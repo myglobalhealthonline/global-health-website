@@ -245,6 +245,11 @@ export type CountryDoctorCard = {
    *  table). The /doctors page promotes the featured row into the
    *  FeaturedDoctor spotlight. */
   isFeatured?: boolean;
+  /** `editorialChecklist.nonPhysician` — roster member who is not a registered
+   *  physician (manual therapist, rehabilitation consultant). Drives the
+   *  `Person`-instead-of-`Physician` schema node and waives the medical
+   *  registration requirement in `validatePublicDoctorRecord`. */
+  nonPhysician?: boolean;
 };
 
 function readSpecialtyName(row: unknown): string | null {
@@ -515,6 +520,11 @@ export const getCountryDoctors = cache(async (
       imageZoom: image?.zoom ?? 1,
       assignedServiceIds,
       isFeatured: r.isFeatured === true,
+      ...(r.editorialChecklist &&
+      typeof r.editorialChecklist === "object" &&
+      (r.editorialChecklist as Record<string, unknown>).nonPhysician === true
+        ? { nonPhysician: true }
+        : {}),
       ...(imcRegistration ? { imcRegistration } : {}),
       ...(regNum ? { registrationNumber: regNum } : {}),
       ...(chamberEntity ? { registrationChamber: chamberEntity } : {}),

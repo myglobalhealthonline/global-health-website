@@ -223,6 +223,7 @@ Status vocabulary: `CLOSED` · `FALSE POSITIVE` · `EXPECTED BEHAVIOR` ·
 | SEO-009 | Patient-reviews section absent from the HTML response | Content / GEO | **IMPLEMENTED LOCALLY — AWAITING DEPLOY** | 2026-08-19 | `DoctifyReviewsSectionLazy` loaded the entire section through `dynamic(..., { ssr: false })`, so its translated eyebrow, `<h2>` and lede existed only inside the RSC flight payload — the served DOM carried a blank 420px div on all eleven page types that render it, in six countries × six locales. Fixed by splitting the chrome into a server-rendered `ReviewsSectionShell`; only the third-party Doctify widget still defers (consent + viewport gated, unchanged). Verified against a local server on the production API: the copy now appears in the DOM outside `<script>`. Regression test added to `DoctifyReviews.render.test.tsx` | Google renders JS and may have seen the section post-render; HTML-only scanners and AI crawlers saw nothing | Deploy, then re-fetch a country home with Googlebot UA and confirm the `<h2>` is in the raw HTML |
 | SEO-010 | Certification-logo `width`/`height` did not match the real assets | Performance / CLS | **IMPLEMENTED LOCALLY — AWAITING DEPLOY** | 2026-08-19 | Six of eleven raster logos in `frontend/lib/content/country-certification-logos.ts` declared an aspect ratio the file does not have (worst: `cfm.webp` declared 260×92 for a 600×400 image), so the pre-load reserved box was the wrong shape. All eleven now declare the true ratio at the 72px display height, which also drops `livro-de-reclamacoes-red.png` from a 1200/2560 srcset to 640/828 and `ordem-dos-medicos.png`'s 2x variant from 14.3 KB to 6.7 KB. Note `livro-de-reclamacoes-red.png` encodes *larger* at 640w (9.6 KB) than at 1200w (7.7 KB) — Next's AVIF output is not monotonic in width for this flat-colour asset, so that one file costs ~2 KB more; kept anyway because the declared ratio is now correct | n/a | Deploy; no follow-up probe needed |
 | SEO-011 | Doctify widget rendered wordless on four of six locales | Content / trust UI | **IMPLEMENTED LOCALLY — AWAITING DEPLOY** | 2026-08-19 | The widget URLs forwarded the page locale straight to Doctify. Doctify ships widget chrome for `en` and `de` only, and does **not** fall back to English for anything else — it returns the label spans empty, so on `pt`, `es`, `cs` and `ro` pages the rating rendered with no "Excellent", no "based on … patient reviews" and no "Source: Doctify", just a bare number. Established by fetching Doctify's `get-script` for eleven language codes (`en`, `pt`, `es`, `cs`, `de`, `ro`, `fr`, `it`, `nl`, `en-GB`, `pt-PT`) and diffing the returned markup with the per-request CSS hash normalised away: only `en` and `de` came back populated. `doctifyLanguage()` now maps any unsupported locale to `en`, resolving regional forms on their base subtag. Section copy and the iframe's accessible `title` still use the page locale | n/a | Deploy, then load a `/portugal/pt` page, accept third-party consent and confirm the widget shows its English labels rather than blanks |
+| SEO-SVC-001 | Four Spain service pages held out of the index by an empty body | Content / indexation | **CLOSED — VERIFIED BY PRODUCTION CHECK** | 2026-08-19 | `consulta-online-medicina-estetica`, `consulta-salud-vascular-circulatoria`, `consulta-diagnotico-vascular` and `consulta-flebologia-y-linfologia` each carried `detailBody = "<p><br /></p>"` (0 plain-text chars) in both the base row and their ES translation, so `isPublicServiceRecordIndexable` correctly withheld them — the 120-char body floor. Not a code defect. ES copy authored and applied to production (`backend/scripts/applied/patch-spain-vascular-aesthetic-services.ts`, 28 field writes): 4,978–5,799-char bodies plus hero, summary, Spanish `seoTitle`/`seoDescription` (they held the English "Book … with a licensed doctor" placeholder) and keywords; the four service names were also de-placeholdered (e.g. "Consulta Diagnostico vascular" → "Diagnóstico Vascular Especialista"). Live check after cache TTL: all four serve `index, follow` with the new titles and all four are in the sitemap. A full sweep of every active market found **no other service with an empty own-locale body** | Pages were `noindex, follow` and absent from the sitemap, so nothing to un-learn — Google has never indexed them | None. The EN/other-locale variants of these four stay `noindex` until translated, which is the gate working as designed |
 
 ### Metadata
 
@@ -279,9 +280,47 @@ measurable loss today, and none should be dressed up as one. Full reasoning in �
 | ID | Finding | Category | Current status | Evidence date | Production state | Google state | Next action |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | SEO-DOC-001 | 135 doctor-locale URLs `noindex` because `editorialChecklist` was `null` | Indexation | **CLOSED (28 doctors backfilled)** | 2026-08-08 | `52c42d1a` | Recrawl pending | Watchlist |
-| SEO-DOC-002 | 26 doctor-locale URLs `noindex` on genuinely thin bios (5 doctors) | Content | **MANUAL ACTION REQUIRED** | 2026-08-08 | Correctly `noindex`; the guard is working as designed | n/a | Clinical/editorial team must write real bios; do not weaken `isPublicDoctorRecordIndexable()` |
+| SEO-DOC-002 | 26 doctor-locale URLs `noindex` on genuinely thin bios (5 doctors) | Content | **MANUAL ACTION REQUIRED** | 2026-08-19 | Correctly `noindex`; the guard is working as designed | n/a | Clinical/editorial team must write real bios; do not weaken `isPublicDoctorRecordIndexable()` |
 | SEO-DOC-003 | Jana Cyplinska 410 | Legacy routing | **CLOSED — reverted, insufficient evidence of retirement** | 2026-08-08 | `36bbd5e5` | n/a | None |
 | SEO-DOC-004 | Three Czech legacy doctor URLs 308'd into a 404 (`mudr-jana-cyplinska`, `mudr-libor-hlavaty`, `mudr-andrei-lavrov`) | Legacy routing | **CLOSED — routed to the Czech roster; disposition still unresolved** | 2026-08-14 | Both URL shapes (legacy `/czechia-doctors/{slug}` + current `/czechia/{lang}/doctors/{slug}`, all 6 locales) now 308 to `/czechia/{lang}/doctors` in one hop, verified locally against the production API — every one of the 11 `/czechia-doctors/:slug` URLs known to GSC or the sitemap now terminates 200 in exactly one hop. `mudr-michael-nytra`'s 2-hop chain collapsed in the same change. **410 deliberately NOT used** — `GONE_DOCTORS` asserts confirmed removal and §14.8 gates that on disposition evidence none of the three has | Legacy URLs still hold the equity: Cyplinská 48 clicks / 30% CTR / pos 4.4; Hlavatý 2 clicks / 567 impr; Lavrov 2 clicks (90d) | **PRODUCTION RE-PROBE OWED** — see the verification note below. Disposition check still owed (§14.8). Upgrade the destination to a per-clinician successor page when the §5 removal policy lands |
+
+#### SEO-DOC-002 — current roster (re-measured against production, 2026-08-19)
+
+A full sweep of every active market found **nine** active doctors still failing
+`isPublicDoctorRecordIndexable`. All nine already have `readyToIndex: true`, so the
+blocker is content only — a bio of at least 120 characters, and a registration number
+or verification URL:
+
+| Market | Doctor | Missing |
+| --- | --- | --- |
+| cz | `mudr-nataliya-kharlamova` | bio (0 chars) |
+| cz | `dr-michael-nytra` | bio (0 chars) |
+| cz | `dr-gabriele-felici` | bio (0 chars) |
+| ie | `dr-arooj-iqbal-lodhi` | bio (0 chars) |
+| ie | `roney-carli` | bio only (86 chars, needs 120+) — registration waived, see below |
+| ie | `priscila-figueiredo` | **nothing — closed 2026-08-19**, registration waived |
+| ro | `dr-robert-gabriel-brindus` | bio (0 chars) |
+| ro | `dr-alexandra-palaga` | bio (13 chars) |
+| ro | `dr-andreea-lorena-bica` | bio (13 chars) |
+
+These are the doctor URLs a crawler reports as `noindex, follow`. Nothing in code
+can close the bio rows: the copy has to come from the clinical team. Do not weaken
+`isPublicDoctorRecordIndexable()` to make the crawl report look clean.
+
+**Non-physician roster members (2026-08-19).** Roney Carli (Manual Therapist) and
+Priscila Figueiredo (Rehabilitation & Wellness Consultant) are not registered
+physicians, so the medical-council registration the gate demanded does not exist
+for them and never will. Handled with an explicit editorial assertion rather than
+by loosening the rule: `editorialChecklist.nonPhysician: true`, applied to both in
+production by `backend/scripts/applied/patch-ie-non-physician-practitioners.ts`.
+It waives **exactly one** requirement — the registration — and is never inferred
+from the free-text title. Bio depth, name, title, blocked-copy and `readyToIndex`
+all still apply, which is why Priscila now renders `index, follow` and Roney does
+not (86-char bio). The same flag also makes `physicianJsonLd` emit a plain
+`Person` node instead of `Physician`, and drop `medicalSpecialty`: claiming a
+medical type for a non-medical practitioner is a false credential claim, and this
+is a public page about a real person. Frontend change is **local, not yet
+deployed** — production still noindexes Priscila until it ships.
 
 #### SEO-DOC-004 — verification status and expected outcome
 

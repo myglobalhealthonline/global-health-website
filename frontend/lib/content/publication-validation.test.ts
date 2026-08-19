@@ -199,3 +199,43 @@ describe("sitemap and hreflang import the SAME predicate, not a lookalike", () =
     expect(src).toContain("isPublicDoctorRecordIndexable");
   });
 });
+
+describe("non-physician roster members — editorialChecklist.nonPhysician", () => {
+  /** A manual therapist / rehabilitation consultant: real bio, no medical
+   *  council registration because none applies to their profession. */
+  const practitioner = (checklist: Record<string, unknown>) => ({
+    fullName: "Priscila Figueiredo",
+    title: "Rehabilitation & Wellness Consultant",
+    bio: "Priscila works with patients recovering from musculoskeletal injury, ".padEnd(200, "x"),
+    languages: ["English", "Português"],
+    specialties: ["Rehabilitation"],
+    imcRegistration: undefined,
+    medicalRegistrationUrl: undefined,
+    qualifications: [],
+    editorialChecklist: checklist,
+  });
+
+  it("without the flag, a missing registration still blocks indexing", () => {
+    const v = validatePublicDoctorRecord(practitioner({ readyToIndex: true }));
+    expect(v.issues.map((i) => i.field)).toContain("credentials");
+    expect(isPublicDoctorRecordIndexable(practitioner({ readyToIndex: true }))).toBe(false);
+  });
+
+  it("with the flag, the registration rule is waived", () => {
+    const v = validatePublicDoctorRecord(practitioner({ readyToIndex: true, nonPhysician: true }));
+    expect(v.issues.map((i) => i.field)).not.toContain("credentials");
+    expect(isPublicDoctorRecordIndexable(practitioner({ readyToIndex: true, nonPhysician: true }))).toBe(
+      true,
+    );
+  });
+
+  it("the flag waives ONLY the registration rule — a thin bio still noindexes", () => {
+    const thin = { ...practitioner({ readyToIndex: true, nonPhysician: true }), bio: "Manual therapist." };
+    expect(validatePublicDoctorRecord(thin).issues.map((i) => i.field)).toContain("bio");
+    expect(isPublicDoctorRecordIndexable(thin)).toBe(false);
+  });
+
+  it("the flag does not bypass readyToIndex", () => {
+    expect(isPublicDoctorRecordIndexable(practitioner({ nonPhysician: true }))).toBe(false);
+  });
+});

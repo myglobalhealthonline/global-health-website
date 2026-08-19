@@ -175,6 +175,7 @@ export default async function CountryLangDoctorsPage({
         imageAltText: d.imageAltText,
         imageCaption: d.imageCaption ?? d.imageDescription,
         bio: d.bio,
+        nonPhysician: d.nonPhysician === true,
       }),
     })),
   };

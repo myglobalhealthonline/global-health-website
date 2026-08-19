@@ -270,14 +270,20 @@ export function physicianJsonLd(doc: {
   imageCaption?: string | null;
   /** Doctor bio (may contain HTML) — becomes the Physician `description`. */
   bio?: string | null;
+  /** Roster member who is not a registered physician (manual therapist,
+   *  rehabilitation consultant). Emits a plain `Person` instead of
+   *  `Physician` and drops `medicalSpecialty`: asserting a medical type for
+   *  a non-medical practitioner is a false credential claim, and this
+   *  function already refuses to emit unverified `hasCredential` entries. */
+  nonPhysician?: boolean;
 }) {
   const hasCredential = buildHasCredential(doc);
   const description = doc.bio ? truncateForSchema(toDoctorBioPlainText(doc.bio), 300) : undefined;
   return {
     "@context": "https://schema.org",
-    "@type": "Physician",
+    "@type": doc.nonPhysician ? "Person" : "Physician",
     name: doc.name,
-    jobTitle: doc.title ?? "Physician",
+    jobTitle: doc.title ?? (doc.nonPhysician ? undefined : "Physician"),
     url: doc.url.startsWith("http") ? doc.url : `${SITE_URL}${doc.url}`,
     ...(description ? { description } : {}),
     image: doc.imageSrc
@@ -294,7 +300,9 @@ export function physicianJsonLd(doc: {
     // `doc.specialty` is a display label (often localized, e.g. "Cardiología"
     // for the ES locale), so it's wrapped as the node's `name` instead of
     // being asserted as a canonical schema.org enum token we can't verify.
-    ...(doc.specialty ? { medicalSpecialty: { "@type": "MedicalSpecialty", name: doc.specialty } } : {}),
+    ...(doc.specialty && !doc.nonPhysician
+      ? { medicalSpecialty: { "@type": "MedicalSpecialty", name: doc.specialty } }
+      : {}),
     worksFor: {
       "@type": "MedicalOrganization",
       "@id": ORGANIZATION_ID,

@@ -90,7 +90,20 @@ export function validatePublicServiceRecord(service: Pick<PublicServiceRecord, "
   return buildResult(issues);
 }
 
-export function validatePublicDoctorRecord(doctor: Pick<PublicDoctorRecord, "fullName" | "title" | "bio" | "languages" | "specialties" | "imcRegistration" | "medicalRegistrationUrl" | "qualifications"> & { qualifications?: string[] }): PublicationValidationResult {
+/**
+ * Practitioners on the roster who are NOT registered physicians — a manual
+ * therapist, a rehabilitation consultant, a psychologist registered with a
+ * non-medical body. `editorialChecklist.nonPhysician: true` is an explicit
+ * admin/editorial assertion, never inferred from the free-text title, and it
+ * waives EXACTLY ONE requirement: the medical-council registration. Bio depth,
+ * name, title and the blocked-copy scan still apply, and the profile still has
+ * to be marked `readyToIndex`.
+ */
+function isNonPhysician(checklist: Record<string, unknown> | undefined): boolean {
+  return checklist?.nonPhysician === true;
+}
+
+export function validatePublicDoctorRecord(doctor: Pick<PublicDoctorRecord, "fullName" | "title" | "bio" | "languages" | "specialties" | "imcRegistration" | "medicalRegistrationUrl" | "qualifications"> & { qualifications?: string[]; editorialChecklist?: Record<string, unknown> }): PublicationValidationResult {
   const issues: PublicationIssue[] = [];
 
   if (!doctor.fullName.trim()) {
@@ -102,7 +115,11 @@ export function validatePublicDoctorRecord(doctor: Pick<PublicDoctorRecord, "ful
   if (!doctor.bio || doctor.bio.trim().length < 120) {
     issues.push({ field: "bio", message: "Missing detailed public doctor bio.", severity: "error" });
   }
-  if (!doctor.imcRegistration && !doctor.medicalRegistrationUrl) {
+  if (
+    !doctor.imcRegistration &&
+    !doctor.medicalRegistrationUrl &&
+    !isNonPhysician(doctor.editorialChecklist)
+  ) {
     issues.push({ field: "credentials", message: "Missing registration number or verification URL.", severity: "error" });
   }
   if (!doctor.languages || doctor.languages.length === 0) {
