@@ -5,7 +5,6 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { CarouselNav } from "@/components/ui/CarouselNav";
 import { useSwipePage } from "@/hooks/use-swipe-page";
-import { DoctorsHero } from "@/components/sections/DoctorsHero";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import type { DoctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { SectionSeam } from "@/components/ui/SectionSeam";
@@ -85,11 +84,6 @@ type DoctorTeamTemplateProps = {
   i18n?: DoctorTeamI18n;
   /** Doctor-card chrome strings, resolved by the (server) caller. */
   cardI18n: DoctorCardI18n;
-  /** Total roster size for the hero's "available" count — defaults to
-   *  `doctors.length`. Pass this when a featured doctor is rendered
-   *  separately via `spotlight` and pulled out of `doctors`, so the count
-   *  reflects the full roster instead of undercounting by one. */
-  totalDoctorCount?: number;
 };
 
 export function DoctorTeamTemplate({
@@ -102,10 +96,8 @@ export function DoctorTeamTemplate({
   spotlight,
   i18n,
   cardI18n,
-  totalDoctorCount,
 }: DoctorTeamTemplateProps) {
   const [page, setPage] = useState(0);
-  const availableCount = totalDoctorCount ?? doctors.length;
   const totalPages = Math.ceil(doctors.length / PAGE_SIZE);
   // Clamp so a filter that shrinks the list (URL nav keeps the page
   // state) never slices past the end into an empty grid.
@@ -118,39 +110,6 @@ export function DoctorTeamTemplate({
 
   return (
     <section className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
-      <DoctorsHero
-        countryName={countryName}
-        eyebrow={`${countryName} · ${i18n?.theTeamBadge ?? "The team"}`}
-        titleLead={i18n?.heroTitleLead ?? "Doctors who"}
-        titleAccent={i18n?.heroTitleAccent ?? "actually"}
-        titleTrail={i18n?.heroTitleTrail ?? "pick up."}
-        lede={(i18n?.heroLedeTemplate ?? "Every clinician below is licensed in {country}, vetted for online care, and reviewed by patients after each consultation.").replace("{country}", countryName)}
-        availableCount={availableCount}
-        availableLabel={
-          availableCount === 1
-            ? (i18n?.heroAvailableSingular ?? "licensed clinician available")
-            : (i18n?.heroAvailablePlural ?? "licensed clinicians available")
-        }
-        primaryCta={{ label: bookingLabel, href: bookingHref }}
-        secondaryCta={{ label: i18n?.viewDoctors ?? "View Doctors", href: "#doctor-grid" }}
-        trustCard1Title={i18n?.trustCard1Title}
-        trustCard1Subtitle={i18n?.trustCard1Subtitle}
-        trustCard2Title={i18n?.trustCard2Title}
-        trustCard2Subtitle={i18n?.trustCard2Subtitle}
-        trustCard3Title={i18n?.trustCard3Title}
-        trustCard3Subtitle={i18n?.trustCard3Subtitle}
-        floatCard1Title={i18n?.floatCard1Title}
-        floatCard1Subtitle={i18n?.floatCard1Subtitle}
-        floatCard2Title={i18n?.floatCard2Title}
-        floatCard2Subtitle={i18n?.floatCard2Subtitle}
-        floatCard3Title={i18n?.floatCard3Title}
-        floatCard3Subtitle={i18n?.floatCard3Subtitle}
-        heroImage={{
-          src: "/images/stock/doctors.jpg",
-          alt: `Doctors available for online consultations in ${countryName}`,
-          priority: true,
-        }}
-      />
 
       {/* GRID — light ivory band; dark liquid-glass DoctorCards float on it. */}
       <section id="doctor-grid" className="gh-section relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel" style={{ scrollMarginTop: "96px" }}>

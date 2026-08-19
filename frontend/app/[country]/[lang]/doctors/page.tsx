@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -10,7 +9,7 @@ import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { countryLangParams } from "@/lib/routing/static-params";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { breadcrumbJsonLd, physicianJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
-import { buildPublicMetadata } from "@/lib/seo/page-seo";
+import { buildPublicMetadata, noindexFollow } from "@/lib/seo/page-seo";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import {
   getPageContent,
@@ -34,11 +33,22 @@ import {
   type DoctorDirectoryContext,
 } from "@/lib/content/doctor-directory";
 import { DoctorDirectoryView } from "./_components/DoctorDirectoryView";
+import { DoctorTeamHero } from "@/components/sections/DoctorTeamHero";
 import { overrideDoctorsBundle } from "@/lib/content/country-doctors-copy";
 import { fetchGlobalConsultationCount } from "@/lib/api/consultation-count";
-import { DoctorsDirectoryClient } from "./_components/DoctorsDirectoryClient";
 
 type Params = { country: string; lang: string };
+type Query = Record<string, string | string[] | undefined>;
+
+/** Normalise one `searchParams` entry to the string[] `parseMultiParam` wants. */
+function multi(value: string | string[] | undefined): string[] {
+  return value === undefined ? [] : Array.isArray(value) ? value : [value];
+}
+
+/** A filtered directory state is a facet of the clean page, not its own entry. */
+function hasFilterState(query: Query): boolean {
+  return multi(query.lang).length > 0 || multi(query.type).length > 0;
+}
 
 export async function generateStaticParams(): Promise<Params[]> {
   return countryLangParams();
@@ -46,10 +56,13 @@ export async function generateStaticParams(): Promise<Params[]> {
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<Params>;
+  searchParams: Promise<Query>;
 }): Promise<Metadata> {
   const { country, lang } = await params;
+  const query = await searchParams;
   const code = countryCodeFromSlug(country);
   const config = code ? await getPublicCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
@@ -68,7 +81,7 @@ export async function generateMetadata({
   const metadataTitle = (page?.seoTitle ??
     `${localized.heroTitleLead} ${localized.heroTitleAccent} ${localized.heroTitleTrail} — ${config.name}`) || title;
   const metadataDescription = (page?.seoDescription ?? localized.heroLedeTemplate.replace("{country}", config.name)) || description;
-  return buildPublicMetadata({
+  const metadata = buildPublicMetadata({
     path: `/${country}/${lang}/doctors`,
     title: metadataTitle,
     description: metadataDescription,
@@ -79,31 +92,36 @@ export async function generateMetadata({
     imageAlt: `${metadataTitle} — ${config.name}`,
     languages: hreflangAlternates(config, "/doctors"),
   });
+  // `?lang=`/`?type=` are filter facets of this same roster, not their own
+  // search entries — same convention as the booking-workflow states (SEO-004):
+  // clean canonical, noindex, follow, and no hreflang claim of their own.
+  return hasFilterState(query) ? noindexFollow(metadata) : metadata;
 }
 
 /**
- * Server component: fetches + renders the FULL, unfiltered doctor roster
- * for the country. No `searchParams` read here — that's what makes this
- * page eligible for static generation (P-001). The `?lang=`/`?type=`
- * filter chips are applied client-side by `DoctorsDirectoryClient`, which
- * needs `useSearchParams` and is therefore wrapped in `<Suspense>` below.
+ * Server component: fetches + renders the doctor roster for the country, with
+ * the `?lang=`/`?type=` chips applied SERVER-side.
  *
- * The fallback here is a lightweight, contentless skeleton — NOT another
- * copy of the directory. `DoctorsDirectoryClient` doesn't actually suspend
- * (`useSearchParams` resolves synchronously), so React's streaming SSR
- * flushes the fallback frame and then immediately flushes the resolved
- * child into the same response. A real `<DoctorDirectoryView>` fallback
- * therefore shipped the ENTIRE directory (hero, stat bar, featured card,
- * every doctor card) TWICE in the raw HTML — a duplicate-content SEO bug.
- * The full roster still reaches crawlers exactly once, via the resolved
- * child render; the SEO win from static generation is unaffected.
+ * History worth keeping: the filters used to run in a client child behind
+ * `<Suspense>` so the page could be statically generated (P-001). That never
+ * materialised — `next build` emits zero prerendered HTML for any
+ * `[country]/[lang]` route; they are all `f` (server-rendered on demand).
+ * What the boundary did produce on every request was the fallback AND the
+ * resolved child in one response: the ENTIRE directory twice (~137 KB of
+ * duplicate markup), while a filtered URL still served the unfiltered roster
+ * to crawlers and no-JS visitors. Reading `searchParams` here renders it once,
+ * correctly filtered. Do NOT reintroduce the boundary unless these routes
+ * actually become static again.
  */
 export default async function CountryLangDoctorsPage({
   params,
+  searchParams,
 }: {
   params: Promise<Params>;
+  searchParams: Promise<Query>;
 }) {
   const { country: slug, lang } = await params;
+  const query = await searchParams;
   const code = countryCodeFromSlug(slug);
   if (!code) notFound();
   const config = getCountryByCode(code);
@@ -191,6 +209,13 @@ export default async function CountryLangDoctorsPage({
     i18n: doctorsI18n,
   };
 
+  // Unfiltered view — feeds the hero counts, which sit above the filter bar
+  // and so always describe the full roster.
+  const baseDirectoryView = buildDoctorDirectoryView(directoryCtx, [], []);
+  const filteredDirectoryView = hasFilterState(query)
+    ? buildDoctorDirectoryView(directoryCtx, multi(query.lang), multi(query.type))
+    : baseDirectoryView;
+
   return (
     <>
       <JsonLd
@@ -206,17 +231,19 @@ export default async function CountryLangDoctorsPage({
       {page?.sections.faq ? <JsonLd data={faqJsonLd(page.faq)} /> : null}
       {/* Directory IS this page's header/hero (no ServiceHero here) — every
           marketing section below must render AFTER it, never before. */}
-      {/* The fallback renders the REAL unfiltered directory, not a skeleton:
-          it is what ends up in the static HTML, so a skeleton meant crawlers
-          (and no-JS visitors) got an aria-hidden shell with no <h1> and no
-          doctor links on all 33 country/locale directory pages. The view is
-          hook-free and server-safe by design; the client child re-renders it
-          with the ?lang/?type filters applied after hydration. */}
-      <Suspense
-        fallback={<DoctorDirectoryView view={buildDoctorDirectoryView(directoryCtx, [], [])} />}
-      >
-        <DoctorsDirectoryClient ctx={directoryCtx} />
-      </Suspense>
+      {/* The hero — and with it the page’s single <h1> — renders OUTSIDE the
+          Suspense boundary. A dynamically rendered page streams both the
+          fallback and the resolved child into the HTML, so a heading inside
+          the boundary shipped twice: h1=2 on all 33 country/locale directory
+          pages. Keep it here, above the boundary. */}
+      <DoctorTeamHero
+        countryName={baseDirectoryView.countryName}
+        bookingHref={baseDirectoryView.bookingHref}
+        bookingLabel={baseDirectoryView.bookingLabel}
+        availableCount={baseDirectoryView.totalDoctorCount}
+        i18n={baseDirectoryView.i18n}
+      />
+      <DoctorDirectoryView view={filteredDirectoryView} />
       {countryTrust ? (
         <VerifiedProfessionals trust={countryTrust} locale={lang} country={code} />
       ) : null}
@@ -224,15 +251,17 @@ export default async function CountryLangDoctorsPage({
         theme="forest"
         variant="carousel"
         language={lang}
-        headline="What patients say about"
-        headlineAccent="our doctors"
+        eyebrow={common.a11y.patientReviews}
+        headline={common.doctify.patientsSayHeadline ?? "What patients say about"}
+        headlineAccent={common.doctify.patientsSayAccent ?? "our doctors"}
+        body={common.doctify.body}
       />
       {page?.sections.intro ? (
-        <ServiceIntro body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
+        <ServiceIntro eyebrow={common.sections.overview} body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
       ) : null}
       {page?.sections.whoFor ? (
         <ChecklistSection
-          eyebrow="Who it's for"
+          eyebrow={common.sections.whoItsFor}
           title={page.whoForTitle!}
           intro={page.whoForIntro ?? undefined}
           items={page.whoForItems}
