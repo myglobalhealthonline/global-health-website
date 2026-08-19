@@ -208,7 +208,13 @@ export function buildPublicMetadata(input: PublicMetadataInput): Metadata {
     keywords: input.keywords,
     alternates: {
       canonical,
-      ...(input.languages ? { languages: input.languages } : {}),
+      // hreflang is reciprocal: every URL in a cluster must be confirmed by
+      // the others. A noindexed variant is never in the real set, so listing
+      // alternates from it produces exactly the "missing return links" GSC
+      // reports — the cluster it points at never names it back. Callers that
+      // flip to noindex AFTER this builder must use `noindexFollow()`, which
+      // strips `languages` the same way.
+      ...(input.languages && !input.noindex ? { languages: input.languages } : {}),
     },
     openGraph: {
       type: input.type ?? "website",
@@ -237,6 +243,22 @@ export function buildPublicMetadata(input: PublicMetadataInput): Metadata {
           },
         },
   };
+}
+
+/**
+ * Demote an already-built metadata object to `noindex, follow` AND drop its
+ * hreflang cluster.
+ *
+ * The `follow` half is deliberate: these are real pages serving fallback-locale
+ * content, so they stay crawlable and their links keep flowing. The dropped
+ * `languages` is the hreflang reciprocity rule — see the comment in
+ * `buildPublicMetadata`. Use this instead of spreading
+ * `{ ...metadata, robots: { index: false, follow: true } }` by hand, which
+ * leaves the cluster behind.
+ */
+export function noindexFollow(metadata: Metadata): Metadata {
+  const { languages: _dropped, ...alternates } = metadata.alternates ?? {};
+  return { ...metadata, alternates, robots: { index: false, follow: true } };
 }
 
 export type RouteSeo = {

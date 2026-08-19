@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { buildPublicMetadata } from "./page-seo";
+import { buildPublicMetadata, noindexFollow } from "./page-seo";
 
 type OpenGraphMetadata = NonNullable<Metadata["openGraph"]>;
 type TwitterMetadata = NonNullable<Metadata["twitter"]>;
@@ -388,5 +388,43 @@ describe("compactSearchTitle", () => {
 
     expect(result).toBe(title);
     expect(result).not.toContain("…");
+  });
+});
+
+describe("hreflang reciprocity on non-indexable pages", () => {
+  // GSC "missing return links": a noindexed variant that still lists alternates
+  // points at a cluster whose members never name it back. Ireland only publishes
+  // English, so /ireland/es/faq must advertise no alternates at all.
+  const languages = {
+    "en-IE": "/ireland/en/faq",
+    "x-default": "/ireland/en/faq",
+  };
+  const base = {
+    path: "/ireland/es/faq",
+    title: "Preguntas frecuentes",
+    description: "d",
+    languages,
+  };
+
+  it("keeps the cluster on an indexable page", () => {
+    const metadata = buildPublicMetadata(base);
+    expect(metadata.alternates?.languages).toEqual(languages);
+  });
+
+  it("drops the cluster when the builder is told the page is noindex", () => {
+    const metadata = buildPublicMetadata({ ...base, noindex: true });
+    expect(metadata.alternates?.languages).toBeUndefined();
+    expect(metadata.alternates?.canonical).toBeTruthy();
+  });
+
+  it("drops the cluster when a caller demotes the page afterwards", () => {
+    const metadata = noindexFollow(buildPublicMetadata(base));
+    expect(metadata.alternates?.languages).toBeUndefined();
+    // The page stays crawlable and keeps its own canonical — only the
+    // reciprocal claim goes.
+    expect(metadata.alternates?.canonical).toBe(
+      "https://www.myglobalhealth.online/ireland/es/faq",
+    );
+    expect(metadata.robots).toEqual({ index: false, follow: true });
   });
 });

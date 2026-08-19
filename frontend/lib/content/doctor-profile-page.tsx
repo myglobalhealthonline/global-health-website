@@ -14,7 +14,7 @@ import { ogLocales } from "@/lib/seo/hreflang";
 import { doctorHreflangCluster } from "@/lib/seo/doctor-hreflang";
 import { doctorIndexableCountryNames, withMarketTitle } from "@/lib/seo/doctor-market-title";
 import { summarizeLanguagesForMetadata } from "@/lib/seo/doctor-language-summary";
-import { buildPublicMetadata } from "@/lib/seo/page-seo";
+import { buildPublicMetadata, noindexFollow } from "@/lib/seo/page-seo";
 import {
   breadcrumbJsonLd,
   faqJsonLd,
@@ -141,7 +141,7 @@ export async function buildDoctorProfileMetadata(
   // page carrying real internal links (their market's services, the country
   // team page, the booking flow). `buildPublicMetadata`'s shared `noindex` is
   // `noindex, nofollow`, which strands those links.
-  return { ...metadata, robots: { index: false, follow: true } };
+  return noindexFollow(metadata);
 }
 export async function renderDoctorProfilePage(params: Promise<DoctorProfileRouteParams>) {
   const { doctorSlug, countrySlug: routeCountrySlug, lang: routeLang } = await params;

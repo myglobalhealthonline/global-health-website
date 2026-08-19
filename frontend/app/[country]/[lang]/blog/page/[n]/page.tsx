@@ -4,7 +4,7 @@ import { renderBlogIndexPage } from "@/lib/content/blog-index-page";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
-import { buildPublicMetadata } from "@/lib/seo/page-seo";
+import { buildPublicMetadata, noindexFollow } from "@/lib/seo/page-seo";
 import { ogLocales } from "@/lib/seo/hreflang";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
@@ -60,7 +60,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   // page, cutting that path exactly where deep archive pages need it most.
   // Overridden to `noindex, follow` here rather than in the shared helper so
   // every other noindex route keeps its stricter default.
-  return { ...metadata, robots: { index: false, follow: true } };
+  return noindexFollow(metadata);
 }
 
 export default async function CountryLangBlogIndexPagedPage({

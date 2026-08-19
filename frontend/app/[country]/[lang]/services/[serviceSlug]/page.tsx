@@ -27,7 +27,7 @@ import { listingPath } from "@/lib/routing/service-listing-path";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { BookCta } from "@/components/booking/BookNowButton";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
-import { buildPublicMetadata } from "@/lib/seo/page-seo";
+import { buildPublicMetadata, noindexFollow } from "@/lib/seo/page-seo";
 import { hreflangRegion, ogLocales } from "@/lib/seo/hreflang";
 import { isRetiredHealthSlug } from "@/lib/seo/health-service-canonical";
 import {
@@ -217,7 +217,7 @@ export async function generateMetadata({
   // which is right for the routes that use it but would strand this page's link
   // equity. Overridden here rather than in the helper so doctor/blog robots are
   // untouched.
-  return { ...metadata, robots: { index: false, follow: true } };
+  return noindexFollow(metadata);
 }
 
 /**

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { noindexFollow } from "@/lib/seo/page-seo";
 
 export type BookingWorkflowSearchParams = Record<
   string,
@@ -47,5 +48,5 @@ export function applyBookingWorkflowIndexing(
   searchParams: BookingWorkflowSearchParams | undefined,
 ): Metadata {
   if (!hasBookingWorkflowParams(searchParams)) return metadata;
-  return { ...metadata, robots: { index: false, follow: true } };
+  return noindexFollow(metadata);
 }

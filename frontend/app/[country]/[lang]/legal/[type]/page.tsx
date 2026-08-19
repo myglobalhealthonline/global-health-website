@@ -18,7 +18,7 @@ import { GH2CompactHero } from "@/components/sections/GH2PagePrimitives";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { indexableHreflangCluster } from "@/lib/seo/hreflang";
-import { buildPublicMetadata } from "@/lib/seo/page-seo";
+import { buildPublicMetadata, noindexFollow } from "@/lib/seo/page-seo";
 
 export const revalidate = 300;
 
@@ -83,7 +83,7 @@ export async function generateMetadata({
     imageAlt: `${documentTitle} — ${config.name}`,
     languages: indexableHreflangCluster(config, `/legal/${type}`, exactLocales),
   });
-  return isExactLocale ? metadata : { ...metadata, robots: { index: false, follow: true } };
+  return isExactLocale ? metadata : noindexFollow(metadata);
 }
 
 export default async function CountryLegalDocumentPage({

@@ -24,7 +24,7 @@ import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import { getMarketFaq, marketFaqLocales } from "@/lib/content/country-faq";
 import { hreflangAlternates, indexableHreflangCluster, ogLocales } from "@/lib/seo/hreflang";
-import { buildPublicMetadata } from "@/lib/seo/page-seo";
+import { buildPublicMetadata, noindexFollow } from "@/lib/seo/page-seo";
 import { buildBookHref } from "@/lib/routing/book-href";
 
 export const revalidate = 300;
@@ -161,7 +161,7 @@ export async function generateMetadata({
   // internal links; `buildPublicMetadata`'s shared `noindex` is
   // `noindex, nofollow`, which needlessly cuts them. Same override as
   // /services/*, /health/*, /legal/* and blog pagination.
-  return { ...metadata, robots: { index: false, follow: true } };
+  return noindexFollow(metadata);
 }
 
 export default async function CountryFAQPage({ params }: { params: Promise<Params> }) {
