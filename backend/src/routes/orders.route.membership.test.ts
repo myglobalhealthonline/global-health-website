@@ -425,8 +425,32 @@ describe("checkout — benefit source switch (§6.4)", () => {
     // One unit exists, so line one is free and line two takes the row's 20%.
     assert.deepEqual(prices, [0, PRICE - Math.round((PRICE * 20) / 100)]);
     assert.equal(order!.items.filter((i) => i.membershipAllowanceUsed).length, 1);
+
+    // The counter is the one thing that differs between the two tolerated
+    // statuses, so it cannot be asserted unconditionally. This order costs
+    // more than zero and therefore needs a Stripe session; with no key
+    // configured, orders.route.ts returns its 503 AFTER the order
+    // transaction has committed and calls releaseOrderMembershipAllowance()
+    // on the way out, deliberately handing the held unit back rather than
+    // burning it on a payment that was never started. Asserting used === 1
+    // regardless made this pass only where a Stripe key is configured.
     const balance = await prisma.membershipAllowanceBalance.findFirst({ where: { benefitId } });
-    assert.equal(balance?.used, 1);
+    const ledger = await prisma.membershipUsageLedger.findMany({
+      where: { orderId: order!.id },
+      select: { delta: true, reason: true },
+      orderBy: { createdAt: "asc" },
+    });
+    if (status === 200) {
+      assert.equal(balance?.used, 1);
+      assert.deepEqual(ledger, [{ delta: -1, reason: "SPEND" }]);
+    } else {
+      // Spent inside the order transaction, then released on the way out.
+      assert.equal(balance?.used, 0);
+      assert.deepEqual(ledger, [
+        { delta: -1, reason: "SPEND" },
+        { delta: 1, reason: "REFUND" },
+      ]);
+    }
   });
 
   /**
