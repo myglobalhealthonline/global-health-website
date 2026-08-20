@@ -15,6 +15,7 @@ import {
   missingRecordOn200,
 } from "@/lib/content/public-content-source";
 import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
+import { marketDisplayName } from "@/lib/content/doctor-market-name";
 
 /**
  * Data-driven country collections used by the country-scoped landing pages
@@ -505,7 +506,7 @@ export const getCountryDoctors = cache(async (
     out.push({
       id: r.id,
       slug: r.slug,
-      fullName: r.fullName,
+      fullName: marketDisplayName(r.slug, countryCode, r.fullName),
       title: r.title,
       bio: typeof r.bio === "string" ? r.bio : null,
       languages,

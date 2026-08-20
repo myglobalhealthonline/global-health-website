@@ -7,6 +7,7 @@ import {
 import { fetchDoctorByCountryAndSlug } from "@/lib/api/site-content-api";
 import { isPublicDoctorRecordIndexable } from "@/lib/content/publication-validation";
 import { resolveDoctorProfileImageUrl } from "@/lib/content/get-public-assets";
+import { marketDisplayName } from "@/lib/content/doctor-market-name";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
@@ -298,6 +299,14 @@ export const resolveDoctorProfilePageData = cache(async function resolveDoctorPr
     return out;
   }
 
+  // Cross-listed clinicians carry one global `fullName` but a per-market
+  // `seoTitle`, so the H1/og/schema name and the <title> disagreed on the
+  // secondary market. Resolve the name for the market this route serves once,
+  // here, so every field below (hero title, profile name, image label, alt
+  // text, booking CTA image alt) speaks with one voice — and matches the
+  // roster card, which resolves through the same helper.
+  const displayName = marketDisplayName(doctorSlug, countryCode, backend.fullName);
+
   const out: DoctorProfilePageData = {
     ...base,
     recordFound: true,
@@ -318,7 +327,7 @@ export const resolveDoctorProfilePageData = cache(async function resolveDoctorPr
     ...(profileImageSrc ? { profileImageSrc } : {}),
     hero: {
       ...base.hero,
-      title: backend.fullName,
+      title: displayName,
       secondaryCta: {
         label: backToTeam.replace("{country}", backend.countryName),
         href: backend.teamPath,
@@ -326,7 +335,7 @@ export const resolveDoctorProfilePageData = cache(async function resolveDoctorPr
     },
     profile: {
       ...base.profile,
-      name: backend.fullName,
+      name: displayName,
       title: backend.title,
       country: backend.countryName,
       bio: backend.bio ?? "",
@@ -336,7 +345,7 @@ export const resolveDoctorProfilePageData = cache(async function resolveDoctorPr
           : (parseLanguagesFromDoctorBio(backend.bio) ?? []),
       qualifications: backend.qualifications ?? [],
       specialties: backend.specialties,
-      imageLabel: backend.fullName,
+      imageLabel: displayName,
       ...(backend.imcRegistration ? { imcRegistration: backend.imcRegistration } : {}),
       ...(backend.medicalRegistrationUrl ? { medicalRegistrationUrl: backend.medicalRegistrationUrl } : {}),
       ...(backend.seoTitle ? { seoTitle: backend.seoTitle } : {}),
@@ -345,7 +354,7 @@ export const resolveDoctorProfilePageData = cache(async function resolveDoctorPr
       ...(backend.faqs ? { faqs: backend.faqs } : {}),
       ...(backend.editorialChecklist ? { editorialChecklist: backend.editorialChecklist } : {}),
       ...(backend.lastReviewedAt ? { lastReviewedAt: backend.lastReviewedAt } : {}),
-      imageAltText: backend.profileImageAltText ?? backend.fullName,
+      imageAltText: backend.profileImageAltText ?? displayName,
       ...(backend.profileImageTitle ? { imageTitle: backend.profileImageTitle } : {}),
       ...(backend.profileImageCaption ? { imageCaption: backend.profileImageCaption } : {}),
       ...(backend.profileImageDescription
@@ -362,7 +371,7 @@ export const resolveDoctorProfilePageData = cache(async function resolveDoctorPr
     out.profileImageZoom = backend.profileImageZoom;
     out.bookingCtaImage = {
       src: resolvedImageSrc,
-      alt: backend.profileImageAltText ?? backend.fullName,
+      alt: backend.profileImageAltText ?? displayName,
     };
   }
 

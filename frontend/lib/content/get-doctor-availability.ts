@@ -1,6 +1,7 @@
 import "server-only";
 import { serverReadAuthHeaders } from "@/lib/api/client";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
+import { marketDisplayName } from "@/lib/content/doctor-market-name";
 
 /**
  * Server-side fetcher for the public doctor availability endpoint.
@@ -163,7 +164,7 @@ export async function getBookingDoctorSummary(
     if (!json.ok || !d?.slug || !d.fullName) return null;
     return {
       slug: d.slug,
-      fullName: d.fullName,
+      fullName: marketDisplayName(d.slug, countryCode, d.fullName),
       title: d.title ?? "",
       countryCode: d.countryCode ?? countryCode,
     };
