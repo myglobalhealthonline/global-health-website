@@ -23,8 +23,8 @@
     "railway:connect": "node scripts/connect-railway.mjs"
   },
   "devDependencies": {
-    "@playwright/test": "^1.60.0",
-    "playwright": "^1.60.0"
+    "@playwright/test": "^1.62.1",
+    "playwright": "^1.62.1"
   },
   "pnpm": {
     "//": "S-004: these overrides are NOT inherited by the deployed services. backend/ and frontend/ each build standalone with --ignore-workspace, so every security pin must be MIRRORED into backend/package.json and frontend/package.json by hand. When you add/bump a pin here for a CVE, mirror it there too (and vice-versa) or the deployed service ships unpatched. Prefer major-scoped keys (e.g. ws@7) so a security floor never becomes a version ceiling.",
@@ -33,7 +33,7 @@
       "sanitize-html": "^2.17.5",
       "hono": "4.12.25",
       "@hono/node-server": "1.19.13",
-      "postcss": "8.5.23",
+      "postcss": "8.5.26",
       "brace-expansion@1": "1.1.18",
       "brace-expansion@5": "5.0.9",
       "esbuild": "0.28.1",
