@@ -368,7 +368,7 @@
       "retry": "Try again",
       "providerRequired": "Select your provider to continue.",
       "cardRequired": "Enter the card or policy number for the cover you selected.",
-      "priceNote": "We reserve your time now. Once your card is verified you'll get a secure payment link by email and WhatsApp at your covered price."
+      "priceNote": "We check your card before taking payment. If it needs verifying by hand we'll hold your time and send a secure payment link by email and WhatsApp."
     },
     "benefitToggleLabel": "I have a membership, insurance or plan",
     "benefitHeading": "Which one should we apply?",

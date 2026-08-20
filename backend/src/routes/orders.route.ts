@@ -69,6 +69,8 @@ import { cancelOrderAppointments } from "../modules/appointments/appointments.se
 import { resolveOrderPaymentUrl } from "../modules/orders/order-payment-url.service.js";
 import { notifyAdminsOfInsuranceOrder, applyInsuranceVerificationDecision } from "../modules/insurance-verification/insurance-verification.service.js";
 import { decryptPhi } from "../lib/crypto/phi-crypto.js";
+import { declaredCoverageIsSystemVerified } from "../modules/benefits/declared-coverage.service.js";
+import type { DeclaredCoverageSource } from "../modules/benefits/declared-coverage.service.js";
 
 /**
  * Orders + checkout.
@@ -909,8 +911,35 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         // and alert the company's admins to verify the card. The patient is
         // charged only after an admin verifies (insurance price) or rejects
         // (standard price) — see insurance-verification.service.
+        // A declared card whose record is already linked to this account needs
+        // no human: the link IS the identity proof the review exists to get,
+        // and the same patient could spend the same benefit through the
+        // account-linked picker with nobody reviewing it. Re-checked HERE
+        // rather than trusted from add-to-cart, so a link revoked in between
+        // still sends the order to review.
+        const declaredItem = order.items.find((i) => i.declaredCoverageSource);
+        let declaredAutoVerified = false;
+        if (declaredItem?.declaredCoverageSource && declaredItem.declaredCoverageRefId) {
+          const card = (() => {
+            try {
+              return decryptPhi(declaredItem.declaredCoverageCardNumber);
+            } catch {
+              return null;
+            }
+          })();
+          declaredAutoVerified = card
+            ? await declaredCoverageIsSystemVerified({
+                userId: order.userId,
+                source: declaredItem.declaredCoverageSource as DeclaredCoverageSource,
+                refId: declaredItem.declaredCoverageRefId,
+                cardNumber: card,
+              })
+            : false;
+        }
+
         const insuranceItem = order.items.find(
-          (i) => i.insuranceCompanyId || i.declaredCoverageSource,
+          (i) =>
+            i.insuranceCompanyId || (i.declaredCoverageSource && !declaredAutoVerified),
         );
         if (insuranceItem) {
           // Firmly reserve the slot(s): HELD auto-releases after ~15 min, so

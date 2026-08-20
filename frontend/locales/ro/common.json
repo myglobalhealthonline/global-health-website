@@ -368,7 +368,7 @@
       "retry": "Încearcă din nou",
       "providerRequired": "Selectează furnizorul pentru a continua.",
       "cardRequired": "Introdu numărul cardului sau al poliței pentru acoperirea selectată.",
-      "priceNote": "Îți rezervăm ora acum. După verificarea cardului primești pe e-mail și WhatsApp un link de plată securizat, la prețul acoperit."
+      "priceNote": "Verificăm cardul înainte de a încasa plata. Dacă e nevoie de verificare manuală, îți rezervăm ora și îți trimitem un link de plată securizat pe e-mail și WhatsApp."
     },
     "benefitToggleLabel": "Am un abonament, o asigurare sau un plan",
     "benefitHeading": "Pe care să îl aplicăm?",

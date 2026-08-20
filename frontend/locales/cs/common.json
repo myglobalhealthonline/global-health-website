@@ -368,7 +368,7 @@
       "retry": "Zkusit znovu",
       "providerRequired": "Pro pokračování vyberte poskytovatele.",
       "cardRequired": "Zadejte číslo karty nebo pojistky pro vybrané krytí.",
-      "priceNote": "Termín vám nyní rezervujeme. Po ověření karty vám e-mailem a na WhatsApp pošleme bezpečný platební odkaz s cenou po krytí."
+      "priceNote": "Kartu ověříme před stržením platby. Pokud bude potřeba ruční ověření, termín vám podržíme a pošleme bezpečný platební odkaz e-mailem a na WhatsApp."
     },
     "benefitToggleLabel": "Mám členství, pojištění nebo plán",
     "benefitHeading": "Kterou máme použít?",

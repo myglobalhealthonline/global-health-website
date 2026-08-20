@@ -368,7 +368,7 @@
       "retry": "Erneut versuchen",
       "providerRequired": "Wählen Sie Ihren Anbieter aus, um fortzufahren.",
       "cardRequired": "Geben Sie die Karten- oder Policennummer für die gewählte Kostenübernahme ein.",
-      "priceNote": "Wir reservieren Ihren Termin jetzt. Nach Prüfung Ihrer Karte erhalten Sie per E-Mail und WhatsApp einen sicheren Zahlungslink zu Ihrem übernommenen Preis."
+      "priceNote": "Wir prüfen Ihre Karte, bevor eine Zahlung eingezogen wird. Ist eine manuelle Prüfung nötig, halten wir Ihren Termin und senden Ihnen per E-Mail und WhatsApp einen sicheren Zahlungslink."
     },
     "benefitToggleLabel": "Ich habe eine Mitgliedschaft, Versicherung oder einen Plan",
     "benefitHeading": "Welche sollen wir anwenden?",

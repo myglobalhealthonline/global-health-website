@@ -368,7 +368,7 @@
       "retry": "Reintentar",
       "providerRequired": "Selecciona tu entidad para continuar.",
       "cardRequired": "Introduce el número de tarjeta o póliza de la cobertura seleccionada.",
-      "priceNote": "Reservamos tu hora ahora. Cuando verifiquemos tu tarjeta recibirás por email y WhatsApp un enlace de pago seguro con tu precio cubierto."
+      "priceNote": "Comprobamos tu tarjeta antes de cobrar. Si hace falta verificarla manualmente, reservamos tu hora y te enviamos un enlace de pago seguro por email y WhatsApp."
     },
     "benefitToggleLabel": "Tengo una membresía, un seguro o un plan",
     "benefitHeading": "¿Cuál aplicamos?",

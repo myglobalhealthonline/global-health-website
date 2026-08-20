@@ -368,7 +368,7 @@
       "retry": "Tentar novamente",
       "providerRequired": "Selecione a sua entidade para continuar.",
       "cardRequired": "Introduza o número do cartão ou da apólice da cobertura selecionada.",
-      "priceNote": "Reservamos já o seu horário. Assim que o cartão for verificado, receberá por email e WhatsApp um link de pagamento seguro com o preço coberto."
+      "priceNote": "Verificamos o seu cartão antes de cobrar. Se for necessária verificação manual, reservamos o seu horário e enviamos um link de pagamento seguro por email e WhatsApp."
     },
     "benefitToggleLabel": "Tenho uma adesão, seguro ou plano",
     "benefitHeading": "Qual devemos aplicar?",

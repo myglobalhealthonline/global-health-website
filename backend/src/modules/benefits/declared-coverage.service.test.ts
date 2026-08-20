@@ -8,10 +8,12 @@ import { uniqueCurrencyCode } from "../../test-utils/unique-currency-code.js";
  *
  * This is money logic on unverified input, so the cases that matter are the
  * refusals as much as the prices: a card that belongs to nobody, a plan that
- * does not cover the service, and an unclaimed membership row that a human
- * still has to confirm. Needs Postgres (a plan, a level, a benefit row, a
- * service and an enrollment must exist to price anything), so it skips when
- * the database is unreachable, like the other DB-backed suites.
+ * does not cover the service, and — separately — which declarations the system
+ * may settle without a human. Note the deliberate asymmetry those last cases
+ * pin down: pricing accepts a partner reference, settling does not. Needs
+ * Postgres (a plan, a level, a benefit row, a service and an enrollment must
+ * exist to price anything), so it skips when the database is unreachable, like
+ * the other DB-backed suites.
  */
 describe("declared coverage", () => {
   let prisma: PrismaClient | null = null;
@@ -186,6 +188,89 @@ describe("declared coverage", () => {
     );
     assert.equal(res.ok, true);
     assert.equal(res.ok && res.unitPriceCents, 3000); // 50% off 6000
+  });
+
+  it("settles a membership card by its issued id, claimed or not", async (t) => {
+    if (!prisma) return t.skip();
+    // The fixture row is PENDING with no account linked — an imported member
+    // who never clicked the claim link. The membership id is 8 crypto-random
+    // chars we issued, so resolving it IS the check; there is nothing left for
+    // a person to look at.
+    assert.equal(
+      await svc.declaredCoverageIsSystemVerified({
+        userId: null,
+        source: "MEMBERSHIP",
+        refId: membershipPlanId,
+        cardNumber: CARD,
+      }),
+      true,
+    );
+    assert.equal(
+      await svc.declaredCoverageIsSystemVerified({
+        userId: null,
+        source: "MEMBERSHIP",
+        refId: membershipPlanId,
+        cardNumber: "NOT-A-REAL-CARD",
+      }),
+      false,
+    );
+  });
+
+  it("refuses to settle on a partner reference, which is guessable", async (t) => {
+    if (!prisma) return t.skip();
+    const PARTNER_REF = "100042";
+    await prisma.membershipEnrollment.updateMany({
+      where: { planId: membershipPlanId, membershipId: CARD },
+      data: { partnerReference: PARTNER_REF },
+    });
+
+    // Pricing accepts it — a member handed that number is a real member, and a
+    // human still sees the booking.
+    const priced = await svc.resolveDeclaredCoverage(input({ cardNumber: PARTNER_REF }));
+    assert.equal(priced.ok, true);
+
+    // Skipping the human on it would not: partner numbers are often sequential,
+    // so anyone counting upwards would buy member pricing.
+    assert.equal(
+      await svc.declaredCoverageIsSystemVerified({
+        userId: null,
+        source: "MEMBERSHIP",
+        refId: membershipPlanId,
+        cardNumber: PARTNER_REF,
+      }),
+      false,
+    );
+
+    await prisma.membershipEnrollment.updateMany({
+      where: { planId: membershipPlanId, membershipId: CARD },
+      data: { partnerReference: null },
+    });
+  });
+
+  it("never settles insurance, and never settles a plan without a subscription", async (t) => {
+    if (!prisma) return t.skip();
+    // No copy of the policy exists here to check against — this is the case
+    // the manual queue was built for.
+    assert.equal(
+      await svc.declaredCoverageIsSystemVerified({
+        userId: "someone",
+        source: "INSURANCE",
+        refId: membershipPlanId,
+        cardNumber: CARD,
+      }),
+      false,
+    );
+    // A plan card number is not a key for anything; the entitlement belongs to
+    // an account, and this session holds no subscription for the plan.
+    assert.equal(
+      await svc.declaredCoverageIsSystemVerified({
+        userId: "someone-without-the-plan",
+        source: "PUBLIC_PLAN",
+        refId: pricingPlanId,
+        cardNumber: "anything",
+      }),
+      false,
+    );
   });
 
   it("lists the configured providers for the market", async (t) => {

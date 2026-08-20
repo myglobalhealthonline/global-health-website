@@ -1,6 +1,7 @@
 import type { LocaleCode, ServiceKind } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { resolveCorporateDiscountForCard } from "../corporate/corporate-benefit.service.js";
+import { getActiveMembershipByCardNumber } from "../corporate/corporate-shared.js";
 import {
   pricingEnrollmentSelect,
   priceMembershipLine,
@@ -19,12 +20,16 @@ import { loadValidatedInsurancePrice } from "../pricing/insurance-pricing.servic
  * and mixing an unverified declaration into it would let a typed card number
  * change a price with nobody having looked at it.
  *
- * Nothing here is trusted. Every declared line is parked in
+ * Nothing here is trusted. A declared line is parked in
  * `Order.insuranceVerificationStatus = PENDING` at checkout (the historical
  * column name — it is now the gate for every manually verified coverage), with
  * the slot reserved and no payment taken. An admin verifies the card and the
  * patient is charged the coverage price; a rejection re-prices to standard.
  * So the worst a forged declaration achieves is a booking a human then refuses.
+ *
+ * The one exception is a card that already resolves to the booking account —
+ * see `declaredCoverageIsAccountLinked`, which checkout consults to skip a
+ * review that would decide nothing.
  */
 
 export type DeclaredCoverageSource = "INSURANCE" | "CORPORATE" | "MEMBERSHIP" | "PUBLIC_PLAN";
@@ -132,6 +137,75 @@ export async function listCoverageCatalog(args: {
       name: translated(p.translations, locale, p.name),
     })),
   };
+}
+
+/**
+ * Can the system settle this declaration by itself, with no human in the loop?
+ *
+ * Yes wherever WE are the authority on the card. A membership id and a
+ * corporate card number are credentials this platform issued — 8 crypto-random
+ * base32 chars (decision 40) and `randomBytes(10)` respectively — so they are
+ * unguessable bearer tokens, and resolving one to a live record answers the
+ * only question a reviewer could have asked. Sending those to a queue would be
+ * asking staff to re-do a lookup the database already did, on every booking.
+ *
+ * No in exactly three cases, each because the check is genuinely impossible
+ * rather than merely inconvenient:
+ *
+ *   - INSURANCE. The policy lives in the insurer's system; we hold no copy to
+ *     check against. This is the case the manual queue was built for, and it
+ *     stays manual until the insurer integrations land.
+ *   - MEMBERSHIP matched only on `partnerReference`. That is the partner's own
+ *     member number — often sequential, and explicitly permitted to repeat
+ *     across plans — so it is a label, not a credential. §5.3 avoids leaking
+ *     whether one exists for the same reason; auto-approving on one would hand
+ *     out member pricing to anyone who counts upwards.
+ *   - PUBLIC_PLAN where the session does not hold the plan. A plan "card
+ *     number" is not a key for anything: the real entitlement is a
+ *     per-subscription credit balance owned by an account.
+ */
+export async function declaredCoverageIsSystemVerified(args: {
+  userId: string | null | undefined;
+  source: DeclaredCoverageSource;
+  refId: string;
+  cardNumber: string;
+}): Promise<boolean> {
+  const card = args.cardNumber.trim();
+  const refId = args.refId.trim();
+  if (!card || !refId) return false;
+
+  if (args.source === "MEMBERSHIP") {
+    // `membershipId` ONLY — deliberately not the partnerReference fallback the
+    // pricing path accepts. Pricing may be generous here because a human still
+    // sees the booking; skipping that human may not.
+    const enrollment = await prisma.membershipEnrollment.findFirst({
+      where: {
+        planId: refId,
+        status: { in: ["ACTIVE", "PENDING"] },
+        membershipId: { equals: card, mode: "insensitive" },
+      },
+      select: { id: true },
+    });
+    return enrollment !== null;
+  }
+
+  if (args.source === "CORPORATE") {
+    // Already enforces card status + validity window, member status, and that
+    // the company's contract is live.
+    const membership = await getActiveMembershipByCardNumber(card);
+    return membership !== null && membership.company.id === refId;
+  }
+
+  if (args.source === "PUBLIC_PLAN") {
+    if (!args.userId) return false;
+    const subscription = await prisma.userSubscription.findFirst({
+      where: { userId: args.userId, planId: refId, status: "ACTIVE" },
+      select: { id: true },
+    });
+    return subscription !== null;
+  }
+
+  return false;
 }
 
 export type DeclaredCoverageResult =
