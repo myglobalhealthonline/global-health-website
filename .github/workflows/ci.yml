@@ -138,6 +138,18 @@ jobs:
       - name: Apply migrations
         run: pnpm db:deploy
 
+      - name: Install Chromium for the document renderer
+        # playwright is a runtime dependency of the backend:
+        # modules/generated-documents/html-document-renderer.ts launches
+        # headless Chromium to render generated documents, the membership card
+        # PNG among them. Installing node_modules does not fetch the browser
+        # binary, so 13 membership/checkout tests failed here with
+        # "browserType.launch: Executable doesn't exist". --only-shell fetches
+        # exactly the chromium_headless_shell build that launch({ headless:
+        # true }) resolves to, skipping the full ~100 MB Chromium this never
+        # opens.
+        run: pnpm --filter backend exec playwright install --with-deps --only-shell chromium
+
       - name: Run backend tests
         run: pnpm --filter backend test
 
