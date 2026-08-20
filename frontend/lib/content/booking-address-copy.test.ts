@@ -34,8 +34,10 @@ describe("bookingAddressCopy", () => {
     expect(copy.state).toBeNull();
   });
 
-  it("leaves every non-BR market untouched, in every language", () => {
-    for (const code of ["pt", "ie", "es", "ro", "cz"]) {
+  it("leaves every market without an override untouched, in every language", () => {
+    // Deliberately excludes ie: Ireland gained its own override in b745ec5f
+    // and is covered on its own below.
+    for (const code of ["pt", "es", "ro", "cz"]) {
       for (const lang of ["pt", "en", "es", "de", "cs", "ro"]) {
         const copy = bookingAddressCopy(code, lang, PT_BASE);
         expect(copy.state).toBeNull();
@@ -43,6 +45,28 @@ describe("bookingAddressCopy", () => {
         expect(copy.streetAddress).toBe(PT_BASE.streetAddress);
       }
     }
+  });
+
+  /**
+   * Eircode is the name of the Irish postal-code system, not a translation of
+   * "postal code", so it is the same string in all six languages. It is also
+   * the ONLY field Ireland overrides — everything else must still come from
+   * the locale bundle, and Ireland must never render the Estado field.
+   */
+  it("labels the Irish postal code Eircode in every language, and nothing else", () => {
+    for (const lang of ["pt", "en", "es", "de", "cs", "ro"]) {
+      const copy = bookingAddressCopy("ie", lang, PT_BASE);
+      expect(copy.postalCode).toBe("Eircode");
+      expect(copy.streetAddress).toBe(PT_BASE.streetAddress);
+      expect(copy.city).toBe(PT_BASE.city);
+      expect(copy.aptUnit).toBe(PT_BASE.aptUnit);
+      expect(copy.patientAddress).toBe(PT_BASE.patientAddress);
+      expect(copy.state).toBeNull();
+    }
+  });
+
+  it("does not treat Ireland as collecting a state", () => {
+    expect(collectsAddressState("ie")).toBe(false);
   });
 
   it("labels CEP and a state in every language on the BR site", () => {

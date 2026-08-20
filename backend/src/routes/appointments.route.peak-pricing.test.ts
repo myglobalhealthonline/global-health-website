@@ -110,6 +110,27 @@ describe("POST /api/appointments — peak pricing", () => {
     await prisma.currency.deleteMany({ where: { id: currencyId } });
   });
 
+  /**
+   * A slot on a fixed UTC hour, always in the future.
+   *
+   * The claim these bookings go through is
+   * `WHERE "status" = 'OPEN' AND "startAt" > NOW()`
+   * (doctor-availability.service.ts), so a hardcoded calendar date is a time
+   * bomb rather than a fixture: this suite pinned 2026-08-10 and every case
+   * started returning 409 "This slot is no longer available" the day that
+   * date passed, with nothing about the pricing logic having changed.
+   *
+   * The HOUR is the part these tests actually pin — 19:00 UTC sits inside the
+   * 18:00-22:00 peak window configured above, 09:00 UTC sits outside it — so
+   * the hour is fixed and the date always moves forward with the clock.
+   */
+  function futureSlotAt(utcHour: number) {
+    const startAt = new Date();
+    startAt.setUTCDate(startAt.getUTCDate() + 7);
+    startAt.setUTCHours(utcHour, 0, 0, 0);
+    return { startAt, endAt: new Date(startAt.getTime() + 30 * 60_000) };
+  }
+
   function bookingPayload(timeSlotId: string) {
     return {
       country: countryCode.toLowerCase(),
@@ -130,13 +151,9 @@ describe("POST /api/appointments — peak pricing", () => {
   it("charges the PEAK price for a slot inside the peak window, not the flat base price", async (t) => {
     if (!app) return t.skip(`buildApp() failed: ${describeError(bootError)}`);
 
+    // 19:00 UTC — inside the 18:00-22:00 peak window.
     const slot = await prisma.doctorTimeSlot.create({
-      data: {
-        doctorId,
-        startAt: new Date("2026-08-10T19:00:00.000Z"), // 19:00 UTC — inside 18:00-22:00 peak window
-        endAt: new Date("2026-08-10T19:30:00.000Z"),
-        status: "OPEN",
-      },
+      data: { doctorId, ...futureSlotAt(19), status: "OPEN" },
     });
 
     const res = await app.inject({
@@ -161,13 +178,9 @@ describe("POST /api/appointments — peak pricing", () => {
   it("charges the OFF_PEAK price for a slot outside the peak window", async (t) => {
     if (!app) return t.skip(`buildApp() failed: ${describeError(bootError)}`);
 
+    // 09:00 UTC — outside the peak window.
     const slot = await prisma.doctorTimeSlot.create({
-      data: {
-        doctorId,
-        startAt: new Date("2026-08-10T09:00:00.000Z"), // 09:00 UTC — outside the peak window
-        endAt: new Date("2026-08-10T09:30:00.000Z"),
-        status: "OPEN",
-      },
+      data: { doctorId, ...futureSlotAt(9), status: "OPEN" },
     });
 
     const res = await app.inject({
