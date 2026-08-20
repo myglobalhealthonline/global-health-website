@@ -5,8 +5,8 @@
  *   - "short" → a compact inline notice for tight spaces (e.g. beside a
  *     booking form / confirmation step).
  *
- * Light-theme by default to read as a serious legal notice rather than a
- * marketing band. Content is passed in (per-country PageContent CMS).
+ * The notice card itself is always forest glass; `theme` only chooses the
+ * band it sits on. Content is passed in (per-country PageContent CMS).
  */
 
 import Link from "next/link";
@@ -18,8 +18,9 @@ type FullProps = {
   /** One string per paragraph. */
   paragraphs: string[];
   title?: string;
-  /** "dark" (default) = today's forest-glass card, unchanged. "light" =
-   *  ivory variant for pages that opt into the CMS green/ivory picker. */
+  /** Band behind the card: "dark" (default) = forest section, "light" =
+   *  ivory section for pages that opt into the CMS green/ivory picker.
+   *  The card stays forest glass either way. */
   theme?: "dark" | "light";
 };
 
@@ -100,25 +101,23 @@ export function MedicalDisclaimer(props: MedicalDisclaimerProps) {
     >
       <SectionSeam theme={light ? "light" : "dark"} />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+        {/* The card is forest glass on BOTH themes — `theme` only picks the
+            band behind it. A white card here read as a flat notice box and
+            was the one place on the site where this component looked
+            different from every other page. */}
         <div
-          className={
-            light
-              ? "rounded-[var(--radius-card)] p-6 sm:p-8 lg:p-10 gh2-card-ivory"
-              : "rounded-[var(--radius-card)] p-6 sm:p-8 lg:p-10 gh2-glass-forest"
-          }
-          style={{
-            border: light ? "1px solid rgba(29,75,54,0.14)" : "1px solid rgba(255,255,255,0.14)",
-          }}
+          className="gh2-glass-forest gh2-dark-content rounded-[var(--radius-card)] p-6 sm:p-8 lg:p-10"
+          style={{ border: "1px solid rgba(255,255,255,0.14)" }}
         >
           <div className="flex items-center gap-2.5">
             <ShieldAlert
               className="size-5"
-              style={{ color: light ? "var(--color-brand-primary)" : "var(--color-brand-accent)" }}
+              style={{ color: "var(--color-brand-accent)" }}
               aria-hidden
             />
             <h2
               className="text-[11px] font-bold uppercase tracking-[0.18em]"
-              style={{ color: light ? "var(--color-brand-primary)" : "var(--color-brand-accent)" }}
+              style={{ color: "var(--color-brand-accent)" }}
             >
               {title}
             </h2>
@@ -129,9 +128,7 @@ export function MedicalDisclaimer(props: MedicalDisclaimerProps) {
               <p
                 key={i}
                 className="text-sm leading-relaxed"
-                style={{
-                  color: light ? "var(--color-text-body)" : "rgba(255,255,255,0.72)",
-                }}
+                style={{ color: "rgba(255,255,255,0.72)" }}
               >
                 {p}
               </p>
