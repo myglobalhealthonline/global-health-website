@@ -17,6 +17,25 @@ const ignoredNamespaceKeys = {
   ]),
 };
 
+/** Namespaces where a locale legitimately carries only PART of the base key set.
+ *
+ *  `faq-markets.json` is market-scoped, not locale-mirrored: each locale holds
+ *  FAQ copy only for the markets that actually speak it (cs -> cz, es -> es,
+ *  pt -> br + pt, ro -> ro, de -> none yet). lib/content/country-faq.ts is built
+ *  around exactly that: `MarketFaqDoc` is a Partial, `getMarketFaq` falls back
+ *  and reports `exact: false` so a non-native rendering can be noindexed, and
+ *  `marketFaqLocales` drives hreflang and the sitemap off the locales that
+ *  genuinely have copy. Demanding parity with English here would mean
+ *  translating the Irish market FAQ into Czech purely to satisfy this script,
+ *  which is the precise outcome that module exists to prevent: an English
+ *  answer under a translated heading, emitted as FAQPage schema on a YMYL
+ *  medical page.
+ *
+ *  Only the missing-key rule is relaxed. Extra keys still fail (a market key
+ *  English does not have is a typo), and so do placeholder mismatches on the
+ *  keys a locale does carry. */
+const partialNamespaces = new Set(["faq-markets.json"]);
+
 function flattenJson(value, prefix = "") {
   if (Array.isArray(value)) {
     return value.reduce(
@@ -92,8 +111,10 @@ async function main() {
       const baseKeys = Object.keys(baseFlat).filter((key) => !ignoredKeys.has(key)).sort();
       const localeKeys = Object.keys(localeFlat).filter((key) => !ignoredKeys.has(key)).sort();
 
-      for (const key of diffSet(baseKeys, localeKeys)) {
-        failures.push(`${locale}/${namespace}:${key}: missing key`);
+      if (!partialNamespaces.has(namespace)) {
+        for (const key of diffSet(baseKeys, localeKeys)) {
+          failures.push(`${locale}/${namespace}:${key}: missing key`);
+        }
       }
       for (const key of diffSet(localeKeys, baseKeys)) {
         failures.push(`${locale}/${namespace}:${key}: extra key`);
