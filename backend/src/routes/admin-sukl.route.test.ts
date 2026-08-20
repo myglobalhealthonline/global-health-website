@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
-import type { FastifyInstance } from "fastify";
+import type { FastifyInstance, InjectOptions, LightMyRequestResponse } from "fastify";
 import { buildApp } from "../app.js";
 
 /**
@@ -60,11 +60,12 @@ describe("admin SÚKL route — auth + redaction", () => {
         t.skip(`buildApp() failed — DB likely offline: ${describeError(bootError)}`);
         return;
       }
-      const res = await app.inject({
+      const options: InjectOptions = {
         method,
         url,
         ...(method === "PUT" ? { payload: { suklProfessionalIdentifier: "TEST-1" } } : {}),
-      });
+      };
+      const res = await app.inject(options);
       // 401 = no session cookie. 503 = admin token fallback enabled without
       // ADMIN_API_TOKEN set, an env quirk on some boxes. Both mean "not without
       // credentials".
@@ -81,12 +82,13 @@ describe("admin SÚKL route — auth + redaction", () => {
       return;
     }
     for (const { method, url } of unauthenticated) {
-      const res = await app.inject({
+      const options: InjectOptions = {
         method,
         url,
         ...(method === "PUT" ? { payload: { suklProfessionalIdentifier: "TEST-1" } } : {}),
-      });
-      const body = res.body ?? "";
+      };
+      const res: LightMyRequestResponse = await app.inject(options);
+      const body: string = res.body ?? "";
       for (const needle of FORBIDDEN_IN_BODY) {
         assert.ok(
           !body.includes(needle),
