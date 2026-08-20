@@ -30,22 +30,24 @@
     "//": "S-004: these overrides are NOT inherited by the deployed services. backend/ and frontend/ each build standalone with --ignore-workspace, so every security pin must be MIRRORED into backend/package.json and frontend/package.json by hand. When you add/bump a pin here for a CVE, mirror it there too (and vice-versa) or the deployed service ships unpatched. Prefer major-scoped keys (e.g. ws@7) so a security floor never becomes a version ceiling.",
     "//auditConfig": "S-028 (2026-08-02 OSV-Scanner audit): GHSA-mh99-v99m-4gvg actually publishes FOUR per-major-line affected ranges (4.0.0-5.0.8, 3.0.0-3.0.3, 2.0.0-2.1.3, 0-1.1.17) per the current advisory data — the prior note here claiming 1.1.16 already carried the 1.x fix was wrong; the real 1.x fix is 1.1.17. Pinned brace-expansion@1 to 1.1.17 below and dropped the ignoreGhsas suppression accordingly.",
     "overrides": {
-      "sanitize-html": "^2.17.4",
+      "sanitize-html": "^2.17.5",
       "hono": "4.12.25",
       "@hono/node-server": "1.19.13",
       "postcss": "8.5.23",
-      "brace-expansion@1": "1.1.17",
-      "brace-expansion@5": "5.0.8",
+      "brace-expansion@1": "1.1.18",
+      "brace-expansion@5": "5.0.9",
       "esbuild": "0.28.1",
       "ws@7": "7.5.11",
       "form-data": "4.0.6",
       "vite": "8.0.16",
       "@babel/core": "7.29.6",
-      "js-yaml": "4.3.0",
-      "fast-uri": "3.1.4",
+      "js-yaml": "4.3.1",
+      "fast-uri": "3.1.5",
       "axios": "^1.18.1",
       "find-my-way": "^9.7.0",
-      "sharp": "^0.35.3"
+      "sharp": "^0.35.3",
+      "nanoid": "3.3.18",
+      "deepmerge-ts": "8.0.0"
     }
   }
 }
