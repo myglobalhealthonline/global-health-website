@@ -3630,6 +3630,9 @@ html.js .gh-reveal-stagger > .gh-reveal-in {
   z-index: 1;
   flex-shrink: 0;
   display: flex;
+  /* Same primitive shape as .gh-portal-dialog__footer, where a flex-end
+   * row without wrap pushed its first button off the left edge at 320px. */
+  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
   gap: 10px;

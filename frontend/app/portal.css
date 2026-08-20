@@ -742,39 +742,68 @@ a.gh-admin-summary-item--link:focus-visible {
   position: relative;
   display: grid;
   gap: 12px;
-  border: 1px solid var(--portal-line);
+  border: 1px solid transparent;
   border-radius: var(--portal-radius-lg);
-  background: var(--portal-surface);
+  /* Material B `.is-static` (DESIGN2 §5.2/§7.18) — same fill + gradient
+   * hairline as the desktop .gh-appointment-card it replaces below 760px,
+   * no backdrop-filter (list surface, blur budget §14). */
+  background-image: var(--lux-card-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: var(--lux-elev-press);
   padding: 16px 16px 16px 19px;
   text-decoration: none;
   color: inherit;
+  transition: box-shadow 150ms ease-out, transform 150ms ease-out,
+    background-image 150ms ease-out;
+}
+
+/* Interactive variants only — a card that carries its own action buttons
+ * must not pretend to be pressable. */
+a.gh-portal-mobile-card:hover,
+[role="button"].gh-portal-mobile-card:hover {
+  background-image: var(--lux-card-fill), var(--lux-card-border-hover);
+  box-shadow: var(--lux-elev-1);
+  transform: translateY(-1px);
+}
+
+a.gh-portal-mobile-card:active,
+[role="button"].gh-portal-mobile-card:active {
+  box-shadow: var(--lux-elev-press);
+  transform: scale(0.99);
 }
 
 .gh-portal-mobile-card::before {
   content: "";
   position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
+  /* Inset + pill radius, same recipe as .gh-admin-summary-item and
+   * .gh-admin-mobile-card. A full-height bar with the card's own corner
+   * radius escapes the silhouette: the surface curves away at the corners
+   * while the 3px bar stays straight, so it reads as a line sticking out
+   * of the card. */
+  inset-block: 12px;
+  inset-inline-start: 0;
   width: 3px;
-  border-radius: var(--portal-radius-lg) 0 0 var(--portal-radius-lg);
-  background: var(--portal-line-strong);
+  border-radius: 0 999px 999px 0;
+  background: var(--lux-mobile-edge);
+  box-shadow: 0 0 8px var(--portal-signal-glow);
+  pointer-events: none;
 }
 
-.gh-portal-mobile-card--success::before { background: var(--portal-success); }
-.gh-portal-mobile-card--warning::before { background: var(--portal-warning); }
-.gh-portal-mobile-card--danger::before { background: var(--portal-danger); }
-.gh-portal-mobile-card--info::before { background: var(--portal-info); }
-.gh-portal-mobile-card--brand::before { background: var(--portal-primary); }
+.gh-portal-mobile-card--success::before { background: var(--lux-status-edge-success); }
+.gh-portal-mobile-card--warning::before { background: var(--lux-status-edge-warning); }
+.gh-portal-mobile-card--danger::before { background: var(--lux-status-edge-danger); }
+.gh-portal-mobile-card--info::before { background: var(--lux-status-edge-info); }
+.gh-portal-mobile-card--brand::before { background: var(--lux-status-edge-brand); }
 
 /* Live override (DESIGN.md §5.20) — lime edge + halo while a consultation
  * is actively in progress, wins over the `tone` prop's edge color. */
 .gh-portal-mobile-card--live {
-  box-shadow: 0 0 0 1px var(--portal-signal-glow);
+  box-shadow: var(--lux-elev-2);
 }
 
 .gh-portal-mobile-card--live::before {
-  background: var(--portal-signal);
+  background: var(--lux-status-edge-live);
   box-shadow: 0 0 12px var(--portal-signal-glow);
   animation: gh-agenda-now-breathe 3s ease-in-out infinite;
 }
@@ -839,26 +868,54 @@ a.gh-admin-summary-item--link:focus-visible {
   font-size: 10px;
   font-style: normal;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
 .gh-portal-mobile-card__meta-item strong {
-  display: block;
+  /* Two-line clamp, not nowrap+ellipsis: at the card's real width a meta
+   * value like a consultation type ("Repeat Prescription Online") is wider
+   * than its 2-column cell, and truncating the one field the row exists to
+   * show is worse than a second line. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
   overflow: hidden;
+  overflow-wrap: anywhere;
   color: var(--portal-text);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
-  line-height: 1.25;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.3;
 }
 
 .gh-portal-mobile-card__actions {
   display: flex;
+  /* Without wrap the row's min-content (sum of every button) sets the
+   * card's width, so a 3-action card pushes past the viewport and clips
+   * the status pill. */
+  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
+  margin-top: 2px;
+}
+
+/* .gh-btn is public-site scale (52px tall, 28px side padding): three of
+ * them never fit a 360px card, so the labels broke onto two lines. Portal
+ * card scale instead — 44px keeps the touch target. Consumers also pass
+ * hand-rolled `<button className="... px-2 py-1">` rows (admin orders),
+ * hence the flex centering: their own vertical padding is replaced here. */
+.gh-portal-mobile-card__actions .gh-btn,
+.gh-portal-mobile-card__actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 14px;
+  gap: 7px;
+  font-size: 12.5px;
+  white-space: nowrap;
 }
 
 /* DocumentRow — DESIGN.md §5.19, new shared primitive. Row content only;
@@ -4475,13 +4532,15 @@ a.gh-appointment-card:hover {
 .gh-appointment-card::before {
   content: "";
   position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
+  /* See .gh-portal-mobile-card::before — inset so the bar never crosses
+   * the card's rounded corners. */
+  inset-block: 12px;
+  inset-inline-start: 0;
   width: 3px;
-  border-radius: var(--portal-radius-lg) 0 0 var(--portal-radius-lg);
+  border-radius: 0 999px 999px 0;
   background: var(--lux-mobile-edge);
   box-shadow: 0 0 8px var(--portal-signal-glow);
+  pointer-events: none;
 }
 
 .gh-appointment-card--success::before { background: var(--lux-status-edge-success); }
@@ -5287,7 +5346,10 @@ a.gh-appointment-card:hover {
 .gh-admin-main > header:not(.gh-portal-page-header)::after {
   content: "";
   position: absolute;
-  inset-inline-start: 0;
+  /* Aligned to the header's own horizontal padding, not the box edge: at
+   * bottom:8px the --portal-radius-xl corner has already curved the
+   * surface inward, so a rule starting at 0 hangs outside it. */
+  inset-inline-start: clamp(20px, 2vw, 28px);
   bottom: 8px;
   width: min(220px, 42vw);
   height: 1px;
@@ -6064,6 +6126,10 @@ a.gh-appointment-card:hover {
 .gh-portal-dialog__footer {
   flex: 0 0 auto;
   display: flex;
+  /* Overflow in a flex-end row escapes to the LEFT, where nothing can
+   * scroll to it: at 320px with a translated confirm label the Cancel
+   * button sat 67px off the panel's left edge (12px at 375px). */
+  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
@@ -6196,6 +6262,7 @@ a.gh-appointment-card:hover {
 
 .gh-portal-tour__footer {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
