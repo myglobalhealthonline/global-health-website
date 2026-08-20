@@ -369,7 +369,7 @@ export default async function CountryLangGeneralConsultationPage({
           doctors (dark) → why-choose (ivory) → FAQ (dark) → reviews (ivory). */}
       {doctorItems.length > 0 ? (
         <DoctorsSection
-          title={gp.doctorsSectionTitle.replace("{country}", config.name)}
+          title={gp.doctorsSectionTitle.replace("{country}", c.countryNames?.[code] ?? config.name)}
           intro={gp.doctorsSectionIntro}
           doctors={doctorItems}
           theme="dark"

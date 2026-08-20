@@ -239,7 +239,7 @@ export default async function CountryLandingPage({
           <SectionSeam theme="light" />
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
             <h2 className="max-w-[20ch] text-[clamp(1.9rem,3.5vw,2.8rem)] font-extrabold leading-[1.05] tracking-[-0.03em] text-[var(--color-text-primary)]">
-              {c.gpPage.doctorsSectionTitle.replace("{country}", config.name)}
+              {c.gpPage.doctorsSectionTitle.replace("{country}", c.countryNames?.[code] ?? config.name)}
             </h2>
             <ul className="mt-10 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
               {doctors.map((d) => (

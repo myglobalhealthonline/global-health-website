@@ -310,7 +310,7 @@ export default async function CountryLangSpecialistConsultationPage({
       {/* The clinicians behind the service. */}
       {doctorItems.length > 0 ? (
         <DoctorsSection
-          title={`${doctorItems.length} · ${sp.doctorsSectionTitle.replace("{country}", config.name)}`}
+          title={`${doctorItems.length} · ${sp.doctorsSectionTitle.replace("{country}", c.countryNames?.[code] ?? config.name)}`}
           intro={sp.doctorsSectionIntro}
           doctors={doctorItems}
           theme="dark"

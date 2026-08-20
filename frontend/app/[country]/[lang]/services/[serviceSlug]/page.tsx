@@ -782,7 +782,7 @@ export default async function ServiceDetailPage({
                 {(detail.kind === "SPECIALIST"
                   ? c.specialistPage.doctorsSectionTitle
                   : c.gpPage.doctorsSectionTitle
-                ).replace("{country}", config.name)}
+                ).replace("{country}", c.countryNames?.[code] ?? config.name)}
               </h2>
               <p className="mt-3 max-w-[58ch] text-sm leading-relaxed text-[var(--color-text-muted)]">
                 {detail.kind === "SPECIALIST"
