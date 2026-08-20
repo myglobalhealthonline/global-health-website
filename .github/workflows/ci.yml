@@ -678,6 +678,28 @@ jobs:
         # package.json, catching deploy-time failures in CI.
         run: pnpm install --frozen-lockfile --ignore-workspace --ignore-scripts
 
+      - name: Compile the standalone tree (backend)
+        # This job installed and audited the standalone tree but never
+        # COMPILED it, and on 2026-08-20 that gap shipped a broken deploy.
+        # --ignore-workspace can resolve different versions than the
+        # workspace install every other job uses: the workspace had fastify
+        # 5.12.0 while this tree resolved 5.12.1, whose types reject
+        # `trustProxy: <number>` and re-infer buildApp() as an HTTP/2
+        # instance. Twenty-one type errors that were invisible to CI and to
+        # a local build, and surfaced only when Railway ran `pnpm run build`.
+        #
+        # Runs the same command nixpacks.toml does. prisma generate first
+        # because the install above passes --ignore-scripts, which skips the
+        # postinstall that normally produces the client tsc needs.
+        #
+        # backend only: the frontend's standalone build is a full `next
+        # build`, already covered by the container-scan job's image build.
+        if: matrix.package == 'backend'
+        working-directory: backend
+        run: |
+          pnpm exec prisma generate
+          pnpm run build
+
       - name: Audit dependencies (standalone — this is what actually deploys)
         working-directory: ${{ matrix.package }}
         # The workspace root pnpm audit only sees the root lockfile. This is
