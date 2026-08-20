@@ -451,7 +451,7 @@ export function DoctorProfileTemplate({
               )}
             </h2>
             <div
-              className="mt-8 break-words text-[16px] leading-[1.85] text-[var(--color-text-body)] [&_a]:underline [&_a]:underline-offset-2 [&_p:first-child]:mt-0 [&_p]:mt-5 [&_ul]:mt-5 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mt-5 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mt-2"
+              className="mt-8 break-words text-[16px] leading-[1.85] text-[var(--color-text-body)] [&_a]:underline [&_a]:underline-offset-2 [&_p:first-child]:mt-0 [&_p]:mt-5 [&_ul]:mt-5 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mt-5 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mt-2 [&_h2:first-child]:mt-0 [&_h2]:mt-11 [&_h2]:text-[1.15rem] [&_h3:first-child]:mt-0 [&_h3]:mt-11 [&_h3]:text-[1.05rem] [&_h2]:font-extrabold [&_h2]:leading-[1.35] [&_h2]:tracking-[-0.01em] [&_h2]:text-[var(--color-text-primary)] [&_h3]:font-extrabold [&_h3]:leading-[1.35] [&_h3]:tracking-[-0.01em] [&_h3]:text-[var(--color-text-primary)] [&_h2+ul]:mt-4 [&_h3+ul]:mt-4 [&_h2+p]:mt-4 [&_h3+p]:mt-4 [&_strong]:font-semibold [&_strong]:text-[var(--color-text-primary)]"
               // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- safeBio = sanitizeDoctorBioHtml(profile.bio), sanitize-html with a controlled allowlist (frontend/lib/content/doctor-bio-format.ts).
               dangerouslySetInnerHTML={{ __html: safeBio }}
             />
