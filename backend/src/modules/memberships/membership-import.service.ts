@@ -104,7 +104,7 @@ export type PreviewData = {
  * member list is a flat export, and the whole grammar is thirty lines.
  */
 export function parseCsv(input: string): string[][] {
-  const text = input.replace(/^﻿/, "");
+  const text = input.replace(/^\uFEFF/, "");
   const rows: string[][] = [];
   let row: string[] = [];
   let field = "";
