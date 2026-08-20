@@ -47,6 +47,15 @@ ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 ENV NEXT_PUBLIC_GA_MEASUREMENT_ID=$NEXT_PUBLIC_GA_MEASUREMENT_ID
 ENV NEXT_PUBLIC_CLARITY_PROJECT_ID=$NEXT_PUBLIC_CLARITY_PROJECT_ID
 
+# Escape hatch for builds that have no backend to read from. Deliberately
+# EMPTY by default, which preserves today's behaviour exactly: unset means
+# public-content-source.ts still hard-fails the prerender rather than shipping
+# fallback copy, so a real Railway deploy is unchanged unless someone sets this
+# on the service. CI's container-scan job passes =1 because the image it builds
+# is a throwaway scan target, never deployed, with no backend to reach.
+ARG ALLOW_DEGRADED_BUILD=
+ENV ALLOW_DEGRADED_BUILD=$ALLOW_DEGRADED_BUILD
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
