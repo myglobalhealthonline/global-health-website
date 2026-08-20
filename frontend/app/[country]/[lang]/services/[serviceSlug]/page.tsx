@@ -749,9 +749,7 @@ export default async function ServiceDetailPage({
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-primary)]">
               {t.aboutService}
             </p>
-            <div
-              className="gh2-card-ivory mt-8 border-t-2 border-t-[rgba(176,241,34,0.24)] p-6 md:p-8"
-            >
+            <div className="mt-8">
               {resolvedLinks.length > 0 ? (
                 <ServiceLinkedBody
                   bodyHtml={bodyHtml}
@@ -760,7 +758,7 @@ export default async function ServiceDetailPage({
                 />
               ) : (
                 <div
-                  className="gh-article-body"
+                  className="gh-article-body max-w-[76ch]"
                   // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- bodyHtml = scopeBlogHtml(detail.detailBody), sanitize-html with a controlled allowlist.
                   dangerouslySetInnerHTML={{ __html: bodyHtml }}
                 />
