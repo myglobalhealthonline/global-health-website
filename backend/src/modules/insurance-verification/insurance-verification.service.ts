@@ -14,6 +14,10 @@ import {
   orderPayShortLink,
 } from "../orders/order-payment-url.service.js";
 import { startPrePaymentFlow } from "../automation/pre-payment-flow.service.js";
+import {
+  adminNotifyEmails,
+  adminNotifyWhatsAppNumbers,
+} from "../automation/admin-booking-alert.service.js";
 
 /**
  * Insurance card manual-verification flow.
@@ -61,6 +65,8 @@ type OrderWithInsurance = {
   shippingCents: number;
   insuranceCompanyId: string | null;
   insuranceVerificationStatus: string | null;
+  declaredCoverageSource: string | null;
+  declaredCoverageRefId: string | null;
   items: {
     id: string;
     name: string;
@@ -71,6 +77,8 @@ type OrderWithInsurance = {
     quantity: number;
     unitPriceCents: number;
     insuranceCompanyId: string | null;
+    declaredCoverageSource: string | null;
+    declaredCoverageRefId: string | null;
     patientWhatsappConsent: boolean;
   }[];
 };
@@ -89,6 +97,8 @@ async function loadOrder(orderId: string): Promise<OrderWithInsurance | null> {
       shippingCents: true,
       insuranceCompanyId: true,
       insuranceVerificationStatus: true,
+      declaredCoverageSource: true,
+      declaredCoverageRefId: true,
       items: {
         select: {
           id: true,
@@ -100,6 +110,8 @@ async function loadOrder(orderId: string): Promise<OrderWithInsurance | null> {
           quantity: true,
           unitPriceCents: true,
           insuranceCompanyId: true,
+          declaredCoverageSource: true,
+          declaredCoverageRefId: true,
           patientWhatsappConsent: true,
         },
       },
@@ -107,61 +119,129 @@ async function loadOrder(orderId: string): Promise<OrderWithInsurance | null> {
   });
 }
 
+/** Who verifies this order's card, and what the patient should be told it is. */
+type CoverageDescriptor = {
+  /** Patient-facing noun: "insurance card", "membership card", … */
+  cardLabel: string;
+  /** The provider the patient named. */
+  providerName: string;
+  notifyEmails: string[];
+  notifyWhatsappNumbers: string[];
+};
+
 /**
- * Alert the insurance company's configured admins that a booking needs card
- * verification. Best-effort per channel — a failed send is logged, never throws.
+ * Resolve the coverage awaiting verification on an order — insurance, or one of
+ * the three declared sources the booking form's coverage picker offers.
+ *
+ * Recipients differ by design: an insurer has its own admins configured on the
+ * company row (they verify their own members' cards), while a membership,
+ * corporate or plan card is ours to check, so it goes to the platform admins.
+ */
+async function describeCoverage(order: OrderWithInsurance): Promise<CoverageDescriptor | null> {
+  if (order.insuranceCompanyId) {
+    const company = await prisma.insuranceCompany.findUnique({
+      where: { id: order.insuranceCompanyId },
+      select: { name: true, notifyEmails: true, notifyWhatsappNumbers: true },
+    });
+    if (!company) return null;
+    return {
+      cardLabel: "insurance card",
+      providerName: company.name,
+      notifyEmails: company.notifyEmails,
+      notifyWhatsappNumbers: company.notifyWhatsappNumbers,
+    };
+  }
+
+  const source = order.declaredCoverageSource ?? order.items[0]?.declaredCoverageSource ?? null;
+  const refId = order.declaredCoverageRefId ?? order.items[0]?.declaredCoverageRefId ?? null;
+  if (!source || !refId) return null;
+
+  const platform = {
+    notifyEmails: adminNotifyEmails(),
+    notifyWhatsappNumbers: adminNotifyWhatsAppNumbers(),
+  };
+
+  if (source === "MEMBERSHIP") {
+    const plan = await prisma.membershipPlan.findUnique({
+      where: { id: refId },
+      select: { name: true },
+    });
+    return { cardLabel: "membership card", providerName: plan?.name ?? "your membership", ...platform };
+  }
+  if (source === "CORPORATE") {
+    const company = await prisma.corporateCompany.findUnique({
+      where: { id: refId },
+      select: { name: true },
+    });
+    return {
+      cardLabel: "corporate healthcare card",
+      providerName: company?.name ?? "your employer's plan",
+      ...platform,
+    };
+  }
+  if (source === "PUBLIC_PLAN") {
+    const plan = await prisma.pricingPlan.findUnique({
+      where: { id: refId },
+      select: { name: true },
+    });
+    return { cardLabel: "plan card", providerName: plan?.name ?? "your plan", ...platform };
+  }
+  return null;
+}
+
+/**
+ * Alert whoever verifies this order's card that a booking is waiting on them.
+ * Best-effort per channel — a failed send is logged, never throws.
  */
 export async function notifyAdminsOfInsuranceOrder(
   orderId: string,
   log?: FastifyBaseLogger,
 ): Promise<void> {
   const order = await loadOrder(orderId);
-  if (!order || !order.insuranceCompanyId) return;
-  const company = await prisma.insuranceCompany.findUnique({
-    where: { id: order.insuranceCompanyId },
-    select: { name: true, notifyEmails: true, notifyWhatsappNumbers: true },
-  });
-  if (!company) return;
+  if (!order) return;
+  const coverage = await describeCoverage(order);
+  if (!coverage) return;
 
   const serviceName = order.items[0]?.name ?? "Consultation";
   const verifyUrl = adminOrderUrl(order.id);
+  const heading = `Booking to verify — ${coverage.cardLabel}`;
 
-  const emailHtml = wrapHtml("Insurance booking to verify", `
-    <p>A patient booked an insurance consultation that needs manual card verification before payment.</p>
+  const emailHtml = wrapHtml(heading, `
+    <p>A patient booked a consultation using a ${esc(coverage.cardLabel)} that needs manual verification before payment.</p>
     <ul>
-      <li><strong>Company:</strong> ${esc(company.name)}</li>
+      <li><strong>Provider:</strong> ${esc(coverage.providerName)}</li>
       <li><strong>Patient:</strong> ${esc(order.fullName)} (${esc(order.email)})</li>
       <li><strong>Service:</strong> ${esc(serviceName)}</li>
     </ul>
     <p>Open the order to view the card number and mark it verified or not verified:</p>
-    <p style="margin:24px 0;text-align:center;"><a href="${esc(verifyUrl)}" style="background:#B0F122;color:#0a1f14;padding:11px 20px;border-radius:999px;text-decoration:none;font-weight:700;">Verify insurance</a></p>
+    <p style="margin:24px 0;text-align:center;"><a href="${esc(verifyUrl)}" style="background:#B0F122;color:#0a1f14;padding:11px 20px;border-radius:999px;text-decoration:none;font-weight:700;">Verify booking</a></p>
     <p style="font-size:12px;color:#737373;">${esc(verifyUrl)}</p>
   `);
   const waText =
-    `🩺 Insurance booking to verify\n` +
-    `Company: ${company.name}\n` +
+    `🩺 ${heading}\n` +
+    `Provider: ${coverage.providerName}\n` +
     `Patient: ${order.fullName}\n` +
     `Service: ${serviceName}\n` +
     `Verify: ${verifyUrl}`;
 
-  for (const email of company.notifyEmails) {
+  for (const email of coverage.notifyEmails) {
     try {
       await sendEmail({
         to: email,
-        subject: `Insurance booking to verify — ${company.name}`,
+        subject: `${heading} — ${coverage.providerName}`,
         html: emailHtml,
-        text: `Insurance booking to verify.\nCompany: ${company.name}\nPatient: ${order.fullName} (${order.email})\nService: ${serviceName}\nVerify: ${verifyUrl}`,
+        text: `${heading}.\nProvider: ${coverage.providerName}\nPatient: ${order.fullName} (${order.email})\nService: ${serviceName}\nVerify: ${verifyUrl}`,
       });
     } catch (err) {
-      log?.warn({ err, orderId, email }, "insurance admin email failed");
+      log?.warn({ err, orderId, email }, "coverage admin email failed");
     }
   }
-  for (const number of company.notifyWhatsappNumbers) {
+  for (const number of coverage.notifyWhatsappNumbers) {
     try {
       // Staff number → no patientConsent gate.
       await sendWhatsAppText({ to: number, message: waText });
     } catch (err) {
-      log?.warn({ err, orderId, number }, "insurance admin whatsapp failed");
+      log?.warn({ err, orderId, number }, "coverage admin whatsapp failed");
     }
   }
 }
@@ -192,13 +272,9 @@ export async function applyInsuranceVerificationDecision(
 
   const order = await loadOrder(orderId);
   if (!order) return { ok: false, message: "Order not found" };
-  const company = order.insuranceCompanyId
-    ? await prisma.insuranceCompany.findUnique({
-        where: { id: order.insuranceCompanyId },
-        select: { name: true },
-      })
-    : null;
-  const companyName = company?.name ?? "your insurer";
+  const coverage = await describeCoverage(order);
+  const companyName = coverage?.providerName ?? "your insurer";
+  const cardLabel = coverage?.cardLabel ?? "insurance card";
 
   if (decision === "REJECTED") {
     // Re-price the insurance line(s) to the STANDARD price for the same doctor
@@ -252,6 +328,13 @@ export async function applyInsuranceVerificationDecision(
             insuranceCompanyId: null,
             insurancePolicyNumber: null,
             insurancePriceCents: null,
+            // Same clearing for a declared membership / corporate / plan card:
+            // the claim was refused, so nothing may re-derive a coverage price
+            // from it later (the effective-price recompute reads these).
+            declaredCoverageSource: null,
+            declaredCoverageRefId: null,
+            declaredCoverageCardNumber: null,
+            declaredCoveragePriceCents: null,
             doctorPayoutCents: commissionByItemId.get(item.id)?.doctorPayoutCents ?? null,
             commissionCents: commissionByItemId.get(item.id)?.commissionCents ?? null,
           },
@@ -262,6 +345,8 @@ export async function applyInsuranceVerificationDecision(
         // Status already flipped to REJECTED by the atomic claim above.
         data: {
           insuranceCompanyId: null,
+          declaredCoverageSource: null,
+          declaredCoverageRefId: null,
           subtotalCents: subtotal,
           totalCents: subtotal + order.shippingCents,
           commissionTotalCents: commission?.commissionTotalCents ?? null,
@@ -284,24 +369,24 @@ export async function applyInsuranceVerificationDecision(
   const consent = order.items[0]?.patientWhatsappConsent ?? true;
 
   if (decision === "VERIFIED") {
-    const html = wrapHtml("Your insurance was verified", `
-      <p>Good news — your ${esc(companyName)} insurance card was verified.</p>
-      <p>Complete your booking at your insurance price (<strong>${esc(amount)}</strong>):</p>
+    const html = wrapHtml("Your cover was verified", `
+      <p>Good news — your ${esc(companyName)} ${esc(cardLabel)} was verified.</p>
+      <p>Complete your booking at your covered price (<strong>${esc(amount)}</strong>):</p>
       <p style="margin:24px 0;text-align:center;"><a href="${esc(payLink)}" style="background:#B0F122;color:#0a1f14;padding:11px 20px;border-radius:999px;text-decoration:none;font-weight:700;">Pay &amp; confirm</a></p>
       <p style="font-size:12px;color:#737373;">${esc(payLink)}</p>
     `);
-    await safeSend(order.email, `Insurance verified — complete your booking`, html,
-      `Your ${companyName} insurance was verified. Pay to confirm (${amount}): ${payLink}`,
+    await safeSend(order.email, `Cover verified — complete your booking`, html,
+      `Your ${companyName} ${cardLabel} was verified. Pay to confirm (${amount}): ${payLink}`,
       order.phone, consent, order.countryCode, log, orderId);
   } else {
-    const html = wrapHtml("We couldn't verify your insurance card", `
-      <p>Unfortunately we were unable to verify your ${esc(companyName)} insurance card.</p>
+    const html = wrapHtml(`We couldn't verify your ${cardLabel}`, `
+      <p>Unfortunately we were unable to verify your ${esc(companyName)} ${esc(cardLabel)}.</p>
       <p>You can still book this consultation with the same doctor and time at the standard price (<strong>${esc(amount)}</strong>):</p>
       <p style="margin:24px 0;text-align:center;"><a href="${esc(payLink)}" style="background:#B0F122;color:#0a1f14;padding:11px 20px;border-radius:999px;text-decoration:none;font-weight:700;">Book at standard price</a></p>
       <p style="font-size:12px;color:#737373;">${esc(payLink)}</p>
     `);
-    await safeSend(order.email, `Insurance card could not be verified`, html,
-      `We couldn't verify your ${companyName} insurance card. Book at the standard price (${amount}): ${payLink}`,
+    await safeSend(order.email, `Card could not be verified`, html,
+      `We couldn't verify your ${companyName} ${cardLabel}. Book at the standard price (${amount}): ${payLink}`,
       order.phone, consent, order.countryCode, log, orderId);
   }
 

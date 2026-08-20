@@ -2246,6 +2246,12 @@ model Appointment {
   /// already lives on `amountCents`, so these are record-keeping only.
   insuranceCompanyId             String?
   insurancePolicyNumber          String?
+  /// Declared-coverage snapshot for the clinical/billing record — copied from
+  /// the OrderItem when the appointment is minted. Record-keeping only; the
+  /// charged amount already lives on `amountCents`.
+  declaredCoverageSource         String?
+  declaredCoverageRefId          String?
+  declaredCoverageCardNumber     String?
   createdAt                      DateTime                  @default(now())
   updatedAt                      DateTime                  @updatedAt
 
@@ -2898,6 +2904,21 @@ model CartItem {
   insuranceCompanyId                String?
   insurancePolicyNumber             String?
   insurancePriceCents               Int?
+  /// Self-declared coverage the patient picked in the booking form's coverage
+  /// picker: a category + a provider from the admin catalogue + their card
+  /// number. Source is MEMBERSHIP | CORPORATE | PUBLIC_PLAN — INSURANCE keeps
+  /// the dedicated columns above because its lifecycle (network check, payout,
+  /// admin-notify recipients) reads them by name.
+  ///
+  /// `declaredCoverageRefId` is the MembershipPlan / CorporateCompany /
+  /// PricingPlan id. The card number is an encrypted `phi:v1:` envelope.
+  /// `declaredCoveragePriceCents` is an audit copy of the resolved price;
+  /// checkout re-derives what is charged. Every declared line is parked for
+  /// manual verification before payment — same gate insurance uses.
+  declaredCoverageSource            String?
+  declaredCoverageRefId             String?
+  declaredCoverageCardNumber        String?
+  declaredCoveragePriceCents        Int?
   createdAt                         DateTime         @default(now())
 
   @@index([heldUntil])
@@ -2954,6 +2975,13 @@ model Order {
   /// consultation line's company). Null for non-insurance orders. Drives the
   /// admin-notify recipient lookup + the admin verification UI.
   insuranceCompanyId            String?
+  /// Declared-coverage mirror of the single consultation line, for orders whose
+  /// coverage is NOT insurance (membership / corporate / health plan). Drives
+  /// the admin verification UI's "what is being verified" panel. The parked
+  /// state itself is still `insuranceVerificationStatus` above — one gate for
+  /// every manually verified coverage, historical column name.
+  declaredCoverageSource        String?
+  declaredCoverageRefId         String?
   stripeSessionId               String?               @unique
   stripePaymentIntentId         String?               @unique
   stripeInvoiceId               String?               @unique
@@ -3228,6 +3256,13 @@ model OrderItem {
   insuranceCompanyId                String?
   insurancePolicyNumber             String?
   insurancePriceCents               Int?
+  /// Declared-coverage snapshot copied from the CartItem at checkout. See the
+  /// CartItem columns of the same name — when set, `unitPriceCents` above is
+  /// the coverage price and the order is parked for manual verification.
+  declaredCoverageSource            String?
+  declaredCoverageRefId             String?
+  declaredCoverageCardNumber        String?
+  declaredCoveragePriceCents        Int?
   /// LAB_EXAM lines only — the `TestCenterExam` this line was priced from, so
   /// the paid order can be reconciled against the laboratory's own invoice.
   /// Plain id, not an FK: the catalogue entry may be retired while the paid

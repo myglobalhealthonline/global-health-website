@@ -469,6 +469,11 @@ async function fulfillPaidOrderFromCheckoutSession(
           // in its encrypted phi:v1: envelope — copied verbatim, not decrypted.
           insuranceCompanyId: item.insuranceCompanyId,
           insurancePolicyNumber: item.insurancePolicyNumber,
+          // Declared membership / corporate / plan coverage, same deal: card
+          // number copied verbatim in its envelope, never decrypted here.
+          declaredCoverageSource: item.declaredCoverageSource,
+          declaredCoverageRefId: item.declaredCoverageRefId,
+          declaredCoverageCardNumber: item.declaredCoverageCardNumber,
         },
       });
       await tx.orderItem.update({

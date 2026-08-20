@@ -348,6 +348,28 @@
     "patientReviews": "Hodnocení pacientů"
   },
   "bookingForm": {
+    "coverage": {
+      "toggleLabel": "Mám pojištění, členství nebo zdravotní plán",
+      "toggleHint": "Uplatněte své krytí na tuto rezervaci. Kartu ověříme před jakoukoli platbou.",
+      "accountOption": "Použít krytí již spojené s mým účtem",
+      "declareOption": "Zadat kartu ručně",
+      "categoryLabel": "Typ krytí",
+      "categoryInsurance": "Pojištění",
+      "categoryCorporate": "Firemní zdravotní péče",
+      "categoryMembership": "Členství",
+      "categoryPublicPlan": "Zdravotní plán Global Health",
+      "providerLabel": "Poskytovatel",
+      "providerPlaceholder": "Vyberte svého poskytovatele",
+      "cardLabel": "Číslo karty / pojistky",
+      "cardPlaceholder": "Přesně jak je uvedeno na kartě",
+      "cardHint": "Ověřujeme ručně před stržením platby.",
+      "noProviders": "Pro tuto zemi zatím nejsou nastaveni žádní poskytovatelé.",
+      "loadError": "Možnosti krytí se nepodařilo načíst.",
+      "retry": "Zkusit znovu",
+      "providerRequired": "Pro pokračování vyberte poskytovatele.",
+      "cardRequired": "Zadejte číslo karty nebo pojistky pro vybrané krytí.",
+      "priceNote": "Termín vám nyní rezervujeme. Po ověření karty vám e-mailem a na WhatsApp pošleme bezpečný platební odkaz s cenou po krytí."
+    },
     "benefitToggleLabel": "Mám členství, pojištění nebo plán",
     "benefitHeading": "Kterou máme použít?",
     "benefitNoneFound": "Ve vašem účtu jsme nenašli žádné členství, plán ani pojištění.",

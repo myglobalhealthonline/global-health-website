@@ -271,6 +271,24 @@ async function resolveActiveCartForCheckout(
   return { cartId: guestCart?.id ?? null, userId: null };
 }
 
+/** Provider name behind a coverage id, per source. Null when the row is gone —
+ *  the admin panel still renders, just without a name. */
+async function coverageProviderName(
+  source: "INSURANCE" | "MEMBERSHIP" | "CORPORATE" | "PUBLIC_PLAN",
+  id: string,
+): Promise<string | null> {
+  if (source === "MEMBERSHIP") {
+    return (await prisma.membershipPlan.findUnique({ where: { id }, select: { name: true } }))?.name ?? null;
+  }
+  if (source === "CORPORATE") {
+    return (await prisma.corporateCompany.findUnique({ where: { id }, select: { name: true } }))?.name ?? null;
+  }
+  if (source === "PUBLIC_PLAN") {
+    return (await prisma.pricingPlan.findUnique({ where: { id }, select: { name: true } }))?.name ?? null;
+  }
+  return (await prisma.insuranceCompany.findUnique({ where: { id }, select: { name: true } }))?.name ?? null;
+}
+
 const ordersRoute: FastifyPluginAsync = async (app) => {
   // ── Checkout: cart → Order PENDING + Stripe session ───────────────
   app.post(
@@ -312,11 +330,13 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         // guest→user cart merge — can never enter the insurance flow (which
         // skips Stripe) with non-insurance items riding along. Reject early so
         // no orphan order/slot is created.
-        const cartInsuranceCount = cart.items.filter((i) => i.insuranceCompanyId).length;
+        const cartInsuranceCount = cart.items.filter(
+          (i) => i.insuranceCompanyId || i.declaredCoverageSource,
+        ).length;
         if (cartInsuranceCount > 0 && cartInsuranceCount !== cart.items.length) {
           return reply.status(400).send(
             errorResponse(
-              "An insurance consultation must be booked on its own. Please remove the other items and try again.",
+              "A booking that uses insurance, a membership or a plan card must be made on its own. Please remove the other items and try again.",
             ),
           );
         }
@@ -474,7 +494,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                 // engine: the negotiated insurance price is final and must not
                 // consume a plan credit or stack a plan discount (§ no-overlap).
                 items: cart.items
-                  .filter((i) => !i.insuranceCompanyId)
+                  .filter((i) => !i.insuranceCompanyId && !i.declaredCoverageSource)
                   .map((i) => ({
                     id: i.id,
                     kind: i.kind,
@@ -509,7 +529,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   // reaches this branch anyway.
                   userId,
                   items: cart.items
-                    .filter((i) => !i.insuranceCompanyId)
+                    .filter((i) => !i.insuranceCompanyId && !i.declaredCoverageSource)
                     .map((i) => ({
                       id: i.id,
                       kind: i.kind,
@@ -543,9 +563,14 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           // be recorded on exactly the lines whose price it set, because that
           // stamp is what the annual-limit counter reads.
           const corporateLine = (
-            i: { id: string; unitPriceCents: number; insuranceCompanyId?: string | null },
+            i: {
+              id: string;
+              unitPriceCents: number;
+              insuranceCompanyId?: string | null;
+              declaredCoverageSource?: string | null;
+            },
           ): CorporateDiscount | null => {
-            if (i.insuranceCompanyId) return null;
+            if (i.insuranceCompanyId || i.declaredCoverageSource) return null;
             const planLine = planResult.lines.get(i.id);
             const base = effectiveUnitPrice(i);
             const planBenefitApplied = Boolean(
@@ -555,14 +580,27 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             return corporateDiscounts.get(i.id) ?? null;
           };
           const corporateLineDiscount = (
-            i: { id: string; unitPriceCents: number; insuranceCompanyId?: string | null },
+            i: {
+              id: string;
+              unitPriceCents: number;
+              insuranceCompanyId?: string | null;
+              declaredCoverageSource?: string | null;
+            },
           ): number => corporateLine(i)?.discountCents ?? 0;
           const finalUnitPrice = (
-            i: { id: string; unitPriceCents: number; insuranceCompanyId?: string | null },
+            i: {
+              id: string;
+              unitPriceCents: number;
+              insuranceCompanyId?: string | null;
+              declaredCoverageSource?: string | null;
+            },
           ) => {
             // Insurance lines: the validated insurance price (effectiveUnitPrice)
-            // is final, no plan/corporate/membership layer applies.
-            if (i.insuranceCompanyId) return effectiveUnitPrice(i);
+            // is final, no plan/corporate/membership layer applies. A declared
+            // membership / corporate / plan card is the same deal — the card's
+            // own price was resolved at add-to-cart and a human verifies it, so
+            // no second engine may layer on top of it either.
+            if (i.insuranceCompanyId || i.declaredCoverageSource) return effectiveUnitPrice(i);
             const membershipLine = membershipPlan?.lines.get(i.id);
             if (membershipLine) return membershipLine.unitPriceCents;
             return (
@@ -705,6 +743,13 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   insuranceCompanyId: i.insuranceCompanyId,
                   insurancePolicyNumber: i.insurancePolicyNumber,
                   insurancePriceCents: i.insuranceCompanyId ? finalUnitPrice(i) : null,
+                  // Declared-coverage snapshot, same role as the insurance
+                  // triple above: what the patient claimed, and the price the
+                  // server re-derived for it, for the admin verifying the card.
+                  declaredCoverageSource: i.declaredCoverageSource,
+                  declaredCoverageRefId: i.declaredCoverageRefId,
+                  declaredCoverageCardNumber: i.declaredCoverageCardNumber,
+                  declaredCoveragePriceCents: i.declaredCoverageSource ? finalUnitPrice(i) : null,
                   // Commission-market snapshot (see the block above).
                   doctorPayoutCents: commissionByCartItemId.get(i.id)?.doctorPayoutCents ?? null,
                   commissionCents: commissionByCartItemId.get(i.id)?.commissionCents ?? null,
@@ -864,7 +909,9 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         // and alert the company's admins to verify the card. The patient is
         // charged only after an admin verifies (insurance price) or rejects
         // (standard price) — see insurance-verification.service.
-        const insuranceItem = order.items.find((i) => i.insuranceCompanyId);
+        const insuranceItem = order.items.find(
+          (i) => i.insuranceCompanyId || i.declaredCoverageSource,
+        );
         if (insuranceItem) {
           // Firmly reserve the slot(s): HELD auto-releases after ~15 min, so
           // commit HELD→BOOKED for the whole verification window. No appointment
@@ -883,6 +930,10 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             data: {
               insuranceVerificationStatus: "PENDING",
               insuranceCompanyId: insuranceItem.insuranceCompanyId,
+              // Mirror of the declared line, so the admin queue can name what
+              // it is verifying without re-reading the item rows.
+              declaredCoverageSource: insuranceItem.declaredCoverageSource,
+              declaredCoverageRefId: insuranceItem.declaredCoverageRefId,
               paymentStatus: "UNPAID",
             },
           });
@@ -1590,11 +1641,16 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           meetingUrl = fresh?.meetingUrl ?? meetingUrl;
         }
 
-        // Insurance verification block: surface the status + the DECRYPTED card
-        // number so the admin can verify it against the insurer. Only present
-        // for insurance orders (verificationStatus != null).
+        // Card-verification block: surface the status + the DECRYPTED card
+        // number so the admin can verify it against the provider. Present for
+        // every parked order (verificationStatus != null) — insurance, or one
+        // of the three coverage sources the booking form's picker offers. The
+        // field is still called `insurance` because it is the same panel and
+        // the same decision buttons; `source` says what is actually being
+        // verified.
         let insurance: {
           verificationStatus: string;
+          source: "INSURANCE" | "MEMBERSHIP" | "CORPORATE" | "PUBLIC_PLAN";
           companyId: string | null;
           companyName: string | null;
           policyNumber: string | null;
@@ -1602,27 +1658,42 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         } | null = null;
         if (order.insuranceVerificationStatus) {
           const insItem = order.items.find((i) => i.insuranceCompanyId) ?? null;
-          const companyId = order.insuranceCompanyId ?? insItem?.insuranceCompanyId ?? null;
-          const company = companyId
-            ? await prisma.insuranceCompany.findUnique({
-                where: { id: companyId },
-                select: { name: true },
-              })
+          const covItem = order.items.find((i) => i.declaredCoverageSource) ?? null;
+          const companyId =
+            order.insuranceCompanyId ??
+            insItem?.insuranceCompanyId ??
+            order.declaredCoverageRefId ??
+            covItem?.declaredCoverageRefId ??
+            null;
+          const source = (insItem || order.insuranceCompanyId
+            ? "INSURANCE"
+            : (order.declaredCoverageSource ?? covItem?.declaredCoverageSource ?? "INSURANCE")) as
+            | "INSURANCE"
+            | "MEMBERSHIP"
+            | "CORPORATE"
+            | "PUBLIC_PLAN";
+          const companyName = companyId
+            ? await coverageProviderName(source, companyId)
             : null;
+          // Decryption failure must not blank the whole panel: the admin still
+          // needs the status and the provider to act on the order.
           let policyNumber: string | null = null;
-          if (insItem?.insurancePolicyNumber) {
+          const encrypted = insItem?.insurancePolicyNumber ?? covItem?.declaredCoverageCardNumber;
+          if (encrypted) {
             try {
-              policyNumber = decryptPhi(insItem.insurancePolicyNumber);
+              policyNumber = decryptPhi(encrypted);
             } catch {
               policyNumber = null;
             }
           }
           insurance = {
             verificationStatus: order.insuranceVerificationStatus,
+            source,
             companyId,
-            companyName: company?.name ?? null,
+            companyName,
             policyNumber,
-            insurancePriceCents: insItem?.insurancePriceCents ?? null,
+            insurancePriceCents:
+              insItem?.insurancePriceCents ?? covItem?.declaredCoveragePriceCents ?? null,
           };
         }
 

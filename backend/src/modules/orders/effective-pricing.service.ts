@@ -5,6 +5,9 @@ import {
   getServicePeakConfig,
 } from "../pricing/peak-pricing.service.js";
 import { loadValidatedInsurancePrice } from "../pricing/insurance-pricing.service.js";
+import { resolveDeclaredCoverage } from "../benefits/declared-coverage.service.js";
+import type { DeclaredCoverageSource } from "../benefits/declared-coverage.service.js";
+import { decryptPhi } from "../../lib/crypto/phi-crypto.js";
 
 export interface EffectivePriceItem {
   id: string;
@@ -15,6 +18,12 @@ export interface EffectivePriceItem {
   /** Selected insurance company id (consultation lines). When set + valid for
    * the service, the negotiated insurance price replaces the peak/base price. */
   insuranceCompanyId?: string | null;
+  /** Declared membership / corporate / health-plan coverage (consultation
+   *  lines). Re-resolved here from the encrypted card number, for the same
+   *  reason insurance is: the cart's price snapshot is display-only. */
+  declaredCoverageSource?: string | null;
+  declaredCoverageRefId?: string | null;
+  declaredCoverageCardNumber?: string | null;
 }
 
 const CONSULTATION_KINDS = new Set(["GENERAL_CONSULTATION", "SPECIALIST_CONSULTATION"]);
@@ -44,6 +53,8 @@ export async function computeEffectivePrices(
           select: {
             basePriceCents: true,
             currencyCode: true,
+            countryId: true,
+            kind: true,
             country: { select: { currency: { select: { code: true } } } },
           },
         }),
@@ -73,6 +84,29 @@ export async function computeEffectivePrices(
         );
         if (insurancePrice != null) {
           out.set(i.id, insurancePrice);
+          return;
+        }
+      }
+      // Declared coverage: re-resolve the card against the admin's current
+      // configuration. Same tamper rule as insurance — a card that no longer
+      // resolves falls through to the peak/base price, never to something
+      // cheaper than the server can justify right now.
+      const declaredCard = decryptPhi(i.declaredCoverageCardNumber);
+      if (i.declaredCoverageSource && i.declaredCoverageRefId && declaredCard) {
+        const resolved = await resolveDeclaredCoverage({
+          source: i.declaredCoverageSource as DeclaredCoverageSource,
+          refId: i.declaredCoverageRefId,
+          cardNumber: declaredCard,
+          service: {
+            id: i.serviceId,
+            countryId: svc.countryId,
+            kind: svc.kind,
+            currencyCode: svc.currencyCode ?? svc.country.currency.code,
+          },
+          fullPriceCents: priced.unitPriceCents,
+        });
+        if (resolved.ok) {
+          out.set(i.id, resolved.unitPriceCents);
           return;
         }
       }

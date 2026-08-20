@@ -121,6 +121,79 @@ export async function getActiveMembershipForUser(
 }
 
 /**
+ * Same resolution as `getActiveMembershipForUser`, keyed on the printed benefit
+ * card number instead of a platform login. This is what the booking form's
+ * coverage picker needs: the patient declares "I am covered by company X, card
+ * 1234" before any account link exists, and the card is the only handle they
+ * have. Every other gate is unchanged — card status + validity window, member
+ * status (a beneficiary still derives from a live employee), company status and
+ * contract window — so a card cannot buy a benefit the login could not.
+ *
+ * `linkedUserId` is the account the card resolves to, when it resolves to one.
+ * The caller uses it to decide whether the declaration still needs a human to
+ * verify it, and to count annual-limit usage.
+ */
+export async function getActiveMembershipByCardNumber(
+  cardNumber: string,
+): Promise<(ActiveMembership & { linkedUserId: string | null }) | null> {
+  const trimmed = cardNumber.trim();
+  if (!trimmed) return null;
+  const card = await prisma.corporateBenefitCard.findFirst({
+    where: {
+      cardNumber: { equals: trimmed, mode: "insensitive" },
+      status: "ACTIVE",
+      validUntil: { gt: new Date() },
+    },
+    select: {
+      memberType: true,
+      employee: {
+        select: {
+          id: true,
+          userId: true,
+          status: true,
+          company: { include: { plan: true } },
+        },
+      },
+      beneficiary: {
+        select: {
+          id: true,
+          userId: true,
+          status: true,
+          employee: { select: { status: true } },
+          company: { include: { plan: true } },
+        },
+      },
+    },
+  });
+  if (!card) return null;
+
+  const employee = card.employee;
+  if (employee && employee.status === "ACTIVE" && companyIsLive(employee.company)) {
+    return {
+      memberType: "EMPLOYEE",
+      employeeId: employee.id,
+      company: employee.company,
+      linkedUserId: employee.userId,
+    };
+  }
+  const beneficiary = card.beneficiary;
+  if (
+    beneficiary &&
+    beneficiary.status === "ACTIVE" &&
+    beneficiary.employee?.status === "ACTIVE" &&
+    companyIsLive(beneficiary.company)
+  ) {
+    return {
+      memberType: "BENEFICIARY",
+      beneficiaryId: beneficiary.id,
+      company: beneficiary.company,
+      linkedUserId: beneficiary.userId,
+    };
+  }
+  return null;
+}
+
+/**
  * Any (not necessarily ACTIVE) employee membership for a user — the
  * onboarding surfaces need pre-active rows too. Returns the most
  * recently created when several exist (shouldn't happen in practice).

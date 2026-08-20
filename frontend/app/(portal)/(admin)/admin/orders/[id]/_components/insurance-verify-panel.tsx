@@ -8,6 +8,11 @@ import { Btn } from "@/components/portal-atoms";
 
 type Insurance = {
   verificationStatus: string;
+  /** Which kind of cover is being verified. INSURANCE is the legacy flow; the
+   *  other three come from the booking form's cover picker and are checked by
+   *  us rather than by an insurer. Absent on orders parked before this field
+   *  existed — treated as insurance. */
+  source?: "INSURANCE" | "MEMBERSHIP" | "CORPORATE" | "PUBLIC_PLAN";
   companyId: string | null;
   companyName: string | null;
   policyNumber: string | null;
@@ -40,6 +45,14 @@ export function InsuranceVerifyPanel({ orderId, currencyCode, insurance }: Props
 
   const status = insurance.verificationStatus;
   const isPending = status === "PENDING";
+  const source = insurance.source ?? "INSURANCE";
+  const COVER_LABEL: Record<string, { title: string; provider: string; price: string }> = {
+    INSURANCE: { title: "Insurance verification", provider: "Company", price: "Insurance price" },
+    MEMBERSHIP: { title: "Membership verification", provider: "Membership", price: "Member price" },
+    CORPORATE: { title: "Corporate cover verification", provider: "Employer", price: "Covered price" },
+    PUBLIC_PLAN: { title: "Health plan verification", provider: "Plan", price: "Plan price" },
+  };
+  const labels = COVER_LABEL[source] ?? COVER_LABEL.INSURANCE;
 
   function decide(decision: "VERIFIED" | "REJECTED") {
     setError(null);
@@ -75,7 +88,7 @@ export function InsuranceVerifyPanel({ orderId, currencyCode, insurance }: Props
       <div className="flex items-center gap-2">
         <ShieldCheck className="size-4" style={{ color: "#1B4D3E" }} aria-hidden />
         <h3 className="m-0 text-sm font-bold" style={{ color: "var(--portal-text-1, #0F2E25)" }}>
-          Insurance verification
+          {labels.title}
         </h3>
         <span className="ml-auto text-xs font-semibold" style={{ color: statusColor }}>
           {statusLabel}
@@ -85,7 +98,7 @@ export function InsuranceVerifyPanel({ orderId, currencyCode, insurance }: Props
       <dl className="mt-3 grid grid-cols-1 gap-1.5 text-sm sm:grid-cols-2">
         <div>
           <dt className="text-[11px] uppercase tracking-wide" style={{ color: "var(--portal-text-3, #737373)" }}>
-            Company
+            {labels.provider}
           </dt>
           <dd className="m-0 font-medium">{insurance.companyName ?? "—"}</dd>
         </div>
@@ -97,7 +110,7 @@ export function InsuranceVerifyPanel({ orderId, currencyCode, insurance }: Props
         </div>
         <div>
           <dt className="text-[11px] uppercase tracking-wide" style={{ color: "var(--portal-text-3, #737373)" }}>
-            Insurance price
+            {labels.price}
           </dt>
           <dd className="m-0 font-medium">{money(insurance.insurancePriceCents, currencyCode)}</dd>
         </div>
@@ -106,8 +119,10 @@ export function InsuranceVerifyPanel({ orderId, currencyCode, insurance }: Props
       {isPending ? (
         <>
           <p className="mt-3 text-xs" style={{ color: "var(--portal-text-3, #737373)" }}>
-            Verify the card number with the insurer, then choose an outcome. The patient is only
-            charged after you decide — the time slot is reserved until then.
+            {source === "INSURANCE"
+              ? "Verify the card number with the insurer, then choose an outcome."
+              : "Check the card number against the provider's records, then choose an outcome."}{" "}
+            The patient is only charged after you decide — the time slot is reserved until then.
           </p>
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <button
@@ -157,7 +172,7 @@ export function InsuranceVerifyPanel({ orderId, currencyCode, insurance }: Props
         }
       >
         <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
-          The insurance discount will be removed and the order re-priced to the standard price for
+          The cover will be removed and the order re-priced to the standard price for
           the same doctor and time. The patient is emailed &amp; WhatsApp&rsquo;d a payment link and
           told their card couldn&rsquo;t be verified. This can&rsquo;t be undone.
         </p>

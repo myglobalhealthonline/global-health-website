@@ -13,6 +13,12 @@ import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { PhoneField } from "@/components/forms/phone-field";
 import { DobField, isoToDisplayDob } from "@/components/forms/dob-field";
+import { ToggleSwitch } from "@/components/forms/toggle-switch";
+import {
+  fetchCoverageCatalog,
+  type CoverageCatalog,
+  type CoverageProvider,
+} from "@/lib/api/public-api";
 import { dialCodeForCountrySlug } from "@/lib/phone/dial-codes";
 import type { CommonLocale } from "@/lib/i18n/types";
 import type { InsuranceOption } from "@/lib/content/get-country-collections";
@@ -91,6 +97,25 @@ type Props = {
    */
   benefitParam?: string | null;
 };
+
+/**
+ * The four coverage categories, mapped to the catalogue key they read and the
+ * i18n key that labels them. One table so the segmented control, the provider
+ * list and the submitted payload can never drift apart.
+ */
+const CATEGORY_KEYS = {
+  INSURANCE: { catalog: "insurance", label: "categoryInsurance" },
+  CORPORATE: { catalog: "corporate", label: "categoryCorporate" },
+  MEMBERSHIP: { catalog: "membership", label: "categoryMembership" },
+  PUBLIC_PLAN: { catalog: "publicPlan", label: "categoryPublicPlan" },
+} as const;
+
+const CATEGORY_ORDER = [
+  "INSURANCE",
+  "CORPORATE",
+  "MEMBERSHIP",
+  "PUBLIC_PLAN",
+] as const satisfies readonly (keyof typeof CATEGORY_KEYS)[];
 
 /** Saved patient profile fields we prefill on the details step (req #2). */
 type ProfileAddress = {
@@ -178,6 +203,8 @@ export function ConsultationBookingForm({
     ? tz.slice(tz.lastIndexOf("/") + 1).replace(/_/g, " ")
     : tz;
 
+  /** Coverage-picker copy. Short alias — it is referenced ~20 times below. */
+  const cov = i18n.coverage;
   const nationalIdLabel = idLabelForCountrySlug(params?.country);
   // Brazil needs ONE identifier to print on the prescription: CPF or,
   // failing that, a passport number.
@@ -223,7 +250,9 @@ export function ConsultationBookingForm({
   // Toggle off means "pay the standard price" (cart source NONE).
   const [benefitOptions, setBenefitOptions] = useState<BenefitOption[]>([]);
   const [benefitChoice, setBenefitChoice] = useState<{ source: string; refId: string } | null>(null);
-  const [benefitToggle, setBenefitToggle] = useState(false);
+  // Open already when the insurance step chose an insurer: that patient has
+  // said they are covered, and the only thing left to collect is the card.
+  const [benefitToggle, setBenefitToggle] = useState(Boolean(selectedInsurance));
   /** Options came back at least once — distinguishes "none" from "not asked". */
   const [benefitLoaded, setBenefitLoaded] = useState(false);
   /**
@@ -250,6 +279,34 @@ export function ConsultationBookingForm({
   // collects the card number — the server stays the price authority, and
   // re-validates coverage and network membership at checkout.
   const [insurancePolicyNumber, setInsurancePolicyNumber] = useState("");
+
+  // ── Coverage picker ────────────────────────────────────────────────
+  // Two ways to be covered, one section. "account" replays the benefit the
+  // patient already holds (verified, no card to type). "declare" is the new
+  // path: pick a category, pick a provider the admin configured, type the card
+  // number. A declaration is checked by a human before payment, so nothing here
+  // decides a price — the server re-derives it at add-to-cart.
+  /**
+   * The half the patient explicitly picked, or null while the default below
+   * still governs. Kept as "their choice or nothing" rather than as the live
+   * value so the default can keep reacting to what loads without ever
+   * overwriting a deliberate pick.
+   *
+   * An insurer chosen back at the insurance step is already a declaration — it
+   * fixed which doctors were bookable — so it seeds the card half here and the
+   * patient types their card once, in the one place that asks for it.
+   */
+  const [coverageModeChoice, setCoverageModeChoice] = useState<"account" | "declare" | null>(
+    selectedInsurance ? "declare" : null,
+  );
+  const [declaredCategory, setDeclaredCategory] =
+    useState<keyof typeof CATEGORY_KEYS>("INSURANCE");
+  const [declaredProviderId, setDeclaredProviderId] = useState(
+    selectedInsurance?.companyId ?? "",
+  );
+  const [catalog, setCatalog] = useState<CoverageCatalog | null>(null);
+  const [catalogError, setCatalogError] = useState(false);
+  const [catalogRetry, setCatalogRetry] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -358,6 +415,29 @@ export function ConsultationBookingForm({
     };
   }, [meId, serviceId, doctorId, selectedSlotId, benefitParam, benefitRetry]);
 
+  // The admin-configured providers for this market. Public on purpose: a guest
+  // must be able to say they are covered, and the catalogue carries names + ids
+  // only. Fetched once per country/service; the retry counter re-runs it.
+  useEffect(() => {
+    let cancelled = false;
+    void fetchCoverageCatalog({
+      country: countryCode,
+      serviceId,
+      locale: params?.lang ?? null,
+    }).then((res) => {
+      if (cancelled) return;
+      if (!res.ok) {
+        setCatalogError(true);
+        return;
+      }
+      setCatalog(res.data);
+      setCatalogError(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [countryCode, serviceId, params?.lang, catalogRetry]);
+
   // Scroll the newly revealed "patient being treated" section into view so the
   // patient notices it appeared instead of scrolling past a section that grew
   // above the fold. Guarded by prefers-reduced-motion (UI-only, no logic change).
@@ -397,7 +477,7 @@ export function ConsultationBookingForm({
    * dependent booking (neither of which gets the dropdown), the early step's
    * choice stands.
    */
-  const insurer =
+  const accountInsurer =
     benefitLoaded && !treatingOther
       ? activeBenefit?.source === "INSURANCE"
         ? {
@@ -407,10 +487,67 @@ export function ConsultationBookingForm({
           }
         : null
       : selectedInsurance;
+
+  /**
+   * Which half the picker shows. A guest holds no account cover at all, and a
+   * signed-in patient with no benefits has an empty list — both must land on
+   * the card form, or opening the picker shows nothing to fill in. Derived
+   * rather than defaulted through an effect, so a deliberate pick can never be
+   * clobbered by a later load.
+   */
+  const coverageMode: "account" | "declare" =
+    coverageModeChoice ??
+    ((authLoaded && !me) || (benefitLoaded && benefitOptions.length === 0)
+      ? "declare"
+      : "account");
+  /** Whether the patient is filling in a card rather than replaying account cover. */
+  const declaring = benefitToggle && !treatingOther && coverageMode === "declare";
+  const declaredProviders: CoverageProvider[] =
+    catalog?.[CATEGORY_KEYS[declaredCategory].catalog] ?? [];
+  const declaredProvider =
+    declaredProviders.find((p) => p.id === declaredProviderId) ?? null;
+
+  /**
+   * Insurance prices we can quote WITHOUT asking the server about the card:
+   * they are per-service negotiated rates, already in hand from the insurance
+   * step or the account's own options. Membership / corporate / plan prices
+   * depend on the card itself, and there is no public endpoint that turns a
+   * card number into a price — that would be an enumeration oracle over member
+   * ids, which the membership claim flow deliberately avoids. Those show their
+   * covered price on the next step instead, once the server has resolved it.
+   */
+  const knownInsurancePrices = useMemo(() => {
+    const map = new Map<string, number>();
+    if (selectedInsurance) {
+      map.set(selectedInsurance.companyId, selectedInsurance.insurancePriceCents);
+    }
+    for (const o of benefitOptions) {
+      if (o.source === "INSURANCE") map.set(o.refId, o.unitPriceCents);
+    }
+    return map;
+  }, [benefitOptions, selectedInsurance]);
+
+  /** The insurer in force, from whichever half of the picker is being used. */
+  const insurer = declaring
+    ? declaredCategory === "INSURANCE" && declaredProvider
+      ? {
+          companyId: declaredProvider.id,
+          name: declaredProvider.name,
+          insurancePriceCents:
+            knownInsurancePrices.get(declaredProvider.id) ?? selectedSlot?.priceCents ?? 0,
+        }
+      : null
+    : accountInsurer;
   // The insurance price only "reveals" once the patient has entered their card
   // number, mirroring the requirement that the price updates when they provide
-  // their insurance details.
-  const insuranceActive = Boolean(insurer && insurancePolicyNumber.trim());
+  // their insurance details. In declare mode it also needs a price we actually
+  // know — otherwise the summary would quote the standard price as if it were
+  // the covered one.
+  const insuranceActive = Boolean(
+    insurer &&
+      insurancePolicyNumber.trim() &&
+      (!declaring || knownInsurancePrices.has(insurer.companyId)),
+  );
   const displayedPriceCents = insuranceActive
     ? insurer!.insurancePriceCents
     : selectedSlot?.priceCents;
@@ -506,6 +643,19 @@ export function ConsultationBookingForm({
       setError(i18n.acceptCombinedConsent);
       return;
     }
+    // A half-filled coverage declaration is the one case where continuing
+    // silently would charge the standard price to someone who believes they
+    // just applied their cover.
+    if (declaring) {
+      if (!declaredProvider) {
+        setError(cov.providerRequired);
+        return;
+      }
+      if (!insurancePolicyNumber.trim()) {
+        setError(cov.cardRequired);
+        return;
+      }
+    }
 
     // IANA tz from browser. Falls back to undefined on the rare engine
     // that doesn't expose `resolvedOptions().timeZone` so the cart route
@@ -577,14 +727,33 @@ export function ConsultationBookingForm({
       //
       // Omitted for guests: they hold no benefits, their cart stays UNSET, and
       // checkout resolves that to NONE because nothing is eligible for them.
-      const cartBenefit: CartBenefitInput = insuranceActive
-        ? { source: "INSURANCE", refId: insurer!.companyId }
-        : selectedMember
-          ? // Booking for a dependent draws on the public plan's credit.
-            { source: "PUBLIC_PLAN", refId: "credit" }
-          : activeBenefit
-            ? { source: activeBenefit.source, refId: activeBenefit.refId }
-            : { source: "NONE" };
+      // A declared card, if the picker is on its "declare" half and complete.
+      // The server re-derives what it is worth and parks the order for manual
+      // verification — this only says what the patient claimed.
+      const declaredPayload =
+        declaring && declaredProvider && insurancePolicyNumber.trim()
+          ? {
+              source: declaredCategory,
+              refId: declaredProvider.id,
+              cardNumber: insurancePolicyNumber.trim(),
+            }
+          : null;
+
+      const cartBenefit: CartBenefitInput = declaredPayload
+        ? // Insurance keeps its own cart-level source (it drives the insurance
+          // lifecycle). Every other declaration is NONE: the account-linked
+          // engines must not also run on a line a declared card already priced.
+          declaredPayload.source === "INSURANCE"
+          ? { source: "INSURANCE", refId: declaredPayload.refId }
+          : { source: "NONE" }
+        : insuranceActive
+          ? { source: "INSURANCE", refId: insurer!.companyId }
+          : selectedMember
+            ? // Booking for a dependent draws on the public plan's credit.
+              { source: "PUBLIC_PLAN", refId: "credit" }
+            : activeBenefit
+              ? { source: activeBenefit.source, refId: activeBenefit.refId }
+              : { source: "NONE" };
 
       const res = await add({
         ...(me ? { benefit: cartBenefit } : {}),
@@ -598,7 +767,9 @@ export function ConsultationBookingForm({
         // re-resolves it authoritatively at checkout.
         // Insurance replaces plan/family benefits (no stacking): when a company
         // is selected + its policy entered, skip the benefit fields entirely.
-        ...(insuranceActive
+        ...(declaredPayload
+          ? { declaredCoverage: declaredPayload }
+          : insuranceActive
           ? {
               insuranceCompanyId: insurer!.companyId,
               insurancePolicyNumber: insurancePolicyNumber.trim(),
@@ -837,15 +1008,14 @@ export function ConsultationBookingForm({
         {/* Manual "someone else" path — only when not targeting a saved
           * family member (the two mechanisms are mutually exclusive). */}
         {me && !selectedMember ? (
-          <label className="mt-2 flex items-center gap-2 text-sm text-[var(--color-text-body)]">
-            <input
-              type="checkbox"
+          <div className="mt-3 rounded-[var(--radius-card)] border border-[var(--color-border)] p-3">
+            <ToggleSwitch
+              id="booking-for-other"
               checked={bookingForOther}
-              onChange={(e) => setBookingForOther(e.target.checked)}
-              className="size-4 rounded border-[var(--color-border)]"
+              onChange={setBookingForOther}
+              label={i18n.bookingForOther}
             />
-            {i18n.bookingForOther}
-          </label>
+          </div>
         ) : null}
 
         {/* Plan-benefit clarification (Req 5): booking for someone else is always
@@ -865,89 +1035,6 @@ export function ConsultationBookingForm({
           </p>
         ) : null}
 
-        {/* Benefit selector (§11.2) — a toggle, then the benefits this patient
-          * already holds. Every price is exact: the slot is known by now.
-          *
-          * Insurance is in the list too, network-filtered server-side, so the
-          * dropdown cannot name an insurer this doctor is not bookable under.
-          * Its price still only reveals once the card number is entered (§33).
-          *
-          * Shown to any signed-in patient booking for themselves, even with no
-          * options — toggling on is how they reach the claim link. */}
-        {me && !treatingOther ? (
-          <div className="mt-3">
-            <label className="flex items-start gap-2">
-              <input
-                type="checkbox"
-                checked={benefitToggle}
-                onChange={(e) => setBenefitToggle(e.target.checked)}
-                className="mt-0.5 size-4 shrink-0"
-              />
-              <span className="text-xs font-semibold text-[var(--color-text-body)]">
-                {i18n.benefitToggleLabel}
-              </span>
-            </label>
-
-            {benefitError ? (
-              <p className="mt-2 text-xs text-[var(--color-text-body)]">
-                {i18n.benefitLoadError}{" "}
-                <button
-                  type="button"
-                  onClick={() => setBenefitRetry((n) => n + 1)}
-                  className="font-semibold underline"
-                >
-                  {i18n.benefitLoadRetry}
-                </button>
-              </p>
-            ) : null}
-
-            {benefitToggle && !benefitError ? (
-              <div className="mt-2 grid gap-2">
-                {benefitOptions.length > 0 ? (
-                  <label className="block">
-                    <span className="text-xs font-semibold text-[var(--color-text-body)]">
-                      {i18n.benefitHeading}
-                    </span>
-                    <select
-                      value={benefitChoice ? `${benefitChoice.source}:${benefitChoice.refId}` : ""}
-                      onChange={(e) => {
-                        const [source, ...rest] = e.target.value.split(":");
-                        setBenefitChoice({ source, refId: rest.join(":") });
-                      }}
-                      className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
-                    >
-                      {benefitOptions.map((opt) => (
-                        <option key={`${opt.source}:${opt.refId}`} value={`${opt.source}:${opt.refId}`}>
-                          {opt.label} —{" "}
-                          {formatPriceRounded(opt.unitPriceCents, selectedSlot?.currencyCode ?? "EUR")}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                ) : benefitLoaded ? (
-                  // Only after the options actually loaded. Rendering this
-                  // while the request is still in flight told a member who
-                  // holds a membership that their account has none.
-                  <p className="text-xs text-[var(--color-text-muted)]">{i18n.benefitNoneFound}</p>
-                ) : null}
-
-                <BenefitScarcityNote option={chosenOption ?? undefined} template={i18n.benefitScarcityNote} />
-
-                {/* The claim page, not an inline form. The emailed confirm link
-                  * is what proves the claimant owns the enrolled address (§5.3),
-                  * and a booking flow is exactly where that would get weakened. */}
-                {benefitLoaded && benefitOptions.every((o) => o.source !== "MEMBERSHIP") ? (
-                  <p className="text-xs text-[var(--color-text-muted)]">
-                    <Link href="/account/membership/claim" className="font-semibold underline">
-                      {i18n.benefitClaimCta}
-                    </Link>{" "}
-                    {i18n.benefitClaimHint}
-                  </p>
-                ) : null}
-              </div>
-            ) : null}
-          </div>
-        ) : null}
 
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {!treatingOther ? (
@@ -1160,40 +1247,6 @@ export function ConsultationBookingForm({
           </label>
         ) : null}
 
-        {/* Insurance card number. The insurer came either from the earlier
-          * insurance step (it decides which doctors are bookable) or from the
-          * dropdown above — we only collect the card to verify. */}
-        {insurer ? (
-          <div className="mt-4 grid gap-3 rounded-md border border-[var(--color-border)] p-3">
-            <p className="m-0 text-xs font-semibold text-[var(--color-text-body)]">
-              Booking with {insurer.name} —{" "}
-              {formatPriceRounded(
-                insurer.insurancePriceCents,
-                selectedSlot?.currencyCode ?? "EUR",
-              )}
-            </p>
-            <label className="block">
-              <span className="text-xs font-semibold text-[var(--color-text-body)]">
-                Insurance card / policy number
-              </span>
-              <input
-                type="text"
-                value={insurancePolicyNumber}
-                onChange={(e) => setInsurancePolicyNumber(e.target.value)}
-                maxLength={120}
-                autoComplete="off"
-                placeholder={i18n.insurancePolicyPlaceholder}
-                className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
-              />
-              <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-                Your insurance price applies once you enter your card number. We&rsquo;ll reserve
-                your time and verify your card before taking payment — you&rsquo;ll get a secure
-                payment link by email &amp; WhatsApp once it&rsquo;s verified.
-              </p>
-            </label>
-          </div>
-        ) : null}
-
         <label className="mt-4 block">
           <span className="text-xs font-semibold text-[var(--color-text-body)]">
             {i18n.reasonForVisit}
@@ -1208,7 +1261,229 @@ export function ConsultationBookingForm({
         </label>
       </div>
 
-      {/* 3. Patient address — required when the country's BookingSetting
+      {/* 3. Cover — one section for both ways of being covered.
+        *
+        * "Use cover already on my account" replays the verified benefits the
+        * account holds, priced exactly (the slot is known by now), no card to
+        * type. "Enter a card manually" is the declaration path: category →
+        * provider from the admin catalogue → card number. A declaration is
+        * checked by a human before payment, so it never sets a price here;
+        * the server resolves it at the next step.
+        *
+        * Shown to guests too — a guest holds no account benefits but can very
+        * much hold an insurance card. Hidden only when treating someone else,
+        * where the cover in play is the dependent's, not the account's. */}
+      {!treatingOther ? (
+        <div role="group" className="gh2-card-ivory p-5 sm:p-6">
+          <ToggleSwitch
+            id="coverage-toggle"
+            checked={benefitToggle}
+            onChange={setBenefitToggle}
+            label={cov.toggleLabel}
+            description={cov.toggleHint}
+          />
+
+          {benefitToggle ? (
+            <div className="mt-5 grid gap-4">
+              {/* The two halves are offered only when there is a choice to
+                * make. With nothing on the account the picker is the card
+                * form, and a segmented control with one usable option is
+                * just a thing to read past. */}
+              {me && benefitOptions.length > 0 ? (
+                <div
+                  role="radiogroup"
+                  aria-label={cov.categoryLabel}
+                  className="flex flex-wrap gap-2"
+                >
+                  {(
+                    [
+                      ["account", cov.accountOption],
+                      ["declare", cov.declareOption],
+                    ] as const
+                  ).map(([value, label]) => (
+                    <button
+                      key={value}
+                      type="button"
+                      role="radio"
+                      aria-checked={coverageMode === value}
+                      onClick={() => setCoverageModeChoice(value)}
+                      className={`rounded-full border px-4 py-2 text-xs font-semibold transition-colors ${
+                        coverageMode === value
+                          ? "border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)]/10 text-[var(--color-brand-primary)]"
+                          : "border-[var(--color-border)] text-[var(--color-text-body)] hover:bg-[var(--color-background-page)]"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+
+              {benefitError ? (
+                <p className="text-xs text-[var(--color-text-body)]">
+                  {i18n.benefitLoadError}{" "}
+                  <button
+                    type="button"
+                    onClick={() => setBenefitRetry((n) => n + 1)}
+                    className="font-semibold underline"
+                  >
+                    {i18n.benefitLoadRetry}
+                  </button>
+                </p>
+              ) : null}
+
+              {/* ── Account cover ───────────────────────────────────── */}
+              {!declaring && !benefitError ? (
+                <div className="grid gap-2">
+                  {benefitOptions.length > 0 ? (
+                    <label className="block">
+                      <span className="text-xs font-semibold text-[var(--color-text-body)]">
+                        {i18n.benefitHeading}
+                      </span>
+                      <select
+                        value={benefitChoice ? `${benefitChoice.source}:${benefitChoice.refId}` : ""}
+                        onChange={(e) => {
+                          const [source, ...rest] = e.target.value.split(":");
+                          setBenefitChoice({ source, refId: rest.join(":") });
+                        }}
+                        className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+                      >
+                        {benefitOptions.map((opt) => (
+                          <option key={`${opt.source}:${opt.refId}`} value={`${opt.source}:${opt.refId}`}>
+                            {opt.label} —{" "}
+                            {formatPriceRounded(opt.unitPriceCents, selectedSlot?.currencyCode ?? "EUR")}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  ) : benefitLoaded && me ? (
+                    // Only after the options actually loaded. Rendering this
+                    // while the request is still in flight told a member who
+                    // holds a membership that their account has none.
+                    <p className="text-xs text-[var(--color-text-muted)]">{i18n.benefitNoneFound}</p>
+                  ) : null}
+
+                  <BenefitScarcityNote option={chosenOption ?? undefined} template={i18n.benefitScarcityNote} />
+
+                  {/* The claim page, not an inline form. The emailed confirm link
+                    * is what proves the claimant owns the enrolled address (§5.3),
+                    * and a booking flow is exactly where that would get weakened. */}
+                  {me && benefitLoaded && benefitOptions.every((o) => o.source !== "MEMBERSHIP") ? (
+                    <p className="text-xs text-[var(--color-text-muted)]">
+                      <Link href="/account/membership/claim" className="font-semibold underline">
+                        {i18n.benefitClaimCta}
+                      </Link>{" "}
+                      {i18n.benefitClaimHint}
+                    </p>
+                  ) : null}
+                </div>
+              ) : null}
+
+              {/* ── Declared card ───────────────────────────────────── */}
+              {declaring ? (
+                <div className="grid gap-4">
+                  <fieldset className="min-w-0">
+                    <legend className="text-xs font-semibold text-[var(--color-text-body)]">
+                      {cov.categoryLabel}
+                    </legend>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {CATEGORY_ORDER.map((key) => (
+                        <button
+                          key={key}
+                          type="button"
+                          role="radio"
+                          aria-checked={declaredCategory === key}
+                          onClick={() => {
+                            setDeclaredCategory(key);
+                            // The provider list changes with the category, so a
+                            // carried-over id would submit a provider that is
+                            // no longer on screen.
+                            setDeclaredProviderId("");
+                          }}
+                          className={`rounded-full border px-4 py-2 text-xs font-semibold transition-colors ${
+                            declaredCategory === key
+                              ? "border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)]/10 text-[var(--color-brand-primary)]"
+                              : "border-[var(--color-border)] text-[var(--color-text-body)] hover:bg-[var(--color-background-page)]"
+                          }`}
+                        >
+                          {cov[CATEGORY_KEYS[key].label]}
+                        </button>
+                      ))}
+                    </div>
+                  </fieldset>
+
+                  {catalogError ? (
+                    <p className="text-xs text-[var(--color-text-body)]">
+                      {cov.loadError}{" "}
+                      <button
+                        type="button"
+                        onClick={() => setCatalogRetry((n) => n + 1)}
+                        className="font-semibold underline"
+                      >
+                        {cov.retry}
+                      </button>
+                    </p>
+                  ) : declaredProviders.length === 0 && catalog ? (
+                    <p className="text-xs text-[var(--color-text-muted)]">{cov.noProviders}</p>
+                  ) : (
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <label className="block">
+                        <span className="gh-field-label text-xs font-semibold text-[var(--color-text-body)]" data-required>
+                          {cov.providerLabel}
+                        </span>
+                        <select
+                          value={declaredProviderId}
+                          onChange={(e) => setDeclaredProviderId(e.target.value)}
+                          className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+                        >
+                          <option value="">{cov.providerPlaceholder}</option>
+                          {declaredProviders.map((p) => (
+                            <option key={p.id} value={p.id}>
+                              {p.name}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+
+                      <label className="block">
+                        <span className="gh-field-label text-xs font-semibold text-[var(--color-text-body)]" data-required>
+                          {cov.cardLabel}
+                        </span>
+                        <input
+                          type="text"
+                          value={insurancePolicyNumber}
+                          onChange={(e) => setInsurancePolicyNumber(e.target.value)}
+                          maxLength={120}
+                          autoComplete="off"
+                          placeholder={cov.cardPlaceholder || i18n.insurancePolicyPlaceholder}
+                          className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+                        />
+                        <p className="mt-1 text-xs text-[var(--color-text-muted)]">{cov.cardHint}</p>
+                      </label>
+                    </div>
+                  )}
+
+                  {/* The covered price, where we can state it truthfully: an
+                    * insurance rate is per service and already in hand. Every
+                    * other card is priced server-side at the next step. */}
+                  {insuranceActive ? (
+                    <p className="text-xs font-semibold" style={{ color: "var(--color-brand-primary)" }}>
+                      {insurer!.name} —{" "}
+                      {formatPriceRounded(
+                        insurer!.insurancePriceCents,
+                        selectedSlot?.currencyCode ?? "EUR",
+                      )}
+                    </p>
+                  ) : null}
+                  <p className="text-xs text-[var(--color-text-muted)]">{cov.priceNote}</p>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
+      {/* 4. Patient address — required when the country's BookingSetting
         * has requireAddress on. Snapshotted onto the appointment so the
         * clinical record + any prescription dispatch has the address as
         * it stood at booking, even if the patient later edits their
@@ -1312,19 +1587,18 @@ export function ConsultationBookingForm({
           * to a signed-in patient booking for themselves. Defaults on when the
           * profile had no address, off when it was prefilled (already saved). */}
         {me && !treatingOther ? (
-          <label className="mt-4 flex items-center gap-2 text-sm text-[var(--color-text-body)]">
-            <input
-              type="checkbox"
+          <div className="mt-4">
+            <ToggleSwitch
+              id="save-address"
               checked={saveAddress}
-              onChange={(e) => setSaveAddress(e.target.checked)}
-              className="size-4 rounded border-[var(--color-border)]"
+              onChange={setSaveAddress}
+              label={i18n.saveAddressToProfile}
             />
-            {i18n.saveAddressToProfile}
-          </label>
+          </div>
         ) : null}
       </div>
 
-      {/* 4. Consent — every required tick grouped in one place at the end of
+      {/* 5. Consent — every required tick grouped in one place at the end of
         * the form (moved off the Patient Details card) so a patient scanning
         * top-to-bottom hits them all together instead of missing one buried
         * earlier. Clinic sharing + platform processing + cross-border access
@@ -1342,7 +1616,7 @@ export function ConsultationBookingForm({
             name="consent"
             required
             aria-required="true"
-            className="mt-0.5 size-4 rounded border-[var(--color-border)]"
+            className="mt-0.5 size-4 shrink-0 rounded border-[var(--color-border)]"
           />
           <span>{i18n.consentStatement}</span>
         </label>
@@ -1352,7 +1626,7 @@ export function ConsultationBookingForm({
             name="gdprCombinedConsent"
             required
             aria-required="true"
-            className="mt-0.5 size-4 rounded border-[var(--color-border)]"
+            className="mt-0.5 size-4 shrink-0 rounded border-[var(--color-border)]"
           />
           <span>
             {i18n.gdprCombinedConsent} {privacyPolicyLink}
@@ -1365,7 +1639,7 @@ export function ConsultationBookingForm({
           <input
             type="checkbox"
             name="whatsappOptIn"
-            className="mt-0.5 size-4 rounded border-[var(--color-border)]"
+            className="mt-0.5 size-4 shrink-0 rounded border-[var(--color-border)]"
           />
           <span>{i18n.whatsappConsent}</span>
         </label>

@@ -348,6 +348,28 @@
     "patientReviews": "Patientenbewertungen"
   },
   "bookingForm": {
+    "coverage": {
+      "toggleLabel": "Ich habe eine Versicherung, Mitgliedschaft oder einen Gesundheitsplan",
+      "toggleHint": "Nutzen Sie Ihre Kostenübernahme für diese Buchung. Wir prüfen Ihre Karte vor jeder Zahlung.",
+      "accountOption": "Bereits mit meinem Konto verknüpfte Kostenübernahme nutzen",
+      "declareOption": "Karte manuell eingeben",
+      "categoryLabel": "Art der Kostenübernahme",
+      "categoryInsurance": "Versicherung",
+      "categoryCorporate": "Betriebliche Gesundheitsversorgung",
+      "categoryMembership": "Mitgliedschaft",
+      "categoryPublicPlan": "Global-Health-Gesundheitsplan",
+      "providerLabel": "Anbieter",
+      "providerPlaceholder": "Anbieter auswählen",
+      "cardLabel": "Karten- / Policennummer",
+      "cardPlaceholder": "Genau wie auf Ihrer Karte aufgedruckt",
+      "cardHint": "Wir prüfen dies manuell, bevor wir eine Zahlung einziehen.",
+      "noProviders": "Für dieses Land sind noch keine Anbieter eingerichtet.",
+      "loadError": "Die Optionen zur Kostenübernahme konnten nicht geladen werden.",
+      "retry": "Erneut versuchen",
+      "providerRequired": "Wählen Sie Ihren Anbieter aus, um fortzufahren.",
+      "cardRequired": "Geben Sie die Karten- oder Policennummer für die gewählte Kostenübernahme ein.",
+      "priceNote": "Wir reservieren Ihren Termin jetzt. Nach Prüfung Ihrer Karte erhalten Sie per E-Mail und WhatsApp einen sicheren Zahlungslink zu Ihrem übernommenen Preis."
+    },
     "benefitToggleLabel": "Ich habe eine Mitgliedschaft, Versicherung oder einen Plan",
     "benefitHeading": "Welche sollen wir anwenden?",
     "benefitNoneFound": "Wir haben in Ihrem Konto keine Mitgliedschaft, keinen Plan und keine Versicherung gefunden.",

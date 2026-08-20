@@ -56,6 +56,18 @@ export type AddItemInput = {
   /** The patient's insurance card / policy number (stored encrypted). */
   insurancePolicyNumber?: string;
   /**
+   * Self-declared coverage from the booking form's coverage picker: the
+   * category, the provider the patient picked out of the admin catalogue, and
+   * the number on their card. Unverified by definition — the server re-derives
+   * the price from the card and parks the order for manual verification, so
+   * nothing here decides what is charged.
+   */
+  declaredCoverage?: {
+    source: "INSURANCE" | "CORPORATE" | "MEMBERSHIP" | "PUBLIC_PLAN";
+    refId: string;
+    cardNumber: string;
+  };
+  /**
    * Cart-level benefit choice (§11.4) — which pricing engine checkout runs.
    * Sent here rather than by a separate call so a line can never exist without
    * the benefit that prices it. Ignored for guests, who hold none.

@@ -26,6 +26,7 @@ import {
   loadValidatedInsurancePrice,
   isDoctorInInsuranceNetwork,
 } from "../modules/pricing/insurance-pricing.service.js";
+import { resolveDeclaredCoverage } from "../modules/benefits/declared-coverage.service.js";
 import { isLineSellableInCommissionMarket } from "../modules/orders/commission.service.js";
 import { encryptPhi } from "../lib/crypto/phi-crypto.js";
 
@@ -71,6 +72,28 @@ const benefitSelectionSchema = z.enum([
   "USE_PLAN_DISCOUNT",
 ]);
 
+/**
+ * Patient-facing sentence for a declaration that could not be priced. Each
+ * reason has its own fix, so they must not collapse into one "invalid card":
+ * a wrong number is retyped, an uncovered service needs a different payment
+ * choice, and a credits-only plan needs the account linking instead.
+ */
+function declaredCoverageMessage(
+  reason: "UNKNOWN_PROVIDER" | "CARD_NOT_RECOGNISED" | "NO_BENEFIT_FOR_SERVICE" | "ACCOUNT_LINK_REQUIRED",
+): string {
+  switch (reason) {
+    case "UNKNOWN_PROVIDER":
+      return "That provider is no longer available. Please pick another option.";
+    case "CARD_NOT_RECOGNISED":
+      return "We could not find that card number with the provider you selected. Check the number and try again.";
+    case "ACCOUNT_LINK_REQUIRED":
+      return "This plan's benefit is tied to your account. Sign in with the account that holds the plan to use it.";
+    case "NO_BENEFIT_FOR_SERVICE":
+    default:
+      return "Your selected cover does not include this service. You can continue at the standard price.";
+  }
+}
+
 const cartQuerySchema = z.object({
   // .catch(undefined): unknown locale falls back to the country default
   // (see services.route.ts countryQuerySchema for the same pattern).
@@ -115,6 +138,26 @@ const addItemBodySchema = z.object({
    */
   insuranceCompanyId: z.string().min(1).max(120).optional(),
   insurancePolicyNumber: z.string().trim().max(120).optional().or(z.literal("")),
+  /**
+   * Self-declared coverage from the booking form's coverage picker: a category,
+   * a provider the admin configured, and the card number printed on the
+   * patient's card. Unlike `benefit` below — which may only ever name something
+   * the ACCOUNT already holds — this is an unverified claim, so every line
+   * carrying one is parked for manual verification at checkout before a cent
+   * moves.
+   *
+   * `INSURANCE` here is a convenience for the picker: it is mapped straight
+   * onto `insuranceCompanyId` / `insurancePolicyNumber` above so the insurance
+   * lifecycle (network gate, payout, admin-notify recipients) stays the one
+   * that runs, unchanged.
+   */
+  declaredCoverage: z
+    .object({
+      source: z.enum(["INSURANCE", "CORPORATE", "MEMBERSHIP", "PUBLIC_PLAN"]),
+      refId: z.string().trim().min(1).max(120),
+      cardNumber: z.string().trim().min(1).max(120),
+    })
+    .optional(),
   /**
    * Cart-level benefit choice (§11.4). Carried here rather than by a separate
    * call, so there is no window in which a line exists without the benefit that
@@ -754,11 +797,22 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       }
       const queryParse = cartQuerySchema.safeParse(request.query);
       const requestedLocale = queryParse.success ? queryParse.data.locale : undefined;
-      const { kind, healthTestId, serviceId, quantity, timeSlotId, doctorId, patient, benefitSelection, familyMemberId, insuranceCompanyId, insurancePolicyNumber, benefit } =
+      const { kind, healthTestId, serviceId, quantity, timeSlotId, doctorId, patient, benefitSelection, familyMemberId, insuranceCompanyId, insurancePolicyNumber, benefit, declaredCoverage } =
         body.data;
       const qty = quantity ?? 1;
-      const insuranceCompanyIdValue = insuranceCompanyId?.trim() || null;
-      const insurancePolicyValue = insurancePolicyNumber?.trim() || null;
+      // A declared INSURANCE coverage is the same thing the legacy insurance
+      // step sends, so it collapses onto the existing columns rather than
+      // opening a second insurance code path.
+      const declaredInsurance = declaredCoverage?.source === "INSURANCE" ? declaredCoverage : null;
+      const insuranceCompanyIdValue =
+        (declaredInsurance?.refId ?? insuranceCompanyId)?.trim() || null;
+      const insurancePolicyValue =
+        (declaredInsurance?.cardNumber ?? insurancePolicyNumber)?.trim() || null;
+      /** Membership / corporate / health-plan declarations — the new columns. */
+      const declaredOther =
+        declaredCoverage && declaredCoverage.source !== "INSURANCE" ? declaredCoverage : null;
+      /** Resolved coverage price, set by the pricing block below. */
+      let declaredPriceCents: number | null = null;
 
       // Consultation kinds require the patient intake snapshot up
       // front — the consult page collects it before add-to-cart so
@@ -972,6 +1026,39 @@ const cartRoute: FastifyPluginAsync = async (app) => {
               unitPriceCents = insurancePrice;
             }
 
+            // Declared membership / corporate / health-plan coverage. Priced
+            // from the admin's own configuration for the card the patient
+            // typed, against the SAME peak-adjusted price they were shown. A
+            // declaration that cannot be priced is a hard 400 naming the
+            // reason — never a silent fall-through to the standard price the
+            // patient did not agree to.
+            if (declaredOther) {
+              const resolved = await resolveDeclaredCoverage({
+                source: declaredOther.source,
+                refId: declaredOther.refId,
+                cardNumber: declaredOther.cardNumber,
+                service: {
+                  id: svc.id,
+                  countryId: svc.countryId,
+                  kind: svc.kind,
+                  currencyCode: svc.currencyCode ?? svc.country.currency.code,
+                },
+                fullPriceCents: unitPriceCents,
+                locale: requestedLocale ?? null,
+              });
+              if (!resolved.ok) {
+                return reply
+                  .status(400)
+                  .send(
+                    errorResponse(declaredCoverageMessage(resolved.reason), {
+                      declaredCoverage: resolved.reason,
+                    }),
+                  );
+              }
+              unitPriceCents = resolved.unitPriceCents;
+              declaredPriceCents = resolved.unitPriceCents;
+            }
+
             // Commission markets (Brazil): our receipt bills the commission,
             // which is price − doctor payout. With no payout configured the
             // commission would silently be the FULL price and the doctor would
@@ -1156,24 +1243,29 @@ const cartRoute: FastifyPluginAsync = async (app) => {
           );
       }
 
-      // Insurance is booked ALONE. An insurance consultation goes through a
-      // manual card-verification flow (no instant checkout), so it can't share
-      // a cart with pay-now items — and a cart that already holds an insurance
-      // line can't take anything else. Either direction is a 409 asking the
-      // patient to clear the cart first.
-      const cartHasInsurance = cart.items.some((i) => i.insuranceCompanyId);
-      if (insuranceCompanyIdValue && cart.items.length > 0) {
+      // A declared-coverage booking is made ALONE. It goes through a manual
+      // card-verification flow (no instant checkout), so it can't share a cart
+      // with pay-now items — and a cart that already holds one can't take
+      // anything else. Either direction is a 409 asking the patient to clear
+      // the cart first. Applies to every declared source, not just insurance:
+      // the parked-order gate at checkout is one flag for the whole order, so
+      // a mixed cart would strand the pay-now lines behind a verification.
+      const cartHasCoverage = cart.items.some(
+        (i) => i.insuranceCompanyId || i.declaredCoverageSource,
+      );
+      const addingCoverage = Boolean(insuranceCompanyIdValue || declaredOther);
+      if (addingCoverage && cart.items.length > 0) {
         return reply.status(409).send(
           errorResponse(
-            "An insurance consultation must be booked on its own. Clear your cart first, then add the insurance booking.",
+            "A booking that uses insurance, a membership or a plan card must be made on its own. Clear your cart first, then add this booking.",
             { conflict: "insurance_must_be_alone" },
           ),
         );
       }
-      if (cartHasInsurance) {
+      if (cartHasCoverage) {
         return reply.status(409).send(
           errorResponse(
-            "Your cart has an insurance consultation awaiting verification. Check out or clear it before adding other items.",
+            "Your cart has a booking awaiting card verification. Check out or clear it before adding other items.",
             { conflict: "cart_has_insurance" },
           ),
         );
@@ -1342,6 +1434,14 @@ const cartRoute: FastifyPluginAsync = async (app) => {
                 ? encryptPhi(insurancePolicyValue)
                 : null,
             insurancePriceCents: isConsultation && insuranceCompanyIdValue ? unitPriceCents : null,
+            // Declared membership / corporate / health-plan coverage. Card
+            // number encrypted like the insurance policy number — it is a
+            // membership identifier tied to a named patient.
+            declaredCoverageSource: isConsultation && declaredOther ? declaredOther.source : null,
+            declaredCoverageRefId: isConsultation && declaredOther ? declaredOther.refId : null,
+            declaredCoverageCardNumber:
+              isConsultation && declaredOther ? encryptPhi(declaredOther.cardNumber) : null,
+            declaredCoveragePriceCents: isConsultation ? declaredPriceCents : null,
           },
         });
       } catch (err) {

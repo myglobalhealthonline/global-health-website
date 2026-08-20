@@ -348,6 +348,28 @@
     "patientReviews": "Avaliações de pacientes"
   },
   "bookingForm": {
+    "coverage": {
+      "toggleLabel": "Tenho seguro, adesão ou plano de saúde",
+      "toggleHint": "Aplique a sua cobertura a esta marcação. Verificamos o seu cartão antes de qualquer pagamento.",
+      "accountOption": "Usar a cobertura já associada à minha conta",
+      "declareOption": "Introduzir um cartão manualmente",
+      "categoryLabel": "Tipo de cobertura",
+      "categoryInsurance": "Seguro",
+      "categoryCorporate": "Saúde empresarial",
+      "categoryMembership": "Adesão",
+      "categoryPublicPlan": "Plano de saúde Global Health",
+      "providerLabel": "Entidade",
+      "providerPlaceholder": "Selecione a sua entidade",
+      "cardLabel": "Número do cartão / apólice",
+      "cardPlaceholder": "Tal como está impresso no cartão",
+      "cardHint": "Verificamos manualmente antes de cobrar.",
+      "noProviders": "Ainda não há entidades configuradas para este país.",
+      "loadError": "Não foi possível carregar as opções de cobertura.",
+      "retry": "Tentar novamente",
+      "providerRequired": "Selecione a sua entidade para continuar.",
+      "cardRequired": "Introduza o número do cartão ou da apólice da cobertura selecionada.",
+      "priceNote": "Reservamos já o seu horário. Assim que o cartão for verificado, receberá por email e WhatsApp um link de pagamento seguro com o preço coberto."
+    },
     "benefitToggleLabel": "Tenho uma adesão, seguro ou plano",
     "benefitHeading": "Qual devemos aplicar?",
     "benefitNoneFound": "Não encontrámos qualquer adesão, plano ou seguro na sua conta.",

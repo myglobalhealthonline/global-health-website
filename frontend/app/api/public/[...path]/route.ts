@@ -18,6 +18,9 @@ const ALLOWED_PATHS: Record<string, Set<string>> = {
     "reviews/rate",
     "patient-upload",
     "cross-border-rx-consent",
+    // Coverage catalogue for the booking form's cover picker — names + ids of
+    // admin-configured insurers / employers / membership + health plans.
+    "coverage-catalog",
   ]),
   POST: new Set([
     "brazil-consent/submit",

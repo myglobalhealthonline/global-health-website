@@ -348,6 +348,28 @@
     "patientReviews": "Recenzii ale pacienților"
   },
   "bookingForm": {
+    "coverage": {
+      "toggleLabel": "Am asigurare, abonament sau plan de sănătate",
+      "toggleHint": "Aplică acoperirea la această programare. Verificăm cardul înainte de orice plată.",
+      "accountOption": "Folosește acoperirea deja asociată contului meu",
+      "declareOption": "Introdu un card manual",
+      "categoryLabel": "Tip de acoperire",
+      "categoryInsurance": "Asigurare",
+      "categoryCorporate": "Sănătate corporativă",
+      "categoryMembership": "Abonament",
+      "categoryPublicPlan": "Plan de sănătate Global Health",
+      "providerLabel": "Furnizor",
+      "providerPlaceholder": "Selectează furnizorul",
+      "cardLabel": "Număr card / poliță",
+      "cardPlaceholder": "Așa cum apare pe card",
+      "cardHint": "Verificăm manual înainte de a încasa plata.",
+      "noProviders": "Încă nu există furnizori configurați pentru această țară.",
+      "loadError": "Nu am putut încărca opțiunile de acoperire.",
+      "retry": "Încearcă din nou",
+      "providerRequired": "Selectează furnizorul pentru a continua.",
+      "cardRequired": "Introdu numărul cardului sau al poliței pentru acoperirea selectată.",
+      "priceNote": "Îți rezervăm ora acum. După verificarea cardului primești pe e-mail și WhatsApp un link de plată securizat, la prețul acoperit."
+    },
     "benefitToggleLabel": "Am un abonament, o asigurare sau un plan",
     "benefitHeading": "Pe care să îl aplicăm?",
     "benefitNoneFound": "Nu am găsit niciun abonament, plan sau asigurare în contul dumneavoastră.",

@@ -3,6 +3,7 @@ import { prisma } from "../../db/prisma.js";
 import { percentDiscountAmountCents } from "../subscriptions/pricing-resolver.js";
 import {
   companyIsLive,
+  getActiveMembershipByCardNumber,
   getActiveMembershipForUser,
 } from "./corporate-shared.js";
 
@@ -297,6 +298,63 @@ export async function resolveCorporateDiscount(input: {
     rules,
     contractYearStart(membership.company.contractStartAt),
   );
+  const picked = pickRule(rules, {
+    serviceId: input.serviceId,
+    serviceKind: input.serviceKind,
+    baseCents: input.baseCents,
+    memberType: membership.memberType,
+    copayUsable: copayApplies(membership.company.plan.currencyCode, input.currencyCode),
+    exhausted: makeExhaustedTest(rules, used, new Map()),
+  });
+  if (!picked) return null;
+
+  const discount = toDiscount(picked, input.baseCents, membership, membership.memberType);
+  return discount.discountCents > 0 ? discount : null;
+}
+
+/**
+ * Card-keyed sibling of `resolveCorporateDiscount`, for the booking form's
+ * coverage picker: the patient names their employer and types the card number
+ * printed on their benefit card, with no account link required.
+ *
+ * Rule matching, co-pay clamping and annual limits are the same engine — only
+ * the membership lookup differs — so a declared card can never price a line the
+ * logged-in path would price differently.
+ *
+ * `companyId` is what the patient picked from the catalogue. A card belonging
+ * to a different company is a mismatch, not a fallback: silently pricing under
+ * the card's real employer would show a discount the patient never chose.
+ */
+export async function resolveCorporateDiscountForCard(input: {
+  cardNumber: string;
+  companyId: string;
+  serviceId: string;
+  serviceKind: ServiceKind;
+  baseCents: number;
+  currencyCode?: string | null;
+}): Promise<CorporateDiscount | null> {
+  if (input.baseCents <= 0) return null;
+  if (input.serviceKind !== "GENERAL" && input.serviceKind !== "SPECIALIST") return null;
+  const membership = await getActiveMembershipByCardNumber(input.cardNumber);
+  if (!membership || membership.company.id !== input.companyId) return null;
+
+  const rules: RuleRow[] = await prisma.corporateBenefitRule.findMany({
+    where: { corporatePlanId: membership.company.planId, isActive: true },
+    select: RULE_SELECT,
+  });
+  if (rules.length === 0) return null;
+
+  // Usage is counted per platform account, so an unlinked card has no history
+  // to count. ponytail: treat it as unused here — the admin re-checks the
+  // limit when they verify the declaration, before any money moves.
+  const used = membership.linkedUserId
+    ? await loadUsage(
+        membership.linkedUserId,
+        rules,
+        contractYearStart(membership.company.contractStartAt),
+      )
+    : new Map<string, number>();
+
   const picked = pickRule(rules, {
     serviceId: input.serviceId,
     serviceKind: input.serviceKind,

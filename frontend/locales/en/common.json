@@ -348,6 +348,28 @@
     "patientReviews": "Patient reviews"
   },
   "bookingForm": {
+    "coverage": {
+      "toggleLabel": "I have insurance, a membership or a healthcare plan",
+      "toggleHint": "Apply your cover to this booking. We check your card before any payment is taken.",
+      "accountOption": "Use cover already on my account",
+      "declareOption": "Enter a card manually",
+      "categoryLabel": "Type of cover",
+      "categoryInsurance": "Insurance",
+      "categoryCorporate": "Corporate healthcare",
+      "categoryMembership": "Membership",
+      "categoryPublicPlan": "Global Health healthcare plan",
+      "providerLabel": "Provider",
+      "providerPlaceholder": "Select your provider",
+      "cardLabel": "Card / policy number",
+      "cardPlaceholder": "As printed on your card",
+      "cardHint": "We verify this manually before taking payment.",
+      "noProviders": "No providers are set up for this country yet.",
+      "loadError": "We couldn't load the cover options.",
+      "retry": "Try again",
+      "providerRequired": "Select your provider to continue.",
+      "cardRequired": "Enter the card or policy number for the cover you selected.",
+      "priceNote": "We reserve your time now. Once your card is verified you'll get a secure payment link by email and WhatsApp at your covered price."
+    },
     "benefitToggleLabel": "I have a membership, insurance or plan",
     "benefitHeading": "Which one should we apply?",
     "benefitNoneFound": "We couldn't find a membership, plan or insurance on your account.",

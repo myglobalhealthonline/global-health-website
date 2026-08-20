@@ -348,6 +348,28 @@
     "patientReviews": "Opiniones de pacientes"
   },
   "bookingForm": {
+    "coverage": {
+      "toggleLabel": "Tengo seguro, membresía o plan de salud",
+      "toggleHint": "Aplica tu cobertura a esta reserva. Comprobamos tu tarjeta antes de cobrar.",
+      "accountOption": "Usar la cobertura ya vinculada a mi cuenta",
+      "declareOption": "Introducir una tarjeta manualmente",
+      "categoryLabel": "Tipo de cobertura",
+      "categoryInsurance": "Seguro",
+      "categoryCorporate": "Salud corporativa",
+      "categoryMembership": "Membresía",
+      "categoryPublicPlan": "Plan de salud Global Health",
+      "providerLabel": "Entidad",
+      "providerPlaceholder": "Selecciona tu entidad",
+      "cardLabel": "Número de tarjeta / póliza",
+      "cardPlaceholder": "Tal como aparece en tu tarjeta",
+      "cardHint": "Lo verificamos manualmente antes de cobrar.",
+      "noProviders": "Todavía no hay entidades configuradas para este país.",
+      "loadError": "No pudimos cargar las opciones de cobertura.",
+      "retry": "Reintentar",
+      "providerRequired": "Selecciona tu entidad para continuar.",
+      "cardRequired": "Introduce el número de tarjeta o póliza de la cobertura seleccionada.",
+      "priceNote": "Reservamos tu hora ahora. Cuando verifiquemos tu tarjeta recibirás por email y WhatsApp un enlace de pago seguro con tu precio cubierto."
+    },
     "benefitToggleLabel": "Tengo una membresía, un seguro o un plan",
     "benefitHeading": "¿Cuál aplicamos?",
     "benefitNoneFound": "No encontramos ninguna membresía, plan ni seguro en su cuenta.",

@@ -363,6 +363,35 @@ export type CommonLocale = {
     patientReviews: string;
   };
   bookingForm: {
+    /**
+     * Coverage picker — the toggle that reveals it, the four categories, and
+     * the provider + card fields inside. Distinct from the `benefit*` keys
+     * below, which describe cover ALREADY on the account (no card needed).
+     */
+    coverage: {
+      toggleLabel: string;
+      toggleHint: string;
+      accountOption: string;
+      declareOption: string;
+      categoryLabel: string;
+      categoryInsurance: string;
+      categoryCorporate: string;
+      categoryMembership: string;
+      categoryPublicPlan: string;
+      providerLabel: string;
+      providerPlaceholder: string;
+      cardLabel: string;
+      cardPlaceholder: string;
+      cardHint: string;
+      /** Chosen category has nothing configured for this country. */
+      noProviders: string;
+      loadError: string;
+      retry: string;
+      providerRequired: string;
+      cardRequired: string;
+      /** Reassurance under the card field — the price lands at the next step. */
+      priceNote: string;
+    };
     /** Benefit selector (§11.2) — the toggle, then the dropdown's own label. */
     benefitToggleLabel: string;
     benefitHeading: string;

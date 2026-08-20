@@ -62,6 +62,9 @@ type AdminOrder = {
   trackingUrl: string | null;
   insurance: {
     verificationStatus: string;
+    /** Which cover the card belongs to — insurance, or one of the three
+     *  declared sources the booking form's cover picker offers. */
+    source?: "INSURANCE" | "MEMBERSHIP" | "CORPORATE" | "PUBLIC_PLAN";
     companyId: string | null;
     companyName: string | null;
     policyNumber: string | null;

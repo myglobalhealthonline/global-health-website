@@ -182,3 +182,29 @@ export async function uploadPatientFile(token: string, file: File) {
     return { ok: false as const, message: "Upload failed" };
   }
 }
+
+/** One admin-configured provider inside a coverage category. */
+export type CoverageProvider = { id: string; name: string };
+
+/**
+ * The coverage catalogue for a market: what an admin has configured under each
+ * of the four categories the booking form offers. Names + ids only — what a
+ * given card is worth is decided server-side at add-to-cart, never here.
+ */
+export type CoverageCatalog = {
+  insurance: CoverageProvider[];
+  corporate: CoverageProvider[];
+  membership: CoverageProvider[];
+  publicPlan: CoverageProvider[];
+};
+
+export function fetchCoverageCatalog(args: {
+  country: string;
+  serviceId?: string | null;
+  locale?: string | null;
+}) {
+  const params = new URLSearchParams({ country: args.country });
+  if (args.serviceId) params.set("serviceId", args.serviceId);
+  if (args.locale) params.set("locale", args.locale);
+  return publicFetch<CoverageCatalog>(`/api/public/coverage-catalog?${params.toString()}`);
+}
