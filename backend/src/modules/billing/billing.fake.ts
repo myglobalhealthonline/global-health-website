@@ -89,6 +89,24 @@ export class FakeBillingPort implements BillingPort {
     };
   }
 
+  async createSubscriptionPaymentLink(input: {
+    priceId: string;
+    metadata: Record<string, string>;
+    returnUrl: string;
+  }): Promise<{ url: string; paymentLinkId: string }> {
+    const paymentLinkId = this.nextId("plink");
+    return {
+      paymentLinkId,
+      url: `https://fake-billing.local/pay/${paymentLinkId}?return=${encodeURIComponent(
+        input.returnUrl,
+      )}`,
+    };
+  }
+
+  async deactivatePaymentLink(): Promise<void> {
+    // Nothing to deactivate in-memory — fake links are inert.
+  }
+
   async createBillingPortalSession(input: {
     customerId: string;
     returnUrl: string;

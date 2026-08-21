@@ -13,6 +13,7 @@ import type {
   BillingSubscriptionView,
   CreatePriceInput,
   CreateSubscriptionCheckoutInput,
+  CreateSubscriptionPaymentLinkInput,
   EnsureProductInput,
   FindOrCreateCustomerInput,
   SchedulePlanChangeInput,
@@ -167,6 +168,40 @@ export class StripeBillingPort implements BillingPort {
       ...(input.trialEnd ? { payment_method_collection: "always" as const } : {}),
     });
     return { url: session.url ?? "", sessionId: session.id };
+  }
+
+  async createSubscriptionPaymentLink(
+    input: CreateSubscriptionPaymentLinkInput,
+  ): Promise<{ url: string; paymentLinkId: string }> {
+    assertDefaultStripeAccount(input.countryCode, "subscription payment link");
+    const stripe = getStripeClient();
+    const link = await stripe.paymentLinks.create({
+      line_items: [{ price: input.priceId, quantity: 1 }],
+      // The link creates its own customer, so the ONLY thread back to the
+      // membership this payment belongs to is the metadata copied onto the
+      // resulting subscription. Without it the webhook cannot tell this apart
+      // from a brand-new signup and would strand the payment.
+      subscription_data: { metadata: input.metadata },
+      metadata: input.metadata,
+      // A mailed link is addressed to ONE person. Capping completed sessions
+      // stops a forwarded or leaked URL from becoming an open subscribe button
+      // that bills strangers against this membership.
+      restrictions: { completed_sessions: { limit: input.maxCompletions ?? 1 } },
+      after_completion: { type: "redirect", redirect: { url: input.returnUrl } },
+      // VAT removed from subscription plans — never apply Stripe Tax (D21).
+      automatic_tax: { enabled: false },
+    });
+    return { url: link.url, paymentLinkId: link.id };
+  }
+
+  async deactivatePaymentLink(paymentLinkId: string): Promise<void> {
+    const stripe = getStripeClient();
+    try {
+      await stripe.paymentLinks.update(paymentLinkId, { active: false });
+    } catch (err) {
+      // Already gone / unknown id — the link cannot accept payments either way.
+      if (!isResourceMissing(err)) throw err;
+    }
   }
 
   async cancelActiveSubscriptionsForCustomer(

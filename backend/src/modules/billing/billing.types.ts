@@ -68,6 +68,33 @@ export interface CreateSubscriptionCheckoutInput {
   trialEnd?: Date | null;
 }
 
+/**
+ * A REUSABLE subscription payment link (Stripe Payment Link), for the cases a
+ * 24-hour Checkout Session cannot cover — e.g. emailing a legacy member a link
+ * that must stay alive for several days.
+ *
+ * Unlike Checkout, the provider mints its OWN customer when the link is used,
+ * so the link cannot be pinned to a customer we already hold. Carry the
+ * internal subscription id in `metadata` instead: it lands on the resulting
+ * provider Subscription, which is how the webhook re-attaches the payment to
+ * the membership it belongs to.
+ */
+export interface CreateSubscriptionPaymentLinkInput {
+  priceId: string;
+  /** Copied onto the created subscription. MUST carry `internalSubId`. */
+  metadata: Record<string, string>;
+  /** Where the payer lands after paying. */
+  returnUrl: string;
+  /** Plan's country — pins the page language. */
+  countryCode?: string | null;
+  /**
+   * How many completed payments the link accepts before it stops working.
+   * Defaults to 1: a link mailed to one member must not become a public
+   * subscribe button if it is forwarded or leaks.
+   */
+  maxCompletions?: number;
+}
+
 export interface BillingPortalInput {
   customerId: string;
   returnUrl: string;
@@ -133,6 +160,18 @@ export interface BillingPort {
   cancelActiveSubscriptionsForCustomer(
     customerId: string,
   ): Promise<{ canceled: number; skippedPaid: number }>;
+
+  /**
+   * Mint a reusable payment link (see CreateSubscriptionPaymentLinkInput).
+   * Prefer `createSubscriptionCheckout` for normal flows — this exists for
+   * out-of-band collection where the 24h session lifetime is too short.
+   */
+  createSubscriptionPaymentLink(
+    input: CreateSubscriptionPaymentLinkInput,
+  ): Promise<{ url: string; paymentLinkId: string }>;
+
+  /** Stop a payment link accepting further payments. Idempotent. */
+  deactivatePaymentLink(paymentLinkId: string): Promise<void>;
 
   createBillingPortalSession(
     input: BillingPortalInput,

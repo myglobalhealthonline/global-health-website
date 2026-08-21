@@ -115,12 +115,16 @@ async function main(): Promise<void> {
   const commit = process.argv.includes("--commit");
   const checkoutOnly = process.argv.includes("--checkout-only");
   const skipCheckout = process.argv.includes("--no-checkout");
+  // Reusable link instead of a 24h Checkout session — for mailing a member a
+  // link that has to survive several days.
+  const paymentLinkMode = process.argv.includes("--payment-link");
 
   const { prisma } = await import("../src/db/prisma.js");
   const { getBillingPort } = await import("../src/modules/billing/billing.factory.js");
   const { syncPlanStripePrice } = await import(
     "../src/modules/billing/price-sync.service.js"
   );
+  const { isResourceMissing } = await import("../src/modules/billing/billing.stripe.js");
   const { captureSnapshot } = await import(
     "../src/modules/subscriptions/plan-snapshot.service.js"
   );
@@ -233,9 +237,7 @@ async function main(): Promise<void> {
     });
 
     const base = env.PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? "http://localhost:3000";
-    const checkout = await billing.createSubscriptionCheckout({
-      customerId: customer.customerId,
-      priceId: stripePriceId,
+    const checkoutParams = {
       successUrl: `${base}/account/membership?subscription=ok`,
       cancelUrl: `${base}/account/membership?subscription=cancelled`,
       automaticTax: false,
@@ -243,7 +245,33 @@ async function main(): Promise<void> {
       countryCode: country!.code,
       // Charge €0 today, first real invoice on the legacy anniversary.
       trialEnd: periodEnd,
-    });
+    };
+
+    let checkout;
+    try {
+      checkout = await billing.createSubscriptionCheckout({
+        customerId: customer.customerId,
+        priceId: stripePriceId,
+        ...checkoutParams,
+      });
+    } catch (err) {
+      // Stale/cross-account Price id — typically a TEST-mode price left on the
+      // plan row from seeding, rejected by a live key. Mint a fresh
+      // Product+Price on the CURRENT account and retry once, exactly as the
+      // patient subscribe flow does (subscription.service.ts).
+      if (!isResourceMissing(err)) throw err;
+      log("plan's Stripe price is not on this account — re-syncing a fresh one");
+      ({ stripePriceId } = await syncPlanStripePrice(plan!.id, { force: true }));
+      await prisma.userSubscription.update({
+        where: { id: subscriptionId },
+        data: { stripePriceId },
+      });
+      checkout = await billing.createSubscriptionCheckout({
+        customerId: customer.customerId,
+        priceId: stripePriceId,
+        ...checkoutParams,
+      });
+    }
 
     log("");
     log(`PAYMENT LINK (send to ${LEGACY.email}) — valid 24h, re-run --checkout-only for a fresh one:`);
@@ -254,8 +282,61 @@ async function main(): Promise<void> {
     );
   }
 
+  /**
+   * Reusable payment link. Unlike the Checkout session it does NOT defer the
+   * first charge: the member is billed the moment they complete it, and their
+   * renewal date becomes that day. That is the price of a link that outlives
+   * Stripe's 24h session cap — say so in whatever message carries the link.
+   */
+  async function mintPaymentLink7Day(subscriptionId: string): Promise<void> {
+    const billing = getBillingPort();
+    if (billing.driver !== "stripe") {
+      log("BILLING_DRIVER is not 'stripe' — skipping (nothing real to mint).");
+      return;
+    }
+    let stripePriceId = plan!.stripePriceId;
+    if (!stripePriceId || stripePriceId.includes("_fake_")) {
+      ({ stripePriceId } = await syncPlanStripePrice(plan!.id));
+    }
+    const base = env.PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? "http://localhost:3000";
+
+    let link;
+    try {
+      link = await billing.createSubscriptionPaymentLink({
+        priceId: stripePriceId,
+        metadata: { kind: "subscription", internalSubId: subscriptionId },
+        returnUrl: `${base}/account/membership?subscription=ok`,
+        countryCode: country!.code,
+      });
+    } catch (err) {
+      if (!isResourceMissing(err)) throw err;
+      log("plan's Stripe price is not on this account — re-syncing a fresh one");
+      ({ stripePriceId } = await syncPlanStripePrice(plan!.id, { force: true }));
+      await prisma.userSubscription.update({
+        where: { id: subscriptionId },
+        data: { stripePriceId },
+      });
+      link = await billing.createSubscriptionPaymentLink({
+        priceId: stripePriceId,
+        metadata: { kind: "subscription", internalSubId: subscriptionId },
+        returnUrl: `${base}/account/membership?subscription=ok`,
+        countryCode: country!.code,
+      });
+    }
+
+    log("");
+    log(`REUSABLE PAYMENT LINK (${link.paymentLinkId}) — no expiry; deactivate when done:`);
+    log(link.url);
+    log(`Charges ${(plan!.monthlyPriceCents / 100).toFixed(2)} ${plan!.currencyCode} IMMEDIATELY on completion.`);
+    log("Accepts ONE completed payment, then stops working.");
+  }
+
   if (checkoutOnly) {
     if (!existingSub) throw new Error("--checkout-only: no imported subscription found — run --commit first");
+    if (paymentLinkMode) {
+      await mintPaymentLink7Day(existingSub.id);
+      return;
+    }
     if (existingSub.stripeSubscriptionId) {
       log(
         `subscription already linked to Stripe ${existingSub.stripeSubscriptionId} — the card is ` +
