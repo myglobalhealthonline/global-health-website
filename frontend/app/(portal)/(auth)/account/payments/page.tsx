@@ -315,22 +315,30 @@ export default async function AccountPaymentsPage() {
       priority: 2,
       align: "right",
       desktopOnly: true,
-      render: (invoice) => {
-        const receiptUrl = invoice.hostedInvoiceUrl ?? invoice.pdfUrl;
-        return receiptUrl ? (
-          <a
-            href={receiptUrl}
+      // Points at OUR document, not Stripe's hosted invoice page, so a patient
+      // sees one consistent Global Health document in their market's language.
+      // Stripe is still the system of record for membership numbering and VAT —
+      // this is a presentation change only.
+      render: (invoice) => (
+        <span className="inline-flex items-center gap-3">
+          <Link
+            href={`/print/subscription-invoices/${invoice.id}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--portal-primary)] hover:underline"
           >
-            {inv.viewInvoice}
+            {a.payments.viewInvoice}
             <ExternalLink className="size-3.5" aria-hidden />
+          </Link>
+          <a
+            href={`/api/account/subscription-invoices/${invoice.id}/pdf`}
+            className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--portal-primary)] hover:underline"
+          >
+            {a.payments.downloadInvoice}
+            <Download className="size-3.5" aria-hidden />
           </a>
-        ) : (
-          <span className="text-xs text-[var(--portal-muted)]">—</span>
-        );
-      },
+        </span>
+      ),
     },
   ];
 
@@ -444,20 +452,26 @@ export default async function AccountPaymentsPage() {
               fields={invoiceFields}
               rows={invoices}
               getRowKey={(invoice) => invoice.id}
-              cardActions={(invoice) => {
-                const receiptUrl = invoice.hostedInvoiceUrl ?? invoice.pdfUrl;
-                return receiptUrl ? (
-                  <a
-                    href={receiptUrl}
+              cardActions={(invoice) => (
+                <>
+                  <Link
+                    href={`/print/subscription-invoices/${invoice.id}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] bg-[var(--portal-surface-elevated)] px-3 py-1.5 text-xs font-semibold text-[var(--portal-primary)]"
                   >
-                    {inv.viewInvoice}
+                    {a.payments.viewInvoice}
                     <ExternalLink className="size-3.5" aria-hidden />
+                  </Link>
+                  <a
+                    href={`/api/account/subscription-invoices/${invoice.id}/pdf`}
+                    className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] bg-[var(--portal-surface-elevated)] px-3 py-1.5 text-xs font-semibold text-[var(--portal-primary)]"
+                  >
+                    {a.payments.downloadInvoice}
+                    <Download className="size-3.5" aria-hidden />
                   </a>
-                ) : null;
-              }}
+                </>
+              )}
             />
           </div>
         </section>

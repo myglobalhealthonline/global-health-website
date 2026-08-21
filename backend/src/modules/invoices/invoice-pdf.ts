@@ -3,6 +3,7 @@ import { htmlToPdfBuffer } from "../generated-documents/html-document-renderer.j
 import { PDF_TOKENS as T, PDF_SANS, PDF_SERIF, pdfLogoDataUrl, pdfEcgRule } from "../../lib/pdf/brand.js";
 import { clinicAddressLines } from "../../lib/clinic-addresses.js";
 import { isCommissionCountry } from "../orders/commission.service.js";
+import { safeDecrypt } from "./invoice-detail.service.js";
 
 // ── i18n labels ───────────────────────────────────────────────────────────────
 
@@ -786,7 +787,9 @@ export async function buildInvoicePdfData(
         subtotalCents: commissionCents - order.shippingCents,
         shippingCents: order.shippingCents,
         paidAt: order.paidAt?.toISOString() ?? null,
-        taxIdNumber: profile?.taxIdNumber ?? null,
+        // PHI-encrypted column — raw reads printed the phi:v1: envelope onto
+        // the emailed PDF. See safeDecrypt in invoice-detail.service.ts.
+        taxIdNumber: safeDecrypt(profile?.taxIdNumber),
         consultationDate,
         items: buildCommissionLines(order.items, commissionCents, order.shippingCents, L),
       },
@@ -811,7 +814,8 @@ export async function buildInvoicePdfData(
       subtotalCents: order.subtotalCents,
       shippingCents: order.shippingCents,
       paidAt: order.paidAt?.toISOString() ?? null,
-      taxIdNumber: profile?.taxIdNumber ?? null,
+      // PHI-encrypted column — see safeDecrypt in invoice-detail.service.ts.
+      taxIdNumber: safeDecrypt(profile?.taxIdNumber),
       consultationDate,
       items: order.items.map((i) => ({
         name: i.name,

@@ -1,5 +1,6 @@
 import { prisma } from "../../db/prisma.js";
 import { isCommissionCountry } from "../orders/commission.service.js";
+import { decryptPhi } from "../../lib/crypto/phi-crypto.js";
 
 /**
  * The payload the printable invoice page renders — the document itself, its
@@ -15,6 +16,19 @@ import { isCommissionCountry } from "../orders/commission.service.js";
  * country scope + the S-031 medical-access guard; the public route serves it
  * unguarded by design (see that file for why).
  */
+
+/**
+ * Decrypt a PHI column for display. A key/ciphertext mismatch must not take
+ * the whole document down — an invoice missing its tax-ID line is recoverable,
+ * a 500 on every invoice is not.
+ */
+export function safeDecrypt(value: string | null | undefined): string | null {
+  try {
+    return decryptPhi(value ?? null);
+  } catch {
+    return null;
+  }
+}
 
 export type InvoiceDetailPayload = {
   invoice: {
@@ -211,7 +225,10 @@ export async function buildInvoiceDetailPayload(
       doctorPayoutTotalCents: invoice.order.doctorPayoutTotalCents,
       paymentStatus: invoice.order.paymentStatus,
       paidAt: invoice.order.paidAt?.toISOString() ?? null,
-      taxIdNumber: profile?.taxIdNumber ?? null,
+      // taxIdNumber is a PHI_ENCRYPTED_FIELDS column — reading it raw printed
+      // the "phi:v1:…" envelope onto the document where the tax number should
+      // be. decryptPhi passes plaintext/legacy values through unchanged.
+      taxIdNumber: safeDecrypt(profile?.taxIdNumber),
       consultationDate,
       items: invoice.order.items.map((i) => ({
         id: i.id,

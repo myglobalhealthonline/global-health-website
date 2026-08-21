@@ -1,10 +1,15 @@
-import type { FastifyPluginAsync } from "fastify";
+import type { FastifyPluginAsync, FastifyRequest, FastifyReply } from "fastify";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError, normalizeDbError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import type { SafeUser } from "../modules/auth/auth.service.js";
 import { isCommissionCountry } from "../modules/orders/commission.service.js";
+import {
+  buildSubscriptionInvoiceDetail,
+  buildSubscriptionInvoicePdfData,
+} from "../modules/invoices/subscription-invoice-document.service.js";
+import { renderInvoicePdfBuffer } from "../modules/invoices/invoice-pdf.js";
 
 /**
  * The signed-in patient's own Global Health billing documents — the invoices,
@@ -23,6 +28,39 @@ import { isCommissionCountry } from "../modules/orders/commission.service.js";
  * case-insensitively — order emails are not normalized on write.
  */
 const accountInvoicesRoute: FastifyPluginAsync = async (app) => {
+  /**
+   * Resolves the caller, or replies and returns null. ADMIN is allowed through
+   * alongside PATIENT for support work, matching account-payments.route.ts —
+   * but every query below is still scoped to the resolved user's own id, so an
+   * admin sees their own rows, never someone else's.
+   */
+  async function requirePatient(
+    request: FastifyRequest,
+    reply: FastifyReply,
+  ): Promise<SafeUser | null> {
+    let authUser: SafeUser | null = null;
+    try {
+      authUser = await resolveOptionalAuthUser(request);
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        reply.status(503).send(errorResponse(error.message));
+        return null;
+      }
+      app.log.error(error);
+      reply.status(500).send(errorResponse("Unexpected authentication error"));
+      return null;
+    }
+    if (!authUser) {
+      reply.status(401).send(errorResponse("Not authenticated"));
+      return null;
+    }
+    if (authUser.role !== "PATIENT" && authUser.role !== "ADMIN") {
+      reply.status(403).send(errorResponse("Forbidden"));
+      return null;
+    }
+    return authUser;
+  }
+
   app.get("/api/account/invoices", async (request, reply) => {
     let authUser: SafeUser | null = null;
     try {
@@ -141,6 +179,68 @@ const accountInvoicesRoute: FastifyPluginAsync = async (app) => {
       return reply.status(500).send(errorResponse("Could not load invoices"));
     }
   });
+
+  /**
+   * One membership charge, drawn as a Global Health document rather than
+   * Stripe's. Shaped identically to the order invoice payload so the printable
+   * page renders both through one component. Scoped to the caller's own
+   * subscription — unlike the order document, this is not link-shareable,
+   * because nothing of ours ever emails it.
+   */
+  app.get<{ Params: { id: string } }>(
+    "/api/account/subscription-invoices/:id",
+    async (request, reply) => {
+      const auth = await requirePatient(request, reply);
+      if (!auth) return;
+
+      try {
+        const payload = await buildSubscriptionInvoiceDetail(request.params.id, auth.id);
+        if (!payload) {
+          return reply.status(404).send(errorResponse("Invoice not found"));
+        }
+        const { patientProfileId: _omit, ...body } = payload;
+        return okResponse(body);
+      } catch (error) {
+        const normalized = normalizeDbError(error, "Could not load invoice");
+        if (normalized instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(normalized.message));
+        }
+        app.log.error(normalized);
+        return reply.status(500).send(errorResponse("Could not load invoice"));
+      }
+    },
+  );
+
+  /** The same membership document as a downloadable PDF. */
+  app.get<{ Params: { id: string } }>(
+    "/api/account/subscription-invoices/:id/pdf",
+    { config: { rateLimit: { max: 20, timeWindow: "10 minutes" } } },
+    async (request, reply) => {
+      const auth = await requirePatient(request, reply);
+      if (!auth) return;
+
+      try {
+        const built = await buildSubscriptionInvoicePdfData(request.params.id, auth.id);
+        if (!built) return reply.status(404).send(errorResponse("Invoice not found"));
+
+        const pdfBuffer = await renderInvoicePdfBuffer(built.data);
+        if (!pdfBuffer) {
+          return reply.status(500).send(errorResponse("Could not render document PDF"));
+        }
+        return reply
+          .header("Content-Type", "application/pdf")
+          .header("Content-Disposition", `attachment; filename="${built.filename}"`)
+          .send(pdfBuffer);
+      } catch (error) {
+        const normalized = normalizeDbError(error, "Could not generate document PDF");
+        if (normalized instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(normalized.message));
+        }
+        app.log.error(normalized);
+        return reply.status(500).send(errorResponse("Could not generate document PDF"));
+      }
+    },
+  );
 };
 
 export default accountInvoicesRoute;
