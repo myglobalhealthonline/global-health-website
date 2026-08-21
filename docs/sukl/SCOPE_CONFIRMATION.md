@@ -21,7 +21,34 @@ Last reviewed: 2026-08-04.
 | Scope of this build | ePoukaz only | Product decision, 2026-08-04 |
 | Cross-border eRecept | Out of scope, blocked on Q7 below | Product decision |
 
-### Authentication model — CHANGED 2026-08-13
+### Authentication model — CONFIRMED 2026-08-20
+
+SÚKL (ticket, Stanislav Levinský) answered directly:
+
+> **"Yes, ZalozitPoukaz requires a signature"** (unless authentication is done by
+> Citizen Identity). "It is signed with a **qualified personal certificate**. A
+> DEMO certificate from PostSignum can be used in the test environment."
+> "AppPingZEP is used to test a message with a signature, but not to send this
+> message every time before creating an eVoucher."
+
+So the signature is **required**, not optional-in-practice, and the schema's
+`minOccurs="0"` reflects only that some operations omit it. The two routes below
+stand, with Route A now the default rather than a possibility.
+
+Practical consequences:
+
+- **Test can proceed without a doctor's real certificate** — a PostSignum DEMO
+  qualified certificate is accepted, so the signing layer is buildable and
+  testable now.
+- **AppPingZEP is a one-off verification**, not a pre-flight for every create.
+  SÚKL said so explicitly; calling it before each voucher would be exactly the
+  kind of avoidable traffic their rate limiting exists to stop.
+- **Production is where the hard question lands.** A qualified *personal*
+  certificate belongs to the doctor. Whether it can be held server-side, or must
+  be used on their device, is the security and legal review that
+  `SECURITY_MODEL.md` gates on — unchanged by this answer.
+
+### Earlier record — 2026-08-13
 
 The earlier position ("workplace certificate only, no doctor signature") is
 **superseded**. SÚKL (ticket 40336) state:
@@ -142,6 +169,31 @@ Numbered so replies can cite them.
   `SuklDoctorIdentity.suklProfessionalIdentifier` stays opaque text. Confirm the
   exact field once the documentation is read.
 
+**Module scope — ANSWERED 2026-08-20**
+
+- **Q18** ~~Is our workplace authorised for the eRecept (CUER) module as well as
+  ePoukaz?~~ **YES.** SÚKL: *"If you have the Ambulance workplace role and
+  doctors will access the application, then yes, you can create both eVouchers
+  and ePrescriptions under one account."*
+
+  This matters more than any other answer in this project. **ePoukaz is medical
+  devices** — spectacles, hearing aids, incontinence supplies. **eRecept is
+  medicines.** Doctors on this platform prescribe medicines, so `ZalozitPredpis`
+  on the eRecept module is the operation the product actually needs, and
+  `ZalozitPoukaz` is a secondary capability.
+
+  One account, one workplace certificate, both modules. Nothing built so far is
+  wasted: the certificate, mutual-TLS transport, envelope layer, admin console
+  and monitoring are shared. Only the payload layer differs, and it is not
+  written yet.
+
+  SÚKL also point to sample applications in test mode at
+  https://system.test-erecept.sukl.cz/ (workplace SSL certificate required),
+  which are worth walking through before automating either module.
+
+  The ePrescription module's technical documentation is published separately
+  from ePoukaz — see the Supplier section of epreskripce.gov.cz.
+
 **Cross-border (scope gate — no code until answered)**
 
 - **Q7** Which cross-border eRecept workflows, if any, is an outpatient workplace
@@ -153,6 +205,15 @@ Numbered so replies can cite them.
   required, and is the facility communication certificate sufficient?
 - **Q9** What patient identification data is required, and what consent and audit
   obligations attach to a cross-border lookup?
+
+- **Q15b** ~~What is our workplace IČP?~~ **ANSWERED 2026-08-20 — not needed for
+  test.** SÚKL: *"what is an IČP … For testing purposes, you can enter
+  anything."* IČP is an insurance-billing identifier, not a SÚKL-issued one, so
+  it is out of their hands. The test environment accepts any 8-digit value;
+  production needs the real IČP from the health-insurance registration, which is
+  a Global Guest administrative task rather than a SÚKL request.
+
+  **This unblocks `ZalozitPoukaz` for testing.**
 
 - **Q13** ~~Which identifier goes in the request as the workplace?~~
   **ANSWERED 2026-08-13.** SÚKL: *"You only need to use the workplace code in
