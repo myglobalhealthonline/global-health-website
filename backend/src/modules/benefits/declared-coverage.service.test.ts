@@ -190,30 +190,121 @@ describe("declared coverage", () => {
     assert.equal(res.ok && res.unitPriceCents, 3000); // 50% off 6000
   });
 
-  it("settles a membership card by its issued id, claimed or not", async (t) => {
+  it("settles a membership card only for the enrolled address", async (t) => {
     if (!prisma) return t.skip();
-    // The fixture row is PENDING with no account linked — an imported member
-    // who never clicked the claim link. The membership id is 8 crypto-random
-    // chars we issued, so resolving it IS the check; there is nothing left for
-    // a person to look at.
+    // THE attack this gate exists for: a stranger who has seen the card. The
+    // number resolves — it is real — but knowing it must not be enough, or
+    // anyone who photographed a card books at that member's price.
     assert.equal(
       await svc.declaredCoverageIsSystemVerified({
         userId: null,
+        bookingEmail: "stranger@example.com",
+        source: "MEMBERSHIP",
+        refId: membershipPlanId,
+        cardNumber: CARD,
+      }),
+      false,
+    );
+    // The member's own address settles, case- and whitespace-insensitively.
+    assert.equal(
+      await svc.declaredCoverageIsSystemVerified({
+        userId: null,
+        bookingEmail: `  DECLARED-${uniq}@TEST.LOCAL  `,
         source: "MEMBERSHIP",
         refId: membershipPlanId,
         cardNumber: CARD,
       }),
       true,
     );
+    // Right address, card that belongs to nobody.
     assert.equal(
       await svc.declaredCoverageIsSystemVerified({
         userId: null,
+        bookingEmail: `declared-${uniq}@test.local`,
         source: "MEMBERSHIP",
         refId: membershipPlanId,
         cardNumber: "NOT-A-REAL-CARD",
       }),
       false,
     );
+  });
+
+  it("settles for the linked account even from another address", async (t) => {
+    if (!prisma) return t.skip();
+    const user = await prisma.user.create({
+      data: {
+        email: `declared-linked-${uniq}@test.local`,
+        fullName: "Linked Member",
+        role: "PATIENT",
+        passwordHash: "not-a-real-hash",
+      },
+      select: { id: true },
+    });
+    await prisma.membershipEnrollment.updateMany({
+      where: { planId: membershipPlanId, membershipId: CARD },
+      data: { userId: user.id, status: "ACTIVE", linkedAt: new Date() },
+    });
+
+    // The claim flow already proved this account owns the membership, so a
+    // different contact address on one booking is not suspicious.
+    assert.equal(
+      await svc.declaredCoverageIsSystemVerified({
+        userId: user.id,
+        bookingEmail: "someone-else@example.com",
+        source: "MEMBERSHIP",
+        refId: membershipPlanId,
+        cardNumber: CARD,
+      }),
+      true,
+    );
+    // A different session with the same card still gets a human.
+    assert.equal(
+      await svc.declaredCoverageIsSystemVerified({
+        userId: "a-different-user",
+        bookingEmail: "someone-else@example.com",
+        source: "MEMBERSHIP",
+        refId: membershipPlanId,
+        cardNumber: CARD,
+      }),
+      false,
+    );
+
+    await prisma.membershipEnrollment.updateMany({
+      where: { planId: membershipPlanId, membershipId: CARD },
+      data: { userId: null, status: "PENDING", linkedAt: null },
+    });
+    await prisma.user.delete({ where: { id: user.id } });
+  });
+
+  it("never prices an allowance unit from a declared card", async (t) => {
+    if (!prisma) return t.skip();
+    // Included visits are a counted entitlement, and only the account-linked
+    // checkout decrements the counter. Pricing one at zero here would be an
+    // unlimited free consultation nothing records. The level's own rule applies
+    // instead — the same branch a member who declines their unit takes.
+    const level = await prisma.membershipLevel.findFirst({
+      where: { planId: membershipPlanId },
+      select: { id: true },
+    });
+    const allowance = await prisma.membershipBenefit.create({
+      data: {
+        levelId: level!.id,
+        planId: membershipPlanId,
+        countryId,
+        serviceId,
+        benefitType: "ALLOWANCE",
+        allowanceCount: 3,
+        fallbackType: "PERCENT",
+        fallbackPercent: 10,
+      },
+    });
+
+    const res = await svc.resolveDeclaredCoverage(input());
+    assert.equal(res.ok, true);
+    // 10% fallback, NOT the free included visit.
+    assert.equal(res.ok && res.unitPriceCents, 5400);
+
+    await prisma.membershipBenefit.delete({ where: { id: allowance.id } });
   });
 
   it("refuses to settle on a partner reference, which is guessable", async (t) => {
@@ -234,6 +325,9 @@ describe("declared coverage", () => {
     assert.equal(
       await svc.declaredCoverageIsSystemVerified({
         userId: null,
+        // Even with the enrolled address: the reference is not a credential, so
+        // it cannot be the thing that settles.
+        bookingEmail: `declared-${uniq}@test.local`,
         source: "MEMBERSHIP",
         refId: membershipPlanId,
         cardNumber: PARTNER_REF,
@@ -254,6 +348,7 @@ describe("declared coverage", () => {
     assert.equal(
       await svc.declaredCoverageIsSystemVerified({
         userId: "someone",
+        bookingEmail: "someone@example.com",
         source: "INSURANCE",
         refId: membershipPlanId,
         cardNumber: CARD,
@@ -265,6 +360,7 @@ describe("declared coverage", () => {
     assert.equal(
       await svc.declaredCoverageIsSystemVerified({
         userId: "someone-without-the-plan",
+        bookingEmail: "someone@example.com",
         source: "PUBLIC_PLAN",
         refId: pricingPlanId,
         cardNumber: "anything",

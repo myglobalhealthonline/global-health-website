@@ -4,7 +4,7 @@ import { resolveCorporateDiscountForCard } from "../corporate/corporate-benefit.
 import { getActiveMembershipByCardNumber } from "../corporate/corporate-shared.js";
 import {
   pricingEnrollmentSelect,
-  priceMembershipLine,
+  priceMembershipOptions,
 } from "../memberships/membership-pricing.service.js";
 import type { PricingEnrollment } from "../memberships/membership-pricing.service.js";
 import { loadValidatedInsurancePrice } from "../pricing/insurance-pricing.service.js";
@@ -139,18 +139,37 @@ export async function listCoverageCatalog(args: {
   };
 }
 
+/** Emails compare lowercased + trimmed, the same normalisation enrollment
+ *  rows are written with. */
+function sameEmail(a: string | null | undefined, b: string | null | undefined): boolean {
+  if (!a || !b) return false;
+  return a.trim().toLowerCase() === b.trim().toLowerCase();
+}
+
 /**
  * Can the system settle this declaration by itself, with no human in the loop?
  *
- * Yes wherever WE are the authority on the card. A membership id and a
- * corporate card number are credentials this platform issued — 8 crypto-random
- * base32 chars (decision 40) and `randomBytes(10)` respectively — so they are
- * unguessable bearer tokens, and resolving one to a live record answers the
- * only question a reviewer could have asked. Sending those to a queue would be
- * asking staff to re-do a lookup the database already did, on every booking.
+ * Two things have to be true, and it took getting the first one wrong to see
+ * the second. The card must RESOLVE — that part we are the authority on, since
+ * a membership id and a corporate card number are credentials this platform
+ * issued (8 crypto-random base32 chars per decision 40, and `randomBytes(10)`).
+ * But resolving proves the number is real, not that the person booking owns it.
+ * A card number is printed on a card, photographed, forwarded to family, pasted
+ * into a chat. On its own it would let anyone who has seen one book at that
+ * member's price — and against an allowance benefit, spend from their entitlement.
  *
- * No in exactly three cases, each because the check is genuinely impossible
- * rather than merely inconvenient:
+ * So settling also needs the booking to be tied to the member's own identity:
+ * the contact email matches the record, or the record is linked to the signed-in
+ * account. The email test is worth more than it looks, because every
+ * confirmation, payment link and meeting link goes to that address — so a
+ * stranger who satisfies it hands the consultation to the real member and gets
+ * nothing but a bill they cannot see.
+ *
+ * Failing this is NOT a refusal. The price still applies and the slot is still
+ * held; the booking just goes to a human, which is the right answer for a member
+ * booking from a different address than the one their programme enrolled.
+ *
+ * Never settled at all:
  *
  *   - INSURANCE. The policy lives in the insurer's system; we hold no copy to
  *     check against. This is the case the manual queue was built for, and it
@@ -158,14 +177,15 @@ export async function listCoverageCatalog(args: {
  *   - MEMBERSHIP matched only on `partnerReference`. That is the partner's own
  *     member number — often sequential, and explicitly permitted to repeat
  *     across plans — so it is a label, not a credential. §5.3 avoids leaking
- *     whether one exists for the same reason; auto-approving on one would hand
- *     out member pricing to anyone who counts upwards.
+ *     whether one exists for the same reason.
  *   - PUBLIC_PLAN where the session does not hold the plan. A plan "card
  *     number" is not a key for anything: the real entitlement is a
  *     per-subscription credit balance owned by an account.
  */
 export async function declaredCoverageIsSystemVerified(args: {
   userId: string | null | undefined;
+  /** The address the booking's confirmations and payment link will go to. */
+  bookingEmail: string | null | undefined;
   source: DeclaredCoverageSource;
   refId: string;
   cardNumber: string;
@@ -184,16 +204,24 @@ export async function declaredCoverageIsSystemVerified(args: {
         status: { in: ["ACTIVE", "PENDING"] },
         membershipId: { equals: card, mode: "insensitive" },
       },
-      select: { id: true },
+      select: { email: true, userId: true },
     });
-    return enrollment !== null;
+    if (!enrollment) return false;
+    return (
+      sameEmail(enrollment.email, args.bookingEmail) ||
+      (Boolean(args.userId) && enrollment.userId === args.userId)
+    );
   }
 
   if (args.source === "CORPORATE") {
     // Already enforces card status + validity window, member status, and that
     // the company's contract is live.
     const membership = await getActiveMembershipByCardNumber(card);
-    return membership !== null && membership.company.id === refId;
+    if (!membership || membership.company.id !== refId) return false;
+    return (
+      sameEmail(membership.linkedEmail, args.bookingEmail) ||
+      (Boolean(args.userId) && membership.linkedUserId === args.userId)
+    );
   }
 
   if (args.source === "PUBLIC_PLAN") {
@@ -381,7 +409,15 @@ async function resolveMembership(
   // See the doc comment: an imported-but-unclaimed row is a real member, and
   // the manual verification step is where a human says so. Nothing else about
   // the enrollment is relaxed — term dates and level benefits still govern.
-  const priced = await priceMembershipLine({
+  //
+  // An INCLUDED VISIT is deliberately not on offer here. Allowance units are a
+  // counted entitlement, and only the account-linked checkout path decrements
+  // `MembershipAllowanceBalance` — a declared line carries cart benefit NONE and
+  // is excluded from that engine. Pricing a unit at zero on this path would hand
+  // out free consultations that no counter ever records, without limit. So the
+  // declared path takes the SAME branch a member who declines their unit takes
+  // (decision 44): the level's own percent/fixed rule, with nothing spent.
+  const { withUnit, withoutUnit } = await priceMembershipOptions({
     enrollment: { ...enrollment, status: "ACTIVE" } as PricingEnrollment,
     service: {
       id: input.service.id,
@@ -390,7 +426,20 @@ async function resolveMembership(
     },
     fullPriceCents: input.fullPriceCents,
   });
-  if (!priced) return { ok: false, reason: "NO_BENEFIT_FOR_SERVICE" };
+
+  // `withoutUnit` is populated only when a unit was available and declined;
+  // otherwise `withUnit` already IS the non-unit price.
+  const priced = withoutUnit ?? (withUnit?.basis === "ALLOWANCE" ? null : withUnit);
+  if (!priced) {
+    // The only thing this membership offers here is an allowance unit we cannot
+    // spend from a declared card. That is not "your cover excludes this" — it is
+    // "claim the membership and the included visit is yours", which is a
+    // different sentence with a different fix.
+    return {
+      ok: false,
+      reason: withUnit ? "ACCOUNT_LINK_REQUIRED" : "NO_BENEFIT_FOR_SERVICE",
+    };
+  }
 
   return {
     ok: true,

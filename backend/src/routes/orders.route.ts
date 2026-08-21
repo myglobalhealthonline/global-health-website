@@ -930,6 +930,10 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           declaredAutoVerified = card
             ? await declaredCoverageIsSystemVerified({
                 userId: order.userId,
+                // Where every confirmation, payment link and meeting link for
+                // this booking lands — which is what makes matching it proof
+                // of anything.
+                bookingEmail: order.email,
                 source: declaredItem.declaredCoverageSource as DeclaredCoverageSource,
                 refId: declaredItem.declaredCoverageRefId,
                 cardNumber: card,

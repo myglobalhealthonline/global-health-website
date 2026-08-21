@@ -129,13 +129,16 @@ export async function getActiveMembershipForUser(
  * status (a beneficiary still derives from a live employee), company status and
  * contract window — so a card cannot buy a benefit the login could not.
  *
- * `linkedUserId` is the account the card resolves to, when it resolves to one.
- * The caller uses it to decide whether the declaration still needs a human to
- * verify it, and to count annual-limit usage.
+ * `linkedUserId` is the account the card resolves to, when it resolves to one,
+ * and `linkedEmail` the address on the member's row. The caller uses them to
+ * decide whether the declaration still needs a human to verify it, and
+ * `linkedUserId` also counts annual-limit usage.
  */
 export async function getActiveMembershipByCardNumber(
   cardNumber: string,
-): Promise<(ActiveMembership & { linkedUserId: string | null }) | null> {
+): Promise<
+  (ActiveMembership & { linkedUserId: string | null; linkedEmail: string | null }) | null
+> {
   const trimmed = cardNumber.trim();
   if (!trimmed) return null;
   const card = await prisma.corporateBenefitCard.findFirst({
@@ -150,6 +153,7 @@ export async function getActiveMembershipByCardNumber(
         select: {
           id: true,
           userId: true,
+          email: true,
           status: true,
           company: { include: { plan: true } },
         },
@@ -158,6 +162,7 @@ export async function getActiveMembershipByCardNumber(
         select: {
           id: true,
           userId: true,
+          email: true,
           status: true,
           employee: { select: { status: true } },
           company: { include: { plan: true } },
@@ -174,6 +179,7 @@ export async function getActiveMembershipByCardNumber(
       employeeId: employee.id,
       company: employee.company,
       linkedUserId: employee.userId,
+      linkedEmail: employee.email,
     };
   }
   const beneficiary = card.beneficiary;
@@ -188,6 +194,7 @@ export async function getActiveMembershipByCardNumber(
       beneficiaryId: beneficiary.id,
       company: beneficiary.company,
       linkedUserId: beneficiary.userId,
+      linkedEmail: beneficiary.email,
     };
   }
   return null;
