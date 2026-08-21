@@ -371,6 +371,13 @@ export type CommonLocale = {
     coverage: {
       toggleLabel: string;
       toggleHint: string;
+      /** Same toggle when the booking is for someone else — the cover being
+       *  described is the patient's, not the account holder's. */
+      patientToggleLabel: string;
+      patientToggleHint: string;
+      /** Variant for an approved dependent, where turning the toggle on means
+       *  giving up the account's family credit for this booking. */
+      dependentToggleHint: string;
       accountOption: string;
       declareOption: string;
       categoryLabel: string;

@@ -351,6 +351,9 @@
     "coverage": {
       "toggleLabel": "I have insurance, a membership or a healthcare plan",
       "toggleHint": "Apply your cover to this booking. We check your card before any payment is taken.",
+      "patientToggleLabel": "The patient has their own insurance, membership or healthcare plan",
+      "patientToggleHint": "Enter their card. We check it before any payment is taken.",
+      "dependentToggleHint": "Leave this off to use your plan's family credit for them, or turn it on to use their own card instead. Only one applies.",
       "accountOption": "Use cover already on my account",
       "declareOption": "Enter a card manually",
       "categoryLabel": "Type of cover",

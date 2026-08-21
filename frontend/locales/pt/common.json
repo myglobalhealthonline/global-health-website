@@ -351,6 +351,9 @@
     "coverage": {
       "toggleLabel": "Tenho seguro, adesão ou plano de saúde",
       "toggleHint": "Aplique a sua cobertura a esta marcação. Verificamos o seu cartão antes de qualquer pagamento.",
+      "patientToggleLabel": "O doente tem seguro, adesão ou plano de saúde próprio",
+      "patientToggleHint": "Introduza o cartão dele. Verificamos antes de qualquer pagamento.",
+      "dependentToggleHint": "Deixe desligado para usar o crédito familiar do seu plano, ou ligue para usar o cartão próprio dele. Aplica-se apenas um.",
       "accountOption": "Usar a cobertura já associada à minha conta",
       "declareOption": "Introduzir um cartão manualmente",
       "categoryLabel": "Tipo de cobertura",

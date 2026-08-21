@@ -500,8 +500,16 @@ export function ConsultationBookingForm({
     ((authLoaded && !me) || (benefitLoaded && benefitOptions.length === 0)
       ? "declare"
       : "account");
-  /** Whether the patient is filling in a card rather than replaying account cover. */
-  const declaring = benefitToggle && !treatingOther && coverageMode === "declare";
+  /**
+   * Whether a card is being filled in rather than account cover replayed.
+   *
+   * Booking for someone else forces the card path: the benefits on THIS account
+   * are the account holder's, and the person being treated is not them. Their
+   * own cover — a dependent membership enrollment, a corporate beneficiary card
+   * — is a card they hold, and since the card is the credential it does not
+   * matter whose hands type it.
+   */
+  const declaring = benefitToggle && (treatingOther || coverageMode === "declare");
   const declaredProviders: CoverageProvider[] =
     catalog?.[CATEGORY_KEYS[declaredCategory].catalog] ?? [];
   const declaredProvider =
@@ -768,7 +776,15 @@ export function ConsultationBookingForm({
         // Insurance replaces plan/family benefits (no stacking): when a company
         // is selected + its policy entered, skip the benefit fields entirely.
         ...(declaredPayload
-          ? { declaredCoverage: declaredPayload }
+          ? {
+              declaredCoverage: declaredPayload,
+              // The dependent targeting must survive the card. Without it the
+              // line reverts to the account holder and the appointment is
+              // minted against the wrong patient — the card would be right and
+              // the person wrong. No `benefitSelection`: the card prices this
+              // line, so the plan's family credit is deliberately not spent.
+              ...(selectedMember ? { familyMemberId: selectedMember.id } : {}),
+            }
           : insuranceActive
           ? {
               insuranceCompanyId: insurer!.companyId,
@@ -1271,16 +1287,26 @@ export function ConsultationBookingForm({
         * the server resolves it at the next step.
         *
         * Shown to guests too — a guest holds no account benefits but can very
-        * much hold an insurance card. Hidden only when treating someone else,
-        * where the cover in play is the dependent's, not the account's. */}
-      {!treatingOther ? (
-        <div role="group" className="gh2-card-ivory p-5 sm:p-6">
-          <ToggleSwitch
+        * much hold an insurance card. Shown when treating someone else too,
+        * reworded: the cover then belongs to the PATIENT (a dependent
+        * membership enrollment, a corporate beneficiary card), and only the
+        * card half applies — this account's own benefits are not theirs. */}
+      <div role="group" className="gh2-card-ivory p-5 sm:p-6">
+        <ToggleSwitch
             id="coverage-toggle"
             checked={benefitToggle}
             onChange={setBenefitToggle}
-            label={cov.toggleLabel}
-            description={cov.toggleHint}
+            label={treatingOther ? cov.patientToggleLabel : cov.toggleLabel}
+            description={
+              selectedMember
+                ? // Turning it on for an approved dependent gives up the
+                  // account's family credit for this booking — say so, rather
+                  // than let them discover it in the price.
+                  cov.dependentToggleHint
+                : treatingOther
+                  ? cov.patientToggleHint
+                  : cov.toggleHint
+            }
           />
 
           {benefitToggle ? (
@@ -1288,8 +1314,9 @@ export function ConsultationBookingForm({
               {/* The two halves are offered only when there is a choice to
                 * make. With nothing on the account the picker is the card
                 * form, and a segmented control with one usable option is
-                * just a thing to read past. */}
-              {me && benefitOptions.length > 0 ? (
+                * just a thing to read past. Never offered while treating
+                * someone else: account cover is not the patient's. */}
+              {me && !treatingOther && benefitOptions.length > 0 ? (
                 <div
                   role="radiogroup"
                   aria-label={cov.categoryLabel}
@@ -1480,8 +1507,7 @@ export function ConsultationBookingForm({
               ) : null}
             </div>
           ) : null}
-        </div>
-      ) : null}
+      </div>
 
       {/* 4. Patient address — required when the country's BookingSetting
         * has requireAddress on. Snapshotted onto the appointment so the

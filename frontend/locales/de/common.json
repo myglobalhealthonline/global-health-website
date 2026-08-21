@@ -351,6 +351,9 @@
     "coverage": {
       "toggleLabel": "Ich habe eine Versicherung, Mitgliedschaft oder einen Gesundheitsplan",
       "toggleHint": "Nutzen Sie Ihre Kostenübernahme für diese Buchung. Wir prüfen Ihre Karte vor jeder Zahlung.",
+      "patientToggleLabel": "Die behandelte Person hat eine eigene Versicherung, Mitgliedschaft oder einen Gesundheitsplan",
+      "patientToggleHint": "Geben Sie deren Karte ein. Wir prüfen sie vor jeder Zahlung.",
+      "dependentToggleHint": "Ausgeschaltet lassen, um das Familienguthaben Ihres Plans zu nutzen, oder einschalten, um deren eigene Karte zu verwenden. Es gilt nur eines.",
       "accountOption": "Bereits mit meinem Konto verknüpfte Kostenübernahme nutzen",
       "declareOption": "Karte manuell eingeben",
       "categoryLabel": "Art der Kostenübernahme",

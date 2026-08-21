@@ -351,6 +351,9 @@
     "coverage": {
       "toggleLabel": "Mám pojištění, členství nebo zdravotní plán",
       "toggleHint": "Uplatněte své krytí na tuto rezervaci. Kartu ověříme před jakoukoli platbou.",
+      "patientToggleLabel": "Pacient má vlastní pojištění, členství nebo zdravotní plán",
+      "patientToggleHint": "Zadejte jeho kartu. Ověříme ji před jakoukoli platbou.",
+      "dependentToggleHint": "Nechte vypnuté, chcete-li použít rodinný kredit svého plánu, nebo zapněte a použijte jeho vlastní kartu. Uplatní se pouze jedno.",
       "accountOption": "Použít krytí již spojené s mým účtem",
       "declareOption": "Zadat kartu ručně",
       "categoryLabel": "Typ krytí",

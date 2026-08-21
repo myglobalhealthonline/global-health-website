@@ -351,6 +351,9 @@
     "coverage": {
       "toggleLabel": "Tengo seguro, membresía o plan de salud",
       "toggleHint": "Aplica tu cobertura a esta reserva. Comprobamos tu tarjeta antes de cobrar.",
+      "patientToggleLabel": "El paciente tiene su propio seguro, membresía o plan de salud",
+      "patientToggleHint": "Introduce su tarjeta. La comprobamos antes de cobrar.",
+      "dependentToggleHint": "Déjalo desactivado para usar el crédito familiar de tu plan, o actívalo para usar su propia tarjeta. Solo se aplica uno.",
       "accountOption": "Usar la cobertura ya vinculada a mi cuenta",
       "declareOption": "Introducir una tarjeta manualmente",
       "categoryLabel": "Tipo de cobertura",

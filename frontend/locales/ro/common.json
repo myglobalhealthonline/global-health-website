@@ -351,6 +351,9 @@
     "coverage": {
       "toggleLabel": "Am asigurare, abonament sau plan de sănătate",
       "toggleHint": "Aplică acoperirea la această programare. Verificăm cardul înainte de orice plată.",
+      "patientToggleLabel": "Pacientul are propria asigurare, abonament sau plan de sănătate",
+      "patientToggleHint": "Introdu cardul lui. Îl verificăm înainte de orice plată.",
+      "dependentToggleHint": "Lasă dezactivat pentru a folosi creditul familial al planului tău, sau activează pentru a folosi cardul lui. Se aplică doar unul.",
       "accountOption": "Folosește acoperirea deja asociată contului meu",
       "declareOption": "Introdu un card manual",
       "categoryLabel": "Tip de acoperire",
