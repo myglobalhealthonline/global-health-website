@@ -162,6 +162,31 @@ Numbered so replies can cite them.
   **Consequence:** test-phase ePoukaz work does not need per-doctor test
   accounts; production onboarding does, and it is a per-doctor action they must
   take themselves.
+- **Q19** ~~Why does S026 reject username 00150928363?~~ **ANSWERED 2026-08-20**
+  by Milan Mádr:
+
+  > "Regarding the username 00150928363 — this is the login information for the
+  > **object account**, it is not the login information of the **test user
+  > (doctor)**. … you must also have a doctor's testing identity set up. Without
+  > this, it is not possible to issue ePrescriptions and eVouchers."
+
+  `00150928363` identifies the ENTITY, not a prescriber. `Uzivatel` must be a
+  **healthcare-professional identity**, requested per doctor at
+  https://testpristupy.sukl.cz/ei_forms.html#/form_Zdravotnik — the request ID
+  then goes back into the SÚKL ticket.
+
+  **Consequence for the design.** `Uzivatel` is per DOCTOR, and the qualified
+  signature is per doctor too. SÚKL authenticate the PRESCRIBER; the workplace
+  certificate only establishes *where*. That confirms `SuklDoctorIdentity` was
+  the right shape, and makes `SUKL_TEST_UZIVATEL` a **test-only shortcut**:
+  correct while one doctor is being proven, wrong for production, where the
+  identity must come from that doctor's row.
+
+  It also sharpens Q16. Production on the credential route would mean holding
+  **per-doctor logins AND per-doctor signing keys** server-side — exactly the
+  accumulation Identita občana avoids. That is a reason to weigh the two routes
+  before building the production path, not after.
+
 - **Q6** ~~Prescriber identifier format?~~ **PARTIALLY ANSWERED 2026-08-13.**
   Logins are assigned by SÚKL's **External Identity** system (Externí identita),
   via https://pristupy.sukl.cz/ for production and the test-access portal for

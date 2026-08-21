@@ -109,7 +109,20 @@ export function suklTimeoutMs(): number {
 // blocking value (Uzivatel) a single place to be reported as missing, rather
 // than letting it surface as an opaque SÚKL fault.
 
-/** The calling account's login. A CREDENTIAL — never log or return it. */
+/**
+ * The calling account's login. A CREDENTIAL — never log or return it.
+ *
+ * TEST-ONLY SHORTCUT. SÚKL confirmed 2026-08-20 that `Uzivatel` identifies the
+ * prescribing DOCTOR, not the facility: the entity account (00150928363) is
+ * rejected with S026, and each doctor needs their own healthcare-professional
+ * identity requested from the test-access portal.
+ *
+ * A single env var is right while one doctor is being proven end to end. In
+ * production the value must come from that doctor's `SuklDoctorIdentity` row —
+ * which also means production would hold per-doctor credentials server-side,
+ * one of the reasons the Identita občana route is still open
+ * (SCOPE_CONFIRMATION.md Q16/Q19).
+ */
 export function suklUzivatel(): string | null {
   return env.SUKL_TEST_UZIVATEL?.trim() ?? null;
 }
