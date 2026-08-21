@@ -1,4 +1,5 @@
 import { prisma } from "../../db/prisma.js";
+import { paidAppointmentWhere } from "../appointments/appointment-payment-gate.js";
 import { checkDoctorJoinedMeeting } from "../../lib/google-meet/check-doctor-joined.js";
 import {
   resolveDoctorContact,
@@ -58,6 +59,11 @@ export async function runDoctorNoShowCheckCron() {
       doctorId: { not: null },
       meetingUrl: { not: null },
       status: { notIn: ["CANCELLED", "COMPLETED"] },
+      // Unpaid consultations are not consultations. Without this an unpaid
+      // manual booking that reaches its start time still nudges the doctor —
+      // and it can, because the pre-payment cancel sweep may not have run yet
+      // (its deadline is clock-based, not tied to the consultation start).
+      AND: [paidAppointmentWhere],
     },
     select: {
       id: true,

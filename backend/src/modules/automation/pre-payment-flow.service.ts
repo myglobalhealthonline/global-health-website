@@ -1174,6 +1174,101 @@ export async function notifyDoctorOnPaymentConfirmed(orderId: string) {
   await startPostPaymentFlow(orderId);
 }
 
+/**
+ * Pure deadline arithmetic for a rescheduled consultation — split out of
+ * `recomputePrePaymentDueAt` so the two rules that matter are testable without
+ * a database:
+ *
+ *   1. the deadline may never sit past the consultation it pays for, and
+ *   2. it may never be so tight the patient cannot act on the reschedule they
+ *      were just told about — measured from NOW, since that is when they hear
+ *      about it, though rule 1 still wins when the new slot is minutes away.
+ */
+export function rescheduledPaymentDueAt(input: {
+  flow: PrePaymentFlow;
+  bookedAt: Date;
+  consultStart: Date;
+  now: Date;
+}): Date {
+  const plan = computePrePaymentPlan({
+    bookedAt: input.bookedAt,
+    consultationStartAt: input.consultStart,
+    webCheckout: input.flow === PrePaymentFlow.WEB_CHECKOUT,
+  });
+
+  let due =
+    plan.paymentDueAt.getTime() > input.consultStart.getTime()
+      ? input.consultStart
+      : plan.paymentDueAt;
+
+  const floor = new Date(input.now.getTime() + MIN_PAY_WINDOW_MIN * MS_MIN);
+  if (due.getTime() < floor.getTime()) {
+    due = floor.getTime() > input.consultStart.getTime() ? input.consultStart : floor;
+  }
+  return due;
+}
+
+/**
+ * Re-anchor an unpaid order's payment deadline after its consultation moved.
+ *
+ * The deadline is computed from the consultation start at booking time
+ * (`computePrePaymentPlan`), but a reschedule used to leave it where it was.
+ * On 2026-08-21 that produced ORD-000382: booked for 13:59, deadline 12:59,
+ * then moved to 08:30 — so the order was still "awaiting payment" while its
+ * own consultation came and went, and the cancel sweep only retired it 4.5h
+ * after the fact.
+ *
+ * The flow is deliberately NOT reclassified. `prePaymentReminderStage` is an
+ * index into that flow's ladder, and flipping OUTSIDE_48H → WITHIN_48H
+ * mid-flight would silently re-number the stages already sent (and move the
+ * cancel stage). Only the deadline moves.
+ *
+ * Returns the new deadline, or null when nothing applied (paid, cancelled, no
+ * flow, or no consultation start).
+ */
+export async function recomputePrePaymentDueAt(
+  orderId: string,
+  newConsultStart: Date | null,
+  now: Date = new Date(),
+): Promise<Date | null> {
+  if (!newConsultStart) return null;
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    select: {
+      status: true,
+      paymentStatus: true,
+      prePaymentFlow: true,
+      paymentDueAt: true,
+      createdAt: true,
+    },
+  });
+  if (
+    !order ||
+    !order.prePaymentFlow ||
+    order.paymentStatus === "PAID" ||
+    order.status === "PAID" ||
+    order.status === "CANCELLED"
+  ) {
+    return null;
+  }
+
+  const due = rescheduledPaymentDueAt({
+    flow: order.prePaymentFlow,
+    bookedAt: order.createdAt,
+    consultStart: newConsultStart,
+    now,
+  });
+
+  if (order.paymentDueAt && order.paymentDueAt.getTime() === due.getTime()) {
+    return due;
+  }
+  await prisma.order.update({
+    where: { id: orderId },
+    data: { paymentDueAt: due },
+  });
+  return due;
+}
+
 export function prePaymentMaxStage(flow: PrePaymentFlow): number {
   return maxStage(flow);
 }
@@ -1204,7 +1299,7 @@ export function prePaymentStageThresholdHours(
  */
 export async function runPrePaymentCancelSweep() {
   const now = new Date();
-  const due = await prisma.order.findMany({
+  const pastDeadline = await prisma.order.findMany({
     where: {
       status: "PENDING",
       paymentStatus: { in: ["UNPAID", "PENDING"] },
@@ -1214,6 +1309,33 @@ export async function runPrePaymentCancelSweep() {
     take: 100,
     orderBy: { paymentDueAt: "asc" },
   });
+
+  // Safety net: an unpaid order whose consultation has already STARTED is due
+  // regardless of what its `paymentDueAt` says. recomputePrePaymentDueAt keeps
+  // the two in step on reschedule, but this catches anything that slipped —
+  // a deadline written before that fix, a clock skew, a path that moves a slot
+  // without going through the admin reschedule service. Without it an unpaid
+  // booking can outlive its own consultation (ORD-000382, 2026-08-21).
+  const consultationStarted = await prisma.order.findMany({
+    where: {
+      status: "PENDING",
+      paymentStatus: { in: ["UNPAID", "PENDING"] },
+      prePaymentFlow: { not: null },
+      id: { notIn: pastDeadline.map((o) => o.id) },
+      orderAppointments: {
+        some: {
+          appointment: {
+            scheduledAt: { not: null, lte: now },
+            status: { notIn: ["CANCELLED", "COMPLETED"] },
+          },
+        },
+      },
+    },
+    take: 100,
+    orderBy: { createdAt: "asc" },
+  });
+
+  const due = [...pastDeadline, ...consultationStarted];
 
   // Pass 1 — enforce every deadline. No sends in this loop.
   const claimed: {

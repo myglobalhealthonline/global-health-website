@@ -8,6 +8,7 @@ import {
 } from "./manual-booking.service.js";
 import { releaseAppointmentSlot } from "../doctor-availability/doctor-availability.service.js";
 import { generateOrderMeetLink, orderIsPaidForMeet } from "../admin-orders/generate-order-meet-link.service.js";
+import { recomputePrePaymentDueAt } from "../automation/pre-payment-flow.service.js";
 import { sendAppointmentUpdateNotifications } from "../automation/appointment-update-notifications.service.js";
 import { recordAudit } from "../audit/audit.service.js";
 import { getAppointmentById, type AdminAppointmentDetail } from "./appointments.service.js";
@@ -185,6 +186,18 @@ export async function adminUpdateAppointment(
       });
     }
   });
+
+  // Move the payment deadline with the consultation. It is derived from the
+  // consultation start at booking time, so leaving it behind lets an unpaid
+  // order outlive the appointment it belongs to — the order then reads as
+  // "still awaiting payment" while the slot comes and goes, and every
+  // automation gated on "not cancelled yet" fires against a dead booking
+  // (ORD-000382, 2026-08-21). No-ops on paid orders.
+  if (orderId && diff.timeChanged) {
+    await recomputePrePaymentDueAt(orderId, input.scheduledAt ?? null).catch(
+      () => undefined,
+    );
+  }
 
   let meetingUrl: string | null = orderItem?.order.meetingUrl ?? row.meetingUrl;
   const shouldRegenerateMeet =

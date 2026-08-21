@@ -35,6 +35,7 @@ import {
   DuplicatePatientError,
 } from "../modules/appointments/manual-booking.service.js";
 import { notifyPatientDoctorReady } from "../modules/appointments/notify-doctor-ready.service.js";
+import { isAppointmentPaid } from "../modules/appointments/appointment-payment-gate.js";
 
 /**
  * Doctor-side appointment actions + per-patient drilldown + invoices.
@@ -200,10 +201,25 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
         }
         const updateData: Record<string, unknown> = {};
         if (body.data.meetingUrl !== undefined) {
-          updateData.meetingUrl =
+          const nextMeetingUrl =
             body.data.meetingUrl === null || body.data.meetingUrl === ""
               ? null
               : body.data.meetingUrl;
+          // Adding a link to an unpaid booking is what dragged ORD-000382 into
+          // the no-show cron: the doctor pasted a Meet URL onto a consultation
+          // nobody had paid for, and `meetingUrl != null` was that cron's
+          // entry condition. Clearing one stays allowed — that direction only
+          // ever removes a booking from automation.
+          if (nextMeetingUrl !== null && !(await isAppointmentPaid(appt.id))) {
+            return reply
+              .status(400)
+              .send(
+                errorResponse(
+                  "This consultation has not been paid for yet. The meeting link is created automatically once payment lands.",
+                ),
+              );
+          }
+          updateData.meetingUrl = nextMeetingUrl;
         }
         if (body.data.status !== undefined) {
           updateData.status = body.data.status;

@@ -8,6 +8,7 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { formatNotificationDateTime } from "../modules/notifications/notification-datetime.js";
 import { notifyDoctor } from "../modules/notifications/notify.service.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import { paidAppointmentWhere } from "../modules/appointments/appointment-payment-gate.js";
 
 /**
  * Cron-triggered 24h appointment-reminder runner.
@@ -20,6 +21,8 @@ import { errorResponse, okResponse } from "../utils/response.js";
  *   - meetingUrl is set
  *   - reminderSentAt is null
  *   - status is not CANCELLED/COMPLETED
+ *   - the consultation is PAID (or corporate-covered) — see
+ *     appointment-payment-gate.ts
  *
  * For each match, it sends the reminder email and stamps
  * `reminderSentAt = now()` so repeat runs in the same window don't
@@ -55,6 +58,10 @@ const remindersRoute: FastifyPluginAsync = async (app) => {
             { clinicId: { not: null } },
             { locationAddress: { not: null } },
           ],
+          // Never remind anyone about a consultation that was never paid for.
+          // AND-nested rather than spread because this query already owns the
+          // top-level OR above.
+          AND: [paidAppointmentWhere],
         },
         select: {
           id: true,
@@ -126,6 +133,9 @@ const remindersRoute: FastifyPluginAsync = async (app) => {
           doctorId: { not: null },
           doctorReminderSentAt: null,
           status: { notIn: ["CANCELLED", "COMPLETED"] },
+          // Same payment gate as the patient reminder above — an unpaid
+          // booking must not put a slot on the doctor's radar either.
+          AND: [paidAppointmentWhere],
         },
         select: {
           id: true,
