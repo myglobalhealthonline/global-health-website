@@ -168,6 +168,26 @@ _BLOCKED._ Prefixes must be preserved exactly as SÚKL declares them.
 
 _BLOCKED._
 
+### Modules — which service does what
+
+SÚKL confirmed 2026-08-20 that one account and one workplace certificate cover
+several modules, and that an Ambulance workplace may use both:
+
+| Module | Purpose | Create operation |
+|---|---|---|
+| **eRecept** | **Prescribing and dispensing MEDICINES** | `ZalozitPredpis` |
+| Medication record | Viewing a patient's medication / vaccination record | — |
+| **ePoukaz (eVoucher)** | Medical DEVICES: spectacles, hearing aids, incontinence supplies | `ZalozitPoukaz` |
+
+Everything built so far targets ePoukaz. Since the doctors on this platform
+prescribe medicines, **eRecept is the module the product needs**; its technical
+documentation is published separately, under the Supplier section of
+epreskripce.gov.cz.
+
+Sample applications for both are available in test mode at
+https://system.test-erecept.sukl.cz/ , with the workplace SSL certificate
+installed. Worth walking through by hand before automating.
+
 ### Authentication requirements
 
 **Corrected 2026-08-13 — the earlier entry here was wrong.**
@@ -183,15 +203,32 @@ sufficient to issue one. Two routes exist and neither is chosen yet — see
 "Authentication model — CHANGED 2026-08-13" in `SCOPE_CONFIRMATION.md`, and
 Q15–Q17 there.
 
+**Confirmed 2026-08-20:** `ZalozitPoukaz` **requires** the signature unless
+authentication is via Identita občana. It is a **qualified personal
+certificate** — the doctor's, not the facility's — and the facility
+communication certificate does not substitute for it.
+
 For the test environment SÚKL accept a **DEMO qualified certificate**, e.g.
-PostSignum's test certificate.
+PostSignum's test certificate, so the signing layer can be built and verified
+before any real doctor certificate exists.
+
+`AppPingZEP` is the way to verify that our signature is well-formed. SÚKL were
+explicit that it is a **one-off check, not a pre-flight before every create** —
+calling it per voucher would be pointless traffic against a rate-limited
+service.
 
 Also settled: the request payload carries the **workplace code `00150928369`**.
 The certificate subject's `O` and `OU` are not used in payloads.
 
 ### Required doctor / facility / workplace fields
 
-_BLOCKED._ In particular: the exact format of the prescriber identifier. The
+**IČP answered 2026-08-20:** *"For testing purposes, you can enter anything."*
+IČP is an insurance-billing identifier rather than a SÚKL-issued one, so any
+8-digit value is accepted in test. Production requires the real IČP from the
+health-insurance registration — an administrative task for Global Guest, not a
+SÚKL request. This removes IČP as a blocker for test work.
+
+_Still open._ The exact format of the prescriber identifier. The
 `SuklDoctorIdentity.suklProfessionalIdentifier` column stores it as opaque text
 and validates only shape and length, because it is not known whether SÚKL expects
 an IČP, a KRZP code, or a value of their own.
