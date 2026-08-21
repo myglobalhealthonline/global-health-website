@@ -47,6 +47,16 @@ ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 ENV NEXT_PUBLIC_GA_MEASUREMENT_ID=$NEXT_PUBLIC_GA_MEASUREMENT_ID
 ENV NEXT_PUBLIC_CLARITY_PROJECT_ID=$NEXT_PUBLIC_CLARITY_PROJECT_ID
 
+# Not a NEXT_PUBLIC_* var, so it is never inlined into a client bundle — but
+# `next build` prerenders ~885 pages through serverReadAuthHeaders(), and
+# without this the build's public-content reads fall back to the shared
+# 300/min egress-IP bucket, 429 after 5 retries, and the fallback guard in
+# public-content-source.ts kills the build. Same Railway ARG mechanism as the
+# block above: a value set on the service but missing an ARG line here never
+# reaches the build stage. Must match the backend service's value.
+ARG PROXY_CLIENT_IP_SECRET
+ENV PROXY_CLIENT_IP_SECRET=$PROXY_CLIENT_IP_SECRET
+
 # Escape hatch for builds that have no backend to read from. Deliberately
 # EMPTY by default, which preserves today's behaviour exactly: unset means
 # public-content-source.ts still hard-fails the prerender rather than shipping
