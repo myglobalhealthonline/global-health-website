@@ -317,7 +317,16 @@
     "loading": "Se încarcă…",
     "receipt": "Chitanță",
     "viewReceipt": "Vezi chitanța",
-    "receiptUnavailable": "Factura nu este disponibilă"
+    "receiptUnavailable": "Factura nu este disponibilă",
+    "invoicesHeading": "Facturi pentru consultații",
+    "invoicesHint": "Facturi și chitanțe emise de Global Health pentru programările tale.",
+    "colDocument": "Document",
+    "viewInvoice": "Vezi",
+    "downloadInvoice": "Descarcă PDF",
+    "docInvoice": "Factură",
+    "docReceipt": "Chitanță",
+    "docInvoiceReceipt": "Factură / Chitanță",
+    "docCreditNote": "Notă de credit"
   },
   "profile": {
     "breadcrumb": "Cont",

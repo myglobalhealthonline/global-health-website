@@ -317,7 +317,16 @@
     "loading": "Načítání…",
     "receipt": "Doklad",
     "viewReceipt": "Zobrazit doklad",
-    "receiptUnavailable": "Faktura není k dispozici"
+    "receiptUnavailable": "Faktura není k dispozici",
+    "invoicesHeading": "Faktury za konzultace",
+    "invoicesHint": "Faktury a účtenky vystavené Global Health k vašim rezervacím.",
+    "colDocument": "Dokument",
+    "viewInvoice": "Zobrazit",
+    "downloadInvoice": "Stáhnout PDF",
+    "docInvoice": "Faktura",
+    "docReceipt": "Účtenka",
+    "docInvoiceReceipt": "Faktura / Účtenka",
+    "docCreditNote": "Dobropis"
   },
   "profile": {
     "breadcrumb": "Účet",

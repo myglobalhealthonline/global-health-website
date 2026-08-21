@@ -317,7 +317,16 @@
     "loading": "Wird geladen…",
     "receipt": "Beleg",
     "viewReceipt": "Beleg ansehen",
-    "receiptUnavailable": "Rechnung nicht verfügbar"
+    "receiptUnavailable": "Rechnung nicht verfügbar",
+    "invoicesHeading": "Rechnungen für Konsultationen",
+    "invoicesHint": "Von Global Health für Ihre Buchungen ausgestellte Rechnungen und Belege.",
+    "colDocument": "Dokument",
+    "viewInvoice": "Ansehen",
+    "downloadInvoice": "PDF herunterladen",
+    "docInvoice": "Rechnung",
+    "docReceipt": "Beleg",
+    "docInvoiceReceipt": "Rechnung / Beleg",
+    "docCreditNote": "Gutschrift"
   },
   "profile": {
     "breadcrumb": "Konto",

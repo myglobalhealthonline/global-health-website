@@ -317,7 +317,16 @@
     "loading": "Cargando…",
     "receipt": "Recibo",
     "viewReceipt": "Ver recibo",
-    "receiptUnavailable": "Factura no disponible"
+    "receiptUnavailable": "Factura no disponible",
+    "invoicesHeading": "Facturas de consultas",
+    "invoicesHint": "Facturas y recibos emitidos por Global Health para tus reservas.",
+    "colDocument": "Documento",
+    "viewInvoice": "Ver",
+    "downloadInvoice": "Descargar PDF",
+    "docInvoice": "Factura",
+    "docReceipt": "Recibo",
+    "docInvoiceReceipt": "Factura / Recibo",
+    "docCreditNote": "Nota de crédito"
   },
   "profile": {
     "breadcrumb": "Cuenta",

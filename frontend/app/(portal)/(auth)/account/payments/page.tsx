@@ -1,6 +1,15 @@
 import Link from "next/link";
-import { CreditCard, ExternalLink, FileText, CheckCircle2, AlertCircle, Clock3 } from "lucide-react";
+import {
+  CreditCard,
+  ExternalLink,
+  FileText,
+  CheckCircle2,
+  AlertCircle,
+  Clock3,
+  Download,
+} from "lucide-react";
 import { fetchAccountPayments, type AccountPayment } from "@/lib/api/account-payments-api";
+import { fetchAccountInvoices, type AccountInvoice } from "@/lib/api/account-invoices-api";
 import { getServerInvoices } from "@/lib/api/me-subscription-server";
 import type { SubscriptionInvoiceView } from "@/lib/api/me-subscription";
 import { formatAppDate } from "@/lib/format-datetime";
@@ -44,9 +53,10 @@ function titleCase(value: string): string {
 }
 
 export default async function AccountPaymentsPage() {
-  const [result, invoicesData, locale] = await Promise.all([
+  const [result, invoicesData, ghInvoicesResult, locale] = await Promise.all([
     fetchAccountPayments(),
     getServerInvoices(),
+    fetchAccountInvoices(),
     getPortalLocale(),
   ]);
   const { account: a, subscription } = loadLocaleBundle(locale);
@@ -54,6 +64,9 @@ export default async function AccountPaymentsPage() {
   const unavailable = result.ok ? null : result.message;
   const invoices = invoicesData?.invoices ?? [];
   const inv = subscription.invoice;
+  // Global Health's own billing documents for consultation/product orders.
+  // Distinct from `invoices` above, which are Stripe membership invoices.
+  const ghInvoices = ghInvoicesResult.ok ? ghInvoicesResult.data.items : [];
 
   const invoiceStatusLabel = (status: string | null): string => {
     switch ((status ?? "").toLowerCase()) {
@@ -91,7 +104,7 @@ export default async function AccountPaymentsPage() {
   const actionCount = items.filter(
     (item) => item.status === "FAILED" || item.status === "REQUIRES_ACTION" || item.status === "UNPAID",
   ).length;
-  const receiptsCount = items.length + invoices.length;
+  const receiptsCount = items.length + invoices.length + ghInvoices.length;
   const lastPayment = [...items]
     .sort((aItem, bItem) => new Date(bItem.paidAt).getTime() - new Date(aItem.paidAt).getTime())[0];
 
@@ -167,6 +180,86 @@ export default async function AccountPaymentsPage() {
         ) : (
           <ReceiptButton paymentId={payment.id} i18n={a.payments} />
         ),
+    },
+  ];
+
+  const ghDocLabel = (row: AccountInvoice): string => {
+    switch (row.documentType) {
+      case "CREDIT_NOTE":
+        return a.payments.docCreditNote;
+      case "RECEIPT":
+        return a.payments.docReceipt;
+      case "INVOICE_RECEIPT":
+        return a.payments.docInvoiceReceipt;
+      default:
+        return a.payments.docInvoice;
+    }
+  };
+
+  const ghInvoiceFields: ColumnPriorityField<AccountInvoice>[] = [
+    {
+      key: "date",
+      label: a.payments.colDate,
+      priority: 2,
+      render: (row) => formatAppDate(row.generatedAt),
+    },
+    {
+      key: "document",
+      label: a.payments.colDocument,
+      priority: 1,
+      cardPrimary: true,
+      render: (row) => (
+        <>
+          <span className="block font-semibold text-[var(--portal-text)]">
+            {ghDocLabel(row)} · {row.invoiceNumber}
+          </span>
+          {row.description ? (
+            <span className="block text-xs text-[var(--portal-muted)]">{row.description}</span>
+          ) : null}
+        </>
+      ),
+    },
+    {
+      key: "amount",
+      label: a.payments.colAmount,
+      priority: 2,
+      render: (row) => (
+        <span
+          className="font-semibold text-[var(--portal-text)]"
+          style={{ fontVariantNumeric: "tabular-nums" }}
+        >
+          {formatPrice(row.totalCents, row.currencyCode)}
+        </span>
+      ),
+    },
+    {
+      key: "actions",
+      label: a.payments.colReceipt,
+      priority: 2,
+      align: "right",
+      desktopOnly: true,
+      render: (row) => (
+        <span className="inline-flex items-center gap-3">
+          <Link
+            href={`/print/order-invoices/${row.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--portal-primary)] hover:underline"
+          >
+            {a.payments.viewInvoice}
+            <ExternalLink className="size-3.5" aria-hidden />
+          </Link>
+          {/* Plain anchor: the backend sends Content-Disposition: attachment,
+              so the browser saves the real PDF with no JavaScript. */}
+          <a
+            href={`/api/public/invoices/${row.id}/pdf`}
+            className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--portal-primary)] hover:underline"
+          >
+            {a.payments.downloadInvoice}
+            <Download className="size-3.5" aria-hidden />
+          </a>
+        </span>
+      ),
     },
   ];
 
@@ -270,7 +363,7 @@ export default async function AccountPaymentsPage() {
         </div>
       ) : null}
 
-      {items.length === 0 && invoices.length === 0 && !unavailable ? (
+      {items.length === 0 && invoices.length === 0 && ghInvoices.length === 0 && !unavailable ? (
         <div className="gh-patient-empty-state gh-card flex flex-col items-center p-10 text-center">
           <div className="inline-flex size-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
             <CreditCard aria-hidden className="size-6" />
@@ -301,6 +394,44 @@ export default async function AccountPaymentsPage() {
             }
           />
         </div>
+      ) : null}
+
+      {ghInvoices.length > 0 ? (
+        <section className="mt-8">
+          <h3 className="text-sm font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
+            {a.payments.invoicesHeading}
+          </h3>
+          <p className="mb-3 mt-1 text-xs text-[var(--portal-muted)]">
+            {a.payments.invoicesHint}
+          </p>
+          <div className="gh-card overflow-hidden p-0">
+            <ColumnPriorityTable
+              fields={ghInvoiceFields}
+              rows={ghInvoices}
+              getRowKey={(row) => row.id}
+              cardActions={(row) => (
+                <>
+                  <Link
+                    href={`/print/order-invoices/${row.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] bg-[var(--portal-surface-elevated)] px-3 py-1.5 text-xs font-semibold text-[var(--portal-primary)]"
+                  >
+                    {a.payments.viewInvoice}
+                    <ExternalLink className="size-3.5" aria-hidden />
+                  </Link>
+                  <a
+                    href={`/api/public/invoices/${row.id}/pdf`}
+                    className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] bg-[var(--portal-surface-elevated)] px-3 py-1.5 text-xs font-semibold text-[var(--portal-primary)]"
+                  >
+                    {a.payments.downloadInvoice}
+                    <Download className="size-3.5" aria-hidden />
+                  </a>
+                </>
+              )}
+            />
+          </div>
+        </section>
       ) : null}
 
       {invoices.length > 0 ? (

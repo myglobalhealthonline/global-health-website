@@ -317,7 +317,16 @@
     "loading": "Loading…",
     "receipt": "Receipt",
     "viewReceipt": "View receipt",
-    "receiptUnavailable": "Invoice not available"
+    "receiptUnavailable": "Invoice not available",
+    "invoicesHeading": "Consultation invoices",
+    "invoicesHint": "Invoices and receipts issued by Global Health for your bookings.",
+    "colDocument": "Document",
+    "viewInvoice": "View",
+    "downloadInvoice": "Download PDF",
+    "docInvoice": "Invoice",
+    "docReceipt": "Receipt",
+    "docInvoiceReceipt": "Invoice / Receipt",
+    "docCreditNote": "Credit note"
   },
   "profile": {
     "breadcrumb": "Account",
