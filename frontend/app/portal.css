@@ -6470,7 +6470,10 @@ a.gh-appointment-card:hover {
 .gh-portal-nav-scrim {
   position: fixed;
   inset: 0;
-  z-index: calc(var(--z-header) - 1);
+  /* Drawer tokens, not header-1: the nav IS a drawer below lg, and at
+   * --z-header - 1 it sat under every --z-fixed-bar element (the consent
+   * banner), which then painted over the open drawer. */
+  z-index: var(--z-drawer-overlay);
   background: var(--lux-overlay-fill);
   border: 0;
   padding: 0;
@@ -6725,6 +6728,10 @@ a.gh-appointment-card:hover {
     --portal-pad-x: 12px;
     --portal-pad-y: 14px;
     --portal-section-gap: 12px;
+    /* Matches the .gh-portal-topbar height override below, so sticky offsets
+     * derived from this var (.gh-portal-tabs-sticky) pin flush to the topbar
+     * instead of leaving a 4px band of scrolling content above them. */
+    --portal-topbar-h: 60px;
   }
 
   .gh-portal-topbar {
@@ -7785,4 +7792,15 @@ button.gh-capacity-cell:hover {
   letter-spacing: 0.01em;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Below lg the fixed sidebar is a slide-in drawer, so it takes the drawer
+ * z-token rather than the --z-header it wears as desktop chrome. At
+ * --z-header (200) it sat below --z-fixed-bar (250) and the consent banner
+ * painted straight over the open nav. Above lg it is static chrome again and
+ * must stay below --z-dropdown (300) so topbar menus open over it. */
+@media (max-width: 1023px) {
+  .gh-portal-sidebar {
+    z-index: var(--z-drawer);
+  }
 }

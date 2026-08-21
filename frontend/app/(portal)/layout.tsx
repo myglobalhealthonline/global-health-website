@@ -22,5 +22,12 @@ import { rootMetadata } from "@/lib/seo/root-metadata";
 export const metadata = rootMetadata;
 
 export default function PortalRootLayout({ children }: { children: ReactNode }) {
-  return <RootDocument lang="en">{children}</RootDocument>;
+  // No consent bar: portal routes load no analytics/marketing scripts (S-027),
+  // so there is nothing here for consent to gate, and the fixed bar sat over
+  // the mobile nav drawer. The public roots still show it.
+  return (
+    <RootDocument lang="en" cookieBanner={false}>
+      {children}
+    </RootDocument>
+  );
 }

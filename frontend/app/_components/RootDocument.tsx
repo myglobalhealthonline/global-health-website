@@ -20,7 +20,19 @@ import "../globals.css";
  * `(admin)`/`(doctor)`/`account`/`corporate` layouts so public visitors never
  * download it. See CLAUDE.md.
  */
-export function RootDocument({ lang, children }: { lang: string; children: ReactNode }) {
+export function RootDocument({
+  lang,
+  cookieBanner = true,
+  children,
+}: {
+  lang: string;
+  /** Portal roots pass false: they load no analytics or marketing scripts
+   *  (S-027), so there is nothing on those routes for consent to gate, and
+   *  the fixed bar covered the mobile nav drawer. Consent is still collected
+   *  on every public route. */
+  cookieBanner?: boolean;
+  children: ReactNode;
+}) {
   return (
     <html lang={lang} className="h-full antialiased" suppressHydrationWarning>
       <head>
@@ -46,7 +58,7 @@ export function RootDocument({ lang, children }: { lang: string; children: React
             in the two public root layouts only. */}
         <ScrollToTop />
         {children}
-        <CookieBanner />
+        {cookieBanner ? <CookieBanner /> : null}
       </body>
     </html>
   );
