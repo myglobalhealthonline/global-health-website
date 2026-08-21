@@ -4871,21 +4871,11 @@ body.gh-cookie-bar-open {
   }
 }
 
-
-
-/* Notification popover — on phones the panel is wider than the space
- * left of the bell (anchored right-0 mid-topbar), so it clipped off the
- * left viewport edge. Pin it to the viewport instead. */
-@media (max-width: 640px) {
-  .gh-notification-popover {
-    position: fixed !important;
-    left: 12px !important;
-    right: 12px !important;
-    top: 72px !important;
-    width: auto !important;
-    transform-origin: top center;
-  }
-}
+/* Notification popover mobile pinning used to live here. It predated the
+ * Radix AppMenu migration: position:fixed on the content resolves against the
+ * popper wrapper's transform, not the viewport, so the panel collapsed to a
+ * sliver. Radix collisionPadding plus the w-[min(360px,100vw-32px)] clamp keep
+ * it on screen now — do not re-add. */
 
 
 /* ------------------------------------------------------------------ *
