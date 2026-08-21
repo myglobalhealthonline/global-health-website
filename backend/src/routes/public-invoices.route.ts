@@ -1,8 +1,10 @@
 import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
+import { prisma } from "../db/prisma.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { buildInvoiceDetailPayload } from "../modules/invoices/invoice-detail.service.js";
+import { buildInvoicePdfData, renderInvoicePdfBuffer } from "../modules/invoices/invoice-pdf.js";
 
 /**
  * Public read of one billing document, for the printable page at
@@ -61,6 +63,72 @@ const publicInvoicesRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(err);
         return reply.status(500).send(errorResponse("Could not load invoice"));
+      }
+    },
+  );
+
+  /**
+   * Same document as the page above, rendered as the real PDF — the "Download"
+   * action on the printable page. Public for the same reason and with the same
+   * enumeration caveat; the only fields it exposes are the ones already
+   * printed on the document itself.
+   *
+   * Rendering a PDF costs far more than a JSON read, so this carries a tighter
+   * limit than the detail endpoint.
+   */
+  app.get<{ Params: { invoiceId: string } }>(
+    "/api/public/invoices/:invoiceId/pdf",
+    { config: { rateLimit: { max: 20, timeWindow: "10 minutes" } } },
+    async (request, reply) => {
+      const params = paramsSchema.safeParse(request.params);
+      if (!params.success) {
+        return reply.status(400).send(errorResponse("Invalid invoice id"));
+      }
+
+      try {
+        const invoice = await prisma.invoice.findUnique({
+          where: { id: params.data.invoiceId },
+          select: {
+            invoiceNumber: true,
+            documentType: true,
+            creditNoteReason: true,
+            generatedAt: true,
+            orderId: true,
+          },
+        });
+        if (!invoice) return reply.status(404).send(errorResponse("Invoice not found"));
+
+        const pdfData = await buildInvoicePdfData(
+          invoice.orderId,
+          invoice.invoiceNumber,
+          invoice.generatedAt.toISOString(),
+          invoice.documentType,
+          invoice.creditNoteReason,
+        );
+        const pdfBuffer = pdfData ? await renderInvoicePdfBuffer(pdfData) : null;
+        if (!pdfBuffer) {
+          return reply.status(500).send(errorResponse("Could not render document PDF"));
+        }
+
+        const prefix =
+          invoice.documentType === "CREDIT_NOTE"
+            ? "credit-note"
+            : invoice.documentType === "RECEIPT"
+              ? "receipt"
+              : "invoice";
+        return reply
+          .header("Content-Type", "application/pdf")
+          .header(
+            "Content-Disposition",
+            `attachment; filename="${prefix}-${invoice.invoiceNumber}.pdf"`,
+          )
+          .send(pdfBuffer);
+      } catch (err) {
+        if (err instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(err.message));
+        }
+        app.log.error(err);
+        return reply.status(500).send(errorResponse("Could not generate document PDF"));
       }
     },
   );

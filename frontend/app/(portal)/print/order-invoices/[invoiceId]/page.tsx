@@ -41,6 +41,7 @@ const LABELS: Record<string, Record<string, string>> = {
     address: "6-9 Trinity Street, Dublin 2, D02 EY47, Ireland",
     taxId: "Tax ID",
     consultationDate: "Consultation date",
+    download: "Download PDF",
   },
   cz: {
     invoice: "Faktura",
@@ -65,6 +66,7 @@ const LABELS: Record<string, Record<string, string>> = {
     address: "Irsko",
     taxId: "DIČ",
     consultationDate: "Datum konzultace",
+    download: "Stáhnout PDF",
   },
   // Keys MUST match `Country.code` as stored in the DB (ie, cz, es, ro, pt, br).
   // These were once keyed "sp"/"rm" — legacy Wix-era aliases that match no real
@@ -94,6 +96,7 @@ const LABELS: Record<string, Record<string, string>> = {
     address: "Irlanda",
     taxId: "NIF",
     consultationDate: "Fecha de consulta",
+    download: "Descargar PDF",
   },
   ro: {
     invoice: "Factură",
@@ -118,6 +121,7 @@ const LABELS: Record<string, Record<string, string>> = {
     address: "Irlanda",
     taxId: "CUI",
     consultationDate: "Data consultației",
+    download: "Descarcă PDF",
   },
   pt: {
     invoice: "Fatura",
@@ -142,6 +146,7 @@ const LABELS: Record<string, Record<string, string>> = {
     address: "Irlanda",
     taxId: "NIF",
     consultationDate: "Data da consulta",
+    download: "Descarregar PDF",
   },
   // Brazil — pt-BR. Deliberately not a copy of `pt`: different taxpayer id (CPF
   // vs NIF) and different vocabulary ("registro" not "registo").
@@ -168,6 +173,7 @@ const LABELS: Record<string, Record<string, string>> = {
     address: "Irlanda",
     taxId: "CPF",
     consultationDate: "Data da consulta",
+    download: "Baixar PDF",
     // Commission markets only — mirrors backend invoice-pdf.ts INVOICE_LABELS.br.
     commissionLine: "Comissão Global Health",
     commissionNote:
@@ -393,6 +399,30 @@ export default async function PrintOrderInvoicePage({
 
   return (
     <div className="vk-backdrop">
+      {/* Screen-only toolbar. A plain anchor, not a client component: the
+          backend sends Content-Disposition: attachment, so the browser saves
+          the real PDF (the same renderer the emailed copy uses) with no
+          JavaScript involved. Hidden in @media print so it never lands on
+          paper. */}
+      <div className="vk-toolbar">
+        <a
+          className="vk-dl"
+          href={`/api/public/invoices/${encodeURIComponent(invoiceId)}/pdf`}
+        >
+          <svg viewBox="0 0 16 16" aria-hidden="true" className="vk-dl-icon">
+            <path
+              d="M8 1.5v8m0 0L4.75 6.25M8 9.5l3.25-3.25M2.5 11.5v1.25a1.25 1.25 0 0 0 1.25 1.25h8.5a1.25 1.25 0 0 0 1.25-1.25V11.5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          {L.download}
+        </a>
+      </div>
+
       <div className="vk-sheet">
         <div className="vk-spine" />
         <div className="vk-spine-caption">
@@ -556,6 +586,30 @@ export default async function PrintOrderInvoicePage({
           font-family: ${VK_SANS};
           color: ${VK.ink};
         }
+        .vk-toolbar {
+          max-width: 820px;
+          margin: 0 auto 14px;
+          display: flex;
+          justify-content: flex-end;
+        }
+        .vk-dl {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 9px 16px;
+          border: 1px solid ${VK.hairlineDark};
+          background: ${VK.paper};
+          color: ${VK.forest};
+          font-size: 13px;
+          font-weight: 600;
+          letter-spacing: 0.02em;
+          text-decoration: none;
+          border-radius: 2px;
+          transition: background 120ms ease, border-color 120ms ease;
+        }
+        .vk-dl:hover { background: ${VK.ivory}; border-color: ${VK.forest}; }
+        .vk-dl:focus-visible { outline: 2px solid ${VK.forest}; outline-offset: 2px; }
+        .vk-dl-icon { width: 15px; height: 15px; flex: none; }
         .vk-sheet {
           position: relative;
           max-width: 820px;
@@ -701,6 +755,7 @@ export default async function PrintOrderInvoicePage({
           @page { size: A4; margin: 0; }
           html, body { background: ${VK.paper}; }
           .vk-backdrop { background: ${VK.paper}; padding: 0; min-height: 0; }
+          .vk-toolbar { display: none; }
           .vk-sheet { max-width: none; box-shadow: none; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
           .vk-spine, .vk-spine-caption {
             -webkit-print-color-adjust: exact;
