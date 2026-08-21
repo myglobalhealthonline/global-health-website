@@ -239,7 +239,7 @@ export function ServiceCatalog({
                           style={{ background: "var(--color-brand-accent)" }}
                         />
                       ) : null}
-                      {f.label}
+                      {f.label}{" "}
                       <span
                         className="inline-flex min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-bold"
                         style={

@@ -43,10 +43,9 @@ export const PORTUGAL_DOCTORS: PortugalDoctorSheet[] = [
       "Agende uma videoconsulta com Dr. Tiago Figueira — médico registado na Ordem dos Médicos (OM 77986). MUDr. Universidade de Masaryk · Cirurgia Geral Irlanda · Diretor Clínico Global Health · Consulta no mesmo dia.",
     languagesAdd: ["Czech"],
     bio: `
-<p>O Dr. Tiago Miguel Figueira é médico (MUDr.) formado em Medicina Geral pela Universidade de Masaryk, Faculdade de Medicina de Brno — uma das escolas médicas mais reconhecidas internacionalmente na Europa — com experiência clínica em Portugal, Irlanda e República Checa.</p>
-<p>Antes de se dedicar integralmente à medicina online, o Dr. Figueira exerceu funções de Senior House Officer em Cirurgia Geral no Tipperary University Hospital, na Irlanda, onde adquiriu experiência prática em cuidados agudos, medicina perioperatória, assistência cirúrgica e resposta a emergências. Esta experiência hospitalar confere-lhe a base clínica para reconhecer quando uma situação requer atenção urgente — e quando não requer.</p>
-<p>Atualmente, como Diretor Clínico da Global Health Irlanda e Portugal, o Dr. Figueira lidera a prestação de cuidados primários online em ambos os mercados — de Dublin a Lisboa e em todo o território nacional. Tornou-se médico online porque acredita que cuidados de saúde de qualidade devem estar disponíveis para todos — independentemente do local de residência, do idioma falado ou do tempo de espera disponível.</p>
-<p>No âmbito da Global Health Portugal, o Dr. Figueira oferece consultas de clínica geral online disponíveis hoje — incluindo consultas no mesmo dia para doença aguda, renovação de receitas, atestados médicos e declarações. As suas consultas estão disponíveis para pacientes em todo o território português e as receitas emitidas são legalmente válidas em qualquer farmácia portuguesa.</p>
+<p>Cirurgia geral de urgência ensina a distinguir depressa o que pode esperar do que não pode — foi essa a base que o Dr. Tiago Miguel Figueira levou consigo da sala de emergências para a consulta online. Formou-se em Medicina Geral pela Universidade de Masaryk, Faculdade de Medicina de Brno, e exerceu como Senior House Officer em Cirurgia Geral no Tipperary University Hospital, na Irlanda, onde lidou com cuidados agudos, medicina perioperatória, assistência cirúrgica e resposta a emergências.</p>
+<p>É hoje Diretor Clínico da Global Health na Irlanda e em Portugal, com prática clínica nos dois mercados — e experiência adicional adquirida na República Checa. A função de direção clínica não o afastou da consulta: continua a atender diretamente, com agenda aberta a marcações no mesmo dia.</p>
+<p>Em Portugal, as suas consultas de clínica geral cobrem doença aguda, renovação de receitas, atestados médicos e declarações, com disponibilidade em todo o território nacional. As receitas que emite são válidas em qualquer farmácia portuguesa.</p>
 <p><strong>O que trata:</strong></p>
 <ul>
 <li>Doença aguda — infeções respiratórias, febre, gripe, dor de garganta, infeções do ouvido</li>
@@ -60,7 +59,7 @@ export const PORTUGAL_DOCTORS: PortugalDoctorSheet[] = [
 <li>Saúde mental — ansiedade, depressão, gestão do stress e referenciação a especialistas</li>
 <li>Atestados médicos, declarações e renovação de receitas</li>
 </ul>
-<p><strong>A sua abordagem:</strong> Cada consulta com o Dr. Figueira é personalizada, baseada em evidências e realizada com o mesmo padrão clínico que esperaria de uma consulta presencial. Dedica tempo a ouvir, explica de forma clara e assegura que sai da consulta com um plano concreto — não apenas com uma receita.</p>
+<p><strong>Em consulta:</strong> ouve antes de decidir, explica o raciocínio clínico em termos claros e fecha cada consulta com um plano de ação definido — não apenas uma receita. O padrão é o mesmo que aplicaria numa urgência hospitalar: avaliação estruturada, decisão fundamentada.</p>
 `.trim(),
     faqs: [
       {

@@ -384,10 +384,7 @@ export default async function CountryLangHomePage({
       : { v: dataLawName, l: gdprLabel, icon: "lock" };
   const trustItems: TrustRibbonItem[] = [
     {
-      v:
-        countryDoctors.length >= 10
-          ? `${Math.floor(countryDoctors.length / 10) * 10}+`
-          : String(countryDoctors.length),
+      v: String(countryDoctors.length),
       l: countryDoctors.length === 1 ? t.trust.licensedSingular : t.trust.licensedPlural,
       icon: "doctor",
     },
@@ -438,10 +435,7 @@ export default async function CountryLangHomePage({
   const trustMarqueeItems: TrustMarqueeItem[] = [
     {
       icon: "doctor" as const,
-      value:
-        countryDoctors.length >= 10
-          ? `${Math.floor(countryDoctors.length / 10) * 10}+`
-          : String(countryDoctors.length),
+      value: String(countryDoctors.length),
       label:
         countryDoctors.length === 1 ? t.trust.licensedSingular : t.trust.licensedPlural,
     },

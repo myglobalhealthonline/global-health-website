@@ -42,10 +42,10 @@ export function TrustMarquee({
   ariaLabel?: string;
 }) {
   if (!items || items.length === 0) return null;
-  // Duplicate the sequence so the CSS track loops seamlessly; short lists
-  // get quadrupled so the belt never shows a gap on ultra-wide screens.
-  const loop = items.length < 5 ? [...items, ...items] : items;
-  const track = [...loop, ...loop];
+  // Duplicate the sequence once so the CSS track (-50% translate) loops
+  // seamlessly. Do not pre-double short lists on top of this — that made
+  // the same 4-item sequence appear 4x in a row in the served DOM/text.
+  const track = [...items, ...items];
 
   return (
     <section
