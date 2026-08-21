@@ -226,6 +226,16 @@ const checkoutBodySchema = z.object({
     .regex(/^\/[a-z0-9/-]*$/i)
     .max(200)
     .optional(),
+  /**
+   * The site locale the customer was actually browsing in when they booked
+   * (the `[lang]` route segment), NOT the booking country's default. Every
+   * patient-facing message for this order is written in it. Absent on older
+   * clients — the Order column stays null and language falls back to the
+   * country, exactly as before this shipped.
+   */
+  notificationLocale: z
+    .enum(["EN", "PT", "ES", "CS", "RO", "DE"])
+    .optional(),
 });
 
 const orderIdParamSchema = z.object({ id: z.string().min(1).max(120) });
@@ -652,6 +662,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
               fullName: body.data.fullName,
               phone: body.data.phone || null,
               countryCode: cart.countryCode,
+              notificationLocale: body.data.notificationLocale ?? null,
               currencyCode: cart.currencyCode,
               subtotalCents,
               shippingCents,

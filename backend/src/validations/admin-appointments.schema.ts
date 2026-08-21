@@ -262,6 +262,13 @@ export const createManualAppointmentBodySchema = z
     locationAddress: z.string().trim().max(500).optional().nullable(),
     notes: z.string().trim().max(2000).optional().nullable(),
     countryCode: countryCodeSchema,
+    /**
+     * Language the patient-facing notifications for this booking go out in.
+     * The dialog pre-selects the booking country's own locale; the operator
+     * overrides it when the patient reads something else. Omitted → the service
+     * falls back to the country locale, so older clients are unchanged.
+     */
+    notificationLocale: z.enum(["EN", "PT", "ES", "CS", "RO", "DE"]).optional(),
     /** Booking under an insurer — the server re-derives the insurance price and
      *  requires the doctor to be in that insurer's network for the service. */
     insuranceCompanyId: z.string().trim().min(1).max(64).optional().nullable(),

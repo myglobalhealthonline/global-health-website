@@ -6,6 +6,12 @@ import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { AdminCard } from "../../_components/atoms";
 import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
+import {
+  NOTIFICATION_LOCALES,
+  NOTIFICATION_LOCALE_LABEL,
+  defaultNotificationLocaleForCountry,
+  type NotificationLocale,
+} from "@/lib/notification-locale";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { CountryDialSelect } from "@/components/forms/country-dial-select";
 import { splitPhone } from "@/lib/phone/dial-codes";
@@ -207,6 +213,13 @@ export function ManualBookingForm({
   );
   const [benefitLoading, setBenefitLoading] = useState(false);
   const [benefitLoadError, setBenefitLoadError] = useState<string | null>(null);
+  // Pre-selected from the country being booked in — the common case is a
+  // patient who reads that country's language. The admin overrides it for the
+  // expat/tourist case, which is exactly why this is a control and not a
+  // derived value.
+  const [notificationLocale, setNotificationLocale] = useState<NotificationLocale>(() =>
+    defaultNotificationLocaleForCountry(countryCode),
+  );
   const [consultationMode, setConsultationMode] = useState<"ONLINE" | "IN_PERSON">(
     "ONLINE",
   );
@@ -1172,6 +1185,26 @@ export function ManualBookingForm({
               </span>
             ) : null}
             {errors.doctorId ? <FieldError msg={errors.doctorId} /> : null}
+          </label>
+
+          <label className="flex flex-col gap-1.5">
+            <span className="gh-field-label">Notification language *</span>
+            <select
+              name="notificationLocale"
+              className="gh-select"
+              value={notificationLocale}
+              onChange={(e) => setNotificationLocale(e.target.value as NotificationLocale)}
+            >
+              {NOTIFICATION_LOCALES.map((code) => (
+                <option key={code} value={code}>
+                  {NOTIFICATION_LOCALE_LABEL[code]}
+                </option>
+              ))}
+            </select>
+            <span className="text-xs text-[var(--portal-muted)]">
+              Emails and WhatsApp messages for this booking are written in this
+              language. Defaults to the booking country&apos;s own language.
+            </span>
           </label>
 
           <label className="flex flex-col gap-1.5">

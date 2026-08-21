@@ -5,6 +5,11 @@ import { useRouter } from "next/navigation";
 import { CalendarPlus } from "lucide-react";
 import { fetchAvailabilityRangeClient } from "@/lib/api/doctor-availability-client";
 import type { DoctorTimeSlotView } from "@/lib/api/doctor-availability-types";
+import {
+  NOTIFICATION_LOCALES,
+  NOTIFICATION_LOCALE_LABEL,
+  type NotificationLocale,
+} from "@/lib/notification-locale";
 
 /**
  * Spin a follow-up appointment off the current one.
@@ -38,6 +43,8 @@ export type FollowUpButtonCopy = {
   selectSlotFirst: string;
   /** Explains billing + notifications so the doctor knows what the patient gets. */
   billingNote: string;
+  notificationLanguage: string;
+  notificationLanguageHint: string;
 };
 
 /** How far ahead to offer follow-up slots. */
@@ -46,9 +53,13 @@ const LOOKAHEAD_DAYS = 60;
 export function FollowUpButton({
   appointmentId,
   copy,
+  defaultNotificationLocale,
 }: {
   appointmentId: string;
   copy: FollowUpButtonCopy;
+  /** The source consultation's own notification language, so a follow-up keeps
+   *  writing to the patient in the language they have been written to in. */
+  defaultNotificationLocale: NotificationLocale;
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -59,6 +70,9 @@ export function FollowUpButton({
   const [selectedSlotId, setSelectedSlotId] = useState<string>("");
   const [notes, setNotes] = useState("");
   const [mode, setMode] = useState<"ONLINE" | "IN_PERSON">("ONLINE");
+  const [notificationLocale, setNotificationLocale] = useState<NotificationLocale>(
+    defaultNotificationLocale,
+  );
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -138,6 +152,7 @@ export function FollowUpButton({
             consultationType: "follow-up",
             notes: notes.trim() || undefined,
             consultationMode: mode,
+            notificationLocale,
           }),
         },
       );
@@ -245,6 +260,23 @@ export function FollowUpButton({
             </div>
           )}
         </div>
+        <label className="flex flex-col gap-1">
+          <span className="gh-field-label">{copy.notificationLanguage}</span>
+          <select
+            className="gh-select"
+            value={notificationLocale}
+            onChange={(e) => setNotificationLocale(e.target.value as NotificationLocale)}
+          >
+            {NOTIFICATION_LOCALES.map((code) => (
+              <option key={code} value={code}>
+                {NOTIFICATION_LOCALE_LABEL[code]}
+              </option>
+            ))}
+          </select>
+          <span className="text-xs text-[var(--portal-muted)]">
+            {copy.notificationLanguageHint}
+          </span>
+        </label>
         <label className="flex flex-col gap-1">
           <span className="gh-field-label">{copy.deliveryLabel}</span>
           <select

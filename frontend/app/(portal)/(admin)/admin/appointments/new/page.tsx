@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import { MANUAL_BOOKING_COOKIE } from "@/lib/admin/manual-booking-cookie";
+import { parseNotificationLocale } from "@/lib/notification-locale";
 import { ArrowLeft, Globe2 } from "lucide-react";
 import {
   fetchAdminClinicsByCountryCode,
@@ -287,6 +288,10 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
       locationAddress,
       notes: readOpt("notes"),
       countryCode: readStr("countryCode"),
+      // Re-narrowed server-side: a bypassed client must not be able to write an
+      // arbitrary string into the column. Unrecognised → null, and the backend
+      // falls back to the booking country's locale.
+      notificationLocale: parseNotificationLocale(readStr("notificationLocale")) ?? null,
       // Insurance: the backend re-derives the price and enforces that the
       // doctor is in the insurer's network — never trusted from the form.
       insuranceCompanyId: readOpt("insuranceCompanyId"),

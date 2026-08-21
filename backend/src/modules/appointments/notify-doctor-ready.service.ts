@@ -1,7 +1,8 @@
 import { prisma } from "../../db/prisma.js";
 import { sendEmail } from "../../lib/email/send-email.js";
 import { sendWhatsAppText } from "../../lib/whatsapp/wasender.js";
-import { detectAutomationLanguage } from "../automation/pre-payment-messages.js";
+import type { LocaleCode } from "@prisma/client";
+import { resolveNotificationLang } from "../automation/notification-language.js";
 import {
   doctorReadyEmailHtml,
   doctorReadyEmailSubject,
@@ -12,16 +13,27 @@ import {
 
 const SUPPORTED_LANGS: readonly DoctorReadyLang[] = ["en", "pt", "ro", "cs", "es"];
 
+/**
+ * `notificationLocale` — the language the patient booked in, or the operator's
+ * manual-booking choice — outranks everything. `consultationLanguageCode` is
+ * kept as the next-best signal for rows minted before that column existed: it
+ * is the language the consult is SPOKEN in, which is a decent guess at the
+ * patient's language but is not the same thing.
+ */
 function resolveLang(input: {
+  notificationLocale: LocaleCode | null;
   consultationLanguageCode: string | null;
   countryCode: string;
   consultationType: string;
 }): DoctorReadyLang {
-  const explicit = input.consultationLanguageCode?.trim().toLowerCase();
-  if (explicit && (SUPPORTED_LANGS as readonly string[]).includes(explicit)) {
-    return explicit as DoctorReadyLang;
+  if (!input.notificationLocale) {
+    const explicit = input.consultationLanguageCode?.trim().toLowerCase();
+    if (explicit && (SUPPORTED_LANGS as readonly string[]).includes(explicit)) {
+      return explicit as DoctorReadyLang;
+    }
   }
-  return detectAutomationLanguage({
+  return resolveNotificationLang({
+    notificationLocale: input.notificationLocale,
     countryCode: input.countryCode,
     serviceName: input.consultationType,
   });
@@ -62,6 +74,7 @@ export async function notifyPatientDoctorReady(opts: {
       countryCode: true,
       consultationType: true,
       consultationLanguageCode: true,
+      notificationLocale: true,
       whatsappConsent: true,
       meetingUrl: true,
       status: true,
@@ -94,6 +107,7 @@ export async function notifyPatientDoctorReady(opts: {
   }
 
   const lang = resolveLang({
+    notificationLocale: appt.notificationLocale,
     consultationLanguageCode: appt.consultationLanguageCode,
     countryCode: appt.countryCode,
     consultationType: appt.consultationType,

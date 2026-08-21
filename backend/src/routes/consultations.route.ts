@@ -76,6 +76,7 @@ async function findOwnedAppointment(doctorId: string, appointmentId: string) {
       symptoms: true,
       patientTimezone: true,
       consultationLanguageCode: true,
+      notificationLocale: true,
       createdAt: true,
     },
   });
@@ -124,6 +125,7 @@ async function findReadableAppointment(
       symptoms: true,
       patientTimezone: true,
       consultationLanguageCode: true,
+      notificationLocale: true,
       createdAt: true,
     },
   });

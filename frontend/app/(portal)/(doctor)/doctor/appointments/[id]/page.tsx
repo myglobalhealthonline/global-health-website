@@ -56,6 +56,7 @@ import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { doctorAppointmentView } from "@/lib/api/appointment-status-labels";
 import { SetCrumbTitle } from "@/components/crumb-title";
+import { defaultNotificationLocaleForCountry } from "@/lib/notification-locale";
 
 export const dynamic = "force-dynamic";
 
@@ -410,7 +411,14 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                       copy={d.finalizeChecklist}
                     />
                     <div className="mt-4 border-t border-[var(--portal-line)] pt-4">
-                      <FollowUpButton appointmentId={appointment.id} copy={d.followUpButton} />
+                      <FollowUpButton
+                        appointmentId={appointment.id}
+                        copy={d.followUpButton}
+                        defaultNotificationLocale={
+                          appointment.notificationLocale ??
+                          defaultNotificationLocaleForCountry(appointment.countryCode)
+                        }
+                      />
                     </div>
                   </div>
                 </FormSection>

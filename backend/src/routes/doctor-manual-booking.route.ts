@@ -76,6 +76,7 @@ const doctorManualBookingRoute: FastifyPluginAsync = async (app) => {
         serviceId: body.data.serviceId,
         timeSlotId: body.data.timeSlotId,
         consultationMode: body.data.consultationMode,
+        notificationLocale: body.data.notificationLocale ?? null,
         clinicId: body.data.clinicId ?? null,
         locationAddress: body.data.locationAddress ?? null,
         notes: body.data.notes ?? null,

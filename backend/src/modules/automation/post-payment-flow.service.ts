@@ -1,5 +1,9 @@
 import { CartItemKind } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
+import {
+  resolveNotificationLang,
+  type NotificationLang,
+} from "./notification-language.js";
 import { resolveEmailLogoUrl } from "../../lib/email/resolve-email-logo-url.js";
 import { sendWhatsAppText, formatWhatsAppSendError } from "../../lib/whatsapp/wasender.js";
 import type { PhoneNormalizeHints } from "../../lib/whatsapp/normalize-phone.js";
@@ -13,7 +17,6 @@ import {
 import { formatOrderDisplayId } from "./automation-catalog.js";
 import { createAutomationRun, finishAutomationRun } from "./automation-run.service.js";
 import {
-  detectAutomationLanguage,
   pendingAppointmentDateLabel,
   prefixServiceName,
   type AutomationLang,
@@ -134,7 +137,8 @@ async function loadPostPaymentContext(orderId: string) {
 
   const doctorContact = await resolveDoctorContact(primary.doctorId);
 
-  const lang = detectAutomationLanguage({
+  const lang = resolveNotificationLang({
+    notificationLocale: order.notificationLocale,
     countryCode: order.countryCode,
     serviceName: primary.name,
   });
@@ -273,7 +277,7 @@ async function sendPatientEmail(
   automationKey: string,
   orderId: string,
   to: string,
-  lang: ReturnType<typeof detectAutomationLanguage>,
+  lang: NotificationLang,
   ctx: PostPaymentMessageContext,
   summary: string,
   variant: PostPaymentEmailVariant,
@@ -314,7 +318,7 @@ async function sendDoctorEmail(
   automationKey: string,
   orderId: string,
   to: string,
-  lang: ReturnType<typeof detectAutomationLanguage>,
+  lang: NotificationLang,
   ctx: PostPaymentMessageContext,
   summary: string,
   variant: "meeting_link" | "one_hour" | "session_start",

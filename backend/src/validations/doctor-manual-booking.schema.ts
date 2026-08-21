@@ -48,6 +48,13 @@ export const createDoctorManualAppointmentBodySchema = z
     /** First base `DoctorTimeSlot` to claim, from the doctor's own calendar. */
     timeSlotId: z.string().trim().min(1).max(120),
     consultationMode: z.enum(["ONLINE", "IN_PERSON"]).default("ONLINE"),
+    /**
+     * Language the patient-facing notifications for this booking go out in.
+     * The dialog pre-selects the booking country's own locale; the operator
+     * overrides it when the patient reads something else. Omitted → the service
+     * falls back to the country locale, so older clients are unchanged.
+     */
+    notificationLocale: z.enum(["EN", "PT", "ES", "CS", "RO", "DE"]).optional(),
     clinicId: z.string().trim().min(1).max(60).optional().nullable(),
     locationAddress: z.string().trim().max(500).optional().nullable(),
     notes: z.string().trim().max(2000).optional().nullable(),

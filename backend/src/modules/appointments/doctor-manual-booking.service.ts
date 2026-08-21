@@ -1,6 +1,7 @@
 import type { ServiceKind } from "@prisma/client";
 import type { FastifyRequest } from "fastify";
 import { prisma } from "../../db/prisma.js";
+import type { LocaleCode } from "@prisma/client";
 import { normalizeDbError } from "../shared/db-errors.js";
 import {
   createManualBooking,
@@ -184,6 +185,9 @@ export type CreateDoctorManualBookingInput = {
   serviceId: string;
   timeSlotId: string;
   consultationMode: "ONLINE" | "IN_PERSON";
+  /** Notification language picked in the booking dialog. Omitted → the
+   *  booking country's own locale. */
+  notificationLocale?: LocaleCode | null;
   clinicId?: string | null;
   locationAddress?: string | null;
   notes?: string | null;
@@ -243,6 +247,7 @@ export async function createDoctorManualBooking(
       input.consultationMode === "IN_PERSON" ? input.locationAddress ?? null : null,
     notes: input.notes ?? null,
     countryCode: service.country.code,
+    notificationLocale: input.notificationLocale ?? null,
     // No amount override and no insurer: the price is resolved from the
     // catalogue + the slot's peak rule, so the doctor cannot influence it.
     origin: { source: "doctor_manual", actorRole: "DOCTOR" },

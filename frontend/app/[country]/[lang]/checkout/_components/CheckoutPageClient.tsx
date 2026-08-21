@@ -18,6 +18,7 @@ import { useCart } from "@/components/cart/CartContext";
 import { MobileOrderTotalBar } from "@/components/cart/MobileOrderTotalBar";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 import { startCheckout } from "@/lib/api/cart-client";
+import { notificationLocaleFromLang } from "@/lib/notification-locale";
 import { getCartPreview, type CartCoverageLine } from "@/lib/api/me-subscription";
 import { fetchCurrentUser, type AuthUser } from "@/lib/api/auth-api";
 import { PhoneField } from "@/components/forms/phone-field";
@@ -181,6 +182,7 @@ export function CheckoutPageClient({
       shipPostalCode: String(form.get("shipPostalCode") ?? ""),
       shipCountryCode: String(form.get("shipCountryCode") ?? cart.countryCode),
       returnTo,
+      notificationLocale: notificationLocaleFromLang(lang),
     });
     if (!res.ok) {
       setSubmitting(false);

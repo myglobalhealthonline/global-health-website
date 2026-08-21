@@ -1,8 +1,10 @@
 import bcrypt from "bcryptjs";
 import { randomBytes, randomUUID } from "node:crypto";
 import { CartItemKind, PaymentStatus, ServiceKind } from "@prisma/client";
+import type { LocaleCode } from "@prisma/client";
 import type { FastifyRequest } from "fastify";
 import { prisma } from "../../db/prisma.js";
+import { defaultNotificationLocaleForCountry } from "../automation/notification-language.js";
 import { env } from "../../config/env.js";
 import {
   getStripeClient,
@@ -347,6 +349,13 @@ export type CreateManualBookingInput = {
    *  Rounded up to the window's base grid step when consumed. */
   durationMinutes?: number | null;
   consultationMode: "ONLINE" | "IN_PERSON";
+  /**
+   * Language every patient-facing message for this booking is written in — the
+   * operator's dropdown choice in the admin/doctor booking dialog. Omitted (the
+   * partner API, and any caller that doesn't ask) falls back to the booking
+   * country's own locale, which is what the dialog pre-selects too.
+   */
+  notificationLocale?: LocaleCode | null;
   clinicId?: string | null;
   locationAddress?: string | null;
   notes?: string | null;
@@ -512,6 +521,11 @@ export async function createManualBooking(
   if (!input.timeSlotId) {
     throw new SlotNotAvailableError();
   }
+  // Written to BOTH the order and the appointment, so order-level automation
+  // (payment link, reminders) and appointment-level automation (doctor ready,
+  // no-show) never disagree about which language this patient reads.
+  const notificationLocale =
+    input.notificationLocale ?? defaultNotificationLocaleForCountry(input.countryCode);
 
   const service = await prisma.service.findFirst({
     where: {
@@ -1025,6 +1039,7 @@ export async function createManualBooking(
         userId,
         countryCode: input.countryCode,
         consultationType: input.consultationTypeOverride?.trim() || service.name,
+        notificationLocale,
         followUpFromAppointmentId: input.followUpFromAppointmentId ?? null,
         fullName,
         email,
@@ -1137,6 +1152,7 @@ export async function createManualBooking(
       fullName,
       phone: input.patient.phone?.trim() || null,
       countryCode: input.countryCode.toLowerCase(),
+      notificationLocale,
       currencyCode,
       // Provenance icon in the admin orders table — the partner API is the
       // AI phone agent's booking path; every other manual booking is a human

@@ -2050,6 +2050,17 @@ model Appointment {
   /// BCP-47 language code chosen by patient at booking time (e.g. "en", "pt", "fr").
   /// Null for legacy bookings made before language selection was introduced.
   consultationLanguageCode       String?
+  /// Language every patient-facing notification for this appointment is written
+  /// in. Deliberately SEPARATE from `consultationLanguageCode`, which is the
+  /// language the consultation itself is spoken in (set by GP assignment) —
+  /// a patient can browse in English and be seen by a Portuguese-speaking GP.
+  ///
+  /// Website bookings copy the site locale the patient actually booked in;
+  /// manual bookings copy the admin/doctor's dropdown choice, which defaults to
+  /// the booking country's `defaultLocale`. Null = decide from the country at
+  /// send time (every pre-feature row). DE resolves to English copy — see
+  /// `resolveNotificationLang`.
+  notificationLocale             LocaleCode?
   /// Why this doctor was auto-assigned by the same-day GP quick-book flow
   /// (e.g. "PRIORITY_24H", "ROTATION", "ONLY_AVAILABLE"). Null for manual /
   /// doctor-first bookings where the patient picked the clinician. Populated
@@ -2935,6 +2946,14 @@ model Order {
   fullName                      String
   phone                         String?
   countryCode                   String
+  /// Language every patient-facing notification for this order is written in —
+  /// payment links, reminders, confirmations, refunds, invoices. Website
+  /// checkouts copy the site locale the patient booked in; manual bookings copy
+  /// the admin/doctor's dropdown choice (defaulting to the booking country's
+  /// `defaultLocale`). Null = decide from `countryCode` at send time, which is
+  /// what every row predating this column does. Copied onto the Appointment at
+  /// mint. DE resolves to English copy — see `resolveNotificationLang`.
+  notificationLocale            LocaleCode?
   currencyCode                  String
   subtotalCents                 Int
   shippingCents                 Int                   @default(0)

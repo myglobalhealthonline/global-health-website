@@ -282,6 +282,7 @@ export async function resendInvoiceWhatsApp(
           fullName: true,
           phone: true,
           countryCode: true,
+          notificationLocale: true,
           items: {
             select: { patientWhatsappConsent: true, patientAddressCountryCode: true },
             take: 1,
@@ -301,9 +302,12 @@ export async function resendInvoiceWhatsApp(
   }
 
   const { sendWhatsAppText, formatWhatsAppSendError } = await import("../../lib/whatsapp/wasender.js");
-  const { detectAutomationLanguage } = await import("../automation/pre-payment-messages.js");
+  const { resolveNotificationLang } = await import("../automation/notification-language.js");
   const { whatsappContactFooter } = await import("../automation/whatsapp-contact-footer.js");
-  const lang = detectAutomationLanguage({ countryCode: invoice.order.countryCode });
+  const lang = resolveNotificationLang({
+    notificationLocale: invoice.order.notificationLocale,
+    countryCode: invoice.order.countryCode,
+  });
   const docLabel = INVOICE_DOC_LABEL[lang][
     invoice.documentType === "RECEIPT"
       ? "RECEIPT"

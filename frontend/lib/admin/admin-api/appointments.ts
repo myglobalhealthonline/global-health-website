@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { adminRequest } from "./core";
+import type { NotificationLocale } from "@/lib/notification-locale";
 
 type AdminAppointmentsListPayload = {
   items: Array<{
@@ -170,6 +171,10 @@ export type CreateManualAppointmentInput = {
   locationAddress?: string | null;
   notes?: string | null;
   countryCode: string;
+  /** Language the patient-facing notifications go out in. The dialog
+   *  pre-selects the booking country's locale; omit to let the backend fall
+   *  back to that same country default. */
+  notificationLocale?: NotificationLocale | null;
   /** Booking under an insurer. The backend re-derives the insurance price and
    *  requires the doctor to be in that insurer's network for the service. */
   insuranceCompanyId?: string | null;

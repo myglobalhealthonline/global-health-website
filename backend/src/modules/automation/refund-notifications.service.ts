@@ -1,6 +1,10 @@
 import { prisma } from "../../db/prisma.js";
+import {
+  resolveNotificationLang,
+  type NotificationLang,
+} from "./notification-language.js";
 import { generateCreditNoteForOrder } from "../invoices/generate-invoice.service.js";
-import { detectAutomationLanguage, type AutomationLang } from "./pre-payment-messages.js";
+import type { AutomationLang } from "./pre-payment-messages.js";
 import { whatsappContactFooter } from "./whatsapp-contact-footer.js";
 import { formatOrderTotal, resolvePatientFullName } from "./pre-payment-email-template.js";
 import { formatOrderDisplayId } from "./automation-catalog.js";
@@ -94,6 +98,7 @@ export async function sendOrderRefundNotifications(orderId: string): Promise<voi
       fullName: true,
       phone: true,
       countryCode: true,
+      notificationLocale: true,
       currencyCode: true,
       totalCents: true,
       orderNumber: true,
@@ -106,7 +111,11 @@ export async function sendOrderRefundNotifications(orderId: string): Promise<voi
 
   const isPT = order.countryCode.toLowerCase() === "pt";
   const primary = order.items[0];
-  const lang = detectAutomationLanguage({ countryCode: order.countryCode, serviceName: primary?.name });
+  const lang = resolveNotificationLang({
+    notificationLocale: order.notificationLocale,
+    countryCode: order.countryCode,
+    serviceName: primary?.name,
+  });
   const ctx: Ctx = {
     fullName: resolvePatientFullName(order.fullName, primary?.patientFullName),
     orderRef: formatOrderDisplayId({ id: order.id, orderNumber: order.orderNumber }),

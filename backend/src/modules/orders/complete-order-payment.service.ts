@@ -433,6 +433,10 @@ async function fulfillPaidOrderFromCheckoutSession(
           userId: order.userId,
           countryCode: order.countryCode,
           consultationType,
+          // Carried from the order so every appointment-level message (doctor
+          // ready, no-show nudge) speaks the same language as the order-level
+          // ones the patient has already received.
+          notificationLocale: order.notificationLocale ?? null,
           consultationLanguageCode: gpAssignment?.languageCode ?? null,
           assignmentReason: gpAssignment?.reason ?? null,
           fullName: aptFullName,

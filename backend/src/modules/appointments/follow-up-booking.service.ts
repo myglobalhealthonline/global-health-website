@@ -1,4 +1,5 @@
 import type { FastifyRequest } from "fastify";
+import type { LocaleCode } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import {
   createManualBooking,
@@ -85,6 +86,10 @@ export type CreateFollowUpBookingInput = {
   /** First base `DoctorTimeSlot` to claim, from the doctor's own calendar. */
   timeSlotId: string;
   consultationMode?: "ONLINE" | "IN_PERSON";
+  /** Notification language picked in the follow-up dialog. Omitted → inherit
+   *  the source appointment's, so a patient who has been written to in
+   *  Portuguese keeps being written to in Portuguese. */
+  notificationLocale?: LocaleCode | null;
   notes?: string | null;
   /** Defaults to "follow-up"; the dialog can pick another consultation type. */
   consultationType?: string;
@@ -101,6 +106,7 @@ export async function createFollowUpBooking(
     select: {
       id: true,
       countryCode: true,
+      notificationLocale: true,
       fullName: true,
       email: true,
       phone: true,
@@ -161,6 +167,10 @@ export async function createFollowUpBooking(
     locationAddress: mode === "IN_PERSON" ? source.locationAddress : null,
     notes: input.notes ?? null,
     countryCode: source.countryCode,
+    // Explicit pick wins; otherwise carry the source consultation's language
+    // rather than re-deriving from the country, which would switch languages
+    // mid-thread for a patient booked in something other than the default.
+    notificationLocale: input.notificationLocale ?? source.notificationLocale,
     followUpFromAppointmentId: source.id,
     // Null when the source was free / legacy-imported with no amount — then
     // the service's own price applies, rather than booking a priceless row.

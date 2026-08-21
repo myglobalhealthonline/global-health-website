@@ -1,5 +1,9 @@
 import { CartItemKind, PrePaymentFlow } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
+import {
+  resolveNotificationLang,
+  type NotificationLang,
+} from "./notification-language.js";
 import { releaseSlotsToBaseGrid } from "../doctor-availability/doctor-availability.service.js";
 import { cancelOrderAppointments } from "../appointments/appointments.service.js";
 import { releaseOrderCreditReservations } from "../subscriptions/checkout-pricing.service.js";
@@ -27,7 +31,6 @@ import {
   type PrePaymentEmailVariant,
 } from "./pre-payment-email-template.js";
 import {
-  detectAutomationLanguage,
   formatDeadline,
   prefixServiceName,
   pendingAppointmentDateLabel,
@@ -318,7 +321,8 @@ async function loadOrderContext(orderId: string, paymentUrl: string | null) {
       })
     : null;
 
-  const lang = detectAutomationLanguage({
+  const lang = resolveNotificationLang({
+    notificationLocale: order.notificationLocale,
     countryCode: order.countryCode,
     serviceName: primary.name,
   });
@@ -388,7 +392,7 @@ async function sendPatientEmail(
   automationKey: string,
   orderId: string,
   to: string,
-  lang: ReturnType<typeof detectAutomationLanguage>,
+  lang: NotificationLang,
   ctx: PrePaymentMessageContext,
   summary: string,
   variant: PrePaymentEmailVariant = "initial",
@@ -529,7 +533,7 @@ async function notifyDoctorOnBooking(
   orderId: string,
   doctorId: string | null | undefined,
   ctx: PrePaymentMessageContext,
-  lang: ReturnType<typeof detectAutomationLanguage>,
+  lang: NotificationLang,
 ) {
   if (!doctorId) return;
 

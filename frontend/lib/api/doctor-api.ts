@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import type { SupportMessage } from "@/lib/api/support-chat-api";
+import type { NotificationLocale } from "@/lib/notification-locale";
 
 /**
  * Server-side fetchers for the doctor portal. Each call forwards the
@@ -489,6 +490,10 @@ export type AppointmentDetailDto = {
   clinicTimezone?: string;
   /** BCP-47 language the patient selected at booking (e.g. "en", "pt"). */
   consultationLanguageCode?: string | null;
+  /** Language this booking's patient-facing notifications are written in.
+   *  Null on rows predating the column — the backend then derives it from the
+   *  country at send time. */
+  notificationLocale?: NotificationLocale | null;
   /** Patient's Global Health Number — shown in appointment/medical context only. */
   globalHealthNumber?: string | null;
   /** Patient's home address (PatientProfile, not the per-order shipping

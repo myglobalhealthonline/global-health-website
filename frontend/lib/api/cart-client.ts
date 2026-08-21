@@ -123,6 +123,14 @@ export type CheckoutInput = {
   shipPostalCode: string;
   shipCountryCode: string;
   returnTo?: string;
+  /**
+   * Site locale the customer is browsing in, upper-cased (the `[lang]` route
+   * segment). Recorded on the Order so every payment link, reminder and
+   * confirmation is written in the language they actually booked in, rather
+   * than the booking country's default. Omitted → the server falls back to the
+   * country, which is the pre-feature behaviour.
+   */
+  notificationLocale?: "EN" | "PT" | "ES" | "CS" | "RO" | "DE";
 };
 
 export async function startCheckout(

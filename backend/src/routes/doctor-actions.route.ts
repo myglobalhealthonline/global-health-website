@@ -130,6 +130,13 @@ const followUpSchema = z
       .default("follow-up"),
     notes: z.string().trim().max(2000).optional(),
     consultationMode: z.enum(["ONLINE", "IN_PERSON"]).optional(),
+    /**
+     * Language the patient-facing notifications for this booking go out in.
+     * The dialog pre-selects the booking country's own locale; the operator
+     * overrides it when the patient reads something else. Omitted → the service
+     * falls back to the country locale, so older clients are unchanged.
+     */
+    notificationLocale: z.enum(["EN", "PT", "ES", "CS", "RO", "DE"]).optional(),
   })
   .strict();
 
@@ -520,6 +527,7 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
           timeSlotId: body.data.timeSlotId,
           consultationMode: body.data.consultationMode,
           consultationType: body.data.consultationType,
+          notificationLocale: body.data.notificationLocale ?? null,
           notes: body.data.notes ?? null,
           request,
         });

@@ -1,5 +1,9 @@
 import { CartItemKind } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
+import {
+  resolveNotificationLang,
+  type NotificationLang,
+} from "./notification-language.js";
 import { resolveEmailLogoUrl } from "../../lib/email/resolve-email-logo-url.js";
 import { sendWhatsAppText, formatWhatsAppSendError } from "../../lib/whatsapp/wasender.js";
 import type { PhoneNormalizeHints } from "../../lib/whatsapp/normalize-phone.js";
@@ -10,7 +14,6 @@ import {
 import { formatOrderDisplayId } from "./automation-catalog.js";
 import { createAutomationRun, finishAutomationRun } from "./automation-run.service.js";
 import {
-  detectAutomationLanguage,
   pendingAppointmentDateLabel,
 } from "./pre-payment-messages.js";
 import { formatOrderTotal, resolvePatientFullName, splitPatientName } from "./pre-payment-email-template.js";
@@ -70,7 +73,8 @@ async function loadUpdateContext(input: AppointmentUpdateNotifyInput) {
   if (!appointment) return null;
 
   const doctorContact = await resolveDoctorContact(appointment.doctorId);
-  const lang = detectAutomationLanguage({
+  const lang = resolveNotificationLang({
+    notificationLocale: order.notificationLocale,
     countryCode: order.countryCode,
     serviceName: primary.name,
   });
@@ -198,7 +202,7 @@ async function sendWhatsApp(
 async function sendPatientEmail(
   orderId: string,
   to: string,
-  lang: ReturnType<typeof detectAutomationLanguage>,
+  lang: NotificationLang,
   ctx: PostPaymentMessageContext,
 ) {
   const automationKey = "appointment_update_patient_email";
@@ -236,7 +240,7 @@ async function sendDoctorEmail(
   automationKey: string,
   orderId: string,
   to: string,
-  lang: ReturnType<typeof detectAutomationLanguage>,
+  lang: NotificationLang,
   ctx: PostPaymentMessageContext,
   summary: string,
   subject: string,
@@ -303,7 +307,7 @@ async function notifyDoctorUpdated(
   orderId: string,
   appointmentId: string,
   doctorId: string,
-  lang: ReturnType<typeof detectAutomationLanguage>,
+  lang: NotificationLang,
   ctx: PostPaymentMessageContext,
   phoneHints: PhoneNormalizeHints,
   keySuffix: "" | "_previous",

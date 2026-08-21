@@ -146,6 +146,7 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         locationAddress: body.data.locationAddress ?? null,
         notes: body.data.notes ?? null,
         countryCode: body.data.countryCode,
+        notificationLocale: body.data.notificationLocale ?? null,
         insuranceCompanyId: body.data.insuranceCompanyId ?? null,
         insurancePolicyNumber: body.data.insurancePolicyNumber ?? null,
         discountPercent: body.data.discountPercent ?? null,

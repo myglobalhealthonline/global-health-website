@@ -1,3 +1,4 @@
+import type { LocaleCode } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { paidAppointmentWhere } from "../appointments/appointment-payment-gate.js";
 import { checkDoctorJoinedMeeting } from "../../lib/google-meet/check-doctor-joined.js";
@@ -7,7 +8,7 @@ import {
 } from "../../lib/whatsapp/resolve-doctor-contact.js";
 import { sendEmail } from "../../lib/email/send-email.js";
 import { sendWhatsAppText } from "../../lib/whatsapp/wasender.js";
-import { detectAutomationLanguage } from "./pre-payment-messages.js";
+import { resolveNotificationLang } from "./notification-language.js";
 import { createAutomationRun } from "./automation-run.service.js";
 import {
   doctorNoShowEmailHtml,
@@ -20,16 +21,27 @@ import {
 const MS_MINUTE = 60_000;
 const SUPPORTED_LANGS: readonly DoctorNoShowLang[] = ["en", "pt", "ro", "cs", "es"];
 
+/**
+ * `notificationLocale` — the language the patient booked in, or the operator's
+ * manual-booking choice — outranks everything. `consultationLanguageCode` is
+ * kept as the next-best signal for rows minted before that column existed: it
+ * is the language the consult is SPOKEN in, which is a decent guess at the
+ * patient's language but is not the same thing.
+ */
 function resolveLang(input: {
+  notificationLocale: LocaleCode | null;
   consultationLanguageCode: string | null;
   countryCode: string;
   consultationType: string;
 }): DoctorNoShowLang {
-  const explicit = input.consultationLanguageCode?.trim().toLowerCase();
-  if (explicit && (SUPPORTED_LANGS as readonly string[]).includes(explicit)) {
-    return explicit as DoctorNoShowLang;
+  if (!input.notificationLocale) {
+    const explicit = input.consultationLanguageCode?.trim().toLowerCase();
+    if (explicit && (SUPPORTED_LANGS as readonly string[]).includes(explicit)) {
+      return explicit as DoctorNoShowLang;
+    }
   }
-  const detected = detectAutomationLanguage({
+  const detected = resolveNotificationLang({
+    notificationLocale: input.notificationLocale,
     countryCode: input.countryCode,
     serviceName: input.consultationType,
   });
@@ -72,6 +84,7 @@ export async function runDoctorNoShowCheckCron() {
       countryCode: true,
       consultationType: true,
       consultationLanguageCode: true,
+      notificationLocale: true,
     },
     take: 100,
     orderBy: { scheduledAt: "asc" },
@@ -112,6 +125,7 @@ export async function runDoctorNoShowCheckCron() {
     if (claim.count === 0) continue; // Already claimed by a concurrent run.
 
     const lang = resolveLang({
+      notificationLocale: appt.notificationLocale,
       consultationLanguageCode: appt.consultationLanguageCode,
       countryCode: appt.countryCode,
       consultationType: appt.consultationType,

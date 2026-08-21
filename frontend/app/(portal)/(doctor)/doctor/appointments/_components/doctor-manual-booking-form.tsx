@@ -4,6 +4,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { CalendarPlus, Check, Copy, Loader2 } from "lucide-react";
 import { fetchAvailabilityRangeClient } from "@/lib/api/doctor-availability-client";
+import {
+  NOTIFICATION_LOCALES,
+  NOTIFICATION_LOCALE_LABEL,
+  defaultNotificationLocaleForCountry,
+  type NotificationLocale,
+} from "@/lib/notification-locale";
 import type { DoctorTimeSlotView } from "@/lib/api/doctor-availability-types";
 import type {
   DoctorBookableService,
@@ -59,6 +65,8 @@ export type DoctorManualBookingCopy = {
   mode: string;
   modeOnline: string;
   modeInPerson: string;
+  notificationLanguage: string;
+  notificationLanguageHint: string;
   clinic: string;
   clinicNone: string;
   clinicHint: string;
@@ -149,6 +157,12 @@ export function DoctorManualBookingForm({
   const [addressCountryCode, setAddressCountryCode] = useState("");
 
   const [serviceId, setServiceId] = useState(services[0]?.id ?? "");
+  // Explicit override of the country default below. Null = "follow the
+  // selected service's country", so switching service re-derives it instead of
+  // stranding a stale pick; any manual choice pins it.
+  const [notificationLocale, setNotificationLocale] = useState<NotificationLocale | null>(
+    null,
+  );
   const [consultationMode, setConsultationMode] = useState<"ONLINE" | "IN_PERSON">(
     "ONLINE",
   );
@@ -188,6 +202,10 @@ export function DoctorManualBookingForm({
   // public BR booking form uses. Keyed off the picked service's country,
   // exactly like `collectUtente` above.
   const isBrazil = selectedService?.countryCode.toLowerCase() === "br";
+  // Same keyed-off-the-service pattern as the two above: with no explicit pick,
+  // the notification language follows whichever country's service is selected.
+  const effectiveNotificationLocale =
+    notificationLocale ?? defaultNotificationLocaleForCountry(selectedService?.countryCode);
 
   const loadSlots = useCallback(async () => {
     setLoadingSlots(true);
@@ -314,6 +332,7 @@ export function DoctorManualBookingForm({
           serviceId,
           timeSlotId: selectedSlotId,
           consultationMode,
+          notificationLocale: effectiveNotificationLocale,
           clinicId: consultationMode === "IN_PERSON" ? clinicId || null : null,
           locationAddress:
             consultationMode === "IN_PERSON" ? locationAddress.trim() || null : null,
@@ -614,6 +633,24 @@ export function DoctorManualBookingForm({
               ))}
             </select>
             {errors.serviceId ? <FieldError msg={errors.serviceId} /> : null}
+          </label>
+
+          <label className="flex flex-col gap-1.5">
+            <span className="gh-field-label">{copy.notificationLanguage} *</span>
+            <select
+              className="gh-select"
+              value={effectiveNotificationLocale}
+              onChange={(e) => setNotificationLocale(e.target.value as NotificationLocale)}
+            >
+              {NOTIFICATION_LOCALES.map((code) => (
+                <option key={code} value={code}>
+                  {NOTIFICATION_LOCALE_LABEL[code]}
+                </option>
+              ))}
+            </select>
+            <span className="text-xs text-[var(--portal-muted)]">
+              {copy.notificationLanguageHint}
+            </span>
           </label>
 
           <label className="flex flex-col gap-1.5">
