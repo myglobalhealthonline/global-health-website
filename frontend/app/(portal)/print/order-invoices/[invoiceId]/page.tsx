@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
-import { getServerAuthUser } from "@/lib/api/server-auth";
+import { notFound } from "next/navigation";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
-import { cookies } from "next/headers";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 
 export const dynamic = "force-dynamic";
@@ -292,17 +290,18 @@ type InvoiceDetail = {
   } | null;
 };
 
+/**
+ * Reads the public billing endpoint, NOT /api/admin/invoices/:id. This page is
+ * reached from the invoice link emailed to the patient, so it has to render for
+ * whoever holds that link — the admin route 403s a doctor (which this page then
+ * turned into a 404) and bounces the patient to /account, which is exactly the
+ * bug this fixes.
+ */
 async function fetchInvoiceDetail(invoiceId: string): Promise<InvoiceDetail | null> {
   const backend = getBackendOrigin();
   if (!backend) return null;
-  const store = await cookies();
-  const cookieHeader = store
-    .getAll()
-    .map((c) => `${c.name}=${c.value}`)
-    .join("; ");
   try {
-    const res = await fetch(`${backend}/api/admin/invoices/${invoiceId}`, {
-      headers: cookieHeader ? { cookie: cookieHeader } : undefined,
+    const res = await fetch(`${backend}/api/public/invoices/${encodeURIComponent(invoiceId)}`, {
       cache: "no-store",
     });
     if (!res.ok) return null;
@@ -322,10 +321,6 @@ export default async function PrintOrderInvoicePage({
   params: Promise<Params>;
 }) {
   const { invoiceId } = await params;
-  const user = await getServerAuthUser();
-  if (!user) redirect(`/login?next=/print/order-invoices/${invoiceId}`);
-  if (user.role !== "ADMIN" && user.role !== "DOCTOR") redirect("/account");
-
   const data = await fetchInvoiceDetail(invoiceId);
   if (!data) notFound();
 

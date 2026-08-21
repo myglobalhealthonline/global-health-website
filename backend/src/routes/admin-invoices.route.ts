@@ -14,6 +14,7 @@ import { resolveOrderPaymentUrl } from "../modules/orders/order-payment-url.serv
 import { buildInvoicePdfData, renderInvoicePdfBuffer } from "../modules/invoices/invoice-pdf.js";
 import { resendInvoiceDocument, resendInvoiceWhatsApp } from "../modules/invoices/generate-invoice.service.js";
 import { isCommissionCountry } from "../modules/orders/commission.service.js";
+import { buildInvoiceDetailPayload } from "../modules/invoices/invoice-detail.service.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 
 /**
@@ -410,12 +411,13 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
   });
 
   // ── Invoice detail for print page ──────────────────────────────────────────
+  // The document shaping lives in buildInvoiceDetailPayload so this route and
+  // the public /api/public/invoices/:invoiceId route can never render different
+  // documents for the same invoice. What stays here is the part that is
+  // admin-only: LOCAL_ADMIN country scope and the S-031 PHI read guard.
   app.get<{ Params: { invoiceId: string } }>(
     "/api/admin/invoices/:invoiceId",
     async (request, reply) => {
-      // Admin always; patient access validated by email match in the frontend
-      // server component. We expose this endpoint to admin only from the API
-      // side to keep the auth simple.
       const auth = await verifyAdminAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
 
@@ -423,199 +425,46 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
       if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
 
       try {
-        const invoice = await prisma.invoice.findUnique({
-          where: { id: params.data.invoiceId },
-          include: {
-            order: {
-              include: {
-                items: {
-                  select: {
-                    id: true,
-                    kind: true,
-                    name: true,
-                    quantity: true,
-                    unitPriceCents: true,
-                    lineTotalCents: true,
-                    commissionCents: true,
-                    doctorId: true,
-                    appointmentId: true,
-                  },
-                },
-              },
-            },
-          },
-        });
-
-        if (!invoice) {
+        const payload = await buildInvoiceDetailPayload(params.data.invoiceId);
+        if (!payload) {
           return reply.status(404).send(errorResponse("Invoice not found"));
         }
 
         // SEC-001b: a LOCAL_ADMIN may only open invoices in their countries.
-        const scope = await assertOrderCountryScope(request, invoice.orderId, invoice.countryCode);
+        const scope = await assertOrderCountryScope(
+          request,
+          payload.order.id,
+          payload.invoice.countryCode,
+        );
         if (!scope.allowed) {
           return reply.status(scope.status).send(errorResponse(scope.message));
         }
 
-        // Find the first consultation item that has a doctor assigned.
-        const consultItem = invoice.order.items.find(
-          (i) =>
-            (i.kind === "GENERAL_CONSULTATION" || i.kind === "SPECIALIST_CONSULTATION") &&
-            i.doctorId,
-        );
-
-        let doctor: {
-          fullName: string;
-          registrationNumber: string | null;
-          chamberEntity: string | null;
-        } | null = null;
-
-        if (consultItem?.doctorId) {
-          // Fetch doctor name + all their country registrations in one query.
-          const doctorRow = await prisma.doctor.findUnique({
-            where: { id: consultItem.doctorId },
-            select: {
-              fullName: true,
-              country: { select: { code: true } },
-              additionalCountries: {
-                select: {
-                  registrationNumber: true,
-                  chamberEntity: true,
-                  country: { select: { code: true } },
-                },
-              },
-            },
-          });
-
-          if (doctorRow) {
-            const orderCountry = invoice.order.countryCode.toLowerCase();
-
-            // Check primary country first, then additional countries.
-            const allRegistrations = [
-              {
-                code: doctorRow.country.code.toLowerCase(),
-                registrationNumber: null as string | null,
-                chamberEntity: null as string | null,
-              },
-              ...doctorRow.additionalCountries.map((dc) => ({
-                code: dc.country.code.toLowerCase(),
-                registrationNumber: dc.registrationNumber,
-                chamberEntity: dc.chamberEntity,
-              })),
-            ];
-
-            // For the primary country there's no DoctorCountry row — look it up separately.
-            const matchedReg = allRegistrations.find((r) => r.code === orderCountry);
-
-            let regNumber: string | null = matchedReg?.registrationNumber ?? null;
-            let chamberEntity: string | null = matchedReg?.chamberEntity ?? null;
-
-            // Primary country: registration lives in DoctorCountry (the M:N row).
-            if (!regNumber) {
-              const dc = await prisma.doctorCountry.findFirst({
-                where: {
-                  doctorId: consultItem.doctorId,
-                  country: { code: { equals: orderCountry, mode: "insensitive" } },
-                },
-                select: { registrationNumber: true, chamberEntity: true },
-              });
-              regNumber = dc?.registrationNumber ?? null;
-              chamberEntity = dc?.chamberEntity ?? null;
-            }
-
-            doctor = {
-              fullName: doctorRow.fullName,
-              registrationNumber: regNumber,
-              chamberEntity,
-            };
-          }
-        }
-
-        // PatientProfile — taxpayer ID
-        const profile = await prisma.patientProfile.findUnique({
-          where: { email: invoice.order.email.toLowerCase() },
-          select: { id: true, taxIdNumber: true },
-        });
-
         // S-031 fix: guard this PHI read. Reason resolution (x-phi-reason /
         // gh_phi_reason) is automatic inside the guard — no per-route
         // threading needed. No profile (guest order) → nothing to guard.
-        if (profile) {
+        if (payload.patientProfileId) {
           const actor = resolveAdminSessionActor(request);
           try {
             await guardMedicalRead(
               request,
               { userId: actor?.userId ?? "", role: actor?.role ?? "ADMIN" },
-              { patientProfileId: profile.id, resourceType: "SENSITIVE_PROFILE", accessAction: "VIEWED" },
+              {
+                patientProfileId: payload.patientProfileId,
+                resourceType: "SENSITIVE_PROFILE",
+                accessAction: "VIEWED",
+              },
             );
           } catch (guardError) {
             if (guardError instanceof MedicalAccessDeniedError) {
-              return reply
-                .status(403)
-                .send(medicalAccessDeniedResponse(guardError));
+              return reply.status(403).send(medicalAccessDeniedResponse(guardError));
             }
             throw guardError;
           }
         }
 
-        // Consultation date from the appointment
-        const consultApptId = consultItem?.appointmentId ?? null;
-        let consultationDate: string | null = null;
-        if (consultApptId) {
-          const appt = await prisma.appointment.findUnique({
-            where: { id: consultApptId },
-            select: { scheduledAt: true },
-          });
-          consultationDate = appt?.scheduledAt?.toISOString() ?? null;
-        }
-
-        return okResponse({
-          invoice: {
-            id: invoice.id,
-            invoiceNumber: invoice.invoiceNumber,
-            countryCode: invoice.countryCode,
-            documentType: invoice.documentType,
-            creditNoteReason: invoice.creditNoteReason,
-            generatedAt: invoice.generatedAt.toISOString(),
-            emailSentAt: invoice.emailSentAt?.toISOString() ?? null,
-          },
-          order: {
-            id: invoice.order.id,
-            orderNumber: invoice.order.orderNumber,
-            fullName: invoice.order.fullName,
-            email: invoice.order.email,
-            phone: invoice.order.phone,
-            countryCode: invoice.order.countryCode,
-            currencyCode: invoice.order.currencyCode,
-            totalCents: invoice.order.totalCents,
-            subtotalCents: invoice.order.subtotalCents,
-            shippingCents: invoice.order.shippingCents,
-            // Commission markets: the print page renders a single commission line
-            // instead of the basket, mirroring the PDF. The DECISION is made here
-            // rather than in the page so both renderers agree — same rule as
-            // buildInvoicePdfData: a commission market with no frozen snapshot
-            // (pre-feature order) falls back to full-price rendering.
-            commissionMode:
-              invoice.order.commissionTotalCents != null &&
-              (await isCommissionCountry(invoice.order.countryCode)),
-            commissionTotalCents: invoice.order.commissionTotalCents,
-            doctorPayoutTotalCents: invoice.order.doctorPayoutTotalCents,
-            paymentStatus: invoice.order.paymentStatus,
-            paidAt: invoice.order.paidAt?.toISOString() ?? null,
-            taxIdNumber: profile?.taxIdNumber ?? null,
-            consultationDate,
-            items: invoice.order.items.map((i) => ({
-              id: i.id,
-              kind: i.kind,
-              name: i.name,
-              quantity: i.quantity,
-              unitPriceCents: i.unitPriceCents,
-              lineTotalCents: i.lineTotalCents,
-              // Drives the per-service commission lines on the print page.
-              commissionCents: i.commissionCents,
-            })),
-          },
-          doctor,
-        });
+        const { patientProfileId: _omit, ...body } = payload;
+        return okResponse(body);
       } catch (err) {
         if (err instanceof DatabaseUnavailableError) {
           return reply.status(503).send(errorResponse(err.message));
