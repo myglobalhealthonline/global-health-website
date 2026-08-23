@@ -7,7 +7,7 @@ import { Clock, User, Calendar, BadgeCheck, ArrowUpRight, RefreshCw } from "luci
 import { BlogCard } from "@/components/cards/BlogCard";
 import { getCountryByCode } from "@/data/countries";
 import { getBlogPost, listBlogPosts, type BlogDoctor, type BlogListItem, type BlogPostFull } from "@/lib/content/get-public-blog";
-import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
+import { blogArticleBodyClassName, scopeBlogHtml } from "@/lib/content/scope-blog-html";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { articleJsonLd, breadcrumbJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
@@ -614,7 +614,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
             <style>/classes preserved) and CSS-scoped to .gh-article-body so it
             can't bleed into the site. Rendered server-side for SEO. */}
         <div
-          className="gh-article-body gh-article-raw"
+          className={blogArticleBodyClassName(post.body)}
           // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- scopeBlogHtml() runs sanitize-html with a controlled allowlist (frontend/lib/content/scope-blog-html.ts) before this renders; mirrors the backend's own sanitizeBlogHtml allowlist.
           dangerouslySetInnerHTML={{ __html: scopeBlogHtml(post.body) }}
         />

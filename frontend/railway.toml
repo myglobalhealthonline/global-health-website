@@ -4,9 +4,10 @@
 # runtime image always contains `.next/` (Railpack alone can run `next start`
 # without shipping the production build).
 #
-# Optional: pin the Dockerfile explicitly
-# [build]
-# dockerfilePath = "Dockerfile"
+# Pin the Dockerfile so both Git-connected and Railway CLI deploys use the
+# production standalone image rather than falling back to Railpack.
+[build]
+dockerfilePath = "Dockerfile"
 
 [deploy]
 healthcheckPath = "/api/health"

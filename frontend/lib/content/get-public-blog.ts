@@ -132,8 +132,12 @@ function normalizeCountries(raw: unknown): Array<{ code: string; slug: string }>
 }
 
 /** Rough reading-time estimate from the HTML body (200 wpm, min 1). */
-function readingTimeFromHtml(html: string): number {
-  const text = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+export function readingTimeFromHtml(html: string): number {
+  const text = html
+    .replace(/<(style|script)\b[^>]*>[\s\S]*?<\/\1>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
   const words = text ? text.split(" ").length : 0;
   return Math.max(1, Math.ceil(words / 200));
 }

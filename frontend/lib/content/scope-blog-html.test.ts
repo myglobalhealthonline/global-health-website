@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { scopeBlogHtml, BLOG_SCOPE_CLASS } from "./scope-blog-html";
+import { blogArticleBodyClassName, scopeBlogHtml, BLOG_SCOPE_CLASS } from "./scope-blog-html";
 
 /**
  * Pull the CSS that ends up inside the single `<style>` block scopeBlogHtml
@@ -171,5 +171,17 @@ describe("scopeBlogHtml", () => {
       const css = scopedCss(`<style>.card { color: #111 } h2 { color: #222 }</style>`);
       expect(css).not.toContain("data-blog-h1");
     });
+  });
+});
+
+describe("blogArticleBodyClassName", () => {
+  it("uses native typography for plain article markup", () => {
+    expect(blogArticleBodyClassName("<h2>Plain article</h2><p>Copy</p>")).toBe("gh-article-body");
+  });
+
+  it("keeps the raw class for self-designed bodies", () => {
+    expect(blogArticleBodyClassName("<STYLE>.article{color:red}</STYLE><main>Designed</main>")).toBe(
+      "gh-article-body gh-article-raw",
+    );
   });
 });

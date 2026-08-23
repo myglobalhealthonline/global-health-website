@@ -311,3 +311,8 @@ function warnDropped(what: string, err?: unknown): void {
   const suffix = err instanceof Error ? `: ${err.message.split("\n")[0]}` : "";
   console.warn(`[scope-blog-html] dropped ${what} from author CSS${suffix}`);
 }
+
+/** Select native article typography unless the body explicitly ships a design system. */
+export function blogArticleBodyClassName(html: string): string {
+  return /<style\b/i.test(html) ? "gh-article-body gh-article-raw" : "gh-article-body";
+}
