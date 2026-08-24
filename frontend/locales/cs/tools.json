@@ -324,8 +324,8 @@
       "h1Lead": "Normální",
       "h1Accent": "krevní tlak",
       "h1Trail": "{country}",
-      "metaTitle": "Normální Krevní Tlak {country} | Tabulka Hodnot pro Dospělé",
-      "metaDescription": "Porovnejte systolický a diastolický tlak s evropskou tabulkou pro dospělé. Zjistěte kategorii, co znamená a které hodnoty vyžadují lékařskou péči ještě týž den.",
+      "metaTitle": "Kalkulačka Krevního Tlaku {country} | Tabulka Normálních Hodnot",
+      "metaDescription": "Zadejte systolický a diastolický tlak a hned uvidíte kategorii podle evropské tabulky pro dospělé — co hodnota znamená a které vyžadují lékaře ještě týž den.",
       "lede": "Zadejte dvě čísla ze svého tlakoměru a uvidíte, kam hodnota patří v evropské tabulce pro dospělé — a co s tím případně dělat.",
       "trustPoints": [
         "Evropské kategorie (ESC/ESH) pro dospělé",

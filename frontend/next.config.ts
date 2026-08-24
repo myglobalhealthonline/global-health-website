@@ -790,7 +790,14 @@ const nextConfig: NextConfig = {
       },
       {
         source: `/:country${IE_ONLY}/:lang${LANG}/sick-leave`,
-        destination: "/:country/:lang/sick-certificate-ireland",
+        // Straight to the /services/ canonical, NOT to the clean-URL alias.
+        // `/:country/:lang/sick-certificate-ireland` is a rewrite: it answers
+        // 200 but its canonical points at /services/…, so landing there made
+        // this a 308 -> 200-with-a-foreign-canonical chain. GSC still shows
+        // 528 impressions on the retired /ireland/sick-leave at position 56,
+        // split from the 411 on the service page — one hop to the canonical
+        // is what lets those consolidate.
+        destination: "/:country/:lang/services/sick-certificate-ireland",
         permanent: true,
       },
       // ── Legacy Wix URLs (pre-migration site) ─────────────────────────

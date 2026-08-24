@@ -324,8 +324,8 @@
       "h1Lead": "Tensión arterial",
       "h1Accent": "normal",
       "h1Trail": "{country}",
-      "metaTitle": "Tensión Arterial Normal {country} | Tabla de Valores",
-      "metaDescription": "Compara tus valores de tensión sistólica y diastólica con la tabla europea para adultos. Descubre la categoría, qué significa y qué lecturas necesitan atención médica el mismo día.",
+      "metaTitle": "Baremos de Tensión Arterial {country} | Tabla de Valores Normales",
+      "metaDescription": "Introduce tu tensión sistólica y diastólica y consulta el baremo europeo para adultos: en qué categoría estás, qué significa y qué lecturas necesitan atención médica el mismo día.",
       "lede": "Introduce los dos números de tu tensiómetro para ver dónde queda la lectura en la tabla europea para adultos y qué conviene hacer, si es que hay que hacer algo.",
       "trustPoints": [
         "Categorías europeas (ESC/ESH) para adultos",

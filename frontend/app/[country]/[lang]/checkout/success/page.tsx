@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { GH2StatusPage } from "@/components/sections/GH2PagePrimitives";
 import { SyncOrderPaymentOnReturn } from "@/components/payments/SyncOrderPaymentOnReturn";
+import { PurchaseTracker } from "@/components/analytics/PurchaseTracker";
 import { fetchOrderReceipt, syncOrderPaymentServer } from "@/lib/api/cart-server";
 import { formatPrice } from "@/lib/format-currency";
 import { formatOrderDisplayId } from "@/lib/format-order-display";
@@ -104,6 +105,14 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
       <Suspense fallback={null}>
         <SyncOrderPaymentOnReturn skipIfSynced={paymentSynced} />
       </Suspense>
+      {/* Only on this branch: `processing` above is an unconfirmed payment. */}
+      {order ? (
+        <PurchaseTracker
+          orderId={order.id}
+          totalCents={order.totalCents}
+          currencyCode={order.currencyCode}
+        />
+      ) : null}
       <GH2StatusPage
       status="success"
       title={t.successTitle}

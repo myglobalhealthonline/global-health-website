@@ -14,7 +14,14 @@ export type AnalyticsEventName =
   | "add_to_cart"
   | "begin_checkout"
   | "select_service"
-  | "begin_booking";
+  | "begin_booking"
+  // GA4 reserved e-commerce event. The property recorded ZERO key events
+  // because nothing downstream of `add_to_cart` was ever instrumented, so no
+  // ranking or landing page could be tied to revenue. Carries
+  // `transaction_id`/`value`/`currency` only — deliberately no `items` array:
+  // `SafeAnalyticsValue` forbids it, and it would put service names (i.e. what
+  // the patient bought) into the analytics property.
+  | "purchase";
 
 export type SafeAnalyticsValue = string | number | boolean;
 export type SafeAnalyticsParameters = Readonly<Record<string, SafeAnalyticsValue>>;

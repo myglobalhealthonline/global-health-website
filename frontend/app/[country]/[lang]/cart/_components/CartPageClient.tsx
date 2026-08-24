@@ -26,6 +26,7 @@ import { MobileOrderTotalBar } from "@/components/cart/MobileOrderTotalBar";
 import { PlanCoverage, type PlanCoverageStrings } from "@/components/cart/PlanCoverage";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 import { corporateCoverageLabel } from "@/lib/corporate-coverage-label";
+import { trackAnalyticsEvent } from "@/lib/analytics/track";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDateTimeShort } from "@/lib/format-datetime";
 import { CART_ITEM_MAX_QTY, type BenefitSelection, type CartItem } from "@/lib/api/cart-types";
@@ -249,6 +250,22 @@ export function CartPageClient({
   const total = cart.subtotalCents + shippingCents;
   // Savings only reduce the item subtotal (never shipping); clamp defensively.
   const payableSaved = Math.min(Math.max(0, coverageSaved), cart.subtotalCents);
+  // GA4 `begin_checkout` — the middle of the only funnel this site has
+  // (add_to_cart -> begin_checkout -> purchase). Both the sidebar button and
+  // the mobile total bar route through here so the two entry points cannot
+  // drift into counting differently. `trackAnalyticsEvent` applies the
+  // consent/production/gtag gates, so this is a no-op for a visitor who
+  // declined analytics.
+  // Plain function, not useCallback: this sits below the `loading` /
+  // empty-cart early returns, so a hook here would be a conditional call.
+  const goToCheckout = () => {
+    trackAnalyticsEvent("begin_checkout", {
+      value: Math.round(Math.max(0, total - payableSaved)) / 100,
+      currency: cart.currencyCode,
+      items: cart.items.length,
+    });
+    router.push(checkoutHref);
+  };
 
   return (
     <>
@@ -443,7 +460,7 @@ export function CartPageClient({
               </dl>
               <button
                 type="button"
-                onClick={() => router.push(checkoutHref)}
+                onClick={goToCheckout}
                 className="gh2-btn-lime mt-6 w-full justify-center"
               >
                 {t.continueToCheckout}
@@ -474,7 +491,7 @@ export function CartPageClient({
         totalLabel={t.total}
         formattedTotal={formatPrice(Math.max(0, total - payableSaved), cart.currencyCode)}
         actionLabel={t.continueToCheckout}
-        onAction={() => router.push(checkoutHref)}
+        onAction={goToCheckout}
         watchTargetId="cart-order-summary"
       />
     </>
