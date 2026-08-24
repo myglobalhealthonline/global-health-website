@@ -564,7 +564,8 @@
     "fromPricePrefix": "A partir de {price} · ",
     "liveAvailability": "Disponibilidade em tempo real — escolha um médico e uma hora que lhe convenha.",
     "disclaimer": "A informação nesta página é geral e não substitui aconselhamento, diagnóstico ou tratamento médico profissional. Marque uma consulta para discutir a sua situação com um médico registado para exercer em {country}.",
-    "clinicallyReviewedBy": "Revisado clinicamente por"
+    "clinicallyReviewedBy": "Revisado clinicamente por",
+    "insuranceAvailability": "Aceitamos também {list} para este serviço."
   },
   "homeCatalog": {
     "tagGeneral": "Geral",

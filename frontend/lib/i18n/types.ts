@@ -601,6 +601,10 @@ export type CommonLocale = {
     liveAvailability: string;
     disclaimer: string;
     clinicallyReviewedBy: string;
+    /** "We also accept {list} for this service." — {list} is joined by
+     *  Intl.ListFormat in the page locale. Replaces the backend's
+     *  English-only insuranceSeoLine on the public service page. */
+    insuranceAvailability: string;
   };
   homeCatalog: {
     tagGeneral: string;

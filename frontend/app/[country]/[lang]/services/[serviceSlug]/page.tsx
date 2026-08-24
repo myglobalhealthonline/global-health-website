@@ -59,6 +59,7 @@ import { isToolMarket } from "@/lib/tools/markets";
 import { listRelatedBlogPosts } from "@/lib/content/get-public-blog";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { buildLocalizedInsuranceLine } from "@/lib/content/insurance-seo-line";
 import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { DoctifyWidgetLazy as DoctifyWidget } from "@/components/sections/DoctifyReviewsLazy";
 import { SectionSeam } from "@/components/ui/SectionSeam";
@@ -190,8 +191,18 @@ export async function generateMetadata({
     safeMeta.description ?? `Learn about ${title} and book a consultation.`;
   // Append the auto insurance line to the meta description when companies cover
   // this service, capped so the description stays a sensible length for SERPs.
-  const description = detail.insuranceSeoLine
-    ? `${baseDescription} ${detail.insuranceSeoLine}`.slice(0, 320)
+  //
+  // Composed here from the insurer names rather than taken from the backend's
+  // `detail.insuranceSeoLine`: that field is hardcoded English, so it was
+  // appending "We also have X for this service." to Portuguese, Spanish, Czech,
+  // German and Romanian SERP snippets.
+  const insuranceLine = buildLocalizedInsuranceLine(
+    detail.insuranceOptions.map((o) => o.name),
+    lang as LocaleCode,
+    loadLocaleBundle(lang as LocaleCode).common.serviceDetailPage.insuranceAvailability,
+  );
+  const description = insuranceLine
+    ? `${baseDescription} ${insuranceLine}`.slice(0, 320)
     : baseDescription;
   const metadata = buildPublicMetadata({
     path: `/${country}/${lang}/services/${serviceSlug}`,
@@ -238,6 +249,13 @@ export default async function ServiceDetailPage({
 
   const { common: c, home } = loadLocaleBundle(lang as LocaleCode);
   const t = c.serviceDetailPage;
+  // Same composition as generateMetadata — the backend's own line is English
+  // only, and this one renders above the fold on every localized service page.
+  const localizedInsuranceLine = buildLocalizedInsuranceLine(
+    detail.insuranceOptions.map((o) => o.name),
+    lang as LocaleCode,
+    t.insuranceAvailability,
+  );
 
   // Clinical review date chip — same "Last reviewed <date>" label/format the
   // blog byline already uses. Renders nothing when the service has none set.
@@ -615,9 +633,9 @@ export default async function ServiceDetailPage({
               {/* Insurance availability — auto-generated when companies cover
                 * this service ("We also have … for this service."). SEO-friendly
                 * and updates automatically as coverage changes in admin. */}
-              {detail.insuranceSeoLine ? (
+              {localizedInsuranceLine ? (
                 <p className="mt-3 max-w-[46ch] text-[clamp(0.85rem,0.5vw+0.65rem,1rem)] font-semibold leading-relaxed text-[#8FE3B0]">
-                  {detail.insuranceSeoLine}
+                  {localizedInsuranceLine}
                 </p>
               ) : null}
 

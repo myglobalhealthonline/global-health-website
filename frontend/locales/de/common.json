@@ -564,7 +564,8 @@
     "fromPricePrefix": "Ab {price} · ",
     "liveAvailability": "Live-Verfügbarkeit — wählen Sie einen Arzt und eine Zeit, die zu Ihnen passt.",
     "disclaimer": "Die Informationen auf dieser Seite sind allgemeiner Natur und ersetzen keine professionelle medizinische Beratung, Diagnose oder Behandlung. Buchen Sie eine Beratung, um Ihre Situation mit einem in {country} zur Berufsausübung zugelassenen Arzt zu besprechen.",
-    "clinicallyReviewedBy": "Klinisch überprüft von"
+    "clinicallyReviewedBy": "Klinisch überprüft von",
+    "insuranceAvailability": "Für diese Leistung akzeptieren wir auch {list}."
   },
   "homeCatalog": {
     "tagGeneral": "Allgemein",
