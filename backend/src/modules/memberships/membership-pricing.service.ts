@@ -33,13 +33,16 @@ import { holderEnrollmentId } from "./membership-card.service.js";
  *   - the GOVERNING row is the booking country's own configuration. It decides
  *     whether there is a benefit here at all, and what the price is when no
  *     allowance unit is spent. It is what lands on `OrderItem`.
- *   - the POOL row is the PRIMARY country's ALLOWANCE row for the same service
- *     kind (§21.4). It owns the counter, so a unit spends the same pool no
- *     matter which covered country the booking is in.
+ *   - the POOL row owns the counter a unit comes off. Normally the PRIMARY
+ *     country's ALLOWANCE row for the same service kind (§21.4), so a unit
+ *     spends the same pool no matter which covered country the booking is in —
+ *     unless a service-scoped ALLOWANCE row covers this exact service, which
+ *     carries its own unshared counter. See `resolvePoolBenefit`.
  *
- * They are the same row only when the booking is in the primary country and
- * that row is an ALLOWANCE one. Everywhere else they differ, which is why
- * `MembershipPrice` carries both ids.
+ * They are the same row when the governing row is itself the allowance one:
+ * the booking is in the primary country under a kind-wide pool, or the row is
+ * service-scoped. Everywhere else they differ, which is why `MembershipPrice`
+ * carries both ids.
  *
  * Coverage is not configuration. A country with a `MembershipPlanCountry` row
  * but no benefit row governing this service gets NO benefit and NO unit (§20).
@@ -64,10 +67,10 @@ export type MembershipPrice = {
    */
   benefitId: string;
   /**
-   * The row whose COUNTER a unit comes off: the primary country's ALLOWANCE
-   * row for this service kind (§21.4). Null when no pool applies. Equal to
-   * `benefitId` only when the booking is in the primary country and the
-   * governing row is the allowance one.
+   * The row whose COUNTER a unit comes off: this service's own service-scoped
+   * ALLOWANCE row, else the primary country's ALLOWANCE row for its kind
+   * (§21.4). Null when no pool applies. Equal to `benefitId` whenever the
+   * governing row is itself the allowance one.
    */
   poolBenefitId: string | null;
   /** What the member pays. Never above `fullPriceCents` — see the clamp below. */
@@ -174,33 +177,52 @@ export function selectBenefitRow(
 }
 
 /**
- * The row that owns the shared allowance counter for this service kind: the
- * PRIMARY country's ALLOWANCE row (§21.4, decision 37). One pool, spendable in
- * every configured covered country, and — critically — keyed on a benefit id
- * exactly as it was in phase 1, so `MembershipAllowanceBalance` needed no
- * migration and every phase-5 idempotency key and concurrency guarantee
- * survives untouched.
+ * The row that owns the allowance counter this booking spends from. Two shapes,
+ * in the same precedence order as `selectBenefitRow` — a rule for one service
+ * always beats the rule for its type (§6.2):
  *
- * Always the primary's row, never the booking country's own. An ALLOWANCE row
- * configured on a non-primary country would otherwise define a SECOND pool,
- * which is precisely what decision 36 says does not exist.
+ *   1. a SERVICE-SCOPED ALLOWANCE row for exactly this service. Its pool is its
+ *      own: a `Service` belongs to one country, so there is nothing to share and
+ *      no cross-country mapping to get wrong. This is what "one free X" is.
+ *   2. otherwise the KIND-wide pool: the PRIMARY country's ALLOWANCE row for
+ *      this service kind (§21.4, decision 37). One pool, spendable in every
+ *      configured covered country.
  *
- * Null means this level has no allowance for that kind; the booking country's
- * own percent/fixed rule applies alone.
+ * Both are keyed on a benefit id exactly as in phase 1, so
+ * `MembershipAllowanceBalance` needs no migration and every phase-5 idempotency
+ * key and concurrency guarantee survives untouched.
+ *
+ * The kind-wide pool is still ALWAYS the primary's row, never the booking
+ * country's own kind row: that would define a SECOND shared pool, which is
+ * precisely what decision 36 says does not exist. A service-scoped row is the
+ * one exception, and only because it is not shared at all.
+ *
+ * A service-scoped row therefore takes its service OUT of the shared pool — a
+ * unit spent on it comes off its own counter, and the kind-wide units stay
+ * whole. That is the same "service beats kind" answer the governing row gives.
+ *
+ * Null means this level has no allowance reaching this service; the booking
+ * country's own percent/fixed rule applies alone.
  */
 export function resolvePoolBenefit(
   enrollment: Pick<PricingEnrollment, "plan" | "level">,
-  serviceKind: ServiceKind,
+  service: PricingService,
 ): PricingBenefitRow | null {
+  const allowances = enrollment.level.benefits.filter(
+    (b) => b.isActive && b.benefitType === "ALLOWANCE",
+  );
   return (
-    enrollment.level.benefits.find(
+    // `serviceId` is globally unique and the write path pins a service row to
+    // its service's own country (`assertBenefitService`), so matching the id
+    // alone cannot reach another country's row.
+    allowances.find((b) => b.serviceId === service.id) ??
+    allowances.find(
       (b) =>
-        b.isActive &&
         b.countryId === enrollment.plan.primaryCountryId &&
         b.serviceId === null &&
-        b.serviceKind === serviceKind &&
-        b.benefitType === "ALLOWANCE",
-    ) ?? null
+        b.serviceKind === service.kind,
+    ) ??
+    null
   );
 }
 
@@ -258,7 +280,7 @@ export function resolveMembershipPrice(args: {
   //     routing around it would make the row decorative (§22).
   if (!benefit || benefit.benefitType === "EXCLUDED") return null;
 
-  const pool = resolvePoolBenefit(enrollment, service.kind);
+  const pool = resolvePoolBenefit(enrollment, service);
   const remaining = pool ? Math.max(0, args.allowanceRemaining ?? 0) : null;
 
   const finish = (
@@ -453,7 +475,7 @@ async function loadPoolRemaining(
   enrollment: PricingEnrollment,
   service: PricingService,
 ): Promise<{ allowanceRemaining: number; unitAvailable: boolean }> {
-  const pool = resolvePoolBenefit(enrollment, service.kind);
+  const pool = resolvePoolBenefit(enrollment, service);
   if (!pool) return { allowanceRemaining: 0, unitAvailable: false };
   const allowanceRemaining = await loadAllowanceRemaining(enrollment, pool);
   return { allowanceRemaining, unitAvailable: allowanceRemaining > 0 };

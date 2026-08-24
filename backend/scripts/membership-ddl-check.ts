@@ -40,7 +40,6 @@ const EXPECTED_CONSTRAINTS = [
   "MembershipBenefit_plan_country_fkey",
   "MembershipEnrollment_level_plan_fkey",
   "MembershipEnrollment_plan_country_fkey",
-  "MembershipBenefit_allowance_on_kind_rows_only",
   "MembershipLevel_card_background_hex_format",
   "MembershipBenefit_target_exactly_one",
   "MembershipBenefit_kind_consultations_only",
@@ -51,6 +50,19 @@ const EXPECTED_CONSTRAINTS = [
   // Phase 6 (§11.7) — the goodwill override's two invariants.
   "OrderItem_membership_override_needs_benefit",
   "OrderItem_membership_override_spends_no_allowance",
+];
+
+/**
+ * Constraints that must be GONE. A dropped constraint is invisible to a
+ * presence-only check, and this one silently costs money the other way round:
+ * while it survives, every "one free X" benefit row is rejected at INSERT, so a
+ * database that missed the migration looks configured in the admin UI and gives
+ * the member nothing.
+ */
+const REMOVED_CONSTRAINTS = [
+  // 20260824120000 — an ALLOWANCE may now live on a service-scoped row, whose
+  // counter is its own rather than the shared cross-country pool.
+  "MembershipBenefit_allowance_on_kind_rows_only",
 ];
 
 const EXPECTED_INDEXES = [
@@ -256,15 +268,6 @@ async function checkMembershipFixtures(client: Client): Promise<void> {
       [levelId, planId, foreignCountryId],
     );
 
-    // §21.3: a shared pool cannot be pinned to one country's Service row.
-    await expectReject(
-      client,
-      "ALLOWANCE on a service-specific row",
-      `INSERT INTO "MembershipBenefit" ("id","levelId","planId","countryId","serviceId","benefitType","allowanceCount","updatedAt")
-       VALUES ('ddlchk_b10',$1,$2,$3,$4,'ALLOWANCE',4,now())`,
-      [levelId, planId, countryId, serviceId],
-    );
-
     await expectReject(
       client,
       "malformed card background hex",
@@ -424,11 +427,14 @@ async function main(): Promise<void> {
 
   const constraints = await client.query<{ conname: string }>(
     `SELECT conname FROM pg_constraint WHERE conname = ANY($1)`,
-    [EXPECTED_CONSTRAINTS],
+    [[...EXPECTED_CONSTRAINTS, ...REMOVED_CONSTRAINTS]],
   );
   const foundConstraints = new Set(constraints.rows.map((row) => row.conname));
   for (const name of EXPECTED_CONSTRAINTS) {
     check(`constraint ${name}`, foundConstraints.has(name));
+  }
+  for (const name of REMOVED_CONSTRAINTS) {
+    check(`constraint ${name} is gone`, !foundConstraints.has(name));
   }
 
   const indexes = await client.query<{ indexname: string }>(

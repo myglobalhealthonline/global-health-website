@@ -465,6 +465,30 @@ describe("admin membership plan routes", () => {
     assert.equal(res.statusCode, 400, res.body);
   });
 
+  /**
+   * "One free X" — an ALLOWANCE pinned to a single service. Rejected until
+   * 20260824120000 by both a Zod refine and a CHECK constraint, so this is the
+   * one case where a green unit test proves nothing: only a real request
+   * against a real database shows that BOTH gates are actually open.
+   */
+  it("accepts an ALLOWANCE pinned to one service, and stores its count", async (t) => {
+    if (!app) return t.skip();
+    const { defaultLevelId } = await createPlan(`svcallowance-${uniq}`);
+    const res = await app.inject({
+      method: "POST",
+      url: `/api/admin/membership-levels/${defaultLevelId}/benefits`,
+      cookies: superCookie,
+      payload: { serviceId: gpServiceId, benefitType: "ALLOWANCE", allowanceCount: 1 },
+    });
+    assert.equal(res.statusCode, 200, res.body);
+    const row = await prisma.membershipBenefit.findFirst({
+      where: { levelId: defaultLevelId, serviceId: gpServiceId },
+    });
+    assert.equal(row?.benefitType, "ALLOWANCE");
+    assert.equal(row?.allowanceCount, 1);
+    assert.equal(row?.serviceKind, null, "still exactly one target");
+  });
+
   it("rejects a benefit targeting both a kind and a service → 400", async (t) => {
     if (!app) return t.skip();
     const { defaultLevelId } = await createPlan(`bothtarget-${uniq}`);

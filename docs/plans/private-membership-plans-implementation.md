@@ -2130,6 +2130,36 @@ silent-failure mode §9 rejected in the original design. Service-specific rows m
 therefore be `PERCENT`, `FIXED` or `EXCLUDED` only. Enforce with a CHECK:
 `benefitType <> 'ALLOWANCE' OR serviceKind IS NOT NULL`.
 
+> **SUPERSEDED 2026-08-24 — see §21.3b.** The constraint above was dropped by
+> migration `20260824120000_membership_service_scoped_allowance`. The reasoning
+> held for a SHARED pool and only for a shared pool; a service-scoped allowance
+> is not shared, so there is nothing to map. Open item 4 below is resolved.
+
+### 21.3b Service-scoped allowances — "one free X" (2026-08-24)
+
+A service-specific `ALLOWANCE` is expressible again. It carries **its own counter**,
+not a slice of the shared pool:
+
+- `resolvePoolBenefit` now takes the whole `PricingService` and answers in the same
+  precedence order as `selectBenefitRow` — a row pinned to this exact service first,
+  the primary country's kind-wide row otherwise. So a rule for one service beats the
+  rule for its type on the pool exactly as it already did on the price.
+- The cross-country mapping problem never arises: the row names one `Service`, which
+  belongs to one country, and `assertBenefitService` already pins the row's
+  `countryId` to that service's own. Nothing travels, so nothing has to be mapped.
+- **Deviation from the restoration sketch in open item 4:** that sketch would have
+  allowed such a row only on the PRIMARY country. The restriction turned out to be
+  unnecessary — locality comes from the `Service` reference itself, not from which
+  country the row sits in — so a service-scoped allowance is allowed on any covered
+  country. Ireland can hold "one free GP visit" while Czechia stays primary, which is
+  the case that prompted this.
+- Decision 36 is intact: there is still exactly one SHARED pool per kind, still
+  always the primary country's row. A service-scoped row is not a second shared pool
+  because it is not shared at all.
+- Consequence worth stating in the editor: pinning an allowance to a service takes
+  that service OUT of the kind-wide pool. A unit spent on it comes off its own
+  counter, and the kind-wide units stay whole.
+
 ### 21.4 The shared pool, without re-keying the counter
 
 Decision 36 (one shared pool) and decision 35 (per-country rows) appear to conflict:
@@ -2553,9 +2583,10 @@ existing members immediately; removing warns that existing bookings keep their p
 Both write audit rows.
 
 **Level editor:** a country tab strip, primary tab badged. Each tab holds that
-country's benefit table, unchanged in shape from phase 1 except that the allowance
-option is disabled on service-specific rows (§21.3), with the reason shown. Plus the
-card colour picker and live preview.
+country's benefit table, unchanged in shape from phase 1. (The allowance option was
+disabled on service-specific rows until 2026-08-24; it is selectable everywhere now —
+§21.3b — and the hint under the count says which kind of pool the row creates.) Plus
+the card colour picker and live preview.
 
 **A country tab with no benefit rows is badged loudly** — "not configured — members
 get no benefit here" — because coverage without configuration silently gives nothing
@@ -2643,8 +2674,15 @@ in a generated migration, which is why every step re-runs `membership-ddl-check.
 3. ~~Commission-model markets remain blocked (§6.6).~~ **Resolved 2026-08-16** —
    Brazil can be a plan's primary country and can be added as covered coverage.
    See §18 open item 2 for what the commission receipt shows.
-4. **A service-specific allowance is no longer expressible, and that is a real
-   capability loss** — recorded here because it was not called out when §21.3 was
+4. ~~**A service-specific allowance is no longer expressible, and that is a real
+   capability loss**~~ — **Resolved 2026-08-24**, see §21.3b. Restored more broadly
+   than the sketch below proposed: allowed on any covered country, not just the
+   primary, because the `Service` reference is what makes the pool local. The
+   `mems-ireland` row converted on 2026-08-08 was NOT converted back — it is a
+   kind-wide row now and changing it would silently re-scope live members' visits.
+   Original entry kept below for the reasoning.
+
+   Recorded here because it was not called out when §21.3 was
    written, and it surfaced immediately: the dev database held exactly one such row
    (`mems-ireland` / `standard` / `acute-medical-consultation`, 6 visits), converted
    to a `GENERAL` kind row on 2026-08-08 to unblock the migration.

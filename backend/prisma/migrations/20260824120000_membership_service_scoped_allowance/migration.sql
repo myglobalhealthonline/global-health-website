@@ -1,0 +1,30 @@
+-- Allow an ALLOWANCE benefit on a service-scoped row ("one free X"), not just
+-- on a service KIND.
+--
+-- The original constraint (`MembershipBenefit_allowance_on_kind_rows_only`,
+-- phase 7 §21.3) existed because the allowance pool is SHARED across every
+-- country a plan covers, and a `Service` row belongs to exactly one country —
+-- there is no reliable mapping between a Czech service and its Irish
+-- counterpart, and slug matching was rejected outright as a silent-failure
+-- mode.
+--
+-- That reasoning holds for a shared pool and only for a shared pool. A
+-- service-scoped allowance is not shared: its counter belongs to the one
+-- service in the one country the row already names, so there is nothing to map
+-- and nothing to get wrong. `resolvePoolBenefit` gives such a row precedence
+-- over the kind-wide pool, mirroring the governing-row rule that a rule for one
+-- service always beats the rule for its type (§6.2).
+--
+-- The kind-wide pool is unchanged: it is still ALWAYS the primary country's
+-- row, so decision 36 ("there is no second shared pool") still holds.
+--
+-- Nothing else is relaxed. `MembershipBenefit_value_matches_type` still forces
+-- an ALLOWANCE row to carry an allowanceCount, and the exactly-one-target rule
+-- (serviceKind XOR serviceId) is untouched, so this widens the allowed set by
+-- exactly the service-scoped-allowance case and nothing more.
+--
+-- Purely permissive: no existing row can violate the looser rule, so there is
+-- no data step and this is safe to re-run against a database that already has
+-- the constraint dropped.
+ALTER TABLE "MembershipBenefit"
+  DROP CONSTRAINT IF EXISTS "MembershipBenefit_allowance_on_kind_rows_only";

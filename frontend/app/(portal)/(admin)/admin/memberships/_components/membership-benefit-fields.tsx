@@ -105,13 +105,6 @@ export function MembershipBenefitFields({
       ? [...services, { ...benefit.service }]
       : services;
 
-  // §21.3: an allowance may only live on a service-KIND row. A service-scoped
-  // pool cannot be shared across countries — `Service` rows are per-country and
-  // there is no reliable mapping between a Czech service and its Irish
-  // counterpart. A CHECK constraint and the Zod refine both reject it, so the
-  // option is disabled here rather than left to bounce after a save.
-  const allowanceBlocked = targetMode === "service";
-
   const pickedService = serviceChoices.find((s) => s.id === serviceId);
   // A kind-targeted row covers many services at different prices, so the
   // preview uses a nominal 60.00 and says so.
@@ -157,13 +150,7 @@ export function MembershipBenefitFields({
               name="targetMode"
               value="service"
               checked={targetMode === "service"}
-              onChange={() => {
-                setTargetMode("service");
-                // The type follows the target rather than waiting to be
-                // refused: an allowance on one service is rejected by a CHECK,
-                // by the Zod refine and by the option below.
-                if (benefitType === "ALLOWANCE") setBenefitType("PERCENT");
-              }}
+              onChange={() => setTargetMode("service")}
             />
             <span className="text-sm">One specific service</span>
           </label>
@@ -216,20 +203,11 @@ export function MembershipBenefitFields({
           value={benefitType}
           onChange={(ev) => setBenefitType(ev.target.value as MembershipBenefit["benefitType"])}
         >
-          <option value="ALLOWANCE" disabled={allowanceBlocked}>
-            A number of included consultations
-          </option>
+          <option value="ALLOWANCE">A number of included consultations</option>
           <option value="PERCENT">A percentage off</option>
           <option value="FIXED">A fixed member price</option>
           <option value="EXCLUDED">Nothing — carve this out</option>
         </select>
-        {allowanceBlocked ? (
-          <span className="text-xs text-[var(--color-text-muted)]">
-            Included consultations cover a whole consultation type, not one service — the pool is
-            shared across every country the programme covers, and a single country&apos;s service
-            can&apos;t hold it.
-          </span>
-        ) : null}
       </label>
 
       {benefitType === "ALLOWANCE" ? (
@@ -247,7 +225,10 @@ export function MembershipBenefitFields({
               required
             />
             <span className="text-xs text-[var(--color-text-muted)]">
-              A fixed pool for the whole term — it does not reset monthly.
+              A fixed pool for the whole term — it does not reset monthly.{" "}
+              {targetMode === "service"
+                ? "Counted for this one service alone, so it is not spent anywhere else and does not touch the consultation-type pool."
+                : "Shared across every country the programme covers, and counted on the primary country's row — so the same rule has to exist there for units to work here."}
             </span>
           </label>
           <label className="flex flex-col gap-1.5">

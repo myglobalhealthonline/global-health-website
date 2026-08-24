@@ -455,11 +455,12 @@ describe("membership pricing — the shared pool", () => {
     enrollment(benefits, { plan: multiCountry() });
 
   it("resolves the pool from the PRIMARY country's row, whatever country is booked", () => {
-    assert.equal(resolvePoolBenefit(holder([iePool, czPercent]), "GENERAL")?.id, "pool_ie");
+    assert.equal(resolvePoolBenefit(holder([iePool, czPercent]), CZ_SERVICE)?.id, "pool_ie");
   });
 
   it("returns null for a kind with no primary allowance", () => {
-    assert.equal(resolvePoolBenefit(holder([iePool, czPercent]), "SPECIALIST"), null);
+    const czSpecialist: PricingService = { id: "svc_cz_spec", countryId: "cz", kind: "SPECIALIST" };
+    assert.equal(resolvePoolBenefit(holder([iePool, czPercent]), czSpecialist), null);
   });
 
   it("never treats a NON-primary allowance row as a pool — one pool, not one per country", () => {
@@ -470,7 +471,7 @@ describe("membership pricing — the shared pool", () => {
       percentOff: null,
       allowanceCount: 99,
     });
-    assert.equal(resolvePoolBenefit(holder([czPool]), "GENERAL"), null);
+    assert.equal(resolvePoolBenefit(holder([czPool]), CZ_SERVICE), null);
   });
 
   it("a unit spends in a non-primary country and reports the PRIMARY row as the pool", () => {
@@ -549,5 +550,103 @@ describe("membership pricing — the shared pool", () => {
       }),
       null,
     );
+  });
+});
+
+/**
+ * "One free X" — an ALLOWANCE pinned to a single service.
+ *
+ * The shared kind-wide pool cannot express it: its counter is the primary
+ * country's and is spendable on every service of that kind in every covered
+ * country. A service-scoped row carries its OWN counter, which is sound because
+ * a `Service` belongs to exactly one country — nothing is shared, so there is
+ * no cross-country mapping to get wrong.
+ *
+ * The cases that carry money here are the precedence (a service row's pool
+ * beats the kind pool for its own service) and the containment (it does NOT
+ * become the pool for a sibling service of the same kind).
+ */
+describe("membership pricing — a service-scoped allowance", () => {
+  const CZ_SIBLING: PricingService = { id: "svc_cz_2", countryId: "cz", kind: "GENERAL" };
+  const iePool = benefit({
+    id: "pool_ie",
+    countryId: "ie",
+    benefitType: "ALLOWANCE",
+    percentOff: null,
+    allowanceCount: 6,
+  });
+  const czPercent = benefit({ id: "ben_cz", countryId: "cz", percentOff: 50 });
+  /** One free CZ_SERVICE — in a NON-primary country, which is the whole point. */
+  const czOneFree = benefit({
+    id: "pool_svc",
+    countryId: "cz",
+    serviceKind: null,
+    serviceId: CZ_SERVICE.id,
+    benefitType: "ALLOWANCE",
+    percentOff: null,
+    allowanceCount: 1,
+  });
+  const holder = (benefits: PricingBenefitRow[]) =>
+    enrollment(benefits, { plan: multiCountry() });
+
+  it("is its own pool, in a country that is not the primary", () => {
+    assert.equal(resolvePoolBenefit(holder([czOneFree]), CZ_SERVICE)?.id, "pool_svc");
+  });
+
+  it("beats the kind-wide pool for its own service (§6.2)", () => {
+    assert.equal(
+      resolvePoolBenefit(holder([iePool, czPercent, czOneFree]), CZ_SERVICE)?.id,
+      "pool_svc",
+    );
+  });
+
+  it("does not become the pool for a sibling service of the same kind", () => {
+    assert.equal(
+      resolvePoolBenefit(holder([iePool, czPercent, czOneFree]), CZ_SIBLING)?.id,
+      "pool_ie",
+      "the sibling still draws on the shared kind pool",
+    );
+  });
+
+  it("prices the free visit at zero and counts it against its own row", () => {
+    const price = resolveMembershipPrice({
+      enrollment: holder([iePool, czPercent, czOneFree]),
+      service: CZ_SERVICE,
+      fullPriceCents: 6000,
+      allowanceRemaining: 1,
+      now: NOW,
+    });
+    assert.equal(price?.unitPriceCents, 0);
+    assert.equal(price?.allowanceUsed, true);
+    assert.equal(price?.poolBenefitId, "pool_svc", "not the shared kind pool");
+    // Governing and pool are the same row here, so the OrderItem audits the
+    // service row rather than the country's kind rule.
+    assert.equal(price?.benefitId, "pool_svc");
+  });
+
+  it("charges full price once its single unit is gone, with no fallback set", () => {
+    assert.equal(
+      resolveMembershipPrice({
+        enrollment: holder([iePool, czPercent, czOneFree]),
+        service: CZ_SERVICE,
+        fullPriceCents: 6000,
+        allowanceRemaining: 0,
+        now: NOW,
+      }),
+      null,
+      "the service row governs, so Czechia's 50% kind rule does NOT apply",
+    );
+  });
+
+  it("takes its own fallback once exhausted, not the kind rule", () => {
+    const price = resolveMembershipPrice({
+      enrollment: holder([iePool, czPercent, { ...czOneFree, fallbackType: "PERCENT", fallbackPercent: 10 }]),
+      service: CZ_SERVICE,
+      fullPriceCents: 6000,
+      allowanceRemaining: 0,
+      now: NOW,
+    });
+    assert.equal(price?.unitPriceCents, 5400);
+    assert.equal(price?.basis, "FALLBACK_PERCENT");
   });
 });

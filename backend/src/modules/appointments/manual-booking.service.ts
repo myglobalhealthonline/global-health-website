@@ -777,10 +777,11 @@ export async function createManualBooking(
         allowanceUsed: boolean;
         basis: MembershipPriceBasis;
         /**
-         * The POOL row — the primary country's ALLOWANCE row — whose counter a
-         * unit comes off (§21.4). Distinct from `benefitId` above, which is the
-         * governing row the line is priced by and audited against. Null under
-         * an override, and whenever the level has no allowance for this kind.
+         * The POOL row whose counter a unit comes off (§21.4) — the service's
+         * own ALLOWANCE row, else the primary country's row for its kind. Often
+         * distinct from `benefitId` above, which is the governing row the line
+         * is priced by and audited against. Null under an override, and
+         * whenever no allowance reaches this service.
          */
         benefit: PricingBenefitRow | null;
         overrideReason: string | null;
@@ -813,11 +814,12 @@ export async function createManualBooking(
         };
         amountCents = resolved.unitPriceCents;
       } else if (membershipEnrollment) {
-        // The counter is the PRIMARY country's row, whatever country this
-        // booking is in (§21.4) — the governing row only decides the PRICE.
-        // Reading or spending the governing row here would split one shared
-        // pool into a counter per country, silently.
-        const pool = resolvePoolBenefit(membershipEnrollment, pricingService.kind);
+        // The counter is the service's own ALLOWANCE row if it has one, else
+        // the PRIMARY country's kind row whatever country this booking is in
+        // (§21.4) — the governing row only decides the PRICE. Reading or
+        // spending this country's kind row here would split one shared pool
+        // into a counter per country, silently.
+        const pool = resolvePoolBenefit(membershipEnrollment, pricingService);
         const allowanceRemaining = pool
           ? await loadAllowanceRemaining(membershipEnrollment, pool)
           : 0;

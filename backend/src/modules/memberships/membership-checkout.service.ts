@@ -154,9 +154,11 @@ export async function planMembershipCheckout(
     const fullPriceCents = args.fullPriceByItemId.get(item.id);
     if (fullPriceCents == null) continue;
 
-    // The counter is the PRIMARY country's row, whatever country this line is
-    // booked in (§21.4). The governing row is resolved inside the resolver.
-    const pool = resolvePoolBenefit(enrollment, service.kind);
+    // The counter is the service's own ALLOWANCE row if it has one, else the
+    // PRIMARY country's kind row whatever country this line is booked in
+    // (§21.4). Never this country's kind row. The governing row is resolved
+    // inside the resolver.
+    const pool = resolvePoolBenefit(enrollment, service);
     const allowanceRemaining = pool ? await remainingFor(pool) : 0;
     const price = resolveMembershipPrice({
       enrollment,
