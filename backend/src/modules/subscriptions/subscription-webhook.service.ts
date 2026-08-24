@@ -211,9 +211,45 @@ async function onSubscriptionSynced(
   const obj = event.data.object;
   const stripeSubscriptionId = str(obj.id);
   if (!stripeSubscriptionId) return { handled: true, detail: "no-id" };
-  const sub = await prisma.userSubscription.findUnique({
+  let sub = await prisma.userSubscription.findUnique({
     where: { stripeSubscriptionId },
   });
+
+  // Payment-link adoption. A Stripe Payment Link mints its OWN customer, so a
+  // membership paid through one matches neither by subscription id (brand new)
+  // nor by customer id (ours is a different customer). The internal id we put
+  // in the link's `subscription_data.metadata` is the only thread back, and
+  // without this the payment would look like a stranger's signup: our row would
+  // stay unlinked and the money would never reach the membership it paid for.
+  //
+  // Only ever adopts a row that has NO provider subscription yet — it must not
+  // be able to re-point a membership that is already billing.
+  if (!sub) {
+    const meta = (obj.metadata as Record<string, string> | undefined) ?? {};
+    const internalSubId = meta.internalSubId;
+    if (internalSubId) {
+      const claimable = await prisma.userSubscription.findFirst({
+        where: { id: internalSubId, stripeSubscriptionId: null },
+        select: { id: true },
+      });
+      if (claimable) {
+        sub = await prisma.userSubscription.update({
+          where: { id: claimable.id },
+          data: {
+            stripeSubscriptionId,
+            ...(str(obj.customer) ? { stripeCustomerId: str(obj.customer) } : {}),
+          },
+        });
+        await recordAudit({
+          action: "SUBSCRIPTION_UPDATED",
+          entityType: "UserSubscription",
+          entityId: sub.id,
+          actorUserId: sub.userId,
+          metadata: { via: "payment_link_adoption", stripeSubscriptionId },
+        });
+      }
+    }
+  }
   if (!sub) return deferWhenLinkPending(str(obj.customer), "sub-not-found");
 
   const stripeStatus = mapStripeStatus(str(obj.status));
