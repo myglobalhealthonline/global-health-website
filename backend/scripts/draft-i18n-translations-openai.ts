@@ -6,7 +6,7 @@ import { prisma } from "../src/db/prisma.js";
 const LOCALES = ["EN", "PT", "ES", "CS", "RO", "DE"] as const;
 type Locale = (typeof LOCALES)[number];
 
-const ENTITIES = ["services", "service-faqs", "doctors", "doctor-markets", "health-tests", "health-test-faqs"] as const;
+const ENTITIES = ["services", "service-faqs", "doctors", "doctor-markets", "health-tests", "health-test-faqs", "blog"] as const;
 type EntityFlag = (typeof ENTITIES)[number];
 
 const TRANS_ENTITY_NAME: Record<EntityFlag, string> = {
@@ -16,8 +16,12 @@ const TRANS_ENTITY_NAME: Record<EntityFlag, string> = {
   "doctor-markets": "DoctorMarketTranslation",
   "health-tests": "HealthTestTranslation",
   "health-test-faqs": "HealthTestFaqTranslation",
+  blog: "BlogTranslation",
 };
 
+// Job field names for "blog" are BlogPost column names, NOT BlogTranslation
+// column names (body/seoDescription/coverAlt vs content/seoDesc/coverImageAlt
+// on BlogTranslation) — apply-blog-translations.ts maps between the two.
 const ENTITY_FIELDS: Record<EntityFlag, readonly string[]> = {
   services: ["name", "summary", "seoTitle", "seoDescription", "heroTitle", "heroDescription", "detailBody", "ctaLabel"],
   "service-faqs": ["question", "answer"],
@@ -25,7 +29,12 @@ const ENTITY_FIELDS: Record<EntityFlag, readonly string[]> = {
   "doctor-markets": ["title", "bio", "seoTitle", "seoDescription"],
   "health-tests": ["title", "shortDescription", "sampleType", "resultsTimeline", "heroButtonLabel", "detailIntro", "whatThisTestCovers", "whyGetTested", "seoTitle", "seoDescription"],
   "health-test-faqs": ["question", "answer"],
+  blog: ["title", "excerpt", "body", "seoTitle", "seoDescription", "coverAlt"],
 };
+
+// BlogPost.body is a full article (tens of thousands of chars); the other
+// short-field jobs are fine on the default cap.
+const BLOG_BODY_MAX_OUTPUT_TOKENS = Math.max(16_000, Number(process.env.BLOG_BODY_MAX_OUTPUT_TOKENS?.trim() || "48000"));
 
 type Job = {
   key: string;
@@ -118,7 +127,7 @@ async function callOpenAi(body: object): Promise<Record<string, unknown>> {
         body: JSON.stringify(body),
       });
       if (response.status === 429 || response.status >= 500) {
-        lastError = new Error(`OpenAI transient error (${response.status})`);
+        lastError = new Error(`OpenAI transient error (${response.status}): ${await response.text()}`);
         continue;
       }
       if (!response.ok) throw new Error(`OpenAI request failed (${response.status}): ${await response.text()}`);
@@ -167,7 +176,7 @@ async function translate(job: Job): Promise<Draft> {
   const body = await callOpenAi({
     model,
     reasoning: { effort: "low" },
-    max_output_tokens: 16_000,
+    max_output_tokens: job.entity === "blog" && job.field === "body" ? BLOG_BODY_MAX_OUTPUT_TOKENS : 16_000,
     input: prompt,
   });
   if (body.incomplete_details) throw new Error(`OpenAI response incomplete: ${JSON.stringify(body.incomplete_details)}`);
@@ -404,6 +413,45 @@ async function collectHealthTestFaqJobs(completed: Set<string>): Promise<Job[]> 
   return buildJobs(leaves, ENTITY_FIELDS["health-test-faqs"], completed, new Set());
 }
 
+// Blog isn't country-scoped like services/doctors/health-tests (a post can be
+// attached to zero, one, or several countries via BlogPostCountry) — target
+// locales are simply every other supported locale, and buildJobs' own
+// isMeaningful/completed checks skip anything already translated.
+async function collectBlogJobs(completed: Set<string>): Promise<Job[]> {
+  const posts = await prisma.blogPost.findMany({
+    where: { status: "PUBLISHED", isActive: true },
+    orderBy: { slug: "asc" },
+    select: {
+      id: true, slug: true, locale: true, title: true, excerpt: true, body: true,
+      seoTitle: true, seoDescription: true,
+      coverAsset: { select: { altText: true } },
+      translations: { select: { locale: true, title: true, excerpt: true, content: true, seoTitle: true, seoDesc: true, coverImageAlt: true } },
+    },
+  });
+  const leaves: Leaf[] = posts.map((post) => ({
+    id: post.id,
+    slug: post.slug,
+    countryCode: post.locale,
+    sourceLocale: post.locale as Locale,
+    targetLocales: LOCALES.filter((locale) => locale !== post.locale),
+    base: {
+      title: post.title,
+      excerpt: post.excerpt,
+      body: post.body,
+      seoTitle: post.seoTitle,
+      seoDescription: post.seoDescription,
+      coverAlt: post.coverAsset?.altText ?? null,
+    },
+    translations: new Map(
+      post.translations.map((row) => [row.locale as Locale, {
+        title: row.title, excerpt: row.excerpt, body: row.content,
+        seoTitle: row.seoTitle, seoDescription: row.seoDesc, coverAlt: row.coverImageAlt,
+      }]),
+    ),
+  }));
+  return buildJobs(leaves, ENTITY_FIELDS.blog, completed, new Set());
+}
+
 async function collectJobs(completed: Set<string>, legacyCompleted: Set<string>): Promise<Job[]> {
   switch (entity) {
     case "services": return collectServiceJobs(completed, legacyCompleted);
@@ -412,6 +460,7 @@ async function collectJobs(completed: Set<string>, legacyCompleted: Set<string>)
     case "doctor-markets": return collectDoctorMarketJobs(completed);
     case "health-tests": return collectHealthTestJobs(completed);
     case "health-test-faqs": return collectHealthTestFaqJobs(completed);
+    case "blog": return collectBlogJobs(completed);
   }
 }
 
