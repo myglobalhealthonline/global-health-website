@@ -108,9 +108,15 @@ const pt: LocalePost = {
         id: "baixa",
         nav: "Baixa médica",
         eyebrow: "Instrumento 2",
-        h2: "O que é a baixa médica e o CIT",
+        h2: "CIT, baixa médica e sick leave: qual é a diferença?",
         blocks: [
-          lead("Quando a doença ultrapassa o âmbito da autodeclaração, o que passa a existir é um Certificado de Incapacidade Temporária."),
+          lead("CIT e baixa médica não são dois documentos diferentes. «Baixa médica» é o nome corrente da situação; o Certificado de Incapacidade Temporária é o documento médico que a formaliza."),
+          p("A expressão inglesa <em>sick leave</em> significa apenas ausência ao trabalho por doença. Em Portugal, não corresponde a um terceiro certificado. Essa ausência pode ser justificada por autodeclaração, por uma declaração médica ou por um CIT, conforme a duração, a necessidade de avaliação clínica e o eventual direito a subsídio de doença."),
+          ul([
+            "<strong>Use a autodeclaração</strong> para uma ausência curta, dentro dos limites legais, quando não precisa de avaliação médica nem de subsídio de doença.",
+            "<strong>Peça uma declaração médica</strong> quando a entidade patronal precisa de prova da falta e a avaliação não indica necessidade de CIT.",
+            "<strong>Peça avaliação para CIT</strong> quando a incapacidade precisa de certificação médica, ultrapassa o âmbito da autodeclaração ou pode dar lugar a subsídio de doença.",
+          ]),
           p("O <strong>CIT</strong> é emitido por médico — no SNS ou no privado, nós também o emitimos — e comunicado à Segurança Social. É esse documento que atesta clinicamente que está temporariamente incapaz para o trabalho, e é a partir dele que se avalia o direito ao <strong>subsídio de doença</strong>."),
           ul([
             "É <strong>o médico</strong> que decide se existe incapacidade e qual o período — não o utente e não a entidade patronal.",
@@ -133,7 +139,7 @@ const pt: LocalePost = {
           p("Uma consulta privada <strong>pode emitir CIT</strong> — nós emitimos. O que decide qual dos dois documentos faz sentido é a duração provável da doença: o subsídio de doença só começa a ser pago depois de um período de espera fixado por lei, pelo que uma ausência de dois ou três dias raramente justifica um CIT, e uma declaração médica resolve o que a entidade patronal precisa. Quando a doença se prolonga para lá desse período, o CIT é o instrumento certo."),
           ul([
             "Precisa apenas de justificar a falta perante a entidade patronal: uma declaração médica cumpre esse efeito.",
-            "Precisa de subsídio de doença: precisa de CIT, e portanto do circuito do SNS.",
+            "Precisa de subsídio de doença: precisa de avaliação médica e, quando existe incapacidade, de um CIT emitido por uma entidade de saúde habilitada.",
             "Não sabe qual dos dois é o seu caso: é exatamente isso que uma consulta resolve em poucos minutos.",
           ]),
           p(`Pode confirmar a inscrição de qualquer médico junto da <a href="${ORDEM_MEDICOS}" rel="nofollow noopener" target="_blank">Ordem dos Médicos</a>, connosco como em qualquer outro lado.`),
@@ -195,7 +201,7 @@ const pt: LocalePost = {
       { label: "SNS 24 — baixa médica", href: SNS24_BAIXA },
       { label: "Ordem dos Médicos", href: ORDEM_MEDICOS },
     ],
-    sourcesNote: "As ligações abrem nos sites das entidades competentes. A Global Health não integra a Segurança Social nem o SNS, não emite Certificados de Incapacidade Temporária e não pode decidir, acelerar ou garantir qualquer prestação social.",
+    sourcesNote: "As ligações abrem nos sites das entidades competentes. A Global Health não integra a Segurança Social nem o SNS. A emissão de CIT depende sempre da avaliação clínica, e nenhuma consulta pode decidir, acelerar ou garantir uma prestação social.",
     faqEyebrow: "FAQ",
     faqH2: "Perguntas frequentes",
     faqs: [
