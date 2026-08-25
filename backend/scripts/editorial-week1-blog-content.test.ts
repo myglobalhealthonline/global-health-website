@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { ES_TENSION_ARTERIAL_NORMAL } from "./content/blog-week1-2026-08/es-tension-arterial-normal.js";
 import { RO_TENSIUNE_ARTERIALA_NORMALA } from "./content/blog-week1-2026-08/ro-tensiune-arteriala-normala.js";
@@ -78,4 +79,19 @@ test("Romania links routine GP hypertension management to chronic care", () => {
 
   assert.match(html, /medicul de familie poate coordona/i);
   assert.match(html, /\/services\/boli-cronice-online/);
+});
+
+test("published Spain updater is exact-record, dry-run and state preserving", () => {
+  const updater = readFileSync(
+    new URL("./update-published-es-blood-pressure-2026-08.ts", import.meta.url),
+    "utf8",
+  );
+  assert.match(updater, /const APPLY = process\.argv\.includes\("--apply"\)/);
+  assert.match(updater, /cmt5txqqn0000s8ju2rz5zg1u/);
+  assert.match(updater, /EXPECTED_CURRENT_HASH/);
+  assert.match(updater, /existing\.status !== "PUBLISHED"/);
+  assert.match(updater, /existing\.translations\.length !== 5/);
+  assert.match(updater, /publishedAt: existing\.publishedAt/);
+  assert.match(updater, /lastReviewedAt: existing\.lastReviewedAt/);
+  assert.match(updater, /VERIFIED: published Spanish article corrected; state and translations preserved/);
 });
