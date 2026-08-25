@@ -1,6 +1,12 @@
+import type { LocaleCode } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { sendPatientUploadLinkEmail } from "../../lib/email/templates.js";
 import { sendWhatsAppText } from "../../lib/whatsapp/wasender.js";
+import {
+  resolveNotificationLang,
+  type NotificationLang,
+} from "../automation/notification-language.js";
+import { uploadLinkWhatsAppGeneral } from "./upload-link-messages.js";
 import {
   buildPatientUploadUrl,
   createPatientUploadToken,
@@ -45,6 +51,9 @@ export type SendAppointmentUploadLinkResult =
       failed: UploadLinkChannel[];
       /** True when WhatsApp was requested but the appointment has no phone. */
       missingPhone: boolean;
+      /** Language the message was actually written in — the caller's override
+       *  when one was passed, otherwise the booking's own language. */
+      lang: NotificationLang;
     }
   | { ok: false; status: 400 | 404; message: string };
 
@@ -54,6 +63,9 @@ export async function sendAppointmentUploadLink(opts: {
    *  Null for ADMIN callers, who may act on any appointment. */
   doctorIdScope: string | null;
   channels: UploadLinkChannel[];
+  /** Admin/doctor override for the language of this one send. Null/undefined
+   *  keeps the booking's own language. */
+  locale?: LocaleCode | null;
 }): Promise<SendAppointmentUploadLinkResult> {
   const channels = opts.channels.length ? opts.channels : [...UPLOAD_LINK_CHANNELS];
 
@@ -62,7 +74,15 @@ export async function sendAppointmentUploadLink(opts: {
       id: opts.appointmentId,
       ...(opts.doctorIdScope ? { doctorId: opts.doctorIdScope } : {}),
     },
-    select: { id: true, doctorId: true, fullName: true, email: true, phone: true },
+    select: {
+      id: true,
+      doctorId: true,
+      fullName: true,
+      email: true,
+      phone: true,
+      countryCode: true,
+      notificationLocale: true,
+    },
   });
   if (!appt) {
     return { ok: false, status: 404, message: "Appointment not found" };
@@ -88,6 +108,15 @@ export async function sendAppointmentUploadLink(opts: {
   });
   const link = buildPatientUploadUrl(token);
 
+  // Default: the language the patient booked in, falling back to the locale of
+  // the country the consultation was booked in. An explicit `locale` from the
+  // admin/doctor overrides it for this send only — it is not written back to
+  // the appointment, so the automated notifications keep their own language.
+  const lang = resolveNotificationLang({
+    notificationLocale: opts.locale ?? appt.notificationLocale,
+    countryCode: appt.countryCode,
+  });
+
   const sent: UploadLinkChannel[] = [];
   const failed: UploadLinkChannel[] = [];
   let missingPhone = false;
@@ -98,6 +127,7 @@ export async function sendAppointmentUploadLink(opts: {
         to: appt.email,
         patientName: appt.fullName ?? appt.email,
         link,
+        lang,
       });
       // `mode: "log"` means no provider is configured — nothing left the box.
       if (res.ok && res.mode !== "log") sent.push("email");
@@ -115,7 +145,7 @@ export async function sendAppointmentUploadLink(opts: {
       try {
         const wa = await sendWhatsAppText({
           to: appt.phone,
-          message: `Upload your medical files securely for your Global Health appointment:\n${link}`,
+          message: uploadLinkWhatsAppGeneral(lang, link),
         });
         if (wa.ok && !wa.skipped) sent.push("whatsapp");
         else failed.push("whatsapp");
@@ -125,5 +155,5 @@ export async function sendAppointmentUploadLink(opts: {
     }
   }
 
-  return { ok: true, link, expiresAt, sent, failed, missingPhone };
+  return { ok: true, link, expiresAt, sent, failed, missingPhone, lang };
 }

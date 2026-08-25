@@ -273,6 +273,8 @@ type AppointmentRecord = {
   /** IANA tz captured at booking time. Surfaced on the patient + doctor
    *  views so scheduledAt renders in the patient's local time. */
   patientTimezone?: string | null;
+  /** Present on the admin selects; other readers leave it undefined. */
+  notificationLocale?: string | null;
   createdAt: Date;
   updatedAt: Date;
   /** Populated only by the patient-facing list/detail queries that
@@ -319,6 +321,10 @@ export type AdminAppointmentDetail = {
   /** IANA tz captured at booking time. Lets the admin reschedule UI show
    *  which zone the slot was originally booked in. Null on legacy rows. */
   patientTimezone: string | null;
+  /** Language the patient's notifications are written in — the site locale
+   *  they booked in, or the operator's pick on a manual booking. Null means
+   *  "derive from the booking country". Pre-selects the upload-link language. */
+  notificationLocale: string | null;
   /** Linked order for the clickable order reference on the admin detail
    *  page. `orderId` targets /admin/orders/[id]; `orderNumber` (ORD-000001)
    *  is the label. Both null when the appointment has no linked order. */
@@ -442,6 +448,7 @@ const ADMIN_APPT_SELECT = {
   locationAddress: true,
   doctorId: true,
   patientTimezone: true,
+  notificationLocale: true,
   createdAt: true,
   updatedAt: true,
 } as const;
@@ -466,6 +473,7 @@ function toAdminAppointment(record: AppointmentRecord): AdminAppointmentDetail {
     locationAddress: record.locationAddress,
     doctorId: record.doctorId ?? null,
     patientTimezone: record.patientTimezone ?? null,
+    notificationLocale: record.notificationLocale ?? null,
     // Order-link + service-name fields are populated only by the detail
     // path (getAppointmentById), which knows the linked order. Default to
     // null here so every other caller of the mapper stays type-safe.

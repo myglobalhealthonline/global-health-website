@@ -2,6 +2,11 @@
 
 import { useState, useTransition } from "react";
 import { Copy, Link2, Mail, MessageCircle } from "lucide-react";
+import {
+  NOTIFICATION_LOCALES,
+  NOTIFICATION_LOCALE_LABEL,
+  type NotificationLocale,
+} from "@/lib/notification-locale";
 
 /**
  * "Send the patient an upload link" action, shared by the doctor
@@ -29,6 +34,8 @@ export type SendPatientUploadLinkCopy = {
   failed: string;
   pickChannel: string;
   expiresAt: string;
+  language: string;
+  languageHint: string;
 };
 
 export const DEFAULT_SEND_PATIENT_UPLOAD_LINK_COPY: SendPatientUploadLinkCopy = {
@@ -49,6 +56,9 @@ export const DEFAULT_SEND_PATIENT_UPLOAD_LINK_COPY: SendPatientUploadLinkCopy = 
   failed: "Could not send the upload link.",
   pickChannel: "Pick at least one channel.",
   expiresAt: "Link expires {date}",
+  language: "Language",
+  languageHint:
+    "Defaults to the language of the country this consultation was booked in. Change it to send in another language.",
 };
 
 type SendResponse = {
@@ -65,11 +75,19 @@ type SendResponse = {
 
 export function SendPatientUploadLinkCard({
   endpoint,
+  defaultLocale = "EN",
   copy = DEFAULT_SEND_PATIENT_UPLOAD_LINK_COPY,
   className,
 }: {
   /** POST target, e.g. `/api/doctor/appointments/<id>/upload-link`. */
   endpoint: string;
+  /**
+   * Pre-selected language: the booking's own `notificationLocale` when it has
+   * one, otherwise the locale of the country the consultation was booked in.
+   * The sender can change it — the pick applies to this send only and is never
+   * written back to the appointment.
+   */
+  defaultLocale?: NotificationLocale;
   copy?: SendPatientUploadLinkCopy;
   className?: string;
 }) {
@@ -79,6 +97,7 @@ export function SendPatientUploadLinkCard({
   const [notes, setNotes] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [locale, setLocale] = useState<NotificationLocale>(defaultLocale);
   // Both channels selected by default — a single send mints one token and
   // delivers it everywhere at once. Picking channels separately used to mint
   // (and silently revoke the prior) token per click, so a WhatsApp send
@@ -109,7 +128,7 @@ export function SendPatientUploadLinkCard({
         const res = await fetch(endpoint, {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ channels: selected }),
+          body: JSON.stringify({ channels: selected, locale }),
         });
         const json = (await res.json().catch(() => ({}))) as SendResponse;
         if (!res.ok || !json.ok || !json.data?.link) {
@@ -158,6 +177,23 @@ export function SendPatientUploadLinkCard({
           <p className="mt-1 text-portal-meta text-[var(--portal-muted)]">{copy.description}</p>
         </div>
       </div>
+
+      <label className="grid gap-1">
+        <span className="gh-field-label">{copy.language}</span>
+        <select
+          className="gh-select"
+          value={locale}
+          disabled={pending}
+          onChange={(e) => setLocale(e.target.value as NotificationLocale)}
+        >
+          {NOTIFICATION_LOCALES.map((code) => (
+            <option key={code} value={code}>
+              {NOTIFICATION_LOCALE_LABEL[code]}
+            </option>
+          ))}
+        </select>
+        <span className="text-portal-meta text-[var(--portal-muted)]">{copy.languageHint}</span>
+      </label>
 
       <div className="flex flex-wrap items-center gap-3">
         <label className="flex items-center gap-1.5 text-sm text-[var(--portal-text)]">

@@ -18,6 +18,11 @@ import {
   parseUploadLinkChannels,
   sendAppointmentUploadLink,
 } from "../modules/patient-upload/appointment-upload-link.service.js";
+import {
+  parseNotificationLocale,
+  resolveNotificationLang,
+} from "../modules/automation/notification-language.js";
+import { uploadLinkWhatsAppGeneral } from "../modules/patient-upload/upload-link-messages.js";
 import { resolveAdminSessionActor, verifyAdminAccess } from "../utils/admin-auth.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import { upsertPatientProfileByEmail } from "../modules/patient-profile/patient-profile.service.js";
@@ -213,7 +218,7 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
     },
   );
 
-  app.post<{ Params: { email: string } }>(
+  app.post<{ Params: { email: string }; Body: { locale?: unknown } }>(
     "/api/doctor/patients/:email/upload-link",
     // S-020: capability-token issuance — tighter, fail-closed limit so a
     // Redis outage doesn't fall back to the loose global default.
@@ -235,11 +240,28 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
       const hasAppt = await prisma.appointment.findFirst({
         where: { doctorId: auth.doctorId, email: { equals: email, mode: "insensitive" } },
         orderBy: { createdAt: "desc" },
-        select: { id: true, fullName: true, phone: true },
+        select: {
+          id: true,
+          fullName: true,
+          phone: true,
+          countryCode: true,
+          notificationLocale: true,
+        },
       });
       if (!hasAppt) {
         return reply.status(404).send(errorResponse("Patient not found for this doctor"));
       }
+
+      // Written in the patient's language: the booking's own locale, else the
+      // locale of the country that appointment was booked in. The doctor may
+      // override it per send with `locale` in the body.
+      const lang = resolveNotificationLang({
+        notificationLocale:
+          parseNotificationLocale(
+            typeof request.body?.locale === "string" ? request.body.locale : null,
+          ) ?? hasAppt.notificationLocale,
+        countryCode: hasAppt.countryCode,
+      });
 
       const { token, expiresAt } = await createPatientUploadToken({
         email,
@@ -255,6 +277,7 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
           to: email,
           patientName: hasAppt.fullName ?? email,
           link,
+          lang,
         });
       } catch (err) {
         app.log.error({ err }, "patient-upload: email send failed");
@@ -265,7 +288,7 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
         try {
           const wa = await sendWhatsAppText({
             to: hasAppt.phone,
-            message: `Upload your medical files securely:\n${link}`,
+            message: uploadLinkWhatsAppGeneral(lang, link),
           });
           if (!wa.ok && !wa.skipped) {
             app.log.warn({ wa }, "patient-upload: whatsapp send failed");
@@ -280,6 +303,7 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
       return okResponse({
         link,
         expiresAt: expiresAt.toISOString(),
+        lang,
         deliveryWarnings: deliveryWarnings.length ? deliveryWarnings : undefined,
       });
     },
@@ -299,7 +323,7 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
     config: { rateLimit: { max: 20, timeWindow: "1 hour", skipOnError: false } },
   } as const;
 
-  app.post<{ Params: { id: string }; Body: { channels?: unknown } }>(
+  app.post<{ Params: { id: string }; Body: { channels?: unknown; locale?: unknown } }>(
     "/api/doctor/appointments/:id/upload-link",
     uploadLinkRateLimit,
     async (request, reply) => {
@@ -312,6 +336,11 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
           // scoping to it is correct for both roles here.
           doctorIdScope: auth.doctorId,
           channels: parseUploadLinkChannels(request.body?.channels),
+          // Optional per-send language override; omitted keeps the booking's
+          // own language (country locale for rows that never recorded one).
+          locale: parseNotificationLocale(
+            typeof request.body?.locale === "string" ? request.body.locale : null,
+          ),
         });
         if (!result.ok) {
           return reply.status(result.status).send(errorResponse(result.message));
@@ -322,7 +351,7 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
           action: "SHARE_LINK_CREATED",
           entityType: "PatientUploadLink",
           entityId: request.params.id,
-          metadata: { kind: "appointment-upload-link", sent: result.sent },
+          metadata: { kind: "appointment-upload-link", sent: result.sent, lang: result.lang },
           request,
         });
         return okResponse(
@@ -332,6 +361,7 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
             sent: result.sent,
             failed: result.failed,
             missingPhone: result.missingPhone,
+            lang: result.lang,
           },
           "Upload link sent",
         );
@@ -345,7 +375,7 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
     },
   );
 
-  app.post<{ Params: { id: string }; Body: { channels?: unknown } }>(
+  app.post<{ Params: { id: string }; Body: { channels?: unknown; locale?: unknown } }>(
     "/api/admin/appointments/:id/upload-link",
     uploadLinkRateLimit,
     async (request, reply) => {
@@ -356,6 +386,11 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
           appointmentId: request.params.id,
           doctorIdScope: null,
           channels: parseUploadLinkChannels(request.body?.channels),
+          // Optional per-send language override; omitted keeps the booking's
+          // own language (country locale for rows that never recorded one).
+          locale: parseNotificationLocale(
+            typeof request.body?.locale === "string" ? request.body.locale : null,
+          ),
         });
         if (!result.ok) {
           return reply.status(result.status).send(errorResponse(result.message));
@@ -367,7 +402,7 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
           action: "SHARE_LINK_CREATED",
           entityType: "PatientUploadLink",
           entityId: request.params.id,
-          metadata: { kind: "appointment-upload-link", sent: result.sent },
+          metadata: { kind: "appointment-upload-link", sent: result.sent, lang: result.lang },
           request,
         });
         return okResponse(
@@ -377,6 +412,7 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
             sent: result.sent,
             failed: result.failed,
             missingPhone: result.missingPhone,
+            lang: result.lang,
           },
           "Upload link sent",
         );

@@ -9,6 +9,11 @@ import {
   type PatientAlertType,
 } from "@/components/patient-alerts";
 import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
+import {
+  NOTIFICATION_LOCALES,
+  NOTIFICATION_LOCALE_LABEL,
+  type NotificationLocale,
+} from "@/lib/notification-locale";
 
 type Profile = {
   weightKg: number | null;
@@ -73,6 +78,9 @@ export type PatientProfileCopy = {
   sendUploadLink: string;
   uploadLinkSent: string;
   uploadLinkFailed: string;
+  uploadLinkLanguage: string;
+  uploadLinkLanguageAuto: string;
+  uploadLinkLanguageHint: string;
   alertStatusLabel: string;
   alertClinicLabel: string;
   alertRemove: string;
@@ -139,6 +147,8 @@ export function PatientProfilePanel({
   const [profile, setProfile] = useState<Profile | null>(null);
   const [pending, startTransition] = useTransition();
   const [uploadMsg, setUploadMsg] = useState<string | null>(null);
+  // "" = auto — the server writes it in the patient's booking language.
+  const [uploadLocale, setUploadLocale] = useState<NotificationLocale | "">("");
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
   // Weight/height are controlled so BMI can recompute live as the doctor
   // types (BMI itself is never posted — the server derives/stores it).
@@ -304,7 +314,13 @@ export function PatientProfilePanel({
     startTransition(async () => {
       const res = await fetch(
         `/api/doctor/patients/${encodeURIComponent(email)}/upload-link`,
-        { method: "POST" },
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          // Empty = let the server use the booking's own language; this panel
+          // is patient-scoped, so it doesn't know which appointment answers.
+          body: JSON.stringify(uploadLocale ? { locale: uploadLocale } : {}),
+        },
       );
       const json = (await res.json()) as {
         ok?: boolean;
@@ -552,6 +568,25 @@ export function PatientProfilePanel({
       </form>
 
       <div className="gh-doctor-upload-link mt-5 border-t border-[var(--portal-line)] pt-4">
+        <label className="mb-3 grid max-w-xs gap-1">
+          <span className="gh-field-label">{copy.uploadLinkLanguage}</span>
+          <select
+            className="gh-select"
+            value={uploadLocale}
+            disabled={pending}
+            onChange={(e) => setUploadLocale(e.target.value as NotificationLocale | "")}
+          >
+            <option value="">{copy.uploadLinkLanguageAuto}</option>
+            {NOTIFICATION_LOCALES.map((code) => (
+              <option key={code} value={code}>
+                {NOTIFICATION_LOCALE_LABEL[code]}
+              </option>
+            ))}
+          </select>
+          <span className="text-portal-meta text-[var(--portal-muted)]">
+            {copy.uploadLinkLanguageHint}
+          </span>
+        </label>
         <button
           type="button"
           disabled={pending}

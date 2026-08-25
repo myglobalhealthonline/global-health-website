@@ -256,6 +256,9 @@
     "identityDesc": "Comparați actul de identitate cu fotografia de verificare, apoi confirmați sau respingeți. O identitate confirmată este tipărită pe rețetele de medicamente controlate."
   },
   "patients": {
+    "uploadLinkLanguage": "Limba linkului de încărcare",
+    "uploadLinkLanguageAuto": "Automat (limba programării pacientului)",
+    "uploadLinkLanguageHint": "Modul automat folosește limba celei mai recente programări a pacientului la dumneavoastră.",
     "eyebrow": "Fișe pacienți",
     "title": "Pacienții mei",
     "description": "Pacienți distincți care au rezervat la dvs. Datele de contact rămân protejate; folosiți spațiile de lucru ale programărilor pentru chat clinic și revizuirea documentelor.",
@@ -1092,6 +1095,8 @@
     "submitButton": "Trimite formularul"
   },
   "documentsReviewSendPanel": {
+    "uploadLinkLanguage": "Limba linkului de încărcare",
+    "uploadLinkLanguageHint": "Implicit, limba țării în care a fost programată consultația.",
     "title": "Revizuire și trimitere",
     "noneWaiting": "Niciun document în așteptare. Generați o recomandare de analize, o rețetă medicală sau o adeverință de absență, apoi reveniți aici pentru a revizui și edita înainte de trimitere.",
     "reviewEditHint": "Revizuiți și editați fiecare PDF. Trimiterea prin e-mail este disponibilă doar pentru analize și adeverințe de absență — rețetele medicale sunt pentru evidențele dvs. și transmiterea către portalul național.",
@@ -1180,6 +1185,8 @@
     "uploadFiles": "Încarcă fișierele"
   },
   "patientUploadLinkCard": {
+    "language": "Limba",
+    "languageHint": "Implicit, limba țării în care a fost programată consultația. Modificați pentru a trimite în altă limbă.",
     "title": "Trimite pacientului linkul de încărcare",
     "description": "Generează un link securizat prin care pacientul poate încărca fișiere direct în această programare. Retrimiterea îl înlocuiește — orice link deja trimis încetează să funcționeze, așa că alege toate canalele înainte de trimitere.",
     "sendWhatsapp": "WhatsApp",

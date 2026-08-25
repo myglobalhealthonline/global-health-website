@@ -256,6 +256,9 @@
     "identityDesc": "Compare o documento de identificação com a fotografia de verificação e depois confirme ou rejeite. Uma identidade confirmada é impressa nas receitas de medicamentos controlados."
   },
   "patients": {
+    "uploadLinkLanguage": "Idioma do link de carregamento",
+    "uploadLinkLanguageAuto": "Automático (idioma da marcação do paciente)",
+    "uploadLinkLanguageHint": "O modo automático usa o idioma da marcação mais recente do paciente consigo.",
     "eyebrow": "Registos de pacientes",
     "title": "Os meus pacientes",
     "description": "Pacientes distintos que marcaram consigo. Os dados de contacto permanecem protegidos; use os espaços de trabalho das consultas para chat clínico e revisão de documentos.",
@@ -1092,6 +1095,8 @@
     "submitButton": "Submeter formulário"
   },
   "documentsReviewSendPanel": {
+    "uploadLinkLanguage": "Idioma do link de carregamento",
+    "uploadLinkLanguageHint": "Por predefinição, o idioma do país onde a consulta foi marcada.",
     "title": "Rever e enviar",
     "noneWaiting": "Nenhum documento em espera. Gere uma receita de exames, receita médica ou atestado de ausência e volte aqui para rever e editar antes de enviar.",
     "reviewEditHint": "Reveja e edite cada PDF. O envio por email está disponível apenas para exames e atestados de ausência — as receitas médicas destinam-se ao seu registo e submissão no portal nacional.",
@@ -1180,6 +1185,8 @@
     "uploadFiles": "Carregar ficheiros"
   },
   "patientUploadLinkCard": {
+    "language": "Idioma",
+    "languageHint": "Por predefinição, o idioma do país onde a consulta foi marcada. Altere para enviar noutro idioma.",
     "title": "Enviar link de carregamento ao paciente",
     "description": "Gera um link seguro que o paciente pode usar para carregar ficheiros diretamente para esta consulta. Enviar de novo substitui-o — qualquer link já enviado deixa de funcionar, por isso escolha todos os canais antes de enviar.",
     "sendWhatsapp": "WhatsApp",

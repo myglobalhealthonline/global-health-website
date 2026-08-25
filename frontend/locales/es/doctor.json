@@ -256,6 +256,9 @@
     "identityDesc": "Compare el documento de identidad con la foto de verificación y luego confirme o rechace. Una identidad confirmada se imprime en las recetas de medicamentos controlados."
   },
   "patients": {
+    "uploadLinkLanguage": "Idioma del enlace de subida",
+    "uploadLinkLanguageAuto": "Automático (idioma de la reserva del paciente)",
+    "uploadLinkLanguageHint": "El modo automático usa el idioma de la reserva más reciente del paciente con usted.",
     "eyebrow": "Registros de pacientes",
     "title": "Mis pacientes",
     "description": "Pacientes distintos que han reservado con usted. Los datos de contacto permanecen protegidos; use los espacios de trabajo de las citas para el chat clínico y la revisión de documentos.",
@@ -1092,6 +1095,8 @@
     "submitButton": "Enviar formulario"
   },
   "documentsReviewSendPanel": {
+    "uploadLinkLanguage": "Idioma del enlace de subida",
+    "uploadLinkLanguageHint": "Por defecto, el idioma del país en el que se reservó la consulta.",
     "title": "Revisar y enviar",
     "noneWaiting": "No hay documentos en espera. Genere una receta de exámenes, receta médica o certificado de ausencia, y vuelva aquí para revisar y editar antes de enviar.",
     "reviewEditHint": "Revise y edite cada PDF. El envío por correo está disponible solo para exámenes y certificados de ausencia — las recetas médicas son para su registro y presentación en el portal nacional.",
@@ -1180,6 +1185,8 @@
     "uploadFiles": "Subir archivos"
   },
   "patientUploadLinkCard": {
+    "language": "Idioma",
+    "languageHint": "Por defecto, el idioma del país en el que se reservó la consulta. Cámbielo para enviarlo en otro idioma.",
     "title": "Enviar enlace de subida al paciente",
     "description": "Genera un enlace seguro que el paciente puede usar para subir archivos directamente a esta cita. Enviar de nuevo lo sustituye — cualquier enlace ya enviado deja de funcionar, así que elige todos los canales antes de enviar.",
     "sendWhatsapp": "WhatsApp",

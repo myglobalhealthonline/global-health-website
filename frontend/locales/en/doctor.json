@@ -256,6 +256,9 @@
     "identityDesc": "Compare the ID document with the verification photo, then confirm or reject. A confirmed identity is printed on controlled-medication prescriptions."
   },
   "patients": {
+    "uploadLinkLanguage": "Upload link language",
+    "uploadLinkLanguageAuto": "Automatic (patient's booking language)",
+    "uploadLinkLanguageHint": "Automatic uses the language of the patient's most recent booking with you.",
     "eyebrow": "Patient records",
     "title": "My patients",
     "description": "Distinct patients who have booked with you. Contact details stay protected; use appointment workspaces for clinical chat and document review.",
@@ -1170,6 +1173,8 @@
     "submitButton": "Submit form"
   },
   "documentsReviewSendPanel": {
+    "uploadLinkLanguage": "Upload link language",
+    "uploadLinkLanguageHint": "Defaults to the language of the country this consultation was booked in.",
     "title": "Review & send",
     "noneWaiting": "No documents waiting. Generate an exams prescription, medicine prescription, or absence certificate, then return here to review and edit before sending.",
     "reviewEditHint": "Review and edit each PDF. Email send is available for exams and absence certificates only — medicine prescriptions are for your records and national portal submission.",
@@ -1258,6 +1263,8 @@
     "uploadFiles": "Upload files"
   },
   "patientUploadLinkCard": {
+    "language": "Language",
+    "languageHint": "Defaults to the language of the country this consultation was booked in. Change it to send in another language.",
     "title": "Send upload link to patient",
     "description": "Generates a secure link the patient can use to upload files straight into this appointment. Sending again replaces it — any link already out stops working, so pick every channel you want before sending.",
     "sendWhatsapp": "WhatsApp",

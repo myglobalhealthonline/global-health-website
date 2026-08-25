@@ -9,6 +9,11 @@ import {
 import { HistorySection } from "@/app/(portal)/(doctor)/doctor/_components/doctor-document-tables";
 import { GENERATED_DOCUMENT_TYPE_LABELS } from "@/lib/doctor-session-display";
 import { AppMenu, AppMenuItem } from "@/components/AppMenu";
+import {
+  NOTIFICATION_LOCALES,
+  NOTIFICATION_LOCALE_LABEL,
+  type NotificationLocale,
+} from "@/lib/notification-locale";
 
 export type ReviewQueueDoc = {
   id: string;
@@ -74,6 +79,8 @@ export type DocumentsReviewSendPanelCopy = {
   couldNotFinalize: string;
   finalizedSuccess: string;
   moreActions: string;
+  uploadLinkLanguage: string;
+  uploadLinkLanguageHint: string;
 };
 
 // ponytail: baked-in English default so the only current caller
@@ -112,6 +119,9 @@ const DEFAULT_COPY: DocumentsReviewSendPanelCopy = {
   couldNotFinalize: "Could not finalize the prescription.",
   finalizedSuccess: "Medicine prescription finalized and moved to history.",
   moreActions: "More document actions",
+  uploadLinkLanguage: "Upload link language",
+  uploadLinkLanguageHint:
+    "Defaults to the language of the country this consultation was booked in.",
 };
 
 export function DocumentsReviewSendPanel({
@@ -120,6 +130,7 @@ export function DocumentsReviewSendPanel({
   onEditDraft,
   open,
   onOpenChange,
+  notificationLocale = "EN",
   copy = DEFAULT_COPY,
 }: {
   appointmentId: string;
@@ -128,6 +139,9 @@ export function DocumentsReviewSendPanel({
   onEditDraft: (doc: ReviewQueueDoc) => void;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /** Pre-selected language for the per-prescription upload link — the
+   *  booking's own locale, else the booking country's. */
+  notificationLocale?: NotificationLocale;
   copy?: DocumentsReviewSendPanelCopy;
 }) {
   const [queue, setQueue] = useState<ReviewQueueDoc[]>([]);
@@ -137,6 +151,10 @@ export function DocumentsReviewSendPanel({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  // Applies to the upload link only — sending the PDFs themselves is a
+  // separate flow with its own copy.
+  const [uploadLinkLocale, setUploadLinkLocale] =
+    useState<NotificationLocale>(notificationLocale);
 
   const sendableQueue = useMemo(
     () => queue.filter((row) => canEmailDocument(row.documentType)),
@@ -243,7 +261,11 @@ export function DocumentsReviewSendPanel({
     startTransition(async () => {
       const res = await fetch(
         `/api/doctor/documents/generated/${id}/send-upload-link`,
-        { method: "POST" },
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ locale: uploadLinkLocale }),
+        },
       );
       const json = await parseDoctorApiJson<{
         ok?: boolean;
@@ -306,6 +328,29 @@ export function DocumentsReviewSendPanel({
           <p className="mb-3 text-portal-label font-semibold text-[var(--portal-primary)]">
             {success}
           </p>
+        ) : null}
+
+        {/* Applies to every "send upload link" action below — queue rows and
+            already-sent history rows alike. */}
+        {queue.length > 0 || history.length > 0 ? (
+          <label className="mb-3 grid max-w-xs gap-1">
+            <span className="gh-field-label">{copy.uploadLinkLanguage}</span>
+            <select
+              className="gh-select"
+              value={uploadLinkLocale}
+              disabled={pending}
+              onChange={(e) => setUploadLinkLocale(e.target.value as NotificationLocale)}
+            >
+              {NOTIFICATION_LOCALES.map((code) => (
+                <option key={code} value={code}>
+                  {NOTIFICATION_LOCALE_LABEL[code]}
+                </option>
+              ))}
+            </select>
+            <span className="text-portal-meta text-[var(--portal-muted)]">
+              {copy.uploadLinkLanguageHint}
+            </span>
+          </label>
         ) : null}
 
         {queue.length === 0 ? (

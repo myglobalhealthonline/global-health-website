@@ -42,6 +42,7 @@ import {
   SendPatientUploadLinkCard,
   type SendPatientUploadLinkCopy,
 } from "@/components/SendPatientUploadLinkCard";
+import type { NotificationLocale } from "@/lib/notification-locale";
 
 export type AppointmentDocumentsTabCopy = {
   summary: string;
@@ -92,6 +93,7 @@ export function AppointmentDocumentsTab({
   uploadCopy,
   sendDocumentCopy,
   uploadLinkCopy,
+  notificationLocale,
   reviewCopy,
 }: {
   appointmentId: string;
@@ -105,6 +107,8 @@ export function AppointmentDocumentsTab({
   uploadCopy: DocumentUploadFormCopy;
   sendDocumentCopy: SendDocumentFormCopy;
   uploadLinkCopy: SendPatientUploadLinkCopy;
+  /** Language the patient reads — pre-selects the upload-link picker. */
+  notificationLocale: NotificationLocale;
   reviewCopy: DocumentsReviewSendPanelCopy;
 }) {
   const [uploads, setUploads] = useState<DoctorDocumentDto[]>(initialUploads);
@@ -262,6 +266,7 @@ export function AppointmentDocumentsTab({
         onEditDraft={handleEditDraft}
         open={reviewSendOpen}
         onOpenChange={setReviewSendOpen}
+        notificationLocale={notificationLocale}
         copy={reviewCopy}
       />
 
@@ -320,6 +325,7 @@ export function AppointmentDocumentsTab({
               the AppointmentDocument rows listed in "Uploaded files". */}
           <SendPatientUploadLinkCard
             endpoint={`/api/doctor/appointments/${appointmentId}/upload-link`}
+            defaultLocale={notificationLocale}
             copy={uploadLinkCopy}
           />
         </div>

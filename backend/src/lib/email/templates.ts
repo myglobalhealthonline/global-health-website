@@ -4,6 +4,11 @@ import { formatOrderDisplayId } from "../../modules/automation/automation-catalo
 import { absoluteSiteUrl, sendEmail } from "./send-email.js";
 import { DEFAULT_EMAIL_LOGO_PATH } from "./resolve-email-logo-url.js";
 import { createBrazilConsentToken } from "../../modules/brazil-consent/brazil-consent-link.service.js";
+import type { NotificationLang } from "../../modules/automation/notification-language.js";
+import {
+  uploadLinkCopy,
+  uploadLinkEmailGreeting,
+} from "../../modules/patient-upload/upload-link-messages.js";
 
 /** Shared branded transactional email shell — matches the public site's
  *  "Clinical Editorial" system (docs/design/design-system-gh2-clinical-editorial.md): deep-night forest
@@ -771,16 +776,22 @@ export async function sendPatientUploadLinkEmail(opts: {
   to: string;
   patientName: string;
   link: string;
+  /** Language the patient reads — resolved from the booking, or overridden by
+   *  the admin/doctor who triggered the send. Defaults to English. */
+  lang?: NotificationLang;
 }) {
+  const lang = opts.lang ?? "en";
+  const copy = uploadLinkCopy(lang);
+  const greeting = uploadLinkEmailGreeting(lang, opts.patientName);
   return sendEmail({
     to: opts.to,
-    subject: "Upload your medical files — Global Health",
-    text: `Hi ${opts.patientName},\n\nUse this secure link to upload your exam results for your doctor:\n\n${opts.link}\n\n— Global Health`,
+    subject: copy.emailSubject,
+    text: `${greeting}\n\n${copy.emailBody}\n\n${opts.link}\n\n— Global Health`,
     html: wrapHtml(
-      "Upload your files",
-      `<p>Hi ${escapeHtml(opts.patientName)},</p>
-       <p>Use this secure link to upload your exam results for your doctor.</p>
-       <p style="margin:24px 0;text-align:center;"><a href="${opts.link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Upload files</a></p>`,
+      copy.emailHeading,
+      `<p>${escapeHtml(greeting)}</p>
+       <p>${escapeHtml(copy.emailBody)}</p>
+       <p style="margin:24px 0;text-align:center;"><a href="${opts.link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">${escapeHtml(copy.emailCta)}</a></p>`,
     ),
   });
 }

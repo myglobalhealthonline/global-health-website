@@ -256,6 +256,9 @@
     "identityDesc": "Porovnejte doklad totožnosti s ověřovací fotografií a poté potvrďte nebo zamítněte. Potvrzená totožnost se tiskne na recepty na kontrolované léky."
   },
   "patients": {
+    "uploadLinkLanguage": "Jazyk odkazu pro nahrání",
+    "uploadLinkLanguageAuto": "Automaticky (jazyk objednávky pacienta)",
+    "uploadLinkLanguageHint": "Automatický režim použije jazyk poslední objednávky pacienta u vás.",
     "eyebrow": "Záznamy pacientů",
     "title": "Moji pacienti",
     "description": "Jednotliví pacienti, kteří si u vás rezervovali termín. Kontaktní údaje zůstávají chráněny; pro klinický chat a kontrolu dokumentů použijte pracovní prostory termínů.",
@@ -1092,6 +1095,8 @@
     "submitButton": "Odeslat formulář"
   },
   "documentsReviewSendPanel": {
+    "uploadLinkLanguage": "Jazyk odkazu pro nahrání",
+    "uploadLinkLanguageHint": "Výchozí je jazyk země, ve které byla konzultace objednána.",
     "title": "Kontrola a odeslání",
     "noneWaiting": "Žádné čekající dokumenty. Vygenerujte žádanku na vyšetření, lékařský předpis nebo potvrzení o pracovní neschopnosti a poté se sem vraťte ke kontrole a úpravě před odesláním.",
     "reviewEditHint": "Zkontrolujte a upravte každé PDF. Odeslání e-mailem je dostupné pouze pro vyšetření a potvrzení o pracovní neschopnosti — lékařské předpisy slouží pro vaši evidenci a odeslání přes národní portál.",
@@ -1180,6 +1185,8 @@
     "uploadFiles": "Nahrát soubory"
   },
   "patientUploadLinkCard": {
+    "language": "Jazyk",
+    "languageHint": "Výchozí je jazyk země, ve které byla konzultace objednána. Změňte jej, chcete-li odeslat v jiném jazyce.",
     "title": "Odeslat pacientovi odkaz pro nahrání",
     "description": "Vytvoří bezpečný odkaz, přes který pacient nahraje soubory přímo k tomuto termínu. Opětovné odeslání ho nahradí — už odeslaný odkaz přestane fungovat, proto vyberte všechny kanály předem.",
     "sendWhatsapp": "WhatsApp",

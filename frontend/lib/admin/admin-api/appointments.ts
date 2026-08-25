@@ -53,6 +53,9 @@ type AdminAppointmentDetailPayload = {
     doctorId: string | null;
     /** IANA tz captured at booking time; null on legacy appointments. */
     patientTimezone: string | null;
+    /** Language this patient's notifications are written in; null means
+     *  "derive from the booking country". */
+    notificationLocale: NotificationLocale | null;
     /** Linked order for the clickable order reference. `orderId` targets
      *  /admin/orders/[id]; `orderNumber` (ORD-000001) is the label. Both
      *  null when the appointment has no linked order. */

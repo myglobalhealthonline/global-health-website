@@ -722,6 +722,10 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                     uploadCopy={d.documentUploadForm}
                     sendDocumentCopy={d.sendDocumentForm}
                     uploadLinkCopy={d.patientUploadLinkCard}
+                    notificationLocale={
+                      appointment.notificationLocale ??
+                      defaultNotificationLocaleForCountry(appointment.countryCode)
+                    }
                     reviewCopy={d.documentsReviewSendPanel}
                   />
                 </div>

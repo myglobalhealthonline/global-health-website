@@ -23,6 +23,7 @@ import {
 } from "../modules/memed/prescription-widget.service.js";
 import { MemedPrescriptionNotConfiguredError } from "../lib/memed/prescription-client.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
+import { parseNotificationLocale } from "../modules/automation/notification-language.js";
 import { prisma } from "../db/prisma.js";
 import { guardMedicalReadForAppointment, MedicalAccessDeniedError, medicalAccessDeniedResponse } from "../utils/guard-medical-read.js";
 import { contentDisposition } from "../utils/content-disposition.js";
@@ -298,7 +299,7 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
     },
   );
 
-  app.post<{ Params: { id: string } }>(
+  app.post<{ Params: { id: string }; Body: { locale?: unknown } }>(
     "/api/doctor/documents/generated/:id/send-upload-link",
     async (request, reply) => {
       const auth = await verifyDoctorAccess(request);
@@ -323,7 +324,14 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
             throw guardError;
           }
         }
-        const result = await sendGeneratedDocumentUploadLink(auth.doctorId, request.params.id);
+        const result = await sendGeneratedDocumentUploadLink(
+          auth.doctorId,
+          request.params.id,
+          // Per-send override; omitted keeps the booking's own language.
+          parseNotificationLocale(
+            typeof request.body?.locale === "string" ? request.body.locale : null,
+          ),
+        );
         if (!result.ok) {
           return reply.status(result.status).send(errorResponse(result.message));
         }
@@ -331,6 +339,7 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
           {
             link: result.link,
             expiresAt: result.expiresAt.toISOString(),
+            lang: result.lang,
             deliveryWarnings: result.deliveryWarnings.length
               ? result.deliveryWarnings
               : undefined,

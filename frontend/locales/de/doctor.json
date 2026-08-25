@@ -256,6 +256,9 @@
     "identityDesc": "Vergleichen Sie das Ausweisdokument mit dem Verifizierungsfoto und bestätigen oder lehnen Sie ab. Eine bestätigte Identität wird auf Rezepten für kontrollierte Medikamente gedruckt."
   },
   "patients": {
+    "uploadLinkLanguage": "Sprache des Upload-Links",
+    "uploadLinkLanguageAuto": "Automatisch (Buchungssprache des Patienten)",
+    "uploadLinkLanguageHint": "Automatisch verwendet die Sprache der letzten Buchung des Patienten bei Ihnen.",
     "eyebrow": "Patientenakten",
     "title": "Meine Patienten",
     "description": "Eindeutige Patienten, die bei Ihnen gebucht haben. Kontaktdaten bleiben geschützt; nutzen Sie die Termin-Arbeitsbereiche für klinischen Chat und Dokumentenprüfung.",
@@ -1092,6 +1095,8 @@
     "submitButton": "Formular übermitteln"
   },
   "documentsReviewSendPanel": {
+    "uploadLinkLanguage": "Sprache des Upload-Links",
+    "uploadLinkLanguageHint": "Standardmäßig die Sprache des Landes, in dem die Konsultation gebucht wurde.",
     "title": "Prüfen & senden",
     "noneWaiting": "Keine wartenden Dokumente. Erstellen Sie eine Untersuchungsverordnung, ein Arzneimittelrezept oder eine Abwesenheitsbescheinigung und kehren Sie dann hierher zurück, um vor dem Versand zu prüfen und zu bearbeiten.",
     "reviewEditHint": "Prüfen und bearbeiten Sie jedes PDF. Der E-Mail-Versand ist nur für Untersuchungen und Abwesenheitsbescheinigungen verfügbar — Arzneimittelrezepte dienen Ihrer Dokumentation und der Einreichung im nationalen Portal.",
@@ -1180,6 +1185,8 @@
     "uploadFiles": "Dateien hochladen"
   },
   "patientUploadLinkCard": {
+    "language": "Sprache",
+    "languageHint": "Standardmäßig die Sprache des Landes, in dem die Konsultation gebucht wurde. Ändern Sie sie, um in einer anderen Sprache zu senden.",
     "title": "Upload-Link an Patient senden",
     "description": "Erzeugt einen sicheren Link, über den der Patient Dateien direkt zu diesem Termin hochladen kann. Erneutes Senden ersetzt ihn — ein bereits verschickter Link funktioniert dann nicht mehr, also vor dem Senden alle gewünschten Kanäle auswählen.",
     "sendWhatsapp": "WhatsApp",

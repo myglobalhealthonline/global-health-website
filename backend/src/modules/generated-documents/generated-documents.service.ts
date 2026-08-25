@@ -1,4 +1,4 @@
-import type { GeneratedDocument, GeneratedDocumentType } from "@prisma/client";
+import type { GeneratedDocument, GeneratedDocumentType, LocaleCode } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 import { prisma } from "../../db/prisma.js";
 import { env } from "../../config/env.js";
@@ -11,6 +11,8 @@ import {
 } from "../../services/object-storage.js";
 import { sendGeneratedDocumentEmail, sendPatientUploadLinkEmail } from "../../lib/email/templates.js";
 import { sendWhatsAppText } from "../../lib/whatsapp/wasender.js";
+import { resolveNotificationLang } from "../automation/notification-language.js";
+import { uploadLinkWhatsAppPrescription } from "../patient-upload/upload-link-messages.js";
 import { resolveAppointmentDocumentSource } from "./appointment-document-source.js";
 import {
   absenceDefaultReason,
@@ -909,7 +911,12 @@ export async function sendGeneratedDocuments(
  * Send an exams prescription's per-prescription upload link to the patient via
  * email + WhatsApp. Reuses the stored v3 token; re-mints + persists if expired.
  */
-export async function sendGeneratedDocumentUploadLink(doctorId: string, documentId: string) {
+export async function sendGeneratedDocumentUploadLink(
+  doctorId: string,
+  documentId: string,
+  /** Doctor's per-send language override. Null keeps the booking's own. */
+  locale?: LocaleCode | null,
+) {
   const doc = await prisma.generatedDocument.findFirst({
     where: { id: documentId, doctorId },
   });
@@ -924,7 +931,14 @@ export async function sendGeneratedDocumentUploadLink(doctorId: string, document
 
   const appt = await prisma.appointment.findFirst({
     where: { id: doc.appointmentId, doctorId },
-    select: { id: true, fullName: true, email: true, phone: true },
+    select: {
+      id: true,
+      fullName: true,
+      email: true,
+      phone: true,
+      countryCode: true,
+      notificationLocale: true,
+    },
   });
   if (!appt) return { ok: false as const, status: 404, message: "Appointment not found" };
 
@@ -945,6 +959,12 @@ export async function sendGeneratedDocumentUploadLink(doctorId: string, document
 
   const link = buildPatientUploadUrl(token);
   const numberLabel = doc.prescriptionNumber != null ? ` #${doc.prescriptionNumber}` : "";
+  // The patient reads this, so it goes out in their language — the booking's
+  // recorded locale, else the booking country's, unless the doctor overrode it.
+  const lang = resolveNotificationLang({
+    notificationLocale: locale ?? appt.notificationLocale,
+    countryCode: appt.countryCode,
+  });
   const deliveryWarnings: string[] = [];
 
   try {
@@ -952,6 +972,7 @@ export async function sendGeneratedDocumentUploadLink(doctorId: string, document
       to: appt.email,
       patientName: appt.fullName,
       link,
+      lang,
     });
     if (!res.ok || res.mode === "log") deliveryWarnings.push("email");
   } catch {
@@ -962,7 +983,7 @@ export async function sendGeneratedDocumentUploadLink(doctorId: string, document
     try {
       const wa = await sendWhatsAppText({
         to: appt.phone,
-        message: `Upload your exam results for prescription${numberLabel} securely:\n${link}`,
+        message: uploadLinkWhatsAppPrescription(lang, link, numberLabel),
       });
       if (!wa.ok && !wa.skipped) deliveryWarnings.push("whatsapp");
     } catch {
@@ -972,7 +993,7 @@ export async function sendGeneratedDocumentUploadLink(doctorId: string, document
     deliveryWarnings.push("no-phone");
   }
 
-  return { ok: true as const, link, expiresAt, deliveryWarnings };
+  return { ok: true as const, link, expiresAt, deliveryWarnings, lang };
 }
 
 export async function getGeneratedDocumentFile(

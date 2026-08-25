@@ -28,6 +28,7 @@ import { ScheduleTzOffsetInput } from "../_components/schedule-tz-offset";
 import { ScheduleSlotInput } from "../_components/schedule-slot-input";
 import { AdminAppointmentTabs } from "./_components/appointment-tabs";
 import { SendPatientUploadLinkCard } from "@/components/SendPatientUploadLinkCard";
+import { defaultNotificationLocaleForCountry } from "@/lib/notification-locale";
 import {
   AdminCard,
   Btn,
@@ -606,6 +607,10 @@ export default async function AdminAppointmentDetailPage({
                   </p>
                   <SendPatientUploadLinkCard
                     endpoint={`/api/admin/appointments/${appointment.id}/upload-link`}
+                    defaultLocale={
+                      appointment.notificationLocale ??
+                      defaultNotificationLocaleForCountry(appointment.country)
+                    }
                   />
                 </AdminCard>
 
