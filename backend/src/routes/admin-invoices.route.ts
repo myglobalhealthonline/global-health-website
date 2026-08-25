@@ -13,9 +13,9 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOrderPaymentUrl } from "../modules/orders/order-payment-url.service.js";
 import { buildInvoicePdfData, renderInvoicePdfBuffer } from "../modules/invoices/invoice-pdf.js";
 import { resendInvoiceDocument, resendInvoiceWhatsApp } from "../modules/invoices/generate-invoice.service.js";
-import { isCommissionCountry } from "../modules/orders/commission.service.js";
 import { buildInvoiceDetailPayload } from "../modules/invoices/invoice-detail.service.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
+import { getObject, streamToNodeReadable } from "../services/object-storage.js";
 
 /**
  * Admin invoice endpoints.
@@ -372,6 +372,10 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
         totalCents: inv.order.totalCents,
         currencyCode: inv.order.currencyCode,
         paymentStatus: inv.order.paymentStatus,
+        // Portugal: InvoiceExpress's document, mirrored here. The print page has
+        // no order data to draw it from, so the table must link the stored PDF.
+        hasStoredPdf: Boolean(inv.pdfStorageKey),
+        invoiceExpressPermalink: inv.invoiceExpressPermalink,
       });
 
       const docsByOrder = new Map<string, ReturnType<typeof toDocument>[]>();
@@ -495,6 +499,7 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
             generatedAt: true,
             orderId: true,
             countryCode: true,
+            pdfStorageKey: true,
           },
         });
         if (!invoice) return reply.status(404).send(errorResponse("Invoice not found"));
@@ -503,6 +508,23 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
         const scope = await assertOrderCountryScope(request, invoice.orderId, invoice.countryCode);
         if (!scope.allowed) {
           return reply.status(scope.status).send(errorResponse(scope.message));
+        }
+
+        // Portugal: the document was issued by InvoiceExpress and mirrored into
+        // storage (pt-invoice-mirror.service.ts). Stream that copy — rendering
+        // our own template here would hand the admin a second, unofficial
+        // version of a legal document that InvoiceExpress alone numbers.
+        if (invoice.pdfStorageKey) {
+          const obj = await getObject(invoice.pdfStorageKey);
+          const stream = streamToNodeReadable(obj.Body);
+          if (!stream) return reply.status(404).send(errorResponse("Invoice PDF is not available"));
+          // "202/Globalhealth" is a legal sequence number and an illegal filename.
+          const fileName = `${invoice.invoiceNumber.replace(/[/\\]/g, "-")}.pdf`;
+          void reply.header("Content-Type", obj.ContentType ?? "application/pdf");
+          void reply.header("Content-Disposition", `attachment; filename="${fileName}"`);
+          void reply.header("Cache-Control", "private, no-store");
+          // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write -- streaming a stored PDF's Node Readable through Fastify's typed reply.send(), not writing user-controlled HTML.
+          return reply.send(stream);
         }
 
         const pdfData = await buildInvoicePdfData(

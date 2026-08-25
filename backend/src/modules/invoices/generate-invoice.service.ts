@@ -207,10 +207,38 @@ export async function resendInvoiceDocument(
       documentType: true,
       creditNoteReason: true,
       countryCode: true,
+      invoiceExpressId: true,
+      invoiceExpressType: true,
       order: { select: { id: true, email: true, fullName: true } },
     },
   });
   if (!invoice) return false;
+
+  // Portugal: the document is InvoiceExpress's, not ours — there is nothing
+  // here to render, and attaching a Global Health template would send the
+  // patient a second, unofficial version of a legal document. Ask InvoiceExpress
+  // to email its own PDF again instead.
+  if (invoice.invoiceExpressId) {
+    const { emailInvoiceReceipt } = await import("../../lib/invoice-express/client.js");
+    await emailInvoiceReceipt(
+      Number(invoice.invoiceExpressId),
+      invoice.invoiceExpressType === "Invoice" ? "Invoice" : "InvoiceReceipt",
+      {
+        email: invoice.order.email,
+        subject: "Your Receipt from Global Health",
+        body: `Dear ${invoice.order.fullName},\n\nPlease find your receipt attached.\n\nKind regards,\nGlobal Health`,
+      },
+    );
+    await prisma.invoice.update({
+      where: { id: invoice.id },
+      data: { emailSentAt: new Date(), emailSentTo: invoice.order.email },
+    });
+    log.info(
+      { invoiceId: invoice.id, invoiceExpressId: invoice.invoiceExpressId },
+      "PT InvoiceExpress document resent",
+    );
+    return true;
+  }
 
   await renderAndSendInvoiceDoc(
     {

@@ -26,6 +26,13 @@ export type InvoiceDocument = {
   totalCents: number;
   currencyCode: string;
   paymentStatus: string;
+  /**
+   * Portugal: the document is InvoiceExpress's, mirrored into our storage as a
+   * PDF. There is no print page for it — Download serves the stored file.
+   */
+  hasStoredPdf?: boolean;
+  /** InvoiceExpress's own document link, for support staff working in their UI. */
+  invoiceExpressPermalink?: string | null;
 };
 
 /** An order and every fiscal document linked to it. */
@@ -86,15 +93,33 @@ function DocumentRow({ doc }: { doc: InvoiceDocument }) {
         <EmailedPill emailSentAt={doc.emailSentAt} />
       </div>
       <div className="flex flex-wrap items-center justify-end gap-1.5">
-        <Link
-          href={`/print/order-invoices/${doc.id}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-1.5 text-portal-thead font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)]"
-        >
-          <ExternalLink className="size-3" aria-hidden />
-          View
-        </Link>
+        {/* Portugal has no print page — the document is InvoiceExpress's, and we
+            hold the finished PDF rather than the data to draw one. Its View
+            opens InvoiceExpress's own copy when we have the link; otherwise
+            Download (the stored file) is the only action. */}
+        {doc.hasStoredPdf ? (
+          doc.invoiceExpressPermalink ? (
+            <a
+              href={doc.invoiceExpressPermalink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-1.5 text-portal-thead font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)]"
+            >
+              <ExternalLink className="size-3" aria-hidden />
+              View
+            </a>
+          ) : null
+        ) : (
+          <Link
+            href={`/print/order-invoices/${doc.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-1.5 text-portal-thead font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)]"
+          >
+            <ExternalLink className="size-3" aria-hidden />
+            View
+          </Link>
+        )}
         {/* Download + Send-to-patient (email / WhatsApp) — one document each. */}
         <InvoiceRowActions invoiceId={doc.id} />
       </div>

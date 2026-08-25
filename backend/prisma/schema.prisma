@@ -5086,8 +5086,17 @@ enum CreditNoteReason {
   CANCELLATION
 }
 
-/// Invoice/receipt tied to an Order (Portugal excluded).
+/// Invoice/receipt tied to an Order.
 /// invoiceNumber is the human-facing reference: IE-00001, CZ-00001, SP-00001, RO-00001.
+///
+/// PORTUGAL is the one country whose document this system does not draw. The
+/// legal Fatura-Recibo is issued by InvoiceExpress (see
+/// modules/invoices/pt-invoicexpress.service.ts), and the row here MIRRORS it so
+/// the patient and admin portals can list, download and resend it exactly like
+/// every other market's. Such a row carries `invoiceExpressId` + `pdfStorageKey`
+/// and `invoiceNumber` holds InvoiceExpress's own sequence number
+/// ("202/Globalhealth"); the PDF is OUR stored copy, not a live link, so the
+/// document survives an InvoiceExpress outage or a lapsed account.
 /// NOT unique: a manual/AI booking keeps its unpaid INVOICE row AND gets a separate
 /// RECEIPT row that reuses the SAME number when paid — so one number can appear on
 /// two rows (the invoice it settles + the receipt). Orders may also carry a
@@ -5105,6 +5114,20 @@ model Invoice {
   generatedAt      DateTime            @default(now())
   emailSentAt      DateTime?
   emailSentTo      String?
+
+  /// Portugal only. The InvoiceExpress document id this row mirrors. Its
+  /// presence is what tells every reader (download, resend, PDF render) to use
+  /// the mirrored copy instead of drawing our own template. Unique: one row per
+  /// InvoiceExpress document, so a re-run of the mirror can never duplicate it.
+  invoiceExpressId        String?  @unique
+  /// "InvoiceReceipt" | "Invoice" — InvoiceExpress paths are type-scoped, so a
+  /// resend has to know which one it is holding.
+  invoiceExpressType      String?
+  /// InvoiceExpress's own shareable document link. Kept as a fallback for the
+  /// stored PDF and for support staff who need the document in their UI.
+  invoiceExpressPermalink String?
+  /// Object-storage key of our mirrored PDF copy.
+  pdfStorageKey           String?
 
   @@index([orderId])
   @@index([invoiceNumber])
