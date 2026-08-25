@@ -86,11 +86,18 @@ export function BlogFields({ post, isCreate, doctors = [], services = [], langua
             Author
             <input
               name="authorDisplayName"
+              list="blog-author-options"
               maxLength={160}
               placeholder="The Global Health Medical Team"
               defaultValue={post?.authorDisplayName ?? ""}
               className={inputClass}
             />
+            {/* Suggested bylines — still free text, so a guest or doctor name
+             *  can be typed instead. Blank falls back to the medical team. */}
+            <datalist id="blog-author-options">
+              <option value="The Global Health Medical Team" />
+              <option value="Global Health Editorial Team" />
+            </datalist>
           </label>
         </FormSection>
 
