@@ -87,7 +87,7 @@ export function BlogFields({ post, isCreate, doctors = [], services = [], langua
             <input
               name="authorDisplayName"
               maxLength={160}
-              placeholder="Global Health Editorial Team"
+              placeholder="The Global Health Medical Team"
               defaultValue={post?.authorDisplayName ?? ""}
               className={inputClass}
             />

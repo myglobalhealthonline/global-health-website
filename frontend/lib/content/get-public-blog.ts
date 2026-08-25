@@ -161,7 +161,7 @@ function normalizeApiPost(raw: ApiBlogPost): BlogPostFull | null {
     }),
     countries: normalizeCountries(raw.countries),
     category: str(raw.category) || "Health guide",
-    author: str(raw.author) || "Global Health Editorial Team",
+    author: str(raw.author) || "The Global Health Medical Team",
     publishedAt,
     readingTime: readingTimeFromHtml(body),
     coverImageSrc: coverUrl ? resolveTrustedAssetUrl(coverUrl) ?? coverUrl : null,

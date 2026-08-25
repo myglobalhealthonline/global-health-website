@@ -256,7 +256,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
   ]);
 
   // Byline — prefer the linked author doctor (with a profile link), fall back
-  // to the free-text author ("Global Health Editorial Team" when unset). Same
+  // to the free-text author ("The Global Health Medical Team" when unset). Same
   // preference the Article JSON-LD uses, so the visible byline and the schema
   // can't name different people.
   const authorName = post.authorDoctor?.name ?? post.author;
