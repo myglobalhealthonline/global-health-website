@@ -6264,3 +6264,43 @@ fixed separately). New guard: `frontend/tests/unit/legacy-wix-backlink-targets.t
 which asserts no lab-test redirect points at an unpublished slug.
 
 ---
+
+## 28. IE-WEBDOCTOR-RESEARCH-001 — Ireland market research package (2026-08-25)
+
+**Scope.** A new derived research package lives at `seo/ireland/README.md`.
+It contains the requested Ireland baseline, all 282 public WebDoctor sitemap URLs
+with a 20-page bounded deep template sample, 152 retained and scored keywords,
+a 27-URL live target inventory/map, content gaps, clinical gates, briefs, backlink prospects,
+measurement plan and roadmap. It is not a second ledger; this file remains the
+operational source of truth.
+
+**Fresh first-party baseline.** GSC final data filtered to Ireland
+(`country=irl`) returned 119 clicks and 7,283 impressions across 1,851
+query-page rows for 2026-05-25 → 2026-08-22, versus 72 clicks and 1,176
+impressions across 338 rows for the preceding equal period. The rapid impression
+increase is consistent with index expansion and is not treated as a conversion
+trend. OpenSEO's GA4 organic view returned only 24 sessions and zero key events
+for the current period, with no previous comparison; analytics coverage and
+generic key-event configuration therefore require reconciliation before organic
+conversion rate is used for page decisions.
+
+**OpenSEO market evidence.** Ireland domain estimates were 217 organic visits /
+112 keywords for Global Health and 80,967 / 3,036 for WebDoctor. Filtered
+domain-scope backlink summaries were 36 versus 117 referring domains. Five
+sampled live SERPs placed WebDoctor #1 for `online doctor ireland`,
+`home blood test ireland` and `online mental health consultation`, #2 for
+`online weight management ireland`, and outside the sampled top ten for
+`sick cert online`. The focused batch used 480 credits (16,807 → 16,327);
+no tracker, recurring check, saved keyword, project-memory write or external
+mutation was created.
+
+**Implementation decision.** No public code, CMS data, routes, metadata or
+clinical flow changed. The latest OpenSEO audit completed its 100-page budget
+with zero critical issues, one thin-root warning and informational title/
+description length flags. Those heuristics do not override the previously
+verified architecture. The Ireland lab cluster remains frozen until the
+approximately 2026-09-08 gate. Next eligible work is the dated remeasurement,
+sick-certificate recrawl check, page-level query-intent review and GA4/GSC
+reconciliation described in the package.
+
+---
