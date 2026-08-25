@@ -152,12 +152,18 @@ export async function issuePortugalInvoiceExpress(
     });
     log.info({ orderId, invoiceExpressId: id }, "PT InvoiceExpress invoice issued");
 
+    // Recorded so the mirror below can stamp it on the `invoices` row. Without
+    // it every PT document reads "Pending" in the admin portal forever — the
+    // patient has the receipt, but staff see an unsent document and resend one
+    // they already have.
+    let emailedAt: Date | null = null;
     try {
       await emailInvoiceReceipt(id, type, {
         email: order.email,
         subject: "Your Receipt from Global Health",
         body: `Dear ${order.fullName},\n\nPlease find your receipt attached.\n\nKind regards,\nGlobal Health`,
       });
+      emailedAt = new Date();
       log.info({ orderId, invoiceExpressId: id }, "PT InvoiceExpress receipt emailed");
     } catch (emailErr) {
       log.warn({ err: emailErr, orderId, invoiceExpressId: id }, "PT InvoiceExpress email failed — invoice still issued");
@@ -168,7 +174,10 @@ export async function issuePortugalInvoiceExpress(
     // Awaited rather than fired off: this whole function already runs
     // fire-and-forget off the paid-order path, and the mirror swallows its own
     // failures, so awaiting costs nothing and keeps the ordering legible.
-    await mirrorPortugalInvoiceDocument(orderId, id, type, log);
+    await mirrorPortugalInvoiceDocument(orderId, id, type, log, {
+      emailedAt,
+      emailedTo: emailedAt ? order.email : null,
+    });
   } catch (err) {
     log.warn({ err, orderId }, "PT InvoiceExpress issue failed — order still paid");
     await emitOpsAlert({
