@@ -1,6 +1,6 @@
 # SEO control state — canonical
 
-**Last operational update: 2026-08-25.** Historical audit files remain snapshots;
+**Last operational update: 2026-08-26.** Historical audit files remain snapshots;
 this ledger is the source of truth for current status, dated gates and future work.
 
 **This file is the single source of truth for the SEO workstream.** It carries the
@@ -6386,5 +6386,51 @@ separate `https://api.myglobalhealth.online` page-content route still
 returned `record: null` during the investigation even though the rendered site is
 now serving the CMS copy; treat that custom-domain/backend-origin discrepancy as a
 configuration watch item, not as evidence that the rendered release is absent.
+
+---
+
+## 31. IE-GENERAL-SERVICE-KEYWORDS-001 — 16-service keyword map and localized six-page update (2026-08-26)
+
+**Status: LIVE IN PRODUCTION — 36 LOCALE VARIANTS VERIFIED.** All 16 active Ireland
+`GENERAL` services now have one documented commercial-intent owner in
+`seo/ireland/12-gp-service-keyword-map-2026-08-26.csv`. Fresh final GSC query/page
+rows, bounded WebDoctor landing-page/domain rankings and focused OpenSEO expansion
+supported public snippet/H1 changes on six pages only: hair loss, mental health,
+referral and investigations, skin, treatment/repeat-prescription review and weight
+management. The other ten pages were deliberately left unchanged because their
+existing copy already owned the relevant intent or the fresh evidence did not justify
+resetting measurement.
+
+The six updates were saved through the authenticated production service editors in
+English, Portuguese, Spanish, Czech, Romanian and German. The changed fields were SEO
+title, SEO description and hero title only. Public cache-busted checks then matched the
+intended title, meta description and H1 on every combination (six services × six
+locales). Prices, duration, doctor assignments, body copy, FAQs, CTA/booking behavior,
+slugs, visibility and publication state were not changed.
+
+OpenSEO URL Inspection on 2026-08-26 confirmed all 16 English Ireland GENERAL
+service URLs are submitted and indexed, with Google-selected canonicals matching
+their declared service URLs. No indexing exception requires an immediate content or
+technical change.
+
+The repository manifest at
+`backend/src/content/ireland-general-service-keywords.ts` records all 16 intent owners,
+the six English payloads and 30 localized payloads. Its guarded replay script is dry-run
+by default, requires the exact version confirmation, validates active/public/GENERAL
+state, preserves operational fields and uses optimistic `updatedAt` guards inside a
+Serializable transaction. The direct database dry run was not used for production
+because the local production credential was stale; the authenticated admin saves are
+the authoritative applied path. Ten focused tests and backend type-check pass.
+
+OpenSEO exposes English only for Ireland location 2372. Native-market checks for
+Portugal, Spain, Czechia, Romania and Germany were therefore used only as phrasing
+proxies; their volumes are not Irish demand and must not be reported as such. Google
+ignores the meta-keywords field, and the admin editor does not expose it, so the live
+claim is limited to the verified title, description and H1 fields.
+
+**Measurement gate:** compare page/query GSC windows after 28 complete days plus the
+normal final-data lag, on or after 2026-09-28. Track impressions, clicks, CTR and query ownership per changed URL;
+do not rewrite the ten unchanged pages or add medication/guarantee terms without new
+page-level evidence and clinical review.
 
 ---

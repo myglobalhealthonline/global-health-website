@@ -1,6 +1,6 @@
 # Ireland organic SEO programme
 
-**Status:** research package plus reviewed GP/specialist repository batch, updated 2026-08-25
+**Status:** research package plus live GP/specialist hub and service-page batches, updated 2026-08-26
 **Canonical operational source:** `docs/plans/seo-control-state.md`
 **Market:** Republic of Ireland, Google, English, DataForSEO location 2372
 **Domains:** `www.myglobalhealth.online` and competitor `www.webdoctor.ie`
@@ -11,7 +11,7 @@ This directory is a derived Ireland research package. It does not replace the ca
 
 Fresh evidence supports an authority-and-intent programme, not a broad technical rewrite. OpenSEO's latest 100-page audit completed with no critical issues, one thin-root warning and informational length flags. The target's organic footprint is materially smaller than WebDoctor's, and the five sampled SERPs are competitive commercial or mixed-health results.
 
-A focused follow-up review found two safe code defects outside the frozen lab cluster: the GP hub did not restrict its clinician cards to reciprocal assignments on active GP services, and the specialist hub could emit fallback FAQ/service structured data that differed from its visible authored content. Both are corrected in the repository with focused tests. No CMS record, price, duration, credential, clinical flow, booking logic, route, title, meta description or H1 was changed, and nothing has been deployed by this batch.
+A focused follow-up review found two safe code defects outside the frozen lab cluster: the GP hub did not restrict its clinician cards to reciprocal assignments on active GP services, and the specialist hub could emit fallback FAQ/service structured data that differed from its visible authored content. Both are corrected and deployed. A later service-page batch mapped all 16 Ireland GENERAL services and updated the six pages with fresh page-level evidence across all six locales; see `12-gp-service-keyword-map-2026-08-26.csv` and the canonical ledger. Prices, durations, credentials, clinical flow, booking logic, slugs and publication state were unchanged.
 
 ## Key evidence
 
@@ -40,6 +40,7 @@ A focused follow-up review found two safe code defects outside the frozen lab cl
 - `09-implementation-log.md` — changes and deliberate non-changes.
 - `10-measurement-plan.md` — privacy-safe KPIs and gates.
 - `11-30-60-90-day-roadmap.md` — owners, dependencies and dates.
+- `12-gp-service-keyword-map-2026-08-26.csv` — all 16 Ireland GP-level service intent owners, evidence and the six-page production update scope.
 - `clinical-review-register.csv` — medical/legal publication gates.
 - `content-briefs/` — page-level briefs.
 - `raw/openseo-call-log.jsonl` — sanitised call ledger.
