@@ -1,4 +1,4 @@
-# Editorial plan — 43 articles, 7 weeks
+# Editorial plan — 43 article candidates, 8-week decision horizon
 
 Companion to `docs/plans/seo-followup-batch-2026-08-19.md` §4, which holds the
 research this schedule is built from. Ledger: `docs/plans/seo-control-state.md`.
@@ -164,7 +164,7 @@ If a byline is not available, the article does not publish — it waits.
 
 ---
 
-## 5. The schedule — 43 topics over 7 weeks
+## 5. The schedule — 42 topics over 7 weeks, plus a Week 8 decision
 
 Six topics a week. Each week deliberately spans several markets so no market
 waits seven weeks for its first article. Ordered by expected value: weeks 1–2
@@ -221,7 +221,7 @@ the two are not interchangeable. **KD** is keyword difficulty out of 100.
 
 | # | Market | Article | Target query | Vol · KD | Links to | Sources |
 | --- | --- | --- | --- | --- | --- | --- |
-| 13 | IE | Haemochromatosis in Ireland: why the HFE gene test matters here | `haemochromatosis in ireland` | 260 · 3 (+39 impr at pos 77) | `/ireland/en/tests` | HSE; Irish Haemochromatosis Association; EASL iron-overload guidance |
+| 13 | IE | Haemochromatosis in Ireland: why the HFE gene test matters here | `haemochromatosis in ireland` | 260 · 3 (+39 impr at pos 77) | `/ireland/en/lab-tests` | HSE; Irish Haemochromatosis Association; EASL iron-overload guidance |
 | 14 | IE | Adult ADHD assessment in Ireland: routes, waiting times, cost | `adhd assessment ireland` | 1,900 · 0 | mental health; psychiatry | NICE NG87; HSE ADHD pathway; College of Psychiatrists of Ireland |
 | 15 | RO | Scrisoarea medicală: ce este, cât e valabilă, cine o eliberează | `scrisoare medicala` | 1,000 · 0 | medical-letter service | CNAS; Min. Sănătății (Contract-cadru); Colegiul Medicilor |
 | 16 | CZ | Krevní tlak podle věku: tabulka a co znamená | `krevní tlak podle věku` | 2,400 · 0 | GP; cardiology | ESC/ESH 2024; Česká kardiologická společnost; ÚZIS |
@@ -274,10 +274,10 @@ the two are not interchangeable. **KD** is keyword difficulty out of 100.
 
 | # | Market | Article | Target query | Vol · KD | Links to | Sources |
 | --- | --- | --- | --- | --- | --- | --- |
-| 31 | IE | Vitamin D and B12 testing at home: when it is worth it | ~50 impr across `at home vitamin d test`, `b12 test kit` | — | `/ireland/en/tests` | HSE/FSAI vitamin D guidance; NICE B12 deficiency guideline |
-| 32 | IE | AMH testing and ovarian reserve: what the result does and does not tell you | ~30 impr across `amh test`, `amh test ireland` | — | `/ireland/en/tests`; women's health | NICE CG156; ESHRE |
-| 33 | RO | Analiza AMH: când se recoltează și ce arată | ~25 impr across `dozare amh`, `amh cand se recolteaza` | — | `/romania/ro/tests`; women's health | ESHRE; NICE CG156 |
-| 34 | RO | Test genetic pentru boala celiacă: cui i se recomandă | 19 impr, `test genetic boala celiaca` at pos 17.6 | — | `/romania/ro/tests` | ESPGHAN / ESsCD coeliac guidelines; Min. Sănătății |
+| 31 | IE | Vitamin D and B12 testing at home: when it is worth it | ~50 impr across `at home vitamin d test`, `b12 test kit` | — | `/ireland/en/lab-tests` | HSE/FSAI vitamin D guidance; NICE B12 deficiency guideline |
+| 32 | IE | AMH testing and ovarian reserve: what the result does and does not tell you | ~30 impr across `amh test`, `amh test ireland` | — | `/ireland/en/lab-tests`; women's health | NICE CG156; ESHRE |
+| 33 | RO | Analiza AMH: când se recoltează și ce arată | ~25 impr across `dozare amh`, `amh cand se recolteaza` | — | `/romania/ro/lab-tests`; women's health | ESHRE; NICE CG156 |
+| 34 | RO | Test genetic pentru boala celiacă: cui i se recomandă | 19 impr, `test genetic boala celiaca` at pos 17.6 | — | `/romania/ro/lab-tests` | ESPGHAN / ESsCD coeliac guidelines; Min. Sănătății |
 | 35 | CZ | Cukrovka 2. typu: příčiny, příznaky, kdy na vyšetření | 58 impr across `diabetes`, `cukrovka příčiny` at pos 37–48 | — | chronic-disease service | Česká diabetologická společnost; ÚZIS; EASD/ADA consensus |
 | 36 | PT | Infeção respiratória: quando é preciso ver um médico | 72 impr at pos 70–81 — largest badly-ranked PT informational term | — | consulta-medica; medicina-geral-e-familiar | DGS norms; SNS24 triage; ECDC seasonal guidance |
 
@@ -359,14 +359,100 @@ any article is cannibalising a service page for the same query.
 
 ---
 
-## 7. Honest summary
+## 7. Execution update — 25 August 2026
 
-Six topics a week will help, and the plan above is ordered so the biggest wins
-land first. But three things are worth saying plainly:
+This update supersedes the volume and sequencing assumptions below without
+discarding the original keyword research. A production CMS check, a fresh
+Search Console comparison, an OpenSEO crawl/backlink review, and a live
+competitor review all point to the same operating change: publish a smaller
+cohort, measure it, and improve authority in parallel.
 
-1. **36 URLs a week is the wrong target.** 6 topics a week is the real number.
+### 7.1 Current delivery state
+
+- Week 1 has four live topics: Portugal autodeclaração, Ireland Illness
+  Benefit, Czech eNeschopenka, and Ireland sick certificate. The Spain and
+  Romania blood-pressure posts remain production drafts pending review.
+- Week 2 has 36 standalone HTML copies locally but **zero production CMS
+  records**. The local full-language set is research material, not the
+  production publishing plan.
+- The exact evidence-backed Week 2 locale matrix contains **19 variants**, not
+  36. Start with the six primary-language drafts, then add only the 13 approved
+  translations that receive native-language review.
+
+### 7.2 Compact article standard
+
+Google does not reward an arbitrary word count. Use enough space to answer the
+intent safely and completely, with these working ranges rather than hard SEO
+minimums:
+
+- administrative/process articles: usually 600–900 words;
+- clinical and safety-sensitive articles: usually 700–1,200 words;
+- one primary intent and one exact service CTA family per page;
+- the direct answer in the first 80–120 words;
+- 3–5 useful contextual internal links for a short article;
+- 2–4 FAQs only where they answer distinct, evidenced questions;
+- named clinician author/reviewer, real `lastReviewedAt`, primary sources, and
+  native-language review remain mandatory.
+
+Do not insert every OpenSEO keyword. The primary query belongs in the title,
+H1, opening answer, and a natural heading. Secondary queries belong only where
+they help the same intent. Unrelated terms require a different page or no page.
+
+### 7.3 Revised phase order
+
+**25 August–8 September:** finish the two Week 1 reviews; reduce and rewrite
+Week 2; create primary-language drafts only after explicit production approval;
+publish the administrative cohort before the clinical-safety cohort; validate
+post-25-August `begin_booking`, `begin_checkout`, and `purchase` data; and run
+one real authority/outreach action for each priority administrative cluster.
+
+**Weeks 3–5:** run no more than three active clusters at once, normally two new
+articles and one existing-page improvement. Keep Ireland ADHD assessment,
+Spanish evidence-based blood-pressure management, Portugal burnout leave, and
+Ireland mental-health medical certificates as the strongest net-new
+candidates. Improve the existing Romania medical-letter, Portugal travel,
+Czech eNeschopenka/English sick-note, dermatology, ADHD-tool, and
+blood-pressure-tool pages instead of creating competing articles.
+
+**Week 6:** keep the Ireland laboratory cluster behind the registered
+8 September measurement gate. Use the live `/lab-tests` routes and verify that
+each exact product and market pathway exists
+before drafting. Do not create another broad Czech diabetes article while the
+existing Czech diabetes post owns that topic.
+
+**Weeks 7–8:** treat Spain dermatology and online-vs-in-person as updates or
+localisations of existing content. Fold systolic/diastolic, blood-pressure
+table, and ADHD-definition queries into their existing tools or owner pages.
+Reassess the Ireland Long-Term Illness Scheme separately from employment sick
+leave after the 30 September measurement pass. Brazil remains deferred until
+clinical capacity and non-brand search demand improve.
+
+### 7.4 Decision gates
+
+- At 30 days, judge indexation, query ownership, impressions, and early rank
+  movement. Do not call a page a failure because it has no conversion on a
+  small sample.
+- At 60 days, judge clicks, CTR relative to position, internal commercial-path
+  use, and whether another page is competing for the same intent.
+- At 90 days, use qualified organic landings plus `begin_booking`,
+  `begin_checkout`, and `purchase` to decide what to scale, refresh,
+  consolidate, or stop.
+- Publication count is not a KPI. The operating KPIs are reviewed/indexable
+  pages, earned search demand, useful commercial paths, conversion signals,
+  and acquired relevant referring domains.
+
+---
+
+## 8. Honest summary
+
+Six topics a week can help once review capacity and post-deployment measurement
+support that pace. For the current two-week cleanup phase, the §7 limit of
+three active clusters takes precedence. Three things are worth saying plainly:
+
+1. **36 URLs a week is the wrong target.** Six topics is a later ceiling, not a
+   weekly quota.
    The locale rule in §3 turns that into 20–26 URLs and loses nothing the
-   current blog measurably earns.
+   current blog measurably earns. Week 2's exact planned matrix is 19 URLs.
 2. **Content raises positions; it does not raise authority.** Several of these
    will reach page one. The competitive head terms will not, until the
    off-site work in `docs/client/off-site-authority-plan-2026-08-19.html`
