@@ -32,14 +32,15 @@ published pages, indexed pages or measured outcomes.
 
 ### 27.1 Evidence that changes the plan
 
-- Production holds 24 Week 1 blog records: 22 live locale records across four topics
-  and two blood-pressure drafts for Spain and Romania. On 2026-08-25, six Week 2
-  primary-language records were created with status `DRAFT`; none was published.
+- Production holds 24 Week 1 blog records: 23 live locale records and one Romanian
+  blood-pressure draft. The Spanish blood-pressure record was published and reviewed
+  on 2026-08-25 outside this correction pass. Six Week 2 primary-language records
+  remain `DRAFT`; none was published by this work.
 - On 2026-08-25 the local Week 2 primary-language cohort was reduced to the compact
-  publication ranges and revalidated at: Portugal sickness-benefit 900 words, Ireland
-  Illness Benefit payment 898, Czech sickness-pay calculation 824, Portugal driving
-  certificate 894, Spain urgent blood-pressure 1,157, and Romania rapid blood-pressure
-  safety 1,146. All six now pass the local content gates for sections, FAQs, linking
+  publication ranges and revalidated at: Portugal sickness-benefit 898 words, Ireland
+  Illness Benefit payment 893, Czech sickness-pay calculation 897, Portugal driving
+  certificate 899, Spain urgent blood-pressure 1,199, and Romania rapid blood-pressure
+  safety 1,198. All six now pass the local content gates for sections, FAQs, linking
   and medical-safety wording.
 - In the disclosed 28-day Search Console rows ending 2026-08-22, blogs produced
   64 clicks and 8,120 impressions, versus 5 clicks and 1,092 impressions in the
@@ -151,6 +152,43 @@ returned all six rows as existing `DRAFT` records:
 No translation record was created, no pre-existing record was updated, and no draft
 was published. The next authorized action is human/native/clinical review inside the
 normal CMS workflow, not status promotion.
+
+### 27.9 Patient-value correction pass and draft synchronization (2026-08-25)
+
+All eight primary articles in the active Week 1 and Week 2 cohort were reviewed for
+patient usefulness rather than keyword presence alone. The corrections add direct
+answers, worked calculations, decision tables, escalation routes, document and
+consultation checklists, and clearer boundaries between medical care and government
+benefit, licensing or tax decisions. Time-sensitive claims now point to current
+official sources, and unsupported completed-review wording was removed from the
+approved local variants.
+
+The exact 19 approved Week 2 standalone HTML copies were regenerated from the source
+modules and passed the renderer check. Editorial tests passed 13/13, backend type-check
+passed, and 27 distinct internal links used by the eight primary articles returned
+HTTP 200 in focused production checks; no broad crawl was rerun.
+
+After a successful dry run, the six Week 2 primary production records were updated in
+one guarded transaction and independently re-read as `DRAFT`, unpublished and without
+translation rows:
+
+| Primary draft | Record | Saved body hash (SHA-256) |
+| --- | --- | --- |
+| PT sickness benefit | `cmt8la5mj0000csjuzvvr49bg` | `6129a2d99ee367a504a05693ef1f7445e023e99a5c73a32472795b7c58e4cebb` |
+| IE Illness Benefit payment | `cmt8la96q0002csju6spj0o0n` | `e2dc454414402125e8d280346bc5f025910aa6a37c66ed138fa0b62407f118ef` |
+| CZ sickness-pay calculation | `cmt8ladb60004csjuxgxyk4nu` | `1639ce7ad7e035c4e32b45ff0478df30af4c0ed6344cb5f1e2ce8f38095de5cf` |
+| PT driving certificate | `cmt8lahc30006csjuw55xnemg` | `bbbe0d607d0115a4fd9434d4e0e83d42ac97fe1af3a85a8ed516b2866f8167d5` |
+| ES urgent blood pressure | `cmt8laldn0008csjufi90oq5x` | `f1f9ee282796611d6e88fd051c8cf71544a2f6f306714c965744a473c10733bc` |
+| RO rapid blood-pressure safety | `cmt8lapi9000acsju2l7jkq5m` | `7d78dd0826282b953a53931b32674e8238d86f546de81503ada7e68c366130a3` |
+
+The Romanian Week 1 record `cmt5txspa0002s8julxban3bz` was also dry-run, updated and
+re-read as `DRAFT`, unpublished and byte-equivalent to the corrected local source
+(`ec41f2c3a7b7357ba84a562bb3939bf905267e1fd7f286c3cc49220e848d4bcb`);
+its five existing translation rows were not changed. The Spanish Week 1 record
+`cmt5txqqn0000s8ju2rz5zg1u` had meanwhile become `PUBLISHED` with a recorded review
+date, so the draft-only updater correctly refused it and its local correction was not
+written to production. This pass did not publish content, create or edit translation
+rows, deploy, push or send outreach.
 
 ---
 
@@ -349,7 +387,7 @@ Status vocabulary: `CLOSED` · `FALSE POSITIVE` · `EXPECTED BEHAVIOR` ·
 
 | ID | Finding | Category | Current status | Evidence date | Production state | Google state | Next action |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| SEO-EDITORIAL-001 | Week 2 drifted from an evidence-backed 19-locale plan into 36 local research variants without CMS records | Content growth / measurement | **SIX PRIMARY DRAFTS CREATED — PUBLICATION REVIEW REQUIRED** | 2026-08-25 | Week 1 has four live posts and two reviewed production drafts still awaiting real clinical dates. Week 2 retains 36 research sources, restricts preparation to exactly 19 standalone HTML variants, and now has six primary-language production records with status `DRAFT`; the other 13 approved variants remain local | Current 28-day blog rows reached 64 clicks and 8,120 impressions, up from 5 clicks and 1,092 impressions in the prior comparison; conversion attribution is valid only after the 2026-08-25 funnel deployment | Complete native/legal/clinical review; do not publish or create translations without the relevant approval; use 30/60/90-day gates after publication |
+| SEO-EDITORIAL-001 | Week 2 drifted from an evidence-backed 19-locale plan into 36 local research variants without CMS records | Content growth / measurement | **SEVEN CORRECTED PRODUCTION DRAFTS — PUBLICATION REVIEW REQUIRED** | 2026-08-25 | The Romanian Week 1 record and all six Week 2 primary records now hold the patient-value corrections as `DRAFT`. The Spanish Week 1 record became reviewed and `PUBLISHED` outside this pass, so its local correction was deliberately not written under draft-only approval. Week 2 still restricts preparation to exactly 19 standalone HTML variants; the other 13 approved variants remain local | Current 28-day blog rows reached 64 clicks and 8,120 impressions, up from 5 clicks and 1,092 impressions in the prior comparison; conversion attribution is valid only after the 2026-08-25 funnel deployment | Obtain explicit approval before changing the live Spanish article; complete native/legal/clinical review for drafts; do not publish or create translations without the relevant approval; use 30/60/90-day gates after publication |
 | SEO-001 | Sitemap coverage gap | Indexation | **FALSE POSITIVE** | 2026-08-12 | 1,906 URLs live and well-formed | Sitemap read and processed | None |
 | SEO-002 | Internal links pointing at 308 redirects | Crawl efficiency | **CLOSED — VERIFIED BY PRODUCTION CHECK** | 2026-08-12 | Footer country links and service-page links point at canonical URLs (`f4e84104`, `05f471a7`); health-alias link leak closed (`532d9c8a`) | n/a | None |
 | SEO-003 | Fallback-locale legal pages carry `noindex` | Indexation | **EXPECTED BEHAVIOR — CLOSED** | 2026-08-09 | `noindex, follow`, absent from sitemap, absent as hreflang target; exact-locale legal pages stay indexable | Consistent | None |

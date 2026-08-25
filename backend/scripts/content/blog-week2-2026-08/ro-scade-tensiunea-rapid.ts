@@ -16,8 +16,11 @@ import type { LocalePost, PostSet } from "../blog-seo-2026-08/types.js";
 
 const ESC_GUIDELINE =
   "https://www.escardio.org/guidelines/clinical-practice-guidelines/all-esc-practice-guidelines/elevated-blood-pressure-and-hypertension/";
-const MS_PROTOCOL =
-  "https://oldsite.ms.ro/wp-content/uploads/2021/04/ANEXA-22_Hipertensiunea-arteriala.docx";
+const CARDIOPORTAL_HTA =
+  "https://www.cardioportal.ro/pacienti/factori-de-risc-cardiovascular/hipertensiunea-arteriala-2/";
+const CARDIOPORTAL_MASURARE =
+  "https://www.cardioportal.ro/pacienti/factori-de-risc-cardiovascular/hipertensiunea-arteriala-2/cum-masuram-tensiunea-arteriala/";
+const NHS_PREECLAMPSIA = "https://www.nhs.uk/conditions/pre-eclampsia/";
 const EMERGENCY_112 = "https://www.112.ro/";
 const EMERGENCY_112_LAW = "https://legislatie.just.ro/Public/DetaliiDocumentAfis/267768";
 
@@ -45,9 +48,9 @@ const ro: LocalePost = {
     categoryHref: roHref("/blog"),
     eyebrow: "România · Ghid de siguranță",
     h1: "Ce scade tensiunea rapid, în siguranță?",
-    deck: "Mai întâi verificați dacă este o urgență. Apoi verificați măsurarea. Nu începeți cu o pastilă improvizată.",
+    deck: "Verificați urgența, apoi măsurarea. Nu începeți cu o pastilă improvizată.",
     intro:
-      "Nu există un aliment, ceai sau comprimat care să scadă <strong>rapid și sigur tensiunea pentru orice persoană</strong>. Sunați la <strong>112</strong> dacă o valoare mare apare împreună cu durere sau apăsare în piept, lipsă severă de aer, slăbiciune ori amorțeală pe o parte, vorbire dificilă, confuzie, leșin, pierderea bruscă a vederii sau o durere de cap bruscă și neobișnuit de puternică. Nu așteptați să treacă și nu conduceți. Fără aceste semne, opriți efortul, stați liniștit câteva minute și repetați corect măsurarea o singură dată. Nu luați captopril suplimentar, medicamentul altcuiva sau o doză veche fără o indicație personală clară.",
+      "Nu există un aliment, ceai sau comprimat care să scadă <strong>rapid și sigur tensiunea pentru orice persoană</strong>. Sunați la <strong>112</strong> dacă o valoare mare apare împreună cu durere sau apăsare în piept, lipsă severă de aer, slăbiciune ori amorțeală pe o parte, vorbire dificilă, confuzie, leșin, pierderea bruscă a vederii sau o durere de cap bruscă și neobișnuit de puternică. Nu așteptați să treacă și nu conduceți. Fără aceste semne, opriți efortul, stați liniștit câteva minute, apoi faceți două citiri corecte la scurt interval. Nu luați captopril suplimentar, medicamentul altcuiva sau o doză veche fără o indicație personală clară.",
     facts: [
       "Semne acute în piept, respirație sau sistem nervos: 112",
       "Repetați corect măsurarea dacă sunteți stabil",
@@ -58,8 +61,8 @@ const ro: LocalePost = {
     panelChip: "Ordinea corectă",
     panelParas: [
       "Simptomele de alarmă au prioritate față de o nouă măsurare.",
-      "O valoare izolată poate fi influențată de durere, efort, anxietate sau tehnică.",
-      "Scăderea forțată a tensiunii poate fi periculoasă; tratamentul se ajustează individual.",
+      "Durerea, efortul, anxietatea sau tehnica pot influența o valoare.",
+      "Scăderea forțată poate fi periculoasă; tratamentul se ajustează individual.",
     ],
     author: {
       initials: "RB",
@@ -82,8 +85,8 @@ const ro: LocalePost = {
             "După câteva minute de repaus, faceți două citiri la scurt interval și notați-le.",
             "Notați pulsul, simptomele, ora, medicamentele obișnuite și contextul: durere, febră, efort sau lipsă de somn.",
           ]),
-          p("Acești pași nu tratează hipertensiunea. Ei reduc erorile frecvente și oferă informații utile unui medic. Nu măsurați continuu până obțineți cifra dorită și nu păstrați doar valoarea cea mai mică."),
-          p("Dacă valoarea rămâne în jurul sau peste 180/120 mmHg, cereți evaluare medicală rapidă în aceeași zi, chiar dacă nu aveți simptome. Dacă apare un semn de alarmă, sunați la 112 fără să așteptați încă o citire."),
+          p("Acești pași nu tratează hipertensiunea. Reduc erorile și ajută medicul. Nu măsurați continuu până obțineți cifra dorită și nu păstrați doar valoarea cea mai mică."),
+          p("Dacă valoarea rămâne în jurul sau peste 180/120 mmHg, cereți evaluare în aceeași zi: medic de familie, centru de permanență sau UPU. Dacă vă agravați ori apare un semn de alarmă, sunați la 112."),
         ],
       },
       {
@@ -101,6 +104,7 @@ const ro: LocalePost = {
             "Pierderea bruscă a vederii sau o durere de cap explozivă, diferită de cele obișnuite.",
           ]),
           p("Sunați la 112, nu conduceți singur și notați ora debutului. Pregătiți lista medicamentelor și urmați instrucțiunile dispecerului. O a doua valoare mai mică nu anulează un simptom compatibil cu accident vascular cerebral sau infarct."),
+          warn("Sarcină și după naștere", "Tensiunea mare cu cefalee severă, modificări de vedere, durere sub coaste, vărsături, lipsă de aer sau umflare bruscă necesită evaluare obstetricală urgentă. Preeclampsia poate apărea și după naștere."),
           cite(`Cadrul legal oficial pentru <a href="${EMERGENCY_112_LAW}" rel="nofollow noopener" target="_blank">Sistemul național unic pentru apeluri de urgență</a> definește 112 ca serviciul care preia apelurile și alertează intervenția specializată.`),
         ],
       },
@@ -125,7 +129,7 @@ const ro: LocalePost = {
           lead("Când sunteți stabil și nu aveți semne de alarmă, medicina de familie este punctul obișnuit de pornire."),
           p('Într-o <a href="' + roHref("/services/boli-cronice-online") + '">consultație pentru boli cronice</a>, medicul poate verifica tehnica, <a href="' + roHref("/tools/blood-pressure-chart") + '">jurnalul tensiunii</a>, tratamentul prescris, dozele omise și factorii de risc. Poate recomanda analize, ECG, consult fizic sau monitorizare ambulatorie.'),
           p("Cardiologia este o etapă de escaladare când există boală cardiacă, teste anormale, simptome cardiovasculare, hipertensiune rezistentă sau recomandarea medicului de familie. Nu este un înlocuitor pentru 112 și nici prima oprire obligatorie pentru orice valoare izolată."),
-          p('Puteți vedea <a href="' + roHref("/doctors") + '">medicii disponibili în România</a> sau <a href="' + roHref("/contact") + '">contacta Global Health</a> pentru programare. Aceste canale nu sunt servicii de urgență.'),
+          p('Pentru programare, vedeți <a href="' + roHref("/doctors") + '">medicii din România</a> sau <a href="' + roHref("/contact") + '">contactați Global Health</a>. Aceste canale nu sunt servicii de urgență.'),
         ],
       },
       {
@@ -161,8 +165,10 @@ const ro: LocalePost = {
       "Sursele separă evaluarea de urgență de tratamentul pe termen lung și nu oferă o doză universală.",
     sources: [
       { label: "ESC — tensiune arterială crescută și hipertensiune", href: ESC_GUIDELINE },
-      { label: "Ministerul Sănătății — protocol pentru hipertensiune", href: MS_PROTOCOL },
+      { label: "Societatea Română de Cardiologie — hipertensiunea arterială", href: CARDIOPORTAL_HTA },
+      { label: "Societatea Română de Cardiologie — măsurarea tensiunii", href: CARDIOPORTAL_MASURARE },
       { label: "Portalul Legislativ — sistemul național 112", href: EMERGENCY_112_LAW },
+      { label: "NHS — preeclampsia în sarcină și după naștere", href: NHS_PREECLAMPSIA },
     ],
     sourcesNote:
       "Decizia individuală depinde de istoricul medical, examinare, analize și tratamentul prescris.",
@@ -171,7 +177,7 @@ const ro: LocalePost = {
     faqs: [
       {
         q: "Ce scade tensiunea imediat acasă?",
-        a: "Nu există un remediu sigur pentru orice situație. Verificați simptomele, repetați corect măsurarea dacă sunteți stabil și urmați planul personal. Cu durere în piept, lipsă severă de aer sau semne neurologice, sunați la 112.",
+        a: "Nu există un remediu sigur pentru orice situație. Verificați simptomele și, dacă sunteți stabil, faceți două citiri corecte la scurt interval. Cu durere în piept, lipsă severă de aer sau semne neurologice, sunați la 112.",
       },
       {
         q: "De la ce tensiune se ia captopril?",
@@ -183,7 +189,7 @@ const ro: LocalePost = {
       },
       {
         q: "Când este suficientă o consultație programată?",
-        a: "Când sunteți stabil, fără semne de alarmă, și doriți evaluarea unor valori crescute repetat. Medicina de familie coordonează de obicei îngrijirea; cardiologia se adaugă dacă există motive clinice.",
+        a: "Când sunteți stabil, fără semne de alarmă, și doriți evaluarea unor valori crescute repetat. Pentru o valoare care rămâne în jurul sau peste 180/120 mmHg, cereți evaluare în aceeași zi prin medicul de familie, un centru de permanență sau UPU; cardiologia se adaugă dacă există motive clinice.",
       },
     ],
     disclaimerTitle: "Aviz medical și de urgență",
@@ -232,7 +238,7 @@ const en: LocalePost = {
       line: "Family physician · Medical Director, Global Health Romania",
     },
     reviewLine:
-      "Clinically reviewed by Dr Andreea Lorena Bica, specialist neurologist, Global Health Romania.",
+      "Clinical and native editorial review by Dr Andreea Lorena Bica is required before publication.",
     navLabel: "In this guide",
     sections: [
       {
@@ -399,7 +405,7 @@ const en: LocalePost = {
       "The article separates emergency triage from long-term hypertension care and deliberately avoids presenting a universal medication protocol.",
     sources: [
       { label: "ESC — Elevated blood pressure and hypertension", href: ESC_GUIDELINE },
-      { label: "Romanian Ministry of Health — hypertension protocol", href: MS_PROTOCOL },
+      { label: "Romanian Society of Cardiology — hypertension", href: CARDIOPORTAL_HTA },
       { label: "Special Telecommunications Service — Romania 112", href: EMERGENCY_112 },
     ],
     sourcesNote:
@@ -568,7 +574,7 @@ const pt: LocalePost = {
     sourcesLead: "As fontes separam triagem de emergência do controlo de hipertensão a longo prazo.",
     sources: [
       { label: "ESC — Pressão elevada e hipertensão", href: ESC_GUIDELINE },
-      { label: "Ministério da Saúde da Roménia — protocolo", href: MS_PROTOCOL },
+      { label: "Sociedade Romena de Cardiologia — hipertensão", href: CARDIOPORTAL_HTA },
       { label: "Serviço 112 da Roménia", href: EMERGENCY_112 },
     ],
     sourcesNote: "As decisões individuais dependem do historial, exame, análises e tratamento prescrito de cada pessoa.",
@@ -640,7 +646,7 @@ const es: LocalePost = {
     links: [{ label: "Consulta online de crónicos", href: esHref("/services/boli-cronice-online") }, { label: "Registro de tensión arterial", href: esHref("/tools/blood-pressure-chart") }, { label: "Médicos en Rumanía", href: esHref("/doctors") }, { label: "Contacto Global Health", href: esHref("/contact") }],
     ctaBox: { h3: "¿Lecturas altas repetidas sin señales de alarma?", text: "Reserva una valoración con el registro, los síntomas y la lista de medicación. El médico puede indicar monitorización, pruebas o derivación.", primary: { label: "Reservar consulta", href: esHref("/services/boli-cronice-online") }, secondary: { label: "Ver médicos", href: esHref("/doctors") } },
     sourcesEyebrow: "Fuentes clínicas", sourcesH2: "Referencias utilizadas", sourcesLead: "Estas fuentes separan la emergencia de la atención crónica y no establecen una pauta farmacológica universal.",
-    sources: [{ label: "ESC — Presión elevada e hipertensión", href: ESC_GUIDELINE }, { label: "Ministerio de Sanidad rumano — protocolo", href: MS_PROTOCOL }, { label: "Servicio 112 de Rumanía", href: EMERGENCY_112 }], sourcesNote: "Las decisiones individuales dependen de la historia clínica, exploración, pruebas y tratamiento prescrito.",
+    sources: [{ label: "ESC — Presión elevada e hipertensión", href: ESC_GUIDELINE }, { label: "Sociedad Rumana de Cardiología — hipertensión", href: CARDIOPORTAL_HTA }, { label: "Servicio 112 de Rumanía", href: EMERGENCY_112 }], sourcesNote: "Las decisiones individuales dependen de la historia clínica, exploración, pruebas y tratamiento prescrito.",
     faqEyebrow: "Preguntas frecuentes", faqH2: "Dudas sobre bajar la tensión rápidamente", faqs: [
       { q: "¿Qué baja la tensión inmediatamente en casa?", a: "No hay un remedio doméstico seguro para todos. Siéntate, revisa síntomas, repite bien la medición y sigue tu plan. Ante dolor torácico, falta de aire grave o alteraciones neurológicas, llama al 112." },
       { q: "¿A partir de qué tensión se toma captopril?", a: "No existe una cifra universal. Es un medicamento con receta y depende de tu historia y plan. Nunca tomes captopril extra o no prescrito." },
@@ -707,7 +713,7 @@ const cs: LocalePost = {
     links: [{ label: "Online péče o chronické potíže", href: csHref("/services/boli-cronice-online") }, { label: "Deník krevního tlaku", href: csHref("/tools/blood-pressure-chart") }, { label: "Lékaři v Rumunsku", href: csHref("/doctors") }, { label: "Kontakt Global Health", href: csHref("/contact") }],
     ctaBox: { h3: "Opakovaně vysoké hodnoty bez varovných příznaků?", text: "Objednejte se se záznamem, seznamem léků a popisem příznaků. Lékař určí další měření, vyšetření či doporučení.", primary: { label: "Objednat konzultaci", href: csHref("/services/boli-cronice-online") }, secondary: { label: "Zobrazit lékaře", href: csHref("/doctors") } },
     sourcesEyebrow: "Klinické zdroje", sourcesH2: "Podklady tohoto průvodce", sourcesLead: "Zdroje oddělují akutní třídění od dlouhodobé léčby a nepředkládají univerzální lékový postup.",
-    sources: [{ label: "ESC — Zvýšený tlak a hypertenze", href: ESC_GUIDELINE }, { label: "Rumunské ministerstvo zdravotnictví — protokol", href: MS_PROTOCOL }, { label: "Rumunská tísňová linka 112", href: EMERGENCY_112 }], sourcesNote: "Individuální rozhodnutí závisí na anamnéze, vyšetření, laboratorních výsledcích a předepsané léčbě.",
+    sources: [{ label: "ESC — Zvýšený tlak a hypertenze", href: ESC_GUIDELINE }, { label: "Rumunská kardiologická společnost — hypertenze", href: CARDIOPORTAL_HTA }, { label: "Rumunská tísňová linka 112", href: EMERGENCY_112 }], sourcesNote: "Individuální rozhodnutí závisí na anamnéze, vyšetření, laboratorních výsledcích a předepsané léčbě.",
     faqEyebrow: "Časté otázky", faqH2: "Otázky k rychlému snížení tlaku", faqs: [
       { q: "Co doma okamžitě sníží krevní tlak?", a: "Neexistuje domácí prostředek bezpečný pro každého. Posaďte se, zkontrolujte příznaky, správně přeměřte a držte se osobního plánu. Při bolesti na hrudi, těžké dušnosti nebo neurologické změně volejte 112." },
       { q: "Od jakého tlaku se bere captopril?", a: "Univerzální číslo neexistuje. Jde o lék na předpis a rozhoduje váš stav a plán. Nikdy neberte další ani nepředepsaný captopril." },
@@ -774,7 +780,7 @@ const de: LocalePost = {
     links: [{ label: "Online-Sprechstunde chronische Erkrankungen", href: deHref("/services/boli-cronice-online") }, { label: "Blutdruckprotokoll", href: deHref("/tools/blood-pressure-chart") }, { label: "Ärzte in Rumänien", href: deHref("/doctors") }, { label: "Global Health kontaktieren", href: deHref("/contact") }],
     ctaBox: { h3: "Wiederholt hohe Werte ohne Warnzeichen?", text: "Buchen Sie mit Protokoll, Medikamentenliste und Symptomen. Der Arzt kann weitere Messungen, Untersuchungen oder eine Überweisung planen.", primary: { label: "Sprechstunde buchen", href: deHref("/services/boli-cronice-online") }, secondary: { label: "Ärzte ansehen", href: deHref("/doctors") } },
     sourcesEyebrow: "Klinische Quellen", sourcesH2: "Grundlagen dieses Leitfadens", sourcesLead: "Die Quellen trennen Notfalltriage von Langzeitbehandlung und geben kein universelles Arzneischema vor.",
-    sources: [{ label: "ESC — Erhöhter Blutdruck und Hypertonie", href: ESC_GUIDELINE }, { label: "Rumänisches Gesundheitsministerium — Protokoll", href: MS_PROTOCOL }, { label: "Rumänischer Notruf 112", href: EMERGENCY_112 }], sourcesNote: "Individuelle Entscheidungen hängen von Vorgeschichte, Untersuchung, Laborwerten und verordneter Therapie ab.",
+    sources: [{ label: "ESC — Erhöhter Blutdruck und Hypertonie", href: ESC_GUIDELINE }, { label: "Rumänische Gesellschaft für Kardiologie — Hypertonie", href: CARDIOPORTAL_HTA }, { label: "Rumänischer Notruf 112", href: EMERGENCY_112 }], sourcesNote: "Individuelle Entscheidungen hängen von Vorgeschichte, Untersuchung, Laborwerten und verordneter Therapie ab.",
     faqEyebrow: "Häufige Fragen", faqH2: "Fragen zum schnellen Blutdrucksenken", faqs: [
       { q: "Was senkt den Blutdruck zu Hause sofort?", a: "Kein Hausmittel ist für jede Situation sicher. Setzen Sie sich, prüfen Sie Symptome, messen Sie korrekt nach und folgen Sie Ihrem Plan. Bei Brustschmerz, schwerer Atemnot oder neurologischen Veränderungen rufen Sie 112." },
       { q: "Ab welchem Blutdruck soll man Captopril nehmen?", a: "Es gibt keine universelle Zahl. Das verschreibungspflichtige Medikament hängt von Vorgeschichte und Plan ab. Nehmen Sie niemals zusätzliches oder nicht verordnetes Captopril." },

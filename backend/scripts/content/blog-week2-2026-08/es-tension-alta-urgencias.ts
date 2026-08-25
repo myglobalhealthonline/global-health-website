@@ -18,6 +18,7 @@ import type { LocalePost, PostSet } from "../blog-seo-2026-08/types.js";
 
 const ESC_2024 =
   "https://www.escardio.org/guidelines/clinical-practice-guidelines/all-esc-practice-guidelines/elevated-blood-pressure-and-hypertension/";
+const NHS_PREECLAMPSIA = "https://www.nhs.uk/conditions/pre-eclampsia/";
 const SEC_ESC_2024 =
   "https://secardiologia.es/images/2023/Gu%C3%ADas/Final_GPC_ESC_2024_PA_elevada_e_hipertensio%CC%81n.pdf";
 const FEC_HTA =
@@ -47,7 +48,7 @@ const es: LocalePost = {
     categoryHref: href("es", "/blog"),
     eyebrow: "España · Guía de seguridad",
     h1: "Tensión alta: síntomas y cuándo llamar al 112",
-    deck: "Los síntomas súbitos deciden la respuesta.",
+    deck: "Los síntomas deciden.",
     intro:
       "La <strong>tensión alta suele ser silenciosa</strong>: sentirse bien no descarta hipertensión y un dolor de cabeza aislado no la confirma. Llame al <strong>112</strong> si una lectura alta coincide con dolor u opresión en el pecho, falta de aire intensa, debilidad o pérdida de sensibilidad de un lado, dificultad para hablar, confusión, desmayo, pérdida súbita de visión o un dolor de cabeza repentino y muy intenso. No conduzca. Si no hay señales de alarma, descanse unos minutos, repita correctamente una vez y pida valoración sanitaria rápida si la lectura sigue alrededor de 180/120 mmHg o más. No duplique dosis ni tome medicación prestada.",
     facts: [
@@ -55,12 +56,12 @@ const es: LocalePost = {
       "Síntomas torácicos, respiratorios o neurológicos: 112",
       "No cambie dosis sin un plan personal",
     ],
-    primaryCta: { label: "Consulta de medicina general", href: chronicHref("es") },
+    primaryCta: { label: "Ver cuándo llamar al 112", href: "#112" },
     secondaryCta: { label: "Registrar mis lecturas", href: toolHref("es") },
     panelChip: "Decida por seguridad",
     panelParas: [
-      "Una lectura aislada puede alterarse por dolor, esfuerzo, ansiedad o una técnica incorrecta.",
-      "Los signos de posible ictus, infarto o edema pulmonar requieren 112 aunque una segunda lectura sea menor.",
+      "Dolor, esfuerzo, ansiedad o mala técnica pueden alterar una lectura.",
+      "Los signos de ictus, infarto o edema pulmonar requieren 112 aunque la segunda lectura sea menor.",
     ],
     author: {
       initials: "FM",
@@ -96,7 +97,8 @@ const es: LocalePost = {
             "Confusión nueva, convulsión, desmayo o disminución del nivel de conciencia.",
             "Pérdida súbita de visión o dolor de cabeza explosivo y diferente de los habituales.",
           ]),
-          p("No conduzca. Anote la hora en que comenzaron los síntomas, tenga a mano la lista de medicamentos y siga las instrucciones del 112. Una cifra algo menor al repetirla no anula un posible ictus o infarto."),
+          p("No conduzca. Anote el inicio de los síntomas, prepare la medicación y siga al 112. Una segunda cifra menor no descarta ictus o infarto."),
+          warn("Embarazo y posparto", "Una tensión alta con cefalea intensa, cambios visuales, dolor bajo las costillas, vómitos, falta de aire o hinchazón súbita necesita valoración obstétrica urgente. La preeclampsia también puede aparecer después del parto."),
           cite('La <a href="https://www.comunidad.madrid/salud/codigo-ictus" rel="nofollow noopener" target="_blank">Comunidad de Madrid</a> considera el ictus una emergencia y enumera debilidad de un lado, dificultad para hablar, pérdida brusca de visión y cefalea súbita entre sus señales.'),
         ],
       },
@@ -125,9 +127,8 @@ const es: LocalePost = {
         h2: "La hipertensión estable empieza en medicina general",
         blocks: [
           lead("La mayoría de los casos estables se valoran y siguen en atención primaria. No necesita cardiología como primera puerta por una lectura aislada sin señales de alarma."),
-          p('En una <a href="' + chronicHref("es") + '">consulta de medicina general y enfermedades crónicas</a> pueden revisar la técnica, el registro, la medicación y riesgos como diabetes o enfermedad renal. También pueden indicar análisis, ECG o valoración presencial.'),
+          p('En una <a href="' + chronicHref("es") + '">consulta de medicina general</a> pueden revisar técnica, registro, medicación y riesgos, e indicar análisis, ECG o valoración presencial.'),
           p('La <a href="' + cardioHref("es") + '">consulta de cardiología</a> es una escalada razonable si hay cardiopatía conocida, pruebas anormales, síntomas cardiovasculares, hipertensión resistente o una derivación desde atención primaria. No sustituye al 112.'),
-          p('Puede consultar los <a href="' + href("es", "/doctors") + '">médicos disponibles en España</a> o <a href="' + href("es", "/contact") + '">contactar con Global Health</a> si está estable.'),
         ],
       },
       {
@@ -137,18 +138,26 @@ const es: LocalePost = {
         h2: "Qué llevar a la consulta si no es una urgencia",
         blocks: [
           lead("Lleve lecturas recientes, su lista de medicamentos y los informes que ya tenga."),
+          ul([
+            "Dos lecturas por ocasión, con fecha, hora, pulso y síntomas.",
+            "Lista de medicamentos, dosis, suplementos y dosis olvidadas.",
+            "Embarazo o parto reciente, diabetes, enfermedad renal y antecedentes cardiovasculares.",
+            "Análisis, ECG e informes recientes; lleve el tensiómetro si duda de la técnica.",
+          ]),
+          p("Si empeora mientras espera, llame al 112."),
         ],
       },
     ],
     linksEyebrow: "Global Health España",
     linksH2: "Siguientes pasos si está estable",
     linksLead:
-      "Lleve lecturas, medicamentos e informes para valorar el patrón completo.",
+      "Lleve lecturas y medicación.",
     links: [
       { label: "Medicina general y enfermedades crónicas", href: chronicHref("es") },
       { label: "Registro de tensión arterial", href: toolHref("es") },
       { label: "Cardiología, si necesita escalada", href: cardioHref("es") },
       { label: "Médicos en España", href: href("es", "/doctors") },
+      { label: "Contacto", href: href("es", "/contact") },
     ],
     ctaBox: {
       h3: "¿Tiene lecturas repetidamente altas sin señales de alarma?",
@@ -168,6 +177,7 @@ const es: LocalePost = {
       },
       { label: "Comunidad de Madrid — Código Ictus", href: "https://www.comunidad.madrid/salud/codigo-ictus" },
       { label: "Castilla y León — dolor torácico y 112", href: "https://www.saludcastillayleon.es/es/asistencia-sanitaria/urgencias-emergencias/emergencias-sanitarias-castilla-leon/actuar/dolor-toracico-origen-cardiaco" },
+      { label: "NHS — preeclampsia durante el embarazo y después del parto", href: NHS_PREECLAMPSIA },
     ],
     sourcesNote:
       "Información general. No permite diagnosticar ni tratar una emergencia a distancia.",
@@ -228,7 +238,7 @@ const en: LocalePost = {
       "When routine follow-up belongs in general practice and when a cardiologist can add value.",
     ],
     author: { initials: "FM", name: "Dr. Fidel Ernesto Mesa Prado", line: "Specialist in Cardiology · Global Health Spain" },
-    reviewLine: "Clinically reviewed by Dr. Eduardo Daniel Rodríguez Olivas, general practitioner, Global Health Spain.",
+    reviewLine: "Clinical and native editorial review by Dr. Eduardo Daniel Rodríguez Olivas is required before publication.",
     navLabel: "In this guide",
     sections: [
       {
@@ -360,7 +370,7 @@ const en: LocalePost = {
       { q: "Can an online appointment deal with a high reading?", a: "It can review a stable home record and arrange follow-up, but it cannot examine acute organ injury. Warning signs require 112 or in-person emergency care; without them, general practice is usually the first step." },
     ],
     disclaimerTitle: "Medical notice",
-    disclaimer: "Written by Dr. Fidel Ernesto Mesa Prado, specialist in Cardiology at Global Health Spain, and clinically reviewed by Dr. Eduardo Daniel Rodríguez Olivas, general practitioner. AI-assisted content requiring native editorial and final clinical approval before publication. It does not replace individual assessment. Do not change a medicine or dose without your clinician’s plan. Call 112 for chest pain, severe breathlessness, neurological symptoms, confusion, collapse or sudden loss of vision.",
+    disclaimer: "Written by Dr. Fidel Ernesto Mesa Prado, specialist in Cardiology at Global Health Spain. Clinical and native editorial review by Dr. Eduardo Daniel Rodríguez Olivas is required before publication. This AI-assisted content does not replace individual assessment. Do not change a medicine or dose without your clinician’s plan. Call 112 for chest pain, severe breathlessness, neurological symptoms, confusion, collapse or sudden loss of vision.",
   } satisfies Article,
 };
 
@@ -392,7 +402,7 @@ const de: LocalePost = {
       "Wann die Hausarztmedizin zuständig ist und wann Kardiologie die Abklärung sinnvoll ergänzt.",
     ],
     author: { initials: "FM", name: "Dr. Fidel Ernesto Mesa Prado", line: "Facharzt für Kardiologie · Global Health Spanien" },
-    reviewLine: "Klinisch geprüft von Dr. Eduardo Daniel Rodríguez Olivas, Allgemeinmediziner, Global Health Spanien.",
+    reviewLine: "Die klinische und muttersprachliche Prüfung durch Dr. Eduardo Daniel Rodríguez Olivas ist vor der Veröffentlichung erforderlich.",
     navLabel: "In diesem Ratgeber",
     sections: [
       {
@@ -501,7 +511,7 @@ const de: LocalePost = {
       { q: "Kann eine Videosprechstunde einen hohen Wert klären?", a: "Sie kann ein stabiles Heimprotokoll auswerten und die Nachsorge planen, aber keine akute Organschädigung untersuchen. Warnzeichen gehören zum Notruf oder in die Notaufnahme; ohne Warnzeichen ist die Hausarztmedizin meist der erste Schritt." },
     ],
     disclaimerTitle: "Medizinischer Hinweis",
-    disclaimer: "Verfasst von Dr. Fidel Ernesto Mesa Prado, Facharzt für Kardiologie bei Global Health Spanien, und klinisch geprüft von Dr. Eduardo Daniel Rodríguez Olivas, Allgemeinmediziner. KI-unterstützter Inhalt, der vor Veröffentlichung muttersprachliche Redaktion und abschließende klinische Freigabe benötigt. Er ersetzt keine individuelle Untersuchung. Ändern Sie Medikamente oder Dosen nicht ohne ärztlichen Plan. Wählen Sie bei Brustschmerz, schwerer Atemnot, neurologischen Symptomen, Verwirrtheit, Ohnmacht oder plötzlichem Sehverlust 112.",
+    disclaimer: "Verfasst von Dr. Fidel Ernesto Mesa Prado, Facharzt für Kardiologie bei Global Health Spanien. Die klinische und muttersprachliche Prüfung durch Dr. Eduardo Daniel Rodríguez Olivas ist vor der Veröffentlichung erforderlich. Der KI-unterstützte Inhalt ersetzt keine individuelle Untersuchung. Ändern Sie Medikamente oder Dosen nicht ohne ärztlichen Plan. Wählen Sie bei Brustschmerz, schwerer Atemnot, neurologischen Symptomen, Verwirrtheit, Ohnmacht oder plötzlichem Sehverlust 112.",
   } satisfies Article,
 };
 

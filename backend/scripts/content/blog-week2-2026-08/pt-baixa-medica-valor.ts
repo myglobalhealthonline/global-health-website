@@ -20,6 +20,7 @@ const SICKNESS_LAW =
   "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/2004-34545075-115611936";
 const IAS_2026 =
   "https://diariodarepublica.pt/dr/detalhe/portaria/480-a-2025-993056222";
+const SS_DIRETA = "https://app.seg-social.pt/ptss";
 
 const site = (locale: "pt" | "en" | "de" | "es" | "cs" | "ro", path: string) =>
   `https://www.myglobalhealth.online/portugal/${locale}${path}`;
@@ -39,8 +40,8 @@ const pt: LocalePost = {
     categoryHref: site("pt", "/blog"),
     eyebrow: "Portugal · Valores de 2026",
     h1: "Baixa médica: quanto se recebe e como é calculada",
-    deck: "O subsídio depende das remunerações registadas, da duração e dos dias pagos.",
-    intro: "Em 2026, o <strong>subsídio de doença</strong> paga, na regra geral, 55% da remuneração de referência até ao 30.º dia, 60% do 31.º ao 90.º, 70% do 91.º ao 365.º e 75% depois disso. A Segurança Social calcula uma remuneração diária de referência e considera os dias de espera. O valor final depende do registo contributivo e da decisão individual.",
+    deck: "O subsídio depende da remuneração e dos dias pagos.",
+    intro: "Em 2026, o <strong>subsídio de doença</strong> paga, na regra geral, 55% da remuneração de referência até ao 30.º dia, 60% do 31.º ao 90.º, 70% do 91.º ao 365.º e 75% depois. O valor final depende das remunerações registadas, dos dias pagos e da decisão da Segurança Social.",
     facts: [
       "55% até 30 dias; depois 60%, 70% e 75%",
       "A fórmula habitual usa seis meses de remunerações registadas",
@@ -71,7 +72,7 @@ const pt: LocalePost = {
             "<strong>Do 91.º ao 365.º dia:</strong> 70%.",
             "<strong>Mais de 365 dias:</strong> 75%.",
           ]),
-          p("A subida de escalão aplica-se aos dias dessa fase; não recalcula automaticamente todos os dias anteriores. Nas taxas de 55% e 60%, a lei prevê uma majoração de cinco pontos em algumas situações familiares ou de baixos rendimentos. A Segurança Social verifica essas condições."),
+          p("Cada taxa aplica-se aos dias dessa fase. Nas taxas de 55% e 60%, certas situações familiares ou de baixos rendimentos podem acrescentar cinco pontos."),
           cite("Taxas e majorações confirmadas em 25 de agosto de 2026 no <a href=\"" + SS_SICKNESS + "\" rel=\"nofollow noopener\" target=\"_blank\">portal da Segurança Social</a> e no <a href=\"" + SICKNESS_LAW + "\" rel=\"nofollow noopener\" target=\"_blank\">regime jurídico consolidado</a>."),
         ],
       },
@@ -82,7 +83,7 @@ const pt: LocalePost = {
         h2: "Como calcular uma estimativa do subsídio de doença",
         blocks: [
           lead("Na situação habitual, a remuneração diária de referência é R ÷ 180."),
-          p("R soma as remunerações registadas nos primeiros seis dos oito meses anteriores ao início da incapacidade. Subsídios de férias, de Natal e semelhantes ficam de fora. Consulte a carreira contributiva: o salário líquido não substitui o registo oficial."),
+          p("R soma as remunerações registadas nos primeiros seis dos oito meses anteriores. Subsídios de férias e de Natal ficam de fora; o salário líquido não substitui o registo oficial."),
           warn("Um simulador não decide o valor", "Use-o para perceber a fórmula, não como confirmação de pagamento. A Segurança Social calcula com os dados reais do beneficiário."),
         ],
       },
@@ -103,7 +104,7 @@ const pt: LocalePost = {
         h2: "Quando começa o pagamento da baixa",
         blocks: [
           lead("Para trabalhadores por conta de outrem, o subsídio começa normalmente no 4.º dia; para trabalhadores independentes, no 11.º."),
-          p("A informação oficial prevê situações sem espera, incluindo internamento, cirurgia de ambulatório e tuberculose. Confirme o enquadramento do caso."),
+          p("Internamento, cirurgia de ambulatório e tuberculose estão entre as situações sem espera."),
           p("Uma autodeclaração pode justificar uma ausência curta, mas não cria por si só direito ao subsídio. O nosso guia sobre <a href=\"https://www.myglobalhealth.online/portugal/pt/blog/autodeclaracao-de-doenca-ou-baixa-medica\">autodeclaração e baixa médica</a> explica essa diferença sem repetir o cálculo desta página."),
         ],
       },
@@ -114,7 +115,7 @@ const pt: LocalePost = {
         h2: "IAS, mínimo diário e majoração",
         blocks: [
           lead("O IAS de 2026 é 537,13 €. Na regra geral, o mínimo diário do subsídio ronda 5,37 €, salvo se a própria remuneração de referência for inferior."),
-          p("Nas taxas de 55% e 60% pode existir uma majoração de cinco pontos percentuais em situações previstas na lei, como certos rendimentos baixos ou agregados com descendentes. As majorações não se acumulam automaticamente e têm de ser verificadas no processo individual."),
+          p("Nas taxas de 55% e 60%, a Segurança Social verifica se existe direito à majoração legal de cinco pontos."),
           cite("IAS confirmado pela <a href=\"" + IAS_2026 + "\" rel=\"nofollow noopener\" target=\"_blank\">Portaria n.º 480-A/2025/1</a>."),
         ],
       },
@@ -129,15 +130,16 @@ const pt: LocalePost = {
             "Confirme a data de início e a duração certificada.",
             "Veja os meses usados na remuneração de referência.",
             "Identifique dias de espera ou uma exceção aplicável.",
-            "Consulte o processamento na Segurança Social Direta.",
+            "Consulte o processamento na <a href=\"" + SS_DIRETA + "\" rel=\"nofollow noopener\" target=\"_blank\">Segurança Social Direta</a>.",
           ]),
+          p("Valor diferente, atraso ou indeferimento? Verifique remunerações e dias na Segurança Social Direta e peça esclarecimento à Segurança Social. A clínica esclarece a certificação, não o cálculo ou recurso da prestação."),
           p("Se precisa de avaliação clínica da incapacidade, conheça o serviço de <a href=\"" + site("pt", "/services/baixa-medica") + "\">baixa médica online em Portugal</a>. O médico avalia a situação clínica; não pode garantir um CIT, o direito ao subsídio ou um montante."),
         ],
       },
     ],
     linksEyebrow: "Global Health Portugal",
     linksH2: "Informação e avaliação",
-    linksLead: "A clínica avalia; a Segurança Social decide a prestação.",
+    linksLead: "A clínica avalia; a Segurança Social decide.",
     links: [
       { label: "Avaliação para baixa médica", href: site("pt", "/services/baixa-medica") },
       { label: "Autodeclaração ou baixa médica", href: site("pt", "/blog/autodeclaracao-de-doenca-ou-baixa-medica") },
@@ -156,6 +158,7 @@ const pt: LocalePost = {
     sources: [
       { label: "Segurança Social — Subsídio de Doença", href: SS_SICKNESS },
       { label: "Diário da República — regime consolidado", href: SICKNESS_LAW },
+      { label: "Segurança Social Direta — consultar o processo", href: SS_DIRETA },
     ],
     sourcesNote: "Confirme a decisão na Segurança Social Direta.",
     faqEyebrow: "Perguntas frequentes",
@@ -164,6 +167,7 @@ const pt: LocalePost = {
       { q: "Quanto se recebe nos primeiros 30 dias?", a: "Na regra geral, 55% da remuneração de referência diária nos dias pagos. Não é necessariamente 55% do salário líquido." },
       { q: "Os primeiros três dias são pagos?", a: "Em regra, não para trabalhadores por conta de outrem. Algumas situações oficiais dispensam o período de espera." },
       { q: "A autodeclaração dá direito ao subsídio?", a: "Não por si só. Justificar uma falta e cumprir os requisitos de uma prestação são questões diferentes." },
+      { q: "E se o valor estiver errado ou não chegar?", a: "Consulte remunerações, dias e decisão na Segurança Social Direta e peça esclarecimento à Segurança Social. A clínica não decide o cálculo nem o recurso." },
     ],
     disclaimerTitle: "Informação médica e social",
     disclaimer: "Artigo AI-assisted, preparado para revisão editorial nativa e clínica. Informação geral sobre Portugal em 2026; não substitui aconselhamento médico, jurídico ou laboral, nem uma decisão da Segurança Social.",

@@ -35,6 +35,7 @@ const CSSZ_SICKNESS_DETAIL = "https://www.cssz.gov.cz/podrobne-informace-o-nemoc
 const CSSZ_BENEFIT_CALC = "https://www.cssz.gov.cz/web/cz/vyse-a-vypocet-davek";
 const LABOUR_CODE_192 = "https://ppropo.mpsv.cz/zakon_262_2006";
 const SICKNESS_ACT_187 = "https://ppropo.mpsv.cz/zakon_187_2006";
+const MPSV_CALCULATOR_2026 = "https://mpsv.gov.cz/kalkulacka-pro-vypocet-davek-v-roce-2026";
 
 const href = (lang: string, path: string) => `https://www.myglobalhealth.online/czechia/${lang}${path}`;
 
@@ -57,13 +58,13 @@ const cs: LocalePost = {
     eyebrow: "Česko · Pravidla pro rok 2026",
     h1: "Výpočet nemocenské v roce 2026",
     deck: "Prvních 14 dnů platí zaměstnavatel náhradu mzdy za zameškané směny. Od 15. dne platí ČSSZ nemocenské za kalendářní dny.",
-    intro: "Výpočet nemocenské v roce 2026 má <strong>dva odlišné kroky</strong>. V prvních 14 kalendářních dnech pracovní neschopnosti vyplácí zaměstnavatel náhradu mzdy jen za zameškané směny a placené svátky. Od 15. dne vyplácí ČSSZ nemocenské za každý kalendářní den. Obě částky se nejprve redukují, takže je nelze přesně získat jedním procentem z hrubé měsíční mzdy.",
+    intro: "Výpočet nemocenské v roce 2026 má <strong>dva odlišné kroky</strong>. U běžného zaměstnance v pojištěném pracovním poměru vyplácí v prvních 14 kalendářních dnech zaměstnavatel náhradu mzdy jen za zameškané směny a placené svátky. Od 15. dne vyplácí ČSSZ nemocenské za každý kalendářní den. OSVČ, dohody a přeshraniční situace mohou mít jiná pravidla. Obě částky se redukují, takže je nelze přesně získat jedním procentem z hrubé měsíční mzdy.",
     facts: [
       "1.–14. den: náhrada mzdy od zaměstnavatele",
       "Od 15. dne: nemocenské od ČSSZ",
       "Redukční hranice 2026: 1 633, 2 449 a 4 897 Kč",
     ],
-    primaryCta: { label: "Objednat lékařské posouzení", href: href("cs", "/services/neschopenka-online") },
+    primaryCta: { label: "Otevřít kalkulačku MPSV 2026", href: MPSV_CALCULATOR_2026 },
     secondaryCta: { label: "Jak funguje eNeschopenka", href: href("cs", "/blog/neschopenka-jak-funguje-eneschopenka") },
     panelChip: "Rychlé vysvětlení",
     panelParas: [
@@ -72,7 +73,7 @@ const cs: LocalePost = {
       "ČSSZ od 15. dne používá denní vyměřovací základ.",
     ],
     author: { initials: "VČ", name: "MUDr. Vojtěch Černý", line: "Praktický lékař · Global Health Česko" },
-    reviewLine: "Odborně zkontrolovala MUDr. Romana Pavlů, praktická lékařka pro dospělé, Global Health Česko.",
+    reviewLine: "Odborná a jazyková kontrola MUDr. Romanou Pavlů je nutná před zveřejněním.",
     navLabel: "Obsah článku",
     sections: [
       {
@@ -117,10 +118,11 @@ const cs: LocalePost = {
         eyebrow: "Jak postupovat",
         h2: "Orientační příklad výpočtu nemocenské",
         blocks: [
-          lead("Nejdřív oddělte zameškané směny v prvních 14 dnech od kalendářních dnů od 15. dne."),
-          p("Představte si zaměstnance, který onemocní v úterý a má běžný rozvrh pondělí až pátek. Zaměstnavatel v prvních 14 kalendářních dnech počítá jen směny, které zaměstnanec zameškal. Hodinový průměr zredukuje, vezme 60 % a výsledek vynásobí zameškanými hodinami. Víkendy bez plánované směny se v této části neplatí."),
-          p("Pokud neschopnost pokračuje 15. den, přebírá platbu ČSSZ. Zredukovaný denní základ násobí 60 % a platí každý kalendářní den včetně víkendů. Od 31. a 61. dne se sazba zvýší. Přesnou částku proto spočítá mzdová účtárna a ČSSZ z reálných údajů."),
-          warn("Online kalkulačka dává jen odhad", "Výsledek může změnit rozhodné období, vyloučené dny, směny, předchozí zaměstnání nebo jiný pojistný režim."),
+          lead("Na jednoduchých číslech je vidět, proč se obě fáze nesmí smíchat."),
+          p("Příklad zaměstnavatele: průměrný hodinový výdělek 250 Kč je pod první hodinovou hranicí. Započte se 90 %, tedy 225 Kč, a náhrada činí 60 % z této částky, tedy 135 Kč za zameškanou hodinu. Při devíti osmihodinových směnách je orientační náhrada 72 × 135 Kč = 9 720 Kč před zákonným zaokrouhlením a případnými zvláštnostmi mzdového výpočtu."),
+          p("Příklad ČSSZ: pokud je nezredukovaný denní vyměřovací základ 1 500 Kč, započte se 90 %, tedy 1 350 Kč. Od 15. do 30. dne činí nemocenské 60 % z redukovaného základu, tedy orientačně 810 Kč za kalendářní den. ČSSZ použije skutečné příjmy, započitatelné a vyloučené dny a zákonné zaokrouhlení."),
+          p("Pro vlastní odhad použijte <a href=\"" + MPSV_CALCULATOR_2026 + "\" rel=\"nofollow noopener\" target=\"_blank\">kalkulačku MPSV 2026</a> a výsledek porovnejte s mzdovou účtárnou nebo ČSSZ."),
+          warn("Kalkulačka dává jen odhad", "Výsledek může změnit rozhodné období, vyloučené dny, směny, předchozí zaměstnání, dohoda, OSVČ nebo přeshraniční pojistný režim."),
         ],
       },
       {
@@ -135,6 +137,7 @@ const cs: LocalePost = {
             "Jaký průměrný hodinový výdělek použila mzdová účtárna?",
             "Od kterého dne převzala platbu ČSSZ?",
             "Jaké příjmy a vyloučené dny vstoupily do denního základu?",
+            "Odpovídá odhad v kalkulačce MPSV údajům, které eviduje mzdová účtárna nebo ČSSZ?",
           ]),
           p("Proces vystavení neschopenky vysvětluje náš samostatný průvodce <a href=\"" + href("cs", "/blog/neschopenka-jak-funguje-eneschopenka") + "\">Jak funguje eNeschopenka</a>. Pokud potřebujete lékařské posouzení, můžete využít <a href=\"" + href("cs", "/services/neschopenka-online") + "\">online konzultaci pro neschopenku</a>. Lékař nemůže zaručit vystavení neschopenky ani konkrétní výši dávky."),
         ],
@@ -162,6 +165,7 @@ const cs: LocalePost = {
       { label: "MPSV — Nemocenské pojištění v roce 2026", href: MPSV_SICKNESS_2026 },
       { label: "ČSSZ — Podrobné informace o nemocenském", href: CSSZ_SICKNESS_DETAIL },
       { label: "ČSSZ — Výše a výpočet dávek", href: CSSZ_BENEFIT_CALC },
+      { label: "MPSV — Kalkulačka dávek pro rok 2026", href: MPSV_CALCULATOR_2026 },
       { label: "Zákoník práce § 192", href: LABOUR_CODE_192 },
       { label: "Zákon o nemocenském pojištění", href: SICKNESS_ACT_187 },
     ],
@@ -171,7 +175,7 @@ const cs: LocalePost = {
     faqs: [
       { q: "Kdo platí prvních 14 dnů?", a: "Zaměstnavatel platí náhradu mzdy za zameškané směny a placené svátky. ČSSZ začne platit nemocenské od 15. kalendářního dne." },
       { q: "Kolik procent platí ČSSZ?", a: "Od 15. do 30. dne 60 %, od 31. do 60. dne 66 % a od 61. dne 72 % redukovaného denního vyměřovacího základu." },
-      { q: "Proč kalkulačka ukazuje jinou částku?", a: "Nemusí znát váš skutečný hodinový průměr, směny, rozhodné období, vyloučené dny ani údaje vedené u ČSSZ." },
+      { q: "Kde najdu oficiální kalkulačku?", a: "MPSV zveřejňuje kalkulačku dávek pro rok 2026. Je orientační: nemusí znát váš skutečný hodinový průměr, směny, rozhodné období, vyloučené dny ani všechny údaje vedené u ČSSZ." },
     ],
     disclaimerTitle: "Zdravotní a finanční upozornění",
     disclaimer: "AI-assisted článek připravený pro českou jazykovou a odbornou kontrolu. Obecné informace k 25. srpnu 2026; nejde o individuální lékařskou, právní ani mzdovou radu.",
@@ -212,7 +216,7 @@ const en: LocalePost = {
       "From day 15 onward ČSSZ moves to a daily assessment base, and the percentage increases again after day 30 and day 60.",
     ],
     author: { initials: "VČ", name: "MUDr. Vojtěch Černý", line: "General Practitioner · Global Health Czechia" },
-    reviewLine: "Clinically reviewed by MUDr. Romana Pavlů, General Practitioner for adults, Global Health Czechia.",
+    reviewLine: "Clinical and native editorial review by MUDr. Romana Pavlů is required before publication.",
     navLabel: "In this article",
     sections: [
       {
@@ -376,7 +380,7 @@ const en: LocalePost = {
     ],
     disclaimerTitle: "Medical and financial notice",
     disclaimer:
-      "Written by MUDr. Vojtěch Černý, General Practitioner at Global Health Czechia, and clinically reviewed by MUDr. Romana Pavlů, General Practitioner for adults. This article provides general information about Czech temporary incapacity for work and sickness-related income as of 24 August 2026. It is not personal medical advice, legal advice, or payroll advice. Your employer determines the exact first-phase wage compensation from your payroll records; ČSSZ determines the exact sickness benefit from your countable income under the law. In a medical emergency, call 155 or 112 immediately.",
+      "Written by MUDr. Vojtěch Černý, General Practitioner at Global Health Czechia. Clinical and native editorial review by MUDr. Romana Pavlů is required before publication. This article provides general information about Czech temporary incapacity for work and sickness-related income as of 24 August 2026. It is not personal medical advice, legal advice, or payroll advice. Your employer determines the exact first-phase wage compensation from your payroll records; ČSSZ determines the exact sickness benefit from your countable income under the law. In a medical emergency, call 155 or 112 immediately.",
   } satisfies Article,
 };
 
@@ -1013,7 +1017,7 @@ const de: LocalePost = {
       "Ab Tag 15 verwendet die ČSSZ eine tägliche Bemessungsgrundlage; nach Tag 30 und Tag 60 steigt der Prozentsatz erneut.",
     ],
     author: { initials: "VČ", name: "MUDr. Vojtěch Černý", line: "Allgemeinmediziner · Global Health Tschechien" },
-    reviewLine: "Fachlich geprüft von MUDr. Romana Pavlů, Allgemeinmedizinerin für Erwachsene, Global Health Tschechien.",
+    reviewLine: "Die fachliche und muttersprachliche Prüfung durch MUDr. Romana Pavlů ist vor der Veröffentlichung erforderlich.",
     navLabel: "In diesem Artikel",
     sections: [
       {
@@ -1177,7 +1181,7 @@ const de: LocalePost = {
     ],
     disclaimerTitle: "Medizinischer und finanzieller Hinweis",
     disclaimer:
-      "Verfasst von MUDr. Vojtěch Černý, Allgemeinmediziner bei Global Health Tschechien, fachlich geprüft von MUDr. Romana Pavlů, Allgemeinmedizinerin für Erwachsene. Dieser Artikel enthält allgemeine Informationen zur tschechischen Arbeitsunfähigkeit und zu krankheitsbedingten Zahlungen mit Stand 24. August 2026. Er ersetzt keine persönliche ärztliche Beratung, keine Rechtsberatung und keine Lohnbuchhaltungsberatung. Den exakten Lohnersatz ermittelt Ihr Arbeitgeber anhand Ihrer Entgeltunterlagen; das exakte Krankengeld ermittelt die ČSSZ anhand Ihres anrechenbaren Einkommens nach dem Gesetz. Im medizinischen Notfall rufen Sie sofort 155 oder 112 an.",
+      "Verfasst von MUDr. Vojtěch Černý, Allgemeinmediziner bei Global Health Tschechien. Die fachliche und muttersprachliche Prüfung durch MUDr. Romana Pavlů ist vor der Veröffentlichung erforderlich. Dieser Artikel enthält allgemeine Informationen zur tschechischen Arbeitsunfähigkeit und zu krankheitsbedingten Zahlungen mit Stand 24. August 2026. Er ersetzt keine persönliche ärztliche Beratung, keine Rechtsberatung und keine Lohnbuchhaltungsberatung. Den exakten Lohnersatz ermittelt Ihr Arbeitgeber anhand Ihrer Entgeltunterlagen; das exakte Krankengeld ermittelt die ČSSZ anhand Ihres anrechenbaren Einkommens nach dem Gesetz. Im medizinischen Notfall rufen Sie sofort 155 oder 112 an.",
   } satisfies Article,
 };
 

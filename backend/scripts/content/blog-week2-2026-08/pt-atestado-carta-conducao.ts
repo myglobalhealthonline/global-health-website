@@ -50,23 +50,20 @@ const pt: LocalePost = {
     categoryHref: href("pt", "/blog"),
     eyebrow: "Portugal · Guia administrativo",
     h1: "Atestado médico para carta de condução",
-    deck: "A categoria, a idade e o uso profissional determinam os requisitos. A consulta não garante emissão.",
+    deck: "Categoria, idade e uso profissional determinam os requisitos. A consulta não garante emissão.",
     intro:
-      "O <strong>atestado médico para carta de condução</strong> confirma a aptidão exigida. O <strong>Grupo 1</strong> reúne motociclos, ciclomotores, ligeiros e tratores agrícolas; o <strong>Grupo 2</strong> inclui pesados e certas utilizações profissionais de B ou BE. O médico envia o atestado eletronicamente ao IMT. A consulta não garante emissão e pode exigir avaliação presencial.",
+      "O <strong>Grupo 1</strong> reúne motociclos, ciclomotores, ligeiros e tratores agrícolas; o <strong>Grupo 2</strong> inclui pesados e certos usos profissionais de B ou BE. O médico envia o atestado ao IMT, mas a consulta não garante emissão e pode exigir avaliação presencial.",
     facts: [
-      "Os grupos têm um mapa legal concreto",
-      "O médico transmite o atestado ao IMT",
-      "A consulta não garante aptidão nem emissão",
+      "Categoria e uso definem o grupo",
+      "O médico transmite-o ao IMT",
+      "A avaliação pode exigir presença física",
     ],
-    primaryCta: {
-      label: "Marcar consulta para certificado de condução",
-      href: href("pt", "/services/certificado-medico-carta-de-conducao"),
-    },
+    primaryCta: { label: "Confirmar grupo e prazo oficial", href: JUSTICA_REVALIDACAO },
     secondaryCta: { label: "Regras de revalidação", href: JUSTICA_REVALIDACAO },
     panelChip: "O essencial",
     panelParas: [
-      "A categoria e a atividade definem o grupo.",
-      "O médico envia o atestado; o condutor pede a revalidação.",
+      "Categoria e atividade definem o grupo.",
+      "O médico envia o atestado; o condutor trata da revalidação.",
     ],
     author: {
       initials: "RR",
@@ -82,9 +79,14 @@ const pt: LocalePost = {
         eyebrow: "Mapa legal",
         h2: "Que categorias pertencem ao Grupo 1 e ao Grupo 2?",
         blocks: [
-          lead("A classificação depende da categoria e, por vezes, da atividade exercida."),
-          p("O <strong>Grupo 1</strong> abrange AM, A1, A2, A, B1, B e BE, além de ciclomotores e tratores agrícolas. O <strong>Grupo 2</strong> abrange C1, C1E, C, CE, D1, D1E, D e DE. Também entram no Grupo 2 condutores de B ou BE que conduzam ambulâncias, veículos de bombeiros, transporte de doentes, transporte escolar ou coletivo de crianças e automóveis ligeiros de passageiros de aluguer."),
-          p("Se usa B ou BE profissionalmente, indique a atividade na marcação. O grupo altera os critérios clínicos e as avaliações complementares aplicáveis."),
+          lead("Use este mapa rápido antes de marcar: a categoria e a atividade determinam o grupo."),
+          ul([
+            "<strong>Grupo 1:</strong> AM, A1, A2, A, B1, B, BE, ciclomotores e tratores agrícolas.",
+            "<strong>Grupo 2 por categoria:</strong> C1, C1E, C, CE, D1, D1E, D e DE.",
+            "<strong>B ou BE profissional:</strong> ambulâncias, bombeiros, transporte de doentes, escolar ou de crianças e ligeiros de passageiros de aluguer entram no Grupo 2.",
+            "<strong>Na dúvida:</strong> confirme a categoria e descreva a atividade; B ou BE nem sempre significa Grupo 1.",
+          ]),
+          p("O grupo altera critérios clínicos, periodicidade e avaliações complementares."),
           cite('Mapa oficial: <a href="' + IMT_REQUISITOS + '" rel="nofollow noopener" target="_blank">IMT — carta de condução</a> e <a href="' + JUSTICA_REVALIDACAO + '" rel="nofollow noopener" target="_blank">Justiça — revalidar a carta</a>.'),
         ],
       },
@@ -94,7 +96,7 @@ const pt: LocalePost = {
         eyebrow: "Revalidação",
         h2: "Quando são pedidos atestado e avaliação psicológica?",
         blocks: [
-          lead("Os prazos variam com a categoria, a habilitação e a idade."),
+          lead("Os prazos variam com categoria, habilitação e idade."),
           p("A Justiça indica atestado a partir dos 60 anos no Grupo 1 e também certificado de aptidão psicológica depois dos 70. No Grupo 2, a revalidação periódica exige atestado e, depois dos 50, certificado psicológico. Primeira emissão, troca de carta estrangeira ou indicação da autoridade de saúde podem seguir regras próprias."),
           warn("Confirme o prazo oficial", "Use a sua categoria, data de nascimento e data de habilitação. Se recebeu uma notificação do IMT, leve-a à consulta."),
         ],
@@ -105,14 +107,15 @@ const pt: LocalePost = {
         eyebrow: "Avaliação",
         h2: "O que preparar para a avaliação médica",
         blocks: [
-          lead("A consulta sustenta uma decisão clínica responsável."),
+          lead("A consulta sustenta a decisão clínica."),
           p("Tenha consigo identificação, categoria, medicamentos e relatórios relevantes. O médico pode precisar de esclarecer visão, mobilidade, doenças crónicas, perda de consciência ou tratamentos que afetem a vigilância."),
           ul([
             "Carta, categoria e eventual notificação do IMT.",
             "Medicação, relatórios relevantes, óculos ou lentes.",
           ]),
-          p("A teleconsulta pode ser adequada se a informação for suficiente. Caso contrário, o médico indicará exame presencial, teste ou parecer complementar."),
+          p("A teleconsulta pode bastar quando há informação suficiente; caso contrário, será indicado exame presencial, teste ou parecer."),
           warn("Sem garantia prévia", "A marcação paga uma avaliação, não um resultado. O atestado só pode ser emitido se o médico concluir que existem elementos suficientes e que os critérios aplicáveis estão cumpridos."),
+          p("Se não houver emissão, confirme o passo seguinte: relatório em falta, exame presencial, visão, especialidade ou psicologia. Reúna-o antes da revalidação."),
         ],
       },
       {
@@ -124,6 +127,7 @@ const pt: LocalePost = {
           lead("Depois de emitido, o atestado é transmitido pelo médico através da plataforma eletrónica e fica disponível para o IMT."),
           p("Não precisa de enviar uma cópia do atestado eletrónico. A revalidação é um pedido separado, online ou num balcão. Junte o certificado psicológico ou outro documento quando forem exigidos."),
           p("A submissão eletrónica não elimina a avaliação clínica. Guarde a confirmação da revalidação e acompanhe pedidos do IMT."),
+          p("Se o atestado não aparecer ou o IMT pedir esclarecimentos, confirme com o emissor e acompanhe o pedido no IMT. A clínica não decide a revalidação."),
         ],
       },
       {
@@ -139,7 +143,7 @@ const pt: LocalePost = {
     linksEyebrow: "Global Health Portugal",
     linksH2: "Próximos passos",
     linksLead:
-      "A consulta avalia a categoria, a história e os documentos disponíveis.",
+      "A consulta avalia categoria, história e documentos.",
     links: [
       { label: "Consulta para atestado da carta", href: href("pt", "/services/certificado-medico-carta-de-conducao") },
       { label: "Médicos em Portugal", href: href("pt", "/doctors") },
@@ -147,7 +151,7 @@ const pt: LocalePost = {
     ],
     ctaBox: {
       h3: "Precisa de avaliação para o atestado?",
-      text: "Prepare a categoria, a medicação e os relatórios. A consulta não garante emissão.",
+      text: "Prepare categoria, medicação e relatórios. Não há garantia de emissão.",
       primary: { label: "Marcar consulta", href: href("pt", "/services/certificado-medico-carta-de-conducao") },
       secondary: { label: "Ver médicos", href: href("pt", "/doctors") },
     },
@@ -228,7 +232,7 @@ const en: LocalePost = {
       line: "General Practitioner · Global Health Portugal",
     },
     reviewLine:
-      "Clinically reviewed by Dra. Margarida Domingues e Andrade, General Practitioner, Global Health Portugal.",
+      "Clinical, legal and native editorial review is required before publication.",
     navLabel: "In this article",
     sections: [
       {
@@ -394,7 +398,7 @@ const en: LocalePost = {
     ],
     disclaimerTitle: "Medical Disclaimer",
     disclaimer:
-      "Written by Dr Rui Diogo Rodrigues, General Practitioner at Global Health Portugal, and clinically reviewed by Dra. Margarida Domingues e Andrade, General Practitioner. This article gives general information about driving licence medical certificates in Portugal. It is not individual medical advice and it is not legal advice. Whether the certificate can be issued depends on the licence category, age, medical history and the doctor's assessment. In a medical emergency, call 112 immediately.",
+      "Written by Dr Rui Diogo Rodrigues, General Practitioner at Global Health Portugal. Clinical, legal and native editorial review is required before publication. This article gives general information about driving licence medical certificates in Portugal. It is not individual medical advice and it is not legal advice. Whether the certificate can be issued depends on the licence category, age, medical history and the doctor's assessment. In a medical emergency, call 112 immediately.",
   } satisfies Article,
 };
 
@@ -437,7 +441,7 @@ const de: LocalePost = {
       line: "Allgemeinmediziner · Global Health Portugal",
     },
     reviewLine:
-      "Fachlich geprüft von Dra. Margarida Domingues e Andrade, Allgemeinmedizinerin, Global Health Portugal.",
+      "Die klinische, rechtliche und muttersprachliche Prüfung ist vor der Veröffentlichung erforderlich.",
     navLabel: "In diesem Artikel",
     sections: [
       {
@@ -603,7 +607,7 @@ const de: LocalePost = {
     ],
     disclaimerTitle: "Medizinischer Hinweis",
     disclaimer:
-      "Verfasst von Dr Rui Diogo Rodrigues, Allgemeinmediziner bei Global Health Portugal, fachlich geprüft von Dra. Margarida Domingues e Andrade, Allgemeinmedizinerin. Der Artikel enthält allgemeine Informationen zum ärztlichen Attest für den Führerschein in Portugal. Er ersetzt weder eine individuelle medizinische Beurteilung noch eine rechtliche Beratung. Ob das Attest ausgestellt werden kann, hängt von Führerscheinkategorie, Alter, Krankengeschichte und ärztlicher Untersuchung ab. Im medizinischen Notfall rufen Sie sofort 112 an.",
+      "Verfasst von Dr Rui Diogo Rodrigues, Allgemeinmediziner bei Global Health Portugal. Die klinische, rechtliche und muttersprachliche Prüfung ist vor der Veröffentlichung erforderlich. Der Artikel enthält allgemeine Informationen zum ärztlichen Attest für den Führerschein in Portugal. Er ersetzt weder eine individuelle medizinische Beurteilung noch eine rechtliche Beratung. Ob das Attest ausgestellt werden kann, hängt von Führerscheinkategorie, Alter, Krankengeschichte und ärztlicher Untersuchung ab. Im medizinischen Notfall rufen Sie sofort 112 an.",
   } satisfies Article,
 };
 

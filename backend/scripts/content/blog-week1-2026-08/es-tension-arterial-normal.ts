@@ -83,9 +83,9 @@ const es: LocalePost = {
         id: "cifras",
         nav: "Las cifras",
         eyebrow: "Lo primero",
-        h2: "Qué tensión se considera normal en un adulto",
+        h2: "Tabla rápida: qué tensión se considera normal en un adulto",
         blocks: [
-          lead("Si buscas una respuesta rápida, aquí está: por debajo de 120/80 mmHg es una lectura claramente normal; 140/90 mmHg repetido ya obliga a pensar en hipertensión."),
+          lead("La referencia práctica no cambia por sexo ni por década de edad: por debajo de 120/80 mmHg es una lectura claramente normal; 140/90 mmHg repetido ya obliga a pensar en hipertensión."),
           p("Entre ambos extremos está la zona que más se malinterpreta. Mucha gente lee 132/84, se queda con el “no llego a 14/9” y asume que está todo bien. No es así. Puede no ser aún hipertensión confirmada, pero tampoco es una cifra ideal, y merece seguimiento si se repite."),
           ul([
             "<strong>Por debajo de 120/80</strong>: lectura claramente normal.",

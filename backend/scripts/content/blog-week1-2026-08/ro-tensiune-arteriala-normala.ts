@@ -29,8 +29,6 @@ const CARDIOPORTAL_CE =
   "https://www.cardioportal.ro/pacienti/factori-de-risc-cardiovascular/hipertensiunea-arteriala-2/ce-inseamna-hipertensiune-arteriala/";
 const CARDIOPORTAL_MASURARE =
   "https://www.cardioportal.ro/pacienti/factori-de-risc-cardiovascular/hipertensiunea-arteriala-2/cum-masuram-tensiunea-arteriala/";
-const MS_GUIDE =
-  "https://oldsite.ms.ro/wp-content/uploads/2021/04/ANEXA-22_Hipertensiunea-arteriala.docx";
 
 const href = (path: string) => `https://www.myglobalhealth.online/romania/ro${path}`;
 const toolHref = href("/tools/blood-pressure-chart");
@@ -82,9 +80,9 @@ const ro: LocalePost = {
         id: "valori",
         nav: "Valorile",
         eyebrow: "Răspunsul scurt",
-        h2: "Ce tensiune se consideră normală la adult",
+        h2: "Tabel rapid: ce tensiune se consideră normală la adult",
         blocks: [
-          lead("Dacă vreți răspunsul direct: sub 120/80 mmHg este clar normal, iar 140/90 mmHg repetat în cabinet intră deja în zona hipertensiunii."),
+          lead("Reperul practic nu se schimbă la fiecare vârstă: sub 120/80 mmHg este clar normal, iar 140/90 mmHg repetat în cabinet intră deja în zona hipertensiunii."),
           p("Zona care creează cele mai multe confuzii este cea intermediară. O persoană cu 132/84 poate să audă „nu e chiar rău” și să creadă că nu mai contează. Contează. Poate să nu fie încă hipertensiune confirmată, dar nu mai este nici lectura ideală și trebuie urmărită dacă se repetă."),
           ul([
             "<strong>Sub 120/80</strong>: valoare clar normală.",
@@ -214,7 +212,6 @@ const ro: LocalePost = {
       { label: "Cardioportal — Hipertensiunea arterială", href: CARDIOPORTAL_HTA },
       { label: "Cardioportal — Ce înseamnă hipertensiune arterială", href: CARDIOPORTAL_CE },
       { label: "Cardioportal — Cum măsurăm tensiunea arterială", href: CARDIOPORTAL_MASURARE },
-      { label: "Ministerul Sănătății — ghid hipertensiune", href: MS_GUIDE },
     ],
     sourcesNote:
       "Linkurile deschid resurse externe. Acest articol explică praguri și pași practici; diagnosticul și ținta de tratament se individualizează în consultație.",

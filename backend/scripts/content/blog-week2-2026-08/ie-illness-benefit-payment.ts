@@ -36,6 +36,8 @@ const REVENUE_DSP_TAX =
   "https://www.revenue.ie/en/jobs-and-pensions/taxation-of-social-welfare-payments/how-dsp-payments-taxed.aspx";
 const ENTERPRISE_SICK_LEAVE =
   "https://www.gov.ie/en/department-of-enterprise-tourism-and-employment/press-releases/entitlement-to-statutory-sick-leave-to-remain-unchanged-at-5-days/";
+const STATUTORY_SICK_LEAVE_2026 =
+  "https://www.gov.ie/en/department-of-social-protection/publications/illness-benefit-injury-benefit-and-statutory-sick-leave-in-2025/";
 
 const href = (lang: string, path: string) => `https://www.myglobalhealth.online/ireland/${lang}${path}`;
 const claimGuideSlug = {
@@ -68,7 +70,7 @@ const en: LocalePost = {
   title: "How Much Is Illness Benefit in Ireland in 2026?",
   excerpt: "Current Illness Benefit rates, waiting days, weekly payment timing, tax and the difference from employer sick pay.",
   seoTitle: "Illness Benefit Ireland: 2026 rates and timing",
-  seoDescription: "See 2026 Illness Benefit rates in Ireland, the three waiting days, weekly payment timing, tax and how employer sick pay differs.",
+  seoDescription: "See 2026 Illness Benefit rates in Ireland, when payment starts, weekly timing, tax and how employer sick pay affects the first paid day.",
   category: "General Practice",
   article: {
     lang: "en-IE",
@@ -78,22 +80,22 @@ const en: LocalePost = {
     eyebrow: "Ireland · 2026 payment guide",
     h1: "How much is Illness Benefit in Ireland in 2026?",
     deck: "The maximum personal rate is EUR 254 a week, but earnings, timing and tax affect an individual payment.",
-    intro: "In 2026, the maximum personal rate of <strong>Illness Benefit is EUR 254 a week</strong> when average weekly earnings in the relevant tax year were at least EUR 300. Lower earnings bands have lower rates. DSP pays weekly after three waiting days, and the payment is taxable. Our separate <a href=\"" + enLinks.claimGuide + "\">Illness Benefit claim guide</a> covers eligibility, PRSI and applying.",
+    intro: "In 2026, the maximum personal <strong>Illness Benefit is EUR 254 a week</strong>. Lower earnings bands receive less. Your first paid day depends on how much of the five-day statutory sick-leave entitlement remains. The payment is taxable. See our <a href=\"" + enLinks.claimGuide + "\">claim guide</a> for eligibility, PRSI and applying.",
     facts: [
       "Maximum 2026 personal rate: EUR 254 a week",
       "Four rate bands reflect average weekly earnings",
       "The payment is taxable but not subject to PRSI or USC",
     ],
-    primaryCta: { label: "Book a sick certificate assessment", href: enLinks.service },
+    primaryCta: { label: "Check the 2026 start-day rules", href: STATUTORY_SICK_LEAVE_2026 },
     secondaryCta: { label: "Read the claim guide", href: enLinks.claimGuide },
     panelChip: "Quick answer",
     panelParas: [
       "EUR 254 is the maximum personal rate, not a flat rate.",
-      "Three waiting days normally apply.",
-      "Payment may arrive Monday to Saturday.",
+      "The first paid day can be day 6, day 5 or day 4.",
+      "Payment is weekly; the start date varies.",
     ],
     author: { initials: "TF", name: "Dr Tiago Miguel Figueira", line: "IMC 523449 · Clinical Director, Global Health" },
-    reviewLine: "Clinically reviewed by Dr Ahmed Maklad, General Practitioner, Global Health Ireland.",
+    reviewLine: "Clinical and native editorial review by Dr Ahmed Maklad is required before publication.",
     navLabel: "In this guide",
     sections: [
       {
@@ -102,7 +104,7 @@ const en: LocalePost = {
         eyebrow: "Official bands",
         h2: "Illness Benefit rates in Ireland in 2026",
         blocks: [
-          lead("Your personal rate depends on average weekly earnings in the relevant tax year."),
+          lead("DSP uses average weekly earnings in the relevant tax year."),
           ul([
             "<strong>EUR 300 or more:</strong> EUR 254 a week.",
             "<strong>EUR 220–299.99:</strong> EUR 198.90 a week.",
@@ -119,7 +121,7 @@ const en: LocalePost = {
         h2: "Why an individual payment may differ",
         blocks: [
           lead("DSP uses earnings and weeks worked in the relevant tax year."),
-          p("Increases may apply for a qualified adult or child, so a household payment can differ from the personal rate. EUR 254 is the maximum personal rate, not a promise of what every claimant will receive."),
+          p("At the top band, a qualified-adult increase is EUR 168.60, giving EUR 422.60 combined. At lower bands it is EUR 109.20. Child Support Payment may add EUR 58 for a child under 12 or EUR 78 from age 12. Conditions apply; additions are not automatic."),
         ],
       },
       {
@@ -128,10 +130,16 @@ const en: LocalePost = {
         eyebrow: "Waiting days",
         h2: "When is Illness Benefit paid?",
         blocks: [
-          lead("Illness Benefit is paid weekly, but the first three days off sick are normally unpaid waiting days."),
-          p("Sunday is not a waiting day. Payment may issue Monday to Saturday depending on claim registration and the first day of illness. Processing can make the first transfer arrive later than day four."),
-          p("Apply within six weeks of becoming ill and make sure the Certificate of Incapacity for Work has been completed. Late claims can be affected unless DSP accepts a reason for delay. For the application route and PRSI rules, use the <a href=\"" + enLinks.claimGuide + "\">separate claim guide</a>."),
-          warn("Do not plan around a fixed payment weekday", "Check MyWelfare or contact DSP for your own claim. The public rule is weekly payment, not one universal weekday."),
+          lead("Illness Benefit is paid weekly, but your first payable day depends on the statutory sick leave you still have available in 2026."),
+          ul([
+            "<strong>None used:</strong> five employer-paid days, then Illness Benefit from day 6.",
+            "<strong>One used:</strong> four employer-paid days, then Illness Benefit from day 5.",
+            "<strong>Three used:</strong> two employer-paid days plus one waiting day; Illness Benefit from day 4.",
+            "<strong>All five used:</strong> three waiting days; Illness Benefit from day 4.",
+          ]),
+          p("The two payments cannot cover the same day. Sunday is not a waiting day. Processing may make the transfer arrive after the first payable day."),
+          p("Apply within six weeks and ensure the Certificate of Incapacity for Work is completed. See the <a href=\"" + enLinks.claimGuide + "\">claim guide</a> for the route and PRSI rules."),
+          warn("Check your own claim", "Count the statutory sick-leave days already used, then check MyWelfare or contact DSP. These examples do not predict a transfer date."),
         ],
       },
       {
@@ -140,9 +148,8 @@ const en: LocalePost = {
         eyebrow: "Two separate payments",
         h2: "How Illness Benefit differs from employer sick pay",
         blocks: [
-          lead("Illness Benefit is a state payment and is separate from your employer's sick-pay policy."),
-          p("Statutory sick leave remains five days in 2026 for an eligible employee. The employer pays 70% of normal daily earnings, subject to the statutory cap. A workplace scheme may be more generous."),
-          p("Once statutory or employer sick pay is exhausted, Illness Benefit may still apply if the claim meets DSP rules. Some employers receive Illness Benefit directly while continuing payroll; others require the employee to keep the payment. Check your contract and payslip before assuming the two amounts are added together."),
+          lead("The state benefit and employer sick pay are separate."),
+          p("Eligible employees have five statutory sick-leave days in 2026, paid at 70% of normal daily earnings subject to the cap. A better workplace scheme may apply. Check your contract and payslip: the two payments are not automatically added together."),
           cite("The five-day 2026 position is explained in the official <a href=\"" + ENTERPRISE_SICK_LEAVE + "\" rel=\"nofollow noopener\" target=\"_blank\">statutory sick leave update</a>."),
         ],
       },
@@ -153,8 +160,8 @@ const en: LocalePost = {
         h2: "Is Illness Benefit taxable?",
         blocks: [
           lead("Yes. DSP normally pays Illness Benefit without deducting tax, then reports the payment to Revenue."),
-          p("Revenue may collect income tax by adjusting your tax credits and rate band. PRSI and USC are not charged on Illness Benefit, and increases for dependent children are not taxed. This can change the tax deducted from wages during or after the claim, so the DSP transfer alone does not show the full net effect."),
-          p("If you need medical certification, the <a href=\"" + enLinks.service + "\">online sick certificate service</a> can assess your health and work capacity. A consultation does not guarantee a certificate, eligibility or a payment amount."),
+          p("Revenue may adjust tax credits and rate bands. PRSI and USC do not apply, and child increases are not taxed, so the DSP transfer alone does not show the final tax effect."),
+          p("Medical certification, benefit entitlement and tax treatment are separate decisions. A medical consultation cannot guarantee a certificate, eligibility or a payment amount."),
         ],
       },
     ],
@@ -169,7 +176,7 @@ const en: LocalePost = {
     ],
     ctaBox: {
       h3: "Need a medical assessment for sick leave?",
-      text: "A GP can assess fitness for work. Certification and benefit entitlement depend on individual requirements.",
+      text: "A GP assesses fitness for work; DSP decides benefit entitlement.",
       primary: { label: "Book an assessment", href: enLinks.service },
       secondary: { label: "View doctors", href: enLinks.doctors },
     },
@@ -178,6 +185,7 @@ const en: LocalePost = {
     sourcesLead: "Rules verified on 25 August 2026.",
     sources: [
       { label: "Department of Social Protection — Illness Benefit", href: GOV_IB },
+      { label: "DSP — Illness Benefit and statutory sick leave in 2026", href: STATUTORY_SICK_LEAVE_2026 },
       { label: "MyWelfare — Illness Benefit", href: MYWELFARE },
       { label: "Revenue — tax treatment of Illness Benefit", href: REVENUE_TAX },
       { label: "Department of Enterprise — statutory sick leave", href: ENTERPRISE_SICK_LEAVE },
@@ -188,6 +196,7 @@ const en: LocalePost = {
     faqs: [
       { q: "Does everyone get EUR 254 a week?", a: "No. EUR 254 is the maximum 2026 personal rate. DSP uses four bands based on average weekly earnings, and household increases may also apply." },
       { q: "What day is Illness Benefit paid?", a: "It is paid weekly and may issue Monday to Saturday, depending on claim registration and the first day of illness." },
+      { q: "Does it always start after three waiting days?", a: "No. With all five statutory days available it usually starts on day 6; with all five used, on day 4. Partly used entitlement can mean day 5 or day 4." },
       { q: "Is Illness Benefit taxed?", a: "Yes. DSP usually pays it gross and reports it to Revenue. Income tax may be collected through adjusted credits or rate bands; PRSI and USC do not apply." },
     ],
     disclaimerTitle: "Medical and benefits information",
@@ -229,7 +238,7 @@ const pt: LocalePost = {
       "Como o Illness Benefit e tributado, o que o Revenue faz nos bastidores e porque o recibo pode parecer estranho durante um pedido ativo.",
     ],
     author: { initials: "TF", name: "Dr Tiago Miguel Figueira", line: "IMC 523449 · Diretor Clinico, Global Health" },
-    reviewLine: "Revisto clinicamente pelo Dr Ahmed Maklad, Medico de Familia, Global Health Irlanda.",
+    reviewLine: "Revisão clínica e editorial nativa pelo Dr Ahmed Maklad obrigatória antes da publicação.",
     navLabel: "Neste artigo",
     sections: [
       {
@@ -402,7 +411,7 @@ const pt: LocalePost = {
     ],
     disclaimerTitle: "Aviso medico",
     disclaimer:
-      "Escrito pelo Dr Tiago Miguel Figueira (IMC 523449), Diretor Clinico da Global Health, e revisto clinicamente pelo Dr Ahmed Maklad, Medico de Familia. Este artigo fornece informacao geral sobre o calendario de pagamento e a tributacao do sistema irlandes. Nao constitui aconselhamento medico personalizado, juridico, fiscal ou de payroll. As decisoes sobre Illness Benefit cabem ao Department of Social Protection e ao Revenue. Se tiver sintomas de emergencia, ligue imediatamente 112 ou 999.",
+      "Escrito pelo Dr Tiago Miguel Figueira (IMC 523449), Diretor Clinico da Global Health. A revisão clínica e editorial nativa pelo Dr Ahmed Maklad é obrigatória antes da publicação. Este artigo fornece informacao geral sobre o calendario de pagamento e a tributacao do sistema irlandes. Nao constitui aconselhamento medico personalizado, juridico, fiscal ou de payroll. As decisoes sobre Illness Benefit cabem ao Department of Social Protection e ao Revenue. Se tiver sintomas de emergencia, ligue imediatamente 112 ou 999.",
   } satisfies Article,
 };
 
@@ -440,7 +449,7 @@ const es: LocalePost = {
       "Como tributa el Illness Benefit, que hace Revenue por detras y por que la nomina puede cambiar mientras la prestacion esta activa.",
     ],
     author: { initials: "TF", name: "Dr Tiago Miguel Figueira", line: "IMC 523449 · Director Clinico, Global Health" },
-    reviewLine: "Revisado clinicamente por el Dr Ahmed Maklad, medico de familia, Global Health Irlanda.",
+    reviewLine: "Revisión clínica y editorial nativa por el Dr Ahmed Maklad obligatoria antes de publicar.",
     navLabel: "En este articulo",
     sections: [
       {
@@ -613,7 +622,7 @@ const es: LocalePost = {
     ],
     disclaimerTitle: "Aviso medico",
     disclaimer:
-      "Escrito por el Dr Tiago Miguel Figueira (IMC 523449), Director Clinico de Global Health, y revisado clinicamente por el Dr Ahmed Maklad, medico de familia. Este articulo ofrece informacion general sobre el calendario de pago y la tributacion del sistema irlandes. No sustituye consejo medico individual, asesoramiento legal, fiscal ni de payroll. Las decisiones sobre Illness Benefit corresponden al Department of Social Protection y a Revenue. Si tiene sintomas de emergencia, llame de inmediato al 112 o al 999.",
+      "Escrito por el Dr Tiago Miguel Figueira (IMC 523449), Director Clinico de Global Health. La revisión clínica y editorial nativa por el Dr Ahmed Maklad es obligatoria antes de publicar. Este articulo ofrece informacion general sobre el calendario de pago y la tributacion del sistema irlandes. No sustituye consejo medico individual, asesoramiento legal, fiscal ni de payroll. Las decisiones sobre Illness Benefit corresponden al Department of Social Protection y a Revenue. Si tiene sintomas de emergencia, llame de inmediato al 112 o al 999.",
   } satisfies Article,
 };
 
@@ -862,7 +871,7 @@ const ro: LocalePost = {
       "Cum este taxat Illness Benefit, ce face Revenue in fundal si de ce fluturasul de salariu poate arata ciudat cat timp plata este activa.",
     ],
     author: { initials: "TF", name: "Dr Tiago Miguel Figueira", line: "IMC 523449 · Director Clinic, Global Health" },
-    reviewLine: "Revizuit clinic de Dr Ahmed Maklad, medic de familie, Global Health Irlanda.",
+    reviewLine: "Revizuirea clinică și editorială nativă de către Dr Ahmed Maklad este obligatorie înainte de publicare.",
     navLabel: "In acest articol",
     sections: [
       {
@@ -1035,7 +1044,7 @@ const ro: LocalePost = {
     ],
     disclaimerTitle: "Avertisment medical",
     disclaimer:
-      "Articol scris de Dr Tiago Miguel Figueira (IMC 523449), Director Clinic la Global Health, si revizuit clinic de Dr Ahmed Maklad, medic de familie. Acest text ofera informatii generale despre calendarul de plata si fiscalitatea sistemului irlandez. Nu reprezinta sfat medical personalizat, consultanta juridica, fiscala sau de payroll. Deciziile privind Illness Benefit apartin Department of Social Protection si Revenue. Daca aveti simptome de urgenta, sunati imediat la 112 sau 999.",
+      "Articol scris de Dr Tiago Miguel Figueira (IMC 523449), Director Clinic la Global Health. Revizuirea clinică și editorială nativă de către Dr Ahmed Maklad este obligatorie înainte de publicare. Acest text ofera informatii generale despre calendarul de plata si fiscalitatea sistemului irlandez. Nu reprezinta sfat medical personalizat, consultanta juridica, fiscala sau de payroll. Deciziile privind Illness Benefit apartin Department of Social Protection si Revenue. Daca aveti simptome de urgenta, sunati imediat la 112 sau 999.",
   } satisfies Article,
 };
 
@@ -1073,7 +1082,7 @@ const de: LocalePost = {
       "Wie Illness Benefit besteuert wird, was Revenue im Hintergrund aendert und warum die Gehaltsabrechnung waehrend eines laufenden Anspruchs ungewoehnlich aussehen kann.",
     ],
     author: { initials: "TF", name: "Dr Tiago Miguel Figueira", line: "IMC 523449 · Aerztlicher Leiter, Global Health" },
-    reviewLine: "Fachlich geprueft von Dr Ahmed Maklad, Allgemeinmediziner, Global Health Irland.",
+    reviewLine: "Die fachliche und muttersprachliche Prüfung durch Dr Ahmed Maklad ist vor der Veröffentlichung erforderlich.",
     navLabel: "In diesem Artikel",
     sections: [
       {
@@ -1246,7 +1255,7 @@ const de: LocalePost = {
     ],
     disclaimerTitle: "Medizinischer Hinweis",
     disclaimer:
-      "Verfasst von Dr Tiago Miguel Figueira (IMC 523449), Aerztlicher Leiter bei Global Health, und fachlich geprueft von Dr Ahmed Maklad, Allgemeinmediziner. Dieser Artikel bietet allgemeine Informationen zu Zahlungszeitpunkt und steuerlicher Behandlung im irischen System. Er ersetzt keine individuelle medizinische Beratung, Rechtsberatung, Steuerberatung oder Payroll-Beratung. Entscheidungen zu Illness Benefit treffen Department of Social Protection und Revenue. Bei Notfallsymptomen rufen Sie sofort 112 oder 999 an.",
+      "Verfasst von Dr Tiago Miguel Figueira (IMC 523449), Aerztlicher Leiter bei Global Health. Vor der Veroeffentlichung ist eine fachliche und muttersprachliche Pruefung durch Dr Ahmed Maklad erforderlich. Dieser Artikel bietet allgemeine Informationen zu Zahlungszeitpunkt und steuerlicher Behandlung im irischen System. Er ersetzt keine individuelle medizinische Beratung, Rechtsberatung, Steuerberatung oder Payroll-Beratung. Entscheidungen zu Illness Benefit treffen Department of Social Protection und Revenue. Bei Notfallsymptomen rufen Sie sofort 112 oder 999 an.",
   } satisfies Article,
 };
 

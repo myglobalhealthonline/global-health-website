@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import {
   WEEK2_POST_SETS,
@@ -127,5 +128,15 @@ test("Spain routes stable hypertension to GP care and selected cases to cardiolo
     assert.match(html, /\/services\/enfermedades-cronicas-online/);
     assert.match(html, /\/services\/cardiologo-online/);
   }
+});
+
+test("Week 2 updater is dry-run by default and refuses unsafe records", () => {
+  const updater = readFileSync(new URL("./update-week2-blog-drafts-2026-08.ts", import.meta.url), "utf8");
+  assert.match(updater, /const APPLY = process\.argv\.includes\("--apply"\)/);
+  assert.match(updater, /existing\.status !== "DRAFT"/);
+  assert.match(updater, /existing\.publishedAt \|\| existing\.lastReviewedAt/);
+  assert.match(updater, /existing\.translations\.length !== 0/);
+  assert.match(updater, /currentChecklist\.seedHash !== currentHash/);
+  assert.match(updater, /VERIFIED: six DRAFT records updated; zero translations; nothing published/);
 });
 
