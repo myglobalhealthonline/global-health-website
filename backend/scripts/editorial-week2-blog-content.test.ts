@@ -59,7 +59,6 @@ test("Week 2 drafts meet metadata, structure, linking and source gates", () => {
     }
   }
 });
-
 test("hypertension topics enforce medication, emergency and myth-correction safety", () => {
   for (const key of ["es-tension-alta-urgencias", "ro-scade-tensiunea-rapid"]) {
     const set = WEEK2_POST_SETS.find((candidate) => candidate.key === key)!;
