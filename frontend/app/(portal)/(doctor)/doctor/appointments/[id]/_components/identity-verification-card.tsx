@@ -11,13 +11,12 @@ import {
 } from "@/lib/api/doctor-identity-verification-client";
 
 /**
- * Patient identity status during an Irish consultation, with the ID photo and
- * selfie side by side so the doctor can make the call the law asks them to.
+ * Patient identity status during a consultation, with the ID photo and selfie
+ * side by side so the doctor can make the call the law asks them to.
  *
- * Ireland only — the caller gates on country. The images load only when the
- * doctor expands the comparison, so opening a consultation does not pull a
- * patient's biometric images (and does not write an access-log row) unless
- * someone actually looked.
+ * The images load only when the doctor expands the comparison, so opening a
+ * consultation does not pull a patient's biometric images (and does not write
+ * an access-log row) unless someone actually looked.
  */
 
 type Msg = { kind: "ok" | "err"; text: string } | null;

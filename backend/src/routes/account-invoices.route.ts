@@ -10,6 +10,7 @@ import {
   buildSubscriptionInvoicePdfData,
 } from "../modules/invoices/subscription-invoice-document.service.js";
 import { renderInvoicePdfBuffer } from "../modules/invoices/invoice-pdf.js";
+import { getObject, streamToNodeReadable } from "../services/object-storage.js";
 
 /**
  * The signed-in patient's own Global Health billing documents — the invoices,
@@ -98,6 +99,7 @@ const accountInvoicesRoute: FastifyPluginAsync = async (app) => {
           creditNoteReason: true,
           countryCode: true,
           generatedAt: true,
+          pdfStorageKey: true,
           order: {
             select: {
               orderNumber: true,
@@ -166,6 +168,10 @@ const accountInvoicesRoute: FastifyPluginAsync = async (app) => {
           currencyCode: i.order.currencyCode,
           paymentStatus: i.order.paymentStatus,
           description: i.order.items.map((item) => item.name).join(", ") || null,
+          // Portugal: the document is InvoiceExpress's, mirrored into storage,
+          // so the portal must offer the stored PDF instead of the print page —
+          // there is no order data here from which to draw one.
+          hasStoredPdf: Boolean(i.pdfStorageKey),
         };
       });
 
@@ -179,6 +185,71 @@ const accountInvoicesRoute: FastifyPluginAsync = async (app) => {
       return reply.status(500).send(errorResponse("Could not load invoices"));
     }
   });
+
+  /**
+   * The Portuguese Fatura-Recibo as a PDF.
+   *
+   * Every other market's document is DRAWN on demand by
+   * /print/order-invoices/:invoiceId from the order's data. Portugal's is
+   * issued by InvoiceExpress, so there is nothing to draw — this streams the
+   * copy we stored when it was issued (see pt-invoice-mirror.service.ts). Our
+   * copy, deliberately, not a live InvoiceExpress link: the signed URLs expire
+   * and the document must outlive the third-party account.
+   *
+   * Scoped exactly like the listing above — the caller's own orders, matched on
+   * userId OR the order email, so guest-era bookings still resolve.
+   */
+  app.get<{ Params: { invoiceId: string } }>(
+    "/api/account/invoices/:invoiceId/pdf",
+    async (request, reply) => {
+      const auth = await requirePatient(request, reply);
+      if (!auth) return;
+
+      try {
+        const invoice = await prisma.invoice.findFirst({
+          where: {
+            id: request.params.invoiceId,
+            order: {
+              OR: [
+                { userId: auth.id },
+                { email: { equals: auth.email, mode: "insensitive" } },
+              ],
+            },
+          },
+          select: { invoiceNumber: true, pdfStorageKey: true, invoiceExpressPermalink: true },
+        });
+        // Same 404 for "not yours" as for "does not exist" — an ownership probe
+        // must not be distinguishable from a missing document.
+        if (!invoice) return reply.status(404).send(errorResponse("Invoice not found"));
+
+        if (!invoice.pdfStorageKey) {
+          // The document exists in InvoiceExpress but the mirror has not landed
+          // (or this is a non-PT row, which renders through the print page).
+          return reply.status(404).send(errorResponse("Invoice PDF is not available yet"));
+        }
+
+        const obj = await getObject(invoice.pdfStorageKey);
+        const stream = streamToNodeReadable(obj.Body);
+        if (!stream) return reply.status(404).send(errorResponse("Invoice PDF is not available"));
+
+        // Slashes are legal in an InvoiceExpress sequence number
+        // ("202/Globalhealth") and illegal in a filename.
+        const fileName = `${invoice.invoiceNumber.replace(/[/\\]/g, "-")}.pdf`;
+        void reply.header("Content-Type", obj.ContentType ?? "application/pdf");
+        void reply.header("Content-Disposition", `attachment; filename="${fileName}"`);
+        void reply.header("Cache-Control", "private, no-store");
+        // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write -- streaming a stored PDF's Node Readable through Fastify's typed reply.send(), not writing user-controlled HTML.
+        return reply.send(stream);
+      } catch (error) {
+        const normalized = normalizeDbError(error, "Could not load invoice PDF");
+        if (normalized instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(normalized.message));
+        }
+        app.log.error(normalized);
+        return reply.status(500).send(errorResponse("Could not load invoice PDF"));
+      }
+    },
+  );
 
   /**
    * One membership charge, drawn as a Global Health document rather than

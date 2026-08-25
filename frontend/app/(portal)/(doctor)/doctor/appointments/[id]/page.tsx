@@ -671,33 +671,29 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
               </div>
             ),
           },
-          // Ireland only: identity verification decides whether a controlled
-          // prescription may claim the patient was checked, and the doctor is
-          // the one who confirms it. It gets a tab of its own because the
-          // sidebar card is easy to miss and the "Verify" action on the
-          // appointments list deep-links straight here (`?tab=identity`).
-          ...(appointment.countryCode.toLowerCase() === "ie"
-            ? [
-                {
-                  id: "identity",
-                  label: d.appointmentDetail.tabIdentity,
-                  icon: <ShieldCheck aria-hidden />,
-                  panel: (
-                    <FormSection
-                      title={d.appointmentDetail.identityTitle}
-                      description={d.appointmentDetail.identityDesc}
-                    >
-                      <div className="gh-form-section__span-2">
-                        <IdentityVerificationCard
-                          email={appointment.email}
-                          variant="panel"
-                        />
-                      </div>
-                    </FormSection>
-                  ),
-                },
-              ]
-            : []),
+          // Identity verification decides whether a prescription may claim the
+          // patient was checked, and the doctor is the one who confirms it. It
+          // gets a tab of its own because the sidebar card is easy to miss and
+          // the "Verify" action on the appointments list deep-links straight
+          // here (`?tab=identity`).
+          {
+            id: "identity",
+            label: d.appointmentDetail.tabIdentity,
+            icon: <ShieldCheck aria-hidden />,
+            panel: (
+              <FormSection
+                title={d.appointmentDetail.identityTitle}
+                description={d.appointmentDetail.identityDesc}
+              >
+                <div className="gh-form-section__span-2">
+                  <IdentityVerificationCard
+                    email={appointment.email}
+                    variant="panel"
+                  />
+                </div>
+              </FormSection>
+            ),
+          },
           {
             id: "documents",
             label: d.appointmentDetail.tabDocuments,

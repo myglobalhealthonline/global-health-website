@@ -14,6 +14,7 @@ import {
 // orphan draft from here. With both live, each order would get two settled
 // legal documents and need a credit note to unwind.
 import { emitOpsAlert } from "../subscriptions/ops/ops-alert.js";
+import { mirrorPortugalInvoiceDocument } from "./pt-invoice-mirror.service.js";
 import type { PaymentLog } from "../orders/complete-order-payment.service.js";
 
 const noopLog: PaymentLog = {
@@ -161,6 +162,13 @@ export async function issuePortugalInvoiceExpress(
     } catch (emailErr) {
       log.warn({ err: emailErr, orderId, invoiceExpressId: id }, "PT InvoiceExpress email failed — invoice still issued");
     }
+
+    // Copy the issued document into our own storage + an `invoices` row so the
+    // patient portal can list and download it and an admin can resend it.
+    // Awaited rather than fired off: this whole function already runs
+    // fire-and-forget off the paid-order path, and the mirror swallows its own
+    // failures, so awaiting costs nothing and keeps the ordering legible.
+    await mirrorPortugalInvoiceDocument(orderId, id, type, log);
   } catch (err) {
     log.warn({ err, orderId }, "PT InvoiceExpress issue failed — order still paid");
     await emitOpsAlert({

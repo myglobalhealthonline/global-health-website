@@ -21,6 +21,12 @@ export type AccountInvoice = {
   currencyCode: string;
   paymentStatus: string;
   description: string | null;
+  /**
+   * Portugal: the document is InvoiceExpress's Fatura-Recibo, stored as a PDF
+   * on our side rather than drawn from order data. Such a row has no print
+   * page — download it from /api/account/invoices/:id/pdf instead.
+   */
+  hasStoredPdf?: boolean;
 };
 
 type ApiResult<T> =

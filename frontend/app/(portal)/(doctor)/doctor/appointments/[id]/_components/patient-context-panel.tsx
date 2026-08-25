@@ -103,7 +103,6 @@ export function PatientContextPanel({
   const country = appointment.countryCode.toLowerCase();
   const isBrazil = country === "br";
   const isPortugal = country === "pt";
-  const isIreland = country === "ie";
   const identityLabels: Partial<Record<PatientIdentityFieldKey, string>> = {
     utenteNumber: copy.utenteNumber,
     taxIdNumber: isBrazil
@@ -188,10 +187,9 @@ export function PatientContextPanel({
             value={new Date(appointment.createdAt).toLocaleString()}
           />
         </dl>
-        {/* Ireland only: identity verification gates whether a controlled
-            prescription can claim the patient was checked. Gated here rather
-            than inside the card so no other market pays for the fetch. */}
-        {isIreland ? <IdentityVerificationCard email={appointment.email} /> : null}
+        {/* Every market: identity verification decides whether a
+            prescription may claim the patient was checked. */}
+        <IdentityVerificationCard email={appointment.email} />
         {appointment.notes ? (
           <div className="mt-4 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3 text-portal-compact">
             <p className="text-portal-thead font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">

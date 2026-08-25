@@ -129,6 +129,91 @@ export async function listDocuments(
   return json.invoices ?? [];
 }
 
+export interface IeDocumentDetail {
+  id: number;
+  type: string;
+  status: string;
+  /** dd/mm/yyyy. */
+  date: string;
+  /** The fiscal reference, e.g. "202/Globalhealth". */
+  sequence_number: string;
+  /** InvoiceExpress's own shareable link to the document. */
+  permalink?: string;
+  total: number;
+  client?: { name?: string; fiscal_id?: string };
+}
+
+/** One document, by id. Read-only. */
+export async function getDocument(
+  id: number,
+  type: IeDocumentType,
+): Promise<IeDocumentDetail> {
+  const url = ieUrl(`/${docPath(type)}/${id}.json`);
+  const res = await fetch(url, {
+    headers: { Accept: "application/json" },
+    signal: AbortSignal.timeout(TIMEOUT_MS),
+  });
+  const text = await res.text().catch(() => "");
+  if (!res.ok) {
+    throw new Error(
+      `InvoiceExpress GET ${redact(url)} → ${res.status}${text.trim() ? `: ${text.trim().slice(0, 500)}` : ""}`,
+    );
+  }
+  const json = JSON.parse(text) as {
+    invoice_receipt?: IeDocumentDetail;
+    invoice?: IeDocumentDetail;
+  };
+  const doc = json.invoice_receipt ?? json.invoice;
+  if (!doc) throw new Error(`InvoiceExpress GET ${redact(url)} returned no document`);
+  return doc;
+}
+
+/**
+ * Download the document's PDF.
+ *
+ * InvoiceExpress renders PDFs asynchronously: `/api/pdf/{id}.json` answers 202
+ * with an empty body while the render is queued and 200 with a signed S3 URL
+ * once it is ready. So this polls, then fetches the bytes from that URL — which
+ * expires, hence "download now and store it" rather than "keep the link".
+ */
+export async function fetchDocumentPdf(
+  id: number,
+  opts: { attempts?: number; delayMs?: number } = {},
+): Promise<Buffer> {
+  const attempts = opts.attempts ?? 6;
+  const delayMs = opts.delayMs ?? 1_500;
+  const url = ieUrl(`/api/pdf/${id}.json`);
+
+  let pdfUrl: string | undefined;
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    const res = await fetch(url, {
+      headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+    const text = await res.text().catch(() => "");
+    if (res.status === 200) {
+      const json = JSON.parse(text) as { output?: { pdfUrl?: string } };
+      pdfUrl = json.output?.pdfUrl;
+      if (pdfUrl) break;
+    } else if (res.status !== 202) {
+      throw new Error(
+        `InvoiceExpress GET ${redact(url)} → ${res.status}${text.trim() ? `: ${text.trim().slice(0, 300)}` : ""}`,
+      );
+    }
+    if (attempt < attempts) await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+  if (!pdfUrl) {
+    throw new Error(`InvoiceExpress PDF for ${id} was still rendering after ${attempts} attempts`);
+  }
+
+  // The signed S3 URL carries its own credentials — no api_key, nothing to redact.
+  const pdf = await fetch(pdfUrl, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  if (!pdf.ok) {
+    throw new Error(`InvoiceExpress PDF download for ${id} → ${pdf.status}`);
+  }
+  return Buffer.from(await pdf.arrayBuffer());
+}
+
 export interface IeInvoiceItem {
   name: string;
   description: string;

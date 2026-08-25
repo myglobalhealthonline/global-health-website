@@ -196,6 +196,14 @@ export default async function AccountPaymentsPage() {
     }
   };
 
+  /**
+   * Portugal's document is InvoiceExpress's Fatura-Recibo, stored as a PDF —
+   * there is no print page to open, because we hold the finished file rather
+   * than the data to draw one. Those rows get a single Download action; every
+   * other market keeps View (print page) + Download.
+   */
+  const ghStoredPdfHref = (row: AccountInvoice) => `/api/account/invoices/${row.id}/pdf`;
+
   const ghInvoiceFields: ColumnPriorityField<AccountInvoice>[] = [
     {
       key: "date",
@@ -240,19 +248,21 @@ export default async function AccountPaymentsPage() {
       desktopOnly: true,
       render: (row) => (
         <span className="inline-flex items-center gap-3">
-          <Link
-            href={`/print/order-invoices/${row.id}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--portal-primary)] hover:underline"
-          >
-            {a.payments.viewInvoice}
-            <ExternalLink className="size-3.5" aria-hidden />
-          </Link>
+          {!row.hasStoredPdf && (
+            <Link
+              href={`/print/order-invoices/${row.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--portal-primary)] hover:underline"
+            >
+              {a.payments.viewInvoice}
+              <ExternalLink className="size-3.5" aria-hidden />
+            </Link>
+          )}
           {/* Plain anchor: the backend sends Content-Disposition: attachment,
               so the browser saves the real PDF with no JavaScript. */}
           <a
-            href={`/api/public/invoices/${row.id}/pdf`}
+            href={row.hasStoredPdf ? ghStoredPdfHref(row) : `/api/public/invoices/${row.id}/pdf`}
             className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--portal-primary)] hover:underline"
           >
             {a.payments.downloadInvoice}
@@ -419,17 +429,19 @@ export default async function AccountPaymentsPage() {
               getRowKey={(row) => row.id}
               cardActions={(row) => (
                 <>
-                  <Link
-                    href={`/print/order-invoices/${row.id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] bg-[var(--portal-surface-elevated)] px-3 py-1.5 text-xs font-semibold text-[var(--portal-primary)]"
-                  >
-                    {a.payments.viewInvoice}
-                    <ExternalLink className="size-3.5" aria-hidden />
-                  </Link>
+                  {!row.hasStoredPdf && (
+                    <Link
+                      href={`/print/order-invoices/${row.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] bg-[var(--portal-surface-elevated)] px-3 py-1.5 text-xs font-semibold text-[var(--portal-primary)]"
+                    >
+                      {a.payments.viewInvoice}
+                      <ExternalLink className="size-3.5" aria-hidden />
+                    </Link>
+                  )}
                   <a
-                    href={`/api/public/invoices/${row.id}/pdf`}
+                    href={row.hasStoredPdf ? ghStoredPdfHref(row) : `/api/public/invoices/${row.id}/pdf`}
                     className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] bg-[var(--portal-surface-elevated)] px-3 py-1.5 text-xs font-semibold text-[var(--portal-primary)]"
                   >
                     {a.payments.downloadInvoice}

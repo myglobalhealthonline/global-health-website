@@ -21,16 +21,12 @@ import { compareSelfieToIdDocument, isFaceMatchConfigured } from "../../services
  *     a patient must not retroactively change what an issued document said.
  */
 
-/** ISO country code this workflow is scoped to. Nothing here runs elsewhere. */
-export const IDENTITY_VERIFICATION_COUNTRY = "ie";
-
 /**
- * Ireland-only by product decision. Country codes are stored lowercase, so
- * compare lowercase — an upper-cased value silently matches nothing.
+ * Runs in every market. This began Ireland-only; the country gate was removed
+ * deliberately, not forgotten. Identity is established the same way everywhere,
+ * and the only country-specific piece left is the Irish controlled-medication
+ * notice, which lives in the document template layer.
  */
-export function isIdentityVerificationCountry(countryCode: string | null | undefined): boolean {
-  return (countryCode ?? "").trim().toLowerCase() === IDENTITY_VERIFICATION_COUNTRY;
-}
 
 /**
  * Short, opaque, human-quotable reference printed on the prescription and
@@ -336,10 +332,7 @@ export async function requestVerification(input: {
  */
 export async function resolveVerificationForPrescription(input: {
   patientEmail: string;
-  countryCode: string | null | undefined;
 }): Promise<{ eventId: string; referenceId: string; verifiedAt: Date } | null> {
-  if (!isIdentityVerificationCountry(input.countryCode)) return null;
-
   const profile = await prisma.patientProfile.findFirst({
     where: { email: { equals: input.patientEmail.trim(), mode: "insensitive" } },
     select: { id: true },
@@ -390,14 +383,14 @@ export async function isVerificationRelevantForPatient(input: {
   if (summary && (summary.status !== "NOT_VERIFIED" || summary.hasSelfie || summary.requestedAt)) {
     return true;
   }
-  const irishAppointment = await prisma.appointment.findFirst({
-    where: {
-      email: { equals: input.patientEmail.trim(), mode: "insensitive" },
-      countryCode: { equals: IDENTITY_VERIFICATION_COUNTRY, mode: "insensitive" },
-    },
+  // Any booking, any market. Still not "anyone with an account": someone who
+  // has never booked has nothing to verify for, and prompting them would be an
+  // unprompted demand for a passport photo.
+  const appointment = await prisma.appointment.findFirst({
+    where: { email: { equals: input.patientEmail.trim(), mode: "insensitive" } },
     select: { id: true },
   });
-  return Boolean(irishAppointment);
+  return Boolean(appointment);
 }
 
 /** Every prescription document issued on the strength of one verification. */

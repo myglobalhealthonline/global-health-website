@@ -9,11 +9,11 @@ import {
 } from "@/lib/api/account-profile-api";
 
 /**
- * Ireland controlled-medication identity check: take a live photo of your face
- * so a clinician can match it against the ID document already on file.
+ * Controlled-medication identity check: take a live photo of your face so a
+ * clinician can match it against the ID document already on file.
  *
- * Renders nothing unless the server says the patient is in scope — country
- * rules live on the backend, not here.
+ * Renders nothing unless the server says the patient is in scope — that rule
+ * lives on the backend, not here.
  */
 
 const JPEG_QUALITY = 0.92;
@@ -217,9 +217,8 @@ export function IdentityVerificationCard({
         <div>
           <h3 className="text-lg font-semibold text-[var(--portal-text)]">Photo ID verification</h3>
           <p className="mt-1 text-sm text-[var(--portal-muted)]">
-            Irish rules require us to confirm who you are before certain medications can be
-            prescribed. Take a photo of your face and we will match it to the ID document on
-            your file.
+            We have to confirm who you are before certain medications can be prescribed. Take
+            a photo of your face and we will match it to the ID document on your file.
           </p>
         </div>
       </header>
