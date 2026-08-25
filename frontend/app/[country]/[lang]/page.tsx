@@ -88,6 +88,7 @@ export async function generateMetadata({
   const { record: page } = await getPageContent(code, "HOME", lang as PublicLocale);
   const extras = homePageExtras(code, lang);
   const { common: metaCommon } = loadLocaleBundle(lang as LocaleCode);
+  const preferIrelandExtras = code === "ie";
   const path = `/${country}/${lang}`;
   // `config.name` is the country's English display name (DB `Country.name`),
   // not locale-aware — the generic template fallback below must use the
@@ -96,12 +97,12 @@ export async function generateMetadata({
   // half-English, e.g. "Médico Online Czechia" instead of "...Chequia".
   const localizedCountryName = metaCommon.countryNames?.[code] ?? config.name;
   const title =
-    page?.seoTitle ??
-    extras?.seoTitle ??
+    (preferIrelandExtras ? extras?.seoTitle : page?.seoTitle) ??
+    (preferIrelandExtras ? page?.seoTitle : extras?.seoTitle) ??
     metaCommon.homeMeta.titleTemplate.replace("{country}", localizedCountryName);
   const description =
-    page?.seoDescription ??
-    extras?.seoDescription ??
+    (preferIrelandExtras ? extras?.seoDescription : page?.seoDescription) ??
+    (preferIrelandExtras ? page?.seoDescription : extras?.seoDescription) ??
     metaCommon.homeMeta.descriptionTemplate.replace("{country}", localizedCountryName);
   // OG/Twitter may carry a distinct social-optimised variant; fall back to
   // the page title/description otherwise.
@@ -200,6 +201,7 @@ export default async function CountryLangHomePage({
   const bundle = loadLocaleBundle(lang as LocaleCode);
   const cc = bundle.common;
   const extras = homePageExtras(code, lang);
+  const preferIrelandExtras = code === "ie";
   const t = overrideHomeBundle(bundle.home, code, lang);
   const tServices = extras?.servicesHeadline
     ? {
@@ -563,8 +565,16 @@ export default async function CountryLangHomePage({
           languages: gpLanguages.bookableLanguages,
           configured: gpLanguages.configured,
         }}
-        heroTitle={page?.heroTitle ?? extras?.heroTitle ?? null}
-        heroSubtitle={page?.heroSubtitle ?? extras?.heroSubtitle ?? null}
+        heroTitle={
+          (preferIrelandExtras ? extras?.heroTitle : page?.heroTitle) ??
+          (preferIrelandExtras ? page?.heroTitle : extras?.heroTitle) ??
+          null
+        }
+        heroSubtitle={
+          (preferIrelandExtras ? extras?.heroSubtitle : page?.heroSubtitle) ??
+          (preferIrelandExtras ? page?.heroSubtitle : extras?.heroSubtitle) ??
+          null
+        }
         heroBullets={extras?.heroBullets ?? null}
         heroPriceBadge={extras?.heroPriceBadge ?? null}
         heroImageSrc={page?.heroImageSrc ?? null}

@@ -44,6 +44,7 @@ import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { buildBookHref } from "@/lib/routing/book-href";
+import { irelandStaticPageSeo } from "@/lib/content/ireland-static-page-seo";
 
 export const revalidate = 300;
 
@@ -74,13 +75,15 @@ async function resolve(country: string, lang: string) {
   // Market name in the page's own language ("Brasil", "Česko"), not the
   // English seed name. Schema keeps the English name — it names the entity.
   const countryName = getCommonLocale(lang as LocaleCode).countryNames?.[code] ?? config.name;
+  const baseCopy = resolveAboutCopy(config, contact, about, t, countryName);
+  const irelandSeo = code === "ie" ? irelandStaticPageSeo("ABOUT", lang as LocaleCode) : null;
   return {
     code,
     config,
     contact,
     about,
     countryName,
-    copy: resolveAboutCopy(config, contact, about, t, countryName),
+    copy: irelandSeo ? { ...baseCopy, ...irelandSeo } : baseCopy,
     t,
   };
 }
@@ -93,7 +96,7 @@ export async function generateMetadata({
   const { country, lang } = await params;
   const resolved = await resolve(country, lang);
   if (!resolved) return { title: SITE_NAME };
-  const { config, copy } = resolved;
+  const { config, copy, countryName } = resolved;
 
   return buildPublicMetadata({
     path: `/${country}/${lang}/about`,
@@ -104,7 +107,7 @@ export async function generateMetadata({
     brandSuffix: false,
     type: "website",
     kind: "corporate",
-    subtitle: config.name,
+    subtitle: countryName,
     sourceImage: "/images/stock/about.jpg",
     imageAlt: copy.h1,
     locale: ogLocales(config, lang).locale,

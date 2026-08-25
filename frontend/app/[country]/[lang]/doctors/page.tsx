@@ -34,7 +34,10 @@ import {
 } from "@/lib/content/doctor-directory";
 import { DoctorDirectoryView } from "./_components/DoctorDirectoryView";
 import { DoctorTeamHero } from "@/components/sections/DoctorTeamHero";
-import { overrideDoctorsBundle } from "@/lib/content/country-doctors-copy";
+import {
+  doctorDirectorySeo,
+  overrideDoctorsBundle,
+} from "@/lib/content/country-doctors-copy";
 import { fetchGlobalConsultationCount } from "@/lib/api/consultation-count";
 
 type Params = { country: string; lang: string };
@@ -73,14 +76,21 @@ export async function generateMetadata({
   const description =
     page?.seoDescription ??
     `Doctors and specialists registered to practise in ${config.name}. Browse profiles by specialty and language.`;
+  const irelandSeo = doctorDirectorySeo(code, lang);
   const localized = overrideDoctorsBundle(
     loadLocaleBundle(lang as LocaleCode).common.doctors,
     code,
     lang,
   );
-  const metadataTitle = (page?.seoTitle ??
-    `${localized.heroTitleLead} ${localized.heroTitleAccent} ${localized.heroTitleTrail} — ${config.name}`) || title;
-  const metadataDescription = (page?.seoDescription ?? localized.heroLedeTemplate.replace("{country}", config.name)) || description;
+  const metadataTitle =
+    irelandSeo?.title ??
+    page?.seoTitle ??
+    (`${localized.heroTitleLead} ${localized.heroTitleAccent} ${localized.heroTitleTrail} — ${config.name}` ||
+      title);
+  const metadataDescription =
+    irelandSeo?.description ??
+    page?.seoDescription ??
+    (localized.heroLedeTemplate.replace("{country}", config.name) || description);
   const metadata = buildPublicMetadata({
     path: `/${country}/${lang}/doctors`,
     title: metadataTitle,

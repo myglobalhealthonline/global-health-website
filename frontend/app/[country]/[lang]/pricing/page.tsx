@@ -22,6 +22,7 @@ import { PricingPlansGrid } from "./_components/PricingPlansGrid";
 import { Stethoscope, Calendar, ShieldCheck, CreditCard, Zap, BadgeCheck } from "lucide-react";
 import { DoctifyWidgetLazy as DoctifyWidget } from "@/components/sections/DoctifyReviewsLazy";
 import { SectionSeam } from "@/components/ui/SectionSeam";
+import { irelandStaticPageSeo } from "@/lib/content/ireland-static-page-seo";
 
 type Params = { country: string; lang: string };
 
@@ -34,18 +35,21 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const code = countryCodeFromSlug(country);
   const config = code ? await getPublicCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
-  const { subscription } = loadLocaleBundle(lang as LocaleCode);
+  const { subscription, common } = loadLocaleBundle(lang as LocaleCode);
+  const countryName = common.countryNames?.[code] ?? config.name;
+  const irelandSeo = code === "ie" ? irelandStaticPageSeo("PRICING", lang as LocaleCode) : null;
 
-  const title = `${subscription.pricing.heading} · ${config.name} · ${SITE_NAME}`;
-  const description = subscription.pricing.lede.replace("{country}", config.name);
+  const title = irelandSeo?.title ?? `${subscription.pricing.heading} · ${countryName} · ${SITE_NAME}`;
+  const description =
+    irelandSeo?.description ?? subscription.pricing.lede.replace("{country}", countryName);
   return buildPublicMetadata({
     path: `/${country}/${lang}/pricing`,
     title,
     description,
     locale: ogLocales(config, lang).locale,
     kind: "pricing",
-    subtitle: config.name,
-    imageAlt: `${title} — ${config.name}`,
+    subtitle: countryName,
+    imageAlt: `${title} — ${countryName}`,
     languages: hreflangAlternates(config, "/pricing"),
   });
 }
@@ -73,16 +77,18 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
 
   const plans = await getCountryPlans(code, lang);
   const { subscription, common: c } = loadLocaleBundle(lang as LocaleCode);
+  const countryName = c.countryNames?.[code] ?? config.name;
   const t = subscription.pricing;
   const hiw = subscription.howItWorks;
   const pp = c.pricingPage;
+  const irelandSeo = code === "ie" ? irelandStaticPageSeo("PRICING", lang as LocaleCode) : null;
 
   return (
     <>
       <JsonLd
         data={breadcrumbJsonLd([
           { name: "Home", url: "/" },
-          { name: config.name, url: `/${slug}/${lang}` },
+          { name: countryName, url: `/${slug}/${lang}` },
           { name: t.heading, url: `/${slug}/${lang}/pricing` },
         ])}
       />
@@ -106,16 +112,16 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
       <PageHero
         watermark={t.watermark}
         countryCode={config.code}
-        countryLabel={t.countryLabel.replace("{country}", config.name)}
-        titleLead={t.titleLead}
-        titleAccent={t.titleAccent}
-        titleTrail={t.titleTrail}
-        lede={t.lede.replace("{country}", config.name)}
+        countryLabel={t.countryLabel.replace("{country}", countryName)}
+        titleLead={irelandSeo?.h1 ?? t.titleLead}
+        titleAccent={irelandSeo ? "" : t.titleAccent}
+        titleTrail={irelandSeo ? "" : t.titleTrail}
+        lede={t.lede.replace("{country}", countryName)}
         ctaLabel={t.ctaLabel}
         ctaHref="#plans"
         secondaryLabel={t.secondaryLabel}
         secondaryHref={`/${slug}/${lang}/doctors`}
-        rightSlot={<PlansArchPanel countryName={config.name} i18n={t} />}
+        rightSlot={<PlansArchPanel countryName={countryName} i18n={t} />}
         mobileBgSrc="/images/stock/plans.webp"
         trustCards={[
           {
@@ -171,7 +177,7 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
               <h3
                 className="text-[1.4rem] font-bold tracking-[-0.02em] text-[var(--color-text-primary)]"
               >
-                {t.empty.title.replace("{country}", config.name)}
+                {t.empty.title.replace("{country}", countryName)}
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-[var(--color-text-muted)]">
                 {t.empty.body}

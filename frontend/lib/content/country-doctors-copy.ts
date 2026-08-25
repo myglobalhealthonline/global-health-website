@@ -14,6 +14,10 @@ import type { CommonLocale } from "@/lib/i18n/types";
 
 type DoctorsBundle = CommonLocale["doctors"];
 type DoctorsOverride = Partial<DoctorsBundle>;
+export type DoctorDirectorySeo = {
+  title: string;
+  description: string;
+};
 
 function key(code: CountryCode, locale: string): string {
   return `${code.toLowerCase()}:${locale.toLowerCase()}`;
@@ -21,6 +25,9 @@ function key(code: CountryCode, locale: string): string {
 
 const OVERRIDES: Record<string, DoctorsOverride> = {
   "ie:en": {
+    heroTitleLead: "IMC-registered",
+    heroTitleAccent: "online doctors",
+    heroTitleTrail: "in Ireland.",
     // Availability pill: "{count} IMC-registered doctors and clinicians"
     // (count is computed, prefix stays dynamic).
     heroAvailablePlural: "IMC-registered doctors and clinicians",
@@ -37,22 +44,37 @@ const OVERRIDES: Record<string, DoctorsOverride> = {
   // Ireland page in any locale. Reuses each locale's already-translated
   // gpPage/specialistPage.hero.stat2 copy for consistency.
   "ie:es": {
+    heroTitleLead: "Médicos online",
+    heroTitleAccent: "colegiados en el IMC",
+    heroTitleTrail: "en Irlanda.",
     trustCard2Title: "Valorado en Doctify",
     trustCard2Subtitle: "{count}+ consultas",
   },
   "ie:pt": {
+    heroTitleLead: "Médicos online",
+    heroTitleAccent: "registados no IMC",
+    heroTitleTrail: "na Irlanda.",
     trustCard2Title: "Avaliado no Doctify",
     trustCard2Subtitle: "{count}+ consultas",
   },
   "ie:cs": {
+    heroTitleLead: "Online lékaři",
+    heroTitleAccent: "registrovaní u IMC",
+    heroTitleTrail: "v Irsku.",
     trustCard2Title: "Hodnoceno na Doctify",
     trustCard2Subtitle: "{count}+ konzultací",
   },
   "ie:ro": {
+    heroTitleLead: "Medici online",
+    heroTitleAccent: "înregistrați la IMC",
+    heroTitleTrail: "în Irlanda.",
     trustCard2Title: "Evaluat pe Doctify",
     trustCard2Subtitle: "{count}+ consultații",
   },
   "ie:de": {
+    heroTitleLead: "Online-Ärzte",
+    heroTitleAccent: "beim IMC registriert",
+    heroTitleTrail: "in Irland.",
     trustCard2Title: "Bewertet auf Doctify",
     trustCard2Subtitle: "{count}+ Konsultationen",
   },
@@ -175,6 +197,39 @@ const OVERRIDES: Record<string, DoctorsOverride> = {
   },
 };
 
+const SEO: Record<string, DoctorDirectorySeo> = {
+  "ie:en": {
+    title: "Online Doctors Ireland | IMC-Registered GPs & Specialists",
+    description:
+      "Browse IMC-registered doctors and clinicians in Ireland. View specialties, registration details, languages and online booking options.",
+  },
+  "ie:es": {
+    title: "Médicos Online Irlanda | Médicos y Especialistas en el IMC",
+    description:
+      "Consulte médicos y profesionales clínicos colegiados en el IMC en Irlanda. Vea especialidades, datos registrales, idiomas y opciones de reserva online.",
+  },
+  "ie:pt": {
+    title: "Médicos Online Irlanda | Clínicos e Especialistas no IMC",
+    description:
+      "Veja médicos e clínicos registados no IMC na Irlanda. Consulte especialidades, dados de registo, idiomas e opções de marcação online.",
+  },
+  "ie:cs": {
+    title: "Online lékaři Irsko | Praktičtí lékaři a specialisté u IMC",
+    description:
+      "Prohlédněte si lékaře a kliniky registrované u IMC v Irsku. Zobrazte specializace, registrační údaje, jazyky a možnosti online objednání.",
+  },
+  "ie:ro": {
+    title: "Medici Online Irlanda | Medici și Specialiști Înregistrați la IMC",
+    description:
+      "Căutați medici și clinicieni înregistrați la IMC în Irlanda. Vedeți specialități, date de înregistrare, limbi vorbite și opțiuni de programare online.",
+  },
+  "ie:de": {
+    title: "Online-Ärzte Irland | Hausärzte und Fachärzte beim IMC",
+    description:
+      "Finden Sie beim IMC registrierte Ärzte und klinische Fachkräfte in Irland. Sehen Sie Fachgebiete, Registrierungsdaten, Sprachen und Online-Buchungsoptionen.",
+  },
+};
+
 /** Merge the country/locale override (if any) onto the `doctors` bundle. */
 export function overrideDoctorsBundle(
   base: DoctorsBundle,
@@ -183,4 +238,11 @@ export function overrideDoctorsBundle(
 ): DoctorsBundle {
   const over = OVERRIDES[key(code, locale)];
   return over ? { ...base, ...over } : base;
+}
+
+export function doctorDirectorySeo(
+  code: CountryCode,
+  locale: string,
+): DoctorDirectorySeo | null {
+  return SEO[key(code, locale)] ?? null;
 }

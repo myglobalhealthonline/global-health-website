@@ -33,9 +33,11 @@ import {
 } from "@/lib/seo/structured-data";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { buildBookHref } from "@/lib/routing/book-href";
+import { irelandStaticPageSeo } from "@/lib/content/ireland-static-page-seo";
 
 export const revalidate = 300;
 
@@ -50,8 +52,11 @@ function resolve(country: string, lang: string) {
   if (!contact) return null;
   const bundle = loadLocaleBundle(lang as LocaleCode).contact;
   const t = bundle.country as unknown as ContactCopyTemplates & Record<string, string>;
-  const copy = resolveContactCopy(contact, lang as LocaleCode, config.name, t);
-  return { code, config, contact, copy, t };
+  const countryName = getCommonLocale(lang as LocaleCode).countryNames?.[code] ?? config.name;
+  const baseCopy = resolveContactCopy(contact, lang as LocaleCode, countryName, t);
+  const irelandSeo = code === "ie" ? irelandStaticPageSeo("CONTACT", lang as LocaleCode) : null;
+  const copy = irelandSeo ? { ...baseCopy, ...irelandSeo } : baseCopy;
+  return { code, config, contact, copy, countryName, t };
 }
 
 export async function generateMetadata({
@@ -62,7 +67,7 @@ export async function generateMetadata({
   const { country, lang } = await params;
   const resolved = resolve(country, lang);
   if (!resolved) return { title: SITE_NAME };
-  const { config, copy } = resolved;
+  const { config, copy, countryName } = resolved;
 
   return buildPublicMetadata({
     path: `/${country}/${lang}/contact`,
@@ -73,8 +78,8 @@ export async function generateMetadata({
     brandSuffix: false,
     type: "website",
     kind: "page",
-    subtitle: config.name,
-    imageAlt: `${copy.h1} — ${config.name}`,
+    subtitle: countryName,
+    imageAlt: `${copy.h1} — ${countryName}`,
     locale: ogLocales(config, lang).locale,
     languages: hreflangAlternates(config, "/contact"),
   });
@@ -131,7 +136,7 @@ export default async function CountryContactPage({ params }: { params: Promise<P
   const { country, lang } = await params;
   const resolved = resolve(country, lang);
   if (!resolved) notFound();
-  const { code, config, contact, copy, t } = resolved;
+  const { code, config, contact, copy, countryName, t } = resolved;
   const common = loadLocaleBundle(lang as LocaleCode).common;
 
   const office = contact.office;
@@ -174,7 +179,7 @@ export default async function CountryContactPage({ params }: { params: Promise<P
       {/* DARK — hero, same primitive and rhythm as the global /contact page */}
       <PageHero
         countryCode={config.code}
-        countryLabel={`${SITE_NAME} · ${config.name}`}
+        countryLabel={`${SITE_NAME} · ${common.countryNames?.[code] ?? config.name}`}
         watermark={t.watermark}
         titleLead={copy.h1}
         titleAccent=""
@@ -203,7 +208,7 @@ export default async function CountryContactPage({ params }: { params: Promise<P
             : {
                 icon: <Video className="size-[18px]" strokeWidth={2} aria-hidden />,
                 title: t.onlineOnlyLabel,
-                subtitle: config.name,
+                subtitle: countryName,
               },
         ]}
         rightSlot={
@@ -226,7 +231,7 @@ export default async function CountryContactPage({ params }: { params: Promise<P
                 : {
                     icon: <Video className="size-4" strokeWidth={2} aria-hidden />,
                     title: t.onlineOnlyLabel,
-                    subtitle: config.name,
+                    subtitle: countryName,
                   },
             ]}
           />
@@ -315,7 +320,7 @@ export default async function CountryContactPage({ params }: { params: Promise<P
                   </DetailRow>
                 ) : (
                   <DetailRow icon={Video} label={t.onlineOnlyLabel}>
-                    {t.onlineOnlyBody.replace("{country}", config.name)}
+                    {t.onlineOnlyBody.replace("{country}", countryName)}
                   </DetailRow>
                 )}
                 <DetailRow icon={ShieldCheck} label={t.faqEyebrow}>
