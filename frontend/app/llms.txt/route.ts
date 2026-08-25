@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { countries } from "@/data/countries";
 import { SITE_NAME } from "@/lib/constants";
 import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
+import { isCountryFeatureEnabled } from "@/lib/content/country-features";
+import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { listBlogPosts, type BlogListItem } from "@/lib/content/get-public-blog";
 
@@ -31,6 +32,10 @@ function blogPostHref(origin: string, post: BlogListItem): string {
 
 export async function GET() {
   const origin = getSiteUrl();
+  // Same source as app/sitemap.ts: the seeded configs carry no
+  // `enabledFeatures`, so the static `@/data/countries` array would make
+  // every feature gate below pass and re-advertise the dead URLs.
+  const countries = await getPublicCountriesMerged();
   const posts = await listBlogPosts();
   const lines: string[] = [
     `# ${SITE_NAME}`,
@@ -45,10 +50,20 @@ export async function GET() {
     const lang = (c.defaultLocale ?? "EN").toLowerCase();
     lines.push(`- [${c.name}](${origin}/${slug}/${lang}): country landing page with available doctors and consultation types.`);
     lines.push(`- [${c.name} - book online](${origin}/${slug}/${lang}/book): guided booking for service, clinician, time, and patient details.`);
-    lines.push(`- [${c.name} - Book a GP appointment](${origin}/${slug}/${lang}/gp-consultation-online): general practitioners registered in ${c.name}.`);
-    lines.push(`- [${c.name} - See a specialist](${origin}/${slug}/${lang}/see-a-specialist): specialists registered in ${c.name}.`);
+    // Section routes gated by a per-country feature flag `notFound()` at
+    // request time, so listing them unconditionally advertised dead 404s to
+    // AI crawlers for markets without that product line. Same gate, and the
+    // same reasoning, as app/sitemap.ts.
+    if (isCountryFeatureEnabled(c, "general-consultations")) {
+      lines.push(`- [${c.name} - Book a GP appointment](${origin}/${slug}/${lang}/gp-consultation-online): general practitioners registered in ${c.name}.`);
+    }
+    if (isCountryFeatureEnabled(c, "specialist-consultations")) {
+      lines.push(`- [${c.name} - See a specialist](${origin}/${slug}/${lang}/see-a-specialist): specialists registered in ${c.name}.`);
+    }
     lines.push(`- [${c.name} - doctors](${origin}/${slug}/${lang}/doctors): clinician roster with qualifications and specialties.`);
-    lines.push(`- [${c.name} - lab tests](${origin}/${slug}/${lang}/lab-tests): at-home and in-clinic laboratory tests.`);
+    if (isCountryFeatureEnabled(c, "health-tests")) {
+      lines.push(`- [${c.name} - lab tests](${origin}/${slug}/${lang}/lab-tests): at-home and in-clinic laboratory tests.`);
+    }
   }
 
   lines.push(
