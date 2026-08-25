@@ -6,9 +6,19 @@ import { env } from "../../config/env.js";
  * Three calls, matching the InvoiceExpress API, all authenticated with the
  * `api_key` query param on the account subdomain
  * (https://{account}.app.invoicexpress.com):
- *   1. createInvoiceReceipt — POST /invoices.json            (draft)
- *   2. finalizeInvoice      — PUT  /invoices/{id}/change-state.json  (→ settled)
- *   3. emailInvoiceReceipt  — POST /invoice_receipts/{id}/email-document.json
+ *   1. createInvoiceReceipt — POST /invoice_receipts.json                    (draft)
+ *   2. finalizeInvoice      — PUT  /{docPath}/{id}/change-state.json  (→ settled)
+ *   3. emailInvoiceReceipt  — POST /{docPath}/{id}/email-document.json
+ *
+ * Every path is document-type scoped (`invoice_receipts` for a Fatura-Recibo,
+ * `invoices` for a plain Fatura), and so is the JSON root key on both request
+ * and response. Until 2026-08-25 the create call posted `{invoice: {type:
+ * "InvoiceReceipt", ...}}` to the generic `/invoices.json`; InvoiceExpress
+ * stopped honouring that `type` field around 2026-07-17 and started returning a
+ * plain draft Invoice under an `invoice` root, so the `invoice_receipt.id` read
+ * threw, no document was ever finalized or emailed, and every PT order since
+ * left an orphan draft behind. Hence: type-scoped paths, and a response parse
+ * that accepts whichever root key comes back and reports the type it got.
  *
  * Native fetch + AbortSignal.timeout, mirroring lib/whatsapp/wasender.ts. On a
  * non-2xx response these throw with a truncated body so the orchestrator can
@@ -37,6 +47,23 @@ function ieUrl(path: string): string {
 /** Never leak the api_key from a URL into logs. */
 function redact(url: string): string {
   return url.replace(/api_key=[^&]*/i, "api_key=***");
+}
+
+/**
+ * The two document types this client issues. `InvoiceReceipt` (Fatura-Recibo)
+ * is what a paid consultation gets; `Invoice` only appears when InvoiceExpress
+ * answers a create with a plain Fatura, which we then still finalize and email
+ * rather than abandon as a draft.
+ */
+export type IeDocumentType = "InvoiceReceipt" | "Invoice";
+
+/** URL segment + JSON root key for a document type — they always agree. */
+function docPath(type: IeDocumentType): "invoice_receipts" | "invoices" {
+  return type === "InvoiceReceipt" ? "invoice_receipts" : "invoices";
+}
+
+function docRootKey(type: IeDocumentType): "invoice_receipt" | "invoice" {
+  return type === "InvoiceReceipt" ? "invoice_receipt" : "invoice";
 }
 
 async function ieRequest(
@@ -68,6 +95,40 @@ async function ieRequest(
   }
 }
 
+export interface IeListedDocument {
+  id: number;
+  type: string;
+  status: string;
+  /** dd/mm/yyyy, as InvoiceExpress renders it. */
+  date: string;
+  sequence_number: string;
+  total: number;
+  client?: { name?: string; fiscal_id?: string };
+}
+
+/**
+ * One page of the account's documents, newest first. Read-only — the cleanup
+ * script uses it to find orphan drafts.
+ */
+export async function listDocuments(
+  page: number,
+  perPage = 30,
+): Promise<IeListedDocument[]> {
+  const url = `${ieUrl("/invoices.json")}&page=${page}&per_page=${perPage}`;
+  const res = await fetch(url, {
+    headers: { Accept: "application/json" },
+    signal: AbortSignal.timeout(TIMEOUT_MS),
+  });
+  const text = await res.text().catch(() => "");
+  if (!res.ok) {
+    throw new Error(
+      `InvoiceExpress GET ${redact(url)} → ${res.status}${text.trim() ? `: ${text.trim().slice(0, 500)}` : ""}`,
+    );
+  }
+  const json = JSON.parse(text) as { invoices?: IeListedDocument[] };
+  return json.invoices ?? [];
+}
+
 export interface IeInvoiceItem {
   name: string;
   description: string;
@@ -76,49 +137,84 @@ export interface IeInvoiceItem {
   tax: { name: string };
 }
 
-export interface IeInvoicePayload {
-  invoice: {
-    type: "InvoiceReceipt";
-    date: string;
-    due_date: string;
-    tax_exemption: string;
-    client: {
-      name: string;
-      code: string;
-      fiscal_id: string;
-      address: string;
-      postal_code: string;
-      city: string;
-    };
-    items: IeInvoiceItem[];
+export interface IeInvoiceBody {
+  date: string;
+  due_date: string;
+  tax_exemption: string;
+  client: {
+    name: string;
+    code: string;
+    fiscal_id: string;
+    address: string;
+    postal_code: string;
+    city: string;
   };
+  items: IeInvoiceItem[];
 }
 
-/** Create a DRAFT InvoiceReceipt. Returns its numeric id. */
-export async function createInvoiceReceipt(payload: IeInvoicePayload): Promise<{ id: number }> {
-  const json = (await ieRequest("POST", "/invoices.json", payload)) as {
-    invoice_receipt?: { id?: number };
+export interface IeCreatedDocument {
+  id: number;
+  /** What InvoiceExpress actually created — drives every follow-up path. */
+  type: IeDocumentType;
+}
+
+/**
+ * Read the created document out of a create response, whichever root key
+ * InvoiceExpress used. Exported for the unit test: this parse is the exact
+ * thing that silently broke PT invoicing for five weeks.
+ */
+export function parseCreatedDocument(json: unknown): IeCreatedDocument {
+  const body = (json ?? {}) as {
+    invoice_receipt?: { id?: number; type?: string };
+    invoice?: { id?: number; type?: string };
   };
-  const id = json.invoice_receipt?.id;
+  const doc = body.invoice_receipt ?? body.invoice;
+  const id = doc?.id;
   if (typeof id !== "number") {
-    throw new Error(`InvoiceExpress create returned no invoice_receipt.id (got ${JSON.stringify(json).slice(0, 200)})`);
+    throw new Error(
+      `InvoiceExpress create returned no document id (got ${JSON.stringify(json).slice(0, 200)})`,
+    );
   }
-  return { id };
+  // Trust the document's own `type` when present; otherwise infer it from the
+  // root key that carried it.
+  const type: IeDocumentType =
+    doc?.type === "Invoice" || (doc?.type === undefined && body.invoice_receipt === undefined)
+      ? "Invoice"
+      : "InvoiceReceipt";
+  return { id, type };
+}
+
+/** Create a DRAFT Fatura-Recibo. Returns its id and the type actually created. */
+export async function createInvoiceReceipt(body: IeInvoiceBody): Promise<IeCreatedDocument> {
+  const json = await ieRequest("POST", "/invoice_receipts.json", { invoice_receipt: body });
+  return parseCreatedDocument(json);
 }
 
 /** Transition draft → finalized (issues the legal document, assigns a number). */
-export async function finalizeInvoice(id: number): Promise<void> {
-  await ieRequest("PUT", `/invoices/${id}/change-state.json`, {
-    invoice: { state: "finalized" },
+export async function finalizeInvoice(id: number, type: IeDocumentType): Promise<void> {
+  await ieRequest("PUT", `/${docPath(type)}/${id}/change-state.json`, {
+    [docRootKey(type)]: { state: "finalized" },
   });
 }
 
-/** Email the finalized InvoiceReceipt PDF to the patient. */
+/**
+ * Delete a DRAFT document. Drafts carry no fiscal number, so this is a plain
+ * cleanup — it is NOT a way to undo a finalized document (that needs a credit
+ * note). Used by scripts/pt-invoicexpress-cleanup-drafts.ts.
+ */
+export async function deleteDraftDocument(id: number, type: IeDocumentType): Promise<void> {
+  await ieRequest("PUT", `/${docPath(type)}/${id}/change-state.json`, {
+    [docRootKey(type)]: { state: "deleted" },
+  });
+}
+
+/** Email the finalized document's PDF to the patient. */
 export async function emailInvoiceReceipt(
   id: number,
+  type: IeDocumentType,
   opts: { email: string; subject: string; body: string },
 ): Promise<void> {
-  await ieRequest("POST", `/invoice_receipts/${id}/email-document.json`, {
+  await ieRequest("POST", `/${docPath(type)}/${id}/email-document.json`, {
     message: {
       client: { email: opts.email, save: "0" },
       subject: opts.subject,

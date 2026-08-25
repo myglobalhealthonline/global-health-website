@@ -7,6 +7,12 @@ import {
   emailInvoiceReceipt,
   type IeInvoiceItem,
 } from "../../lib/invoice-express/client.js";
+// NOTE (2026-08-25): this issuer is the ONLY thing that may issue a PT fiscal
+// document. The native Stripe→InvoiceExpress connector must stay disabled on
+// the PT account — while it was on and this issuer was broken, every paid PT
+// order produced a connector-issued "Consumidor final" Fatura-Recibo AND an
+// orphan draft from here. With both live, each order would get two settled
+// legal documents and need a credit note to unwind.
 import { emitOpsAlert } from "../subscriptions/ops/ops-alert.js";
 import type { PaymentLog } from "../orders/complete-order-payment.service.js";
 
@@ -118,27 +124,24 @@ export async function issuePortugalInvoiceExpress(
 
     const today = new Date();
     const payload = {
-      invoice: {
-        type: "InvoiceReceipt" as const,
-        date: formatIeDate(today),
-        due_date: formatIeDate(today),
-        tax_exemption: "M07",
-        client: {
-          name: order.fullName,
-          // Stable client key so InvoiceExpress de-dupes the patient's client
-          // record across repeat orders.
-          code: order.userId ?? order.email,
-          fiscal_id: resolveFiscalId(profile?.taxIdNumber),
-          address: order.shipLine1 ?? profile?.addressLine1 ?? "-",
-          postal_code: order.shipPostalCode ?? profile?.addressPostalCode ?? "0000-000",
-          city: order.shipCity ?? profile?.addressCity ?? "-",
-        },
-        items,
+      date: formatIeDate(today),
+      due_date: formatIeDate(today),
+      tax_exemption: "M07",
+      client: {
+        name: order.fullName,
+        // Stable client key so InvoiceExpress de-dupes the patient's client
+        // record across repeat orders.
+        code: order.userId ?? order.email,
+        fiscal_id: resolveFiscalId(profile?.taxIdNumber),
+        address: order.shipLine1 ?? profile?.addressLine1 ?? "-",
+        postal_code: order.shipPostalCode ?? profile?.addressPostalCode ?? "0000-000",
+        city: order.shipCity ?? profile?.addressCity ?? "-",
       },
+      items,
     };
 
-    const { id } = await createInvoiceReceipt(payload);
-    await finalizeInvoice(id);
+    const { id, type } = await createInvoiceReceipt(payload);
+    await finalizeInvoice(id, type);
 
     // Persist BEFORE emailing: an email failure must not cause a re-issue on the
     // next webhook redelivery. Stamp the id even if the email later fails.
@@ -149,7 +152,7 @@ export async function issuePortugalInvoiceExpress(
     log.info({ orderId, invoiceExpressId: id }, "PT InvoiceExpress invoice issued");
 
     try {
-      await emailInvoiceReceipt(id, {
+      await emailInvoiceReceipt(id, type, {
         email: order.email,
         subject: "Your Receipt from Global Health",
         body: `Dear ${order.fullName},\n\nPlease find your receipt attached.\n\nKind regards,\nGlobal Health`,
