@@ -15,7 +15,7 @@ Local coverage: every one of the six topics currently has EN, PT, ES, CS, RO and
 
 ## Research record
 
-Fresh research used the existing OpenSEO project `GlobalHealthNew` (`7804f362-5891-417e-9c3a-d9e8d4d7dc6b`). Location codes were Portugal `2620`, Ireland `2372`, Czechia `2203`, Spain `2724`, and Romania `2642`. Language codes were `pt`, `en`, `cs`, `es`, and `ro`. The live calls ran on 24 August 2026.
+Fresh research used the existing Global Health OpenSEO project. Location codes were Portugal `2620`, Ireland `2372`, Czechia `2203`, Spain `2724`, and Romania `2642`. Language codes were `pt`, `en`, `cs`, `es`, and `ro`. The live calls ran on 24 August 2026.
 
 | Market/query | Fresh volume | KD | CPC (USD) | Intent | Recent direction |
 | --- | ---: | ---: | ---: | --- | --- |
@@ -37,7 +37,7 @@ The August 19 editorial-plan estimates match the fresh headline figures. They we
 
 OpenSEO calls used: `whoami`, `list_projects`, `research_keywords`, `get_keyword_metrics`, `get_serp_results`, `find_serp_competitors`, `get_search_opportunities`, `get_domain_keyword_suggestions`, `get_ranked_keywords`, `get_search_console_performance`, `get_backlinks_overview`, and `get_backlinks_profile`.
 
-Credit record: the focused batch started at 19,930 credits and ended at 18,775, for 1,155 credits charged. This remained below the 2,000-credit approval threshold. No tracking campaign, saved keyword batch, project-context mutation, or large site audit was started.
+Credit record: the focused batch used 1,155 credits and remained below the 2,000-credit approval threshold. No tracking campaign, saved keyword batch, project-context mutation, or large site audit was started.
 
 ## Keyword-to-section maps
 
@@ -150,7 +150,7 @@ Backlink prospects are prospects only. Acquired backlinks: **none**. Outreach se
 
 The safe seeder prints the canonical manifest after its dry run and after creation. It checks the country, active service, registered author/reviewer, base slugs, translation slugs, and title collisions again inside each transaction. Any existing row causes the whole topic to be preserved and skipped.
 
-Production dry-run result, 24 August 2026: all six base posts and 30 translation rows were collision-free and eligible for `DRAFT` creation. CMS records created: **none at this checkpoint**. The production mutation remains pending fresh direct user approval, so there are no Week 2 CMS IDs to report yet and no existing records were changed.
+Production dry-run result, 24 August 2026: all six base posts and 30 translation rows were collision-free and eligible for `DRAFT` creation. CMS records created from this Week 2 pack: **none**. Later translation completion for two pre-existing draft posts did not seed these six Week 2 topics. The Week 2 production mutation remains pending fresh direct user approval, so there are no Week 2 CMS IDs to report yet and no existing records were changed by this seeder.
 
 Publication remains blocked until:
 
