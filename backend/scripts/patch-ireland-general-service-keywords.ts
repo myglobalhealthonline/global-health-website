@@ -20,6 +20,7 @@ import {
 } from "../src/content/ireland-general-service-keywords.js";
 import {
   assertIrelandGeneralServiceKeywordApplyAuthorized,
+  buildIrelandGeneralServiceKeywordTransactionOptions,
   buildOptimisticServiceTranslationWhere,
   buildOptimisticServiceWhere,
 } from "../src/content/ireland-general-service-keyword-patch.js";
@@ -243,7 +244,9 @@ async function main(): Promise<void> {
         }
       }
     },
-    { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+    buildIrelandGeneralServiceKeywordTransactionOptions(
+      Prisma.TransactionIsolationLevel.Serializable,
+    ),
   );
 
   writeLine(

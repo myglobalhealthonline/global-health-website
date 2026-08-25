@@ -3,9 +3,20 @@ import test from "node:test";
 
 import {
   assertIrelandGeneralServiceKeywordApplyAuthorized,
+  buildIrelandGeneralServiceKeywordTransactionOptions,
   buildOptimisticServiceTranslationWhere,
   buildOptimisticServiceWhere,
+  IRELAND_GENERAL_SERVICE_KEYWORD_TRANSACTION_TIMEOUT_MS,
 } from "./ireland-general-service-keyword-patch.js";
+
+test("allows the full localized batch to finish over a remote proxy", () => {
+  assert.ok(IRELAND_GENERAL_SERVICE_KEYWORD_TRANSACTION_TIMEOUT_MS >= 30_000);
+  assert.deepEqual(buildIrelandGeneralServiceKeywordTransactionOptions("Serializable"), {
+    isolationLevel: "Serializable",
+    maxWait: 10_000,
+    timeout: 30_000,
+  });
+});
 
 test("requires the exact version token before an apply", () => {
   assert.doesNotThrow(() =>
