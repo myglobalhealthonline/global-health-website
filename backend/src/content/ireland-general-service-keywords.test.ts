@@ -35,18 +35,24 @@ test("maps exactly the 16 active Ireland GP-level services", () => {
   assert.equal(new Set(irelandGeneralServiceKeywordMap.map(({ slug }) => slug)).size, 16);
 });
 
-test("provides every supported localized variant for each changed service", () => {
+test("provides every supported localized variant for all 16 services", () => {
   const expectedLocales = ["CS", "DE", "ES", "PT", "RO"];
+  const localizedSlugs = expectedSlugs;
 
-  assert.equal(irelandGeneralServiceLocalizedSeoUpdates.length, 30);
-  for (const update of irelandGeneralServiceSeoUpdates) {
+  assert.equal(irelandGeneralServiceLocalizedSeoUpdates.length, 80);
+  assert.deepEqual(
+    [...new Set(irelandGeneralServiceLocalizedSeoUpdates.map(({ slug }) => slug))].sort(),
+    localizedSlugs.sort(),
+  );
+
+  for (const slug of localizedSlugs) {
     assert.deepEqual(
       irelandGeneralServiceLocalizedSeoUpdates
-        .filter(({ slug }) => slug === update.slug)
+        .filter((update) => update.slug === slug)
         .map(({ locale }) => locale)
         .sort(),
       expectedLocales,
-      `${update.slug} must have all five localized variants`,
+      `${slug} must have all five localized variants`,
     );
   }
 });
@@ -113,17 +119,10 @@ test("records sources and exclusions instead of copying unsafe competitor terms"
   }
 });
 
-test("limits public copy changes to the six evidence-backed pages", () => {
+test("covers all 16 services in the English update batch", () => {
   assert.deepEqual(
     irelandGeneralServiceSeoUpdates.map(({ slug }) => slug).sort(),
-    [
-      "hair-loss-consultation",
-      "mental-health-consultation",
-      "referral-and-investigations",
-      "skin-dermatology-consultation",
-      "treatment-review",
-      "weight-management-consultation",
-    ],
+    expectedSlugs,
   );
 });
 

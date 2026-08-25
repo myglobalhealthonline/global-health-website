@@ -1,3 +1,5 @@
+import { irelandGeneralServiceLocalizedCompletionSeoUpdates } from "./ireland-general-service-keywords-localized-completion.js";
+
 export const IRELAND_GENERAL_SERVICE_KEYWORD_VERSION =
   "IE-GENERAL-SERVICE-KEYWORDS-2026-08-25" as const;
 
@@ -154,11 +156,35 @@ export const irelandGeneralServiceKeywordMap: readonly IrelandGeneralServiceKeyw
 ] as const;
 
 /**
- * Only pages with fresh page-level evidence receive public snippet/H1 changes.
- * The other ten pages retain their already-relevant copy so this batch does
- * not reset measurement or manufacture changes from zero-volume suggestions.
+ * Fresh page-level evidence supports English public snippet/H1 changes for all
+ * 16 Ireland GENERAL services. Localized PT/ES/CS/RO/DE updates now cover the
+ * same 16 services through the reviewed completion payload.
  */
 export const irelandGeneralServiceSeoUpdates: readonly IrelandGeneralServiceSeoUpdate[] = [
+  {
+    slug: "acute-medical-consultation",
+    seoTitle: "Same-Day Doctor Consultation Ireland | See a Doctor Online",
+    seoDescription:
+      "Book a same-day online doctor consultation in Ireland for suitable non-emergency symptoms, clinical assessment and advice on appropriate next steps.",
+    heroTitle: "Same-Day Online Doctor Consultation in Ireland",
+    seoKeywords: ["same day doctor consultation ireland", "online medical consultation ireland", "doctor advice online ireland", "online doctor appointment"],
+  },
+  {
+    slug: "aesthetic-medicine-consultation",
+    seoTitle: "Aesthetic Medicine Consultation Ireland | Pre & Post Care",
+    seoDescription:
+      "Book an online aesthetic medicine consultation in Ireland for independent pre-procedure advice or medical assessment of suitable post-procedure concerns.",
+    heroTitle: "Online Aesthetic Medicine Consultation in Ireland",
+    seoKeywords: ["aesthetic medicine consultation ireland", "online aesthetic consultation", "pre-procedure medical advice", "post-procedure assessment"],
+  },
+  {
+    slug: "chronic-disease-consultation",
+    seoTitle: "Online Chronic Disease Consultation Ireland | Ongoing Care",
+    seoDescription:
+      "Book an online chronic disease consultation in Ireland for structured review of a diagnosed long-term condition, treatment safety and ongoing-care planning.",
+    heroTitle: "Online Chronic Disease Consultation in Ireland",
+    seoKeywords: ["chronic disease consultation ireland", "chronic disease management ireland", "online chronic care consultation", "long-term condition review"],
+  },
   {
     slug: "hair-loss-consultation",
     seoTitle: "Online Hair Loss Consultation Ireland | Doctor Assessment",
@@ -166,6 +192,14 @@ export const irelandGeneralServiceSeoUpdates: readonly IrelandGeneralServiceSeoU
       "Book an online hair loss consultation with an Irish-registered doctor for hair thinning or alopecia assessment and advice on appropriate next steps.",
     heroTitle: "Online Hair Loss Consultation in Ireland",
     seoKeywords: ["online hair loss consultation", "hair loss consultation ireland", "hair thinning consultation", "alopecia assessment ireland"],
+  },
+  {
+    slug: "mens-health-consultation",
+    seoTitle: "Online Men's Health Consultation Ireland | Confidential GP",
+    seoDescription:
+      "Book a confidential online men's health consultation in Ireland for GP assessment of sexual health, hormonal, prostate or general men's health concerns.",
+    heroTitle: "Online Men's Health Consultation in Ireland",
+    seoKeywords: ["online men's health consultation ireland", "men's health doctor ireland", "erectile dysfunction consultation ireland", "testosterone assessment ireland"],
   },
   {
     slug: "mental-health-consultation",
@@ -176,6 +210,22 @@ export const irelandGeneralServiceSeoUpdates: readonly IrelandGeneralServiceSeoU
     seoKeywords: ["online mental health consultation ireland", "GP mental health assessment ireland", "anxiety consultation online ireland", "depression consultation online ireland"],
   },
   {
+    slug: "musculoskeletal-pain-assessment",
+    seoTitle: "Online Musculoskeletal Assessment Ireland | Pain & Joint Care",
+    seoDescription:
+      "Book an online musculoskeletal assessment in Ireland for suitable back pain, joint pain, sciatica or soft-tissue concerns and advice on appropriate care.",
+    heroTitle: "Online Musculoskeletal and Pain Assessment in Ireland",
+    seoKeywords: ["online musculoskeletal assessment ireland", "back pain consultation online", "joint pain assessment online", "sciatica consultation online"],
+  },
+  {
+    slug: "paediatric-consultation",
+    seoTitle: "Online Paediatric GP Ireland | Children's Doctor Consultation",
+    seoDescription:
+      "Book an online paediatric GP consultation in Ireland for suitable non-emergency concerns affecting babies, children or teenagers, with referral advice when needed.",
+    heroTitle: "Online Paediatric GP Consultation in Ireland",
+    seoKeywords: ["online paediatric GP consultation ireland", "online doctor for children ireland", "children's doctor online ireland", "paediatric GP ireland"],
+  },
+  {
     slug: "referral-and-investigations",
     seoTitle: "Online GP Referral Ireland | Tests, Scans & Specialist Letters",
     seoDescription:
@@ -184,12 +234,36 @@ export const irelandGeneralServiceSeoUpdates: readonly IrelandGeneralServiceSeoU
     seoKeywords: ["online GP referral ireland", "referral letter online", "GP blood test referral", "MRI referral GP ireland", "specialist referral ireland"],
   },
   {
+    slug: "second-opinion-consultation",
+    seoTitle: "Online Medical Second Opinion Ireland | Independent GP Review",
+    seoDescription:
+      "Book an online medical second opinion in Ireland for an independent GP-level review of a diagnosis, treatment plan, clinical letter or test result.",
+    heroTitle: "Online Medical Second Opinion in Ireland",
+    seoKeywords: ["online medical second opinion ireland", "doctor second opinion online", "second opinion consultation", "independent GP review ireland"],
+  },
+  {
+    slug: "sick-certificate-ireland",
+    seoTitle: "Sick Cert Online Ireland | Same-Day Doctor Assessment",
+    seoDescription:
+      "Book an online doctor assessment for a sick cert or sick note in Ireland. Any medical certificate depends on the clinical findings and the doctor's discretion.",
+    heroTitle: "Online Sick Cert Assessment in Ireland",
+    seoKeywords: ["sick cert online", "online sick cert ireland", "medical certificate online ireland", "sick note online ireland", "same day sick cert"],
+  },
+  {
     slug: "skin-dermatology-consultation",
     seoTitle: "Online Skin Consultation Ireland | GP Skin Assessment",
     seoDescription:
       "Book an online skin consultation with an Irish-registered GP for rashes, eczema, acne or other suitable skin concerns, with referral advice where needed.",
     heroTitle: "Online Skin Consultation in Ireland",
     seoKeywords: ["online skin consultation ireland", "skin consultation", "doctor for skin", "rash consultation online", "eczema consultation online"],
+  },
+  {
+    slug: "travel-health-consultation",
+    seoTitle: "Online Travel Health Consultation Ireland | Pre-Travel Doctor",
+    seoDescription:
+      "Book an online travel health consultation in Ireland for destination-specific risk assessment, vaccine guidance, malaria advice and pre-travel planning.",
+    heroTitle: "Online Travel Health Consultation in Ireland",
+    seoKeywords: ["travel health consultation ireland", "travel health assessment", "pre-travel health check ireland", "travel doctor", "malaria risk advice ireland"],
   },
   {
     slug: "treatment-review",
@@ -207,15 +281,24 @@ export const irelandGeneralServiceSeoUpdates: readonly IrelandGeneralServiceSeoU
     heroTitle: "Online Medical Weight Management in Ireland",
     seoKeywords: ["online weight management ireland", "medical weight management ireland", "weight loss consultation ireland", "doctor-led weight loss ireland"],
   },
+  {
+    slug: "womens-health-consultation",
+    seoTitle: "Online Women's Health Consultation Ireland | Confidential GP",
+    seoDescription:
+      "Book a confidential online women's health consultation in Ireland for GP assessment of menopause, PCOS, contraception, hormonal or reproductive concerns.",
+    heroTitle: "Online Women's Health Consultation in Ireland",
+    seoKeywords: ["online women's health consultation ireland", "women's health doctor ireland", "menopause consultation ireland", "PCOS consultation ireland"],
+  },
 ] as const;
 
 /**
- * Localized equivalents for the six supported updates. Google Ireland exposes
- * English keyword metrics only, so these use native phrasing validated against
- * the corresponding home-language OpenSEO market as a phrasing proxy. Those
- * proxy volumes must never be reported as Ireland demand.
+ * Localized equivalents for all 16 services. Google Ireland exposes English
+ * keyword metrics only, so these use native phrasing validated against the
+ * corresponding home-language OpenSEO market as a phrasing proxy. Those proxy
+ * volumes must never be reported as Ireland demand.
  */
 export const irelandGeneralServiceLocalizedSeoUpdates: readonly IrelandGeneralServiceLocalizedSeoUpdate[] = [
+  ...irelandGeneralServiceLocalizedCompletionSeoUpdates,
   {
     slug: "hair-loss-consultation",
     locale: "PT",

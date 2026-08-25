@@ -1,6 +1,6 @@
 # SEO control state — canonical
 
-**Last operational update: 2026-08-26.** Historical audit files remain snapshots;
+**Last operational update: 2026-08-25.** Historical audit files remain snapshots;
 this ledger is the source of truth for current status, dated gates and future work.
 
 **This file is the single source of truth for the SEO workstream.** It carries the
@@ -6389,38 +6389,39 @@ configuration watch item, not as evidence that the rendered release is absent.
 
 ---
 
-## 31. IE-GENERAL-SERVICE-KEYWORDS-001 — 16-service keyword map and localized six-page update (2026-08-26)
+## 31. IE-GENERAL-SERVICE-KEYWORDS-001 — 16-service keyword map and full six-locale update (2026-08-25)
 
-**Status: LIVE IN PRODUCTION — 36 LOCALE VARIANTS VERIFIED.** All 16 active Ireland
+**Status: LIVE IN PRODUCTION — 96 UPDATED VARIANTS VERIFIED.** All 16 active Ireland
 `GENERAL` services now have one documented commercial-intent owner in
-`seo/ireland/12-gp-service-keyword-map-2026-08-26.csv`. Fresh final GSC query/page
+`seo/ireland/12-gp-service-keyword-map-2026-08-25.csv`. Fresh final GSC query/page
 rows, bounded WebDoctor landing-page/domain rankings and focused OpenSEO expansion
-supported public snippet/H1 changes on six pages only: hair loss, mental health,
-referral and investigations, skin, treatment/repeat-prescription review and weight
-management. The other ten pages were deliberately left unchanged because their
-existing copy already owned the relevant intent or the fresh evidence did not justify
-resetting measurement.
+supported English SEO title, description and hero-title updates on all 16 service
+pages. Localized PT/ES/CS/RO/DE title, description and hero-title updates now cover
+the same 16 services through the owner-approved completion follow-up.
 
-The six updates were saved through the authenticated production service editors in
-English, Portuguese, Spanish, Czech, Romanian and German. The changed fields were SEO
-title, SEO description and hero title only. Public cache-busted checks then matched the
-intended title, meta description and H1 on every combination (six services × six
-locales). Prices, duration, doctor assignments, body copy, FAQs, CTA/booking behavior,
-slugs, visibility and publication state were not changed.
+The English updates were saved through the authenticated production service editors for
+all 16 Ireland GENERAL pages. The same 16 services were then saved in Portuguese,
+Spanish, Czech, Romanian and German. Public cache-busted checks matched the intended
+title, meta description and H1 on 96 updated combinations (16 services × six locales).
+Prices, duration, doctor assignments, body copy, FAQs, CTA/booking behavior, slugs,
+visibility and publication state were not changed.
 
-OpenSEO URL Inspection on 2026-08-26 confirmed all 16 English Ireland GENERAL
+OpenSEO URL Inspection on 2026-08-25 confirmed all 16 English Ireland GENERAL
 service URLs are submitted and indexed, with Google-selected canonicals matching
 their declared service URLs. No indexing exception requires an immediate content or
 technical change.
 
 The repository manifest at
-`backend/src/content/ireland-general-service-keywords.ts` records all 16 intent owners,
-the six English payloads and 30 localized payloads. Its guarded replay script is dry-run
-by default, requires the exact version confirmation, validates active/public/GENERAL
-state, preserves operational fields and uses optimistic `updatedAt` guards inside a
-Serializable transaction. The direct database dry run was not used for production
-because the local production credential was stale; the authenticated admin saves are
-the authoritative applied path. Ten focused tests and backend type-check pass.
+`backend/src/content/ireland-general-service-keywords.ts` plus
+`backend/src/content/ireland-general-service-keywords-localized-completion.ts`
+records all 16 intent owners, the 16 English payloads and 80 localized payloads. The
+guarded replay script is dry-run by default, requires the exact version confirmation,
+validates active/public/GENERAL state, preserves operational fields and uses optimistic
+`updatedAt` guards inside a Serializable transaction. The direct database dry run was
+not used for production because the local production credential was stale; the
+authenticated admin saves are the authoritative applied path. Ten focused tests and
+targeted lint pass; the current backend-wide type-check is failing in unrelated invoice
+files outside this SEO batch.
 
 OpenSEO exposes English only for Ireland location 2372. Native-market checks for
 Portugal, Spain, Czechia, Romania and Germany were therefore used only as phrasing
