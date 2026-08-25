@@ -43,7 +43,10 @@ import {
   doctorEmailSubjectCancelled,
   doctorWhatsAppBookingReceived,
   doctorWhatsAppCancelled,
+  multibancoPendingEmailSubject,
+  patientMultibancoPending,
   type AutomationLang,
+  type MultibancoPendingContext,
   type PrePaymentMessageContext,
 } from "./pre-payment-messages.js";
 import { whatsappContactFooter } from "./whatsapp-contact-footer.js";
@@ -54,6 +57,7 @@ import {
   resolveOrderPortalAccess,
 } from "./resolve-order-portal-access.service.js";
 import { generateCreditNoteForOrder } from "../invoices/generate-invoice.service.js";
+import { voidOrderCheckoutPayment } from "../orders/void-checkout-payment.service.js";
 import { getStripeClient, isStripeConfigured } from "../../lib/stripe/client.js";
 import { emitOpsAlert } from "../subscriptions/ops/ops-alert.js";
 
@@ -850,6 +854,116 @@ export async function sendPrePaymentCancelledNotifications(
   }
 }
 
+/** Voucher details Stripe hands back for a delayed-notification payment. */
+export type MultibancoReferenceDetails = {
+  entity: string;
+  reference: string;
+  amountCents: number;
+  currencyCode: string;
+  /** Voucher expiry, or null when Stripe omits it. */
+  expiresAt: Date | null;
+};
+
+/**
+ * "Here is your Multibanco reference — nothing is confirmed until you pay it."
+ *
+ * Sent when a Checkout Session completes with `payment_status: "unpaid"`, which
+ * is what EVERY Multibanco checkout does: Stripe fires
+ * `checkout.session.completed` the moment the Entidade/Referência pair is
+ * printed, and the money only arrives (via SIBS) when the patient actually pays
+ * at an ATM or in homebanking, hours or days later. The booking confirmation
+ * belongs to `checkout.session.async_payment_succeeded` and nothing else — see
+ * the webhook in payments.route.ts.
+ *
+ * Deliberately patient-only: the doctor is not told a booking exists off an
+ * unpaid voucher, exactly as the WEB_CHECKOUT flow does not.
+ *
+ * Idempotent per voucher — the automation key carries the reference number, so
+ * a redelivered webhook is a no-op while a genuinely re-minted session (new
+ * reference) still notifies.
+ */
+export async function sendMultibancoReferenceNotification(
+  orderId: string,
+  details: MultibancoReferenceDetails,
+): Promise<void> {
+  const stageKey = `multibanco_reference_${details.reference}`;
+  const alreadySent = await prisma.automationRun.findFirst({
+    where: { orderId, automationKey: { startsWith: stageKey }, status: "SUCCESS" },
+    select: { id: true },
+  });
+  if (alreadySent) return;
+
+  const loaded = await loadOrderContext(orderId, null);
+  if (!loaded) return;
+  const { order, primary, lang, ctx, phoneHints } = loaded;
+
+  // The date we quote is the one we enforce. Stripe fixes the voucher's own
+  // lifetime at ~7 days and offers no way to shorten it, so the reference is
+  // instead voided at our ordinary `paymentDueAt` (see voidOrderCheckoutPayment)
+  // — Multibanco is held to exactly the same deadline as every other method.
+  // The voucher expiry only wins in the rare case where it lands first, e.g. a
+  // consultation booked more than a week out.
+  const orderDeadline = order.paymentDueAt;
+  const payByDate =
+    orderDeadline && details.expiresAt
+      ? new Date(Math.min(orderDeadline.getTime(), details.expiresAt.getTime()))
+      : (orderDeadline ?? details.expiresAt);
+
+  const mbCtx: MultibancoPendingContext = {
+    ...ctx,
+    entity: details.entity,
+    reference: details.reference,
+    amountLabel: formatOrderTotal(details.amountCents, details.currencyCode),
+    payBy: payByDate
+      ? formatDeadline(payByDate, primary.patientTimezone, lang)
+      : ctx.deadline,
+  };
+  const body = patientMultibancoPending(mbCtx, lang);
+  const subject = multibancoPendingEmailSubject(mbCtx, lang);
+
+  await sendWhatsApp(
+    `${stageKey}_whatsapp`,
+    orderId,
+    order.phone,
+    body,
+    "Patient WhatsApp — Multibanco reference issued (payment pending)",
+    lang,
+    phoneHints,
+    primary.patientWhatsappConsent,
+  );
+
+  const summary = "Patient email — Multibanco reference issued (payment pending)";
+  const run = await createAutomationRun({
+    automationKey: `${stageKey}_email`,
+    orderId,
+    channel: "email",
+    recipient: order.email,
+    summary,
+    status: "RUNNING",
+  });
+  try {
+    await sendAutomationEmail(
+      {
+        to: order.email,
+        subject,
+        text: body,
+        html: wrapHtml(
+          subject,
+          `<div style="white-space:pre-wrap;">${body.replace(/\n/g, "<br/>")}</div>`,
+        ),
+      },
+      { recordLabel: ctx.orderNumber },
+    );
+    await finishAutomationRun(run.id, { status: "SUCCESS", summary });
+  } catch (err) {
+    await finishAutomationRun(run.id, {
+      status: "FAILED",
+      summary,
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
+
 /**
  * The single message of the WEB_CHECKOUT flow: "we noticed you left the checkout
  * page". Email + WhatsApp, patient only — the doctor was never told about this
@@ -1056,9 +1170,17 @@ async function stripePaymentVerdict(order: {
   try {
     const stripe = getStripeClient(order.countryCode);
     const session = await stripe.checkout.sessions.retrieve(order.stripeSessionId);
-    // `status: "complete"` covers a €0/credit-covered checkout, which completes
-    // without ever setting payment_status to "paid".
-    return session.payment_status === "paid" || session.status === "complete"
+    // `payment_status` ONLY. This used to also accept `status === "complete"`
+    // as proof of payment, meaning to cover a €0/credit-covered checkout — but
+    // a Multibanco session is `complete` from the instant the voucher prints,
+    // with `payment_status: "unpaid"`. That made every unpaid PT voucher read
+    // as "paid" here: the sweep aborted the cancel, the sync it falls back to
+    // correctly refused (payment_status != paid), and the order sat holding its
+    // slot on every subsequent tick with nobody told. A €0 checkout reports
+    // `no_payment_required` anyway, which is the honest thing to match — and
+    // €0 orders skip Stripe entirely today (orders.route.ts).
+    return session.payment_status === "paid" ||
+      session.payment_status === "no_payment_required"
       ? "paid"
       : "not-paid";
   } catch {
@@ -1129,6 +1251,13 @@ export async function cancelPrePaymentOrder(orderId: string): Promise<boolean> {
     data: { status: "CANCELLED", paymentStatus: "FAILED" },
   });
   if (claimed.count === 0) return false;
+
+  // Void anything still payable, now that this call owns the cancellation. A
+  // Multibanco reference stays chargeable at any ATM for ~7 days — far past
+  // this deadline — so leaving it live lets the patient pay for a consultation
+  // whose slot we are about to hand back. Multibanco is thereby held to the
+  // same payment deadline as every other method.
+  await voidOrderCheckoutPayment(order).catch(() => undefined);
 
   if (heldSlotIds.length) {
     await releaseSlotsToBaseGrid(heldSlotIds);

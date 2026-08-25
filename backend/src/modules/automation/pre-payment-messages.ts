@@ -580,3 +580,139 @@ export function formatDeadline(
     return `${date.toISOString().slice(0, 16).replace("T", " ")} (UTC)`;
   }
 }
+
+/**
+ * Multibanco (and any other delayed-notification method) issues a voucher at
+ * checkout time and settles hours or days later, via SIBS. The patient must be
+ * told the reference exists and that NOTHING is confirmed until the bank
+ * reports the payment — the booking confirmation is sent only on
+ * `checkout.session.async_payment_succeeded`.
+ */
+export type MultibancoPendingContext = PrePaymentMessageContext & {
+  /** Entidade — 5 digits. */
+  entity: string;
+  /** Referência — 9 digits. */
+  reference: string;
+  /** Amount to pay, already currency-formatted. */
+  amountLabel: string;
+  /**
+   * The deadline the patient is actually held to, already localised: our
+   * ordinary `paymentDueAt`, NOT Stripe's ~7-day voucher lifetime. The two
+   * differ, and quoting Stripe's would invite the patient to pay a reference we
+   * have already voided — see voidOrderCheckoutPayment.
+   */
+  payBy: string;
+};
+
+export function multibancoPendingEmailSubject(
+  ctx: MultibancoPendingContext,
+  lang: Lang,
+): string {
+  return t(lang, {
+    en: `Payment pending — Multibanco reference for ${ctx.orderNumber}`,
+    pt: `Pagamento pendente — referência Multibanco ${ctx.orderNumber}`,
+    ro: `Plată în așteptare — referință Multibanco ${ctx.orderNumber}`,
+    cs: `Platba čeká — reference Multibanco ${ctx.orderNumber}`,
+    es: `Pago pendiente — referencia Multibanco ${ctx.orderNumber}`,
+  });
+}
+
+export function patientMultibancoPending(
+  ctx: MultibancoPendingContext,
+  lang: Lang,
+): string {
+  const validity = t(lang, {
+    en: `\n⏳ Pay by: ${ctx.payBy}`,
+    pt: `\n⏳ Pagar até: ${ctx.payBy}`,
+    ro: `\n⏳ Plătiți până la: ${ctx.payBy}`,
+    cs: `\n⏳ Zaplaťte do: ${ctx.payBy}`,
+    es: `\n⏳ Pagar antes de: ${ctx.payBy}`,
+  });
+  return t(lang, {
+    en: `Hi ${ctx.patientName},
+We generated a Multibanco reference for your booking ${ctx.orderNumber}.
+
+⚠️ Your payment is NOT confirmed yet and your appointment is NOT booked yet.
+
+Pay with these details at an ATM or in your homebanking:
+🏦 Entity: ${ctx.entity}
+🔢 Reference: ${ctx.reference}
+💶 Amount: ${ctx.amountLabel}${validity}
+
+Reserved appointment:
+📌 Service: ${ctx.serviceName}
+👤 Doctor: ${ctx.doctorName}
+📅 Date and time: ${ctx.appointmentDate}
+
+As soon as the bank confirms the payment we will send your booking confirmation and the meeting link.
+If the payment has not reached us by then, the reference is cancelled and the slot is released — the same deadline that applies to every other payment method.`,
+    pt: `Olá ${ctx.patientName},
+Gerámos uma referência Multibanco para a sua marcação ${ctx.orderNumber}.
+
+⚠️ O seu pagamento ainda NÃO está confirmado e a consulta ainda NÃO está marcada.
+
+Pague com estes dados num ATM ou no seu homebanking:
+🏦 Entidade: ${ctx.entity}
+🔢 Referência: ${ctx.reference}
+💶 Valor: ${ctx.amountLabel}${validity}
+
+Consulta reservada:
+📌 Serviço: ${ctx.serviceName}
+👤 Médico: ${ctx.doctorName}
+📅 Data e hora: ${ctx.appointmentDate}
+
+Assim que o banco confirmar o pagamento, enviamos a confirmação da marcação e o link da reunião.
+Se o pagamento não chegar até essa data, a referência é anulada e a vaga é libertada — é o mesmo prazo que se aplica a qualquer outro método de pagamento.`,
+    ro: `Bună ${ctx.patientName},
+Am generat o referință Multibanco pentru rezervarea ${ctx.orderNumber}.
+
+⚠️ Plata NU este încă confirmată, iar consultația NU este încă rezervată.
+
+Plătiți cu aceste date la ATM sau în homebanking:
+🏦 Entitate: ${ctx.entity}
+🔢 Referință: ${ctx.reference}
+💶 Sumă: ${ctx.amountLabel}${validity}
+
+Consultație rezervată:
+📌 Serviciu: ${ctx.serviceName}
+👤 Medic: ${ctx.doctorName}
+📅 Data și ora: ${ctx.appointmentDate}
+
+Imediat ce banca confirmă plata, vă trimitem confirmarea rezervării și linkul întâlnirii.
+Dacă plata nu ajunge până atunci, referința este anulată și intervalul este eliberat — același termen ca pentru orice altă metodă de plată.`,
+    cs: `Dobrý den ${ctx.patientName},
+Vygenerovali jsme referenci Multibanco pro vaši rezervaci ${ctx.orderNumber}.
+
+⚠️ Vaše platba zatím NENÍ potvrzena a konzultace zatím NENÍ rezervována.
+
+Zaplaťte těmito údaji v bankomatu nebo v internetovém bankovnictví:
+🏦 Entita: ${ctx.entity}
+🔢 Reference: ${ctx.reference}
+💶 Částka: ${ctx.amountLabel}${validity}
+
+Rezervovaná konzultace:
+📌 Služba: ${ctx.serviceName}
+👤 Lékař: ${ctx.doctorName}
+📅 Datum a čas: ${ctx.appointmentDate}
+
+Jakmile banka platbu potvrdí, zašleme vám potvrzení rezervace a odkaz na schůzku.
+Pokud platba do té doby nedorazí, reference se zruší a termín se uvolní — stejná lhůta jako u každé jiné platební metody.`,
+    es: `Hola ${ctx.patientName},
+Hemos generado una referencia Multibanco para su reserva ${ctx.orderNumber}.
+
+⚠️ Su pago aún NO está confirmado y la consulta aún NO está reservada.
+
+Pague con estos datos en un cajero o en su banca electrónica:
+🏦 Entidad: ${ctx.entity}
+🔢 Referencia: ${ctx.reference}
+💶 Importe: ${ctx.amountLabel}${validity}
+
+Consulta reservada:
+📌 Servicio: ${ctx.serviceName}
+👤 Médico: ${ctx.doctorName}
+📅 Fecha y hora: ${ctx.appointmentDate}
+
+En cuanto el banco confirme el pago le enviaremos la confirmación de la reserva y el enlace de la reunión.
+Si el pago no llega antes de esa fecha, la referencia se anula y la cita se libera — el mismo plazo que se aplica a cualquier otro método de pago.`,
+  });
+}

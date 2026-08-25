@@ -1082,6 +1082,11 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           stripe,
           cart.countryCode,
           body.data.email,
+          // Website self-serve checkout holds the slot for 15 minutes, which no
+          // ATM trip fits. Multibanco is held to that same deadline as every
+          // other method, so it is not offered here rather than being offered
+          // and voided minutes later. It stays on manual bookings / pay links.
+          { allowDelayedNotification: false },
         );
         const session = await stripe.checkout.sessions.create({
           mode: "payment",

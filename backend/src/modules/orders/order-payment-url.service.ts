@@ -1,3 +1,4 @@
+import { PrePaymentFlow } from "@prisma/client";
 import { env } from "../../config/env.js";
 import { prisma } from "../../db/prisma.js";
 import {
@@ -122,6 +123,12 @@ export async function resolveOrderPaymentUrl(
       stripe,
       order.countryCode,
       order.email,
+      // This resolver re-mints sessions for BOTH flows. A website order's
+      // deadline is a flat 15 minutes, too short for an offline reference, so
+      // it must not be handed Multibanco here either — the re-mint has to match
+      // the methods the original checkout offered. Manual bookings and pay
+      // links keep it: their deadline is `paymentDueAt`, hours or days out.
+      { allowDelayedNotification: order.prePaymentFlow !== PrePaymentFlow.WEB_CHECKOUT },
     );
     const session = await stripe.checkout.sessions.create({
       mode: "payment",

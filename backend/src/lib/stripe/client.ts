@@ -140,6 +140,22 @@ export type CheckoutPaymentMethodConfig = {
   phone_number_collection?: { enabled: boolean };
 };
 
+export type ResolveCheckoutPaymentMethodsOptions = {
+  /**
+   * Whether this order's payment deadline is long enough for a method that
+   * settles offline. Multibanco prints an Entidade/Referência pair the patient
+   * takes to an ATM or homebanking, so it needs hours, not minutes.
+   *
+   * Pass `false` for website self-serve checkout: that flow holds the slot for
+   * a flat 15 minutes (WEB_CHECKOUT_PAY_WINDOW_MIN), and Multibanco is held to
+   * the same deadline as every other method — the reference is voided when it
+   * elapses. Offering it there would hand the patient a reference and cancel it
+   * before they could reach a machine. Manual bookings and payment links keep
+   * it: their deadline is `paymentDueAt`, usually hours or days out.
+   */
+  allowDelayedNotification?: boolean;
+};
+
 /**
  * Portugal gets card + MB WAY + Multibanco; every other market keeps plain card.
  *
@@ -152,18 +168,25 @@ export type CheckoutPaymentMethodConfig = {
  * regardless. Multibanco already covers the bank-reference habit PT patients
  * expect. Do not re-add bank transfer without a Stripe-supported country AND
  * the capability enabled on the PT account.
+ *
+ * MB WAY stays on every PT path: it confirms in the patient's banking app
+ * within minutes, so unlike Multibanco it fits even the 15-minute window.
  */
 export async function resolveCheckoutPaymentMethods(
   _stripe: StripeInstance,
   countryCode: string | null | undefined,
   email: string,
+  opts: ResolveCheckoutPaymentMethodsOptions = {},
 ): Promise<CheckoutPaymentMethodConfig> {
   if (countryCode?.trim().toLowerCase() !== "pt") {
     return { customer_email: email, payment_method_types: ["card"] };
   }
+  const allowDelayed = opts.allowDelayedNotification ?? true;
   return {
     customer_email: email,
-    payment_method_types: ["card", "mb_way", "multibanco"],
+    payment_method_types: allowDelayed
+      ? ["card", "mb_way", "multibanco"]
+      : ["card", "mb_way"],
     phone_number_collection: { enabled: true },
   };
 }

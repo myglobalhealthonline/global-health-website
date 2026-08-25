@@ -1,4 +1,9 @@
-import type { FastifyPluginAsync, FastifyRequest, FastifyReply } from "fastify";
+import type {
+  FastifyBaseLogger,
+  FastifyPluginAsync,
+  FastifyRequest,
+  FastifyReply,
+} from "fastify";
 import { z } from "zod";
 import { OrderStatus, PaymentStatus, PrePaymentFlow } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
@@ -13,6 +18,8 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { checkoutBranding } from "../modules/billing/checkout-branding.js";
 import { completeOrderPaymentFromCheckoutSession, syncOrderPaymentFromStripe, syncOrderPaymentFromStripeSession } from "../modules/orders/complete-order-payment.service.js";
+import { isSettledCheckoutSession } from "../modules/orders/checkout-session-settlement.js";
+import { voidOrderCheckoutPaymentById } from "../modules/orders/void-checkout-payment.service.js";
 import {
   handleSubscriptionEvent,
   isSubscriptionEvent,
@@ -27,8 +34,10 @@ import { releaseOrderMembershipAllowance } from "../modules/memberships/membersh
 import { sendOrderRefundNotifications } from "../modules/automation/refund-notifications.service.js";
 import { cancelOrderAppointments } from "../modules/appointments/appointments.service.js";
 import {
+  sendMultibancoReferenceNotification,
   sendPrePaymentCancelledNotifications,
   sendWebCheckoutCancelNotifications,
+  type MultibancoReferenceDetails,
 } from "../modules/automation/pre-payment-flow.service.js";
 
 const createCheckoutBodySchema = z.object({
@@ -74,6 +83,226 @@ const syncOrderBodySchema = z
   .refine((data) => Boolean(data.orderId || data.stripeSessionId), {
     message: "orderId or stripeSessionId is required",
   });
+
+/** The subset of a Checkout Session this file reads off a webhook payload. */
+type WebhookCheckoutSession = {
+  id: string;
+  /** "paid" | "unpaid" | "no_payment_required" — the ONLY proof money moved. */
+  payment_status?: string | null;
+  client_reference_id?: string | null;
+  payment_intent?: string | null;
+  invoice?: string | null;
+  amount_total?: number | null;
+  currency?: string | null;
+  metadata?: Record<string, string>;
+};
+
+/**
+ * Pull the Entidade/Referência pair off the session's PaymentIntent.
+ *
+ * Multibanco prints the voucher as a `next_action` on the intent; the Checkout
+ * Session payload itself carries no reference, so this costs one API call.
+ * Returns null for any other delayed method (or if Stripe is unreachable) —
+ * callers must treat that as "we have nothing to tell the patient", never as
+ * "there is nothing pending".
+ */
+async function resolveMultibancoDetails(
+  session: WebhookCheckoutSession,
+  countryCode: string | null,
+  log: FastifyBaseLogger,
+): Promise<MultibancoReferenceDetails | null> {
+  const paymentIntentId =
+    typeof session.payment_intent === "string" ? session.payment_intent : null;
+  if (!paymentIntentId) return null;
+  try {
+    const stripe = getStripeClient(countryCode);
+    const intent = await stripe.paymentIntents.retrieve(paymentIntentId);
+    const voucher = intent.next_action?.multibanco_display_details;
+    if (!voucher?.entity || !voucher.reference) return null;
+    return {
+      entity: voucher.entity,
+      reference: voucher.reference,
+      amountCents: session.amount_total ?? intent.amount ?? 0,
+      currencyCode: (session.currency ?? intent.currency ?? "eur").toUpperCase(),
+      expiresAt: voucher.expires_at ? new Date(voucher.expires_at * 1000) : null,
+    };
+  } catch (err) {
+    log.warn({ err, paymentIntentId }, "Could not read Multibanco voucher off PaymentIntent");
+    return null;
+  }
+}
+
+/**
+ * `checkout.session.completed` with `payment_status !== "paid"` — the session is
+ * finished but NO money has moved.
+ *
+ * This is the normal, expected shape of every Multibanco checkout: Stripe
+ * completes the session the instant the Entidade/Referência pair is printed,
+ * and SIBS only reports the actual payment hours or days later, as
+ * `checkout.session.async_payment_succeeded`. Treating this event as payment
+ * (which this handler did until 2026-08-25) marks the order PAID, mints the
+ * appointment, sends the booking confirmation and — in Portugal — issues a real
+ * fiscal invoice, all for money that may never arrive.
+ *
+ * So: keep the order PENDING with its slot still held, tell the patient how to
+ * pay the voucher, and let `async_payment_succeeded` do the confirming.
+ */
+async function handleUnpaidCompletedSession(
+  session: WebhookCheckoutSession,
+  stripeEventId: string,
+  log: FastifyBaseLogger,
+): Promise<void> {
+  const orderId =
+    session.metadata?.kind === "order"
+      ? (session.client_reference_id ?? session.metadata?.orderId ?? null)
+      : null;
+
+  if (!orderId) {
+    // Redemptions, Brazil consent fees and legacy appointment bookings are all
+    // card-only today, so an unpaid completion on one of them is unexpected.
+    log.warn(
+      { sessionId: session.id, kind: session.metadata?.kind, paymentStatus: session.payment_status },
+      "Checkout session completed unpaid on a non-order flow — nothing committed",
+    );
+  } else {
+    const order = await prisma.order.findUnique({
+      where: { id: orderId },
+      select: { id: true, countryCode: true, status: true, paymentStatus: true },
+    });
+    if (!order) {
+      log.warn({ orderId, sessionId: session.id }, "Unpaid completed session for unknown order");
+    } else if (order.paymentStatus !== PaymentStatus.PAID && order.status !== OrderStatus.PAID) {
+      // PENDING (not PAID, not FAILED): the voucher is live, the slot stays
+      // held, and the pre-payment reminder ladder keeps running as before.
+      await prisma.order.update({
+        where: { id: orderId },
+        data: { paymentStatus: PaymentStatus.PENDING },
+      });
+      const details = await resolveMultibancoDetails(session, order.countryCode, log);
+      if (details) {
+        await sendMultibancoReferenceNotification(orderId, details).catch((err) => {
+          log.error({ err, orderId }, "Multibanco reference notification failed");
+        });
+      } else {
+        // We know the payment is pending but cannot say how to complete it —
+        // the patient is left holding a slot with no instructions from us.
+        await emitOpsAlert({
+          severity: "warning",
+          title: "Checkout completed unpaid with no voucher details",
+          detail:
+            "A Checkout Session completed with payment_status != paid but no Multibanco voucher could be read off the PaymentIntent. The order is PENDING and the patient was NOT told how to pay.",
+          context: { orderId, sessionId: session.id, paymentStatus: session.payment_status ?? null },
+        });
+      }
+    }
+  }
+
+  // Record the event so a Stripe redelivery is deduped at the top of the
+  // handler instead of re-sending the voucher message.
+  await prisma.processedWebhookEvent
+    .create({ data: { stripeEventId, eventType: "checkout.session.completed.unpaid" } })
+    .catch(() => undefined);
+}
+
+/**
+ * Tear down a PENDING order whose payment is not going to arrive: mark it
+ * CANCELLED/FAILED, hand back the held slot, credits and allowance units,
+ * cancel the minted appointments, and tell the patient (and doctor) why.
+ *
+ * Shared by the two webhook events that mean "this attempt is dead" —
+ * `checkout.session.expired` and `checkout.session.async_payment_failed` — so
+ * an abandoned voucher releases exactly what an abandoned session does.
+ *
+ * `respectPrePaymentDeadline` is the difference between them. A Checkout
+ * Session expiring at booking+24h says nothing about a deadline that is days
+ * away (ORD-000163 was cancelled ~3 days early before this check existed), so
+ * expiry defers to `paymentDueAt` and lets `resolveOrderPaymentUrl` re-mint a
+ * session on the next click. A FAILED Multibanco voucher carries no such
+ * ambiguity — that money is definitively not coming — so it cancels outright.
+ */
+async function abandonUnpaidOrder(
+  orderId: string,
+  log: FastifyBaseLogger,
+  opts: { respectPrePaymentDeadline: boolean; reason: string },
+): Promise<void> {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: { items: true },
+  });
+  if (!order || order.status !== OrderStatus.PENDING) return;
+
+  if (opts.respectPrePaymentDeadline) {
+    // A future pre-payment deadline still owns the order: the slot stays HELD
+    // and runPrePaymentCancelSweep performs the cancel + notifications when it
+    // actually elapses. Only orders with no deadline (product-only) or an
+    // already-elapsed one fall through.
+    const deadlineStillOwnsOrder =
+      order.prePaymentFlow != null &&
+      order.paymentDueAt != null &&
+      order.paymentDueAt.getTime() > Date.now();
+    if (deadlineStillOwnsOrder) return;
+  }
+
+  // Kill anything still payable before the slot goes back on the grid. A
+  // Multibanco voucher stays chargeable at any ATM for ~7 days, well past our
+  // deadline, so without this the patient can pay a reference for a booking we
+  // have already torn down. Also our last chance to notice the money already
+  // arrived — abort the teardown if so, and let the payment webhook proceed.
+  const voided = await voidOrderCheckoutPaymentById(orderId, log);
+  if (voided === "already-paid") {
+    log.warn(
+      { orderId, reason: opts.reason },
+      "Abandon aborted — Stripe reports the payment succeeded or is settling",
+    );
+    return;
+  }
+
+  const heldSlotIds = order.items
+    .map((i) => i.timeSlotId)
+    .filter((id): id is string => Boolean(id));
+  await prisma.order.update({
+    where: { id: orderId },
+    data: { status: OrderStatus.CANCELLED, paymentStatus: PaymentStatus.FAILED },
+  });
+  if (heldSlotIds.length > 0) {
+    await releaseSlotsToBaseGrid(heldSlotIds);
+  }
+  // Release any subscription credit reservations on the abandoned order
+  // (RESERVED → RELEASED, credit restored).
+  await releaseOrderCreditReservations(orderId).catch((err) => {
+    log.error({ err, orderId }, "Release order credit reservations failed");
+  });
+  // Same for membership allowance units (§7): spent at checkout, and this
+  // abandoned-order path is one of the two crons that hand them back when the
+  // payment never arrives.
+  await releaseOrderMembershipAllowance(orderId).catch((err) => {
+    log.error({ err, orderId }, "Release membership allowance failed");
+  });
+  // Cancel the consultation appointment(s) — release BOOKED slots + drop the
+  // events off the admin/doctor calendars.
+  await cancelOrderAppointments(orderId).catch((err) => {
+    log.error({ err, orderId, reason: opts.reason }, "Cancel appointments on abandoned order failed");
+  });
+
+  if (order.prePaymentFlow === PrePaymentFlow.WEB_CHECKOUT) {
+    // Website checkout: the patient was already told at T-10min that the slot
+    // would be released, and the doctor was never told the booking existed.
+    // Only the admin alert (plus the abandonment message itself, if the nudge
+    // never ran) — same rule the cancel sweep applies.
+    await sendWebCheckoutCancelNotifications(orderId, order.prePaymentReminderStage).catch(
+      (err) => {
+        log.error({ err, orderId }, "Web-checkout abandon notification failed");
+      },
+    );
+  } else {
+    // Notify the patient (+ doctor) that the unpaid reservation was cancelled —
+    // the SAME cancelled message the deadline sweep sends, so a silent cancel
+    // never happens again.
+    await sendPrePaymentCancelledNotifications(orderId).catch((err) => {
+      log.error({ err, orderId, reason: opts.reason }, "Cancelled notification failed");
+    });
+  }
+}
 
 const paymentsRoute: FastifyPluginAsync = async (app) => {
   /**
@@ -257,10 +486,18 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
   /**
    * Stripe webhook receiver. Verifies the signature against
    * STRIPE_WEBHOOK_SECRET, then processes the events we care about:
-   *   - checkout.session.completed       → mark appointment PAID
-   *   - checkout.session.async_payment_succeeded → same
-   *   - checkout.session.async_payment_failed   → mark FAILED
-   *   - charge.refunded                  → mark REFUNDED
+   *   - checkout.session.completed (payment_status "paid")  → mark PAID
+   *   - checkout.session.completed (payment_status "unpaid") → voucher issued,
+   *       order stays PENDING — see handleUnpaidCompletedSession
+   *   - checkout.session.async_payment_succeeded → mark PAID
+   *   - checkout.session.async_payment_failed    → cancel order / mark FAILED
+   *   - checkout.session.expired                 → cancel order (deadline-aware)
+   *   - charge.refunded                          → mark REFUNDED
+   *
+   * `completed` is NOT a payment. Delayed-notification methods (Multibanco,
+   * enabled for Portugal) fire it when the voucher is printed and settle days
+   * later; only `payment_status` distinguishes the two, and only
+   * `async_payment_succeeded` confirms a booking.
    *
    * Note: the body MUST be the raw bytes (not the JSON-parsed object) for
    * signature verification. The content-type parser registered in `app.ts`
@@ -359,6 +596,24 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
           eventType === "checkout.session.completed" ||
           eventType === "checkout.session.async_payment_succeeded"
         ) {
+          // ── Delayed-notification payments (Multibanco) ─────────
+          // `completed` means the session finished, NOT that we were paid:
+          // Multibanco completes it when the voucher is printed and settles
+          // days later via SIBS. `payment_status` is the only proof money
+          // moved, so nothing below this line may run without it. The
+          // `async_payment_succeeded` redelivery of the same session is what
+          // carries "paid" — and it is never gated here.
+          const completedSession = event.data.object as WebhookCheckoutSession;
+          if (
+            !isSettledCheckoutSession({
+              eventType,
+              paymentStatus: completedSession.payment_status,
+            })
+          ) {
+            await handleUnpaidCompletedSession(completedSession, event.id, app.log);
+            return okResponse({ received: true, pending: true });
+          }
+
           // ── Redemption shipping payment (§11) ─────────────────
           const redemptionSession = event.data.object as {
             metadata?: Record<string, string>;
@@ -483,81 +738,14 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
             const orderId =
               session.client_reference_id ?? session.metadata?.orderId ?? null;
             if (orderId) {
-              const order = await prisma.order.findUnique({
-                where: { id: orderId },
-                include: { items: true },
+              // Stripe expires an unpaid Checkout Session 24h after it was
+              // created — but a pre-payment order's real payment deadline
+              // (`paymentDueAt`) is usually DAYS later, so a session expiry is
+              // not on its own a reason to cancel. See the option's doc.
+              await abandonUnpaidOrder(orderId, app.log, {
+                respectPrePaymentDeadline: true,
+                reason: "session expiry",
               });
-              if (order && order.status === "PENDING") {
-                // Stripe expires an unpaid Checkout Session 24h after it was
-                // created — but a pre-payment order's real payment deadline
-                // (`paymentDueAt`, e.g. 24h before the consultation) is usually
-                // DAYS later. Cancelling on session expiry would kill the
-                // reservation early: ORD-000163 was booked ~4 days out and got
-                // cancelled at booking+24h instead of at its 24h-before-consult
-                // deadline. This hit every OUTSIDE_48H order and any WITHIN_48H
-                // order booked >~25h out.
-                //
-                // When a future pre-payment deadline still owns the order, do
-                // nothing here: the slot stays HELD, resolveOrderPaymentUrl
-                // re-mints a fresh Checkout Session the next time the patient
-                // opens the pay link, and runPrePaymentCancelSweep performs the
-                // cancel + notifications at the real deadline. Only orders with
-                // no pre-payment deadline (null — e.g. product-only orders) or an
-                // already-elapsed one fall through to the cancel below.
-                const deadlineStillOwnsOrder =
-                  order.prePaymentFlow != null &&
-                  order.paymentDueAt != null &&
-                  order.paymentDueAt.getTime() > Date.now();
-                if (deadlineStillOwnsOrder) {
-                  return okResponse({ received: true });
-                }
-                const heldSlotIds = order.items
-                  .map((i) => i.timeSlotId)
-                  .filter((id): id is string => Boolean(id));
-                await prisma.order.update({
-                  where: { id: orderId },
-                  data: { status: "CANCELLED", paymentStatus: PaymentStatus.FAILED },
-                });
-                if (heldSlotIds.length > 0) {
-                  await releaseSlotsToBaseGrid(heldSlotIds);
-                }
-                // Release any subscription credit reservations on the
-                // abandoned order (RESERVED → RELEASED, credit restored).
-                await releaseOrderCreditReservations(orderId).catch((err) => {
-                  app.log.error({ err, orderId }, "Release order credit reservations failed");
-                });
-                // Same for membership allowance units (§7): spent at checkout,
-                // and this abandoned-order path is one of the two crons that
-                // hand them back when the payment never arrives.
-                await releaseOrderMembershipAllowance(orderId).catch((err) => {
-                  app.log.error({ err, orderId }, "Release membership allowance failed");
-                });
-                // Cancel the consultation appointment(s) — release BOOKED slots
-                // + drop the events off the admin/doctor calendars.
-                await cancelOrderAppointments(orderId).catch((err) => {
-                  app.log.error({ err, orderId }, "Cancel appointments on session expiry failed");
-                });
-                if (order.prePaymentFlow === PrePaymentFlow.WEB_CHECKOUT) {
-                  // Website checkout: the patient was already told at T-10min
-                  // that the slot would be released, and the doctor was never
-                  // told the booking existed. Only the admin alert (plus the
-                  // abandonment message itself, if the nudge never ran) — same
-                  // rule the cancel sweep applies.
-                  await sendWebCheckoutCancelNotifications(
-                    orderId,
-                    order.prePaymentReminderStage,
-                  ).catch((err) => {
-                    app.log.error({ err, orderId }, "Web-checkout abandon notification failed");
-                  });
-                } else {
-                  // Notify the patient (+ doctor) that the unpaid reservation was
-                  // cancelled — the SAME cancelled message the deadline sweep sends,
-                  // so a silent session-expiry cancel never happens again.
-                  await sendPrePaymentCancelledNotifications(orderId).catch((err) => {
-                    app.log.error({ err, orderId }, "Cancelled notification on session expiry failed");
-                  });
-                }
-              }
             }
             return okResponse({ received: true });
           }
@@ -576,6 +764,31 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
             if (redemptionId) await releaseRedemption(redemptionId);
             return okResponse({ received: true });
           }
+
+          // ── Order branch (cart checkout) ───────────────────────
+          // A Multibanco voucher that expired unpaid lands here. Without this
+          // branch the order id fell through to the legacy appointment update
+          // below, which threw "record not found" → 500 → Stripe retried the
+          // event forever while the order kept its slot. Cancel outright: the
+          // voucher is dead, so unlike a session expiry there is no later
+          // deadline worth deferring to.
+          if (session.metadata?.kind === "order") {
+            const orderId =
+              session.client_reference_id ?? session.metadata?.orderId ?? null;
+            if (orderId) {
+              await abandonUnpaidOrder(orderId, app.log, {
+                respectPrePaymentDeadline: false,
+                reason: "async payment failed",
+              });
+            } else {
+              app.log.warn(
+                { sessionId: session.id, eventId: event.id },
+                "async_payment_failed on an order session with no orderId",
+              );
+            }
+            return okResponse({ received: true });
+          }
+
           const appointmentId = session.client_reference_id ?? null;
           // No appointmentId → we can't link a Payment row to anything
           // meaningful. Previously we wrote `appointmentId: ""` which
