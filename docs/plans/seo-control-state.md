@@ -32,9 +32,9 @@ published pages, indexed pages or measured outcomes.
 
 ### 27.1 Evidence that changes the plan
 
-- Production currently holds 24 Week 1 blog records: 22 live locale records across
-  four topics and two blood-pressure drafts for Spain and Romania. Week 2 has zero
-  CMS records.
+- Production holds 24 Week 1 blog records: 22 live locale records across four topics
+  and two blood-pressure drafts for Spain and Romania. On 2026-08-25, six Week 2
+  primary-language records were created with status `DRAFT`; none was published.
 - On 2026-08-25 the local Week 2 primary-language cohort was reduced to the compact
   publication ranges and revalidated at: Portugal sickness-benefit 900 words, Ireland
   Illness Benefit payment 898, Czech sickness-pay calculation 824, Portugal driving
@@ -48,10 +48,10 @@ published pages, indexed pages or measured outcomes.
   sample contained no blog, tool or doctor URLs. It cannot validate those families.
 - The backlink snapshot showed 62 referring domains. Several head terms are authority
   problems, so publishing more copy cannot substitute for relevant editorial links.
-- Standalone HTML copies now exist locally for the approved 19-locale Week 2 matrix.
-  No Week 2 CMS row was created, changed or published in this pass. The Week 2 seeder
-  still needs a fresh production dry run from an environment that can reach the
-  database host before any approved mutation is attempted.
+- Standalone HTML copies exist locally for the approved 19-locale Week 2 matrix. A
+  fresh production dry run returned six collision-free primary rows, explicit user
+  approval was obtained, and those six rows were created as `DRAFT`. The other 13
+  approved translations and all 17 unapproved research variants remain local only.
 - The conversion funnel was verified in production on 2026-08-25. Only events after
   that deployment can be used to judge whether blog traffic becomes leads or revenue.
 
@@ -59,7 +59,7 @@ published pages, indexed pages or measured outcomes.
 
 | Date | Implementation | Decision gate |
 | --- | --- | --- |
-| 2026-08-25 to 2026-09-08 | Finish the two Week 1 reviews; compact the six primary-language Week 2 articles; create CMS drafts only after explicit production approval; execute one real authority action per priority administrative cluster | Local compacting/validation complete on 2026-08-25; still no blanket 36-URL import |
+| 2026-08-25 to 2026-09-08 | Finish the two Week 1 reviews; compact the six primary-language Week 2 articles; create CMS drafts only after explicit production approval; execute one real authority action per priority administrative cluster | Six primary CMS drafts created after approval on 2026-08-25; no translations published and no blanket 36-URL import |
 | ~2026-09-01 | Run the registered Czech travel-medicine and Portugal doctor recrawl checks | Act only on a measured exception |
 | ~2026-09-04 | Run the Brazil Sarmento recrawl check | Keep Brazil editorial expansion deferred unless clinical capacity and non-brand demand improve |
 | ~2026-09-06 | Run the Romania doctor and second-opinion signal checks | Prefer improving an owner page over creating a competing article |
@@ -129,9 +129,28 @@ plain-language implementation report is
   the dated broader profile. The evidence keeps Ireland payment separate from its
   claim guide, Czech calculation separate from the eNeschopenka guide, and the
   Spanish/Romanian articles safety-led.
-- This is local preparation only: Week 2 production CMS records remain zero. Nothing
-  was published, deployed, pushed or sent externally. Native-language, clinician and
-  current-rule review still gate any production action.
+- The six primary-language Week 2 rows were subsequently created as production
+  `DRAFT` records after explicit approval; see §27.7. Nothing was published,
+  deployed, pushed or sent externally. Native-language, clinician and current-rule
+  review still gate publication.
+
+### 27.7 Six primary-language CMS drafts created (2026-08-25)
+
+The production seeder was rerun without `--apply` immediately before mutation. It
+returned six `create` actions and no collisions. After explicit user approval, the
+same default primary-only cohort was applied. A read-only verification pass then
+returned all six rows as existing `DRAFT` records:
+
+- PT sickness benefit `cmt8la5mj0000csjuzvvr49bg`;
+- IE payment/timing `cmt8la96q0002csju6spj0o0n`;
+- CZ sickness calculation `cmt8ladb60004csjuxgxyk4nu`;
+- PT driving certificate `cmt8lahc30006csjuw55xnemg`;
+- ES urgent blood pressure `cmt8laldn0008csjufi90oq5x`;
+- RO blood-pressure safety `cmt8lapi9000acsju2l7jkq5m`.
+
+No translation record was created, no pre-existing record was updated, and no draft
+was published. The next authorized action is human/native/clinical review inside the
+normal CMS workflow, not status promotion.
 
 ---
 
@@ -330,7 +349,7 @@ Status vocabulary: `CLOSED` · `FALSE POSITIVE` · `EXPECTED BEHAVIOR` ·
 
 | ID | Finding | Category | Current status | Evidence date | Production state | Google state | Next action |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| SEO-EDITORIAL-001 | Week 2 drifted from an evidence-backed 19-locale plan into 36 local research variants without CMS records | Content growth / measurement | **LOCAL PREPARATION COMPLETE — PRODUCTION MUTATION REQUIRES APPROVAL** | 2026-08-25 | Week 1 has four live posts and two reviewed production drafts still awaiting real clinical dates. Week 2 retains 36 research sources, restricts preparation to exactly 19 standalone HTML variants, and has compacted the six primaries. Week 2 CMS records remain zero | Current 28-day blog rows reached 64 clicks and 8,120 impressions, up from 5 clicks and 1,092 impressions in the prior comparison; conversion attribution is valid only after the 2026-08-25 funnel deployment | Obtain native/legal/clinical sign-off, then seek explicit production approval for the six-primary dry-run cohort; publish selectively and use 30/60/90-day gates |
+| SEO-EDITORIAL-001 | Week 2 drifted from an evidence-backed 19-locale plan into 36 local research variants without CMS records | Content growth / measurement | **SIX PRIMARY DRAFTS CREATED — PUBLICATION REVIEW REQUIRED** | 2026-08-25 | Week 1 has four live posts and two reviewed production drafts still awaiting real clinical dates. Week 2 retains 36 research sources, restricts preparation to exactly 19 standalone HTML variants, and now has six primary-language production records with status `DRAFT`; the other 13 approved variants remain local | Current 28-day blog rows reached 64 clicks and 8,120 impressions, up from 5 clicks and 1,092 impressions in the prior comparison; conversion attribution is valid only after the 2026-08-25 funnel deployment | Complete native/legal/clinical review; do not publish or create translations without the relevant approval; use 30/60/90-day gates after publication |
 | SEO-001 | Sitemap coverage gap | Indexation | **FALSE POSITIVE** | 2026-08-12 | 1,906 URLs live and well-formed | Sitemap read and processed | None |
 | SEO-002 | Internal links pointing at 308 redirects | Crawl efficiency | **CLOSED — VERIFIED BY PRODUCTION CHECK** | 2026-08-12 | Footer country links and service-page links point at canonical URLs (`f4e84104`, `05f471a7`); health-alias link leak closed (`532d9c8a`) | n/a | None |
 | SEO-003 | Fallback-locale legal pages carry `noindex` | Indexation | **EXPECTED BEHAVIOR — CLOSED** | 2026-08-09 | `noindex, follow`, absent from sitemap, absent as hreflang target; exact-locale legal pages stay indexable | Consistent | None |

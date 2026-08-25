@@ -1,6 +1,6 @@
 # Week 2 editorial batch
 
-Prepared 24 August 2026. These are AI-assisted local working drafts. Every kept locale requires a native-language editor and the medical articles require clinician review before publication. **No Week 2 CMS records exist yet.** The production dry run created no rows and changed no existing content.
+Prepared 24 August 2026. These are AI-assisted working drafts. Every kept locale requires a native-language editor and the medical articles require clinician review before publication. **The six primary-language records were created in production as `DRAFT` on 25 August 2026.** No Week 2 record was published and no translation record was created.
 
 Local source coverage: every one of the six topics has EN, PT, ES, CS, RO and DE copy, for a 36-variant research archive. The production-preparation manifest is now restricted to the exact 19 evidence-backed variants in the canonical editorial plan: `pt/en/de` for both Portugal topics, `en/ro/es/pt/de` for Ireland, `cs/en/de` for Czechia, `es/en/de` for Spain, and `ro/en` for Romania. The 17 unapproved variants remain in the TypeScript research source only and are not emitted as standalone HTML or accepted by the seeder. The article jurisdiction remains the topic market; the language variant does not replace the applicable local law, benefit system, emergency pathway or service route.
 
@@ -27,7 +27,7 @@ Local source coverage: every one of the six topics has EN, PT, ES, CS, RO and DE
   triage. Spain and Romania reject self-medication and quick-fix framing; Portugal
   driving copy explains regulated groups and makes no certificate guarantee.
 
-CMS records created or changed by this implementation: **zero**. Acquired backlinks:
+CMS records created by the approved production implementation: **six DRAFTs**. Existing records changed: **zero**. Acquired backlinks:
 **zero**. Outreach sent: **zero**. Publication, deployment and push: **none**.
 
 ## Revised rollout, 25 August 2026
@@ -176,7 +176,22 @@ Backlink prospects are prospects only. Acquired backlinks: **none**. Outreach se
 
 The safe seeder prints the canonical manifest after its dry run and after creation. It checks the country, active service, registered author/reviewer, base slugs, translation slugs, and title collisions again inside each transaction. Any existing row causes the whole topic to be preserved and skipped.
 
-Production dry-run result, 24 August 2026: all six base posts and 30 translation rows were collision-free and eligible for `DRAFT` creation. CMS records created from this Week 2 pack: **none**. Later translation completion for two pre-existing draft posts did not seed these six Week 2 topics. The Week 2 production mutation remains pending fresh direct user approval, so there are no Week 2 CMS IDs to report yet and no existing records were changed by this seeder.
+Production result, 25 August 2026: a fresh six-primary dry run returned six
+collision-free `create` actions. The user then explicitly approved creation, and the
+same primary-only manifest was applied. A read-only verification pass returned all
+six rows as `skip-existing` with status `DRAFT`:
+
+| Topic / locale | CMS ID |
+| --- | --- |
+| Portugal sickness benefit / PT | `cmt8la5mj0000csjuzvvr49bg` |
+| Ireland Illness Benefit payment / EN | `cmt8la96q0002csju6spj0o0n` |
+| Czech sickness calculation / CS | `cmt8ladb60004csjuxgxyk4nu` |
+| Portugal driving certificate / PT | `cmt8lahc30006csjuw55xnemg` |
+| Spain urgent blood pressure / ES | `cmt8laldn0008csjufi90oq5x` |
+| Romania blood-pressure safety / RO | `cmt8lapi9000acsju2l7jkq5m` |
+
+No translation row was created. No existing post was updated. All six records remain
+unpublished and subject to the publication gates below.
 
 Publication remains blocked until:
 
