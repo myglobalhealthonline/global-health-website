@@ -40,10 +40,14 @@
 - Target/competitor domain and backlink comparison.
 - 20-page bounded public WebDoctor sample.
 - 152-keyword master, URL map, gaps, briefs and clinical register.
+- GP hub clinician cards restricted to reciprocal active GP-service assignments.
+- Specialist FAQ/service JSON-LD aligned with visible authored or fallback content.
+- Focused tests, frontend typecheck, touched-file lint and independent review completed.
 
 ## Deferred
 
-- Public metadata/copy/schema/internal-link changes.
+- Public metadata/copy/internal-link changes beyond the two proven hub defects.
+- Deployment and post-deploy rendered verification of the GP/specialist hub patch.
 - Lab changes before the dated gate.
 - Net-new medical pages.
 - Any CMS write against production.

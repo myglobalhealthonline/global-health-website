@@ -1,11 +1,11 @@
 # Implementation log
 
 **Batch date:** 2026-08-25
-**Public application changes:** none
+**Public application changes:** GP/specialist hub code; not deployed
 **CMS writes:** none
 **Deploy:** none
 
-The canonical ledger did not justify a public SEO code change today. The Ireland lab cluster is under a dated measurement freeze, existing technical remediation is already deployed/monitored, and no new critical technical defect was proven.
+The initial research pass did not justify a broad rewrite. A subsequent focused GP/specialist review found two bounded defects that could be fixed without changing CMS content, clinical claims or booking behavior.
 
 | File changed | URL affected | Reason | Keyword cluster | Change type | Expected impact | Risk | Clinical review | Validation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -25,14 +25,18 @@ The canonical ledger did not justify a public SEO code change today. The Ireland
 | `clinical-review-register.csv` | Priority medical pages | Prevent unreviewed publication | Medical clusters | Governance | YMYL safety | Low | Required | Register review |
 | `content-briefs/*` | Proposed existing-page work | Define page-level requirements | P0/P1 clusters | Draft planning | Actionable editorial work | Medium | Required | Brief checklist |
 | `raw/openseo-call-log.jsonl` | None | Sanitised collection record | All | Provenance | Reproducibility | Low | No | No credentials stored |
+| `frontend/lib/content/service-doctor-selection.ts` and specialist wrapper | GP and specialist hubs | Enforce reciprocal active-service assignment before a clinician appears | Online GP / specialists | Eligibility helper | More accurate clinician discovery and trust presentation | Low | No copy change | 23 focused tests + typecheck |
+| `frontend/app/[country]/[lang]/general-consultation/page.tsx` | `/{country}/{lang}/gp-consultation-online` | Exclude unassigned and specialist-only clinicians from the GP roster | Online GP | Page integration | GP heading and clinician cards remain semantically aligned | Low | No | Selector tests + full frontend suite |
+| `frontend/lib/seo/consultation-hub-visible-content.ts` | Specialist hub | Resolve the exact visible hero/FAQ content used by structured data | Specialists | SEO helper | Prevent hidden, stale or empty FAQ schema | Low | No | Authored, fallback and empty-FAQ tests |
+| `frontend/app/[country]/[lang]/specialist-consultation/page.tsx` | `/{country}/{lang}/see-a-specialist` | Use visible authored/fallback FAQ and hero description in JSON-LD | Specialists | Structured data | Schema matches the page users see | Low | No | Focused tests, typecheck, lint, review |
 
 ## Deliberate non-changes
 
-The assignment requested direct changes when they were safe and high-confidence. The evidence produced no such public-code candidate: the live audit found zero critical issues, completed technical controls remain verified, and the only material Ireland cluster is under a dated measurement freeze. Zero public changes is therefore an evidence-based implementation decision, not an unreviewed omission.
+The follow-up batch deliberately stops at the two proven defects. The live CMS already contains the earlier GP/specialist content work, and current query evidence does not justify another metadata rewrite.
 
 - No title, meta description or H1 was changed from a length heuristic alone.
 - No new service, medication, location or clinician page was created.
-- No redirect, canonical, sitemap, robots, hreflang, schema or navigation rule was changed.
+- No redirect, canonical, sitemap, robots, hreflang or navigation rule was changed.
 - No prescription cluster was enabled.
 - No lab copy/schema/link change was made before the approximately 2026-09-08 gate.
 - No rank tracker, recurring paid task or saved-keyword tag was created.

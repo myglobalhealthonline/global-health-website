@@ -50,6 +50,7 @@ import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 import { fetchGlobalConsultationCount } from "@/lib/api/consultation-count";
+import { selectServiceDoctors } from "@/lib/content/service-doctor-selection";
 
 type Params = { country: string; lang: string };
 
@@ -188,7 +189,10 @@ export default async function CountryLangGeneralConsultationPage({
   }));
 
   // Doctor cards — admin adding a Doctor row for this country adds a card.
-  const doctorItems = doctors.slice(0, 6).map((d) => ({
+  const eligibleDoctors = selectServiceDoctors(doctors, services)
+    .map((selection) => selection.doctor)
+    .slice(0, 6);
+  const doctorItems = eligibleDoctors.map((d) => ({
     name: d.fullName,
     title: d.title,
     bio: d.bio ?? "",

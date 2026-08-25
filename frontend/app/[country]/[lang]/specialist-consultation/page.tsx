@@ -44,6 +44,7 @@ import { fetchGlobalConsultationCount } from "@/lib/api/consultation-count";
 import { getCountryLegal } from "@/lib/content/get-country-legal";
 import { getServiceHubContent } from "@/lib/content/service-hub-content";
 import { selectSpecialistDoctors } from "@/lib/content/specialist-doctor-selection";
+import { resolveConsultationHubVisibleContent } from "@/lib/seo/consultation-hub-visible-content";
 
 type Params = { country: string; lang: string };
 
@@ -141,6 +142,18 @@ export default async function CountryLangSpecialistConsultationPage({
     serviceNames: services.map((service) => service.name),
   });
   const heroSubtitle = page?.heroSubtitle ?? sp.heroSubtitle.replace("{country}", config.name);
+  const fallbackHeroTitle = [sp.heroLead, sp.heroAccent, sp.heroTrail]
+    .filter(Boolean)
+    .join(" ");
+  const visibleContent = resolveConsultationHubVisibleContent({
+    authoredTitle: page?.heroTitle,
+    fallbackTitle: fallbackHeroTitle,
+    authoredDescription: page?.heroSubtitle,
+    fallbackDescription: sp.heroSubtitle.replace("{country}", config.name),
+    authoredFaq: page?.faq ?? [],
+    authoredFaqVisible: Boolean(page?.sections.faq),
+    fallbackFaq: hub.faq,
+  });
 
   // Specialist service cards — auto from Service rows where kind=SPECIALIST.
   // Each card links to the booking form WITH `?service=<slug>` so the
@@ -206,11 +219,11 @@ export default async function CountryLangSpecialistConsultationPage({
           { name: c.navigation.specialistConsultation, url: `/${slug}/${lang}/see-a-specialist` },
         ])}
       />
-      <JsonLd data={faqJsonLd(hub.faq)} />
+      <JsonLd data={faqJsonLd(visibleContent.faq)} />
       <JsonLd
         data={medicalServiceHubJsonLd({
-          name: hub.overview.title,
-          description: hub.overview.body,
+          name: visibleContent.title,
+          description: visibleContent.description,
           countryName: config.name,
           url: `/${slug}/${lang}/see-a-specialist`,
           bookingUrl: hasEligibleDoctor ? ctaHref : null,
@@ -337,11 +350,11 @@ export default async function CountryLangSpecialistConsultationPage({
       {page?.sections.faq ? (
         <FAQSection
           title={c.extra.consultFaqTitle}
-          items={page.faq}
+          items={visibleContent.faq}
           theme={themeProp(page?.faqTheme, "dark")}
         />
       ) : (
-        <FAQSection title={c.extra.consultFaqTitle} items={hub.faq} />
+        <FAQSection title={c.extra.consultFaqTitle} items={visibleContent.faq} />
       )}
 
       <DoctifyReviewsSection

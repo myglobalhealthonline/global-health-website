@@ -6304,3 +6304,31 @@ sick-certificate recrawl check, page-level query-intent review and GA4/GSC
 reconciliation described in the package.
 
 ---
+
+## 29. IE-SERVICE-HUB-001 — GP roster and specialist schema alignment (2026-08-25)
+
+**Status: IMPLEMENTED IN REPOSITORY — NOT DEPLOYED.** A focused review of the
+existing Ireland GP and specialist hubs confirmed that the earlier CMS content
+batch is already live; no production patch script was rerun and no title, meta,
+H1, price, duration, credential, clinical claim or booking behavior changed.
+
+Two code defects were corrected. The GP hub previously rendered the first six
+country doctors without proving a reciprocal assignment to an active GENERAL
+service, allowing specialist-only clinicians to appear beneath GP-oriented
+headings. It now uses the same assignment contract as the specialist hub,
+deduplicates multi-assigned doctors, preserves featured/catalogue order and
+retains the six-card cap. The specialist hub previously emitted fallback FAQ
+and service JSON-LD even when visitors saw authored CMS content; schema and UI
+now share the visible authored/fallback FAQ and hero description, including a
+non-empty fallback when an enabled authored FAQ contains no completed rows.
+
+**Verification.** RED tests first failed on the missing helpers. The completed
+batch passes 23 focused tests, frontend locale/typecheck, touched-file ESLint
+and independent review. The full frontend suite is 1,015 passed / five skipped /
+one unrelated pre-existing sick-certificate redirect expectation failed. The
+production build compiled and typechecked, then failed during prerender because
+the backend was unavailable; this is the existing build-environment dependency.
+Live pre-deploy probes returned 200 for both Ireland hubs with one FAQ schema
+each. Deployment and post-deploy rendered roster/schema comparison remain.
+
+---

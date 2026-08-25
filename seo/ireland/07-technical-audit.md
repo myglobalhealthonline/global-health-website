@@ -22,6 +22,8 @@
 | Existing sick-cert redirect test mismatch | Test expects clean alias while current rule resolves to service path | Redirect suite | Test confidence gap | None | Medium | Reconcile test with canonical redirect policy in a separate code batch | Pre-existing | Frontend test |
 | Existing lint failures | Two unused imports in backend | Backend | None directly | None | Low | Fix in owning workstream | Pre-existing | `pnpm lint` |
 | Backend tests require local DB | Numerous failures at 127.0.0.1:5433 plus unrelated auth assertions | Backend suite | None directly | None | Medium | Start isolated test DB before interpreting suite | Pre-existing | Backend test |
+| GP hub roster was not service-assignment scoped | GP page used the first six country doctors, while the specialist hub already required reciprocal active-service assignments | GP hub | Mixed clinician entities under GP-oriented content weakened semantic and trust alignment | Users could see clinicians who were not bookable for an active GP service | Medium | Reuse the reciprocal service-assignment selector and retain the six-card cap | Implemented in repository; not deployed | Selector unit tests, typecheck, lint, independent review |
+| Specialist JSON-LD could differ from visible authored content | FAQ schema always used fallback hub FAQs; service schema used fallback overview even when authored hero copy was visible | Specialist hub | Hidden/stale schema and page mismatch | Search engines could receive answers different from those shown to users | Medium | Resolve visible authored/fallback content once and use it for schema and UI; fall back when authored FAQ is empty | Implemented in repository; not deployed | Helper tests including empty FAQ, typecheck, lint, independent review |
 
 ## Structured data review
 
@@ -35,4 +37,4 @@ No fresh Lighthouse run was started because the canonical ledger already records
 
 ## Implementation decision
 
-No safe new technical code defect or high-confidence on-page change was proven. Consequently this batch intentionally contains zero public application or CMS changes, despite the assignment's request to implement such changes where safe. Forcing a title, schema, redirect, internal-link or medical-copy edit without contrary evidence would conflict with the canonical ledger and the dated Ireland lab freeze. The implemented scope is the research/control package, complete public inventories and a ledger entry; user-facing changes remain gated by fresh evidence and clinical/business review.
+The initial broad audit did not justify a rewrite. The focused GP/specialist follow-up proved and corrected two code defects: GP roster eligibility and specialist visible-content/schema alignment. The patch does not change CMS content, clinical claims, booking behavior, prices, credentials, routes or metadata. Deployment and post-deploy rendered verification remain outstanding.
