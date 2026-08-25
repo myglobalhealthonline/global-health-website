@@ -1,7 +1,8 @@
 # SEO handover — Claude Code → Codex
 
-**Written 2026-08-15.** For an agent picking up SEO work on this repo in Codex, with
-no memory of the sessions that produced the current state.
+**Written 2026-08-15; operational update 2026-08-25.** For an agent picking up SEO
+work on this repo in Codex, with no memory of the sessions that produced the current
+state.
 
 Read this once, then work from `docs/plans/seo-control-state.md`. This file explains
 what you are inheriting, what changes because the work moved to Codex, and what will
@@ -25,9 +26,11 @@ the ledger wins on facts and this file wins on process.
    document, but its §2 design decisions and §5 "explicitly not doing" list are still
    binding.
 
-There is no Wave 4. As of 2026-08-15 the six-market program is **complete / monitor
-exceptions**, and the next phase is scheduled measurement, not implementation. Do not
-open a new batch because the roadmap looks quiet.
+There is no Wave 4 technical-remediation batch. The six-market technical program
+remains **complete / monitor exceptions**. A separate, owner-directed editorial growth
+experiment was registered on 2026-08-25. It uses the same measurement gates and does
+not reopen closed technical findings. Do not treat planned blog work as permission to
+rerun old SEO batches.
 
 ---
 
@@ -95,8 +98,11 @@ the Indexing API is 200/day and officially JobPosting/BroadcastEvent-only, so do
 mass-submit.
 
 Handles (no credentials here): Search Console `sc-domain:myglobalhealth.online`, GA4
-property `547083375`. GA4 is consent-gated and only has data for 2026-07-25 → 07-28 —
-treat it as unusable for trend work until that is fixed.
+property `547083375`. GA4 is consent-gated. The Docker build gap and conversion-funnel
+instrumentation were verified in production on 2026-08-25 (`f43ee835`):
+`begin_booking`, `begin_checkout`, and `purchase` are wired, and the booking/purchase
+events are registered as key events. Pre-2026-08-25 data cannot answer blog lead ROI;
+watch post-deployment event volume before drawing conversion conclusions.
 
 ---
 
@@ -162,20 +168,29 @@ kills precise rules placed below broad ones.
 
 ---
 
-## 5. Current state as of 2026-08-15
+## 5. Current state, updated 2026-08-25
 
 **Headline:** clicks 420 → 738 across matched 28-day windows (2026-06-18 → 07-15 vs
 07-16 → 08-12). First click-level evidence the migration is working. CTR (3.84% →
 2.05%) and blended position (13.1 → 18.4) both fell, and that is arithmetic from 230%
 impression growth, not a regression — see §22.1 and `SEO-GROWTH-012`.
 
-**Nothing is mid-flight.** No SEO code change is uncommitted, unpushed or awaiting
-deploy as of this handover. The last two SEO commits are documentation.
+**No technical SEO implementation batch is mid-flight.** The localized insurance line
+and the `llms.txt` feature gates are deployed and live. Local editorial assets may be
+uncommitted or may exist outside the CMS; that is content-production state, not proof
+that a page is drafted, published, indexed, or measured.
+
+**Editorial experiment overlay.** Week 1 has four live topics and two production
+drafts. Week 2 has 36 local working copies, but the production plan is reduced to the
+19 evidence-backed variants in the editorial plan; the rollout starts with six
+primary-language drafts and requires separate production approval. The first two weeks
+are cleanup and measurement, with no more than three active clusters at once.
 
 **What is open, and it is all measurement:**
 
 | Due | Item | Where |
 | --- | --- | --- |
+| 2026-08-25 → 2026-09-08 | Finish Week 1 review; compact and stage the six primary Week 2 articles; validate post-deployment funnel events; begin one real authority action per priority cluster | `editorial-plan-2026-08-19.md` §7; `seo-control-state.md` §27 |
 | ~2026-09-01 | Czech travel-medicine redirect lag + Portugal doctor recrawl; `inspect_urls` watchlist pass | §6, §21.10 |
 | ~2026-09-04 | Brazil Sarmento recrawl | §21.10 |
 | ~2026-09-06 | Romania doctor recrawl + second-opinion query signal | §21.10 |
@@ -216,11 +231,16 @@ once, on 2026-08-08, and reverted the same day.
    and takes minutes. Read its attribution-rule header first.
 5. Check the `seo-live-urls` CI job is green on `main`. A red one means production
    rotted with no commit behind it.
-6. Only then pick up the nearest dated item from §5 above.
+6. Read `docs/audits/seo/README.md` and the current 2026-08-25 roadmap report so a
+   historical audit is not mistaken for current state.
+7. Only then pick up the nearest dated item from §5 above. Editorial work follows the
+   separate production and clinical-review gates in `editorial-plan-2026-08-19.md` §7.
 
-Do not open a new growth batch on arrival. The program is in monitor state, every open
-item is dated, and the standing instruction is to not reopen anything early absent a
-genuine production or search regression.
+Do not open a new technical growth batch on arrival. The technical program is in
+monitor state, every open item is dated, and the standing instruction is to not reopen
+anything early absent a genuine production or search regression. The editorial
+experiment is already scoped; do not widen its topic or locale matrix without new
+Search Console, migration-corridor, product, and reviewer evidence.
 
 ---
 

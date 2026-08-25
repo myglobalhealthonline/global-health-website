@@ -49,7 +49,7 @@ No credentials here — handles only. The tooling finds its own tokens.
 | Service | Handle | Notes |
 | --- | --- | --- |
 | Search Console | `sc-domain:myglobalhealth.online` | OAuth. **Token dies ~2026-08-10** — the consent screen is still in Testing, which caps refresh tokens at 7 days. Publish it to stop the weekly re-auth. |
-| GA4 | property `547083375` | Data API enabled 2026-08-03. Consent-gated tag; **only 07-25 → 07-28 has data** (see the Dockerfile ARG bug in the plan doc's §7). |
+| GA4 | property `547083375` | Data API enabled 2026-08-03. Consent-gated tag. The Docker build gap is fixed and `begin_booking`, `begin_checkout`, and `purchase` were verified in production on 2026-08-25. Historical data before that deployment cannot prove blog lead ROI; evaluate only post-2026-08-25 event volume. |
 | CrUX + PageSpeed | API key | Key-based, so unaffected by the OAuth expiry. |
 | openseo MCP | tool list | SERP, keywords, backlinks, site audit. Announces itself — nothing to configure. |
 
@@ -75,7 +75,11 @@ Traps that have each cost a wasted round already:
 
 **Canonical SEO control file: `docs/plans/seo-control-state.md`.** It holds the
 remediation ledger, the growth roadmap, and the indexation watchlist. Every other
-SEO markdown in the repo is historical evidence and carries a header saying so.
+SEO status audit in the repo is historical evidence unless this section identifies
+it as a current operating document.
+The current plain-language audit is
+`docs/audits/seo/seo-roadmap-review-2026-08-25.html`; the active content-growth
+execution rules are in `docs/plans/editorial-plan-2026-08-19.md` §7.
 
 Two rules that override any older SEO document:
 
