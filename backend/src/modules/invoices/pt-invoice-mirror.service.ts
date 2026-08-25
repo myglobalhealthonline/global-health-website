@@ -37,6 +37,13 @@ export async function mirrorPortugalInvoiceDocument(
   invoiceExpressId: number,
   invoiceExpressType: IeDocumentType,
   log: PaymentLog = noopLog,
+  /**
+   * When InvoiceExpress has already emailed the document to the patient, pass
+   * when and to whom so the row records it. Omitted (or null) leaves the row
+   * unsent — never overwrites an existing timestamp, so a retry cannot erase a
+   * send that did happen.
+   */
+  sent: { emailedAt?: Date | null; emailedTo?: string | null } = {},
 ): Promise<void> {
   try {
     const existing = await prisma.invoice.findUnique({
@@ -83,11 +90,18 @@ export async function mirrorPortugalInvoiceDocument(
         invoiceExpressType,
         invoiceExpressPermalink: doc.permalink ?? null,
         pdfStorageKey: storageKey,
+        emailSentAt: sent.emailedAt ?? null,
+        emailSentTo: sent.emailedTo ?? null,
       },
       update: {
         invoiceNumber: doc.sequence_number,
         invoiceExpressPermalink: doc.permalink ?? null,
         pdfStorageKey: storageKey,
+        // Only ever set, never cleared: a retry that could not confirm a send
+        // must leave an earlier confirmed one standing.
+        ...(sent.emailedAt
+          ? { emailSentAt: sent.emailedAt, emailSentTo: sent.emailedTo ?? null }
+          : {}),
       },
     });
 
