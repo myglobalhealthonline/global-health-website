@@ -11,6 +11,8 @@ canonical status ledger.
 3. `seo-roadmap-review-2026-08-25.html` — current plain-language audit and action plan.
 4. `../../plans/editorial-plan-2026-08-19.md` §7 — compact content standard, approved
    Week 2 locale matrix and 30/60/90-day measurement rules.
+5. `../../plans/seo-editorial-next-agent-brief-2026-08-25.md` — detailed, copy-paste
+   execution brief for the next agent.
 
 ## Current position, 25 August 2026
 

@@ -11,7 +11,7 @@ the ledger wins on facts and this file wins on process.
 
 ---
 
-## 1. Read these three, in this order
+## 1. Read these four, in this order
 
 1. **`docs/plans/seo-control-state.md`** — the canonical SEO ledger, roadmap and
    indexation watchlist. ~5,600 lines. Every other SEO markdown in the repo is
@@ -25,6 +25,9 @@ the ledger wins on facts and this file wins on process.
 3. **`docs/plans/seo-indexation-plan-2026-07-28.md`** — superseded as a status
    document, but its §2 design decisions and §5 "explicitly not doing" list are still
    binding.
+4. **`docs/plans/seo-editorial-next-agent-brief-2026-08-25.md`** — detailed execution
+   order for Week 1 review, the selective 19-variant Week 2 cohort, authority work,
+   production approval boundaries and 30/60/90-day measurement.
 
 There is no Wave 4 technical-remediation batch. The six-market technical program
 remains **complete / monitor exceptions**. A separate, owner-directed editorial growth
