@@ -390,6 +390,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const country of countries) {
     try {
       const countryPosts = await listBlogPosts(country.code);
+      const supportedLangs = new Set(countryLangs(country));
       for (const p of countryPosts) {
         if (p.countries.length === 0) continue; // already emitted above as a bare-URL entry
         bump(country.code, "blog", p.publishedAt);
@@ -399,8 +400,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         // (falling back to the authored body) but carry noindex from
         // buildBlogPostMetadata, so they are deliberately not submitted.
         for (const variant of p.localeVariants) {
+          const lang = variant.locale.toLowerCase();
+          // A translation can be shared across several assigned markets, but
+          // not every market enables every site locale (Brazil currently
+          // supports pt/en/es only). Unsupported locale routes redirect to the
+          // market default, so including them would submit non-canonical URLs.
+          if (!supportedLangs.has(lang)) continue;
           pushLocalized(country, `/blog/${variant.slug}`, 0.5, { lastModified: p.publishedAt }, [
-            variant.locale.toLowerCase(),
+            lang,
           ]);
         }
       }

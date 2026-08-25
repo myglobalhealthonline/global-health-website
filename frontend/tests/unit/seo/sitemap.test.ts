@@ -67,6 +67,14 @@ const F = vi.hoisted(() => {
       supportedLocales: ["cs"],
       enabledFeatures: ["general-consultations"],
     },
+    {
+      code: "br",
+      slug: "brazil",
+      name: "Brazil",
+      defaultLocale: "pt",
+      supportedLocales: ["pt", "en", "es"],
+      enabledFeatures: ["general-consultations"],
+    },
   ];
 
   const body = (word: string) =>
@@ -225,12 +233,24 @@ const F = vi.hoisted(() => {
         { locale: "PT", slug: "ireland-post-pt" },
       ],
     },
+    {
+      slug: "brazil-post",
+      countries: ["br"],
+      publishedAt: TS.blogIe,
+      localeVariants: [
+        { locale: "PT", slug: "brazil-post" },
+        { locale: "CS", slug: "brazil-post-cs" },
+        { locale: "DE", slug: "brazil-post-de" },
+        { locale: "RO", slug: "brazil-post-ro" },
+      ],
+    },
   ];
 
   const blogByCountry: Record<string, unknown[]> = {
     ie: [globalBlogPosts[1]],
     es: [],
     cz: [],
+    br: [globalBlogPosts[2]],
   };
 
   const plansByCountry: Record<string, unknown[]> = {
@@ -435,6 +455,17 @@ describe("sitemap — locale eligibility", () => {
     expect(urls).not.toContain(`${base}/ireland/pt/health/migraine`);
     // Translation exists, but the market does not enable that locale.
     expect(urls.some((u) => u.includes("/health/hypertension"))).toBe(false);
+  });
+
+  it("omits blog translations in locales the assigned market does not support", () => {
+    expect(urls).toContain(`${base}/brazil/pt/blog/brazil-post`);
+    for (const [locale, slug] of [
+      ["cs", "brazil-post-cs"],
+      ["de", "brazil-post-de"],
+      ["ro", "brazil-post-ro"],
+    ]) {
+      expect(urls).not.toContain(`${base}/brazil/${locale}/blog/${slug}`);
+    }
   });
 });
 
