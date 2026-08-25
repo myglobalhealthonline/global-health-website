@@ -123,10 +123,12 @@ plain-language implementation report is
   safe seeder defaults to the six primaries and requires `--approved-locales` for
   the remaining approved translations. It provides no path to the 17 unapproved
   variants.
-- Focused OpenSEO keyword, SERP and owner-page Search Console checks were refreshed
-  on 2026-08-25. No broad crawl or fresh backlink pull was run. The evidence keeps
-  Ireland payment separate from its claim guide, Czech calculation separate from
-  the eNeschopenka guide, and the Spanish/Romanian articles safety-led.
+- Focused OpenSEO keyword, SERP, owner-page Search Console and domain-level backlink
+  checks were refreshed on 2026-08-25. No broad crawl was run. The narrow backlink
+  response reported 37 links from 36 referring domains and is not used to overwrite
+  the dated broader profile. The evidence keeps Ireland payment separate from its
+  claim guide, Czech calculation separate from the eNeschopenka guide, and the
+  Spanish/Romanian articles safety-led.
 - This is local preparation only: Week 2 production CMS records remain zero. Nothing
   was published, deployed, pushed or sent externally. Native-language, clinician and
   current-rule review still gate any production action.

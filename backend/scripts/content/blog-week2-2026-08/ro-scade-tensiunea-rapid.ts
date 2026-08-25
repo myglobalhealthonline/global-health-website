@@ -19,6 +19,7 @@ const ESC_GUIDELINE =
 const MS_PROTOCOL =
   "https://oldsite.ms.ro/wp-content/uploads/2021/04/ANEXA-22_Hipertensiunea-arteriala.docx";
 const EMERGENCY_112 = "https://www.112.ro/";
+const EMERGENCY_112_LAW = "https://legislatie.just.ro/Public/DetaliiDocumentAfis/267768";
 
 const roHref = (path: string) => `https://www.myglobalhealth.online/romania/ro${path}`;
 const enHref = (path: string) => `https://www.myglobalhealth.online/romania/en${path}`;
@@ -100,7 +101,7 @@ const ro: LocalePost = {
             "Pierderea bruscă a vederii sau o durere de cap explozivă, diferită de cele obișnuite.",
           ]),
           p("Sunați la 112, nu conduceți singur și notați ora debutului. Pregătiți lista medicamentelor și urmați instrucțiunile dispecerului. O a doua valoare mai mică nu anulează un simptom compatibil cu accident vascular cerebral sau infarct."),
-          cite('Serviciul oficial <a href="https://localizare.112.ro/privacy-policy/" rel="nofollow noopener" target="_blank">Apel 112 al Serviciului de Telecomunicații Speciale</a> preia apelurile de urgență și le transmite agențiilor specializate pentru intervenție.'),
+          cite(`Cadrul legal oficial pentru <a href="${EMERGENCY_112_LAW}" rel="nofollow noopener" target="_blank">Sistemul național unic pentru apeluri de urgență</a> definește 112 ca serviciul care preia apelurile și alertează intervenția specializată.`),
         ],
       },
       {
@@ -161,7 +162,7 @@ const ro: LocalePost = {
     sources: [
       { label: "ESC — tensiune arterială crescută și hipertensiune", href: ESC_GUIDELINE },
       { label: "Ministerul Sănătății — protocol pentru hipertensiune", href: MS_PROTOCOL },
-      { label: "STS — serviciul oficial Apel 112", href: "https://localizare.112.ro/privacy-policy/" },
+      { label: "Portalul Legislativ — sistemul național 112", href: EMERGENCY_112_LAW },
     ],
     sourcesNote:
       "Decizia individuală depinde de istoricul medical, examinare, analize și tratamentul prescris.",

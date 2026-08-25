@@ -2,7 +2,33 @@
 
 Prepared 24 August 2026. These are AI-assisted local working drafts. Every kept locale requires a native-language editor and the medical articles require clinician review before publication. **No Week 2 CMS records exist yet.** The production dry run created no rows and changed no existing content.
 
-Local coverage: every one of the six topics currently has EN, PT, ES, CS, RO and DE copy, for 36 standalone variants. This is a research archive, not the approved production locale matrix. Before any CMS seeding, reduce the batch to the 19 evidence-backed variants in the canonical editorial plan: `pt/en/de` for both Portugal topics, `en/ro/es/pt/de` for Ireland, `cs/en/de` for Czechia, `es/en/de` for Spain, and `ro/en` for Romania. The article jurisdiction remains the topic market; the language variant does not replace the applicable local law, benefit system, emergency pathway or service route.
+Local source coverage: every one of the six topics has EN, PT, ES, CS, RO and DE copy, for a 36-variant research archive. The production-preparation manifest is now restricted to the exact 19 evidence-backed variants in the canonical editorial plan: `pt/en/de` for both Portugal topics, `en/ro/es/pt/de` for Ireland, `cs/en/de` for Czechia, `es/en/de` for Spain, and `ro/en` for Romania. The 17 unapproved variants remain in the TypeScript research source only and are not emitted as standalone HTML or accepted by the seeder. The article jurisdiction remains the topic market; the language variant does not replace the applicable local law, benefit system, emergency pathway or service route.
+
+## Local implementation record, 25 August 2026
+
+- The six primary-language drafts were rewritten first: PT sickness benefit 900
+  words; IE payment/timing 898; CZ calculation 824; PT driving certificate 894;
+  ES urgent blood-pressure safety 1,157; RO immediate blood-pressure safety 1,146.
+- Exactly 19 deterministic standalone HTML files now live beside this README. They
+  use the same article renderer and scoped visual language as the CMS body path.
+- The default seeder scope is the six primary-language drafts. The explicit
+  `--approved-locales` option expands it to 19, never 36. Both modes remain dry-run
+  unless a separately approved operator supplies `--apply`.
+- Focused OpenSEO work on 25 August refreshed keyword, SERP, owner-page GSC and
+  domain-level backlink evidence. It did not run a broad crawl, change project state
+  or acquire a backlink. The focused backlink response reported 37 links from 36
+  referring domains; this narrow provider response does not rewrite the dated
+  24 August profile below. Starting account balance was 17,474 credits; no final
+  balance was read, so no exact credit-spend claim is made for this refresh.
+- The current GSC owner-page evidence keeps Ireland payment/timing separate from the
+  existing claim guide and Czech calculation separate from the eNeschopenka process
+  guide. No measurable conflict appeared for the exact Portugal owner-page filter.
+- Current SERPs support source-led administrative answers and conservative clinical
+  triage. Spain and Romania reject self-medication and quick-fix framing; Portugal
+  driving copy explains regulated groups and makes no certificate guarantee.
+
+CMS records created or changed by this implementation: **zero**. Acquired backlinks:
+**zero**. Outreach sent: **zero**. Publication, deployment and push: **none**.
 
 ## Revised rollout, 25 August 2026
 

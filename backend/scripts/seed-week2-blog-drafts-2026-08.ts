@@ -51,7 +51,7 @@ function validate(set: PostSet, post: LocalePost): string[] {
   const minimum = isPrimary ? (clinical ? 700 : 600) : 600;
   const maximum = isPrimary ? (clinical ? 1_200 : 900) : 2_600;
   if (words < minimum || words > maximum) errors.push(`${label}: ${words} words outside ${minimum}-${maximum}`);
-  const faqMinimum = isPrimary ? 2 : 2;
+  const faqMinimum = 2;
   const faqMaximum = isPrimary ? 4 : 6;
   if (post.article.faqs.length < faqMinimum || post.article.faqs.length > faqMaximum) {
     errors.push(`${label}: FAQ count outside ${faqMinimum}-${faqMaximum}`);

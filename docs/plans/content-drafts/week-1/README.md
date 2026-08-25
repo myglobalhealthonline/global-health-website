@@ -50,3 +50,21 @@ the concrete utility in each article rather than request generic link exchanges.
 - Czechia: ČSSZ and ePortál ČSSZ.
 
 The Spain and Romania drafts still require named clinician review before publication.
+
+## Review record, 25 August 2026
+
+Both production drafts were re-read through the production-safe dry-run path and
+compared byte-for-byte with their local source bodies. No production write was made.
+
+- Spain remained `DRAFT`; local and CMS SHA-256 both begin `b026d` and the full
+  hashes matched. It has one H1, 112 guidance, no dosing instruction, and active
+  doctor, contact, chronic-care and cardiology routes.
+- Romania remained `DRAFT`; local and CMS SHA-256 both begin `ef768` and the full
+  hashes matched. It has one H1, 112 guidance, no dosing instruction, and active
+  doctor, contact and chronic-care routes.
+- Both records retain named author and reviewer identities, with `publishedAt` and
+  `lastReviewedAt` still null. That is intentional: a real clinician must approve
+  each draft before a real review date is recorded or publication is considered.
+
+Content and route review is complete. Clinical acceptance and native editorial
+sign-off remain publication gates, not tasks that an automated review can satisfy.

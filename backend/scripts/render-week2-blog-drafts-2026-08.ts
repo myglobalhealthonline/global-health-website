@@ -4,12 +4,13 @@
  * The 17 unapproved locale variants remain in the TypeScript research archive,
  * but this renderer deliberately has no path to write them.
  *
- * Usage from backend/:
+ * Usage:
  *   node --import tsx scripts/render-week2-blog-drafts-2026-08.ts --write
  *   node --import tsx scripts/render-week2-blog-drafts-2026-08.ts --check
  */
 import { readFileSync, writeFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { renderArticle } from "./content/blog-seo-2026-08/template.js";
 import { WEEK2_POST_SETS } from "./content/blog-week2-2026-08/index.js";
 
@@ -20,7 +21,8 @@ if (WRITE === CHECK) {
   throw new Error("Choose exactly one mode: --write or --check");
 }
 
-const outputDirectory = resolve(process.cwd(), "../docs/plans/content-drafts/week-2");
+const scriptDirectory = dirname(fileURLToPath(import.meta.url));
+const outputDirectory = resolve(scriptDirectory, "../../docs/plans/content-drafts/week-2");
 
 const escapeAttribute = (value: string) =>
   value.replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
