@@ -6307,10 +6307,12 @@ reconciliation described in the package.
 
 ## 29. IE-SERVICE-HUB-001 — GP roster and specialist schema alignment (2026-08-25)
 
-**Status: IMPLEMENTED IN REPOSITORY — NOT DEPLOYED.** A focused review of the
-existing Ireland GP and specialist hubs confirmed that the earlier CMS content
-batch is already live; no production patch script was rerun and no title, meta,
-H1, price, duration, credential, clinical claim or booking behavior changed.
+**Status: DEPLOYED ON MAIN.** `origin/main` points at implementation commit
+`60449ffd`, and the owner confirmed the deployment is live. A focused review of
+the existing Ireland GP and specialist hubs confirmed that the earlier CMS
+content batch was already live; no production patch script was rerun and no
+title, meta, H1, price, duration, credential, clinical claim or booking behavior
+changed in this code batch.
 
 Two code defects were corrected. The GP hub previously rendered the first six
 country doctors without proving a reciprocal assignment to an active GENERAL
@@ -6328,7 +6330,61 @@ and independent review. The full frontend suite is 1,015 passed / five skipped /
 one unrelated pre-existing sick-certificate redirect expectation failed. The
 production build compiled and typechecked, then failed during prerender because
 the backend was unavailable; this is the existing build-environment dependency.
-Live pre-deploy probes returned 200 for both Ireland hubs with one FAQ schema
-each. Deployment and post-deploy rendered roster/schema comparison remain.
+OpenSEO URL Inspection on 2026-08-25 reports both canonical hubs submitted and
+indexed with matching Google-selected canonicals. Google last crawled the GP hub
+on 2026-08-25 and the specialist hub on 2026-08-24. A post-deploy rendered
+roster/schema comparison remains a separate data-quality check.
+
+---
+
+## 30. IE-CONSULTATION-COPY-001 — complete GP and specialist hub copy (2026-08-25)
+
+**Status: LIVE IN PRODUCTION — ALL SIX LOCALES VERIFIED.** Complete content now
+covers the existing CMS-authored surface of both canonical Ireland hubs in English,
+Czech, German, Spanish, Portuguese and Romanian: metadata, H1/hero copy, overview,
+suitability, trust reasons, FAQs, CTA labels and medical limitations. Prices,
+durations, doctor availability and appointment times deliberately remain
+catalogue-driven rather than being copied into static claims.
+
+**Fresh OpenSEO evidence.** URL Inspection reports both canonical URLs submitted
+and indexed. The 2026-05-22 to 2026-08-22 final Search Console window returned 57
+queries for the GP hub, with its useful non-brand terms mostly around positions
+22–30, and five low-volume specialist-hub queries. Focused Ireland metrics returned
+880 monthly searches / KD 27 for `online gp ireland` and 140 / KD 22 for
+`gp online appointment`. Four live SERPs confirmed a crowded GP result set and no
+dedicated specialist hub among the sampled leaders. That supports one GP intent
+owner and one distinct specialist intent owner, not another competing URL.
+
+**Implementation controls.** The new patcher is dry-run by default, requires the
+exact content-version confirmation to write, preserves publication state and
+section toggles, and uses `updatedAt` optimistic concurrency checks in one
+transaction. Fourteen focused content tests pass, including order-insensitive JSON
+read-back comparison; backend type-check and targeted lint pass.
+
+**Production apply and locale verification (2026-08-25).** The reviewed English
+fields and five localized variants were saved through the authenticated
+`www.myglobalhealth.online/admin/page-content` editors for both Ireland records.
+Both records remained `PUBLISHED` and active; CTA targets, images, themes, section
+visibility and catalogue-driven data were unchanged. An independent claims pass
+preserved IMC registration, changing price/availability language, referral and
+certificate uncertainty, clinical discretion and the 112 emergency exclusion. A
+draft that reintroduced a fixed specialist roster and blanket no-referral promise
+was rejected before save.
+
+The committed manifest and guarded replay script cover the English (`EN`) source
+only. Czech, German, Spanish, Portuguese and Romanian were reviewed and saved
+manually in the production CMS; they are production state recorded by this ledger,
+not replayable payloads in this repository batch. Re-read the CMS translations
+before any future localization sweep rather than treating the English patcher as
+their source of truth.
+
+Post-save admin reloads read back the localized titles, H1s and final FAQ fields for
+all five translated locales. Cache-busted public HTML checks returned HTTP 200 and
+the new localized SEO title and H1 on all 12 Ireland combinations (two hubs × six
+locales); the new final FAQ also appeared on all ten non-English hub URLs. The
+separate `https://api.myglobalhealth.online` page-content route still
+returned `record: null` during the investigation even though the rendered site is
+now serving the CMS copy; treat that custom-domain/backend-origin discrepancy as a
+configuration watch item, not as evidence that the rendered release is absent.
 
 ---
