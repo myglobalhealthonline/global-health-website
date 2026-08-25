@@ -18,15 +18,15 @@ export type IdentityVerificationBannerCopy = {
 };
 
 /**
- * Dashboard prompt pointing an Irish patient at their identity verification.
+ * Dashboard prompt pointing a patient at their identity verification.
  *
  * Deliberately mirrors the "Verify your email" card above it — same AdminCard,
  * same chevron affordance — because it is the same kind of ask and the patient
  * should not have to learn a second pattern.
  *
  * Renders nothing unless the server says this patient is in scope, and nothing
- * once they are verified. Scope is a server decision (an Irish consultation
- * could prescribe for them), never guessed from an address here.
+ * once they are verified. Scope is a server decision, never guessed from an
+ * address here.
  */
 export function IdentityVerificationBanner({
   copy,

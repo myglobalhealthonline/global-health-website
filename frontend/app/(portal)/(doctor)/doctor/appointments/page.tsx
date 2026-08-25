@@ -468,19 +468,17 @@ export default async function DoctorAppointmentsPage({
                               <Btn href={`/doctor/appointments/${a.id}`} variant="secondary" size="sm">
                                 {d.common.open}
                               </Btn>
-                              {/* Ireland: deep-link straight to the Identity
-                                  tab. Verification needs reviewing before the
+                              {/* Deep-link straight to the Identity tab.
+                                  Verification wants reviewing before the
                                   consultation, not during it. */}
-                              {a.countryCode.toLowerCase() === "ie" ? (
-                                <Btn
-                                  href={`/doctor/appointments/${a.id}?tab=identity`}
-                                  variant="secondary"
-                                  size="sm"
-                                  iconLeft={<ShieldCheck className="size-3.5" aria-hidden />}
-                                >
-                                  {d.appointments.verifyIdentity}
-                                </Btn>
-                              ) : null}
+                              <Btn
+                                href={`/doctor/appointments/${a.id}?tab=identity`}
+                                variant="secondary"
+                                size="sm"
+                                iconLeft={<ShieldCheck className="size-3.5" aria-hidden />}
+                              >
+                                {d.appointments.verifyIdentity}
+                              </Btn>
                               <NotifyDoctorReadyButton
                                 appointmentId={a.id}
                                 copy={notifyReadyCopy}
@@ -495,16 +493,14 @@ export default async function DoctorAppointmentsPage({
                               <Btn href={`/doctor/appointments/${a.id}`} variant="secondary" size="sm">
                                 {d.common.open}
                               </Btn>
-                              {a.countryCode.toLowerCase() === "ie" ? (
-                                <Btn
-                                  href={`/doctor/appointments/${a.id}?tab=identity`}
-                                  variant="secondary"
-                                  size="sm"
-                                  iconLeft={<ShieldCheck className="size-3.5" aria-hidden />}
-                                >
-                                  {d.appointments.verifyIdentity}
-                                </Btn>
-                              ) : null}
+                              <Btn
+                                href={`/doctor/appointments/${a.id}?tab=identity`}
+                                variant="secondary"
+                                size="sm"
+                                iconLeft={<ShieldCheck className="size-3.5" aria-hidden />}
+                              >
+                                {d.appointments.verifyIdentity}
+                              </Btn>
                             </span>
                           )
                         }

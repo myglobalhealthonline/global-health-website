@@ -146,7 +146,7 @@ function buildTemplateContext(input: {
   birthDate: string;
   fields?: Record<string, string>;
   dataProtectionLawName?: string | null;
-  /** Non-null only when a human confirmed the patient's identity (IE). */
+  /** Non-null only when a human confirmed the patient's identity. */
   identityVerification?: { referenceId: string; verifiedAt: Date } | null;
 }): Record<string, unknown> {
   const consultationDate = input.appt.scheduledAt
@@ -198,7 +198,11 @@ function buildTemplateContext(input: {
     // Printed only for a confirmed verification. There is deliberately no
     // "not verified" counterpart: an unverified prescription stays silent on
     // identity rather than advertising the gap to whoever handles the paper.
-    if (isIreland && input.identityVerification) {
+    // Every market. The `ie*` key names are kept only because the templates
+    // already bind to them; the marking itself is not Ireland-specific. The
+    // controlled-medication notice above stays IE-only — that one is Irish
+    // dispensing law, not a statement about this patient.
+    if (input.identityVerification) {
       base.ieIdentityVerified = "Patient Identity Verified";
       base.ieIdentityVerifiedRef = input.identityVerification.referenceId;
       base.ieIdentityVerifiedAt = formatDateDdMmYyyy(input.identityVerification.verifiedAt);
@@ -409,10 +413,7 @@ async function generateAppointmentDocumentUnlocked(input: {
   // document is byte-for-byte what it was before this feature existed.
   const identityVerification =
     input.documentType === "PRESCRIPTION"
-      ? await resolveVerificationForPrescription({
-          patientEmail: appt.email,
-          countryCode: appt.countryCode,
-        })
+      ? await resolveVerificationForPrescription({ patientEmail: appt.email })
       : null;
 
   const templateContext = buildTemplateContext({

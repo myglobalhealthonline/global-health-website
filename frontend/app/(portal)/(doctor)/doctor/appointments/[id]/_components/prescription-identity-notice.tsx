@@ -14,8 +14,6 @@ import {
  * Informational, never blocking — issuing is always allowed. The warning
  * exists so an unverified patient is a decision the doctor made rather than a
  * detail they discovered afterwards on the PDF.
- *
- * Ireland only; the caller gates on country.
  */
 export function PrescriptionIdentityNotice({ email }: { email: string }) {
   const [data, setData] = useState<DoctorIdentityVerification | null>(null);

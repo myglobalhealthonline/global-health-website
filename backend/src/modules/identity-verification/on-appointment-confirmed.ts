@@ -1,13 +1,10 @@
 import { prisma } from "../../db/prisma.js";
 import { recordAudit } from "../audit/audit.service.js";
-import {
-  isIdentityVerificationCountry,
-  requestVerification,
-} from "./identity-verification.service.js";
+import { requestVerification } from "./identity-verification.service.js";
 import { notifyPatientVerificationRequested } from "./notify-identity-verification.service.js";
 
 /**
- * Ask an Irish patient to verify as soon as their booking is paid, rather than
+ * Ask a patient to verify as soon as their booking is paid, rather than
  * waiting for a doctor to notice mid-consultation.
  *
  * The point is timing. Verification needs a human to review a photo, so a
@@ -25,7 +22,6 @@ export async function onAppointmentConfirmed(appointmentId: string): Promise<voi
     select: { id: true, email: true, countryCode: true },
   });
   if (!appt?.email) return;
-  if (!isIdentityVerificationCountry(appt.countryCode)) return;
 
   const profile = await prisma.patientProfile.findFirst({
     where: { email: { equals: appt.email.trim(), mode: "insensitive" } },
