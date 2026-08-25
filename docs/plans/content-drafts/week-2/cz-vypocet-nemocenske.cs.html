@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="cs-CZ">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Výpočet nemocenské 2026: zaměstnavatel a ČSSZ</title>
+<meta name="description" content="Výpočet nemocenské 2026: náhrada mzdy v prvních 14 dnech, dávka ČSSZ od 15. dne, redukční hranice a orientační postup.">
+</head>
+<body>
+<style>
+:root {
+  --gh-font-sans: "Aptos", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --gh-text-display: clamp(2.65rem, 6vw + .7rem, 5.65rem);
+  --gh-text-h2: clamp(2rem, 3.7vw + .35rem, 3.35rem);
+  --gh-text-h3: clamp(1.3rem, 1.7vw + .3rem, 1.8rem);
+  --gh-text-body-lg: clamp(1.08rem, .85vw + .76rem, 1.28rem);
+  --gh-text-body: clamp(.98rem, .42vw + .76rem, 1.08rem);
+  --gh-text-eyebrow: .8125rem;
+  --gh-text-meta: .875rem;
+  --gh-forest: #1D4B36;
+  --gh-forest-hover: #163826;
+  --gh-mint: #8FB021;
+  --gh-lime: #B0F122;
+  --gh-accent-soft: rgba(176,241,34,.20);
+  --gh-accent-dim: rgba(176,241,34,.10);
+  --gh-page: #FFFFFF;
+  --gh-soft: #F6F8F1;
+  --gh-panel: #EDF2E2;
+  --gh-text: #2D3B36;
+  --gh-muted: #6D6D6D;
+  --gh-on-dark-muted: rgba(255,255,255,.72);
+  --gh-on-dark-faint: rgba(255,255,255,.60);
+  --gh-border: #E4E7DD;
+  --gh-border-strong: #C3CCB5;
+  --gh-radius-card: 20px;
+  --gh-radius-small: 12px;
+  --gh-radius-pill: 999px;
+  --gh-shadow-card: 0 1px 3px rgba(29,75,54,.08), 0 4px 12px rgba(29,75,54,.04);
+  --gh-shadow-hover: 0 4px 12px rgba(29,75,54,.12), 0 8px 24px rgba(29,75,54,.08);
+  --gh-shadow-elevated: 0 8px 30px rgba(29,75,54,.14), 0 2px 8px rgba(29,75,54,.08);
+  --gh-shadow-focus: 0 0 0 3px rgba(29,75,54,.28);
+  --gh-container: 1180px;
+  --gh-section-space: clamp(4.25rem, calc(2.5rem + 3vw), 7.5rem);
+  --gh-inset: clamp(20px, 3vw, 36px);
+  --gh-glass-border: 1px solid rgba(176,241,34,.22);
+  --gh-glass-filter: blur(18px) saturate(170%) brightness(1.05);
+}
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--gh-page); }
+.gh-blog, .gh-blog * { box-sizing: border-box; }
+.gh-blog { width: 100%; overflow: clip; font-family: var(--gh-font-sans); color: var(--gh-text); background: var(--gh-page); line-height: 1.65; -webkit-font-smoothing: antialiased; }
+.gh-blog h1, .gh-blog h2, .gh-blog h3, .gh-blog p { margin-top: 0; }
+.gh-blog h1, .gh-blog h2, .gh-blog h3 { font-family: var(--gh-font-sans); font-weight: 800; letter-spacing: -.02em; line-height: 1.08; }
+.gh-blog a:focus-visible, .gh-blog summary:focus-visible { outline: none; box-shadow: var(--gh-shadow-focus); }
+.gh-blog .article-intro { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(340px, .7fr); gap: clamp(2rem, 5vw, 5.5rem); align-items: center; padding: clamp(4.5rem, 8vw, 8rem) max(var(--gh-inset), calc((100vw - var(--gh-container)) / 2)); background: linear-gradient(178deg, #12342A 0%, #0F2E25 100%); color: #FFFFFF; }
+.gh-blog .hero-copy { min-width: 0; }
+.gh-blog .hero-brandline { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem; margin-bottom: 1.1rem; color: var(--gh-on-dark-faint); font-size: .82rem; font-weight: 700; }
+.gh-blog .hero-brandline strong { color: #FFFFFF; }
+.gh-blog .hero-brandline a { display: inline-flex; align-items: center; min-height: 32px; padding: .3rem .7rem; border: 1px solid rgba(176,241,34,.18); border-radius: var(--gh-radius-pill); color: var(--gh-lime); background: var(--gh-accent-dim); font-size: .75rem; text-decoration: none; }
+.gh-blog .eyebrow { display: inline-flex; align-items: center; gap: .6rem; min-height: 32px; margin: 0 0 1rem; padding: .32rem .76rem; border: 1px solid rgba(29,75,54,.10); border-radius: var(--gh-radius-pill); color: var(--gh-forest); background: rgba(29,75,54,.06); font-size: var(--gh-text-eyebrow); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.gh-blog .eyebrow::before { content: ""; width: 8px; height: 8px; flex: 0 0 auto; border-radius: var(--gh-radius-pill); background: var(--gh-mint); }
+.gh-blog .article-intro .eyebrow, .gh-blog .section-forest .eyebrow { color: var(--gh-lime); background: var(--gh-accent-dim); border-color: rgba(176,241,34,.18); }
+.gh-blog .article-intro .eyebrow::before, .gh-blog .section-forest .eyebrow::before { background: var(--gh-lime); }
+.gh-blog h1 { max-width: 14ch; margin-bottom: 1rem; color: #FFFFFF; font-size: var(--gh-text-display); }
+.gh-blog .hero-deck { max-width: 48ch; margin-bottom: 1.75rem; color: #FFFFFF; font-size: var(--gh-text-body-lg); font-weight: 600; line-height: 1.55; }
+.gh-blog .intro-lead { max-width: 64ch; margin-bottom: 2rem; color: var(--gh-on-dark-muted); font-size: var(--gh-text-body); line-height: 1.78; }
+.gh-blog .hero-facts { display: flex; flex-wrap: wrap; gap: .55rem; margin: 0 0 1.7rem; }
+.gh-blog .hero-fact { display: inline-flex; align-items: center; min-height: 34px; padding: .35rem .72rem; border: 1px solid rgba(255,255,255,.15); border-radius: var(--gh-radius-pill); color: var(--gh-on-dark-muted); background: rgba(255,255,255,.06); font-size: .75rem; font-weight: 600; }
+.gh-blog .hero-actions { display: flex; flex-wrap: wrap; gap: .8rem; }
+.gh-blog .btn-lime, .gh-blog .btn-ghost { display: inline-flex; align-items: center; justify-content: center; min-height: 56px; padding: 0 1.7rem; border-radius: var(--gh-radius-pill); font-family: inherit; font-size: .95rem; font-weight: 800; text-decoration: none; transition: transform 200ms cubic-bezier(.16,1,.3,1), background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease; }
+.gh-blog .btn-lime { border: 0; color: #0a1f14; background: var(--gh-lime); box-shadow: 0 4px 15px rgba(176,241,34,.14); }
+.gh-blog .btn-lime:hover { transform: translateY(-2px); box-shadow: 0 7px 20px rgba(176,241,34,.14); }
+.gh-blog .btn-ghost { border: 1px solid rgba(255,255,255,.22); color: rgba(255,255,255,.88); background: transparent; }
+.gh-blog .btn-ghost:hover { transform: translateY(-2px); background: rgba(255,255,255,.13); border-color: rgba(255,255,255,.45); }
+.gh-blog .hero-panel { padding: clamp(1.5rem, 3vw, 2.25rem); border: var(--gh-glass-border); border-radius: var(--gh-radius-card); color: #FFFFFF; background: rgba(4,32,24,.92); box-shadow: 0 18px 40px -18px rgba(4,24,18,.55); -webkit-backdrop-filter: var(--gh-glass-filter); backdrop-filter: var(--gh-glass-filter); }
+.gh-blog .meta-chip, .gh-blog .meta-chip-lime { display: inline-flex; align-items: center; min-height: 30px; margin-bottom: 1.1rem; padding: .3rem .65rem; border: 1px solid rgba(176,241,34,.18); border-radius: var(--gh-radius-pill); color: var(--gh-lime); background: var(--gh-accent-dim); font-size: .75rem; font-weight: 600; }
+.gh-blog .intro-support { max-width: 62ch; margin-bottom: 1.2rem; color: var(--gh-on-dark-muted); font-size: var(--gh-text-body); line-height: 1.75; }
+.gh-blog .intro-support:last-child { margin-bottom: 0; }
+.gh-blog .hero-author { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: .85rem; align-items: center; margin-top: 1.35rem; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,.14); }
+.gh-blog .hero-author-mark { display: grid; place-items: center; width: 48px; height: 48px; border: 1px solid rgba(176,241,34,.22); border-radius: var(--gh-radius-small); color: var(--gh-lime); background: var(--gh-accent-dim); font-size: .85rem; font-weight: 800; }
+.gh-blog .hero-author strong { display: block; margin-bottom: .2rem; color: #FFFFFF; font-size: .92rem; }
+.gh-blog .hero-author span, .gh-blog .hero-review-line { display: block; color: var(--gh-on-dark-faint); font-size: .78rem; line-height: 1.55; }
+.gh-blog .hero-review-line { margin-top: .75rem; }
+.gh-blog .article-nav { position: sticky; top: 0; z-index: 20; border-bottom: 1px solid rgba(29,75,54,.10); background: rgba(246,248,241,.96); box-shadow: 0 8px 30px rgba(29,75,54,.08); -webkit-backdrop-filter: blur(18px) saturate(170%); backdrop-filter: blur(18px) saturate(170%); }
+.gh-blog .article-nav-inner { display: flex; align-items: center; gap: 1rem; max-width: var(--gh-container); margin: 0 auto; padding: .65rem var(--gh-inset); }
+.gh-blog .article-nav-label { flex: 0 0 auto; color: var(--gh-forest); font-size: .8rem; font-weight: 800; }
+.gh-blog .article-nav-list { display: flex; gap: .45rem; min-width: 0; overflow-x: auto; scrollbar-width: thin; padding-bottom: 2px; }
+.gh-blog .article-nav-list a { display: inline-flex; align-items: center; min-height: 48px; flex: 0 0 auto; padding: .55rem .9rem; border: 1px solid rgba(29,75,54,.10); border-radius: var(--gh-radius-pill); color: var(--gh-forest); background: rgba(255,255,255,.72); font-size: .82rem; font-weight: 700; text-decoration: none; transition: transform 200ms ease, border-color 200ms ease, background-color 200ms ease; }
+.gh-blog .article-nav-list a:hover { transform: translateY(-2px); border-color: rgba(29,75,54,.22); background: #FFFFFF; }
+.gh-blog .article-section { position: relative; padding: var(--gh-section-space) 0; scroll-margin-top: 76px; }
+.gh-blog .section-ivory { background: linear-gradient(180deg, #fffdf1 0%, #f6f8f1 52%, #edf2e2 100%); }
+.gh-blog .section-forest { background: linear-gradient(178deg, #12342A 0%, #0F2E25 100%); color: #FFFFFF; }
+.gh-blog .section-inner { width: min(100%, var(--gh-container)); margin: 0 auto; padding: 0 var(--gh-inset); }
+.gh-blog .section-anchor { position: absolute; width: 1px; height: 1px; overflow: hidden; border: 0; margin: 0; padding: 0; }
+.gh-blog h2 { max-width: 22ch; margin-bottom: 1.35rem; color: var(--gh-forest); font-size: var(--gh-text-h2); }
+.gh-blog h2::after { content: ""; display: block; width: clamp(3.5rem, 8vw, 6rem); height: 5px; margin-top: 1rem; border-radius: var(--gh-radius-pill); background: var(--gh-mint); }
+.gh-blog h3 { max-width: 34ch; margin: 2.6rem 0 .85rem; color: var(--gh-forest); font-size: var(--gh-text-h3); letter-spacing: -.01em; }
+.gh-blog p { max-width: 78ch; margin-bottom: 1.3rem; color: var(--gh-text); font-size: var(--gh-text-body); line-height: 1.78; }
+.gh-blog .section-lead { max-width: 68ch; margin-bottom: 1.8rem; color: var(--gh-forest); font-size: var(--gh-text-body-lg); font-weight: 600; line-height: 1.7; }
+.gh-blog strong { font-weight: 800; }
+.gh-blog a { color: var(--gh-forest); font-weight: 700; text-decoration-color: rgba(29,75,54,.34); text-underline-offset: .18em; transition: color 200ms ease, text-decoration-color 200ms ease; }
+.gh-blog a:hover { color: var(--gh-forest-hover); text-decoration-color: var(--gh-forest-hover); }
+.gh-blog .section-forest h2, .gh-blog .section-forest h3 { color: #FFFFFF; }
+.gh-blog .section-forest h2::after { background: var(--gh-lime); }
+.gh-blog .section-forest p { color: var(--gh-on-dark-muted); }
+.gh-blog .section-forest .section-lead { color: #FFFFFF; }
+.gh-blog .section-forest a { color: #FFFFFF; text-decoration-color: rgba(176,241,34,.58); }
+.gh-blog .section-forest a:hover { text-decoration-color: var(--gh-lime); }
+.gh-blog .alert-green, .gh-blog .alert-warn { position: relative; max-width: 92ch; margin: 2rem 0; padding: clamp(1.25rem, 2.5vw, 1.75rem) clamp(1.25rem, 3vw, 2rem) clamp(1.25rem, 2.5vw, 1.75rem) clamp(1.65rem, 4vw, 2.6rem); overflow: hidden; border: 1px solid rgba(29,75,54,.14); border-radius: var(--gh-radius-small); color: var(--gh-forest); background: rgba(29,75,54,.06); box-shadow: var(--gh-shadow-card); font-size: var(--gh-text-body); line-height: 1.68; }
+.gh-blog .alert-green::before, .gh-blog .alert-warn::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 6px; background: var(--gh-mint); }
+.gh-blog .alert-warn { background: var(--gh-accent-dim); border-color: rgba(176,241,34,.28); }
+.gh-blog .alert-warn::before { background: var(--gh-lime); }
+.gh-blog .alert-green strong, .gh-blog .alert-warn strong { display: block; margin-bottom: .4rem; }
+.gh-blog .section-forest .alert-green, .gh-blog .section-forest .alert-warn { color: #FFFFFF; background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18); }
+.gh-blog .section-forest .alert-green::before, .gh-blog .section-forest .alert-warn::before { background: var(--gh-lime); }
+.gh-blog .check-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; margin: 1.5rem 0 2rem; padding: 0; list-style: none; }
+.gh-blog .check-list li { position: relative; min-height: 58px; padding: 1rem 1rem 1rem 3.25rem; border: 1px solid rgba(29,75,54,.10); border-radius: var(--gh-radius-small); color: var(--gh-text); background: linear-gradient(172deg, #ffffff 0%, #fbfcf8 100%); box-shadow: var(--gh-shadow-card); font-size: var(--gh-text-body); line-height: 1.52; }
+.gh-blog .check-list li::before { content: "✓"; position: absolute; top: .92rem; left: 1rem; display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: var(--gh-radius-pill); color: var(--gh-forest); background: rgba(143,176,33,.16); font-weight: 800; }
+.gh-blog .section-forest .check-list li { border: var(--gh-glass-border); color: var(--gh-on-dark-muted); background: rgba(4,32,24,.92); box-shadow: 0 18px 40px -18px rgba(4,24,18,.55); -webkit-backdrop-filter: var(--gh-glass-filter); backdrop-filter: var(--gh-glass-filter); }
+.gh-blog .section-forest .check-list li::before { color: var(--gh-lime); background: var(--gh-accent-dim); }
+.gh-blog .institution-bar { display: flex; flex-wrap: wrap; gap: .7rem; margin: 1.4rem 0 2.25rem; }
+.gh-blog .inst-link { display: inline-flex; align-items: center; gap: .55rem; min-height: 48px; padding: .7rem 1rem; border: 1px solid rgba(29,75,54,.10); border-radius: var(--gh-radius-pill); color: var(--gh-forest); background: rgba(29,75,54,.06); font-size: var(--gh-text-meta); font-weight: 700; text-decoration: none; transition: transform 200ms ease, background-color 200ms ease, border-color 200ms ease; }
+.gh-blog .inst-link::before { content: ""; width: 8px; height: 8px; flex: 0 0 auto; border-radius: var(--gh-radius-pill); background: var(--gh-mint); }
+.gh-blog .inst-link:hover { transform: translateY(-2px); background: rgba(143,176,33,.14); border-color: rgba(29,75,54,.22); }
+.gh-blog .section-forest .inst-link { border-color: rgba(176,241,34,.18); color: #FFFFFF; background: var(--gh-accent-dim); }
+.gh-blog .section-forest .inst-link:hover { border-color: rgba(176,241,34,.42); color: #FFFFFF; background: rgba(176,241,34,.16); }
+.gh-blog .section-forest .inst-link::before { background: var(--gh-lime); }
+.gh-blog .faq-section { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 1.9rem 0 2.25rem; }
+.gh-blog .faq-item { align-self: start; overflow: hidden; border: 1px solid rgba(29,75,54,.10); border-radius: var(--gh-radius-card); background: linear-gradient(172deg, #ffffff 0%, #fbfcf8 100%); box-shadow: var(--gh-shadow-card); }
+.gh-blog .faq-wide { grid-column: 1 / -1; }
+.gh-blog .faq-q { position: relative; min-height: 64px; padding: 1.2rem 3.2rem 1.2rem 1.3rem; color: var(--gh-forest); font-size: 1.02rem; font-weight: 800; line-height: 1.45; cursor: pointer; list-style: none; }
+.gh-blog .faq-q::-webkit-details-marker { display: none; }
+.gh-blog .faq-q::after { content: "+"; position: absolute; top: 50%; right: 1.25rem; display: grid; place-items: center; width: 28px; height: 28px; transform: translateY(-50%); border-radius: var(--gh-radius-pill); color: var(--gh-forest); background: rgba(143,176,33,.16); font-size: 1.2rem; line-height: 1; }
+.gh-blog .faq-item[open] .faq-q { border-bottom: 1px solid rgba(29,75,54,.10); }
+.gh-blog .faq-item[open] .faq-q::after { content: "−"; }
+.gh-blog .faq-a { padding: 1.15rem 1.3rem .15rem; }
+.gh-blog .faq-a p { margin-bottom: 1.05rem; }
+.gh-blog .section-forest .faq-q { color: #FFFFFF; }
+.gh-blog .section-forest .faq-q::after { color: var(--gh-lime); background: var(--gh-accent-dim); }
+.gh-blog .section-forest .faq-item[open] .faq-q { border-bottom-color: rgba(176,241,34,.18); }
+.gh-blog .section-forest .faq-item { border: var(--gh-glass-border); color: #FFFFFF; background: rgba(4,32,24,.92); box-shadow: 0 18px 40px -18px rgba(4,24,18,.55); -webkit-backdrop-filter: var(--gh-glass-filter); backdrop-filter: var(--gh-glass-filter); }
+.gh-blog .cite-note { max-width: 92ch; margin-top: -.55rem; color: var(--gh-muted); font-size: .82rem; font-style: italic; line-height: 1.58; }
+.gh-blog .section-forest .cite-note { color: var(--gh-on-dark-faint); }
+.gh-blog .disclaimer { position: relative; margin-top: 2rem; padding: clamp(1.4rem, 2.5vw, 1.9rem); border: 1px solid rgba(176,241,34,.18); border-radius: var(--gh-radius-small); color: var(--gh-on-dark-muted); background: rgba(4,32,24,.92); box-shadow: 0 18px 40px -18px rgba(4,24,18,.55); font-size: .9rem; line-height: 1.68; }
+.gh-blog .disclaimer::before { content: ""; display: block; width: 46px; height: 5px; margin-bottom: 1rem; border-radius: var(--gh-radius-pill); background: var(--gh-lime); }
+.gh-blog .disclaimer strong { display: block; margin-bottom: .45rem; color: #FFFFFF; font-size: 1rem; }
+.gh-blog .cta-box { position: relative; overflow: hidden; margin: 2.25rem 0; padding: clamp(1.7rem, 4vw, 2.7rem); border: 1px solid rgba(176,241,34,.22); border-radius: var(--gh-radius-card); color: #FFFFFF; background: linear-gradient(178deg, #12342A 0%, #0F2E25 100%); box-shadow: var(--gh-shadow-elevated); }
+.gh-blog .cta-box h3 { position: relative; z-index: 1; max-width: 26ch; margin: 0 0 .75rem; color: #FFFFFF; }
+.gh-blog .cta-box p { position: relative; z-index: 1; max-width: 62ch; color: var(--gh-on-dark-muted); }
+.gh-blog .cta-btns { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.35rem; }
+.gh-blog .btn-primary, .gh-blog .btn-secondary { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 0 1.45rem; border-radius: var(--gh-radius-pill); font-size: .92rem; font-weight: 800; text-decoration: none; transition: transform 200ms ease, background-color 200ms ease, border-color 200ms ease; }
+.gh-blog .btn-primary { border: 0; color: #0a1f14; background: var(--gh-lime); }
+.gh-blog .btn-secondary { border: 1px solid rgba(255,255,255,.22); color: #FFFFFF; background: transparent; }
+.gh-blog .btn-primary:hover, .gh-blog .btn-secondary:hover { transform: translateY(-2px); }
+.gh-blog .btn-secondary:hover { border-color: rgba(255,255,255,.45); background: rgba(255,255,255,.10); }
+.gh-blog .related { margin-top: 2.6rem; padding-top: 2rem; border-top: 1px solid rgba(29,75,54,.12); }
+.gh-blog .related h2 { max-width: none; margin-bottom: 1.25rem; font-size: var(--gh-text-h3); }
+.gh-blog .related h2::after { width: 3.5rem; height: 4px; margin-top: .7rem; }
+.gh-blog .related-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.gh-blog .related-card { min-height: 100%; padding: 1.25rem; border: 1px solid rgba(29,75,54,.10); border-radius: var(--gh-radius-card); color: var(--gh-text); background: linear-gradient(172deg, #ffffff 0%, #fbfcf8 100%); box-shadow: var(--gh-shadow-card); text-decoration: none; transition: transform 250ms ease, border-color 250ms ease, box-shadow 250ms ease; }
+.gh-blog .related-card:hover { transform: translateY(-3px); border-color: rgba(29,75,54,.22); box-shadow: var(--gh-shadow-hover); }
+.gh-blog .rc-tag { display: inline-flex; min-height: 28px; align-items: center; margin-bottom: .8rem; padding: .28rem .62rem; border: 1px solid rgba(29,75,54,.10); border-radius: var(--gh-radius-pill); color: var(--gh-forest); background: rgba(29,75,54,.06); font-size: .72rem; font-weight: 700; }
+.gh-blog .rc-title { color: var(--gh-forest); font-size: 1rem; font-weight: 800; line-height: 1.45; }
+.gh-blog .section-ivory .disclaimer { border: 1px solid rgba(29,75,54,.12); color: var(--gh-text); background: linear-gradient(172deg, #ffffff 0%, #fbfcf8 100%); box-shadow: var(--gh-shadow-card); }
+.gh-blog .section-ivory .disclaimer::before { background: var(--gh-mint); }
+.gh-blog .section-ivory .disclaimer strong { color: var(--gh-forest); }
+@media (max-width: 1050px) { .gh-blog .article-intro { grid-template-columns: 1fr; } .gh-blog .hero-panel { max-width: 760px; } }
+@media (max-width: 900px) { .gh-blog .related-grid { grid-template-columns: 1fr; } }
+@media (max-width: 760px) {
+  .gh-blog .article-intro { padding-top: 4rem; padding-bottom: 4rem; }
+  .gh-blog h1 { max-width: 14ch; }
+  .gh-blog .article-nav-inner { align-items: flex-start; flex-direction: column; gap: .35rem; }
+  .gh-blog .article-nav-list { width: 100%; }
+  .gh-blog .check-list, .gh-blog .faq-section { grid-template-columns: 1fr; }
+  .gh-blog .faq-wide { grid-column: auto; }
+  .gh-blog .hero-brandline { align-items: flex-start; flex-direction: column; }
+}
+@media (max-width: 520px) {
+  .gh-blog .hero-actions { flex-direction: column; }
+  .gh-blog .btn-lime, .gh-blog .btn-ghost { width: 100%; }
+  .gh-blog .article-nav-label { display: none; }
+  .gh-blog .article-nav-inner { padding-top: .45rem; padding-bottom: .45rem; }
+  .gh-blog .cta-btns { flex-direction: column; }
+  .gh-blog .btn-primary, .gh-blog .btn-secondary { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .gh-blog .btn-lime, .gh-blog .btn-ghost, .gh-blog .article-nav-list a, .gh-blog .inst-link { transform: none !important; transition: none !important; }
+}
+@media (pointer: coarse) {
+  .gh-blog .hero-panel, .gh-blog .section-forest .faq-item { -webkit-backdrop-filter: none; backdrop-filter: none; background: #0F2E25; }
+}
+@supports not (backdrop-filter: blur(1px)) {
+  .gh-blog .hero-panel, .gh-blog .section-forest .faq-item { -webkit-backdrop-filter: none; backdrop-filter: none; background: #0F2E25; }
+}
+</style><main class="gh-blog" lang="cs-CZ"><header class="article-intro"><div class="hero-copy"><div class="hero-brandline"><strong>Global Health</strong> · Medicína kdykoli a kdekoli <a href="https://www.myglobalhealth.online/czechia/cs/blog">Praktické lékařství</a></div><span class="eyebrow">Česko · Pravidla pro rok 2026</span><h1>Výpočet nemocenské v roce 2026</h1><p class="hero-deck">Prvních 14 dnů platí zaměstnavatel náhradu mzdy za zameškané směny. Od 15. dne platí ČSSZ nemocenské za kalendářní dny.</p><p class="intro-lead">Výpočet nemocenské v roce 2026 má <strong>dva odlišné kroky</strong>. V prvních 14 kalendářních dnech pracovní neschopnosti vyplácí zaměstnavatel náhradu mzdy jen za zameškané směny a placené svátky. Od 15. dne vyplácí ČSSZ nemocenské za každý kalendářní den. Obě částky se nejprve redukují, takže je nelze přesně získat jedním procentem z hrubé měsíční mzdy.</p><div class="hero-facts"><span class="hero-fact">1.–14. den: náhrada mzdy od zaměstnavatele</span><span class="hero-fact">Od 15. dne: nemocenské od ČSSZ</span><span class="hero-fact">Redukční hranice 2026: 1 633, 2 449 a 4 897 Kč</span></div><div class="hero-actions"><a class="btn-lime" href="https://www.myglobalhealth.online/czechia/cs/services/neschopenka-online">Objednat lékařské posouzení</a><a class="btn-ghost" href="https://www.myglobalhealth.online/czechia/cs/blog/neschopenka-jak-funguje-eneschopenka">Jak funguje eNeschopenka</a></div></div><aside class="hero-panel"><span class="meta-chip">Rychlé vysvětlení</span><p class="intro-support">Náhrada mzdy a nemocenské nejsou stejná platba.</p><p class="intro-support">První fáze se počítá z hodinového výdělku a směn.</p><p class="intro-support">ČSSZ od 15. dne používá denní vyměřovací základ.</p><div class="hero-author"><div aria-hidden="true" class="hero-author-mark">VČ</div><div><strong>MUDr. Vojtěch Černý</strong><span>Praktický lékař · Global Health Česko</span></div></div><span class="hero-review-line">Odborně zkontrolovala MUDr. Romana Pavlů, praktická lékařka pro dospělé, Global Health Česko.</span></aside></header><nav class="article-nav"><div class="article-nav-inner"><span class="article-nav-label">Obsah článku</span><div class="article-nav-list"><a href="#prvnich-14">Prvních 14 dnů</a><a href="#od-15-dne">Od 15. dne</a><a href="#sazby-cssz">Sazby ČSSZ</a><a href="#priklad">Příklad</a><a href="#co-zkontrolovat">Co zkontrolovat</a><a href="#faq">Časté otázky</a></div></div></nav><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="prvnich-14" /><span class="eyebrow">Náhrada mzdy</span><h2>Co platí zaměstnavatel v prvních 14 dnech</h2><p class="section-lead">Zaměstnavatel platí 60 % redukovaného průměrného hodinového výdělku za zameškané směny a placené svátky.</p><p>Mzdová účtárna vychází z průměrného hodinového výdělku, ne přímo z aktuální hrubé mzdy. Pro rok 2026 používá odvozené hodinové redukční hranice 285,78 Kč / 428,58 Kč / 856,98 Kč. Do první hranice započítá 90 %, mezi první a druhou 60 %, mezi druhou a třetí 30 % a nad třetí hranici už nic.</p><p>Z redukovaného výsledku vezme 60 % a vynásobí ho počtem hodin v neodpracovaných směnách. Dva zaměstnanci se stejnou měsíční mzdou proto mohou dostat jinou náhradu, pokud mají jinak rozvrženou pracovní dobu.</p><p class="cite-note">Pravidla stanoví <a href="https://ppropo.mpsv.cz/zakon_262_2006" rel="nofollow noopener" target="_blank">§ 192 zákoníku práce</a>.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="od-15-dne" /><span class="eyebrow">Nemocenské ČSSZ</span><h2>Jak ČSSZ počítá nemocenské od 15. dne</h2><p class="section-lead">ČSSZ používá redukovaný denní vyměřovací základ a platí všechny kalendářní dny.</p><p>Denní základ vychází zpravidla ze započitatelných příjmů za 12 kalendářních měsíců před měsícem vzniku neschopnosti, dělených započitatelnými dny. V roce 2026 platí denní redukční hranice 1 633 Kč / 2 449 Kč / 4 897 Kč. Započítává se 90 % do první, 60 % mezi první a druhou a 30 % mezi druhou a třetí hranicí.</p></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="sazby-cssz" /><span class="eyebrow">Délka neschopnosti</span><h2>Kolik procent platí ČSSZ</h2><ul class="check-list"><li><strong>15.–30. den:</strong> 60 % redukovaného denního základu.</li><li><strong>31.–60. den:</strong> 66 %.</li><li><strong>Od 61. dne:</strong> 72 %.</li></ul><p class="cite-note">Hranice a sazby byly ověřeny 25. srpna 2026 na stránkách <a href="https://mpsv.gov.cz/nemocenske-pojisteni" rel="nofollow noopener" target="_blank">MPSV</a> a <a href="https://www.cssz.gov.cz/web/cz/vyse-a-vypocet-davek" rel="nofollow noopener" target="_blank">ČSSZ</a>.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="priklad" /><span class="eyebrow">Jak postupovat</span><h2>Orientační příklad výpočtu nemocenské</h2><p class="section-lead">Nejdřív oddělte zameškané směny v prvních 14 dnech od kalendářních dnů od 15. dne.</p><p>Představte si zaměstnance, který onemocní v úterý a má běžný rozvrh pondělí až pátek. Zaměstnavatel v prvních 14 kalendářních dnech počítá jen směny, které zaměstnanec zameškal. Hodinový průměr zredukuje, vezme 60 % a výsledek vynásobí zameškanými hodinami. Víkendy bez plánované směny se v této části neplatí.</p><p>Pokud neschopnost pokračuje 15. den, přebírá platbu ČSSZ. Zredukovaný denní základ násobí 60 % a platí každý kalendářní den včetně víkendů. Od 31. a 61. dne se sazba zvýší. Přesnou částku proto spočítá mzdová účtárna a ČSSZ z reálných údajů.</p><div class="alert-warn"><strong>Online kalkulačka dává jen odhad</strong>Výsledek může změnit rozhodné období, vyloučené dny, směny, předchozí zaměstnání nebo jiný pojistný režim.</div></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="co-zkontrolovat" /><span class="eyebrow">Když částka nesedí</span><h2>Co ověřit u zaměstnavatele a ČSSZ</h2><p class="section-lead">Nejdřív zjistěte, která ze dvou plateb se právě počítá.</p><ul class="check-list"><li>Kolik směn a hodin jste zameškali v prvních 14 dnech?</li><li>Jaký průměrný hodinový výdělek použila mzdová účtárna?</li><li>Od kterého dne převzala platbu ČSSZ?</li><li>Jaké příjmy a vyloučené dny vstoupily do denního základu?</li></ul><p>Proces vystavení neschopenky vysvětluje náš samostatný průvodce <a href="https://www.myglobalhealth.online/czechia/cs/blog/neschopenka-jak-funguje-eneschopenka">Jak funguje eNeschopenka</a>. Pokud potřebujete lékařské posouzení, můžete využít <a href="https://www.myglobalhealth.online/czechia/cs/services/neschopenka-online">online konzultaci pro neschopenku</a>. Lékař nemůže zaručit vystavení neschopenky ani konkrétní výši dávky.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="global-health" /><span class="eyebrow">Global Health Česko</span><h2>Neschopenka a lékařské posouzení</h2><p class="section-lead">ČSSZ počítá dávku; lékař posuzuje zdravotní důvody pracovní neschopnosti.</p><ul class="check-list"><li><a href="https://www.myglobalhealth.online/czechia/cs/services/neschopenka-online">Online konzultace pro neschopenku</a></li><li><a href="https://www.myglobalhealth.online/czechia/cs/blog/neschopenka-jak-funguje-eneschopenka">Jak funguje eNeschopenka</a></li><li><a href="https://www.myglobalhealth.online/czechia/cs/doctors">Lékaři v Česku</a></li><li><a href="https://www.myglobalhealth.online/czechia/cs/contact">Kontakt Global Health Česko</a></li></ul><div class="cta-box"><h3>Potřebujete lékařské posouzení?</h3><p>Český lékař může posoudit, zda zdravotní stav odůvodňuje pracovní neschopnost. Výši platby určuje zaměstnavatel a ČSSZ.</p><div class="cta-btns"><a class="btn-primary" href="https://www.myglobalhealth.online/czechia/cs/services/neschopenka-online">Objednat konzultaci</a><a class="btn-secondary" href="https://www.myglobalhealth.online/czechia/cs/doctors">Zobrazit lékaře</a></div></div></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="sources" /><span class="eyebrow">Oficiální zdroje</span><h2>Pravidla pro rok 2026</h2><p class="section-lead">Hranice a postup byly ověřeny 25. srpna 2026.</p><div class="institution-bar"><a class="inst-link" href="https://mpsv.gov.cz/nemocenske-pojisteni" rel="nofollow noopener" target="_blank">MPSV — Nemocenské pojištění v roce 2026</a><a class="inst-link" href="https://www.cssz.gov.cz/podrobne-informace-o-nemocenskem" rel="nofollow noopener" target="_blank">ČSSZ — Podrobné informace o nemocenském</a><a class="inst-link" href="https://www.cssz.gov.cz/web/cz/vyse-a-vypocet-davek" rel="nofollow noopener" target="_blank">ČSSZ — Výše a výpočet dávek</a><a class="inst-link" href="https://ppropo.mpsv.cz/zakon_262_2006" rel="nofollow noopener" target="_blank">Zákoník práce § 192</a><a class="inst-link" href="https://ppropo.mpsv.cz/zakon_187_2006" rel="nofollow noopener" target="_blank">Zákon o nemocenském pojištění</a></div><p class="cite-note">Přesnou náhradu mzdy stanoví zaměstnavatel a přesné nemocenské ČSSZ.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="faq" /><span class="eyebrow">Časté otázky</span><h2>Výpočet nemocenské 2026</h2><div class="faq-section"><details class="faq-item"><summary class="faq-q">Kdo platí prvních 14 dnů?</summary><div class="faq-a"><p>Zaměstnavatel platí náhradu mzdy za zameškané směny a placené svátky. ČSSZ začne platit nemocenské od 15. kalendářního dne.</p></div></details><details class="faq-item"><summary class="faq-q">Kolik procent platí ČSSZ?</summary><div class="faq-a"><p>Od 15. do 30. dne 60 %, od 31. do 60. dne 66 % a od 61. dne 72 % redukovaného denního vyměřovacího základu.</p></div></details><details class="faq-item"><summary class="faq-q">Proč kalkulačka ukazuje jinou částku?</summary><div class="faq-a"><p>Nemusí znát váš skutečný hodinový průměr, směny, rozhodné období, vyloučené dny ani údaje vedené u ČSSZ.</p></div></details></div></div></section><section class="article-section section-ivory"><div class="section-inner"><div class="disclaimer"><strong>Zdravotní a finanční upozornění</strong>AI-assisted článek připravený pro českou jazykovou a odbornou kontrolu. Obecné informace k 25. srpnu 2026; nejde o individuální lékařskou, právní ani mzdovou radu.</div></div></section></main>
+</body>
+</html>

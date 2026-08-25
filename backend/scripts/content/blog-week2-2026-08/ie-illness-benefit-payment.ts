@@ -56,219 +56,144 @@ const buildSharedLinks = (lang: keyof typeof claimGuideSlug) => ({
 });
 
 const enLinks = buildSharedLinks("EN");
+const ptLinks = buildSharedLinks("PT");
+const esLinks = buildSharedLinks("ES");
+const csLinks = buildSharedLinks("CS");
+const roLinks = buildSharedLinks("RO");
+const deLinks = buildSharedLinks("DE");
 
 const en: LocalePost = {
   locale: "EN",
   slug: "illness-benefit-payment-ireland-rate-tax-timing",
-  title: "Illness Benefit Payment in Ireland: Rate, Timing and Tax",
-  excerpt:
-    "How much Illness Benefit pays in Ireland, when the first money usually arrives, why the first days off work are different from the DSP payment, and how Revenue taxes it.",
-  seoTitle: "Illness Benefit Payment Ireland: rate and tax",
-  seoDescription:
-    "Illness Benefit payment in Ireland: current rate, waiting days, weekly payment timing, tax and how it differs from employer sick pay.",
+  title: "How Much Is Illness Benefit in Ireland in 2026?",
+  excerpt: "Current Illness Benefit rates, waiting days, weekly payment timing, tax and the difference from employer sick pay.",
+  seoTitle: "Illness Benefit Ireland: 2026 rates and timing",
+  seoDescription: "See 2026 Illness Benefit rates in Ireland, the three waiting days, weekly payment timing, tax and how employer sick pay differs.",
   category: "General Practice",
   article: {
     lang: "en-IE",
     tagline: "Medicine Anytime, Anywhere",
     categoryLabel: "General Practice",
     categoryHref: enLinks.blog,
-    eyebrow: "Ireland · Payment guide",
-    h1: "Illness Benefit payment in Ireland",
-    deck: "How much the Department of Social Protection pays, when it is paid, how tax is collected, and why employer sick pay still matters first.",
-    intro:
-      "Illness Benefit is a <strong>weekly Department of Social Protection payment</strong> for people who cannot work because of illness. As of <strong>24 August 2026</strong>, the official MyWelfare page shows a <strong>personal weekly rate of EUR 254</strong>, but that does <strong>not</strong> mean every claimant receives the same amount into their bank account. Timing depends on waiting days, when your claim and medical certificate arrive, whether you have employer sick pay first, and how Revenue adjusts tax. If you need the eligibility and IB1 process itself, read our separate <a href=\"" + enLinks.claimGuide + "\">Illness Benefit claim guide</a>.",
+    eyebrow: "Ireland · 2026 payment guide",
+    h1: "How much is Illness Benefit in Ireland in 2026?",
+    deck: "The maximum personal rate is EUR 254 a week, but earnings, timing and tax affect an individual payment.",
+    intro: "In 2026, the maximum personal rate of <strong>Illness Benefit is EUR 254 a week</strong> when average weekly earnings in the relevant tax year were at least EUR 300. Lower earnings bands have lower rates. DSP pays weekly after three waiting days, and the payment is taxable. Our separate <a href=\"" + enLinks.claimGuide + "\">Illness Benefit claim guide</a> covers eligibility, PRSI and applying.",
     facts: [
-      "Current official personal weekly rate shown by MyWelfare: EUR 254",
-      "First 3 days off sick are waiting days under the live DSP page",
-      "Illness Benefit is taxable even though DSP usually pays it gross",
+      "Maximum 2026 personal rate: EUR 254 a week",
+      "Four rate bands reflect average weekly earnings",
+      "The payment is taxable but not subject to PRSI or USC",
     ],
-    primaryCta: { label: "See our Illness Benefit claim guide", href: enLinks.claimGuide },
-    secondaryCta: { label: "Official Illness Benefit page", href: GOV_IB },
-    panelChip: "What this guide covers",
+    primaryCta: { label: "Book a sick certificate assessment", href: enLinks.service },
+    secondaryCta: { label: "Read the claim guide", href: enLinks.claimGuide },
+    panelChip: "Quick answer",
     panelParas: [
-      "The live payment figure searchers care about, without pretending everybody gets one identical weekly amount in practice.",
-      "When Illness Benefit starts, why the first payment can lag behind your first day off work, and where employer sick pay sits in that gap.",
-      "How Illness Benefit is taxed, what Revenue changes behind the scenes, and why your payslip can look odd while a claim is active.",
+      "EUR 254 is the maximum personal rate, not a flat rate.",
+      "Three waiting days normally apply.",
+      "Payment may arrive Monday to Saturday.",
     ],
     author: { initials: "TF", name: "Dr Tiago Miguel Figueira", line: "IMC 523449 · Clinical Director, Global Health" },
     reviewLine: "Clinically reviewed by Dr Ahmed Maklad, General Practitioner, Global Health Ireland.",
-    navLabel: "In this article",
+    navLabel: "In this guide",
     sections: [
       {
-        id: "scope",
-        nav: "Scope",
-        eyebrow: "Do not mix two guides",
-        h2: "This article is about payment, not about whether you qualify",
+        id: "rates",
+        nav: "2026 rates",
+        eyebrow: "Official bands",
+        h2: "Illness Benefit rates in Ireland in 2026",
         blocks: [
-          lead("Most searchers land here after they have already heard of Illness Benefit and want one practical answer: how much money arrives, and when."),
-          p("That is a different question from <strong>whether you qualify</strong>, how PRSI conditions work, or who can issue the Certificate of Incapacity for Work. We already cover those points in our dedicated <a href=\"" + enLinks.claimGuide + "\">Illness Benefit claim guide</a>, and keeping the topics separate matters because the search intent is separate."),
-          p("So this page stays narrow. It covers the weekly amount currently shown on the official service page, the first three unpaid waiting days shown on the DSP page, the weekly payment cycle, and the tax treatment set out by Revenue. It also explains why many employees see employer sick pay and Illness Benefit as one thing when in law they are two different streams of money."),
-          warn(
-            "Do not assume the keyword means one simple number",
-            "A search for 'illness benefit payment' sounds like a single figure query, but the amount that reaches you can change with claim timing, additions for dependants, employer sick pay arrangements and tax collected later through Revenue.",
-          ),
+          lead("Your personal rate depends on average weekly earnings in the relevant tax year."),
+          ul([
+            "<strong>EUR 300 or more:</strong> EUR 254 a week.",
+            "<strong>EUR 220–299.99:</strong> EUR 198.90 a week.",
+            "<strong>EUR 150–219.99:</strong> EUR 163.70 a week.",
+            "<strong>Below EUR 150:</strong> EUR 114 a week.",
+          ]),
+          cite("Rates verified on 25 August 2026 on the <a href=\"" + GOV_IB + "\" rel=\"nofollow noopener\" target=\"_blank\">Department of Social Protection Illness Benefit page</a>."),
         ],
       },
       {
-        id: "rate",
-        nav: "Current rate",
-        eyebrow: "The number people search for",
-        h2: "The current official personal rate is EUR 254 a week, but that is not the whole story",
+        id: "individual-rate",
+        nav: "Your rate",
+        eyebrow: "Individual amount",
+        h2: "Why an individual payment may differ",
         blocks: [
-          lead("On the live MyWelfare Illness Benefit page checked on 24 August 2026, the standard personal weekly rate shown is EUR 254."),
-          p("That is the clean headline figure and it answers the search. But it is still only the <strong>personal rate line</strong> on the official page. It does not mean that every claimant will see exactly EUR 254 land in their account every week. Some claims include extra amounts or different circumstances, and your net position can also look different once Revenue adjusts your tax credits."),
-          ul([
-            "<strong>Use EUR 254 as the current official personal weekly rate</strong> because that is what MyWelfare publicly shows right now.",
-            "<strong>Do not write 'everyone gets EUR 254'</strong> because that is broader than the official wording supports.",
-            "<strong>Do not quote stale Budget figures</strong> from older blog posts when the live service page already gives the current amount.",
-            "<strong>If your circumstances are unusual</strong>, the amount can differ from the headline personal rate.",
-          ]),
-          p("In plain English: the safest public summary is that Illness Benefit is currently paid at a personal weekly rate of EUR 254 on the live official service page, while the final amount on an individual claim can differ for reasons that the claim record and tax system control."),
-          cite(`Current live service page: <a href="${MYWELFARE}" rel="nofollow noopener" target="_blank">MyWelfare — Illness Benefit</a>.`),
+          lead("DSP uses earnings and weeks worked in the relevant tax year."),
+          p("Increases may apply for a qualified adult or child, so a household payment can differ from the personal rate. EUR 254 is the maximum personal rate, not a promise of what every claimant will receive."),
         ],
       },
       {
         id: "timing",
-        nav: "When paid",
-        eyebrow: "Start date and payment day",
-        h2: "Why the first payment usually arrives later than people expect",
+        nav: "Payment timing",
+        eyebrow: "Waiting days",
+        h2: "When is Illness Benefit paid?",
         blocks: [
-          lead("Illness Benefit is paid weekly, but it does not simply start on the morning you call in sick."),
-          p("The live DSP page says there is <strong>no Illness Benefit for the first 3 days</strong> you are off sick from work. Those are the current waiting days. The same page also says the benefit is <strong>paid weekly</strong> and can be paid <strong>Monday to Saturday</strong> depending on when the claim is registered and the first day of your illness."),
-          p("That single sentence explains most of the confusion around the first payment. Your first week off work can involve three separate layers: your employer may owe statutory sick leave or occupational sick pay first; the DSP still applies its own waiting-day rule; and the Department cannot release payment until the claim and supporting certificate are both in the system."),
-          ul([
-            "Claim promptly: MyWelfare says you must claim within <strong>6 weeks</strong> of becoming ill, even if your employer continues paying you at first.",
-            "Expect a gap between your first missed workday and your first DSP payment because waiting days and registration timing still apply.",
-            "The first payment day is not fixed to one weekday for everyone; the live gov.ie page says it can fall Monday to Saturday.",
-            "If the claim is decided later, arrears can still be due, but a late start does not mean the first week is handled like ordinary wages.",
-          ]),
-          p("The practical consequence is simple: if you are budgeting for rent or bills, do not assume that the first DSP payment will mirror your employer's payroll rhythm. It is a social welfare payment with its own calendar, not a wage continuation service."),
-          cite(`Payment timing at source: <a href="${GOV_IB}" rel="nofollow noopener" target="_blank">gov.ie — Illness Benefit</a>. Operational processing detail: <a href="${GOV_IB_GUIDE}" rel="nofollow noopener" target="_blank">Operational Guidelines</a>.`),
+          lead("Illness Benefit is paid weekly, but the first three days off sick are normally unpaid waiting days."),
+          p("Sunday is not a waiting day. Payment may issue Monday to Saturday depending on claim registration and the first day of illness. Processing can make the first transfer arrive later than day four."),
+          p("Apply within six weeks of becoming ill and make sure the Certificate of Incapacity for Work has been completed. Late claims can be affected unless DSP accepts a reason for delay. For the application route and PRSI rules, use the <a href=\"" + enLinks.claimGuide + "\">separate claim guide</a>."),
+          warn("Do not plan around a fixed payment weekday", "Check MyWelfare or contact DSP for your own claim. The public rule is weekly payment, not one universal weekday."),
+        ],
+      },
+      {
+        id: "employer",
+        nav: "Employer sick pay",
+        eyebrow: "Two separate payments",
+        h2: "How Illness Benefit differs from employer sick pay",
+        blocks: [
+          lead("Illness Benefit is a state payment and is separate from your employer's sick-pay policy."),
+          p("Statutory sick leave remains five days in 2026 for an eligible employee. The employer pays 70% of normal daily earnings, subject to the statutory cap. A workplace scheme may be more generous."),
+          p("Once statutory or employer sick pay is exhausted, Illness Benefit may still apply if the claim meets DSP rules. Some employers receive Illness Benefit directly while continuing payroll; others require the employee to keep the payment. Check your contract and payslip before assuming the two amounts are added together."),
+          cite("The five-day 2026 position is explained in the official <a href=\"" + ENTERPRISE_SICK_LEAVE + "\" rel=\"nofollow noopener\" target=\"_blank\">statutory sick leave update</a>."),
         ],
       },
       {
         id: "tax",
         nav: "Tax",
-        eyebrow: "What surprises PAYE workers",
-        h2: "Illness Benefit is taxable, but DSP usually pays it without deducting tax first",
+        eyebrow: "Revenue treatment",
+        h2: "Is Illness Benefit taxable?",
         blocks: [
-          lead("Many people think a social welfare illness payment must be tax-free because the money comes from the State. Illness Benefit is not tax-free."),
-          p("Revenue's current guidance says Illness Benefit is liable to <strong>Income Tax</strong>. Revenue also says taxable DSP payments are generally <strong>not liable to USC or PRSI</strong>. The important administrative detail is that the Department usually pays Illness Benefit <strong>without deducting tax at source</strong>, and Revenue then collects any Income Tax due by reducing your tax credits and rate band."),
-          p("That is why the benefit can feel like it was 'untaxed' when you receive it, yet your later payslip, tax credit certificate or year-end tax position changes. If your employer also runs a sick pay scheme, the employer still taxes the wage element through payroll in the normal way, while Revenue separately adjusts for the DSP payment."),
-          ul([
-            "<strong>DSP payment:</strong> usually paid gross for Income Tax purposes, with Revenue collecting tax later through credits.",
-            "<strong>Income Tax:</strong> yes, potentially due.",
-            "<strong>USC and PRSI on taxable DSP payments:</strong> Revenue says no.",
-            "<strong>Employer sick pay:</strong> still taxed as employer pay through payroll rules.",
-          ]),
-          warn(
-            "Do not read the bank credit in isolation",
-            "A full week's Illness Benefit hitting your account does not by itself tell you the real tax cost. Revenue may recover Income Tax later by reducing credits, and that can show up only when payroll updates.",
-          ),
-          p("If you need proof of what DSP actually paid for a period, MyWelfare also offers a <strong>payment statement</strong> service. That is often the cleanest way to reconcile what you received with what your employer and Revenue are showing."),
-          cite(`Tax treatment: <a href="${REVENUE_TAX}" rel="nofollow noopener" target="_blank">Revenue — taxation of illness benefits</a>. General DSP tax rule: <a href="${REVENUE_DSP_TAX}" rel="nofollow noopener" target="_blank">Revenue — how DSP payments are taxed</a>.`),
-        ],
-      },
-      {
-        id: "employer",
-        nav: "Employer pay",
-        eyebrow: "Separate stream of money",
-        h2: "Employer statutory sick leave and Illness Benefit are not the same payment",
-        blocks: [
-          lead("This distinction matters because many Irish employees still describe the entire sick-pay period as 'Illness Benefit' when legally that is wrong."),
-          p("Illness Benefit is paid by the <strong>Department of Social Protection</strong>. Statutory sick leave is paid by <strong>your employer</strong>. They can overlap in the same illness episode, but they do not come from the same scheme and they do not use the same rules. As of <strong>24 August 2026</strong>, the official government position remains that statutory sick leave entitlement stayed at <strong>5 days</strong> after the 8 April 2025 decision not to move to a higher default entitlement."),
-          p("That date matters because many articles still repeat the old phased plan that talked about 10 days by 2026. That is not the current position. If you are reading an HR blog that still says every employee automatically has 10 statutory sick-leave days in 2026, the article is out of date."),
-          ul([
-            "<strong>Employer sick leave</strong> protects the opening part of many absences, depending on your contract and the statutory floor.",
-            "<strong>Illness Benefit</strong> remains the DSP weekly payment once its own conditions and timing rules are met.",
-            "<strong>Occupational sick pay schemes</strong> can be more generous than the statutory minimum, but that depends on the employer.",
-            "<strong>The correct question for payroll</strong> is not 'am I on Illness Benefit?' but 'which part is employer pay and which part is DSP pay this week?'",
-          ]),
-          p("If what you actually need is the certificate and application pathway, not the payment mechanics, go back to our <a href=\"" + enLinks.claimGuide + "\">step-by-step Illness Benefit claim guide</a>. That article covers the IB1 and the medical evidence route in full."),
-          cite(`Current statutory sick leave position: <a href="${ENTERPRISE_SICK_LEAVE}" rel="nofollow noopener" target="_blank">Department of Enterprise press release, 8 April 2025</a>.`),
-        ],
-      },
-      {
-        id: "practical",
-        nav: "Practical checks",
-        eyebrow: "Avoid avoidable delays",
-        h2: "What to check if the money is less, later or stranger than expected",
-        blocks: [
-          lead("Most payment complaints are not about the headline rate. They are about timing, mismatched records, or tax confusion."),
-          ul([
-            "Check whether the first 3 days off work were waiting days rather than payable Illness Benefit days.",
-            "Check whether your employer paid the opening days separately under statutory or contractual sick pay.",
-            "Check whether the claim and the medical certificate were both submitted promptly.",
-            "Check whether Revenue updated your tax credits after the DSP claim went live.",
-            "Check whether a return to work, travel, or a change of bank details needs to be reported.",
-          ]),
-          p("If your problem is not the amount but the fact that the claim has not moved, MyWelfare is still the most useful official place to review the service and related account actions. If your problem is medical certification, our <a href=\"" + enLinks.service + "\">Irish sick-certificate service</a> explains what an online GP can and cannot certify. If your problem is clinical deterioration rather than paperwork, the claim can wait and your health cannot."),
-          warn(
-            "Emergency symptoms override payment questions",
-            "If you have chest pain, stroke symptoms, severe shortness of breath, collapse or another emergency, call 112 or 999. A delayed benefit payment is never the urgent issue in that moment.",
-          ),
+          lead("Yes. DSP normally pays Illness Benefit without deducting tax, then reports the payment to Revenue."),
+          p("Revenue may collect income tax by adjusting your tax credits and rate band. PRSI and USC are not charged on Illness Benefit, and increases for dependent children are not taxed. This can change the tax deducted from wages during or after the claim, so the DSP transfer alone does not show the full net effect."),
+          p("If you need medical certification, the <a href=\"" + enLinks.service + "\">online sick certificate service</a> can assess your health and work capacity. A consultation does not guarantee a certificate, eligibility or a payment amount."),
         ],
       },
     ],
     linksEyebrow: "Global Health Ireland",
-    linksH2: "Useful next steps",
-    linksLead: "Use the payment guide for budgeting and payroll questions. Use the claim guide and GP route when you still need the certificate and application pathway itself.",
+    linksH2: "Claim information and medical assessment",
+    linksLead: "DSP decides the claim; a doctor assesses work fitness.",
     links: [
-      { label: "Illness Benefit claim guide", href: enLinks.claimGuide },
-      { label: "Irish online sick certificate service", href: enLinks.service },
-      { label: "Meet our doctors in Ireland", href: enLinks.doctors },
-      { label: "Contact Global Health Ireland", href: enLinks.contact },
+      { label: "Illness Benefit eligibility and claim guide", href: enLinks.claimGuide },
+      { label: "Sick certificate assessment", href: enLinks.service },
+      { label: "Doctors in Ireland", href: enLinks.doctors },
+      { label: "Contact Global Health", href: enLinks.contact },
     ],
     ctaBox: {
-      h3: "Need the certificate before the payment can start?",
-      text: "Our Irish doctors can assess whether a Certificate of Incapacity for Work is clinically appropriate and direct you to the right next step.",
-      primary: { label: "Book an online GP", href: enLinks.service },
-      secondary: { label: "Read the claim guide", href: enLinks.claimGuide },
+      h3: "Need a medical assessment for sick leave?",
+      text: "A GP can assess fitness for work. Certification and benefit entitlement depend on individual requirements.",
+      primary: { label: "Book an assessment", href: enLinks.service },
+      secondary: { label: "View doctors", href: enLinks.doctors },
     },
     sourcesEyebrow: "Official sources",
-    sourcesH2: "Where the payment rules come from",
-    sourcesLead: "This article uses live Irish official sources for amount, timing, tax and the current employer sick-leave position rather than recycling older blog figures.",
+    sourcesH2: "2026 rules checked",
+    sourcesLead: "Rules verified on 25 August 2026.",
     sources: [
+      { label: "Department of Social Protection — Illness Benefit", href: GOV_IB },
       { label: "MyWelfare — Illness Benefit", href: MYWELFARE },
-      { label: "gov.ie — Illness Benefit", href: GOV_IB },
-      { label: "gov.ie — Operational Guidelines", href: GOV_IB_GUIDE },
-      { label: "Revenue — taxation of illness benefits", href: REVENUE_TAX },
-      { label: "Revenue — how DSP payments are taxed", href: REVENUE_DSP_TAX },
-      { label: "Government of Ireland — statutory sick leave remains at 5 days", href: ENTERPRISE_SICK_LEAVE },
+      { label: "Revenue — tax treatment of Illness Benefit", href: REVENUE_TAX },
+      { label: "Department of Enterprise — statutory sick leave", href: ENTERPRISE_SICK_LEAVE },
     ],
-    sourcesNote:
-      "Links open on the issuing body's own website. Global Health does not decide entitlement, payment dates, tax treatment or payroll practice on any Illness Benefit claim.",
-    faqEyebrow: "FAQ",
-    faqH2: "Common payment questions",
+    sourcesNote: "Check your claim with DSP and your tax record with Revenue.",
+    faqEyebrow: "Frequently asked questions",
+    faqH2: "Illness Benefit payment questions",
     faqs: [
-      {
-        q: "How much is Illness Benefit in Ireland right now?",
-        a: "On the live MyWelfare Illness Benefit page checked on 24 August 2026, the current personal weekly rate shown is EUR 254. That is the official headline personal rate, but it should not be turned into a promise that every claimant receives the exact same net amount in practice.",
-      },
-      {
-        q: "Why did I not get paid from my first sick day?",
-        a: "The live gov.ie Illness Benefit page says there is no payment for the first 3 days you are off sick from work. These are the current waiting days. Your first DSP payment can also depend on when the claim and medical certificate are registered.",
-      },
-      {
-        q: "What day of the week is Illness Benefit paid?",
-        a: "Illness Benefit is paid weekly, but the official gov.ie page says it can be paid Monday to Saturday depending on when the claim is registered and the first day of your illness. There is not one universal payment weekday for every claim.",
-      },
-      {
-        q: "Is Illness Benefit taxable in Ireland?",
-        a: "Yes. Revenue says Illness Benefit is liable to Income Tax. Revenue also says taxable DSP payments are generally not liable to USC or PRSI. DSP usually pays the benefit without deducting tax first, and Revenue then collects any Income Tax due by adjusting your tax credits and rate band.",
-      },
-      {
-        q: "Is Illness Benefit the same as statutory sick pay from my employer?",
-        a: "No. Illness Benefit is a Department of Social Protection payment. Statutory sick leave is employer-paid. As of 24 August 2026, the government's stated position remains that statutory sick leave stayed at 5 days after the 8 April 2025 decision not to increase it further.",
-      },
+      { q: "Does everyone get EUR 254 a week?", a: "No. EUR 254 is the maximum 2026 personal rate. DSP uses four bands based on average weekly earnings, and household increases may also apply." },
+      { q: "What day is Illness Benefit paid?", a: "It is paid weekly and may issue Monday to Saturday, depending on claim registration and the first day of illness." },
+      { q: "Is Illness Benefit taxed?", a: "Yes. DSP usually pays it gross and reports it to Revenue. Income tax may be collected through adjusted credits or rate bands; PRSI and USC do not apply." },
     ],
-    disclaimerTitle: "Medical Disclaimer",
-    disclaimer:
-      "Written by Dr Tiago Miguel Figueira (IMC 523449), Clinical Director at Global Health, and clinically reviewed by Dr Ahmed Maklad, General Practitioner. This article gives general information about Irish social-welfare payment timing and tax. It is not personalised medical advice, legal advice, tax advice or payroll advice. Illness Benefit entitlement and payment decisions are made by the Department of Social Protection and Revenue. If you have emergency symptoms, call 112 or 999 immediately.",
+    disclaimerTitle: "Medical and benefits information",
+    disclaimer: "AI-assisted article pending native editorial and clinical review. General 2026 information only; not a DSP decision, professional advice or a guarantee of certification or payment.",
   } satisfies Article,
 };
-
-const ptLinks = buildSharedLinks("PT");
 
 const pt: LocalePost = {
   locale: "PT",
@@ -481,8 +406,6 @@ const pt: LocalePost = {
   } satisfies Article,
 };
 
-const esLinks = buildSharedLinks("ES");
-
 const es: LocalePost = {
   locale: "ES",
   slug: "pago-illness-benefit-irlanda-cuantia-impuestos-plazos",
@@ -693,8 +616,6 @@ const es: LocalePost = {
       "Escrito por el Dr Tiago Miguel Figueira (IMC 523449), Director Clinico de Global Health, y revisado clinicamente por el Dr Ahmed Maklad, medico de familia. Este articulo ofrece informacion general sobre el calendario de pago y la tributacion del sistema irlandes. No sustituye consejo medico individual, asesoramiento legal, fiscal ni de payroll. Las decisiones sobre Illness Benefit corresponden al Department of Social Protection y a Revenue. Si tiene sintomas de emergencia, llame de inmediato al 112 o al 999.",
   } satisfies Article,
 };
-
-const csLinks = buildSharedLinks("CS");
 
 const cs: LocalePost = {
   locale: "CS",
@@ -907,8 +828,6 @@ const cs: LocalePost = {
   } satisfies Article,
 };
 
-const roLinks = buildSharedLinks("RO");
-
 const ro: LocalePost = {
   locale: "RO",
   slug: "plata-illness-benefit-irlanda-valoare-impozit-termen",
@@ -1119,8 +1038,6 @@ const ro: LocalePost = {
       "Articol scris de Dr Tiago Miguel Figueira (IMC 523449), Director Clinic la Global Health, si revizuit clinic de Dr Ahmed Maklad, medic de familie. Acest text ofera informatii generale despre calendarul de plata si fiscalitatea sistemului irlandez. Nu reprezinta sfat medical personalizat, consultanta juridica, fiscala sau de payroll. Deciziile privind Illness Benefit apartin Department of Social Protection si Revenue. Daca aveti simptome de urgenta, sunati imediat la 112 sau 999.",
   } satisfies Article,
 };
-
-const deLinks = buildSharedLinks("DE");
 
 const de: LocalePost = {
   locale: "DE",

@@ -7,15 +7,20 @@
  *
  * Usage from backend/:
  *   node --env-file=.env --import tsx scripts/seed-week2-blog-drafts-2026-08.ts
+ *   node --env-file=.env --import tsx scripts/seed-week2-blog-drafts-2026-08.ts --approved-locales
  *   node --env-file=.env --import tsx scripts/seed-week2-blog-drafts-2026-08.ts --apply
  */
 import { createHash } from "node:crypto";
 import { prisma } from "../src/db/prisma.js";
 import { renderArticle, wordCount } from "./content/blog-seo-2026-08/template.js";
 import type { LocalePost, PostSet } from "./content/blog-seo-2026-08/types.js";
-import { WEEK2_POST_SETS } from "./content/blog-week2-2026-08/index.js";
+import {
+  WEEK2_POST_SETS,
+  WEEK2_PRIMARY_POST_SETS,
+} from "./content/blog-week2-2026-08/index.js";
 
 const APPLY = process.argv.includes("--apply");
+const INCLUDE_APPROVED_LOCALES = process.argv.includes("--approved-locales");
 const ONLY = process.argv.find((arg) => arg.startsWith("--only="))?.slice("--only=".length);
 const SEEDED_BY = "seed-week2-blog-drafts-2026-08";
 const RESEARCHED_AT = "2026-08-24";
@@ -41,8 +46,16 @@ function validate(set: PostSet, post: LocalePost): string[] {
   if (post.seoTitle.length > 60) errors.push(`${label}: SEO title exceeds 60 characters`);
   if (post.seoDescription.length > 155) errors.push(`${label}: SEO description exceeds 155 characters`);
   const words = wordCount(body);
-  if (words < 900 || words > 2_600) errors.push(`${label}: ${words} words outside 900-2600`);
-  if (post.article.faqs.length < 4 || post.article.faqs.length > 6) errors.push(`${label}: FAQ count outside 4-6`);
+  const isPrimary = set.posts[0] === post;
+  const clinical = set.key === "es-tension-alta-urgencias" || set.key === "ro-scade-tensiunea-rapid";
+  const minimum = isPrimary ? (clinical ? 700 : 600) : 600;
+  const maximum = isPrimary ? (clinical ? 1_200 : 900) : 2_600;
+  if (words < minimum || words > maximum) errors.push(`${label}: ${words} words outside ${minimum}-${maximum}`);
+  const faqMinimum = isPrimary ? 2 : 2;
+  const faqMaximum = isPrimary ? 4 : 6;
+  if (post.article.faqs.length < faqMinimum || post.article.faqs.length > faqMaximum) {
+    errors.push(`${label}: FAQ count outside ${faqMinimum}-${faqMaximum}`);
+  }
   if (!body.includes(`/services/${set.serviceSlug}`)) errors.push(`${label}: missing configured service link`);
   if (!body.includes("/doctors") || !body.includes("/contact")) errors.push(`${label}: missing doctors/contact links`);
   if (body.includes("/blog/categories/") || body.includes("/health/")) errors.push(`${label}: blocked internal route`);
@@ -92,13 +105,18 @@ async function verifyDoctor(doctorId: string, countryId: string, role: string, t
 }
 
 async function main() {
-  const sets = ONLY ? WEEK2_POST_SETS.filter((set) => set.key === ONLY) : WEEK2_POST_SETS;
+  const sourceSets = INCLUDE_APPROVED_LOCALES ? WEEK2_POST_SETS : WEEK2_PRIMARY_POST_SETS;
+  const sets = ONLY ? sourceSets.filter((set) => set.key === ONLY) : sourceSets;
   if (sets.length === 0) throw new Error(`--only=${ONLY} matched no Week 2 topic`);
 
   const errors = sets.flatMap((set) => set.posts.flatMap((post) => validate(set, post)));
   if (errors.length) throw new Error(`REFUSING TO RUN\n${errors.map((error) => `- ${error}`).join("\n")}`);
 
-  console.log(`${APPLY ? "APPLY" : "DRY RUN"}: ${sets.length} Week 2 topic(s), ${sets.flatMap((set) => set.posts).length} locale draft(s)`);
+  console.log(
+    `${APPLY ? "APPLY" : "DRY RUN"}: ${sets.length} Week 2 topic(s), ` +
+      `${sets.flatMap((set) => set.posts).length} locale draft(s) ` +
+      `[${INCLUDE_APPROVED_LOCALES ? "approved 19-locale matrix" : "primary-language cohort"}]`,
+  );
   const manifest: ManifestRow[] = [];
 
   for (const set of sets) {

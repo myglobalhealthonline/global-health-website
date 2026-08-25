@@ -61,7 +61,7 @@ const es: LocalePost = {
       "140/90 repetido en consulta ya entra en hipertensión",
       "Edad y sexo cambian el riesgo, no la física de la presión",
     ],
-    primaryCta: { label: "Consulta con cardiología", href: href("/services/cardiologo-online") },
+    primaryCta: { label: "Consulta de enfermedades crónicas", href: chronicCareHref },
     secondaryCta: { label: "Usar la calculadora de tensión", href: toolHref },
     panelChip: "Qué resuelve este artículo",
     panelParas: [
@@ -262,7 +262,7 @@ export const ES_TENSION_ARTERIAL_NORMAL: PostSet = {
   keywordDifficulty: 10,
   evidence:
     "Editorial plan 2026-08-19 and follow-up batch 2026-08-19: tensión arterial normal 33,100 / KD 10; tensión arterial normal mujer 1,300; tensión arterial normal adultos 880; GSC 16 impressions at position 29. Active lead paths exist through Spain primary-care chronic-conditions management, specialist cardiology and the blood-pressure tool cluster.",
-  serviceSlug: "cardiologo-online",
+  serviceSlug: "enfermedades-cronicas-online",
   authorDoctorId: "cmrdpqvkc000z01rui7z5it57",
   authorDisplayName: "Dr. Fidel Ernesto Mesa Prado",
   reviewerDoctorId: "cmrdpxpi0001v01ruqavjiq79",
