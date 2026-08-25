@@ -111,4 +111,76 @@ export const COVER_ALTS: Record<string, Partial<Record<"EN" | "PT" | "ES" | "CS"
     EN: "Doctor comparing earlier results while building the test request on the computer, sample tubes in a rack beside him.",
     ES: "Médico compara resultados anteriores mientras prepara la solicitud de análisis en el ordenador, con tubos de muestra en una gradilla al lado.",
   },
+
+  // 13 · ES normal blood pressure — original ES on the Asset.
+  "tension-arterial-normal-medicion-correcta-en-casa": {
+    EN: "Man checking his blood pressure correctly at home, seated with his cuffed arm supported on the table.",
+    PT: "Homem mede corretamente a tensão arterial em casa, sentado com o braço apoiado na mesa.",
+    CS: "Muž si doma správně měří krevní tlak vsedě, s paží podepřenou na stole.",
+    RO: "Bărbatul își măsoară corect tensiunea acasă, așezat cu brațul sprijinit pe masă.",
+    DE: "Mann misst zu Hause korrekt seinen Blutdruck, sitzend mit dem Arm auf dem Tisch abgestützt.",
+  },
+
+  // 14 · RO normal blood pressure — original RO on the Asset.
+  "tensiune-arteriala-jurnal-revizuit-cu-medicul": {
+    EN: "Doctor and older patient review a home blood-pressure journal together in the consulting room.",
+    PT: "Médica e doente idoso analisam juntos um registo de tensão arterial no consultório.",
+    ES: "Médica y paciente mayor revisan juntos un registro de tensión arterial en la consulta.",
+    CS: "Lékařka a starší pacient spolu v ordinaci procházejí domácí záznamy krevního tlaku.",
+    DE: "Ärztin und älterer Patient werten gemeinsam ein Blutdrucktagebuch im Sprechzimmer aus.",
+  },
+
+  // 15 · PT sick-leave pay — original PT on the Asset.
+  "baixa-medica-calculo-do-valor-em-casa": {
+    EN: "Woman calculates sick-leave pay at home with documents, a calendar and calculator on the table.",
+    ES: "Mujer calcula en casa la prestación por baja médica con documentos, calendario y calculadora.",
+    CS: "Žena doma počítá nemocenskou s dokumenty, kalendářem a kalkulačkou na stole.",
+    RO: "Femeie calculează acasă indemnizația medicală folosind documente, un calendar și un calculator.",
+    DE: "Frau berechnet zu Hause das Krankengeld mit Unterlagen, Kalender und Taschenrechner.",
+  },
+
+  // 16 · IE Illness Benefit payment — original EN on the Asset.
+  "illness-benefit-ireland-payment-calendar-planning": {
+    PT: "Homem revê o calendário e as finanças domésticas enquanto planeia os pagamentos do Illness Benefit irlandês.",
+    ES: "Hombre revisa el calendario y las finanzas domésticas mientras planifica los pagos del Illness Benefit irlandés.",
+    CS: "Muž doma prochází kalendář a rodinné finance při plánování plateb irské dávky Illness Benefit.",
+    RO: "Bărbatul verifică acasă calendarul și bugetul familiei pentru plățile Illness Benefit din Irlanda.",
+    DE: "Mann prüft zu Hause Kalender und Haushaltsfinanzen zur Planung der irischen Illness-Benefit-Zahlungen.",
+  },
+
+  // 17 · CZ sick-pay calculation — original CS on the Asset.
+  "vypocet-nemocenske-zamestnavatel-cssz-kalendar": {
+    EN: "Man calculates Czech sick pay at home using a calendar and separate employer and CSSA document sets.",
+    PT: "Homem calcula o subsídio de doença checo com um calendário e documentos separados do empregador e da CSSA.",
+    ES: "Hombre calcula la baja checa con un calendario y documentos separados del empleador y la CSSA.",
+    RO: "Bărbatul calculează indemnizația medicală cehă cu un calendar și documente separate de la angajator și CSSA.",
+    DE: "Mann berechnet tschechisches Krankengeld mit Kalender und getrennten Unterlagen von Arbeitgeber und CSSA.",
+  },
+
+  // 18 · PT driving-licence certificate — original PT on the Asset.
+  "atestado-carta-conducao-avaliacao-da-visao": {
+    EN: "Doctor checks a driver's vision during the medical assessment for a Portuguese driving licence certificate.",
+    ES: "Médica evalúa la visión de un conductor para el certificado del permiso de conducir portugués.",
+    CS: "Lékařka kontroluje zrak řidiče při vyšetření pro portugalské potvrzení k řidičskému průkazu.",
+    RO: "Medicul verifică vederea unui șofer pentru adeverința necesară permisului auto portughez.",
+    DE: "Ärztin prüft das Sehvermögen eines Fahrers für das portugiesische Führerscheinattest.",
+  },
+
+  // 19 · ES high blood pressure emergency guidance — original ES on the Asset.
+  "tension-alta-familiar-pide-ayuda-medica": {
+    EN: "Woman checks her blood pressure while a family member calls for medical help.",
+    PT: "Mulher mede a tensão arterial enquanto um familiar telefona a pedir ajuda médica.",
+    CS: "Žena si měří krevní tlak, zatímco příbuzný telefonuje pro lékařskou pomoc.",
+    RO: "Femeie își măsoară tensiunea în timp ce un membru al familiei solicită ajutor medical la telefon.",
+    DE: "Frau misst ihren Blutdruck, während ein Familienmitglied telefonisch medizinische Hilfe anfordert.",
+  },
+
+  // 20 · RO safe response to a high reading — original RO on the Asset.
+  "tensiune-mare-repetare-masurare-sfat-medical": {
+    EN: "Woman repeats a blood-pressure reading at home while her family asks a doctor for advice by video.",
+    PT: "Mulher repete a medição da tensão em casa enquanto a família pede orientação médica por vídeo.",
+    ES: "Mujer repite la medición de tensión en casa mientras su familia pide consejo médico por vídeo.",
+    CS: "Žena doma opakuje měření krevního tlaku, zatímco rodina žádá lékaře o radu přes video.",
+    DE: "Frau wiederholt zu Hause die Blutdruckmessung, während die Familie per Video ärztlichen Rat einholt.",
+  },
 };

@@ -1,7 +1,8 @@
 /**
- * Cover images for the August 2026 blog SEO batch (see
- * scripts/content/blog-seo-2026-08/). One hero per article, twelve in total,
- * generated from scripts/content/blog-seo-2026-08/IMAGE-PROMPTS.md.
+ * Cover images for the August 2026 blog SEO and editorial batches. One hero
+ * per article, twenty in total. The original twelve briefs live in
+ * scripts/content/blog-seo-2026-08/IMAGE-PROMPTS.md; covers 13-20 extend that
+ * editorial system to the Week 1 follow-up and Week 2 CMS drafts.
  *
  *   node --env-file=.env --import tsx scripts/seed-blog-covers-2026-08.ts           # dry run
  *   node --env-file=.env --import tsx scripts/seed-blog-covers-2026-08.ts --apply   # write
@@ -38,7 +39,10 @@ import { COVER_ALTS } from "./data/blog-cover-alts-2026-08.js";
 import type { LocaleCode } from "@prisma/client";
 
 const APPLY = process.argv.includes("--apply");
-const ONLY = process.argv.find((a) => a.startsWith("--only="))?.split("=")[1];
+const ONLY_ARG = process.argv.find((a) => a.startsWith("--only="))?.split("=")[1];
+const ONLY = ONLY_ARG
+  ? new Set(ONLY_ARG.split(",").map((value) => value.trim()).filter(Boolean))
+  : null;
 
 const SEEDED_BY = "seed-blog-covers-2026-08";
 const SOURCE_DIR = "C:/Users/kingh/Downloads";
@@ -236,6 +240,118 @@ const COVERS: Cover[] = [
     description:
       "Imagem principal do guia sobre solicitação de exames laboratoriais no Brasil. Resultados antigos na mão do médico e a lista sendo montada na tela — o raciocínio antes da coleta. Os tubos aparecem pequenos e ao fundo, de propósito.",
   },
+  {
+    file: "13.png",
+    postSlug: "tension-arterial-normal-tabla-edad-sexo",
+    postLocale: "ES",
+    uuid: "44108f54-5dd3-4f3e-ac9b-6916dbe7653d",
+    name: "tension-arterial-normal-medicion-correcta-en-casa",
+    altText:
+      "Hombre se mide la tensión arterial correctamente en casa, sentado con el brazo apoyado sobre la mesa.",
+    title: "Medición correcta de la tensión arterial en casa",
+    caption:
+      "La postura, el manguito y varios días de mediciones importan más que una cifra aislada.",
+    description:
+      "Imagen principal de la guía sobre tensión arterial normal. Un hombre se mide la presión en casa con el manguito en el brazo y la extremidad apoyada sobre la mesa. La escena muestra una técnica tranquila y repetible, sin convertir una sola lectura en un diagnóstico.",
+  },
+  {
+    file: "14.png",
+    postSlug: "tensiune-arteriala-normala-varsta-adulti",
+    postLocale: "RO",
+    uuid: "fe80b93d-7bd5-4868-8943-9800d63ff1bf",
+    name: "tensiune-arteriala-jurnal-revizuit-cu-medicul",
+    altText:
+      "Medic și pacient în vârstă analizează împreună un jurnal de tensiune arterială în cabinet.",
+    title: "Interpretarea jurnalului de tensiune arterială",
+    caption:
+      "Un tipar măsurat corect valorează mai mult decât o singură cifră sau un tabel generic.",
+    description:
+      "Imagine principală pentru ghidul românesc despre tensiunea arterială normală. Medicul și un pacient mai în vârstă revizuiesc împreună un jurnal de măsurători, cu tensiometrul pe birou. Scena pune accentul pe interpretarea unui tipar, nu pe o valoare izolată.",
+  },
+  {
+    file: "15.png",
+    postSlug: "baixa-medica-quanto-se-recebe-como-calcular",
+    postLocale: "PT",
+    uuid: "af6201b0-6393-41fc-ba38-968d07bdda77",
+    name: "baixa-medica-calculo-do-valor-em-casa",
+    altText:
+      "Mulher calcula em casa o valor da baixa médica com documentos, calendário e calculadora sobre a mesa.",
+    title: "Calcular o valor da baixa médica",
+    caption:
+      "O valor depende da remuneração de referência, da duração e dos dias abrangidos.",
+    description:
+      "Imagem principal do guia português sobre o valor da baixa médica. Uma mulher recupera em casa enquanto organiza documentos genéricos, calendário e calculadora para perceber o impacto no orçamento familiar.",
+  },
+  {
+    file: "16.png",
+    postSlug: "illness-benefit-payment-ireland-rate-tax-timing",
+    postLocale: "EN",
+    uuid: "db1bc472-27f0-45fc-af8e-ac5974cb232e",
+    name: "illness-benefit-ireland-payment-calendar-planning",
+    altText:
+      "Man reviews a calendar and household finances at home while planning around Ireland's Illness Benefit payments.",
+    title: "Planning around Illness Benefit payments",
+    caption:
+      "Rate, tax treatment and payment timing all matter when planning the weeks away from work.",
+    description:
+      "Editorial cover for the Ireland Illness Benefit payment guide. A worker reviews an unreadable weekly calendar, calculator and household finances at a rainy Dublin kitchen table, focusing on payment timing rather than the claim form.",
+  },
+  {
+    file: "17.png",
+    postSlug: "vypocet-nemocenske-2026-co-plati-zamestnavatel-a-co-cssz",
+    postLocale: "CS",
+    uuid: "dcdc1582-4a0a-465f-9691-caf6431a7d3a",
+    name: "vypocet-nemocenske-zamestnavatel-cssz-kalendar",
+    altText:
+      "Muž doma počítá nemocenskou podle kalendáře a dvou sad podkladů od zaměstnavatele a ČSSZ.",
+    title: "Výpočet nemocenské ve dvou fázích",
+    caption:
+      "První období hradí zaměstnavatel a další dny přebírá ČSSZ.",
+    description:
+      "Hlavní obrázek průvodce výpočtem nemocenské v roce 2026. Zaměstnanec pracuje s kalendářem, kalkulačkou a dvěma oddělenými sadami podkladů, které vizuálně vyjadřují platbu od zaměstnavatele a následně od ČSSZ.",
+  },
+  {
+    file: "18.png",
+    postSlug: "atestado-medico-para-carta-de-conducao",
+    postLocale: "PT",
+    uuid: "d52397a6-9ae7-45ba-bb27-f9d6e3eb613a",
+    name: "atestado-carta-conducao-avaliacao-da-visao",
+    altText:
+      "Médica avalia a visão de um condutor numa consulta para o atestado da carta de condução.",
+    title: "Avaliação médica para a carta de condução",
+    caption:
+      "A consulta confirma aptidão clínica e visual antes do envio eletrónico do atestado.",
+    description:
+      "Imagem principal do guia português sobre o atestado médico para a carta de condução. Uma médica realiza uma avaliação visual a um condutor numa consulta luminosa, com chaves e carteira discretamente sobre a secretária.",
+  },
+  {
+    file: "19.png",
+    postSlug: "tension-alta-sintomas-cuando-urgencias",
+    postLocale: "ES",
+    uuid: "a1dec5f6-9528-45e8-957f-6b9aae7970dd",
+    name: "tension-alta-familiar-pide-ayuda-medica",
+    altText:
+      "Mujer se mide la tensión mientras un familiar llama por teléfono para pedir ayuda médica.",
+    title: "Pedir ayuda ante una tensión alta con síntomas",
+    caption:
+      "La combinación de la cifra y los síntomas decide si corresponde llamar al 112.",
+    description:
+      "Imagen principal de la guía española sobre tensión alta y urgencias. Una mujer permanece sentada y se mide la presión mientras un familiar solicita orientación por teléfono. La escena muestra una decisión serena de pedir ayuda, sin dramatizar una emergencia.",
+  },
+  {
+    file: "20.png",
+    postSlug: "ce-scade-tensiunea-arteriala-rapid-sigur",
+    postLocale: "RO",
+    uuid: "8db71f07-2244-4c9a-8916-2b2f0bbfe3b7",
+    name: "tensiune-mare-repetare-masurare-sfat-medical",
+    altText:
+      "Femeie repetă măsurarea tensiunii acasă în timp ce familia cere sfatul unui medic prin video.",
+    title: "Repetarea măsurării și sfat medical sigur",
+    caption:
+      "Opriți-vă, repetați corect măsurarea și cereți ajutor clinic în locul tratamentelor improvizate.",
+    description:
+      "Imaginea principală a ghidului românesc despre scăderea sigură a tensiunii. O femeie repetă măsurarea acasă, cu brațul sprijinit, în timp ce un membru al familiei notează recomandările unui medic prin apel video. Nu apar medicamente sau soluții improvizate.",
+  },
 ];
 
 function s3Key(cover: Cover): string {
@@ -251,9 +367,11 @@ function kb(bytes: number): string {
 }
 
 async function main(): Promise<void> {
-  const targets = ONLY ? COVERS.filter((c) => c.file === ONLY || c.postSlug === ONLY || c.name === ONLY) : COVERS;
+  const targets = ONLY
+    ? COVERS.filter((c) => ONLY.has(c.file) || ONLY.has(c.postSlug) || ONLY.has(c.name))
+    : COVERS;
   if (targets.length === 0) {
-    console.error(`No cover matches --only=${ONLY}`);
+    console.error(`No cover matches --only=${ONLY_ARG}`);
     process.exitCode = 1;
     return;
   }

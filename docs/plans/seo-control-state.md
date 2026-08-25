@@ -153,6 +153,23 @@ No translation record was created, no pre-existing record was updated, and no dr
 was published. The next authorized action is human/native/clinical review inside the
 normal CMS workflow, not status promotion.
 
+### 27.8 Blog cover-media completion (2026-08-25)
+
+The Blog image workflow was applied to the August editorial inventory after an
+owner-reported missing-cover check. The original 12-cover SEO set was regenerated or
+refreshed in production, then eight additional covers were created for the two Week 1
+blood-pressure records and the six primary-language Week 2 CMS drafts. Every image
+uses a stable media key, a topic-specific editorial brief and a primary-locale alt
+description; localized alt descriptions are stored for later translation rows.
+
+Production was queried before and after the scoped writes. The final state is 30
+active `BlogPost` records: 23 `PUBLISHED` and seven `DRAFT`, with zero missing or
+inactive cover assets. All 30 linked media endpoints returned HTTP 200, an image
+content type and a non-empty body. The live Spanish blood-pressure article also
+rendered its expected new cover in served HTML. This media work did not change any
+draft status, create translation rows or grant publication approval; the review gate
+in §27.7 remains in force.
+
 ### 27.9 Patient-value correction pass and draft synchronization (2026-08-25)
 
 All eight primary articles in the active Week 1 and Week 2 cohort were reviewed for
