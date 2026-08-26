@@ -120,10 +120,10 @@ export const COUNTRY_CONTACT: Record<string, CountryContact> = {
           "Global Health is an online clinic. Consultations happen by secure video with doctors registered with the Irish Medical Council, and our registered office is in Dublin 2.",
         reachHeading: "How to reach a doctor",
         reachBody:
-          "The fastest route to a doctor is booking a consultation directly — the phone line is for account, billing and booking questions rather than clinical advice. Same-day appointments are usually available in Ireland. If you need urgent care, contact your GP, call 112 or 999, or attend your nearest emergency department.",
+          "The fastest route to a doctor is booking a consultation directly. The phone line is for account, billing and booking questions rather than clinical advice. Same-day appointments are usually available in Ireland. If you need urgent care, contact your GP, call 112 or 999, or attend your nearest emergency department.",
         regulatoryHeading: "Registration and certificates",
         regulatoryBody:
-          "Every doctor consulting through Global Health Ireland holds registration with the Irish Medical Council. Medical certificates are issued by the assessing doctor following the consultation. Employers set their own requirements for sick leave, and statutory entitlements — including Illness Benefit — are assessed by the Department of Social Protection, not by us.",
+          "Every doctor consulting through Global Health Ireland holds registration with the Irish Medical Council. Medical certificates are issued by the assessing doctor following the consultation. Employers set their own requirements for sick leave, and statutory entitlements, including Illness Benefit, are assessed by the Department of Social Protection, not by us.",
         faqHeading: "Frequently asked questions",
         faqs: [
           {

@@ -39,12 +39,12 @@ const BMI_MARKET_FAQ: MarketFaq = {
       {
         question: "Does the HSE use BMI?",
         answer:
-          "Yes. BMI is the first-line screening measure in Irish practice, as it is internationally — normally read alongside waist circumference, blood pressure and blood tests rather than on its own. A raised BMI is what prompts further assessment; it is not a diagnosis by itself.",
+          "Yes. BMI is the first-line screening measure in Irish practice and is usually read alongside waist circumference, blood pressure and blood tests rather than on its own. A raised BMI prompts further assessment; it is not a diagnosis by itself.",
       },
       {
         question: "Where can I get my BMI checked in Ireland?",
         answer:
-          "Any GP appointment includes height and weight, and most pharmacies will measure them too. You can also work it out here in seconds and bring the number to a consultation — our Irish-registered doctors can review it together with your blood pressure, cholesterol and blood glucose.",
+          "Any GP appointment includes height and weight, and most pharmacies will measure them too. You can also work it out here in seconds and bring the number to a consultation. Our Irish-registered doctors can review it together with your blood pressure, cholesterol and blood glucose.",
       },
     ],
   },
@@ -344,12 +344,12 @@ const BP_MARKET_FAQ: MarketFaq = {
       {
         question: "What counts as high blood pressure in Ireland?",
         answer:
-          "Irish practice follows the European thresholds: 140/90 mmHg or above measured in a clinic, or 135/85 or above on a validated home monitor. A single raised reading is not a diagnosis — a GP will normally ask for a week of home readings, or arrange 24-hour monitoring, before treating anything.",
+          "Irish practice follows the European thresholds: 140/90 mmHg or above measured in a clinic, or 135/85 or above on a validated home monitor. A single raised reading is not a diagnosis. A GP will normally ask for a week of home readings, or arrange 24-hour monitoring, before treating anything.",
       },
       {
         question: "Where can I get my blood pressure checked in Ireland?",
         answer:
-          "Any GP appointment includes it, and most pharmacies will measure it for you. If you already have a home monitor, take a week of morning and evening readings and bring them to a consultation — our Irish-registered doctors can review the set by video alongside your cholesterol and blood glucose.",
+          "Any GP appointment includes it, and most pharmacies will measure it for you. If you already have a home monitor, take a week of morning and evening readings and bring them to a consultation. Our Irish-registered doctors can review the set by video alongside your cholesterol and blood glucose.",
       },
     ],
   },
@@ -503,7 +503,7 @@ const DUE_DATE_MARKET_FAQ: MarketFaq = {
       {
         question: "When is the dating scan done in Ireland?",
         answer:
-          "Irish maternity units normally scan in the first trimester, generally somewhere between about 11 and 14 weeks, with the anomaly scan around 20 weeks. Until then the estimate above is what you have to work with — and our Irish-registered doctors can go through early symptoms or any medicines you already take by video in the meantime.",
+          "Irish maternity units normally scan in the first trimester, generally somewhere between about 11 and 14 weeks, with the anomaly scan around 20 weeks. Until then the estimate above is what you have to work with. Our Irish-registered doctors can go through early symptoms or any medicines you already take by video in the meantime.",
       },
     ],
   },
@@ -651,7 +651,7 @@ const OVULATION_MARKET_FAQ: MarketFaq = {
       {
         question: "Where do I get fertility advice in Ireland?",
         answer:
-          "Start with a GP. They can check the basics — cycles, thyroid, rubella immunity, and bloods for both partners — and refer on to a fertility service when that is the next step. Our Irish-registered doctors can go through irregular cycles and preconception checks by video first, which is often enough to know whether a referral is what you need.",
+          "Start with a GP. They can check the basics: cycles, thyroid, rubella immunity and bloods for both partners, then refer on to a fertility service when that is the next step. Our Irish-registered doctors can go through irregular cycles and preconception checks by video first, which is often enough to know whether a referral is what you need.",
       },
       {
         question: "Can I buy ovulation tests in Ireland?",
@@ -805,12 +805,12 @@ const ADHD_MARKET_FAQ: MarketFaq = {
       {
         question: "How do I get assessed for ADHD in Ireland?",
         answer:
-          "Through a GP first. Adult ADHD is assessed by psychiatrists and clinical psychologists, whether that happens in the public mental health services or privately, and a GP referral is what starts either route. The GP also checks the things that look like ADHD — thyroid function, sleep, anxiety, depression — before anyone assesses for it.",
+          "Through a GP first. Adult ADHD is assessed by psychiatrists and clinical psychologists, whether that happens in the public mental health services or privately, and a GP referral is what starts either route. The GP also checks the things that can look like ADHD, such as thyroid function, sleep problems, anxiety and depression, before anyone assesses for it.",
       },
       {
         question: "Can I be prescribed ADHD medication from an online test?",
         answer:
-          "No, and be wary of anywhere that offers it. ADHD medicines are controlled drugs, started only after a full assessment and a diagnosis by a specialist, and prescribing afterwards is normally shared between that specialist and your GP. Our Irish-registered doctors can review a screening result, rule out the conditions that mimic ADHD and refer you on — they cannot diagnose it in a video call.",
+          "No, and be wary of anywhere that offers it. ADHD medicines are controlled drugs, started only after a full assessment and a diagnosis by a specialist, and prescribing afterwards is normally shared between that specialist and your GP. Our Irish-registered doctors can review a screening result, rule out the conditions that mimic ADHD and refer you on. They cannot diagnose it in a video call.",
       },
     ],
   },
@@ -952,7 +952,7 @@ const OSTEOPOROSIS_MARKET_FAQ: MarketFaq = {
       {
         question: "Does the HSE offer DXA bone density scans?",
         answer:
-          "Yes. DXA scanning is available through the public hospital system on referral, and privately without one in most clinics. Ireland follows the same NICE-aligned case-finding approach this checker uses — risk factors decide who is assessed, not age or a scan alone.",
+          "Yes. DXA scanning is available through the public hospital system on referral, and privately without one in most clinics. Ireland follows the same NICE-aligned case-finding approach this checker uses. Risk factors decide who is assessed, not age or a scan alone.",
       },
       {
         question: "Where can I get assessed for osteoporosis in Ireland?",
