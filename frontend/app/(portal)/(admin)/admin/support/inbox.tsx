@@ -57,7 +57,7 @@ export function AdminSupportInbox({
         />
       )}
       emptyTitle="No support messages yet"
-      emptyDescription="When a doctor writes in from their portal, the conversation shows up here and the admin team is emailed."
+      emptyDescription="When a doctor writes in from their portal, the conversation shows up here and the admin team is emailed and messaged on WhatsApp. Use “New conversation” above to write to a doctor first."
       selectConversationTitle="Select a doctor"
       selectConversationBody="Choose a doctor on the left to read and reply to their support thread."
       orderFallbackLabel="Open doctor"
@@ -98,7 +98,8 @@ function AdminSupportThreadChat({
       poster={poster}
       fileUploader={fileUploader}
       labels={{
-        emptyBody: "Reply below — the doctor sees your first name.",
+        emptyBody:
+          "Write below — the doctor sees your first name, and is alerted by email and WhatsApp.",
         placeholder: "Reply to the doctor…",
       }}
     />

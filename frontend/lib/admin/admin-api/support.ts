@@ -20,3 +20,24 @@ export async function fetchAdminSupportThreads() {
     viewerUserId: string | null;
   }>("/api/admin/support/threads");
 }
+
+/** One row of the "start a conversation" doctor picker. */
+export type AdminSupportDoctorOption = {
+  doctorId: string;
+  fullName: string;
+  countryCode: string | null;
+  /** Non-null when this doctor already has a thread — the UI reuses it. */
+  threadId: string | null;
+};
+
+/**
+ * Every active doctor, for the admin-initiated conversation picker. Separate
+ * from `fetchAdminDoctors`: this list must include doctors who have never
+ * written in (so have no thread row), and needs three fields, not the full
+ * AdminDoctorDto.
+ */
+export async function fetchAdminSupportDoctors() {
+  return adminRequest<{ items: AdminSupportDoctorOption[] }>(
+    "/api/admin/support/doctors",
+  );
+}

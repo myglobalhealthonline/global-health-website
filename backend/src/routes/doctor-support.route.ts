@@ -18,6 +18,7 @@ import { verifySniffedMime } from "../utils/sniff-mime.js";
 import { notifyDoctor } from "../modules/notifications/notify.service.js";
 import {
   alertAdminsOfSupportMessage,
+  alertDoctorOfSupportMessage,
   notifySupportAdmins,
   supportSnippet,
 } from "../modules/support/support-notify.service.js";
@@ -49,7 +50,9 @@ import { recordAudit } from "../modules/audit/audit.service.js";
  *
  * Admin surface (global admins only — LOCAL_ADMIN is country-scoped and must
  * not read every doctor's thread):
+ *   GET  /api/admin/support/doctors
  *   GET  /api/admin/support/threads
+ *   POST /api/admin/support/threads          (admin opens a conversation)
  *   GET  /api/admin/support/threads/:threadId
  *   POST /api/admin/support/threads/:threadId/messages
  *   POST /api/admin/support/threads/:threadId/messages/upload
@@ -81,6 +84,12 @@ export const postBodySchema = z.object({
   body: z.string().trim().min(1, "Message cannot be empty").max(4000),
 });
 const threadIdParamSchema = z.object({ threadId: z.string().min(1).max(120) });
+/** Admin-initiated conversation: pick a doctor, write the opening message.
+ *  Exported for the route's unit tests, same reasoning as `postBodySchema`. */
+export const startThreadBodySchema = z.object({
+  doctorId: z.string().min(1).max(120),
+  body: z.string().trim().min(1, "Message cannot be empty").max(4000),
+});
 const messageIdParamSchema = z.object({ messageId: z.string().min(1).max(120) });
 const adminMessageParamSchema = z.object({
   threadId: z.string().min(1).max(120),
@@ -292,6 +301,10 @@ const doctorSupportRoute: FastifyPluginAsync = async (app) => {
           data: {
             lastMessageAt: row.createdAt,
             lastMessageRole: SupportMessageAuthorRole.DOCTOR,
+            // The doctor has answered, so the next admin message must reach
+            // them at once instead of sitting out the rest of the window —
+            // the mirror of `afterAdminReply` clearing `lastAdminEmailAt`.
+            lastDoctorAlertAt: null,
           },
         });
 
@@ -357,6 +370,10 @@ const doctorSupportRoute: FastifyPluginAsync = async (app) => {
           data: {
             lastMessageAt: row.createdAt,
             lastMessageRole: SupportMessageAuthorRole.DOCTOR,
+            // The doctor has answered, so the next admin message must reach
+            // them at once instead of sitting out the rest of the window —
+            // the mirror of `afterAdminReply` clearing `lastAdminEmailAt`.
+            lastDoctorAlertAt: null,
           },
         });
 
@@ -478,6 +495,117 @@ const doctorSupportRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(err);
         return reply.status(500).send(errorResponse("Could not load support threads"));
+      }
+    },
+  );
+
+  // ── Admin: GET doctors (picker for a new conversation) ───────────
+  // Purpose-built and deliberately not `/api/admin/doctors`: the picker needs
+  // three fields per doctor, not the full AdminDoctorDto, and it must list
+  // every active doctor — including those who have never written in and so
+  // have no thread row yet.
+  app.get(
+    "/api/admin/support/doctors",
+    { config: { rateLimit: { max: 60, timeWindow: "1 minute" } } },
+    async (request, reply) => {
+      const admin = await verifyGlobalAdminAccess(request);
+      if (!admin.ok) return reply.status(admin.status).send(errorResponse(admin.message));
+
+      try {
+        const doctors = await prisma.doctor.findMany({
+          where: { active: true },
+          orderBy: { fullName: "asc" },
+          select: {
+            id: true,
+            fullName: true,
+            country: { select: { code: true } },
+            supportThread: { select: { id: true } },
+          },
+        });
+
+        return okResponse({
+          items: doctors.map((d) => ({
+            doctorId: d.id,
+            fullName: d.fullName,
+            countryCode: d.country?.code ?? null,
+            /** Non-null when a thread already exists — the UI reuses it. */
+            threadId: d.supportThread?.id ?? null,
+          })),
+        });
+      } catch (err) {
+        if (err instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(err.message));
+        }
+        app.log.error(err);
+        return reply.status(500).send(errorResponse("Could not load doctors"));
+      }
+    },
+  );
+
+  // ── Admin: POST start a conversation with a doctor ────────────────
+  // The opening message is required, not optional: a thread with no messages
+  // is invisible in the inbox (which orders on `lastMessageAt`) and would
+  // notify the doctor about nothing. Creating the thread and writing the first
+  // message in one call keeps both surfaces consistent.
+  app.post(
+    "/api/admin/support/threads",
+    { config: { rateLimit: { max: 30, timeWindow: "1 minute" } } },
+    async (request, reply) => {
+      const admin = await verifyGlobalAdminAccess(request);
+      if (!admin.ok) return reply.status(admin.status).send(errorResponse(admin.message));
+      // Same reasoning as the reply route: the maintenance-token fallback has
+      // no user row, so it cannot author a named message.
+      const actor = resolveAdminSessionActor(request);
+      if (!actor) return reply.status(401).send(errorResponse("Not authenticated"));
+
+      const body = startThreadBodySchema.safeParse(request.body);
+      if (!body.success) {
+        return reply.status(400).send(errorResponse("Invalid message", body.error.flatten()));
+      }
+
+      try {
+        const doctor = await prisma.doctor.findUnique({
+          where: { id: body.data.doctorId },
+          select: { id: true },
+        });
+        if (!doctor) return reply.status(404).send(errorResponse("Doctor not found"));
+
+        // Upsert, not create: the doctor may already have a thread (they wrote
+        // in once, or an admin opened one before). One thread per doctor.
+        const thread = await getOrCreateThread(doctor.id);
+
+        const row = await prisma.supportMessage.create({
+          data: {
+            threadId: thread.id,
+            authorRole: SupportMessageAuthorRole.ADMIN,
+            authorUserId: actor.userId,
+            body: body.data.body,
+            readByDoctor: false,
+          },
+          select: MESSAGE_SELECT,
+        });
+
+        await afterAdminReply(thread.id, actor.userId, row.createdAt);
+        notifyDoctorOfReply(doctor.id, thread.id, row);
+
+        recordAudit({
+          actorUserId: actor.userId,
+          actorRole: actor.role,
+          action: "SUPPORT_MESSAGE_POSTED",
+          entityType: "SupportMessage",
+          entityId: row.id,
+          metadata: { threadId: thread.id, initiatedByAdmin: true },
+          request,
+        }).catch(() => {});
+
+        const items = await listMessages(thread.id, "admin");
+        return reply.status(201).send(okResponse({ threadId: thread.id, items }));
+      } catch (err) {
+        if (err instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(err.message));
+        }
+        app.log.error(err);
+        return reply.status(500).send(errorResponse("Could not start the conversation"));
       }
     },
   );
@@ -761,17 +889,34 @@ const doctorSupportRoute: FastifyPluginAsync = async (app) => {
     });
   }
 
+  /**
+   * Bell + throttled email/WhatsApp for the doctor. The bell always fires; the
+   * email and WhatsApp share one `SUPPORT_ALERT_THROTTLE_MINUTES` window per
+   * thread — the mirror of `notifyAndAlert` on the doctor → admin side.
+   * Neither may fail the admin's POST.
+   */
   function notifyDoctorOfReply(
     doctorId: string,
     threadId: string,
     row: { body: string | null; fileName: string | null; author: { fullName: string | null } | null },
   ) {
+    const snippet = supportSnippet({ body: row.body, fileName: row.fileName });
+    const adminName = firstName(row.author?.fullName);
+
     notifyDoctor(doctorId, "SUPPORT_REPLY", {
       threadId,
-      snippet: supportSnippet({ body: row.body, fileName: row.fileName }) ?? undefined,
-      byUserName: firstName(row.author?.fullName),
+      snippet: snippet ?? undefined,
+      byUserName: adminName,
       byRole: "ADMIN",
     }).catch((err) => app.log.warn({ err }, "notifyDoctor failed (support reply)"));
+
+    void alertDoctorOfSupportMessage({
+      threadId,
+      doctorId,
+      adminName,
+      snippet,
+      log: app.log,
+    });
   }
 };
 
