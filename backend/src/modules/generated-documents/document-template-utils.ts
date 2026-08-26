@@ -72,6 +72,29 @@ export function isEmailSendable(documentType: GeneratedDocumentType): boolean {
   return EMAIL_SEND_QUEUE_TYPES.includes(documentType);
 }
 
+/**
+ * Markets where the medicine prescription PDF may also be emailed straight to
+ * the patient. Everywhere else a PRESCRIPTION stays a doctor's-records +
+ * national-portal document and is finalized rather than sent.
+ *
+ * Both code spellings are listed on purpose: this app stores Spain as `sp` and
+ * Romania as `rm`, while ISO `es`/`ro` show up in imported/legacy rows.
+ */
+export const PRESCRIPTION_EMAIL_COUNTRIES = ["cz", "sp", "es", "rm", "ro"];
+
+export function isPrescriptionEmailCountry(countryCode: string | null | undefined): boolean {
+  return PRESCRIPTION_EMAIL_COUNTRIES.includes((countryCode ?? "").toLowerCase().trim());
+}
+
+/** Country-aware form of `isEmailSendable` — use this on any real send path. */
+export function isEmailSendableForCountry(
+  documentType: GeneratedDocumentType,
+  countryCode: string | null | undefined,
+): boolean {
+  if (isEmailSendable(documentType)) return true;
+  return documentType === "PRESCRIPTION" && isPrescriptionEmailCountry(countryCode);
+}
+
 /** Documents appear in history once sent or (for PRESCRIPTION) once finalized. */
 export function isVisibleInHistory(
   documentType: GeneratedDocumentType,

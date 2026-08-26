@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   formatExamsNotes,
   isEmailSendable,
+  isEmailSendableForCountry,
   isInReviewQueue,
   isVisibleInHistory,
   ABSENCE_DEFAULT_REASON,
@@ -60,6 +61,22 @@ describe("review queue and history", () => {
   it("exams and absence are email sendable", () => {
     assert.equal(isEmailSendable("EXAMS_PRESCRIPTION"), true);
     assert.equal(isEmailSendable("ABSENCE_CERTIFICATE"), true);
+  });
+});
+
+describe("isEmailSendableForCountry", () => {
+  it("allows the medicine prescription in CZ, ES and RO only", () => {
+    for (const code of ["cz", "sp", "es", "rm", "ro", "CZ", " Sp "]) {
+      assert.equal(isEmailSendableForCountry("PRESCRIPTION", code), true, code);
+    }
+    for (const code of ["ie", "pt", "br", "", null, undefined]) {
+      assert.equal(isEmailSendableForCountry("PRESCRIPTION", code), false, String(code));
+    }
+  });
+
+  it("leaves the country-independent types alone", () => {
+    assert.equal(isEmailSendableForCountry("EXAMS_PRESCRIPTION", "ie"), true);
+    assert.equal(isEmailSendableForCountry("ABSENCE_CERTIFICATE", "br"), true);
   });
 });
 

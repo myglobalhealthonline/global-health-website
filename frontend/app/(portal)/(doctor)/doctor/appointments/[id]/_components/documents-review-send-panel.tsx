@@ -26,12 +26,27 @@ export type ReviewQueueDoc = {
   hasUploadLink?: boolean;
 };
 
-function canEmailDocument(documentType: string): boolean {
+/**
+ * Markets where a medicine prescription may be emailed to the patient as well
+ * as filed for the national portal. Mirrors PRESCRIPTION_EMAIL_COUNTRIES in
+ * backend/src/modules/generated-documents/document-template-utils.ts — the
+ * backend re-checks it, this only decides whether the button is drawn.
+ * `sp`/`rm` are this app's own codes for Spain/Romania; ISO `es`/`ro` appear on
+ * imported rows.
+ */
+const PRESCRIPTION_EMAIL_COUNTRIES = ["cz", "sp", "es", "rm", "ro"];
+
+function prescriptionEmailAllowed(countryCode: string | null): boolean {
+  return PRESCRIPTION_EMAIL_COUNTRIES.includes((countryCode ?? "").toLowerCase().trim());
+}
+
+function canEmailDocument(documentType: string, countryCode: string | null): boolean {
   return (
     documentType === "EXAMS_PRESCRIPTION" ||
     documentType === "ABSENCE_CERTIFICATE" ||
     documentType === "OTHER" ||
-    documentType === "CUSTOM_CERTIFICATE"
+    documentType === "CUSTOM_CERTIFICATE" ||
+    (documentType === "PRESCRIPTION" && prescriptionEmailAllowed(countryCode))
   );
 }
 
@@ -54,11 +69,15 @@ export type DocumentsReviewSendPanelCopy = {
   title: string;
   noneWaiting: string;
   reviewEditHint: string;
+  /** Replaces `reviewEditHint` in CZ/ES/RO, where medicine prescriptions send too. */
+  reviewEditHintWithPrescription: string;
   sending: string;
   sendSelected: string;
   review: string;
   edit: string;
   send: string;
+  sendPrescription: string;
+  sendPrescriptionTitle: string;
   finalize: string;
   finalizeTitle: string;
   sendUploadLink: string;
@@ -93,11 +112,15 @@ const DEFAULT_COPY: DocumentsReviewSendPanelCopy = {
     "No documents waiting. Generate an exams prescription, medicine prescription, or absence certificate, then return here to review and edit before sending.",
   reviewEditHint:
     "Review and edit each PDF. Email send is available for exams and absence certificates only — medicine prescriptions are for your records and national portal submission.",
+  reviewEditHintWithPrescription:
+    "Review and edit each PDF before sending. In this market the medicine prescription can be emailed to the patient as well as filed for the national portal.",
   sending: "Sending…",
   sendSelected: "Send selected",
   review: "Review",
   edit: "Edit",
   send: "Send",
+  sendPrescription: "Send prescription",
+  sendPrescriptionTitle: "Email this medicine prescription to the patient",
   finalize: "Finalize",
   finalizeTitle: "Mark as finalized — moves to history",
   sendUploadLink: "Send upload link",
@@ -148,6 +171,9 @@ export function DocumentsReviewSendPanel({
   const [history, setHistory] = useState<ReviewQueueDoc[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [patientEmail, setPatientEmail] = useState<string | null>(null);
+  // Country the consultation was booked in — decides whether the medicine
+  // prescription gets a send button (CZ/ES/RO) or only finalize.
+  const [countryCode, setCountryCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -157,8 +183,8 @@ export function DocumentsReviewSendPanel({
     useState<NotificationLocale>(notificationLocale);
 
   const sendableQueue = useMemo(
-    () => queue.filter((row) => canEmailDocument(row.documentType)),
-    [queue],
+    () => queue.filter((row) => canEmailDocument(row.documentType, countryCode)),
+    [queue, countryCode],
   );
 
   const load = useCallback(async () => {
@@ -170,6 +196,14 @@ export function DocumentsReviewSendPanel({
       ok?: boolean;
       data?: { queue?: ReviewQueueDoc[]; history?: ReviewQueueDoc[] };
     }>(docsRes);
+    const ctxJson = await parseDoctorApiJson<{
+      ok?: boolean;
+      data?: { countryCode?: string; patient?: { email?: string } };
+    }>(ctxRes);
+    // Read the country before pruning the selection — otherwise a reload would
+    // drop an already-ticked prescription on the first pass.
+    const country = ctxJson?.ok ? ctxJson.data?.countryCode ?? null : null;
+    if (country) setCountryCode(country);
     if (docsJson?.ok && docsJson.data) {
       setQueue(docsJson.data.queue ?? []);
       setHistory(docsJson.data.history ?? []);
@@ -177,15 +211,11 @@ export function DocumentsReviewSendPanel({
         const next = new Set<string>();
         for (const id of prev) {
           const row = (docsJson.data!.queue ?? []).find((q) => q.id === id);
-          if (row && canEmailDocument(row.documentType)) next.add(id);
+          if (row && canEmailDocument(row.documentType, country)) next.add(id);
         }
         return next;
       });
     }
-    const ctxJson = await parseDoctorApiJson<{
-      ok?: boolean;
-      data?: { patient?: { email?: string } };
-    }>(ctxRes);
     if (ctxJson?.ok && ctxJson.data?.patient?.email) {
       setPatientEmail(ctxJson.data.patient.email);
     }
@@ -360,7 +390,9 @@ export function DocumentsReviewSendPanel({
         ) : (
           <>
             <p className="mb-3 text-portal-compact text-[var(--portal-muted)]">
-              {copy.reviewEditHint}
+              {prescriptionEmailAllowed(countryCode)
+                ? copy.reviewEditHintWithPrescription
+                : copy.reviewEditHint}
             </p>
             {sendableQueue.length > 0 ? (
               <div className="gh-doctor-review-toolbar mb-3 flex justify-end">
@@ -377,7 +409,10 @@ export function DocumentsReviewSendPanel({
             ) : null}
             <ul className="gh-doctor-review-list divide-y divide-[var(--portal-line)] rounded-md border border-[var(--portal-line)]">
               {queue.map((row) => {
-                const sendable = canEmailDocument(row.documentType);
+                const sendable = canEmailDocument(row.documentType, countryCode);
+                const isPrescription = row.documentType === "PRESCRIPTION";
+                const sendLabel = isPrescription ? copy.sendPrescription : copy.send;
+                const sendTitle = isPrescription ? copy.sendPrescriptionTitle : undefined;
                 return (
                   <li
                     key={row.id}
@@ -424,8 +459,9 @@ export function DocumentsReviewSendPanel({
                           disabled={pending}
                           onClick={() => sendDocuments([row.id])}
                           className="gh-btn gh-btn-soft px-2 py-1 text-portal-thead"
+                          title={sendTitle}
                         >
-                          <Send className="size-3" aria-hidden /> {copy.send}
+                          <Send className="size-3" aria-hidden /> {sendLabel}
                         </button>
                       ) : null}
                       {canFinalize(row.documentType) ? (
@@ -473,8 +509,8 @@ export function DocumentsReviewSendPanel({
                           <Pencil className="size-3" aria-hidden /> {copy.edit}
                         </button>
                         {sendable ? (
-                          <button type="button" disabled={pending} onClick={() => sendDocuments([row.id])} className="gh-btn gh-btn-soft px-2 py-1 text-portal-thead">
-                            <Send className="size-3" aria-hidden /> {copy.send}
+                          <button type="button" disabled={pending} onClick={() => sendDocuments([row.id])} className="gh-btn gh-btn-soft px-2 py-1 text-portal-thead" title={sendTitle}>
+                            <Send className="size-3" aria-hidden /> {sendLabel}
                           </button>
                         ) : null}
                         <AppMenu contentClassName="gh-portal-menu-content min-w-[180px] p-1.5" trigger={<button type="button" aria-label={copy.moreActions} className="gh-btn gh-btn-soft px-2 py-1"><MoreVertical className="size-3.5" aria-hidden /></button>}>

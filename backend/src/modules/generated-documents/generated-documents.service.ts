@@ -18,7 +18,7 @@ import {
   absenceDefaultReason,
   formatDateDdMmYyyy,
   formatExamsNotes,
-  isEmailSendable,
+  isEmailSendableForCountry,
   isInReviewQueue,
   isVisibleInHistory,
 } from "./document-template-utils.js";
@@ -832,7 +832,9 @@ export async function sendGeneratedDocuments(
       doctorId,
       sentToPatient: false,
     },
-  }).then((rows) => rows.filter((d) => isEmailSendable(d.documentType)));
+  }).then((rows) =>
+    rows.filter((d) => isEmailSendableForCountry(d.documentType, appt.countryCode)),
+  );
 
   let sent = 0;
   const errors: string[] = [];
