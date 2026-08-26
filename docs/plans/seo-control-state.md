@@ -6435,3 +6435,51 @@ do not rewrite the ten unchanged pages or add medication/guarantee terms without
 page-level evidence and clinical review.
 
 ---
+
+## 32. IE-PROFILE-SPECIALIST-KEYWORDS-001 — doctor profiles and seven specialist services (2026-08-26)
+
+**Status: LIVE IN PRODUCTION — 168 LOCALIZED SEO RECORDS APPLIED.** The Ireland
+follow-up phase now covers 21 publishable clinician profiles and seven specialist
+consultation services in English, Portuguese, Spanish, Czech, Romanian and German.
+The production patch updated SEO title, meta description and keywords on 126
+doctor-market translation rows (21 profiles × six locales), plus SEO title, meta
+description and H1 on 42 service translation rows (seven services × six locales).
+Service prices, durations, assignments, booking behavior, publication state, body
+copy, FAQs and clinician biographies or credentials were not changed.
+
+The seven specialist intent owners are cardiology, neurology, nutrition,
+paediatrics, physiotherapy, psychiatry and psychology. Fresh Ireland evidence kept
+psychiatry and psychology distinct from the GP mental-health page and avoided
+promises about diagnosis, treatment, referral, appointment speed or outcomes.
+Clinician titles use the production roster's verified role; no stronger specialist,
+consultant, registration or credential claim was inferred from keyword demand.
+
+`dr-arooj-iqbal-lodhi` is deliberately excluded. The production Ireland record has
+no substantive biography, so it remains a thin/noindex exception until reviewed
+source material exists. No copy was invented to make that profile indexable.
+
+**Production verification.** A post-apply dry run reported no changes for all 21
+profiles and all seven services. After the public 60-second data-cache refresh, all
+21 English clinician URLs rendered the intended name-first title, self-canonical and
+`index, follow`; all seven English specialist URLs rendered the intended title,
+description and H1 with the same indexability controls. One clinician and one
+specialist URL were also checked in each of the six locale routes to confirm the
+localized delivery path. Google Search Console URL Inspection reports all seven
+English specialist URLs and three priority clinician URLs submitted and indexed,
+with successful fetches and Google-selected canonicals matching the declared URLs.
+
+The guarded replay script is dry-run by default, requires the exact content-version
+confirmation to write, validates the active Ireland market and active/public
+SPECIALIST service invariants, and uses optimistic `updatedAt` checks. Production
+writes run in bounded per-record Serializable transactions so a hosted command
+timeout cannot silently roll back the complete batch. Eighteen backend content and
+patch tests, the focused frontend SEO-template tests and the frontend package
+type-check pass; independent code and security reviews reported no actionable
+findings. The backend-wide type-check remains blocked by the unrelated pre-existing
+invoice/Prisma client errors already recorded in §31, outside this SEO batch.
+
+**Measurement gate:** compare complete GSC page/query windows after 28 days plus the
+normal final-data lag, on or after 2026-09-28. Indexing requests accelerate
+discovery only; they do not guarantee recrawl timing, position or ranking gains.
+
+---

@@ -104,35 +104,34 @@ function equal(left: unknown, right: unknown): boolean {
 
 async function prepareDoctors(countryId: string): Promise<DoctorPrepared[]> {
   const slugs = irelandDoctorProfileKeywordMap.map(({ slug }) => slug);
-  const doctors = await prisma.doctor.findMany({
-    where: { slug: { in: slugs } },
-    select: { id: true, slug: true, active: true, updatedAt: true },
-  });
-  const missing = slugs.filter((slug) => !doctors.some((doctor) => doctor.slug === slug));
-  if (missing.length > 0) throw new Error(`Missing doctors: ${missing.join(", ")}`);
-
-  const prepared: DoctorPrepared[] = [];
-  for (const doctor of doctors) {
-    const market = await prisma.doctorCountry.findUnique({
-      where: { doctorId_countryId: { doctorId: doctor.id, countryId } },
-      select: {
-        id: true,
-        active: true,
-        country: { select: { code: true } },
-        translations: {
-          where: { locale: { in: [...LOCALES] } },
-          select: {
-            id: true,
-            locale: true,
-            updatedAt: true,
-            seoTitle: true,
-            seoDescription: true,
-            seoKeywords: true,
-          },
+  const markets = await prisma.doctorCountry.findMany({
+    where: { countryId, doctor: { slug: { in: slugs } } },
+    select: {
+      id: true,
+      active: true,
+      country: { select: { code: true } },
+      doctor: { select: { id: true, slug: true, active: true, updatedAt: true } },
+      translations: {
+        where: { locale: { in: [...LOCALES] } },
+        select: {
+          id: true,
+          locale: true,
+          updatedAt: true,
+          seoTitle: true,
+          seoDescription: true,
+          seoKeywords: true,
         },
       },
-    });
-    if (!market) throw new Error(`${doctor.slug} has no Ireland DoctorCountry row.`);
+    },
+  });
+  const missing = slugs.filter(
+    (slug) => !markets.some(({ doctor }) => doctor.slug === slug),
+  );
+  if (missing.length > 0) throw new Error(`Missing Ireland doctor markets: ${missing.join(", ")}`);
+
+  const prepared: DoctorPrepared[] = [];
+  for (const market of markets) {
+    const { doctor } = market;
     assertIrelandDoctorMarketWritable({
       doctorSlug: doctor.slug,
       doctorActive: doctor.active,
