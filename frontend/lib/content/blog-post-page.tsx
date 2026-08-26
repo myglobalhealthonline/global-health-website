@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Clock, User, Calendar, BadgeCheck, ArrowUpRight, RefreshCw } from "lucide-react";
 import { BlogCard } from "@/components/cards/BlogCard";
+import { BlogShareLinks } from "@/components/blog/BlogShareLinks";
 import { CalmEditorialArticleHero } from "@/components/blog/CalmEditorialArticleHero";
 import { getCountryByCode } from "@/data/countries";
 import { getBlogPost, listBlogPosts, type BlogDoctor, type BlogListItem, type BlogPostFull } from "@/lib/content/get-public-blog";
@@ -670,24 +671,28 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
         ) : null}
       </section>
 
+      {isCalmEditorialPilot ? (
+        <BlogShareLinks articleUrl={`${getSiteUrl()}${canonicalUrl}`} title={displayTitle} />
+      ) : null}
+
       {/* Dark CTA block — matches luxury language of the rest of the site */}
       <section
         className={
           isCalmEditorialPilot
-            ? "gh-blog-calm-cta"
+            ? "gh-blog-calm-cta relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
             : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
         }
         style={{
           padding: "clamp(64px,8vw,100px) 0",
         }}
       >
-        {isCalmEditorialPilot ? null : <SectionSeam theme="dark" />}
+        <SectionSeam theme="dark" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="grid items-end gap-10 lg:grid-cols-[1.6fr_1fr]">
             <div>
               <p
                 className="text-[11px] font-bold uppercase tracking-[0.2em]"
-                style={{ color: isCalmEditorialPilot ? "var(--color-brand-primary)" : "var(--color-brand-accent)" }}
+                style={{ color: "var(--color-brand-accent)" }}
               >
                 {blogI18n.nextStep}
               </p>
@@ -695,14 +700,14 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
                 className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.02]"
                 style={{
                   fontSize: "clamp(2rem, 4vw + 0.5rem, 3.5rem)",
-                  color: isCalmEditorialPilot ? "var(--color-text-primary)" : "rgba(255,255,255,0.92)",
+                  color: "rgba(255,255,255,0.92)",
                 }}
               >
                 {blogI18n.readyToSpeak}
               </h2>
               <p
                 className="mt-5 max-w-[48ch] text-[length:var(--text-body-lg)] leading-relaxed"
-                style={{ color: isCalmEditorialPilot ? "var(--color-text-secondary)" : "rgba(255,255,255,0.72)" }}
+                style={{ color: "rgba(255,255,255,0.72)" }}
               >
                 {/* Blog articles live outside the [country]/[lang] segment. When
                   * the post has a linked CTA service, we route straight to that
@@ -714,7 +719,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
             </div>
             <Link
               href={ctaHref}
-              className={isCalmEditorialPilot ? "gh-blog-calm-cta-link lg:justify-self-end" : "gh2-btn-lime lg:justify-self-end"}
+              className="gh2-btn-lime lg:justify-self-end"
             >
               {blogI18n.bookConsultation}
             </Link>
@@ -723,8 +728,8 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
       </section>
 
       {relatedPosts.length > 0 ? (
-        <section className={isCalmEditorialPilot ? "gh-blog-calm-related" : "gh-inline-clamp-section relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"}>
-          {isCalmEditorialPilot ? null : <SectionSeam theme="light" />}
+        <section className={isCalmEditorialPilot ? "gh-blog-calm-related relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel" : "gh-inline-clamp-section relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"}>
+          <SectionSeam theme="light" />
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
             <h2
               className="max-w-[24ch] font-extrabold tracking-[-0.03em] leading-[1.04]"
@@ -742,14 +747,28 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
               {relatedPosts.map((p) => (
                 isCalmEditorialPilot ? (
                   <article key={p.slug} className="gh-blog-calm-related-item">
-                    <p>{p.category}</p>
-                    <h3>
-                      <Link href={relatedHrefFor(p)}>{sentenceCaseIfShouting(p.title)}</Link>
-                    </h3>
-                    <p>{p.excerpt}</p>
-                    <Link href={relatedHrefFor(p)} className="gh-blog-calm-related-link">
-                      {blogPageI18n.readArticle} <span aria-hidden>→</span>
-                    </Link>
+                    <div className="gh-blog-calm-related-media" aria-hidden="true">
+                      {p.coverImageSrc ? (
+                        <Image
+                          src={p.coverImageSrc}
+                          alt=""
+                          fill
+                          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                          className="object-cover"
+                          unoptimized={isUnoptimizedImageSrc(p.coverImageSrc)}
+                        />
+                      ) : null}
+                    </div>
+                    <div className="gh-blog-calm-related-content">
+                      <p>{p.category}</p>
+                      <h3>
+                        <Link href={relatedHrefFor(p)}>{sentenceCaseIfShouting(p.title)}</Link>
+                      </h3>
+                      <p>{p.excerpt}</p>
+                      <Link href={relatedHrefFor(p)} className="gh-blog-calm-related-link">
+                        {blogPageI18n.readArticle} <span aria-hidden>→</span>
+                      </Link>
+                    </div>
                   </article>
                 ) : (
                 <BlogCard
