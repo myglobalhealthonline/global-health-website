@@ -2,9 +2,13 @@ import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
-import { releaseAppointmentSlot } from "../modules/doctor-availability/doctor-availability.service.js";
+import {
+  reclaimSlotForRescheduledAppointment,
+  releaseAppointmentSlot,
+} from "../modules/doctor-availability/doctor-availability.service.js";
 import { releaseMembershipAllowanceForSlot } from "../modules/memberships/membership-allowance.service.js";
 import { resolveStaffTimeZone } from "../modules/automation/staff-timezone.js";
+import { applyRescheduleSideEffects } from "../modules/appointments/reschedule-side-effects.service.js";
 import { formatNotificationDateTime } from "../modules/notifications/notification-datetime.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -253,6 +257,22 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
               : new Date(body.data.scheduledAt).toISOString());
         const isCancelling =
           body.data.status === "CANCELLED" && appt.status !== "CANCELLED";
+        // Length of the slot being released — the re-claim below keeps the
+        // consultation at its true duration instead of the base grid's.
+        const previousSlot =
+          isReschedule && appt.timeSlotId
+            ? await prisma.doctorTimeSlot.findUnique({
+                where: { id: appt.timeSlotId },
+                select: { startAt: true, endAt: true },
+              })
+            : null;
+        const previousSlotMinutes = previousSlot
+          ? Math.round(
+              (previousSlot.endAt.getTime() - previousSlot.startAt.getTime()) /
+                60_000,
+            )
+          : null;
+
         if ((isReschedule || isCancelling) && appt.timeSlotId) {
           // Cancelling returns a spent allowance unit (decision 16). A
           // RESCHEDULE deliberately does not: the consultation still happens,
@@ -337,6 +357,35 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
             },
             request,
           }).catch(() => {});
+          // Off the response path, but strictly ordered: the Meet event takes
+          // its end time from the appointment's slot, so the slot has to be
+          // back in place before the link is reissued.
+          void (async () => {
+            // The old slot was released above and only `scheduledAt` moved, so
+            // re-point the appointment at a real slot at the new time — else
+            // the booking page keeps offering it to other patients.
+            await reclaimSlotForRescheduledAppointment(
+              updated.id,
+              // The row was looked up scoped to this doctor, so they own it.
+              auth.doctorId,
+              updated.scheduledAt ?? null,
+              previousSlotMinutes,
+            ).catch(() => null);
+
+            // Same downstream work as an admin reschedule: reissue the Meet
+            // link (the old one points at a calendar event at the old time)
+            // and write it to the order + every linked appointment so all
+            // portals agree, re-arm the stage-gated reminder ladder against
+            // the new time, and notify the patient.
+            await applyRescheduleSideEffects({
+              appointmentId: updated.id,
+              scheduledAt: updated.scheduledAt ?? null,
+              timeChanged: true,
+              changeReason: "",
+            });
+          })().catch((err) => {
+            app.log.warn({ err }, "Reschedule side effects failed");
+          });
           // Admins read the slot on the BOOKED MARKET's clock — a doctor
           // rostered in several countries reschedules against the service's
           // country, not their own profile country.

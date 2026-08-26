@@ -14,6 +14,7 @@ import {
   UnrecognizedAppointmentStatusError,
 } from "../modules/appointments/appointment-status-transitions.js";
 import { SlotAlreadyTakenError } from "../modules/doctor-availability/doctor-availability.service.js";
+import { applyRescheduleSideEffects } from "../modules/appointments/reschedule-side-effects.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import {
@@ -262,7 +263,23 @@ const accountAppointmentsRoute: FastifyPluginAsync = async (app) => {
         metadata: { newTimeSlotId: body.data.newTimeSlotId },
         request,
       }).catch(() => {});
-      return okResponse({ appointment });
+
+      // A self-service move gets the same treatment as an admin one: new Meet
+      // link written to the order + every linked appointment (so all portals
+      // show it), reminder ladder re-armed on the new time, and the patient +
+      // doctor told. No change reason — the patient moved it themselves.
+      const sideEffects = await applyRescheduleSideEffects({
+        appointmentId: appointment.id,
+        timeChanged: true,
+        changeReason: "",
+      }).catch(() => null);
+
+      // Re-read so the response carries the regenerated Meet link rather than
+      // the one that belonged to the old calendar event.
+      const refreshed = sideEffects?.meetRegenerated
+        ? await getAppointmentForUser(appointment.id, authUser.id)
+        : null;
+      return okResponse({ appointment: refreshed ?? appointment });
     } catch (error) {
       if (error instanceof AppointmentNotOwnedError) {
         return reply.status(404).send(errorResponse("Appointment not found"));

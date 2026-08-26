@@ -765,6 +765,107 @@ export async function startPostPaymentFlow(orderId: string) {
   await post_sendPaymentConfirmation(orderId);
 }
 
+/**
+ * Re-arm the post-payment reminder ladder after a consultation is moved.
+ *
+ * `Order.postPaymentStage` only ever moves forward, and
+ * `runPostPaymentReminderCron` gates every send on it. So an order whose
+ * 1-hour reminder (stage 3) or 5-minute reminder (stage 4) already fired
+ * against the ORIGINAL consultation time is invisible to the cron for its NEW
+ * time: the patient is rescheduled and then never reminded again (stage 4 also
+ * drops out of the cron's candidate query entirely). Rewind the stage to
+ * whichever rung still has lead time against the new start:
+ *
+ *   more than 65 min out -> stage 2 (MEETING_LINK): 1-hour + 5-minute re-fire
+ *   65 min or less       -> stage 3 (ONE_HOUR): the 1-hour window is already
+ *                           gone, but keep the 5-minute reminder armed
+ *
+ * The sends themselves carry no per-time dedupe beyond the stage, so a rewind
+ * is all that is needed for the ladder to run again on the new time.
+ *
+ * Returns the stage to rewind to, or null to leave the order alone: the stage
+ * has not reached the meeting link yet (the ladder is still ahead of the move
+ * and the cron re-reads the start time every tick anyway), the new start is
+ * unknown or already past, or the target is not actually behind the current
+ * stage. `rearmPostPaymentRemindersForReschedule` adds the unpaid-order guard.
+ */
+export function postPaymentStageAfterReschedule(input: {
+  currentStage: number;
+  consultStart: Date | null;
+  now: Date;
+}): number | null {
+  const { currentStage, consultStart, now } = input;
+  if (currentStage < POST_PAYMENT_STAGE_MEETING_LINK) return null;
+  if (!consultStart) return null;
+
+  const leadMs = consultStart.getTime() - now.getTime();
+  if (leadMs <= 0) return null;
+
+  // The cron fires the 1-hour reminder inside a 55-65 minute window; anything
+  // closer than that has already missed it, so only the 5-minute rung is left.
+  const targetStage =
+    leadMs > 65 * MS_MINUTE
+      ? POST_PAYMENT_STAGE_MEETING_LINK
+      : POST_PAYMENT_STAGE_ONE_HOUR;
+  return targetStage < currentStage ? targetStage : null;
+}
+
+export async function rearmPostPaymentRemindersForReschedule(
+  orderId: string,
+  newConsultStart?: Date | null,
+): Promise<void> {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    select: { id: true, paymentStatus: true, postPaymentStage: true },
+  });
+  if (!order) return;
+  if (order.paymentStatus !== "PAID") return;
+
+  const consultStart =
+    newConsultStart ?? (await resolveConsultationStartForOrder(orderId));
+
+  const targetStage = postPaymentStageAfterReschedule({
+    currentStage: order.postPaymentStage,
+    consultStart,
+    now: new Date(),
+  });
+  if (targetStage === null || !consultStart) return;
+
+  await prisma.order.update({
+    where: { id: orderId },
+    data: { postPaymentStage: targetStage },
+  });
+
+  await createAutomationRun({
+    automationKey: "post_payment_reminders_rearmed",
+    orderId,
+    status: "SUCCESS",
+    summary: `Reminder ladder re-armed after reschedule (stage ${order.postPaymentStage} -> ${targetStage})`,
+    metadata: {
+      previousStage: order.postPaymentStage,
+      newStage: targetStage,
+      consultStart: consultStart.toISOString(),
+    },
+    executedAt: new Date(),
+  }).catch(() => undefined);
+}
+
+/**
+ * Same as `rearmPostPaymentRemindersForReschedule`, keyed off the appointment
+ * so callers that only hold an appointment id don't each re-derive the order.
+ */
+export async function rearmPostPaymentRemindersForAppointment(
+  appointmentId: string,
+  newConsultStart?: Date | null,
+): Promise<void> {
+  const item = await prisma.orderItem.findFirst({
+    where: { appointmentId, kind: { in: CONSULTATION_KINDS } },
+    select: { orderId: true },
+  });
+  if (!item?.orderId) return;
+  await rearmPostPaymentRemindersForReschedule(item.orderId, newConsultStart);
+}
+
 export async function runPostPaymentReminderCron() {
   const now = new Date();
   const oneHourWindowStart = new Date(now.getTime() + 55 * MS_MINUTE);
