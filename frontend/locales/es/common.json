@@ -326,7 +326,7 @@
     "faqsLabel": "Preguntas frecuentes",
     "bookThisClinicianLabel": "Reservar este clínico",
     "openVideoSlotsHeading": "Slots de vídeo disponibles, sujeto a disponibilidad.",
-    "calendarInviteBody": "Recibirá una invitación de calendario inmediatamente después de la reserva — sin idas y venidas.",
+    "calendarInviteBody": "Recibirá una invitación de calendario inmediatamente después de la reserva, sin idas y venidas.",
     "generalPracticeFallback": "Práctica general",
     "heroDescription": "Revise los detalles del perfil del médico, las áreas de consulta y las opciones de reserva antes de programar su cita.",
     "bookConsultation": "Reservar consulta",
@@ -562,7 +562,7 @@
     "readyEyebrow": "Cuando tú quieras",
     "bookHeading": "Reservar {service} en {country}",
     "fromPricePrefix": "Desde {price} · ",
-    "liveAvailability": "Disponibilidad en directo — elige un médico y una hora que te convenga.",
+    "liveAvailability": "Disponibilidad en directo. Elige un médico y una hora que te convenga.",
     "disclaimer": "La información de esta página es general y no sustituye el asesoramiento, diagnóstico o tratamiento médico profesional. Reserva una consulta para hablar de tu situación con un médico colegiado para ejercer en {country}.",
     "clinicallyReviewedBy": "Revisado clínicamente por",
     "insuranceAvailability": "También aceptamos {list} para este servicio."

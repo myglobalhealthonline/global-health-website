@@ -537,7 +537,7 @@ export function DoctorProfileTemplate({
                 className="mt-4 text-[14.5px] leading-[1.7] text-[var(--color-text-muted)]"
               >
                 {t?.calendarInviteBody ??
-                  "You'll receive a calendar invite immediately after booking — no back-and-forth."}
+                  "You'll receive a calendar invite immediately after booking, with no back-and-forth."}
               </p>
               <BookCta
                 href={hero.primaryCta.href}

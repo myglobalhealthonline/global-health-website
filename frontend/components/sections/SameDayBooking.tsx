@@ -65,7 +65,7 @@ const DEFAULT_I18N: SameDayBookingI18n = {
   loading: "Finding open times…",
   noSlots: "No times today or tomorrow for this language. Try another language.",
   continue: "Continue",
-  reassure: "Choose your language, pick a time — we will assign the right GP.",
+  reassure: "Choose your language and pick a time. We will assign the right GP.",
   minSuffix: "min",
 };
 

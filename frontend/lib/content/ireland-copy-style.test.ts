@@ -42,6 +42,12 @@ function extractIrelandFaqBlock(source: string, sectionName: string): string {
   return match?.[1] ?? "";
 }
 
+function loadLocalePage(locale: string, page: string): unknown {
+  return JSON.parse(
+    readFileSync(new URL(`../../locales/${locale}/${page}.json`, import.meta.url), "utf8"),
+  );
+}
+
 describe("Ireland public copy style", () => {
   it("country-home-copy Ireland locale overrides contain no em dashes", () => {
     for (const locale of IRELAND_LOCALES) {
@@ -61,6 +67,49 @@ describe("Ireland public copy style", () => {
           irelandStaticPageSeo(page, locale),
         );
       }
+    }
+  });
+
+  it("Ireland about and contact page copy contains no em dashes in every locale", () => {
+    for (const locale of IRELAND_LOCALES) {
+      expectNoEmDash(`${locale}/about.json`, loadLocalePage(locale, "about"));
+      expectNoEmDash(`${locale}/contact.json`, loadLocalePage(locale, "contact"));
+    }
+  });
+
+  it("Ireland home page copy contains no em dashes in every locale", () => {
+    for (const locale of IRELAND_LOCALES) {
+      expectNoEmDash(`${locale}/home.json`, loadLocalePage(locale, "home"));
+    }
+  });
+
+  it("shared doctor and service messages used on Ireland pages contain no em dashes", () => {
+    for (const locale of IRELAND_LOCALES) {
+      const common = loadLocalePage(locale, "common") as {
+        doctorProfile: { calendarInviteBody: string };
+        serviceDetailPage: { liveAvailability: string };
+      };
+      expectNoEmDash(
+        `${locale}/common.doctorProfile.calendarInviteBody`,
+        common.doctorProfile.calendarInviteBody,
+      );
+      expectNoEmDash(
+        `${locale}/common.serviceDetailPage.liveAvailability`,
+        common.serviceDetailPage.liveAvailability,
+      );
+    }
+  });
+
+  it("Ireland public pricing copy contains no em dashes in every locale", () => {
+    for (const locale of IRELAND_LOCALES) {
+      const subscription = loadLocalePage(locale, "subscription") as {
+        howItWorks: unknown;
+        note: unknown;
+        pricing: unknown;
+      };
+      expectNoEmDash(`${locale}/subscription.howItWorks`, subscription.howItWorks);
+      expectNoEmDash(`${locale}/subscription.note`, subscription.note);
+      expectNoEmDash(`${locale}/subscription.pricing`, subscription.pricing);
     }
   });
 

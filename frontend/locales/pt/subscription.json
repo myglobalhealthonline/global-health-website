@@ -9,7 +9,7 @@
     "steps": [
       {
         "title": "Escolha o plano perfeito para si",
-        "body": "Selecione o plano de saúde que se adapta ao seu estilo de vida e às suas necessidades — Essential, Comprehensive ou Premium Wellness."
+        "body": "Selecione o plano de saúde que se adapta ao seu estilo de vida e às suas necessidades: Essential, Comprehensive ou Premium Wellness."
       },
       {
         "title": "Inscreva-se com facilidade",
@@ -17,11 +17,11 @@
       },
       {
         "title": "Marque a sua consulta a qualquer hora",
-        "body": "Marque uma consulta online quando lhe der jeito — de dia ou à noite, a partir de qualquer dispositivo."
+        "body": "Marque uma consulta online quando lhe der jeito, de dia ou à noite, a partir de qualquer dispositivo."
       },
       {
         "title": "Sem taxas de marcação adicionais",
-        "body": "O seu plano mensal cobre a marcação — sem custos surpresa para agendar uma consulta."
+        "body": "O seu plano mensal cobre a marcação, sem custos surpresa para agendar uma consulta."
       },
       {
         "title": "Fale com um médico a partir de qualquer lugar",
@@ -45,7 +45,7 @@
     "titleLead": "Cuidados que",
     "titleAccent": "se renovam",
     "titleTrail": "consigo",
-    "lede": "Cuidados mensais de medicina geral online com créditos de consulta, poupança em especialistas e recompensas de bem-estar — com preços para {country}.",
+    "lede": "Cuidados mensais de medicina geral online com créditos de consulta, poupança em especialistas e recompensas de bem-estar, com preços para {country}.",
     "ctaLabel": "Ver planos",
     "secondaryLabel": "Falar com um médico",
     "eyebrow": "Adesão mensal",
@@ -68,7 +68,7 @@
     "managePlan": "Gerir plano",
     "switchToThisPlan": "Mudar para este plano",
     "viewDetails": "Detalhes do plano",
-    "onlineOnlyNote": "Apenas consultas online/por vídeo — sem consultas presenciais e sem prescrições.",
+    "onlineOnlyNote": "Apenas consultas online ou por vídeo, sem consultas presenciais nem prescrições.",
     "trust_card1_title": "Médicos licenciados",
     "trust_card1_subtitle": "Registados localmente",
     "trust_card2_title": "Planos flexíveis",

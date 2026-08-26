@@ -1,6 +1,6 @@
 {
   "hero": {
-    "eyebrow": "Online zdravotní klinika — po celé Evropě",
+  "eyebrow": "Online zdravotní klinika po celé Evropě",
     "title": "Licencované online konzultace přizpůsobené vašemu bydlišti",
     "description": "Bezpečná péče prostřednictvím videa a zpráv po celé Evropě.",
     "selectCountry": "Vyberte svou zemi",
@@ -32,14 +32,14 @@
       "today": "Dnes",
       "continue": "Pokračovat",
       "minSuffix": "min",
-      "reassure": "Vyberte svůj jazyk, zvolte čas — přiřadíme vám správného lékaře."
+      "reassure": "Vyberte svůj jazyk a zvolte čas. Přiřadíme vám správného lékaře."
     }
   },
   "team": {
     "eyebrow": "Tým",
     "headline": "Uvidím pokaždé",
     "headlineAccent": "stejného lékaře?",
-    "body": "Každá konzultace probíhá s někým registrovaným tam, kde se nacházíte. Žádná call centra, žádné neznámé tváře — lékař na obrazovce je lékař z profilu.",
+    "body": "Každá konzultace probíhá s někým registrovaným tam, kde se nacházíte. Žádná call centra ani neznámé tváře. Lékař na obrazovce je lékař z profilu.",
     "registeredSingular": "registrovaný lékař",
     "registeredPlural": "registrovaní lékaři",
     "ctaView": "Zobrazit profil",
@@ -63,7 +63,7 @@
     "eyebrow": "Jak to funguje",
     "headlineMain": "Jak to",
     "headlineAccent": "funguje?",
-    "subtitle": "Od výběru služby k potvrzené schůzce — vyberte lékaře, zvolte čas a získejte péči odkudkoli.",
+    "subtitle": "Vyberte službu a lékaře, zvolte čas a získejte péči odkudkoli.",
     "step1Title": "Vyberte svou službu",
     "step1Body": "Procházejte konzultace praktického lékaře, doporučení ke specialistům a domácí testovací služby. Filtrujte podle jazyka, naléhavosti nebo ceny.",
     "step2Title": "Vyberte lékaře a čas",

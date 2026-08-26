@@ -1,6 +1,6 @@
 {
   "hero": {
-    "eyebrow": "Clínica médica online — en toda Europa",
+  "eyebrow": "Clínica médica online en toda Europa",
     "title": "Consultas online con colegiados, adaptadas a donde vives",
     "description": "Atención segura por vídeo y mensajes en toda Europa.",
     "selectCountry": "Selecciona tu país",
@@ -39,7 +39,7 @@
     "eyebrow": "El equipo",
     "headline": "¿Veré siempre",
     "headlineAccent": "al mismo médico?",
-    "body": "Cada consulta es con alguien colegiado donde estás. Sin call centres, sin rotación de desconocidos — el médico en pantalla es el médico del perfil.",
+    "body": "Cada consulta es con alguien colegiado donde estás. Sin call centres ni rotación de desconocidos. El médico en pantalla es el médico del perfil.",
     "registeredSingular": "clínico registrado",
     "registeredPlural": "clínicos registrados",
     "ctaView": "Ver perfil",
@@ -63,7 +63,7 @@
     "eyebrow": "Cómo funciona",
     "headlineMain": "¿Cómo",
     "headlineAccent": "funciona?",
-    "subtitle": "Desde elegir un servicio hasta una cita confirmada — selecciona un clínico, elige un horario y recibe atención desde cualquier lugar.",
+    "subtitle": "Elige un servicio y un clínico, selecciona un horario y recibe atención desde cualquier lugar.",
     "step1Title": "Elige tu servicio",
     "step1Body": "Navega por consultas de médico general, derivaciones a especialistas y pruebas en casa. Filtra por idioma, urgencia o precio.",
     "step2Title": "Elige médico y horario",

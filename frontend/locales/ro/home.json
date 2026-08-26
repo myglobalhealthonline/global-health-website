@@ -1,6 +1,6 @@
 {
   "hero": {
-    "eyebrow": "Clinică medicală online — în toată Europa",
+  "eyebrow": "Clinică medicală online în toată Europa",
     "title": "Consultații online licențiate, adaptate locului unde trăiești",
     "description": "Îngrijire sigură prin video și mesaje în toată Europa.",
     "selectCountry": "Selectați țara dvs.",
@@ -32,14 +32,14 @@
       "today": "Astăzi",
       "continue": "Continuați",
       "minSuffix": "min",
-      "reassure": "Alegeți limba, selectați o oră — vă vom aloca medicul de familie potrivit."
+      "reassure": "Alegeți limba și selectați o oră. Vă vom aloca medicul de familie potrivit."
     }
   },
   "team": {
     "eyebrow": "Echipa",
     "headline": "Voi vedea mereu",
     "headlineAccent": "același medic?",
-    "body": "Fiecare consultație este cu cineva autorizat acolo unde vă aflați. Fără call centre, fără rotație de necunoscuți — medicul de pe ecran este medicul din profil.",
+    "body": "Fiecare consultație este cu cineva autorizat acolo unde vă aflați. Fără call centre sau rotație de necunoscuți. Medicul de pe ecran este medicul din profil.",
     "registeredSingular": "medic înregistrat",
     "registeredPlural": "medici înregistrați",
     "ctaView": "Vezi profilul",
@@ -63,7 +63,7 @@
     "eyebrow": "Cum funcționează",
     "headlineMain": "Cum",
     "headlineAccent": "funcționează?",
-    "subtitle": "De la alegerea unui serviciu până la o programare confirmată — selectați un clinician, alegeți un orar și primiți îngrijire de oriunde.",
+    "subtitle": "Alegeți un serviciu și un clinician, selectați un orar și primiți îngrijire de oriunde.",
     "step1Title": "Alegeți serviciul dvs.",
     "step1Body": "Răsfoiți consultații la medic de familie, trimiteri la specialiști și teste la domiciliu. Filtrați după limbă, urgență sau preț.",
     "step2Title": "Alegeți medic și orar",

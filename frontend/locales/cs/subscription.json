@@ -9,7 +9,7 @@
     "steps": [
       {
         "title": "Vyberte si ideální plán",
-        "body": "Vyberte si zdravotní plán, který odpovídá vašemu životnímu stylu a potřebám — Essential, Comprehensive nebo Premium Wellness."
+        "body": "Vyberte si zdravotní plán, který odpovídá vašemu životnímu stylu a potřebám: Essential, Comprehensive nebo Premium Wellness."
       },
       {
         "title": "Snadná registrace",
@@ -17,11 +17,11 @@
       },
       {
         "title": "Objednejte se kdykoli",
-        "body": "Objednejte se na online konzultaci, kdy se vám to hodí — ve dne i večer, z jakéhokoli zařízení."
+        "body": "Objednejte se na online konzultaci, kdy se vám to hodí, ve dne i večer a z jakéhokoli zařízení."
       },
       {
         "title": "Žádné další poplatky za objednání",
-        "body": "Váš měsíční plán pokrývá objednání — žádné nečekané poplatky za sjednání konzultace."
+        "body": "Váš měsíční plán pokrývá objednání bez nečekaných poplatků za sjednání konzultace."
       },
       {
         "title": "Spojte se s lékařem odkudkoli",
@@ -45,7 +45,7 @@
     "titleLead": "Péče, která",
     "titleAccent": "se obnovuje",
     "titleTrail": "s vámi",
-    "lede": "Měsíční online péče praktického lékaře s kredity na konzultace, slevami u specialistů a odměnami za wellness — s cenami pro zemi {country}.",
+    "lede": "Měsíční online péče praktického lékaře s kredity na konzultace, slevami u specialistů a odměnami za wellness, s cenami pro zemi {country}.",
     "ctaLabel": "Zobrazit plány",
     "secondaryLabel": "Promluvit s lékařem",
     "eyebrow": "Měsíční členství",
@@ -68,7 +68,7 @@
     "managePlan": "Spravovat plán",
     "switchToThisPlan": "Přejít na tento plán",
     "viewDetails": "Podrobnosti plánu",
-    "onlineOnlyNote": "Pouze online/video konzultace — žádné osobní návštěvy a žádné předpisy.",
+    "onlineOnlyNote": "Pouze online nebo video konzultace, bez osobních návštěv a předpisů.",
     "trust_card1_title": "Licencovaní lékaři",
     "trust_card1_subtitle": "Registrovaní lokálně",
     "trust_card2_title": "Flexibilní plány",

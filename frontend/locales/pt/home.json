@@ -1,6 +1,6 @@
 {
   "hero": {
-    "eyebrow": "Clínica médica online — em toda a Europa",
+  "eyebrow": "Clínica médica online em toda a Europa",
     "title": "Consultas online licenciadas, adaptadas ao seu país",
     "description": "Cuidados seguros por vídeo e mensagens em toda a Europa.",
     "selectCountry": "Selecione o seu país",
@@ -32,14 +32,14 @@
       "today": "Hoje",
       "continue": "Continuar",
       "minSuffix": "min",
-      "reassure": "Escolha o seu idioma, escolha uma hora — nós iremos atribuir o médico de família adequado."
+      "reassure": "Escolha o seu idioma e uma hora. Iremos atribuir o médico de família adequado."
     }
   },
   "team": {
     "eyebrow": "A equipa",
     "headline": "Vou ver sempre",
     "headlineAccent": "o mesmo médico?",
-    "body": "Cada consulta é com alguém licenciado no seu país. Sem call centres, sem rotatividade de desconhecidos — o médico no ecrã é o médico no perfil.",
+    "body": "Cada consulta é com alguém licenciado no seu país. Sem call centres nem rotatividade de desconhecidos. O médico no ecrã é o médico no perfil.",
     "registeredSingular": "clínico registado",
     "registeredPlural": "clínicos registados",
     "ctaView": "Ver perfil",
@@ -63,7 +63,7 @@
     "eyebrow": "Como funciona",
     "headlineMain": "Como",
     "headlineAccent": "funciona?",
-    "subtitle": "Desde a escolha de um serviço até à confirmação da consulta — selecione um clínico, escolha um horário e receba cuidados de qualquer lugar.",
+    "subtitle": "Escolha um serviço e um clínico, selecione um horário e receba cuidados de qualquer lugar.",
     "step1Title": "Escolha o seu serviço",
     "step1Body": "Consulte serviços de médico geral, referências a especialistas e testes em casa. Filtre por idioma, urgência ou preço.",
     "step2Title": "Escolha médico e horário",

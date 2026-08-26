@@ -309,7 +309,7 @@ export function DoctorCard({
                     // visible text (the registration number), not replace it.
                     aria-label={
                       imcRegistration
-                        ? `${imcRegistration} — ${cardI18n.verifyRegistrationAria}`
+                        ? `${imcRegistration}, ${cardI18n.verifyRegistrationAria}`
                         : cardI18n.verifyRegistrationAria
                     }
                     // min-h-11 floors the box at the 44px touch target

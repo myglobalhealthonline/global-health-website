@@ -9,7 +9,7 @@
     "steps": [
       {
         "title": "Choose Your Perfect Plan",
-        "body": "Select the health plan that fits your lifestyle and needs — Essential, Comprehensive, or Premium Wellness."
+        "body": "Select the health plan that fits your lifestyle and needs: Essential, Comprehensive, or Premium Wellness."
       },
       {
         "title": "Sign Up with Ease",
@@ -17,11 +17,11 @@
       },
       {
         "title": "Schedule Your Appointment Anytime",
-        "body": "Book an online consultation whenever it suits you — day or evening, from any device."
+        "body": "Book an online consultation whenever it suits you, day or evening, from any device."
       },
       {
         "title": "No Additional Scheduling Fees",
-        "body": "Your monthly plan covers your booking — no surprise charges to schedule a consultation."
+        "body": "Your monthly plan covers your booking. There are no surprise charges to schedule a consultation."
       },
       {
         "title": "Connect with a Doctor from Anywhere",
@@ -45,7 +45,7 @@
     "titleLead": "Care that",
     "titleAccent": "renews",
     "titleTrail": "with you",
-    "lede": "Monthly online GP care with consultation credits, specialist savings and wellness rewards — priced for {country}.",
+    "lede": "Monthly online GP care with consultation credits, specialist savings and wellness rewards, priced for {country}.",
     "ctaLabel": "See plans",
     "secondaryLabel": "Talk to a doctor",
     "eyebrow": "Monthly membership",
@@ -68,7 +68,7 @@
     "managePlan": "Manage plan",
     "switchToThisPlan": "Switch to this plan",
     "viewDetails": "Plan details",
-    "onlineOnlyNote": "Online/video consultations only — no in-person visits and no prescriptions.",
+    "onlineOnlyNote": "Online and video consultations only. No in-person visits or prescriptions.",
     "trust_card1_title": "Licensed doctors",
     "trust_card1_subtitle": "Registered locally",
     "trust_card2_title": "Flexible plans",

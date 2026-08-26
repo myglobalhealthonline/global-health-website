@@ -250,7 +250,7 @@ export function FeaturedDoctor({
                       // visible registration number, not just the generic verb.
                       aria-label={
                         doctor.verifyRegistrationLabel
-                          ? `${doctor.imcRegistration} — ${doctor.verifyRegistrationLabel}`
+                          ? `${doctor.imcRegistration}, ${doctor.verifyRegistrationLabel}`
                           : doctor.imcRegistration
                       }
                       className="inline-flex min-h-11 items-center gap-1 font-semibold underline underline-offset-2 transition-opacity hover:opacity-75 motion-reduce:transition-none"

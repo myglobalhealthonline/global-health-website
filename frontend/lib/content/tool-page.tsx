@@ -751,7 +751,7 @@ export function ToolPage({
       <FAQSection
         theme="dark"
         eyebrow={bundle.ui.questionsEyebrow}
-        title={`${copy.cardTitle} — ${bundle.ui.faqSuffix}`}
+        title={`${copy.cardTitle}: ${bundle.ui.faqSuffix}`}
         items={faq}
       />
 

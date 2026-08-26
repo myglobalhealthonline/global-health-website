@@ -326,7 +326,7 @@
     "faqsLabel": "Häufig gestellte Fragen",
     "bookThisClinicianLabel": "Diesen Arzt buchen",
     "openVideoSlotsHeading": "Offene Videoslots, je nach Verfügbarkeit.",
-    "calendarInviteBody": "Sie erhalten sofort nach der Buchung eine Kalendereinladung – kein Hin und Her.",
+    "calendarInviteBody": "Sie erhalten sofort nach der Buchung eine Kalendereinladung, ohne weiteres Hin und Her.",
     "generalPracticeFallback": "Allgemeinmedizin",
     "heroDescription": "Überprüfen Sie die Details des Arztprofils, die Beratungsbereiche und die Buchungsoptionen, bevor Sie Ihren Termin vereinbaren.",
     "bookConsultation": "Beratung buchen",
@@ -562,7 +562,7 @@
     "readyEyebrow": "Bereit, wann Sie es sind",
     "bookHeading": "{service} in {country} buchen",
     "fromPricePrefix": "Ab {price} · ",
-    "liveAvailability": "Live-Verfügbarkeit — wählen Sie einen Arzt und eine Zeit, die zu Ihnen passt.",
+    "liveAvailability": "Live-Verfügbarkeit. Wählen Sie einen Arzt und eine Zeit, die zu Ihnen passt.",
     "disclaimer": "Die Informationen auf dieser Seite sind allgemeiner Natur und ersetzen keine professionelle medizinische Beratung, Diagnose oder Behandlung. Buchen Sie eine Beratung, um Ihre Situation mit einem in {country} zur Berufsausübung zugelassenen Arzt zu besprechen.",
     "clinicallyReviewedBy": "Klinisch überprüft von",
     "insuranceAvailability": "Für diese Leistung akzeptieren wir auch {list}."

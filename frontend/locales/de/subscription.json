@@ -9,7 +9,7 @@
     "steps": [
       {
         "title": "Wählen Sie Ihren perfekten Plan",
-        "body": "Wählen Sie den Gesundheitsplan, der zu Ihrem Lebensstil und Ihren Bedürfnissen passt — Essential, Comprehensive oder Premium Wellness."
+        "body": "Wählen Sie den Gesundheitsplan, der zu Ihrem Lebensstil und Ihren Bedürfnissen passt: Essential, Comprehensive oder Premium Wellness."
       },
       {
         "title": "Einfach anmelden",
@@ -17,15 +17,15 @@
       },
       {
         "title": "Vereinbaren Sie jederzeit Ihren Termin",
-        "body": "Buchen Sie eine Online-Beratung, wann immer es Ihnen passt — tagsüber oder abends, von jedem Gerät."
+        "body": "Buchen Sie eine Online-Beratung, wann immer es Ihnen passt, tagsüber oder abends und von jedem Gerät."
       },
       {
         "title": "Keine zusätzlichen Buchungsgebühren",
-        "body": "Ihr Monatsplan deckt die Buchung ab — keine versteckten Gebühren für die Terminvereinbarung."
+        "body": "Ihr Monatsplan deckt die Buchung ab, ohne versteckte Gebühren für die Terminvereinbarung."
       },
       {
         "title": "Verbinden Sie sich von überall mit einem Arzt",
-        "body": "Treffen Sie Ihren Arzt per sicherem Video — von zu Hause, der Arbeit oder unterwegs."
+        "body": "Treffen Sie Ihren Arzt per sicherem Video, von zu Hause, der Arbeit oder unterwegs."
       }
     ]
   },
@@ -45,7 +45,7 @@
     "titleLead": "Versorgung, die",
     "titleAccent": "sich erneuert",
     "titleTrail": "mit Ihnen",
-    "lede": "Monatliche hausärztliche Online-Versorgung mit Beratungsguthaben, Facharzt-Ersparnissen und Wellness-Prämien — abgestimmt auf {country}.",
+    "lede": "Monatliche hausärztliche Online-Versorgung mit Beratungsguthaben, Facharzt-Ersparnissen und Wellness-Prämien, abgestimmt auf {country}.",
     "ctaLabel": "Tarife ansehen",
     "secondaryLabel": "Mit einer Ärztin oder einem Arzt sprechen",
     "eyebrow": "Monatliche Mitgliedschaft",
@@ -68,7 +68,7 @@
     "managePlan": "Plan verwalten",
     "switchToThisPlan": "Zu diesem Plan wechseln",
     "viewDetails": "Tarifdetails",
-    "onlineOnlyNote": "Nur Online-/Videoberatungen — keine persönlichen Besuche und keine Verschreibungen.",
+    "onlineOnlyNote": "Nur Online- oder Videoberatungen, ohne persönliche Besuche und Verschreibungen.",
     "trust_card1_title": "Zugelassene Ärzte",
     "trust_card1_subtitle": "Lokal registriert",
     "trust_card2_title": "Flexible Tarife",

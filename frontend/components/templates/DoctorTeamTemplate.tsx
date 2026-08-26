@@ -246,7 +246,7 @@ export function DoctorTeamTemplate({
                         <li key={d.href}>
                           <Link href={d.href!}>
                             {d.name}
-                            {d.title ? ` — ${d.title}` : ""}
+                            {d.title ? `, ${d.title}` : ""}
                           </Link>
                         </li>
                       ))}

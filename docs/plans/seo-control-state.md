@@ -1,6 +1,6 @@
 # SEO control state — canonical
 
-**Last operational update: 2026-08-25.** Historical audit files remain snapshots;
+**Last operational update: 2026-08-26.** Historical audit files remain snapshots;
 this ledger is the source of truth for current status, dated gates and future work.
 
 **This file is the single source of truth for the SEO workstream.** It carries the
@@ -20,6 +20,24 @@ Property: `sc-domain:myglobalhealth.online` · Site: `https://www.myglobalhealth
 
 The active forward plan (§27) is surfaced first for operators; the numbered baseline,
 ledger and historical evidence follow from §0.
+
+### 27.10 Ireland public-copy humanization (2026-08-26)
+
+- Ireland home, doctors, plans, about, contact, tool, doctor-profile and public
+  service copy was reviewed for formulaic em-dash-heavy wording across EN, PT, ES,
+  CS, RO and DE. Static copy was rewritten contextually; titles use ordinary title
+  separators and prose uses sentences, commas or explanatory colons as appropriate.
+- A guarded production pass updated only text-bearing fields on active public Ireland
+  services, published page content, active Ireland doctor profiles and their visible
+  FAQs. Prices, duration, assignments, booking state, visibility and publication state
+  were outside the mutation surface.
+- The final full-scope production preview returned zero remaining eligible em-dash or
+  known fragment repairs. A separate grammar audit found and repaired the recurring
+  sentence fragments left by an overlapping writer before verification.
+- Frontend regression coverage now checks the six Ireland locales for the home,
+  about, contact and public pricing copy plus the shared doctor/service messages used
+  on those routes. Rendering may briefly show stale content until the 60-second Next
+  data-cache revalidation completes or the frontend commit is deployed.
 
 ---
 

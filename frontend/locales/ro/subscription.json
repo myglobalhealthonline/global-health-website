@@ -9,7 +9,7 @@
     "steps": [
       {
         "title": "Alege planul perfect pentru tine",
-        "body": "Alege planul de sănătate care se potrivește stilului tău de viață și nevoilor tale — Essential, Comprehensive sau Premium Wellness."
+        "body": "Alege planul de sănătate care se potrivește stilului tău de viață și nevoilor tale: Essential, Comprehensive sau Premium Wellness."
       },
       {
         "title": "Înscrie-te cu ușurință",
@@ -17,11 +17,11 @@
       },
       {
         "title": "Programează-ți consultația oricând",
-        "body": "Rezervă o consultație online când îți convine — zi sau seară, de pe orice dispozitiv."
+        "body": "Rezervă o consultație online când îți convine, zi sau seară, de pe orice dispozitiv."
       },
       {
         "title": "Fără taxe suplimentare de programare",
-        "body": "Planul tău lunar acoperă programarea — fără costuri-surpriză pentru a stabili o consultație."
+        "body": "Planul tău lunar acoperă programarea, fără costuri-surpriză pentru a stabili o consultație."
       },
       {
         "title": "Conectează-te cu un medic de oriunde",
@@ -45,7 +45,7 @@
     "titleLead": "Îngrijire care",
     "titleAccent": "se reînnoiește",
     "titleTrail": "împreună cu dumneavoastră",
-    "lede": "Îngrijire lunară online de la medicul de familie, cu credite de consultații, economii la specialiști și recompense de wellness — la prețuri pentru {country}.",
+    "lede": "Îngrijire lunară online de la medicul de familie, cu credite de consultații, economii la specialiști și recompense de wellness, la prețuri pentru {country}.",
     "ctaLabel": "Vedeți planurile",
     "secondaryLabel": "Discutați cu un medic",
     "eyebrow": "Abonament lunar",
@@ -68,7 +68,7 @@
     "managePlan": "Gestionează planul",
     "switchToThisPlan": "Schimbă la acest plan",
     "viewDetails": "Detalii plan",
-    "onlineOnlyNote": "Doar consultații online/video — fără vizite în persoană și fără prescripții medicale.",
+    "onlineOnlyNote": "Doar consultații online sau video, fără vizite în persoană și fără prescripții medicale.",
     "trust_card1_title": "Medici licențiați",
     "trust_card1_subtitle": "Înregistrați local",
     "trust_card2_title": "Planuri flexibile",
