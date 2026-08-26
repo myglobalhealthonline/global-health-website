@@ -33,8 +33,8 @@ automatically. Verify it's still current before relying on it: hit
 `x-ratelimit-remaining` counters — see the 2026-08-14 report for the exact
 command.)
 
-**Note on `GOOGLE_OAUTH_*`, `GMAIL_SEND_*`, `WA_*`, `INVOICE_EXPRESS_*`,
-`MAKE_INVOICE_WEBHOOK_URL`:** these are Zod `.optional()` fields in
+**Note on `GOOGLE_OAUTH_*`, `GMAIL_SEND_*`, `WA_*`, and `INVOICE_EXPRESS_*`:**
+these are Zod `.optional()` fields in
 `backend/src/config/env.ts` — optional means the key may be **absent**, not
 present-with-empty-string (`""` still fails `.email()`/`.url()`/`.min(1)`
 validation and crashes the deploy). To disable them, delete the variable

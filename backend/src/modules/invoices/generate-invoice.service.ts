@@ -5,85 +5,7 @@ import { absoluteSiteUrl } from "../../lib/email/send-email.js";
 import { sendSalesInvoiceCopy } from "../../lib/email/sales-invoice-copy.js";
 import type { PaymentLog } from "../orders/complete-order-payment.service.js";
 import { buildInvoicePdfData, renderInvoicePdfBuffer, type CreditNoteReason } from "./invoice-pdf.js";
-
-const MAKE_INVOICE_WEBHOOK_URL = process.env.MAKE_INVOICE_WEBHOOK_URL;
-const MAKE_INVOICE_WEBHOOK_ALLOWED_HOST = "hook.eu1.make.com";
-
-async function sendPaymentWebhookToMake(
-  orderId: string,
-  invoiceId: string,
-  invoiceNumber: string,
-  log: PaymentLog,
-): Promise<void> {
-  if (!MAKE_INVOICE_WEBHOOK_URL) return;
-
-  let webhookHost: string;
-  try {
-    webhookHost = new URL(MAKE_INVOICE_WEBHOOK_URL).hostname;
-  } catch {
-    log.error({ orderId }, "MAKE_INVOICE_WEBHOOK_URL is not a valid URL; skipping webhook");
-    return;
-  }
-  if (webhookHost !== MAKE_INVOICE_WEBHOOK_ALLOWED_HOST) {
-    log.error({ orderId, webhookHost }, "MAKE_INVOICE_WEBHOOK_URL host is not allowlisted; skipping webhook");
-    return;
-  }
-
-  const order = await prisma.order.findUnique({
-    where: { id: orderId },
-    select: {
-      fullName: true,
-      email: true,
-      totalCents: true,
-      commissionTotalCents: true,
-      shipLine1: true,
-      shipCity: true,
-      shipPostalCode: true,
-      stripeInvoiceId: true,
-      items: { select: { name: true }, take: 1 },
-    },
-  });
-  if (!order) return;
-
-  const profile = await prisma.patientProfile.findUnique({
-    where: { email: order.email.toLowerCase() },
-    select: {
-      taxIdNumber: true,
-      addressLine1: true,
-      addressCity: true,
-      addressPostalCode: true,
-    },
-  });
-
-  const payload = {
-    customer_name: order.fullName,
-    customer_email: order.email,
-    contact: { contactId: order.email },
-    customer_address_street: order.shipLine1 ?? profile?.addressLine1 ?? "",
-    customer_address_zip: order.shipPostalCode ?? profile?.addressPostalCode ?? "",
-    customer_address_city: order.shipCity ?? profile?.addressCity ?? "",
-    // Must match the document we actually issued. In a commission market that is
-    // the commission, NOT the amount charged — sending the gross here would book
-    // revenue we never earned (the doctor's share is not ours).
-    total: (order.commissionTotalCents ?? order.totalCents) / 100,
-    service_name: order.items[0]?.name ?? "Medical Consultation",
-    vat_id: profile?.taxIdNumber?.trim() ?? "",
-    invoice_id: invoiceId,
-    invoice_number: invoiceNumber,
-    stripe_invoice_id: order.stripeInvoiceId ?? null,
-  };
-
-  const res = await fetch(MAKE_INVOICE_WEBHOOK_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-    signal: AbortSignal.timeout(8000),
-  });
-
-  if (!res.ok) {
-    throw new Error(`Make.com webhook responded ${res.status}`);
-  }
-}
+import { issueInvoicePublicCapability } from "./invoice-public-link.service.js";
 
 const noopLog: PaymentLog = {
   info: () => {},
@@ -151,9 +73,14 @@ async function renderAndSendInvoiceDoc(
   { salesCopy = true }: { salesCopy?: boolean } = {},
 ): Promise<void> {
   const pdfBuffer = await renderInvoiceDocPdf(opts, log);
-
-  const invoiceUrl = absoluteSiteUrl(`/print/order-invoices/${opts.invoiceId}`);
   try {
+    const token = await issueInvoicePublicCapability(opts.invoiceId);
+    if (!token) {
+      throw new Error(`Could not mint a public capability for invoice ${opts.invoiceId}`);
+    }
+    const invoiceUrl = absoluteSiteUrl(
+      `/print/order-invoices/${opts.invoiceId}?token=${encodeURIComponent(token)}`,
+    );
     await sendInvoiceEmail({
       to: opts.email,
       fullName: opts.fullName,
@@ -343,7 +270,14 @@ export async function resendInvoiceWhatsApp(
         ? "CREDIT_NOTE"
         : "INVOICE"
   ];
-  const invoiceUrl = absoluteSiteUrl(`/print/order-invoices/${invoice.id}`);
+  const token = await issueInvoicePublicCapability(invoice.id);
+  if (!token) {
+    log.warn({ invoiceId }, "Invoice WhatsApp resend skipped — could not mint public capability");
+    return { ok: false, reason: "send_failed", message: "Could not generate the invoice link" };
+  }
+  const invoiceUrl = absoluteSiteUrl(
+    `/print/order-invoices/${invoice.id}?token=${encodeURIComponent(token)}`,
+  );
   const result = await sendWhatsAppText({
     to: invoice.order.phone,
     message:
@@ -424,7 +358,6 @@ export async function createUnpaidInvoiceForOrder(
 
   log.info({ orderId, invoiceNumber, invoiceId: invoice.id }, "Unpaid invoice created");
 
-  // No Make.com payment webhook here — nothing is paid yet.
   await renderAndSendInvoiceDoc(
     {
       invoiceId: invoice.id,
@@ -517,11 +450,6 @@ export async function generateInvoiceForOrder(
     // create-only backfill: keep the invoice row (it shows in the invoice
     // section, unsent) but don't deliver it — the admin sends it via Resend.
     if (!opts.skipEmail) {
-      // Fire-and-forget — webhook failure must never block the receipt.
-      sendPaymentWebhookToMake(orderId, receipt.id, receipt.invoiceNumber, log).catch((err) => {
-        log.warn({ err, orderId, invoiceNumber: receipt.invoiceNumber }, "Make.com invoice webhook failed");
-      });
-
       await renderAndSendInvoiceDoc(
         {
           invoiceId: receipt.id,
@@ -563,11 +491,6 @@ export async function generateInvoiceForOrder(
   // create-only backfill: keep the row (visible + unsent in the invoice
   // section) but skip delivery — admin sends it via Resend.
   if (!opts.skipEmail) {
-    // Fire-and-forget — webhook failure must never block invoice creation.
-    sendPaymentWebhookToMake(orderId, invoice.id, invoiceNumber, log).catch((err) => {
-      log.warn({ err, orderId, invoiceNumber }, "Make.com invoice webhook failed");
-    });
-
     await renderAndSendInvoiceDoc(
       {
         invoiceId: invoice.id,

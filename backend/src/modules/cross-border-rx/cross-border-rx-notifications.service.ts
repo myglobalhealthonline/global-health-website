@@ -395,7 +395,7 @@ export async function notifyPatientCrossBorderPayment(opts: {
   /** Source appointment's WhatsApp consent — gates the patient WhatsApp send. */
   whatsappConsent: boolean;
 }): Promise<void> {
-  const shortLink = orderPayShortLink(opts.orderId);
+  const shortLink = await orderPayShortLink(opts.orderId);
 
   const emailHtml = wrapHtml(
     "Complete your prescription request",

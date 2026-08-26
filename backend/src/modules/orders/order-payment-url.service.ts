@@ -9,6 +9,13 @@ import {
 import { buildPtStripeInvoiceData } from "../invoices/pt-stripe-invoice-data.js";
 import { checkoutBranding } from "../billing/checkout-branding.js";
 import { isCommissionCountry } from "./commission.service.js";
+import {
+  generateCapabilityNonce,
+  signPublicCapability,
+  verifyPublicCapability,
+} from "../../utils/public-capability.js";
+
+const ORDER_PAY_CAPABILITY_TTL = "30d";
 
 function isSessionOpen(session: {
   status: string | null;
@@ -22,15 +29,58 @@ function isSessionOpen(session: {
   );
 }
 
+async function getOrCreateOrderPayNonce(orderId: string): Promise<string | null> {
+  const existing = await prisma.order.findUnique({
+    where: { id: orderId },
+    select: { payAccessNonce: true },
+  });
+  if (!existing) return null;
+  if (existing.payAccessNonce) return existing.payAccessNonce;
+
+  const nonce = generateCapabilityNonce();
+  const claimed = await prisma.order.updateMany({
+    where: { id: orderId, payAccessNonce: null },
+    data: { payAccessNonce: nonce },
+  });
+  if (claimed.count > 0) return nonce;
+
+  const current = await prisma.order.findUnique({
+    where: { id: orderId },
+    select: { payAccessNonce: true },
+  });
+  return current?.payAccessNonce ?? null;
+}
+
+export async function issueOrderPayCapability(orderId: string): Promise<string | null> {
+  const nonce = await getOrCreateOrderPayNonce(orderId);
+  if (!nonce) return null;
+  return signPublicCapability(
+    { sub: orderId, purpose: "order-pay", nonce },
+    ORDER_PAY_CAPABILITY_TTL,
+  );
+}
+
+export async function verifyOrderPayCapability(token: string): Promise<string | null> {
+  const payload = verifyPublicCapability(token, "order-pay");
+  if (!payload) return null;
+  const order = await prisma.order.findUnique({
+    where: { id: payload.sub },
+    select: { id: true, payAccessNonce: true },
+  });
+  if (!order?.payAccessNonce || order.payAccessNonce !== payload.nonce) return null;
+  return order.id;
+}
+
 /**
- * Short, branded pay link that 302-redirects to the live Stripe Checkout URL
- * (frontend `app/pay/[orderId]` → backend `/api/orders/:id/pay-url`). Handed to
- * WhatsApp/email instead of the 200-char Stripe URL, and always resolves the
- * freshest session (and the cancelled/paid guard) at click time.
+ * Short, branded pay link that 302-redirects to the live Stripe Checkout URL.
+ * Handed to WhatsApp/email instead of the long Stripe URL and keyed on a
+ * purpose-bound signed capability rather than the raw order id.
  */
-export function orderPayShortLink(orderId: string): string {
+export async function orderPayShortLink(orderId: string): Promise<string> {
   const base = env.PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? "http://localhost:3000";
-  return `${base}/pay/${orderId}`;
+  const token = await issueOrderPayCapability(orderId);
+  if (!token) return `${base}/pay/unavailable`;
+  return `${base}/pay/${encodeURIComponent(token)}`;
 }
 
 /**

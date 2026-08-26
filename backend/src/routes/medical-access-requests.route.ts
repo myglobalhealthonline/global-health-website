@@ -6,6 +6,7 @@ import { errorResponse, okResponse } from "../utils/response.js";
 import { replyWithError } from "../utils/reply-error.js";
 import {
   createAccessRequest,
+  MedicalAccessRequestNotFoundError,
   respondToAccessRequest,
   respondToAccessRequestByToken,
   verifyAccessRequestToken,
@@ -171,8 +172,18 @@ const medicalAccessRequestsRoute: FastifyPluginAsync = async (app) => {
         ?? undefined;
 
       try {
+        // Bind the response to the authenticated account relation, not to an
+        // email string supplied by (or merely present on) the session.
+        // nosemgrep: gh-phi-route-missing-guard -- patient-self authorization input; the service additionally enforces this profile id against the request row.
+        const profile = await prisma.patientProfile.findUnique({
+          where: { userId: request.authUser.sub },
+          select: { id: true },
+        });
+        if (!profile) return reply.status(404).send(errorResponse("Access request not found"));
+
         await respondToAccessRequest({
           requestId: request.params.id,
+          patientProfileId: profile.id,
           approved: body.data.approved,
           patientResponseIp: ipAddress,
         });
@@ -181,6 +192,9 @@ const medicalAccessRequestsRoute: FastifyPluginAsync = async (app) => {
           body.data.approved ? "Access granted" : "Access denied",
         );
       } catch (error) {
+        if (error instanceof MedicalAccessRequestNotFoundError) {
+          return reply.status(404).send(errorResponse("Access request not found"));
+        }
         return replyWithError(reply, app.log, error, "Could not respond to access request");
       }
     },

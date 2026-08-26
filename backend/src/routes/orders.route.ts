@@ -66,7 +66,10 @@ import { recordAudit, recordCriticalAudit } from "../modules/audit/audit.service
 import { releaseSlotsToBaseGrid } from "../modules/doctor-availability/doctor-availability.service.js";
 import { sendOrderRefundNotifications } from "../modules/automation/refund-notifications.service.js";
 import { cancelOrderAppointments } from "../modules/appointments/appointments.service.js";
-import { resolveOrderPaymentUrl } from "../modules/orders/order-payment-url.service.js";
+import {
+  resolveOrderPaymentUrl,
+  verifyOrderPayCapability,
+} from "../modules/orders/order-payment-url.service.js";
 import { notifyAdminsOfInsuranceOrder, applyInsuranceVerificationDecision } from "../modules/insurance-verification/insurance-verification.service.js";
 import { decryptPhi } from "../lib/crypto/phi-crypto.js";
 import { declaredCoverageIsSystemVerified } from "../modules/benefits/declared-coverage.service.js";
@@ -1281,23 +1284,23 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
   );
 
   // ── Public short pay-link resolver ─────────────────────────────────
-  // Backs the branded `${SITE}/pay/:id` short link sent over WhatsApp/email.
-  // Unauthenticated (keyed on the unguessable order CUID). Returns the live
-  // Stripe Checkout URL, or `payable: false` when the order is no longer
-  // payable (resolveOrderPaymentUrl returns "" for cancelled/paid). The
-  // frontend `/pay/:id` route issues the browser redirect.
-  app.get<{ Params: { id: string } }>(
-    "/api/orders/:id/pay-url",
+  // Backs the branded `${SITE}/pay/:token` short link sent over WhatsApp/email.
+  // Unauthenticated, but only through a signed purpose-bound capability.
+  app.get<{ Params: { token: string } }>(
+    "/api/public/orders/pay/:token",
     async (request, reply) => {
-      const params = orderIdParamSchema.safeParse(request.params);
-      if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
       try {
-        const url = await resolveOrderPaymentUrl(params.data.id);
+        const token = typeof request.params.token === "string" ? request.params.token.trim() : "";
+        const orderId = token ? await verifyOrderPayCapability(token) : null;
+        if (!orderId) {
+          return reply.status(404).send(errorResponse("Payment link not found"));
+        }
+
+        // nosemgrep: gh-public-raw-id-capability -- orderId came from the signed capability above.
+        const url = await resolveOrderPaymentUrl(orderId);
         if (url) return okResponse({ url, payable: true, status: "PAYABLE" });
-        // Not payable — tell the caller WHY so the pay page can show the right
-        // message (already paid vs cancelled/expired) instead of a dead link.
         const order = await prisma.order.findUnique({
-          where: { id: params.data.id },
+          where: { id: orderId },
           select: { status: true, paymentStatus: true },
         });
         let status: "PAID" | "CANCELLED" | "UNAVAILABLE" = "UNAVAILABLE";
@@ -1313,8 +1316,57 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         }
         return okResponse({ url: null, payable: false, status });
       } catch (err) {
-        app.log.error({ err, orderId: params.data.id }, "pay-url resolve failed");
+        app.log.error({ err }, "public pay-url resolve failed");
         return okResponse({ url: null, payable: false, status: "UNAVAILABLE" });
+      }
+    },
+  );
+
+  // Raw database ids are not public payment capabilities.
+  app.get<{ Params: { id: string } }>(
+    "/api/orders/:id/pay-url",
+    async (_request, reply) => reply.status(404).send(errorResponse("Payment link not found")),
+  );
+
+  app.get<{ Params: { id: string } }>(
+    "/api/account/orders/:id/payment-url",
+    async (request, reply) => {
+      let user;
+      try {
+        user = await resolveOptionalAuthUser(request);
+      } catch (err) {
+        if (err instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(err.message));
+        }
+        return reply.status(500).send(errorResponse("Auth error"));
+      }
+      if (!user) return reply.status(401).send(errorResponse("Not authenticated"));
+      if (user.role !== "PATIENT" && user.role !== "ADMIN") {
+        return reply.status(403).send(errorResponse("Forbidden"));
+      }
+
+      const params = orderIdParamSchema.safeParse(request.params);
+      if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
+
+      try {
+        const order = await prisma.order.findFirst({
+          where: { id: params.data.id, userId: user.id },
+          select: { id: true, status: true },
+        });
+        if (!order) return reply.status(404).send(errorResponse("Order not found"));
+        if (order.status === "CANCELLED") {
+          return reply.status(409).send(errorResponse("This order was cancelled and can no longer be paid."));
+        }
+
+        const url = await resolveOrderPaymentUrl(order.id);
+        if (!url) return reply.status(502).send(errorResponse("Could not create a payment link"));
+        return okResponse({ url });
+      } catch (err) {
+        if (err instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(err.message));
+        }
+        app.log.error(err);
+        return reply.status(500).send(errorResponse("Could not resolve payment link"));
       }
     },
   );

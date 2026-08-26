@@ -361,7 +361,7 @@ export async function applyInsuranceVerificationDecision(
   // Mint / refresh the Stripe payment link off the order's CURRENT items
   // (insurance price when VERIFIED, standard price when REJECTED).
   const paymentUrl = await resolveOrderPaymentUrl(orderId);
-  const payLink = orderPayShortLink(orderId);
+    const payLink = await orderPayShortLink(orderId);
 
   // Notify the patient with a decision-specific message + the pay link.
   const fresh = await loadOrder(orderId);

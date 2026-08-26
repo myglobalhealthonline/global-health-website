@@ -3,13 +3,9 @@ import { getBackendOrigin } from "@/lib/server/backend-origin";
 
 export const dynamic = "force-dynamic";
 
-// Same-origin JSON proxy for the order-detail "Complete payment" CTA —
-// mirrors ../../appointments/[id]/payment-url/route.ts. The underlying
-// backend route (`/api/orders/:id/pay-url`) is intentionally unauthenticated
-// (it also backs the branded `/pay/:id` WhatsApp/email short link and is
-// keyed on the unguessable order CUID), so no cookie forwarding is required,
-// but we proxy through the frontend origin anyway to keep the client fetch
-// same-origin and consistent with every other account payment action.
+// Same-origin JSON proxy for the order-detail "Complete payment" CTA. Unlike
+// the public branded `/pay/{token}` link, this stays authenticated and scoped
+// to the caller's own order id.
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -22,8 +18,10 @@ export async function GET(
 
   let upstream: Response;
   try {
-    upstream = await fetch(`${backend}/api/orders/${encodeURIComponent(id)}/pay-url`, {
+    const cookie = request.headers.get("cookie") ?? "";
+    upstream = await fetch(`${backend}/api/account/orders/${encodeURIComponent(id)}/payment-url`, {
       method: "GET",
+      headers: cookie ? { cookie } : undefined,
       cache: "no-store",
     });
   } catch {

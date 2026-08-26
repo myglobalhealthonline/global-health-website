@@ -2979,6 +2979,11 @@ model Order {
   doctorPayoutTotalCents        Int?
   status                        OrderStatus           @default(PENDING)
   paymentStatus                 PaymentStatus         @default(UNPAID)
+  /// Revocable nonce bound into the signed public `/pay/{token}` capability.
+  /// The token itself is not stored; verification checks the signature plus
+  /// this live nonce so links can be rotated server-side without exposing raw
+  /// database IDs as payment capabilities.
+  payAccessNonce                String?
   /// Provenance of the booking — see BookingSource doc comment. Set at
   /// creation time by manual-booking.service.ts / partner-booking.service.ts;
   /// self-service checkout (orders.route.ts) leaves the WEBSITE default.
@@ -5108,6 +5113,10 @@ enum CreditNoteReason {
 /// CREDIT_NOTE (own CN- number) on refund — hence orderId is indexed, not unique.
 model Invoice {
   id               String              @id @default(cuid())
+  /// Revocable nonce bound into the signed public invoice capability emailed
+  /// to patients. The raw token is never stored; the server verifies the
+  /// signature and requires the nonce to still match this row.
+  publicAccessNonce String?
   invoiceNumber    String
   orderId          String
   order            Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)

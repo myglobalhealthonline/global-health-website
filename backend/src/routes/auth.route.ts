@@ -50,6 +50,15 @@ import { sendLoginOtpEmail } from "../lib/email/templates.js";
 import { alertSuspiciousLogin } from "../modules/security-alerts/security-alert.service.js";
 import { prisma } from "../db/prisma.js";
 
+export function clearRevokedSessionCookies(
+  reply: {
+    clearCookie: (name: string, options: ReturnType<typeof authCookieOptions>) => unknown;
+  },
+): void {
+  reply.clearCookie(env.AUTH_COOKIE_NAME, authCookieOptions());
+  reply.clearCookie(TRUSTED_DEVICE_COOKIE_NAME, trustedDeviceCookieOptions());
+}
+
 /** Exported for unit testing (see auth.route.schema.test.ts). Kept at
  *  module scope — was previously local to `authRoute`, which made the
  *  validation logic untestable without booting the full Fastify app. */
@@ -543,6 +552,10 @@ const authRoute: FastifyPluginAsync = async (app) => {
         body.data.currentPassword,
         body.data.newPassword,
       );
+      // changeUserPassword bumps tokenVersion, so the session used for this
+      // request is intentionally stale. Remove both local credentials now;
+      // other devices are rejected by requireAuth on their next request.
+      clearRevokedSessionCookies(reply);
       return okResponse({ user: updated }, "Password updated");
     } catch (error) {
       if (error instanceof AuthInvalidCredentialsError) {

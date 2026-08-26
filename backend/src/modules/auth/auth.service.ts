@@ -344,8 +344,14 @@ export async function changeUserPassword(
     const updated = await prisma.user.update({
       where: { id },
       // Clear the must-change flag on a successful self-rotation —
-      // the temp password is now invalid, so the gate is satisfied.
-      data: { passwordHash: newHash, mustChangePassword: false },
+      // the temp password is now invalid, so the gate is satisfied. Increment
+      // tokenVersion in the same write so every JWT issued under the old
+      // password (including the current request's token) is revoked.
+      data: {
+        passwordHash: newHash,
+        mustChangePassword: false,
+        tokenVersion: { increment: 1 },
+      },
     });
     // Task 4: a password change revokes every "trusted device" — a device
     // that skipped 2FA under the old password shouldn't keep skipping it.

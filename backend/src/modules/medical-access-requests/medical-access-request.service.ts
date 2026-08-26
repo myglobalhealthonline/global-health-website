@@ -12,6 +12,13 @@ const ACCESS_GRANT_DAYS = 30;
 // storage, revocable, short TTL — no login required for the patient to act.
 const TOKEN_TTL_MS = 14 * 24 * 60 * 60 * 1000;
 
+export class MedicalAccessRequestNotFoundError extends Error {
+  constructor() {
+    super("Medical access request not found");
+    this.name = "MedicalAccessRequestNotFoundError";
+  }
+}
+
 function hashAccessRequestToken(token: string): string {
   return createHash("sha256").update(token).digest("hex");
 }
@@ -130,6 +137,8 @@ export async function verifyAccessRequestToken(
   | {
       ok: true;
       requestId: string;
+      /** Internal capability binding; route responses deliberately omit it. */
+      patientProfileId: string;
       doctorName: string;
       doctorCountry: string;
       requestedAccessScope: string;
@@ -144,6 +153,7 @@ export async function verifyAccessRequestToken(
       where: { tokenHash },
       select: {
         id: true,
+        patientProfileId: true,
         status: true,
         tokenExpiresAt: true,
         requestingDoctorCountry: true,
@@ -171,6 +181,7 @@ export async function verifyAccessRequestToken(
     return {
       ok: true,
       requestId: request.id,
+      patientProfileId: request.patientProfileId,
       doctorName: doctor?.fullName ?? "A doctor",
       doctorCountry: request.requestingDoctorCountry ?? "unknown",
       requestedAccessScope: request.requestedAccessScope,
@@ -198,6 +209,7 @@ export async function respondToAccessRequestByToken(params: {
 
   await respondToAccessRequest({
     requestId: verified.requestId,
+    patientProfileId: verified.patientProfileId,
     approved: params.approved,
     patientResponseIp: params.patientResponseIp,
   });
@@ -220,59 +232,72 @@ export async function respondToAccessRequestByToken(params: {
  */
 export async function respondToAccessRequest(params: {
   requestId: string;
+  patientProfileId: string;
   approved: boolean;
   patientResponseIp?: string;
 }): Promise<void> {
   try {
     const newStatus = params.approved ? "APPROVED" : "DENIED";
 
-    // Idempotency guard: a request already in a terminal status has already
-    // been processed (grant created if approved, audit written). Retrying
-    // must be a no-op — otherwise a client retry after a false 500 (e.g. the
-    // audit write below failing) would create a duplicate MedicalAccessGrant,
-    // since there's no unique constraint on accessRequestId.
-    const existing = await prisma.medicalAccessRequest.findUnique({
-      where: { id: params.requestId },
-      select: { status: true },
-    });
-    if (existing && existing.status !== "PENDING") {
-      return;
-    }
-
-    const request = await prisma.medicalAccessRequest.update({
-      where: { id: params.requestId },
-      data: {
-        status: newStatus,
-        ...(params.approved ? { approvedAt: new Date() } : { deniedAt: new Date() }),
-        patientResponseIp: params.patientResponseIp ?? null,
-      },
-      select: {
-        id: true,
-        patientProfileId: true,
-        requestingUserId: true,
-        requestedAccessScope: true,
-      },
-    });
-
-    if (params.approved) {
-      if (!request.requestingUserId) {
-        // A grant without a grantee would silently match no doctor — fail loud.
+    const request = await prisma.$transaction(async (tx) => {
+      const existing = await tx.medicalAccessRequest.findUnique({
+        where: { id: params.requestId },
+        select: {
+          id: true,
+          status: true,
+          patientProfileId: true,
+          requestingUserId: true,
+          requestedAccessScope: true,
+        },
+      });
+      // Use the same not-found response for an absent request and one owned by
+      // another patient. This prevents ID probing and, critically, stops an
+      // authenticated patient from approving/denying someone else's request.
+      if (!existing || existing.patientProfileId !== params.patientProfileId) {
+        throw new MedicalAccessRequestNotFoundError();
+      }
+      if (existing.status !== "PENDING") return null;
+      if (params.approved && !existing.requestingUserId) {
         throw new Error(
           `Access request ${params.requestId} has no requestingUserId; cannot create grant`,
         );
       }
-      const expiresAt = new Date(Date.now() + ACCESS_GRANT_DAYS * 24 * 60 * 60 * 1000);
-      await prisma.medicalAccessGrant.create({
+
+      // Conditional write closes the find/update race: only one concurrent
+      // responder can move this exact patient's request out of PENDING.
+      const transitioned = await tx.medicalAccessRequest.updateMany({
+        where: {
+          id: params.requestId,
+          patientProfileId: params.patientProfileId,
+          status: "PENDING",
+        },
         data: {
-          accessRequestId: params.requestId,
-          patientProfileId: request.patientProfileId,
-          grantedToUserId: request.requestingUserId,
-          grantedToRole: "DOCTOR",
-          scope: request.requestedAccessScope,
-          expiresAt,
+          status: newStatus,
+          ...(params.approved ? { approvedAt: new Date() } : { deniedAt: new Date() }),
+          patientResponseIp: params.patientResponseIp ?? null,
         },
       });
-    }
+      if (transitioned.count !== 1) return null;
+
+      if (params.approved) {
+        const expiresAt = new Date(Date.now() + ACCESS_GRANT_DAYS * 24 * 60 * 60 * 1000);
+        await tx.medicalAccessGrant.create({
+          data: {
+            accessRequestId: params.requestId,
+            patientProfileId: existing.patientProfileId,
+            grantedToUserId: existing.requestingUserId!,
+            grantedToRole: "DOCTOR",
+            scope: existing.requestedAccessScope,
+            expiresAt,
+          },
+        });
+      }
+      return existing;
+    });
+
+    // Already-terminal or a simultaneous responder won the conditional
+    // transition. The first transaction performed the one allowed decision.
+    if (!request) return;
 
     // S-008: PHI access grant/deny decision — audit write must not be
     // silently swallowed. Wrapped in its own try/catch: the status
@@ -300,6 +325,7 @@ export async function respondToAccessRequest(params: {
       );
     }
   } catch (error) {
+    if (error instanceof MedicalAccessRequestNotFoundError) throw error;
     throw normalizeDbError(error, "Could not process access request response");
   }
 }

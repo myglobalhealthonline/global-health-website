@@ -5,6 +5,7 @@ import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { buildInvoiceDetailPayload } from "../modules/invoices/invoice-detail.service.js";
 import { buildInvoicePdfData, renderInvoicePdfBuffer } from "../modules/invoices/invoice-pdf.js";
+import { verifyInvoicePublicCapability } from "../modules/invoices/invoice-public-link.service.js";
 
 /**
  * Public read of one billing document, for the printable page at
@@ -18,21 +19,18 @@ import { buildInvoicePdfData, renderInvoicePdfBuffer } from "../modules/invoices
  * to /account, and every doctor got a hard 404. Anyone holding the link is,
  * by design, meant to be able to read the document it points at.
  *
- * ENUMERATION RISK — READ BEFORE COPYING THIS PATTERN
- * --------------------------------------------------
- * `Invoice.id` is a Prisma cuid(): a millisecond timestamp, a monotonic
- * counter, a host fingerprint and only four random characters. It is NOT a
- * capability token, so this endpoint is walkable by anyone willing to iterate
- * ids, and each hit returns a patient's name, email, phone and taxpayer id.
- * The rate limit below raises the cost of that walk; it does not prevent it.
- * The durable fix is a random per-invoice `publicToken` keyed into the URL —
- * intentionally deferred so that already-delivered links keep working.
+ * PUBLIC CAPABILITY MODEL
+ * -----------------------
+ * `Invoice.id` is not a public credential. Anonymous access is allowed only
+ * when the caller presents a signed purpose-bound capability token that
+ * matches the invoice and the row's current `publicAccessNonce`.
  *
  * Deliberately narrower than the admin route: no MedicalAccessLog row is
  * written (an anonymous read has no actor to attribute) and no clinical
  * content is exposed — this is a billing document, not a consultation record.
  */
 const paramsSchema = z.object({ invoiceId: z.string().trim().min(1).max(120) });
+const querySchema = z.object({ token: z.string().trim().min(20).max(1200).optional() });
 
 const publicInvoicesRoute: FastifyPluginAsync = async (app) => {
   app.get<{ Params: { invoiceId: string } }>(
@@ -43,12 +41,19 @@ const publicInvoicesRoute: FastifyPluginAsync = async (app) => {
       if (!params.success) {
         return reply.status(400).send(errorResponse("Invalid invoice id"));
       }
+      const query = querySchema.safeParse(request.query);
+      const token = query.success ? query.data.token : undefined;
 
       try {
+        const allowed = await verifyInvoicePublicCapability(params.data.invoiceId, token);
+        if (!allowed) {
+          return reply.status(404).send(errorResponse("Invoice not found"));
+        }
         // No nosemgrep needed: gh-phi-route-missing-guard matches prisma
         // find* calls INSIDE a FastifyPluginAsync, and every read for this
         // document happens in invoice-detail.service.ts. Do not inline a
         // prisma call here — it would trip that rule, correctly.
+        // nosemgrep: gh-public-raw-id-capability -- verified above for this id and its live nonce.
         const payload = await buildInvoiceDetailPayload(params.data.invoiceId);
         if (!payload) {
           return reply.status(404).send(errorResponse("Invoice not found"));
@@ -84,8 +89,15 @@ const publicInvoicesRoute: FastifyPluginAsync = async (app) => {
       if (!params.success) {
         return reply.status(400).send(errorResponse("Invalid invoice id"));
       }
+      const query = querySchema.safeParse(request.query);
+      const token = query.success ? query.data.token : undefined;
 
       try {
+        const allowed = await verifyInvoicePublicCapability(params.data.invoiceId, token);
+        if (!allowed) {
+          return reply.status(404).send(errorResponse("Invoice not found"));
+        }
+        // nosemgrep: gh-public-raw-id-capability -- verified above for this id and its live nonce.
         const invoice = await prisma.invoice.findUnique({
           where: { id: params.data.invoiceId },
           select: {

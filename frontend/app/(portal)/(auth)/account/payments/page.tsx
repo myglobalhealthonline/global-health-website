@@ -262,7 +262,7 @@ export default async function AccountPaymentsPage() {
           {/* Plain anchor: the backend sends Content-Disposition: attachment,
               so the browser saves the real PDF with no JavaScript. */}
           <a
-            href={row.hasStoredPdf ? ghStoredPdfHref(row) : `/api/public/invoices/${row.id}/pdf`}
+            href={ghStoredPdfHref(row)}
             className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--portal-primary)] hover:underline"
           >
             {a.payments.downloadInvoice}
@@ -441,7 +441,7 @@ export default async function AccountPaymentsPage() {
                     </Link>
                   )}
                   <a
-                    href={row.hasStoredPdf ? ghStoredPdfHref(row) : `/api/public/invoices/${row.id}/pdf`}
+                    href={ghStoredPdfHref(row)}
                     className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] bg-[var(--portal-surface-elevated)] px-3 py-1.5 text-xs font-semibold text-[var(--portal-primary)]"
                   >
                     {a.payments.downloadInvoice}

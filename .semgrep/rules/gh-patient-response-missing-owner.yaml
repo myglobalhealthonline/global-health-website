@@ -1,0 +1,27 @@
+rules:
+  - id: gh-patient-response-missing-owner
+    languages: [typescript]
+    severity: ERROR
+    message: >
+      An authenticated patient response is bound only to the request id.
+      Resolve the caller's patient profile and pass patientProfileId into the
+      service's atomic id + owner + PENDING update. Foreign and missing ids
+      must have the same response.
+    metadata:
+      category: security
+      cwe: CWE-639
+      references:
+        - docs/audits/security/full-repository-security-audit-2026-08-26.md
+    patterns:
+      - pattern: |
+          respondToAccessRequest({
+            requestId: $REQUEST.params.id,
+            ...
+          })
+      - pattern-not: |
+          respondToAccessRequest({
+            requestId: $REQUEST.params.id,
+            ...,
+            patientProfileId: $PATIENT,
+            ...
+          })

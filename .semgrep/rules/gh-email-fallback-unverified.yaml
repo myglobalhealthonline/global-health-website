@@ -1,0 +1,20 @@
+rules:
+  - id: gh-email-fallback-unverified
+    languages: [typescript]
+    severity: ERROR
+    message: >
+      This authenticated route authorizes records by the caller's email but
+      does not check emailVerifiedAt. Keep direct userId ownership available,
+      but allow an email fallback only after mailbox ownership is verified.
+    metadata:
+      category: security
+      cwe: CWE-862
+      references:
+        - docs/audits/security/full-repository-security-audit-2026-08-26.md
+    patterns:
+      - pattern-inside: |
+          $APP.$METHOD(..., async (...) => {
+            ...
+          })
+      - pattern: |
+          { email: { equals: $AUTH.email, mode: "insensitive" } }

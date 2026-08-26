@@ -506,7 +506,7 @@ export async function createSelfPayOrder(
     metadata: { status: "AWAITING_PAYMENT", orderId: order.id, totalCents: subtotalCents },
   }).catch(() => {});
 
-  return { orderId: order.id, payUrl, shortLink: orderPayShortLink(order.id) };
+    return { orderId: order.id, payUrl, shortLink: await orderPayShortLink(order.id) };
 }
 
 /**

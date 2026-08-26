@@ -473,8 +473,7 @@ jobs:
   # flagged line sits inside a template literal, where any inline comment
   # becomes literal PDF output text — it is carried forward via
   # --baseline-commit on pull requests instead, so it won't block merges but
-  # any genuinely NEW finding will. continue-on-error stays true until a
-  # clean run is confirmed in Actions — TODO: flip to false once verified.
+  # any genuinely NEW finding will. This scanner is a blocking security gate.
   sast-semgrep:
     name: SAST (Semgrep)
     runs-on: ubuntu-latest
@@ -492,7 +491,6 @@ jobs:
 
       - name: Scan (PR — baseline against base branch, only new findings block)
         if: github.event_name == 'pull_request'
-        continue-on-error: true # TODO: flip to false once a clean run is confirmed in Actions
         run: |
           semgrep --config p/typescript --config p/nodejs --config p/owasp-top-ten \
             --config p/secrets --config p/javascript \
@@ -501,7 +499,6 @@ jobs:
 
       - name: Scan (push — full scan, known baseline findings expected)
         if: github.event_name != 'pull_request'
-        continue-on-error: true # TODO: flip to false once a clean run is confirmed in Actions
         run: |
           semgrep --config p/typescript --config p/nodejs --config p/owasp-top-ten \
             --config p/secrets --config p/javascript \
@@ -528,10 +525,8 @@ jobs:
   # Loading all 5 rules per file (not one invocation per rule per file) keeps
   # this to 138 semgrep calls rather than 690.
   #
-  # continue-on-error stays true until a clean run is confirmed in Actions —
-  # separately, 3 files currently have confirmed real findings (tracked in
-  # the audit report) that this phase's scope was to detect, not fix — TODO:
-  # flip to false once those are remediated and a clean run is confirmed.
+  # Confirmed authorization findings are fixed before this gate is enabled;
+  # any new match blocks the workflow.
   sast-authz-rules:
     name: SAST (Custom Authorization Rules)
     runs-on: ubuntu-latest
@@ -546,7 +541,6 @@ jobs:
         run: pip install semgrep==1.172.0
 
       - name: Run custom authorization rules (per-file)
-        continue-on-error: true # TODO: flip to false once a clean run is confirmed in Actions
         run: |
           set -e
           fail=0
@@ -603,11 +597,8 @@ jobs:
   # surface); `image` scans the actual built artifact. --ignore-unfixed
   # because node:22-bookworm-slim carries ~160 Debian CVEs with no upstream
   # patch yet (verified locally) — failing on those would be permanently red
-  # for a risk this repo has no way to remediate. continue-on-error stays
-  # true until a clean run is confirmed in Actions (this job's image build
-  # step could not be dry-run locally — no container runtime on the audit
-  # host, see docs/audits/security/tooling-images-2026-08-02.md) — TODO: flip
-  # to false once verified green.
+  # for a risk this repo has no way to remediate. Fixable CRITICAL/HIGH
+  # findings remain blocking in both scans.
   container-scan:
     name: Container Scan (Trivy)
     runs-on: ubuntu-latest
@@ -616,7 +607,6 @@ jobs:
 
       - name: Scan Dockerfile + compose config
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
-        continue-on-error: true # TODO: flip to false once a clean run is confirmed in Actions
         with:
           scan-type: config
           scan-ref: .
@@ -639,7 +629,6 @@ jobs:
 
       - name: Scan built image
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
-        continue-on-error: true # TODO: flip to false once a clean run is confirmed in Actions
         with:
           scan-type: image
           image-ref: gh-frontend-scan:ci

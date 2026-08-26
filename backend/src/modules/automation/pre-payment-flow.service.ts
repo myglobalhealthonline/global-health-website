@@ -337,7 +337,7 @@ async function loadOrderContext(orderId: string, paymentUrl: string | null) {
   // link to messages (the raw Stripe URL is ~200 chars and looks broken in
   // WhatsApp). The short link re-resolves the live session at click time.
   const resolvedPaymentLink = await resolveOrderPaymentUrl(orderId, paymentUrl);
-  const messagePaymentLink = resolvedPaymentLink ? orderPayShortLink(orderId) : "";
+  const messagePaymentLink = resolvedPaymentLink ? await orderPayShortLink(orderId) : "";
   const ctx: PrePaymentMessageContext = {
     patientName: patientFullName,
     patientFirstName: firstName,

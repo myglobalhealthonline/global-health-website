@@ -1,0 +1,33 @@
+rules:
+  - id: gh-public-raw-id-capability
+    languages: [typescript]
+    severity: ERROR
+    message: >
+      A public invoice or payment route is using a database id as the access
+      capability. Resolve an explicit random/signed, purpose-bound capability
+      before loading the invoice or order; raw Prisma ids are identifiers, not
+      authorization secrets.
+    metadata:
+      category: security
+      cwe: CWE-639
+      references:
+        - docs/audits/security/full-repository-security-audit-2026-08-26.md
+    patterns:
+      - pattern-either:
+          - pattern: buildInvoiceDetailPayload($PARAMS.invoiceId)
+          - pattern: |
+              $PRISMA.invoice.findUnique({
+                where: { id: $PARAMS.invoiceId },
+                ...
+              })
+          - pattern: resolveOrderPaymentUrl($REQUEST.params.id)
+          - pattern: resolveOrderPaymentUrl($PARAMS.data.id)
+      - pattern-either:
+          - pattern-inside: |
+              $APP.get("/api/public/invoices/:invoiceId", ..., async (...) => {
+                ...
+              })
+          - pattern-inside: |
+              $APP.get("/api/orders/:id/pay-url", ..., async (...) => {
+                ...
+              })

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
@@ -15,6 +16,7 @@ export const metadata: Metadata = buildPublicMetadata({
 });
 
 type Params = { invoiceId: string };
+type SearchParams = { token?: string };
 
 /**
  * Reads the public billing endpoint, NOT /api/admin/invoices/:id. This page is
@@ -23,13 +25,16 @@ type Params = { invoiceId: string };
  * turned into a 404) and bounces the patient to /account, which is exactly the
  * bug this fixes.
  */
-async function fetchInvoiceDetail(invoiceId: string): Promise<InvoiceDetail | null> {
+async function fetchPublicInvoiceDetail(
+  invoiceId: string,
+  token: string,
+): Promise<InvoiceDetail | null> {
   const backend = getBackendOrigin();
   if (!backend) return null;
   try {
-    const res = await fetch(`${backend}/api/public/invoices/${encodeURIComponent(invoiceId)}`, {
-      cache: "no-store",
-    });
+    const url = new URL(`${backend}/api/public/invoices/${encodeURIComponent(invoiceId)}`);
+    url.searchParams.set("token", token);
+    const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) return null;
     const json = (await res.json()) as { ok?: boolean; data?: InvoiceDetail };
     if (!json.ok || !json.data) return null;
@@ -39,19 +44,55 @@ async function fetchInvoiceDetail(invoiceId: string): Promise<InvoiceDetail | nu
   }
 }
 
+async function fetchAuthenticatedInvoiceDetail(
+  invoiceId: string,
+): Promise<{ data: InvoiceDetail; source: "account" | "admin" } | null> {
+  const backend = getBackendOrigin();
+  if (!backend) return null;
+  const requestHeaders = await headers();
+  const cookie = requestHeaders.get("cookie") ?? "";
+  if (!cookie) return null;
+
+  for (const source of ["account", "admin"] as const) {
+    const res = await fetch(`${backend}/api/${source}/invoices/${encodeURIComponent(invoiceId)}`, {
+      cache: "no-store",
+      headers: { cookie },
+    }).catch(() => null);
+    if (!res?.ok) continue;
+    const json = (await res.json()) as { ok?: boolean; data?: InvoiceDetail };
+    if (json.ok && json.data) {
+      return { data: json.data, source };
+    }
+  }
+  return null;
+}
+
 export default async function PrintOrderInvoicePage({
   params,
+  searchParams,
 }: {
   params: Promise<Params>;
+  searchParams: Promise<SearchParams>;
 }) {
   const { invoiceId } = await params;
-  const data = await fetchInvoiceDetail(invoiceId);
+  const { token } = await searchParams;
+  const publicToken = typeof token === "string" && token.trim().length > 0 ? token.trim() : null;
+
+  const publicData = publicToken ? await fetchPublicInvoiceDetail(invoiceId, publicToken) : null;
+  const authed = publicData ? null : await fetchAuthenticatedInvoiceDetail(invoiceId);
+  const data = publicData ?? authed?.data ?? null;
   if (!data) notFound();
+
+  const downloadHref = publicToken
+    ? `/api/public/invoices/${encodeURIComponent(invoiceId)}/pdf?token=${encodeURIComponent(publicToken)}`
+    : authed?.source === "admin"
+      ? `/api/admin/invoices/${encodeURIComponent(invoiceId)}/pdf`
+      : `/api/account/invoices/${encodeURIComponent(invoiceId)}/pdf`;
 
   return (
     <InvoiceDocument
       data={data}
-      downloadHref={`/api/public/invoices/${encodeURIComponent(invoiceId)}/pdf`}
+      downloadHref={downloadHref}
     />
   );
 }

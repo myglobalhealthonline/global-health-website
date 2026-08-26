@@ -466,7 +466,7 @@ async function createAsyncFeeCheckoutForRequest(
       where: { id: request.orderId },
       select: { stripeCheckoutUrl: true },
     });
-    return existing?.stripeCheckoutUrl ?? orderPayShortLink(request.orderId);
+    return existing?.stripeCheckoutUrl ?? (await orderPayShortLink(request.orderId));
   }
 
   // Re-resolve the per-country config for THIS request's target country, so the
@@ -617,7 +617,7 @@ async function createAsyncFeeCheckoutForRequest(
     whatsappConsent: source?.whatsappConsent ?? false,
   }).catch(() => {});
 
-  return session.url ?? orderPayShortLink(order.id);
+  return session.url ?? (await orderPayShortLink(order.id));
 }
 
 // ── Patient consent (public, token-based) ────────────────────────────────────
@@ -752,7 +752,7 @@ export async function getCrossBorderRxConsentView(
       where: { id: request.orderId },
       select: { stripeCheckoutUrl: true },
     });
-    paymentUrl = order?.stripeCheckoutUrl ?? orderPayShortLink(request.orderId);
+    paymentUrl = order?.stripeCheckoutUrl ?? (await orderPayShortLink(request.orderId));
   } else if (request.status === "CONSENT_DECLINED") {
     gpBookingUrl = await buildGpBookingUrl(request.targetDoctorId, request.targetCountryCode);
   }

@@ -9,8 +9,30 @@ import {
   buildSubscriptionInvoiceDetail,
   buildSubscriptionInvoicePdfData,
 } from "../modules/invoices/subscription-invoice-document.service.js";
-import { renderInvoicePdfBuffer } from "../modules/invoices/invoice-pdf.js";
+import { buildInvoiceDetailPayload } from "../modules/invoices/invoice-detail.service.js";
+import { buildInvoicePdfData, renderInvoicePdfBuffer } from "../modules/invoices/invoice-pdf.js";
 import { getObject, streamToNodeReadable } from "../services/object-storage.js";
+
+type AccountInvoiceOwner = Pick<SafeUser, "id" | "email" | "emailVerifiedAt">;
+
+/**
+ * Guest-era orders may be claimed by email only after the account has proved
+ * control of that address. Direct User.id ownership remains available before
+ * verification, so this gate does not hide invoices already linked to the
+ * signed-in account.
+ */
+export function buildAccountInvoiceOrderScope(authUser: AccountInvoiceOwner) {
+  if (!authUser.emailVerifiedAt) {
+    return { userId: authUser.id };
+  }
+  return {
+    OR: [
+      { userId: authUser.id },
+      // nosemgrep: gh-email-fallback-unverified -- the early return above requires emailVerifiedAt.
+      { email: { equals: authUser.email, mode: "insensitive" as const } },
+    ],
+  };
+}
 
 /**
  * The signed-in patient's own Global Health billing documents — the invoices,
@@ -23,10 +45,10 @@ import { getObject, streamToNodeReadable } from "../services/object-storage.js";
  * invoices only, so consultation invoices were reachable solely through the
  * emailed link.
  *
- * OWNERSHIP: matched on the order's userId, and additionally on the order's
- * email so that bookings made as a guest before the account existed (or made
- * by staff on the patient's behalf) still appear. Email is compared
- * case-insensitively — order emails are not normalized on write.
+ * OWNERSHIP: always matched on the order's userId. After email verification,
+ * the order email is also accepted so guest-era/staff-created bookings appear.
+ * Email is compared case-insensitively because order emails are not normalized
+ * on write; an unverified account never receives this fallback.
  */
 const accountInvoicesRoute: FastifyPluginAsync = async (app) => {
   /**
@@ -83,12 +105,7 @@ const accountInvoicesRoute: FastifyPluginAsync = async (app) => {
     try {
       const invoices = await prisma.invoice.findMany({
         where: {
-          order: {
-            OR: [
-              { userId: authUser.id },
-              { email: { equals: authUser.email, mode: "insensitive" } },
-            ],
-          },
+          order: buildAccountInvoiceOrderScope(authUser),
         },
         orderBy: { generatedAt: "desc" },
         take: 100,
@@ -186,18 +203,47 @@ const accountInvoicesRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
+  app.get<{ Params: { invoiceId: string } }>(
+    "/api/account/invoices/:invoiceId",
+    async (request, reply) => {
+      const auth = await requirePatient(request, reply);
+      if (!auth) return;
+
+      try {
+        const invoice = await prisma.invoice.findFirst({
+          where: {
+            id: request.params.invoiceId,
+            order: buildAccountInvoiceOrderScope(auth),
+          },
+          select: { id: true },
+        });
+        if (!invoice) return reply.status(404).send(errorResponse("Invoice not found"));
+
+        const payload = await buildInvoiceDetailPayload(request.params.invoiceId);
+        if (!payload) return reply.status(404).send(errorResponse("Invoice not found"));
+
+        const { patientProfileId: _omit, ...body } = payload;
+        return okResponse(body);
+      } catch (error) {
+        const normalized = normalizeDbError(error, "Could not load invoice");
+        if (normalized instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(normalized.message));
+        }
+        app.log.error(normalized);
+        return reply.status(500).send(errorResponse("Could not load invoice"));
+      }
+    },
+  );
+
   /**
-   * The Portuguese Fatura-Recibo as a PDF.
+   * The patient's own document as a PDF.
    *
-   * Every other market's document is DRAWN on demand by
-   * /print/order-invoices/:invoiceId from the order's data. Portugal's is
-   * issued by InvoiceExpress, so there is nothing to draw — this streams the
-   * copy we stored when it was issued (see pt-invoice-mirror.service.ts). Our
-   * copy, deliberately, not a live InvoiceExpress link: the signed URLs expire
-   * and the document must outlive the third-party account.
+   * Portugal's Fatura-Recibo is mirrored into storage and streamed directly.
+   * Every other market's invoice is rendered server-side from the order data,
+   * matching the printable page but behind the authenticated account scope.
    *
-   * Scoped exactly like the listing above — the caller's own orders, matched on
-   * userId OR the order email, so guest-era bookings still resolve.
+   * Scoped exactly like the listing above — direct userId ownership always,
+   * plus the guest-era email fallback only after email verification.
    */
   app.get<{ Params: { invoiceId: string } }>(
     "/api/account/invoices/:invoiceId/pdf",
@@ -209,37 +255,54 @@ const accountInvoicesRoute: FastifyPluginAsync = async (app) => {
         const invoice = await prisma.invoice.findFirst({
           where: {
             id: request.params.invoiceId,
-            order: {
-              OR: [
-                { userId: auth.id },
-                { email: { equals: auth.email, mode: "insensitive" } },
-              ],
-            },
+            order: buildAccountInvoiceOrderScope(auth),
           },
-          select: { invoiceNumber: true, pdfStorageKey: true, invoiceExpressPermalink: true },
+          select: {
+            invoiceNumber: true,
+            pdfStorageKey: true,
+            invoiceExpressPermalink: true,
+            orderId: true,
+            generatedAt: true,
+            documentType: true,
+            creditNoteReason: true,
+          },
         });
         // Same 404 for "not yours" as for "does not exist" — an ownership probe
         // must not be distinguishable from a missing document.
         if (!invoice) return reply.status(404).send(errorResponse("Invoice not found"));
 
-        if (!invoice.pdfStorageKey) {
-          // The document exists in InvoiceExpress but the mirror has not landed
-          // (or this is a non-PT row, which renders through the print page).
-          return reply.status(404).send(errorResponse("Invoice PDF is not available yet"));
+        if (invoice.pdfStorageKey) {
+          const obj = await getObject(invoice.pdfStorageKey);
+          const stream = streamToNodeReadable(obj.Body);
+          if (!stream) return reply.status(404).send(errorResponse("Invoice PDF is not available"));
+
+          const fileName = `${invoice.invoiceNumber.replace(/[/\\]/g, "-")}.pdf`;
+          void reply.header("Content-Type", obj.ContentType ?? "application/pdf");
+          void reply.header("Content-Disposition", `attachment; filename="${fileName}"`);
+          void reply.header("Cache-Control", "private, no-store");
+          // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write -- streaming a stored PDF's Node Readable through Fastify's typed reply.send(), not writing user-controlled HTML.
+          return reply.send(stream);
         }
 
-        const obj = await getObject(invoice.pdfStorageKey);
-        const stream = streamToNodeReadable(obj.Body);
-        if (!stream) return reply.status(404).send(errorResponse("Invoice PDF is not available"));
-
-        // Slashes are legal in an InvoiceExpress sequence number
-        // ("202/Globalhealth") and illegal in a filename.
-        const fileName = `${invoice.invoiceNumber.replace(/[/\\]/g, "-")}.pdf`;
-        void reply.header("Content-Type", obj.ContentType ?? "application/pdf");
-        void reply.header("Content-Disposition", `attachment; filename="${fileName}"`);
-        void reply.header("Cache-Control", "private, no-store");
-        // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write -- streaming a stored PDF's Node Readable through Fastify's typed reply.send(), not writing user-controlled HTML.
-        return reply.send(stream);
+        const pdfData = await buildInvoicePdfData(
+          invoice.orderId,
+          invoice.invoiceNumber,
+          invoice.generatedAt.toISOString(),
+          invoice.documentType,
+          invoice.creditNoteReason,
+        );
+        const pdfBuffer = pdfData ? await renderInvoicePdfBuffer(pdfData) : null;
+        if (!pdfBuffer) {
+          return reply.status(500).send(errorResponse("Could not render document PDF"));
+        }
+        return reply
+          .header("Content-Type", "application/pdf")
+          .header(
+            "Content-Disposition",
+            `attachment; filename="${invoice.invoiceNumber.replace(/[/\\]/g, "-")}.pdf"`,
+          )
+          .header("Cache-Control", "private, no-store")
+          .send(pdfBuffer);
       } catch (error) {
         const normalized = normalizeDbError(error, "Could not load invoice PDF");
         if (normalized instanceof DatabaseUnavailableError) {
