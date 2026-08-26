@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
-import Link from "next/link";
 import { ArrowRight, CalendarClock } from "lucide-react";
 import { ServiceCard } from "@/components/cards/ServiceCard";
 import { DoctorProfileTemplate } from "@/components/templates/DoctorProfileTemplate";
@@ -13,7 +12,6 @@ import { getCountryByCode } from "@/data/countries";
 import { ogLocales } from "@/lib/seo/hreflang";
 import { doctorHreflangCluster } from "@/lib/seo/doctor-hreflang";
 import { doctorIndexableCountryNames, withMarketTitle } from "@/lib/seo/doctor-market-title";
-import { summarizeLanguagesForMetadata } from "@/lib/seo/doctor-language-summary";
 import { buildPublicMetadata, noindexFollow } from "@/lib/seo/page-seo";
 import {
   breadcrumbJsonLd,
@@ -37,6 +35,7 @@ import { formatPriceRounded } from "@/lib/format-currency";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
+import { fillDoctorProfileSeoTemplate } from "@/lib/content/doctor-profile-seo";
 
 type DoctorProfileRouteParams = {
   doctorSlug: string;
@@ -85,11 +84,13 @@ export async function buildDoctorProfileMetadata(
   // substituted the primary country regardless of route.
   const routeCountryName = config?.name ?? data.profile.country;
   const fillProfileTemplate = (template: string) =>
-    template
-      .replace("{name}", data.profile.name)
-      .replace("{title}", data.profile.title)
-      .replace("{country}", routeCountryName)
-      .replace("{languages}", summarizeLanguagesForMetadata(data.profile.languages));
+    fillDoctorProfileSeoTemplate(template, {
+      name: data.profile.name,
+      title: data.profile.title,
+      country: routeCountryName,
+      languages: data.profile.languages,
+      specialties: data.profile.specialties,
+    });
   const baseTitle =
     data.profile.seoTitle ?? `${data.profile.name} · ${data.profile.title} · ${routeCountryName}`;
   // Cross-listed doctors (same clinician, multiple markets) currently share
