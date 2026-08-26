@@ -1,15 +1,16 @@
 import type { FastifyRequest } from "fastify";
-import { CartItemKind, OrderStatus } from "@prisma/client";
+import { CartItemKind } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import {
   DoctorNotAssignedToServiceError,
   DoctorNotAvailableInCountryError,
   DoctorNotFoundError,
 } from "./manual-booking.service.js";
-import { releaseAppointmentSlot } from "../doctor-availability/doctor-availability.service.js";
-import { generateOrderMeetLink, orderIsPaidForMeet } from "../admin-orders/generate-order-meet-link.service.js";
-import { recomputePrePaymentDueAt } from "../automation/pre-payment-flow.service.js";
-import { sendAppointmentUpdateNotifications } from "../automation/appointment-update-notifications.service.js";
+import {
+  reclaimSlotForRescheduledAppointment,
+  releaseAppointmentSlot,
+} from "../doctor-availability/doctor-availability.service.js";
+import { applyRescheduleSideEffects } from "./reschedule-side-effects.service.js";
 import { recordAudit } from "../audit/audit.service.js";
 import { getAppointmentById, type AdminAppointmentDetail } from "./appointments.service.js";
 import { computeAppointmentUpdateDiff } from "./admin-update-appointment.diff.js";
@@ -166,6 +167,21 @@ export async function adminUpdateAppointment(
     meetingUrl: row.meetingUrl,
   };
 
+  // Read the released slot's length before it goes, so the consultation keeps
+  // its true duration when we re-claim a slot at the new time.
+  const previousSlot =
+    diff.timeChanged && row.timeSlotId
+      ? await prisma.doctorTimeSlot.findUnique({
+          where: { id: row.timeSlotId },
+          select: { startAt: true, endAt: true },
+        })
+      : null;
+  const previousSlotMinutes = previousSlot
+    ? Math.round(
+        (previousSlot.endAt.getTime() - previousSlot.startAt.getTime()) / 60_000,
+      )
+    : null;
+
   if (diff.timeChanged && row.timeSlotId) {
     await releaseAppointmentSlot(input.appointmentId).catch(() => undefined);
   }
@@ -187,53 +203,38 @@ export async function adminUpdateAppointment(
     }
   });
 
-  // Move the payment deadline with the consultation. It is derived from the
-  // consultation start at booking time, so leaving it behind lets an unpaid
-  // order outlive the appointment it belongs to — the order then reads as
-  // "still awaiting payment" while the slot comes and goes, and every
-  // automation gated on "not cancelled yet" fires against a dead booking
-  // (ORD-000382, 2026-08-21). No-ops on paid orders.
-  if (orderId && diff.timeChanged) {
-    await recomputePrePaymentDueAt(orderId, input.scheduledAt ?? null).catch(
-      () => undefined,
-    );
+  // The move above only wrote `scheduledAt` — the old slot is already
+  // released, so without this the new time is backed by no DoctorTimeSlot and
+  // the booking page keeps offering it to other patients. Best-effort: an
+  // off-grid admin time simply stays slotless, as before.
+  if (diff.timeChanged) {
+    await reclaimSlotForRescheduledAppointment(
+      input.appointmentId,
+      diff.nextDoctorId,
+      diff.nextScheduledAt,
+      previousSlotMinutes,
+    ).catch(() => null);
   }
 
-  let meetingUrl: string | null = orderItem?.order.meetingUrl ?? row.meetingUrl;
-  const shouldRegenerateMeet =
-    Boolean(orderId) &&
-    orderIsPaidForMeet({
-      paymentStatus: orderItem!.order.paymentStatus,
-      status: orderItem!.order.status as OrderStatus,
-    }) &&
-    row.consultationMode === "ONLINE" &&
-    (diff.timeChanged || diff.doctorChanged);
-
-  if (shouldRegenerateMeet && orderId) {
-    const meetResult = await generateOrderMeetLink(orderId, {
-      forceRegenerate: true,
-      skipSideEffects: true,
-    });
-    if (meetResult.ok) {
-      meetingUrl = meetResult.meetLink;
-    }
-  }
+  // Deadline move, reminder re-arm, Meet reissue and the patient/doctor
+  // "appointment updated" notifications are shared with the doctor-portal and
+  // patient self-service reschedule paths — see
+  // applyRescheduleSideEffects for the ordering and the reasoning.
+  const sideEffects = await applyRescheduleSideEffects({
+    appointmentId: input.appointmentId,
+    scheduledAt: diff.nextScheduledAt,
+    timeChanged: diff.timeChanged,
+    doctorChanged: diff.doctorChanged,
+    changeReason: input.changeReason,
+    previousDoctorId: beforeSnapshot.doctorId,
+    newDoctorId: diff.nextDoctorId,
+    fallbackMeetingUrl: orderItem?.order.meetingUrl ?? row.meetingUrl,
+  });
+  const meetingUrl = sideEffects.meetingUrl;
+  const notificationsSent = sideEffects.notificationsSent;
 
   const appointment = await getAppointmentById(input.appointmentId);
   if (!appointment) throw new AppointmentNotFoundError();
-
-  let notificationsSent = false;
-  if (orderId) {
-    const notifyResult = await sendAppointmentUpdateNotifications({
-      orderId,
-      appointmentId: input.appointmentId,
-      changeReason: input.changeReason,
-      previousDoctorId: beforeSnapshot.doctorId,
-      newDoctorId: diff.nextDoctorId,
-      meetingUrl,
-    }).catch(() => ({ sent: false }));
-    notificationsSent = notifyResult.sent;
-  }
 
   recordAudit({
     actorUserId: input.adminUserId ?? null,

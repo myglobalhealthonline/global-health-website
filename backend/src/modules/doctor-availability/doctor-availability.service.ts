@@ -1595,6 +1595,64 @@ export async function releaseExpiredHeldSlotsForDoctors(
  * no-op. Returns the slot id we released (or null if nothing to do)
  * so the caller can record an audit row.
  */
+/**
+ * Point a rescheduled appointment at a real slot again.
+ *
+ * The admin order page and the doctor workspace both move a consultation by
+ * writing a freeform `scheduledAt`: they release the old DoctorTimeSlot and
+ * leave `Appointment.timeSlotId` NULL, so the new time is backed by nothing
+ * and the base grid still offers it to the next patient who opens the booking
+ * page — a double-book waiting to happen.
+ *
+ * Best-effort by design: an admin may deliberately place a consultation off
+ * the doctor's grid (out of hours, between slots), and that must keep working.
+ * When no OPEN slot starts exactly at the new time — or another booking wins
+ * the race for it — we return null and leave the appointment slotless, which
+ * is exactly the old behaviour.
+ *
+ * `durationMinutes` should be the span of the slot that was just released so
+ * a 45-minute consult doesn't silently shrink to the 15-minute base grid.
+ */
+export async function reclaimSlotForRescheduledAppointment(
+  appointmentId: string,
+  doctorId: string | null,
+  startAt: Date | null,
+  durationMinutes: number | null,
+): Promise<string | null> {
+  if (!doctorId || !startAt) return null;
+
+  const windowEnd = new Date(
+    startAt.getTime() + Math.max(durationMinutes ?? 0, 1) * 60_000,
+  );
+  // The grid is materialised lazily, so a date nobody has browsed yet has no
+  // rows to claim.
+  await ensureSlotsForRange(doctorId, startAt, windowEnd).catch(() => undefined);
+
+  const candidate = await prisma.doctorTimeSlot.findFirst({
+    where: { doctorId, startAt, status: "OPEN" },
+    select: { id: true },
+  });
+  if (!candidate) return null;
+
+  try {
+    return await prisma.$transaction(async (tx) => {
+      const claimed = await claimConsecutiveSlots(tx, candidate.id, durationMinutes);
+      if (claimed.startAt.getTime() !== startAt.getTime()) {
+        throw new SlotAlreadyTakenError();
+      }
+      await tx.appointment.update({
+        where: { id: appointmentId },
+        data: { timeSlotId: candidate.id },
+      });
+      return candidate.id;
+    });
+  } catch {
+    // Lost the race, or the run of base slots doesn't cover the consult's
+    // length. Leave the appointment slotless rather than failing the move.
+    return null;
+  }
+}
+
 export async function releaseAppointmentSlot(
   appointmentId: string,
 ): Promise<string | null> {
