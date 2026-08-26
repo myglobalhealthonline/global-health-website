@@ -606,12 +606,12 @@ img {
   border-top: 1px solid rgba(29, 75, 54, 0.12);
 }
 
-/* Calm editorial blog pilot
- * --------------------------
- * One continuous reading surface for the approved HFMD article. The CMS keeps
- * owning semantic content; this shared layer owns its presentation. Keeping
- * every selector below the pilot classes makes the experiment inert for every
- * other blog post. */
+/* Shared calm editorial blog system
+ * ---------------------------------
+ * One reading-first surface for every public article. The CMS keeps owning
+ * semantic content; this layer normalizes the three body shapes currently in
+ * production: plain rich text, nested authored sections, and the direct-TOC
+ * editorial family. */
 .gh-blog-calm-hero,
 .gh-blog-calm-article-shell,
 .gh-blog-calm-share {
@@ -748,6 +748,383 @@ img {
   font-size: 17px;
   line-height: 1.78;
 }
+
+.gh-article-editorial {
+  color: #303b36;
+  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.78;
+}
+
+.gh-article-editorial--plain {
+  width: min(100%, 720px);
+  margin-inline: auto;
+}
+
+.gh-article-editorial--authored-sections {
+  width: min(100%, 980px);
+  margin-inline: auto;
+}
+
+.gh-article-editorial--plain > :first-child,
+.gh-article-editorial--authored-sections > :first-child { margin-top: 0; }
+
+.gh-article-editorial--plain h2,
+.gh-article-editorial--plain h3,
+.gh-article-editorial--plain h4,
+.gh-article-editorial--authored-sections h2,
+.gh-article-editorial--authored-sections h3,
+.gh-article-editorial--authored-sections h4 {
+  color: #173c2f;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.gh-article-editorial--plain h2,
+.gh-article-editorial--authored-sections h2 {
+  margin: 48px 0 18px;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+}
+
+.gh-article-editorial--plain h3,
+.gh-article-editorial--authored-sections h3 {
+  margin: 32px 0 12px;
+  font-size: clamp(1.3rem, 2.4vw, 1.65rem);
+}
+
+.gh-article-editorial--plain p,
+.gh-article-editorial--authored-sections p {
+  max-width: 70ch;
+  margin: 16px 0;
+  text-wrap: pretty;
+}
+
+.gh-article-editorial--plain a,
+.gh-article-editorial--authored-sections a {
+  color: #1d6249;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.gh-article-editorial--plain ul,
+.gh-article-editorial--plain ol,
+.gh-article-editorial--authored-sections ul,
+.gh-article-editorial--authored-sections ol {
+  margin: 20px 0;
+  padding-left: 1.35rem;
+}
+
+.gh-article-editorial--plain li,
+.gh-article-editorial--authored-sections li { margin: 8px 0; }
+
+.gh-article-editorial--authored-sections :is(.article-intro, .article-lede) {
+  margin-bottom: 42px;
+  padding: 0 0 38px;
+  border-bottom: 1px solid rgba(29, 75, 54, 0.14);
+  background: transparent;
+}
+
+.gh-article-editorial--authored-sections :is(.article-intro, .article-lede) :is(
+  [data-blog-h1],
+  .hero-brandline,
+  .hero-label,
+  .hero-subtitle,
+  .hero-author,
+  .hero-reviewed,
+  .hero-review-line,
+  .hero-actions,
+  .eyebrow
+) { display: none; }
+
+.gh-article-editorial--authored-sections :is(.hero-copy, .hero-inner) {
+  width: 100%;
+  max-width: 760px;
+}
+
+.gh-article-editorial--authored-sections :is(.hero-deck, .hero-desc, .intro-lead) {
+  max-width: 64ch;
+  margin: 0;
+  color: #40534b;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.08rem, 1.6vw, 1.25rem);
+  line-height: 1.7;
+}
+
+.gh-article-editorial--authored-sections :is(.hero-facts, .hero-pills) {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  max-width: 820px;
+  margin-top: 24px;
+}
+
+.gh-article-editorial--authored-sections .hero-panel {
+  max-width: 760px;
+  margin-top: 24px;
+  padding: 20px 22px;
+  border: 1px solid rgba(29, 75, 54, 0.12);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.38);
+}
+
+.gh-article-editorial--authored-sections .intro-support {
+  display: block;
+  max-width: 66ch;
+  margin: 12px 0 0;
+  color: #4d5d56;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.gh-article-editorial--authored-sections :is(.hero-fact, .hero-pill, .meta-chip) {
+  margin: 0;
+  padding: 13px 14px;
+  border: 1px solid rgba(29, 75, 54, 0.12);
+  border-radius: 4px;
+  background: #e8eee7;
+  color: #355247;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.gh-article-editorial--authored-sections :is(.article-nav, .toc) {
+  position: static;
+  margin: 0 0 44px;
+  padding: 20px 22px;
+  border: 1px solid rgba(29, 75, 54, 0.14);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.34);
+  box-shadow: none;
+}
+
+.gh-article-editorial--authored-sections :is(.article-nav-inner, .toc-inner) {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.gh-article-editorial--authored-sections :is(.article-nav-label, .toc-label) {
+  margin: 0 0 12px;
+  color: #173c2f;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.gh-article-editorial--authored-sections :is(.article-nav-list, .toc-grid) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px 22px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gh-article-editorial--authored-sections :is(.article-nav-list, .toc-grid) li { margin: 0; }
+.gh-article-editorial--authored-sections :is(.article-nav-list, .toc-grid) a {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  color: #496158;
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.gh-article-editorial--authored-sections .article-section {
+  scroll-margin-top: calc(var(--header-height) + 28px);
+  padding: 48px 0 6px;
+  border-top: 1px solid rgba(29, 75, 54, 0.14);
+  background: transparent;
+  color: #303b36;
+}
+
+.gh-article-editorial--authored-sections .article-section:first-of-type {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.gh-article-editorial--authored-sections .section-inner {
+  width: 100%;
+  max-width: 900px;
+  margin-inline: auto;
+}
+
+.gh-article-editorial--authored-sections :is(.section-label, .eyebrow) {
+  display: inline-flex;
+  margin: 0 0 10px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #6b8379;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.gh-article-editorial--authored-sections .section-lead {
+  max-width: 66ch;
+  color: #4d5d56;
+  font-size: 1.05rem;
+  line-height: 1.72;
+}
+
+.gh-article-editorial--authored-sections .section-rule {
+  width: 44px;
+  height: 2px;
+  margin: 18px 0 22px;
+  background: #7a9489;
+}
+
+.gh-article-editorial--authored-sections :is(
+  .risk-grid,
+  .symptom-grid,
+  .treatment-grid,
+  .future-grid,
+  .stat-grid,
+  .type-grid,
+  .resources-grid,
+  .card-grid,
+  .prevention-grid
+) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 26px 0;
+}
+
+.gh-article-editorial--authored-sections :is(
+  .risk-card,
+  .symptom-card,
+  .treatment-card,
+  .future-card,
+  .stat-card,
+  .type-card,
+  .resource-card,
+  .prevention-card,
+  .card,
+  .tc-badge
+) {
+  padding: 20px;
+  border: 1px solid rgba(29, 75, 54, 0.12);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.42);
+  box-shadow: none;
+}
+
+.gh-article-editorial--authored-sections :is(.risk-icon, .symptom-icon, .type-icon, .card-icon, .prev-icon) {
+  margin-bottom: 10px;
+  color: #3f6f5d;
+  font-size: 1.2rem;
+}
+
+.gh-article-editorial--authored-sections :is(.check-list, .article-nav-list) {
+  list-style: none;
+  padding-left: 0;
+}
+
+.gh-article-editorial--authored-sections .check-list li {
+  position: relative;
+  padding-left: 24px;
+}
+
+.gh-article-editorial--authored-sections .check-list li::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #39705b;
+  content: "✓";
+  font-weight: 800;
+}
+
+.gh-article-editorial--authored-sections :is(.alert-warn, .alert-green) {
+  margin: 28px 0;
+  padding: 20px 22px;
+  border: 1px solid rgba(29, 75, 54, 0.16);
+  border-left: 4px solid #4d806b;
+  border-radius: 3px;
+  background: #eaf0e9;
+  color: #294137;
+}
+
+.gh-article-editorial--authored-sections .alert-warn {
+  border-color: rgba(156, 91, 47, 0.22);
+  border-left-color: #9c5b2f;
+  background: #f5ece2;
+  color: #4a3426;
+}
+
+.gh-article-editorial--authored-sections :is(.faq-section, .faq-wide) { margin: 34px 0; }
+.gh-article-editorial--authored-sections .faq-item {
+  margin: 0;
+  border-top: 1px solid rgba(29, 75, 54, 0.14);
+  background: transparent;
+}
+.gh-article-editorial--authored-sections :is(.faq-q, .faq-item summary) {
+  display: flex;
+  min-height: 52px;
+  align-items: center;
+  padding: 14px 0;
+  color: #173c2f;
+  cursor: pointer;
+  font-weight: 700;
+}
+.gh-article-editorial--authored-sections :is(.faq-a, .faq-answer) {
+  padding: 0 0 18px;
+  color: #4d5d56;
+}
+
+.gh-article-editorial--authored-sections :is(.cta-box, .institution-bar, .author-bar, .disclaimer) {
+  margin: 34px 0;
+  padding: 22px 24px;
+  border: 1px solid rgba(29, 75, 54, 0.14);
+  border-radius: 4px;
+  background: #e8eee7;
+  color: #294137;
+}
+
+.gh-article-editorial--authored-sections :is(.cta-btns, .hero-actions) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.gh-article-editorial--authored-sections :is(.btn-lime, .btn-primary, .btn-secondary, .btn-ghost) {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border: 1px solid #315b4b;
+  border-radius: 3px;
+  background: transparent;
+  color: #234a3b;
+  font-size: 13px;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.gh-article-editorial :is(table, .symptom-table) {
+  width: 100%;
+  margin: 28px 0;
+  border-collapse: collapse;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.gh-article-editorial :is(th, td) {
+  padding: 12px;
+  border: 1px solid rgba(29, 75, 54, 0.15);
+  text-align: left;
+  vertical-align: top;
+}
+.gh-article-editorial th { background: #dfe9e1; color: #28463a; }
+.gh-article-editorial tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.34); }
 
 .gh-article-calm > .toc-strip {
   position: sticky;
@@ -1154,6 +1531,9 @@ img {
 }
 
 @media (max-width: 900px) {
+  .gh-article-editorial--authored-sections :is(.hero-facts, .hero-pills) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .gh-article-calm {
     display: block;
     width: min(100%, 720px);
@@ -1190,8 +1570,27 @@ img {
   .gh-article-calm .toc-list { columns: 1; }
   .gh-article-calm .card-grid,
   .gh-article-calm .resources-grid { grid-template-columns: 1fr; }
+  .gh-article-editorial { font-size: 16px; line-height: 1.72; }
+  .gh-article-editorial--authored-sections :is(
+    .hero-facts,
+    .hero-pills,
+    .article-nav-list,
+    .toc-grid,
+    .risk-grid,
+    .symptom-grid,
+    .treatment-grid,
+    .future-grid,
+    .stat-grid,
+    .type-grid,
+    .resources-grid,
+    .card-grid,
+    .prevention-grid
+  ) { grid-template-columns: 1fr; }
+  .gh-article-editorial--authored-sections :is(.article-nav, .toc) { padding: 18px; }
   .gh-article-calm .symptom-table,
-  .gh-article-calm table {
+  .gh-article-calm table,
+  .gh-article-editorial table,
+  .gh-article-editorial .symptom-table {
     display: block;
     overflow-x: auto;
     white-space: normal;

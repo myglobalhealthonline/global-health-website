@@ -116,7 +116,16 @@
     "clinicallyReviewedBy": "Clinically reviewed by",
     "lastReviewed": "Last reviewed",
     "moreArticles": "More articles",
-    "medicalDisclaimer": "This article is for information only and is not a substitute for medical advice."
+    "medicalDisclaimer": "This article is for information only and is not a substitute for medical advice.",
+    "articleDetails": "Article details",
+    "shareKicker": "Worth sharing?",
+    "shareTitle": "Share this article",
+    "shareOn": "Share on {network}",
+    "copyLink": "Copy link",
+    "copySuccess": "Article link copied.",
+    "copyFailure": "Copy failed. Select the address from your browser instead.",
+    "instagramCopied": "Link copied. Open Instagram to share it.",
+    "shareComplete": "Article shared."
   },
   "flow": {
     "patientUploadHeading": "Upload medical files",

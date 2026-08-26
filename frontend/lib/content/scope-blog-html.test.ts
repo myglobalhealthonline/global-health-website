@@ -231,4 +231,65 @@ describe("calmEditorialBlogHtml", () => {
     expect(out).not.toContain("<script");
     expect(out).not.toContain("alert(1)");
   });
+
+  it("keeps answer-first copy from the shared gh-blog article family", () => {
+    const ghBatch = `
+      <style>.article-section { background: #031f18 }</style>
+      <main class="gh-blog">
+        <header class="article-intro article-lede">
+          <p class="intro-lead">You can usually request this online.</p>
+          <div class="hero-facts"><p class="hero-fact">A useful fact</p></div>
+        </header>
+        <nav class="article-nav"><a href="#eligibility">Eligibility</a></nav>
+        <section id="eligibility" class="article-section"><p>Full guidance.</p></section>
+      </main>
+    `;
+
+    const out = calmEditorialBlogHtml(ghBatch);
+
+    expect(out).not.toContain("<style");
+    expect(out).toContain("You can usually request this online.");
+    expect(out).toContain("A useful fact");
+    expect(out).toContain('href="#eligibility"');
+    expect(out).toContain('id="eligibility"');
+  });
+
+  it("keeps a section-wrapped answer-first intro outside the direct-TOC family", () => {
+    const html = `
+      <style>.article-lede { color: #123 }</style>
+      <section class="article-lede"><p>Important answer-first guidance.</p></section>
+      <main><section id="care"><p>Full guidance.</p></section></main>
+    `;
+
+    const out = calmEditorialBlogHtml(html);
+
+    expect(out).toContain("Important answer-first guidance.");
+    expect(out).toContain("Full guidance.");
+  });
+
+  it("keeps useful legacy-diabetes summary content", () => {
+    const legacy = `
+      <style>.hero { background: #1a3d2b }</style>
+      <header class="hero article-lede">
+        <p class="hero-desc">Diabetes can develop without obvious symptoms.</p>
+        <div class="hero-pills"><span class="hero-pill">Know the signs</span></div>
+      </header>
+      <nav class="toc"><a href="#signs">Signs</a></nav>
+      <main><section id="signs"><p>Clinical guidance.</p></section></main>
+    `;
+
+    const out = calmEditorialBlogHtml(legacy);
+
+    expect(out).not.toContain("<style");
+    expect(out).toContain("Diabetes can develop without obvious symptoms.");
+    expect(out).toContain("Know the signs");
+    expect(out).toContain("Clinical guidance.");
+  });
+
+  it("preserves plain rich text without inventing a body structure", () => {
+    const out = calmEditorialBlogHtml(`<h2 id="care">Care advice</h2><p>Call a doctor if symptoms worsen.</p>`);
+
+    expect(out).toContain('id="care"');
+    expect(out).toContain("Call a doctor if symptoms worsen.");
+  });
 });

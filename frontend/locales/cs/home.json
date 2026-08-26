@@ -108,9 +108,18 @@
     "bookConsultationBody": "Zarezervujte si online konzultaci s místně registrovaným lékařem ve vaší zemi. Otevřené termíny jsou zobrazeny během rezervace.",
     "bookConsultation": "Zarezervovat konzultaci",
     "clinicallyReviewedBy": "Klinicky přezkoumáno",
-    "lastReviewed": "Last reviewed",
-    "moreArticles": "More articles",
-    "medicalDisclaimer": "This article is for information only and is not a substitute for medical advice."
+    "lastReviewed": "Poslední kontrola",
+    "moreArticles": "Další články",
+    "medicalDisclaimer": "Tento článek slouží pouze pro informační účely a nenahrazuje lékařské poradenství.",
+    "articleDetails": "Podrobnosti o článku",
+    "shareKicker": "Stojí za sdílení?",
+    "shareTitle": "Sdílet tento článek",
+    "shareOn": "Sdílet na síti {network}",
+    "copyLink": "Kopírovat odkaz",
+    "copySuccess": "Odkaz na článek byl zkopírován.",
+    "copyFailure": "Odkaz se nepodařilo zkopírovat. Vyberte adresu v prohlížeči.",
+    "instagramCopied": "Odkaz byl zkopírován. Otevřete Instagram a sdílejte ho.",
+    "shareComplete": "Článek byl sdílen."
   },
   "flow": {
     "patientUploadHeading": "Nahrát lékařské dokumenty",

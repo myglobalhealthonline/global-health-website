@@ -108,9 +108,18 @@
     "bookConsultationBody": "Programați o consultație online cu un medic înregistrat local în țara dumneavoastră. Programările disponibile sunt afișate în timpul rezervării.",
     "bookConsultation": "Programați consultația",
     "clinicallyReviewedBy": "Revizuit clinic de",
-    "lastReviewed": "Last reviewed",
-    "moreArticles": "More articles",
-    "medicalDisclaimer": "This article is for information only and is not a substitute for medical advice."
+    "lastReviewed": "Ultima revizuire",
+    "moreArticles": "Mai multe articole",
+    "medicalDisclaimer": "Acest articol are doar scop informativ și nu înlocuiește sfatul medical.",
+    "articleDetails": "Detaliile articolului",
+    "shareKicker": "Merită distribuit?",
+    "shareTitle": "Distribuie acest articol",
+    "shareOn": "Distribuie pe {network}",
+    "copyLink": "Copiază linkul",
+    "copySuccess": "Linkul articolului a fost copiat.",
+    "copyFailure": "Linkul nu a putut fi copiat. Selectează adresa din browser.",
+    "instagramCopied": "Link copiat. Deschide Instagram pentru a-l distribui.",
+    "shareComplete": "Articol distribuit."
   },
   "flow": {
     "patientUploadHeading": "Încărcați fișiere medicale",

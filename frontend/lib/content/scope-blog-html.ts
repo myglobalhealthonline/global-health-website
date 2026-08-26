@@ -320,8 +320,10 @@ function warnDropped(what: string, err?: unknown): void {
  * are removed:
  *   1. embedded author CSS, which is what creates a different visual system
  *      for every designed post; and
- *   2. the body's own introductory hero, because the page template already
- *      renders the canonical title, excerpt, author and clinical reviewer.
+ *   2. the original direct-TOC body's duplicated introductory hero, because
+ *      the page template already renders its title, excerpt, author and
+ *      clinical reviewer. Other article families keep their answer-first
+ *      introductions because they contain useful guidance beyond that chrome.
  *
  * The result still passes through the same sanitizer as every public article.
  * This is deliberately exported as a small transformation so the pilot can be
@@ -330,11 +332,14 @@ function warnDropped(what: string, err?: unknown): void {
 export function calmEditorialBlogHtml(html: string): string {
   if (!html) return html;
 
+  const hasDirectToc = /\bclass=(?:"[^"]*\btoc-strip\b[^"]*"|'[^']*\btoc-strip\b[^']*')/i.test(html);
   const withoutAuthorCss = html.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, "");
-  const withoutDuplicatedIntro = withoutAuthorCss.replace(
-    /<section\b(?=[^>]*\bclass=(?:"[^"]*\barticle-lede\b[^"]*"|'[^']*\barticle-lede\b[^']*'))[^>]*>[\s\S]*?<\/section>/i,
-    "",
-  );
+  const withoutDuplicatedIntro = hasDirectToc
+    ? withoutAuthorCss.replace(
+        /<section\b(?=[^>]*\bclass=(?:"[^"]*\barticle-lede\b[^"]*"|'[^']*\barticle-lede\b[^']*'))[^>]*>[\s\S]*?<\/section>/i,
+        "",
+      )
+    : withoutAuthorCss;
 
   return scopeBlogHtml(withoutDuplicatedIntro);
 }

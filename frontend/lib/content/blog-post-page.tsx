@@ -10,7 +10,7 @@ import { CalmEditorialArticleHero } from "@/components/blog/CalmEditorialArticle
 import { getCountryByCode } from "@/data/countries";
 import { getBlogPost, listBlogPosts, type BlogDoctor, type BlogListItem, type BlogPostFull } from "@/lib/content/get-public-blog";
 import { blogArticleBodyClassName, calmEditorialBlogHtml, scopeBlogHtml } from "@/lib/content/scope-blog-html";
-import { isCalmEditorialBlogPilot } from "@/lib/content/blog-presentation";
+import { editorialBlogBodyClassName, usesEditorialBlogPresentation } from "@/lib/content/blog-presentation";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { articleJsonLd, breadcrumbJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
@@ -284,12 +284,12 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
   // them into FAQPage schema. Never fabricated — if the body has no FAQ
   // markup, no FAQPage node is emitted.
   const articleFaqs = extractArticleFaqs(post.body);
-  /** Body ships its own complete design (its own <style> block). */
-  const isCalmEditorialPilot = isCalmEditorialBlogPilot(post.slug);
-  const renderedArticleHtml = isCalmEditorialPilot
+  /** The approved calm editorial treatment is now the default blog presentation. */
+  const usesCalmEditorialPresentation = usesEditorialBlogPresentation(post.slug);
+  const renderedArticleHtml = usesCalmEditorialPresentation
     ? calmEditorialBlogHtml(post.body)
     : scopeBlogHtml(post.body);
-  const isDesignedBody = !isCalmEditorialPilot && post.body.includes("<style");
+  const isDesignedBody = !usesCalmEditorialPresentation && post.body.includes("<style");
   /** Body closes with its own styled medical-disclaimer panel. */
   const bodyHasOwnDisclaimer = /class="[^"]*\bdisclaimer\b/.test(post.body);
   const relatedHrefFor = (p: BlogListItem) =>
@@ -325,7 +325,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
           ...(articleFaqs.length > 0 ? [faqJsonLd(articleFaqs)] : []),
         ]}
       />
-      {isCalmEditorialPilot ? (
+      {usesCalmEditorialPresentation ? (
         <CalmEditorialArticleHero
           backHref={backHref}
           backLabel={blogI18n.allArticles}
@@ -346,6 +346,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
           }
           coverImageSrc={post.coverImageSrc}
           coverImageAlt={post.coverImageAlt ?? displayTitle}
+          detailsLabel={blogI18n.articleDetails}
         />
       ) : (
         <section
@@ -632,14 +633,14 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
           bodies keep the site container + padding. */}
       <section
         className={
-          isCalmEditorialPilot
+          usesCalmEditorialPresentation
             ? "gh-blog-calm-article-shell"
             : isDesignedBody
               ? undefined
               : "mx-auto max-w-[var(--container-width)]"
         }
         style={
-          isCalmEditorialPilot
+          usesCalmEditorialPresentation
             ? undefined
             : isDesignedBody
             ? { background: "var(--color-background-page)" }
@@ -650,7 +651,11 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
             <style>/classes preserved) and CSS-scoped to .gh-article-body so it
             can't bleed into the site. Rendered server-side for SEO. */}
         <div
-          className={`${blogArticleBodyClassName(renderedArticleHtml)}${isCalmEditorialPilot ? " gh-article-calm" : ""}`}
+          className={
+            usesCalmEditorialPresentation
+              ? editorialBlogBodyClassName(post.body)
+              : blogArticleBodyClassName(renderedArticleHtml)
+          }
           // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- scopeBlogHtml() runs sanitize-html with a controlled allowlist (frontend/lib/content/scope-blog-html.ts) before this renders; mirrors the backend's own sanitizeBlogHtml allowlist.
           dangerouslySetInnerHTML={{ __html: renderedArticleHtml }}
         />
@@ -671,14 +676,27 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
         ) : null}
       </section>
 
-      {isCalmEditorialPilot ? (
-        <BlogShareLinks articleUrl={`${getSiteUrl()}${canonicalUrl}`} title={displayTitle} />
+      {usesCalmEditorialPresentation ? (
+        <BlogShareLinks
+          articleUrl={`${getSiteUrl()}${canonicalUrl}`}
+          title={displayTitle}
+          labels={{
+            kicker: blogI18n.shareKicker,
+            title: blogI18n.shareTitle,
+            shareOn: blogI18n.shareOn,
+            copyLink: blogI18n.copyLink,
+            copySuccess: blogI18n.copySuccess,
+            copyFailure: blogI18n.copyFailure,
+            instagramCopied: blogI18n.instagramCopied,
+            shareComplete: blogI18n.shareComplete,
+          }}
+        />
       ) : null}
 
       {/* Dark CTA block — matches luxury language of the rest of the site */}
       <section
         className={
-          isCalmEditorialPilot
+          usesCalmEditorialPresentation
             ? "gh-blog-calm-cta relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
             : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
         }
@@ -728,7 +746,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
       </section>
 
       {relatedPosts.length > 0 ? (
-        <section className={isCalmEditorialPilot ? "gh-blog-calm-related relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel" : "gh-inline-clamp-section relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"}>
+        <section className={usesCalmEditorialPresentation ? "gh-blog-calm-related relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel" : "gh-inline-clamp-section relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"}>
           <SectionSeam theme="light" />
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
             <h2
@@ -743,9 +761,9 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
             {/* Same card as the blog index, in its stacked orientation — the
                 cover image is already on BlogListItem, so the old text-only
                 tile was dropping an asset the data layer had all along. */}
-            <div className={isCalmEditorialPilot ? "gh-blog-calm-related-list" : "mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 md:mt-12"}>
+            <div className={usesCalmEditorialPresentation ? "gh-blog-calm-related-list" : "mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 md:mt-12"}>
               {relatedPosts.map((p) => (
-                isCalmEditorialPilot ? (
+                usesCalmEditorialPresentation ? (
                   <article key={p.slug} className="gh-blog-calm-related-item">
                     <div className="gh-blog-calm-related-media" aria-hidden="true">
                       {p.coverImageSrc ? (

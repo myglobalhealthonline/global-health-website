@@ -108,9 +108,18 @@
     "bookConsultationBody": "Agende uma consulta online com um médico registado localmente no seu país. As nomeações disponíveis são mostradas durante a reserva.",
     "bookConsultation": "Agendar consulta",
     "clinicallyReviewedBy": "Revisado clinicamente por",
-    "lastReviewed": "Last reviewed",
-    "moreArticles": "More articles",
-    "medicalDisclaimer": "This article is for information only and is not a substitute for medical advice."
+    "lastReviewed": "Última revisão",
+    "moreArticles": "Mais artigos",
+    "medicalDisclaimer": "Este artigo é apenas informativo e não substitui aconselhamento médico.",
+    "articleDetails": "Detalhes do artigo",
+    "shareKicker": "Vale a pena partilhar?",
+    "shareTitle": "Partilhe este artigo",
+    "shareOn": "Partilhar no {network}",
+    "copyLink": "Copiar ligação",
+    "copySuccess": "Ligação do artigo copiada.",
+    "copyFailure": "Não foi possível copiar. Selecione o endereço no navegador.",
+    "instagramCopied": "Ligação copiada. Abra o Instagram para a partilhar.",
+    "shareComplete": "Artigo partilhado."
   },
   "flow": {
     "patientUploadHeading": "Carregar ficheiros médicos",

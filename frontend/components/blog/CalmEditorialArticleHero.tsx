@@ -19,6 +19,7 @@ type CalmEditorialArticleHeroProps = {
   lastReviewedLabel: string | null;
   coverImageSrc: string | null;
   coverImageAlt: string;
+  detailsLabel: string;
 };
 
 /** Quiet, reading-first hero used by the one-article calm-editorial pilot. */
@@ -38,6 +39,7 @@ export function CalmEditorialArticleHero({
   lastReviewedLabel,
   coverImageSrc,
   coverImageAlt,
+  detailsLabel,
 }: CalmEditorialArticleHeroProps) {
   return (
     <header className="gh-blog-calm-hero">
@@ -51,7 +53,7 @@ export function CalmEditorialArticleHero({
         <h1>{title}</h1>
         {excerpt ? <p className="gh-blog-calm-dek">{excerpt}</p> : null}
 
-        <div className="gh-blog-calm-byline" aria-label="Article details">
+        <div className="gh-blog-calm-byline" aria-label={detailsLabel}>
           <span>
             <User className="size-4" aria-hidden />
             {authorHref ? <Link href={authorHref}>{authorName}</Link> : authorName}

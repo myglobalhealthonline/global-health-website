@@ -108,9 +108,18 @@
     "bookConsultationBody": "Buchen Sie eine Online-Konsultation mit einem lokal registrierten Arzt in Ihrem Land. Offene Termine werden während der Buchung angezeigt.",
     "bookConsultation": "Konsultation buchen",
     "clinicallyReviewedBy": "Klinisch überprüft von",
-    "lastReviewed": "Last reviewed",
-    "moreArticles": "More articles",
-    "medicalDisclaimer": "This article is for information only and is not a substitute for medical advice."
+    "lastReviewed": "Zuletzt überprüft",
+    "moreArticles": "Weitere Artikel",
+    "medicalDisclaimer": "Dieser Artikel dient nur zur Information und ersetzt keine medizinische Beratung.",
+    "articleDetails": "Artikeldetails",
+    "shareKicker": "Lesenswert?",
+    "shareTitle": "Diesen Artikel teilen",
+    "shareOn": "Auf {network} teilen",
+    "copyLink": "Link kopieren",
+    "copySuccess": "Artikellink kopiert.",
+    "copyFailure": "Kopieren fehlgeschlagen. Wählen Sie die Adresse im Browser aus.",
+    "instagramCopied": "Link kopiert. Öffnen Sie Instagram, um ihn zu teilen.",
+    "shareComplete": "Artikel geteilt."
   },
   "flow": {
     "patientUploadHeading": "Medizinische Unterlagen hochladen",
