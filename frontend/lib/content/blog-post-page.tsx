@@ -9,6 +9,7 @@ import { BlogShareLinks } from "@/components/blog/BlogShareLinks";
 import { CalmEditorialArticleHero } from "@/components/blog/CalmEditorialArticleHero";
 import { getCountryByCode } from "@/data/countries";
 import { getBlogPost, listBlogPosts, type BlogDoctor, type BlogListItem, type BlogPostFull } from "@/lib/content/get-public-blog";
+import { prepareBlogArticleHtml } from "@/lib/content/blog-table-of-contents";
 import { blogArticleBodyClassName, calmEditorialBlogHtml, scopeBlogHtml } from "@/lib/content/scope-blog-html";
 import { editorialBlogBodyClassName, usesEditorialBlogPresentation } from "@/lib/content/blog-presentation";
 import { SectionSeam } from "@/components/ui/SectionSeam";
@@ -289,6 +290,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
   const renderedArticleHtml = usesCalmEditorialPresentation
     ? calmEditorialBlogHtml(post.body)
     : scopeBlogHtml(post.body);
+  const preparedArticle = prepareBlogArticleHtml(renderedArticleHtml, displayTitle);
   const isDesignedBody = !usesCalmEditorialPresentation && post.body.includes("<style");
   /** Body closes with its own styled medical-disclaimer panel. */
   const bodyHasOwnDisclaimer = /class="[^"]*\bdisclaimer\b/.test(post.body);
@@ -650,15 +652,44 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
         {/* Admin-authored article HTML. Sanitized on save (scripts stripped,
             <style>/classes preserved) and CSS-scoped to .gh-article-body so it
             can't bleed into the site. Rendered server-side for SEO. */}
-        <div
-          className={
-            usesCalmEditorialPresentation
-              ? editorialBlogBodyClassName(post.body)
-              : blogArticleBodyClassName(renderedArticleHtml)
-          }
-          // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- scopeBlogHtml() runs sanitize-html with a controlled allowlist (frontend/lib/content/scope-blog-html.ts) before this renders; mirrors the backend's own sanitizeBlogHtml allowlist.
-          dangerouslySetInnerHTML={{ __html: renderedArticleHtml }}
-        />
+        {usesCalmEditorialPresentation ? (
+          <div
+            className={
+              preparedArticle.items.length > 0
+                ? "gh-blog-reading-layout"
+                : "gh-blog-reading-layout gh-blog-reading-layout--no-toc"
+            }
+          >
+            {preparedArticle.items.length > 0 ? (
+              <nav className="gh-blog-reading-toc" aria-labelledby="blog-reading-toc-title">
+                <div className="gh-blog-reading-toc-heading">
+                  <span aria-hidden>+</span>
+                  <h2 id="blog-reading-toc-title">{blogI18n.onThisPage}</h2>
+                </div>
+                <ol className="gh-blog-reading-toc-list">
+                  {preparedArticle.items.map((item) => (
+                    <li key={item.id}>
+                      <a href={`#${item.id}`}>{item.label}</a>
+                    </li>
+                  ))}
+                </ol>
+              </nav>
+            ) : null}
+            <div id="blog-article-content" className="gh-blog-reading-body">
+              <div
+                className={editorialBlogBodyClassName(post.body)}
+                // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- scopeBlogHtml() runs sanitize-html with a controlled allowlist (frontend/lib/content/scope-blog-html.ts) before this renders; mirrors the backend's own sanitizeBlogHtml allowlist.
+                dangerouslySetInnerHTML={{ __html: preparedArticle.html }}
+              />
+            </div>
+          </div>
+        ) : (
+          <div
+            className={blogArticleBodyClassName(renderedArticleHtml)}
+            // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- scopeBlogHtml() runs sanitize-html with a controlled allowlist (frontend/lib/content/scope-blog-html.ts) before this renders; mirrors the backend's own sanitizeBlogHtml allowlist.
+            dangerouslySetInnerHTML={{ __html: renderedArticleHtml }}
+          />
+        )}
         {/* Designed articles nearly all close with their own styled
             "Medical Disclaimer" panel; appending this one under it printed the
             same notice twice (naming a different doctor, since this line reads

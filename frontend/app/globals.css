@@ -736,6 +736,120 @@ img {
   padding: clamp(52px, 7vw, 92px) 20px;
 }
 
+.gh-blog-reading-layout {
+  display: grid;
+  width: min(100%, 1080px);
+  margin-inline: auto;
+  grid-template-columns: 210px minmax(0, 720px);
+  justify-content: space-between;
+  gap: 72px;
+}
+
+.gh-blog-reading-layout--no-toc {
+  display: block;
+  width: min(100%, 720px);
+}
+
+.gh-blog-reading-toc {
+  position: sticky;
+  top: calc(var(--header-height) + 24px);
+  align-self: start;
+  max-height: calc(100dvh - var(--header-height) - 48px);
+  overflow: auto;
+  padding: 0 18px 0 0;
+  border-right: 1px solid rgba(29, 75, 54, 0.14);
+}
+
+.gh-blog-reading-toc h2 {
+  margin: 0;
+  color: #173c2f;
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.gh-blog-reading-toc-heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 18px;
+}
+
+.gh-blog-reading-toc-heading > span {
+  display: inline-grid;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  place-items: center;
+  border-radius: 3px;
+  background: #173c2f;
+  color: #b0f122;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.gh-blog-reading-toc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: calm-toc;
+}
+
+.gh-blog-reading-toc-list li {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 7px;
+  margin: 0 0 10px;
+  counter-increment: calm-toc;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.gh-blog-reading-toc-list li::before {
+  content: counter(calm-toc, decimal-leading-zero);
+  color: #779086;
+  font-variant-numeric: tabular-nums;
+}
+
+.gh-blog-reading-toc-list a {
+  display: inline-block;
+  padding-block: 2px;
+  color: #4c6158;
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.gh-blog-reading-toc-list a:hover { color: var(--color-brand-primary); }
+.gh-blog-reading-toc-list a:focus-visible {
+  border-radius: 2px;
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 3px;
+}
+
+.gh-blog-reading-body {
+  min-width: 0;
+}
+
+.gh-blog-reading-body > .gh-article-calm {
+  display: block;
+  width: 100%;
+  margin-inline: 0;
+}
+
+.gh-blog-reading-body > .gh-article-editorial--plain,
+.gh-blog-reading-body > .gh-article-editorial--authored-sections {
+  width: 100%;
+  margin-inline: 0;
+}
+
+.gh-blog-reading-body > .gh-article-calm > .toc-strip,
+.gh-blog-reading-body > .gh-article-editorial--authored-sections :is(.article-nav, .toc) {
+  display: none !important;
+}
+
 .gh-article-calm {
   display: grid;
   width: min(100%, 1080px);
@@ -1125,6 +1239,159 @@ img {
 }
 .gh-article-editorial th { background: #dfe9e1; color: #28463a; }
 .gh-article-editorial tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.34); }
+
+/* Shared scanability layer: the CMS templates use different markup, so these
+ * restrained markers create one visual language without trusting authored SVG. */
+.gh-blog-reading-body :is(h2[id], h3[id]) {
+  scroll-margin-top: calc(var(--header-height) + 30px);
+}
+
+.gh-blog-reading-body .gh-article-editorial--authored-sections .article-section {
+  position: relative;
+  margin: 0 0 22px;
+  padding: 34px clamp(22px, 4vw, 42px) 38px;
+  border: 1px solid rgba(29, 75, 54, 0.14);
+  border-left: 3px solid #4d806b;
+  border-radius: 6px;
+  background: #faf8f2;
+  box-shadow: 0 16px 36px rgba(17, 53, 40, 0.045);
+}
+
+.gh-blog-reading-body .gh-article-editorial--authored-sections .article-section:nth-of-type(even) {
+  background: #eef2eb;
+}
+
+.gh-blog-reading-body .gh-article-editorial--authored-sections .article-section::before {
+  display: inline-grid;
+  width: 28px;
+  height: 28px;
+  margin-bottom: 18px;
+  place-items: center;
+  border: 1px solid rgba(29, 75, 54, 0.18);
+  border-radius: 3px;
+  background: #173c2f;
+  color: #b0f122;
+  content: "+";
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.gh-blog-reading-body .gh-article-editorial--authored-sections .section-inner {
+  max-width: none;
+}
+
+.gh-blog-reading-body .gh-article-editorial--authored-sections .article-wrap > h2 {
+  position: relative;
+  margin-top: 54px;
+  padding-top: 34px;
+  border-top: 1px solid rgba(29, 75, 54, 0.18);
+}
+
+.gh-blog-reading-body .gh-article-calm .section-label::before,
+.gh-blog-reading-body .gh-article-editorial--authored-sections .section-label::before {
+  display: inline-grid;
+  width: 22px;
+  height: 22px;
+  margin-right: 8px;
+  place-items: center;
+  border-radius: 3px;
+  background: #173c2f;
+  color: #b0f122;
+  content: "+";
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.gh-blog-reading-body .gh-article-editorial--authored-sections :is(
+  .risk-card,
+  .symptom-card,
+  .treatment-card,
+  .future-card,
+  .stat-card,
+  .type-card,
+  .resource-card,
+  .prevention-card,
+  .card,
+  .tc-badge
+) {
+  position: relative;
+  padding-top: 58px;
+  border-color: rgba(29, 75, 54, 0.17);
+  background: #fffdf7;
+  box-shadow: 0 10px 26px rgba(17, 53, 40, 0.055);
+}
+
+.gh-blog-reading-body .gh-article-editorial--authored-sections :is(
+  .risk-card,
+  .symptom-card,
+  .treatment-card,
+  .future-card,
+  .stat-card,
+  .type-card,
+  .resource-card,
+  .prevention-card,
+  .card,
+  .tc-badge
+)::before {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  display: inline-grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 3px;
+  background: #dfe9e1;
+  color: #24513f;
+  content: "+";
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.gh-blog-reading-body .gh-article-editorial--authored-sections :is(.risk-card, .alert-warn)::before { content: "!"; }
+.gh-blog-reading-body .gh-article-editorial--authored-sections :is(.treatment-card, .prevention-card)::before { content: "✓"; }
+.gh-blog-reading-body .gh-article-editorial--authored-sections :is(.future-card, .resource-card)::before { content: "↗"; }
+.gh-blog-reading-body .gh-article-editorial--authored-sections :is(.stat-card, .tc-badge)::before { content: "#"; }
+
+.gh-blog-reading-body .gh-article-editorial--authored-sections :is(.alert-warn, .alert-green)::before {
+  display: inline-grid;
+  width: 26px;
+  height: 26px;
+  margin: 0 10px 10px 0;
+  place-items: center;
+  border-radius: 3px;
+  background: #173c2f;
+  color: #b0f122;
+  content: "i";
+  font-family: Georgia, serif;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.gh-blog-reading-body .gh-article-editorial--authored-sections .alert-warn::before { content: "!"; }
+
+.gh-blog-reading-body .gh-article-editorial--authored-sections .faq-item summary {
+  list-style: none;
+}
+
+.gh-blog-reading-body .gh-article-editorial--authored-sections .faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.gh-blog-reading-body .gh-article-editorial--authored-sections .faq-q::after,
+.gh-blog-reading-body .gh-article-editorial--authored-sections .faq-item summary::after {
+  margin-left: auto;
+  color: #4d806b;
+  content: "+";
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 18px;
+}
 
 .gh-article-calm > .toc-strip {
   position: sticky;
@@ -1534,6 +1801,26 @@ img {
   .gh-article-editorial--authored-sections :is(.hero-facts, .hero-pills) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+  .gh-blog-reading-layout {
+    display: block;
+    width: min(100%, 720px);
+  }
+  .gh-blog-reading-toc {
+    position: static;
+    max-height: none;
+    margin-bottom: 44px;
+    padding: 22px;
+    border: 1px solid rgba(29, 75, 54, 0.14);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.34);
+  }
+  .gh-blog-reading-toc-list {
+    columns: 2;
+    column-gap: 24px;
+  }
+  .gh-blog-reading-toc-list li {
+    break-inside: avoid;
+  }
   .gh-article-calm {
     display: block;
     width: min(100%, 720px);
@@ -1566,6 +1853,10 @@ img {
   .gh-blog-calm-hero h1 { font-size: clamp(2.3rem, 12vw, 3.45rem); }
   .gh-blog-calm-cover-frame { aspect-ratio: 4 / 3; }
   .gh-blog-calm-article-shell { padding-inline: 16px; }
+  .gh-blog-reading-toc-list { columns: 1; }
+  .gh-blog-reading-body .gh-article-editorial--authored-sections .article-section {
+    padding: 26px 20px 30px;
+  }
   .gh-article-calm { font-size: 16px; line-height: 1.72; }
   .gh-article-calm .toc-list { columns: 1; }
   .gh-article-calm .card-grid,
