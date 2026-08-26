@@ -101,6 +101,23 @@ export async function fetchAdminSupportThread(
   return readJson<AdminSupportThreadPayload>(res, "Failed to load support thread");
 }
 
+/**
+ * Admin opens a conversation with a doctor who may never have written in.
+ * The opening message is part of the same call — a thread with no messages
+ * is invisible in the inbox and would notify the doctor about nothing.
+ */
+export async function startAdminSupportThread(
+  doctorId: string,
+  body: string,
+): Promise<SupportThreadPayload> {
+  const res = await fetch("/api/admin/support/threads", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ doctorId, body }),
+  });
+  return readJson<SupportThreadPayload>(res, "Failed to start the conversation");
+}
+
 export async function postAdminSupportMessage(
   threadId: string,
   body: string,

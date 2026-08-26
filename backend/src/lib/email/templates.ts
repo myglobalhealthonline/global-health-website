@@ -176,6 +176,51 @@ export async function sendSupportMessageAlertEmail(opts: {
 }
 
 /**
+ * The admin team wrote into a doctor's support thread → alert the doctor.
+ *
+ * Mirror of `sendSupportMessageAlertEmail` for the other direction. Throttling
+ * lives upstream in `alertDoctorOfSupportMessage`
+ * (SupportThread.lastDoctorAlertAt), shared with the WhatsApp send so a burst
+ * of admin messages produces one email and one WhatsApp per window.
+ */
+export async function sendSupportReplyDoctorAlertEmail(opts: {
+  to: string;
+  /** First name of the replying admin — the doctor only ever sees that. */
+  adminName: string;
+  /** Absolute `/doctor/support` URL. */
+  threadUrl: string;
+  /** First ~140 chars of the message, or "Sent a file: …". Optional. */
+  snippet?: string | null;
+}) {
+  const snippet = opts.snippet?.trim() || null;
+  const subject = `${opts.adminName} from Global Health sent you a message`;
+  return sendEmail({
+    to: opts.to,
+    subject,
+    text: `${opts.adminName} from the Global Health support team sent you a message${snippet ? `:
+
+"${snippet}"` : "."}
+
+Open the support chat:
+${opts.threadUrl}
+
+— Global Health`,
+    html: wrapHtml(
+      "New support message",
+      `<p><strong>${escapeHtml(opts.adminName)}</strong> from the Global Health support team sent you a message.</p>
+       ${
+         snippet
+           ? `<blockquote style="margin:18px 0;padding:12px 16px;border-left:3px solid #B0F122;background:#F6F8F1;border-radius:0 10px 10px 0;color:#2D3B36;">${escapeHtml(snippet)}</blockquote>`
+           : ""
+       }
+       <p style="margin:24px 0;text-align:center;"><a href="${opts.threadUrl}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Open the chat</a></p>
+       <p style="font-size:13px;color:#737373;">Or paste this URL into your browser:<br/><a href="${opts.threadUrl}">${escapeHtml(opts.threadUrl)}</a></p>
+       <p style="font-size:13px;color:#737373;">Reply from your portal and the support team is notified straight away.</p>`,
+    ),
+  });
+}
+
+/**
  * A patient wrote into their clinic (admin) message thread → alert the admin
  * team. Throttling lives upstream in `alertAdminsOfPatientMessage`
  * (Appointment.lastPatientMsgAdminAlertAt) so a burst of patient messages

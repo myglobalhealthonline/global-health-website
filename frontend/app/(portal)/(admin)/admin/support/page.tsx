@@ -1,6 +1,7 @@
-import { fetchAdminSupportThreads } from "@/lib/admin/admin-api";
+import { fetchAdminSupportThreads, fetchAdminSupportDoctors } from "@/lib/admin/admin-api";
 import { AdminCard, PageHeader, Pill } from "@/components/portal-atoms";
 import { AdminSupportInbox } from "./inbox";
+import { NewSupportThreadButton } from "./new-thread";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +18,13 @@ type Props = { searchParams?: Promise<{ open?: string }> };
  */
 export default async function AdminSupportPage({ searchParams }: Props) {
   const sp = searchParams ? await searchParams : {};
-  const result = await fetchAdminSupportThreads();
+  // Parallel: the doctor picker must list every active doctor, including those
+  // with no thread yet, so it can't be derived from the inbox rows.
+  const [result, doctorsResult] = await Promise.all([
+    fetchAdminSupportThreads(),
+    fetchAdminSupportDoctors(),
+  ]);
+  const doctorOptions = doctorsResult.ok ? doctorsResult.data.items : [];
 
   if (!result.ok) {
     return (
@@ -40,8 +47,15 @@ export default async function AdminSupportPage({ searchParams }: Props) {
       <PageHeader
         eyebrow="Support"
         title="Doctor support"
-        description="Doctors' direct line to the operations team. Any admin can reply — your first name is shown to the doctor so they know who answered."
-        actions={totalUnread > 0 ? <Pill tone="brand">{totalUnread} unread</Pill> : null}
+        description="Two-way line between doctors and the operations team. Either side can start the conversation; your first name is shown to the doctor so they know who wrote."
+        actions={
+          <div className="flex items-center gap-2">
+            {totalUnread > 0 ? <Pill tone="brand">{totalUnread} unread</Pill> : null}
+            {doctorOptions.length > 0 ? (
+              <NewSupportThreadButton doctors={doctorOptions} />
+            ) : null}
+          </div>
+        }
       />
       <AdminSupportInbox
         threads={threads}

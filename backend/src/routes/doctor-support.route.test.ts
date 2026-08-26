@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { firstName, postBodySchema, serializeMessage } from "./doctor-support.route.js";
+import {
+  firstName,
+  postBodySchema,
+  serializeMessage,
+  startThreadBodySchema,
+} from "./doctor-support.route.js";
 import { supportSnippet } from "../modules/support/support-notify.service.js";
 
 /**
@@ -117,5 +122,42 @@ describe("supportSnippet", () => {
   it("returns null when there is nothing to describe", () => {
     assert.equal(supportSnippet({}), null);
     assert.equal(supportSnippet({ body: "  ", fileName: "  " }), null);
+  });
+});
+
+describe("startThreadBodySchema", () => {
+  it("accepts a doctor id with a trimmed opening message", () => {
+    const parsed = startThreadBodySchema.safeParse({
+      doctorId: "doc_1",
+      body: "  Please re-upload your registration certificate.  ",
+    });
+    assert.equal(parsed.success, true);
+    assert.equal(
+      parsed.success && parsed.data.body,
+      "Please re-upload your registration certificate.",
+    );
+  });
+
+  it("requires an opening message — an empty thread would notify about nothing", () => {
+    assert.equal(
+      startThreadBodySchema.safeParse({ doctorId: "doc_1", body: "   " }).success,
+      false,
+    );
+    assert.equal(startThreadBodySchema.safeParse({ doctorId: "doc_1" }).success, false);
+  });
+
+  it("requires a doctor id", () => {
+    assert.equal(startThreadBodySchema.safeParse({ body: "hello" }).success, false);
+    assert.equal(
+      startThreadBodySchema.safeParse({ doctorId: "", body: "hello" }).success,
+      false,
+    );
+  });
+
+  it("shares the 4000-character ceiling with a normal message", () => {
+    const ok = startThreadBodySchema.safeParse({ doctorId: "doc_1", body: "x".repeat(4000) });
+    const tooLong = startThreadBodySchema.safeParse({ doctorId: "doc_1", body: "x".repeat(4001) });
+    assert.equal(ok.success, true);
+    assert.equal(tooLong.success, false);
   });
 });

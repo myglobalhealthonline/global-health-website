@@ -4330,6 +4330,11 @@ model SupportThread {
   /// Claimed atomically (conditional updateMany) before each send, and reset
   /// to null when an admin replies so the next doctor message alerts at once.
   lastAdminEmailAt DateTime?
+  /// Mirror of `lastAdminEmailAt` for the other direction: throttles the
+  /// email + WhatsApp fan-out to the doctor when an admin writes (or opens a
+  /// thread). Reset to null when the doctor replies, so the next admin
+  /// message reaches them at once.
+  lastDoctorAlertAt DateTime?
   messages         SupportMessage[]
   readStates       SupportThreadRead[]
   createdAt        DateTime                  @default(now())
