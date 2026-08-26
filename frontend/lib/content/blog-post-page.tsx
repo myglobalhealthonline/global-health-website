@@ -5,9 +5,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { Clock, User, Calendar, BadgeCheck, ArrowUpRight, RefreshCw } from "lucide-react";
 import { BlogCard } from "@/components/cards/BlogCard";
+import { CalmEditorialArticleHero } from "@/components/blog/CalmEditorialArticleHero";
 import { getCountryByCode } from "@/data/countries";
 import { getBlogPost, listBlogPosts, type BlogDoctor, type BlogListItem, type BlogPostFull } from "@/lib/content/get-public-blog";
-import { blogArticleBodyClassName, scopeBlogHtml } from "@/lib/content/scope-blog-html";
+import { blogArticleBodyClassName, calmEditorialBlogHtml, scopeBlogHtml } from "@/lib/content/scope-blog-html";
+import { isCalmEditorialBlogPilot } from "@/lib/content/blog-presentation";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { articleJsonLd, breadcrumbJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
@@ -282,7 +284,11 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
   // markup, no FAQPage node is emitted.
   const articleFaqs = extractArticleFaqs(post.body);
   /** Body ships its own complete design (its own <style> block). */
-  const isDesignedBody = post.body.includes("<style");
+  const isCalmEditorialPilot = isCalmEditorialBlogPilot(post.slug);
+  const renderedArticleHtml = isCalmEditorialPilot
+    ? calmEditorialBlogHtml(post.body)
+    : scopeBlogHtml(post.body);
+  const isDesignedBody = !isCalmEditorialPilot && post.body.includes("<style");
   /** Body closes with its own styled medical-disclaimer panel. */
   const bodyHasOwnDisclaimer = /class="[^"]*\bdisclaimer\b/.test(post.body);
   const relatedHrefFor = (p: BlogListItem) =>
@@ -318,10 +324,30 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
           ...(articleFaqs.length > 0 ? [faqJsonLd(articleFaqs)] : []),
         ]}
       />
-      {/* ── Article hero — matches the PageHero atmosphere (layered forest
-          gradients, lime glow, plus glyphs) with the cover image living IN the
-          hero as a right-column panel instead of a detached banner below. */}
-      <section
+      {isCalmEditorialPilot ? (
+        <CalmEditorialArticleHero
+          backHref={backHref}
+          backLabel={blogI18n.allArticles}
+          category={post.category}
+          title={displayTitle}
+          excerpt={post.excerpt}
+          authorName={authorName}
+          authorHref={authorHref}
+          publishedLabel={formatted}
+          readingTimeLabel={`${post.readingTime} ${blogI18n.minRead}`}
+          reviewerName={reviewerName}
+          reviewerHref={reviewerHref}
+          reviewedByLabel={blogI18n.clinicallyReviewedBy}
+          lastReviewedLabel={
+            post.lastReviewedAt && lastReviewedFormatted !== formatted
+              ? `${blogI18n.lastReviewed} ${lastReviewedFormatted}`
+              : null
+          }
+          coverImageSrc={post.coverImageSrc}
+          coverImageAlt={post.coverImageAlt ?? displayTitle}
+        />
+      ) : (
+        <section
         className="gh-medical-pattern gh-medical-pattern-dark relative isolate flex flex-col !overflow-visible gh-hero-cap lg:min-h-[calc(100svh-var(--header-height))]"
         style={{ background: "#031F18" }}
       >
@@ -597,15 +623,24 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
           </div>
         </div>
       </section>
+      )}
 
       {/* Article body. Designed articles (they ship their own <style>) are
           full-bleed — their CSS sizes sections against 100vw, so any site
           container/padding here squeezes their grid columns. Plain rich-text
           bodies keep the site container + padding. */}
       <section
-        className={isDesignedBody ? undefined : "mx-auto max-w-[var(--container-width)]"}
+        className={
+          isCalmEditorialPilot
+            ? "gh-blog-calm-article-shell"
+            : isDesignedBody
+              ? undefined
+              : "mx-auto max-w-[var(--container-width)]"
+        }
         style={
-          isDesignedBody
+          isCalmEditorialPilot
+            ? undefined
+            : isDesignedBody
             ? { background: "var(--color-background-page)" }
             : { background: "var(--color-background-page)", padding: "clamp(48px,6vw,80px) clamp(20px,4vw,40px)" }
         }
@@ -614,9 +649,9 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
             <style>/classes preserved) and CSS-scoped to .gh-article-body so it
             can't bleed into the site. Rendered server-side for SEO. */}
         <div
-          className={blogArticleBodyClassName(post.body)}
+          className={`${blogArticleBodyClassName(renderedArticleHtml)}${isCalmEditorialPilot ? " gh-article-calm" : ""}`}
           // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- scopeBlogHtml() runs sanitize-html with a controlled allowlist (frontend/lib/content/scope-blog-html.ts) before this renders; mirrors the backend's own sanitizeBlogHtml allowlist.
-          dangerouslySetInnerHTML={{ __html: scopeBlogHtml(post.body) }}
+          dangerouslySetInnerHTML={{ __html: renderedArticleHtml }}
         />
         {/* Designed articles nearly all close with their own styled
             "Medical Disclaimer" panel; appending this one under it printed the
@@ -637,18 +672,22 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
 
       {/* Dark CTA block — matches luxury language of the rest of the site */}
       <section
-        className="relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
+        className={
+          isCalmEditorialPilot
+            ? "gh-blog-calm-cta"
+            : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
+        }
         style={{
           padding: "clamp(64px,8vw,100px) 0",
         }}
       >
-        <SectionSeam theme="dark" />
+        {isCalmEditorialPilot ? null : <SectionSeam theme="dark" />}
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="grid items-end gap-10 lg:grid-cols-[1.6fr_1fr]">
             <div>
               <p
                 className="text-[11px] font-bold uppercase tracking-[0.2em]"
-                style={{ color: "var(--color-brand-accent)" }}
+                style={{ color: isCalmEditorialPilot ? "var(--color-brand-primary)" : "var(--color-brand-accent)" }}
               >
                 {blogI18n.nextStep}
               </p>
@@ -656,14 +695,14 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
                 className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.02]"
                 style={{
                   fontSize: "clamp(2rem, 4vw + 0.5rem, 3.5rem)",
-                  color: "rgba(255,255,255,0.92)",
+                  color: isCalmEditorialPilot ? "var(--color-text-primary)" : "rgba(255,255,255,0.92)",
                 }}
               >
                 {blogI18n.readyToSpeak}
               </h2>
               <p
                 className="mt-5 max-w-[48ch] text-[length:var(--text-body-lg)] leading-relaxed"
-                style={{ color: "rgba(255,255,255,0.72)" }}
+                style={{ color: isCalmEditorialPilot ? "var(--color-text-secondary)" : "rgba(255,255,255,0.72)" }}
               >
                 {/* Blog articles live outside the [country]/[lang] segment. When
                   * the post has a linked CTA service, we route straight to that
@@ -675,7 +714,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
             </div>
             <Link
               href={ctaHref}
-              className="gh2-btn-lime lg:justify-self-end"
+              className={isCalmEditorialPilot ? "gh-blog-calm-cta-link lg:justify-self-end" : "gh2-btn-lime lg:justify-self-end"}
             >
               {blogI18n.bookConsultation}
             </Link>
@@ -684,8 +723,8 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
       </section>
 
       {relatedPosts.length > 0 ? (
-        <section className="gh-inline-clamp-section relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
-          <SectionSeam theme="light" />
+        <section className={isCalmEditorialPilot ? "gh-blog-calm-related" : "gh-inline-clamp-section relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"}>
+          {isCalmEditorialPilot ? null : <SectionSeam theme="light" />}
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
             <h2
               className="max-w-[24ch] font-extrabold tracking-[-0.03em] leading-[1.04]"
@@ -699,8 +738,20 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
             {/* Same card as the blog index, in its stacked orientation — the
                 cover image is already on BlogListItem, so the old text-only
                 tile was dropping an asset the data layer had all along. */}
-            <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 md:mt-12">
+            <div className={isCalmEditorialPilot ? "gh-blog-calm-related-list" : "mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 md:mt-12"}>
               {relatedPosts.map((p) => (
+                isCalmEditorialPilot ? (
+                  <article key={p.slug} className="gh-blog-calm-related-item">
+                    <p>{p.category}</p>
+                    <h3>
+                      <Link href={relatedHrefFor(p)}>{sentenceCaseIfShouting(p.title)}</Link>
+                    </h3>
+                    <p>{p.excerpt}</p>
+                    <Link href={relatedHrefFor(p)} className="gh-blog-calm-related-link">
+                      {blogPageI18n.readArticle} <span aria-hidden>→</span>
+                    </Link>
+                  </article>
+                ) : (
                 <BlogCard
                   key={p.slug}
                   orientation="stacked"
@@ -717,6 +768,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
                   readArticleLabel={blogPageI18n.readArticle}
                   categoryFallback={blogPageI18n.categoryFallback}
                 />
+                )
               ))}
             </div>
           </div>
