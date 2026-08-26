@@ -170,9 +170,9 @@ const adminDoctorBaseObject = z.object({
   canCreateManualAppointments: z.boolean().optional(),
   canRequestCrossJurisdictionRx: z.boolean().optional(),
   /**
-   * Review destination for this doctor's completed consultations. false /
-   * omitted keeps the internal 7-dimension form; true routes the patient to
-   * Trustpilot instead, 24h after the consultation ends.
+   * Legacy rollout flag retained for backward compatibility on doctor rows.
+   * Review invitations are now routed universally from country settings, so
+   * this field no longer changes patient-facing behaviour.
    */
   trustpilotInviteEnabled: z.boolean().optional(),
   /**

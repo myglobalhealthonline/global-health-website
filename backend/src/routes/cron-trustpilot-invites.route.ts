@@ -11,11 +11,11 @@ import { dispatchDueTrustpilotInvites } from "../modules/review-invites/review-i
  *   POST /api/cron/trustpilot-invites
  *   Header: X-Cron-Token: <CRON_SECRET>
  *
- * Appointments finalised for a doctor with `trustpilotInviteEnabled` leave a
- * ReviewInvite row scheduled 24h after the consultation ended. This endpoint
- * turns the due ones into Trustpilot AFS triggers; Trustpilot then emails the
- * patient. Point Railway cron at it hourly — the 24h delay lives on the row,
- * so tick frequency only affects punctuality, never correctness.
+ * Legacy TRUSTPILOT ReviewInvite rows still need dispatching after rollout of
+ * the universal internal review hub. This endpoint turns those due rows into
+ * Trustpilot AFS triggers; Trustpilot then emails the patient. Point Railway
+ * cron at it hourly — the 24h delay lives on the row, so tick frequency only
+ * affects punctuality, never correctness.
  *
  * Runs are idempotent: a row is claimed by stamping `dispatchedAt`, so an
  * overlapping tick re-reads it as already handled.

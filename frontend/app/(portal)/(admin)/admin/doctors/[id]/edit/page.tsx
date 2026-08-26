@@ -196,7 +196,6 @@ export default async function AdminEditDoctorPage({
       active: raw.active,
       canCreateManualAppointments: raw.canCreateManualAppointments,
       canRequestCrossJurisdictionRx: raw.canRequestCrossJurisdictionRx,
-      trustpilotInviteEnabled: raw.trustpilotInviteEnabled,
       crossBorderRxEnabled: raw.crossBorderRxEnabled,
       crossBorderRxCountries: raw.crossBorderRxCountries,
       isCountryDirector: raw.isCountryDirector,
@@ -654,32 +653,14 @@ export default async function AdminEditDoctorPage({
               Patient reviews
             </h3>
             <p className="mb-3 mt-1 text-portal-compact text-[var(--color-text-muted)]">
-              Where this doctor&apos;s patients are asked to leave a review once
-              the consultation is marked complete. One request per visit — the
-              two are never both sent.
+              Every patient receives the same Global Health feedback request
+              after a completed consultation.
             </p>
-            <label className="flex cursor-pointer items-start gap-2.5 border-t border-[var(--color-border)] py-3">
-              <input
-                type="checkbox"
-                form="doctor-edit-form"
-                name="trustpilotInviteEnabled"
-                defaultChecked={Boolean(doctor.trustpilotInviteEnabled)}
-                className="mt-0.5 h-5 w-5 rounded border-[var(--color-border)] accent-[var(--color-brand-primary)]"
-              />
-              <div className="flex-1">
-                <p className="m-0 text-portal-compact font-bold text-[var(--color-text-primary)]">
-                  Use Trustpilot instead of our review form
-                </p>
-                <p className="m-0 text-portal-meta text-[var(--color-text-muted)]">
-                  Off (default): the patient gets the Global Health review form
-                  straight away — 7 questions, private, stored with the
-                  appointment. On: we send the patient nothing, and 24 hours
-                  after the consultation Trustpilot emails its own invite. That
-                  review is public on the Trustpilot profile, but it is a star
-                  rating and free text only — the 7 questions are not asked.
-                </p>
-              </div>
-            </label>
+            <p className="border-t border-[var(--color-border)] pt-3 text-portal-meta text-[var(--color-text-muted)]">
+              Public Google and Doctify links are selected from the appointment
+              country. Trustpilot uses the single global link configured under
+              Settings → Reviews.
+            </p>
           </AdminCard>
         </div>
       </div>

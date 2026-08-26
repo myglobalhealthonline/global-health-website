@@ -2618,8 +2618,8 @@ model BrazilConsentSubmission {
 
 /// Where a completed appointment's review request was routed.
 /// INTERNAL   — our own 7-dimension form at /reviews/rate. Sent by us, at once.
-/// TRUSTPILOT — the doctor has `Doctor.trustpilotInviteEnabled`. Nothing is
-///              sent to the patient by us; the row is a scheduled trigger,
+/// TRUSTPILOT — legacy scheduled Trustpilot AFS trigger rows created before
+///              the universal internal review hub rollout. They are still
 ///              picked up by POST /api/cron/trustpilot-invites once
 ///              `scheduledFor` passes, which emails Trustpilot's Automatic
 ///              Feedback Service address. Trustpilot then invites the patient.
@@ -2646,8 +2646,9 @@ model ReviewInvite {
   contactPhone          String?
   localeCode            String?
   expiresAt             DateTime
-  /// Which review destination this appointment was routed to. Also keeps the
-  /// two populations separable: only INTERNAL rows can carry ratings below.
+  /// Which review channel this invite row belongs to. INTERNAL is the default
+  /// universal review hub; TRUSTPILOT is retained only for legacy AFS rows.
+  /// Only INTERNAL rows can carry ratings below.
   channel               ReviewInviteChannel @default(INTERNAL)
   /// TRUSTPILOT rows only: when the AFS trigger becomes due (consultation end
   /// + 24h). Null on INTERNAL rows, which are sent inline at creation.
@@ -3812,12 +3813,14 @@ model Review {
  * alongside plain strings.
  * Known keys (Phase 4):
  * review.trustpilot.businessUnitId   string
+ * review.trustpilot.reviewUrl        string (one global patient-facing review URL)
  * review.trustpilot.aggregate        { rating: number, count: number, updatedAt: iso8601 }
  * review.google.placeId              string
  * review.google.aggregate            { rating: number, count: number, updatedAt: iso8601 }
  * review.doctify.clinicId            string
  * review.doctify.aggregate           { rating: number, count: number, updatedAt: iso8601 }
  * review.primaryProvider             "TRUSTPILOT" | "GOOGLE" | "DOCTIFY"
+ * review.destination:<COUNTRY_CODE>  { sendReviewRequests: boolean, googleReviewUrl: string|null, doctifyReviewUrl: string|null }
  */
 model Setting {
   key       String   @id

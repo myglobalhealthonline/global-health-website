@@ -9,18 +9,10 @@ import {
   sendTrustpilotAfsTrigger,
   toTrustpilotLocale,
 } from "../../lib/trustpilot/afs-trigger.js";
+import { resolveUniversalReviewInviteRouting } from "./review-destinations.js";
+import { canSendReviewInviteForCountry } from "../settings/settings.service.js";
 
 const INVITE_TTL_DAYS = 14;
-
-/**
- * Delay between the consultation ending and Trustpilot being asked to invite
- * the patient. Long enough that the visit is finished and any follow-up has
- * landed, short enough that the patient still remembers it.
- *
- * NOTE: Trustpilot applies its OWN delay on top of this, configured in the
- * dashboard under AFS. Set that one to 0 or the patient waits twice.
- */
-const TRUSTPILOT_TRIGGER_DELAY_MS = 24 * 60 * 60 * 1000;
 
 /** Rows handled per cron tick. Keeps a backlog from monopolising one run. */
 const TRUSTPILOT_DISPATCH_BATCH = 50;
@@ -68,15 +60,11 @@ export async function trustpilotInvitesUsedThisMonth(now = new Date()): Promise<
  * Create (and for the internal channel, send) the review invite for a
  * completed appointment.
  *
- * Two destinations, chosen by the appointment's doctor:
- *
- *  - `Doctor.trustpilotInviteEnabled === false` (default) — unchanged: mint a
- *    token and email/WhatsApp the patient our own 7-dimension form.
- *  - `Doctor.trustpilotInviteEnabled === true` — send the patient nothing.
- *    Persist a TRUSTPILOT row scheduled for 24h after the consultation ended;
- *    the cron turns that into a Trustpilot AFS trigger when due, and
- *    Trustpilot emails the patient. The internal form is never sent, so the
- *    patient is asked exactly once.
+ * Every completed appointment receives the same Global Health review hub.
+ * The hub collects first-party feedback and, after submission, exposes the
+ * appointment country's Google/Doctify destinations plus the one global
+ * Trustpilot destination. Historical TRUSTPILOT rows remain dispatchable, but
+ * new rows are no longer selected by a doctor-level toggle.
  *
  * Idempotent per appointment in both cases: an existing unsubmitted, unexpired
  * invite is returned as-is rather than duplicated.
@@ -85,24 +73,31 @@ export async function createReviewInviteForAppointment(appointmentId: string) {
   const appt = await prisma.appointment.findUnique({
     where: { id: appointmentId },
     include: {
-      doctor: { select: { fullName: true, trustpilotInviteEnabled: true } },
+      doctor: { select: { fullName: true } },
       service: { select: { name: true } },
     },
   });
   if (!appt || appt.status !== "COMPLETED") return null;
+  if (!(await canSendReviewInviteForCountry(appt.countryCode))) return null;
 
   const existing = await prisma.reviewInvite.findFirst({
-    where: { appointmentId, submittedAt: null },
+    where: {
+      appointmentId,
+      submittedAt: null,
+      expiresAt: { gt: new Date() },
+    },
     orderBy: { createdAt: "desc" },
   });
-  if (existing && existing.expiresAt > new Date()) {
+  if (existing) {
     return existing;
   }
 
-  const useTrustpilot = appt.doctor?.trustpilotInviteEnabled === true;
   const token = randomBytes(24).toString("base64url");
   const expiresAt = new Date(Date.now() + INVITE_TTL_DAYS * 24 * 60 * 60 * 1000);
-  const localeCode = appt.countryCode?.toLowerCase() === "br" ? "pt-br" : "en";
+  const routing = resolveUniversalReviewInviteRouting({
+    countryCode: appt.countryCode,
+    notificationLocale: appt.notificationLocale,
+  });
 
   const invite = await prisma.reviewInvite.create({
     data: {
@@ -113,25 +108,14 @@ export async function createReviewInviteForAppointment(appointmentId: string) {
       contactPhone: appt.phone,
       doctorName: appt.doctor ? appt.doctor.fullName.trim() : null,
       serviceName: appt.service?.name ?? appt.consultationType,
-      localeCode,
+      localeCode: routing.localeCode,
       expiresAt,
-      channel: useTrustpilot ? "TRUSTPILOT" : "INTERNAL",
-      // The clock starts when the consultation ended, not when this ran — a
-      // late finalisation shouldn't push the patient's invite further out.
-      scheduledFor: useTrustpilot
-        ? new Date(
-            (appt.consultationCompletedAt ?? new Date()).getTime() +
-              TRUSTPILOT_TRIGGER_DELAY_MS,
-          )
-        : null,
+      channel: routing.channel,
+      scheduledFor: routing.scheduledFor,
     },
   });
 
-  // Trustpilot rows are delivered by the cron once `scheduledFor` passes —
-  // nothing is sent to the patient from here.
-  if (useTrustpilot) return invite;
-
-  const locale = getReviewFormLocale(localeCode);
+  const locale = getReviewFormLocale(routing.localeCode);
   const link = reviewUrl(token);
   // The invite row is already persisted. Treat delivery as best-effort so a
   // failed email/WhatsApp send doesn't throw back to the caller (which would

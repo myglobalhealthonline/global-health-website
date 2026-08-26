@@ -3,10 +3,21 @@ import { adminRequest } from "./core";
 export type AdminReviewAggregate = { rating: number; count: number; updatedAt: string } | null;
 
 export type AdminReviewSettings = {
-  trustpilot: { businessUnitId: string | null; aggregate: AdminReviewAggregate };
+  trustpilot: {
+    businessUnitId: string | null;
+    reviewUrl: string | null;
+    aggregate: AdminReviewAggregate;
+  };
   google: { placeId: string | null; aggregate: AdminReviewAggregate };
   doctify: { clinicId: string | null; aggregate: AdminReviewAggregate };
   primaryProvider: "TRUSTPILOT" | "GOOGLE" | "DOCTIFY" | null;
+  destinations: Array<{
+    countryCode: string;
+    countryName: string;
+    sendReviewRequests: boolean;
+    googleReviewUrl: string | null;
+    doctifyReviewUrl: string | null;
+  }>;
 };
 
 /** GET/PATCH the review-provider config (Settings table). Drives the

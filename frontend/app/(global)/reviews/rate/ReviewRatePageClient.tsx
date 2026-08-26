@@ -24,8 +24,15 @@ function ReviewRateForm() {
     intro: string;
     submit: string;
     thanks: string;
+    publicTitle: string;
+    publicIntro: string;
+    publicCta: string;
     labels: Record<string, string>;
   } | null>(null);
+  const [destinations, setDestinations] = useState<Array<{
+    provider: "GOOGLE" | "DOCTIFY" | "TRUSTPILOT";
+    url: string;
+  }>>([]);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -43,6 +50,7 @@ function ReviewRateForm() {
         return;
       }
       setLocale(res.data.locale);
+      setDestinations(res.data.destinations);
       if (res.data.submitted) setSubmitted(true);
     });
   }, [token]);
@@ -74,8 +82,31 @@ function ReviewRateForm() {
   }
   if (submitted && locale) {
     return (
-      <div className="gh-card mx-auto max-w-lg p-8 text-center" role="status">
-        <h1 className="text-xl font-bold">{locale.thanks}</h1>
+      <div className="gh-card mx-auto max-w-lg p-8 text-center">
+        <h1 className="text-xl font-bold" role="status">{locale.thanks}</h1>
+        {destinations.length > 0 ? (
+          <div className="mt-6 border-t border-[var(--color-border)] pt-6">
+            <h2 className="text-lg font-bold text-[var(--color-text-primary)]">
+              {locale.publicTitle}
+            </h2>
+            <p className="mt-2 text-sm text-[var(--color-text-muted)]">
+              {locale.publicIntro}
+            </p>
+            <div className="mt-5 grid gap-3">
+              {destinations.map((destination) => (
+                <a
+                  key={destination.provider}
+                  href={destination.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="gh2-btn-lime justify-center"
+                >
+                  {locale.publicCta} {destination.provider === "GOOGLE" ? "Google" : destination.provider === "DOCTIFY" ? "Doctify" : "Trustpilot"}
+                </a>
+              ))}
+            </div>
+          </div>
+        ) : null}
       </div>
     );
   }

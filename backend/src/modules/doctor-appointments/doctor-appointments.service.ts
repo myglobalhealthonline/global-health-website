@@ -49,7 +49,12 @@ export async function finalizeDoctorAppointment(
     },
   });
 
-  createReviewInviteForAppointment(updated.id).catch(() => {});
+  createReviewInviteForAppointment(updated.id).catch((error) => {
+    console.error("[review-invite] could not create post-consultation invite", {
+      appointmentId: updated.id,
+      error,
+    });
+  });
 
   if (updated.countryCode.toLowerCase() === "br") {
     sendBrazilFinalizationEmail({

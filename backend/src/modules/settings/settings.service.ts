@@ -1,5 +1,12 @@
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
+import {
+  canSendReviewInvite,
+  countryReviewSettingKey,
+  parseCountryReviewSetting,
+  toPatientReviewDestinations,
+  type PatientReviewDestination,
+} from "../review-invites/review-destinations.js";
 
 /**
  * Thin wrapper around the generic Setting key/value table.
@@ -18,6 +25,7 @@ export type AggregateSnapshot = {
 export type PublicReviewConfig = {
   trustpilot: {
     businessUnitId: string | null;
+    reviewUrl: string | null;
     aggregate: AggregateSnapshot | null;
   };
   google: {
@@ -47,6 +55,7 @@ export async function getSetting<T = unknown>(key: string): Promise<T | null> {
 // featured-doctor rows keyed `featured_doctor:<code>`).
 const WRITABLE_SETTING_KEYS = new Set<string>([
   "review.trustpilot.businessUnitId",
+  "review.trustpilot.reviewUrl",
   "review.trustpilot.aggregate",
   "review.google.placeId",
   "review.google.aggregate",
@@ -56,6 +65,7 @@ const WRITABLE_SETTING_KEYS = new Set<string>([
 ]);
 const WRITABLE_SETTING_PREFIXES = [
   "featured_doctor:",
+  "review.destination:",
   // Same-day GP quick-book config + rotation state (per country).
   "gp_same_day_service:",
   "gp_priority_doctor:",
@@ -98,6 +108,7 @@ export async function getPublicReviewConfig(): Promise<PublicReviewConfig> {
         key: {
           in: [
             "review.trustpilot.businessUnitId",
+            "review.trustpilot.reviewUrl",
             "review.trustpilot.aggregate",
             "review.google.placeId",
             "review.google.aggregate",
@@ -132,6 +143,7 @@ export async function getPublicReviewConfig(): Promise<PublicReviewConfig> {
     return {
       trustpilot: {
         businessUnitId: asString(map.get("review.trustpilot.businessUnitId")),
+        reviewUrl: asString(map.get("review.trustpilot.reviewUrl")),
         aggregate: asAggregate(map.get("review.trustpilot.aggregate")),
       },
       google: {
@@ -146,5 +158,81 @@ export async function getPublicReviewConfig(): Promise<PublicReviewConfig> {
     };
   } catch (error) {
     throw normalizeDbError(error, "Could not read review config");
+  }
+}
+
+export type AdminCountryReviewDestination = {
+  countryCode: string;
+  countryName: string;
+  sendReviewRequests: boolean;
+  googleReviewUrl: string | null;
+  doctifyReviewUrl: string | null;
+};
+
+export async function getAdminCountryReviewDestinations(): Promise<AdminCountryReviewDestination[]> {
+  try {
+    const countries = await prisma.country.findMany({
+      where: { isActive: true },
+      select: { code: true, name: true },
+      orderBy: { name: "asc" },
+    });
+    const keys = countries.map((country) => countryReviewSettingKey(country.code));
+    const settings = keys.length
+      ? await prisma.setting.findMany({ where: { key: { in: keys } } })
+      : [];
+    const values = new Map(settings.map((setting) => [setting.key, setting.value]));
+
+    return countries.map((country) => {
+      const stored = parseCountryReviewSetting(values.get(countryReviewSettingKey(country.code)));
+      return {
+        countryCode: country.code.toUpperCase(),
+        countryName: country.name,
+        sendReviewRequests: stored?.sendReviewRequests ?? false,
+        googleReviewUrl: stored?.googleReviewUrl ?? null,
+        doctifyReviewUrl: stored?.doctifyReviewUrl ?? null,
+      };
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Could not read country review destinations");
+  }
+}
+
+async function getCountryReviewDeliveryConfig(
+  countryCode: string | null | undefined,
+): Promise<{
+  countrySetting: ReturnType<typeof parseCountryReviewSetting>;
+  trustpilotReviewUrl: string | null;
+}> {
+  const countryKey = countryCode ? countryReviewSettingKey(countryCode) : null;
+  const keys = ["review.trustpilot.reviewUrl", ...(countryKey ? [countryKey] : [])];
+  const rows = await prisma.setting.findMany({ where: { key: { in: keys } } });
+  const values = new Map(rows.map((row) => [row.key, row.value]));
+  const countrySetting = countryKey
+    ? parseCountryReviewSetting(values.get(countryKey))
+    : null;
+  const trustpilotValue = values.get("review.trustpilot.reviewUrl");
+  const trustpilotReviewUrl = typeof trustpilotValue === "string" ? trustpilotValue : null;
+  return { countrySetting, trustpilotReviewUrl };
+}
+
+export async function canSendReviewInviteForCountry(
+  countryCode: string | null | undefined,
+): Promise<boolean> {
+  try {
+    return canSendReviewInvite(await getCountryReviewDeliveryConfig(countryCode));
+  } catch (error) {
+    throw normalizeDbError(error, "Could not read review invitation setting");
+  }
+}
+
+export async function getPatientReviewDestinations(
+  countryCode: string | null | undefined,
+): Promise<PatientReviewDestination[]> {
+  try {
+    const { countrySetting, trustpilotReviewUrl } =
+      await getCountryReviewDeliveryConfig(countryCode);
+    return toPatientReviewDestinations({ countrySetting, trustpilotReviewUrl });
+  } catch (error) {
+    throw normalizeDbError(error, "Could not read patient review destinations");
   }
 }

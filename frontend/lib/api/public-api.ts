@@ -66,8 +66,15 @@ export function fetchReviewForm(token: string) {
       intro: string;
       submit: string;
       thanks: string;
+      publicTitle: string;
+      publicIntro: string;
+      publicCta: string;
       labels: Record<string, string>;
     };
+    destinations: Array<{
+      provider: "GOOGLE" | "DOCTIFY" | "TRUSTPILOT";
+      url: string;
+    }>;
   }>(`/api/public/reviews/rate?token=${encodeURIComponent(token)}`);
 }
 

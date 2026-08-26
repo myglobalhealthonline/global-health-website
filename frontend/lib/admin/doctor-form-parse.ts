@@ -91,7 +91,6 @@ export function parseDoctorBodyFromForm(formData: FormData, defaultLocale: strin
       formData.get("canCreateManualAppointments") === "on",
     canRequestCrossJurisdictionRx:
       formData.get("canRequestCrossJurisdictionRx") === "on",
-    trustpilotInviteEnabled: formData.get("trustpilotInviteEnabled") === "on",
     // Country-director master switch + the markets it covers. The ids are
     // DoctorCountry.countryId values; the backend scopes the write by doctorId,
     // so an id outside the doctor's own markets simply matches nothing.

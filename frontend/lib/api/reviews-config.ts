@@ -7,7 +7,11 @@ export type AggregateSnapshot = {
 };
 
 export type ReviewConfig = {
-  trustpilot: { businessUnitId: string | null; aggregate: AggregateSnapshot | null };
+  trustpilot: {
+    businessUnitId: string | null;
+    reviewUrl: string | null;
+    aggregate: AggregateSnapshot | null;
+  };
   google: { placeId: string | null; aggregate: AggregateSnapshot | null };
   doctify: { clinicId: string | null; aggregate: AggregateSnapshot | null };
   primaryProvider: "TRUSTPILOT" | "GOOGLE" | "DOCTIFY" | null;

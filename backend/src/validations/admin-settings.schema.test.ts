@@ -94,4 +94,91 @@ describe("review settings validation", () => {
     });
     assert.equal(r.success, false);
   });
+
+  it("accepts one global Trustpilot review URL and country review destinations", () => {
+    const r = reviewSettingsSchema.safeParse({
+      trustpilot: {
+        reviewUrl: "https://www.trustpilot.com/evaluate/myglobalhealth.online",
+      },
+      destinations: [
+        {
+          countryCode: "IE",
+          sendReviewRequests: true,
+          googleReviewUrl: "https://search.google.com/local/writereview?placeid=abc",
+          doctifyReviewUrl: "https://www.doctify.com/ie/review/global-health",
+        },
+        {
+          countryCode: "BR",
+          googleReviewUrl: null,
+          doctifyReviewUrl: null,
+        },
+      ],
+    });
+
+    assert.equal(r.success, true);
+  });
+
+  it("defaults a missing country send toggle to disabled", () => {
+    const r = reviewSettingsSchema.safeParse({
+      destinations: [
+        { countryCode: "IE", googleReviewUrl: null, doctifyReviewUrl: null },
+      ],
+    });
+
+    assert.equal(r.success, true);
+    if (r.success) {
+      assert.equal(r.data.destinations?.[0]?.sendReviewRequests, false);
+    }
+  });
+
+  it("rejects a non-boolean country send toggle", () => {
+    const r = reviewSettingsSchema.safeParse({
+      destinations: [
+        {
+          countryCode: "IE",
+          sendReviewRequests: "true",
+          googleReviewUrl: null,
+          doctifyReviewUrl: null,
+        },
+      ],
+    });
+
+    assert.equal(r.success, false);
+  });
+
+  it("rejects duplicate country destinations", () => {
+    const r = reviewSettingsSchema.safeParse({
+      destinations: [
+        { countryCode: "IE", googleReviewUrl: null, doctifyReviewUrl: null },
+        { countryCode: "ie", googleReviewUrl: null, doctifyReviewUrl: null },
+      ],
+    });
+
+    assert.equal(r.success, false);
+  });
+
+  it("rejects review URLs on untrusted hosts", () => {
+    const r = reviewSettingsSchema.safeParse({
+      trustpilot: { reviewUrl: "https://example.com/fake-trustpilot" },
+      destinations: [
+        {
+          countryCode: "IE",
+          googleReviewUrl: "https://example.com/fake-google",
+          doctifyReviewUrl: "http://doctify.com/insecure",
+        },
+      ],
+    });
+
+    assert.equal(r.success, false);
+  });
+
+  it("rejects review URLs containing embedded credentials", () => {
+    const r = reviewSettingsSchema.safeParse({
+      trustpilot: {
+        reviewUrl: "https://user:password@www.trustpilot.com/evaluate/example.com",
+      },
+    });
+
+    assert.equal(r.success, false);
+  });
 });

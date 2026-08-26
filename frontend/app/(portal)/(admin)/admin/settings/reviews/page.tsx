@@ -48,6 +48,7 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
       body = {
         trustpilot: {
           businessUnitId: String(formData.get("trustpilotId") ?? "").trim() || null,
+          reviewUrl: String(formData.get("trustpilotReviewUrl") ?? "").trim() || null,
           aggregate: parseAggregate(formData, "trustpilot"),
         },
         google: {
@@ -59,6 +60,15 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
           aggregate: parseAggregate(formData, "doctify"),
         },
         primaryProvider: primaryRaw === "" ? null : primaryRaw,
+        destinations: settings.destinations.map((destination) => ({
+          countryCode: destination.countryCode,
+          sendReviewRequests:
+            formData.get(`sendReviewRequests_${destination.countryCode}`) === "on",
+          googleReviewUrl:
+            String(formData.get(`googleReviewUrl_${destination.countryCode}`) ?? "").trim() || null,
+          doctifyReviewUrl:
+            String(formData.get(`doctifyReviewUrl_${destination.countryCode}`) ?? "").trim() || null,
+        })),
       };
     } catch (err) {
       redirect(
@@ -180,6 +190,20 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
 
         <FormSection title="Trustpilot">
           <label className="flex flex-col gap-2">
+            <span className="gh-field-label">Global patient review URL</span>
+            <input
+              name="trustpilotReviewUrl"
+              type="url"
+              className="gh-input min-w-0"
+              maxLength={500}
+              placeholder="https://www.trustpilot.com/evaluate/myglobalhealth.online"
+              defaultValue={settings.trustpilot.reviewUrl ?? ""}
+            />
+            <span className="text-xs text-[var(--color-text-muted)]">
+              Used for every country. This must be the official Trustpilot review page.
+            </span>
+          </label>
+          <label className="flex flex-col gap-2">
             <span className="gh-field-label">Business unit id</span>
             <input
               name="trustpilotId"
@@ -217,6 +241,46 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
             </span>
           </label>
         </FormSection>
+
+        {settings.destinations.map((destination) => (
+          <FormSection
+            key={destination.countryCode}
+            title={`${destination.countryName} review invitations`}
+            description="Review requests are sent only when this country is enabled and at least one valid review profile is available."
+          >
+            <label className="flex items-center gap-3">
+              <input
+                name={`sendReviewRequests_${destination.countryCode}`}
+                type="checkbox"
+                className="size-4 accent-[var(--color-primary)]"
+                defaultChecked={destination.sendReviewRequests}
+              />
+              <span className="gh-field-label">Send review requests for this country</span>
+            </label>
+            <label className="flex flex-col gap-2">
+              <span className="gh-field-label">Google Business Profile review URL</span>
+              <input
+                name={`googleReviewUrl_${destination.countryCode}`}
+                type="url"
+                className="gh-input min-w-0"
+                maxLength={500}
+                placeholder="https://search.google.com/local/writereview?placeid=..."
+                defaultValue={destination.googleReviewUrl ?? ""}
+              />
+            </label>
+            <label className="flex flex-col gap-2">
+              <span className="gh-field-label">Doctify patient review URL</span>
+              <input
+                name={`doctifyReviewUrl_${destination.countryCode}`}
+                type="url"
+                className="gh-input min-w-0"
+                maxLength={500}
+                placeholder="https://www.doctify.com/..."
+                defaultValue={destination.doctifyReviewUrl ?? ""}
+              />
+            </label>
+          </FormSection>
+        ))}
 
         <FormSection title="Google">
           <label className="flex flex-col gap-2">

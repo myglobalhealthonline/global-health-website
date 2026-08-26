@@ -1,7 +1,11 @@
 import type { FastifyPluginAsync } from "fastify";
 import { Prisma } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
-import { getPublicReviewConfig } from "../modules/settings/settings.service.js";
+import {
+  getAdminCountryReviewDestinations,
+  getPublicReviewConfig,
+} from "../modules/settings/settings.service.js";
+import { countryReviewSettingKey } from "../modules/review-invites/review-destinations.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { verifyGlobalAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -21,7 +25,8 @@ const adminSettingsRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/admin/settings/reviews", async (request, reply) => {
     try {
       const config = await getPublicReviewConfig();
-      return okResponse(config);
+      const destinations = await getAdminCountryReviewDestinations();
+      return okResponse({ ...config, destinations });
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));
@@ -39,6 +44,18 @@ const adminSettingsRoute: FastifyPluginAsync = async (app) => {
     try {
       const body = parsed.data;
       const now = new Date().toISOString();
+      if (body.destinations) {
+        const countries = await prisma.country.findMany({ select: { code: true } });
+        const knownCodes = new Set(countries.map((country) => country.code.toUpperCase()));
+        const unknown = body.destinations.find(
+          (destination) => !knownCodes.has(destination.countryCode),
+        );
+        if (unknown) {
+          return reply
+            .status(400)
+            .send(errorResponse(`Unknown country code: ${unknown.countryCode}`));
+        }
+      }
       // Build the writes as lazy Prisma ops and run them in ONE transaction so
       // a partial failure can't leave the review config half-updated. All keys
       // are the hardcoded review.* constants below (the Setting allowlist).
@@ -71,6 +88,7 @@ const adminSettingsRoute: FastifyPluginAsync = async (app) => {
       }
 
       applyId("review.trustpilot.businessUnitId", body.trustpilot?.businessUnitId);
+      applyId("review.trustpilot.reviewUrl", body.trustpilot?.reviewUrl);
       applyAggregate("review.trustpilot.aggregate", body.trustpilot?.aggregate);
       applyId("review.google.placeId", body.google?.placeId);
       applyAggregate("review.google.aggregate", body.google?.aggregate);
@@ -80,10 +98,27 @@ const adminSettingsRoute: FastifyPluginAsync = async (app) => {
         if (body.primaryProvider === null) clearKey("review.primaryProvider");
         else setKey("review.primaryProvider", body.primaryProvider);
       }
+      for (const destination of body.destinations ?? []) {
+        const key = countryReviewSettingKey(destination.countryCode);
+        if (
+          !destination.sendReviewRequests &&
+          !destination.googleReviewUrl &&
+          !destination.doctifyReviewUrl
+        ) {
+          clearKey(key);
+        } else {
+          setKey(key, {
+            sendReviewRequests: destination.sendReviewRequests,
+            googleReviewUrl: destination.googleReviewUrl,
+            doctifyReviewUrl: destination.doctifyReviewUrl,
+          });
+        }
+      }
 
       await prisma.$transaction(ops);
       const config = await getPublicReviewConfig();
-      return okResponse(config, "Review settings saved");
+      const destinations = await getAdminCountryReviewDestinations();
+      return okResponse({ ...config, destinations }, "Review settings saved");
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));

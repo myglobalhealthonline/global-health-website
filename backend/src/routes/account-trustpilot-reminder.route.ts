@@ -1,8 +1,12 @@
 import type { FastifyPluginAsync } from "fastify";
 import { prisma } from "../db/prisma.js";
 import { requireAuth } from "../utils/require-auth.js";
-import { getSetting } from "../modules/settings/settings.service.js";
+import {
+  canSendReviewInviteForCountry,
+  getSetting,
+} from "../modules/settings/settings.service.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import { isTrustedReviewUrl } from "../modules/review-invites/review-destinations.js";
 
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 
@@ -24,20 +28,22 @@ const accountTrustpilotReminderRoute: FastifyPluginAsync = async (app) => {
             updatedAt: { gte: cutoff },
           },
           orderBy: { updatedAt: "desc" },
-          select: { id: true, updatedAt: true },
+          select: { id: true, updatedAt: true, countryCode: true },
         });
 
         if (!completed) {
           return okResponse({ showCta: false, trustpilotUrl: null, completedAt: null });
         }
 
-        const businessUnitId = await getSetting<string>("review.trustpilot.businessUnitId");
-        const trustpilotUrl = businessUnitId
-          ? `https://www.trustpilot.com/evaluate/${businessUnitId}`
-          : null;
+        const storedTrustpilotUrl = await getSetting<string>("review.trustpilot.reviewUrl");
+        const trustpilotUrl =
+          storedTrustpilotUrl && isTrustedReviewUrl(storedTrustpilotUrl, "TRUSTPILOT")
+            ? storedTrustpilotUrl
+            : null;
+        const countryEnabled = await canSendReviewInviteForCountry(completed.countryCode);
 
         return okResponse({
-          showCta: true,
+          showCta: countryEnabled && trustpilotUrl !== null,
           trustpilotUrl,
           completedAt: completed.updatedAt.toISOString(),
         });

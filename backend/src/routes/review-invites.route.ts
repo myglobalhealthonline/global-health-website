@@ -10,6 +10,7 @@ import {
 } from "../modules/review-invites/review-invite.service.js";
 import { getReviewFormLocale } from "../lib/i18n/review-form.js";
 import { isValidCronSecret } from "../utils/cron-auth.js";
+import { getPatientReviewDestinations } from "../modules/settings/settings.service.js";
 
 const ratingSchema = z.object({
   overallSatisfaction: z.number().int().min(1).max(5),
@@ -29,11 +30,21 @@ const reviewInvitesRoute: FastifyPluginAsync = async (app) => {
       const invite = await getReviewInviteByToken(token);
       if (!invite) return reply.status(404).send(errorResponse("Review not found"));
       if (invite.submittedAt) {
-        return okResponse({ submitted: true, locale: getReviewFormLocale(invite.localeCode) });
+        const destinations = await getPatientReviewDestinations(
+          invite.appointment?.countryCode,
+        );
+        return okResponse({
+          submitted: true,
+          locale: getReviewFormLocale(invite.localeCode),
+          destinations,
+        });
       }
       if (invite.expiresAt < new Date()) {
         return reply.status(410).send(errorResponse("Review link has expired"));
       }
+      const destinations = await getPatientReviewDestinations(
+        invite.appointment?.countryCode,
+      );
       return okResponse({
         submitted: false,
         invite: {
@@ -43,6 +54,7 @@ const reviewInvitesRoute: FastifyPluginAsync = async (app) => {
           localeCode: invite.localeCode,
         },
         locale: getReviewFormLocale(invite.localeCode),
+        destinations,
       });
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {
