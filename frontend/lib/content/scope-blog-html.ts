@@ -312,6 +312,33 @@ function warnDropped(what: string, err?: unknown): void {
   console.warn(`[scope-blog-html] dropped ${what} from author CSS${suffix}`);
 }
 
+/**
+ * Convert a self-designed article into the shared calm editorial treatment.
+ *
+ * The CMS body remains the source of truth for the article's medical copy,
+ * headings, tables, links and anchor targets. Only two presentational layers
+ * are removed:
+ *   1. embedded author CSS, which is what creates a different visual system
+ *      for every designed post; and
+ *   2. the body's own introductory hero, because the page template already
+ *      renders the canonical title, excerpt, author and clinical reviewer.
+ *
+ * The result still passes through the same sanitizer as every public article.
+ * This is deliberately exported as a small transformation so the pilot can be
+ * tested independently and rolled back without changing production content.
+ */
+export function calmEditorialBlogHtml(html: string): string {
+  if (!html) return html;
+
+  const withoutAuthorCss = html.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, "");
+  const withoutDuplicatedIntro = withoutAuthorCss.replace(
+    /<section\b(?=[^>]*\bclass=(?:"[^"]*\barticle-lede\b[^"]*"|'[^']*\barticle-lede\b[^']*'))[^>]*>[\s\S]*?<\/section>/i,
+    "",
+  );
+
+  return scopeBlogHtml(withoutDuplicatedIntro);
+}
+
 /** Select native article typography unless the body explicitly ships a design system. */
 export function blogArticleBodyClassName(html: string): string {
   return /<style\b/i.test(html) ? "gh-article-body gh-article-raw" : "gh-article-body";

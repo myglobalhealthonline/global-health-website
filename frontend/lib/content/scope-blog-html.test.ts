@@ -1,5 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { blogArticleBodyClassName, scopeBlogHtml, BLOG_SCOPE_CLASS } from "./scope-blog-html";
+import {
+  blogArticleBodyClassName,
+  calmEditorialBlogHtml,
+  scopeBlogHtml,
+  BLOG_SCOPE_CLASS,
+} from "./scope-blog-html";
 
 /**
  * Pull the CSS that ends up inside the single `<style>` block scopeBlogHtml
@@ -183,5 +188,47 @@ describe("blogArticleBodyClassName", () => {
     expect(blogArticleBodyClassName("<STYLE>.article{color:red}</STYLE><main>Designed</main>")).toBe(
       "gh-article-body gh-article-raw",
     );
+  });
+});
+
+describe("calmEditorialBlogHtml", () => {
+  const designedArticle = `
+    <style>.hero { background: #031f18 } .section { color: #fff }</style>
+    <section class="hero article-lede" aria-label="Article introduction">
+      <div class="hero-inner"><p>Duplicated article introduction</p></div>
+    </section>
+    <nav class="toc-strip" aria-label="Table of contents">
+      <a href="#overview">Overview</a>
+    </nav>
+    <main>
+      <article id="overview" class="section">
+        <h2 class="section-title">Overview</h2>
+        <p>Clinically useful article copy.</p>
+      </article>
+    </main>
+  `;
+
+  it("removes the authored design system and duplicated article introduction", () => {
+    const out = calmEditorialBlogHtml(designedArticle);
+
+    expect(out).not.toContain("<style");
+    expect(out).not.toContain("Duplicated article introduction");
+    expect(out).not.toContain("article-lede");
+  });
+
+  it("preserves semantic article content, navigation, and anchor targets", () => {
+    const out = calmEditorialBlogHtml(designedArticle);
+
+    expect(out).toContain('aria-label="Table of contents"');
+    expect(out).toContain('href="#overview"');
+    expect(out).toContain('id="overview"');
+    expect(out).toContain("Clinically useful article copy.");
+  });
+
+  it("still applies the public article sanitizer", () => {
+    const out = calmEditorialBlogHtml(`${designedArticle}<script>alert(1)</script>`);
+
+    expect(out).not.toContain("<script");
+    expect(out).not.toContain("alert(1)");
   });
 });
