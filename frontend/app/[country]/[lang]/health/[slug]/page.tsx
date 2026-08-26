@@ -30,6 +30,8 @@ import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { AlsoAvailableIn } from "@/components/sections/AlsoAvailableIn";
+import { PageHero } from "@/components/sections/PageHero";
+import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { ArrowRight } from "lucide-react";
 
@@ -171,6 +173,21 @@ export default async function CountryLandingPage({
     template?.ctaService ? `?service=${encodeURIComponent(template.ctaService)}` : ""
   }`;
 
+  // Hero title split — the accent half is the trailing "in Ireland" / country
+  // word, matching how every other PageHero on the public site splits its
+  // headline. Titles are CMS-authored, so this derives it instead of adding a
+  // second field admins would have to fill for 90 pages.
+  const titleWords = page.title.trim().split(/\s+/);
+  const accentWordCount =
+    titleWords.length > 2 && /^(in|for|and|&|—|-)$/i.test(titleWords[titleWords.length - 2] ?? "")
+      ? 2
+      : 1;
+  const titleLead = titleWords.slice(0, -accentWordCount).join(" ");
+  const titleAccent = titleWords.slice(-accentWordCount).join(" ");
+  const doctorsHref = `/${country}/${lang}/doctors${
+    template?.doctorLanguage ? `?lang=${encodeURIComponent(template.doctorLanguage)}` : ""
+  }`;
+
   return (
     <>
       <JsonLd
@@ -207,40 +224,59 @@ export default async function CountryLandingPage({
       />
       {page.faq && page.faq.length > 0 ? <JsonLd data={faqJsonLd(page.faq)} /> : null}
 
-      {/* Header + body — ivory band, same rhythm as the service page's
+      {/* Dark hero — same primitive the service, FAQ, pricing and about pages
+          use, so a /health/ page reads as part of the site rather than a bare
+          article. It owns the <h1>; the body band below is copy only. */}
+      <PageHero
+        countryCode={code}
+        countryLabel={c.countryNames?.[code] ?? config.name}
+        titleLead={titleLead}
+        titleAccent={titleAccent}
+        lede={page.seoDescription ?? undefined}
+        ctaLabel={c.doctorProfile.bookConsultation}
+        ctaHref={ctaHref}
+        secondaryLabel={doctors.length > 0 ? c.doctors.viewDoctors : undefined}
+        secondaryHref={doctors.length > 0 ? doctorsHref : undefined}
+        heroImage={{
+          src: doctors.length > 0 ? "/images/stock/doctors.jpg" : "/images/stock/gp.jpg",
+          alt: `${page.title} — ${config.name}`,
+          priority: true,
+        }}
+      />
+
+      {/* Body — ivory band, same rhythm as the service page's
           "About this service" section. */}
-      <section className="gh-inline-clamp-section gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
-        <SectionSeam theme="light" />
-        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-primary)]">
-            {config.name}
-          </p>
-          <h1 className="mt-3 max-w-[20ch] text-[clamp(2rem,4vw,3rem)] font-extrabold leading-[1.05] tracking-[-0.03em] text-[var(--color-text-primary)]">
-            {page.title}
-          </h1>
-          {bodyHtml ? (
+      {bodyHtml ? (
+        <section className="gh-inline-clamp-section gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+          <SectionSeam theme="light" />
+          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
             <div
-              className="gh-article-body mt-8 max-w-[76ch]"
+              className="gh-article-body max-w-[76ch]"
               // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- bodyHtml = scopeBlogHtml(page.bodyHtml), sanitize-html with a controlled allowlist.
               dangerouslySetInnerHTML={{ __html: bodyHtml }}
             />
-          ) : null}
-          <div className="mt-8">
-            <Link href={ctaHref} className="gh2-btn-lime inline-flex items-center gap-2">
-              {c.doctorProfile.bookConsultation}
-              <ArrowRight className="size-4" aria-hidden />
-            </Link>
+            <div className="mt-8">
+              <Link href={ctaHref} className="gh2-btn-lime inline-flex items-center gap-2">
+                {c.doctorProfile.bookConsultation}
+                <ArrowRight className="size-4" aria-hidden />
+              </Link>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
 
       {doctors.length > 0 ? (
         <section className="gh-inline-clamp-section gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
           <SectionSeam theme="light" />
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-            <h2 className="max-w-[20ch] text-[clamp(1.9rem,3.5vw,2.8rem)] font-extrabold leading-[1.05] tracking-[-0.03em] text-[var(--color-text-primary)]">
-              {c.gpPage.doctorsSectionTitle.replace("{country}", c.countryNames?.[code] ?? config.name)}
-            </h2>
+            <header>
+              <h2 className="max-w-[20ch] text-[clamp(1.9rem,3.5vw,2.8rem)] font-extrabold leading-[1.05] tracking-[-0.03em] text-[var(--color-text-primary)]">
+                {c.gpPage.doctorsSectionTitle.replace("{country}", c.countryNames?.[code] ?? config.name)}
+              </h2>
+              <p className="mt-3 max-w-[58ch] text-sm leading-relaxed text-[var(--color-text-muted)]">
+                {c.gpPage.doctorsSectionIntro}
+              </p>
+            </header>
             <ul className="mt-10 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
               {doctors.map((d) => (
                 <li key={d.id}>
@@ -275,22 +311,31 @@ export default async function CountryLandingPage({
       ) : null}
 
       {page.faq && page.faq.length > 0 ? (
-        <FAQSection title={c.serviceDetailPage.faqTitle} items={page.faq} theme="light" />
+        <FAQSection title={c.serviceDetailPage.faqTitle} items={page.faq} />
       ) : null}
 
       {template?.related && template.related.length > 0 ? (
         <section className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel gh-inline-clamp-section-tight">
           <SectionSeam theme="light" />
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-            <h2 className="text-[clamp(1.2rem,2vw,1.6rem)] font-bold tracking-[-0.02em] text-[var(--color-text-primary)]">
+            {/* Same treatment as the service page's related-topics block —
+                brand-primary on ivory (brand-accent is the on-dark colour and
+                failed contrast here), 44px touch targets. */}
+            <h2
+              className="font-extrabold tracking-[-0.02em] leading-tight"
+              style={{
+                fontSize: "clamp(1.25rem, 1.5vw + 0.75rem, 1.75rem)",
+                color: "var(--color-text-primary)",
+              }}
+            >
               {c.serviceDetailPage.relatedTopicsTitle}
             </h2>
-            <ul className="mt-4 space-y-2">
+            <ul className="mt-4 flex list-none flex-wrap gap-x-6 gap-y-2 p-0">
               {template.related.map((item, idx) => (
                 <li key={idx}>
                   <Link
                     href={item.href}
-                    className="text-[15px] font-medium text-[var(--color-brand-accent)] underline underline-offset-2"
+                    className="inline-flex min-h-11 items-center font-semibold text-[var(--color-brand-primary)] underline decoration-[rgba(29,75,54,0.28)] underline-offset-4 transition-colors hover:text-[var(--color-brand-primary-hover)]"
                   >
                     {item.label}
                   </Link>
@@ -310,6 +355,16 @@ export default async function CountryLandingPage({
           eligibleLocales={eligibleLocales}
         />
       )}
+
+      {/* Short medical disclaimer — same placement as the service page. */}
+      <section className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel gh-inline-clamp-section-tight">
+        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          <MedicalDisclaimer
+            variant="short"
+            text={c.serviceDetailPage.disclaimer.replace("{country}", config.name)}
+          />
+        </div>
+      </section>
 
       {/* Closing booking band — visual parity with the service page's
           closing CTA. */}
