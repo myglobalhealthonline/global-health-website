@@ -5031,12 +5031,23 @@ html.js .gh-reveal-stagger > .gh-reveal-in {
 
 /* Reserved space, kept in step with the bar's own bottom offset above (6rem
  * mobile / 1rem desktop) plus a small clearance gap. */
-body.gh-cookie-bar-open {
+/* The room is added INSIDE the footer, not as body padding: body's own fill is
+ * flat forest, so padding there painted a bare strip below the footer chrome
+ * whenever the bar was open. Pages with no footer keep the body fallback. */
+body.gh-cookie-bar-open .gh-footer-shell {
+  padding-bottom: calc(var(--gh-cookie-bar-h, 0px) + 6rem + 12px);
+}
+
+body.gh-cookie-bar-open:not(:has(.gh-footer-shell)) {
   padding-bottom: calc(var(--gh-cookie-bar-h, 0px) + 6rem + 12px);
 }
 
 @media (min-width: 768px) {
-  body.gh-cookie-bar-open {
+  body.gh-cookie-bar-open .gh-footer-shell {
+    padding-bottom: calc(var(--gh-cookie-bar-h, 0px) + 1rem + 12px);
+  }
+
+  body.gh-cookie-bar-open:not(:has(.gh-footer-shell)) {
     padding-bottom: calc(var(--gh-cookie-bar-h, 0px) + 1rem + 12px);
   }
 }
