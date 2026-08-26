@@ -6501,3 +6501,56 @@ normal final-data lag, on or after 2026-09-28. Indexing requests accelerate
 discovery only; they do not guarantee recrawl timing, position or ranking gains.
 
 ---
+
+## 33. IE-PROFILE-SPECIALIST-FAQ-001 — intent-led profile and specialist FAQs (2026-08-26)
+
+**Status: LIVE IN PRODUCTION — 72 FAQ RECORDS CREATED.** This follow-up fills the
+only verified, publishable Ireland profile that had no FAQ content and adds one
+transactional-intent FAQ to each of the seven specialist consultation services.
+Roney Carli now has five authored questions in each supported locale (30
+`DoctorFaq` rows). Cardiology, neurology, nutrition, paediatrics, physiotherapy,
+psychiatry and psychology each gained one base English `ServiceFaq` plus five
+localized translations (42 service FAQ records). Existing profile and service
+FAQs were preserved.
+
+The service questions use the page's established consultation phrase once, in a
+natural booking or preparation question. Answers explain what to prepare and when
+remote care is not appropriate. They do not add fixed prices, availability
+promises, blanket referral claims, guaranteed outcomes or stronger professional
+credentials. Roney Carli's questions are based on his existing biography,
+qualifications and language fields. Because `DoctorFaq` is global to a clinician
+rather than market-scoped, that copy is deliberately country-neutral.
+
+**Search evidence.** Final Search Console query/page data for the preceding three
+months showed early specialist-page impressions for `heart specialist`,
+`cardiology consultation`, `book a neurologist appointment` and `consultant
+psychiatrist ireland`. Focused Ireland keyword metrics retained the existing page
+owners: `nutritionist ireland` 260 monthly searches / KD 14, `neurologist ireland`
+110 / KD 0 and `cardiologist ireland` 30 / KD 16. WebDoctor's live nutrition page
+also confirms that direct questions about online access, preparation, scope and
+cost are a standard competitor content pattern. The batch does not copy competitor
+claims or wording.
+
+**Controls and verification.** The dedicated patcher defaults to dry-run, requires
+the exact reviewed confirmation token, checks the audited pre-write FAQ counts,
+detects duplicate questions across English and all translated FAQ rows, and
+revalidates active Ireland doctor/service state. The 72 creates run in one bounded
+Serializable transaction, so a failed batch rolls back in full. Eleven focused
+content and patch tests pass, touched-file ESLint passes, and independent voice and
+security reviews were applied before the production write. The backend-wide
+type-check remains blocked only by the unrelated pre-existing invoice/Prisma client
+errors recorded in §§31–32.
+
+A post-apply production read matched all 30 doctor FAQ rows and all seven service
+FAQ records, including every localized question and answer, to the reviewed
+manifests. Cache-busted public HTML returned HTTP 200 and the new visible question
+on Roney Carli's English profile plus specialist examples across Portuguese,
+Spanish, Czech, Romanian, German and English routes. Existing frontend rendering
+continues to emit the same visible FAQ rows in `FAQPage` JSON-LD.
+
+FAQ content can strengthen topical relevance and match long-tail questions, but it
+does not guarantee a ranking increase or a Google FAQ rich result. Measure query,
+page, impressions, clicks and CTR after a complete 28-day window plus final-data
+lag, on or after 2026-09-28, before expanding or rewriting this cluster again.
+
+---
