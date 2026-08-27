@@ -40,6 +40,22 @@ let memedScriptState: MemedScriptState | null = null;
 
 const MEMED_SCRIPT_ID = "memed-sinapse-prescricao-script";
 
+/**
+ * The doctor portal runs a nonce/'strict-dynamic' CSP (proxy.ts nonceCsp) —
+ * a plain `<script src>` injected after page load is NOT trusted just by
+ * host, even though the policy also lists Memed's host as a legacy-browser
+ * fallback. Any script already on the page that Next stamped with the
+ * request's nonce can be read back via its `.nonce` IDL property (the
+ * reflected attribute is stripped for security, but the property survives),
+ * and 'strict-dynamic' trusts elements created by an already-trusted script
+ * regardless of their `src` host — copying it here is what actually
+ * authorizes this tag, not the CSP host allowlist.
+ */
+function pageNonce(): string | undefined {
+  const el = document.querySelector<HTMLScriptElement>("script[nonce]");
+  return el?.nonce || undefined;
+}
+
 /** Loads (or reuses) the widget script for this `token`. Re-injects the tag
  *  if a different doctor's token was previously loaded on this page. */
 function loadMemedScript(scriptUrl: string, token: string): Promise<void> {
@@ -52,6 +68,8 @@ function loadMemedScript(scriptUrl: string, token: string): Promise<void> {
     script.id = MEMED_SCRIPT_ID;
     script.src = scriptUrl;
     script.setAttribute("data-token", token);
+    const nonce = pageNonce();
+    if (nonce) script.nonce = nonce;
     script.async = true;
     script.onload = () => resolve();
     script.onerror = () => reject(new Error("Failed to load Memed widget script"));
