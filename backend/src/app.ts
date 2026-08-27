@@ -14,6 +14,15 @@ import { buildOriginGuardHook } from "./utils/origin-guard.js";
 import { isTrustedBuildRead, isTrustedSsrPublicRead } from "./utils/rate-limit-trust.js";
 import { errorResponse } from "./utils/response.js";
 
+/**
+ * Length ceiling for a single route path parameter. Signed public
+ * capabilities travel in a path segment (notably
+ * `/api/public/orders/pay/:token`) and run ~700 characters. Fastify's
+ * 100-char default rejects them with a 414 before routing, which turned
+ * every WhatsApp/email pay link into a dead "unknown" page.
+ */
+export const MAX_PARAM_LENGTH = 2000;
+
 export async function buildApp() {
   // bodyLimit applies to non-multipart payloads. Aligned with the
   // multipart fileSize ceiling so admin rich-text saves carrying
@@ -35,10 +44,11 @@ export async function buildApp() {
         req(request) {
           return {
             method: request.method,
-            url: (request.url ?? "").replace(
-              /([?&](?:token|uploadToken|t)=)[^&#]+/gi,
-              "$1[REDACTED]",
-            ),
+            url: (request.url ?? "")
+              .replace(/([?&](?:token|uploadToken|t)=)[^&#]+/gi, "$1[REDACTED]")
+              // The order-pay capability rides in a PATH segment, not the query
+              // string, so the pattern above can't reach it.
+              .replace(/(\/api\/public\/orders\/pay\/)[^/?#]+/gi, "$1[REDACTED]"),
             hostname: request.hostname,
             remoteAddress: request.ip,
             remotePort: request.socket?.remotePort,
@@ -48,6 +58,7 @@ export async function buildApp() {
     },
     bodyLimit: 5 * 1024 * 1024,
     trustProxy: 1,
+    routerOptions: { maxParamLength: MAX_PARAM_LENGTH },
   });
 
   // Idempotent additive DDL — keeps the live DB in sync with the Prisma
