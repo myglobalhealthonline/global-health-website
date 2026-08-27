@@ -207,12 +207,21 @@ function nonceCsp(nonce: string): string {
     "default-src 'self'",
     // 'unsafe-inline' + https: are legacy fallbacks only — browsers honoring the
     // nonce/'strict-dynamic' ignore them. 'unsafe-eval' intentionally omitted in prod.
-    `script-src 'nonce-${nonce}' 'strict-dynamic' https: 'unsafe-inline'${devEval}`,
+    // The Memed host here is a legacy-browser fallback too — the widget script
+    // is injected client-side (memed-prescribe-panel.tsx) copying the nonce off
+    // an existing Next script tag, which is what actually authorizes it under
+    // 'strict-dynamic'.
+    `script-src 'nonce-${nonce}' 'strict-dynamic' https: 'unsafe-inline' https://integrations.memed.com.br${devEval}`,
     // CMS + Tailwind emit inline <style>; keep style-src permissive.
     "style-src 'self' 'unsafe-inline'",
     `img-src 'self' data: blob:${media}`,
     "font-src 'self' data:",
-    `connect-src 'self'${media}`,
+    // The Memed widget calls its own API domains directly from the browser
+    // (sandbox + production hosts — see lib/memed/prescription-client.ts's
+    // doc comment for which is which) once loaded.
+    `connect-src 'self' https://*.memed.com.br${media}`,
+    // The widget can render parts of its UI in an iframe.
+    "frame-src 'self' https://*.memed.com.br",
     `form-action 'self'${media}`,
     CSP_BASE,
   ].join("; ");
