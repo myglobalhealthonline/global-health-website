@@ -47,6 +47,7 @@ type Status = "idle" | "starting" | "loading-widget" | "open" | "not-configured"
 
 type MdHubGlobal = {
   event: { add: (name: string, cb: (payload: unknown) => void) => void };
+  module: { show: (name: string) => void };
 };
 type MdSinapsePrescricaoGlobal = {
   event: { add: (name: "core:moduleInit", cb: (moduleData: { name: string }) => void) => void };
@@ -70,6 +71,11 @@ function waitForPrescricaoImpressa(): Promise<{ prescricaoId: string; documentId
     }
     win.MdSinapsePrescricao.event.add("core:moduleInit", (moduleData) => {
       if (moduleData.name !== "plataforma.prescricao") return;
+      // Per Memed's own troubleshooting doc ("O módulo da Memed não
+      // carrega"): the module loads inert and must be explicitly told to
+      // display — without this the script runs with no visible UI, no
+      // console error, and no move toward prescricaoImpressa either.
+      win.MdHub?.module.show("plataforma.prescricao");
       win.MdHub?.event.add("prescricaoImpressa", (payload) => {
         const data = payload as PrescricaoImpressaPayload;
         const prescricaoId = data.prescriptionUuid;
