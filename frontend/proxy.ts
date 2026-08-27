@@ -227,6 +227,36 @@ function nonceCsp(nonce: string): string {
   ].join("; ");
 }
 
+// Doctor appointment pages embed Memed's e-prescription widget
+// (memed-prescribe-panel.tsx). Its bundle injects its own inline <script>
+// internally — not via a DOM API a trusted script called, which is what
+// 'strict-dynamic' requires to propagate trust — so the nonce policy blocks
+// it outright ("Executing inline script violates..."), and there's no hash
+// to allowlist (the content is dynamically generated, differs per load).
+// No nonce here is deliberate: CSP3 ignores 'unsafe-inline' whenever a nonce
+// is present in the same source list, so dropping the nonce is what makes
+// 'unsafe-inline' actually take effect for Memed's inline script. This is a
+// real, scoped trade — inline-script XSS hardening is weaker on THESE routes
+// only; every other doctor route (and account/admin/corporate) keeps the
+// full nonce/'strict-dynamic' policy via nonceCsp() above.
+const MEMED_WIDGET_ROUTES = /^\/doctor\/appointments\//;
+
+function memedWidgetCsp(): string {
+  const media = API_ORIGIN ? ` ${API_ORIGIN}` : "";
+  const devEval = process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : "";
+  return [
+    "default-src 'self'",
+    `script-src 'self' 'unsafe-inline' https://integrations.memed.com.br https://*.memed.com.br${devEval}`,
+    "style-src 'self' 'unsafe-inline'",
+    `img-src 'self' data: blob:${media}`,
+    "font-src 'self' data:",
+    `connect-src 'self' https://*.memed.com.br${media}`,
+    "frame-src 'self' https://*.memed.com.br",
+    `form-action 'self'${media}`,
+    CSP_BASE,
+  ].join("; ");
+}
+
 const JWT_ISSUER = "global-health-backend";
 const JWT_AUDIENCE = "global-health-website";
 
@@ -546,7 +576,10 @@ export async function proxy(request: NextRequest) {
   // enforcing public policy (no nonce, static-safe) for every other document.
   // Exactly one CSP header is emitted per request; next.config.ts sets none.
   let csp = NONCE_CSP_ENABLED ? publicCsp() : CSP_BASE;
-  if (NONCE_CSP_ENABLED && NONCE_ROUTES.test(pathname)) {
+  if (NONCE_CSP_ENABLED && MEMED_WIDGET_ROUTES.test(pathname)) {
+    csp = memedWidgetCsp();
+    requestHeaders.set("Content-Security-Policy", csp);
+  } else if (NONCE_CSP_ENABLED && NONCE_ROUTES.test(pathname)) {
     const nonce = btoa(crypto.randomUUID());
     csp = nonceCsp(nonce);
     requestHeaders.set("x-nonce", nonce);
