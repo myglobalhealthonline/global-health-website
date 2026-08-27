@@ -20,6 +20,7 @@ const ALLOWED: Record<string, Set<string>> = {
     "insurance/document",
     "id-document",
     "identity-verification/selfie",
+    "identity-verification/submit",
     "nationality/1/upload",
     "nationality/2/upload",
   ]),

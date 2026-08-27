@@ -367,8 +367,13 @@ const doctorPatientProfileRoute: FastifyPluginAsync = async (app) => {
             // The score is shown to the reviewer — it is the assist they are
             // meant to weigh. Awaiting review only when the cycle is still open.
             latestEvent: summary.latestEvent,
+            // Submitted, not merely started. A patient part-way through
+            // swapping a wrong photo is not waiting on the doctor, and must
+            // not appear in the queue as though they were.
             awaitingReview:
-              summary.latestEvent != null && summary.latestEvent.reviewedAt == null,
+              summary.submitted &&
+              summary.latestEvent != null &&
+              summary.latestEvent.reviewedAt == null,
           },
         });
       } catch (error) {

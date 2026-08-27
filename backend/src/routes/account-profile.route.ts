@@ -21,6 +21,9 @@ import {
 import { encryptPhi, decryptPhi } from "../lib/crypto/phi-crypto.js";
 import {
   getVerificationSummary,
+  submitVerificationCycle,
+  reopenVerificationCycleForEditing,
+  VerificationIncompleteError,
   syncVerificationCycle,
   faceMatchAvailable,
   isVerificationRelevantForPatient,
@@ -375,6 +378,9 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
           app.log.error(e, "identity verification sync after ID upload failed");
           return null;
         });
+        // Same reasoning as the selfie path: a replaced ID must not be reviewed
+        // as though it were the one the patient submitted.
+        await reopenVerificationCycleForEditing(profile.id).catch(() => false);
       }
 
       await guardMedicalRead(
@@ -435,11 +441,13 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
         data: {
           selfieImageKey: storageKey,
           selfieUploadedAt: new Date(),
-          // Back to PENDING even if they were VERIFIED before: a new face
-          // submission is a new claim and has to be looked at again.
-          idVerificationStatus: "PENDING",
         },
       });
+
+      // Replacing a photo pulls the cycle back out of the review queue, so a
+      // doctor never opens a review and finds themselves looking at the image
+      // the patient has just swapped out. No-op if they had not submitted yet.
+      await reopenVerificationCycleForEditing(profile.id);
 
       // Cannot be null here — the selfie key was just written, which is the
       // only condition syncVerificationCycle needs to open a cycle.
@@ -474,17 +482,52 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
       return okResponse(
         {
           uploaded: true,
-          status: "PENDING",
           referenceId: event.referenceId,
           // Never the score — the patient must not be able to tune their photo
           // against the matcher, and it is a reviewer's aid, not a result.
           automatedCheckRan: event.faceMatchScore !== null,
         },
-        "Verification photo submitted for review",
+        "Photo saved. Check it, then submit when you are happy with it.",
       );
     } catch (error) {
       app.log.error(error);
       return reply.status(500).send(errorResponse("Upload failed"));
+    }
+  });
+
+  app.post("/api/account/profile/identity-verification/submit", async (request, reply) => {
+    const profile = await requirePatient(request);
+    if (!profile) return reply.status(403).send(errorResponse("Patient access required"));
+
+    try {
+      const event = await submitVerificationCycle(profile.id);
+
+      await recordCriticalAudit({
+        actorUserId: request.authUser!.sub,
+        actorRole: "PATIENT",
+        action: "IDENTITY_VERIFICATION_SELFIE_SUBMITTED",
+        entityType: "IdentityVerificationEvent",
+        entityId: event.id,
+        metadata: {
+          patientProfileId: profile.id,
+          referenceId: event.referenceId,
+          method: event.method,
+          faceMatchScore: event.faceMatchScore,
+          submitted: true,
+        },
+        request,
+      });
+
+      return okResponse(
+        { submitted: true, referenceId: event.referenceId },
+        "Sent for review",
+      );
+    } catch (error) {
+      if (error instanceof VerificationIncompleteError) {
+        return reply.status(400).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not submit verification"));
     }
   });
 
@@ -509,6 +552,7 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
           hasIdDocument: summary.hasIdDocument,
           hasSelfie: summary.hasSelfie,
           selfieUploadedAt: summary.selfieUploadedAt,
+          submitted: summary.submitted,
           requestedAt: summary.requestedAt,
           // Who asked. The booking flow raises this too, and telling a patient
           // "your doctor asked" when nobody did is a small lie the portal
