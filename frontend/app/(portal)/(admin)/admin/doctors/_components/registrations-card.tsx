@@ -45,6 +45,7 @@ export function DoctorRegistrationsCard({
     const registrationNumber =
       String(formData.get("registrationNumber") ?? "").trim() || null;
     const division = String(formData.get("division") ?? "").trim() || null;
+    const boardState = String(formData.get("boardState") ?? "").trim().toUpperCase() || null;
     const isVerified = formData.get("isVerified") === "on";
     // Write-only — omit the key entirely when the admin left it blank, so
     // an already-stored CPF isn't wiped out just by re-saving the form.
@@ -61,6 +62,7 @@ export function DoctorRegistrationsCard({
       chamberEntity,
       registrationNumber,
       division,
+      boardState,
       isVerified,
       ...(cpfRaw ? { cpf: cpfRaw } : {}),
       // The checkbox only renders for BR rows — for every other country
@@ -175,7 +177,21 @@ export function DoctorRegistrationsCard({
                   </label>
                 </div>
                 {country.code.toUpperCase() === "BR" ? (
-                  <div className="gh-admin-doctor-registration-fields mt-2 grid gap-2 sm:grid-cols-[1fr_auto] sm:items-end">
+                  <div className="gh-admin-doctor-registration-fields mt-2 grid gap-2 sm:grid-cols-[80px_1fr_auto] sm:items-end">
+                    <label className="flex flex-col gap-1">
+                      <span className="gh-field-label">State (UF)</span>
+                      <input
+                        type="text"
+                        name="boardState"
+                        maxLength={2}
+                        defaultValue={row?.boardState ?? ""}
+                        placeholder="SP"
+                        className="gh-input uppercase"
+                      />
+                      <span className="text-portal-thead text-[var(--color-text-muted)]">
+                        CRM state. Required by Memed.
+                      </span>
+                    </label>
                     <label className="flex flex-col gap-1">
                       <span className="gh-field-label">CPF</span>
                       <input

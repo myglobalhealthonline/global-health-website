@@ -6,6 +6,9 @@ export type DoctorRegistrationInput = {
   chamberEntity?: string | null;
   registrationNumber?: string | null;
   division?: string | null;
+  /** Two-letter Brazilian state (UF) the CRM was issued in — required by
+   *  Memed's board_state field. Brazil-only. */
+  boardState?: string | null;
   isVerified?: boolean;
   /** Write-only plaintext in — never read back. Empty string clears the
    *  stored CPF; `undefined` leaves it untouched. */
@@ -24,6 +27,7 @@ export type DoctorRegistrationRow = {
   chamberEntity: string | null;
   registrationNumber: string | null;
   division: string | null;
+  boardState: string | null;
   isVerified: boolean;
   verifiedAt: string | null;
   active: boolean;
@@ -60,6 +64,7 @@ export async function listDoctorRegistrations(
       chamberEntity: true,
       registrationNumber: true,
       division: true,
+      boardState: true,
       isVerified: true,
       verifiedAt: true,
       active: true,
@@ -78,6 +83,7 @@ export async function listDoctorRegistrations(
     chamberEntity: r.chamberEntity,
     registrationNumber: r.registrationNumber,
     division: r.division,
+    boardState: r.boardState,
     isVerified: r.isVerified,
     verifiedAt: r.verifiedAt?.toISOString() ?? null,
     active: r.active,
@@ -121,6 +127,7 @@ export async function upsertDoctorRegistration(
 
   const registrationNumber = normalizeString(input.registrationNumber, 64);
   const division = normalizeString(input.division, 120);
+  const boardState = normalizeString(input.boardState, 2)?.toUpperCase() ?? null;
   const chamberEntity =
     normalizeString(input.chamberEntity, 64) ??
     (registrationNumber ? defaultChamberEntityForCountry(country.code) : null);
@@ -160,6 +167,7 @@ export async function upsertDoctorRegistration(
       chamberEntity,
       registrationNumber,
       division,
+      boardState,
       isVerified,
       verifiedAt,
       // Re-activate the row when a registration is set. Profile-save
@@ -179,6 +187,7 @@ export async function upsertDoctorRegistration(
       chamberEntity,
       registrationNumber,
       division,
+      boardState,
       isVerified,
       verifiedAt,
       active: true,
@@ -192,6 +201,7 @@ export async function upsertDoctorRegistration(
       chamberEntity: true,
       registrationNumber: true,
       division: true,
+      boardState: true,
       isVerified: true,
       verifiedAt: true,
       active: true,
@@ -209,6 +219,7 @@ export async function upsertDoctorRegistration(
     chamberEntity: saved.chamberEntity,
     registrationNumber: saved.registrationNumber,
     division: saved.division,
+    boardState: saved.boardState,
     isVerified: saved.isVerified,
     verifiedAt: saved.verifiedAt?.toISOString() ?? null,
     active: saved.active,
@@ -239,6 +250,7 @@ export async function getDoctorRegistrationByCountryCode(
       chamberEntity: true,
       registrationNumber: true,
       division: true,
+      boardState: true,
       isVerified: true,
       verifiedAt: true,
       active: true,
@@ -257,6 +269,7 @@ export async function getDoctorRegistrationByCountryCode(
     chamberEntity: row.chamberEntity,
     registrationNumber: row.registrationNumber,
     division: row.division,
+    boardState: row.boardState,
     isVerified: row.isVerified,
     verifiedAt: row.verifiedAt?.toISOString() ?? null,
     active: row.active,
