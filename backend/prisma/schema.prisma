@@ -2984,7 +2984,7 @@ model Order {
   /// The token itself is not stored; verification checks the signature plus
   /// this live nonce so links can be rotated server-side without exposing raw
   /// database IDs as payment capabilities.
-  payAccessNonce                String?
+  payAccessNonce                String?               @unique
   /// Provenance of the booking — see BookingSource doc comment. Set at
   /// creation time by manual-booking.service.ts / partner-booking.service.ts;
   /// self-service checkout (orders.route.ts) leaves the WEBSITE default.

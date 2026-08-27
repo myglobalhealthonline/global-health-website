@@ -17,12 +17,21 @@ before(async () => {
           findUnique: async ({
             where,
           }: {
-            where: { id: string };
+            where: { id?: string; payAccessNonce?: string };
           }) => {
-            if (!state.nonceByOrderId.has(where.id)) return null;
+            if (where.payAccessNonce !== undefined) {
+              for (const [id, nonce] of state.nonceByOrderId) {
+                if (nonce !== null && nonce === where.payAccessNonce) {
+                  return { id, payAccessNonce: nonce };
+                }
+              }
+              return null;
+            }
+            const id = where.id ?? "";
+            if (!state.nonceByOrderId.has(id)) return null;
             return {
-              id: where.id,
-              payAccessNonce: state.nonceByOrderId.get(where.id) ?? null,
+              id,
+              payAccessNonce: state.nonceByOrderId.get(id) ?? null,
             };
           },
           updateMany: async ({
@@ -65,6 +74,8 @@ before(async () => {
   mock.module("../../utils/public-capability.js", {
     namedExports: {
       generateCapabilityNonce: () => "order-nonce",
+      // Three dot-separated segments on purpose: the service tells a legacy
+      // signed capability from an opaque nonce by that shape.
       signPublicCapability: ({
         sub,
         purpose,
@@ -73,9 +84,9 @@ before(async () => {
         sub: string;
         purpose: string;
         nonce: string;
-      }) => `${purpose}:${sub}:${nonce}`,
+      }) => `${purpose}.${sub}.${nonce}`,
       verifyPublicCapability: (token: string, purpose: string) => {
-        const [tokenPurpose, sub, nonce] = token.split(":");
+        const [tokenPurpose, sub, nonce] = token.split(".");
         if (tokenPurpose !== purpose || !sub || !nonce) return null;
         return { sub, purpose, nonce };
       },
@@ -92,19 +103,30 @@ beforeEach(() => {
 });
 
 describe("order payment capability", () => {
-  it("mints a pay token and uses it in the public short link", async () => {
-    const token = await issueOrderPayCapability("order_1");
+  it("puts the bare nonce in the short link and resolves it back", async () => {
     const shortLink = await orderPayShortLink("order_1");
 
-    assert.equal(token, "order-pay:order_1:order-nonce");
-    assert.equal(shortLink, "https://www.myglobalhealth.test/pay/order-pay%3Aorder_1%3Aorder-nonce");
+    assert.equal(shortLink, "https://www.myglobalhealth.test/pay/order-nonce");
+    assert.equal(await verifyOrderPayCapability("order-nonce"), "order_1");
+  });
+
+  it("still resolves a legacy signed capability already sent to patients", async () => {
+    const token = await issueOrderPayCapability("order_1");
+
+    assert.equal(token, "order-pay.order_1.order-nonce");
     assert.equal(await verifyOrderPayCapability(token ?? ""), "order_1");
   });
 
-  it("rejects a token after the order nonce rotates", async () => {
+  it("rejects both link generations after the order nonce rotates", async () => {
     const token = await issueOrderPayCapability("order_1");
     state.nonceByOrderId.set("order_1", "rotated-order-nonce");
 
     assert.equal(await verifyOrderPayCapability(token ?? ""), null);
+    assert.equal(await verifyOrderPayCapability("order-nonce"), null);
+  });
+
+  it("grants nothing for an unknown or empty token", async () => {
+    assert.equal(await verifyOrderPayCapability("not-a-real-nonce"), null);
+    assert.equal(await verifyOrderPayCapability("   "), null);
   });
 });

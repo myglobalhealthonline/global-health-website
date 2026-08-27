@@ -51,6 +51,14 @@ async function getOrCreateOrderPayNonce(orderId: string): Promise<string | null>
   return current?.payAccessNonce ?? null;
 }
 
+/** Three base64url segments — the shape of the legacy signed capability. */
+const SIGNED_CAPABILITY_SHAPE = /^[\w-]+\.[\w-]+\.[\w-]+$/;
+
+/**
+ * Legacy signed pay capability. Superseded by the opaque nonce link below —
+ * kept so the ~700-character tokens already sitting in patients' WhatsApp and
+ * email threads keep resolving. Nothing mints these any more.
+ */
 export async function issueOrderPayCapability(orderId: string): Promise<string | null> {
   const nonce = await getOrCreateOrderPayNonce(orderId);
   if (!nonce) return null;
@@ -60,8 +68,31 @@ export async function issueOrderPayCapability(orderId: string): Promise<string |
   );
 }
 
+/**
+ * Resolves a pay link's path segment to an order id, or null when it grants
+ * nothing. Accepts both link generations:
+ *
+ *  - the opaque `payAccessNonce` (144 random bits, ~24 chars) that current
+ *    links carry — the nonce IS the capability, and rotating it server-side
+ *    revokes every link for that order;
+ *  - a legacy signed capability, still bound to the live nonce, so an old
+ *    token dies the moment the nonce rotates.
+ */
 export async function verifyOrderPayCapability(token: string): Promise<string | null> {
-  const payload = verifyPublicCapability(token, "order-pay");
+  const candidate = token.trim();
+  if (!candidate) return null;
+
+  if (!SIGNED_CAPABILITY_SHAPE.test(candidate)) {
+    // nosemgrep: gh-public-raw-id-capability -- payAccessNonce is a random
+    // capability, not a database identifier.
+    const order = await prisma.order.findUnique({
+      where: { payAccessNonce: candidate },
+      select: { id: true },
+    });
+    return order?.id ?? null;
+  }
+
+  const payload = verifyPublicCapability(candidate, "order-pay");
   if (!payload) return null;
   const order = await prisma.order.findUnique({
     where: { id: payload.sub },
@@ -73,14 +104,18 @@ export async function verifyOrderPayCapability(token: string): Promise<string | 
 
 /**
  * Short, branded pay link that 302-redirects to the live Stripe Checkout URL.
- * Handed to WhatsApp/email instead of the long Stripe URL and keyed on a
- * purpose-bound signed capability rather than the raw order id.
+ * Handed to WhatsApp/email instead of the long Stripe URL, and keyed on the
+ * order's random `payAccessNonce` rather than the raw order id.
+ *
+ * The nonce is base64url, so it needs no percent-encoding and keeps the whole
+ * link around 60 characters. The signed-JWT form this replaced ran ~700, which
+ * WhatsApp wrapped across several lines and patients read as broken.
  */
 export async function orderPayShortLink(orderId: string): Promise<string> {
   const base = env.PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? "http://localhost:3000";
-  const token = await issueOrderPayCapability(orderId);
-  if (!token) return `${base}/pay/unavailable`;
-  return `${base}/pay/${encodeURIComponent(token)}`;
+  const nonce = await getOrCreateOrderPayNonce(orderId);
+  if (!nonce) return `${base}/pay/unavailable`;
+  return `${base}/pay/${nonce}`;
 }
 
 /**

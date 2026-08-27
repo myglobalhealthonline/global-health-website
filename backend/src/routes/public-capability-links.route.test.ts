@@ -227,6 +227,30 @@ describe("public capability links", () => {
     assert.equal(body.data.status, "PAID");
   });
 
+  it("resolves the short pay link, which carries the bare nonce", async (t) => {
+    if (!app) return t.skip();
+    const { orderPayShortLink } = await import("../modules/orders/order-payment-url.service.js");
+    const shortLink = await orderPayShortLink(paidOrderId);
+    const nonce = shortLink.split("/pay/")[1];
+    assert.ok(nonce && nonce !== "unavailable");
+    assert.ok(
+      shortLink.length < 120,
+      `short pay link should stay well under the old ~700-char capability (got ${shortLink.length})`,
+    );
+
+    const res = await app.inject({ method: "GET", url: `/api/public/orders/pay/${nonce}` });
+    assert.equal(res.statusCode, 200, res.body);
+
+    const body = res.json() as { ok: boolean; data: { payable: boolean; status: string } };
+    assert.equal(body.data.status, "PAID");
+  });
+
+  it("rejects a raw order id on the public pay endpoint", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({ method: "GET", url: `/api/public/orders/pay/${paidOrderId}` });
+    assert.equal(res.statusCode, 404, res.body);
+  });
+
   it("keeps authenticated raw-id order payment access scoped to the account route", async (t) => {
     if (!app) return t.skip();
     const res = await app.inject({
