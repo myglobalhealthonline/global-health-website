@@ -646,11 +646,11 @@
     "verifiedOn": "Verificado a {date}",
     "reviewedOn": "Revisto a {date}",
     "documentType": "Tipo de documento",
-    "uploadHint": "Carregue a frente (e o verso, se aplicável). Máx. 10 MB por ficheiro. PDF, JPG, PNG.",
-    "uploadFront": "Carregar frente",
-    "uploadBack": "Carregar verso",
+    "uploadHint": "Uma fotografia ou digitalização nítida do seu passaporte ou cartão de cidadão. Máx. 10 MB. PDF, JPG, PNG.",
     "uploading": "A carregar…",
-    "uploaded": "Documento de identificação guardado"
+    "uploaded": "Documento de identificação guardado",
+    "uploadDocument": "Carregar documento de identificação",
+    "replaceDocument": "Substituir documento de identificação"
   },
   "nationality": {
     "title": "Dupla nacionalidade",

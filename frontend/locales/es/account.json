@@ -646,11 +646,11 @@
     "verifiedOn": "Verificado el {date}",
     "reviewedOn": "Revisado el {date}",
     "documentType": "Tipo de documento",
-    "uploadHint": "Sube el anverso (y el reverso si procede). Máx. 10 MB por archivo. PDF, JPG, PNG.",
-    "uploadFront": "Subir anverso",
-    "uploadBack": "Subir reverso",
+    "uploadHint": "Una foto o escaneo nítido de su pasaporte o documento de identidad. Máx. 10 MB. PDF, JPG, PNG.",
     "uploading": "Subiendo…",
-    "uploaded": "Documento de identidad guardado"
+    "uploaded": "Documento de identidad guardado",
+    "uploadDocument": "Subir documento de identidad",
+    "replaceDocument": "Sustituir documento de identidad"
   },
   "nationality": {
     "title": "Doble nacionalidad",

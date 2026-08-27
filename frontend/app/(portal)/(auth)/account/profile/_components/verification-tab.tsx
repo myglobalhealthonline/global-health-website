@@ -21,8 +21,8 @@ type VerificationI18n = {
   reviewedOn: string;
   documentType: string;
   uploadHint: string;
-  uploadFront: string;
-  uploadBack: string;
+  uploadDocument: string;
+  replaceDocument: string;
   uploading: string;
   uploaded: string;
   badgeNotVerified: string;
@@ -47,9 +47,9 @@ const DEFAULT_I18N: VerificationI18n = {
   verifiedOn: "Verified {date}",
   reviewedOn: "Reviewed {date}",
   documentType: "Document type",
-  uploadHint: "Upload front side (and back if applicable). Max 10 MB per file. PDF, JPG, PNG.",
-  uploadFront: "Upload front",
-  uploadBack: "Upload back",
+  uploadHint: "One clear photo or scan of your passport or ID card. Max 10 MB. PDF, JPG, PNG.",
+  uploadDocument: "Upload ID document",
+  replaceDocument: "Replace ID document",
   uploading: "Uploading…",
   uploaded: "ID document saved",
   badgeNotVerified: "Not verified",
@@ -89,7 +89,6 @@ export function VerificationTab({ i18n = DEFAULT_I18N }: { i18n?: VerificationI1
   const [data, setData] = useState<VerificationData | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [docType, setDocType] = useState("passport");
-  const [uploadSide, setUploadSide] = useState<"front" | "back">("front");
   // Bumped on a successful ID upload so the identity-verification card below
   // re-reads its status. It owns a separate fetch, and without this nudge a
   // patient who has just uploaded their ID keeps being told to upload their ID.
@@ -97,7 +96,6 @@ export function VerificationTab({ i18n = DEFAULT_I18N }: { i18n?: VerificationI1
   const [pending, startUpload] = useTransition();
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
   const frontRef = useRef<HTMLInputElement>(null);
-  const backRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     void fetchVerification().then((res) => {
@@ -111,7 +109,6 @@ export function VerificationTab({ i18n = DEFAULT_I18N }: { i18n?: VerificationI1
     if (!file) return;
     e.target.value = "";
     setMsg(null);
-    setUploadSide(side);
     startUpload(async () => {
       const res = await uploadIdDocument(file, side, docType);
       if (res.ok) {
@@ -238,27 +235,23 @@ export function VerificationTab({ i18n = DEFAULT_I18N }: { i18n?: VerificationI1
                 <p className="text-xs text-[var(--portal-muted)]">
                   {i18n.uploadHint}
                 </p>
+                {/* One document, not a front/back pair. A passport photo page
+                    is a single image, and the second slot only ever produced
+                    half-finished uploads. Re-uploading replaces what is on
+                    file, which is how a patient fixes a wrong photo. */}
                 <div className="flex flex-wrap gap-2">
                   <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-[var(--portal-line)] px-4 py-2 text-sm font-medium text-[var(--portal-text)] hover:bg-[var(--portal-well)] disabled:opacity-60">
                     <Upload aria-hidden className="size-4" />
-                    {pending && uploadSide === "front" ? i18n.uploading : i18n.uploadFront}
+                    {pending
+                      ? i18n.uploading
+                      : v?.hasIdDocument
+                        ? i18n.replaceDocument
+                        : i18n.uploadDocument}
                     <input
                       ref={frontRef}
                       type="file"
                       accept=".pdf,.jpg,.jpeg,.png,.webp"
                       onChange={(e) => onFileChange(e, "front")}
-                      disabled={pending}
-                      className="sr-only"
-                    />
-                  </label>
-                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-[var(--portal-line)] px-4 py-2 text-sm font-medium text-[var(--portal-text)] hover:bg-[var(--portal-well)] disabled:opacity-60">
-                    <Upload aria-hidden className="size-4" />
-                    {pending && uploadSide === "back" ? i18n.uploading : i18n.uploadBack}
-                    <input
-                      ref={backRef}
-                      type="file"
-                      accept=".pdf,.jpg,.jpeg,.png,.webp"
-                      onChange={(e) => onFileChange(e, "back")}
                       disabled={pending}
                       className="sr-only"
                     />

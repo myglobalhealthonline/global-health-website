@@ -646,11 +646,11 @@
     "verifiedOn": "Verified {date}",
     "reviewedOn": "Reviewed {date}",
     "documentType": "Document type",
-    "uploadHint": "Upload front side (and back if applicable). Max 10 MB per file. PDF, JPG, PNG.",
-    "uploadFront": "Upload front",
-    "uploadBack": "Upload back",
+    "uploadHint": "One clear photo or scan of your passport or ID card. Max 10 MB. PDF, JPG, PNG.",
     "uploading": "Uploading…",
-    "uploaded": "ID document saved"
+    "uploaded": "ID document saved",
+    "uploadDocument": "Upload ID document",
+    "replaceDocument": "Replace ID document"
   },
   "nationality": {
     "title": "Dual nationality",

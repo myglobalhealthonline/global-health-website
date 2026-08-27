@@ -646,11 +646,11 @@
     "verifiedOn": "Verificat la {date}",
     "reviewedOn": "Verificat la {date}",
     "documentType": "Tip de document",
-    "uploadHint": "Încarcă fața documentului (și verso, dacă e cazul). Max. 10 MB per fișier. PDF, JPG, PNG.",
-    "uploadFront": "Încarcă fața",
-    "uploadBack": "Încarcă verso",
+    "uploadHint": "O fotografie sau scanare clară a pașaportului ori a cărții de identitate. Max. 10 MB. PDF, JPG, PNG.",
     "uploading": "Se încarcă…",
-    "uploaded": "Actul de identitate a fost salvat"
+    "uploaded": "Actul de identitate a fost salvat",
+    "uploadDocument": "Încărcați actul de identitate",
+    "replaceDocument": "Înlocuiți actul de identitate"
   },
   "nationality": {
     "title": "Dublă cetățenie",
