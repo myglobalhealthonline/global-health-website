@@ -320,6 +320,9 @@ export type AdminDoctorRegistrationDto = {
   active: boolean;
   /** Masked last 4 digits only — never the decrypted CPF. Brazil only. */
   cpfLast4: string | null;
+  /** Explicit admin opt-in gate for Memed e-prescription signing — not
+   *  implied by isVerified/CPF/CRM being complete. */
+  memedPrescriptionEnabled: boolean;
 };
 
 type AdminDoctorsListPayload = {
@@ -600,6 +603,7 @@ export async function patchAdminDoctorRegistration(
     isVerified?: boolean;
     /** Write-only. Omit to leave the stored CPF untouched. */
     cpf?: string;
+    memedPrescriptionEnabled?: boolean;
   },
 ) {
   return adminRequest<{ registration: AdminDoctorRegistrationDto }>(

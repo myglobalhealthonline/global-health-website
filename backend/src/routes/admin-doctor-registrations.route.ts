@@ -32,6 +32,8 @@ const upsertBodySchema = z
      *  value untouched; empty string clears it. Brazil-only in practice
      *  (Memed's prescriber-registration `cpf` field). */
     cpf: z.string().trim().max(20).optional(),
+    /** Explicit opt-in — a complete CRM+CPF+DOB is not enough by itself. */
+    memedPrescriptionEnabled: z.boolean().optional(),
   })
   .strict();
 
@@ -98,6 +100,7 @@ const adminDoctorRegistrationsRoute: FastifyPluginAsync = async (app) => {
               chamberEntity: row.chamberEntity,
               registrationNumber: row.registrationNumber,
               isVerified: row.isVerified,
+              memedPrescriptionEnabled: row.memedPrescriptionEnabled,
             },
           },
           request,

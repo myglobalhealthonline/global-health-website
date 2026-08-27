@@ -10,6 +10,9 @@ export type DoctorRegistrationInput = {
   /** Write-only plaintext in — never read back. Empty string clears the
    *  stored CPF; `undefined` leaves it untouched. */
   cpf?: string;
+  /** Explicit admin opt-in for Memed e-prescription signing — see the
+   *  schema field's doc comment. Not implied by isVerified/CPF/CRM. */
+  memedPrescriptionEnabled?: boolean;
 };
 
 export type DoctorRegistrationRow = {
@@ -27,6 +30,8 @@ export type DoctorRegistrationRow = {
   /** Masked last 4 digits only — same contract as DoctorBankAccount's
    *  ibanLast4. Never the decrypted CPF. */
   cpfLast4: string | null;
+  /** Explicit admin opt-in gate for Memed e-prescription signing. */
+  memedPrescriptionEnabled: boolean;
 };
 
 function cpfLast4Of(cpf: string): string | null {
@@ -59,6 +64,7 @@ export async function listDoctorRegistrations(
       verifiedAt: true,
       active: true,
       cpfLast4: true,
+      memedPrescriptionEnabled: true,
       country: { select: { code: true, name: true } },
     },
     orderBy: [{ active: "desc" }, { country: { name: "asc" } }],
@@ -76,6 +82,7 @@ export async function listDoctorRegistrations(
     verifiedAt: r.verifiedAt?.toISOString() ?? null,
     active: r.active,
     cpfLast4: r.cpfLast4,
+    memedPrescriptionEnabled: r.memedPrescriptionEnabled,
   }));
 }
 
@@ -162,6 +169,9 @@ export async function upsertDoctorRegistration(
       // surfaces on the public roster.
       active: true,
       ...cpfWrite,
+      ...(input.memedPrescriptionEnabled !== undefined && {
+        memedPrescriptionEnabled: input.memedPrescriptionEnabled,
+      }),
     },
     create: {
       doctorId,
@@ -173,6 +183,7 @@ export async function upsertDoctorRegistration(
       verifiedAt,
       active: true,
       ...cpfWrite,
+      memedPrescriptionEnabled: input.memedPrescriptionEnabled ?? false,
     },
     select: {
       id: true,
@@ -185,6 +196,7 @@ export async function upsertDoctorRegistration(
       verifiedAt: true,
       active: true,
       cpfLast4: true,
+      memedPrescriptionEnabled: true,
     },
   });
 
@@ -201,6 +213,7 @@ export async function upsertDoctorRegistration(
     verifiedAt: saved.verifiedAt?.toISOString() ?? null,
     active: saved.active,
     cpfLast4: saved.cpfLast4,
+    memedPrescriptionEnabled: saved.memedPrescriptionEnabled,
   };
 }
 
@@ -230,6 +243,7 @@ export async function getDoctorRegistrationByCountryCode(
       verifiedAt: true,
       active: true,
       cpfLast4: true,
+      memedPrescriptionEnabled: true,
       country: { select: { code: true, name: true } },
     },
   });
@@ -247,6 +261,7 @@ export async function getDoctorRegistrationByCountryCode(
     verifiedAt: row.verifiedAt?.toISOString() ?? null,
     active: row.active,
     cpfLast4: row.cpfLast4,
+    memedPrescriptionEnabled: row.memedPrescriptionEnabled,
   };
 }
 

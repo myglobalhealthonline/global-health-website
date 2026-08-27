@@ -1049,6 +1049,12 @@ model DoctorCountry {
   /// Last 4 digits of the CPF for masked "CPF on file: ••••1234" display
   /// without decrypting. Mirrors `DoctorBankAccount.ibanLast4`.
   cpfLast4             String?
+  /// Explicit admin opt-in gate for Memed e-prescription signing. Having a
+  /// complete CRM+CPF+DOB is NOT enough by itself — a BR doctor must be
+  /// deliberately switched on here before `ensurePrescriber` will register
+  /// them with Memed at all. Default false: nobody gets it just by having
+  /// their profile filled in.
+  memedPrescriptionEnabled Boolean                 @default(false)
   /// Country-director grant for THIS market. When true AND
   /// `Doctor.isCountryDirector`, the doctor may view every consultation booked
   /// in this country, across all doctors. Read-only and money-free — see

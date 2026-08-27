@@ -19,6 +19,7 @@ import {
 import {
   DoctorCpfMissingError,
   DoctorDateOfBirthMissingError,
+  DoctorMemedNotEnabledError,
   DoctorNotVerifiedForMemedError,
   DoctorRegistrationMissingError,
   startWidgetSession,
@@ -515,7 +516,7 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
         ) {
           return reply.status(400).send(errorResponse(error.message));
         }
-        if (error instanceof DoctorNotVerifiedForMemedError) {
+        if (error instanceof DoctorNotVerifiedForMemedError || error instanceof DoctorMemedNotEnabledError) {
           return reply.status(403).send(errorResponse(error.message));
         }
         if (error instanceof Error && error.message === "Appointment not found") {

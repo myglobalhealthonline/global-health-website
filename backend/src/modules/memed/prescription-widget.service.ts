@@ -50,6 +50,13 @@ export class DoctorDateOfBirthMissingError extends Error {
   }
 }
 
+export class DoctorMemedNotEnabledError extends Error {
+  constructor() {
+    super("This doctor is not enabled for Memed e-prescription signing");
+    this.name = "DoctorMemedNotEnabledError";
+  }
+}
+
 async function loadDoctorCountryRow(doctorId: string, countryCode: string) {
   return prisma.doctorCountry.findFirst({
     where: { doctorId, country: { code: { equals: countryCode, mode: "insensitive" } } },
@@ -60,6 +67,7 @@ async function loadDoctorCountryRow(doctorId: string, countryCode: string) {
       isVerified: true,
       memedPrescriberId: true,
       cpfEncrypted: true,
+      memedPrescriptionEnabled: true,
       country: { select: { code: true } },
     },
   });
@@ -91,6 +99,10 @@ export async function ensurePrescriber(doctorId: string, countryCode: string): P
   const row = await loadDoctorCountryRow(doctorId, countryCode);
   if (!row || !row.registrationNumber?.trim()) throw new DoctorRegistrationMissingError();
   if (!row.isVerified) throw new DoctorNotVerifiedForMemedError();
+  // Checked every call, even for an already-registered doctor — an admin
+  // switching this off must block future sessions immediately, not just
+  // stop new registrations.
+  if (!row.memedPrescriptionEnabled) throw new DoctorMemedNotEnabledError();
   if (row.memedPrescriberId) return row.memedPrescriberId;
   if (!row.cpfEncrypted) throw new DoctorCpfMissingError();
 
