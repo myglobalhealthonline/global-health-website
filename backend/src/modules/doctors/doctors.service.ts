@@ -1127,6 +1127,7 @@ export async function createAdminDoctor(input: AdminDoctorCreateBody): Promise<A
           // entirely (not `?? null`) so a doctor imported without this field
           // stays null rather than an explicit key setting it.
           ...(input.lastReviewedAt !== undefined && { lastReviewedAt: input.lastReviewedAt }),
+          ...(input.dateOfBirth !== undefined && { dateOfBirth: input.dateOfBirth }),
           active: input.active ?? true,
           specialties: {
             create: input.specialtyIds.map((specialtyId) => ({
@@ -1294,6 +1295,7 @@ export async function updateAdminDoctor(
             seoDescription: body.seoDescription,
           }),
           ...(body.lastReviewedAt !== undefined && { lastReviewedAt: body.lastReviewedAt }),
+          ...(body.dateOfBirth !== undefined && { dateOfBirth: body.dateOfBirth }),
           ...(body.active !== undefined && { active: body.active }),
           ...(body.canCreateManualAppointments !== undefined && {
             canCreateManualAppointments: body.canCreateManualAppointments,

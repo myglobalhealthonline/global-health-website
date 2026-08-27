@@ -27,6 +27,11 @@ const upsertBodySchema = z
     registrationNumber: z.string().trim().max(64).optional().nullable(),
     division: z.string().trim().max(120).optional().nullable(),
     isVerified: z.boolean().optional(),
+    /** Write-only — plaintext in, encrypted before storage, never echoed
+     *  back (see upsertDoctorRegistration). Omit to leave the existing
+     *  value untouched; empty string clears it. Brazil-only in practice
+     *  (Memed's prescriber-registration `cpf` field). */
+    cpf: z.string().trim().max(20).optional(),
   })
   .strict();
 

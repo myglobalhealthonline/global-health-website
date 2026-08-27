@@ -9,80 +9,97 @@ import { doctorApiErrorMessage, parseDoctorApiJson } from "@/lib/doctor-api-clie
  * signs the prescription/certificate/exam request inside Memed's own UI
  * (that in-widget confirmation is the actual legal signature — nothing on
  * our side signs anything). On success we record the returned document
- * reference via /memed-document, which mirrors the signed PDF into our
- * storage so it shows up in the normal documents list.
+ * reference via /memed-document, which fetches the signed PDF server-side
+ * and mirrors it into our storage so it shows up in the normal documents
+ * list.
  *
- * We have no Memed credentials yet, so `/memed-session` 503s until the
- * backend is configured — this panel then shows a quiet "not connected"
- * notice and the doctor keeps using the existing DOCX flow in the other
- * tabs. Nothing here blocks that fallback.
+ * Script/event contract confirmed against Memed's real docs
+ * (doc.memed.com.br/docs/frontend, /docs/frontend/eventos-mdhub) as of
+ * 2026-08-27:
+ *   - The widget script is loaded with a `data-token` ATTRIBUTE on the
+ *     `<script>` tag itself — not passed via a JS init call.
+ *   - Finish event: `MdSinapsePrescricao.event.add('core:moduleInit', cb)`
+ *     fires once per module; inside it, once `moduleData.name ===
+ *     'plataforma.prescricao'`, `MdHub.event.add('prescricaoImpressa', cb)`
+ *     fires with `{ prescriptionUuid, documents: [{ uuid, file_name, ... }] }`
+ *     — no direct PDF URL, fetched separately server-side.
  *
- * The widget's own JS API (script global name, init call, the event that
- * fires with the finished document) is NOT yet confirmed against Memed's
- * real docs — see doc.memed.com.br/docs/backend-api once credentials
- * arrive. `bootMemedWidget` below is the one place that needs updating;
- * everything else (session mint, script load, document recording) is real.
+ * Still unconfirmed (flagged, not guessed): exactly how the widget binds to
+ * a container element on the page — Memed's "Modos de carregamento do
+ * script" / "Modos de exibição" doc pages weren't pulled. The `<div>` below
+ * is a placeholder mount point; if the widget instead renders itself
+ * fixed/floating regardless of a container, this div can be dropped.
  */
 
 type MemedDocType = "PRESCRIPTION" | "ABSENCE_CERTIFICATE" | "CUSTOM_CERTIFICATE" | "EXAMS_PRESCRIPTION";
 
 type Status = "idle" | "starting" | "loading-widget" | "open" | "not-configured" | "error";
 
-let memedScriptPromise: Promise<void> | null = null;
+type MemedScriptState = { token: string; promise: Promise<void> };
+let memedScriptState: MemedScriptState | null = null;
 
-function loadMemedScript(scriptUrl: string): Promise<void> {
-  if (memedScriptPromise) return memedScriptPromise;
+const MEMED_SCRIPT_ID = "memed-sinapse-prescricao-script";
+
+/** Loads (or reuses) the widget script for this `token`. Re-injects the tag
+ *  if a different doctor's token was previously loaded on this page. */
+function loadMemedScript(scriptUrl: string, token: string): Promise<void> {
+  if (memedScriptState?.token === token) return memedScriptState.promise;
+
+  document.getElementById(MEMED_SCRIPT_ID)?.remove();
+
   const promise: Promise<void> = new Promise<void>((resolve, reject) => {
-    const existing = document.querySelector(`script[src="${scriptUrl}"]`);
-    if (existing) {
-      resolve();
-      return;
-    }
     const script = document.createElement("script");
+    script.id = MEMED_SCRIPT_ID;
     script.src = scriptUrl;
+    script.setAttribute("data-token", token);
     script.async = true;
     script.onload = () => resolve();
     script.onerror = () => reject(new Error("Failed to load Memed widget script"));
     document.body.appendChild(script);
   }).catch((err: unknown) => {
-    memedScriptPromise = null;
+    memedScriptState = null;
     throw err;
   });
-  memedScriptPromise = promise;
+
+  memedScriptState = { token, promise };
   return promise;
 }
 
-/**
- * TODO(confirm against Memed docs): boots the widget into `container` using
- * `token`, and resolves with the issued document's id + PDF URL once the
- * doctor finishes signing inside Memed's UI. Placeholder shape below is our
- * best read of Memed's publicly-described partner integration, not verified
- * against real credentials.
- */
-function bootMemedWidget(
-  token: string,
-  container: HTMLDivElement,
-): Promise<{ documentId: string; url: string }> {
+type MdHubGlobal = {
+  event: { add: (name: string, cb: (payload: unknown) => void) => void };
+};
+type MdSinapsePrescricaoGlobal = {
+  event: { add: (name: "core:moduleInit", cb: (moduleData: { name: string }) => void) => void };
+};
+
+type PrescricaoImpressaPayload = {
+  prescriptionUuid?: string;
+  documents?: Array<{ uuid: string; file_name?: string; type?: string }>;
+};
+
+/** Resolves with the first document from the finished prescription. */
+function waitForPrescricaoImpressa(): Promise<{ prescricaoId: string; documentId: string }> {
   return new Promise((resolve, reject) => {
     const win = window as unknown as {
-      MdSinapsePrescricao?: {
-        init: (opts: {
-          token: string;
-          container: HTMLDivElement;
-          onDocumentoCriado?: (doc: { id: string; url: string }) => void;
-          onError?: (err: unknown) => void;
-        }) => void;
-      };
+      MdSinapsePrescricao?: MdSinapsePrescricaoGlobal;
+      MdHub?: MdHubGlobal;
     };
     if (!win.MdSinapsePrescricao) {
       reject(new Error("Memed widget did not load correctly"));
       return;
     }
-    win.MdSinapsePrescricao.init({
-      token,
-      container,
-      onDocumentoCriado: (doc) => resolve({ documentId: doc.id, url: doc.url }),
-      onError: (err) => reject(err instanceof Error ? err : new Error("Memed widget error")),
+    win.MdSinapsePrescricao.event.add("core:moduleInit", (moduleData) => {
+      if (moduleData.name !== "plataforma.prescricao") return;
+      win.MdHub?.event.add("prescricaoImpressa", (payload) => {
+        const data = payload as PrescricaoImpressaPayload;
+        const prescricaoId = data.prescriptionUuid;
+        const documentId = data.documents?.[0]?.uuid;
+        if (!prescricaoId || !documentId) {
+          reject(new Error("Memed finished the prescription but returned no document id"));
+          return;
+        }
+        resolve({ prescricaoId, documentId });
+      });
     });
   });
 }
@@ -130,19 +147,19 @@ export function MemedPrescribePanel({
       }
 
       setStatus("loading-widget");
-      await loadMemedScript(json.data.scriptUrl);
-      if (!containerRef.current) throw new Error("Widget container not ready");
+      const finished = waitForPrescricaoImpressa();
+      await loadMemedScript(json.data.scriptUrl, json.data.token);
 
       setStatus("open");
-      const issued = await bootMemedWidget(json.data.token, containerRef.current);
+      const issued = await finished;
 
       const recordRes = await fetch(`/api/doctor/appointments/${appointmentId}/memed-document`, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           type: docType,
-          memedDocumentId: issued.documentId,
-          memedUrl: issued.url,
+          prescricaoId: issued.prescricaoId,
+          documentId: issued.documentId,
         }),
       });
       const recordJson = await parseDoctorApiJson<{ ok?: boolean; message?: string }>(recordRes);

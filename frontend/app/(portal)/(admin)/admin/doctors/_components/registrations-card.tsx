@@ -46,6 +46,9 @@ export function DoctorRegistrationsCard({
       String(formData.get("registrationNumber") ?? "").trim() || null;
     const division = String(formData.get("division") ?? "").trim() || null;
     const isVerified = formData.get("isVerified") === "on";
+    // Write-only — omit the key entirely when the admin left it blank, so
+    // an already-stored CPF isn't wiped out just by re-saving the form.
+    const cpfRaw = String(formData.get("cpf") ?? "").trim();
     if (!countryId) {
       redirect(
         `/admin/doctors/${doctorId}?error=${encodeURIComponent(
@@ -58,6 +61,7 @@ export function DoctorRegistrationsCard({
       registrationNumber,
       division,
       isVerified,
+      ...(cpfRaw ? { cpf: cpfRaw } : {}),
     });
     if (!result.ok) {
       redirect(
@@ -165,6 +169,23 @@ export function DoctorRegistrationsCard({
                     Verified
                   </label>
                 </div>
+                {country.code.toUpperCase() === "BR" ? (
+                  <div className="gh-admin-doctor-registration-fields mt-2 grid gap-2 sm:grid-cols-[1fr_auto] sm:items-end">
+                    <label className="flex flex-col gap-1">
+                      <span className="gh-field-label">CPF</span>
+                      <input
+                        type="text"
+                        name="cpf"
+                        maxLength={20}
+                        placeholder={row?.cpfLast4 ? `CPF on file — ending ${row.cpfLast4}` : "000.000.000-00"}
+                        className="gh-input"
+                      />
+                      <span className="text-portal-thead text-[var(--color-text-muted)]">
+                        Write-only — leave blank to keep the stored CPF. Required by Memed to register this doctor for BR e-prescription signing.
+                      </span>
+                    </label>
+                  </div>
+                ) : null}
                 <div className="gh-admin-doctor-form-actions mt-2 flex justify-end">
                   <button type="submit" className="gh-btn gh-btn-primary">
                     Save

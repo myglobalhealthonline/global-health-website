@@ -234,6 +234,9 @@ const adminDoctorBaseObject = z.object({
   /** Clinical review date shown on the doctor profile as "Last reviewed"
    *  (E-E-A-T signal). Admin-set only — never auto-populated on create. */
   lastReviewedAt: optionalNullableDate,
+  /** Person-level DOB — currently only used by Memed's BR prescriber
+   *  registration (`data_nascimento`). */
+  dateOfBirth: optionalNullableDate,
   /** Per-locale CMS content (title, bio, SEO). The default-locale entry
    *  mirrors the base fields above; backend upserts one DoctorTranslation
    *  row per entry. */

@@ -1,11 +1,15 @@
 import { prisma } from "../../db/prisma.js";
 import { defaultChamberEntityForCountry } from "../../lib/doctor-registration-display.js";
+import { encryptPhi, decryptPhi } from "../../lib/crypto/phi-crypto.js";
 
 export type DoctorRegistrationInput = {
   chamberEntity?: string | null;
   registrationNumber?: string | null;
   division?: string | null;
   isVerified?: boolean;
+  /** Write-only plaintext in — never read back. Empty string clears the
+   *  stored CPF; `undefined` leaves it untouched. */
+  cpf?: string;
 };
 
 export type DoctorRegistrationRow = {
@@ -20,7 +24,15 @@ export type DoctorRegistrationRow = {
   isVerified: boolean;
   verifiedAt: string | null;
   active: boolean;
+  /** Masked last 4 digits only — same contract as DoctorBankAccount's
+   *  ibanLast4. Never the decrypted CPF. */
+  cpfLast4: string | null;
 };
+
+function cpfLast4Of(cpf: string): string | null {
+  const digits = cpf.replace(/\D/g, "");
+  return digits.length >= 4 ? digits.slice(-4) : null;
+}
 
 /**
  * Per-market doctor medical-registration rows. Lives on the existing
@@ -46,6 +58,7 @@ export async function listDoctorRegistrations(
       isVerified: true,
       verifiedAt: true,
       active: true,
+      cpfLast4: true,
       country: { select: { code: true, name: true } },
     },
     orderBy: [{ active: "desc" }, { country: { name: "asc" } }],
@@ -62,6 +75,7 @@ export async function listDoctorRegistrations(
     isVerified: r.isVerified,
     verifiedAt: r.verifiedAt?.toISOString() ?? null,
     active: r.active,
+    cpfLast4: r.cpfLast4,
   }));
 }
 
@@ -123,6 +137,16 @@ export async function upsertDoctorRegistration(
     verifiedAt = null;
   }
 
+  // Write-only: undefined leaves the stored CPF untouched, "" clears it,
+  // anything else encrypts + replaces it. Never decrypted/echoed back here.
+  let cpfWrite: { cpfEncrypted: string | null; cpfLast4: string | null } | undefined;
+  if (input.cpf !== undefined) {
+    const trimmed = input.cpf.trim();
+    cpfWrite = trimmed
+      ? { cpfEncrypted: encryptPhi(trimmed), cpfLast4: cpfLast4Of(trimmed) }
+      : { cpfEncrypted: null, cpfLast4: null };
+  }
+
   const saved = await prisma.doctorCountry.upsert({
     where: { doctorId_countryId: { doctorId, countryId } },
     update: {
@@ -137,6 +161,7 @@ export async function upsertDoctorRegistration(
       // registration here makes the country visible again so the data
       // surfaces on the public roster.
       active: true,
+      ...cpfWrite,
     },
     create: {
       doctorId,
@@ -147,6 +172,7 @@ export async function upsertDoctorRegistration(
       isVerified,
       verifiedAt,
       active: true,
+      ...cpfWrite,
     },
     select: {
       id: true,
@@ -158,6 +184,7 @@ export async function upsertDoctorRegistration(
       isVerified: true,
       verifiedAt: true,
       active: true,
+      cpfLast4: true,
     },
   });
 
@@ -173,6 +200,7 @@ export async function upsertDoctorRegistration(
     isVerified: saved.isVerified,
     verifiedAt: saved.verifiedAt?.toISOString() ?? null,
     active: saved.active,
+    cpfLast4: saved.cpfLast4,
   };
 }
 
@@ -201,6 +229,7 @@ export async function getDoctorRegistrationByCountryCode(
       isVerified: true,
       verifiedAt: true,
       active: true,
+      cpfLast4: true,
       country: { select: { code: true, name: true } },
     },
   });
@@ -217,7 +246,25 @@ export async function getDoctorRegistrationByCountryCode(
     isVerified: row.isVerified,
     verifiedAt: row.verifiedAt?.toISOString() ?? null,
     active: row.active,
+    cpfLast4: row.cpfLast4,
   };
+}
+
+/**
+ * Decrypted CPF for server-side use ONLY (Memed prescriber registration —
+ * modules/memed/prescription-widget.service.ts ensurePrescriber). Never
+ * exposed through any admin GET; that path only ever sees `cpfLast4`.
+ */
+export async function getDecryptedDoctorCpf(
+  doctorId: string,
+  countryCode: string,
+): Promise<string | null> {
+  const row = await prisma.doctorCountry.findFirst({
+    where: { doctorId, country: { code: { equals: countryCode, mode: "insensitive" } } },
+    select: { cpfEncrypted: true },
+  });
+  if (!row?.cpfEncrypted) return null;
+  return decryptPhi(row.cpfEncrypted);
 }
 
 function normalizeString(value: string | null | undefined, max: number): string | null {
