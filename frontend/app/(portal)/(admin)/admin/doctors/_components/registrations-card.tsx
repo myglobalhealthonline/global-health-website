@@ -49,6 +49,7 @@ export function DoctorRegistrationsCard({
     // Write-only — omit the key entirely when the admin left it blank, so
     // an already-stored CPF isn't wiped out just by re-saving the form.
     const cpfRaw = String(formData.get("cpf") ?? "").trim();
+    const memedPrescriptionEnabled = formData.get("memedPrescriptionEnabled") === "on";
     if (!countryId) {
       redirect(
         `/admin/doctors/${doctorId}?error=${encodeURIComponent(
@@ -62,6 +63,10 @@ export function DoctorRegistrationsCard({
       division,
       isVerified,
       ...(cpfRaw ? { cpf: cpfRaw } : {}),
+      // The checkbox only renders for BR rows — for every other country
+      // this just writes `false`, which is what the field already
+      // defaults to and means nothing there anyway.
+      memedPrescriptionEnabled,
     });
     if (!result.ok) {
       redirect(
@@ -183,6 +188,14 @@ export function DoctorRegistrationsCard({
                       <span className="text-portal-thead text-[var(--color-text-muted)]">
                         Write-only — leave blank to keep the stored CPF. Required by Memed to register this doctor for BR e-prescription signing.
                       </span>
+                    </label>
+                    <label className="inline-flex items-center gap-2 pb-2 text-portal-compact">
+                      <input
+                        type="checkbox"
+                        name="memedPrescriptionEnabled"
+                        defaultChecked={Boolean(row?.memedPrescriptionEnabled)}
+                      />
+                      Enable Memed prescribing
                     </label>
                   </div>
                 ) : null}
