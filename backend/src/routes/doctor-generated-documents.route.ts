@@ -17,6 +17,8 @@ import {
   sendGeneratedDocumentUploadLink,
 } from "../modules/generated-documents/generated-documents.service.js";
 import {
+  DoctorCpfMissingError,
+  DoctorDateOfBirthMissingError,
   DoctorNotVerifiedForMemedError,
   DoctorRegistrationMissingError,
   startWidgetSession,
@@ -35,8 +37,10 @@ const memedDocumentSchema = z.object({
     GeneratedDocumentType.CUSTOM_CERTIFICATE,
     GeneratedDocumentType.EXAMS_PRESCRIPTION,
   ]),
-  memedDocumentId: z.string().min(1),
-  memedUrl: z.string().url(),
+  /** Memed's `prescriptionUuid` from the widget's `prescricaoImpressa` event. */
+  prescricaoId: z.string().min(1),
+  /** One entry from that event's `documents[].uuid`. */
+  documentId: z.string().min(1),
 });
 
 const baseFields = z.record(z.string()).optional();
@@ -498,14 +502,17 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
         });
         return okResponse({
           token: session.token,
-          expiresAt: session.expiresAt.toISOString(),
           scriptUrl: session.scriptUrl,
         });
       } catch (error) {
         if (error instanceof MemedPrescriptionNotConfiguredError) {
           return reply.status(503).send(errorResponse(error.message));
         }
-        if (error instanceof DoctorRegistrationMissingError) {
+        if (
+          error instanceof DoctorRegistrationMissingError ||
+          error instanceof DoctorCpfMissingError ||
+          error instanceof DoctorDateOfBirthMissingError
+        ) {
           return reply.status(400).send(errorResponse(error.message));
         }
         if (error instanceof DoctorNotVerifiedForMemedError) {
@@ -537,8 +544,8 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
           appointmentId: request.params.id,
           doctorId: auth.doctorId,
           documentType: body.data.type,
-          memedDocumentId: body.data.memedDocumentId,
-          memedUrl: body.data.memedUrl,
+          prescricaoId: body.data.prescricaoId,
+          documentId: body.data.documentId,
         });
         if (!row) return reply.status(404).send(errorResponse("Appointment not found"));
         recordAudit({

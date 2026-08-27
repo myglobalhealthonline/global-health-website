@@ -75,6 +75,7 @@ export function parseDoctorBodyFromForm(formData: FormData, defaultLocale: strin
     // Admin-set only, never defaulted — "" (blank) clears it, absent leaves
     // it untouched on update per the create/edit page's own undefined check.
     lastReviewedAt: String(formData.get("lastReviewedAt") ?? "").trim(),
+    dateOfBirth: String(formData.get("dateOfBirth") ?? "").trim(),
     specialtyIds,
     additionalCountryIds,
     translations,

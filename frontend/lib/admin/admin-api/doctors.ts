@@ -241,6 +241,9 @@ export type AdminDoctorDto = {
    *  (E-E-A-T signal, mirrors AdminServiceDto.lastReviewedAt). Admin-set
    *  only — never auto-populated. */
   lastReviewedAt: string | null;
+  /** Only used to register the doctor with Memed for BR e-prescription
+   *  signing (`data_nascimento`) — not shown publicly. */
+  dateOfBirth: string | null;
   active: boolean;
   createdAt: string;
   updatedAt: string;
@@ -315,6 +318,8 @@ export type AdminDoctorRegistrationDto = {
   isVerified: boolean;
   verifiedAt: string | null;
   active: boolean;
+  /** Masked last 4 digits only — never the decrypted CPF. Brazil only. */
+  cpfLast4: string | null;
 };
 
 type AdminDoctorsListPayload = {
@@ -593,6 +598,8 @@ export async function patchAdminDoctorRegistration(
     registrationNumber?: string | null;
     division?: string | null;
     isVerified?: boolean;
+    /** Write-only. Omit to leave the stored CPF untouched. */
+    cpf?: string;
   },
 ) {
   return adminRequest<{ registration: AdminDoctorRegistrationDto }>(

@@ -652,6 +652,12 @@ model Doctor {
   /// (E-E-A-T signal, mirrors Service.lastReviewedAt). Nullable, no
   /// backfill — set by admins going forward, never auto-populated.
   lastReviewedAt                  DateTime?
+  /// Person-level date of birth. Currently only consumed by Memed's BR
+  /// prescriber-registration call (`data_nascimento`,
+  /// modules/memed/prescription-widget.service.ts ensurePrescriber) — not
+  /// per-country like CRM/CPF, since a doctor has exactly one birth date
+  /// regardless of how many markets they practice in.
+  dateOfBirth                     DateTime?
   // Phase 2: imcRegistration removed. Per-country registration lives on
   // DoctorCountry.registrationNumber. Public payload computes the
   // display value via `overrideImcRegistrationFromCountry`.
@@ -1034,6 +1040,15 @@ model DoctorCountry {
   /// lib/memed/prescription-client.ts ensurePrescriber). BR only in
   /// practice; null everywhere else and until Memed credentials arrive.
   memedPrescriberId    String?
+  /// AES-256-GCM encrypted CPF (`phi:v1:` envelope via encryptPhi), same
+  /// contract as `DoctorBankAccount.ibanEncrypted`. Brazil-only in
+  /// practice — required by Memed's prescriber-registration call
+  /// (`cpf` field). Never returned by any GET; write-only from the admin
+  /// form, same pattern as the bank IBAN.
+  cpfEncrypted         String?
+  /// Last 4 digits of the CPF for masked "CPF on file: ••••1234" display
+  /// without decrypting. Mirrors `DoctorBankAccount.ibanLast4`.
+  cpfLast4             String?
   /// Country-director grant for THIS market. When true AND
   /// `Doctor.isCountryDirector`, the doctor may view every consultation booked
   /// in this country, across all doctors. Read-only and money-free — see

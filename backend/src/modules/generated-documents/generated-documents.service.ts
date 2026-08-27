@@ -1078,18 +1078,19 @@ export class MemedDocumentAlreadyRecordedError extends Error {
 /**
  * Record a document a BR doctor issued through the Memed e-prescription
  * widget (see modules/memed/prescription-widget.service.ts). Memed already
- * signed and hosts the original — we mirror the PDF into our own object
- * storage so the existing download/email/WhatsApp-send paths
- * (getGeneratedDocumentFile, sendGeneratedDocuments) work unchanged, and
- * keep memedDocumentId/memedUrl as the record of where the legally-signed
- * original lives.
+ * signed and hosts the original — we fetch the PDF bytes ourselves
+ * (server-side, with our own credentials — never trust a frontend-supplied
+ * URL) and mirror them into our own object storage so the existing
+ * download/email/WhatsApp-send paths (getGeneratedDocumentFile,
+ * sendGeneratedDocuments) work unchanged. `memedDocumentId` is the record of
+ * which Memed document this is, for idempotency + audit.
  */
 export async function createMemedIssuedDocument(input: {
   appointmentId: string;
   doctorId: string;
   documentType: GeneratedDocumentType;
-  memedDocumentId: string;
-  memedUrl: string;
+  prescricaoId: string;
+  documentId: string;
 }): Promise<GeneratedDocument | null> {
   const appt = await prisma.appointment.findFirst({
     where: { id: input.appointmentId, doctorId: input.doctorId },
@@ -1098,14 +1099,12 @@ export async function createMemedIssuedDocument(input: {
   if (!appt) return null;
 
   const existing = await prisma.generatedDocument.findUnique({
-    where: { memedDocumentId: input.memedDocumentId },
+    where: { memedDocumentId: input.documentId },
   });
   if (existing) throw new MemedDocumentAlreadyRecordedError();
 
-  const res = await fetch(input.memedUrl, { signal: AbortSignal.timeout(20_000) });
-  if (!res.ok) throw new Error(`Could not fetch signed document from Memed (${res.status})`);
-  const pdfBuffer = Buffer.from(await res.arrayBuffer());
-  if (!pdfBuffer.length) throw new Error("Memed document download was empty");
+  const { fetchPrescriptionDocumentPdf } = await import("../../lib/memed/prescription-client.js");
+  const pdfBuffer = await fetchPrescriptionDocumentPdf(input.prescricaoId, input.documentId);
 
   const patientSlug =
     appt.fullName
@@ -1127,9 +1126,8 @@ export async function createMemedIssuedDocument(input: {
       documentType: input.documentType,
       fileName,
       storageKey,
-      memedDocumentId: input.memedDocumentId,
-      memedUrl: input.memedUrl,
-      metadata: { source: "memed" },
+      memedDocumentId: input.documentId,
+      metadata: { source: "memed", prescricaoId: input.prescricaoId },
     },
   });
 }

@@ -188,6 +188,20 @@ export function DoctorFields({
           </span>
         </label>
 
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Date of birth</span>
+          <input
+            type="date"
+            name="dateOfBirth"
+            className="gh-input min-w-0"
+            defaultValue={toDateInputValue(initial?.dateOfBirth)}
+          />
+          <span className="text-xs text-[var(--color-text-muted)]">
+            Only used to register the doctor with Memed for BR e-prescription
+            signing — not shown anywhere public.
+          </span>
+        </label>
+
         <p className="gh-form-section__span-2 text-xs text-[var(--color-text-muted)]">
           {showTranslationTabs ? (
             <>
