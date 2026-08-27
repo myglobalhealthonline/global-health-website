@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
+import Script from "next/script";
 import { Loader2, Stamp } from "lucide-react";
 import { doctorApiErrorMessage, parseDoctorApiJson } from "@/lib/doctor-api-client";
 
@@ -24,6 +25,15 @@ import { doctorApiErrorMessage, parseDoctorApiJson } from "@/lib/doctor-api-clie
  *     fires with `{ prescriptionUuid, documents: [{ uuid, file_name, ... }] }`
  *     — no direct PDF URL, fetched separately server-side.
  *
+ * The doctor portal runs a nonce/'strict-dynamic' CSP (proxy.ts nonceCsp).
+ * A plain `document.createElement('script')` injected after page load is
+ * NOT trusted just by host under 'strict-dynamic' (tried that first — it
+ * failed silently as "Failed to load Memed widget script", CSP-blocked).
+ * `next/script`'s <Script> component is Next's own supported path: Next
+ * detects the nonce from the CSP header it already emits for its own
+ * bundle and applies it to any <Script> it renders, so this one is trusted
+ * the same way Next's own hydration scripts are — no manual nonce-copying.
+ *
  * Still unconfirmed (flagged, not guessed): exactly how the widget binds to
  * a container element on the page — Memed's "Modos de carregamento do
  * script" / "Modos de exibição" doc pages weren't pulled. The `<div>` below
@@ -34,54 +44,6 @@ import { doctorApiErrorMessage, parseDoctorApiJson } from "@/lib/doctor-api-clie
 type MemedDocType = "PRESCRIPTION" | "ABSENCE_CERTIFICATE" | "CUSTOM_CERTIFICATE" | "EXAMS_PRESCRIPTION";
 
 type Status = "idle" | "starting" | "loading-widget" | "open" | "not-configured" | "error";
-
-type MemedScriptState = { token: string; promise: Promise<void> };
-let memedScriptState: MemedScriptState | null = null;
-
-const MEMED_SCRIPT_ID = "memed-sinapse-prescricao-script";
-
-/**
- * The doctor portal runs a nonce/'strict-dynamic' CSP (proxy.ts nonceCsp) —
- * a plain `<script src>` injected after page load is NOT trusted just by
- * host, even though the policy also lists Memed's host as a legacy-browser
- * fallback. Any script already on the page that Next stamped with the
- * request's nonce can be read back via its `.nonce` IDL property (the
- * reflected attribute is stripped for security, but the property survives),
- * and 'strict-dynamic' trusts elements created by an already-trusted script
- * regardless of their `src` host — copying it here is what actually
- * authorizes this tag, not the CSP host allowlist.
- */
-function pageNonce(): string | undefined {
-  const el = document.querySelector<HTMLScriptElement>("script[nonce]");
-  return el?.nonce || undefined;
-}
-
-/** Loads (or reuses) the widget script for this `token`. Re-injects the tag
- *  if a different doctor's token was previously loaded on this page. */
-function loadMemedScript(scriptUrl: string, token: string): Promise<void> {
-  if (memedScriptState?.token === token) return memedScriptState.promise;
-
-  document.getElementById(MEMED_SCRIPT_ID)?.remove();
-
-  const promise: Promise<void> = new Promise<void>((resolve, reject) => {
-    const script = document.createElement("script");
-    script.id = MEMED_SCRIPT_ID;
-    script.src = scriptUrl;
-    script.setAttribute("data-token", token);
-    const nonce = pageNonce();
-    if (nonce) script.nonce = nonce;
-    script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Failed to load Memed widget script"));
-    document.body.appendChild(script);
-  }).catch((err: unknown) => {
-    memedScriptState = null;
-    throw err;
-  });
-
-  memedScriptState = { token, promise };
-  return promise;
-}
 
 type MdHubGlobal = {
   event: { add: (name: string, cb: (payload: unknown) => void) => void };
@@ -134,7 +96,9 @@ export function MemedPrescribePanel({
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState<string | null>(null);
   const [docType, setDocType] = useState<MemedDocType>("PRESCRIPTION");
+  const [session, setSession] = useState<{ token: string; scriptUrl: string } | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const scriptLoad = useRef<{ resolve: () => void; reject: (err: Error) => void } | null>(null);
 
   const start = useCallback(async () => {
     setStatus("starting");
@@ -166,7 +130,13 @@ export function MemedPrescribePanel({
 
       setStatus("loading-widget");
       const finished = waitForPrescricaoImpressa();
-      await loadMemedScript(json.data.scriptUrl, json.data.token);
+
+      await new Promise<void>((resolve, reject) => {
+        scriptLoad.current = { resolve, reject };
+        // Triggers the <Script> below to render/load — its onLoad/onError
+        // call back into this promise.
+        setSession({ token: json.data!.token!, scriptUrl: json.data!.scriptUrl! });
+      });
 
       setStatus("open");
       const issued = await finished;
@@ -243,6 +213,16 @@ export function MemedPrescribePanel({
 
       {message ? <p className="text-xs text-[var(--portal-muted)]">{message}</p> : null}
       <div ref={containerRef} className={status === "open" ? "min-h-[480px]" : "hidden"} />
+      {session ? (
+        <Script
+          id="memed-sinapse-prescricao-script"
+          src={session.scriptUrl}
+          data-token={session.token}
+          strategy="afterInteractive"
+          onLoad={() => scriptLoad.current?.resolve()}
+          onError={() => scriptLoad.current?.reject(new Error("Failed to load Memed widget script"))}
+        />
+      ) : null}
     </div>
   );
 }
