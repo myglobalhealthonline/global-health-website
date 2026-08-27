@@ -581,6 +581,7 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
         select: {
           idVerificationStatus: true,
           idDocumentType: true,
+          idDocumentKey: true,
           idVerificationAdminNotes: true,
           idVerificationReviewedAt: true,
           phoneVerificationStatus: true,
@@ -598,7 +599,13 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
         { patientProfileId: profile.id, resourceType: "VERIFICATION_STATUS", accessAction: "VIEWED" },
       ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
 
-      return okResponse({ verification: row });
+      // The storage key itself never leaves the server — the portal only needs
+      // to know whether a document exists, so it can offer "replace" instead
+      // of "upload".
+      const { idDocumentKey, ...rest } = row;
+      return okResponse({
+        verification: { ...rest, hasIdDocument: Boolean(idDocumentKey) },
+      });
     } catch (error) {
       app.log.error(error);
       return reply.status(500).send(errorResponse("Could not load verification status"));

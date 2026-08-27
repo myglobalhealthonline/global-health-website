@@ -646,11 +646,11 @@
     "verifiedOn": "Ověřeno {date}",
     "reviewedOn": "Zkontrolováno {date}",
     "documentType": "Typ dokumentu",
-    "uploadHint": "Nahrajte přední stranu (a zadní, pokud je to relevantní). Max. 10 MB na soubor. PDF, JPG, PNG.",
-    "uploadFront": "Nahrát přední stranu",
-    "uploadBack": "Nahrát zadní stranu",
+    "uploadHint": "Jedna zřetelná fotografie nebo sken cestovního pasu či občanského průkazu. Max. 10 MB. PDF, JPG, PNG.",
     "uploading": "Nahrávání…",
-    "uploaded": "Doklad totožnosti uložen"
+    "uploaded": "Doklad totožnosti uložen",
+    "uploadDocument": "Nahrát doklad totožnosti",
+    "replaceDocument": "Nahradit doklad totožnosti"
   },
   "nationality": {
     "title": "Dvojí státní příslušnost",

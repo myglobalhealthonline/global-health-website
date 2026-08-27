@@ -646,11 +646,11 @@
     "verifiedOn": "Verifiziert am {date}",
     "reviewedOn": "Geprüft am {date}",
     "documentType": "Dokumenttyp",
-    "uploadHint": "Lade die Vorderseite hoch (und die Rückseite, falls zutreffend). Max. 10 MB pro Datei. PDF, JPG, PNG.",
-    "uploadFront": "Vorderseite hochladen",
-    "uploadBack": "Rückseite hochladen",
+    "uploadHint": "Ein klares Foto oder ein Scan Ihres Reisepasses oder Personalausweises. Max. 10 MB. PDF, JPG, PNG.",
     "uploading": "Wird hochgeladen…",
-    "uploaded": "Ausweisdokument gespeichert"
+    "uploaded": "Ausweisdokument gespeichert",
+    "uploadDocument": "Ausweisdokument hochladen",
+    "replaceDocument": "Ausweisdokument ersetzen"
   },
   "nationality": {
     "title": "Doppelte Staatsangehörigkeit",

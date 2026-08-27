@@ -10,6 +10,8 @@ export type InsuranceData = {
 export type VerificationData = {
   idVerificationStatus: VerificationStatus;
   idDocumentType: string | null;
+  /** Drives upload-vs-replace wording. The storage key stays server-side. */
+  hasIdDocument: boolean;
   idVerificationAdminNotes: string | null;
   idVerificationReviewedAt: string | null;
   phoneVerificationStatus: VerificationStatus;
