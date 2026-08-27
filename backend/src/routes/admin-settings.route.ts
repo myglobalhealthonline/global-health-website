@@ -93,6 +93,7 @@ const adminSettingsRoute: FastifyPluginAsync = async (app) => {
       applyId("review.google.placeId", body.google?.placeId);
       applyAggregate("review.google.aggregate", body.google?.aggregate);
       applyId("review.doctify.clinicId", body.doctify?.clinicId);
+      applyId("review.doctify.reviewUrl", body.doctify?.reviewUrl);
       applyAggregate("review.doctify.aggregate", body.doctify?.aggregate);
       if (body.primaryProvider !== undefined) {
         if (body.primaryProvider === null) clearKey("review.primaryProvider");
@@ -102,15 +103,13 @@ const adminSettingsRoute: FastifyPluginAsync = async (app) => {
         const key = countryReviewSettingKey(destination.countryCode);
         if (
           !destination.sendReviewRequests &&
-          !destination.googleReviewUrl &&
-          !destination.doctifyReviewUrl
+          !destination.googleReviewUrl
         ) {
           clearKey(key);
         } else {
           setKey(key, {
             sendReviewRequests: destination.sendReviewRequests,
             googleReviewUrl: destination.googleReviewUrl,
-            doctifyReviewUrl: destination.doctifyReviewUrl,
           });
         }
       }

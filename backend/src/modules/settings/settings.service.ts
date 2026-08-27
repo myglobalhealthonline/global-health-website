@@ -34,6 +34,7 @@ export type PublicReviewConfig = {
   };
   doctify: {
     clinicId: string | null;
+    reviewUrl: string | null;
     aggregate: AggregateSnapshot | null;
   };
   primaryProvider: "TRUSTPILOT" | "GOOGLE" | "DOCTIFY" | null;
@@ -60,6 +61,7 @@ const WRITABLE_SETTING_KEYS = new Set<string>([
   "review.google.placeId",
   "review.google.aggregate",
   "review.doctify.clinicId",
+  "review.doctify.reviewUrl",
   "review.doctify.aggregate",
   "review.primaryProvider",
 ]);
@@ -113,6 +115,7 @@ export async function getPublicReviewConfig(): Promise<PublicReviewConfig> {
             "review.google.placeId",
             "review.google.aggregate",
             "review.doctify.clinicId",
+            "review.doctify.reviewUrl",
             "review.doctify.aggregate",
             "review.primaryProvider",
           ],
@@ -152,6 +155,7 @@ export async function getPublicReviewConfig(): Promise<PublicReviewConfig> {
       },
       doctify: {
         clinicId: asString(map.get("review.doctify.clinicId")),
+        reviewUrl: asString(map.get("review.doctify.reviewUrl")),
         aggregate: asAggregate(map.get("review.doctify.aggregate")),
       },
       primaryProvider: asPrimaryProvider(map.get("review.primaryProvider")),
@@ -166,7 +170,6 @@ export type AdminCountryReviewDestination = {
   countryName: string;
   sendReviewRequests: boolean;
   googleReviewUrl: string | null;
-  doctifyReviewUrl: string | null;
 };
 
 export async function getAdminCountryReviewDestinations(): Promise<AdminCountryReviewDestination[]> {
@@ -189,7 +192,6 @@ export async function getAdminCountryReviewDestinations(): Promise<AdminCountryR
         countryName: country.name,
         sendReviewRequests: stored?.sendReviewRequests ?? false,
         googleReviewUrl: stored?.googleReviewUrl ?? null,
-        doctifyReviewUrl: stored?.doctifyReviewUrl ?? null,
       };
     });
   } catch (error) {
@@ -201,18 +203,25 @@ async function getCountryReviewDeliveryConfig(
   countryCode: string | null | undefined,
 ): Promise<{
   countrySetting: ReturnType<typeof parseCountryReviewSetting>;
+  doctifyReviewUrl: string | null;
   trustpilotReviewUrl: string | null;
 }> {
   const countryKey = countryCode ? countryReviewSettingKey(countryCode) : null;
-  const keys = ["review.trustpilot.reviewUrl", ...(countryKey ? [countryKey] : [])];
+  const keys = [
+    "review.doctify.reviewUrl",
+    "review.trustpilot.reviewUrl",
+    ...(countryKey ? [countryKey] : []),
+  ];
   const rows = await prisma.setting.findMany({ where: { key: { in: keys } } });
   const values = new Map(rows.map((row) => [row.key, row.value]));
   const countrySetting = countryKey
     ? parseCountryReviewSetting(values.get(countryKey))
     : null;
+  const doctifyValue = values.get("review.doctify.reviewUrl");
+  const doctifyReviewUrl = typeof doctifyValue === "string" ? doctifyValue : null;
   const trustpilotValue = values.get("review.trustpilot.reviewUrl");
   const trustpilotReviewUrl = typeof trustpilotValue === "string" ? trustpilotValue : null;
-  return { countrySetting, trustpilotReviewUrl };
+  return { countrySetting, doctifyReviewUrl, trustpilotReviewUrl };
 }
 
 export async function canSendReviewInviteForCountry(
@@ -229,9 +238,13 @@ export async function getPatientReviewDestinations(
   countryCode: string | null | undefined,
 ): Promise<PatientReviewDestination[]> {
   try {
-    const { countrySetting, trustpilotReviewUrl } =
+    const { countrySetting, doctifyReviewUrl, trustpilotReviewUrl } =
       await getCountryReviewDeliveryConfig(countryCode);
-    return toPatientReviewDestinations({ countrySetting, trustpilotReviewUrl });
+    return toPatientReviewDestinations({
+      countrySetting,
+      doctifyReviewUrl,
+      trustpilotReviewUrl,
+    });
   } catch (error) {
     throw normalizeDbError(error, "Could not read patient review destinations");
   }

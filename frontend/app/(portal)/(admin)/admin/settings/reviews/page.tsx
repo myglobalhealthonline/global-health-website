@@ -5,6 +5,7 @@ import { fetchAdminReviewSettings, patchAdminReviewSettings } from "@/lib/admin/
 import { AdminCard, Btn, PageHeader } from "../../_components/atoms";
 import { FormSection } from "@/components/FormSection";
 import { Star } from "lucide-react";
+import { ReviewCountrySettings } from "./ReviewCountrySettings";
 
 export const dynamic = "force-dynamic";
 
@@ -57,17 +58,16 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
         },
         doctify: {
           clinicId: String(formData.get("doctifyId") ?? "").trim() || null,
+          reviewUrl: String(formData.get("doctifyReviewUrl") ?? "").trim() || null,
           aggregate: parseAggregate(formData, "doctify"),
         },
         primaryProvider: primaryRaw === "" ? null : primaryRaw,
         destinations: settings.destinations.map((destination) => ({
           countryCode: destination.countryCode,
           sendReviewRequests:
-            formData.get(`sendReviewRequests_${destination.countryCode}`) === "on",
+            formData.get(`sendReviewRequests_${destination.countryCode}`) === "true",
           googleReviewUrl:
             String(formData.get(`googleReviewUrl_${destination.countryCode}`) ?? "").trim() || null,
-          doctifyReviewUrl:
-            String(formData.get(`doctifyReviewUrl_${destination.countryCode}`) ?? "").trim() || null,
         })),
       };
     } catch (err) {
@@ -111,7 +111,7 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
         eyebrow="Settings"
         title="Reviews"
         icon={<Star className="size-4" />}
-        description="Provider ids for the on-page Doctify widget, plus the manually-verified aggregate rating that drives the star-rating rich result in Google search. Only real, currently-accurate numbers belong here — a wrong or stale rating here is a fabricated review, not an SEO trick, and Google can issue a manual action for it."
+        description="Control patient review requests, global Trustpilot and Doctify profiles, and each country's Google Business Profile."
       />
 
       {sp.error ? (
@@ -126,6 +126,42 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
       ) : null}
 
       <form action={saveAction} className="grid gap-4">
+        <FormSection
+          title="Global review profiles"
+          description="Trustpilot and Doctify use one profile across every country. These links are shown to patients only when their country is enabled below."
+        >
+          <label className="flex flex-col gap-2">
+            <span className="gh-field-label">Trustpilot review URL</span>
+            <input
+              name="trustpilotReviewUrl"
+              type="url"
+              className="gh-input min-w-0"
+              maxLength={500}
+              placeholder="https://www.trustpilot.com/evaluate/myglobalhealth.online"
+              defaultValue={settings.trustpilot.reviewUrl ?? ""}
+            />
+            <span className="text-xs text-[var(--color-text-muted)]">
+              One Trustpilot profile is used for all countries.
+            </span>
+          </label>
+          <label className="flex flex-col gap-2">
+            <span className="gh-field-label">Doctify review URL</span>
+            <input
+              name="doctifyReviewUrl"
+              type="url"
+              className="gh-input min-w-0"
+              maxLength={500}
+              placeholder="https://www.doctify.com/..."
+              defaultValue={settings.doctify.reviewUrl ?? ""}
+            />
+            <span className="text-xs text-[var(--color-text-muted)]">
+              One Doctify profile is used for all countries.
+            </span>
+          </label>
+        </FormSection>
+
+        <ReviewCountrySettings destinations={settings.destinations} />
+
         <FormSection
           title="Primary provider"
           description="Whichever provider is selected here feeds the site-wide AggregateRating structured data (the star rating Google can show in search results). Leave unset to keep emitting no rating markup at all."
@@ -146,8 +182,8 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
         </FormSection>
 
         <FormSection
-          title="Doctify"
-          description="The provider the on-page widget already embeds live."
+          title="Doctify rating and widget"
+          description="Widget identifier and verified public rating data. These fields do not control where patients leave reviews."
         >
           <label className="flex flex-col gap-2">
             <span className="gh-field-label">Clinic id</span>
@@ -188,21 +224,10 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
           </label>
         </FormSection>
 
-        <FormSection title="Trustpilot">
-          <label className="flex flex-col gap-2">
-            <span className="gh-field-label">Global patient review URL</span>
-            <input
-              name="trustpilotReviewUrl"
-              type="url"
-              className="gh-input min-w-0"
-              maxLength={500}
-              placeholder="https://www.trustpilot.com/evaluate/myglobalhealth.online"
-              defaultValue={settings.trustpilot.reviewUrl ?? ""}
-            />
-            <span className="text-xs text-[var(--color-text-muted)]">
-              Used for every country. This must be the official Trustpilot review page.
-            </span>
-          </label>
+        <FormSection
+          title="Trustpilot rating data"
+          description="Business identifier and verified public rating data. The patient review URL is configured above."
+        >
           <label className="flex flex-col gap-2">
             <span className="gh-field-label">Business unit id</span>
             <input
@@ -242,47 +267,10 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
           </label>
         </FormSection>
 
-        {settings.destinations.map((destination) => (
-          <FormSection
-            key={destination.countryCode}
-            title={`${destination.countryName} review invitations`}
-            description="Review requests are sent only when this country is enabled and at least one valid review profile is available."
-          >
-            <label className="flex items-center gap-3">
-              <input
-                name={`sendReviewRequests_${destination.countryCode}`}
-                type="checkbox"
-                className="size-4 accent-[var(--color-primary)]"
-                defaultChecked={destination.sendReviewRequests}
-              />
-              <span className="gh-field-label">Send review requests for this country</span>
-            </label>
-            <label className="flex flex-col gap-2">
-              <span className="gh-field-label">Google Business Profile review URL</span>
-              <input
-                name={`googleReviewUrl_${destination.countryCode}`}
-                type="url"
-                className="gh-input min-w-0"
-                maxLength={500}
-                placeholder="https://search.google.com/local/writereview?placeid=..."
-                defaultValue={destination.googleReviewUrl ?? ""}
-              />
-            </label>
-            <label className="flex flex-col gap-2">
-              <span className="gh-field-label">Doctify patient review URL</span>
-              <input
-                name={`doctifyReviewUrl_${destination.countryCode}`}
-                type="url"
-                className="gh-input min-w-0"
-                maxLength={500}
-                placeholder="https://www.doctify.com/..."
-                defaultValue={destination.doctifyReviewUrl ?? ""}
-              />
-            </label>
-          </FormSection>
-        ))}
-
-        <FormSection title="Google">
+        <FormSection
+          title="Google rating data"
+          description="Site-wide rating data for search markup. Country-specific patient review links are configured above."
+        >
           <label className="flex flex-col gap-2">
             <span className="gh-field-label">Place id</span>
             <input

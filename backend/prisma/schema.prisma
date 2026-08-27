@@ -3818,9 +3818,10 @@ model Review {
  * review.google.placeId              string
  * review.google.aggregate            { rating: number, count: number, updatedAt: iso8601 }
  * review.doctify.clinicId            string
+ * review.doctify.reviewUrl            string (one global patient-facing review URL)
  * review.doctify.aggregate           { rating: number, count: number, updatedAt: iso8601 }
  * review.primaryProvider             "TRUSTPILOT" | "GOOGLE" | "DOCTIFY"
- * review.destination:<COUNTRY_CODE>  { sendReviewRequests: boolean, googleReviewUrl: string|null, doctifyReviewUrl: string|null }
+ * review.destination:<COUNTRY_CODE>  { sendReviewRequests: boolean, googleReviewUrl: string|null }
  */
 model Setting {
   key       String   @id

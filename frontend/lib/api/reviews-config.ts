@@ -13,7 +13,11 @@ export type ReviewConfig = {
     aggregate: AggregateSnapshot | null;
   };
   google: { placeId: string | null; aggregate: AggregateSnapshot | null };
-  doctify: { clinicId: string | null; aggregate: AggregateSnapshot | null };
+  doctify: {
+    clinicId: string | null;
+    reviewUrl: string | null;
+    aggregate: AggregateSnapshot | null;
+  };
   primaryProvider: "TRUSTPILOT" | "GOOGLE" | "DOCTIFY" | null;
 };
 

@@ -114,7 +114,6 @@ beforeEach(() => {
       value: {
         sendReviewRequests: true,
         googleReviewUrl: "https://search.google.com/local/writereview?placeid=br",
-        doctifyReviewUrl: null,
       },
     },
   ];
@@ -128,7 +127,6 @@ describe("createReviewInviteForAppointment", () => {
         value: {
           sendReviewRequests: false,
           googleReviewUrl: "https://search.google.com/local/writereview?placeid=br",
-          doctifyReviewUrl: null,
         },
       },
     ];
@@ -148,7 +146,6 @@ describe("createReviewInviteForAppointment", () => {
         value: {
           sendReviewRequests: true,
           googleReviewUrl: null,
-          doctifyReviewUrl: null,
         },
       },
     ];
@@ -159,6 +156,24 @@ describe("createReviewInviteForAppointment", () => {
     assert.equal(state.createCalls.length, 0);
     assert.equal(state.emailCalls.length, 0);
     assert.equal(state.whatsappCalls.length, 0);
+  });
+
+  it("sends for an enabled country when only the global Doctify profile exists", async () => {
+    state.settingRows = [
+      {
+        key: "review.destination:BR",
+        value: { sendReviewRequests: true, googleReviewUrl: null },
+      },
+      {
+        key: "review.doctify.reviewUrl",
+        value: "https://www.doctify.com/review/global-health",
+      },
+    ];
+
+    const result = await service.createReviewInviteForAppointment("appt_1");
+
+    assert.equal(result?.channel, "INTERNAL");
+    assert.equal(state.emailCalls.length, 1);
   });
 
   it("reuses an unexpired legacy Trustpilot invite instead of minting a second ask", async () => {

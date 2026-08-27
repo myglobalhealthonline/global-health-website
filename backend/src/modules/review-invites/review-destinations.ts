@@ -5,7 +5,6 @@ export type ReviewDestinationProvider = "GOOGLE" | "DOCTIFY" | "TRUSTPILOT";
 export type CountryReviewSetting = {
   sendReviewRequests: boolean;
   googleReviewUrl: string | null;
-  doctifyReviewUrl: string | null;
 };
 
 export type PatientReviewDestination = {
@@ -54,11 +53,11 @@ export function reviewUrlSchema(provider: ReviewDestinationProvider) {
 export const countryReviewSettingSchema = z.object({
   sendReviewRequests: z.boolean().default(false),
   googleReviewUrl: reviewUrlSchema("GOOGLE"),
-  doctifyReviewUrl: reviewUrlSchema("DOCTIFY"),
 });
 
 export function canSendReviewInvite(input: {
   countrySetting: CountryReviewSetting | null;
+  doctifyReviewUrl: string | null;
   trustpilotReviewUrl: string | null;
 }): boolean {
   return (
@@ -74,14 +73,15 @@ export function parseCountryReviewSetting(value: unknown): CountryReviewSetting 
 
 export function toPatientReviewDestinations(input: {
   countrySetting: CountryReviewSetting | null;
+  doctifyReviewUrl: string | null;
   trustpilotReviewUrl: string | null;
 }): PatientReviewDestination[] {
   const destinations: PatientReviewDestination[] = [];
   if (input.countrySetting?.googleReviewUrl) {
     destinations.push({ provider: "GOOGLE", url: input.countrySetting.googleReviewUrl });
   }
-  if (input.countrySetting?.doctifyReviewUrl) {
-    destinations.push({ provider: "DOCTIFY", url: input.countrySetting.doctifyReviewUrl });
+  if (input.doctifyReviewUrl && isTrustedReviewUrl(input.doctifyReviewUrl, "DOCTIFY")) {
+    destinations.push({ provider: "DOCTIFY", url: input.doctifyReviewUrl });
   }
   if (
     input.trustpilotReviewUrl &&

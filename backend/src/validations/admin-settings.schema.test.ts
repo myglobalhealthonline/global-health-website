@@ -95,22 +95,23 @@ describe("review settings validation", () => {
     assert.equal(r.success, false);
   });
 
-  it("accepts one global Trustpilot review URL and country review destinations", () => {
+  it("accepts global Trustpilot and Doctify URLs plus country Google destinations", () => {
     const r = reviewSettingsSchema.safeParse({
       trustpilot: {
         reviewUrl: "https://www.trustpilot.com/evaluate/myglobalhealth.online",
+      },
+      doctify: {
+        reviewUrl: "https://www.doctify.com/review/global-health",
       },
       destinations: [
         {
           countryCode: "IE",
           sendReviewRequests: true,
           googleReviewUrl: "https://search.google.com/local/writereview?placeid=abc",
-          doctifyReviewUrl: "https://www.doctify.com/ie/review/global-health",
         },
         {
           countryCode: "BR",
           googleReviewUrl: null,
-          doctifyReviewUrl: null,
         },
       ],
     });
@@ -121,7 +122,7 @@ describe("review settings validation", () => {
   it("defaults a missing country send toggle to disabled", () => {
     const r = reviewSettingsSchema.safeParse({
       destinations: [
-        { countryCode: "IE", googleReviewUrl: null, doctifyReviewUrl: null },
+        { countryCode: "IE", googleReviewUrl: null },
       ],
     });
 
@@ -138,7 +139,6 @@ describe("review settings validation", () => {
           countryCode: "IE",
           sendReviewRequests: "true",
           googleReviewUrl: null,
-          doctifyReviewUrl: null,
         },
       ],
     });
@@ -149,8 +149,8 @@ describe("review settings validation", () => {
   it("rejects duplicate country destinations", () => {
     const r = reviewSettingsSchema.safeParse({
       destinations: [
-        { countryCode: "IE", googleReviewUrl: null, doctifyReviewUrl: null },
-        { countryCode: "ie", googleReviewUrl: null, doctifyReviewUrl: null },
+        { countryCode: "IE", googleReviewUrl: null },
+        { countryCode: "ie", googleReviewUrl: null },
       ],
     });
 
@@ -160,11 +160,11 @@ describe("review settings validation", () => {
   it("rejects review URLs on untrusted hosts", () => {
     const r = reviewSettingsSchema.safeParse({
       trustpilot: { reviewUrl: "https://example.com/fake-trustpilot" },
+      doctify: { reviewUrl: "http://doctify.com/insecure" },
       destinations: [
         {
           countryCode: "IE",
           googleReviewUrl: "https://example.com/fake-google",
-          doctifyReviewUrl: "http://doctify.com/insecure",
         },
       ],
     });

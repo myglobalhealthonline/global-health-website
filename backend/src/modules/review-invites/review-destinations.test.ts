@@ -9,13 +9,13 @@ import {
 } from "./review-destinations.js";
 
 describe("review destinations", () => {
-  it("returns country Google and Doctify links plus the global Trustpilot link", () => {
+  it("returns country Google plus global Doctify and Trustpilot links", () => {
     const result = toPatientReviewDestinations({
       countrySetting: {
         sendReviewRequests: true,
         googleReviewUrl: "https://search.google.com/local/writereview?placeid=ie",
-        doctifyReviewUrl: "https://www.doctify.com/ie/review/global-health",
       },
+      doctifyReviewUrl: "https://www.doctify.com/review/global-health",
       trustpilotReviewUrl: "https://www.trustpilot.com/evaluate/myglobalhealth.online",
     });
 
@@ -26,7 +26,7 @@ describe("review destinations", () => {
       },
       {
         provider: "DOCTIFY",
-        url: "https://www.doctify.com/ie/review/global-health",
+        url: "https://www.doctify.com/review/global-health",
       },
       {
         provider: "TRUSTPILOT",
@@ -37,7 +37,11 @@ describe("review destinations", () => {
 
   it("omits destinations that are unconfigured", () => {
     assert.deepEqual(
-      toPatientReviewDestinations({ countrySetting: null, trustpilotReviewUrl: null }),
+      toPatientReviewDestinations({
+        countrySetting: null,
+        doctifyReviewUrl: null,
+        trustpilotReviewUrl: null,
+      }),
       [],
     );
   });
@@ -51,7 +55,6 @@ describe("review destinations", () => {
       {
         sendReviewRequests: false,
         googleReviewUrl: "https://search.google.com/local/writereview?placeid=ie",
-        doctifyReviewUrl: null,
       },
     );
   });
@@ -60,12 +63,12 @@ describe("review destinations", () => {
     const enabledWithoutProfiles = {
       sendReviewRequests: true,
       googleReviewUrl: null,
-      doctifyReviewUrl: null,
     };
 
     assert.equal(
       canSendReviewInvite({
         countrySetting: enabledWithoutProfiles,
+        doctifyReviewUrl: null,
         trustpilotReviewUrl: null,
       }),
       false,
@@ -73,6 +76,7 @@ describe("review destinations", () => {
     assert.equal(
       canSendReviewInvite({
         countrySetting: enabledWithoutProfiles,
+        doctifyReviewUrl: null,
         trustpilotReviewUrl: "https://www.trustpilot.com/evaluate/myglobalhealth.online",
       }),
       true,
@@ -80,6 +84,7 @@ describe("review destinations", () => {
     assert.equal(
       canSendReviewInvite({
         countrySetting: { ...enabledWithoutProfiles, sendReviewRequests: false },
+        doctifyReviewUrl: "https://www.doctify.com/review/global-health",
         trustpilotReviewUrl: "https://www.trustpilot.com/evaluate/myglobalhealth.online",
       }),
       false,
@@ -90,7 +95,6 @@ describe("review destinations", () => {
     assert.equal(
       parseCountryReviewSetting({
         googleReviewUrl: "https://example.com/not-google",
-        doctifyReviewUrl: "javascript:alert(1)",
       }),
       null,
     );

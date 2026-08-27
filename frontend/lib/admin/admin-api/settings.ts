@@ -9,14 +9,17 @@ export type AdminReviewSettings = {
     aggregate: AdminReviewAggregate;
   };
   google: { placeId: string | null; aggregate: AdminReviewAggregate };
-  doctify: { clinicId: string | null; aggregate: AdminReviewAggregate };
+  doctify: {
+    clinicId: string | null;
+    reviewUrl: string | null;
+    aggregate: AdminReviewAggregate;
+  };
   primaryProvider: "TRUSTPILOT" | "GOOGLE" | "DOCTIFY" | null;
   destinations: Array<{
     countryCode: string;
     countryName: string;
     sendReviewRequests: boolean;
     googleReviewUrl: string | null;
-    doctifyReviewUrl: string | null;
   }>;
 };
 

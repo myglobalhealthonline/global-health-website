@@ -34,6 +34,7 @@ export const reviewSettingsSchema = z.object({
   doctify: z
     .object({
       clinicId: z.string().trim().max(120).nullable().optional(),
+      reviewUrl: reviewUrlSchema("DOCTIFY").optional(),
       aggregate: aggregateSchema.optional(),
     })
     .optional(),
@@ -47,7 +48,6 @@ export const reviewSettingsSchema = z.object({
         countryCode: z.string().trim().regex(/^[A-Za-z]{2}$/).transform((code) => code.toUpperCase()),
         sendReviewRequests: z.boolean().default(false),
         googleReviewUrl: reviewUrlSchema("GOOGLE"),
-        doctifyReviewUrl: reviewUrlSchema("DOCTIFY"),
       }),
     )
     .max(30)
