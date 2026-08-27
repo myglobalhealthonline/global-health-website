@@ -67,6 +67,19 @@ export type IdentityVerificationSummary = {
   idDocumentRenderAs: "image" | "embed";
   hasSelfie: boolean;
   selfieUploadedAt: Date | null;
+  /**
+   * Whether the patient has finished and handed the cycle to a reviewer.
+   *
+   * Uploading an image no longer submits it: patients photograph the wrong
+   * document, or a blurred one, and need to swap it before anyone looks. Until
+   * they submit, the cycle is a DRAFT they can keep replacing.
+   *
+   * Derived from the profile status rather than its own column — PENDING means
+   * "with a reviewer", NOT_VERIFIED/REJECTED with an open cycle means "still
+   * being assembled". A dedicated `submittedAt` on the event would model this
+   * more honestly and is worth adding next time the schema is touched.
+   */
+  submitted: boolean;
   requestedAt: Date | null;
   requestedByDoctorId: string | null;
   latestEvent: {
@@ -135,6 +148,7 @@ export async function getVerificationSummary(
     idDocumentRenderAs: resolveRenderAs(profile.idDocumentKey),
     hasSelfie: Boolean(profile.selfieImageKey),
     selfieUploadedAt: profile.selfieUploadedAt,
+    submitted: profile.idVerificationStatus === "PENDING",
     requestedAt: profile.idVerifyRequestedAt,
     requestedByDoctorId: profile.idVerifyRequestedBy,
     latestEvent: toEventSummary(latest),
@@ -230,6 +244,79 @@ export async function syncVerificationCycle(
       requestedByDoctorId: profile.idVerifyRequestedBy,
     },
   });
+}
+
+export class VerificationIncompleteError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "VerificationIncompleteError";
+  }
+}
+
+/**
+ * Patient says their photos are right — hand the cycle to a reviewer.
+ *
+ * This is the only thing that puts a patient in front of a doctor. Uploading
+ * an image deliberately does not: a patient who photographed the wrong page of
+ * their passport should be able to fix it without a clinician having already
+ * looked at the mistake, and without the review queue filling with drafts.
+ *
+ * Runs the face-match assist here if the upload path could not (e.g. the two
+ * images arrived in separate requests), so the reviewer always sees whatever
+ * score was obtainable.
+ */
+export async function submitVerificationCycle(
+  patientProfileId: string,
+): Promise<IdentityVerificationEvent> {
+  const profile = await prisma.patientProfile.findUnique({
+    where: { id: patientProfileId },
+    select: { idDocumentKey: true, selfieImageKey: true },
+  });
+  if (!profile?.idDocumentKey) {
+    throw new VerificationIncompleteError("Upload your ID document before submitting");
+  }
+  if (!profile.selfieImageKey) {
+    throw new VerificationIncompleteError("Take your verification photo before submitting");
+  }
+
+  const event = await syncVerificationCycle(patientProfileId);
+  if (!event) {
+    throw new VerificationIncompleteError("Nothing to submit");
+  }
+
+  await prisma.patientProfile.update({
+    where: { id: patientProfileId },
+    data: { idVerificationStatus: "PENDING" },
+  });
+
+  return event;
+}
+
+/**
+ * Patient replaced an image after submitting — pull the cycle back out of the
+ * queue until they submit again.
+ *
+ * Without this a doctor could open a review, and be looking at the photo the
+ * patient just replaced. A verification decision has to be made against the
+ * images the patient actually stands behind.
+ *
+ * No-op unless the profile is sitting at PENDING, so replacing an image while
+ * already VERIFIED never silently strips an existing verification.
+ */
+export async function reopenVerificationCycleForEditing(
+  patientProfileId: string,
+): Promise<boolean> {
+  const profile = await prisma.patientProfile.findUnique({
+    where: { id: patientProfileId },
+    select: { idVerificationStatus: true },
+  });
+  if (profile?.idVerificationStatus !== "PENDING") return false;
+
+  await prisma.patientProfile.update({
+    where: { id: patientProfileId },
+    data: { idVerificationStatus: "NOT_VERIFIED" },
+  });
+  return true;
 }
 
 /** Whether an automated score was even possible for this cycle. */

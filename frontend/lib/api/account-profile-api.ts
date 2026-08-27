@@ -20,18 +20,23 @@ export type VerificationData = {
 };
 
 /**
- * Ireland controlled-medication identity check. Note what is absent: the
- * face-match score. It is a reviewer's aid, and showing it to the patient
- * would let them tune their photo against the matcher.
+ * Controlled-medication identity check. Note what is absent: the face-match
+ * score. It is a reviewer's aid, and showing it to the patient would let them
+ * tune their photo against the matcher.
  */
 export type IdentityVerificationData = {
-  /** Server's call on whether this patient is in scope (Ireland). */
+  /** Server's call on whether this patient is in scope. */
   relevant: boolean;
   status: VerificationStatus;
   verifiedAt: string | null;
   hasIdDocument: boolean;
   hasSelfie: boolean;
   selfieUploadedAt: string | null;
+  /**
+   * True once the patient has handed the cycle to a reviewer. Uploading does
+   * not submit — a wrong photo can be replaced until this is true.
+   */
+  submitted: boolean;
   /** Set when verification was asked for — by a doctor, or by the booking flow. */
   requestedAt: string | null;
   /** False when the booking flow raised it rather than a named doctor. */
@@ -142,11 +147,24 @@ export function uploadVerificationSelfie(file: File) {
   form.append("file", file);
   return postForm<{
     uploaded: boolean;
-    status: VerificationStatus;
     referenceId: string;
     automatedCheckRan: boolean;
   }>(`${BASE}/identity-verification/selfie`, form);
 }
+
+/** Hands the cycle to a reviewer. Separate from upload so a wrong photo can be
+ *  swapped first. */
+export function submitIdentityVerification() {
+  return postForm<{ submitted: boolean; referenceId: string }>(
+    `${BASE}/identity-verification/submit`,
+    new FormData(),
+  );
+}
+
+/** Streamed from the backend, access-logged, never cached. Used for the
+ *  patient's own "is this the right photo?" check. */
+export const IDENTITY_SELFIE_URL = `${BASE}/identity-verification/selfie/download`;
+export const IDENTITY_ID_DOCUMENT_URL = `${BASE}/id-document/download?side=front`;
 
 export function fetchNationality() {
   return get<{ nationalityDocuments: NationalityDoc[] }>(`${BASE}/nationality`);

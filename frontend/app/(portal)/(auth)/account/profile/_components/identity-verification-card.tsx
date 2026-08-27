@@ -4,7 +4,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Camera, CheckCircle2, Clock, ShieldAlert, X } from "lucide-react";
 import {
   fetchIdentityVerification,
+  submitIdentityVerification,
   uploadVerificationSelfie,
+  IDENTITY_ID_DOCUMENT_URL,
+  IDENTITY_SELFIE_URL,
   type IdentityVerificationData,
 } from "@/lib/api/account-profile-api";
 
@@ -78,6 +81,9 @@ export function IdentityVerificationCard({
   const [camera, setCamera] = useState<CameraState>("idle");
   const [preview, setPreview] = useState<{ url: string; blob: Blob } | null>(null);
   const [busy, setBusy] = useState(false);
+  // ID documents may be PDFs, which an <img> cannot render. Fall back to a
+  // link rather than showing the patient a broken box.
+  const [idIsPdf, setIdIsPdf] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -190,7 +196,20 @@ export function IdentityVerificationCard({
       if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
       previewUrlRef.current = null;
       setPreview(null);
-      setMsg({ kind: "ok", text: "Photo submitted. Your doctor will confirm it." });
+      setMsg({ kind: "ok", text: "Photo saved. Check it, then send it for review." });
+      await load();
+    } else {
+      setMsg({ kind: "err", text: res.message });
+    }
+  }
+
+  async function finalize() {
+    setBusy(true);
+    setMsg(null);
+    const res = await submitIdentityVerification();
+    setBusy(false);
+    if (res.ok) {
+      setMsg({ kind: "ok", text: "Sent for review. Your doctor will confirm it." });
       await load();
     } else {
       setMsg({ kind: "err", text: res.message });
@@ -209,6 +228,10 @@ export function IdentityVerificationCard({
   // they have their passport to hand. The ID is still required overall, so its
   // absence is surfaced as an outstanding step, not as a lock on this one.
   const showCapture = data.status !== "VERIFIED" || preview !== null;
+  // Ready to hand over: both halves present, nothing already with a reviewer,
+  // and not already verified.
+  const canSubmit =
+    data.hasIdDocument && data.hasSelfie && !data.submitted && data.status !== "VERIFIED";
 
   return (
     <div className="gh-patient-form-card gh-card p-6">
@@ -241,6 +264,83 @@ export function IdentityVerificationCard({
         </p>
       )}
 
+      {/* What is actually on file, so a wrong photo is visible before anyone
+          reviews it. Cache-busted on every refresh: the URL is stable, and a
+          patient who just replaced an image would otherwise be shown the old
+          one by the browser cache and think nothing happened. */}
+      {(data.hasSelfie || data.hasIdDocument) && !preview && (
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          {data.hasIdDocument && (
+            <figure className="m-0">
+              <figcaption className="mb-1 text-xs text-[var(--portal-muted)]">
+                Your ID document
+              </figcaption>
+              {idIsPdf ? (
+                <p className="rounded-lg border border-[var(--portal-line)] px-3 py-4 text-xs text-[var(--portal-muted)]">
+                  PDF on file.{" "}
+                  <a
+                    href={`${IDENTITY_ID_DOCUMENT_URL}&v=${refreshKey}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline"
+                  >
+                    Open it
+                  </a>{" "}
+                  to check it is the right document.
+                </p>
+              ) : (
+                /* eslint-disable-next-line @next/next/no-img-element -- authenticated, no-store stream from our own API; next/image would need a public URL. */
+                <img
+                  src={`${IDENTITY_ID_DOCUMENT_URL}&v=${refreshKey}`}
+                  alt="The ID document currently on your file"
+                  onError={() => setIdIsPdf(true)}
+                  className="max-h-48 w-full rounded-lg border border-[var(--portal-line)] object-contain"
+                />
+              )}
+              <p className="mt-1 text-xs text-[var(--portal-muted)]">
+                Wrong one? Upload it again above to replace it.
+              </p>
+            </figure>
+          )}
+          {data.hasSelfie && (
+            <figure className="m-0">
+              <figcaption className="mb-1 text-xs text-[var(--portal-muted)]">
+                Your photo
+                {data.selfieUploadedAt &&
+                  ` · ${new Date(data.selfieUploadedAt).toLocaleDateString()}`}
+              </figcaption>
+              {/* eslint-disable-next-line @next/next/no-img-element -- see above. */}
+              <img
+                src={`${IDENTITY_SELFIE_URL}?v=${refreshKey}-${data.selfieUploadedAt ?? ""}`}
+                alt="The verification photo currently on your file"
+                className="max-h-48 w-full rounded-lg border border-[var(--portal-line)] object-contain"
+              />
+              <p className="mt-1 text-xs text-[var(--portal-muted)]">
+                Wrong one? Take a new photo below to replace it.
+              </p>
+            </figure>
+          )}
+        </div>
+      )}
+
+      {/* The finalise step. Deliberately separate from uploading: nothing
+          reaches a reviewer until the patient says both photos are right. */}
+      {canSubmit && (
+        <div className="mt-4 rounded-lg border border-[var(--portal-line)] bg-[var(--portal-well)] px-4 py-3">
+          <p className="text-sm text-[var(--portal-text)]">
+            Both photos are on file. Check them above, then send them for review.
+          </p>
+          <button
+            type="button"
+            onClick={() => void finalize()}
+            disabled={busy}
+            className="mt-2 rounded-md bg-[var(--portal-primary)] px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+          >
+            {busy ? "Sending…" : "Send for review"}
+          </button>
+        </div>
+      )}
+
       {showCapture && (
         <div className="mt-4 space-y-3">
           {preview ? (
@@ -248,7 +348,7 @@ export function IdentityVerificationCard({
               {/* eslint-disable-next-line @next/next/no-img-element -- a blob: object URL from the patient's own camera; next/image cannot optimise it and would need it uploaded first. */}
               <img
                 src={preview.url}
-                alt="Your verification photo, ready to submit"
+                alt="Your new verification photo, not yet saved"
                 className="max-h-72 w-full rounded-lg object-contain"
               />
               <div className="flex flex-wrap gap-2">
@@ -258,7 +358,7 @@ export function IdentityVerificationCard({
                   disabled={busy}
                   className="rounded-md bg-[var(--portal-primary)] px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
                 >
-                  {busy ? "Submitting…" : "Submit for verification"}
+                  {busy ? "Saving…" : "Use this photo"}
                 </button>
                 <button
                   type="button"

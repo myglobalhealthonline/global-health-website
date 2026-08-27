@@ -51,7 +51,7 @@ const DEFAULT_I18N: VerificationI18n = {
   uploadFront: "Upload front",
   uploadBack: "Upload back",
   uploading: "Uploading…",
-  uploaded: "ID document uploaded — awaiting review",
+  uploaded: "ID document saved",
   badgeNotVerified: "Not verified",
   badgePending: "Pending review",
   badgeVerified: "Verified",
@@ -115,9 +115,12 @@ export function VerificationTab({ i18n = DEFAULT_I18N }: { i18n?: VerificationI1
     startUpload(async () => {
       const res = await uploadIdDocument(file, side, docType);
       if (res.ok) {
-        setData((prev) =>
-          prev ? { ...prev, idVerificationStatus: "PENDING" } : prev,
-        );
+        // Re-read rather than guessing a status. An upload no longer submits
+        // anything for review, and replacing a document that WAS submitted
+        // pulls it back out of the queue — so the badge here can move in
+        // either direction and only the server knows which.
+        const fresh = await fetchVerification();
+        if (fresh.ok) setData(fresh.data.verification);
         setIdDocVersion((v) => v + 1);
         setMsg({ kind: "ok", text: i18n.uploaded });
       } else {
@@ -213,7 +216,12 @@ export function VerificationTab({ i18n = DEFAULT_I18N }: { i18n?: VerificationI1
               </p>
             )}
 
-            {(v?.idVerificationStatus === "NOT_VERIFIED" || v?.idVerificationStatus === "REJECTED") && (
+            {/* Available until the ID is actually verified — including while a
+                submission is awaiting review. Patients photograph the wrong
+                page, or a blurred one, and previously had no way back: once a
+                selfie flipped the status to PENDING these controls vanished
+                and the wrong ID was stuck on file. */}
+            {v?.idVerificationStatus !== "VERIFIED" && (
               <div className="mt-3 space-y-3">
                 <div>
                   <label className="gh-field-label">{i18n.documentType}</label>
