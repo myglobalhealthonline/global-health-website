@@ -26,6 +26,9 @@ const upsertBodySchema = z
     chamberEntity: z.string().trim().max(64).optional().nullable(),
     registrationNumber: z.string().trim().max(64).optional().nullable(),
     division: z.string().trim().max(120).optional().nullable(),
+    /** Two-letter Brazilian state (UF) the CRM was issued in — Memed's
+     *  board_state requirement. Brazil-only. */
+    boardState: z.string().trim().max(2).optional().nullable(),
     isVerified: z.boolean().optional(),
     /** Write-only — plaintext in, encrypted before storage, never echoed
      *  back (see upsertDoctorRegistration). Omit to leave the existing

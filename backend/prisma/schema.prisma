@@ -1030,6 +1030,11 @@ model DoctorCountry {
   /// "General Division" / "Specialist Division"). Surfaced on doctor cards
   /// and profiles so patients see the exact register, not just a number.
   division             String?
+  /// Two-letter Brazilian state (UF) the CRM was issued in, e.g. "SP", "RJ".
+  /// Required by Memed's prescriber-registration call (`board.board_state`)
+  /// — they reject anything that isn't a real UF abbreviation. Brazil-only;
+  /// meaningless (and unused) for every other country's registration.
+  boardState           String?
   /// Admin marks the registration verified after sighting documentation;
   /// PDFs print "(unverified)" if `isVerified = false` so clinicians
   /// don't accidentally issue Rx under an unconfirmed credential.

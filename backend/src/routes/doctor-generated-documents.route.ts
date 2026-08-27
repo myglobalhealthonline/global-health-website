@@ -17,6 +17,7 @@ import {
   sendGeneratedDocumentUploadLink,
 } from "../modules/generated-documents/generated-documents.service.js";
 import {
+  DoctorBoardStateMissingError,
   DoctorCpfMissingError,
   DoctorDateOfBirthMissingError,
   DoctorMemedNotEnabledError,
@@ -512,7 +513,8 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
         if (
           error instanceof DoctorRegistrationMissingError ||
           error instanceof DoctorCpfMissingError ||
-          error instanceof DoctorDateOfBirthMissingError
+          error instanceof DoctorDateOfBirthMissingError ||
+          error instanceof DoctorBoardStateMissingError
         ) {
           return reply.status(400).send(errorResponse(error.message));
         }

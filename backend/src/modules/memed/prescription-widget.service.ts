@@ -57,6 +57,13 @@ export class DoctorMemedNotEnabledError extends Error {
   }
 }
 
+export class DoctorBoardStateMissingError extends Error {
+  constructor() {
+    super("Doctor's CRM state (UF) is not on file — required by Memed");
+    this.name = "DoctorBoardStateMissingError";
+  }
+}
+
 async function loadDoctorCountryRow(doctorId: string, countryCode: string) {
   return prisma.doctorCountry.findFirst({
     where: { doctorId, country: { code: { equals: countryCode, mode: "insensitive" } } },
@@ -68,6 +75,7 @@ async function loadDoctorCountryRow(doctorId: string, countryCode: string) {
       memedPrescriberId: true,
       cpfEncrypted: true,
       memedPrescriptionEnabled: true,
+      boardState: true,
       country: { select: { code: true } },
     },
   });
@@ -105,6 +113,7 @@ export async function ensurePrescriber(doctorId: string, countryCode: string): P
   if (!row.memedPrescriptionEnabled) throw new DoctorMemedNotEnabledError();
   if (row.memedPrescriberId) return row.memedPrescriberId;
   if (!row.cpfEncrypted) throw new DoctorCpfMissingError();
+  if (!row.boardState?.trim()) throw new DoctorBoardStateMissingError();
 
   const doctor = await prisma.doctor.findUnique({
     where: { id: doctorId },
@@ -126,7 +135,7 @@ export async function ensurePrescriber(doctorId: string, countryCode: string): P
     board: {
       boardCode: row.chamberEntity?.trim() || "CRM",
       boardNumber: row.registrationNumber,
-      boardState: row.country.code.toUpperCase(),
+      boardState: row.boardState.trim().toUpperCase(),
     },
     dateOfBirthBr: formatDateBr(doctor.dateOfBirth),
     email: userLink?.email ?? "",

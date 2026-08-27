@@ -315,6 +315,9 @@ export type AdminDoctorRegistrationDto = {
   chamberEntity: string | null;
   registrationNumber: string | null;
   division: string | null;
+  /** Two-letter Brazilian state (UF) the CRM was issued in — required by
+   *  Memed's board_state field. Brazil only. */
+  boardState: string | null;
   isVerified: boolean;
   verifiedAt: string | null;
   active: boolean;
@@ -600,6 +603,7 @@ export async function patchAdminDoctorRegistration(
     chamberEntity?: string | null;
     registrationNumber?: string | null;
     division?: string | null;
+    boardState?: string | null;
     isVerified?: boolean;
     /** Write-only. Omit to leave the stored CPF untouched. */
     cpf?: string;
