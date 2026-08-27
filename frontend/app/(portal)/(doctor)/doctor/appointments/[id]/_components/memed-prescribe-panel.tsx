@@ -135,7 +135,6 @@ export function MemedPrescribePanel({
       }
 
       setStatus("loading-widget");
-      const finished = waitForPrescricaoImpressa();
 
       await new Promise<void>((resolve, reject) => {
         scriptLoad.current = { resolve, reject };
@@ -144,8 +143,12 @@ export function MemedPrescribePanel({
         setSession({ token: json.data!.token!, scriptUrl: json.data!.scriptUrl! });
       });
 
+      // Only safe to register the moduleInit listener once the script has
+      // actually loaded — window.MdSinapsePrescricao doesn't exist before
+      // that. Calling this earlier (the original bug) rejected immediately,
+      // every time, regardless of whether the script itself was fine.
       setStatus("open");
-      const issued = await finished;
+      const issued = await waitForPrescricaoImpressa();
 
       const recordRes = await fetch(`/api/doctor/appointments/${appointmentId}/memed-document`, {
         method: "POST",
