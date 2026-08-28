@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
+import { ClinicalNoteBody } from "@/components/clinical/clinical-note-body";
 import { formatAppDateTime } from "@/lib/format-datetime";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import {
@@ -294,6 +295,24 @@ export default async function PrintConsultPage({
         .vk-section { margin-top: 28px; }
         .vk-section .vk-caps { display: block; margin-bottom: 8px; }
         .vk-section-body { margin: 6px 0 0; font-family: ${VK_SERIF}; font-size: 14px; color: ${VK.ink}; white-space: pre-wrap; line-height: 1.6; }
+
+        /* Clinical note body — Markdown-lite output (ClinicalNoteBody). */
+        .vk-note-body { font-family: ${VK_SERIF}; font-size: 14px; line-height: 1.65; color: ${VK.ink}; overflow-wrap: break-word; }
+        .vk-note-p { margin: 0 0 10px; }
+        .vk-note-body > :first-child { margin-top: 0; }
+        .vk-note-body > :last-child { margin-bottom: 0; }
+        .vk-note-h1, .vk-note-h2, .vk-note-h3 { font-family: ${VK_SANS}; color: ${VK.night}; margin: 18px 0 6px; line-height: 1.3; }
+        .vk-note-h1 { font-size: 15px; font-weight: 700; }
+        .vk-note-h2 { font-size: 13.5px; font-weight: 700; }
+        .vk-note-h3 { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: ${VK.forest}; }
+        .vk-note-ul, .vk-note-ol { margin: 0 0 10px; padding-left: 20px; }
+        .vk-note-ul { list-style: disc; }
+        .vk-note-ol { list-style: decimal; }
+        .vk-note-ul li, .vk-note-ol li { margin: 2px 0; }
+        .vk-note-quote { margin: 0 0 10px; padding: 2px 0 2px 12px; border-left: 2px solid ${VK.hairlineDark}; color: ${VK.muted}; }
+        .vk-note-rule { border: 0; border-top: 1px solid ${VK.hairline}; margin: 16px 0; }
+        .vk-note-body code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; background: ${VK.ivory}; padding: 1px 4px; border-radius: 3px; }
+        .vk-note-body strong { font-weight: 700; color: ${VK.night}; }
         .vk-list { margin-top: 4px; }
         .vk-list-item { padding: 10px 0; border-bottom: 1px solid ${VK.hairline}; }
         .vk-list-item:first-child { padding-top: 0; }
@@ -330,7 +349,8 @@ function SoapSection({
   return (
     <div className="vk-section">
       <span className="vk-caps">{title}</span>
-      <p className="vk-section-body">{body}</p>
+      {/* Notes are authored as light Markdown — rendered, not shown raw. */}
+      <ClinicalNoteBody body={body} prefix="vk-note" />
     </div>
   );
 }
