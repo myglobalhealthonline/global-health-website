@@ -701,9 +701,14 @@ export async function TestCentersManager({
                   <Tr>
                     <Td>
                       <span className="text-[12px] text-[var(--color-text-muted)]">
-                        {offeringSearch || offeringCategory
-                          ? "No exams match this filter."
-                          : "No exams on this center yet — add one below."}
+                        {/* An empty center reads as "the filter hid it" unless we
+                            separate the two cases — examCount is the unfiltered
+                            total, so a zero here means nothing is priced yet. */}
+                        {manageCenter.examCount === 0
+                          ? "No exams priced at this center yet — add one below."
+                          : offeringSearch || offeringCategory
+                            ? `None of this center's ${manageCenter.examCount} priced ${manageCenter.examCount === 1 ? "exam" : "exams"} match this filter — it does not affect what you can add below.`
+                            : "No exams on this center yet — add one below."}
                       </span>
                     </Td>
                     <Td></Td>
