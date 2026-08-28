@@ -304,6 +304,9 @@ export async function TestCentersManager({
           pageSize: PICKER_LIMIT,
           isActive: "true",
           notOnCenterId: manageCenter.id,
+          // The category filter above narrows the picker too — without it a new
+          // exam can sit past PICKER_LIMIT and look like it was never created.
+          category: offeringCategory,
           search: pickerSearch,
         }),
       ])
@@ -789,7 +792,9 @@ export async function TestCentersManager({
                   <span className="text-[12px] text-[var(--color-text-muted)]">
                     {pickerSearch
                       ? "No unpriced catalogue exam matches that search."
-                      : "All catalogue exams are already on this center."}
+                      : offeringCategory
+                        ? `No unpriced catalogue exam left in “${offeringCategory}”. Clear the category filter to see the rest.`
+                        : "All catalogue exams are already on this center."}
                   </span>
                 )}
               </label>
@@ -899,7 +904,7 @@ export async function TestCentersManager({
               <span className="pb-2 text-[12px] text-[var(--color-text-muted)]">
                 {addableTotal > PICKER_LIMIT
                   ? `Showing ${PICKER_LIMIT} of ${addableTotal} unpriced matches — narrow the search.`
-                  : `${addableTotal} unpriced ${addableTotal === 1 ? "exam" : "exams"} available.`}
+                  : `${addableTotal} unpriced ${addableTotal === 1 ? "exam" : "exams"} available${offeringCategory ? ` in “${offeringCategory}”` : ""}.`}
               </span>
             </form>
           )}
