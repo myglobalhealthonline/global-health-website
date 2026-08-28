@@ -131,6 +131,23 @@ export interface RegisterPrescriberInput {
 }
 
 /**
+ * Look up an already-registered prescriber by external_id and return their
+ * token, or null if Memed has no such prescriber. Memed's own docs name this
+ * as the recovery path for a POST that fails because the external_id is
+ * already registered — see `registerPrescriber` below.
+ */
+export async function getPrescriberByExternalId(externalId: string): Promise<string | null> {
+  try {
+    const { json } = await request("GET", `/sinapse-prescricao/usuarios/${encodeURIComponent(externalId)}`);
+    const body = json as { data?: { attributes?: { token?: string } } };
+    return body.data?.attributes?.token?.trim() || null;
+  } catch (err) {
+    if (err instanceof Error && /→ 404/.test(err.message)) return null;
+    throw err;
+  }
+}
+
+/**
  * Register (or re-register) a doctor as a Memed prescriber. Returns the
  * per-doctor `token` — this is stored (by the caller) as
  * `DoctorCountry.memedPrescriberId` and used directly as the widget's
@@ -138,31 +155,46 @@ export interface RegisterPrescriberInput {
  * modules/memed/prescription-widget.service.ts.
  */
 export async function registerPrescriber(input: RegisterPrescriberInput): Promise<string> {
-  const { json } = await request("POST", "/sinapse-prescricao/usuarios", {
-    body: {
-      data: {
-        type: "usuarios",
-        attributes: {
-          external_id: input.externalId,
-          nome: input.firstName,
-          sobrenome: input.lastName,
-          cpf: input.cpf.replace(/\D/g, ""),
-          board: {
-            board_code: input.board.boardCode,
-            board_number: input.board.boardNumber,
-            board_state: input.board.boardState,
+  try {
+    const { json } = await request("POST", "/sinapse-prescricao/usuarios", {
+      body: {
+        data: {
+          type: "usuarios",
+          attributes: {
+            external_id: input.externalId,
+            nome: input.firstName,
+            sobrenome: input.lastName,
+            cpf: input.cpf.replace(/\D/g, ""),
+            board: {
+              board_code: input.board.boardCode,
+              board_number: input.board.boardNumber,
+              board_state: input.board.boardState,
+            },
+            data_nascimento: input.dateOfBirthBr,
+            email: input.email,
+            telefone: input.phone,
           },
-          data_nascimento: input.dateOfBirthBr,
-          email: input.email,
-          telefone: input.phone,
         },
       },
-    },
-  });
-  const body = json as { data?: { attributes?: { token?: string } } };
-  const token = body.data?.attributes?.token?.trim();
-  if (!token) throw new Error("Memed Prescrição registration response carried no token");
-  return token;
+    });
+    const body = json as { data?: { attributes?: { token?: string } } };
+    const token = body.data?.attributes?.token?.trim();
+    if (!token) throw new Error("Memed Prescrição registration response carried no token");
+    return token;
+  } catch (err) {
+    // Memed rejects a POST whose external_id is already registered
+    // ("Médico já cadastrado para o parceiro com esse id externo") — their
+    // own docs name GET .../usuarios/{external_id} as the recovery path,
+    // not a retry. This is a real, expected case for us specifically:
+    // Development and Production share the same Memed credentials AND the
+    // same DoctorCountry.id as external_id, so a doctor registered via
+    // either environment reads as "already registered" from the other.
+    if (err instanceof Error && /"code":"external_id"/.test(err.message)) {
+      const existing = await getPrescriberByExternalId(input.externalId);
+      if (existing) return existing;
+    }
+    throw err;
+  }
 }
 
 /**
