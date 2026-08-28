@@ -238,7 +238,12 @@ export async function TestCentersManager({
   const cataloguePage = parsePage(sp.cPage);
   const catalogueSearch = sp.cSearch?.trim() || undefined;
   const catalogueCategory = sp.cCat?.trim() || undefined;
+  // The picker carries its own search + category, deliberately independent of
+  // the offerings filter above it: one narrows what this center already prices,
+  // the other narrows the catalogue you are adding from. Sharing them made an
+  // unpriced exam look missing when the offerings filter matched nothing.
   const pickerSearch = sp.pick?.trim() || undefined;
+  const pickerCategory = sp.pickCat?.trim() || undefined;
 
   /** Rebuild the current URL with some params replaced. `null` drops a param. */
   function href(overrides: Record<string, string | number | null | undefined>): string {
@@ -255,6 +260,7 @@ export async function TestCentersManager({
       cSearch: catalogueSearch,
       cCat: catalogueCategory,
       pick: pickerSearch,
+      pickCat: pickerCategory,
       ...overrides,
     };
     for (const [key, value] of Object.entries(merged)) {
@@ -304,9 +310,11 @@ export async function TestCentersManager({
           pageSize: PICKER_LIMIT,
           isActive: "true",
           notOnCenterId: manageCenter.id,
-          // The category filter above narrows the picker too — without it a new
-          // exam can sit past PICKER_LIMIT and look like it was never created.
-          category: offeringCategory,
+          // Without a category the picker returns the first PICKER_LIMIT rows of
+          // the whole catalogue by [sortOrder, name], so a newly created exam
+          // late in the alphabet falls off the end and looks like it was never
+          // created. This is the picker's own category, not the offerings one.
+          category: pickerCategory,
           search: pickerSearch,
         }),
       ])
@@ -663,6 +671,9 @@ export async function TestCentersManager({
             reference; <strong>center code</strong> is the lab&rsquo;s own code for the same exam.
           </p>
 
+          <p className="m-0 mb-2 text-[13px] font-semibold text-[var(--color-text-primary)]">
+            Exams already priced here
+          </p>
           <div className="mb-3">
             <FilterBar
               action={base}
@@ -707,7 +718,7 @@ export async function TestCentersManager({
                         {manageCenter.examCount === 0
                           ? "No exams priced at this center yet — add one below."
                           : offeringSearch || offeringCategory
-                            ? `None of this center's ${manageCenter.examCount} priced ${manageCenter.examCount === 1 ? "exam" : "exams"} match this filter — it does not affect what you can add below.`
+                            ? `None of this center's ${manageCenter.examCount} priced ${manageCenter.examCount === 1 ? "exam" : "exams"} match this filter.`
                             : "No exams on this center yet — add one below."}
                       </span>
                     </Td>
@@ -771,14 +782,72 @@ export async function TestCentersManager({
             <Pager pagination={offeringsPagination} hrefForPage={(p) => href({ oPage: p })} />
           ) : null}
 
-          {/* Add / edit an offering */}
-          <form action={saveOfferingAction} className="mt-5 grid gap-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-4">
+          {/* Add / edit an offering. The catalogue filter has to be its own GET
+              form — HTML forbids nesting it inside the POST form — so both sit
+              as siblings in one bordered card, filter first, directly above the
+              dropdown it drives. It is deliberately separate from the offerings
+              filter at the top of the panel: that one narrows what this center
+              already prices, this one narrows what you can add. */}
+          <div className="mt-5 grid gap-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-4">
+            <div>
+              <p className="m-0 text-[13px] font-semibold text-[var(--color-text-primary)]">
+                {editingOffering
+                  ? `Edit pricing — ${editingOffering.examTypeName}`
+                  : "Add an exam from the catalogue"}
+              </p>
+              {editingOffering ? null : (
+                <p className="m-0 mt-1 text-[12px] text-[var(--color-text-muted)]">
+                  Only exams not yet priced at {manageCenter.name} are listed here. This search is
+                  separate from the filter above, which applies to the priced list.
+                </p>
+              )}
+            </div>
+
+            {editingOffering ? null : (
+              <form method="get" action={base} className="flex flex-wrap items-end gap-2">
+                <input type="hidden" name="center" value={manageCenter.id} />
+                {offeringSearch ? <input type="hidden" name="oSearch" value={offeringSearch} /> : null}
+                {offeringCategory ? <input type="hidden" name="oCat" value={offeringCategory} /> : null}
+                {offeringPage > 1 ? <input type="hidden" name="oPage" value={String(offeringPage)} /> : null}
+                <label className="flex flex-col gap-1">
+                  <span className="gh-field-label">Search the catalogue</span>
+                  <input
+                    name="pick"
+                    defaultValue={pickerSearch ?? ""}
+                    placeholder="Exam name or GH ref…"
+                    className="gh-input"
+                    style={{ minWidth: 260 }}
+                  />
+                </label>
+                <label className="flex flex-col gap-1">
+                  <span className="gh-field-label">Category</span>
+                  <select name="pickCat" defaultValue={pickerCategory ?? ""} className="gh-input">
+                    <option value="">All categories</option>
+                    {categories.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <button type="submit" className="gh-btn gh-btn-soft">Find</button>
+                {pickerSearch || pickerCategory ? (
+                  <Link href={href({ pick: null, pickCat: null })} className="gh-btn gh-btn-ghost text-[12px]">
+                    Clear
+                  </Link>
+                ) : null}
+                <span className="pb-2 text-[12px] text-[var(--color-text-muted)]">
+                  {addableTotal > PICKER_LIMIT
+                    ? `Showing ${PICKER_LIMIT} of ${addableTotal} matches — narrow the search.`
+                    : `${addableTotal} ${addableTotal === 1 ? "exam" : "exams"} available to add${pickerCategory ? ` in “${pickerCategory}”` : ""}.`}
+                </span>
+              </form>
+            )}
+
+            <form action={saveOfferingAction} className="grid gap-4">
             <input type="hidden" name="centerId" value={manageCenter.id} />
             <input type="hidden" name="offeringId" value={editingOffering?.id ?? ""} />
             <input type="hidden" name="returnTo" value={href({ editOffering: null })} />
-            <p className="m-0 text-[13px] font-semibold text-[var(--color-text-primary)]">
-              {editingOffering ? `Edit pricing — ${editingOffering.examTypeName}` : "Add an exam to this center"}
-            </p>
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="flex flex-col gap-1">
                 <span className="gh-field-label">Exam</span>
@@ -795,11 +864,9 @@ export async function TestCentersManager({
                   </select>
                 ) : (
                   <span className="text-[12px] text-[var(--color-text-muted)]">
-                    {pickerSearch
-                      ? "No unpriced catalogue exam matches that search."
-                      : offeringCategory
-                        ? `No unpriced catalogue exam left in “${offeringCategory}”. Clear the category filter to see the rest.`
-                        : "All catalogue exams are already on this center."}
+                    {pickerSearch || pickerCategory
+                      ? "No exam left to add matches this search — clear it to see the rest of the catalogue."
+                      : "Every catalogue exam is already priced at this center."}
                   </span>
                 )}
               </label>
@@ -885,34 +952,8 @@ export async function TestCentersManager({
                 </Link>
               ) : null}
             </div>
-          </form>
-
-          {/* Catalogue search feeding the picker above. Separate GET form so it
-              can be used without submitting the pricing form. */}
-          {editingOffering ? null : (
-            <form method="get" action={base} className="mt-3 flex flex-wrap items-end gap-2">
-              <input type="hidden" name="center" value={manageCenter.id} />
-              {offeringSearch ? <input type="hidden" name="oSearch" value={offeringSearch} /> : null}
-              {offeringCategory ? <input type="hidden" name="oCat" value={offeringCategory} /> : null}
-              {offeringPage > 1 ? <input type="hidden" name="oPage" value={String(offeringPage)} /> : null}
-              <label className="flex flex-col gap-1">
-                <span className="gh-field-label">Find an exam to add</span>
-                <input
-                  name="pick"
-                  defaultValue={pickerSearch ?? ""}
-                  placeholder="Search the catalogue by name or GH ref…"
-                  className="gh-input"
-                  style={{ minWidth: 300 }}
-                />
-              </label>
-              <button type="submit" className="gh-btn gh-btn-soft">Search catalogue</button>
-              <span className="pb-2 text-[12px] text-[var(--color-text-muted)]">
-                {addableTotal > PICKER_LIMIT
-                  ? `Showing ${PICKER_LIMIT} of ${addableTotal} unpriced matches — narrow the search.`
-                  : `${addableTotal} unpriced ${addableTotal === 1 ? "exam" : "exams"} available${offeringCategory ? ` in “${offeringCategory}”` : ""}.`}
-              </span>
             </form>
-          )}
+          </div>
         </AdminCard>
       ) : null}
 
