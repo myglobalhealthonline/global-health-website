@@ -19,6 +19,7 @@ import {
   verifyClinicalReadAccess,
   verifyDoctorAccess,
 } from "../utils/doctor-auth.js";
+import { resolveAdminSessionActor, verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 import { notifyAdmins } from "../modules/notifications/notify.service.js";
@@ -650,6 +651,159 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(error);
         return reply.status(500).send(errorResponse("Could not delete document"));
+      }
+    },
+  );
+
+  /**
+   * Admin counterpart of the doctor upload above: an operator attaches a
+   * medical record to an appointment on the patient's behalf (scans handed in
+   * at reception, lab PDFs mailed to the clinic, records the patient could not
+   * upload themselves).
+   *
+   * Deliberately writes the SAME `AppointmentDocument` row the doctor upload
+   * and the patient upload-link flow write, so the file surfaces everywhere
+   * those already do — the doctor's appointment Documents tab ("Uploaded
+   * files"), the doctor's patient record, and the patient portal's medical
+   * files — with no extra listing plumbing.
+   *
+   * The row's `doctorId` is the appointment's assigned doctor (the column is
+   * required, and it is what the download route authorises against), so an
+   * unassigned appointment is rejected rather than guessed at.
+   */
+  app.post<{ Params: { id: string } }>(
+    "/api/admin/appointments/:id/documents",
+    async (request, reply) => {
+      const auth = await verifyAdminAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+
+      if (!isMediaStorageConfigured()) {
+        return reply.status(503).send(errorResponse("Object storage is not configured"));
+      }
+
+      const appt = await prisma.appointment.findUnique({
+        where: { id: request.params.id },
+        select: { id: true, fullName: true, doctorId: true },
+      });
+      if (!appt) {
+        return reply.status(404).send(errorResponse("Appointment not found"));
+      }
+      if (!appt.doctorId) {
+        return reply
+          .status(409)
+          .send(errorResponse("Assign a doctor to this appointment before uploading records"));
+      }
+
+      const actor = resolveAdminSessionActor(request);
+      try {
+        await guardMedicalReadForAppointment(
+          request,
+          { userId: actor?.userId ?? "system", role: actor?.role ?? "ADMIN", doctorId: null },
+          appt.id,
+          { resourceType: "MEDICAL_DOC", accessAction: "UPLOADED" },
+        );
+      } catch (guardError) {
+        if (guardError instanceof MedicalAccessDeniedError) {
+          return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+        }
+        throw guardError;
+      }
+
+      const file = await request.file();
+      if (!file) {
+        return reply.status(400).send(errorResponse('Expected one file field named "file"'));
+      }
+      const declaredMime = file.mimetype ?? "";
+      if (!ALLOWED_MIME.has(declaredMime)) {
+        return reply
+          .status(415)
+          .send(errorResponse("Unsupported file type — use PDF / JPEG / PNG / WebP / AVIF"));
+      }
+      const buffer = await file.toBuffer();
+      if (buffer.length > MAX_BYTES) {
+        return reply.status(413).send(errorResponse("File too large (max 10MB)"));
+      }
+      const mimetype = verifySniffedMime(buffer, declaredMime, ALLOWED_MIME);
+      if (!mimetype) {
+        return reply.status(415).send(errorResponse("File content does not match declared type"));
+      }
+
+      const labelField = file.fields?.["label"];
+      let label = "";
+      if (labelField && !Array.isArray(labelField) && "value" in labelField) {
+        label = String(labelField.value ?? "").trim().slice(0, 200);
+      }
+      const safeName = sanitizeOriginalFilename(file.filename ?? "document");
+      if (!label) label = safeName;
+
+      const storageKey = `clinical/${appt.doctorId}/${appt.id}/${randomUUID()}-${safeName}`;
+
+      try {
+        await putObject(storageKey, buffer, mimetype);
+      } catch (error) {
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Upload failed"));
+      }
+
+      try {
+        const row = await prisma.appointmentDocument.create({
+          data: {
+            appointmentId: appt.id,
+            doctorId: appt.doctorId,
+            label,
+            storageKey,
+            mimetype,
+            byteSize: buffer.length,
+          },
+          select: { id: true, label: true, mimetype: true, byteSize: true, createdAt: true },
+        });
+        // Same S-008 reasoning as the doctor upload: the file and its row are
+        // already committed here, so an audit failure must log loudly rather
+        // than throw into the catch below, which deletes the stored object.
+        try {
+          await recordCriticalAudit({
+            actorUserId: actor?.userId ?? null,
+            actorRole: actor?.role ?? "ADMIN",
+            action: "DOCUMENT_UPLOADED",
+            entityType: "AppointmentDocument",
+            entityId: row.id,
+            metadata: {
+              appointmentId: appt.id,
+              label,
+              byteSize: buffer.length,
+              uploadedByAdmin: true,
+            },
+            request,
+          });
+        } catch (auditError) {
+          app.log.error(
+            { err: auditError, documentId: row.id },
+            "CRITICAL: DOCUMENT_UPLOADED audit write failed",
+          );
+        }
+        return reply.status(201).send(
+          okResponse({
+            document: {
+              id: row.id,
+              label: row.label,
+              mimetype: row.mimetype,
+              byteSize: row.byteSize,
+              url: buildDownloadPath(row.id),
+              createdAt: row.createdAt.toISOString(),
+            },
+          }),
+        );
+      } catch (error) {
+        try {
+          await deleteObject(storageKey);
+        } catch {
+          /* best-effort */
+        }
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not save document"));
       }
     },
   );

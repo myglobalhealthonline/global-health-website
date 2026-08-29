@@ -28,6 +28,7 @@ import { ScheduleTzOffsetInput } from "../_components/schedule-tz-offset";
 import { ScheduleSlotInput } from "../_components/schedule-slot-input";
 import { AdminAppointmentTabs } from "./_components/appointment-tabs";
 import { SendPatientUploadLinkCard } from "@/components/SendPatientUploadLinkCard";
+import { UploadPatientRecordCard } from "@/components/UploadPatientRecordCard";
 import { defaultNotificationLocaleForCountry } from "@/lib/notification-locale";
 import {
   AdminCard,
@@ -611,6 +612,15 @@ export default async function AdminAppointmentDetailPage({
                       appointment.notificationLocale ??
                       defaultNotificationLocaleForCountry(appointment.country)
                     }
+                  />
+                  {/* Same destination as the link above — the file is written
+                      as an AppointmentDocument, so it shows in the doctor's
+                      Documents tab and the patient portal without any extra
+                      plumbing. Needs an assigned doctor (that column is
+                      required); the backend answers 409 when there is none. */}
+                  <UploadPatientRecordCard
+                    className="mt-3"
+                    endpoint={`/api/admin/appointments/${appointment.id}/documents`}
                   />
                 </AdminCard>
 
