@@ -119,6 +119,25 @@ beforeEach(() => {
 });
 
 describe("authoritative bookability summaries", () => {
+  it("deduplicates concurrent cold reads for the same summary", async () => {
+    serviceFixture = service({ id: "service-concurrent" });
+    slotFixtures = [
+      {
+        id: "slot-concurrent",
+        startAt: "2026-09-03T09:00:00.000Z",
+        endAt: "2026-09-03T09:30:00.000Z",
+      },
+    ];
+
+    const [first, second] = await Promise.all([
+      getServiceBookability({ countryCode: "IE", serviceId: "service-concurrent", now }),
+      getServiceBookability({ countryCode: "IE", serviceId: "service-concurrent", now }),
+    ]);
+
+    assert.deepEqual(first, second);
+    assert.equal(slotReads, 1);
+  });
+
   it("keeps a Wednesday CTA enabled for a real compatible Thursday slot", async () => {
     slotFixtures = [
       {

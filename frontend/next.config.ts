@@ -117,12 +117,13 @@ const SECURITY_HEADERS = [
  *
  * The defaults intentionally stay below the older 4 x 2 profile. A Railway
  * build on 2026-08-29 still logged 503s from `/api/blog` while prerendering
- * localized blog pages, so the build now starts from 2 workers unless the
- * service opts back up with explicit env vars.
+ * localized blog pages, so the build stays at 2 workers. Each worker keeps two
+ * read slots: 2 x 1 made a single page serialize its own independent reads and
+ * exceed Next's 180-second page timeout.
  */
 const BACKEND_POOL_MAX = 10;
 const buildCpus = Number(process.env.NEXT_BUILD_CPUS) || 2;
-const buildApiConcurrency = Number(process.env.NEXT_BUILD_API_CONCURRENCY) || 1;
+const buildApiConcurrency = Number(process.env.NEXT_BUILD_API_CONCURRENCY) || 2;
 if (buildCpus * buildApiConcurrency >= BACKEND_POOL_MAX) {
   throw new Error(
     `NEXT_BUILD_CPUS (${buildCpus}) x NEXT_BUILD_API_CONCURRENCY ` +

@@ -95,6 +95,28 @@ export function assertAbsenceConfirmed(entity: string, res: ApiResult<unknown>):
 }
 
 /**
+ * A list endpoint has no meaningful "not found" response: an unsuccessful
+ * read never proves that the collection is empty. Throwing during ISR lets
+ * Next keep serving the last successfully generated page instead of replacing
+ * it with a thin 200 whose services, doctors, specialties, or tests vanished.
+ *
+ * A build/local smoke run with no API URL keeps the historical empty fallback
+ * so compile-only CI does not require a backend.
+ */
+export function assertCollectionAvailable(entity: string, res: ApiResult<unknown>): void {
+  // Build policy (including the explicit ALLOW_DEGRADED_BUILD escape hatch)
+  // remains owned by logPublicContentFallback immediately after this guard.
+  if (res.ok || IS_BUILD || !hasPublicApiBaseUrl()) return;
+  if (res.status !== undefined && !isTransientStatus(res.status)) {
+    throw new PublicContentRequestError(entity, res.status, res.message);
+  }
+  throw new PublicContentUnavailableError(
+    entity,
+    res.status !== undefined ? `HTTP ${res.status}` : res.message,
+  );
+}
+
+/**
  * The 200-with-no-record case: the backend answered, but the envelope has no
  * usable row. Absence is NOT confirmed (a real absence is a 404 from all three
  * detail routes — services.route.ts, health-tests.route.ts,

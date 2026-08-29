@@ -188,6 +188,33 @@ describe.each(FAMILIES)("$name", (family) => {
   });
 });
 
+const COLLECTION_FAMILIES = [
+  {
+    name: "country services",
+    call: () => getters.getCountryServices("ie", undefined, "ro"),
+  },
+  {
+    name: "country doctors",
+    call: () => getters.getCountryDoctors("ie", "ro"),
+  },
+  {
+    name: "country specialties",
+    call: () => getters.getCountrySpecialties("ie", "ro"),
+  },
+  {
+    name: "country health tests",
+    call: () => getters.getCountryHealthTests("ie", "ro"),
+  },
+] as const;
+
+describe.each(COLLECTION_FAMILIES)("$name collection", (family) => {
+  it("does not turn a repeated 503 into an empty ISR payload", async () => {
+    fetchMock.mockResolvedValue(unavailable());
+
+    await expect(family.call()).rejects.toBeInstanceOf(PublicContentUnavailableError);
+  });
+});
+
 describe("retry mechanics", () => {
   it("bypasses the Next Data Cache on the retry", async () => {
     // Next stores the 503 body under this URL's cache entry for the whole

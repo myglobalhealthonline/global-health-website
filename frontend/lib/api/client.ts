@@ -155,9 +155,10 @@ export function serverReadAuthHeaders(path: string, method: string): Record<stri
  * saturated by ~15 workers each firing 5+ parallel content reads. This cap
  * bounds that demand: `cpus` (frontend/next.config.ts) x this cap is the
  * build's total concurrent load. The defaults are deliberately conservative
- * now (2 x 1 = 2): Railway build logs still showed blog prerenders taking 503s
- * at the previous 4 x 2 setting, so the build now starts from a lower floor
- * and lets ops raise it explicitly if the backend proves it can sustain more.
+ * now (2 x 2 = 4): Railway build logs still showed blog prerenders taking 503s
+ * at the previous 4 x 2 setting. One slot per worker proved too restrictive:
+ * a homepage starts several independent reads in parallel and serialized them
+ * long enough for Next's 180-second page watchdog to kill the render.
  *
  * CAVEAT, so this comment doesn't misdirect the next investigation. The pool
  * attribution above was never measured; it was inferred. The 2026-08-08
@@ -172,7 +173,7 @@ export function serverReadAuthHeaders(path: string, method: string): Record<stri
  *
  * Build-only: a live visitor's SSR is never queued behind this.
  */
-const BUILD_MAX_IN_FLIGHT = Number(process.env.NEXT_BUILD_API_CONCURRENCY) || 1;
+const BUILD_MAX_IN_FLIGHT = Number(process.env.NEXT_BUILD_API_CONCURRENCY) || 2;
 let buildInFlight = 0;
 const buildWaiting: Array<() => void> = [];
 

@@ -1,7 +1,10 @@
 import { cache } from "react";
 import { apiRequest } from "@/lib/api/client";
 import { BLOG_AUTHOR_NAME } from "@/lib/content/blog-byline";
-import { logPublicContentFallback } from "@/lib/content/public-content-source";
+import {
+  assertCollectionAvailable,
+  logPublicContentFallback,
+} from "@/lib/content/public-content-source";
 import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
 
 /** Cache tag for public blog reads — busted by admin create/edit/delete. */
@@ -190,6 +193,7 @@ const fetchPublishedPosts = cache(async (countryCode?: string, locale?: string):
     tags: [PUBLIC_BLOG_TAG],
   });
   if (!res.ok) {
+    assertCollectionAvailable("blog:list", res);
     logPublicContentFallback("blog:list", res.message);
     return [];
   }

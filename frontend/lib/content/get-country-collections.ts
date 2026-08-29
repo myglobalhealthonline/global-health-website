@@ -11,6 +11,7 @@ import {
 } from "@/lib/api/site-content-api";
 import {
   assertAbsenceConfirmed,
+  assertCollectionAvailable,
   logPublicContentFallback,
   missingRecordOn200,
 } from "@/lib/content/public-content-source";
@@ -438,6 +439,7 @@ export const getCountryServices = cache(async (
 ): Promise<CountryServiceCard[]> => {
   const res = await fetchServicesByCountry(countryCode, kind, locale);
   if (!res.ok) {
+    assertCollectionAvailable(`country-services:${countryCode}:${kind ?? "all"}`, res);
     logPublicContentFallback(`country-services:${countryCode}:${kind ?? "all"}`, res.message);
     return [];
   }
@@ -512,6 +514,7 @@ export const getCountrySpecialties = cache(async (
 ): Promise<CountrySpecialtyCard[]> => {
   const res = await fetchSpecialtiesByCountry(countryCode, locale);
   if (!res.ok) {
+    assertCollectionAvailable(`country-specialties:${countryCode}`, res);
     logPublicContentFallback(`country-specialties:${countryCode}`, res.message);
     return [];
   }
@@ -540,6 +543,7 @@ export const getCountryDoctors = cache(async (
 ): Promise<CountryDoctorCard[]> => {
   const res = await fetchDoctorsByCountry(countryCode, locale);
   if (!res.ok) {
+    assertCollectionAvailable(`country-doctors:${countryCode}`, res);
     logPublicContentFallback(`country-doctors:${countryCode}`, res.message);
     return [];
   }
@@ -662,6 +666,7 @@ export const getCountryHealthTests = cache(async (
 ): Promise<CountryHealthTestCard[]> => {
   const res = await fetchHealthTestsByCountry(countryCode, locale);
   if (!res.ok) {
+    assertCollectionAvailable(`country-health-tests:${countryCode}`, res);
     logPublicContentFallback(`country-health-tests:${countryCode}`, res.message);
     return [];
   }

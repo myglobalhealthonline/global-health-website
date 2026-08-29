@@ -3,7 +3,10 @@ import { fetchDoctors, fetchDoctorsByCountry, fetchDoctorsCount } from "@/lib/ap
 import { cache } from "react";
 import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
 import { isKnownCountryCode } from "@/lib/content/merge-public-content";
-import { logPublicContentFallback } from "@/lib/content/public-content-source";
+import {
+  assertCollectionAvailable,
+  logPublicContentFallback,
+} from "@/lib/content/public-content-source";
 
 /** Parses `Languages: a, b.` from seeded/CMS bio lines. Returns null if not present. */
 export function parseLanguagesFromDoctorBio(bio: string | null | undefined): string[] | null {
@@ -264,6 +267,7 @@ export const getPublicDoctorsNormalized = cache(
   async (locale?: string): Promise<PublicDoctorRecord[]> => {
     const res = await fetchDoctors(locale);
     if (!res.ok) {
+      assertCollectionAvailable("doctors", res);
       logPublicContentFallback("doctors", res.message);
       return [];
     }
@@ -299,6 +303,7 @@ export const getPublicDoctorsForMarket = cache(
   async (countryCode: string, locale?: string): Promise<PublicDoctorRecord[]> => {
     const res = await fetchDoctorsByCountry(countryCode, locale);
     if (!res.ok) {
+      assertCollectionAvailable(`country-doctors:${countryCode}`, res);
       logPublicContentFallback(`country-doctors:${countryCode}`, res.message);
       return [];
     }
@@ -316,6 +321,7 @@ export const getPublicDoctorsForMarket = cache(
 export const getPublicDoctorsCount = cache(async (): Promise<number> => {
   const res = await fetchDoctorsCount();
   if (!res.ok) {
+    assertCollectionAvailable("doctors:count", res);
     logPublicContentFallback("doctors:count", res.message);
     return 0;
   }

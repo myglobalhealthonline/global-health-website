@@ -3,7 +3,10 @@ import { fetchSpecialties } from "@/lib/api/site-content-api";
 import { cache } from "react";
 import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
 import { isKnownCountryCode } from "@/lib/content/merge-public-content";
-import { logPublicContentFallback } from "@/lib/content/public-content-source";
+import {
+  assertCollectionAvailable,
+  logPublicContentFallback,
+} from "@/lib/content/public-content-source";
 
 export type PublicSpecialtyRecord = {
   id: string;
@@ -86,6 +89,7 @@ function normalizeSpecialty(row: unknown): PublicSpecialtyRecord | null {
 export const getPublicSpecialtiesNormalized = cache(async (locale?: string): Promise<PublicSpecialtyRecord[]> => {
   const res = await fetchSpecialties(locale);
   if (!res.ok) {
+    assertCollectionAvailable("specialties", res);
     logPublicContentFallback("specialties", res.message);
     return [];
   }

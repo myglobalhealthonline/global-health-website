@@ -16,27 +16,29 @@ afterEach(() => {
 });
 
 describe("acquireBuildSlot", () => {
-  it("defaults to one in-flight read during a build when no env override is set", async () => {
+  it("defaults to two in-flight reads so one page's parallel data does not self-deadlock", async () => {
     const m = await load({
       NEXT_PHASE: "phase-production-build",
       NEXT_BUILD_API_CONCURRENCY: undefined,
     });
 
-    let secondEntered = false;
+    let thirdEntered = false;
     const first = await m.acquireBuildSlot();
-    const second = m.acquireBuildSlot().then((release) => {
-      secondEntered = true;
+    const second = await m.acquireBuildSlot();
+    const third = m.acquireBuildSlot().then((release) => {
+      thirdEntered = true;
       return release;
     });
 
     await Promise.resolve();
-    expect(secondEntered).toBe(false);
+    expect(thirdEntered).toBe(false);
 
     first();
     await Promise.resolve();
     await Promise.resolve();
-    expect(secondEntered).toBe(true);
-    (await second)();
+    expect(thirdEntered).toBe(true);
+    second();
+    (await third)();
   });
 
   it("is a no-op at runtime — a visitor's SSR is never queued", async () => {

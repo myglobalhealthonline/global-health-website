@@ -2,7 +2,10 @@ import type { CountryCode } from "@/data/countries";
 import { fetchServices } from "@/lib/api/site-content-api";
 import { cache } from "react";
 import { isKnownCountryCode } from "@/lib/content/merge-public-content";
-import { logPublicContentFallback } from "@/lib/content/public-content-source";
+import {
+  assertCollectionAvailable,
+  logPublicContentFallback,
+} from "@/lib/content/public-content-source";
 
 export type PublicServiceRecord = {
   id: string;
@@ -138,6 +141,7 @@ function normalizeService(row: unknown): PublicServiceRecord | null {
 export const getPublicServicesNormalized = cache(async (locale?: string): Promise<PublicServiceRecord[]> => {
   const res = await fetchServices(locale);
   if (!res.ok) {
+    assertCollectionAvailable("services", res);
     logPublicContentFallback("services", res.message);
     return [];
   }

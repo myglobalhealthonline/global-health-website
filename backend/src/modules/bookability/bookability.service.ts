@@ -27,7 +27,41 @@ const CACHE_TTL_MS = 60_000;
 const CONCURRENCY = 8;
 
 const cache = new TtlCache<BookabilitySummary>(2000);
-registerAvailabilityCache(() => cache.clear());
+const inFlight = new Map<string, Promise<BookabilitySummary>>();
+let cacheGeneration = 0;
+
+function clearBookabilityCaches(): void {
+  cacheGeneration += 1;
+  cache.clear();
+  inFlight.clear();
+}
+
+registerAvailabilityCache(clearBookabilityCaches);
+
+function resolveCachedBookability(
+  key: string,
+  compute: () => Promise<BookabilitySummary>,
+): Promise<BookabilitySummary> {
+  const cached = cache.get(key);
+  if (cached) return Promise.resolve(cached);
+
+  const pending = inFlight.get(key);
+  if (pending) return pending;
+
+  const generation = cacheGeneration;
+  const request = compute()
+    .then((result) => {
+      // A pause/slot/assignment write may invalidate while this read is still
+      // running. Never repopulate the cache with a pre-invalidation result.
+      if (generation === cacheGeneration) cache.set(key, result, CACHE_TTL_MS);
+      return result;
+    })
+    .finally(() => {
+      if (inFlight.get(key) === request) inFlight.delete(key);
+    });
+  inFlight.set(key, request);
+  return request;
+}
 
 export function invalidateBookabilityCache(): void {
   invalidateAvailabilityCaches();
@@ -240,55 +274,52 @@ export async function getServiceBookability(
   const lookaheadDays = horizon(args.lookaheadDays, DEFAULT_LOOKAHEAD_DAYS, 90);
   const code = args.countryCode.trim().toLowerCase();
   const key = `service:${code}:${args.serviceId ?? args.serviceSlug}:${primaryDays}:${lookaheadDays}:${Math.floor(now.getTime() / CACHE_TTL_MS)}`;
-  const cached = cache.get(key);
-  if (cached) return cached;
-
-  const service = await prisma.service.findFirst({
-    where: {
-      ...(args.serviceId ? { id: args.serviceId } : { slug: args.serviceSlug }),
-      isActive: true,
-      visibility: "PUBLIC",
-      country: { code, isActive: true },
-    },
-    select: {
-      id: true,
-      durationMinutes: true,
-      bookingPausedFrom: true,
-      bookingPausedUntil: true,
-      country: { select: { bookingSetting: { select: { bookingEnabled: true } } } },
-      assignedDoctors: {
-        where: {
-          isActive: true,
-          status: "active",
-          doctor: {
-            active: true,
-            OR: [
-              { country: { code, isActive: true } },
-              {
-                additionalCountries: {
-                  some: { active: true, country: { code, isActive: true } },
+  return resolveCachedBookability(key, async () => {
+    const service = await prisma.service.findFirst({
+      where: {
+        ...(args.serviceId ? { id: args.serviceId } : { slug: args.serviceSlug }),
+        isActive: true,
+        visibility: "PUBLIC",
+        country: { code, isActive: true },
+      },
+      select: {
+        id: true,
+        durationMinutes: true,
+        bookingPausedFrom: true,
+        bookingPausedUntil: true,
+        country: { select: { bookingSetting: { select: { bookingEnabled: true } } } },
+        assignedDoctors: {
+          where: {
+            isActive: true,
+            status: "active",
+            doctor: {
+              active: true,
+              OR: [
+                { country: { code, isActive: true } },
+                {
+                  additionalCountries: {
+                    some: { active: true, country: { code, isActive: true } },
+                  },
                 },
-              },
-            ],
+              ],
+            },
           },
-        },
-        select: {
-          doctor: {
-            select: {
-              id: true,
-              bookingPausedFrom: true,
-              bookingPausedUntil: true,
+          select: {
+            doctor: {
+              select: {
+                id: true,
+                bookingPausedFrom: true,
+                bookingPausedUntil: true,
+              },
             },
           },
         },
       },
-    },
+    });
+    return service
+      ? evaluateService(service, now, primaryDays, Math.max(primaryDays, lookaheadDays))
+      : { state: "UNAVAILABLE", reasonCode: "NO_APPROVED_DOCTOR", nextAvailableAt: null };
   });
-  const result = service
-    ? await evaluateService(service, now, primaryDays, Math.max(primaryDays, lookaheadDays))
-    : { state: "UNAVAILABLE", reasonCode: "NO_APPROVED_DOCTOR", nextAvailableAt: null } as const;
-  cache.set(key, result, CACHE_TTL_MS);
-  return result;
 }
 
 export async function getDoctorBookability(
@@ -299,75 +330,71 @@ export async function getDoctorBookability(
   const lookaheadDays = horizon(args.lookaheadDays, DEFAULT_LOOKAHEAD_DAYS, 90);
   const code = args.countryCode.trim().toLowerCase();
   const key = `doctor:${code}:${args.doctorId}:${args.serviceId ?? "any"}:${primaryDays}:${lookaheadDays}:${Math.floor(now.getTime() / CACHE_TTL_MS)}`;
-  const cached = cache.get(key);
-  if (cached) return cached;
-
-  const services = await prisma.service.findMany({
-    where: {
-      ...(args.serviceId ? { id: args.serviceId } : {}),
-      isActive: true,
-      visibility: "PUBLIC",
-      country: { code, isActive: true },
-      assignedDoctors: {
-        some: {
-          doctorId: args.doctorId,
-          isActive: true,
-          status: "active",
-          doctor: {
-            active: true,
-            OR: [
-              { country: { code, isActive: true } },
-              {
-                additionalCountries: {
-                  some: { active: true, country: { code, isActive: true } },
+  return resolveCachedBookability(key, async () => {
+    const services = await prisma.service.findMany({
+      where: {
+        ...(args.serviceId ? { id: args.serviceId } : {}),
+        isActive: true,
+        visibility: "PUBLIC",
+        country: { code, isActive: true },
+        assignedDoctors: {
+          some: {
+            doctorId: args.doctorId,
+            isActive: true,
+            status: "active",
+            doctor: {
+              active: true,
+              OR: [
+                { country: { code, isActive: true } },
+                {
+                  additionalCountries: {
+                    some: { active: true, country: { code, isActive: true } },
+                  },
                 },
-              },
-            ],
-          },
-        },
-      },
-    },
-    select: {
-      id: true,
-      durationMinutes: true,
-      bookingPausedFrom: true,
-      bookingPausedUntil: true,
-      country: { select: { bookingSetting: { select: { bookingEnabled: true } } } },
-      assignedDoctors: {
-        where: { doctorId: args.doctorId, isActive: true, status: "active" },
-        select: {
-          doctor: {
-            select: {
-              id: true,
-              bookingPausedFrom: true,
-              bookingPausedUntil: true,
+              ],
             },
           },
         },
       },
-    },
-  });
-  if (services.length === 0) {
-    const unavailable = {
-      state: "UNAVAILABLE",
-      reasonCode: "NO_APPROVED_DOCTOR",
-      nextAvailableAt: null,
-    } as const;
-    cache.set(key, unavailable, CACHE_TTL_MS);
-    return unavailable;
-  }
+      select: {
+        id: true,
+        durationMinutes: true,
+        bookingPausedFrom: true,
+        bookingPausedUntil: true,
+        country: { select: { bookingSetting: { select: { bookingEnabled: true } } } },
+        assignedDoctors: {
+          where: { doctorId: args.doctorId, isActive: true, status: "active" },
+          select: {
+            doctor: {
+              select: {
+                id: true,
+                bookingPausedFrom: true,
+                bookingPausedUntil: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    if (services.length === 0) {
+      return {
+        state: "UNAVAILABLE",
+        reasonCode: "NO_APPROVED_DOCTOR",
+        nextAvailableAt: null,
+      };
+    }
 
-  const summaries = await Promise.all(
-    services.map((service) =>
-      evaluateService(service, now, primaryDays, Math.max(primaryDays, lookaheadDays)),
-    ),
-  );
-  const byEarliest = (a: BookabilitySummary, b: BookabilitySummary) =>
-    (a.nextAvailableAt ?? "9999").localeCompare(b.nextAvailableAt ?? "9999");
-  const result =
-    summaries.filter((summary) => summary.state === "BOOKABLE").sort(byEarliest)[0]
-    ?? summaries.filter((summary) => summary.state === "RETURNING").sort(byEarliest)[0]
-    ?? summaries[0];
-  cache.set(key, result, CACHE_TTL_MS);
-  return result;
+    const summaries = await Promise.all(
+      services.map((service) =>
+        evaluateService(service, now, primaryDays, Math.max(primaryDays, lookaheadDays)),
+      ),
+    );
+    const byEarliest = (a: BookabilitySummary, b: BookabilitySummary) =>
+      (a.nextAvailableAt ?? "9999").localeCompare(b.nextAvailableAt ?? "9999");
+    return (
+      summaries.filter((summary) => summary.state === "BOOKABLE").sort(byEarliest)[0]
+      ?? summaries.filter((summary) => summary.state === "RETURNING").sort(byEarliest)[0]
+      ?? summaries[0]
+    );
+  });
 }

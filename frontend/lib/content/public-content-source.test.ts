@@ -95,3 +95,38 @@ describe("logPublicContentFallback", () => {
     expect(warn).not.toHaveBeenCalled();
   });
 });
+
+describe("assertCollectionAvailable", () => {
+  it("throws at production runtime so ISR keeps the last good page", async () => {
+    const m = await load({
+      NEXT_PHASE: undefined,
+      NODE_ENV: "production",
+      NEXT_PUBLIC_API_URL: "https://api.example.test",
+    });
+
+    expect(() =>
+      m.assertCollectionAvailable("country-services:ie:all", {
+        ok: false,
+        status: 503,
+        message: "Services data is unavailable",
+      }),
+    ).toThrow(m.PublicContentUnavailableError);
+  });
+
+  it("leaves build failures to the existing degraded-build policy", async () => {
+    const m = await load({
+      NEXT_PHASE: "phase-production-build",
+      NODE_ENV: "production",
+      NEXT_PUBLIC_API_URL: "https://api.example.test",
+      ALLOW_DEGRADED_BUILD: "1",
+    });
+
+    expect(() =>
+      m.assertCollectionAvailable("country-services:ie:all", {
+        ok: false,
+        status: 503,
+        message: "Services data is unavailable",
+      }),
+    ).not.toThrow();
+  });
+});
