@@ -154,7 +154,10 @@ export function serverReadAuthHeaders(path: string, method: string): Record<stri
  * backend's `pg` pool (`max: 10`, 5s `connectionTimeoutMillis`) being
  * saturated by ~15 workers each firing 5+ parallel content reads. This cap
  * bounds that demand: `cpus` (frontend/next.config.ts) x this cap is the
- * build's total concurrent load, and the defaults (4 x 2 = 8) sit under 10.
+ * build's total concurrent load. The defaults are deliberately conservative
+ * now (2 x 1 = 2): Railway build logs still showed blog prerenders taking 503s
+ * at the previous 4 x 2 setting, so the build now starts from a lower floor
+ * and lets ops raise it explicitly if the backend proves it can sustain more.
  *
  * CAVEAT, so this comment doesn't misdirect the next investigation. The pool
  * attribution above was never measured; it was inferred. The 2026-08-08
@@ -169,7 +172,7 @@ export function serverReadAuthHeaders(path: string, method: string): Record<stri
  *
  * Build-only: a live visitor's SSR is never queued behind this.
  */
-const BUILD_MAX_IN_FLIGHT = Number(process.env.NEXT_BUILD_API_CONCURRENCY) || 2;
+const BUILD_MAX_IN_FLIGHT = Number(process.env.NEXT_BUILD_API_CONCURRENCY) || 1;
 let buildInFlight = 0;
 const buildWaiting: Array<() => void> = [];
 
@@ -444,14 +447,20 @@ export async function apiRequest<T>(
         }
         await new Promise((resolve) => setTimeout(resolve, waitMs));
       }
-      // A retry MUST bypass the Next.js Data Cache. Next stores whatever the
-      // upstream returned — a 503 body included — under this URL's cache entry
-      // for the full `revalidate` window, so a cache-honouring retry would
-      // replay the same 503 from disk without ever touching the network and
-      // the retry would be pure latency. Dropping to `no-store` for the retry
-      // is what makes it able to observe recovery at all.
-      delete fetchInit.next;
-      fetchInit.cache = "no-store";
+      // A retry MUST bypass the first attempt's Next.js Data Cache entry:
+      // Next can store a 503 under the original fetch key for the full
+      // revalidate window. At runtime `no-store` is safe. During `next build`,
+      // however, switching a prerender fetch to `no-store` raises Next's
+      // DynamicServerError and aborts the retry ladder after its first wait.
+      // Build retries therefore keep the static Data Cache contract and vary
+      // a non-secret request header, which is part of Next's fetch cache key,
+      // so each attempt reaches the backend without making the page dynamic.
+      if (IS_BUILD) {
+        (fetchInit.headers as Record<string, string>)["x-gh-build-retry"] = String(attempt + 1);
+      } else {
+        delete fetchInit.next;
+        fetchInit.cache = "no-store";
+      }
       if (timeout) clearTimeout(timeout);
       startAttempt();
       fetchInit.signal = controller?.signal;

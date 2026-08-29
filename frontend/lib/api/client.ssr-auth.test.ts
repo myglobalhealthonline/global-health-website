@@ -16,13 +16,19 @@ async function load(env: Record<string, string | undefined>) {
 function stubFetch(
   responses: Array<{ status?: number; headers?: Record<string, string>; body?: unknown }>,
 ) {
-  const calls: Array<{ url: string; headers: Record<string, string>; cache?: string }> = [];
+  const calls: Array<{
+    url: string;
+    headers: Record<string, string>;
+    cache?: string;
+    next?: { revalidate?: number | false; tags?: string[] };
+  }> = [];
   let i = 0;
   const fetchMock = vi.fn(async (url: string, init: RequestInit) => {
     calls.push({
       url: String(url),
       headers: { ...((init.headers ?? {}) as Record<string, string>) },
       cache: init.cache as string | undefined,
+      next: (init as RequestInit & { next?: { revalidate?: number | false; tags?: string[] } }).next,
     });
     const spec = responses[Math.min(i, responses.length - 1)];
     i += 1;
@@ -194,6 +200,7 @@ describe("runtime 429 handling", () => {
 
     expect(calls).toHaveLength(2);
     expect(calls[1].cache).toBe("no-store"); // retry must bypass the Data Cache
+    expect(calls[1].headers["x-gh-build-retry"]).toBeUndefined();
     expect(res.ok).toBe(true);
   });
 
@@ -225,6 +232,31 @@ describe("runtime 429 handling", () => {
       vi.useRealTimers();
     }
     expect(calls).toHaveLength(6); // first attempt + BUILD_RETRY_ATTEMPTS (5)
+  });
+
+  it("keeps build retries static-compatible while bypassing a cached 503", async () => {
+    const m = await load(BUILD);
+    const calls = stubFetch([
+      { status: 503, body: { ok: false, message: "Blog data is unavailable" } },
+      { status: 200, body: { ok: true, data: { posts: [] } } },
+    ]);
+    vi.useFakeTimers();
+    try {
+      const pending = m.apiRequest("/api/blog?countryCode=ro&locale=DE", {
+        revalidate: 60,
+        tags: ["public-blog"],
+      });
+      await vi.advanceTimersByTimeAsync(10_000);
+      await expect(pending).resolves.toMatchObject({ ok: true });
+    } finally {
+      vi.useRealTimers();
+    }
+
+    expect(calls).toHaveLength(2);
+    expect(calls[0].headers["x-gh-build-retry"]).toBeUndefined();
+    expect(calls[1].cache).toBeUndefined();
+    expect(calls[1].next).toEqual({ revalidate: 60, tags: ["public-blog"] });
+    expect(calls[1].headers["x-gh-build-retry"]).toBe("1");
   });
 
   it("does not retry a non-public read (no Data Cache opt-in)", async () => {

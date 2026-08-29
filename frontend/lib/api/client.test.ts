@@ -16,6 +16,29 @@ afterEach(() => {
 });
 
 describe("acquireBuildSlot", () => {
+  it("defaults to one in-flight read during a build when no env override is set", async () => {
+    const m = await load({
+      NEXT_PHASE: "phase-production-build",
+      NEXT_BUILD_API_CONCURRENCY: undefined,
+    });
+
+    let secondEntered = false;
+    const first = await m.acquireBuildSlot();
+    const second = m.acquireBuildSlot().then((release) => {
+      secondEntered = true;
+      return release;
+    });
+
+    await Promise.resolve();
+    expect(secondEntered).toBe(false);
+
+    first();
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(secondEntered).toBe(true);
+    (await second)();
+  });
+
   it("is a no-op at runtime — a visitor's SSR is never queued", async () => {
     const m = await load({ NEXT_PHASE: undefined });
     // Ten concurrent acquires all resolve without anything being released.

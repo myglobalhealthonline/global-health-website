@@ -57,6 +57,17 @@ ENV NEXT_PUBLIC_CLARITY_PROJECT_ID=$NEXT_PUBLIC_CLARITY_PROJECT_ID
 ARG PROXY_CLIENT_IP_SECRET
 ENV PROXY_CLIENT_IP_SECRET=$PROXY_CLIENT_IP_SECRET
 
+# Build-only throttles for public-content reads. `next.config.ts` and
+# lib/api/client.ts read these during `next build`; without ARG passthrough
+# Railway image builds silently fall back to the code defaults even when the
+# service has safer values configured.
+ARG NEXT_BUILD_CPUS
+ARG NEXT_BUILD_API_CONCURRENCY
+ARG PUBLIC_CONTENT_BUILD_TIMEOUT_MS
+ENV NEXT_BUILD_CPUS=$NEXT_BUILD_CPUS
+ENV NEXT_BUILD_API_CONCURRENCY=$NEXT_BUILD_API_CONCURRENCY
+ENV PUBLIC_CONTENT_BUILD_TIMEOUT_MS=$PUBLIC_CONTENT_BUILD_TIMEOUT_MS
+
 # Escape hatch for builds that have no backend to read from. Deliberately
 # EMPTY by default, which preserves today's behaviour exactly: unset means
 # public-content-source.ts still hard-fails the prerender rather than shipping

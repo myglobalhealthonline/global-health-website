@@ -114,10 +114,15 @@ const SECURITY_HEADERS = [
  * either alone silently breaks the invariant, and the symptom (thin pages) is
  * indistinguishable from a content bug. So assert it here, at build start,
  * instead of discovering it in a deploy.
+ *
+ * The defaults intentionally stay below the older 4 x 2 profile. A Railway
+ * build on 2026-08-29 still logged 503s from `/api/blog` while prerendering
+ * localized blog pages, so the build now starts from 2 workers unless the
+ * service opts back up with explicit env vars.
  */
 const BACKEND_POOL_MAX = 10;
-const buildCpus = Number(process.env.NEXT_BUILD_CPUS) || 4;
-const buildApiConcurrency = Number(process.env.NEXT_BUILD_API_CONCURRENCY) || 2;
+const buildCpus = Number(process.env.NEXT_BUILD_CPUS) || 2;
+const buildApiConcurrency = Number(process.env.NEXT_BUILD_API_CONCURRENCY) || 1;
 if (buildCpus * buildApiConcurrency >= BACKEND_POOL_MAX) {
   throw new Error(
     `NEXT_BUILD_CPUS (${buildCpus}) x NEXT_BUILD_API_CONCURRENCY ` +
