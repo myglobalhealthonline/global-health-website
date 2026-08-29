@@ -1560,10 +1560,60 @@ export async function updateAdminDoctor(
       invalidateBookabilityCache();
     }
 
+    // Suspending via the edit form has to do the same work as the explicit
+    // disable action — drop the future unbooked slots, kill the open session.
+    // Run after the transaction commits so a failed side effect cannot roll
+    // back the suspension itself.
+    if (body.active === false) await applyDoctorSuspension(id);
+
     return result;
   } catch (error) {
     throw normalizeDbError(error, "Doctors data is unavailable");
   }
+}
+
+/**
+ * Everything that has to happen the moment a doctor is suspended
+ * (`active` flips to false). Called by both paths that can suspend one:
+ * `disableAdminDoctor` and an `updateAdminDoctor` that sets active = false.
+ *
+ * Two effects:
+ *  1. Drop their future *unbooked* slots. Generation is already gated on
+ *     `active`, but rows minted before the suspension would otherwise linger.
+ *     BOOKED slots are left alone — a real patient holds them, and the calendar
+ *     shows those consultations flagged so staff can reassign deliberately.
+ *  2. Bump the linked login's tokenVersion, which invalidates any session the
+ *     doctor already has open instead of waiting for the JWT to expire.
+ *
+ * Availability *windows* are deliberately untouched, so re-activating restores
+ * the doctor's schedule exactly as it was.
+ *
+ * Never throws: suspension itself must not fail because a side effect did.
+ */
+async function applyDoctorSuspension(id: string): Promise<void> {
+  try {
+    await prisma.doctorTimeSlot.deleteMany({
+      where: {
+        doctorId: id,
+        startAt: { gte: new Date() },
+        status: { in: ["OPEN", "HELD", "BLOCKED"] },
+        appointment: null,
+      },
+    });
+  } catch {
+    // Leftover rows stay hidden by the `doctor: { active: true }` read filters.
+  }
+  try {
+    await prisma.user.updateMany({
+      where: { doctorId: id },
+      data: { tokenVersion: { increment: 1 } },
+    });
+  } catch {
+    // Login is blocked regardless; this only shortens an already-open session.
+  }
+  // The public slot readers cache their results, so without this a suspended
+  // doctor keeps being offered until the entries age out on their own.
+  invalidateBookabilityCache();
 }
 
 export async function disableAdminDoctor(id: string): Promise<AdminDoctorRecord | null> {
@@ -1571,11 +1621,13 @@ export async function disableAdminDoctor(id: string): Promise<AdminDoctorRecord 
   if (!existing) return null;
 
   try {
-    return await prisma.doctor.update({
+    const updated = await prisma.doctor.update({
       where: { id },
       data: { active: false },
       include: adminDoctorInclude,
     });
+    await applyDoctorSuspension(id);
+    return updated;
   } catch (error) {
     throw normalizeDbError(error, "Doctors data is unavailable");
   }

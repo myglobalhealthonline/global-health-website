@@ -127,6 +127,7 @@ export default async function AdminCalendarPage({ searchParams }: Props) {
         // out the rest of the roster's open slots.
         doctorId: c.doctorId ?? null,
         doctorName: c.doctorName,
+        doctorSuspended: c.doctorSuspended,
         patientName: c.patientName,
         consultationType: c.consultationType,
         meetingUrl: c.meetingUrl,
@@ -153,6 +154,9 @@ export default async function AdminCalendarPage({ searchParams }: Props) {
 
   const allDoctors = doctors.ok ? doctors.data.items : [];
   const doctorOptions = allDoctors
+    // A suspended doctor has no schedule to draw, so filtering to them would
+    // only ever produce an empty grid.
+    .filter((d) => d.active)
     .filter((d) => !countryCode || servesCountry(d, countryCode))
     .map((d) => ({ id: d.id, name: d.fullName }));
 

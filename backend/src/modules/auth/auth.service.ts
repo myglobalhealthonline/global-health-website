@@ -273,6 +273,12 @@ export async function loginUser(
     if (!ok) {
       throw new AuthInvalidCredentialsError();
     }
+    // Checked after the password compare so a suspended doctor's account is
+    // indistinguishable from a wrong password — the same generic error either
+    // way, and no timing signal that the address exists.
+    if (await isSuspendedDoctorAccount(user.doctorId)) {
+      throw new AuthInvalidCredentialsError();
+    }
     const twoFactorEnabled = Boolean((user as Record<string, unknown>).twoFactorEnabled);
     // §5.2 backstop: catches enrollments imported AFTER this user verified.
     // One indexed query per successful login, deliberately uncached — a login
@@ -293,6 +299,31 @@ function isPastDeletionDate(user: Pick<User, "deletionScheduledAt">): boolean {
   return Boolean(user.deletionScheduledAt && user.deletionScheduledAt.getTime() < Date.now());
 }
 
+/**
+ * True when this login account belongs to a doctor whose profile has been
+ * suspended (`Doctor.active = false`).
+ *
+ * `User.isActive` and `Doctor.active` are separate flags, so suspending a
+ * doctor's profile used to leave their login working — they could still sign
+ * in and work the portal while being hidden from every public surface.
+ * Treating an inactive profile as an inactive account makes `Doctor.active`
+ * the single suspension switch.
+ *
+ * Costs one indexed lookup, and only for accounts that actually link to a
+ * doctor — a patient or admin session skips it entirely.
+ */
+async function isSuspendedDoctorAccount(doctorId: string | null): Promise<boolean> {
+  if (!doctorId) return false;
+  const doctor = await prisma.doctor.findUnique({
+    where: { id: doctorId },
+    select: { active: true },
+  });
+  // A missing doctor row means the link is broken, not that the account is
+  // suspended — `onDelete: SetNull` would have cleared doctorId on a real
+  // delete, so this is only reachable mid-transaction. Fail open.
+  return doctor ? !doctor.active : false;
+}
+
 /** Raw tokenVersion lookup for callers that mint a JWT outside the normal
  *  login flow (e.g. the invite-accept path) and need it to embed in the
  *  token. Defaults to 0 if the user is somehow gone by this point — the
@@ -306,6 +337,9 @@ export async function getSafeUserById(id: string) {
   try {
     const user = await prisma.user.findUnique({ where: { id } });
     if (!user || !user.isActive || isPastDeletionDate(user)) return null;
+    // Also drops a session that is already open when the profile is suspended,
+    // rather than letting it run until the JWT expires.
+    if (await isSuspendedDoctorAccount(user.doctorId)) return null;
     return toSafeUser(user);
   } catch (error) {
     throw normalizeDbError(error, "Authentication is temporarily unavailable");

@@ -21,6 +21,9 @@ export type CalendarItem = {
   meta?: {
     doctorId?: string | null;
     doctorName?: string | null;
+    /** The booked doctor has since been suspended. Their slots are gone, but
+     *  this consultation still stands and needs reassigning or cancelling. */
+    doctorSuspended?: boolean;
     patientName?: string | null;
     consultationType?: string | null;
     meetingUrl?: string | null;

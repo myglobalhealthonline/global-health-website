@@ -217,6 +217,14 @@ export function DayAgenda({
                           {showDoctorName && item.meta?.doctorName ? (
                             <span className="block truncate text-xs" style={{ color: "var(--portal-muted)" }}>
                               {item.meta.doctorName}
+                              {/* The doctor was suspended after this was booked.
+                                  The booking still stands, so say so plainly
+                                  rather than letting it look normal. */}
+                              {item.meta.doctorSuspended ? (
+                                <span className="ml-1.5 font-semibold" style={{ color: "var(--color-status-warning-text, #92400e)" }}>
+                                  · Suspended — needs reassigning
+                                </span>
+                              ) : null}
                             </span>
                           ) : null}
                         </span>

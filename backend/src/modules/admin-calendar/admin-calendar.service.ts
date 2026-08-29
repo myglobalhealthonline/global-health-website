@@ -32,6 +32,10 @@ export type AdminCalendarConsultation = {
   id: string;
   doctorId: string | null;
   doctorName: string | null;
+  /** True when this consultation is still booked with a suspended doctor.
+   *  Suspension hides slots but never touches existing bookings, so admin has
+   *  to be able to see which ones need reassigning. */
+  doctorSuspended: boolean;
   patientName: string;
   consultationType: string;
   status: string;
@@ -87,6 +91,10 @@ export async function getAdminCalendar(
     //    once the rows exist.
     const doctorsInScope = await prisma.doctor.findMany({
       where: {
+        // Suspended doctors (active = false) generate no schedule and show no
+        // slots. Without this the calendar both re-minted and displayed their
+        // slots, so a suspended doctor still looked bookable to admin staff.
+        active: true,
         availabilities: { some: {} },
         ...(doctorId ? { id: doctorId } : {}),
         ...(doctorCountryWhere ?? {}),
@@ -102,8 +110,11 @@ export async function getAdminCalendar(
       prisma.doctorTimeSlot.findMany({
         where: {
           startAt: { gte: fromUtc, lt: toUtc },
+          // Hides slot rows left behind from before the doctor was suspended.
+          // Generation is already gated, but the historic rows persist until
+          // the purge sweeps them, and un-suspending must bring them back.
+          doctor: { active: true, ...(doctorCountryWhere ?? {}) },
           ...(doctorId ? { doctorId } : {}),
-          ...(doctorCountryWhere ? { doctor: doctorCountryWhere } : {}),
         },
         orderBy: { startAt: "asc" },
         select: {
@@ -141,7 +152,11 @@ export async function getAdminCalendar(
           scheduledAt: true,
           meetingUrl: true,
           countryCode: true,
-          doctor: { select: { fullName: true } },
+          // `active` rides along so the calendar can mark consultations still
+          // booked with a suspended doctor. They are deliberately NOT hidden —
+          // a real patient holds that appointment and staff have to see it to
+          // reassign or cancel it deliberately.
+          doctor: { select: { fullName: true, active: true } },
           // Real consultation length: the claimed slot spans it exactly (a
           // 45-min consult collapsed its base slots into one [start,+45) row).
           // `service.durationMinutes` covers appointments booked without a slot.
@@ -172,6 +187,7 @@ export async function getAdminCalendar(
           id: a.id,
           doctorId: a.doctorId ?? null,
           doctorName: a.doctor?.fullName ?? null,
+          doctorSuspended: a.doctor ? !a.doctor.active : false,
           patientName: a.fullName,
           consultationType: a.consultationType,
           status: a.status as string,

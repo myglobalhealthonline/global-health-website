@@ -807,6 +807,22 @@ export const WINDOW_PREGENERATE_DAYS = 120;
 export type GenerationResult = { created: number; skippedOverlap: number };
 
 /**
+ * `Doctor.active = false` is the platform's single suspension switch: it hides
+ * the doctor from every public surface, blocks their login, and — through this
+ * check — stops their schedule existing at all.
+ *
+ * A missing row is treated as suspended: if we cannot prove the doctor is
+ * active, minting bookable slots for them is the worse failure.
+ */
+export async function isDoctorSuspended(doctorId: string): Promise<boolean> {
+  const doctor = await prisma.doctor.findUnique({
+    where: { id: doctorId },
+    select: { active: true },
+  });
+  return !doctor?.active;
+}
+
+/**
  * Materialise (and reconcile) a doctor's slots after their windows changed.
  *
  * Order matters: reconcile first so stale rows can't occupy a start instant the
@@ -946,6 +962,12 @@ export async function ensureSlotsForRange(
   toUtc: Date,
 ): Promise<GenerationResult> {
   if (toUtc <= fromUtc) return { created: 0, skippedOverlap: 0 };
+  // A suspended doctor generates nothing. This is the gate that makes
+  // suspension stick: slot rows are re-minted on every availability read, so
+  // deleting them elsewhere only lasts until the next admin or patient view.
+  // Their availability windows are left intact so un-suspending restores the
+  // schedule exactly as it was.
+  if (await isDoctorSuspended(doctorId)) return { created: 0, skippedOverlap: 0 };
 
   const generated = await windowSlotCandidates(doctorId, fromUtc, toUtc);
   if (generated.length === 0) return { created: 0, skippedOverlap: 0 };
@@ -1076,6 +1098,10 @@ export async function listOpenSlotsForDoctor(
   const cached = slotCache.get(cacheKey);
   if (cached) return cached;
   try {
+    // Guarded here rather than relying on callers: this takes a raw doctorId,
+    // so any caller that resolves a doctor without an `active` filter would
+    // otherwise expose a suspended doctor's leftover slot rows as bookable.
+    if (await isDoctorSuspended(doctorId)) return [];
     await releaseExpiredHeldSlots(doctorId);
     await ensureSlotsForRange(doctorId, fromUtc, toUtc);
     const [rows, pause] = await Promise.all([
@@ -1301,6 +1327,9 @@ export async function listOpenSlotsForDoctorAndService(
   const cached = slotCache.get(cacheKey);
   if (cached) return cached;
   try {
+    // Same guard as listOpenSlotsForDoctor — a suspended doctor offers nothing,
+    // including via the aggregated service-first and GP quick-book fan-outs.
+    if (await isDoctorSuspended(doctorId)) return [];
     if (!opts?.skipExpiredRelease) {
       await releaseExpiredHeldSlots(doctorId);
     }

@@ -101,6 +101,10 @@ export type AdminCalendarConsultation = {
   id: string;
   doctorId: string | null;
   doctorName: string | null;
+  /** True when the booked doctor has since been suspended. Suspension hides
+   *  their slots but never touches existing bookings, so these need flagging
+   *  for staff to reassign or cancel deliberately. */
+  doctorSuspended: boolean;
   patientName: string;
   consultationType: string;
   status: string;
