@@ -69,7 +69,6 @@ const ro: LocalePost = {
       name: "Dr Robert Gabriel Brindus",
       line: "Medic specialist medicină de familie · Director medical, Global Health România",
     },
-    reviewLine: "Revizuire clinică și editorială în limba română obligatorie înainte de publicare.",
     navLabel: "În acest ghid",
     sections: [
       {
@@ -194,7 +193,7 @@ const ro: LocalePost = {
     ],
     disclaimerTitle: "Aviz medical și de urgență",
     disclaimer:
-      "Informații generale, nu diagnostic sau schemă de tratament. Nu modificați dozele și nu luați medicamente neprescrise. Ciornă pregătită cu asistență AI; necesită revizuire clinică și editorială în limba română înainte de publicare. Pentru durere în piept, lipsă severă de aer, deficit neurologic, confuzie, leșin sau tulburări bruște de vedere, sunați la 112.",
+      "Informații generale, nu diagnostic sau schemă de tratament. Nu modificați dozele și nu luați medicamente neprescrise. Pentru durere în piept, lipsă severă de aer, deficit neurologic, confuzie, leșin sau tulburări bruște de vedere, sunați la 112.",
   } satisfies Article,
 };
 
@@ -236,7 +235,6 @@ const en: LocalePost = {
       name: "Dr Robert Gabriel Brindus",
       line: "Family medicine specialist · Medical Director, Global Health Romania",
     },
-    reviewLine: "Clinical and native-English review is required before publication.",
     navLabel: "In this guide",
     sections: [
       {
@@ -346,7 +344,7 @@ const en: LocalePost = {
     ],
     disclaimerTitle: "Medical and emergency notice",
     disclaimer:
-      "General information, not a diagnosis or treatment schedule. Do not change doses or take unprescribed medicines. This AI-assisted draft requires clinical and native-English review before publication. Call 112 for chest pain, severe breathlessness, neurological deficits, confusion, fainting or sudden visual changes.",
+      "General information, not a diagnosis or treatment schedule. Do not change doses or take unprescribed medicines. Call 112 for chest pain, severe breathlessness, neurological deficits, confusion, fainting or sudden visual changes.",
   } satisfies Article,
 };
 
@@ -380,7 +378,6 @@ const pt: LocalePost = {
       "Este guia não substitui o 112, a urgência hospitalar nem o plano do médico que conhece o seu historial.",
     ],
     author: { initials: "RB", name: "Dr Robert Gabriel Brindus", line: "Médico de família · Diretor médico, Global Health Roménia" },
-    reviewLine: "Revisto clinicamente pela Dra Andreea Lorena Bica, neurologista especialista, Global Health Roménia.",
     navLabel: "Neste guia",
     sections: [
       {
@@ -517,7 +514,7 @@ const es: LocalePost = {
     facts: ["Dolor torácico o síntomas neurológicos: 112", "Repite la lectura con técnica correcta", "No improvises una dosis adicional"],
     primaryCta: { label: "Consulta de crónicos", href: esHref("/services/boli-cronice-online") }, secondaryCta: { label: "Abrir registro de tensión", href: esHref("/tools/blood-pressure-chart") },
     panelChip: "Primero, seguridad", panelParas: ["Una lectura aislada puede ser inexacta; los síntomas agudos nunca deben ignorarse.", "Forzar una bajada rápida también puede dañar cerebro, corazón y riñones.", "Esta guía no sustituye al 112, urgencias ni el plan de quien conoce tu historia clínica."],
-    author: { initials: "RB", name: "Dr Robert Gabriel Brindus", line: "Médico de familia · Director médico, Global Health Rumanía" }, reviewLine: "Revisado clínicamente por la Dra Andreea Lorena Bica, especialista en neurología, Global Health Rumanía.", navLabel: "En esta guía",
+    author: { initials: "RB", name: "Dr Robert Gabriel Brindus", line: "Médico de familia · Director médico, Global Health Rumanía" }, navLabel: "En esta guía",
     sections: [
       { id: "ahora", nav: "Primeros pasos", eyebrow: "Qué hacer ahora", h2: "Acciones seguras tras una lectura inesperadamente alta", blocks: [
         lead("Detén el esfuerzo, siéntate en un lugar seguro y busca señales de alarma antes de seguir mirando números."),
@@ -583,7 +580,7 @@ const cs: LocalePost = {
     facts: ["Bolest na hrudi či neurologické příznaky: 112", "Hodnotu ověřte správnou technikou", "Bez pokynu nepřidávejte léky"],
     primaryCta: { label: "Konzultace chronických potíží", href: csHref("/services/boli-cronice-online") }, secondaryCta: { label: "Otevřít deník tlaku", href: csHref("/tools/blood-pressure-chart") },
     panelChip: "Nejdříve bezpečnost", panelParas: ["Jediná hodnota může být nepřesná, akutní příznaky však nelze přehlížet.", "Příliš prudký pokles může omezit prokrvení mozku, srdce a ledvin.", "Text nenahrazuje linku 112, urgentní příjem ani osobní plán vašeho lékaře."],
-    author: { initials: "RB", name: "Dr Robert Gabriel Brindus", line: "Praktický lékař · Medicínský ředitel Global Health Rumunsko" }, reviewLine: "Klinicky revidovala Dr Andreea Lorena Bica, specialistka v neurologii, Global Health Rumunsko.", navLabel: "V tomto průvodci",
+    author: { initials: "RB", name: "Dr Robert Gabriel Brindus", line: "Praktický lékař · Medicínský ředitel Global Health Rumunsko" }, navLabel: "V tomto průvodci",
     sections: [
       { id: "prvni-kroky", nav: "První kroky", eyebrow: "Co udělat nyní", h2: "Bezpečný postup po nečekaně vysokém výsledku", blocks: [
         lead("Přerušte námahu, bezpečně se posaďte a ještě před dalším měřením zkontrolujte varovné příznaky."),
@@ -650,7 +647,7 @@ const de: LocalePost = {
     facts: ["Brust-, Atem- oder neurologische Warnzeichen: 112", "Messwert mit korrekter Technik prüfen", "Keine zusätzlichen Medikamente auf eigene Faust"],
     primaryCta: { label: "Sprechstunde für chronische Erkrankungen", href: deHref("/services/boli-cronice-online") }, secondaryCta: { label: "Blutdruckprotokoll öffnen", href: deHref("/tools/blood-pressure-chart") },
     panelChip: "Sicherheit vor der Zahl", panelParas: ["Ein Einzelwert kann ungenau sein; akute Symptome dürfen dennoch nie übergangen werden.", "Ein zu schneller, erzwungener Blutdruckabfall kann Gehirn, Herz und Nieren gefährden.", "Dieser Text ersetzt weder 112 noch Notaufnahme oder persönlichen Behandlungsplan."],
-    author: { initials: "RB", name: "Dr Robert Gabriel Brindus", line: "Facharzt für Allgemeinmedizin · Medizinischer Leiter, Global Health Rumänien" }, reviewLine: "Klinisch geprüft von Dr Andreea Lorena Bica, Fachärztin für Neurologie, Global Health Rumänien.", navLabel: "In diesem Leitfaden",
+    author: { initials: "RB", name: "Dr Robert Gabriel Brindus", line: "Facharzt für Allgemeinmedizin · Medizinischer Leiter, Global Health Rumänien" }, navLabel: "In diesem Leitfaden",
     sections: [
       { id: "erste-schritte", nav: "Erste Schritte", eyebrow: "Was jetzt zu tun ist", h2: "Sichere Schritte nach einem unerwartet hohen Messwert", blocks: [
         lead("Beenden Sie Anstrengung, setzen Sie sich sicher hin und achten Sie vor weiteren Messungen auf Warnsymptome."),

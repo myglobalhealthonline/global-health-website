@@ -68,7 +68,6 @@ const es: LocalePost = {
       name: "Dr. Fidel Ernesto Mesa Prado",
       line: "Médico Especialista en Cardiología · Global Health España",
     },
-    reviewLine: "Revisión clínica y editorial en español de España obligatoria antes de la publicación.",
     navLabel: "En este artículo",
     sections: [
       {
@@ -203,7 +202,7 @@ const es: LocalePost = {
     ],
     disclaimerTitle: "Aviso médico",
     disclaimer:
-      "Información general, no diagnóstico ni pauta de tratamiento. No cambie medicamentos o dosis por su cuenta. Borrador preparado con asistencia de IA; exige revisión clínica y editorial en español de España antes de publicarse. Ante dolor torácico, falta de aire, síntomas neurológicos, confusión, desmayo o pérdida súbita de visión, llame al 112.",
+      "Información general, no diagnóstico ni pauta de tratamiento. No cambie medicamentos o dosis por su cuenta. Ante dolor torácico, falta de aire, síntomas neurológicos, confusión, desmayo o pérdida súbita de visión, llame al 112.",
   } satisfies Article,
 };
 
@@ -244,7 +243,6 @@ const en: LocalePost = {
       name: "Dr. Fidel Ernesto Mesa Prado",
       line: "Specialist in Cardiology · Global Health Spain",
     },
-    reviewLine: "Clinical and native-English editorial review is required before publication.",
     navLabel: "In this article",
     sections: [
       {
@@ -361,7 +359,7 @@ const en: LocalePost = {
     ],
     disclaimerTitle: "Medical notice",
     disclaimer:
-      "General information, not a diagnosis or treatment plan. Do not change medication or doses yourself. This AI-assisted draft requires clinical and native-English editorial review before publication. Call 112 for chest pain, breathlessness, neurological symptoms, confusion, fainting or sudden loss of vision.",
+      "General information, not a diagnosis or treatment plan. Do not change medication or doses yourself. Call 112 for chest pain, breathlessness, neurological symptoms, confusion, fainting or sudden loss of vision.",
   } satisfies Article,
 };
 
@@ -402,7 +400,6 @@ const de: LocalePost = {
       name: "Dr. Fidel Ernesto Mesa Prado",
       line: "Facharzt für Kardiologie · Global Health Spanien",
     },
-    reviewLine: "Eine klinische und muttersprachlich deutsche Redaktion ist vor der Veröffentlichung erforderlich.",
     navLabel: "In diesem Artikel",
     sections: [
       {
@@ -519,7 +516,7 @@ const de: LocalePost = {
     ],
     disclaimerTitle: "Medizinischer Hinweis",
     disclaimer:
-      "Allgemeine Information, keine Diagnose oder Behandlungsanweisung. Ändern Sie Medikamente oder Dosen nicht eigenmächtig. Dieser KI-unterstützte Entwurf braucht vor der Veröffentlichung eine klinische und muttersprachlich deutsche Redaktion. Wählen Sie bei Brustschmerz, Atemnot, neurologischen Beschwerden, Verwirrtheit, Ohnmacht oder plötzlichem Sehverlust 112.",
+      "Allgemeine Information, keine Diagnose oder Behandlungsanweisung. Ändern Sie Medikamente oder Dosen nicht eigenmächtig. Wählen Sie bei Brustschmerz, Atemnot, neurologischen Beschwerden, Verwirrtheit, Ohnmacht oder plötzlichem Sehverlust 112.",
   } satisfies Article,
 };
 
@@ -551,7 +548,6 @@ const pt: LocalePost = {
       "Quando recorrer à medicina geral em Espanha e quando acrescentar cardiologia.",
     ],
     author: { initials: "FM", name: "Dr. Fidel Ernesto Mesa Prado", line: "Especialista em Cardiologia · Global Health Espanha" },
-    reviewLine: "Revisto clinicamente pelo Dr. Eduardo Daniel Rodríguez Olivas, médico de medicina geral, Global Health Espanha.",
     navLabel: "Neste artigo",
     sections: [
       {
@@ -660,7 +656,7 @@ const pt: LocalePost = {
       { q: "Uma videoconsulta consegue avaliar uma crise?", a: "Pode rever um registo estável e planear seguimento, mas não examina lesão aguda. Sinais de alarme exigem 112 ou urgência presencial; sem sinais, a medicina geral é geralmente o primeiro passo." },
     ],
     disclaimerTitle: "Informação médica",
-    disclaimer: "Elaborado pelo Dr. Fidel Ernesto Mesa Prado, especialista em cardiologia da Global Health Espanha, e revisto clinicamente pelo Dr. Eduardo Daniel Rodríguez Olivas, médico de medicina geral. Conteúdo produzido com assistência de IA, sujeito a revisão editorial por falante nativo e aprovação clínica final antes da publicação. Não substitui avaliação individual. Não altere medicamentos ou doses sem um plano médico. Perante dor no peito, falta de ar intensa, sinais neurológicos, confusão, desmaio ou perda súbita de visão, ligue 112.",
+    disclaimer: "Elaborado pelo Dr. Fidel Ernesto Mesa Prado, especialista em cardiologia da Global Health Espanha. Não substitui avaliação individual. Não altere medicamentos ou doses sem um plano médico. Perante dor no peito, falta de ar intensa, sinais neurológicos, confusão, desmaio ou perda súbita de visão, ligue 112.",
   } satisfies Article,
 };
 
@@ -678,7 +674,7 @@ const cs: LocalePost = {
     facts: ["Hypertenze bývá tichá", "Vysoká hodnota s varovnými příznaky: 112", "Dávky léků sami neměňte"],
     primaryCta: { label: "Praktický lékař", href: chronicHref("cs") }, secondaryCta: { label: "Kardiologická konzultace", href: cardioHref("cs") },
     panelChip: "Co průvodce řeší", panelParas: ["Které náhlé obtíže mohou znamenat akutní orgánové poškození.", "Jak jednou správně zopakovat velmi vysokou hodnotu bez oddalování pomoci.", "Proč domácí prostředky a svévolné úpravy léků představují riziko.", "Kdy ve Španělsku začít u praktického lékaře a kdy zapojit kardiologa."],
-    author: { initials: "FM", name: "Dr. Fidel Ernesto Mesa Prado", line: "Specialista v kardiologii · Global Health Španělsko" }, reviewLine: "Klinicky zkontroloval Dr. Eduardo Daniel Rodríguez Olivas, praktický lékař, Global Health Španělsko.", navLabel: "V článku",
+    author: { initials: "FM", name: "Dr. Fidel Ernesto Mesa Prado", line: "Specialista v kardiologii · Global Health Španělsko" }, navLabel: "V článku",
     sections: [
       { id: "priznaky", nav: "Příznaky", eyebrow: "První zásada", h2: "Jaké příznaky může vysoký tlak způsobit?", blocks: [
         lead("Nejčastěji nezpůsobuje žádné rozpoznatelné příznaky. Skutečnou hodnotu zjistí pouze měření."),
@@ -732,7 +728,7 @@ const cs: LocalePost = {
       { q: "Pomůže rychle čaj, česnek nebo citron?", a: "Neřeší akutní orgánové poškození a mohou oddálit pomoc. Některé rostlinné přípravky interagují s léky. Nenahrazují 112 ani lékařské vyšetření." },
       { q: "Lze krizi vyřešit videokonzultací?", a: "Videokonzultace může vyhodnotit stabilní domácí záznam a naplánovat kontrolu, ale nevyšetří akutní poškození. Varovné příznaky patří na 112 či pohotovost; jinak začněte u praktického lékaře." },
     ],
-    disclaimerTitle: "Zdravotní upozornění", disclaimer: "Připravil Dr. Fidel Ernesto Mesa Prado, specialista v kardiologii Global Health Španělsko; klinickou kontrolu provedl Dr. Eduardo Daniel Rodríguez Olivas, praktický lékař. Obsah vznikl s podporou AI a před zveřejněním vyžaduje redakční kontrolu rodilým mluvčím a konečné klinické schválení. Nenahrazuje individuální vyšetření. Bez lékařského plánu neměňte léky ani dávky. Při bolesti na hrudi, těžké dušnosti, neurologických příznacích, zmatenosti, bezvědomí nebo náhlé ztrátě zraku volejte 112.",
+    disclaimerTitle: "Zdravotní upozornění", disclaimer: "Připravil Dr. Fidel Ernesto Mesa Prado, specialista v kardiologii Global Health Španělsko. Nenahrazuje individuální vyšetření. Bez lékařského plánu neměňte léky ani dávky. Při bolesti na hrudi, těžké dušnosti, neurologických příznacích, zmatenosti, bezvědomí nebo náhlé ztrátě zraku volejte 112.",
   } satisfies Article,
 };
 
@@ -749,7 +745,7 @@ const ro: LocalePost = {
     intro: "<strong>Tensiunea arterială mare nu dă de obicei simptome</strong>. Hipertensiunea nu poate fi confirmată sau exclusă după cum te simți. În Spania, dacă o valoare foarte mare apare împreună cu <strong>durere ori apăsare în piept, lipsă de aer, slăbiciune pe o parte, vorbire dificilă, confuzie, leșin, pierderea bruscă a vederii sau o durere de cap bruscă și neobișnuit de intensă</strong>, sună la <strong>112</strong>. Pot fi semne de afectare acută a inimii, creierului, plămânilor, ochilor sau aortei. Nu aștepta efectul unui ceai și nu lua o doză suplimentară ori medicamentul altei persoane.",
     facts: ["Hipertensiunea este frecvent silențioasă", "Valoare mare plus semne de alarmă: 112", "Nu modifica singur medicația"], primaryCta: { label: "Consultație de medicină generală", href: chronicHref("ro") }, secondaryCta: { label: "Consultație de cardiologie", href: cardioHref("ro") },
     panelChip: "Ce clarifică ghidul", panelParas: ["Ce simptome bruște pot semnala afectarea acută a organelor.", "Cum repeți corect o valoare foarte mare fără să întârzii ajutorul.", "De ce remediile populare și schimbarea medicației fără recomandare cresc riscul.", "Când începi cu medicul generalist în Spania și când este util cardiologul."],
-    author: { initials: "FM", name: "Dr. Fidel Ernesto Mesa Prado", line: "Medic specialist în cardiologie · Global Health Spania" }, reviewLine: "Revizuit clinic de Dr. Eduardo Daniel Rodríguez Olivas, medic generalist, Global Health Spania.", navLabel: "În acest articol",
+    author: { initials: "FM", name: "Dr. Fidel Ernesto Mesa Prado", line: "Medic specialist în cardiologie · Global Health Spania" }, navLabel: "În acest articol",
     sections: [
       { id: "simptome", nav: "Simptome", eyebrow: "Prima idee", h2: "Ce simptome poate provoca tensiunea mare?", blocks: [lead("Cel mai adesea, niciunul. Doar măsurarea arată cât de mare este tensiunea."), p("Durerea de cap, amețeala, țiuitul în urechi, sângerarea nazală, palpitațiile sau vederea încețoșată pot însoți o creștere, dar nu sunt specifice. Apar și în anxietate, migrenă, febră, durere, deshidratare ori lipsă de somn. Nici starea bună nu oferă siguranță: valorile crescute pot rămâne neobservate ani întregi."), p("Separă diagnosticul de triajul imediat. Hipertensiunea se stabilește prin măsurători repetate și evaluare medicală. Urgența momentului este decisă de debutul brusc, simptome, context — inclusiv sarcină sau perioada după naștere — și posibila afectare acută a organelor."), ul(["O durere de cap obișnuită nu dovedește că tensiunea este cauza.", "Amețeala poate apărea și la tensiune mică.", "Durerea sau panica pot crește temporar valoarea, însă o valoare extremă rămâne importantă.", "Semnele neurologice, respiratorii, vizuale sau toracice apărute brusc schimbă imediat prioritatea."]), cite(`<a href="${FEC_HTA}" rel="nofollow noopener" target="_blank">Fundación Española del Corazón</a> explică faptul că hipertensiunea este de regulă asimptomatică și se depistează prin măsurare.`)] },
       { id: "afectare-acuta", nav: "Urgență majoră", eyebrow: "Diferența esențială", h2: "O valoare foarte mare nu înseamnă întotdeauna aceeași urgență", blocks: [lead("Urgența hipertensivă majoră înseamnă tensiune foarte mare împreună cu afectare acută de organ, nu doar un număr pe aparat."), p("Acasă nu poți exclude în siguranță afectarea creierului, inimii, rinichilor, retinei sau aortei. În spital pot fi necesare consultația, ECG-ul, analizele de sânge și urină, examinarea fundului de ochi ori imagistica. Semnele de alarmă cer evaluare imediată în persoană."), p("O valoare repetată corect, în jur de 180/120 mmHg sau mai mare, este foarte ridicată. Fără semne de alarmă nu demonstrează singură afectare acută, dar necesită evaluare medicală urgentă în aceeași zi. Cu semne de alarmă, nu continua să măsori sperând că scade: sună la 112."), warn("Nu încerca să stabilești singur tipul urgenței", "Lipsa durerii nu exclude afectarea. Nici o valoare sub 180/120 nu exclude un accident vascular cerebral, sindrom coronarian acut sau o problemă a aortei când simptomele sunt bruște."), cite(`Ghidul <a href="${ESC_2024}" rel="nofollow noopener" target="_blank">ESC 2024</a> diferențiază tensiunea marcat crescută de urgența hipertensivă cu afectare acută de organ.`)] },
@@ -771,7 +767,7 @@ const ro: LocalePost = {
       { q: "Ceaiul, usturoiul sau lămâia scad repede tensiunea?", a: "Nu tratează afectarea acută și pot întârzia ajutorul. Unele produse naturale interacționează cu medicamentele. Nu înlocuiesc niciodată 112 ori evaluarea medicală." },
       { q: "O consultație video poate evalua o criză?", a: "Poate revizui un jurnal stabil și planifica monitorizarea, dar nu poate examina afectarea acută. Semnele de alarmă necesită 112 sau evaluare de urgență în persoană; fără ele, începe de regulă cu medicul generalist." },
     ],
-    disclaimerTitle: "Notă medicală", disclaimer: "Redactat de Dr. Fidel Ernesto Mesa Prado, medic specialist în cardiologie la Global Health Spania, și revizuit clinic de Dr. Eduardo Daniel Rodríguez Olivas, medic generalist. Conținut realizat cu asistență AI, care necesită revizie editorială de către un vorbitor nativ și aprobare clinică finală înainte de publicare. Nu înlocuiește evaluarea individuală. Nu schimba medicamentele sau dozele fără un plan medical. Pentru durere în piept, lipsă severă de aer, semne neurologice, confuzie, leșin sau pierderea bruscă a vederii, sună la 112.",
+    disclaimerTitle: "Notă medicală", disclaimer: "Redactat de Dr. Fidel Ernesto Mesa Prado, medic specialist în cardiologie la Global Health Spania. Nu înlocuiește evaluarea individuală. Nu schimba medicamentele sau dozele fără un plan medical. Pentru durere în piept, lipsă severă de aer, semne neurologice, confuzie, leșin sau pierderea bruscă a vederii, sună la 112.",
   } satisfies Article,
 };
 

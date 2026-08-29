@@ -70,7 +70,6 @@ const pt: LocalePost = {
       name: "Dr Rui Diogo Rodrigues",
       line: "Médico de Clínica Geral e Medicina Familiar · Global Health Portugal",
     },
-    reviewLine: "Revisão clínica, legal e editorial em português europeu obrigatória antes da publicação.",
     navLabel: "Neste artigo",
     sections: [
       {
@@ -98,6 +97,7 @@ const pt: LocalePost = {
         blocks: [
           lead("Os prazos variam com categoria, habilitação e idade."),
           p("A Justiça indica atestado a partir dos 60 anos no Grupo 1 e também certificado de aptidão psicológica depois dos 70. No Grupo 2, a revalidação periódica exige atestado e, depois dos 50, certificado psicológico. Primeira emissão, troca de carta estrangeira ou indicação da autoridade de saúde podem seguir regras próprias."),
+          p('O teste psicotécnico é presencial. Quando for exigido, a Global Health encaminha-o para uma <a href="' + href("pt", "/services/certificado-medico-carta-de-conducao") + '">clínica parceira de confiança</a> e coordena os passos seguintes.'),
           warn("Confirme o prazo oficial", "Use a sua categoria, data de nascimento e data de habilitação. Se recebeu uma notificação do IMT, leve-a à consulta."),
         ],
       },
@@ -145,7 +145,7 @@ const pt: LocalePost = {
     linksLead:
       "A consulta avalia categoria, história e documentos.",
     links: [
-      { label: "Consulta para atestado da carta", href: href("pt", "/services/certificado-medico-carta-de-conducao") },
+      { label: "Consulta para atestado e encaminhamento psicotécnico", href: href("pt", "/services/certificado-medico-carta-de-conducao") },
       { label: "Médicos em Portugal", href: href("pt", "/doctors") },
       { label: "Contactar a Global Health", href: href("pt", "/contact") },
     ],
@@ -189,7 +189,7 @@ const pt: LocalePost = {
     ],
     disclaimerTitle: "Aviso Médico",
     disclaimer:
-      "Informação geral sobre o atestado médico para carta de condução em Portugal. Não substitui avaliação individual, não garante emissão e não substitui instruções do IMT. Rascunho preparado com assistência de IA; exige revisão clínica, legal e editorial em português europeu antes de qualquer publicação.",
+      "Informação geral sobre o atestado médico para carta de condução em Portugal. Não substitui avaliação individual, não garante emissão e não substitui instruções do IMT.",
   } satisfies Article,
 };
 
@@ -230,8 +230,6 @@ const en: LocalePost = {
       name: "Dr Rui Diogo Rodrigues",
       line: "General practitioner and family doctor · Global Health Portugal",
     },
-    reviewLine:
-      "Clinical, legal and native English editorial review is required before publication.",
     navLabel: "In this article",
     sections: [
       {
@@ -259,6 +257,7 @@ const en: LocalePost = {
         blocks: [
           lead("Deadlines depend on category, acquisition date and age."),
           p("The Justice portal requires a medical certificate from age 60 for Group 1 and a psychological certificate after 70. Group 2 renewals require a medical certificate and, after 50, a psychological certificate. First licences, foreign-licence exchanges and health-authority directions may follow different rules."),
+          p('The psychotechnical test must be completed in person. When required, Global Health refers the patient to a <a href="' + href("en", "/services/certificado-medico-carta-de-conducao") + '">trusted partner clinic</a> and coordinates the next steps.'),
           warn("Check the official deadline", "Use your category, birth date and acquisition date. Bring any IMT notice."),
         ],
       },
@@ -305,7 +304,7 @@ const en: LocalePost = {
     linksH2: "Next steps",
     linksLead: "The appointment covers your category, history and documents.",
     links: [
-      { label: "Driving licence medical certificate consultation", href: href("en", "/services/certificado-medico-carta-de-conducao") },
+      { label: "Driving certificate consultation and psychotechnical referral", href: href("en", "/services/certificado-medico-carta-de-conducao") },
       { label: "Doctors in Portugal", href: href("en", "/doctors") },
       { label: "Contact Global Health Portugal", href: href("en", "/contact") },
     ],
@@ -348,7 +347,7 @@ const en: LocalePost = {
     ],
     disclaimerTitle: "Medical disclaimer",
     disclaimer:
-      "General information about Portuguese driving medical certificates. It does not replace individual assessment, guarantee issuance or override IMT instructions. This AI-assisted draft requires clinical, legal and native English review before publication.",
+      "General information about Portuguese driving medical certificates. It does not replace individual assessment, guarantee issuance or override IMT instructions.",
   } satisfies Article,
 };
 
@@ -389,8 +388,6 @@ const de: LocalePost = {
       name: "Dr Rui Diogo Rodrigues",
       line: "Arzt für Allgemein- und Familienmedizin · Global Health Portugal",
     },
-    reviewLine:
-      "Vor der Veröffentlichung ist eine klinische, rechtliche und muttersprachliche redaktionelle Prüfung erforderlich.",
     navLabel: "In diesem Artikel",
     sections: [
       {
@@ -418,6 +415,7 @@ const de: LocalePost = {
         blocks: [
           lead("Fristen richten sich nach Klasse, Erwerbsdatum und Alter."),
           p("Laut Justizportal braucht Gruppe 1 ab 60 ein ärztliches und nach 70 zusätzlich ein psychologisches Attest. Für Gruppe 2 ist bei der Erneuerung ein ärztliches, nach 50 auch ein psychologisches Attest nötig. Bei Ersterteilung, ausländischem Führerschein oder behördlicher Anordnung können andere Regeln gelten."),
+          p('Der psychotechnische Test muss persönlich stattfinden. Wenn er erforderlich ist, vermittelt Global Health den Patienten an eine <a href="' + href("de", "/services/certificado-medico-carta-de-conducao") + '">vertrauenswürdige Partnerklinik</a> und koordiniert die nächsten Schritte.'),
           warn("Amtliche Frist prüfen", "Nutzen Sie Klasse, Geburts- und Erwerbsdatum. Bringen Sie eine Mitteilung des IMT mit."),
         ],
       },
@@ -464,7 +462,7 @@ const de: LocalePost = {
     linksH2: "Nächste Schritte",
     linksLead: "In der Sprechstunde werden Führerscheinklasse, Krankengeschichte und Unterlagen geprüft.",
     links: [
-      { label: "Sprechstunde für das Führerscheinattest", href: href("de", "/services/certificado-medico-carta-de-conducao") },
+      { label: "Sprechstunde und Überweisung zum psychotechnischen Test", href: href("de", "/services/certificado-medico-carta-de-conducao") },
       { label: "Ärzte in Portugal", href: href("de", "/doctors") },
       { label: "Global Health Portugal kontaktieren", href: href("de", "/contact") },
     ],
@@ -507,7 +505,7 @@ const de: LocalePost = {
     ],
     disclaimerTitle: "Medizinischer Hinweis",
     disclaimer:
-      "Allgemeine Informationen zum ärztlichen Führerscheinattest in Portugal. Der Text ersetzt keine individuelle Beurteilung, garantiert keine Ausstellung und ersetzt keine Anweisung des IMT. Dieser KI-unterstützte Entwurf muss vor der Veröffentlichung klinisch, rechtlich und muttersprachlich redaktionell geprüft werden.",
+      "Allgemeine Informationen zum ärztlichen Führerscheinattest in Portugal. Der Text ersetzt keine individuelle Beurteilung, garantiert keine Ausstellung und ersetzt keine Anweisung des IMT.",
   } satisfies Article,
 };
 
@@ -549,8 +547,6 @@ const es: LocalePost = {
       name: "Dr Rui Diogo Rodrigues",
       line: "Médico de Medicina General y Familiar · Global Health Portugal",
     },
-    reviewLine:
-      "Revisado clínicamente por la Dra. Margarida Domingues e Andrade, médica de Medicina General y Familiar, Global Health Portugal.",
     navLabel: "En este artículo",
     sections: [
       {
@@ -617,6 +613,7 @@ const es: LocalePost = {
         blocks: [
           lead("La evaluación psicológica solo se exige en determinados perfiles y categorías de permiso."),
           p("En la práctica, la <strong>evaluación psicológica</strong> aparece con más frecuencia en expedientes del <strong>Grupo 2</strong> y en contextos donde la categoría, la actividad profesional o la historia clínica obligan a confirmar aptitudes psicológicas relevantes para la conducción. También puede plantearse si existen dudas sobre atención, control conductual, consumo problemático de sustancias o cambios cognitivos que merecen una revisión más precisa."),
+          p('El test psicotécnico debe realizarse presencialmente. Cuando sea necesario, Global Health deriva al paciente a una <a href="' + href("es", "/services/certificado-medico-carta-de-conducao") + '">clínica colaboradora de confianza</a> y coordina los siguientes pasos.'),
           ul([
             "Puede derivarse de la categoría, no de una sospecha personal.",
             "Puede venir motivada por antecedentes clínicos o conductuales relevantes.",
@@ -667,7 +664,7 @@ const es: LocalePost = {
     linksLead:
       "Nuestro equipo en Portugal revisa lo que realmente define estos casos: categoría, edad, antecedentes, medicación, documentación y necesidad o no de pasos complementarios antes de remitir al IMT.",
     links: [
-      { label: "Consulta para certificado médico de conducción", href: href("es", "/services/certificado-medico-carta-de-conducao") },
+      { label: "Consulta y derivación para el test psicotécnico", href: href("es", "/services/certificado-medico-carta-de-conducao") },
       { label: "Nuestros médicos en Portugal", href: href("es", "/doctors") },
       { label: "Contactar con Global Health Portugal", href: href("es", "/contact") },
     ],
@@ -717,7 +714,7 @@ const es: LocalePost = {
     ],
     disclaimerTitle: "Aviso médico",
     disclaimer:
-      "Escrito por el Dr Rui Diogo Rodrigues, médico de Medicina General y Familiar de Global Health Portugal, y revisado clínicamente por la Dra. Margarida Domingues e Andrade, médica de Medicina General y Familiar. Este artículo contiene información general sobre el certificado médico para el carnet de conducir en Portugal. No sustituye una valoración clínica individual ni asesoramiento jurídico. La emisión del certificado depende de la categoría del permiso, la edad, los antecedentes clínicos y la observación médica. En una urgencia médica, llame al 112.",
+      "Escrito por el Dr Rui Diogo Rodrigues, médico de Medicina General y Familiar de Global Health Portugal. Este artículo contiene información general sobre el certificado médico para el carnet de conducir en Portugal. No sustituye una valoración clínica individual ni asesoramiento jurídico. La emisión del certificado depende de la categoría del permiso, la edad, los antecedentes clínicos y la observación médica. En una urgencia médica, llame al 112.",
   } satisfies Article,
 };
 
@@ -759,8 +756,6 @@ const cs: LocalePost = {
       name: "Dr Rui Diogo Rodrigues",
       line: "Lékař všeobecného a rodinného lékařství · Global Health Portugal",
     },
-    reviewLine:
-      "Klinicky zkontrolovala Dra. Margarida Domingues e Andrade, lékařka všeobecného a rodinného lékařství, Global Health Portugal.",
     navLabel: "V tomto článku",
     sections: [
       {
@@ -827,6 +822,7 @@ const cs: LocalePost = {
         blocks: [
           lead("Nejde o povinnost pro každého řidiče, ale v některých kategoriích a klinických situacích je to běžná součást procesu."),
           p("V praxi se <strong>psychologické posouzení</strong> častěji objevuje u případů <strong>skupiny 2</strong> a tam, kde kategorie, profesní charakter řízení nebo zdravotní historie vyvolávají otázky ohledně pozornosti, úsudku, kontroly chování či dalších psychických schopností důležitých pro řízení. Může se uplatnit také při kognitivních změnách nebo po událostech, které vyžadují přesnější zhodnocení funkční způsobilosti."),
+          p('Psychotechnické vyšetření musí proběhnout osobně. Pokud je vyžadováno, Global Health pacienta odešle na <a href="' + href("cs", "/services/certificado-medico-carta-de-conducao") + '">důvěryhodnou partnerskou kliniku</a> a koordinuje další kroky.'),
           ul([
             "Může vyplývat z typu oprávnění, ne z osobního podezření.",
             "Může být odůvodněno předchozí zdravotní nebo behaviorální anamnézou.",
@@ -877,7 +873,7 @@ const cs: LocalePost = {
     linksLead:
       "Náš tým v Portugalsku posuzuje žádost podle toho, co je skutečně rozhodující: kategorie, věk, anamnéza, medikace, podklady a případná potřeba dalších kroků před předáním na IMT.",
     links: [
-      { label: "Konzultace k lékařskému potvrzení pro řízení", href: href("cs", "/services/certificado-medico-carta-de-conducao") },
+      { label: "Konzultace a odeslání na psychotechnické vyšetření", href: href("cs", "/services/certificado-medico-carta-de-conducao") },
       { label: "Naši lékaři v Portugalsku", href: href("cs", "/doctors") },
       { label: "Kontaktovat Global Health Portugal", href: href("cs", "/contact") },
     ],
@@ -927,7 +923,7 @@ const cs: LocalePost = {
     ],
     disclaimerTitle: "Lékařské upozornění",
     disclaimer:
-      "Text připravil Dr Rui Diogo Rodrigues, lékař všeobecného a rodinného lékařství v Global Health Portugal, a klinicky zkontrolovala Dra. Margarida Domingues e Andrade, lékařka všeobecného a rodinného lékařství. Článek přináší obecné informace o lékařském potvrzení pro řidičský průkaz v Portugalsku. Nenahrazuje individuální lékařské posouzení ani právní poradenství. Možnost vystavení potvrzení závisí na kategorii oprávnění, věku, anamnéze a lékařském vyšetření. V akutní zdravotní nouzi volejte 112.",
+      "Text připravil Dr Rui Diogo Rodrigues, lékař všeobecného a rodinného lékařství v Global Health Portugal. Článek přináší obecné informace o lékařském potvrzení pro řidičský průkaz v Portugalsku. Nenahrazuje individuální lékařské posouzení ani právní poradenství. Možnost vystavení potvrzení závisí na kategorii oprávnění, věku, anamnéze a lékařském vyšetření. V akutní zdravotní nouzi volejte 112.",
   } satisfies Article,
 };
 
@@ -969,8 +965,6 @@ const roPost: LocalePost = {
       name: "Dr Rui Diogo Rodrigues",
       line: "Medic de medicină generală și de familie · Global Health Portugal",
     },
-    reviewLine:
-      "Revizuit clinic de Dra. Margarida Domingues e Andrade, medic de medicină generală și de familie, Global Health Portugal.",
     navLabel: "În acest articol",
     sections: [
       {
@@ -1037,6 +1031,7 @@ const roPost: LocalePost = {
         blocks: [
           lead("Evaluarea psihologică este cerută doar pentru anumite categorii sau situații clinice."),
           p("În practică, <strong>evaluarea psihologică</strong> apare mai des în dosarele din <strong>grupa 2</strong> și în situațiile în care categoria, activitatea profesională sau istoricul medical ridică întrebări privind atenția, controlul comportamental, judecata sau alte aptitudini psihice relevante pentru condus. Poate fi necesară și dacă există suspiciuni de modificări cognitive sau un istoric care justifică o verificare mai detaliată."),
+          p('Testul psihotehnic trebuie efectuat în persoană. Când este necesar, Global Health îndrumă pacientul către o <a href="' + href("ro", "/services/certificado-medico-carta-de-conducao") + '">clinică parteneră de încredere</a> și coordonează pașii următori.'),
           ul([
             "Poate rezulta din categorie, nu dintr-o neîncredere personală.",
             "Poate fi cerută din cauza istoricului medical sau comportamental relevant.",
@@ -1087,7 +1082,7 @@ const roPost: LocalePost = {
     linksLead:
       "Echipa noastră din Portugalia analizează exact elementele care contează: categoria, vârsta, istoricul medical, medicația, documentele și necesitatea sau nu a unor pași suplimentari înainte de trimiterea la IMT.",
     links: [
-      { label: "Consultație pentru certificatul medical de conducere", href: href("ro", "/services/certificado-medico-carta-de-conducao") },
+      { label: "Consultație și trimitere pentru testul psihotehnic", href: href("ro", "/services/certificado-medico-carta-de-conducao") },
       { label: "Medicii noștri din Portugalia", href: href("ro", "/doctors") },
       { label: "Contact Global Health Portugal", href: href("ro", "/contact") },
     ],
@@ -1137,7 +1132,7 @@ const roPost: LocalePost = {
     ],
     disclaimerTitle: "Avertisment medical",
     disclaimer:
-      "Text scris de Dr Rui Diogo Rodrigues, medic de medicină generală și de familie la Global Health Portugal, și revizuit clinic de Dra. Margarida Domingues e Andrade, medic de medicină generală și de familie. Articolul oferă informații generale despre certificatul medical pentru permisul de conducere în Portugalia. Nu înlocuiește evaluarea clinică individuală și nici consultanța juridică. Emiterea certificatului depinde de categoria permisului, vârstă, istoricul medical și examinarea medicală. În caz de urgență medicală, sunați la 112.",
+      "Text scris de Dr Rui Diogo Rodrigues, medic de medicină generală și de familie la Global Health Portugal. Articolul oferă informații generale despre certificatul medical pentru permisul de conducere în Portugalia. Nu înlocuiește evaluarea clinică individuală și nici consultanța juridică. Emiterea certificatului depinde de categoria permisului, vârstă, istoricul medical și examinarea medicală. În caz de urgență medicală, sunați la 112.",
   } satisfies Article,
 };
 

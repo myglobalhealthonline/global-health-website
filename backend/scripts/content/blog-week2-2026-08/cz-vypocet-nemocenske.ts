@@ -73,7 +73,6 @@ const cs: LocalePost = {
       "ČSSZ od 15. dne používá denní vyměřovací základ.",
     ],
     author: { initials: "VČ", name: "MUDr. Vojtěch Černý", line: "Praktický lékař · Global Health Česko" },
-    reviewLine: "Odborná a jazyková kontrola MUDr. Romanou Pavlů je nutná před zveřejněním.",
     navLabel: "Obsah článku",
     sections: [
       {
@@ -139,7 +138,7 @@ const cs: LocalePost = {
             "Jaké příjmy a vyloučené dny vstoupily do denního základu?",
             "Odpovídá odhad v kalkulačce MPSV údajům, které eviduje mzdová účtárna nebo ČSSZ?",
           ]),
-          p("Proces vystavení neschopenky vysvětluje náš samostatný průvodce <a href=\"" + href("cs", "/blog/neschopenka-jak-funguje-eneschopenka") + "\">Jak funguje eNeschopenka</a>. Pokud potřebujete lékařské posouzení, můžete využít <a href=\"" + href("cs", "/services/neschopenka-online") + "\">online konzultaci pro neschopenku</a>. Lékař nemůže zaručit vystavení neschopenky ani konkrétní výši dávky."),
+          p("Při konzultaci lékař elektronicky stanoví začátek eNeschopenky. Pacient musí během pracovní neschopnosti dodržovat režim a chodit na kontroly v určených termínech. Po uzdravení kontaktuje lékaře a požádá o ukončení; formální ukončení provádí a ČSSZ hlásí lékař, nikoli pacient pouhým návratem do práce."),
         ],
       },
     ],
@@ -178,7 +177,7 @@ const cs: LocalePost = {
       { q: "Kde najdu oficiální kalkulačku?", a: "MPSV zveřejňuje kalkulačku dávek pro rok 2026. Je orientační: nemusí znát váš skutečný hodinový průměr, směny, rozhodné období, vyloučené dny ani všechny údaje vedené u ČSSZ." },
     ],
     disclaimerTitle: "Zdravotní a finanční upozornění",
-    disclaimer: "AI-assisted článek připravený pro českou jazykovou a odbornou kontrolu. Obecné informace k 25. srpnu 2026; nejde o individuální lékařskou, právní ani mzdovou radu.",
+    disclaimer: "Obecné informace k 25. srpnu 2026; nejde o individuální lékařskou, právní ani mzdovou radu.",
   } satisfies Article,
 };
 
@@ -216,7 +215,6 @@ const enResearch: LocalePost = {
       "From day 15 onward ČSSZ moves to a daily assessment base, and the percentage increases again after day 30 and day 60.",
     ],
     author: { initials: "VČ", name: "MUDr. Vojtěch Černý", line: "General Practitioner · Global Health Czechia" },
-    reviewLine: "Clinical and native editorial review by MUDr. Romana Pavlů is required before publication.",
     navLabel: "In this article",
     sections: [
       {
@@ -319,7 +317,7 @@ const enResearch: LocalePost = {
             "Did the incapacity begin just after employment ended, so employer compensation never arose?",
             "Is this already a longer incapacity where the percentage increased after day 30 or day 60?",
           ]),
-          p("If you first need the process side rather than the calculation side, we cover that separately in our Czech guide on how eNeschopenka works: <a href=\"https://www.myglobalhealth.online/czechia/en/blog/neschopenka-czech-sick-note-explained\">How the Czech electronic sick note actually works</a>. That guide is about the sick note process itself. This article is deliberately about the money."),
+          p("At the consultation, the doctor electronically sets the start date of the eNeschopenka. During sick leave, the patient must follow the prescribed regime and attend check-ups on the dates set by the doctor. After recovery, the patient contacts the doctor and asks for the leave to be ended; the doctor formally closes it and reports the end to ČSSZ. Returning to work does not close it automatically. See our guide to <a href=\"https://www.myglobalhealth.online/czechia/en/blog/neschopenka-czech-sick-note-explained\">how the Czech electronic sick note works</a>."),
           p("And if you still need a doctor to decide whether temporary incapacity for work is medically justified in your case, you can book an online consultation. What a doctor can decide is whether incapacity is clinically appropriate. What neither the doctor nor the clinic can decide is the statutory amount paid by payroll or by ČSSZ."),
         ],
       },
@@ -380,7 +378,7 @@ const enResearch: LocalePost = {
     ],
     disclaimerTitle: "Medical and financial notice",
     disclaimer:
-      "Written by MUDr. Vojtěch Černý, General Practitioner at Global Health Czechia. Clinical and native editorial review by MUDr. Romana Pavlů is required before publication. This article provides general information about Czech temporary incapacity for work and sickness-related income as of 24 August 2026. It is not personal medical advice, legal advice, or payroll advice. Your employer determines the exact first-phase wage compensation from your payroll records; ČSSZ determines the exact sickness benefit from your countable income under the law. In a medical emergency, call 155 or 112 immediately.",
+      "Written by MUDr. Vojtěch Černý, General Practitioner at Global Health Czechia. This article provides general information about Czech temporary incapacity for work and sickness-related income as of 24 August 2026. It is not personal medical advice, legal advice, or payroll advice. Your employer determines the exact first-phase wage compensation from your payroll records; ČSSZ determines the exact sickness benefit from your countable income under the law. In a medical emergency, call 155 or 112 immediately.",
   } satisfies Article,
 };
 
@@ -418,7 +416,6 @@ const pt: LocalePost = {
       "Depois do dia 15, a ČSSZ passa para uma base diária e a percentagem sobe novamente depois do dia 30 e do dia 60.",
     ],
     author: { initials: "VČ", name: "MUDr. Vojtěch Černý", line: "Médico de clínica geral · Global Health Chéquia" },
-    reviewLine: "Revisão clínica de MUDr. Romana Pavlů, médica de clínica geral para adultos, Global Health Chéquia.",
     navLabel: "Neste artigo",
     sections: [
       {
@@ -518,7 +515,7 @@ const pt: LocalePost = {
             "A incapacidade começou logo após o fim do emprego, de modo que nunca houve direito a compensação do empregador?",
             "Trata-se já de uma incapacidade mais longa, em que a percentagem subiu depois do dia 30 ou do dia 60?",
           ]),
-          p("Se o que precisa primeiro é do lado do processo e não do cálculo, tratamos isso em separado no nosso guia sobre a eNeschopenka: <a href=\"https://www.myglobalhealth.online/czechia/pt/blog/neschopenka-czech-sick-note-explained\">como funciona a baixa eletrónica checa</a>. Esse texto explica o circuito do documento. Este artigo está propositadamente focado no dinheiro."),
+          p("Na consulta, o médico define eletronicamente a data de início da eNeschopenka. Durante a baixa, o doente deve cumprir o regime indicado e comparecer às consultas de controlo nas datas marcadas. Depois de recuperar, contacta o médico e pede o fim da baixa; o médico encerra-a formalmente e comunica o fim à ČSSZ. Regressar ao trabalho não a encerra automaticamente. Consulte o guia sobre <a href=\"https://www.myglobalhealth.online/czechia/pt/blog/neschopenka-czech-sick-note-explained\">como funciona a baixa eletrónica checa</a>."),
           p("Se ainda precisa que um médico decida se a incapacidade temporária para o trabalho é clinicamente justificada no seu caso, pode marcar uma consulta online. O médico decide a questão clínica; o valor é decidido pela lei, pelo empregador e pela ČSSZ."),
         ],
       },
@@ -579,7 +576,7 @@ const pt: LocalePost = {
     ],
     disclaimerTitle: "Aviso médico e financeiro",
     disclaimer:
-      "Escrito por MUDr. Vojtěch Černý, médico de clínica geral da Global Health Chéquia, com revisão clínica de MUDr. Romana Pavlů, médica de clínica geral para adultos. Este artigo fornece informação geral sobre a incapacidade temporária para o trabalho e os pagamentos associados na Chéquia com referência a 24 de agosto de 2026. Não substitui aconselhamento médico individual, aconselhamento jurídico nem aconselhamento salarial. O valor exato da compensação inicial é determinado pelo seu empregador com base nos seus dados salariais; o valor exato do subsídio é determinado pela ČSSZ de acordo com o seu rendimento contabilizável e a lei. Em urgência médica, ligue 155 ou 112.",
+      "Escrito por MUDr. Vojtěch Černý, médico de clínica geral da Global Health Chéquia. Este artigo fornece informação geral sobre a incapacidade temporária para o trabalho e os pagamentos associados na Chéquia com referência a 24 de agosto de 2026. Não substitui aconselhamento médico individual, aconselhamento jurídico nem aconselhamento salarial. O valor exato da compensação inicial é determinado pelo seu empregador com base nos seus dados salariais; o valor exato do subsídio é determinado pela ČSSZ de acordo com o seu rendimento contabilizável e a lei. Em urgência médica, ligue 155 ou 112.",
   } satisfies Article,
 };
 
@@ -617,7 +614,6 @@ const es: LocalePost = {
       "Desde el día 15 la ČSSZ pasa a una base diaria y el porcentaje vuelve a subir después del día 30 y del día 60.",
     ],
     author: { initials: "VČ", name: "MUDr. Vojtěch Černý", line: "Médico de medicina general · Global Health Chequia" },
-    reviewLine: "Revisión clínica de MUDr. Romana Pavlů, médica de medicina general para adultos, Global Health Chequia.",
     navLabel: "En este artículo",
     sections: [
       {
@@ -717,7 +713,7 @@ const es: LocalePost = {
             "¿La incapacidad empezó justo después de terminar el empleo, de modo que nunca surgió el derecho a compensación del empleador?",
             "¿Se trata ya de una incapacidad más larga en la que el porcentaje ha subido después del día 30 o del día 60?",
           ]),
-          p("Si lo que necesita primero es la parte del proceso y no la del cálculo, lo tratamos por separado en nuestra guía sobre la eNeschopenka: <a href=\"https://www.myglobalhealth.online/czechia/es/blog/neschopenka-czech-sick-note-explained\">cómo funciona la baja electrónica checa</a>. Ese texto explica el recorrido del documento. Este artículo está deliberadamente centrado en el dinero."),
+          p("En la consulta, el médico establece electrónicamente la fecha de inicio de la eNeschopenka. Durante la baja, el paciente debe cumplir el régimen indicado y acudir a las revisiones en las fechas fijadas. Tras recuperarse, contacta con el médico y solicita el alta; el médico cierra formalmente la baja y comunica su finalización a la ČSSZ. Volver al trabajo no la cierra automáticamente. Consulte la guía sobre <a href=\"https://www.myglobalhealth.online/czechia/es/blog/neschopenka-czech-sick-note-explained\">cómo funciona la baja electrónica checa</a>."),
           p("Si todavía necesita que un médico determine si la incapacidad temporal para el trabajo está médicamente justificada en su caso, puede reservar una consulta online. El médico decide la cuestión clínica; el importe lo determinan la ley, el empleador y la ČSSZ."),
         ],
       },
@@ -778,7 +774,7 @@ const es: LocalePost = {
     ],
     disclaimerTitle: "Aviso médico y financiero",
     disclaimer:
-      "Escrito por MUDr. Vojtěch Černý, médico de medicina general de Global Health Chequia, con revisión clínica de MUDr. Romana Pavlů, médica de medicina general para adultos. Este artículo ofrece información general sobre la incapacidad temporal para el trabajo y los pagos asociados en Chequia con referencia al 24 de agosto de 2026. No sustituye el consejo médico individual, el asesoramiento jurídico ni el asesoramiento de nómina. El importe exacto de la compensación inicial lo determina su empleador con sus datos salariales; el importe exacto de la prestación lo determina la ČSSZ conforme a su ingreso computable y la ley. En una urgencia médica, llame al 155 o al 112.",
+      "Escrito por MUDr. Vojtěch Černý, médico de medicina general de Global Health Chequia. Este artículo ofrece información general sobre la incapacidad temporal para el trabajo y los pagos asociados en Chequia con referencia al 24 de agosto de 2026. No sustituye el consejo médico individual, el asesoramiento jurídico ni el asesoramiento de nómina. El importe exacto de la compensación inicial lo determina su empleador con sus datos salariales; el importe exacto de la prestación lo determina la ČSSZ conforme a su ingreso computable y la ley. En una urgencia médica, llame al 155 o al 112.",
   } satisfies Article,
 };
 
@@ -816,7 +812,6 @@ const roPost: LocalePost = {
       "Din ziua 15 ČSSZ trece la o bază zilnică, iar procentul crește din nou după ziua 30 și după ziua 60.",
     ],
     author: { initials: "VČ", name: "MUDr. Vojtěch Černý", line: "Medic de medicină generală · Global Health Cehia" },
-    reviewLine: "Revizuit clinic de MUDr. Romana Pavlů, medic de medicină generală pentru adulți, Global Health Cehia.",
     navLabel: "În acest articol",
     sections: [
       {
@@ -918,7 +913,7 @@ const roPost: LocalePost = {
             "A început incapacitatea imediat după încetarea raportului de muncă, astfel încât nu a existat deloc compensație de la angajator?",
             "Este deja o incapacitate mai lungă, în care procentul a crescut după ziua 30 sau ziua 60?",
           ]),
-          p("Dacă aveți nevoie mai întâi de partea de proces și nu de cea de calcul, o tratăm separat în ghidul nostru despre eNeschopenka: <a href=\"https://www.myglobalhealth.online/czechia/ro/blog/neschopenka-czech-sick-note-explained\">cum funcționează concediul medical electronic ceh</a>. Acel text explică traseul documentului. Articolul de aici este concentrat intenționat pe bani."),
+          p("În consultație, medicul stabilește electronic data de început a eNeschopenka. Pe durata concediului medical, pacientul trebuie să respecte regimul indicat și să se prezinte la controale la datele stabilite. După recuperare, contactează medicul și solicită încheierea concediului; medicul îl închide formal și comunică finalizarea către ČSSZ. Revenirea la serviciu nu îl închide automat. Consultați ghidul despre <a href=\"https://www.myglobalhealth.online/czechia/ro/blog/neschopenka-czech-sick-note-explained\">cum funcționează concediul medical electronic ceh</a>."),
           p("Dacă aveți nevoie ca un medic să stabilească dacă incapacitatea temporară de muncă este justificată clinic în cazul dumneavoastră, puteți programa o consultație online. Medicul face evaluarea clinică, iar suma este stabilită potrivit legii de angajator și de ČSSZ."),
         ],
       },
@@ -979,7 +974,7 @@ const roPost: LocalePost = {
     ],
     disclaimerTitle: "Aviz medical și financiar",
     disclaimer:
-      "Scris de MUDr. Vojtěch Černý, medic de medicină generală la Global Health Cehia, și revizuit clinic de MUDr. Romana Pavlů, medic de medicină generală pentru adulți. Acest articol oferă informații generale despre incapacitatea temporară de muncă și plățile aferente în Cehia, cu referință la 24 august 2026. Nu înlocuiește sfatul medical individual, consultanța juridică sau consultanța de salarizare. Valoarea exactă a compensației inițiale este stabilită de angajator pe baza datelor salariale proprii; valoarea exactă a indemnizației este stabilită de ČSSZ pe baza venitului luat în calcul și a legii. În urgență medicală, sunați imediat la 155 sau 112.",
+      "Scris de MUDr. Vojtěch Černý, medic de medicină generală la Global Health Cehia. Acest articol oferă informații generale despre incapacitatea temporară de muncă și plățile aferente în Cehia, cu referință la 24 august 2026. Nu înlocuiește sfatul medical individual, consultanța juridică sau consultanța de salarizare. Valoarea exactă a compensației inițiale este stabilită de angajator pe baza datelor salariale proprii; valoarea exactă a indemnizației este stabilită de ČSSZ pe baza venitului luat în calcul și a legii. În urgență medicală, sunați imediat la 155 sau 112.",
   } satisfies Article,
 };
 
@@ -1017,7 +1012,6 @@ const deResearch: LocalePost = {
       "Ab Tag 15 verwendet die ČSSZ eine tägliche Bemessungsgrundlage; nach Tag 30 und Tag 60 steigt der Prozentsatz erneut.",
     ],
     author: { initials: "VČ", name: "MUDr. Vojtěch Černý", line: "Allgemeinmediziner · Global Health Tschechien" },
-    reviewLine: "Die fachliche und muttersprachliche Prüfung durch MUDr. Romana Pavlů ist vor der Veröffentlichung erforderlich.",
     navLabel: "In diesem Artikel",
     sections: [
       {
@@ -1120,7 +1114,7 @@ const deResearch: LocalePost = {
             "Begann die Arbeitsunfähigkeit kurz nach Ende des Arbeitsverhältnisses, sodass gar kein Arbeitgeber-Lohnersatz mehr entstehen konnte?",
             "Handelt es sich bereits um eine längere Arbeitsunfähigkeit, bei der der Prozentsatz nach Tag 30 oder Tag 60 angestiegen ist?",
           ]),
-          p("Wenn Sie zunächst die Prozessseite statt der Berechnungsseite brauchen, behandeln wir das gesondert in unserem Leitfaden zur eNeschopenka: <a href=\"https://www.myglobalhealth.online/czechia/de/blog/neschopenka-krankschreibung-in-tschechien\">Wie die elektronische Krankschreibung in Tschechien funktioniert</a>. Dieser Text dort erklärt den Ablauf. Dieser Artikel hier ist bewusst auf die finanzielle Berechnung fokussiert."),
+          p("In der Sprechstunde legt der Arzt den Beginn der eNeschopenka elektronisch fest. Während der Krankschreibung muss der Patient die angeordneten Regeln einhalten und zu den festgelegten Kontrollterminen erscheinen. Nach der Genesung kontaktiert er den Arzt und bittet um Beendigung; der Arzt schließt die Krankschreibung formell und meldet das Ende an die ČSSZ. Die bloße Rückkehr zur Arbeit beendet sie nicht automatisch. Lesen Sie unseren Leitfaden dazu, <a href=\"https://www.myglobalhealth.online/czechia/de/blog/neschopenka-krankschreibung-in-tschechien\">wie die elektronische Krankschreibung in Tschechien funktioniert</a>."),
           p("Und falls Sie zunächst ärztlich klären lassen müssen, ob eine vorübergehende Arbeitsunfähigkeit in Ihrem Fall medizinisch gerechtfertigt ist, können Sie eine Online-Sprechstunde buchen. Ärztlich entschieden wird die Frage der Arbeitsunfähigkeit. Gesetzlich entschieden wird dagegen die Höhe des Geldes, das Arbeitgeber oder ČSSZ später zahlen."),
         ],
       },
@@ -1181,7 +1175,7 @@ const deResearch: LocalePost = {
     ],
     disclaimerTitle: "Medizinischer und finanzieller Hinweis",
     disclaimer:
-      "Verfasst von MUDr. Vojtěch Černý, Allgemeinmediziner bei Global Health Tschechien. Die fachliche und muttersprachliche Prüfung durch MUDr. Romana Pavlů ist vor der Veröffentlichung erforderlich. Dieser Artikel enthält allgemeine Informationen zur tschechischen Arbeitsunfähigkeit und zu krankheitsbedingten Zahlungen mit Stand 24. August 2026. Er ersetzt keine persönliche ärztliche Beratung, keine Rechtsberatung und keine Lohnbuchhaltungsberatung. Den exakten Lohnersatz ermittelt Ihr Arbeitgeber anhand Ihrer Entgeltunterlagen; das exakte Krankengeld ermittelt die ČSSZ anhand Ihres anrechenbaren Einkommens nach dem Gesetz. Im medizinischen Notfall rufen Sie sofort 155 oder 112 an.",
+      "Verfasst von MUDr. Vojtěch Černý, Allgemeinmediziner bei Global Health Tschechien. Dieser Artikel enthält allgemeine Informationen zur tschechischen Arbeitsunfähigkeit und zu krankheitsbedingten Zahlungen mit Stand 24. August 2026. Er ersetzt keine persönliche ärztliche Beratung, keine Rechtsberatung und keine Lohnbuchhaltungsberatung. Den exakten Lohnersatz ermittelt Ihr Arbeitgeber anhand Ihrer Entgeltunterlagen; das exakte Krankengeld ermittelt die ČSSZ anhand Ihres anrechenbaren Einkommens nach dem Gesetz. Im medizinischen Notfall rufen Sie sofort 155 oder 112 an.",
   } satisfies Article,
 };
 
@@ -1213,7 +1207,6 @@ const en: LocalePost = {
     panelChip: "Quick answer",
     panelParas: ["The two stages use different calculations.", "From day 15, ČSSZ uses a daily assessment base."],
     author: { initials: "VČ", name: "MUDr. Vojtěch Černý", line: "General Practitioner · Global Health Czechia" },
-    reviewLine: "Clinical and native-language review by MUDr. Romana Pavlů is required before publication.",
     navLabel: "In this guide",
     sections: [
       { id: "first-14-days", nav: "First 14 days", eyebrow: "Wage compensation", h2: "What the employer pays during the first 14 days", blocks: [
@@ -1240,7 +1233,8 @@ const en: LocalePost = {
       { id: "checks", nav: "What to check", eyebrow: "If the amount looks wrong", h2: "What to verify with payroll and ČSSZ", blocks: [
         lead("First identify which of the two payments is being calculated."),
         ul(["How many shifts and hours were missed in the first 14 days?", "Which average hourly earnings did payroll use?", "On which date did ČSSZ take over payment?", "Which income and excluded days entered the daily base?", "Does the MPSV estimate use the same information as payroll or ČSSZ?"]),
-        p("Our separate guide explains <a href=\"" + href("en", "/blog/neschopenka-czech-sick-note-explained") + "\">how Czech eNeschopenka works</a>. If you need a medical assessment, see the <a href=\"" + href("en", "/services/neschopenka-online") + "\">online sick-note consultation</a>. A doctor cannot guarantee a sick note or a particular benefit amount."),
+      p("At the consultation, the doctor electronically sets the start date of the eNeschopenka. During sick leave, the patient must follow the prescribed regime and attend check-ups on the dates set by the doctor. After recovery, the patient contacts the doctor and asks for the leave to be ended; the doctor formally closes it and reports the end to ČSSZ. Returning to work does not close it automatically."),
+      p("Our separate guide explains <a href=\"" + href("en", "/blog/neschopenka-czech-sick-note-explained") + "\">how Czech eNeschopenka works</a>. If you need a medical assessment, see the <a href=\"" + href("en", "/services/neschopenka-online") + "\">online sick-note consultation</a>. A doctor cannot guarantee a sick note or a particular benefit amount."),
       ]},
     ],
     linksEyebrow: "Global Health Czechia", linksH2: "Sick note and medical assessment", linksLead: "ČSSZ calculates the benefit; a doctor assesses whether health reasons justify incapacity for work.",
@@ -1250,7 +1244,7 @@ const en: LocalePost = {
     sources: [{ label: "MPSV: sickness insurance in 2026", href: MPSV_SICKNESS_2026 }, { label: "ČSSZ: detailed sickness-benefit information", href: CSSZ_SICKNESS_DETAIL }, { label: "ČSSZ: benefit amounts and calculations", href: CSSZ_BENEFIT_CALC }, { label: "MPSV: 2026 benefit calculator", href: MPSV_CALCULATOR_2026 }, { label: "Czech Labour Code, Section 192", href: LABOUR_CODE_192 }, { label: "Czech Sickness Insurance Act", href: SICKNESS_ACT_187 }],
     sourcesNote: "The employer calculates exact wage compensation; ČSSZ calculates exact sickness benefit.", faqEyebrow: "Frequently asked questions", faqH2: "Czech sick pay in 2026",
     faqs: [{ q: "Who pays during the first 14 days?", a: "The employer pays wage compensation for missed shifts and paid public holidays. ČSSZ starts paying sickness benefit from the 15th calendar day." }, { q: "What percentage does ČSSZ pay?", a: "It pays 60% from days 15-30, 66% from days 31-60 and 72% from day 61, always after reducing the daily assessment base." }, { q: "Where is the official calculator?", a: "MPSV publishes a 2026 benefit calculator. It is only an estimate because it may not know your actual hourly average, shifts, assessment period or excluded days." }],
-    disclaimerTitle: "Medical and financial information", disclaimer: "AI-assisted article awaiting Czech legal, payroll and clinical review. General information checked on 25 August 2026; not individual medical, legal or payroll advice.",
+    disclaimerTitle: "Medical and financial information", disclaimer: "General information checked on 25 August 2026; not individual medical, legal or payroll advice.",
   } satisfies Article,
 };
 
@@ -1259,16 +1253,16 @@ const de: LocalePost = {
   article: {
     lang: "de-DE", tagline: "Medizin, wenn Sie sie brauchen", categoryLabel: "Allgemeinmedizin", categoryHref: href("de", "/blog"), eyebrow: "Tschechien · Regeln für 2026", h1: "Berechnung des Krankengelds in Tschechien 2026", deck: "In den ersten 14 Kalendertagen zahlt der Arbeitgeber Ersatz für ausgefallene Schichten. Ab Tag 15 zahlt die ČSSZ für jeden Kalendertag.",
     intro: "Die Berechnung bei Krankheit in Tschechien hat 2026 <strong>zwei getrennte Stufen</strong>. Bei einem versicherten Arbeitsverhältnis zahlt der Arbeitgeber in den ersten 14 Kalendertagen Lohnersatz, jedoch nur für ausgefallene Schichten und bezahlte Feiertage. Ab Tag 15 zahlt die ČSSZ Krankengeld für jeden Kalendertag. Für Selbstständige, bestimmte Vereinbarungen und grenzüberschreitende Fälle können andere Regeln gelten. Beide Beträge werden reduziert und lassen sich nicht als einfacher Prozentsatz des monatlichen Bruttolohns berechnen.",
-    facts: ["Tag 1-14: Lohnersatz durch den Arbeitgeber", "Ab Tag 15: Krankengeld durch die ČSSZ", "Tagesgrenzen 2026: 1.633, 2.449 und 4.897 CZK"], primaryCta: { label: "Offiziellen Rechner für 2026 öffnen", href: MPSV_CALCULATOR_2026 }, secondaryCta: { label: "So funktioniert eNeschopenka", href: href("de", "/blog/neschopenka-krankschreibung-in-tschechien") }, panelChip: "Kurz erklärt", panelParas: ["Lohnersatz und Krankengeld sind verschiedene Zahlungen.", "Die erste Stufe nutzt Stundenverdienst und ausgefallene Schichten.", "Ab Tag 15 verwendet die ČSSZ eine tägliche Bemessungsgrundlage."], author: { initials: "VČ", name: "MUDr. Vojtěch Černý", line: "Allgemeinmediziner · Global Health Tschechien" }, reviewLine: "Vor der Veröffentlichung ist die fachliche und sprachliche Prüfung durch MUDr. Romana Pavlů erforderlich.", navLabel: "In diesem Leitfaden",
+    facts: ["Tag 1-14: Lohnersatz durch den Arbeitgeber", "Ab Tag 15: Krankengeld durch die ČSSZ", "Tagesgrenzen 2026: 1.633, 2.449 und 4.897 CZK"], primaryCta: { label: "Offiziellen Rechner für 2026 öffnen", href: MPSV_CALCULATOR_2026 }, secondaryCta: { label: "So funktioniert eNeschopenka", href: href("de", "/blog/neschopenka-krankschreibung-in-tschechien") }, panelChip: "Kurz erklärt", panelParas: ["Lohnersatz und Krankengeld sind verschiedene Zahlungen.", "Die erste Stufe nutzt Stundenverdienst und ausgefallene Schichten.", "Ab Tag 15 verwendet die ČSSZ eine tägliche Bemessungsgrundlage."], author: { initials: "VČ", name: "MUDr. Vojtěch Černý", line: "Allgemeinmediziner · Global Health Tschechien" }, navLabel: "In diesem Leitfaden",
     sections: [
       { id: "erste-14-tage", nav: "Erste 14 Tage", eyebrow: "Lohnersatz", h2: "Was der Arbeitgeber in den ersten 14 Tagen zahlt", blocks: [lead("Der Arbeitgeber zahlt 60% des reduzierten durchschnittlichen Stundenverdiensts für ausgefallene Schichten und bezahlte Feiertage."), p("Die Lohnabrechnung verwendet den durchschnittlichen Stundenverdienst, nicht direkt das aktuelle Monatsgehalt. Für 2026 gelten die stündlichen Reduktionsgrenzen " + EMPLOYER_HOURLY_THRESHOLDS_2026 + ". Bis zur ersten Grenze zählen 90%, zwischen der ersten und zweiten 60%, zwischen der zweiten und dritten 30%. Einkommen oberhalb der dritten Grenze bleibt unberücksichtigt."), p("Vom reduzierten Ergebnis werden 60% mit den ausgefallenen Arbeitsstunden multipliziert. Zwei Beschäftigte mit gleichem Monatsgehalt können deshalb bei unterschiedlichen Schichtplänen verschiedene Beträge erhalten."), cite("Rechtsgrundlage ist <a href=\"" + LABOUR_CODE_192 + "\" rel=\"nofollow noopener\" target=\"_blank\">§ 192 des tschechischen Arbeitsgesetzbuchs</a>.")] },
       { id: "ab-tag-15", nav: "Ab Tag 15", eyebrow: "Leistung der ČSSZ", h2: "Wie die ČSSZ ab Tag 15 rechnet", blocks: [lead("Die ČSSZ verwendet eine reduzierte tägliche Bemessungsgrundlage und zahlt für jeden Kalendertag."), p("Die Grundlage wird gewöhnlich aus dem anrechenbaren Einkommen der zwölf Kalendermonate vor Beginn der Arbeitsunfähigkeit und den anrechenbaren Tagen gebildet. 2026 gelten die täglichen Grenzen " + DVZ_THRESHOLDS_2026 + ". Bis zur ersten Grenze zählen 90%, zwischen der ersten und zweiten 60%, zwischen der zweiten und dritten 30%.")] },
       { id: "cssz-saetze", nav: "ČSSZ-Sätze", eyebrow: "Dauer der Krankheit", h2: "Welchen Prozentsatz die ČSSZ zahlt", blocks: [ul(["<strong>Tag 15-30:</strong> 60% der reduzierten Tagesgrundlage.", "<strong>Tag 31-60:</strong> 66%.", "<strong>Ab Tag 61:</strong> 72%."]), p("Die Prozentsätze werden erst nach der Reduktion der Tagesgrundlage angewandt. Wer sie direkt auf das monatliche Bruttogehalt anwendet, erhält ein falsches Ergebnis."), cite("Grenzen und Sätze wurden am 25. August 2026 bei <a href=\"" + MPSV_SICKNESS_2026 + "\" rel=\"nofollow noopener\" target=\"_blank\">MPSV</a> und <a href=\"" + CSSZ_BENEFIT_CALC + "\" rel=\"nofollow noopener\" target=\"_blank\">ČSSZ</a> geprüft.")] },
       { id: "beispiel", nav: "Beispiel", eyebrow: "Rechenweg", h2: "Beispiel für die Berechnung", blocks: [lead("Ein einfaches Beispiel zeigt, warum beide Stufen getrennt bleiben müssen."), p("Arbeitgeberbeispiel: Ein durchschnittlicher Stundenverdienst von 250 CZK liegt unter der ersten Stundengrenze. Davon zählen 90%, also 225 CZK. Der Lohnersatz beträgt 60% davon, somit 135 CZK je ausgefallener Stunde. Bei neun Achtstundenschichten ergibt sich vor Rundung und Besonderheiten der Lohnabrechnung eine Schätzung von 72 × 135 CZK = 9.720 CZK."), p("ČSSZ-Beispiel: Eine ungekürzte tägliche Bemessungsgrundlage von 1.500 CZK wird zu 90% berücksichtigt, also mit 1.350 CZK. Von Tag 15 bis 30 beträgt die Leistung 60%, damit geschätzt 810 CZK je Kalendertag. Die ČSSZ nutzt die tatsächlichen Einkünfte, anrechenbare und ausgeschlossene Tage sowie die gesetzlichen Rundungsregeln."), p("Nutzen Sie für eine eigene Schätzung den <a href=\"" + MPSV_CALCULATOR_2026 + "\" rel=\"nofollow noopener\" target=\"_blank\">MPSV-Rechner 2026</a> und vergleichen Sie das Ergebnis mit der Lohnabrechnung oder ČSSZ."), warn("Der Rechner liefert nur eine Schätzung", "Bemessungszeitraum, ausgeschlossene Tage, Schichten, frühere Beschäftigung, Selbstständigkeit oder ein grenzüberschreitendes Versicherungsverhältnis können den Betrag ändern.")] },
-      { id: "pruefen", nav: "Was prüfen", eyebrow: "Wenn der Betrag nicht stimmt", h2: "Was Sie bei Arbeitgeber und ČSSZ prüfen sollten", blocks: [lead("Klären Sie zuerst, welche der beiden Zahlungen gerade berechnet wird."), ul(["Wie viele Schichten und Stunden fielen in den ersten 14 Tagen aus?", "Welchen durchschnittlichen Stundenverdienst nutzte die Lohnabrechnung?", "Ab welchem Tag übernahm die ČSSZ?", "Welche Einkünfte und ausgeschlossenen Tage flossen in die Tagesgrundlage ein?", "Nutzt die MPSV-Schätzung dieselben Angaben wie Arbeitgeber oder ČSSZ?"]), p("Unser eigener Leitfaden erklärt, <a href=\"" + href("de", "/blog/neschopenka-krankschreibung-in-tschechien") + "\">wie eNeschopenka funktioniert</a>. Für eine medizinische Beurteilung können Sie die <a href=\"" + href("de", "/services/neschopenka-online") + "\">Online-Konsultation zur Krankschreibung</a> nutzen. Ein Arzt kann weder Krankschreibung noch Leistungshöhe garantieren.")] },
+      { id: "pruefen", nav: "Was prüfen", eyebrow: "Wenn der Betrag nicht stimmt", h2: "Was Sie bei Arbeitgeber und ČSSZ prüfen sollten", blocks: [lead("Klären Sie zuerst, welche der beiden Zahlungen gerade berechnet wird."), ul(["Wie viele Schichten und Stunden fielen in den ersten 14 Tagen aus?", "Welchen durchschnittlichen Stundenverdienst nutzte die Lohnabrechnung?", "Ab welchem Tag übernahm die ČSSZ?", "Welche Einkünfte und ausgeschlossenen Tage flossen in die Tagesgrundlage ein?", "Nutzt die MPSV-Schätzung dieselben Angaben wie Arbeitgeber oder ČSSZ?"]), p("In der Sprechstunde legt der Arzt den Beginn der eNeschopenka elektronisch fest. Während der Krankschreibung müssen Patienten die angeordneten Regeln einhalten und zu den festgelegten Kontrollterminen erscheinen. Nach der Genesung kontaktiert der Patient den Arzt und bittet um Beendigung; der Arzt schließt die Krankschreibung formell und meldet das Ende an die ČSSZ. Die bloße Rückkehr zur Arbeit beendet sie nicht automatisch."), p("Unser eigener Leitfaden erklärt, <a href=\"" + href("de", "/blog/neschopenka-krankschreibung-in-tschechien") + "\">wie eNeschopenka funktioniert</a>. Für eine medizinische Beurteilung können Sie die <a href=\"" + href("de", "/services/neschopenka-online") + "\">Online-Konsultation zur Krankschreibung</a> nutzen. Ein Arzt kann weder Krankschreibung noch Leistungshöhe garantieren.")] },
     ],
     linksEyebrow: "Global Health Tschechien", linksH2: "Krankschreibung und medizinische Beurteilung", linksLead: "Die ČSSZ berechnet die Leistung; der Arzt beurteilt die gesundheitliche Arbeitsunfähigkeit.", links: [{ label: "Online-Konsultation zur Krankschreibung", href: href("de", "/services/neschopenka-online") }, { label: "So funktioniert eNeschopenka", href: href("de", "/blog/neschopenka-krankschreibung-in-tschechien") }, { label: "Ärzte in Tschechien", href: href("de", "/doctors") }, { label: "Global Health Tschechien kontaktieren", href: href("de", "/contact") }], ctaBox: { h3: "Brauchen Sie eine medizinische Beurteilung?", text: "Ein tschechischer Arzt kann beurteilen, ob Ihr Zustand eine Arbeitsunfähigkeit begründet. Arbeitgeber und ČSSZ bestimmen die Zahlung.", primary: { label: "Konsultation buchen", href: href("de", "/services/neschopenka-online") }, secondary: { label: "Ärzte ansehen", href: href("de", "/doctors") } },
-    sourcesEyebrow: "Offizielle Quellen", sourcesH2: "Regeln für 2026", sourcesLead: "Grenzen und Verfahren wurden am 25. August 2026 geprüft.", sources: [{ label: "MPSV: Krankenversicherung 2026", href: MPSV_SICKNESS_2026 }, { label: "ČSSZ: Einzelheiten zum Krankengeld", href: CSSZ_SICKNESS_DETAIL }, { label: "ČSSZ: Höhe und Berechnung", href: CSSZ_BENEFIT_CALC }, { label: "MPSV: Leistungsrechner 2026", href: MPSV_CALCULATOR_2026 }, { label: "Tschechisches Arbeitsgesetzbuch § 192", href: LABOUR_CODE_192 }, { label: "Tschechisches Krankenversicherungsgesetz", href: SICKNESS_ACT_187 }], sourcesNote: "Der Arbeitgeber berechnet den genauen Lohnersatz; die ČSSZ berechnet das genaue Krankengeld.", faqEyebrow: "Häufige Fragen", faqH2: "Krankengeld in Tschechien 2026", faqs: [{ q: "Wer zahlt in den ersten 14 Tagen?", a: "Der Arbeitgeber zahlt Lohnersatz für ausgefallene Schichten und bezahlte Feiertage. Ab dem 15. Kalendertag zahlt die ČSSZ Krankengeld." }, { q: "Welchen Prozentsatz zahlt die ČSSZ?", a: "60% von Tag 15-30, 66% von Tag 31-60 und 72% ab Tag 61, jeweils nach Reduktion der täglichen Bemessungsgrundlage." }, { q: "Wo finde ich den offiziellen Rechner?", a: "MPSV veröffentlicht einen Rechner für 2026. Er bleibt eine Schätzung, da er Ihren tatsächlichen Stundenwert, Schichten und ausgeschlossenen Tage möglicherweise nicht kennt." }], disclaimerTitle: "Medizinischer und finanzieller Hinweis", disclaimer: "KI-unterstützter Artikel, der noch tschechisch-rechtlich, lohnfachlich und klinisch geprüft werden muss. Allgemeine Informationen vom 25. August 2026; keine individuelle medizinische, rechtliche oder lohnfachliche Beratung.",
+    sourcesEyebrow: "Offizielle Quellen", sourcesH2: "Regeln für 2026", sourcesLead: "Grenzen und Verfahren wurden am 25. August 2026 geprüft.", sources: [{ label: "MPSV: Krankenversicherung 2026", href: MPSV_SICKNESS_2026 }, { label: "ČSSZ: Einzelheiten zum Krankengeld", href: CSSZ_SICKNESS_DETAIL }, { label: "ČSSZ: Höhe und Berechnung", href: CSSZ_BENEFIT_CALC }, { label: "MPSV: Leistungsrechner 2026", href: MPSV_CALCULATOR_2026 }, { label: "Tschechisches Arbeitsgesetzbuch § 192", href: LABOUR_CODE_192 }, { label: "Tschechisches Krankenversicherungsgesetz", href: SICKNESS_ACT_187 }], sourcesNote: "Der Arbeitgeber berechnet den genauen Lohnersatz; die ČSSZ berechnet das genaue Krankengeld.", faqEyebrow: "Häufige Fragen", faqH2: "Krankengeld in Tschechien 2026", faqs: [{ q: "Wer zahlt in den ersten 14 Tagen?", a: "Der Arbeitgeber zahlt Lohnersatz für ausgefallene Schichten und bezahlte Feiertage. Ab dem 15. Kalendertag zahlt die ČSSZ Krankengeld." }, { q: "Welchen Prozentsatz zahlt die ČSSZ?", a: "60% von Tag 15-30, 66% von Tag 31-60 und 72% ab Tag 61, jeweils nach Reduktion der täglichen Bemessungsgrundlage." }, { q: "Wo finde ich den offiziellen Rechner?", a: "MPSV veröffentlicht einen Rechner für 2026. Er bleibt eine Schätzung, da er Ihren tatsächlichen Stundenwert, Schichten und ausgeschlossenen Tage möglicherweise nicht kennt." }], disclaimerTitle: "Medizinischer und finanzieller Hinweis", disclaimer: "Allgemeine Informationen vom 25. August 2026; keine individuelle medizinische, rechtliche oder lohnfachliche Beratung.",
   } satisfies Article,
 };
 
