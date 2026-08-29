@@ -8,7 +8,9 @@
  *  - `DEFAULT_BRAND_ICON` — globe-only mark. For favicons + tight badges.
  *
  * Admin can override `DEFAULT_BRAND_LOGO` via the `site-logo` CMS asset
- * (see `resolveSiteLogoAsset`).
+ * (see `resolveSiteLogoAsset`). That slot is reserved for an official Global
+ * Health lockup: shared site chrome presents it with the registered-mark
+ * treatment, so campaign or third-party artwork must use a different slot.
  */
 export const DEFAULT_BRAND_LOGO = {
   src: "/logos/global-health-dark.png",

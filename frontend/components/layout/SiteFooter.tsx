@@ -51,6 +51,12 @@ import { resolveLocale } from "@/lib/i18n/resolve-locale";
 import { localeDisplayName } from "@/lib/i18n/locale-display";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { hreflangRegion } from "@/lib/seo/hreflang";
+import { RegisteredBrandLockup } from "@/components/brand/RegisteredBrandLockup";
+import {
+  EU_TRADE_MARK_NUMBER,
+  EU_TRADE_MARK_URL,
+  REGISTERED_BRAND_NAME,
+} from "@/lib/brand/trademark";
 
 const REGULATORY_TEXT: Partial<Record<string, string>> = {
   cz: "Global Health je obchodní značkou společnosti Global Guest s.r.o., poskytovatele zdravotních služeb zapsaného v Národním registru poskytovatelů zdravotních služeb (NRPZS) pod registračním číslem 19071680.",
@@ -320,13 +326,15 @@ export function SiteFooter({
               {/* width/height match the rendered size (.gh-footer-logo is
                   64px tall) so the optimizer serves a ~128px 2x variant
                   instead of the full 399px source. */}
-              <Image
-                src="/logos/global-health-light.png"
-                alt={siteName || "Global Health"}
-                width={98}
-                height={64}
-                className="gh-footer-logo"
-              />
+              <RegisteredBrandLockup tone="light">
+                <Image
+                  src="/logos/global-health-light.png"
+                  alt={siteName || "Global Health"}
+                  width={98}
+                  height={64}
+                  className="gh-footer-logo"
+                />
+              </RegisteredBrandLockup>
             </Link>
             <p className="gh-footer-tagline whitespace-pre-line">{tagline}</p>
 
@@ -450,6 +458,19 @@ export function SiteFooter({
         {regulatoryText ? (
           <p className="gh-footer-regulatory gh-body-sm text-white/60">{regulatoryText}</p>
         ) : null}
+
+        <p className="mt-4 text-sm text-white/60">
+          <a
+            href={EU_TRADE_MARK_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="gh-footer-legalLink gh-focus-on-dark"
+            aria-label={`${REGISTERED_BRAND_NAME}, registered European Union trade mark number ${EU_TRADE_MARK_NUMBER}`}
+          >
+            {REGISTERED_BRAND_NAME}
+            <sup aria-hidden="true">®</sup> · EUTM No. {EU_TRADE_MARK_NUMBER}
+          </a>
+        </p>
 
         {/* items-center: legal links have a 44px tap-target min-height, so
             without centering the plain-text siblings (·, GDPR line) sat at

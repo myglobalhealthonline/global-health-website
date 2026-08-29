@@ -33,6 +33,7 @@ import {
   type NotificationPopoverItem,
 } from "@/components/NotificationPopover";
 import { PortalUserMenu } from "@/components/PortalUserMenu";
+import { RegisteredBrandLockup } from "@/components/brand/RegisteredBrandLockup";
 import { IdleLogout } from "@/components/IdleLogout";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { usePortalMobileNavA11y } from "@/components/use-portal-mobile-nav";
@@ -363,14 +364,16 @@ export function PortalShell({
             className="gh-admin-sidebar-logo px-5 pb-[18px] pt-5"
           >
             <Link href={logoHref ?? rootHref} className="inline-flex items-center gap-2.5">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/logos/global-health-light.png"
-                alt="Global Health"
-                width={399}
-                height={260}
-                style={{ height: 44, width: "auto" }}
-              />
+              <RegisteredBrandLockup tone="light">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/logos/global-health-light.png"
+                  alt="Global Health"
+                  width={399}
+                  height={260}
+                  style={{ height: 44, width: "auto" }}
+                />
+              </RegisteredBrandLockup>
             </Link>
             <p
               className="gh-portal-label mt-2 text-[10px] font-bold uppercase tracking-[0.22em]"
