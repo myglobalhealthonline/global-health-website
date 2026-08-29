@@ -158,8 +158,8 @@ Do not infer "Back {date}" from a weekly window alone.
 A normal gap in the weekly schedule is **not** unavailability. The calculation looks
 forward across calendar days, not only at today. For example, a doctor who works
 Monday, Tuesday, Thursday, and Friday remains `BOOKABLE` on Wednesday when a real
-Thursday slot is open. The public UI may show "Next available Thursday" while keeping
-the Book CTA active.
+Thursday slot is open. The public CTA keeps its familiar "Book" / "Book consultation"
+copy; the normal picker shows the next selectable date after the user opens it.
 
 The summary is scoped:
 
@@ -316,7 +316,7 @@ remove internal links, change canonicals, or synthesize a new `lastmod`.
 | Scenario | Result |
 | --- | --- |
 | Active/public doctor with a compatible OPEN slot inside the picker horizon | BOOKABLE; page/listing unchanged |
-| Doctor does not work today but has an OPEN slot tomorrow/next working day | BOOKABLE; CTA remains active; show "Next available {localized date}" and open the picker at that date |
+| Doctor does not work today but has an OPEN slot tomorrow/next working day | BOOKABLE; CTA remains active with its standard Book copy; the picker shows the real next selectable date |
 | Doctor works Monday, Tuesday, Thursday, Friday and today is Wednesday | Wednesday is a normal schedule gap, not a pause; Thursday's verified OPEN slot keeps the doctor BOOKABLE |
 | Doctor on a three-week explicit pause | RETURNING when a post-pause slot is verified; page/card remain visible; Book disabled |
 | Doctor has weekly windows but all compatible slots are BOOKED/HELD/BLOCKED | RETURNING if a later OPEN slot is verified, otherwise UNAVAILABLE; never BOOKABLE from windows alone |
@@ -368,8 +368,8 @@ without dry-run output and explicit approval; `backend/.env` points at productio
 - GENERAL and SPECIALIST consultation paths obey the same core policy.
 - Specialist doctor/service CTAs are disabled whenever their authoritative state is
   RETURNING or UNAVAILABLE; no always-on specialist exception remains.
-- A non-working day never disables Book when a compatible future slot exists inside
-  the picker horizon; the earliest verified slot is shown as the next available date.
+- A non-working day never disables or relabels Book when a compatible future slot
+  exists inside the picker horizon; the picker exposes the earliest verified slot.
 - Return dates are shown only when backed by a verified compatible future slot.
 - An indefinitely unavailable doctor's profile remains live, shows no invented
   return date, and cannot start booking.

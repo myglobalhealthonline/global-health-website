@@ -162,6 +162,32 @@ describe("buildDoctorDirectoryView", () => {
     ]);
   });
 
+  it("keeps a doctor with an in-horizon slot on the standard Book CTA", () => {
+    const availableDoctor = doc({
+      id: "open-with-slot",
+      slug: "open-with-slot",
+      fullName: "Open With Slot",
+      assignedServiceIds: [gpService],
+      bookability: {
+        state: "BOOKABLE",
+        reasonCode: null,
+        nextAvailableAt: "2026-09-03T09:00:00.000Z",
+      },
+    });
+    const view = buildDoctorDirectoryView(
+      { ...ctx(), doctors: [availableDoctor] },
+      [],
+      [],
+    );
+
+    expect(view.doctorCards[0]).toMatchObject({
+      name: "Open With Slot",
+      bookability: { state: "BOOKABLE" },
+      bookLabel: "Pick a time",
+      nextAvailableLabel: undefined,
+    });
+  });
+
   it("preserves the explicitly featured doctor's spotlight identity even when unavailable", () => {
     const featuredUnavailable = doc({
       id: "featured-paused",
