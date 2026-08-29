@@ -32,7 +32,7 @@ export function getBookabilityActionProps(
     returningLabel: nextDate
       ? messages.returningOn.replace("{date}", nextDate)
       : messages.notAcceptingOnlineBookings,
-    nextAvailableLabel: nextDate
+    nextAvailableLabel: bookability.state === "RETURNING" && nextDate
       ? messages.nextAvailable.replace("{date}", nextDate)
       : undefined,
   };

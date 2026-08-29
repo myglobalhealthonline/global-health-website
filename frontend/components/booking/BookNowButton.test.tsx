@@ -67,7 +67,7 @@ describe("BookCta crawl surface", () => {
     expect(html).not.toContain("href=");
   });
 
-  it("keeps BOOKABLE active and shows a localized next-slot date", () => {
+  it("keeps BOOKABLE active with the original CTA copy", () => {
     const html = renderToStaticMarkup(
       <BookCta
         href="/czechia/cs/book?doctor=dr-michael-nytra"
@@ -83,6 +83,7 @@ describe("BookCta crawl surface", () => {
     );
 
     expect(html).not.toContain('disabled=""');
-    expect(html).toContain("Next available Thursday, 3 September");
+    expect(html).toContain("Book");
+    expect(html).not.toContain("Next available Thursday, 3 September");
   });
 });

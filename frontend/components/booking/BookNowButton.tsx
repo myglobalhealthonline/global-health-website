@@ -18,7 +18,6 @@ function actionStatus({
   bookability,
   unavailableLabel,
   returningLabel,
-  nextAvailableLabel,
 }: BookabilityActionProps): { disabled: boolean; label?: string } {
   if (bookability?.state === "UNAVAILABLE") {
     return { disabled: true, label: unavailableLabel ?? "Not accepting online bookings" };
@@ -26,7 +25,10 @@ function actionStatus({
   if (bookability?.state === "RETURNING") {
     return { disabled: true, label: returningLabel ?? "Appointments are not open yet" };
   }
-  return { disabled: false, label: bookability?.nextAvailableAt ? nextAvailableLabel : undefined };
+  // A verified future slot makes this action BOOKABLE; it should not rewrite
+  // the familiar CTA with inventory detail. Return/leave dates belong only to
+  // the disabled RETURNING state above.
+  return { disabled: false };
 }
 
 /**
@@ -76,7 +78,6 @@ export function BookNowButton({
     bookability,
     unavailableLabel,
     returningLabel,
-    nextAvailableLabel,
   });
   return (
     <button
@@ -131,7 +132,6 @@ export function BookCta({
     bookability,
     unavailableLabel,
     returningLabel,
-    nextAvailableLabel,
   });
   if (status.disabled) {
     return (
