@@ -50,7 +50,11 @@ import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 import { fetchGlobalConsultationCount } from "@/lib/api/consultation-count";
-import { selectServiceDoctors } from "@/lib/content/service-doctor-selection";
+import {
+  selectServiceDoctors,
+  selectedServiceBookability,
+  sortServiceDoctorSelectionsByBookability,
+} from "@/lib/content/service-doctor-selection";
 import { getBookabilityActionProps } from "@/lib/content/bookability-presentation";
 import type { BookabilitySummary } from "@/lib/content/get-country-collections";
 
@@ -218,29 +222,37 @@ export default async function CountryLangGeneralConsultationPage({
   }));
 
   // Doctor cards — admin adding a Doctor row for this country adds a card.
-  const eligibleDoctors = selectServiceDoctors(doctors, services)
-    .map((selection) => selection.doctor)
-    .map((doctor, position) => ({ doctor, position }))
-    .sort(
-      (a, b) =>
-        bookabilityRank(a.doctor.bookability) - bookabilityRank(b.doctor.bookability) ||
-        a.position - b.position,
-    )
-    .map(({ doctor }) => doctor)
+  const eligibleDoctors = sortServiceDoctorSelectionsByBookability(
+    selectServiceDoctors(doctors, services),
+  )
     .slice(0, 6);
-  const doctorItems = eligibleDoctors.map((d) => ({
-    name: d.fullName,
-    title: d.title,
-    bio: d.bio ?? "",
-    languages: d.languages,
-    country: config.code,
-    imageSrc: d.imageSrc ?? null,
-    href: `/${slug}/${lang}/doctors/${d.slug}`,
-    bookingHref: buildBookHref({ country: slug, lang, doctor: d.slug }),
-    whatsappNumber: d.whatsappNumber,
-    ctaLabel: c.doctors.viewProfile,
-    ...getBookabilityActionProps(d.bookability, lang, c.bookingAvailability, (overlay ?? config).bookingTimezone),
-  }));
+  const doctorItems = eligibleDoctors.map((selection) => {
+    const d = selection.doctor;
+    const pairBookability = selectedServiceBookability(selection);
+    return {
+      name: d.fullName,
+      title: d.title,
+      bio: d.bio ?? "",
+      languages: d.languages,
+      country: config.code,
+      imageSrc: d.imageSrc ?? null,
+      href: `/${slug}/${lang}/doctors/${d.slug}`,
+      bookingHref: buildBookHref({
+        country: slug,
+        lang,
+        service: selection.serviceSlug,
+        doctor: d.slug,
+      }),
+      whatsappNumber: d.whatsappNumber,
+      ctaLabel: c.doctors.viewProfile,
+      ...getBookabilityActionProps(
+        pairBookability,
+        lang,
+        c.bookingAvailability,
+        (overlay ?? config).bookingTimezone,
+      ),
+    };
+  });
 
   return (
     <>

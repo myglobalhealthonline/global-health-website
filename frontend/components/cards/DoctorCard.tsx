@@ -81,7 +81,7 @@ type DoctorCardProps = {
   bookingHref?: string;
   ctaLabel?: string;
   bookLabel?: string;
-  /** Override the primary button label (default: "Book with {firstName}"). */
+  /** Override the primary button label in booking-selection contexts. */
   primaryLabel?: string;
   /** Dark variant — forest-glass surface + light text, for dark sections
    *  (doctors directory, dark DoctorsSection). Defaults to the original
@@ -129,7 +129,7 @@ export function DoctorCard({
   bookingHref,
   ctaLabel,
   bookLabel,
-  /** Override the primary button label (default: "Book with {firstName}"). */
+  /** Override the primary button label in booking-selection contexts. */
   primaryLabel,
   dark = false,
   viewProfileAriaLabel,
@@ -153,10 +153,16 @@ export function DoctorCard({
   // public cards (the public API no longer sends the number either).
   const profileHref = href;
   const bookHref = bookingHref ?? null;
-  const firstName = name
-    .replace(/^Dr\.?\s*/i, "")
-    .split(/\s+/)[0] ?? name;
-
+  // A doctor-specific booking link without an authoritative operational
+  // summary must fail closed. The profile remains crawlable, but an omitted
+  // prop can never turn into an active "Pick a time" claim.
+  const resolvedBookability = bookHref
+    ? bookability ?? {
+        state: "UNAVAILABLE" as const,
+        reasonCode: "NO_OPEN_SLOT" as const,
+        nextAvailableAt: null,
+      }
+    : bookability;
   // Card palette as root-scoped CSS vars so descendants (text, icons,
   // borders) recolor for the dark variant without per-element prop
   // threading. Light = the original white-card greens; dark = light ink
@@ -425,7 +431,7 @@ export function DoctorCard({
             ) : null}
             <BookCta
               href={bookHref}
-              bookability={bookability}
+              bookability={resolvedBookability}
               unavailableLabel={unavailableLabel}
               returningLabel={returningLabel}
               nextAvailableLabel={nextAvailableLabel}
@@ -443,7 +449,7 @@ export function DoctorCard({
             {bookHref ? (
               <BookCta
                 href={bookHref}
-                bookability={bookability}
+                bookability={resolvedBookability}
                 unavailableLabel={unavailableLabel}
                 returningLabel={returningLabel}
                 nextAvailableLabel={nextAvailableLabel}

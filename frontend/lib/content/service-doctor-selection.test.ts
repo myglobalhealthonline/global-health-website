@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import type { CountryDoctorCard, CountryServiceCard } from "./get-country-collections";
 import {
+  selectedServiceBookability,
   selectServiceDoctors,
+  sortServiceDoctorSelectionsByBookability,
   sortDoctorsByServiceBookability,
 } from "./service-doctor-selection";
 
@@ -169,5 +171,93 @@ describe("selectServiceDoctors", () => {
     expect(result.map((entry) => entry.doctor.slug)).toEqual(["featured-gp", "assigned-gp"]);
     expect(doctors).toEqual(originalDoctors);
     expect(acute.assignedDoctorIds).toEqual(originalAssignments);
+  });
+
+  it("reads the chosen service pair summary instead of the doctor's aggregate summary", () => {
+    const gp = service({
+      id: "svc-gp",
+      slug: "gp-consultation",
+      assignedDoctorIds: ["doc-mixed"],
+    });
+    const [selection] = selectServiceDoctors(
+      [
+        doctor({
+          id: "doc-mixed",
+          slug: "mixed",
+          assignedServiceIds: [gp.id],
+          bookability: {
+            state: "BOOKABLE",
+            reasonCode: null,
+            nextAvailableAt: "2026-09-01T09:00:00.000Z",
+          },
+          bookabilityByServiceId: {
+            [gp.id]: {
+              state: "UNAVAILABLE",
+              reasonCode: "NO_OPEN_SLOT",
+              nextAvailableAt: null,
+            },
+          },
+        }),
+      ],
+      [gp],
+    );
+
+    expect(selectedServiceBookability(selection!)).toEqual({
+      state: "UNAVAILABLE",
+      reasonCode: "NO_OPEN_SLOT",
+      nextAvailableAt: null,
+    });
+  });
+
+  it("sorts selected doctors by the chosen service pair state before callers slice them", () => {
+    const gp = service({
+      id: "svc-gp",
+      slug: "gp-consultation",
+      assignedDoctorIds: ["doc-wrong-aggregate", "doc-real-slot"],
+    });
+    const selections = selectServiceDoctors(
+      [
+        doctor({
+          id: "doc-wrong-aggregate",
+          slug: "wrong-aggregate",
+          assignedServiceIds: [gp.id],
+          bookability: {
+            state: "BOOKABLE",
+            reasonCode: null,
+            nextAvailableAt: "2026-09-01T09:00:00.000Z",
+          },
+          bookabilityByServiceId: {
+            [gp.id]: {
+              state: "UNAVAILABLE",
+              reasonCode: "NO_OPEN_SLOT",
+              nextAvailableAt: null,
+            },
+          },
+        }),
+        doctor({
+          id: "doc-real-slot",
+          slug: "real-slot",
+          assignedServiceIds: [gp.id],
+          bookability: {
+            state: "UNAVAILABLE",
+            reasonCode: "NO_OPEN_SLOT",
+            nextAvailableAt: null,
+          },
+          bookabilityByServiceId: {
+            [gp.id]: {
+              state: "BOOKABLE",
+              reasonCode: null,
+              nextAvailableAt: "2026-09-01T09:00:00.000Z",
+            },
+          },
+        }),
+      ],
+      [gp],
+    );
+
+    expect(sortServiceDoctorSelectionsByBookability(selections).map((entry) => entry.doctor.slug)).toEqual([
+      "real-slot",
+      "wrong-aggregate",
+    ]);
   });
 });

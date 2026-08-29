@@ -7,6 +7,7 @@ import { CarouselNav } from "@/components/ui/CarouselNav";
 import { useSwipePage } from "@/hooks/use-swipe-page";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import type { DoctorCardI18n } from "@/components/cards/doctor-card-i18n";
+import type { BookabilityActionProps } from "@/components/booking/BookNowButton";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 
 const PAGE_SIZE = 6;
@@ -37,7 +38,7 @@ type Doctor = {
   bookingHref?: string;
   ctaLabel?: string;
   bookLabel?: string;
-};
+} & BookabilityActionProps;
 
 export type DoctorTeamI18n = {
   theTeamBadge: string;
@@ -191,6 +192,10 @@ export function DoctorTeamTemplate({
                       ctaLabel={d.ctaLabel ?? i18n?.viewProfile ?? ""}
                       cardI18n={cardI18n}
                       bookLabel={d.bookLabel}
+                      bookability={d.bookability}
+                      unavailableLabel={d.unavailableLabel}
+                      returningLabel={d.returningLabel}
+                      nextAvailableLabel={d.nextAvailableLabel}
                       dark
                       viewProfileAriaLabel={i18n?.viewProfileAria?.replace("{name}", d.name)}
                     />

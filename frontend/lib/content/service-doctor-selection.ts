@@ -1,5 +1,6 @@
 import {
   getDoctorServiceBookability,
+  type BookabilitySummary,
   type BookabilityState,
   type CountryDoctorCard,
   type CountryServiceCard,
@@ -14,6 +15,30 @@ export type ServiceDoctorSelection = {
 
 export function bookabilityStateRank(state: BookabilityState): number {
   return state === "BOOKABLE" ? 0 : state === "RETURNING" ? 1 : 2;
+}
+
+export function selectedServiceBookability(
+  selection: ServiceDoctorSelection,
+): BookabilitySummary {
+  return getDoctorServiceBookability(
+    selection.doctor.bookabilityByServiceId,
+    selection.serviceId,
+  );
+}
+
+/** Stable, immutable ordering for a doctor list already paired to one service. */
+export function sortServiceDoctorSelectionsByBookability(
+  selections: ServiceDoctorSelection[],
+): ServiceDoctorSelection[] {
+  return selections
+    .map((selection, position) => ({ selection, position }))
+    .toSorted((left, right) => {
+      const leftState = selectedServiceBookability(left.selection).state;
+      const rightState = selectedServiceBookability(right.selection).state;
+      return bookabilityStateRank(leftState) - bookabilityStateRank(rightState) ||
+        left.position - right.position;
+    })
+    .map(({ selection }) => selection);
 }
 
 /** Stable, immutable ordering for a roster shown against one exact service. */
