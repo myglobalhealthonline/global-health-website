@@ -29,7 +29,10 @@ import { getServerAuthUser } from "@/lib/api/server-auth";
 import { PortalShell, type PortalNavGroup } from "@/components/portal-shell";
 import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
 import { resolveBookConsultationHref } from "@/lib/api/last-booking-country";
-import { fetchPatientUnreadMessageCount } from "@/lib/api/account-appointments-api";
+import {
+  fetchPatientUnreadDocumentCount,
+  fetchPatientUnreadMessageCount,
+} from "@/lib/api/account-appointments-api";
 import { getServerNotifications } from "@/lib/api/me-subscription-server";
 import { fetchMeCorporate } from "@/lib/corporate/corporate-api";
 import type { NotificationPopoverItem } from "@/components/NotificationPopover";
@@ -63,13 +66,15 @@ export default async function AccountLayout({ children }: { children: ReactNode 
   // `/` (the country picker) every time, forcing them to repick Ireland
   // / Portugal / etc. on every booking. Now we route them straight to
   // the country they last booked in.
-  const [bookHref, unreadMessages, locale, notifications, corporateResult] = await Promise.all([
-    resolveBookConsultationHref(),
-    fetchPatientUnreadMessageCount(),
-    getPortalLocale(),
-    getServerNotifications(),
-    fetchMeCorporate(),
-  ]);
+  const [bookHref, unreadMessages, newDocuments, locale, notifications, corporateResult] =
+    await Promise.all([
+      resolveBookConsultationHref(),
+      fetchPatientUnreadMessageCount(),
+      fetchPatientUnreadDocumentCount(),
+      getPortalLocale(),
+      getServerNotifications(),
+      fetchMeCorporate(),
+    ]);
   const hasCorporateMembership = corporateResult.ok && corporateResult.data !== null;
   const { account: a, common } = loadLocaleBundle(locale);
   const tourSteps = [
@@ -110,7 +115,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
         { href: "/account/bookings", label: a.nav.myBookings, icon: <CalendarDays className="size-4" aria-hidden /> },
         { href: "/account/messages", label: a.nav.messages, icon: <MessagesSquare className="size-4" aria-hidden />, badge: unreadMessages },
         { href: "/account/prescriptions", label: a.nav.prescriptions, icon: <PillBottle className="size-4" aria-hidden /> },
-        { href: "/account/medical-files", label: a.nav.medicalFiles, icon: <FileText className="size-4" aria-hidden /> },
+        { href: "/account/medical-files", label: a.nav.medicalFiles, icon: <FileText className="size-4" aria-hidden />, badge: newDocuments },
       ],
     },
     {

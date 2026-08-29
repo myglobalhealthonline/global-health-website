@@ -156,6 +156,7 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
           storageKey,
           mimetype,
           byteSize: fileBuffer.length,
+          uploadedByRole: "PATIENT",
           ...(sourceGeneratedDocumentId ? { sourceGeneratedDocumentId } : {}),
         },
       });

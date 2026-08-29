@@ -9,13 +9,16 @@ function isAllowed(method: string, segments: string[]): boolean {
   if (method === "GET") {
     // base list: []
     // download: ["<id>", "download"]
+    // nav badge count: ["unread-count"]
     return (
       segments.length === 0 ||
+      (segments.length === 1 && segments[0] === "unread-count") ||
       (segments.length === 2 && segments[1] === "download")
     );
   }
   if (method === "POST") {
-    return segments.length === 0;
+    // upload: []   ·   clear the nav badge: ["seen"]
+    return segments.length === 0 || (segments.length === 1 && segments[0] === "seen");
   }
   return false;
 }

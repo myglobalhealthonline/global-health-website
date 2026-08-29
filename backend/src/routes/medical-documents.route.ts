@@ -14,8 +14,10 @@ import {
   getPatientAccessibleDocument,
   getPatientAccessibleGeneratedDocument,
   getPatientAccessibleAppointmentDocument,
+  countNewPatientDocuments,
   listMedicalDocumentsAdmin,
   listPatientUnifiedDocuments,
+  markPatientMedicalFilesSeen,
   MEDICAL_DOC_ALLOWED_MIME,
   MEDICAL_DOC_MAX_BYTES,
   VALID_DOCUMENT_TYPES,
@@ -25,6 +27,14 @@ async function resolvePatientProfile(email: string) {
   return prisma.patientProfile.findUnique({
     where: { email },
     select: { id: true, globalHealthNumber: true },
+  });
+}
+
+/** Same lookup, plus the badge cursor the Medical Files nav item reads. */
+async function resolvePatientProfileWithSeenAt(email: string) {
+  return prisma.patientProfile.findUnique({
+    where: { email },
+    select: { id: true, medicalFilesSeenAt: true },
   });
 }
 
@@ -183,6 +193,54 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
     },
   );
 
+  /**
+   * Badge feed for the portal nav: how many documents the clinic side has
+   * added since this patient last opened Medical Files. Mirrors the unread
+   * chat-message count the Messages item uses.
+   */
+  app.get(
+    "/api/account/medical-documents/unread-count",
+    { preHandler: requireAuth },
+    async (request, reply) => {
+      if (!request.authUser || request.authUser.role !== "PATIENT") {
+        return reply.status(403).send(errorResponse("Patient access required"));
+      }
+      const profile = await resolvePatientProfileWithSeenAt(request.authUser.email);
+      // No profile yet = nothing filed for them; a zero badge, not a 404.
+      if (!profile) return okResponse({ unreadCount: 0 });
+      try {
+        const unreadCount = await countNewPatientDocuments(
+          profile.id,
+          request.authUser.email,
+          profile.medicalFilesSeenAt,
+        );
+        return okResponse({ unreadCount });
+      } catch (error) {
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not load document count"));
+      }
+    },
+  );
+
+  /** Patient opened Medical Files — clear the badge. */
+  app.post(
+    "/api/account/medical-documents/seen",
+    { preHandler: requireAuth },
+    async (request, reply) => {
+      if (!request.authUser || request.authUser.role !== "PATIENT") {
+        return reply.status(403).send(errorResponse("Patient access required"));
+      }
+      const profile = await resolvePatientProfile(request.authUser.email);
+      if (!profile) return okResponse({ seen: false });
+      try {
+        await markPatientMedicalFilesSeen(profile.id);
+        return okResponse({ seen: true });
+      } catch (error) {
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not update documents state"));
+      }
+    },
+  );
   app.get<{ Params: { id: string } }>(
     "/api/account/medical-documents/:id/download",
     { preHandler: requireAuth },
