@@ -1,6 +1,8 @@
 # API Performance Audit
 
 **Audit date:** 2026-08-29  
+**Verified correction date:** 2026-08-30
+
 **Repository revision:** `f7da1354` (`perf: optimize public booking availability reads`)  
 **Scope:** Next.js frontend, Fastify backend, Prisma/PostgreSQL data paths, Railway deployment, same-origin proxy handlers, polling, caches, payloads, and third-party integrations  
 **Mode:** Audit first. No production data, schema, infrastructure, or application behavior was changed.
@@ -9,11 +11,11 @@
 
 This report deliberately separates three evidence classes:
 
-1. **Current measured:** seven serial, unauthenticated GET samples per listed public route against the repository's configured Railway staging hosts. No auth material was used. Each `curl` invocation opened a new connection, so these figures include cold DNS/TCP/TLS cost and represent a cold navigation rather than an already-pooled server connection. Response headers identified the observed Railway edge as `sin1`.
+1. **Current measured (aggregate-only):** seven serial, unauthenticated GET samples per listed public route against the load-test target hosts in `loadtest/config/targets.json`; their 2026-08-29 environment status was not independently verified. No auth material was used. Each `curl` invocation opened a new connection, so these figures include cold DNS/TCP/TLS cost and represent a cold navigation rather than an already-pooled server connection. Response headers identified the observed Railway edge as `sin1`. No raw per-request timing log was retained, so these aggregates are directional until the probe is rerun with a preserved artifact.
 2. **Historical measured:** the controlled 2026-08-14 Railway snapshot load test in `docs/audits/perf/load-test-report-2026-08-14.md`. These results are not treated as proof of today's latency, but they remain valid capacity evidence until the environment is retested.
 3. **Current code-confirmed:** request topology, query sequencing, cache policy, payload shape, polling, provider calls, and deployment configuration traced at revision `f7da1354`. Where runtime timing or `EXPLAIN` evidence is absent, the report says so.
 
-Current authenticated timing, per-query timing, p99, and provider timing were not collected. Docker Desktop was unavailable, `backend/.env` points at production, and no APM exists in the codebase. The current k6 profiles import `loadtest/scenarios/*.js`, but that directory is absent in this clone; the configured targets are Railway hosts; and the credential files are unsafe to reuse. Bypassing those controls would have made the audit less trustworthy, not more complete.
+Current authenticated timing, per-query timing, stable tail percentiles, and provider timing were not collected. Docker Desktop was unavailable, `backend/.env` points at production, and no APM exists in the codebase. The current k6 profiles import `loadtest/scenarios/*.js`, but that directory is absent in this clone; the configured targets are Railway hosts; and the credential files are unsafe to reuse. Bypassing those controls would have made the audit less trustworthy, not more complete.
 
 ### Security blocker discovered during measurement setup
 
@@ -27,15 +29,15 @@ Required response: rotate the proxy secret; invalidate every represented session
 
 ## 1. Executive Summary
 
-Overall API health is **Needs Investigation at low concurrency and Critical at the historical 200-user target**.
+The observed cold, serial public-entry paths are **Needs Investigation**, and the historical 200-user target is **Critical**. This is not a health rating for the unmeasured authenticated API estate.
 
-- Source inspection found **658 Fastify method/path registrations** across 29 route families. The Next frontend contains **166 same-origin API route-handler files** and approximately **506 statically discoverable API path literals/variants**. The static counts are a surface-area ledger, not a claim that every operation runs on every journey.
+- Source inspection found **685 unique Fastify method/path registrations** across 29 route families. The Next frontend contains **166 same-origin API route-handler files** and approximately **506 statically discoverable API path literals/variants**. The frontend literal estimate is extraction-method dependent; the static counts are a surface-area ledger, not a claim that every operation runs on every journey.
 - Eight representative public paths were measured with seven valid samples each. All seven backend API reads had p95 above 500 ms; the Ireland services catalog was 919 ms p95; the Ireland doctors catalog was 1.70 s p95; the Ireland homepage was 2.52 s p95.
 - Tiny JSON responses and `/health` still cluster around 0.48-0.55 s average. This proves payload size is not the only issue. Cold connection/edge transit and shared backend/database work form a substantial latency floor. Exact attribution requires pooled-connection probes plus route/DB instrumentation.
 - Payload size then compounds the floor: the Ireland service list is **276,806 bytes** and the doctor list is **514,430 bytes** uncompressed. The homepage response is **640,192 bytes** uncompressed HTML. These list payloads are too large for navigation-blocking data.
 - The public shell performs five parallel backend reads on most marketing pages. A country homepage adds six parallel reads for its body. The page is parallelized, but it still depends on a wide origin fan-out before useful content is complete.
 - Every public page mounts the cart provider, which performs `/api/cart` after hydration, including informational pages. Visible chat/support views poll every 10 seconds.
-- The current availability optimization is real and verified: cold-read single-flight, bounded TTL caches, shared raw slot inventory, and batched expired-hold sweeping are present, and 13 focused tests pass. Remaining availability paths still perform several sequential reads and may execute cleanup writes from a GET.
+- The current availability optimization is real and verified: cold-read single-flight, bounded TTL caches, shared raw slot inventory, and batched expired-hold sweeping are present. Thirteen focused tests pass: five in `backend/src/modules/doctor-availability/doctor-availability.cache.test.ts` and eight in `backend/src/modules/bookability/bookability.summary.test.ts`. Remaining availability paths still perform several sequential reads and may execute cleanup writes from a GET.
 - Historical controlled load testing on the 2026-08-14 `Dev-hassaan` snapshot failed the 200-concurrent-user target: `/ie/en` p95 reached 30 s and overall request p95 reached 13.48 s while database pool usage remained at three active connections or fewer. Queueing/contention in single Node processes was the strongest explanation for that environment; it is not proof that the same bottleneck dominates revision `f7da1354`.
 - In-process schedulers, provider dispatch, PDF/LibreOffice work, and HTTP request serving still share the backend process. This is a tail-latency and capacity risk even when average CPU appears low.
 - There is no route latency histogram, trace propagation, database query timing, event-loop lag metric, provider timing, cache-hit metric, or pool-wait metric in the repository. This is the main reason several root-cause allocations cannot yet be quantified.
@@ -79,22 +81,22 @@ Railway starts one `node dist/server.js` backend process (`backend/railway.json`
 
 ### Inventory method and totals
 
-The route ledger at the end of this report is source-derived from current `app.get/post/put/patch/delete()` registrations and records method, endpoint, handler file, authentication/cache class, and measurement state for all **658 statically discoverable backend operations**. The generator scanned non-test `backend/src/routes/*.ts`, extracted literal Fastify method/path registrations, sorted by path and method, and deduplicated on method plus path. This is the ultimate-execution source inventory; runtime `app.printRoutes()` should be captured in CI to detect any dynamically registered exception. Same-origin Next handlers are transport adapters for those operations plus a small number of frontend-only routes such as `/api/og` and `/api/health`.
+The route ledger at the end of this report is source-derived from `app.get/post/put/patch/delete()` registrations at revision `f7da1354` and records method, endpoint, handler file, authentication/cache class, and measurement state for all **685 statically discoverable backend operations**. A TypeScript AST scanner inspected non-test `backend/src/routes/*.ts`, including generic-typed and multiline call expressions, then sorted by path and method and deduplicated on method plus path. This is the ultimate-execution source inventory; runtime `app.printRoutes()` should be captured in CI to detect any dynamically registered exception. Same-origin Next handlers are transport adapters for those operations plus a small number of frontend-only routes such as `/api/og` and `/api/health`.
 
-Frontend path scanning found 506 literals/variants. Query-string variants and catch-all proxies mean this number is not directly comparable to the backend registration count. The runtime route families are summarized below so an engineer can understand user impact without reading 658 rows first.
+Frontend path scanning found approximately 506 literals/variants. Template normalization, HTTP-method sensitivity, query-string variants, and catch-all proxies make this estimate method-dependent and not directly comparable to the backend registration count. The runtime route families are summarized below so an engineer can understand user impact without reading 685 rows first.
 
 | Family | Backend operations | Main consumers | Initial-load behavior | Auth/cache |
 | --- | ---: | --- | --- | --- |
-| `/api/public/*` | 22 | Public forms, consent, reviews, availability, invoices, upload capabilities | Some homepage/booking blocking | Public or signed capability; route-specific cache/no-store |
-| `/api/countries*`, `/api/services*`, `/api/doctors*`, `/api/health-tests*`, `/api/blog*`, `/api/assets`, `/api/specialties` | 24 | Public shell, country home, catalog/detail, sitemap/build | Frequently blocking SSR | Public; generally 60-300 s cache directives/tags |
+| `/api/public/*` | 26 | Public forms, consent, reviews, availability, invoices, upload capabilities | Some homepage/booking blocking | Public or signed capability; route-specific cache/no-store |
+| `/api/countries*`, `/api/services*`, `/api/doctors*`, `/api/health-tests*`, `/api/blog*`, `/api/assets`, `/api/specialties` | 26 | Public shell, country home, catalog/detail, sitemap/build | Frequently blocking SSR | Public; generally 60-300 s cache directives/tags |
 | `/api/auth/*` | 19 | Login, registration, session, password, 2FA | Login/session blocking | Private, no-store; tighter rate limits |
 | `/api/cart*`, `/api/orders*`, `/api/appointments` | 9 | Every public shell after hydration, booking, checkout | Cart is universal post-paint; booking blocking | Guest/auth private, no-store |
 | `/api/payments/*` | 3 | Checkout, sync, Stripe webhook | Conversion blocking / webhook | Private or signed provider call |
 | `/api/contact`, `/api/newsletter`, `/api/medical-access-requests*` | 5 | Contact/newsletter forms and medical-access workflow | Interaction/background | Public form or handler-specific controls |
 | `/api/account/*` | 56 | Patient dashboard/profile/files/chat/payments | Dashboard has auth + six parallel reads | Authenticated, private no-store |
 | `/api/me/*` | 33 | Membership, subscription, corporate benefit surfaces | Pricing/account dependent | Authenticated, private no-store |
-| `/api/doctor/*` | 122 | Doctor dashboard, consultations, documents, chat, reports | Dashboard has one read then two parallel reads | Doctor/admin roles, private no-store |
-| `/api/admin/*` | 330 | Admin dashboards and CRUD | Admin home has countries then eight parallel reads | Admin roles, private no-store |
+| `/api/doctor/*` | 127 | Doctor dashboard, consultations, documents, chat, reports | Dashboard has one read then two parallel reads | Doctor/admin roles, private no-store |
+| `/api/admin/*` | 346 | Admin dashboards and CRUD | Admin home has countries then eight parallel reads | Admin roles, private no-store |
 | `/api/corporate/*` | 16 | Corporate admin portal | Dashboard/detail dependent | Corporate/admin roles, private no-store |
 | `/api/partner/*` | 5 | Partner integration | Background/integration | API-client authentication |
 | `/api/internal/*`, `/api/cron/*` | 9 | Scheduler/jobs | Background; shares API process | Internal secret/controlled caller |
@@ -103,11 +105,11 @@ Frontend path scanning found 506 literals/variants. Query-string variants and ca
 
 ### Current measured inventory
 
-All sizes below are uncompressed response bytes. Backend compression is enabled above 1 KB; header checks confirmed gzip on `/api/countries` and the homepage. p99 is not reported because seven samples cannot support it.
+All sizes below are uncompressed response bytes. Backend compression is enabled above 1 KB; header checks confirmed gzip on `/api/countries` and the homepage. Seven samples cannot support stable tail estimates: under the nearest-rank method, p95 is the maximum observation. The p95 column is retained only as a directional cold-path signal; p99 is not reported.
 
 | Endpoint | Method | Used By | Avg | p50 | p95 | Payload | Status |
 | --- | --- | --- | ---: | ---: | ---: | ---: | --- |
-| `/health` | GET | Railway/operations | 551 ms | 458 ms | 877 ms | 43 B | Slow |
+| `/health` | GET | Railway/operations | 551 ms | 458 ms | 877 ms | 43 B | Cold-path latency; server cost unisolated |
 | `/api/countries` | GET | Public shell/site context | 498 ms | 489 ms | 584 ms | 9,219 B | Needs investigation |
 | `/api/countries/ie/services?locale=EN` | GET | Ireland home/catalog | 868 ms | 865 ms | 919 ms | 276,806 B | Slow |
 | `/api/countries/ie/doctors?locale=EN` | GET | Ireland home/doctors | 1,077 ms | 954 ms | 1,702 ms | 514,430 B | Critical |
@@ -154,8 +156,8 @@ The historical report recorded no DB lock waits and no more than three active co
 
 - **Current performance:** 1,266 ms average, 1,070 ms p50, 2,518 ms p95; 640,192 B uncompressed HTML.
 - **Target:** less than 500 ms TTFB and less than 1 s p95 document response from a representative market; materially smaller HTML/RSC transfer.
-- **Root cause:** the public shell starts five backend reads (`PublicShell.tsx:85`); country home starts six more (`app/[country]/[lang]/page.tsx:223`). The work is mostly parallel rather than waterfall, but origin fan-out, dynamic personalization, and very large data/HTML still block completion. The shell also mounts cart hydration traffic after paint.
-- **Evidence:** current probe; `frontend/components/layout/PublicShell.tsx:85-157`; `frontend/app/[country]/[lang]/page.tsx:78,223`; `frontend/components/cart/CartContext.tsx:93`.
+- **Root cause:** the public shell starts five backend reads (`PublicShell.tsx:86`); country home starts six more (`app/[country]/[lang]/page.tsx:231-242`). The work is mostly parallel rather than waterfall, but origin fan-out, dynamic personalization, and very large data/HTML still block completion. The shell also mounts cart hydration traffic after paint.
+- **Evidence:** current aggregate-only probe; `frontend/components/layout/PublicShell.tsx:86,157-158`; `frontend/app/[country]/[lang]/page.tsx:231-242`; `frontend/components/cart/CartContext.tsx:81-95`; `frontend/lib/api/cart-client.ts:36`.
 - **Recommended fix:** measure the render with Server-Timing first; consolidate stable shell/home data into cached projections; stream below-fold trust/review sections; keep personalized auth/cart as small islands; remove catalog detail fields; assess Cache Components/PPR only after response dependencies are explicit.
 - **Risk:** medium-high because locale, SEO metadata, feature flags, and authenticated header state must remain correct.
 - **Expected impact:** largest improvement to LCP/navigation because this is the visible document path.
@@ -167,8 +169,8 @@ Affected routes include `/api/services/:countryCode/:serviceSlug/aggregated-avai
 - **Current performance:** not safely timed in this audit because the GET path can release expired holds and materialize slots. The route was not repeatedly invoked against an unknown database target.
 - **Expected target:** less than 500 ms p95 warm and less than 1 s p95 cold with query count bounded independently of doctor count.
 - **Root cause:** current code still performs service/doctor lookup, bookability, optional insurance lookup, slot work, timezone resolution, and peak configuration. The single-doctor path calls timezone resolution separately; aggregated paths batch doctor reads but still sweep expired holds and fan out slot work.
-- **Evidence:** `backend/src/routes/country-scoped.route.ts:344-402,434-467`; `backend/src/modules/service-booking/service-availability.service.ts:96-197`; `backend/src/modules/doctor-availability/doctor-availability.service.ts:1777-1893`.
-- **Resolved since the July audit:** 45-second bounded caches, in-flight deduplication, shared raw slot inventory across service durations, mutation invalidation, and one batched hold release are present at revision `f7da1354`. Thirteen focused tests pass.
+- **Evidence:** `backend/src/routes/country-scoped.route.ts:276-433,434-467`; `backend/src/modules/service-booking/service-availability.service.ts:96-197`; `backend/src/modules/doctor-availability/doctor-availability.service.ts:1777-1893`.
+- **Resolved since the July audit:** 45-second bounded caches, in-flight deduplication, shared raw slot inventory across service durations, mutation invalidation, and one batched hold release are present at revision `f7da1354`. Thirteen focused tests pass: five in `backend/src/modules/doctor-availability/doctor-availability.cache.test.ts` and eight in `backend/src/modules/bookability/bookability.summary.test.ts`.
 - **Recommended fix:** move expired-hold release/materialization to a scheduled/set-based job; batch timezone/insurance/peak data into the initial doctor/service projection; add per-phase timing and query-count tests; preserve short no-store client semantics for bookable slots.
 - **Risk:** high. Availability correctness, held slots, pauses, doctor suspension, and race-free booking are more important than cache hit rate.
 - **Expected impact:** lower p95 and less write contention, especially for service/GP fan-out.
@@ -188,7 +190,7 @@ Affected routes include `/api/services/:countryCode/:serviceSlug/aggregated-avai
 - **Current performance:** unmeasured; code documents 10-15 s LibreOffice fallback.
 - **Target:** list metadata under 300 ms p95; generation as an asynchronous job with progress; download streams without full proxy buffering.
 - **Root cause:** list can purge orphans via storage reads; generation performs DB/storage/render work; sends loop documents and providers sequentially; storage reads retry up to three times with waits.
-- **Evidence:** `backend/src/modules/generated-documents/generated-documents.service.ts:63-100,343-532,722-768,817-999`.
+- **Evidence:** generation mutex and documented LibreOffice duration at `backend/src/modules/generated-documents/generated-documents.service.ts:63-100`; generation/send work at `343-532,817-999`; read-side orphan purge at `722-768`.
 - **Recommended fix:** make list read-only; move orphan cleanup to a job; queue generation/send; stream storage objects; expose job state.
 - **Risk:** medium-high because clinical documents and delivery auditability are sensitive.
 - **Expected impact:** removes 10 s-class CPU/provider work from interactive request slots.
@@ -222,10 +224,10 @@ Index acceptance requires reduced buffers/rows scanned on representative data, n
 ## 6. Backend Bottlenecks
 
 - **Single process per service:** historical load shows severe queueing with low aggregate CPU utilization. Multiple cores do not help one Node process unless work is replicated or moved to workers.
-- **Scheduler shares request process:** reminder, subscription, outbox, cancellation, and no-show jobs run in the API process, including boot-time jittered runs (`internal-scheduler.ts:29-53,476-507`).
+- **Scheduler shares request process:** reminder, subscription, outbox, cancellation, and no-show jobs run in the API process, including boot-time jittered runs (`backend/src/lib/internal-scheduler.ts:29-53,459-526`).
 - **CPU/heavy child processes share image/process environment:** PDF generation, Chromium, and LibreOffice compete with requests.
 - **Provider/storage work is awaited:** payment, document, email, WhatsApp, object storage, Rekognition, and other integration paths can occupy request handlers.
-- **Proxy buffering:** frontend proxy helpers buffer text or `arrayBuffer()` responses instead of streaming all eligible downloads, adding memory and one-hop latency.
+- **Proxy buffering:** the public catch-all reads the full upstream body with `arrayBuffer()` before returning it (`frontend/app/api/public/[...path]/route.ts:83-84`), and `frontend/lib/server/proxy-stream.ts:86` buffers JSON text. The shared helper `frontend/lib/server/proxy-forward.ts:57-59` streams `upstream.body` directly. Buffering adds memory and one-hop latency where it remains.
 - **No global request deadline:** Node/Fastify defaults apply; provider routes have inconsistent abort budgets.
 - **No first-class metrics:** logs exist, but no APM/OTel/Prometheus route histograms, event-loop lag, query timing, provider timing, or cache hit ratios were found.
 
@@ -243,13 +245,13 @@ Parallelization prevents a simple A->B->C waterfall, but it does not remove back
 
 ### Duplicate/unnecessary traffic
 
-- Every public shell mounts `CartProvider`, which calls `/api/cart` after hydration even on informational pages (`PublicShell.tsx:157`, `CartContext.tsx:93`). Scope it to commerce routes or lazy-load after the first cart interaction.
+- Every public shell mounts `CartProvider`, which calls `/api/cart` after hydration even on informational pages (`PublicShell.tsx:158`, `CartContext.tsx:81-95`, `frontend/lib/api/cart-client.ts:36`). Scope it to commerce routes or lazy-load after the first cart interaction.
 - Public auth `/api/auth/me` is already conditional on `gh-auth-hint`; this is a positive optimization and should be preserved.
 - Metadata/page content duplication is request-deduped with React `cache()`; this is also resolved and should not be reported as a duplicate call.
 
 ### Polling
 
-Patient/admin booking chat, patient/doctor consultation chat, and doctor/admin support chat poll every 10 seconds while visible (`frontend/components/chat/ChatThread.tsx:44-92`, `ConsultationChat.tsx:73-147`, `SupportChat.tsx:55-153`). Support chat also refreshes on focus/visibility. Visibility gating is good; the remaining risk is many open portal tabs and unchanged full responses.
+Patient/admin booking chat, patient/doctor consultation chat, and doctor/admin support chat poll every 10 seconds while visible (`frontend/components/chat/ChatThread.tsx:44-92`, `ConsultationChat.tsx:73-147`, `SupportChat.tsx:66,126-153`). Support chat also refreshes on focus/visibility. Visibility gating is good; the remaining risk is many open portal tabs and unchanged full responses.
 
 Recommended next step: record payload/change rate and active-session concurrency. If low-change, use ETag/`If-None-Match`, long polling, SSE, or WebSocket only where operational complexity is justified. Back off after repeated unchanged responses and stop immediately when hidden/offline.
 
@@ -393,8 +395,8 @@ Run the restored smoke/baseline/target-200 ladder against a confirmed non-produc
 
 | Change | Before/after metrics | Correctness checks | Acceptance target |
 | --- | --- | --- | --- |
-| Doctor/service projections | p50/p95/p99, TTFB, raw/compressed bytes, serialization time | Locale, order, active status, SEO links, detail parity | Doctor/service list p95 <500 ms and first payload <100 KB compressed |
-| Public shell/home consolidation | Document/RSC p50/p95/p99, Server-Timing phases, backend request count, LCP | Six markets/languages, metadata, auth header, footer/trust flags | `/ie/en` p95 <1 s in baseline; fewer origin calls |
+| Doctor/service projections | p50/p95/p99, TTFB, raw/compressed bytes, serialization time, error rate | Locale, order, active status, SEO links, detail parity | Doctor/service list p95 <500 ms, first payload <100 KB compressed, and errors <1% |
+| Public shell/home consolidation | Document/RSC p50/p95/p99, Server-Timing phases, backend request count, LCP, error rate | Six markets/languages, metadata, auth header, footer/trust flags | `/ie/en` p95 <1 s in baseline; fewer origin calls; agreed compressed-byte budget; errors <1% |
 | Cart lazy load | Request count per anonymous page, INP/LCP | Cart count/add/update/checkout E2E | No `/api/cart` on informational anonymous navigation |
 | Availability changes | Query count/time, p50/p95/p99, writes per GET, cache hit/coalesce rate | Held/booked/paused/suspended/race tests; real booking E2E | Warm p95 <500 ms; bounded query count; zero cleanup writes in GET target state |
 | Admin summary | First-paint API count, response bytes, DB time | Country scope/role authorization, totals parity | One summary call plus only detail-on-demand |
@@ -409,15 +411,15 @@ For every optimization, retain the same dataset, location, connection model, and
 ## Audit Verification Performed
 
 - `pnpm --filter backend typecheck` — passed.
-- Focused availability/bookability tests — 13 passed, 0 failed.
-- Current public probes — 7 valid samples for each of 8 representative paths; no authenticated or mutating requests.
+- Focused availability/bookability tests — 13 passed, 0 failed: 5 in `backend/src/modules/doctor-availability/doctor-availability.cache.test.ts` and 8 in `backend/src/modules/bookability/bookability.summary.test.ts`.
+- Current public probes — 7 valid samples for each of 8 representative paths; no authenticated or mutating requests. Only aggregates were retained; no raw per-sample artifact is available.
 - Response-header checks — compression and public cache directives observed; private caching confirmed from code.
 - Docker local profiling — blocked because Docker Desktop was not running; no unsafe fallback was used.
 - Full k6 rerun — blocked because tracked scenarios are missing and credential handling is unsafe; historical results are clearly labeled.
 
 ## Appendix A — Complete Backend Route Ledger
 
-The source-derived ledger below lists all literal Fastify method/path registrations found at the audited revision. `NM` means not measured in this audit. Auth is inferred conservatively from route family; the handler remains the source of truth for exceptional public/signed routes.
+The source-derived ledger below lists all **685 unique** literal Fastify method/path registrations found at revision `f7da1354`. It was regenerated with a TypeScript AST scan that includes generic-typed and multiline calls. `NM` means not measured in this audit. Auth is inferred conservatively from route family; the handler remains the source of truth for exceptional public/signed routes.
 
 | Method | Endpoint | Backend handler / used by | Auth/cache | Avg | p95 | Payload | Status |
 | --- | --- | --- | --- | ---: | ---: | ---: | --- |
@@ -487,6 +489,7 @@ The source-derived ledger below lists all literal Fastify method/path registrati
 | PATCH | `/api/admin/appointments/:id/schedule` | `admin-appointments.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | PATCH | `/api/admin/appointments/:id/status` | `admin-appointments.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | PATCH | `/api/admin/appointments/:id/update` | `admin-appointments.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
+| POST | `/api/admin/appointments/:id/upload-link` | `patient-upload.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/assets` | `admin-assets.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | POST | `/api/admin/assets` | `admin-assets.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | DELETE | `/api/admin/assets/:id` | `admin-assets.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
@@ -543,10 +546,16 @@ The source-derived ledger below lists all literal Fastify method/path registrati
 | PUT | `/api/admin/countries/:code/gp-settings` | `admin-gp-settings.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/countries/:countryId/authority-links` | `admin-country-authority-links.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | POST | `/api/admin/countries/:countryId/authority-links` | `admin-country-authority-links.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
+| DELETE | `/api/admin/countries/:countryId/authority-links/:linkId` | `admin-country-authority-links.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
+| PATCH | `/api/admin/countries/:countryId/authority-links/:linkId` | `admin-country-authority-links.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/countries/:countryId/footer` | `admin-country-footer.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | PUT | `/api/admin/countries/:countryId/footer` | `admin-country-footer.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/countries/:countryId/insurance-companies` | `admin-insurance-companies.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | POST | `/api/admin/countries/:countryId/insurance-companies` | `admin-insurance-companies.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
+| DELETE | `/api/admin/countries/:countryId/insurance-companies/:companyId` | `admin-insurance-companies.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
+| PATCH | `/api/admin/countries/:countryId/insurance-companies/:companyId` | `admin-insurance-companies.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
+| GET | `/api/admin/countries/:countryId/insurance-companies/:companyId/coverage` | `admin-insurance-companies.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
+| PUT | `/api/admin/countries/:countryId/insurance-companies/:companyId/coverage` | `admin-insurance-companies.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/countries/:countryId/landing-pages` | `admin-seo-landing.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | PUT | `/api/admin/countries/:countryId/landing-pages` | `admin-seo-landing.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | DELETE | `/api/admin/countries/:countryId/landing-pages/:pageId` | `admin-seo-landing.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
@@ -569,14 +578,18 @@ The source-derived ledger below lists all literal Fastify method/path registrati
 | GET | `/api/admin/doctor-service-requests` | `admin-doctors.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/doctors` | `admin-doctors.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | POST | `/api/admin/doctors` | `admin-doctors.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
+| GET | `/api/admin/doctors/:doctorId/bank` | `admin-doctor-bank.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/doctors/:doctorId/credentials` | `admin-doctor-credentials.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | POST | `/api/admin/doctors/:doctorId/credentials` | `admin-doctor-credentials.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
+| DELETE | `/api/admin/doctors/:doctorId/credentials/:credentialId` | `admin-doctor-credentials.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
+| PATCH | `/api/admin/doctors/:doctorId/credentials/:credentialId` | `admin-doctor-credentials.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/doctors/:doctorId/faqs` | `admin-doctor-faqs.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | PUT | `/api/admin/doctors/:doctorId/faqs` | `admin-doctor-faqs.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/doctors/:doctorId/markets` | `admin-doctor-markets.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | PATCH | `/api/admin/doctors/:doctorId/markets/:countryId` | `admin-doctor-markets.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/doctors/:doctorId/markets/:countryId/bank` | `admin-doctor-markets.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/doctors/:doctorId/registrations` | `admin-doctor-registrations.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
+| PATCH | `/api/admin/doctors/:doctorId/registrations/:countryId` | `admin-doctor-registrations.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | POST | `/api/admin/doctors/:doctorId/time-slots` | `admin-doctor-time-slots.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | DELETE | `/api/admin/doctors/:doctorId/time-slots/:slotId` | `admin-doctor-time-slots.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | PATCH | `/api/admin/doctors/:doctorId/time-slots/:slotId` | `admin-doctor-time-slots.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
@@ -586,6 +599,8 @@ The source-derived ledger below lists all literal Fastify method/path registrati
 | PATCH | `/api/admin/doctors/:id` | `admin-doctors.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/doctors/:id/availability` | `doctor-availability.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | POST | `/api/admin/doctors/:id/availability` | `doctor-availability.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
+| DELETE | `/api/admin/doctors/:id/availability/:availabilityId` | `doctor-availability.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
+| PATCH | `/api/admin/doctors/:id/availability/:availabilityId` | `doctor-availability.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | DELETE | `/api/admin/doctors/:id/booking-pause` | `admin-doctors.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | PATCH | `/api/admin/doctors/:id/booking-pause` | `admin-doctors.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/doctors/:id/confidentiality` | `doctor-confidentiality.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
@@ -706,14 +721,17 @@ The source-derived ledger below lists all literal Fastify method/path registrati
 | POST | `/api/admin/patients` | `admin-patient-profile.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/patients/:email/access-log` | `account-access-log.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/patients/:email/alert-log` | `admin-patient-profile.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
+| POST | `/api/admin/patients/:email/alerts/:type/remove` | `admin-patient-profile.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/patients/:email/consents` | `consents.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/patients/:email/id-document/download` | `admin-patient-profile.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/patients/:email/insurance/download` | `admin-patient-profile.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/patients/:email/medical-documents` | `medical-documents.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/patients/:email/nationality` | `admin-patient-profile.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
+| PATCH | `/api/admin/patients/:email/nationality/:slot/verification` | `admin-patient-profile.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/patients/:email/payments` | `admin-patient-profile.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/patients/:email/profile` | `admin-patient-profile.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | PATCH | `/api/admin/patients/:email/profile` | `admin-patient-profile.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
+| PATCH | `/api/admin/patients/:email/verification/:kind` | `admin-patient-profile.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/patients/by-email` | `admin-patient-profile.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/patients/search` | `admin-patient-profile.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/admin/payout-invoices` | `admin-payout-invoices.route.ts` | Admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
@@ -855,6 +873,7 @@ The source-derived ledger below lists all literal Fastify method/path registrati
 | PATCH | `/api/corporate/requests/:id` | `corporate.route.ts` | Corporate role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/countries` | `countries.route.ts` | Public read or handler-specific | 498 ms | 584 ms | 9,219 B | Needs investigation |
 | GET | `/api/countries/:code/legal` | `legal-public.route.ts` | Public read or handler-specific | NM | NM | NM | NM—runtime coverage required |
+| GET | `/api/countries/:code/legal-documents/:type` | `legal-public.route.ts` | Public read or handler-specific | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/countries/:countryCode/doctors` | `country-scoped.route.ts` | Public read or handler-specific | 1,077 ms | 1,702 ms | 514,430 B | Critical (Ireland sample) |
 | GET | `/api/countries/:countryCode/doctors/:slug` | `country-scoped.route.ts` | Public read or handler-specific | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/countries/:countryCode/health-tests` | `country-scoped.route.ts` | Public read or handler-specific | NM | NM | NM | NM—runtime coverage required |
@@ -907,6 +926,7 @@ The source-derived ledger below lists all literal Fastify method/path registrati
 | POST | `/api/doctor/appointments/:id/notify-ready` | `doctor-actions.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/doctor/appointments/:id/prescriptions` | `prescriptions.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | POST | `/api/doctor/appointments/:id/prescriptions` | `prescriptions.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
+| POST | `/api/doctor/appointments/:id/upload-link` | `patient-upload.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/doctor/availability` | `doctor-self-availability.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | POST | `/api/doctor/availability` | `doctor-self-availability.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | DELETE | `/api/doctor/availability/:availabilityId` | `doctor-self-availability.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
@@ -933,6 +953,7 @@ The source-derived ledger below lists all literal Fastify method/path registrati
 | DELETE | `/api/doctor/documents/generated/:id` | `doctor-generated-documents.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | POST | `/api/doctor/documents/generated/:id/finalize` | `doctor-generated-documents.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/doctor/documents/generated/:id/pdf` | `doctor-generated-documents.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
+| POST | `/api/doctor/documents/generated/:id/send-upload-link` | `doctor-generated-documents.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/doctor/exam-types` | `doctor-exam-catalogue.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | DELETE | `/api/doctor/exams/:examId` | `exam-results.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | PATCH | `/api/doctor/exams/:examId` | `exam-results.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
@@ -954,13 +975,16 @@ The source-derived ledger below lists all literal Fastify method/path registrati
 | GET | `/api/doctor/patients` | `doctor.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/doctor/patients/:email` | `doctor-actions.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/doctor/patients/:email/alert-log` | `doctor-patient-profile.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
+| POST | `/api/doctor/patients/:email/alerts/:type/remove` | `doctor-patient-profile.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/doctor/patients/:email/consultation-history` | `doctor-consultation-history.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/doctor/patients/:email/documents` | `doctor-patient-documents.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/doctor/patients/:email/identity-verification` | `doctor-patient-profile.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
+| GET | `/api/doctor/patients/:email/identity-verification/image` | `doctor-patient-profile.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | POST | `/api/doctor/patients/:email/identity-verification/request` | `doctor-patient-profile.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | POST | `/api/doctor/patients/:email/identity-verification/review` | `doctor-patient-profile.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/doctor/patients/:email/profile` | `doctor-patient-profile.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | PATCH | `/api/doctor/patients/:email/profile` | `doctor-patient-profile.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
+| POST | `/api/doctor/patients/:email/upload-link` | `patient-upload.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | POST | `/api/doctor/patients/:patientEmail/medical-documents` | `medical-documents.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/doctor/payout-invoices` | `doctor-payout-invoices.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | POST | `/api/doctor/payout-invoices` | `doctor-payout-invoices.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
@@ -991,6 +1015,7 @@ The source-derived ledger below lists all literal Fastify method/path registrati
 | POST | `/api/doctor/time-slots/bulk` | `doctor-self-availability.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | POST | `/api/doctor/time-slots/bulk-block` | `doctor-self-availability.route.ts` | Doctor/admin role; private no-store | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/doctors` | `doctors.route.ts` | Public read or handler-specific | NM | NM | NM | NM—runtime coverage required |
+| GET | `/api/doctors/:countryCode/:slug/availability` | `doctor-availability.route.ts` | Public read or handler-specific | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/doctors/by-language` | `doctors.route.ts` | Public read or handler-specific | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/doctors/count` | `doctors.route.ts` | Public read or handler-specific | 527 ms | 608 ms | 31 B | Needs investigation |
 | GET | `/api/health-tests` | `health-tests.route.ts` | Public read or handler-specific | NM | NM | NM | NM—runtime coverage required |
@@ -1051,13 +1076,17 @@ The source-derived ledger below lists all literal Fastify method/path registrati
 | POST | `/api/public/brazil-consent/submit` | `brazil-consent.route.ts` | Public or signed capability; route-specific | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/public/certificates/:id` | `certificate-verify.route.ts` | Public or signed capability; route-specific | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/public/consultation-count` | `consultation-count.route.ts` | Public or signed capability; route-specific | NM | NM | NM | NM—runtime coverage required |
+| GET | `/api/public/countries/:code/footer` | `public-country-footer.route.ts` | Public or signed capability; route-specific | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/public/countries/:code/landing-pages` | `public-seo-landing.route.ts` | Public or signed capability; route-specific | NM | NM | NM | NM—runtime coverage required |
+| GET | `/api/public/countries/:code/landing-pages/:slug` | `public-seo-landing.route.ts` | Public or signed capability; route-specific | NM | NM | NM | NM—runtime coverage required |
+| GET | `/api/public/countries/:code/trust` | `public-country-trust.route.ts` | Public or signed capability; route-specific | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/public/coverage-catalog` | `public-coverage-catalog.route.ts` | Public or signed capability; route-specific | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/public/cross-border-rx-consent` | `cross-border-rx.route.ts` | Public or signed capability; route-specific | NM | NM | NM | NM—runtime coverage required |
 | POST | `/api/public/cross-border-rx-consent` | `cross-border-rx.route.ts` | Public or signed capability; route-specific | NM | NM | NM | NM—runtime coverage required |
 | POST | `/api/public/cross-border-rx-consent/revert` | `cross-border-rx.route.ts` | Public or signed capability; route-specific | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/public/cross-border-rx/fees` | `public-cross-border-fees.route.ts` | Public or signed capability; route-specific | NM | NM | NM | NM—runtime coverage required |
 | POST | `/api/public/gp-assign` | `public-gp-booking.route.ts` | Public or signed capability; route-specific | NM | NM | NM | NM—runtime coverage required |
+| GET | `/api/public/gp-availability` | `public-gp-booking.route.ts` | Public or signed capability; route-specific | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/public/gp-languages` | `public-gp-booking.route.ts` | Public or signed capability; route-specific | 496 ms | 650 ms | 179 B | Needs investigation |
 | GET | `/api/public/invoices/:invoiceId` | `public-invoices.route.ts` | Public or signed capability; route-specific | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/public/invoices/:invoiceId/pdf` | `public-invoices.route.ts` | Public or signed capability; route-specific | NM | NM | NM | NM—runtime coverage required |
@@ -1076,6 +1105,6 @@ The source-derived ledger below lists all literal Fastify method/path registrati
 | GET | `/api/services/:slug/faqs` | `services.route.ts` | Public read or handler-specific | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/share-links/:token` | `share-links.route.ts` | Signed capability | NM | NM | NM | NM—runtime coverage required |
 | GET | `/api/specialties` | `services.route.ts` | Public read or handler-specific | NM | NM | NM | NM—runtime coverage required |
-| GET | `/health` | `health.route.ts` | Operational public | 551 ms | 877 ms | 43 B | Slow |
+| GET | `/health` | `health.route.ts` | Operational public | 551 ms | 877 ms | 43 B | Cold-path latency; server cost unisolated |
 | GET | `/live` | `health.route.ts` | Operational public | NM | NM | NM | NM—runtime coverage required |
 | GET | `/ready` | `health.route.ts` | Operational public | NM | NM | NM | NM—runtime coverage required |
