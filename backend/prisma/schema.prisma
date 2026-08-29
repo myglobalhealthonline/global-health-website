@@ -239,6 +239,8 @@ enum AuditAction {
   DOCTOR_PURGED
   DOCTOR_PHOTO_UPDATED
   DOCTOR_PHOTO_REMOVED
+  BOOKING_PAUSE_SET
+  BOOKING_PAUSE_CLEARED
   DOCTOR_BANK_VIEWED
   /// A country director listed every consultation in one of their granted
   /// markets. Audited like DOCTOR_BANK_VIEWED because it is a cross-doctor
@@ -674,6 +676,12 @@ model Doctor {
   languages                       String[]
   editorialChecklist              Json?
   active                          Boolean                          @default(true)
+  /// Operational booking pause. This never changes profile publication or lifecycle.
+  /// A null `bookingPausedUntil` means the pause is indefinite once `bookingPausedFrom`
+  /// has been reached. Public copy must use a localized reason code, not this note.
+  bookingPausedFrom               DateTime?
+  bookingPausedUntil              DateTime?
+  bookingPauseReason              String?
   country                         Country                          @relation(fields: [countryId], references: [id], onDelete: Cascade)
   specialties                     DoctorSpecialty[]
   assets                          Asset[]
@@ -797,6 +805,7 @@ model Doctor {
 
   @@unique([countryId, slug])
   @@index([slug])
+  @@index([bookingPausedFrom, bookingPausedUntil])
 }
 
 /// Doctor payout bank details. The doctor enters these in their own portal
@@ -1260,6 +1269,11 @@ model Service {
   shippingCents            Int                            @default(0)
   editorialChecklist       Json?
   isActive                 Boolean                        @default(true)
+  /// Operational booking pause. This does not retire or unpublish the service.
+  /// A null `bookingPausedUntil` means the pause is indefinite once it starts.
+  bookingPausedFrom        DateTime?
+  bookingPausedUntil       DateTime?
+  bookingPauseReason       String?
   /// Clinical review date shown on the service page as "Last reviewed"
   /// (E-E-A-T signal). Nullable, no backfill — set by admins going forward.
   lastReviewedAt           DateTime?
@@ -1336,6 +1350,7 @@ model Service {
   /// (raw SQL in the migration) — guarantees the linked service is in the
   /// plan's country (§36.10).
   @@unique([id, countryId])
+  @@index([bookingPausedFrom, bookingPausedUntil])
 }
 
 /// Type of a contextual internal-link callout, in render-priority order:

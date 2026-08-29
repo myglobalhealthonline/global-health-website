@@ -5,6 +5,7 @@ import {
   createManualBooking,
   type CreateManualBookingResult,
 } from "./manual-booking.service.js";
+import { slotOverlapsPause } from "../bookability/bookability.service.js";
 
 /**
  * Doctor-initiated follow-up booking.
@@ -76,6 +77,13 @@ export class FollowUpVenueMissingError extends Error {
   }
 }
 
+export class FollowUpBookingUnavailableError extends Error {
+  constructor() {
+    super("This doctor or service is not accepting follow-up bookings at the selected time.");
+    this.name = "FollowUpBookingUnavailableError";
+  }
+}
+
 export type CreateFollowUpBookingInput = {
   /** Appointment being followed up. Must belong to `doctorId`. */
   sourceAppointmentId: string;
@@ -123,6 +131,66 @@ export async function createFollowUpBooking(
   });
   if (!source) throw new FollowUpSourceNotFoundError();
   if (!source.serviceId) throw new FollowUpSourceNotBillableError();
+
+  // Doctor follow-ups are not an implicit pause bypass. Validate the exact
+  // selected slot (including full-span overlap) against the same country,
+  // lifecycle, assignment, doctor-pause and service-pause gates as public
+  // booking before entering the shared manual-booking pipeline.
+  const [targetSlot, servicePolicy] = await Promise.all([
+    prisma.doctorTimeSlot.findFirst({
+      where: { id: input.timeSlotId, doctorId: input.doctorId, status: "OPEN" },
+      select: {
+        startAt: true,
+        endAt: true,
+        doctor: {
+          select: {
+            active: true,
+            country: { select: { code: true } },
+            additionalCountries: {
+              where: { country: { code: source.countryCode }, active: true },
+              select: { id: true },
+              take: 1,
+            },
+            bookingPausedFrom: true,
+            bookingPausedUntil: true,
+          },
+        },
+      },
+    }),
+    prisma.service.findFirst({
+      where: {
+        id: source.serviceId,
+        isActive: true,
+        visibility: "PUBLIC",
+        country: { code: source.countryCode, isActive: true },
+      },
+      select: {
+        bookingPausedFrom: true,
+        bookingPausedUntil: true,
+        country: { select: { bookingSetting: { select: { bookingEnabled: true } } } },
+        assignedDoctors: {
+          where: { doctorId: input.doctorId, isActive: true, status: "active" },
+          select: { id: true },
+          take: 1,
+        },
+      },
+    }),
+  ]);
+  const doctorInCountry =
+    targetSlot?.doctor.country.code === source.countryCode ||
+    (targetSlot?.doctor.additionalCountries.length ?? 0) > 0;
+  if (
+    !targetSlot ||
+    !servicePolicy ||
+    servicePolicy.country.bookingSetting?.bookingEnabled === false ||
+    !targetSlot.doctor.active ||
+    !doctorInCountry ||
+    servicePolicy.assignedDoctors.length === 0 ||
+    slotOverlapsPause(targetSlot, targetSlot.doctor) ||
+    slotOverlapsPause(targetSlot, servicePolicy)
+  ) {
+    throw new FollowUpBookingUnavailableError();
+  }
 
   // Book the follow-up against the patient's CURRENT address, not the one
   // frozen onto the source appointment. Downstream identity is keyed on email,

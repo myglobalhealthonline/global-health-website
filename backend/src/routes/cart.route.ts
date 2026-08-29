@@ -29,6 +29,7 @@ import {
 import { resolveDeclaredCoverage } from "../modules/benefits/declared-coverage.service.js";
 import { isLineSellableInCommissionMarket } from "../modules/orders/commission.service.js";
 import { encryptPhi } from "../lib/crypto/phi-crypto.js";
+import { slotOverlapsPause } from "../modules/bookability/bookability-policy.js";
 
 /**
  * Shopping cart for orderable items.
@@ -951,13 +952,25 @@ const cartRoute: FastifyPluginAsync = async (app) => {
                   serviceId: svc.id,
                   doctorId,
                   isActive: true,
-                  doctor: { active: true },
+                  status: "active",
+                  doctor: {
+                    active: true,
+                    OR: [
+                      { countryId: svc.countryId },
+                      { additionalCountries: { some: { active: true, countryId: svc.countryId } } },
+                    ],
+                  },
                 },
-                select: { id: true },
+                select: {
+                  id: true,
+                  doctor: {
+                    select: { bookingPausedFrom: true, bookingPausedUntil: true },
+                  },
+                },
               }),
               prisma.doctorTimeSlot.findFirst({
                 where: { id: timeSlotId, doctorId },
-                select: { id: true, status: true, startAt: true },
+                select: { id: true, status: true, startAt: true, endAt: true },
               }),
               readBookingSettings(svc.country.code),
             ]);
@@ -971,6 +984,22 @@ const cartRoute: FastifyPluginAsync = async (app) => {
             if (!slot) {
               return reply.status(400).send(
                 errorResponse("That time slot does not belong to the selected doctor."),
+              );
+            }
+
+            if (slot.status !== "OPEN") {
+              return reply.status(409).send(
+                errorResponse("That time slot is no longer available."),
+              );
+            }
+            if (
+              slotOverlapsPause(slot, svc) ||
+              slotOverlapsPause(slot, assignment.doctor)
+            ) {
+              return reply.status(409).send(
+                errorResponse(
+                  "This doctor or service is not accepting online bookings at the selected time.",
+                ),
               );
             }
 
@@ -1350,6 +1379,54 @@ const cartRoute: FastifyPluginAsync = async (app) => {
               svc?.durationMinutes ?? null,
             );
             if (held.doctorId !== doctorId) throw new SlotAlreadyTakenError();
+            const [servicePolicy, doctorPolicy, assignment, bookingSetting] =
+              await Promise.all([
+                tx.service.findFirst({
+                  where: {
+                    id: serviceId,
+                    isActive: true,
+                    visibility: "PUBLIC",
+                    country: { code: countryCode, isActive: true },
+                  },
+                  select: { bookingPausedFrom: true, bookingPausedUntil: true },
+                }),
+                tx.doctor.findFirst({
+                  where: {
+                    id: doctorId,
+                    active: true,
+                    OR: [
+                      { country: { code: countryCode, isActive: true } },
+                      {
+                        additionalCountries: {
+                          some: {
+                            active: true,
+                            country: { code: countryCode, isActive: true },
+                          },
+                        },
+                      },
+                    ],
+                  },
+                  select: { bookingPausedFrom: true, bookingPausedUntil: true },
+                }),
+                tx.serviceDoctor.findFirst({
+                  where: { serviceId, doctorId, isActive: true, status: "active" },
+                  select: { id: true },
+                }),
+                tx.bookingSetting.findFirst({
+                  where: { country: { code: countryCode } },
+                  select: { bookingEnabled: true },
+                }),
+              ]);
+            if (
+              !servicePolicy ||
+              !doctorPolicy ||
+              !assignment ||
+              bookingSetting?.bookingEnabled === false ||
+              slotOverlapsPause(held, servicePolicy) ||
+              slotOverlapsPause(held, doctorPolicy)
+            ) {
+              throw new SlotAlreadyTakenError();
+            }
           });
         } catch (err) {
           if (err instanceof SlotAlreadyTakenError) {

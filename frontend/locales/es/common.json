@@ -124,6 +124,11 @@
   "cta": {
     "primaryBooking": "Reservar Online"
   },
+  "bookingAvailability": {
+    "notAcceptingOnlineBookings": "No acepta reservas online",
+    "returningOn": "Las reservas vuelven a abrir el {date}",
+    "nextAvailable": "Próxima disponibilidad: {date}"
+  },
   "notFound": {
     "title": "Página no encontrada",
     "body": "La página que busca no existe o ha sido movida.",

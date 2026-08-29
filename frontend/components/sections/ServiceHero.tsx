@@ -16,6 +16,7 @@ import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
 import { isUnoptimizedImageSrc as isUnlistedRemote } from "@/lib/content/asset-media-url";
 import { isBookingWorkflowHref } from "@/lib/routing/book-href";
 import { BookNowButton } from "@/components/booking/BookNowButton";
+import type { BookabilitySummary } from "@/lib/content/get-country-collections";
 
 /**
  * Reusable premium service-page hero (clinical-editorial gh2 system).
@@ -32,7 +33,14 @@ import { BookNowButton } from "@/components/booking/BookNowButton";
  * bars) so it needs no translation.
  */
 
-type CtaLink = { label: string; href: string };
+type CtaLink = {
+  label: string;
+  href: string;
+  bookability?: BookabilitySummary;
+  unavailableLabel?: string;
+  returningLabel?: string;
+  nextAvailableLabel?: string;
+};
 type FeatureCard = { icon: ReactNode; title: string; subtitle: string };
 type Badge = { icon?: ReactNode; title: string; subtitle: string; accent?: string };
 type TrustStat = { icon: ReactNode; title: string; subtitle: string };
@@ -360,10 +368,15 @@ export function ServiceHero({
             ) : null}
 
             <div className="mt-7 flex flex-wrap items-center gap-3.5">
-              {isBookingWorkflowHref(primaryCta.href) ? (
+              {(primaryCta.bookability && primaryCta.bookability.state !== "BOOKABLE") ||
+              isBookingWorkflowHref(primaryCta.href) ? (
                 <BookNowButton
                   href={primaryCta.href}
                   className="gh2-btn-lime pr-2 gh-focus-on-dark "
+                  bookability={primaryCta.bookability}
+                  unavailableLabel={primaryCta.unavailableLabel}
+                  returningLabel={primaryCta.returningLabel}
+                  nextAvailableLabel={primaryCta.nextAvailableLabel}
                 >
                   {primaryCta.label}
                   <span
@@ -380,6 +393,11 @@ export function ServiceHero({
                   className="gh2-btn-lime pr-2 gh-focus-on-dark "
                 >
                   {primaryCta.label}
+                  {primaryCta.bookability?.nextAvailableAt && primaryCta.nextAvailableLabel ? (
+                    <span className="text-[0.78em] font-semibold opacity-75">
+                      {primaryCta.nextAvailableLabel}
+                    </span>
+                  ) : null}
                   <span
                     aria-hidden
                     className="ml-1 inline-flex size-7 items-center justify-center rounded-full"

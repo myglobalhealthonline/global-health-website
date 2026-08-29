@@ -7,6 +7,7 @@ import {
   releaseExpiredHeldSlotsForDoctors,
 } from "../doctor-availability/doctor-availability.service.js";
 import { computeSlotPrice, getServicePeakConfig } from "../pricing/peak-pricing.service.js";
+import { slotOverlapsPause } from "../bookability/bookability-policy.js";
 
 /**
  * Aggregated availability for a single service across every doctor assigned to
@@ -93,13 +94,25 @@ export async function getServiceAggregatedAvailability(
     };
 
     const service = await prisma.service.findFirst({
-      where: { slug: serviceSlug, isActive: true, country: { code, isActive: true } },
+      where: {
+        slug: serviceSlug,
+        isActive: true,
+        visibility: "PUBLIC",
+        country: { code, isActive: true },
+      },
       select: {
         id: true,
         durationMinutes: true,
         basePriceCents: true,
         currencyCode: true,
-        country: { select: { currency: { select: { code: true } } } },
+        bookingPausedFrom: true,
+        bookingPausedUntil: true,
+        country: {
+          select: {
+            currency: { select: { code: true } },
+            bookingSetting: { select: { bookingEnabled: true } },
+          },
+        },
       },
     });
     if (!service) {
@@ -119,7 +132,9 @@ export async function getServiceAggregatedAvailability(
           { country: { code, isActive: true } },
           { additionalCountries: { some: { active: true, country: { code, isActive: true } } } },
         ],
-        assignedServices: { some: { serviceId: service.id, isActive: true } },
+        assignedServices: {
+          some: { serviceId: service.id, isActive: true, status: "active" },
+        },
         ...(insuranceCompanyId
           ? {
               insuranceDoctorPayouts: {
@@ -141,6 +156,10 @@ export async function getServiceAggregatedAvailability(
       slots: [],
       doctorsByStart: {},
     };
+    if (service.country.bookingSetting?.bookingEnabled === false) {
+      cache.set(cacheKey, found, CACHE_TTL_MS);
+      return found;
+    }
     if (doctors.length === 0) {
       cache.set(cacheKey, found, CACHE_TTL_MS);
       return found;
@@ -181,6 +200,17 @@ export async function getServiceAggregatedAvailability(
     const doctorsByStart: Record<string, ServiceAggDoctorRef[]> = {};
     for (const { doctor, slots } of perDoctor) {
       for (const slot of slots) {
+        if (
+          slotOverlapsPause(
+            { startAt: new Date(slot.startAt), endAt: new Date(slot.endAt) },
+            {
+              bookingPausedFrom: service.bookingPausedFrom,
+              bookingPausedUntil: service.bookingPausedUntil,
+            },
+          )
+        ) {
+          continue;
+        }
         (doctorsByStart[slot.startAt] ??= []).push({
           doctorId: doctor.id,
           doctorSlug: doctor.slug,

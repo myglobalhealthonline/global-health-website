@@ -124,6 +124,11 @@
   "cta": {
     "primaryBooking": "Book Online"
   },
+  "bookingAvailability": {
+    "notAcceptingOnlineBookings": "Not accepting online bookings",
+    "returningOn": "Appointments reopen {date}",
+    "nextAvailable": "Next available {date}"
+  },
   "notFound": {
     "title": "Page not found",
     "body": "The page you are looking for does not exist or has been moved.",

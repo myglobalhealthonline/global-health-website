@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
-import { recordEntityPurge } from "../modules/audit/audit.service.js";
+import { recordAudit, recordEntityPurge } from "../modules/audit/audit.service.js";
 import { Prisma } from "@prisma/client";
 import {
   createAdminSpecialty,
@@ -45,8 +45,10 @@ import {
   ServiceFaqServiceNotFoundError,
   ServiceFaqMaxLimitError,
 } from "../services/service-faq.service.js";
-import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { resolveAdminSessionActor, verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import { bookingPauseBodySchema } from "../validations/booking-pause.schema.js";
+import { setServiceBookingPause } from "../modules/bookability/bookability.service.js";
 
 function handleServiceWriteError(
   app: { log: { error: (e: unknown) => void } },
@@ -223,6 +225,71 @@ const adminServicesRoute: FastifyPluginAsync = async (app) => {
       }
       app.log.error(error);
       return reply.status(500).send(errorResponse("Unexpected admin service error"));
+    }
+  });
+
+  app.patch("/api/admin/services/:id/booking-pause", async (request, reply) => {
+    const params = serviceIdParamsSchema.safeParse(request.params);
+    const body = bookingPauseBodySchema.safeParse(request.body);
+    if (!params.success || !body.success) {
+      return reply.status(400).send(
+        errorResponse("Invalid service booking pause", {
+          params: params.success ? undefined : params.error.flatten(),
+          body: body.success ? undefined : body.error.flatten(),
+        }),
+      );
+    }
+    try {
+      const service = await setServiceBookingPause(params.data.id, {
+        bookingPausedFrom: body.data.from,
+        bookingPausedUntil: body.data.until,
+        bookingPauseReason: body.data.reasonCode,
+      });
+      const actor = resolveAdminSessionActor(request);
+      recordAudit({
+        actorUserId: actor?.userId,
+        actorRole: "ADMIN",
+        action: "BOOKING_PAUSE_SET",
+        entityType: "Service",
+        entityId: service.id,
+        metadata: {
+          from: service.bookingPausedFrom?.toISOString() ?? null,
+          until: service.bookingPausedUntil?.toISOString() ?? null,
+          reasonCode: service.bookingPauseReason,
+        },
+        request,
+      }).catch(() => {});
+      return okResponse({ service }, "Service booking pause saved");
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+        return reply.status(404).send(errorResponse("Service not found"));
+      }
+      return handleServiceWriteError(app, reply, error);
+    }
+  });
+
+  app.delete("/api/admin/services/:id/booking-pause", async (request, reply) => {
+    const params = serviceIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid service id", params.error.flatten()));
+    }
+    try {
+      const service = await setServiceBookingPause(params.data.id, { bookingPausedFrom: null });
+      const actor = resolveAdminSessionActor(request);
+      recordAudit({
+        actorUserId: actor?.userId,
+        actorRole: "ADMIN",
+        action: "BOOKING_PAUSE_CLEARED",
+        entityType: "Service",
+        entityId: service.id,
+        request,
+      }).catch(() => {});
+      return okResponse({ service }, "Service booking pause cleared");
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+        return reply.status(404).send(errorResponse("Service not found"));
+      }
+      return handleServiceWriteError(app, reply, error);
     }
   });
 

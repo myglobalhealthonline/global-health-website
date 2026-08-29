@@ -14,6 +14,56 @@ import { assertLocaleSupported } from "../shared/locale-support.js";
 import { getFeaturedDoctorId } from "./featured-doctor.service.js";
 import { normalizeDoctorWhatsAppForStorage } from "../../lib/whatsapp/resolve-doctor-contact.js";
 import { defaultChamberEntityForCountry } from "../../lib/doctor-registration-display.js";
+import { getDoctorBookability } from "../bookability/bookability.service.js";
+import type { BookabilitySummary } from "../bookability/bookability.service.js";
+
+const BOOKABILITY_CONCURRENCY = 8;
+
+async function mapBounded<T, R>(
+  items: readonly T[],
+  mapper: (item: T) => Promise<R>,
+): Promise<R[]> {
+  const results = new Array<R>(items.length);
+  let cursor = 0;
+  const worker = async () => {
+    while (cursor < items.length) {
+      const index = cursor++;
+      results[index] = await mapper(items[index]!);
+    }
+  };
+  await Promise.all(
+    Array.from({ length: Math.min(BOOKABILITY_CONCURRENCY, items.length) }, () => worker()),
+  );
+  return results;
+}
+
+async function doctorBookabilityPayload(input: {
+  countryCode: string;
+  doctorId: string;
+  serviceIds: readonly string[];
+}): Promise<{
+  bookability: BookabilitySummary;
+  bookabilityByServiceId: Record<string, BookabilitySummary>;
+}> {
+  const uniqueServiceIds = [...new Set(input.serviceIds)];
+  const [bookability, pairSummaries] = await Promise.all([
+    getDoctorBookability({ countryCode: input.countryCode, doctorId: input.doctorId }),
+    mapBounded(uniqueServiceIds, async (serviceId) => ({
+      serviceId,
+      summary: await getDoctorBookability({
+        countryCode: input.countryCode,
+        doctorId: input.doctorId,
+        serviceId,
+      }),
+    })),
+  ]);
+  return {
+    bookability,
+    bookabilityByServiceId: Object.fromEntries(
+      pairSummaries.map(({ serviceId, summary }) => [serviceId, summary]),
+    ),
+  };
+}
 
 /** Display fields a DoctorTranslation overrides. */
 const doctorTranslationSelect = {
@@ -398,7 +448,7 @@ export async function listDoctors(locale?: LocaleCode) {
     });
     // Each doctor merges to the requested locale, falling back to their own
     // country's default locale (then base columns). Same id either way.
-    return rows.map((d) => {
+    const mapped = rows.map((d) => {
       const requestedLocale = locale ?? d.country.defaultLocale;
       const merged = mergeDoctorTranslation(d, requestedLocale, d.country.defaultLocale);
       return stripPrivateContact({
@@ -410,6 +460,12 @@ export async function listDoctors(locale?: LocaleCode) {
         ),
       });
     });
+    const summaries = await mapBounded(
+      rows,
+      (doctor) =>
+        getDoctorBookability({ countryCode: doctor.country.code, doctorId: doctor.id }),
+    );
+    return mapped.map((doctor, index) => ({ ...doctor, bookability: summaries[index]! }));
   } catch (error) {
     throw normalizeDbError(error, "Doctors data is unavailable");
   }
@@ -539,7 +595,7 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
     // Setting table — no Doctor column). The public /doctors page pulls
     // this row out into the FeaturedDoctor spotlight.
     const featuredId = await getFeaturedDoctorId(countryCode);
-    return rows.map((d) => {
+    const mapped = rows.map((d) => {
       const market = d.additionalCountries[0];
       const marketDefaultLocale = market?.country.defaultLocale ?? d.country.defaultLocale;
       const requestedLocale = locale ?? marketDefaultLocale;
@@ -565,6 +621,15 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
         isFeatured: d.id === featuredId,
       };
     });
+    const summaries = await mapBounded(
+      rows,
+      (doctor) => doctorBookabilityPayload({
+        countryCode,
+        doctorId: doctor.id,
+        serviceIds: doctor.assignedServices.map((assignment) => assignment.serviceId),
+      }),
+    );
+    return mapped.map((doctor, index) => ({ ...doctor, ...summaries[index]! }));
   } catch (error) {
     throw normalizeDbError(error, "Doctors data is unavailable");
   }
@@ -584,10 +649,26 @@ type DoctorCredentialRow = {
  * lives on the linked User record, which these public reads never select — so
  * email is already admin/clinic-only.)
  */
-function stripPrivateContact<T extends { whatsappNumber?: string | null }>(
+function stripPrivateContact<
+  T extends {
+    whatsappNumber?: string | null;
+    bookingPausedFrom?: Date | null;
+    bookingPausedUntil?: Date | null;
+    bookingPauseReason?: string | null;
+  },
+>(
   doctor: T,
-): Omit<T, "whatsappNumber"> {
-  const { whatsappNumber: _omit, ...rest } = doctor;
+): Omit<
+  T,
+  "whatsappNumber" | "bookingPausedFrom" | "bookingPausedUntil" | "bookingPauseReason"
+> {
+  const {
+    whatsappNumber: _whatsappNumber,
+    bookingPausedFrom: _bookingPausedFrom,
+    bookingPausedUntil: _bookingPausedUntil,
+    bookingPauseReason: _bookingPauseReason,
+    ...rest
+  } = doctor;
   return rest;
 }
 
@@ -744,8 +825,10 @@ export async function getDoctorByCountryAndSlug(
         assignedServices: {
           where: {
             isActive: true,
+            status: "active",
             service: {
               isActive: true,
+              visibility: "PUBLIC",
               country: { code: countryCode, isActive: true },
             },
           },
@@ -778,7 +861,12 @@ export async function getDoctorByCountryAndSlug(
       requestedLocale,
       marketDefaultLocale,
     );
-      return {
+    const bookabilityPayload = await doctorBookabilityPayload({
+      countryCode,
+      doctorId: doctor.id,
+      serviceIds: doctor.assignedServices.map((assignment) => assignment.serviceId),
+    });
+    return {
         ...stripPrivateContact(
           overrideImcRegistrationFromCountry({
             ...marketMerged,
@@ -790,6 +878,7 @@ export async function getDoctorByCountryAndSlug(
           }, countryCode, requestedLocale, marketDefaultLocale),
         ),
       faqs: resolveDoctorFaqs(doctor.faqs, requestedLocale, marketDefaultLocale),
+      ...bookabilityPayload,
     };
   } catch (error) {
     throw normalizeDbError(error, "Doctors data is unavailable");

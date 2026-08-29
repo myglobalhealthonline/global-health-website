@@ -11,6 +11,7 @@ import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import {
   getCountryDoctors,
   getCountryServices,
+  getDoctorServiceBookability,
   type CountryDoctorCard,
   type CountryServiceCard,
 } from "@/lib/content/get-country-collections";
@@ -182,19 +183,35 @@ export default async function CountryLangBookPage({
 
   // Corporate consultations never appear here: they are CorporatePlanService
   // rows, not catalogue services, and are booked from /account/corporate.
-  const services = [...generalServicesRaw, ...specialistServicesRaw];
+  const allServices = [...generalServicesRaw, ...specialistServicesRaw];
+  const services = allServices.filter((service) => service.bookability.state === "BOOKABLE");
   const selectedService =
     services.find((s) => s.slug === serviceSlugParam || s.id === serviceIdParam) ?? null;
-  const requestedDoctor = doctorSlugParam
+  const requestedDoctorCandidate = doctorSlugParam
     ? doctors.find(
         (doctor) => doctor.slug === doctorSlugParam || doctor.id === doctorSlugParam,
       ) ?? null
     : null;
+  const requestedDoctor =
+    requestedDoctorCandidate?.bookability.state === "BOOKABLE"
+      ? requestedDoctorCandidate
+      : null;
   const requestedDoctorAssigned =
     Boolean(selectedService && requestedDoctor) &&
-    selectedService!.assignedDoctorIds.includes(requestedDoctor!.id);
+    selectedService!.assignedDoctorIds.includes(requestedDoctor!.id) &&
+    getDoctorServiceBookability(
+      requestedDoctor!.bookabilityByServiceId,
+      selectedService!.id,
+    ).state === "BOOKABLE";
   const servicesForRequestedDoctor = requestedDoctor
-    ? services.filter((service) => service.assignedDoctorIds.includes(requestedDoctor.id))
+    ? services.filter(
+        (service) =>
+          service.assignedDoctorIds.includes(requestedDoctor.id) &&
+          getDoctorServiceBookability(
+            requestedDoctor.bookabilityByServiceId,
+            service.id,
+          ).state === "BOOKABLE",
+      )
     : services;
 
   // The booking flow is bidirectional and the two orders differ:
@@ -372,6 +389,8 @@ export default async function CountryLangBookPage({
     notice = { tone: "warning", message: bp.serviceUnavailable };
   } else if (doctorSlugParam && !requestedDoctor) {
     notice = { tone: "warning", message: bp.clinicianUnavailable };
+  } else if (doctorSlugParam && selectedService && !requestedDoctorAssigned) {
+    notice = { tone: "warning", message: bp.clinicianUnavailable };
   }
 
   return (
@@ -448,7 +467,7 @@ export default async function CountryLangBookPage({
                   lang={lang}
                   services={servicesForRequestedDoctor}
                   requestedDoctor={requestedDoctor}
-                  allServicesCount={services.length}
+                  allServicesCount={allServices.length}
                   bp={bp}
                   minSuffix={c.extra.minSuffix}
                 />
@@ -692,7 +711,14 @@ async function SelectedServiceFlow({
   const assignedDoctorIds = new Set(service.assignedDoctorIds);
   const serviceDoctors =
     assignedDoctorIds.size > 0
-      ? doctors.filter((doctor) => assignedDoctorIds.has(doctor.id))
+      ? doctors.filter(
+          (doctor) =>
+            assignedDoctorIds.has(doctor.id) &&
+            getDoctorServiceBookability(
+              doctor.bookabilityByServiceId,
+              service.id,
+            ).state === "BOOKABLE",
+        )
       : [];
   // Slug OR id — the corporate pre-assessment deep link carries the pinned
   // doctor's ID (`/api/me/corporate` bookPath), and a slug-only match silently
@@ -758,6 +784,7 @@ async function SelectedServiceFlow({
               at={at}
               bp={bp}
               cardI18n={doctorCardI18n(loadLocaleBundle(lang as LocaleCode).common.doctors)}
+              bookingAvailability={loadLocaleBundle(lang as LocaleCode).common.bookingAvailability}
               benefit={benefitHrefParam}
             />
           )}
@@ -983,7 +1010,7 @@ function ServicePicker({
       {services.length === 0 ? (
         <div className="gh2-status-card gh2-status-card-dark text-center">
           <p className="font-semibold text-white">
-            {allServicesCount === 0
+            {!requestedDoctor || allServicesCount === 0
               ? bp.noBookableServices
               : bp.clinicianNoServices}
           </p>
@@ -1087,6 +1114,7 @@ function ServiceChoiceCard({
                 the cards use — see isBookingWorkflowHref. */}
             <BookCta
               href={href}
+              bookability={service.bookability}
               className="gh2-btn-compact gh2-btn-compact-primary-dark"
             >
               {bp.continue}

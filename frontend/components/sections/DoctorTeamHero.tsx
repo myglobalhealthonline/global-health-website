@@ -1,5 +1,6 @@
 import { DoctorsHero } from "@/components/sections/DoctorsHero";
 import type { DoctorTeamI18n } from "@/components/templates/DoctorTeamTemplate";
+import type { BookabilityActionProps } from "@/components/booking/BookNowButton";
 
 /**
  * The /doctors directory hero, lifted out of `DoctorTeamTemplate` so it
@@ -21,6 +22,10 @@ export function DoctorTeamHero({
   bookingLabel,
   availableCount,
   i18n,
+  bookability,
+  unavailableLabel,
+  returningLabel,
+  nextAvailableLabel,
 }: {
   countryName: string;
   bookingHref: string;
@@ -29,7 +34,7 @@ export function DoctorTeamHero({
    *  to the active ?lang/?type selection. */
   availableCount: number;
   i18n?: DoctorTeamI18n;
-}) {
+} & BookabilityActionProps) {
   return (
     // `.gh-medical-pattern { overflow: clip }` on the section this hero used to
     // sit inside is what kept its own `right-[-6%]` pattern layer from widening
@@ -50,7 +55,14 @@ export function DoctorTeamHero({
             ? (i18n?.heroAvailableSingular ?? "licensed clinician available")
             : (i18n?.heroAvailablePlural ?? "licensed clinicians available")
         }
-        primaryCta={{ label: bookingLabel, href: bookingHref }}
+        primaryCta={{
+          label: bookingLabel,
+          href: bookingHref,
+          bookability,
+          unavailableLabel,
+          returningLabel,
+          nextAvailableLabel,
+        }}
         secondaryCta={{ label: i18n?.viewDoctors ?? "View Doctors", href: "#doctor-grid" }}
         trustCard1Title={i18n?.trustCard1Title}
         trustCard1Subtitle={i18n?.trustCard1Subtitle}

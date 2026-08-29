@@ -3,6 +3,9 @@ import {
   aggregateRatingJsonLd,
   articleJsonLd,
   breadcrumbJsonLd,
+  consultationServiceOffersJsonLd,
+  medicalClinicServiceJsonLd,
+  medicalProcedureJsonLd,
   organizationJsonLd,
 } from "./structured-data";
 
@@ -127,5 +130,70 @@ describe("breadcrumbJsonLd", () => {
     const result = breadcrumbJsonLd([{ name: "Home", url: "https://example.com/x" }]);
     const items = result.itemListElement as Array<{ item: string }>;
     expect(items[0].item).toBe("https://example.com/x");
+  });
+});
+
+describe("booking availability schema parity", () => {
+  it("keeps MedicalProcedure content but omits ReserveAction when booking is unavailable", () => {
+    const result = medicalProcedureJsonLd({
+      name: "Online GP consultation",
+      description: "Speak with a clinician online.",
+      countryName: "Ireland",
+      url: "/ireland/en/gp-consultation-online",
+      bookingUrl: null,
+    });
+
+    expect(result).not.toHaveProperty("potentialAction");
+    expect(result).toMatchObject({
+      "@type": "MedicalProcedure",
+      name: "Online GP consultation",
+    });
+  });
+
+  it("keeps the clinic service node but omits its ReserveAction when booking is unavailable", () => {
+    const result = medicalClinicServiceJsonLd({
+      serviceName: "Cardiology consultation",
+      description: "Remote cardiology consultation.",
+      specialty: "Cardiovascular",
+      countryName: "Ireland",
+      countrySlug: "ireland",
+      url: "/ireland/en/services/cardiology",
+      bookingUrl: null,
+    });
+
+    expect(result.availableService).not.toHaveProperty("potentialAction");
+  });
+
+  it("emits InStock offers only for services whose visible Book action is enabled", () => {
+    const result = consultationServiceOffersJsonLd({
+      name: "Consultations",
+      description: "Available consultations.",
+      serviceType: "Online consultation",
+      countryName: "Ireland",
+      url: "/ireland/en/gp-consultation-online",
+      offers: [
+        {
+          name: "Available GP",
+          url: "/ireland/en/services/available-gp",
+          priceCents: 5900,
+          currencyCode: "EUR",
+          bookable: true,
+        },
+        {
+          name: "Paused GP",
+          url: "/ireland/en/services/paused-gp",
+          priceCents: 5900,
+          currencyCode: "EUR",
+          bookable: false,
+        },
+      ],
+    });
+
+    expect(result?.offers).toHaveLength(1);
+    expect(result?.offers[0]).toMatchObject({
+      name: "Available GP",
+      availability: "https://schema.org/InStock",
+    });
+    expect(JSON.stringify(result)).not.toContain("Paused GP");
   });
 });

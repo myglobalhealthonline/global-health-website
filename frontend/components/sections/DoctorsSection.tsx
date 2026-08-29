@@ -13,6 +13,7 @@ import type { DoctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { CarouselNav } from "@/components/ui/CarouselNav";
 import { useSwipePage } from "@/hooks/use-swipe-page";
+import type { BookabilityActionProps } from "@/components/booking/BookNowButton";
 
 type DoctorItem = {
   name: string;
@@ -41,7 +42,7 @@ type DoctorItem = {
   href?: string;
   bookingHref?: string;
   ctaLabel?: string;
-};
+} & BookabilityActionProps;
 
 type DoctorsSectionProps = {
   title?: string;

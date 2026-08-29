@@ -16,6 +16,8 @@ import {
   fetchAdminDoctors,
   fetchAdminSpecialties,
   patchAdminDoctor,
+  setAdminDoctorBookingPause,
+  clearAdminDoctorBookingPause,
 } from "@/lib/admin/admin-api";
 import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import {
@@ -24,6 +26,7 @@ import {
 } from "@/lib/content/publication-validation";
 import { AdminCard, Btn, PageHeader, Pill } from "../../../_components/atoms";
 import { SetCrumbTitle } from "@/components/crumb-title";
+import { BookingPauseCard } from "@/components/admin/BookingPauseCard";
 
 export const dynamic = "force-dynamic";
 
@@ -279,6 +282,55 @@ export default async function AdminEditDoctorPage({
     );
   }
 
+  async function saveBookingPauseAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+    const from = String(formData.get("from") ?? "").trim();
+    const until = String(formData.get("until") ?? "").trim();
+    const reasonCode = String(formData.get("reasonCode") ?? "LEAVE");
+    const result = await setAdminDoctorBookingPause(id, {
+      from: `${from}:00.000Z`,
+      until: until ? `${until}:00.000Z` : null,
+      reasonCode,
+    });
+    if (!result.ok) {
+      redirect(`/admin/doctors/${id}/edit?error=${encodeURIComponent(result.message)}`);
+    }
+    const countryCodes = new Set([
+      doctor.country.code,
+      ...(doctor.additionalCountries ?? [])
+        .map((link) => link.country?.code)
+        .filter((code): code is string => Boolean(code)),
+    ]);
+    for (const code of countryCodes) {
+      revalidateTag(SITE_CACHE_TAGS.countryDoctors(code), "max");
+      revalidateTag(SITE_CACHE_TAGS.countryDoctorBySlug(code, doctor.slug), "max");
+    }
+    revalidateTag(SITE_CACHE_TAGS.globalDoctors(), "max");
+    redirect(`/admin/doctors/${id}/edit?success=${encodeURIComponent("Booking pause saved")}`);
+  }
+
+  async function clearBookingPauseAction() {
+    "use server";
+    await requireAdminAction();
+    const result = await clearAdminDoctorBookingPause(id);
+    if (!result.ok) {
+      redirect(`/admin/doctors/${id}/edit?error=${encodeURIComponent(result.message)}`);
+    }
+    const countryCodes = new Set([
+      doctor.country.code,
+      ...(doctor.additionalCountries ?? [])
+        .map((link) => link.country?.code)
+        .filter((code): code is string => Boolean(code)),
+    ]);
+    for (const code of countryCodes) {
+      revalidateTag(SITE_CACHE_TAGS.countryDoctors(code), "max");
+      revalidateTag(SITE_CACHE_TAGS.countryDoctorBySlug(code, doctor.slug), "max");
+    }
+    revalidateTag(SITE_CACHE_TAGS.globalDoctors(), "max");
+    redirect(`/admin/doctors/${id}/edit?success=${encodeURIComponent("Booking pause cleared")}`);
+  }
+
   return (
     <>
       <SetCrumbTitle label={doctor.fullName} />
@@ -373,6 +425,16 @@ export default async function AdminEditDoctorPage({
 
         {/* Right sidebar — visibility + practicing-in */}
         <div className="gh-admin-doctor-side-stack grid gap-4 self-start">
+          <BookingPauseCard
+            value={{
+              from: doctor.bookingPausedFrom,
+              until: doctor.bookingPausedUntil,
+              reasonCode: doctor.bookingPauseReason,
+            }}
+            saveAction={saveBookingPauseAction}
+            clearAction={clearBookingPauseAction}
+            subject="appointments with this doctor"
+          />
           <AdminCard>
             <h3
               className="m-0 text-[var(--color-text-primary)]"

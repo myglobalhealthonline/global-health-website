@@ -51,6 +51,8 @@ import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 import { fetchGlobalConsultationCount } from "@/lib/api/consultation-count";
 import { selectServiceDoctors } from "@/lib/content/service-doctor-selection";
+import { getBookabilityActionProps } from "@/lib/content/bookability-presentation";
+import type { BookabilitySummary } from "@/lib/content/get-country-collections";
 
 type Params = { country: string; lang: string };
 
@@ -94,6 +96,16 @@ function formatPrice(cents: number | null, currency: string | null): string | un
 function formatDuration(minutes: number | null): string | undefined {
   if (minutes == null) return undefined;
   return `${minutes} min`;
+}
+
+const NO_BOOKING_TARGET: BookabilitySummary = {
+  state: "UNAVAILABLE",
+  reasonCode: "NO_OPEN_SLOT",
+  nextAvailableAt: null,
+};
+
+function bookabilityRank(summary: BookabilitySummary): number {
+  return summary.state === "BOOKABLE" ? 0 : summary.state === "RETURNING" ? 1 : 2;
 }
 
 export default async function CountryLangGeneralConsultationPage({
@@ -165,16 +177,31 @@ export default async function CountryLangGeneralConsultationPage({
   // Cart-first booking: hero CTA jumps to the in-page service list
   // instead of the legacy /book-online form. Admin can still override
   // via the ContentPage row.
+  const prioritizedServices = services
+    .map((service, position) => ({ service, position }))
+    .sort(
+      (a, b) =>
+        bookabilityRank(a.service.bookability) - bookabilityRank(b.service.bookability) ||
+        a.position - b.position,
+    )
+    .map(({ service }) => service);
+  const bookingService = prioritizedServices[0] ?? null;
+  const hubBookability = bookingService?.bookability ?? NO_BOOKING_TARGET;
+  const hubActionProps = getBookabilityActionProps(
+    hubBookability,
+    lang,
+    c.bookingAvailability,
+  );
   const ctaHref =
     page?.ctaHref ??
-    buildBookHref({ country: slug, lang, service: services[0]?.slug ?? null });
+    buildBookHref({ country: slug, lang, service: bookingService?.slug ?? null });
 
   // Map Service rows to the ServicesGrid card shape. Cards auto-appear when
   // admin adds a Service row of kind=GENERAL for this country.
   // Each service card links to the booking form WITH `?service=<slug>`
   // so the backend resolves the catalogue price + triggers Stripe Checkout.
   // Without this the priced services would never actually charge.
-  const serviceItems = services.map((s) => ({
+  const serviceItems = prioritizedServices.map((s) => ({
     title: s.name,
     description: s.summary,
     // Two CTAs: "Learn more" opens the read-only service detail page;
@@ -186,11 +213,19 @@ export default async function CountryLangGeneralConsultationPage({
     duration: formatDuration(s.durationMinutes),
     startingPrice: formatPrice(s.basePriceCents, s.currencyCode),
     imageSrc: s.imageSrc ?? null,
+    ...getBookabilityActionProps(s.bookability, lang, c.bookingAvailability),
   }));
 
   // Doctor cards — admin adding a Doctor row for this country adds a card.
   const eligibleDoctors = selectServiceDoctors(doctors, services)
     .map((selection) => selection.doctor)
+    .map((doctor, position) => ({ doctor, position }))
+    .sort(
+      (a, b) =>
+        bookabilityRank(a.doctor.bookability) - bookabilityRank(b.doctor.bookability) ||
+        a.position - b.position,
+    )
+    .map(({ doctor }) => doctor)
     .slice(0, 6);
   const doctorItems = eligibleDoctors.map((d) => ({
     name: d.fullName,
@@ -203,6 +238,7 @@ export default async function CountryLangGeneralConsultationPage({
     bookingHref: buildBookHref({ country: slug, lang, doctor: d.slug }),
     whatsappNumber: d.whatsappNumber,
     ctaLabel: c.doctors.viewProfile,
+    ...getBookabilityActionProps(d.bookability, lang, c.bookingAvailability),
   }));
 
   return (
@@ -220,7 +256,7 @@ export default async function CountryLangGeneralConsultationPage({
           description: `Network of general practitioners registered to practise in ${config.name}. Profiles include credentials, specialties and languages.`,
           countryName: config.name,
           url: `/${slug}/${lang}/gp-consultation-online`,
-          bookingUrl: ctaHref,
+          bookingUrl: hubBookability.state === "BOOKABLE" ? ctaHref : null,
         })}
       />
       {/* Commercial layer alongside MedicalProcedure above — one real Offer per
@@ -241,6 +277,7 @@ export default async function CountryLangGeneralConsultationPage({
               priceCents: s.basePriceCents!,
               currencyCode: s.currencyCode ?? "EUR",
               durationMinutes: s.durationMinutes,
+              bookable: s.bookability.state === "BOOKABLE",
             })),
         });
         return serviceOffersLd ? <JsonLd data={serviceOffersLd} /> : null;
@@ -265,7 +302,7 @@ export default async function CountryLangGeneralConsultationPage({
         titleAccent={heroAccent}
         titleTrail={heroTrail}
         lede={heroSubtitle}
-        primaryCta={{ label: ctaLabel, href: ctaHref }}
+        primaryCta={{ label: ctaLabel, href: ctaHref, ...hubActionProps }}
         secondaryCta={{
           label: gp.secondaryLabel,
           href: `/${slug}/${lang}/doctors`,
@@ -419,8 +456,13 @@ export default async function CountryLangGeneralConsultationPage({
         body={c.doctify.body}
       />
 
-      <FinalCTA primaryHref={ctaHref} secondaryHref={`/${slug}/${lang}/doctors`} i18n={home.finalCta} />
-      <StickyBookingCTA href={ctaHref} />
+      <FinalCTA
+        primaryHref={ctaHref}
+        secondaryHref={`/${slug}/${lang}/doctors`}
+        i18n={home.finalCta}
+        {...hubActionProps}
+      />
+      <StickyBookingCTA href={ctaHref} {...hubActionProps} />
 
       {page?.sections.disclaimer ? (
         <MedicalDisclaimer

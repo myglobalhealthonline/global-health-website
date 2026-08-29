@@ -15,13 +15,18 @@ import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { Flag } from "@/components/ui/Flag";
 import { fetchCrossBorderRxFees } from "@/lib/api/site-content-api";
-import { getCountryDoctors, getCountryServices } from "@/lib/content/get-country-collections";
+import {
+  getCountryDoctors,
+  getCountryServices,
+  getDoctorServiceBookability,
+} from "@/lib/content/get-country-collections";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { buildBookHref } from "@/lib/routing/book-href";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
+import { getBookabilityActionProps } from "@/lib/content/bookability-presentation";
 import {
   CROSS_BORDER_COUNTRIES,
   isShareLocale,
@@ -113,25 +118,49 @@ export default async function DrRenatoSharePage({ params }: { params: Params }) 
   // His bookable catalogue, rendered with the same cards the rest of the site
   // uses — one Offer per assigned service, priced from the DB.
   const assigned = new Set(doctor.assignedServiceIds);
-  const bookable = generalServices.filter((s) => assigned.has(s.id));
+  const bookable = generalServices
+    .filter((s) => assigned.has(s.id))
+    .map((service, position) => ({
+      service,
+      position,
+      pairBookability: getDoctorServiceBookability(
+        doctor.bookabilityByServiceId,
+        service.id,
+      ),
+    }))
+    .sort((a, b) => {
+      const rank = (state: "BOOKABLE" | "RETURNING" | "UNAVAILABLE") =>
+        state === "BOOKABLE" ? 0 : state === "RETURNING" ? 1 : 2;
+      return rank(a.pairBookability.state) - rank(b.pairBookability.state) ||
+        a.position - b.position;
+    });
   // The hero CTA books the headline consultation, which is the FIRST service in
   // the admin's sort order (BR: "Consulta Clínica Online"), not the cheapest —
   // by price the winner was "Renovação de Receita" at R$199, so the main
   // "Agendar consulta" button was starting a prescription refill.
-  const primary = bookable.find((s) => s.basePriceCents != null) ?? null;
+  const primary = bookable.find(({ service }) => service.basePriceCents != null) ?? null;
 
   const bookHref = buildBookHref({
     country: COUNTRY_SLUG,
     lang: locale,
     doctor: DOCTOR_SLUG,
-    service: primary?.slug ?? null,
+    service: primary?.service.slug ?? null,
   });
   const profileHref = `/${COUNTRY_SLUG}/${locale}/doctors/${DOCTOR_SLUG}`;
 
   // Chrome strings (grid pagination labels, closer CTA) come from the shipped
   // locale bundles so this page speaks the same language as the rest of pt-BR.
   const bundle = loadLocaleBundle(locale as LocaleCode);
-  const serviceItems = bookable.map((s) => ({
+  const primaryActionProps = getBookabilityActionProps(
+    primary?.pairBookability ?? {
+      state: "UNAVAILABLE",
+      reasonCode: "NO_OPEN_SLOT",
+      nextAvailableAt: null,
+    },
+    locale,
+    bundle.common.bookingAvailability,
+  );
+  const serviceItems = bookable.map(({ service: s, pairBookability }) => ({
     title: s.name,
     description: s.summary,
     detailHref: `/${COUNTRY_SLUG}/${locale}/services/${s.slug}`,
@@ -147,6 +176,11 @@ export default async function DrRenatoSharePage({ params }: { params: Params }) 
     startingPrice:
       s.basePriceCents != null ? formatPriceRounded(s.basePriceCents, s.currencyCode) : undefined,
     imageSrc: s.imageSrc ?? null,
+    ...getBookabilityActionProps(
+      pairBookability,
+      locale,
+      bundle.common.bookingAvailability,
+    ),
   }));
 
   const feeByCountry = new Map(
@@ -164,7 +198,7 @@ export default async function DrRenatoSharePage({ params }: { params: Params }) 
         titleAccent={t.heroAccent}
         titleTrail={t.heroTrail}
         lede={t.lede}
-        primaryCta={{ label: t.bookCta, href: bookHref }}
+        primaryCta={{ label: t.bookCta, href: bookHref, ...primaryActionProps }}
         secondaryCta={{ label: t.profileCta, href: profileHref }}
         heroImage={{
           src: doctor.imageSrc ?? "/images/stock/gp.jpg",
@@ -330,11 +364,16 @@ export default async function DrRenatoSharePage({ params }: { params: Params }) 
 
       <FAQSection title={t.faqTitle} items={t.faq} theme="dark" eyebrow={t.faqEyebrow} />
 
-      <FinalCTA primaryHref={bookHref} secondaryHref={profileHref} i18n={bundle.home.finalCta} />
+      <FinalCTA
+        primaryHref={bookHref}
+        secondaryHref={profileHref}
+        i18n={bundle.home.finalCta}
+        {...primaryActionProps}
+      />
 
       <MedicalDisclaimer paragraphs={t.noticeParagraphs} title={t.noticeTitle} theme="light" />
 
-      <StickyBookingCTA href={bookHref} label={t.bookCta} />
+      <StickyBookingCTA href={bookHref} label={t.bookCta} {...primaryActionProps} />
 
 
     </>

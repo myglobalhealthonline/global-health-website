@@ -217,6 +217,7 @@ export default async function CountryLangDoctorsPage({
     specialistServiceIds: specialistServices.map((s) => s.id),
     verifyUrl,
     i18n: doctorsI18n,
+    bookingAvailability: common.bookingAvailability,
   };
 
   // Unfiltered view — feeds the hero counts, which sit above the filter bar
@@ -252,6 +253,10 @@ export default async function CountryLangDoctorsPage({
         bookingLabel={baseDirectoryView.bookingLabel}
         availableCount={baseDirectoryView.totalDoctorCount}
         i18n={baseDirectoryView.i18n}
+        bookability={baseDirectoryView.bookability}
+        unavailableLabel={baseDirectoryView.unavailableLabel}
+        returningLabel={baseDirectoryView.returningLabel}
+        nextAvailableLabel={baseDirectoryView.nextAvailableLabel}
       />
       <DoctorDirectoryView view={filteredDirectoryView} />
       {countryTrust ? (

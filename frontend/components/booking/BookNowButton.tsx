@@ -5,6 +5,29 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { isBookingWorkflowHref } from "@/lib/routing/book-href";
 import { trackAnalyticsEvent } from "@/lib/analytics/track";
+import type { BookabilitySummary } from "@/lib/content/get-country-collections";
+
+export type BookabilityActionProps = {
+  bookability?: BookabilitySummary;
+  unavailableLabel?: string;
+  returningLabel?: string;
+  nextAvailableLabel?: string;
+};
+
+function actionStatus({
+  bookability,
+  unavailableLabel,
+  returningLabel,
+  nextAvailableLabel,
+}: BookabilityActionProps): { disabled: boolean; label?: string } {
+  if (bookability?.state === "UNAVAILABLE") {
+    return { disabled: true, label: unavailableLabel ?? "Not accepting online bookings" };
+  }
+  if (bookability?.state === "RETURNING") {
+    return { disabled: true, label: returningLabel ?? "Appointments are not open yet" };
+  }
+  return { disabled: false, label: bookability?.nextAvailableAt ? nextAvailableLabel : undefined };
+}
 
 /**
  * Client-side substitute for `<Link href>` on booking URLs carrying wizard
@@ -37,26 +60,44 @@ export function BookNowButton({
   style,
   children,
   ariaLabel,
+  bookability,
+  unavailableLabel,
+  returningLabel,
+  nextAvailableLabel,
 }: {
   href: string;
   className?: string;
   style?: CSSProperties;
   children?: ReactNode;
   ariaLabel?: string;
-}) {
+} & BookabilityActionProps) {
   const router = useRouter();
+  const status = actionStatus({
+    bookability,
+    unavailableLabel,
+    returningLabel,
+    nextAvailableLabel,
+  });
   return (
     <button
       type="button"
-      onClick={() => {
-        trackBeginBooking(href);
-        router.push(href);
-      }}
-      className={className}
+      disabled={status.disabled}
+      onClick={
+        status.disabled
+          ? undefined
+          : () => {
+              trackBeginBooking(href);
+              router.push(href);
+            }
+      }
+      className={`${className ?? ""} disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:brightness-100`}
       style={style}
-      aria-label={ariaLabel}
+      aria-label={status.disabled ? status.label : ariaLabel}
     >
-      {children}
+      {status.disabled ? status.label : children}
+      {!status.disabled && status.label ? (
+        <span className="text-[0.78em] font-semibold opacity-75">{status.label}</span>
+      ) : null}
     </button>
   );
 }
@@ -75,16 +116,46 @@ export function BookCta({
   style,
   ariaLabel,
   children,
+  bookability,
+  unavailableLabel,
+  returningLabel,
+  nextAvailableLabel,
 }: {
   href: string;
   className?: string;
   style?: CSSProperties;
   ariaLabel?: string;
   children?: ReactNode;
-}) {
+} & BookabilityActionProps) {
+  const status = actionStatus({
+    bookability,
+    unavailableLabel,
+    returningLabel,
+    nextAvailableLabel,
+  });
+  if (status.disabled) {
+    return (
+      <button
+        type="button"
+        disabled
+        className={`${className ?? ""} disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:brightness-100`}
+        style={style}
+        aria-label={status.label}
+      >
+        {status.label}
+      </button>
+    );
+  }
   if (isBookingWorkflowHref(href)) {
     return (
-      <BookNowButton href={href} className={className} style={style} ariaLabel={ariaLabel}>
+      <BookNowButton
+        href={href}
+        className={className}
+        style={style}
+        ariaLabel={ariaLabel}
+        bookability={bookability}
+        nextAvailableLabel={nextAvailableLabel}
+      >
         {children}
       </BookNowButton>
     );
@@ -98,6 +169,9 @@ export function BookCta({
       onClick={() => trackBeginBooking(href)}
     >
       {children}
+      {status.label ? (
+        <span className="text-[0.78em] font-semibold opacity-75">{status.label}</span>
+      ) : null}
     </Link>
   );
 }

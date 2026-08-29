@@ -12,6 +12,7 @@ function service(overrides: Partial<CountryServiceCard> & Pick<CountryServiceCar
     currencyCode: "EUR",
     assignedDoctorIds: [],
     insuranceOptions: [],
+    bookability: { state: "BOOKABLE", reasonCode: null, nextAvailableAt: null },
     ...overrides,
   };
 }
@@ -24,6 +25,8 @@ function doctor(overrides: Partial<CountryDoctorCard> & Pick<CountryDoctorCard, 
     languages: [],
     specialties: [],
     assignedServiceIds: [],
+    bookability: { state: "BOOKABLE", reasonCode: null, nextAvailableAt: null },
+    bookabilityByServiceId: {},
     ...overrides,
   };
 }

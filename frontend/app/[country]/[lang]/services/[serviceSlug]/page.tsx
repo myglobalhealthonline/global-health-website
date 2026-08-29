@@ -21,6 +21,7 @@ import {
   getCountryDoctors,
   getCountryServiceDetail,
   getCountryServices,
+  getDoctorServiceBookability,
 } from "@/lib/content/get-country-collections";
 import { buildBookHref } from "@/lib/routing/book-href";
 import { listingPath } from "@/lib/routing/service-listing-path";
@@ -64,6 +65,7 @@ import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { DoctifyWidgetLazy as DoctifyWidget } from "@/components/sections/DoctifyReviewsLazy";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { isUnoptimizedImageSrc as isUnlistedRemote } from "@/lib/content/asset-media-url";
+import { getBookabilityActionProps } from "@/lib/content/bookability-presentation";
 
 type Params = { country: string; lang: string; serviceSlug: string };
 
@@ -249,6 +251,11 @@ export default async function ServiceDetailPage({
 
   const { common: c, home } = loadLocaleBundle(lang as LocaleCode);
   const t = c.serviceDetailPage;
+  const serviceActionProps = getBookabilityActionProps(
+    detail.bookability,
+    lang,
+    c.bookingAvailability,
+  );
   // Same composition as generateMetadata — the backend's own line is English
   // only, and this one renders above the fold on every localized service page.
   const localizedInsuranceLine = buildLocalizedInsuranceLine(
@@ -449,6 +456,7 @@ export default async function ServiceDetailPage({
               priceCents: detail.basePriceCents,
               currencyCode: detail.currencyCode,
               durationMinutes: detail.durationMinutes,
+              bookable: detail.bookability.state === "BOOKABLE",
             },
           ],
         })
@@ -480,7 +488,7 @@ export default async function ServiceDetailPage({
           countryName: config.name,
           countrySlug: country,
           url: `/${country}/${lang}/services/${serviceSlug}`,
-          bookingUrl: bookHref,
+          bookingUrl: detail.bookability.state === "BOOKABLE" ? bookHref : null,
           reviewerPhysician,
           authorPhysician,
           reviewedByPhysician,
@@ -738,6 +746,7 @@ export default async function ServiceDetailPage({
                   {/* CTA */}
                   <BookCta
                     href={bookHref}
+                    {...serviceActionProps}
                     className="mt-4 flex h-[52px] w-full items-center justify-center gap-2.5 rounded-[12px] bg-[var(--color-brand-accent)] text-[clamp(14px,1vw,16px)] font-bold text-[#0a1f14] shadow-[0_4px_12px_rgba(176,241,34,0.14)] transition-all"
                   >
                     {bookLabel}
@@ -831,6 +840,11 @@ export default async function ServiceDetailPage({
                       doctor: d.slug,
                     })}
                     ctaLabel={c.doctors.viewProfile}
+                    {...getBookabilityActionProps(
+                      getDoctorServiceBookability(d.bookabilityByServiceId, detail.id),
+                      lang,
+                      c.bookingAvailability,
+                    )}
                     dark
                   />
                 </li>
@@ -919,7 +933,11 @@ export default async function ServiceDetailPage({
               </p>
             </div>
             <div className="flex lg:justify-end">
-              <BookCta href={bookHref} className="gh2-btn-lime gh-focus-on-dark">
+              <BookCta
+                href={bookHref}
+                {...serviceActionProps}
+                className="gh2-btn-lime gh-focus-on-dark"
+              >
                 {bookLabel}
                 <ArrowRight className="size-4" aria-hidden />
               </BookCta>

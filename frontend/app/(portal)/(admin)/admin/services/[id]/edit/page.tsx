@@ -16,6 +16,8 @@ import {
   fetchAdminServiceLinks,
   fetchAdminServices,
   patchAdminService,
+  setAdminServiceBookingPause,
+  clearAdminServiceBookingPause,
   putAdminServiceLinks,
   putAdminServicePeakPricing,
 } from "@/lib/admin/admin-api";
@@ -33,6 +35,7 @@ import { FlagBadge } from "../../../_components/flag-badge";
 import { FormSection } from "@/components/FormSection";
 import { displayNameFrom } from "@/lib/admin/display-name";
 import { SetCrumbTitle } from "@/components/crumb-title";
+import { BookingPauseCard } from "@/components/admin/BookingPauseCard";
 
 export const dynamic = "force-dynamic";
 
@@ -411,6 +414,41 @@ export default async function AdminEditServicePage({
     );
   }
 
+  async function saveBookingPauseAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+    const from = String(formData.get("from") ?? "").trim();
+    const until = String(formData.get("until") ?? "").trim();
+    const reasonCode = String(formData.get("reasonCode") ?? "LEAVE");
+    const result = await setAdminServiceBookingPause(id, {
+      from: `${from}:00.000Z`,
+      until: until ? `${until}:00.000Z` : null,
+      reasonCode,
+    });
+    if (!result.ok) {
+      redirect(`/admin/services/${id}/edit?kind=${encodeURIComponent(kind)}&error=${encodeURIComponent(result.message)}`);
+    }
+    revalidateTag(SITE_CACHE_TAGS.countryServices(service.country.code), "max");
+    revalidateTag(SITE_CACHE_TAGS.countryDoctors(service.country.code), "max");
+    revalidateTag(SITE_CACHE_TAGS.serviceBySlug(service.slug), "max");
+    revalidateTag(SITE_CACHE_TAGS.globalServices(), "max");
+    redirect(`/admin/services/${id}/edit?kind=${encodeURIComponent(kind)}&success=${encodeURIComponent("Booking pause saved")}`);
+  }
+
+  async function clearBookingPauseAction() {
+    "use server";
+    await requireAdminAction();
+    const result = await clearAdminServiceBookingPause(id);
+    if (!result.ok) {
+      redirect(`/admin/services/${id}/edit?kind=${encodeURIComponent(kind)}&error=${encodeURIComponent(result.message)}`);
+    }
+    revalidateTag(SITE_CACHE_TAGS.countryServices(service.country.code), "max");
+    revalidateTag(SITE_CACHE_TAGS.countryDoctors(service.country.code), "max");
+    revalidateTag(SITE_CACHE_TAGS.serviceBySlug(service.slug), "max");
+    revalidateTag(SITE_CACHE_TAGS.globalServices(), "max");
+    redirect(`/admin/services/${id}/edit?kind=${encodeURIComponent(kind)}&success=${encodeURIComponent("Booking pause cleared")}`);
+  }
+
   async function saveServiceLinksAction(formData: FormData) {
     "use server";
     await requireAdminAction();
@@ -584,6 +622,16 @@ export default async function AdminEditServicePage({
 
         {/* Right sidebar — cover image + visibility */}
         <div className="grid gap-4 self-start">
+          <BookingPauseCard
+            value={{
+              from: service.bookingPausedFrom,
+              until: service.bookingPausedUntil,
+              reasonCode: service.bookingPauseReason,
+            }}
+            saveAction={saveBookingPauseAction}
+            clearAction={clearBookingPauseAction}
+            subject="this service"
+          />
           {/* Cover image preview (read-only). Uploads happen via the
               ManagedImageField labelled "Hero image" inside the form on the
               left — showing two upload UIs would mean two form inputs with

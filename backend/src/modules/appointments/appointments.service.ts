@@ -26,6 +26,7 @@ import {
   ensureSlotsForRange,
   SlotAlreadyTakenError,
 } from "../doctor-availability/doctor-availability.service.js";
+import { isPauseActiveAt, slotOverlapsPause } from "../bookability/bookability-policy.js";
 
 /**
  * Thrown when a patient tries to reschedule onto a slot that belongs to a
@@ -64,6 +65,13 @@ export class DoctorNotAssignedToServiceError extends Error {
   constructor() {
     super("This doctor is no longer offering that service. Please pick a different doctor or service.");
     this.name = "DoctorNotAssignedToServiceError";
+  }
+}
+
+export class BookingUnavailableError extends Error {
+  constructor() {
+    super("This doctor or service is not accepting online bookings at the selected time.");
+    this.name = "BookingUnavailableError";
   }
 }
 
@@ -144,17 +152,39 @@ export async function createAppointmentWithOptionalOwner(
     //     surface duration / price downstream.
     // Service is country-scoped, so the (slug, countryCode) tuple
     // resolves to one row.
-    let serviceForBooking: { id: string; durationMinutes: number | null } | null =
+    let serviceForBooking: {
+      id: string;
+      countryId: string;
+      durationMinutes: number | null;
+      bookingPausedFrom: Date | null;
+      bookingPausedUntil: Date | null;
+    } | null =
       null;
     if (input.serviceSlug) {
       serviceForBooking = await prisma.service.findFirst({
         where: {
           slug: input.serviceSlug,
           isActive: true,
+          visibility: "PUBLIC",
           country: { code: input.country, isActive: true },
         },
-        select: { id: true, durationMinutes: true },
+        select: {
+          id: true,
+          countryId: true,
+          durationMinutes: true,
+          bookingPausedFrom: true,
+          bookingPausedUntil: true,
+        },
       });
+      if (!serviceForBooking) throw new BookingUnavailableError();
+    }
+
+    // A timed public booking without a service cannot validate duration,
+    // assignment, service lifecycle, or service pause policy.
+    if (input.timeSlotId && !serviceForBooking) throw new BookingUnavailableError();
+
+    if (!input.timeSlotId && serviceForBooking && isPauseActiveAt(serviceForBooking, new Date())) {
+      throw new BookingUnavailableError();
     }
 
     // Slot booking path. If the patient picked a concrete slot, we wrap
@@ -178,16 +208,56 @@ export async function createAppointmentWithOptionalOwner(
         // the slot's doctor is bookable for that service. Throw inside
         // the transaction so the slot claim rolls back to OPEN.
         if (serviceForBooking) {
-          const assignment = await tx.serviceDoctor.findFirst({
-            where: {
-              serviceId: serviceForBooking.id,
-              doctorId: claimed.doctorId,
-              isActive: true,
-            },
-            select: { id: true },
-          });
+          const [assignment, doctor, servicePolicy, bookingSetting] = await Promise.all([
+            tx.serviceDoctor.findFirst({
+              where: {
+                serviceId: serviceForBooking.id,
+                doctorId: claimed.doctorId,
+                isActive: true,
+                status: "active",
+                doctor: {
+                  active: true,
+                  OR: [
+                    { countryId: serviceForBooking.countryId },
+                    {
+                      additionalCountries: {
+                        some: { active: true, countryId: serviceForBooking.countryId },
+                      },
+                    },
+                  ],
+                },
+              },
+              select: { id: true },
+            }),
+            tx.doctor.findUnique({
+              where: { id: claimed.doctorId },
+              select: { bookingPausedFrom: true, bookingPausedUntil: true },
+            }),
+            tx.service.findFirst({
+              where: {
+                id: serviceForBooking.id,
+                isActive: true,
+                visibility: "PUBLIC",
+                country: { code: input.country, isActive: true },
+              },
+              select: { bookingPausedFrom: true, bookingPausedUntil: true },
+            }),
+            tx.bookingSetting.findFirst({
+              where: { country: { code: input.country } },
+              select: { bookingEnabled: true },
+            }),
+          ]);
           if (!assignment) {
             throw new DoctorNotAssignedToServiceError();
+          }
+          if (
+            !doctor ||
+            !servicePolicy ||
+            bookingSetting?.bookingEnabled === false ||
+            slotOverlapsPause(claimed, servicePolicy) ||
+            slotOverlapsPause(claimed, doctor)
+          ) {
+            throw new BookingUnavailableError();
           }
         }
         await tx.appointment.create({
@@ -947,7 +1017,15 @@ export async function rescheduleAppointmentForPatient(
 ): Promise<AccountAppointmentDetail | null> {
   const owned = await prisma.appointment.findFirst({
     where: { id, userId },
-    select: { id: true, timeSlotId: true, status: true, doctorId: true, scheduledAt: true },
+    select: {
+      id: true,
+      timeSlotId: true,
+      status: true,
+      doctorId: true,
+      serviceId: true,
+      countryCode: true,
+      scheduledAt: true,
+    },
   });
   if (!owned) throw new AppointmentNotOwnedError();
 
@@ -985,6 +1063,51 @@ export async function rescheduleAppointmentForPatient(
     const claimed = await claimConsecutiveSlots(tx, newTimeSlotId, preserveMinutes);
     if (owned.doctorId && claimed.doctorId !== owned.doctorId) {
       throw new RescheduleDoctorMismatchError();
+    }
+    const [settings, doctor, service] = await Promise.all([
+      tx.bookingSetting.findFirst({
+        where: { country: { code: owned.countryCode } },
+        select: { bookingEnabled: true },
+      }),
+      tx.doctor.findUnique({
+        where: { id: claimed.doctorId },
+        select: { active: true, bookingPausedFrom: true, bookingPausedUntil: true },
+      }),
+      owned.serviceId
+        ? tx.service.findFirst({
+            where: {
+              id: owned.serviceId,
+              isActive: true,
+              visibility: "PUBLIC",
+              country: { code: owned.countryCode, isActive: true },
+            },
+            select: {
+              id: true,
+              bookingPausedFrom: true,
+              bookingPausedUntil: true,
+              assignedDoctors: {
+                where: {
+                  doctorId: claimed.doctorId,
+                  isActive: true,
+                  status: "active",
+                },
+                select: { id: true },
+                take: 1,
+              },
+            },
+          })
+        : Promise.resolve(null),
+    ]);
+    if (
+      settings?.bookingEnabled === false ||
+      !doctor?.active ||
+      slotOverlapsPause(claimed, doctor) ||
+      (owned.serviceId &&
+        (!service ||
+          service.assignedDoctors.length === 0 ||
+          slotOverlapsPause(claimed, service)))
+    ) {
+      throw new BookingUnavailableError();
     }
     await tx.appointment.update({
       where: { id },

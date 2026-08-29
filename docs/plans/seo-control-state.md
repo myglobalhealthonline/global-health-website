@@ -21,6 +21,28 @@ Property: `sc-domain:myglobalhealth.online` · Site: `https://www.myglobalhealth
 The active forward plan (§27) is surfaced first for operators; the numbered baseline,
 ledger and historical evidence follow from §0.
 
+### 27.11 Booking availability visibility — local implementation (2026-08-29)
+
+- Public doctor, specialist, consultation, and service pages remain lifecycle- and
+  publication-driven when online booking is paused. Availability does not change
+  robots, canonical, hreflang, sitemap membership, `lastmod`, or crawlable profile
+  and detail links.
+- Entity-specific booking actions now consume an authoritative country + service +
+  doctor policy and verified compatible slot. A normal non-working day therefore
+  remains bookable when a real next working-day slot exists; unavailable and known
+  returning states render non-navigating disabled controls.
+- Public booking reads and writes, including forged/deep-linked, cart, appointment,
+  reschedule, and doctor follow-up paths, enforce the same country, lifecycle,
+  assignment, pause, and full-slot-overlap rules. Structured data omits false
+  `InStock` offers and `ReserveAction` when the matching action is unavailable.
+- Admin and doctor portal controls can schedule or clear a durable pause without
+  deleting slots or cancelling existing appointments. Public cache tags are
+  invalidated for affected markets.
+- This is a **local implementation record, not deployment evidence**. The production
+  migration, live checks, critical end-to-end proof, and two-week GSC observation
+  remain open. Notification signup was not exposed because consent, unsubscribe,
+  and idempotent delivery are not implemented.
+
 ### 27.10 Ireland public-copy humanization (2026-08-26)
 
 - Ireland home, doctors, plans, about, contact, tool, doctor-profile and public

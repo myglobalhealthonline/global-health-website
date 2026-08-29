@@ -28,6 +28,7 @@ import {
   FollowUpSourceNotBillableError,
   FollowUpSourceNotFoundError,
   FollowUpVenueMissingError,
+  FollowUpBookingUnavailableError,
 } from "../modules/appointments/follow-up-booking.service.js";
 import {
   DoctorNotAssignedToServiceError,
@@ -643,6 +644,9 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
         }
         // Race loser / stale picker — the doctor re-picks an open slot.
         if (error instanceof SlotNotAvailableError) {
+          return reply.status(409).send(errorResponse(error.message));
+        }
+        if (error instanceof FollowUpBookingUnavailableError) {
           return reply.status(409).send(errorResponse(error.message));
         }
         // Following up would start a SECOND chart for this patient. Normally

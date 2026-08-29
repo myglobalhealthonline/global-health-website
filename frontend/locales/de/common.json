@@ -124,6 +124,11 @@
   "cta": {
     "primaryBooking": "Online buchen"
   },
+  "bookingAvailability": {
+    "notAcceptingOnlineBookings": "Nimmt derzeit keine Online-Buchungen an",
+    "returningOn": "Termine sind wieder buchbar ab {date}",
+    "nextAvailable": "Nächster verfügbarer Termin: {date}"
+  },
   "notFound": {
     "title": "Seite nicht gefunden",
     "body": "Die gesuchte Seite existiert nicht oder wurde verschoben.",

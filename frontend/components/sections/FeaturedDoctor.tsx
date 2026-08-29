@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/BrandIcons";
 import { focalStyle, DoctorAvatarFallback } from "@/components/media/doctor-photo";
 import { SectionSeam } from "@/components/ui/SectionSeam";
-import { BookCta } from "@/components/booking/BookNowButton";
+import { BookCta, type BookabilityActionProps } from "@/components/booking/BookNowButton";
 
 type DoctorSpotlightProps = {
   name: string;
@@ -65,7 +65,7 @@ type DoctorSpotlightProps = {
   verifyRegistrationLabel?: string;
   /** Photo-overlay ribbon text — falls back to English when absent. */
   clinicalDirectorLabel?: string;
-};
+} & BookabilityActionProps;
 
 export function FeaturedDoctor({
   doctor,
@@ -310,6 +310,10 @@ export function FeaturedDoctor({
             {bookHref ? (
               <BookCta
                 href={bookHref}
+                bookability={doctor.bookability}
+                unavailableLabel={doctor.unavailableLabel}
+                returningLabel={doctor.returningLabel}
+                nextAvailableLabel={doctor.nextAvailableLabel}
                 className="inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-extrabold tracking-[-0.005em] transition-[transform,filter] duration-200 hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-accent)]/40 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                 style={{
                   background: "var(--color-brand-accent)",

@@ -8,6 +8,7 @@ import { HeroReveal } from "@/components/motion/HeroReveal";
 import { fitHeadingFontSize, IDEAL_HEADING_CHARS } from "@/lib/text/fit-heading-size";
 import { isUnoptimizedImageSrc as isUnlistedRemote } from "@/lib/content/asset-media-url";
 import type { SameDayBookingI18n } from "@/components/sections/SameDayBooking";
+import { BookCta, type BookabilityActionProps } from "@/components/booking/BookNowButton";
 
 // SameDayBooking renders real server-fetchable markup (slot grid, CTA) once
 // hydrated — keep SSR on so it isn't blank/no-index on first paint. Dynamic
@@ -80,6 +81,10 @@ export function HomeHero({
   ctaLabel,
   heroPriceBadge,
   i18n,
+  bookability,
+  unavailableLabel,
+  returningLabel,
+  nextAvailableLabel,
 }: {
   countryCode: CountryCode;
   countryName: string;
@@ -98,7 +103,7 @@ export function HomeHero({
   /** Small above-fold price line, e.g. "GP consultations from €45". Verbatim, pre-translated. */
   heroPriceBadge?: string | null;
   i18n?: HomeHeroI18n;
-}) {
+} & BookabilityActionProps) {
   const displayHeroTitle = heroTitle?.trim() || null;
   const displayHeroSubtitle = heroSubtitle?.trim() || null;
   const displayHeroPriceBadge = heroPriceBadge?.trim() || null;
@@ -240,13 +245,17 @@ export function HomeHero({
 
           <HeroReveal delay={340}>
             <div className="mt-11 flex flex-wrap items-center gap-4">
-              <Link
+              <BookCta
                 href={bookHref}
+                bookability={bookability}
+                unavailableLabel={unavailableLabel}
+                returningLabel={returningLabel}
+                nextAvailableLabel={nextAvailableLabel}
                 className="gh2-btn-lime gh-focus-on-dark motion-reduce:transition-none"
               >
                 {displayCtaLabel}
                 <ArrowRight className="size-4" strokeWidth={2} aria-hidden />
-              </Link>
+              </BookCta>
               <Link
                 href="#services"
                 className="gh2-btn-ghost gh-focus-on-dark motion-reduce:transition-none"
@@ -350,13 +359,14 @@ export function HomeHero({
                     languageLabel,
                   )}
                 </p>
-                <Link
+                <PanelBookCta
                   href={bookHref}
-                  className="gh-home-hero-panelBookBtn flex w-full items-center justify-center gap-2 rounded-full py-3 text-[13px] font-bold text-white transition-colors duration-200 hover:bg-white/10 motion-reduce:transition-none"
-                >
-                  {i18n?.bookNow ?? "Book now"}
-                  <ArrowRight className="size-3.5" strokeWidth={1.5} aria-hidden />
-                </Link>
+                  label={i18n?.bookNow ?? "Book now"}
+                  bookability={bookability}
+                  unavailableLabel={unavailableLabel}
+                  returningLabel={returningLabel}
+                  nextAvailableLabel={nextAvailableLabel}
+                />
               </div>
             </aside>
           ) : null}
@@ -368,6 +378,32 @@ export function HomeHero({
         className="gh-home-hero-bottomRule gh-medical-pattern-layer absolute bottom-0 left-0 right-0 h-px"
       />
     </section>
+  );
+}
+
+function PanelBookCta({
+  href,
+  label,
+  bookability,
+  unavailableLabel,
+  returningLabel,
+  nextAvailableLabel,
+}: {
+  href: string;
+  label: string;
+} & BookabilityActionProps) {
+  return (
+    <BookCta
+      href={href}
+      bookability={bookability}
+      unavailableLabel={unavailableLabel}
+      returningLabel={returningLabel}
+      nextAvailableLabel={nextAvailableLabel}
+      className="gh-home-hero-panelBookBtn flex w-full items-center justify-center gap-2 rounded-full py-3 text-[13px] font-bold text-white transition-colors duration-200 hover:bg-white/10 motion-reduce:transition-none"
+    >
+      {label}
+      <ArrowRight className="size-3.5" strokeWidth={1.5} aria-hidden />
+    </BookCta>
   );
 }
 

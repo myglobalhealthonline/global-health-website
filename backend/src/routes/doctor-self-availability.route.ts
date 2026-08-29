@@ -20,6 +20,9 @@ import {
 } from "../modules/doctor-availability/doctor-availability.service.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
+import { bookingPauseBodySchema } from "../validations/booking-pause.schema.js";
+import { setDoctorBookingPause } from "../modules/bookability/bookability.service.js";
+import { recordAudit } from "../modules/audit/audit.service.js";
 
 /**
  * Doctor self-service availability.
@@ -199,7 +202,7 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
         // public availability endpoint.
         await ensureSlotsForRange(auth.doctorId, fromUtc, toUtc);
 
-        const [windows, slots, clinicTimezone, availableTimezones] = await Promise.all([
+        const [windows, slots, clinicTimezone, availableTimezones, bookingPause] = await Promise.all([
           listAdminAvailability(auth.doctorId),
           prisma.doctorTimeSlot.findMany({
             where: {
@@ -232,6 +235,14 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
           }),
           resolveDoctorTimeZone(auth.doctorId),
           resolveDoctorTimeZones(auth.doctorId),
+          prisma.doctor.findUniqueOrThrow({
+            where: { id: auth.doctorId },
+            select: {
+              bookingPausedFrom: true,
+              bookingPausedUntil: true,
+              bookingPauseReason: true,
+            },
+          }),
         ]);
 
         return okResponse({
@@ -251,6 +262,7 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
           })),
           clinicTimezone,
           availableTimezones,
+          bookingPause,
         });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
@@ -261,6 +273,67 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
       }
     },
   );
+
+  app.patch("/api/doctor/booking-pause", async (request, reply) => {
+    const auth = await verifyDoctorAccess(request);
+    if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+    const body = bookingPauseBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.status(400).send(errorResponse("Invalid booking pause", body.error.flatten()));
+    }
+    try {
+      const bookingPause = await setDoctorBookingPause(auth.doctorId, {
+        bookingPausedFrom: body.data.from,
+        bookingPausedUntil: body.data.until,
+        bookingPauseReason: body.data.reasonCode,
+      });
+      recordAudit({
+        actorUserId: auth.userId,
+        actorRole: auth.role,
+        action: "BOOKING_PAUSE_SET",
+        entityType: "Doctor",
+        entityId: auth.doctorId,
+        metadata: {
+          from: bookingPause.bookingPausedFrom?.toISOString() ?? null,
+          until: bookingPause.bookingPausedUntil?.toISOString() ?? null,
+          reasonCode: bookingPause.bookingPauseReason,
+        },
+        request,
+      }).catch(() => {});
+      return okResponse({ bookingPause }, "Booking pause saved");
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not save booking pause"));
+    }
+  });
+
+  app.delete("/api/doctor/booking-pause", async (request, reply) => {
+    const auth = await verifyDoctorAccess(request);
+    if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+    try {
+      const bookingPause = await setDoctorBookingPause(auth.doctorId, {
+        bookingPausedFrom: null,
+      });
+      recordAudit({
+        actorUserId: auth.userId,
+        actorRole: auth.role,
+        action: "BOOKING_PAUSE_CLEARED",
+        entityType: "Doctor",
+        entityId: auth.doctorId,
+        request,
+      }).catch(() => {});
+      return okResponse({ bookingPause }, "Booking pause cleared");
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not clear booking pause"));
+    }
+  });
 
   // ── Create a recurring window ──────────────────────────────────────
   app.post(

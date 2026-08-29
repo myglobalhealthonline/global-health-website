@@ -13,7 +13,7 @@ import {
 import { Flag } from "@/components/ui/Flag";
 import { focalStyle, DoctorAvatarFallback } from "@/components/media/doctor-photo";
 import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
-import { BookCta } from "@/components/booking/BookNowButton";
+import { BookCta, type BookabilityActionProps } from "@/components/booking/BookNowButton";
 
 
 /* ─── Mint icon box ──────────────────────────────────────────────────────── */
@@ -100,7 +100,7 @@ type DoctorCardProps = {
    *  grid directly under the page <h1> with no section heading above it, so it
    *  passes "h2" to avoid skipping a level. */
   titleAs?: "h2" | "h3";
-};
+} & BookabilityActionProps;
 
 /* ─── Component ──────────────────────────────────────────────────────────── */
 export function DoctorCard({
@@ -135,6 +135,10 @@ export function DoctorCard({
   viewProfileAriaLabel,
   cardI18n,
   titleAs: NameHeading = "h3",
+  bookability,
+  unavailableLabel,
+  returningLabel,
+  nextAvailableLabel,
 }: DoctorCardProps) {
   // cardI18n is a required prop; the English fallback only guards a caller
   // that skips TS (or an older call site mid-migration) from crashing.
@@ -421,6 +425,10 @@ export function DoctorCard({
             ) : null}
             <BookCta
               href={bookHref}
+              bookability={bookability}
+              unavailableLabel={unavailableLabel}
+              returningLabel={returningLabel}
+              nextAvailableLabel={nextAvailableLabel}
               className={`gh2-btn-compact relative z-20 flex-1 gap-1 ${
                 dark ? "gh2-btn-compact-primary-dark" : "gh2-btn-compact-primary"
               }`}
@@ -435,6 +443,10 @@ export function DoctorCard({
             {bookHref ? (
               <BookCta
                 href={bookHref}
+                bookability={bookability}
+                unavailableLabel={unavailableLabel}
+                returningLabel={returningLabel}
+                nextAvailableLabel={nextAvailableLabel}
                 className={`relative z-20 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full px-4 text-[13.5px] font-extrabold tracking-[-0.005em] transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-0.5 hover:brightness-110 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${
                   dark
                     ? "focus-visible:ring-[var(--color-brand-accent)]/40"

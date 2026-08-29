@@ -2,6 +2,7 @@ import { Prisma, type DoctorSlotStatus } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { TtlCache } from "../../lib/ttl-cache.js";
+import { slotOverlapsPause, type BookingPause } from "../bookability/bookability-policy.js";
 import {
   invalidateAvailabilityCaches,
   registerAvailabilityCache,
@@ -1029,6 +1030,13 @@ const slotCache = new TtlCache<PublicSlot[]>(SLOT_CACHE_MAX_ENTRIES);
 // this one — see availability-cache-bus.
 registerAvailabilityCache(() => slotCache.clear());
 
+async function loadDoctorBookingPause(doctorId: string): Promise<BookingPause | null> {
+  return prisma.doctor.findUnique({
+    where: { id: doctorId },
+    select: { bookingPausedFrom: true, bookingPausedUntil: true },
+  });
+}
+
 function slotCacheKey(
   doctorId: string,
   serviceDurationMinutes: number | null,
@@ -1050,20 +1058,29 @@ export async function listOpenSlotsForDoctor(
   try {
     await releaseExpiredHeldSlots(doctorId);
     await ensureSlotsForRange(doctorId, fromUtc, toUtc);
-    const rows = await prisma.doctorTimeSlot.findMany({
-      where: {
-        doctorId,
-        status: "OPEN",
-        startAt: { gte: fromUtc, lt: toUtc },
-      },
-      orderBy: { startAt: "asc" },
-      select: { id: true, startAt: true, endAt: true },
-    });
+    const [rows, pause] = await Promise.all([
+      prisma.doctorTimeSlot.findMany({
+        where: {
+          doctorId,
+          status: "OPEN",
+          startAt: { gte: fromUtc, lt: toUtc },
+        },
+        orderBy: { startAt: "asc" },
+        select: { id: true, startAt: true, endAt: true },
+      }),
+      loadDoctorBookingPause(doctorId),
+    ]);
     const result = rows.map((r) => ({
-      id: r.id,
-      startAt: r.startAt.toISOString(),
-      endAt: r.endAt.toISOString(),
-    }));
+        id: r.id,
+        startAt: r.startAt.toISOString(),
+        endAt: r.endAt.toISOString(),
+      }))
+      .filter((slot) =>
+        !slotOverlapsPause(
+          { startAt: new Date(slot.startAt), endAt: new Date(slot.endAt) },
+          pause,
+        ),
+      );
     slotCache.set(cacheKey, result, SLOT_CACHE_TTL_MS);
     return result;
   } catch (error) {
@@ -1271,11 +1288,17 @@ export async function listOpenSlotsForDoctorAndService(
     // Fetch ALL slots (not just OPEN) so a BOOKED/BLOCKED/HELD slot correctly
     // breaks a run — a consult can't start where it wouldn't fit before the
     // next occupied slot.
-    const rows = await prisma.doctorTimeSlot.findMany({
-      where: { doctorId, startAt: { gte: fromUtc, lt: toUtc } },
-      orderBy: { startAt: "asc" },
-      select: { id: true, startAt: true, endAt: true, status: true },
-    });
+    const [rawRows, pause] = await Promise.all([
+      prisma.doctorTimeSlot.findMany({
+        where: { doctorId, startAt: { gte: fromUtc, lt: toUtc } },
+        orderBy: { startAt: "asc" },
+        select: { id: true, startAt: true, endAt: true, status: true },
+      }),
+      loadDoctorBookingPause(doctorId),
+    ]);
+    // Paused rows are removed before the contiguous-duration pass, so a
+    // consultation can neither start inside nor bridge across a pause.
+    const rows = rawRows.filter((row) => !slotOverlapsPause(row, pause));
 
     const durMs = (serviceDurationMinutes ?? 0) * 60_000;
     // No service duration → every OPEN base slot is a candidate as-is.
@@ -1348,10 +1371,23 @@ export async function claimDoctorSlot(
   const rows = await client.$queryRaw<
     { doctorId: string; startAt: Date; endAt: Date }[]
   >(Prisma.sql`
-    UPDATE "DoctorTimeSlot"
+    UPDATE "DoctorTimeSlot" AS slot
     SET "status" = 'BOOKED', "updatedAt" = NOW()
-    WHERE "id" = ${slotId} AND "status" = 'OPEN' AND "startAt" > NOW()
-    RETURNING "doctorId", "startAt", "endAt"
+    WHERE slot."id" = ${slotId}
+      AND slot."status" = 'OPEN'
+      AND slot."startAt" > NOW()
+      AND NOT EXISTS (
+        SELECT 1
+        FROM "Doctor" AS doctor
+        WHERE doctor."id" = slot."doctorId"
+          AND doctor."bookingPausedFrom" IS NOT NULL
+          AND doctor."bookingPausedFrom" < slot."endAt"
+          AND (
+            doctor."bookingPausedUntil" IS NULL
+            OR doctor."bookingPausedUntil" > slot."startAt"
+          )
+      )
+    RETURNING slot."doctorId", slot."startAt", slot."endAt"
   `);
   if (rows.length === 0) {
     throw new SlotAlreadyTakenError();

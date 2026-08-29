@@ -7,6 +7,7 @@ import { isSupportedLocale } from "@/lib/content/get-public-page";
 import {
   getCountryLandingPage,
   getCountryDoctors,
+  getCountryServices,
   getLandingAvailableLocales,
 } from "@/lib/content/get-country-collections";
 import { getCountryTrust } from "@/lib/content/get-country-trust";
@@ -34,6 +35,9 @@ import { PageHero } from "@/components/sections/PageHero";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { ArrowRight } from "lucide-react";
+import { BookCta } from "@/components/booking/BookNowButton";
+import { getBookabilityActionProps } from "@/lib/content/bookability-presentation";
+import type { BookabilitySummary } from "@/lib/content/get-country-collections";
 
 type Params = { country: string; lang: string; slug: string };
 
@@ -155,6 +159,25 @@ export default async function CountryLandingPage({
   const pageUrl = `${getSiteUrl()}/${country}/${lang}/health/${slug}`;
   const c = loadLocaleBundle(lang as LocaleCode).common;
 
+  const targetedServices = template?.ctaService
+    ? await getCountryServices(code, undefined, lang)
+    : [];
+  const targetedService = template?.ctaService
+    ? targetedServices.find((service) => service.slug === template.ctaService) ?? null
+    : null;
+  const missingTargetBookability: BookabilitySummary = {
+    state: "UNAVAILABLE",
+    reasonCode: "NO_APPROVED_DOCTOR",
+    nextAvailableAt: null,
+  };
+  const ctaActionProps = template?.ctaService
+    ? getBookabilityActionProps(
+        targetedService?.bookability ?? missingTargetBookability,
+        lang,
+        c.bookingAvailability,
+      )
+    : {};
+
   let doctors: Awaited<ReturnType<typeof getCountryDoctors>> = [];
   if (template?.doctorLanguage || (template?.doctorSlugs && template.doctorSlugs.length > 0)) {
     const all = await getCountryDoctors(code, lang);
@@ -235,6 +258,7 @@ export default async function CountryLandingPage({
         lede={page.seoDescription ?? undefined}
         ctaLabel={c.doctorProfile.bookConsultation}
         ctaHref={ctaHref}
+        {...ctaActionProps}
         secondaryLabel={doctors.length > 0 ? c.doctors.viewDoctors : undefined}
         secondaryHref={doctors.length > 0 ? doctorsHref : undefined}
         heroImage={{
@@ -256,10 +280,14 @@ export default async function CountryLandingPage({
               dangerouslySetInnerHTML={{ __html: bodyHtml }}
             />
             <div className="mt-8">
-              <Link href={ctaHref} className="gh2-btn-lime inline-flex items-center gap-2">
+              <BookCta
+                href={ctaHref}
+                className="gh2-btn-lime inline-flex items-center gap-2"
+                {...ctaActionProps}
+              >
                 {c.doctorProfile.bookConsultation}
                 <ArrowRight className="size-4" aria-hidden />
-              </Link>
+              </BookCta>
             </div>
           </div>
         </section>
@@ -381,10 +409,14 @@ export default async function CountryLandingPage({
               </h2>
             </div>
             <div className="flex lg:justify-end">
-              <Link href={ctaHref} className="gh2-btn-lime gh-focus-on-dark">
+              <BookCta
+                href={ctaHref}
+                className="gh2-btn-lime gh-focus-on-dark"
+                {...ctaActionProps}
+              >
                 {c.doctorProfile.bookConsultation}
                 <ArrowRight className="size-4" aria-hidden />
-              </Link>
+              </BookCta>
             </div>
           </div>
         </div>

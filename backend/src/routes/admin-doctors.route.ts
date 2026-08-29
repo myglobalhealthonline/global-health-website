@@ -49,6 +49,8 @@ import {
   pendingProfileChangeRequestsQuerySchema,
 } from "../validations/doctor-profile-change-requests.schema.js";
 import { z } from "zod";
+import { bookingPauseBodySchema } from "../validations/booking-pause.schema.js";
+import { setDoctorBookingPause } from "../modules/bookability/bookability.service.js";
 
 /** Raised inside the login-email change transaction when the requested
  *  address already belongs to another User or PatientProfile. */
@@ -188,6 +190,72 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
       }
       app.log.error(error);
       return reply.status(500).send(errorResponse("Unexpected admin doctor error"));
+    }
+  });
+
+  app.patch("/api/admin/doctors/:id/booking-pause", async (request, reply) => {
+    const params = doctorIdParamsSchema.safeParse(request.params);
+    const body = bookingPauseBodySchema.safeParse(request.body);
+    if (!params.success || !body.success) {
+      return reply.status(400).send(
+        errorResponse("Invalid doctor booking pause", {
+          params: params.success ? undefined : params.error.flatten(),
+          body: body.success ? undefined : body.error.flatten(),
+        }),
+      );
+    }
+
+    try {
+      const doctor = await setDoctorBookingPause(params.data.id, {
+        bookingPausedFrom: body.data.from,
+        bookingPausedUntil: body.data.until,
+        bookingPauseReason: body.data.reasonCode,
+      });
+      const actor = resolveAdminSessionActor(request);
+      recordAudit({
+        actorUserId: actor?.userId,
+        actorRole: "ADMIN",
+        action: "BOOKING_PAUSE_SET",
+        entityType: "Doctor",
+        entityId: doctor.id,
+        metadata: {
+          from: doctor.bookingPausedFrom?.toISOString() ?? null,
+          until: doctor.bookingPausedUntil?.toISOString() ?? null,
+          reasonCode: doctor.bookingPauseReason,
+        },
+        request,
+      }).catch(() => {});
+      return okResponse({ doctor }, "Doctor booking pause saved");
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+        return reply.status(404).send(errorResponse("Doctor profile not found"));
+      }
+      return handleDoctorWriteError(app, reply, error);
+    }
+  });
+
+  app.delete("/api/admin/doctors/:id/booking-pause", async (request, reply) => {
+    const params = doctorIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid doctor id", params.error.flatten()));
+    }
+    try {
+      const doctor = await setDoctorBookingPause(params.data.id, { bookingPausedFrom: null });
+      const actor = resolveAdminSessionActor(request);
+      recordAudit({
+        actorUserId: actor?.userId,
+        actorRole: "ADMIN",
+        action: "BOOKING_PAUSE_CLEARED",
+        entityType: "Doctor",
+        entityId: doctor.id,
+        request,
+      }).catch(() => {});
+      return okResponse({ doctor }, "Doctor booking pause cleared");
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+        return reply.status(404).send(errorResponse("Doctor profile not found"));
+      }
+      return handleDoctorWriteError(app, reply, error);
     }
   });
 

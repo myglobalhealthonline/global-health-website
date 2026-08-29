@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { DEFAULT_BOOK_CTA_LABEL } from "@/lib/constants";
-import { BookCta } from "@/components/booking/BookNowButton";
+import { BookCta, type BookabilityActionProps } from "@/components/booking/BookNowButton";
 
 /**
  * Routes where a persistent "Book" bar is redundant or in the way — the
@@ -31,10 +31,14 @@ function useIdleReady() {
 export function StickyBookingCTA({
   href,
   label = DEFAULT_BOOK_CTA_LABEL,
+  bookability,
+  unavailableLabel,
+  returningLabel,
+  nextAvailableLabel,
 }: {
   href: string;
   label?: string;
-}) {
+} & BookabilityActionProps) {
   const ready = useIdleReady();
   const pathname = usePathname();
   const shouldHide = pathname
@@ -49,6 +53,10 @@ export function StickyBookingCTA({
           exactly (same bg/ink/shadow), no bar/container behind it. */}
       <BookCta
         href={href}
+        bookability={bookability}
+        unavailableLabel={unavailableLabel}
+        returningLabel={returningLabel}
+        nextAvailableLabel={nextAvailableLabel}
         className="group pointer-events-auto flex min-h-12 w-full items-center justify-center gap-1.5 rounded-full bg-[var(--color-brand-accent)] px-5 py-3 text-base font-extrabold tracking-[-0.01em] text-[#0a1f14] shadow-[0_4px_16px_rgba(176,241,34,0.22)] transition-[transform,box-shadow,filter] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:brightness-105 hover:shadow-[0_10px_30px_rgba(176,241,34,0.32)] active:translate-y-0 active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
       >
         {label}

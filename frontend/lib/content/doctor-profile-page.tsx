@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { ArrowRight, CalendarClock } from "lucide-react";
@@ -6,7 +7,6 @@ import { DoctorProfileTemplate } from "@/components/templates/DoctorProfileTempl
 import { JsonLd } from "@/components/seo/JsonLd";
 import { DoctorSharePageLink } from "@/components/sections/DoctorSharePageLink";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
-import { BookCta } from "@/components/booking/BookNowButton";
 import { resolveDoctorProfilePageData } from "@/lib/content/doctor-profile-data";
 import { getCountryByCode } from "@/data/countries";
 import { ogLocales } from "@/lib/seo/hreflang";
@@ -24,8 +24,11 @@ import { buildBookHref, buildServiceDetailHref } from "@/lib/routing/book-href";
 import {
   getCountryDoctors,
   getCountryServices,
+  getDoctorServiceBookability,
   type CountryDoctorCard,
+  type BookabilitySummary,
 } from "@/lib/content/get-country-collections";
+import { getBookabilityActionProps } from "@/lib/content/bookability-presentation";
 import { getCountryTrust, doctorVerificationUrl } from "@/lib/content/get-country-trust";
 import { getCountryDisclaimer } from "@/lib/content/get-country-legal";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
@@ -217,6 +220,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
     basePriceCents: number | null;
     currencyCode: string | null;
     imageSrc: string | null;
+    bookability: BookabilitySummary;
   }> = [];
   let profileDoc: CountryDoctorCard | undefined;
   let countryTrust: CountryTrust | null = null;
@@ -270,6 +274,9 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
         month: "long",
         year: "numeric",
       })
+    : undefined;
+  const doctorBookingAction = profileDoc
+    ? getBookabilityActionProps(profileDoc.bookability, lang, c.bookingAvailability)
     : undefined;
 
   const templateData = {
@@ -342,7 +349,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
             : []),
         ]}
       />
-      <DoctorProfileTemplate {...templateData} t={dp} />
+      <DoctorProfileTemplate {...templateData} t={dp} {...doctorBookingAction} />
 
       {/* Doctor-first booking: lists the services the admin has assigned
           to this doctor. Each card routes back through the service-first
@@ -392,6 +399,18 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
                 const startingPrice = service.basePriceCents != null
                   ? formatPriceRounded(service.basePriceCents, service.currencyCode)
                   : undefined;
+                const effectiveBookability = profileDoc
+                  ? getDoctorServiceBookability(profileDoc.bookabilityByServiceId, service.id)
+                  : {
+                      state: "UNAVAILABLE" as const,
+                      reasonCode: "NO_OPEN_SLOT" as const,
+                      nextAvailableAt: null,
+                    };
+                const bookingAction = getBookabilityActionProps(
+                  effectiveBookability,
+                  lang,
+                  c.bookingAvailability,
+                );
                 return (
                   <ServiceCard
                     key={service.id}
@@ -415,6 +434,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
                     bookLabel={dp.pickSlot}
                     imageSrc={service.imageSrc}
                     dark
+                    {...bookingAction}
                   />
                 );
               })}
@@ -449,8 +469,8 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
                   .replace("{name}", data.profile.name)
                   .replace("{country}", routeCountryName)}
               </p>
-              <BookCta
-                href={buildBookHref({ country: slug, lang, doctor: doctorSlug })}
+              <Link
+                href={teamHref}
                 className="mt-5 inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-bold transition-colors duration-200 hover:bg-white"
                 style={{
                   background: "var(--color-brand-accent)",
@@ -459,7 +479,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
               >
                 {dp.browseOtherClinicians}
                 <ArrowRight className="size-4" aria-hidden />
-              </BookCta>
+              </Link>
             </div>
           </div>
         </section>
@@ -492,7 +512,11 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
         headline={c.doctify.patientsSayHeadline ?? "What patients say about"}
         headlineAccent={c.doctify.patientsSayAccent ?? "our doctors"}
       />
-      <StickyBookingCTA href={fallbackBookHref} label={dp.bookWithDoctor.replace("{name}", firstName ?? data.profile.name)} />
+      <StickyBookingCTA
+        href={fallbackBookHref}
+        label={dp.bookWithDoctor.replace("{name}", firstName ?? data.profile.name)}
+        {...doctorBookingAction}
+      />
     </>
   );
 }

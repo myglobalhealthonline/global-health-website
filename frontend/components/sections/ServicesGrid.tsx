@@ -11,6 +11,7 @@ import {
 } from "@/components/sections/ServiceCatalog";
 import { Container } from "@/components/layout/Container";
 import { SectionSeam } from "@/components/ui/SectionSeam";
+import type { BookabilityActionProps } from "@/components/booking/BookNowButton";
 
 type Item = {
   title: string;
@@ -26,7 +27,7 @@ type Item = {
   duration?: string;
   startingPrice?: string;
   imageSrc?: string | null;
-};
+} & BookabilityActionProps;
 
 type ServicesGridProps = {
   title?: string;
@@ -65,6 +66,10 @@ function toCatalogItem(item: Item): ServiceCatalogItem {
     imageSrc: item.imageSrc,
     detailHref: item.detailHref,
     bookHref: item.bookHref,
+    bookability: item.bookability,
+    unavailableLabel: item.unavailableLabel,
+    returningLabel: item.returningLabel,
+    nextAvailableLabel: item.nextAvailableLabel,
   };
 }
 

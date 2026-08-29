@@ -39,4 +39,9 @@ export type DoctorAvailabilityResponse = {
    *  country first, then each additional country. Display-only; availability
    *  is still authored in `clinicTimezone`. */
   availableTimezones?: string[];
+  bookingPause: {
+    bookingPausedFrom: string | null;
+    bookingPausedUntil: string | null;
+    bookingPauseReason: "LEAVE" | "TEMPORARY_UNAVAILABLE" | "OTHER" | null;
+  };
 };

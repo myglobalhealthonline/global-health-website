@@ -2,6 +2,7 @@ import type { FastifyPluginAsync } from "fastify";
 import { prisma } from "../db/prisma.js";
 import {
   createAppointmentWithOptionalOwner,
+  BookingUnavailableError,
   DoctorNotAssignedToServiceError,
   SlotAlreadyTakenError,
 } from "../modules/appointments/appointments.service.js";
@@ -109,9 +110,12 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
           }
         }
       } catch (settingsErr) {
-        // Settings lookup is best-effort — never block bookings if the
-        // table is empty / lookup fails.
-        app.log.warn({ err: settingsErr }, "BookingSetting lookup failed; allowing booking");
+        // Fail closed: a database error must never bypass the country-wide
+        // booking kill switch. A missing row still means defaults apply.
+        app.log.error({ err: settingsErr }, "BookingSetting lookup failed; blocking booking");
+        return reply
+          .status(503)
+          .send(errorResponse("Booking policy is temporarily unavailable. Please try again."));
       }
 
       // Dual GDPR consent — required for EVERY booking regardless of
@@ -330,6 +334,9 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
         // 400 — patient/payload mismatch (often a stale form). UI should
         // refresh the doctor picker and surface the message.
         return reply.status(400).send(errorResponse(error.message));
+      }
+      if (error instanceof BookingUnavailableError) {
+        return reply.status(409).send(errorResponse(error.message));
       }
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));

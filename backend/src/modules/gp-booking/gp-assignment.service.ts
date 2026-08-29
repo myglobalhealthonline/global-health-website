@@ -10,6 +10,11 @@ import {
 import { isValidTimeZone } from "../doctor-availability/timezone.js";
 import { computeSlotPrice, getServicePeakConfig } from "../pricing/peak-pricing.service.js";
 import {
+  isPauseActiveAt,
+  slotOverlapsPause,
+  type BookingPause,
+} from "../bookability/bookability-policy.js";
+import {
   resolveGpSameDayService,
   getGpPriorityDoctorId,
   claimNextRotationCursor,
@@ -106,7 +111,31 @@ export class GpNoDoctorError extends Error {
   }
 }
 
-type EligibleDoctor = { id: string };
+type EligibleDoctor = {
+  id: string;
+  bookingPausedFrom: Date | null;
+  bookingPausedUntil: Date | null;
+};
+
+async function loadGpBookingPolicy(
+  serviceId: string,
+): Promise<{ countryBookingEnabled: boolean; servicePause: BookingPause }> {
+  const service = await prisma.service.findUnique({
+    where: { id: serviceId },
+    select: {
+      bookingPausedFrom: true,
+      bookingPausedUntil: true,
+      country: { select: { bookingSetting: { select: { bookingEnabled: true } } } },
+    },
+  });
+  return {
+    countryBookingEnabled: service?.country.bookingSetting?.bookingEnabled !== false,
+    servicePause: {
+      bookingPausedFrom: service?.bookingPausedFrom ?? null,
+      bookingPausedUntil: service?.bookingPausedUntil ?? null,
+    },
+  };
+}
 
 /** Active, in-country, GP-service-assigned doctors who speak `languageCode`. */
 async function listEligibleGpDoctors(
@@ -130,12 +159,21 @@ async function listEligibleGpDoctors(
         some: { serviceId, isActive: true, status: "active" },
       },
     },
-    select: { id: true, languages: true },
+    select: {
+      id: true,
+      languages: true,
+      bookingPausedFrom: true,
+      bookingPausedUntil: true,
+    },
   });
   const lang = languageCode.trim().toLowerCase();
   return rows
     .filter((d) => d.languages.some((l) => l.trim().toLowerCase() === lang))
-    .map((d) => ({ id: d.id }));
+    .map((d) => ({
+      id: d.id,
+      bookingPausedFrom: d.bookingPausedFrom,
+      bookingPausedUntil: d.bookingPausedUntil,
+    }));
 }
 
 /** Clinic timezone for a country (all its doctors share it). Falls back to UTC. */
@@ -176,6 +214,10 @@ export async function getGpAvailability(args: {
     const clinicTimezone = await resolveCountryTimeZone(countryCode);
     const service = await resolveGpSameDayService(countryCode);
     if (!service) return cacheAvailability(cacheKey, { service: null, clinicTimezone, slots: [] });
+    const policy = await loadGpBookingPolicy(service.id);
+    if (!policy.countryBookingEnabled || isPauseActiveAt(policy.servicePause, new Date())) {
+      return cacheAvailability(cacheKey, { service, clinicTimezone, slots: [] });
+    }
 
     const eligible = await listEligibleGpDoctors(countryCode, service.id, languageCode);
     if (eligible.length === 0) return cacheAvailability(cacheKey, { service, clinicTimezone, slots: [] });
@@ -218,6 +260,14 @@ export async function getGpAvailability(args: {
     const byStart = new Map<string, GpAvailabilitySlot>();
     for (const slots of perDoctorSlots) {
       for (const slot of slots) {
+        if (
+          slotOverlapsPause(
+            { startAt: new Date(slot.startAt), endAt: new Date(slot.endAt) },
+            policy.servicePause,
+          )
+        ) {
+          continue;
+        }
         if (byStart.has(slot.startAt)) continue;
         const priced = computeSlotPrice({
           config: peakConfig,
@@ -280,6 +330,7 @@ export async function getGpLanguages(countryCode: string): Promise<GpLanguagesRe
   try {
     const service = await resolveGpSameDayService(countryCode);
     if (!service) return store({ configured: false, languages: [], bookableLanguages: [] });
+    const policy = await loadGpBookingPolicy(service.id);
 
     const code = countryCode.trim().toLowerCase();
     const rows = await prisma.doctor.findMany({
@@ -308,7 +359,13 @@ export async function getGpLanguages(countryCode: string): Promise<GpLanguagesRe
       for (const lang of normalizeLanguages(row.languages)) set.add(lang);
     }
     const languages = Array.from(set).sort();
-    if (rows.length === 0) return store({ configured: true, languages, bookableLanguages: [] });
+    if (
+      rows.length === 0
+      || !policy.countryBookingEnabled
+      || isPauseActiveAt(policy.servicePause, new Date())
+    ) {
+      return store({ configured: true, languages, bookableLanguages: [] });
+    }
 
     // Which of those languages can actually be booked today/tomorrow: sweep the
     // pool's open slots and keep only the languages of doctors who have ≥1.
@@ -337,7 +394,14 @@ export async function getGpLanguages(countryCode: string): Promise<GpLanguagesRe
         ),
       );
       results.forEach((slots, idx) => {
-        if (slots.length === 0) return;
+        const bookableSlots = slots.filter(
+          (slot) =>
+            !slotOverlapsPause(
+              { startAt: new Date(slot.startAt), endAt: new Date(slot.endAt) },
+              policy.servicePause,
+            ),
+        );
+        if (bookableSlots.length === 0) return;
         for (const lang of normalizeLanguages(batch[idx].languages)) bookable.add(lang);
       });
     }
@@ -389,6 +453,8 @@ export async function resolveGpAssignment(args: {
   try {
     const service = await resolveGpSameDayService(countryCode);
     if (!service) throw new GpServiceUnavailableError();
+    const policy = await loadGpBookingPolicy(service.id);
+    if (!policy.countryBookingEnabled) throw new GpServiceUnavailableError();
 
     const eligible = await listEligibleGpDoctors(countryCode, service.id, languageCode);
     if (eligible.length === 0) throw new GpNoDoctorError();
@@ -422,6 +488,7 @@ export async function resolveGpAssignment(args: {
     }[] = [];
     for (const doctorId of [...eligibleIds].sort()) {
       const rows = byDoctor.get(doctorId) ?? [];
+      const doctor = eligible.find((candidate) => candidate.id === doctorId);
       // Must have an OPEN base slot starting exactly at `startAt`.
       if (
         rows.length === 0 ||
@@ -431,6 +498,15 @@ export async function resolveGpAssignment(args: {
         continue;
       }
       if (durMs <= 0) {
+        if (
+          slotOverlapsPause(
+            { startAt: rows[0].startAt, endAt: rows[0].endAt },
+            policy.servicePause,
+          )
+          || slotOverlapsPause(rows[0], doctor)
+        ) {
+          continue;
+        }
         candidates.push({
           id: rows[0].id,
           doctorId,
@@ -455,6 +531,16 @@ export async function resolveGpAssignment(args: {
         coverEnd = rows[k].endAt.getTime();
       }
       if (coverEnd - startAt.getTime() >= durMs) {
+        const candidateSpan = {
+          startAt: rows[0].startAt,
+          endAt: new Date(startAt.getTime() + durMs),
+        };
+        if (
+          slotOverlapsPause(candidateSpan, policy.servicePause)
+          || slotOverlapsPause(candidateSpan, doctor)
+        ) {
+          continue;
+        }
         candidates.push({
           id: rows[0].id,
           doctorId,

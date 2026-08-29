@@ -10,6 +10,7 @@ import {
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import type { DoctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { CarouselNav } from "@/components/ui/CarouselNav";
+import type { BookabilityActionProps } from "@/components/booking/BookNowButton";
 
 export type DoctorCarouselItem = {
   kind?: "gp" | "specialist";
@@ -37,7 +38,7 @@ export type DoctorCarouselItem = {
   href?: string;
   bookingHref?: string;
   ctaLabel?: string;
-};
+} & BookabilityActionProps;
 
 type DoctorCarouselProps = {
   doctors: DoctorCarouselItem[];

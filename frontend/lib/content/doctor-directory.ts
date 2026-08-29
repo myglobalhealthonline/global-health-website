@@ -3,6 +3,8 @@ import { languageKey, languageLabel } from "@/lib/content/languages";
 import type { FilterGroup } from "@/components/sections/DoctorFilters";
 import type { CountryDoctorCard } from "@/lib/content/get-country-collections";
 import type { CommonLocale } from "@/lib/i18n/types";
+import type { BookabilityActionProps } from "@/components/booking/BookNowButton";
+import { getBookabilityActionProps } from "@/lib/content/bookability-presentation";
 
 /**
  * Filter predicate + view-model builder for the /doctors directory.
@@ -35,6 +37,7 @@ export type DoctorDirectoryContext = {
   specialistServiceIds: string[];
   verifyUrl?: string;
   i18n: CommonLocale["doctors"];
+  bookingAvailability: CommonLocale["bookingAvailability"];
 };
 
 export type DoctorCardData = {
@@ -60,7 +63,7 @@ export type DoctorCardData = {
   bookingHref?: string;
   ctaLabel?: string;
   bookLabel?: string;
-};
+} & BookabilityActionProps;
 
 export type SpotlightData = {
   name: string;
@@ -87,7 +90,7 @@ export type SpotlightData = {
   bookWithLabel?: string;
   verifyRegistrationLabel?: string;
   clinicalDirectorLabel?: string;
-};
+} & BookabilityActionProps;
 
 export type DoctorDirectoryView = {
   countryName: string;
@@ -104,7 +107,7 @@ export type DoctorDirectoryView = {
   clearHref: string;
   clearLabel: string;
   filtersLabel: string;
-};
+} & BookabilityActionProps;
 
 /**
  * A doctor passes when it matches EVERY active filter group (AND across
@@ -116,7 +119,17 @@ export function buildDoctorDirectoryView(
   filterLangsRaw: string[],
   filterTypesRaw: string[],
 ): DoctorDirectoryView {
-  const { countryName, countrySlug, lang, doctors, generalServiceIds, specialistServiceIds, verifyUrl, i18n } = ctx;
+  const {
+    countryName,
+    countrySlug,
+    lang,
+    doctors,
+    generalServiceIds,
+    specialistServiceIds,
+    verifyUrl,
+    i18n,
+    bookingAvailability,
+  } = ctx;
 
   const filterLangs = parseMultiParam(filterLangsRaw).map((s) => languageKey(s));
   const filterTypes = parseMultiParam(filterTypesRaw)
@@ -162,9 +175,17 @@ export function buildDoctorDirectoryView(
   // it's part of the current (filtered) view; otherwise the grid just
   // shows the matches.
   const featured = filteredDoctors.find((d) => d.isFeatured) ?? null;
-  const gridDoctors = featured
+  const gridDoctors = (featured
     ? filteredDoctors.filter((d) => d.id !== featured.id)
-    : filteredDoctors;
+    : filteredDoctors)
+    .map((doctor, position) => ({ doctor, position }))
+    .sort((a, b) => {
+      const rank = (state: CountryDoctorCard["bookability"]["state"]) =>
+        state === "BOOKABLE" ? 0 : state === "RETURNING" ? 1 : 2;
+      return rank(a.doctor.bookability.state) - rank(b.doctor.bookability.state) ||
+        a.position - b.position;
+    })
+    .map(({ doctor }) => doctor);
 
   const doctorCards: DoctorCardData[] = gridDoctors.map((d) => ({
     name: d.fullName,
@@ -189,6 +210,7 @@ export function buildDoctorDirectoryView(
     bookingHref: buildBookHref({ country: countrySlug, lang, doctor: d.slug }),
     ctaLabel: i18n.viewProfile,
     bookLabel: i18n.pickTime,
+    ...getBookabilityActionProps(d.bookability, lang, bookingAvailability),
   }));
 
   const spotlight: SpotlightData | null = featured
@@ -217,6 +239,7 @@ export function buildDoctorDirectoryView(
         bookWithLabel: i18n.bookWithTemplate,
         verifyRegistrationLabel: i18n.verifyRegistrationAria,
         clinicalDirectorLabel: i18n.clinicalDirectorLabel,
+        ...getBookabilityActionProps(featured.bookability, lang, bookingAvailability),
       }
     : null;
 
@@ -244,6 +267,23 @@ export function buildDoctorDirectoryView(
   }
 
   const hasActive = filterLangs.length > 0 || filterTypes.length > 0;
+  const bookingDoctor = filteredDoctors
+    .map((doctor, position) => ({ doctor, position }))
+    .sort((a, b) => {
+      const rank = (state: CountryDoctorCard["bookability"]["state"]) =>
+        state === "BOOKABLE" ? 0 : state === "RETURNING" ? 1 : 2;
+      return rank(a.doctor.bookability.state) - rank(b.doctor.bookability.state) ||
+        a.position - b.position;
+    })[0]?.doctor;
+  const directoryActionProps = getBookabilityActionProps(
+    bookingDoctor?.bookability ?? {
+      state: "UNAVAILABLE",
+      reasonCode: "NO_OPEN_SLOT",
+      nextAvailableAt: null,
+    },
+    lang,
+    bookingAvailability,
+  );
 
   const filterGroups: FilterGroup[] = [
     {
@@ -298,5 +338,6 @@ export function buildDoctorDirectoryView(
     clearHref: `/${countrySlug}/${lang}/doctors`,
     clearLabel: i18n.clearFilters,
     filtersLabel: i18n.filters,
+    ...directoryActionProps,
   };
 }

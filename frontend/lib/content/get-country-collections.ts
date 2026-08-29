@@ -46,7 +46,104 @@ export type CountryServiceCard = {
   /** Insurance companies that cover this service + the negotiated price the
    *  patient pays if they select that company at booking. Empty = none. */
   insuranceOptions: InsuranceOption[];
+  bookability: BookabilitySummary;
 };
+
+export type BookabilityState = "BOOKABLE" | "RETURNING" | "UNAVAILABLE";
+
+export type BookabilityReasonCode =
+  | "COUNTRY_PAUSED"
+  | "DOCTOR_PAUSED"
+  | "SERVICE_PAUSED"
+  | "NO_APPROVED_DOCTOR"
+  | "NO_OPEN_SLOT";
+
+export type BookabilitySummary = {
+  state: BookabilityState;
+  reasonCode: BookabilityReasonCode | null;
+  nextAvailableAt: string | null;
+};
+
+const FALLBACK_BOOKABILITY: BookabilitySummary = {
+  state: "UNAVAILABLE",
+  reasonCode: "NO_OPEN_SLOT",
+  nextAvailableAt: null,
+};
+
+const BOOKABILITY_STATES = new Set<BookabilityState>([
+  "BOOKABLE",
+  "RETURNING",
+  "UNAVAILABLE",
+]);
+
+const BOOKABILITY_REASON_CODES = new Set<BookabilityReasonCode>([
+  "COUNTRY_PAUSED",
+  "DOCTOR_PAUSED",
+  "SERVICE_PAUSED",
+  "NO_APPROVED_DOCTOR",
+  "NO_OPEN_SLOT",
+]);
+
+const UNAVAILABLE_BOOKABILITY: BookabilitySummary = {
+  state: "UNAVAILABLE",
+  reasonCode: "NO_OPEN_SLOT",
+  nextAvailableAt: null,
+};
+
+function parseBookabilitySummary(value: unknown): BookabilitySummary | null {
+  if (!value || typeof value !== "object") return null;
+  const raw = value as Record<string, unknown>;
+  if (typeof raw.state !== "string" || !BOOKABILITY_STATES.has(raw.state as BookabilityState)) {
+    return null;
+  }
+  if (
+    raw.reasonCode !== null &&
+    (typeof raw.reasonCode !== "string" ||
+      !BOOKABILITY_REASON_CODES.has(raw.reasonCode as BookabilityReasonCode))
+  ) {
+    return null;
+  }
+  if (
+    raw.nextAvailableAt !== null &&
+    (typeof raw.nextAvailableAt !== "string" || Number.isNaN(Date.parse(raw.nextAvailableAt)))
+  ) {
+    return null;
+  }
+  return {
+    state: raw.state as BookabilityState,
+    reasonCode: raw.reasonCode as BookabilityReasonCode | null,
+    nextAvailableAt: raw.nextAvailableAt as string | null,
+  };
+}
+
+/**
+ * Runtime boundary for public API payloads. Missing or malformed summaries
+ * fail closed: the page remains visible, but a missing/malformed operational
+ * summary must never create an active booking claim.
+ */
+export function normalizeBookabilitySummary(value: unknown): BookabilitySummary {
+  return parseBookabilitySummary(value) ?? { ...FALLBACK_BOOKABILITY };
+}
+
+export function normalizeBookabilityByServiceId(
+  value: unknown,
+): Record<string, BookabilitySummary> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  const out: Record<string, BookabilitySummary> = {};
+  for (const [serviceId, summary] of Object.entries(value as Record<string, unknown>)) {
+    const parsed = parseBookabilitySummary(summary);
+    if (serviceId && parsed) out[serviceId] = parsed;
+  }
+  return out;
+}
+
+/** Service-specific booking links must never inherit a doctor's aggregate state. */
+export function getDoctorServiceBookability(
+  byServiceId: Readonly<Record<string, BookabilitySummary>>,
+  serviceId: string,
+): BookabilitySummary {
+  return byServiceId[serviceId] ?? { ...UNAVAILABLE_BOOKABILITY };
+}
 
 /** One selectable insurance company for a covered service (public payload). */
 export type InsuranceOption = {
@@ -161,6 +258,7 @@ export type CountryServiceDetail = {
    *  per-locale publication rule — see `PublicServiceLocaleRecord`. */
   resolvedLocale: string | null;
   translatedFields: string[] | null;
+  bookability: BookabilitySummary;
 };
 
 export type HealthTestFaqItem = { id: string; question: string; answer: string };
@@ -251,6 +349,8 @@ export type CountryDoctorCard = {
    *  `Person`-instead-of-`Physician` schema node and waives the medical
    *  registration requirement in `validatePublicDoctorRecord`. */
   nonPhysician?: boolean;
+  bookability: BookabilitySummary;
+  bookabilityByServiceId: Record<string, BookabilitySummary>;
 };
 
 function readSpecialtyName(row: unknown): string | null {
@@ -381,6 +481,7 @@ export const getCountryServices = cache(async (
       ...(image?.description ? { imageDescription: image.description } : {}),
       assignedDoctorIds,
       insuranceOptions: parseInsuranceOptions(r.insuranceOptions),
+      bookability: normalizeBookabilitySummary(r.bookability),
     });
   }
   return out;
@@ -520,6 +621,8 @@ export const getCountryDoctors = cache(async (
       imageFocalY: image?.focalY ?? 50,
       imageZoom: image?.zoom ?? 1,
       assignedServiceIds,
+      bookability: normalizeBookabilitySummary(r.bookability),
+      bookabilityByServiceId: normalizeBookabilityByServiceId(r.bookabilityByServiceId),
       isFeatured: r.isFeatured === true,
       ...(r.editorialChecklist &&
       typeof r.editorialChecklist === "object" &&
@@ -698,6 +801,7 @@ export const getCountryServiceDetail = cache(async (
     translatedFields: Array.isArray(r.translatedFields)
       ? r.translatedFields.filter((f): f is string => typeof f === "string")
       : null,
+    bookability: normalizeBookabilitySummary(r.bookability),
   };
 });
 

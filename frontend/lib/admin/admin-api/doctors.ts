@@ -245,6 +245,9 @@ export type AdminDoctorDto = {
    *  signing (`data_nascimento`) — not shown publicly. */
   dateOfBirth: string | null;
   active: boolean;
+  bookingPausedFrom?: string | null;
+  bookingPausedUntil?: string | null;
+  bookingPauseReason?: "LEAVE" | "TEMPORARY_UNAVAILABLE" | "OTHER" | null;
   createdAt: string;
   updatedAt: string;
   country: { id: string; code: string; name: string; slug: string; defaultLocale: string };
@@ -535,6 +538,19 @@ export async function patchAdminDoctor(id: string, body: unknown) {
   return adminRequest<AdminDoctorDetailPayload>(`/api/admin/doctors/${id}`, {
     method: "PATCH",
     body,
+  });
+}
+
+export async function setAdminDoctorBookingPause(id: string, body: unknown) {
+  return adminRequest<{ bookingPause: { from: string; until: string | null; reasonCode: string } }>(
+    `/api/admin/doctors/${id}/booking-pause`,
+    { method: "PATCH", body },
+  );
+}
+
+export async function clearAdminDoctorBookingPause(id: string) {
+  return adminRequest<{ bookingPause: null }>(`/api/admin/doctors/${id}/booking-pause`, {
+    method: "DELETE",
   });
 }
 

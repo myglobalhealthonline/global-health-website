@@ -19,6 +19,45 @@ import {
   resolveInsurancePrice,
   type InsuranceCompanyPricing,
 } from "../pricing/insurance-pricing.service.js";
+import { getServiceBookability } from "../bookability/bookability.service.js";
+
+const BOOKABILITY_CONCURRENCY = 8;
+
+async function mapBookabilityBounded<T, R>(
+  items: readonly T[],
+  mapper: (item: T) => Promise<R>,
+): Promise<R[]> {
+  const results = new Array<R>(items.length);
+  let cursor = 0;
+  const worker = async () => {
+    while (cursor < items.length) {
+      const index = cursor++;
+      results[index] = await mapper(items[index]!);
+    }
+  };
+  await Promise.all(
+    Array.from({ length: Math.min(BOOKABILITY_CONCURRENCY, items.length) }, () => worker()),
+  );
+  return results;
+}
+
+function stripOperationalBookingPause<
+  T extends {
+    bookingPausedFrom?: Date | null;
+    bookingPausedUntil?: Date | null;
+    bookingPauseReason?: string | null;
+  },
+>(
+  service: T,
+): Omit<T, "bookingPausedFrom" | "bookingPausedUntil" | "bookingPauseReason"> {
+  const {
+    bookingPausedFrom: _bookingPausedFrom,
+    bookingPausedUntil: _bookingPausedUntil,
+    bookingPauseReason: _bookingPauseReason,
+    ...publicService
+  } = service;
+  return publicService;
+}
 
 /** One insurance option surfaced to the public service payload / booking form. */
 export type InsuranceOption = {
@@ -398,7 +437,7 @@ export async function listServices(locale?: LocaleCode) {
   // Public catalogue — corporate/admin-only services are NEVER listed here
   // (ServiceVisibility gate, corporate plan doc §3.2).
   try {
-    return await prisma.service.findMany({
+    const rows = await prisma.service.findMany({
       where: { isActive: true, visibility: "PUBLIC" },
       orderBy: [{ country: { name: "asc" } }, { kind: "asc" }, { sortOrder: "asc" }, { name: "asc" }],
       include: {
@@ -410,11 +449,16 @@ export async function listServices(locale?: LocaleCode) {
         },
         translations: { select: serviceTranslationSelect },
       },
-    }).then((rows) =>
-      rows.map((row) =>
+    });
+    const mapped = rows.map((row) => stripOperationalBookingPause(
         mergeServiceTranslation(row, locale ?? row.country.defaultLocale, row.country.defaultLocale),
-      ),
+    ));
+    const summaries = await mapBookabilityBounded(
+      rows,
+      (service) =>
+        getServiceBookability({ countryCode: service.country.code, serviceId: service.id }),
     );
+    return mapped.map((service, index) => ({ ...service, bookability: summaries[index]! }));
   } catch (error) {
     throw normalizeDbError(error, "Services data is unavailable");
   }
@@ -490,7 +534,7 @@ export async function listServicesByCountry(
     });
     // Merge each row to the requested locale (falling back to the
     // country default + base columns). Same Service.id either way.
-    return rows.map((row) => {
+    const mapped = rows.map((row) => {
       const merged = mergeServiceTranslation(
         row,
         locale ?? row.country.defaultLocale,
@@ -507,12 +551,17 @@ export async function listServicesByCountry(
         insuranceDoctorPayouts: _insuranceDoctorPayouts,
         ...mergedRest
       } = merged;
-      return {
+      return stripOperationalBookingPause({
         ...mergedRest,
         insuranceOptions,
         insuranceSeoLine: buildInsuranceSeoLine(insuranceOptions.map((o) => o.name)),
-      };
+      });
     });
+    const summaries = await mapBookabilityBounded(
+      rows,
+      (service) => getServiceBookability({ countryCode, serviceId: service.id }),
+    );
+    return mapped.map((service, index) => ({ ...service, bookability: summaries[index]! }));
   } catch (error) {
     throw normalizeDbError(error, "Services data is unavailable");
   }
@@ -1131,8 +1180,23 @@ export async function getPublicServiceBySlug(
         // insurer is only offered when at least one assigned doctor has a payout
         // set for it (i.e. agreed to see that insurer's patients).
         assignedDoctors: {
-          where: { isActive: true, doctor: { active: true } },
-          select: { doctorId: true },
+          where: {
+            isActive: true,
+            status: "active",
+            doctor: { active: true },
+          },
+          select: {
+            doctorId: true,
+            doctor: {
+              select: {
+                countryId: true,
+                additionalCountries: {
+                  where: { active: true },
+                  select: { countryId: true },
+                },
+              },
+            },
+          },
         },
         insuranceCoverages: {
           where: { company: { isActive: true } },
@@ -1165,12 +1229,26 @@ export async function getPublicServiceBySlug(
       merged.resolvedLocale,
       row.country.defaultLocale,
     );
-    const assignedDoctorIds = new Set(row.assignedDoctors.map((a) => a.doctorId));
+    const assignedDoctorIds = new Set(
+      row.assignedDoctors
+        .filter(
+          (assignment) =>
+            assignment.doctor.countryId === row.country.id ||
+            assignment.doctor.additionalCountries.some(
+              (market) => market.countryId === row.country.id,
+            ),
+        )
+        .map((assignment) => assignment.doctorId),
+    );
     const insuranceOptions = buildInsuranceOptions(
       row.basePriceCents,
       row.insuranceCoverages,
       insurersWithDoctors(row.insuranceDoctorPayouts, assignedDoctorIds),
     );
+    const bookability = await getServiceBookability({
+      countryCode: row.country.code,
+      serviceId: row.id,
+    });
     // Strip the raw coverage/network rows — only the resolved options/SEO line ship.
     const {
       insuranceCoverages: _insuranceCoverages,
@@ -1178,7 +1256,7 @@ export async function getPublicServiceBySlug(
       assignedDoctors: _assignedDoctors,
       ...mergedRest
     } = merged;
-    return {
+    return stripOperationalBookingPause({
       ...mergedRest,
       faqs,
       links,
@@ -1188,7 +1266,8 @@ export async function getPublicServiceBySlug(
       assignedDoctorIds: [...assignedDoctorIds],
       insuranceOptions,
       insuranceSeoLine: buildInsuranceSeoLine(insuranceOptions.map((o) => o.name)),
-    };
+      bookability,
+    });
   } catch (error) {
     throw normalizeDbError(error, "Service data is unavailable");
   }

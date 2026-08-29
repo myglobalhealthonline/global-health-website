@@ -33,6 +33,7 @@ import {
 import {
   getCountryDoctors,
   getCountryServices,
+  getDoctorServiceBookability,
 } from "@/lib/content/get-country-collections";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
@@ -45,6 +46,8 @@ import { getCountryLegal } from "@/lib/content/get-country-legal";
 import { getServiceHubContent } from "@/lib/content/service-hub-content";
 import { selectSpecialistDoctors } from "@/lib/content/specialist-doctor-selection";
 import { resolveConsultationHubVisibleContent } from "@/lib/seo/consultation-hub-visible-content";
+import { getBookabilityActionProps } from "@/lib/content/bookability-presentation";
+import type { BookabilitySummary } from "@/lib/content/get-country-collections";
 
 type Params = { country: string; lang: string };
 
@@ -91,6 +94,16 @@ function formatPrice(cents: number | null, currency: string | null): string | un
 function formatDuration(minutes: number | null): string | undefined {
   if (minutes == null) return undefined;
   return `${minutes} min`;
+}
+
+const NO_BOOKING_TARGET: BookabilitySummary = {
+  state: "UNAVAILABLE",
+  reasonCode: "NO_APPROVED_DOCTOR",
+  nextAvailableAt: null,
+};
+
+function bookabilityRank(summary: BookabilitySummary): number {
+  return summary.state === "BOOKABLE" ? 0 : summary.state === "RETURNING" ? 1 : 2;
 }
 
 export default async function CountryLangSpecialistConsultationPage({
@@ -158,7 +171,15 @@ export default async function CountryLangSpecialistConsultationPage({
   // Specialist service cards — auto from Service rows where kind=SPECIALIST.
   // Each card links to the booking form WITH `?service=<slug>` so the
   // backend stamps catalogue price + triggers Stripe Checkout.
-  const serviceItems = services.map((s) => ({
+  const prioritizedServices = services
+    .map((service, position) => ({ service, position }))
+    .sort(
+      (a, b) =>
+        bookabilityRank(a.service.bookability) - bookabilityRank(b.service.bookability) ||
+        a.position - b.position,
+    )
+    .map(({ service }) => service);
+  const serviceItems = prioritizedServices.map((s) => ({
     title: s.name,
     description: s.summary,
     // Two CTAs: "Learn more" opens the read-only service detail page;
@@ -171,23 +192,41 @@ export default async function CountryLangSpecialistConsultationPage({
     duration: formatDuration(s.durationMinutes),
     startingPrice: formatPrice(s.basePriceCents, s.currencyCode),
     imageSrc: s.imageSrc ?? null,
+    ...getBookabilityActionProps(s.bookability, lang, c.bookingAvailability),
   }));
 
   const eligibleDoctors = selectSpecialistDoctors(doctors, services);
-  const firstEligible = eligibleDoctors[0];
-  const hasEligibleDoctor = Boolean(firstEligible);
-  const ctaLabel = hasEligibleDoctor
-    ? page?.ctaLabel ?? c.doctors.bookAppointment
-    : sp.specialistConsultationsTitle;
-  const ctaHref = hasEligibleDoctor && firstEligible
-    ? page?.ctaHref ?? buildBookHref({
-        country: slug,
-        lang,
-        service: firstEligible.serviceSlug,
-        doctor: firstEligible.doctor.slug,
-      })
-    : services.length > 0 ? "#services" : `/${slug}/${lang}`;
-  const doctorItems = eligibleDoctors.map(({ doctor: d, serviceSlug, serviceNames }) => ({
+  const bookingService = prioritizedServices[0] ?? null;
+  const hubBookability = bookingService?.bookability ?? NO_BOOKING_TARGET;
+  const hubActionProps = getBookabilityActionProps(
+    hubBookability,
+    lang,
+    c.bookingAvailability,
+  );
+  const ctaLabel = page?.ctaLabel ?? c.doctors.bookAppointment;
+  const ctaHref = page?.ctaHref ?? buildBookHref({
+    country: slug,
+    lang,
+    service: bookingService?.slug ?? null,
+  });
+  const servicesBySlug = new Map(services.map((service) => [service.slug, service]));
+  const doctorItems = eligibleDoctors
+    .map((selection, position) => {
+      const service = servicesBySlug.get(selection.serviceSlug);
+      const pairBookability = service
+        ? getDoctorServiceBookability(
+            selection.doctor.bookabilityByServiceId,
+            service.id,
+          )
+        : NO_BOOKING_TARGET;
+      return { ...selection, pairBookability, position };
+    })
+    .sort(
+      (a, b) =>
+        bookabilityRank(a.pairBookability) - bookabilityRank(b.pairBookability) ||
+        a.position - b.position,
+    )
+    .map(({ doctor: d, serviceSlug, serviceNames, pairBookability }) => ({
       name: d.fullName,
       title: d.specialties.length > 0 ? d.specialties.join(", ") : serviceNames.join(", ") || d.title,
       bio: d.bio ?? "",
@@ -208,6 +247,7 @@ export default async function CountryLangSpecialistConsultationPage({
       bookingHref: buildBookHref({ country: slug, lang, service: serviceSlug, doctor: d.slug }),
       ctaLabel: c.doctors.viewProfile,
       bookLabel: c.doctors.bookAppointment,
+      ...getBookabilityActionProps(pairBookability, lang, c.bookingAvailability),
     }));
 
   return (
@@ -226,7 +266,7 @@ export default async function CountryLangSpecialistConsultationPage({
           description: visibleContent.description,
           countryName: config.name,
           url: `/${slug}/${lang}/see-a-specialist`,
-          bookingUrl: hasEligibleDoctor ? ctaHref : null,
+          bookingUrl: hubBookability.state === "BOOKABLE" ? ctaHref : null,
         })}
       />
 
@@ -237,7 +277,7 @@ export default async function CountryLangSpecialistConsultationPage({
         titleAccent={page?.heroTitle ? "" : sp.heroAccent}
         titleTrail={page?.heroTitle ? undefined : sp.heroTrail}
         lede={heroSubtitle}
-        primaryCta={{ label: ctaLabel, href: ctaHref }}
+        primaryCta={{ label: ctaLabel, href: ctaHref, ...hubActionProps }}
         secondaryCta={{
           label: sp.secondaryLabel,
           href: `/${slug}/${lang}/doctors`,
@@ -381,8 +421,9 @@ export default async function CountryLangSpecialistConsultationPage({
           primaryCta: ctaLabel,
           secondaryCta: sp.secondaryLabel,
         }}
+        {...hubActionProps}
       />
-      <StickyBookingCTA href={ctaHref} label={ctaLabel} />
+      <StickyBookingCTA href={ctaHref} label={ctaLabel} {...hubActionProps} />
 
       {page?.sections.disclaimer ? (
         <MedicalDisclaimer

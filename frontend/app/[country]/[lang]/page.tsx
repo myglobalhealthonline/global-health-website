@@ -61,6 +61,8 @@ import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { SITE_NAME } from "@/lib/constants";
 import { Stethoscope, ShieldCheck, Activity, Languages } from "lucide-react";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
+import { getBookabilityActionProps } from "@/lib/content/bookability-presentation";
+import type { BookabilitySummary } from "@/lib/content/get-country-collections";
 
 // Marquee language-chip priority: majority consultation languages surface
 // ahead of the rest of the (alphabetical) GP language pool. See
@@ -145,6 +147,7 @@ function mapServiceToCatalogItem(
   s: CountryServiceCard,
   hrefs: { detailHref: string; bookHref: string },
   labels: { general: string; specialist: string; min: string },
+  actionProps: ReturnType<typeof getBookabilityActionProps>,
 ): ServiceCatalogItem {
   return {
     type: s.kind === "GENERAL" ? "general" : "specialist",
@@ -160,7 +163,12 @@ function mapServiceToCatalogItem(
     detailHref: hrefs.detailHref,
     bookHref: hrefs.bookHref,
     imageSrc: s.imageSrc ?? null,
+    ...actionProps,
   };
+}
+
+function bookabilityRank(summary: BookabilitySummary): number {
+  return summary.state === "BOOKABLE" ? 0 : summary.state === "RETURNING" ? 1 : 2;
 }
 
 function mapCategoryTile(input: {
@@ -233,9 +241,29 @@ export default async function CountryLangHomePage({
       getGpLanguages(code),
     ]);
 
-  const generalServices = allCountryServices.filter((s) => s.kind === "GENERAL");
-  const specialistServices = allCountryServices.filter((s) => s.kind === "SPECIALIST");
-  const prescriptionServices = allCountryServices.filter((s) => s.kind === "PRESCRIPTION");
+  const prioritizedCountryServices = allCountryServices
+    .map((service, position) => ({ service, position }))
+    .sort(
+      (a, b) =>
+        bookabilityRank(a.service.bookability) - bookabilityRank(b.service.bookability) ||
+        a.position - b.position,
+    )
+    .map(({ service }) => service);
+  const generalServices = prioritizedCountryServices.filter((s) => s.kind === "GENERAL");
+  const specialistServices = prioritizedCountryServices.filter((s) => s.kind === "SPECIALIST");
+  const prescriptionServices = prioritizedCountryServices.filter((s) => s.kind === "PRESCRIPTION");
+  const homeBookingTarget = [...generalServices, ...specialistServices][0] ?? null;
+  const homeActionProps = homeBookingTarget
+    ? getBookabilityActionProps(
+        homeBookingTarget.bookability,
+        lang,
+        cc.bookingAvailability,
+      )
+    : getBookabilityActionProps(
+        { state: "UNAVAILABLE", reasonCode: "NO_OPEN_SLOT", nextAvailableAt: null },
+        lang,
+        cc.bookingAvailability,
+      );
 
   // Country regulator's public verification page (medicalcouncil.ie /
   // ordemdosmedicos.pt) — every doctor card links here so patients can
@@ -257,13 +285,13 @@ export default async function CountryLangHomePage({
       mapServiceToCatalogItem(s, {
         detailHref: `/${slug}/${lang}/services/${s.slug}`,
         bookHref: buildBookHref({ country: slug, lang, service: s.slug }),
-      }, catalogLabels),
+      }, catalogLabels, getBookabilityActionProps(s.bookability, lang, cc.bookingAvailability)),
     ),
     ...specialistServices.map((s) =>
       mapServiceToCatalogItem(s, {
         detailHref: `/${slug}/${lang}/services/${s.slug}`,
         bookHref: buildBookHref({ country: slug, lang, service: s.slug }),
-      }, catalogLabels),
+      }, catalogLabels, getBookabilityActionProps(s.bookability, lang, cc.bookingAvailability)),
     ),
     ...(isCountryFeatureEnabled(config, "online-prescriptions") && prescriptionServices.length > 0
       ? (() => {
@@ -313,7 +341,14 @@ export default async function CountryLangHomePage({
   const teamDoctorItems: DoctorCarouselItem[] = (featuredDoctor
     ? countryDoctors.filter((d) => d.id !== featuredDoctor.id)
     : countryDoctors
-  ).map((d) => {
+  )
+    .map((doctor, position) => ({ doctor, position }))
+    .sort(
+      (a, b) =>
+        bookabilityRank(a.doctor.bookability) - bookabilityRank(b.doctor.bookability) ||
+        a.position - b.position,
+    )
+    .map(({ doctor: d }) => {
     const isGP = d.assignedServiceIds.some((id) => generalServiceIdSet.has(id));
     const isSpecialist = d.assignedServiceIds.some((id) => specialistServiceIdSet.has(id));
     return {
@@ -342,6 +377,7 @@ export default async function CountryLangHomePage({
       href: `/${slug}/${lang}/doctors/${d.slug}`,
       bookingHref: buildBookHref({ country: slug, lang, doctor: d.slug }),
       ctaLabel: t.team.ctaView,
+      ...getBookabilityActionProps(d.bookability, lang, cc.bookingAvailability),
     };
   });
 
@@ -552,6 +588,7 @@ export default async function CountryLangHomePage({
         doctorCount={countryDoctors.length}
         languageLabel={languageLabel}
         bookHref={page?.ctaHref ?? bookHref}
+        {...homeActionProps}
         totalDoctorsAcrossEurope={totalDoctorsAcrossEurope}
         liveDoctors={liveDoctors}
         sameDay={{
@@ -677,6 +714,11 @@ export default async function CountryLangHomePage({
                   instagramUrl: featuredDoctor.instagramUrl,
                   facebookUrl: featuredDoctor.facebookUrl,
                   linkedinUrl: featuredDoctor.linkedinUrl,
+                  ...getBookabilityActionProps(
+                    featuredDoctor.bookability,
+                    lang,
+                    cc.bookingAvailability,
+                  ),
                   viewProfileLabel: bundle.common.doctors.viewProfile,
                   bookWithLabel: bundle.common.doctors.bookWithTemplate,
                   verifyRegistrationLabel: bundle.common.doctors.verifyRegistrationAria,
@@ -720,8 +762,13 @@ export default async function CountryLangHomePage({
       {page?.sections.faq ? (
         <FAQSection items={page.faq} theme={themeProp(page?.faqTheme, "dark")} />
       ) : null}
-      <FinalCTA primaryHref={bookHref} secondaryHref={doctorsHref} i18n={t.finalCta} />
-      <StickyBookingCTA href={bookHref} />
+      <FinalCTA
+        primaryHref={bookHref}
+        secondaryHref={doctorsHref}
+        i18n={t.finalCta}
+        {...homeActionProps}
+      />
+      <StickyBookingCTA href={bookHref} {...homeActionProps} />
       {page?.sections.disclaimer ? (
         <MedicalDisclaimer
           paragraphs={page.disclaimerParagraphs}

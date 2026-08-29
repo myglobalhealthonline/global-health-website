@@ -14,6 +14,7 @@ function service(
     currencyCode: "EUR",
     assignedDoctorIds: [],
     insuranceOptions: [],
+    bookability: { state: "BOOKABLE", reasonCode: null, nextAvailableAt: null },
     ...overrides,
   };
 }
@@ -28,6 +29,8 @@ function doctor(
     languages: [],
     specialties: [],
     assignedServiceIds: [],
+    bookability: { state: "BOOKABLE", reasonCode: null, nextAvailableAt: null },
+    bookabilityByServiceId: {},
     ...overrides,
   };
 }

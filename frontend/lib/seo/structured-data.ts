@@ -516,7 +516,7 @@ export function medicalProcedureJsonLd(input: {
   description: string;
   countryName: string;
   url: string;
-  bookingUrl: string;
+  bookingUrl: string | null;
 }) {
   return {
     "@context": "https://schema.org",
@@ -529,10 +529,16 @@ export function medicalProcedureJsonLd(input: {
     preparation: "Have your symptoms, medications list, and ID ready for the video call.",
     howPerformed: "Video consultation via Google Meet with a licensed clinician.",
     followup: "Clinical notes, referrals and follow-up guidance are issued during or shortly after the call.",
-    potentialAction: {
-      "@type": "ReserveAction",
-      target: input.bookingUrl.startsWith("http") ? input.bookingUrl : `${SITE_URL}${input.bookingUrl}`,
-    },
+    ...(input.bookingUrl
+      ? {
+          potentialAction: {
+            "@type": "ReserveAction",
+            target: input.bookingUrl.startsWith("http")
+              ? input.bookingUrl
+              : `${SITE_URL}${input.bookingUrl}`,
+          },
+        }
+      : {}),
     provider: {
       "@type": "MedicalOrganization",
       "@id": ORGANIZATION_ID,
@@ -658,7 +664,7 @@ export function medicalClinicServiceJsonLd(input: {
    *  `countryMedicalOrganizationJsonLd` uses for the country home page. */
   countrySlug: string;
   url: string;
-  bookingUrl: string;
+  bookingUrl: string | null;
   /** Named clinical reviewer (Physician schema) for this service page's
    *  content, surfaced as `employee` — `reviewedBy` is not a valid property
    *  on MedicalOrganization/MedicalClinic (Google silently ignores it), so
@@ -699,12 +705,16 @@ export function medicalClinicServiceJsonLd(input: {
       name: input.serviceName,
       ...(input.description ? { description: input.description } : {}),
       howPerformed: "Secure video consultation with a registered clinician.",
-      potentialAction: {
-        "@type": "ReserveAction",
-        target: input.bookingUrl.startsWith("http")
-          ? input.bookingUrl
-          : `${SITE_URL}${input.bookingUrl}`,
-      },
+      ...(input.bookingUrl
+        ? {
+            potentialAction: {
+              "@type": "ReserveAction",
+              target: input.bookingUrl.startsWith("http")
+                ? input.bookingUrl
+                : `${SITE_URL}${input.bookingUrl}`,
+            },
+          }
+        : {}),
     },
   };
 }
@@ -728,9 +738,12 @@ export function consultationServiceOffersJsonLd(input: {
     priceCents: number;
     currencyCode: string;
     durationMinutes?: number | null;
+    /** Must match the visible Book action. False offers stay out of JSON-LD. */
+    bookable?: boolean;
   }>;
 }) {
-  if (input.offers.length === 0) return null;
+  const bookableOffers = input.offers.filter((offer) => offer.bookable !== false);
+  if (bookableOffers.length === 0) return null;
   return {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -740,7 +753,7 @@ export function consultationServiceOffersJsonLd(input: {
     url: input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`,
     areaServed: { "@type": "Country", name: input.countryName },
     provider: { "@type": "MedicalOrganization", "@id": ORGANIZATION_ID, name: SITE_NAME },
-    offers: input.offers.map((offer) => ({
+    offers: bookableOffers.map((offer) => ({
       "@type": "Offer",
       name: offer.name,
       url: offer.url.startsWith("http") ? offer.url : `${SITE_URL}${offer.url}`,

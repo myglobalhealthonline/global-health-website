@@ -17,7 +17,7 @@ import { sanitizeDoctorBioHtml } from "@/lib/content/doctor-bio-format";
 import { focalStyle } from "@/components/media/doctor-photo";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
-import { BookCta } from "@/components/booking/BookNowButton";
+import { BookCta, type BookabilityActionProps } from "@/components/booking/BookNowButton";
 
 /* ─── Types ──────────────────────────────────────────────────────────────── */
 type DoctorProfileTemplateProps = {
@@ -87,7 +87,7 @@ type DoctorProfileTemplateProps = {
     nextStep?: string;
     patientReviews?: string;
   };
-};
+} & BookabilityActionProps;
 
 /* ─── Component ──────────────────────────────────────────────────────────── */
 export function DoctorProfileTemplate({
@@ -100,6 +100,10 @@ export function DoctorProfileTemplate({
   profileImageZoom = 1,
   doctifyWidgetUrl,
   t,
+  bookability,
+  unavailableLabel,
+  returningLabel,
+  nextAvailableLabel,
 }: DoctorProfileTemplateProps) {
   const safeBio = sanitizeDoctorBioHtml(profile.bio);
   const heroImageStyle = focalStyle(profileImageFocalX, profileImageFocalY, profileImageZoom);
@@ -363,6 +367,10 @@ export function DoctorProfileTemplate({
               <div className="mt-5 flex flex-wrap items-center gap-3">
                 <BookCta
                   href={hero.primaryCta.href}
+                  bookability={bookability}
+                  unavailableLabel={unavailableLabel}
+                  returningLabel={returningLabel}
+                  nextAvailableLabel={nextAvailableLabel}
                   className="gh2-btn-lime shadow-[0_4px_24px_rgba(167,243,11,0.28)]"
                 >
                   <CalendarDays className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
@@ -541,6 +549,10 @@ export function DoctorProfileTemplate({
               </p>
               <BookCta
                 href={hero.primaryCta.href}
+                bookability={bookability}
+                unavailableLabel={unavailableLabel}
+                returningLabel={returningLabel}
+                nextAvailableLabel={nextAvailableLabel}
                 className="gh2-btn-lime mt-8 w-full justify-center"
               >
                 {hero.primaryCta.label}
@@ -575,6 +587,10 @@ export function DoctorProfileTemplate({
             </div>
             <BookCta
               href={bottomCta.ctaHref}
+              bookability={bookability}
+              unavailableLabel={unavailableLabel}
+              returningLabel={returningLabel}
+              nextAvailableLabel={nextAvailableLabel}
               className="gh2-btn-lime lg:justify-self-end"
             >
               {bottomCta.ctaLabel}

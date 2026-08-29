@@ -13,6 +13,7 @@ import {
   BadgeCheck,
   Video,
 } from "lucide-react";
+import { BookCta, type BookabilityActionProps } from "@/components/booking/BookNowButton";
 
 /**
  * Premium doctors-page hero (clinical-editorial gh2 system).
@@ -29,7 +30,7 @@ import {
  * defaults for real figures before launch.
  */
 
-type CtaLink = { label: string; href: string };
+type CtaLink = { label: string; href: string } & BookabilityActionProps;
 
 type InfoCard = {
   icon: ReactNode;
@@ -270,13 +271,17 @@ export function DoctorsHero({
 
             {/* CTAs */}
             <div className="mt-7 flex flex-wrap items-center gap-3">
-              <Link
+              <BookCta
                 href={primaryCta.href}
                 className="gh2-btn-lime gh-focus-on-dark "
+                bookability={primaryCta.bookability}
+                unavailableLabel={primaryCta.unavailableLabel}
+                returningLabel={primaryCta.returningLabel}
+                nextAvailableLabel={primaryCta.nextAvailableLabel}
               >
                 {primaryCta.label}
                 <ArrowUpRight className="size-4" strokeWidth={2} aria-hidden />
-              </Link>
+              </BookCta>
               <Link
                 href={secondaryCta.href}
                 className="gh2-btn-ghost gh-focus-on-dark "

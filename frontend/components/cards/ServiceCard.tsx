@@ -6,7 +6,7 @@ import { ArrowRight, CalendarDays, Clock, Tag, Stethoscope } from "lucide-react"
 import { cn } from "@/lib/utils/cn";
 import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 import { isBookingWorkflowHref } from "@/lib/routing/book-href";
-import { BookCta, BookNowButton } from "@/components/booking/BookNowButton";
+import { BookCta, BookNowButton, type BookabilityActionProps } from "@/components/booking/BookNowButton";
 
 
 type ServiceCardProps = {
@@ -31,7 +31,7 @@ type ServiceCardProps = {
    *  horizontal image-left | content-right layout on desktop so the row
    *  stays the same height as its siblings (mirrors ServiceCatalog). */
   featured?: boolean;
-};
+} & BookabilityActionProps;
 
 /** Footer actions for two-CTA mode. Sits above the card-wide overlay link
  *  via z-index so each button's own navigation fires. Buttons mirror the
@@ -44,6 +44,10 @@ function TwoActions({
   bookLabel,
   title,
   dark,
+  bookability,
+  unavailableLabel,
+  returningLabel,
+  nextAvailableLabel,
 }: {
   detailHref: string;
   bookHref: string;
@@ -51,7 +55,7 @@ function TwoActions({
   bookLabel: string;
   title: string;
   dark: boolean;
-}) {
+} & BookabilityActionProps) {
   return (
     <div className="relative z-10 mt-6 flex flex-col gap-2 sm:flex-row sm:gap-2.5">
       {/* sr-only suffix (not aria-label): Lighthouse's descriptive-link-text
@@ -72,6 +76,10 @@ function TwoActions({
       </Link>
       <BookCta
         href={bookHref}
+        bookability={bookability}
+        unavailableLabel={unavailableLabel}
+        returningLabel={returningLabel}
+        nextAvailableLabel={nextAvailableLabel}
         className="inline-flex h-12 w-full items-center justify-center gap-1.5 rounded-full px-4 text-sm font-extrabold tracking-[-0.005em] transition-[transform,filter,box-shadow,background-color] duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0 whitespace-nowrap sm:flex-1"
         style={
           dark
@@ -109,6 +117,10 @@ export function ServiceCard({
   bookHref,
   bookLabel = "Book",
   featured = false,
+  bookability,
+  unavailableLabel,
+  returningLabel,
+  nextAvailableLabel,
 }: ServiceCardProps) {
   const twoButton = Boolean(detailHref && bookHref);
   // Card-wide overlay target: detail page in two-CTA mode, else the legacy href.
@@ -125,6 +137,10 @@ export function ServiceCard({
     isBookingWorkflowHref(overlayHref) ? (
       <BookNowButton
         href={overlayHref}
+        bookability={bookability}
+        unavailableLabel={unavailableLabel}
+        returningLabel={returningLabel}
+        nextAvailableLabel={nextAvailableLabel}
         ariaLabel={`${learnLabel}: ${title}`}
         className="absolute inset-0 z-[1] rounded-[var(--radius-card)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-accent)]"
       />
@@ -255,6 +271,10 @@ export function ServiceCard({
                   bookLabel={bookLabel}
                   title={title}
                   dark
+                  bookability={bookability}
+                  unavailableLabel={unavailableLabel}
+                  returningLabel={returningLabel}
+                  nextAvailableLabel={nextAvailableLabel}
                 />
               ) : (
                 /* CTA pill */
@@ -328,6 +348,10 @@ export function ServiceCard({
               bookLabel={bookLabel}
               title={title}
               dark
+              bookability={bookability}
+              unavailableLabel={unavailableLabel}
+              returningLabel={returningLabel}
+              nextAvailableLabel={nextAvailableLabel}
             />
           ) : (
             <div
@@ -405,6 +429,10 @@ export function ServiceCard({
             bookLabel={bookLabel}
             title={title}
             dark={false}
+            bookability={bookability}
+            unavailableLabel={unavailableLabel}
+            returningLabel={returningLabel}
+            nextAvailableLabel={nextAvailableLabel}
           />
         ) : (
           <div className="mt-5 flex items-center gap-2 text-sm font-semibold text-[var(--color-brand-primary)]">

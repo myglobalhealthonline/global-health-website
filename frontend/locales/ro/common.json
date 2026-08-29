@@ -124,6 +124,11 @@
   "cta": {
     "primaryBooking": "Programează online"
   },
+  "bookingAvailability": {
+    "notAcceptingOnlineBookings": "Nu acceptă programări online",
+    "returningOn": "Programările se redeschid pe {date}",
+    "nextAvailable": "Următoarea disponibilitate: {date}"
+  },
   "notFound": {
     "title": "Pagina nu a fost găsită",
     "body": "Pagina pe care o căutați nu există sau a fost mutată.",

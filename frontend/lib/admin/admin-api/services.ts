@@ -82,6 +82,9 @@ export type AdminServiceDto = {
    *  public surface and refused server-side at booking. */
   visibility: "PUBLIC" | "ADMIN_ONLY";
   isActive: boolean;
+  bookingPausedFrom?: string | null;
+  bookingPausedUntil?: string | null;
+  bookingPauseReason?: "LEAVE" | "TEMPORARY_UNAVAILABLE" | "OTHER" | null;
   /** Clinical review date shown on the page as "Last reviewed" (E-E-A-T). */
   lastReviewedAt: string | null;
   /** Named author / clinical reviewer for this service's content. Free-text
@@ -265,6 +268,19 @@ export async function patchAdminService(id: string, body: unknown) {
   return adminRequest<AdminServiceDetailPayload>(`/api/admin/services/${id}`, {
     method: "PATCH",
     body,
+  });
+}
+
+export async function setAdminServiceBookingPause(id: string, body: unknown) {
+  return adminRequest<{ bookingPause: { from: string; until: string | null; reasonCode: string } }>(
+    `/api/admin/services/${id}/booking-pause`,
+    { method: "PATCH", body },
+  );
+}
+
+export async function clearAdminServiceBookingPause(id: string) {
+  return adminRequest<{ bookingPause: null }>(`/api/admin/services/${id}/booking-pause`, {
+    method: "DELETE",
   });
 }
 

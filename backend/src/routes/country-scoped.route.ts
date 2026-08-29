@@ -26,6 +26,7 @@ import { isDoctorInInsuranceNetwork } from "../modules/pricing/insurance-pricing
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import { getDoctorBookability } from "../modules/bookability/bookability.service.js";
 
 /** Returns true if the country exists; otherwise writes a 404 to `reply` and
  *  returns false so the handler can `return` immediately. */
@@ -299,6 +300,7 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
           where: {
             slug: serviceSlug,
             isActive: true,
+            visibility: "PUBLIC",
             country: { code: countryCode, isActive: true },
           },
           select: {
@@ -354,6 +356,16 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
             .send(errorResponse("Doctor is not assigned to this service"));
         }
 
+        const bookability = await getDoctorBookability({
+          countryCode,
+          doctorId: doctor.id,
+          serviceId: service.id,
+        });
+        if (bookability.state !== "BOOKABLE") {
+          const clinicTimezone = await resolveDoctorTimeZone(doctor.id);
+          return okResponse({ slots: [], clinicTimezone, bookability });
+        }
+
         // Booking under an insurer: the doctor must also be in that insurer's
         // network for this service (admin set them a payout for it). Otherwise
         // they never take that insurer's patients — same 404 as unassigned.
@@ -406,7 +418,7 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
             currencyCode: priced.currencyCode,
           };
         });
-        return okResponse({ slots: pricedSlots, clinicTimezone });
+        return okResponse({ slots: pricedSlots, clinicTimezone, bookability });
       } catch (error) {
         return handleError(app, reply, error, "Unexpected availability error");
       }

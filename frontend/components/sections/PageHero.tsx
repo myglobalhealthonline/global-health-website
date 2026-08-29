@@ -6,6 +6,8 @@ import { Flag } from "@/components/ui/Flag";
 import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
 import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
 import { isUnoptimizedImageSrc as isUnlistedRemote } from "@/lib/content/asset-media-url";
+import { BookCta } from "@/components/booking/BookNowButton";
+import type { BookabilitySummary } from "@/lib/content/get-country-collections";
 
 export type PageHeroProps = {
   countryCode?: string;
@@ -16,6 +18,10 @@ export type PageHeroProps = {
   lede?: ReactNode;
   ctaLabel?: string;
   ctaHref?: string;
+  bookability?: BookabilitySummary;
+  unavailableLabel?: string;
+  returningLabel?: string;
+  nextAvailableLabel?: string;
   secondaryLabel?: string;
   secondaryHref?: string;
   rightSlot?: ReactNode;
@@ -45,6 +51,10 @@ export function PageHero({
   lede,
   ctaLabel,
   ctaHref,
+  bookability,
+  unavailableLabel,
+  returningLabel,
+  nextAvailableLabel,
   secondaryLabel,
   secondaryHref,
   rightSlot,
@@ -266,11 +276,26 @@ export function PageHero({
 
               {(ctaHref && ctaLabel) || (secondaryHref && secondaryLabel) ? (
                 <div className="mt-8 flex flex-wrap items-center gap-3">
-                  {ctaHref && ctaLabel ? (
-                    <Link
+                  {ctaHref && ctaLabel && (bookability || /\/book(?:[/?#]|$)/.test(ctaHref)) ? (
+                    <BookCta
                       href={ctaHref}
                       className="gh2-btn-lime pr-2 gh-focus-on-dark "
+                      bookability={bookability}
+                      unavailableLabel={unavailableLabel}
+                      returningLabel={returningLabel}
+                      nextAvailableLabel={nextAvailableLabel}
                     >
+                      {ctaLabel}
+                      <span
+                        aria-hidden
+                        className="ml-1 inline-flex size-7 items-center justify-center rounded-full"
+                        style={{ background: "rgba(10,31,20,0.16)" }}
+                      >
+                        <ArrowUpRight className="size-4" strokeWidth={2} />
+                      </span>
+                    </BookCta>
+                  ) : ctaHref && ctaLabel ? (
+                    <Link href={ctaHref} className="gh2-btn-lime pr-2 gh-focus-on-dark ">
                       {ctaLabel}
                       <span
                         aria-hidden
@@ -427,11 +452,20 @@ export function PageHero({
 
             {(ctaHref && ctaLabel) || (secondaryHref && secondaryLabel) ? (
               <div className="flex flex-wrap items-center gap-3" style={{ marginTop: 40 }}>
-                {ctaHref && ctaLabel ? (
-                  <Link
+                {ctaHref && ctaLabel && (bookability || /\/book(?:[/?#]|$)/.test(ctaHref)) ? (
+                  <BookCta
                     href={ctaHref}
                     className="gh2-btn-lime gh-focus-on-dark "
+                    bookability={bookability}
+                    unavailableLabel={unavailableLabel}
+                    returningLabel={returningLabel}
+                    nextAvailableLabel={nextAvailableLabel}
                   >
+                    {ctaLabel}
+                    <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
+                  </BookCta>
+                ) : ctaHref && ctaLabel ? (
+                  <Link href={ctaHref} className="gh2-btn-lime gh-focus-on-dark ">
                     {ctaLabel}
                     <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
                   </Link>

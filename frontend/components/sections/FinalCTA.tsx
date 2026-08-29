@@ -11,6 +11,7 @@ import { SectionSeam } from "@/components/ui/SectionSeam";
 import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
 import { isBookingWorkflowHref } from "@/lib/routing/book-href";
 import { BookNowButton } from "@/components/booking/BookNowButton";
+import type { BookabilitySummary } from "@/lib/content/get-country-collections";
 
 export type FinalCtaI18n = {
   eyebrow: string;
@@ -28,10 +29,18 @@ export function FinalCTA({
   primaryHref = "/",
   secondaryHref = "/contact",
   i18n,
+  bookability,
+  unavailableLabel,
+  returningLabel,
+  nextAvailableLabel,
 }: {
   primaryHref?: string;
   secondaryHref?: string;
   i18n?: FinalCtaI18n;
+  bookability?: BookabilitySummary;
+  unavailableLabel?: string;
+  returningLabel?: string;
+  nextAvailableLabel?: string;
 }) {
   return (
     <section
@@ -119,8 +128,16 @@ export function FinalCTA({
               </p>
 
               <div className="mt-10 flex flex-wrap gap-3">
-                {isBookingWorkflowHref(primaryHref) ? (
-                  <BookNowButton href={primaryHref} className="gh2-btn-lime gh-focus-on-dark">
+                {(bookability && bookability.state !== "BOOKABLE") ||
+                isBookingWorkflowHref(primaryHref) ? (
+                  <BookNowButton
+                    href={primaryHref}
+                    className="gh2-btn-lime gh-focus-on-dark"
+                    bookability={bookability}
+                    unavailableLabel={unavailableLabel}
+                    returningLabel={returningLabel}
+                    nextAvailableLabel={nextAvailableLabel}
+                  >
                     {i18n?.primaryCta ?? "Book Appointment"}
                     <ArrowUpRight className="size-4" strokeWidth={2} aria-hidden />
                   </BookNowButton>
@@ -130,6 +147,11 @@ export function FinalCTA({
                     className="gh2-btn-lime gh-focus-on-dark"
                   >
                     {i18n?.primaryCta ?? "Book Appointment"}
+                    {bookability?.nextAvailableAt && nextAvailableLabel ? (
+                      <span className="text-[0.78em] font-semibold opacity-75">
+                        {nextAvailableLabel}
+                      </span>
+                    ) : null}
                     <ArrowUpRight className="size-4" strokeWidth={2} aria-hidden />
                   </Link>
                 )}

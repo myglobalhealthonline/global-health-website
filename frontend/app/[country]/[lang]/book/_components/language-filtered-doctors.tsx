@@ -5,7 +5,15 @@ import Link from "next/link";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import type { DoctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { buildBookHref } from "@/lib/routing/book-href";
-import type { CountryDoctorCard, CountryServiceCard } from "@/lib/content/get-country-collections";
+import {
+  getDoctorServiceBookability,
+  type CountryDoctorCard,
+  type CountryServiceCard,
+} from "@/lib/content/get-country-collections";
+import {
+  getBookabilityActionProps,
+  type BookabilityMessages,
+} from "@/lib/content/bookability-presentation";
 
 const LANGUAGE_NAMES: Record<string, string> = {
   en: "English",
@@ -36,6 +44,7 @@ export function LanguageFilteredDoctors({
   at,
   bp,
   benefit,
+  bookingAvailability,
 }: {
   country: string;
   lang: string;
@@ -52,6 +61,7 @@ export function LanguageFilteredDoctors({
   at?: string;
   bp: import("@/lib/i18n/types").CommonLocale["bookPage"];
   cardI18n: DoctorCardI18n;
+  bookingAvailability: BookabilityMessages;
 }) {
   const allLanguages = useMemo(() => {
     const set = new Set<string>();
@@ -181,6 +191,14 @@ export function LanguageFilteredDoctors({
                 })}
                 primaryLabel={bp.continue}
                 ctaLabel={cardI18n.viewProfileLabel}
+                {...getBookabilityActionProps(
+                  getDoctorServiceBookability(
+                    doctor.bookabilityByServiceId,
+                    service.id,
+                  ),
+                  lang,
+                  bookingAvailability,
+                )}
                 dark
               />
             </li>

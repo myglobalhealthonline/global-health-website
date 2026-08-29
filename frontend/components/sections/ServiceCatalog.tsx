@@ -20,7 +20,7 @@ import {
 import { cn } from "@/lib/utils/cn";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { CarouselNav } from "@/components/ui/CarouselNav";
-import { BookCta } from "@/components/booking/BookNowButton";
+import { BookCta, type BookabilityActionProps } from "@/components/booking/BookNowButton";
 import { useSwipePage } from "@/hooks/use-swipe-page";
 
 export type ServiceTileType = "general" | "specialist" | "prescription" | "test";
@@ -44,7 +44,7 @@ export type ServiceCatalogItem = {
    *  are set the tile renders two buttons instead of a single whole-tile link. */
   detailHref?: string;
   bookHref?: string;
-};
+} & BookabilityActionProps;
 
 const DEFAULT_ICONS: Record<ServiceTileType, ReactNode> = {
   general: <Stethoscope className="size-5" strokeWidth={1.5} aria-hidden />,
@@ -343,13 +343,17 @@ function TileActions({
   bookHref,
   bookLabel,
   learnMoreLabel,
+  bookability,
+  unavailableLabel,
+  returningLabel,
+  nextAvailableLabel,
 }: {
   title: string;
   detailHref: string;
   bookHref: string;
   bookLabel: string;
   learnMoreLabel: string;
-}) {
+} & BookabilityActionProps) {
   return (
     <div className="relative z-[var(--z-raised)] mt-4 flex gap-2.5">
       {/* sr-only suffix (not aria-label): Lighthouse's descriptive-link-text
@@ -365,6 +369,10 @@ function TileActions({
       </Link>
       <BookCta
         href={bookHref}
+        bookability={bookability}
+        unavailableLabel={unavailableLabel}
+        returningLabel={returningLabel}
+        nextAvailableLabel={nextAvailableLabel}
         aria-label={`${bookLabel}: ${title}`}
         className="inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-full px-3 text-[13px] font-extrabold tracking-[-0.005em] transition-[transform,filter] duration-200 hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0"
         style={{
@@ -522,7 +530,17 @@ export function ServiceTile({
             </div>
 
             {twoButton ? (
-              <TileActions title={s.title} detailHref={s.detailHref!} bookHref={s.bookHref!} bookLabel={bookLabel} learnMoreLabel={i18n.learnMore} />
+              <TileActions
+                title={s.title}
+                detailHref={s.detailHref!}
+                bookHref={s.bookHref!}
+                bookLabel={bookLabel}
+                learnMoreLabel={i18n.learnMore}
+                bookability={s.bookability}
+                unavailableLabel={s.unavailableLabel}
+                returningLabel={s.returningLabel}
+                nextAvailableLabel={s.nextAvailableLabel}
+              />
             ) : (
               <span
                 className="
@@ -677,7 +695,17 @@ export function ServiceTile({
           </div>
 
           {twoButton ? (
-            <TileActions title={s.title} detailHref={s.detailHref!} bookHref={s.bookHref!} bookLabel={bookLabel} learnMoreLabel={i18n.learnMore} />
+            <TileActions
+              title={s.title}
+              detailHref={s.detailHref!}
+              bookHref={s.bookHref!}
+              bookLabel={bookLabel}
+              learnMoreLabel={i18n.learnMore}
+              bookability={s.bookability}
+              unavailableLabel={s.unavailableLabel}
+              returningLabel={s.returningLabel}
+              nextAvailableLabel={s.nextAvailableLabel}
+            />
           ) : (
             <span
               className="

@@ -11,6 +11,8 @@ function doc(overrides: Partial<CountryDoctorCard> & Pick<CountryDoctorCard, "id
     languages: [],
     specialties: [],
     assignedServiceIds: [],
+    bookability: { state: "BOOKABLE", reasonCode: null, nextAvailableAt: null },
+    bookabilityByServiceId: {},
     ...overrides,
   };
 }
@@ -72,6 +74,11 @@ function ctx(): DoctorDirectoryContext {
     specialistServiceIds: [specialistService],
     verifyUrl: undefined,
     i18n,
+    bookingAvailability: {
+      notAcceptingOnlineBookings: "Not accepting online bookings",
+      returningOn: "Appointments reopen {date}",
+      nextAvailable: "Next available {date}",
+    },
   };
 }
 

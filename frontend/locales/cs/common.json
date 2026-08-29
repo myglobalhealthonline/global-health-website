@@ -124,6 +124,11 @@
   "cta": {
     "primaryBooking": "Rezervovat online"
   },
+  "bookingAvailability": {
+    "notAcceptingOnlineBookings": "Nepřijímá online rezervace",
+    "returningOn": "Rezervace budou znovu otevřeny {date}",
+    "nextAvailable": "Nejbližší termín: {date}"
+  },
   "notFound": {
     "title": "Stránka nenalezena",
     "body": "Stránka, kterou hledáte, neexistuje nebo byla přesunuta.",

@@ -13,6 +13,7 @@ import {
 import { countryCodeSchema } from "../validations/shared.schema.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { getDoctorBookability } from "../modules/bookability/bookability.service.js";
 
 const publicAvailabilityQuerySchema = z.object({
   days: z.coerce.number().int().min(1).max(60).default(14),
@@ -94,6 +95,16 @@ const doctorAvailabilityRoute: FastifyPluginAsync = async (app) => {
         return reply.status(404).send(errorResponse("Doctor not found"));
       }
 
+      const bookability = await getDoctorBookability({
+        countryCode: countryParse.data,
+        doctorId: doctor.id,
+      });
+
+      if (bookability.state !== "BOOKABLE") {
+        const clinicTimezone = await resolveDoctorTimeZone(doctor.id);
+        return okResponse({ slots: [], clinicTimezone, bookability });
+      }
+
       const now = new Date();
       const fromUtc = new Date(now.getTime() + 60 * 60 * 1000); // 1h buffer — don't show slots about to start
       const toUtc = new Date(
@@ -102,7 +113,7 @@ const doctorAvailabilityRoute: FastifyPluginAsync = async (app) => {
 
       const slots = await listOpenSlotsForDoctor(doctor.id, fromUtc, toUtc);
       const clinicTimezone = await resolveDoctorTimeZone(doctor.id);
-      return okResponse({ slots, clinicTimezone });
+      return okResponse({ slots, clinicTimezone, bookability });
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));

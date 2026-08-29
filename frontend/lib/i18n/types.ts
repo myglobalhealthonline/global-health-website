@@ -182,6 +182,11 @@ export type CommonLocale = {
   cta: {
     primaryBooking: string;
   };
+  bookingAvailability: {
+    notAcceptingOnlineBookings: string;
+    returningOn: string;
+    nextAvailable: string;
+  };
   notFound: {
     title: string;
     body: string;
