@@ -1,15 +1,9 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { RegisteredBrandLockup } from "@/components/brand/RegisteredBrandLockup";
-import {
-  EU_TRADE_MARK_NUMBER,
-  EU_TRADE_MARK_URL,
-  REGISTERED_BRAND_NAME,
-} from "@/lib/brand/trademark";
+import { EU_TRADE_MARK_URL } from "@/lib/brand/trademark";
 
 const frontendRoot = fileURLToPath(new URL("../..", import.meta.url));
 
@@ -18,36 +12,29 @@ function source(relativePath: string) {
 }
 
 describe("registered Global Health brand treatment", () => {
-  it("uses the official EUIPO record and exact registered brand name", () => {
-    expect(REGISTERED_BRAND_NAME).toBe("Global Health Medicine Anytime Anywhere");
-    expect(EU_TRADE_MARK_NUMBER).toBe("019362479");
+  it("uses the official EUIPO record", () => {
     expect(EU_TRADE_MARK_URL).toBe(
       "https://euipo.europa.eu/eSearch/#details/trademarks/019362479",
     );
   });
 
-  it("renders one decorative symbol with an accessible registration label", () => {
-    const html = renderToStaticMarkup(
-      <RegisteredBrandLockup tone="light">
-        <span>Global Health logo</span>
-      </RegisteredBrandLockup>,
-    );
-
-    expect(html.match(/®/gu)).toHaveLength(1);
-    expect(html).toContain('aria-hidden="true"');
-    expect(html).toContain("Registered European Union trade mark");
-  });
-
-  it("applies the shared lockup to public desktop, mobile and footer branding", () => {
+  it("does not add a registered symbol to any shared logo", () => {
     for (const relativePath of [
       "components/layout/SiteHeader.tsx",
       "components/layout/MobileNav.tsx",
       "components/layout/SiteFooter.tsx",
       "components/sections/CountryEntryGate.tsx",
       "components/sections/GH2PagePrimitives.tsx",
+      "components/portal-shell.tsx",
+      "app/(portal)/(admin)/admin/_components/admin-shell.tsx",
     ]) {
-      expect(source(relativePath)).toContain("RegisteredBrandLockup");
+      expect(source(relativePath)).not.toContain("RegisteredBrandLockup");
+      expect(source(relativePath)).not.toContain("®");
     }
+
+    expect(
+      existsSync(path.join(frontendRoot, "components/brand/RegisteredBrandLockup.tsx")),
+    ).toBe(false);
   });
 
   it("keeps the mobile logo synchronized with the configured desktop logo", () => {
@@ -57,21 +44,15 @@ describe("registered Global Health brand treatment", () => {
     expect(mobileNav).not.toContain("src={DEFAULT_BRAND_LOGO.src}");
   });
 
-  it("applies the same lockup to patient, doctor, corporate and admin portal chrome", () => {
-    for (const relativePath of [
-      "components/portal-shell.tsx",
-      "app/(portal)/(admin)/admin/_components/admin-shell.tsx",
-    ]) {
-      expect(source(relativePath)).toContain("RegisteredBrandLockup");
-    }
-  });
-
-  it("links the public footer to the official registration", () => {
+  it("links only the existing bottom copyright line to the official registration", () => {
     const footer = source("components/layout/SiteFooter.tsx");
 
     expect(footer).toContain("EU_TRADE_MARK_URL");
-    expect(footer).toContain("EU_TRADE_MARK_NUMBER");
-    expect(footer).toContain("REGISTERED_BRAND_NAME");
+    expect(footer).toContain("{copyrightPrefix} · {navigation.footerCopyrightSuffix}");
+    expect(footer).not.toContain("EUTM No.");
+    expect(footer).not.toContain("EU_TRADE_MARK_NUMBER");
+    expect(footer).not.toContain("REGISTERED_BRAND_NAME");
+    expect(footer).not.toContain("®");
   });
 
   it("does not put the registration symbol into SEO titles or structured data", () => {

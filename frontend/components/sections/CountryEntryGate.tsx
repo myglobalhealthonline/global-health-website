@@ -23,7 +23,6 @@ import { setClientLocaleCookie } from "@/lib/i18n/get-client-locale";
 import { countryLinkLocale } from "@/lib/i18n/country-link-locale";
 import { countrySlug, registerCountrySlugs } from "@/lib/routing/country-slug";
 import type { GlobeArc, GlobeMarker } from "@/components/ui/cobe-globe";
-import { RegisteredBrandLockup } from "@/components/brand/RegisteredBrandLockup";
 import styles from "./CountryEntryGate.module.css";
 
 // WebGL/canvas — browser-only, no server-rendered fallback worth paying for.
@@ -398,16 +397,14 @@ export function CountryEntryGate({ countries, detectedLocale, copy, doctorCount 
 
       {/* Header — brand + tagline */}
       <header className={`${styles.header} relative flex items-center justify-between`}>
-        <RegisteredBrandLockup tone="light">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/logos/global-health-light.png"
-            alt="Global Health"
-            width={399}
-            height={260}
-            className={styles.logo}
-          />
-        </RegisteredBrandLockup>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/logos/global-health-light.png"
+          alt="Global Health"
+          width={399}
+          height={260}
+          className={styles.logo}
+        />
         <p className={`${styles.tagline} hidden uppercase sm:block`}>{copy.eyebrow}</p>
       </header>
 

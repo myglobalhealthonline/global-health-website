@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowUpRight, CheckCircle2, XCircle, Loader2, ShieldCheck, Clock, Lock } from "lucide-react";
-import { RegisteredBrandLockup } from "@/components/brand/RegisteredBrandLockup";
 
 export function GH2SectionHeader({
   eyebrow,
@@ -360,16 +359,14 @@ export function GH2AuthShell({
         <div className="relative z-10 flex flex-1 flex-col" style={{ padding: "clamp(40px,5vw,60px) clamp(36px,4.5vw,56px)" }}>
           {/* Logo */}
           <Link href="/" className="inline-flex items-center" style={{ textDecoration: "none" }}>
-            <RegisteredBrandLockup tone="light">
-              {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, same as SiteFooter */}
-              <img
-                src="/logos/global-health-light.png"
-                alt="Global Health"
-                width={399}
-                height={260}
-                style={{ height: 76, width: "auto" }}
-              />
-            </RegisteredBrandLockup>
+            {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, same as SiteFooter */}
+            <img
+              src="/logos/global-health-light.png"
+              alt="Global Health"
+              width={399}
+              height={260}
+              style={{ height: 76, width: "auto" }}
+            />
           </Link>
 
           {/* Headline — flex-grows to center */}
@@ -476,16 +473,14 @@ export function GH2AuthShell({
           {/* Top row — mobile logo + back link */}
           <div className="mb-4 flex items-center justify-between lg:hidden">
             <Link href="/" className="inline-flex items-center" style={{ textDecoration: "none" }}>
-              <RegisteredBrandLockup>
-                {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, same as SiteFooter */}
-                <img
-                  src="/logos/global-health-dark.png"
-                  alt="Global Health"
-                  width={404}
-                  height={272}
-                  style={{ height: 56, width: "auto" }}
-                />
-              </RegisteredBrandLockup>
+              {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, same as SiteFooter */}
+              <img
+                src="/logos/global-health-dark.png"
+                alt="Global Health"
+                width={404}
+                height={272}
+                style={{ height: 56, width: "auto" }}
+              />
             </Link>
             <Link
               href="/"

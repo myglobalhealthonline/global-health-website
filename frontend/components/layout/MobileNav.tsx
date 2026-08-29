@@ -40,7 +40,6 @@ import { Flag } from "@/components/ui/Flag";
 import { setClientLocaleCookie } from "@/lib/i18n/get-client-locale";
 import { countryLinkLocale } from "@/lib/i18n/country-link-locale";
 import { usePublicAuth } from "@/components/layout/PublicAuthContext";
-import { RegisteredBrandLockup } from "@/components/brand/RegisteredBrandLockup";
 
 export function MobileNav({
   siteName,
@@ -211,16 +210,14 @@ export function MobileNav({
 
           <div className="flex items-center justify-between gap-4 border-b border-[var(--color-border)] px-5 py-4">
             <Link href="/" className="flex items-center" aria-label={`${siteName} ${navigation.navHome}`}>
-              <RegisteredBrandLockup>
-                <Image
-                  src={brandLogo.src}
-                  alt={brandLogo.alt}
-                  width={86}
-                  height={56}
-                  className="h-12 w-auto max-w-[200px]"
-                  unoptimized={isUnoptimizedImageSrc(brandLogo.src)}
-                />
-              </RegisteredBrandLockup>
+              <Image
+                src={brandLogo.src}
+                alt={brandLogo.alt}
+                width={86}
+                height={56}
+                className="h-12 w-auto max-w-[200px]"
+                unoptimized={isUnoptimizedImageSrc(brandLogo.src)}
+              />
             </Link>
             <Dialog.Close className="inline-flex size-11 items-center justify-center rounded-full border border-[var(--color-border)] bg-white p-3 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)] focus-visible:ring-offset-2">
               <span className="sr-only">{navigation.navCloseMenu}</span>
