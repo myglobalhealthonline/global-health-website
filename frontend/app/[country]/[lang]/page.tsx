@@ -258,11 +258,13 @@ export default async function CountryLangHomePage({
         homeBookingTarget.bookability,
         lang,
         cc.bookingAvailability,
+        config.bookingTimezone,
       )
     : getBookabilityActionProps(
         { state: "UNAVAILABLE", reasonCode: "NO_OPEN_SLOT", nextAvailableAt: null },
         lang,
         cc.bookingAvailability,
+        config.bookingTimezone,
       );
 
   // Country regulator's public verification page (medicalcouncil.ie /
@@ -285,13 +287,13 @@ export default async function CountryLangHomePage({
       mapServiceToCatalogItem(s, {
         detailHref: `/${slug}/${lang}/services/${s.slug}`,
         bookHref: buildBookHref({ country: slug, lang, service: s.slug }),
-      }, catalogLabels, getBookabilityActionProps(s.bookability, lang, cc.bookingAvailability)),
+      }, catalogLabels, getBookabilityActionProps(s.bookability, lang, cc.bookingAvailability, config.bookingTimezone)),
     ),
     ...specialistServices.map((s) =>
       mapServiceToCatalogItem(s, {
         detailHref: `/${slug}/${lang}/services/${s.slug}`,
         bookHref: buildBookHref({ country: slug, lang, service: s.slug }),
-      }, catalogLabels, getBookabilityActionProps(s.bookability, lang, cc.bookingAvailability)),
+      }, catalogLabels, getBookabilityActionProps(s.bookability, lang, cc.bookingAvailability, config.bookingTimezone)),
     ),
     ...(isCountryFeatureEnabled(config, "online-prescriptions") && prescriptionServices.length > 0
       ? (() => {
@@ -320,7 +322,15 @@ export default async function CountryLangHomePage({
       : []),
   ];
 
-  const liveDoctors: LiveDoctorItem[] = countryDoctors
+  const prioritizedCountryDoctors = countryDoctors
+    .map((doctor, position) => ({ doctor, position }))
+    .toSorted(
+      (a, b) =>
+        bookabilityRank(a.doctor.bookability) - bookabilityRank(b.doctor.bookability) ||
+        a.position - b.position,
+    )
+    .map(({ doctor }) => doctor);
+  const liveDoctors: LiveDoctorItem[] = prioritizedCountryDoctors
     .slice(0, 4)
     .map((d) => ({
       name: d.fullName,
@@ -377,7 +387,7 @@ export default async function CountryLangHomePage({
       href: `/${slug}/${lang}/doctors/${d.slug}`,
       bookingHref: buildBookHref({ country: slug, lang, doctor: d.slug }),
       ctaLabel: t.team.ctaView,
-      ...getBookabilityActionProps(d.bookability, lang, cc.bookingAvailability),
+      ...getBookabilityActionProps(d.bookability, lang, cc.bookingAvailability, config.bookingTimezone),
     };
   });
 
@@ -616,7 +626,13 @@ export default async function CountryLangHomePage({
         heroPriceBadge={extras?.heroPriceBadge ?? null}
         heroImageSrc={page?.heroImageSrc ?? null}
         ctaLabel={page?.ctaLabel ?? null}
-        i18n={t.countryHero}
+        i18n={{
+          ...t.countryHero,
+          sameDay: {
+            ...t.countryHero.sameDay,
+            unavailable: cc.bookingAvailability.notAcceptingOnlineBookings,
+          },
+        }}
       />
       {page?.sections.faq ? <JsonLd data={faqJsonLd(page.faq)} /> : null}
       <TrustMarquee items={trustMarqueeItems} ariaLabel={cc.a11y.whyPatientsTrustUs} />
@@ -718,6 +734,7 @@ export default async function CountryLangHomePage({
                     featuredDoctor.bookability,
                     lang,
                     cc.bookingAvailability,
+                    config.bookingTimezone,
                   ),
                   viewProfileLabel: bundle.common.doctors.viewProfile,
                   bookWithLabel: bundle.common.doctors.bookWithTemplate,

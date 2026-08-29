@@ -36,6 +36,7 @@ type BackendCountryOverlay = {
   defaultLocale?: LocaleCode;
   supportedLocales?: LocaleCode[];
   enabledFeatures?: string[];
+  bookingTimezone?: string;
 };
 
 function extractBackendCountryOverlay(row: unknown): { code: CountryCode } & BackendCountryOverlay | null {
@@ -58,6 +59,13 @@ function extractBackendCountryOverlay(row: unknown): { code: CountryCode } & Bac
   const enabledFeatures = Array.isArray(r.enabledFeatures)
     ? r.enabledFeatures.filter((v): v is string => typeof v === "string")
     : undefined;
+  const bookingSetting = r.bookingSetting;
+  const bookingTimezone =
+    bookingSetting &&
+    typeof bookingSetting === "object" &&
+    typeof (bookingSetting as Record<string, unknown>).timezone === "string"
+      ? String((bookingSetting as Record<string, unknown>).timezone).trim()
+      : undefined;
 
   return {
     code: code.toLowerCase(),
@@ -72,6 +80,7 @@ function extractBackendCountryOverlay(row: unknown): { code: CountryCode } & Bac
     ...(enabledFeatures && enabledFeatures.length > 0
       ? { enabledFeatures }
       : {}),
+    ...(bookingTimezone ? { bookingTimezone } : {}),
   };
 }
 
@@ -94,6 +103,7 @@ function synthesizeAdminCountry(
     slug,
     defaultLocale,
     supportedLocales: supported,
+    bookingTimezone: overlay.bookingTimezone ?? "UTC",
     legacyHomePath: overlay.legacyHomePath ?? `/${slug}`,
     teamPath: overlay.teamPath ?? `/${slug}/doctors`,
     generalConsultationPath:

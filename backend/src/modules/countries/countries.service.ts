@@ -12,6 +12,7 @@ import { normalizeDbError } from "../shared/db-errors.js";
 import { assertLocaleSupported, LocaleNotSupportedError } from "../shared/locale-support.js";
 import { resolveTranslation } from "../shared/resolve-translation.js";
 import type { DisclaimerTranslationInput } from "../../validations/admin-countries.schema.js";
+import { invalidateBookabilityCache } from "../bookability/bookability.service.js";
 
 export class CountryCurrencyNotFoundError extends Error {
   constructor() {
@@ -234,7 +235,7 @@ export async function updateAdminCountry(
   }
 
   try {
-    return await prisma.$transaction(async (tx) => {
+    const updatedCountry = await prisma.$transaction(async (tx) => {
       await tx.country.update({
         where: { id },
         data: {
@@ -315,6 +316,10 @@ export async function updateAdminCountry(
       if (!updated) throw new Error("Country missing after update");
       return updated;
     });
+    if (body.bookingSetting !== undefined) {
+      invalidateBookabilityCache();
+    }
+    return updatedCountry;
   } catch (error) {
     throw normalizeDbError(error, "Countries data is unavailable");
   }

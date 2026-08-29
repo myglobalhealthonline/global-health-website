@@ -31,6 +31,7 @@ import {
   ServicePriceMissingError,
   SlotNotAvailableError,
   DuplicatePatientError,
+  ManualBookingUnavailableError,
 } from "../modules/appointments/manual-booking.service.js";
 import {
   partnerAvailabilityQuerySchema,
@@ -238,7 +239,10 @@ const partnerApiRoute: FastifyPluginAsync = async (app) => {
         // 409 is the one an integrator must handle in code: the slot went to
         // someone else between the availability read and this write, or this
         // request is a replay. Re-read availability and pick another slot.
-        if (error instanceof SlotNotAvailableError) {
+        if (
+          error instanceof SlotNotAvailableError ||
+          error instanceof ManualBookingUnavailableError
+        ) {
           return reply.status(409).send(errorResponse(error.message));
         }
         // The caller gave an address we've never seen for someone whose phone

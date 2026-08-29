@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 import {
   deriveBookability,
   isPauseActiveAt,
+  resolveBookabilityFailClosed,
   slotOverlapsPause,
 } from "./bookability-policy.js";
 
@@ -133,6 +134,34 @@ describe("deriveBookability", () => {
       {
         state: "UNAVAILABLE",
         reasonCode: "NO_APPROVED_DOCTOR",
+        nextAvailableAt: null,
+      },
+    );
+  });
+});
+
+describe("resolveBookabilityFailClosed", () => {
+  it("preserves a successfully computed public summary", async () => {
+    const summary = {
+      state: "BOOKABLE" as const,
+      reasonCode: null,
+      nextAvailableAt: thursday,
+    };
+
+    assert.deepEqual(
+      await resolveBookabilityFailClosed(async () => summary),
+      summary,
+    );
+  });
+
+  it("returns a controlled unavailable summary when computation fails", async () => {
+    assert.deepEqual(
+      await resolveBookabilityFailClosed(async () => {
+        throw new Error("slot provider offline");
+      }),
+      {
+        state: "UNAVAILABLE",
+        reasonCode: "NO_OPEN_SLOT",
         nextAvailableAt: null,
       },
     );

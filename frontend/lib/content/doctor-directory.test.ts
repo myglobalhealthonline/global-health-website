@@ -79,6 +79,7 @@ function ctx(): DoctorDirectoryContext {
       returningOn: "Appointments reopen {date}",
       nextAvailable: "Next available {date}",
     },
+    bookingTimezone: "Europe/Dublin",
   };
 }
 
@@ -129,6 +130,60 @@ describe("buildDoctorDirectoryView", () => {
   it("unrecognised type token is dropped, same as no type filter", () => {
     const view = buildDoctorDirectoryView(ctx(), [], ["nonsense"]);
     expect(view.doctorCards.map((d) => d.name)).toEqual(["GP English", "GP Spanish"]);
+  });
+
+  it("keeps unavailable doctor cards visible but orders them after bookable cards", () => {
+    const unavailableFirst = doc({
+      id: "paused",
+      slug: "paused",
+      fullName: "Paused Doctor",
+      assignedServiceIds: [gpService],
+      bookability: {
+        state: "UNAVAILABLE",
+        reasonCode: "DOCTOR_PAUSED",
+        nextAvailableAt: null,
+      },
+    });
+    const availableSecond = doc({
+      id: "open",
+      slug: "open",
+      fullName: "Open Doctor",
+      assignedServiceIds: [gpService],
+    });
+    const view = buildDoctorDirectoryView(
+      { ...ctx(), doctors: [unavailableFirst, availableSecond] },
+      [],
+      [],
+    );
+
+    expect(view.doctorCards.map((entry) => entry.name)).toEqual([
+      "Open Doctor",
+      "Paused Doctor",
+    ]);
+  });
+
+  it("preserves the explicitly featured doctor's spotlight identity even when unavailable", () => {
+    const featuredUnavailable = doc({
+      id: "featured-paused",
+      slug: "featured-paused",
+      fullName: "Featured Paused",
+      isFeatured: true,
+      assignedServiceIds: [specialistService],
+      bookability: {
+        state: "UNAVAILABLE",
+        reasonCode: "DOCTOR_PAUSED",
+        nextAvailableAt: null,
+      },
+    });
+    const view = buildDoctorDirectoryView(
+      { ...ctx(), doctors: [featuredUnavailable, doctors[0]!] },
+      [],
+      [],
+    );
+
+    expect(view.spotlight?.name).toBe("Featured Paused");
+    expect(view.spotlight?.bookability?.state).toBe("UNAVAILABLE");
+    expect(view.doctorCards.map((entry) => entry.name)).toEqual(["GP English"]);
   });
 
   it("filter chips only render for types the country actually has", () => {

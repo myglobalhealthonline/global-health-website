@@ -41,6 +41,7 @@ import {
   DuplicatePatientError,
   MembershipNotAvailableError,
   MembershipWithInsuranceError,
+  ManualBookingUnavailableError,
   ServiceNotFoundError,
   ServicePriceMissingError,
   SlotNotAvailableError,
@@ -196,7 +197,10 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
       }
       // Slot taken / stale between picker load and submit → 409 so the
       // admin re-picks instead of double-booking.
-      if (error instanceof SlotNotAvailableError) {
+      if (
+        error instanceof SlotNotAvailableError ||
+        error instanceof ManualBookingUnavailableError
+      ) {
         return reply.status(409).send(errorResponse(error.message));
       }
       // The typed email is new but this person already exists. 409 with the

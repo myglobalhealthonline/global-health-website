@@ -40,6 +40,13 @@ export class BookingPauseValidationError extends Error {
   }
 }
 
+export class BookingPauseTargetNotFoundError extends Error {
+  constructor(entity: "Doctor" | "Service") {
+    super(`${entity} not found`);
+    this.name = "BookingPauseTargetNotFoundError";
+  }
+}
+
 export type BookingPauseInput = {
   bookingPausedFrom: Date | null;
   bookingPausedUntil?: Date | null;
@@ -77,31 +84,46 @@ export function validateBookingPauseInput(input: BookingPauseInput) {
 }
 
 export async function setDoctorBookingPause(doctorId: string, input: BookingPauseInput) {
-  const updated = await prisma.doctor.update({
-    where: { id: doctorId },
-    data: validateBookingPauseInput(input),
-    select: {
-      id: true,
-      bookingPausedFrom: true,
-      bookingPausedUntil: true,
-      bookingPauseReason: true,
-    },
-  });
+  const pause = validateBookingPauseInput(input);
+  // Pause state is operational, not editorial. A Prisma model update would
+  // advance Doctor.updatedAt (`@updatedAt`), which feeds the public sitemap's
+  // lastmod. Update only the pause columns so SEO metadata remains invariant.
+  const [updated] = await prisma.$queryRaw<Array<{
+    id: string;
+    bookingPausedFrom: Date | null;
+    bookingPausedUntil: Date | null;
+    bookingPauseReason: string | null;
+  }>>`
+    UPDATE "Doctor"
+    SET "bookingPausedFrom" = ${pause.bookingPausedFrom},
+        "bookingPausedUntil" = ${pause.bookingPausedUntil},
+        "bookingPauseReason" = ${pause.bookingPauseReason}
+    WHERE "id" = ${doctorId}
+    RETURNING "id", "bookingPausedFrom", "bookingPausedUntil", "bookingPauseReason"
+  `;
+  if (!updated) throw new BookingPauseTargetNotFoundError("Doctor");
   invalidateBookabilityCache();
   return updated;
 }
 
 export async function setServiceBookingPause(serviceId: string, input: BookingPauseInput) {
-  const updated = await prisma.service.update({
-    where: { id: serviceId },
-    data: validateBookingPauseInput(input),
-    select: {
-      id: true,
-      bookingPausedFrom: true,
-      bookingPausedUntil: true,
-      bookingPauseReason: true,
-    },
-  });
+  const pause = validateBookingPauseInput(input);
+  // Keep Service.updatedAt reserved for content/lifecycle edits; sitemap
+  // lastmod must not change merely because bookings were paused or resumed.
+  const [updated] = await prisma.$queryRaw<Array<{
+    id: string;
+    bookingPausedFrom: Date | null;
+    bookingPausedUntil: Date | null;
+    bookingPauseReason: string | null;
+  }>>`
+    UPDATE "Service"
+    SET "bookingPausedFrom" = ${pause.bookingPausedFrom},
+        "bookingPausedUntil" = ${pause.bookingPausedUntil},
+        "bookingPauseReason" = ${pause.bookingPauseReason}
+    WHERE "id" = ${serviceId}
+    RETURNING "id", "bookingPausedFrom", "bookingPausedUntil", "bookingPauseReason"
+  `;
+  if (!updated) throw new BookingPauseTargetNotFoundError("Service");
   invalidateBookabilityCache();
   return updated;
 }

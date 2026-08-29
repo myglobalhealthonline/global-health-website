@@ -13,6 +13,28 @@ export type BookabilitySummary = {
   nextAvailableAt: string | null;
 };
 
+const FAIL_CLOSED_BOOKABILITY: BookabilitySummary = {
+  state: "UNAVAILABLE",
+  reasonCode: "NO_OPEN_SLOT",
+  nextAvailableAt: null,
+};
+
+/**
+ * Public catalogue/profile reads must not disappear just because the slot
+ * inventory used to enrich them is temporarily unavailable. Keep the content
+ * response alive, but fail closed so no booking action is advertised without
+ * an authoritative result.
+ */
+export async function resolveBookabilityFailClosed(
+  resolve: () => Promise<BookabilitySummary>,
+): Promise<BookabilitySummary> {
+  try {
+    return await resolve();
+  } catch {
+    return { ...FAIL_CLOSED_BOOKABILITY };
+  }
+}
+
 export type BookingPause = {
   bookingPausedFrom: Date | null;
   bookingPausedUntil: Date | null;

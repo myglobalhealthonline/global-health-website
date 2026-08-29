@@ -197,7 +197,9 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
   // route it still reads e.g. "Ireland" even under /czechia/*. Everything the
   // patient reads or a crawler indexes on THIS page must name the market the
   // route is actually serving — same fix as buildDoctorProfileMetadata above.
-  const routeCountryName = (code ? getCountryByCode(code)?.name : undefined) ?? data.profile.country;
+  const routeConfig = code ? getCountryByCode(code) : undefined;
+  const routeCountryName = routeConfig?.name ?? data.profile.country;
+  const bookingTimezone = routeConfig?.bookingTimezone ?? "UTC";
   // Breadcrumb-only localized country label — deliberately NOT used for
   // `routeCountryName` above, which drives visible copy (country pill,
   // "Registered in {country}") that this ticket does not touch.
@@ -242,6 +244,21 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
     }
   }
 
+  const prioritizedAssignedServices = assignedServices
+    .map((service, position) => ({ service, position }))
+    .toSorted((left, right) => {
+      const rank = (state: BookabilitySummary["state"]) =>
+        state === "BOOKABLE" ? 0 : state === "RETURNING" ? 1 : 2;
+      const leftState = profileDoc
+        ? getDoctorServiceBookability(profileDoc.bookabilityByServiceId, left.service.id).state
+        : "UNAVAILABLE";
+      const rightState = profileDoc
+        ? getDoctorServiceBookability(profileDoc.bookabilityByServiceId, right.service.id).state
+        : "UNAVAILABLE";
+      return rank(leftState) - rank(rightState) || left.position - right.position;
+    })
+    .map(({ service }) => service);
+
   // Regulator + verification URL for this market — drives the Physician
   // schema recognizedBy block and the profile's "Verify registration" link.
   const regulator = countryTrust?.regulator?.name
@@ -249,7 +266,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
     : null;
   const verifyUrl = doctorVerificationUrl(countryTrust) ?? data.profile.medicalRegistrationUrl ?? undefined;
 
-  const hasServices = assignedServices.length > 0;
+  const hasServices = prioritizedAssignedServices.length > 0;
   // First-name-only label so the CTA reads as "Pick a time with Anna"
   // not "Pick a time with Dr. Anna Garcia Lopez". Falls back to the
   // generic label when we can't extract a first name.
@@ -276,7 +293,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
       })
     : undefined;
   const doctorBookingAction = profileDoc
-    ? getBookabilityActionProps(profileDoc.bookability, lang, c.bookingAvailability)
+    ? getBookabilityActionProps(profileDoc.bookability, lang, c.bookingAvailability, bookingTimezone)
     : undefined;
 
   const templateData = {
@@ -389,7 +406,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
               {dp.pickSlotWith.replace("{name}", firstName ?? data.profile.name)}
             </p>
             <div className="mt-10 grid gap-5 sm:grid-cols-2">
-              {assignedServices.map((service) => {
+              {prioritizedAssignedServices.map((service) => {
                 const consultHref = buildBookHref({
                   country: slug,
                   lang,
@@ -410,6 +427,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
                   effectiveBookability,
                   lang,
                   c.bookingAvailability,
+                  bookingTimezone,
                 );
                 return (
                   <ServiceCard

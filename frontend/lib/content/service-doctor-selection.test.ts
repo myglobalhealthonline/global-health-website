@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import type { CountryDoctorCard, CountryServiceCard } from "./get-country-collections";
-import { selectServiceDoctors } from "./service-doctor-selection";
+import {
+  selectServiceDoctors,
+  sortDoctorsByServiceBookability,
+} from "./service-doctor-selection";
 
 function service(
   overrides: Partial<CountryServiceCard> & Pick<CountryServiceCard, "id" | "slug">,
@@ -69,6 +72,88 @@ describe("selectServiceDoctors", () => {
     expect(result).toHaveLength(1);
     expect(result[0].serviceSlug).toBe(acute.slug);
     expect(result[0].serviceNames).toEqual([acute.name, chronic.name]);
+  });
+
+  it("uses the doctor's best bookable service pair instead of the first assignment", () => {
+    const paused = service({
+      id: "svc-paused",
+      slug: "paused-specialist",
+      assignedDoctorIds: ["doc-multi"],
+    });
+    const open = service({
+      id: "svc-open",
+      slug: "open-specialist",
+      assignedDoctorIds: ["doc-multi"],
+    });
+    const result = selectServiceDoctors(
+      [
+        doctor({
+          id: "doc-multi",
+          slug: "multi-specialist",
+          assignedServiceIds: [paused.id, open.id],
+          bookabilityByServiceId: {
+            [paused.id]: {
+              state: "UNAVAILABLE",
+              reasonCode: "SERVICE_PAUSED",
+              nextAvailableAt: null,
+            },
+            [open.id]: {
+              state: "BOOKABLE",
+              reasonCode: null,
+              nextAvailableAt: "2026-09-01T09:00:00.000Z",
+            },
+          },
+        }),
+      ],
+      [paused, open],
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({ serviceId: open.id, serviceSlug: open.slug });
+    expect(result[0].serviceNames).toEqual([paused.name, open.name]);
+  });
+
+  it("sorts a service roster by the exact doctor-service pair before callers slice it", () => {
+    const serviceId = "svc-specialist";
+    const unavailable = doctor({
+      id: "doc-unavailable",
+      slug: "unavailable",
+      bookabilityByServiceId: {
+        [serviceId]: {
+          state: "UNAVAILABLE",
+          reasonCode: "DOCTOR_PAUSED",
+          nextAvailableAt: null,
+        },
+      },
+    });
+    const returning = doctor({
+      id: "doc-returning",
+      slug: "returning",
+      bookabilityByServiceId: {
+        [serviceId]: {
+          state: "RETURNING",
+          reasonCode: "DOCTOR_PAUSED",
+          nextAvailableAt: "2026-09-05T09:00:00.000Z",
+        },
+      },
+    });
+    const bookable = doctor({
+      id: "doc-bookable",
+      slug: "bookable",
+      bookabilityByServiceId: {
+        [serviceId]: {
+          state: "BOOKABLE",
+          reasonCode: null,
+          nextAvailableAt: "2026-09-01T09:00:00.000Z",
+        },
+      },
+    });
+
+    expect(
+      sortDoctorsByServiceBookability([unavailable, returning, bookable], serviceId).map(
+        (entry) => entry.slug,
+      ),
+    ).toEqual(["bookable", "returning", "unavailable"]);
   });
 
   it("orders featured doctors first without mutating the input arrays", () => {

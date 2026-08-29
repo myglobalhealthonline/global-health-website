@@ -38,6 +38,7 @@ import {
   ServicePriceMissingError,
   SlotNotAvailableError,
   DuplicatePatientError,
+  ManualBookingUnavailableError,
 } from "../modules/appointments/manual-booking.service.js";
 import { notifyPatientDoctorReady } from "../modules/appointments/notify-doctor-ready.service.js";
 import { isAppointmentPaid } from "../modules/appointments/appointment-payment-gate.js";
@@ -643,7 +644,10 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
           return reply.status(400).send(errorResponse(error.message));
         }
         // Race loser / stale picker — the doctor re-picks an open slot.
-        if (error instanceof SlotNotAvailableError) {
+        if (
+          error instanceof SlotNotAvailableError ||
+          error instanceof ManualBookingUnavailableError
+        ) {
           return reply.status(409).send(errorResponse(error.message));
         }
         if (error instanceof FollowUpBookingUnavailableError) {

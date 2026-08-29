@@ -48,7 +48,10 @@ import {
 import { resolveAdminSessionActor, verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { bookingPauseBodySchema } from "../validations/booking-pause.schema.js";
-import { setServiceBookingPause } from "../modules/bookability/bookability.service.js";
+import {
+  BookingPauseTargetNotFoundError,
+  setServiceBookingPause,
+} from "../modules/bookability/bookability.service.js";
 
 function handleServiceWriteError(
   app: { log: { error: (e: unknown) => void } },
@@ -261,7 +264,10 @@ const adminServicesRoute: FastifyPluginAsync = async (app) => {
       }).catch(() => {});
       return okResponse({ service }, "Service booking pause saved");
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+      if (
+        error instanceof BookingPauseTargetNotFoundError ||
+        (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025")
+      ) {
         return reply.status(404).send(errorResponse("Service not found"));
       }
       return handleServiceWriteError(app, reply, error);
@@ -286,7 +292,10 @@ const adminServicesRoute: FastifyPluginAsync = async (app) => {
       }).catch(() => {});
       return okResponse({ service }, "Service booking pause cleared");
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+      if (
+        error instanceof BookingPauseTargetNotFoundError ||
+        (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025")
+      ) {
         return reply.status(404).send(errorResponse("Service not found"));
       }
       return handleServiceWriteError(app, reply, error);

@@ -27,6 +27,7 @@ import {
 import { AdminCard, Btn, PageHeader, Pill } from "../../../_components/atoms";
 import { SetCrumbTitle } from "@/components/crumb-title";
 import { BookingPauseCard } from "@/components/admin/BookingPauseCard";
+import { zonedInputToUtcInstant } from "@/lib/booking-pause-time";
 
 export const dynamic = "force-dynamic";
 
@@ -90,6 +91,9 @@ export default async function AdminEditDoctorPage({
   }
 
   const doctor = doctorResult.data.doctor;
+  const doctorTimeZone =
+    countriesResult.data.countries.find((country) => country.id === doctor.countryId)
+      ?.bookingSetting?.timezone ?? "UTC";
   const [specialtiesResult, marketsResult] = await Promise.all([
     fetchAdminSpecialties(doctor.countryId),
     fetchAdminDoctorMarkets(id),
@@ -288,9 +292,14 @@ export default async function AdminEditDoctorPage({
     const from = String(formData.get("from") ?? "").trim();
     const until = String(formData.get("until") ?? "").trim();
     const reasonCode = String(formData.get("reasonCode") ?? "LEAVE");
+    const fromUtc = zonedInputToUtcInstant(from, doctorTimeZone);
+    const untilUtc = until ? zonedInputToUtcInstant(until, doctorTimeZone) : null;
+    if (!fromUtc || (until && !untilUtc)) {
+      redirect(`/admin/doctors/${id}/edit?error=${encodeURIComponent(`Choose a valid time in ${doctorTimeZone}`)}`);
+    }
     const result = await setAdminDoctorBookingPause(id, {
-      from: `${from}:00.000Z`,
-      until: until ? `${until}:00.000Z` : null,
+      from: fromUtc,
+      until: untilUtc,
       reasonCode,
     });
     if (!result.ok) {
@@ -433,6 +442,7 @@ export default async function AdminEditDoctorPage({
             }}
             saveAction={saveBookingPauseAction}
             clearAction={clearBookingPauseAction}
+            timeZone={doctorTimeZone}
             subject="appointments with this doctor"
           />
           <AdminCard>

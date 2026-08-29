@@ -4,16 +4,21 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AdminCard } from "@/components/portal-atoms";
 import type { DoctorAvailabilityResponse } from "@/lib/api/doctor-availability-types";
+import {
+  utcInstantToZonedInput,
+  zonedInputToUtcInstant,
+} from "@/lib/booking-pause-time";
+import { timeZoneLabel } from "@/lib/timezones";
 
 type Pause = DoctorAvailabilityResponse["bookingPause"];
 
-function inputValue(value: string | null): string {
-  if (!value) return "";
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? "" : date.toISOString().slice(0, 16);
-}
-
-export function DoctorBookingPauseControl({ initial }: { initial: Pause }) {
+export function DoctorBookingPauseControl({
+  initial,
+  timeZone,
+}: {
+  initial: Pause;
+  timeZone: string;
+}) {
   const router = useRouter();
   const [message, setMessage] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -23,12 +28,19 @@ export function DoctorBookingPauseControl({ initial }: { initial: Pause }) {
     setMessage(null);
     const from = String(formData.get("from") ?? "");
     const until = String(formData.get("until") ?? "");
+    const fromUtc = zonedInputToUtcInstant(from, timeZone);
+    const untilUtc = until ? zonedInputToUtcInstant(until, timeZone) : null;
+    if (!fromUtc || (until && !untilUtc)) {
+      setPending(false);
+      setMessage(`Choose a valid time in ${timeZoneLabel(timeZone)}.`);
+      return;
+    }
     const response = await fetch("/api/doctor/booking-pause", {
       method: "PATCH",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        from: `${from}:00.000Z`,
-        until: until ? `${until}:00.000Z` : null,
+        from: fromUtc,
+        until: untilUtc,
         reasonCode: String(formData.get("reasonCode") ?? "LEAVE"),
       }),
     });
@@ -41,6 +53,8 @@ export function DoctorBookingPauseControl({ initial }: { initial: Pause }) {
     setMessage("Booking pause saved. Existing appointments are unchanged.");
     router.refresh();
   }
+
+  const zoneLabel = timeZoneLabel(timeZone);
 
   async function clear() {
     setPending(true);
@@ -61,16 +75,16 @@ export function DoctorBookingPauseControl({ initial }: { initial: Pause }) {
       <h2 className="m-0 text-lg font-extrabold">Pause online bookings</h2>
       <p className="mt-1 text-sm text-[var(--color-text-muted)]">
         Your public profile stays visible. Booking buttons are disabled for the pause period.
-        Existing appointments are not cancelled.
+        Existing appointments are not cancelled. Times below use {zoneLabel}.
       </p>
       <form action={save} className="mt-4 grid gap-3 md:grid-cols-3">
         <label className="grid gap-1 text-sm font-semibold">
-          Starts (UTC)
-          <input className="gh-input" type="datetime-local" name="from" required defaultValue={inputValue(initial.bookingPausedFrom)} />
+          Starts ({zoneLabel})
+          <input className="gh-input" type="datetime-local" name="from" required defaultValue={utcInstantToZonedInput(initial.bookingPausedFrom, timeZone)} />
         </label>
         <label className="grid gap-1 text-sm font-semibold">
-          Ends (optional, UTC)
-          <input className="gh-input" type="datetime-local" name="until" defaultValue={inputValue(initial.bookingPausedUntil)} />
+          Ends ({zoneLabel}, optional)
+          <input className="gh-input" type="datetime-local" name="until" defaultValue={utcInstantToZonedInput(initial.bookingPausedUntil, timeZone)} />
         </label>
         <label className="grid gap-1 text-sm font-semibold">
           Reason

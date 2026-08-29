@@ -175,6 +175,7 @@ export default async function CountryLandingPage({
         targetedService?.bookability ?? missingTargetBookability,
         lang,
         c.bookingAvailability,
+        config.bookingTimezone,
       )
     : {};
 

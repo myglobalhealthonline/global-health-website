@@ -31,7 +31,8 @@ import {
 } from "../patient-profile/patient-identity-match.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import {
-  holdConsecutiveSlots,
+  BookingClaimUnavailableError,
+  holdConsecutiveSlotsForBooking,
   releaseSlotsToBaseGrid,
   resolveDoctorTimeZone,
   SlotAlreadyTakenError,
@@ -216,6 +217,19 @@ export class SlotNotAvailableError extends Error {
       "That time slot is no longer available. Refresh and pick another open slot.",
     );
     this.name = "SlotNotAvailableError";
+  }
+}
+
+/**
+ * The chosen slot remained open, but the authoritative booking policy rejected
+ * the country/service/doctor tuple at claim time. Shared by admin, doctor,
+ * partner and follow-up booking so none of those channels silently bypasses a
+ * country shutdown, pause, lifecycle rule, or assignment revocation.
+ */
+export class ManualBookingUnavailableError extends Error {
+  constructor() {
+    super("This doctor or service is not accepting bookings at the selected time.");
+    this.name = "ManualBookingUnavailableError";
   }
 }
 
@@ -531,6 +545,7 @@ export async function createManualBooking(
     where: {
       id: input.serviceId,
       isActive: true,
+      visibility: "PUBLIC",
       country: { code: input.countryCode.toLowerCase(), isActive: true },
     },
     select: {
@@ -714,19 +729,22 @@ export async function createManualBooking(
   let claimedSlot: { doctorId: string; startAt: Date; endAt: Date };
   try {
     claimedSlot = await prisma.$transaction(async (tx) => {
-      const held = await holdConsecutiveSlots(
+      return holdConsecutiveSlotsForBooking(
         tx,
         input.timeSlotId,
         bookingDuration,
+        {
+          countryCode: input.countryCode,
+          serviceId: service.id,
+          doctorId: input.doctorId,
+        },
       );
-      // The slot must belong to the doctor this booking assigned.
-      if (held.doctorId !== input.doctorId) {
-        throw new SlotNotAvailableError();
-      }
-      return held;
     });
   } catch (err) {
     if (err instanceof SlotAlreadyTakenError) throw new SlotNotAvailableError();
+    if (err instanceof BookingClaimUnavailableError) {
+      throw new ManualBookingUnavailableError();
+    }
     throw err;
   }
   // scheduledAt is the slot's UTC instant — no more free-text wall-clock.

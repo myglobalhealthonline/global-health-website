@@ -38,6 +38,7 @@ export type DoctorDirectoryContext = {
   verifyUrl?: string;
   i18n: CommonLocale["doctors"];
   bookingAvailability: CommonLocale["bookingAvailability"];
+  bookingTimezone: string;
 };
 
 export type DoctorCardData = {
@@ -129,6 +130,7 @@ export function buildDoctorDirectoryView(
     verifyUrl,
     i18n,
     bookingAvailability,
+    bookingTimezone,
   } = ctx;
 
   const filterLangs = parseMultiParam(filterLangsRaw).map((s) => languageKey(s));
@@ -210,7 +212,7 @@ export function buildDoctorDirectoryView(
     bookingHref: buildBookHref({ country: countrySlug, lang, doctor: d.slug }),
     ctaLabel: i18n.viewProfile,
     bookLabel: i18n.pickTime,
-    ...getBookabilityActionProps(d.bookability, lang, bookingAvailability),
+    ...getBookabilityActionProps(d.bookability, lang, bookingAvailability, bookingTimezone),
   }));
 
   const spotlight: SpotlightData | null = featured
@@ -239,7 +241,7 @@ export function buildDoctorDirectoryView(
         bookWithLabel: i18n.bookWithTemplate,
         verifyRegistrationLabel: i18n.verifyRegistrationAria,
         clinicalDirectorLabel: i18n.clinicalDirectorLabel,
-        ...getBookabilityActionProps(featured.bookability, lang, bookingAvailability),
+        ...getBookabilityActionProps(featured.bookability, lang, bookingAvailability, bookingTimezone),
       }
     : null;
 
@@ -283,6 +285,7 @@ export function buildDoctorDirectoryView(
     },
     lang,
     bookingAvailability,
+    bookingTimezone,
   );
 
   const filterGroups: FilterGroup[] = [

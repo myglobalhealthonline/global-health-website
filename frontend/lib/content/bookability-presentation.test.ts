@@ -36,6 +36,7 @@ describe("getBookabilityActionProps", () => {
         { state: "UNAVAILABLE", reasonCode: "NO_OPEN_SLOT", nextAvailableAt: null },
         "en",
         messages,
+        "UTC",
       ),
     ).toMatchObject({ unavailableLabel: "Not accepting online bookings" });
   });

@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { AlertTriangle, ArrowRight, CalendarClock, Check, ChevronDown, Globe, Loader2, RotateCw } from "lucide-react";
 import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
 import { formatPriceRounded } from "@/lib/format-currency";
+import type { BookabilitySummary } from "@/lib/content/get-country-collections";
+import { getSameDayEmptyMessage } from "@/lib/content/same-day-booking-state";
 
 /**
  * Same-day GP quick-book — the hero panel on the country home page. Replaces
@@ -48,6 +50,7 @@ export type SameDayBookingI18n = {
   pickLanguageFirst: string;
   loading: string;
   noSlots: string;
+  unavailable: string;
   continue: string;
   reassure: string;
   minSuffix: string;
@@ -64,6 +67,7 @@ const DEFAULT_I18N: SameDayBookingI18n = {
   pickLanguageFirst: "Choose a language to see available times.",
   loading: "Finding open times…",
   noSlots: "No times today or tomorrow for this language. Try another language.",
+  unavailable: "Not accepting online bookings",
   continue: "Continue",
   reassure: "Choose your language and pick a time. We will assign the right GP.",
   minSuffix: "min",
@@ -173,6 +177,7 @@ export function SameDayBooking({
   const [selectedLanguage, setSelectedLanguage] = useState(defaultLanguage);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [service, setService] = useState<ServiceInfo | null>(null);
+  const [bookability, setBookability] = useState<BookabilitySummary | null>(null);
   const [clinicTz, setClinicTz] = useState("UTC");
   const [loading, setLoading] = useState(false);
   const [selectedStart, setSelectedStart] = useState<string | null>(null);
@@ -190,6 +195,7 @@ export function SameDayBooking({
     setSlots([]);
     setSelectedStart(null);
     setFetchError(false);
+    setBookability(null);
     if (!code) return;
     setLoading(true);
     try {
@@ -199,11 +205,17 @@ export function SameDayBooking({
       );
       const json = (await res.json()) as {
         ok?: boolean;
-        data?: { slots?: Slot[]; clinicTimezone?: string; service?: ServiceInfo | null };
+        data?: {
+          slots?: Slot[];
+          clinicTimezone?: string;
+          service?: ServiceInfo | null;
+          bookability?: BookabilitySummary | null;
+        };
       };
       const nextSlots = json.ok && json.data?.slots ? json.data.slots : [];
       setSlots(nextSlots);
       setService(json.data?.service ?? null);
+      setBookability(json.data?.bookability ?? null);
       setClinicTz(json.data?.clinicTimezone ?? "UTC");
     } catch {
       setSlots([]);
@@ -406,7 +418,9 @@ export function SameDayBooking({
             </button>
           </div>
         ) : !hasTwoDaySlots ? (
-          <p className="py-5 text-center text-[13px] text-white/55">{t.noSlots}</p>
+          <p className="py-5 text-center text-[13px] text-white/55">
+            {getSameDayEmptyMessage(bookability, t)}
+          </p>
         ) : (
           <>
             <div className="flex items-baseline justify-between gap-3">

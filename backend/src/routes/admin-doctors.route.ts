@@ -50,7 +50,10 @@ import {
 } from "../validations/doctor-profile-change-requests.schema.js";
 import { z } from "zod";
 import { bookingPauseBodySchema } from "../validations/booking-pause.schema.js";
-import { setDoctorBookingPause } from "../modules/bookability/bookability.service.js";
+import {
+  BookingPauseTargetNotFoundError,
+  setDoctorBookingPause,
+} from "../modules/bookability/bookability.service.js";
 
 /** Raised inside the login-email change transaction when the requested
  *  address already belongs to another User or PatientProfile. */
@@ -227,7 +230,10 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
       }).catch(() => {});
       return okResponse({ doctor }, "Doctor booking pause saved");
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+      if (
+        error instanceof BookingPauseTargetNotFoundError ||
+        (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025")
+      ) {
         return reply.status(404).send(errorResponse("Doctor profile not found"));
       }
       return handleDoctorWriteError(app, reply, error);
@@ -252,7 +258,10 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
       }).catch(() => {});
       return okResponse({ doctor }, "Doctor booking pause cleared");
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+      if (
+        error instanceof BookingPauseTargetNotFoundError ||
+        (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025")
+      ) {
         return reply.status(404).send(errorResponse("Doctor profile not found"));
       }
       return handleDoctorWriteError(app, reply, error);

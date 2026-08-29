@@ -9,6 +9,8 @@ import { uniqueCurrencyCode } from "../test-utils/unique-currency-code.js";
 
 loadEnv({ path: join(__dirname, "../..", ".env") });
 
+type InjectStatusResponse = { statusCode: number; body: string };
+
 /**
  * Security-audit phase 5 (docs/audits/security/audit-authz-matrix-2026-08-02.md):
  * a role × endpoint authorization matrix, following the exact pattern
@@ -70,6 +72,7 @@ describe("authorization matrix", () => {
   let invoiceId = "";
   /** Cheapest cart line that needs no slot — carries the benefit probes below. */
   let healthTestId = "";
+  let pauseServiceId = "";
   // Write-guard fixtures (§ write-path regression): doctor3 owns appointment2
   // for patient2, but patient2 has granted NO consent of any kind — the
   // guard's 4g "all doctor checks failed" path. Doctor3 passes the route's
@@ -310,6 +313,15 @@ describe("authorization matrix", () => {
     });
     healthTestId = healthTest.id;
 
+    const pauseService = await prisma.service.create({
+      data: {
+        countryId: countryA.id,
+        slug: `authz-pause-service-${uniq}`.toLowerCase(),
+        name: "Authz Pause Service",
+      },
+    });
+    pauseServiceId = pauseService.id;
+
     // Write-guard fixtures: doctor3 has 2FA + confidentiality (passes 4a/4b)
     // and owns appointment2 (so the route's own doctorId-scoped lookup
     // succeeds and the request reaches the guard call), but patient2 has
@@ -402,6 +414,7 @@ describe("authorization matrix", () => {
     await prisma.cartItem.deleteMany({ where: { cart: { userId: patient1UserId } } });
     await prisma.cart.deleteMany({ where: { userId: patient1UserId } });
     await prisma.healthTest.deleteMany({ where: { id: healthTestId } });
+    await prisma.service.deleteMany({ where: { id: pauseServiceId } });
     await prisma.medicalDocument.deleteMany({ where: { id: medicalDocumentId } });
     await prisma.prescription.deleteMany({ where: { id: prescriptionId } });
     await prisma.consultationService.deleteMany({ where: { consultationId: consultation2Id } });
@@ -437,6 +450,179 @@ describe("authorization matrix", () => {
     if (!app) return t.skip();
     const res = await app.inject({ method: "GET", url: "/api/admin/patients/search" });
     assert.equal(res.statusCode, 401);
+  });
+
+  // ── Booking-pause management ──────────────────────────────────────────
+  // Every new mutation is represented here. Admin endpoints must reject
+  // doctors before parsing or touching a target; self-service endpoints must
+  // reject patients and scope an authenticated doctor to their linked profile.
+  const pausePayload = {
+    from: "2026-09-01T08:00:00.000Z",
+    until: "2026-09-08T08:00:00.000Z",
+    reasonCode: "LEAVE",
+  };
+
+  it("admin booking pauses: unauthenticated requests to all four mutations → 401", async (t) => {
+    if (!app) return t.skip();
+    const targets = [
+      ["PATCH", `/api/admin/doctors/${doctor2Id}/booking-pause`],
+      ["DELETE", `/api/admin/doctors/${doctor2Id}/booking-pause`],
+      ["PATCH", `/api/admin/services/${pauseServiceId}/booking-pause`],
+      ["DELETE", `/api/admin/services/${pauseServiceId}/booking-pause`],
+    ] as const;
+    for (const [method, url] of targets) {
+      const res: InjectStatusResponse = await app.inject({
+        method,
+        url,
+        ...(method === "PATCH" ? { payload: pausePayload } : {}),
+      });
+      assert.equal(res.statusCode, 401, `${method} ${url}: ${res.body}`);
+    }
+  });
+
+  it("doctor booking pause: unauthenticated PATCH and DELETE → 401", async (t) => {
+    if (!app) return t.skip();
+    for (const method of ["PATCH", "DELETE"] as const) {
+      const res: InjectStatusResponse = await app.inject({
+        method,
+        url: "/api/doctor/booking-pause",
+        ...(method === "PATCH" ? { payload: pausePayload } : {}),
+      });
+      assert.equal(res.statusCode, 401, `${method}: ${res.body}`);
+    }
+  });
+
+  it("doctor booking pause: a patient cannot PATCH or DELETE → 403", async (t) => {
+    if (!app) return t.skip();
+    for (const method of ["PATCH", "DELETE"] as const) {
+      const res: InjectStatusResponse = await app.inject({
+        method,
+        url: "/api/doctor/booking-pause",
+        cookies: patient1Cookie,
+        ...(method === "PATCH" ? { payload: pausePayload } : {}),
+      });
+      assert.equal(res.statusCode, 403, `${method}: ${res.body}`);
+    }
+  });
+
+  it("doctor booking pause: a doctor can set and clear only their own pause", async (t) => {
+    if (!app) return t.skip();
+    const editorialUpdatedAt = (
+      await prisma.doctor.findUniqueOrThrow({ where: { id: doctor2Id }, select: { updatedAt: true } })
+    ).updatedAt;
+    const set = await app.inject({
+      method: "PATCH",
+      url: "/api/doctor/booking-pause",
+      cookies: doctor2Cookie,
+      payload: pausePayload,
+    });
+    assert.equal(set.statusCode, 200, set.body);
+    const paused = await prisma.doctor.findUniqueOrThrow({ where: { id: doctor2Id } });
+    assert.equal(paused.bookingPausedFrom?.toISOString(), pausePayload.from);
+    assert.equal(
+      paused.updatedAt.toISOString(),
+      editorialUpdatedAt.toISOString(),
+      "operational pause did not synthesize a doctor sitemap lastmod",
+    );
+    assert.equal(
+      (await prisma.doctor.findUniqueOrThrow({ where: { id: doctor1Id } })).bookingPausedFrom,
+      null,
+      "self-service mutation did not affect another doctor",
+    );
+
+    const clear = await app.inject({
+      method: "DELETE",
+      url: "/api/doctor/booking-pause",
+      cookies: doctor2Cookie,
+    });
+    assert.equal(clear.statusCode, 200, clear.body);
+    assert.equal(
+      (await prisma.doctor.findUniqueOrThrow({ where: { id: doctor2Id } })).bookingPausedFrom,
+      null,
+    );
+  });
+
+  it("admin doctor booking pause: a doctor cannot PATCH or DELETE → 403", async (t) => {
+    if (!app) return t.skip();
+    for (const method of ["PATCH", "DELETE"] as const) {
+      const res: InjectStatusResponse = await app.inject({
+        method,
+        url: `/api/admin/doctors/${doctor2Id}/booking-pause`,
+        cookies: doctor2Cookie,
+        ...(method === "PATCH" ? { payload: pausePayload } : {}),
+      });
+      assert.equal(res.statusCode, 403, `${method}: ${res.body}`);
+    }
+  });
+
+  it("admin doctor booking pause: an admin can PATCH and DELETE", async (t) => {
+    if (!app) return t.skip();
+    const editorialUpdatedAt = (
+      await prisma.doctor.findUniqueOrThrow({ where: { id: doctor2Id }, select: { updatedAt: true } })
+    ).updatedAt;
+    const set = await app.inject({
+      method: "PATCH",
+      url: `/api/admin/doctors/${doctor2Id}/booking-pause`,
+      cookies: adminCookie,
+      payload: pausePayload,
+    });
+    assert.equal(set.statusCode, 200, set.body);
+    const clear = await app.inject({
+      method: "DELETE",
+      url: `/api/admin/doctors/${doctor2Id}/booking-pause`,
+      cookies: adminCookie,
+    });
+    assert.equal(clear.statusCode, 200, clear.body);
+    assert.equal(
+      (
+        await prisma.doctor.findUniqueOrThrow({ where: { id: doctor2Id }, select: { updatedAt: true } })
+      ).updatedAt.toISOString(),
+      editorialUpdatedAt.toISOString(),
+      "admin pause set/clear did not synthesize a doctor sitemap lastmod",
+    );
+  });
+
+  it("admin service booking pause: a doctor cannot PATCH or DELETE → 403", async (t) => {
+    if (!app) return t.skip();
+    for (const method of ["PATCH", "DELETE"] as const) {
+      const res: InjectStatusResponse = await app.inject({
+        method,
+        url: `/api/admin/services/${pauseServiceId}/booking-pause`,
+        cookies: doctor2Cookie,
+        ...(method === "PATCH" ? { payload: pausePayload } : {}),
+      });
+      assert.equal(res.statusCode, 403, `${method}: ${res.body}`);
+    }
+  });
+
+  it("admin service booking pause: an admin can PATCH and DELETE", async (t) => {
+    if (!app) return t.skip();
+    const editorialUpdatedAt = (
+      await prisma.service.findUniqueOrThrow({ where: { id: pauseServiceId }, select: { updatedAt: true } })
+    ).updatedAt;
+    const set = await app.inject({
+      method: "PATCH",
+      url: `/api/admin/services/${pauseServiceId}/booking-pause`,
+      cookies: adminCookie,
+      payload: pausePayload,
+    });
+    assert.equal(set.statusCode, 200, set.body);
+    const clear = await app.inject({
+      method: "DELETE",
+      url: `/api/admin/services/${pauseServiceId}/booking-pause`,
+      cookies: adminCookie,
+    });
+    assert.equal(clear.statusCode, 200, clear.body);
+    assert.equal(
+      (
+        await prisma.service.findUniqueOrThrow({
+          where: { id: pauseServiceId },
+          select: { updatedAt: true },
+        })
+      ).updatedAt.toISOString(),
+      editorialUpdatedAt.toISOString(),
+      "admin pause set/clear did not synthesize a service sitemap lastmod",
+    );
   });
 
   // ── Doctor scoping that already works (regression protection) ────────

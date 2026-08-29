@@ -16,6 +16,13 @@ delivery workflow; the UI therefore makes no notification promise.
   cannot complete without the backend because the repository intentionally refuses
   degraded public content; no degraded build override was used as proof.
 - The migration has been validated locally but has not been applied to production.
+- Post-review hardening closes manual/admin/doctor/partner claim-time bypasses,
+  invalidates availability caches after country and assignment changes, preserves
+  editorial `updatedAt`/sitemap `lastmod` during pause changes, and keeps public
+  content alive with a fail-closed booking state when enrichment fails.
+- Public rosters use a stable `BOOKABLE` → `RETURNING` → `UNAVAILABLE` order.
+  “Not accepting online bookings” cards stay rendered and crawlable at the end;
+  explicitly featured doctors keep their featured placement.
 
 ## 0. Confirmed product decision
 

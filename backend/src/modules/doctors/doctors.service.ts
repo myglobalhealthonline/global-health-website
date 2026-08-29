@@ -14,8 +14,12 @@ import { assertLocaleSupported } from "../shared/locale-support.js";
 import { getFeaturedDoctorId } from "./featured-doctor.service.js";
 import { normalizeDoctorWhatsAppForStorage } from "../../lib/whatsapp/resolve-doctor-contact.js";
 import { defaultChamberEntityForCountry } from "../../lib/doctor-registration-display.js";
-import { getDoctorBookability } from "../bookability/bookability.service.js";
+import {
+  getDoctorBookability,
+  invalidateBookabilityCache,
+} from "../bookability/bookability.service.js";
 import type { BookabilitySummary } from "../bookability/bookability.service.js";
+import { resolveBookabilityFailClosed } from "../bookability/bookability-policy.js";
 
 const BOOKABILITY_CONCURRENCY = 8;
 
@@ -47,14 +51,18 @@ async function doctorBookabilityPayload(input: {
 }> {
   const uniqueServiceIds = [...new Set(input.serviceIds)];
   const [bookability, pairSummaries] = await Promise.all([
-    getDoctorBookability({ countryCode: input.countryCode, doctorId: input.doctorId }),
+    resolveBookabilityFailClosed(() =>
+      getDoctorBookability({ countryCode: input.countryCode, doctorId: input.doctorId }),
+    ),
     mapBounded(uniqueServiceIds, async (serviceId) => ({
       serviceId,
-      summary: await getDoctorBookability({
-        countryCode: input.countryCode,
-        doctorId: input.doctorId,
-        serviceId,
-      }),
+      summary: await resolveBookabilityFailClosed(() =>
+        getDoctorBookability({
+          countryCode: input.countryCode,
+          doctorId: input.doctorId,
+          serviceId,
+        }),
+      ),
     })),
   ]);
   return {
@@ -463,7 +471,9 @@ export async function listDoctors(locale?: LocaleCode) {
     const summaries = await mapBounded(
       rows,
       (doctor) =>
-        getDoctorBookability({ countryCode: doctor.country.code, doctorId: doctor.id }),
+        resolveBookabilityFailClosed(() =>
+          getDoctorBookability({ countryCode: doctor.country.code, doctorId: doctor.id }),
+        ),
     );
     return mapped.map((doctor, index) => ({ ...doctor, bookability: summaries[index]! }));
   } catch (error) {
@@ -1545,6 +1555,10 @@ export async function updateAdminDoctor(
           : null,
       } satisfies UpdateAdminDoctorResult;
     }, ADMIN_DOCTOR_TX_OPTIONS);
+
+    if (countryChanging) {
+      invalidateBookabilityCache();
+    }
 
     return result;
   } catch (error) {

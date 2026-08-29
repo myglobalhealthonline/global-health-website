@@ -38,6 +38,10 @@ ledger and historical evidence follow from §0.
 - Admin and doctor portal controls can schedule or clear a durable pause without
   deleting slots or cancelling existing appointments. Public cache tags are
   invalidated for affected markets.
+- Post-review hardening preserves doctor/service editorial `updatedAt` values when
+  pause fields change, so sitemap `lastmod` remains invariant. Public rosters remain
+  complete but rank `BOOKABLE`, then `RETURNING`, then `UNAVAILABLE`, placing “Not
+  accepting online bookings” cards last without removing their crawlable links.
 - This is a **local implementation record, not deployment evidence**. The production
   migration, live checks, critical end-to-end proof, and two-week GSC observation
   remain open. Notification signup was not exposed because consent, unsubscribe,

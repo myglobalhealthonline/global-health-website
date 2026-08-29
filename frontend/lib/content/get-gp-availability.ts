@@ -1,6 +1,7 @@
 import "server-only";
 import { serverReadAuthHeaders } from "@/lib/api/client";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
+import type { BookabilitySummary } from "./get-country-collections";
 
 /**
  * Server-side fetchers for the same-day GP quick-book.
@@ -35,6 +36,7 @@ export type GpAvailabilityResult = {
   service: GpAvailabilityService | null;
   clinicTimezone: string;
   slots: GpAvailabilitySlot[];
+  bookability: BookabilitySummary | null;
 };
 
 export async function getGpLanguages(countryCode: string): Promise<{
@@ -81,6 +83,7 @@ export async function getGpAvailability(
     service: null,
     clinicTimezone: "UTC",
     slots: [],
+    bookability: null,
   };
   const backend = getBackendOrigin();
   if (!backend) return empty;
@@ -99,6 +102,7 @@ export async function getGpAvailability(
       service: json.data.service ?? null,
       clinicTimezone: json.data.clinicTimezone ?? "UTC",
       slots: Array.isArray(json.data.slots) ? json.data.slots : [],
+      bookability: json.data.bookability ?? null,
     };
   } catch {
     return empty;

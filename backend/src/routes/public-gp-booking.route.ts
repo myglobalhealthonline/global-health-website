@@ -8,6 +8,7 @@ import {
   GpNoDoctorError,
   GpServiceUnavailableError,
 } from "../modules/gp-booking/gp-assignment.service.js";
+import { getServiceBookability } from "../modules/bookability/bookability.service.js";
 import { countryCodeSchema } from "../validations/shared.schema.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
@@ -79,6 +80,12 @@ const publicGpBookingRoute: FastifyPluginAsync = async (app) => {
           languageCode: parsed.data.language,
           days: parsed.data.days,
         });
+        const bookability = result.service
+          ? await getServiceBookability({
+              countryCode: parsed.data.country,
+              serviceId: result.service.id,
+            })
+          : null;
         return okResponse({
           service: result.service
             ? {
@@ -92,6 +99,7 @@ const publicGpBookingRoute: FastifyPluginAsync = async (app) => {
             : null,
           clinicTimezone: result.clinicTimezone,
           slots: result.slots,
+          bookability,
         });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {

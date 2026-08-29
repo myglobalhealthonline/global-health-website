@@ -15,6 +15,7 @@ import {
   ServicePriceMissingError,
   SlotNotAvailableError,
   DuplicatePatientError,
+  ManualBookingUnavailableError,
 } from "../modules/appointments/manual-booking.service.js";
 import { createDoctorManualAppointmentBodySchema } from "../validations/doctor-manual-booking.schema.js";
 import { verifyDoctorAccess, verifyManualEntryPermission } from "../utils/doctor-auth.js";
@@ -137,7 +138,10 @@ const doctorManualBookingRoute: FastifyPluginAsync = async (app) => {
         return reply.status(404).send(errorResponse(error.message));
       }
       // Race loser / stale picker — the doctor re-picks an open slot.
-      if (error instanceof SlotNotAvailableError) {
+      if (
+        error instanceof SlotNotAvailableError ||
+        error instanceof ManualBookingUnavailableError
+      ) {
         return reply.status(409).send(errorResponse(error.message));
       }
       // A new email address for someone who is already a patient. Reported

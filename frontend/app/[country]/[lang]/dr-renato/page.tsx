@@ -159,6 +159,7 @@ export default async function DrRenatoSharePage({ params }: { params: Params }) 
     },
     locale,
     bundle.common.bookingAvailability,
+    "America/Sao_Paulo",
   );
   const serviceItems = bookable.map(({ service: s, pairBookability }) => ({
     title: s.name,
@@ -180,6 +181,7 @@ export default async function DrRenatoSharePage({ params }: { params: Params }) 
       pairBookability,
       locale,
       bundle.common.bookingAvailability,
+      "America/Sao_Paulo",
     ),
   }));
 

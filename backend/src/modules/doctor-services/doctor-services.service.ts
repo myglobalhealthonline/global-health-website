@@ -2,6 +2,7 @@ import type { LocaleCode, ServiceKind } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { resolveTranslation } from "../shared/resolve-translation.js";
+import { invalidateBookabilityCache } from "../bookability/bookability.service.js";
 
 /** Service kinds doctors may self-select (health tests remain admin-only). */
 export const DOCTOR_SELECTABLE_SERVICE_KINDS: ServiceKind[] = [
@@ -251,6 +252,7 @@ export async function saveDoctorServiceSelections(
         });
       }
     });
+    invalidateBookabilityCache();
 
     return listDoctorSelectableServices(doctorId);
   } catch (error) {
@@ -457,6 +459,7 @@ export async function adminAssignServiceToDoctor(
         },
       },
     });
+    invalidateBookabilityCache();
 
     return {
       id: row.id,
@@ -515,6 +518,7 @@ export async function adminUpdateDoctorService(
         },
       },
     });
+    invalidateBookabilityCache();
 
     return {
       id: row.id,
@@ -542,6 +546,9 @@ export async function adminRemoveDoctorService(
     const result = await prisma.serviceDoctor.deleteMany({
       where: { id: serviceDoctorId, doctorId },
     });
+    if (result.count > 0) {
+      invalidateBookabilityCache();
+    }
     return result.count > 0;
   } catch (error) {
     throw normalizeDbError(error, "Could not remove doctor service assignment");

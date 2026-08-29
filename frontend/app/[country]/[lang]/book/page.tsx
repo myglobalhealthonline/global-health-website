@@ -487,6 +487,7 @@ export default async function CountryLangBookPage({
                   code={code}
                   country={slug}
                   lang={lang}
+                  bookingTimezone={config.bookingTimezone}
                   service={selectedService}
                   doctors={doctors}
                   doctorSlug={doctorSlugParam}
@@ -677,6 +678,7 @@ async function SelectedServiceFlow({
   code,
   country,
   lang,
+  bookingTimezone,
   service,
   doctors,
   doctorSlug,
@@ -693,6 +695,7 @@ async function SelectedServiceFlow({
   code: string;
   country: string;
   lang: string;
+  bookingTimezone: string;
   service: CountryServiceCard;
   doctors: CountryDoctorCard[];
   doctorSlug: string | null;
@@ -785,6 +788,7 @@ async function SelectedServiceFlow({
               bp={bp}
               cardI18n={doctorCardI18n(loadLocaleBundle(lang as LocaleCode).common.doctors)}
               bookingAvailability={loadLocaleBundle(lang as LocaleCode).common.bookingAvailability}
+              bookingTimezone={bookingTimezone}
               benefit={benefitHrefParam}
             />
           )}

@@ -192,7 +192,7 @@ export default async function CountryLangSpecialistConsultationPage({
     duration: formatDuration(s.durationMinutes),
     startingPrice: formatPrice(s.basePriceCents, s.currencyCode),
     imageSrc: s.imageSrc ?? null,
-    ...getBookabilityActionProps(s.bookability, lang, c.bookingAvailability),
+    ...getBookabilityActionProps(s.bookability, lang, c.bookingAvailability, (overlay ?? config).bookingTimezone),
   }));
 
   const eligibleDoctors = selectSpecialistDoctors(doctors, services);
@@ -202,6 +202,7 @@ export default async function CountryLangSpecialistConsultationPage({
     hubBookability,
     lang,
     c.bookingAvailability,
+    (overlay ?? config).bookingTimezone,
   );
   const ctaLabel = page?.ctaLabel ?? c.doctors.bookAppointment;
   const ctaHref = page?.ctaHref ?? buildBookHref({
@@ -247,7 +248,7 @@ export default async function CountryLangSpecialistConsultationPage({
       bookingHref: buildBookHref({ country: slug, lang, service: serviceSlug, doctor: d.slug }),
       ctaLabel: c.doctors.viewProfile,
       bookLabel: c.doctors.bookAppointment,
-      ...getBookabilityActionProps(pairBookability, lang, c.bookingAvailability),
+      ...getBookabilityActionProps(pairBookability, lang, c.bookingAvailability, (overlay ?? config).bookingTimezone),
     }));
 
   return (

@@ -22,6 +22,7 @@ let serviceFixture: ServiceFixture;
 let slotFixtures: Array<{ id: string; startAt: string; endAt: string }>;
 let slotReads = 0;
 let invalidations = 0;
+let pauseSqlStatements: string[] = [];
 
 let getServiceBookability:
   (typeof import("./bookability.service.js"))["getServiceBookability"];
@@ -29,6 +30,8 @@ let getDoctorBookability:
   (typeof import("./bookability.service.js"))["getDoctorBookability"];
 let setDoctorBookingPause:
   (typeof import("./bookability.service.js"))["setDoctorBookingPause"];
+let setServiceBookingPause:
+  (typeof import("./bookability.service.js"))["setServiceBookingPause"];
 
 function service(overrides: Partial<ServiceFixture> = {}): ServiceFixture {
   return {
@@ -54,6 +57,17 @@ before(async () => {
   mock.module("../../db/prisma.js", {
     namedExports: {
       prisma: {
+        $queryRaw: async (strings: TemplateStringsArray, ...values: unknown[]) => {
+          const sql = strings.join("?");
+          pauseSqlStatements.push(sql);
+          const id = String(values.at(-1));
+          return [{
+            id,
+            bookingPausedFrom: values[0] as Date | null,
+            bookingPausedUntil: values[1] as Date | null,
+            bookingPauseReason: values[2] as string | null,
+          }];
+        },
         service: {
           findFirst: async () => serviceFixture,
           findMany: async () => [serviceFixture],
@@ -92,6 +106,7 @@ before(async () => {
     getServiceBookability,
     getDoctorBookability,
     setDoctorBookingPause,
+    setServiceBookingPause,
   } = await import("./bookability.service.js"));
 });
 
@@ -100,6 +115,7 @@ beforeEach(() => {
   slotFixtures = [];
   slotReads = 0;
   invalidations = 0;
+  pauseSqlStatements = [];
 });
 
 describe("authoritative bookability summaries", () => {
@@ -189,5 +205,19 @@ describe("pause mutations", () => {
     });
     assert.equal(updated.id, "doctor-1");
     assert.equal(invalidations, 1);
+    assert.match(pauseSqlStatements[0], /UPDATE "Doctor"/);
+    assert.doesNotMatch(pauseSqlStatements[0], /updatedAt/);
+  });
+
+  it("updates service pause fields without changing editorial updatedAt/lastmod", async () => {
+    const updated = await setServiceBookingPause("service-1", {
+      bookingPausedFrom: new Date("2026-09-10T00:00:00.000Z"),
+      bookingPausedUntil: null,
+      bookingPauseReason: "leave",
+    });
+    assert.equal(updated.id, "service-1");
+    assert.equal(invalidations, 1);
+    assert.match(pauseSqlStatements[0], /UPDATE "Service"/);
+    assert.doesNotMatch(pauseSqlStatements[0], /updatedAt/);
   });
 });

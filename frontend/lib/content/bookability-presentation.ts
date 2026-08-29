@@ -21,7 +21,7 @@ export function getBookabilityActionProps(
   bookability: BookabilitySummary,
   locale: string,
   messages: BookabilityMessages,
-  timeZone?: string,
+  timeZone: string,
 ): BookabilityActionProps {
   const nextDate = bookability.nextAvailableAt
     ? formatDate(bookability.nextAvailableAt, locale, timeZone)

@@ -36,6 +36,7 @@ import { FormSection } from "@/components/FormSection";
 import { displayNameFrom } from "@/lib/admin/display-name";
 import { SetCrumbTitle } from "@/components/crumb-title";
 import { BookingPauseCard } from "@/components/admin/BookingPauseCard";
+import { zonedInputToUtcInstant } from "@/lib/booking-pause-time";
 
 export const dynamic = "force-dynamic";
 
@@ -168,6 +169,7 @@ export default async function AdminEditServicePage({
   const serviceCountry = countriesResult.data.countries.find(
     (c) => c.id === service.countryId,
   );
+  const serviceTimeZone = serviceCountry?.bookingSetting?.timezone ?? "UTC";
   const { locales, defaultLocale } = resolveCountryLocaleTabs(serviceCountry);
 
   // Peak-hour pricing only applies to online consultations (they're the only
@@ -420,9 +422,14 @@ export default async function AdminEditServicePage({
     const from = String(formData.get("from") ?? "").trim();
     const until = String(formData.get("until") ?? "").trim();
     const reasonCode = String(formData.get("reasonCode") ?? "LEAVE");
+    const fromUtc = zonedInputToUtcInstant(from, serviceTimeZone);
+    const untilUtc = until ? zonedInputToUtcInstant(until, serviceTimeZone) : null;
+    if (!fromUtc || (until && !untilUtc)) {
+      redirect(`/admin/services/${id}/edit?kind=${encodeURIComponent(kind)}&error=${encodeURIComponent(`Choose a valid time in ${serviceTimeZone}`)}`);
+    }
     const result = await setAdminServiceBookingPause(id, {
-      from: `${from}:00.000Z`,
-      until: until ? `${until}:00.000Z` : null,
+      from: fromUtc,
+      until: untilUtc,
       reasonCode,
     });
     if (!result.ok) {
@@ -630,6 +637,7 @@ export default async function AdminEditServicePage({
             }}
             saveAction={saveBookingPauseAction}
             clearAction={clearBookingPauseAction}
+            timeZone={serviceTimeZone}
             subject="this service"
           />
           {/* Cover image preview (read-only). Uploads happen via the

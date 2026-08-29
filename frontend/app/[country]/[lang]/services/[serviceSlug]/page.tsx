@@ -66,6 +66,7 @@ import { DoctifyWidgetLazy as DoctifyWidget } from "@/components/sections/Doctif
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { isUnoptimizedImageSrc as isUnlistedRemote } from "@/lib/content/asset-media-url";
 import { getBookabilityActionProps } from "@/lib/content/bookability-presentation";
+import { sortDoctorsByServiceBookability } from "@/lib/content/service-doctor-selection";
 
 type Params = { country: string; lang: string; serviceSlug: string };
 
@@ -255,6 +256,7 @@ export default async function ServiceDetailPage({
     detail.bookability,
     lang,
     c.bookingAvailability,
+    config.bookingTimezone,
   );
   // Same composition as generateMetadata — the backend's own line is English
   // only, and this one renders above the fold on every localized service page.
@@ -312,7 +314,12 @@ export default async function ServiceDetailPage({
     specialists.find((s) => s.slug === serviceSlug);
   const assignedIds = new Set(serviceCard?.assignedDoctorIds ?? []);
   const assignedDoctors =
-    assignedIds.size > 0 ? allDoctors.filter((d) => assignedIds.has(d.id)).slice(0, 3) : [];
+    assignedIds.size > 0
+      ? sortDoctorsByServiceBookability(
+          allDoctors.filter((doctor) => assignedIds.has(doctor.id)),
+          detail.id,
+        ).slice(0, 3)
+      : [];
 
   // Capped at 4 to match the spec's max-boxes rule — a link dump would defeat
   // the point of keeping these pages off the hub in the first place.
@@ -718,7 +725,9 @@ export default async function ServiceDetailPage({
                         ? { icon: Clock, label: t.minuteAppointment.replace("{count}", String(detail.durationMinutes)) }
                         : null,
                       { icon: Stethoscope, label: t.doctorRegistered.replace("{country}", config.name) },
-                      { icon: CalendarCheck, label: t.instantConfirmation },
+                      detail.bookability.state === "BOOKABLE"
+                        ? { icon: CalendarCheck, label: t.instantConfirmation }
+                        : null,
                       { icon: FileText, label: t.summaryIncluded },
                     ]
                       .filter((row): row is { icon: typeof Clock; label: string } => row !== null)
@@ -844,6 +853,7 @@ export default async function ServiceDetailPage({
                       getDoctorServiceBookability(d.bookabilityByServiceId, detail.id),
                       lang,
                       c.bookingAvailability,
+                      config.bookingTimezone,
                     )}
                     dark
                   />
@@ -929,7 +939,7 @@ export default async function ServiceDetailPage({
               </h2>
               <p className="mt-4 max-w-[44ch] text-[15px] leading-relaxed text-[var(--gh2-on-dark-muted)]">
                 {priceLabel ? t.fromPricePrefix.replace("{price}", priceLabel) : ""}
-                {t.liveAvailability}
+                {detail.bookability.state === "BOOKABLE" ? t.liveAvailability : ""}
               </p>
             </div>
             <div className="flex lg:justify-end">

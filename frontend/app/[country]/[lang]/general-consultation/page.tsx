@@ -191,6 +191,7 @@ export default async function CountryLangGeneralConsultationPage({
     hubBookability,
     lang,
     c.bookingAvailability,
+    (overlay ?? config).bookingTimezone,
   );
   const ctaHref =
     page?.ctaHref ??
@@ -213,7 +214,7 @@ export default async function CountryLangGeneralConsultationPage({
     duration: formatDuration(s.durationMinutes),
     startingPrice: formatPrice(s.basePriceCents, s.currencyCode),
     imageSrc: s.imageSrc ?? null,
-    ...getBookabilityActionProps(s.bookability, lang, c.bookingAvailability),
+    ...getBookabilityActionProps(s.bookability, lang, c.bookingAvailability, (overlay ?? config).bookingTimezone),
   }));
 
   // Doctor cards — admin adding a Doctor row for this country adds a card.
@@ -238,7 +239,7 @@ export default async function CountryLangGeneralConsultationPage({
     bookingHref: buildBookHref({ country: slug, lang, doctor: d.slug }),
     whatsappNumber: d.whatsappNumber,
     ctaLabel: c.doctors.viewProfile,
-    ...getBookabilityActionProps(d.bookability, lang, c.bookingAvailability),
+    ...getBookabilityActionProps(d.bookability, lang, c.bookingAvailability, (overlay ?? config).bookingTimezone),
   }));
 
   return (

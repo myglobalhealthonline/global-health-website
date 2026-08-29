@@ -74,6 +74,7 @@ export function mergeCountryConfigWithBackend(
     defaultLocale?: LocaleCode;
     supportedLocales?: LocaleCode[];
     enabledFeatures?: string[];
+    bookingTimezone?: string;
   },
 ): CountryConfig {
   const pathsOk = areLegacyCountryPathsComplete({
@@ -115,6 +116,7 @@ export function mergeCountryConfigWithBackend(
     ...(backend.enabledFeatures && backend.enabledFeatures.length > 0
       ? { enabledFeatures: backend.enabledFeatures }
       : {}),
+    ...(backend.bookingTimezone ? { bookingTimezone: backend.bookingTimezone } : {}),
   };
 }
 

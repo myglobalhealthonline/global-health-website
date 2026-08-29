@@ -1,4 +1,9 @@
-import type { CountryDoctorCard, CountryServiceCard } from "./get-country-collections";
+import {
+  getDoctorServiceBookability,
+  type BookabilityState,
+  type CountryDoctorCard,
+  type CountryServiceCard,
+} from "./get-country-collections";
 
 export type ServiceDoctorSelection = {
   doctor: CountryDoctorCard;
@@ -6,6 +11,32 @@ export type ServiceDoctorSelection = {
   serviceSlug: string;
   serviceNames: string[];
 };
+
+export function bookabilityStateRank(state: BookabilityState): number {
+  return state === "BOOKABLE" ? 0 : state === "RETURNING" ? 1 : 2;
+}
+
+/** Stable, immutable ordering for a roster shown against one exact service. */
+export function sortDoctorsByServiceBookability(
+  doctors: CountryDoctorCard[],
+  serviceId: string,
+): CountryDoctorCard[] {
+  return doctors
+    .map((doctor, position) => ({ doctor, position }))
+    .toSorted((left, right) => {
+      const leftState = getDoctorServiceBookability(
+        left.doctor.bookabilityByServiceId,
+        serviceId,
+      ).state;
+      const rightState = getDoctorServiceBookability(
+        right.doctor.bookabilityByServiceId,
+        serviceId,
+      ).state;
+      return bookabilityStateRank(leftState) - bookabilityStateRank(rightState) ||
+        left.position - right.position;
+    })
+    .map(({ doctor }) => doctor);
+}
 
 /**
  * Selects doctors with a reciprocal assignment to one of the supplied active
@@ -29,10 +60,31 @@ export function selectServiceDoctors(
 
       const existing = selections.get(doctor.id);
       if (existing) {
+        const existingState = getDoctorServiceBookability(
+          doctor.bookabilityByServiceId,
+          existing.serviceId,
+        ).state;
+        const candidateState = getDoctorServiceBookability(
+          doctor.bookabilityByServiceId,
+          service.id,
+        ).state;
+        const shouldUseCandidate =
+          bookabilityStateRank(candidateState) < bookabilityStateRank(existingState);
         if (!existing.serviceNames.includes(service.name)) {
           selections.set(doctor.id, {
             ...existing,
+            ...(shouldUseCandidate
+              ? { serviceId: service.id, serviceSlug: service.slug, serviceIndex, assignmentIndex }
+              : {}),
             serviceNames: [...existing.serviceNames, service.name],
+          });
+        } else if (shouldUseCandidate) {
+          selections.set(doctor.id, {
+            ...existing,
+            serviceId: service.id,
+            serviceSlug: service.slug,
+            serviceIndex,
+            assignmentIndex,
           });
         }
         continue;

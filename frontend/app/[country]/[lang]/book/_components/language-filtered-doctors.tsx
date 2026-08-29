@@ -45,6 +45,7 @@ export function LanguageFilteredDoctors({
   bp,
   benefit,
   bookingAvailability,
+  bookingTimezone,
 }: {
   country: string;
   lang: string;
@@ -62,6 +63,7 @@ export function LanguageFilteredDoctors({
   bp: import("@/lib/i18n/types").CommonLocale["bookPage"];
   cardI18n: DoctorCardI18n;
   bookingAvailability: BookabilityMessages;
+  bookingTimezone: string;
 }) {
   const allLanguages = useMemo(() => {
     const set = new Set<string>();
@@ -198,6 +200,7 @@ export function LanguageFilteredDoctors({
                   ),
                   lang,
                   bookingAvailability,
+                  bookingTimezone,
                 )}
                 dark
               />

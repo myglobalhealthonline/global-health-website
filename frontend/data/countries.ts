@@ -29,6 +29,8 @@ export type CountryConfig = {
   slug: string;
   defaultLocale: LocaleCode;
   supportedLocales: LocaleCode[];
+  /** IANA timezone used for clinic-local booking dates and times. */
+  bookingTimezone: string;
   /**
    * Per-country sidebar/page toggles surfaced by the public country
    * fetch. Each entry is a slug from `COUNTRY_FEATURE_KEYS` (e.g.
@@ -51,6 +53,7 @@ export const countries: CountryConfig[] = [
     slug: "ireland",
     defaultLocale: "en",
     supportedLocales: ["en", "pt", "es", "cs", "ro", "de"],
+    bookingTimezone: "Europe/Dublin",
     legacyHomePath: "/home",
     teamPath: "/ireland-team",
     generalConsultationPath: "/general-consultation-ie",
@@ -63,6 +66,7 @@ export const countries: CountryConfig[] = [
     slug: "czechia",
     defaultLocale: "cs",
     supportedLocales: ["cs", "en", "pt", "es", "ro", "de"],
+    bookingTimezone: "Europe/Prague",
     legacyHomePath: "/home-cz",
     teamPath: "/czechia-team",
     generalConsultationPath: "/general-consultation-cz",
@@ -75,6 +79,7 @@ export const countries: CountryConfig[] = [
     slug: "portugal",
     defaultLocale: "pt",
     supportedLocales: ["pt", "en", "es", "cs", "ro", "de"],
+    bookingTimezone: "Europe/Lisbon",
     legacyHomePath: "/home-pt",
     teamPath: "/portugal-team",
     generalConsultationPath: "/general-consultation-pt",
@@ -87,6 +92,7 @@ export const countries: CountryConfig[] = [
     slug: "spain",
     defaultLocale: "es",
     supportedLocales: ["es", "en", "pt", "cs", "ro", "de"],
+    bookingTimezone: "Europe/Madrid",
     legacyHomePath: "/home-sp",
     teamPath: "/spain-team",
     generalConsultationPath: "/general-consultation-sp",
@@ -103,6 +109,7 @@ export const countries: CountryConfig[] = [
     slug: "romania",
     defaultLocale: "ro",
     supportedLocales: ["ro", "en", "pt", "es", "cs", "de"],
+    bookingTimezone: "Europe/Bucharest",
     legacyHomePath: "/home-rm",
     teamPath: "/romania-team",
     generalConsultationPath: "/general-consultation-rm",
@@ -116,6 +123,7 @@ export const countries: CountryConfig[] = [
     // Brazil intentionally supports 3 locales (matches CountryLocale rows in
     // DB — user decision 2026-07-24); other markets carry all six.
     supportedLocales: ["pt", "en", "es"],
+    bookingTimezone: "America/Sao_Paulo",
     legacyHomePath: "/home-br",
     teamPath: "/brazil-team",
     generalConsultationPath: "/general-consultation-br",

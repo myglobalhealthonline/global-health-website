@@ -1037,6 +1037,26 @@ async function loadDoctorBookingPause(doctorId: string): Promise<BookingPause | 
   });
 }
 
+/**
+ * The slot itself was still open, but the booking tuple ceased to be valid at
+ * claim time (market disabled, service/doctor lifecycle changed, assignment
+ * revoked, or a pause overlaps the claimed span). Kept separate from
+ * `SlotAlreadyTakenError` so callers can return an availability-specific
+ * message while still rolling the slot mutation back in the same transaction.
+ */
+export class BookingClaimUnavailableError extends Error {
+  constructor() {
+    super("This doctor or service is not accepting bookings at the selected time.");
+    this.name = "BookingClaimUnavailableError";
+  }
+}
+
+export type BookingClaimContext = {
+  countryCode: string;
+  serviceId: string;
+  doctorId: string;
+};
+
 function slotCacheKey(
   doctorId: string,
   serviceDurationMinutes: number | null,
@@ -1508,6 +1528,83 @@ async function consumeConsecutiveSlots(
   }
 }
 
+/**
+ * Revalidate the complete booking tuple at the moment a slot is claimed.
+ *
+ * Public availability is advisory and can become stale. This guard belongs in
+ * the same transaction as the OPEN -> HELD/BOOKED mutation so a direct API
+ * call, a stale picker, or a concurrent lifecycle change cannot turn a hidden
+ * or paused tuple into a booking. A missing BookingSetting keeps the historic
+ * default (`bookingEnabled = true`); an explicit false closes the market.
+ */
+export async function assertBookingClaimAllowed(
+  client: Prisma.TransactionClient,
+  claimed: { doctorId: string; startAt: Date; endAt: Date },
+  context: BookingClaimContext,
+): Promise<void> {
+  if (claimed.doctorId !== context.doctorId) {
+    throw new BookingClaimUnavailableError();
+  }
+
+  const countryCode = context.countryCode.trim().toLowerCase();
+  const policy = await client.service.findFirst({
+    where: {
+      id: context.serviceId,
+      isActive: true,
+      visibility: "PUBLIC",
+      country: { code: countryCode, isActive: true },
+    },
+    select: {
+      bookingPausedFrom: true,
+      bookingPausedUntil: true,
+      country: {
+        select: { bookingSetting: { select: { bookingEnabled: true } } },
+      },
+      assignedDoctors: {
+        where: {
+          doctorId: context.doctorId,
+          isActive: true,
+          status: "active",
+          doctor: {
+            active: true,
+            OR: [
+              { country: { code: countryCode, isActive: true } },
+              {
+                additionalCountries: {
+                  some: {
+                    active: true,
+                    country: { code: countryCode, isActive: true },
+                  },
+                },
+              },
+            ],
+          },
+        },
+        select: {
+          doctor: {
+            select: {
+              bookingPausedFrom: true,
+              bookingPausedUntil: true,
+            },
+          },
+        },
+        take: 1,
+      },
+    },
+  });
+
+  const assignedDoctor = policy?.assignedDoctors[0]?.doctor;
+  if (
+    !policy ||
+    !assignedDoctor ||
+    policy.country.bookingSetting?.bookingEnabled === false ||
+    slotOverlapsPause(claimed, policy) ||
+    slotOverlapsPause(claimed, assignedDoctor)
+  ) {
+    throw new BookingClaimUnavailableError();
+  }
+}
+
 /** Book a run of base slots (OPEN → BOOKED) at the consultation's true length. */
 export async function claimConsecutiveSlots(
   client: Prisma.TransactionClient,
@@ -1524,6 +1621,22 @@ export async function holdConsecutiveSlots(
   durationMinutes: number | null,
 ): Promise<{ doctorId: string; startAt: Date; endAt: Date }> {
   return consumeConsecutiveSlots(client, startSlotId, durationMinutes, "HELD");
+}
+
+/**
+ * Manual/partner/follow-up slot hold with the authoritative booking policy in
+ * the same transaction. Callers must not preflight and then use the unguarded
+ * hold: doing so reintroduces a race between the policy read and slot claim.
+ */
+export async function holdConsecutiveSlotsForBooking(
+  client: Prisma.TransactionClient,
+  startSlotId: string,
+  durationMinutes: number | null,
+  context: BookingClaimContext,
+): Promise<{ doctorId: string; startAt: Date; endAt: Date }> {
+  const held = await consumeConsecutiveSlots(client, startSlotId, durationMinutes, "HELD");
+  await assertBookingClaimAllowed(client, held, context);
+  return held;
 }
 
 /**

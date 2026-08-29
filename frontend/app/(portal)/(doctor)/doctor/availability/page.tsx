@@ -121,7 +121,10 @@ export default async function DoctorAvailabilityPage({ searchParams }: PageProps
         description={d.availability.description}
       />
 
-      <DoctorBookingPauseControl initial={result.data.bookingPause} />
+      <DoctorBookingPauseControl
+        initial={result.data.bookingPause}
+        timeZone={clinicTimezone}
+      />
 
       <DoctorAvailabilityUI
         initialWindows={result.data.windows}

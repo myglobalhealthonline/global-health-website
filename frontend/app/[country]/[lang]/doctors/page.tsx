@@ -218,6 +218,7 @@ export default async function CountryLangDoctorsPage({
     verifyUrl,
     i18n: doctorsI18n,
     bookingAvailability: common.bookingAvailability,
+    bookingTimezone: config.bookingTimezone,
   };
 
   // Unfiltered view — feeds the hero counts, which sit above the filter bar

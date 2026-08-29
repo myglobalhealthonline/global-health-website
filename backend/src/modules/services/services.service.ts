@@ -19,7 +19,11 @@ import {
   resolveInsurancePrice,
   type InsuranceCompanyPricing,
 } from "../pricing/insurance-pricing.service.js";
-import { getServiceBookability } from "../bookability/bookability.service.js";
+import {
+  getServiceBookability,
+  invalidateBookabilityCache,
+} from "../bookability/bookability.service.js";
+import { resolveBookabilityFailClosed } from "../bookability/bookability-policy.js";
 
 const BOOKABILITY_CONCURRENCY = 8;
 
@@ -456,7 +460,12 @@ export async function listServices(locale?: LocaleCode) {
     const summaries = await mapBookabilityBounded(
       rows,
       (service) =>
-        getServiceBookability({ countryCode: service.country.code, serviceId: service.id }),
+        resolveBookabilityFailClosed(() =>
+          getServiceBookability({
+            countryCode: service.country.code,
+            serviceId: service.id,
+          }),
+        ),
     );
     return mapped.map((service, index) => ({ ...service, bookability: summaries[index]! }));
   } catch (error) {
@@ -559,7 +568,10 @@ export async function listServicesByCountry(
     });
     const summaries = await mapBookabilityBounded(
       rows,
-      (service) => getServiceBookability({ countryCode, serviceId: service.id }),
+      (service) =>
+        resolveBookabilityFailClosed(() =>
+          getServiceBookability({ countryCode, serviceId: service.id }),
+        ),
     );
     return mapped.map((service, index) => ({ ...service, bookability: summaries[index]! }));
   } catch (error) {
@@ -892,6 +904,7 @@ async function syncServiceDoctorAssignments(
 
   if (unique.length === 0) {
     await prisma.serviceDoctor.deleteMany({ where: { serviceId } });
+    invalidateBookabilityCache();
     return;
   }
 
@@ -941,6 +954,7 @@ async function syncServiceDoctorAssignments(
       });
     }
   });
+  invalidateBookabilityCache();
 }
 
 export async function getAdminServiceById(id: string): Promise<AdminServiceRecord | null> {
@@ -1245,10 +1259,12 @@ export async function getPublicServiceBySlug(
       row.insuranceCoverages,
       insurersWithDoctors(row.insuranceDoctorPayouts, assignedDoctorIds),
     );
-    const bookability = await getServiceBookability({
-      countryCode: row.country.code,
-      serviceId: row.id,
-    });
+    const bookability = await resolveBookabilityFailClosed(() =>
+      getServiceBookability({
+        countryCode: row.country.code,
+        serviceId: row.id,
+      }),
+    );
     // Strip the raw coverage/network rows — only the resolved options/SEO line ship.
     const {
       insuranceCoverages: _insuranceCoverages,
