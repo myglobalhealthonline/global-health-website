@@ -18,7 +18,7 @@ Success means all of the following are true:
 4. Every doctor and service card that renders before the change still renders afterward with the same content, order, links, localized text, image behavior, and booking state.
 5. No card becomes blank because a new projection is missing or malformed.
 6. `BOOKABLE`, `RETURNING`, and `UNAVAILABLE` decisions, their reason codes, and `nextAvailableAt` values remain identical for the same data and clock.
-7. The old public collection endpoints remain available during rollout and can be restored immediately through a server-side feature flag.
+7. The old public collection endpoints remain available and are the automatic runtime fallback whenever the projection path fails (user decision 2026-08-30: no operator feature flags; see §12).
 8. No secret, cookie value, token, private clinician contact field, or patient data is added to a response, log, metric, fixture, or performance artifact.
 
 ## 2. Non-negotiable safety rules
@@ -40,7 +40,8 @@ The first implementation phases must not edit these authentication boundaries:
 
 - `frontend/app/api/auth/[...path]/route.ts`
 - `frontend/lib/api/auth-api.ts`
-- the authentication decisions and `gh-auth-hint` handling in `frontend/proxy.ts`
+- `frontend/app/api/cart/route.ts` (forwards the raw cookie header and applies `forwardSetCookies` — a session-cookie-carrying path, frozen alongside the auth proxy)
+- the authentication decisions and `gh-auth-hint` handling in `frontend/proxy.ts` (hint written/deleted at `frontend/proxy.ts:631-649`; the proxy matcher also covers `/api/*` route handlers)
 - `frontend/components/layout/PublicAuthContext.tsx`
 - `backend/src/routes/auth.route.ts`
 - `backend/src/modules/auth/auth.service.ts`
@@ -114,13 +115,15 @@ Relevant current source:
 
 - The homepage awaits six reads at `frontend/app/[country]/[lang]/page.tsx:223-242`.
 - The public shell awaits five reads at `frontend/components/layout/PublicShell.tsx:82-98`.
-- The service list selects country, assets, assignments, translations, insurance coverage, and insurer/doctor relationships, then resolves one summary per service at `backend/src/modules/services/services.service.ts:476-576`.
-- The doctor list selects specialties, translations, FAQs, assets, market registration, credentials, and assignments, then resolves doctor/service summaries at `backend/src/modules/doctors/doctors.service.ts:503-642`.
-- The service evaluator releases expired holds and scans assigned doctors in bounded batches at `backend/src/modules/bookability/bookability.service.ts:190-265`.
-- The normalized frontend contracts are `CountryServiceCard` and `CountryDoctorCard` at `frontend/lib/content/get-country-collections.ts:30-66,303-355`.
+- The service list (`listServicesByCountry`) selects country, assets, assignments, translations, insurance coverage, and insurer/doctor relationships with a broad `include`, then resolves one summary per service at `backend/src/modules/services/services.service.ts:476-580`. Cold query count ≈ `8 + 3N + 8D` for N services and D distinct doctors.
+- The doctor list (`listDoctorsByCountry`) selects specialties, translations, FAQs, assets, market registration, credentials, and assignments, then resolves doctor/service summaries at `backend/src/modules/doctors/doctors.service.ts:503-646`. Order is `fullName asc` with `take: 300`; `stripPrivateContact` (`:662-683`) removes `whatsappNumber` and booking-pause fields at `:620`. Cold query count ≈ `14 + 3M(1+S) + 8M` for M doctors averaging S assigned services (~700 for M=30, S=4).
+- The service evaluator releases expired holds and scans assigned doctors in bounded batches (concurrency 8) at `backend/src/modules/bookability/bookability.service.ts:190-266`. The bookability summary cache TTL is **60 s** (`CACHE_TTL_MS`, `:29`) with single-flight; the 45 s TTL belongs to the slot-inventory layer (`doctor-availability.service.ts:1045`). The public GET path performs writes: expired-hold sweeping (`releaseExpiredHeldSlotsForDoctors`, `:217`) and slot minting (`ensureSlotsForRange` → `createMany`). Projections that reuse the bookability enrichment inherit these writes unchanged.
+- The normalized frontend contracts are `CountryServiceCard` at `frontend/lib/content/get-country-collections.ts:30-51` (dependent bookability types at `:53-66`) and `CountryDoctorCard` at `:303-355`. The doctor mapper (`:611-657`) always emits `imageFocalX`/`imageFocalY` (default 50), `imageZoom` (default 1), and `isFeatured` even though typed optional; parity tests must assert presence. `marketDisplayName` is applied inside this frontend mapper (`:614`) — the backend projection must return raw `fullName`.
+- **Hidden second consumer of the doctors endpoint:** `getPublicDoctorsForMarket` (`frontend/lib/content/get-public-doctors.ts:302-317`) requires fields absent from `CountryDoctorCard` — `country{code,name,teamPath}`, `seoTitle`, `seoDescription`, `seoKeywords`, `faqs`, `qualifications`, `editorialChecklist`, `updatedAt`, `lastReviewedAt` — feeding `app/sitemap.ts:444`, `lib/seo/doctor-hreflang.ts:51`, `lib/seo/doctor-market-title.ts:20`. It must stay on the legacy endpoint permanently; narrowing the legacy `/doctors` response would silently empty the sitemap.
+- **Legacy failure semantics are fail-loud, not `[]`:** `getCountryDoctors`/`getCountryServices` call `assertCollectionAvailable` (`get-country-collections.ts:442-444,546-548`); an unconfirmed backend failure raises `PublicContentUnavailableError` (`frontend/lib/content/public-content-source.ts`); `[]` only for confirmed-empty. Pinned by `content-fetch-reliability.test.ts:194,198`. The adapter must preserve this: projection failure → legacy call; legacy failure → the existing throw, never a synthesized empty result.
 - Public auth is already deferred and conditional on `gh-auth-hint` at `frontend/components/layout/PublicAuthContext.tsx:51-71`; preserve this behavior.
-- Cart hydration currently runs after every public-layout mount at `frontend/components/cart/CartContext.tsx:77-95`.
-- The homepage GP proxy reserializes its complete result through `NextResponse.json` at `frontend/app/api/public/gp-availability/route.ts:11-26`.
+- Cart hydration currently runs after every public-layout mount at `frontend/components/cart/CartContext.tsx:81-95` (unconditional effect at `:93-95`).
+- The homepage GP route reserializes its complete result through `NextResponse.json` at `frontend/app/api/public/gp-availability/route.ts:11-26`. **It is not a header-forwarding proxy:** it forwards zero incoming headers; the backend fetch lives in `frontend/lib/content/get-gp-availability.ts:77-110` with `cache: "no-store"`. Backend `Cache-Control: no-store` is currently dropped (route relies on `force-dynamic`). Consumer envelope pinned by `frontend/components/sections/SameDayBooking.tsx:202-219`: `{ ok, data: { slots, service, bookability, clinicTimezone } }`.
 
 ## 5. Scope
 
@@ -164,6 +167,8 @@ Every invariant needs an automated parity assertion.
 - Same doctor-service assignment order and membership.
 - Same insurance options and patient-visible prices.
 - No additional private fields.
+- `bookabilityByServiceId` key coverage: every ID in a doctor's `assignedServiceIds` has an entry. `getDoctorServiceBookability` (`get-country-collections.ts:142-147`) returns a hard `UNAVAILABLE` for any missing key — a partial map produces valid cards with silently dead CTAs. Validation must assert key coverage, not only value validity.
+- Featured-doctor parity: the same doctor (or none) carries `isFeatured` in old and new results. It drives the directory spotlight (`doctor-directory.ts:179`), the homepage FeaturedDoctor, and the service page's JSON-LD clinical-reviewer node (`services/[serviceSlug]/page.tsx:371`).
 
 ### 6.2 Doctor card invariants
 
@@ -179,6 +184,13 @@ The projection must supply the complete `CountryDoctorCard` shape used by curren
 | Display flags/links | `isFeatured`, public social links currently used by cards |
 | Booking | `bookability`, complete `bookabilityByServiceId` for consumers that choose a service |
 
+Implementation findings (Phase 4, 2026-08-30 — from the first implementation round, binding on any re-implementation of the adapter):
+
+- `registrationNumber` is not emitted by the backend (the frontend derives it from `imcRegistration`) — the adapter keeps deriving it.
+- The frontend mapper reads the chamber from `r.additionalCountries[0].chamberEntity` (`get-country-collections.ts:583-588`); a projection that drops `additionalCountries` and ships top-level `registrationChamber` must be shimmed back (`additionalCountries: [{chamberEntity: registrationChamber}]`) or cards lose their chamber prefix — highest-risk consumer difference.
+- `nonPhysician` has no raw column; the mapper reads `r.editorialChecklist.nonPhysician` — ship a derived boolean and shim `editorialChecklist: {nonPhysician}`.
+- The projection emits raw `fullName`; `marketDisplayName` stays a frontend-mapper transform.
+
 `whatsappNumber` must not be introduced by the projection. It is present in the frontend type for historical/caller compatibility, but current public backend mapping deliberately strips the private number.
 
 ### 6.3 Service card invariants
@@ -193,6 +205,8 @@ The projection must supply the complete `CountryServiceCard` shape:
 | Media | `imageSrc`, `imageAltText`, `imageTitle`, `imageCaption`, `imageDescription` |
 | Relationships | ordered `assignedDoctorIds` |
 | Insurance | normalized `insuranceOptions` with the same company IDs, names, and prices |
+
+Implementation findings (Phase 3, 2026-08-30 — from the first implementation round): the raw payload must also carry `isActive` (the frontend mapper drops rows where `isActive === false`). `insuranceSeoLine` is detail-contract-only (the card mapper never reads it) — omit from the projection. The legacy services asset select omits `title`/`caption`/`description`/`focalX`/`focalY`/`zoom`, so service `imageTitle`/`imageCaption`/`imageDescription` are always undefined in production today — copy the legacy select verbatim for parity; fixing it is a separate content decision.
 
 Long detail bodies, FAQs, full translation relations, raw country objects, raw insurance coverage rows, payout rows, and unrelated SEO/editorial fields are not card contract fields. They may be omitted only from the new projection; the existing collection/detail responses remain unchanged.
 
@@ -226,7 +240,7 @@ Prefer distinct routes whose names cannot collide with `doctors/:slug` or servic
 - `GET /api/countries/:countryCode/doctor-cards?locale=EN`
 - `GET /api/countries/:countryCode/service-cards?locale=EN&kind=GENERAL`
 
-Final names must be checked against the runtime route table before implementation. The existing routes remain untouched:
+Route-conflict check performed 2026-08-30 against current source: **no conflict.** The siblings of `/api/countries/:countryCode/` are all distinct static children (`doctors` `country-scoped.route.ts:127`, `doctors/:slug` `:146`, `specialties` `:172`, `health-tests` `:194`, `plans` `:213`, `services` `:237`, plus `pages/:pageKey`, `page-content/:pageKey`, `legal`, `legal-documents/:type`); Fastify prefers static over parametric per segment; no `:wildcard` sibling exists; Next `rewrites()`/`redirects()` never match `/api/countries/*`; the `/api/public/[...path]` allowlist cannot reach it; `proxy.ts` does no `/api/countries` routing. The `/api/countries` prefix is already in `PUBLIC_READ_PREFIXES` (`frontend/lib/api/client.ts:63`) and `backend/src/utils/rate-limit-trust.ts:45`, so new routes inherit the raised SSR/build rate-limit bucket. Use param name `:countryCode`. Ship a route-table test as regression protection. The existing routes remain untouched:
 
 - `GET /api/countries/:countryCode/doctors`
 - `GET /api/countries/:countryCode/doctors/:slug`
@@ -240,7 +254,8 @@ Each projection must:
 4. Use Prisma `select`, not a broad `include`, for card fields.
 5. Reuse current filtering and ordering expressions.
 6. Build normalized assignment IDs and insurance options with existing functions.
-7. Return the existing `okResponse` envelope.
+7. Return the existing `okResponse` envelope (`backend/src/utils/response.ts:1` — `{ ok, message, data }`; the collections put a bare array in `data`).
+7a. Copy the existing route preamble pattern: `applyPublicCache(reply)` (`public, max-age=60, s-maxage=60, stale-while-revalidate=300`), zod `safeParse` on params/query, `ensureCountryExists`, `handleError`.
 8. Expose a contract version in code/metrics, not as user-visible content.
 9. Have focused response-schema tests that reject unexpected private fields.
 
@@ -254,10 +269,10 @@ Per request, the adapter performs this sequence:
 2. If disabled, call the old fetcher only.
 3. If enabled, call the new projection.
 4. Parse every required field and enum into the existing normalized TypeScript shape.
-5. Verify internal relationships: unique IDs; assignment IDs are non-empty; every bookability map value is valid; no duplicate card IDs.
+5. Verify internal relationships: unique IDs; assignment IDs are non-empty; every bookability map value is valid; **`bookabilityByServiceId` keys cover `assignedServiceIds`**; no duplicate card IDs.
 6. If validation succeeds, return the new result.
-7. If the request or validation fails, emit a sanitized fallback metric and call the old endpoint.
-8. If the old endpoint also fails, preserve the current page-level error/fallback behavior; do not invent data.
+7. If the request or validation fails, emit a sanitized fallback metric and call the old endpoint. Use a non-throwing logger for this — `logPublicContentFallback` throws during `next build` unless `ALLOW_DEGRADED_BUILD=1`, and a projection failure with a healthy legacy path must not kill prerender (learned in the first implementation round).
+8. If the old endpoint also fails, preserve the current fail-loud behavior exactly: the existing `assertCollectionAvailable`/`PublicContentUnavailableError` semantics in `frontend/lib/content/public-content-source.ts`. A projection failure must never be converted into the confirmed-empty branch; do not invent data.
 
 The adapter must not perform both requests on every production page. Shadow comparison is sampled and isolated from the user response.
 
@@ -310,13 +325,13 @@ After the projections are stable:
 
 ### 7.6 GP availability transfer
 
-The first GP improvement is transport-only:
+The first GP improvement is transport-only. Corrected model: `frontend/app/api/public/gp-availability/route.ts` is a thin re-serializer, not a header-forwarding proxy — zero incoming headers forwarded; the backend fetch lives in `frontend/lib/content/get-gp-availability.ts:77-110`.
 
-- Return the same status, envelope, slots, service, timezone, and bookability.
-- Preserve `cache: no-store` behavior expected by the booking widget.
-- Stream or forward the backend response where safe, or explicitly enable compression on the same-origin route.
-- Forward only reviewed safe headers; never forward `set-cookie` or internal headers accidentally.
-- Add a byte-for-byte canonical JSON equivalence test before and after the proxy change.
+- Return the same status and the exact envelope `{ ok: true, data: { service, clinicTimezone, slots, bookability } }` consumed by `SameDayBooking.tsx:202-219` and `book/page.tsx`.
+- **Streaming is NOT safe here** (finding from the first implementation round): the upstream body is the `okResponse` `{ok,message,data}` envelope while the route emits `{ok,data}`; the lib normalizes partial bodies (`clinicTimezone ?? "UTC"`, `slots ?? []`); upstream failures are deliberately swallowed into `200` + empty result; a network throw has no upstream Response at all. Streaming would change status codes and body shape. Do not stream.
+- Ship instead: an explicit `Cache-Control: no-store` header on the route's 200 and 400 (allowed strengthening), preserving request validation and the 1-30 day clamp byte-identically (including its no-integer-coercion behavior, e.g. `days=7.9` stays `7.9`).
+- Add a byte-for-byte canonical JSON equivalence test pinning the envelope and the swallow-errors-to-empty semantics.
+- **Rate-limit allowlist fix (same phase, additive):** `/api/public/gp-availability` and `/api/public/gp-languages` are missing from `PUBLIC_READ_PREFIXES` (`frontend/lib/api/client.ts:62-78`) and `backend/src/utils/rate-limit-trust.ts:44-67`, despite `client.ts:104-108` claiming otherwise. Both SSR reads fall into the shared 300/min egress-IP bucket — live 429 exposure under crawl/deploy load. Add both paths to both lists in lockstep.
 
 Reducing days, truncating slots, pagination, or changing the visible slot list is not part of the transport-only release.
 
@@ -438,14 +453,10 @@ Exit gate:
 
 Tasks:
 
-- Add cache tags for projections while retaining the parent old-route tags for coordinated invalidation.
+- Fetch projections under the **same existing cache tags** as the legacy collections — `SITE_CACHE_TAGS.countryDoctors(code)` / `(code, locale)` and the country-services equivalents, with `revalidate: REVALIDATE_SECONDS`. Mandatory: there is no `/api/revalidate` route and no backend→frontend purge webhook; the ~20 admin/doctor mutation trigger sites (admin editors, `frontend/lib/server/revalidate-doctor-profile.ts:58-61`, country pages) enumerate tag names literally, so a projection fetched under only a new tag would never be invalidated.
 - Build strict normalizers that return `CountryDoctorCard[]` and `CountryServiceCard[]`.
 - Use existing parsing conventions; do not add a runtime validation dependency without approval.
-- Add server-side flags with this minimum granularity:
-  - doctor/service projection;
-  - market;
-  - consumer group;
-  - global kill switch.
+- No flags (user decision 2026-08-30, see §12): the adapter always tries the projection first.
 - Implement one-request fallback as specified in section 7.2.
 - Add structured metrics for new success, validation failure, upstream failure, fallback success, and fallback failure.
 - Ensure fallback is not cached as a successful empty projection.
@@ -517,6 +528,7 @@ Tasks:
 - Avoid awaiting data not used above the fold only when removing it cannot change layout, SEO, counts, or links.
 - Preserve `PublicAuthProvider` and conditional auth fetch exactly.
 - Preserve cart hydration until the deferred cart design is approved.
+- Measured opportunity: the global entry gate (`frontend/app/(global)/page.tsx:75-78`) calls `getCountryDoctors` once per country purely for `.length`. A per-country count read (following the `getPublicDoctorsCount` pattern) is an additive candidate, only with proven identical rendered counts.
 
 Exit gate:
 
@@ -611,6 +623,8 @@ For each surface assert:
 
 Use existing Playwright login fixtures and non-production accounts.
 
+Safety facts verified 2026-08-30: the Playwright config lives at the repo root (`playwright.config.ts`, `testDir: "./frontend/tests/e2e"`), `baseURL` defaults to `http://localhost:3000` via `E2E_BASE_URL`, and **no production guard exists** — `E2E_NO_WEBSERVER` disables the only localhost pin. Confirm `E2E_BASE_URL` is unset or non-production before any E2E run. The k6 harness is separately unsafe: `loadtest/config/targets.json` hardcodes Railway hosts with no env override, and `loadtest/config/cookies.json` is a **tracked file containing role session JWTs** (the audit's standing P0). Do not run the k6 harness against its configured targets under this plan.
+
 | Scenario | Expected result |
 | --- | --- |
 | Anonymous opens `/login` | form renders, no console/server error |
@@ -671,6 +685,8 @@ pnpm --filter frontend test
 pnpm --filter frontend build
 ```
 
+Notes verified against current source: there is **no root `test` script** (E2E is `pnpm e2e` from the root). Backend tests are safe by default — `backend/src/test-guard.ts` loads `.env.test` first (`DATABASE_URL` = `127.0.0.1:5433/global_health_test` wins over `backend/.env`'s production URL) and exits unless the DB host is localhost/test-named. DB-backed tests need the local test Postgres on 5433. The performance baseline must run the production build (`next build && next start`) — dev mode does not exercise the Data Cache. `next build` requires a reachable backend (`NEXT_PUBLIC_API_URL`, default `127.0.0.1:4000` from `.env.local`); a killed build leaves orphaned `next build` node processes that block later builds — kill by CommandLine match, never blanket node.exe. `projection-flags`-style modules and anything imported by `get-country-collections.ts` must NOT use `import "server-only"` — that file sits in a Client Component graph (via `book/_components/language-filtered-doctors.tsx`) and the marker breaks the build.
+
 Run targeted Playwright projects/specs against a confirmed non-production environment with synthetic accounts. Do not run authenticated or mutating E2E tests against production.
 
 Before every commit:
@@ -707,44 +723,31 @@ Initial rollback alerts:
 
 Do not create high-cardinality labels from raw URLs, record IDs, emails, names, or tokens.
 
-## 12. Feature flags and rollout
+## 12. Rollout (revised 2026-08-30 by user decision: no feature flags, global always-on)
 
-Minimum flags:
+**User decision 2026-08-30 supersedes the original flag design:** no environment-variable switches. The projection path and bookability batching are always on, for every market and every consumer, from the deploy that ships them. Do not build flag plumbing.
 
-- `PUBLIC_SERVICE_CARD_PROJECTION_V1`
-- `PUBLIC_DOCTOR_CARD_PROJECTION_V1`
-- `PUBLIC_BOOKABILITY_BATCH_V1`
-- `PUBLIC_GP_PROXY_STREAM_V1`
-- per-consumer and per-market allowlists
-- one global public-performance kill switch
+What remains as the safety net, because it is automatic behavior rather than an operator switch:
 
-Recommended rollout:
+- The adapter validates every projection response and **falls back to the legacy endpoint on any failure** (network, malformed payload, missing field, bad enum, duplicate ID, bookability-map key gap). A broken projection degrades to today's behavior, never to blank cards. This was exercised for real in the first implementation round: a production build against a backend without the new routes produced 204 projection 404s, 204 clean legacy fallbacks, and a fully rendered site.
+- Legacy endpoints stay registered and operational — fallback target, and permanent home of `getPublicDoctorsForMarket` (sitemap/hreflang).
+- Fail-closed bookability and `PublicContentUnavailableError` semantics unchanged.
 
-1. Local seeded tests.
-2. CI contract/parity/build gates.
-3. Confirmed non-production shadow comparison.
-4. Internal traffic only.
-5. Ireland/English canary for one low-risk consumer.
-6. Expand percentage in steps while monitoring fallback, card synthetic, auth synthetic, p95, errors, and DB/event-loop metrics.
-7. Expand to the rest of Ireland's configured locales.
-8. Expand one market at a time across configured locales.
-9. Migrate higher-risk booking/detail consumers last.
-10. Leave legacy endpoints and rollback flags in place for at least one agreed release/observation period.
+Rollout: local seeded tests → CI contract/parity/build gates → deploy **backend before or together with frontend** (a frontend deployed ahead of the backend wastes one 404 round-trip per collection read before falling back) → verify with the §9.2 page matrix and a `probe.sh` rerun.
 
-Do not roll out a projection and bookability batching simultaneously. Their metrics and rollback flags must remain independent.
+**Accepted trade-off (recorded):** with no flags, turning the fast path off in production requires reverting the code and redeploying the previous build, not a variable flip. The user explicitly chose this simplification.
 
 ## 13. Rollback procedure
 
-Rollback must not require a new build for the primary failure modes.
+Revised for the no-flag design (2026-08-30): the automatic legacy fallback absorbs projection failures at runtime without operator action. Operator rollback for anything the fallback cannot absorb is a code rollback:
 
-1. Disable the affected consumer/market projection flag.
-2. Confirm subsequent server requests use the legacy endpoint.
+1. A failing projection endpoint (5xx/404/malformed) self-heals per request via the adapter fallback — confirm fallback log volume and that cards render; no action needed beyond diagnosis.
+2. For a behavioral regression the fallback cannot catch (wrong-but-valid data), roll back the deployment to the platform's last-known-good release.
 3. Purge only the affected projection cache keys if necessary; do not purge unrelated public/auth/cart data.
-4. Confirm card synthetic and login synthetic are green.
-5. If a backend error remains, disable the projection route globally and roll back the deployment using the platform's last-known-good release.
-6. Preserve sanitized traces and mismatch categories for diagnosis.
-7. Do not delete or mutate user data during rollback.
-8. Do not retry mutating booking/payment requests as part of a public-read rollback.
+4. Confirm card synthetic and login synthetic are green after rollback.
+5. Preserve sanitized traces and mismatch categories for diagnosis.
+6. Do not delete or mutate user data during rollback.
+7. Do not retry mutating booking/payment requests as part of a public-read rollback.
 
 Rollback triggers include:
 
@@ -763,7 +766,7 @@ A private-field exposure is an incident: disable the projection immediately, pre
 
 | Risk | Why it matters | Mitigation |
 | --- | --- | --- |
-| Projection omits a hidden consumer field | Cards or booking can render incorrectly even if TypeScript compiles | Consumer inventory, runtime validation, golden normalized parity, staged migration |
+| Projection omits a hidden consumer field | Cards or booking can render incorrectly even if TypeScript compiles | Consumer inventory, runtime validation, golden normalized parity, staged migration. Known hidden consumer: `getPublicDoctorsForMarket` (`get-public-doctors.ts:302-317`) feeds `app/sitemap.ts`, `doctor-hreflang.ts`, `doctor-market-title.ts` with non-card fields — it stays on the legacy endpoint permanently |
 | New endpoint conflicts with `:slug` route | Requests may hit detail handler | Use non-colliding route name and assert `app.printRoutes()`/route tests |
 | Locale merge drifts | Wrong-language or empty card text | Reuse merge functions; fixture each fallback case; full configured market/locale matrix |
 | Sorting changes | Featured/bookable cards move | Reuse order clauses and stable original-position tiebreaker; ordered-ID parity |
