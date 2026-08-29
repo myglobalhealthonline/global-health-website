@@ -75,6 +75,7 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         countryCode: query.data.countryCode,
         consultationType: query.data.consultationType,
         search: query.data.search,
+        email: query.data.email,
         doctorName: query.data.doctorName,
         dateFrom: query.data.dateFrom,
         dateTo: query.data.dateTo,

@@ -168,6 +168,17 @@ export const adminAppointmentsQuerySchema = z.object({
     .optional()
     .transform((value) => (value === undefined || value === "" ? undefined : value)),
   /**
+   * Exact (case-insensitive) patient email. Distinct from `search`, which is
+   * a substring match and would pull in other patients' bookings whose email
+   * merely contains this one — unacceptable for the per-patient PHI views.
+   */
+  email: z
+    .string()
+    .trim()
+    .max(320)
+    .optional()
+    .transform((value) => (value === undefined || value === "" ? undefined : value)),
+  /**
    * Free-text doctor filter. Matched (case-insensitive substring) against
    * the assigned doctor's full name and — when linked — the doctor's login
    * email. Composes with every other filter via AND. Appointments with no

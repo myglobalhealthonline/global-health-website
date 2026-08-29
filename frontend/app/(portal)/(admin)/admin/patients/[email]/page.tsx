@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { ArrowLeft, ShieldCheck, FileText, CreditCard, History, Globe } from "lucide-react";
+import { ArrowLeft, ShieldCheck, FileText, CreditCard, History, Globe, CalendarClock, ExternalLink } from "lucide-react";
 import { PhiReasonGate } from "../../_components/phi-reason-gate";
 import {
   fetchAdminPatientProfile,
@@ -8,9 +8,11 @@ import {
   fetchAdminPatientConsents,
   fetchAdminPatientAccessLog,
   fetchAdminPatientPayments,
+  fetchAdminAppointments,
   type VerificationStatus,
 } from "@/lib/admin/admin-api";
 import { AdminCard, PageHeader, Pill } from "../../_components/atoms";
+import { formatAppDateTime } from "@/lib/format-datetime";
 
 export const dynamic = "force-dynamic";
 
@@ -63,6 +65,20 @@ function fmtAmount(cents: number, currency: string) {
   return new Intl.NumberFormat("en-GB", { style: "currency", currency }).format(cents / 100);
 }
 
+// Same tone/label mapping the appointments queue uses, so a status reads the
+// same wherever an admin meets it.
+function appointmentStatusTone(status: string): "published" | "inactive" | "active" | "pending" | "neutral" {
+  if (status === "COMPLETED") return "published";
+  if (status === "CANCELLED") return "inactive";
+  if (status === "CONTACTED") return "active";
+  if (status === "UNDER_REVIEW") return "pending";
+  return "neutral";
+}
+
+function appointmentStatusLabel(status: string) {
+  return status.replace(/_/g, " ").toLowerCase();
+}
+
 export default async function AdminPatientDetailPage({ params, searchParams }: PageProps) {
   const { email: rawEmail } = await params;
   const { reasonError } = await searchParams;
@@ -85,13 +101,17 @@ export default async function AdminPatientDetailPage({ params, searchParams }: P
     }
   }
 
-  const [profileRes, nationalityRes, consentsRes, accessLogRes, paymentsRes] = await Promise.all([
-    fetchAdminPatientProfile(email),
-    fetchAdminPatientNationality(email),
-    fetchAdminPatientConsents(email),
-    fetchAdminPatientAccessLog(email),
-    fetchAdminPatientPayments(email),
-  ]);
+  const [profileRes, nationalityRes, consentsRes, accessLogRes, paymentsRes, appointmentsRes] =
+    await Promise.all([
+      fetchAdminPatientProfile(email),
+      fetchAdminPatientNationality(email),
+      fetchAdminPatientConsents(email),
+      fetchAdminPatientAccessLog(email),
+      fetchAdminPatientPayments(email),
+      // Exact-email filter, not the queue's substring `search` — that would
+      // fold in other patients whose email contains this one.
+      fetchAdminAppointments({ email, pageSize: "100" }),
+    ]);
 
   if (!profileRes.ok || !profileRes.data.profile) {
     return (
@@ -114,6 +134,7 @@ export default async function AdminPatientDetailPage({ params, searchParams }: P
   const consents = consentsRes.ok ? consentsRes.data.consents : [];
   const accessLogs = accessLogRes.ok ? accessLogRes.data.logs : [];
   const payments = paymentsRes.ok ? paymentsRes.data.items : [];
+  const appointments = appointmentsRes.ok ? appointmentsRes.data.items : [];
 
   return (
     <>
@@ -185,6 +206,64 @@ export default async function AdminPatientDetailPage({ params, searchParams }: P
             ) : null}
           </p>
         ) : null}
+      </Section>
+
+      {/* ── Appointment history ───────────────────────────────────────── */}
+      <Section icon={<CalendarClock className="size-4" />} title="Appointment history">
+        {!appointmentsRes.ok ? (
+          <p className="text-sm text-[var(--color-status-warning-text)]">{appointmentsRes.message}</p>
+        ) : appointments.length === 0 ? (
+          <p className="text-sm text-[var(--color-text-muted)]">No appointments booked yet.</p>
+        ) : (
+          <div className="gh-admin-support-table-wrap overflow-x-auto">
+            <table className="gh-table">
+              <thead>
+                <tr>
+                  <th>When</th>
+                  <th>Consultation</th>
+                  <th>Doctor</th>
+                  <th>Country</th>
+                  <th>Status</th>
+                  <th className="text-right">Open</th>
+                </tr>
+              </thead>
+              <tbody>
+                {appointments.map((a) => (
+                  <tr key={a.id}>
+                    <td>
+                      {/* Scheduled slot when there is one, otherwise the booking
+                          date — an unscheduled request still needs a date. */}
+                      {a.scheduledAt ? (
+                        formatAppDateTime(a.scheduledAt)
+                      ) : (
+                        <span className="text-[var(--color-text-muted)]">
+                          Requested {formatAppDateTime(a.createdAt)}
+                        </span>
+                      )}
+                    </td>
+                    <td>{a.consultationType}</td>
+                    <td className="text-[var(--color-text-muted)]">{a.doctorName ?? "Unassigned"}</td>
+                    <td className="text-[var(--color-text-muted)]">{a.country.toUpperCase()}</td>
+                    <td>
+                      <Pill tone={appointmentStatusTone(a.status)}>
+                        {appointmentStatusLabel(a.status)}
+                      </Pill>
+                    </td>
+                    <td className="text-right">
+                      <Link
+                        href={`/admin/appointments/${a.id}`}
+                        aria-label={`Open appointment from ${a.scheduledAt ?? a.createdAt}`}
+                        className="inline-flex items-center gap-1.5 font-semibold text-[var(--color-accent)] hover:underline"
+                      >
+                        Open <ExternalLink className="size-3.5" aria-hidden />
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Section>
 
       {/* ── Nationality documents ─────────────────────────────────────── */}
