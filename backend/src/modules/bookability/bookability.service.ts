@@ -4,7 +4,10 @@ import {
   invalidateAvailabilityCaches,
   registerAvailabilityCache,
 } from "../doctor-availability/availability-cache-bus.js";
-import { listOpenSlotsForDoctorAndService } from "../doctor-availability/doctor-availability.service.js";
+import {
+  listOpenSlotsForDoctorAndService,
+  releaseExpiredHeldSlotsForDoctors,
+} from "../doctor-availability/doctor-availability.service.js";
 import {
   deriveBookability,
   slotOverlapsPause,
@@ -208,6 +211,11 @@ async function evaluateService(
     bookingPausedUntil: service.bookingPausedUntil,
   };
 
+  // Expired cart holds are doctor-scoped, not service-scoped. Sweep the
+  // complete doctor set once before the slot fan-out instead of issuing one
+  // release query per doctor (and repeating it for every summary).
+  await releaseExpiredHeldSlotsForDoctors(doctors.map((doctor) => doctor.id));
+
   const slots: { doctorId: string; startAt: string }[] = [];
   for (let i = 0; i < doctors.length; i += CONCURRENCY) {
     const batch = doctors.slice(i, i + CONCURRENCY);
@@ -218,6 +226,7 @@ async function evaluateService(
           service.durationMinutes,
           now,
           lookaheadEnd,
+          { skipExpiredRelease: true },
         ),
       ),
     );

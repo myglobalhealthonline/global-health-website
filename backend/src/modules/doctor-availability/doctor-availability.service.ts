@@ -1048,9 +1048,32 @@ const SLOT_CACHE_TTL_MS = 45_000;
 // evicts first once the cap is hit (see TtlCache).
 const SLOT_CACHE_MAX_ENTRIES = 2000;
 const slotCache = new TtlCache<PublicSlot[]>(SLOT_CACHE_MAX_ENTRIES);
+const slotReadsInFlight = new Map<string, Promise<PublicSlot[]>>();
+type DoctorSlotInventory = {
+  rows: Array<{
+    id: string;
+    startAt: Date;
+    endAt: Date;
+    status: DoctorSlotStatus;
+  }>;
+  pause: BookingPause | null;
+};
+const slotInventoryCache = new TtlCache<DoctorSlotInventory>(SLOT_CACHE_MAX_ENTRIES);
+const slotInventoryReadsInFlight = new Map<string, Promise<DoctorSlotInventory>>();
+const expiredHoldSweepCache = new TtlCache<true>(SLOT_CACHE_MAX_ENTRIES);
+const expiredHoldSweepsInFlight = new Map<string, Promise<void>>();
+let slotCacheGeneration = 0;
 // Any write that changes inventory clears every availability cache, not just
 // this one — see availability-cache-bus.
-registerAvailabilityCache(() => slotCache.clear());
+registerAvailabilityCache(() => {
+  slotCacheGeneration += 1;
+  slotReadsInFlight.clear();
+  slotInventoryReadsInFlight.clear();
+  expiredHoldSweepsInFlight.clear();
+  slotCache.clear();
+  slotInventoryCache.clear();
+  expiredHoldSweepCache.clear();
+});
 
 async function loadDoctorBookingPause(doctorId: string): Promise<BookingPause | null> {
   return prisma.doctor.findUnique({
@@ -1084,9 +1107,97 @@ function slotCacheKey(
   serviceDurationMinutes: number | null,
   fromUtc: Date,
   toUtc: Date,
+  skipExpiredRelease: boolean,
 ): string {
   const bucket = (d: Date) => Math.floor(d.getTime() / SLOT_CACHE_TTL_MS);
-  return `${doctorId}:${serviceDurationMinutes ?? "base"}:${bucket(fromUtc)}:${bucket(toUtc)}`;
+  return `${doctorId}:${serviceDurationMinutes ?? "base"}:${skipExpiredRelease ? "skip" : "released"}:${bucket(fromUtc)}:${bucket(toUtc)}`;
+}
+
+function slotInventoryCacheKey(
+  doctorId: string,
+  fromUtc: Date,
+  toUtc: Date,
+  skipExpiredRelease: boolean,
+): string {
+  const bucket = (d: Date) => Math.floor(d.getTime() / SLOT_CACHE_TTL_MS);
+  return `${doctorId}:${skipExpiredRelease ? "skip" : "released"}:${bucket(fromUtc)}:${bucket(toUtc)}`;
+}
+
+/**
+ * Materialise and load a doctor's raw slot rows once per date bucket.
+ * Service duration only affects the in-memory contiguous-run calculation, so
+ * repeating this database work for every assigned service cannot change the
+ * answer and was the source of the cold-cache query explosion.
+ */
+function loadDoctorSlotInventory(
+  doctorId: string,
+  fromUtc: Date,
+  toUtc: Date,
+  skipExpiredRelease: boolean,
+): Promise<DoctorSlotInventory> {
+  const key = slotInventoryCacheKey(doctorId, fromUtc, toUtc, skipExpiredRelease);
+  const cached = slotInventoryCache.get(key);
+  if (cached) return Promise.resolve(cached);
+
+  const pending = slotInventoryReadsInFlight.get(key);
+  if (pending) return pending;
+
+  const generation = slotCacheGeneration;
+  const request = (async () => {
+    // Public slot rows minted before a doctor was suspended must stay hidden.
+    // Keep this guard inside the shared inventory load so concurrent service
+    // durations perform the lifecycle check once for the doctor/date window.
+    if (await isDoctorSuspended(doctorId)) return { rows: [], pause: null };
+    if (!skipExpiredRelease) await releaseExpiredHeldSlots(doctorId);
+    await ensureSlotsForRange(doctorId, fromUtc, toUtc);
+    const [rows, pause] = await Promise.all([
+      prisma.doctorTimeSlot.findMany({
+        where: { doctorId, startAt: { gte: fromUtc, lt: toUtc } },
+        orderBy: { startAt: "asc" },
+        select: { id: true, startAt: true, endAt: true, status: true },
+      }),
+      loadDoctorBookingPause(doctorId),
+    ]);
+    return { rows, pause };
+  })()
+    .then((result) => {
+      if (generation === slotCacheGeneration) {
+        slotInventoryCache.set(key, result, SLOT_CACHE_TTL_MS);
+      }
+      return result;
+    })
+    .finally(() => {
+      if (slotInventoryReadsInFlight.get(key) === request) {
+        slotInventoryReadsInFlight.delete(key);
+      }
+    });
+  slotInventoryReadsInFlight.set(key, request);
+  return request;
+}
+
+function resolveCachedSlotRead(
+  key: string,
+  load: () => Promise<PublicSlot[]>,
+): Promise<PublicSlot[]> {
+  const cached = slotCache.get(key);
+  if (cached) return Promise.resolve(cached);
+
+  const pending = slotReadsInFlight.get(key);
+  if (pending) return pending;
+
+  const generation = slotCacheGeneration;
+  const request = load()
+    .then((result) => {
+      // A booking or admin slot write may clear caches while this read is still
+      // running. Never re-seed the cache with pre-invalidation data.
+      if (generation === slotCacheGeneration) slotCache.set(key, result, SLOT_CACHE_TTL_MS);
+      return result;
+    })
+    .finally(() => {
+      if (slotReadsInFlight.get(key) === request) slotReadsInFlight.delete(key);
+    });
+  slotReadsInFlight.set(key, request);
+  return request;
 }
 
 export async function listOpenSlotsForDoctor(
@@ -1094,44 +1205,32 @@ export async function listOpenSlotsForDoctor(
   fromUtc: Date,
   toUtc: Date,
 ): Promise<PublicSlot[]> {
-  const cacheKey = slotCacheKey(doctorId, null, fromUtc, toUtc);
-  const cached = slotCache.get(cacheKey);
-  if (cached) return cached;
-  try {
-    // Guarded here rather than relying on callers: this takes a raw doctorId,
-    // so any caller that resolves a doctor without an `active` filter would
-    // otherwise expose a suspended doctor's leftover slot rows as bookable.
-    if (await isDoctorSuspended(doctorId)) return [];
-    await releaseExpiredHeldSlots(doctorId);
-    await ensureSlotsForRange(doctorId, fromUtc, toUtc);
-    const [rows, pause] = await Promise.all([
-      prisma.doctorTimeSlot.findMany({
-        where: {
-          doctorId,
-          status: "OPEN",
-          startAt: { gte: fromUtc, lt: toUtc },
-        },
-        orderBy: { startAt: "asc" },
-        select: { id: true, startAt: true, endAt: true },
-      }),
-      loadDoctorBookingPause(doctorId),
-    ]);
-    const result = rows.map((r) => ({
-        id: r.id,
-        startAt: r.startAt.toISOString(),
-        endAt: r.endAt.toISOString(),
-      }))
-      .filter((slot) =>
-        !slotOverlapsPause(
-          { startAt: new Date(slot.startAt), endAt: new Date(slot.endAt) },
-          pause,
-        ),
+  const cacheKey = slotCacheKey(doctorId, null, fromUtc, toUtc, false);
+  return resolveCachedSlotRead(cacheKey, async () => {
+    try {
+      const { rows, pause } = await loadDoctorSlotInventory(
+        doctorId,
+        fromUtc,
+        toUtc,
+        false,
       );
-    slotCache.set(cacheKey, result, SLOT_CACHE_TTL_MS);
-    return result;
-  } catch (error) {
-    throw normalizeDbError(error, "Doctor availability is unavailable");
-  }
+      return rows
+        .filter((row) => row.status === "OPEN")
+        .map((row) => ({
+          id: row.id,
+          startAt: row.startAt.toISOString(),
+          endAt: row.endAt.toISOString(),
+        }))
+        .filter((slot) =>
+          !slotOverlapsPause(
+            { startAt: new Date(slot.startAt), endAt: new Date(slot.endAt) },
+            pause,
+          ),
+        );
+    } catch (error) {
+      throw normalizeDbError(error, "Doctor availability is unavailable");
+    }
+  });
 }
 
 /**
@@ -1323,81 +1422,77 @@ export async function listOpenSlotsForDoctorAndService(
     skipExpiredRelease?: boolean;
   },
 ): Promise<PublicSlot[]> {
-  const cacheKey = slotCacheKey(doctorId, serviceDurationMinutes, fromUtc, toUtc);
-  const cached = slotCache.get(cacheKey);
-  if (cached) return cached;
-  try {
-    // Same guard as listOpenSlotsForDoctor — a suspended doctor offers nothing,
-    // including via the aggregated service-first and GP quick-book fan-outs.
-    if (await isDoctorSuspended(doctorId)) return [];
-    if (!opts?.skipExpiredRelease) {
-      await releaseExpiredHeldSlots(doctorId);
-    }
-    await ensureSlotsForRange(doctorId, fromUtc, toUtc);
-    // Fetch ALL slots (not just OPEN) so a BOOKED/BLOCKED/HELD slot correctly
-    // breaks a run — a consult can't start where it wouldn't fit before the
-    // next occupied slot.
-    const [rawRows, pause] = await Promise.all([
-      prisma.doctorTimeSlot.findMany({
-        where: { doctorId, startAt: { gte: fromUtc, lt: toUtc } },
-        orderBy: { startAt: "asc" },
-        select: { id: true, startAt: true, endAt: true, status: true },
-      }),
-      loadDoctorBookingPause(doctorId),
-    ]);
-    // Paused rows are removed before the contiguous-duration pass, so a
-    // consultation can neither start inside nor bridge across a pause.
-    const rows = rawRows.filter((row) => !slotOverlapsPause(row, pause));
+  const skipExpiredRelease = opts?.skipExpiredRelease === true;
+  const cacheKey = slotCacheKey(
+    doctorId,
+    serviceDurationMinutes,
+    fromUtc,
+    toUtc,
+    skipExpiredRelease,
+  );
+  return resolveCachedSlotRead(cacheKey, async () => {
+    try {
+      // Fetch ALL slots (not just OPEN) so a BOOKED/BLOCKED/HELD slot correctly
+      // breaks a run — a consult can't start where it wouldn't fit before the
+      // next occupied slot. The raw inventory is shared across service
+      // durations; only the calculation below is duration-specific.
+      const { rows: rawRows, pause } = await loadDoctorSlotInventory(
+        doctorId,
+        fromUtc,
+        toUtc,
+        skipExpiredRelease,
+      );
+      // Paused rows are removed before the contiguous-duration pass, so a
+      // consultation can neither start inside nor bridge across a pause.
+      const rows = rawRows.filter((row) => !slotOverlapsPause(row, pause));
 
-    const durMs = (serviceDurationMinutes ?? 0) * 60_000;
-    // No service duration → every OPEN base slot is a candidate as-is.
-    if (durMs <= 0) {
-      const base = rows
-        .filter((r) => r.status === "OPEN")
-        .map((r) => ({
-          id: r.id,
-          startAt: r.startAt.toISOString(),
-          endAt: r.endAt.toISOString(),
-        }));
-      slotCache.set(cacheKey, base, SLOT_CACHE_TTL_MS);
-      return base;
-    }
+      const durMs = (serviceDurationMinutes ?? 0) * 60_000;
+      // No service duration → every OPEN base slot is a candidate as-is.
+      if (durMs <= 0) {
+        return rows
+          .filter((r) => r.status === "OPEN")
+          .map((r) => ({
+            id: r.id,
+            startAt: r.startAt.toISOString(),
+            endAt: r.endAt.toISOString(),
+          }));
+      }
 
-    // Sliding window: from each OPEN slot, greedily extend across contiguous
-    // OPEN base slots (startAt === previous endAt) until the run covers the
-    // service duration. Emit a candidate start (id = first base slot) with
-    // endAt = start + service duration (the true consultation length).
-    const out: PublicSlot[] = [];
-    for (let i = 0; i < rows.length; i++) {
-      if (rows[i].status !== "OPEN") continue;
-      const startMs = rows[i].startAt.getTime();
-      let coverEnd = rows[i].endAt.getTime();
-      let j = i;
-      while (coverEnd - startMs < durMs) {
-        const next = rows[j + 1];
-        if (
-          !next ||
-          next.status !== "OPEN" ||
-          next.startAt.getTime() !== rows[j].endAt.getTime()
-        ) {
-          break;
+      // Sliding window: from each OPEN slot, greedily extend across contiguous
+      // OPEN base slots (startAt === previous endAt) until the run covers the
+      // service duration. Emit a candidate start (id = first base slot) with
+      // endAt = start + service duration (the true consultation length).
+      const out: PublicSlot[] = [];
+      for (let i = 0; i < rows.length; i++) {
+        if (rows[i].status !== "OPEN") continue;
+        const startMs = rows[i].startAt.getTime();
+        let coverEnd = rows[i].endAt.getTime();
+        let j = i;
+        while (coverEnd - startMs < durMs) {
+          const next = rows[j + 1];
+          if (
+            !next ||
+            next.status !== "OPEN" ||
+            next.startAt.getTime() !== rows[j].endAt.getTime()
+          ) {
+            break;
+          }
+          j += 1;
+          coverEnd = rows[j].endAt.getTime();
         }
-        j += 1;
-        coverEnd = rows[j].endAt.getTime();
+        if (coverEnd - startMs >= durMs) {
+          out.push({
+            id: rows[i].id,
+            startAt: rows[i].startAt.toISOString(),
+            endAt: new Date(startMs + durMs).toISOString(),
+          });
+        }
       }
-      if (coverEnd - startMs >= durMs) {
-        out.push({
-          id: rows[i].id,
-          startAt: rows[i].startAt.toISOString(),
-          endAt: new Date(startMs + durMs).toISOString(),
-        });
-      }
+      return out;
+    } catch (error) {
+      throw normalizeDbError(error, "Doctor availability is unavailable");
     }
-    slotCache.set(cacheKey, out, SLOT_CACHE_TTL_MS);
-    return out;
-  } catch (error) {
-    throw normalizeDbError(error, "Doctor availability is unavailable");
-  }
+  });
 }
 
 /**
@@ -1739,7 +1834,44 @@ export async function releaseExpiredHeldSlots(doctorId: string): Promise<void> {
 export async function releaseExpiredHeldSlotsForDoctors(
   doctorIds: string[],
 ): Promise<void> {
-  if (doctorIds.length === 0) return;
+  const uniqueDoctorIds = [...new Set(doctorIds)];
+  if (uniqueDoctorIds.length === 0) return;
+
+  const waits = new Set<Promise<void>>();
+  const unsweptDoctorIds: string[] = [];
+  for (const doctorId of uniqueDoctorIds) {
+    if (expiredHoldSweepCache.get(doctorId)) continue;
+    const pending = expiredHoldSweepsInFlight.get(doctorId);
+    if (pending) waits.add(pending);
+    else unsweptDoctorIds.push(doctorId);
+  }
+
+  if (unsweptDoctorIds.length > 0) {
+    const generation = slotCacheGeneration;
+    const request = sweepExpiredHeldSlots(unsweptDoctorIds)
+      .then(() => {
+        if (generation !== slotCacheGeneration) return;
+        for (const doctorId of unsweptDoctorIds) {
+          expiredHoldSweepCache.set(doctorId, true, SLOT_CACHE_TTL_MS);
+        }
+      })
+      .finally(() => {
+        for (const doctorId of unsweptDoctorIds) {
+          if (expiredHoldSweepsInFlight.get(doctorId) === request) {
+            expiredHoldSweepsInFlight.delete(doctorId);
+          }
+        }
+      });
+    for (const doctorId of unsweptDoctorIds) {
+      expiredHoldSweepsInFlight.set(doctorId, request);
+    }
+    waits.add(request);
+  }
+
+  await Promise.all(waits);
+}
+
+async function sweepExpiredHeldSlots(doctorIds: string[]): Promise<void> {
   try {
     const stale = await prisma.doctorTimeSlot.findMany({
       where: {

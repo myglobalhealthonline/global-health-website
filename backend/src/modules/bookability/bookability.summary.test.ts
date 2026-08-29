@@ -20,6 +20,8 @@ type ServiceFixture = {
 
 let serviceFixture: ServiceFixture;
 let slotFixtures: Array<{ id: string; startAt: string; endAt: string }>;
+let batchReleasedDoctorIds: string[][] = [];
+let slotReadOptions: Array<{ skipExpiredRelease?: boolean } | undefined> = [];
 let slotReads = 0;
 let invalidations = 0;
 let pauseSqlStatements: string[] = [];
@@ -95,9 +97,19 @@ before(async () => {
   });
   mock.module("../doctor-availability/doctor-availability.service.js", {
     namedExports: {
-      listOpenSlotsForDoctorAndService: async () => {
+      listOpenSlotsForDoctorAndService: async (
+        _doctorId: string,
+        _duration: number | null,
+        _fromUtc: Date,
+        _toUtc: Date,
+        options?: { skipExpiredRelease?: boolean },
+      ) => {
         slotReads += 1;
+        slotReadOptions.push(options);
         return slotFixtures;
+      },
+      releaseExpiredHeldSlotsForDoctors: async (doctorIds: string[]) => {
+        batchReleasedDoctorIds.push([...doctorIds]);
       },
     },
   });
@@ -113,6 +125,8 @@ before(async () => {
 beforeEach(() => {
   serviceFixture = service();
   slotFixtures = [];
+  batchReleasedDoctorIds = [];
+  slotReadOptions = [];
   slotReads = 0;
   invalidations = 0;
   pauseSqlStatements = [];
@@ -136,6 +150,41 @@ describe("authoritative bookability summaries", () => {
 
     assert.deepEqual(first, second);
     assert.equal(slotReads, 1);
+  });
+
+  it("releases expired holds once before scanning a service's doctors", async () => {
+    serviceFixture = service({
+      id: "service-batched-release",
+      assignedDoctors: [
+        {
+          doctor: {
+            id: "doctor-1",
+            bookingPausedFrom: null,
+            bookingPausedUntil: null,
+          },
+        },
+        {
+          doctor: {
+            id: "doctor-2",
+            bookingPausedFrom: null,
+            bookingPausedUntil: null,
+          },
+        },
+      ],
+    });
+
+    await getServiceBookability({
+      countryCode: "IE",
+      serviceId: "service-batched-release",
+      now,
+    });
+
+    assert.deepEqual(batchReleasedDoctorIds, [["doctor-1", "doctor-2"]]);
+    assert.equal(slotReads, 2);
+    assert.deepEqual(slotReadOptions, [
+      { skipExpiredRelease: true },
+      { skipExpiredRelease: true },
+    ]);
   });
 
   it("keeps a Wednesday CTA enabled for a real compatible Thursday slot", async () => {
