@@ -259,7 +259,7 @@ export const RO_TENSIUNE_ARTERIALA_NORMALA: PostSet = {
     "Editorial plan 2026-08-19 and follow-up batch 2026-08-19: cat este tensiunea normala in functie de varsta 6,600 / KD 0; tabel cu valori tensiune arteriala 2,900; calculator tensiune arteriala 1,900; GSC 21 impressions at position 12. Romania cardiology service is inactive as of 2026-08-23, so the honest live lead path is the active chronic-disease follow-up service plus the blood-pressure tool.",
   serviceSlug: "boli-cronice-online",
   authorDoctorId: "cmrc4axni00rn01p2n3r2bopf",
-  authorDisplayName: "Dr Robert Gabriel Brindus",
+  authorDisplayName: "Global Health Medical Team",
   reviewerDoctorId: "cmrc4j7oc00se01p2gf7y9ldw",
   reviewerDisplayName: "Dr Andreea Lorena Bica",
   posts: [ro],

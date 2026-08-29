@@ -698,6 +698,6 @@ export const BR_PEDIDO_EXAMES: PostSet = {
     "br/2076 expansion 2026-08-04. TARGET CHANGED from 'pedido de exames online' (210), which the expansion showed is the smallest term in its own cluster. New head 'solicitação de exames laboratoriais' 480 KD 0, with the cluster all at KD 0: solicitação de exames pdf 590, pedido de exames laboratoriais 320, exemplo de pedido de ultrassom 260 — roughly eight times the combined volume of the original pick, same commercial destination, and 'pedido de exames online' is still covered inside the article. Rejected: the SUS-navigational mass (meu sus digital 201,000 KD 68, conecte sus 74,000 KD 36, consulta online sus grátis 1,900 KD 24) and the 'telemedicina' head (49,500 KD 26), all above the ceiling; 'consulta online da atestado' (4,400 KD 8) belongs to br-atestado-medico and is not targeted twice. SERP 2026-08-04: rank 2 is the CFM Prescrição Eletrônica page for exam requests, the rest are hospital and health-plan request forms (hcor, unimedcuritiba, unimed.coop.br, saude.df.gov.br), a municipal PDF form and clinic-software blogs — forms rather than explanation.",
   serviceSlug: "solicitacao-exames-online",
   authorDoctorId: "cmqyzr0fb000o01lu9deh6mf5",
-  authorDisplayName: "Dr. Renato Sarmento",
+  authorDisplayName: "Global Health Medical Team",
   posts: [pt, en, es],
 };

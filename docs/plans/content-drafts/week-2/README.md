@@ -1,8 +1,8 @@
 # Week 2 editorial batch
 
-Prepared 24 August 2026. These are AI-assisted working drafts. Every kept locale requires a native-language editor and the medical articles require clinician review before publication. **The six primary-language records were created in production as `DRAFT` on 25 August 2026.** No Week 2 record was published and no translation record was created.
+Prepared 24 August 2026. These are AI-assisted working drafts. Every kept locale requires a native-language editor and the medical articles require clinician review before publication. **The six primary-language records were created in production on 25 August 2026, and all 30 translation rows were present by 29 August 2026.** The final audit found five Week 2 parents still `DRAFT`; the Spain urgent-blood-pressure parent had been published separately before the last 17 translations were added.
 
-Local source coverage: every one of the six topics has EN, PT, ES, CS, RO and DE copy, for a 36-variant research archive. The production-preparation manifest is now restricted to the exact 19 evidence-backed variants in the canonical editorial plan: `pt/en/de` for both Portugal topics, `en/ro/es/pt/de` for Ireland, `cs/en/de` for Czechia, `es/en/de` for Spain, and `ro/en` for Romania. The 17 unapproved variants remain in the TypeScript research source only and are not emitted as standalone HTML or accepted by the seeder. The article jurisdiction remains the topic market; the language variant does not replace the applicable local law, benefit system, emergency pathway or service route.
+Local and production coverage: every one of the six topics now has EN, PT, ES, CS, RO and DE copy, for 36 variants total. The original production-preparation manifest was restricted to 19 evidence-backed variants; the owner later approved completing the remaining 17 from the reviewed TypeScript sources. The article jurisdiction remains the topic market; the language variant does not replace the applicable local law, benefit system, emergency pathway or service route.
 
 ## Local implementation record, 25 August 2026
 
@@ -27,17 +27,17 @@ Local source coverage: every one of the six topics has EN, PT, ES, CS, RO and DE
   triage. Spain and Romania reject self-medication and quick-fix framing; Portugal
   driving copy explains regulated groups and makes no certificate guarantee.
 
-CMS records created by the approved production implementation: **six DRAFTs**. Existing records changed: **zero**. Acquired backlinks:
+CMS records covered by the approved production implementation: **six parents and 30 translation rows**. The 17-row completion changed existing parents and translations: **zero**. Acquired backlinks:
 **zero**. Outreach sent: **zero**. Publication, deployment and push: **none**.
 
 ## Revised rollout, 25 August 2026
 
 - Rewrite the kept articles to the compact editorial standard before seeding: usually 600-900 words for administrative/process content and 700-1,200 words for clinical safety content. These are working ranges, not ranking targets.
 - Keep one search intent and one service CTA family per article. Use only the secondary queries that support that intent; do not insert every keyword returned by OpenSEO.
-- Create the six primary-language CMS drafts first. The other 13 approved locale variants remain local until native-language review is available.
+- The six primary-language CMS records were created first. The initial 13 locale variants and the remaining 17 were added as translation rows in separate guarded transactions on 29 August 2026; all missing variants received the translation/localization and humanization pass before import.
 - Review and release the administrative cohort first: Portugal sickness-benefit amount, Ireland Illness Benefit amount/timing, and Czech sickness-pay calculation.
 - Release the Portugal driving-certificate, Spain urgent blood-pressure, and Romania blood-pressure-safety cohort only after the relevant legal or clinical review is complete.
-- Do not seed the 17 unplanned locale variants. Preserve them locally as research material unless later Search Console or migration-corridor evidence justifies a new locale decision.
+- Keep publication approval separate from translation completeness. Five parent records remain drafts and must not be published without the relevant native/legal/clinical approval.
 
 ## Research record
 
@@ -190,12 +190,30 @@ six rows as `skip-existing` with status `DRAFT`:
 | Spain urgent blood pressure / ES | `cmt8laldn0008csjufi90oq5x` |
 | Romania blood-pressure safety / RO | `cmt8lapi9000acsju2l7jkq5m` |
 
-No translation row was created. No existing post was updated. All six records remain
-unpublished and subject to the publication gates below.
+No translation row was created in that primary-only transaction. No existing post was
+updated. At that readback, all six records were unpublished.
+
+Production translation result, 29 August 2026: after a clean 13-row dry run, the
+approved `EN/DE`, `RO/ES/PT/DE`, `EN/DE`, `EN/DE`, `EN/DE`, and `EN` locale sets
+were added in one guarded transaction. Readback verified 13 translation rows with
+localized metadata, bodies and cover alt text. At that transaction's readback, the
+six parent posts remained active `DRAFT` records with null publication and review
+dates. The remaining 17 research variants were not part of that initial import.
+
+Remaining translation result, 29 August 2026: the live audit later found exactly 17
+absent locale rows. After the Claude Blog translation/localization and humanization
+review, a separate exact-matrix importer completed a clean dry run and created those
+17 rows in one transaction. It locked the six parents and 13 existing translations,
+then verified that none of them changed. The final independent audit returned six
+parents, 30 translations, and complete CS/DE/EN/ES/PT/RO coverage for every topic.
+Five parents were `DRAFT`; the Spain urgent-blood-pressure parent was `PUBLISHED`
+before this completion and was preserved verbatim. All six retained the `Global
+Health Medical Team` author byline. Existing keyword evidence covered every topic,
+so this completion used no OpenSEO credits.
 
 Publication remains blocked until:
 
-- a native editor reviews each of the 19 kept locale drafts before that locale is published;
+- a native editor reviews each locale before a draft parent is published or future translated copy is materially revised;
 - the named clinician accepts authorship/review attribution and reviews the article;
 - the Ireland editor confirms the narrow payment intent does not compete with the published claim guide;
 - current annual benefit figures and legal rules are checked on the day of publication;

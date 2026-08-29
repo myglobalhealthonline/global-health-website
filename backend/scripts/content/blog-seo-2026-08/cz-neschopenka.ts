@@ -1216,7 +1216,7 @@ export const CZ_NESCHOPENKA: PostSet = {
     "Cluster from the 2026-08-04 cs/2203 expansion, all KD<=18: elektronická neschopenka 1,600 KD 0, e neschopenka 1,600 KD 0, jak zjistit kdy mi přijde nemocenská 1,300 KD 5, čssz nemocenská 720 KD 10, neschopenka zpětně 590 KD 0, neschopenka vycházky 390 KD 0, neschopenka po telefonu 320 KD 2. SERP page 1 = ČSSZ + news/HR/law explainers + one clinic blog; no praktický lékař authors any of it. GSC: 'vystavení neschopenky' already at pos 46 on /czechia/cs/services/neschopenka-online.",
   serviceSlug: "neschopenka-online",
   authorDoctorId: "cmqz2vn0j006901lu9zla3zmp",
-  authorDisplayName: "MUDr. Vojtěch Černý",
+  authorDisplayName: "Global Health Medical Team",
   reviewerDoctorId: "cmqz4mk98007801lugo7c4y30",
   reviewerDisplayName: "MUDr. Romana Pavlů",
   posts: [cs, en, pt, es, roPost, de],

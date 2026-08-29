@@ -182,7 +182,7 @@ const cs: LocalePost = {
   } satisfies Article,
 };
 
-const en: LocalePost = {
+const enResearch: LocalePost = {
   locale: "EN",
   slug: "czech-sickness-benefit-calculation-2026-employer-vs-cssz",
   title: "Czech Sickness Benefit Calculation 2026: Employer Pay vs ČSSZ",
@@ -403,7 +403,7 @@ const pt: LocalePost = {
     h1: "Como se calcula a baixa médica checa em 2026",
     deck: "Os primeiros 14 dias não funcionam da mesma forma que o resto da baixa. É nessa passagem do empregador para a ČSSZ que mais pessoas fazem contas erradas.",
     intro:
-      "Se um médico na Chéquia o declarar em <strong>incapacidade temporária para o trabalho</strong>, não começa desde o primeiro dia uma única prestação igual para todos os dias. Existem <strong>dois regimes de cálculo</strong>. Durante os primeiros 14 dias de calendário, o empregador paga uma <strong>compensação salarial</strong>, e só pelos dias úteis ou feriados pagos em que o trabalhador iria efetivamente trabalhar. A partir do <strong>15.º dia de calendário</strong>, a <strong>Administração Checa da Segurança Social, ČSSZ</strong>, assume o pagamento do <strong>subsídio de doença</strong> por dias de calendário. Em 2026, os limites de redução relevantes são 1 633 CZK, 2 449 CZK e 4 897 CZK. Por isso, quem tentar estimar o valor apenas como uma percentagem fixa do salário bruto quase de certeza falha o cálculo.",
+      "Se um médico na Chéquia o declarar em <strong>incapacidade temporária para o trabalho</strong>, o pagamento não segue uma única fórmula desde o primeiro dia. Existem <strong>dois regimes de cálculo</strong>. Durante os primeiros 14 dias de calendário, o empregador paga uma <strong>compensação salarial</strong>, e só pelos dias úteis ou feriados pagos em que o trabalhador iria efetivamente trabalhar. A partir do <strong>15.º dia de calendário</strong>, a <strong>Administração Checa da Segurança Social, ČSSZ</strong>, assume o pagamento do <strong>subsídio de doença</strong> por dias de calendário. Em 2026, os limites de redução relevantes são 1 633 CZK, 2 449 CZK e 4 897 CZK. Uma estimativa baseada apenas numa percentagem fixa do salário bruto dará quase sempre um valor errado.",
     facts: [
       "Dias 1-14: compensação salarial do empregador",
       "A partir do dia 15: prestação paga pela ČSSZ",
@@ -462,7 +462,7 @@ const pt: LocalePost = {
         eyebrow: "Subsídio da ČSSZ",
         h2: "Como a ČSSZ calcula o subsídio de doença a partir do dia 15",
         blocks: [
-          lead("A partir do 15.º dia de calendário, a lógica muda por completo. A ČSSZ deixa de olhar para o horário de trabalho e passa a olhar para a base diária legal."),
+          lead("A partir do 15.º dia de calendário, a ČSSZ deixa de usar o horário de trabalho e passa a calcular o pagamento a partir da base diária prevista na lei."),
           p("A ČSSZ parte do <strong>rendimento contabilizável</strong> no período relevante, normalmente os 12 meses civis anteriores ao mês em que começou a incapacidade. Esse rendimento é dividido pelo número de dias de calendário contabilizáveis e assim nasce a <strong>base diária de incidência</strong>."),
           p(`Em 2026, essa base diária é reduzida usando os limites legais de <strong>${DVZ_THRESHOLDS_2026}</strong>. Até ao primeiro limite contam 90%, entre o primeiro e o segundo contam 60%, entre o segundo e o terceiro contam 30%, e o que ultrapassa o terceiro deixa de contar. O resultado é a <strong>base diária reduzida</strong>.`),
           p("Sobre essa base aplica-se depois a percentagem correspondente à duração da incapacidade. Do dia 15 ao dia 30, o subsídio é <strong>60%</strong> da base diária reduzida. Do dia 31 ao dia 60 sobe para <strong>66%</strong>. A partir do dia 61 sobe para <strong>72%</strong>. É por isso que uma baixa longa pode aumentar ligeiramente sem que a base salarial mude."),
@@ -481,7 +481,7 @@ const pt: LocalePost = {
         eyebrow: "Exemplo prático",
         h2: "Porque o mesmo salário gera valores diferentes em semanas diferentes",
         blocks: [
-          lead("O objetivo do exemplo não é substituir a empresa nem a ČSSZ. Serve para mostrar porque é que as primeiras duas semanas e a fase estatal posterior não se podem estimar da mesma forma."),
+          lead("Este exemplo mostra porque é que as primeiras duas semanas e a fase posterior, paga pela ČSSZ, exigem cálculos diferentes."),
           p("Imagine um trabalhador com horário regular de segunda a sexta que fica incapaz para o trabalho na terça-feira, 10 de março de 2026. Nos primeiros 14 dias de calendário perde nove dias úteis programados. O empregador ignora os fins de semana, pega no rendimento médio horário, reduz esse valor através dos limites horários de 2026 e paga 60% do resultado pelas horas efetivamente perdidas. Com turnos de oito horas, isso significa 72 horas perdidas; com turnos de doze horas, a conta é diferente, mesmo que o salário mensal seja igual."),
           p("Se a incapacidade continuar para lá de 23 de março de 2026, no dia seguinte começa a fase da ČSSZ. A partir daí, o que importa é a base diária reduzida e a taxa legal correspondente ao dia da incapacidade: 60% entre o dia 15 e o dia 30, 66% depois e, em baixas mais prolongadas, 72%."),
           warn("Para que serve este exemplo", "Serve para perceber a mecânica. Não serve para prever ao cêntimo. O valor exato depende sempre do seu rendimento médio, do seu horário e do histórico de rendimentos considerado pela ČSSZ."),
@@ -495,7 +495,7 @@ const pt: LocalePost = {
         blocks: [
           lead("Nem todas as pessoas passam pelos primeiros 14 dias da mesma maneira. Depois de terminar o emprego, ou no caso dos independentes, o resultado é diferente do percurso normal de um trabalhador por conta de outrem."),
           p("Se a relação laboral já terminou e a pessoa adoece ainda dentro do <strong>prazo de proteção</strong>, o direito ao subsídio pode continuar a nascer. Esse prazo é normalmente de <strong>7 dias de calendário</strong>, desde que o emprego tenha durado pelo menos esse tempo. Se durou menos, o prazo de proteção dura apenas tanto quanto durou o próprio emprego."),
-          p("O que surpreende muita gente é que já não existe empregador para pagar a compensação dos primeiros 14 dias. Assim, a ČSSZ pode pagar a partir do dia 15, mas a fase inicial de duas semanas não fica coberta por compensação salarial. Para os <strong>trabalhadores independentes</strong>, a estrutura é ainda mais exigente: o seguro de doença é voluntário e, mesmo quando existe direito, não há compensação do empregador nos primeiros 14 dias."),
+          p("Quando a relação laboral já terminou, não há empregador que pague a compensação dos primeiros 14 dias. A ČSSZ pode pagar a partir do dia 15, mas as duas semanas iniciais ficam sem compensação salarial. Para os <strong>trabalhadores independentes</strong>, o seguro de doença é voluntário e, mesmo quando existe direito, não há compensação do empregador nos primeiros 14 dias."),
           ul([
             "Trabalhador com contrato em vigor: primeiros 14 dias compensados pelo empregador, a partir do dia 15 subsídio.",
             "Ex-trabalhador no prazo de proteção: possível subsídio a partir do dia 15, mas sem compensação salarial nas primeiras duas semanas.",
@@ -588,7 +588,7 @@ const es: LocalePost = {
   slug: "calculo-de-la-baja-medica-en-chequia-2026-empleador-vs-cssz",
   title: "Cálculo de la baja médica en Chequia en 2026: empleador vs. ČSSZ",
   excerpt:
-    "En Chequia, los ingresos durante una baja por enfermedad en 2026 se calculan en dos fases: los primeros 14 días de calendario los paga el empleador como compensación salarial solo por los días laborables perdidos; desde el día 15 paga la ČSSZ por días de calendario. Explicamos la diferencia exacta, los límites de reducción de 2026 y un ejemplo práctico.",
+    "En Chequia, los ingresos durante una baja por enfermedad en 2026 se calculan en dos fases: los primeros 14 días de calendario los paga el empleador como compensación salarial solo por los días laborables perdidos; desde el día 15 paga la ČSSZ por días de calendario. La guía aclara ambos cálculos, los límites de reducción de 2026 y un ejemplo práctico.",
   seoTitle: "Baja médica Chequia 2026: empleador vs. ČSSZ",
   seoDescription:
     "Baja médica en Chequia en 2026: 14 días a cargo del empleador, ČSSZ desde el día 15, límites de reducción y ejemplo práctico.",
@@ -661,7 +661,7 @@ const es: LocalePost = {
         eyebrow: "Prestación estatal",
         h2: "Cómo calcula la ČSSZ la prestación desde el día 15",
         blocks: [
-          lead("A partir del día 15 de calendario cambia toda la lógica. La ČSSZ deja de mirar el horario laboral y pasa a usar la base diaria legal."),
+          lead("A partir del día 15 de calendario, la ČSSZ deja de usar el horario laboral y calcula el pago con la base diaria prevista por la ley."),
           p("La ČSSZ parte del <strong>ingreso computable</strong> del período relevante, normalmente los 12 meses naturales anteriores al mes en que empezó la incapacidad. Ese ingreso se divide entre el número de días naturales computables y así nace la <strong>base diaria de cálculo</strong>."),
           p(`En 2026, esa base diaria se reduce usando los límites legales de <strong>${DVZ_THRESHOLDS_2026}</strong>. Hasta el primer límite cuenta el 90%, entre el primero y el segundo el 60%, entre el segundo y el tercero el 30%, y lo que supera el tercero deja de contar. El resultado es la <strong>base diaria reducida</strong>.`),
           p("Sobre esa base se aplica el porcentaje según la duración de la incapacidad. Del día 15 al 30 la prestación es el <strong>60%</strong> de la base diaria reducida. Del día 31 al 60 sube al <strong>66%</strong>. A partir del día 61 sube al <strong>72%</strong>. Por eso una baja larga puede aumentar ligeramente sin que cambie la base salarial inicial."),
@@ -680,7 +680,7 @@ const es: LocalePost = {
         eyebrow: "Ejemplo práctico",
         h2: "Por qué el mismo salario da importes distintos en semanas distintas",
         blocks: [
-          lead("El ejemplo no pretende sustituir a la empresa ni a la ČSSZ. Sirve para entender por qué las dos primeras semanas y la fase estatal posterior no se pueden estimar de la misma manera."),
+          lead("Este ejemplo muestra por qué las dos primeras semanas y la fase posterior, pagada por la ČSSZ, requieren cálculos distintos."),
           p("Imagine una persona asalariada con horario regular de lunes a viernes que cae de baja el martes 10 de marzo de 2026. En los primeros 14 días naturales pierde nueve jornadas laborables programadas. El empleador ignora los fines de semana, toma el rendimiento medio por hora, lo reduce con los umbrales horarios de 2026 y paga el 60% del resultado por las horas realmente perdidas. Con turnos de ocho horas son 72 horas; con turnos de doce horas, la cuenta cambia aunque el salario mensual sea idéntico."),
           p("Si la incapacidad continúa más allá del 23 de marzo de 2026, al día siguiente empieza la fase de la ČSSZ. Lo relevante pasa a ser la base diaria reducida y el porcentaje legal aplicable: 60% entre el día 15 y el 30, 66% después y, en bajas más largas, 72%."),
           warn("Para qué sirve este ejemplo", "Sirve para entender el mecanismo. No sirve para predecir el importe exacto al céntimo. La cantidad real siempre depende de su rendimiento medio, de su horario y del historial de ingresos que entra en el cálculo de la ČSSZ."),
@@ -694,7 +694,7 @@ const es: LocalePost = {
         blocks: [
           lead("No todo el mundo atraviesa los primeros 14 días de la misma forma. Tras el fin del empleo, o en el trabajo autónomo, el resultado es distinto al caso estándar de una persona asalariada."),
           p("Si la relación laboral ya terminó y la enfermedad empieza aún dentro del <strong>período de protección</strong>, puede seguir existiendo derecho a la prestación. Ese período suele ser de <strong>7 días de calendario</strong>, siempre que el empleo haya durado al menos ese tiempo. Si duró menos, el período de protección dura solo tanto como duró ese empleo."),
-          p("Lo que sorprende a muchas personas es que ya no existe empleador que pague la compensación de los primeros 14 días. Así, la ČSSZ puede pagar desde el día 15, pero la fase inicial de dos semanas queda sin compensación del empleador. Para las <strong>personas autónomas</strong>, además, el seguro de enfermedad es voluntario y no existe compensación del empleador en esas primeras dos semanas."),
+          p("Cuando la relación laboral ya ha terminado, no hay un empleador que pague la compensación de los primeros 14 días. La ČSSZ puede pagar desde el día 15, pero las dos primeras semanas quedan sin compensación salarial. Para las <strong>personas autónomas</strong>, además, el seguro de enfermedad es voluntario y tampoco existe compensación del empleador durante ese período."),
           ul([
             "Trabajador con contrato en vigor: primeros 14 días pagados por el empleador, desde el día 15 prestación.",
             "Ex trabajador dentro del período de protección: posible prestación desde el día 15, pero sin compensación del empleador en las dos primeras semanas.",
@@ -801,7 +801,7 @@ const roPost: LocalePost = {
     h1: "Cum se calculează concediul medical ceh în 2026",
     deck: "Primele 14 zile nu sunt plătite în același mod ca restul concediului. Tocmai la trecerea dintre angajator și ČSSZ apar cele mai multe calcule greșite.",
     intro:
-      "Dacă în Cehia un medic vă declară în <strong>incapacitate temporară de muncă</strong>, nu începe din prima zi o singură prestație liniară. Există <strong>două regimuri de calcul</strong>. În primele 14 zile calendaristice, angajatorul plătește o <strong>compensație salarială</strong>, și numai pentru zilele lucrătoare sau sărbătorile plătite în care ați fi lucrat efectiv. Din <strong>ziua 15 calendaristică</strong>, <strong>Administrația Cehă de Asigurări Sociale, ČSSZ</strong>, preia plata <strong>indemnizației de boală</strong> pe zile calendaristice. În 2026 se aplică plafoanele de reducere de 1.633 CZK, 2.449 CZK și 4.897 CZK. De aceea, cine încearcă să estimeze suma doar ca un procent fix din salariul brut aproape sigur greșește.",
+      "Dacă în Cehia un medic vă declară în <strong>incapacitate temporară de muncă</strong>, plata nu se calculează după aceeași formulă din prima zi. Există <strong>două regimuri de calcul</strong>. În primele 14 zile calendaristice, angajatorul plătește o <strong>compensație salarială</strong>, și numai pentru zilele lucrătoare sau sărbătorile plătite în care ați fi lucrat efectiv. Din <strong>ziua 15 calendaristică</strong>, <strong>Administrația Cehă de Asigurări Sociale, ČSSZ</strong>, preia plata <strong>indemnizației de boală</strong> pe zile calendaristice. În 2026 se aplică plafoanele de reducere de 1.633 CZK, 2.449 CZK și 4.897 CZK. O estimare bazată doar pe un procent fix din salariul brut va fi aproape sigur greșită.",
     facts: [
       "Zilele 1-14: compensație salarială de la angajator",
       "Din ziua 15: prestație plătită de ČSSZ",
@@ -833,7 +833,7 @@ const roPost: LocalePost = {
             "Din ziua 15: ČSSZ, indemnizație de boală, toate zilele calendaristice ale incapacității.",
             "Persoanele independente sunt un caz separat: nu au compensație de la angajator și nu primesc această prestație în primele 14 zile.",
           ]),
-          warn("De ce așteptările sunt adesea greșite", "Mulți înmulțesc încă din primele două săptămâni o valoare zilnică presupusă cu toate zilele din calendar. Dar angajatorul nu plătește weekendurile dacă nu exista tură planificată. De aceea primul import pare adesea mai puțin intuitiv decât se aștepta angajatul."),
+          warn("De ce suma poate fi mai mică decât vă așteptați", "Mulți înmulțesc încă din primele două săptămâni o valoare zilnică presupusă cu toate zilele din calendar. Angajatorul nu plătește însă weekendurile dacă nu exista o tură planificată. De aceea prima sumă poate fi mai mică decât se aștepta angajatul."),
         ],
       },
       {
@@ -861,7 +861,7 @@ const roPost: LocalePost = {
         eyebrow: "Indemnizația de stat",
         h2: "Cum calculează ČSSZ indemnizația de boală din ziua 15",
         blocks: [
-          lead("Din ziua 15 calendaristică logica se schimbă complet. ČSSZ nu mai urmărește programul de lucru, ci baza zilnică prevăzută de lege."),
+          lead("Din ziua 15 calendaristică, ČSSZ nu mai folosește programul de lucru, ci calculează plata pe baza zilnică prevăzută de lege."),
           p("ČSSZ pornește de la <strong>venitul luat în calcul</strong> în perioada relevantă, de regulă ultimele 12 luni calendaristice anterioare lunii în care a început incapacitatea. Acest venit se împarte la numărul de zile calendaristice luate în calcul și astfel rezultă <strong>baza zilnică de evaluare</strong>."),
           p(`În 2026, această bază zilnică este redusă folosind limitele legale de <strong>${DVZ_THRESHOLDS_2026}</strong>. Până la primul prag se iau în calcul 90%, între primul și al doilea 60%, între al doilea și al treilea 30%, iar ce depășește al treilea prag nu mai contează. Rezultatul este <strong>baza zilnică redusă</strong>.`),
           p("Pe această bază se aplică apoi procentul în funcție de durata incapacității. Din ziua 15 până în ziua 30 indemnizația este <strong>60%</strong> din baza zilnică redusă. Din ziua 31 până în ziua 60 crește la <strong>66%</strong>. Din ziua 61 crește la <strong>72%</strong>. De aceea un concediu medical mai lung poate aduce o sumă zilnică puțin mai mare, chiar dacă baza salarială nu s-a schimbat."),
@@ -880,10 +880,10 @@ const roPost: LocalePost = {
         eyebrow: "Exemplu practic",
         h2: "De ce același salariu produce sume diferite în săptămâni diferite",
         blocks: [
-          lead("Exemplul nu este menit să înlocuiască angajatorul sau ČSSZ. El arată de ce primele două săptămâni și faza ulterioară plătită de stat nu se pot estima în același mod."),
+          lead("Exemplul arată de ce primele două săptămâni și faza ulterioară, plătită de ČSSZ, trebuie calculate separat."),
           p("Imaginați-vă un angajat cu program regulat de luni până vineri care intră în concediu medical marți, 10 martie 2026. În primele 14 zile calendaristice pierde nouă zile lucrătoare programate. Angajatorul ignoră weekendurile, ia câștigul mediu orar, îl reduce prin pragurile orare din 2026 și plătește 60% din rezultat pentru orele efectiv pierdute. Cu ture de opt ore asta înseamnă 72 de ore; cu ture de douăsprezece ore, calculul se schimbă, chiar dacă salariul lunar este identic."),
           p("Dacă incapacitatea continuă după 23 martie 2026, în ziua următoare începe faza ČSSZ. Din acel moment nu mai contează dacă este sâmbătă sau marți. Contează baza zilnică redusă și procentul legal aplicabil pentru etapa respectivă a incapacității. Între ziua 15 și ziua 30 se plătește 60%; apoi 66%; iar în concedii mai lungi 72%."),
-          p("Prin urmare, este perfect normal ca aceeași persoană să vadă trei valori diferite pe parcursul unui concediu medical prelungit: una în faza angajatorului, alta la începutul plății de la ČSSZ și încă una dacă incapacitatea durează mai mult de o lună. Nu este o eroare. Așa este construit legal sistemul ceh."),
+          p("Aceeași persoană poate vedea trei valori diferite pe parcursul unui concediu medical prelungit: una în faza angajatorului, alta la începutul plății de la ČSSZ și încă una dacă incapacitatea durează mai mult de o lună. Diferența rezultă din etapele prevăzute de sistemul ceh."),
           warn("La ce folosește exemplul", "Ajută la înțelegerea mecanismului. Nu oferă o predicție exactă la ultimul ban. Suma reală depinde întotdeauna de câștigul mediu al persoanei, de programul ei și de istoricul veniturilor luat în calcul de ČSSZ."),
         ],
       },
@@ -895,7 +895,7 @@ const roPost: LocalePost = {
         blocks: [
           lead("Nu toată lumea trece prin primele 14 zile în același mod. După încetarea raportului de muncă sau în activitatea independentă, rezultatul este diferit față de cazul standard al unui angajat."),
           p("Dacă raportul de muncă s-a încheiat deja și boala începe încă în <strong>perioada de protecție</strong>, dreptul la indemnizație poate continua să apară. Această perioadă este, în mod obișnuit, de <strong>7 zile calendaristice</strong>, cu condiția ca raportul de muncă să fi durat cel puțin atât. Dacă a durat mai puțin, perioada de protecție durează doar atât cât a durat contractul respectiv."),
-          p("Ceea ce surprinde multă lume este că nu mai există angajator care să plătească compensația pentru primele 14 zile. Astfel, ČSSZ poate plăti din ziua 15, dar faza inițială de două săptămâni rămâne fără compensație salarială de la angajator. Pentru <strong>persoanele independente</strong>, structura este și mai strictă: asigurarea pentru boală este voluntară și, chiar când există dreptul, nu există compensație de la angajator în primele două săptămâni."),
+          p("După încetarea raportului de muncă, nu mai există un angajator care să plătească primele 14 zile. ČSSZ poate plăti din ziua 15, dar cele două săptămâni inițiale rămân fără compensație salarială. Pentru <strong>persoanele independente</strong>, asigurarea pentru boală este voluntară și, chiar când există dreptul, nu există compensație de la angajator în primele două săptămâni."),
           ul([
             "Angajat cu contract activ: primele 14 zile plătite de angajator, din ziua 15 indemnizație.",
             "Fost angajat în perioada de protecție: posibilă indemnizație din ziua 15, dar fără compensația angajatorului în primele două săptămâni.",
@@ -919,7 +919,7 @@ const roPost: LocalePost = {
             "Este deja o incapacitate mai lungă, în care procentul a crescut după ziua 30 sau ziua 60?",
           ]),
           p("Dacă aveți nevoie mai întâi de partea de proces și nu de cea de calcul, o tratăm separat în ghidul nostru despre eNeschopenka: <a href=\"https://www.myglobalhealth.online/czechia/ro/blog/neschopenka-czech-sick-note-explained\">cum funcționează concediul medical electronic ceh</a>. Acel text explică traseul documentului. Articolul de aici este concentrat intenționat pe bani."),
-          p("Dacă aveți nevoie mai întâi ca un medic să decidă dacă incapacitatea temporară de muncă este justificată clinic în cazul dumneavoastră, puteți programa o consultație online. Medicul decide problema clinică, iar suma este stabilită de lege, de angajator și de ČSSZ."),
+          p("Dacă aveți nevoie ca un medic să stabilească dacă incapacitatea temporară de muncă este justificată clinic în cazul dumneavoastră, puteți programa o consultație online. Medicul face evaluarea clinică, iar suma este stabilită potrivit legii de angajator și de ČSSZ."),
         ],
       },
     ],
@@ -983,7 +983,7 @@ const roPost: LocalePost = {
   } satisfies Article,
 };
 
-const de: LocalePost = {
+const deResearch: LocalePost = {
   locale: "DE",
   slug: "tschechien-berechnung-krankengeld-2026-arbeitgeber-vs-cssz",
   title: "Berechnung des Krankengeldes in Tschechien 2026: Arbeitgeber vs. ČSSZ",
@@ -1185,6 +1185,93 @@ const de: LocalePost = {
   } satisfies Article,
 };
 
+// These older long-form copies are retained as research material only. The
+// approved EN and DE candidates below are translations of the compact Czech
+// source and keep Czech benefit rules intact.
+void [enResearch, deResearch];
+
+const en: LocalePost = {
+  locale: "EN",
+  slug: "czech-sick-pay-calculation-2026-employer-cssz",
+  title: "Czech sick pay calculation 2026: employer and ČSSZ",
+  excerpt: "How employer wage compensation is calculated for the first 14 days and how ČSSZ sickness benefit works from day 15 in Czechia.",
+  seoTitle: "Czech sick pay calculation 2026: employer and ČSSZ",
+  seoDescription: "Calculate Czech sick pay in 2026: employer compensation for days 1-14, ČSSZ benefit from day 15, reduction thresholds and examples.",
+  category: "General Practice",
+  article: {
+    lang: "en-CZ",
+    tagline: "Medicine Anytime, Anywhere",
+    categoryLabel: "General Practice",
+    categoryHref: href("en", "/blog"),
+    eyebrow: "Czechia · 2026 rules",
+    h1: "How Czech sick pay is calculated in 2026",
+    deck: "The employer pays wage compensation for missed shifts during the first 14 calendar days. From day 15, ČSSZ pays sickness benefit for every calendar day.",
+    intro: "A Czech sick-pay calculation in 2026 has <strong>two separate stages</strong>. For an employee covered by sickness insurance, the employer pays wage compensation during the first 14 calendar days, but only for missed scheduled shifts and paid public holidays. From day 15, ČSSZ pays sickness benefit for every calendar day. Self-employed people, some agreements and cross-border cases follow different rules. Both stages use reduction thresholds, so neither amount is a simple percentage of monthly gross salary.",
+    facts: ["Days 1-14: wage compensation from the employer", "From day 15: sickness benefit from ČSSZ", "2026 daily thresholds: CZK 1,633, 2,449 and 4,897"],
+    primaryCta: { label: "Open the official 2026 calculator", href: MPSV_CALCULATOR_2026 },
+    secondaryCta: { label: "How Czech eNeschopenka works", href: href("en", "/blog/neschopenka-czech-sick-note-explained") },
+    panelChip: "Quick answer",
+    panelParas: ["The two stages use different calculations.", "From day 15, ČSSZ uses a daily assessment base."],
+    author: { initials: "VČ", name: "MUDr. Vojtěch Černý", line: "General Practitioner · Global Health Czechia" },
+    reviewLine: "Clinical and native-language review by MUDr. Romana Pavlů is required before publication.",
+    navLabel: "In this guide",
+    sections: [
+      { id: "first-14-days", nav: "First 14 days", eyebrow: "Wage compensation", h2: "What the employer pays during the first 14 days", blocks: [
+        lead("The employer pays 60% of reduced average hourly earnings for missed shifts and paid public holidays."),
+        p("Payroll starts with average hourly earnings rather than the current monthly salary. For 2026, the hourly reduction thresholds are " + EMPLOYER_HOURLY_THRESHOLDS_2026 + ". Payroll counts 90% up to the first threshold, 60% between the first and second, and 30% between the second and third. Earnings above the third threshold do not enter the calculation."),
+        p("The employer takes 60% of the reduced result and multiplies it by the missed working hours. Two people with the same monthly salary can therefore receive different compensation when their shift patterns differ."),
+        cite("The legal basis is <a href=\"" + LABOUR_CODE_192 + "\" rel=\"nofollow noopener\" target=\"_blank\">Section 192 of the Czech Labour Code</a>."),
+      ]},
+      { id: "from-day-15", nav: "From day 15", eyebrow: "ČSSZ benefit", h2: "How ČSSZ calculates sickness benefit from day 15", blocks: [
+        lead("ČSSZ uses a reduced daily assessment base and pays for every calendar day."),
+        p("The base normally uses assessable income from the previous 12 calendar months. The 2026 daily thresholds are " + DVZ_THRESHOLDS_2026 + ". ČSSZ counts 90% up to the first threshold, 60% to the second, and 30% to the third."),
+      ]},
+      { id: "cssz-rates", nav: "ČSSZ rates", eyebrow: "Length of absence", h2: "What percentage ČSSZ pays", blocks: [
+        ul(["<strong>Days 15-30:</strong> 60% of the reduced daily base.", "<strong>Days 31-60:</strong> 66%.", "<strong>From day 61:</strong> 72%."]),
+        cite("Thresholds and rates were checked on 25 August 2026 with <a href=\"" + MPSV_SICKNESS_2026 + "\" rel=\"nofollow noopener\" target=\"_blank\">MPSV</a> and <a href=\"" + CSSZ_BENEFIT_CALC + "\" rel=\"nofollow noopener\" target=\"_blank\">ČSSZ</a>."),
+      ]},
+      { id: "example", nav: "Example", eyebrow: "Worked method", h2: "A worked Czech sick-pay example", blocks: [
+        lead("A simple example shows why the two stages cannot be combined."),
+        p("Employer example: CZK 250 an hour is reduced to CZK 225. Sixty percent is CZK 135 per missed hour. Nine eight-hour shifts give an estimate of CZK 9,720 before rounding."),
+        p("ČSSZ example: a daily base of CZK 1,500 is reduced to CZK 1,350. From day 15 to day 30, 60% gives an estimated CZK 810 per calendar day."),
+        p("For your own estimate, use the <a href=\"" + MPSV_CALCULATOR_2026 + "\" rel=\"nofollow noopener\" target=\"_blank\">MPSV 2026 calculator</a>, then compare the result with payroll or ČSSZ."),
+        warn("A calculator gives an estimate", "The assessment period, excluded days, shift pattern, earlier employment, an agreement, self-employment or cross-border insurance can change the result."),
+      ]},
+      { id: "checks", nav: "What to check", eyebrow: "If the amount looks wrong", h2: "What to verify with payroll and ČSSZ", blocks: [
+        lead("First identify which of the two payments is being calculated."),
+        ul(["How many shifts and hours were missed in the first 14 days?", "Which average hourly earnings did payroll use?", "On which date did ČSSZ take over payment?", "Which income and excluded days entered the daily base?", "Does the MPSV estimate use the same information as payroll or ČSSZ?"]),
+        p("Our separate guide explains <a href=\"" + href("en", "/blog/neschopenka-czech-sick-note-explained") + "\">how Czech eNeschopenka works</a>. If you need a medical assessment, see the <a href=\"" + href("en", "/services/neschopenka-online") + "\">online sick-note consultation</a>. A doctor cannot guarantee a sick note or a particular benefit amount."),
+      ]},
+    ],
+    linksEyebrow: "Global Health Czechia", linksH2: "Sick note and medical assessment", linksLead: "ČSSZ calculates the benefit; a doctor assesses whether health reasons justify incapacity for work.",
+    links: [{ label: "Online sick-note consultation", href: href("en", "/services/neschopenka-online") }, { label: "How eNeschopenka works", href: href("en", "/blog/neschopenka-czech-sick-note-explained") }, { label: "Doctors in Czechia", href: href("en", "/doctors") }, { label: "Contact Global Health Czechia", href: href("en", "/contact") }],
+    ctaBox: { h3: "Do you need a medical assessment?", text: "A Czech doctor can assess whether your condition justifies incapacity for work. The employer and ČSSZ determine the payment.", primary: { label: "Book a consultation", href: href("en", "/services/neschopenka-online") }, secondary: { label: "View doctors", href: href("en", "/doctors") } },
+    sourcesEyebrow: "Official sources", sourcesH2: "Rules for 2026", sourcesLead: "Checked on 25 August 2026.",
+    sources: [{ label: "MPSV: sickness insurance in 2026", href: MPSV_SICKNESS_2026 }, { label: "ČSSZ: detailed sickness-benefit information", href: CSSZ_SICKNESS_DETAIL }, { label: "ČSSZ: benefit amounts and calculations", href: CSSZ_BENEFIT_CALC }, { label: "MPSV: 2026 benefit calculator", href: MPSV_CALCULATOR_2026 }, { label: "Czech Labour Code, Section 192", href: LABOUR_CODE_192 }, { label: "Czech Sickness Insurance Act", href: SICKNESS_ACT_187 }],
+    sourcesNote: "The employer calculates exact wage compensation; ČSSZ calculates exact sickness benefit.", faqEyebrow: "Frequently asked questions", faqH2: "Czech sick pay in 2026",
+    faqs: [{ q: "Who pays during the first 14 days?", a: "The employer pays wage compensation for missed shifts and paid public holidays. ČSSZ starts paying sickness benefit from the 15th calendar day." }, { q: "What percentage does ČSSZ pay?", a: "It pays 60% from days 15-30, 66% from days 31-60 and 72% from day 61, always after reducing the daily assessment base." }, { q: "Where is the official calculator?", a: "MPSV publishes a 2026 benefit calculator. It is only an estimate because it may not know your actual hourly average, shifts, assessment period or excluded days." }],
+    disclaimerTitle: "Medical and financial information", disclaimer: "AI-assisted article awaiting Czech legal, payroll and clinical review. General information checked on 25 August 2026; not individual medical, legal or payroll advice.",
+  } satisfies Article,
+};
+
+const de: LocalePost = {
+  locale: "DE", slug: "krankengeld-tschechien-berechnung-2026-arbeitgeber-cssz", title: "Krankengeld in Tschechien 2026: Arbeitgeber und ČSSZ", excerpt: "So werden die Lohnfortzahlung in den ersten 14 Tagen und das Krankengeld der ČSSZ ab Tag 15 in Tschechien berechnet.", seoTitle: "Krankengeld Tschechien 2026: Berechnung", seoDescription: "Berechnung bei Krankheit in Tschechien 2026: Arbeitgeberzahlung für Tag 1-14, ČSSZ-Leistung ab Tag 15, Reduktionsgrenzen und Beispiele.", category: "Allgemeinmedizin",
+  article: {
+    lang: "de-DE", tagline: "Medizin, wenn Sie sie brauchen", categoryLabel: "Allgemeinmedizin", categoryHref: href("de", "/blog"), eyebrow: "Tschechien · Regeln für 2026", h1: "Berechnung des Krankengelds in Tschechien 2026", deck: "In den ersten 14 Kalendertagen zahlt der Arbeitgeber Ersatz für ausgefallene Schichten. Ab Tag 15 zahlt die ČSSZ für jeden Kalendertag.",
+    intro: "Die Berechnung bei Krankheit in Tschechien hat 2026 <strong>zwei getrennte Stufen</strong>. Bei einem versicherten Arbeitsverhältnis zahlt der Arbeitgeber in den ersten 14 Kalendertagen Lohnersatz, jedoch nur für ausgefallene Schichten und bezahlte Feiertage. Ab Tag 15 zahlt die ČSSZ Krankengeld für jeden Kalendertag. Für Selbstständige, bestimmte Vereinbarungen und grenzüberschreitende Fälle können andere Regeln gelten. Beide Beträge werden reduziert und lassen sich nicht als einfacher Prozentsatz des monatlichen Bruttolohns berechnen.",
+    facts: ["Tag 1-14: Lohnersatz durch den Arbeitgeber", "Ab Tag 15: Krankengeld durch die ČSSZ", "Tagesgrenzen 2026: 1.633, 2.449 und 4.897 CZK"], primaryCta: { label: "Offiziellen Rechner für 2026 öffnen", href: MPSV_CALCULATOR_2026 }, secondaryCta: { label: "So funktioniert eNeschopenka", href: href("de", "/blog/neschopenka-krankschreibung-in-tschechien") }, panelChip: "Kurz erklärt", panelParas: ["Lohnersatz und Krankengeld sind verschiedene Zahlungen.", "Die erste Stufe nutzt Stundenverdienst und ausgefallene Schichten.", "Ab Tag 15 verwendet die ČSSZ eine tägliche Bemessungsgrundlage."], author: { initials: "VČ", name: "MUDr. Vojtěch Černý", line: "Allgemeinmediziner · Global Health Tschechien" }, reviewLine: "Vor der Veröffentlichung ist die fachliche und sprachliche Prüfung durch MUDr. Romana Pavlů erforderlich.", navLabel: "In diesem Leitfaden",
+    sections: [
+      { id: "erste-14-tage", nav: "Erste 14 Tage", eyebrow: "Lohnersatz", h2: "Was der Arbeitgeber in den ersten 14 Tagen zahlt", blocks: [lead("Der Arbeitgeber zahlt 60% des reduzierten durchschnittlichen Stundenverdiensts für ausgefallene Schichten und bezahlte Feiertage."), p("Die Lohnabrechnung verwendet den durchschnittlichen Stundenverdienst, nicht direkt das aktuelle Monatsgehalt. Für 2026 gelten die stündlichen Reduktionsgrenzen " + EMPLOYER_HOURLY_THRESHOLDS_2026 + ". Bis zur ersten Grenze zählen 90%, zwischen der ersten und zweiten 60%, zwischen der zweiten und dritten 30%. Einkommen oberhalb der dritten Grenze bleibt unberücksichtigt."), p("Vom reduzierten Ergebnis werden 60% mit den ausgefallenen Arbeitsstunden multipliziert. Zwei Beschäftigte mit gleichem Monatsgehalt können deshalb bei unterschiedlichen Schichtplänen verschiedene Beträge erhalten."), cite("Rechtsgrundlage ist <a href=\"" + LABOUR_CODE_192 + "\" rel=\"nofollow noopener\" target=\"_blank\">§ 192 des tschechischen Arbeitsgesetzbuchs</a>.")] },
+      { id: "ab-tag-15", nav: "Ab Tag 15", eyebrow: "Leistung der ČSSZ", h2: "Wie die ČSSZ ab Tag 15 rechnet", blocks: [lead("Die ČSSZ verwendet eine reduzierte tägliche Bemessungsgrundlage und zahlt für jeden Kalendertag."), p("Die Grundlage wird gewöhnlich aus dem anrechenbaren Einkommen der zwölf Kalendermonate vor Beginn der Arbeitsunfähigkeit und den anrechenbaren Tagen gebildet. 2026 gelten die täglichen Grenzen " + DVZ_THRESHOLDS_2026 + ". Bis zur ersten Grenze zählen 90%, zwischen der ersten und zweiten 60%, zwischen der zweiten und dritten 30%.")] },
+      { id: "cssz-saetze", nav: "ČSSZ-Sätze", eyebrow: "Dauer der Krankheit", h2: "Welchen Prozentsatz die ČSSZ zahlt", blocks: [ul(["<strong>Tag 15-30:</strong> 60% der reduzierten Tagesgrundlage.", "<strong>Tag 31-60:</strong> 66%.", "<strong>Ab Tag 61:</strong> 72%."]), p("Die Prozentsätze werden erst nach der Reduktion der Tagesgrundlage angewandt. Wer sie direkt auf das monatliche Bruttogehalt anwendet, erhält ein falsches Ergebnis."), cite("Grenzen und Sätze wurden am 25. August 2026 bei <a href=\"" + MPSV_SICKNESS_2026 + "\" rel=\"nofollow noopener\" target=\"_blank\">MPSV</a> und <a href=\"" + CSSZ_BENEFIT_CALC + "\" rel=\"nofollow noopener\" target=\"_blank\">ČSSZ</a> geprüft.")] },
+      { id: "beispiel", nav: "Beispiel", eyebrow: "Rechenweg", h2: "Beispiel für die Berechnung", blocks: [lead("Ein einfaches Beispiel zeigt, warum beide Stufen getrennt bleiben müssen."), p("Arbeitgeberbeispiel: Ein durchschnittlicher Stundenverdienst von 250 CZK liegt unter der ersten Stundengrenze. Davon zählen 90%, also 225 CZK. Der Lohnersatz beträgt 60% davon, somit 135 CZK je ausgefallener Stunde. Bei neun Achtstundenschichten ergibt sich vor Rundung und Besonderheiten der Lohnabrechnung eine Schätzung von 72 × 135 CZK = 9.720 CZK."), p("ČSSZ-Beispiel: Eine ungekürzte tägliche Bemessungsgrundlage von 1.500 CZK wird zu 90% berücksichtigt, also mit 1.350 CZK. Von Tag 15 bis 30 beträgt die Leistung 60%, damit geschätzt 810 CZK je Kalendertag. Die ČSSZ nutzt die tatsächlichen Einkünfte, anrechenbare und ausgeschlossene Tage sowie die gesetzlichen Rundungsregeln."), p("Nutzen Sie für eine eigene Schätzung den <a href=\"" + MPSV_CALCULATOR_2026 + "\" rel=\"nofollow noopener\" target=\"_blank\">MPSV-Rechner 2026</a> und vergleichen Sie das Ergebnis mit der Lohnabrechnung oder ČSSZ."), warn("Der Rechner liefert nur eine Schätzung", "Bemessungszeitraum, ausgeschlossene Tage, Schichten, frühere Beschäftigung, Selbstständigkeit oder ein grenzüberschreitendes Versicherungsverhältnis können den Betrag ändern.")] },
+      { id: "pruefen", nav: "Was prüfen", eyebrow: "Wenn der Betrag nicht stimmt", h2: "Was Sie bei Arbeitgeber und ČSSZ prüfen sollten", blocks: [lead("Klären Sie zuerst, welche der beiden Zahlungen gerade berechnet wird."), ul(["Wie viele Schichten und Stunden fielen in den ersten 14 Tagen aus?", "Welchen durchschnittlichen Stundenverdienst nutzte die Lohnabrechnung?", "Ab welchem Tag übernahm die ČSSZ?", "Welche Einkünfte und ausgeschlossenen Tage flossen in die Tagesgrundlage ein?", "Nutzt die MPSV-Schätzung dieselben Angaben wie Arbeitgeber oder ČSSZ?"]), p("Unser eigener Leitfaden erklärt, <a href=\"" + href("de", "/blog/neschopenka-krankschreibung-in-tschechien") + "\">wie eNeschopenka funktioniert</a>. Für eine medizinische Beurteilung können Sie die <a href=\"" + href("de", "/services/neschopenka-online") + "\">Online-Konsultation zur Krankschreibung</a> nutzen. Ein Arzt kann weder Krankschreibung noch Leistungshöhe garantieren.")] },
+    ],
+    linksEyebrow: "Global Health Tschechien", linksH2: "Krankschreibung und medizinische Beurteilung", linksLead: "Die ČSSZ berechnet die Leistung; der Arzt beurteilt die gesundheitliche Arbeitsunfähigkeit.", links: [{ label: "Online-Konsultation zur Krankschreibung", href: href("de", "/services/neschopenka-online") }, { label: "So funktioniert eNeschopenka", href: href("de", "/blog/neschopenka-krankschreibung-in-tschechien") }, { label: "Ärzte in Tschechien", href: href("de", "/doctors") }, { label: "Global Health Tschechien kontaktieren", href: href("de", "/contact") }], ctaBox: { h3: "Brauchen Sie eine medizinische Beurteilung?", text: "Ein tschechischer Arzt kann beurteilen, ob Ihr Zustand eine Arbeitsunfähigkeit begründet. Arbeitgeber und ČSSZ bestimmen die Zahlung.", primary: { label: "Konsultation buchen", href: href("de", "/services/neschopenka-online") }, secondary: { label: "Ärzte ansehen", href: href("de", "/doctors") } },
+    sourcesEyebrow: "Offizielle Quellen", sourcesH2: "Regeln für 2026", sourcesLead: "Grenzen und Verfahren wurden am 25. August 2026 geprüft.", sources: [{ label: "MPSV: Krankenversicherung 2026", href: MPSV_SICKNESS_2026 }, { label: "ČSSZ: Einzelheiten zum Krankengeld", href: CSSZ_SICKNESS_DETAIL }, { label: "ČSSZ: Höhe und Berechnung", href: CSSZ_BENEFIT_CALC }, { label: "MPSV: Leistungsrechner 2026", href: MPSV_CALCULATOR_2026 }, { label: "Tschechisches Arbeitsgesetzbuch § 192", href: LABOUR_CODE_192 }, { label: "Tschechisches Krankenversicherungsgesetz", href: SICKNESS_ACT_187 }], sourcesNote: "Der Arbeitgeber berechnet den genauen Lohnersatz; die ČSSZ berechnet das genaue Krankengeld.", faqEyebrow: "Häufige Fragen", faqH2: "Krankengeld in Tschechien 2026", faqs: [{ q: "Wer zahlt in den ersten 14 Tagen?", a: "Der Arbeitgeber zahlt Lohnersatz für ausgefallene Schichten und bezahlte Feiertage. Ab dem 15. Kalendertag zahlt die ČSSZ Krankengeld." }, { q: "Welchen Prozentsatz zahlt die ČSSZ?", a: "60% von Tag 15-30, 66% von Tag 31-60 und 72% ab Tag 61, jeweils nach Reduktion der täglichen Bemessungsgrundlage." }, { q: "Wo finde ich den offiziellen Rechner?", a: "MPSV veröffentlicht einen Rechner für 2026. Er bleibt eine Schätzung, da er Ihren tatsächlichen Stundenwert, Schichten und ausgeschlossenen Tage möglicherweise nicht kennt." }], disclaimerTitle: "Medizinischer und finanzieller Hinweis", disclaimer: "KI-unterstützter Artikel, der noch tschechisch-rechtlich, lohnfachlich und klinisch geprüft werden muss. Allgemeine Informationen vom 25. August 2026; keine individuelle medizinische, rechtliche oder lohnfachliche Beratung.",
+  } satisfies Article,
+};
+
 export const CZ_VYPOCET_NEMOCENSKE: PostSet = {
   key: "cz-vypocet-nemocenske",
   countryCode: "cz",
@@ -1195,7 +1282,7 @@ export const CZ_VYPOCET_NEMOCENSKE: PostSet = {
     "Primary keyword 'výpočet nemocenské 2026' 1,600/KD31/CPC1.26 with supporting head term 'nemocenská 2026' 2,900/KD22 from the 2026-08 editorial research brief. Search intent is explicitly calculation-focused, with SERPs mixing state sources, payroll explainers and calculators. This article is intentionally calculation-first and distinct from the existing eNeschopenka process explainer.",
   serviceSlug: "neschopenka-online",
   authorDoctorId: "cmqz2vn0j006901lu9zla3zmp",
-  authorDisplayName: "MUDr. Vojtěch Černý",
+  authorDisplayName: "Global Health Medical Team",
   reviewerDoctorId: "cmqz4mk98007801lugo7c4y30",
   reviewerDisplayName: "MUDr. Romana Pavlů",
   posts: [cs, en, pt, es, roPost, de],

@@ -24,6 +24,7 @@ import { getCountryTrust } from "@/lib/content/get-country-trust";
 import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
 import { sentenceCaseIfShouting } from "@/lib/text/sentence-case";
+import { resolveBlogAuthorByline } from "@/lib/content/blog-byline";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -259,14 +260,10 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
     ),
   ]);
 
-  // Byline — prefer the linked author doctor (with a profile link), fall back
-  // to the free-text author ("The Global Health Medical Team" when unset). Same
-  // preference the Article JSON-LD uses, so the visible byline and the schema
-  // can't name different people.
-  const authorName = post.authorDoctor?.name ?? post.author;
-  const authorHref = post.authorDoctor?.countrySlug
-    ? `/${post.authorDoctor.countrySlug}/en/doctors/${post.authorDoctor.slug}`
-    : null;
+  const { name: authorName, href: authorHref } = resolveBlogAuthorByline({
+    storedAuthor: post.author,
+    authorDoctor: post.authorDoctor,
+  });
   // "Clinically reviewed by Dr X" — prefer the linked reviewer doctor (with
   // a profile link), fall back to the free-text reviewer name.
   const reviewerName = post.reviewerDoctor?.name ?? post.reviewer;

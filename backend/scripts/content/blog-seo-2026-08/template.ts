@@ -138,8 +138,8 @@ export function renderArticle(a: Article): string {
     `<a class="btn-ghost" href="${a.secondaryCta.href}">${a.secondaryCta.label}</a></div>` +
     `</div><aside class="hero-panel"><span class="meta-chip">${a.panelChip}</span>` +
     a.panelParas.map((t) => `<p class="intro-support">${t}</p>`).join("") +
-    `<div class="hero-author"><div aria-hidden="true" class="hero-author-mark">${a.author.initials}</div>` +
-    `<div><strong>${a.author.name}</strong><span>${a.author.line}</span></div></div>` +
+    `<div class="hero-author"><div aria-hidden="true" class="hero-author-mark">GH</div>` +
+    `<div><strong>Global Health Medical Team</strong></div></div>` +
     (a.reviewLine ? `<span class="hero-review-line">${a.reviewLine}</span>` : "") +
     `</aside></header>`;
 

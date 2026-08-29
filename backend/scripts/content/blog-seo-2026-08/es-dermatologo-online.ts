@@ -1375,7 +1375,7 @@ export const ES_DERMATOLOGO_ONLINE: PostSet = {
     "es/2724 expansion 2026-08-04. Head term 260 KD 0, unchanged. Cluster: dermatología online 170 KD 0, app dermatología gratis 70, dermatologo online españa 30, dermatólogo online gratis chat 30, dermatólogo online españa 30, consultas dermatológicas gratuitas 20, dermatología infantil online 10, plus dermatólogo online gratis españa, consulta dermatológica gratis en línea and dermatología cita online (transactional). The smallest cluster in the batch; the expansion showed the demand splits into a paid transactional head and a 'gratis' tail nobody answers honestly, so the article answers it via the SNS route. SERP 2026-08-04: individual dermatologists' consulta-online pages (dermatologia-bagazgoitia, madriderma, dermanieto, drgonzalezcantero), aggregators (Doctoralia, DermaPeople) and Quirónsalud teledermatología. All sell the service; none sets out what teledermatology can decide without a dermatoscope.",
   serviceSlug: "dermatologia-especialista-online",
   authorDoctorId: "cmrdppjf5000u01ru1ayu78k0",
-  authorDisplayName: "Dr. Alfredo del Valle Moreno Montañez",
+  authorDisplayName: "Global Health Medical Team",
   reviewerDoctorId: "cmrdpxpi0001v01ruqavjiq79",
   reviewerDisplayName: "Dr. Eduardo Daniel Rodríguez Olivas",
   posts: [es, en, pt, cs, roPost, de],

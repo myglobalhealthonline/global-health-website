@@ -5,6 +5,7 @@
  */
 import { SITE_NAME } from "@/lib/constants";
 import { toDoctorBioPlainText } from "@/lib/content/doctor-bio-format";
+import { BLOG_AUTHOR_NAME } from "@/lib/content/blog-byline";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { buildOgImageUrl, OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH } from "@/lib/seo/og-image";
 import type { AggregateSnapshot } from "@/lib/api/reviews-config";
@@ -458,11 +459,13 @@ export function articleJsonLd(input: {
    *  only have a category label here, never a coded clinical entity. */
   about?: string | null;
 }) {
-  const author = input.authorPhysician
-    ? physicianJsonLd(input.authorPhysician)
-    : input.authorName
-      ? { "@type": "Person", name: input.authorName }
-      : { "@type": "Organization", name: SITE_NAME };
+  const author = input.authorName === BLOG_AUTHOR_NAME
+    ? { "@type": "Organization", name: BLOG_AUTHOR_NAME, url: SITE_URL }
+    : input.authorPhysician
+      ? physicianJsonLd(input.authorPhysician)
+      : input.authorName
+        ? { "@type": "Person", name: input.authorName }
+        : { "@type": "Organization", name: SITE_NAME };
   return {
     "@context": "https://schema.org",
     "@type": "Article",

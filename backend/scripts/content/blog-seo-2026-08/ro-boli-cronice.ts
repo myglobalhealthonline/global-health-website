@@ -1474,7 +1474,7 @@ export const RO_BOLI_CRONICE: PostSet = {
     "ro/2642 expansion 2026-08-04. TARGET CHANGED from 'boli cronice' (880, KD 0), because the volume under that head is pension demand: vechime minima pentru pensie de boala 3,600, pensie de invaliditate gradul 3 suma forum 3,600, cat este pensia pe caz de boala 2,900, boli pentru pensionare pe caz de boala 1,300, tabel cu boli pentru pensionare 1,000, calculator pensie invaliditate 1,000 — pension law, answered with statutory amounts this batch will not publish, converting to nothing we sell. New head 'boli incluse in programul national de sanatate' 1,000 KD 1, with 'boli cronice' kept as co-head. In-scope cluster: care sunt boli cronice 390, tabel boli cronice 390, programe nationale de sanatate 2025 320, boli cronice lista 260, lista bolilor cronice in romania 260, anexa 13 boli cronice 210, ce inseamna asigurat pns 210 KD 1, lista boli cronice cnas 170 KD 8, adeverinta de includere in programul national de sanatate 170 KD 8. SERP 2026-08-04: CNAS's own curative-programmes page, the Ministry of Health page, a Government HG PDF, hospital programme lists, lege5.ro and MS/DSP Facebook posts — everything written for administrators, nothing explaining inclusion to a patient.",
   serviceSlug: "boli-cronice-online",
   authorDoctorId: "cmrc4axni00rn01p2n3r2bopf",
-  authorDisplayName: "Dr Robert Gabriel Brindus",
+  authorDisplayName: "Global Health Medical Team",
   reviewerDoctorId: "cmrc4j7oc00se01p2gf7y9ldw",
   reviewerDisplayName: "Dr Andreea Lorena Bica",
   posts: [ro, en, pt, es, cs, de],

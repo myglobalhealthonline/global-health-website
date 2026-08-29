@@ -63,6 +63,7 @@ const esLinks = buildSharedLinks("ES");
 const csLinks = buildSharedLinks("CS");
 const roLinks = buildSharedLinks("RO");
 const deLinks = buildSharedLinks("DE");
+const TEAM_AUTHOR = { initials: "GH", name: "Global Health Medical Team", line: "Global Health" } as const;
 
 const en: LocalePost = {
   locale: "EN",
@@ -94,7 +95,7 @@ const en: LocalePost = {
       "The first paid day can be day 6, day 5 or day 4.",
       "Payment is weekly; the start date varies.",
     ],
-    author: { initials: "TF", name: "Dr Tiago Miguel Figueira", line: "IMC 523449 · Clinical Director, Global Health" },
+    author: TEAM_AUTHOR,
     reviewLine: "Clinical and native editorial review by Dr Ahmed Maklad is required before publication.",
     navLabel: "In this guide",
     sections: [
@@ -204,7 +205,7 @@ const en: LocalePost = {
   } satisfies Article,
 };
 
-const pt: LocalePost = {
+const ptResearch: LocalePost = {
   locale: "PT",
   slug: "pagamento-illness-benefit-irlanda-valor-imposto-prazo",
   title: "Pagamento do Illness Benefit na Irlanda: valor, prazo e imposto",
@@ -237,7 +238,7 @@ const pt: LocalePost = {
       "Quando o Illness Benefit comeca, porque o primeiro pagamento pode demorar mais do que o esperado e onde entra a baixa paga pelo empregador.",
       "Como o Illness Benefit e tributado, o que o Revenue faz nos bastidores e porque o recibo pode parecer estranho durante um pedido ativo.",
     ],
-    author: { initials: "TF", name: "Dr Tiago Miguel Figueira", line: "IMC 523449 · Diretor Clinico, Global Health" },
+    author: TEAM_AUTHOR,
     reviewLine: "Revisão clínica e editorial nativa pelo Dr Ahmed Maklad obrigatória antes da publicação.",
     navLabel: "Neste artigo",
     sections: [
@@ -411,11 +412,11 @@ const pt: LocalePost = {
     ],
     disclaimerTitle: "Aviso medico",
     disclaimer:
-      "Escrito pelo Dr Tiago Miguel Figueira (IMC 523449), Diretor Clinico da Global Health. A revisão clínica e editorial nativa pelo Dr Ahmed Maklad é obrigatória antes da publicação. Este artigo fornece informacao geral sobre o calendario de pagamento e a tributacao do sistema irlandes. Nao constitui aconselhamento medico personalizado, juridico, fiscal ou de payroll. As decisoes sobre Illness Benefit cabem ao Department of Social Protection e ao Revenue. Se tiver sintomas de emergencia, ligue imediatamente 112 ou 999.",
+      "Escrito pela Global Health Medical Team. A revisão clínica e editorial nativa pelo Dr Ahmed Maklad é obrigatória antes da publicação. Este artigo fornece informacao geral sobre o calendario de pagamento e a tributacao do sistema irlandes. Nao constitui aconselhamento medico personalizado, juridico, fiscal ou de payroll. As decisoes sobre Illness Benefit cabem ao Department of Social Protection e ao Revenue. Se tiver sintomas de emergencia, ligue imediatamente 112 ou 999.",
   } satisfies Article,
 };
 
-const es: LocalePost = {
+const esResearch: LocalePost = {
   locale: "ES",
   slug: "pago-illness-benefit-irlanda-cuantia-impuestos-plazos",
   title: "Pago del Illness Benefit en Irlanda: cuantia, plazo e impuestos",
@@ -448,7 +449,7 @@ const es: LocalePost = {
       "Cuando empieza el Illness Benefit, por que el primer pago puede tardar y donde encaja el sick pay de la empresa en ese hueco.",
       "Como tributa el Illness Benefit, que hace Revenue por detras y por que la nomina puede cambiar mientras la prestacion esta activa.",
     ],
-    author: { initials: "TF", name: "Dr Tiago Miguel Figueira", line: "IMC 523449 · Director Clinico, Global Health" },
+    author: TEAM_AUTHOR,
     reviewLine: "Revisión clínica y editorial nativa por el Dr Ahmed Maklad obligatoria antes de publicar.",
     navLabel: "En este articulo",
     sections: [
@@ -622,222 +623,163 @@ const es: LocalePost = {
     ],
     disclaimerTitle: "Aviso medico",
     disclaimer:
-      "Escrito por el Dr Tiago Miguel Figueira (IMC 523449), Director Clinico de Global Health. La revisión clínica y editorial nativa por el Dr Ahmed Maklad es obligatoria antes de publicar. Este articulo ofrece informacion general sobre el calendario de pago y la tributacion del sistema irlandes. No sustituye consejo medico individual, asesoramiento legal, fiscal ni de payroll. Las decisiones sobre Illness Benefit corresponden al Department of Social Protection y a Revenue. Si tiene sintomas de emergencia, llame de inmediato al 112 o al 999.",
+      "Escrito por el equipo médico de Global Health. La revisión clínica y editorial nativa por el Dr Ahmed Maklad es obligatoria antes de publicar. Este articulo ofrece informacion general sobre el calendario de pago y la tributacion del sistema irlandes. No sustituye consejo medico individual, asesoramiento legal, fiscal ni de payroll. Las decisiones sobre Illness Benefit corresponden al Department of Social Protection y a Revenue. Si tiene sintomas de emergencia, llame de inmediato al 112 o al 999.",
   } satisfies Article,
 };
 
 const cs: LocalePost = {
   locale: "CS",
   slug: "illness-benefit-irsko-vyse-davky-dane-termin",
-  title: "Illness Benefit v Irsku: vyse davky, dane a termin vyplaty",
-  excerpt:
-    "Kolik v Irsku plati Illness Benefit, kdy obvykle dorazi prvni platba, proc prvni dny nemoci funguji jinak a jak tuto davku zdanuje Revenue.",
-  seoTitle: "Illness Benefit v Irsku: vyse davky a dane",
-  seoDescription:
-    "Aktualni castka, cekaci dny, tydenni vyplata, zdaneni a rozdil mezi Illness Benefit a sick pay od zamestnavatele.",
-  category: "Prakticke lekarstvi",
+  title: "Illness Benefit v Irsku: výše dávky a termín výplaty v roce 2026",
+  excerpt: "Aktuální sazby Illness Benefit, čekací dny, týdenní výplata, zdanění a rozdíl oproti nemocenské od zaměstnavatele.",
+  seoTitle: "Illness Benefit v Irsku: sazby a výplata 2026",
+  seoDescription: "Zjistěte sazby Illness Benefit v Irsku pro rok 2026, kdy začíná výplata, jak se dávka daní a jak ji ovlivňuje nemocenská od zaměstnavatele.",
+  category: "Praktické lékařství",
   article: {
     lang: "cs-CZ",
-    tagline: "Medicina kdykoli a odkudkoli",
-    categoryLabel: "Prakticke lekarstvi",
+    tagline: "Lékařská péče kdykoli a odkudkoli",
+    categoryLabel: "Praktické lékařství",
     categoryHref: csLinks.blog,
-    eyebrow: "Irsko · Pruvodce vyplatou",
-    h1: "Illness Benefit v Irsku",
-    deck: "Kolik plati Department of Social Protection, kdy penize prichazeji, jak funguje zdaneni a proc je dulezite odlisit statni davku od nemocenske vyplacene zamestnavatelem.",
-    intro:
-      "Illness Benefit je <strong>tydenni davka od irskeho Department of Social Protection</strong>, tedy uradu socialni ochrany, pro lidi, kteri nemohou pracovat kvuli nemoci. Ke dni <strong>24. srpna 2026</strong> ukazuje oficialni stranka MyWelfare <strong>zakladni osobni sazbu EUR 254 tydne</strong>, ale to <strong>neznamena</strong>, ze kazdy zadatel dostane na ucet presne stejnou cistou castku. Vysledek ovlivnuji cekaci dny, okamzik podani zadosti a lekarskeho potvrzeni, pripadna nemocenska od zamestnavatele a take zpusob, jakym irsky danovy urad Revenue upravi dan. Pokud hledate podminky naroku a samotnou zadost IB1, prejdete na nas samostatny <a href=\"" + csLinks.claimGuide + "\">navod jak o Illness Benefit zazadat</a>.",
+    eyebrow: "Irsko · Výplata v roce 2026",
+    h1: "Kolik činí Illness Benefit v Irsku v roce 2026?",
+    deck: "Nejvyšší osobní sazba je 254 EUR týdně. Konkrétní částku ale ovlivňují příjmy, začátek výplaty a daň.",
+    intro: "V roce 2026 činí nejvyšší osobní sazba <strong>Illness Benefit 254 EUR týdně</strong>. Při nižších příjmech se použijí nižší sazby. První placený den závisí na tom, kolik z pěti dnů zákonné nemocenské vám ještě zbývá, a dávka podléhá dani z příjmu. Podmínky nároku, pravidla PRSI a postup podání žádosti najdete v našem <a href=\"" + csLinks.claimGuide + "\">průvodci žádostí o Illness Benefit</a>.",
     facts: [
-      "Aktualne zobrazena osobni sazba na MyWelfare: EUR 254 tydne",
-      "Prvni 3 dny pracovni neschopnosti jsou podle zive stranky DSP cekaci dny",
-      "Illness Benefit je zdanitelny, i kdyz DSP obvykle nestrhava dan pri vyplate",
+      "Nejvyšší osobní sazba v roce 2026: 254 EUR týdně",
+      "Čtyři sazby podle průměrného týdenního výdělku",
+      "Dávka podléhá dani z příjmu, nikoli PRSI ani USC",
     ],
-    primaryCta: { label: "Precist navod k zadosti", href: csLinks.claimGuide },
-    secondaryCta: { label: "Oficialni stranka Illness Benefit", href: GOV_IB },
-    panelChip: "Co tento clanek resi",
+    primaryCta: { label: "Ověřit pravidla začátku výplaty", href: STATUTORY_SICK_LEAVE_2026 },
+    secondaryCta: { label: "Přečíst průvodce žádostí", href: csLinks.claimGuide },
+    panelChip: "Stručná odpověď",
     panelParas: [
-      "Aktualni castku, kterou lide nejcasteji hledaji, bez nepresneho tvrzeni, ze vsichni dostavaji stejnou sumu.",
-      "Kdy davka realne zacina, proc prvni platba casto neprijde hned a kam do toho vstupuje placena nemocenska od zamestnavatele.",
-      "Jak se Illness Benefit dani, co dela Revenue na pozadi a proc muze vyplatni paska vypadat jinak nez cekate.",
+      "254 EUR je nejvyšší osobní sazba, nikoli jednotná částka pro každého.",
+      "První placený den může být šestý, pátý nebo čtvrtý den nemoci.",
+      "Dávka se vyplácí týdně; datum prvního převodu se může lišit.",
     ],
-    author: { initials: "TF", name: "Dr Tiago Miguel Figueira", line: "IMC 523449 · Klinicky reditel, Global Health" },
-    reviewLine: "Klinicky zrevidoval Dr Ahmed Maklad, vseobecny lekar, Global Health Irsko.",
-    navLabel: "V tomto clanku",
+    author: TEAM_AUTHOR,
+    reviewLine: "Před zveřejněním je nutná klinická a jazyková kontrola Dr. Ahmedem Makladem.",
+    navLabel: "V tomto průvodci",
     sections: [
       {
-        id: "scope",
-        nav: "Rozsah",
-        eyebrow: "Nemesit dva navody",
-        h2: "Tento clanek je o vyplate, ne o samotnem naroku",
+        id: "sazby",
+        nav: "Sazby 2026",
+        eyebrow: "Oficiální pásma",
+        h2: "Sazby Illness Benefit v Irsku v roce 2026",
         blocks: [
-          lead("Vetsina lidi sem prijde ve chvili, kdy uz o Illness Benefit slysela a chce jednu praktickou odpoved: kolik penez prijde a kdy."),
-          p("To je jina otazka nez <strong>zda mate narok</strong>, jak funguji irske prispevky <strong>PRSI</strong> neboli Pay Related Social Insurance, nebo kdo muze vystavit <strong>Certificate of Incapacity for Work</strong>, tedy potvrzeni o neschopnosti pracovat. Tyto body uz mame podrobne vysvetlene v samostatnem <a href=\"" + csLinks.claimGuide + "\">navodu k zadosti o Illness Benefit</a> a je dobre je nemichat, protoze i zamer vyhledavani je jiny."),
-          p("Tato stranka proto zustava uzka a vecna. Resi aktualni tydenni sazbu z oficialni sluzby, tri cekaci dny podle stranky DSP, tedy Department of Social Protection, tydenni rytmus vyplaceni a danova pravidla popsana uradem Revenue. Zaroven vysvetluje, proc mnoho zamestnancu povazuje nemocenskou od zamestnavatele a Illness Benefit za jednu vec, i kdyz pravne jde o dva odlisne toky penez."),
-          warn(
-            "Nesnazte se vse zredukovat na jedno cislo",
-            "Dotaz 'illness benefit payment' zni jednoduse, ale castka, ktera skutecne dorazi na ucet, se muze lisit podle nacasovani zadosti, moznych navyseni, pravidel zamestnavatele a dane dorovnane pozdeji pres Revenue.",
-          ),
+          lead("DSP vychází z průměrného týdenního výdělku v rozhodném daňovém roce."),
+          ul([
+            "<strong>300 EUR a více:</strong> 254 EUR týdně.",
+            "<strong>220 až 299,99 EUR:</strong> 198,90 EUR týdně.",
+            "<strong>150 až 219,99 EUR:</strong> 163,70 EUR týdně.",
+            "<strong>Méně než 150 EUR:</strong> 114 EUR týdně.",
+          ]),
+          cite("Sazby byly ověřeny 25. srpna 2026 na stránce <a href=\"" + GOV_IB + "\" rel=\"nofollow noopener\" target=\"_blank\">Department of Social Protection věnované Illness Benefit</a>."),
         ],
       },
       {
-        id: "rate",
-        nav: "Aktualni castka",
-        eyebrow: "Cislo, ktere lide hledaji",
-        h2: "Aktualni oficialni osobni sazba je EUR 254 tydne, ale to neni cely pribeh",
+        id: "vlastni-sazba",
+        nav: "Vaše sazba",
+        eyebrow: "Konkrétní částka",
+        h2: "Proč se skutečná částka může lišit",
         blocks: [
-          lead("Na zive strance MyWelfare zkontrolovane 24. srpna 2026 je pro Illness Benefit uvedena osobni tydenni sazba EUR 254."),
-          p("To je hlavni cislo a odpovida na vyhledavani. Je to ale porad jen <strong>zakladni osobni sazba</strong> uvedena na oficialni strance. Neznamena to, ze kazdy uvidi na ucte kazdy tyden presne EUR 254. Nektere pripady se lisi okolnostmi a cisty vysledek muze vypadat jinak i kvuli pozdejsi danove uprave ze strany Revenue."),
-          ul([
-            "<strong>EUR 254 pouzivejte jako aktualni oficialni osobni tydenni sazbu</strong>, protoze to je castka, kterou MyWelfare prave zobrazuje.",
-            "<strong>Nepiste, ze 'kazdy dostane EUR 254'</strong>, protoze to by bylo sirsi tvrzeni, nez dovoluje oficialni zdroj.",
-            "<strong>Neprepisujte stare blogove castky z drivejsich rozpoctu</strong>, kdyz ziva sluzba ukazuje aktualni stav.",
-            "<strong>Pokud mate nestandardni situaci</strong>, muze byt vysledna castka jina nez hlavni osobni sazba.",
-          ]),
-          p("Nejbezpecnejsi verejna formulace tedy zni: oficialni sluzba v soucasnosti uvadi osobni tydenni sazbu EUR 254, ale konecna castka konkretniho cloveka se muze lisit podle okolnosti spisu a nasledneho zdaneni."),
-          cite(`Aktualni oficialni zdroj: <a href="${MYWELFARE}" rel="nofollow noopener" target="_blank">MyWelfare — Illness Benefit</a>.`),
+          lead("DSP zohledňuje výdělek a počet odpracovaných týdnů v rozhodném daňovém roce."),
+          p("U nejvyššího pásma může příplatek na kvalifikovaného dospělého činit 168,60 EUR, takže společná částka dosáhne 422,60 EUR. V nižších pásmech činí tento příplatek 109,20 EUR. Child Support Payment může přidat 58 EUR na dítě mladší 12 let nebo 78 EUR od 12 let. Platí další podmínky a příplatky se nepřiznávají automaticky."),
         ],
       },
       {
-        id: "timing",
-        nav: "Kdy chodi",
-        eyebrow: "Zacatek a den vyplaty",
-        h2: "Proc prvni platba obvykle dorazi pozdeji, nez lide cekaji",
+        id: "vyplata",
+        nav: "Termín výplaty",
+        eyebrow: "Čekací dny",
+        h2: "Kdy začíná výplata Illness Benefit?",
         blocks: [
-          lead("Illness Benefit se vyplaci tydne, ale nespusti se automaticky v den, kdy poprve zavolate do prace, ze jste nemocni."),
-          p("Aktualni stranka DSP rika, ze <strong>za prvni 3 dny</strong>, kdy jste mimo praci kvuli nemoci, <strong>se Illness Benefit neplati</strong>. To jsou aktualni cekaci dny. Stejna stranka zaroven uvadi, ze davka je <strong>vyplacena tydne</strong> a muze byt vyplacena <strong>od pondeli do soboty</strong> podle toho, kdy byla zadost zaregistrovana a ktery den byl prvnim dnem nemoci."),
-          p("Prave to vysvetluje vetsinu zmatku kolem prvni platby. Prvni tyden nemoci muze mit tri vrstvy najednou: zamestnavatel muze nejdriv vyplacet svou zakonou nebo smluvni nemocenskou; DSP stale uplatni vlastni cekaci dny; a Department nemuze penize poslat, dokud nema v systemu zadost i podporne lekarske potvrzeni."),
+          lead("Illness Benefit se vyplácí týdně, ale první placený den závisí na tom, kolik dnů zákonné nemocenské vám v roce 2026 ještě zbývá."),
           ul([
-            "Podejte zadost vcas: MyWelfare rika, ze se ma podat do <strong>6 tydnu</strong> od zacatku nemoci, i kdyz vas zamestnavatel zprvu jeste plati.",
-            "Pocitejte s mezerou mezi prvnim vynechanym pracovnim dnem a prvni platbou od DSP, protoze se pocitaji cekaci dny a cas registrace.",
-            "Neexistuje jediny univerzalni den vyplaty pro vsechny; oficialni gov.ie uvadi rozpeti od pondeli do soboty.",
-            "Pokud je rozhodnuti vydano pozdeji, mohou vzniknout doplatky zpetne, ale prvni tyden se tim nemeni na beznou mzdu.",
+            "<strong>Nevyčerpali jste žádný den:</strong> pět dnů platí zaměstnavatel; Illness Benefit začíná šestým dnem.",
+            "<strong>Vyčerpali jste jeden den:</strong> čtyři dny platí zaměstnavatel; Illness Benefit začíná pátým dnem.",
+            "<strong>Vyčerpali jste tři dny:</strong> dva dny platí zaměstnavatel, následuje jeden čekací den; Illness Benefit začíná čtvrtým dnem.",
+            "<strong>Vyčerpali jste všech pět dnů:</strong> po třech čekacích dnech začíná Illness Benefit čtvrtým dnem.",
           ]),
-          p("Prakticky to znamena, ze pri planovani najmu a beznych uctu neni rozumne pocitat s tim, ze prvni platba od DSP prijde ve stejnem rytmu jako vyplatni termin zamestnavatele. Jde o socialni davku s vlastnim kalendarem."),
-          cite(`Pravidla vyplaty: <a href="${GOV_IB}" rel="nofollow noopener" target="_blank">gov.ie — Illness Benefit</a>. Operacni detail: <a href="${GOV_IB_GUIDE}" rel="nofollow noopener" target="_blank">Operational Guidelines</a>.`),
+          p("Obě platby nemohou pokrýt stejný den. Neděle se nepočítá jako čekací den. Kvůli zpracování může převod dorazit až po prvním dni, za který už dávka náleží."),
+          p("Žádost podejte do šesti týdnů a ověřte, že bylo vyplněno Certificate of Incapacity for Work. Postup a pravidla PRSI popisuje náš <a href=\"" + csLinks.claimGuide + "\">průvodce žádostí</a>."),
+          warn("Zkontrolujte vlastní případ", "Spočítejte, kolik dnů zákonné nemocenské jste už vyčerpali, a poté zkontrolujte MyWelfare nebo kontaktujte DSP. Tyto příklady neurčují přesné datum převodu."),
         ],
       },
       {
-        id: "tax",
-        nav: "Dane",
-        eyebrow: "Co casto prekvapi",
-        h2: "Illness Benefit je zdanitelny, ale DSP obvykle nestrhava dan hned pri odeslani platby",
+        id: "zamestnavatel",
+        nav: "Platba zaměstnavatele",
+        eyebrow: "Dvě oddělené platby",
+        h2: "Illness Benefit není totéž co nemocenská od zaměstnavatele",
         blocks: [
-          lead("Mnoho lidi predpoklada, ze statni davka pri nemoci musi byt automaticky osvobozena od dane. U Illness Benefit to neplati."),
-          p("Aktualni pokyny Revenue uvadeji, ze Illness Benefit podleha <strong>Income Tax</strong>, tedy dani z prijmu. Revenue zaroven vysvetluje, ze zdanitelne platby od DSP obecne <strong>nepodlehaji USC ani PRSI</strong>. Dulezity administrativni detail je ten, ze Department obvykle vyplaci Illness Benefit <strong>bez okamzite srazene dane</strong> a Revenue si prislusnou dan dotahne pozdeji upravou danovych kreditu a sazebniho pasma."),
-          p("Proto muze platba na bankovnim vypisu vypadat, jako by prisla 'bez dane', zatimco pozdeji se zmeni vase vyplatni paska, danovy kredit nebo rocni danova pozice. Pokud zaroven dostavate nemocenskou od zamestnavatele, tato cast se dal dani jako bezna mzda v payrollu, zatimco Revenue zvlast zohledni platbu od DSP."),
-          ul([
-            "<strong>Platba od DSP:</strong> obvykle prijde bez primeho srazeni dane, Revenue ji zohledni nasledne.",
-            "<strong>Dan z prijmu:</strong> ano, muze byt splatna.",
-            "<strong>USC a PRSI u zdanitelnych plateb DSP:</strong> Revenue rika, ze ne.",
-            "<strong>Nemocenska od zamestnavatele:</strong> zustava pod beznymi pravidly mezd a dani.",
-          ]),
-          warn(
-            "Nehodnotte jen to, co prislo na ucet",
-            "To, ze vam na ucet dorazi cela tydenni castka Illness Benefit, samo o sobe neznamena, ze uz je vse danove vyreseno. Revenue muze dan vybrat pozdeji pres snizene kredity a to se casto projevi az na dalsi vyplate.",
-          ),
-          p("Pokud potrebujete presne dokazat, co vam DSP za konkretni obdobi vyplatilo, MyWelfare umoznuje take ziskat <strong>payment statement</strong>, tedy vypis plateb. To je casto nejcistsi zpusob, jak porovnat castku z banky, evidenci zamestnavatele a nastaveni Revenue."),
-          cite(`Danova pravidla: <a href="${REVENUE_TAX}" rel="nofollow noopener" target="_blank">Revenue — taxation of illness benefits</a>. Obecne zdaneni plateb DSP: <a href="${REVENUE_DSP_TAX}" rel="nofollow noopener" target="_blank">Revenue — how DSP payments are taxed</a>.`),
+          lead("Zákonnou nemocenskou platí zaměstnavatel, Illness Benefit vyplácí DSP."),
+          p("Zaměstnanci, kteří splní podmínky, mají v roce 2026 nárok na pět dnů zákonné nemocenské. Zaměstnavatel je platí ve výši 70 % běžného denního výdělku, nejvýše však do zákonného limitu. Pracovní smlouva nebo firemní program mohou nabídnout výhodnější podmínky. Zkontrolujte smlouvu a výplatní pásku: obě platby se automaticky nesčítají."),
+          cite("Pět dnů zákonné nemocenské pro rok 2026 potvrzuje oficiální <a href=\"" + ENTERPRISE_SICK_LEAVE + "\" rel=\"nofollow noopener\" target=\"_blank\">aktualizace ke statutory sick leave</a>."),
         ],
       },
       {
-        id: "employer",
-        nav: "Zamestnavatel",
-        eyebrow: "Dva ruzne zdroje penez",
-        h2: "Nemocenska od zamestnavatele a Illness Benefit nejsou tatyz platebni kanal",
+        id: "dan",
+        nav: "Daň",
+        eyebrow: "Postup Revenue",
+        h2: "Podléhá Illness Benefit dani?",
         blocks: [
-          lead("Tento rozdil je dulezity, protoze mnoho zamestnancu v Irsku stale oznacuje cely obdobi nemoci jako 'Illness Benefit', i kdyz je to pravne nepresne."),
-          p("Illness Benefit vyplaci <strong>Department of Social Protection</strong>. Zakonna nemocenska neboli <strong>statutory sick leave</strong> je naopak placena <strong>zamestnavatelem</strong>. Oboji se muze objevit v ramci jedne nemoci, ale nejde o stejny system ani o stejna pravidla. K datu <strong>24. srpna 2026</strong> zustava oficialni stanovisko irske vlady takove, ze narok na statutory sick leave zustal po rozhodnuti z <strong>8. dubna 2025</strong> na <strong>5 dnech</strong>."),
-          p("To je dulezite zduraznit, protoze rada clanku stale opakuje starsi plan, ktery pocital s 10 dny v roce 2026. To uz neodpovida aktualnimu stavu. Pokud nektery HR clanek tvrdi, ze kazdy zamestnanec ma v roce 2026 automaticky 10 dnu zakonem placene nemocenske, pracuje se zastaralou informaci."),
-          ul([
-            "<strong>Nemocenska od zamestnavatele</strong> casto kryje uvod absence podle smlouvy a zakonneho minima.",
-            "<strong>Illness Benefit</strong> zustava tydenni statni davkou, jakmile se spusti jeho vlastni pravidla.",
-            "<strong>Firemni sick-pay scheme</strong> muze byt stedrejsi nez zakonny minimal, ale zalezi na zamestnavateli.",
-            "<strong>Spravna otazka pro mzdove oddeleni</strong> neni 'jsem na Illness Benefit?', ale 'ktera cast tohoto tydne je plat zamestnavatele a ktera cast je platba od DSP?'",
-          ]),
-          p("Pokud ale ve skutecnosti resite certifikat a cestu podani zadosti, ne samotnou mechaniku penez, vratte se k nasemu <a href=\"" + csLinks.claimGuide + "\">podrobnemu navodu k zadosti o Illness Benefit</a>. Tam rozebirame formular IB1 i lekarsky podklad krok za krokem."),
-          cite(`Aktualni stanovisko ke statutory sick leave: <a href="${ENTERPRISE_SICK_LEAVE}" rel="nofollow noopener" target="_blank">Department of Enterprise, 8 April 2025</a>.`),
-        ],
-      },
-      {
-        id: "practical",
-        nav: "Co zkontrolovat",
-        eyebrow: "Prakticke overeni",
-        h2: "Co proverit, kdyz penize prisly pozde, v jine castce nebo nelogicky",
-        blocks: [
-          lead("Vetsina stiznosti na vyplatu nevznika kvuli samotne hlavni sazbe. Problem byva v nacasovani, nesouladu udaju nebo v danovem nastaveni."),
-          ul([
-            "Overte, zda prvni 3 dny absence byly cekaci dny a ne dny, za ktere se mel Illness Benefit vyplatit.",
-            "Overte, zda zamestnavatel nevyplatil uvodni dny zvlast jako statutory nebo contractual sick pay.",
-            "Overte, zda byla vcas odeslana zadost i lekarske potvrzeni.",
-            "Overte, zda Revenue po aktivaci platby upravil vase danove kredity.",
-            "Overte, zda neni treba nahlasit navrat do prace, cestu do zahranici nebo zmenu bankovniho uctu.",
-          ]),
-          p("Jestli problem neni v castce, ale v tom, ze se zadost nikam neposouva, zustava MyWelfare nejuzitecnejsim oficialnim mistem pro kontrolu stavu sluzby a souvisejicich ukonu. Pokud je problem v lekarskem potvrzeni, nase <a href=\"" + csLinks.service + "\">irska online sluzba pro sick certificate</a> vysvetluje, co muze a nemuze lekar po videokonzultaci potvrdit. Pokud se ale nezhorsuje administrativa, nybrz zdravotni stav, papir muze pockat a vase zdravi ne."),
-          warn(
-            "Pri urgentnich priznacich neres­te nejdriv penize",
-            "Pri bolesti na hrudi, priznacich mozkove mrtvice, tezke dusnosti, kolapsu nebo jinem akutnim stavu volejte 112 nebo 999. Zpozdena davka v tu chvili neni hlavni problem.",
-          ),
+          lead("Ano. DSP zpravidla vyplácí Illness Benefit bez srážky daně a poté platbu hlásí úřadu Revenue."),
+          p("Revenue může upravit daňové slevy a sazební pásmo. PRSI ani USC se z této dávky neplatí a příplatky na děti se nedaní. Samotný převod od DSP proto neukazuje konečný dopad na vaši daň."),
+          p("Lékařské potvrzení, nárok na dávku a její zdanění jsou tři samostatné otázky. Lékařská konzultace nemůže zaručit vystavení potvrzení, přiznání dávky ani její výši."),
         ],
       },
     ],
-    linksEyebrow: "Global Health Irsko",
-    linksH2: "Uzitecne dalsi kroky",
-    linksLead: "Tento clanek pouzijte pro otazky k castce, terminu a zdaneni. Navod k zadosti a lekarskou cestu pouzijte, pokud jeste potrebujete potvrzeni a formalni postup.",
+    linksEyebrow: "Global Health Ireland",
+    linksH2: "Informace k žádosti a lékařské posouzení",
+    linksLead: "O dávce rozhoduje DSP; lékař posuzuje pracovní schopnost.",
     links: [
-      { label: "Navod k zadosti o Illness Benefit", href: csLinks.claimGuide },
-      { label: "Online sluzba pro sick certificate v Irsku", href: csLinks.service },
-      { label: "Poznejte nase lekare v Irsku", href: csLinks.doctors },
-      { label: "Kontakt Global Health Irsko", href: csLinks.contact },
+      { label: "Podmínky a žádost o Illness Benefit", href: csLinks.claimGuide },
+      { label: "Posouzení pro potvrzení pracovní neschopnosti", href: csLinks.service },
+      { label: "Lékaři v Irsku", href: csLinks.doctors },
+      { label: "Kontaktovat Global Health", href: csLinks.contact },
     ],
     ctaBox: {
-      h3: "Potrebujete potvrzeni driv, nez se platba rozbehne?",
-      text: "Nasi irsti lekari mohou posoudit, zda je Certificate of Incapacity for Work klinicky primereny, a nasmerovat vas na spravny dalsi krok.",
-      primary: { label: "Objednat online konzultaci", href: csLinks.service },
-      secondary: { label: "Precist navod k zadosti", href: csLinks.claimGuide },
+      h3: "Potřebujete lékařské posouzení kvůli pracovní neschopnosti?",
+      text: "Praktický lékař posoudí vaši pracovní schopnost; o nároku na dávku rozhoduje DSP.",
+      primary: { label: "Objednat posouzení", href: csLinks.service },
+      secondary: { label: "Zobrazit lékaře", href: csLinks.doctors },
     },
-    sourcesEyebrow: "Oficialni zdroje",
-    sourcesH2: "Odkud pravidla pro vyplatu vychazeji",
-    sourcesLead: "Clanek vychazi z aktualnich irskych oficialnich zdroju pro castku, nacasovani, zdaneni i soucasny stav employer sick leave a neopakuje stare blogove udaje.",
+    sourcesEyebrow: "Oficiální zdroje",
+    sourcesH2: "Pravidla pro rok 2026",
+    sourcesLead: "Sazby a postupy byly ověřeny 25. srpna 2026.",
     sources: [
+      { label: "Department of Social Protection — Illness Benefit", href: GOV_IB },
+      { label: "DSP — Illness Benefit a statutory sick leave v roce 2026", href: STATUTORY_SICK_LEAVE_2026 },
       { label: "MyWelfare — Illness Benefit", href: MYWELFARE },
-      { label: "gov.ie — Illness Benefit", href: GOV_IB },
-      { label: "gov.ie — Operational Guidelines", href: GOV_IB_GUIDE },
-      { label: "Revenue — taxation of illness benefits", href: REVENUE_TAX },
-      { label: "Revenue — how DSP payments are taxed", href: REVENUE_DSP_TAX },
-      { label: "Government of Ireland — statutory sick leave remains at 5 days", href: ENTERPRISE_SICK_LEAVE },
+      { label: "Revenue — zdanění Illness Benefit", href: REVENUE_TAX },
+      { label: "Department of Enterprise — statutory sick leave", href: ENTERPRISE_SICK_LEAVE },
     ],
-    sourcesNote:
-      "Odkazy vedou na weby vydavajicich instituci. Global Health nerozhoduje o naroku, terminu vyplaty, danovem zachazeni ani mzdove praxi u zadosti o Illness Benefit.",
-    faqEyebrow: "FAQ",
-    faqH2: "Caste otazky k vyplate",
+    sourcesNote: "Svůj nárok ověřte u DSP a daňové údaje u Revenue.",
+    faqEyebrow: "Časté otázky",
+    faqH2: "Otázky k výplatě Illness Benefit",
     faqs: [
       {
-        q: "Kolik Illness Benefit v Irsku aktualne plati?",
-        a: "Na zive strance MyWelfare zkontrolovane 24. srpna 2026 je uvedena osobni tydenni sazba EUR 254. To je hlavni oficialni castka, ale nema se z ni delat zavazne tvrzeni, ze kazdy dostane stejny cisty prijem.",
+        q: "Dostane každý 254 EUR týdně?",
+        a: "Ne. Částka 254 EUR je nejvyšší osobní sazba pro rok 2026. DSP používá čtyři pásma podle průměrného týdenního výdělku a za určitých podmínek lze získat také příplatky na členy domácnosti.",
       },
       {
-        q: "Proc jsem nedostal penize od prvniho dne nemoci?",
-        a: "Aktualni stranka gov.ie uvadi, ze za prvni 3 dny, kdy jste off sick, se Illness Benefit neplati. To jsou soucasne cekaci dny. Prvni platba take zavisi na tom, kdy se do systemu dostane zadost a lekarske potvrzeni.",
+        q: "Který den se Illness Benefit vyplácí?",
+        a: "Dávka se vyplácí týdně a může být odeslána od pondělí do soboty podle registrace žádosti a prvního dne nemoci.",
       },
       {
-        q: "Ktery den v tydnu Illness Benefit chodi?",
-        a: "Illness Benefit se vyplaci tydne, ale oficialni gov.ie uvadi, ze platba muze prijit od pondeli do soboty podle toho, kdy byla zadost zaregistrovana a kdy zacala nemoc. Neexistuje jeden stejny den pro vsechny.",
+        q: "Začíná výplata vždy po třech čekacích dnech?",
+        a: "Ne. Pokud máte k dispozici všech pět dnů zákonné nemocenské, Illness Benefit obvykle začíná šestým dnem. Pokud jste všech pět dnů už vyčerpali, může začít čtvrtým dnem. Při částečně vyčerpaném nároku může začít pátým nebo čtvrtým dnem.",
       },
       {
-        q: "Je Illness Benefit v Irsku zdanitelny?",
-        a: "Ano. Revenue uvadi, ze Illness Benefit podleha dani z prijmu. Zaroven rika, ze zdanitelne platby DSP obecne nepodlehaji USC ani PRSI. DSP obvykle plati bez prime srazene dane a Revenue ji vybere pozdeji pres upravu kreditu a sazebniho pasma.",
-      },
-      {
-        q: "Je Illness Benefit to same jako nemocenska od zamestnavatele?",
-        a: "Ne. Illness Benefit plati Department of Social Protection. Zakonnou nemocenskou plati zamestnavatel. K 24. srpnu 2026 zustava oficialni stanovisko vlady takove, ze statutory sick leave zustal po rozhodnuti z 8. dubna 2025 na 5 dnech.",
+        q: "Podléhá Illness Benefit dani?",
+        a: "Ano. DSP ji zpravidla vyplatí v hrubé výši a nahlásí Revenue. Daň z příjmu může Revenue vybrat úpravou daňových slev nebo sazebního pásma; PRSI ani USC se neplatí.",
       },
     ],
-    disclaimerTitle: "Lekarske upozorneni",
-    disclaimer:
-      "Clanek napsal Dr Tiago Miguel Figueira (IMC 523449), klinicky reditel Global Health, a klinicky jej zrevidoval Dr Ahmed Maklad, vseobecny lekar. Text prinasi obecne informace o irskem socialnim systemu, nacasovani plateb a zdaneni. Nejde o individualni lekarskou, pravni, danovou ani mzdovou radu. O naroku a vyplate Illness Benefit rozhoduji Department of Social Protection a Revenue. Pri urgentnich priznacich okamzite volejte 112 nebo 999.",
+    disclaimerTitle: "Zdravotní a sociální informace",
+    disclaimer: "Článek vytvořený s pomocí AI čeká na jazykovou a klinickou kontrolu. Jde o obecné informace pro rok 2026, nikoli o rozhodnutí DSP, odborné poradenství ani záruku vystavení potvrzení či přiznání dávky.",
   } satisfies Article,
 };
 
-const ro: LocalePost = {
+const roResearch: LocalePost = {
   locale: "RO",
   slug: "plata-illness-benefit-irlanda-valoare-impozit-termen",
   title: "Plata Illness Benefit in Irlanda: valoare, termen si impozit",
@@ -870,7 +812,7 @@ const ro: LocalePost = {
       "Cand incepe Illness Benefit, de ce prima plata poate intarzia si unde intra sick pay-ul angajatorului in acest interval.",
       "Cum este taxat Illness Benefit, ce face Revenue in fundal si de ce fluturasul de salariu poate arata ciudat cat timp plata este activa.",
     ],
-    author: { initials: "TF", name: "Dr Tiago Miguel Figueira", line: "IMC 523449 · Director Clinic, Global Health" },
+    author: TEAM_AUTHOR,
     reviewLine: "Revizuirea clinică și editorială nativă de către Dr Ahmed Maklad este obligatorie înainte de publicare.",
     navLabel: "In acest articol",
     sections: [
@@ -1044,11 +986,11 @@ const ro: LocalePost = {
     ],
     disclaimerTitle: "Avertisment medical",
     disclaimer:
-      "Articol scris de Dr Tiago Miguel Figueira (IMC 523449), Director Clinic la Global Health. Revizuirea clinică și editorială nativă de către Dr Ahmed Maklad este obligatorie înainte de publicare. Acest text ofera informatii generale despre calendarul de plata si fiscalitatea sistemului irlandez. Nu reprezinta sfat medical personalizat, consultanta juridica, fiscala sau de payroll. Deciziile privind Illness Benefit apartin Department of Social Protection si Revenue. Daca aveti simptome de urgenta, sunati imediat la 112 sau 999.",
+      "Articol scris de echipa medicală Global Health. Revizuirea clinică și editorială nativă de către Dr Ahmed Maklad este obligatorie înainte de publicare. Acest text ofera informatii generale despre calendarul de plata si fiscalitatea sistemului irlandez. Nu reprezinta sfat medical personalizat, consultanta juridica, fiscala sau de payroll. Deciziile privind Illness Benefit apartin Department of Social Protection si Revenue. Daca aveti simptome de urgenta, sunati imediat la 112 sau 999.",
   } satisfies Article,
 };
 
-const de: LocalePost = {
+const deResearch: LocalePost = {
   locale: "DE",
   slug: "illness-benefit-zahlung-irland-betrag-steuer-zeitpunkt",
   title: "Illness Benefit Zahlung in Irland: Betrag, Steuer und Zeitpunkt",
@@ -1081,7 +1023,7 @@ const de: LocalePost = {
       "Wann Illness Benefit beginnt, warum die erste Zahlung spaeter kommen kann und wo Sick Pay des Arbeitgebers in diese Luecke faellt.",
       "Wie Illness Benefit besteuert wird, was Revenue im Hintergrund aendert und warum die Gehaltsabrechnung waehrend eines laufenden Anspruchs ungewoehnlich aussehen kann.",
     ],
-    author: { initials: "TF", name: "Dr Tiago Miguel Figueira", line: "IMC 523449 · Aerztlicher Leiter, Global Health" },
+    author: TEAM_AUTHOR,
     reviewLine: "Die fachliche und muttersprachliche Prüfung durch Dr Ahmed Maklad ist vor der Veröffentlichung erforderlich.",
     navLabel: "In diesem Artikel",
     sections: [
@@ -1255,7 +1197,127 @@ const de: LocalePost = {
     ],
     disclaimerTitle: "Medizinischer Hinweis",
     disclaimer:
-      "Verfasst von Dr Tiago Miguel Figueira (IMC 523449), Aerztlicher Leiter bei Global Health. Vor der Veroeffentlichung ist eine fachliche und muttersprachliche Pruefung durch Dr Ahmed Maklad erforderlich. Dieser Artikel bietet allgemeine Informationen zu Zahlungszeitpunkt und steuerlicher Behandlung im irischen System. Er ersetzt keine individuelle medizinische Beratung, Rechtsberatung, Steuerberatung oder Payroll-Beratung. Entscheidungen zu Illness Benefit treffen Department of Social Protection und Revenue. Bei Notfallsymptomen rufen Sie sofort 112 oder 999 an.",
+      "Verfasst vom Global Health Medical Team. Vor der Veroeffentlichung ist eine fachliche und muttersprachliche Pruefung durch Dr Ahmed Maklad erforderlich. Dieser Artikel bietet allgemeine Informationen zu Zahlungszeitpunkt und steuerlicher Behandlung im irischen System. Er ersetzt keine individuelle medizinische Beratung, Rechtsberatung, Steuerberatung oder Payroll-Beratung. Entscheidungen zu Illness Benefit treffen Department of Social Protection und Revenue. Bei Notfallsymptomen rufen Sie sofort 112 oder 999 an.",
+  } satisfies Article,
+};
+
+// The original long-form locale copies remain above as research evidence. The
+// approved publication candidates below are fresh translations of the compact
+// English source, not shortened versions of those older drafts.
+void [ptResearch, esResearch, roResearch, deResearch];
+
+const pt: LocalePost = {
+  locale: "PT",
+  slug: "illness-benefit-irlanda-valor-pagamento-2026",
+  title: "Illness Benefit na Irlanda: valores e pagamentos em 2026",
+  excerpt: "Valores de 2026, dias de espera, calendário semanal, imposto e diferença entre Illness Benefit e baixa paga pelo empregador.",
+  seoTitle: "Illness Benefit Irlanda: valores e pagamentos 2026",
+  seoDescription: "Veja os valores do Illness Benefit na Irlanda em 2026, quando começa o pagamento, como é tributado e como se relaciona com a baixa paga.",
+  category: "Medicina Geral",
+  article: {
+    lang: "pt-PT",
+    tagline: "Medicina a qualquer hora, em qualquer lugar",
+    categoryLabel: "Medicina Geral",
+    categoryHref: ptLinks.blog,
+    eyebrow: "Irlanda · Pagamentos em 2026",
+    h1: "Quanto paga o Illness Benefit na Irlanda em 2026?",
+    deck: "O valor pessoal máximo é 254 EUR por semana. O montante individual depende dos rendimentos, da data de início e do imposto.",
+    intro: "Em 2026, o valor pessoal máximo do <strong>Illness Benefit é 254 EUR por semana</strong>. Existem escalões inferiores. O primeiro dia pago depende dos dias de statutory sick leave disponíveis, e o apoio é tributável. Consulte o nosso <a href=\"" + ptLinks.claimGuide + "\">guia do Illness Benefit</a> para requisitos, PRSI e pedido.",
+    facts: ["Máximo em 2026: 254 EUR por semana", "Quatro escalões dependem dos rendimentos médios", "Paga Income Tax, mas não PRSI nem USC"],
+    primaryCta: { label: "Consultar as regras de início em 2026", href: STATUTORY_SICK_LEAVE_2026 },
+    secondaryCta: { label: "Ler o guia do pedido", href: ptLinks.claimGuide },
+    panelChip: "Resposta rápida",
+    panelParas: ["254 EUR é o máximo pessoal, não um valor igual para todos.", "O pagamento pode começar no 6.º, 5.º ou 4.º dia."],
+    author: { initials: "TF", name: "Dr Tiago Miguel Figueira", line: "IMC 523449 · Diretor Clínico, Global Health" },
+    reviewLine: "É necessária revisão clínica e linguística pelo Dr Ahmed Maklad antes da publicação.",
+    navLabel: "Neste guia",
+    sections: [
+      { id: "valores", nav: "Valores de 2026", eyebrow: "Escalões oficiais", h2: "Valores do Illness Benefit em 2026", blocks: [
+        lead("O DSP usa a média semanal do ano fiscal relevante."),
+        ul(["<strong>300 EUR ou mais:</strong> 254 EUR por semana.", "<strong>220 a 299,99 EUR:</strong> 198,90 EUR por semana.", "<strong>150 a 219,99 EUR:</strong> 163,70 EUR por semana.", "<strong>Menos de 150 EUR:</strong> 114 EUR por semana."]),
+        cite("Valores confirmados em 25 de agosto de 2026 na página do <a href=\"" + GOV_IB + "\" rel=\"nofollow noopener\" target=\"_blank\">Department of Social Protection</a>."),
+      ]},
+      { id: "inicio", nav: "Quando começa", eyebrow: "Dias de espera", h2: "Quando começa o Illness Benefit?", blocks: [
+        lead("A data depende dos dias de statutory sick leave já usados em 2026."),
+        ul(["<strong>Nenhum dia usado:</strong> cinco dias pagos pelo empregador; Illness Benefit a partir do 6.º dia.", "<strong>Um dia usado:</strong> quatro dias pagos pelo empregador; início no 5.º dia.", "<strong>Três dias usados:</strong> dois dias pagos pelo empregador e um dia de espera; início no 4.º dia.", "<strong>Todos os cinco usados:</strong> três dias de espera; início no 4.º dia."]),
+        p("Os dois pagamentos não podem cobrir o mesmo dia. O domingo não conta como dia de espera. O registo e o processamento podem fazer com que o dinheiro chegue depois do primeiro dia elegível."),
+        warn("Confirme o seu processo", "Conte os dias de statutory sick leave já usados e confirme o calendário no MyWelfare ou com o DSP. Estes exemplos não preveem a data exata da transferência."),
+      ]},
+      { id: "empregador", nav: "Baixa do empregador", eyebrow: "Pagamentos distintos", h2: "Illness Benefit e sick pay não são a mesma coisa", blocks: [
+        lead("O empregador paga statutory sick leave; o DSP paga Illness Benefit."),
+        p("Em 2026, os trabalhadores elegíveis mantêm cinco dias de statutory sick leave, pagos a 70% do rendimento diário normal até ao limite legal. Um contrato ou regime interno pode ser mais favorável. Confirme o recibo de vencimento e as regras da sua empresa."),
+        cite("A posição para 2026 consta da <a href=\"" + ENTERPRISE_SICK_LEAVE + "\" rel=\"nofollow noopener\" target=\"_blank\">atualização oficial sobre statutory sick leave</a>."),
+      ]},
+      { id: "imposto", nav: "Imposto", eyebrow: "Tratamento fiscal", h2: "O Illness Benefit é tributável?", blocks: [
+        lead("Sim. O DSP costuma pagar sem reter imposto e comunica o valor ao Revenue."),
+        p("O Revenue pode ajustar os tax credits e o rate band para cobrar Income Tax. PRSI e USC não se aplicam ao Illness Benefit, e os acréscimos por filhos não são tributados. Por isso, o valor que entra na conta não mostra sozinho o efeito fiscal final."),
+      ]},
+      { id: "verificar", nav: "O que verificar", eyebrow: "Se o valor não bate certo", h2: "O que confirmar antes de contactar o DSP", blocks: [
+        lead("Compare o calendário do empregador, o pedido ao DSP e a informação fiscal."),
+        ul(["Quantos dias de statutory sick leave já usou?", "Qual foi o escalão aplicado?", "O pedido e o certificado foram registados?"]),
+        p("Se precisa de avaliação médica, veja o nosso <a href=\"" + ptLinks.service + "\">serviço de certificado de doença</a>. Em caso de dor no peito, sinais de AVC, falta de ar grave ou colapso, ligue 112 ou 999."),
+      ]},
+    ],
+    linksEyebrow: "Global Health Irlanda", linksH2: "Pedido e avaliação médica", linksLead: "O DSP decide o apoio; o médico avalia a capacidade para trabalhar.",
+    links: [{ label: "Guia de elegibilidade e pedido", href: ptLinks.claimGuide }, { label: "Avaliação para certificado de doença", href: ptLinks.service }, { label: "Médicos na Irlanda", href: ptLinks.doctors }, { label: "Contactar a Global Health", href: ptLinks.contact }],
+    ctaBox: { h3: "Precisa de avaliação médica para a baixa?", text: "Um médico pode avaliar a capacidade para trabalhar. O DSP decide o direito ao apoio.", primary: { label: "Marcar avaliação", href: ptLinks.service }, secondary: { label: "Ver médicos", href: ptLinks.doctors } },
+    sourcesEyebrow: "Fontes oficiais", sourcesH2: "Regras verificadas para 2026", sourcesLead: "Valores e procedimentos confirmados em 25 de agosto de 2026.",
+    sources: [{ label: "Department of Social Protection: Illness Benefit", href: GOV_IB }, { label: "DSP: Illness Benefit e statutory sick leave em 2026", href: STATUTORY_SICK_LEAVE_2026 }, { label: "MyWelfare: Illness Benefit", href: MYWELFARE }, { label: "Revenue: tributação do Illness Benefit", href: REVENUE_TAX }, { label: "Department of Enterprise: statutory sick leave", href: ENTERPRISE_SICK_LEAVE }],
+    sourcesNote: "Confirme o processo com o DSP e o imposto com o Revenue.", faqEyebrow: "Perguntas frequentes", faqH2: "Pagamentos do Illness Benefit",
+    faqs: [{ q: "Todas as pessoas recebem 254 EUR por semana?", a: "Não. Esse é o valor pessoal máximo em 2026. O DSP aplica quatro escalões segundo os rendimentos semanais médios." }, { q: "Em que dia é pago?", a: "O pagamento é semanal e pode ser emitido de segunda-feira a sábado, conforme o registo do pedido e o primeiro dia de doença." }, { q: "Começa sempre depois de três dias de espera?", a: "Não. Com os cinco dias de statutory sick leave disponíveis, costuma começar no 6.º dia; se já os usou, pode começar no 4.º dia." }, { q: "O Illness Benefit paga imposto?", a: "Sim. O DSP costuma pagar o valor bruto e o Revenue cobra Income Tax através de ajustes fiscais. PRSI e USC não se aplicam." }],
+    disclaimerTitle: "Informação médica e sobre apoios", disclaimer: "Artigo assistido por IA, sujeito a revisão clínica e linguística. Informação geral de 2026; não é decisão do DSP nem garantia de certificação ou pagamento.",
+  } satisfies Article,
+};
+
+const es: LocalePost = {
+  locale: "ES", slug: "illness-benefit-irlanda-cuantia-pago-2026", title: "Illness Benefit en Irlanda: cuantía y pagos en 2026", excerpt: "Cuantías de 2026, días de espera, pago semanal, impuestos y diferencia entre Illness Benefit y la baja pagada por la empresa.", seoTitle: "Illness Benefit Irlanda: cuantía y pagos 2026", seoDescription: "Consulta las cuantías del Illness Benefit en Irlanda en 2026, cuándo empieza el pago, cómo tributa y cómo encaja con la baja de empresa.", category: "Medicina General",
+  article: {
+    lang: "es-ES", tagline: "Medicina cuando la necesites", categoryLabel: "Medicina General", categoryHref: esLinks.blog, eyebrow: "Irlanda · Pagos en 2026", h1: "¿Cuánto se cobra de Illness Benefit en Irlanda en 2026?", deck: "La cuantía personal máxima es de 254 EUR por semana. Los ingresos, la fecha de inicio y los impuestos pueden cambiar el importe individual.",
+    intro: "En 2026, la cuantía personal máxima del <strong>Illness Benefit es de 254 EUR por semana</strong>. Hay tramos inferiores. El primer día pagado depende de los días de statutory sick leave que todavía tenga disponibles, y la prestación tributa. Para revisar requisitos, PRSI y solicitud, consulte nuestra <a href=\"" + esLinks.claimGuide + "\">guía para pedir el Illness Benefit</a>.",
+    facts: ["Cuantía personal máxima en 2026: 254 EUR semanales", "Cuatro tramos según los ingresos semanales medios", "Tributa por Income Tax, pero no por PRSI ni USC"], primaryCta: { label: "Consultar las reglas de inicio de 2026", href: STATUTORY_SICK_LEAVE_2026 }, secondaryCta: { label: "Leer la guía de solicitud", href: esLinks.claimGuide }, panelChip: "Respuesta breve", panelParas: ["254 EUR es el máximo personal, no una tarifa plana.", "El pago puede comenzar el día 6, 5 o 4.", "Se paga cada semana; la primera transferencia puede tardar."], author: TEAM_AUTHOR, reviewLine: "Se requiere revisión clínica y lingüística del Dr Ahmed Maklad antes de publicar.", navLabel: "Contenido",
+    sections: [
+      { id: "cuantias", nav: "Cuantías 2026", eyebrow: "Tramos oficiales", h2: "Cuantías del Illness Benefit en 2026", blocks: [lead("El DSP utiliza los ingresos semanales medios del ejercicio fiscal pertinente."), ul(["<strong>300 EUR o más:</strong> 254 EUR por semana.", "<strong>Entre 220 y 299,99 EUR:</strong> 198,90 EUR.", "<strong>Entre 150 y 219,99 EUR:</strong> 163,70 EUR.", "<strong>Menos de 150 EUR:</strong> 114 EUR."]), cite("Cuantías verificadas el 25 de agosto de 2026 en la página del <a href=\"" + GOV_IB + "\" rel=\"nofollow noopener\" target=\"_blank\">Department of Social Protection</a>.")] },
+      { id: "inicio", nav: "Cuándo empieza", eyebrow: "Días de espera", h2: "¿Cuándo empieza a pagarse?", blocks: [lead("La fecha depende de los días de statutory sick leave ya utilizados en 2026."), ul(["<strong>Ningún día utilizado:</strong> cinco días pagados por la empresa; Illness Benefit desde el día 6.", "<strong>Un día utilizado:</strong> cuatro días de empresa; desde el día 5.", "<strong>Tres días utilizados:</strong> dos días de empresa y uno de espera; desde el día 4.", "<strong>Los cinco utilizados:</strong> tres días de espera; desde el día 4."]), p("Los dos pagos no pueden cubrir la misma fecha. El domingo no cuenta como día de espera. El registro y la tramitación pueden retrasar el ingreso respecto al primer día reconocido."), warn("Revise su expediente", "Cuente los días de statutory sick leave ya utilizados y confirme el calendario en MyWelfare o con el DSP. Los ejemplos no predicen una fecha exacta de transferencia.")] },
+      { id: "empresa", nav: "Pago de empresa", eyebrow: "Dos pagos distintos", h2: "El Illness Benefit no es la baja pagada por la empresa", blocks: [lead("La empresa paga statutory sick leave; el DSP paga Illness Benefit."), p("En 2026, los trabajadores que cumplen los requisitos disponen de cinco días de statutory sick leave, abonados al 70% del salario diario normal hasta el límite legal. El contrato puede ofrecer condiciones mejores."), cite("La situación de 2026 figura en la <a href=\"" + ENTERPRISE_SICK_LEAVE + "\" rel=\"nofollow noopener\" target=\"_blank\">actualización oficial sobre statutory sick leave</a>.")] },
+      { id: "impuestos", nav: "Impuestos", eyebrow: "Tratamiento fiscal", h2: "¿El Illness Benefit tributa?", blocks: [lead("Sí. El DSP suele pagarlo sin retención y comunica la prestación a Revenue."), p("Revenue puede ajustar los tax credits y el rate band para recaudar Income Tax. No se aplican PRSI ni USC. El ingreso bancario no muestra por sí solo el efecto fiscal final.")] },
+      { id: "comprobar", nav: "Qué comprobar", eyebrow: "Si la cifra no cuadra", h2: "Qué revisar antes de contactar con el DSP", blocks: [lead("Compare el calendario de la empresa, la solicitud al DSP y la información fiscal."), ul(["¿Cuántos días de statutory sick leave ha utilizado este año?", "¿Qué tramo se aplicó a sus ingresos?", "¿Se registraron la solicitud y el certificado?", "¿Revenue cambió sus tax credits o su rate band?"]), p("Si necesita una valoración médica, consulte el <a href=\"" + esLinks.service + "\">servicio de certificado por enfermedad</a>. Ante dolor torácico, signos de ictus, falta de aire intensa o pérdida de conocimiento, llame al 112 o al 999.")] },
+    ],
+    linksEyebrow: "Global Health Irlanda", linksH2: "Solicitud y valoración médica", linksLead: "El DSP decide la prestación; el médico valora la capacidad para trabajar.", links: [{ label: "Guía de requisitos y solicitud", href: esLinks.claimGuide }, { label: "Valoración para certificado", href: esLinks.service }, { label: "Médicos en Irlanda", href: esLinks.doctors }, { label: "Contactar con Global Health", href: esLinks.contact }], ctaBox: { h3: "¿Necesita una valoración médica para la baja?", text: "Un médico puede valorar su capacidad para trabajar. El DSP decide el derecho a la prestación.", primary: { label: "Reservar valoración", href: esLinks.service }, secondary: { label: "Ver médicos", href: esLinks.doctors } },
+    sourcesEyebrow: "Fuentes oficiales", sourcesH2: "Reglas de 2026 verificadas", sourcesLead: "Cuantías y procedimientos comprobados el 25 de agosto de 2026.", sources: [{ label: "Department of Social Protection: Illness Benefit", href: GOV_IB }, { label: "DSP: Illness Benefit y statutory sick leave en 2026", href: STATUTORY_SICK_LEAVE_2026 }, { label: "MyWelfare: Illness Benefit", href: MYWELFARE }, { label: "Revenue: fiscalidad del Illness Benefit", href: REVENUE_TAX }, { label: "Department of Enterprise: statutory sick leave", href: ENTERPRISE_SICK_LEAVE }], sourcesNote: "Confirme su expediente con el DSP y su situación fiscal con Revenue.", faqEyebrow: "Preguntas frecuentes", faqH2: "Pagos del Illness Benefit", faqs: [{ q: "¿Todo el mundo cobra 254 EUR por semana?", a: "No. Es la cuantía personal máxima de 2026. El DSP aplica cuatro tramos según los ingresos semanales medios." }, { q: "¿Qué día se paga?", a: "El pago es semanal y puede emitirse de lunes a sábado, según el registro de la solicitud y el primer día de enfermedad." }, { q: "¿Empieza siempre tras tres días de espera?", a: "No. Con los cinco días de statutory sick leave disponibles suele empezar el día 6; si ya los usó, puede empezar el día 4." }, { q: "¿Paga impuestos?", a: "Sí. El DSP suele pagarlo bruto y Revenue recauda Income Tax mediante ajustes fiscales. No se aplican PRSI ni USC." }], disclaimerTitle: "Información médica y sobre prestaciones", disclaimer: "Artículo asistido por IA pendiente de revisión clínica y lingüística. Información general de 2026; no constituye una resolución del DSP, asesoramiento individual ni garantía de certificado o pago.",
+  } satisfies Article,
+};
+
+const ro: LocalePost = {
+  locale: "RO", slug: "illness-benefit-irlanda-suma-plata-2026", title: "Illness Benefit în Irlanda: sume și plăți în 2026", excerpt: "Sumele din 2026, zilele de așteptare, plata săptămânală, impozitul și diferența față de concediul medical plătit de angajator.", seoTitle: "Illness Benefit Irlanda: sume și plăți 2026", seoDescription: "Află sumele Illness Benefit din Irlanda în 2026, când începe plata, cum se impozitează și cum se corelează cu plata angajatorului.", category: "Medicină generală",
+  article: {
+    lang: "ro-RO", tagline: "Medicină atunci când ai nevoie", categoryLabel: "Medicină generală", categoryHref: roLinks.blog, eyebrow: "Irlanda · Plăți în 2026", h1: "Cât este Illness Benefit în Irlanda în 2026?", deck: "Suma personală maximă este de 254 EUR pe săptămână. Venitul, data de începere și impozitul pot schimba plata fiecărei persoane.", intro: "În 2026, suma personală maximă pentru <strong>Illness Benefit este de 254 EUR pe săptămână</strong>. Pentru venituri mai mici se aplică alte praguri. Prima zi plătită depinde de zilele de statutory sick leave rămase, iar indemnizația este impozabilă. Pentru eligibilitate, PRSI și depunerea cererii, consultați <a href=\"" + roLinks.claimGuide + "\">ghidul nostru despre Illness Benefit</a>.",
+    facts: ["Suma personală maximă în 2026: 254 EUR pe săptămână", "Patru praguri în funcție de venitul săptămânal mediu", "Se aplică Income Tax, dar nu PRSI sau USC"], primaryCta: { label: "Vezi regulile de început din 2026", href: STATUTORY_SICK_LEAVE_2026 }, secondaryCta: { label: "Citește ghidul cererii", href: roLinks.claimGuide }, panelChip: "Pe scurt", panelParas: ["254 EUR este suma personală maximă, nu o sumă fixă.", "Plata poate începe în ziua 6, 5 sau 4.", "Indemnizația este săptămânală; primul transfer poate întârzia."], author: TEAM_AUTHOR, reviewLine: "Revizuirea clinică și lingvistică de către Dr Ahmed Maklad este obligatorie înainte de publicare.", navLabel: "În acest ghid",
+    sections: [
+      { id: "sume", nav: "Sume 2026", eyebrow: "Praguri oficiale", h2: "Sumele Illness Benefit în 2026", blocks: [lead("DSP folosește venitul săptămânal mediu din anul fiscal relevant."), ul(["<strong>Cel puțin 300 EUR:</strong> 254 EUR pe săptămână.", "<strong>220-299,99 EUR:</strong> 198,90 EUR.", "<strong>150-219,99 EUR:</strong> 163,70 EUR.", "<strong>Sub 150 EUR:</strong> 114 EUR."]), p("Pot exista suplimente pentru un adult sau copii eligibili, dar acestea nu se acordă automat. DSP decide pe baza dosarului. Consultația medicală nu stabilește pragul sau suma finală."), cite("Sume verificate la 25 august 2026 pe pagina <a href=\"" + GOV_IB + "\" rel=\"nofollow noopener\" target=\"_blank\">Department of Social Protection</a>.")] },
+      { id: "inceput", nav: "Când începe", eyebrow: "Zile de așteptare", h2: "Când începe plata Illness Benefit?", blocks: [lead("Data depinde de zilele de statutory sick leave deja folosite în 2026."), ul(["<strong>Nicio zi folosită:</strong> cinci zile plătite de angajator; Illness Benefit din ziua 6.", "<strong>O zi folosită:</strong> patru zile plătite de angajator; din ziua 5.", "<strong>Trei zile folosite:</strong> două zile plătite de angajator și o zi de așteptare; din ziua 4.", "<strong>Toate cele cinci folosite:</strong> trei zile de așteptare; din ziua 4."]), p("Cele două plăți nu pot acoperi aceeași zi. Duminica nu este zi de așteptare. Înregistrarea și procesarea pot face ca transferul să ajungă după prima zi eligibilă."), warn("Verificați dosarul propriu", "Numărați zilele de statutory sick leave folosite și confirmați calendarul în MyWelfare sau la DSP. Exemplele nu prezic data exactă a transferului.")] },
+      { id: "angajator", nav: "Plata angajatorului", eyebrow: "Plăți separate", h2: "Illness Benefit nu este plata angajatorului", blocks: [lead("Angajatorul plătește statutory sick leave; DSP plătește Illness Benefit."), p("În 2026, angajații eligibili au cinci zile de statutory sick leave, plătite cu 70% din câștigul zilnic normal, în limita legală. Contractul poate oferi condiții mai bune. Verificați fluturașul de salariu și politica angajatorului."), p("Depuneți cererea la DSP în termen de șase săptămâni și asigurați-vă că este completat Certificate of Incapacity for Work, chiar dacă angajatorul acoperă primele zile."), cite("Regula pentru 2026 este explicată în <a href=\"" + ENTERPRISE_SICK_LEAVE + "\" rel=\"nofollow noopener\" target=\"_blank\">actualizarea oficială despre statutory sick leave</a>.")] },
+      { id: "impozit", nav: "Impozit", eyebrow: "Tratament fiscal", h2: "Illness Benefit se impozitează?", blocks: [lead("Da. DSP plătește de obicei fără reținere și raportează indemnizația către Revenue."), p("Revenue poate ajusta tax credits și rate band pentru a colecta Income Tax. PRSI și USC nu se aplică, iar suplimentele pentru copii nu sunt impozitate. Suma intrată în cont nu arată singură efectul fiscal final."), p("Certificarea medicală, dreptul la indemnizație și fiscalitatea sunt decizii separate. Medicul poate evalua capacitatea de muncă, dar nu poate garanta certificatul, eligibilitatea sau suma.")] },
+      { id: "verificari", nav: "Ce verifici", eyebrow: "Dacă suma nu corespunde", h2: "Ce să verificați înainte de a contacta DSP", blocks: [lead("Comparați calendarul angajatorului, cererea DSP și informațiile fiscale."), ul(["Câte zile de statutory sick leave ați folosit anul acesta?", "Ce prag a fost aplicat venitului?", "Cererea și certificatul au fost înregistrate?", "Revenue a modificat tax credits sau rate band?"]), p("Dacă aveți nevoie de evaluare medicală, consultați <a href=\"" + roLinks.service + "\">serviciul pentru certificat medical</a>. Pentru durere în piept, semne de AVC, lipsă severă de aer sau pierderea stării de conștiență, sunați la 112 sau 999.")] },
+    ],
+    linksEyebrow: "Global Health Irlanda", linksH2: "Cererea și evaluarea medicală", linksLead: "DSP decide indemnizația; medicul evaluează capacitatea de muncă.", links: [{ label: "Ghid de eligibilitate și cerere", href: roLinks.claimGuide }, { label: "Evaluare pentru certificat medical", href: roLinks.service }, { label: "Medici în Irlanda", href: roLinks.doctors }, { label: "Contact Global Health", href: roLinks.contact }], ctaBox: { h3: "Aveți nevoie de evaluare medicală?", text: "Medicul poate evalua capacitatea de muncă. DSP decide dreptul la indemnizație.", primary: { label: "Programează evaluarea", href: roLinks.service }, secondary: { label: "Vezi medicii", href: roLinks.doctors } },
+    sourcesEyebrow: "Surse oficiale", sourcesH2: "Reguli verificate pentru 2026", sourcesLead: "Sumele și procedurile au fost verificate la 25 august 2026.", sources: [{ label: "Department of Social Protection: Illness Benefit", href: GOV_IB }, { label: "DSP: Illness Benefit și statutory sick leave în 2026", href: STATUTORY_SICK_LEAVE_2026 }, { label: "MyWelfare: Illness Benefit", href: MYWELFARE }, { label: "Revenue: impozitarea Illness Benefit", href: REVENUE_TAX }, { label: "Department of Enterprise: statutory sick leave", href: ENTERPRISE_SICK_LEAVE }], sourcesNote: "Confirmați dosarul la DSP și situația fiscală la Revenue.", faqEyebrow: "Întrebări frecvente", faqH2: "Plata Illness Benefit", faqs: [{ q: "Primește toată lumea 254 EUR pe săptămână?", a: "Nu. Aceasta este suma personală maximă în 2026. DSP aplică patru praguri în funcție de venitul săptămânal mediu." }, { q: "În ce zi se plătește?", a: "Plata este săptămânală și poate fi emisă de luni până sâmbătă, în funcție de înregistrarea cererii și prima zi de boală." }, { q: "Începe întotdeauna după trei zile de așteptare?", a: "Nu. Cu toate cele cinci zile de statutory sick leave disponibile, începe de regulă în ziua 6; dacă au fost folosite, poate începe în ziua 4." }, { q: "Se plătește impozit?", a: "Da. DSP plătește de obicei brut, iar Revenue colectează Income Tax prin ajustări fiscale. PRSI și USC nu se aplică." }], disclaimerTitle: "Informații medicale și despre indemnizații", disclaimer: "Articol asistat de IA, în așteptarea revizuirii clinice și lingvistice. Informații generale pentru 2026; nu reprezintă o decizie DSP, recomandare individuală sau garanție de certificat ori plată.",
+  } satisfies Article,
+};
+
+const de: LocalePost = {
+  locale: "DE", slug: "illness-benefit-irland-betrag-zahlung-2026", title: "Illness Benefit in Irland: Betrag und Zahlung 2026", excerpt: "Beträge für 2026, Wartezeiten, wöchentliche Zahlung, Steuer und der Unterschied zur Lohnfortzahlung des Arbeitgebers.", seoTitle: "Illness Benefit Irland: Betrag und Zahlung 2026", seoDescription: "Aktuelle Illness-Benefit-Sätze in Irland, Zahlungsbeginn, Steuer und Zusammenspiel mit der gesetzlichen Lohnfortzahlung im Jahr 2026.", category: "Allgemeinmedizin",
+  article: {
+    lang: "de-DE", tagline: "Medizin, wenn Sie sie brauchen", categoryLabel: "Allgemeinmedizin", categoryHref: deLinks.blog, eyebrow: "Irland · Zahlungen 2026", h1: "Wie hoch ist Illness Benefit in Irland 2026?", deck: "Der persönliche Höchstsatz beträgt 254 EUR pro Woche. Einkommen, Beginn und Steuer können die individuelle Zahlung verändern.", intro: "Im Jahr 2026 beträgt der persönliche Höchstsatz für <strong>Illness Benefit 254 EUR pro Woche</strong>. Für niedrigere Einkommen gelten andere Stufen. Der erste bezahlte Tag hängt von den noch verfügbaren Tagen Statutory Sick Leave ab; die Leistung ist steuerpflichtig. Voraussetzungen, PRSI und Antrag erklärt unser <a href=\"" + deLinks.claimGuide + "\">Leitfaden zu Illness Benefit</a>.",
+    facts: ["Persönlicher Höchstsatz 2026: 254 EUR pro Woche", "Vier Stufen nach durchschnittlichem Wochenverdienst", "Income Tax fällt an, PRSI und USC nicht"], primaryCta: { label: "Startregeln für 2026 ansehen", href: STATUTORY_SICK_LEAVE_2026 }, secondaryCta: { label: "Antragsleitfaden lesen", href: deLinks.claimGuide }, panelChip: "Kurz erklärt", panelParas: ["254 EUR ist der persönliche Höchstsatz, kein Pauschalbetrag.", "Die Zahlung kann am 6., 5. oder 4. Tag beginnen.", "Gezahlt wird wöchentlich; die erste Überweisung kann später eintreffen."], author: TEAM_AUTHOR, reviewLine: "Vor der Veröffentlichung ist die fachliche und sprachliche Prüfung durch Dr Ahmed Maklad erforderlich.", navLabel: "In diesem Leitfaden",
+    sections: [
+      { id: "betraege", nav: "Beträge 2026", eyebrow: "Offizielle Stufen", h2: "Illness-Benefit-Sätze im Jahr 2026", blocks: [lead("DSP verwendet den durchschnittlichen Wochenverdienst im maßgeblichen Steuerjahr."), ul(["<strong>Mindestens 300 EUR:</strong> 254 EUR pro Woche.", "<strong>220 bis 299,99 EUR:</strong> 198,90 EUR.", "<strong>150 bis 219,99 EUR:</strong> 163,70 EUR.", "<strong>Unter 150 EUR:</strong> 114 EUR."]), p("Zuschläge für einen qualifizierten Erwachsenen oder Kinder sind möglich, aber nicht automatisch. DSP entscheidet anhand des Einzelfalls. Eine ärztliche Konsultation legt weder die Stufe noch den endgültigen Betrag fest."), cite("Beträge am 25. August 2026 auf der Seite des <a href=\"" + GOV_IB + "\" rel=\"nofollow noopener\" target=\"_blank\">Department of Social Protection</a> geprüft.")] },
+      { id: "beginn", nav: "Zahlungsbeginn", eyebrow: "Wartetage", h2: "Wann beginnt Illness Benefit?", blocks: [lead("Der Beginn hängt von den 2026 bereits genutzten Tagen Statutory Sick Leave ab."), ul(["<strong>Noch keinen Tag genutzt:</strong> fünf Tage Arbeitgeberzahlung; Illness Benefit ab Tag 6.", "<strong>Einen Tag genutzt:</strong> vier Tage Arbeitgeberzahlung; ab Tag 5.", "<strong>Drei Tage genutzt:</strong> zwei Tage Arbeitgeberzahlung und ein Wartetag; ab Tag 4.", "<strong>Alle fünf genutzt:</strong> drei Wartetage; ab Tag 4."]), p("Beide Zahlungen dürfen nicht denselben Tag abdecken. Sonntag ist kein Wartetag. Registrierung und Bearbeitung können dazu führen, dass die Überweisung erst nach dem ersten anspruchsberechtigten Tag eintrifft."), warn("Prüfen Sie Ihren Fall", "Zählen Sie die bereits genutzten Tage Statutory Sick Leave und bestätigen Sie den Zeitplan bei MyWelfare oder DSP. Die Beispiele nennen kein festes Überweisungsdatum.")] },
+      { id: "arbeitgeber", nav: "Arbeitgeberzahlung", eyebrow: "Getrennte Leistungen", h2: "Illness Benefit ist nicht die Lohnfortzahlung des Arbeitgebers", blocks: [lead("Der Arbeitgeber zahlt Statutory Sick Leave; DSP zahlt Illness Benefit."), p("Berechtigte Beschäftigte haben 2026 fünf Tage Statutory Sick Leave. Der Arbeitgeber zahlt 70% des normalen Tagesverdienstes bis zur gesetzlichen Obergrenze. Vertragliche Regelungen können günstiger sein. Prüfen Sie Gehaltsabrechnung und Betriebsregelung."), p("Stellen Sie den DSP-Antrag innerhalb von sechs Wochen. Auch das Certificate of Incapacity for Work muss ausgefüllt sein, selbst wenn der Arbeitgeber die ersten Tage bezahlt."), cite("Die Regelung für 2026 erläutert die <a href=\"" + ENTERPRISE_SICK_LEAVE + "\" rel=\"nofollow noopener\" target=\"_blank\">offizielle Aktualisierung zu Statutory Sick Leave</a>.")] },
+      { id: "steuer", nav: "Steuer", eyebrow: "Steuerliche Behandlung", h2: "Ist Illness Benefit steuerpflichtig?", blocks: [lead("Ja. DSP zahlt meist ohne Abzug und meldet die Leistung an Revenue."), p("Revenue kann Tax Credits und Rate Band anpassen, um Income Tax einzuziehen. PRSI und USC fallen nicht an; Kinderzuschläge sind steuerfrei. Der Kontoeingang allein zeigt daher nicht die endgültige Steuerwirkung."), p("Ärztliche Bescheinigung, Leistungsanspruch und Besteuerung sind getrennte Entscheidungen. Ein Arzt kann die Arbeitsfähigkeit beurteilen, aber weder Bescheinigung noch Anspruch oder Betrag garantieren.")] },
+      { id: "pruefen", nav: "Was prüfen", eyebrow: "Wenn der Betrag nicht stimmt", h2: "Was Sie vor einer Anfrage bei DSP prüfen sollten", blocks: [lead("Vergleichen Sie Arbeitgeberkalender, DSP-Antrag und Steuerdaten."), ul(["Wie viele Tage Statutory Sick Leave haben Sie dieses Jahr genutzt?", "Welche Einkommensstufe wurde angewandt?", "Sind Antrag und Bescheinigung registriert?", "Hat Revenue Tax Credits oder Rate Band geändert?"]), p("Wenn Sie eine medizinische Beurteilung benötigen, finden Sie hier den <a href=\"" + deLinks.service + "\">Service für eine Krankheitsbescheinigung</a>. Bei Brustschmerz, Schlaganfallzeichen, schwerer Atemnot oder Bewusstlosigkeit wählen Sie 112 oder 999.")] },
+    ],
+    linksEyebrow: "Global Health Irland", linksH2: "Antrag und medizinische Beurteilung", linksLead: "DSP entscheidet über die Leistung; der Arzt beurteilt die Arbeitsfähigkeit.", links: [{ label: "Leitfaden zu Voraussetzungen und Antrag", href: deLinks.claimGuide }, { label: "Beurteilung für eine Krankheitsbescheinigung", href: deLinks.service }, { label: "Ärzte in Irland", href: deLinks.doctors }, { label: "Global Health kontaktieren", href: deLinks.contact }], ctaBox: { h3: "Brauchen Sie eine medizinische Beurteilung?", text: "Ein Arzt kann Ihre Arbeitsfähigkeit beurteilen. DSP entscheidet über den Leistungsanspruch.", primary: { label: "Beurteilung buchen", href: deLinks.service }, secondary: { label: "Ärzte ansehen", href: deLinks.doctors } },
+    sourcesEyebrow: "Offizielle Quellen", sourcesH2: "Regeln für 2026 geprüft", sourcesLead: "Beträge und Verfahren wurden am 25. August 2026 geprüft.", sources: [{ label: "Department of Social Protection: Illness Benefit", href: GOV_IB }, { label: "DSP: Illness Benefit und Statutory Sick Leave 2026", href: STATUTORY_SICK_LEAVE_2026 }, { label: "MyWelfare: Illness Benefit", href: MYWELFARE }, { label: "Revenue: Besteuerung von Illness Benefit", href: REVENUE_TAX }, { label: "Department of Enterprise: Statutory Sick Leave", href: ENTERPRISE_SICK_LEAVE }], sourcesNote: "Bestätigen Sie Ihren Fall bei DSP und Ihre Steuerdaten bei Revenue.", faqEyebrow: "Häufige Fragen", faqH2: "Zahlung von Illness Benefit", faqs: [{ q: "Erhält jeder 254 EUR pro Woche?", a: "Nein. Das ist der persönliche Höchstsatz für 2026. DSP nutzt vier Stufen nach dem durchschnittlichen Wochenverdienst." }, { q: "An welchem Tag wird gezahlt?", a: "Die Zahlung erfolgt wöchentlich und kann je nach Registrierung und erstem Krankheitstag von Montag bis Samstag angewiesen werden." }, { q: "Beginnt die Zahlung immer nach drei Wartetagen?", a: "Nein. Mit allen fünf verfügbaren Tagen Statutory Sick Leave beginnt sie meist an Tag 6; sind alle genutzt, kann sie an Tag 4 beginnen." }, { q: "Fällt Steuer an?", a: "Ja. DSP zahlt meist brutto, Revenue erhebt Income Tax über Steueranpassungen. PRSI und USC fallen nicht an." }], disclaimerTitle: "Medizinische und sozialrechtliche Information", disclaimer: "KI-unterstützter Artikel, der noch fachlich und sprachlich geprüft werden muss. Allgemeine Informationen für 2026; keine DSP-Entscheidung, individuelle Beratung oder Garantie für Bescheinigung oder Zahlung.",
   } satisfies Article,
 };
 
@@ -1269,7 +1331,7 @@ export const IE_ILLNESS_BENEFIT_PAYMENT: PostSet = {
     "Exact keyword 880/KD2; broad parent keyword 'illness benefit ireland' 6,600/KD5/CPC USD 3.70. This article is intentionally narrower than the existing eligibility/application post and focuses on rate, timing, tax and employer sick-pay handoff to avoid cannibalization.",
   serviceSlug: "sick-certificate-ireland",
   authorDoctorId: "cmp5r0if3002kssjug743x0p6",
-  authorDisplayName: "Dr Tiago Miguel Figueira",
+  authorDisplayName: "Global Health Medical Team",
   reviewerDoctorId: "cmqas8yh9000b01pgpc0yp1la",
   reviewerDisplayName: "Dr Ahmed Maklad",
   posts: [en, ro, es, pt, de, cs],

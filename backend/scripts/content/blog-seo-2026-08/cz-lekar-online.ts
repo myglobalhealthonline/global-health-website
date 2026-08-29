@@ -1308,7 +1308,7 @@ export const CZ_LEKAR_ONLINE: PostSet = {
     "cs/2203 expansion 2026-08-04: 'lékař online 24 7' 170 KD 0 and 'lékař online 24/7' 170 KD 1 — same intent, ~340/mo combined. Replaced the original pick 'praktický lékař online' (KD 5, no volume returned). Head term 'online lékař' 880/mo is KD 28, above the ceiling for 57 referring domains, so it is the term this grows into rather than the target. SERP page 1 is provider homepages and directories only (praktickylekar.online, mojeambulance.cz, euc.cz, znamylekar.cz, navstevalekare.cz, zpmvcr.cz). GSC: cluster at pos 13.4 on /czechia/cs/gp-consultation-online.",
   serviceSlug: "lekar-online-praha",
   authorDoctorId: "cmqz4mk98007801lugo7c4y30",
-  authorDisplayName: "MUDr. Romana Pavlů",
+  authorDisplayName: "Global Health Medical Team",
   reviewerDoctorId: "cmqz2vn0j006901lu9zla3zmp",
   reviewerDisplayName: "MUDr. Vojtěch Černý",
   posts: [cs, en, pt, es, roPost, de],

@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { apiRequest } from "@/lib/api/client";
+import { BLOG_AUTHOR_NAME } from "@/lib/content/blog-byline";
 import { logPublicContentFallback } from "@/lib/content/public-content-source";
 import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
 
@@ -161,7 +162,7 @@ function normalizeApiPost(raw: ApiBlogPost): BlogPostFull | null {
     }),
     countries: normalizeCountries(raw.countries),
     category: str(raw.category) || "Health guide",
-    author: str(raw.author) || "The Global Health Medical Team",
+    author: str(raw.author) || BLOG_AUTHOR_NAME,
     publishedAt,
     readingTime: readingTimeFromHtml(body),
     coverImageSrc: coverUrl ? resolveTrustedAssetUrl(coverUrl) ?? coverUrl : null,

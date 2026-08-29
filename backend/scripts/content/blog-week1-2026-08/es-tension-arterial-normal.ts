@@ -264,7 +264,7 @@ export const ES_TENSION_ARTERIAL_NORMAL: PostSet = {
     "Editorial plan 2026-08-19 and follow-up batch 2026-08-19: tensión arterial normal 33,100 / KD 10; tensión arterial normal mujer 1,300; tensión arterial normal adultos 880; GSC 16 impressions at position 29. Active lead paths exist through Spain primary-care chronic-conditions management, specialist cardiology and the blood-pressure tool cluster.",
   serviceSlug: "enfermedades-cronicas-online",
   authorDoctorId: "cmrdpqvkc000z01rui7z5it57",
-  authorDisplayName: "Dr. Fidel Ernesto Mesa Prado",
+  authorDisplayName: "Global Health Medical Team",
   reviewerDoctorId: "cmrdpxpi0001v01ruqavjiq79",
   reviewerDisplayName: "Dr. Eduardo Daniel Rodríguez Olivas",
   posts: [es],

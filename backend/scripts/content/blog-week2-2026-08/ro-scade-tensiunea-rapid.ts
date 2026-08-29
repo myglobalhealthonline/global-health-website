@@ -200,13 +200,13 @@ const ro: LocalePost = {
 
 const en: LocalePost = {
   locale: "EN",
-  slug: "how-to-lower-blood-pressure-safely-right-now",
-  title: "How to lower blood pressure safely right now: what to do first",
+  slug: "how-to-lower-blood-pressure-quickly-and-safely",
+  title: "How to lower blood pressure quickly: safe steps and when to call 112",
   excerpt:
-    "A practical Romania-based safety guide to repeating a high reading, recognising 112 warning signs, and avoiding unsafe extra tablets or quick-fix remedies.",
-  seoTitle: "Lower blood pressure safely: first steps",
+    "There is no quick fix that is safe for everyone. Learn how to check a high reading, when to call 112 and why not to take extra captopril or another dose without a personal plan.",
+  seoTitle: "Lower blood pressure quickly: safe first steps",
   seoDescription:
-    "High blood-pressure reading? Learn how to recheck it, when to call 112, and why extra captopril, tablets or quick remedies may be unsafe.",
+    "What to do after a high reading, when to call 112 and why extra captopril, additional doses and improvised remedies may be unsafe.",
   category: "Chronic conditions",
   article: {
     lang: "en-RO",
@@ -214,229 +214,139 @@ const en: LocalePost = {
     categoryLabel: "Chronic conditions",
     categoryHref: enHref("/blog"),
     eyebrow: "Romania · Safety guide",
-    h1: "How to lower blood pressure safely right now",
-    deck:
-      "Start by checking for an emergency and confirming the reading. Do not start with an improvised tablet.",
+    h1: "How can you lower blood pressure quickly and safely?",
+    deck: "Check for an emergency first, then check the measurement. Do not start with an improvised tablet.",
     intro:
-      "There is no universally safe home trick that instantly lowers blood pressure. Call <strong>112</strong> if a high reading comes with <strong>chest pain, severe breathlessness, one-sided weakness or numbness, trouble speaking, confusion, fainting, a sudden vision change, or a sudden unusual severe headache</strong>. If none of these warning signs is present, sit quietly for a few minutes, repeat the measurement correctly and record the results. Do not take extra captopril, someone else’s tablet, an unprescribed medicine or leftover treatment unless your own clinician has given you a clear personal plan for this exact situation.",
+      "No food, tea or tablet lowers blood pressure <strong>quickly and safely for everyone</strong>. Call <strong>112</strong> if a high reading occurs with chest pain, severe breathlessness, one-sided weakness or numbness, speech difficulty, confusion, fainting, sudden vision loss or a sudden, unusually severe headache. Do not wait or drive. Without these signs, stop exertion, sit quietly and take two careful readings a short time apart. Do not take extra captopril, someone else’s medicine or a leftover dose without personal instructions.",
     facts: [
-      "Chest, breathing or neurological warning signs: call 112",
-      "Confirm a reading with sound technique",
-      "Never improvise an extra prescription dose",
+      "Acute chest, breathing or neurological signs: call 112",
+      "Repeat the measurement correctly if you are stable",
+      "Do not improvise medicines or doses",
     ],
     primaryCta: { label: "Chronic-care consultation", href: enHref("/services/boli-cronice-online") },
-    secondaryCta: { label: "Open the blood-pressure log", href: enHref("/tools/blood-pressure-chart") },
-    panelChip: "Safety before the number",
+    secondaryCta: { label: "Open the blood pressure log", href: enHref("/tools/blood-pressure-chart") },
+    panelChip: "The right order",
     panelParas: [
-      "This guide separates a possibly inaccurate isolated reading from symptoms that may signal acute organ injury.",
-      "It explains why forcing the pressure down can be harmful and why prescription medicine is never a universal home remedy.",
-      "It does not replace 112, an emergency department or instructions from a clinician who knows your medical history.",
+      "Warning symptoms take priority over another measurement.",
+      "Pain, exertion, anxiety or technique can alter a reading.",
+      "A forced rapid fall can be dangerous; treatment is individual.",
     ],
     author: {
       initials: "RB",
       name: "Dr Robert Gabriel Brindus",
-      line: "Family physician · Medical Director, Global Health Romania",
+      line: "Family medicine specialist · Medical Director, Global Health Romania",
     },
-    reviewLine:
-      "Clinical and native editorial review by Dr Andreea Lorena Bica is required before publication.",
+    reviewLine: "Clinical and native-English review is required before publication.",
     navLabel: "In this guide",
     sections: [
       {
-        id: "first",
+        id: "first-steps",
         nav: "First steps",
-        eyebrow: "What to do now",
-        h2: "Safe actions after an unexpectedly high reading",
+        eyebrow: "After a high reading",
+        h2: "What you can do straight away without putting yourself at risk",
         blocks: [
-          lead(
-            "Stop exertion, sit somewhere safe and check for warning symptoms before focusing on repeated numbers.",
-          ),
+          lead("Stop exerting yourself, sit down and check for symptoms before you repeat the measurement."),
           ul([
-            "Sit with your back supported, feet flat and legs uncrossed; do not talk while the monitor is running.",
-            "Support your arm at heart level and use a correctly sized upper-arm cuff.",
-            "Take two further readings a short time apart, then record the time, pulse, symptoms and circumstances.",
-            "If a warning symptom is present, stop delaying care to repeat the reading and call 112.",
-            "If you feel stable but readings remain far above your usual range, seek same-day clinical advice or follow your existing personal plan.",
+            "Support your back, keep both feet on the floor and rest your arm at heart level.",
+            "Use a correctly sized cuff on your bare upper arm and do not talk while the monitor is running.",
+            "After a few minutes of rest, take two readings a short time apart and write them down.",
+            "Record your pulse, symptoms, the time, usual medicines and relevant context such as pain, fever or exertion.",
           ]),
-          p(
-            "These steps do not treat hypertension. They reduce common measurement errors and create useful information for clinical triage. Recent exercise, pain, anxiety, caffeine, nicotine, talking and a cuff that is too small can all raise a reading temporarily. That does not justify assuming a severe symptom is anxiety or waiting for it to pass.",
-          ),
-          warn(
-            "Do not drive yourself if you are acutely unwell",
-            "For chest pain, a new neurological deficit, confusion, fainting or severe breathing difficulty, call 112 and follow the dispatcher’s instructions.",
-          ),
+          p("These steps do not treat hypertension. They reduce errors and give a clinician useful information. Do not keep measuring until you see the number you want or record only the lowest result."),
+          p("If the reading stays around 180/120 mmHg or higher, seek assessment that day through family medicine, an out-of-hours centre or an emergency department. If you become worse or a warning sign appears, call 112."),
         ],
       },
       {
         id: "emergency",
         nav: "Call 112",
-        eyebrow: "Emergency signs",
-        h2: "A high number is most dangerous when acute symptoms appear",
+        eyebrow: "Warning signs",
+        h2: "When high blood pressure may accompany an emergency",
         blocks: [
-          lead(
-            "A reading around or above 180/120 mmHg is severely high and needs prompt assessment; acute organ-injury symptoms make it an emergency call to 112.",
-          ),
-          p(
-            "Do not wait for tea, a cold shower or an improvised tablet to work when symptoms could represent stroke, a heart attack, fluid in the lungs or another emergency. Tell the dispatcher the reading, symptoms, time of onset, usual prescription medicines and known conditions. If another person is with you, ask them to stay and gather your medication list.",
-          ),
+          lead("A hypertensive emergency combines very high blood pressure with acute organ injury. At home, you can recognise warning signs but not confirm the diagnosis."),
           ul([
-            "Chest pain or pressure, particularly with sweating, nausea or a feeling of impending collapse.",
-            "Severe breathlessness, choking sensation or rapidly worsening breathing.",
-            "A drooping face, weakness or numbness on one side, slurred speech or inability to understand speech.",
+            "Chest pain or pressure, especially with sweating, nausea or a feeling that you may faint.",
+            "Severe breathlessness or rapidly worsening breathing.",
+            "A drooping face, weakness or numbness on one side, or slurred speech.",
             "New confusion, a seizure, fainting or loss of consciousness.",
             "Sudden loss of vision or an explosive headache unlike your usual headaches.",
           ]),
-          p(
-            "Pregnancy or the period after delivery, kidney disease, previous stroke and established heart disease can increase concern. Do not try to diagnose hypertensive emergency from a number alone. Conversely, do not let a slightly lower repeat reading overrule serious new symptoms.",
-          ),
-          cite(
-            `In Romania, the emergency route is <a href="${EMERGENCY_112}" rel="nofollow noopener" target="_blank">112</a>. European clinical guidance distinguishes severely elevated readings without acute injury from hypertensive emergency with acute organ damage.`,
-          ),
+          p("Call 112, do not drive and note when symptoms began. Have your medication list ready and follow the dispatcher. A lower second reading does not cancel a possible stroke or heart-attack symptom."),
+          warn("Pregnancy and after birth", "A high reading with severe headache, visual changes, pain below the ribs, vomiting, breathlessness or sudden swelling needs urgent obstetric assessment. Pre-eclampsia can also develop after delivery."),
+          cite(`Romania’s legal framework for the <a href="${EMERGENCY_112_LAW}" rel="nofollow noopener" target="_blank">national emergency-call system</a> defines 112 as the service that receives calls and alerts the appropriate response.`),
         ],
       },
       {
-        id: "captopril",
-        nav: "Captopril",
-        eyebrow: "The tablet question",
-        h2: "When should captopril be taken for a high reading? There is no universal number",
+        id: "medicines",
+        nav: "Medicines",
+        eyebrow: "No self-medication",
+        h2: "There is no universal reading for taking captopril or an extra dose",
         blocks: [
-          lead(
-            "Captopril is a prescription medicine, not an automatic first-aid response when a monitor crosses a particular threshold.",
-          ),
-          p(
-            "Whether it is suitable depends on the diagnosis, kidney function, potassium, pregnancy, other medicines and the treatment plan set by a clinician. The same reading may require a different response in two people. Lowering pressure too abruptly may also compromise blood flow to the brain, heart or kidneys.",
-          ),
-          warn(
-            "Do not take extra or unprescribed captopril",
-            "Do not borrow it, double your usual treatment or repeat a tablet because the monitor has not changed quickly. If your clinician has already provided a written action plan for elevated readings, follow that exact plan and seek help when the situation falls outside it.",
-          ),
-          p(
-            "A missed dose, recent medication change or suspected adverse effect needs advice from your clinician or pharmacist. A general article cannot tell you how to compensate for missed treatment. If emergency symptoms are present, contacting 112 is more important than searching for a pill that promises to reduce the number.",
-          ),
+          lead("Captopril and other blood pressure medicines are used according to each person’s history, test results, other conditions and prescribed treatment."),
+          p("The same reading can require different decisions in different people. Kidney function, potassium, pregnancy, dehydration and other medicines change the risk. Lowering pressure too quickly may reduce blood flow to the brain, heart or kidneys and cause dizziness or fainting."),
+          warn("Do not take an improvised dose", "Do not double your treatment, take unprescribed captopril or use a relative’s medicine. Follow only an action plan written for you; if warning signs are present, call 112."),
+          p("Lemon, garlic, vinegar, cold water and herbal teas do not treat a heart attack, stroke or other emergency. Slow breathing may ease anxiety, but a lower reading after rest does not prove the danger has passed. Some herbs interact with medicines."),
         ],
       },
       {
-        id: "myths",
-        nav: "Quick-fix myths",
-        eyebrow: "What not to rely on",
-        h2: "Tea, lemon, garlic and breathing exercises do not treat an emergency",
+        id: "follow-up",
+        nav: "Stable care",
+        eyebrow: "After the episode",
+        h2: "Repeated high readings are usually managed through family medicine",
         blocks: [
-          lead(
-            "Some habits support cardiovascular health over months or years. They are not rescue treatments for acute symptoms or a severely high reading.",
-          ),
-          p(
-            "A caffeine-free infusion or slow breathing may help you feel calmer. A lower repeat reading after resting does not prove that the clinical risk has disappeared. Lemon, garlic, vinegar and cold water do not instantly clear blood vessels. Herbal products may interact with anticoagulants, diuretics and other medicines, so «natural» does not mean risk-free.",
-          ),
-          ul([
-            "Never delay calling 112 to test an infusion or an internet remedy.",
-            "Do not combine supplements and prescription medicines to force a rapid drop.",
-            "Do not stop daily treatment because one reading improved after rest.",
-            "Do not take a relative’s medicine, even if they also have hypertension.",
-            "Discuss salt, sleep, movement, alcohol and weight as long-term measures, not instant fixes.",
-          ]),
-          p(
-            "A safer question is not «what lowers blood pressure in five minutes?» but «is this an emergency, is the measurement reliable, and what action plan has my clinician given me?». That order helps avoid both unnecessary panic and dangerous delay.",
-          ),
+          lead("When you are stable and have no warning signs, family medicine is the usual place to start."),
+          p('During a <a href="' + enHref("/services/boli-cronice-online") + '">chronic-care consultation</a>, a doctor can review your technique, <a href="' + enHref("/tools/blood-pressure-chart") + '">blood pressure log</a>, treatment, missed doses and risks. They may recommend blood tests, an ECG, an in-person examination or ambulatory monitoring.'),
+          p("Cardiology is a later step for known heart disease, abnormal tests, cardiovascular symptoms, resistant hypertension or a family-medicine referral. It does not replace 112 or need to be the first stop for every isolated high reading."),
+          p('For planned care, view the <a href="' + enHref("/doctors") + '">doctors in Romania</a> or <a href="' + enHref("/contact") + '">contact Global Health</a>. These are not emergency services.'),
         ],
       },
       {
-        id: "record",
-        nav: "Record it",
-        eyebrow: "After the reading",
-        h2: "What to record and discuss after the immediate situation",
+        id: "prepare",
+        nav: "Prepare for the appointment",
+        eyebrow: "What helps",
+        h2: "What to have ready for a scheduled consultation",
         blocks: [
-          lead(
-            "A short, accurate log is more useful than repeatedly checking the monitor in panic and reporting only the highest number.",
-          ),
-          p(
-            `Use the Global Health <a href="${enHref("/tools/blood-pressure-chart")}">blood-pressure chart and log</a> to record readings in context. Include the time, arm, posture, pulse, symptoms, usual prescribed treatment and anything unusual such as pain, fever, poor sleep or exertion.`,
-          ),
-          ul([
-            "Record all readings rather than selecting only the best or worst one.",
-            "Note whether the monitor or cuff is new and whether its technique has been checked.",
-            "Prepare a complete medicine list, including decongestants, anti-inflammatory medicines and supplements.",
-            "Tell the clinician if routine treatment was missed, but do not compensate without advice.",
-            "Ask which future readings need same-day contact and which symptoms require 112 in your personal plan.",
-          ]),
-          p(
-            "A clinician may recommend structured home monitoring, blood and urine tests, an ECG, kidney assessment or cardiology review. An online appointment can organise the history and decide the next step, but it cannot replace examination or investigations that must happen in person.",
-          ),
-        ],
-      },
-      {
-        id: "care",
-        nav: "Getting care",
-        eyebrow: "A realistic pathway",
-        h2: "When family medicine can help and when cardiology is needed",
-        blocks: [
-          lead(
-            "For repeated high readings without emergency symptoms, family medicine is usually a practical first point of coordination.",
-          ),
-          p(
-            `During an <a href="${enHref("/services/boli-cronice-online")}">online chronic-care consultation</a>, a doctor can review the log, established prescriptions, other conditions and cardiovascular risks. They can clarify whether monitoring should continue, tests are needed or an in-person assessment should not wait.`,
-          ),
-          p(
-            "Cardiology review may be appropriate when pressure remains uncontrolled despite treatment, a secondary cause is suspected, cardiac symptoms develop or specialist investigations are required. Emergency symptoms do not belong on this scheduled pathway: chest pain, a neurological deficit, confusion or severe breathlessness require 112.",
-          ),
-          p(
-            `You can review clinicians on <a href="${enHref("/doctors")}">Our doctors</a> and use the <a href="${enHref("/contact")}">contact page</a> for booking support. These routes support planned care; neither is an emergency-response channel.`,
-          ),
+          lead("Bring your blood pressure log, a complete medication list and any reports you already have."),
+          p("This information helps the doctor decide whether follow-up in family medicine is enough or whether you need tests, an in-person examination or cardiology."),
         ],
       },
     ],
     linksEyebrow: "Global Health Romania",
-    linksH2: "Choose the next step that matches the situation",
-    linksLead:
-      "Without emergency signs, organise your readings and discuss the pattern with a clinician. With warning symptoms, call 112.",
+    linksH2: "Choose the right next step",
+    linksLead: "Without warning signs, organise your readings and speak to a doctor. With acute symptoms, call 112.",
     links: [
-      { label: "Online chronic-care consultation", href: enHref("/services/boli-cronice-online") },
-      { label: "Blood-pressure chart and log", href: enHref("/tools/blood-pressure-chart") },
-      { label: "Global Health Romania doctors", href: enHref("/doctors") },
-      { label: "Contact Global Health Romania", href: enHref("/contact") },
+      { label: "Chronic-care consultation", href: enHref("/services/boli-cronice-online") },
+      { label: "Blood pressure log", href: enHref("/tools/blood-pressure-chart") },
+      { label: "Doctors in Romania", href: enHref("/doctors") },
+      { label: "Contact Global Health", href: enHref("/contact") },
     ],
     ctaBox: {
-      h3: "Repeated high readings, but no warning signs?",
-      text: "Book an assessment with your log, medicine list and symptoms. A clinician can distinguish measurement problems, temporary elevation and hypertension that needs investigation or a changed plan.",
+      h3: "Are your readings repeatedly high, but you feel stable?",
+      text: "Book with your log, medicines and symptoms. A family doctor can decide on tests and cardiology involvement.",
       primary: { label: "Book a consultation", href: enHref("/services/boli-cronice-online") },
-      secondary: { label: "Meet the doctors", href: enHref("/doctors") },
+      secondary: { label: "View doctors", href: enHref("/doctors") },
     },
-    sourcesEyebrow: "Clinical sources",
-    sourcesH2: "References used for this guide",
-    sourcesLead:
-      "The article separates emergency triage from long-term hypertension care and deliberately avoids presenting a universal medication protocol.",
+    sourcesEyebrow: "Medical sources",
+    sourcesH2: "Sources for this guide",
+    sourcesLead: "These sources separate emergency assessment from long-term treatment and provide no universal dose.",
     sources: [
-      { label: "ESC — Elevated blood pressure and hypertension", href: ESC_GUIDELINE },
+      { label: "ESC — elevated blood pressure and hypertension", href: ESC_GUIDELINE },
       { label: "Romanian Society of Cardiology — hypertension", href: CARDIOPORTAL_HTA },
-      { label: "Special Telecommunications Service — Romania 112", href: EMERGENCY_112 },
+      { label: "Romanian Society of Cardiology — measuring blood pressure", href: CARDIOPORTAL_MASURARE },
+      { label: "Romanian Legislative Portal — national 112 system", href: EMERGENCY_112_LAW },
+      { label: "NHS — pre-eclampsia during pregnancy and after birth", href: NHS_PREECLAMPSIA },
     ],
-    sourcesNote:
-      "External references provide the clinical and emergency-access framework. Individual decisions depend on a person’s history, examination and established treatment.",
-    faqEyebrow: "FAQs",
+    sourcesNote: "Individual decisions depend on history, examination, test results and prescribed treatment.",
+    faqEyebrow: "Frequently asked questions",
     faqH2: "Questions about lowering blood pressure quickly",
     faqs: [
-      {
-        q: "What lowers blood pressure immediately at home?",
-        a: "There is no home remedy that safely treats every high reading immediately. Sit down, check for warning symptoms, repeat the measurement correctly and follow your personal clinical plan. Call 112 for chest pain, severe breathlessness, neurological changes, confusion or fainting.",
-      },
-      {
-        q: "At what blood pressure should I take captopril?",
-        a: "There is no universal number at which everyone should take captopril. It is a prescription medicine and suitability depends on your history, current plan and contraindications. Never take extra or unprescribed captopril.",
-      },
-      {
-        q: "Can I take another tablet if the reading does not fall?",
-        a: "Not unless your own clinician has explicitly instructed you to do so in this situation. Doubling or combining treatment may cause a harmful drop or adverse effects. Seek advice; call 112 if warning symptoms are present.",
-      },
-      {
-        q: "Will lemon water or herbal tea lower it quickly?",
-        a: "They do not treat a hypertensive emergency. Rest may coincide with a lower repeat reading, but it does not cancel serious symptoms. Some herbal products also interact with prescription medicines.",
-      },
-      {
-        q: "When can I book a consultation instead of calling 112?",
-        a: "Scheduled care is appropriate when you are stable, have no warning symptoms and need repeated high readings assessed. It is not a substitute for emergency care when chest, breathing or neurological symptoms occur.",
-      },
+      { q: "What lowers blood pressure immediately at home?", a: "No remedy is safe for every situation. Check symptoms and, if stable, take two careful readings. Call 112 for chest pain, severe breathlessness or neurological signs." },
+      { q: "At what blood pressure should I take captopril?", a: "There is no universal number. Take it only if prescribed and according to your personal plan. Never take an extra dose or unprescribed medicine." },
+      { q: "Will lemon, garlic or tea lower blood pressure quickly?", a: "They do not treat an emergency. Rest may coincide with a lower reading but does not cancel serious symptoms; some herbal products interact with medicines." },
+      { q: "When is a scheduled consultation enough?", a: "When stable, without warning signs, and repeated high readings need assessment. If a reading remains around 180/120 mmHg or higher, seek same-day assessment through family medicine, an out-of-hours centre or an emergency department; add cardiology for a clinical reason." },
     ],
     disclaimerTitle: "Medical and emergency notice",
     disclaimer:
-      "This article provides general information, not a diagnosis or treatment schedule. Do not take extra or unprescribed medicine and do not change treatment on your own. For chest pain, severe breathlessness, neurological deficits, confusion, fainting, sudden vision changes or a sudden severe headache, call 112.",
+      "General information, not a diagnosis or treatment schedule. Do not change doses or take unprescribed medicines. This AI-assisted draft requires clinical and native-English review before publication. Call 112 for chest pain, severe breathlessness, neurological deficits, confusion, fainting or sudden visual changes.",
   } satisfies Article,
 };
 
@@ -457,7 +367,7 @@ const pt: LocalePost = {
     categoryHref: ptHref("/blog"),
     eyebrow: "Roménia · Guia de segurança",
     h1: "Como baixar a tensão alta com segurança",
-    deck: "Primeiro confirme se há uma emergência. Depois confirme a medição — sem improvisar comprimidos.",
+    deck: "Primeiro confirme se há uma emergência. Depois confirme a medição, sem improvisar comprimidos.",
     intro:
       "Não existe um método caseiro universal e seguro para baixar a tensão arterial imediatamente. Ligue <strong>112</strong> se a medição alta vier acompanhada de <strong>dor no peito, falta de ar intensa, fraqueza ou dormência de um lado, dificuldade em falar, confusão, desmaio, alteração súbita da visão ou dor de cabeça súbita e invulgarmente forte</strong>. Sem estes sinais, sente-se, descanse alguns minutos e repita a medição corretamente. Não tome captopril extra, medicamentos de outra pessoa, comprimidos não prescritos ou sobras de um tratamento antigo sem um plano pessoal dado pelo seu médico.",
     facts: ["Dor no peito ou sinais neurológicos: 112", "Confirme a medição com boa técnica", "Não tome doses extra por iniciativa própria"],
@@ -487,7 +397,7 @@ const pt: LocalePost = {
             "Se houver um sinal de alarme, não adie o pedido de ajuda para continuar a medir: ligue 112.",
             "Se estiver estável mas os valores continuarem muito acima do habitual, procure aconselhamento médico no próprio dia.",
           ]),
-          p("Estes passos não tratam hipertensão. Servem para reduzir erros comuns e produzir informação útil. Esforço recente, dor, ansiedade, cafeína, nicotina, falar e uma braçadeira pequena podem elevar temporariamente a leitura. Mesmo assim, não atribua sintomas graves apenas ao stress."),
+          p("Estes passos não tratam a hipertensão. Reduzem erros comuns e produzem informação útil. Esforço recente, dor, ansiedade, cafeína, nicotina, falar e uma braçadeira pequena podem elevar temporariamente a leitura. Mesmo assim, não atribua sintomas graves apenas ao stress."),
           warn("Não conduza se estiver muito mal", "Com dor torácica, défice neurológico, confusão, desmaio ou dificuldade respiratória intensa, ligue 112 e siga as instruções do operador."),
         ],
       },
@@ -517,8 +427,8 @@ const pt: LocalePost = {
         h2: "Captopril não é uma resposta automática a um número",
         blocks: [
           lead("Não há um valor universal a partir do qual todas as pessoas devam tomar captopril."),
-          p("Este medicamento sujeito a receita depende do diagnóstico, função renal, potássio, gravidez, outros tratamentos e plano individual. A mesma leitura pode exigir decisões diferentes em duas pessoas. Uma queda forçada e demasiado rápida pode reduzir o fluxo de sangue para cérebro, coração e rins."),
-          warn("DO NOT — não tome captopril extra nem não prescrito", "Não peça um comprimido emprestado, não duplique o tratamento habitual e não repita uma toma porque o monitor não mudou depressa. Siga apenas o plano escrito que o seu médico preparou para si."),
+          p("A decisão de tomar este medicamento sujeito a receita depende do diagnóstico, função renal, potássio, gravidez, outros tratamentos e plano individual. A mesma leitura pode exigir decisões diferentes em duas pessoas. Uma queda forçada e demasiado rápida pode reduzir o fluxo de sangue para cérebro, coração e rins."),
+          warn("Não tome captopril extra nem captopril que não lhe foi prescrito", "Não peça um comprimido emprestado, não duplique o tratamento habitual e não repita uma toma porque o monitor não mudou depressa. Siga apenas o plano escrito que o seu médico preparou para si."),
           p("Uma toma esquecida, uma alteração recente ou um possível efeito adverso exigem aconselhamento do médico ou farmacêutico. Um artigo geral não pode dizer como compensar uma omissão. Se houver sinais de emergência, ligar 112 tem prioridade sobre procurar uma pastilha que prometa baixar o valor."),
         ],
       },
@@ -529,7 +439,7 @@ const pt: LocalePost = {
         h2: "Chá, limão, alho e respiração não tratam uma emergência",
         blocks: [
           lead("Alguns hábitos ajudam a saúde cardiovascular a longo prazo. Nenhum substitui avaliação quando há sintomas ou uma leitura muito elevada."),
-          p("Uma infusão sem cafeína e respirar devagar podem ajudar a acalmar, mas uma leitura menor depois do repouso não prova que o risco acabou. Limão, alho, vinagre ou água fria não desobstruem vasos instantaneamente. Plantas e suplementos podem interagir com anticoagulantes, diuréticos e outros medicamentos."),
+          p("Uma infusão sem cafeína e respirar devagar podem ajudar a acalmar, mas uma leitura menor depois do repouso não prova que o risco acabou. Limão, alho, vinagre ou água fria não dilatam os vasos de imediato. Plantas e suplementos podem interagir com anticoagulantes, diuréticos e outros medicamentos."),
           ul([
             "Nunca adie o 112 para experimentar uma receita da internet.",
             "Não misture suplementos e medicamentos para forçar uma descida.",
@@ -537,7 +447,7 @@ const pt: LocalePost = {
             "Não use o medicamento de um familiar, mesmo com o mesmo diagnóstico.",
             "Discuta sal, sono, exercício, álcool e peso como medidas de fundo, não como socorro imediato.",
           ]),
-          p("A pergunta mais segura é: há uma emergência, a medição é fiável e qual é o meu plano pessoal? Esta ordem evita tanto pânico desnecessário como atrasos perigosos."),
+          p("Siga esta ordem: verifique se há uma emergência, confirme se a medição é fiável e consulte o seu plano pessoal. Assim evita pânico desnecessário e atrasos perigosos."),
         ],
       },
       {
@@ -560,7 +470,7 @@ const pt: LocalePost = {
       },
     ],
     linksEyebrow: "Global Health Roménia",
-    linksH2: "Escolha um passo proporcional à situação",
+    linksH2: "Escolha o passo certo para a situação",
     linksLead: "Sem sinais de emergência, organize as leituras e discuta o padrão. Com sinais de alarme, ligue 112.",
     links: [
       { label: "Consulta online de doenças crónicas", href: ptHref("/services/boli-cronice-online") },
@@ -611,7 +521,7 @@ const es: LocalePost = {
     sections: [
       { id: "ahora", nav: "Primeros pasos", eyebrow: "Qué hacer ahora", h2: "Acciones seguras tras una lectura inesperadamente alta", blocks: [
         lead("Detén el esfuerzo, siéntate en un lugar seguro y busca señales de alarma antes de seguir mirando números."),
-        ul(["Apoya la espalda, deja los pies planos y no cruces las piernas ni hables al medir.", "Apoya el brazo a la altura del corazón y usa un manguito de brazo del tamaño correcto.", "Haz dos lecturas más separadas por un breve intervalo y anota hora, pulso, síntomas y contexto.", "Si aparece una señal de alarma, deja de retrasar la ayuda para medir una y otra vez: llama al 112.", "Si estás estable pero las cifras siguen muy por encima de lo habitual, pide consejo médico ese mismo día."]),
+        ul(["Apoya la espalda, deja los pies planos y no cruces las piernas ni hables al medir.", "Apoya el brazo a la altura del corazón y usa un manguito de brazo del tamaño correcto.", "Haz dos lecturas más separadas por un breve intervalo y anota hora, pulso, síntomas y contexto.", "Si aparece una señal de alarma, no retrases la llamada por seguir midiendo: llama al 112.", "Si estás estable pero las cifras siguen muy por encima de lo habitual, pide consejo médico ese mismo día."]),
         p("Estos pasos no son un tratamiento. Reducen errores y generan datos útiles. Ejercicio, dolor, ansiedad, cafeína, nicotina, hablar o un manguito pequeño pueden elevar temporalmente la lectura. Aun así, nunca des por hecho que un síntoma grave es solo estrés."),
         warn("No conduzcas si te encuentras muy mal", "Ante dolor torácico, un déficit neurológico, confusión, desmayo o dificultad respiratoria intensa, llama al 112 y sigue las instrucciones."),
       ] },
@@ -625,17 +535,17 @@ const es: LocalePost = {
       { id: "captopril", nav: "Captopril", eyebrow: "La pregunta de la pastilla", h2: "No existe una cifra universal para tomar captopril", blocks: [
         lead("El captopril es un medicamento sujeto a prescripción, no una respuesta automática cuando el tensiómetro supera un número."),
         p("Su idoneidad depende del diagnóstico, la función renal, el potasio, el embarazo, otros fármacos y el plan clínico individual. La misma cifra puede requerir actuaciones distintas en dos personas. Bajar la presión de forma demasiado brusca puede reducir el flujo de sangre al cerebro, corazón o riñones."),
-        warn("No tomes captopril extra ni no prescrito", "No uses el de otra persona, no dupliques el tratamiento habitual ni repitas una pastilla porque la cifra no cambió rápido. Sigue únicamente el plan personal escrito por tu médico."),
+        warn("No tomes captopril extra ni captopril que no te hayan recetado", "No uses el de otra persona, no dupliques el tratamiento habitual ni repitas una pastilla porque la cifra no cambió rápido. Sigue únicamente el plan personal escrito por tu médico."),
         p("Una dosis olvidada, un cambio reciente o una posible reacción adversa requieren consejo del médico o farmacéutico. Un artículo general no puede decir cómo compensar una omisión. Con síntomas de emergencia, llamar al 112 importa más que buscar una pastilla que prometa bajar el número."),
       ] },
       { id: "mitos", nav: "Mitos", eyebrow: "Soluciones rápidas", h2: "El té, el limón, el ajo o respirar lento no tratan una emergencia", blocks: [
         lead("Algunos hábitos ayudan a largo plazo, pero ninguno sustituye una valoración ante síntomas o una lectura muy alta."),
-        p("Una infusión sin cafeína o respirar despacio puede ayudarte a calmarte. Una cifra menor tras descansar no demuestra que el riesgo haya desaparecido. Limón, ajo, vinagre o agua fría no despejan las arterias al instante. Las plantas también pueden interactuar con anticoagulantes, diuréticos y otros fármacos."),
+        p("Una infusión sin cafeína o respirar despacio puede ayudarte a calmarte. Una cifra menor tras descansar no demuestra que el riesgo haya desaparecido. Limón, ajo, vinagre o agua fría no dilatan los vasos de inmediato. Las plantas también pueden interactuar con anticoagulantes, diuréticos y otros fármacos."),
         ul(["No retrases el 112 para probar un remedio de internet.", "No combines suplementos y medicación para forzar una bajada.", "No abandones el tratamiento diario porque una lectura mejoró.", "No tomes la medicación de un familiar aunque comparta diagnóstico.", "Habla de sal, sueño, ejercicio, alcohol y peso como medidas a largo plazo, no como rescate."]),
-        p("La pregunta útil es: ¿hay una emergencia, la medición es fiable y qué plan personal tengo? Ese orden evita tanto el pánico como una demora peligrosa."),
+        p("Sigue este orden: comprueba si hay una emergencia, confirma que la medición sea fiable y consulta tu plan personal. Así evitas el pánico y una demora peligrosa."),
       ] },
       { id: "seguimiento", nav: "Seguimiento", eyebrow: "Después del episodio", h2: "Registra el patrón y elige el nivel de atención adecuado", blocks: [
-        lead("Un registro breve y exacto sirve más que muchas mediciones consecutivas hechas con ansiedad."),
+        lead("Un registro breve y exacto aporta más información que muchas mediciones consecutivas hechas con ansiedad."),
         p(`Utiliza el <a href="${esHref("/tools/blood-pressure-chart")}">registro de tensión arterial</a> para guardar hora, brazo, postura, pulso, síntomas, tratamiento habitual y factores como dolor, fiebre o mal sueño. Conserva todas las lecturas.`),
         p(`Sin señales de alarma, una <a href="${esHref("/services/boli-cronice-online")}">consulta online de enfermedades crónicas</a> puede revisar el registro y la medicación y decidir si necesitas análisis, ECG, valoración presencial o cardiología.`),
         ul(["Prepara la lista completa de medicación, descongestionantes, antiinflamatorios y suplementos.", "Cuenta si olvidaste el tratamiento, pero no lo compenses por tu cuenta.", "Pregunta qué cifras requieren contacto ese mismo día en tu plan personal.", "Usa la consulta programada solo si estás estable; los síntomas agudos exigen 112."]),
@@ -649,7 +559,7 @@ const es: LocalePost = {
     sources: [{ label: "ESC — Presión elevada e hipertensión", href: ESC_GUIDELINE }, { label: "Sociedad Rumana de Cardiología — hipertensión", href: CARDIOPORTAL_HTA }, { label: "Servicio 112 de Rumanía", href: EMERGENCY_112 }], sourcesNote: "Las decisiones individuales dependen de la historia clínica, exploración, pruebas y tratamiento prescrito.",
     faqEyebrow: "Preguntas frecuentes", faqH2: "Dudas sobre bajar la tensión rápidamente", faqs: [
       { q: "¿Qué baja la tensión inmediatamente en casa?", a: "No hay un remedio doméstico seguro para todos. Siéntate, revisa síntomas, repite bien la medición y sigue tu plan. Ante dolor torácico, falta de aire grave o alteraciones neurológicas, llama al 112." },
-      { q: "¿A partir de qué tensión se toma captopril?", a: "No existe una cifra universal. Es un medicamento con receta y depende de tu historia y plan. Nunca tomes captopril extra o no prescrito." },
+      { q: "¿A partir de qué tensión se toma captopril?", a: "No existe una cifra universal. Es un medicamento con receta y depende de tu historia y plan. Nunca tomes captopril extra ni captopril que no te hayan recetado." },
       { q: "¿Puedo tomar otra pastilla si no baja?", a: "No sin instrucciones explícitas de tu médico. Duplicar o combinar tratamientos puede provocar una bajada peligrosa. Busca consejo; con señales de alarma, llama al 112." },
       { q: "¿El limón o una infusión la bajan rápido?", a: "No tratan una emergencia. Descansar puede coincidir con una lectura menor, pero no anula síntomas graves. Algunas plantas interactúan con medicamentos." },
       { q: "¿Cuándo puedo reservar consulta en vez de llamar al 112?", a: "Cuando estés estable, sin señales de alarma, y necesites evaluar lecturas altas repetidas. La consulta programada nunca sustituye urgencias." },
@@ -677,29 +587,29 @@ const cs: LocalePost = {
     sections: [
       { id: "prvni-kroky", nav: "První kroky", eyebrow: "Co udělat nyní", h2: "Bezpečný postup po nečekaně vysokém výsledku", blocks: [
         lead("Přerušte námahu, bezpečně se posaďte a ještě před dalším měřením zkontrolujte varovné příznaky."),
-        ul(["Opřete záda, položte chodidla na zem, nekřižte nohy a během měření nemluvte.", "Podepřete paži ve výši srdce a použijte pažní manžetu správné velikosti.", "Proveďte další dvě měření s krátkým odstupem a zapište čas, puls, příznaky a okolnosti.", "Při varovném příznaku neodkládejte pomoc dalším opakovaným měřením — volejte 112.", "Jste-li stabilní, ale hodnoty zůstávají výrazně nad vaším obvyklým rozmezím, požádejte ještě tentýž den o lékařskou radu."]),
+        ul(["Opřete záda, položte chodidla na zem, nekřižte nohy a během měření nemluvte.", "Podepřete paži ve výši srdce a použijte pažní manžetu správné velikosti.", "Proveďte další dvě měření s krátkým odstupem a zapište čas, puls, příznaky a okolnosti.", "Při varovném příznaku neodkládejte pomoc dalším opakovaným měřením. Volejte 112.", "Jste-li stabilní, ale hodnoty zůstávají výrazně nad vaším obvyklým rozmezím, požádejte ještě tentýž den o lékařskou radu."]),
         p("Tyto kroky nejsou léčbou hypertenze. Omezují běžné chyby a poskytují údaje pro bezpečné rozhodnutí. Námaha, bolest, úzkost, kofein, nikotin, mluvení nebo malá manžeta mohou výsledek dočasně zvýšit. Závažné nové příznaky však nikdy automaticky nepřipisujte stresu."),
         p("Neměřte tlak desetkrát za sebou a nevybírejte jen nejnižší číslo. Opakované kontrolování zvyšuje úzkost a ztěžuje interpretaci. Důležitější je omezený počet správně provedených měření, přesný čas začátku příznaků a informace o běžně předepsané léčbě."),
-        warn("Při akutních potížích sami neřiďte", "Při bolesti na hrudi, nové neurologické poruše, zmatenosti, mdlobě nebo těžké dušnosti volejte 112 a postupujte podle dispečera."),
+        warn("Při akutních potížích sami neřiďte", "Při bolesti na hrudi, nové neurologické poruše, zmatenosti, mdlobě nebo těžké dušnosti volejte 112 a postupujte podle pokynů dispečera."),
       ] },
       { id: "pohotovost", nav: "Volat 112", eyebrow: "Varovné příznaky", h2: "Kdy je vysoký tlak důvodem k volání 112", blocks: [
-        lead("Hodnota okolo nebo nad 180/120 mmHg je velmi vysoká a vyžaduje rychlé posouzení; s příznaky akutního poškození jde o pohotovost."),
+        lead("Hodnota okolo nebo nad 180/120 mmHg je velmi vysoká a vyžaduje rychlé posouzení; s příznaky akutního orgánového poškození jde o emergentní stav."),
         p("Nečekejte na účinek čaje, sprchy nebo improvizované tablety, pokud příznaky mohou znamenat cévní mozkovou příhodu, infarkt nebo tekutinu v plicích. Dispečerovi sdělte naměřené hodnoty, příznaky, čas jejich začátku, předepsané léky a známé diagnózy. Pokud je s vámi někdo další, ať zůstane nablízku a připraví seznam léků."),
         ul(["Bolest či tlak na hrudi, zejména s pocením, nevolností nebo pocitem na omdlení.", "Těžká dušnost, pocit dušení nebo rychlé zhoršování dechu.", "Pokles koutku, slabost jedné strany, nesrozumitelná řeč nebo porucha porozumění.", "Nová zmatenost, křeče, mdloba nebo ztráta vědomí.", "Náhlá ztráta zraku nebo explozivní bolest hlavy odlišná od obvyklých bolestí."]),
-        p("Těhotenství a období po porodu, onemocnění ledvin, prodělaná cévní příhoda a srdeční onemocnění zvyšují naléhavost. Pohotovost nelze určit jen podle čísla, ale mírně nižší druhé měření také nesmí zrušit význam závažných příznaků."),
-        cite(`V Rumunsku je číslem tísňového volání <a href="${EMERGENCY_112}" rel="nofollow noopener" target="_blank">112</a>. Evropská doporučení odlišují velmi vysoký tlak bez akutního poškození od hypertenzní pohotovosti s poškozením orgánu.`),
+        p("Těhotenství a období po porodu, onemocnění ledvin, prodělaná cévní příhoda a srdeční onemocnění zvyšují naléhavost. Emergentní stav nelze určit jen podle čísla, ale mírně nižší druhé měření také nesmí vést k přehlédnutí závažných příznaků."),
+        cite(`V Rumunsku je číslem tísňového volání <a href="${EMERGENCY_112}" rel="nofollow noopener" target="_blank">112</a>. Evropská doporučení odlišují velmi vysoký tlak bez akutního poškození od hypertenzního emergentního stavu s orgánovým poškozením.`),
       ] },
       { id: "captopril", nav: "Captopril", eyebrow: "Otázka tablety", h2: "Pro captopril neexistuje univerzální hraniční hodnota", blocks: [
         lead("Captopril je lék na předpis, nikoli automatická první pomoc po překročení určitého čísla na tonometru."),
         p("Vhodnost závisí na diagnóze, funkci ledvin, hladině draslíku, těhotenství, dalších lécích a osobním plánu. Stejná hodnota může vyžadovat u dvou lidí rozdílný postup. Příliš rychlé snížení tlaku může omezit přívod krve do mozku, srdce či ledvin a způsobit závratě, kolaps nebo jiné komplikace."),
-        warn("DO NOT — neberte další ani nepředepsaný captopril", "Nepůjčujte si jej, nezdvojujte běžnou léčbu a neopakujte tabletu jen proto, že se číslo rychle nezměnilo. Máte-li od lékaře písemný akční plán, držte se přesně jeho podmínek."),
+        warn("Neberte další ani nepředepsaný captopril", "Nepůjčujte si jej, nezdvojujte běžnou léčbu a neopakujte tabletu jen proto, že se číslo rychle nezměnilo. Máte-li od lékaře písemný akční plán, držte se přesně jeho podmínek."),
         p("Vynechanou dávku, nedávnou změnu léčby nebo podezření na nežádoucí účinek řešte s lékařem či lékárníkem. Obecný článek nemůže určit, jak vynechání nahradit. Při akutních příznacích má volání 112 přednost před hledáním tablety, která slibuje rychlý pokles."),
       ] },
       { id: "myty", nav: "Mýty", eyebrow: "Rychlá řešení", h2: "Čaj, citron, česnek ani dýchání neléčí akutní stav", blocks: [
         lead("Některé návyky podporují kardiovaskulární zdraví dlouhodobě. Žádný z nich nenahrazuje vyšetření při varovných příznacích."),
         p("Bezkofeinový nálev nebo pomalé dýchání mohou pomoci se zklidnit, ale nižší hodnota po odpočinku nedokazuje, že riziko pominulo. Citron, česnek, ocet ani studená voda cévy okamžitě neuvolní. Byliny a doplňky mohou navíc ovlivňovat účinek antikoagulancií, diuretik a dalších léků."),
         ul(["Neodkládejte volání 112 kvůli internetovému receptu.", "Nekombinujte doplňky a léky, abyste vynutili pokles.", "Nevysazujte každodenní léčbu po jedné lepší hodnotě.", "Neužívejte lék příbuzného ani při stejné diagnóze.", "Sůl, spánek, pohyb, alkohol a hmotnost řešte jako dlouhodobá témata, ne jako okamžitou záchranu."]),
-        p("Bezpečnější otázka zní: je to pohotovost, bylo měření spolehlivé a jaký osobní plán mám? Toto pořadí pomáhá zabránit zbytečné panice i nebezpečnému odkladu."),
+        p("Postupujte v tomto pořadí: zkontrolujte, zda nejde o emergentní stav, ověřte spolehlivost měření a podívejte se do svého osobního plánu. Tím omezíte zbytečnou paniku i nebezpečný odklad."),
       ] },
       { id: "sledovani", nav: "Další péče", eyebrow: "Po epizodě", h2: "Zapište průběh a zvolte správnou úroveň péče", blocks: [
         lead("Krátký a přesný záznam je užitečnější než řada měření provedených v panice."),
@@ -715,7 +625,7 @@ const cs: LocalePost = {
     sourcesEyebrow: "Klinické zdroje", sourcesH2: "Podklady tohoto průvodce", sourcesLead: "Zdroje oddělují akutní třídění od dlouhodobé léčby a nepředkládají univerzální lékový postup.",
     sources: [{ label: "ESC — Zvýšený tlak a hypertenze", href: ESC_GUIDELINE }, { label: "Rumunská kardiologická společnost — hypertenze", href: CARDIOPORTAL_HTA }, { label: "Rumunská tísňová linka 112", href: EMERGENCY_112 }], sourcesNote: "Individuální rozhodnutí závisí na anamnéze, vyšetření, laboratorních výsledcích a předepsané léčbě.",
     faqEyebrow: "Časté otázky", faqH2: "Otázky k rychlému snížení tlaku", faqs: [
-      { q: "Co doma okamžitě sníží krevní tlak?", a: "Neexistuje domácí prostředek bezpečný pro každého. Posaďte se, zkontrolujte příznaky, správně přeměřte a držte se osobního plánu. Při bolesti na hrudi, těžké dušnosti nebo neurologické změně volejte 112." },
+      { q: "Co doma okamžitě sníží krevní tlak?", a: "Neexistuje domácí prostředek bezpečný pro každého. Posaďte se, zkontrolujte příznaky, správně přeměřte a držte se osobního plánu. Při bolesti na hrudi, těžké dušnosti nebo neurologických příznacích volejte 112." },
       { q: "Od jakého tlaku se bere captopril?", a: "Univerzální číslo neexistuje. Jde o lék na předpis a rozhoduje váš stav a plán. Nikdy neberte další ani nepředepsaný captopril." },
       { q: "Mohu si vzít další tabletu, když tlak neklesá?", a: "Ne bez výslovného pokynu vlastního lékaře. Zdvojení nebo kombinace může způsobit nebezpečný pokles. Vyžádejte si radu; při varovných příznacích volejte 112." },
       { q: "Sníží tlak rychle citron nebo bylinný čaj?", a: "Neléčí akutní stav. Odpočinek může doprovázet nižší druhé měření, ale neruší závažné příznaky. Některé byliny také interagují s léky." },
@@ -736,22 +646,22 @@ const de: LocalePost = {
   article: {
     lang: "de-RO", tagline: "Medizinische Versorgung jederzeit und überall", categoryLabel: "Chronische Erkrankungen", categoryHref: deHref("/blog"), eyebrow: "Rumänien · Sicherheitsleitfaden",
     h1: "Hohen Blutdruck jetzt sicher einordnen", deck: "Prüfen Sie zuerst auf einen Notfall und danach die Messung. Beginnen Sie nicht mit einer improvisierten Tablette.",
-    intro: "Es gibt keinen universell sicheren Hausgriff, der den Blutdruck sofort senkt. Rufen Sie <strong>112</strong>, wenn ein hoher Wert mit <strong>Brustschmerz, schwerer Atemnot, einseitiger Schwäche oder Taubheit, Sprachstörung, Verwirrtheit, Ohnmacht, plötzlicher Sehstörung oder einem plötzlich einsetzenden ungewöhnlich starken Kopfschmerz</strong> auftritt. Ohne diese Warnzeichen setzen Sie sich hin, ruhen einige Minuten und messen korrekt nach. Nehmen Sie kein zusätzliches Captopril, keine fremde Tablette, kein nicht verordnetes Medikament und keine Reste einer früheren Behandlung ohne persönlichen ärztlichen Plan.",
+    intro: "Es gibt kein universell sicheres Hausmittel, das den Blutdruck sofort senkt. Rufen Sie <strong>112</strong>, wenn ein hoher Wert mit <strong>Brustschmerz, schwerer Atemnot, einseitiger Schwäche oder Taubheit, Sprachstörung, Verwirrtheit, Ohnmacht, plötzlicher Sehstörung oder einem plötzlich einsetzenden ungewöhnlich starken Kopfschmerz</strong> auftritt. Ohne diese Warnzeichen setzen Sie sich hin, ruhen einige Minuten und messen korrekt nach. Nehmen Sie kein zusätzliches Captopril, keine fremde Tablette, kein nicht verordnetes Medikament und keine Reste einer früheren Behandlung ohne persönlichen ärztlichen Plan.",
     facts: ["Brust-, Atem- oder neurologische Warnzeichen: 112", "Messwert mit korrekter Technik prüfen", "Keine zusätzlichen Medikamente auf eigene Faust"],
     primaryCta: { label: "Sprechstunde für chronische Erkrankungen", href: deHref("/services/boli-cronice-online") }, secondaryCta: { label: "Blutdruckprotokoll öffnen", href: deHref("/tools/blood-pressure-chart") },
-    panelChip: "Sicherheit vor der Zahl", panelParas: ["Ein Einzelwert kann ungenau sein; akute Symptome dürfen dennoch nie übergangen werden.", "Ein erzwungener schneller Abfall kann Gehirn, Herz und Nieren gefährden.", "Dieser Text ersetzt weder 112 noch Notaufnahme oder persönlichen Behandlungsplan."],
+    panelChip: "Sicherheit vor der Zahl", panelParas: ["Ein Einzelwert kann ungenau sein; akute Symptome dürfen dennoch nie übergangen werden.", "Ein zu schneller, erzwungener Blutdruckabfall kann Gehirn, Herz und Nieren gefährden.", "Dieser Text ersetzt weder 112 noch Notaufnahme oder persönlichen Behandlungsplan."],
     author: { initials: "RB", name: "Dr Robert Gabriel Brindus", line: "Facharzt für Allgemeinmedizin · Medizinischer Leiter, Global Health Rumänien" }, reviewLine: "Klinisch geprüft von Dr Andreea Lorena Bica, Fachärztin für Neurologie, Global Health Rumänien.", navLabel: "In diesem Leitfaden",
     sections: [
       { id: "erste-schritte", nav: "Erste Schritte", eyebrow: "Was jetzt zu tun ist", h2: "Sichere Schritte nach einem unerwartet hohen Messwert", blocks: [
         lead("Beenden Sie Anstrengung, setzen Sie sich sicher hin und achten Sie vor weiteren Messungen auf Warnsymptome."),
-        ul(["Lehnen Sie den Rücken an, stellen Sie beide Füße flach auf und sprechen Sie während der Messung nicht.", "Stützen Sie den Arm auf Herzhöhe und verwenden Sie eine passende Oberarmmanschette.", "Messen Sie nach kurzer Pause zweimal und notieren Sie Uhrzeit, Puls, Beschwerden und Umstände.", "Bei Warnzeichen darf weiteres Nachmessen den Hilferuf nicht verzögern: Rufen Sie 112.", "Bleiben die Werte bei stabilem Befinden weit über Ihrem üblichen Bereich, holen Sie noch am selben Tag ärztlichen Rat ein."]),
+        ul(["Lehnen Sie den Rücken an, stellen Sie beide Füße flach auf den Boden und sprechen Sie während der Messung nicht.", "Stützen Sie den Arm auf Herzhöhe und verwenden Sie eine passende Oberarmmanschette.", "Messen Sie nach kurzer Pause zweimal und notieren Sie Uhrzeit, Puls, Beschwerden und Umstände.", "Bei Warnzeichen darf weiteres Nachmessen den Hilferuf nicht verzögern: Rufen Sie 112.", "Bleiben die Werte bei stabilem Befinden weit über Ihrem üblichen Bereich, holen Sie noch am selben Tag ärztlichen Rat ein."]),
         p("Diese Schritte behandeln keine Hypertonie. Sie vermeiden typische Messfehler und liefern verwertbare Angaben. Körperliche Belastung, Schmerzen, Angst, Koffein, Nikotin, Sprechen oder eine zu kleine Manschette können den Wert vorübergehend erhöhen. Schwere neue Symptome sollten Sie trotzdem nie vorschnell als Stress erklären."),
         p("Messen Sie nicht pausenlos weiter und wählen Sie nicht einfach den niedrigsten Wert. Das verstärkt häufig die Anspannung. Wichtiger sind wenige saubere Messungen, der genaue Beginn möglicher Beschwerden und eine vollständige Liste der regulär verordneten Medikamente."),
         warn("Bei akuten Beschwerden nicht selbst fahren", "Bei Brustschmerz, neurologischem Ausfall, Verwirrtheit, Ohnmacht oder schwerer Atemnot rufen Sie 112 und folgen der Leitstelle."),
       ] },
       { id: "notfall", nav: "112 rufen", eyebrow: "Warnzeichen", h2: "Wann sehr hoher Blutdruck ein Notfall ist", blocks: [
-        lead("Ein Wert um oder über 180/120 mmHg ist sehr hoch und muss zeitnah beurteilt werden; zusammen mit akuten Organschäden-Symptomen ist er ein Notfall."),
-        p("Warten Sie bei möglichen Schlaganfall-, Herzinfarkt- oder Lungenödemzeichen nicht auf Tee, Dusche oder eine improvisierte Tablette. Nennen Sie der Leitstelle Messwert, Symptome, Beginn, reguläre Medikamente und bekannte Erkrankungen. Ist jemand bei Ihnen, sollte die Person bleiben und Medikamentenliste sowie Ausweis bereithalten."),
+        lead("Ein Wert um oder über 180/120 mmHg ist sehr hoch und muss zeitnah beurteilt werden; zusammen mit Anzeichen einer akuten Organschädigung ist er ein Notfall."),
+        p("Warten Sie bei möglichen Schlaganfall-, Herzinfarkt- oder Lungenödemzeichen nicht auf Tee, Dusche oder eine improvisierte Tablette. Nennen Sie der Leitstelle den Messwert, die Symptome, deren Beginn, Ihre regulären Medikamente und bekannte Erkrankungen. Ist jemand bei Ihnen, sollte die Person bleiben und Medikamentenliste sowie Ausweis bereithalten."),
         ul(["Brustschmerz oder Druck, besonders mit Schweiß, Übelkeit oder Kollapsgefühl.", "Schwere Atemnot, Erstickungsgefühl oder rasche Verschlechterung der Atmung.", "Hängender Mundwinkel, einseitige Schwäche oder verwaschene Sprache.", "Neue Verwirrtheit, Krampfanfall, Ohnmacht oder Bewusstlosigkeit.", "Plötzlicher Sehverlust oder explosionsartiger, ungewohnter Kopfschmerz."]),
         p("Schwangerschaft oder Wochenbett, Nierenerkrankung, früherer Schlaganfall und Herzerkrankung erhöhen die Dringlichkeit. Eine Notfallsituation wird nicht allein durch eine Zahl bestimmt. Umgekehrt darf ein etwas niedrigerer Kontrollwert ernste Symptome nicht entkräften."),
         cite(`In Rumänien gilt für akute Notfälle <a href="${EMERGENCY_112}" rel="nofollow noopener" target="_blank">112</a>. Europäische Leitlinien unterscheiden stark erhöhte Werte ohne akute Schädigung vom hypertensiven Notfall mit Organschaden.`),
@@ -760,19 +670,19 @@ const de: LocalePost = {
         lead("Captopril ist verschreibungspflichtig und keine automatische Erste Hilfe, sobald das Messgerät eine bestimmte Zahl zeigt."),
         p("Ob es geeignet ist, hängt von Diagnose, Nierenfunktion, Kalium, Schwangerschaft, weiteren Arzneimitteln und persönlichem Plan ab. Derselbe Wert kann bei zwei Menschen unterschiedliche Maßnahmen erfordern. Ein zu schneller Blutdruckabfall kann die Durchblutung von Gehirn, Herz oder Nieren vermindern und Schwindel oder Kollaps auslösen."),
         warn("Kein zusätzliches oder nicht verordnetes Captopril", "Leihen Sie keine Tablette, verdoppeln Sie die übliche Behandlung nicht und wiederholen Sie nichts, nur weil sich die Anzeige nicht schnell ändert. Folgen Sie ausschließlich einem ausdrücklich für Sie erstellten Aktionsplan."),
-        p("Eine vergessene Einnahme, eine kürzliche Umstellung oder eine vermutete Nebenwirkung gehört mit Arzt oder Apotheke besprochen. Ein allgemeiner Artikel kann keinen Ausgleich für eine vergessene Einnahme festlegen. Bei Notfallzeichen ist der Anruf bei 112 wichtiger als die Suche nach einer schnell wirkenden Tablette."),
+        p("Eine vergessene Einnahme, eine kürzliche Umstellung oder eine vermutete Nebenwirkung sollten Sie mit Ihrem Arzt oder Apotheker besprechen. Ein allgemeiner Artikel kann keinen Ausgleich für eine vergessene Einnahme festlegen. Bei Notfallzeichen ist der Anruf bei 112 wichtiger als die Suche nach einer schnell wirkenden Tablette."),
       ] },
       { id: "mythen", nav: "Mythen", eyebrow: "Schnelle Hausmittel", h2: "Tee, Zitrone, Knoblauch und Atmen behandeln keinen Notfall", blocks: [
         lead("Manche Gewohnheiten fördern langfristig die Herz-Kreislauf-Gesundheit. Keine ersetzt die Akutbeurteilung bei Warnsymptomen."),
         p("Koffeinfreier Tee oder langsames Atmen können beruhigen. Ein niedrigerer Wert nach Ruhe beweist jedoch nicht, dass die Gefahr vorbei ist. Zitrone, Knoblauch, Essig und kaltes Wasser öffnen Blutgefäße nicht sofort. Pflanzliche Produkte können außerdem mit Blutverdünnern, Entwässerungsmitteln und anderen Arzneien wechselwirken."),
         ul(["Verzögern Sie 112 nie, um ein Internetrezept auszuprobieren.", "Kombinieren Sie keine Ergänzungsmittel und Medikamente, um einen Abfall zu erzwingen.", "Setzen Sie die tägliche Therapie nicht nach einem besseren Einzelwert ab.", "Nehmen Sie nie das Medikament eines Angehörigen, auch nicht bei gleicher Diagnose.", "Besprechen Sie Salz, Schlaf, Bewegung, Alkohol und Gewicht als Langzeitmaßnahmen, nicht als Soforthilfe."]),
-        p("Die sichere Frage lautet: Liegt ein Notfall vor, war die Messung zuverlässig und welchen persönlichen Plan habe ich? Diese Reihenfolge verhindert sowohl unnötige Panik als auch gefährliches Warten."),
+        p("Gehen Sie in dieser Reihenfolge vor: Prüfen Sie auf einen Notfall, kontrollieren Sie die Messung und halten Sie sich an Ihren persönlichen Plan. So vermeiden Sie unnötige Panik und gefährliches Warten."),
       ] },
       { id: "nachsorge", nav: "Nachsorge", eyebrow: "Nach der Situation", h2: "Verlauf dokumentieren und passende Versorgung wählen", blocks: [
-        lead("Ein kurzes, genaues Protokoll ist hilfreicher als viele Messungen hintereinander in Angst."),
+        lead("Ein kurzes, genaues Protokoll ist hilfreicher als viele Messungen hintereinander unter Anspannung."),
         p(`Im <a href="${deHref("/tools/blood-pressure-chart")}">Blutdruckprotokoll</a> notieren Sie Uhrzeit, Arm, Haltung, Puls, Beschwerden, reguläre Therapie und Umstände wie Schmerz, Fieber oder Schlafmangel. Bewahren Sie alle Werte auf, nicht nur den höchsten.`),
         p(`Ohne Warnzeichen kann eine <a href="${deHref("/services/boli-cronice-online")}">Online-Sprechstunde für chronische Erkrankungen</a> Protokoll, Medikamente und Risiken prüfen und klären, ob Labor, EKG, persönliche Untersuchung oder Kardiologie nötig sind.`),
-        ul(["Bereiten Sie alle Medikamente einschließlich Abschwellern, Entzündungshemmern und Ergänzungen vor.", "Nennen Sie ausgelassene Einnahmen, gleichen Sie diese aber nicht selbst aus.", "Fragen Sie, welche künftigen Werte in Ihrem Plan Kontakt am selben Tag verlangen.", "Nutzen Sie Termine nur im stabilen Zustand; akute Warnzeichen gehören zu 112."]),
+        ul(["Bereiten Sie alle Medikamente einschließlich abschwellender Mittel, Entzündungshemmer und Nahrungsergänzungsmittel vor.", "Nennen Sie ausgelassene Einnahmen, gleichen Sie diese aber nicht selbst aus.", "Fragen Sie, welche künftigen Werte in Ihrem Plan Kontakt am selben Tag verlangen.", "Nutzen Sie Termine nur im stabilen Zustand; akute Warnzeichen gehören zu 112."]),
         p(`Unter <a href="${deHref("/doctors")}">Unsere Ärzte</a> finden Sie Profile; die <a href="${deHref("/contact")}">Kontaktseite</a> hilft bei der Buchung. Beide Wege sind keine Notfallkanäle.`),
       ] },
     ],
@@ -802,7 +712,7 @@ export const RO_SCADE_TENSIUNEA_RAPID: PostSet = {
     "OpenSEO research 2026-08-24: ce scade tensiunea arteriala rapid 9,900 / KD 0 / CPC 0.24; pastila care scade tensiunea imediat 4,400 / KD 0 / CPC 0.16; de la ce tensiune se ia captopril 4,400 / KD 0; ce scade tensiunea imediat 3,600 / KD 0 / CPC 0.59. SERP review exposed a safety gap: much of the ranking content foregrounds remedies rather than symptom-led emergency triage.",
   serviceSlug: "boli-cronice-online",
   authorDoctorId: "cmrc4axni00rn01p2n3r2bopf",
-  authorDisplayName: "Dr Robert Gabriel Brindus",
+  authorDisplayName: "Global Health Medical Team",
   reviewerDoctorId: "cmrc4j7oc00se01p2gf7y9ldw",
   reviewerDisplayName: "Dr Andreea Lorena Bica",
   posts: [ro, en, pt, es, cs, de],

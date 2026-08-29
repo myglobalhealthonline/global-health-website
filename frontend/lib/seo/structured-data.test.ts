@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { aggregateRatingJsonLd, breadcrumbJsonLd, organizationJsonLd } from "./structured-data";
+import {
+  aggregateRatingJsonLd,
+  articleJsonLd,
+  breadcrumbJsonLd,
+  organizationJsonLd,
+} from "./structured-data";
 
 const FRESH = new Date().toISOString();
 const STALE = new Date(Date.now() - 500 * 24 * 60 * 60 * 1000).toISOString();
@@ -59,6 +64,42 @@ describe("organizationJsonLd + aggregateRating wiring", () => {
     const org = organizationJsonLd([], aggregateRatingJsonLd({ rating: 4.9, count: 50, updatedAt: FRESH }));
     expect(org).toHaveProperty("aggregateRating");
     expect((org as { aggregateRating?: { ratingValue: number } }).aggregateRating?.ratingValue).toBe(4.9);
+  });
+});
+
+describe("articleJsonLd blog author attribution", () => {
+  it("uses the canonical medical-team Organization while retaining a named clinician reviewer", () => {
+    const article = articleJsonLd({
+      title: "When to seek medical help",
+      url: "/ireland/en/blog/when-to-seek-medical-help",
+      authorName: "Global Health Medical Team",
+      authorPhysician: {
+        name: "Dr Legacy Author",
+        url: "/ireland/en/doctors/legacy-author",
+        registrationNumber: "12345",
+        chamber: "Medical Council",
+      },
+      reviewerPhysician: {
+        name: "Dr Clinical Reviewer",
+        url: "/ireland/en/doctors/clinical-reviewer",
+        registrationNumber: "67890",
+        chamber: "Medical Council",
+      },
+    });
+
+    expect(article.author).toMatchObject({
+      "@type": "Organization",
+      name: "Global Health Medical Team",
+    });
+    expect(article.reviewedBy).toMatchObject({
+      "@type": "Physician",
+      name: "Dr Clinical Reviewer",
+      identifier: {
+        "@type": "PropertyValue",
+        propertyID: "Medical Council",
+        value: "67890",
+      },
+    });
   });
 });
 

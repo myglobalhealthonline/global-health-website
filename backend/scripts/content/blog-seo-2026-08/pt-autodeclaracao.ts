@@ -1193,7 +1193,7 @@ export const PT_AUTODECLARACAO: PostSet = {
     "pt/2620 expansion 2026-08-04. Cluster all at KD 0: autodeclaração de doença 12,100, validar autodeclaração de doença 4,400, autodeclaração de doença pdf 1,000, imprimir autodeclaração de doença 1,000, autodeclaração de doença 1 dia 880, simulador baixa médica 1,300, baixa médica valores 720, pedir baixa médica online 390. Replaced the original 'baixa médica' pick, which the same run put at KD 20 — on the ceiling — for a third of the volume; baixa médica terms are still covered by the second half of the article. SERP for baixa médica is SNS24 plus banks/insurers/HR blogs; the autodeclaração queries are answered by Segurança Social itself and aggregator PDFs. No doctor-authored page explains the boundary.",
   serviceSlug: "baixa-medica",
   authorDoctorId: "cmqwnkhcd00007gjummb923nm",
-  authorDisplayName: "Dr Rui Diogo Rodrigues",
+  authorDisplayName: "Global Health Medical Team",
   reviewerDoctorId: "cmqwnkoqe000c7gju26jtb7qt",
   reviewerDisplayName: "Dra. Margarida Domingues e Andrade",
   posts: [pt, en, es, cs, roPost, de],

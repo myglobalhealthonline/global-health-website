@@ -1430,7 +1430,7 @@ export const ES_BAJA_ANSIEDAD: PostSet = {
     "es/2724 expansion 2026-08-04. Head term 1,000 KD 0, unchanged by the expansion. Cluster all KD 0: como desmontar una baja por ansiedad 880, despido por viajar estando de baja 720, sanciones por viajar al extranjero estando de baja médica 480, inspección médica del inss 390, 6 meses de baja por ansiedad 210, cuando te llama la inspección médica estando de baja 170, se puede viajar estando de baja en españa 170, mi médico no me da la baja por ansiedad 140, baja por ansiedad duración mínima 50. The tail is about surveillance and suspicion rather than about anxiety, so the article answers the inspección and the travel question from the clinical side. Rejected as targets: 'baja por depresión fingida' (590, faked-illness intent) and 'como desmontar una baja por ansiedad' (880, employer-side). SERP 2026-08-04 is HR/payroll software (coverflex, factorial, payfit, sesamehr), employment-law firms and psychology practices, several publishing contradictory durations and percentages; no doctor-authored page explains what the clinician assesses.",
   serviceSlug: "justificante-medico-online",
   authorDoctorId: "cmrdpvch9001i01ruy7pmzmdk",
-  authorDisplayName: "Dra. Mónica Fabiana Cornejo Román",
+  authorDisplayName: "Global Health Medical Team",
   reviewerDoctorId: "cmrdpxpi0001v01ruqavjiq79",
   reviewerDisplayName: "Dr. Eduardo Daniel Rodríguez Olivas",
   posts: [es, en, pt, cs, roPost, de],

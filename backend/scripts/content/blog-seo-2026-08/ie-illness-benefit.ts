@@ -1212,7 +1212,7 @@ export const IE_ILLNESS_BENEFIT: PostSet = {
     "SERP page 1 is government/citizens-advice only (mywelfare.ie, citizensinformation.ie, gov.ie, nsso.gov.ie) plus HR blogs — no clinician-authored result. GSC already shows the adjacent cluster: 'medical certificate ireland' 47 impr @ pos 55, 'sick leave certificate ireland' 26 @ 35, 'return to work medical certificate ireland' 26 @ 38.",
   serviceSlug: "sick-certificate-ireland",
   authorDoctorId: "cmp5r0if3002kssjug743x0p6",
-  authorDisplayName: "Dr Tiago Miguel Figueira",
+  authorDisplayName: "Global Health Medical Team",
   reviewerDoctorId: "cmqas8yh9000b01pgpc0yp1la",
   reviewerDisplayName: "Dr Ahmed Maklad",
   posts: [en, pt, es, cs, roPost, de],

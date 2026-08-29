@@ -1,6 +1,6 @@
 # SEO control state — canonical
 
-**Last operational update: 2026-08-26.** Historical audit files remain snapshots;
+**Last operational update: 2026-08-29.** Historical audit files remain snapshots;
 this ledger is the source of truth for current status, dated gates and future work.
 
 **This file is the single source of truth for the SEO workstream.** It carries the
@@ -67,10 +67,12 @@ published pages, indexed pages or measured outcomes.
   sample contained no blog, tool or doctor URLs. It cannot validate those families.
 - The backlink snapshot showed 62 referring domains. Several head terms are authority
   problems, so publishing more copy cannot substitute for relevant editorial links.
-- Standalone HTML copies exist locally for the approved 19-locale Week 2 matrix. A
-  fresh production dry run returned six collision-free primary rows, explicit user
-  approval was obtained, and those six rows were created as `DRAFT`. The other 13
-  approved translations and all 17 unapproved research variants remain local only.
+- The complete 36-locale Week 2 matrix now exists in production as six primary
+  `BlogPost` records plus 30 `BlogTranslation` rows. The first 13 translations and
+  the remaining 17 were added in separate guarded transactions after owner approval
+  on 2026-08-29. The final live audit found five parents still `DRAFT` and the Spain
+  urgent-blood-pressure parent `PUBLISHED`; neither translation import changed a
+  parent status.
 - The conversion funnel was verified in production on 2026-08-25. Only events after
   that deployment can be used to judge whether blog traffic becomes leads or revenue.
 
@@ -88,8 +90,10 @@ published pages, indexed pages or measured outcomes.
 
 ### 27.3 Publication contract
 
-- Week 2's approved matrix is exactly 19 locale variants: six primary-language drafts
-  first, then only the 13 translations that receive native-language review.
+- Week 2's owner-approved CMS matrix is now all 36 locale variants: six primary
+  records plus five translations per topic. Publication and clinical/native review
+  remain separate gates; adding a translation row does not authorize a draft parent
+  to be published.
 - Administrative/process articles should usually fit 600–900 words; clinical or
   safety-sensitive articles usually need 700–1,200. These are working ranges, not
   ranking requirements.
@@ -99,8 +103,10 @@ published pages, indexed pages or measured outcomes.
 - Use the primary query naturally in the title, H1, opening answer and one heading.
   OpenSEO secondary terms belong only where they answer the same intent. Do not insert
   every discovered keyword or create unrelated sections to chase density.
-- Named clinician author and reviewer, a real review date, primary sources and native
-  review remain publication gates. Never invent a byline, review, statistic or date.
+- Canonical `Global Health Medical Team` byline, preserved linked clinician
+  provenance, a named clinical reviewer, a real review date, primary sources and
+  native review remain publication gates. Never invent a byline, review,
+  statistic or date.
 - Production creation, publishing and external outreach remain separate actions that
   require the relevant owner approval.
 
@@ -134,14 +140,14 @@ plain-language implementation report is
   access. Their CMS bodies exactly matched local source hashes, their safety and
   service-link checks passed, and both remain `DRAFT` with null publication and
   review dates. Native clinical acceptance remains outstanding.
-- Week 2 keeps all 36 source variants as research material, but executable selection
-  now permits exactly the approved 19. The six primary-language articles were
+- Week 2 kept all 36 source variants as research material at this preparation stage,
+  while executable selection then permitted exactly the initial approved 19. The six primary-language articles were
   compacted first to 824-1,157 words and passed focused structure, metadata, link,
   intent and clinical-safety tests.
-- Exactly 19 standalone HTML copies were rendered from the approved manifest. The
+- Exactly 19 standalone HTML copies were rendered from the initial approved manifest. The
   safe seeder defaults to the six primaries and requires `--approved-locales` for
-  the remaining approved translations. It provides no path to the 17 unapproved
-  variants.
+  the initial 13 approved translations. The later 17-row completion used the separate
+  exact-matrix importer recorded in §27.12.
 - Focused OpenSEO keyword, SERP, owner-page Search Console and domain-level backlink
   checks were refreshed on 2026-08-25. No broad crawl was run. The narrow backlink
   response reported 37 links from 36 referring domains and is not used to overwrite
@@ -227,6 +233,98 @@ publication and review timestamps and five translation rows, and its saved body 
 The public API and a cache-busted rendered route both returned HTTP 200 with the
 corrected quick-reference heading. This pass did not publish a draft, create or edit
 translation rows, deploy, push or send outreach.
+
+### 27.10 Approved Week 2 translations added (2026-08-29)
+
+The 13 approved non-primary Week 2 variants were rebuilt from the compact primary
+articles with the Claude Blog translation workflow and a humanization pass. The
+administrative translations render at 843-900 words; the clinical translations at
+1,125-1,199. Each keeps the topic market's law, benefit system, emergency route,
+official sources and service CTA. Existing keyword evidence covered every topic, so
+no additional OpenSEO credits were used.
+
+A scoped importer tied to the six exact parent IDs completed a clean production dry
+run, then created all 13 `BlogTranslation` rows in one transaction. It locks the six
+parents before rechecking draft state and source hashes, rejects any existing or
+partial translation set, sanitizes HTML through the production blog sanitizer, and
+uses the reviewed per-locale cover alt descriptions. Readback verified the exact
+13-row matrix and, at that transaction's readback, confirmed that all six parents
+remained active `DRAFT` records with null publication and review dates. No unapproved locale, status change, publication,
+deployment, push or outreach occurred.
+
+Focused editorial and importer tests passed 14/14, and backend type-check passed.
+Native-language, legal and clinical review still gate publication.
+
+### 27.11 Blog byline standardization to Global Health Medical Team (2026-08-29)
+
+All current production blog posts now use `Global Health Medical Team` as the
+stored and rendered author byline. The guarded production batch covered the exact
+30-post inventory in one transaction: 24 `PUBLISHED` records and six `DRAFT`
+records. It also normalized 121 embedded hero-author cards across post bodies and
+translation bodies so the visible in-article byline matches the page chrome and
+schema output.
+
+The mutation surface was intentionally narrow. The script updated only
+`BlogPost.authorDisplayName` plus the embedded author-card HTML, and then re-read
+the inventory to confirm every post now carries the canonical byline. Existing
+`authorDoctorId` and `reviewerDoctorId` relationships were preserved exactly,
+including rows that already lacked an author-doctor link. No publication status,
+review date, slug, body copy beyond the byline card, translation matrix, cover
+media, deployment, push or outreach changed.
+
+Frontend byline and structured-data helpers now present the medical-team byline as
+the article author while retaining the linked clinician reviewer as the
+`reviewedBy` entity. Focused frontend tests passed 14/14, the production script
+tests passed 2/2, frontend and backend package type-checks passed, and the final
+production readback verified all 30 blogs and all 121 embedded bylines with zero
+clinical-link drift.
+
+### 27.12 Remaining Week 2 translations completed (2026-08-29)
+
+An exact live locale audit found 17 missing rows across the six Week 2 parents. All
+17 already had full EN/PT/ES/CS/RO/DE source variants and topic-level keyword
+evidence, so no additional OpenSEO credits were used. The Claude Blog translation,
+localization and humanization workflows were applied to the missing variants. The
+review corrected stale Czech wording for Irish Illness Benefit waiting days, several
+Romanian mistranslations, mixed-English emergency/medication warnings, and literal
+Czech, Portuguese, Spanish and German phrasing while preserving every jurisdiction,
+threshold, source, internal link and service CTA.
+
+The guarded importer enforces the exact 13-existing/17-missing matrix, locks all six
+parents and all 13 existing translations, rejects slug collisions and creates only
+new `BlogTranslation` rows. Its production dry run first detected that the Spain
+urgent-blood-pressure parent had been published concurrently. The importer was then
+hardened to preserve the current `PUBLISHED` parent and its existing EN/DE copies
+verbatim, while continuing to require source equivalence for the five draft parents.
+A second dry run passed; the apply transaction created exactly 17 rows. Readback
+proved all six parents and all 13 existing translations unchanged.
+
+The independent final production audit returned six parents, 30 translations and
+complete CS/DE/EN/ES/PT/RO coverage for every topic. Five parents are `DRAFT`; the
+Spain parent is `PUBLISHED`. Every parent retains the canonical `Global Health
+Medical Team` author. The all-36 editorial and clinical-safety suite plus importer
+tests passed 15/15, backend type-check passed, and review found no blocking issue.
+No deployment, push, outreach, parent update, existing-translation update or
+publication action was part of this completion.
+
+A final whole-corpus audit returned 30 blog parents, 151 translation rows and **zero
+missing supported locales**. One older hand-foot-and-mouth article still has a
+redundant same-language EN translation in addition to its complete locale set; that
+is a separate data-quality anomaly, not a missing translation, and was left unchanged.
+
+### 27.13 Draft author attribution made team-only (2026-08-29)
+
+The six current Week 2 drafts already stored and rendered `Global Health Medical
+Team`, but each still carried a non-null `authorDoctorId`. That secondary CMS field
+made the draft attribution contradictory even though the visible byline was correct.
+A scoped, row-locked production migration cleared `authorDoctorId` on exactly those
+six `DRAFT` records and did not change the canonical display name.
+
+Readback verified all six drafts now have team-only authorship. Their six named
+`reviewerDoctorId` links, 30 translation rows, bodies, slugs, statuses, publication
+and review dates, metadata, cover assets and CTA services were preserved. The focused
+tests passed 3/3, the full backend test command now includes the seven content-script
+test files by default and passed, and backend type-check passed.
 
 ---
 
@@ -425,7 +523,7 @@ Status vocabulary: `CLOSED` · `FALSE POSITIVE` · `EXPECTED BEHAVIOR` ·
 
 | ID | Finding | Category | Current status | Evidence date | Production state | Google state | Next action |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| SEO-EDITORIAL-001 | Week 2 drifted from an evidence-backed 19-locale plan into 36 local research variants without CMS records | Content growth / measurement | **ALL EIGHT PRIMARY CORRECTIONS APPLIED — DRAFT PUBLICATION REVIEW REQUIRED** | 2026-08-25 | The Romanian Week 1 record and all six Week 2 primary records hold the patient-value corrections as `DRAFT`. After separate owner approval, the already-published Spanish Week 1 record also received its correction while retaining its publication/review state and five translations. Week 2 remains restricted to exactly 19 standalone HTML variants; the other 13 approved variants remain local | Current 28-day blog rows reached 64 clicks and 8,120 impressions, up from 5 clicks and 1,092 impressions in the prior comparison; conversion attribution is valid only after the 2026-08-25 funnel deployment | Complete native/legal/clinical review for the seven drafts; do not publish or create translations without the relevant approval; use 30/60/90-day gates after publication |
+| SEO-EDITORIAL-001 | Week 2 drifted from an evidence-backed 19-locale plan into 36 local research variants without CMS records | Content growth / measurement | **COMPLETE 36-LOCALE MATRIX IN CMS — DRAFT PUBLICATION REVIEW REQUIRED** | 2026-08-29 | After owner approval, all six Week 2 parents now have five translations each: 30 `BlogTranslation` rows and complete CS/DE/EN/ES/PT/RO coverage. Five parents remain `DRAFT`; the Spain urgent-blood-pressure parent was published separately before the 17-row completion. The completion transaction changed no parent, existing translation or publication state. The published Spanish Week 1 record retains its publication/review state and five translations | Current 28-day blog rows reached 64 clicks and 8,120 impressions, up from 5 clicks and 1,092 impressions in the prior comparison; conversion attribution is valid only after the 2026-08-25 funnel deployment | Complete native/legal/clinical review for the remaining drafts; do not publish a draft without the relevant approval; use 30/60/90-day gates after publication |
 | SEO-001 | Sitemap coverage gap | Indexation | **FALSE POSITIVE** | 2026-08-12 | 1,906 URLs live and well-formed | Sitemap read and processed | None |
 | SEO-002 | Internal links pointing at 308 redirects | Crawl efficiency | **CLOSED — VERIFIED BY PRODUCTION CHECK** | 2026-08-12 | Footer country links and service-page links point at canonical URLs (`f4e84104`, `05f471a7`); health-alias link leak closed (`532d9c8a`) | n/a | None |
 | SEO-003 | Fallback-locale legal pages carry `noindex` | Indexation | **EXPECTED BEHAVIOR — CLOSED** | 2026-08-09 | `noindex, follow`, absent from sitemap, absent as hreflang target; exact-locale legal pages stay indexable | Consistent | None |

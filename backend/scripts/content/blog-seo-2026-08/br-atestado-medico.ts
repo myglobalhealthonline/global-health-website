@@ -712,6 +712,6 @@ export const BR_ATESTADO_MEDICO: PostSet = {
     "br/2076 expansion 2026-08-04. Head term 1,600 KD 12, unchanged. In-scope cluster: atestado médico online pdf 590 KD 1, telemedicina consulta online 1,000 KD 12, telemedicina barata 590 KD 0, telemedicina primeira consulta grátis 480 KD 7. Rejected as targets — fraud intent, same call as the Spanish 'justificante medico' rejection: melhor desculpa para pegar atestado médico 1,600 KD 0, melhor desculpa para pegar atestado médico de 3 dias 1,600 KD 0, atestado médico pdf grátis 880 KD 0, atestado médico online grátis com carimbo 590 KD 0, atestado médico sus pdf download 590 KD 0. The article answers that demand honestly in a dedicated section instead of chasing it. Also rejected: the SUS-navigational mass (meu sus digital 201,000 KD 68, conecte sus 74,000 KD 36, atestado online sus 1,600 KD 50), all far above the difficulty ceiling. SERP 2026-08-04: rank 1 CFM Prescrição Eletrônica FAQ, rank 3 Atesta CFM (cited by the SERP but NOT by this article — the platform is not in operation, suspended over a federal court injunction; clinician correction 2026-08-07), rank 2 a state health department; the rest are telemedicine vendors and their blogs. None explains when a teleconsultation should not produce an atestado. CFM hosts sit behind a WAF and cannot be curl-checked; verified via the live SERP.",
   serviceSlug: "atestado-medico-online",
   authorDoctorId: "cmqyzr0fb000o01lu9deh6mf5",
-  authorDisplayName: "Dr. Renato Sarmento",
+  authorDisplayName: "Global Health Medical Team",
   posts: [pt, en, es],
 };

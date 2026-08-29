@@ -61,9 +61,9 @@ test("Week 2 primary cohort contains the six native-market drafts in rollout ord
   );
 });
 
-test("Week 2 drafts meet metadata, structure, linking and source gates", () => {
-  for (const set of WEEK2_POST_SETS) {
-    assert.ok(set.authorDoctorId, `${set.key} has no verified author ID`);
+test("all 36 Week 2 locale variants meet metadata, structure, linking and source gates", () => {
+  for (const set of WEEK2_RESEARCH_POST_SETS) {
+    assert.equal(set.authorDisplayName, "Global Health Medical Team", `${set.key} author display name drifted`);
     assert.ok(set.reviewerDoctorId, `${set.key} has no verified reviewer ID`);
 
     for (const post of set.posts) {
@@ -104,7 +104,7 @@ test("Week 2 primary-language drafts meet the compact editorial standard", () =>
 });
 test("hypertension topics enforce medication, emergency and myth-correction safety", () => {
   for (const key of ["es-tension-alta-urgencias", "ro-scade-tensiunea-rapid"]) {
-    const set = WEEK2_POST_SETS.find((candidate) => candidate.key === key)!;
+    const set = WEEK2_RESEARCH_POST_SETS.find((candidate) => candidate.key === key)!;
     for (const post of set.posts) {
       const html = renderArticle(post.article);
       assert.match(html, /112/);
@@ -113,7 +113,7 @@ test("hypertension topics enforce medication, emergency and myth-correction safe
     }
   }
 
-  const romanian = WEEK2_POST_SETS.find((set) => set.key === "ro-scade-tensiunea-rapid")!;
+  const romanian = WEEK2_RESEARCH_POST_SETS.find((set) => set.key === "ro-scade-tensiunea-rapid")!;
   for (const post of romanian.posts) {
     const html = renderArticle(post.article);
     assert.match(html, /captopril/i);
@@ -122,12 +122,23 @@ test("hypertension topics enforce medication, emergency and myth-correction safe
 });
 
 test("Spain routes stable hypertension to GP care and selected cases to cardiology", () => {
-  const set = WEEK2_POST_SETS.find((candidate) => candidate.key === "es-tension-alta-urgencias")!;
+  const set = WEEK2_RESEARCH_POST_SETS.find((candidate) => candidate.key === "es-tension-alta-urgencias")!;
   for (const post of set.posts) {
     const html = renderArticle(post.article);
     assert.match(html, /\/services\/enfermedades-cronicas-online/);
     assert.match(html, /\/services\/cardiologo-online/);
   }
+});
+
+test("Czech translated calculation guides link to the existing localized eNeschopenka articles", () => {
+  const set = WEEK2_POST_SETS.find((candidate) => candidate.key === "cz-vypocet-nemocenske")!;
+  const english = renderArticle(set.posts.find((post) => post.locale === "EN")!.article);
+  const german = renderArticle(set.posts.find((post) => post.locale === "DE")!.article);
+
+  assert.match(english, /\/czechia\/en\/blog\/neschopenka-czech-sick-note-explained/);
+  assert.doesNotMatch(english, /sick-note-how-eneschopenka-works/);
+  assert.match(german, /\/czechia\/de\/blog\/neschopenka-krankschreibung-in-tschechien/);
+  assert.doesNotMatch(german, /krankschreibung-so-funktioniert-eneschopenka/);
 });
 
 test("Week 2 updater is dry-run by default and refuses unsafe records", () => {

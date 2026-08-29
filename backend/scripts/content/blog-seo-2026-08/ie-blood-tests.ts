@@ -1227,7 +1227,7 @@ export const IE_BLOOD_TESTS: PostSet = {
     "KD 0 at 1,600/mo with a local pack. SERP page 1 is entirely private phlebotomy product pages (liffeymedical.ie, thehealthlab.ie, bloodworks.ie, fola.care, dbt-bloodtest.ie, mccabespharmacy.com) — no doctor-authored explanation of test selection or interpretation. Supporting: 'blood tests ireland' 390 KD 0, 'private blood test dublin' KD 0, 'vitamin d test ireland' 40 KD 0. GSC: 'online lab test consultations' 123 impressions at pos 62 on /ireland/en/lab-tests.",
   serviceSlug: "referral-and-investigations",
   authorDoctorId: "cmp5r0if3002kssjug743x0p6",
-  authorDisplayName: "Dr Tiago Miguel Figueira",
+  authorDisplayName: "Global Health Medical Team",
   reviewerDoctorId: "cmqas8yh9000b01pgpc0yp1la",
   reviewerDisplayName: "Dr Ahmed Maklad",
   posts: [en, pt, es, cs, roPost, de],

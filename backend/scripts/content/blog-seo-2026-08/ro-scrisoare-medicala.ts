@@ -1325,7 +1325,7 @@ export const RO_SCRISOARE_MEDICALA: PostSet = {
     "ro/2642 expansion 2026-08-04. Head term 1,000 KD 0, unchanged. Cluster: scrisoare medicala model 260, model scrisoare medicala pdf 170, scrisoare medicala anexa 5 110, cat are valabilitate o scrisoare medicala 90, scrisoare medicala anexa 43 model nou 90, model scrisoare medicala handicap 90, eliberare scrisoare medicala 70, model scrisoare medicala medic de familie 70, legislatie scrisoare medicala 50, cine elibereaza scrisoarea medicala 30, ce este scrisoarea medicala 30. SERP 2026-08-04: rank 1 is the CNAS PDF of the form itself, followed by county DGASPC and hospital PDFs of the same form, lege5.ro and one family-doctor blog. Page one is documents, not explanations — nothing tells a patient what to do when the letter is incomplete, expired or on the wrong model.",
   serviceSlug: "trimiteri-si-investigatii",
   authorDoctorId: "cmrc4axni00rn01p2n3r2bopf",
-  authorDisplayName: "Dr Robert Gabriel Brindus",
+  authorDisplayName: "Global Health Medical Team",
   reviewerDoctorId: "cmrc4j7oc00se01p2gf7y9ldw",
   reviewerDisplayName: "Dr Andreea Lorena Bica",
   posts: [ro, en, pt, es, cs, de],

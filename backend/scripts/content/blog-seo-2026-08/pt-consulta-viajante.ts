@@ -1392,7 +1392,7 @@ export const PT_CONSULTA_VIAJANTE: PostSet = {
     "pt/2620 expansion 2026-08-04. Head term 5,400 KD 3, unchanged by the expansion. Cluster: consulta do viajante online 1,000 KD 5, marcar consulta do viajante sns 880 KD 5, consulta do viajante porto 880 KD 0, consulta do viajante braga 390 KD 0, centro de vacinação internacional de braga 390 KD 0, consulta do viajante lisboa 260 KD 0, consulta do viajante coimbra 260 KD 0, consulta do viajante matosinhos 110 KD 0, marcar consulta do viajante online 110 KD 7. The tail is overwhelmingly where-and-how-to-book, so the article is built around locations, documents and the video/presential boundary. SERP 2026-08-04: SNS 24 guide at 1, ARS Norte CVI Porto at 4, then CUF, Hospital da Luz, JCS, Affidea, IHMT NOVA and two telemedicine pure-plays. None states which parts of the consultation a video appointment can deliver and which require a Centro de Vacinação Internacional.",
   serviceSlug: "consulta-do-viajante",
   authorDoctorId: "cmqwnkj7y00037gju0x972cj4",
-  authorDisplayName: "Dr Vitor Hugo de Matos Pais",
+  authorDisplayName: "Global Health Medical Team",
   reviewerDoctorId: "cmqwnkili00027gjun3zlxdd5",
   reviewerDisplayName: "Dra. Nádia Cavaco",
   posts: [pt, en, es, cs, roPost, de],
