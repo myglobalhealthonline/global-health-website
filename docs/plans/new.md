@@ -843,3 +843,206 @@ This plan is complete only when:
 The first code ticket should be limited to Phase 0 through Phase 2: reproducible baseline, sanitized instrumentation, and characterization tests. It must not change a production response, card component, authentication path, or bookability result.
 
 Only after those tests establish the current contract should implementation proceed to the additive service-card projection.
+
+## 18. Continuation context (2026-08-30 — for the session resuming this work)
+
+A full implementation round was completed and then discarded from the working tree before commit ("removed everything"); this plan was re-fixed afterward and now embeds everything that round learned. State for the resuming session:
+
+- git is clean at `9b850cf5`; nothing of the implementation survived. This document + memory file `project_perf_plan_execution_aug2026.md` are the complete guide.
+- Final user decisions, not open for re-litigation: no feature flags or env switches of any kind (always-on in code); global — all six markets, no canary; rollback = redeploy previous build (§12/§13).
+- The proven build order and every trap (chamber/editorialChecklist shims, `isActive`, non-throwing fallback logger, no `server-only` import in the get-country-collections graph, cache-tag reuse, key-coverage validation, batch/cache-key sharing, GP streaming-unsafe analysis, rate-limit lockstep fix) are recorded in §6-§7 findings blocks and §10 notes.
+- Last round's proof points, reproducible: 183 frontend + 64 backend tests green; production build EXIT=0 against the Railway backend; during prerender every one of 204 projection 404s fell back cleanly to legacy with full page content.
+- Process rule learned the hard way: commit each PR as it goes green (with the user's approval), so a single working-tree discard cannot erase the work again.
+
+## 19. Implementation round 2 — what is now in the tree (2026-08-30)
+
+Re-implemented after the round-1 discard, under the no-flag global design.
+Everything below is uncommitted working-tree state at the time of writing.
+
+### 19.1 Delivered
+
+| Phase | Change | Files |
+| --- | --- | --- |
+| 3 | `listServiceCardsByCountry` + `GET /api/countries/:countryCode/service-cards` | `backend/src/modules/services/services.service.ts`, `backend/src/routes/country-scoped.route.ts` |
+| 4 | `listDoctorCardsByCountry` + `GET /api/countries/:countryCode/doctor-cards` | `backend/src/modules/doctors/doctors.service.ts`, same route file |
+| 5 | Projection fetchers (legacy cache tags) + always-on validating adapter with one-request legacy fallback | `frontend/lib/api/site-content-api.ts`, `frontend/lib/content/get-country-collections.ts` |
+| 7 | `getCountryBookabilityBatch` + `readBatch*` readers, wired into the two projections only | `backend/src/modules/bookability/bookability.service.ts` |
+| 9 | GP route `Cache-Control: no-store` (header only, no streaming) + `gp-availability`/`gp-languages` added to both public-read allowlists in lockstep | `frontend/app/api/public/gp-availability/route.ts`, `frontend/lib/api/client.ts`, `backend/src/utils/rate-limit-trust.ts` |
+
+Tests added: `backend/src/routes/card-projections.test.ts` (24, including a
+five-case drift guard that runs the same fixture through the projection's
+replicated locale merge and through the exported `mergeDoctorTranslation` /
+`mergeDoctorMarketTranslation`, so an edit to either helper cannot silently
+diverge from the copy),
+`backend/src/routes/card-projections.route-table.test.ts` (2),
+`backend/src/modules/bookability/bookability.batch.test.ts` (7),
+`frontend/lib/content/card-projection-adapter.test.ts` (14),
+`frontend/tests/unit/gp-public-read-allowlist.test.ts` (5).
+
+### 19.2 Design decisions made during this round
+
+- **One shared row mapper, not a second normalizer.** The projections emit a
+  raw-payload-shaped body and the frontend keeps its existing
+  `CountryServiceCard` / `CountryDoctorCard` mapping code, now extracted as
+  `mapServiceRow` / `mapDoctorRow` and called by both the projection and the
+  legacy path. Card parity is therefore structural, not asserted field by
+  field — one adapter test proves the two payloads yield `toEqual` cards.
+- **`resolveTranslation` directly instead of `mergeServiceTranslation` /
+  `mergeDoctorTranslation`.** Those helpers require the full display-field base
+  type (including `detailBody`), which would have forced the projection to
+  select the very columns it exists to drop. `resolveTranslation` *is* the
+  fallback chain those helpers wrap; the projection applies it to the two or
+  three fields a card renders, and the doctor projection replicates
+  `mergeDoctorMarketTranslation`'s resolved-locale guard verbatim.
+- **Batch by injecting a slot loader, not by forking `evaluateService`.**
+  `evaluateService` gained an options bag (`skipExpiredRelease`, `loadSlots`,
+  both defaulted to today's behaviour). The batch memoizes slot reads per
+  `(doctorId, durationMinutes)` and sweeps expired holds once for the whole
+  country. `deriveBookability` remains the only decision function.
+- **The batch writes the per-item cache keys.** Same key format, same
+  generation guard, so a later `getServiceBookability` / `getDoctorBookability`
+  within the TTL hits the batch's entry instead of recomputing a possibly
+  different answer. Pinned by a test.
+
+### 19.3 Verification actually run
+
+- `pnpm --filter backend typecheck` — clean. `pnpm --filter frontend typecheck` — clean.
+- `pnpm --filter frontend lint` — 0 errors (15 pre-existing warnings).
+  `pnpm --filter backend lint` — 1 pre-existing error in
+  `modules/automation/refund-notifications.service.ts`, untouched by this work.
+- **Full backend suite: 1856/1856 pass, 0 fail, 0 skipped.** A local PG18
+  cluster was hand-built on `127.0.0.1:5433` for this (Docker does not start on
+  this machine — see the local-test-db note), so the DB-backed tests that
+  normally skip actually ran.
+- A DB-backed integration suite was added,
+  `backend/src/routes/card-projections.integration.test.ts` (12): it runs both
+  projections and both legacy collections against real Postgres over
+  `app.inject` and asserts same rows, same order, same card values, smaller
+  payloads, no private clinician fields, 404 parity, kind filtering, and the
+  query-growth gate. This is what proves the Prisma `select` clauses are
+  actually valid — the mocked contract tests never execute them.
+- `getPublicDoctorsForMarket` (the sitemap/hreflang feeder) is untouched and
+  still calls the legacy `fetchDoctorsByCountry` directly, not `getCountryDoctors`
+  — so it never reaches the adapter at all.
+- `pnpm --filter frontend test` — 1134 pass, 5 skipped, 2 failures, BOTH
+  reproduced on a clean tree at HEAD in the same machine state:
+  `tests/unit/sick-cert-legacy-redirects.test.ts` (a real pre-existing
+  assertion failure) and `tests/unit/ireland-core-page-seo.test.ts` (a 5 s
+  test-timeout flake that only appears when the machine is loaded — it passes
+  in isolation).
+- Production build: `NEXT_PUBLIC_API_URL=https://api.myglobalhealth.online pnpm --filter frontend build`
+  → **EXIT=0**, with **186 projection 404s all falling back cleanly to legacy**
+  during prerender and every page rendering full content. That is the
+  frontend-deployed-before-backend case proven safe (it costs one wasted
+  request per collection read until the backend ships).
+
+### 19.4 Phase 1 — instrumentation (delivered)
+
+`backend/src/lib/perf/`, registered by one line in `app.ts`; deleting that line
+disables the whole feature.
+
+- `request-context.ts` — `AsyncLocalStorage` per request holding an opaque
+  request id, a DB round-trip count, total DB ms, and named phase spans.
+  `timePhase(name, fn)` wraps an expression without restructuring it.
+- `instrument-pool.ts` — counts round trips at the `pg.Pool` boundary.
+  Prisma's own `query` event fires in the engine's async context and therefore
+  cannot be correlated with the causing request; the pool is ours and runs in
+  the caller's context, which is what `AsyncLocalStorage` needs. Only elapsed
+  time is read — never the SQL text or its bound parameters.
+- `fastify-perf.ts` — one `perf` log line per request
+  (`requestId, route, method, statusCode, totalMs, dbMs, dbQueries, phases,
+  bytes, eventLoopLagMs, rssMb`) plus a `Server-Timing` response header.
+  Cardinality is bounded by construction: `route` is Fastify's route TEMPLATE,
+  never the resolved URL, so ids and slugs cannot become label values. An
+  inbound `x-request-id` is echoed only when it is short and matches
+  `[A-Za-z0-9._-]+`, so a caller cannot smuggle text into the logs.
+- The frontend sends `x-request-id` on server-side reads only
+  (`frontend/lib/api/client.ts`), so one page render is followable across both
+  processes. Browser calls are left alone rather than widening the API's CORS
+  `allowedHeaders`.
+- `query` and `bookability` spans are timed inside both projections.
+
+### 19.5 Measured results
+
+**Query growth (the Phase 7 exit gate — "bounded query count independent of
+roster size").** Measured on real Postgres via the perf instrumentation, cold
+cache both sides, two markets with 1 and 5 doctors:
+
+| Path | 1 doctor | 5 doctors | Growth |
+| --- | ---: | ---: | ---: |
+| legacy `/doctors` | 37 | 121 | **+84** |
+| projection `/doctor-cards` | 26 | 38 | **+12** |
+
+A ~7x shallower slope. Note the honest corollary, now pinned by the test's own
+comment: the batch is a fixed country-level cost, so on a one-doctor market it
+issues MORE round trips than the per-item path (which answers almost everything
+from its 60 s cache). The gate is the slope, not any single fixture.
+
+**Production baseline ("before"), `docs/audits/performance/baseline-2026-08-30/`.**
+`probe.mjs` is re-runnable; `samples.json` holds every raw sample. 30 samples
+each, 3 warm-ups discarded, sequential single-connection from one developer
+machine — comparable only against a run made the same way from the same place.
+
+| Target | p50 | p95 (directional) | max | decoded bytes | encoding |
+| --- | ---: | ---: | ---: | ---: | --- |
+| `/api/countries/ie/doctors?locale=EN` | 351 ms | 417 ms | 430 ms | 533,561 | br |
+| `/api/countries/ie/services?locale=EN` | 380 ms | 429 ms | 464 ms | 271,174 | br |
+| `/health` | 345 ms | 797 ms | 1,021 ms | 43 | — |
+| `https://www.myglobalhealth.online/ireland/en` | 383 ms | 459 ms | 461 ms | 708,135 | gzip |
+
+**URL correctness matters here and cost a wrong number once.** The first run
+probed `https://myglobalhealth.online/ie/en` — the apex host, which 301s to
+`www`, and the country CODE alias rather than the canonical SLUG the sitemap
+and every internal link use. That run reported the homepage at p50 880 ms /
+p95 1,123 ms; the same page probed correctly is p50 383 ms. The API keeps the
+country code (`/api/countries/ie/...`), because that is what its route
+parameter takes — only the site URL was wrong.
+
+**Between-run variance is large.** The two runs above, minutes apart from the
+same machine, moved `/doctors` p95 from 766 ms to 417 ms purely on CDN/origin
+cache state. Per §9.5 this makes any single run directional: compare only runs
+made the same way, from the same place, close together — and treat a result
+as inconclusive when cache state is unknown.
+
+The two projection targets are in the probe and currently return 404 — the
+backend is not deployed yet. That is the "after" half of the comparison and is
+the first thing to re-run post-deploy.
+
+**Payload size** is asserted rather than quoted: the integration test requires
+each projection to be strictly smaller than its legacy counterpart on the same
+fixture. A representative production ratio needs the deployed endpoints.
+
+### 19.6 Phase 8 — entry-gate count: analysed, deliberately NOT changed
+
+`frontend/app/(global)/page.tsx` calls `getCountryDoctors` once per country
+purely for `.length`. §8 lists a per-country count read as a candidate "only
+with proven identical rendered counts" — and it provably is not identical:
+
+- The gate SUMS per-country rosters, so a doctor active in two markets is
+  counted twice. `countActiveDoctors()` (`GET /api/doctors/count`) counts
+  distinct active doctors, so swapping it in would silently change a published
+  stat. Multi-market doctors are a supported, used feature (`DoctorCountry`).
+- A new per-country `count` would also diverge from `.length` by the 300-row
+  cap and by any row the frontend mapper drops.
+
+What the gate did get for free: those six reads now go through the projection,
+so each is a much smaller payload. The remaining waste is real and worth a
+follow-up — the gate triggers a full `getCountryBookabilityBatch` per country
+to render a number that does not use bookability at all. Fixing that properly
+means a count endpoint whose semantics are proven against production data,
+which is a separate, evidence-gated change.
+
+### 19.7 Not done / still open
+
+- **Phase 10 (controlled load) is blocked and must not be attempted as-is.**
+  The k6 harness hardcodes Railway hosts in `loadtest/config/targets.json` with
+  no env override, and `loadtest/config/cookies.json` is a TRACKED file holding
+  role session JWTs. Running it points load at production with real sessions.
+  It needs a non-production target and synthetic credentials first — that is
+  the standing P0, not a step of this plan.
+- Phase 6's per-consumer migration bookkeeping is moot under the no-flag
+  decision: the adapter sits at the getter, so every consumer moved at once.
+  What remains from §9.2 is the rendered page matrix against a deployed
+  backend — it cannot be run here, since no local environment has content.
+- The "after" performance run, and therefore every §16 numeric budget
+  (100 KB compressed lists, p95 < 500 ms, homepage p95 < 1 s).
