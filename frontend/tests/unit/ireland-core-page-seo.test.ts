@@ -82,6 +82,10 @@ describe("Ireland core-page SEO", () => {
     }
   });
 
+  // Imports three real Next route modules and runs their generateMetadata for
+  // two locales. That is legitimately slower than a unit test, and on a loaded
+  // machine it exceeded vitest's 5s default and failed as a timeout while
+  // passing in isolation. Given an explicit budget instead of a flaky default.
   it("wires the Ireland copy into each route's real metadata output", async () => {
     const [pricing, about, contact] = await Promise.all([
       import("@/app/[country]/[lang]/pricing/page"),
@@ -107,7 +111,7 @@ describe("Ireland core-page SEO", () => {
         );
       });
     }
-  });
+  }, 30_000);
 
   it("does not apply Ireland metadata to another market", async () => {
     const contact = await import("@/app/[country]/[lang]/contact/page");

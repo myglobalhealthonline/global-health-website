@@ -16,7 +16,15 @@ test.describe("Smoke", () => {
     expect(response?.status(), "/ should not return 5xx").toBeLessThan(500);
     // Site name appears in either the header logo, footer, or document
     // title — match loosely on the brand word.
-    await expect(page).toHaveTitle(/global health/i);
+    //
+    // It is NOT in the title: the entry page's <title> is marketing copy
+    // ("Online Doctor Consultations in Europe & Brazil" — same on production,
+    // checked 2026-08-30), so asserting the brand there tied a smoke test to
+    // an SEO string that copy edits are free to change. Assert what the
+    // comment above actually claims instead: a non-empty title, plus the brand
+    // in the header logo.
+    await expect(page).toHaveTitle(/\S/);
+    await expect(page.getByAltText(/global health/i).first()).toBeVisible();
   });
 
   test("legacy book-online redirects to /book", async ({ request }) => {

@@ -1,0 +1,67 @@
+{
+  "capturedAt": "2026-08-30T12:21:51.634Z",
+  "base": "http://localhost:4000",
+  "vus": 20,
+  "offeredRps": 40,
+  "seconds": 25,
+  "node": "v24.11.1",
+  "note": "Dependency-free concurrency probe against a local stack seeded with the public production catalogue. Not a substitute for the k6 ladder against a production-like environment; it bounds error rate and compares legacy vs projection under identical load on identical data.",
+  "results": {
+    "legacy:doctors": {
+      "requests": 1000,
+      "throughputPerSec": 40,
+      "errors": 0,
+      "errorRate": 0,
+      "bodyMismatches": 0,
+      "statuses": {
+        "200": 1000
+      },
+      "p50": 263.9,
+      "p95": 302.1,
+      "p99": 311.1,
+      "max": 321.2
+    },
+    "proj:doctor-cards": {
+      "requests": 1000,
+      "throughputPerSec": 40,
+      "errors": 0,
+      "errorRate": 0,
+      "bodyMismatches": 0,
+      "statuses": {
+        "200": 1000
+      },
+      "p50": 262.3,
+      "p95": 296.1,
+      "p99": 336.7,
+      "max": 360.3
+    },
+    "legacy:services": {
+      "requests": 1000,
+      "throughputPerSec": 40,
+      "errors": 0,
+      "errorRate": 0,
+      "bodyMismatches": 0,
+      "statuses": {
+        "200": 1000
+      },
+      "p50": 212.2,
+      "p95": 245.8,
+      "p99": 260.4,
+      "max": 269.2
+    },
+    "proj:service-cards": {
+      "requests": 1000,
+      "throughputPerSec": 40,
+      "errors": 0,
+      "errorRate": 0,
+      "bodyMismatches": 0,
+      "statuses": {
+        "200": 1000
+      },
+      "p50": 150.5,
+      "p95": 193.9,
+      "p99": 201.3,
+      "max": 211.5
+    }
+  }
+}

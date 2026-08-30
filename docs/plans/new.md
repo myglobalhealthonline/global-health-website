@@ -1073,7 +1073,105 @@ session does not re-chase them:
 - Images briefly reporting `naturalWidth === 0` were mid-decode; the optimizer
   serves them 200.
 
-### 19.8 Not done / still open
+### 19.8 Full local stack — the §16 acceptance run (2026-08-30)
+
+A complete stack was stood up locally to close the boxes that need a real
+environment: PG18 on `127.0.0.1:5433` (Docker does not start on this machine),
+the backend on `.env.test`, and the frontend built against it.
+
+**The database was seeded with the real PUBLIC production catalogue** — the
+same anonymous `/api/countries`, `/doctors` and `/services` payloads any
+visitor receives — not invented data. 6 countries, 120 services, 60 distinct
+doctors; Ireland at 22 doctors / 23 services, matching production exactly. No
+authenticated endpoint was read and no patient data was copied. `.env.dev`
+points at a remote Railway database and was deliberately NOT used, because
+public GETs write (hold sweep, slot minting).
+
+**Projection path served every page.** `pnpm --filter frontend build` against
+the local backend finished EXIT=0 with **zero** `card-projection` fallbacks —
+against production (which lacks the routes) the same build logs 186. Rendered
+doctor counts matched BOTH endpoints in every market:
+
+| market | page | projection | legacy |
+| --- | ---: | ---: | ---: |
+| ireland | 22 | 22 | 22 |
+| portugal | 16 | 16 | 16 |
+| spain | 13 | 13 | 13 |
+| czechia | 8 | 8 | 8 |
+| romania | 3 | 3 | 3 |
+| brazil | 1 | 1 | 1 |
+
+48 market/locale pages (6 markets × locales × 6 sub-paths) returned 200 with
+full content, 0 problems.
+
+**Payload budget.** Compressed (brotli), and the reason this work exists:
+
+| endpoint | production today | local legacy | local projection |
+| --- | ---: | ---: | ---: |
+| doctors | **102.5 KB — over the 100 KB budget** | 31.5 KB | 26.5 KB |
+| services | 62.4 KB | 57.4 KB | **4.0 KB** |
+
+Read the doctor column with care: the seeded rows carry real bios and assets
+but not translations, FAQs, specialties or credentials, which is most of
+production's 533 KB decoded payload and is exactly what the projection drops.
+The local doctor reduction is therefore an UNDERSTATEMENT; the service ratio
+(93% smaller) is representative because detail bodies were seeded.
+
+**Latency.** All four endpoints p95 22-33 ms locally, i.e. far under the
+500 ms budget — but on loopback with a warm cache, which shows the origin is
+not the bottleneck rather than proving the production budget.
+
+**Load.** `load-probe.mjs` (added here; k6 is not installed and its harness
+aims at a full traffic mix): 20 workers, 25 s, 40 rps offered, trusted-SSR
+headers with one synthetic client IP per worker.
+
+| target | requests | p50 | p95 | p99 | errors | bad bodies |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| legacy doctors | 1000 | 264 ms | 302 ms | 311 ms | **0 (0.00%)** | 0 |
+| projection doctor-cards | 1000 | 262 ms | 296 ms | 337 ms | **0 (0.00%)** | 0 |
+| legacy services | 1000 | 212 ms | 246 ms | 260 ms | **0 (0.00%)** | 0 |
+| projection service-cards | 1000 | 151 ms | 194 ms | 201 ms | **0 (0.00%)** | 0 |
+
+Two earlier runs are kept in the script's comments because they are the useful
+part: uncapped, the probe hit 97-100% 429s at ~1,300 rps. That is the rate
+limiter working, not a defect — first because no `PROXY_CLIENT_IP_SECRET` was
+configured so everything shared the 300/min visitor bucket, then because the
+fastest endpoint outran the SSR bucket. A load probe that does not send the
+headers real SSR traffic sends measures the limiter and nothing else.
+
+**Auth, authorization and cart.** The E2E suites had never actually executed
+(no `E2E_*` credentials had ever been set), so running them surfaced four
+stale assertions, all fixed, none of them product defects:
+
+- `authz-boundaries.spec.ts` accepted only a redirect to `/login`, but an
+  authenticated wrong-role user is correctly sent to their OWN portal. The
+  helper now asserts the real invariant — the requested portal did not render.
+  The measured matrix: each role 200s only on its own portal and every
+  cross-portal attempt 307s to the caller's portal, with no 5xx.
+- `patient-portal.spec.ts` looked for "Dashboard" (the ADMIN nav label; the
+  patient nav says "Overview"), used bare locators that hit strict-mode
+  violations ("Payments" resolves to 5 nodes, the profile "Privacy" tab to 2),
+  and carried the same `/login`-only assumption.
+- `smoke.spec.ts` asserted the brand in the `<title>`, but the entry page's
+  title is marketing copy ("Online Doctor Consultations in Europe & Brazil",
+  identical on production) — it now checks a non-empty title plus the brand in
+  the header logo, which is what its own comment always claimed.
+
+Result: **38/38 auth + authz + patient-portal, and 13/13 cart.** A new
+`cart-regression.spec.ts` covers the guest cart lifecycle, rejection of
+malformed and slot-less adds, the authenticated cart, and cart persistence
+across navigation.
+
+Two local-environment gaps found and fixed along the way, neither a product
+defect: `frontend/.env.local` has no `AUTH_JWT_PUBLIC_KEY`, so `proxy.ts`
+could not verify the backend's RS256 session and every portal route bounced;
+and the seeded doctor PROFILE is created inactive, which login correctly
+rejects.
+
+**Test totals: backend 1856/1856, frontend 1136/1136, both typechecks clean,
+backend lint clean, frontend lint 0 errors, production build EXIT=0.**
+
+### 19.9 Not done / still open
 
 - **Phase 10 (controlled load): the harness is now safe to point somewhere, but
   no run has been made.** The two blockers were fixed on 2026-08-30:
@@ -1095,5 +1193,15 @@ session does not re-chase them:
   decision: the adapter sits at the getter, so every consumer moved at once.
   What remains from §9.2 is the rendered page matrix against a deployed
   backend — it cannot be run here, since no local environment has content.
-- The "after" performance run, and therefore every §16 numeric budget
-  (100 KB compressed lists, p95 < 500 ms, homepage p95 < 1 s).
+- **The production "after" run.** Everything measured in §19.8 is a local
+  stack. The production budgets stay unproven until the backend ships and
+  `probe.mjs` is re-run.
+- **Rollback has been exercised at runtime, not as a platform redeploy.** The
+  frontend-ahead-of-backend direction is proven (186 clean fallbacks, full
+  render, live-vs-local parity); the reverse is safe by construction since the
+  new routes are additive and an older frontend never calls them. Rehearsing an
+  actual platform rollback needs the deploy platform.
+- §9.4 cart rows that need live availability — adding a consultation (needs a
+  real `timeSlotId` + `doctorId`), health test or prescription line, quantity
+  and benefit updates, expired-hold messaging, and checkout. Slot inventory was
+  deliberately not fabricated.
