@@ -1,10 +1,12 @@
 import { cache } from "react";
 import {
+  fetchDoctorCardsByCountry,
   fetchDoctorsByCountry,
   fetchHealthTestsByCountry,
   fetchHealthTestDetail,
   fetchLandingPage,
   fetchLandingSlugs,
+  fetchServiceCardsByCountry,
   fetchServiceDetail,
   fetchServicesByCountry,
   fetchSpecialtiesByCountry,
@@ -427,6 +429,106 @@ const SERVICE_KINDS: ReadonlySet<CountryServiceCard["kind"]> = new Set([
   "HOME_DELIVERY",
 ]);
 
+/* ------------------------------------------------------------------ *
+ * Card-projection adapter (perf plan docs/plans/new.md §7.2)
+ * ------------------------------------------------------------------ */
+
+/**
+ * Projection failures are logged but must never throw. `logPublicContentFallback`
+ * deliberately kills `next build` on a degraded backend — correct for the
+ * legacy path, wrong here: a projection miss with a healthy legacy endpoint is
+ * a fully rendered page, not thin content.
+ */
+function logProjectionFallback(scope: string, detail: string): void {
+  console.warn(`[card-projection] ${scope}: ${detail} — falling back to the legacy endpoint`);
+}
+
+/**
+ * Try the projection endpoint. Returns the cards on success, or `null` to mean
+ * "use the legacy endpoint" — network error, non-2xx, malformed JSON, a row
+ * that fails required-field validation, a duplicate ID, or (doctors) a
+ * bookability map that does not cover every assigned service.
+ *
+ * `null` is never a rendering outcome: the caller always falls back, so the
+ * legacy fail-loud `PublicContentUnavailableError` semantics stay intact and a
+ * projection failure can never be mistaken for a confirmed-empty country.
+ */
+async function tryServiceCardProjection(
+  countryCode: string,
+  kind: CountryServiceCard["kind"] | undefined,
+  locale?: string,
+): Promise<CountryServiceCard[] | null> {
+  const scope = `country-service-cards:${countryCode}:${kind ?? "all"}`;
+  try {
+    const res = await fetchServiceCardsByCountry(countryCode, kind, locale);
+    if (!res.ok) {
+      logProjectionFallback(scope, res.message);
+      return null;
+    }
+    const out: CountryServiceCard[] = [];
+    const seen = new Set<string>();
+    for (const row of res.data) {
+      const card = mapServiceRow(row, kind);
+      if (!card) {
+        logProjectionFallback(scope, "row failed card validation");
+        return null;
+      }
+      if (seen.has(card.id)) {
+        logProjectionFallback(scope, "duplicate service id");
+        return null;
+      }
+      seen.add(card.id);
+      out.push(card);
+    }
+    return out;
+  } catch (error) {
+    logProjectionFallback(scope, error instanceof Error ? error.message : "unknown error");
+    return null;
+  }
+}
+
+async function tryDoctorCardProjection(
+  countryCode: string,
+  locale?: string,
+): Promise<CountryDoctorCard[] | null> {
+  const scope = `country-doctor-cards:${countryCode}`;
+  try {
+    const res = await fetchDoctorCardsByCountry(countryCode, locale);
+    if (!res.ok) {
+      logProjectionFallback(scope, res.message);
+      return null;
+    }
+    const out: CountryDoctorCard[] = [];
+    const seen = new Set<string>();
+    for (const row of res.data) {
+      const card = mapDoctorRow(row, countryCode);
+      if (!card) {
+        logProjectionFallback(scope, "row failed card validation");
+        return null;
+      }
+      if (seen.has(card.id)) {
+        logProjectionFallback(scope, "duplicate doctor id");
+        return null;
+      }
+      // A missing key here is not a visible defect — `getDoctorServiceBookability`
+      // returns a hard UNAVAILABLE — so the card would render with a silently
+      // dead CTA. Treat incomplete coverage as a failed projection.
+      for (const serviceId of card.assignedServiceIds) {
+        if (!card.bookabilityByServiceId[serviceId]) {
+          logProjectionFallback(scope, "bookabilityByServiceId does not cover assignedServiceIds");
+          return null;
+        }
+      }
+      seen.add(card.id);
+      out.push(card);
+    }
+    return out;
+  } catch (error) {
+    logProjectionFallback(scope, error instanceof Error ? error.message : "unknown error");
+    return null;
+  }
+}
+
 /** Services for a country. Pass a `kind` to filter server-side, or `undefined`
  *  to fetch every kind in ONE query and partition in memory (the homepage does
  *  this instead of three per-kind round-trips). Skips inactive rows. When a
@@ -437,6 +539,8 @@ export const getCountryServices = cache(async (
   kind: "GENERAL" | "SPECIALIST" | "PRESCRIPTION" | "HEALTH_TEST" | "HOME_DELIVERY" | undefined,
   locale?: string,
 ): Promise<CountryServiceCard[]> => {
+  const projected = await tryServiceCardProjection(countryCode, kind, locale);
+  if (projected) return projected;
   const res = await fetchServicesByCountry(countryCode, kind, locale);
   if (!res.ok) {
     assertCollectionAvailable(`country-services:${countryCode}:${kind ?? "all"}`, res);
@@ -445,11 +549,28 @@ export const getCountryServices = cache(async (
   }
   const out: CountryServiceCard[] = [];
   for (const row of res.data) {
-    if (!row || typeof row !== "object") continue;
+    const card = mapServiceRow(row, kind);
+    if (card) out.push(card);
+  }
+  return out;
+});
+
+/**
+ * Row → `CountryServiceCard`. Shared by the legacy collection payload and the
+ * `/service-cards` projection so both paths produce byte-identical cards —
+ * parity by construction rather than by a second normalizer. Returns null for
+ * a row that is missing a required field or is explicitly inactive.
+ */
+function mapServiceRow(
+  row: unknown,
+  kind: CountryServiceCard["kind"] | undefined,
+): CountryServiceCard | null {
+  {
+    if (!row || typeof row !== "object") return null;
     const r = row as Record<string, unknown>;
-    if (typeof r.id !== "string" || typeof r.slug !== "string") continue;
-    if (typeof r.name !== "string") continue;
-    if (r.isActive === false) continue;
+    if (typeof r.id !== "string" || typeof r.slug !== "string") return null;
+    if (typeof r.name !== "string") return null;
+    if (r.isActive === false) return null;
     const assignedDoctorIds: string[] = [];
     const assignments = r.assignedDoctors;
     if (Array.isArray(assignments)) {
@@ -467,7 +588,7 @@ export const getCountryServices = cache(async (
         ? (r.kind as CountryServiceCard["kind"])
         : undefined;
     const image = pickImage(row);
-    out.push({
+    return {
       id: r.id,
       slug: r.slug,
       name: r.name,
@@ -484,10 +605,9 @@ export const getCountryServices = cache(async (
       assignedDoctorIds,
       insuranceOptions: parseInsuranceOptions(r.insuranceOptions),
       bookability: normalizeBookabilitySummary(r.bookability),
-    });
+    };
   }
-  return out;
-});
+}
 
 /** Defensively parse the server's `insuranceOptions` array off a raw payload. */
 function parseInsuranceOptions(raw: unknown): InsuranceOption[] {
@@ -541,6 +661,8 @@ export const getCountryDoctors = cache(async (
   countryCode: string,
   locale?: string,
 ): Promise<CountryDoctorCard[]> => {
+  const projected = await tryDoctorCardProjection(countryCode, locale);
+  if (projected) return projected;
   const res = await fetchDoctorsByCountry(countryCode, locale);
   if (!res.ok) {
     assertCollectionAvailable(`country-doctors:${countryCode}`, res);
@@ -549,11 +671,24 @@ export const getCountryDoctors = cache(async (
   }
   const out: CountryDoctorCard[] = [];
   for (const row of res.data) {
-    if (!row || typeof row !== "object") continue;
+    const card = mapDoctorRow(row, countryCode);
+    if (card) out.push(card);
+  }
+  return out;
+});
+
+/**
+ * Row → `CountryDoctorCard`. Shared by the legacy collection payload and the
+ * `/doctor-cards` projection (see `mapServiceRow`). Returns null for a row
+ * missing a required field or explicitly inactive.
+ */
+function mapDoctorRow(row: unknown, countryCode: string): CountryDoctorCard | null {
+  {
+    if (!row || typeof row !== "object") return null;
     const r = row as Record<string, unknown>;
-    if (typeof r.id !== "string" || typeof r.slug !== "string") continue;
-    if (typeof r.fullName !== "string" || typeof r.title !== "string") continue;
-    if (r.active === false) continue;
+    if (typeof r.id !== "string" || typeof r.slug !== "string") return null;
+    if (typeof r.fullName !== "string" || typeof r.title !== "string") return null;
+    if (r.active === false) return null;
     const specialties: string[] = [];
     const specs = r.specialties;
     if (Array.isArray(specs)) {
@@ -608,7 +743,7 @@ export const getCountryDoctors = cache(async (
       : [];
     const image = pickImage(row);
 
-    out.push({
+    return {
       id: r.id,
       slug: r.slug,
       fullName: marketDisplayName(r.slug, countryCode, r.fullName),
@@ -654,10 +789,9 @@ export const getCountryDoctors = cache(async (
       ...(typeof r.linkedinUrl === "string" && r.linkedinUrl.trim()
         ? { linkedinUrl: r.linkedinUrl.trim() }
         : {}),
-    });
+    };
   }
-  return out;
-});
+}
 
 /** Health tests for a country. Maps the HealthTest model to a card shape. */
 export const getCountryHealthTests = cache(async (
