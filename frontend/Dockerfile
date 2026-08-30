@@ -77,6 +77,13 @@ ENV PUBLIC_CONTENT_BUILD_TIMEOUT_MS=$PUBLIC_CONTENT_BUILD_TIMEOUT_MS
 ARG ALLOW_DEGRADED_BUILD=
 ENV ALLOW_DEGRADED_BUILD=$ALLOW_DEGRADED_BUILD
 
+# Railway system variable, needed at BUILD time only: next.config.ts bakes it
+# into the deployment id, which is what stops a tab left open across a deploy
+# from erroring on 404'd chunks. Missing (local `docker build`) is fine — the
+# skew protection is simply off.
+ARG RAILWAY_GIT_COMMIT_SHA=
+ENV RAILWAY_GIT_COMMIT_SHA=$RAILWAY_GIT_COMMIT_SHA
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 

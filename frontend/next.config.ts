@@ -136,6 +136,17 @@ if (buildCpus * buildApiConcurrency >= BACKEND_POOL_MAX) {
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // Version-skew protection. Railway replaces the whole container on deploy
+  // and nothing caches `/_next/static` in front of it (no CDN — the origin is
+  // the only source), so after a redeploy every chunk a still-open tab tries
+  // to lazy-load 404s and the request lands in the error boundary
+  // ("Something went wrong") until the user does a full reload. With a
+  // deployment id, Next tags asset/RSC requests and does a hard navigation on
+  // a mismatch instead of erroring. Undefined off-Railway (local dev), which
+  // just turns the feature off. The value is resolved at BUILD time and baked
+  // into `.next/required-server-files.json`, so the standalone server and the
+  // client bundle always agree — do not make it vary at runtime.
+  deploymentId: process.env.RAILWAY_GIT_COMMIT_SHA || undefined,
   // SEO audit Phase 4 #2 — by default Next's trailingSlash:false behavior
   // 308-redirects a trailing-slash request BEFORE `proxy.ts` (middleware) or
   // this file's own `redirects()` ever run — confirmed empirically (neither
