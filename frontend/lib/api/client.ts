@@ -75,6 +75,13 @@ const PUBLIC_READ_PREFIXES = [
   "/api/public/reviews-config",
   // TRUST-METRIC-001 — same class as reviews-config above.
   "/api/public/consultation-count",
+  // Homepage same-day GP quick-book. Both are anonymous GET content reads
+  // that the SSR/build paths make on every market page, but they were never
+  // allowlisted here or in rate-limit-trust.ts — so they fell into the shared
+  // 300/min egress-IP bucket and 429'd under crawl and deploy load. Keep this
+  // list and the backend one in lockstep.
+  "/api/public/gp-availability",
+  "/api/public/gp-languages",
 ];
 
 function isPublicReadPath(path: string): boolean {
