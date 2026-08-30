@@ -7,13 +7,17 @@ import { useSyncExternalStore } from "react";
  *
  * A datetime-local input renders a bare wall clock with no zone attached,
  * so an admin in Lisbon and an admin in Bucharest read the same field as
- * two different instants. This spells out the three zones that matter:
+ * two different instants. The field is edited in the CLINIC's zone
+ * (`ScheduleSlotInput` prefills from it and ships the matching offset), and
+ * this caption spells out the zones that matter:
  *
- *   - the admin's own browser zone, which is what the input is showing
- *     and editing (ScheduleSlotInput prefills from it, and the server
- *     action converts back using ScheduleTzOffsetInput's offset);
- *   - the clinic zone the rest of admin renders in (Europe/Dublin, the
- *     `formatAppDateTime` default) — the number the summary tile shows;
+ *   - the clinic zone being edited in, named and offset;
+ *   - the admin's own browser zone, so they can sanity-check the number
+ *     against their own clock;
+ *   - the clinic zone this booking's country is run in (its
+ *     `BookingSetting.timezone`) — the number the summary tile shows. It was
+ *     hardcoded to Europe/Dublin, which captioned a Czech or Brazilian
+ *     booking in Irish time;
  *   - the patient's own zone captured at booking, when we have it and it
  *     differs from the clinic's.
  *
@@ -22,7 +26,6 @@ import { useSyncExternalStore } from "react";
  * hydrate-mismatch.
  */
 
-const CLINIC_TZ = "Europe/Dublin";
 const DISPLAY_LOCALE = "en-IE";
 
 function cityOf(tz: string): string {
@@ -59,9 +62,13 @@ function getBrowserTz(): string | null {
 export function ScheduleTzHint({
   iso,
   patientTimezone,
+  clinicTimezone,
 }: {
   iso: string | null;
   patientTimezone?: string | null;
+  /** The booking country's own clinic zone — pass
+   *  `bookingTimezoneForCountry(countryCode)`. */
+  clinicTimezone: string;
 }) {
   // The browser zone is a client-only value that never changes for the life
   // of the page: read it through useSyncExternalStore so the server snapshot
@@ -74,19 +81,25 @@ export function ScheduleTzHint({
   return (
     <span className="gh-admin-schedule-tz-hint">
       <span>
-        {browserTz
-          ? `Editing in your local time — ${cityOf(browserTz)} (${valid ? offsetOf(valid, browserTz) : offsetOf(new Date(), browserTz)}).`
-          : "Editing in your local time."}
+        Editing in clinic time — {cityOf(clinicTimezone)} (
+        {valid ? offsetOf(valid, clinicTimezone) : offsetOf(new Date(), clinicTimezone)}).
       </span>
       {valid ? (
         <span>
-          Booked for <strong>{timeIn(valid, CLINIC_TZ)}</strong> clinic time (
-          {cityOf(CLINIC_TZ)}, {offsetOf(valid, CLINIC_TZ)}).
+          Booked for <strong>{timeIn(valid, clinicTimezone)}</strong> clinic time
+          {browserTz && browserTz !== clinicTimezone ? (
+            <>
+              {" "}
+              — {timeIn(valid, browserTz)} your time ({cityOf(browserTz)},{" "}
+              {offsetOf(valid, browserTz)})
+            </>
+          ) : null}
+          .
         </span>
       ) : (
         <span>No time booked yet.</span>
       )}
-      {valid && patientTimezone && patientTimezone !== CLINIC_TZ ? (
+      {valid && patientTimezone && patientTimezone !== clinicTimezone ? (
         <span>
           Patient booked from {cityOf(patientTimezone)} — {timeIn(valid, patientTimezone)}{" "}
           their time ({offsetOf(valid, patientTimezone)}).

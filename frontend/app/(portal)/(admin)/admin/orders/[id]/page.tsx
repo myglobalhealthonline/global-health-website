@@ -12,6 +12,7 @@ import {
   type PillTone,
 } from "@/components/portal-atoms";
 import { formatAppDateTime } from "@/lib/format-datetime";
+import { bookingTimezoneForCountry } from "@/lib/booking-timezone";
 import { formatPrice } from "@/lib/format-currency";
 import { formatOrderDisplayId } from "@/lib/format-order-display";
 import { AdminOrderActions } from "./_components/order-actions";
@@ -154,8 +155,11 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
   const consultByAppointment = new Map(
     consultations.map((c) => [c.appointmentId, c]),
   );
+  // Consultation times read in the order's own country zone; the formatters
+  // otherwise fall back to Europe/Dublin for every market.
+  const orderClinicTz = bookingTimezoneForCountry(order.countryCode);
   const consultationTimeText = (scheduledAt: string | null) =>
-    scheduledAt ? formatAppDateTime(scheduledAt) : "Time to be confirmed";
+    scheduledAt ? formatAppDateTime(scheduledAt, orderClinicTz) : "Time to be confirmed";
 
   return (
     <>

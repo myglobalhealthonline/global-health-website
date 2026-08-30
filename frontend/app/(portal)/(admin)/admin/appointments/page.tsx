@@ -7,6 +7,7 @@ import { ScopeBanner } from "../_components/scope-banner";
 import { PortalMobileCard, type PortalMobileCardTone } from "@/components/PortalMobileCard";
 import { AppointmentCard, type AppointmentCardTone } from "@/components/AppointmentCard";
 import { formatAppDateTime, formatAppDayMonth, formatAppTime } from "@/lib/format-datetime";
+import { bookingTimezoneForCountry } from "@/lib/booking-timezone";
 import {
   AdminCard,
   Btn,
@@ -350,14 +351,22 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
             <div className="hidden md:grid gap-2 p-3">
               {items.map((appointment) => {
                 const live = isAppointmentLive(appointment);
+                // Each row reads in ITS OWN country's clinic zone — the
+                // formatters' Europe/Dublin default showed a Prague or São
+                // Paulo booking at Irish wall-clock time.
+                const rowTz = bookingTimezoneForCountry(appointment.country);
                 return (
                   <AppointmentCard
                     key={appointment.id}
                     href={`/admin/appointments/${appointment.id}`}
-                    time={appointment.scheduledAt ? formatAppTime(appointment.scheduledAt) : "—"}
+                    time={
+                      appointment.scheduledAt
+                        ? formatAppTime(appointment.scheduledAt, rowTz)
+                        : "—"
+                    }
                     timeMeta={
                       appointment.scheduledAt
-                        ? formatAppDayMonth(appointment.scheduledAt)
+                        ? formatAppDayMonth(appointment.scheduledAt, rowTz)
                         : `Created ${formatDate(appointment.createdAt)}`
                     }
                     person={appointment.fullName}

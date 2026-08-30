@@ -8,8 +8,8 @@ import {
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { AdminCard, SectionHeader } from "@/components/portal-atoms";
 import { ScheduleSlotInput } from "../../../appointments/_components/schedule-slot-input";
+import { bookingTimezoneForCountry } from "@/lib/booking-timezone";
 import { ScheduleTzHint } from "../../../appointments/_components/schedule-tz-hint";
-import { ScheduleTzOffsetInput } from "../../../appointments/_components/schedule-tz-offset";
 
 type Props = {
   appointmentId: string;
@@ -115,11 +115,18 @@ export async function UpdateAppointmentPanel({
 
         <form id={formId} action={updateAppointmentAction} className="gh-admin-order-appointment-form grid gap-4">
           <label className="flex flex-col gap-1.5">
-            <span className="gh-field-label">Consultation date & time</span>
-            <ScheduleSlotInput name="scheduledAt" initialIso={appointment.scheduledAt} />
+            <span className="gh-field-label">Consultation date &amp; time</span>
+            {/* Edited in the consultation country's clinic zone — the admin's
+                own zone is shown underneath for reference. */}
+            <ScheduleSlotInput
+              name="scheduledAt"
+              initialIso={appointment.scheduledAt}
+              timeZone={bookingTimezoneForCountry(countryCode)}
+            />
             <ScheduleTzHint
               iso={appointment.scheduledAt}
               patientTimezone={appointment.patientTimezone}
+              clinicTimezone={bookingTimezoneForCountry(countryCode)}
             />
           </label>
 
@@ -153,8 +160,6 @@ export async function UpdateAppointmentPanel({
               placeholder="Explain why this appointment is being changed (shown to patient and doctor)."
             />
           </label>
-
-          <ScheduleTzOffsetInput formId={formId} />
 
           <button type="submit" className="gh-btn gh-btn-primary w-fit justify-self-end">
             Save changes & notify
