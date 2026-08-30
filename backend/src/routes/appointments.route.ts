@@ -7,7 +7,11 @@ import {
   SlotAlreadyTakenError,
 } from "../modules/appointments/appointments.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
-import { bookingSchema, NATIONAL_ID_VALIDATORS } from "../validations/booking.schema.js";
+import {
+  bookingSchema,
+  identityDocumentError,
+  NATIONAL_ID_VALIDATORS,
+} from "../validations/booking.schema.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { sendBookingConfirmationEmail } from "../lib/email/templates.js";
@@ -82,17 +86,6 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
                 .send(errorResponse(`The ${label} you entered is not in the expected format.`));
             }
           }
-          // Brazil: CPF (nationalIdNumber) or, failing that, a passport
-          // number — the prescription needs ONE identifier to print.
-          if (
-            parsed.data.country === "br" &&
-            !(parsed.data.nationalIdNumber ?? "").trim() &&
-            !(parsed.data.passportNumber ?? "").trim()
-          ) {
-            return reply
-              .status(400)
-              .send(errorResponse("Enter your CPF or your passport number to continue."));
-          }
           if (settings.requireAddress) {
             const missing: string[] = [];
             if (!parsed.data.addressLine1) missing.push("street address");
@@ -116,6 +109,17 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
         return reply
           .status(503)
           .send(errorResponse("Booking policy is temporarily unavailable. Please try again."));
+      }
+
+      // Country identity-document rule (BR: CPF or passport; CZ: passport or
+      // ID card number). Outside the BookingSetting block on purpose — a
+      // country missing its settings row must not skip the requirement.
+      const identityError = identityDocumentError(parsed.data.country, {
+        nationalIdNumber: parsed.data.nationalIdNumber,
+        passportNumber: parsed.data.passportNumber,
+      });
+      if (identityError) {
+        return reply.status(400).send(errorResponse(identityError));
       }
 
       // Dual GDPR consent — required for EVERY booking regardless of

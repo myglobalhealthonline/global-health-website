@@ -209,6 +209,13 @@ export function ConsultationBookingForm({
   // Brazil needs ONE identifier to print on the prescription: CPF or,
   // failing that, a passport number.
   const isBrazil = (params?.country ?? "").toLowerCase().startsWith("brazil");
+  // Czechia requires a passport or ID card number on the clinical record. The
+  // rodné číslo (the `nationalIdNumber` field above) stays optional — expats
+  // treated here have none — so the two are separate fields, not a fallback
+  // pair like Brazil's CPF/passport.
+  const isCzech = countryCode.trim().toLowerCase() === "cz";
+  // Both markets collect a passport number; only the label and the rule differ.
+  const collectIdentityDocument = isBrazil || isCzech;
   const privacyPolicyHref = `/${params?.country ?? ""}/${params?.lang ?? ""}/legal/privacy-policy`;
   const privacyPolicyLink = (
     <Link
@@ -600,7 +607,9 @@ export function ConsultationBookingForm({
     const patientOtherPhone = bookingForOther ? String(form.get("patientOtherPhone") ?? "").trim() : "";
     const patientOtherDob = bookingForOther ? String(form.get("patientOtherDob") ?? "").trim() : "";
     const nationalIdNumber = String(form.get("nationalIdNumber") ?? "").trim();
-    const passportNumber = isBrazil ? String(form.get("passportNumber") ?? "").trim() : "";
+    const passportNumber = collectIdentityDocument
+      ? String(form.get("passportNumber") ?? "").trim()
+      : "";
     // Gated on the flag, not just on the field being absent, so a country that
     // doesn't collect it can never end up storing one.
     const utenteNumber = collectUtente
@@ -641,6 +650,12 @@ export function ConsultationBookingForm({
     }
     if (isBrazil && !nationalIdNumber && !passportNumber) {
       setError("Enter your CPF or your passport number to continue.");
+      return;
+    }
+    // Czechia: the identity document is required on its own — a rodné číslo
+    // does not stand in for it.
+    if (isCzech && !passportNumber) {
+      setError(i18n.identityDocumentRequired);
       return;
     }
     if (!consent) {
@@ -1220,22 +1235,26 @@ export function ConsultationBookingForm({
           </p>
         </label>
 
-        {/* Passport — Brazil only. One of CPF / passport is required so the
-          * prescription has an identifier to print. */}
-        {isBrazil ? (
+        {/* Identity document. Brazil: passport as the fallback identifier when
+          * the patient has no CPF. Czechia: a passport OR ID card number,
+          * required in its own right — the rodné číslo above does not replace
+          * it. Every other market doesn't collect it here at all. */}
+        {collectIdentityDocument ? (
           <label className="mt-4 block">
             <span className="gh-field-label text-xs font-semibold text-[var(--color-text-body)]" data-required>
-              Passport number
+              {isCzech ? i18n.identityDocument : "Passport number"}
             </span>
             <input
               type="text"
               name="passportNumber"
               maxLength={64}
+              required={isCzech}
+              aria-required={isCzech}
               defaultValue={defaults.passportNumber}
               className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
             />
             <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-              Required if you don&rsquo;t have a CPF.
+              {isCzech ? i18n.identityDocumentHint : "Required if you don’t have a CPF."}
             </p>
           </label>
         ) : null}

@@ -93,6 +93,26 @@ describe("buildPatientIdLine", () => {
     );
   });
 
+  it("labels the Czech national ID as the rodné číslo it collects", () => {
+    assert.equal(
+      buildPatientIdLine("CZ", {
+        ...baseProfile,
+        nationalIdNumber: "760506/1234",
+      }),
+      "Rodné číslo: 760506/1234",
+    );
+  });
+
+  it("labels the Czech identity document as passport OR ID card", () => {
+    assert.equal(
+      buildPatientIdLine("CZ", {
+        ...baseProfile,
+        passportNumber: "AB1234567",
+      }),
+      "Pas / OP: AB1234567",
+    );
+  });
+
   it("uses the issuing-country health id when one was captured", () => {
     assert.equal(
       buildPatientIdLine(

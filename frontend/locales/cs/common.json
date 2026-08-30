@@ -353,6 +353,9 @@
     "patientReviews": "Hodnocení pacientů"
   },
   "bookingForm": {
+    "identityDocument": "Číslo pasu / občanského průkazu",
+    "identityDocumentHint": "Do zdravotnické dokumentace je nutné uvést číslo pasu nebo občanského průkazu. Rodné číslo je nepovinné.",
+    "identityDocumentRequired": "Zadejte číslo pasu nebo občanského průkazu.",
     "coverage": {
       "toggleLabel": "Mám pojištění, členství nebo zdravotní plán",
       "toggleHint": "Uplatněte své krytí na tuto rezervaci. Kartu ověříme před jakoukoli platbou.",

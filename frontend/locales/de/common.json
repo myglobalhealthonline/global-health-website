@@ -353,6 +353,9 @@
     "patientReviews": "Patientenbewertungen"
   },
   "bookingForm": {
+    "identityDocument": "Reisepass- / Personalausweisnummer",
+    "identityDocumentHint": "In tschechischen Krankenakten erforderlich. Die rodné číslo bleibt optional.",
+    "identityDocumentRequired": "Geben Sie Ihre Reisepass- oder Personalausweisnummer ein.",
     "coverage": {
       "toggleLabel": "Ich habe eine Versicherung, Mitgliedschaft oder einen Gesundheitsplan",
       "toggleHint": "Nutzen Sie Ihre Kostenübernahme für diese Buchung. Wir prüfen Ihre Karte vor jeder Zahlung.",

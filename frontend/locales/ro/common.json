@@ -353,6 +353,9 @@
     "patientReviews": "Recenzii ale pacienților"
   },
   "bookingForm": {
+    "identityDocument": "Numărul pașaportului / al cărții de identitate",
+    "identityDocumentHint": "Obligatoriu în documentația medicală cehă. Rodné číslo rămâne opțional.",
+    "identityDocumentRequired": "Introduceți numărul pașaportului sau al cărții de identitate.",
     "coverage": {
       "toggleLabel": "Am asigurare, abonament sau plan de sănătate",
       "toggleHint": "Aplică acoperirea la această programare. Verificăm cardul înainte de orice plată.",
