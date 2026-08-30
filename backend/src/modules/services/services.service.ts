@@ -21,10 +21,8 @@ import {
   type InsuranceCompanyPricing,
 } from "../pricing/insurance-pricing.service.js";
 import {
-  getCountryBookabilityBatch,
   getServiceBookability,
   invalidateBookabilityCache,
-  readBatchServiceBookability,
 } from "../bookability/bookability.service.js";
 import type { BookabilitySummary } from "../bookability/bookability.service.js";
 import { resolveBookabilityFailClosed } from "../bookability/bookability-policy.js";
@@ -1422,12 +1420,18 @@ export async function listServiceCardsByCountry(
         },
       },
     }));
-    // One country-level input load instead of one metadata query per service.
-    // Same derivation, same frozen clock, same cache keys — see §7.4.
-    const batch = await timePhase("bookability", () =>
-      getCountryBookabilityBatch({ countryCode }),
+    // NOT the country batch: it only WRITES the bookability cache, so it
+    // recomputed the whole market on every request. The per-item reader
+    // answers from the 60 s cache — see §7.4 and the regression note on
+    // getCountryBookabilityBatch.
+    const summaries = await timePhase("bookability", () =>
+      mapBookabilityBounded(rows, (service) =>
+        resolveBookabilityFailClosed(() =>
+          getServiceBookability({ countryCode, serviceId: service.id }),
+        ),
+      ),
     );
-    return rows.map((row) => {
+    return rows.map((row, index) => {
       const defaultLocale = row.country.defaultLocale;
       const { tr } = resolveTranslation(
         row.translations,
@@ -1456,7 +1460,7 @@ export async function listServiceCardsByCountry(
           row.insuranceCoverages,
           insurersWithDoctors(row.insuranceDoctorPayouts, assignedDoctorIds),
         ),
-        bookability: readBatchServiceBookability(batch, row.id),
+        bookability: summaries[index]!,
       };
     });
   } catch (error) {

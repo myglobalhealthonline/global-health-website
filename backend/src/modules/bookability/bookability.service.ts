@@ -463,6 +463,14 @@ function pickDoctorSummary(summaries: readonly BookabilitySummary[]): Bookabilit
 }
 
 /**
+ * NOT WIRED INTO THE CARD PROJECTIONS. It only WRITES the per-item cache and
+ * never reads it, and has no single-flight, so every call recomputed a whole
+ * market from scratch (~4.2 s on production IE vs <30 ms for the cached
+ * per-item readers). Kept because it is the base for the real fix: make it
+ * cache-aware/single-flighted, or compute only the requested pairs. Re-measure
+ * with `Server-Timing: bookability;dur=` before wiring it back — the
+ * query-count test does not catch this.
+ *
  * Resolve every public bookability summary a country's card collections need
  * in one pass: one service+roster metadata query instead of one per summary,
  * one expired-hold sweep instead of one per service, and one slot read per

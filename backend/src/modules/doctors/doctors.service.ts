@@ -16,10 +16,8 @@ import { getFeaturedDoctorId } from "./featured-doctor.service.js";
 import { normalizeDoctorWhatsAppForStorage } from "../../lib/whatsapp/resolve-doctor-contact.js";
 import { defaultChamberEntityForCountry } from "../../lib/doctor-registration-display.js";
 import {
-  getCountryBookabilityBatch,
   getDoctorBookability,
   invalidateBookabilityCache,
-  readBatchDoctorBookability,
 } from "../bookability/bookability.service.js";
 import type { BookabilitySummary } from "../bookability/bookability.service.js";
 import { resolveBookabilityFailClosed } from "../bookability/bookability-policy.js";
@@ -1892,14 +1890,20 @@ export async function listDoctorCardsByCountry(
         },
       },
     }));
-    // One country-level input load instead of 1 + S metadata queries per
-    // doctor. Same derivation, same frozen clock, same cache keys — see §7.4.
-    const [featuredId, batch] = await timePhase("bookability", () => Promise.all([
+    // NOT the country batch: it only WRITES the bookability cache, so it
+    // recomputed the whole market on every request (~4.2 s on production IE).
+    // The per-item readers answer from the 60 s cache — see §7.4 and the
+    // regression note on getCountryBookabilityBatch.
+    const [featuredId, summaries] = await timePhase("bookability", () => Promise.all([
       getFeaturedDoctorId(countryCode),
-      getCountryBookabilityBatch({ countryCode }),
+      mapBounded(rows, (row) => doctorBookabilityPayload({
+        countryCode,
+        doctorId: row.id,
+        serviceIds: row.assignedServices.map((assignment) => assignment.serviceId),
+      })),
     ]));
     const code = countryCode.toUpperCase();
-    return rows.map((row) => {
+    return rows.map((row, index) => {
       const market = row.additionalCountries[0];
       const defaultLocale = market?.country.defaultLocale ?? row.country.defaultLocale;
       const requested = locale ?? defaultLocale;
@@ -1955,11 +1959,7 @@ export async function listDoctorCardsByCountry(
         editorialChecklist: readNonPhysician(row.editorialChecklist)
           ? ({ nonPhysician: true } as const)
           : null,
-        ...readBatchDoctorBookability(
-          batch,
-          row.id,
-          row.assignedServices.map((assignment) => assignment.serviceId),
-        ),
+        ...summaries[index]!,
       };
     });
   } catch (error) {

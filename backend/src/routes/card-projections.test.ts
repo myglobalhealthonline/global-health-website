@@ -132,23 +132,8 @@ before(async () => {
   });
   mock.module("../modules/bookability/bookability.service.js", {
     namedExports: {
-      getCountryBookabilityBatch: async () => ({
-        services: new Map(),
-        doctors: new Map(),
-        doctorServices: new Map(),
-      }),
-      readBatchServiceBookability: () => BOOKABLE,
-      readBatchDoctorBookability: (
-        _batch: unknown,
-        _doctorId: string,
-        serviceIds: readonly string[],
-      ) => ({
-        bookability: BOOKABLE,
-        bookabilityByServiceId: Object.fromEntries(
-          serviceIds.map((id) => [id, id === "service-2" ? UNAVAILABLE : BOOKABLE]),
-        ),
-      }),
-      getDoctorBookability: async () => BOOKABLE,
+      getDoctorBookability: async (args: { serviceId?: string }) =>
+        args.serviceId === "service-2" ? UNAVAILABLE : BOOKABLE,
       getServiceBookability: async () => BOOKABLE,
       invalidateBookabilityCache: () => {},
     },
