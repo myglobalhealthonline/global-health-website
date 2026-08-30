@@ -464,6 +464,9 @@ export type ListAppointmentsOptions = {
   countryCode?: string;
   consultationType?: string;
   search?: string;
+  /** Exact (case-insensitive) patient email — the per-patient history view.
+   *  Composes with `search` via AND. */
+  email?: string;
   /** Case-insensitive substring on the assigned doctor's full name (and
    *  linked login email). Excludes appointments with no doctor. */
   doctorName?: string;
@@ -578,6 +581,12 @@ function buildAppointmentWhereClause(options: ListAppointmentsOptions): Prisma.A
     ];
   }
 
+  // Exact patient email — `search` above is a substring match, so it cannot
+  // stand in here: "an@b.com" is contained in "ryan@b.com".
+  const patientEmail = options.email?.trim();
+  if (patientEmail) {
+    where.email = { equals: patientEmail, mode: "insensitive" };
+  }
   // Doctor-name filter. Relation filter on `doctor` (not a raw subquery) —
   // a null doctorId never matches a relation filter, so undoctored
   // appointments drop out exactly like the old `IN (...)` did.

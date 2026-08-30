@@ -353,6 +353,9 @@
     "patientReviews": "Patient reviews"
   },
   "bookingForm": {
+    "identityDocument": "Passport / ID card number",
+    "identityDocumentHint": "Required on Czech clinical records. Your rodné číslo stays optional.",
+    "identityDocumentRequired": "Enter your passport or ID card number to continue.",
     "coverage": {
       "toggleLabel": "I have insurance, a membership or a healthcare plan",
       "toggleHint": "Apply your cover to this booking. We check your card before any payment is taken.",

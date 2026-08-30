@@ -30,6 +30,7 @@ import { resolveDeclaredCoverage } from "../modules/benefits/declared-coverage.s
 import { isLineSellableInCommissionMarket } from "../modules/orders/commission.service.js";
 import { encryptPhi } from "../lib/crypto/phi-crypto.js";
 import { slotOverlapsPause } from "../modules/bookability/bookability-policy.js";
+import { identityDocumentError } from "../validations/booking.schema.js";
 
 /**
  * Shopping cart for orderable items.
@@ -1136,17 +1137,6 @@ const cartRoute: FastifyPluginAsync = async (app) => {
                   errorResponse("A national ID number is required for bookings in this country."),
                 );
               }
-              // Brazil: CPF (nationalIdNumber) or, failing that, a passport
-              // number — the prescription needs ONE identifier to print.
-              if (
-                svc.country.code.trim().toLowerCase() === "br" &&
-                !patient?.nationalIdNumber?.trim() &&
-                !patient?.passportNumber?.trim()
-              ) {
-                return reply.status(400).send(
-                  errorResponse("Enter your CPF or your passport number to continue."),
-                );
-              }
               if (settings.requireAddress) {
                 const missing: string[] = [];
                 if (!patient?.addressLine1?.trim()) missing.push("street address");
@@ -1160,6 +1150,18 @@ const cartRoute: FastifyPluginAsync = async (app) => {
                   );
                 }
               }
+            }
+
+            // Country identity-document rule (BR: CPF or passport; CZ:
+            // passport or ID card number). Outside the `if (settings)` block
+            // on purpose — a country missing its settings row must not skip
+            // the requirement.
+            const identityError = identityDocumentError(svc.country.code, {
+              nationalIdNumber: patient?.nationalIdNumber,
+              passportNumber: patient?.passportNumber,
+            });
+            if (identityError) {
+              return reply.status(400).send(errorResponse(identityError));
             }
 
             // Dual GDPR consent — both required for every cart-first

@@ -353,6 +353,9 @@
     "patientReviews": "Opiniones de pacientes"
   },
   "bookingForm": {
+    "identityDocument": "Número de pasaporte / documento de identidad",
+    "identityDocumentHint": "Obligatorio en los registros clínicos checos. El rodné číslo sigue siendo opcional.",
+    "identityDocumentRequired": "Introduzca su número de pasaporte o documento de identidad.",
     "coverage": {
       "toggleLabel": "Tengo seguro, membresía o plan de salud",
       "toggleHint": "Aplica tu cobertura a esta reserva. Comprobamos tu tarjeta antes de cobrar.",

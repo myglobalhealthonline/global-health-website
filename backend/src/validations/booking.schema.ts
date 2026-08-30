@@ -177,3 +177,53 @@ export const NATIONAL_ID_VALIDATORS: Record<
     valid: (raw) => /^\d{6}\/?\d{3,4}$/.test(raw.replace(/\s+/g, "")),
   },
 };
+
+/**
+ * Countries that require an identity document number at booking time, on top
+ * of (and independent of) `BookingSetting.requireNationalId`.
+ *
+ *   br — the prescription needs ONE identifier to print, so CPF
+ *        (`nationalIdNumber`) OR a passport number satisfies it.
+ *   cz — Czech clinical records must carry a passport or ID-card number.
+ *        The rodné číslo stays optional (many expats have none), so it does
+ *        NOT satisfy this rule; only `passportNumber` does. That field is
+ *        labelled "passport / ID card number" on the Czech booking form.
+ *
+ * Keyed by lowercase `Country.code`. Enforced OUTSIDE the `if (settings)`
+ * block in both booking routes, so a country missing its BookingSetting row
+ * can never silently skip it.
+ */
+const IDENTITY_DOCUMENT_RULES: Record<
+  string,
+  {
+    accepts: Array<"nationalIdNumber" | "passportNumber">;
+    message: string;
+  }
+> = {
+  br: {
+    accepts: ["nationalIdNumber", "passportNumber"],
+    message: "Enter your CPF or your passport number to continue.",
+  },
+  cz: {
+    accepts: ["passportNumber"],
+    message: "Enter your passport or ID card number to continue.",
+  },
+};
+
+/**
+ * Returns the error message when the booking country demands an identity
+ * document and none of the accepted fields carries one; null when satisfied
+ * or when the country has no such rule.
+ */
+export function identityDocumentError(
+  countryCode: string | null | undefined,
+  patient: {
+    nationalIdNumber?: string | null;
+    passportNumber?: string | null;
+  } | null | undefined,
+): string | null {
+  const rule = IDENTITY_DOCUMENT_RULES[(countryCode ?? "").trim().toLowerCase()];
+  if (!rule) return null;
+  const satisfied = rule.accepts.some((field) => patient?.[field]?.trim());
+  return satisfied ? null : rule.message;
+}

@@ -437,6 +437,11 @@ export type CommonLocale = {
     dateOfBirth: string;
     nationalIdOptional: string;
     nationalIdHint: string;
+    /** Czech booking: passport / ID card number — mandatory, and separate
+     *  from the (optional) rodné číslo national-ID field. */
+    identityDocument: string;
+    identityDocumentHint: string;
+    identityDocumentRequired: string;
     utenteOptional: string;
     utenteHint: string;
     reasonForVisit: string;

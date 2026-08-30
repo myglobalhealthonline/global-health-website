@@ -9,6 +9,7 @@ import {
   uploadLinkCopy,
   uploadLinkEmailGreeting,
 } from "../../modules/patient-upload/upload-link-messages.js";
+import { clinicDocumentCopy } from "../../modules/notifications/clinic-document-messages.js";
 
 /** Shared branded transactional email shell — matches the public site's
  *  "Clinical Editorial" system (docs/design/design-system-gh2-clinical-editorial.md): deep-night forest
@@ -836,6 +837,43 @@ export async function sendPatientUploadLinkEmail(opts: {
       copy.emailHeading,
       `<p>${escapeHtml(greeting)}</p>
        <p>${escapeHtml(copy.emailBody)}</p>
+       <p style="margin:24px 0;text-align:center;"><a href="${opts.link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">${escapeHtml(copy.emailCta)}</a></p>`,
+    ),
+  });
+}
+
+/**
+ * Sent to the patient when the clinic (an admin) adds a document to their
+ * medical files. Carries no attachment and no clinical detail beyond the
+ * label the operator typed — the record itself stays behind the portal login,
+ * which is where the link points.
+ */
+export async function sendClinicDocumentAddedEmail(opts: {
+  to: string;
+  patientName: string;
+  documentName: string;
+  link: string;
+  /** Language the patient reads — the booking's locale, else its country's. */
+  lang?: NotificationLang;
+}) {
+  const lang = opts.lang ?? "en";
+  const copy = clinicDocumentCopy(lang);
+  const greeting = copy.emailGreeting.replace("{name}", opts.patientName);
+  const body = copy.emailBody.replace("{document}", opts.documentName);
+  return sendEmail({
+    to: opts.to,
+    subject: copy.emailSubject,
+    text: `${greeting}
+
+${body}
+
+${opts.link}
+
+— Global Health`,
+    html: wrapHtml(
+      copy.emailHeading,
+      `<p>${escapeHtml(greeting)}</p>
+       <p>${escapeHtml(body)}</p>
        <p style="margin:24px 0;text-align:center;"><a href="${opts.link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">${escapeHtml(copy.emailCta)}</a></p>`,
     ),
   });

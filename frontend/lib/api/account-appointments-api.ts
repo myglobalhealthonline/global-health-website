@@ -157,6 +157,26 @@ export async function fetchAccountMessageUnread(): Promise<
   }
 }
 
+/**
+ * Documents the clinic side added since the patient last opened Medical
+ * Files — the nav badge next to that item. Same shape (and same silent-zero
+ * failure mode) as the unread-message count above.
+ */
+export async function fetchPatientUnreadDocumentCount(): Promise<number> {
+  const apiUrl = getBackendOrigin();
+  if (!apiUrl) return 0;
+  const cookieHeader = await buildCookieHeader();
+  try {
+    const res = await fetch(`${apiUrl}/api/account/medical-documents/unread-count`, {
+      headers: cookieHeader ? { cookie: cookieHeader } : undefined,
+      cache: "no-store",
+    });
+    const json = (await res.json()) as { ok?: boolean; data?: { unreadCount?: number } };
+    return json.ok && typeof json.data?.unreadCount === "number" ? json.data.unreadCount : 0;
+  } catch {
+    return 0;
+  }
+}
 export async function fetchPatientUnreadMessageCount(): Promise<number> {
   const apiUrl = getBackendOrigin();
   if (!apiUrl) return 0;

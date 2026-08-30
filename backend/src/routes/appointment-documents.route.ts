@@ -13,7 +13,17 @@ import {
 import { sanitizeOriginalFilename } from "../utils/media-key.js";
 import { contentDisposition } from "../utils/content-disposition.js";
 import { isEmailConfigured } from "../lib/email/send-email.js";
-import { sendDoctorDocumentToPatientEmail } from "../lib/email/templates.js";
+import {
+  sendClinicDocumentAddedEmail,
+  sendDoctorDocumentToPatientEmail,
+} from "../lib/email/templates.js";
+import { sendWhatsAppText } from "../lib/whatsapp/wasender.js";
+import {
+  clinicDocumentCopy,
+  clinicDocumentWhatsApp,
+} from "../modules/notifications/clinic-document-messages.js";
+import { resolveNotificationLang } from "../modules/automation/notification-language.js";
+import { env } from "../config/env.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
   verifyClinicalReadAccess,
@@ -22,7 +32,7 @@ import {
 import { resolveAdminSessionActor, verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordCriticalAudit } from "../modules/audit/audit.service.js";
-import { notifyAdmins } from "../modules/notifications/notify.service.js";
+import { notifyAdmins, notifyUser } from "../modules/notifications/notify.service.js";
 import { sniffFileMime, verifySniffedMime } from "../utils/sniff-mime.js";
 import { guardMedicalReadForAppointment, MedicalAccessDeniedError, medicalAccessDeniedResponse } from "../utils/guard-medical-read.js";
 
@@ -247,6 +257,8 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
             storageKey,
             mimetype,
             byteSize: buffer.length,
+            uploadedByRole: "DOCTOR",
+            uploadedByUserId: auth.userId,
           },
         });
         // S-008: PHI document upload — audit failure must be loud, but the
@@ -411,6 +423,8 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
             storageKey,
             mimetype,
             byteSize: buffer.length,
+            uploadedByRole: "DOCTOR",
+            uploadedByUserId: auth.userId,
           },
           select: { id: true, label: true, mimetype: true, byteSize: true, createdAt: true },
         });
@@ -683,7 +697,16 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
 
       const appt = await prisma.appointment.findUnique({
         where: { id: request.params.id },
-        select: { id: true, fullName: true, doctorId: true },
+        select: {
+          id: true,
+          fullName: true,
+          doctorId: true,
+          email: true,
+          phone: true,
+          countryCode: true,
+          notificationLocale: true,
+          userId: true,
+        },
       });
       if (!appt) {
         return reply.status(404).send(errorResponse("Appointment not found"));
@@ -754,6 +777,8 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
             storageKey,
             mimetype,
             byteSize: buffer.length,
+            uploadedByRole: "ADMIN",
+            uploadedByUserId: actor?.userId ?? null,
           },
           select: { id: true, label: true, mimetype: true, byteSize: true, createdAt: true },
         });
@@ -781,6 +806,57 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
             "CRITICAL: DOCUMENT_UPLOADED audit write failed",
           );
         }
+        // Tell the patient a new file is waiting — bell, email and WhatsApp,
+        // in the language the booking is written in. Fire-and-forget: the
+        // record is already on file, so a mail/WhatsApp outage must not fail
+        // the upload the operator just made.
+        void (async () => {
+          try {
+            const lang = resolveNotificationLang({
+              notificationLocale: appt.notificationLocale,
+              countryCode: appt.countryCode,
+            });
+            const base = (env.PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
+            const link = `${base}/account/medical-files`;
+            const patientName = appt.fullName ?? appt.email;
+            const copy = clinicDocumentCopy(lang);
+
+            // In-app bell. Only for a claimed account — a guest booking has no
+            // User row to hang a notification off.
+            if (appt.userId) {
+              await notifyUser(appt.userId, "DOCUMENT_UPLOADED", {
+                appointmentId: appt.id,
+                title: copy.emailHeading,
+                body: copy.emailBody.replace("{document}", label),
+                href: "/account/medical-files",
+              }).catch((err) =>
+                app.log.warn({ err }, "admin document upload: patient bell failed"),
+              );
+            }
+
+            await sendClinicDocumentAddedEmail({
+              to: appt.email,
+              patientName,
+              documentName: label,
+              link,
+              lang,
+            }).catch((err) =>
+              app.log.warn({ err }, "admin document upload: patient email failed"),
+            );
+
+            if (appt.phone) {
+              const wa = await sendWhatsAppText({
+                to: appt.phone,
+                message: clinicDocumentWhatsApp(lang, label, link),
+              });
+              if (!wa.ok && !wa.skipped) {
+                app.log.warn({ wa }, "admin document upload: patient whatsapp failed");
+              }
+            }
+          } catch (err) {
+            app.log.warn({ err }, "admin document upload: patient notification threw");
+          }
+        })();
         return reply.status(201).send(
           okResponse({
             document: {

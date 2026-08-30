@@ -73,14 +73,20 @@ export function buildPatientIdLine(
         BR: "RG",
         ES: "DNI",
         SP: "DNI",
-        CZ: "Občanský průkaz",
+        // The Czech booking form collects the rodné číslo in this field
+        // (the passport / ID card number goes to `passportNumber`), so the
+        // label has to name what was actually entered.
+        CZ: "Rodné číslo",
         RM: "CI",
         RO: "CI",
       }[upper] ?? "National ID";
     return `${nationalLabel}: ${profile.nationalIdNumber}`;
   }
   if (profile.passportNumber) {
-    return `Passport: ${profile.passportNumber}`;
+    // Czechia accepts either document in this field — see the booking form's
+    // "passport / ID card number".
+    const passportLabel = upper === "CZ" ? "Pas / OP" : "Passport";
+    return `${passportLabel}: ${profile.passportNumber}`;
   }
   return null;
 }

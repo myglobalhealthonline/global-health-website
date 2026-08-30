@@ -43,7 +43,10 @@ export type MedicalDocCategory =
   | "EXAM_PRESCRIPTION"
   | "EXAM_RESULT"
   | "CERTIFICATE"
-  | "DOCTOR_DOCUMENT";
+  | "DOCTOR_DOCUMENT"
+  /** Uploaded for the patient by the clinic team (admin), as opposed to by
+   *  the treating doctor — its own tab in the portal. */
+  | "CLINIC_DOCUMENT";
 
 export type UnifiedPatientDocument = {
   source: MedicalDocSource;
@@ -158,6 +161,7 @@ export async function listPatientUnifiedDocuments(
               mimetype: true,
               byteSize: true,
               sourceGeneratedDocumentId: true,
+              uploadedByRole: true,
               createdAt: true,
             },
           })
@@ -200,10 +204,13 @@ export async function listPatientUnifiedDocuments(
 
     for (const a of appointmentDocs) {
       const isResult = Boolean(a.sourceGeneratedDocumentId);
+      // Provenance is null on every row predating the column — those keep
+      // reading as doctor uploads, exactly how they already surfaced.
+      const fromClinic = a.uploadedByRole === "ADMIN";
       rows.push({
         source: "APPOINTMENT",
         id: a.id,
-        category: isResult ? "EXAM_RESULT" : "DOCTOR_DOCUMENT",
+        category: isResult ? "EXAM_RESULT" : fromClinic ? "CLINIC_DOCUMENT" : "DOCTOR_DOCUMENT",
         title: a.label || a.storageKey.split("/").pop() || "Document",
         description: null,
         fileName: a.label || a.storageKey.split("/").pop() || "document",
@@ -321,6 +328,78 @@ export async function listPatientMedicalDocuments(
   }
 }
 
+/**
+ * How many documents the clinic side has added since the patient last opened
+ * Medical Files — the number in the nav badge, same idea as unread chat.
+ *
+ * Counts only what the patient did NOT put there themselves: their own
+ * MedicalDocument uploads and their own upload-link files never badge. A null
+ * `seenAt` (never opened) counts everything, which is the right fresh state.
+ */
+export async function countNewPatientDocuments(
+  patientProfileId: string,
+  patientEmail: string,
+  seenAt: Date | null,
+): Promise<number> {
+  const newer = seenAt ? { gt: seenAt } : undefined;
+  try {
+    const appointmentIds = (
+      await prisma.appointment.findMany({
+        where: { email: { equals: patientEmail, mode: "insensitive" } },
+        select: { id: true },
+      })
+    ).map((a) => a.id);
+
+    const [medicalDocs, generated, appointmentDocs] = await Promise.all([
+      prisma.medicalDocument.count({
+        where: {
+          patientProfileId,
+          visibleToPatient: true,
+          uploadedByRole: { not: "PATIENT" },
+          documentType: { notIn: Array.from(PATIENT_HIDDEN_TYPES) },
+          ...(newer ? { createdAt: newer } : {}),
+        },
+      }),
+      prisma.generatedDocument.count({
+        where: {
+          patientEmail: { equals: patientEmail, mode: "insensitive" },
+          sentToPatient: true,
+          documentType: { in: PATIENT_VISIBLE_GENERATED_TYPES },
+          ...(newer ? { createdAt: newer } : {}),
+        },
+      }),
+      appointmentIds.length
+        ? prisma.appointmentDocument.count({
+            where: {
+              appointmentId: { in: appointmentIds },
+              uploadedByRole: { not: "PATIENT" },
+              // Exam results are uploads the patient made against their own
+              // prescription, including on rows predating the provenance
+              // column — never a new document TO them.
+              sourceGeneratedDocumentId: null,
+              ...(newer ? { createdAt: newer } : {}),
+            },
+          })
+        : Promise.resolve(0),
+    ]);
+
+    return medicalDocs + generated + appointmentDocs;
+  } catch (error) {
+    throw normalizeDbError(error, "Could not count new medical documents");
+  }
+}
+
+/** Stamp "the patient has now seen Medical Files", clearing the nav badge. */
+export async function markPatientMedicalFilesSeen(patientProfileId: string) {
+  try {
+    await prisma.patientProfile.update({
+      where: { id: patientProfileId },
+      data: { medicalFilesSeenAt: new Date() },
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Could not update medical files state");
+  }
+}
 /** Check patient owns/can access this doc. */
 export async function getPatientAccessibleDocument(
   patientProfileId: string,

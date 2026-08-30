@@ -353,6 +353,9 @@
     "patientReviews": "Avaliações de pacientes"
   },
   "bookingForm": {
+    "identityDocument": "Número do passaporte / cartão de identificação",
+    "identityDocumentHint": "Obrigatório nos registos clínicos checos. O rodné číslo continua opcional.",
+    "identityDocumentRequired": "Introduza o número do passaporte ou do cartão de identificação.",
     "coverage": {
       "toggleLabel": "Tenho seguro, adesão ou plano de saúde",
       "toggleHint": "Aplique a sua cobertura a esta marcação. Verificamos o seu cartão antes de qualquer pagamento.",

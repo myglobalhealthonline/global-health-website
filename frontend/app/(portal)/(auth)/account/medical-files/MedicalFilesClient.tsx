@@ -2,17 +2,24 @@
 
 import Image from "next/image";
 import { useEffect, useState, useTransition } from "react";
-import { Download, FileText, FlaskConical, Stethoscope, Upload } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Building2, Download, FileText, FlaskConical, Stethoscope, Upload } from "lucide-react";
 import { AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
 import { DocumentRow } from "@/components/DocumentRow";
 import { PortalTabs, PortalTabPanel, type PortalTabItem } from "@/components/PortalTabs";
 
-type Tab = "uploaded" | "exam-prescriptions" | "certificates" | "doctor-documents";
+type Tab =
+  | "uploaded"
+  | "exam-prescriptions"
+  | "certificates"
+  | "clinic-documents"
+  | "doctor-documents";
 
 export interface MedicalFilesLabels {
   tabMyUploads: string;
   tabExamPrescriptions: string;
   tabCertificates: string;
+  tabClinicDocuments: string;
   tabDoctorDocuments: string;
   tabsAria: string;
   sumUploaded: string;
@@ -21,6 +28,8 @@ export interface MedicalFilesLabels {
   sumExamPrescriptionsHint: string;
   sumCertificates: string;
   sumCertificatesHint: string;
+  sumClinicDocuments: string;
+  sumClinicDocumentsHint: string;
   sumDoctorDocuments: string;
   sumDoctorDocumentsHint: string;
   download: string;
@@ -31,6 +40,8 @@ export interface MedicalFilesLabels {
   emptyExamBody: string;
   emptyCertificatesTitle: string;
   emptyCertificatesBody: string;
+  emptyClinicDocsTitle: string;
+  emptyClinicDocsBody: string;
   emptyDoctorDocsTitle: string;
   emptyDoctorDocsBody: string;
   examResultTag: string;
@@ -53,6 +64,7 @@ type DocCategory =
   | "EXAM_PRESCRIPTION"
   | "EXAM_RESULT"
   | "CERTIFICATE"
+  | "CLINIC_DOCUMENT"
   | "DOCTOR_DOCUMENT";
 
 type DocSource = "MEDICAL_DOC" | "GENERATED" | "APPOINTMENT";
@@ -103,6 +115,14 @@ function buildTabs(labels: MedicalFilesLabels): {
       categories: ["CERTIFICATE"],
       emptyTitle: labels.emptyCertificatesTitle,
       emptyDescription: labels.emptyCertificatesBody,
+    },
+    {
+      id: "clinic-documents",
+      label: labels.tabClinicDocuments,
+      icon: <Building2 className="size-4" aria-hidden />,
+      categories: ["CLINIC_DOCUMENT"],
+      emptyTitle: labels.emptyClinicDocsTitle,
+      emptyDescription: labels.emptyClinicDocsBody,
     },
     {
       id: "doctor-documents",
@@ -349,11 +369,25 @@ export function MedicalFilesClient({
   downloadingAllLabel,
   labels,
 }: MedicalFilesClientProps) {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<Tab>("uploaded");
   const [allDocs, setAllDocs] = useState<MedicalDoc[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [downloadingAll, startDownloadAll] = useTransition();
   const TABS = buildTabs(labels);
+
+  // Opening this page is what clears the "new documents" badge on the nav
+  // item. Stamped once per mount, then `router.refresh()` re-renders the
+  // server layout that reads the count — otherwise the badge would sit there
+  // stale until the next full navigation.
+  useEffect(() => {
+    void fetch("/api/account/medical-documents/seen", {
+      method: "POST",
+      credentials: "include",
+    })
+      .then(() => router.refresh())
+      .catch(() => {});
+  }, [router]);
 
   useEffect(() => {
     void fetch("/api/account/medical-documents", { credentials: "include" })
@@ -423,6 +457,7 @@ export function MedicalFilesClient({
           { label: labels.sumUploaded, value: String(countFor("uploaded")), hint: labels.sumUploadedHint, icon: <Upload aria-hidden /> },
           { label: labels.sumExamPrescriptions, value: String(countFor("exam-prescriptions")), hint: labels.sumExamPrescriptionsHint, icon: <FlaskConical aria-hidden /> },
           { label: labels.sumCertificates, value: String(countFor("certificates")), hint: labels.sumCertificatesHint, icon: <FileText aria-hidden /> },
+          { label: labels.sumClinicDocuments, value: String(countFor("clinic-documents")), hint: labels.sumClinicDocumentsHint, icon: <Building2 aria-hidden /> },
           { label: labels.sumDoctorDocuments, value: String(countFor("doctor-documents")), hint: labels.sumDoctorDocumentsHint, icon: <Stethoscope aria-hidden /> },
         ]}
       />
