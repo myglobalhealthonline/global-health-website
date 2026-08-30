@@ -8,8 +8,8 @@ import {
   listAdminAvailability,
   listOpenSlotsForDoctor,
   patchAdminAvailability,
-  resolveDoctorTimeZone,
 } from "../modules/doctor-availability/doctor-availability.service.js";
+import { resolveCountryTimeZone } from "../modules/countries/country-timezone.service.js";
 import { countryCodeSchema } from "../validations/shared.schema.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
@@ -101,7 +101,7 @@ const doctorAvailabilityRoute: FastifyPluginAsync = async (app) => {
       });
 
       if (bookability.state !== "BOOKABLE") {
-        const clinicTimezone = await resolveDoctorTimeZone(doctor.id);
+        const clinicTimezone = await resolveCountryTimeZone(countryParse.data);
         return okResponse({ slots: [], clinicTimezone, bookability });
       }
 
@@ -112,7 +112,9 @@ const doctorAvailabilityRoute: FastifyPluginAsync = async (app) => {
       );
 
       const slots = await listOpenSlotsForDoctor(doctor.id, fromUtc, toUtc);
-      const clinicTimezone = await resolveDoctorTimeZone(doctor.id);
+      // Booking-country zone, not the doctor's home zone — see
+      // `resolveCountryTimeZone`.
+      const clinicTimezone = await resolveCountryTimeZone(countryParse.data);
       return okResponse({ slots, clinicTimezone, bookability });
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {

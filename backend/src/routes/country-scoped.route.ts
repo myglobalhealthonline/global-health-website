@@ -17,8 +17,8 @@ import { listPublicPlansByCountry } from "../modules/plans/public-plans.service.
 import { getPublicCountryByCode } from "../modules/countries/countries.service.js";
 import {
   listOpenSlotsForDoctorAndService,
-  resolveDoctorTimeZone,
 } from "../modules/doctor-availability/doctor-availability.service.js";
+import { resolveCountryTimeZone } from "../modules/countries/country-timezone.service.js";
 import {
   computeSlotPrice,
   getServicePeakConfig,
@@ -411,7 +411,7 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
           serviceId: service.id,
         });
         if (bookability.state !== "BOOKABLE") {
-          const clinicTimezone = await resolveDoctorTimeZone(doctor.id);
+          const clinicTimezone = await resolveCountryTimeZone(countryCode);
           return okResponse({ slots: [], clinicTimezone, bookability });
         }
 
@@ -439,9 +439,12 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
           now,
           toUtc,
         );
-        // Same tz the slots were generated in — the patient sees clinic-local
-        // times so "09:00" reads identically to the doctor and the patient.
-        const clinicTimezone = await resolveDoctorTimeZone(doctor.id);
+        // The zone of the country being booked IN, not the doctor's own
+        // primary country. A doctor rostered into a second country authors
+        // their windows at home (resolveDoctorTimeZone) — rendering those raw
+        // listed an Irish-primary doctor's Czech slots an hour early. The UTC
+        // instants are untouched; only the display zone changes.
+        const clinicTimezone = await resolveCountryTimeZone(countryCode);
 
         // Attach the price each slot will be charged. Peak-hour pricing is
         // resolved server-side from the slot's clinic-local start time so the
