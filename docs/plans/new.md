@@ -1032,7 +1032,48 @@ to render a number that does not use bookability at all. Fixing that properly
 means a count endpoint whose semantics are proven against production data,
 which is a separate, evidence-gated change.
 
-### 19.7 Not done / still open
+### 19.7 Browser verification against real content (2026-08-30)
+
+Run from the production build (`next start`, launch config
+`frontend-prod-build-prod-api`) with `NEXT_PUBLIC_API_URL` pointed at the live
+backend. Because that backend does not yet serve the projections, this
+exercises the ADAPTER AND FALLBACK path against real production content —
+i.e. it answers "does anything regress before the backend ships", not "is the
+projection fast".
+
+Surfaces returning 200 with content: `/ireland/en` (708 KB),
+`/ireland/en/doctors` (483 KB), `/ireland/en/gp-consultation-online`,
+`/ireland/en/see-a-specialist`, `/ireland/en/book`, `/ireland/pt`,
+`/portugal/pt`. The two consultation paths 308 to their market slugs, as
+before.
+
+The decisive check is local-vs-live parity on the same URL, same minute:
+
+| `/ireland/en/doctors` | live `www` | local build |
+| --- | --- | --- |
+| doctor profile links | 22, in order | **identical, same order** |
+| featured names | 7, in order | **identical, same order** |
+| booking CTAs | 4 | 4 |
+
+`/ireland/en/services/sick-certificate-ireland` likewise matched live exactly:
+same H1, 4 related doctor cards, 2 booking CTAs, `€45`, and the same 9
+sections — including the one empty section, which is therefore pre-existing
+and not introduced here.
+
+Two things this run surfaced that are NOT regressions, recorded so the next
+session does not re-chase them:
+
+- The global entry gate (`/`) threw `PublicContentUnavailableError` for
+  pt/es/ro/br/ie. Cause: `PROXY_CLIENT_IP_SECRET` in `.env.local` is the dev
+  value and does not match production's, so these SSR reads were not trusted
+  and fell into the shared 300/min visitor bucket; the six-market fan-out then
+  burst-429'd. A direct request seconds later returned 200. It also
+  incidentally demonstrated the full designed chain end to end: projection 404
+  → legacy → legacy 429 → fail-loud throw rather than an invented empty page.
+- Images briefly reporting `naturalWidth === 0` were mid-decode; the optimizer
+  serves them 200.
+
+### 19.8 Not done / still open
 
 - **Phase 10 (controlled load) is blocked and must not be attempted as-is.**
   The k6 harness hardcodes Railway hosts in `loadtest/config/targets.json` with
