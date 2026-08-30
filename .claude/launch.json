@@ -55,39 +55,6 @@
       ],
       "port": 3000,
       "autoPort": true
-    },
-    {
-      "name": "backend-test-db",
-      "runtimeExecutable": "node",
-      "runtimeArgs": [
-        "--env-file=.env.test",
-        "--import",
-        "tsx",
-        "src/server.ts"
-      ],
-      "cwd": "backend",
-      "env": {
-        "PORT": "4000",
-        "NODE_ENV": "development",
-        "PROXY_CLIENT_IP_SECRET": "local-loadprobe-secret-0123456789abcdef"
-      },
-      "port": 4000
-    },
-    {
-      "name": "frontend-prod-build-prod-api",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": [
-        "next",
-        "start",
-        "-p",
-        "3200"
-      ],
-      "cwd": "frontend",
-      "env": {
-        "NEXT_PUBLIC_API_URL": "https://api.myglobalhealth.online"
-      },
-      "port": 3200,
-      "autoPort": true
     }
   ]
 }

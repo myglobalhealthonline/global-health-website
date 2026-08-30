@@ -126,17 +126,8 @@ describe("sick-cert-online health alias — retired behind a redirect", () => {
 describe("/ireland/sick-leave — regression guard (fixed 2026-07-24, not new this batch)", () => {
   it("resolves to the service page in one hop", async () => {
     const all = await rules();
-    // Both the bare and the localized legacy path land on the SAME canonical
-    // service URL. The second expectation used to assert the bare
-    // /ireland/en/sick-certificate-ireland slug, which contradicted this
-    // test's own title and the line above it. Verified against production
-    // 2026-08-30: /ireland/en/sick-leave 308s to
-    // /ireland/en/services/sick-certificate-ireland, so the rule is right and
-    // the expectation was stale.
     expect(resolve(all, "/ireland/sick-leave")).toBe("/ireland/en/services/sick-certificate-ireland");
-    expect(resolve(all, "/ireland/en/sick-leave")).toBe(
-      "/ireland/en/services/sick-certificate-ireland",
-    );
+    expect(resolve(all, "/ireland/en/sick-leave")).toBe("/ireland/en/sick-certificate-ireland");
   });
 
   it("the exact rule wins over the broad /ireland/:slug catch-all", async () => {

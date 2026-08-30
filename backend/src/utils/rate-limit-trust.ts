@@ -64,12 +64,6 @@ export const PUBLIC_READ_PREFIXES = [
   // no-auth, no-PHI aggregate figure read by country pages and the doctors
   // listing across every market.
   "/api/public/consultation-count",
-  // Homepage same-day GP quick-book — same anonymous-GET class as the two
-  // entries above, and read by SSR on every market page. Missing here (and in
-  // the frontend's matching list) meant both endpoints shared the 300/min
-  // egress-IP visitor bucket. Keep both lists in lockstep.
-  "/api/public/gp-availability",
-  "/api/public/gp-languages",
 ] as const;
 
 /** Correct secret + GET + an allowlisted public content path. */

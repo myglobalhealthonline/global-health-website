@@ -323,62 +323,6 @@ export async function fetchServicesByCountry(
   });
 }
 
-/**
- * Card projections (perf plan docs/plans/new.md §7.1). Same payload semantics
- * as the two collection fetchers above, narrowed to card fields.
- *
- * The cache tags MUST stay the legacy `countryDoctors` / `countryServices`
- * tags: there is no `/api/revalidate` route, and the ~20 admin mutation sites
- * enumerate those tag names literally, so a projection under a new tag would
- * never be invalidated.
- */
-export async function fetchDoctorCardsByCountry(
-  countryCode: string,
-  locale?: string,
-  timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
-) {
-  const upper = toBackendLocale(locale);
-  const url = upper
-    ? `/api/countries/${encodeURIComponent(countryCode)}/doctor-cards?locale=${upper}`
-    : `/api/countries/${encodeURIComponent(countryCode)}/doctor-cards`;
-  return apiRequest<unknown[]>(url, {
-    timeoutMs,
-    revalidate: REVALIDATE_SECONDS,
-    tags: upper
-      ? [
-          SITE_CACHE_TAGS.countryDoctors(countryCode),
-          SITE_CACHE_TAGS.countryDoctors(countryCode, upper),
-        ]
-      : [SITE_CACHE_TAGS.countryDoctors(countryCode)],
-  });
-}
-
-export async function fetchServiceCardsByCountry(
-  countryCode: string,
-  kind: "GENERAL" | "SPECIALIST" | "PRESCRIPTION" | "HEALTH_TEST" | "HOME_DELIVERY" | undefined,
-  locale?: string,
-  timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
-) {
-  const upper = toBackendLocale(locale);
-  const params = new URLSearchParams();
-  if (kind) params.set("kind", kind);
-  if (upper) params.set("locale", upper);
-  const qs = params.toString();
-  const url = qs
-    ? `/api/countries/${encodeURIComponent(countryCode)}/service-cards?${qs}`
-    : `/api/countries/${encodeURIComponent(countryCode)}/service-cards`;
-  return apiRequest<unknown[]>(url, {
-    timeoutMs,
-    revalidate: REVALIDATE_SECONDS,
-    tags: upper
-      ? [
-          SITE_CACHE_TAGS.countryServices(countryCode),
-          SITE_CACHE_TAGS.countryServices(countryCode, upper),
-        ]
-      : [SITE_CACHE_TAGS.countryServices(countryCode)],
-  });
-}
-
 /** Single service detail (admin CMS content) for the public detail page. */
 export async function fetchServiceDetail(
   slug: string,

@@ -55,22 +55,11 @@ test.describe("Patient portal — authenticated flows", () => {
 
   test("dashboard renders stat cards and nav", async ({ page }) => {
     await page.goto("/account", { waitUntil: "domcontentloaded" });
-    // The patient nav's first item is "Overview" (locales/en/account.json →
-    // nav.overview). "Dashboard" is the ADMIN portal's label, so this
-    // assertion could never have matched here — the other three below are
-    // correct and unchanged.
-    // 15s rather than the 5s default: this is the first render of the portal
-    // shell after a fresh login, and under parallel workers on a loaded
-    // machine it legitimately exceeds 5s. It passes well inside 5s serially.
-    await expect(page.locator("text=Overview").first()).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator("text=Dashboard").first()).toBeVisible();
     // Nav items from S9 spec
-    // `.first()` on each: these labels appear in the nav AND again in the
-    // dashboard's summary cards ("Payments" resolves to 5 nodes), which is a
-    // strict-mode violation for a bare locator. The assertion is "this item is
-    // present and visible", so the first match is the right one to check.
-    await expect(page.locator("text=Medical files").first()).toBeVisible();
-    await expect(page.locator("text=Access history").first()).toBeVisible();
-    await expect(page.locator("text=Payments").first()).toBeVisible();
+    await expect(page.locator("text=Medical files")).toBeVisible();
+    await expect(page.locator("text=Access history")).toBeVisible();
+    await expect(page.locator("text=Payments")).toBeVisible();
   });
 
   test("medical files page renders without 5xx", async ({ page }) => {
@@ -88,10 +77,7 @@ test.describe("Patient portal — authenticated flows", () => {
 
   test("profile page has privacy tab", async ({ page }) => {
     await page.goto("/account/profile", { waitUntil: "domcontentloaded" });
-    // The responsive tab strip renders a desktop and a mobile copy, so this
-    // resolves to 2 nodes (strict-mode violation) with only one visible at a
-    // time. `.first()` + a role query targets the tab itself.
-    await expect(page.getByRole("tab", { name: "Privacy" }).first()).toBeVisible();
+    await expect(page.locator("text=Privacy")).toBeVisible();
   });
 
   test("payments page renders without 5xx", async ({ page }) => {
@@ -101,14 +87,10 @@ test.describe("Patient portal — authenticated flows", () => {
 
   test("patient cannot access admin routes", async ({ page }) => {
     const res = await page.goto("/admin", { waitUntil: "domcontentloaded" });
-    const status = res?.status() ?? 200;
-    const path = new URL(page.url()).pathname.replace(/\/$/, "");
-    // An ANONYMOUS visitor goes to /login; an authenticated patient is sent to
-    // their OWN portal (/account) instead — verified against the running app
-    // 2026-08-30. Either is fine. What must never happen is /admin rendering,
-    // or a 5xx. Checking only for "/login" made this pass-by-accident logic.
-    const blocked = status < 500 && (status >= 400 || (path !== "/admin" && !path.startsWith("/admin/")));
-    expect(blocked, `Patient session should not access /admin (status ${status}, landed on ${path})`).toBeTruthy();
+    const finalUrl = page.url();
+    // Admin should redirect to login or return 403/redirect — not 200 admin page
+    const blocked = finalUrl.includes("/login") || (res?.status() ?? 200) >= 400;
+    expect(blocked, "Patient session should not access /admin").toBeTruthy();
   });
 
   test("patient cannot access another patient's account API", async ({ request, page }) => {
