@@ -4,9 +4,11 @@ import { z } from "zod";
 import { localeCodeSchema } from "../validations/admin-countries.schema.js";
 import {
   getDoctorByCountryAndSlug,
+  listDoctorCardsByCountry,
   listDoctorsByCountry,
 } from "../modules/doctors/doctors.service.js";
 import {
+  listServiceCardsByCountry,
   listServicesByCountry,
   listSpecialtiesByCountry,
 } from "../modules/services/services.service.js";
@@ -143,6 +145,29 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
+  // Card projection (perf plan docs/plans/new.md). Additive: same filters,
+  // order, locale fallback and bookability as /doctors, narrowed to the
+  // fields a doctor card renders. /doctors stays unchanged and is the
+  // frontend's automatic fallback.
+  app.get("/api/countries/:countryCode/doctor-cards", async (request, reply) => {
+    applyPublicCache(reply);
+    const params = countryParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid country code", params.error.flatten()));
+    }
+    const query = collectionLocaleQuerySchema.safeParse(request.query);
+    if (!query.success) {
+      return reply.status(400).send(errorResponse("Invalid doctors query", query.error.flatten()));
+    }
+    try {
+      if (!(await ensureCountryExists(params.data.countryCode, reply))) return;
+      const doctors = await listDoctorCardsByCountry(params.data.countryCode, query.data.locale);
+      return okResponse(doctors);
+    } catch (error) {
+      return handleError(app, reply, error, "Unexpected doctor-cards error");
+    }
+  });
+
   app.get("/api/countries/:countryCode/doctors/:slug", async (request, reply) => {
     applyPublicCache(reply);
     const params = countrySlugParamsSchema.safeParse(request.params);
@@ -254,6 +279,30 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
       return okResponse(services);
     } catch (error) {
       return handleError(app, reply, error, "Unexpected services error");
+    }
+  });
+
+  // Card projection sibling of /services (see /doctor-cards above).
+  app.get("/api/countries/:countryCode/service-cards", async (request, reply) => {
+    applyPublicCache(reply);
+    const params = countryParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid country code", params.error.flatten()));
+    }
+    const query = servicesQuerySchema.safeParse(request.query);
+    if (!query.success) {
+      return reply.status(400).send(errorResponse("Invalid services query", query.error.flatten()));
+    }
+    try {
+      if (!(await ensureCountryExists(params.data.countryCode, reply))) return;
+      const services = await listServiceCardsByCountry(
+        params.data.countryCode,
+        query.data.kind,
+        query.data.locale,
+      );
+      return okResponse(services);
+    } catch (error) {
+      return handleError(app, reply, error, "Unexpected service-cards error");
     }
   });
 

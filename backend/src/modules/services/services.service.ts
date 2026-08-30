@@ -12,6 +12,7 @@ import type {
 import { normalizeDbError } from "../shared/db-errors.js";
 import { sanitizeRichHtml } from "../../utils/sanitize-html.js";
 import { resolveTranslation } from "../shared/resolve-translation.js";
+import { timePhase } from "../../lib/perf/request-context.js";
 import { assertLocaleSupported } from "../shared/locale-support.js";
 import { resolveServiceLinksForPage } from "../service-links/service-links.service.js";
 import { faqTranslationSelect, mergeFaqTranslation } from "../../services/service-faq.service.js";
@@ -20,9 +21,12 @@ import {
   type InsuranceCompanyPricing,
 } from "../pricing/insurance-pricing.service.js";
 import {
+  getCountryBookabilityBatch,
   getServiceBookability,
   invalidateBookabilityCache,
+  readBatchServiceBookability,
 } from "../bookability/bookability.service.js";
+import type { BookabilitySummary } from "../bookability/bookability.service.js";
 import { resolveBookabilityFailClosed } from "../bookability/bookability-policy.js";
 
 const BOOKABILITY_CONCURRENCY = 8;
@@ -1316,5 +1320,146 @@ export async function reorderAdminSpecialties(
     );
   } catch (error) {
     throw normalizeDbError(error, "Could not reorder specialties");
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Public service-card projection (perf plan docs/plans/new.md §7.1)
+ * ------------------------------------------------------------------ */
+
+/** One card row. Deliberately raw-payload-shaped: the frontend keeps using
+ *  its existing `CountryServiceCard` mapper unchanged, so parity is by
+ *  construction rather than by a second normalizer. */
+export type PublicServiceCard = {
+  id: string;
+  slug: string;
+  name: string;
+  summary: string | null;
+  kind: ServiceKind;
+  durationMinutes: number | null;
+  basePriceCents: number | null;
+  currencyCode: string | null;
+  isActive: true;
+  assets: Array<{ kind: "IMAGE"; path: string; altText: string | null }>;
+  assignedDoctors: Array<{ doctorId: string }>;
+  insuranceOptions: InsuranceOption[];
+  bookability: BookabilitySummary;
+};
+
+/**
+ * Card-only variant of `listServicesByCountry`. Same `where`, `orderBy`,
+ * translation fallback, assignment scoping, insurance derivation and
+ * bookability resolver — only the selected columns and the emitted keys are
+ * narrowed to what a service card actually renders. Detail bodies, FAQs, SEO
+ * fields, raw country/coverage/payout rows and `insuranceSeoLine` are dropped.
+ *
+ * The legacy endpoint is untouched and remains the runtime fallback.
+ */
+export async function listServiceCardsByCountry(
+  countryCode: string,
+  kind?: ServiceKind,
+  locale?: LocaleCode,
+): Promise<PublicServiceCard[]> {
+  try {
+    const rows = await timePhase("query", () => prisma.service.findMany({
+      where: {
+        isActive: true,
+        visibility: "PUBLIC",
+        country: { code: countryCode, isActive: true },
+        ...(kind ? { kind } : {}),
+      },
+      orderBy: [{ kind: "asc" }, { sortOrder: "asc" }, { name: "asc" }],
+      select: {
+        id: true,
+        slug: true,
+        name: true,
+        summary: true,
+        kind: true,
+        durationMinutes: true,
+        basePriceCents: true,
+        currencyCode: true,
+        country: { select: { defaultLocale: true } },
+        // Legacy select omits title/caption/description/focal/zoom for
+        // services; copied verbatim so card media stays byte-identical.
+        assets: {
+          where: { isActive: true, kind: "IMAGE" },
+          orderBy: { createdAt: "asc" },
+          select: { path: true, altText: true },
+        },
+        assignedDoctors: {
+          where: {
+            isActive: true,
+            status: "active",
+            doctor: {
+              active: true,
+              OR: [
+                { country: { code: countryCode, isActive: true } },
+                {
+                  additionalCountries: {
+                    some: { active: true, country: { code: countryCode, isActive: true } },
+                  },
+                },
+              ],
+            },
+          },
+          orderBy: { sortOrder: "asc" },
+          select: { doctorId: true },
+        },
+        translations: { select: { locale: true, name: true, summary: true } },
+        insuranceCoverages: {
+          where: { company: { isActive: true } },
+          orderBy: [{ company: { sortOrder: "asc" } }, { company: { name: "asc" } }],
+          select: {
+            overridePriceCents: true,
+            company: {
+              select: { id: true, name: true, pricingMode: true, discountPercent: true },
+            },
+          },
+        },
+        insuranceDoctorPayouts: {
+          where: { doctorAmountCents: { not: null }, company: { isActive: true } },
+          select: { insuranceCompanyId: true, doctorId: true },
+        },
+      },
+    }));
+    // One country-level input load instead of one metadata query per service.
+    // Same derivation, same frozen clock, same cache keys — see §7.4.
+    const batch = await timePhase("bookability", () =>
+      getCountryBookabilityBatch({ countryCode }),
+    );
+    return rows.map((row) => {
+      const defaultLocale = row.country.defaultLocale;
+      const { tr } = resolveTranslation(
+        row.translations,
+        locale ?? defaultLocale,
+        defaultLocale,
+      );
+      const assignedDoctorIds = new Set(row.assignedDoctors.map((a) => a.doctorId));
+      return {
+        id: row.id,
+        slug: row.slug,
+        name: tr?.name ?? row.name,
+        summary: tr?.summary ?? row.summary,
+        kind: row.kind,
+        durationMinutes: row.durationMinutes,
+        basePriceCents: row.basePriceCents,
+        currencyCode: row.currencyCode,
+        isActive: true as const,
+        assets: row.assets.map((a) => ({
+          kind: "IMAGE" as const,
+          path: a.path,
+          altText: a.altText,
+        })),
+        assignedDoctors: row.assignedDoctors.map((a) => ({ doctorId: a.doctorId })),
+        insuranceOptions: buildInsuranceOptions(
+          row.basePriceCents,
+          row.insuranceCoverages,
+          insurersWithDoctors(row.insuranceDoctorPayouts, assignedDoctorIds),
+        ),
+        bookability: readBatchServiceBookability(batch, row.id),
+      };
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Services data is unavailable");
   }
 }
