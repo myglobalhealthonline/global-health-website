@@ -1,8 +1,5 @@
 import { prisma } from "../../db/prisma.js";
-import {
-  resolveNotificationLang,
-  type NotificationLang,
-} from "./notification-language.js";
+import { resolveNotificationLang } from "./notification-language.js";
 import { generateCreditNoteForOrder } from "../invoices/generate-invoice.service.js";
 import type { AutomationLang } from "./pre-payment-messages.js";
 import { whatsappContactFooter } from "./whatsapp-contact-footer.js";

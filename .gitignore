@@ -113,5 +113,10 @@ frontend/docs/qa-screenshots/
 backend/tmp/i18n-drafts/
 loadtest/backups/*.dump
 loadtest/config/secrets.json
+# Real per-role session cookies minted by scripts/mint-load-test-cookies.mjs.
+# helpers.js always described this file as gitignored, but the rule was never
+# added and it was committed with live PATIENT/DOCTOR/ADMIN/SUPERADMIN
+# sessions in it. Commit loadtest/config/cookies.example.json instead.
+loadtest/config/cookies.json
 loadtest/results/
 loadtest/config/seed-passwords.json

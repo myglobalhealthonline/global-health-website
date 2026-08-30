@@ -51,6 +51,7 @@ import { resolveLocale } from "@/lib/i18n/resolve-locale";
 import { localeDisplayName } from "@/lib/i18n/locale-display";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { hreflangRegion } from "@/lib/seo/hreflang";
+import { EU_TRADE_MARK_URL } from "@/lib/brand/trademark";
 
 const REGULATORY_TEXT: Partial<Record<string, string>> = {
   cz: "Global Health je obchodní značkou společnosti Global Guest s.r.o., poskytovatele zdravotních služeb zapsaného v Národním registru poskytovatelů zdravotních služeb (NRPZS) pod registračním číslem 19071680.",
@@ -455,9 +456,16 @@ export function SiteFooter({
             without centering the plain-text siblings (·, GDPR line) sat at
             the top of the row while the links floated lower. */}
         <div className="gh-footer-copyrightBar">
-          <span suppressHydrationWarning>
+          <a
+            href={EU_TRADE_MARK_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="gh-footer-legalLink gh-focus-on-dark"
+            aria-label="View the Global Health European Union trade mark record"
+            suppressHydrationWarning
+          >
             {copyrightPrefix} · {navigation.footerCopyrightSuffix}
-          </span>
+          </a>
           <span className="gh-footer-legalRow">
             <Link
               href="/privacy"

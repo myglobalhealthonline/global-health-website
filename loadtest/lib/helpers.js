@@ -15,8 +15,61 @@ try {
   secrets = {};
 }
 
-export const FRONTEND_BASE = targets.frontendBaseUrl;
-export const BACKEND_BASE = targets.backendBaseUrl;
+/**
+ * Hosts this harness must never point load at by accident. It previously
+ * defaulted to the production Railway pair in targets.json, so a bare
+ * `./run.sh smoke` was a production load test — with real role sessions
+ * attached. Both base URLs are now empty by default and env-driven, and
+ * resolving to one of these refuses to start unless the operator says so.
+ */
+const PRODUCTION_HOST_PATTERNS = [
+  /(^|\.)myglobalhealth\.online$/i,
+  /(^|\.)myglobalhealth\.up\.railway\.app$/i,
+  /(^|\.)backendmyglobalhealth\.up\.railway\.app$/i,
+];
+
+function hostOf(url) {
+  // k6's init context has URL; fall back to a regex if that ever changes.
+  try {
+    return new URL(url).hostname;
+  } catch (e) {
+    const match = /^[a-z]+:\/\/([^/:]+)/i.exec(url || "");
+    return match ? match[1] : "";
+  }
+}
+
+function resolveBase(name, envValue, configValue) {
+  const url = (envValue || configValue || "").trim().replace(/\/$/, "");
+  if (!url) {
+    throw new Error(
+      `[loadtest] ${name} is not set. Point this run at a NON-PRODUCTION environment: ` +
+        `set LOADTEST_FRONTEND_URL and LOADTEST_BACKEND_URL, or fill them into ` +
+        `loadtest/config/targets.json. They are intentionally empty so this harness ` +
+        `cannot default to production.`,
+    );
+  }
+  const host = hostOf(url);
+  const isProduction = PRODUCTION_HOST_PATTERNS.some((pattern) => pattern.test(host));
+  if (isProduction && __ENV.LOADTEST_ALLOW_PRODUCTION !== "1") {
+    throw new Error(
+      `[loadtest] refusing to run against production host "${host}" (${name}). ` +
+        `Load testing production with real role sessions is the failure mode this ` +
+        `guard exists for. If you genuinely intend it, set LOADTEST_ALLOW_PRODUCTION=1.`,
+    );
+  }
+  return url;
+}
+
+export const FRONTEND_BASE = resolveBase(
+  "frontendBaseUrl",
+  __ENV.LOADTEST_FRONTEND_URL,
+  targets.frontendBaseUrl,
+);
+export const BACKEND_BASE = resolveBase(
+  "backendBaseUrl",
+  __ENV.LOADTEST_BACKEND_URL,
+  targets.backendBaseUrl,
+);
 export const PROXY_SECRET =
   secrets.proxyClientIpSecret || __ENV.PROXY_CLIENT_IP_SECRET || "";
 
@@ -51,8 +104,15 @@ export function backendHeaders(extra) {
   return Object.assign(headers, extra || {});
 }
 
-// Cookie pool minted once by scripts/mint-load-test-cookies.mjs and checked
-// in as config/cookies.json (gitignored). Each entry: { role, email, cookie }.
+// Cookie pool read from config/cookies.json, which IS gitignored (the rule was
+// missing until 2026-08-30 and the file had been committed with live
+// PATIENT/DOCTOR/ADMIN/SUPERADMIN sessions — see cookies.example.json for the
+// shape). Each entry: { role, email, cookie }. Absent file = empty pool = the
+// authenticated profiles run unauthenticated rather than failing.
+//
+// The mint script this originally referenced (scripts/mint-load-test-cookies.mjs)
+// is not in the repository; populate the file by logging in as synthetic
+// accounts against the SAME non-production environment under test.
 const cookiePool = new SharedArray("cookies", function () {
   try {
     return JSON.parse(open("../config/cookies.json"));

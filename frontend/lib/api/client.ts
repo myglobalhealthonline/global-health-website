@@ -75,6 +75,13 @@ const PUBLIC_READ_PREFIXES = [
   "/api/public/reviews-config",
   // TRUST-METRIC-001 — same class as reviews-config above.
   "/api/public/consultation-count",
+  // Homepage same-day GP quick-book. Both are anonymous GET content reads
+  // that the SSR/build paths make on every market page, but they were never
+  // allowlisted here or in rate-limit-trust.ts — so they fell into the shared
+  // 300/min egress-IP bucket and 429'd under crawl and deploy load. Keep this
+  // list and the backend one in lockstep.
+  "/api/public/gp-availability",
+  "/api/public/gp-languages",
 ];
 
 function isPublicReadPath(path: string): boolean {
@@ -298,6 +305,21 @@ export function hasPublicApiBaseUrl() {
   return Boolean(API_URL);
 }
 
+/**
+ * Opaque correlation id for a server-side read (perf plan phase 1). The
+ * backend echoes it and logs it, so one page render can be followed across
+ * both processes without putting a URL, user id or cookie in a log line.
+ *
+ * Server-only: a browser call would need `x-request-id` added to the API's
+ * CORS `allowedHeaders`, which is a wider change than the tracing is worth,
+ * and browser requests are already correlated by the backend's own generated
+ * id in the response header.
+ */
+function requestIdHeader(): Record<string, string> {
+  if (typeof window !== "undefined") return {};
+  return { "x-request-id": crypto.randomUUID() };
+}
+
 export async function apiRequest<T>(
   path: string,
   options: ApiClientOptions = {},
@@ -346,6 +368,7 @@ export async function apiRequest<T>(
       headers: {
         "Content-Type": "application/json",
         ...serverReadAuthHeaders(path, options.method ?? "GET"),
+        ...requestIdHeader(),
       },
       body: options.body ? JSON.stringify(options.body) : undefined,
       signal: controller?.signal,

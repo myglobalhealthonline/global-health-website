@@ -10,6 +10,7 @@ import {
 } from "../doctor-availability/doctor-availability.service.js";
 import {
   deriveBookability,
+  resolveBookabilityFailClosed,
   slotOverlapsPause,
   type BookabilitySummary,
   type BookingPause,
@@ -187,11 +188,33 @@ function horizon(value: number | undefined, fallback: number, max: number): numb
   return Math.min(max, Math.max(1, Math.floor(value!)));
 }
 
+/** How a service evaluation reads a doctor's open slots. Injectable so a
+ *  batch can memoize the fan-out per (doctor, duration) instead of repeating
+ *  the same read once per doctor/service pair. */
+type SlotLoader = (
+  doctorId: string,
+  serviceDurationMinutes: number | null,
+  fromUtc: Date,
+  toUtc: Date,
+) => Promise<Array<{ startAt: string; endAt: string }>>;
+
+const defaultSlotLoader: SlotLoader = (doctorId, duration, fromUtc, toUtc) =>
+  listOpenSlotsForDoctorAndService(doctorId, duration, fromUtc, toUtc, {
+    skipExpiredRelease: true,
+  });
+
+type EvaluateOptions = {
+  /** The caller already swept expired holds for every doctor in the batch. */
+  skipExpiredRelease?: boolean;
+  loadSlots?: SlotLoader;
+};
+
 async function evaluateService(
   service: BookableService,
   now: Date,
   primaryHorizonDays: number,
   lookaheadDays: number,
+  options: EvaluateOptions = {},
 ): Promise<BookabilitySummary> {
   const doctors = service.assignedDoctors.map((assignment) => assignment.doctor);
   const countryBookingEnabled = service.country.bookingSetting?.bookingEnabled !== false;
@@ -214,20 +237,17 @@ async function evaluateService(
   // Expired cart holds are doctor-scoped, not service-scoped. Sweep the
   // complete doctor set once before the slot fan-out instead of issuing one
   // release query per doctor (and repeating it for every summary).
-  await releaseExpiredHeldSlotsForDoctors(doctors.map((doctor) => doctor.id));
+  if (!options.skipExpiredRelease) {
+    await releaseExpiredHeldSlotsForDoctors(doctors.map((doctor) => doctor.id));
+  }
 
+  const loadSlots = options.loadSlots ?? defaultSlotLoader;
   const slots: { doctorId: string; startAt: string }[] = [];
   for (let i = 0; i < doctors.length; i += CONCURRENCY) {
     const batch = doctors.slice(i, i + CONCURRENCY);
     const results = await Promise.all(
       batch.map((doctor) =>
-        listOpenSlotsForDoctorAndService(
-          doctor.id,
-          service.durationMinutes,
-          now,
-          lookaheadEnd,
-          { skipExpiredRelease: true },
-        ),
+        loadSlots(doctor.id, service.durationMinutes, now, lookaheadEnd),
       ),
     );
     results.forEach((doctorSlots, index) => {
@@ -406,4 +426,191 @@ export async function getDoctorBookability(
       ?? summaries[0]
     );
   });
+}
+
+/* ------------------------------------------------------------------ *
+ * Country-level batch (perf plan docs/plans/new.md 7.4)
+ * ------------------------------------------------------------------ */
+
+export type CountryBookabilityBatch = {
+  /** serviceId -> aggregate summary across every approved doctor. */
+  services: Map<string, BookabilitySummary>;
+  /** doctorId -> aggregate summary across every service the doctor takes. */
+  doctors: Map<string, BookabilitySummary>;
+  /** doctorId -> serviceId -> summary for that exact pair. */
+  doctorServices: Map<string, Map<string, BookabilitySummary>>;
+};
+
+/** Same shape the per-item readers use, so a doctor with no approved service
+ *  reads identically whichever path produced it. */
+const NO_APPROVED_DOCTOR: BookabilitySummary = {
+  state: "UNAVAILABLE",
+  reasonCode: "NO_APPROVED_DOCTOR",
+  nextAvailableAt: null,
+};
+
+/** getDoctorBookability's aggregate rule, extracted verbatim: earliest
+ *  BOOKABLE, else earliest RETURNING, else the first summary. */
+function pickDoctorSummary(summaries: readonly BookabilitySummary[]): BookabilitySummary {
+  const byEarliest = (a: BookabilitySummary, b: BookabilitySummary) =>
+    (a.nextAvailableAt ?? "9999").localeCompare(b.nextAvailableAt ?? "9999");
+  return (
+    summaries.filter((summary) => summary.state === "BOOKABLE").sort(byEarliest)[0]
+    ?? summaries.filter((summary) => summary.state === "RETURNING").sort(byEarliest)[0]
+    ?? summaries[0]
+    ?? { ...NO_APPROVED_DOCTOR }
+  );
+}
+
+/**
+ * Resolve every public bookability summary a country's card collections need
+ * in one pass: one service+roster metadata query instead of one per summary,
+ * one expired-hold sweep instead of one per service, and one slot read per
+ * (doctor, service duration) instead of one per doctor/service pair.
+ *
+ * It changes HOW the inputs are loaded, never what they mean: the same
+ * `evaluateService` and `deriveBookability` decide every result, from a single
+ * frozen `now`, with the same horizons, pause overlap, approved-doctor
+ * filtering and aggregate priority as the per-item readers. Results are
+ * written into the per-item cache under the exact same keys, so a later
+ * `getServiceBookability` / `getDoctorBookability` for the same input hits the
+ * cache rather than recomputing a possibly-different answer.
+ */
+export async function getCountryBookabilityBatch(
+  args: SummaryOptions,
+): Promise<CountryBookabilityBatch> {
+  const now = args.now ?? new Date();
+  const primaryDays = horizon(args.primaryHorizonDays, DEFAULT_PRIMARY_HORIZON_DAYS, 30);
+  const lookaheadDays = horizon(args.lookaheadDays, DEFAULT_LOOKAHEAD_DAYS, 90);
+  const effectiveLookahead = Math.max(primaryDays, lookaheadDays);
+  const code = args.countryCode.trim().toLowerCase();
+  const bucket = Math.floor(now.getTime() / CACHE_TTL_MS);
+  const generation = cacheGeneration;
+
+  const services = await prisma.service.findMany({
+    where: {
+      isActive: true,
+      visibility: "PUBLIC",
+      country: { code, isActive: true },
+    },
+    select: {
+      id: true,
+      durationMinutes: true,
+      bookingPausedFrom: true,
+      bookingPausedUntil: true,
+      country: { select: { bookingSetting: { select: { bookingEnabled: true } } } },
+      assignedDoctors: {
+        where: {
+          isActive: true,
+          status: "active",
+          doctor: {
+            active: true,
+            OR: [
+              { country: { code, isActive: true } },
+              {
+                additionalCountries: {
+                  some: { active: true, country: { code, isActive: true } },
+                },
+              },
+            ],
+          },
+        },
+        select: {
+          doctor: {
+            select: { id: true, bookingPausedFrom: true, bookingPausedUntil: true },
+          },
+        },
+      },
+    },
+  });
+
+  // One sweep for the whole batch. Expired holds are doctor-scoped, so
+  // repeating it per service would issue the same write N times.
+  const doctorIds = [
+    ...new Set(services.flatMap((s) => s.assignedDoctors.map((a) => a.doctor.id))),
+  ];
+  await releaseExpiredHeldSlotsForDoctors(doctorIds);
+
+  // Memoized per (doctor, duration): the same read otherwise repeats once per
+  // pair. Safe because the batch shares one frozen `now` and one horizon.
+  const slotReads = new Map<string, Promise<Array<{ startAt: string; endAt: string }>>>();
+  const loadSlots: SlotLoader = (doctorId, duration, fromUtc, toUtc) => {
+    const key = `${doctorId}|${duration ?? "null"}`;
+    let pending = slotReads.get(key);
+    if (!pending) {
+      pending = listOpenSlotsForDoctorAndService(doctorId, duration, fromUtc, toUtc, {
+        skipExpiredRelease: true,
+      });
+      slotReads.set(key, pending);
+    }
+    return pending;
+  };
+  const evaluate = (service: BookableService) =>
+    resolveBookabilityFailClosed(() =>
+      evaluateService(service, now, primaryDays, effectiveLookahead, {
+        skipExpiredRelease: true,
+        loadSlots,
+      }),
+    );
+
+  const cacheSet = (key: string, summary: BookabilitySummary) => {
+    if (generation === cacheGeneration) cache.set(key, summary, CACHE_TTL_MS);
+  };
+  const horizonKey = `${primaryDays}:${lookaheadDays}:${bucket}`;
+
+  const serviceSummaries = new Map<string, BookabilitySummary>();
+  const doctorServices = new Map<string, Map<string, BookabilitySummary>>();
+
+  for (const service of services) {
+    const aggregate = await evaluate(service);
+    serviceSummaries.set(service.id, aggregate);
+    cacheSet(`service:${code}:${service.id}:${horizonKey}`, aggregate);
+
+    for (const assignment of service.assignedDoctors) {
+      const pair = await evaluate({ ...service, assignedDoctors: [assignment] });
+      const doctorId = assignment.doctor.id;
+      let byService = doctorServices.get(doctorId);
+      if (!byService) {
+        byService = new Map<string, BookabilitySummary>();
+        doctorServices.set(doctorId, byService);
+      }
+      byService.set(service.id, pair);
+      cacheSet(`doctor:${code}:${doctorId}:${service.id}:${horizonKey}`, pair);
+    }
+  }
+
+  const doctorSummaries = new Map<string, BookabilitySummary>();
+  for (const [doctorId, byService] of doctorServices) {
+    const aggregate = pickDoctorSummary([...byService.values()]);
+    doctorSummaries.set(doctorId, aggregate);
+    cacheSet(`doctor:${code}:${doctorId}:any:${horizonKey}`, aggregate);
+  }
+
+  return { services: serviceSummaries, doctors: doctorSummaries, doctorServices };
+}
+
+/** A doctor with no approved service, or a service the doctor does not take,
+ *  reads UNAVAILABLE/NO_APPROVED_DOCTOR — the same answer the per-item reader
+ *  gives for an empty service set. */
+export function readBatchDoctorBookability(
+  batch: CountryBookabilityBatch,
+  doctorId: string,
+  serviceIds: readonly string[],
+): { bookability: BookabilitySummary; bookabilityByServiceId: Record<string, BookabilitySummary> } {
+  const byService = batch.doctorServices.get(doctorId);
+  const bookabilityByServiceId: Record<string, BookabilitySummary> = {};
+  for (const serviceId of new Set(serviceIds)) {
+    bookabilityByServiceId[serviceId] = byService?.get(serviceId) ?? { ...NO_APPROVED_DOCTOR };
+  }
+  return {
+    bookability: batch.doctors.get(doctorId) ?? { ...NO_APPROVED_DOCTOR },
+    bookabilityByServiceId,
+  };
+}
+
+export function readBatchServiceBookability(
+  batch: CountryBookabilityBatch,
+  serviceId: string,
+): BookabilitySummary {
+  return batch.services.get(serviceId) ?? { ...NO_APPROVED_DOCTOR };
 }

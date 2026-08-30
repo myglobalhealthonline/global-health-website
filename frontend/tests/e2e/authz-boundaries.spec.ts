@@ -14,11 +14,33 @@ import { storageStatePath } from "./fixtures/storage-state.js";
  * convention as the rest of this suite's authenticated tests.
  */
 
-function blockedOrRedirected(status: number | undefined, finalUrl: string): boolean {
-  const notServerError = (status ?? 200) < 500;
-  const redirectedAway = finalUrl.includes("/login") || finalUrl.includes("/unauthorized");
-  const explicitlyDenied = (status ?? 200) >= 400;
-  return notServerError && (redirectedAway || explicitlyDenied);
+/**
+ * The invariant is "the requested portal did not render", not "the user was
+ * sent to a specific page".
+ *
+ * An ANONYMOUS visitor is redirected to /login. An AUTHENTICATED visitor with
+ * the wrong role is redirected to their OWN portal instead — verified against
+ * the running app 2026-08-30: a patient hitting /admin, /doctor, /corporate or
+ * /admin/memberships gets 307 → /account, a doctor gets 307 → /doctor, a
+ * corporate admin gets 307 → /corporate, and each role 200s only on its own
+ * portal. That is correct behaviour, but the original helper accepted only
+ * /login and /unauthorized, so it failed every authenticated cross-portal
+ * case.
+ *
+ * Landing anywhere other than the requested route is therefore a pass; a 200
+ * still on the requested route, or any 5xx, is a failure.
+ */
+function blockedOrRedirected(
+  status: number | undefined,
+  finalUrl: string,
+  requestedRoute: string,
+): boolean {
+  if ((status ?? 200) >= 500) return false;
+  if ((status ?? 200) >= 400) return true;
+  const path = new URL(finalUrl).pathname.replace(/\/$/, "");
+  const requested = requestedRoute.replace(/\/$/, "");
+  // Still on the requested portal (exactly, or deeper inside it) = it rendered.
+  return path !== requested && !path.startsWith(`${requested}/`);
 }
 
 test.describe("Patient session cannot reach other portals", () => {
@@ -32,7 +54,7 @@ test.describe("Patient session cannot reach other portals", () => {
   for (const route of ["/admin", "/doctor", "/corporate", "/admin/memberships"]) {
     test(`patient session hitting ${route} is blocked or redirected`, async ({ page }) => {
       const response = await page.goto(route, { waitUntil: "domcontentloaded" });
-      expect(blockedOrRedirected(response?.status(), page.url()), `${route} must not render for a patient session`).toBeTruthy();
+      expect(blockedOrRedirected(response?.status(), page.url(), route), `${route} must not render for a patient session`).toBeTruthy();
     });
   }
 
@@ -69,7 +91,7 @@ test.describe("Doctor session cannot reach admin/corporate portals", () => {
   for (const route of ["/admin", "/corporate"]) {
     test(`doctor session hitting ${route} is blocked or redirected`, async ({ page }) => {
       const response = await page.goto(route, { waitUntil: "domcontentloaded" });
-      expect(blockedOrRedirected(response?.status(), page.url()), `${route} must not render for a doctor session`).toBeTruthy();
+      expect(blockedOrRedirected(response?.status(), page.url(), route), `${route} must not render for a doctor session`).toBeTruthy();
     });
   }
 });
@@ -86,7 +108,7 @@ test.describe("LOCAL_ADMIN session cannot escalate to super-admin-only settings"
   for (const route of ["/admin/settings", "/admin/users"]) {
     test(`local-admin session hitting ${route} is blocked or redirected`, async ({ page }) => {
       const response = await page.goto(route, { waitUntil: "domcontentloaded" });
-      expect(blockedOrRedirected(response?.status(), page.url()), `${route} must not render for a LOCAL_ADMIN session`).toBeTruthy();
+      expect(blockedOrRedirected(response?.status(), page.url(), route), `${route} must not render for a LOCAL_ADMIN session`).toBeTruthy();
     });
   }
 });
@@ -101,7 +123,7 @@ test.describe("Corporate-admin session cannot reach clinical portals", () => {
   for (const route of ["/admin", "/doctor", "/account"]) {
     test(`corporate-admin session hitting ${route} is blocked or redirected`, async ({ page }) => {
       const response = await page.goto(route, { waitUntil: "domcontentloaded" });
-      expect(blockedOrRedirected(response?.status(), page.url()), `${route} must not render for a corporate-admin session`).toBeTruthy();
+      expect(blockedOrRedirected(response?.status(), page.url(), route), `${route} must not render for a corporate-admin session`).toBeTruthy();
     });
   }
 });

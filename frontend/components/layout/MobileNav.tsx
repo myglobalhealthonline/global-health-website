@@ -24,6 +24,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { SiteNavigationData } from "@/data/navigation";
 import { DEFAULT_BRAND_LOGO } from "@/lib/content/brand-logo";
+import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 import type { CountryConfig, CountryCode } from "@/data/countries";
 import {
   COUNTRY_CODE_TO_SLUG,
@@ -210,11 +211,12 @@ export function MobileNav({
           <div className="flex items-center justify-between gap-4 border-b border-[var(--color-border)] px-5 py-4">
             <Link href="/" className="flex items-center" aria-label={`${siteName} ${navigation.navHome}`}>
               <Image
-                src={DEFAULT_BRAND_LOGO.src}
+                src={brandLogo.src}
                 alt={brandLogo.alt}
                 width={86}
                 height={56}
                 className="h-12 w-auto max-w-[200px]"
+                unoptimized={isUnoptimizedImageSrc(brandLogo.src)}
               />
             </Link>
             <Dialog.Close className="inline-flex size-11 items-center justify-center rounded-full border border-[var(--color-border)] bg-white p-3 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)] focus-visible:ring-offset-2">

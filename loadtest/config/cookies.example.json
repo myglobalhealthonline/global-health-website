@@ -1,0 +1,18 @@
+[
+  {
+    "_comment": "Copy to cookies.json (gitignored) and fill from scripts/mint-load-test-cookies.mjs. NEVER commit the filled file — it holds real sessions. Mint against the SAME non-production environment you are load testing, with synthetic accounts only.",
+    "role": "PATIENT",
+    "email": "patient@example.test",
+    "cookie": "<cookie-name>=<session-token>"
+  },
+  {
+    "role": "DOCTOR",
+    "email": "doctor@example.test",
+    "cookie": "<cookie-name>=<session-token>"
+  },
+  {
+    "role": "ADMIN",
+    "email": "admin@example.test",
+    "cookie": "<cookie-name>=<session-token>"
+  }
+]

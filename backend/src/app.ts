@@ -111,6 +111,14 @@ export async function buildApp() {
   });
   await app.register(cookie);
 
+  // Perf plan phase 1. Registered before the other hooks so its
+  // AsyncLocalStorage store wraps the whole request, which is what lets the
+  // pool wrapper attribute database round trips to the request that caused
+  // them. Emits one sanitized `perf` log line plus a `Server-Timing` header;
+  // deleting this line disables the feature entirely.
+  const { registerPerfInstrumentation } = await import("./lib/perf/fastify-perf.js");
+  registerPerfInstrumentation(app);
+
   // S-013: reject cross-site state-changing requests that carry the auth
   // cookie. Reuses the exact allowlist the CORS check above enforces.
   app.addHook(
