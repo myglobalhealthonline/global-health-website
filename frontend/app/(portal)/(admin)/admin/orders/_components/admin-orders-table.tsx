@@ -28,6 +28,7 @@ import {
   type PillTone,
 } from "@/components/portal-atoms";
 import { formatAppDate, formatAppDateTime } from "@/lib/format-datetime";
+import { bookingTimezoneForCountry } from "@/lib/booking-timezone";
 import { formatPrice } from "@/lib/format-currency";
 import { formatOrderDisplayId } from "@/lib/format-order-display";
 import { OrderMeetLinkDisplay } from "./order-meet-link-display";
@@ -91,7 +92,11 @@ function doctorLabel(o: AdminOrderRow): string {
 function consultationTimeLabel(o: AdminOrderRow): string {
   const c = primaryConsultation(o);
   if (!c) return "—";
-  return c.scheduledAt ? formatAppDateTime(c.scheduledAt) : "Time TBC";
+  // The order's country names the clinic zone — without it every market's
+  // consultation reads at Irish wall-clock time.
+  return c.scheduledAt
+    ? formatAppDateTime(c.scheduledAt, bookingTimezoneForCountry(o.countryCode))
+    : "Time TBC";
 }
 
 function CopyLinkButton({ url }: { url: string }) {
@@ -562,7 +567,14 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
                     />
                     <RecordDetailsField
                       label="Time"
-                      value={c.scheduledAt ? formatAppDateTime(c.scheduledAt) : "Time TBC"}
+                      value={
+                        c.scheduledAt
+                          ? formatAppDateTime(
+                              c.scheduledAt,
+                              bookingTimezoneForCountry(quickViewOrder.countryCode),
+                            )
+                          : "Time TBC"
+                      }
                     />
                   </div>
                 ))}

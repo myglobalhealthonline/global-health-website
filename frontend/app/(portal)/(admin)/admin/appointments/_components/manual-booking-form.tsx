@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { AdminCard } from "../../_components/atoms";
 import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
+import { bookingTimezoneForCountry } from "@/lib/booking-timezone";
 import {
   NOTIFICATION_LOCALES,
   NOTIFICATION_LOCALE_LABEL,
@@ -229,7 +230,12 @@ export function ManualBookingForm({
   const [slots, setSlots] = useState<Slot[]>([]);
   const [slotsLoading, setSlotsLoading] = useState(false);
   const [slotsError, setSlotsError] = useState<string | null>(null);
-  const [clinicTimezone, setClinicTimezone] = useState<string>("Europe/Dublin");
+  // Seeded from the booking country, not Europe/Dublin: the slot list renders
+  // before the availability response lands, and a wrong seed showed every
+  // country's slots in Irish time until it arrived.
+  const [clinicTimezone, setClinicTimezone] = useState<string>(() =>
+    bookingTimezoneForCountry(countryCode),
+  );
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   // Which calendar month the admin is browsing for slots — 0 = this month, 1 =
   // next month, etc. Drives both the `days` fetched (far enough to reach the
@@ -398,7 +404,7 @@ export function ManualBookingForm({
         }
         const list = json.data.slots ?? [];
         setSlots(list);
-        const tzVal = json.data.clinicTimezone ?? "Europe/Dublin";
+        const tzVal = json.data.clinicTimezone ?? bookingTimezoneForCountry(countryCode);
         setClinicTimezone(tzVal);
         const pending = pendingSlotRef.current
           ? list.find((s) => s.id === pendingSlotRef.current)

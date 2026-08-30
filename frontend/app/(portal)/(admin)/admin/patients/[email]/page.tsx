@@ -13,6 +13,7 @@ import {
 } from "@/lib/admin/admin-api";
 import { AdminCard, PageHeader, Pill } from "../../_components/atoms";
 import { formatAppDateTime } from "@/lib/format-datetime";
+import { bookingTimezoneForCountry } from "@/lib/booking-timezone";
 
 export const dynamic = "force-dynamic";
 
@@ -234,7 +235,9 @@ export default async function AdminPatientDetailPage({ params, searchParams }: P
                       {/* Scheduled slot when there is one, otherwise the booking
                           date — an unscheduled request still needs a date. */}
                       {a.scheduledAt ? (
-                        formatAppDateTime(a.scheduledAt)
+                        // In the booking country's own clinic zone, not the
+                        // formatters' Europe/Dublin default.
+                        formatAppDateTime(a.scheduledAt, bookingTimezoneForCountry(a.country))
                       ) : (
                         <span className="text-[var(--color-text-muted)]">
                           Requested {formatAppDateTime(a.createdAt)}

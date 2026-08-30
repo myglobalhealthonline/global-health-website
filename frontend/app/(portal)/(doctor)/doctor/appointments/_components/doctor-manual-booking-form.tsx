@@ -18,6 +18,7 @@ import type {
 import { CountryDialSelect } from "@/components/forms/country-dial-select";
 import { combinePhone, dialCodeForCountry } from "@/lib/phone/dial-codes";
 import { formatAppTime } from "@/lib/format-datetime";
+import { bookingTimezoneForCountry } from "@/lib/booking-timezone";
 import { BRAZIL_STATES } from "@/lib/content/booking-address-copy";
 
 /**
@@ -238,7 +239,11 @@ export function DoctorManualBookingForm({
 
   // Group by clinic-local day so the doctor reads their own working hours,
   // not the browser's timezone.
-  const tz = clinicTimezone;
+  // Until the availability response lands `clinicTimezone` is undefined, and
+  // the formatters' historical fallback is Europe/Dublin — which showed every
+  // country's slots in Irish time. Fall back to the selected service's own
+  // country zone instead.
+  const tz = clinicTimezone ?? bookingTimezoneForCountry(selectedService?.countryCode);
   const byDay = useMemo(() => {
     const map = new Map<string, DoctorTimeSlotView[]>();
     for (const s of slots) {

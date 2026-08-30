@@ -24,12 +24,13 @@ import {
 } from "@/lib/admin/appointment-status";
 import { FlagBadge } from "../../_components/flag-badge";
 import { SetCrumbTitle } from "@/components/crumb-title";
-import { ScheduleTzOffsetInput } from "../_components/schedule-tz-offset";
 import { ScheduleSlotInput } from "../_components/schedule-slot-input";
+import { ScheduleTzHint } from "../_components/schedule-tz-hint";
 import { AdminAppointmentTabs } from "./_components/appointment-tabs";
 import { SendPatientUploadLinkCard } from "@/components/SendPatientUploadLinkCard";
 import { UploadPatientRecordCard } from "@/components/UploadPatientRecordCard";
 import { defaultNotificationLocaleForCountry } from "@/lib/notification-locale";
+import { bookingTimezoneForCountry, timezoneCity } from "@/lib/booking-timezone";
 import {
   AdminCard,
   Btn,
@@ -58,7 +59,7 @@ function safeHttpUrl(url: string | undefined | null): string | null {
 const formatDate = formatAppDateTime;
 
 /** Clinic zone — the fallback for legacy bookings with no captured patient tz. */
-const CLINIC_TZ = "Europe/Dublin";
+
 
 // Human name for the raw consultationType enum, matching the patient-facing
 // labels in locales/en/account.json (the admin API only returns the enum).
@@ -214,9 +215,9 @@ export default async function AdminAppointmentDetailPage({
 
     const rawSlot = String(formData.get("scheduledAt") ?? "").trim();
     const rawUrl = String(formData.get("meetingUrl") ?? "").trim();
-    // Browser's `getTimezoneOffset()` in minutes WEST of UTC. Comes from
-    // the ScheduleTzOffsetInput client component. Falls back to 0 (UTC)
-    // if for any reason the value isn't supplied.
+    // Minutes WEST of UTC for the wall clock that was typed, resolved in the
+    // CLINIC's zone by ScheduleSlotInput (which ships this hidden field
+    // alongside the visible input). Falls back to 0 (UTC) if absent.
     const rawTzOffset = String(formData.get("scheduledAtTzOffset") ?? "0").trim();
     const tzOffsetMin = Number.isFinite(Number(rawTzOffset))
       ? Number(rawTzOffset)
@@ -344,6 +345,9 @@ export default async function AdminAppointmentDetailPage({
   }
 
   const appointment = result.data.appointment;
+  // The clinic zone of THIS booking's country — not a global default. Every
+  // admin time here reads in it when the patient's own zone wasn't captured.
+  const clinicTz = bookingTimezoneForCountry(appointment.country);
   const terminal = isTerminalAppointmentStatus(appointment.status);
   const allowedNext = getAllowedNextStatuses(appointment.status);
   const canUpdate = !terminal && allowedNext.length > 0;
@@ -565,7 +569,7 @@ export default async function AdminAppointmentDetailPage({
                         appointment.scheduledAt
                           ? formatAppDateTimeWithZone(
                               appointment.scheduledAt,
-                              appointment.patientTimezone ?? CLINIC_TZ,
+                              appointment.patientTimezone ?? clinicTz,
                             )
                           : "Not scheduled yet"
                       }
@@ -683,19 +687,23 @@ export default async function AdminAppointmentDetailPage({
                   </p>
 
                   <form action={scheduleCallAction} className="gh-admin-appointment-side-form">
-                    {/* Browser-side TZ offset so the server can convert the
-                        datetime-local string to a UTC ISO that matches the
-                        admin's actual clock — independent of the Node server
-                        timezone. */}
-                    <ScheduleTzOffsetInput />
                     <label className="flex flex-col gap-1.5">
-                      <span className="gh-field-label">Slot (your local time)</span>
-                      {/* Client-side conversion of the stored UTC ISO into the
-                          admin's browser-local datetime-local string. Avoids
-                          server-timezone leakage on reopen. */}
+                      <span className="gh-field-label">
+                        Slot (clinic time — {timezoneCity(clinicTz)})
+                      </span>
+                      {/* Edited in the consultation country's own zone, and
+                          the hidden offset it ships is resolved for the typed
+                          wall clock in that zone — so what the admin types is
+                          what the clinic (and the patient) get. */}
                       <ScheduleSlotInput
                         name="scheduledAt"
                         initialIso={appointment.scheduledAt}
+                        timeZone={clinicTz}
+                      />
+                      <ScheduleTzHint
+                        iso={appointment.scheduledAt}
+                        patientTimezone={appointment.patientTimezone}
+                        clinicTimezone={clinicTz}
                       />
                       <span className="text-portal-thead text-[var(--color-text-muted)]">
                         Leave blank to clear.
