@@ -17,7 +17,7 @@ import {
   sendCorporateDoctorBookingEmail,
   sendCorporateDoctorCancelledEmail,
 } from "./corporate-emails.js";
-import { resolveDoctorTimeZone } from "../doctor-availability/doctor-availability.service.js";
+import { resolveCountryTimeZone } from "../countries/country-timezone.service.js";
 import { corporateBookPath } from "./corporate-request.service.js";
 
 /**
@@ -82,10 +82,10 @@ export async function notifyCorporateBookingCreated(
     }));
 
   // The clinic's zone, not the server's: this runs in UTC in production, and a
-  // confirmation stating the wrong hour is worse than none.
-  const timeZone = appointment.doctorId
-    ? await resolveDoctorTimeZone(appointment.doctorId)
-    : "UTC";
+  // confirmation stating the wrong hour is worse than none. Keyed on the
+  // country the appointment is IN — a doctor rostered abroad would otherwise
+  // have their away bookings announced on their home clock.
+  const timeZone = await resolveCountryTimeZone(appointment.countryCode);
   const when = formatWhen(appointment.scheduledAt, timeZone);
 
   const firstName = appointment.fullName.trim().split(/\s+/)[0] || appointment.fullName;
@@ -211,9 +211,7 @@ export async function notifyCorporateBookingCancelled(
   }
 
   const doctorContact = await resolveDoctorContact(appointment.doctorId);
-  const timeZone = appointment.doctorId
-    ? await resolveDoctorTimeZone(appointment.doctorId)
-    : "UTC";
+  const timeZone = await resolveCountryTimeZone(appointment.countryCode);
   const when = formatWhen(appointment.scheduledAt, timeZone);
   const firstName = appointment.fullName.trim().split(/\s+/)[0] || appointment.fullName;
   const rebookPath = corporateBookPath(appointment.corporateServiceId);

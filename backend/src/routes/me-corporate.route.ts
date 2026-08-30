@@ -29,7 +29,7 @@ import {
   listCorporateServiceSlots,
   listCorporateServicesForPlan,
 } from "../modules/corporate/corporate-booking.service.js";
-import { resolveDoctorTimeZone } from "../modules/doctor-availability/doctor-availability.service.js";
+import { resolveCountryTimeZone } from "../modules/countries/country-timezone.service.js";
 import { notifyCorporateBookingCreated } from "../modules/corporate/corporate-booking-notifications.js";
 import {
   REQUEST_TYPE_LABEL,
@@ -495,10 +495,13 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
     const service = services.find((s) => s.id === id);
     if (!service) return reply.status(404).send(errorResponse("Consultation not found"));
     const slots = service.doctor ? await listCorporateServiceSlots(id) : [];
-    // The clinic zone the slot grid was generated in. Without it the portal's
-    // slot labels render in whatever timezone the renderer happens to run in
-    // (UTC on the server), which is not the hour anyone shows up at.
-    const timeZone = service.doctor ? await resolveDoctorTimeZone(service.doctor.id) : null;
+    // The zone of the country this corporate plan runs in — the hour the
+    // member actually shows up at. Without it the portal's slot labels render
+    // in whatever timezone the renderer happens to run in (UTC on the server);
+    // keyed on the doctor it would follow them abroad instead.
+    const timeZone = service.doctor
+      ? await resolveCountryTimeZone(company.countryCode)
+      : null;
     return okResponse({ service, slots, timeZone, companyLive: companyIsLive(company) });
   });
 

@@ -34,7 +34,6 @@ import {
   BookingClaimUnavailableError,
   holdConsecutiveSlotsForBooking,
   releaseSlotsToBaseGrid,
-  resolveDoctorTimeZone,
   SlotAlreadyTakenError,
 } from "../doctor-availability/doctor-availability.service.js";
 import { completeOrderPaymentFromCheckoutSession } from "../orders/complete-order-payment.service.js";
@@ -755,13 +754,15 @@ export async function createManualBooking(
   // price when the service has no enabled peak config.
   const peakConfig = amountOverride == null ? await getServicePeakConfig(service.id) : null;
   if (peakConfig?.enabled) {
-    const tz = await resolveDoctorTimeZone(input.doctorId);
     const priced = computeSlotPrice({
       config: peakConfig,
       basePriceCents: amountCents,
       fallbackCurrency: service.currencyCode ?? "EUR",
       slotStartUtc: scheduledAt,
-      clinicTimezone: tz,
+      // The country the appointment is happening in — the same zone the
+      // public picker prices against. A doctor rostered into a second
+      // country would otherwise price their away bookings on home hours.
+      clinicTimezone: clinicTimeZone,
     });
     amountCents = priced.unitPriceCents;
   }

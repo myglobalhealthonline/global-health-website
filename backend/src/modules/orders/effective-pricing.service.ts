@@ -1,5 +1,5 @@
 import { prisma } from "../../db/prisma.js";
-import { resolveDoctorTimeZone } from "../doctor-availability/doctor-availability.service.js";
+import { resolveCountryTimeZoneById } from "../countries/country-timezone.service.js";
 import {
   computeSlotPrice,
   getServicePeakConfig,
@@ -65,7 +65,7 @@ export async function computeEffectivePrices(
         getServicePeakConfig(i.serviceId),
       ]);
       if (!svc || svc.basePriceCents == null || !slot) return;
-      const tz = await resolveDoctorTimeZone(i.doctorId);
+      const tz = await resolveCountryTimeZoneById(svc.countryId);
       const priced = computeSlotPrice({
         config,
         basePriceCents: svc.basePriceCents,

@@ -18,7 +18,7 @@ import { sendBookingConfirmationEmail } from "../lib/email/templates.js";
 import { isStripeConfigured } from "../lib/stripe/client.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import { computeSlotPrice, getServicePeakConfig } from "../modules/pricing/peak-pricing.service.js";
-import { resolveDoctorTimeZone } from "../modules/doctor-availability/doctor-availability.service.js";
+import { resolveCountryTimeZone } from "../modules/countries/country-timezone.service.js";
 import { promoteAppointmentConsents } from "../modules/consents/promote-appointment-consents.js";
 
 const appointmentsRoute: FastifyPluginAsync = async (app) => {
@@ -221,7 +221,7 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
                 ) {
                   const peakConfig = await getServicePeakConfig(service.id);
                   if (peakConfig?.enabled) {
-                    const tz = await resolveDoctorTimeZone(bookedSlot.doctorId);
+                    const tz = await resolveCountryTimeZone(parsed.data.country);
                     const priced = computeSlotPrice({
                       config: peakConfig,
                       basePriceCents: service.basePriceCents,

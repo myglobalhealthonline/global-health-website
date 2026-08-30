@@ -1,6 +1,6 @@
 import type { LocaleCode, ServiceKind } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
-import { resolveDoctorTimeZone } from "../doctor-availability/doctor-availability.service.js";
+import { resolveCountryTimeZoneById } from "../countries/country-timezone.service.js";
 import { computeSlotPrice, getServicePeakConfig } from "../pricing/peak-pricing.service.js";
 import {
   isDoctorInInsuranceNetwork,
@@ -116,7 +116,14 @@ function translatedName(
 
 /** The peak-adjusted price for a slot, or the base price when there is none. */
 async function resolveFullPrice(args: {
-  service: { id: string; basePriceCents: number; currencyCode: string | null };
+  service: {
+    id: string;
+    basePriceCents: number;
+    currencyCode: string | null;
+    /** Peak windows are read on the clock of the country the service is sold
+     *  in, not the doctor's own country. */
+    countryId: string;
+  };
   fallbackCurrency: string;
   doctorId?: string | null;
   timeSlotId?: string | null;
@@ -145,7 +152,7 @@ async function resolveFullPrice(args: {
     basePriceCents: args.service.basePriceCents,
     fallbackCurrency: base.currencyCode,
     slotStartUtc: slot.startAt,
-    clinicTimezone: await resolveDoctorTimeZone(args.doctorId),
+    clinicTimezone: await resolveCountryTimeZoneById(args.service.countryId),
   });
   return {
     fullPriceCents: priced.unitPriceCents,
@@ -264,6 +271,7 @@ export async function listBenefitOptions(args: {
       id: service.id,
       basePriceCents: service.basePriceCents,
       currencyCode: service.currencyCode,
+      countryId: service.countryId,
     },
     fallbackCurrency: service.country.currency.code,
     doctorId: args.doctorId,

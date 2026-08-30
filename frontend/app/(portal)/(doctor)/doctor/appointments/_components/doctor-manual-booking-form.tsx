@@ -239,11 +239,14 @@ export function DoctorManualBookingForm({
 
   // Group by clinic-local day so the doctor reads their own working hours,
   // not the browser's timezone.
-  // Until the availability response lands `clinicTimezone` is undefined, and
-  // the formatters' historical fallback is Europe/Dublin — which showed every
-  // country's slots in Irish time. Fall back to the selected service's own
-  // country zone instead.
-  const tz = clinicTimezone ?? bookingTimezoneForCountry(selectedService?.countryCode);
+  // The country the appointment is happening in decides the clock — NOT the
+  // doctor. `/api/doctor/availability/range` answers with the doctor's own
+  // calendar zone (right for their calendar, wrong here): a doctor rostered
+  // into a second country would book that country's patients on home hours.
+  // Falls back to the calendar zone only while no service is picked yet.
+  const tz = selectedService
+    ? bookingTimezoneForCountry(selectedService.countryCode)
+    : clinicTimezone;
   const byDay = useMemo(() => {
     const map = new Map<string, DoctorTimeSlotView[]>();
     for (const s of slots) {

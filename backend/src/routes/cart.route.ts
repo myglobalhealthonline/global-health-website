@@ -15,7 +15,6 @@ import { resolveTranslation } from "../modules/shared/resolve-translation.js";
 import {
   holdConsecutiveSlots,
   releaseSlotsToBaseGrid,
-  resolveDoctorTimeZone,
   SlotAlreadyTakenError,
 } from "../modules/doctor-availability/doctor-availability.service.js";
 import {
@@ -31,6 +30,7 @@ import { isLineSellableInCommissionMarket } from "../modules/orders/commission.s
 import { encryptPhi } from "../lib/crypto/phi-crypto.js";
 import { slotOverlapsPause } from "../modules/bookability/bookability-policy.js";
 import { identityDocumentError } from "../validations/booking.schema.js";
+import { resolveCountryTimeZone } from "../modules/countries/country-timezone.service.js";
 
 /**
  * Shopping cart for orderable items.
@@ -1011,7 +1011,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
             // between the slot picker, the cart, and the checkout summary.
             const peakConfig = await getServicePeakConfig(svc.id);
             if (peakConfig?.enabled) {
-              const tz = await resolveDoctorTimeZone(doctorId);
+              const tz = await resolveCountryTimeZone(svc.country.code);
               const priced = computeSlotPrice({
                 config: peakConfig,
                 basePriceCents: svc.basePriceCents,

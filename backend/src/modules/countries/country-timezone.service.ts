@@ -34,3 +34,24 @@ export async function resolveCountryTimeZone(
     return "UTC";
   }
 }
+
+/**
+ * Same answer as `resolveCountryTimeZone`, for callers that already hold a
+ * `countryId` (a Service row, say) and would otherwise round-trip through the
+ * country code to ask.
+ */
+export async function resolveCountryTimeZoneById(
+  countryId: string | null | undefined,
+): Promise<string> {
+  if (!countryId) return "UTC";
+  try {
+    const setting = await prisma.bookingSetting.findUnique({
+      where: { countryId },
+      select: { timezone: true },
+    });
+    const tz = setting?.timezone;
+    return tz && isValidTimeZone(tz) ? tz : "UTC";
+  } catch {
+    return "UTC";
+  }
+}
