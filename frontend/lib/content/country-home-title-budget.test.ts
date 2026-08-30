@@ -69,6 +69,14 @@ describe("country home titleTemplate stays within the search-title budget for ev
   }
 });
 
+describe("Ireland authored home titles stay within the crawler title budget", () => {
+  it.each(["en", "cs", "de", "es", "pt", "ro"])("IE:%s stays at 70 characters or fewer", (locale) => {
+    const title = EXTRAS[`IE:${locale}`]?.seoTitle;
+    expect(title, `IE:${locale} is missing its authored SEO title`).toBeTruthy();
+    expect(len(title ?? "")).toBeLessThanOrEqual(70);
+  });
+});
+
 describe("country-home-copy EXTRAS — Czechia now has the same coverage as its siblings", () => {
   const LOCALES = ["en", "pt", "es", "cs", "ro", "de"];
   const SIBLINGS = ["es", "ro", "br"]; // the markets Czechia's fix was modelled on

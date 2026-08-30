@@ -116,12 +116,12 @@ export function organizationJsonLd(
       { "@type": "Country", name: "Brazil" },
     ],
     medicalSpecialty: [
-      "General Practice",
-      "Cardiology",
-      "Neurology",
-      "Pediatrics",
-      "Dermatology",
-      "Psychiatry",
+      "https://schema.org/PrimaryCare",
+      "https://schema.org/Cardiovascular",
+      "https://schema.org/Neurologic",
+      "https://schema.org/Pediatric",
+      "https://schema.org/Dermatology",
+      "https://schema.org/Psychiatric",
     ],
     contactPoint: {
       "@type": "ContactPoint",
@@ -272,17 +272,16 @@ export function physicianJsonLd(doc: {
   /** Doctor bio (may contain HTML) — becomes the Physician `description`. */
   bio?: string | null;
   /** Roster member who is not a registered physician (manual therapist,
-   *  rehabilitation consultant). Emits a plain `Person` instead of
-   *  `Physician` and drops `medicalSpecialty`: asserting a medical type for
-   *  a non-medical practitioner is a false credential claim, and this
-   *  function already refuses to emit unverified `hasCredential` entries. */
+   *  rehabilitation consultant). Suppresses the default Physician job title. */
   nonPhysician?: boolean;
 }) {
   const hasCredential = buildHasCredential(doc);
   const description = doc.bio ? truncateForSchema(toDoctorBioPlainText(doc.bio), 300) : undefined;
   return {
     "@context": "https://schema.org",
-    "@type": doc.nonPhysician ? "Person" : "Physician",
+    // Schema.org Physician is an organization/local-business type, not a
+    // person. Individual clinicians are Person nodes with verified credentials.
+    "@type": "Person",
     name: doc.name,
     jobTitle: doc.title ?? (doc.nonPhysician ? undefined : "Physician"),
     url: doc.url.startsWith("http") ? doc.url : `${SITE_URL}${doc.url}`,
@@ -296,14 +295,9 @@ export function physicianJsonLd(doc: {
         }
       : undefined,
     knowsLanguage: doc.languages,
-    areaServed: doc.countryName,
-    // Structured MedicalSpecialty node rather than a bare free-text string —
-    // `doc.specialty` is a display label (often localized, e.g. "Cardiología"
-    // for the ES locale), so it's wrapped as the node's `name` instead of
-    // being asserted as a canonical schema.org enum token we can't verify.
-    ...(doc.specialty && !doc.nonPhysician
-      ? { medicalSpecialty: { "@type": "MedicalSpecialty", name: doc.specialty } }
-      : {}),
+    // Display labels such as "Cardiología" are not verified members of the
+    // MedicalSpecialty enumeration, so keep them in a text-capable property.
+    ...(doc.specialty ? { knowsAbout: doc.specialty } : {}),
     worksFor: {
       "@type": "MedicalOrganization",
       "@id": ORGANIZATION_ID,
@@ -389,7 +383,12 @@ export function countryMedicalOrganizationJsonLd(country: {
     name: `${SITE_NAME} · ${country.name}`,
     url: country.url.startsWith("http") ? country.url : `${SITE_URL}${country.url}`,
     parentOrganization: { "@type": "MedicalOrganization", "@id": ORGANIZATION_ID },
-    medicalSpecialty: ["GeneralPractice", "Cardiology", "Dermatology", "Psychiatry"],
+    medicalSpecialty: [
+      "https://schema.org/PrimaryCare",
+      "https://schema.org/Cardiovascular",
+      "https://schema.org/Dermatology",
+      "https://schema.org/Psychiatric",
+    ],
     areaServed: { "@type": "Country", name: country.name },
     ...(country.identifier
       ? {
@@ -459,6 +458,7 @@ export function articleJsonLd(input: {
    *  only have a category label here, never a coded clinical entity. */
   about?: string | null;
 }) {
+  const url = input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`;
   const author = input.authorName === BLOG_AUTHOR_NAME
     ? { "@type": "Organization", name: BLOG_AUTHOR_NAME, url: SITE_URL }
     : input.authorPhysician
@@ -471,7 +471,16 @@ export function articleJsonLd(input: {
     "@type": "Article",
     headline: input.title,
     ...(input.description ? { description: input.description } : {}),
-    url: input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`,
+    url,
+    mainEntityOfPage: {
+      "@type": "MedicalWebPage",
+      "@id": `${url}#webpage`,
+      url,
+      ...(input.reviewerPhysician
+        ? { reviewedBy: physicianJsonLd(input.reviewerPhysician) }
+        : {}),
+      ...(input.dateModified ? { lastReviewed: input.dateModified.slice(0, 10) } : {}),
+    },
     // ImageObject with explicit width/height (Google's Article guidance wants
     // declared dimensions, ≥1200px wide) — reuses the site's existing OG-image
     // pipeline, which always renders at a fixed OG_IMAGE_WIDTH x OG_IMAGE_HEIGHT,
@@ -490,13 +499,6 @@ export function articleJsonLd(input: {
     ...(input.datePublished ? { datePublished: input.datePublished } : {}),
     ...(input.dateModified ? { dateModified: input.dateModified } : {}),
     author,
-    ...(input.reviewerPhysician
-      ? { reviewedBy: physicianJsonLd(input.reviewerPhysician) }
-      : {}),
-    // `lastReviewed` is WebPage/MedicalWebPage vocabulary (same precedent as
-    // putting `reviewedBy` on this Article node). Sourced from the exact
-    // same field as `dateModified` so the two can never drift apart.
-    ...(input.dateModified ? { lastReviewed: input.dateModified } : {}),
     publisher: {
       "@type": "MedicalOrganization",
       "@id": ORGANIZATION_ID,
@@ -599,10 +601,8 @@ export function catalogueItemListJsonLd(items: Array<{ name: string; url: string
 /**
  * A free calculator / screening tool page (`/{country}/{lang}/tools/...`).
  *
- * WebApplication rather than MedicalWebPage: the page's primary entity is the
- * interactive tool, and `isAccessibleForFree` + a zero-price offer is what
- * makes the "free tool" claim machine-readable. The explanatory copy around
- * it is covered by the FAQPage block the same page emits.
+ * A MedicalWebPage keeps the free-tool claim machine-readable without
+ * asserting SoftwareApplication review data the site does not have.
  */
 export function healthToolJsonLd(input: {
   name: string;
@@ -611,15 +611,12 @@ export function healthToolJsonLd(input: {
 }) {
   return {
     "@context": "https://schema.org",
-    "@type": "WebApplication",
+    "@type": "MedicalWebPage",
     name: input.name,
     description: truncateForSchema(input.description, 300),
     url: input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`,
-    applicationCategory: "HealthApplication",
-    operatingSystem: "Any",
-    browserRequirements: "Requires JavaScript",
     isAccessibleForFree: true,
-    offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+    audience: "https://schema.org/Patient",
     publisher: { "@id": ORGANIZATION_ID },
   };
 }
@@ -635,8 +632,9 @@ export function medicalSpecialtyForService(kind: string, slug: string): string {
     [/psychiatr/, "Psychiatric"],
     [/psycholog|mental/, "Psychiatric"],
     [/paediatr|pediatr/, "Pediatric"],
-    [/nutrition|diet/, "Nutrition"],
-    [/physio|musculoskeletal|pain|orthop/, "PhysicalMedicine"],
+    [/nutrition|diet/, "DietNutrition"],
+    [/physio/, "Physiotherapy"],
+    [/musculoskeletal|pain|orthop/, "Musculoskeletal"],
     [/gastro/, "Gastroenterologic"],
     [/endocrin|diabet|weight|thyroid/, "Endocrine"],
     [/pneumo|respiratory|pulmon/, "Pulmonary"],
@@ -649,61 +647,43 @@ export function medicalSpecialtyForService(kind: string, slug: string): string {
   return "PrimaryCare";
 }
 
-/**
- * Schema.org `MedicalOrganization` for a service page (the same country
- * entity as `countryMedicalOrganizationJsonLd`, merged by `@id`), carrying
- * the page's `medicalSpecialty` and the bookable consultation as
- * `availableService` (a MedicalProcedure with a ReserveAction).
- */
+/** Schema.org `MedicalWebPage` for a clinically reviewed service page. */
 export function medicalClinicServiceJsonLd(input: {
   serviceName: string;
   description: string;
   specialty: string;
-  countryName: string;
-  /** URL slug, e.g. "ireland" — feeds the country-scoped `@id`, same anchor
-   *  `countryMedicalOrganizationJsonLd` uses for the country home page. */
-  countrySlug: string;
   url: string;
   bookingUrl: string | null;
-  /** Named clinical reviewer (Physician schema) for this service page's
-   *  content, surfaced as `employee` — `reviewedBy` is not a valid property
-   *  on MedicalOrganization/MedicalClinic (Google silently ignores it), so
-   *  this is the structurally correct way to attach the named physician.
-   *  Omitted entirely when the country has no named reviewer. */
+  /** Country-level clinical reviewer used when the service has no reviewer. */
   reviewerPhysician?: ReturnType<typeof physicianJsonLd> | null;
-  /** ISO timestamp of the admin-set clinical review date. Same field feeds
-   *  both `dateModified` and `lastReviewed` (WebPage/MedicalWebPage
-   *  vocabulary, same precedent as the blog Article schema) — omitted
-   *  entirely when the service has no review date set. */
+  /** ISO timestamp of the admin-set clinical review date. */
   dateModified?: string | null;
-  /** SEO audit 3.3 — named author / clinical reviewer for THIS service's
-   *  content (Service.authorDoctorId / reviewerDoctorId), distinct from
-   *  `reviewerPhysician` above (the country's general "Clinical Director"
-   *  fallback, surfaced as `employee`). Attached directly as `author` /
-   *  `reviewedBy` on this node — the same non-strict-but-widely-adopted
-   *  E-E-A-T convention `articleJsonLd` already uses for blog posts (not a
-   *  Google rich-result requirement, but valuable for AI-search citation).
-   *  Omitted entirely when the service has no doctor linked. */
+  /** Service-specific author and clinical reviewer. */
   authorPhysician?: ReturnType<typeof physicianJsonLd> | null;
   reviewedByPhysician?: ReturnType<typeof physicianJsonLd> | null;
 }) {
+  const reviewer = input.reviewedByPhysician ?? input.reviewerPhysician;
+  const specialty = input.specialty.startsWith("http")
+    ? input.specialty
+    : `https://schema.org/${input.specialty}`;
   return {
     "@context": "https://schema.org",
-    "@type": "MedicalOrganization",
-    "@id": countryOrganizationId(input.countrySlug),
-    name: `${SITE_NAME} · ${input.countryName}`,
+    "@type": "MedicalWebPage",
+    name: input.serviceName,
+    description: input.description,
     url: input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`,
-    parentOrganization: { "@type": "MedicalOrganization", "@id": ORGANIZATION_ID },
-    medicalSpecialty: input.specialty,
-    areaServed: { "@type": "Country", name: input.countryName },
-    ...(input.reviewerPhysician ? { employee: input.reviewerPhysician } : {}),
+    specialty,
+    audience: "https://schema.org/Patient",
     ...(input.authorPhysician ? { author: input.authorPhysician } : {}),
-    ...(input.reviewedByPhysician ? { reviewedBy: input.reviewedByPhysician } : {}),
-    ...(input.dateModified ? { dateModified: input.dateModified, lastReviewed: input.dateModified } : {}),
-    availableService: {
+    ...(reviewer ? { reviewedBy: reviewer } : {}),
+    ...(input.dateModified
+      ? { dateModified: input.dateModified, lastReviewed: input.dateModified.slice(0, 10) }
+      : {}),
+    mainEntity: {
       "@type": "MedicalProcedure",
       name: input.serviceName,
       ...(input.description ? { description: input.description } : {}),
+      relevantSpecialty: specialty,
       howPerformed: "Secure video consultation with a registered clinician.",
       ...(input.bookingUrl
         ? {

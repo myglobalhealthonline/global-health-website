@@ -4,9 +4,13 @@ import {
   articleJsonLd,
   breadcrumbJsonLd,
   consultationServiceOffersJsonLd,
+  countryMedicalOrganizationJsonLd,
+  healthToolJsonLd,
   medicalClinicServiceJsonLd,
   medicalProcedureJsonLd,
+  medicalSpecialtyForService,
   organizationJsonLd,
+  physicianJsonLd,
 } from "./structured-data";
 
 const FRESH = new Date().toISOString();
@@ -57,6 +61,39 @@ describe("aggregateRatingJsonLd", () => {
 });
 
 describe("organizationJsonLd + aggregateRating wiring", () => {
+  it("uses canonical MedicalSpecialty enumeration URLs", () => {
+    const global = organizationJsonLd();
+    const country = countryMedicalOrganizationJsonLd({
+      name: "Ireland",
+      slug: "ireland",
+      url: "/ireland/en",
+    });
+
+    expect(global.medicalSpecialty).toEqual([
+      "https://schema.org/PrimaryCare",
+      "https://schema.org/Cardiovascular",
+      "https://schema.org/Neurologic",
+      "https://schema.org/Pediatric",
+      "https://schema.org/Dermatology",
+      "https://schema.org/Psychiatric",
+    ]);
+    expect(country.medicalSpecialty).toEqual([
+      "https://schema.org/PrimaryCare",
+      "https://schema.org/Cardiovascular",
+      "https://schema.org/Dermatology",
+      "https://schema.org/Psychiatric",
+    ]);
+  });
+
+  it.each([
+    ["nutrition-consultation", "DietNutrition"],
+    ["online-physio", "Physiotherapy"],
+    ["orthopaedic-pain", "Musculoskeletal"],
+    ["acute-medical-consultation", "PrimaryCare"],
+  ])("maps %s to a valid MedicalSpecialty member", (slug, expected) => {
+    expect(medicalSpecialtyForService("consultation", slug)).toBe(expected);
+  });
+
   it("omits aggregateRating entirely when the guard returns undefined (production's empty state)", () => {
     const org = organizationJsonLd([], aggregateRatingJsonLd(null));
     expect(org).not.toHaveProperty("aggregateRating");
@@ -75,6 +112,7 @@ describe("articleJsonLd blog author attribution", () => {
     const article = articleJsonLd({
       title: "When to seek medical help",
       url: "/ireland/en/blog/when-to-seek-medical-help",
+      dateModified: "2026-08-30T12:34:56.000Z",
       authorName: "Global Health Medical Team",
       authorPhysician: {
         name: "Dr Legacy Author",
@@ -94,13 +132,20 @@ describe("articleJsonLd blog author attribution", () => {
       "@type": "Organization",
       name: "Global Health Medical Team",
     });
-    expect(article.reviewedBy).toMatchObject({
-      "@type": "Physician",
-      name: "Dr Clinical Reviewer",
-      identifier: {
-        "@type": "PropertyValue",
-        propertyID: "Medical Council",
-        value: "67890",
+    expect(article).not.toHaveProperty("reviewedBy");
+    expect(article).not.toHaveProperty("lastReviewed");
+    expect(article.dateModified).toBe("2026-08-30T12:34:56.000Z");
+    expect(article.mainEntityOfPage).toMatchObject({
+      "@type": "MedicalWebPage",
+      lastReviewed: "2026-08-30",
+      reviewedBy: {
+        "@type": "Person",
+        name: "Dr Clinical Reviewer",
+        identifier: {
+          "@type": "PropertyValue",
+          propertyID: "Medical Council",
+          value: "67890",
+        },
       },
     });
   });
@@ -150,18 +195,25 @@ describe("booking availability schema parity", () => {
     });
   });
 
-  it("keeps the clinic service node but omits its ReserveAction when booking is unavailable", () => {
+  it("keeps the service page entity but omits its ReserveAction when booking is unavailable", () => {
     const result = medicalClinicServiceJsonLd({
       serviceName: "Cardiology consultation",
       description: "Remote cardiology consultation.",
       specialty: "Cardiovascular",
-      countryName: "Ireland",
-      countrySlug: "ireland",
       url: "/ireland/en/services/cardiology",
       bookingUrl: null,
+      dateModified: "2026-08-30T12:34:56.000Z",
     });
 
-    expect(result.availableService).not.toHaveProperty("potentialAction");
+    expect(result).toMatchObject({
+      "@type": "MedicalWebPage",
+      specialty: "https://schema.org/Cardiovascular",
+      mainEntity: { "@type": "MedicalProcedure" },
+    });
+    expect(result.mainEntity).not.toHaveProperty("potentialAction");
+    expect(result).not.toHaveProperty("availableService");
+    expect(result.dateModified).toBe("2026-08-30T12:34:56.000Z");
+    expect(result.lastReviewed).toBe("2026-08-30");
   });
 
   it("emits InStock offers only for services whose visible Book action is enabled", () => {
@@ -195,5 +247,37 @@ describe("booking availability schema parity", () => {
       availability: "https://schema.org/InStock",
     });
     expect(JSON.stringify(result)).not.toContain("Paused GP");
+  });
+});
+
+describe("physicianJsonLd specialty typing", () => {
+  it("models an individual clinician as a Person without an unverified specialty enum", () => {
+    const physician = physicianJsonLd({
+      name: "Dr Example",
+      url: "/ireland/en/doctors/dr-example",
+      specialty: "Cardiología",
+      countryName: "Ireland",
+    });
+
+    expect(physician["@type"]).toBe("Person");
+    expect(physician).not.toHaveProperty("medicalSpecialty");
+    expect(physician).not.toHaveProperty("areaServed");
+    expect(physician.knowsAbout).toBe("Cardiología");
+  });
+});
+
+describe("healthToolJsonLd", () => {
+  it("describes a free health tool as a page without inventing app reviews", () => {
+    const tool = healthToolJsonLd({
+      name: "BMI calculator",
+      description: "Calculate body mass index.",
+      url: "/portugal/cs/tools/bmi-calculator",
+    });
+
+    expect(tool["@type"]).toBe("MedicalWebPage");
+    expect(tool.isAccessibleForFree).toBe(true);
+    expect(tool).not.toHaveProperty("aggregateRating");
+    expect(tool).not.toHaveProperty("review");
+    expect(tool).not.toHaveProperty("offers");
   });
 });

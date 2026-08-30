@@ -70,8 +70,7 @@ export const EXTRAS: Record<string, HomePageExtras> = {
     heroPriceBadge: "GP consultations from €39",
   },
   "IE:es": {
-    seoTitle:
-      "Médico Online Irlanda | Médicos de Cabecera y Especialistas Colegiados en el IMC | Mismo Día",
+    seoTitle: "Médico Online Irlanda | Médicos colegiados en el IMC | Mismo día",
     seoDescription:
       "Consulte hoy con un médico colegiado en el IMC por videollamada para consultas de médico de cabecera, certificados médicos y derivaciones a especialistas. Citas el mismo día en toda Irlanda desde 39 €.",
     ogTitle: "Médico Online Irlanda | Consulte hoy | Global Health",
@@ -89,8 +88,7 @@ export const EXTRAS: Record<string, HomePageExtras> = {
     heroPriceBadge: "Consultas de médico de cabecera desde 39 €",
   },
   "IE:pt": {
-    seoTitle:
-      "Médico Online Irlanda | Clínicos Gerais e Especialistas Registados no IMC | Mesmo Dia",
+    seoTitle: "Médico Online Irlanda | Médicos registados no IMC | Mesmo dia",
     seoDescription:
       "Consulte hoje um médico registado no IMC por videochamada para consultas de clínica geral, atestados médicos e referenciações para especialistas. Consultas no mesmo dia em toda a Irlanda a partir de 39 €.",
     ogTitle: "Médico Online Irlanda | Consulte hoje | Global Health",
@@ -108,8 +106,7 @@ export const EXTRAS: Record<string, HomePageExtras> = {
     heroPriceBadge: "Consultas de clínica geral a partir de 39 €",
   },
   "IE:cs": {
-    seoTitle:
-      "Online lékař Irsko | Praktičtí lékaři a specialisté registrovaní u IMC | Tentýž den",
+    seoTitle: "Online lékař Irsko | Lékaři registrovaní u IMC | Tentýž den",
     seoDescription:
       "Promluvte si dnes s lékařem registrovaným u IMC prostřednictvím videohovoru pro konzultace s praktickým lékařem, pracovní neschopnost a odeslání ke specialistovi. Termíny tentýž den kdekoli v Irsku od 39 €.",
     ogTitle: "Online lékař Irsko | Konzultace ještě dnes | Global Health",
@@ -127,8 +124,7 @@ export const EXTRAS: Record<string, HomePageExtras> = {
     heroPriceBadge: "Konzultace s praktickým lékařem od 39 €",
   },
   "IE:ro": {
-    seoTitle:
-      "Medic Online Irlanda | Medici de Familie și Specialiști Înregistrați la IMC | În Aceeași Zi",
+    seoTitle: "Medic Online Irlanda | Medici înregistrați la IMC | În aceeași zi",
     seoDescription:
       "Vorbiți azi cu un medic înregistrat la IMC prin apel video pentru consultații de medicină de familie, concedii medicale și trimiteri către specialiști. Programări în aceeași zi oriunde în Irlanda de la 39 €.",
     ogTitle: "Medic Online Irlanda | Consultație azi | Global Health",
@@ -146,8 +142,7 @@ export const EXTRAS: Record<string, HomePageExtras> = {
     heroPriceBadge: "Consultații de medicină de familie de la 39 €",
   },
   "IE:de": {
-    seoTitle:
-      "Online-Arzt Irland | Bei IMC registrierte Hausärzte & Fachärzte | Am selben Tag",
+    seoTitle: "Online-Arzt Irland | IMC-registrierte Ärzte | Am selben Tag",
     seoDescription:
       "Sprechen Sie noch heute per Videoanruf mit einem bei IMC registrierten Arzt für Hausarzttermine, Krankschreibungen und Facharztüberweisungen. Termine am selben Tag in ganz Irland ab 39 €.",
     ogTitle: "Online-Arzt Irland | Noch heute einen Arzt sprechen | Global Health",

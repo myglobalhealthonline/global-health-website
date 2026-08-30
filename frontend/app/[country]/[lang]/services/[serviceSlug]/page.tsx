@@ -492,8 +492,6 @@ export default async function ServiceDetailPage({
           description:
             stripHtml(detail.heroDescription) ?? stripHtml(detail.summary) ?? detail.name,
           specialty: medicalSpecialtyForService(detail.kind, detail.slug),
-          countryName: config.name,
-          countrySlug: country,
           url: `/${country}/${lang}/services/${serviceSlug}`,
           bookingUrl: detail.bookability.state === "BOOKABLE" ? bookHref : null,
           reviewerPhysician,
