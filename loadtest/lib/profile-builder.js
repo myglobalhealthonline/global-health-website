@@ -4,7 +4,7 @@
 // results are comparable across the execution ladder.
 
 export const THRESHOLDS = {
-  "http_req_duration{name:page:/ie/en}": ["p(95)<1500"],
+  "http_req_duration{name:page:/ireland/en}": ["p(95)<1500"],
   http_req_failed: ["rate<0.01"],
   checks: ["rate>0.95"],
 };

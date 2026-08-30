@@ -1075,12 +1075,22 @@ session does not re-chase them:
 
 ### 19.8 Not done / still open
 
-- **Phase 10 (controlled load) is blocked and must not be attempted as-is.**
-  The k6 harness hardcodes Railway hosts in `loadtest/config/targets.json` with
-  no env override, and `loadtest/config/cookies.json` is a TRACKED file holding
-  role session JWTs. Running it points load at production with real sessions.
-  It needs a non-production target and synthetic credentials first — that is
-  the standing P0, not a step of this plan.
+- **Phase 10 (controlled load): the harness is now safe to point somewhere, but
+  no run has been made.** The two blockers were fixed on 2026-08-30:
+  `loadtest/config/cookies.json` is untracked and gitignored (it had been
+  committed holding live PATIENT/DOCTOR/ADMIN/SUPERADMIN sessions, while
+  `helpers.js` described it as gitignored all along), and
+  `loadtest/config/targets.json` no longer defaults to the production Railway
+  pair — both base URLs are empty, read from `LOADTEST_FRONTEND_URL` /
+  `LOADTEST_BACKEND_URL`, and `helpers.js` refuses to start against a known
+  production host unless `LOADTEST_ALLOW_PRODUCTION=1`. `pagesToBrowse` and the
+  p95 threshold tag moved from the `/ie/en` code alias to the canonical
+  `/ireland/en`; the threshold had been keyed to a tag no run would emit once
+  the paths changed, and a threshold that matches nothing passes vacuously.
+  **Untracking the file does not revoke those sessions — they remain in git
+  history and must be invalidated separately** (token-version bump or auth
+  secret rotation). Running the ladder still needs a non-production target with
+  synthetic accounts.
 - Phase 6's per-consumer migration bookkeeping is moot under the no-flag
   decision: the adapter sits at the getter, so every consumer moved at once.
   What remains from §9.2 is the rendered page matrix against a deployed
