@@ -53,6 +53,7 @@ export type CommonLocale = {
     legal: string;
     information: string;
     careers: string;
+    press: string;
     contactUs: string;
     aboutUs: string;
     howItWorks: string;

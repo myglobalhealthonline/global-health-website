@@ -512,6 +512,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Country About pages: the market's languages, offering and registration.
     // Undated for the same reason — the copy is code-resident, not CMS.
     pushLocalized(country, "/about", 0.5);
+    // Careers + Press: company pages, code-resident copy, undated like /about.
+    pushLocalized(country, "/careers", 0.3);
+    pushLocalized(country, "/press", 0.3);
     // Country FAQ pages. Once a market has researched per-market copy, only the
     // locales that actually carry it are submitted — the others render a
     // fallback language and self-noindex (see lib/content/country-faq.ts), and

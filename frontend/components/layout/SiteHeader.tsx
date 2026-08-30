@@ -140,8 +140,16 @@ function sectionNavForCountryLang(
   }
   items.push({ href: `${base}/blog`, label: nav.navBlog });
   // In-country: the market's own About, FAQ and contact pages (local NAP,
-  // register, languages, offering, regulatory FAQs).
-  items.push({ href: `${base}/about`, label: nav.navAbout });
+  // register, languages, offering, regulatory FAQs). About is a dropdown so
+  // the company pages (Careers, Press) ride along without new top-level pills.
+  items.push({
+    label: nav.navAbout,
+    children: [
+      { href: `${base}/about`, label: nav.navAbout },
+      { href: `${base}/careers`, label: nav.footerCareers },
+      { href: `${base}/press`, label: nav.footerPress },
+    ],
+  });
   // FAQ is deliberately NOT here (Hassaan, 2026-08-15) — it lives in the
   // footer only, which still puts it on every page of the market.
   items.push({ href: `${base}/contact`, label: nav.navContact });
@@ -159,7 +167,14 @@ function sectionNavForCountryLang(
 function sectionNavGlobal(nav: SiteNavigationData): SectionNavItem[] {
   return [
     { href: "/", label: nav.navHome, exact: true },
-    { href: "/ireland/en/about", label: nav.navAbout },
+    {
+      label: nav.navAbout,
+      children: [
+        { href: "/ireland/en/about", label: nav.navAbout },
+        { href: "/ireland/en/careers", label: nav.footerCareers },
+        { href: "/ireland/en/press", label: nav.footerPress },
+      ],
+    },
     { href: "/ireland/en/blog", label: nav.navBlog },
     // FAQ is footer-only sitewide (Hassaan, 2026-08-15).
     { href: "/contact", label: nav.navContact },

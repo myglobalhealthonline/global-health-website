@@ -198,6 +198,10 @@ export function SiteFooter({
     { label: navigation.navBlog, href: `${careScope}/blog` },
     { label: navigation.navFaq, href: `${careScope}/faq` },
     { label: navigation.navAbout, href: `${careScope}/about` },
+    // Careers and Press exist only per market, same as About — careScope
+    // always names a live page (active country, or Ireland outside one).
+    { label: navigation.footerCareers, href: `${careScope}/careers` },
+    { label: navigation.footerPress, href: `${careScope}/press` },
     { label: navigation.footerContactUs, href: careBase ? `${careBase}/contact` : "/contact" },
     { label: navigation.footerPrivacyPolicy, href: "/privacy" },
     { label: navigation.footerTermsOfService, href: "/terms" },

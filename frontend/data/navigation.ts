@@ -60,6 +60,8 @@ export type SiteNavigationData = {
   footerForgotPassword: string;
   footerMyAccount: string;
   footerContactUs: string;
+  footerCareers: string;
+  footerPress: string;
   footerPrivacyPolicy: string;
   footerTermsOfService: string;
   footerTagline: string;
@@ -199,6 +201,8 @@ export function buildSiteNavigationData(
     footerForgotPassword: copy.footer.forgotPassword,
     footerMyAccount: copy.footer.myAccount,
     footerContactUs: copy.footer.contactUs,
+    footerCareers: copy.footer.careers,
+    footerPress: copy.footer.press,
     footerPrivacyPolicy: copy.footer.privacyPolicy,
     footerTermsOfService: copy.footer.termsOfService,
     footerTagline: copy.footer.tagline,

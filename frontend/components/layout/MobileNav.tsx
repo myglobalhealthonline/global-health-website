@@ -169,8 +169,11 @@ export function MobileNav({
           // all six locale bundles into the browser.
           ...toolLinks,
           { href: `/${navCountrySlug}/${navLang}/blog`, label: navigation.navBlog },
-          // Country-scoped, matching SiteHeader/SiteFooter.
+          // Country-scoped, matching SiteHeader/SiteFooter. The drawer lists
+          // sections flat, so the About dropdown's children sit inline here.
           { href: `/${navCountrySlug}/${navLang}/about`, label: navigation.navAbout },
+          { href: `/${navCountrySlug}/${navLang}/careers`, label: navigation.footerCareers },
+          { href: `/${navCountrySlug}/${navLang}/press`, label: navigation.footerPress },
           // No FAQ — footer only, matching SiteHeader.
           { href: `/${navCountrySlug}/${navLang}/contact`, label: navigation.navContact },
         ]
@@ -179,6 +182,8 @@ export function MobileNav({
           // Ireland-scoped: the bare /about, /blog and /faq were retired on
           // 2026-08-15 and 301 here. Mirrors SiteHeader's sectionNavGlobal.
           { href: "/ireland/en/about", label: navigation.navAbout },
+          { href: "/ireland/en/careers", label: navigation.footerCareers },
+          { href: "/ireland/en/press", label: navigation.footerPress },
           { href: "/ireland/en/blog", label: navigation.navBlog },
           // FAQ is footer-only sitewide, matching SiteHeader.
           { href: "/contact", label: navigation.navContact },
