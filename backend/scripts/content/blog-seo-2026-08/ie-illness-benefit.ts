@@ -57,7 +57,7 @@ const en: LocalePost = {
     h1: "Illness Benefit in Ireland",
     deck: "The social welfare payment for people who cannot work because of illness or injury — and the medical certificate that has to support the claim.",
     intro:
-      "Illness Benefit is a weekly payment from the <strong>Department of Social Protection (DSP)</strong> for people under pensionable age who cannot work because of illness or injury. It is a social insurance payment funded by PRSI, so it is not means-tested. Two things have to reach the Department: your claim, made on the <strong>IB1</strong> form or through MyWelfare, and a <strong>Certificate of Incapacity for Work</strong> from a doctor registered with the Irish Medical Council, which the doctor submits to the Department for you. Not every online service issues that certificate, so it is worth checking before you book. It is a separate payment from the statutory sick leave your employer pays.",
+      "Illness Benefit is a weekly payment from the <strong>Department of Social Protection (DSP)</strong> for people under pensionable age who cannot work because of illness or injury. It is a social insurance payment funded by PRSI, so it is not means-tested. Two things have to reach the Department: your claim, made on the <strong>IB1</strong> form or through MyWelfare, and a <strong>Certificate of Incapacity for Work</strong> from a doctor registered with the Irish Medical Council. The doctor can send the certificate electronically; if they do not, you must post the paper certificate to the Department yourself. Not every online service issues that certificate, so it is worth checking before you book. It is a separate payment from the statutory sick leave your employer pays.",
     facts: ["Paid by the Department of Social Protection", "Requires a Certificate of Incapacity for Work", "Separate from employer sick pay"],
     primaryCta: { label: "Book an online GP consultation", href: href("en", "/services/sick-certificate-ireland") },
     secondaryCta: { label: "Illness Benefit on gov.ie", href: GOV_IB },
@@ -108,7 +108,7 @@ const en: LocalePost = {
         blocks: [
           lead("This is the medical document the Department requires. It is not the same thing as the note you give your employer, although one consultation can produce both."),
           p("A Certificate of Incapacity for Work states that, in the opinion of the doctor who examined you, you are unfit for work, and it states the period that opinion covers. It has to come from a doctor who is <strong>registered with the Medical Council</strong> — you can check any doctor's registration yourself on the Council's public register."),
-          p("In practice the certificate does not travel with you. The doctor issues it and sends it to the Department — some practices file electronically, others by post, and either way it is not something you post yourself. Your job is to make sure the doctor has your <strong>PPS number</strong> and your correct personal details, because a mismatch between the certificate and your claim is what stalls payment."),
+          p("The route depends on the practice. A doctor can complete and send the certificate electronically. If they do not, the doctor gives you a paper certificate and <strong>you must post it</strong> to Social Welfare Services, PO Box 1650, D01 WY03. Ask which route was used, and make sure the doctor has your <strong>PPS number</strong> and correct personal details, because a mismatch between the certificate and your claim can stall payment."),
           ul([
             "The doctor decides the period the certificate covers, based on the clinical picture — not on what you ask for.",
             "If you remain unfit beyond that period, you need a further certificate; your doctor will tell you when.",
@@ -127,7 +127,7 @@ const en: LocalePost = {
           lead("There are two parallel tracks — yours and your doctor's — and the claim only moves when both have arrived."),
           ul([
             "<strong>See a doctor.</strong> The consultation establishes whether you are unfit for work and for how long. Bring your PPS number.",
-            "<strong>The doctor issues the Certificate of Incapacity for Work</strong> and submits it to the Department.",
+            "<strong>The doctor completes the Certificate of Incapacity for Work.</strong> They may send it electronically; otherwise, you must post the paper certificate to the Department.",
             "<strong>You submit the claim.</strong> That is the IB1 form, or the equivalent online application through MyWelfare using your verified MyGovID account.",
             "<strong>Give the Department your bank details</strong> in the format the claim asks for, so payment is not held while they are chased.",
             "<strong>Tell your employer separately.</strong> Notifying the Department is not notifying your employer, and the Department does not do it for you.",
@@ -201,7 +201,7 @@ const en: LocalePost = {
     faqs: [
       {
         q: "How do I get a medical certificate for Illness Benefit?",
-        a: "You need a consultation with a doctor registered with the Irish Medical Council. If the doctor finds you unfit for work, they issue a Certificate of Incapacity for Work and submit it to the Department of Social Protection. Not every online service issues this certificate, so check before booking. Bring your PPS number to the consultation, because the certificate has to match your claim.",
+        a: "You need a consultation with a doctor registered with the Irish Medical Council. If the doctor finds you unfit for work, they complete a Certificate of Incapacity for Work. The doctor may send it electronically; if they give you a paper certificate, you must post it to the Department of Social Protection. Not every online service issues this certificate, so check before booking. Bring your PPS number to the consultation, because the certificate has to match your claim.",
       },
       {
         q: "Is Illness Benefit the same as statutory sick pay in Ireland?",
@@ -249,7 +249,7 @@ const pt: LocalePost = {
     h1: "Illness Benefit na Irlanda",
     deck: "O apoio social para quem não consegue trabalhar por doença ou lesão — e o certificado médico que tem de sustentar o pedido.",
     intro:
-      "O Illness Benefit é um pagamento semanal do <strong>Department of Social Protection (DSP)</strong> destinado a quem tem menos do que a idade da reforma e não pode trabalhar por doença ou lesão. É um apoio de segurança social financiado pelas contribuições PRSI, pelo que não depende dos seus rendimentos ou património. Têm de chegar duas coisas ao Departamento: o seu pedido, feito no formulário <strong>IB1</strong> ou através do MyWelfare, e um <strong>Certificate of Incapacity for Work</strong> emitido por um médico inscrito no Irish Medical Council, que o próprio médico submete ao Departamento por si. Nem todos os serviços online emitem esse certificado, pelo que vale a pena confirmar antes de marcar. É um apoio distinto da baixa legal paga pela entidade patronal.",
+      "O Illness Benefit é um pagamento semanal do <strong>Department of Social Protection (DSP)</strong> destinado a quem tem menos do que a idade da reforma e não pode trabalhar por doença ou lesão. É um apoio de segurança social financiado pelas contribuições PRSI, pelo que não depende dos seus rendimentos ou património. Têm de chegar duas coisas ao Departamento: o seu pedido, feito no formulário <strong>IB1</strong> ou através do MyWelfare, e um <strong>Certificate of Incapacity for Work</strong> emitido por um médico inscrito no Irish Medical Council. O médico pode enviá-lo por via eletrónica; se não o fizer, tem de enviar o certificado em papel ao Departamento. Nem todos os serviços online emitem esse certificado, pelo que vale a pena confirmar antes de marcar. É um apoio distinto da baixa legal paga pela entidade patronal.",
     facts: ["Pago pelo Department of Social Protection", "Exige um Certificate of Incapacity for Work", "Distinto da baixa paga pela entidade patronal"],
     primaryCta: { label: "Marcar consulta médica online", href: href("pt", "/services/sick-certificate-ireland") },
     secondaryCta: { label: "Illness Benefit no gov.ie", href: GOV_IB },
@@ -300,7 +300,7 @@ const pt: LocalePost = {
         blocks: [
           lead("É este o documento médico exigido pelo Departamento. Não é o mesmo que a justificação entregue à entidade patronal, ainda que uma só consulta possa dar origem a ambos."),
           p("O Certificate of Incapacity for Work declara que, na opinião do médico que o observou, está incapaz para o trabalho, e indica o período abrangido por essa opinião. Tem de ser emitido por um médico <strong>inscrito no Medical Council</strong> — pode confirmar a inscrição de qualquer médico no registo público do Conselho."),
-          p("Na prática, o certificado não viaja consigo. O médico emite-o e envia-o ao Departamento — há consultórios que o fazem por via eletrónica e outros por correio; em caso algum é o doente que o envia. A sua parte é garantir que o médico tem o seu <strong>número PPS</strong> e os seus dados corretos, porque é a divergência entre o certificado e o pedido que trava o pagamento."),
+          p("O percurso depende do consultório. O médico pode preencher e enviar o certificado por via eletrónica. Se não o fizer, entrega-lhe um certificado em papel e <strong>é o requerente que tem de o enviar</strong> para Social Welfare Services, PO Box 1650, D01 WY03. Confirme qual foi a via usada e garanta que o médico tem o seu <strong>número PPS</strong> e os dados corretos, porque uma divergência entre o certificado e o pedido pode travar o pagamento."),
           ul([
             "É o médico que decide o período abrangido pelo certificado, com base no quadro clínico — não com base no que lhe for pedido.",
             "Se continuar incapaz para além desse período, precisa de novo certificado; o médico indicar-lhe-á quando.",
@@ -319,7 +319,7 @@ const pt: LocalePost = {
           lead("Existem duas vias paralelas — a sua e a do médico — e o processo só avança quando as duas chegam."),
           ul([
             "<strong>Consulte um médico.</strong> A consulta estabelece se está incapaz para o trabalho e por quanto tempo. Leve o número PPS.",
-            "<strong>O médico emite o Certificate of Incapacity for Work</strong> e submete-o ao Departamento.",
+            "<strong>O médico preenche o Certificate of Incapacity for Work.</strong> Pode enviá-lo eletronicamente; caso contrário, tem de enviar o certificado em papel ao Departamento.",
             "<strong>Você submete o pedido.</strong> É o formulário IB1, ou o pedido equivalente online no MyWelfare com a conta MyGovID verificada.",
             "<strong>Indique os dados bancários</strong> no formato pedido, para que o pagamento não fique retido enquanto são solicitados.",
             "<strong>Avise a entidade patronal em separado.</strong> Comunicar ao Departamento não é comunicar à entidade patronal, e o Departamento não o faz por si.",
@@ -393,7 +393,7 @@ const pt: LocalePost = {
     faqs: [
       {
         q: "Como obtenho o certificado médico para o Illness Benefit?",
-        a: "Precisa de uma consulta com um médico inscrito no Irish Medical Council. Se o médico concluir que está incapaz para o trabalho, emite um Certificate of Incapacity for Work e submete-o ao Department of Social Protection. Nem todos os serviços online emitem este certificado, por isso confirme antes de marcar. Leve o número PPS à consulta, porque o certificado tem de coincidir com o seu pedido.",
+        a: "Precisa de uma consulta com um médico inscrito no Irish Medical Council. Se o médico concluir que está incapaz para o trabalho, preenche um Certificate of Incapacity for Work. O médico pode enviá-lo eletronicamente; se lhe entregar um certificado em papel, tem de o enviar ao Department of Social Protection. Nem todos os serviços online emitem este certificado, por isso confirme antes de marcar. Leve o número PPS à consulta, porque o certificado tem de coincidir com o seu pedido.",
       },
       {
         q: "O Illness Benefit é o mesmo que a baixa paga pela entidade patronal?",
@@ -441,7 +441,7 @@ const es: LocalePost = {
     h1: "Illness Benefit en Irlanda",
     deck: "La prestación social para quien no puede trabajar por enfermedad o lesión — y el certificado médico que debe respaldar la solicitud.",
     intro:
-      "El Illness Benefit es un pago semanal del <strong>Department of Social Protection (DSP)</strong> para personas por debajo de la edad de jubilación que no pueden trabajar por enfermedad o lesión. Es una prestación contributiva financiada con las cotizaciones PRSI, así que no depende de sus ingresos ni de su patrimonio. Al Departamento deben llegar dos cosas: su solicitud, mediante el formulario <strong>IB1</strong> o a través de MyWelfare, y un <strong>Certificate of Incapacity for Work</strong> emitido por un médico colegiado en el Irish Medical Council, que el propio médico envía al Departamento por usted. No todos los servicios online emiten ese certificado, así que conviene confirmarlo antes de reservar. Es una prestación distinta de la baja legal que paga la empresa.",
+      "El Illness Benefit es un pago semanal del <strong>Department of Social Protection (DSP)</strong> para personas por debajo de la edad de jubilación que no pueden trabajar por enfermedad o lesión. Es una prestación contributiva financiada con las cotizaciones PRSI, así que no depende de sus ingresos ni de su patrimonio. Al Departamento deben llegar dos cosas: su solicitud, mediante el formulario <strong>IB1</strong> o a través de MyWelfare, y un <strong>Certificate of Incapacity for Work</strong> emitido por un médico colegiado en el Irish Medical Council. El médico puede enviarlo electrónicamente; si no lo hace, usted debe enviar por correo el certificado en papel al Departamento. No todos los servicios online emiten ese certificado, así que conviene confirmarlo antes de reservar. Es una prestación distinta de la baja legal que paga la empresa.",
     facts: ["Lo paga el Department of Social Protection", "Exige un Certificate of Incapacity for Work", "Distinto de la baja que paga la empresa"],
     primaryCta: { label: "Reservar consulta médica online", href: href("es", "/services/sick-certificate-ireland") },
     secondaryCta: { label: "Illness Benefit en gov.ie", href: GOV_IB },
@@ -492,7 +492,7 @@ const es: LocalePost = {
         blocks: [
           lead("Este es el documento médico que exige el Departamento. No es lo mismo que el justificante que entrega a su empresa, aunque una sola consulta pueda generar ambos."),
           p("El Certificate of Incapacity for Work declara que, en opinión del médico que le ha examinado, usted está incapacitado para trabajar, e indica el periodo que abarca esa opinión. Debe emitirlo un médico <strong>colegiado en el Medical Council</strong>: puede comprobar usted mismo la colegiación de cualquier médico en el registro público del Consejo."),
-          p("En la práctica el certificado no viaja con usted. El médico lo emite y lo envía al Departamento: unas consultas lo tramitan electrónicamente y otras por correo postal, pero en ningún caso lo envía usted. Su parte consiste en asegurarse de que el médico tiene su <strong>número PPS</strong> y sus datos correctos, porque lo que bloquea el pago es la discrepancia entre el certificado y la solicitud."),
+          p("La vía depende de la consulta. El médico puede cumplimentar y enviar el certificado electrónicamente. Si no lo hace, le entrega un certificado en papel y <strong>usted debe enviarlo por correo</strong> a Social Welfare Services, PO Box 1650, D01 WY03. Confirme qué vía se utilizó y asegúrese de que el médico tiene su <strong>número PPS</strong> y sus datos correctos, porque una discrepancia entre el certificado y la solicitud puede bloquear el pago."),
           ul([
             "El médico decide el periodo que abarca el certificado según el cuadro clínico, no según lo que se le pida.",
             "Si sigue incapacitado más allá de ese periodo, necesita otro certificado; su médico le dirá cuándo.",
@@ -511,7 +511,7 @@ const es: LocalePost = {
           lead("Hay dos vías paralelas —la suya y la de su médico— y el expediente solo avanza cuando llegan las dos."),
           ul([
             "<strong>Acuda a un médico.</strong> La consulta determina si está incapacitado para trabajar y por cuánto tiempo. Lleve su número PPS.",
-            "<strong>El médico emite el Certificate of Incapacity for Work</strong> y lo envía al Departamento.",
+            "<strong>El médico cumplimenta el Certificate of Incapacity for Work.</strong> Puede enviarlo electrónicamente; si no, usted debe enviar por correo el certificado en papel al Departamento.",
             "<strong>Usted presenta la solicitud.</strong> Es el formulario IB1, o la solicitud equivalente online en MyWelfare con su cuenta MyGovID verificada.",
             "<strong>Facilite sus datos bancarios</strong> en el formato que pide la solicitud, para que el pago no quede retenido mientras se los reclaman.",
             "<strong>Avise a su empresa por separado.</strong> Comunicarlo al Departamento no es comunicarlo a su empresa, y el Departamento no lo hace por usted.",
@@ -585,7 +585,7 @@ const es: LocalePost = {
     faqs: [
       {
         q: "¿Cómo consigo el certificado médico para el Illness Benefit?",
-        a: "Necesita una consulta con un médico colegiado en el Irish Medical Council. Si el médico concluye que está incapacitado para trabajar, emite un Certificate of Incapacity for Work y lo envía al Department of Social Protection. No todos los servicios online emiten este certificado, así que confírmelo antes de reservar. Lleve su número PPS a la consulta, porque el certificado debe coincidir con su solicitud.",
+        a: "Necesita una consulta con un médico colegiado en el Irish Medical Council. Si el médico concluye que está incapacitado para trabajar, cumplimenta un Certificate of Incapacity for Work. El médico puede enviarlo electrónicamente; si le entrega un certificado en papel, usted debe enviarlo por correo al Department of Social Protection. No todos los servicios online emiten este certificado, así que confírmelo antes de reservar. Lleve su número PPS a la consulta, porque el certificado debe coincidir con su solicitud.",
       },
       {
         q: "¿El Illness Benefit es lo mismo que la baja que paga la empresa?",
@@ -633,7 +633,7 @@ const cs: LocalePost = {
     h1: "Illness Benefit v Irsku",
     deck: "Sociální dávka pro toho, kdo nemůže pracovat kvůli nemoci nebo úrazu — a lékařské potvrzení, o které se žádost musí opřít.",
     intro:
-      "Illness Benefit je týdenní dávka <strong>Department of Social Protection (DSP)</strong> určená lidem pod důchodovým věkem, kteří nemohou pracovat kvůli nemoci nebo úrazu. Je financovaná z odvodů <strong>PRSI</strong>, takže nezávisí na vašich příjmech ani na majetku. Na úřad musí dorazit dvě věci: vaše žádost na formuláři <strong>IB1</strong> nebo přes MyWelfare a <strong>Certificate of Incapacity for Work</strong> vystavený lékařem registrovaným u Irish Medical Council, které lékař odešle úřadu za vás. Ne každá online služba toto potvrzení vystavuje, proto se před objednáním zeptejte. Je to jiná dávka než zákonná nemocenská, kterou platí zaměstnavatel.",
+      "Illness Benefit je týdenní dávka <strong>Department of Social Protection (DSP)</strong> určená lidem pod důchodovým věkem, kteří nemohou pracovat kvůli nemoci nebo úrazu. Je financovaná z odvodů <strong>PRSI</strong>, takže nezávisí na vašich příjmech ani na majetku. Na úřad musí dorazit dvě věci: vaše žádost na formuláři <strong>IB1</strong> nebo přes MyWelfare a <strong>Certificate of Incapacity for Work</strong> vystavený lékařem registrovaným u Irish Medical Council. Lékař jej může odeslat elektronicky; pokud to neudělá, musíte papírové potvrzení poslat úřadu sami. Ne každá online služba toto potvrzení vystavuje, proto se před objednáním zeptejte. Je to jiná dávka než zákonná nemocenská, kterou platí zaměstnavatel.",
     facts: [
       "Vyplácí Department of Social Protection",
       "Vyžaduje Certificate of Incapacity for Work",
@@ -688,7 +688,7 @@ const cs: LocalePost = {
         blocks: [
           lead("Tohle je lékařský dokument, který úřad vyžaduje. Není totéž co omluvenka pro zaměstnavatele, i když jedna konzultace může vést k obojímu."),
           p("Certificate of Incapacity for Work konstatuje, že podle názoru lékaře, který vás vyšetřil, jste práce neschopní, a uvádí období, na které se ten názor vztahuje. Musí jej vystavit lékař <strong>registrovaný u Medical Council</strong> — registraci kteréhokoli lékaře si ověříte ve veřejném registru."),
-          p("V praxi potvrzení necestuje s vámi. Lékař jej vystaví a odešle úřadu — některé ordinace elektronicky, jiné poštou; vy jej neposíláte v žádném případě. Vaším úkolem je zajistit, aby měl lékař vaše <strong>PPS číslo</strong> a správné údaje, protože právě nesoulad mezi potvrzením a žádostí výplatu blokuje."),
+          p("Postup závisí na ordinaci. Lékař může potvrzení vyplnit a odeslat elektronicky. Pokud to neudělá, dostanete papírové potvrzení a <strong>musíte je poslat</strong> na Social Welfare Services, PO Box 1650, D01 WY03. Ověřte si, jaký postup byl použit, a zajistěte, aby měl lékař vaše <strong>PPS číslo</strong> a správné údaje, protože nesoulad mezi potvrzením a žádostí může výplatu zablokovat."),
           ul([
             "Období, na které potvrzení platí, určuje lékař podle klinického stavu — ne podle toho, co si přejete.",
             "Pokud jste práce neschopní i po jeho skončení, potřebujete nové potvrzení; lékař vám řekne kdy.",
@@ -707,7 +707,7 @@ const cs: LocalePost = {
           lead("Jsou dvě souběžné cesty — vaše a lékařova — a proces se pohne, až dorazí obě."),
           ul([
             "<strong>Jděte k lékaři.</strong> Konzultace určí, zda jste práce neschopní a na jak dlouho. Vezměte si PPS číslo.",
-            "<strong>Lékař vystaví Certificate of Incapacity for Work</strong> a odešle jej úřadu.",
+            "<strong>Lékař vyplní Certificate of Incapacity for Work.</strong> Může jej odeslat elektronicky; jinak musíte papírové potvrzení poslat úřadu sami.",
             "<strong>Vy podáte žádost.</strong> Buď formulář IB1, nebo odpovídající online žádost v MyWelfare s ověřeným účtem MyGovID.",
             "<strong>Uveďte bankovní údaje</strong> v požadovaném formátu, aby platba nezůstala viset, než si je úřad vyžádá.",
             "<strong>Zaměstnavatele informujte zvlášť.</strong> Oznámení úřadu není oznámením zaměstnavateli a úřad to za vás neudělá.",
@@ -781,7 +781,7 @@ const cs: LocalePost = {
     faqs: [
       {
         q: "Jak získám lékařské potvrzení pro Illness Benefit?",
-        a: "Potřebujete konzultaci s lékařem registrovaným u Irish Medical Council. Pokud dojde k závěru, že jste práce neschopní, vystaví Certificate of Incapacity for Work a odešle jej Department of Social Protection. Ne každá online služba toto potvrzení vystavuje, ověřte si to před objednáním. Vezměte si na konzultaci PPS číslo, protože potvrzení se musí shodovat s vaší žádostí.",
+        a: "Potřebujete konzultaci s lékařem registrovaným u Irish Medical Council. Pokud dojde k závěru, že jste práce neschopní, vyplní Certificate of Incapacity for Work. Lékař jej může odeslat elektronicky; pokud vám dá papírové potvrzení, musíte je poslat Department of Social Protection sami. Ne každá online služba toto potvrzení vystavuje, ověřte si to před objednáním. Vezměte si na konzultaci PPS číslo, protože potvrzení se musí shodovat s vaší žádostí.",
       },
       {
         q: "Je Illness Benefit totéž co nemocenská od zaměstnavatele?",
@@ -829,7 +829,7 @@ const roPost: LocalePost = {
     h1: "Illness Benefit în Irlanda",
     deck: "Indemnizația socială pentru cine nu poate munci din cauza bolii sau a unui accident — și certificatul medical pe care cererea trebuie să se sprijine.",
     intro:
-      "Illness Benefit este o plată săptămânală a <strong>Department of Social Protection (DSP)</strong>, destinată persoanelor sub vârsta de pensionare care nu pot munci din cauza bolii sau a unui accident. Este finanțată din contribuțiile <strong>PRSI</strong>, deci nu depinde de veniturile sau de averea dumneavoastră. La instituție trebuie să ajungă două lucruri: cererea, pe formularul <strong>IB1</strong> sau prin MyWelfare, și un <strong>Certificate of Incapacity for Work</strong> eliberat de un medic înscris la Irish Medical Council, pe care medicul îl transmite instituției în locul dumneavoastră. Nu orice serviciu online eliberează acest certificat, așa că verificați înainte de programare. Este o indemnizație distinctă de concediul medical legal plătit de angajator.",
+      "Illness Benefit este o plată săptămânală a <strong>Department of Social Protection (DSP)</strong>, destinată persoanelor sub vârsta de pensionare care nu pot munci din cauza bolii sau a unui accident. Este finanțată din contribuțiile <strong>PRSI</strong>, deci nu depinde de veniturile sau de averea dumneavoastră. La instituție trebuie să ajungă două lucruri: cererea, pe formularul <strong>IB1</strong> sau prin MyWelfare, și un <strong>Certificate of Incapacity for Work</strong> eliberat de un medic înscris la Irish Medical Council. Medicul îl poate transmite electronic; dacă nu o face, dumneavoastră trebuie să trimiteți prin poștă certificatul pe hârtie către instituție. Nu orice serviciu online eliberează acest certificat, așa că verificați înainte de programare. Este o indemnizație distinctă de concediul medical legal plătit de angajator.",
     facts: [
       "Plătită de Department of Social Protection",
       "Necesită Certificate of Incapacity for Work",
@@ -884,7 +884,7 @@ const roPost: LocalePost = {
         blocks: [
           lead("Acesta este documentul medical cerut de instituție. Nu este același lucru cu justificarea depusă la angajator, chiar dacă o singură consultație poate da naștere ambelor."),
           p("Certificate of Incapacity for Work atestă că, în opinia medicului care v-a evaluat, sunteți inapt de muncă și indică perioada acoperită de acea opinie. Trebuie eliberat de un medic <strong>înscris la Medical Council</strong> — înscrierea oricărui medic poate fi verificată în registrul public."),
-          p("În practică, certificatul nu călătorește cu dumneavoastră. Medicul îl eliberează și îl trimite instituției — unele cabinete electronic, altele prin poștă; în niciun caz nu îl trimiteți dumneavoastră. Rolul dumneavoastră este să vă asigurați că medicul are <strong>numărul PPS</strong> și datele corecte, pentru că neconcordanța dintre certificat și cerere blochează plata."),
+          p("Procedura depinde de cabinet. Medicul poate completa și transmite certificatul electronic. Dacă nu o face, vă dă un certificat pe hârtie și <strong>dumneavoastră trebuie să îl trimiteți prin poștă</strong> la Social Welfare Services, PO Box 1650, D01 WY03. Verificați ce procedură a fost folosită și asigurați-vă că medicul are <strong>numărul PPS</strong> și datele corecte, deoarece o neconcordanță între certificat și cerere poate bloca plata."),
           ul([
             "Perioada acoperită de certificat o decide medicul, pe baza tabloului clinic — nu pe baza a ceea ce i se cere.",
             "Dacă rămâneți inapt după încheierea ei, aveți nevoie de un certificat nou; medicul vă spune când.",
@@ -903,7 +903,7 @@ const roPost: LocalePost = {
           lead("Există două trasee paralele — al dumneavoastră și al medicului — iar procesul avansează doar când ajung amândouă."),
           ul([
             "<strong>Consultați un medic.</strong> Consultația stabilește dacă sunteți inapt de muncă și pentru cât timp. Luați numărul PPS.",
-            "<strong>Medicul eliberează Certificate of Incapacity for Work</strong> și îl transmite instituției.",
+            "<strong>Medicul completează Certificate of Incapacity for Work.</strong> Îl poate transmite electronic; în caz contrar, dumneavoastră trebuie să trimiteți prin poștă certificatul pe hârtie către instituție.",
             "<strong>Dumneavoastră depuneți cererea.</strong> Formularul IB1 sau cererea echivalentă online, în MyWelfare, cu cont MyGovID verificat.",
             "<strong>Indicați datele bancare</strong> în formatul cerut, ca plata să nu rămână blocată până sunt solicitate.",
             "<strong>Anunțați separat angajatorul.</strong> Notificarea instituției nu înseamnă notificarea angajatorului, iar instituția nu o face în locul dumneavoastră.",
@@ -977,7 +977,7 @@ const roPost: LocalePost = {
     faqs: [
       {
         q: "Cum obțin certificatul medical pentru Illness Benefit?",
-        a: "Aveți nevoie de o consultație cu un medic înscris la Irish Medical Council. Dacă medicul conchide că sunteți inapt de muncă, eliberează un Certificate of Incapacity for Work și îl transmite către Department of Social Protection. Nu orice serviciu online eliberează acest certificat, așa că verificați înainte de a vă programa. Luați numărul PPS la consultație, pentru că certificatul trebuie să corespundă cererii.",
+        a: "Aveți nevoie de o consultație cu un medic înscris la Irish Medical Council. Dacă medicul conchide că sunteți inapt de muncă, completează un Certificate of Incapacity for Work. Medicul îl poate transmite electronic; dacă vă dă un certificat pe hârtie, dumneavoastră trebuie să îl trimiteți prin poștă către Department of Social Protection. Nu orice serviciu online eliberează acest certificat, așa că verificați înainte de a vă programa. Luați numărul PPS la consultație, pentru că certificatul trebuie să corespundă cererii.",
       },
       {
         q: "Illness Benefit este același lucru cu concediul plătit de angajator?",
@@ -1025,7 +1025,7 @@ const de: LocalePost = {
     h1: "Illness Benefit in Irland",
     deck: "Die Sozialleistung für alle, die wegen Krankheit oder Unfall nicht arbeiten können — und die ärztliche Bescheinigung, auf die sich der Antrag stützen muss.",
     intro:
-      "Illness Benefit ist eine wöchentliche Zahlung des <strong>Department of Social Protection (DSP)</strong> für Personen unterhalb des Rentenalters, die wegen Krankheit oder Unfall nicht arbeiten können. Sie wird aus den <strong>PRSI</strong>-Beiträgen finanziert und hängt daher nicht von Ihrem Einkommen oder Vermögen ab. Zwei Dinge müssen bei der Behörde ankommen: Ihr Antrag über das Formular <strong>IB1</strong> oder über MyWelfare und ein <strong>Certificate of Incapacity for Work</strong> von einer beim Irish Medical Council registrierten Ärztin oder einem Arzt, das die Ärztin oder der Arzt für Sie an die Behörde übermittelt. Nicht jeder Online-Anbieter stellt diese Bescheinigung aus — fragen Sie vor der Buchung nach. Es handelt sich um eine andere Leistung als die gesetzliche Lohnfortzahlung des Arbeitgebers.",
+      "Illness Benefit ist eine wöchentliche Zahlung des <strong>Department of Social Protection (DSP)</strong> für Personen unterhalb des Rentenalters, die wegen Krankheit oder Unfall nicht arbeiten können. Sie wird aus den <strong>PRSI</strong>-Beiträgen finanziert und hängt daher nicht von Ihrem Einkommen oder Vermögen ab. Zwei Dinge müssen bei der Behörde ankommen: Ihr Antrag über das Formular <strong>IB1</strong> oder über MyWelfare und ein <strong>Certificate of Incapacity for Work</strong> von einer beim Irish Medical Council registrierten Ärztin oder einem Arzt. Die Praxis kann es elektronisch übermitteln; geschieht das nicht, müssen Sie die Papierbescheinigung selbst per Post an die Behörde senden. Nicht jeder Online-Anbieter stellt diese Bescheinigung aus — fragen Sie vor der Buchung nach. Es handelt sich um eine andere Leistung als die gesetzliche Lohnfortzahlung des Arbeitgebers.",
     facts: [
       "Gezahlt vom Department of Social Protection",
       "Erfordert ein Certificate of Incapacity for Work",
@@ -1080,7 +1080,7 @@ const de: LocalePost = {
         blocks: [
           lead("Dies ist der ärztliche Nachweis, den die Behörde verlangt. Er ist nicht dasselbe wie die Krankmeldung beim Arbeitgeber, auch wenn eine einzige Sprechstunde beides hervorbringen kann."),
           p("Das Certificate of Incapacity for Work hält fest, dass Sie nach Einschätzung der untersuchenden Ärztin oder des Arztes arbeitsunfähig sind, und nennt den Zeitraum, für den diese Einschätzung gilt. Ausstellen darf es nur, wer beim <strong>Medical Council registriert</strong> ist — die Registrierung lässt sich im öffentlichen Register prüfen."),
-          p("In der Praxis reisen Sie nicht mit der Bescheinigung. Die Ärztin oder der Arzt stellt sie aus und schickt sie an die Behörde — manche Praxen elektronisch, andere per Post; Sie selbst versenden sie nie. Ihre Aufgabe ist es, dafür zu sorgen, dass Ihre <strong>PPS-Nummer</strong> und Ihre Daten korrekt vorliegen — denn es ist die Abweichung zwischen Bescheinigung und Antrag, die die Zahlung stoppt."),
+          p("Der Übermittlungsweg hängt von der Praxis ab. Die Ärztin oder der Arzt kann die Bescheinigung elektronisch ausfüllen und übermitteln. Geschieht das nicht, erhalten Sie eine Papierbescheinigung und <strong>müssen sie selbst per Post senden</strong> an Social Welfare Services, PO Box 1650, D01 WY03. Fragen Sie nach, welcher Weg genutzt wurde, und achten Sie auf eine korrekte <strong>PPS-Nummer</strong> und korrekte persönliche Daten, weil Abweichungen zwischen Bescheinigung und Antrag die Zahlung verzögern können."),
           ul([
             "Den abgedeckten Zeitraum bestimmt die Ärztin oder der Arzt nach dem klinischen Befund — nicht nach dem, worum gebeten wird.",
             "Dauert die Arbeitsunfähigkeit darüber hinaus an, brauchen Sie eine neue Bescheinigung; die Praxis sagt Ihnen wann.",
@@ -1099,7 +1099,7 @@ const de: LocalePost = {
           lead("Es gibt zwei parallele Wege — Ihren und den der Praxis — und das Verfahren läuft erst, wenn beide angekommen sind."),
           ul([
             "<strong>Ärztliche Beurteilung.</strong> Die Sprechstunde klärt, ob und wie lange Sie arbeitsunfähig sind. Halten Sie die PPS-Nummer bereit.",
-            "<strong>Die Praxis stellt das Certificate of Incapacity for Work aus</strong> und übermittelt es an die Behörde.",
+            "<strong>Die Praxis füllt das Certificate of Incapacity for Work aus.</strong> Sie kann es elektronisch übermitteln; andernfalls müssen Sie die Papierbescheinigung selbst per Post an die Behörde senden.",
             "<strong>Sie stellen den Antrag.</strong> Über das Formular IB1 oder den entsprechenden Online-Antrag in MyWelfare mit verifiziertem MyGovID-Konto.",
             "<strong>Geben Sie Ihre Bankverbindung</strong> im geforderten Format an, damit die Zahlung nicht bis zur Nachforderung liegen bleibt.",
             "<strong>Informieren Sie den Arbeitgeber gesondert.</strong> Eine Meldung an die Behörde ist keine Meldung an den Arbeitgeber, und die Behörde übernimmt das nicht.",
@@ -1173,7 +1173,7 @@ const de: LocalePost = {
     faqs: [
       {
         q: "Wie bekomme ich die ärztliche Bescheinigung für Illness Benefit?",
-        a: "Sie brauchen eine Sprechstunde bei einer beim Irish Medical Council registrierten Ärztin oder einem Arzt. Wird Arbeitsunfähigkeit festgestellt, wird ein Certificate of Incapacity for Work ausgestellt und an das Department of Social Protection übermittelt. Nicht jeder Online-Anbieter stellt diese Bescheinigung aus, fragen Sie vor der Buchung nach. Halten Sie die PPS-Nummer bereit, denn Bescheinigung und Antrag müssen übereinstimmen.",
+        a: "Sie brauchen eine Sprechstunde bei einer beim Irish Medical Council registrierten Ärztin oder einem Arzt. Wird Arbeitsunfähigkeit festgestellt, wird ein Certificate of Incapacity for Work ausgefüllt. Die Praxis kann es elektronisch übermitteln; erhalten Sie eine Papierbescheinigung, müssen Sie sie selbst per Post an das Department of Social Protection senden. Nicht jeder Online-Anbieter stellt diese Bescheinigung aus, fragen Sie vor der Buchung nach. Halten Sie die PPS-Nummer bereit, denn Bescheinigung und Antrag müssen übereinstimmen.",
       },
       {
         q: "Ist Illness Benefit dasselbe wie die Lohnfortzahlung?",

@@ -4,7 +4,12 @@ import { test } from "node:test";
 import { ES_TENSION_ARTERIAL_NORMAL } from "./content/blog-week1-2026-08/es-tension-arterial-normal.js";
 import { RO_TENSIUNE_ARTERIALA_NORMALA } from "./content/blog-week1-2026-08/ro-tensiune-arteriala-normala.js";
 import { PT_AUTODECLARACAO } from "./content/blog-seo-2026-08/pt-autodeclaracao.js";
+import { IE_ILLNESS_BENEFIT } from "./content/blog-seo-2026-08/ie-illness-benefit.js";
 import { renderArticle, wordCount } from "./content/blog-seo-2026-08/template.js";
+import {
+  ENGLISH_REPLACEMENTS,
+  replaceExactly,
+} from "./update-published-ie-illness-benefit-2026-08.js";
 
 const cases = [
   {
@@ -81,6 +86,33 @@ test("Romania links routine GP hypertension management to chronic care", () => {
   assert.match(html, /\/services\/boli-cronice-online/);
 });
 
+test("Ireland Illness Benefit guidance covers both electronic and paper certificates", () => {
+  const expectedRoutes = {
+    EN: [/electronically/i, /post the paper certificate/i],
+    PT: [/eletronicamente/i, /certificado em papel/i],
+    ES: [/electrónicamente/i, /certificado en papel/i],
+    CS: [/elektronicky/i, /papírové potvrzení/i],
+    RO: [/electronic/i, /certificat pe hârtie/i],
+    DE: [/elektronisch/i, /Papierbescheinigung/i],
+  } as const;
+
+  for (const post of IE_ILLNESS_BENEFIT.posts) {
+    const html = renderArticle(post.article);
+    for (const pattern of expectedRoutes[post.locale]) assert.match(html, pattern);
+  }
+});
+
+test("Ireland correction is exact and idempotent", () => {
+  const legacy = ENGLISH_REPLACEMENTS.map(([before]) => before).join(" | ");
+  const corrected = replaceExactly(legacy, ENGLISH_REPLACEMENTS, "EN");
+
+  assert.match(corrected, /Irish Medical Council\. The doctor/);
+  assert.match(corrected, /post the paper certificate/i);
+  assert.match(corrected, /D01 WY03/);
+  assert.doesNotMatch(corrected, /not something you post yourself/i);
+  assert.equal(replaceExactly(corrected, ENGLISH_REPLACEMENTS, "EN"), corrected);
+});
+
 test("published Spain updater is exact-record, dry-run and state preserving", () => {
   const updater = readFileSync(
     new URL("./update-published-es-blood-pressure-2026-08.ts", import.meta.url),
@@ -94,4 +126,19 @@ test("published Spain updater is exact-record, dry-run and state preserving", ()
   assert.match(updater, /publishedAt: existing\.publishedAt/);
   assert.match(updater, /lastReviewedAt: existing\.lastReviewedAt/);
   assert.match(updater, /VERIFIED: published Spanish article corrected; state and translations preserved/);
+});
+
+test("published Ireland updater is surgical, dry-run and concurrency guarded", () => {
+  const updater = readFileSync(
+    new URL("./update-published-ie-illness-benefit-2026-08.ts", import.meta.url),
+    "utf8",
+  );
+  assert.match(updater, /const APPLY = process\.argv\.includes\("--apply"\)/);
+  assert.match(updater, /illness-benefit-ireland-how-to-claim/);
+  assert.match(updater, /replaceExactly/);
+  assert.match(updater, /EXPECTED_RECORD_ID/);
+  assert.match(updater, /updatedAt: existing\.updatedAt/);
+  assert.match(updater, /isolationLevel: "Serializable"/);
+  assert.match(updater, /fingerprint\(locked\) !== preparedFingerprint/);
+  assert.match(updater, /VERIFIED: Illness Benefit submission guidance corrected; publication state preserved/);
 });

@@ -6688,3 +6688,50 @@ page, impressions, clicks and CTR after a complete 28-day window plus final-data
 lag, on or after 2026-09-28, before expanding or rewriting this cluster again.
 
 ---
+
+## 34. IE-ILLNESS-BENEFIT-ACCURACY-001 — ranking-drop diagnosis and claim-route correction (2026-08-30)
+
+**Status: LIVE IN PRODUCTION — SIX LOCALES CORRECTED AND DATABASE-VERIFIED.** The
+28-day finalized GSC comparison does not show a sitewide collapse: clicks increased
+from 592 to 772 and impressions from 18,879 to 51,927, while average position moved
+from 16.93 to 18.34 as the site appeared for a much broader query set. The sharper
+incident is page-level. The five-page recovery cohort moved from position 17.53 to
+29.68 week over week, led by the Ireland Illness Benefit article. Its Ireland desktop
+visibility fell from 117 impressions at position 18.67 to 57 at 30.26; mobile position
+was approximately stable (8.59 to 8.89). URL Inspection reports the page submitted,
+indexed and self-canonical, and exact query/page checks found no competing Global
+Health owner for its primary terms.
+
+The live article contained a material YMYL accuracy defect: it stated that the doctor
+always sends the Certificate of Incapacity for Work and that the claimant never posts
+it. Current MyWelfare guidance says the doctor can complete it electronically, but if
+that does not happen the claimant must post the paper certificate to Social Welfare
+Services, PO Box 1650, D01 WY03. The inaccurate statement appeared in the intro,
+certificate section, claim steps and FAQ across EN/PT/ES/CS/RO/DE.
+
+The production correction was deliberately surgical because the published article
+and translations had later admin edits. The guarded updater changed only the exact
+incorrect sentences, preserved all other body content, publication status and review
+dates, used a transaction fingerprint to reject concurrent changes, and verified all
+six saved hashes after write. The repository source now matches the official process;
+the reusable updater is pinned to the inspected production record and combines a
+Serializable transaction with `updatedAt` conditional writes. Nine focused tests,
+including exact-output and idempotence behavior, pass and the backend package
+type-check is clean. After the
+documented blog cache window, a cache-busted public request returned HTTP 200,
+contained `D01 WY03` and no longer contained the incorrect “not something you post
+yourself” statement. A follow-up reviewer-found sentence-boundary defect in the
+production-only surgical replacement was also corrected across all six locales;
+the final cache-busted public check returned HTTP 200 with correct punctuation,
+the official postcode present and the malformed comma form absent.
+
+**Interpretation and next gate.** Keyword insertion was not the limiting factor. The
+live SERP is dominated by MyWelfare, Citizens Information, gov.ie and NSSO, with newer
+commercial medical pages also competing. Accuracy and authority are therefore the
+current constraints. Do not add more variants or rewrite the title/H1 during the
+measurement window. Track the fixed cohort weekly through the existing
+`monitor-seo-recovery-cohort` heartbeat and evaluate complete finalized 28-day windows
+on or after 2026-09-28. The correction removes a verified trust defect; it does not
+guarantee an immediate ranking increase.
+
+---
