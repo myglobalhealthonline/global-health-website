@@ -150,18 +150,93 @@ export async function ensurePrescriber(doctorId: string, countryCode: string): P
   return token;
 }
 
+export type MemedPatient = {
+  idExterno: string;
+  nome: string;
+  cpf?: string;
+  passaporte?: string;
+  dataNascimento?: string;
+  endereco?: string;
+  cidade?: string;
+};
+
+/**
+ * Patient data for the widget's `setPaciente` MdHub command — without this
+ * the widget renders with only the patient's name pre-filled and the doctor
+ * has to hand-type CPF/DOB/address every time. Prefers the appointment's own
+ * snapshot fields (accurate as of booking) and falls back to PatientProfile
+ * (kept current across visits) — same precedence as the PDF templates'
+ * `buildPatientIdLine`/`buildAddressLines`, but returning raw values instead
+ * of pre-formatted/labeled strings since Memed wants plain field values.
+ */
+async function resolvePatientForMemed(appointmentId: string): Promise<MemedPatient> {
+  const appt = await prisma.appointment.findUniqueOrThrow({
+    where: { id: appointmentId },
+    select: {
+      id: true,
+      fullName: true,
+      email: true,
+      dateOfBirth: true,
+      patientHealthIdNumber: true,
+      addressLine1: true,
+      addressLine2: true,
+      addressCity: true,
+      addressPostalCode: true,
+    },
+  });
+
+  const profile = await prisma.patientProfile.findUnique({
+    where: { email: appt.email.toLowerCase() },
+    select: {
+      taxIdNumber: true,
+      passportNumber: true,
+      dateOfBirth: true,
+      addressLine1: true,
+      addressLine2: true,
+      addressCity: true,
+      addressPostalCode: true,
+    },
+  });
+
+  // `patientHealthIdNumber` is the id captured for THIS issuing country
+  // (cross-border Rx asks for it at payment) — it wins when present, same
+  // rule as buildPatientIdLine. Otherwise fall back to the chart's CPF.
+  const cpfRaw = decryptPhi(appt.patientHealthIdNumber) ?? decryptPhi(profile?.taxIdNumber ?? null);
+  const passportRaw = cpfRaw ? null : decryptPhi(profile?.passportNumber ?? null);
+  const dob = appt.dateOfBirth ?? profile?.dateOfBirth ?? null;
+
+  const addressLine1 = appt.addressLine1 ?? profile?.addressLine1 ?? null;
+  const addressLine2 = appt.addressLine2 ?? profile?.addressLine2 ?? null;
+  const postalCode = appt.addressPostalCode ?? profile?.addressPostalCode ?? null;
+  const endereco = [addressLine1, addressLine2, postalCode].filter(Boolean).join(", ") || undefined;
+  const cidade = appt.addressCity ?? profile?.addressCity ?? undefined;
+
+  return {
+    idExterno: appt.id,
+    nome: appt.fullName,
+    cpf: cpfRaw?.replace(/\D/g, "") || undefined,
+    passaporte: passportRaw?.replace(/\D/g, "") || undefined,
+    dataNascimento: dob ? formatDateBr(dob) : undefined,
+    endereco,
+    cidade,
+  };
+}
+
 export async function startWidgetSession(input: {
   doctorId: string;
   appointmentId: string;
-}): Promise<{ token: string; scriptUrl: string | null }> {
+}): Promise<{ token: string; scriptUrl: string | null; patient: MemedPatient }> {
   const appt = await prisma.appointment.findFirst({
     where: { id: input.appointmentId, doctorId: input.doctorId },
     select: { id: true, countryCode: true },
   });
   if (!appt) throw new Error("Appointment not found");
 
-  const token = await ensurePrescriber(input.doctorId, appt.countryCode);
+  const [token, patient] = await Promise.all([
+    ensurePrescriber(input.doctorId, appt.countryCode),
+    resolvePatientForMemed(appt.id),
+  ]);
 
   const { env } = await import("../../config/env.js");
-  return { token, scriptUrl: env.MEMED_PRESCRIPTION_SCRIPT_URL ?? null };
+  return { token, scriptUrl: env.MEMED_PRESCRIPTION_SCRIPT_URL ?? null, patient };
 }

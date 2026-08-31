@@ -505,6 +505,7 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
         return okResponse({
           token: session.token,
           scriptUrl: session.scriptUrl,
+          patient: session.patient,
         });
       } catch (error) {
         if (error instanceof MemedPrescriptionNotConfiguredError) {

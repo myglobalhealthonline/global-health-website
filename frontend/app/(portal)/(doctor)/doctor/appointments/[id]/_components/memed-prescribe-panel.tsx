@@ -24,6 +24,12 @@ import { doctorApiErrorMessage, parseDoctorApiJson } from "@/lib/doctor-api-clie
  *     'plataforma.prescricao'`, `MdHub.event.add('prescricaoImpressa', cb)`
  *     fires with `{ prescriptionUuid, documents: [{ uuid, file_name, ... }] }`
  *     — no direct PDF URL, fetched separately server-side.
+ *   - Patient data (name/CPF/DOB/address) does NOT come from the token —
+ *     without an explicit call the widget shows only the patient's name
+ *     (Memed's own recent-patient lookup?) with everything else blank,
+ *     forcing the doctor to retype it. Fix: `await MdHub.command.send(
+ *     'plataforma.prescricao', 'setPaciente', {...})`, called BEFORE
+ *     `module.show` (doc.memed.com.br/docs/frontend/comandos-mdhub/set-patient).
  *
  * The doctor portal runs a nonce/'strict-dynamic' CSP (proxy.ts nonceCsp).
  * A plain `document.createElement('script')` injected after page load is
@@ -48,6 +54,7 @@ type Status = "idle" | "starting" | "loading-widget" | "open" | "not-configured"
 type MdHubGlobal = {
   event: { add: (name: string, cb: (payload: unknown) => void) => void };
   module: { show: (name: string) => void };
+  command: { send: (moduleName: string, command: string, payload: unknown) => Promise<void> };
 };
 type MdSinapsePrescricaoGlobal = {
   event: { add: (name: "core:moduleInit", cb: (moduleData: { name: string }) => void) => void };
@@ -58,8 +65,18 @@ type PrescricaoImpressaPayload = {
   documents?: Array<{ uuid: string; file_name?: string; type?: string }>;
 };
 
+export type MemedPatient = {
+  idExterno: string;
+  nome: string;
+  cpf?: string;
+  passaporte?: string;
+  dataNascimento?: string;
+  endereco?: string;
+  cidade?: string;
+};
+
 /** Resolves with the first document from the finished prescription. */
-function waitForPrescricaoImpressa(): Promise<{ prescricaoId: string; documentId: string }> {
+function waitForPrescricaoImpressa(patient: MemedPatient): Promise<{ prescricaoId: string; documentId: string }> {
   return new Promise((resolve, reject) => {
     const win = window as unknown as {
       MdSinapsePrescricao?: MdSinapsePrescricaoGlobal;
@@ -71,21 +88,40 @@ function waitForPrescricaoImpressa(): Promise<{ prescricaoId: string; documentId
     }
     win.MdSinapsePrescricao.event.add("core:moduleInit", (moduleData) => {
       if (moduleData.name !== "plataforma.prescricao") return;
-      // Per Memed's own troubleshooting doc ("O módulo da Memed não
-      // carrega"): the module loads inert and must be explicitly told to
-      // display — without this the script runs with no visible UI, no
-      // console error, and no move toward prescricaoImpressa either.
-      win.MdHub?.module.show("plataforma.prescricao");
-      win.MdHub?.event.add("prescricaoImpressa", (payload) => {
-        const data = payload as PrescricaoImpressaPayload;
-        const prescricaoId = data.prescriptionUuid;
-        const documentId = data.documents?.[0]?.uuid;
-        if (!prescricaoId || !documentId) {
-          reject(new Error("Memed finished the prescription but returned no document id"));
-          return;
+      void (async () => {
+        // Pre-fill the patient before opening — without this the widget
+        // only shows the patient's name and the doctor has to retype
+        // CPF/DOB/address by hand every single time.
+        try {
+          await win.MdHub?.command.send("plataforma.prescricao", "setPaciente", {
+            idExterno: patient.idExterno,
+            nome: patient.nome,
+            ...(patient.cpf ? { cpf: patient.cpf } : {}),
+            ...(patient.passaporte ? { passaporte: patient.passaporte } : {}),
+            ...(patient.dataNascimento ? { data_nascimento: patient.dataNascimento } : {}),
+            ...(patient.endereco ? { endereco: patient.endereco } : {}),
+            ...(patient.cidade ? { cidade: patient.cidade } : {}),
+          });
+        } catch {
+          // Best-effort — a failed pre-fill shouldn't block the doctor from
+          // opening the module and typing the patient in by hand.
         }
-        resolve({ prescricaoId, documentId });
-      });
+        // Per Memed's own troubleshooting doc ("O módulo da Memed não
+        // carrega"): the module loads inert and must be explicitly told to
+        // display — without this the script runs with no visible UI, no
+        // console error, and no move toward prescricaoImpressa either.
+        win.MdHub?.module.show("plataforma.prescricao");
+        win.MdHub?.event.add("prescricaoImpressa", (payload) => {
+          const data = payload as PrescricaoImpressaPayload;
+          const prescricaoId = data.prescriptionUuid;
+          const documentId = data.documents?.[0]?.uuid;
+          if (!prescricaoId || !documentId) {
+            reject(new Error("Memed finished the prescription but returned no document id"));
+            return;
+          }
+          resolve({ prescricaoId, documentId });
+        });
+      })();
     });
   });
 }
@@ -103,6 +139,7 @@ export function MemedPrescribePanel({
   const [message, setMessage] = useState<string | null>(null);
   const [docType, setDocType] = useState<MemedDocType>("PRESCRIPTION");
   const [session, setSession] = useState<{ token: string; scriptUrl: string } | null>(null);
+  const patientRef = useRef<MemedPatient | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const scriptLoad = useRef<{ resolve: () => void; reject: (err: Error) => void } | null>(null);
 
@@ -117,7 +154,7 @@ export function MemedPrescribePanel({
       const json = await parseDoctorApiJson<{
         ok?: boolean;
         message?: string;
-        data?: { token?: string; scriptUrl?: string | null };
+        data?: { token?: string; scriptUrl?: string | null; patient?: MemedPatient };
       }>(res);
       if (res.status === 503) {
         setStatus("not-configured");
@@ -133,6 +170,12 @@ export function MemedPrescribePanel({
         setMessage("Memed widget script URL is not configured");
         return;
       }
+      if (!json.data.patient) {
+        setStatus("error");
+        setMessage("Memed session started but carried no patient data");
+        return;
+      }
+      patientRef.current = json.data.patient;
 
       setStatus("loading-widget");
 
@@ -148,7 +191,7 @@ export function MemedPrescribePanel({
       // that. Calling this earlier (the original bug) rejected immediately,
       // every time, regardless of whether the script itself was fine.
       setStatus("open");
-      const issued = await waitForPrescricaoImpressa();
+      const issued = await waitForPrescricaoImpressa(patientRef.current!);
 
       const recordRes = await fetch(`/api/doctor/appointments/${appointmentId}/memed-document`, {
         method: "POST",
