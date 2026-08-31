@@ -46,8 +46,8 @@ export function JobApplicationForm({ jobId, privacyHref, locale, copy }: { jobId
     }
   }
 
-  if (state.status === "success") return <div className="gh-careers-application-success" role="status"><strong>{state.message}</strong></div>;
-  return <section id="apply" className="gh-careers-application">
+  if (state.status === "success") return <div className="gh-careers-application-success gh2-glass-forest gh2-dark-content" role="status"><strong>{state.message}</strong></div>;
+  return <section id="apply" className="gh-careers-application gh2-glass-forest gh2-dark-content">
     <h2>{copy.heading}</h2>
     <form ref={formRef} onSubmit={submit} encType="multipart/form-data">
       <label><span>{copy.fullName}</span><input name="fullName" autoComplete="name" maxLength={120} required /></label>

@@ -95,7 +95,7 @@ export default async function JobDetailPage({ params }: { params: Promise<Params
       <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
       <div className="gh-careers-detail-grid">
         <article className="gh-careers-job-main">
-          <div className="gh-careers-prose gh-article-body" lang={sourceLocale} dangerouslySetInnerHTML={{ __html: descriptionHtml }} />
+          <div className="gh-article-body max-w-[76ch]" lang={sourceLocale} dangerouslySetInnerHTML={{ __html: descriptionHtml }} />
           <JobApplicationForm jobId={job.id} privacyHref={`${base}/legal/privacy-policy`} locale={context.locale} copy={{
             heading: context.t.applyHeading, fullName: context.t.formFullName, email: context.t.formEmail,
             phone: context.t.formPhone, message: context.t.formMessage, cv: context.t.formCv, cvHelp: context.t.formCvHelp,

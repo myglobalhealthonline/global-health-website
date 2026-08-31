@@ -6538,19 +6538,6 @@ body:has(.gh2-404) elevenlabs-convai {
 .gh-careers-detail { min-height: 70vh; }
 .gh-careers-detail-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(17rem, 21rem); grid-template-areas: "content aside"; gap: clamp(1.5rem, 4vw, 3.5rem); align-items: start; }
 .gh-careers-job-main { grid-area: content; min-width: 0; padding: 0; }
-.gh-careers-prose { max-width: 76ch; color: var(--color-text-body); font-size: 1rem; line-height: 1.75; overflow-wrap: anywhere; }
-.gh-careers-prose > :first-child { margin-top: 0 !important; }
-.gh-careers-prose :where(h2, h3, h4, h5, h6) { font-family: var(--font-display); color: var(--color-brand-primary); text-wrap: balance; }
-.gh-careers-prose :where(h4, h5, h6) { margin: 1.5rem 0 .65rem; font-size: 1.05rem; font-weight: 750; line-height: 1.35; }
-.gh-careers-prose :where(p), .gh-careers-prose > :where(div) { margin: .875rem 0; }
-.gh-careers-prose :where(ul) { margin: 1rem 0 1rem .25rem; padding-left: 1.4rem; list-style: disc outside; }
-.gh-careers-prose :where(ol) { margin: 1rem 0 1rem .25rem; padding-left: 1.4rem; list-style: decimal outside; }
-.gh-careers-prose :where(li) { margin: .5rem 0; padding-left: .2rem; }
-.gh-careers-prose :where(li)::marker { color: var(--color-brand-mint); font-weight: 700; }
-.gh-careers-prose :where(a) { color: var(--color-brand-primary); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
-.gh-careers-prose :where(pre, table) { max-width: 100%; overflow-x: auto; }
-.gh-careers-prose :where(table) { display: block; margin: 1.5rem 0; border-collapse: collapse; }
-.gh-careers-prose :where(th, td) { border: 1px solid var(--color-border); padding: .65rem .75rem; text-align: start; vertical-align: top; }
 .gh-careers-job-aside { grid-area: aside; position: sticky; top: 7rem; min-width: 0; padding: 1.25rem; color: white; }
 .gh-careers-job-aside > .gh2-btn-lime { display: flex; width: 100%; justify-content: center; }
 .gh-careers-job-aside dl { margin: 1rem 0 0; }
@@ -6566,11 +6553,12 @@ body:has(.gh2-404) elevenlabs-convai {
 .gh-careers-job-aside .gh-careers-share button, .gh-careers-job-aside .gh-careers-share a { border-color: rgba(255,255,255,.22); color: white; }
 .gh-careers-job-aside .gh-careers-share button:hover, .gh-careers-job-aside .gh-careers-share a:hover { border-color: rgba(176,241,34,.5); background: rgba(255,255,255,.1); }
 .gh-careers-job-aside .gh-careers-share button:focus-visible, .gh-careers-job-aside .gh-careers-share a:focus-visible { outline-color: var(--color-brand-accent); }
-.gh-careers-application { margin-top: 2rem; padding: clamp(1.25rem, 3vw, 2rem); border-radius: 1.25rem; background: var(--color-brand-primary); color: white; }
-.gh-careers-application h2 { font-family: var(--font-display); font-size: 2rem; }
+.gh-careers-application { margin-top: 2rem; padding: clamp(1.25rem, 3vw, 2rem); color: var(--color-text-body); }
+.gh-careers-application h2 { color: var(--color-text-primary); font-family: var(--font-display); font-size: 2rem; }
 .gh-careers-application form { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
 .gh-careers-application label { display: flex; flex-direction: column; gap: .4rem; font-size: .85rem; font-weight: 650; }
 .gh-careers-application input:not([type="checkbox"]), .gh-careers-application textarea { box-sizing: border-box; width: 100%; border: 1px solid rgba(255,255,255,.25); border-radius: .7rem; background: rgba(255,255,255,.1); color: white; padding: .8rem .9rem; font: inherit; }
+.gh-careers-application input:not([type="checkbox"]):focus, .gh-careers-application textarea:focus { outline: none; border-color: rgba(176,241,34,.65); box-shadow: 0 0 0 3px rgba(176,241,34,.16); }
 .gh-careers-application input[type="file"] { min-height: 48px; }
 .gh-careers-application small { color: rgba(255,255,255,.7); font-weight: 400; }
 .gh-careers-form-wide, .gh-careers-form-error, .gh-careers-application button { grid-column: 1 / -1; }
@@ -6579,7 +6567,7 @@ body:has(.gh2-404) elevenlabs-convai {
 .gh-careers-privacy a { color: var(--color-brand-accent); text-decoration: underline; }
 .gh-careers-honeypot { position: absolute !important; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 .gh-careers-form-error { color: #ffd7d7; }
-.gh-careers-application-success { margin-top: 2rem; padding: 1.5rem; border-radius: 1rem; background: var(--color-brand-primary); color: white; }
+.gh-careers-application-success { margin-top: 2rem; padding: 1.5rem; color: var(--color-text-primary); }
 @media (max-width: 800px) {
   .gh-careers-detail-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "aside" "content"; }
   .gh-careers-job-aside { position: static; }
