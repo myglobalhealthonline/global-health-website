@@ -34,13 +34,49 @@ const jobShape = {
   closesAt: z.coerce.date().nullable().optional(),
 };
 
-export const adminJobCreateBodySchema = z
-  .object(jobShape)
-  .extend({ status: z.nativeEnum(JobListingStatus).default(JobListingStatus.DRAFT) })
+const jobSharedShape = {
+  countryId: jobShape.countryId,
+  slug: jobShape.slug,
+  workplaceMode: jobShape.workplaceMode,
+  status: jobShape.status,
+  closesAt: jobShape.closesAt,
+};
+
+export const adminJobLocalizationSchema = z
+  .object({
+    locale: jobShape.locale,
+    title: jobShape.title,
+    department: jobShape.department,
+    location: jobShape.location,
+    employmentType: jobShape.employmentType,
+    minimumExperience: jobShape.minimumExperience,
+    descriptionHtml: jobShape.descriptionHtml,
+  })
   .strict();
-export const adminJobPatchBodySchema = z.object(jobShape).partial().strict();
-export type AdminJobInput = z.infer<typeof adminJobCreateBodySchema>;
-export type AdminJobPatch = z.infer<typeof adminJobPatchBodySchema>;
+
+const uniqueLocalizations = z
+  .array(adminJobLocalizationSchema)
+  .min(1)
+  .max(Object.keys(LocaleCode).length)
+  .refine(
+    (items) => new Set(items.map(({ locale }) => locale)).size === items.length,
+    "Each job locale can only be submitted once",
+  );
+
+export const adminJobGroupCreateBodySchema = z
+  .object(jobSharedShape)
+  .extend({
+    status: z.nativeEnum(JobListingStatus).default(JobListingStatus.DRAFT),
+    localizations: uniqueLocalizations,
+  })
+  .strict();
+export const adminJobGroupPatchBodySchema = z
+  .object(jobSharedShape)
+  .partial()
+  .extend({ localizations: uniqueLocalizations.optional() })
+  .strict();
+export type AdminJobGroupInput = z.infer<typeof adminJobGroupCreateBodySchema>;
+export type AdminJobGroupPatch = z.infer<typeof adminJobGroupPatchBodySchema>;
 
 export const publicJobsQuerySchema = z
   .object({

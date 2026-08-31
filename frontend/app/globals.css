@@ -6537,8 +6537,8 @@ body:has(.gh2-404) elevenlabs-convai {
 .gh-careers-state a, .gh-careers-back { display: inline-flex; align-items: center; gap: .5rem; color: var(--color-brand-primary); }
 .gh-careers-detail { min-height: 70vh; }
 .gh-careers-detail-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(17rem, 21rem); grid-template-areas: "content aside"; gap: clamp(1.5rem, 4vw, 3.5rem); align-items: start; }
-.gh-careers-job-main { grid-area: content; min-width: 0; padding: clamp(1.25rem, 3vw, 2.5rem); }
-.gh-careers-prose { max-width: 72ch; color: var(--color-text-body); font-size: 1rem; line-height: 1.75; overflow-wrap: anywhere; }
+.gh-careers-job-main { grid-area: content; min-width: 0; padding: 0; }
+.gh-careers-prose { max-width: 76ch; color: var(--color-text-body); font-size: 1rem; line-height: 1.75; overflow-wrap: anywhere; }
 .gh-careers-prose > :first-child { margin-top: 0 !important; }
 .gh-careers-prose :where(h2, h3, h4, h5, h6) { font-family: var(--font-display); color: var(--color-brand-primary); text-wrap: balance; }
 .gh-careers-prose :where(h4, h5, h6) { margin: 1.5rem 0 .65rem; font-size: 1.05rem; font-weight: 750; line-height: 1.35; }
@@ -6551,18 +6551,21 @@ body:has(.gh2-404) elevenlabs-convai {
 .gh-careers-prose :where(pre, table) { max-width: 100%; overflow-x: auto; }
 .gh-careers-prose :where(table) { display: block; margin: 1.5rem 0; border-collapse: collapse; }
 .gh-careers-prose :where(th, td) { border: 1px solid var(--color-border); padding: .65rem .75rem; text-align: start; vertical-align: top; }
-.gh-careers-job-aside { grid-area: aside; position: sticky; top: 7rem; min-width: 0; padding: 1.25rem; }
+.gh-careers-job-aside { grid-area: aside; position: sticky; top: 7rem; min-width: 0; padding: 1.25rem; color: white; }
 .gh-careers-job-aside > .gh2-btn-lime { display: flex; width: 100%; justify-content: center; }
 .gh-careers-job-aside dl { margin: 1rem 0 0; }
-.gh-careers-job-aside dl div { padding: .9rem 0; border-top: 1px solid var(--color-border); }
-.gh-careers-job-aside dt { display: flex; align-items: center; gap: .4rem; color: var(--color-text-muted); font-size: .8rem; }
+.gh-careers-job-aside dl div { padding: .9rem 0; border-top: 1px solid rgba(255,255,255,.16); }
+.gh-careers-job-aside dt { display: flex; align-items: center; gap: .4rem; color: rgba(255,255,255,.64); font-size: .8rem; }
 .gh-careers-job-aside dt svg { width: 1rem; height: 1rem; }
-.gh-careers-job-aside dd { margin: .25rem 0 0; font-weight: 650; color: var(--color-text-primary); }
+.gh-careers-job-aside dd { margin: .25rem 0 0; font-weight: 650; color: white; }
 .gh-careers-share { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; }
 .gh-careers-share button, .gh-careers-share a { display: inline-flex; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; gap: .35rem; padding: .5rem .7rem; border: 1px solid var(--color-border); border-radius: 999px; background: transparent; color: var(--color-text-primary); font: inherit; font-size: .78rem; cursor: pointer; text-decoration: none; transition: border-color 180ms ease, background-color 180ms ease; }
 .gh-careers-share button:hover, .gh-careers-share a:hover { border-color: var(--color-border-strong); background: var(--color-background-soft); }
 .gh-careers-share button:focus-visible, .gh-careers-share a:focus-visible { outline: 2px solid var(--color-brand-primary); outline-offset: 2px; }
 .gh-careers-share svg { width: .9rem; height: .9rem; }
+.gh-careers-job-aside .gh-careers-share button, .gh-careers-job-aside .gh-careers-share a { border-color: rgba(255,255,255,.22); color: white; }
+.gh-careers-job-aside .gh-careers-share button:hover, .gh-careers-job-aside .gh-careers-share a:hover { border-color: rgba(176,241,34,.5); background: rgba(255,255,255,.1); }
+.gh-careers-job-aside .gh-careers-share button:focus-visible, .gh-careers-job-aside .gh-careers-share a:focus-visible { outline-color: var(--color-brand-accent); }
 .gh-careers-application { margin-top: 2rem; padding: clamp(1.25rem, 3vw, 2rem); border-radius: 1.25rem; background: var(--color-brand-primary); color: white; }
 .gh-careers-application h2 { font-family: var(--font-display); font-size: 2rem; }
 .gh-careers-application form { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }

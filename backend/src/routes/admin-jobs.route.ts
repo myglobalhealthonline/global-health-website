@@ -2,17 +2,17 @@ import { JobListingStatus, Prisma } from "@prisma/client";
 import type { FastifyInstance, FastifyPluginAsync, FastifyReply } from "fastify";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import {
-  createAdminJob,
-  getAdminJob,
+  createAdminJobGroup,
+  getAdminJobGroup,
   listAdminJobs,
   RecruitmentConflictError,
   RecruitmentNotReadyError,
   RecruitmentValidationError,
-  updateAdminJob,
+  updateAdminJobGroup,
 } from "../modules/recruitment/recruitment.service.js";
 import {
-  adminJobCreateBodySchema,
-  adminJobPatchBodySchema,
+  adminJobGroupCreateBodySchema,
+  adminJobGroupPatchBodySchema,
   adminJobsQuerySchema,
   jobIdParamsSchema,
 } from "../modules/recruitment/recruitment.schema.js";
@@ -55,34 +55,33 @@ const adminJobsRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/admin/jobs/:id", async (request, reply) => {
     const params = jobIdParamsSchema.safeParse(request.params);
     if (!params.success) return reply.status(400).send(errorResponse("Invalid job"));
-    const job = await getAdminJob(params.data.id);
+    const job = await getAdminJobGroup(params.data.id);
     if (!job) return reply.status(404).send(errorResponse("Job not found"));
     return okResponse({ job });
   });
 
-  app.post("/api/admin/jobs", async (request, reply) => {
-    const body = adminJobCreateBodySchema.safeParse(request.body);
+  app.post("/api/admin/job-groups", async (request, reply) => {
+    const body = adminJobGroupCreateBodySchema.safeParse(request.body);
     if (!body.success) return reply.status(400).send(errorResponse("Invalid job", body.error.flatten()));
     const actor = resolveAdminSessionActor(request);
     try {
-      const job = await createAdminJob(body.data, actor?.userId ?? null);
-      await recordAudit({
+      const job = await createAdminJobGroup(body.data, actor?.userId ?? null);
+      const common = {
         actorUserId: actor?.userId ?? null,
         actorRole: actor?.role ?? "ADMIN",
-        action: "JOB_CREATED",
         entityType: "JobListing",
         entityId: job.id,
         request,
-      });
+        metadata: {
+          countryId: job.countryId,
+          slug: job.slug,
+          jobIds: job.localizations.map(({ id }) => id),
+          locales: job.localizations.map(({ locale }) => locale),
+        },
+      };
+      await recordAudit({ ...common, action: "JOB_CREATED" });
       if (job.status === JobListingStatus.PUBLISHED) {
-        await recordAudit({
-          actorUserId: actor?.userId ?? null,
-          actorRole: actor?.role ?? "ADMIN",
-          action: "JOB_PUBLISHED",
-          entityType: "JobListing",
-          entityId: job.id,
-          request,
-        });
+        await recordAudit({ ...common, action: "JOB_PUBLISHED" });
       }
       return reply.status(201).send(okResponse({ job }));
     } catch (error) {
@@ -90,28 +89,34 @@ const adminJobsRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
-  app.patch("/api/admin/jobs/:id", async (request, reply) => {
+  app.patch("/api/admin/job-groups/:id", async (request, reply) => {
     const params = jobIdParamsSchema.safeParse(request.params);
-    const body = adminJobPatchBodySchema.safeParse(request.body);
+    const body = adminJobGroupPatchBodySchema.safeParse(request.body);
     if (!params.success || !body.success) return reply.status(400).send(errorResponse("Invalid job update"));
     const actor = resolveAdminSessionActor(request);
     try {
-      const before = await getAdminJob(params.data.id);
-      if (!before) return reply.status(404).send(errorResponse("Job not found"));
-      const job = await updateAdminJob(params.data.id, body.data, actor?.userId ?? null);
-      if (!job) return reply.status(404).send(errorResponse("Job not found"));
+      const updated = await updateAdminJobGroup(params.data.id, body.data, actor?.userId ?? null);
+      if (!updated) return reply.status(404).send(errorResponse("Job not found"));
+      const { job, previousStatus } = updated;
       const common = {
         actorUserId: actor?.userId ?? null,
         actorRole: actor?.role ?? "ADMIN",
         entityType: "JobListing",
         entityId: job.id,
         request,
+        metadata: {
+          anchorId: params.data.id,
+          countryId: job.countryId,
+          slug: job.slug,
+          jobIds: job.localizations.map(({ id }) => id),
+          locales: job.localizations.map(({ locale }) => locale),
+        },
       };
       await recordAudit({ ...common, action: "JOB_UPDATED" });
-      if (before.status !== job.status && job.status === JobListingStatus.PUBLISHED) {
+      if (previousStatus !== job.status && job.status === JobListingStatus.PUBLISHED) {
         await recordAudit({ ...common, action: "JOB_PUBLISHED" });
       }
-      if (before.status !== job.status && job.status === JobListingStatus.ARCHIVED) {
+      if (previousStatus !== job.status && job.status === JobListingStatus.ARCHIVED) {
         await recordAudit({ ...common, action: "JOB_ARCHIVED" });
       }
       return okResponse({ job });
