@@ -82,6 +82,7 @@ const PUBLIC_READ_PREFIXES = [
   // list and the backend one in lockstep.
   "/api/public/gp-availability",
   "/api/public/gp-languages",
+  "/api/public/jobs",
 ];
 
 function isPublicReadPath(path: string): boolean {

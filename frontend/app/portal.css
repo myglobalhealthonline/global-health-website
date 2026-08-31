@@ -7804,3 +7804,17 @@ button.gh-capacity-cell:hover {
     z-index: var(--z-drawer);
   }
 }
+
+/* Careers admin — global jobs and private recruitment inbox. */
+.gh-admin-careers-tabs { display: flex; gap: .35rem; margin: 0 0 1rem; padding: .3rem; width: fit-content; border: 1px solid var(--portal-line); border-radius: var(--portal-radius-pill); background: var(--portal-well); }
+.gh-admin-careers-tabs a { padding: .5rem .9rem; border-radius: var(--portal-radius-pill); color: var(--portal-muted); font-size: .82rem; font-weight: 750; text-decoration: none; }
+.gh-admin-careers-tabs a[aria-current="page"] { background: var(--portal-surface); color: var(--portal-primary); box-shadow: var(--portal-shadow); }
+.gh-admin-careers-form label { display: flex; min-width: 0; flex-direction: column; gap: .4rem; }
+.gh-admin-careers-pagination { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem; margin-top: 1rem; font-size: .85rem; color: var(--portal-muted); }
+.gh-admin-careers-pagination > :last-child { justify-self: end; }
+.gh-admin-careers-detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.gh-admin-careers-dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.gh-admin-careers-dl div { min-width: 0; }
+.gh-admin-careers-dl dt { color: var(--portal-muted); font-size: .72rem; font-weight: 750; letter-spacing: .06em; text-transform: uppercase; }
+.gh-admin-careers-dl dd { margin: .3rem 0 0; overflow-wrap: anywhere; color: var(--portal-text); }
+@media (max-width: 900px) { .gh-admin-careers-detail-grid, .gh-admin-careers-dl { grid-template-columns: 1fr; } }

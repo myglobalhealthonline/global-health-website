@@ -21,3 +21,4 @@ export * from "./admin-api/page-content";
 export * from "./admin-api/blog";
 export * from "./admin-api/settings";
 export * from "./admin-api/support";
+export * from "./admin-api/careers";

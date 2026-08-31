@@ -792,6 +792,55 @@ export function subscriptionPlanServiceJsonLd(input: {
   };
 }
 
+/** Google JobPosting markup for the one visible, currently-open job page. */
+export function jobPostingJsonLd(input: {
+  id: string;
+  title: string;
+  descriptionHtml: string;
+  datePosted: string;
+  validThrough?: string | null;
+  employmentType: string;
+  workplaceMode: "REMOTE" | "HYBRID" | "ONSITE";
+  location: string;
+  countryName: string;
+  countryCode: string;
+  url: string;
+}) {
+  const rawEmploymentType = input.employmentType.trim().toUpperCase().replace(/[ -]+/g, "_");
+  const employmentType = rawEmploymentType === "CONTRACT" ? "CONTRACTOR" : rawEmploymentType;
+  const supportedEmploymentTypes = new Set([
+    "FULL_TIME", "PART_TIME", "CONTRACTOR", "TEMPORARY", "INTERN", "VOLUNTEER", "PER_DIEM", "OTHER",
+  ]);
+  const remote = input.workplaceMode === "REMOTE";
+  return {
+    "@context": "https://schema.org",
+    "@type": "JobPosting",
+    title: input.title,
+    description: input.descriptionHtml,
+    datePosted: input.datePosted,
+    ...(input.validThrough ? { validThrough: input.validThrough } : {}),
+    ...(supportedEmploymentTypes.has(employmentType) ? { employmentType } : {}),
+    identifier: { "@type": "PropertyValue", name: SITE_NAME, value: input.id },
+    hiringOrganization: { "@type": "Organization", "@id": ORGANIZATION_ID, name: SITE_NAME },
+    url: input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`,
+    ...(remote
+      ? {
+          jobLocationType: "TELECOMMUTE",
+          applicantLocationRequirements: { "@type": "Country", name: input.countryName },
+        }
+      : {
+          jobLocation: {
+            "@type": "Place",
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: input.location,
+              addressCountry: input.countryCode.toUpperCase(),
+            },
+          },
+        }),
+  };
+}
+
 type AnyLd = Record<string, unknown>;
 
 /** Serialise one or many JSON-LD payloads safely (escapes `</`). */

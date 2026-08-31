@@ -32,6 +32,23 @@ enum PublishStatus {
   PUBLISHED
 }
 
+enum JobListingStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum JobWorkplaceMode {
+  REMOTE
+  HYBRID
+  ONSITE
+}
+
+enum JobApplicationStatus {
+  NEW
+  REVIEWED
+}
+
 enum ServiceKind {
   GENERAL
   SPECIALIST
@@ -441,6 +458,16 @@ enum AuditAction {
   /// Doctor pressed "notify patient" from the consultation room — patient
   /// was emailed/WhatsApp'd that the doctor is ready to see them.
   PATIENT_NOTIFIED_DOCTOR_READY
+  JOB_CREATED
+  JOB_UPDATED
+  JOB_PUBLISHED
+  JOB_ARCHIVED
+  JOB_APPLICATION_RECEIVED
+  JOB_APPLICATION_LIST_VIEWED
+  JOB_APPLICATION_VIEWED
+  JOB_APPLICATION_CV_DOWNLOADED
+  JOB_APPLICATION_STATUS_CHANGED
+  JOB_APPLICATION_PURGED
 }
 
 enum CountryAccessModel {
@@ -535,6 +562,7 @@ model Country {
   assets                      Asset[]
   blogPosts                   BlogPost[]
   blogPostCountries           BlogPostCountry[]
+  jobListings                 JobListing[]
   faqs                        Faq[]
   contentPages                ContentPage[]
   pageContents                PageContent[]
@@ -3419,6 +3447,58 @@ model Outbox {
   processedAt    DateTime?
 
   @@index([status, createdAt])
+}
+
+model JobListing {
+  id                String           @id @default(cuid())
+  countryId         String
+  locale            LocaleCode
+  slug              String
+  title             String
+  department        String
+  location          String
+  workplaceMode     JobWorkplaceMode
+  employmentType    String
+  minimumExperience String?
+  descriptionHtml   String
+  status            JobListingStatus @default(DRAFT)
+  publishedAt       DateTime?
+  closesAt          DateTime?
+  createdByUserId   String?
+  updatedByUserId   String?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  country      Country          @relation(fields: [countryId], references: [id], onDelete: Restrict)
+  applications JobApplication[]
+
+  @@unique([countryId, locale, slug])
+  @@index([countryId, locale, status, closesAt])
+  @@index([updatedAt])
+}
+
+model JobApplication {
+  id                    String               @id @default(cuid())
+  jobListingId          String
+  fullName              String
+  email                 String
+  phone                 String?
+  message               String?
+  status                JobApplicationStatus @default(NEW)
+  privacyAcknowledgedAt DateTime
+  privacyNoticeVersion  String
+  cvStorageKey          String               @unique
+  cvByteSize            Int
+  cvScannedAt           DateTime
+  submittedAt           DateTime             @default(now())
+  reviewedAt            DateTime?
+  retentionUntil        DateTime
+  updatedAt             DateTime             @updatedAt
+
+  jobListing JobListing @relation(fields: [jobListingId], references: [id], onDelete: Restrict)
+
+  @@index([jobListingId, submittedAt])
+  @@index([retentionUntil])
 }
 
 model User {

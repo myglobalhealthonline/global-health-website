@@ -10,6 +10,8 @@ export type OutboxLog = { info: (m: string) => void; error: (m: string) => void 
 
 /** Side-effect kinds we durably queue. Extend as more move off the request path. */
 export const OUTBOX_KIND_ORDER_PAID_AUTOMATIONS = "order_paid_automations";
+export const OUTBOX_KIND_RECRUITMENT_APPLICATION_NOTIFICATION =
+  "recruitment_application_notification";
 
 // Minimal client surface so enqueue can run inside a Prisma interactive
 // transaction (tx) OR standalone against the shared client.
@@ -116,6 +118,21 @@ async function dispatchOutboxRow(
       await ensureOrderPaidAutomations(payload.orderId, toPaymentLog(log), {
         sendShopConfirmation: payload.sendShopConfirmation === true,
       });
+      return;
+    }
+    case OUTBOX_KIND_RECRUITMENT_APPLICATION_NOTIFICATION: {
+      const payload = row.payload as { applicationId?: unknown } | null;
+      if (
+        typeof payload?.applicationId !== "string" ||
+        payload.applicationId.length < 1 ||
+        payload.applicationId.length > 64
+      ) {
+        throw new Error("recruitment_application_notification: missing applicationId in payload");
+      }
+      const { sendRecruitmentApplicationNotification } = await import(
+        "../recruitment/recruitment-email.js"
+      );
+      await sendRecruitmentApplicationNotification(payload.applicationId);
       return;
     }
     default:

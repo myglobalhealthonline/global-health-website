@@ -49,6 +49,22 @@ services:
       timeout: 5s
       retries: 5
 
+  clamav:
+    image: clamav/clamav:1.4.6
+    container_name: global-health-clamav
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3310:3310"
+    volumes:
+      - global_health_clamav:/var/lib/clamav
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/clamdcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 20
+      start_period: 120s
+
 volumes:
   global_health_pg:
   global_health_pg_test:
+  global_health_clamav:

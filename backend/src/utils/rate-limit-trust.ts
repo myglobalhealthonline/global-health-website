@@ -70,6 +70,7 @@ export const PUBLIC_READ_PREFIXES = [
   // egress-IP visitor bucket. Keep both lists in lockstep.
   "/api/public/gp-availability",
   "/api/public/gp-languages",
+  "/api/public/jobs",
 ] as const;
 
 /** Correct secret + GET + an allowlisted public content path. */

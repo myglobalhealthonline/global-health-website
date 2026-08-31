@@ -103,6 +103,18 @@ const envSchema = z.object({
    * Defaults to `.data/local-media` when NODE_ENV is not production.
    */
   LOCAL_MEDIA_ROOT: z.string().trim().min(1).optional(),
+  /** Private ClamAV TCP endpoint for recruitment CV scanning. */
+  CLAMAV_HOST: blankAsUnset(z.string().trim().min(1).optional()),
+  CLAMAV_PORT: blankAsUnset(z.coerce.number().int().min(1).max(65535).default(3310)),
+  CLAMAV_TIMEOUT_MS: blankAsUnset(z.coerce.number().int().min(1000).max(60000).default(15000)),
+  RECRUITMENT_NOTIFICATION_EMAIL: blankAsUnset(
+    z.string().trim().email().default("careers@myglobalhealth.online"),
+  ),
+  RECRUITMENT_PRIVACY_NOTICE_VERSION: z.string().trim().min(1).default("recruitment-privacy-v1"),
+  RECRUITMENT_RETENTION_MONTHS: blankAsUnset(z.coerce.number().int().min(1).max(36).default(6)),
+  RECRUITMENT_RETENTION_ENFORCE: z
+    .union([z.literal("true"), z.literal("false"), z.boolean()])
+    .default(false),
 
   /**
    * AWS Rekognition — face match between a patient's selfie and the photo on
@@ -697,6 +709,9 @@ const adminPhiRequireReason =
 const phiAuditEmergencyBypass =
   parsed.PHI_AUDIT_EMERGENCY_BYPASS === true || parsed.PHI_AUDIT_EMERGENCY_BYPASS === "true";
 
+const recruitmentRetentionEnforce =
+  parsed.RECRUITMENT_RETENTION_ENFORCE === true || parsed.RECRUITMENT_RETENTION_ENFORCE === "true";
+
 // SEC-005: hard-fail in production if the medical-access guard would run in a
 // shadow / non-enforcing configuration. Previously COMPLIANCE_MODE=relaxed was
 // an escape hatch that skipped the shadow-mode check entirely — leaving denied
@@ -785,5 +800,6 @@ export const env = {
   MEDICAL_ACCESS_ENFORCE: medicalAccessEnforce,
   ADMIN_PHI_REQUIRE_REASON: adminPhiRequireReason,
   PHI_AUDIT_EMERGENCY_BYPASS: phiAuditEmergencyBypass,
+  RECRUITMENT_RETENTION_ENFORCE: recruitmentRetentionEnforce,
   REQUIRE_2FA_FOR_ROLES: require2faForRoles,
 };

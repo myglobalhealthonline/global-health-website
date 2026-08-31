@@ -11,10 +11,38 @@ import {
   medicalSpecialtyForService,
   organizationJsonLd,
   physicianJsonLd,
+  jobPostingJsonLd,
 } from "./structured-data";
 
 const FRESH = new Date().toISOString();
 const STALE = new Date(Date.now() - 500 * 24 * 60 * 60 * 1000).toISOString();
+
+describe("jobPostingJsonLd", () => {
+  it("uses remote location requirements and omits unsupported employment types", () => {
+    const schema = jobPostingJsonLd({
+      id: "job_1", title: "Remote doctor", descriptionHtml: "<p>Care for patients.</p>",
+      datePosted: FRESH, employmentType: "Flexible", workplaceMode: "REMOTE",
+      location: "Remote", countryName: "Ireland", countryCode: "ie", url: "/ireland/en/careers/doctor",
+    });
+    expect(schema).toMatchObject({
+      "@type": "JobPosting",
+      jobLocationType: "TELECOMMUTE",
+      applicantLocationRequirements: { "@type": "Country", name: "Ireland" },
+    });
+    expect(schema).not.toHaveProperty("employmentType");
+    expect(schema).not.toHaveProperty("jobLocation");
+  });
+
+  it("maps a visible onsite job to a physical location", () => {
+    const schema = jobPostingJsonLd({
+      id: "job_2", title: "Nurse", descriptionHtml: "<p>Clinic role.</p>",
+      datePosted: FRESH, validThrough: "2027-01-01T00:00:00.000Z", employmentType: "Full time",
+      workplaceMode: "ONSITE", location: "Dublin", countryName: "Ireland", countryCode: "ie", url: "/job",
+    });
+    expect(schema).toMatchObject({ employmentType: "FULL_TIME", validThrough: "2027-01-01T00:00:00.000Z" });
+    expect(schema).toHaveProperty("jobLocation.address.addressLocality", "Dublin");
+  });
+});
 
 describe("aggregateRatingJsonLd", () => {
   it("emits nothing for a null aggregate", () => {

@@ -182,8 +182,10 @@ export async function deleteObject(key: string): Promise<void> {
     const full = safeLocalFilePath(key);
     try {
       await unlink(full);
-    } catch {
-      // File may already be gone — treat delete as idempotent.
+    } catch (error) {
+      // Missing is idempotent; permission/I/O failures must reach callers so
+      // confidential-record purges never delete the DB row while leaving the file.
+      if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
     }
     return;
   }
