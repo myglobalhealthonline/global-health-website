@@ -1,5 +1,8 @@
 # Portugal 30/60/90-day roadmap
 
+> **Dated evidence, not the current roadmap.** The canonical global ledger at
+> `docs/plans/seo-control-state.md` owns current priorities, dates and next actions.
+
 No ranking guarantee. Dates start after the localization fix and any separately approved CMS corrections deploy.
 
 ## Days 0–30: correctness, measurement, quick wins

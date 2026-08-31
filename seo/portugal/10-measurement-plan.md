@@ -1,5 +1,8 @@
 # Portugal SEO measurement plan
 
+> **Dated evidence, not the current measurement calendar.** Use
+> `docs/plans/seo-control-state.md` for current gates and next actions.
+
 ## Baseline
 
 Primary baseline: final GSC data through 2026-08-28. Use both Portugal searcher country and canonical `/portugal/pt` page filters; neither alone is a complete market view.

@@ -365,6 +365,15 @@ test files by default and passed, and backend type-check passed.
 
 Supporting rules:
 
+- **Keep global control separate from country evidence.** `seo/README.md` is the
+  workspace router; `seo/<country>/` holds detailed dated audits, keywords,
+  competitors, content opportunities, technical analysis and raw exports. This file
+  alone owns current status, priorities, deadlines and next actions. New country work
+  saves its evidence in the country package and adds only a concise dated decision and
+  link here. Sections 10–21 and 28–35 are a legacy exception: their embedded country
+  evidence remains in place to preserve the decision trail, but new detailed market
+  evidence follows the country-first rule. Cross-market findings stay here rather
+  than being copied six times.
 - **Do not rerun the full ~1,000-page crawl for every batch.** Reserve a full crawl for
   validating global technical architecture, establishing a periodic baseline, or
   following substantial sitewide change. For one page, one query cluster, one country,
@@ -3306,7 +3315,9 @@ investigation without new evidence.)
 
 | File | Purpose | Last meaningful update | Authoritative? |
 | --- | --- | --- | --- |
-| `docs/plans/seo-control-state.md` | **This file** — ledger, roadmap, watchlist, baseline | 2026-08-12 | **CURRENT — canonical** |
+| `seo/README.md` | Six-market workspace map and global/country ownership contract | 2026-08-31 | CURRENT — navigation, not status |
+| `seo/<country>/` | Detailed dated market evidence: audits, keywords, competitors, content, technical analysis and exports | 2026-08-31 | EVIDENCE — this ledger wins on operational state |
+| `docs/plans/seo-control-state.md` | **This file** — ledger, roadmap, watchlist, baseline | 2026-08-31 | **CURRENT — canonical** |
 | `docs/plans/seo-indexation-plan-2026-07-28.md` | GSC indexation audit and carry-out plan | 2026-08-03 | PARTIALLY STALE — design decisions in §2 and the "explicitly not doing" list in §5 remain binding; all counts and scheduled checks superseded |
 | `docs/audits/seo/commercial-opportunity-matrix-2026-08-10.md` | Commercial-query opportunity matrix | 2026-08-10 | HISTORICAL — findings promoted into §7 |
 | `docs/audits/seo/ranking-growth-batch-2026-08-10.md` | Structural fixes + legacy-URL consolidation report | 2026-08-10 | HISTORICAL — implementation record |

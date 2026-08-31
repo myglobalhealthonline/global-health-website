@@ -1,8 +1,10 @@
 # Portugal organic-search research and implementation
 
-Status: completed research package and safe repository fix, 2026-08-31.
+**Evidence snapshot:** completed research package and safe repository fix, 2026-08-31.
+**Canonical operational source:** [`docs/plans/seo-control-state.md`](../../docs/plans/seo-control-state.md).
+**Workspace contract:** [`seo/README.md`](../README.md).
 
-This directory is the auditable Portugal (`pt-PT`) SEO workstream for `myglobalhealth.online`. It separates purchased/raw evidence from normalized analysis, recommendations, production state, and code changes.
+This directory is the auditable Portugal (`pt-PT`) SEO workstream for `myglobalhealth.online`. It separates purchased/raw evidence from normalized analysis, recommendations, dated production observations, and code changes.
 
 ## Headline result
 

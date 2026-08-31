@@ -1,5 +1,9 @@
 # Portugal technical SEO audit
 
+> **Dated evidence, not current operational status.** Action/status values are the
+> 2026-08-31 audit snapshot. The canonical global ledger at
+> `docs/plans/seo-control-state.md` owns current status and actions.
+
 Evidence date: 2026-08-31. Severity reflects verified Portugal impact, not global crawler counts.
 
 ## Findings

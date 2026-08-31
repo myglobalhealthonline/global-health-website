@@ -1,5 +1,8 @@
 # Implementation log
 
+> **Dated evidence, not current operational status.** The canonical global ledger at
+> `docs/plans/seo-control-state.md` owns current status, priorities and next actions.
+
 **Batch date:** 2026-08-25
 **Public application changes:** GP/specialist hub code; not deployed
 **CMS writes:** none

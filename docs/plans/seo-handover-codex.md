@@ -4,28 +4,31 @@
 work on this repo in Codex, with no memory of the sessions that produced the current
 state.
 
-Read this once, then work from `docs/plans/seo-control-state.md`. This file explains
-what you are inheriting, what changes because the work moved to Codex, and what will
-silently mislead you. It does **not** duplicate the ledger — where the two disagree,
-the ledger wins on facts and this file wins on process.
+Read this once, then use `seo/README.md` to route the task to the global ledger and
+the relevant country evidence package. This file explains what you are inheriting,
+what changes because the work moved to Codex, and what will silently mislead you. It
+does **not** duplicate the ledger — where the two disagree, the ledger wins on facts
+and this file wins on process.
 
 ---
 
-## 1. Read these four, in this order
+## 1. Read in this order
 
-1. **`docs/plans/seo-control-state.md`** — the canonical SEO ledger, roadmap and
-   indexation watchlist. ~5,600 lines. Every other SEO markdown in the repo is
-   historical evidence and carries a header saying so. Start at §0 (operating rules),
-   §5 (remediation ledger), §6 (indexation watchlist), §7 (roadmap), then §21.10 (the
-   dated measurement calendar — the closest thing to a to-do list).
-2. **`CLAUDE.md`, the SEO sections** — repo conventions. Codex does **not** read
+1. **`seo/README.md`** — the six-market workspace map and source-of-truth contract.
+2. **`docs/plans/seo-control-state.md`** — the canonical global ledger, roadmap and
+   indexation watchlist. Start at §0, then read only the global status/watchlist/
+   roadmap sections and country sections relevant to the task.
+3. **`seo/<country>/README.md`** — the market evidence index. Country files support
+   the ledger; they do not own current status, dates or next actions.
+4. **`CLAUDE.md`, the SEO sections** — repo conventions. Codex does **not** read
    `CLAUDE.md` automatically; the repo-root `AGENTS.md` it *does* read points at it.
    Section 4 below mirrors the parts that matter; read the file itself before trusting
    the mirror.
-3. **`docs/plans/seo-indexation-plan-2026-07-28.md`** — superseded as a status
+5. **`docs/plans/seo-indexation-plan-2026-07-28.md`** — superseded as a status
    document, but its §2 design decisions and §5 "explicitly not doing" list are still
    binding.
-4. **`docs/plans/seo-editorial-next-agent-brief-2026-08-25.md`** — detailed execution
+6. **`docs/plans/seo-editorial-next-agent-brief-2026-08-25.md`** — for editorial work,
+   the detailed execution
    order for Week 1 review, the selective 19-variant Week 2 cohort, authority work,
    production approval boundaries and 30/60/90-day measurement.
 
@@ -113,6 +116,8 @@ watch post-deployment event volume before drawing conversion conclusions.
 
 | Thing | Where | Note |
 | --- | --- | --- |
+| SEO workspace router | `seo/README.md` | Global/country ownership and six-market navigation |
+| Country evidence | `seo/<country>/` | Dated audits, keywords, competitors, content opportunities and raw exports |
 | Canonical ledger / roadmap / watchlist | `docs/plans/seo-control-state.md` | The one file that must stay current |
 | Redirects (all 364 rules) | `frontend/next.config.ts` | Runs **before** middleware. Rule order matters — a broad rule above a precise one kills it |
 | Middleware (410s, locale, headers) | `frontend/proxy.ts` | Next 16 convention here is `proxy.ts`, not `middleware.ts` |
@@ -229,7 +234,8 @@ once, on 2026-08-08, and reverted the same day.
 2. If you need the Google APIs directly rather than through OpenSEO: run
    `py ~/.claude/plugins/.../google_auth.py --check`, then make one real call and
    confirm it returns rows. `--check` alone has lied before.
-3. Read `seo-control-state.md` §0, §5, §6, §7, §21.10, §22.
+3. Read `seo/README.md`, the relevant country README, and the applicable sections of
+   `seo-control-state.md` (§0 plus current global and market-specific entries).
 4. `py scripts/seo-ledger-sweep.py` — confirms the ledger still agrees with production
    and takes minutes. Read its attribution-rule header first.
 5. Check the `seo-live-urls` CI job is green on `main`. A red one means production

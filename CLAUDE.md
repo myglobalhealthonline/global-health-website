@@ -73,10 +73,12 @@ Traps that have each cost a wasted round already:
 - Quotas: URL Inspection ~7.5 s/URL, 2,000/day. Indexing API 200/day and
   officially JobPosting/BroadcastEvent-only — do not mass-submit.
 
-**Canonical SEO control file: `docs/plans/seo-control-state.md`.** It holds the
-remediation ledger, the growth roadmap, and the indexation watchlist. Every other
-SEO status audit in the repo is historical evidence unless this section identifies
-it as a current operating document.
+**SEO entry point: `seo/README.md`. Canonical SEO control file:
+`docs/plans/seo-control-state.md`.** The country folders hold detailed, dated market
+evidence; the control file alone holds current remediation status, the growth roadmap,
+the indexation watchlist, deadlines and next actions. Other SEO status audits are
+historical evidence unless this section identifies them as a current operating
+document.
 The current plain-language audit is
 `docs/audits/seo/seo-roadmap-review-2026-08-25.html`; the active content-growth
 execution rules are in `docs/plans/editorial-plan-2026-08-19.md` §7.

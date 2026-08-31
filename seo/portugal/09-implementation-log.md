@@ -1,5 +1,8 @@
 # Portugal implementation log
 
+> **Dated evidence, not current operational status.** The canonical global ledger at
+> `docs/plans/seo-control-state.md` owns current status, priorities and next actions.
+
 Date: 2026-08-31.
 
 ## Implemented
