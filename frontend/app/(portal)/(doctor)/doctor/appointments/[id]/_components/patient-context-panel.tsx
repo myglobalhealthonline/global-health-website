@@ -118,8 +118,8 @@ export function PatientContextPanel({
   };
   return (
     <FormSection title={copy.patient}>
-      <div className="gh-form-section__span-2">
-        <dl className="grid gap-2 text-portal-compact">
+      <div className="gh-form-section__span-2 min-w-0">
+        <dl className="grid min-w-0 gap-2 text-portal-compact">
           {appointment.globalHealthNumber ? (
             <Row label={copy.ghn} value={appointment.globalHealthNumber} />
           ) : null}
@@ -217,12 +217,17 @@ export function PatientContextPanel({
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-baseline justify-between gap-3 border-b border-[var(--portal-line)]/60 py-1">
-      <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+      <dt className="shrink-0 text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
         {label}
       </dt>
-      {/* Addresses are long enough to overflow the narrow rail — wrap rather
-          than push the label off the row. */}
-      <dd className="text-right break-words text-[var(--portal-text)]">{value}</dd>
+      {/* `min-w-0` is what actually contains the value: a flex item defaults to
+          min-width:auto, so a single unbreakable token — an email, a pharmacy
+          Healthmail address, a one-line address — set the row's minimum width
+          and pushed the whole card past its own edge. `anywhere` then breaks
+          inside that token; `break-words` alone will not. */}
+      <dd className="min-w-0 flex-1 text-right [overflow-wrap:anywhere] text-[var(--portal-text)]">
+        {value}
+      </dd>
     </div>
   );
 }

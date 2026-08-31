@@ -503,13 +503,18 @@ function ReadRow({
   // making the row visibly taller than the read-only rows above it.
   return (
     <div className="flex items-center justify-between gap-3 border-b border-[var(--portal-line)]/60 py-1">
-      <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+      <dt className="shrink-0 text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
         {label}
       </dt>
-      <dd className="flex min-w-0 items-center justify-end gap-1 text-right">
+      <dd className="flex min-w-0 flex-1 items-center justify-end gap-1 text-right">
         {value ? (
           <>
-            <span className="break-words text-[var(--portal-text)]">{value}</span>
+            {/* Same containment as the read-only rows next door: the span needs
+                its own min-w-0, and `anywhere` to break inside a long
+                Healthmail address or passport string. */}
+            <span className="min-w-0 [overflow-wrap:anywhere] text-[var(--portal-text)]">
+              {value}
+            </span>
             <button
               type="button"
               onClick={(e) => onOpen(e.currentTarget)}
