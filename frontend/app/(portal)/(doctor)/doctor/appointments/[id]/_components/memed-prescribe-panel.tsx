@@ -24,6 +24,12 @@ import { doctorApiErrorMessage, parseDoctorApiJson } from "@/lib/doctor-api-clie
  *     'plataforma.prescricao'`, `MdHub.event.add('prescricaoImpressa', cb)`
  *     fires with `{ prescriptionUuid, documents: [{ uuid, file_name, ... }] }`
  *     — no direct PDF URL, fetched separately server-side.
+ *   - Patient data (name/CPF/DOB/address) does NOT come from the token —
+ *     without an explicit call the widget shows only the patient's name
+ *     (Memed's own recent-patient lookup?) with everything else blank,
+ *     forcing the doctor to retype it. Fix: `await MdHub.command.send(
+ *     'plataforma.prescricao', 'setPaciente', {...})`, called BEFORE
+ *     `module.show` (doc.memed.com.br/docs/frontend/comandos-mdhub/set-patient).
  *
  * The doctor portal runs a nonce/'strict-dynamic' CSP (proxy.ts nonceCsp).
  * A plain `document.createElement('script')` injected after page load is
@@ -33,6 +39,18 @@ import { doctorApiErrorMessage, parseDoctorApiJson } from "@/lib/doctor-api-clie
  * detects the nonce from the CSP header it already emits for its own
  * bundle and applies it to any <Script> it renders, so this one is trusted
  * the same way Next's own hydration scripts are — no manual nonce-copying.
+ *
+ * `core:moduleInit` and the script tag itself only fire/load ONCE per page —
+ * `next/script` dedupes by `id` and won't call `onLoad` again on a second
+ * mount, and Memed's own module only initializes once. The ORIGINAL version
+ * of this component redid the whole fetch-session → render-Script →
+ * await-onLoad → register-moduleInit-listener sequence on every click,
+ * which worked exactly once: the second click re-triggered a script load
+ * that had already happened, so `onLoad` never fired again and the button
+ * spun forever. Fixed by splitting "load & initialize the widget" (once,
+ * guarded by `widgetReady`) from "open it for one more prescription" (every
+ * click, via `pendingRef` swapped out per attempt against a SINGLE
+ * long-lived `prescricaoImpressa` listener registered during init).
  *
  * Still unconfirmed (flagged, not guessed): exactly how the widget binds to
  * a container element on the page — Memed's "Modos de carregamento do
@@ -48,6 +66,7 @@ type Status = "idle" | "starting" | "loading-widget" | "open" | "not-configured"
 type MdHubGlobal = {
   event: { add: (name: string, cb: (payload: unknown) => void) => void };
   module: { show: (name: string) => void };
+  command: { send: (moduleName: string, command: string, payload: unknown) => Promise<void> };
 };
 type MdSinapsePrescricaoGlobal = {
   event: { add: (name: "core:moduleInit", cb: (moduleData: { name: string }) => void) => void };
@@ -58,36 +77,39 @@ type PrescricaoImpressaPayload = {
   documents?: Array<{ uuid: string; file_name?: string; type?: string }>;
 };
 
-/** Resolves with the first document from the finished prescription. */
-function waitForPrescricaoImpressa(): Promise<{ prescricaoId: string; documentId: string }> {
-  return new Promise((resolve, reject) => {
-    const win = window as unknown as {
-      MdSinapsePrescricao?: MdSinapsePrescricaoGlobal;
-      MdHub?: MdHubGlobal;
-    };
-    if (!win.MdSinapsePrescricao) {
-      reject(new Error("Memed widget did not load correctly"));
-      return;
-    }
-    win.MdSinapsePrescricao.event.add("core:moduleInit", (moduleData) => {
-      if (moduleData.name !== "plataforma.prescricao") return;
-      // Per Memed's own troubleshooting doc ("O módulo da Memed não
-      // carrega"): the module loads inert and must be explicitly told to
-      // display — without this the script runs with no visible UI, no
-      // console error, and no move toward prescricaoImpressa either.
-      win.MdHub?.module.show("plataforma.prescricao");
-      win.MdHub?.event.add("prescricaoImpressa", (payload) => {
-        const data = payload as PrescricaoImpressaPayload;
-        const prescricaoId = data.prescriptionUuid;
-        const documentId = data.documents?.[0]?.uuid;
-        if (!prescricaoId || !documentId) {
-          reject(new Error("Memed finished the prescription but returned no document id"));
-          return;
-        }
-        resolve({ prescricaoId, documentId });
-      });
+export type MemedPatient = {
+  idExterno: string;
+  nome: string;
+  cpf?: string;
+  passaporte?: string;
+  dataNascimento?: string;
+  endereco?: string;
+  cidade?: string;
+};
+
+function memedGlobals() {
+  return window as unknown as {
+    MdSinapsePrescricao?: MdSinapsePrescricaoGlobal;
+    MdHub?: MdHubGlobal;
+  };
+}
+
+async function sendPatientToWidget(patient: MemedPatient): Promise<void> {
+  const win = memedGlobals();
+  try {
+    await win.MdHub?.command.send("plataforma.prescricao", "setPaciente", {
+      idExterno: patient.idExterno,
+      nome: patient.nome,
+      ...(patient.cpf ? { cpf: patient.cpf } : {}),
+      ...(patient.passaporte ? { passaporte: patient.passaporte } : {}),
+      ...(patient.dataNascimento ? { data_nascimento: patient.dataNascimento } : {}),
+      ...(patient.endereco ? { endereco: patient.endereco } : {}),
+      ...(patient.cidade ? { cidade: patient.cidade } : {}),
     });
-  });
+  } catch {
+    // Best-effort — a failed pre-fill shouldn't block the doctor from
+    // opening the module and typing the patient in by hand.
+  }
 }
 
 export function MemedPrescribePanel({
@@ -105,6 +127,42 @@ export function MemedPrescribePanel({
   const [session, setSession] = useState<{ token: string; scriptUrl: string } | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const scriptLoad = useRef<{ resolve: () => void; reject: (err: Error) => void } | null>(null);
+  /** True once the script has loaded AND the persistent prescricaoImpressa
+   *  listener is attached — both one-time-only setup steps. */
+  const widgetReady = useRef(false);
+  /** Swapped out for each open-the-widget attempt; the one long-lived
+   *  prescricaoImpressa listener (attached once, in initWidget) resolves
+   *  whichever pending promise is current when the doctor finishes. */
+  const pendingRef = useRef<{ resolve: (v: { prescricaoId: string; documentId: string }) => void; reject: (err: Error) => void } | null>(null);
+
+  /** One-time setup: wait for the module system, attach the single
+   *  long-lived finish-event listener. Never runs twice. */
+  const initWidget = useCallback((): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const win = memedGlobals();
+      if (!win.MdSinapsePrescricao) {
+        reject(new Error("Memed widget did not load correctly"));
+        return;
+      }
+      win.MdSinapsePrescricao.event.add("core:moduleInit", (moduleData) => {
+        if (moduleData.name !== "plataforma.prescricao") return;
+        win.MdHub?.event.add("prescricaoImpressa", (payload) => {
+          const data = payload as PrescricaoImpressaPayload;
+          const prescricaoId = data.prescriptionUuid;
+          const documentId = data.documents?.[0]?.uuid;
+          const pending = pendingRef.current;
+          pendingRef.current = null;
+          if (!prescricaoId || !documentId) {
+            pending?.reject(new Error("Memed finished the prescription but returned no document id"));
+            return;
+          }
+          pending?.resolve({ prescricaoId, documentId });
+        });
+        widgetReady.current = true;
+        resolve();
+      });
+    });
+  }, []);
 
   const start = useCallback(async () => {
     setStatus("starting");
@@ -117,7 +175,7 @@ export function MemedPrescribePanel({
       const json = await parseDoctorApiJson<{
         ok?: boolean;
         message?: string;
-        data?: { token?: string; scriptUrl?: string | null };
+        data?: { token?: string; scriptUrl?: string | null; patient?: MemedPatient };
       }>(res);
       if (res.status === 503) {
         setStatus("not-configured");
@@ -133,22 +191,33 @@ export function MemedPrescribePanel({
         setMessage("Memed widget script URL is not configured");
         return;
       }
+      if (!json.data.patient) {
+        setStatus("error");
+        setMessage("Memed session started but carried no patient data");
+        return;
+      }
+      const patient = json.data.patient;
 
-      setStatus("loading-widget");
+      if (!widgetReady.current) {
+        setStatus("loading-widget");
+        await new Promise<void>((resolve, reject) => {
+          scriptLoad.current = { resolve, reject };
+          // Triggers the <Script> below to render/load — its onLoad/onError
+          // call back into this promise. Only happens once: the script tag
+          // stays mounted (and next/script dedupes by id) for every
+          // subsequent open.
+          setSession({ token: json.data!.token!, scriptUrl: json.data!.scriptUrl! });
+        });
+        await initWidget();
+      }
 
-      await new Promise<void>((resolve, reject) => {
-        scriptLoad.current = { resolve, reject };
-        // Triggers the <Script> below to render/load — its onLoad/onError
-        // call back into this promise.
-        setSession({ token: json.data!.token!, scriptUrl: json.data!.scriptUrl! });
-      });
-
-      // Only safe to register the moduleInit listener once the script has
-      // actually loaded — window.MdSinapsePrescricao doesn't exist before
-      // that. Calling this earlier (the original bug) rejected immediately,
-      // every time, regardless of whether the script itself was fine.
       setStatus("open");
-      const issued = await waitForPrescricaoImpressa();
+      const finished = new Promise<{ prescricaoId: string; documentId: string }>((resolve, reject) => {
+        pendingRef.current = { resolve, reject };
+      });
+      await sendPatientToWidget(patient);
+      memedGlobals().MdHub?.module.show("plataforma.prescricao");
+      const issued = await finished;
 
       const recordRes = await fetch(`/api/doctor/appointments/${appointmentId}/memed-document`, {
         method: "POST",
@@ -173,7 +242,7 @@ export function MemedPrescribePanel({
       setStatus("error");
       setMessage(err instanceof Error ? err.message : "Memed widget failed");
     }
-  }, [appointmentId, docType, onIssued]);
+  }, [appointmentId, docType, onIssued, initWidget]);
 
   if (countryCode.toLowerCase() !== "br") return null;
 
