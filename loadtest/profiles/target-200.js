@@ -8,6 +8,7 @@ export {
   adminPortal,
   chatPolling,
   heavyLowRps,
+  authLoad,
 } from "../lib/profile-builder.js";
 
 // Target: ramp to 200 peak VUs, hold 30 minutes. This is the certification

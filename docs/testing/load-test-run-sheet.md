@@ -113,6 +113,32 @@ to seed a larger pool before the target-200 run.
 If a cookie ever needs refreshing (7-day expiry), re-run the mint script —
 it's idempotent and only makes 6 login calls total.
 
+## Doctor availability for gp-assign (required before trusting booking-journey results)
+
+The 2026-08-14 run's `booking-journey` scenario got `NO_DOCTOR` from
+`POST /api/public/gp-assign` on every attempt in every profile — the cart
+write / pricing / checkout path was never actually exercised despite the run
+reporting a clean pass (see
+`docs/audits/perf/load-test-report-2026-08-14.md`). Run this once per fresh
+DB snapshot, before `smoke`, from `backend/`:
+
+```bash
+FORCE_SEED=true pnpm db:seed:loadtest-gp --dry   # preview first
+FORCE_SEED=true pnpm db:seed:loadtest-gp
+```
+
+It seeds one doctor (preferring an already-active one already in the
+snapshot) with the right service assignment, an "EN" language entry, and a
+7-day-wide-open availability window, then materializes slots. See the
+script's header comment
+(`backend/scripts/seed-loadtest-gp-availability.ts`) for exactly what it
+checks and why gp-assign can fail even when doctors "look" configured.
+
+`loadtest/scenarios/booking-journey.js` now records a
+`booking_gp_assign_success` rate metric with a `rate>0.1` threshold (see
+`loadtest/lib/profile-builder.js`) specifically so a repeat of this failure
+mode shows up as a failed threshold instead of a silent 0%-error pass.
+
 ## Execution ladder
 
 Each step gated on the previous passing its thresholds. Run from

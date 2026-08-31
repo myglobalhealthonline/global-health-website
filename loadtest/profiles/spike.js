@@ -8,6 +8,7 @@ export {
   adminPortal,
   chatPolling,
   heavyLowRps,
+  authLoad,
 } from "../lib/profile-builder.js";
 
 // Spike: 0 -> 300 peak VUs in 30s, hold 5 minutes. Simulates a launch/

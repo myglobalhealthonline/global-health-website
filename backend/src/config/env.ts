@@ -60,7 +60,31 @@ const envSchema = z.object({
     z.enum(["development", "test", "production"]).default("production"),
   ),
   PORT: z.coerce.number().default(4000),
+  /** Number of Node.js cluster workers to fork in this container (see
+   *  src/cluster.ts, which replaces server.js as the process entry point).
+   *  Default 1 = today's behaviour: no forking, server.ts runs directly.
+   *
+   *  Turning this above 1 requires two things to already be true, or the
+   *  "fix" makes things worse:
+   *   - REDIS_URL must be set. Without it, @fastify/rate-limit's in-process
+   *     store is per-worker, so the effective global limit becomes max×workers.
+   *   - DB_POOL_MAX should be reviewed (below) — each worker gets its own
+   *     independent pg.Pool, so total DB connections = DB_POOL_MAX×workers.
+   *  KNOWN GAP: the WhatsApp outbound-send gap in lib/whatsapp/wasender.ts is
+   *  enforced in-process only (a per-worker Promise chain, no cross-process
+   *  lock). With workers>1 the effective minimum gap between WhatsApp sends
+   *  shrinks to (configured gap ÷ workers), risking WaSender account-
+   *  protection throttling. Fix that serialization before running workers>1
+   *  on a deployment that sends WhatsApp messages. */
+  CLUSTER_WORKERS: z.coerce.number().int().min(1).max(64).default(1),
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
+  /** Max connections in the Postgres pool THIS PROCESS holds (db/prisma.ts).
+   *  Unset → computed from CLUSTER_WORKERS so the historical single-process
+   *  budget (10 total) is preserved by default: floor(10/CLUSTER_WORKERS),
+   *  floored at 2. Set explicitly to override once you've confirmed headroom
+   *  on the Postgres max_connections ceiling for a larger total
+   *  (DB_POOL_MAX × CLUSTER_WORKERS). */
+  DB_POOL_MAX: z.coerce.number().int().min(1).max(100).optional(),
   ADMIN_API_TOKEN: z.string().trim().min(1, "ADMIN_API_TOKEN cannot be empty").optional(),
   ADMIN_TOKEN_FALLBACK_ENABLED: z
     .union([z.literal("true"), z.literal("false"), z.boolean()])

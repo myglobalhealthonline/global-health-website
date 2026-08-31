@@ -22,9 +22,15 @@ OUT_DIR="$SCRIPT_DIR/../docs/audits/perf/loadtest-$DATE_TAG"
 mkdir -p "$OUT_DIR"
 
 SUMMARY_JSON="$OUT_DIR/$PROFILE-summary.json"
+# Per-sample time series (one JSON line per metric point), not just the
+# end-of-run aggregate — without this, a run's latency-over-time curve
+# (when did degradation actually start?) is unrecoverable after the fact.
+# Can be large on long profiles (soak); gzip if archiving long-term.
+TIMESERIES_JSON="$OUT_DIR/$PROFILE-timeseries.json"
 
-echo "Running profile '$PROFILE' -> $SUMMARY_JSON"
+echo "Running profile '$PROFILE' -> $SUMMARY_JSON (+ $TIMESERIES_JSON)"
 k6 run \
   --summary-export "$SUMMARY_JSON" \
+  --out "json=$TIMESERIES_JSON" \
   "$@" \
   "$PROFILE_FILE"

@@ -8,6 +8,7 @@ export {
   adminPortal,
   chatPolling,
   heavyLowRps,
+  authLoad,
 } from "../lib/profile-builder.js";
 
 // Smoke: 5 peak VUs, 2 minutes. Proves the harness end-to-end (auth cookies

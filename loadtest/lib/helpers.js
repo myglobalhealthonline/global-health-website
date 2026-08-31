@@ -1,6 +1,7 @@
 import http from "k6/http";
 import { check } from "k6";
 import { SharedArray } from "k6/data";
+import { Rate } from "k6/metrics";
 
 // k6's JS engine has no native JSON module loader — config is read via
 // open()+JSON.parse in init context instead of `import x from "./x.json"`.
@@ -107,12 +108,14 @@ export function backendHeaders(extra) {
 // Cookie pool read from config/cookies.json, which IS gitignored (the rule was
 // missing until 2026-08-30 and the file had been committed with live
 // PATIENT/DOCTOR/ADMIN/SUPERADMIN sessions — see cookies.example.json for the
-// shape). Each entry: { role, email, cookie }. Absent file = empty pool = the
-// authenticated profiles run unauthenticated rather than failing.
-//
-// The mint script this originally referenced (scripts/mint-load-test-cookies.mjs)
-// is not in the repository; populate the file by logging in as synthetic
-// accounts against the SAME non-production environment under test.
+// shape). Each entry: { role, email, cookie }. Populate it by running
+// scripts/mint-load-test-cookies.mjs against the SAME non-production
+// environment under test. Absent file = empty pool = the "authenticated"
+// scenarios run unauthenticated instead of failing outright — that's
+// intentional (a smoke run shouldn't hard-crash without cookies) but it's
+// exactly the failure mode that silently produced a 0%-error, 100%-checks
+// report while testing nothing behind auth. authCookieAttached (below) makes
+// that visible instead of silent: check its threshold in the run summary.
 const cookiePool = new SharedArray("cookies", function () {
   try {
     return JSON.parse(open("../config/cookies.json"));
@@ -120,6 +123,13 @@ const cookiePool = new SharedArray("cookies", function () {
     return [];
   }
 });
+
+// Fraction of authHeaders() calls that actually attached a session cookie.
+// A run against a real auth-scenario mix should sit near 1.0; a value near 0
+// means the cookie pool is empty/exhausted and the "authenticated" scenarios
+// ran as anonymous requests the whole time. See THRESHOLDS in
+// profile-builder.js.
+export const authCookieAttached = new Rate("auth_cookie_attached");
 
 export function cookiesForRole(role) {
   const matches = cookiePool.filter((c) => c.role === role);
@@ -131,6 +141,7 @@ export function cookiesForRole(role) {
 export function authHeaders(role, extra) {
   const identity = cookiesForRole(role);
   const headers = backendHeaders(extra);
+  authCookieAttached.add(Boolean(identity));
   if (identity) {
     headers["Cookie"] = identity.cookie;
   }
