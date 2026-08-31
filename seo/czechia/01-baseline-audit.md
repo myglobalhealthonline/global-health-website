@@ -15,11 +15,28 @@ The strongest near-term opportunities are to make the GP page the unambiguous ow
 | GSC pages containing `/czechia/` | 2026-05-29–2026-08-27 | 137 clicks / 7,355 impressions / 189 rows |
 | GSC Czech searchers (`country=cze`) | same window | 58 clicks / 2,791 impressions / 644 queries |
 | GSC Czech searchers | prior 90 days | 13 clicks / 364 impressions / 62 queries |
-| GA4 organic | current 90 days | 24 sessions / 22 users / 16 engaged sessions |
+| GA4 sitewide organic | current 90 days | 24 sessions / 22 users / 16 engaged sessions |
+| GA4 Czechia organic landing pages | final-data follow-up | 4 sessions / unique users unavailable / 2 engaged sessions |
 | GA4 key events and revenue | current and prior 90 days | 0 / 0 |
 | OpenSEO target estimate | 2203/cs | 12 traffic / 27 ranking keywords |
 
 The GSC increase is directional, not a causal claim. GA4 is too sparse to estimate a dependable conversion rate.
+
+### Final-data follow-up on 2026-08-31
+
+A focused refresh used finalized GSC data for `2026-05-31`–`2026-08-28`. Czechia
+page rows now total 141 clicks and 7,702 impressions; returned privacy-thresholded
+Czech-searcher query rows contain 58 clicks and 2,871 impressions. The comparable www Czechia-prefix page pull returned
+no rows for `2026-03-02`–`2026-05-30`, so that page-prefix comparison is unavailable
+rather than zero performance.
+
+The original GA4 headline above needs a scope qualification. The 24 sessions, 22
+users and 16 engaged sessions are sitewide organic totals, not Czechia-only totals.
+Filtering the landing-page rows to `/czechia/` returns 4 sessions and 2 engaged
+sessions, with no key events, transactions or revenue. The active-user row sum is 4,
+but a person can appear under more than one landing page, so a Czechia-wide unique-user
+count is unavailable. The report metadata returned no sampling or thresholding. See
+`raw/focused-refresh-2026-08-31.json` for the exact calls and returned limitations.
 
 ## Highest-signal pages
 
@@ -51,6 +68,12 @@ The GSC increase is directional, not a causal claim. GA4 is too sparse to estima
 URL Inspection passed the Czech home, GP, 24/7 article, doctor index, pediatric care, canonical travel page, neschopenka, treatment renewal, dermatology, referrals, Prague doctor, mental health, men's health, and major tool routes. The women’s-health page was discovered but not indexed.
 
 The retired travel URL remains indexed as itself with last crawl `2026-07-18`, even though production already redirects it. This remains Google recrawl lag; do not reopen redirect implementation without new evidence.
+
+The P2 second-opinion service returned `Google does not know this URL` in a focused
+2026-08-31 inspection. A separate web fetch returned the page document, but did not
+expose a direct HTTP status field. Monitor it across a repeated live-status and URL
+Inspection check; one inspection does not justify a sitemap, canonical, redirect or
+route change.
 
 ## Decision
 

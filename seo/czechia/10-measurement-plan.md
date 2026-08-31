@@ -7,13 +7,15 @@ Date: `2026-08-31`
 - GSC property: `sc-domain:myglobalhealth.online`
 - GA4 site: `https://www.myglobalhealth.online`
 - Reporting split: Czechia URL prefix, Czech searcher country, Czech (`cs`) and English (`en`) routes
-- Baseline: current `2026-05-29`–`2026-08-27`; prior `2026-02-28`–`2026-05-28`
+- Original package baseline: current `2026-05-29`–`2026-08-27`; prior `2026-02-28`–`2026-05-28`
+- Latest final-data refresh: current `2026-05-31`–`2026-08-28`; prior `2026-03-02`–`2026-05-30`
+- GA4 scope: sitewide overview totals must not be reported as Czechia; landing-page rows beginning `/czechia/` may be summed for additive metrics such as sessions and engaged sessions, but not for unique users or rates
 
 ## Weekly scorecard
 
 | KPI | Source | Segment | Rule |
 | --- | --- | --- | --- |
-| Organic clicks/impressions/CTR/position | GSC | `/czechia/`, `country=cze` | complete data only |
+| Organic clicks/impressions/CTR/position | GSC | `/czechia/`, `country=cze` | finalized data; label query-dimension privacy thresholds |
 | Non-brand performance | GSC | exclude Global Health spellings | save the exact filter with report |
 | Competitor-brand traffic | GSC | MEDDI, EUC, uLékaře, ZnámýLékař, Canadian | report separately, not non-brand |
 | Top-3/10/20 keywords | GSC/OpenSEO | cluster and owner URL | blanks remain unavailable |
@@ -41,3 +43,4 @@ Track query × page, not query alone, so ownership shifts are visible.
 2. Verify booking and consultation events in GA4 with a privacy-safe test transaction before reporting conversion impact.
 3. Escalate indexing only when a live, canonical, sitemap-eligible priority page remains excluded across repeated checks.
 4. Re-run a focused Czech-only audit using crawl restrictions before treating issue counts as market defects.
+5. Reinspect the P2 second-opinion URL after a normal discovery interval; act only if repeated checks show a live canonical sitemap URL remains unknown or excluded.

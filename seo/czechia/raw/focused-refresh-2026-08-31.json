@@ -1,0 +1,277 @@
+{
+  "retrieval_date": "2026-08-31",
+  "market": {
+    "country": "Czechia",
+    "location_code": 2203,
+    "language_code": "cs",
+    "locale": "cs-CZ",
+    "prefix": "https://www.myglobalhealth.online/czechia/",
+    "gsc_property": "sc-domain:myglobalhealth.online",
+    "ga4_property": "properties/547083375",
+    "openseo_project_id": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b"
+  },
+  "cms_source_snapshots": {
+    "retrieval_date": "2026-08-31",
+    "access": "Read-only public API inspection followed by read-only production database dry-runs on 2026-09-01.",
+    "services": [
+      {
+        "slug": "neschopenka-online",
+        "service_id": "cmr85xs2p000e70juwmch637u",
+        "service_updated_at": "2026-07-19T05:02:26.121Z",
+        "existing_faq_count": 7,
+        "source_sha256": "880fd7d374b062af8df380b46b24d1a07c7187f570f2307aba679336203834cc",
+        "apply_blocker": "The base and EN/PT/ES/RO/DE ctaLabel fields are null. A Czech base CTA would leak across locale fallbacks, and null cannot be materialized as an explicit override. The updater refuses apply.",
+        "draft_approval_sha256": "e181f41e9b632af577fff9be1302c7b80a44da3c47be4ab884eaa4901c538d65"
+      },
+      {
+        "slug": "obnoveni-lecby",
+        "service_id": "cmr85xtxo000r70juhan2iood",
+        "service_updated_at": "2026-07-19T05:02:31.451Z",
+        "existing_faq_count": 6,
+        "source_sha256": "8bd648915a8dce6651a6be34a161f3948b9d2861c39e41a305a4ed4805e74ad8",
+        "apply_blocker": "The base and EN/PT/ES/RO/DE ctaLabel fields are null. A Czech base CTA would leak across locale fallbacks, and null cannot be materialized as an explicit override. The updater refuses apply.",
+        "draft_approval_sha256": "d085e67bd02effa715f64236adb7b03c76390fba35b8a110496a8feea0a4c647"
+      }
+    ],
+    "blog": {
+      "slug": "neschopenka-jak-funguje-eneschopenka",
+      "decision": "No copy rewrite. The article already owns informational process intent and links to the service.",
+      "data_quality_watch": "The public API doctor relations do not match the visible author/reviewer attribution. Verify source ownership before any CMS correction."
+    },
+    "production_write": false,
+    "gate": "Both service drafts remain blocked by locale CTA fallback safety, pending clinical approval and separate owner authorization."
+  },
+  "official_source_verification": {
+    "retrieval_date": "2026-08-31",
+    "sources": [
+      {
+        "publisher": "ČSSZ",
+        "url": "https://www.cssz.gov.cz/web/eneschopenka",
+        "used_for": "eNeschopenka submission roles, employer notification qualification and employee notification duty"
+      },
+      {
+        "publisher": "ePreskripce / SÚKL",
+        "url": "https://www.epreskripce.cz/",
+        "used_for": "central eRecept record and prescription identifier wording"
+      },
+      {
+        "publisher": "NZIP",
+        "url": "https://www.nzip.cz/clanek/205-zdravotnicka-zachranna-sluzba",
+        "used_for": "155 and 112 emergency escalation"
+      }
+    ]
+  },
+  "gsc": {
+    "tool": "get_search_console_performance",
+    "calls": [
+      {"name": "pages_current", "parameters": {"projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b", "dataState": "final", "type": "web", "startDate": "2026-05-31", "endDate": "2026-08-28", "dimensions": ["page"], "filters": [{"dimension": "page", "operator": "contains", "expression": "https://www.myglobalhealth.online/czechia/"}], "rowLimit": 1000}},
+      {"name": "pages_previous", "parameters": {"projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b", "dataState": "final", "type": "web", "startDate": "2026-03-02", "endDate": "2026-05-30", "dimensions": ["page"], "filters": [{"dimension": "page", "operator": "contains", "expression": "https://www.myglobalhealth.online/czechia/"}], "rowLimit": 1000}},
+      {"name": "query_page_current", "parameters": {"projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b", "dataState": "final", "type": "web", "startDate": "2026-05-31", "endDate": "2026-08-28", "dimensions": ["query", "page"], "filters": [{"dimension": "page", "operator": "contains", "expression": "https://www.myglobalhealth.online/czechia/"}], "rowLimit": 1000}, "rowCount": 677},
+      {"name": "query_page_previous", "parameters": {"projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b", "dataState": "final", "type": "web", "startDate": "2026-03-02", "endDate": "2026-05-30", "dimensions": ["query", "page"], "filters": [{"dimension": "page", "operator": "contains", "expression": "https://www.myglobalhealth.online/czechia/"}], "rowLimit": 1000}, "rowCount": 0},
+      {"name": "czech_searchers_current", "parameters": {"projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b", "dataState": "final", "type": "web", "startDate": "2026-05-31", "endDate": "2026-08-28", "dimensions": ["query"], "filters": [{"dimension": "country", "operator": "equals", "expression": "cze"}], "rowLimit": 1000}},
+      {"name": "czech_searchers_previous", "parameters": {"projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b", "dataState": "final", "type": "web", "startDate": "2026-03-02", "endDate": "2026-05-30", "dimensions": ["query"], "filters": [{"dimension": "country", "operator": "equals", "expression": "cze"}], "rowLimit": 1000}}
+    ],
+    "czechia_pages_current": {
+      "rows": 189,
+      "clicks": 141,
+      "impressions": 7702
+    },
+    "czechia_pages_previous": {
+      "rows": 0,
+      "note": "No rows were returned for the current www Czechia prefix in this pre-migration comparison window."
+    },
+    "czech_searchers_current": {
+      "rows": 655,
+      "clicks": 58,
+      "impressions": 2871
+    },
+    "czech_searchers_previous": {
+      "rows": 61,
+      "clicks": 13,
+      "impressions": 377
+    },
+    "priority_pages": [
+      {"path": "/czechia/en/services/lekar-online-praha", "clicks": 13, "impressions": 124, "ctr": 0.1048387097, "position": 5.435483871},
+      {"path": "/czechia/cs/tools/blood-pressure-chart", "clicks": 11, "impressions": 704, "ctr": 0.015625, "position": 10.2713068182},
+      {"path": "/czechia/cs/services/obnoveni-lecby", "clicks": 6, "impressions": 58, "ctr": 0.1034482759, "position": 6.7586206897},
+      {"path": "/czechia/cs/blog/neschopenka-jak-funguje-eneschopenka", "clicks": 4, "impressions": 710, "ctr": 0.0056338028, "position": 9.985915493},
+      {"path": "/czechia/cs/services/detsky-lekar-online", "clicks": 4, "impressions": 99, "ctr": 0.0404040404, "position": 8.7474747475},
+      {"path": "/czechia/cs/services/neschopenka-online", "clicks": 4, "impressions": 44, "ctr": 0.0909090909, "position": 16.4318181818},
+      {"path": "/czechia/cs/gp-consultation-online", "clicks": 3, "impressions": 234, "ctr": 0.0128205128, "position": 14.2863247863},
+      {"path": "/czechia/cs/blog/lekar-online-24-7-co-vyresi", "clicks": 2, "impressions": 114, "ctr": 0.0175438596, "position": 11.5438596491},
+      {"path": "/czechia/cs/services/doporuceni-a-vysetreni", "clicks": 1, "impressions": 22, "ctr": 0.0454545455, "position": 13.6363636364},
+      {"path": "/czechia/cs/services/kozni-konzultace-praha", "clicks": 1, "impressions": 52, "ctr": 0.0192307692, "position": 16.2692307692},
+      {"path": "/czechia/cs/services/lekar-online-praha", "clicks": 0, "impressions": 35, "ctr": 0, "position": 7.6285714286}
+    ],
+    "limitation": "All query-dimension results are privacy-thresholded and must not be treated as complete site or country totals."
+  },
+  "ga4": {
+    "tools": [
+      "get_google_analytics_organic_overview",
+      "get_google_analytics_organic_landing_pages",
+      "get_google_analytics_key_events",
+      "get_google_analytics_page_performance",
+      "get_google_analytics_measurement_health"
+    ],
+    "calls": [
+      {"name": "get_google_analytics_organic_overview", "parameters": {"projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b", "startDate": "2026-05-31", "endDate": "2026-08-28", "trend": "weekly"}},
+      {"name": "get_google_analytics_organic_landing_pages_current", "parameters": {"projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b", "startDate": "2026-05-31", "endDate": "2026-08-28", "limit": 1000, "offset": 0}},
+      {"name": "get_google_analytics_organic_landing_pages_previous", "parameters": {"projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b", "startDate": "2026-03-02", "endDate": "2026-05-30", "limit": 1000, "offset": 0}},
+      {"name": "get_google_analytics_key_events_failed", "parameters": {"projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b", "startDate": "2026-05-31", "endDate": "2026-08-28", "channel": "organic_search", "breakdown": "event_and_landing_page", "comparePreviousPeriod": true, "limit": 1000, "offset": 0}},
+      {"name": "get_google_analytics_key_events", "parameters": {"projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b", "startDate": "2026-05-31", "endDate": "2026-08-28", "channel": "organic_search", "breakdown": "event", "comparePreviousPeriod": true, "limit": 1000, "offset": 0}},
+      {"name": "get_google_analytics_page_performance", "parameters": {"projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b", "startDate": "2026-05-31", "endDate": "2026-08-28", "channel": "organic_search", "includeDate": false, "limit": 1000, "offset": 0}},
+      {"name": "get_google_analytics_measurement_health", "parameters": {"projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b"}}
+    ],
+    "sitewide_organic_current": {
+      "sessions": 24,
+      "active_users": 22,
+      "engaged_sessions": 16,
+      "key_events": 0,
+      "transactions": 0,
+      "purchase_revenue_eur": 0
+    },
+    "czechia_organic_landing_pages_current": {
+      "sessions": 4,
+      "active_user_row_sum": 4,
+      "unique_active_users": null,
+      "engaged_sessions": 2,
+      "key_events": 0,
+      "transactions": 0,
+      "purchase_revenue_eur": 0,
+      "limitation": "Sessions and engaged sessions are additive across landing-page rows. Active users can appear in more than one row, so a Czechia-wide unique-user value is unavailable from this report."
+    },
+    "previous": {
+      "rows": 0,
+      "note": "No comparable organic landing-page rows were returned."
+    },
+    "measurement_health": {
+      "web_streams": 1,
+      "key_events": ["purchase", "begin_booking"],
+      "issues": 0
+    },
+    "failures": [
+      "get_google_analytics_key_events with breakdown=event_and_landing_page and comparePreviousPeriod=true returned validation_error; the supported event breakdown was rerun successfully and returned zero rows.",
+      "The local py launcher returned 'No installed Python found!'; OpenSEO GA4 tools returned fresh data, so no local-script fallback was needed."
+    ]
+  },
+  "openseo": {
+    "credits": {
+      "before": 3922,
+      "after": 3722,
+      "spent": 200
+    },
+    "tools": [
+      {"name": "whoami", "parameters": {}, "result": {"mode": "hosted", "credits_remaining_before": 3922, "credits_remaining_after": 3722}},
+      {"name": "list_projects", "parameters": {}, "result": {"id": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b", "name": "GlobalHealthNew", "domain": "myglobalhealth.online", "default_location_code": 2372, "default_language_code": "en", "note": "Every Czech paid-data call overrode the Ireland project default with 2203/cs."}},
+      {"name": "get_keyword_metrics", "parameters": {"projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b", "keywords": ["praktický lékař online", "online konzultace s lékařem", "praktik online", "online lékař", "lékař online 24/7", "online neschopenka", "neschopenka online", "jak funguje eNeschopenka", "eNeschopenka", "obnovení receptu online", "eRecept online", "lékař online Praha", "dětský lékař online", "kožní lékař online", "žádanka online", "druhý názor lékaře", "krevní tlak kalkulačka"], "locationCode": 2203, "languageCode": "cs", "includeMonthlyTrends": false, "sortBy": "search_volume"}},
+      {"name": "get_serp_results", "parameters": {"projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b", "queries": [{"keyword": "praktický lékař online", "locationCode": 2203, "languageCode": "cs"}, {"keyword": "praktik online", "locationCode": 2203, "languageCode": "cs"}, {"keyword": "lékař online 24/7", "locationCode": 2203, "languageCode": "cs"}, {"keyword": "online neschopenka", "locationCode": 2203, "languageCode": "cs"}, {"keyword": "jak funguje eNeschopenka", "locationCode": 2203, "languageCode": "cs"}, {"keyword": "obnovení receptu online", "locationCode": 2203, "languageCode": "cs"}, {"keyword": "lékař online Praha", "locationCode": 2203, "languageCode": "cs"}, {"keyword": "dětský lékař online", "locationCode": 2203, "languageCode": "cs"}, {"keyword": "kožní lékař online", "locationCode": 2203, "languageCode": "cs"}, {"keyword": "žádanka online", "locationCode": 2203, "languageCode": "cs"}], "depth": 20}},
+      {"name": "get_ranked_keywords", "parameters": {"projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b", "target": "https://www.myglobalhealth.online/czechia/", "scope": "subfolder", "locationCode": 2203, "languageCode": "cs", "limit": 100, "maxRank": 50, "sortBy": "rank", "resultTypes": ["organic"]}},
+      {"name": "get_audit_status", "parameters": {"projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b"}},
+      {"name": "get_audit_issues", "parameters": {"projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b", "limit": 200}},
+      {"name": "get_audit_pages", "parameters": {"projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b", "limit": 100, "urlContains": "/czechia/"}},
+      {"name": "get_backlinks_overview", "parameters": {"projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b", "target": "https://www.myglobalhealth.online/czechia/", "scope": "subfolder", "hideSpam": true}},
+      {"name": "inspect_urls", "parameters": {"projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b", "urls": ["https://www.myglobalhealth.online/czechia/cs/gp-consultation-online", "https://www.myglobalhealth.online/czechia/cs/blog/lekar-online-24-7-co-vyresi", "https://www.myglobalhealth.online/czechia/cs/services/neschopenka-online", "https://www.myglobalhealth.online/czechia/cs/blog/neschopenka-jak-funguje-eneschopenka", "https://www.myglobalhealth.online/czechia/cs/services/obnoveni-lecby", "https://www.myglobalhealth.online/czechia/en/services/lekar-online-praha", "https://www.myglobalhealth.online/czechia/cs/services/detsky-lekar-online", "https://www.myglobalhealth.online/czechia/cs/services/kozni-konzultace-praha", "https://www.myglobalhealth.online/czechia/cs/services/doporuceni-a-vysetreni", "https://www.myglobalhealth.online/czechia/cs/services/druhy-nazor-praha", "https://www.myglobalhealth.online/czechia/cs/tools/blood-pressure-chart", "https://www.myglobalhealth.online/czechia/cs/doctors"], "languageCode": "cs-CZ"}}
+    ],
+    "keyword_metrics_returned": 13,
+    "keyword_metrics": [
+      {"keyword": "eneschopenka", "search_volume": 1300, "keyword_difficulty": 0, "intent": "informational", "cpc": 0.57, "competition": 0},
+      {"keyword": "erecept online", "search_volume": 880, "keyword_difficulty": 48, "intent": "informational", "cpc": 1.12, "competition": 0.14},
+      {"keyword": "online lékař", "search_volume": 880, "keyword_difficulty": 28, "intent": "informational", "cpc": 0.66, "competition": 0.28},
+      {"keyword": "krevní tlak kalkulačka", "search_volume": 720, "keyword_difficulty": 0, "intent": "informational", "cpc": 0.03, "competition": 0.02},
+      {"keyword": "jak funguje eneschopenka", "search_volume": 210, "keyword_difficulty": 1, "intent": "informational", "cpc": null, "competition": 0.03},
+      {"keyword": "lékař online 24/7", "search_volume": 170, "keyword_difficulty": 6, "intent": "informational", "cpc": 0.69, "competition": 0.26},
+      {"keyword": "kožní lékař online", "search_volume": 40, "keyword_difficulty": null, "intent": "navigational", "cpc": 0.86, "competition": 0.54},
+      {"keyword": "online neschopenka", "search_volume": 40, "keyword_difficulty": null, "intent": "informational", "cpc": null, "competition": 0},
+      {"keyword": "druhý názor lékaře", "search_volume": 20, "keyword_difficulty": null, "intent": "informational", "cpc": null, "competition": 0},
+      {"keyword": "praktik online", "search_volume": 20, "keyword_difficulty": null, "intent": "informational", "cpc": null, "competition": 0.02},
+      {"keyword": "dětský lékař online", "search_volume": 10, "keyword_difficulty": null, "intent": "navigational", "cpc": 0.81, "competition": 0.37},
+      {"keyword": "online konzultace s lékařem", "search_volume": null, "keyword_difficulty": 4, "intent": "transactional", "cpc": null, "competition": null},
+      {"keyword": "praktický lékař online", "search_volume": null, "keyword_difficulty": 5, "intent": "commercial", "cpc": null, "competition": null}
+    ],
+    "keyword_metrics_unavailable": ["neschopenka online", "obnovení receptu online", "lékař online Praha", "žádanka online"],
+    "serp_top_five_domains": [
+      {"keyword": "praktický lékař online", "domains": ["www.praktickylekar.online", "www.mojeambulance.cz", "euc.cz", "www.zpmvcr.cz", "www.znamylekar.cz"]},
+      {"keyword": "praktik online", "domains": ["www.praktickylekar.online", "euc.cz", "euc.cz", "www.facebook.com", "euc.cz"]},
+      {"keyword": "lékař online 24/7", "domains": [null, "moje.euc.cz", "www.meddi.com", "www.zpmvcr.cz", "pr.denik.cz"]},
+      {"keyword": "online neschopenka", "domains": ["eportal.cssz.cz", "www.cssz.gov.cz", null, "www.koop.cz", null]},
+      {"keyword": "jak funguje eNeschopenka", "domains": [null, "www.cssz.gov.cz", null, "www.cssz.gov.cz", "www.mojeambulance.cz"]},
+      {"keyword": "obnovení receptu online", "domains": [null, "epreskripce.gov.cz", "www.benunapredpis.cz", "www.drmaxlekynapredpis.cz", "www.mojelekarna.cz"]},
+      {"keyword": "lékař online Praha", "domains": [null, "vaspraktikpraha.cz", "www.navstevalekare.cz", "www.ordinacepankrac.cz", "euc.cz"]},
+      {"keyword": "dětský lékař online", "domains": ["www.epediatr.cz", "my.medevio.cz", "www.olivovna.cz", "www.nestlebaby.cz", "www.epediatr.cz"]},
+      {"keyword": "kožní lékař online", "domains": ["www.mediket.ch", "www.institutdermatologie.cz", null, "www.konzultacelekare.cz", "www.ordinace.cz"]},
+      {"keyword": "žádanka online", "domains": [null, "www.ezdravi.gov.cz", "www.unilabs.cz", "www.synlab.cz", "ncez.mzcr.cz"]}
+    ],
+    "target_ranked_keywords": 14,
+    "target_ranked_keyword_rows": [
+      {"keyword": "jak funguje eneschopenka", "search_volume": 210, "intent": "informational", "rank": 17, "url": "https://www.myglobalhealth.online/czechia/cs/blog/neschopenka-jak-funguje-eneschopenka"},
+      {"keyword": "jak funguje neschopenka", "search_volume": 210, "intent": "informational", "rank": 21, "url": "https://www.myglobalhealth.online/czechia/cs/blog/neschopenka-jak-funguje-eneschopenka"},
+      {"keyword": "kalorická kalkulačka zdarma", "search_volume": 170, "intent": "informational", "rank": 22, "url": "https://www.myglobalhealth.online/czechia/cs/tools/calorie-calculator"},
+      {"keyword": "kdy dostanu menstruaci kalkulačka", "search_volume": 170, "intent": "informational", "rank": 27, "url": "https://www.myglobalhealth.online/czechia/cs/tools/ovulation-calculator"},
+      {"keyword": "jak získat neomezené vycházky", "search_volume": 210, "intent": "informational", "rank": 29, "url": "https://www.myglobalhealth.online/czechia/cs/blog/neschopenka-jak-funguje-eneschopenka"},
+      {"keyword": "kalkulačka uhnízdění vajíčka", "search_volume": 170, "intent": "informational", "rank": 30, "url": "https://www.myglobalhealth.online/czechia/cs/tools/ovulation-calculator"},
+      {"keyword": "tabulka měření tlaku", "search_volume": 170, "intent": "transactional", "rank": 30, "url": "https://www.myglobalhealth.online/czechia/cs/tools/blood-pressure-chart"},
+      {"keyword": "kalkulačka váhy", "search_volume": 210, "intent": "informational", "rank": 32, "url": "https://www.myglobalhealth.online/czechia/cs/tools/bmi-calculator"},
+      {"keyword": "normalni tlak u zeny", "search_volume": 170, "intent": "informational", "rank": 36, "url": "https://www.myglobalhealth.online/czechia/cs/tools/blood-pressure-chart"},
+      {"keyword": "kalkulačka plodné dny", "search_volume": 170, "intent": "informational", "rank": 37, "url": "https://www.myglobalhealth.online/czechia/cs/tools/ovulation-calculator"},
+      {"keyword": "termín porodu kalkulačka", "search_volume": 170, "intent": "informational", "rank": 40, "url": "https://www.myglobalhealth.online/czechia/cs/tools/due-date-calculator"},
+      {"keyword": "kalkulačka termín porodu", "search_volume": 170, "intent": "informational", "rank": 41, "url": "https://www.myglobalhealth.online/czechia/cs/tools/due-date-calculator"},
+      {"keyword": "kalkulačka menstruace", "search_volume": 170, "intent": "informational", "rank": 43, "url": "https://www.myglobalhealth.online/czechia/cs/tools/ovulation-calculator"},
+      {"keyword": "datum porodu", "search_volume": 210, "intent": "informational", "rank": 44, "url": "https://www.myglobalhealth.online/czechia/cs/tools/due-date-calculator"}
+    ],
+    "audit": {
+      "audit_id": "52b544a1-1faa-46e6-87c7-e251711733cf",
+      "started_at": "2026-08-31T13:05:10.929Z",
+      "completed_at": "2026-08-31T13:07:23.581Z",
+      "pages_crawled": 100,
+      "czech_pages_returned_by_url_filter": 1,
+      "czech_issue_count": null,
+      "scope_warning": "The crawler followed cross-market links and the URL-filtered page read returned only the Czech home page. Czech issue totals are unavailable; global issue totals are not Czechia defect counts."
+    },
+    "url_inspection": {
+      "passed_indexed": 11,
+      "matching_declared_and_google_canonical_returned": 9,
+      "declared_canonical_not_returned": [
+        "https://www.myglobalhealth.online/czechia/cs/services/neschopenka-online",
+        "https://www.myglobalhealth.online/czechia/cs/services/doporuceni-a-vysetreni"
+      ],
+      "unknown_to_google": ["https://www.myglobalhealth.online/czechia/cs/services/druhy-nazor-praha"],
+      "results": [
+        {"url": "https://www.myglobalhealth.online/czechia/cs/gp-consultation-online", "verdict": "PASS", "coverage": "Odesláno a indexováno", "last_crawl": "2026-08-24T17:28:01Z", "google_canonical": "https://www.myglobalhealth.online/czechia/cs/gp-consultation-online", "declared_canonical": "https://www.myglobalhealth.online/czechia/cs/gp-consultation-online"},
+        {"url": "https://www.myglobalhealth.online/czechia/cs/blog/lekar-online-24-7-co-vyresi", "verdict": "PASS", "coverage": "Odesláno a indexováno", "last_crawl": "2026-08-25T19:10:17Z", "google_canonical": "https://www.myglobalhealth.online/czechia/cs/blog/lekar-online-24-7-co-vyresi", "declared_canonical": "https://www.myglobalhealth.online/czechia/cs/blog/lekar-online-24-7-co-vyresi"},
+        {"url": "https://www.myglobalhealth.online/czechia/cs/services/neschopenka-online", "verdict": "PASS", "coverage": "Odesláno a indexováno", "last_crawl": "2026-07-21T17:11:29Z", "google_canonical": "https://www.myglobalhealth.online/czechia/cs/services/neschopenka-online", "declared_canonical": null},
+        {"url": "https://www.myglobalhealth.online/czechia/cs/blog/neschopenka-jak-funguje-eneschopenka", "verdict": "PASS", "coverage": "Odesláno a indexováno", "last_crawl": "2026-08-26T03:45:06Z", "google_canonical": "https://www.myglobalhealth.online/czechia/cs/blog/neschopenka-jak-funguje-eneschopenka", "declared_canonical": "https://www.myglobalhealth.online/czechia/cs/blog/neschopenka-jak-funguje-eneschopenka"},
+        {"url": "https://www.myglobalhealth.online/czechia/cs/services/obnoveni-lecby", "verdict": "PASS", "coverage": "Odesláno a indexováno", "last_crawl": "2026-07-19T22:35:56Z", "google_canonical": "https://www.myglobalhealth.online/czechia/cs/services/obnoveni-lecby", "declared_canonical": "https://www.myglobalhealth.online/czechia/cs/services/obnoveni-lecby"},
+        {"url": "https://www.myglobalhealth.online/czechia/en/services/lekar-online-praha", "verdict": "PASS", "coverage": "Odesláno a indexováno", "last_crawl": "2026-08-16T22:11:49Z", "google_canonical": "https://www.myglobalhealth.online/czechia/en/services/lekar-online-praha", "declared_canonical": "https://www.myglobalhealth.online/czechia/en/services/lekar-online-praha"},
+        {"url": "https://www.myglobalhealth.online/czechia/cs/services/detsky-lekar-online", "verdict": "PASS", "coverage": "Odesláno a indexováno", "last_crawl": "2026-07-20T00:42:20Z", "google_canonical": "https://www.myglobalhealth.online/czechia/cs/services/detsky-lekar-online", "declared_canonical": "https://www.myglobalhealth.online/czechia/cs/services/detsky-lekar-online"},
+        {"url": "https://www.myglobalhealth.online/czechia/cs/services/kozni-konzultace-praha", "verdict": "PASS", "coverage": "Odesláno a indexováno", "last_crawl": "2026-08-23T17:01:36Z", "google_canonical": "https://www.myglobalhealth.online/czechia/cs/services/kozni-konzultace-praha", "declared_canonical": "https://www.myglobalhealth.online/czechia/cs/services/kozni-konzultace-praha"},
+        {"url": "https://www.myglobalhealth.online/czechia/cs/services/doporuceni-a-vysetreni", "verdict": "PASS", "coverage": "Odesláno a indexováno", "last_crawl": "2026-07-20T01:37:59Z", "google_canonical": "https://www.myglobalhealth.online/czechia/cs/services/doporuceni-a-vysetreni", "declared_canonical": null},
+        {"url": "https://www.myglobalhealth.online/czechia/cs/services/druhy-nazor-praha", "verdict": "NEUTRAL", "coverage": "Google adresu URL nezná", "last_crawl": null, "google_canonical": null, "declared_canonical": null},
+        {"url": "https://www.myglobalhealth.online/czechia/cs/tools/blood-pressure-chart", "verdict": "PASS", "coverage": "Odesláno a indexováno", "last_crawl": "2026-08-30T20:12:21Z", "google_canonical": "https://www.myglobalhealth.online/czechia/cs/tools/blood-pressure-chart", "declared_canonical": "https://www.myglobalhealth.online/czechia/cs/tools/blood-pressure-chart"},
+        {"url": "https://www.myglobalhealth.online/czechia/cs/doctors", "verdict": "PASS", "coverage": "Odesláno a indexováno", "last_crawl": "2026-08-31T08:51:40Z", "google_canonical": "https://www.myglobalhealth.online/czechia/cs/doctors", "declared_canonical": "https://www.myglobalhealth.online/czechia/cs/doctors"}
+      ],
+      "decision": "Monitor the P2 second-opinion URL; one inspection is not evidence for a route or indexation change."
+    },
+    "backlinks": {
+      "subfolder_backlinks": 0,
+      "subfolder_referring_domains": 0,
+      "limitation": "Subfolder counts are filtered totals and do not include rank, trend, or referring-domain breakdowns."
+    },
+    "production_fetch": {
+      "tool": "web.open",
+      "retrieval_date": "2026-08-31",
+      "documents_returned": ["/czechia/cs/gp-consultation-online", "/czechia/cs/services/obnoveni-lecby", "/czechia/en/services/lekar-online-praha", "/czechia/cs/services/doporuceni-a-vysetreni", "/czechia/cs/services/druhy-nazor-praha"],
+      "timeouts": ["/czechia/cs/blog/lekar-online-24-7-co-vyresi", "/czechia/cs/services/neschopenka-online", "/czechia/cs/blog/neschopenka-jak-funguje-eneschopenka", "/czechia/cs/services/detsky-lekar-online", "/czechia/cs/services/kozni-konzultace-praha"],
+      "limitation": "The web fetch returned page documents but did not expose a direct HTTP status field. Google URL Inspection is stored index state, not live production state."
+    }
+  },
+  "decision": {
+    "implemented": "Corrected Czechia measurement attribution, recorded the focused final-data refresh and prepared two repository-only review-gated service drafts.",
+    "not_implemented": [
+      "No GP/article metadata or heading change before the 2026-09-08 ownership gate.",
+      "No clinically material production service, article, tool, FAQ, or profile rewrite while the review register remains pending.",
+      "No production CMS/database write without explicit authorization.",
+      "No travel redirect, canonical, sitemap, robots, hreflang, or route change.",
+      "No outreach or keyword persistence."
+    ]
+  }
+}

@@ -34,6 +34,18 @@ Missing provider metrics are blank, never converted to zero. Accented and unacce
 
 The numbered files cover baseline, competitors, keyword universe, gaps, ownership, architecture, technical audit, backlink prospects, implementation, measurement, and roadmap. Supporting inventories, clinical review register, SERP validation, content briefs, and raw exports sit beside them.
 
+The 2026-09-01 page-level package is documented in
+[`11-page-by-page-optimization.md`](11-page-by-page-optimization.md). Its
+[`page-by-page-completion-matrix.csv`](page-by-page-completion-matrix.csv)
+covers all 50 in-scope URLs and is validated against all 481 keyword-owner rows.
+The exact live technical inputs are preserved in
+[`raw/live-page-seo-snapshot-2026-09-01.csv`](raw/live-page-seo-snapshot-2026-09-01.csv).
+
+The two review-gated service drafts and their dry-run updater live in
+`backend/src/content/czechia-seo-service-drafts.ts` and
+`backend/scripts/patch-czechia-seo-service-drafts.ts`. They are repository
+artifacts, not production CMS state. Both services remain pending clinical review.
+
 Run the lightweight integrity check after editing any generated CSV:
 
 ```powershell
@@ -43,6 +55,6 @@ node seo/czechia/validate-artifacts.mjs
 ## Known limits
 
 - OpenSEO returned Czech keyword data for `2203/cs`; its English keyword-research endpoint did not return a supported language combination. English-for-Czechia demand therefore comes from live Czechia SERPs, GSC, target rankings, and reviewed competitor pages, not invented English volume.
-- GA4 organic conversion data is sparse: 24 sessions and no key events in the current 90-day window. GSC is the primary performance baseline.
+- GA4 organic conversion data is sparse: the overview has 24 sitewide sessions, while Czechia organic landing pages have 4 sessions and no key events in the final-data refresh. A Czechia-wide unique-user count is unavailable from the landing-page rows. GSC is the primary performance baseline.
 - The 100-page technical crawl followed cross-market links into Ireland after the Czech start URL. Its Lighthouse coverage is useful, but its issue totals are not a Czech-only defect count.
 - Backlink exports contain provider anomalies and noisy sources. Every prospect requires manual relevance, editorial, and spam review before outreach.

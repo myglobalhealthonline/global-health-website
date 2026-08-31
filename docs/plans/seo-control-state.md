@@ -1,6 +1,6 @@
 # SEO control state — canonical
 
-**Last operational update: 2026-08-31.** Historical audit files remain snapshots;
+**Last operational update: 2026-09-01.** Historical audit files remain snapshots;
 this ledger is the source of truth for current status, dated gates and future work.
 
 **This file is the single source of truth for the SEO workstream.** It carries the
@@ -20,6 +20,91 @@ Property: `sc-domain:myglobalhealth.online` · Site: `https://www.myglobalhealth
 
 The active forward plan (§27) is surfaced first for operators; the numbered baseline,
 ledger and historical evidence follow from §0.
+
+### 27.15 Czechia page-by-page local optimization package (2026-09-01)
+
+- A 50-row completion matrix now covers every current `/czechia/cs` sitemap URL plus
+  `/czechia/en` and `/czechia/en/services/lekar-online-praha`. It records one primary
+  keyword, focused variants, live originals, proposed metadata/H1/description,
+  bio/FAQ disposition, deslop, technical state, CTA/internal-link action and factual
+  comparison for each page.
+- All 481 keyword-master rows retain an owner URL present in the matrix. Low-volume
+  terms stay mapped without creating pages or forcing unrelated service intent.
+- Live checks on 2026-09-01 returned 200, self-canonical, `index, follow`,
+  self-hreflang and route-appropriate structured data for all 50 URLs. The FAQ route's
+  schema and tabs use the same source groups; inactive groups are user-visible after
+  tab selection. Replay evidence is
+  `seo/czechia/raw/live-page-seo-snapshot-2026-09-01.csv`.
+- Repeated same-day, instant-confirmation and automatic-document wording is flagged
+  for safe clinical-discretion/live-calendar replacement. Doctor bios and all verified
+  clinical, registration, pricing, formula and legal facts remain unchanged.
+- **Production remains unchanged.** Apart from the two guarded service drafts in
+  §27.14, recommendations are local matrix copy. Clinical/legal/native review and
+  separate owner authorization still apply. Only those two service drafts have exact
+  FAQ replacements; the remaining affected FAQ rows are marked incomplete, and every
+  one of the 36 clinical-gated rows has a pending register entry. The two full drafts
+  also remain blocked by null cross-locale CTA fallbacks. GP/24-7 and travel holds remain binding.
+  Evidence: `seo/czechia/11-page-by-page-optimization.md` and
+  `seo/czechia/page-by-page-completion-matrix.csv`.
+
+### 27.14 Czechia review-gated service drafts (2026-09-01)
+
+- Repository-only Czech drafts now cover the two eligible P0 service records:
+  `/czechia/cs/services/neschopenka-online` and
+  `/czechia/cs/services/obnoveni-lecby`. Their existing slugs, FAQ records,
+  price, duration, booking state, assignments, visibility and publication state
+  stay outside the content mutation surface.
+- The neschopenka service keeps transactional assessment intent; the published
+  eNeschopenka article keeps ČSSZ process intent. Treatment renewal owns
+  `obnovení receptu online` and makes clear that an eRecept is not automatic.
+  Unsupported same-day, guaranteed-document and volatile entitlement statements
+  were removed from the drafts. Official ČSSZ/ePreskripce references and 155/112
+  escalation are included where relevant.
+- A dedicated updater defaults to dry-run, accepts one allowlisted slug, verifies
+  exact record ID, `updatedAt`, source fingerprint and FAQ IDs, then requires the
+  exact approved-copy hash, review date, verified-eligibility Czech reviewer ID and confirmation
+  token before `--apply`. It rechecks the live record inside a Serializable
+  transaction. Dry-runs matched full six-locale service and FAQ source hashes
+  `880fd7d…834cc` and `8bd6489…e74ad8`, but both reported an apply blocker: the base
+  CTA and EN/PT/ES/RO/DE CTA fields are null, so a Czech base CTA would leak across
+  locale fallbacks. The updater refuses that write. Global service reviewer/date
+  fields also remain unchanged because they are not locale-scoped; the external
+  clinical register remains the approval record.
+- **Production remains unchanged.** The CTA fallback blocker, clinical approval and
+  separate owner authorization are still unresolved, so no apply command was run.
+  The clinical review register remains `pending`. The GP/24-7 and travel decision gate remains
+  on or after **2026-09-08**. The English Prague service, other service pages,
+  doctor biographies, routes, redirects, canonicals, sitemap and schema were not
+  changed.
+- The existing eNeschopenka article copy was not rewritten because it already
+  separates informational intent and links to the service. Its public API record
+  exposes a doctor-relation mismatch against the visible author/reviewer attribution;
+  this needs source verification before any CMS correction and was not guessed.
+- Verification passed: 13 focused content/updater tests, backend full suite,
+  type-check, build, touched-file lint, Czech artifact validation, JSON parsing and
+  `git diff --check`. Independent code, TypeScript and security reviews reported no
+  remaining findings for the repository-only result.
+
+### 27.13 Czechia final-data refresh and GA4 scope correction (2026-08-31)
+
+- Final GSC data for `2026-05-31`–`2026-08-28` returns 141 clicks and 7,702
+  impressions for Czechia page rows. Privacy-thresholded Czech-searcher query rows
+  return 58 clicks / 2,871 impressions; they are not complete country totals.
+  Priority ownership remains unchanged; the GP/article decision gate stays on or
+  after **2026-09-08**.
+- The prior Czech evidence described 24 GA4 organic sessions as a Czechia baseline.
+  That figure is sitewide. Czechia organic landing-page rows account for 4 sessions,
+  2 engaged sessions and no key events or transactions in the refreshed window. A
+  Czechia-wide unique-user count is unavailable from this report. The country package
+  now records the corrected scope.
+- URL Inspection passed 11 of 12 priority URLs as indexed. Nine returned matching
+  declared and Google-selected canonicals; two omitted the declared-canonical field.
+  `/czechia/cs/services/druhy-nazor-praha` is unknown to Google but is a live P2
+  service. Monitor a repeated inspection; do not change its route, sitemap, canonical
+  or indexation controls from a single observation.
+- No content, CMS/database, redirect, sitemap, robots, hreflang or route change was
+  authorized. All clinically material Czech rewrites remain pending review. Exact
+  calls and limitations: `seo/czechia/raw/focused-refresh-2026-08-31.json`.
 
 ### 27.12 Czechia refresh — local evidence and locale-link fix (2026-08-31)
 
