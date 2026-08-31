@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   addCalendarMonths,
-  adminJobCreateBodySchema,
-  adminJobPatchBodySchema,
+  adminJobGroupCreateBodySchema,
+  adminJobGroupPatchBodySchema,
   adminApplicationsQuerySchema,
   applicationFieldsSchema,
   isAllowedJobTransition,
@@ -26,17 +26,45 @@ describe("recruitment validation", () => {
     closesAt: null,
   };
 
-  it("accepts a complete job and rejects unsafe slugs", () => {
-    assert.equal(adminJobCreateBodySchema.safeParse(job).success, true);
-    assert.equal(
-      adminJobCreateBodySchema.safeParse({ ...job, slug: "General Practitioner" }).success,
-      false,
-    );
+  it("accepts unique localized job content and rejects duplicate locales", () => {
+    const shared = {
+      countryId: job.countryId,
+      slug: job.slug,
+      workplaceMode: job.workplaceMode,
+      status: job.status,
+      closesAt: job.closesAt,
+    };
+    const localization = ({
+      locale: job.locale,
+      title: job.title,
+      department: job.department,
+      location: job.location,
+      employmentType: job.employmentType,
+      minimumExperience: job.minimumExperience,
+      descriptionHtml: job.descriptionHtml,
+    });
+
+    assert.equal(adminJobGroupCreateBodySchema.safeParse({
+      ...shared,
+      localizations: [localization, { ...localization, locale: "PT", title: "Médico" }],
+    }).success, true);
+    assert.equal(adminJobGroupCreateBodySchema.safeParse({
+      ...shared,
+      localizations: [localization, localization],
+    }).success, false);
+    assert.equal(adminJobGroupCreateBodySchema.safeParse({ ...shared, localizations: [] }).success, false);
+    assert.equal(adminJobGroupCreateBodySchema.safeParse({ ...shared, localizations: [localization], extra: true }).success, false);
+    assert.equal(adminJobGroupCreateBodySchema.safeParse({
+      ...shared,
+      slug: "General Practitioner",
+      localizations: [localization],
+    }).success, false);
   });
 
-  it("does not inject a draft status into a partial job update", () => {
-    const parsed = adminJobPatchBodySchema.parse({ title: "Updated title" });
-    assert.equal(Object.hasOwn(parsed, "status"), false);
+  it("keeps localized content optional for a status-only grouped archive", () => {
+    assert.deepEqual(adminJobGroupPatchBodySchema.parse({ status: "ARCHIVED" }), {
+      status: "ARCHIVED",
+    });
   });
 
   it("normalizes application text without accepting privacy opt-out", () => {

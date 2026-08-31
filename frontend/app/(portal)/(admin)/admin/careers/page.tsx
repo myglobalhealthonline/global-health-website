@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Edit3, ExternalLink, Plus } from "lucide-react";
-import { fetchAdminCountries, fetchAdminJobs, fetchRecruitmentHealth, type AdminJobDto } from "@/lib/admin/admin-api";
+import { fetchAdminCountries, fetchAdminJobs, fetchRecruitmentHealth, type AdminJobListDto } from "@/lib/admin/admin-api";
 import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
 import { ResponsiveFilterBar } from "@/components/ResponsiveFilterBar";
 import { AdminCard, AdminEmptyState, AdminSummaryStrip, Btn, IconBtn, PageHeader, Pill } from "../_components/atoms";
@@ -10,8 +10,8 @@ type SearchParams = Record<string, string | string[] | undefined>;
 const read = (value: string | string[] | undefined) => Array.isArray(value) ? value[0] : value;
 const date = (value: string | null) => value ? new Intl.DateTimeFormat("en-GB", { dateStyle: "medium" }).format(new Date(value)) : "—";
 
-function JobsTable({ jobs }: { jobs: AdminJobDto[] }) {
-  const fields: ColumnPriorityField<AdminJobDto>[] = [
+function JobsTable({ jobs }: { jobs: AdminJobListDto[] }) {
+  const fields: ColumnPriorityField<AdminJobListDto>[] = [
     { key: "title", label: "Job", priority: 1, cardPrimary: true, render: (job) => <><strong>{job.title}</strong><small className="block font-mono text-[var(--portal-muted)]">{job.slug}</small></> },
     { key: "market", label: "Market", priority: 2, render: (job) => `${job.country.name} · ${job.locale}` },
     { key: "department", label: "Department", priority: 2, render: (job) => job.department },

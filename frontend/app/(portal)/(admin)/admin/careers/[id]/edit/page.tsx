@@ -2,13 +2,13 @@ import Link from "next/link";
 import { ArrowLeft, Archive, ExternalLink } from "lucide-react";
 import { redirect } from "next/navigation";
 import { revalidatePath, revalidateTag } from "next/cache";
-import { fetchAdminCountries, fetchAdminJob, updateAdminJob } from "@/lib/admin/admin-api";
+import { fetchAdminCountries, fetchAdminJob, updateAdminJobGroup } from "@/lib/admin/admin-api";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { PUBLIC_JOBS_TAG } from "@/lib/content/get-public-jobs";
 import { AdminCard, Btn, PageHeader, Pill } from "../../../_components/atoms";
 import { ConfirmDeleteButton } from "../../../_components/confirm-delete-button";
 import { JobFields } from "../../_components/job-fields";
-import { parseJobForm, validateJobInput } from "../../_components/job-form-parse";
+import { parseJobForm, toAdminJobGroupInput, validateJobInput } from "../../_components/job-form-parse";
 
 export const dynamic = "force-dynamic";
 export default async function EditCareerJobPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams?: Promise<{ error?: string; success?: string }> }) {
@@ -21,14 +21,14 @@ export default async function EditCareerJobPage({ params, searchParams }: { para
   async function save(form: FormData) {
     "use server"; await requireAdminAction();
     let body; try { body = parseJobForm(form); } catch { redirect(`/admin/careers/${id}/edit?error=Invalid+job+form+values`); }
-    const error = validateJobInput(body!); if (error) redirect(`/admin/careers/${id}/edit?error=${encodeURIComponent(error)}`);
-    const result = await updateAdminJob(id, body!); if (!result.ok) redirect(`/admin/careers/${id}/edit?error=${encodeURIComponent(result.message)}`);
+    const error = validateJobInput(body!, job.localizations.map(({ locale }) => locale)); if (error) redirect(`/admin/careers/${id}/edit?error=${encodeURIComponent(error)}`);
+    const result = await updateAdminJobGroup(id, toAdminJobGroupInput(body!)); if (!result.ok) redirect(`/admin/careers/${id}/edit?error=${encodeURIComponent(result.message)}`);
     revalidateTag(PUBLIC_JOBS_TAG, "max"); revalidatePath("/admin/careers"); revalidatePath(publicPath);
     redirect(`/admin/careers/${id}/edit?success=${encodeURIComponent("Job saved")}`);
   }
   async function archive() {
     "use server"; await requireAdminAction();
-    const result = await updateAdminJob(id, { status: "ARCHIVED" });
+    const result = await updateAdminJobGroup(id, { status: "ARCHIVED" });
     if (!result.ok) redirect(`/admin/careers/${id}/edit?error=${encodeURIComponent(result.message)}`);
     revalidateTag(PUBLIC_JOBS_TAG, "max"); revalidatePath("/admin/careers"); revalidatePath(publicPath);
     redirect(`/admin/careers/${id}/edit?success=Job+archived`);

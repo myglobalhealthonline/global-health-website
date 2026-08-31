@@ -94,7 +94,7 @@ export default async function JobDetailPage({ params }: { params: Promise<Params
       <SectionSeam theme="light" />
       <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
       <div className="gh-careers-detail-grid">
-        <article className="gh-careers-job-main gh2-card-ivory">
+        <article className="gh-careers-job-main">
           <div className="gh-careers-prose gh-article-body" lang={sourceLocale} dangerouslySetInnerHTML={{ __html: descriptionHtml }} />
           <JobApplicationForm jobId={job.id} privacyHref={`${base}/legal/privacy-policy`} locale={context.locale} copy={{
             heading: context.t.applyHeading, fullName: context.t.formFullName, email: context.t.formEmail,
@@ -105,7 +105,7 @@ export default async function JobDetailPage({ params }: { params: Promise<Params
             genericError: context.t.formGenericError, closed: context.t.formClosed,
           }} />
         </article>
-        <aside className="gh-careers-job-aside gh2-card-ivory">
+        <aside className="gh-careers-job-aside gh2-glass-forest gh2-dark-content">
           <a href="#apply" className="gh2-btn-lime">{context.t.ctaApply}</a>
           <JobShareActions url={canonicalUrl} title={job.title} copyLabel={context.t.copyLink} copiedLabel={context.t.copiedLink} shareLabel={context.t.shareJob} />
           <dl>

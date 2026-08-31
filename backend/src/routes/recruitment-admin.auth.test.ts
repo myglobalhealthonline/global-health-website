@@ -81,8 +81,8 @@ describe("recruitment admin routes authorize global admins only", () => {
 
   it("rejects unauthenticated and LOCAL_ADMIN job writes before body validation", async () => {
     for (const request of [
-      { method: "POST" as const, url: "/api/admin/jobs" },
-      { method: "PATCH" as const, url: "/api/admin/jobs/job-test" },
+      { method: "POST" as const, url: "/api/admin/job-groups" },
+      { method: "PATCH" as const, url: "/api/admin/job-groups/job-test" },
     ]) {
       const unauthenticated = await app.inject({ ...request, payload: {} });
       assert.equal(unauthenticated.statusCode, 401, unauthenticated.body);

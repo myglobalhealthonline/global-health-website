@@ -12,9 +12,8 @@ import { sanitizeCareerHtml } from "../../utils/sanitize-html.js";
 import { OUTBOX_KIND_RECRUITMENT_APPLICATION_NOTIFICATION } from "../outbox/outbox.js";
 import {
   addCalendarMonths,
-  adminJobCreateBodySchema,
-  type AdminJobInput,
-  type AdminJobPatch,
+  type AdminJobGroupInput,
+  type AdminJobGroupPatch,
   type ApplicationFields,
   isAllowedJobTransition,
 } from "./recruitment.schema.js";
@@ -70,9 +69,39 @@ function getActivePublicCountry(countryCode: string) {
 }
 
 const adminJobInclude = {
-  country: { select: { id: true, code: true, name: true, slug: true } },
+  country: { select: { id: true, code: true, name: true, slug: true, defaultLocale: true } },
   _count: { select: { applications: true } },
 } satisfies Prisma.JobListingInclude;
+
+const adminJobListSelect = {
+  id: true,
+  countryId: true,
+  locale: true,
+  slug: true,
+  title: true,
+  department: true,
+  location: true,
+  workplaceMode: true,
+  status: true,
+  closesAt: true,
+  updatedAt: true,
+  country: { select: { id: true, code: true, name: true, slug: true, defaultLocale: true } },
+  _count: { select: { applications: true } },
+} satisfies Prisma.JobListingSelect;
+
+const adminJobLocalizationSelect = {
+  id: true,
+  locale: true,
+  title: true,
+  department: true,
+  location: true,
+  employmentType: true,
+  minimumExperience: true,
+  descriptionHtml: true,
+  status: true,
+  publishedAt: true,
+  updatedAt: true,
+} satisfies Prisma.JobListingSelect;
 
 function publicOpenWhere(now = new Date()): Prisma.JobListingWhereInput {
   return {
@@ -90,28 +119,35 @@ function sanitizeDescription(input: string): string {
   return sanitized;
 }
 
-async function assertCountryLocale(countryId: string, locale: JobListing["locale"]): Promise<void> {
-  const country = await prisma.country.findUnique({
-    where: { id: countryId },
-    select: { id: true, isActive: true, defaultLocale: true },
-  });
-  if (!country?.isActive) throw new RecruitmentValidationError("Country not found or inactive");
-  if (country.defaultLocale === locale) return;
-  const localeRow = await prisma.countryLocale.findUnique({
-    where: { countryId_locale: { countryId, locale } },
-    select: { id: true },
-  });
-  if (!localeRow) throw new RecruitmentValidationError("Locale is not enabled for this country");
-}
-
-function assertPublishReady(input: AdminJobInput, now: Date): void {
-  if (input.status !== JobListingStatus.PUBLISHED) return;
-  if (input.closesAt && input.closesAt <= now) {
+function assertPublishSettings(
+  status: JobListingStatus,
+  closesAt: Date | null | undefined,
+  now: Date,
+): void {
+  if (status !== JobListingStatus.PUBLISHED) return;
+  if (closesAt && closesAt <= now) {
     throw new RecruitmentValidationError("Closing time must be in the future when publishing");
   }
   if (!env.CLAMAV_HOST || !isMediaStorageConfigured()) {
     throw new RecruitmentNotReadyError("Recruitment intake is not configured");
   }
+}
+
+async function getAdminCountryLocales(countryId: string) {
+  const country = await prisma.country.findUnique({
+    where: { id: countryId },
+    select: {
+      id: true,
+      isActive: true,
+      defaultLocale: true,
+      countryLocales: { select: { locale: true } },
+    },
+  });
+  if (!country?.isActive) throw new RecruitmentValidationError("Country not found or inactive");
+  return {
+    defaultLocale: country.defaultLocale,
+    locales: new Set([country.defaultLocale, ...country.countryLocales.map(({ locale }) => locale)]),
+  };
 }
 
 export async function listPublicJobs(countryCode: string, locale: JobListing["locale"]) {
@@ -158,14 +194,32 @@ export async function getOpenJobById(id: string) {
   return prisma.jobListing.findFirst({ where: { ...publicOpenWhere(), id }, select: { id: true } });
 }
 
-export async function listAdminJobs(query: {
+type AdminJobsQuery = {
   countryId?: string;
   locale?: JobListing["locale"];
   status?: JobListingStatus;
   search?: string;
   page: number;
   pageSize: number;
-}) {
+};
+
+function adminJobsSqlWhere(query: AdminJobsQuery, includeStatus: boolean) {
+  const conditions = [
+    query.countryId ? Prisma.sql`"countryId" = ${query.countryId}` : null,
+    query.locale ? Prisma.sql`"locale" = CAST(${query.locale} AS "LocaleCode")` : null,
+    query.search ? Prisma.sql`(
+      "title" ILIKE ${`%${query.search}%`} OR
+      "department" ILIKE ${`%${query.search}%`} OR
+      "location" ILIKE ${`%${query.search}%`}
+    )` : null,
+    includeStatus && query.status
+      ? Prisma.sql`"status" = CAST(${query.status} AS "JobListingStatus")`
+      : null,
+  ].filter((condition): condition is Prisma.Sql => condition !== null);
+  return conditions.length ? Prisma.sql`WHERE ${Prisma.join(conditions, " AND ")}` : Prisma.empty;
+}
+
+export async function listAdminJobs(query: AdminJobsQuery) {
   const baseWhere: Prisma.JobListingWhereInput = {
     ...(query.countryId ? { countryId: query.countryId } : {}),
     ...(query.locale ? { locale: query.locale } : {}),
@@ -180,31 +234,72 @@ export async function listAdminJobs(query: {
       : {}),
   };
   const where = { ...baseWhere, ...(query.status ? { status: query.status } : {}) };
-  const [total, items, counts] = await prisma.$transaction([
-    prisma.jobListing.count({ where }),
-    prisma.jobListing.findMany({
+  const skip = (query.page - 1) * query.pageSize;
+  const [pageGroups, countRows] = await prisma.$transaction([
+    prisma.jobListing.groupBy({
+      by: ["countryId", "slug"],
       where,
-      include: adminJobInclude,
-      orderBy: { updatedAt: "desc" },
-      skip: (query.page - 1) * query.pageSize,
+      _max: { updatedAt: true },
+      orderBy: [{ _max: { updatedAt: "desc" } }, { countryId: "asc" }, { slug: "asc" }],
+      skip,
       take: query.pageSize,
     }),
-    prisma.jobListing.groupBy({
-      by: ["status"],
-      where: baseWhere,
-      orderBy: { status: "asc" },
-      _count: { status: true },
-    }),
+    prisma.$queryRaw<Array<{ total: number; draft: number; published: number; archived: number }>>(Prisma.sql`
+      WITH matching AS (
+        SELECT DISTINCT "countryId", "slug"
+        FROM "JobListing"
+        ${adminJobsSqlWhere(query, true)}
+      ), summary_groups AS (
+        SELECT "countryId", "slug", MIN("status"::text) AS "status"
+        FROM "JobListing"
+        ${adminJobsSqlWhere(query, false)}
+        GROUP BY "countryId", "slug"
+      )
+      SELECT
+        (SELECT COUNT(*)::int FROM matching) AS "total",
+        COUNT(*) FILTER (WHERE "status" = 'DRAFT')::int AS "draft",
+        COUNT(*) FILTER (WHERE "status" = 'PUBLISHED')::int AS "published",
+        COUNT(*) FILTER (WHERE "status" = 'ARCHIVED')::int AS "archived"
+      FROM summary_groups
+    `),
   ]);
-  const summary = { draft: 0, published: 0, archived: 0 };
-  for (const row of counts) {
-    const count = typeof row._count === "object" ? (row._count.status ?? 0) : 0;
-    summary[row.status.toLowerCase() as keyof typeof summary] = count;
+  const pageOrder = new Map(pageGroups.map((group, index) => [`${group.countryId}:${group.slug}`, index]));
+  const pageRows = pageGroups.length ? await prisma.jobListing.findMany({
+    where: { OR: pageGroups.map(({ countryId, slug }) => ({ countryId, slug })) },
+    select: adminJobListSelect,
+  }) : [];
+
+  function groupRows(rows: typeof pageRows) {
+    const groups = new Map<string, typeof pageRows>();
+    for (const row of rows) {
+      const key = `${row.countryId}:${row.slug}`;
+      groups.set(key, [...(groups.get(key) ?? []), row]);
+    }
+    return [...groups.values()].map((group) => {
+      const search = query.search?.toLowerCase();
+      const canonical = (query.locale ? group.find(({ locale }) => locale === query.locale) : undefined) ??
+        (search ? group.find((row) => [row.title, row.department, row.location]
+          .some((value) => value.toLowerCase().includes(search))) : undefined) ??
+        group.find(({ locale, country }) => locale === country.defaultLocale) ?? group[0];
+      return {
+        ...canonical,
+        _count: { applications: group.reduce((total, row) => total + row._count.applications, 0) },
+      };
+    }).sort((left, right) =>
+      (pageOrder.get(`${left.countryId}:${left.slug}`) ?? 0) -
+      (pageOrder.get(`${right.countryId}:${right.slug}`) ?? 0));
   }
+
+  const counts = countRows[0] ?? { total: 0, draft: 0, published: 0, archived: 0 };
   return {
-    items,
-    pagination: { page: query.page, pageSize: query.pageSize, total, totalPages: Math.ceil(total / query.pageSize) },
-    summary,
+    items: groupRows(pageRows),
+    pagination: {
+      page: query.page,
+      pageSize: query.pageSize,
+      total: counts.total,
+      totalPages: Math.ceil(counts.total / query.pageSize),
+    },
+    summary: { draft: counts.draft, published: counts.published, archived: counts.archived },
   };
 }
 
@@ -212,78 +307,202 @@ export function getAdminJob(id: string) {
   return prisma.jobListing.findUnique({ where: { id }, include: adminJobInclude });
 }
 
-export async function createAdminJob(input: AdminJobInput, actorUserId: string | null) {
-  await assertCountryLocale(input.countryId, input.locale);
+export async function getAdminJobGroup(id: string) {
+  const job = await getAdminJob(id);
+  if (!job) return null;
+  const localizations = await prisma.jobListing.findMany({
+    where: { countryId: job.countryId, slug: job.slug },
+    select: adminJobLocalizationSelect,
+    orderBy: { locale: "asc" },
+  });
+  return { ...job, localizations };
+}
+
+export async function createAdminJobGroup(input: AdminJobGroupInput, actorUserId: string | null) {
+  const country = await getAdminCountryLocales(input.countryId);
+  const submittedLocales = new Set(input.localizations.map(({ locale }) => locale));
+  if (!submittedLocales.has(country.defaultLocale)) {
+    throw new RecruitmentValidationError("The country default locale is required");
+  }
+  for (const locale of submittedLocales) {
+    if (!country.locales.has(locale)) {
+      throw new RecruitmentValidationError("Locale is not enabled for this country");
+    }
+  }
   const now = new Date();
-  assertPublishReady(input, now);
-  return prisma.jobListing.create({
-    data: {
-      ...input,
-      minimumExperience: input.minimumExperience ?? null,
-      closesAt: input.closesAt ?? null,
-      descriptionHtml: sanitizeDescription(input.descriptionHtml),
-      publishedAt: input.status === JobListingStatus.PUBLISHED ? now : null,
-      createdByUserId: actorUserId,
-      updatedByUserId: actorUserId,
-    },
-    include: adminJobInclude,
+  assertPublishSettings(input.status, input.closesAt, now);
+  return prisma.$transaction(async (tx) => {
+    const jobs = [];
+    for (const localization of input.localizations) {
+      jobs.push(await tx.jobListing.create({
+        data: {
+          countryId: input.countryId,
+          slug: input.slug,
+          workplaceMode: input.workplaceMode,
+          status: input.status,
+          closesAt: input.closesAt ?? null,
+          publishedAt: input.status === JobListingStatus.PUBLISHED ? now : null,
+          ...localization,
+          minimumExperience: localization.minimumExperience ?? null,
+          descriptionHtml: sanitizeDescription(localization.descriptionHtml),
+          createdByUserId: actorUserId,
+          updatedByUserId: actorUserId,
+        },
+        include: adminJobInclude,
+      }));
+    }
+    const canonical = jobs.find(({ locale }) => locale === country.defaultLocale) ?? jobs[0];
+    if (!canonical) throw new RecruitmentConflictError("Could not create job localizations");
+    return {
+      ...canonical,
+      localizations: jobs.map((job) => ({
+        id: job.id,
+        locale: job.locale,
+        title: job.title,
+        department: job.department,
+        location: job.location,
+        employmentType: job.employmentType,
+        minimumExperience: job.minimumExperience,
+        descriptionHtml: job.descriptionHtml,
+        status: job.status,
+        publishedAt: job.publishedAt,
+        updatedAt: job.updatedAt,
+      })),
+    };
   });
 }
 
-export async function updateAdminJob(id: string, patch: AdminJobPatch, actorUserId: string | null) {
-  const existing = await prisma.jobListing.findUnique({ where: { id } });
-  if (!existing) return null;
-  const parsed = adminJobCreateBodySchema.safeParse({
-    countryId: patch.countryId ?? existing.countryId,
-    locale: patch.locale ?? existing.locale,
-    slug: patch.slug ?? existing.slug,
-    title: patch.title ?? existing.title,
-    department: patch.department ?? existing.department,
-    location: patch.location ?? existing.location,
-    workplaceMode: patch.workplaceMode ?? existing.workplaceMode,
-    employmentType: patch.employmentType ?? existing.employmentType,
-    minimumExperience:
-      patch.minimumExperience === undefined ? existing.minimumExperience : patch.minimumExperience,
-    descriptionHtml: patch.descriptionHtml ?? existing.descriptionHtml,
-    status: patch.status ?? existing.status,
-    closesAt: patch.closesAt === undefined ? existing.closesAt : patch.closesAt,
+export async function updateAdminJobGroup(id: string, patch: AdminJobGroupPatch, actorUserId: string | null) {
+  const anchor = await prisma.jobListing.findUnique({ where: { id } });
+  if (!anchor) return null;
+  const siblings = await prisma.jobListing.findMany({
+    where: { countryId: anchor.countryId, slug: anchor.slug },
+    orderBy: { locale: "asc" },
   });
-  if (!parsed.success) throw new RecruitmentValidationError(parsed.error.issues[0]?.message ?? "Invalid job");
-  const target = parsed.data;
-  if (!isAllowedJobTransition(existing.status, target.status)) {
-    throw new RecruitmentValidationError("This job status transition is not allowed");
-  }
+  if (!siblings.length) return null;
+
+  const countryId = patch.countryId ?? anchor.countryId;
+  const slug = patch.slug ?? anchor.slug;
+  const workplaceMode = patch.workplaceMode ?? anchor.workplaceMode;
+  const status = patch.status ?? anchor.status;
+  const closesAt = patch.closesAt === undefined ? anchor.closesAt : patch.closesAt;
   if (
-    existing.publishedAt &&
-    (target.countryId !== existing.countryId || target.locale !== existing.locale || target.slug !== existing.slug)
+    siblings.some(({ publishedAt }) => publishedAt) &&
+    (countryId !== anchor.countryId || slug !== anchor.slug)
   ) {
-    throw new RecruitmentValidationError("Country, locale, and slug cannot change after publication");
+    throw new RecruitmentValidationError("Country and slug cannot change after publication");
   }
-  await assertCountryLocale(target.countryId, target.locale);
-  const now = new Date();
-  if (!existing.publishedAt && target.status === JobListingStatus.PUBLISHED) assertPublishReady(target, now);
-  const updatedAt = new Date(Math.max(now.getTime(), existing.updatedAt.getTime() + 1));
-  const data = {
-    ...target,
-    minimumExperience: target.minimumExperience ?? null,
-    closesAt: target.closesAt ?? null,
-    descriptionHtml: sanitizeDescription(target.descriptionHtml),
-    publishedAt:
-      !existing.publishedAt && target.status === JobListingStatus.PUBLISHED ? now : existing.publishedAt,
-    updatedByUserId: actorUserId,
-    updatedAt,
-  };
-  return prisma.$transaction(async (tx) => {
-    const updated = await tx.jobListing.updateMany({
-      where: { id, updatedAt: existing.updatedAt, status: existing.status },
-      data,
-    });
-    if (updated.count !== 1) {
-      throw new RecruitmentConflictError("This job changed while you were editing");
+  for (const sibling of siblings) {
+    if (!isAllowedJobTransition(sibling.status, status)) {
+      throw new RecruitmentValidationError("This job status transition is not allowed");
     }
-    const job = await tx.jobListing.findUnique({ where: { id }, include: adminJobInclude });
-    if (!job) throw new RecruitmentConflictError("This job changed while you were editing");
-    return job;
+  }
+
+  let defaultLocale = anchor.locale;
+  if (patch.localizations || countryId !== anchor.countryId || slug !== anchor.slug) {
+    const country = await getAdminCountryLocales(countryId);
+    defaultLocale = country.defaultLocale;
+    const existingLocales = new Set(siblings.map(({ locale }) => locale));
+    const effectiveLocales = new Set([
+      ...siblings.map(({ locale }) => locale),
+      ...(patch.localizations?.map(({ locale }) => locale) ?? []),
+    ]);
+    if (!effectiveLocales.has(country.defaultLocale)) {
+      throw new RecruitmentValidationError("The country default locale is required");
+    }
+    for (const locale of effectiveLocales) {
+      const existingLocale = countryId === anchor.countryId && existingLocales.has(locale);
+      if (!existingLocale && !country.locales.has(locale)) {
+        throw new RecruitmentValidationError("Locale is not enabled for this country");
+      }
+    }
+  }
+
+  const now = new Date();
+  if (status === JobListingStatus.PUBLISHED && siblings.some(({ publishedAt }) => !publishedAt)) {
+    assertPublishSettings(status, closesAt, now);
+  }
+  const publishedAt = siblings.find((job) => job.publishedAt)?.publishedAt ??
+    (status === JobListingStatus.PUBLISHED ? now : null);
+  const localizationByLocale = new Map(
+    patch.localizations?.map((localization) => [localization.locale, localization]) ?? [],
+  );
+
+  return prisma.$transaction(async (tx) => {
+    for (const sibling of siblings) {
+      const localization = localizationByLocale.get(sibling.locale);
+      const updatedAt = new Date(Math.max(now.getTime(), sibling.updatedAt.getTime() + 1));
+      const updated = await tx.jobListing.updateMany({
+        where: { id: sibling.id, updatedAt: sibling.updatedAt, status: sibling.status },
+        data: {
+          countryId,
+          slug,
+          workplaceMode,
+          status,
+          closesAt: closesAt ?? null,
+          publishedAt: sibling.publishedAt ?? publishedAt,
+          ...(localization ? {
+            title: localization.title,
+            department: localization.department,
+            location: localization.location,
+            employmentType: localization.employmentType,
+            minimumExperience: localization.minimumExperience ?? null,
+            descriptionHtml: sanitizeDescription(localization.descriptionHtml),
+          } : {}),
+          updatedByUserId: actorUserId,
+          updatedAt,
+        },
+      });
+      if (updated.count !== 1) {
+        throw new RecruitmentConflictError("This job changed while you were editing");
+      }
+      localizationByLocale.delete(sibling.locale);
+    }
+
+    for (const localization of localizationByLocale.values()) {
+      await tx.jobListing.create({
+        data: {
+          countryId,
+          slug,
+          workplaceMode,
+          status,
+          closesAt: closesAt ?? null,
+          publishedAt,
+          ...localization,
+          minimumExperience: localization.minimumExperience ?? null,
+          descriptionHtml: sanitizeDescription(localization.descriptionHtml),
+          createdByUserId: actorUserId,
+          updatedByUserId: actorUserId,
+        },
+      });
+    }
+
+    const jobs = await tx.jobListing.findMany({
+      where: { countryId, slug },
+      include: adminJobInclude,
+      orderBy: { locale: "asc" },
+    });
+    const canonical = jobs.find(({ locale }) => locale === defaultLocale) ?? jobs[0];
+    if (!canonical) throw new RecruitmentConflictError("This job changed while you were editing");
+    return {
+      previousStatus: anchor.status,
+      job: {
+        ...canonical,
+        localizations: jobs.map((job) => ({
+          id: job.id,
+          locale: job.locale,
+          title: job.title,
+          department: job.department,
+          location: job.location,
+          employmentType: job.employmentType,
+          minimumExperience: job.minimumExperience,
+          descriptionHtml: job.descriptionHtml,
+          status: job.status,
+          publishedAt: job.publishedAt,
+          updatedAt: job.updatedAt,
+        })),
+      },
+    };
   });
 }
 
@@ -351,9 +570,24 @@ export async function listAdminApplications(query: {
   page: number;
   pageSize: number;
 }) {
+  const jobGroup = query.jobId
+    ? await prisma.jobListing.findUnique({
+        where: { id: query.jobId },
+        select: { countryId: true, slug: true },
+      })
+    : null;
+  if (query.jobId && !jobGroup) {
+    return { items: [], pagination: { page: query.page, pageSize: query.pageSize, total: 0, totalPages: 0 } };
+  }
+  if (jobGroup && query.countryId && jobGroup.countryId !== query.countryId) {
+    return { items: [], pagination: { page: query.page, pageSize: query.pageSize, total: 0, totalPages: 0 } };
+  }
+  const jobListing = {
+    ...(jobGroup ?? {}),
+    ...(query.countryId ? { countryId: query.countryId } : {}),
+  };
   const where: Prisma.JobApplicationWhereInput = {
-    ...(query.jobId ? { jobListingId: query.jobId } : {}),
-    ...(query.countryId ? { jobListing: { countryId: query.countryId } } : {}),
+    ...(Object.keys(jobListing).length ? { jobListing } : {}),
     ...(query.status ? { status: query.status } : {}),
     ...(query.submittedFrom || query.submittedTo
       ? { submittedAt: { ...(query.submittedFrom ? { gte: query.submittedFrom } : {}), ...(query.submittedTo ? { lt: query.submittedTo } : {}) } }

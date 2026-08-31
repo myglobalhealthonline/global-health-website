@@ -12,11 +12,32 @@ export type AdminJobDto = {
   country: { id: string; code: string; name: string; slug: string };
   _count: { applications: number };
 };
+export type AdminJobListDto = Pick<
+  AdminJobDto,
+  "id" | "countryId" | "locale" | "slug" | "title" | "department" | "location" |
+  "workplaceMode" | "status" | "closesAt" | "updatedAt" | "country" | "_count"
+>;
+export type AdminJobLocalizationDto = Pick<
+  AdminJobDto,
+  "id" | "locale" | "title" | "department" | "location" | "employmentType" |
+  "minimumExperience" | "descriptionHtml" | "status" | "publishedAt" | "updatedAt"
+>;
+export type AdminJobDetailDto = AdminJobDto & { localizations: AdminJobLocalizationDto[] };
 export type AdminJobInput = {
   countryId: string; locale: AdminJobLocale; slug: string; title: string; department: string;
   location: string; workplaceMode: AdminJobWorkplaceMode; employmentType: string;
   minimumExperience: string | null; descriptionHtml: string; status: AdminJobStatus;
   closesAt: string | null;
+};
+export type AdminJobGroupInput = Pick<
+  AdminJobInput,
+  "countryId" | "slug" | "workplaceMode" | "status" | "closesAt"
+> & {
+  localizations: Array<Pick<
+    AdminJobInput,
+    "locale" | "title" | "department" | "location" | "employmentType" |
+    "minimumExperience" | "descriptionHtml"
+  >>;
 };
 export type AdminApplicationStatus = "NEW" | "REVIEWED";
 export type AdminApplicationListDto = {
@@ -39,14 +60,14 @@ function queryPath(path: string, query?: Record<string, string | undefined>) {
 }
 
 export function fetchAdminJobs(query?: Record<string, string | undefined>) {
-  return adminRequest<{ items: AdminJobDto[]; pagination: Pagination; summary: { draft: number; published: number; archived: number } }>(queryPath("/api/admin/jobs", query));
+  return adminRequest<{ items: AdminJobListDto[]; pagination: Pagination; summary: { draft: number; published: number; archived: number } }>(queryPath("/api/admin/jobs", query));
 }
-export const fetchAdminJob = cache((id: string) => adminRequest<{ job: AdminJobDto }>(`/api/admin/jobs/${encodeURIComponent(id)}`));
-export function createAdminJob(body: AdminJobInput) {
-  return adminRequest<{ job: AdminJobDto }>("/api/admin/jobs", { method: "POST", body });
+export const fetchAdminJob = cache((id: string) => adminRequest<{ job: AdminJobDetailDto }>(`/api/admin/jobs/${encodeURIComponent(id)}`));
+export function createAdminJobGroup(body: AdminJobGroupInput) {
+  return adminRequest<{ job: AdminJobDetailDto }>("/api/admin/job-groups", { method: "POST", body });
 }
-export function updateAdminJob(id: string, body: Partial<AdminJobInput>) {
-  return adminRequest<{ job: AdminJobDto }>(`/api/admin/jobs/${encodeURIComponent(id)}`, { method: "PATCH", body });
+export function updateAdminJobGroup(id: string, body: Partial<AdminJobGroupInput>) {
+  return adminRequest<{ job: AdminJobDetailDto }>(`/api/admin/job-groups/${encodeURIComponent(id)}`, { method: "PATCH", body });
 }
 export function fetchRecruitmentHealth() {
   return adminRequest<{ storage: { configured: boolean }; scanner: { configured: boolean; reachable: boolean }; ready: boolean }>("/api/admin/recruitment/health");

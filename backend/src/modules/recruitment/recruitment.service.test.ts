@@ -8,6 +8,8 @@ const state: {
   outboxData: Record<string, unknown> | null;
   auditData: Record<string, unknown> | null;
   listWhere: Record<string, unknown> | null;
+  adminGroupTake: number | null;
+  adminListSelect: Record<string, unknown> | null;
   publicJobs: Array<Record<string, unknown>>;
   publicCountry: { id: string; isActive: boolean; defaultLocale: string } | null;
 } = {
@@ -17,6 +19,8 @@ const state: {
   outboxData: null,
   auditData: null,
   listWhere: null,
+  adminGroupTake: null,
+  adminListSelect: null,
   publicJobs: [],
   publicCountry: { id: "country-cz", isActive: true, defaultLocale: "CS" },
 };
@@ -73,18 +77,45 @@ before(async () => {
           findUnique: async () => state.publicCountry,
         },
         jobListing: {
-          findMany: async ({ where, take }: { where?: Record<string, unknown>; take?: number }) => {
+          findUnique: async () => ({ countryId: "country-cz", slug: "doctor" }),
+          groupBy: async ({ where, skip = 0, take }: {
+            where?: Record<string, unknown>;
+            skip?: number;
+            take?: number;
+          }) => {
+            state.adminGroupTake = take ?? null;
+            const groups = new Map<string, { countryId: string; slug: string; _max: { updatedAt: Date } }>();
+            for (const job of state.publicJobs
+              .filter((row) => !where?.locale || row.locale === where.locale)
+              .filter((row) => !where?.status || row.status === where.status)) {
+              const key = `${job.countryId}:${job.slug}`;
+              if (!groups.has(key)) groups.set(key, {
+                countryId: String(job.countryId),
+                slug: String(job.slug),
+                _max: { updatedAt: job.updatedAt as Date },
+              });
+            }
+            const rows = [...groups.values()];
+            return take === undefined ? rows.slice(skip) : rows.slice(skip, skip + take);
+          },
+          findMany: async ({ where, take, select }: {
+            where?: Record<string, unknown>;
+            take?: number;
+            select?: Record<string, unknown>;
+          }) => {
+            if (where?.OR) state.adminListSelect = select ?? null;
             const slug = where?.slug;
             const excluded = typeof slug === "object" && slug !== null && "notIn" in slug
               ? (slug as { notIn: string[] }).notIn
               : [];
-            return state.publicJobs
+            const jobs = state.publicJobs
               .filter((job) => !where?.locale || job.locale === where.locale)
               .filter((job) => typeof slug !== "string" || job.slug === slug)
-              .filter((job) => !excluded.includes(String(job.slug)))
-              .slice(0, take);
+              .filter((job) => !excluded.includes(String(job.slug)));
+            return take === undefined ? jobs : jobs.slice(0, take);
           },
         },
+        $queryRaw: async () => [{ total: 1, draft: 0, published: 1, archived: 0 }],
         jobApplication: {
           count: async () => 0,
           findMany: async ({ where }: { where: Record<string, unknown> }) => {
@@ -111,6 +142,8 @@ beforeEach(() => {
   state.outboxData = null;
   state.auditData = null;
   state.listWhere = null;
+  state.adminGroupTake = null;
+  state.adminListSelect = null;
   state.publicJobs = [];
   state.publicCountry = { id: "country-cz", isActive: true, defaultLocale: "CS" };
 });
@@ -130,6 +163,10 @@ function publicJob(slug: string, locale: string, title: string) {
     publishedAt: new Date("2026-08-31T00:00:00.000Z"),
     closesAt: null,
     updatedAt: new Date("2026-08-31T00:00:00.000Z"),
+    countryId: "country-cz",
+    status: "PUBLISHED",
+    country: { id: "country-cz", code: "cz", name: "Czechia", slug: "czechia", defaultLocale: "CS" },
+    _count: { applications: 0 },
   };
 }
 
@@ -194,6 +231,38 @@ describe("public recruitment locale fallback", () => {
   });
 });
 
+describe("admin recruitment groups", () => {
+  it("lists one canonical job per slug and aggregates localized applications", async () => {
+    state.publicJobs = [
+      { ...publicJob("doctor", "CS", "Praktický lékař"), _count: { applications: 2 } },
+      { ...publicJob("doctor", "EN", "Doctor"), _count: { applications: 3 } },
+    ];
+
+    const result = await service.listAdminJobs({ page: 1, pageSize: 25 });
+
+    assert.equal(result.items.length, 1);
+    assert.equal(result.items[0]?.locale, "CS");
+    assert.equal(result.items[0]?._count.applications, 5);
+    assert.equal(result.pagination.total, 1);
+    assert.deepEqual(result.summary, { draft: 0, published: 1, archived: 0 });
+    assert.equal(state.adminGroupTake, 25);
+    assert.equal(Object.hasOwn(state.adminListSelect ?? {}, "descriptionHtml"), false);
+  });
+
+  it("keeps the full grouped application total when filtering to one locale", async () => {
+    state.publicJobs = [
+      { ...publicJob("doctor", "CS", "Praktický lékař"), _count: { applications: 2 } },
+      { ...publicJob("doctor", "EN", "Doctor"), _count: { applications: 3 } },
+    ];
+
+    const result = await service.listAdminJobs({ locale: "EN" as never, page: 1, pageSize: 25 });
+
+    assert.equal(result.items.length, 1);
+    assert.equal(result.items[0]?.locale, "EN");
+    assert.equal(result.items[0]?._count.applications, 5);
+  });
+});
+
 describe("recruitment application transaction", () => {
   it("atomically creates the application, PII-free outbox row, and receipt audit", async () => {
     const submittedAt = new Date("2026-08-31T12:00:00.000Z");
@@ -248,5 +317,15 @@ describe("recruitment application transaction", () => {
     assert.deepEqual(state.listWhere?.submittedAt, {
       lt: new Date("2026-09-01T00:00:00.000Z"),
     });
+  });
+
+  it("filters applications by every locale sibling of the selected job", async () => {
+    await service.listAdminApplications({ jobId: "job-cs", page: 1, pageSize: 25 });
+
+    assert.deepEqual(state.listWhere?.jobListing, {
+      countryId: "country-cz",
+      slug: "doctor",
+    });
+    assert.equal(Object.hasOwn(state.listWhere ?? {}, "jobListingId"), false);
   });
 });
