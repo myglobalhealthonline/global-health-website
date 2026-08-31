@@ -25,6 +25,7 @@ import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
 import { sentenceCaseIfShouting } from "@/lib/text/sentence-case";
 import { resolveBlogAuthorByline } from "@/lib/content/blog-byline";
+import { buildDoctorProfilePath } from "@/lib/content/doctor-profile-path";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -47,8 +48,7 @@ async function blogPhysicianInput(doctor: BlogDoctor | null, locale: LocaleCode)
   // Ranking-growth batch (2026-08-10): was hardcoded `/en/` regardless of the
   // ARTICLE's own locale, so a Portuguese post's Physician schema pointed at
   // an English-locale doctor URL. Use the article's resolved locale.
-  const profileUrl =
-    doctor.countrySlug ? `/${doctor.countrySlug}/${locale}/doctors/${doctor.slug}` : `/blog`;
+  const profileUrl = buildDoctorProfilePath(doctor.countrySlug, locale, doctor.slug) ?? "/blog";
   return {
     name: doctor.name,
     url: profileUrl,
@@ -267,10 +267,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
   // "Clinically reviewed by Dr X" — prefer the linked reviewer doctor (with
   // a profile link), fall back to the free-text reviewer name.
   const reviewerName = post.reviewerDoctor?.name ?? post.reviewer;
-  const reviewerHref =
-    post.reviewerDoctor?.countrySlug
-      ? `/${post.reviewerDoctor.countrySlug}/en/doctors/${post.reviewerDoctor.slug}`
-      : null;
+  const reviewerHref = post.reviewerDoctor?.countrySlug ? (reviewerPhysician?.url ?? null) : null;
   const lastReviewedFormatted = post.lastReviewedAt
     ? new Date(post.lastReviewedAt).toLocaleDateString(locale, {
         day: "numeric",

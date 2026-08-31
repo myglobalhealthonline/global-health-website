@@ -1,0 +1,34 @@
+{
+  "generatedAt": "2026-08-31",
+  "market": {
+    "country": "Czechia",
+    "countryCode": "CZ",
+    "locationCode": 2203,
+    "languageCode": "cs",
+    "locale": "cs-CZ"
+  },
+  "rawResearchRows": 10051,
+  "normalizedUniqueAcrossResearchGscAndTarget": 6593,
+  "relevantCandidatesBeforeFitExclusions": 1895,
+  "eligibleMasterRows": 481,
+  "excludedCandidateRows": 1414,
+  "rawOnlyClearlyIrrelevantRows": 4698,
+  "priorityCounts": {
+    "P0": 31,
+    "P1": 109,
+    "P2": 291,
+    "P3": 50
+  },
+  "missingMetricPolicy": "Unavailable values are blank, never zero.",
+  "normalization": "NFKC + lowercase + whitespace/punctuation normalization. Accented and unaccented keywords remain separate rows; ascii_variant is a companion only.",
+  "scoreWeights": {
+    "businessServiceFit": 25,
+    "conversionIntent": 20,
+    "attainability": 15,
+    "demand": 15,
+    "competitorGap": 15,
+    "serpFit": 10
+  },
+  "filtering": "Raw rows are preserved. The master excludes obvious entertainment, pharmacy-purchase, unrelated local-provider, emergency, and other low-fit intents."
+}
+

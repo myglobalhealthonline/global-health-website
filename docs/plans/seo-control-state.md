@@ -21,6 +21,27 @@ Property: `sc-domain:myglobalhealth.online` · Site: `https://www.myglobalhealth
 The active forward plan (§27) is surfaced first for operators; the numbered baseline,
 ledger and historical evidence follow from §0.
 
+### 27.12 Czechia refresh — local evidence and locale-link fix (2026-08-31)
+
+- Fresh complete GSC data through **2026-08-27** confirms Czechia is no longer in a
+  "missing page" state. `/czechia/cs`, `/czechia/cs/gp-consultation-online`,
+  `/czechia/cs/services/neschopenka-online`, `/czechia/cs/services/obnoveni-lecby`,
+  `/czechia/cs/services/lekar-online-praha`, and multiple Czech blog URLs are live
+  and indexed. The immediate bottleneck is commercial query ownership and authority,
+  not route absence.
+- New Czech evidence pack added under `seo/czechia/` on 2026-08-31. Treat those
+  files as current batch evidence only; this ledger remains canonical for next
+  actions and status.
+- Local frontend fix implemented for blog reviewer doctor links: non-English
+  articles were linking the visible clinical-reviewer name to
+  `/{country}/en/doctors/{slug}` rather than the article locale. Updated
+  `frontend/lib/content/blog-post-page.tsx` to use a shared locale-aware doctor
+  profile path builder, with focused test coverage. Deployment verification
+  remains pending.
+- Travel-medicine legacy URL behavior remains a recrawl / indexing-lag watch item.
+  No redirect change is reopened by this batch. Re-measure Czech GP and travel
+  ownership on or after **2026-09-08**.
+
 ### 27.11 Booking availability visibility — local implementation (2026-08-29)
 
 - Public doctor, specialist, consultation, and service pages remain lifecycle- and

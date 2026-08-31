@@ -1,0 +1,1488 @@
+{
+  "status": {
+    "id": "52b544a1-1faa-46e6-87c7-e251711733cf",
+    "startUrl": "https://www.myglobalhealth.online/czechia/cs",
+    "status": "completed",
+    "pagesCrawled": 100,
+    "pagesTotal": 100,
+    "lighthouseTotal": 20,
+    "lighthouseCompleted": 19,
+    "lighthouseFailed": 1,
+    "currentPhase": "completed",
+    "errorCode": null,
+    "startedAt": "2026-08-31T13:05:10.929Z",
+    "completedAt": "2026-08-31T13:07:23.581Z"
+  },
+  "summary": [
+    {
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "severity": "info",
+      "count": 66
+    },
+    {
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "severity": "info",
+      "count": 42
+    },
+    {
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "severity": "info",
+      "count": 35
+    }
+  ],
+  "issues": [
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/acute-medical-consultation",
+      "details": {
+        "length": 169
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/sick-certificate-ireland",
+      "details": {
+        "length": 166
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/sick-certificate-ireland",
+      "details": {
+        "length": 161
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/treatment-review",
+      "details": {
+        "length": 172
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/treatment-review",
+      "details": {
+        "length": 175
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/treatment-review",
+      "details": {
+        "length": 167
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/chronic-disease-consultation",
+      "details": {
+        "length": 172
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/chronic-disease-consultation",
+      "details": {
+        "length": 162
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/musculoskeletal-pain-assessment",
+      "details": {
+        "length": 164
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/musculoskeletal-pain-assessment",
+      "details": {
+        "length": 171
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/musculoskeletal-pain-assessment",
+      "details": {
+        "length": 172
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/paediatric-consultation",
+      "details": {
+        "length": 180
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/en/services/paediatric-consultation",
+      "details": {
+        "length": 163
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/paediatric-consultation",
+      "details": {
+        "length": 174
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/paediatric-consultation",
+      "details": {
+        "length": 170
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/chronic-disease-consultation",
+      "details": {
+        "length": 168
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/chronic-disease-consultation",
+      "details": {
+        "length": 168
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/paediatric-consultation",
+      "details": {
+        "length": 172
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/weight-management-consultation",
+      "details": {
+        "length": 166
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/hair-loss-consultation",
+      "details": {
+        "length": 167
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/musculoskeletal-pain-assessment",
+      "details": {
+        "length": 173
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/skin-dermatology-consultation",
+      "details": {
+        "length": 161
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/skin-dermatology-consultation",
+      "details": {
+        "length": 166
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/hair-loss-consultation",
+      "details": {
+        "length": 162
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/hair-loss-consultation",
+      "details": {
+        "length": 165
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/second-opinion-consultation",
+      "details": {
+        "length": 178
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/second-opinion-consultation",
+      "details": {
+        "length": 171
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/second-opinion-consultation",
+      "details": {
+        "length": 164
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/travel-health-consultation",
+      "details": {
+        "length": 175
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/aesthetic-medicine-consultation",
+      "details": {
+        "length": 180
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/travel-health-consultation",
+      "details": {
+        "length": 170
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/referral-and-investigations",
+      "details": {
+        "length": 162
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/aesthetic-medicine-consultation",
+      "details": {
+        "length": 171
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/aesthetic-medicine-consultation",
+      "details": {
+        "length": 169
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/aesthetic-medicine-consultation",
+      "details": {
+        "length": 176
+      },
+      "howToFix": "Trim the description to roughly 70–160 characters while keeping the core message and call to action."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/sick-certificate-ireland",
+      "details": {
+        "responseTimeMs": 1873
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/sick-certificate-ireland",
+      "details": {
+        "responseTimeMs": 1847
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/en/services/sick-certificate-ireland",
+      "details": {
+        "responseTimeMs": 1830
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/cs/services/musculoskeletal-pain-assessment",
+      "details": {
+        "responseTimeMs": 2202
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/en/services/musculoskeletal-pain-assessment",
+      "details": {
+        "responseTimeMs": 2095
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/hair-loss-consultation",
+      "details": {
+        "responseTimeMs": 1558
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/musculoskeletal-pain-assessment",
+      "details": {
+        "responseTimeMs": 2125
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/musculoskeletal-pain-assessment",
+      "details": {
+        "responseTimeMs": 2126
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/en/services/mental-health-consultation",
+      "details": {
+        "responseTimeMs": 1737
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/en/services/mens-health-consultation",
+      "details": {
+        "responseTimeMs": 1716
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/mens-health-consultation",
+      "details": {
+        "responseTimeMs": 1779
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/mens-health-consultation",
+      "details": {
+        "responseTimeMs": 1764
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/mens-health-consultation",
+      "details": {
+        "responseTimeMs": 1694
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/mens-health-consultation",
+      "details": {
+        "responseTimeMs": 1741
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/cs/services/mens-health-consultation",
+      "details": {
+        "responseTimeMs": 1741
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/en/services/skin-dermatology-consultation",
+      "details": {
+        "responseTimeMs": 2007
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/skin-dermatology-consultation",
+      "details": {
+        "responseTimeMs": 2030
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/hair-loss-consultation",
+      "details": {
+        "responseTimeMs": 1530
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/musculoskeletal-pain-assessment",
+      "details": {
+        "responseTimeMs": 2127
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/cs/services/hair-loss-consultation",
+      "details": {
+        "responseTimeMs": 1511
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/hair-loss-consultation",
+      "details": {
+        "responseTimeMs": 1510
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/mental-health-consultation",
+      "details": {
+        "responseTimeMs": 1826
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/mental-health-consultation",
+      "details": {
+        "responseTimeMs": 1786
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/cs/services/mental-health-consultation",
+      "details": {
+        "responseTimeMs": 1804
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/second-opinion-consultation",
+      "details": {
+        "responseTimeMs": 2866
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/en/services/travel-health-consultation",
+      "details": {
+        "responseTimeMs": 3028
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/en/services/second-opinion-consultation",
+      "details": {
+        "responseTimeMs": 2833
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/second-opinion-consultation",
+      "details": {
+        "responseTimeMs": 2803
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/cs/services/second-opinion-consultation",
+      "details": {
+        "responseTimeMs": 2897
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/second-opinion-consultation",
+      "details": {
+        "responseTimeMs": 2881
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/second-opinion-consultation",
+      "details": {
+        "responseTimeMs": 2880
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/mental-health-consultation",
+      "details": {
+        "responseTimeMs": 1770
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/mental-health-consultation",
+      "details": {
+        "responseTimeMs": 1703
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/aesthetic-medicine-consultation",
+      "details": {
+        "responseTimeMs": 2199
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/cardiology-specialist-consultation",
+      "details": {
+        "responseTimeMs": 2830
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/cardiology-specialist-consultation",
+      "details": {
+        "responseTimeMs": 2837
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/aesthetic-medicine-consultation",
+      "details": {
+        "responseTimeMs": 2095
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/aesthetic-medicine-consultation",
+      "details": {
+        "responseTimeMs": 2148
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/en/services/aesthetic-medicine-consultation",
+      "details": {
+        "responseTimeMs": 2151
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/aesthetic-medicine-consultation",
+      "details": {
+        "responseTimeMs": 2176
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/cs/services/aesthetic-medicine-consultation",
+      "details": {
+        "responseTimeMs": 2197
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "slow-response",
+      "title": "Slow server response",
+      "url": "https://www.myglobalhealth.online/ireland/en/services/cardiology-specialist-consultation",
+      "details": {
+        "responseTimeMs": 2830
+      },
+      "howToFix": "Investigate server/database time and caching for this route; serving cached or statically generated HTML usually fixes it."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/cs/services/acute-medical-consultation",
+      "details": {
+        "length": 61
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/acute-medical-consultation",
+      "details": {
+        "length": 62
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/acute-medical-consultation",
+      "details": {
+        "length": 62
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/sick-certificate-ireland",
+      "details": {
+        "length": 62
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/acute-medical-consultation",
+      "details": {
+        "length": 67
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/sick-certificate-ireland",
+      "details": {
+        "length": 67
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/sick-certificate-ireland",
+      "details": {
+        "length": 61
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/cs/services/sick-certificate-ireland",
+      "details": {
+        "length": 61
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/cs/services/treatment-review",
+      "details": {
+        "length": 63
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/chronic-disease-consultation",
+      "details": {
+        "length": 65
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/cs/services/chronic-disease-consultation",
+      "details": {
+        "length": 64
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/chronic-disease-consultation",
+      "details": {
+        "length": 68
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/cs/services/musculoskeletal-pain-assessment",
+      "details": {
+        "length": 61
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/en/services/musculoskeletal-pain-assessment",
+      "details": {
+        "length": 61
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/hair-loss-consultation",
+      "details": {
+        "length": 72
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/musculoskeletal-pain-assessment",
+      "details": {
+        "length": 67
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/musculoskeletal-pain-assessment",
+      "details": {
+        "length": 72
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/musculoskeletal-pain-assessment",
+      "details": {
+        "length": 72
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/paediatric-consultation",
+      "details": {
+        "length": 61
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/en/services/paediatric-consultation",
+      "details": {
+        "length": 61
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/chronic-disease-consultation",
+      "details": {
+        "length": 70
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/chronic-disease-consultation",
+      "details": {
+        "length": 72
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/weight-management-consultation",
+      "details": {
+        "length": 63
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/mens-health-consultation",
+      "details": {
+        "length": 72
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/mens-health-consultation",
+      "details": {
+        "length": 67
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/mens-health-consultation",
+      "details": {
+        "length": 66
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/mens-health-consultation",
+      "details": {
+        "length": 67
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/cs/services/mens-health-consultation",
+      "details": {
+        "length": 61
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/hair-loss-consultation",
+      "details": {
+        "length": 61
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/musculoskeletal-pain-assessment",
+      "details": {
+        "length": 69
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/skin-dermatology-consultation",
+      "details": {
+        "length": 76
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/cs/services/skin-dermatology-consultation",
+      "details": {
+        "length": 61
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/hair-loss-consultation",
+      "details": {
+        "length": 66
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/cs/services/hair-loss-consultation",
+      "details": {
+        "length": 63
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/hair-loss-consultation",
+      "details": {
+        "length": 68
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/cs/services/womens-health-consultation",
+      "details": {
+        "length": 61
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/womens-health-consultation",
+      "details": {
+        "length": 70
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/womens-health-consultation",
+      "details": {
+        "length": 67
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/womens-health-consultation",
+      "details": {
+        "length": 66
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/womens-health-consultation",
+      "details": {
+        "length": 66
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/mental-health-consultation",
+      "details": {
+        "length": 69
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/mental-health-consultation",
+      "details": {
+        "length": 62
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/cs/services/mental-health-consultation",
+      "details": {
+        "length": 62
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/second-opinion-consultation",
+      "details": {
+        "length": 65
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/en/services/travel-health-consultation",
+      "details": {
+        "length": 61
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/en/services/second-opinion-consultation",
+      "details": {
+        "length": 61
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/second-opinion-consultation",
+      "details": {
+        "length": 65
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/second-opinion-consultation",
+      "details": {
+        "length": 65
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/second-opinion-consultation",
+      "details": {
+        "length": 64
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/mental-health-consultation",
+      "details": {
+        "length": 61
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/mental-health-consultation",
+      "details": {
+        "length": 76
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/travel-health-consultation",
+      "details": {
+        "length": 66
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/travel-health-consultation",
+      "details": {
+        "length": 66
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/referral-and-investigations",
+      "details": {
+        "length": 64
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/en/services/referral-and-investigations",
+      "details": {
+        "length": 62
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/pt/services/aesthetic-medicine-consultation",
+      "details": {
+        "length": 61
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/travel-health-consultation",
+      "details": {
+        "length": 67
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/travel-health-consultation",
+      "details": {
+        "length": 65
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/cs/services/referral-and-investigations",
+      "details": {
+        "length": 61
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/referral-and-investigations",
+      "details": {
+        "length": 70
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/referral-and-investigations",
+      "details": {
+        "length": 61
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/de/services/aesthetic-medicine-consultation",
+      "details": {
+        "length": 70
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/referral-and-investigations",
+      "details": {
+        "length": 61
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/es/services/aesthetic-medicine-consultation",
+      "details": {
+        "length": 74
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/ro/services/aesthetic-medicine-consultation",
+      "details": {
+        "length": 71
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    },
+    {
+      "severity": "info",
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "url": "https://www.myglobalhealth.online/ireland/cs/services/aesthetic-medicine-consultation",
+      "details": {
+        "length": 62
+      },
+      "howToFix": "Shorten the title to roughly 50–60 characters, front-loading the most important words."
+    }
+  ],
+  "pages": [
+    {
+      "id": "074464bec83afb68b24cf6a1af0c52e41879",
+      "url": "https://www.myglobalhealth.online/czechia/cs",
+      "statusCode": 200,
+      "fetchClass": "ok",
+      "redirectUrl": null,
+      "title": "Online lékař Česko | Registrovaní lékaři a specialisté",
+      "metaDescription": "Promluvte si ještě dnes s registrovaným lékařem přes videohovor — praktický lékař, potvrzení, odeslání ke specialistovi. Tentýž den, Česko.",
+      "wordCount": 2182,
+      "isIndexable": true,
+      "crawlDepth": 0,
+      "inSitemap": false,
+      "internalLinkCount": 61,
+      "responseTimeMs": 458
+    }
+  ],
+  "totalPagesReturned": 1,
+  "scopeLimitation": "The 100-page crawl escaped through cross-market links; only the Czech start page was included before the page cap."
+}
+
