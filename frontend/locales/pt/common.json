@@ -183,6 +183,7 @@
     "bioFallbackTemplate": "Clínico licenciado disponível para consultas online em {country}.",
     "verifyRegistrationAria": "Verificar registo no registo oficial",
     "viewProfileAria": "Ver perfil de {name}",
+    "credentialsLabel": "Qualificações",
     "languagesMoreTemplate": "{languages} e mais",
     "clinicalDirectorLabel": "Diretor Clínico",
     "ourTeamEyebrow": "A Nossa Equipa",

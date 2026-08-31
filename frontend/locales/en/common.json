@@ -184,6 +184,7 @@
     "bioFallbackTemplate": "Licensed clinician available for online consultations in {country}.",
     "verifyRegistrationAria": "Verify registration on the official register",
     "viewProfileAria": "View profile for {name}",
+    "credentialsLabel": "Credentials",
     "languagesMoreTemplate": "{languages} & More",
     "clinicalDirectorLabel": "Clinical Director",
     "showResults": "Show results",

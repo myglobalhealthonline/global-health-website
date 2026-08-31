@@ -140,6 +140,8 @@ export type CommonLocale = {
     verifyRegistrationAria: string;
     /** DoctorCard overlay-link aria-label, "{name}" placeholder. */
     viewProfileAria?: string;
+    /** Heading above verified professional credentials on DoctorCard. */
+    credentialsLabel: string;
     /** Truncated language-list suffix, e.g. "{languages} & More". */
     languagesMoreTemplate: string;
     /** FeaturedDoctor photo-overlay ribbon, e.g. "Clinical Director". */

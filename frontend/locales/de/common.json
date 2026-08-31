@@ -183,6 +183,7 @@
     "bioFallbackTemplate": "Approbierter Arzt für Online-Konsultationen in {country} verfügbar.",
     "verifyRegistrationAria": "Zulassung im offiziellen Register überprüfen",
     "viewProfileAria": "Profil von {name} anzeigen",
+    "credentialsLabel": "Qualifikationen",
     "languagesMoreTemplate": "{languages} & mehr",
     "clinicalDirectorLabel": "Ärztlicher Direktor",
     "ourTeamEyebrow": "Unser Team",

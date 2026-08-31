@@ -87,9 +87,8 @@ type DoctorCardProps = {
    *  (doctors directory, dark DoctorsSection). Defaults to the original
    *  white card for light sections (DoctorWall, consult page). */
   dark?: boolean;
-  /** Overlay-link aria-label — already resolved (e.g. "View profile for
-   *  Dr. Smith"). Falls back to the English default when the caller hasn't
-   *  threaded a localised value through yet. */
+  /** Optional resolved overlay-link aria-label. The localized card string is
+   *  used when callers do not need to override it. */
   viewProfileAriaLabel?: string;
   /** Remaining card chrome strings, resolved by the (server) caller from
    *  `common.doctors`. Required — these used to be English literals baked
@@ -208,7 +207,11 @@ export function DoctorCard({
           className="absolute inset-0 z-0 rounded-[var(--radius-card)] focus:outline-none"
           tabIndex={-1}
         >
-          <span className="sr-only">{viewProfileAriaLabel ?? `View profile for ${name}`}</span>
+          <span className="sr-only">
+            {viewProfileAriaLabel ??
+              cardI18n?.viewProfileAria?.replace("{name}", name) ??
+              `${resolvedCtaLabel}: ${name}`}
+          </span>
         </Link>
       ) : null}
 
@@ -360,7 +363,7 @@ export function DoctorCard({
                   className="text-[10.5px] font-bold uppercase tracking-[0.13em]"
                   style={{ color: "var(--dc-muted)" }}
                 >
-                  Credentials
+                  {cardI18n?.credentialsLabel ?? "Credentials"}
                 </p>
                 <ul className="space-y-0.5">
                   {credentials.map((c) => (

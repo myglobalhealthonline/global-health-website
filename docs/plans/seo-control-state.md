@@ -1,6 +1,6 @@
 # SEO control state — canonical
 
-**Last operational update: 2026-08-29.** Historical audit files remain snapshots;
+**Last operational update: 2026-08-31.** Historical audit files remain snapshots;
 this ledger is the source of truth for current status, dated gates and future work.
 
 **This file is the single source of truth for the SEO workstream.** It carries the
@@ -6733,5 +6733,51 @@ measurement window. Track the fixed cohort weekly through the existing
 `monitor-seo-recovery-cohort` heartbeat and evaluate complete finalized 28-day windows
 on or after 2026-09-28. The correction removes a verified trust defect; it does not
 guarantee an immediate ranking increase.
+
+---
+
+## 35. PT-MARKET-RESEARCH-001 — Portugal corpus, recrawl refresh and localization fix (2026-08-31)
+
+**Status: RESEARCH PACKAGE COMPLETE — SHARED UI FIX VERIFIED; PRODUCTION CONTENT
+REMEDIATION NOT APPLIED.** The Portugal workstream is preserved under
+`seo/portugal/`. OpenSEO/DataForSEO used location 2620 and language `pt`;
+8,106 raw keyword rows were retained, normalized to 5,483 unique terms and
+service/relevance-gated to 1,647 master rows. The final gate removed 143
+non-medical, unsupported or non-Portugal administrative terms that collided
+with `receita`/`consulta` seeds. All approved clusters map to
+existing URLs. No new page, location page, redirect, noindex, title rewrite or
+recurring paid rank tracker was created.
+
+Fresh URL Inspection resolves most of the §19 doctor watchlist. Telmo Coelho's
+current canonical is submitted/indexed with a 2026-08-24 crawl; Vitor Pais is
+submitted/indexed with a 2026-08-30 crawl. Pedro Santos still shows Google's
+stored pre-fix `noindex` state from 2026-08-06 on both URL shapes. Live state is
+newer, so Pedro remains **WAIT FOR GOOGLE**; do not add another code fix until a
+fresh crawl reproduces the problem.
+
+The driving-certificate service is submitted/indexed with a 2026-08-29 crawl,
+but current query evidence remains weak (for example, 30 impressions at average
+position 40.0 for the principal GSC query). The §19 atestado/authority-wall
+decision therefore stands: retain the current page and metadata, pursue
+legitimate authority/entity evidence, and do not reopen title/H1 edits without a
+new testable hypothesis.
+
+The live Portugal homepage exposed a separate high-confidence localization
+defect: shared DoctorCard overlay text and the credentials heading were hardcoded
+in English. `DoctorCardI18n` now carries the existing localized
+`viewProfileAria` value plus a six-locale `credentialsLabel`; a focused
+static-render regression test failed before and passes after the change. The
+page still receives an English hero CTA, some clinician roles, image metadata
+and registration-division values from production content. Those are reviewed
+CMS/data corrections, not another component fallback. No production database
+write was made because `backend/.env` points to production.
+
+Measurement baseline: the final 2026-05-31→08-28 device-complete GSC window
+contains 350 clicks and 8,862 impressions; the prior 90 days contain 281 clicks
+and 2,848 impressions. Query-visible rows are privacy-thresholded. GA4 connection
+health passed but the inspected reporting window returned no usable rows, so
+organic conversion conclusions remain blocked pending privacy-safe event
+validation. Re-evaluate deployed changes only after a complete 28-day window
+plus normal GSC final-data lag.
 
 ---
