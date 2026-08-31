@@ -475,8 +475,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  // One URL per real, exact-locale open job. No synthetic hreflang cluster:
-  // separate locale rows are independent listings in the recruitment model.
+  // Locale fallbacks keep the public UI usable, but only authored source-locale
+  // jobs belong in the sitemap; fallback URLs are canonicalized and noindexed.
   for (const country of countries) {
     const slug = country.slug || countrySlug(country.code);
     for (const lang of countryLangs(country)) {
@@ -484,6 +484,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         const result = await listPublicJobs(country.code, lang);
         if (result.state !== "loaded") continue;
         for (const job of result.jobs) {
+          if (job.locale.toLowerCase() !== lang) continue;
           bump(country.code, "job", job.updatedAt);
           urls.push({
             url: `${base}/${slug}/${lang}/careers/${job.slug}`,

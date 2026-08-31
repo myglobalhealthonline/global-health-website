@@ -83,23 +83,23 @@ export default async function CountryCareersPage({ params }: { params: Promise<P
       trustCards={trustCards} rightSlot={<AboutArchPanel src="/images/stock/doctors.jpg" alt={t.heroImageAlt}
         floats={trustCards} />} mobileBgSrc="/images/stock/doctors.jpg" />
 
-    <section id="open-positions" className="gh-careers-openings gh2-section-ivory">
+    <section id="open-positions" className="gh-careers-openings gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
       <SectionSeam theme="light" />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <p className="gh-eyebrow">{t.rolesEyebrow}</p>
         <h2>{t.openPositions}</h2>
         {result.state === "unavailable" ? (
-          <div className="gh-careers-state" role="status"><strong>{t.unavailableTitle}</strong><p>{t.unavailableBody}</p></div>
+          <div className="gh-careers-state gh2-card-ivory" role="status"><strong>{t.unavailableTitle}</strong><p>{t.unavailableBody}</p></div>
         ) : result.state === "empty" ? (
-          <div className="gh-careers-state"><strong>{t.emptyTitle}</strong><p>{t.emptyBody}</p>
+          <div className="gh-careers-state gh2-card-ivory"><strong>{t.emptyTitle}</strong><p>{t.emptyBody}</p>
             <a href={`mailto:${CAREERS_EMAIL}`}><Mail className="size-4" aria-hidden />{CAREERS_EMAIL}</a></div>
         ) : (
           <div className="gh-careers-groups">
             {groups.map((group) => <section key={group.department} className="gh-careers-group">
-              <h3>{group.department}</h3>
+              <h3 lang={group.jobs[0]?.locale.toLowerCase()}>{group.department}</h3>
               <ul>{group.jobs.map((job) => <li key={job.id}>
-                <Link href={`${base}/careers/${job.slug}`} aria-label={`${job.title} — ${job.location}`}>
-                  <span>{job.title}</span><small>{job.location}</small>
+                <Link href={`${base}/careers/${job.slug}`}>
+                  <span lang={job.locale.toLowerCase()}>{job.title}</span><small lang={job.locale.toLowerCase()}>{job.location}</small>
                 </Link>
               </li>)}</ul>
             </section>)}

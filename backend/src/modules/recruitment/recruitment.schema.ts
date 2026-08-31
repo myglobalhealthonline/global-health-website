@@ -69,6 +69,7 @@ export const applicationFieldsSchema = z
     phone: optionalText(40),
     message: optionalText(2000),
     privacyAcknowledged: z.literal("true"),
+    privacyNoticeLocale: z.nativeEnum(LocaleCode),
     website: z.string().max(200).optional().default(""),
   })
   .strict();

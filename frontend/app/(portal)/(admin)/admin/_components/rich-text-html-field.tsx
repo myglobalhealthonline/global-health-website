@@ -45,7 +45,14 @@ const FONT_SIZES = [
   { label: "24", value: "7" },
 ];
 
-const REMOVABLE_TAGS = new Set(["SCRIPT", "STYLE", "META", "LINK", "OBJECT", "EMBED"]);
+const ALLOWED_EDITOR_TAGS = new Set([
+  "P", "DIV", "BR", "STRONG", "B", "EM", "I", "U", "S", "DEL", "SPAN", "FONT",
+  "H1", "H2", "H3", "H4", "H5", "H6", "UL", "OL", "LI", "BLOCKQUOTE", "A", "HR", "CODE", "PRE",
+]);
+
+export function isAllowedEditorElement(tagName: string, namespaceUri: string | null): boolean {
+  return namespaceUri === "http://www.w3.org/1999/xhtml" && ALLOWED_EDITOR_TAGS.has(tagName.toUpperCase());
+}
 
 const ALLOWED_STYLE_PROPS = new Set([
   "color",
@@ -98,19 +105,29 @@ function unwrapElement(element: HTMLElement) {
   }
 }
 
-function sanitizeEditorHtml(html: string) {
+export function isSafeEditorHref(value: string): boolean {
+  const href = value.trim();
+  if (!href || href.startsWith("//")) return false;
+  try {
+    const parsed = new URL(href, "https://editor.invalid/");
+    if (!["http:", "https:", "mailto:", "tel:"].includes(parsed.protocol)) return false;
+    return parsed.protocol === "mailto:" || parsed.protocol === "tel:" || (!parsed.username && !parsed.password);
+  } catch {
+    return false;
+  }
+}
+
+export function sanitizeEditorHtml(html: string) {
   const root = document.createElement("div");
   root.innerHTML = html;
 
   const elements = Array.from(root.querySelectorAll("*"));
   for (const element of elements) {
-    if (!(element instanceof HTMLElement)) continue;
-    const tag = element.tagName.toUpperCase();
-
-    if (REMOVABLE_TAGS.has(tag)) {
+    if (!isAllowedEditorElement(element.tagName, element.namespaceURI) || !(element instanceof HTMLElement)) {
       element.remove();
       continue;
     }
+    const tag = element.tagName.toUpperCase();
 
     if (tag === "FONT") {
       // Browsers emit `<font face|color|size>` from execCommand. Convert each
@@ -142,7 +159,11 @@ function sanitizeEditorHtml(html: string) {
     }
 
     for (const attribute of Array.from(element.attributes)) {
-      if (attribute.name === "href" && tag === "A") continue;
+      if (attribute.name === "href" && tag === "A") {
+        if (isSafeEditorHref(attribute.value)) continue;
+        element.removeAttribute(attribute.name);
+        continue;
+      }
       if (attribute.name === "style") {
         const nextStyle = filterInlineStyle(attribute.value);
         if (nextStyle) {
@@ -184,7 +205,7 @@ export function RichTextHtmlField({
   useEffect(() => {
     if (!editorRef.current) return;
     const value = initialValue?.trim();
-    editorRef.current.innerHTML = value ? value : "<p><br/></p>";
+    editorRef.current.innerHTML = value ? sanitizeEditorHtml(value) : "<p><br/></p>";
     // notify: false — this is the initial/re-synced value, not a user edit;
     // firing onChange here would make dirty-tracking consumers see a false
     // positive the instant this effect re-runs after a server refetch.
@@ -195,6 +216,7 @@ export function RichTextHtmlField({
     // across every browser and survive the sanitization round-trip.
     try {
       execRichText("styleWithCSS", "true");
+      execRichText("defaultParagraphSeparator", "p");
     } catch {
       // Older browsers / browsers with execCommand stubs will ignore this.
     }
@@ -397,12 +419,16 @@ export function RichTextHtmlField({
             // sanitized) and on paste (next branch).
             syncToHidden();
           }}
-          onPaste={() => {
-            requestAnimationFrame(() => {
-              syncToHidden({ rewriteEditor: true });
-              updateActiveFormats();
-              rememberSelection();
-            });
+          onPaste={(event) => {
+            event.preventDefault();
+            rememberSelection();
+            const clipboardHtml = event.clipboardData.getData("text/html");
+            const clipboardText = event.clipboardData.getData("text/plain");
+            if (clipboardHtml) {
+              exec("insertHTML", sanitizeEditorHtml(clipboardHtml));
+            } else if (clipboardText) {
+              exec("insertText", clipboardText);
+            }
           }}
           onKeyUp={() => {
             updateActiveFormats();

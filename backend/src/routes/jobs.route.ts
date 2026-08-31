@@ -24,7 +24,7 @@ import {
 import { errorResponse, okResponse } from "../utils/response.js";
 
 const APPLICATION_UNAVAILABLE = "Applications are temporarily unavailable. Please try again later.";
-const fieldNames = new Set(["fullName", "email", "phone", "message", "privacyAcknowledged", "website"]);
+const fieldNames = new Set(["fullName", "email", "phone", "message", "privacyAcknowledged", "privacyNoticeLocale", "website"]);
 
 const jobsRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/public/jobs", async (request, reply) => {
@@ -71,7 +71,7 @@ const jobsRoute: FastifyPluginAsync = async (app) => {
         const fields: Record<string, string> = {};
         let cv: { buffer: Buffer; filename: string; mimetype: string } | null = null;
         for await (const part of request.parts({
-          limits: { files: 1, fields: 6, parts: 7, fileSize: MAX_CV_BYTES },
+          limits: { files: 1, fields: 7, parts: 8, fileSize: MAX_CV_BYTES },
         })) {
           if (part.type === "file") {
             if (part.fieldname !== "cv" || cv) {

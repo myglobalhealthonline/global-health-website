@@ -7,7 +7,7 @@ This runbook covers the country-scoped job publisher and confidential PDF-CV inb
 - Configure the existing private object store (`S3_*`). The `recruitment/` prefix must never be public.
 - Run ClamAV on private networking and set `CLAMAV_HOST`, `CLAMAV_PORT`, and `CLAMAV_TIMEOUT_MS`. Never expose port 3310 publicly.
 - Set `RECRUITMENT_NOTIFICATION_EMAIL` to the monitored careers inbox.
-- Have privacy/legal publish localized recruitment-notice text for every live market covering controller, purpose/legal basis, recipients, six-month retention, rights, and contact. Set `RECRUITMENT_PRIVACY_NOTICE_VERSION` to that approved published version; the checkbox is acknowledgment, not consent.
+- Have privacy/legal publish localized recruitment-notice text for every live market covering controller, purpose/legal basis, recipients, six-month retention, rights, and contact. Set `RECRUITMENT_PRIVACY_NOTICE_VERSION` to that approved published version; the checkbox is acknowledgment, not consent. The receipt audit records the displayed notice locale.
 - Keep `RECRUITMENT_RETENTION_MONTHS=6` and `RECRUITMENT_RETENTION_ENFORCE=false` until privacy/legal approves destructive enforcement.
 - Configure the existing email provider. Notifications contain only job/market/time and an authenticated portal link; they never contain applicant contact data or a CV.
 
@@ -23,7 +23,7 @@ Local development can start the pinned scanner with `docker compose up -d clamav
 
 ## Smoke test
 
-1. Confirm another country, locale, draft, archived, and expired job all return 404 publicly.
+1. Confirm another country, draft, archived, and expired job all return 404 publicly. Switching locale may show the source-locale job as a fallback; verify its source `lang`, canonical source URL, and `noindex,follow` metadata.
 2. Submit a clean PDF no larger than 5 MiB and confirm a neutral success response.
 3. Submit a renamed non-PDF and an EICAR test PDF in staging; both must be rejected and neither may create a row or object.
 4. Stop or firewall ClamAV in staging; upload must return 503 and store nothing while job pages remain readable.

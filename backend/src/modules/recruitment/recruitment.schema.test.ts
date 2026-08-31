@@ -46,6 +46,7 @@ describe("recruitment validation", () => {
       phone: " +353 1 555 0100 ",
       message: " Interested ",
       privacyAcknowledged: "true",
+      privacyNoticeLocale: "EN",
       website: "",
     });
     assert.equal(parsed.success, true);

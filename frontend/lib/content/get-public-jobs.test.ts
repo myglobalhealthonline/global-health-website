@@ -8,6 +8,7 @@ import {
 
 const job = (overrides: Partial<PublicJob> = {}): PublicJob => ({
   id: "job_1", slug: "doctor", title: "Doctor", department: "Medical",
+  locale: "EN",
   location: "Remote", workplaceMode: "REMOTE", employmentType: "Contract",
   minimumExperience: null, publishedAt: "2026-08-31T00:00:00.000Z",
   closesAt: null, updatedAt: "2026-08-31T00:00:00.000Z", ...overrides,
@@ -16,6 +17,7 @@ const job = (overrides: Partial<PublicJob> = {}): PublicJob => ({
 describe("public jobs boundary", () => {
   it("rejects malformed records instead of rendering partial jobs", () => {
     expect(normalizePublicJob({ ...job(), workplaceMode: "ANYWHERE" })).toBeNull();
+    expect(normalizePublicJob({ ...job(), locale: "KLINGON" })).toBeNull();
     expect(normalizePublicJob({ ...job(), id: "" })).toBeNull();
   });
 

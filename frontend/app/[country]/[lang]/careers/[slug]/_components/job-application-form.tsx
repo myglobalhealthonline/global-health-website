@@ -11,7 +11,7 @@ type Copy = {
   infected: string; unavailable: string; genericError: string; closed: string;
 };
 
-export function JobApplicationForm({ jobId, privacyHref, copy }: { jobId: string; privacyHref: string; copy: Copy }) {
+export function JobApplicationForm({ jobId, privacyHref, locale, copy }: { jobId: string; privacyHref: string; locale: string; copy: Copy }) {
   const [state, setState] = useState<{ status: "idle" | "pending" | "success" | "error"; message?: string }>({ status: "idle" });
   const [fileSummary, setFileSummary] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
@@ -56,9 +56,12 @@ export function JobApplicationForm({ jobId, privacyHref, copy }: { jobId: string
       <label className="gh-careers-form-wide"><span>{copy.message}</span><textarea name="message" rows={5} maxLength={2000} /></label>
       <label className="gh-careers-form-wide"><span>{copy.cv}</span><input name="cv" type="file" accept="application/pdf,.pdf" required onChange={(event) => {
         const file = event.target.files?.[0];
-        setFileSummary(file ? `${file.name} · ${(file.size / 1024 / 1024).toFixed(2)} MB` : "");
+        setFileSummary(file ? `${file.name} · ${new Intl.NumberFormat(locale, {
+          style: "unit", unit: "megabyte", unitDisplay: "short", maximumFractionDigits: 2,
+        }).format(file.size / 1024 / 1024)}` : "");
       }} /><small>{fileSummary || copy.cvHelp}</small></label>
       <label className="gh-careers-honeypot" aria-hidden="true"><span>Website</span><input name="website" tabIndex={-1} autoComplete="off" /></label>
+      <input type="hidden" name="privacyNoticeLocale" value={locale.toUpperCase()} />
       <label className="gh-careers-privacy gh-careers-form-wide"><input name="privacyAcknowledged" type="checkbox" value="true" required />
         <span>{copy.privacyPrefix} <a href={privacyHref} target="_blank" rel="noopener noreferrer">{copy.privacyLink}</a>.</span>
       </label>

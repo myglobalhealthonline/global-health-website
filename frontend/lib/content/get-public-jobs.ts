@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { apiRequest } from "@/lib/api/client";
+import { supportedLocaleCodes, type LocaleCode } from "@/lib/i18n/types";
 
 export const PUBLIC_JOBS_TAG = "public-jobs";
 export const publicJobsTag = (countryCode: string, locale: string) =>
@@ -9,6 +10,7 @@ export const publicJobTag = (countryCode: string, locale: string, slug: string) 
 
 export type PublicJob = {
   id: string;
+  locale: Uppercase<LocaleCode>;
   slug: string;
   title: string;
   department: string;
@@ -33,11 +35,15 @@ export function normalizePublicJob(value: unknown): PublicJob | null {
   if (!value || typeof value !== "object") return null;
   const raw = value as Record<string, unknown>;
   const workplaceMode = raw.workplaceMode;
+  const locale = string(raw.locale).toLowerCase();
   if (workplaceMode !== "REMOTE" && workplaceMode !== "HYBRID" && workplaceMode !== "ONSITE") {
     return null;
   }
+  if (!supportedLocaleCodes.some((supported) => supported === locale)) return null;
+  const descriptionHtml = string(raw.descriptionHtml);
   const job = {
     id: string(raw.id),
+    locale: locale.toUpperCase() as Uppercase<LocaleCode>,
     slug: string(raw.slug),
     title: string(raw.title),
     department: string(raw.department),
@@ -45,7 +51,7 @@ export function normalizePublicJob(value: unknown): PublicJob | null {
     workplaceMode,
     employmentType: string(raw.employmentType),
     minimumExperience: string(raw.minimumExperience) || null,
-    descriptionHtml: string(raw.descriptionHtml) || undefined,
+    ...(descriptionHtml ? { descriptionHtml } : {}),
     publishedAt: string(raw.publishedAt),
     closesAt: string(raw.closesAt) || null,
     updatedAt: string(raw.updatedAt),

@@ -1,13 +1,14 @@
 import {
   JobApplicationStatus,
   JobListingStatus,
+  LocaleCode,
   Prisma,
   type JobListing,
 } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { env } from "../../config/env.js";
 import { isMediaStorageConfigured } from "../../services/object-storage.js";
-import { sanitizeRichHtml } from "../../utils/sanitize-html.js";
+import { sanitizeCareerHtml } from "../../utils/sanitize-html.js";
 import { OUTBOX_KIND_RECRUITMENT_APPLICATION_NOTIFICATION } from "../outbox/outbox.js";
 import {
   addCalendarMonths,
@@ -25,6 +26,7 @@ export class JobClosedError extends Error {}
 
 const publicJobSelect = {
   id: true,
+  locale: true,
   slug: true,
   title: true,
   department: true,
@@ -36,6 +38,36 @@ const publicJobSelect = {
   closesAt: true,
   updatedAt: true,
 } satisfies Prisma.JobListingSelect;
+
+function localeRank(locale: JobListing["locale"], requested: JobListing["locale"], fallback: JobListing["locale"]): number {
+  if (locale === requested) return 0;
+  if (locale === fallback) return 1;
+  return 2;
+}
+
+function selectPreferredPublicJobs<T extends { slug: string; locale: JobListing["locale"] }>(
+  jobs: T[],
+  requested: JobListing["locale"],
+  fallback: JobListing["locale"],
+): T[] {
+  const selected = new Map<string, T>();
+  for (const job of jobs) {
+    const current = selected.get(job.slug);
+    const jobRank = localeRank(job.locale, requested, fallback);
+    const currentRank = current ? localeRank(current.locale, requested, fallback) : Number.POSITIVE_INFINITY;
+    if (!current || jobRank < currentRank || (jobRank === currentRank && job.locale.localeCompare(current.locale) < 0)) {
+      selected.set(job.slug, job);
+    }
+  }
+  return [...selected.values()];
+}
+
+function getActivePublicCountry(countryCode: string) {
+  return prisma.country.findUnique({
+    where: { code: countryCode },
+    select: { id: true, isActive: true, defaultLocale: true },
+  });
+}
 
 const adminJobInclude = {
   country: { select: { id: true, code: true, name: true, slug: true } },
@@ -51,7 +83,7 @@ function publicOpenWhere(now = new Date()): Prisma.JobListingWhereInput {
 }
 
 function sanitizeDescription(input: string): string {
-  const sanitized = sanitizeRichHtml(input) ?? "";
+  const sanitized = sanitizeCareerHtml(input) ?? "";
   if (!sanitized.replace(/<[^>]*>/g, "").replace(/&nbsp;/gi, " ").trim()) {
     throw new RecruitmentValidationError("Job description must contain readable text");
   }
@@ -83,19 +115,43 @@ function assertPublishReady(input: AdminJobInput, now: Date): void {
 }
 
 export async function listPublicJobs(countryCode: string, locale: JobListing["locale"]) {
-  return prisma.jobListing.findMany({
-    where: { ...publicOpenWhere(), country: { code: countryCode, isActive: true }, locale },
-    select: publicJobSelect,
-    orderBy: [{ department: "asc" }, { publishedAt: "desc" }, { title: "asc" }],
-    take: 200,
-  });
+  const country = await getActivePublicCountry(countryCode);
+  if (!country?.isActive) return [];
+  const localePriority = [locale, country.defaultLocale, ...Object.values(LocaleCode)]
+    .filter((candidate, index, values) => values.indexOf(candidate) === index);
+  const jobs: Prisma.JobListingGetPayload<{ select: typeof publicJobSelect }>[] = [];
+  for (const candidateLocale of localePriority) {
+    if (jobs.length === 200) break;
+    const excludedSlugs = jobs.map((job) => job.slug);
+    jobs.push(...await prisma.jobListing.findMany({
+      where: {
+        ...publicOpenWhere(),
+        countryId: country.id,
+        locale: candidateLocale,
+        ...(excludedSlugs.length ? { slug: { notIn: excludedSlugs } } : {}),
+      },
+      select: publicJobSelect,
+      orderBy: [{ department: "asc" }, { publishedAt: "desc" }, { title: "asc" }],
+      take: 200 - jobs.length,
+    }));
+  }
+  return jobs
+    .sort((left, right) => left.department.localeCompare(right.department) ||
+      (right.publishedAt?.getTime() ?? 0) - (left.publishedAt?.getTime() ?? 0) ||
+      left.title.localeCompare(right.title))
+    .slice(0, 200);
 }
 
 export async function getPublicJob(slug: string, countryCode: string, locale: JobListing["locale"]) {
-  return prisma.jobListing.findFirst({
-    where: { ...publicOpenWhere(), slug, country: { code: countryCode, isActive: true }, locale },
+  const country = await getActivePublicCountry(countryCode);
+  if (!country?.isActive) return null;
+  const jobs = await prisma.jobListing.findMany({
+    where: { ...publicOpenWhere(), countryId: country.id, slug },
     select: { ...publicJobSelect, descriptionHtml: true },
+    orderBy: [{ publishedAt: "desc" }, { locale: "asc" }],
+    take: 20,
   });
+  return selectPreferredPublicJobs(jobs, locale, country.defaultLocale)[0] ?? null;
 }
 
 export async function getOpenJobById(id: string) {
@@ -242,7 +298,7 @@ export async function createApplicationAfterUpload(args: {
   return prisma.$transaction(async (tx) => {
     const job = await tx.jobListing.findFirst({
       where: { ...publicOpenWhere(now), id: args.jobId },
-      select: { id: true },
+      select: { id: true, locale: true },
     });
     if (!job) throw new JobClosedError("Job is no longer open");
     const application = await tx.jobApplication.create({
@@ -275,7 +331,11 @@ export async function createApplicationAfterUpload(args: {
         action: "JOB_APPLICATION_RECEIVED",
         entityType: "JobApplication",
         entityId: application.id,
-        metadata: { jobListingId: job.id },
+        metadata: {
+          jobListingId: job.id,
+          jobLocale: job.locale,
+          privacyNoticeLocale: args.fields.privacyNoticeLocale,
+        },
       },
     });
     return application;

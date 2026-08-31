@@ -211,3 +211,42 @@ export function sanitizeRichHtml(input: string | null | undefined): string | nul
     disallowedTagsMode: "discard",
   });
 }
+
+const CAREER_ALLOWED_TAGS = ALLOWED_TAGS.filter((tag) => !["img", "figure", "figcaption"].includes(tag));
+
+/** Careers prose never embeds remote media; CVs use the separate private upload flow. */
+export function sanitizeCareerHtml(input: string | null | undefined): string | null {
+  if (input == null) return null;
+  const trimmed = input.trim();
+  if (trimmed === "") return null;
+  return sanitizeHtmlLib(trimmed, {
+    allowedTags: CAREER_ALLOWED_TAGS,
+    allowedAttributes: {
+      a: ["href", "title", "rel", "target"],
+      "*": ["style", "dir", "lang", "aria-label", "aria-hidden"],
+    },
+    allowedSchemes: ["http", "https", "mailto", "tel"],
+    allowedStyles: {
+      "*": {
+        color: [/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/, /^rgb\(\s*(\d{1,3}\s*,\s*){2}\d{1,3}\s*\)$/],
+        "background-color": [/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/, /^rgb\(\s*(\d{1,3}\s*,\s*){2}\d{1,3}\s*\)$/],
+        "font-weight": [/^\d{3}$/, /^(normal|bold|bolder|lighter)$/],
+        "font-style": [/^(normal|italic|oblique)$/],
+        "font-family": [/^[a-zA-Z0-9\s,'"-]+$/],
+        "font-size": [/^(10|12|14|16|18|24|32)px$/, /^(xx-small|x-small|small|medium|large|x-large|xx-large|xxx-large|smaller|larger)$/],
+        "text-align": [/^(left|right|center|justify|start|end)$/],
+        "text-decoration": [/^(none|underline|line-through|overline)$/],
+        "line-height": [/^(1(?:\.\d{1,2})?|2(?:\.0{1,2})?)$/],
+      },
+    },
+    transformTags: {
+      a: (tagName, attribs) => ({
+        tagName,
+        attribs: attribs.target === "_blank"
+          ? { ...attribs, rel: `${attribs.rel ?? ""} noopener noreferrer`.trim() }
+          : attribs,
+      }),
+    },
+    disallowedTagsMode: "discard",
+  });
+}

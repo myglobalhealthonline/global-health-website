@@ -82,6 +82,7 @@ function multipartBody(file: Buffer, filename = "candidate.pdf", mimetype = "app
     phone: "",
     message: "",
     privacyAcknowledged: "true",
+    privacyNoticeLocale: "EN",
     website: "",
   };
   const chunks: Buffer[] = [];
