@@ -6812,4 +6812,40 @@ organic conversion conclusions remain blocked pending privacy-safe event
 validation. Re-evaluate deployed changes only after a complete 28-day window
 plus normal GSC final-data lag.
 
+Follow-up evidence on 2026-08-31 kept the operational holds intact. A
+route-contained crawl fetched all 75 canonical `/portugal/pt` sitemap URLs with
+HTTP 200 responses and no missing title, canonical, hreflang or single-H1
+checks. The driving-certificate URL was recrawled by Google on 2026-08-31 and
+remains indexed; Pedro's current and legacy profile URLs still show the stored
+2026-08-06 `noindex` state. No redirect, canonical, robots, sitemap, title or
+H1 change is authorized from this evidence.
+
+Repository-only follow-up: the guarded Portugal HOME updater now covers the
+exact English CTA `Book a consultation` -> `Marcar consulta`. It defaults to a
+dry-run, binds confirmation to the database host, validates the published PT
+record, uses an optimistic Serializable update and verifies the saved value. The production
+write was not run. Reconciled package counts are 14 P0, 60 P1, 853 P2, 720 P3,
+1,598 pt-PT and 49 en-PT rows. The market hub retains brand/Portugal ownership;
+generic online-consultation intent remains assigned to `/services/consulta-medica`.
+
+Page-by-page editorial review is complete for the approved Portugal ownership set:
+24 mapped public pages plus four canonical doctor profiles. The requested 16-column
+completion matrix is `seo/portugal/content-completion-matrix.csv`. Every URL has one
+unique primary keyword; the 24 page briefs and matrix are synchronized, with the
+driving-certificate retain-current sentinel as the documented exception. Relevant
+low-volume variants remain secondary/supporting terms rather than new pages.
+
+**Implementation remains deliberately partial.** The only page-copy source change is
+the pt-PT blood-pressure tool title; it is repository-only and undeployed. Service
+descriptions, H1s, bodies, FAQs, internal links, doctor biographies, credentials and
+profile metadata remain unchanged in operational sources. Historical bulk service
+and doctor importers were not used because they rewrite wider clinical/profile
+surfaces and are unsafe for narrow metadata publication. All 28 rows require clinical,
+credential or official-source review and therefore record factual verification `no`
+and blocked publication. Live checks for the same 28 URLs passed HTTP status,
+canonical, `pt-PT` hreflang, indexability, structured data and booking-CTA checks.
+Frontend/backend type-checks, locale-key validation and 24 focused tool tests passed.
+No production write, push or deployment was made; repository changes were committed
+only after completion and review.
+
 ---

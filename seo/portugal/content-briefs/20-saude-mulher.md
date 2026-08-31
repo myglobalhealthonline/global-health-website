@@ -12,9 +12,9 @@
 - current_performance: 14 GSC impressions and 0 clicks attached to exact normalized terms in the 90-day extract; 29 cleaned keywords in this cluster. Metrics are query-level evidence, not page forecasts.
 - competitor_comparison: dronline.pt, hospitaldaluz.pt appear in this cluster. Compare coverage and trust evidence, never copy wording.
 - SERP_analysis: Validate the head term before metadata changes. Expect official/public-health and established medical domains on YMYL queries; favour the existing service page over a thin keyword variant.
-- recommended_title: Consulta de saúde da mulher online | Global Health
-- recommended_description: Marque uma consulta online de saúde da mulher, com informação clara sobre temas adequados à teleconsulta e sinais de alarme.
-- recommended_h1: Saúde da mulher
+- recommended_title: Consulta de Saúde da Mulher Online | Portugal
+- recommended_description: Avaliação confidencial de saúde da mulher por videochamada: contraceção, saúde hormonal, menopausa e SOP, com médico registado na Ordem.
+- recommended_h1: Consulta de Saúde da Mulher
 - outline:
   1. Answer-first definition and who the service may suit.
   2. What can and cannot be handled online.

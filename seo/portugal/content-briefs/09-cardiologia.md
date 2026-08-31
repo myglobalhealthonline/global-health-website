@@ -12,9 +12,9 @@
 - current_performance: 45 GSC impressions and 0 clicks attached to exact normalized terms in the 90-day extract; 30 cleaned keywords in this cluster. Metrics are query-level evidence, not page forecasts.
 - competitor_comparison: lusiadas.pt appear in this cluster. Compare coverage and trust evidence, never copy wording.
 - SERP_analysis: Validate the head term before metadata changes. Expect official/public-health and established medical domains on YMYL queries; favour the existing service page over a thin keyword variant.
-- recommended_title: Consulta de Cardiologia online | Global Health
-- recommended_description: Consulte um cardiologista online em Portugal, saiba como preparar a consulta e quando os sintomas exigem cuidados urgentes presenciais.
-- recommended_h1: Cardiologia
+- recommended_title: Cardiologista Online | Consulta de Cardiologia
+- recommended_description: Consulta com cardiologista registado na Ordem dos Médicos para risco cardiovascular, doença cardíaca ou segunda opinião, por videochamada segura.
+- recommended_h1: Consulta de Cardiologia
 - outline:
   1. Answer-first definition and who the service may suit.
   2. What can and cannot be handled online.

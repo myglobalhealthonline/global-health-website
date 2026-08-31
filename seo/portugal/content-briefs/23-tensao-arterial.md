@@ -12,8 +12,8 @@
 - current_performance: 54 GSC impressions and 1 clicks attached to exact normalized terms in the 90-day extract; 16 cleaned keywords in this cluster. Metrics are query-level evidence, not page forecasts.
 - competitor_comparison: No exact competitor row in the bounded portfolio sample. appear in this cluster. Compare coverage and trust evidence, never copy wording.
 - SERP_analysis: Validate the head term before metadata changes. Expect official/public-health and established medical domains on YMYL queries; favour the existing service page over a thin keyword variant.
-- recommended_title: Tabela de tensão arterial: valores e registo | Global Health
-- recommended_description: Consulte uma tabela de tensão arterial e saiba como interpretar medições gerais, sem substituir avaliação médica ou cuidados urgentes.
+- recommended_title: Tabela de Tensão Arterial: Valores | Portugal
+- recommended_description: Compare a tensão sistólica e diastólica com a tabela europeia para adultos. Veja a categoria e as leituras que exigem cuidados médicos no próprio dia.
 - recommended_h1: Tabela de tensão arterial
 - outline:
   1. Answer-first definition and who the service may suit.

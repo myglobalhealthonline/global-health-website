@@ -12,9 +12,9 @@
 - current_performance: 58 GSC impressions and 0 clicks attached to exact normalized terms in the 90-day extract; 60 cleaned keywords in this cluster. Metrics are query-level evidence, not page forecasts.
 - competitor_comparison: lusiadas.pt appear in this cluster. Compare coverage and trust evidence, never copy wording.
 - SERP_analysis: Validate the head term before metadata changes. Expect official/public-health and established medical domains on YMYL queries; favour the existing service page over a thin keyword variant.
-- recommended_title: Consulta médica para perda de peso | Global Health
-- recommended_description: Receba avaliação médica individual para gestão do peso. Tratamentos e medicamentos dependem da indicação clínica e não são garantidos.
-- recommended_h1: Perda de peso
+- recommended_title: Consulta Médica para Perda de Peso | Portugal
+- recommended_description: Avaliação dos fatores médicos e metabólicos ligados ao peso, com médicos registados na Ordem. Tratamentos dependem da indicação clínica.
+- recommended_h1: Consulta de Gestão de Peso
 - outline:
   1. Answer-first definition and who the service may suit.
   2. What can and cannot be handled online.

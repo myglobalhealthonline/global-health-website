@@ -12,9 +12,9 @@
 - current_performance: 2 GSC impressions and 0 clicks attached to exact normalized terms in the 90-day extract; 27 cleaned keywords in this cluster. Metrics are query-level evidence, not page forecasts.
 - competitor_comparison: lusiadas.pt appear in this cluster. Compare coverage and trust evidence, never copy wording.
 - SERP_analysis: Validate the head term before metadata changes. Expect official/public-health and established medical domains on YMYL queries; favour the existing service page over a thin keyword variant.
-- recommended_title: Consulta de Oncologia online | Global Health
-- recommended_description: Fale online com um especialista em Oncologia para orientação ou segunda opinião, sem substituir cuidados urgentes ou exames presenciais.
-- recommended_h1: Oncologia
+- recommended_title: Oncologista Online | Segunda Opinião em Oncologia
+- recommended_description: Segunda opinião sobre diagnóstico ou tratamento oncológico, com oncologista registado na Ordem dos Médicos. Inclui apoio em cuidados paliativos.
+- recommended_h1: Consulta de Oncologia
 - outline:
   1. Answer-first definition and who the service may suit.
   2. What can and cannot be handled online.

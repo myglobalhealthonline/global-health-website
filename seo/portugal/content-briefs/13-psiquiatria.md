@@ -12,9 +12,9 @@
 - current_performance: 25 GSC impressions and 0 clicks attached to exact normalized terms in the 90-day extract; 15 cleaned keywords in this cluster. Metrics are query-level evidence, not page forecasts.
 - competitor_comparison: No exact competitor row in the bounded portfolio sample. appear in this cluster. Compare coverage and trust evidence, never copy wording.
 - SERP_analysis: Validate the head term before metadata changes. Expect official/public-health and established medical domains on YMYL queries; favour the existing service page over a thin keyword variant.
-- recommended_title: Consulta de Psiquiatria online | Global Health
-- recommended_description: Consulte um psiquiatra online em Portugal. Saiba o que esperar e onde procurar ajuda imediata numa emergência de saúde mental.
-- recommended_h1: Psiquiatria
+- recommended_title: Psiquiatra Online | Consulta de Psiquiatria
+- recommended_description: Consulta por videochamada com psiquiatra registado na Ordem dos Médicos, para avaliação, revisão diagnóstica e gestão de saúde mental.
+- recommended_h1: Consulta de Psiquiatria
 - outline:
   1. Answer-first definition and who the service may suit.
   2. What can and cannot be handled online.

@@ -12,9 +12,9 @@
 - current_performance: 0 GSC impressions and 0 clicks attached to exact normalized terms in the 90-day extract; 10 cleaned keywords in this cluster. Metrics are query-level evidence, not page forecasts.
 - competitor_comparison: dronline.pt appear in this cluster. Compare coverage and trust evidence, never copy wording.
 - SERP_analysis: Validate the head term before metadata changes. Expect official/public-health and established medical domains on YMYL queries; favour the existing service page over a thin keyword variant.
-- recommended_title: Consulta de saúde do homem online | Global Health
-- recommended_description: Marque uma consulta online de saúde do homem, com avaliação individual e encaminhamento presencial quando necessário.
-- recommended_h1: Saúde do homem
+- recommended_title: Consulta de Saúde do Homem Online | Portugal
+- recommended_description: Avaliação confidencial da saúde do homem por videochamada: disfunção erétil, testosterona e libido, com médico registado.
+- recommended_h1: Consulta de Saúde do Homem
 - outline:
   1. Answer-first definition and who the service may suit.
   2. What can and cannot be handled online.

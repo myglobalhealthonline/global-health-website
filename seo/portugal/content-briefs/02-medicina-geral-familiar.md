@@ -12,9 +12,9 @@
 - current_performance: 7 GSC impressions and 0 clicks attached to exact normalized terms in the 90-day extract; 18 cleaned keywords in this cluster. Metrics are query-level evidence, not page forecasts.
 - competitor_comparison: dronline.pt appear in this cluster. Compare coverage and trust evidence, never copy wording.
 - SERP_analysis: Validate the head term before metadata changes. Expect official/public-health and established medical domains on YMYL queries; favour the existing service page over a thin keyword variant.
-- recommended_title: Medicina Geral e Familiar online | Global Health
-- recommended_description: Marque uma consulta online de Medicina Geral e Familiar em Portugal e saiba o que pode ser avaliado por teleconsulta.
-- recommended_h1: Medicina Geral e Familiar
+- recommended_title: Médico de Família Online | Medicina Geral e Familiar
+- recommended_description: Consulta com especialista em Medicina Geral e Familiar, por videochamada segura, para doença crónica, cuidados continuados e medicina preventiva.
+- recommended_h1: Consulta de Medicina Geral e Familiar
 - outline:
   1. Answer-first definition and who the service may suit.
   2. What can and cannot be handled online.

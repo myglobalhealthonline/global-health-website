@@ -20,9 +20,24 @@ Evidence date: 2026-08-31. Severity reflects verified Portugal impact, not globa
 | PT-TECH-008 | Medium | Organic conversion reporting returned no usable GA4 rows. | GA4 connection healthy, reports empty/null for inspected window. | Validate event ingestion, channel attribution and key-event setup without health data. |
 | PT-TECH-009 | Low | Backlink profile includes low-quality/spam-adjacent referrers. | 567 links / 68 domains; target spam score 2, with several low-rank or irrelevant sources. | Monitor/loss/broken links; do not imitate or mass-disavow without row-level evidence. |
 
+## 2026-08-31 focused follow-up
+
+The follow-up refresh in `raw/focused-refresh-2026-08-31-followup.json` did not reopen any closed technical decision:
+
+- all eight inspected priority URLs returned `PASS` and `Enviada e indexada`;
+- the driving-certificate page refreshed to crawl time `2026-08-31T10:45:38Z`, which strengthens the existing decision to leave its title and H1 unchanged until there is a new testable hypothesis;
+- GA4 measurement health still reports a healthy stream but only two key events, `purchase` and `begin_booking`, so `begin_checkout` remains absent from the current key-event set;
+- the live Portugal homepage still serves the English CTA `Book a consultation`, confirming that the remaining homepage localization gap is in production content data, not in the shared card component fixed in the repository.
+
+No redirect, canonical, hreflang, robots, sitemap or proxy change was justified by this follow-up.
+
+A route-contained crawl then fetched all 75 canonical `/portugal/pt` URLs present in the live sitemap. Every request returned HTTP 200. The crawl found no missing titles, missing canonicals, canonical mismatches, invalid H1 counts or missing hreflang groups in this bounded set. This replaces the earlier escaped-crawl limitation for Portugal-route conclusions; it does not certify pages outside the localized route.
+
 ## Indexation and canonical state
 
 Fresh URL Inspection is healthy for the market homepage, general consultation, driving certificate, Telmo Coelho and Vitor Pais. Google-selected canonicals match declared canonicals for those samples. Pedro is the only unresolved recrawl case.
+
+The 2026-08-31 inspection still shows Pedro's current and legacy URLs in Google's stored `noindex` state with the last crawl fixed at 2026-08-06. Current live behavior did not reproduce a new `noindex` defect, so the recrawl watch remains open and no repository directive changed.
 
 No robots, proxy, canonical, redirect or sitemap code change was justified. Existing route conventions remain:
 

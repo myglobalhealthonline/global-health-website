@@ -12,9 +12,9 @@
 - current_performance: 0 GSC impressions and 0 clicks attached to exact normalized terms in the 90-day extract; 5 cleaned keywords in this cluster. Metrics are query-level evidence, not page forecasts.
 - competitor_comparison: No exact competitor row in the bounded portfolio sample. appear in this cluster. Compare coverage and trust evidence, never copy wording.
 - SERP_analysis: Validate the head term before metadata changes. Expect official/public-health and established medical domains on YMYL queries; favour the existing service page over a thin keyword variant.
-- recommended_title: Consulta para deixar de fumar | Global Health
-- recommended_description: Obtenha apoio médico online para deixar de fumar, com um plano individual e indicação de opções adequadas após avaliação.
-- recommended_h1: Deixar de fumar
+- recommended_title: Consulta para Deixar de Fumar | Apoio Médico
+- recommended_description: Apoio médico para deixar de fumar, com avaliação, plano individual e opções terapêuticas baseadas em evidência, por videochamada segura.
+- recommended_h1: Consulta de Cessação Tabágica
 - outline:
   1. Answer-first definition and who the service may suit.
   2. What can and cannot be handled online.

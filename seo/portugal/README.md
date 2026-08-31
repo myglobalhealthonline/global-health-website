@@ -11,12 +11,13 @@ This directory is the auditable Portugal (`pt-PT`) SEO workstream for `myglobalh
 - 8,106 raw keyword rows retained.
 - 5,483 normalized unique terms before relevance/service gating.
 - 1,647 cleaned Portugal-relevant terms in the master after a final `receita`/administrative-intent relevance gate.
-- 14 P0, 60 P1, 973 P2 and 743 P3 terms after service, safety, public-system and authority constraints.
+- 14 P0, 60 P1, 853 P2 and 720 P3 terms after service, safety, public-system and authority constraints.
 - 100 algorithmically discovered SERP competitors; 11 domains received portfolio/domain analysis.
 - 474 competitor pages and 91 target pages inventoried.
 - 200 live SERP rows retained across ten priority queries.
 - 24 URL/cluster briefs, all mapped to existing URLs. New page recommendation: **zero**.
-- One verified shared-component localization defect fixed and tested. No production database write was made.
+- 28-row page-by-page completion matrix: all mapped pages plus four canonical doctor profiles; every row remains clinically blocked until review.
+- One verified shared-component localization defect was fixed and tested. A second guarded updater now covers the English Portugal homepage CTA, but no production database write was made.
 
 ## Read order
 
@@ -32,7 +33,7 @@ This directory is the auditable Portugal (`pt-PT`) SEO workstream for `myglobalh
 10. [Measurement plan](10-measurement-plan.md)
 11. [30/60/90 roadmap](11-30-60-90-day-roadmap.md)
 
-Supporting evidence: [domain summary](competitor-domain-summary.csv), [competitor pages](competitor-page-inventory.csv), [target pages](target-page-inventory.csv), [SERP validation](serp-validation.csv), [clinical review register](clinical-review-register.csv), [content briefs](content-briefs/), [OpenSEO call log](raw/openseo-call-log.jsonl), [source log](raw/keyword-source-log.csv), and [raw keyword exports](raw/keywords/).
+Supporting evidence: [completion matrix](content-completion-matrix.csv), [domain summary](competitor-domain-summary.csv), [competitor pages](competitor-page-inventory.csv), [target pages](target-page-inventory.csv), [SERP validation](serp-validation.csv), [clinical review register](clinical-review-register.csv), [content briefs](content-briefs/), [OpenSEO call log](raw/openseo-call-log.jsonl), [source log](raw/keyword-source-log.csv), and [raw keyword exports](raw/keywords/).
 
 ## Method
 
@@ -47,7 +48,7 @@ The corpus combines:
 
 Rows were normalized for case, whitespace and trivial punctuation. Accented and unaccented variants were retained when the source data kept them distinct. The master removes or demotes Brazilian, inactive-specialty, public-system, third-party-provider, shopping, location-doorway and obvious expansion noise. Missing volume/KD/CPC remains blank; blank never means zero.
 
-The master contains 1,741 pt-PT and 49 en-PT rows by a transparent language
+The master contains 1,598 pt-PT and 49 en-PT rows by a transparent language
 heuristic; four English rows explicitly contain Portugal/tourist intent. English
 rows without an explicit place name are retained only when observed in the Portugal
 provider market or the site's GSC extract.

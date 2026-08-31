@@ -14,6 +14,8 @@ Primary baseline: final GSC data through 2026-08-28. Use both Portugal searcher 
 
 GSC query totals are privacy-thresholded. Never reconcile them to device totals by inventing “missing keywords.”
 
+The 2026-08-31 follow-up used final 2026-08-01 to 2026-08-28 data: the `/portugal/pt` query/page scope returned 7 clicks and 1,176 impressions, while the Portugal-searcher scope returned 12 clicks and 1,954 impressions. Post-2026-08-25 GA4 organic overview, landing-page, key-event and acquisition reports returned no rows despite healthy measurement configuration. Keep conversion reporting blocked until event ingestion and attribution produce usable data.
+
 ## KPI definitions
 
 | KPI | Definition | Source | Cadence |

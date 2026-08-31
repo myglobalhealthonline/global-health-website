@@ -12,9 +12,9 @@
 - current_performance: 0 GSC impressions and 0 clicks attached to exact normalized terms in the 90-day extract; 43 cleaned keywords in this cluster. Metrics are query-level evidence, not page forecasts.
 - competitor_comparison: dronline.pt, mediconanet.pt appear in this cluster. Compare coverage and trust evidence, never copy wording.
 - SERP_analysis: Validate the head term before metadata changes. Expect official/public-health and established medical domains on YMYL queries; favour the existing service page over a thin keyword variant.
-- recommended_title: Renovação de tratamento online | Global Health
-- recommended_description: Peça uma avaliação médica online para continuidade de tratamento. A prescrição nunca é garantida e depende da decisão clínica.
-- recommended_h1: Renovação de tratamento
+- recommended_title: Renovação de Receita Online: Avaliação Médica
+- recommended_description: Continuidade de tratamento com avaliação clínica por videochamada segura, com médicos registados na Ordem dos Médicos. A prescrição depende da decisão clínica.
+- recommended_h1: Revisão de Tratamento em Curso
 - outline:
   1. Answer-first definition and who the service may suit.
   2. What can and cannot be handled online.

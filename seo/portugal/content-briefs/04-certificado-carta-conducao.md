@@ -13,8 +13,8 @@
 - competitor_comparison: dronline.pt, mediconanet.pt, teleconsultaportugal.com appear in this cluster. Compare coverage and trust evidence, never copy wording.
 - SERP_analysis: Validate the head term before metadata changes. Expect official/public-health and established medical domains on YMYL queries; favour the existing service page over a thin keyword variant.
 - recommended_title: RETER TÍTULO ATUAL — sem alteração aprovada
-- recommended_description: RETER DESCRIÇÃO ATUAL — a limitação observada é de autoridade/SERP, não um defeito de metadados demonstrado.
-- recommended_h1: Certificado médico para carta de condução
+- recommended_description: RETER DESCRIÇÃO ATUAL — a alegação de aceitação pelo IMT e o âmbito Grupo 1/2 permanecem em produção, mas exigem verificação oficial; não foi aprovada nova redação.
+- recommended_h1: Atestado Médico para Carta de Condução
 - outline:
   1. Answer-first definition and who the service may suit.
   2. What can and cannot be handled online.

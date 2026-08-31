@@ -12,9 +12,9 @@
 - current_performance: 0 GSC impressions and 0 clicks attached to exact normalized terms in the 90-day extract; 3 cleaned keywords in this cluster. Metrics are query-level evidence, not page forecasts.
 - competitor_comparison: No exact competitor row in the bounded portfolio sample. appear in this cluster. Compare coverage and trust evidence, never copy wording.
 - SERP_analysis: Validate the head term before metadata changes. Expect official/public-health and established medical domains on YMYL queries; favour the existing service page over a thin keyword variant.
-- recommended_title: Segunda opinião médica online | Global Health
-- recommended_description: Peça uma segunda opinião médica online com revisão do contexto disponível e indicação transparente das limitações da teleconsulta.
-- recommended_h1: Segunda opinião médica
+- recommended_title: Segunda Opinião Médica Online | Portugal
+- recommended_description: Segunda opinião independente sobre diagnóstico ou tratamento, por videochamada, com médicos registados na Ordem dos Médicos.
+- recommended_h1: Consulta de Segunda Opinião Médica
 - outline:
   1. Answer-first definition and who the service may suit.
   2. What can and cannot be handled online.

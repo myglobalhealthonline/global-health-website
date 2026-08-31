@@ -12,9 +12,9 @@
 - current_performance: 7 GSC impressions and 0 clicks attached to exact normalized terms in the 90-day extract; 64 cleaned keywords in this cluster. Metrics are query-level evidence, not page forecasts.
 - competitor_comparison: mediconanet.pt, medis.pt, dronline.pt appear in this cluster. Compare coverage and trust evidence, never copy wording.
 - SERP_analysis: Validate the head term before metadata changes. Expect official/public-health and established medical domains on YMYL queries; favour the existing service page over a thin keyword variant.
-- recommended_title: Consulta de saúde mental online | Global Health
-- recommended_description: Encontre apoio de saúde mental online e escolha o serviço adequado, com orientação explícita para situações urgentes ou de crise.
-- recommended_h1: Saúde mental
+- recommended_title: Consulta de Saúde Mental Online | Portugal
+- recommended_description: Avaliação confidencial de saúde mental por videochamada com médicos registados na Ordem dos Médicos. Numa crise, procure apoio imediato.
+- recommended_h1: Consulta de Saúde Mental
 - outline:
   1. Answer-first definition and who the service may suit.
   2. What can and cannot be handled online.

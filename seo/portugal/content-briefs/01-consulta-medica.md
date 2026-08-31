@@ -12,8 +12,8 @@
 - current_performance: 721 GSC impressions and 1 clicks attached to exact normalized terms in the 90-day extract; 270 cleaned keywords in this cluster. Metrics are query-level evidence, not page forecasts.
 - competitor_comparison: medicinaonline.multicare.pt, dronline.pt, medis.pt, teleconsultaportugal.com, cuf.pt appear in this cluster. Compare coverage and trust evidence, never copy wording.
 - SERP_analysis: Validate the head term before metadata changes. Expect official/public-health and established medical domains on YMYL queries; favour the existing service page over a thin keyword variant.
-- recommended_title: Consulta médica online em Portugal | Global Health
-- recommended_description: Fale online com um médico em Portugal. Consulte quando a teleconsulta é adequada, o que está incluído e quando pode ser necessária avaliação presencial.
+- recommended_title: Consulta Médica Online em Portugal | Global Health
+- recommended_description: Consulta por videochamada com médico registado na Ordem dos Médicos, para sintomas agudos e questões clínicas. Disponibilidade conforme a agenda.
 - recommended_h1: Consulta médica online
 - outline:
   1. Answer-first definition and who the service may suit.

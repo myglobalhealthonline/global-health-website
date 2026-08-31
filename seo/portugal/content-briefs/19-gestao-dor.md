@@ -12,9 +12,9 @@
 - current_performance: No direct keyword rows were retained; maintain the existing service page and validate demand before expanding content.
 - competitor_comparison: No exact competitor row in the bounded portfolio sample. appear in this cluster. Compare coverage and trust evidence, never copy wording.
 - SERP_analysis: Validate the head term before metadata changes. Expect official/public-health and established medical domains on YMYL queries; favour the existing service page over a thin keyword variant.
-- recommended_title: Consulta online de gestão da dor | Global Health
-- recommended_description: Fale com um médico sobre dor persistente, opções de avaliação e próximos passos, incluindo quando é necessária observação presencial.
-- recommended_h1: Gestão da dor
+- recommended_title: Consulta de Gestão da Dor Online | Portugal
+- recommended_description: Avaliação por videochamada de dor nas costas, articulações, ciática ou lesões músculo-esqueléticas, com médicos registados na Ordem.
+- recommended_h1: Avaliação Músculo-Esquelética e da Dor
 - outline:
   1. Answer-first definition and who the service may suit.
   2. What can and cannot be handled online.

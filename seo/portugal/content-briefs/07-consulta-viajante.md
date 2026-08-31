@@ -12,9 +12,9 @@
 - current_performance: 110 GSC impressions and 0 clicks attached to exact normalized terms in the 90-day extract; 42 cleaned keywords in this cluster. Metrics are query-level evidence, not page forecasts.
 - competitor_comparison: dronline.pt appear in this cluster. Compare coverage and trust evidence, never copy wording.
 - SERP_analysis: Validate the head term before metadata changes. Expect official/public-health and established medical domains on YMYL queries; favour the existing service page over a thin keyword variant.
-- recommended_title: Consulta do viajante online | Global Health
-- recommended_description: Prepare a sua viagem com uma consulta online, aconselhamento individual e indicação dos passos que podem exigir atendimento presencial.
-- recommended_h1: Consulta do viajante
+- recommended_title: Consulta do Viajante Online | Portugal
+- recommended_description: Consulta do viajante por videochamada com médico registado. Avaliação dos riscos do destino e aconselhamento sobre vacinação e profilaxia.
+- recommended_h1: Consulta de Saúde do Viajante
 - outline:
   1. Answer-first definition and who the service may suit.
   2. What can and cannot be handled online.

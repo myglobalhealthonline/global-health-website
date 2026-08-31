@@ -12,9 +12,9 @@
 - current_performance: 2 GSC impressions and 0 clicks attached to exact normalized terms in the 90-day extract; 9 cleaned keywords in this cluster. Metrics are query-level evidence, not page forecasts.
 - competitor_comparison: dronline.pt appear in this cluster. Compare coverage and trust evidence, never copy wording.
 - SERP_analysis: Validate the head term before metadata changes. Expect official/public-health and established medical domains on YMYL queries; favour the existing service page over a thin keyword variant.
-- recommended_title: Consulta de Psicologia online | Global Health
-- recommended_description: Marque uma consulta de Psicologia online em Portugal, com informação clara sobre privacidade, preparação e situações de crise.
-- recommended_h1: Psicologia
+- recommended_title: Psicóloga Online | Consulta de Psicologia
+- recommended_description: Consulta por videochamada com psicóloga registada na OPP, para avaliação psicológica e terapia baseada em evidência.
+- recommended_h1: Consulta de Psicologia
 - outline:
   1. Answer-first definition and who the service may suit.
   2. What can and cannot be handled online.

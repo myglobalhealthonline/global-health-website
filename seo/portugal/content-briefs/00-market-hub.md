@@ -1,20 +1,20 @@
-# Médico online em Portugal — P0 optimization brief
+# Portugal market and brand hub - P0 optimization brief
 
 - proposed_url: https://www.myglobalhealth.online/portugal/pt
 - page_type: market hub
-- primary_keyword: médico online Portugal
-- secondary_keywords: global health company | global health online | global health testing | global health care | global health center | the global health | global health and medicine | global health foyer | global health medical center
+- primary_keyword: global health
+- secondary_keywords: my global health | global health company | global health online | global health testing | global health care | global health center | the global health | global health and medicine | global health foyer | global health medical center
 - search_volume: unavailable for the exact term (cluster measured-volume sum: 0; never add volumes across variants as a traffic forecast)
 - intent: navigational / commercial
 - Portugal_audience: Adults in Portugal; European Portuguese. International residents only where the service and language supply are verified.
-- business_objective: Help an eligible user understand the real Médico online em Portugal service and reach the existing booking flow without adding a new URL.
+- business_objective: Help a user identify Global Health's Portugal market site, understand the available online-care scope and reach the existing booking flow without adding a new URL.
 - conversion_action: Use the existing generic booking CTA. Do not promise availability, a diagnosis, document, prescription, referral or treatment.
-- current_performance: 159 GSC impressions and 21 clicks attached to exact normalized terms in the 90-day extract; 11 cleaned keywords in this cluster. Metrics are query-level evidence, not page forecasts.
-- competitor_comparison: No exact competitor row in the bounded portfolio sample. appear in this cluster. Compare coverage and trust evidence, never copy wording.
-- SERP_analysis: Validate the head term before metadata changes. Expect official/public-health and established medical domains on YMYL queries; favour the existing service page over a thin keyword variant.
-- recommended_title: Médico online em Portugal | Global Health
-- recommended_description: Consulte médicos licenciados online em Portugal e escolha entre serviços clínicos disponíveis, com informação clara sobre preços e próximos passos.
-- recommended_h1: Médico online em Portugal
+- current_performance: The final 2026-05-31 to 2026-08-28 page extract reports 32 clicks, 1,314 impressions and average position 26.08. The mapped brand cluster contributes 159 impressions and 21 clicks in the reconciled query evidence. These figures describe observed Google data, not a traffic forecast.
+- competitor_comparison: The brand hub has no exact like-for-like competitor row in the bounded portfolio sample. Compare market clarity and visible trust evidence without copying competitor wording.
+- SERP_analysis: Keep broad online-consultation intent on `/services/consulta-medica`. The market hub owns Global Health and Portugal navigation, supported by a short explanation of the available online-care scope.
+- recommended_title: Global Health Portugal | Cuidados médicos online
+- recommended_description: Conheça os cuidados médicos online da Global Health em Portugal. Consulte os serviços disponíveis, os médicos e os passos para marcar uma consulta.
+- recommended_h1: Cuidados médicos online em Portugal
 - outline:
   1. Answer-first definition and who the service may suit.
   2. What can and cannot be handled online.

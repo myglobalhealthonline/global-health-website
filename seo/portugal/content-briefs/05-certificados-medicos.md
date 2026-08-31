@@ -12,9 +12,9 @@
 - current_performance: 203 GSC impressions and 1 clicks attached to exact normalized terms in the 90-day extract; 82 cleaned keywords in this cluster. Metrics are query-level evidence, not page forecasts.
 - competitor_comparison: mediconanet.pt, dronline.pt, teleconsultaportugal.com appear in this cluster. Compare coverage and trust evidence, never copy wording.
 - SERP_analysis: Validate the head term before metadata changes. Expect official/public-health and established medical domains on YMYL queries; favour the existing service page over a thin keyword variant.
-- recommended_title: Certificados médicos online: avaliação clínica | Global Health
-- recommended_description: Consulte um médico online para saber se o certificado pedido pode ser emitido. A decisão depende da avaliação clínica e do tipo de documento.
-- recommended_h1: Certificados médicos
+- recommended_title: Atestado Médico Online: Avaliação Clínica | Portugal
+- recommended_description: Avaliação online para atestados de caça, náutica, desporto federado e concursos públicos. A emissão depende do documento e da avaliação clínica.
+- recommended_h1: Atestados Médicos
 - outline:
   1. Answer-first definition and who the service may suit.
   2. What can and cannot be handled online.

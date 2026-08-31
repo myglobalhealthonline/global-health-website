@@ -2,8 +2,8 @@
 
 - proposed_url: https://www.myglobalhealth.online/portugal/pt/services/consulta-dermatologia
 - page_type: specialist service page
-- primary_keyword: dermatologista online
-- secondary_keywords: consulta online de dermatologia | micose pele | micoses na pele | ulcera na pele | úlcera na pele | ulcera pele | úlcera pele | ulceração na pele | úlceras na pele | dermatologia cabelo
+- primary_keyword: consulta online de dermatologia
+- secondary_keywords: consulta dermatologia online | consulta de dermatologia online | dermatologista online | consulta de pele online | micose pele | micoses na pele | ulcera na pele | úlcera na pele | ulcera pele | úlcera pele | ulceração na pele | úlceras na pele | dermatologia cabelo
 - search_volume: unavailable for the exact term (cluster measured-volume sum: 3190; never add volumes across variants as a traffic forecast)
 - intent: commercial / transactional with supporting informational needs
 - Portugal_audience: Adults in Portugal; European Portuguese. International residents only where the service and language supply are verified.
@@ -12,9 +12,9 @@
 - current_performance: 18 GSC impressions and 0 clicks attached to exact normalized terms in the 90-day extract; 24 cleaned keywords in this cluster. Metrics are query-level evidence, not page forecasts.
 - competitor_comparison: teleconsultaportugal.com appear in this cluster. Compare coverage and trust evidence, never copy wording.
 - SERP_analysis: Validate the head term before metadata changes. Expect official/public-health and established medical domains on YMYL queries; favour the existing service page over a thin keyword variant.
-- recommended_title: Consulta de Dermatologia online | Global Health
-- recommended_description: Consulte um dermatologista online e saiba que problemas de pele podem ser avaliados por imagem e quando é necessária observação presencial.
-- recommended_h1: Dermatologia
+- recommended_title: Consulta de Dermatologia Online | Avaliação Clínica
+- recommended_description: Avaliação por videochamada de erupção cutânea, eczema, acne e outros problemas de pele, com médicos registados na Ordem.
+- recommended_h1: Consulta de Dermatologia Online
 - outline:
   1. Answer-first definition and who the service may suit.
   2. What can and cannot be handled online.

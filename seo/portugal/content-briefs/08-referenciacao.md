@@ -12,9 +12,9 @@
 - current_performance: 0 GSC impressions and 0 clicks attached to exact normalized terms in the 90-day extract; 39 cleaned keywords in this cluster. Metrics are query-level evidence, not page forecasts.
 - competitor_comparison: lusiadas.pt, dronline.pt appear in this cluster. Compare coverage and trust evidence, never copy wording.
 - SERP_analysis: Validate the head term before metadata changes. Expect official/public-health and established medical domains on YMYL queries; favour the existing service page over a thin keyword variant.
-- recommended_title: Consulta de referenciação online | Global Health
-- recommended_description: Fale com um médico sobre sintomas, exames anteriores e a eventual necessidade de referenciação ou investigação adicional.
-- recommended_h1: Consulta de referenciação
+- recommended_title: Referenciação Médica Online e Exames | Portugal
+- recommended_description: Avaliação médica por videochamada para eventual referenciação, análises ou imagiologia, com médicos registados na Ordem.
+- recommended_h1: Referenciação Médica e Exames Complementares
 - outline:
   1. Answer-first definition and who the service may suit.
   2. What can and cannot be handled online.

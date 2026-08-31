@@ -2,8 +2,8 @@
 
 - proposed_url: https://www.myglobalhealth.online/portugal/pt/services/pediatria-geral
 - page_type: specialist service page
-- primary_keyword: pediatra online
-- secondary_keywords: pediatra consulta | consulta com pediatra online | medico pediatra online | médico pediatra online | consulta online pediatra | medico online pediatra | médico pediatra online gratuito
+- primary_keyword: consulta pediatria online
+- secondary_keywords: pediatra online | pediatra consulta | consulta com pediatra online | medico pediatra online | médico pediatra online | consulta online pediatra | medico online pediatra | médico pediatra online gratuito
 - search_volume: unavailable for the exact term (cluster measured-volume sum: 260; never add volumes across variants as a traffic forecast)
 - intent: commercial / transactional with supporting informational needs
 - Portugal_audience: Adults in Portugal seeking care for a child; European Portuguese. International residents only where the service and language supply are verified.
@@ -12,9 +12,9 @@
 - current_performance: 0 GSC impressions and 0 clicks attached to exact normalized terms in the 90-day extract; 7 cleaned keywords in this cluster. Metrics are query-level evidence, not page forecasts.
 - competitor_comparison: dronline.pt appear in this cluster. Compare coverage and trust evidence, never copy wording.
 - SERP_analysis: Validate the head term before metadata changes. Expect official/public-health and established medical domains on YMYL queries; favour the existing service page over a thin keyword variant.
-- recommended_title: Consulta de Pediatria online | Global Health
-- recommended_description: Marque uma consulta pediátrica online e saiba quais situações podem ser avaliadas à distância e quando procurar urgência presencial.
-- recommended_h1: Pediatria
+- recommended_title: Consulta de Pediatria Online | Médico de Clínica Geral
+- recommended_description: Fale com um médico sobre a saúde do seu filho numa consulta pediátrica de cuidados primários, por videochamada segura. Consulte a agenda.
+- recommended_h1: Consulta de Pediatria — Cuidados Primários
 - outline:
   1. Answer-first definition and who the service may suit.
   2. What can and cannot be handled online.

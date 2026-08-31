@@ -12,9 +12,9 @@
 - current_performance: 6 GSC impressions and 0 clicks attached to exact normalized terms in the 90-day extract; 191 cleaned keywords in this cluster. Metrics are query-level evidence, not page forecasts.
 - competitor_comparison: dronline.pt, mediconanet.pt, teleconsultaportugal.com appear in this cluster. Compare coverage and trust evidence, never copy wording.
 - SERP_analysis: Validate the head term before metadata changes. Expect official/public-health and established medical domains on YMYL queries; favour the existing service page over a thin keyword variant.
-- recommended_title: Baixa médica online: consulta e avaliação | Global Health
-- recommended_description: Faça uma consulta médica online para avaliação clínica. A emissão de baixa depende sempre da decisão do médico e das regras aplicáveis em Portugal.
-- recommended_h1: Baixa médica
+- recommended_title: Baixa Médica Online: Consulta e Avaliação | Portugal
+- recommended_description: Avaliação médica online de falta ao trabalho, com médico registado na Ordem dos Médicos. Qualquer documento depende da decisão clínica.
+- recommended_h1: Justificação Médica de Falta ao Trabalho
 - outline:
   1. Answer-first definition and who the service may suit.
   2. What can and cannot be handled online.

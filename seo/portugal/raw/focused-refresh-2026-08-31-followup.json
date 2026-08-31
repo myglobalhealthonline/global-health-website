@@ -1,0 +1,239 @@
+{
+  "capturedAt": "2026-08-31",
+  "project": {
+    "id": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b",
+    "name": "GlobalHealthNew",
+    "domain": "myglobalhealth.online",
+    "requestedMarket": {
+      "locationCode": 2620,
+      "languageCode": "pt",
+      "locale": "pt-PT"
+    }
+  },
+  "openseoAccount": {
+    "connected": true,
+    "mode": "hosted",
+    "startingCredits": 3722,
+    "endingCredits": 3435,
+    "creditsConsumed": 287
+  },
+  "ga4MeasurementHealth": {
+    "status": "ok",
+    "propertyId": "properties/547083375",
+    "measurementId": "G-SP48D9LJJ5",
+    "keyEvents": [
+      "purchase",
+      "begin_booking"
+    ],
+    "issueCount": 0
+  },
+  "priorityPageRows": [
+    {
+      "url": "https://www.myglobalhealth.online/portugal/pt",
+      "clicks": 32,
+      "impressions": 1314,
+      "ctr": 0.0243531202435312,
+      "position": 26.076103500761036
+    },
+    {
+      "url": "https://www.myglobalhealth.online/portugal/pt/services/certificado-medico-carta-de-conducao",
+      "clicks": 10,
+      "impressions": 1085,
+      "ctr": 0.009216589861751152,
+      "position": 13.402764976958526
+    },
+    {
+      "url": "https://www.myglobalhealth.online/portugal/pt/tools/blood-pressure-chart",
+      "clicks": 4,
+      "impressions": 449,
+      "ctr": 0.008908685968819599,
+      "position": 11.456570155902005
+    },
+    {
+      "url": "https://www.myglobalhealth.online/portugal/pt/services/baixa-medica",
+      "clicks": 1,
+      "impressions": 22,
+      "ctr": 0.045454545454545456,
+      "position": 5.909090909090909
+    },
+    {
+      "url": "https://www.myglobalhealth.online/portugal/pt/services/certificados-medicos",
+      "clicks": 0,
+      "impressions": 30,
+      "ctr": 0,
+      "position": 17.6
+    },
+    {
+      "url": "https://www.myglobalhealth.online/portugal/pt/services/consulta-do-viajante",
+      "clicks": 0,
+      "impressions": 136,
+      "ctr": 0,
+      "position": 44.61029411764706
+    },
+    {
+      "url": "https://www.myglobalhealth.online/portugal/pt/services/consulta-medica",
+      "clicks": 0,
+      "impressions": 30,
+      "ctr": 0,
+      "position": 21.9
+    },
+    {
+      "url": "https://www.myglobalhealth.online/portugal/pt/services/medicina-geral-e-familiar",
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 8
+    }
+  ],
+  "urlInspection": [
+    {
+      "url": "https://www.myglobalhealth.online/portugal/pt",
+      "coverageState": "Enviada e indexada",
+      "lastCrawlTime": "2026-08-29T05:16:29Z",
+      "googleCanonical": "https://www.myglobalhealth.online/portugal/pt",
+      "userCanonical": "https://www.myglobalhealth.online/portugal/pt"
+    },
+    {
+      "url": "https://www.myglobalhealth.online/portugal/pt/services/consulta-medica",
+      "coverageState": "Enviada e indexada",
+      "lastCrawlTime": "2026-07-31T09:30:34Z",
+      "googleCanonical": "https://www.myglobalhealth.online/portugal/pt/services/consulta-medica",
+      "userCanonical": "https://www.myglobalhealth.online/portugal/pt/services/consulta-medica"
+    },
+    {
+      "url": "https://www.myglobalhealth.online/portugal/pt/services/certificados-medicos",
+      "coverageState": "Enviada e indexada",
+      "lastCrawlTime": "2026-07-20T00:33:57Z",
+      "googleCanonical": "https://www.myglobalhealth.online/portugal/pt/services/certificados-medicos",
+      "userCanonical": null
+    },
+    {
+      "url": "https://www.myglobalhealth.online/portugal/pt/services/baixa-medica",
+      "coverageState": "Enviada e indexada",
+      "lastCrawlTime": "2026-07-19T17:21:55Z",
+      "googleCanonical": "https://www.myglobalhealth.online/portugal/pt/services/baixa-medica",
+      "userCanonical": null
+    },
+    {
+      "url": "https://www.myglobalhealth.online/portugal/pt/services/consulta-do-viajante",
+      "coverageState": "Enviada e indexada",
+      "lastCrawlTime": "2026-08-27T08:37:49Z",
+      "googleCanonical": "https://www.myglobalhealth.online/portugal/pt/services/consulta-do-viajante",
+      "userCanonical": "https://www.myglobalhealth.online/portugal/pt/services/consulta-do-viajante"
+    },
+    {
+      "url": "https://www.myglobalhealth.online/portugal/pt/tools/blood-pressure-chart",
+      "coverageState": "Enviada e indexada",
+      "lastCrawlTime": "2026-08-05T21:46:39Z",
+      "googleCanonical": "https://www.myglobalhealth.online/portugal/pt/tools/blood-pressure-chart",
+      "userCanonical": "https://www.myglobalhealth.online/portugal/pt/tools/blood-pressure-chart"
+    },
+    {
+      "url": "https://www.myglobalhealth.online/portugal/pt/services/medicina-geral-e-familiar",
+      "coverageState": "Enviada e indexada",
+      "lastCrawlTime": "2026-08-03T18:17:57Z",
+      "googleCanonical": "https://www.myglobalhealth.online/portugal/pt/services/medicina-geral-e-familiar",
+      "userCanonical": "https://www.myglobalhealth.online/portugal/pt/services/medicina-geral-e-familiar"
+    },
+    {
+      "url": "https://www.myglobalhealth.online/portugal/pt/services/certificado-medico-carta-de-conducao",
+      "coverageState": "Enviada e indexada",
+      "lastCrawlTime": "2026-08-31T10:45:38Z",
+      "googleCanonical": "https://www.myglobalhealth.online/portugal/pt/services/certificado-medico-carta-de-conducao",
+      "userCanonical": "https://www.myglobalhealth.online/portugal/pt/services/certificado-medico-carta-de-conducao"
+    }
+  ],
+  "followupGsc": {
+    "window": "2026-08-01/2026-08-28",
+    "dataState": "final",
+    "routeQueryPageRows": 428,
+    "routeTotals": {
+      "clicks": 7,
+      "impressions": 1176
+    },
+    "portugalSearcherQueryPageRows": 664,
+    "portugalSearcherTotals": {
+      "clicks": 12,
+      "impressions": 1954
+    },
+    "consultaMedicaExactRows": 9
+  },
+  "ga4Followup": {
+    "window": "2026-08-25/2026-08-30",
+    "organicOverviewRows": 0,
+    "organicLandingPageRows": 0,
+    "keyEventRows": 0,
+    "trafficAcquisitionRows": 0,
+    "configuredKeyEvents": [
+      "purchase",
+      "begin_booking"
+    ],
+    "validationErrors": [
+      "One key-event breakdown request used an unsupported comparison/breakdown combination and was retried without it.",
+      "One traffic-acquisition request used an unsupported comparison/breakdown combination and was retried without it."
+    ]
+  },
+  "focusedProviderChecks": {
+    "keywordMetricTermsRequested": 11,
+    "keywordMetrics": [
+      { "keyword": "certificado médico carta de condução", "searchVolume": 1900, "difficulty": 0 },
+      { "keyword": "consulta do viajante online", "searchVolume": 1000, "difficulty": 5 },
+      { "keyword": "médico online", "searchVolume": 880, "difficulty": 0 },
+      { "keyword": "teleconsulta", "searchVolume": 880, "difficulty": 0 },
+      { "keyword": "tabela tensão arterial", "searchVolume": 390, "difficulty": 0 },
+      { "keyword": "baixa médica online", "searchVolume": 210, "difficulty": 0 },
+      { "keyword": "consulta médica online", "searchVolume": 170, "difficulty": 0 },
+      { "keyword": "calculadora tensão arterial", "searchVolume": 70, "difficulty": 0 },
+      { "keyword": "médico de família online", "searchVolume": 10, "difficulty": 45 },
+      { "keyword": "atestado médico online", "searchVolume": null, "difficulty": 0 },
+      { "keyword": "certificados médicos online", "searchVolume": null, "difficulty": null }
+    ],
+    "targetDomain": { "estimatedTraffic": 52, "rankedKeywords": 15 },
+    "dronlineDomain": { "estimatedTraffic": 12654, "rankedKeywords": 601 },
+    "targetBacklinks": { "backlinks": 567, "referringDomains": 68, "domainRank": 43, "spamScore": 2 },
+    "dronlineBacklinks": { "backlinks": 596, "referringDomains": 513, "domainRank": 25, "spamScore": 0 },
+    "serpQueriesChecked": [
+      "consulta médica online",
+      "atestado médico online",
+      "consulta do viajante online"
+    ],
+    "competitorQueryCount": 5
+  },
+  "routeContainedCrawl": {
+    "source": "live sitemap plus direct read-only requests",
+    "totalSitemapUrls": 2115,
+    "portugalAllLocaleUrls": 441,
+    "portugalPtUrlsFetched": 75,
+    "http200": 75,
+    "non200": 0,
+    "missingTitle": 0,
+    "missingCanonical": 0,
+    "canonicalMismatch": 0,
+    "invalidH1Count": 0,
+    "missingHreflang": 0
+  },
+  "storedGoogleStates": [
+    {
+      "subject": "Pedro Santos current and legacy profile URLs",
+      "verdict": "NEUTRAL",
+      "storedState": "noindex",
+      "lastCrawlTime": "2026-08-06",
+      "decision": "Keep the recrawl watch; no new live defect reproduced."
+    }
+  ],
+  "supplyVerification": {
+    "liveHomepageClinicians": 16,
+    "liveHomepageServices": 23,
+    "rowLevelDatabaseRefresh": "environment-blocked: local dependencies unavailable and Docker daemon not running"
+  },
+  "liveNotes": {
+    "homepageTitle": "Médico Online Portugal | Clínicos e Especialistas Registados",
+    "homepageH1": "Cuidados médicos online em Portugal",
+    "homepageEnglishCta": "Book a consultation",
+    "holdsConfirmed": [
+      "Driving-certificate title/H1 hold still stands; live indexing is healthy and current crawl time is 2026-08-31.",
+      "Pedro Santos remains a Google stored-state watch item; no new live noindex defect was reproduced.",
+      "No redirect, canonical, robots, sitemap, or noindex change was justified by this follow-up."
+    ]
+  }
+}
