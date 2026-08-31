@@ -1,0 +1,6 @@
+"source_id","source_type","raw_file","raw_rows","unique_key","market","paid","status","notes"
+"seed-expansion","OpenSEO keyword research","raw/keywords/seed-keywords.csv","4884","keyword + seed + source batch","Portugal / pt","yes","complete","Five bounded batches; related rows preserved before cleanup."
+"competitor-ranked","OpenSEO/DataForSEO ranked keywords","raw/keywords/competitor-ranked-keywords.csv","1389","source domain + keyword + URL","Portugal / pt","yes","bounded sample","DrOnline exhausted at 689; large provider domains capped at 100 rows."
+"gsc-query","Google Search Console query","raw/keywords/gsc-current-queries.csv","811","query","sc-domain property","no","privacy-thresholded","2026-05-31 to 2026-08-28."
+"gsc-query-page","Google Search Console query + page","raw/keywords/gsc-current-query-pages.csv","1022","query + page","sc-domain property","no","fully paginated","Retained separately to audit multi-locale exposure."
+"master","Derived cleaned corpus","../03-keyword-master.csv","1647","normalised_keyword","Portugal / pt-PT + en-PT","no","derived","8,106 raw rows → 5,483 normalized unique terms → 1647 relevant terms after the final receita/administrative relevance gate. Missing metrics remain blank."

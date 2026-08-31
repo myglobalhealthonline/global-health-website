@@ -12,6 +12,8 @@ const cardI18n = {
   verifyRegistrationAria: "Verify registration",
   languagesLabel: "Languages",
   viewProfileLabel: "View profile",
+  viewProfileAria: "Ver perfil de {name}",
+  credentialsLabel: "Qualificações",
   pickTimeLabel: "Pick a time",
 };
 
@@ -25,6 +27,20 @@ const baseProps = {
 };
 
 describe("DoctorCard booking action", () => {
+  it("uses localized profile and credential labels from the shared card strings", () => {
+    const html = renderToStaticMarkup(
+      <DoctorCard
+        {...baseProps}
+        credentials={[{ label: "MRCGP", bodyName: "RCGP" }]}
+      />,
+    );
+
+    expect(html).toContain("Ver perfil de Dr Example");
+    expect(html).toContain("Qualificações");
+    expect(html).not.toContain("View profile for Dr Example");
+    expect(html).not.toContain(">Credentials<");
+  });
+
   it("fails closed when a bookable card has no operational summary", () => {
     const html = renderToStaticMarkup(<DoctorCard {...baseProps} />);
 

@@ -9,9 +9,13 @@ import {
 import { isSafeMediaKey } from "../utils/media-key.js";
 import { errorResponse } from "../utils/response.js";
 
-// S3 key prefixes that contain patient health information. Objects under
-// these prefixes are never served through the public media proxy.
-const PHI_PREFIXES = ["clinical/", "patient-upload/"] as const;
+// S3 key prefixes that contain confidential PHI or recruitment PII. Objects
+// under these prefixes are never served through the public media proxy.
+const SENSITIVE_PREFIXES = ["clinical/", "patient-upload/", "recruitment/"] as const;
+
+export function isSensitiveMediaKey(key: string): boolean {
+  return SENSITIVE_PREFIXES.some((prefix) => key.startsWith(prefix));
+}
 
 const mediaPublicRoute: FastifyPluginAsync = async (app) => {
   app.get(
@@ -24,21 +28,22 @@ const mediaPublicRoute: FastifyPluginAsync = async (app) => {
 
     const star = (request.params as { "*": string })["*"];
     const key = decodeURIComponent(star ?? "").replace(/^\/+/, "");
+    if (isSensitiveMediaKey(key)) {
+      return reply.status(403).send(errorResponse("This document requires authentication"));
+    }
     if (!isSafeMediaKey(key)) {
       return reply.status(400).send(errorResponse("Invalid media key"));
     }
 
-    // PHI-bearing prefixes MUST never be served through the public media
+    // PHI/PII-bearing prefixes MUST never be served through the public media
     // path. A leaked S3 key alone must not expose a patient record:
     //   - `clinical/`       — clinical document attachments, served via the
     //                         auth-gated `/api/doctor/documents/:id/download`
     //                         endpoint which verifies ownership/admin.
     //   - `patient-upload/`  — patient-uploaded medical documents; these must
     //                         be served through an auth-gated route.
-    if (PHI_PREFIXES.some((prefix) => key.startsWith(prefix))) {
-      return reply.status(403).send(errorResponse("This document requires authentication"));
-    }
-
+    //   - `recruitment/`     — candidate CVs, served only through the audited
+    //                         global-admin recruitment download route.
     try {
       const obj = await getObject(key);
       const stream = streamToNodeReadable(obj.Body);

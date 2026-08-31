@@ -1,0 +1,33 @@
+batch,seed,location_code,language_code,result_limit,source,used_fallback,row_count,status,output_file
+1,lékař online,2203,cs,500,related,false,43,ok,raw/keywords/openseo-keyword-research-batch-01.csv
+1,praktický lékař online,2203,cs,500,related,false,108,ok,raw/keywords/openseo-keyword-research-batch-01.csv
+1,eRecept online,2203,cs,500,related,false,30,ok,raw/keywords/openseo-keyword-research-batch-01.csv
+1,neschopenka online,2203,cs,500,ideas,true,500,ok,raw/keywords/openseo-keyword-research-batch-01.csv
+1,žádanka online,2203,cs,500,ideas,true,500,ok,raw/keywords/openseo-keyword-research-batch-01.csv
+2,online konzultace s lékařem,2203,cs,500,ideas,true,238,ok,raw/keywords/openseo-keyword-research-batch-02.csv
+2,druhý názor lékaře,2203,cs,500,ideas,true,500,ok,raw/keywords/openseo-keyword-research-batch-02.csv
+2,kožní lékař online,2203,cs,500,ideas,true,303,ok,raw/keywords/openseo-keyword-research-batch-02.csv
+2,dětský lékař online,2203,cs,500,ideas,true,500,ok,raw/keywords/openseo-keyword-research-batch-02.csv
+2,krevní testy,2203,cs,500,related,false,54,ok,raw/keywords/openseo-keyword-research-batch-02.csv
+3,obnovení receptu online,2203,cs,500,ideas,true,500,ok,raw/keywords/openseo-keyword-research-batch-03.csv
+3,doporučení ke specialistovi,2203,cs,500,suggestions,true,8,ok,raw/keywords/openseo-keyword-research-batch-03.csv
+3,lékařská zpráva online,2203,cs,500,ideas,true,500,ok,raw/keywords/openseo-keyword-research-batch-03.csv
+3,psycholog online,2203,cs,500,related,false,87,ok,raw/keywords/openseo-keyword-research-batch-03.csv
+3,lékař online Praha,2203,cs,500,ideas,true,500,ok,raw/keywords/openseo-keyword-research-batch-03.csv
+4,cestovní medicína Praha,2203,cs,500,related,false,66,ok,raw/keywords/openseo-keyword-research-batch-04.csv
+4,krevní testy Praha,2203,cs,500,related,false,49,ok,raw/keywords/openseo-keyword-research-batch-04.csv
+4,mužské zdraví online,2203,cs,500,ideas,true,500,ok,raw/keywords/openseo-keyword-research-batch-04.csv
+4,chronická onemocnění konzultace,2203,cs,500,ideas,true,500,ok,raw/keywords/openseo-keyword-research-batch-04.csv
+4,hubnutí s lékařem online,2203,cs,500,ideas,true,500,ok,raw/keywords/openseo-keyword-research-batch-04.csv
+5,vypadávání vlasů lékař,2203,cs,500,ideas,true,500,ok,raw/keywords/openseo-keyword-research-batch-05.csv
+5,online psychiatr,2203,cs,500,suggestions,true,7,ok,raw/keywords/openseo-keyword-research-batch-05.csv
+5,doporučení k vyšetření,2203,cs,500,ideas,true,500,ok,raw/keywords/openseo-keyword-research-batch-05.csv
+5,online pohotovost pro děti,2203,cs,500,ideas,true,500,ok,raw/keywords/openseo-keyword-research-batch-05.csv
+5,dermatologická konzultace online,2203,cs,500,ideas,true,500,ok,raw/keywords/openseo-keyword-research-batch-05.csv
+6,lékař pro cizince Praha,2203,cs,500,ideas,true,500,ok,raw/keywords/openseo-keyword-research-batch-06.csv
+6,anglicky mluvící lékař Praha,2203,cs,500,ideas,true,500,ok,raw/keywords/openseo-keyword-research-batch-06.csv
+6,online lékař pro cizince,2203,cs,500,ideas,true,500,ok,raw/keywords/openseo-keyword-research-batch-06.csv
+6,lékař na telefonu,2203,cs,500,related,false,58,ok,raw/keywords/openseo-keyword-research-batch-06.csv
+6,online recept na léky,2203,cs,500,ideas,true,500,ok,raw/keywords/openseo-keyword-research-batch-06.csv
+7,online doctor Czech Republic|English speaking doctor Prague|private doctor Prague|doctor for foreigners Prague|online GP Czech Republic,2203,en,500,Unavailable,false,0,error: English unavailable for Czech Labs location,none
+

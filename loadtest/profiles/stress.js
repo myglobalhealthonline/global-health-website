@@ -8,6 +8,7 @@ export {
   adminPortal,
   chatPolling,
   heavyLowRps,
+  authLoad,
 } from "../lib/profile-builder.js";
 
 // Stress: ramp 200 -> 600 peak VUs, finding the actual ceiling and its

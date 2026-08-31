@@ -1,5 +1,8 @@
 # Ireland 30/60/90-day roadmap
 
+> **Dated evidence, not the current roadmap.** The canonical global ledger at
+> `docs/plans/seo-control-state.md` owns current priorities, dates and next actions.
+
 ## First 30 days: measure and fix the measurement layer
 
 | Action | Owner | Dependency | Success measure |

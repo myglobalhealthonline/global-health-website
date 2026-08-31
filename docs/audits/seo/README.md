@@ -5,13 +5,15 @@ canonical status ledger.
 
 ## Read in this order
 
-1. `../../plans/seo-control-state.md` — current remediation status, measurement
+1. `../../../seo/README.md` — global/country workspace map and source-of-truth rules.
+2. `../../plans/seo-control-state.md` — current remediation status, measurement
    gates, watchlist and future implementation calendar.
-2. `../../plans/seo-handover-codex.md` — operating rules, tooling and handover traps.
-3. `seo-roadmap-review-2026-08-25.html` — current plain-language audit and action plan.
-4. `../../plans/editorial-plan-2026-08-19.md` §7 — compact content standard, approved
+3. `../../plans/seo-handover-codex.md` — operating rules, tooling and handover traps.
+4. The relevant `../../../seo/<country>/README.md` — country evidence index.
+5. `seo-roadmap-review-2026-08-25.html` — current plain-language audit and action plan.
+6. `../../plans/editorial-plan-2026-08-19.md` §7 — compact content standard, approved
    Week 2 locale matrix and 30/60/90-day measurement rules.
-5. `../../plans/seo-editorial-next-agent-brief-2026-08-25.md` — detailed, copy-paste
+7. `../../plans/seo-editorial-next-agent-brief-2026-08-25.md` — detailed, copy-paste
    execution brief for the next agent.
 
 ## Current position, 25 August 2026

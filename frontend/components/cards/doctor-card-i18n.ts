@@ -11,6 +11,8 @@ export type DoctorCardI18n = {
   verifyRegistrationAria: string;
   languagesLabel: string;
   viewProfileLabel: string;
+  viewProfileAria: string;
+  credentialsLabel: string;
   pickTimeLabel: string;
 };
 
@@ -23,6 +25,8 @@ export function doctorCardI18n(d: {
   verifyRegistrationAria: string;
   languagesLabel: string;
   viewProfile: string;
+  viewProfileAria?: string;
+  credentialsLabel: string;
   pickTime: string;
 }): DoctorCardI18n {
   return {
@@ -31,6 +35,8 @@ export function doctorCardI18n(d: {
     verifyRegistrationAria: d.verifyRegistrationAria,
     languagesLabel: d.languagesLabel,
     viewProfileLabel: d.viewProfile,
+    viewProfileAria: d.viewProfileAria ?? `${d.viewProfile} {name}`,
+    credentialsLabel: d.credentialsLabel,
     pickTimeLabel: d.pickTime,
   };
 }

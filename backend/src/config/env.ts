@@ -60,7 +60,31 @@ const envSchema = z.object({
     z.enum(["development", "test", "production"]).default("production"),
   ),
   PORT: z.coerce.number().default(4000),
+  /** Number of Node.js cluster workers to fork in this container (see
+   *  src/cluster.ts, which replaces server.js as the process entry point).
+   *  Default 1 = today's behaviour: no forking, server.ts runs directly.
+   *
+   *  Turning this above 1 requires two things to already be true, or the
+   *  "fix" makes things worse:
+   *   - REDIS_URL must be set. Without it, @fastify/rate-limit's in-process
+   *     store is per-worker, so the effective global limit becomes max×workers.
+   *   - DB_POOL_MAX should be reviewed (below) — each worker gets its own
+   *     independent pg.Pool, so total DB connections = DB_POOL_MAX×workers.
+   *  KNOWN GAP: the WhatsApp outbound-send gap in lib/whatsapp/wasender.ts is
+   *  enforced in-process only (a per-worker Promise chain, no cross-process
+   *  lock). With workers>1 the effective minimum gap between WhatsApp sends
+   *  shrinks to (configured gap ÷ workers), risking WaSender account-
+   *  protection throttling. Fix that serialization before running workers>1
+   *  on a deployment that sends WhatsApp messages. */
+  CLUSTER_WORKERS: z.coerce.number().int().min(1).max(64).default(1),
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
+  /** Max connections in the Postgres pool THIS PROCESS holds (db/prisma.ts).
+   *  Unset → computed from CLUSTER_WORKERS so the historical single-process
+   *  budget (10 total) is preserved by default: floor(10/CLUSTER_WORKERS),
+   *  floored at 2. Set explicitly to override once you've confirmed headroom
+   *  on the Postgres max_connections ceiling for a larger total
+   *  (DB_POOL_MAX × CLUSTER_WORKERS). */
+  DB_POOL_MAX: z.coerce.number().int().min(1).max(100).optional(),
   ADMIN_API_TOKEN: z.string().trim().min(1, "ADMIN_API_TOKEN cannot be empty").optional(),
   ADMIN_TOKEN_FALLBACK_ENABLED: z
     .union([z.literal("true"), z.literal("false"), z.boolean()])
@@ -103,6 +127,18 @@ const envSchema = z.object({
    * Defaults to `.data/local-media` when NODE_ENV is not production.
    */
   LOCAL_MEDIA_ROOT: z.string().trim().min(1).optional(),
+  /** Private ClamAV TCP endpoint for recruitment CV scanning. */
+  CLAMAV_HOST: blankAsUnset(z.string().trim().min(1).optional()),
+  CLAMAV_PORT: blankAsUnset(z.coerce.number().int().min(1).max(65535).default(3310)),
+  CLAMAV_TIMEOUT_MS: blankAsUnset(z.coerce.number().int().min(1000).max(60000).default(15000)),
+  RECRUITMENT_NOTIFICATION_EMAIL: blankAsUnset(
+    z.string().trim().email().default("careers@myglobalhealth.online"),
+  ),
+  RECRUITMENT_PRIVACY_NOTICE_VERSION: z.string().trim().min(1).default("recruitment-privacy-v1"),
+  RECRUITMENT_RETENTION_MONTHS: blankAsUnset(z.coerce.number().int().min(1).max(36).default(6)),
+  RECRUITMENT_RETENTION_ENFORCE: z
+    .union([z.literal("true"), z.literal("false"), z.boolean()])
+    .default(false),
 
   /**
    * AWS Rekognition — face match between a patient's selfie and the photo on
@@ -697,6 +733,9 @@ const adminPhiRequireReason =
 const phiAuditEmergencyBypass =
   parsed.PHI_AUDIT_EMERGENCY_BYPASS === true || parsed.PHI_AUDIT_EMERGENCY_BYPASS === "true";
 
+const recruitmentRetentionEnforce =
+  parsed.RECRUITMENT_RETENTION_ENFORCE === true || parsed.RECRUITMENT_RETENTION_ENFORCE === "true";
+
 // SEC-005: hard-fail in production if the medical-access guard would run in a
 // shadow / non-enforcing configuration. Previously COMPLIANCE_MODE=relaxed was
 // an escape hatch that skipped the shadow-mode check entirely — leaving denied
@@ -785,5 +824,6 @@ export const env = {
   MEDICAL_ACCESS_ENFORCE: medicalAccessEnforce,
   ADMIN_PHI_REQUIRE_REASON: adminPhiRequireReason,
   PHI_AUDIT_EMERGENCY_BYPASS: phiAuditEmergencyBypass,
+  RECRUITMENT_RETENTION_ENFORCE: recruitmentRetentionEnforce,
   REQUIRE_2FA_FOR_ROLES: require2faForRoles,
 };

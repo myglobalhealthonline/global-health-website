@@ -1,5 +1,8 @@
 # Ireland SEO measurement plan
 
+> **Dated evidence, not the current measurement calendar.** Use
+> `docs/plans/seo-control-state.md` for current gates and next actions.
+
 ## Baseline
 
 - Date: 2026-08-25.

@@ -1,0 +1,864 @@
+{
+  "retrievedAt": "2026-08-31",
+  "siteUrl": "sc-domain:myglobalhealth.online",
+  "results": [
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=_vlYFyV8BNoaOU8n-pcB0Q&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "PASS",
+          "coverageState": "Odesláno a indexováno",
+          "robotsTxtState": "ALLOWED",
+          "indexingState": "INDEXING_ALLOWED",
+          "lastCrawlTime": "2026-08-30T07:44:32Z",
+          "pageFetchState": "SUCCESSFUL",
+          "googleCanonical": "https://www.myglobalhealth.online/czechia/cs",
+          "userCanonical": "https://www.myglobalhealth.online/czechia/cs",
+          "sitemap": [
+            "https://www.myglobalhealth.online/sitemap.xml"
+          ],
+          "referringUrls": [
+            "https://www.myglobalhealth.online/",
+            "https://www.myglobalhealth.online/ireland/pt/book",
+            "https://www.myglobalhealth.online/czechia",
+            "https://www.myglobalhealth.online/pt/general-consultation-pt"
+          ],
+          "crawledAs": "MOBILE"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        },
+        "richResultsResult": {
+          "verdict": "PASS",
+          "detectedItems": [
+            {
+              "richResultType": "Navigační struktura",
+              "items": [
+                {
+                  "name": "Položka bez názvu"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/gp-consultation-online",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=pPYw2VWFQKcKRtkNP9QxMQ&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "PASS",
+          "coverageState": "Odesláno a indexováno",
+          "robotsTxtState": "ALLOWED",
+          "indexingState": "INDEXING_ALLOWED",
+          "lastCrawlTime": "2026-08-24T17:28:01Z",
+          "pageFetchState": "SUCCESSFUL",
+          "googleCanonical": "https://www.myglobalhealth.online/czechia/cs/gp-consultation-online",
+          "userCanonical": "https://www.myglobalhealth.online/czechia/cs/gp-consultation-online",
+          "sitemap": [
+            "https://www.myglobalhealth.online/sitemap.xml"
+          ],
+          "referringUrls": [
+            "https://www.myglobalhealth.online/czechia/es/general-consultation",
+            "https://www.myglobalhealth.online/czechia-team"
+          ],
+          "crawledAs": "MOBILE"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        },
+        "richResultsResult": {
+          "verdict": "PASS",
+          "detectedItems": [
+            {
+              "richResultType": "Navigační struktura",
+              "items": [
+                {
+                  "name": "Položka bez názvu"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/blog/lekar-online-24-7-co-vyresi",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=EpKq6x2hHU0vlIjnN5t39g&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "PASS",
+          "coverageState": "Odesláno a indexováno",
+          "robotsTxtState": "ALLOWED",
+          "indexingState": "INDEXING_ALLOWED",
+          "lastCrawlTime": "2026-08-25T19:10:17Z",
+          "pageFetchState": "SUCCESSFUL",
+          "googleCanonical": "https://www.myglobalhealth.online/czechia/cs/blog/lekar-online-24-7-co-vyresi",
+          "userCanonical": "https://www.myglobalhealth.online/czechia/cs/blog/lekar-online-24-7-co-vyresi",
+          "sitemap": [
+            "https://www.myglobalhealth.online/sitemap.xml"
+          ],
+          "referringUrls": [
+            "https://www.myglobalhealth.online/czechia/de/blog/arzt-online-tschechien-was-moeglich-ist",
+            "https://www.myglobalhealth.online/czechia/pt/blog/medico-online-chequia-o-que-resolve",
+            "https://www.myglobalhealth.online/blog",
+            "https://www.myglobalhealth.online/czechia/es/blog/medico-online-chequia-que-resuelve",
+            "https://www.myglobalhealth.online/sitemap.xml"
+          ],
+          "crawledAs": "MOBILE"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        },
+        "richResultsResult": {
+          "verdict": "PASS",
+          "detectedItems": [
+            {
+              "richResultType": "Navigační struktura",
+              "items": [
+                {
+                  "name": "Položka bez názvu"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/services/neschopenka",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=0AyafuAWQmny5Mmqx03tRw&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "NEUTRAL",
+          "coverageState": "Google adresu URL nezná",
+          "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+          "indexingState": "INDEXING_STATE_UNSPECIFIED",
+          "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/services/obnoveni-receptu",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=ielrP8sjoMSlL-3cUVWjrA&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "NEUTRAL",
+          "coverageState": "Google adresu URL nezná",
+          "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+          "indexingState": "INDEXING_STATE_UNSPECIFIED",
+          "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/services/detsky-lekar-online",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=O7iNFfOIpCd_j65jSmSHrA&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "PASS",
+          "coverageState": "Odesláno a indexováno",
+          "robotsTxtState": "ALLOWED",
+          "indexingState": "INDEXING_ALLOWED",
+          "lastCrawlTime": "2026-07-20T00:42:20Z",
+          "pageFetchState": "SUCCESSFUL",
+          "googleCanonical": "https://www.myglobalhealth.online/czechia/cs/services/detsky-lekar-online",
+          "userCanonical": "https://www.myglobalhealth.online/czechia/cs/services/detsky-lekar-online",
+          "sitemap": [
+            "https://www.myglobalhealth.online/sitemap.xml"
+          ],
+          "referringUrls": [
+            "https://www.myglobalhealth.online/czechia/es/services/detsky-lekar-online",
+            "https://www.myglobalhealth.online/general-consultation-cz"
+          ],
+          "crawledAs": "MOBILE"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/services/kozni-lekar-online",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=7LgtZZKFOlZDL4bd66TN1w&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "NEUTRAL",
+          "coverageState": "Google adresu URL nezná",
+          "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+          "indexingState": "INDEXING_STATE_UNSPECIFIED",
+          "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/services/cestovni-medicina-praha",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=G8SMqRciKDIr5R-pRG9upw&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "PASS",
+          "coverageState": "Odesláno a indexováno",
+          "robotsTxtState": "ALLOWED",
+          "indexingState": "INDEXING_ALLOWED",
+          "lastCrawlTime": "2026-07-20T02:53:20Z",
+          "pageFetchState": "SUCCESSFUL",
+          "googleCanonical": "https://www.myglobalhealth.online/czechia/cs/services/cestovni-medicina-praha",
+          "userCanonical": "https://www.myglobalhealth.online/czechia/cs/services/cestovni-medicina-praha",
+          "sitemap": [
+            "https://www.myglobalhealth.online/sitemap.xml"
+          ],
+          "referringUrls": [
+            "https://www.myglobalhealth.online/general-consultation-cz",
+            "https://www.myglobalhealth.online/sitemap.xml"
+          ],
+          "crawledAs": "MOBILE"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/services/travel-health-prague",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=L95HgT4-Kh0TFKsPo7T9WA&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "PASS",
+          "coverageState": "Odesláno a indexováno",
+          "robotsTxtState": "ALLOWED",
+          "indexingState": "INDEXING_ALLOWED",
+          "lastCrawlTime": "2026-07-18T16:11:36Z",
+          "pageFetchState": "SUCCESSFUL",
+          "googleCanonical": "https://www.myglobalhealth.online/czechia/cs/services/travel-health-prague",
+          "referringUrls": [
+            "https://www.myglobalhealth.online/czechia"
+          ],
+          "crawledAs": "MOBILE"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/doctors",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=oTnmozinwuGzMcJmOQu5sw&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "PASS",
+          "coverageState": "Odesláno a indexováno",
+          "robotsTxtState": "ALLOWED",
+          "indexingState": "INDEXING_ALLOWED",
+          "lastCrawlTime": "2026-08-31T08:51:40Z",
+          "pageFetchState": "SUCCESSFUL",
+          "googleCanonical": "https://www.myglobalhealth.online/czechia/cs/doctors",
+          "userCanonical": "https://www.myglobalhealth.online/czechia/cs/doctors",
+          "referringUrls": [
+            "https://www.myglobalhealth.online/czechia-team",
+            "https://www.myglobalhealth.online/czechia/cs/lab-tests"
+          ],
+          "crawledAs": "MOBILE"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        },
+        "richResultsResult": {
+          "verdict": "PASS",
+          "detectedItems": [
+            {
+              "richResultType": "Navigační struktura",
+              "items": [
+                {
+                  "name": "Položka bez názvu"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/services/neschopenka-online",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=xulGFpX346rm7EjGMimMmA&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "PASS",
+          "coverageState": "Odesláno a indexováno",
+          "robotsTxtState": "ALLOWED",
+          "indexingState": "INDEXING_ALLOWED",
+          "lastCrawlTime": "2026-07-21T17:11:29Z",
+          "pageFetchState": "SUCCESSFUL",
+          "googleCanonical": "https://www.myglobalhealth.online/czechia/cs/services/neschopenka-online",
+          "referringUrls": [
+            "https://www.myglobalhealth.online/general-consultation-cz",
+            "https://www.myglobalhealth.online/czechia/es/services/neschopenka-online"
+          ],
+          "crawledAs": "MOBILE"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/services/obnoveni-lecby",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=arwCnXvpfrAjYLHJTaNx2w&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "PASS",
+          "coverageState": "Odesláno a indexováno",
+          "robotsTxtState": "ALLOWED",
+          "indexingState": "INDEXING_ALLOWED",
+          "lastCrawlTime": "2026-07-19T22:35:56Z",
+          "pageFetchState": "SUCCESSFUL",
+          "googleCanonical": "https://www.myglobalhealth.online/czechia/cs/services/obnoveni-lecby",
+          "userCanonical": "https://www.myglobalhealth.online/czechia/cs/services/obnoveni-lecby",
+          "sitemap": [
+            "https://www.myglobalhealth.online/sitemap.xml"
+          ],
+          "referringUrls": [
+            "https://www.myglobalhealth.online/general-consultation-cz"
+          ],
+          "crawledAs": "MOBILE"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/services/kozni-konzultace-praha",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=3iX-3T76V_NQTbwYYSU68A&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "PASS",
+          "coverageState": "Odesláno a indexováno",
+          "robotsTxtState": "ALLOWED",
+          "indexingState": "INDEXING_ALLOWED",
+          "lastCrawlTime": "2026-08-23T17:01:36Z",
+          "pageFetchState": "SUCCESSFUL",
+          "googleCanonical": "https://www.myglobalhealth.online/czechia/cs/services/kozni-konzultace-praha",
+          "userCanonical": "https://www.myglobalhealth.online/czechia/cs/services/kozni-konzultace-praha",
+          "sitemap": [
+            "https://www.myglobalhealth.online/sitemap.xml"
+          ],
+          "referringUrls": [
+            "https://www.myglobalhealth.online/czechia/es/services/kozni-konzultace-praha",
+            "https://www.myglobalhealth.online/czechia/de/services/kozni-konzultace-praha",
+            "https://www.myglobalhealth.online/general-consultation-cz"
+          ],
+          "crawledAs": "MOBILE"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        },
+        "richResultsResult": {
+          "verdict": "PASS",
+          "detectedItems": [
+            {
+              "richResultType": "Navigační struktura",
+              "items": [
+                {
+                  "name": "Položka bez názvu"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/services/doporuceni-a-vysetreni",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=cJnG2AvfddQYV1xdpYGOrQ&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "PASS",
+          "coverageState": "Odesláno a indexováno",
+          "robotsTxtState": "ALLOWED",
+          "indexingState": "INDEXING_ALLOWED",
+          "lastCrawlTime": "2026-07-20T01:37:59Z",
+          "pageFetchState": "SUCCESSFUL",
+          "googleCanonical": "https://www.myglobalhealth.online/czechia/cs/services/doporuceni-a-vysetreni",
+          "sitemap": [
+            "https://www.myglobalhealth.online/sitemap.xml"
+          ],
+          "referringUrls": [
+            "https://www.myglobalhealth.online/general-consultation-cz"
+          ],
+          "crawledAs": "MOBILE"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/services/lekar-online-praha",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=Nhl0N3otyXOlHUVqbsjkwQ&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "PASS",
+          "coverageState": "Odesláno a indexováno",
+          "robotsTxtState": "ALLOWED",
+          "indexingState": "INDEXING_ALLOWED",
+          "lastCrawlTime": "2026-08-16T12:18:22Z",
+          "pageFetchState": "SUCCESSFUL",
+          "googleCanonical": "https://www.myglobalhealth.online/czechia/cs/services/lekar-online-praha",
+          "userCanonical": "https://www.myglobalhealth.online/czechia/cs/services/lekar-online-praha",
+          "sitemap": [
+            "https://www.myglobalhealth.online/sitemap.xml"
+          ],
+          "referringUrls": [
+            "https://www.myglobalhealth.online/czechia/es/services/lekar-online-praha",
+            "https://www.myglobalhealth.online/general-consultation-cz",
+            "https://www.myglobalhealth.online/czechia/de/services/lekar-online-praha",
+            "https://www.myglobalhealth.online/czechia/pt/services/lekar-online-praha"
+          ],
+          "crawledAs": "MOBILE"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        },
+        "richResultsResult": {
+          "verdict": "PASS",
+          "detectedItems": [
+            {
+              "richResultType": "Navigační struktura",
+              "items": [
+                {
+                  "name": "Položka bez názvu"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/services/dusevni-zdravi-online",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=PtCLt5_qAd49Djzt9pJ7IQ&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "PASS",
+          "coverageState": "Odesláno a indexováno",
+          "robotsTxtState": "ALLOWED",
+          "indexingState": "INDEXING_ALLOWED",
+          "lastCrawlTime": "2026-07-19T17:05:48Z",
+          "pageFetchState": "SUCCESSFUL",
+          "googleCanonical": "https://www.myglobalhealth.online/czechia/cs/services/dusevni-zdravi-online",
+          "sitemap": [
+            "https://www.myglobalhealth.online/sitemap.xml"
+          ],
+          "referringUrls": [
+            "https://www.myglobalhealth.online/general-consultation-cz"
+          ],
+          "crawledAs": "MOBILE"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/services/druhy-nazor",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=OwnqPBblEgxhX5FsskfM8w&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "NEUTRAL",
+          "coverageState": "Google adresu URL nezná",
+          "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+          "indexingState": "INDEXING_STATE_UNSPECIFIED",
+          "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/services/zenske-zdravi-online",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=IJH2_0dShCb8HDgWjXoAIg&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "NEUTRAL",
+          "coverageState": "Objeveno – momentálně neindexováno",
+          "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+          "indexingState": "INDEXING_STATE_UNSPECIFIED",
+          "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+          "sitemap": [
+            "https://www.myglobalhealth.online/sitemap.xml"
+          ],
+          "referringUrls": [
+            "https://www.myglobalhealth.online/czechia/pt/services/zenske-zdravi-online",
+            "https://www.myglobalhealth.online/czechia/en/services/zenske-zdravi-online",
+            "https://www.myglobalhealth.online/general-consultation-cz"
+          ],
+          "crawledAs": "CRAWLING_USER_AGENT_UNSPECIFIED"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/services/krevni-testy-praha",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=-6AeVDhyORXMPRxlvm0k0g&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "NEUTRAL",
+          "coverageState": "Google adresu URL nezná",
+          "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+          "indexingState": "INDEXING_STATE_UNSPECIFIED",
+          "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/services/muzske-zdravi-online",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=DqOwBFD5djrrMxvnxUocAw&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "PASS",
+          "coverageState": "Odesláno a indexováno",
+          "robotsTxtState": "ALLOWED",
+          "indexingState": "INDEXING_ALLOWED",
+          "lastCrawlTime": "2026-08-02T16:56:53Z",
+          "pageFetchState": "SUCCESSFUL",
+          "googleCanonical": "https://www.myglobalhealth.online/czechia/cs/services/muzske-zdravi-online",
+          "userCanonical": "https://www.myglobalhealth.online/czechia/cs/services/muzske-zdravi-online",
+          "referringUrls": [
+            "https://www.myglobalhealth.online/general-consultation-cz",
+            "https://www.myglobalhealth.online/czechia/pt/services/muzske-zdravi-online",
+            "https://www.myglobalhealth.online/sitemap.xml"
+          ],
+          "crawledAs": "MOBILE"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/tools/blood-pressure-calculator",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=W-8AuEnbmG1ig6IYaF0MLg&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "NEUTRAL",
+          "coverageState": "Google adresu URL nezná",
+          "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+          "indexingState": "INDEXING_STATE_UNSPECIFIED",
+          "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/tools/blood-pressure-chart",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=ewYJG8Gn5kQp23Yu3Iuiag&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "PASS",
+          "coverageState": "Odesláno a indexováno",
+          "robotsTxtState": "ALLOWED",
+          "indexingState": "INDEXING_ALLOWED",
+          "lastCrawlTime": "2026-08-30T20:12:21Z",
+          "pageFetchState": "SUCCESSFUL",
+          "googleCanonical": "https://www.myglobalhealth.online/czechia/cs/tools/blood-pressure-chart",
+          "userCanonical": "https://www.myglobalhealth.online/czechia/cs/tools/blood-pressure-chart",
+          "sitemap": [
+            "https://www.myglobalhealth.online/sitemap.xml"
+          ],
+          "referringUrls": [
+            "https://www.myglobalhealth.online/czechia/cs/book",
+            "https://www.myglobalhealth.online/sitemap.xml"
+          ],
+          "crawledAs": "MOBILE"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        },
+        "richResultsResult": {
+          "verdict": "PASS",
+          "detectedItems": [
+            {
+              "richResultType": "Navigační struktura",
+              "items": [
+                {
+                  "name": "Položka bez názvu"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/tools/calorie-calculator",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=yhg2WCIc9YzNM4XDLM_K6g&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "PASS",
+          "coverageState": "Odesláno a indexováno",
+          "robotsTxtState": "ALLOWED",
+          "indexingState": "INDEXING_ALLOWED",
+          "lastCrawlTime": "2026-08-07T23:43:30Z",
+          "pageFetchState": "SUCCESSFUL",
+          "googleCanonical": "https://www.myglobalhealth.online/czechia/cs/tools/calorie-calculator",
+          "userCanonical": "https://www.myglobalhealth.online/czechia/cs/tools/calorie-calculator",
+          "sitemap": [
+            "https://www.myglobalhealth.online/sitemap.xml"
+          ],
+          "referringUrls": [
+            "https://www.myglobalhealth.online/portugal/pt/tools/calorie-calculator",
+            "https://www.myglobalhealth.online/romania/ro/tools/calorie-calculator",
+            "https://www.myglobalhealth.online/spain/de/tools/calorie-calculator",
+            "https://www.myglobalhealth.online/czechia/cs/book",
+            "https://www.myglobalhealth.online/spain/pt/tools/calorie-calculator",
+            "https://www.myglobalhealth.online/brazil/es/tools/calorie-calculator"
+          ],
+          "crawledAs": "MOBILE"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        },
+        "richResultsResult": {
+          "verdict": "PASS",
+          "detectedItems": [
+            {
+              "richResultType": "Navigační struktura",
+              "items": [
+                {
+                  "name": "Položka bez názvu"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/tools/bmi-calculator",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=79jr-L2BzRiUk3YnMslgWg&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "PASS",
+          "coverageState": "Odesláno a indexováno",
+          "robotsTxtState": "ALLOWED",
+          "indexingState": "INDEXING_ALLOWED",
+          "lastCrawlTime": "2026-08-25T19:39:19Z",
+          "pageFetchState": "SUCCESSFUL",
+          "googleCanonical": "https://www.myglobalhealth.online/czechia/cs/tools/bmi-calculator",
+          "userCanonical": "https://www.myglobalhealth.online/czechia/cs/tools/bmi-calculator",
+          "referringUrls": [
+            "https://www.myglobalhealth.online/brazil/es/tools/bmi-calculator",
+            "https://www.myglobalhealth.online/czechia/cs/book",
+            "https://www.myglobalhealth.online/spain/es/tools/bmi-calculator",
+            "https://www.myglobalhealth.online/brazil/en/tools/bmi-calculator"
+          ],
+          "crawledAs": "MOBILE"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        },
+        "richResultsResult": {
+          "verdict": "PASS",
+          "detectedItems": [
+            {
+              "richResultType": "Navigační struktura",
+              "items": [
+                {
+                  "name": "Položka bez názvu"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/tools/adhd-test",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=DF33vU7bRMG4EXhNI-m79Q&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "PASS",
+          "coverageState": "Odesláno a indexováno",
+          "robotsTxtState": "ALLOWED",
+          "indexingState": "INDEXING_ALLOWED",
+          "lastCrawlTime": "2026-08-30T07:48:47Z",
+          "pageFetchState": "SUCCESSFUL",
+          "googleCanonical": "https://www.myglobalhealth.online/czechia/cs/tools/adhd-test",
+          "userCanonical": "https://www.myglobalhealth.online/czechia/cs/tools/adhd-test",
+          "sitemap": [
+            "https://www.myglobalhealth.online/sitemap.xml"
+          ],
+          "referringUrls": [
+            "https://www.myglobalhealth.online/czechia/cs/book",
+            "https://www.myglobalhealth.online/sitemap.xml"
+          ],
+          "crawledAs": "MOBILE"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        },
+        "richResultsResult": {
+          "verdict": "PASS",
+          "detectedItems": [
+            {
+              "richResultType": "Navigační struktura",
+              "items": [
+                {
+                  "name": "Položka bez názvu"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/tools/osteoporosis-risk-checker",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=qdnXUG2g8oe-RSngD_22cw&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "PASS",
+          "coverageState": "Odesláno a indexováno",
+          "robotsTxtState": "ALLOWED",
+          "indexingState": "INDEXING_ALLOWED",
+          "lastCrawlTime": "2026-08-10T08:16:57Z",
+          "pageFetchState": "SUCCESSFUL",
+          "googleCanonical": "https://www.myglobalhealth.online/czechia/cs/tools/osteoporosis-risk-checker",
+          "userCanonical": "https://www.myglobalhealth.online/czechia/cs/tools/osteoporosis-risk-checker",
+          "sitemap": [
+            "https://www.myglobalhealth.online/sitemap.xml"
+          ],
+          "referringUrls": [
+            "https://www.myglobalhealth.online/czechia/cs/tools/due-date-calculator",
+            "https://www.myglobalhealth.online/czechia/cs/book",
+            "https://www.myglobalhealth.online/ireland/pt/tools/osteoporosis-risk-checker"
+          ],
+          "crawledAs": "MOBILE"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        },
+        "richResultsResult": {
+          "verdict": "PASS",
+          "detectedItems": [
+            {
+              "richResultType": "Navigační struktura",
+              "items": [
+                {
+                  "name": "Položka bez názvu"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/tools/due-date-calculator",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=Z8AeJ8K1Vhi02qrrmn2v4A&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "PASS",
+          "coverageState": "Odesláno a indexováno",
+          "robotsTxtState": "ALLOWED",
+          "indexingState": "INDEXING_ALLOWED",
+          "lastCrawlTime": "2026-08-30T15:21:42Z",
+          "pageFetchState": "SUCCESSFUL",
+          "googleCanonical": "https://www.myglobalhealth.online/czechia/cs/tools/due-date-calculator",
+          "userCanonical": "https://www.myglobalhealth.online/czechia/cs/tools/due-date-calculator",
+          "sitemap": [
+            "https://www.myglobalhealth.online/sitemap.xml"
+          ],
+          "referringUrls": [
+            "https://www.myglobalhealth.online/brazil/en/tools/due-date-calculator",
+            "https://www.myglobalhealth.online/czechia/cs/book",
+            "https://www.myglobalhealth.online/czechia/ro/tools/due-date-calculator",
+            "https://www.myglobalhealth.online/brazil/es/tools/due-date-calculator",
+            "https://www.myglobalhealth.online/sitemap.xml"
+          ],
+          "crawledAs": "MOBILE"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        },
+        "richResultsResult": {
+          "verdict": "PASS",
+          "detectedItems": [
+            {
+              "richResultType": "Navigační struktura",
+              "items": [
+                {
+                  "name": "Položka bez názvu"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/tools/ovulation-calculator",
+      "result": {
+        "inspectionResultLink": "https://search.google.com/search-console/inspect?resource_id=sc-domain:myglobalhealth.online&id=g2-vkg-ZU2456hwOeBFfCg&utm_medium=link&utm_source=api",
+        "indexStatusResult": {
+          "verdict": "PASS",
+          "coverageState": "Odesláno a indexováno",
+          "robotsTxtState": "ALLOWED",
+          "indexingState": "INDEXING_ALLOWED",
+          "lastCrawlTime": "2026-08-05T21:50:17Z",
+          "pageFetchState": "SUCCESSFUL",
+          "googleCanonical": "https://www.myglobalhealth.online/czechia/cs/tools/ovulation-calculator",
+          "userCanonical": "https://www.myglobalhealth.online/czechia/cs/tools/ovulation-calculator",
+          "sitemap": [
+            "https://www.myglobalhealth.online/sitemap.xml"
+          ],
+          "referringUrls": [
+            "https://www.myglobalhealth.online/ireland/en/tools/ovulation-calculator",
+            "https://www.myglobalhealth.online/portugal/de/tools/ovulation-calculator",
+            "https://www.myglobalhealth.online/portugal/pt/tools/ovulation-calculator",
+            "https://www.myglobalhealth.online/czechia/cs/book",
+            "https://www.myglobalhealth.online/romania/pt/tools/ovulation-calculator",
+            "https://www.myglobalhealth.online/brazil/en/tools/ovulation-calculator"
+          ],
+          "crawledAs": "MOBILE"
+        },
+        "mobileUsabilityResult": {
+          "verdict": "VERDICT_UNSPECIFIED"
+        },
+        "richResultsResult": {
+          "verdict": "PASS",
+          "detectedItems": [
+            {
+              "richResultType": "Navigační struktura",
+              "items": [
+                {
+                  "name": "Položka bez názvu"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
+

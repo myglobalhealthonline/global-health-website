@@ -1,0 +1,48 @@
+# Czechia SEO evidence pack
+
+Evidence date: `2026-08-31`
+
+This directory is the reproducible Czechia research and implementation package. It is not the operational SEO ledger: decisions, holds, and next-review dates remain canonical in [`docs/plans/seo-control-state.md`](../../docs/plans/seo-control-state.md).
+
+## Scope and settings
+
+- Target: `https://www.myglobalhealth.online/czechia/`
+- Search Console property: `sc-domain:myglobalhealth.online`
+- GA4 site: `https://www.myglobalhealth.online`
+- OpenSEO project: `7804f362-5891-417e-9c3a-d9e8d4d7dc6b`
+- Czech location: `2203`
+- Czech language: `cs`
+- Locale: `cs-CZ`
+- Current window: `2026-05-29`–`2026-08-27`
+- Comparison window: `2026-02-28`–`2026-05-28`
+
+## Evidence retained
+
+- `10,051` raw keyword-research rows in six provider exports
+- `6,593` normalized unique terms across research, GSC, and target rankings
+- `481` service-relevant keyword records in `03-keyword-master.csv`
+- `1,414` reviewed candidate exclusions with reasons
+- `600` organic results across 30 Czech SERPs
+- `281` current Czechia sitemap URLs
+- `360` observed competitor pages
+- `207` deduplicated backlink prospects; none contacted
+- full GSC, GA4, URL Inspection, audit, SERP, call-log, and source-log evidence under `raw/`
+
+Missing provider metrics are blank, never converted to zero. Accented and unaccented forms remain separate keyword rows with an ASCII companion field. No keyword data was persisted back into OpenSEO.
+
+## Deliverables
+
+The numbered files cover baseline, competitors, keyword universe, gaps, ownership, architecture, technical audit, backlink prospects, implementation, measurement, and roadmap. Supporting inventories, clinical review register, SERP validation, content briefs, and raw exports sit beside them.
+
+Run the lightweight integrity check after editing any generated CSV:
+
+```powershell
+node seo/czechia/validate-artifacts.mjs
+```
+
+## Known limits
+
+- OpenSEO returned Czech keyword data for `2203/cs`; its English keyword-research endpoint did not return a supported language combination. English-for-Czechia demand therefore comes from live Czechia SERPs, GSC, target rankings, and reviewed competitor pages, not invented English volume.
+- GA4 organic conversion data is sparse: 24 sessions and no key events in the current 90-day window. GSC is the primary performance baseline.
+- The 100-page technical crawl followed cross-market links into Ireland after the Czech start URL. Its Lighthouse coverage is useful, but its issue totals are not a Czech-only defect count.
+- Backlink exports contain provider anomalies and noisy sources. Every prospect requires manual relevance, editorial, and spam review before outreach.

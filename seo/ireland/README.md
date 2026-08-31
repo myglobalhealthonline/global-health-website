@@ -1,7 +1,8 @@
 # Ireland organic SEO programme
 
-**Status:** research package plus live GP/specialist hub and full six-locale GENERAL service batch, updated 2026-08-25
+**Evidence snapshot:** research package plus live GP/specialist hub and full six-locale GENERAL service batch, updated 2026-08-25
 **Canonical operational source:** `docs/plans/seo-control-state.md`
+**Workspace contract:** [`seo/README.md`](../README.md)
 **Market:** Republic of Ireland, Google, English, DataForSEO location 2372
 **Domains:** `www.myglobalhealth.online` and competitor `www.webdoctor.ie`
 
@@ -35,7 +36,7 @@ A focused follow-up review found two safe code defects outside the frozen lab cl
 - `04-content-gap.csv` — target-versus-competitor gaps and exclusions.
 - `05-url-keyword-map.csv` — one primary intent per priority URL.
 - `06-proposed-site-architecture.md` — keep-first hub-and-spoke architecture.
-- `07-technical-audit.md` — verified technical findings and implementation status.
+- `07-technical-audit.md` — dated technical findings and status snapshot.
 - `08-backlink-opportunities.csv` — legitimate authority opportunities and exclusions.
 - `09-implementation-log.md` — changes and deliberate non-changes.
 - `10-measurement-plan.md` — privacy-safe KPIs and gates.

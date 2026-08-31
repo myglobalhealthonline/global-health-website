@@ -53,6 +53,7 @@ export type CommonLocale = {
     legal: string;
     information: string;
     careers: string;
+    press: string;
     contactUs: string;
     aboutUs: string;
     howItWorks: string;
@@ -139,6 +140,8 @@ export type CommonLocale = {
     verifyRegistrationAria: string;
     /** DoctorCard overlay-link aria-label, "{name}" placeholder. */
     viewProfileAria?: string;
+    /** Heading above verified professional credentials on DoctorCard. */
+    credentialsLabel: string;
     /** Truncated language-list suffix, e.g. "{languages} & More". */
     languagesMoreTemplate: string;
     /** FeaturedDoctor photo-overlay ribbon, e.g. "Clinical Director". */

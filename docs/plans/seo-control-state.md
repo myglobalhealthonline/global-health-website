@@ -1,6 +1,6 @@
 # SEO control state — canonical
 
-**Last operational update: 2026-08-29.** Historical audit files remain snapshots;
+**Last operational update: 2026-08-31.** Historical audit files remain snapshots;
 this ledger is the source of truth for current status, dated gates and future work.
 
 **This file is the single source of truth for the SEO workstream.** It carries the
@@ -20,6 +20,27 @@ Property: `sc-domain:myglobalhealth.online` · Site: `https://www.myglobalhealth
 
 The active forward plan (§27) is surfaced first for operators; the numbered baseline,
 ledger and historical evidence follow from §0.
+
+### 27.12 Czechia refresh — local evidence and locale-link fix (2026-08-31)
+
+- Fresh complete GSC data through **2026-08-27** confirms Czechia is no longer in a
+  "missing page" state. `/czechia/cs`, `/czechia/cs/gp-consultation-online`,
+  `/czechia/cs/services/neschopenka-online`, `/czechia/cs/services/obnoveni-lecby`,
+  `/czechia/cs/services/lekar-online-praha`, and multiple Czech blog URLs are live
+  and indexed. The immediate bottleneck is commercial query ownership and authority,
+  not route absence.
+- New Czech evidence pack added under `seo/czechia/` on 2026-08-31. Treat those
+  files as current batch evidence only; this ledger remains canonical for next
+  actions and status.
+- Local frontend fix implemented for blog reviewer doctor links: non-English
+  articles were linking the visible clinical-reviewer name to
+  `/{country}/en/doctors/{slug}` rather than the article locale. Updated
+  `frontend/lib/content/blog-post-page.tsx` to use a shared locale-aware doctor
+  profile path builder, with focused test coverage. Deployment verification
+  remains pending.
+- Travel-medicine legacy URL behavior remains a recrawl / indexing-lag watch item.
+  No redirect change is reopened by this batch. Re-measure Czech GP and travel
+  ownership on or after **2026-09-08**.
 
 ### 27.11 Booking availability visibility — local implementation (2026-08-29)
 
@@ -365,6 +386,15 @@ test files by default and passed, and backend type-check passed.
 
 Supporting rules:
 
+- **Keep global control separate from country evidence.** `seo/README.md` is the
+  workspace router; `seo/<country>/` holds detailed dated audits, keywords,
+  competitors, content opportunities, technical analysis and raw exports. This file
+  alone owns current status, priorities, deadlines and next actions. New country work
+  saves its evidence in the country package and adds only a concise dated decision and
+  link here. Sections 10–21 and 28–35 are a legacy exception: their embedded country
+  evidence remains in place to preserve the decision trail, but new detailed market
+  evidence follows the country-first rule. Cross-market findings stay here rather
+  than being copied six times.
 - **Do not rerun the full ~1,000-page crawl for every batch.** Reserve a full crawl for
   validating global technical architecture, establishing a periodic baseline, or
   following substantial sitewide change. For one page, one query cluster, one country,
@@ -576,6 +606,16 @@ Status vocabulary: `CLOSED` · `FALSE POSITIVE` · `EXPECTED BEHAVIOR` ·
 | SEO-METADATA-003 | Localized country titles overwritten | Metadata | **CLOSED** | 2026-08-10 | `1de4dd67`, `3282f5cc` | n/a | None |
 | SEO-METADATA-004 | Unicode country-name word-boundary bug | Metadata | **CLOSED** | 2026-08-10 | `26dc7e6f` | n/a | None |
 | SEO-METADATA-005 | CMS-specific title inconsistency | Metadata | **DEFERRED** | 2026-08-12 | Not reproducible in a four-page production spot check; no measurable ranking cost in current GSC data | n/a | Re-check only if a title defect surfaces in GSC or a crawl |
+
+### SEMrush audit triage — 2026-08-30
+
+| ID | Finding | Category | Current status | Evidence date | Production state | Google state | Next action |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| SEO-SEMRUSH-001 | 133 invalid structured-data items | Structured data | **READY TO IMPLEMENT** | 2026-08-30 | Authenticated SEMrush table fully audited: 52 individual `Physician` nodes were each counted twice as invalid `Local Business`/`Organization` items (`address`, `jobTitle`, `worksFor`) = 104; 23 service organizations used unsupported `availableService`; 6 `WebApplication` tool nodes lacked genuine `aggregateRating`/`review`. Local fix models clinicians as `Person`, services/tools as `MedicalWebPage`, uses canonical specialty URLs, and attaches review metadata only to WebPage-compatible nodes. Focused suites 68/68; frontend `tsc --noEmit` clean | Not deployed or reprocessed | Deploy, validate representative doctor/service/tool URLs, then rerun SEMrush |
+| SEO-SEMRUSH-002 | 144 external links reported broken | Links | **FALSE POSITIVE** | 2026-08-30 | The 144 rows contain only two destinations: 88 × `https://wa.me/353894715849` reported `429`, and 56 × `https://www.cnpd.pt` reported `500`. Both opened successfully in a normal browser on the evidence date; WhatsApp resolved to its valid chat page and CNPD served its current homepage. These are target-side bot/rate-limit responses, not dead links | n/a | No site edit. Optionally exclude this check for those two verified targets in SEMrush |
+| SEO-SEMRUSH-003 | 5 title tags reported too long | Metadata | **READY TO IMPLEMENT** | 2026-08-30 | Exact rows are the five non-English Ireland country homes: `/ireland/{cs,de,es,pt,ro}`. Their code-owned titles were 79–92 characters. Local titles now preserve `Online Doctor/IMC/same-day` intent in 59–65 characters; a six-locale ≤70 regression guard covers Ireland including EN | Not deployed or reprocessed | Deploy and rerun SEMrush |
+| SEO-SEMRUSH-004 | 2 pages reported low word count | Content | **FALSE POSITIVE** | 2026-08-30 | Both rows are the same root selector rendered as `https://www.myglobalhealth.online` and `https://www.myglobalhealth.online/`, each counted at 103 words. This is one concise market-selection page, not two thin content pages | n/a | None; do not add filler copy |
+| SEO-SEMRUSH-005 | 88 pages reported low text-to-HTML ratio | Performance / heuristic | **EXPECTED BEHAVIOR** | 2026-08-30 | Audit was capped at 100 URLs with JS rendering disabled and flagged 88 at ratios 0.02–0.08: 35 country homes, 23 services, 14 doctor pages, 6 tools and 10 other/root pages. The crawl is alphabetically/sample biased (mostly Portugal-CS after country homes), while historical byte tracing attributes the ratio to normal Next App Router RSC serialization and two data-heavy homepage islands (~41 KB) without removing rendered content | n/a | No ratio-only refactor. Reopen only with Core Web Vitals or transfer-size regression evidence |
 
 ### Analytics, CTR and device — batch of 2026-08-24
 
@@ -3296,7 +3336,9 @@ investigation without new evidence.)
 
 | File | Purpose | Last meaningful update | Authoritative? |
 | --- | --- | --- | --- |
-| `docs/plans/seo-control-state.md` | **This file** — ledger, roadmap, watchlist, baseline | 2026-08-12 | **CURRENT — canonical** |
+| `seo/README.md` | Six-market workspace map and global/country ownership contract | 2026-08-31 | CURRENT — navigation, not status |
+| `seo/<country>/` | Detailed dated market evidence: audits, keywords, competitors, content, technical analysis and exports | 2026-08-31 | EVIDENCE — this ledger wins on operational state |
+| `docs/plans/seo-control-state.md` | **This file** — ledger, roadmap, watchlist, baseline | 2026-08-31 | **CURRENT — canonical** |
 | `docs/plans/seo-indexation-plan-2026-07-28.md` | GSC indexation audit and carry-out plan | 2026-08-03 | PARTIALLY STALE — design decisions in §2 and the "explicitly not doing" list in §5 remain binding; all counts and scheduled checks superseded |
 | `docs/audits/seo/commercial-opportunity-matrix-2026-08-10.md` | Commercial-query opportunity matrix | 2026-08-10 | HISTORICAL — findings promoted into §7 |
 | `docs/audits/seo/ranking-growth-batch-2026-08-10.md` | Structural fixes + legacy-URL consolidation report | 2026-08-10 | HISTORICAL — implementation record |
@@ -6676,5 +6718,98 @@ FAQ content can strengthen topical relevance and match long-tail questions, but 
 does not guarantee a ranking increase or a Google FAQ rich result. Measure query,
 page, impressions, clicks and CTR after a complete 28-day window plus final-data
 lag, on or after 2026-09-28, before expanding or rewriting this cluster again.
+
+---
+
+## 34. IE-ILLNESS-BENEFIT-ACCURACY-001 — ranking-drop diagnosis and claim-route correction (2026-08-30)
+
+**Status: LIVE IN PRODUCTION — SIX LOCALES CORRECTED AND DATABASE-VERIFIED.** The
+28-day finalized GSC comparison does not show a sitewide collapse: clicks increased
+from 592 to 772 and impressions from 18,879 to 51,927, while average position moved
+from 16.93 to 18.34 as the site appeared for a much broader query set. The sharper
+incident is page-level. The five-page recovery cohort moved from position 17.53 to
+29.68 week over week, led by the Ireland Illness Benefit article. Its Ireland desktop
+visibility fell from 117 impressions at position 18.67 to 57 at 30.26; mobile position
+was approximately stable (8.59 to 8.89). URL Inspection reports the page submitted,
+indexed and self-canonical, and exact query/page checks found no competing Global
+Health owner for its primary terms.
+
+The live article contained a material YMYL accuracy defect: it stated that the doctor
+always sends the Certificate of Incapacity for Work and that the claimant never posts
+it. Current MyWelfare guidance says the doctor can complete it electronically, but if
+that does not happen the claimant must post the paper certificate to Social Welfare
+Services, PO Box 1650, D01 WY03. The inaccurate statement appeared in the intro,
+certificate section, claim steps and FAQ across EN/PT/ES/CS/RO/DE.
+
+The production correction was deliberately surgical because the published article
+and translations had later admin edits. The guarded updater changed only the exact
+incorrect sentences, preserved all other body content, publication status and review
+dates, used a transaction fingerprint to reject concurrent changes, and verified all
+six saved hashes after write. The repository source now matches the official process;
+the reusable updater is pinned to the inspected production record and combines a
+Serializable transaction with `updatedAt` conditional writes. Nine focused tests,
+including exact-output and idempotence behavior, pass and the backend package
+type-check is clean. After the
+documented blog cache window, a cache-busted public request returned HTTP 200,
+contained `D01 WY03` and no longer contained the incorrect “not something you post
+yourself” statement. A follow-up reviewer-found sentence-boundary defect in the
+production-only surgical replacement was also corrected across all six locales;
+the final cache-busted public check returned HTTP 200 with correct punctuation,
+the official postcode present and the malformed comma form absent.
+
+**Interpretation and next gate.** Keyword insertion was not the limiting factor. The
+live SERP is dominated by MyWelfare, Citizens Information, gov.ie and NSSO, with newer
+commercial medical pages also competing. Accuracy and authority are therefore the
+current constraints. Do not add more variants or rewrite the title/H1 during the
+measurement window. Track the fixed cohort weekly through the existing
+`monitor-seo-recovery-cohort` heartbeat and evaluate complete finalized 28-day windows
+on or after 2026-09-28. The correction removes a verified trust defect; it does not
+guarantee an immediate ranking increase.
+
+---
+
+## 35. PT-MARKET-RESEARCH-001 — Portugal corpus, recrawl refresh and localization fix (2026-08-31)
+
+**Status: RESEARCH PACKAGE COMPLETE — SHARED UI FIX VERIFIED; PRODUCTION CONTENT
+REMEDIATION NOT APPLIED.** The Portugal workstream is preserved under
+`seo/portugal/`. OpenSEO/DataForSEO used location 2620 and language `pt`;
+8,106 raw keyword rows were retained, normalized to 5,483 unique terms and
+service/relevance-gated to 1,647 master rows. The final gate removed 143
+non-medical, unsupported or non-Portugal administrative terms that collided
+with `receita`/`consulta` seeds. All approved clusters map to
+existing URLs. No new page, location page, redirect, noindex, title rewrite or
+recurring paid rank tracker was created.
+
+Fresh URL Inspection resolves most of the §19 doctor watchlist. Telmo Coelho's
+current canonical is submitted/indexed with a 2026-08-24 crawl; Vitor Pais is
+submitted/indexed with a 2026-08-30 crawl. Pedro Santos still shows Google's
+stored pre-fix `noindex` state from 2026-08-06 on both URL shapes. Live state is
+newer, so Pedro remains **WAIT FOR GOOGLE**; do not add another code fix until a
+fresh crawl reproduces the problem.
+
+The driving-certificate service is submitted/indexed with a 2026-08-29 crawl,
+but current query evidence remains weak (for example, 30 impressions at average
+position 40.0 for the principal GSC query). The §19 atestado/authority-wall
+decision therefore stands: retain the current page and metadata, pursue
+legitimate authority/entity evidence, and do not reopen title/H1 edits without a
+new testable hypothesis.
+
+The live Portugal homepage exposed a separate high-confidence localization
+defect: shared DoctorCard overlay text and the credentials heading were hardcoded
+in English. `DoctorCardI18n` now carries the existing localized
+`viewProfileAria` value plus a six-locale `credentialsLabel`; a focused
+static-render regression test failed before and passes after the change. The
+page still receives an English hero CTA, some clinician roles, image metadata
+and registration-division values from production content. Those are reviewed
+CMS/data corrections, not another component fallback. No production database
+write was made because `backend/.env` points to production.
+
+Measurement baseline: the final 2026-05-31→08-28 device-complete GSC window
+contains 350 clicks and 8,862 impressions; the prior 90 days contain 281 clicks
+and 2,848 impressions. Query-visible rows are privacy-thresholded. GA4 connection
+health passed but the inspected reporting window returned no usable rows, so
+organic conversion conclusions remain blocked pending privacy-safe event
+validation. Re-evaluate deployed changes only after a complete 28-day window
+plus normal GSC final-data lag.
 
 ---

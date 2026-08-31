@@ -23,6 +23,7 @@ import { runMembershipExpiryJob } from "../modules/memberships/membership-expiry
 import { runRetentionSweepReport } from "../modules/data-policy/country-data-policy.service.js";
 import { dispatchDueTrustpilotInvites } from "../modules/review-invites/review-invite.service.js";
 import { runSuklCertificateMonitor } from "../modules/sukl/sukl-certificate-monitor.service.js";
+import { runRecruitmentRetentionSweep } from "../modules/recruitment/recruitment-retention.service.js";
 
 type Logger = { info: (msg: string) => void; error: (msg: string) => void };
 
@@ -68,6 +69,7 @@ const LOCK_TRUSTPILOT_INVITES = 4010010;
 const LOCK_SUKL_CERTIFICATE = 4010011;
 const LOCK_MEMBERSHIP_EXPIRY = 4010012;
 const LOCK_DOCTOR_NO_SHOW = 4010013;
+const LOCK_RECRUITMENT_RETENTION = 4010014;
 
 // SESSION-level advisory lock (pg_advisory_lock / pg_advisory_unlock) on a
 // single manually-checked-out `pg.Pool` client, NOT a Prisma-managed
@@ -394,6 +396,36 @@ async function tickDataRetention(log: Logger) {
   );
 }
 
+async function tickRecruitmentRetention(log: Logger) {
+  await withAdvisoryLock(
+    LOCK_RECRUITMENT_RETENTION,
+    async () => {
+      try {
+        const result = await runRecruitmentRetentionSweep();
+        if (result.candidates > 0) {
+          log.info(
+            `[cron] recruitment-retention: candidates=${result.candidates} purged=${result.purged} failed=${result.failed} enforced=${result.enforced} backlog=${result.backlogRemaining}`,
+          );
+        }
+        if (
+          result.failed > 0 ||
+          result.backlogRemaining ||
+          result.oldestOverdueMs > 48 * 60 * 60 * 1000
+        ) {
+          void emitOpsAlert({
+            severity: "warning",
+            title: "Recruitment retention requires attention",
+            detail: `failed=${result.failed}; backlog=${result.backlogRemaining}; overdueHours=${Math.floor(result.oldestOverdueMs / 3_600_000)}`,
+          });
+        }
+      } catch (err) {
+        log.error(`[cron] recruitment-retention error: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    },
+    { failClosed: true },
+  );
+}
+
 async function tickTrustpilotInvites(log: Logger) {
   // Non-idempotent: each due row causes Trustpilot to email a patient, and the
   // row is only stamped `dispatchedAt` AFTER that send returns — so two
@@ -468,7 +500,7 @@ export function startInternalScheduler(log: Logger): () => void {
 
   setOpsAlertLogger({ warn: (m) => log.info(m), error: (m) => log.error(m) });
   log.info(
-    "[cron] internal scheduler — pre-payment 15m, post-payment 5m, subs-ops 5m, reconciliation 60m, renewal-reminders 24h, account-purge 60m, outbox 30s, data-retention 24h, trustpilot-invites 60m, sukl-certificate 24h, doctor-no-show 60s",
+    "[cron] internal scheduler — pre-payment 15m, post-payment 5m, subs-ops 5m, reconciliation 60m, renewal-reminders 24h, account-purge 60m, outbox 30s, data-retention 24h, recruitment-retention 24h, trustpilot-invites 60m, sukl-certificate 24h, doctor-no-show 60s",
   );
 
   const timers: NodeJS.Timeout[] = [];
@@ -500,6 +532,7 @@ export function startInternalScheduler(log: Logger): () => void {
       // Safe on boot: idempotent, and a deploy is exactly when a stale ACTIVE
       // badge or a leaked allowance unit is most likely to be noticed.
       void tickMembershipExpiry(log);
+      void tickRecruitmentRetention(log);
       // Safe on boot: the per-appointment doctorNoShowNotifiedAt guard means
       // a redeploy can't double-notify — and it's exactly when a missed
       // check during the previous process's downtime should get caught up.
@@ -518,6 +551,7 @@ export function startInternalScheduler(log: Logger): () => void {
   timers.push(setInterval(() => void tickDailyReminders(log), DAILY_INTERVAL_MS));
   timers.push(setInterval(() => void tickOutboxDispatch(log), OUTBOX_INTERVAL_MS));
   timers.push(setInterval(() => void tickDataRetention(log), DATA_RETENTION_INTERVAL_MS));
+  timers.push(setInterval(() => void tickRecruitmentRetention(log), DATA_RETENTION_INTERVAL_MS));
   timers.push(
     setInterval(() => void tickTrustpilotInvites(log), TRUSTPILOT_INVITES_INTERVAL_MS),
   );

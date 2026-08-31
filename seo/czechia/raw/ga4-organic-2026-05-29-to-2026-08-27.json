@@ -1,0 +1,712 @@
+{
+  "overview": {
+    "status": "ok",
+    "source": {
+      "provider": "google_analytics",
+      "propertyId": "properties/547083375",
+      "propertyDisplayName": "myglobalhealth.online"
+    },
+    "request": {
+      "requestedDateRange": {
+        "startDate": "2026-05-29",
+        "endDate": "2026-08-27"
+      },
+      "resolvedDateRange": {
+        "startDate": "2026-05-29",
+        "endDate": "2026-08-27"
+      },
+      "previousDateRange": {
+        "startDate": "2026-02-27",
+        "endDate": "2026-05-28"
+      },
+      "propertyTimeZone": "Europe/Dublin",
+      "currencyCode": "EUR",
+      "channel": "organic_search",
+      "trend": "weekly"
+    },
+    "current": {
+      "sessions": 24,
+      "activeUsers": 22,
+      "engagedSessions": 16,
+      "engagementRate": 0.6666666666666666,
+      "keyEvents": 0,
+      "transactions": 0,
+      "purchaseRevenue": 0
+    },
+    "previous": null,
+    "comparison": {
+      "sessions": {
+        "current": 24,
+        "previous": null,
+        "absoluteChange": null,
+        "percentChange": null
+      },
+      "activeUsers": {
+        "current": 22,
+        "previous": null,
+        "absoluteChange": null,
+        "percentChange": null
+      },
+      "engagedSessions": {
+        "current": 16,
+        "previous": null,
+        "absoluteChange": null,
+        "percentChange": null
+      },
+      "engagementRate": {
+        "current": 0.6666666666666666,
+        "previous": null,
+        "absoluteChange": null,
+        "percentChange": null
+      },
+      "keyEvents": {
+        "current": 0,
+        "previous": null,
+        "absoluteChange": null,
+        "percentChange": null
+      },
+      "transactions": {
+        "current": 0,
+        "previous": null,
+        "absoluteChange": null,
+        "percentChange": null
+      },
+      "purchaseRevenue": {
+        "current": 0,
+        "previous": null,
+        "absoluteChange": null,
+        "percentChange": null
+      }
+    },
+    "trend": [
+      {
+        "yearWeek": "202630",
+        "sessions": 6,
+        "activeUsers": 5,
+        "engagedSessions": 5,
+        "engagementRate": 0.8333333333333334,
+        "keyEvents": 0,
+        "transactions": 0,
+        "purchaseRevenue": 0
+      },
+      {
+        "yearWeek": "202631",
+        "sessions": 18,
+        "activeUsers": 17,
+        "engagedSessions": 11,
+        "engagementRate": 0.6111111111111112,
+        "keyEvents": 0,
+        "transactions": 0,
+        "purchaseRevenue": 0
+      }
+    ],
+    "diagnostics": [],
+    "reportMetadata": {
+      "hasLimitedData": false,
+      "reports": [
+        {
+          "dataLossFromOtherRow": false,
+          "subjectToThresholding": false,
+          "sampling": [],
+          "restrictedMetrics": [],
+          "emptyReason": null,
+          "hasLimitedData": false
+        },
+        {
+          "dataLossFromOtherRow": false,
+          "subjectToThresholding": false,
+          "sampling": [],
+          "restrictedMetrics": [],
+          "emptyReason": null,
+          "hasLimitedData": false
+        },
+        {
+          "dataLossFromOtherRow": false,
+          "subjectToThresholding": false,
+          "sampling": [],
+          "restrictedMetrics": [],
+          "emptyReason": null,
+          "hasLimitedData": false
+        }
+      ]
+    },
+    "quota": {
+      "tokensPerDay": {
+        "consumed": 1,
+        "remaining": 199871
+      },
+      "tokensPerHour": {
+        "consumed": 1,
+        "remaining": 39886
+      },
+      "concurrentRequests": {
+        "consumed": 0,
+        "remaining": 10
+      },
+      "serverErrorsPerProjectPerHour": {
+        "consumed": 0,
+        "remaining": 10
+      },
+      "potentiallyThresholdedRequestsPerHour": {
+        "consumed": 0,
+        "remaining": 120
+      },
+      "tokensPerProjectPerHour": {
+        "consumed": 1,
+        "remaining": 13886
+      }
+    },
+    "warnings": [],
+    "meta": {
+      "projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b"
+    }
+  },
+  "landingPages": {
+    "status": "ok",
+    "source": {
+      "provider": "google_analytics",
+      "propertyId": "properties/547083375",
+      "propertyDisplayName": "myglobalhealth.online"
+    },
+    "request": {
+      "requestedDateRange": {
+        "startDate": "2026-05-29",
+        "endDate": "2026-08-27"
+      },
+      "resolvedDateRange": {
+        "startDate": "2026-05-29",
+        "endDate": "2026-08-27"
+      },
+      "propertyTimeZone": "Europe/Dublin",
+      "currencyCode": "EUR",
+      "channel": "organic_search",
+      "reportKind": "landing_pages",
+      "breakdown": "landing_page",
+      "dimensions": [
+        "hostName",
+        "landingPage"
+      ],
+      "metrics": [
+        "sessions",
+        "activeUsers",
+        "engagedSessions",
+        "engagementRate",
+        "keyEvents",
+        "sessionKeyEventRate",
+        "transactions",
+        "purchaseRevenue"
+      ],
+      "flags": {
+        "includeDate": false,
+        "onlyWithTransactions": false
+      },
+      "limit": 100,
+      "offset": 0
+    },
+    "rowCount": 20,
+    "totalRowCount": 20,
+    "rows": [
+      {
+        "hostName": "www.myglobalhealth.online",
+        "landingPage": "/",
+        "sessions": 3,
+        "activeUsers": 3,
+        "engagedSessions": 2,
+        "engagementRate": 0.6666666666666666,
+        "keyEvents": 0,
+        "sessionKeyEventRate": 0,
+        "transactions": 0,
+        "purchaseRevenue": 0
+      },
+      {
+        "hostName": "www.myglobalhealth.online",
+        "landingPage": "/ireland/en/blog/sick-certificate-ireland-employee-rights",
+        "sessions": 2,
+        "activeUsers": 2,
+        "engagedSessions": 2,
+        "engagementRate": 1,
+        "keyEvents": 0,
+        "sessionKeyEventRate": 0,
+        "transactions": 0,
+        "purchaseRevenue": 0
+      },
+      {
+        "hostName": "www.myglobalhealth.online",
+        "landingPage": "/spain/en/services/consulta-medica-online",
+        "sessions": 2,
+        "activeUsers": 1,
+        "engagedSessions": 1,
+        "engagementRate": 0.5,
+        "keyEvents": 0,
+        "sessionKeyEventRate": 0,
+        "transactions": 0,
+        "purchaseRevenue": 0
+      },
+      {
+        "hostName": "www.myglobalhealth.online",
+        "landingPage": "/czechia/cs/doctors/mudr-ahmed-maklad",
+        "sessions": 1,
+        "activeUsers": 1,
+        "engagedSessions": 1,
+        "engagementRate": 1,
+        "keyEvents": 0,
+        "sessionKeyEventRate": 0,
+        "transactions": 0,
+        "purchaseRevenue": 0
+      },
+      {
+        "hostName": "www.myglobalhealth.online",
+        "landingPage": "/czechia/cs/doctors/mudr-vojtěch-černý",
+        "sessions": 1,
+        "activeUsers": 1,
+        "engagedSessions": 0,
+        "engagementRate": 0,
+        "keyEvents": 0,
+        "sessionKeyEventRate": 0,
+        "transactions": 0,
+        "purchaseRevenue": 0
+      },
+      {
+        "hostName": "www.myglobalhealth.online",
+        "landingPage": "/czechia/cs/services/cestovni-medicina-praha",
+        "sessions": 1,
+        "activeUsers": 1,
+        "engagedSessions": 0,
+        "engagementRate": 0,
+        "keyEvents": 0,
+        "sessionKeyEventRate": 0,
+        "transactions": 0,
+        "purchaseRevenue": 0
+      },
+      {
+        "hostName": "www.myglobalhealth.online",
+        "landingPage": "/czechia/cs/services/muzske-zdravi-online",
+        "sessions": 1,
+        "activeUsers": 1,
+        "engagedSessions": 1,
+        "engagementRate": 1,
+        "keyEvents": 0,
+        "sessionKeyEventRate": 0,
+        "transactions": 0,
+        "purchaseRevenue": 0
+      },
+      {
+        "hostName": "www.myglobalhealth.online",
+        "landingPage": "/ireland/en/doctors/dr-ahmed-maklad",
+        "sessions": 1,
+        "activeUsers": 1,
+        "engagedSessions": 1,
+        "engagementRate": 1,
+        "keyEvents": 0,
+        "sessionKeyEventRate": 0,
+        "transactions": 0,
+        "purchaseRevenue": 0
+      },
+      {
+        "hostName": "www.myglobalhealth.online",
+        "landingPage": "/ireland/en/doctors/dr-khoiamul-islam",
+        "sessions": 1,
+        "activeUsers": 1,
+        "engagedSessions": 0,
+        "engagementRate": 0,
+        "keyEvents": 0,
+        "sessionKeyEventRate": 0,
+        "transactions": 0,
+        "purchaseRevenue": 0
+      },
+      {
+        "hostName": "www.myglobalhealth.online",
+        "landingPage": "/ireland/en/doctors/dr-mirza-aun-mohammad",
+        "sessions": 1,
+        "activeUsers": 1,
+        "engagedSessions": 1,
+        "engagementRate": 1,
+        "keyEvents": 0,
+        "sessionKeyEventRate": 0,
+        "transactions": 0,
+        "purchaseRevenue": 0
+      },
+      {
+        "hostName": "www.myglobalhealth.online",
+        "landingPage": "/ireland/en/doctors/dr-mohammed-omar",
+        "sessions": 1,
+        "activeUsers": 1,
+        "engagedSessions": 1,
+        "engagementRate": 1,
+        "keyEvents": 0,
+        "sessionKeyEventRate": 0,
+        "transactions": 0,
+        "purchaseRevenue": 0
+      },
+      {
+        "hostName": "www.myglobalhealth.online",
+        "landingPage": "/ireland/en/doctors/dr-muhammad-usman-yoosuf",
+        "sessions": 1,
+        "activeUsers": 1,
+        "engagedSessions": 1,
+        "engagementRate": 1,
+        "keyEvents": 0,
+        "sessionKeyEventRate": 0,
+        "transactions": 0,
+        "purchaseRevenue": 0
+      },
+      {
+        "hostName": "www.myglobalhealth.online",
+        "landingPage": "/ireland/es/health/sick-cert-online",
+        "sessions": 1,
+        "activeUsers": 1,
+        "engagedSessions": 1,
+        "engagementRate": 1,
+        "keyEvents": 0,
+        "sessionKeyEventRate": 0,
+        "transactions": 0,
+        "purchaseRevenue": 0
+      },
+      {
+        "hostName": "www.myglobalhealth.online",
+        "landingPage": "/portugal/pt/doctors",
+        "sessions": 1,
+        "activeUsers": 1,
+        "engagedSessions": 1,
+        "engagementRate": 1,
+        "keyEvents": 0,
+        "sessionKeyEventRate": 0,
+        "transactions": 0,
+        "purchaseRevenue": 0
+      },
+      {
+        "hostName": "www.myglobalhealth.online",
+        "landingPage": "/portugal/pt/doctors/dr-lucas-alvarenga-berto",
+        "sessions": 1,
+        "activeUsers": 1,
+        "engagedSessions": 0,
+        "engagementRate": 0,
+        "keyEvents": 0,
+        "sessionKeyEventRate": 0,
+        "transactions": 0,
+        "purchaseRevenue": 0
+      },
+      {
+        "hostName": "www.myglobalhealth.online",
+        "landingPage": "/portugal/pt/doctors/dra-margarida-andrade",
+        "sessions": 1,
+        "activeUsers": 1,
+        "engagedSessions": 1,
+        "engagementRate": 1,
+        "keyEvents": 0,
+        "sessionKeyEventRate": 0,
+        "transactions": 0,
+        "purchaseRevenue": 0
+      },
+      {
+        "hostName": "www.myglobalhealth.online",
+        "landingPage": "/romania/ro/doctors",
+        "sessions": 1,
+        "activeUsers": 1,
+        "engagedSessions": 0,
+        "engagementRate": 0,
+        "keyEvents": 0,
+        "sessionKeyEventRate": 0,
+        "transactions": 0,
+        "purchaseRevenue": 0
+      },
+      {
+        "hostName": "www.myglobalhealth.online",
+        "landingPage": "/spain/cs/services/cardiologo-online",
+        "sessions": 1,
+        "activeUsers": 1,
+        "engagedSessions": 1,
+        "engagementRate": 1,
+        "keyEvents": 0,
+        "sessionKeyEventRate": 0,
+        "transactions": 0,
+        "purchaseRevenue": 0
+      },
+      {
+        "hostName": "www.myglobalhealth.online",
+        "landingPage": "/spain/es/doctors/dr-fabiana-cornejo",
+        "sessions": 1,
+        "activeUsers": 1,
+        "engagedSessions": 1,
+        "engagementRate": 1,
+        "keyEvents": 0,
+        "sessionKeyEventRate": 0,
+        "transactions": 0,
+        "purchaseRevenue": 0
+      },
+      {
+        "hostName": "www.myglobalhealth.online",
+        "landingPage": "/spain/pt",
+        "sessions": 1,
+        "activeUsers": 1,
+        "engagedSessions": 0,
+        "engagementRate": 0,
+        "keyEvents": 0,
+        "sessionKeyEventRate": 0,
+        "transactions": 0,
+        "purchaseRevenue": 0
+      }
+    ],
+    "pageInfo": {
+      "offset": 0,
+      "limit": 100,
+      "hasMore": false,
+      "nextOffset": null
+    },
+    "reportMetadata": {
+      "dataLossFromOtherRow": false,
+      "subjectToThresholding": false,
+      "sampling": [],
+      "restrictedMetrics": [],
+      "emptyReason": null,
+      "hasLimitedData": false
+    },
+    "quota": {
+      "tokensPerDay": {
+        "consumed": 1,
+        "remaining": 199870
+      },
+      "tokensPerHour": {
+        "consumed": 1,
+        "remaining": 39885
+      },
+      "concurrentRequests": {
+        "consumed": 0,
+        "remaining": 10
+      },
+      "serverErrorsPerProjectPerHour": {
+        "consumed": 0,
+        "remaining": 10
+      },
+      "potentiallyThresholdedRequestsPerHour": {
+        "consumed": 0,
+        "remaining": 120
+      },
+      "tokensPerProjectPerHour": {
+        "consumed": 1,
+        "remaining": 13885
+      }
+    },
+    "warnings": [],
+    "diagnostics": [],
+    "meta": {
+      "projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b"
+    }
+  },
+  "keyEvents": {
+    "status": "ok",
+    "source": {
+      "provider": "google_analytics",
+      "propertyId": "properties/547083375",
+      "propertyDisplayName": "myglobalhealth.online"
+    },
+    "request": {
+      "requestedDateRange": {
+        "startDate": "2026-05-29",
+        "endDate": "2026-08-27"
+      },
+      "resolvedDateRange": {
+        "startDate": "2026-05-29",
+        "endDate": "2026-08-27"
+      },
+      "propertyTimeZone": "Europe/Dublin",
+      "currencyCode": "EUR",
+      "channel": "organic_search",
+      "reportKind": "key_events",
+      "breakdown": "event",
+      "dimensions": [
+        "eventName"
+      ],
+      "metrics": [
+        "keyEvents",
+        "totalUsers"
+      ],
+      "flags": {
+        "includeDate": false,
+        "onlyWithTransactions": false
+      },
+      "limit": 100,
+      "offset": 0
+    },
+    "rowCount": 0,
+    "totalRowCount": 0,
+    "rows": [],
+    "pageInfo": {
+      "offset": 0,
+      "limit": 100,
+      "hasMore": false,
+      "nextOffset": null
+    },
+    "reportMetadata": {
+      "dataLossFromOtherRow": false,
+      "subjectToThresholding": false,
+      "sampling": [],
+      "restrictedMetrics": [],
+      "emptyReason": null,
+      "hasLimitedData": false
+    },
+    "quota": {
+      "tokensPerDay": {
+        "consumed": 1,
+        "remaining": 199865
+      },
+      "tokensPerHour": {
+        "consumed": 1,
+        "remaining": 39899
+      },
+      "concurrentRequests": {
+        "consumed": 0,
+        "remaining": 10
+      },
+      "serverErrorsPerProjectPerHour": {
+        "consumed": 0,
+        "remaining": 10
+      },
+      "potentiallyThresholdedRequestsPerHour": {
+        "consumed": 0,
+        "remaining": 120
+      },
+      "tokensPerProjectPerHour": {
+        "consumed": 1,
+        "remaining": 13899
+      }
+    },
+    "warnings": [],
+    "diagnostics": [],
+    "comparison": {
+      "previousDateRange": {
+        "startDate": "2026-02-27",
+        "endDate": "2026-05-28"
+      },
+      "dimensions": [
+        "eventName"
+      ],
+      "metrics": [
+        "keyEvents",
+        "totalUsers"
+      ],
+      "rows": [],
+      "coverage": {
+        "complete": true,
+        "current": {
+          "fetchedRowCount": 0,
+          "totalRowCount": 0
+        },
+        "previous": {
+          "fetchedRowCount": 0,
+          "totalRowCount": 0
+        }
+      },
+      "reportMetadata": {
+        "hasLimitedData": false,
+        "current": {
+          "dataLossFromOtherRow": false,
+          "subjectToThresholding": false,
+          "sampling": [],
+          "restrictedMetrics": [],
+          "emptyReason": null,
+          "hasLimitedData": false
+        },
+        "previous": {
+          "dataLossFromOtherRow": false,
+          "subjectToThresholding": false,
+          "sampling": [],
+          "restrictedMetrics": [],
+          "emptyReason": null,
+          "hasLimitedData": false
+        }
+      },
+      "quota": {
+        "tokensPerDay": {
+          "consumed": 1,
+          "remaining": 199892
+        },
+        "tokensPerHour": {
+          "consumed": 1,
+          "remaining": 39999
+        },
+        "concurrentRequests": {
+          "consumed": 0,
+          "remaining": 10
+        },
+        "serverErrorsPerProjectPerHour": {
+          "consumed": 0,
+          "remaining": 10
+        },
+        "potentiallyThresholdedRequestsPerHour": {
+          "consumed": 0,
+          "remaining": 120
+        },
+        "tokensPerProjectPerHour": {
+          "consumed": 1,
+          "remaining": 13999
+        }
+      }
+    },
+    "meta": {
+      "projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b"
+    }
+  },
+  "measurementHealth": {
+    "status": "ok",
+    "source": {
+      "provider": "google_analytics_admin",
+      "propertyId": "properties/547083375",
+      "propertyDisplayName": "myglobalhealth.online"
+    },
+    "summary": {
+      "dataStreamCount": 1,
+      "webStreamCount": 1,
+      "keyEventCount": 2,
+      "customDimensionCount": 0,
+      "customMetricCount": 0,
+      "issueCount": 0
+    },
+    "issues": [],
+    "webStreams": [
+      {
+        "streamId": "15322239584",
+        "displayName": "Website",
+        "measurementId": "G-SP48D9LJJ5",
+        "defaultUri": "https://myglobalhealth.online",
+        "createTime": "2026-07-25T10:06:01.099Z",
+        "updateTime": "2026-07-25T10:06:01.099Z",
+        "enhancedMeasurement": {
+          "streamEnabled": true,
+          "scrollsEnabled": true,
+          "outboundClicksEnabled": true,
+          "siteSearchEnabled": true,
+          "videoEngagementEnabled": true,
+          "fileDownloadsEnabled": true,
+          "pageChangesEnabled": true,
+          "formInteractionsEnabled": true,
+          "searchQueryParameter": "q,s,search,query,keyword",
+          "uriQueryParameter": ""
+        }
+      }
+    ],
+    "otherStreams": [],
+    "keyEvents": [
+      {
+        "eventName": "purchase",
+        "createTime": "2026-07-25T10:06:01.099912Z",
+        "countingMethod": "ONCE_PER_EVENT"
+      },
+      {
+        "eventName": "begin_booking",
+        "createTime": "2026-08-24T19:26:27.202184Z",
+        "deletable": true,
+        "custom": true,
+        "countingMethod": "ONCE_PER_SESSION"
+      }
+    ],
+    "customDefinitions": {
+      "dimensions": [],
+      "metrics": []
+    },
+    "meta": {
+      "projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b"
+    }
+  }
+}
+

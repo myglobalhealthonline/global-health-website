@@ -1,5 +1,9 @@
 # Ireland technical SEO audit
 
+> **Dated evidence, not current operational status.** Status and recommended-fix
+> columns are the 2026-08-25 audit snapshot. The canonical global ledger at
+> `docs/plans/seo-control-state.md` owns current status and actions.
+
 **Audited:** 2026-08-25
 **Inputs:** repository inspection, canonical SEO ledger, OpenSEO 100-page audit and focused production/competitor checks.
 

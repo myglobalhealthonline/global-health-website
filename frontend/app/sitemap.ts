@@ -11,6 +11,7 @@ import { getPublicServicesForCountry } from "@/lib/content/get-public-services";
 import { getCountryHealthTests } from "@/lib/content/get-country-collections";
 import { fetchLandingSlugs } from "@/lib/api/site-content-api";
 import { listBlogPosts } from "@/lib/content/get-public-blog";
+import { listPublicJobs } from "@/lib/content/get-public-jobs";
 import { hreflangRegion } from "@/lib/seo/hreflang";
 import { marketFaqLocales } from "@/lib/content/country-faq";
 import type { LocaleCode } from "@/lib/i18n/types";
@@ -107,7 +108,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // build time: a lastModified that changes on every deploy teaches Google the
   // signal is noise and gets it discounted sitewide, including for the detail
   // pages where it IS accurate.
-  type StampKey = "service" | "doctor" | "blog" | "legal" | "landing" | "test" | "plan";
+  type StampKey = "service" | "doctor" | "blog" | "legal" | "landing" | "test" | "plan" | "job";
   const stamps = new Map<string, Partial<Record<StampKey, string>>>();
   const bump = (code: string, key: StampKey, ts: string | null | undefined) => {
     const forCountry = stamps.get(code) ?? {};
@@ -124,6 +125,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "landing",
     "test",
     "plan",
+    "job",
   ];
   /**
    * Newest of the given child timestamps for a country.
@@ -473,6 +475,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
+  // Locale fallbacks keep the public UI usable, but only authored source-locale
+  // jobs belong in the sitemap; fallback URLs are canonicalized and noindexed.
+  for (const country of countries) {
+    const slug = country.slug || countrySlug(country.code);
+    for (const lang of countryLangs(country)) {
+      try {
+        const result = await listPublicJobs(country.code, lang);
+        if (result.state !== "loaded") continue;
+        for (const job of result.jobs) {
+          if (job.locale.toLowerCase() !== lang) continue;
+          bump(country.code, "job", job.updatedAt);
+          urls.push({
+            url: `${base}/${slug}/${lang}/careers/${job.slug}`,
+            lastModified: job.updatedAt,
+            changeFrequency: "weekly",
+            priority: 0.6,
+          });
+        }
+      } catch {
+        // Careers API unavailable for this locale — keep the rest of the sitemap.
+      }
+    }
+  }
+
   // Country home + section pages — every enabled locale, with hreflang
   // alternates so Google indexes each translated variant.
   // Section routes gated by a per-country feature flag (see
@@ -488,7 +514,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const code = country.code;
     // The country home surfaces every content type, so any of them changing
     // is a real change to it.
-    pushLocalized(country, "", 0.9, dated(newest(code, "service", "doctor", "blog", "legal", "landing", "test", "plan")));
+    pushLocalized(country, "", 0.9, dated(newest(code, "service", "doctor", "blog", "legal", "landing", "test", "plan", "job")));
     pushLocalized(country, "/doctors", 0.8, dated(newest(code, "doctor")));
     if (isCountryFeatureEnabled(country, "general-consultations")) {
       pushLocalized(country, "/gp-consultation-online", 0.8, dated(newest(code, "service")));
@@ -512,6 +538,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Country About pages: the market's languages, offering and registration.
     // Undated for the same reason — the copy is code-resident, not CMS.
     pushLocalized(country, "/about", 0.5);
+    // Careers is dated by its newest live listing; Press remains code-resident.
+    pushLocalized(country, "/careers", 0.3, dated(stamps.get(code)?.job));
+    pushLocalized(country, "/press", 0.3);
     // Country FAQ pages. Once a market has researched per-market copy, only the
     // locales that actually carry it are submitted — the others render a
     // fallback language and self-noindex (see lib/content/country-faq.ts), and

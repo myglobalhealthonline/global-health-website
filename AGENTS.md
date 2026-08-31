@@ -13,10 +13,10 @@ Portugal, Spain, Romania, Brazil) in six languages.
 It covers the two-file CSS split, the UI primitives to use instead of hand-rolling
 dropdowns and tables, dependency-override mirroring, and the security-scanning rules.
 
-For SEO work, read `docs/plans/seo-handover-codex.md` first, then
-`docs/plans/seo-control-state.md` — the canonical SEO ledger, roadmap and indexation
-watchlist. Every other SEO markdown in this repo is historical evidence and says so in
-its header.
+For SEO work, start at `seo/README.md`. It routes agents to the canonical global
+ledger and the relevant country evidence package. Read `docs/plans/seo-handover-codex.md`
+for process; `docs/plans/seo-control-state.md` remains the only operational ledger,
+roadmap and indexation watchlist.
 
 ## Conventions that are easy to get wrong
 

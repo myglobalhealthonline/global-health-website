@@ -63,7 +63,7 @@ export function GH2CompactHero({
   backLabel,
 }: {
   eyebrow: string;
-  title: string;
+  title: ReactNode;
   accent?: string;
   body?: ReactNode;
   watermark?: string;

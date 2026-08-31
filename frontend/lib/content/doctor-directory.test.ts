@@ -46,6 +46,7 @@ const i18n = {
   registrationLabel: "Registration",
   verifiedSuffix: "Verified",
   languagesLabel: "Languages",
+  credentialsLabel: "Credentials",
 };
 
 const gpService = "svc-gp";

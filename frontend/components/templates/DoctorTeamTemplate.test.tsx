@@ -12,6 +12,8 @@ const cardI18n = {
   verifyRegistrationAria: "Verify registration",
   languagesLabel: "Languages",
   viewProfileLabel: "View profile",
+  viewProfileAria: "View profile for {name}",
+  credentialsLabel: "Credentials",
   pickTimeLabel: "Pick a time",
 };
 
