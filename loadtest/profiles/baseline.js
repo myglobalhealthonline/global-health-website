@@ -8,6 +8,7 @@ export {
   adminPortal,
   chatPolling,
   heavyLowRps,
+  authLoad,
 } from "../lib/profile-builder.js";
 
 // Baseline: 50 peak VUs, 15 minutes. Establishes healthy-system latency

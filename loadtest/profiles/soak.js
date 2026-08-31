@@ -8,6 +8,7 @@ export {
   adminPortal,
   chatPolling,
   heavyLowRps,
+  authLoad,
 } from "../lib/profile-builder.js";
 
 // Soak: 100 peak VUs, 2 hours. Watches for memory growth (Chromium/
