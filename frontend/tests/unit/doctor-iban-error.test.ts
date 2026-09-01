@@ -9,6 +9,7 @@ const strings = {
   ibanErrorLength: "length",
   ibanErrorFormat: "format",
   ibanErrorChecksum: "checksum",
+  ibanWarnChecksum: "warn",
 } as unknown as Parameters<typeof ibanError>[1];
 
 describe("ibanError", () => {
@@ -35,13 +36,13 @@ describe("ibanError", () => {
     // Real doctor report: a Novo Banco PT IBAN entered three characters short.
     const short = "PT50007000000634495123";
     expect(ibanError(short, strings)).toBeNull();
-    expect(ibanWarning(short, strings)).toBe("checksum");
+    expect(ibanWarning(short, strings)).toBe("warn");
 
     // A single mistyped digit in a real BR IBAN — the case that locked a
     // Brazilian doctor out of saving their bank details.
     const typo = "BR5160746948026220002079161C1";
     expect(ibanError(typo, strings)).toBeNull();
-    expect(ibanWarning(typo, strings)).toBe("checksum");
+    expect(ibanWarning(typo, strings)).toBe("warn");
   });
 
   it("does not warn on a valid IBAN", () => {
