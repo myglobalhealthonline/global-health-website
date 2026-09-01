@@ -24,7 +24,7 @@ const doctorDraft = drafts.find(({ url }) => url.endsWith("/doctors/dr-martim-de
 
 function fakeClient(draft: PortugalSeoMetadataDraft, failure?: Failure) {
   const state = {
-    seoTitle: draft.originalTitle,
+    seoTitle: draft.originalTitle as string | null,
     seoDescription: draft.originalDescription,
     seoKeywords: ["existing keyword"],
     updatedAt: new Date("2026-09-01T12:00:00.000Z"),
@@ -180,6 +180,10 @@ function applyOptions(draft: PortugalSeoMetadataDraft, sourceHash: string) {
 
 test("Portugal service metadata dry-runs and writes one approved record", async () => {
   const { client, state } = fakeClient(serviceDraft);
+  state.seoDescription = serviceDraft.originalDescription.replace(
+    / Aceitamos também Medicare para este serviço\.$/,
+    "",
+  );
   const sourceHash = await dryRun(client, serviceDraft);
   assert.equal(state.transactions, 0);
   await runPortugalSeoMetadataPatch(client, applyOptions(serviceDraft, sourceHash));
@@ -190,10 +194,12 @@ test("Portugal service metadata dry-runs and writes one approved record", async 
 
 test("Portugal home and verified doctor branches preserve their target-specific fields", async () => {
   const home = fakeClient(homeDraft);
+  home.state.seoTitle = null;
   await runPortugalSeoMetadataPatch(home.client, applyOptions(homeDraft, await dryRun(home.client, homeDraft)));
   assert.equal(home.state.seoTitle, homeDraft.proposedTitle);
 
   const doctor = fakeClient(doctorDraft);
+  doctor.state.seoTitle = `${doctorDraft.originalTitle} | Global Health Portugal`;
   await runPortugalSeoMetadataPatch(
     doctor.client,
     applyOptions(doctorDraft, await dryRun(doctor.client, doctorDraft)),

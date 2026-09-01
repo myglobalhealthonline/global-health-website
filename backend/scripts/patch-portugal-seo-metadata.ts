@@ -177,7 +177,19 @@ function sourceSha256(target: MetadataTarget): string {
 }
 
 function assertAuditedSource(draft: PortugalSeoMetadataDraft, target: MetadataTarget): void {
-  if (target.currentTitle !== draft.originalTitle || target.currentDescription !== draft.originalDescription) {
+  const retiredMedicareSuffix = " Aceitamos também Medicare para este serviço.";
+  const inheritedHomeTitle = draft.targetKind === "home"
+    && target.currentTitle === null
+    && draft.originalTitle === "Médico Online Portugal | Clínicos e Especialistas Registados";
+  const storedDoctorTitle = draft.targetKind === "doctor"
+    && target.currentTitle === `${draft.originalTitle} | Global Health Portugal`;
+  const safetyNormalizedServiceDescription = draft.targetKind === "service"
+    && draft.originalDescription.endsWith(retiredMedicareSuffix)
+    && target.currentDescription === draft.originalDescription.slice(0, -retiredMedicareSuffix.length);
+  if (
+    (!inheritedHomeTitle && !storedDoctorTitle && target.currentTitle !== draft.originalTitle)
+    || (!safetyNormalizedServiceDescription && target.currentDescription !== draft.originalDescription)
+  ) {
     throw new Error("Current Portugal metadata does not match the source reviewed in the completion matrix");
   }
   if (
