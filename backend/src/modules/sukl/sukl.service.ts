@@ -17,6 +17,7 @@ import {
   suklWorkplaceCode,
   suklGet,
   suklAppPing,
+  suklGetAppInfo,
   summariseWsdl,
   addressToPath,
   SuklError,
@@ -511,6 +512,19 @@ export type { SuklAppPingResult } from "../../lib/sukl/index.js";
  */
 export async function runSuklAppPing(service: SuklService, path?: string) {
   return suklAppPing(service, path ? { path } : {});
+}
+
+export type { SuklAppInfoResult } from "../../lib/sukl/index.js";
+
+/**
+ * Asks SÚKL which interface version they run.
+ *
+ * Exists to replace an inference with a fact: SUKL_INTERFACE_VERSION is
+ * currently a value read off a published table, and it travels in the Zprava
+ * header of every message we will ever send.
+ */
+export async function runSuklGetAppInfo(service: SuklService) {
+  return suklGetAppInfo(service);
 }
 
 // ─── Doctor identity mappings ────────────────────────────────────────────────
