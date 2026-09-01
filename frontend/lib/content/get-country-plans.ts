@@ -1,6 +1,11 @@
 import { cache } from "react";
 import { fetchPlansByCountry } from "@/lib/api/site-content-api";
-import { logPublicContentFallback } from "@/lib/content/public-content-source";
+import {
+  assertCollectionAvailable,
+  logPublicContentFallback,
+  PublicContentRequestError,
+  PublicContentUnavailableError,
+} from "@/lib/content/public-content-source";
 import type {
   PerkKey,
   PerkUnlockMode,
@@ -130,20 +135,29 @@ export const getCountryPlansResult = cache(
   async (countryCode: string, locale?: string): Promise<
     { ok: true; plans: PublicPlan[] } | { ok: false; plans: [] }
   > => {
+    const entity = `country-plans:${countryCode}:${locale ?? "default"}`;
     const res = await fetchPlansByCountry(countryCode, locale);
     if (!res.ok) {
-      // 404 (feature off) is an expected "no plans" signal, not an error worth
-      // surfacing — the page already feature-gates. Log other failures.
-      if (res.status !== 404) logPublicContentFallback("country-plans", res.message);
+      assertCollectionAvailable(entity, res);
+      logPublicContentFallback("country-plans", res.message);
       return { ok: false, plans: [] };
     }
-    if (!Array.isArray(res.data?.plans)) return { ok: false, plans: [] };
-    const plans = res.data.plans.map(parsePlan);
-    if (plans.some((plan) => plan === null)) return { ok: false, plans: [] };
+    const plans = Array.isArray(res.data?.plans) ? res.data.plans.map(parsePlan) : null;
+    if (!plans || plans.some((plan) => plan === null)) {
+      const failure = { ok: false as const, message: "backend returned 200 with no usable plan catalogue" };
+      assertCollectionAvailable(entity, failure);
+      logPublicContentFallback("country-plans", failure.message);
+      return { ok: false, plans: [] };
+    }
     return { ok: true, plans: plans as PublicPlan[] };
   },
 );
 
-export const getCountryPlans = cache(async (countryCode: string, locale?: string): Promise<PublicPlan[]> =>
-  (await getCountryPlansResult(countryCode, locale)).plans
-);
+export const getCountryPlans = cache(async (countryCode: string, locale?: string): Promise<PublicPlan[]> => {
+  try {
+    return (await getCountryPlansResult(countryCode, locale)).plans;
+  } catch (error) {
+    if (error instanceof PublicContentUnavailableError || error instanceof PublicContentRequestError) return [];
+    throw error;
+  }
+});

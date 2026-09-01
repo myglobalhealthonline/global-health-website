@@ -2,9 +2,17 @@ import { describe, expect, it, vi } from "vitest";
 
 const { fetchPlansByCountry } = vi.hoisted(() => ({ fetchPlansByCountry: vi.fn() }));
 vi.mock("@/lib/api/site-content-api", () => ({ fetchPlansByCountry }));
-vi.mock("@/lib/content/public-content-source", () => ({ logPublicContentFallback: vi.fn() }));
+vi.mock("@/lib/api/client", async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  hasPublicApiBaseUrl: () => true,
+}));
+vi.mock("@/lib/content/public-content-source", async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  logPublicContentFallback: vi.fn(),
+}));
 
-import { getCountryPlansResult } from "./get-country-plans";
+import { getCountryPlans, getCountryPlansResult } from "./get-country-plans";
+import { PublicContentRequestError, PublicContentUnavailableError } from "./public-content-source";
 
 const validPlan = {
   id: "plan-1",
@@ -29,28 +37,37 @@ const validPlan = {
 };
 
 describe("getCountryPlansResult", () => {
-  it("distinguishes a successful empty catalogue from a failed request", async () => {
+  it("distinguishes a successful empty catalogue from transient failures", async () => {
     fetchPlansByCountry.mockResolvedValueOnce({ ok: true, data: { plans: [] } });
     await expect(getCountryPlansResult("pt", "pt")).resolves.toEqual({ ok: true, plans: [] });
 
+    fetchPlansByCountry.mockResolvedValueOnce({ ok: false, status: 404, message: "not found" });
+    await expect(getCountryPlansResult("pt-not-found", "pt")).rejects.toBeInstanceOf(PublicContentRequestError);
+
     fetchPlansByCountry.mockResolvedValueOnce({ ok: false, status: 503, message: "unavailable" });
-    await expect(getCountryPlansResult("pt-failure", "pt")).resolves.toEqual({ ok: false, plans: [] });
+    await expect(getCountryPlansResult("pt-failure", "pt")).rejects.toBeInstanceOf(PublicContentUnavailableError);
+
+    fetchPlansByCountry.mockResolvedValueOnce({ ok: false, message: "timeout" });
+    await expect(getCountryPlansResult("pt-timeout", "pt")).rejects.toBeInstanceOf(PublicContentUnavailableError);
+
+    fetchPlansByCountry.mockResolvedValueOnce({ ok: false, status: 503, message: "unavailable" });
+    await expect(getCountryPlans("pt-portal", "pt")).resolves.toEqual([]);
   });
 
   it("rejects malformed catalogues instead of treating them as empty", async () => {
     fetchPlansByCountry.mockResolvedValueOnce({ ok: true, data: {} });
-    await expect(getCountryPlansResult("pt-missing-plans", "pt")).resolves.toEqual({ ok: false, plans: [] });
+    await expect(getCountryPlansResult("pt-missing-plans", "pt")).rejects.toBeInstanceOf(PublicContentUnavailableError);
 
     fetchPlansByCountry.mockResolvedValueOnce({
       ok: true,
       data: { plans: [{ ...validPlan, monthlyPriceCents: "5000" }] },
     });
-    await expect(getCountryPlansResult("pt-invalid-price", "pt")).resolves.toEqual({ ok: false, plans: [] });
+    await expect(getCountryPlansResult("pt-invalid-price", "pt")).rejects.toBeInstanceOf(PublicContentUnavailableError);
 
     fetchPlansByCountry.mockResolvedValueOnce({
       ok: true,
       data: { plans: [{ ...validPlan, perks: [{ perkKey: "FAMILY_USAGE", unlockMode: "INVALID", unlockAfterPaidMonths: null }] }] },
     });
-    await expect(getCountryPlansResult("pt-invalid-perk", "pt")).resolves.toEqual({ ok: false, plans: [] });
+    await expect(getCountryPlansResult("pt-invalid-perk", "pt")).rejects.toBeInstanceOf(PublicContentUnavailableError);
   });
 });
