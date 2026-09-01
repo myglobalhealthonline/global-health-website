@@ -290,3 +290,34 @@ Current matrix totals are 31 live, 14 source-pinned clinical drafts pending revi
 three measurement holds and two reviewed-no-change pages. The register totals are
 17 approved and 20 pending; the extra pending row covers Czech forms and analytics
 privacy rather than a matrix page.
+
+## Remaining published-copy remediation prepared — 2026-09-02
+
+A second production comparison found unsafe wording below the already deployed
+metadata layer. Exact source-pinned replacements are now prepared for the Czech GP
+PageContent record; Czech paediatric, mental-health, dermatology, travel-medicine and
+Prague service records; the English Prague service translation; and five Czech doctor
+profiles. The service drafts replace the complete existing FAQ sets by immutable ID.
+The profile FAQ candidates are source-pinned by immutable ID, but production
+`DoctorFaq` rows are shared across countries. The writer therefore keeps all doctor
+profiles preview-only and performs no doctor or FAQ write until a country-scoped FAQ
+overlay exists and separate profile/credential plus clinical-governance approvals can
+be recorded. Biographies, titles, qualifications, credentials, registrations,
+languages, assignments and availability remain unchanged.
+
+The Czech doctor directory also has a `cz`/`cs`-only copy overlay that removes
+same-day and 24-hour promises while leaving every other market and language on its
+existing bundle. The Czech GP hero availability card uses the same country-only
+fallback, while other countries retain their existing localized copy. Keywords are
+used naturally in relevant FAQ questions; no keyword is repeated mechanically where
+it would make the answer less useful.
+
+Read-only production dry-runs matched all six service source hashes, all five doctor
+source hashes and the GP PageContent hash. The expanded Czech Prague service draft
+has a new exact approval hash, so its previous metadata-only approval cannot authorize
+the expanded copy; the CLI rejects the hash mismatch before applying. No production
+database write occurred. Specialist, profile-governance and native-English review
+requirements remain unchanged, and the 24/7 article remains on its measurement hold.
+The production writers now also preserve Czech default FAQs during an English-only
+update, structurally verify JSONB regardless of object-key order, and require reviewed
+PageContent HTML to pass the application sanitizer byte-for-byte before apply.

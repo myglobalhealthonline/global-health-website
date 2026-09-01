@@ -12,13 +12,14 @@ const source = readFileSync(
   "utf8",
 );
 
-test("promotion script preserves bios, bodies, credentials, FAQs and tool runtime copy", () => {
-  assert.doesNotMatch(source, /doctorFaq\.(update|create|delete)/);
-  assert.doesNotMatch(source, /faqReplacements\s*:/);
+test("promotion script preserves globally shared doctor FAQs and protected content", () => {
+  assert.doesNotMatch(source, /doctorFaq\.(update|updateMany|create|delete)/);
+  assert.match(source, /Doctor promotion is preview-only/);
+  assert.match(source, /FAQs are country-scoped/);
+  assert.match(source, /profile\/credential plus clinical-governance approvals/);
   assert.doesNotMatch(source, /writeFile|renameSync|copyFile/);
-  assert.match(source, /doctorMarketTranslation\.updateMany/);
+  assert.doesNotMatch(source, /doctorMarketTranslation\.(update|updateMany|create|delete)/);
   assert.match(source, /blogPost\.updateMany/);
-  assert.match(source, /assertCzechiaDoctorMetadataReadback\(draft, saved\.translations\[0\]\)/);
   assert.match(source, /assertCzechiaBlogMetadataReadback\(draft, saved\)/);
 });
 
@@ -30,9 +31,9 @@ test("promotion script uses the register, exact source hashes and serializable t
   assert.match(source, /TransactionIsolationLevel\.Serializable/);
   assert.match(source, /reviewer-doctor-id/);
   assert.match(source, /approved-sha256/);
-  assert.match(source, /credentials: source\.doctor\.credentials/);
-  assert.match(source, /assignments: source\.doctor\.assignedServices/);
-  assert.match(source, /availabilities: source\.doctor\.availabilities/);
+  assert.match(source, /credentials: \{/);
+  assert.match(source, /assignedServices: \{/);
+  assert.match(source, /availabilities: \{/);
   assert.match(source, /editorialChecklist: source\.editorialChecklist/);
 });
 

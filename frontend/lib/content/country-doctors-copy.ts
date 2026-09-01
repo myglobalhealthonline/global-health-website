@@ -24,6 +24,20 @@ function key(code: CountryCode, locale: string): string {
 }
 
 const OVERRIDES: Record<string, DoctorsOverride> = {
+  "cz:cs": {
+    heroLedeTemplate:
+      "U každého profilu najdete uvedené registrační údaje, jazyky a aktuální možnosti online rezervace v Česku.",
+    heroAvailableSingular: "lékař v seznamu",
+    heroAvailablePlural: "lékařů v seznamu",
+    trustCard1Title: "Registrace u ČLK",
+    trustCard1Subtitle: "Odkaz na oficiální registr",
+    trustCard3Title: "Aktuální termíny",
+    trustCard3Subtitle: "Zobrazují se při rezervaci",
+    floatCard1Title: "Aktuální dostupnost",
+    floatCard1Subtitle: "Termíny najdete v rezervačním kalendáři",
+    bottomCtaAccent: "online.",
+    bioFallbackTemplate: "Profil lékaře pro online konzultace v Česku.",
+  },
   "ie:en": {
     heroTitleLead: "IMC-registered",
     heroTitleAccent: "online doctors",

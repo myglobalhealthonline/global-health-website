@@ -14,6 +14,7 @@ import {
 
 const expectedAssets = [
   "CS:bolesti-pohyboveho-aparatu",
+  "CS:cestovni-medicina-praha",
   "CS:chronicka-onemocneni",
   "CS:detsky-lekar-online",
   "CS:doporuceni-a-vysetreni",
@@ -36,7 +37,6 @@ test("scopes the review-gated batch to every eligible Czech service variant", ()
     expectedAssets,
   );
   assert.ok(CZECHIA_SEO_SERVICE_DRAFTS.every(({ countryCode }) => countryCode === "cz"));
-  assert.ok(!CZECHIA_SEO_SERVICE_DRAFTS.some(({ slug }) => slug === "cestovni-medicina-praha"));
 });
 
 test("keeps one commercial keyword owner per service variant", () => {
@@ -60,13 +60,29 @@ test("ships concise, assessment-first metadata and content", () => {
   }
 });
 
-test("does not invent FAQ replacements where exact reviewed copy is absent", () => {
+test("rewrites only the unsafe published FAQ sets by exact record id", () => {
   const exactFaqAssets = CZECHIA_SEO_SERVICE_DRAFTS
     .filter(({ faqs }) => faqs.length > 0)
     .map(({ locale, slug }) => `${locale}:${slug}`);
 
-  assert.deepEqual(exactFaqAssets, ["CS:neschopenka-online", "CS:obnoveni-lecby"]);
+  assert.deepEqual(exactFaqAssets, [
+    "CS:cestovni-medicina-praha",
+    "CS:detsky-lekar-online",
+    "CS:dusevni-zdravi-online",
+    "CS:kozni-konzultace-praha",
+    "CS:lekar-online-praha",
+    "EN:lekar-online-praha",
+    "CS:neschopenka-online",
+    "CS:obnoveni-lecby",
+  ]);
   assert.ok(CZECHIA_SEO_SERVICE_DRAFTS.every(({ expectedFaqIds }) => expectedFaqIds.length >= 5));
+  assert.ok(
+    CZECHIA_SEO_SERVICE_DRAFTS
+      .filter(({ faqs }) => faqs.length > 0)
+      .every(({ faqs, expectedFaqIds }) =>
+        faqs.every(({ id }) => expectedFaqIds.includes(id)),
+      ),
+  );
 });
 
 test("removes volatile entitlement figures and unconditional medical promises", () => {
@@ -90,6 +106,24 @@ test("links each full-copy page to its official source and correct supporting ow
   assert.match(sickNoteBody, /\/czechia\/cs\/blog\/neschopenka-jak-funguje-eneschopenka/);
   assert.match(renewalBody, /epreskripce\.cz/);
   assert.match(renewalBody, /\/czechia\/cs\/gp-consultation-online/);
+});
+
+test("gives every remaining high-risk service a sourced, emergency-aware full-copy draft", () => {
+  const required = new Set([
+    "CS:cestovni-medicina-praha",
+    "CS:detsky-lekar-online",
+    "CS:dusevni-zdravi-online",
+    "CS:kozni-konzultace-praha",
+    "CS:lekar-online-praha",
+    "EN:lekar-online-praha",
+  ]);
+
+  for (const draft of CZECHIA_SEO_SERVICE_DRAFTS) {
+    if (!required.has(`${draft.locale}:${draft.slug}`)) continue;
+    assert.ok(draft.detailBody, `${draft.locale}:${draft.slug}`);
+    assert.equal(draft.faqs.length, draft.expectedFaqIds.length);
+    assert.match(draft.detailBody, /https:\/\/(?:www\.)?(?:nzip\.cz|ncez\.mzcr\.cz)/);
+  }
 });
 
 test("pins the English Prague draft to the post-Czech-rollout service snapshot", () => {

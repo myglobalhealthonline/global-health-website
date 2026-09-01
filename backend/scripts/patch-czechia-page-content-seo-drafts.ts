@@ -1,5 +1,5 @@
 /**
- * Dry-run or apply the three review-gated Czechia PageContent SEO drafts.
+ * Dry-run or apply the review-gated Czechia PageContent SEO drafts.
  *
  * Dry run:
  *   node --env-file=.env --import tsx scripts/patch-czechia-page-content-seo-drafts.ts --only=home-cs
@@ -9,6 +9,7 @@
  * date, reviewer ID, source fingerprint and confirmation token printed here.
  */
 import { createHash } from "node:crypto";
+import { isDeepStrictEqual } from "node:util";
 import { readFileSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { resolve } from "node:path";
@@ -25,6 +26,7 @@ import {
 } from "../src/content/czechia-page-content-seo-drafts.js";
 import { parseCzechiaSeoReviewDate } from "../src/content/czechia-seo-service-drafts.js";
 import { disconnectDb, prisma } from "../src/db/prisma.js";
+import { sanitizeRichHtml } from "../src/utils/sanitize-html.js";
 import { assertCzechiaClinicalApproval } from "./lib/czechia-clinical-approval.js";
 
 const CLINICAL_REGISTER_PATH = fileURLToPath(
@@ -171,8 +173,17 @@ function changedFields(
   copy: CzechiaPageContentSeoDraft["copy"],
 ): string[] {
   return Object.entries(copy)
-    .filter(([field, value]) => translation[field] !== value)
+    .filter(([field, value]) => !isDeepStrictEqual(translation[field], value))
     .map(([field]) => field);
+}
+
+export const storedValueEquals = isDeepStrictEqual;
+
+function assertSafeBody(draft: CzechiaPageContentSeoDraft): void {
+  const body = draft.copy.body;
+  if (body !== undefined && sanitizeRichHtml(body) !== body) {
+    throw new Error(`Invalid ${draft.key} draft: rich-text sanitizer changed the reviewed body`);
+  }
 }
 
 async function assertEligibleReviewer(reader: ReviewerReader, reviewerId: string): Promise<void> {
@@ -233,6 +244,7 @@ export async function runCzechiaPageContentSeoPatch(
     if (validationErrors.length > 0) {
       throw new Error(`Invalid ${draft.key} draft: ${validationErrors.join("; ")}`);
     }
+    assertSafeBody(draft);
     const page = await readPage(client, draft);
     if (!page) throw new Error(`Missing PageContent ${draft.pageContentId}`);
     assertExactSource(page, draft);
@@ -288,7 +300,7 @@ export async function runCzechiaPageContentSeoPatch(
       const savedTranslation = saved?.translations[0];
       if (!saved || !savedTranslation) throw new Error(`Verification failed: ${item.draft.key} disappeared`);
       for (const [field, value] of Object.entries(item.draft.copy)) {
-        if ((savedTranslation as unknown as Record<string, unknown>)[field] !== value) {
+        if (!storedValueEquals((savedTranslation as unknown as Record<string, unknown>)[field], value)) {
           throw new Error(`Verification failed: ${item.draft.key}.${field} did not save exactly`);
         }
       }

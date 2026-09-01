@@ -430,4 +430,11 @@ test("an English variant updates only its translation and preserves the Czech ba
   assert.equal(saved.seoTitle, service.seoTitle);
   assert.equal(saved.translations.find(({ locale }) => locale === "CS")?.seoTitle, service.translations[0]?.seoTitle);
   assert.equal(saved.translations.find(({ locale }) => locale === "EN")?.seoTitle, draft.seoTitle);
+  for (const [index, faq] of saved.faqs.entries()) {
+    assert.equal(faq.question, service.faqs[index]?.question);
+    assert.equal(faq.answer, service.faqs[index]?.answer);
+    const englishFaq = faq.translations.find(({ locale }) => locale === "EN");
+    assert.equal(englishFaq?.question, draft.faqs[index]?.question);
+    assert.equal(englishFaq?.answer, draft.faqs[index]?.answer);
+  }
 });

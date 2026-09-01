@@ -1,12 +1,13 @@
 /**
  * Preview one Czech doctor-profile, diabetes-blog or tool metadata draft.
- * Doctor/blog apply is possible only after the clinical register is approved:
+ * Blog apply is possible only after the clinical register is approved:
  *
  * node --env-file=.env --import tsx scripts/patch-czechia-profile-blog-tool-seo-drafts.ts --only=doctor:dr-ahmed-maklad
  * node --env-file=.env --import tsx scripts/patch-czechia-profile-blog-tool-seo-drafts.ts --only=doctor:dr-ahmed-maklad --apply --approved-sha256=<hash> --reviewed-at=YYYY-MM-DD --reviewer-doctor-id=<id> --confirm=<token>
  *
- * Tool drafts are preview-only. Their Czech JSON source is shared by every
- * market's CS route, so promotion requires a cz/cs-only country-scoped frontend overlay.
+ * Doctor and tool drafts are preview-only. Doctor FAQs are global rather than
+ * market-scoped, and the doctor approval register cannot yet record both the
+ * profile/credential and governance approvals. Tool Czech JSON is also shared.
  */
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
@@ -20,7 +21,6 @@ import {
   CZECHIA_TOOL_SEO_DRAFTS,
   assertCzechiaBlogMetadataReadback,
   assertCzechiaClinicalPromotionGate,
-  assertCzechiaDoctorMetadataReadback,
   czechiaClinicalDraftApprovalSha256,
   czechiaClinicalDraftConfirmationToken,
   findCzechiaClinicalRegisterRow,
@@ -336,48 +336,6 @@ async function assertEligibleCzechReviewer(
   }
 }
 
-function protectedDoctorState(source: DoctorSource): string {
-  const translation = source.translations[0];
-  return JSON.stringify({
-    doctorId: source.doctorId,
-    countryId: source.countryId,
-    countryCode: source.country.code,
-    sortOrder: source.sortOrder,
-    marketActive: source.active,
-    chamberEntity: source.chamberEntity,
-    registrationUrl: source.registrationUrl,
-    division: source.division,
-    isVerified: source.isVerified,
-    verifiedAt: source.verifiedAt,
-    directorAccess: source.directorAccess,
-    marketCreatedAt: source.createdAt,
-    doctorCountryId: source.doctor.countryId,
-    fullName: source.doctor.fullName,
-    doctorBio: source.doctor.bio,
-    doctorTitle: source.doctor.title,
-    globalSeoTitle: source.doctor.seoTitle,
-    globalSeoDescription: source.doctor.seoDescription,
-    lastReviewedAt: source.doctor.lastReviewedAt,
-    medicalRegistrationUrl: source.doctor.medicalRegistrationUrl,
-    qualifications: source.doctor.qualifications,
-    languages: source.doctor.languages,
-    doctorActive: source.doctor.active,
-    bookingPausedFrom: source.doctor.bookingPausedFrom,
-    bookingPausedUntil: source.doctor.bookingPausedUntil,
-    bookingPauseReason: source.doctor.bookingPauseReason,
-    doctorUpdatedAt: source.doctor.updatedAt,
-    doctorCreatedAt: source.doctor.createdAt,
-    registrationNumber: source.registrationNumber,
-    credentials: source.doctor.credentials,
-    specialties: source.doctor.specialties,
-    assignments: source.doctor.assignedServices,
-    availabilities: source.doctor.availabilities,
-    translatedTitle: translation?.title,
-    translatedBio: translation?.bio,
-    faqs: source.doctor.faqs,
-  });
-}
-
 function protectedBlogState(source: BlogSource): string {
   return JSON.stringify({
     id: source.id,
@@ -402,43 +360,6 @@ function protectedBlogState(source: BlogSource): string {
     translations: source.translations,
     countries: source.countries,
   });
-}
-
-async function applyDoctor(
-  draft: CzechiaDoctorProfileSeoDraft,
-  options: CzechiaProfileBlogToolPatchOptions,
-): Promise<void> {
-  await prisma.$transaction(
-    async (transaction) => {
-      await assertEligibleCzechReviewer(transaction, options.reviewerDoctorId!);
-      const before = await loadDoctorSource(transaction, draft);
-      assertSourceHash(draft, before);
-      const protectedBefore = protectedDoctorState(before);
-      const result = await transaction.doctorMarketTranslation.updateMany({
-        where: {
-          id: draft.translationId,
-          doctorCountryId: draft.doctorCountryId,
-          locale: "CS",
-          updatedAt: new Date(draft.expectedTranslationUpdatedAt),
-        },
-        data: {
-          seoTitle: draft.desired.seoTitle,
-          seoDescription: draft.desired.seoDescription,
-          seoKeywords: [...draft.desired.seoKeywords],
-        },
-      });
-      if (result.count !== 1) throw new Error(`${draft.assetPath} changed after preview`);
-      const saved = await transaction.doctorCountry.findUniqueOrThrow({
-        where: { id: draft.doctorCountryId },
-        select: doctorSourceSelect,
-      });
-      if (protectedDoctorState(saved) !== protectedBefore) {
-        throw new Error(`${draft.assetPath} protected biography, credential or FAQ state changed`);
-      }
-      assertCzechiaDoctorMetadataReadback(draft, saved.translations[0]);
-    },
-    { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, maxWait: 10_000, timeout: 45_000 },
-  );
 }
 
 async function applyBlog(
@@ -521,13 +442,17 @@ export async function runCzechiaProfileBlogToolPatch(
     logger.log("DRY-RUN ONLY. No biography, credential, article body, FAQ or tool runtime copy changed.");
     return;
   }
+  if (draft.assetKind === "doctor") {
+    throw new Error(
+      "Doctor promotion is preview-only until FAQs are country-scoped and separate profile/credential plus clinical-governance approvals can be recorded",
+    );
+  }
   if (draft.assetKind === "tool") {
     throw new Error(
       "Tool promotion requires a reviewed cz/cs-only country-scoped frontend overlay; shared CS JSON will not be changed",
     );
   }
-  if (draft.assetKind === "doctor") await applyDoctor(draft, options);
-  else await applyBlog(draft, options);
+  await applyBlog(draft, options);
   logger.log(`APPLIED ${key(draft)} metadata only; protected content verified unchanged.`);
 }
 

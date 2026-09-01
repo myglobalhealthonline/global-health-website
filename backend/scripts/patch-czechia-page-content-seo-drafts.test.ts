@@ -12,8 +12,41 @@ import {
   parseCzechiaPageContentReviewDate,
   readClinicalRegisterStatus,
   runCzechiaPageContentSeoPatch,
+  storedValueEquals,
   type CzechiaPageContentPatchOptions,
 } from "./patch-czechia-page-content-seo-drafts.js";
+
+test("JSON readback ignores object key insertion order", () => {
+  assert.equal(
+    storedValueEquals(
+      { question: "Otázka", answer: "Odpověď" },
+      { answer: "Odpověď", question: "Otázka" },
+    ),
+    true,
+  );
+});
+
+test("reviewed PageContent body must already be sanitizer-safe", async () => {
+  const source = CZECHIA_PAGE_CONTENT_SEO_DRAFTS[3];
+  const page = seedPage(source);
+  const draft = {
+    ...draftFor(page, source),
+    copy: { ...source.copy, body: "<p>Safe</p><script>alert(1)</script>" },
+  } as CzechiaPageContentSeoDraft;
+  const database = fakeDatabase(page);
+
+  await assert.rejects(
+    runCzechiaPageContentSeoPatch(
+      database.client,
+      options(draft, false),
+      approvedRegister(draft.canonicalPath),
+      silentLogger,
+      [draft],
+    ),
+    /sanitizer changed the reviewed body/i,
+  );
+  assert.equal(database.transactionCount(), 0);
+});
 
 type FakePage = ReturnType<typeof seedPage>;
 type FakeClient = Parameters<typeof runCzechiaPageContentSeoPatch>[0];
@@ -294,7 +327,7 @@ test("a matching ID from another country aborts before any write", async () => {
 });
 
 test("apply changes only the allowlisted target translation fields", async () => {
-  const source = CZECHIA_PAGE_CONTENT_SEO_DRAFTS[2];
+  const source = CZECHIA_PAGE_CONTENT_SEO_DRAFTS[3];
   const page = seedPage(source);
   const draft = draftFor(page, source);
   const before = structuredClone(page);
@@ -317,7 +350,7 @@ test("apply changes only the allowlisted target translation fields", async () =>
   );
   assert.equal(after.heroImagePath, before.heroImagePath);
   assert.equal(after.ctaHref, before.ctaHref);
-  assert.deepEqual(after.translations[0]?.faq, before.translations[0]?.faq);
+  assert.deepEqual(after.translations[0]?.faq, draft.copy.faq);
   assert.equal(after.translations[0]?.seoTitle, draft.copy.seoTitle);
   assert.equal(after.translations[0]?.intro, draft.copy.intro);
 });

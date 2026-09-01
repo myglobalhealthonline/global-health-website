@@ -315,12 +315,16 @@ function assertSavedCopy(
   }
   for (const faqDraft of draft.faqs) {
     const faq = service.faqs.find(({ id }) => id === faqDraft.id);
+    const beforeFaq = before.faqs.find(({ id }) => id === faqDraft.id);
     const translated = faq?.translations.find(({ locale }) => locale === draft.locale);
+    const expectedBase = service.country.defaultLocale === draft.locale ? faqDraft : beforeFaq;
     if (
-      faq?.question !== faqDraft.question ||
-      faq.answer !== faqDraft.answer ||
-      (translated &&
-        (translated.question !== faqDraft.question || translated.answer !== faqDraft.answer))
+      !expectedBase ||
+      faq?.question !== expectedBase.question ||
+      faq.answer !== expectedBase.answer ||
+      !translated ||
+      translated.question !== faqDraft.question ||
+      translated.answer !== faqDraft.answer
     ) {
       throw new Error(`Verification failed: ${draft.slug} FAQ ${faqDraft.id} does not match`);
     }
@@ -481,16 +485,19 @@ export async function runCzechiaSeoServicePatch(
     for (const faqDraft of prepared.faqs) {
       const faq = locked.faqs.find(({ id }) => id === faqDraft.id)!;
       const translationRow = faq.translations.find(({ locale }) => locale === prepared.locale);
-      await tx.serviceFaq.update({
-        where: { id: faq.id },
-        data: { question: faqDraft.question, answer: faqDraft.answer },
-      });
-      if (translationRow) {
-        await tx.serviceFaqTranslation.update({
-          where: { id: translationRow.id },
+      if (!translationRow) {
+        throw new Error(`Refusing to apply: ${prepared.slug} missing ${prepared.locale} FAQ translation`);
+      }
+      if (locked.country.defaultLocale === prepared.locale) {
+        await tx.serviceFaq.update({
+          where: { id: faq.id },
           data: { question: faqDraft.question, answer: faqDraft.answer },
         });
       }
+      await tx.serviceFaqTranslation.update({
+        where: { id: translationRow.id },
+        data: { question: faqDraft.question, answer: faqDraft.answer },
+      });
     }
 
     const saved = await readService(tx, prepared);

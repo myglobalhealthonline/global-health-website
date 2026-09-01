@@ -56,6 +56,7 @@ import {
   sortServiceDoctorSelectionsByBookability,
 } from "@/lib/content/service-doctor-selection";
 import { getBookabilityActionProps } from "@/lib/content/bookability-presentation";
+import { countryGpFeature3Subtitle } from "@/lib/content/country-gp-copy";
 import type { BookabilitySummary } from "@/lib/content/get-country-collections";
 
 type Params = { country: string; lang: string };
@@ -339,7 +340,7 @@ export default async function CountryLangGeneralConsultationPage({
           {
             icon: <Clock className="size-[18px]" strokeWidth={2} aria-hidden />,
             title: gp.hero.feature3Title,
-            subtitle: gp.hero.feature3Subtitle,
+            subtitle: countryGpFeature3Subtitle(code, lang, gp.hero.feature3Subtitle),
           },
         ]}
         trustStats={[
