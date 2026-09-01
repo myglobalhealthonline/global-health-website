@@ -7046,8 +7046,9 @@ The same guarded path corrected three retired `808 200 204` list items inside th
 single published Portugal medical-disclaimer record and advanced its public revision
 metadata to version 2, a September 2026 visible update date and the correction-time
 publication timestamp. Production database and public backend API readbacks show
-`1411`, no retired 808 contact and the new revision metadata; the frontend render
-remains on its pre-write tagged cache until revalidation or deployment.
+`1411`, no retired 808 contact and the new revision metadata. The rendered frontend
+on deployment `5b19ccba9512ef1ac5a7d2e62c447b578db267ac` returned the same safe contact,
+version 2 and September 2026 date with no retired 808 value.
 
 The four affected doctor pages still contain `1024` in protected biography fields.
 Those fields, and all credentials, registrations, specialties and qualifications,
