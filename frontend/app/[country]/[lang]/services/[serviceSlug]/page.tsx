@@ -60,7 +60,10 @@ import { isToolMarket } from "@/lib/tools/markets";
 import { listRelatedBlogPosts } from "@/lib/content/get-public-blog";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
-import { buildLocalizedInsuranceLine } from "@/lib/content/insurance-seo-line";
+import {
+  buildLocalizedInsuranceLine,
+  composeServiceMetaDescription,
+} from "@/lib/content/insurance-seo-line";
 import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { DoctifyWidgetLazy as DoctifyWidget } from "@/components/sections/DoctifyReviewsLazy";
 import { SectionSeam } from "@/components/ui/SectionSeam";
@@ -204,9 +207,7 @@ export async function generateMetadata({
     lang as LocaleCode,
     loadLocaleBundle(lang as LocaleCode).common.serviceDetailPage.insuranceAvailability,
   );
-  const description = insuranceLine
-    ? `${baseDescription} ${insuranceLine}`.slice(0, 320)
-    : baseDescription;
+  const description = composeServiceMetaDescription(baseDescription, insuranceLine, code, lang);
   const metadata = buildPublicMetadata({
     path: `/${country}/${lang}/services/${serviceSlug}`,
     title,

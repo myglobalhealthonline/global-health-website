@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { buildLocalizedInsuranceLine } from "./insurance-seo-line";
+import {
+  buildLocalizedInsuranceLine,
+  composeServiceMetaDescription,
+} from "./insurance-seo-line";
 
 const PT = "Aceitamos também {list} para este serviço.";
 const EN = "We also accept {list} for this service.";
@@ -32,5 +35,37 @@ describe("buildLocalizedInsuranceLine", () => {
   it("falls back to a comma join instead of throwing on a bad locale tag", () => {
     const line = buildLocalizedInsuranceLine(["A", "B"], "not a locale" as never, EN);
     expect(line).toBe("We also accept A, B for this service.");
+  });
+});
+
+describe("composeServiceMetaDescription", () => {
+  it("keeps clinically approved Portugal metadata exact", () => {
+    expect(
+      composeServiceMetaDescription(
+        "Approved clinical metadata.",
+        "Aceitamos também Medicare para este serviço.",
+        "pt",
+        "pt",
+      ),
+    ).toBe("Approved clinical metadata.");
+  });
+
+  it("retains the existing insurance suffix outside the approved Portugal locale", () => {
+    expect(
+      composeServiceMetaDescription(
+        "Service metadata.",
+        "We also accept Insurer for this service.",
+        "ie",
+        "en",
+      ),
+    ).toBe("Service metadata. We also accept Insurer for this service.");
+    expect(
+      composeServiceMetaDescription(
+        "Service metadata.",
+        "We also accept Insurer for this service.",
+        "pt",
+        "en",
+      ),
+    ).toBe("Service metadata. We also accept Insurer for this service.");
   });
 });
