@@ -145,8 +145,9 @@ token and credential-free production database identity, then used an optimistic
 Serializable transaction and exact readback. Post-write dry runs returned
 `already applied`, and cache-bypassed public reads returned HTTP 200 with the new
 answers. The public backend legal-document readback returns version 2, September 2026,
-`1411` and no retired 808 contact; the rendered frontend awaits its tagged-cache refresh.
-The sanitized receipt is
+`1411` and no retired 808 contact. The rendered frontend on deployment
+`5b19ccba9512ef1ac5a7d2e62c447b578db267ac` returned the same revision and contact,
+with no retired 808 value. The sanitized receipt is
 `raw/production-write-receipt-2026-09-01-faq-safety.json`.
 
 The source assets that could reintroduce those FAQ/disclaimer contacts now use `1411`

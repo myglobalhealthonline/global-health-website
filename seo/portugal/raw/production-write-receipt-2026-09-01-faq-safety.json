@@ -81,7 +81,12 @@
     "public_backend_disclaimer_has_old_808": false,
     "public_backend_disclaimer_version": 2,
     "public_backend_disclaimer_has_september_2026": true,
-    "frontend_disclaimer_cache_refresh_pending": true,
+    "frontend_disclaimer_cache_refresh_pending": false,
+    "frontend_disclaimer_deployment": "5b19ccba9512ef1ac5a7d2e62c447b578db267ac",
+    "frontend_disclaimer_has_1411": true,
+    "frontend_disclaimer_has_old_808": false,
+    "frontend_disclaimer_version_2": true,
+    "frontend_disclaimer_has_september_2026": true,
     "protected_doctor_biography_1024_hold": "The four doctor pages still contain 1024 in existing biography fields. Those fields were not changed because profile edits require the doctor-profile approval workflow. No qualification, credential, registration, specialty or biography fact changed."
   }
 }
