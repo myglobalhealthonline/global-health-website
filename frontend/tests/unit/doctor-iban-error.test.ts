@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   IBAN_EXAMPLES,
   ibanError,
+  ibanWarning,
 } from "../../app/(portal)/(doctor)/doctor/profile/_components/form-helpers";
 
 const strings = {
@@ -30,15 +31,29 @@ describe("ibanError", () => {
     expect(ibanError("NO93 8601 1117 947", strings)).toBeNull();
   });
 
-  it("still rejects a wrong-length IBAN via the checksum", () => {
+  it("does not block on failed check digits — it warns", () => {
     // Real doctor report: a Novo Banco PT IBAN entered three characters short.
-    // Right shape, wrong length — rejected by mod-97 rather than by a length
-    // table, so it can never be waved through.
-    expect(ibanError("PT50007000000634495123", strings)).toBe("checksum");
+    const short = "PT50007000000634495123";
+    expect(ibanError(short, strings)).toBeNull();
+    expect(ibanWarning(short, strings)).toBe("checksum");
+
+    // A single mistyped digit in a real BR IBAN — the case that locked a
+    // Brazilian doctor out of saving their bank details.
+    const typo = "BR5160746948026220002079161C1";
+    expect(ibanError(typo, strings)).toBeNull();
+    expect(ibanWarning(typo, strings)).toBe("checksum");
   });
 
-  it("rejects right-length typos", () => {
-    expect(ibanError("PT50000201231234567890155", strings)).toBe("checksum");
+  it("does not warn on a valid IBAN", () => {
+    expect(ibanWarning("BR5160746948026220002079160C1", strings)).toBeNull();
+    expect(ibanWarning("PT50 0002 0123 1234 5678 9015 4", strings)).toBeNull();
+    expect(ibanWarning("   ", strings)).toBeNull();
+  });
+
+  it("stays silent when a hard error is already showing", () => {
+    // No point saying "check digits" about something that isn't an IBAN.
+    expect(ibanWarning("PT50", strings)).toBeNull();
+    expect(ibanWarning("P150007000000634495123", strings)).toBeNull();
   });
 
   it("checks the IBAN itself, not the market it is saved under", () => {
