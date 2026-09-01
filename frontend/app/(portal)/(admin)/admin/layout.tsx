@@ -18,6 +18,7 @@ import {
   type AdminNotificationDto,
 } from "@/lib/admin/admin-api";
 import { AdminShell, type NavBadge } from "./_components/admin-shell";
+import { PortalDomGuards } from "@/app/_components/RootDocument";
 import {
   profileChangeFieldLabel,
   serviceKindLabel,
@@ -274,6 +275,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       notifications={notifications}
       navBadges={navBadges}
     >
+      <PortalDomGuards />
       {children}
     </AdminShell>
   );

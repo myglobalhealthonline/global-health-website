@@ -36,6 +36,7 @@ import {
 } from "@/lib/api/doctor-api";
 import { ComplianceBanner } from "./_components/compliance-banner";
 import { PortalShell, type PortalNavItem, type PortalNavGroup } from "@/components/portal-shell";
+import { PortalDomGuards } from "@/app/_components/RootDocument";
 import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
 import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -290,6 +291,7 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
         ) : null
       }
     >
+      <PortalDomGuards />
       {children}
       <UnsavedChangesGuard
         i18n={{

@@ -40,6 +40,7 @@ import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { supportedLocaleCodes } from "@/lib/i18n/types";
 import { UnsavedChangesGuard } from "@/components/UnsavedChangesGuard";
+import { PortalDomGuards } from "@/app/_components/RootDocument";
 
 /**
  * Patient portal layout. Reuses `PortalShell` so admin / doctor / patient
@@ -185,6 +186,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
         storageKey: "gh_tour_done_patient",
       }}
     >
+      <PortalDomGuards />
       {children}
       <UnsavedChangesGuard
         i18n={{

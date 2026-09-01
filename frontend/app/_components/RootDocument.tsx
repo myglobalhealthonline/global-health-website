@@ -1,7 +1,50 @@
 import type { ReactNode } from "react";
+import { headers } from "next/headers";
 import { CookieBanner } from "@/components/compliance/CookieBanner";
 import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import "../globals.css";
+
+/**
+ * Pre-hydration document guards, one shared source so the copies can't drift:
+ *
+ * 1. `.js` on <html> — flags JS-enabled visitors for `.gh-reveal-pending`.
+ * 2. removeChild/insertBefore guards — fix the Chrome Google-Translate crash
+ *    (facebook/react#11538): Translate wraps every text node in <font> tags,
+ *    so React's next conditional render calls removeChild/insertBefore
+ *    against a parent the node no longer belongs to, throws NotFoundError,
+ *    and the nearest error boundary replaces the page ("Something went
+ *    wrong"). The guard returns the node instead of throwing — worst case a
+ *    stale translated text fragment lingers, but state updates and
+ *    navigation keep working. Must be a Node.prototype patch (not
+ *    translate="no"): users translating a page still get widgets translated.
+ *
+ * `__ghDomGuards` makes it idempotent — on routes where both the RootDocument
+ * copy and the nonced portal copy execute (memed CSP), the patch applies once.
+ */
+export const DOM_GUARDS_JS =
+  "document.documentElement.classList.add('js');" +
+  "if(!window.__ghDomGuards&&typeof Node==='function'&&Node.prototype){" +
+  "window.__ghDomGuards=1;" +
+  "var rc=Node.prototype.removeChild;" +
+  "Node.prototype.removeChild=function(c){if(c&&c.parentNode!==this){return c;}return rc.apply(this,arguments);};" +
+  "var ib=Node.prototype.insertBefore;" +
+  "Node.prototype.insertBefore=function(n,r){if(r&&r.parentNode!==this){return this.appendChild(n);}return ib.apply(this,arguments);};" +
+  "}";
+
+/**
+ * The same guards, stamped with the request's CSP nonce, for the four
+ * portal surfaces (/account, /admin, /doctor, /corporate) whose
+ * `script-src 'nonce-…' 'strict-dynamic'` policy (proxy.ts nonceCsp) blocks
+ * the un-nonced RootDocument copy — Next only auto-nonces its own framework
+ * scripts, not JSX-authored ones. Mounted by those four layouts, which are
+ * already dynamic (cookies()), so headers() costs nothing extra. On
+ * /doctor/appointments/* (memedWidgetCsp — no nonce header) the attribute is
+ * simply absent and 'unsafe-inline' admits the script.
+ */
+export async function PortalDomGuards() {
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
+  return <script nonce={nonce} dangerouslySetInnerHTML={{ __html: DOM_GUARDS_JS }} />;
+}
 
 /**
  * The shared `<html>`/`<body>` document shell.
@@ -41,12 +84,11 @@ export function RootDocument({
             entry-animation content pre-paint, avoiding the visible->hidden->
             visible flash from RevealOnScroll/HeroReveal mounting after
             content is already on screen. No-JS visitors never get this
-            class, so SSR content stays fully visible (SEO/no-JS safe). */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: "document.documentElement.classList.add('js')",
-          }}
-        />
+            class, so SSR content stays fully visible (SEO/no-JS safe).
+            Also carries the Google-Translate DOM guards — see DOM_GUARDS_JS.
+            CSP-blocked on the nonce'd portal routes; PortalDomGuards is the
+            nonced copy those layouts mount. */}
+        <script dangerouslySetInnerHTML={{ __html: DOM_GUARDS_JS }} />
       </head>
       {/* No sitewide Doctify preconnect: the widget is intersection- and
           consent-gated (DoctifyReviewsLazy) and often never loads, so a
