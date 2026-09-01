@@ -38,6 +38,7 @@ import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { buildBookHref } from "@/lib/routing/book-href";
 import { irelandStaticPageSeo } from "@/lib/content/ireland-static-page-seo";
+import { czechiaStaticPageSeo } from "@/lib/content/czechia-static-page-seo";
 
 export const revalidate = 300;
 
@@ -55,7 +56,12 @@ function resolve(country: string, lang: string) {
   const countryName = getCommonLocale(lang as LocaleCode).countryNames?.[code] ?? config.name;
   const baseCopy = resolveContactCopy(contact, lang as LocaleCode, countryName, t);
   const irelandSeo = code === "ie" ? irelandStaticPageSeo("CONTACT", lang as LocaleCode) : null;
-  const copy = irelandSeo ? { ...baseCopy, ...irelandSeo } : baseCopy;
+  const czechiaSeo = czechiaStaticPageSeo(code, lang, "contact");
+  const copy = czechiaSeo
+    ? { ...baseCopy, ...czechiaSeo }
+    : irelandSeo
+      ? { ...baseCopy, ...irelandSeo }
+      : baseCopy;
   return { code, config, contact, copy, countryName, t };
 }
 

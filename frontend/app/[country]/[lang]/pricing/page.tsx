@@ -23,6 +23,7 @@ import { Stethoscope, Calendar, ShieldCheck, CreditCard, Zap, BadgeCheck } from 
 import { DoctifyWidgetLazy as DoctifyWidget } from "@/components/sections/DoctifyReviewsLazy";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { irelandStaticPageSeo } from "@/lib/content/ireland-static-page-seo";
+import { czechiaStaticPageSeo } from "@/lib/content/czechia-static-page-seo";
 
 type Params = { country: string; lang: string };
 
@@ -38,10 +39,11 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const { subscription, common } = loadLocaleBundle(lang as LocaleCode);
   const countryName = common.countryNames?.[code] ?? config.name;
   const irelandSeo = code === "ie" ? irelandStaticPageSeo("PRICING", lang as LocaleCode) : null;
+  const czechiaSeo = czechiaStaticPageSeo(code, lang, "pricing");
 
-  const title = irelandSeo?.title ?? `${subscription.pricing.heading} · ${countryName} · ${SITE_NAME}`;
+  const title = czechiaSeo?.title ?? irelandSeo?.title ?? `${subscription.pricing.heading} · ${countryName} · ${SITE_NAME}`;
   const description =
-    irelandSeo?.description ?? subscription.pricing.lede.replace("{country}", countryName);
+    czechiaSeo?.description ?? irelandSeo?.description ?? subscription.pricing.lede.replace("{country}", countryName);
   return buildPublicMetadata({
     path: `/${country}/${lang}/pricing`,
     title,
@@ -82,6 +84,7 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
   const hiw = subscription.howItWorks;
   const pp = c.pricingPage;
   const irelandSeo = code === "ie" ? irelandStaticPageSeo("PRICING", lang as LocaleCode) : null;
+  const czechiaSeo = czechiaStaticPageSeo(code, lang, "pricing");
 
   return (
     <>
@@ -113,9 +116,9 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
         watermark={t.watermark}
         countryCode={config.code}
         countryLabel={t.countryLabel.replace("{country}", countryName)}
-        titleLead={irelandSeo?.h1 ?? t.titleLead}
-        titleAccent={irelandSeo ? "" : t.titleAccent}
-        titleTrail={irelandSeo ? "" : t.titleTrail}
+        titleLead={czechiaSeo?.h1 ?? irelandSeo?.h1 ?? t.titleLead}
+        titleAccent={czechiaSeo || irelandSeo ? "" : t.titleAccent}
+        titleTrail={czechiaSeo || irelandSeo ? "" : t.titleTrail}
         lede={t.lede.replace("{country}", countryName)}
         ctaLabel={t.ctaLabel}
         ctaHref="#plans"

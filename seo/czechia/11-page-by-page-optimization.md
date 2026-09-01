@@ -63,8 +63,8 @@ Two pages have complete review-gated repository drafts, not just matrix recommen
 
 | URL | Draft coverage | Approval hash | Production state |
 | --- | --- | --- | --- |
-| `/czechia/cs/services/neschopenka-online` | title, meta, H1, summary, hero, body, CTA, seven existing FAQs, ČSSZ link, emergency and explainer links | `e181f41e9b632af577fff9be1302c7b80a44da3c47be4ab884eaa4901c538d65` | blocked by null EN/PT/ES/RO/DE CTA fallbacks; clinical review and owner authorization also required |
-| `/czechia/cs/services/obnoveni-lecby` | title, meta, H1, summary, hero, body, CTA, six existing FAQs, ePreskripce link, emergency and GP links | `d085e67bd02effa715f64236adb7b03c76390fba35b8a110496a8feea0a4c647` | blocked by null EN/PT/ES/RO/DE CTA fallbacks; clinical review and owner authorization also required |
+| `/czechia/cs/services/neschopenka-online` | title, meta, H1, summary, hero, body, CTA, seven existing FAQs, ČSSZ link, emergency and explainer links | `e181f41e9b632af577fff9be1302c7b80a44da3c47be4ab884eaa4901c538d65` | owner-authorized; blocked by null EN/PT/ES/RO/DE CTA fallbacks and pending clinical review |
+| `/czechia/cs/services/obnoveni-lecby` | title, meta, H1, summary, hero, body, CTA, six existing FAQs, ePreskripce link, emergency and GP links | `d085e67bd02effa715f64236adb7b03c76390fba35b8a110496a8feea0a4c647` | owner-authorized; blocked by null EN/PT/ES/RO/DE CTA fallbacks and pending clinical review |
 
 The guarded updater defaults to dry-run, verifies exact source fingerprints and refuses an apply when non-Czech fallback content would change.
 
@@ -81,4 +81,4 @@ The comparison preserves names, registrations, qualifications, languages, prices
 
 ## Implementation boundary
 
-This is a complete local review and optimization package, not a production CMS write. Rows with `FAQs optimized: no` have a reviewed disposition but no executable FAQ replacement. Rows marked `local_*_pending_clinical_review` contain editorial direction but cannot be applied until the named review gate is satisfied. The two full drafts are additionally blocked by unsafe cross-locale CTA fallback behavior. No production write, publish, commit, push or deployment was performed.
+The approved metadata and H1 changes for all 14 non-clinical static pages are implemented in a Czechia-Czech-only frontend overlay. The 31 eligible clinical rows remain exact matrix-level drafts that no runtime source consumes; their clinical-register entries are still `pending`. Rows with `FAQs optimized: no` have no executable FAQ replacement. The two full service drafts remain blocked by unsafe cross-locale CTA fallback behavior and clinical review. The three measurement holds and two reviewed-no-change rows remain untouched. No production CMS/database write, publish, push or deployment was performed.

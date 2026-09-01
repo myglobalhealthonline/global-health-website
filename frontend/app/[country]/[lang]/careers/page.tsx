@@ -20,6 +20,7 @@ import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
+import { czechiaStaticPageSeo } from "@/lib/content/czechia-static-page-seo";
 
 export const revalidate = 60;
 const CAREERS_EMAIL = "careers@myglobalhealth.online";
@@ -51,9 +52,10 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const { country, lang } = await params;
   const resolved = await resolve(country, lang);
   if (!resolved) return { title: SITE_NAME };
+  const czechiaSeo = czechiaStaticPageSeo(resolved.code, lang, "careers");
   return buildPublicMetadata({
-    path: `/${country}/${lang}/careers`, title: fillTemplate(resolved.t.titleTemplate, resolved.vars),
-    description: fillTemplate(resolved.t.descriptionTemplate, resolved.vars), brandSuffix: false,
+    path: `/${country}/${lang}/careers`, title: czechiaSeo?.title ?? fillTemplate(resolved.t.titleTemplate, resolved.vars),
+    description: czechiaSeo?.description ?? fillTemplate(resolved.t.descriptionTemplate, resolved.vars), brandSuffix: false,
     type: "website", kind: "corporate", subtitle: resolved.countryName,
     sourceImage: "/images/stock/doctors.jpg", imageAlt: resolved.t.heroImageAlt,
     keywords: CAREERS_KEYWORDS[resolved.code], locale: ogLocales(resolved.config, lang).locale,

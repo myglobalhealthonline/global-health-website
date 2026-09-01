@@ -18,6 +18,7 @@ import type { CommonLocale, LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
+import { czechiaStaticPageSeo } from "@/lib/content/czechia-static-page-seo";
 
 export const revalidate = 300;
 
@@ -54,8 +55,9 @@ export async function generateMetadata({
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
   const t = loadLocaleBundle(lang as LocaleCode).common.legalPage;
-  const title = `${t.heroTitle} ${t.heroAccent} · ${config.name}`;
-  const description = t.heroBody.replace("{site}", SITE_NAME).replace("{country}", config.name);
+  const czechiaSeo = czechiaStaticPageSeo(code, lang, "legal");
+  const title = czechiaSeo?.title ?? `${t.heroTitle} ${t.heroAccent} · ${config.name}`;
+  const description = czechiaSeo?.description ?? t.heroBody.replace("{site}", SITE_NAME).replace("{country}", config.name);
   return buildPublicMetadata({
     path: `/${country}/${lang}/legal`,
     title,
@@ -221,6 +223,7 @@ export default async function CountryLegalIndexPage({
 
   const { common: c } = loadLocaleBundle(lang as LocaleCode);
   const t = c.legalPage;
+  const czechiaSeo = czechiaStaticPageSeo(code, lang, "legal");
   const typeLabels = legalTypeLabels(t);
 
   const legal = await getCountryLegal(code);
@@ -253,8 +256,8 @@ export default async function CountryLegalIndexPage({
       />
       <GH2CompactHero
         eyebrow={t.heroEyebrow.replace("{country}", config.name)}
-        title={t.heroTitle}
-        accent={t.heroAccent}
+        title={czechiaSeo?.h1 ?? t.heroTitle}
+        accent={czechiaSeo ? "" : t.heroAccent}
         watermark={t.heroWatermark}
         body={t.heroBody.replace("{site}", SITE_NAME).replace("{country}", config.name)}
       />

@@ -45,6 +45,7 @@ import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { buildBookHref } from "@/lib/routing/book-href";
 import { irelandStaticPageSeo } from "@/lib/content/ireland-static-page-seo";
+import { czechiaStaticPageSeo } from "@/lib/content/czechia-static-page-seo";
 
 export const revalidate = 300;
 
@@ -77,13 +78,18 @@ async function resolve(country: string, lang: string) {
   const countryName = getCommonLocale(lang as LocaleCode).countryNames?.[code] ?? config.name;
   const baseCopy = resolveAboutCopy(config, contact, about, t, countryName);
   const irelandSeo = code === "ie" ? irelandStaticPageSeo("ABOUT", lang as LocaleCode) : null;
+  const czechiaSeo = czechiaStaticPageSeo(code, lang, "about");
   return {
     code,
     config,
     contact,
     about,
     countryName,
-    copy: irelandSeo ? { ...baseCopy, ...irelandSeo } : baseCopy,
+    copy: czechiaSeo
+      ? { ...baseCopy, ...czechiaSeo }
+      : irelandSeo
+        ? { ...baseCopy, ...irelandSeo }
+        : baseCopy,
     t,
   };
 }
@@ -98,7 +104,7 @@ export async function generateMetadata({
   if (!resolved) return { title: SITE_NAME };
   const { config, copy, countryName } = resolved;
 
-  return buildPublicMetadata({
+  const metadata = buildPublicMetadata({
     path: `/${country}/${lang}/about`,
     title: copy.title,
     description: copy.description,
@@ -113,6 +119,8 @@ export async function generateMetadata({
     locale: ogLocales(config, lang).locale,
     languages: hreflangAlternates(config, "/about"),
   });
+  const czechiaSeo = czechiaStaticPageSeo(resolved.code, lang, "about");
+  return czechiaSeo ? { ...metadata, title: { absolute: czechiaSeo.title } } : metadata;
 }
 
 export default async function CountryAboutPage({ params }: { params: Promise<Params> }) {

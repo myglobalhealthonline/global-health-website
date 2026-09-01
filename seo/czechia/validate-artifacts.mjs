@@ -79,6 +79,12 @@ assert.equal((await readdir(new URL("content-briefs/", root))).filter((name) => 
 
 const matrixText = await read("page-by-page-completion-matrix.csv");
 const matrix = records(matrixText);
+const implementationLog = await read("09-implementation-log.md");
+assert.match(
+  implementationLog,
+  /Owner implementation authorization recorded: 2026-09-01, approved baseline `8af7a7e7`/,
+  "owner implementation authorization is not recorded",
+);
 assert.equal(matrix.length, 50);
 assert.equal(new Set(matrix.map(({ url }) => url)).size, 50);
 const expectedMatrixUrls = [
@@ -131,7 +137,8 @@ for (const [field, values] of Object.entries(allowedFlags)) {
   assert.ok(matrix.every((row) => values.has(row[field])), `invalid ${field} value`);
 }
 const allowedStatuses = new Set([
-  "full_local_draft_blocked_cta_fallback_pending_clinical_review_and_owner_authorization",
+  "implemented_in_code_pending_deployment",
+  "full_local_draft_blocked_cta_fallback_pending_clinical_review",
   "local_copy_draft_pending_clinical_and_native_review",
   "local_copy_draft_pending_clinical_review",
   "local_metadata_and_faq_draft_pending_clinical_review",
@@ -143,6 +150,14 @@ const allowedStatuses = new Set([
   "reviewed_no_change",
 ]);
 assert.ok(matrix.every(({ implementation_status }) => allowedStatuses.has(implementation_status)));
+assert.equal(
+  matrix.filter(
+    ({ clinical_review_required, implementation_status }) =>
+      clinical_review_required === "no" && implementation_status === "implemented_in_code_pending_deployment",
+  ).length,
+  14,
+  "all 14 non-clinical pages must record local code implementation",
+);
 
 const exactFaqDraftUrls = [
   "https://www.myglobalhealth.online/czechia/cs/services/neschopenka-online",

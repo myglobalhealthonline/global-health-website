@@ -15,6 +15,7 @@ import { getCountryByCode, type CountryCode } from "@/data/countries";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
 import { sentenceCaseIfShouting } from "@/lib/text/sentence-case";
+import { czechiaStaticPageSeo } from "@/lib/content/czechia-static-page-seo";
 
 type BlogIndexRouteParams = {
   /** Country slug from the route (e.g. "ireland"). Absent on the bare
@@ -47,6 +48,7 @@ export async function renderBlogIndexPage({ countrySlug, lang, page }: BlogIndex
   const bp = common.blogPage;
   const { home } = loadLocaleBundle(locale);
   const blogI18n = home.blog;
+  const czechiaSeo = czechiaStaticPageSeo(countryCode, locale, "blog");
 
   // "Back to home": inside a country context, go straight to that
   // country's home. On the bare index, fall back to the visitor's
@@ -133,8 +135,8 @@ export async function renderBlogIndexPage({ countrySlug, lang, page }: BlogIndex
       <PageHero
         watermark={bp.heroWatermark ?? "Blog"}
         countryLabel={bp.heroCountryLabel ?? "Global Health · Blog"}
-        titleLead={bp.heroTitleLead ?? "Health guides"}
-        titleAccent={bp.heroTitleAccent ?? "articles."}
+        titleLead={czechiaSeo?.h1 ?? bp.heroTitleLead ?? "Health guides"}
+        titleAccent={czechiaSeo ? "" : bp.heroTitleAccent ?? "articles."}
         lede={bp.heroLede ?? "Evidence-based guides written and reviewed by our medical team. No ads, no fluff."}
         ctaLabel={bp.heroCta ?? "Browse articles"}
         ctaHref="#articles"

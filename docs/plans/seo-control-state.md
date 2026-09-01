@@ -38,12 +38,16 @@ ledger and historical evidence follow from §0.
 - Repeated same-day, instant-confirmation and automatic-document wording is flagged
   for safe clinical-discretion/live-calendar replacement. Doctor bios and all verified
   clinical, registration, pricing, formula and legal facts remain unchanged.
-- **Production remains unchanged.** Apart from the two guarded service drafts in
-  §27.14, recommendations are local matrix copy. Clinical/legal/native review and
-  separate owner authorization still apply. Only those two service drafts have exact
-  FAQ replacements; the remaining affected FAQ rows are marked incomplete, and every
-  one of the 36 clinical-gated rows has a pending register entry. The two full drafts
-  also remain blocked by null cross-locale CTA fallbacks. GP/24-7 and travel holds remain binding.
+- Owner implementation authorization for baseline `8af7a7e7` was recorded on
+  2026-09-01. The 14 non-clinical static rows now use a `cz` + `cs`-only frontend
+  overlay for the approved metadata and six changed H1s; other countries and locales
+  retain their existing sources. Legal bodies and unchanged H1s were not rewritten.
+- **Production remains unchanged.** The 31 eligible clinical recommendations remain
+  exact matrix-level drafts that runtime code does not consume, and every one of the
+  36 clinical-gated rows still has a pending register entry. Only the two guarded
+  service drafts in §27.14 have exact FAQ replacements; both remain blocked by
+  clinical review and null cross-locale CTA fallbacks. The three GP/24-7/travel holds
+  and two reviewed-no-change articles remain binding.
   Evidence: `seo/czechia/11-page-by-page-optimization.md` and
   `seo/czechia/page-by-page-completion-matrix.csv`.
 

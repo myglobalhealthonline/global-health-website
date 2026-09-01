@@ -30,6 +30,7 @@ import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { EU_TRADE_MARK_URL } from "@/lib/brand/trademark";
+import { czechiaStaticPageSeo } from "@/lib/content/czechia-static-page-seo";
 
 export const revalidate = 300;
 
@@ -88,11 +89,12 @@ export async function generateMetadata({
   const resolved = await resolve(country, lang);
   if (!resolved) return { title: SITE_NAME };
   const { config, countryName, t, vars } = resolved;
+  const czechiaSeo = czechiaStaticPageSeo(resolved.code, lang, "press");
 
   return buildPublicMetadata({
     path: `/${country}/${lang}/press`,
-    title: fillTemplate(t.titleTemplate, vars),
-    description: fillTemplate(t.descriptionTemplate, vars),
+    title: czechiaSeo?.title ?? fillTemplate(t.titleTemplate, vars),
+    description: czechiaSeo?.description ?? fillTemplate(t.descriptionTemplate, vars),
     brandSuffix: false,
     type: "website",
     kind: "corporate",

@@ -41,6 +41,7 @@ import { BookingSectionHeader } from "./_components/booking-section-header";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
+import { czechiaStaticPageSeo } from "@/lib/content/czechia-static-page-seo";
 
 type Params = { country: string; lang: string };
 type SearchParams = {
@@ -93,8 +94,9 @@ export async function generateMetadata({
   }
 
   const { common } = loadLocaleBundle(lang as LocaleCode);
-  const title = `${common.bookPage.title} — ${config.name}`;
-  const description = common.bookPage.subtitle.replace("{country}", config.name);
+  const czechiaSeo = czechiaStaticPageSeo(code, lang, "book");
+  const title = czechiaSeo?.title ?? `${common.bookPage.title} — ${config.name}`;
+  const description = czechiaSeo?.description ?? common.bookPage.subtitle.replace("{country}", config.name);
   const metadata = buildPublicMetadata({
     path: `/${country}/${lang}/book`,
     title,
@@ -123,6 +125,7 @@ export default async function CountryLangBookPage({
   const { common: c } = loadLocaleBundle(lang as LocaleCode);
   const bf = c.bookingForm;
   const bp = c.bookPage;
+  const czechiaSeo = czechiaStaticPageSeo(code, lang, "book");
   // Started here, awaited where first needed below — lets the (independent)
   // `overlay` fetch on the non-GP path start without waiting on this one.
   const bookingRequirementsPromise = getPublicBookingRequirements(code);
@@ -406,7 +409,7 @@ export default async function CountryLangBookPage({
       <PortalReturnBand fromPortalParam={fromPortalParam} backLabel={bp.backToAccount} badgeLabel={bp.portalBadge} />
 
       <GH2FlowHeader
-        title={bp.title}
+        title={czechiaSeo?.h1 ?? bp.title}
         subtitle={bp.subtitle.replace("{country}", config.name)}
         activeStep={currentStep}
         steps={stepLabels}
@@ -565,11 +568,12 @@ async function GpBookingFlow({
   const langName = gpLanguageLabel(language);
   const steps = ["Language", bp.stepTime, bp.stepDetails];
   const homeHref = `/${country}/${lang}#same-day-booking`;
+  const czechiaSeo = czechiaStaticPageSeo(code, lang, "book");
 
   return (
     <>
       <GH2FlowHeader
-        title={bp.title}
+        title={czechiaSeo?.h1 ?? bp.title}
         subtitle={bp.subtitle.replace("{country}", countryName)}
         activeStep={valid ? 3 : 1}
         steps={steps}

@@ -9,6 +9,7 @@ import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { SITE_NAME } from "@/lib/constants";
+import { czechiaStaticPageSeo } from "@/lib/content/czechia-static-page-seo";
 
 type Params = { country: string; lang: string };
 
@@ -38,10 +39,11 @@ export async function generateMetadata({
     blog.heroLedeCountryTemplate?.replace("{country}", countryName) ??
     blog.heroLede ??
     "Evidence-based health guides written and reviewed by our medical team.";
+  const czechiaSeo = czechiaStaticPageSeo(code, lang, "blog");
   return buildPublicMetadata({
     path: `/${country}/${lang}/blog`,
-    title,
-    description,
+    title: czechiaSeo?.title ?? title,
+    description: czechiaSeo?.description ?? description,
     locale: ogLocales(config, lang).locale,
     kind: "article",
     subtitle: config.name,

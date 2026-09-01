@@ -26,6 +26,7 @@ import { getMarketFaq, marketFaqLocales } from "@/lib/content/country-faq";
 import { hreflangAlternates, indexableHreflangCluster, ogLocales } from "@/lib/seo/hreflang";
 import { buildPublicMetadata, noindexFollow } from "@/lib/seo/page-seo";
 import { buildBookHref } from "@/lib/routing/book-href";
+import { czechiaStaticPageSeo } from "@/lib/content/czechia-static-page-seo";
 
 export const revalidate = 300;
 
@@ -129,6 +130,7 @@ export async function generateMetadata({
   const resolved = await resolve(country, lang);
   if (!resolved) return { title: SITE_NAME };
   const { code, config, countryName, faq, marketFaq } = resolved;
+  const czechiaSeo = czechiaStaticPageSeo(code, lang, "faq");
 
   // Once a market has researched copy, only the locales that actually carry it
   // are publishable: the rest render a fallback language and must not claim to
@@ -143,8 +145,8 @@ export async function generateMetadata({
   const metadata = buildPublicMetadata({
     path: `/${country}/${lang}/faq`,
     // Country-qualified so the 33 variants don't ship one identical title.
-    title: `${faq.faq_section_title} — ${countryName}`,
-    description: `${countryName} — ${faq.hero_lede}`,
+    title: czechiaSeo?.title ?? `${faq.faq_section_title} — ${countryName}`,
+    description: czechiaSeo?.description ?? `${countryName} — ${faq.hero_lede}`,
     type: "website",
     kind: "page",
     subtitle: config.name,
@@ -169,6 +171,7 @@ export default async function CountryFAQPage({ params }: { params: Promise<Param
   const resolved = await resolve(country, lang);
   if (!resolved) notFound();
   const { config, countryName, locale, faq, aboutBundle, aboutT } = resolved;
+  const czechiaSeo = czechiaStaticPageSeo(resolved.code, lang, "faq");
 
   const base = `/${country}/${lang}`;
   const groups = faqGroups(resolved);
@@ -187,9 +190,9 @@ export default async function CountryFAQPage({ params }: { params: Promise<Param
       <PageHero
         countryCode={config.code}
         countryLabel={`${SITE_NAME} · ${countryName}`}
-        titleLead={faq.hero_title_lead}
-        titleAccent={faq.hero_title_accent}
-        titleTrail={faq.hero_title_trail}
+        titleLead={czechiaSeo?.h1 ?? faq.hero_title_lead}
+        titleAccent={czechiaSeo ? "" : faq.hero_title_accent}
+        titleTrail={czechiaSeo ? "" : faq.hero_title_trail}
         lede={faq.hero_lede}
         ctaLabel={faq.hero_cta}
         ctaHref={`${base}/contact`}

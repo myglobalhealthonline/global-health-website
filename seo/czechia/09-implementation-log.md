@@ -2,6 +2,21 @@
 
 Date: `2026-08-31`
 
+## Owner implementation authorization — 2026-09-01
+
+Owner implementation authorization recorded: 2026-09-01, approved baseline `8af7a7e7`.
+The authorization covers all 50 eligible URLs in the page-by-page matrix. It permits
+local implementation and a repository commit; it does not authorize deployment or a
+production CMS/database write.
+
+The 14 non-clinical static pages may use the approved metadata and H1 copy in code.
+For the 31 clinical draft pages, the matrix remains the exact review source and the
+clinical register remains `pending`; no runtime source consumes those proposals.
+The two full service drafts remain protected by their existing exact-copy hash,
+reviewer, date, confirmation-token and cross-locale fallback gates. The three
+measurement holds remain binding, the two reviewed articles remain unchanged, and
+doctor biographies and unsupported FAQ replacements remain unchanged.
+
 ## Implemented
 
 ### Locale-correct doctor profile links from blog pages
@@ -137,10 +152,32 @@ drafts and exact FAQ replacements. The other affected FAQ rows are explicitly ma
 `no` until page-level old/new copy passes clinical review. The 36 clinically gated
 matrix rows all have matching pending entries in `clinical-review-register.csv`.
 The rest are matrix-level local drafts or reviewed no-change dispositions. Both full
-service drafts remain blocked by null non-Czech CTA fallbacks as well as clinical
-review and owner authorization.
+service drafts remain blocked by null non-Czech CTA fallbacks and clinical review;
+owner implementation authorization was recorded on 2026-09-01.
 No production CMS/database write, legal-body edit, publication change, redirect,
-commit, push or deployment was performed.
+push or deployment was performed.
+
+## Approved static-page implementation — 2026-09-01
+
+The 14 non-clinical Czechia rows now use their approved title and description in
+frontend code. Blog, booking, contact, FAQ, legal hub and pricing also use the exact
+approved H1. A Czechia-only overlay returns copy only for country `cz` and locale
+`cs`; Ireland keeps its existing override and every other country-locale pair keeps
+its previous generated metadata and headings. Legal bodies and unchanged H1s remain
+source-owned.
+
+The page-by-page matrix records those 14 rows as
+`implemented_in_code_pending_deployment`. The remaining 36 clinically gated rows
+stay unpublished: 31 exact matrix-level drafts await clinical review, three remain
+measurement holds and two remain reviewed with no source change. Doctor biographies
+and unsupported FAQ replacements were not changed.
+
+Current verification passed the 16 route/output isolation tests, locale-key check,
+frontend TypeScript check, focused ESLint, Czech artifact validator and
+`git diff --check`. Independent code, TypeScript and security/clinical-gate reviews
+approved the final diff with no findings. The strict and degraded builds both compiled and type-checked;
+static generation could not finish while the local content API was unavailable, so
+the degraded run was stopped during repeated fallback fetches.
 
 ## Deployment verification
 

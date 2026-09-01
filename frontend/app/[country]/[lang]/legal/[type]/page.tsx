@@ -19,6 +19,7 @@ import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { indexableHreflangCluster } from "@/lib/seo/hreflang";
 import { buildPublicMetadata, noindexFollow } from "@/lib/seo/page-seo";
+import { czechiaStaticPageSeo } from "@/lib/content/czechia-static-page-seo";
 
 export const revalidate = 300;
 
@@ -62,7 +63,8 @@ export async function generateMetadata({
     }
     if (!documentTitle) return { title: SITE_NAME };
   }
-  const title = `${documentTitle} · ${config.name}`;
+  const czechiaSeo = czechiaStaticPageSeo(code, lang, `legal/${type}`);
+  const title = czechiaSeo?.title ?? `${documentTitle} · ${config.name}`;
   // International-locale batch (2026-08-09): the exact-locale → "en" → any-
   // published-row fallback (get-country-legal.ts) lets a type with only ONE
   // real translation 200 for every supported locale — verified live: 46 of
@@ -77,7 +79,7 @@ export async function generateMetadata({
   const metadata = buildPublicMetadata({
     path: `/${country}/${lang}/legal/${type}`,
     title,
-    description: `${documentTitle}. ${legalDescription}`,
+    description: czechiaSeo?.description ?? `${documentTitle}. ${legalDescription}`,
     locale: `${lang}_${code.toUpperCase()}`,
     subtitle: config.name,
     imageAlt: `${documentTitle} — ${config.name}`,
