@@ -51,6 +51,14 @@ ledger and historical evidence follow from §0.
   No service/profile metadata, bio, FAQ, clinical description, credential or
   availability claim was published. The Portugal hand-foot-mouth article's
   Ireland/HSE wording is held for clinical correction.
+- A 2026-09-02 read-only production gate check after a user-attested
+  `2026-09-01T18:30:00+02:00` Dr Tiago approval confirmed the blockers remain:
+  production still has one eligible operational reviewer user; Dr Tiago's active
+  verified Portugal doctor row still has no active Portugal specialty relation;
+  and the official OM source for registration `77986` lists
+  `TIAGO MIGUEL FALEIRO FIGUEIRA`, while the current production doctor identity
+  omits `Faleiro`. The clinical register therefore remains closed and no
+  production clinical write was attempted.
 - Portugal-only pricing and FAQ metadata, H1 and visible lede corrections are live.
   A cache-busted production readback on deployment
   `b0cebff87d49540ce3205c41adf45f65bf2dfa45` matched both targeted routes. The

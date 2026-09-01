@@ -173,3 +173,25 @@ specialty. Production also currently exposes only one eligible operational revie
 while the guard requires three distinct, active identities for clinician, compliance
 and content ownership. Exact dated approvals, official source references and approved
 copy hashes remain blank. No gate was weakened and no clinical sign-off was invented.
+
+## 2026-09-02 production gate verification after user-attested Dr Tiago approval
+
+The production writer was checked read-only against the current database and the
+official Ordem dos Médicos source after the user supplied a clinical approval
+timestamp of `2026-09-01 18:30 Europe/Prague`.
+
+The blockers are still real:
+
+- production currently exposes one eligible operational reviewer user:
+  `nauman test` (`ADMIN`);
+- Dr Tiago's active Portugal doctor row exists and is verified under OM `77986`,
+  but his only active specialty relation is `General practice` for Ireland, not
+  Portugal;
+- the official OM source now linked in `doctor-profile-fact-register.csv` lists
+  that registration as `TIAGO MIGUEL FALEIRO FIGUEIRA`, while the production
+  doctor identity is `Dr Tiago Miguel Figueira`.
+
+Because the guarded writer compares the clinical register, production doctor
+record and fact register exactly, the Portugal clinical batch remains blocked
+even with the user-attested approval. No approval field was backfilled and no
+clinical write was attempted.

@@ -18,6 +18,7 @@ This directory is the auditable Portugal (`pt-PT`) SEO workstream for `myglobalh
 - 24 URL/cluster briefs, all mapped to existing URLs. New page recommendation: **zero**.
 - 75-row live page-by-page completion matrix covering every current `/portugal/pt` sitemap URL, with a separate 28-row approved clinical-draft manifest.
 - All 16 live doctor profiles have an explicit fact-register row; official credential verification remains pending.
+- A 2026-09-02 production read-only gate check confirmed that the user-attested Dr Tiago approval still cannot unlock the writer: production has one eligible operational reviewer user, Dr Tiago has no active Portugal specialty relation on the doctor record, and the official OM source for 77986 includes the surname `Faleiro`, which the current production doctor identity omits.
 - The Portugal homepage CTA was corrected to `Marcar consulta` through the guarded one-field production updater and verified after the write. No clinically gated copy was published.
 - Portugal FAQ and pricing metadata, H1 and lede fields are live and verified. The empty-catalogue pricing cleanup reached `main`; final public readback is recorded in the implementation log.
 - Five unsafe Portugal FAQ crisis contacts and three occurrences in the medical disclaimer were corrected in production to the official `1411` line plus `112` for immediate danger. Four protected doctor biographies still contain the legacy `1024` text and remain held for the doctor-profile approval workflow; no profile or credential fact was changed.
