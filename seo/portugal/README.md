@@ -19,7 +19,8 @@ This directory is the auditable Portugal (`pt-PT`) SEO workstream for `myglobalh
 - 75-row live page-by-page completion matrix covering every current `/portugal/pt` sitemap URL, with a separate 28-row approved clinical-draft manifest.
 - All 16 live doctor profiles have an explicit fact-register row; official credential verification remains pending.
 - The Portugal homepage CTA was corrected to `Marcar consulta` through the guarded one-field production updater and verified after the write. No clinically gated copy was published.
-- Portugal FAQ and pricing metadata, H1 and lede fields are live and verified. The pricing page still exposes subscription-only lower-page copy on the production deployment; the cleanup is verified in Railway Development and awaits production promotion.
+- Portugal FAQ and pricing metadata, H1 and lede fields are live and verified. The empty-catalogue pricing cleanup reached `main`; final public readback is recorded in the implementation log.
+- Five unsafe Portugal FAQ crisis contacts and three occurrences in the medical disclaimer were corrected in production to the official `1411` line plus `112` for immediate danger. Four protected doctor biographies still contain the legacy `1024` text and remain held for the doctor-profile approval workflow; no profile or credential fact was changed.
 - Clinical publication remains closed until distinct DB-bound clinical, compliance and content-owner approvals, official HTTPS sources and exact copy/source hashes are recorded. The clinician's professional body and active Portugal specialty must match; doctor drafts also require subject/delegation evidence and a verified credential record matching the live profile identity.
 
 ## Read order
@@ -36,7 +37,7 @@ This directory is the auditable Portugal (`pt-PT`) SEO workstream for `myglobalh
 10. [Measurement plan](10-measurement-plan.md)
 11. [30/60/90 roadmap](11-30-60-90-day-roadmap.md)
 
-Supporting evidence: [75-page completion matrix](page-by-page-completion-matrix.csv), [28-row approved draft matrix](content-completion-matrix.csv), [doctor fact register](doctor-profile-fact-register.csv), [domain summary](competitor-domain-summary.csv), [competitor pages](competitor-page-inventory.csv), [target pages](target-page-inventory.csv), [SERP validation](serp-validation.csv), [clinical review register](clinical-review-register.csv), [content briefs](content-briefs/), [OpenSEO call log](raw/openseo-call-log.jsonl), [source log](raw/keyword-source-log.csv), [static-page production readback](raw/static-page-production-readback-2026-09-01.csv), [homepage CTA production receipt](raw/production-write-receipt-2026-09-01-home-cta.json), and [raw keyword exports](raw/keywords/).
+Supporting evidence: [75-page completion matrix](page-by-page-completion-matrix.csv), [28-row approved draft matrix](content-completion-matrix.csv), [doctor fact register](doctor-profile-fact-register.csv), [domain summary](competitor-domain-summary.csv), [competitor pages](competitor-page-inventory.csv), [target pages](target-page-inventory.csv), [SERP validation](serp-validation.csv), [clinical review register](clinical-review-register.csv), [content briefs](content-briefs/), [OpenSEO call log](raw/openseo-call-log.jsonl), [source log](raw/keyword-source-log.csv), [static-page production readback](raw/static-page-production-readback-2026-09-01.csv), [homepage CTA production receipt](raw/production-write-receipt-2026-09-01-home-cta.json), [FAQ safety production receipt](raw/production-write-receipt-2026-09-01-faq-safety.json), and [raw keyword exports](raw/keywords/).
 
 ## Method
 

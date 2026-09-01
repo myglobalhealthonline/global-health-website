@@ -42,12 +42,12 @@ const SERVICE_SEO: Record<string, ServiceSeo> = {
   "pt:medical-consultation": {
     title: "Consulta Médica Online em Portugal | Consulta de Saúde Segura",
     description:
-      "Agende a sua consulta médica online em Portugal de forma rápida e segura. Consulta de saúde em Portugal com médicos qualificados e atendimento no mesmo dia.",
+      "Marque a sua consulta médica online em Portugal por videochamada. Disponibilidade conforme a agenda e avaliação por médico registado em Portugal.",
   },
   "pt:medical-exam": {
     title: "Atestado Médico Portugal | Atestado Médico para Trabalho Online",
     description:
-      "Obtenha atestado médico em Portugal com avaliação de saúde em Portugal de forma online. Processo rápido e seguro para obter atestado médico para trabalho de forma online.",
+      "Consulta online para avaliação médica em Portugal, quando precisa de atestado médico para trabalho. Qualquer documento depende da decisão clínica.",
   },
   "pt:travelers-consultation": {
     title: "Consulta de Saúde Internacional | Consulta Viagem Online",
@@ -58,7 +58,7 @@ const SERVICE_SEO: Record<string, ServiceSeo> = {
   "pt:consulta-medica": {
     title: "Consulta Médica Online em Portugal | Consulta de Saúde Segura",
     description:
-      "Agende a sua consulta médica online em Portugal de forma rápida e segura. Consulta de saúde em Portugal com médicos qualificados e atendimento no mesmo dia.",
+      "Marque a sua consulta médica online em Portugal por videochamada. Disponibilidade conforme a agenda e avaliação por médico registado em Portugal.",
   },
   "pt:consulta-do-viajante": {
     title: "Consulta de Saúde Internacional | Consulta Viagem Online",

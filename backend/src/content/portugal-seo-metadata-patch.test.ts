@@ -2,7 +2,10 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { loadPortugalSeoMetadataDrafts, portugalSeoApprovalSha256, portugalSeoConfirmationToken } from "./portugal-seo-metadata-drafts.js";
-import { assertPortugalSeoApplyAuthorized } from "./portugal-seo-metadata-patch.js";
+import {
+  assertPortugalSeoApplyAuthorized,
+  portugalDatabaseIdentity,
+} from "./portugal-seo-metadata-patch.js";
 
 const draft = loadPortugalSeoMetadataDrafts().find(
   ({ url }) => url.endsWith("/services/consulta-medica"),
@@ -91,5 +94,12 @@ test("blocked, retained and static drafts cannot enter a write transaction", () 
   assert.throws(
     () => assertPortugalSeoApplyAuthorized({ ...authorized, draft: tool }),
     /static runtime source/,
+  );
+});
+
+test("Portugal database identity distinguishes PostgreSQL schemas", () => {
+  assert.equal(
+    portugalDatabaseIdentity("postgresql://user:secret@db.example.test/global_health?schema=clinical"),
+    "postgresql://db.example.test:5432/global_health?schema=clinical",
   );
 });
