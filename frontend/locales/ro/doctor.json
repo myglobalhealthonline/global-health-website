@@ -951,6 +951,17 @@
     "order": "Comandă",
     "uploadedBy": "Încărcat de"
   },
+  "finalizePrompt": {
+    "title": "Finalizați această consultație?",
+    "body": "Nota este semnată. Finalizarea închide programarea și înregistrează că ați efectuat această consultație — abia atunci apare în extrasul dumneavoastră de plată. O puteți finaliza și mai târziu din secțiunea Finalizare.",
+    "filesLabel": "Fișierele necesare au fost încărcate",
+    "timePendingHint": "Ora programată a acestei consultații nu a fost încă atinsă — finalizați-o după ce consultația a avut loc.",
+    "confirm": "Finalizați consultația",
+    "finalizing": "Se finalizează…",
+    "dismiss": "Nu acum",
+    "finalized": "Consultație finalizată",
+    "couldNotFinalize": "Finalizarea nu a reușit"
+  },
   "finalizeChecklist": {
     "finalizedTitle": "Programare finalizată",
     "finalizedDescription": "Notele și documentele necesare au fost confirmate pentru această consultație.",

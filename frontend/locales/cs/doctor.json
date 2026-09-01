@@ -951,6 +951,17 @@
     "order": "Objednávka",
     "uploadedBy": "Nahrál"
   },
+  "finalizePrompt": {
+    "title": "Dokončit tuto konzultaci?",
+    "body": "Zpráva je podepsaná. Dokončení uzavře rezervaci a zaznamená, že jste tuto konzultaci poskytli — teprve tím se dostane do vašeho výkazu odměn. Dokončit lze i později v sekci Dokončení.",
+    "filesLabel": "Požadované soubory nahrány",
+    "timePendingHint": "Naplánovaný čas této rezervace zatím nenastal — dokončete ji, až konzultace proběhne.",
+    "confirm": "Dokončit konzultaci",
+    "finalizing": "Dokončuji…",
+    "dismiss": "Zatím ne",
+    "finalized": "Konzultace dokončena",
+    "couldNotFinalize": "Nepodařilo se dokončit"
+  },
   "finalizeChecklist": {
     "finalizedTitle": "Termín dokončen",
     "finalizedDescription": "Poznámky a požadované dokumenty byly pro tuto konzultaci potvrzeny.",

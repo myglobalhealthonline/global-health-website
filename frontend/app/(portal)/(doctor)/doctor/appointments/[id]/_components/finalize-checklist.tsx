@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, ClipboardCheck, Circle, XCircle } from "lucide-react";
+import { finalizeAppointment } from "./finalize-appointment";
 
 export type FinalizeChecklistCopy = {
   finalizedTitle: string;
@@ -92,17 +93,9 @@ export function FinalizeChecklist({
       return;
     }
     startTransition(async () => {
-      const res = await fetch(
-        `/api/doctor/appointments/${appointmentId}/finalize`,
-        {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ notesUploaded: true, filesUploaded: true }),
-        },
-      );
-      const json = (await res.json()) as { ok?: boolean; message?: string };
-      if (!res.ok || !json.ok) {
-        setMessage(json.message ?? copy.couldNotFinalize);
+      const result = await finalizeAppointment(appointmentId);
+      if (!result.ok) {
+        setMessage(result.message ?? copy.couldNotFinalize);
         return;
       }
       router.refresh();

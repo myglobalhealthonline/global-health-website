@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 import { PortalDialog } from "@/components/PortalDialog";
 import { Btn } from "@/components/portal-atoms";
+import { finalizeAppointment } from "./finalize-appointment";
 
 type SoapState = {
   chiefComplaint: string;
@@ -48,20 +49,56 @@ export type ConsultationFormCopy = {
   saveAndSign: string;
 };
 
+export type FinalizePromptCopy = {
+  title: string;
+  body: string;
+  filesLabel: string;
+  timePendingHint: string;
+  confirm: string;
+  finalizing: string;
+  dismiss: string;
+  finalized: string;
+  couldNotFinalize: string;
+};
+
+/** Everything the post-sign finalize prompt needs. Omitted (or with
+ *  `alreadyFinalized`) the form never raises the prompt. */
+export type FinalizePromptConfig = {
+  /** Appointment.finalized — nothing to prompt for when already true. */
+  alreadyFinalized: boolean;
+  /** Status is CANCELLED — a cancelled appointment can't be finalized. */
+  cancelled: boolean;
+  /** The appointment's scheduled time has passed (or is unset). */
+  timeReached: boolean;
+  /** Appointment.filesUploaded — pre-ticks the attestation in the prompt. */
+  filesUploaded: boolean;
+  copy: FinalizePromptCopy;
+};
+
 /**
  * SOAP note editor + sign button. PATCH on save, POST on sign. The form
  * is read-only once `status === "SIGNED"` — server already rejects edits
  * with a 409 if someone races, but disabling the inputs makes the
  * intent clear in the UI.
+ *
+ * Signing the note is where doctors think the consultation is done, but the
+ * appointment is only payable once it is FINALIZED (Appointment.finalized) —
+ * a separate action further down the page that was being missed, leaving
+ * finished consultations off the payout statement. So a successful sign raises
+ * the finalize prompt right here, at the moment the doctor believes they have
+ * finished, rather than relying on them scrolling to the checklist.
  */
 export function ConsultationForm({
   appointmentId,
   initial,
   copy,
+  finalizePrompt,
 }: {
   appointmentId: string;
   initial: SoapState;
   copy: ConsultationFormCopy;
+  /** Omit to keep the form's old behaviour (sign, no prompt). */
+  finalizePrompt?: FinalizePromptConfig;
 }) {
   const router = useRouter();
   const [state, setState] = useState<SoapState>(initial);
@@ -76,6 +113,23 @@ export function ConsultationForm({
   >(null);
   const [signConfirmOpen, setSignConfirmOpen] = useState(false);
   const signed = state.status === "SIGNED";
+
+  // Post-sign finalize prompt.
+  const [finalizeOpen, setFinalizeOpen] = useState(false);
+  const [finalizeFiles, setFinalizeFiles] = useState(
+    finalizePrompt?.filesUploaded ?? false,
+  );
+  const [finalizeError, setFinalizeError] = useState<string | null>(null);
+  const [finalizePending, startFinalizeTransition] = useTransition();
+  // Local, so the prompt can't be raised twice in one session after the
+  // doctor finalizes from it (the server state only arrives on refresh).
+  const [finalizedHere, setFinalizedHere] = useState(false);
+  const canPromptFinalize = Boolean(
+    finalizePrompt &&
+      !finalizePrompt.alreadyFinalized &&
+      !finalizePrompt.cancelled &&
+      !finalizedHere,
+  );
 
   const dirty =
     !signed &&
@@ -193,9 +247,35 @@ export function ConsultationForm({
         }
         setBaseline(savedValues);
         setMessage({ kind: "success", text: copy.signed });
+        // The note is final — ask for the finalize now, while the doctor is
+        // still on this consultation and thinks of it as finished.
+        if (canPromptFinalize) {
+          setFinalizeError(null);
+          setFinalizeOpen(true);
+        }
         router.refresh();
       } catch {
         setMessage({ kind: "error", text: copy.networkError });
+      }
+    });
+  }
+
+  function confirmFinalize() {
+    if (!finalizePrompt) return;
+    setFinalizeError(null);
+    startFinalizeTransition(async () => {
+      try {
+        const result = await finalizeAppointment(appointmentId);
+        if (!result.ok) {
+          setFinalizeError(result.message ?? finalizePrompt.copy.couldNotFinalize);
+          return;
+        }
+        setFinalizedHere(true);
+        setFinalizeOpen(false);
+        setMessage({ kind: "success", text: finalizePrompt.copy.finalized });
+        router.refresh();
+      } catch {
+        setFinalizeError(copy.networkError);
       }
     });
   }
@@ -345,6 +425,64 @@ export function ConsultationForm({
           {copy.signConfirm}
         </p>
       </PortalDialog>
+
+      {finalizePrompt ? (
+        <PortalDialog
+          open={finalizeOpen}
+          onClose={() => setFinalizeOpen(false)}
+          title={finalizePrompt.copy.title}
+          footer={
+            <>
+              <Btn variant="ghost" onClick={() => setFinalizeOpen(false)}>
+                {finalizePrompt.copy.dismiss}
+              </Btn>
+              <Btn
+                variant="primary"
+                disabled={
+                  finalizePending || !finalizePrompt.timeReached || !finalizeFiles
+                }
+                onClick={confirmFinalize}
+              >
+                {finalizePending
+                  ? finalizePrompt.copy.finalizing
+                  : finalizePrompt.copy.confirm}
+              </Btn>
+            </>
+          }
+        >
+          <div className="grid gap-3">
+            <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
+              {finalizePrompt.copy.body}
+            </p>
+
+            {/* Same manual attestation the finalize checklist asks for — the
+                system can't know which documents this consultation needed. */}
+            <label className="flex items-center gap-2 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] px-3 py-2 text-sm">
+              <input
+                type="checkbox"
+                checked={finalizeFiles}
+                onChange={(e) => setFinalizeFiles(e.target.checked)}
+              />
+              {finalizePrompt.copy.filesLabel}
+            </label>
+
+            {/* Same readiness rule the finalize checklist enforces — the
+                server has no time guard, so the UI is what keeps a doctor
+                from closing a consultation that hasn't happened yet. */}
+            {!finalizePrompt.timeReached ? (
+              <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800">
+                {finalizePrompt.copy.timePendingHint}
+              </p>
+            ) : null}
+
+            {finalizeError ? (
+              <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+                {finalizeError}
+              </p>
+            ) : null}
+          </div>
+        </PortalDialog>
+      ) : null}
     </div>
   );
 }
