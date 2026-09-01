@@ -19,7 +19,7 @@ This directory is the auditable Portugal (`pt-PT`) SEO workstream for `myglobalh
 - 75-row live page-by-page completion matrix covering every current `/portugal/pt` sitemap URL, with a separate 28-row approved clinical-draft manifest.
 - All 16 live doctor profiles have an explicit fact-register row; official credential verification remains pending.
 - The Portugal homepage CTA was corrected to `Marcar consulta` through the guarded one-field production updater and verified after the write. No clinically gated copy was published.
-- Portugal FAQ and pricing metadata, H1 and lede fields are live and verified. The pricing page still exposes subscription-only lower-page copy on the current deployment; a repository follow-up removes it when the live catalogue is empty and awaits deployment.
+- Portugal FAQ and pricing metadata, H1 and lede fields are live and verified. The pricing page still exposes subscription-only lower-page copy on the production deployment; the cleanup is verified in Railway Development and awaits production promotion.
 - Clinical publication remains closed until distinct DB-bound clinical, compliance and content-owner approvals, official HTTPS sources and exact copy/source hashes are recorded. The clinician's professional body and active Portugal specialty must match; doctor drafts also require subject/delegation evidence and a verified credential record matching the live profile identity.
 
 ## Read order
