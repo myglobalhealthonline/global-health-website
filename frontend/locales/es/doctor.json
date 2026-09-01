@@ -951,6 +951,17 @@
     "order": "Pedido",
     "uploadedBy": "Subido por"
   },
+  "finalizePrompt": {
+    "title": "¿Finalizar esta consulta?",
+    "body": "La nota está firmada. Finalizar cierra la cita y registra que prestó esta consulta: es lo que la incluye en su extracto de pago. También puede hacerlo más tarde en la sección Finalizar.",
+    "filesLabel": "Archivos necesarios subidos",
+    "timePendingHint": "Todavía no ha llegado la hora programada de esta cita: finalícela cuando la consulta haya tenido lugar.",
+    "confirm": "Finalizar consulta",
+    "finalizing": "Finalizando…",
+    "dismiss": "Ahora no",
+    "finalized": "Consulta finalizada",
+    "couldNotFinalize": "No se pudo finalizar"
+  },
   "finalizeChecklist": {
     "finalizedTitle": "Cita finalizada",
     "finalizedDescription": "Las notas y los documentos requeridos se confirmaron para esta consulta.",

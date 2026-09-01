@@ -951,6 +951,17 @@
     "order": "Bestellung",
     "uploadedBy": "Hochgeladen von"
   },
+  "finalizePrompt": {
+    "title": "Diese Konsultation abschließen?",
+    "body": "Die Notiz ist signiert. Der Abschluss schließt den Termin ab und hält fest, dass Sie diese Konsultation erbracht haben — erst dadurch erscheint sie auf Ihrer Vergütungsaufstellung. Sie können das auch später im Abschnitt Abschluss erledigen.",
+    "filesLabel": "Erforderliche Dateien hochgeladen",
+    "timePendingHint": "Der geplante Zeitpunkt dieses Termins ist noch nicht erreicht — schließen Sie ihn ab, sobald die Konsultation stattgefunden hat.",
+    "confirm": "Konsultation abschließen",
+    "finalizing": "Wird abgeschlossen…",
+    "dismiss": "Noch nicht",
+    "finalized": "Konsultation abgeschlossen",
+    "couldNotFinalize": "Abschluss nicht möglich"
+  },
   "finalizeChecklist": {
     "finalizedTitle": "Termin abgeschlossen",
     "finalizedDescription": "Notizen und erforderliche Dokumente wurden für diese Konsultation bestätigt.",

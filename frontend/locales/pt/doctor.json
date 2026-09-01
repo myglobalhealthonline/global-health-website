@@ -951,6 +951,17 @@
     "order": "Encomenda",
     "uploadedBy": "Carregado por"
   },
+  "finalizePrompt": {
+    "title": "Finalizar esta consulta?",
+    "body": "A nota está assinada. Finalizar encerra a marcação e regista que prestou esta consulta — é o que a coloca no seu extrato de pagamento. Pode fazê-lo mais tarde na secção Finalizar.",
+    "filesLabel": "Ficheiros necessários carregados",
+    "timePendingHint": "A hora marcada desta consulta ainda não chegou — finalize depois de a consulta ter decorrido.",
+    "confirm": "Finalizar consulta",
+    "finalizing": "A finalizar…",
+    "dismiss": "Agora não",
+    "finalized": "Consulta finalizada",
+    "couldNotFinalize": "Não foi possível finalizar"
+  },
   "finalizeChecklist": {
     "finalizedTitle": "Consulta finalizada",
     "finalizedDescription": "As notas e os documentos necessários foram confirmados para esta consulta.",

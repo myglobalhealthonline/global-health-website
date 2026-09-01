@@ -494,6 +494,17 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                   <ConsultationForm
                     appointmentId={appointment.id}
                     copy={d.consultationForm}
+                    // Signing the note is where doctors stop; finalizing is
+                    // what makes the consultation payable. Prompt for it at
+                    // that moment instead of hoping they scroll to the
+                    // checklist in the Finalize section.
+                    finalizePrompt={{
+                      alreadyFinalized: appointment.finalized ?? false,
+                      cancelled: appointment.status === "CANCELLED",
+                      timeReached,
+                      filesUploaded: appointment.filesUploaded ?? false,
+                      copy: d.finalizePrompt,
+                    }}
                     initial={
                       consultation
                         ? {

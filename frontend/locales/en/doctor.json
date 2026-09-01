@@ -951,6 +951,17 @@
     "order": "Order",
     "uploadedBy": "Uploaded by"
   },
+  "finalizePrompt": {
+    "title": "Finalize this consultation?",
+    "body": "The note is signed. Finalizing closes the appointment and records that you provided this consultation — it is what puts it on your payout statement. You can still do it later from the Finalize section.",
+    "filesLabel": "Required files uploaded",
+    "timePendingHint": "This appointment's scheduled time hasn't been reached yet — finalize it once the consultation has taken place.",
+    "confirm": "Finalize consultation",
+    "finalizing": "Finalizing…",
+    "dismiss": "Not yet",
+    "finalized": "Consultation finalized",
+    "couldNotFinalize": "Could not finalize"
+  },
   "finalizeChecklist": {
     "finalizedTitle": "Appointment finalized",
     "finalizedDescription": "Notes and required documents were confirmed for this consultation.",
