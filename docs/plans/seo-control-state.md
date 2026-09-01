@@ -7090,4 +7090,23 @@ operational reviewer currently exists, and the required distinct dated approval,
 official-source and copy-hash fields remain blank. No gate was weakened and no
 clinical approval was inferred.
 
+Production follow-up on 2026-09-02 supersedes that pre-approval snapshot. Dr Tiago
+Miguel Figueira approved the exact 28-row metadata set at
+`2026-09-01T18:30:00+02:00`, and the owner authorized implementation. The final
+metadata-only gate uses the proven Czech/Ireland pattern: one active verified
+in-market clinician, official evidence, exact reviewed-copy hashes and explicit
+owner authorization. It does not require or invent a Portugal specialty relation.
+
+Twenty-six database records are live and independently verified: one HOME, 21
+services and four doctor-market translations. The frontend-owned blood-pressure
+metadata is live on deployment `e165ab094989de15d35be2111b1262ae44588b36`;
+the driving-certificate metadata remains the reviewed retain-current row. Public
+readback covers all 27 changed URLs. Doctor names, biographies, qualifications,
+credentials/certifications, registrations, specialties and languages were not
+changed; neither were visible clinical copy, 212 reviewed FAQs, prices, booking
+data, availability, or tool algorithms and thresholds. The receipt is
+`seo/portugal/raw/production-write-receipt-2026-09-02-clinical-seo.json` and the
+public readback is
+`seo/portugal/raw/clinical-seo-production-readback-2026-09-02.csv`.
+
 ---

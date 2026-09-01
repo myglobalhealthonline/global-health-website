@@ -4,6 +4,13 @@ $root = Resolve-Path (Join-Path $PSScriptRoot "..\..")
 $draftRows = Import-Csv (Join-Path $PSScriptRoot "content-completion-matrix.csv")
 $drafts = @{}
 foreach ($row in $draftRows) { $drafts[$row.URL] = $row }
+$clinicalRows = @(Import-Csv (Join-Path $PSScriptRoot "clinical-review-register.csv"))
+$approvedUrls = @($clinicalRows | Where-Object publish_status -eq "approved" | ForEach-Object { ($_.page_or_file -split " -> ", 2)[-1].Trim() })
+$productionReadback = @(Import-Csv (Join-Path $PSScriptRoot "raw\clinical-seo-production-readback-2026-09-02.csv"))
+$verifiedUrls = @($productionReadback.URL)
+$productionReceipt = Get-Content -Raw (Join-Path $PSScriptRoot "raw\production-write-receipt-2026-09-02-clinical-seo.json") | ConvertFrom-Json
+$productionReviewDate = [string]$productionReceipt.public_verification.operational_rollout_date
+if ($productionReviewDate -notmatch '^\d{4}-\d{2}-\d{2}$') { throw "Invalid production rollout date" }
 
 $primaryByPath = @{
   "/about" = "Global Health Portugal"; "/blog" = "guias de saúde Portugal"; "/book" = "marcar consulta online";
@@ -132,19 +139,23 @@ $rows = foreach ($live in ($liveRows | Sort-Object URL)) {
   $optimizedMeta = if ($draft) { $draft.'optimized meta description' } elseif ($path -eq "/pricing") { "Os planos mensais ainda não estão disponíveis em Portugal. Consulte os serviços online e os preços apresentados antes de marcar." } elseif ($path -eq "/faq") { "Respostas sobre marcações, pagamentos, videochamadas, privacidade e situações em que uma consulta online pode não ser adequada." } elseif ($path -eq "/gp-consultation-online") { "Consulte um médico online em Portugal por videochamada. Veja os serviços de clínica geral e escolha um horário disponível no calendário do médico." } elseif ($path -eq "/see-a-specialist") { "Consulte as especialidades médicas disponíveis online em Portugal e escolha um horário no calendário do profissional." } elseif ($path -eq "/doctors") { "Conheça médicos e especialistas disponíveis para consulta online em Portugal e consulte as credenciais apresentadas em cada perfil." } elseif ($path -eq "/blog/doenca-mao-pe-boca-sinais-e-tratamento") { "Guia sobre doença mão-pé-boca em crianças: sintomas, tratamento, sinais de urgência e prevenção do contágio." } elseif ($type -eq "doctor profile") { ($live.Meta -replace "\s*Consulta no mesmo dia\.?$", "") } elseif ($path -eq "/health/infecoes-respiratorias") { "Informação sobre tosse, infeções e outros sintomas respiratórios, incluindo quando procurar avaliação médica." } else { $live.Meta }
   $changed = $optimizedTitle -ne $live.Title -or $optimizedMeta -ne $live.Meta
   $clinical = $type -in @("service page", "doctor profile", "health tool", "health guide", "health article", "market hub") -or $path -in @("/gp-consultation-online", "/see-a-specialist", "/doctors")
+  $approved = $draft -and $approvedUrls -contains $live.URL
+  $productionVerified = $approved -and $verifiedUrls -contains $live.URL
+  $approvedRetained = $approved -and !$productionVerified -and $draft.'implementation status' -eq "clinically reviewed; unchanged"
+  if ($approved -and !$productionVerified -and !$approvedRetained) { throw "Approved URL has no production readback or retain-current decision: $($live.URL)" }
   $requiredSchema = if ($type -eq "doctor profile") { "Person" } elseif ($type -in @("health tool", "health guide", "health article")) { "MedicalWebPage" } elseif ($path -eq "/faq") { "FAQPage" } else { "WebSite" }
   $pageSchemaOk = if ($type -eq "service page") { $live.SchemaTypes -contains "Service" -or $live.SchemaTypes -contains "MedicalProcedure" } else { $live.SchemaTypes -contains $requiredSchema }
   $structuredDataOk = $live.JsonLdValid -and $live.SchemaTypes -contains "MedicalOrganization" -and $pageSchemaOk
   $implemented = $path -in @("/pricing", "/faq")
-  $status = if ($draft -and $path -eq "/services/certificado-medico-carta-de-conducao") { "retain-current gate implemented; no metadata write" } elseif ($draft -and $type -eq "health tool") { "frontend-owned gate implemented; clinical apply blocked" } elseif ($draft) { "guarded repository draft implemented; clinical apply blocked" } elseif ($implemented) { "implemented in repository; deployment pending" } elseif ($changed -and $clinical) { "drafted; blocked pending clinical or credential review" } else { "reviewed; unchanged" }
-  $reason = if ($draft -and !$path) { "$($draft.'reason for anything left unchanged') The non-clinical HOME CTA was applied separately and verified as Marcar consulta; metadata remains blocked." } elseif ($draft) { "$($draft.'reason for anything left unchanged') The one-record production source mapping passed a read-only dry run; the clinical gate still blocks apply." } elseif ($path -eq "/faq") { "Repository metadata, H1 and visible lede override implemented. Existing FAQ questions and answers were reviewed and left unchanged because no factual or demand-supported revision was justified." } elseif ($implemented) { "Repository metadata and H1 override implemented; no production CMS write required." } elseif ($changed -and $clinical) { "Current live copy was reviewed and a safer draft prepared, but publication is blocked until the required clinical, credential or official-source approval is recorded." } else { "Current copy remains relevant; the measured status, canonical, pt-PT hreflang/locale, robots, structured data and CTA checks passed on 2026-09-01." }
+  $status = if ($productionVerified) { "live verified $productionReviewDate" } elseif ($approvedRetained) { "clinically reviewed; unchanged" } elseif ($implemented) { "implemented in repository; deployment pending" } elseif ($changed -and $clinical) { "drafted; blocked pending clinical or credential review" } else { "reviewed; unchanged" }
+  $reason = if ($approved) { $draft.'reason for anything left unchanged' } elseif ($path -eq "/faq") { "Repository metadata, H1 and visible lede override implemented. Existing FAQ questions and answers were reviewed and left unchanged because no factual or demand-supported revision was justified." } elseif ($implemented) { "Repository metadata and H1 override implemented; no production CMS write required." } elseif ($changed -and $clinical) { "Current live copy was reviewed and a safer draft prepared, but publication is blocked until the required clinical, credential or official-source approval is recorded." } else { "Current copy remains relevant; the measured status, canonical, pt-PT hreflang/locale, robots, structured data and CTA checks passed on 2026-09-01." }
   [pscustomobject][ordered]@{
     URL = $live.URL; "page type" = $type; "primary keyword" = $primary; "secondary keywords" = $secondary;
-    "original title" = $live.Title; "optimized title" = $optimizedTitle; "original meta description" = $live.Meta;
+    "original title" = if ($draft) { $draft.'original title' } else { $live.Title }; "optimized title" = $optimizedTitle; "original meta description" = if ($draft) { $draft.'original meta description' } else { $live.Meta };
     "optimized meta description" = $optimizedMeta; "description optimized" = if ($implemented) { "yes" } else { "no" };
     "bio optimized" = if ($type -eq "doctor profile") { "no" } else { "not applicable" };
     "FAQs optimized" = if ($type -in @("service page", "doctor profile", "health guide", "health article") -or $path -eq "/faq") { "no" } else { "not applicable" };
-    "deslop completed" = "yes"; "factual verification completed" = if ($clinical) { "no" } else { "yes" };
+    "deslop completed" = "yes"; "factual verification completed" = if ($approved) { "yes" } elseif ($clinical) { "no" } else { "yes" };
     "clinical review required" = if ($clinical) { "yes" } else { "no" }; "implementation status" = $status;
     "reason for anything left unchanged" = $reason; "live H1" = $live.H1;
     "HTTP status" = [string]$live.Status;
@@ -155,7 +166,7 @@ $rows = foreach ($live in ($liveRows | Sort-Object URL)) {
     "structured data" = if ($structuredDataOk) { "yes" } else { "no" };
     "structured data types" = $live.SchemaTypes -join " | ";
     "CTA accuracy" = if ($live.CtaOk) { "yes" } else { "no" };
-    "live reviewed at" = "2026-09-01"
+    "live reviewed at" = if ($approved) { $productionReviewDate } else { "2026-09-01" }
   }
 }
 

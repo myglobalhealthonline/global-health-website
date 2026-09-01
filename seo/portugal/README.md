@@ -1,6 +1,6 @@
 # Portugal organic-search research and implementation
 
-**Evidence snapshot:** production static-page readback and safe repository follow-up, 2026-09-01.
+**Evidence snapshot:** approved clinical metadata production rollout, 2026-09-02.
 **Canonical operational source:** [`docs/plans/seo-control-state.md`](../../docs/plans/seo-control-state.md).
 **Workspace contract:** [`seo/README.md`](../README.md).
 
@@ -17,12 +17,12 @@ This directory is the auditable Portugal (`pt-PT`) SEO workstream for `myglobalh
 - 200 live SERP rows retained across ten priority queries.
 - 24 URL/cluster briefs, all mapped to existing URLs. New page recommendation: **zero**.
 - 75-row live page-by-page completion matrix covering every current `/portugal/pt` sitemap URL, with a separate 28-row approved clinical-draft manifest.
-- All 16 live doctor profiles have an explicit fact-register row; official credential verification remains pending.
-- A 2026-09-02 production read-only gate check confirmed that the user-attested Dr Tiago approval still cannot unlock the writer: production has one eligible operational reviewer user, Dr Tiago has no active Portugal specialty relation on the doctor record, and the official OM source for 77986 includes the surname `Faleiro`, which the current production doctor identity omits.
-- The Portugal homepage CTA was corrected to `Marcar consulta` through the guarded one-field production updater and verified after the write. No clinically gated copy was published.
+- All 16 live doctor profiles have an explicit fact-register row; four approved metadata-only profiles have verified OM evidence and 12 remain pending for future profile-copy changes.
+- Dr Tiago Miguel Figueira approved all 28 rows at `2026-09-01T18:30:00+02:00`. Twenty-six database metadata records and the frontend-owned blood-pressure metadata are live and verified; the driving-certificate row was reviewed and deliberately retained.
+- The Portugal homepage CTA had already been corrected to `Marcar consulta` through the guarded one-field production updater; this metadata rollout left the CTA unchanged.
 - Portugal FAQ and pricing metadata, H1 and lede fields are live and verified. The empty-catalogue pricing cleanup reached `main`; final public readback is recorded in the implementation log.
 - Five unsafe Portugal FAQ crisis contacts and three occurrences in the medical disclaimer were corrected in production to the official `1411` line plus `112` for immediate danger. Four protected doctor biographies still contain the legacy `1024` text and remain held for the doctor-profile approval workflow; no profile or credential fact was changed.
-- Clinical publication remains closed until distinct DB-bound clinical, compliance and content-owner approvals, official HTTPS sources and exact copy/source hashes are recorded. The clinician's professional body and active Portugal specialty must match; doctor drafts also require subject/delegation evidence and a verified credential record matching the live profile identity.
+- The metadata-only clinical rollout is complete. Doctor-profile body copy, credentials, certifications, registrations, specialties, languages, prices, booking data, FAQs and tool algorithms or thresholds were not changed.
 
 ## Read order
 
@@ -38,7 +38,7 @@ This directory is the auditable Portugal (`pt-PT`) SEO workstream for `myglobalh
 10. [Measurement plan](10-measurement-plan.md)
 11. [30/60/90 roadmap](11-30-60-90-day-roadmap.md)
 
-Supporting evidence: [75-page completion matrix](page-by-page-completion-matrix.csv), [28-row approved draft matrix](content-completion-matrix.csv), [doctor fact register](doctor-profile-fact-register.csv), [domain summary](competitor-domain-summary.csv), [competitor pages](competitor-page-inventory.csv), [target pages](target-page-inventory.csv), [SERP validation](serp-validation.csv), [clinical review register](clinical-review-register.csv), [content briefs](content-briefs/), [OpenSEO call log](raw/openseo-call-log.jsonl), [source log](raw/keyword-source-log.csv), [static-page production readback](raw/static-page-production-readback-2026-09-01.csv), [homepage CTA production receipt](raw/production-write-receipt-2026-09-01-home-cta.json), [FAQ safety production receipt](raw/production-write-receipt-2026-09-01-faq-safety.json), and [raw keyword exports](raw/keywords/).
+Supporting evidence: [75-page completion matrix](page-by-page-completion-matrix.csv), [28-row approved draft matrix](content-completion-matrix.csv), [doctor fact register](doctor-profile-fact-register.csv), [domain summary](competitor-domain-summary.csv), [competitor pages](competitor-page-inventory.csv), [target pages](target-page-inventory.csv), [SERP validation](serp-validation.csv), [clinical review register](clinical-review-register.csv), [content briefs](content-briefs/), [OpenSEO call log](raw/openseo-call-log.jsonl), [source log](raw/keyword-source-log.csv), [clinical SEO production receipt](raw/production-write-receipt-2026-09-02-clinical-seo.json), [clinical SEO public readback](raw/clinical-seo-production-readback-2026-09-02.csv), [static-page production readback](raw/static-page-production-readback-2026-09-01.csv), [homepage CTA production receipt](raw/production-write-receipt-2026-09-01-home-cta.json), [FAQ safety production receipt](raw/production-write-receipt-2026-09-01-faq-safety.json), and [raw keyword exports](raw/keywords/).
 
 ## Method
 

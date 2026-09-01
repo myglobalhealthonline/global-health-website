@@ -195,3 +195,61 @@ Because the guarded writer compares the clinical register, production doctor
 record and fact register exactly, the Portugal clinical batch remains blocked
 even with the user-attested approval. No approval field was backfilled and no
 clinical write was attempted.
+
+## 2026-09-02 approved clinical SEO production rollout
+
+This section supersedes the preceding gate snapshot. Dr Tiago Miguel Figueira's
+approval was recorded as `2026-09-01T18:30:00+02:00`, the owner authorized the
+production rollout, and the gate was aligned with the already proven Czech and
+Ireland metadata-only contract: one active, verified in-market clinician, exact
+reviewed-copy hashes, official sources and explicit owner authorization. It did
+not change Dr Tiago's database identity or assert a Portugal specialty that the
+database does not contain.
+
+The final review covered all 28 approved rows and searched the proposed metadata
+for same-day guarantees, guaranteed documents or acceptance, immediacy, cures,
+definitive diagnoses, `100%`, `sem risco` and equivalent unsafe wording. The
+driving-certificate row remained a reviewed retain-current decision. The other
+27 changes comprised one homepage, 21 services, four doctor profiles and the
+frontend-owned blood-pressure tool.
+
+The production writer applied the 26 database-owned records one at a time. Each
+write was bound to the approved-copy and current-source SHA-256 values, the
+credential-free production database identity, the reviewer doctor record and the
+fact register, then used a Serializable transaction, optimistic `updatedAt`
+predicate and exact readback. The first HOME attempt failed closed before any
+write because production stores the inherited title as `null`; the reviewed
+source-variant guard was then added and tested. It recognizes only that exact
+HOME fallback, the retired Medicare suffix already absent from ten stored service
+descriptions and the redundant stored doctor brand suffix. Any other drift still
+blocks.
+
+An independent production query then matched all 26 approved titles and
+descriptions, the four exact doctor keyword arrays and the four active verified OM
+registrations. The doctor writer never targeted names, biographies,
+qualifications, credentials, certifications, registrations, specialties,
+languages, prices, booking data or FAQs. Visible service copy and tool logic or
+clinical thresholds were also outside the write scope.
+
+The first public readback found that the service page dynamically re-appended an
+insurer sentence after reading the reviewed description. Commit `a5d60dbc` now
+preserves the exact reviewed description only for Portugal Portuguese (`pt`/`pt`);
+Portugal's other locales and every other market retain their existing localized
+insurance behavior, and the visible real-time insurer UI is unchanged. The
+blood-pressure metadata overlay and this correction are active in production
+deployment `e165ab094989de15d35be2111b1262ae44588b36`. The 27-page cache-bypassed
+readback is `raw/clinical-seo-production-readback-2026-09-02.csv`; the sanitized
+write receipt is `raw/production-write-receipt-2026-09-02-clinical-seo.json`.
+
+The FAQ review covered 212 questions: six HOME, 18 FAQ-hub, 156 service, 24
+doctor-profile and eight blood-pressure-tool FAQs. No FAQ was rewritten and no
+per-FAQ keyword field was invented. Existing questions already express their page
+intent naturally; forcing a keyword into every question would create stuffing and
+cannibalization across consultation/family medicine, leave/certificates,
+cardiology/second opinion and mental-health clusters.
+
+Verification passed 12 focused backend tests, 28 focused frontend tests, both
+package typechecks, scoped ESLint, production dependency audit, reconciliation and
+independent code, TypeScript and security reviews. The frontend production build
+compiled and passed TypeScript; local static generation remained blocked by the
+unavailable content API, the same known environment limitation recorded earlier.

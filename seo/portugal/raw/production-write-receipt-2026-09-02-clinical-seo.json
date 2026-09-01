@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "receipt_id": "PT-CLINICAL-SEO-2026-09-02",
+  "environment": "production",
+  "result": "26_database_records_applied_and_verified_plus_1_frontend_record_deployed",
+  "database_identity": "production PostgreSQL target (credentials and endpoint omitted)",
+  "clinical_review": {
+    "reviewer": "Dr Tiago Miguel Figueira",
+    "professional_body": "OM",
+    "reviewed_at": "2026-09-01T18:30:00+02:00",
+    "approval_register": "seo/portugal/clinical-review-register.csv"
+  },
+  "database_records": [
+    "home:HOME",
+    "service:consulta-medica",
+    "service:medicina-geral-e-familiar",
+    "service:baixa-medica",
+    "service:certificados-medicos",
+    "service:renovacao-de-tratamento",
+    "service:consulta-do-viajante",
+    "service:consulta-de-referenciacao",
+    "service:consulta-cardiologia",
+    "service:consulta-de-oncologia",
+    "service:pediatria-geral",
+    "service:consulta-de-psicologia",
+    "service:consulta-de-psiquiatria",
+    "service:saude-mental",
+    "service:perda-de-peso",
+    "service:consulta-dermatologia",
+    "service:consulta-queda-de-cabelo",
+    "service:deixar-de-fumar",
+    "service:gestao-da-dor",
+    "service:saude-da-mulher",
+    "service:saude-do-homem",
+    "service:segunda-opiniao-medica",
+    "doctor:dr-martim-delgado",
+    "doctor:dr-telmo-coelho",
+    "doctor:dr-tiago-miguel-figueira",
+    "doctor:dr-vitor-hugo-de-matos-pais"
+  ],
+  "frontend_records": [
+    "tool:blood-pressure-chart"
+  ],
+  "retained_without_write": [
+    "service:certificado-medico-carta-de-conducao"
+  ],
+  "database_verification": {
+    "verified_at_utc": "2026-09-01T21:16:53.617Z",
+    "verified_count": 26,
+    "home": 1,
+    "services": 21,
+    "doctors": 4,
+    "exact_approved_title_and_description": true,
+    "doctor_keywords_exact": true,
+    "doctor_registration_verified": true
+  },
+  "writer_guards": {
+    "one_record_per_apply": true,
+    "approved_copy_sha256_confirmed": true,
+    "source_sha256_confirmed": true,
+    "database_identity_confirmed_without_credentials": true,
+    "serializable_transaction": true,
+    "optimistic_updated_at_check": true,
+    "database_readback_passed": true,
+    "unknown_source_drift_fails_closed": true,
+    "first_home_attempt_failed_closed_before_any_write": true
+  },
+  "protected_scope": {
+    "doctor_names_changed": false,
+    "doctor_biographies_changed": false,
+    "doctor_qualifications_changed": false,
+    "doctor_credentials_or_certifications_changed": false,
+    "doctor_registrations_changed": false,
+    "visible_service_copy_changed": false,
+    "faqs_changed": false,
+    "prices_changed": false,
+    "booking_or_availability_changed": false,
+    "tool_logic_or_thresholds_changed": false
+  },
+  "faq_review": {
+    "reviewed_faqs": 212,
+    "keywords_added_per_faq": false,
+    "decision": "Keep page-level keyword ownership; the existing questions already express intent naturally, and forced per-FAQ keywords would create stuffing and cannibalization."
+  },
+  "public_verification": {
+    "deployment_commit": "e165ab094989de15d35be2111b1262ae44588b36",
+    "operational_rollout_date": "2026-09-02",
+    "verified_at_utc": "2026-09-01T21:39:48.385Z",
+    "readback": "seo/portugal/raw/clinical-seo-production-readback-2026-09-02.csv",
+    "expected_pages": 27,
+    "all_http_200": true,
+    "all_approved_descriptions_exact": true,
+    "all_titles_match_runtime_brand_policy": true,
+    "all_self_canonical": true,
+    "all_hreflang_pt_PT": true,
+    "all_indexable": true,
+    "all_html_lang_pt": true,
+    "all_json_ld_present": true,
+    "unreviewed_insurance_suffix_in_pt_PT_metadata": false
+  }
+}

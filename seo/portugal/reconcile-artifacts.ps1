@@ -4,6 +4,8 @@ $drafts = @(Import-Csv (Join-Path $PSScriptRoot "content-completion-matrix.csv")
 $pages = @(Import-Csv (Join-Path $PSScriptRoot "page-by-page-completion-matrix.csv"))
 $clinical = @(Import-Csv (Join-Path $PSScriptRoot "clinical-review-register.csv"))
 $doctors = @(Import-Csv (Join-Path $PSScriptRoot "doctor-profile-fact-register.csv"))
+$readback = @(Import-Csv (Join-Path $PSScriptRoot "raw\clinical-seo-production-readback-2026-09-02.csv"))
+$receipt = Get-Content -Raw (Join-Path $PSScriptRoot "raw\production-write-receipt-2026-09-02-clinical-seo.json") | ConvertFrom-Json
 
 function Assert-Equal($actual, $expected, [string]$message) {
   if ($actual -ne $expected) { throw "$message (expected $expected; found $actual)" }
@@ -13,6 +15,7 @@ Assert-Equal $drafts.Count 28 "Portugal draft matrix row count"
 Assert-Equal $pages.Count 75 "Portugal live page matrix row count"
 Assert-Equal $clinical.Count 28 "Portugal clinical register row count"
 Assert-Equal $doctors.Count 16 "Portugal doctor fact-register row count"
+Assert-Equal $readback.Count 27 "Portugal clinical SEO public readback row count"
 
 foreach ($set in @($drafts, $pages)) {
   Assert-Equal @($set | Group-Object URL | Where-Object Count -gt 1).Count 0 "Duplicate Portugal URL"
@@ -36,7 +39,34 @@ $rewritten = @($pages | Where-Object {
 })
 $guarantees = "mesmo dia|no mesmo dia|garantid[oa]|disponibilidade imediata"
 Assert-Equal @($rewritten | Where-Object { $_.'optimized title' -match $guarantees -or $_.'optimized meta description' -match $guarantees }).Count 0 "Unsupported availability guarantee in revised copy"
-Assert-Equal @($pages | Where-Object { $_.'clinical review required' -eq "yes" -and $_.'factual verification completed' -ne "no" }).Count 0 "Clinical page incorrectly marked fact-verified"
+$approvedClinicalUrls = @($clinical.page_or_file | ForEach-Object { ($_ -split " -> ", 2)[-1].Trim() })
+Assert-Equal @($pages | Where-Object { $approvedClinicalUrls -contains $_.URL }).Count $clinical.Count "Approved clinical page is missing from the live matrix"
+Assert-Equal @($pages | Where-Object { $approvedClinicalUrls -contains $_.URL -and $_.'factual verification completed' -ne "yes" }).Count 0 "Approved clinical page is missing factual verification"
+$retainedUrls = @($drafts | Where-Object { $_.'implementation status' -eq "clinically reviewed; unchanged" } | ForEach-Object URL)
+$expectedReadbackUrls = @($approvedClinicalUrls | Where-Object { $retainedUrls -notcontains $_ })
+Assert-Equal @($readback | Group-Object URL | Where-Object Count -gt 1).Count 0 "Duplicate production readback URL"
+Assert-Equal @($readback | Where-Object { $expectedReadbackUrls -notcontains $_.URL }).Count 0 "Unexpected URL in production readback"
+Assert-Equal @($expectedReadbackUrls | Where-Object { $readback.URL -notcontains $_ }).Count 0 "Approved URL missing from production readback"
+$readbackChecks = @("title_matches_runtime_suffix_policy", "description_exact", "self_canonical", "hreflang_pt_PT", "indexable", "html_lang_pt", "json_ld_present", "no_unreviewed_insurance_suffix", "deployment_match")
+foreach ($column in $readbackChecks) {
+  Assert-Equal @($readback | Where-Object { $_.$column -ne "True" }).Count 0 "Failed production readback check: $column"
+}
+Assert-Equal @($readback | Where-Object http_status -ne "200").Count 0 "Non-200 production readback"
+Assert-Equal @($readback | Where-Object deployment_commit -ne $receipt.public_verification.deployment_commit).Count 0 "Production deployment commit mismatch"
+Assert-Equal ([int]$receipt.public_verification.expected_pages) $readback.Count "Receipt public page count"
+$rolloutDate = [string]$receipt.public_verification.operational_rollout_date
+if ($rolloutDate -notmatch '^\d{4}-\d{2}-\d{2}$') { throw "Invalid production rollout date" }
+foreach ($row in $readback) {
+  $draft = @($drafts | Where-Object URL -eq $row.URL)[0]
+  Assert-Equal $row.expected_title $draft.'optimized title' "Production title drift for $($row.URL)"
+  Assert-Equal $row.expected_description $draft.'optimized meta description' "Production description drift for $($row.URL)"
+  Assert-Equal $row.rendered_description $row.expected_description "Rendered production description drift for $($row.URL)"
+  $allowedRenderedTitles = @($row.expected_title, "$($row.expected_title) · Global Health", "$($row.expected_title) · Portugal")
+  if ($allowedRenderedTitles -notcontains $row.rendered_title) { throw "Rendered production title drift for $($row.URL)" }
+  Assert-Equal $row.canonical $row.URL "Rendered production canonical drift for $($row.URL)"
+}
+Assert-Equal @($drafts | Where-Object { $_.'implementation status' -eq "live verified $rolloutDate" }).Count $readback.Count "Draft rollout status count"
+Assert-Equal @($pages | Where-Object { $_.'implementation status' -eq "live verified $rolloutDate" }).Count $readback.Count "Live matrix rollout status count"
 
 $approvalColumns = @(
   "reviewer_name", "reviewer_doctor_id", "clinical_reviewer_professional_body", "clinical_reviewer_specialty_id",
