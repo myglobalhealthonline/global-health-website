@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { localeCodeSchema } from "./admin-countries.schema.js";
-import { isValidBic, isValidIban } from "../utils/iban.js";
+import { isValidBic, isStructurallyValidIban } from "../utils/iban.js";
 
 const nullableTrimmed = (max: number) =>
   z
@@ -56,7 +56,9 @@ export const profilePatchBodySchema = z
       .trim()
       .max(42)
       .optional()
-      .refine((v) => v == null || v === "" || isValidIban(v), {
+      // Structural only — a mistyped check digit is flagged to the doctor in
+      // the form, not refused here. See utils/iban.ts isStructurallyValidIban.
+      .refine((v) => v == null || v === "" || isStructurallyValidIban(v), {
         message: "Invalid IBAN",
       }),
   })

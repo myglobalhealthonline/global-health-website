@@ -232,8 +232,24 @@ export function ibanError(raw: string, strings: ProfileStrings): string | null {
   if (!v) return null;
   if (v.length < 15 || v.length > 34) return strings.ibanErrorLength;
   if (!/^[A-Z]{2}\d{2}[A-Z0-9]+$/.test(v)) return strings.ibanErrorFormat;
-  if (!ibanChecksumOk(v)) return strings.ibanErrorChecksum;
   return null;
+}
+
+/**
+ * Advisory, NOT a blocker: the mod-97 check digits don't verify, so the IBAN
+ * is probably mistyped. Shown next to the field while still allowing the save.
+ *
+ * The checksum is a genuine signal — a single wrong character fails it, and a
+ * wrong character means the transfer bounces or reaches the wrong account. But
+ * enforcing it has repeatedly left doctors unable to record their own bank
+ * details, and the person holding the bank statement is better placed to
+ * settle it than a regex. So: warn loudly, let them proceed.
+ */
+export function ibanWarning(raw: string, strings: ProfileStrings): string | null {
+  const v = raw.trim().replace(/[\s-]/g, "").toUpperCase();
+  if (!v) return null;
+  if (ibanError(v, strings)) return null; // a hard error is already showing
+  return ibanChecksumOk(v) ? null : strings.ibanErrorChecksum;
 }
 
 export function MessageBanner({ msg }: { msg: Msg }) {

@@ -10,12 +10,31 @@ export function normalizeIban(raw: string): string {
 }
 
 /**
+ * Structural check only: country code, check digits, and an overall length
+ * inside ISO 13616's 15-34 bound. Says nothing about whether the check digits
+ * actually verify.
+ *
+ * This is what the doctor-facing bank forms accept. The mod-97 test below is
+ * correct but unforgiving, and rejecting on it outright has locked real
+ * doctors out of saving their own bank details over a single mistyped
+ * character. The client shows an advisory when `isValidIban` fails, so a
+ * suspect IBAN is flagged to the person who can actually check it rather than
+ * being refused by the server.
+ */
+export function isStructurallyValidIban(raw: string): boolean {
+  return /^[A-Z]{2}\d{2}[A-Z0-9]{11,30}$/.test(normalizeIban(raw));
+}
+
+/**
  * Validate an IBAN: structural check + ISO 13616 mod-97 == 1.
  * Accepts already-normalized or spaced input.
+ *
+ * Still the right test for "is this definitely a real IBAN" — used for the
+ * client-side advisory. Not used to reject a save; see the note above.
  */
 export function isValidIban(raw: string): boolean {
   const iban = normalizeIban(raw);
-  if (!/^[A-Z]{2}\d{2}[A-Z0-9]{11,30}$/.test(iban)) return false;
+  if (!isStructurallyValidIban(iban)) return false;
   // Move the first four chars to the end, then replace letters with numbers
   // (A=10 … Z=35) and compute mod 97 over the resulting big integer.
   const rearranged = iban.slice(4) + iban.slice(0, 4);
