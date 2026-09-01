@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import Script from "next/script";
 import { Loader2, Stamp } from "lucide-react";
 import { doctorApiErrorMessage, parseDoctorApiJson } from "@/lib/doctor-api-client";
@@ -25,38 +25,30 @@ import { doctorApiErrorMessage, parseDoctorApiJson } from "@/lib/doctor-api-clie
  *     fires with `{ prescriptionUuid, documents: [{ uuid, file_name, ... }] }`
  *     — no direct PDF URL, fetched separately server-side.
  *   - Patient data (name/CPF/DOB/address) does NOT come from the token —
- *     without an explicit call the widget shows only the patient's name
- *     (Memed's own recent-patient lookup?) with everything else blank,
- *     forcing the doctor to retype it. Fix: `await MdHub.command.send(
+ *     without an explicit call the widget shows only the patient's name,
+ *     forcing the doctor to retype the rest. Fix: `await MdHub.command.send(
  *     'plataforma.prescricao', 'setPaciente', {...})`, called BEFORE
  *     `module.show` (doc.memed.com.br/docs/frontend/comandos-mdhub/set-patient).
  *
  * The doctor portal runs a nonce/'strict-dynamic' CSP (proxy.ts nonceCsp).
  * A plain `document.createElement('script')` injected after page load is
- * NOT trusted just by host under 'strict-dynamic' (tried that first — it
- * failed silently as "Failed to load Memed widget script", CSP-blocked).
- * `next/script`'s <Script> component is Next's own supported path: Next
- * detects the nonce from the CSP header it already emits for its own
- * bundle and applies it to any <Script> it renders, so this one is trusted
- * the same way Next's own hydration scripts are — no manual nonce-copying.
+ * NOT trusted just by host under 'strict-dynamic' — `next/script`'s
+ * <Script> is Next's own supported path: Next nonces any <Script> it
+ * renders the same way it nonces its own bundle.
  *
- * `core:moduleInit` and the script tag itself only fire/load ONCE per page —
- * `next/script` dedupes by `id` and won't call `onLoad` again on a second
- * mount, and Memed's own module only initializes once. The ORIGINAL version
- * of this component redid the whole fetch-session → render-Script →
- * await-onLoad → register-moduleInit-listener sequence on every click,
- * which worked exactly once: the second click re-triggered a script load
- * that had already happened, so `onLoad` never fired again and the button
- * spun forever. Fixed by splitting "load & initialize the widget" (once,
- * guarded by `widgetReady`) from "open it for one more prescription" (every
- * click, via `pendingRef` swapped out per attempt against a SINGLE
- * long-lived `prescricaoImpressa` listener registered during init).
- *
- * Still unconfirmed (flagged, not guessed): exactly how the widget binds to
- * a container element on the page — Memed's "Modos de carregamento do
- * script" / "Modos de exibição" doc pages weren't pulled. The `<div>` below
- * is a placeholder mount point; if the widget instead renders itself
- * fixed/floating regardless of a container, this div can be dropped.
+ * "Load & initialize the widget" happens ONCE per page — the script tag
+ * (next/script dedupes by id) and Memed's own `core:moduleInit` both only
+ * fire the first time. That one-time state is kept in MODULE SCOPE
+ * (`widgetState` below), not component state/refs: this component lives
+ * inside a modal that can re-render or remount between opens (tab
+ * switches, parent state changes), and a `useRef` reset on remount would
+ * silently make every "already loaded" open look like a fresh first-time
+ * load again — the button re-renders the <Script> tag, which next/script
+ * treats as already-loaded and never fires `onLoad` again, so the promise
+ * this component awaits never resolves and the button spins forever. That
+ * exact bug shipped once already (refs instead of module state); module
+ * scope survives remounts because it's tied to the JS module instance for
+ * the page's lifetime, not to any one mount of this component.
  */
 
 type MemedDocType = "PRESCRIPTION" | "ABSENCE_CERTIFICATE" | "CUSTOM_CERTIFICATE" | "EXAMS_PRESCRIPTION";
@@ -94,6 +86,91 @@ function memedGlobals() {
   };
 }
 
+type PendingResult = { resolve: (v: { prescricaoId: string; documentId: string }) => void; reject: (err: Error) => void };
+
+/**
+ * Module-scope, not component state — survives this component
+ * remounting (see the file doc comment). `readyPromise` is set exactly
+ * once, the first time anything calls `ensureWidgetLoaded`; every later
+ * call (from any mount of this component) reuses the same promise
+ * instead of re-triggering a script load that has already happened.
+ */
+const widgetState: {
+  readyPromise: Promise<void> | null;
+  scriptUrl: string | null;
+  token: string | null;
+  pending: PendingResult | null;
+} = {
+  readyPromise: null,
+  scriptUrl: null,
+  token: null,
+  pending: null,
+};
+
+/** Runs once per page, however many times it's called from however many
+ *  mounts: loads the script, waits for the module system, attaches the
+ *  ONE long-lived finish-event listener. */
+function ensureWidgetLoaded(token: string, scriptUrl: string): Promise<void> {
+  if (widgetState.readyPromise) return widgetState.readyPromise;
+
+  widgetState.token = token;
+  widgetState.scriptUrl = scriptUrl;
+
+  widgetState.readyPromise = new Promise<void>((resolveReady, rejectReady) => {
+    const scriptId = "memed-sinapse-prescricao-script";
+    const onScriptReady = () => {
+      const win = memedGlobals();
+      if (!win.MdSinapsePrescricao) {
+        rejectReady(new Error("Memed widget did not load correctly"));
+        return;
+      }
+      win.MdSinapsePrescricao.event.add("core:moduleInit", (moduleData) => {
+        if (moduleData.name !== "plataforma.prescricao") return;
+        win.MdHub?.event.add("prescricaoImpressa", (payload) => {
+          const data = payload as PrescricaoImpressaPayload;
+          const prescricaoId = data.prescriptionUuid;
+          const documentId = data.documents?.[0]?.uuid;
+          const pending = widgetState.pending;
+          widgetState.pending = null;
+          if (!prescricaoId || !documentId) {
+            pending?.reject(new Error("Memed finished the prescription but returned no document id"));
+            return;
+          }
+          pending?.resolve({ prescricaoId, documentId });
+        });
+        resolveReady();
+      });
+    };
+
+    const existing = document.getElementById(scriptId) as HTMLScriptElement | null;
+    if (existing) {
+      // Script already in the DOM from an earlier mount of this
+      // component (or a fast-refresh in dev) — don't render a second
+      // <Script>, just proceed straight to module init.
+      onScriptReady();
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.id = scriptId;
+    script.src = scriptUrl;
+    script.setAttribute("data-token", token);
+    script.async = true;
+    const nonceSource = document.querySelector<HTMLScriptElement>("script[nonce]");
+    if (nonceSource?.nonce) script.nonce = nonceSource.nonce;
+    script.onload = onScriptReady;
+    script.onerror = () => rejectReady(new Error("Failed to load Memed widget script"));
+    document.body.appendChild(script);
+  }).catch((err: unknown) => {
+    // A failed load must not wedge every future attempt — let the next
+    // call retry from scratch.
+    widgetState.readyPromise = null;
+    throw err;
+  });
+
+  return widgetState.readyPromise;
+}
+
 async function sendPatientToWidget(patient: MemedPatient): Promise<void> {
   const win = memedGlobals();
   try {
@@ -124,45 +201,6 @@ export function MemedPrescribePanel({
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState<string | null>(null);
   const [docType, setDocType] = useState<MemedDocType>("PRESCRIPTION");
-  const [session, setSession] = useState<{ token: string; scriptUrl: string } | null>(null);
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const scriptLoad = useRef<{ resolve: () => void; reject: (err: Error) => void } | null>(null);
-  /** True once the script has loaded AND the persistent prescricaoImpressa
-   *  listener is attached — both one-time-only setup steps. */
-  const widgetReady = useRef(false);
-  /** Swapped out for each open-the-widget attempt; the one long-lived
-   *  prescricaoImpressa listener (attached once, in initWidget) resolves
-   *  whichever pending promise is current when the doctor finishes. */
-  const pendingRef = useRef<{ resolve: (v: { prescricaoId: string; documentId: string }) => void; reject: (err: Error) => void } | null>(null);
-
-  /** One-time setup: wait for the module system, attach the single
-   *  long-lived finish-event listener. Never runs twice. */
-  const initWidget = useCallback((): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      const win = memedGlobals();
-      if (!win.MdSinapsePrescricao) {
-        reject(new Error("Memed widget did not load correctly"));
-        return;
-      }
-      win.MdSinapsePrescricao.event.add("core:moduleInit", (moduleData) => {
-        if (moduleData.name !== "plataforma.prescricao") return;
-        win.MdHub?.event.add("prescricaoImpressa", (payload) => {
-          const data = payload as PrescricaoImpressaPayload;
-          const prescricaoId = data.prescriptionUuid;
-          const documentId = data.documents?.[0]?.uuid;
-          const pending = pendingRef.current;
-          pendingRef.current = null;
-          if (!prescricaoId || !documentId) {
-            pending?.reject(new Error("Memed finished the prescription but returned no document id"));
-            return;
-          }
-          pending?.resolve({ prescricaoId, documentId });
-        });
-        widgetReady.current = true;
-        resolve();
-      });
-    });
-  }, []);
 
   const start = useCallback(async () => {
     setStatus("starting");
@@ -198,22 +236,12 @@ export function MemedPrescribePanel({
       }
       const patient = json.data.patient;
 
-      if (!widgetReady.current) {
-        setStatus("loading-widget");
-        await new Promise<void>((resolve, reject) => {
-          scriptLoad.current = { resolve, reject };
-          // Triggers the <Script> below to render/load — its onLoad/onError
-          // call back into this promise. Only happens once: the script tag
-          // stays mounted (and next/script dedupes by id) for every
-          // subsequent open.
-          setSession({ token: json.data!.token!, scriptUrl: json.data!.scriptUrl! });
-        });
-        await initWidget();
-      }
+      setStatus("loading-widget");
+      await ensureWidgetLoaded(json.data.token, json.data.scriptUrl);
 
       setStatus("open");
       const finished = new Promise<{ prescricaoId: string; documentId: string }>((resolve, reject) => {
-        pendingRef.current = { resolve, reject };
+        widgetState.pending = { resolve, reject };
       });
       await sendPatientToWidget(patient);
       memedGlobals().MdHub?.module.show("plataforma.prescricao");
@@ -242,7 +270,7 @@ export function MemedPrescribePanel({
       setStatus("error");
       setMessage(err instanceof Error ? err.message : "Memed widget failed");
     }
-  }, [appointmentId, docType, onIssued, initWidget]);
+  }, [appointmentId, docType, onIssued]);
 
   if (countryCode.toLowerCase() !== "br") return null;
 
@@ -290,17 +318,6 @@ export function MemedPrescribePanel({
       )}
 
       {message ? <p className="text-xs text-[var(--portal-muted)]">{message}</p> : null}
-      <div ref={containerRef} className={status === "open" ? "min-h-[480px]" : "hidden"} />
-      {session ? (
-        <Script
-          id="memed-sinapse-prescricao-script"
-          src={session.scriptUrl}
-          data-token={session.token}
-          strategy="afterInteractive"
-          onLoad={() => scriptLoad.current?.resolve()}
-          onError={() => scriptLoad.current?.reject(new Error("Failed to load Memed widget script"))}
-        />
-      ) : null}
     </div>
   );
 }
