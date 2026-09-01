@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readdir, readFile } from "node:fs/promises";
 
 const root = new URL("./", import.meta.url);
@@ -210,6 +211,28 @@ for (const row of matrix) {
   assert.equal(live.h1, row.original_h1, `original H1 drift for ${row.url}`);
 }
 
+function strictRfc3339Timestamp(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,3})?(?:Z|[+-](\d{2}):(\d{2}))$/.exec(value);
+  if (!match) return false;
+  const [year, month, day, hour, minute, second, offsetHour, offsetMinute] = [
+    ...match.slice(1, 7),
+    match[7] ?? "0",
+    match[8] ?? "0",
+  ].map(Number);
+  const daysInMonth = month >= 1 && month <= 12 ? new Date(Date.UTC(year, month, 0)).getUTCDate() : 0;
+  const parsed = new Date(value);
+  return (
+    year > 0 && day >= 1 && day <= daysInMonth && hour <= 23 && minute <= 59 && second <= 59 &&
+    offsetHour <= 23 && offsetMinute <= 59 && !Number.isNaN(parsed.getTime()) && parsed <= new Date()
+  );
+}
+assert.equal(strictRfc3339Timestamp("2026-02-30T10:00:00Z"), false, "invalid calendar date accepted");
+assert.equal(
+  strictRfc3339Timestamp(new Date(Date.now() + 60_000).toISOString()),
+  false,
+  "future clinical review accepted",
+);
+
 const productionReadback = records(await read("raw/static-page-production-readback-2026-09-01.csv"));
 const liveMatrixRows = matrix.filter(({ implementation_status }) => implementation_status === "live_verified_2026-09-01");
 assert.equal(productionReadback.length, 14);
@@ -251,13 +274,56 @@ assert.equal(
   "clinical register contains duplicate assets",
 );
 const clinicalByAsset = new Map(clinicalRegister.map((row) => [row.asset, row]));
+
+const czechiaApprovedToolSeo = JSON.parse(
+  await readFile(new URL("../../frontend/lib/tools/czechia-approved-tool-seo.json", root), "utf8"),
+);
+assert.deepEqual(
+  Object.keys(czechiaApprovedToolSeo).sort(),
+  ["blood-pressure-chart", "bmi-calculator", "calorie-calculator", "osteoporosis-risk-checker"].sort(),
+  "served Czech tool approval set drift",
+);
+for (const [slug, desired] of Object.entries(czechiaApprovedToolSeo)) {
+  const asset = `/czechia/cs/tools/${slug}`;
+  const gate = clinicalByAsset.get(asset);
+  assert.equal(gate?.status, "approved", `served Czech tool copy is not approved for ${asset}`);
+  const approvalHash = createHash("sha256")
+    .update(JSON.stringify({ assetKind: "tool", assetPath: asset, locale: "CS", desired, faqReplacements: [] }))
+    .digest("hex");
+  assert.equal(gate.approved_sha256, approvalHash, `served Czech tool copy approval hash drift for ${asset}`);
+}
+
 for (const row of matrix.filter(({ clinical_review_required }) => clinical_review_required === "yes")) {
   const asset = new URL(row.url).pathname;
   const gate = clinicalByAsset.get(asset);
   assert.ok(gate, `clinical register missing ${asset}`);
   assert.equal(new URL(gate.official_source).protocol, "https:", `clinical source must use HTTPS for ${asset}`);
   assert.ok(gate.reviewer_requirement, `clinical reviewer missing for ${asset}`);
-  assert.equal(gate.status, "pending", `unexpected clinical status for ${asset}`);
+  assert.ok(["pending", "approved"].includes(gate.status), `unexpected clinical status for ${asset}`);
+  if (gate.status === "approved") {
+    assert.ok(gate.reviewer_name, `approved clinical reviewer name missing for ${asset}`);
+    assert.ok(gate.reviewer_doctor_id, `approved clinical reviewer ID missing for ${asset}`);
+    assert.ok(strictRfc3339Timestamp(gate.reviewed_at), `invalid clinical review time for ${asset}`);
+    assert.match(gate.approved_sha256, /^[a-f0-9]{64}$/, `invalid approved hash for ${asset}`);
+    if (asset === "/czechia/en" || asset === "/czechia/en/services/lekar-online-praha") {
+      assert.ok(gate.native_reviewer_name, `native reviewer name missing for ${asset}`);
+      assert.ok(gate.native_reviewer_id, `native reviewer ID missing for ${asset}`);
+      assert.ok(strictRfc3339Timestamp(gate.native_reviewed_at), `invalid native review time for ${asset}`);
+    }
+  } else {
+    assert.ok(
+      [
+        gate.reviewer_name,
+        gate.reviewer_doctor_id,
+        gate.reviewed_at,
+        gate.approved_sha256,
+        gate.native_reviewer_name,
+        gate.native_reviewer_id,
+        gate.native_reviewed_at,
+      ].every((value) => value === ""),
+      `pending clinical row contains approval data for ${asset}`,
+    );
+  }
 }
 
 const pageTypeCounts = Object.groupBy(matrix, ({ page_type }) => page_type);

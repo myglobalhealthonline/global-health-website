@@ -1,0 +1,30 @@
+{
+  "blood-pressure-chart": {
+    "metaTitle": "Krevní tlak: kalkulačka a tabulka hodnot",
+    "metaDescription": "Zkontrolujte orientační kategorii krevního tlaku, správný postup měření a situace, kdy je vhodná konzultace nebo akutní pomoc.",
+    "h1Lead": "Kalkulačka a tabulka",
+    "h1Accent": "krevního tlaku",
+    "h1Trail": ""
+  },
+  "bmi-calculator": {
+    "metaTitle": "BMI kalkulačka | Výpočet BMI online",
+    "metaDescription": "Spočítejte si BMI z výšky a hmotnosti. Výsledek používá orientační kategorie pro dospělé a nenahrazuje individuální zdravotní posouzení.",
+    "h1Lead": "BMI",
+    "h1Accent": "kalkulačka",
+    "h1Trail": ""
+  },
+  "calorie-calculator": {
+    "metaTitle": "Kalkulačka kalorií | Denní kalorický příjem",
+    "metaDescription": "Odhadněte denní kalorický příjem pro udržení, hubnutí nebo nabírání podle rovnice Mifflin-St Jeor. Výsledek je orientační.",
+    "h1Lead": "Kalkulačka",
+    "h1Accent": "kalorií",
+    "h1Trail": ""
+  },
+  "osteoporosis-risk-checker": {
+    "metaTitle": "Riziko osteoporózy | Orientační kontrola",
+    "metaDescription": "Projděte orientační rizikové faktory osteoporózy a zjistěte, kdy může být vhodné odborné posouzení. Nejde o FRAX ani diagnózu.",
+    "h1Lead": "Riziko",
+    "h1Accent": "osteoporózy",
+    "h1Trail": ""
+  }
+}

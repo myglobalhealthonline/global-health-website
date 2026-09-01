@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import czechiaApprovedToolSeo from "./czechia-approved-tool-seo.json";
 import { isToolMarket, toolHreflangAlternates, toolMarkets } from "./markets";
 import { applyMarketBands, applyMarketToolCopy, getMarketFaq } from "./market-copy";
 import { TOOL_SLUGS, getToolCopy, getToolsCopy } from "./registry";
@@ -12,6 +13,12 @@ const MARKETS: Record<string, string[]> = {
   ro: ["ro", "en"],
   br: ["pt", "en"],
 };
+const APPROVED_CZECH_TOOL_SLUGS = [
+  "blood-pressure-chart",
+  "bmi-calculator",
+  "calorie-calculator",
+  "osteoporosis-risk-checker",
+] as const;
 
 describe("toolMarkets", () => {
   it("covers every seeded market and each of its locales", () => {
@@ -143,6 +150,21 @@ describe("getMarketFaq", () => {
 describe("applyMarketToolCopy / applyMarketBands", () => {
   const ptCopy = getToolCopy("pt", "bmi-calculator")!;
   const ptBands = getToolsCopy("pt").bands;
+
+  it("applies only the clinically approved Czech tool metadata", () => {
+    expect(Object.keys(czechiaApprovedToolSeo).sort()).toEqual([...APPROVED_CZECH_TOOL_SLUGS].sort());
+    for (const [slug, seo] of Object.entries(czechiaApprovedToolSeo)) {
+      const shared = getToolCopy("cs", slug)!;
+      expect(applyMarketToolCopy("cz", "cs", slug, shared)).toMatchObject(seo);
+      expect(applyMarketToolCopy("cz", "en", slug, shared)).toBe(shared);
+      expect(applyMarketToolCopy("ie", "cs", slug, shared)).toBe(shared);
+    }
+
+    for (const slug of ["adhd-test", "due-date-calculator", "ovulation-calculator"]) {
+      const shared = getToolCopy("cs", slug)!;
+      expect(applyMarketToolCopy("cz", "cs", slug, shared)).toBe(shared);
+    }
+  });
 
   it("gives Brazil Brazilian Portuguese, not European", () => {
     const br = applyMarketToolCopy("br", "pt", "bmi-calculator", ptCopy);

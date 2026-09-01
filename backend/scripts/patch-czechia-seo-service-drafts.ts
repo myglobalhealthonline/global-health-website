@@ -500,7 +500,7 @@ export async function runCzechiaSeoServicePatch(
       throw new Error(`Verification failed: ${prepared.slug} protected operational state changed`);
     }
     return saved;
-  }, { isolationLevel: "Serializable" });
+  }, { isolationLevel: "Serializable", timeout: 30_000 });
 
   logger.log(`VERIFIED: ${updated.slug} review-gated CS copy saved; global review metadata preserved.`);
   return updated;

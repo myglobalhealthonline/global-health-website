@@ -132,6 +132,7 @@ function fakeDatabase(seed: FakeService, failFaqTranslation = false) {
   let state = structuredClone(seed);
   let transactionCount = 0;
   let isolationLevel: string | undefined;
+  let transactionTimeout: number | undefined;
   const writes: string[] = [];
 
   function transactionClient(target: FakeService) {
@@ -194,10 +195,11 @@ function fakeDatabase(seed: FakeService, failFaqTranslation = false) {
     service: { findUnique: async () => structuredClone(state) },
     $transaction: async (
       operation: (tx: ReturnType<typeof transactionClient>) => Promise<unknown>,
-      config: { isolationLevel: string },
+      config: { isolationLevel: string; timeout?: number },
     ) => {
       transactionCount += 1;
       isolationLevel = config.isolationLevel;
+      transactionTimeout = config.timeout;
       const working = structuredClone(state);
       const result = await operation(transactionClient(working));
       state = working;
@@ -210,6 +212,7 @@ function fakeDatabase(seed: FakeService, failFaqTranslation = false) {
     state: () => structuredClone(state),
     transactionCount: () => transactionCount,
     isolationLevel: () => isolationLevel,
+    transactionTimeout: () => transactionTimeout,
     writes,
   };
 }
@@ -336,6 +339,7 @@ test("apply updates only the exact base, CS translation and existing FAQ ids", a
   const saved = database.state();
   assert.equal(database.transactionCount(), 1);
   assert.equal(database.isolationLevel(), "Serializable");
+  assert.equal(database.transactionTimeout(), 30_000);
   assert.equal(saved.name, draft.name);
   assert.equal(saved.translations[0]?.name, draft.name);
   assert.equal(saved.basePriceCents, service.basePriceCents);

@@ -1,5 +1,6 @@
 import type { CountryCode } from "@/data/countries";
 import { deepMergeLocale } from "@/lib/i18n/deep-merge-locale";
+import czechiaApprovedToolSeo from "@/lib/tools/czechia-approved-tool-seo.json";
 import type { ToolCopy, ToolsBandsCopy } from "@/lib/tools/registry";
 
 /**
@@ -2281,11 +2282,15 @@ type MarketCopyOverride = {
 };
 
 /**
- * Per-market copy overrides, merged over the shared language bundle. Only
- * Brazil needs one today; the same slot is how any market gets its own voice
- * without adding a locale.
+ * Per-market copy overrides, merged over the shared language bundle. This is
+ * how a market gets its own voice without changing a shared locale.
  */
 const MARKET_COPY: Partial<Record<CountryCode, Record<string, MarketCopyOverride>>> = {
+  cz: {
+    cs: {
+      tools: czechiaApprovedToolSeo,
+    },
+  },
   br: {
     pt: {
       tools: {
