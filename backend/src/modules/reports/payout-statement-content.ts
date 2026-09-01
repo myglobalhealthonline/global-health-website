@@ -49,6 +49,10 @@ export type PayoutStatementLabels = {
   accountHolder: string;
   iban: string;
   ibanNotOnFile: string;
+  /** Header value used instead of a single IBAN when the statement covers
+   *  several markets that are paid into DIFFERENT accounts — the per-market
+   *  account is printed above each market's section instead. */
+  ibanPerMarket: string;
   bic: string;
   markets: string;
   totalToPay: string;
@@ -89,6 +93,7 @@ export const PAYOUT_STATEMENT_CONTENT: Record<PayoutStatementLocale, PayoutState
     accountHolder: "Account holder",
     iban: "IBAN",
     ibanNotOnFile: "Not on file",
+    ibanPerMarket: "Per market — see each section",
     bic: "BIC / SWIFT",
     markets: "Markets",
     totalToPay: "Total to pay",
@@ -130,6 +135,7 @@ export const PAYOUT_STATEMENT_CONTENT: Record<PayoutStatementLocale, PayoutState
     accountHolder: "Titular da conta",
     iban: "IBAN",
     ibanNotOnFile: "Não registado",
+    ibanPerMarket: "Por mercado — ver cada secção",
     bic: "BIC / SWIFT",
     markets: "Mercados",
     totalToPay: "Total a pagar",
@@ -171,6 +177,7 @@ export const PAYOUT_STATEMENT_CONTENT: Record<PayoutStatementLocale, PayoutState
     accountHolder: "Titular de la cuenta",
     iban: "IBAN",
     ibanNotOnFile: "No registrado",
+    ibanPerMarket: "Por mercado — ver cada sección",
     bic: "BIC / SWIFT",
     markets: "Mercados",
     totalToPay: "Total a pagar",
@@ -212,6 +219,7 @@ export const PAYOUT_STATEMENT_CONTENT: Record<PayoutStatementLocale, PayoutState
     accountHolder: "Majitel účtu",
     iban: "IBAN",
     ibanNotOnFile: "Není uvedeno",
+    ibanPerMarket: "Podle trhu — viz jednotlivé sekce",
     bic: "BIC / SWIFT",
     markets: "Trhy",
     totalToPay: "Celkem k výplatě",
@@ -253,6 +261,7 @@ export const PAYOUT_STATEMENT_CONTENT: Record<PayoutStatementLocale, PayoutState
     accountHolder: "Titular de cont",
     iban: "IBAN",
     ibanNotOnFile: "Neînregistrat",
+    ibanPerMarket: "Per piață — vezi fiecare secțiune",
     bic: "BIC / SWIFT",
     markets: "Piețe",
     totalToPay: "Total de plată",
@@ -294,6 +303,7 @@ export const PAYOUT_STATEMENT_CONTENT: Record<PayoutStatementLocale, PayoutState
     accountHolder: "Kontoinhaber",
     iban: "IBAN",
     ibanNotOnFile: "Nicht hinterlegt",
+    ibanPerMarket: "Pro Markt — siehe die Abschnitte",
     bic: "BIC / SWIFT",
     markets: "Märkte",
     totalToPay: "Gesamtbetrag",

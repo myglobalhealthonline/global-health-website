@@ -4,7 +4,6 @@ import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse } from "../utils/response.js";
-import { decryptPhi } from "../lib/crypto/phi-crypto.js";
 import {
   doctorAppointmentsReport,
   doctorPatientsReport,
@@ -21,6 +20,7 @@ import {
   resolvePayoutStatementLocale,
 } from "../modules/reports/payout-statement-content.js";
 import { renderPayoutStatementPdfBuffer } from "../modules/reports/payout-statement-pdf.js";
+import { loadDoctorPayoutBanks } from "../modules/reports/payout-bank-lookup.js";
 
 /**
  * GET /api/doctor/reports/export?dataset=services|patients|appointments
@@ -133,21 +133,16 @@ const doctorReportExportsRoute: FastifyPluginAsync = async (app) => {
       } else if (q.dataset === "payout") {
         // The doctor's own payout bank details — their own data, so no
         // reveal-audit (unlike the admin export of another doctor's IBAN).
-        const bankRow = await prisma.doctorBankAccount.findUnique({
-          where: { doctorId: auth.doctorId },
-          select: { accountHolder: true, ibanEncrypted: true, bic: true },
-        });
-        const iban = bankRow?.ibanEncrypted ? decryptPhi(bankRow.ibanEncrypted) : null;
+        // Includes their per-market accounts so a multi-market statement shows
+        // each market's own IBAN, not one account for all of them.
+        const banks = await loadDoctorPayoutBanks(auth.doctorId);
         table = await doctorPayoutStatementReport(
           auth.doctorId,
           doctorName,
           filters,
-          {
-            accountHolder: bankRow?.accountHolder ?? null,
-            iban,
-            bic: bankRow?.bic ?? null,
-          },
+          banks.fallback,
           payoutLocale,
+          banks.byMarket,
         );
       } else {
         table = await doctorAppointmentsReport(auth.doctorId, doctorName, filters);

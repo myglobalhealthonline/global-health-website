@@ -14,7 +14,12 @@ import { fetchDownload } from "@/lib/download";
 import { PortalDialog } from "@/components/PortalDialog";
 
 type ReportCellValue = string | number | boolean | null | undefined;
-type ReportRow = Record<string, ReportCellValue> & { _total?: boolean; _section?: string };
+type ReportRow = Record<string, ReportCellValue> & {
+  _total?: boolean;
+  _section?: string;
+  /** Muted line under a market section — the bank account that market pays into. */
+  _sectionNote?: string;
+};
 type ReportTable = {
   title: string;
   subtitle?: string;
@@ -311,6 +316,12 @@ export function PayoutInvoicePanel({
                       <tr key={i}>
                         <td colSpan={viewTable.columns.length} className="pt-3 pb-1 font-medium text-[var(--portal-text)]">
                           {row._section}
+                        </td>
+                      </tr>
+                    ) : row._sectionNote ? (
+                      <tr key={i}>
+                        <td colSpan={viewTable.columns.length} className="pb-2 text-[var(--portal-muted)]">
+                          {row._sectionNote}
                         </td>
                       </tr>
                     ) : (

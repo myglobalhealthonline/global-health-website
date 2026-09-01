@@ -26,6 +26,10 @@ export type ReportRow = {
   /** Full-width section-header row (e.g. a market name). When set, the row's
    *  column cells are ignored and this label spans the whole width. */
   _section?: string;
+  /** Full-width sub-header line under a `_section` row, rendered smaller and
+   *  muted (the payout statement uses it for the bank account THAT market is
+   *  paid into). Like `_section`, the row's column cells are ignored. */
+  _sectionNote?: string;
 };
 
 /** A label/value fact rendered in the report header block (above the table) —
@@ -135,6 +139,10 @@ export function toCsv(table: ReportTable): string {
       lines.push(csvCell(row._section));
       continue;
     }
+    if (row._sectionNote) {
+      lines.push(csvCell(row._sectionNote));
+      continue;
+    }
     lines.push(table.columns.map((c) => csvCell(row[c.key])).join(","));
   }
   if (table.truncated) {
@@ -189,6 +197,9 @@ export function buildReportHtml(table: ReportTable): string {
           .map((row) => {
             if (row._section) {
               return `<tr class="section"><td colspan="${table.columns.length}">${esc(row._section)}</td></tr>`;
+            }
+            if (row._sectionNote) {
+              return `<tr class="section-note"><td colspan="${table.columns.length}">${esc(row._sectionNote)}</td></tr>`;
             }
             return `<tr${row._total ? ' class="total"' : ""}>${table.columns
               .map(
@@ -258,6 +269,10 @@ export function buildReportHtml(table: ReportTable): string {
   tr.section td {
     font-size: 7pt; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
     color: ${T.forest}; padding: 4mm 1.8mm 1.6mm; border-bottom: 0.6pt solid ${T.night};
+  }
+  tr.section-note td {
+    font-size: 7.2pt; color: ${T.muted}; padding: 1.4mm 1.8mm;
+    border-bottom: 0.4pt solid ${T.hairline};
   }
   .summary {
     margin-top: 4mm; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -344,6 +359,10 @@ export function toExcelXml(table: ReportTable): string {
         const merge = colCount > 1 ? ` ss:MergeAcross="${colCount - 1}"` : "";
         return `<Row><Cell ss:StyleID="section"${merge}><Data ss:Type="String">${xmlEsc(row._section)}</Data></Cell></Row>`;
       }
+      if (row._sectionNote) {
+        const merge = colCount > 1 ? ` ss:MergeAcross="${colCount - 1}"` : "";
+        return `<Row><Cell ss:StyleID="sectionnote"${merge}><Data ss:Type="String">${xmlEsc(row._sectionNote)}</Data></Cell></Row>`;
+      }
       const style = row._total ? "total" : undefined;
       const cells = table.columns.map((c) => excelCell(row[c.key], style)).join("");
       return `<Row>${cells}</Row>`;
@@ -368,6 +387,7 @@ export function toExcelXml(table: ReportTable): string {
     <Style ss:ID="hdr"><Font ss:Bold="1"/><Interior ss:Color="#E5EAE7" ss:Pattern="Solid"/></Style>
     <Style ss:ID="total"><Font ss:Bold="1"/></Style>
     <Style ss:ID="section"><Font ss:Bold="1"/><Interior ss:Color="#EAF0EC" ss:Pattern="Solid"/></Style>
+    <Style ss:ID="sectionnote"><Font ss:Italic="1" ss:Color="#4B5563"/></Style>
   </Styles>
   <Worksheet ss:Name="${xmlEsc(sheetName)}">
     <Table>

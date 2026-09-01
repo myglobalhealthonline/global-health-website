@@ -38,6 +38,9 @@ export function buildPayoutStatementInvoiceHtml(
   const iban = findSummary(table, t.iban) ?? t.ibanNotOnFile;
   const bic = findSummary(table, t.bic);
   const totalToPay = findSummary(table, t.totalToPay) ?? "—";
+  /** The builder writes this sentinel into both header fields when the
+   *  statement's markets are paid into different accounts. */
+  const perMarketBanks = iban === t.ibanPerMarket;
 
   const issuedDate = new Date(table.generatedAt).toLocaleDateString(loc, {
     day: "numeric",
@@ -50,6 +53,12 @@ export function buildPayoutStatementInvoiceHtml(
     .map((row) => {
       if (row._section) {
         return `<tr><td colspan="${table.columns.length + 1}" class="section">${esc(String(row._section))}</td></tr>`;
+      }
+      // Per-market payout account, emitted when the statement's markets are
+      // banked into different accounts — the "PAY TO" block above then says
+      // "per market" and this line is what finance actually pays into.
+      if (row._sectionNote) {
+        return `<tr><td colspan="${table.columns.length + 1}" class="section-note">${esc(String(row._sectionNote))}</td></tr>`;
       }
       if (row._total) {
         return `<tr class="totalrow">
@@ -138,6 +147,8 @@ export function buildPayoutStatementInvoiceHtml(
   tr.totalrow .td { border-top: 1pt solid ${T.night}; border-bottom: none; }
   .section { font-size: 7pt; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
     color: ${T.forest}; padding: 4mm 0 1.6mm; border-bottom: 0.6pt solid ${T.night}; }
+  .section-note { font-size: 7.6pt; color: ${T.muted}; padding: 1.8mm 0;
+    border-bottom: 0.4pt solid ${T.hairline}; }
 
   .settle { display: flex; justify-content: flex-end; margin-top: 8mm; }
   .totals { width: 84mm; }
@@ -181,9 +192,16 @@ export function buildPayoutStatementInvoiceHtml(
     </div>
     <div class="party">
       <span class="caps">${esc(t.payTo)}</span>
-      <div class="n">${esc(accountHolder)}</div>
+      ${
+        // Markets banked into different accounts: the header carries no single
+        // account, so say so once instead of repeating the sentinel as a name
+        // AND an IBAN. The real accounts head each market's section below.
+        perMarketBanks
+          ? `<div class="n">${esc(t.ibanPerMarket)}</div>`
+          : `<div class="n">${esc(accountHolder)}</div>
       <div class="l">${esc(t.iban)}: ${esc(iban)}</div>
-      ${bic ? `<div class="l">${esc(t.bic)}: ${esc(bic)}</div>` : ""}
+      ${bic ? `<div class="l">${esc(t.bic)}: ${esc(bic)}</div>` : ""}`
+      }
     </div>
   </div>
 

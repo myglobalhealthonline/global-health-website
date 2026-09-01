@@ -8,7 +8,9 @@ import type { CSSProperties } from "react";
  *
  * Mirrors the PDF layout: an optional header block of key/value facts (payout
  * statements use it for account holder / IBAN / total to pay), then the table
- * with full-width `_section` rows and bold `_total` rows.
+ * with full-width `_section` rows, their muted `_sectionNote` sub-headers (the
+ * payout statement puts each market's own bank account there) and bold
+ * `_total` rows.
  */
 
 export type ReportCell = string | number | boolean | null;
@@ -18,7 +20,13 @@ export type ReportTableDto = {
   subtitle?: string;
   summary?: { label: string; value: string }[];
   columns: { key: string; label: string; align?: "left" | "right" }[];
-  rows: Array<Record<string, ReportCell> & { _total?: boolean; _section?: string }>;
+  rows: Array<
+    Record<string, ReportCell> & {
+      _total?: boolean;
+      _section?: string;
+      _sectionNote?: string;
+    }
+  >;
   truncated?: boolean;
   generatedAt: string;
 };
@@ -132,6 +140,19 @@ export function ReportResultsTable({ table }: { table: ReportTableDto }) {
                         style={{ color: muted, borderBottom: border }}
                       >
                         {row._section}
+                      </td>
+                    </tr>
+                  );
+                }
+                if (row._sectionNote) {
+                  return (
+                    <tr key={`n-${i}`}>
+                      <td
+                        colSpan={colCount}
+                        className="px-2 pb-2 pt-1 text-xs"
+                        style={{ color: muted, borderBottom: border }}
+                      >
+                        {row._sectionNote}
                       </td>
                     </tr>
                   );
