@@ -577,6 +577,7 @@
     "bicErrorMsg": "Muss 8 oder 11 Zeichen lang sein, z. B. AIBKIE2D",
     "ibanErrorLength": "IBAN muss 15–34 Zeichen lang sein",
     "ibanErrorFormat": "Muss mit einem 2-stelligen Ländercode gefolgt von Ziffern beginnen",
+    "ibanWarnChecksum": "Prüfen Sie die IBAN — die Prüfziffern stimmen nicht. Sie können sie trotzdem speichern.",
     "ibanErrorChecksum": "Diese IBAN hat die Prüfziffern nicht bestanden — bitte jedes Zeichen prüfen",
     "ibanErrorCountryLength": "Eine {code}-IBAN hat {expected} Zeichen — Sie haben {actual} eingegeben",
     "editingCountry": "Bearbeitung: {country}",

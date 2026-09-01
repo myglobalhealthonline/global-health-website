@@ -249,7 +249,9 @@ export function ibanWarning(raw: string, strings: ProfileStrings): string | null
   const v = raw.trim().replace(/[\s-]/g, "").toUpperCase();
   if (!v) return null;
   if (ibanError(v, strings)) return null; // a hard error is already showing
-  return ibanChecksumOk(v) ? null : strings.ibanErrorChecksum;
+  // Deliberately not `ibanErrorChecksum` — that copy reads as a refusal, and
+  // this no longer refuses anything.
+  return ibanChecksumOk(v) ? null : strings.ibanWarnChecksum;
 }
 
 export function MessageBanner({ msg }: { msg: Msg }) {

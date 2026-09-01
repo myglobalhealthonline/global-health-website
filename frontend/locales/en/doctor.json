@@ -577,6 +577,7 @@
     "bicErrorMsg": "Must be 8 or 11 characters, e.g. AIBKIE2D",
     "ibanErrorLength": "IBAN must be 15–34 characters",
     "ibanErrorFormat": "Must start with 2-letter country code then digits",
+    "ibanWarnChecksum": "Check the IBAN — its check digits don't add up. You can still save it.",
     "ibanErrorChecksum": "This IBAN failed its check digits — please re-check every character",
     "ibanErrorCountryLength": "A {code} IBAN is {expected} characters — you entered {actual}",
     "editingCountry": "Editing {country}",
