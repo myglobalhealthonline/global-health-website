@@ -123,6 +123,21 @@ export type SuklAppPingDto = {
   responseHeaders: Record<string, string> | null;
 };
 
+/** Result of GetAppInfo — SÚKL's own statement of the interface version. */
+export type SuklAppInfoDto = {
+  service: string;
+  label: string;
+  ok: boolean;
+  httpStatus: number;
+  durationMs: number;
+  version: string | null;
+  name: string | null;
+  serverTime: string | null;
+  documentTypes: string[];
+  errorCode: string | null;
+  errorMessage: string | null;
+};
+
 export async function fetchSuklStatus() {
   return adminRequest<{
     status: SuklHealthStatusDto;
