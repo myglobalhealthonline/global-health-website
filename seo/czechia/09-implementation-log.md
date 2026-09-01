@@ -254,3 +254,39 @@ in production.
 - Final general and TypeScript reviews: approved with no remaining findings; visible-link and schema URL resolution now share one localized value while preserving the unlinked fallback.
 - Backend suite: database-independent tests ran, then the suite failed where PostgreSQL at `127.0.0.1:5433` was unavailable. The documented test-database setup could not run because Docker Desktop was not running.
 - Strict production build: frontend compiled and type-checked, then correctly refused to prerender without backend content. A degraded-build attempt also compiled/type-checked but was stopped during 951-page fallback generation after repeated backend retries.
+
+## Approved clinical rollout — 2026-09-01
+
+MUDr. Ahmed Maklad approved 17 exact Czech payloads at
+`2026-09-01T18:30:00+02:00`. The register records his existing doctor ID and the
+exact SHA-256 for each approved page. The approval was limited to rows requiring a
+Czech-licensed physician; specialist, native-English and governance-owner rows were
+not widened.
+
+Production writes updated the Czech home PageContent, 11 Czech service pages and the
+existing diabetes article. Neschopenka kept its seven FAQ records and treatment
+renewal kept its six FAQ records; other services retained their FAQ sets. Prices,
+durations, assignments, availability, booking state, doctor biographies,
+credentials, tool logic and non-Czech locales were protected and read back after the
+transactions. The updater transaction timeout was raised to 30 seconds after one
+five-second timeout rolled back cleanly; the bounded timeout is covered by a focused
+test.
+
+The four approved tool metadata/H1 payloads are served from a `cz`/`cs`-only
+frontend overlay. The exact served JSON is hashed in the artifact validator against
+the clinical register. Railway deployment
+`52843a4c-059c-4441-9baf-510020683f70` used final production base `6c0c7fcf` plus
+only the two Czech runtime files from commit `04b98cdc`; no unrelated branch work was
+included.
+
+Public readback passed 17/17 for HTTP 200, approved title/meta/H1, self-canonical,
+`index, follow`, self-hreflang, JSON-LD and internal links. A seven-route isolation
+check kept the three pending Czech tools unchanged and confirmed no Czech copy on
+Czechia English, Ireland, Brazil or Portugal. Evidence is in
+`raw/clinical-production-readback-2026-09-01.csv` and
+`raw/production-write-receipt-2026-09-01-clinical-seo.json`.
+
+Current matrix totals are 31 live, 14 source-pinned clinical drafts pending review,
+three measurement holds and two reviewed-no-change pages. The register totals are
+17 approved and 20 pending; the extra pending row covers Czech forms and analytics
+privacy rather than a matrix page.

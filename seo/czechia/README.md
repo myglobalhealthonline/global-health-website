@@ -41,13 +41,12 @@ covers all 50 in-scope URLs and is validated against all 481 keyword-owner rows.
 The exact live technical inputs are preserved in
 [`raw/live-page-seo-snapshot-2026-09-01.csv`](raw/live-page-seo-snapshot-2026-09-01.csv).
 
-The 31 eligible clinical recommendations now have source-pinned guarded payloads
-for PageContent, services, doctor/profile metadata, one blog and seven tools under
-`backend/src/content/`, with dry-run-first patchers under `backend/scripts/`.
-`clinical-review-register.csv` is the promotion authority: every real apply entry
-point requires an approved matching row, exact content hash and dated reviewer
-identity; English targets additionally require native review. All register rows are
-still pending, so these remain repository artifacts rather than production state.
+The 31 eligible clinical recommendations have source-pinned guarded payloads for
+PageContent, services, doctor/profile metadata, one blog and seven tools. MUDr.
+Ahmed Maklad approved 17 exact payloads on 2026-09-01; those 17 are live and have
+transactional plus public readback evidence. Fourteen eligible pages remain pending
+the reviewer role stated in `clinical-review-register.csv`. The register remains the
+promotion authority, and English targets still require native review.
 
 Run the lightweight integrity check after editing any generated CSV:
 

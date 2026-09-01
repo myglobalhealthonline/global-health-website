@@ -158,8 +158,16 @@ assert.equal(
   matrix.filter(({ implementation_status }) =>
     implementation_status.startsWith("source_pinned_guarded_draft_pending_"),
   ).length,
-  31,
-  "all 31 eligible clinical pages must record a source-pinned guarded draft",
+  14,
+  "the 14 unapproved eligible clinical pages must remain guarded drafts",
+);
+assert.equal(
+  matrix.filter(
+    ({ clinical_review_required, implementation_status }) =>
+      clinical_review_required === "yes" && implementation_status === "live_verified_2026-09-01",
+  ).length,
+  17,
+  "all 17 approved clinical pages must record verified live deployment",
 );
 
 const exactFaqDraftUrls = [
@@ -233,9 +241,64 @@ assert.equal(
   "future clinical review accepted",
 );
 
-const productionReadback = records(await read("raw/static-page-production-readback-2026-09-01.csv"));
+const clinicalRegister = records(await read("clinical-review-register.csv"));
+assert.equal(
+  new Set(clinicalRegister.map(({ asset }) => asset)).size,
+  clinicalRegister.length,
+  "clinical register contains duplicate assets",
+);
+assert.equal(clinicalRegister.filter(({ status }) => status === "approved").length, 17);
+assert.equal(clinicalRegister.filter(({ status }) => status === "pending").length, 20);
+const clinicalByAsset = new Map(clinicalRegister.map((row) => [row.asset, row]));
+
+const staticProductionReadback = records(await read("raw/static-page-production-readback-2026-09-01.csv"));
+const clinicalProductionReadback = records(await read("raw/clinical-production-readback-2026-09-01.csv"));
+const clinicalProductionReceiptText = await read("raw/production-write-receipt-2026-09-01-clinical-seo.json");
+assert.equal(
+  createHash("sha256").update(clinicalProductionReceiptText.replaceAll("\r\n", "\n")).digest("hex"),
+  "3aaa8bc2c4ad9601f2f6dd13850f480dda719cdaa827516f60d2cb06b3770a92",
+  "clinical production receipt drift",
+);
+const clinicalProductionReceipt = JSON.parse(clinicalProductionReceiptText);
+const productionReadback = [...staticProductionReadback, ...clinicalProductionReadback];
 const liveMatrixRows = matrix.filter(({ implementation_status }) => implementation_status === "live_verified_2026-09-01");
-assert.equal(productionReadback.length, 14);
+assert.equal(staticProductionReadback.length, 14);
+assert.equal(clinicalProductionReadback.length, 17);
+assert.equal(new Set(productionReadback.map(({ url }) => url)).size, productionReadback.length);
+assert.deepEqual(
+  clinicalProductionReadback.map(({ url }) => new URL(url).pathname).sort(),
+  clinicalRegister.filter(({ status }) => status === "approved").map(({ asset }) => asset).sort(),
+);
+const approvedClinicalAssets = clinicalRegister
+  .filter(({ status }) => status === "approved")
+  .map(({ asset }) => asset)
+  .sort();
+const receiptAssets = Object.values(clinicalProductionReceipt.applied).flat().sort();
+assert.equal(clinicalProductionReceipt.operation, "czechia-approved-clinical-seo-rollout");
+assert.ok(strictUtcTimestamp(clinicalProductionReceipt.performed_at), "invalid clinical production receipt time");
+assert.equal(clinicalProductionReceipt.approval.reviewer_name, "MUDr. Ahmed Maklad");
+assert.equal(clinicalProductionReceipt.approval.reviewer_doctor_id, "cmqas8yh9000b01pgpc0yp1la");
+assert.equal(clinicalProductionReceipt.approval.reviewed_at, "2026-09-01T18:30:00+02:00");
+assert.equal(clinicalProductionReceipt.approval.approved_assets, approvedClinicalAssets.length);
+assert.equal(clinicalProductionReceipt.repository_commit, "04b98cdc3b86e54961e0916be823c7605f3f6c36");
+assert.equal(clinicalProductionReceipt.production_base_commit, "6c0c7fcf2aa7f31c7d434ce4ee46589761532ffd");
+assert.equal(clinicalProductionReceipt.railway_frontend_deployment_id, "52843a4c-059c-4441-9baf-510020683f70");
+assert.deepEqual(receiptAssets, approvedClinicalAssets, "clinical production receipt asset drift");
+assert.equal(new Set(receiptAssets).size, receiptAssets.length, "clinical production receipt contains duplicate assets");
+assert.equal(clinicalProductionReceipt.database_readback, "verified transactionally; protected operational and non-target locale fields preserved");
+assert.equal(clinicalProductionReceipt.public_verification.artifact, "clinical-production-readback-2026-09-01.csv");
+assert.equal(clinicalProductionReceipt.public_verification.passed, clinicalProductionReadback.length);
+assert.equal(clinicalProductionReceipt.public_verification.total, clinicalProductionReadback.length);
+assert.equal(clinicalProductionReceipt.isolation_verification.passed, 7);
+assert.equal(clinicalProductionReceipt.isolation_verification.total, 7);
+assert.deepEqual([...clinicalProductionReceipt.preserved].sort(), [
+  "booking behavior",
+  "doctor assignments and availability",
+  "doctor biographies and credentials",
+  "non-target countries and locales",
+  "service prices and durations",
+  "tool algorithms and clinical thresholds",
+]);
 assert.deepEqual(
   productionReadback.map(({ url }) => url).sort(),
   liveMatrixRows.map(({ url }) => url).sort(),
@@ -267,14 +330,6 @@ for (const row of liveMatrixRows) {
   assert.ok(Number.isInteger(Number(live.internal_link_count)) && Number(live.internal_link_count) > 0, `deployed internal links missing for ${row.url}`);
 }
 
-const clinicalRegister = records(await read("clinical-review-register.csv"));
-assert.equal(
-  new Set(clinicalRegister.map(({ asset }) => asset)).size,
-  clinicalRegister.length,
-  "clinical register contains duplicate assets",
-);
-const clinicalByAsset = new Map(clinicalRegister.map((row) => [row.asset, row]));
-
 const czechiaApprovedToolSeo = JSON.parse(
   await readFile(new URL("../../frontend/lib/tools/czechia-approved-tool-seo.json", root), "utf8"),
 );
@@ -301,6 +356,7 @@ for (const row of matrix.filter(({ clinical_review_required }) => clinical_revie
   assert.ok(gate.reviewer_requirement, `clinical reviewer missing for ${asset}`);
   assert.ok(["pending", "approved"].includes(gate.status), `unexpected clinical status for ${asset}`);
   if (gate.status === "approved") {
+    assert.equal(row.implementation_status, "live_verified_2026-09-01", `approved clinical row is not live for ${asset}`);
     assert.ok(gate.reviewer_name, `approved clinical reviewer name missing for ${asset}`);
     assert.ok(gate.reviewer_doctor_id, `approved clinical reviewer ID missing for ${asset}`);
     assert.ok(strictRfc3339Timestamp(gate.reviewed_at), `invalid clinical review time for ${asset}`);
@@ -311,6 +367,7 @@ for (const row of matrix.filter(({ clinical_review_required }) => clinical_revie
       assert.ok(strictRfc3339Timestamp(gate.native_reviewed_at), `invalid native review time for ${asset}`);
     }
   } else {
+    assert.notEqual(row.implementation_status, "live_verified_2026-09-01", `pending clinical row is marked live for ${asset}`);
     assert.ok(
       [
         gate.reviewer_name,

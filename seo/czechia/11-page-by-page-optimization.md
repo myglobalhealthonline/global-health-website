@@ -81,4 +81,14 @@ The comparison preserves names, registrations, qualifications, languages, prices
 
 ## Implementation boundary
 
-The approved metadata and H1 changes for all 14 non-clinical static pages are live and publicly verified in a Czechia-Czech-only frontend overlay. Cache-bypassed checks on 2026-09-01 matched every approved title, meta description and H1 and confirmed HTTP 200, self-canonical, `index, follow`, self-hreflang and route-appropriate JSON-LD; exact replay evidence is [`raw/static-page-production-readback-2026-09-01.csv`](raw/static-page-production-readback-2026-09-01.csv). The 31 eligible clinical rows have exact source-pinned guarded payloads; their clinical-register entries are still `pending`, so the real apply entry points fail before a transaction opens. Rows with `FAQs optimized: no` have no executable FAQ replacement. The service updater preserves non-target locale fallbacks instead of leaking Czech copy. The three measurement holds and two reviewed-no-change rows remain untouched. No production CMS/database write or clinical publication was performed.
+The 14 non-clinical static pages and 17 clinician-approved Czech pages are live and
+publicly verified. The approved clinical batch comprises the Czech home, 11
+services, the diabetes article and four tools. Exact replay evidence is
+[`raw/clinical-production-readback-2026-09-01.csv`](raw/clinical-production-readback-2026-09-01.csv),
+with the production operation recorded in
+[`raw/production-write-receipt-2026-09-01-clinical-seo.json`](raw/production-write-receipt-2026-09-01-clinical-seo.json).
+The remaining 14 eligible pages stay source-pinned and fail closed pending their
+specialist, native-English or governance approval. The three measurement holds and
+two reviewed-no-change rows remain untouched. Doctor biographies, credentials,
+prices, durations, availability, booking behavior, clinical algorithms and
+non-target locales were not changed.

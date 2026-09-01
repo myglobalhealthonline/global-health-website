@@ -75,6 +75,28 @@ ledger and historical evidence follow from §0.
   including unique keyword ownership and removal of guarantee wording from proposed
   metadata.
 
+### 27.17 Czechia clinician-approved rollout live (2026-09-01)
+
+- MUDr. Ahmed Maklad approved 17 exact Czech payloads at
+  `2026-09-01T18:30:00+02:00`. The scope was limited to rows requiring a
+  Czech-licensed physician; specialist, native-English and governance-owner rows
+  remain pending.
+- Production now serves the approved Czech home, 11 service pages, the diabetes
+  article and four tool metadata/H1 overlays. The database writes were read back
+  transactionally. Doctor biographies and credentials, service prices and durations,
+  assignments and availability, booking behavior, tool logic and non-target locales
+  were unchanged.
+- Railway frontend deployment `52843a4c-059c-4441-9baf-510020683f70` used final
+  production base `6c0c7fcf` plus only the Czech runtime overlay from `04b98cdc`.
+  Public readback passed 17/17 for HTTP 200, approved title/meta/H1, canonical,
+  robots, self-hreflang, JSON-LD and internal links. Seven isolation checks passed
+  for pending Czech tools and Czechia English, Ireland, Brazil and Portugal.
+- Matrix state: 31 live, 14 source-pinned clinical drafts pending review, three
+  measurement holds and two reviewed-no-change pages. Register state: 17 approved,
+  20 pending, including the non-page privacy row. Evidence:
+  `seo/czechia/raw/clinical-production-readback-2026-09-01.csv` and
+  `seo/czechia/raw/production-write-receipt-2026-09-01-clinical-seo.json`.
+
 ### 27.16 Czechia clinical rollout package prepared (2026-09-01)
 
 - The 31 eligible clinical recommendations now have source-pinned, dry-run-first
@@ -134,11 +156,11 @@ ledger and historical evidence follow from §0.
   `live_verified_2026-09-01`; the pre-deployment original snapshot remains preserved
   as dated evidence. Production evidence is
   `seo/czechia/raw/static-page-production-readback-2026-09-01.csv`.
-- **Clinically gated production copy remains unchanged.** The 31 eligible clinical recommendations are
-  source-pinned guarded drafts whose apply commands remain blocked by the pending
-  clinical register. Only the neschopenka and treatment-renewal services have exact
-  FAQ replacements. The three GP/24-7/travel holds and two reviewed-no-change
-  articles remain binding.
+- Seventeen clinician-approved recommendations are now live as recorded in §27.17.
+  The remaining 14 eligible recommendations stay source-pinned and blocked by their
+  pending specialist, native-English or governance review. Only neschopenka and
+  treatment renewal have exact FAQ replacements. The three GP/24-7/travel holds and
+  two reviewed-no-change articles remain binding.
   Evidence: `seo/czechia/11-page-by-page-optimization.md` and
   `seo/czechia/page-by-page-completion-matrix.csv`.
 
