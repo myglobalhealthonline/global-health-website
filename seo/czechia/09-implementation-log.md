@@ -80,9 +80,9 @@ block was rewritten, no deslop pass was applicable in this follow-up.
 Two existing Czech service records now have repository-only, clinically gated copy:
 
 - `/czechia/cs/services/neschopenka-online`, approval SHA-256
-  `e181f41e9b632af577fff9be1302c7b80a44da3c47be4ab884eaa4901c538d65`;
+  `14565e67950f0e84e4c176c8c4b40cdee460a4ce3dfc52bc07cc484e19b02c1a`;
 - `/czechia/cs/services/obnoveni-lecby`, approval SHA-256
-  `d085e67bd02effa715f64236adb7b03c76390fba35b8a110496a8feea0a4c647`.
+  `3ff9b7a7aa88f80f15f28fab512fe86c5b65488e97a83f3f0e7432b31ab0244e`.
 
 The drafts update title, description, H1, opening, structured body, CTA and every
 existing visible FAQ. Neschopenka keeps transactional assessment intent while the
@@ -123,7 +123,7 @@ Verification passed: 13 focused content/updater tests, the backend full suite,
 backend type-check and build, touched-file ESLint, Czech artifact validation, raw
 JSON parsing and `git diff --check`. Independent code, TypeScript and security
 reviews reported no remaining findings. The production dry-runs were read-only and
-the CTA fallback guard stopped the batch before any transaction could be authorized.
+the pending clinical register stopped the batch before any transaction could be authorized.
 
 ## Page-by-page optimization matrix — 2026-09-01
 
@@ -152,7 +152,7 @@ drafts and exact FAQ replacements. The other affected FAQ rows are explicitly ma
 `no` until page-level old/new copy passes clinical review. The 36 clinically gated
 matrix rows all have matching pending entries in `clinical-review-register.csv`.
 The rest are matrix-level local drafts or reviewed no-change dispositions. Both full
-service drafts remain blocked by null non-Czech CTA fallbacks and clinical review;
+service drafts preserve non-Czech CTA fallbacks and remain blocked by clinical review;
 owner implementation authorization was recorded on 2026-09-01.
 No production CMS/database write, legal-body edit, publication change, redirect,
 push or deployment was performed.
@@ -178,6 +178,41 @@ frontend TypeScript check, focused ESLint, Czech artifact validator and
 approved the final diff with no findings. The strict and degraded builds both compiled and type-checked;
 static generation could not finish while the local content API was unavailable, so
 the degraded run was stopped during repeated fallback fetches.
+
+## Clinical rollout package prepared — 2026-09-01
+
+The 31 eligible clinical recommendations now have source-pinned guarded payloads:
+three PageContent records, 15 service locale targets, five doctor-profile metadata
+records, one existing blog record and seven tool metadata/H1 records. This follows
+the Ireland operational pattern of an exact manifest, immutable source pins,
+dry-run-first output, narrow writes, protected-field comparison and exact readback.
+Doctor biographies, clinical algorithms and unsupported FAQs remain unchanged.
+
+The production entry points now require a matching approved row in
+`clinical-review-register.csv`. The row must contain the reviewer identity, an
+RFC 3339 review timestamp and the exact approved-copy SHA-256; English targets also
+require native-review identity and date. The command reviewer data must match the
+recorded approval. All 37 register rows remain `pending`, so the gate fails before a
+transaction opens and no production write was attempted.
+
+Production read-only dry-runs matched all 31 intended targets. Focused tests passed
+51/51, including exact scope, source drift, protected operational and cross-market
+fields, approval-register validation, transaction behavior and exact readback.
+Backend type-check, Czech artifact validation and `git diff --check` passed. Focused
+backend ESLint was unavailable because this checkout does not have its configured
+executable installed.
+
+The apply guards also prove Czech ownership for PageContent and doctor records,
+reject a blog shared with another country, and require the complete CS/EN/PT/ES/RO/DE
+service translation inventory before changing Czech fallback fields. The doctor
+directory consumes its approved PageContent H1/lede only for `cz`/`cs` and only when
+both live fields exactly match the approved pair; otherwise its existing i18n hero
+remains active. Focused frontend tests passed 19/19 and frontend type-check passed.
+
+The completion matrix now records the 31 targets as source-pinned guarded drafts
+pending clinical approval. The 14 non-clinical rows remain implemented in code and
+pending deployment; three measurement holds and two reviewed-no-change rows remain
+unchanged. No CMS/database apply, publication, push or deployment occurred.
 
 ## Deployment verification
 

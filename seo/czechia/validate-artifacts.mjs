@@ -138,16 +138,11 @@ for (const [field, values] of Object.entries(allowedFlags)) {
 }
 const allowedStatuses = new Set([
   "implemented_in_code_pending_deployment",
-  "full_local_draft_blocked_cta_fallback_pending_clinical_review",
-  "local_copy_draft_pending_clinical_and_native_review",
-  "local_copy_draft_pending_clinical_review",
-  "local_metadata_and_faq_draft_pending_clinical_review",
-  "local_metadata_draft",
-  "local_metadata_draft_pending_clinical_review",
-  "local_safety_copy_draft_pending_clinical_review",
   "measurement_hold_travel_recrawl",
   "measurement_hold_until_2026-09-08",
   "reviewed_no_change",
+  "source_pinned_guarded_draft_pending_clinical_and_native_review",
+  "source_pinned_guarded_draft_pending_clinical_review",
 ]);
 assert.ok(matrix.every(({ implementation_status }) => allowedStatuses.has(implementation_status)));
 assert.equal(
@@ -157,6 +152,13 @@ assert.equal(
   ).length,
   14,
   "all 14 non-clinical pages must record local code implementation",
+);
+assert.equal(
+  matrix.filter(({ implementation_status }) =>
+    implementation_status.startsWith("source_pinned_guarded_draft_pending_"),
+  ).length,
+  31,
+  "all 31 eligible clinical pages must record a source-pinned guarded draft",
 );
 
 const exactFaqDraftUrls = [

@@ -33,7 +33,10 @@ import {
   type DoctorDirectoryContext,
 } from "@/lib/content/doctor-directory";
 import { DoctorDirectoryView } from "./_components/DoctorDirectoryView";
-import { DoctorTeamHero } from "@/components/sections/DoctorTeamHero";
+import {
+  DoctorTeamHero,
+  approvedCzechDoctorHeroCopy,
+} from "@/components/sections/DoctorTeamHero";
 import {
   doctorDirectorySeo,
   overrideDoctorsBundle,
@@ -254,6 +257,12 @@ export default async function CountryLangDoctorsPage({
         bookingLabel={baseDirectoryView.bookingLabel}
         availableCount={baseDirectoryView.totalDoctorCount}
         i18n={baseDirectoryView.i18n}
+        heroCopy={approvedCzechDoctorHeroCopy(
+          code,
+          lang,
+          page?.heroTitle,
+          page?.heroSubtitle,
+        )}
         bookability={baseDirectoryView.bookability}
         unavailableLabel={baseDirectoryView.unavailableLabel}
         returningLabel={baseDirectoryView.returningLabel}

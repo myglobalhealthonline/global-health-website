@@ -6,20 +6,42 @@ import {
   assertCzechiaSeoApplyGate,
   czechiaSeoApprovalSha256,
   czechiaSeoConfirmationToken,
+  parseCzechiaSeoNativeReviewDate,
   parseCzechiaSeoReviewDate,
+  type CzechiaSeoServiceDraft,
   validateCzechiaSeoServiceDraft,
 } from "./czechia-seo-service-drafts.js";
 
-const expectedSlugs = ["neschopenka-online", "obnoveni-lecby"];
+const expectedAssets = [
+  "CS:bolesti-pohyboveho-aparatu",
+  "CS:chronicka-onemocneni",
+  "CS:detsky-lekar-online",
+  "CS:doporuceni-a-vysetreni",
+  "CS:druhy-nazor-praha",
+  "CS:dusevni-zdravi-online",
+  "CS:kontrola-vahy-online",
+  "CS:kozni-konzultace-praha",
+  "CS:lekar-online-praha",
+  "EN:lekar-online-praha",
+  "CS:muzske-zdravi-online",
+  "CS:neschopenka-online",
+  "CS:obnoveni-lecby",
+  "CS:vypadavani-vlasu-online",
+  "CS:zenske-zdravi-online",
+];
 
-test("scopes the review-gated batch to the two eligible Czech services", () => {
-  assert.deepEqual(CZECHIA_SEO_SERVICE_DRAFTS.map(({ slug }) => slug), expectedSlugs);
+test("scopes the review-gated batch to every eligible Czech service variant", () => {
+  assert.deepEqual(
+    CZECHIA_SEO_SERVICE_DRAFTS.map(({ locale, slug }) => `${locale}:${slug}`),
+    expectedAssets,
+  );
   assert.ok(CZECHIA_SEO_SERVICE_DRAFTS.every(({ countryCode }) => countryCode === "cz"));
-  assert.ok(CZECHIA_SEO_SERVICE_DRAFTS.every(({ locale }) => locale === "CS"));
+  assert.ok(!CZECHIA_SEO_SERVICE_DRAFTS.some(({ slug }) => slug === "cestovni-medicina-praha"));
 });
 
-test("keeps one commercial keyword owner per service", () => {
-  const [sickNote, renewal] = CZECHIA_SEO_SERVICE_DRAFTS;
+test("keeps one commercial keyword owner per service variant", () => {
+  const sickNote = CZECHIA_SEO_SERVICE_DRAFTS.find(({ slug }) => slug === "neschopenka-online")!;
+  const renewal = CZECHIA_SEO_SERVICE_DRAFTS.find(({ slug }) => slug === "obnoveni-lecby")!;
 
   assert.equal(sickNote.primaryKeyword, "online neschopenka");
   assert.equal(renewal.primaryKeyword, "obnovení receptu online");
@@ -33,10 +55,18 @@ test("ships concise, assessment-first metadata and content", () => {
     assert.ok(draft.seoTitle.length <= 60, `${draft.slug} SEO title is too long`);
     assert.ok(draft.seoDescription.length >= 110, `${draft.slug} meta is too short`);
     assert.ok(draft.seoDescription.length <= 160, `${draft.slug} meta is too long`);
-    assert.match(draft.detailBody, /155.*112|112.*155/);
-    assert.match(draft.detailBody, /https:\/\//);
-    assert.ok(draft.faqs.length >= 5, `${draft.slug} needs useful visible FAQs`);
+    if (draft.detailBody) assert.match(draft.detailBody, /155.*112|112.*155/);
+    if (draft.detailBody) assert.match(draft.detailBody, /https:\/\//);
   }
+});
+
+test("does not invent FAQ replacements where exact reviewed copy is absent", () => {
+  const exactFaqAssets = CZECHIA_SEO_SERVICE_DRAFTS
+    .filter(({ faqs }) => faqs.length > 0)
+    .map(({ locale, slug }) => `${locale}:${slug}`);
+
+  assert.deepEqual(exactFaqAssets, ["CS:neschopenka-online", "CS:obnoveni-lecby"]);
+  assert.ok(CZECHIA_SEO_SERVICE_DRAFTS.every(({ expectedFaqIds }) => expectedFaqIds.length >= 5));
 });
 
 test("removes volatile entitlement figures and unconditional medical promises", () => {
@@ -48,17 +78,22 @@ test("removes volatile entitlement figures and unconditional medical promises", 
   assert.doesNotMatch(text, /recept je automaticky obnoven|neschopenka ihned/i);
 });
 
-test("links each page to its official source and correct supporting owner", () => {
-  const [sickNote, renewal] = CZECHIA_SEO_SERVICE_DRAFTS;
+test("links each full-copy page to its official source and correct supporting owner", () => {
+  const sickNote = CZECHIA_SEO_SERVICE_DRAFTS.find(({ slug }) => slug === "neschopenka-online")!;
+  const renewal = CZECHIA_SEO_SERVICE_DRAFTS.find(({ slug }) => slug === "obnoveni-lecby")!;
+  const sickNoteBody = sickNote.detailBody;
+  const renewalBody = renewal.detailBody;
 
-  assert.match(sickNote.detailBody, /cssz\.gov\.cz\/web\/eneschopenka/);
-  assert.match(sickNote.detailBody, /\/czechia\/cs\/blog\/neschopenka-jak-funguje-eneschopenka/);
-  assert.match(renewal.detailBody, /epreskripce\.cz/);
-  assert.match(renewal.detailBody, /\/czechia\/cs\/gp-consultation-online/);
+  assert.ok(sickNoteBody);
+  assert.ok(renewalBody);
+  assert.match(sickNoteBody, /cssz\.gov\.cz\/web\/eneschopenka/);
+  assert.match(sickNoteBody, /\/czechia\/cs\/blog\/neschopenka-jak-funguje-eneschopenka/);
+  assert.match(renewalBody, /epreskripce\.cz/);
+  assert.match(renewalBody, /\/czechia\/cs\/gp-consultation-online/);
 });
 
-test("binds approval to the exact final copy and a real review date", () => {
-  const draft = CZECHIA_SEO_SERVICE_DRAFTS[0];
+test("binds approval to the exact final copy, a real review date and an approved register row", () => {
+  const draft = CZECHIA_SEO_SERVICE_DRAFTS[0]!;
   const hash = czechiaSeoApprovalSha256(draft);
 
   assert.match(hash, /^[a-f0-9]{64}$/);
@@ -82,6 +117,19 @@ test("binds approval to the exact final copy and a real review date", () => {
       ),
     /exact reviewed copy/i,
   );
+  assert.throws(
+    () =>
+      assertCzechiaSeoApplyGate(
+        true,
+        draft,
+        parseCzechiaSeoReviewDate("2026-08-31"),
+        hash,
+        "doctor-id",
+        czechiaSeoConfirmationToken(draft),
+        "pending",
+      ),
+    /clinical review register/i,
+  );
   assert.doesNotThrow(() =>
     assertCzechiaSeoApplyGate(
       true,
@@ -90,6 +138,66 @@ test("binds approval to the exact final copy and a real review date", () => {
       hash,
       "doctor-id",
       czechiaSeoConfirmationToken(draft),
+      "approved",
     ),
   );
+});
+
+test("keeps every current service apply path closed while the register is pending", () => {
+  for (const draft of CZECHIA_SEO_SERVICE_DRAFTS) {
+    assert.throws(
+      () =>
+        assertCzechiaSeoApplyGate(
+          true,
+          draft,
+          parseCzechiaSeoReviewDate("2026-08-31"),
+          czechiaSeoApprovalSha256(draft),
+          "doctor-id",
+          czechiaSeoConfirmationToken(draft),
+          "pending",
+          draft.locale === "EN" ? "native-editor-id" : null,
+          draft.locale === "EN" ? parseCzechiaSeoNativeReviewDate("2026-08-31") : null,
+        ),
+      /clinical review register/i,
+      `${draft.locale}:${draft.slug}`,
+    );
+  }
+});
+
+test("requires a dated native-English review only for the English Prague variant", () => {
+  const english = CZECHIA_SEO_SERVICE_DRAFTS.find(({ locale }) => locale === "EN")!;
+  const czech = CZECHIA_SEO_SERVICE_DRAFTS.find(({ locale }) => locale === "CS")!;
+  const approved = (draft: CzechiaSeoServiceDraft) => [
+    true,
+    draft,
+    parseCzechiaSeoReviewDate("2026-08-31"),
+    czechiaSeoApprovalSha256(draft),
+    "doctor-id",
+    czechiaSeoConfirmationToken(draft),
+    "approved",
+  ] as const;
+
+  assert.throws(() => assertCzechiaSeoApplyGate(...approved(english)), /native reviewer/i);
+  assert.throws(
+    () => assertCzechiaSeoApplyGate(...approved(english), "native-editor-id", null),
+    /native review date/i,
+  );
+  assert.throws(
+    () => assertCzechiaSeoApplyGate(...approved(english), "native-editor-id", new Date("invalid")),
+    /valid native review date/i,
+  );
+  assert.throws(
+    () => assertCzechiaSeoApplyGate(...approved(english), "native-editor-id", new Date("2099-01-01")),
+    /future/i,
+  );
+  assert.doesNotThrow(() =>
+    assertCzechiaSeoApplyGate(
+      ...approved(english),
+      "native-editor-id",
+      parseCzechiaSeoNativeReviewDate("2026-08-31"),
+    ),
+  );
+  assert.doesNotThrow(() => assertCzechiaSeoApplyGate(...approved(czech)));
+  assert.throws(() => parseCzechiaSeoNativeReviewDate("2026-02-31"), /valid calendar date/i);
+  assert.throws(() => parseCzechiaSeoNativeReviewDate("2099-01-01"), /future/i);
 });

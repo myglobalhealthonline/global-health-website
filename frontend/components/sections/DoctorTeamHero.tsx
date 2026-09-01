@@ -2,6 +2,39 @@ import { DoctorsHero } from "@/components/sections/DoctorsHero";
 import type { DoctorTeamI18n } from "@/components/templates/DoctorTeamTemplate";
 import type { BookabilityActionProps } from "@/components/booking/BookNowButton";
 
+const APPROVED_CZECH_DOCTORS_HERO = {
+  title: "Online lékaři v Česku",
+  lede:
+    "Vyberte si z ověřených profilů lékařů registrovaných v Česku. U každého najdete jazyky, registrační údaje a aktuální možnost rezervace.",
+} as const;
+
+export type ApprovedDoctorHeroCopy = Readonly<{
+  titleLead: string;
+  titleAccent: string;
+  lede: string;
+}>;
+
+export function approvedCzechDoctorHeroCopy(
+  countryCode: string,
+  locale: string,
+  heroTitle: string | null | undefined,
+  heroSubtitle: string | null | undefined,
+): ApprovedDoctorHeroCopy | null {
+  if (
+    countryCode.toLowerCase() !== "cz" ||
+    locale.toLowerCase() !== "cs" ||
+    heroTitle !== APPROVED_CZECH_DOCTORS_HERO.title ||
+    heroSubtitle !== APPROVED_CZECH_DOCTORS_HERO.lede
+  ) {
+    return null;
+  }
+  return {
+    titleLead: "Online lékaři",
+    titleAccent: "v Česku",
+    lede: APPROVED_CZECH_DOCTORS_HERO.lede,
+  };
+}
+
 /**
  * The /doctors directory hero, lifted out of `DoctorTeamTemplate` so it
  * renders exactly ONCE per page.
@@ -26,6 +59,7 @@ export function DoctorTeamHero({
   unavailableLabel,
   returningLabel,
   nextAvailableLabel,
+  heroCopy,
 }: {
   countryName: string;
   bookingHref: string;
@@ -34,6 +68,7 @@ export function DoctorTeamHero({
    *  to the active ?lang/?type selection. */
   availableCount: number;
   i18n?: DoctorTeamI18n;
+  heroCopy?: ApprovedDoctorHeroCopy | null;
 } & BookabilityActionProps) {
   return (
     // `.gh-medical-pattern { overflow: clip }` on the section this hero used to
@@ -45,10 +80,10 @@ export function DoctorTeamHero({
         <DoctorsHero
         countryName={countryName}
         eyebrow={`${countryName} · ${i18n?.theTeamBadge ?? "The team"}`}
-        titleLead={i18n?.heroTitleLead ?? "Doctors who"}
-        titleAccent={i18n?.heroTitleAccent ?? "actually"}
-        titleTrail={i18n?.heroTitleTrail ?? "pick up."}
-        lede={(i18n?.heroLedeTemplate ?? "Every clinician below is licensed in {country}, vetted for online care, and reviewed by patients after each consultation.").replace("{country}", countryName)}
+        titleLead={heroCopy?.titleLead ?? i18n?.heroTitleLead ?? "Doctors who"}
+        titleAccent={heroCopy?.titleAccent ?? i18n?.heroTitleAccent ?? "actually"}
+        titleTrail={heroCopy ? undefined : (i18n?.heroTitleTrail ?? "pick up.")}
+        lede={heroCopy?.lede ?? (i18n?.heroLedeTemplate ?? "Every clinician below is licensed in {country}, vetted for online care, and reviewed by patients after each consultation.").replace("{country}", countryName)}
         availableCount={availableCount}
         availableLabel={
           availableCount === 1

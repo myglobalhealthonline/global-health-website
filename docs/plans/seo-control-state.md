@@ -21,6 +21,37 @@ Property: `sc-domain:myglobalhealth.online` · Site: `https://www.myglobalhealth
 The active forward plan (§27) is surfaced first for operators; the numbered baseline,
 ledger and historical evidence follow from §0.
 
+### 27.16 Czechia clinical rollout package prepared (2026-09-01)
+
+- The 31 eligible clinical recommendations now have source-pinned, dry-run-first
+  implementation payloads: three PageContent records, 15 service locale targets,
+  five doctor-profile metadata records, one existing blog record and seven tool
+  metadata/H1 records. Doctor biographies, clinical algorithms and unsupported FAQs
+  remain unchanged.
+- Every updater pins the production record identity, timestamp and source hash,
+  preserves non-target locales and operational fields, rechecks inside a Serializable
+  transaction and verifies exact saved state. English targets additionally require a
+  recorded native reviewer. The two FAQ replacements remain limited to neschopenka
+  and treatment renewal. Apply also requires Czech record ownership; a shared blog
+  or incomplete six-locale service set aborts before a write.
+- The clinical register now has explicit reviewer identity, review timestamp,
+  approved-copy SHA-256 and native-review fields. The real `--apply` entry points
+  read that register and refuse a write unless the matching row is approved and its
+  recorded hash and reviewer data match the command. All 37 register rows remain
+  `pending`, so no production write was attempted.
+- Production dry-runs matched all 31 intended targets. Focused approval, content,
+  source-protection, exact-readback and cross-market tests passed 51/51; backend
+  type-check and the Czech artifact validator passed. Focused backend ESLint was not
+  runnable because this checkout does not have the configured executable installed.
+- The doctor-directory PageContent H1/lede is wired through the existing route only
+  when country/locale is `cz`/`cs` and both fields exactly equal the approved pair.
+  Pending, stale or other-market content keeps the existing i18n hero.
+- A fresh 28-day Search Console page pull returned 172 Czechia page rows through
+  2026-08-29. URL Inspection passed the ten sampled home, directory, service,
+  doctor, article and tool URLs as indexed, with the Google-selected canonical
+  matching the declared canonical. This is a baseline refresh, not authorization to
+  publish clinically gated copy.
+
 ### 27.15 Czechia page-by-page local optimization package (2026-09-01)
 
 - A 50-row completion matrix now covers every current `/czechia/cs` sitemap URL plus
@@ -42,12 +73,11 @@ ledger and historical evidence follow from §0.
   2026-09-01. The 14 non-clinical static rows now use a `cz` + `cs`-only frontend
   overlay for the approved metadata and six changed H1s; other countries and locales
   retain their existing sources. Legal bodies and unchanged H1s were not rewritten.
-- **Production remains unchanged.** The 31 eligible clinical recommendations remain
-  exact matrix-level drafts that runtime code does not consume, and every one of the
-  36 clinical-gated rows still has a pending register entry. Only the two guarded
-  service drafts in §27.14 have exact FAQ replacements; both remain blocked by
-  clinical review and null cross-locale CTA fallbacks. The three GP/24-7/travel holds
-  and two reviewed-no-change articles remain binding.
+- **Production remains unchanged.** The 31 eligible clinical recommendations are
+  source-pinned guarded drafts whose apply commands remain blocked by the pending
+  clinical register. Only the neschopenka and treatment-renewal services have exact
+  FAQ replacements. The three GP/24-7/travel holds and two reviewed-no-change
+  articles remain binding.
   Evidence: `seo/czechia/11-page-by-page-optimization.md` and
   `seo/czechia/page-by-page-completion-matrix.csv`.
 
@@ -69,13 +99,13 @@ ledger and historical evidence follow from §0.
   exact approved-copy hash, review date, verified-eligibility Czech reviewer ID and confirmation
   token before `--apply`. It rechecks the live record inside a Serializable
   transaction. Dry-runs matched full six-locale service and FAQ source hashes
-  `880fd7d…834cc` and `8bd6489…e74ad8`, but both reported an apply blocker: the base
-  CTA and EN/PT/ES/RO/DE CTA fields are null, so a Czech base CTA would leak across
-  locale fallbacks. The updater refuses that write. Global service reviewer/date
+  `880fd7d…834cc` and `8bd6489…e74ad8`. The updater now materializes existing
+  non-target fallback values before a Czech base-field change, preventing Czech copy
+  from leaking into another locale. Global service reviewer/date
   fields also remain unchanged because they are not locale-scoped; the external
   clinical register remains the approval record.
-- **Production remains unchanged.** The CTA fallback blocker, clinical approval and
-  separate owner authorization are still unresolved, so no apply command was run.
+- **Production remains unchanged.** Recorded clinical approval remains unresolved,
+  so no apply command was run.
   The clinical review register remains `pending`. The GP/24-7 and travel decision gate remains
   on or after **2026-09-08**. The English Prague service, other service pages,
   doctor biographies, routes, redirects, canonicals, sitemap and schema were not

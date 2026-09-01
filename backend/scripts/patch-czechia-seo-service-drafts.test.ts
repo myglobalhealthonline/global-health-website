@@ -9,6 +9,8 @@ import {
   type CzechiaSeoServiceDraft,
 } from "../src/content/czechia-seo-service-drafts.js";
 import {
+  clinicalReviewAsset,
+  clinicalReviewStatusFromRegister,
   runCzechiaSeoServicePatch,
   sourceSha256,
   type CzechiaSeoPatchOptions,
@@ -52,10 +54,10 @@ function seedService(draft: CzechiaSeoServiceDraft) {
     authorDoctorId: null,
     reviewerDoctorId: null,
     country: { code: "cz", defaultLocale: "CS" },
-    translations: [
-      {
-        id: `translation-${draft.serviceId}`,
-        locale: "CS",
+    translations: ["CS", "EN", "PT", "ES", "RO", "DE"].map((locale) =>
+      ({
+        id: locale === "CS" ? `translation-${draft.serviceId}` : `translation-${locale.toLowerCase()}`,
+        locale,
         name: old("translated name"),
         summary: old("translated summary"),
         seoTitle: old("translated title"),
@@ -65,24 +67,24 @@ function seedService(draft: CzechiaSeoServiceDraft) {
         detailBody: "<p>old translated body</p>",
         ctaLabel: old("translated cta") as string | null,
         updatedAt: new Date("2026-08-01T00:00:00.000Z"),
-      },
-    ],
-    faqs: draft.faqs.map(({ id }, index) => ({
+      }),
+    ),
+    faqs: draft.expectedFaqIds.map((id, index) => ({
       id,
       question: old(`question ${index}`),
       answer: old(`answer ${index}`),
       sortOrder: index,
       isVisible: true,
       updatedAt: new Date("2026-08-01T00:00:00.000Z"),
-      translations: [
-        {
-          id: `translation-${id}`,
-          locale: "CS",
+      translations: ["CS", "EN", "PT", "ES", "RO", "DE"].map((locale) =>
+        ({
+          id: locale === "CS" ? `translation-${id}` : `translation-${locale.toLowerCase()}-${id}`,
+          locale,
           question: old(`translated question ${index}`),
           answer: old(`translated answer ${index}`),
           updatedAt: new Date("2026-08-01T00:00:00.000Z"),
-        },
-      ],
+        }),
+      ),
     })),
     assignedDoctors: [
       {
@@ -97,7 +99,7 @@ function seedService(draft: CzechiaSeoServiceDraft) {
 }
 
 function testDraft() {
-  const draft = CZECHIA_SEO_SERVICE_DRAFTS[0];
+  const draft = CZECHIA_SEO_SERVICE_DRAFTS.find(({ slug }) => slug === "neschopenka-online")!;
   const service = seedService(draft);
   return { draft: draftFor(service, draft), service };
 }
@@ -112,11 +114,16 @@ function draftFor(service: FakeService, draft: CzechiaSeoServiceDraft) {
 function options(draft: CzechiaSeoServiceDraft, apply: boolean): CzechiaSeoPatchOptions {
   return {
     only: draft.slug,
+    locale: draft.locale,
     apply,
     approvedHash: apply ? czechiaSeoApprovalSha256(draft) : null,
     reviewedAt: apply ? parseCzechiaSeoReviewDate("2026-08-31") : null,
     reviewerDoctorId: apply ? "reviewer-doctor" : null,
     confirmation: apply ? czechiaSeoConfirmationToken(draft) : null,
+    clinicalReviewStatus: apply ? "approved" : "pending",
+    nativeReviewerId: apply && draft.locale === "EN" ? "native-editor-id" : null,
+    nativeReviewedAt:
+      apply && draft.locale === "EN" ? parseCzechiaSeoReviewDate("2026-08-31") : null,
   };
 }
 
@@ -153,6 +160,13 @@ function fakeDatabase(seed: FakeService, failFaqTranslation = false) {
           if (!row) throw new Error("unexpected translation id");
           Object.assign(row, data);
           writes.push(`translation:${where.id}`);
+        },
+        updateMany: async ({ where, data }: { where: { id: string; updatedAt: Date }; data: object }) => {
+          const row = target.translations.find(({ id }) => id === where.id);
+          if (!row || row.updatedAt.getTime() !== where.updatedAt.getTime()) return { count: 0 };
+          Object.assign(row, data, { updatedAt: new Date(row.updatedAt.getTime() + 1) });
+          writes.push(`translation:${where.id}`);
+          return { count: 1 };
         },
       },
       serviceFaq: {
@@ -200,6 +214,24 @@ function fakeDatabase(seed: FakeService, failFaqTranslation = false) {
 }
 
 const silentLogger = { log() {} };
+const fullDraft = CZECHIA_SEO_SERVICE_DRAFTS.find(({ slug }) => slug === "neschopenka-online")!;
+
+test("reads approval only from the exact locale-specific clinical register row", () => {
+  const czech = CZECHIA_SEO_SERVICE_DRAFTS.find(
+    ({ slug, locale }) => slug === "lekar-online-praha" && locale === "CS",
+  )!;
+  const english = CZECHIA_SEO_SERVICE_DRAFTS.find(
+    ({ slug, locale }) => slug === "lekar-online-praha" && locale === "EN",
+  )!;
+  const csv = [
+    "asset,asset_type,review_domain,reason,claim_guardrail,official_source,priority,reviewer_requirement,status,reviewer_name,reviewer_doctor_id,reviewed_at,approved_sha256,native_reviewer_name,native_reviewer_id,native_reviewed_at",
+    `${clinicalReviewAsset(czech)},service page,domain,reason,guardrail,source,P0,physician,pending,,,,,,,`,
+    `${clinicalReviewAsset(english)},service page,domain,reason,guardrail,source,P0,physician,approved,Reviewer,doctor-id,2026-08-31T12:00:00Z,${"a".repeat(64)},Editor,editor-id,2026-08-31T13:00:00Z`,
+  ].join("\n");
+
+  assert.equal(clinicalReviewStatusFromRegister(csv, clinicalReviewAsset(czech)), "pending");
+  assert.equal(clinicalReviewStatusFromRegister(csv, clinicalReviewAsset(english)), "approved");
+});
 
 test("dry-run reads the exact source and performs no transaction or write", async () => {
   const { draft, service } = testDraft();
@@ -220,6 +252,47 @@ test("a stale source fingerprint aborts before the transaction", async () => {
   await assert.rejects(
     runCzechiaSeoServicePatch(database.client, options(staleDraft, false), silentLogger, [staleDraft]),
     /source fingerprint changed/i,
+  );
+  assert.equal(database.transactionCount(), 0);
+  assert.deepEqual(database.writes, []);
+});
+
+test("apply aborts before the transaction when the EN preservation row is absent", async () => {
+  const { draft: sourceDraft, service } = testDraft();
+  service.translations.splice(service.translations.findIndex(({ locale }) => locale === "EN"), 1);
+  const draft = draftFor(service, sourceDraft);
+  const database = fakeDatabase(service);
+
+  await assert.rejects(
+    runCzechiaSeoServicePatch(database.client, options(draft, true), silentLogger, [draft]),
+    /missing non-CS service translation.*EN/i,
+  );
+  assert.equal(database.transactionCount(), 0);
+  assert.deepEqual(database.writes, []);
+});
+
+test("apply aborts before the transaction when another supported locale row is absent", async () => {
+  const { draft: sourceDraft, service } = testDraft();
+  service.translations.splice(service.translations.findIndex(({ locale }) => locale === "PT"), 1);
+  const draft = draftFor(service, sourceDraft);
+  const database = fakeDatabase(service);
+
+  await assert.rejects(
+    runCzechiaSeoServicePatch(database.client, options(draft, true), silentLogger, [draft]),
+    /missing non-CS service translation.*PT/i,
+  );
+  assert.equal(database.transactionCount(), 0);
+  assert.deepEqual(database.writes, []);
+});
+
+test("pending clinical register status aborts even with exact CLI approval values", async () => {
+  const { draft, service } = testDraft();
+  const database = fakeDatabase(service);
+  const pending = { ...options(draft, true), clinicalReviewStatus: "pending" };
+
+  await assert.rejects(
+    runCzechiaSeoServicePatch(database.client, pending, silentLogger, [draft]),
+    /clinical review register/i,
   );
   assert.equal(database.transactionCount(), 0);
   assert.deepEqual(database.writes, []);
@@ -262,17 +335,10 @@ test("transaction failure rolls every attempted copy change back", async () => {
 });
 
 test("apply materializes existing non-CS fallback text before changing the Czech base", async () => {
-  const sourceDraft = CZECHIA_SEO_SERVICE_DRAFTS[0];
+  const sourceDraft = fullDraft;
   const service = seedService(sourceDraft);
-  const english = { ...structuredClone(service.translations[0]!), id: "translation-en", locale: "EN", ctaLabel: null };
-  service.translations.push(english);
-  for (const faq of service.faqs) {
-    faq.translations.push({
-      ...structuredClone(faq.translations[0]!),
-      id: `translation-en-${faq.id}`,
-      locale: "EN",
-    });
-  }
+  const english = service.translations.find(({ locale }) => locale === "EN")!;
+  english.ctaLabel = null;
   const draft = draftFor(service, sourceDraft);
   const database = fakeDatabase(service);
 
@@ -284,16 +350,28 @@ test("apply materializes existing non-CS fallback text before changing the Czech
   assert.ok(database.writes.includes("translation:translation-en"));
 });
 
-test("apply aborts when an existing non-CS fallback cannot be materialized", async () => {
-  const sourceDraft = CZECHIA_SEO_SERVICE_DRAFTS[0];
+test("apply keeps an empty base CTA locale-local instead of leaking Czech copy", async () => {
+  const sourceDraft = fullDraft;
   const service = seedService(sourceDraft);
   service.ctaLabel = null;
-  service.translations.push({
-    ...structuredClone(service.translations[0]!),
-    id: "translation-en",
-    locale: "EN",
-    ctaLabel: null,
-  });
+  service.translations.find(({ locale }) => locale === "EN")!.ctaLabel = null;
+  const draft = draftFor(service, sourceDraft);
+  const database = fakeDatabase(service);
+
+  await runCzechiaSeoServicePatch(database.client, options(draft, true), silentLogger, [draft]);
+
+  const saved = database.state();
+  assert.equal(saved.ctaLabel, null);
+  assert.equal(saved.translations.find(({ locale }) => locale === "CS")?.ctaLabel, draft.ctaLabel);
+  assert.equal(saved.translations.find(({ locale }) => locale === "EN")?.ctaLabel, null);
+});
+
+test("apply aborts when a non-CS locale would fall back to rewritten Czech FAQs", async () => {
+  const sourceDraft = fullDraft;
+  const service = seedService(sourceDraft);
+  for (const faq of service.faqs) {
+    faq.translations.splice(faq.translations.findIndex(({ locale }) => locale === "EN"), 1);
+  }
   const draft = draftFor(service, sourceDraft);
   const database = fakeDatabase(service);
 
@@ -305,21 +383,21 @@ test("apply aborts when an existing non-CS fallback cannot be materialized", asy
   assert.deepEqual(database.writes, []);
 });
 
-test("apply aborts when a non-CS locale would fall back to rewritten Czech FAQs", async () => {
-  const sourceDraft = CZECHIA_SEO_SERVICE_DRAFTS[0];
-  const service = seedService(sourceDraft);
-  service.translations.push({
-    ...structuredClone(service.translations[0]!),
-    id: "translation-en",
-    locale: "EN",
-  });
-  const draft = draftFor(service, sourceDraft);
+test("an English variant updates only its translation and preserves the Czech base", async () => {
+  const czech = CZECHIA_SEO_SERVICE_DRAFTS.find(
+    ({ slug, locale }) => slug === "lekar-online-praha" && locale === "CS",
+  )!;
+  const english = CZECHIA_SEO_SERVICE_DRAFTS.find(
+    ({ slug, locale }) => slug === "lekar-online-praha" && locale === "EN",
+  )!;
+  const service = seedService(czech);
+  const draft = draftFor(service, english);
   const database = fakeDatabase(service);
 
-  await assert.rejects(
-    runCzechiaSeoServicePatch(database.client, options(draft, true), silentLogger, [draft]),
-    /unsafe non-CS base-copy fallbacks/i,
-  );
-  assert.equal(database.transactionCount(), 0);
-  assert.deepEqual(database.writes, []);
+  await runCzechiaSeoServicePatch(database.client, options(draft, true), silentLogger, [draft]);
+
+  const saved = database.state();
+  assert.equal(saved.seoTitle, service.seoTitle);
+  assert.equal(saved.translations.find(({ locale }) => locale === "CS")?.seoTitle, service.translations[0]?.seoTitle);
+  assert.equal(saved.translations.find(({ locale }) => locale === "EN")?.seoTitle, draft.seoTitle);
 });

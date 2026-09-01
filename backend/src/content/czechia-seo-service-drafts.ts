@@ -5,24 +5,253 @@ export type CzechiaSeoServiceDraft = {
   expectedServiceUpdatedAt: string;
   expectedSourceSha256: string;
   countryCode: "cz";
-  locale: "CS";
+  locale: "CS" | "EN";
   slug: string;
   primaryKeyword: string;
   secondaryKeywords: readonly string[];
-  name: string;
-  summary: string;
+  expectedFaqIds: readonly string[];
+  name?: string;
+  summary?: string;
   seoTitle: string;
   seoDescription: string;
   heroTitle: string;
-  heroDescription: string;
-  detailBody: string;
-  ctaLabel: string;
+  heroDescription?: string;
+  detailBody?: string;
+  ctaLabel?: string;
   faqs: readonly {
     id: string;
     question: string;
     answer: string;
   }[];
 };
+
+const metadataDrafts = [
+  {
+    serviceId: "cmr85yaop003t70juxbhysddk",
+    expectedServiceUpdatedAt: "2026-07-19T05:02:17.241Z",
+    expectedSourceSha256: "ce8536fbbb759426e65a4f80e50557000af1f59771670c5363497aca80939a43",
+    countryCode: "cz",
+    locale: "CS",
+    slug: "bolesti-pohyboveho-aparatu",
+    primaryKeyword: "bolest zad online konzultace",
+    secondaryKeywords: ["bolest kloubů online", "pohybové potíže lékař"],
+    expectedFaqIds: [
+      "cmr85yaw4003u70ju0yc2kob4", "cmr85yaw4003v70jujjmuvh9w", "cmr85yaw4003w70jubykdw3jz",
+      "cmr85yaw4003x70juqav84y0k", "cmr85yaw4003y70jur0kyqx1a", "cmr85yaw4003z70ju9gm1vj50",
+      "cmr85yaw4004070jun6j0zq6e",
+    ],
+    summary: "Online konzultace bolesti zad, kloubů, svalů nebo pohybových obtíží. Lékař posoudí, zda je bezpečný postup na dálku, nebo je nutné osobní vyšetření.",
+    seoTitle: "Bolesti zad a kloubů | Online konzultace",
+    seoDescription: "Online konzultace bolesti zad, kloubů, svalů nebo pohybových obtíží. Lékař posoudí, zda je vhodný postup na dálku, nebo osobní vyšetření.",
+    heroTitle: "Bolesti zad a kloubů: online konzultace",
+    heroDescription: "Online konzultace bolesti zad, kloubů, svalů nebo pohybových obtíží. Lékař posoudí, zda je bezpečný postup na dálku, nebo je nutné osobní vyšetření.",
+    faqs: [],
+  },
+  {
+    serviceId: "cmr85yeea004i70ju3b7aiw7k",
+    expectedServiceUpdatedAt: "2026-07-19T05:02:10.155Z",
+    expectedSourceSha256: "56e1792fb5f5691371d735d9916a90fce42c979f6117bec472d585858008bee8",
+    countryCode: "cz",
+    locale: "CS",
+    slug: "chronicka-onemocneni",
+    primaryKeyword: "chronická onemocnění online",
+    secondaryKeywords: ["kontrola hypertenze online", "kontrola diabetu online"],
+    expectedFaqIds: ["cmr85yelp004j70juylf9rbbd", "cmr85yelp004k70juf8cxx8n8", "cmr85yelp004l70jup62yxaws", "cmr85yelp004m70juqgkk8p2k", "cmr85yelp004n70juypsr1gtm"],
+    summary: "Online kontrola stabilního chronického onemocnění jako doplněk pravidelné péče. Lékař posoudí průběh, léčbu a potřebu dalšího vyšetření.",
+    seoTitle: "Chronická onemocnění | Online kontrola léčby",
+    seoDescription: "Online kontrola stabilního chronického onemocnění jako doplněk pravidelné péče. Lékař posoudí průběh, léčbu a potřebu dalšího vyšetření.",
+    heroTitle: "Chronická onemocnění: online kontrola léčby",
+    heroDescription: "Online kontrola stabilního chronického onemocnění jako doplněk pravidelné péče. Lékař posoudí průběh, léčbu a potřebu dalšího vyšetření.",
+    faqs: [],
+  },
+  {
+    serviceId: "cmr85ycjf004670juod6z2yqd",
+    expectedServiceUpdatedAt: "2026-07-19T05:02:19.027Z",
+    expectedSourceSha256: "042ea5ba3cba053187e6d1c8e62eb93d4fb21555c632e9e66cdf580be8bed32c",
+    countryCode: "cz",
+    locale: "CS",
+    slug: "detsky-lekar-online",
+    primaryKeyword: "dětský lékař online",
+    secondaryKeywords: ["pediatr online", "online konzultace pro dítě"],
+    expectedFaqIds: ["cmr85ycqv004770jux22fnm86", "cmr85ycqv004870julkldu2kh", "cmr85ycqv004970juh4i934dv", "cmr85ycqv004a70juuvthy3ub", "cmr85ycqv004b70jut3xo112p", "cmr85ycqv004c70jupe7uctrf"],
+    summary: "Online konzultace zdravotních potíží dítěte za přítomnosti rodiče nebo zákonného zástupce. Lékař posoudí, zda stačí videohovor, nebo je nutné osobní či akutní vyšetření.",
+    seoTitle: "Dětský lékař online | Konzultace pro rodiče",
+    seoDescription: "Online konzultace dětských potíží s lékařem. Zjistěte, jak se připravit a které příznaky vyžadují akutní nebo osobní péči.",
+    heroTitle: "Dětský lékař online",
+    heroDescription: "Online konzultace zdravotních potíží dítěte za přítomnosti rodiče nebo zákonného zástupce. Lékař posoudí, zda stačí videohovor, nebo je nutné osobní či akutní vyšetření.",
+    faqs: [],
+  },
+  {
+    serviceId: "cmr85yg92004t70juaf7wjrsu",
+    expectedServiceUpdatedAt: "2026-07-19T05:02:22.571Z",
+    expectedSourceSha256: "03df701e33ba96e25bab127607bd5ff1b9aabba751522b02cb42cf427e4d3456",
+    countryCode: "cz",
+    locale: "CS",
+    slug: "doporuceni-a-vysetreni",
+    primaryKeyword: "žádanka online",
+    secondaryKeywords: ["doporučení ke specialistovi", "eŽádanka"],
+    expectedFaqIds: ["cmr85yggh004u70jubrjk6343", "cmr85yggh004v70ju3wr5njck", "cmr85yggh004w70julchy15yi", "cmr85yggh004x70juyb9eqmmd", "cmr85yggh004y70juxubsi1ul", "cmr85yggh004z70judefhmm3v", "cmr85yggh005070jue4rrzzxo"],
+    summary: "Online konzultace k posouzení potřeby vyšetření nebo doporučení ke specialistovi. Vystavení žádanky či doporučení závisí na klinickém posouzení.",
+    seoTitle: "Žádanka a doporučení online | Posouzení lékařem",
+    seoDescription: "Proberte s lékařem potřebu vyšetření nebo doporučení ke specialistovi. Vystavení závisí na klinickém posouzení a není automatické.",
+    heroTitle: "Doporučení a vyšetření po online konzultaci",
+    heroDescription: "Online konzultace k posouzení potřeby vyšetření nebo doporučení ke specialistovi. Vystavení žádanky či doporučení závisí na klinickém posouzení.",
+    faqs: [],
+  },
+  {
+    serviceId: "cmr85y6z9003570ju1euveuwm",
+    expectedServiceUpdatedAt: "2026-07-19T05:02:24.357Z",
+    expectedSourceSha256: "92d1cceea01ecc97f4c6f554ae263c32c3c09cfc3d0bc8db3be7cb6e5f77a014",
+    countryCode: "cz",
+    locale: "CS",
+    slug: "druhy-nazor-praha",
+    primaryKeyword: "druhý názor lékaře",
+    secondaryKeywords: ["druhy nazor", "second opinion Prague"],
+    expectedFaqIds: ["cmr85y76o003670jutk8id0j1", "cmr85y76o003770juzzlqx2mx", "cmr85y76o003870ju2lmsb647", "cmr85y76o003970ju8n0ggasc", "cmr85y76o003a70ju5p7xlsjq", "cmr85y76o003b70ju6s11i8ou"],
+    summary: "Nezávislé posouzení dostupných lékařských zpráv, výsledků a léčebného plánu. Druhý názor nenahrazuje akutní péči ani vyšetření, které nelze provést na dálku.",
+    seoTitle: "Druhý názor lékaře | Online konzultace",
+    seoDescription: "Nezávislé posouzení dostupných lékařských zpráv a léčebného plánu. Druhý názor nenahrazuje akutní péči ani nutné osobní vyšetření.",
+    heroTitle: "Druhý názor lékaře online",
+    heroDescription: "Nezávislé posouzení dostupných lékařských zpráv, výsledků a léčebného plánu. Druhý názor nenahrazuje akutní péči ani vyšetření, které nelze provést na dálku.",
+    faqs: [],
+  },
+  {
+    serviceId: "cmr85y1e7002170jutctxdjdx",
+    expectedServiceUpdatedAt: "2026-07-19T05:02:15.472Z",
+    expectedSourceSha256: "5c5b2935ee12a43d391abf5dc03f2773574f3a9a6c590d6587026ae13cc13941",
+    countryCode: "cz",
+    locale: "CS",
+    slug: "dusevni-zdravi-online",
+    primaryKeyword: "duševní zdraví online",
+    secondaryKeywords: ["online konzultace duševní zdraví", "úzkost konzultace online"],
+    expectedFaqIds: ["cmr85y1lm002270juhocgavdd", "cmr85y1lm002370jul5kq2re1", "cmr85y1ln002470juv37t93ib", "cmr85y1ln002570ju2j62y5fl", "cmr85y1ln002670jugx5wqmqm", "cmr85y1ln002770ju1g7p03g7", "cmr85y1ln002870juwlpqv3mh"],
+    summary: "Diskrétní online konzultace duševních obtíží s lékařem. Lékař posoudí situaci a doporučí další postup; při krizi nebo ohrožení volejte 155 nebo 112.",
+    seoTitle: "Duševní zdraví online | Konzultace s lékařem",
+    seoDescription: "Diskrétní online konzultace duševních obtíží s lékařem. Při krizi nebo bezprostředním ohrožení volejte 155 nebo 112.",
+    heroTitle: "Duševní zdraví: online konzultace s lékařem",
+    heroDescription: "Diskrétní online konzultace duševních obtíží s lékařem. Lékař posoudí situaci a doporučí další postup; při krizi nebo ohrožení volejte 155 nebo 112.",
+    faqs: [],
+  },
+  {
+    serviceId: "cmr85xvtl001370jue9ackw9g",
+    expectedServiceUpdatedAt: "2026-07-19T05:02:33.212Z",
+    expectedSourceSha256: "908d4aa98d9de6809215d296d2510c7295aeb616a7c3e568645c86133bbaa76c",
+    countryCode: "cz",
+    locale: "CS",
+    slug: "kontrola-vahy-online",
+    primaryKeyword: "hubnutí s lékařem",
+    secondaryKeywords: ["kontrola váhy online", "lékařská konzultace hubnutí"],
+    expectedFaqIds: ["cmr85xw10001470ju89mfykcy", "cmr85xw10001570jux5bcfn9b", "cmr85xw10001670jufog86gl9", "cmr85xw10001770junnpmy0y5", "cmr85xw10001870jub9lqn5en"],
+    summary: "Online konzultace k bezpečnému řízení hmotnosti. Lékař zhodnotí zdravotní stav, dosavadní postup a vhodná vyšetření; konkrétní léčbu nelze slíbit předem.",
+    seoTitle: "Hubnutí s lékařem | Online konzultace",
+    seoDescription: "Online konzultace k bezpečnému řízení hmotnosti. Lékař zhodnotí zdravotní stav, dosavadní postup a vhodná vyšetření; léčbu nelze slíbit předem.",
+    heroTitle: "Hubnutí s lékařem online",
+    heroDescription: "Online konzultace k bezpečnému řízení hmotnosti. Lékař zhodnotí zdravotní stav, dosavadní postup a vhodná vyšetření; konkrétní léčbu nelze slíbit předem.",
+    faqs: [],
+  },
+  {
+    serviceId: "cmr85y394002e70ju6x2wqb0h",
+    expectedServiceUpdatedAt: "2026-07-19T05:02:27.908Z",
+    expectedSourceSha256: "91f36115673d9d97f3a73cfb207c7e31a5049f825a9371c50bbc097620ee5966",
+    countryCode: "cz",
+    locale: "CS",
+    slug: "kozni-konzultace-praha",
+    primaryKeyword: "kožní lékař online",
+    secondaryKeywords: ["kozni online", "online dermatolog", "kožní konzultace Praha"],
+    expectedFaqIds: ["cmr85y3gk002f70juijk1cwpx", "cmr85y3gk002g70juoihnr73r", "cmr85y3gk002h70jugufwixmk", "cmr85y3gk002i70ju9c50fovc", "cmr85y3gk002j70juiffreilb", "cmr85y3gk002k70ju62jwsib4"],
+    summary: "Online konzultace kožních potíží s lékařem. Připravte si kvalitní fotografie a průběh obtíží; lékař posoudí, zda je nutná dermatoskopie nebo osobní vyšetření.",
+    seoTitle: "Kožní lékař online | Dermatologická konzultace",
+    seoDescription: "Konzultujte kožní potíže online s lékařem. Zjistěte, jak připravit fotografie a kdy je nutné osobní dermatologické vyšetření.",
+    heroTitle: "Kožní konzultace online",
+    heroDescription: "Online konzultace kožních potíží s lékařem. Připravte si kvalitní fotografie a průběh obtíží; lékař posoudí, zda je nutná dermatoskopie nebo osobní vyšetření.",
+    faqs: [],
+  },
+  {
+    serviceId: "cmr85xq6u000070jufztsgfec",
+    expectedServiceUpdatedAt: "2026-07-19T05:02:20.805Z",
+    expectedSourceSha256: "54b952bc8cfb2b5e21f0d894b8473082ffe4b510905f4869271d2ab4d2fb9619",
+    countryCode: "cz",
+    locale: "CS",
+    slug: "lekar-online-praha",
+    primaryKeyword: "lékař online Praha",
+    secondaryKeywords: ["soukromý lékař Praha", "online konzultace Praha"],
+    expectedFaqIds: ["cmr85xqeo000170ju6qb7bzbb", "cmr85xqeo000270jug0dgtk42", "cmr85xqeo000370ju5ryyh241", "cmr85xqeo000470jukz64egnl", "cmr85xqeo000570july81xdfm", "cmr85xqeo000670ju725p211x", "cmr85xqeo000770jue4d5moju", "cmr85xqeo000870ju1d7eavt5"],
+    summary: "Online videokonzultace s lékařem pro pacienty v Praze a celém Česku. Lékař posoudí potíže, vysvětlí další postup a doporučí osobní péči, pokud je nutná.",
+    seoTitle: "Lékař online Praha | Video konzultace",
+    seoDescription: "Online videokonzultace s lékařem pro pacienty v Praze a celém Česku. Lékař posoudí potíže a doporučí vhodný další postup.",
+    heroTitle: "Lékař online v Praze",
+    heroDescription: "Online videokonzultace s lékařem pro pacienty v Praze a celém Česku. Lékař posoudí potíže, vysvětlí další postup a doporučí osobní péči, pokud je nutná.",
+    faqs: [],
+  },
+  {
+    serviceId: "cmr85xq6u000070jufztsgfec",
+    expectedServiceUpdatedAt: "2026-07-19T05:02:20.805Z",
+    expectedSourceSha256: "54b952bc8cfb2b5e21f0d894b8473082ffe4b510905f4869271d2ab4d2fb9619",
+    countryCode: "cz",
+    locale: "EN",
+    slug: "lekar-online-praha",
+    primaryKeyword: "English speaking doctor Prague",
+    secondaryKeywords: ["doctor for foreigners Prague", "private doctor Prague", "online doctor Prague"],
+    expectedFaqIds: ["cmr85xqeo000170ju6qb7bzbb", "cmr85xqeo000270jug0dgtk42", "cmr85xqeo000370ju5ryyh241", "cmr85xqeo000470jukz64egnl", "cmr85xqeo000570july81xdfm", "cmr85xqeo000670ju725p211x", "cmr85xqeo000770jue4d5moju", "cmr85xqeo000870ju1d7eavt5"],
+    summary: "Book an online consultation with an English-speaking doctor registered in Czechia. The doctor will assess your symptoms and advise whether remote or in-person care is appropriate.",
+    seoTitle: "English-Speaking Doctor in Prague | Online Consultation",
+    seoDescription: "Book an online consultation with a Czech-registered, English-speaking doctor. See scope, live availability and when in-person or urgent care is needed.",
+    heroTitle: "English-speaking online doctor in Prague",
+    heroDescription: "Book an online consultation with an English-speaking doctor registered in Czechia. The doctor will assess your symptoms and advise whether remote or in-person care is appropriate.",
+    faqs: [],
+  },
+  {
+    serviceId: "cmr85xxof001e70ju4i7habh8",
+    expectedServiceUpdatedAt: "2026-07-19T05:02:13.708Z",
+    expectedSourceSha256: "76dd36fd05a98b345442341c8dec8e1eff3691822c13c080c04e65db612c53c5",
+    countryCode: "cz",
+    locale: "CS",
+    slug: "muzske-zdravi-online",
+    primaryKeyword: "zdraví mužů online",
+    secondaryKeywords: ["erektilní dysfunkce konzultace", "mužské zdraví"],
+    expectedFaqIds: ["cmr85xxvu001f70jukfmypz3u", "cmr85xxvu001g70jush18bon2", "cmr85xxvu001h70juavn4766t", "cmr85xxvu001i70jucxdj5obv", "cmr85xxvu001j70julp1xw1lr"],
+    summary: "Diskrétní online konzultace mužských zdravotních obtíží. Lékař posoudí možné příčiny a další postup; recepty a vyšetření závisejí na klinickém posouzení.",
+    seoTitle: "Zdraví mužů online | Diskrétní konzultace",
+    seoDescription: "Diskrétní online konzultace mužských zdravotních obtíží. Lékař posoudí možné příčiny a další postup; léčba závisí na klinickém posouzení.",
+    heroTitle: "Zdraví mužů online",
+    heroDescription: "Diskrétní online konzultace mužských zdravotních obtíží. Lékař posoudí možné příčiny a další postup; recepty a vyšetření závisejí na klinickém posouzení.",
+    faqs: [],
+  },
+  {
+    serviceId: "cmr85y8u3003h70jufxhjcrip",
+    expectedServiceUpdatedAt: "2026-07-19T05:02:11.944Z",
+    expectedSourceSha256: "03ad4dd643b6395710293a2f0583e25e386958f2b1f23ee1d34a3e25aba574bf",
+    countryCode: "cz",
+    locale: "CS",
+    slug: "vypadavani-vlasu-online",
+    primaryKeyword: "vypadávání vlasů doktor",
+    secondaryKeywords: ["vypadávání vlasů lékař", "vypadávání vlasů online"],
+    expectedFaqIds: ["cmr85y91h003i70ju66607wzd", "cmr85y91h003j70jubcw6u7x9", "cmr85y91h003k70julee55r86", "cmr85y91h003l70juavudt1go", "cmr85y91h003m70juglcrqpa7", "cmr85y91h003n70jue6i9i9f0"],
+    summary: "Online konzultace vypadávání nebo řídnutí vlasů. Lékař zhodnotí průběh, možné příčiny a potřebu vyšetření; léčba nebo recept nejsou automatické.",
+    seoTitle: "Vypadávání vlasů | Online konzultace s lékařem",
+    seoDescription: "Online konzultace vypadávání nebo řídnutí vlasů. Lékař posoudí průběh, možné příčiny a potřebu vyšetření; léčba není automatická.",
+    heroTitle: "Vypadávání vlasů: online konzultace",
+    heroDescription: "Online konzultace vypadávání nebo řídnutí vlasů. Lékař zhodnotí průběh, možné příčiny a potřebu vyšetření; léčba nebo recept nejsou automatické.",
+    faqs: [],
+  },
+  {
+    serviceId: "cmr85xzj5001p70juetn2njoa",
+    expectedServiceUpdatedAt: "2026-07-19T05:02:34.969Z",
+    expectedSourceSha256: "1003e0d10b5ce325311a4230510233f3a064e62440e179eb5ceea963a87a7a5e",
+    countryCode: "cz",
+    locale: "CS",
+    slug: "zenske-zdravi-online",
+    primaryKeyword: "zdraví žen online",
+    secondaryKeywords: ["ženské zdraví konzultace", "menopauza online konzultace"],
+    expectedFaqIds: ["cmr85xzql001q70juqt9z51qo", "cmr85xzql001r70juv4vyt8wj", "cmr85xzql001s70ju090a9zh8", "cmr85xzql001t70juc83sjpe9", "cmr85xzql001u70juwk6onann", "cmr85xzql001v70juqsfgzvwt"],
+    summary: "Diskrétní online konzultace ženských zdravotních obtíží. Lékař posoudí situaci a doporučí další postup; některé potíže vyžadují osobní gynekologické vyšetření.",
+    seoTitle: "Zdraví žen online | Diskrétní konzultace",
+    seoDescription: "Diskrétní online konzultace ženských zdravotních obtíží. Lékař doporučí další postup; některé potíže vyžadují osobní gynekologické vyšetření.",
+    heroTitle: "Zdraví žen online",
+    heroDescription: "Diskrétní online konzultace ženských zdravotních obtíží. Lékař posoudí situaci a doporučí další postup; některé potíže vyžadují osobní gynekologické vyšetření.",
+    faqs: [],
+  },
+] as const satisfies readonly CzechiaSeoServiceDraft[];
 
 const sickNote = {
   serviceId: "cmr85xs2p000e70juwmch637u",
@@ -33,6 +262,11 @@ const sickNote = {
   slug: "neschopenka-online",
   primaryKeyword: "online neschopenka",
   secondaryKeywords: ["neschopenka online", "lékařská neschopenka online"],
+  expectedFaqIds: [
+    "cmr85xsa6000f70juiww70ryi", "cmr85xsa7000g70juxfnb13c0", "cmr85xsa7000h70jukgav4lq6",
+    "cmr85xsa7000i70juhcv8uf4r", "cmr85xsa7000j70juz48nt8zz", "cmr85xsa7000k70ju3eqob21a",
+    "cmr85xsa7000l70ju0rerevdi",
+  ],
   name: "Online neschopenka",
   summary:
     "Online konzultace k posouzení pracovní neschopnosti. Lékař rozhodne podle zdravotního stavu a povahy práce; vystavení eNeschopenky není automatické.",
@@ -112,6 +346,10 @@ const treatmentRenewal = {
   slug: "obnoveni-lecby",
   primaryKeyword: "obnovení receptu online",
   secondaryKeywords: ["obnova léčby online", "eRecept online", "online konzultace kvůli receptu"],
+  expectedFaqIds: [
+    "cmr85xu55000s70juvfpdxhi4", "cmr85xu55000t70jusnndkqhm", "cmr85xu55000u70jucleqlqkr",
+    "cmr85xu55000v70ju4q27csa4", "cmr85xu55000w70ju09qbtii5", "cmr85xu55000x70jus9xjlihu",
+  ],
   name: "Obnovení léčby a receptu online",
   summary:
     "Online konzultace k pokračování zavedené léčby. Lékař posoudí dokumentaci, aktuální stav a bezpečnost dalšího postupu; vystavení eReceptu není automatické.",
@@ -175,12 +413,19 @@ const treatmentRenewal = {
   ],
 } satisfies CzechiaSeoServiceDraft;
 
-export const CZECHIA_SEO_SERVICE_DRAFTS = [sickNote, treatmentRenewal] as const;
+export const CZECHIA_SEO_SERVICE_DRAFTS: readonly CzechiaSeoServiceDraft[] = [
+  ...metadataDrafts.slice(0, 11),
+  sickNote,
+  treatmentRenewal,
+  ...metadataDrafts.slice(11),
+];
 
 function approvalPayload(draft: CzechiaSeoServiceDraft) {
   return {
     slug: draft.slug,
     locale: draft.locale,
+    primaryKeyword: draft.primaryKeyword,
+    secondaryKeywords: draft.secondaryKeywords,
     name: draft.name,
     summary: draft.summary,
     seoTitle: draft.seoTitle,
@@ -198,22 +443,30 @@ export function czechiaSeoApprovalSha256(draft: CzechiaSeoServiceDraft): string 
 }
 
 export function czechiaSeoConfirmationToken(draft: CzechiaSeoServiceDraft): string {
-  return `CZ-SEO-SERVICE:${draft.slug}:${czechiaSeoApprovalSha256(draft).slice(0, 16)}`;
+  return `CZ-SEO-SERVICE:${draft.locale}:${draft.slug}:${czechiaSeoApprovalSha256(draft).slice(0, 16)}`;
 }
 
-export function parseCzechiaSeoReviewDate(value: string | undefined): Date | null {
+function parseReviewDate(value: string | undefined, label: string): Date | null {
   if (!value) return null;
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-    throw new Error("Review date must use YYYY-MM-DD");
+    throw new Error(`${label} must use YYYY-MM-DD`);
   }
   const date = new Date(`${value}T12:00:00.000Z`);
   if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== value) {
-    throw new Error("Review date must be a valid calendar date");
+    throw new Error(`${label} must be a valid calendar date`);
   }
   if (value > new Date().toISOString().slice(0, 10)) {
-    throw new Error("Review date cannot be in the future");
+    throw new Error(`${label} cannot be in the future`);
   }
   return date;
+}
+
+export function parseCzechiaSeoReviewDate(value: string | undefined): Date | null {
+  return parseReviewDate(value, "Review date");
+}
+
+export function parseCzechiaSeoNativeReviewDate(value: string | undefined): Date | null {
+  return parseReviewDate(value, "Native review date");
 }
 
 export function assertCzechiaSeoApplyGate(
@@ -223,6 +476,9 @@ export function assertCzechiaSeoApplyGate(
   providedHash: string | null,
   reviewerDoctorId: string | null,
   confirmation: string | null,
+  clinicalReviewStatus: string | null = null,
+  nativeReviewerId: string | null = null,
+  nativeReviewedAt: Date | null = null,
 ): void {
   if (!apply) return;
   if (!reviewedAt) throw new Error("Refusing to apply without a real clinical review date");
@@ -233,6 +489,24 @@ export function assertCzechiaSeoApplyGate(
   if (confirmation !== czechiaSeoConfirmationToken(draft)) {
     throw new Error("Refusing to apply without the exact confirmation token");
   }
+  if (draft.locale === "EN" && !nativeReviewerId?.trim()) {
+    throw new Error("Refusing to apply English copy without a native reviewer ID");
+  }
+  if (draft.locale === "EN" && !nativeReviewedAt) {
+    throw new Error("Refusing to apply English copy without a native review date");
+  }
+  if (draft.locale === "EN" && Number.isNaN(nativeReviewedAt!.getTime())) {
+    throw new Error("Refusing to apply English copy without a valid native review date");
+  }
+  if (
+    draft.locale === "EN" &&
+    nativeReviewedAt!.toISOString().slice(0, 10) > new Date().toISOString().slice(0, 10)
+  ) {
+    throw new Error("Refusing to apply English copy with a future native review date");
+  }
+  if (clinicalReviewStatus !== "approved") {
+    throw new Error("Refusing to apply until the clinical review register marks this exact asset approved");
+  }
 }
 
 export function validateCzechiaSeoServiceDraft(draft: CzechiaSeoServiceDraft): string[] {
@@ -242,8 +516,12 @@ export function validateCzechiaSeoServiceDraft(draft: CzechiaSeoServiceDraft): s
   if (draft.seoDescription.length < 110 || draft.seoDescription.length > 160) {
     errors.push("SEO description must be 110-160 characters");
   }
-  if (!/155.*112|112.*155/.test(draft.detailBody)) errors.push("Emergency numbers are missing");
-  if (draft.faqs.length < 5) errors.push("At least five visible FAQs are required");
+  if (draft.detailBody && !/155.*112|112.*155/.test(draft.detailBody)) {
+    errors.push("Emergency numbers are missing");
+  }
+  if (draft.faqs.length > 0 && draft.faqs.length < 5) {
+    errors.push("At least five visible FAQs are required when FAQs are rewritten");
+  }
   if (/term[ií]n (ještě )?dnes|ve stejný den|bez čekání/i.test(text)) {
     errors.push("Availability promise found");
   }

@@ -1,10 +1,12 @@
 /**
- * Review-gated Czech SEO copy for two existing service records.
+ * Review-gated Czech SEO copy for eligible existing service variants.
  *
  * Dry run, one exact asset at a time:
  *   node --env-file=.env --import tsx scripts/patch-czechia-seo-service-drafts.ts --only=neschopenka-online
+ *   node --env-file=.env --import tsx scripts/patch-czechia-seo-service-drafts.ts --only=lekar-online-praha --locale=EN
  * Authorized apply, after clinical review:
  *   node --env-file=.env --import tsx scripts/patch-czechia-seo-service-drafts.ts --only=neschopenka-online --apply --approved-sha256=<hash> --reviewed-at=YYYY-MM-DD --reviewer-doctor-id=<id> --confirm=<token>
+ * English apply also requires --native-reviewer-id=<id> and --native-reviewed-at=YYYY-MM-DD.
  *
  * Applying requires separate owner authorization plus the exact clinical
  * approval hash, reviewer, review date and confirmation token printed by the
@@ -12,6 +14,7 @@
  * doctor assignments, visibility or publication state.
  */
 import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import type { Prisma } from "@prisma/client";
@@ -21,18 +24,23 @@ import {
   assertCzechiaSeoApplyGate,
   czechiaSeoApprovalSha256,
   czechiaSeoConfirmationToken,
+  parseCzechiaSeoNativeReviewDate,
   parseCzechiaSeoReviewDate,
   type CzechiaSeoServiceDraft,
   validateCzechiaSeoServiceDraft,
 } from "../src/content/czechia-seo-service-drafts.js";
 import { disconnectDb, prisma } from "../src/db/prisma.js";
 import { sanitizeRichHtml } from "../src/utils/sanitize-html.js";
+import {
+  assertCzechiaClinicalApproval,
+  readCzechiaClinicalReviewRecord,
+} from "./lib/czechia-clinical-approval.js";
 
 function arg(name: string): string | null {
   return process.argv.find((value) => value.startsWith(`--${name}=`))?.slice(name.length + 3) ?? null;
 }
 
-const serviceSelect = {
+export const serviceSelect = {
   id: true,
   countryId: true,
   kind: true,
@@ -114,12 +122,24 @@ type PatcherClient = Pick<typeof prisma, "service" | "$transaction">;
 
 export type CzechiaSeoPatchOptions = {
   only: string | null;
+  locale?: string | null;
   apply: boolean;
   approvedHash: string | null;
   reviewedAt: Date | null;
   reviewerDoctorId: string | null;
   confirmation: string | null;
+  clinicalReviewStatus: string | null;
+  nativeReviewerId: string | null;
+  nativeReviewedAt: Date | null;
 };
+
+export function clinicalReviewAsset(draft: CzechiaSeoServiceDraft): string {
+  return `/czechia/${draft.locale.toLowerCase()}/services/${draft.slug}`;
+}
+
+export function clinicalReviewStatusFromRegister(csv: string, asset: string): string | null {
+  return readCzechiaClinicalReviewRecord(csv, asset).status || null;
+}
 
 export function sourceSha256(service: ServiceSnapshot): string {
   return createHash("sha256").update(JSON.stringify(service)).digest("hex");
@@ -150,7 +170,8 @@ function protectedState(service: ServiceSnapshot): string {
   });
 }
 
-const fallbackFields = [
+const copyFields = [
+  "name",
   "summary",
   "seoTitle",
   "seoDescription",
@@ -160,31 +181,58 @@ const fallbackFields = [
   "ctaLabel",
 ] as const;
 
+type CopyField = (typeof copyFields)[number];
+
+export const CZECHIA_PUBLIC_SERVICE_LOCALES = ["CS", "EN", "PT", "ES", "RO", "DE"] as const;
+
+function draftCopy(draft: CzechiaSeoServiceDraft): Partial<Record<CopyField, string>> {
+  return Object.fromEntries(
+    copyFields.flatMap((field) =>
+      draft[field] === undefined ? [] : [[field, draft[field]]],
+    ),
+  );
+}
+
 function nonCzechFallbackPlan(service: ServiceSnapshot, draft: CzechiaSeoServiceDraft) {
   const materializations: Array<{
     id: string;
     locale: string;
-    data: Partial<Record<(typeof fallbackFields)[number], string>>;
+    data: Partial<Record<CopyField, string>>;
   }> = [];
-  const blockers: string[] = [];
+  const localeOnlyFields = new Set<CopyField>();
+  if (service.country.defaultLocale !== draft.locale) {
+    return { materializations, localeOnlyFields };
+  }
+  const changedFields = copyFields.filter((field) => draft[field] !== undefined);
   for (const translation of service.translations) {
     if (translation.locale === draft.locale) continue;
-    const data: Partial<Record<(typeof fallbackFields)[number], string>> = {};
-    for (const field of fallbackFields) {
+    const data: Partial<Record<CopyField, string>> = {};
+    for (const field of changedFields) {
       if (translation[field] !== null) continue;
       const currentFallback = service[field];
-      if (currentFallback === null) blockers.push(`${translation.locale}:${field}`);
+      if (currentFallback === null) localeOnlyFields.add(field);
       else data[field] = currentFallback;
     }
     if (Object.keys(data).length > 0) materializations.push({ id: translation.id, locale: translation.locale, data });
   }
-  return { materializations, blockers };
+  return { materializations, localeOnlyFields };
+}
+
+function incompleteNonCzechServiceLocales(
+  service: ServiceSnapshot,
+  draft: CzechiaSeoServiceDraft,
+): string[] {
+  if (service.country.defaultLocale !== draft.locale) return [];
+  return CZECHIA_PUBLIC_SERVICE_LOCALES.filter(
+    (locale) =>
+      locale !== draft.locale &&
+      service.translations.filter((translation) => translation.locale === locale).length !== 1,
+  );
 }
 
 function nonCzechFaqFallbacks(service: ServiceSnapshot, draft: CzechiaSeoServiceDraft): string[] {
-  const locales = service.translations
-    .filter(({ locale }) => locale !== draft.locale)
-    .map(({ locale }) => locale);
+  if (draft.faqs.length === 0 || service.country.defaultLocale !== draft.locale) return [];
+  const locales = CZECHIA_PUBLIC_SERVICE_LOCALES.filter((locale) => locale !== draft.locale);
   return service.faqs.flatMap((faq) =>
     locales
       .filter((locale) => !faq.translations.some((translation) => translation.locale === locale))
@@ -208,13 +256,13 @@ function assertExpectedSource(
     throw new Error(`Refusing to continue: ${draft.slug} is not an active public GENERAL service`);
   }
   const czechTranslations = service.translations.filter(({ locale }) => locale === draft.locale);
-  if (service.country.defaultLocale !== draft.locale || czechTranslations.length !== 1) {
-    throw new Error(`Refusing to continue: ${draft.slug} does not have one CS translation`);
+  if (czechTranslations.length !== 1) {
+    throw new Error(`Refusing to continue: ${draft.slug} does not have one ${draft.locale} translation`);
   }
   if (service.updatedAt.toISOString() !== draft.expectedServiceUpdatedAt) {
     throw new Error(`Refusing to continue: ${draft.slug} service updatedAt changed`);
   }
-  const expectedFaqIds = draft.faqs.map(({ id }) => id).sort();
+  const expectedFaqIds = [...draft.expectedFaqIds].sort();
   const actualFaqIds = service.faqs.map(({ id }) => id).sort();
   if (JSON.stringify(actualFaqIds) !== JSON.stringify(expectedFaqIds)) {
     throw new Error(`Refusing to continue: ${draft.slug} FAQ set changed`);
@@ -235,51 +283,35 @@ function preparedDraft(draft: CzechiaSeoServiceDraft): CzechiaSeoServiceDraft {
   if (validationErrors.length > 0) {
     throw new Error(`${draft.slug} failed validation:\n- ${validationErrors.join("\n- ")}`);
   }
-  const sanitizedBody = sanitizeRichHtml(draft.detailBody);
-  if (!sanitizedBody || sanitizedBody !== draft.detailBody) {
+  const sanitizedBody = draft.detailBody ? sanitizeRichHtml(draft.detailBody) : null;
+  if (draft.detailBody && (!sanitizedBody || sanitizedBody !== draft.detailBody)) {
     throw new Error(`${draft.slug} rich-text sanitizer changed the reviewed body`);
   }
   return draft;
 }
 
-function assertSavedCopy(service: ServiceSnapshot, draft: CzechiaSeoServiceDraft): void {
+function assertSavedCopy(
+  service: ServiceSnapshot,
+  before: ServiceSnapshot,
+  draft: CzechiaSeoServiceDraft,
+  localeOnlyFields: ReadonlySet<CopyField>,
+): void {
   const translation = service.translations.find(({ locale }) => locale === draft.locale);
   if (!translation) throw new Error(`Verification failed: ${draft.slug} CS translation missing`);
-  const expected = {
-    name: draft.name,
-    summary: draft.summary,
-    seoTitle: draft.seoTitle,
-    seoDescription: draft.seoDescription,
-    heroTitle: draft.heroTitle,
-    heroDescription: draft.heroDescription,
-    detailBody: draft.detailBody,
-    ctaLabel: draft.ctaLabel,
-  };
-  const actual = {
-    name: translation.name,
-    summary: translation.summary,
-    seoTitle: translation.seoTitle,
-    seoDescription: translation.seoDescription,
-    heroTitle: translation.heroTitle,
-    heroDescription: translation.heroDescription,
-    detailBody: translation.detailBody,
-    ctaLabel: translation.ctaLabel,
-  };
-  if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+  const expected = draftCopy(draft);
+  if (copyFields.some((field) => expected[field] !== undefined && translation[field] !== expected[field])) {
     throw new Error(`Verification failed: ${draft.slug} display copy does not match`);
   }
-  const base = {
-    name: service.name,
-    summary: service.summary,
-    seoTitle: service.seoTitle,
-    seoDescription: service.seoDescription,
-    heroTitle: service.heroTitle,
-    heroDescription: service.heroDescription,
-    detailBody: service.detailBody,
-    ctaLabel: service.ctaLabel,
-  };
-  if (JSON.stringify(base) !== JSON.stringify(expected)) {
-    throw new Error(`Verification failed: ${draft.slug} default-locale base copy does not match`);
+  for (const field of copyFields) {
+    const expectedValue = expected[field];
+    if (expectedValue === undefined) continue;
+    if (service.country.defaultLocale === draft.locale && !localeOnlyFields.has(field)) {
+      if (service[field] !== expectedValue) {
+        throw new Error(`Verification failed: ${draft.slug} default-locale base ${field} does not match`);
+      }
+    } else if (service[field] !== before[field]) {
+      throw new Error(`Verification failed: ${draft.slug} unrelated base ${field} changed`);
+    }
   }
   for (const faqDraft of draft.faqs) {
     const faq = service.faqs.find(({ id }) => id === faqDraft.id);
@@ -302,8 +334,12 @@ export async function runCzechiaSeoServicePatch(
   drafts: readonly CzechiaSeoServiceDraft[] = CZECHIA_SEO_SERVICE_DRAFTS,
 ) {
   if (!options.only) throw new Error("Pass exactly one --only=<service-slug>");
-  const draft = drafts.find(({ slug }) => slug === options.only);
-  if (!draft) throw new Error(`Unsupported --only=${options.only}`);
+  const matches = drafts.filter(
+    ({ slug, locale }) => slug === options.only && (!options.locale || locale === options.locale.toUpperCase()),
+  );
+  if (matches.length > 1) throw new Error(`Pass --locale=CS or --locale=EN for ${options.only}`);
+  const draft = matches[0];
+  if (!draft) throw new Error(`Unsupported --only=${options.only}${options.locale ? ` --locale=${options.locale}` : ""}`);
   const prepared = preparedDraft(draft);
   const approvalHash = czechiaSeoApprovalSha256(prepared);
   assertCzechiaSeoApplyGate(
@@ -313,6 +349,9 @@ export async function runCzechiaSeoServicePatch(
     options.approvedHash,
     options.reviewerDoctorId,
     options.confirmation,
+    options.clinicalReviewStatus,
+    options.nativeReviewerId,
+    options.nativeReviewedAt,
   );
 
   const existing = await readService(client, prepared);
@@ -331,14 +370,23 @@ export async function runCzechiaSeoServicePatch(
   logger.log(`  price/duration/doctors/booking preserved: yes`);
 
   const fallbackPlan = nonCzechFallbackPlan(existing, prepared);
+  const incompleteServiceLocales = incompleteNonCzechServiceLocales(existing, prepared);
   const faqFallbackBlockers = nonCzechFaqFallbacks(existing, prepared);
   if (fallbackPlan.materializations.length > 0) {
     logger.log(
       `  preserved non-CS fallbacks: ${fallbackPlan.materializations.map(({ locale }) => locale).join(", ")}`,
     );
   }
-  if (fallbackPlan.blockers.length > 0) {
-    logger.log(`  apply blocker: empty non-CS base fallbacks (${fallbackPlan.blockers.join("; ")})`);
+  if (fallbackPlan.localeOnlyFields.size > 0) {
+    logger.log(`  locale-only base fields: ${[...fallbackPlan.localeOnlyFields].join(", ")}`);
+  }
+  if (incompleteServiceLocales.length > 0) {
+    logger.log(`  apply blocker: missing non-CS service translation rows (${incompleteServiceLocales.join(", ")})`);
+  }
+  if (incompleteServiceLocales.length > 0) {
+    throw new Error(
+      `Refusing to apply: ${prepared.slug} missing non-CS service translation rows: ${incompleteServiceLocales.join(", ")}`,
+    );
   }
   if (faqFallbackBlockers.length > 0) {
     logger.log(`  apply blocker: missing non-CS FAQ translations (${faqFallbackBlockers.join("; ")})`);
@@ -348,7 +396,7 @@ export async function runCzechiaSeoServicePatch(
     logger.log("Dry run only. Clinical approval and separate owner authorization are still required.");
     return existing;
   }
-  if (fallbackPlan.blockers.length > 0 || faqFallbackBlockers.length > 0) {
+  if (faqFallbackBlockers.length > 0) {
     throw new Error(`Refusing to apply: ${prepared.slug} has unsafe non-CS base-copy fallbacks`);
   }
 
@@ -361,8 +409,14 @@ export async function runCzechiaSeoServicePatch(
     }
     const beforeProtectedState = protectedState(locked);
     const lockedFallbackPlan = nonCzechFallbackPlan(locked, prepared);
+    const lockedIncompleteServiceLocales = incompleteNonCzechServiceLocales(locked, prepared);
     const lockedFaqFallbacks = nonCzechFaqFallbacks(locked, prepared);
-    if (lockedFallbackPlan.blockers.length > 0 || lockedFaqFallbacks.length > 0) {
+    if (lockedIncompleteServiceLocales.length > 0) {
+      throw new Error(
+        `Refusing to apply: ${prepared.slug} missing non-CS service translation rows: ${lockedIncompleteServiceLocales.join(", ")}`,
+      );
+    }
+    if (lockedFaqFallbacks.length > 0) {
       throw new Error(`Refusing to apply: ${prepared.slug} has an unsafe non-CS base fallback`);
     }
 
@@ -401,35 +455,28 @@ export async function runCzechiaSeoServicePatch(
       await tx.serviceTranslation.update({ where: { id: fallback.id }, data: fallback.data });
     }
 
-    const serviceUpdate = await tx.service.updateMany({
-      where: { id: prepared.serviceId, updatedAt: locked.updatedAt },
-      data: {
-        name: prepared.name,
-        summary: prepared.summary,
-        seoTitle: prepared.seoTitle,
-        seoDescription: prepared.seoDescription,
-        heroTitle: prepared.heroTitle,
-        heroDescription: prepared.heroDescription,
-        detailBody: prepared.detailBody,
-        ctaLabel: prepared.ctaLabel,
-      },
-    });
-    if (serviceUpdate.count !== 1) throw new Error("Refusing to apply: service concurrency guard failed");
+    const desiredCopy = draftCopy(prepared);
+    const baseCopy = Object.fromEntries(
+      Object.entries(desiredCopy).filter(([field]) =>
+        locked.country.defaultLocale === prepared.locale && !lockedFallbackPlan.localeOnlyFields.has(field as CopyField),
+      ),
+    );
+    if (Object.keys(baseCopy).length > 0) {
+      const serviceUpdate = await tx.service.updateMany({
+        where: { id: prepared.serviceId, updatedAt: locked.updatedAt },
+        data: baseCopy,
+      });
+      if (serviceUpdate.count !== 1) throw new Error("Refusing to apply: service concurrency guard failed");
+    }
 
     const translation = locked.translations.find(({ locale }) => locale === prepared.locale)!;
-    await tx.serviceTranslation.update({
-      where: { id: translation.id },
-      data: {
-        name: prepared.name,
-        summary: prepared.summary,
-        seoTitle: prepared.seoTitle,
-        seoDescription: prepared.seoDescription,
-        heroTitle: prepared.heroTitle,
-        heroDescription: prepared.heroDescription,
-        detailBody: prepared.detailBody,
-        ctaLabel: prepared.ctaLabel,
-      },
+    const translationUpdate = await tx.serviceTranslation.updateMany({
+      where: { id: translation.id, updatedAt: translation.updatedAt },
+      data: desiredCopy,
     });
+    if (translationUpdate.count !== 1) {
+      throw new Error("Refusing to apply: service translation concurrency guard failed");
+    }
 
     for (const faqDraft of prepared.faqs) {
       const faq = locked.faqs.find(({ id }) => id === faqDraft.id)!;
@@ -448,7 +495,7 @@ export async function runCzechiaSeoServicePatch(
 
     const saved = await readService(tx, prepared);
     if (!saved) throw new Error(`Verification failed: ${prepared.slug} disappeared`);
-    assertSavedCopy(saved, prepared);
+    assertSavedCopy(saved, locked, prepared, lockedFallbackPlan.localeOnlyFields);
     if (protectedState(saved) !== beforeProtectedState) {
       throw new Error(`Verification failed: ${prepared.slug} protected operational state changed`);
     }
@@ -460,13 +507,45 @@ export async function runCzechiaSeoServicePatch(
 }
 
 async function main() {
+  const only = arg("only");
+  const locale = arg("locale");
+  const draft = CZECHIA_SEO_SERVICE_DRAFTS.find(
+    (entry) => entry.slug === only && (!locale || entry.locale === locale.toUpperCase()),
+  );
+  const repoRoot = process.cwd().endsWith("backend") ? resolve(process.cwd(), "..") : process.cwd();
+  const register = readFileSync(resolve(repoRoot, "seo/czechia/clinical-review-register.csv"), "utf8");
+  const apply = process.argv.includes("--apply");
+  if (apply && draft) {
+    const approval = assertCzechiaClinicalApproval(register, {
+      asset: clinicalReviewAsset(draft),
+      approvedSha256: czechiaSeoApprovalSha256(draft),
+    });
+    if (approval.reviewer_doctor_id !== arg("reviewer-doctor-id")) {
+      throw new Error("Refusing to apply: reviewer doctor ID does not match the recorded approval");
+    }
+    if (approval.reviewed_at.slice(0, 10) !== arg("reviewed-at")) {
+      throw new Error("Refusing to apply: review date does not match the recorded approval");
+    }
+    if (draft.locale === "EN" && approval.native_reviewer_id !== arg("native-reviewer-id")) {
+      throw new Error("Refusing to apply: native reviewer ID does not match the recorded approval");
+    }
+    if (draft.locale === "EN" && approval.native_reviewed_at.slice(0, 10) !== arg("native-reviewed-at")) {
+      throw new Error("Refusing to apply: native review date does not match the recorded approval");
+    }
+  }
   await runCzechiaSeoServicePatch(prisma, {
-    only: arg("only"),
-    apply: process.argv.includes("--apply"),
+    only,
+    locale,
+    apply,
     approvedHash: arg("approved-sha256"),
     reviewedAt: parseCzechiaSeoReviewDate(arg("reviewed-at") ?? undefined),
     reviewerDoctorId: arg("reviewer-doctor-id"),
     confirmation: arg("confirm"),
+    clinicalReviewStatus: draft
+      ? clinicalReviewStatusFromRegister(register, clinicalReviewAsset(draft))
+      : null,
+    nativeReviewerId: arg("native-reviewer-id"),
+    nativeReviewedAt: parseCzechiaSeoNativeReviewDate(arg("native-reviewed-at") ?? undefined),
   });
 }
 
