@@ -330,9 +330,9 @@ const sickNote = {
     },
     {
       id: "cmr85xsa7000l70ju0rerevdi",
-      question: "Jak rychle se informace objeví v systému ČSSZ?",
+      question: "Jak rychle se eNeschopenka objeví v systému ČSSZ, pokud ji lékař vystaví?",
       answer:
-        "Doba zpracování je individuální a může trvat hodiny nebo dny podle správnosti údajů a potřeby jejich ověření. Konzultace proto nemůže slíbit konkrétní čas notifikace.",
+        "Pokud lékař eNeschopenku vystaví, odešle údaje ČSSZ elektronicky. Zobrazení a notifikace závisejí na konkrétní službě ČSSZ, jejím nastavení a zpracování. Konzultace nemůže slíbit konkrétní čas; zaměstnavatele informujte neprodleně.",
     },
   ],
 } satisfies CzechiaSeoServiceDraft;
@@ -400,13 +400,13 @@ const treatmentRenewal = {
     },
     {
       id: "cmr85xu55000w70ju09qbtii5",
-      question: "Co když se můj stav od poslední kontroly změnil?",
+      question: "Co když se můj stav před obnovením receptu změnil?",
       answer:
         "Popište změnu hned na začátku konzultace. Lékař posoudí, zda stačí videokonzultace, nebo je bezpečnější širší či osobní vyšetření. Při náhlém závažném zhoršení volejte 155 nebo 112.",
     },
     {
       id: "cmr85xu55000x70jus9xjlihu",
-      question: "Mohu si konzultaci objednat bez registrovaného praktického lékaře?",
+      question: "Mohu si objednat obnovení léčby bez registrovaného praktického lékaře?",
       answer:
         "Ano, konzultaci si objednat můžete. Rozhodnutí o pokračování léčby závisí na dostupné dokumentaci a klinickém posouzení. Služba nenahrazuje pravidelné kontroly ani dlouhodobou péči praktického lékaře.",
     },

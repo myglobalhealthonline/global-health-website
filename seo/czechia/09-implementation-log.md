@@ -80,9 +80,9 @@ block was rewritten, no deslop pass was applicable in this follow-up.
 Two existing Czech service records now have repository-only, clinically gated copy:
 
 - `/czechia/cs/services/neschopenka-online`, approval SHA-256
-  `14565e67950f0e84e4c176c8c4b40cdee460a4ce3dfc52bc07cc484e19b02c1a`;
+  `9d4b1ad095dab37b716d794301ca0607fab21940391da7f43df72020b91d0a0e`;
 - `/czechia/cs/services/obnoveni-lecby`, approval SHA-256
-  `3ff9b7a7aa88f80f15f28fab512fe86c5b65488e97a83f3f0e7432b31ab0244e`.
+  `a02d12a3e9aada7f106233841bc55ec6b268805561660020734306e054ff5106`.
 
 The drafts update title, description, H1, opening, structured body, CTA and every
 existing visible FAQ. Neschopenka keeps transactional assessment intent while the
@@ -91,6 +91,11 @@ online`. The final copy removes same-day promises, guaranteed documents/referral
 volatile benefit thresholds and automatic prescription language. It adds official
 ČSSZ/ePreskripce references, explicit clinical discretion and 155/112 escalation.
 The deslop and fact-preservation checks run in the focused content tests.
+Three vague FAQ questions now name their exact topic naturally: eNeschopenka,
+obnovení receptu and obnovení léčby. The other ten questions remain unchanged to
+avoid repetitive keyword stuffing. The seven Czech tool metadata/H1 payloads remain
+preview-only until their exact clinical-register rows are approved; adding them to
+the frontend before then would publish unapproved clinical copy on the next deploy.
 
 The updater is dry-run by default and allowlists only those two records. It checks
 the exact record ID, locale, `updatedAt`, source SHA-256 and FAQ IDs, preserves

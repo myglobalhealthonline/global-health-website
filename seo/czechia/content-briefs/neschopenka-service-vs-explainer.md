@@ -44,7 +44,7 @@
 ## Repository execution — 2026-09-01
 
 - The service copy is prepared in `backend/src/content/czechia-seo-service-drafts.ts` and targets the existing service and all seven existing FAQ records in place.
-- The final approval hash is `e181f41e9b632af577fff9be1302c7b80a44da3c47be4ab884eaa4901c538d65`.
+- The current proposed approval hash is `9d4b1ad095dab37b716d794301ca0607fab21940391da7f43df72020b91d0a0e`.
 - The full six-locale service and FAQ source is pinned to `880fd7d374b062af8df380b46b24d1a07c7187f570f2307aba679336203834cc`; the dry-run aborts if the record changes.
 - The article was inspected but not rewritten. It already owns the informational process intent and links to the service. Its doctor relations need verification because the public API relation fields do not match the visible author/reviewer attribution.
 - Status: local draft only. Czech physician approval and separate owner authorization are required before any production write.

@@ -63,8 +63,8 @@ Two pages have complete review-gated repository drafts, not just matrix recommen
 
 | URL | Draft coverage | Approval hash | Production state |
 | --- | --- | --- | --- |
-| `/czechia/cs/services/neschopenka-online` | title, meta, H1, summary, hero, body, CTA, seven existing FAQs, ČSSZ link, emergency and explainer links | `14565e67950f0e84e4c176c8c4b40cdee460a4ce3dfc52bc07cc484e19b02c1a` | owner-authorized; locale fallbacks preserved; pending recorded clinical approval |
-| `/czechia/cs/services/obnoveni-lecby` | title, meta, H1, summary, hero, body, CTA, six existing FAQs, ePreskripce link, emergency and GP links | `3ff9b7a7aa88f80f15f28fab512fe86c5b65488e97a83f3f0e7432b31ab0244e` | owner-authorized; locale fallbacks preserved; pending recorded clinical approval |
+| `/czechia/cs/services/neschopenka-online` | title, meta, H1, summary, hero, body, CTA, seven existing FAQs, ČSSZ link, emergency and explainer links | `9d4b1ad095dab37b716d794301ca0607fab21940391da7f43df72020b91d0a0e` | owner-authorized; locale fallbacks preserved; pending recorded clinical approval |
+| `/czechia/cs/services/obnoveni-lecby` | title, meta, H1, summary, hero, body, CTA, six existing FAQs, ePreskripce link, emergency and GP links | `a02d12a3e9aada7f106233841bc55ec6b268805561660020734306e054ff5106` | owner-authorized; locale fallbacks preserved; pending recorded clinical approval |
 
 The guarded updater defaults to dry-run, verifies exact source fingerprints and refuses an apply when non-Czech fallback content would change.
 

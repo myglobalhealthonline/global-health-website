@@ -6,6 +6,7 @@ import {
   czechiaSeoApprovalSha256,
   czechiaSeoConfirmationToken,
   parseCzechiaSeoReviewDate,
+  validateCzechiaSeoServiceDraft,
   type CzechiaSeoServiceDraft,
 } from "../src/content/czechia-seo-service-drafts.js";
 import {
@@ -215,6 +216,34 @@ function fakeDatabase(seed: FakeService, failFaqTranslation = false) {
 
 const silentLogger = { log() {} };
 const fullDraft = CZECHIA_SEO_SERVICE_DRAFTS.find(({ slug }) => slug === "neschopenka-online")!;
+
+test("supported FAQ rewrites keep their records and use natural topic anchors", () => {
+  const expectedQuestions = new Map([
+    [
+      "cmr85xsa7000l70ju0rerevdi",
+      "Jak rychle se eNeschopenka objeví v systému ČSSZ, pokud ji lékař vystaví?",
+    ],
+    ["cmr85xu55000w70ju09qbtii5", "Co když se můj stav před obnovením receptu změnil?"],
+    [
+      "cmr85xu55000x70jus9xjlihu",
+      "Mohu si objednat obnovení léčby bez registrovaného praktického lékaře?",
+    ],
+  ]);
+
+  const faqDrafts = CZECHIA_SEO_SERVICE_DRAFTS.filter(({ faqs }) => faqs.length > 0);
+  for (const draft of faqDrafts) {
+    assert.deepEqual(
+      draft.faqs.map(({ id }) => id),
+      draft.expectedFaqIds,
+    );
+    assert.deepEqual(validateCzechiaSeoServiceDraft(draft), []);
+  }
+
+  const questionsById = new Map(faqDrafts.flatMap(({ faqs }) => faqs.map(({ id, question }) => [id, question])));
+  for (const [id, expectedQuestion] of expectedQuestions) {
+    assert.equal(questionsById.get(id), expectedQuestion);
+  }
+});
 
 test("reads approval only from the exact locale-specific clinical register row", () => {
   const czech = CZECHIA_SEO_SERVICE_DRAFTS.find(
