@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { ibanError } from "../../app/(portal)/(doctor)/doctor/profile/_components/form-helpers";
+import {
+  IBAN_EXAMPLES,
+  ibanError,
+} from "../../app/(portal)/(doctor)/doctor/profile/_components/form-helpers";
 
 const strings = {
   ibanErrorLength: "length",
   ibanErrorFormat: "format",
   ibanErrorChecksum: "checksum",
-  ibanErrorCountryLength: "A {code} IBAN is {expected} characters — you entered {actual}",
 } as unknown as Parameters<typeof ibanError>[1];
 
 describe("ibanError", () => {
@@ -14,30 +16,53 @@ describe("ibanError", () => {
     expect(ibanError("ie29aibk93115212345678", strings)).toBeNull();
   });
 
-  it("names the missing characters when the country length is known", () => {
-    // Real doctor report: a Novo Banco PT IBAN entered three characters short.
-    // Right shape, wrong length — used to pass the client and 400 on the API.
-    expect(ibanError("PT50007000000634495123", strings)).toBe(
-      "A PT IBAN is 25 characters — you entered 22",
-    );
+  it("accepts a real Brazilian IBAN", () => {
+    // 29 characters. A hard-coded 27-character length rule used to reject
+    // every BR IBAN, so a Brazilian doctor could not save their bank details.
+    expect(ibanError("BR 51 60746948 02622 0002079160 C 1", strings)).toBeNull();
+    expect(ibanError("BR97 0036 0305 0000 1000 9795 493P 1", strings)).toBeNull();
   });
 
-  it("falls back to the checksum message for right-length typos", () => {
-    // Correct 25-char PT shape, one digit swapped.
+  it("does not measure an IBAN against its country's expected length", () => {
+    // Maltese IBANs are 31 characters, Brazilian 29, Norwegian 15 — the
+    // validator must not carry a per-country table that can be wrong.
+    expect(ibanError("MT84 MALT 0110 0001 2345 MTLCAST001S", strings)).toBeNull();
+    expect(ibanError("NO93 8601 1117 947", strings)).toBeNull();
+  });
+
+  it("still rejects a wrong-length IBAN via the checksum", () => {
+    // Real doctor report: a Novo Banco PT IBAN entered three characters short.
+    // Right shape, wrong length — rejected by mod-97 rather than by a length
+    // table, so it can never be waved through.
+    expect(ibanError("PT50007000000634495123", strings)).toBe("checksum");
+  });
+
+  it("rejects right-length typos", () => {
     expect(ibanError("PT50000201231234567890155", strings)).toBe("checksum");
   });
 
-  it("checks the IBAN's own country, not the market it is saved under", () => {
-    // Portuguese account, Irish market profile — must not be measured as IE.
+  it("checks the IBAN itself, not the market it is saved under", () => {
+    // Portuguese account on an Irish market profile — perfectly legitimate.
     expect(ibanError("PT50000201231234567890154", strings)).toBeNull();
   });
 
-  it("still flags length and format", () => {
+  it("still flags the ISO bounds and the overall shape", () => {
     expect(ibanError("PT50", strings)).toBe("length");
+    expect(ibanError(`PT50${"1".repeat(31)}`, strings)).toBe("length");
     expect(ibanError("P150007000000634495123", strings)).toBe("format");
   });
 
   it("treats blank as no error", () => {
     expect(ibanError("   ", strings)).toBeNull();
+  });
+
+  it("every built-in placeholder is itself a valid IBAN", () => {
+    // The BR placeholder was once a malformed 27-character string, and because
+    // the length table was derived from these examples it took a whole country
+    // down with it. Placeholders are shown to doctors as the thing to copy —
+    // they must be real.
+    for (const [code, example] of Object.entries(IBAN_EXAMPLES)) {
+      expect(ibanError(example.iban, strings), `${code} example`).toBeNull();
+    }
   });
 });
