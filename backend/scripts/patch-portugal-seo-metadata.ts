@@ -13,19 +13,27 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
-import type { Prisma } from "@prisma/client";
+import { PageKey, PublishStatus, type Prisma } from "@prisma/client";
 
 import {
+  portugalDoctorFactHasRegistration,
   readPortugalDoctorFactRecord,
   type PortugalClinicalReviewRecord,
 } from "../src/content/portugal-clinical-approval.js";
 import {
   loadPortugalSeoMetadataDrafts,
-  portugalSeoApprovalSha256,
-  portugalSeoConfirmationToken,
   type PortugalSeoMetadataDraft,
 } from "../src/content/portugal-seo-metadata-drafts.js";
-import { assertPortugalSeoApplyAuthorized, portugalDatabaseIdentity } from "../src/content/portugal-seo-metadata-patch.js";
+import {
+  loadPortugalSeoRemainingDrafts,
+  type PortugalSeoRemainingDraft,
+} from "../src/content/portugal-seo-remaining-drafts.js";
+import {
+  assertPortugalSeoApplyAuthorized,
+  portugalDatabaseIdentity,
+  portugalSeoDraftApprovalSha256,
+  portugalSeoDraftConfirmationToken,
+} from "../src/content/portugal-seo-metadata-patch.js";
 import { disconnectDb, prisma } from "../src/db/prisma.js";
 
 const COUNTRY = "pt";
@@ -33,13 +41,24 @@ const LOCALE = "PT";
 
 type Reader = Pick<
   Prisma.TransactionClient,
-  "country" | "pageContent" | "service" | "doctorCountry" | "doctor"
+  "country" | "pageContent" | "service" | "doctorCountry" | "doctor" | "seoLandingPage" | "blogPost"
 >;
+
+type Draft = PortugalSeoMetadataDraft | PortugalSeoRemainingDraft;
+
+type TargetStore =
+  | "page_content_translation"
+  | "service_translation"
+  | "doctor_market_translation"
+  | "seo_landing_translation"
+  | "blog_post"
+  | "blog_translation";
 
 type MetadataTarget = Readonly<{
   id: string;
   parentId: string;
-  targetKind: PortugalSeoMetadataDraft["targetKind"];
+  targetKind: Draft["targetKind"];
+  targetStore: TargetStore;
   currentTitle: string | null;
   currentDescription: string | null;
   currentKeywords: readonly string[] | null;
@@ -56,7 +75,7 @@ function arg(name: string): string | null {
   return process.argv.find((value) => value.startsWith(`--${name}=`))?.slice(name.length + 3) ?? null;
 }
 
-function draftKey(draft: PortugalSeoMetadataDraft): string {
+function draftKey(draft: Draft): string {
   return `${draft.targetKind}:${draft.slug}`;
 }
 
@@ -66,7 +85,7 @@ async function countryId(reader: Reader): Promise<string> {
   return country.id;
 }
 
-async function readTarget(reader: Reader, draft: PortugalSeoMetadataDraft): Promise<MetadataTarget> {
+async function readTarget(reader: Reader, draft: Draft): Promise<MetadataTarget> {
   const ptCountryId = await countryId(reader);
 
   if (draft.targetKind === "home") {
@@ -90,6 +109,7 @@ async function readTarget(reader: Reader, draft: PortugalSeoMetadataDraft): Prom
       id: translation.id,
       parentId: page.id,
       targetKind: draft.targetKind,
+      targetStore: "page_content_translation",
       currentTitle: translation.seoTitle,
       currentDescription: translation.seoDescription,
       currentKeywords: null,
@@ -118,6 +138,7 @@ async function readTarget(reader: Reader, draft: PortugalSeoMetadataDraft): Prom
       id: translation.id,
       parentId: service.id,
       targetKind: draft.targetKind,
+      targetStore: "service_translation",
       currentTitle: translation.seoTitle,
       currentDescription: translation.seoDescription,
       currentKeywords: null,
@@ -156,6 +177,7 @@ async function readTarget(reader: Reader, draft: PortugalSeoMetadataDraft): Prom
       id: translation.id,
       parentId: listing.id,
       targetKind: draft.targetKind,
+      targetStore: "doctor_market_translation",
       currentTitle: translation.seoTitle,
       currentDescription: translation.seoDescription,
       currentKeywords: translation.seoKeywords,
@@ -169,6 +191,122 @@ async function readTarget(reader: Reader, draft: PortugalSeoMetadataDraft): Prom
     };
   }
 
+  if (draft.targetKind === "page") {
+    if (!Object.values(PageKey).includes(draft.slug as PageKey)) {
+      throw new Error(`Unsupported Portugal page key ${draft.slug}`);
+    }
+    const page = await reader.pageContent.findUnique({
+      where: { countryId_pageKey: { countryId: ptCountryId, pageKey: draft.slug as PageKey } },
+      select: {
+        id: true,
+        status: true,
+        isActive: true,
+        translations: {
+          where: { locale: LOCALE },
+          select: { id: true, seoTitle: true, seoDescription: true, updatedAt: true },
+        },
+      },
+    });
+    if (!page || !page.isActive || page.status !== PublishStatus.PUBLISHED || page.translations.length !== 1) {
+      throw new Error(`${draft.slug} is not one active published Portugal PT page translation`);
+    }
+    const translation = page.translations[0];
+    return {
+      id: translation.id,
+      parentId: page.id,
+      targetKind: draft.targetKind,
+      targetStore: "page_content_translation",
+      currentTitle: translation.seoTitle,
+      currentDescription: translation.seoDescription,
+      currentKeywords: null,
+      updatedAt: translation.updatedAt,
+    };
+  }
+
+  if (draft.targetKind === "landing") {
+    const page = await reader.seoLandingPage.findUnique({
+      where: { countryId_slug: { countryId: ptCountryId, slug: draft.slug } },
+      select: {
+        id: true,
+        isPublished: true,
+        translations: {
+          where: { locale: LOCALE },
+          select: { id: true, seoTitle: true, seoDescription: true, updatedAt: true },
+        },
+      },
+    });
+    if (!page?.isPublished || page.translations.length !== 1) {
+      throw new Error(`${draft.slug} is not one published Portugal PT landing-page translation`);
+    }
+    const translation = page.translations[0];
+    return {
+      id: translation.id,
+      parentId: page.id,
+      targetKind: draft.targetKind,
+      targetStore: "seo_landing_translation",
+      currentTitle: translation.seoTitle,
+      currentDescription: translation.seoDescription,
+      currentKeywords: null,
+      updatedAt: translation.updatedAt,
+    };
+  }
+
+  if (draft.targetKind === "blog") {
+    const posts = await reader.blogPost.findMany({
+      where: {
+        status: PublishStatus.PUBLISHED,
+        isActive: true,
+        AND: [
+          { OR: [{ slug: draft.slug }, { translations: { some: { slug: draft.slug } } }] },
+          { OR: [{ countries: { none: {} } }, { countries: { some: { countryId: ptCountryId } } }] },
+        ],
+      },
+      take: 2,
+      orderBy: { publishedAt: "desc" },
+      select: {
+        id: true,
+        slug: true,
+        locale: true,
+        seoTitle: true,
+        seoDescription: true,
+        updatedAt: true,
+        translations: {
+          where: { locale: LOCALE },
+          select: { id: true, slug: true, content: true, seoTitle: true, seoDesc: true, updatedAt: true },
+        },
+      },
+    });
+    if (posts.length !== 1) throw new Error(`Expected one published Portugal blog source for ${draft.slug}`);
+    const post = posts[0];
+    if (post.locale === LOCALE) {
+      if (post.slug !== draft.slug) throw new Error(`Portugal blog base slug does not match ${draft.slug}`);
+      return {
+        id: post.id,
+        parentId: post.id,
+        targetKind: draft.targetKind,
+        targetStore: "blog_post",
+        currentTitle: post.seoTitle,
+        currentDescription: post.seoDescription,
+        currentKeywords: null,
+        updatedAt: post.updatedAt,
+      };
+    }
+    const translation = post.translations.find(
+      (candidate) => candidate.slug === draft.slug && Boolean(candidate.content?.trim()),
+    );
+    if (!translation) throw new Error(`${draft.slug} has no servable Portugal PT blog translation`);
+    return {
+      id: translation.id,
+      parentId: post.id,
+      targetKind: draft.targetKind,
+      targetStore: "blog_translation",
+      currentTitle: translation.seoTitle,
+      currentDescription: translation.seoDesc,
+      currentKeywords: null,
+      updatedAt: translation.updatedAt,
+    };
+  }
+
   throw new Error(`${draft.asset} is owned by the static runtime source`);
 }
 
@@ -176,18 +314,22 @@ function sourceSha256(target: MetadataTarget): string {
   return createHash("sha256").update(JSON.stringify(target)).digest("hex");
 }
 
-function assertAuditedSource(draft: PortugalSeoMetadataDraft, target: MetadataTarget): void {
+function assertAuditedSource(draft: Draft, target: MetadataTarget): void {
   const retiredMedicareSuffix = " Aceitamos também Medicare para este serviço.";
   const inheritedHomeTitle = draft.targetKind === "home"
     && target.currentTitle === null
     && draft.originalTitle === "Médico Online Portugal | Clínicos e Especialistas Registados";
   const storedDoctorTitle = draft.targetKind === "doctor"
     && target.currentTitle === `${draft.originalTitle} | Global Health Portugal`;
+  const renderedBlogTitle = draft.targetKind === "blog"
+    && target.targetStore === "blog_translation"
+    && draft.originalTitle.endsWith(" · Global Health")
+    && target.currentTitle === draft.originalTitle.slice(0, -" · Global Health".length);
   const safetyNormalizedServiceDescription = draft.targetKind === "service"
     && draft.originalDescription.endsWith(retiredMedicareSuffix)
     && target.currentDescription === draft.originalDescription.slice(0, -retiredMedicareSuffix.length);
   if (
-    (!inheritedHomeTitle && !storedDoctorTitle && target.currentTitle !== draft.originalTitle)
+    (!inheritedHomeTitle && !storedDoctorTitle && !renderedBlogTitle && target.currentTitle !== draft.originalTitle)
     || (!safetyNormalizedServiceDescription && target.currentDescription !== draft.originalDescription)
   ) {
     throw new Error("Current Portugal metadata does not match the source reviewed in the completion matrix");
@@ -225,7 +367,7 @@ async function assertEligibleReviewer(reader: Reader, approval: PortugalClinical
 }
 
 function assertDoctorCredentialEvidence(
-  draft: PortugalSeoMetadataDraft,
+  draft: Draft,
   target: MetadataTarget,
   factRegisterCsv: string,
   approval: PortugalClinicalReviewRecord,
@@ -245,8 +387,13 @@ function assertDoctorCredentialEvidence(
     !target.doctorFullName ||
     normalized(target.doctorFullName) !== normalized(fact.display_name) ||
     !target.doctorRegistrationVerified ||
-    target.doctorProfessionalBody !== fact.professional_body ||
-    target.doctorRegistrationNumber !== fact.registration_number
+    !target.doctorProfessionalBody ||
+    !target.doctorRegistrationNumber ||
+    !portugalDoctorFactHasRegistration(
+      fact,
+      target.doctorProfessionalBody,
+      target.doctorRegistrationNumber,
+    )
   ) {
     throw new Error("Live Portugal doctor registration does not match the approved fact record");
   }
@@ -254,25 +401,37 @@ function assertDoctorCredentialEvidence(
 
 async function writeTarget(
   transaction: Prisma.TransactionClient,
-  draft: PortugalSeoMetadataDraft,
+  draft: Draft,
   target: MetadataTarget,
 ): Promise<void> {
   const data = { seoTitle: draft.proposedTitle!, seoDescription: draft.proposedDescription! };
   const where = { id: target.id, updatedAt: target.updatedAt };
-  const result = target.targetKind === "home"
+  const result = target.targetStore === "page_content_translation"
     ? await transaction.pageContentTranslation.updateMany({
         where: { ...where, pageContentId: target.parentId, locale: LOCALE },
         data,
       })
-    : target.targetKind === "service"
+    : target.targetStore === "service_translation"
       ? await transaction.serviceTranslation.updateMany({
           where: { ...where, serviceId: target.parentId, locale: LOCALE },
           data,
         })
-      : await transaction.doctorMarketTranslation.updateMany({
-          where: { ...where, doctorCountryId: target.parentId, locale: LOCALE },
-          data: { ...data, seoKeywords: [draft.primaryKeyword, ...draft.secondaryKeywords] },
-        });
+      : target.targetStore === "doctor_market_translation"
+        ? await transaction.doctorMarketTranslation.updateMany({
+            where: { ...where, doctorCountryId: target.parentId, locale: LOCALE },
+            data: { ...data, seoKeywords: [draft.primaryKeyword, ...draft.secondaryKeywords] },
+          })
+        : target.targetStore === "seo_landing_translation"
+          ? await transaction.seoLandingPageTranslation.updateMany({
+              where: { ...where, landingPageId: target.parentId, locale: LOCALE },
+              data,
+            })
+          : target.targetStore === "blog_post"
+            ? await transaction.blogPost.updateMany({ where, data })
+            : await transaction.blogTranslation.updateMany({
+                where: { ...where, postId: target.parentId, locale: LOCALE },
+                data: { seoTitle: data.seoTitle, seoDesc: data.seoDescription },
+              });
   if (result.count !== 1) throw new Error("Portugal SEO metadata concurrency guard failed");
 }
 
@@ -293,8 +452,11 @@ export async function runPortugalSeoMetadataPatch(
   }>,
   logger: Pick<Console, "log"> = console,
 ): Promise<void> {
-  if (!options.only) throw new Error("Pass exactly one --only=<home|service|doctor|tool>:<slug>");
-  const drafts = loadPortugalSeoMetadataDrafts().filter((draft) => draftKey(draft) === options.only);
+  if (!options.only) throw new Error("Pass exactly one --only=<home|service|doctor|tool|page|landing|blog>:<slug>");
+  const drafts: Draft[] = [
+    ...loadPortugalSeoMetadataDrafts(),
+    ...loadPortugalSeoRemainingDrafts(),
+  ].filter((draft) => draftKey(draft) === options.only);
   if (drafts.length !== 1) throw new Error(`Unsupported or duplicate --only=${options.only}`);
   const draft = drafts[0];
 
@@ -313,16 +475,16 @@ export async function runPortugalSeoMetadataPatch(
 
   const before = await readTarget(client, draft);
   const currentSourceHash = sourceSha256(before);
+  assertAuditedSource(draft, before);
   logger.log(`${options.apply ? "APPLY" : "DRY RUN"}: ${draft.asset}`);
   logger.log(`  source sha256: ${currentSourceHash}`);
-  logger.log(`  approval sha256: ${portugalSeoApprovalSha256(draft)}`);
-  logger.log(`  confirmation: ${portugalSeoConfirmationToken(draft)}`);
+  logger.log(`  approval sha256: ${portugalSeoDraftApprovalSha256(draft)}`);
+  logger.log(`  confirmation: ${portugalSeoDraftConfirmationToken(draft)}`);
   if (options.databaseUrl) logger.log(`  database target: ${portugalDatabaseIdentity(options.databaseUrl)}`);
   logger.log(`  title: ${before.currentTitle ?? "(null)"} -> ${draft.proposedTitle ?? "RETAIN"}`);
   logger.log(`  description: ${before.currentDescription ?? "(null)"} -> ${draft.proposedDescription ?? "RETAIN"}`);
 
   if (!options.apply) return;
-  assertAuditedSource(draft, before);
   if (options.sourceHash !== currentSourceHash) {
     throw new Error("Source SHA-256 does not match the current Portugal record");
   }

@@ -5,6 +5,7 @@ import test from "node:test";
 
 import {
   assertPortugalClinicalApproval,
+  portugalDoctorFactHasRegistration,
   portugalDoctorFactSha256,
   readPortugalDoctorFactRecord,
   readPortugalClinicalReviewRecord,
@@ -121,6 +122,18 @@ test("Portugal doctor metadata uses the same approval without changing credentia
     factRegisterCsv: facts.replace("70349", "99999"),
     now,
   }), /fact_register_sha256|canonical/i);
+});
+
+test("Portugal doctor fact evidence can bind multiple professional registrations", () => {
+  const facts = [
+    "URL,slug,display_name,professional_body,registration_number,source_status,official_source,verification_status,notes",
+    '"https://www.myglobalhealth.online/portugal/pt/doctors/dr-joana-branco-maia","dr-joana-branco-maia","Dra. Joana Branco Maia","OM; OPP","64572; 12055","Official","https://ordemdosmedicos.pt | https://www.ordemdospsicologos.pt","verified","Metadata only"',
+  ].join("\n");
+  const fact = readPortugalDoctorFactRecord(facts, "/portugal/pt/doctors/dr-joana-branco-maia");
+
+  assert.equal(portugalDoctorFactHasRegistration(fact, "OM", "64572"), true);
+  assert.equal(portugalDoctorFactHasRegistration(fact, "OPP", "12055"), true);
+  assert.equal(portugalDoctorFactHasRegistration(fact, "OM", "12055"), false);
 });
 
 test("the Portugal register approves the exact 28 reviewed metadata drafts", () => {

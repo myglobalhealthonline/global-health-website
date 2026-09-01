@@ -5,6 +5,7 @@ $pages = @(Import-Csv (Join-Path $PSScriptRoot "page-by-page-completion-matrix.c
 $clinical = @(Import-Csv (Join-Path $PSScriptRoot "clinical-review-register.csv"))
 $doctors = @(Import-Csv (Join-Path $PSScriptRoot "doctor-profile-fact-register.csv"))
 $readback = @(Import-Csv (Join-Path $PSScriptRoot "raw\clinical-seo-production-readback-2026-09-02.csv"))
+$remainingDryRun = @(Import-Csv (Join-Path $PSScriptRoot "raw\remaining-metadata-production-dry-run-2026-09-02.csv"))
 $receipt = Get-Content -Raw (Join-Path $PSScriptRoot "raw\production-write-receipt-2026-09-02-clinical-seo.json") | ConvertFrom-Json
 
 function Assert-Equal($actual, $expected, [string]$message) {
@@ -13,9 +14,10 @@ function Assert-Equal($actual, $expected, [string]$message) {
 
 Assert-Equal $drafts.Count 28 "Portugal draft matrix row count"
 Assert-Equal $pages.Count 75 "Portugal live page matrix row count"
-Assert-Equal $clinical.Count 28 "Portugal clinical register row count"
+Assert-Equal $clinical.Count 45 "Portugal clinical register row count"
 Assert-Equal $doctors.Count 16 "Portugal doctor fact-register row count"
 Assert-Equal $readback.Count 27 "Portugal clinical SEO public readback row count"
+Assert-Equal $remainingDryRun.Count 17 "Portugal remaining metadata dry-run row count"
 
 foreach ($set in @($drafts, $pages)) {
   Assert-Equal @($set | Group-Object URL | Where-Object Count -gt 1).Count 0 "Duplicate Portugal URL"
@@ -39,8 +41,11 @@ $rewritten = @($pages | Where-Object {
 })
 $guarantees = "mesmo dia|no mesmo dia|garantid[oa]|disponibilidade imediata"
 Assert-Equal @($rewritten | Where-Object { $_.'optimized title' -match $guarantees -or $_.'optimized meta description' -match $guarantees }).Count 0 "Unsupported availability guarantee in revised copy"
-$approvedClinicalUrls = @($clinical.page_or_file | ForEach-Object { ($_ -split " -> ", 2)[-1].Trim() })
-Assert-Equal @($pages | Where-Object { $approvedClinicalUrls -contains $_.URL }).Count $clinical.Count "Approved clinical page is missing from the live matrix"
+$approvedClinical = @($clinical | Where-Object publish_status -eq "approved")
+$blockedClinical = @($clinical | Where-Object publish_status -eq "blocked_pending_review")
+$approvedClinicalUrls = @($approvedClinical.page_or_file | ForEach-Object { ($_ -split " -> ", 2)[-1].Trim() })
+$allClinicalUrls = @($clinical.page_or_file | ForEach-Object { ($_ -split " -> ", 2)[-1].Trim() })
+Assert-Equal @($pages | Where-Object { $allClinicalUrls -contains $_.URL }).Count $clinical.Count "Clinical page is missing from the live matrix"
 Assert-Equal @($pages | Where-Object { $approvedClinicalUrls -contains $_.URL -and $_.'factual verification completed' -ne "yes" }).Count 0 "Approved clinical page is missing factual verification"
 $retainedUrls = @($drafts | Where-Object { $_.'implementation status' -eq "clinically reviewed; unchanged" } | ForEach-Object URL)
 $expectedReadbackUrls = @($approvedClinicalUrls | Where-Object { $retainedUrls -notcontains $_ })
@@ -78,31 +83,51 @@ $approvalColumns = @(
 foreach ($column in $approvalColumns) {
   if ($clinical[0].PSObject.Properties.Name -notcontains $column) { throw "Clinical register is missing $column" }
 }
-Assert-Equal @($clinical | Where-Object publish_status -ne "approved").Count 0 "Clinical publication gate is not approved"
-Assert-Equal @($clinical | Where-Object {
+Assert-Equal $approvedClinical.Count 28 "Approved clinical row count"
+Assert-Equal $blockedClinical.Count 17 "Blocked clinical row count"
+Assert-Equal @($approvedClinical | Where-Object {
   -not $_.reviewer_name -or -not $_.reviewer_doctor_id -or -not $_.clinical_reviewer_professional_body -or
   -not $_.reviewed_at -or -not $_.official_source_references -or $_.approved_sha256 -notmatch '^[a-f0-9]{64}$'
 }).Count 0 "Approved clinical row is incomplete"
+Assert-Equal @($blockedClinical | Where-Object {
+  $_.reviewer_name -or $_.reviewer_doctor_id -or $_.clinical_reviewer_professional_body -or $_.reviewed_at -or
+  $_.approved_sha256 -or $_.notes -notmatch 'Candidate SHA-256: [a-f0-9]{64}\.'
+}).Count 0 "Blocked clinical row contains approval data or lacks its candidate hash"
+$blockedClinicalUrls = @($blockedClinical.page_or_file | ForEach-Object { ($_ -split " -> ", 2)[-1].Trim() })
+Assert-Equal @($remainingDryRun | Group-Object url | Where-Object Count -gt 1).Count 0 "Duplicate remaining dry-run URL"
+Assert-Equal @($remainingDryRun | Where-Object {
+  $blockedClinicalUrls -notcontains $_.url -or
+  $_.source_sha256 -notmatch '^[a-f0-9]{64}$' -or $_.approval_sha256 -notmatch '^[a-f0-9]{64}$' -or
+  $_.confirmation -ne "PT-SEO-$($_.approval_sha256.Substring(0, 12).ToUpperInvariant())" -or
+  $_.result -ne "matched one production record; no write"
+}).Count 0 "Invalid remaining production dry-run evidence"
+Assert-Equal @($blockedClinical | Where-Object {
+  $url = ($_.page_or_file -split " -> ", 2)[-1].Trim()
+  $evidence = @($remainingDryRun | Where-Object url -eq $url)[0]
+  !$evidence -or $_.notes -notmatch [regex]::Escape("Candidate SHA-256: $($evidence.approval_sha256).")
+}).Count 0 "Blocked clinical row does not match its production dry-run copy hash"
 Assert-Equal @($clinical | Where-Object {
   $_.clinical_reviewer_specialty_id -or
   $_.compliance_reviewer_name -or $_.compliance_reviewer_id -or $_.compliance_reviewed_at -or
   $_.content_owner_name -or $_.content_owner_id -or $_.content_owner_reviewed_at -or
   $_.delegated_by_doctor_id
 }).Count 0 "Unused legacy approval fields must remain blank"
-Assert-Equal @($clinical | Where-Object {
+Assert-Equal @($approvedClinical | Where-Object {
   $isDoctor = $_.page_or_file -match '/doctors/'
   ($isDoctor -and ($_.fact_register_sha256 -notmatch '^[a-f0-9]{64}$' -or -not $_.credential_subject_doctor_id)) -or
   (!$isDoctor -and ($_.fact_register_sha256 -or $_.credential_subject_doctor_id))
 }).Count 0 "Doctor approval is not bound to an exact fact record and subject ID"
-Assert-Equal @($doctors | Where-Object verification_status -eq "verified").Count 4 "Metadata-only doctor fact verification count"
-Assert-Equal @($doctors | Where-Object verification_status -eq "pending_official_verification").Count 12 "Pending doctor fact verification count"
+Assert-Equal @($doctors | Where-Object verification_status -eq "verified").Count 14 "Metadata-only doctor fact verification count"
+Assert-Equal @($doctors | Where-Object verification_status -eq "pending_official_verification").Count 2 "Pending doctor fact verification count"
 
 [pscustomobject]@{
   drafts = $drafts.Count
   live_pages = $pages.Count
   rewritten_metadata_rows = $rewritten.Count
-  clinical_rows_approved = $clinical.Count
-  doctor_profiles_metadata_verified = 4
-  doctor_profiles_pending_verification = 12
+  clinical_rows_approved = $approvedClinical.Count
+  clinical_rows_blocked = $blockedClinical.Count
+  remaining_production_dry_runs = $remainingDryRun.Count
+  doctor_profiles_metadata_verified = 14
+  doctor_profiles_pending_verification = 2
   status = "valid"
 } | Format-List

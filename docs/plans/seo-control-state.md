@@ -7109,4 +7109,20 @@ data, availability, or tool algorithms and thresholds. The receipt is
 public readback is
 `seo/portugal/raw/clinical-seo-production-readback-2026-09-02.csv`.
 
+The remaining 17 Portugal sitemap records now have the same guarded implementation:
+12 doctor-market translations, three published PT page-content translations, one PT
+health landing translation and the effective PT hand-foot-mouth blog record. Read-only
+production dry runs matched one eligible record for every target and are recorded in
+`seo/portugal/raw/remaining-metadata-production-dry-run-2026-09-02.csv`. Proposed copy
+was rechecked for unsafe availability or guarantee wording; no visible clinical copy,
+FAQ, biography, credential/certification, registration, specialty, price or booking
+field was changed.
+
+These 17 rows remain `blocked_pending_review` with unique candidate SHA-256 values.
+The earlier Dr Tiago approval is bound to the first 28 hashes and was not inferred for
+new copy. Official OM/OPP evidence now verifies 14 of 16 doctor fact rows; Beatriz
+Carvalho (OPP 31618) and Rui Diogo Rodrigues (OM 74473) remain pending exact official
+directory verification. The production apply gate therefore remains closed for all
+17 candidates, and no production write occurred.
+
 ---

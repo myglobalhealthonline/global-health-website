@@ -253,3 +253,33 @@ package typechecks, scoped ESLint, production dependency audit, reconciliation a
 independent code, TypeScript and security reviews. The frontend production build
 compiled and passed TypeScript; local static generation remained blocked by the
 unavailable content API, the same known environment limitation recorded earlier.
+
+## 2026-09-02 remaining 17-page guarded implementation
+
+The 17 sitemap pages outside the first approved manifest now use the same one-record,
+dry-run-first metadata writer. The added targets are 12 doctor-market translations,
+three published PT page-content translations, one PT health landing translation and
+the effective PT hand-foot-mouth blog record. The writer changes only title,
+description and, for doctors, the existing SEO keyword array. It does not target a
+doctor name, biography, qualification, credential/certification, registration,
+specialty, language, price, booking record, FAQ or clinical body field.
+
+Every proposed title and description was checked for same-day, immediacy, guarantee
+and other unsafe availability wording. The Nádia Cavaco draft's dangling separator
+was corrected before its hash was recorded. The existing FAQ review remains valid:
+212 questions already express page intent naturally, so no per-FAQ keyword field or
+keyword-stuffed rewrite was added.
+
+Read-only production dry runs matched exactly one eligible record for all 17 targets.
+Their source hashes, candidate copy hashes and confirmation tokens are recorded in
+`raw/remaining-metadata-production-dry-run-2026-09-02.csv`. Official OM/OPP evidence
+now verifies 14 of the 16 doctor fact rows. Beatriz Carvalho (OPP 31618) and Rui Diogo
+Rodrigues (OM 74473) remain pending exact official-directory verification.
+
+The clinical register contains 28 approved rows and 17 separate
+`blocked_pending_review` rows. The prior approval applies only to the exact first
+28 hashes, so it was not copied onto these candidates. No production write was made.
+Publication requires Dr Tiago's exact approval of the 17 candidate hashes; the two
+pending doctor facts must also be officially verified before their doctor rows can
+pass the apply gate. Reconciliation passes with 45 clinical rows, 14 verified doctor
+facts and two pending facts.

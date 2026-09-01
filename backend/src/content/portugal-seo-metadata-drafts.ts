@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-export type PortugalSeoTargetKind = "home" | "service" | "doctor" | "tool";
+export type PortugalSeoTargetKind = "home" | "service" | "doctor" | "tool" | "page" | "landing" | "blog";
 
 export type PortugalSeoMetadataDraft = Readonly<{
   asset: string;

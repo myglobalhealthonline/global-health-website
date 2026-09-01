@@ -4,6 +4,11 @@ import {
   portugalSeoConfirmationToken,
   type PortugalSeoMetadataDraft,
 } from "./portugal-seo-metadata-drafts.js";
+import {
+  portugalRemainingApprovalSha256,
+  portugalRemainingConfirmationToken,
+  type PortugalSeoRemainingDraft,
+} from "./portugal-seo-remaining-drafts.js";
 
 type PortugalSeoApplyOptions = Readonly<{
   apply: boolean;
@@ -19,6 +24,18 @@ type PortugalSeoApplyOptions = Readonly<{
   now?: Date;
 }>;
 
+export function portugalSeoDraftApprovalSha256(draft: PortugalSeoMetadataDraft): string {
+  return "assetKind" in draft
+    ? portugalRemainingApprovalSha256(draft as PortugalSeoRemainingDraft)
+    : portugalSeoApprovalSha256(draft);
+}
+
+export function portugalSeoDraftConfirmationToken(draft: PortugalSeoMetadataDraft): string {
+  return "assetKind" in draft
+    ? portugalRemainingConfirmationToken(draft as PortugalSeoRemainingDraft)
+    : portugalSeoConfirmationToken(draft);
+}
+
 export function assertPortugalSeoApplyAuthorized(options: PortugalSeoApplyOptions): ReturnType<typeof assertPortugalClinicalApproval> | null {
   if (!options.apply) return null;
   if (options.draft.disposition === "retain_current") {
@@ -27,7 +44,8 @@ export function assertPortugalSeoApplyAuthorized(options: PortugalSeoApplyOption
   if (options.draft.targetKind === "tool") {
     throw new Error(`${options.draft.asset} is managed in a static runtime source`);
   }
-  if (options.confirmation !== portugalSeoConfirmationToken(options.draft)) {
+  const expectedConfirmation = portugalSeoDraftConfirmationToken(options.draft);
+  if (options.confirmation !== expectedConfirmation) {
     throw new Error("Portugal SEO confirmation token does not match the selected draft");
   }
 
@@ -41,7 +59,7 @@ export function assertPortugalSeoApplyAuthorized(options: PortugalSeoApplyOption
     throw new Error("Confirmed database identity does not match DATABASE_URL");
   }
 
-  const expectedHash = portugalSeoApprovalSha256(options.draft);
+  const expectedHash = portugalSeoDraftApprovalSha256(options.draft);
   if (options.approvedHash !== expectedHash) {
     throw new Error("Approved SHA-256 does not match the selected Portugal SEO draft");
   }

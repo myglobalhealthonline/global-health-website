@@ -198,6 +198,18 @@ export function portugalDoctorFactSha256(record: PortugalDoctorFactRecord): stri
   )).digest("hex");
 }
 
+export function portugalDoctorFactHasRegistration(
+  record: PortugalDoctorFactRecord,
+  professionalBody: string,
+  registrationNumber: string,
+): boolean {
+  const bodies = record.professional_body.split(";").map((value) => value.trim()).filter(Boolean);
+  const numbers = record.registration_number.split(";").map((value) => value.trim()).filter(Boolean);
+  return bodies.length === numbers.length && bodies.some(
+    (body, index) => body === professionalBody && numbers[index] === registrationNumber,
+  );
+}
+
 export function assertPortugalClinicalApproval(
   csv: string,
   options: Readonly<{ asset: string; approvedSha256: string; factRegisterCsv?: string; now?: Date }>,
