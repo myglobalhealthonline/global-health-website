@@ -12,6 +12,21 @@ function Assert-Equal($actual, $expected, [string]$message) {
   if ($actual -ne $expected) { throw "$message (expected $expected; found $actual)" }
 }
 
+Add-Type -AssemblyName Microsoft.VisualBasic
+$clinicalParser = [Microsoft.VisualBasic.FileIO.TextFieldParser]::new((Join-Path $PSScriptRoot "clinical-review-register.csv"))
+try {
+  $clinicalParser.SetDelimiters(",")
+  $clinicalParser.HasFieldsEnclosedInQuotes = $true
+  $expectedClinicalFields = $clinicalParser.ReadFields().Count
+  $clinicalLine = 1
+  while (-not $clinicalParser.EndOfData) {
+    $clinicalLine++
+    Assert-Equal $clinicalParser.ReadFields().Count $expectedClinicalFields "Clinical register field count at line $clinicalLine"
+  }
+} finally {
+  $clinicalParser.Close()
+}
+
 Assert-Equal $drafts.Count 28 "Portugal draft matrix row count"
 Assert-Equal $pages.Count 75 "Portugal live page matrix row count"
 Assert-Equal $clinical.Count 45 "Portugal clinical register row count"
@@ -117,8 +132,8 @@ Assert-Equal @($approvedClinical | Where-Object {
   ($isDoctor -and ($_.fact_register_sha256 -notmatch '^[a-f0-9]{64}$' -or -not $_.credential_subject_doctor_id)) -or
   (!$isDoctor -and ($_.fact_register_sha256 -or $_.credential_subject_doctor_id))
 }).Count 0 "Doctor approval is not bound to an exact fact record and subject ID"
-Assert-Equal @($doctors | Where-Object verification_status -eq "verified").Count 14 "Metadata-only doctor fact verification count"
-Assert-Equal @($doctors | Where-Object verification_status -eq "pending_official_verification").Count 2 "Pending doctor fact verification count"
+Assert-Equal @($doctors | Where-Object verification_status -eq "verified").Count 15 "Metadata-only doctor fact verification count"
+Assert-Equal @($doctors | Where-Object verification_status -eq "pending_official_verification").Count 1 "Pending doctor fact verification count"
 
 [pscustomobject]@{
   drafts = $drafts.Count
@@ -127,7 +142,7 @@ Assert-Equal @($doctors | Where-Object verification_status -eq "pending_official
   clinical_rows_approved = $approvedClinical.Count
   clinical_rows_blocked = $blockedClinical.Count
   remaining_production_dry_runs = $remainingDryRun.Count
-  doctor_profiles_metadata_verified = 14
-  doctor_profiles_pending_verification = 2
+  doctor_profiles_metadata_verified = 15
+  doctor_profiles_pending_verification = 1
   status = "valid"
 } | Format-List

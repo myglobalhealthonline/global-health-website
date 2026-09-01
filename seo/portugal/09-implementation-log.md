@@ -273,13 +273,15 @@ keyword-stuffed rewrite was added.
 Read-only production dry runs matched exactly one eligible record for all 17 targets.
 Their source hashes, candidate copy hashes and confirmation tokens are recorded in
 `raw/remaining-metadata-production-dry-run-2026-09-02.csv`. Official OM/OPP evidence
-now verifies 14 of the 16 doctor fact rows. Beatriz Carvalho (OPP 31618) and Rui Diogo
-Rodrigues (OM 74473) remain pending exact official-directory verification.
+now verifies 15 of the 16 doctor fact rows. OM 74473 resolves to Rui Diogo Oliveira
+Rodrigues, consistent with the shortened professional display used on the live page.
+Beatriz Carvalho remains blocked because OPP 31618 resolves to Beatriz Sousa, not
+Beatriz Carvalho; no protected profile or credential field was changed.
 
 The clinical register contains 28 approved rows and 17 separate
 `blocked_pending_review` rows. The prior approval applies only to the exact first
 28 hashes, so it was not copied onto these candidates. No production write was made.
-Publication requires Dr Tiago's exact approval of the 17 candidate hashes; the two
-pending doctor facts must also be officially verified before their doctor rows can
-pass the apply gate. Reconciliation passes with 45 clinical rows, 14 verified doctor
-facts and two pending facts.
+Publication requires Dr Tiago's exact approval of the 17 candidate hashes. Even with
+that approval, the Beatriz candidate must remain excluded until authoritative OPP
+documentation resolves the identity mismatch. Reconciliation passes with 45 clinical
+rows, 15 verified doctor facts and one pending fact.

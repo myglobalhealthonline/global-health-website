@@ -7120,9 +7120,11 @@ field was changed.
 
 These 17 rows remain `blocked_pending_review` with unique candidate SHA-256 values.
 The earlier Dr Tiago approval is bound to the first 28 hashes and was not inferred for
-new copy. Official OM/OPP evidence now verifies 14 of 16 doctor fact rows; Beatriz
-Carvalho (OPP 31618) and Rui Diogo Rodrigues (OM 74473) remain pending exact official
-directory verification. The production apply gate therefore remains closed for all
-17 candidates, and no production write occurred.
+new copy. Official OM/OPP evidence now verifies 15 of 16 doctor fact rows. OM 74473
+resolves to Rui Diogo Oliveira Rodrigues, consistent with the shortened professional
+display used on the live page. Beatriz Carvalho remains blocked because OPP 31618
+resolves to Beatriz Sousa, not Beatriz Carvalho; no protected profile or credential
+field was changed. The production apply gate therefore remains closed for all 17
+candidates, and no production write occurred.
 
 ---
