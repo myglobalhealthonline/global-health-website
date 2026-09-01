@@ -6920,17 +6920,19 @@ unique primary keyword; the 24 page briefs and matrix are synchronized, with the
 driving-certificate retain-current sentinel as the documented exception. Relevant
 low-volume variants remain secondary/supporting terms rather than new pages.
 
-**Implementation remains deliberately partial.** The only page-copy source change is
-the pt-PT blood-pressure tool title; it is repository-only and undeployed. Service
-descriptions, H1s, bodies, FAQs, internal links, doctor biographies, credentials and
-profile metadata remain unchanged in operational sources. Historical bulk service
-and doctor importers were not used because they rewrite wider clinical/profile
-surfaces and are unsafe for narrow metadata publication. All 28 rows require clinical,
-credential or official-source review and therefore record factual verification `no`
-and blocked publication. Live checks for the same 28 URLs passed HTTP status,
-canonical, `pt-PT` hreflang, indexability, structured data and booking-CTA checks.
-Frontend/backend type-checks, locale-key validation and 24 focused tool tests passed.
-No production write, push or deployment was made; repository changes were committed
-only after completion and review.
+The Portugal content owner approved repository implementation for all 28 eligible
+pages on 2026-09-01; the reviewer name was not supplied. This is editorial approval,
+not clinical, credential or official-source approval. The existing briefs and matrix
+remain the implementation payload. No duplicate manifest or publisher was added.
+
+All 28 rows remain blocked and record factual verification `no`. No SEO recommendation
+is present in runtime page copy: the pt-PT blood-pressure title was restored to its
+pre-optimization value, and service descriptions, H1s, bodies, FAQs, internal links,
+doctor biographies, credentials and profile metadata remain unchanged in operational
+sources. Historical bulk service and doctor importers were not used because they
+rewrite wider clinical/profile surfaces and are unsafe for narrow metadata publication.
+The guarded homepage CTA updater was not run. Live checks for the same 28 URLs passed
+HTTP status, canonical, `pt-PT` hreflang, indexability, structured data and booking-CTA
+checks. No CMS write, production write, push or deployment was made.
 
 ---
