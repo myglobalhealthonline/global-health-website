@@ -51,11 +51,17 @@ ledger and historical evidence follow from §0.
   No service/profile metadata, bio, FAQ, clinical description, credential or
   availability claim was published. The Portugal hand-foot-mouth article's
   Ireland/HSE wording is held for clinical correction.
-- Portugal-only pricing and FAQ metadata/H1 corrections are implemented locally and
-  await deployment. The pricing unavailability override is used only after a
-  successfully loaded, genuinely empty plan catalogue; transport and schema failures
-  fail closed. Other current static/legal copy was retained where the
-  live review found no justified change.
+- Portugal-only pricing and FAQ metadata, H1 and visible lede corrections are live.
+  A cache-busted production readback on deployment
+  `b0cebff87d49540ce3205c41adf45f65bf2dfa45` matched both targeted routes. The
+  pricing route still exposed plan-only CTA, heading, trust and onboarding copy with
+  an empty catalogue, so a repository follow-up now hides those sections until plans
+  exist and prevents upstream catalogue failures from becoming false 404s after the
+  feature gate passes. That follow-up awaits deployment. Google's stored crawls from 2026-08-15
+  (FAQ) and 2026-07-19 (pricing) predate the new copy; recrawl remains pending and a
+  finalized 2026-08-01 to 2026-08-29 GSC refresh returned no query rows for either URL.
+  Other current static/legal copy was retained where the live review found no
+  justified change.
 - The owner-authorized non-clinical HOME CTA was applied through its existing guarded
   one-field updater: the PT label is now `Marcar consulta`. Source/host checks,
   transactional readback and a post-write idempotent dry run passed. Public HTML
@@ -6951,6 +6957,9 @@ non-medical, unsupported or non-Portugal administrative terms that collided
 with `receita`/`consulta` seeds. All approved clusters map to
 existing URLs. No new page, location page, redirect, noindex, title rewrite or
 recurring paid rank tracker was created.
+
+Later operational state is recorded in §27.17. It supersedes this dated
+predeployment status without rewriting the 2026-08-31 evidence.
 
 Fresh URL Inspection resolves most of the §19 doctor watchlist. Telmo Coelho's
 current canonical is submitted/indexed with a 2026-08-24 crawl; Vitor Pais is

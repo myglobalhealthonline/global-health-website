@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const portugalPlans = code === "pt" && isCountryFeatureEnabled(config, "subscriptions")
     ? await getCountryPlansResult(code, lang)
     : null;
-  const portugalSeo = portugalPlans?.ok && portugalPlans.plans.length === 0
+  const portugalSeo = portugalPlans && portugalPlans.plans.length === 0
     ? portugalStaticPageSeo(code, lang, "pricing")
     : null;
 
@@ -85,8 +85,8 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
   if (!isCountryFeatureEnabled(overlay, "subscriptions")) notFound();
 
   const planResult = await getCountryPlansResult(code, lang);
-  if (!planResult.ok) notFound();
   const plans = planResult.plans;
+  const hasPlans = plans.length > 0;
   const { subscription, common: c } = loadLocaleBundle(lang as LocaleCode);
   const countryName = c.countryNames?.[code] ?? config.name;
   const t = subscription.pricing;
@@ -94,7 +94,7 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
   const pp = c.pricingPage;
   const irelandSeo = code === "ie" ? irelandStaticPageSeo("PRICING", lang as LocaleCode) : null;
   const czechiaSeo = czechiaStaticPageSeo(code, lang, "pricing");
-  const portugalSeo = plans.length === 0 ? portugalStaticPageSeo(code, lang, "pricing") : null;
+  const portugalSeo = hasPlans ? null : portugalStaticPageSeo(code, lang, "pricing");
   const marketSeo = czechiaSeo ?? portugalSeo ?? irelandSeo;
 
   return (
@@ -103,12 +103,12 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
         data={breadcrumbJsonLd([
           { name: "Home", url: "/" },
           { name: countryName, url: `/${slug}/${lang}` },
-          { name: t.heading, url: `/${slug}/${lang}/pricing` },
+          { name: portugalSeo?.h1 ?? t.heading, url: `/${slug}/${lang}/pricing` },
         ])}
       />
       {/* Product + Offer per plan tier — sourced from the same `plans` fetch
           the cards below render, so schema price never drifts from the page. */}
-      {plans.length > 0 ? (
+      {hasPlans ? (
         <JsonLd
           data={plans.map((plan) =>
             subscriptionPlanServiceJsonLd({
@@ -131,13 +131,13 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
         titleAccent={marketSeo ? "" : t.titleAccent}
         titleTrail={marketSeo ? "" : t.titleTrail}
         lede={portugalSeo?.lede ?? t.lede.replace("{country}", countryName)}
-        ctaLabel={t.ctaLabel}
-        ctaHref="#plans"
+        ctaLabel={hasPlans ? t.ctaLabel : undefined}
+        ctaHref={hasPlans ? "#plans" : undefined}
         secondaryLabel={t.secondaryLabel}
         secondaryHref={`/${slug}/${lang}/doctors`}
-        rightSlot={<PlansArchPanel countryName={countryName} i18n={t} />}
+        rightSlot={hasPlans ? <PlansArchPanel countryName={countryName} i18n={t} /> : undefined}
         mobileBgSrc="/images/stock/plans.webp"
-        trustCards={[
+        trustCards={hasPlans ? [
           {
             icon: <Stethoscope className="size-[18px]" strokeWidth={2} aria-hidden />,
             title: pp.trustLicensedTitle,
@@ -153,7 +153,7 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
             title: pp.trustSecureTitle,
             subtitle: pp.trustSecureSubtitle,
           },
-        ]}
+        ] : undefined}
       />
 
       <section
@@ -162,7 +162,7 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
       >
         <SectionSeam theme="light" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-          <div className="mx-auto max-w-2xl text-center">
+          {hasPlans ? <div className="mx-auto max-w-2xl text-center">
             <p
               className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-accent)]"
             >
@@ -176,9 +176,9 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
             <p className="mt-4 text-base leading-relaxed text-[var(--color-text-muted)]">
               {t.subheading}
             </p>
-          </div>
+          </div> : null}
 
-          {plans.length > 0 ? (
+          {hasPlans ? (
             <PricingPlansGrid
               plans={plans}
               t={t}
@@ -188,11 +188,11 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
             />
           ) : (
             <div className="mx-auto mt-14 max-w-xl rounded-[var(--radius-card)] border border-[var(--color-border)] gh2-glass-forest p-10 text-center">
-              <h3
+              <h2
                 className="text-[1.4rem] font-bold tracking-[-0.02em] text-[var(--color-text-primary)]"
               >
                 {t.empty.title.replace("{country}", countryName)}
-              </h3>
+              </h2>
               <p className="mt-3 text-sm leading-relaxed text-[var(--color-text-muted)]">
                 {t.empty.body}
               </p>
@@ -217,8 +217,8 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
         </div>
       </section>
 
-      {/* How it works — 5-step onboarding overview (subscriptions are IE-only). */}
-      <section className="gh2-section-forest gh-medical-pattern gh-medical-pattern-dark gh-inline-clamp-section-pricing">
+      {/* How it works — shown only when the country has a live plan catalogue. */}
+      {hasPlans ? <section className="gh2-section-forest gh-medical-pattern gh-medical-pattern-dark gh-inline-clamp-section-pricing">
         <SectionSeam theme="dark" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="mx-auto max-w-2xl text-center">
@@ -292,7 +292,7 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
             })}
           </ol>
         </div>
-      </section>
+      </section> : null}
     </>
   );
 }
