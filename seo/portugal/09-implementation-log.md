@@ -123,3 +123,52 @@ No clinical, service, profile, credential, availability, price, FAQ-answer or bo
 Final verification passed the 75-page read-only reconciliation, frontend typecheck and touched-file lint, seven focused frontend tests, 11 focused Portugal backend tests, backend production build, dependency-override drift check, production dependency audit and `git diff --check`. Independent code, TypeScript and security reviews found no remaining actionable issue. The backend package test script expands file arguments to the full suite; that broader local run reached unrelated database tests and failed because the test database at `127.0.0.1:5433` was unavailable. The direct Portugal test run had no failure or skip.
 
 Commit `48832d9cf493ba7a9006cde322fbe5f317af6b54` was pushed to `Dev-hassaan`. Railway reported successful frontend and backend deployments in its Development environment. At 2026-09-01T16:25:59Z the Railway frontend URL returned HTTP 200 from that commit with no plan CTA, plan-selection heading or subscription onboarding copy, and with the empty-state H2. The public custom domain still returned deployment `b0cebff87d49540ce3205c41adf45f65bf2dfa45` and the old lower-page copy. Production promotion remains pending; no `main` push, merge or manual Railway action was performed.
+
+The subsequent `main` merge reached the public custom domain as deployment
+`884dedfefd6ddf5f3232ed9b1566765ad718a607`. A cache-bypassed read returned the
+empty-state H2 and no plan CTA, plan-selection heading, named-plan sales copy or
+flexible-plan claim. This closes the earlier production-promotion hold.
+
+## 2026-09-01 Portugal FAQ safety correction and clinical-gate audit
+
+An official-source review found two retired or incorrect crisis contacts in five live
+FAQ answers and the medical disclaimer: `1024` in four doctor-profile FAQs and
+`808 200 204` in the Portugal mental-health service FAQ and three disclaimer list
+items. The official Government of Portugal announcement confirms
+the national suicide-prevention and psychological-support line `1411`; `112` remains
+the immediate-danger route. A one-record-only updater corrected the five answers in
+production. The same updater then corrected the one published Portugal medical
+disclaimer and advanced its public revision metadata to version 2, with a September
+2026 visible update date and the correction-time publication timestamp. Each write
+required the exact source hash, a patch-bound confirmation
+token and credential-free production database identity, then used an optimistic
+Serializable transaction and exact readback. Post-write dry runs returned
+`already applied`, and cache-bypassed public reads returned HTTP 200 with the new
+answers. The public backend legal-document readback returns version 2, September 2026,
+`1411` and no retired 808 contact; the rendered frontend awaits its tagged-cache refresh.
+The sanitized receipt is
+`raw/production-write-receipt-2026-09-01-faq-safety.json`.
+
+The source assets that could reintroduce those FAQ/disclaimer contacts now use `1411`
+and `112`. Portugal FAQ-hub and shared contact copy was shortened and de-risked:
+same-day, guaranteed-document, blanket language-availability and blanket third-party
+acceptance claims were removed. The FAQ keyword audit did not force a head term into
+every question. Existing service and doctor questions already express their page
+intent; only a small number of hub questions use natural Portugal consultation,
+driving-certificate or data-rights wording. This avoids keyword stuffing and
+cross-service cannibalization.
+
+The protected biography audit found `1024` in four live doctor biographies, repeated
+across their base, PT and Portugal-market layers. Those fields were not changed:
+doctor biography edits must use the existing doctor-profile approval workflow. No
+qualification, credential, registration, specialty, language or biography fact was
+altered.
+
+The broader 28-row clinical publication gate remains closed. Dr Tiago's active,
+verified Portugal registration is present, but the database has no active Portugal
+specialty relationship for him; the only specialty relationship belongs to Ireland.
+The official registration evidence located in this review does not verify a Portugal
+specialty. Production also currently exposes only one eligible operational reviewer,
+while the guard requires three distinct, active identities for clinician, compliance
+and content ownership. Exact dated approvals, official source references and approved
+copy hashes remain blank. No gate was weakened and no clinical sign-off was invented.

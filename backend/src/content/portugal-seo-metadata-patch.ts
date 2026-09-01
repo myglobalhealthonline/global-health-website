@@ -85,5 +85,8 @@ export function portugalDatabaseIdentity(databaseUrl: string): string {
   if (!url.hostname || !databaseName || databaseName.includes("/")) {
     throw new Error("DATABASE_URL is missing host or database name");
   }
-  return `${url.protocol}//${url.hostname}:${url.port || "5432"}/${databaseName}`;
+  const schema = url.searchParams.get("schema");
+  return `${url.protocol}//${url.hostname}:${url.port || "5432"}/${databaseName}${
+    schema ? `?schema=${encodeURIComponent(schema)}` : ""
+  }`;
 }

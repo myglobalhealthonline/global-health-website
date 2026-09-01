@@ -19,7 +19,7 @@ const DISCLAIMER_HTML = [
   // Intro
   "<p>Este Disclaimer Médico rege todos os serviços clínicos prestados através da plataforma Global Health em Portugal, acessível em myglobalhealth.online. Ao marcar uma consulta ou utilizar qualquer serviço clínico através desta plataforma, o utilizador reconhece que leu, compreendeu, e aceita os termos estabelecidos neste documento.</p>",
   "<p>Este disclaimer aplica-se a todos os serviços prestados em Portugal, incluindo consultas de Clínica Geral, Medicina Geral e Familiar, consultas de especialidade, e consultas de profissionais de saúde aliados. Aplicam-se disclaimers próprios aos serviços prestados noutros mercados — Irlanda, República Checa, Espanha, Roménia, e Brasil — disponíveis nas páginas respetivas de cada país desta plataforma.</p>",
-  "<p><em>Última atualização: Junho 2026</em></p>",
+  "<p><em>Última atualização: Setembro 2026</em></p>",
 
   // Emergency box
   "<h2>⚠ Emergência Médica — Leia Primeiro</h2>",
@@ -29,7 +29,7 @@ const DISCLAIMER_HTML = [
   "<p>Recursos de crise de saúde mental:</p>",
   "<ul>" +
     '<li>SNS 24 — <a href="tel:808242424">808 24 24 24</a> (gratuito, 24/7)</li>' +
-    '<li>Linha de Vida Segura (prevenção do suicídio) — <a href="tel:808200204">808 200 204</a></li>' +
+    '<li>Linha Nacional de Prevenção do Suicídio e Apoio Psicológico — <a href="tel:1411">1411</a></li>' +
     '<li>SOS Voz Amiga — <a href="tel:213544545">213 544 545</a></li>' +
     '<li>Liga Portuguesa Contra o Cancro (apoio emocional oncológico) — <a href="tel:808222555">808 222 555</a></li>' +
     "</ul>",
@@ -79,7 +79,7 @@ const DISCLAIMER_HTML = [
   "<p><strong>Recursos de crise de saúde mental — Portugal.</strong> Se está em crise ou a ter pensamentos de suicídio ou autolesão:</p>",
   "<ul>" +
     '<li>SNS 24 — <a href="tel:808242424">808 24 24 24</a> (gratuito, 24/7)</li>' +
-    '<li>Linha de Vida Segura — <a href="tel:808200204">808 200 204</a></li>' +
+    '<li>Linha Nacional de Prevenção do Suicídio e Apoio Psicológico — <a href="tel:1411">1411</a></li>' +
     '<li>SOS Voz Amiga — <a href="tel:213544545">213 544 545</a></li>' +
     '<li>Serviços de emergência — <a href="tel:112">112</a></li>' +
     "</ul>",
@@ -195,7 +195,7 @@ const DISCLAIMER_HTML = [
   "<p>Crise de saúde mental:</p>",
   "<ul>" +
     '<li>SNS 24 — <a href="tel:808242424">808 24 24 24</a> (gratuito, 24/7)</li>' +
-    '<li>Linha de Vida Segura — <a href="tel:808200204">808 200 204</a></li>' +
+    '<li>Linha Nacional de Prevenção do Suicídio e Apoio Psicológico — <a href="tel:1411">1411</a></li>' +
     '<li>SOS Voz Amiga — <a href="tel:213544545">213 544 545</a></li>' +
     "</ul>",
   "<p>Apoio emocional oncológico:</p>",

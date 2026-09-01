@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "receipt_id": "PT-FAQ-SAFETY-2026-09-01",
+  "occurred_at_utc": "2026-09-01T18:21:21Z",
+  "environment": "production",
+  "result": "six_records_applied_and_verified",
+  "database_identity": "postgresql://trolley.proxy.rlwy.net:31877/railway",
+  "official_evidence": [
+    "https://portugal.gov.pt/gc25/comunicacao/noticias/nova-linha-de-prevencao-do-suicidio-entra-em-funcionamento"
+  ],
+  "records": [
+    {
+      "url": "https://www.myglobalhealth.online/portugal/pt/doctors/beatriz-carvalho",
+      "record": "DoctorFaq PT",
+      "question": "Como agendar uma sessão com a Beatriz?",
+      "confirmation": "PT-FAQ-SAFETY-072C905D50AF",
+      "updated_at_utc": "2026-09-01T17:29:49.866Z",
+      "post_write_source_sha256": "ef0f374f218d7e6c80e44671b698c7bc725340abeb516189443f8f02caf94634"
+    },
+    {
+      "url": "https://www.myglobalhealth.online/portugal/pt/doctors/dr-joana-branco-maia",
+      "record": "DoctorFaq PT",
+      "question": "Como agendar uma consulta com a Dra. Joana Branco Maia?",
+      "confirmation": "PT-FAQ-SAFETY-35248E32408D",
+      "updated_at_utc": "2026-09-01T17:29:55.305Z",
+      "post_write_source_sha256": "43de30ef834a4b70e7fb51c185ae5ddef1f1659f2a088a5a9d00d58b7486bec9"
+    },
+    {
+      "url": "https://www.myglobalhealth.online/portugal/pt/doctors/dr-ruben-pereira",
+      "record": "DoctorFaq PT",
+      "question": "Como agendar uma consulta com o Dr. Rúben Pereira?",
+      "confirmation": "PT-FAQ-SAFETY-2568C404C5BB",
+      "updated_at_utc": "2026-09-01T17:30:00.976Z",
+      "post_write_source_sha256": "3040262c8a50faebe3701b7c275b7bb5f5556ce3aaec44f2107016af90ef9327"
+    },
+    {
+      "url": "https://www.myglobalhealth.online/portugal/pt/doctors/dr-telmo-coelho",
+      "record": "DoctorFaq PT",
+      "question": "Como agendar uma consulta com o Dr. Telmo Coelho?",
+      "confirmation": "PT-FAQ-SAFETY-388B88C6F3D2",
+      "updated_at_utc": "2026-09-01T17:30:07.428Z",
+      "post_write_source_sha256": "6314566a258e0f61f16000876b6f7322f0ff787b172bbb4258dabeb31d7cf4c4"
+    },
+    {
+      "url": "https://www.myglobalhealth.online/portugal/pt/services/saude-mental",
+      "record": "ServiceFaq",
+      "question": "E se estiver em crise durante ou após a consulta?",
+      "confirmation": "PT-FAQ-SAFETY-025F43D782D8",
+      "updated_at_utc": "2026-09-01T17:30:14.411Z",
+      "post_write_source_sha256": "b10f2cce7f0f375ef415618848ad5c125d5a4da212c4c2c88b94455fc9a749a6"
+    },
+    {
+      "url": "https://www.myglobalhealth.online/portugal/pt/legal/medical-disclaimer",
+      "record": "CountryLegalDocument MEDICAL_DISCLAIMER/pt",
+      "confirmation": "PT-FAQ-SAFETY-9D9C6448B9BF",
+      "updated_at_utc": "2026-09-01T18:21:21.996Z",
+      "post_write_source_sha256": "a8b2cfbab104d7927ff430c58478e4c61cd65e61944cd3912f2932f5da559fde",
+      "version": 2,
+      "published_at_utc": "2026-09-01T17:58:44.337Z",
+      "visible_update_month": "Setembro 2026"
+    }
+  ],
+  "change": {
+    "removed": "retired or incorrect crisis contacts 1024 and 808 200 204",
+    "added": "1411 for suicide-prevention and psychological support; 112 for immediate danger"
+  },
+  "guards": {
+    "one_record_per_apply": true,
+    "exact_question_and_answer_match": true,
+    "source_sha256_confirmed": true,
+    "database_identity_confirmed_without_credentials": true,
+    "serializable_transaction": true,
+    "optimistic_updated_at_check": true,
+    "database_readback_passed": true,
+    "post_write_dry_run_idempotent": true
+  },
+  "public_verification": {
+    "http_status_200_for_all_five_faq_urls": true,
+    "new_faq_answer_present_for_all_five_faq_urls": true,
+    "public_backend_disclaimer_has_1411": true,
+    "public_backend_disclaimer_has_old_808": false,
+    "public_backend_disclaimer_version": 2,
+    "public_backend_disclaimer_has_september_2026": true,
+    "frontend_disclaimer_cache_refresh_pending": true,
+    "protected_doctor_biography_1024_hold": "The four doctor pages still contain 1024 in existing biography fields. Those fields were not changed because profile edits require the doctor-profile approval workflow. No qualification, credential, registration, specialty or biography fact changed."
+  }
+}

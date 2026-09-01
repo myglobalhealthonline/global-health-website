@@ -7033,4 +7033,30 @@ The guarded homepage CTA updater was not run. Live checks for the same 28 URLs p
 HTTP status, canonical, `pt-PT` hreflang, indexability, structured data and booking-CTA
 checks. No CMS write, production write, push or deployment was made.
 
+Portugal safety follow-up on 2026-09-01 corrected five live FAQ answers that exposed
+retired or incorrect crisis contacts. Four doctor-profile FAQs and the Portugal
+mental-health service FAQ now direct suicide or self-harm crises to the official
+`1411` line and immediate danger to `112`. Writes were one record at a time with exact
+source hashes, patch-bound confirmations, credential-free database identity,
+Serializable optimistic guards and exact readback; cache-bypassed public reads passed
+for all five URLs. The receipt is
+`seo/portugal/raw/production-write-receipt-2026-09-01-faq-safety.json`.
+
+The same guarded path corrected three retired `808 200 204` list items inside the
+single published Portugal medical-disclaimer record and advanced its public revision
+metadata to version 2, a September 2026 visible update date and the correction-time
+publication timestamp. Production database and public backend API readbacks show
+`1411`, no retired 808 contact and the new revision metadata; the frontend render
+remains on its pre-write tagged cache until revalidation or deployment.
+
+The four affected doctor pages still contain `1024` in protected biography fields.
+Those fields, and all credentials, registrations, specialties and qualifications,
+remain unchanged pending the existing doctor-profile approval workflow. The wider
+28-row Portugal clinical publication batch remains blocked: Dr Tiago is active and
+verified for Portugal but has no active Portugal specialty relationship in the
+database, the official evidence reviewed does not establish one, only one eligible
+operational reviewer currently exists, and the required distinct dated approval,
+official-source and copy-hash fields remain blank. No gate was weakened and no
+clinical approval was inferred.
+
 ---

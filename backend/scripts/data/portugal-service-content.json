@@ -731,7 +731,7 @@
     ],
     "_docSlug": "referenciacao-e-exames",
     "_isNew": true,
-    "_shortDisclaimer": "As referenciações e pedidos de exames são emitidos exclusivamente ao critério profissional do médico, após avaliação clínica completa e quando clinicamente indicado. Nem a referenciação nem o pedido de exame podem ser garantidos antecipadamente. Os nossos médicos não emitem referenciações ou pedidos de exames sem base clínica. Este serviço encaminha exclusivamente para o setor privado — não emitimos referenciações válidas para o SNS, que dependem do médico de família atribuído ao doente. Situações urgentes ou de emergência devem ser dirigidas aos serviços de urgência ou ao serviço de urgência mais próximo. 17- Saude mental Recursos de crise para Portugal — substituindo Samaritans/Pieta House: SNS 24 — 808 24 24 24 (linha de aconselhamento e triagem de saúde, 24/7) SOS Voz Amiga — 213 544 545 / 912 802 669 / 963 524 660 (apoio emocional) Linha de Vida Segura (prevenção do suicídio) — 808 200 204 Telefone da Amizade — 222 080 707 Emergência — 112 Recursos de crise — destacados antes de todo o restante conteúdo: Se está em crise ou a ter pensamentos de suicídio ou autolesão, procure apoio imediato: SNS 24 — 808 24 24 24 (gratuito, 24/7) Linha de Vida Segura — 808 200 204 SOS Voz Amiga — 213 544 545 Emergência — 112"
+    "_shortDisclaimer": "As referenciações e pedidos de exames são emitidos exclusivamente ao critério profissional do médico, após avaliação clínica completa e quando clinicamente indicado. Nem a referenciação nem o pedido de exame podem ser garantidos antecipadamente. Os nossos médicos não emitem referenciações ou pedidos de exames sem base clínica. Este serviço encaminha exclusivamente para o setor privado — não emitimos referenciações válidas para o SNS, que dependem do médico de família atribuído ao doente. Situações urgentes ou de emergência devem ser dirigidas aos serviços de urgência ou ao serviço de urgência mais próximo. 17- Saude mental Recursos de crise para Portugal — substituindo Samaritans/Pieta House: SNS 24 — 808 24 24 24 (linha de aconselhamento e triagem de saúde, 24/7) SOS Voz Amiga — 213 544 545 / 912 802 669 / 963 524 660 (apoio emocional) Linha Nacional de Prevenção do Suicídio e Apoio Psicológico — 1411 Telefone da Amizade — 222 080 707 Emergência — 112 Recursos de crise — destacados antes de todo o restante conteúdo: Se está em crise ou a ter pensamentos de suicídio ou autolesão, procure apoio imediato: Linha Nacional de Prevenção do Suicídio e Apoio Psicológico — 1411 Emergência — 112"
   },
   {
     "slug": "mental-health-consultation",
@@ -765,7 +765,7 @@
       },
       {
         "question": "E se estiver em crise durante ou após a consulta?",
-        "answer": "Se está em crise, utilize os recursos de crise indicados no topo desta página — SNS 24 (808 24 24 24), Linha de Vida Segura (808 200 204), ou 112 em caso de perigo imediato. O nosso serviço não é um serviço de intervenção em crise."
+        "answer": "Se está em crise ou a ter pensamentos de suicídio ou autolesão, ligue 1411. Em caso de perigo imediato, ligue 112. O nosso serviço não é um serviço de intervenção em crise."
       },
       {
         "question": "Posso discutir preocupações com medicação durante esta consulta?",
@@ -785,7 +785,7 @@
     ],
     "_docSlug": "saude-mental",
     "_isNew": true,
-    "_shortDisclaimer": "As consultas de saúde mental são realizadas ao nível de cuidados de saúde primários por médicos registados na Ordem dos Médicos, em conformidade com as normas portuguesas de telemedicina e prática clínica. Este serviço é uma avaliação médica ao nível de Clínica Geral — não é um serviço de aconselhamento, psicoterapia, ou psiquiátrico. As recomendações clínicas e referenciações são emitidas exclusivamente ao critério profissional do médico, após avaliação completa. Este serviço não é um serviço de intervenção em crise. Se está em crise ou a ter pensamentos de suicídio ou autolesão, contacte o SNS 24 através do 808 24 24 24, a Linha de Vida Segura através do 808 200 204, ou o 112 imediatamente."
+    "_shortDisclaimer": "As consultas de saúde mental são realizadas ao nível de cuidados de saúde primários por médicos registados na Ordem dos Médicos, em conformidade com as normas portuguesas de telemedicina e prática clínica. Este serviço é uma avaliação médica ao nível de Clínica Geral — não é um serviço de aconselhamento, psicoterapia, ou psiquiátrico. As recomendações clínicas e referenciações são emitidas exclusivamente ao critério profissional do médico, após avaliação completa. Este serviço não é um serviço de intervenção em crise. Se está em crise ou a ter pensamentos de suicídio ou autolesão, ligue 1411. Em caso de perigo imediato, ligue 112."
   },
   {
     "slug": "paediatric-primary-care-consultation",
@@ -1000,7 +1000,7 @@
     ],
     "_docSlug": "consulta-de-nutricao",
     "_isNew": false,
-    "_shortDisclaimer": "As consultas de nutrição são prestadas por nutricionista registada na Ordem dos Nutricionistas, em conformidade com as normas profissionais de prática nutricional em Portugal. Este serviço disponibiliza avaliação e gestão nutricional. Doentes com condições médicas complexas devem assegurar que o apoio nutricional é coordenado com o seu médico ou especialista. As recomendações clínicas são feitas exclusivamente ao critério profissional da nutricionista, após avaliação completa. 21- Psicologia Recursos de crise — destacados antes de todo o restante conteúdo: Se está em crise ou a ter pensamentos de suicídio ou autolesão, procure apoio imediato: SNS 24 — 808 24 24 24 (gratuito, 24/7) Linha de Vida Segura — 808 200 204 SOS Voz Amiga — 213 544 545 Emergência — 112"
+    "_shortDisclaimer": "As consultas de nutrição são prestadas por nutricionista registada na Ordem dos Nutricionistas, em conformidade com as normas profissionais de prática nutricional em Portugal. Este serviço disponibiliza avaliação e gestão nutricional. Doentes com condições médicas complexas devem assegurar que o apoio nutricional é coordenado com o seu médico ou especialista. As recomendações clínicas são feitas exclusivamente ao critério profissional da nutricionista, após avaliação completa. 21- Psicologia Recursos de crise — destacados antes de todo o restante conteúdo: Se está em crise ou a ter pensamentos de suicídio ou autolesão, procure apoio imediato: Linha Nacional de Prevenção do Suicídio e Apoio Psicológico — 1411 Emergência — 112"
   },
   {
     "slug": "psychology-consultation",
@@ -1055,7 +1055,7 @@
     ],
     "_docSlug": "psicologia",
     "_isNew": false,
-    "_shortDisclaimer": "As consultas de psicologia são conduzidas por psicólogas registadas na Ordem dos Psicólogos Portugueses, em conformidade com o respetivo Código Deontológico e as normas portuguesas de telemedicina. Este serviço disponibiliza avaliação psicológica e terapia em ambulatório — não é um serviço de intervenção em crise e não substitui serviços psiquiátricos, de internamento, ou de emergência em saúde mental. As recomendações clínicas e referenciações são feitas exclusivamente ao critério profissional da psicóloga, após avaliação completa. Se está em crise ou a ter pensamentos de suicídio ou autolesão, contacte o SNS 24 através do 808 24 24 24, a Linha de Vida Segura através do 808 200 204, ou o 112 imediatamente. 22. Psiquiatria: Se está em crise ou a ter pensamentos de suicídio ou autolesão, procure apoio imediato: SNS 24 — 808 24 24 24 (gratuito, 24/7) Linha de Vida Segura — 808 200 204 SOS Voz Amiga — 213 544 545 Emergência — 112"
+    "_shortDisclaimer": "As consultas de psicologia são conduzidas por psicólogas registadas na Ordem dos Psicólogos Portugueses, em conformidade com o respetivo Código Deontológico e as normas portuguesas de telemedicina. Este serviço disponibiliza avaliação psicológica e terapia em ambulatório — não é um serviço de intervenção em crise e não substitui serviços psiquiátricos, de internamento, ou de emergência em saúde mental. As recomendações clínicas e referenciações são feitas exclusivamente ao critério profissional da psicóloga, após avaliação completa. Se está em crise ou a ter pensamentos de suicídio ou autolesão, ligue 1411. Em caso de perigo imediato, ligue 112. 22. Psiquiatria: Se está em crise ou a ter pensamentos de suicídio ou autolesão, procure apoio imediato: Linha Nacional de Prevenção do Suicídio e Apoio Psicológico — 1411 Emergência — 112"
   },
   {
     "slug": "psychiatry-consultation",
@@ -1109,7 +1109,7 @@
     ],
     "_docSlug": "psiquiatria",
     "_isNew": false,
-    "_shortDisclaimer": "As consultas de psiquiatria são conduzidas por psiquiatras registados no Colégio de Psiquiatria da Ordem dos Médicos, em conformidade com as normas portuguesas de prática psiquiátrica e de telemedicina. A consulta psiquiátrica à distância tem limitações inerentes de âmbito — apresentações que exijam avaliação presencial, intervenção involuntária ao abrigo da Lei de Saúde Mental (Lei n.º 36/98), ou cuidados psiquiátricos de emergência não podem ser geridas através deste serviço. Todas as recomendações clínicas, incluindo decisões de medicação, são feitas exclusivamente ao critério profissional do psiquiatra, após avaliação completa. Este serviço não é um serviço de intervenção em crise. Se está em crise ou a ter pensamentos de suicídio ou autolesão, contacte o SNS 24 através do 808 24 24 24, a Linha de Vida Segura através do 808 200 204, ou o 112 imediatamente. 22. Oncologia"
+    "_shortDisclaimer": "As consultas de psiquiatria são conduzidas por psiquiatras registados no Colégio de Psiquiatria da Ordem dos Médicos, em conformidade com as normas portuguesas de prática psiquiátrica e de telemedicina. A consulta psiquiátrica à distância tem limitações inerentes de âmbito — apresentações que exijam avaliação presencial, intervenção involuntária ao abrigo da Lei de Saúde Mental (Lei n.º 36/98), ou cuidados psiquiátricos de emergência não podem ser geridas através deste serviço. Todas as recomendações clínicas, incluindo decisões de medicação, são feitas exclusivamente ao critério profissional do psiquiatra, após avaliação completa. Este serviço não é um serviço de intervenção em crise. Se está em crise ou a ter pensamentos de suicídio ou autolesão, ligue 1411. Em caso de perigo imediato, ligue 112. 22. Oncologia"
   },
   {
     "slug": "oncology-consultation",
