@@ -6,6 +6,7 @@ import {
   fetchSuklWsdl,
   getSuklHealthStatus,
   runSuklAppPing,
+  runSuklGetAppInfo,
   listSuklDoctorIdentities,
   revokeSuklDoctorIdentity,
   runSuklConnectionTest,
@@ -189,6 +190,38 @@ const adminSuklRoute: FastifyPluginAsync = async (app) => {
           requestId: result.requestId,
           interfaceVersion: result.interfaceVersion,
           path: result.path,
+          errorCode: result.errorCode,
+        },
+      });
+      return okResponse(result);
+    } catch (error) {
+      return handleError(app, reply, error);
+    }
+  });
+
+  // Asks SÚKL for their interface version. Read-only, and the request body is
+  // empty by schema, so it is the cheapest probe available — but still rate
+  // limited, so still a manual action.
+  app.post("/api/admin/sukl/app-info", async (request, reply) => {
+    const query = suklPingQuerySchema.pick({ service: true }).safeParse(request.query);
+    if (!query.success) {
+      return reply.status(400).send(errorResponse("Invalid service", query.error.flatten()));
+    }
+    const actor = resolveAdminSessionActor(request);
+    try {
+      const result = await runSuklGetAppInfo(query.data.service);
+      await recordAudit({
+        actorUserId: actor?.userId ?? null,
+        actorRole: actor?.role ?? null,
+        action: "SUKL_CONNECTION_TESTED",
+        entityType: "SuklFacilityIntegration",
+        entityId: query.data.service,
+        request,
+        metadata: {
+          kind: "app-info",
+          ok: result.ok,
+          httpStatus: result.httpStatus,
+          reportedVersion: result.version,
           errorCode: result.errorCode,
         },
       });

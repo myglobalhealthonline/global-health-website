@@ -67,6 +67,12 @@ export {
   interpretAppPingResponse,
 } from "./app-ping.js";
 export type { SuklAppPingResult } from "./app-ping.js";
+export {
+  suklGetAppInfo,
+  buildAppInfoRequest,
+  interpretAppInfoResponse,
+} from "./app-info.js";
+export type { SuklAppInfoResult } from "./app-info.js";
 export type { WsdlSummary } from "./wsdl.js";
 export type {
   SuklResponse,
