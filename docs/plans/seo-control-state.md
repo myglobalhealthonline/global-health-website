@@ -57,7 +57,9 @@ ledger and historical evidence follow from §0.
   pricing route still exposed plan-only CTA, heading, trust and onboarding copy with
   an empty catalogue, so a repository follow-up now hides those sections until plans
   exist and prevents upstream catalogue failures from becoming false 404s after the
-  feature gate passes. That follow-up awaits deployment. Google's stored crawls from 2026-08-15
+  feature gate passes. Commit `48832d9c` is deployed and rendered-verified in Railway
+  Development; the public custom domain still serves `b0cebff8`, so production
+  promotion remains pending. Google's stored crawls from 2026-08-15
   (FAQ) and 2026-07-19 (pricing) predate the new copy; recrawl remains pending and a
   finalized 2026-08-01 to 2026-08-29 GSC refresh returned no query rows for either URL.
   Other current static/legal copy was retained where the live review found no
