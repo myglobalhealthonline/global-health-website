@@ -382,6 +382,30 @@ export type PayoutBankInfo = {
   bic?: string | null;
 };
 
+/** Per-market payout accounts, keyed by LOWER-CASE country code
+ *  (`Appointment.countryCode`). A doctor working several markets can bank each
+ *  one separately (`DoctorMarketBankAccount`); a market absent from this map
+ *  falls back to the doctor-level account. Decrypted + audited by the ROUTE. */
+export type PayoutBankByMarket = Record<string, PayoutBankInfo>;
+
+/** True when a bank record carries nothing usable — treated as "not set", so
+ *  an empty market row falls through to the doctor-level account rather than
+ *  blanking the statement. */
+function bankIsEmpty(bank?: PayoutBankInfo | null): boolean {
+  return !bank || (!bank.iban?.trim() && !bank.accountHolder?.trim() && !bank.bic?.trim());
+}
+
+/** Identity of a payout account, for deciding whether two markets are paid
+ *  into the SAME account (header can then carry one IBAN) or different ones. */
+function bankIdentity(bank?: PayoutBankInfo | null): string {
+  if (bankIsEmpty(bank)) return "";
+  return [
+    bank?.accountHolder?.trim() ?? "",
+    bank?.iban ? normalizeIban(bank.iban) : "",
+    bank?.bic?.trim().toUpperCase() ?? "",
+  ].join("|");
+}
+
 /** Group a normalised IBAN into 4-char blocks for legibility on the statement. */
 function groupIban(iban: string): string {
   return normalizeIban(iban).replace(/(.{4})/g, "$1 ").trim();
@@ -401,6 +425,14 @@ function groupIban(iban: string): string {
  * section per market, each with its own subtotal, followed by a grand
  * "TOTAL TO PAY". The header block carries the payout bank details so finance
  * can process the transfer straight from the statement.
+ *
+ * Bank details resolve PER MARKET: a doctor banking each country separately
+ * (`DoctorMarketBankAccount`, set on their own market profile) is paid into
+ * that country's account, with the doctor-level `bank` as the fallback for any
+ * market that has none. When the markets on one statement resolve to different
+ * accounts the header stops claiming a single IBAN and every market section is
+ * headed by the account THAT market is paid into — otherwise finance would
+ * wire a Portuguese month into an Irish account.
  */
 export async function doctorPayoutStatementReport(
   doctorId: string,
@@ -408,6 +440,7 @@ export async function doctorPayoutStatementReport(
   filters: ReportFilters,
   bank?: PayoutBankInfo,
   locale: PayoutStatementLocale = "en",
+  bankByMarket: PayoutBankByMarket = {},
 ): Promise<ReportTable> {
   const t = payoutStatementLabelsFor(locale);
   const htmlLang = t.htmlLang;
@@ -424,7 +457,12 @@ export async function doctorPayoutStatementReport(
   const appts = await prisma.appointment.findMany({
     where: {
       doctorId,
-      ...(filters.countryCode ? { countryCode: filters.countryCode } : {}),
+      // Country codes are stored lower-case; match case-insensitively so a
+      // caller passing "CZ" narrows the statement instead of silently
+      // returning nothing.
+      ...(filters.countryCode
+        ? { countryCode: { equals: filters.countryCode, mode: "insensitive" as const } }
+        : {}),
       ...(filters.consultationType ? { consultationType: filters.consultationType } : {}),
       // Never pay for a refunded consultation — the money went back to the
       // patient, so it drops off the payout regardless of everything else.
@@ -567,6 +605,36 @@ export async function doctorPayoutStatementReport(
   );
   const multiMarket = marketKeys.length > 1;
 
+  // Which account THIS market is paid into: the doctor's per-market account
+  // when they set one, else their doctor-level account.
+  const bankFor = (marketKey: string): PayoutBankInfo | undefined => {
+    const marketBank = bankByMarket[marketKey.toLowerCase()];
+    return bankIsEmpty(marketBank) ? bank : marketBank;
+  };
+
+  // One line of bank details, for the per-market section header. Same labels
+  // as the summary block, so the statement reads consistently in any language.
+  const bankLine = (info: PayoutBankInfo | undefined): string => {
+    const parts = [
+      `${t.accountHolder}: ${info?.accountHolder?.trim() || doctorName}`,
+      `${t.iban}: ${info?.iban?.trim() ? groupIban(info.iban) : t.ibanNotOnFile}`,
+    ];
+    if (info?.bic?.trim()) parts.push(`${t.bic}: ${info.bic.trim()}`);
+    return parts.join(" · ");
+  };
+
+  // Do the markets on this statement all pay into the same account? If they
+  // do, one IBAN in the header is still correct and nothing else is needed.
+  const distinctBanks = new Set(marketKeys.map((key) => bankIdentity(bankFor(key))));
+  const splitBanks = distinctBanks.size > 1;
+
+  // The account the HEADER speaks for. With no rows (or a single market) it is
+  // that market's account — including when the caller narrowed by country, so
+  // an empty period still shows the right IBAN rather than the doctor-level
+  // one. With several markets paid differently, no single account is correct.
+  const headerMarketKey = marketKeys.length === 1 ? marketKeys[0] : filters.countryCode;
+  const headerBank = headerMarketKey ? bankFor(headerMarketKey) : bank;
+
   const payoutOf = (a: (typeof capped)[number]) => {
     // Cross-border async consult: payout snapshotted on the request; no service.
     if (a.consultationType === "cross-border-prescription") {
@@ -596,7 +664,12 @@ export async function doctorPayoutStatementReport(
   for (const key of marketKeys) {
     const list = byMarket.get(key)!;
     list.sort((x, y) => effDate(x).getTime() - effDate(y).getTime());
-    if (multiMarket) rows.push({ _section: t.marketSection.replace("{market}", marketLabel(key)) });
+    if (multiMarket) {
+      rows.push({ _section: t.marketSection.replace("{market}", marketLabel(key)) });
+      // Only when the markets are banked differently — repeating one identical
+      // account above every section would just add noise to the statement.
+      if (splitBanks) rows.push({ _sectionNote: `${t.payTo} — ${bankLine(bankFor(key))}` });
+    }
     const subtotal: Record<string, number> = {};
     for (const a of list) {
       const { payout, insurer, currency } = payoutOf(a);
@@ -648,12 +721,21 @@ export async function doctorPayoutStatementReport(
 
   const summary: ReportSummaryItem[] = [
     { label: t.period, value: periodLabel },
-    { label: t.accountHolder, value: bank?.accountHolder?.trim() || doctorName },
+    {
+      label: t.accountHolder,
+      value: splitBanks ? t.ibanPerMarket : headerBank?.accountHolder?.trim() || doctorName,
+    },
     {
       label: t.iban,
-      value: bank?.iban?.trim() ? groupIban(bank.iban) : t.ibanNotOnFile,
+      value: splitBanks
+        ? t.ibanPerMarket
+        : headerBank?.iban?.trim()
+          ? groupIban(headerBank.iban)
+          : t.ibanNotOnFile,
     },
-    ...(bank?.bic?.trim() ? [{ label: t.bic, value: bank.bic.trim() }] : []),
+    ...(!splitBanks && headerBank?.bic?.trim()
+      ? [{ label: t.bic, value: headerBank.bic.trim() }]
+      : []),
     ...(multiMarket
       ? [{ label: t.markets, value: marketKeys.map(marketLabel).join(", ") }]
       : []),

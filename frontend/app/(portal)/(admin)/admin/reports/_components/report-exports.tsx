@@ -25,7 +25,7 @@ const DATASETS: { value: Dataset; label: string; note: string }[] = [
   {
     value: "payout",
     label: "Doctor payout statement",
-    note: "One doctor's consultations valued at their per-service payout, with a total and the doctor's IBAN. Select a doctor; optionally narrow by country (for doctors working several markets) or consultation type. Starts from 17 Jul 2026 — earlier consultations are excluded. Defaults to last calendar month. Pick a statement language (English, Portuguese, Spanish, Czech, Romanian, German) to hand the doctor a document in their own language — the whole document, headings and totals included.",
+    note: "One doctor's consultations valued at their per-service payout, with a total and the doctor's IBAN. Doctors who bank each market separately get that market's account: a statement covering several markets banked differently prints the account above each market's section instead of one IBAN in the header. Select a doctor; optionally narrow by country (for doctors working several markets) or consultation type. Starts from 17 Jul 2026 — earlier consultations are excluded. Defaults to last calendar month. Pick a statement language (English, Portuguese, Spanish, Czech, Romanian, German) to hand the doctor a document in their own language — the whole document, headings and totals included.",
   },
   {
     value: "commission-payouts",

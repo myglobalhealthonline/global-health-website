@@ -21,6 +21,7 @@ import {
   type ReportTable,
 } from "../modules/reports/report-formatters.js";
 import { resolvePayoutStatementLocale } from "../modules/reports/payout-statement-content.js";
+import { loadDoctorPayoutBanks } from "../modules/reports/payout-bank-lookup.js";
 
 /**
  * GET /api/admin/reports/export?dataset=services|patients|appointments
@@ -231,49 +232,30 @@ const adminReportsRoute: FastifyPluginAsync = async (app) => {
           resolvePayoutStatementLocale(q.locale, "pt"),
         );
       } else if (q.dataset === "payout") {
-        const [doctor, bankRow] = await Promise.all([
+        // Doctors working several markets can bank each one separately
+        // (DoctorMarketBankAccount) — load every account, so the statement can
+        // value each market's consultations against the account THAT market is
+        // actually paid into and fall back to the doctor-level account only for
+        // markets with none of their own.
+        const [doctor, banks] = await Promise.all([
           prisma.doctor.findUnique({
             where: { id: q.doctorId! },
             select: { fullName: true },
           }),
-          prisma.doctorBankAccount.findUnique({
-            where: { doctorId: q.doctorId! },
-            select: { accountHolder: true, ibanEncrypted: true, bic: true },
-          }),
+          loadDoctorPayoutBanks(q.doctorId!),
         ]);
-
-        // Some doctors bank per MARKET (DoctorMarketBankAccount) instead of
-        // globally — fall back to it when the global row is empty. Narrowed
-        // by `countryCode` when the admin picked one; unscoped, only fall
-        // back if exactly one market has bank details (more than one is
-        // genuinely ambiguous — guessing wrong risks the wrong account).
-        let effectiveBank = bankRow;
-        if (!bankRow?.ibanEncrypted && !bankRow?.accountHolder && !bankRow?.bic) {
-          const marketRows = await prisma.doctorCountry.findMany({
-            where: {
-              doctorId: q.doctorId!,
-              bankAccount: { isNot: null },
-              ...(q.countryCode
-                ? { country: { code: { equals: q.countryCode, mode: "insensitive" } } }
-                : {}),
-            },
-            select: {
-              bankAccount: { select: { accountHolder: true, ibanEncrypted: true, bic: true } },
-            },
-          });
-          if (marketRows.length === 1) {
-            effectiveBank = marketRows[0].bankAccount;
-          }
-        }
 
         // Finance needs the full IBAN to pay the doctor, so the statement
         // carries it in the clear. A full-IBAN reveal is financial data — audit
         // it (DOCTOR_BANK_VIEWED) exactly as the dedicated bank-reveal route
         // does, and fail the export if the audit write fails rather than emit
-        // un-audited account details.
-        let iban: string | null = null;
-        if (effectiveBank?.ibanEncrypted) {
-          iban = decryptPhi(effectiveBank.ibanEncrypted);
+        // un-audited account details. One event per export, listing which of
+        // the doctor's accounts it revealed.
+        const revealedAccounts = [
+          ...(banks.fallbackHasIban ? ["doctor"] : []),
+          ...banks.marketsWithIban,
+        ];
+        if (revealedAccounts.length > 0) {
           const actor = resolveAdminSessionActor(request);
           await recordCriticalAudit({
             actorUserId: actor?.userId ?? null,
@@ -281,6 +263,7 @@ const adminReportsRoute: FastifyPluginAsync = async (app) => {
             action: "DOCTOR_BANK_VIEWED",
             entityType: "Doctor",
             entityId: q.doctorId!,
+            metadata: { source: "payout-statement", accounts: revealedAccounts },
             request,
           });
         }
@@ -289,12 +272,9 @@ const adminReportsRoute: FastifyPluginAsync = async (app) => {
           q.doctorId!,
           doctor?.fullName ?? "Doctor",
           filters,
-          {
-            accountHolder: effectiveBank?.accountHolder ?? null,
-            iban,
-            bic: effectiveBank?.bic ?? null,
-          },
+          banks.fallback,
           resolvePayoutStatementLocale(q.locale),
+          banks.byMarket,
         );
       } else {
         table = await adminAppointmentsReport(filters);
