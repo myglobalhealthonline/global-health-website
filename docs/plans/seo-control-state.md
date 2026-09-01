@@ -21,6 +21,52 @@ Property: `sc-domain:myglobalhealth.online` · Site: `https://www.myglobalhealth
 The active forward plan (§27) is surfaced first for operators; the numbered baseline,
 ledger and historical evidence follow from §0.
 
+### 27.17 Portugal Ireland-parity implementation and publication gate (2026-09-01)
+
+- A 75-row completion matrix now covers every live canonical `/portugal/pt` sitemap
+  URL: 23 services, 16 doctor profiles, seven tools, four health guides, seven
+  health articles and 18 hub, static or legal pages. Each row has one unique primary
+  keyword, focused variants, live and proposed metadata, H1, deslop status,
+  factual/clinical disposition and measured HTTP, canonical, `pt-PT` hreflang and
+  robots/indexability, HTML/OG locale, valid page-applicable JSON-LD and booking-CTA
+  checks. The final matrix has no duplicate primary or proposed
+  title and no mechanically repeated `online online` or `Portugal Portugal` variant.
+- The 28 previously approved recommendations remain a separate exact-copy manifest.
+  A one-record-only, dry-run-first updater maps its 27 database-owned records to PT
+  `PageContentTranslation`, `ServiceTranslation` or `DoctorMarketTranslation` rows.
+  Every source mapping passed a production read-only dry run. The writer requires a
+  source fingerprint, an exact match to the audited title/description, three distinct
+  dated clinical/compliance/content-owner approvals, allowlisted HTTPS official
+  sources, exact approved-copy hash, per-record token and credential-free database
+  identity confirmation (protocol, host, effective port and database name),
+  then rechecks and verifies inside a Serializable transaction. A clinical reviewer
+  must match an active verified Portugal doctor record, professional body and active
+  Portugal specialty. Compliance and content-owner approvals must match active,
+  email-verified authorized users. Doctor writes additionally require the subject
+  doctor or recorded delegation and a verified, hash-bound fact-register row whose
+  canonical URL, doctor identity and registration match the live profile.
+- **Clinically gated production copy remains unchanged.** All 28 clinical-register
+  rows are `blocked_pending_review`; factual verification remains `no`. All 16 live
+  doctor profiles are listed in a fact register as pending official verification.
+  No service/profile metadata, bio, FAQ, clinical description, credential or
+  availability claim was published. The Portugal hand-foot-mouth article's
+  Ireland/HSE wording is held for clinical correction.
+- Portugal-only pricing and FAQ metadata/H1 corrections are implemented locally and
+  await deployment. The pricing unavailability override is used only after a
+  successfully loaded, genuinely empty plan catalogue; transport and schema failures
+  fail closed. Other current static/legal copy was retained where the
+  live review found no justified change.
+- The owner-authorized non-clinical HOME CTA was applied through its existing guarded
+  one-field updater: the PT label is now `Marcar consulta`. Source/host checks,
+  transactional readback and a post-write idempotent dry run passed. Public HTML
+  returned 200 with the Portuguese CTA, no old English CTA, the self-canonical and
+  `pt-PT` hreflang. This was the only production content write in the batch; its
+  sanitized receipt is `seo/portugal/raw/production-write-receipt-2026-09-01-home-cta.json`.
+- The Portugal reconciliation script is now read-only. It validates the 28 draft
+  rows, 75 live-page rows, 28 blocked review rows and 16 pending doctor records,
+  including unique keyword ownership and removal of guarantee wording from proposed
+  metadata.
+
 ### 27.16 Czechia clinical rollout package prepared (2026-09-01)
 
 - The 31 eligible clinical recommendations now have source-pinned, dry-run-first

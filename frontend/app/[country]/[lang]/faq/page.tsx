@@ -27,6 +27,7 @@ import { hreflangAlternates, indexableHreflangCluster, ogLocales } from "@/lib/s
 import { buildPublicMetadata, noindexFollow } from "@/lib/seo/page-seo";
 import { buildBookHref } from "@/lib/routing/book-href";
 import { czechiaStaticPageSeo } from "@/lib/content/czechia-static-page-seo";
+import { portugalStaticPageSeo } from "@/lib/content/portugal-static-page-seo";
 
 export const revalidate = 300;
 
@@ -131,6 +132,8 @@ export async function generateMetadata({
   if (!resolved) return { title: SITE_NAME };
   const { code, config, countryName, faq, marketFaq } = resolved;
   const czechiaSeo = czechiaStaticPageSeo(code, lang, "faq");
+  const portugalSeo = portugalStaticPageSeo(code, lang, "faq");
+  const marketSeo = czechiaSeo ?? portugalSeo;
 
   // Once a market has researched copy, only the locales that actually carry it
   // are publishable: the rest render a fallback language and must not claim to
@@ -145,8 +148,8 @@ export async function generateMetadata({
   const metadata = buildPublicMetadata({
     path: `/${country}/${lang}/faq`,
     // Country-qualified so the 33 variants don't ship one identical title.
-    title: czechiaSeo?.title ?? `${faq.faq_section_title} — ${countryName}`,
-    description: czechiaSeo?.description ?? `${countryName} — ${faq.hero_lede}`,
+    title: marketSeo?.title ?? `${faq.faq_section_title} — ${countryName}`,
+    description: marketSeo?.description ?? `${countryName} — ${faq.hero_lede}`,
     type: "website",
     kind: "page",
     subtitle: config.name,
@@ -172,6 +175,8 @@ export default async function CountryFAQPage({ params }: { params: Promise<Param
   if (!resolved) notFound();
   const { config, countryName, locale, faq, aboutBundle, aboutT } = resolved;
   const czechiaSeo = czechiaStaticPageSeo(resolved.code, lang, "faq");
+  const portugalSeo = portugalStaticPageSeo(resolved.code, lang, "faq");
+  const marketSeo = czechiaSeo ?? portugalSeo;
 
   const base = `/${country}/${lang}`;
   const groups = faqGroups(resolved);
@@ -190,10 +195,10 @@ export default async function CountryFAQPage({ params }: { params: Promise<Param
       <PageHero
         countryCode={config.code}
         countryLabel={`${SITE_NAME} · ${countryName}`}
-        titleLead={czechiaSeo?.h1 ?? faq.hero_title_lead}
-        titleAccent={czechiaSeo ? "" : faq.hero_title_accent}
-        titleTrail={czechiaSeo ? "" : faq.hero_title_trail}
-        lede={faq.hero_lede}
+        titleLead={marketSeo?.h1 ?? faq.hero_title_lead}
+        titleAccent={marketSeo ? "" : faq.hero_title_accent}
+        titleTrail={marketSeo ? "" : faq.hero_title_trail}
+        lede={portugalSeo?.lede ?? faq.hero_lede}
         ctaLabel={faq.hero_cta}
         ctaHref={`${base}/contact`}
         // In-country the secondary CTA books, rather than sending the visitor

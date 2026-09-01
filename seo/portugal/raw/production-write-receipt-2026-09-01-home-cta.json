@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "receipt_id": "PT-HOME-CTA-2026-08-31",
+  "occurred_on": "2026-09-01",
+  "timestamp_precision": "date",
+  "environment": "production",
+  "target": {
+    "url": "https://www.myglobalhealth.online/portugal/pt",
+    "record": "PageContentTranslation HOME/PT",
+    "field": "ctaLabel"
+  },
+  "before": "Book a consultation",
+  "after": "Marcar consulta",
+  "result": "applied_and_verified",
+  "guards": {
+    "exact_source_matched": true,
+    "database_host_confirmed": true,
+    "serializable_transaction": true,
+    "optimistic_updated_at_check": true,
+    "database_readback_passed": true,
+    "post_write_dry_run_idempotent": true
+  },
+  "public_verification": {
+    "http_status": 200,
+    "new_cta_present": true,
+    "old_cta_absent": true,
+    "self_canonical": true,
+    "hreflang_pt_PT": true
+  },
+  "scope": "This was the only production content write in the Portugal SEO implementation batch."
+}

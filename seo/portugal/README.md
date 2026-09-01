@@ -16,8 +16,10 @@ This directory is the auditable Portugal (`pt-PT`) SEO workstream for `myglobalh
 - 474 competitor pages and 91 target pages inventoried.
 - 200 live SERP rows retained across ten priority queries.
 - 24 URL/cluster briefs, all mapped to existing URLs. New page recommendation: **zero**.
-- 28-row page-by-page completion matrix: all mapped pages plus four canonical doctor profiles; every row remains clinically blocked until review.
-- One verified shared-component localization defect was fixed and tested. A second guarded updater now covers the English Portugal homepage CTA, but no production database write was made.
+- 75-row live page-by-page completion matrix covering every current `/portugal/pt` sitemap URL, with a separate 28-row approved clinical-draft manifest.
+- All 16 live doctor profiles have an explicit fact-register row; official credential verification remains pending.
+- The Portugal homepage CTA was corrected to `Marcar consulta` through the guarded one-field production updater and verified after the write. No clinically gated copy was published.
+- Clinical publication remains closed until distinct DB-bound clinical, compliance and content-owner approvals, official HTTPS sources and exact copy/source hashes are recorded. The clinician's professional body and active Portugal specialty must match; doctor drafts also require subject/delegation evidence and a verified credential record matching the live profile identity.
 
 ## Read order
 
@@ -33,7 +35,7 @@ This directory is the auditable Portugal (`pt-PT`) SEO workstream for `myglobalh
 10. [Measurement plan](10-measurement-plan.md)
 11. [30/60/90 roadmap](11-30-60-90-day-roadmap.md)
 
-Supporting evidence: [completion matrix](content-completion-matrix.csv), [domain summary](competitor-domain-summary.csv), [competitor pages](competitor-page-inventory.csv), [target pages](target-page-inventory.csv), [SERP validation](serp-validation.csv), [clinical review register](clinical-review-register.csv), [content briefs](content-briefs/), [OpenSEO call log](raw/openseo-call-log.jsonl), [source log](raw/keyword-source-log.csv), and [raw keyword exports](raw/keywords/).
+Supporting evidence: [75-page completion matrix](page-by-page-completion-matrix.csv), [28-row approved draft matrix](content-completion-matrix.csv), [doctor fact register](doctor-profile-fact-register.csv), [domain summary](competitor-domain-summary.csv), [competitor pages](competitor-page-inventory.csv), [target pages](target-page-inventory.csv), [SERP validation](serp-validation.csv), [clinical review register](clinical-review-register.csv), [content briefs](content-briefs/), [OpenSEO call log](raw/openseo-call-log.jsonl), [source log](raw/keyword-source-log.csv), [homepage CTA production receipt](raw/production-write-receipt-2026-09-01-home-cta.json), and [raw keyword exports](raw/keywords/).
 
 ## Method
 

@@ -13,7 +13,7 @@ import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { breadcrumbJsonLd, subscriptionPlanServiceJsonLd } from "@/lib/seo/structured-data";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
-import { getCountryPlans } from "@/lib/content/get-country-plans";
+import { getCountryPlansResult } from "@/lib/content/get-country-plans";
 import { SITE_NAME } from "@/lib/constants";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -24,6 +24,7 @@ import { DoctifyWidgetLazy as DoctifyWidget } from "@/components/sections/Doctif
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { irelandStaticPageSeo } from "@/lib/content/ireland-static-page-seo";
 import { czechiaStaticPageSeo } from "@/lib/content/czechia-static-page-seo";
+import { portugalStaticPageSeo } from "@/lib/content/portugal-static-page-seo";
 
 type Params = { country: string; lang: string };
 
@@ -40,10 +41,16 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const countryName = common.countryNames?.[code] ?? config.name;
   const irelandSeo = code === "ie" ? irelandStaticPageSeo("PRICING", lang as LocaleCode) : null;
   const czechiaSeo = czechiaStaticPageSeo(code, lang, "pricing");
+  const portugalPlans = code === "pt" && isCountryFeatureEnabled(config, "subscriptions")
+    ? await getCountryPlansResult(code, lang)
+    : null;
+  const portugalSeo = portugalPlans?.ok && portugalPlans.plans.length === 0
+    ? portugalStaticPageSeo(code, lang, "pricing")
+    : null;
 
-  const title = czechiaSeo?.title ?? irelandSeo?.title ?? `${subscription.pricing.heading} · ${countryName} · ${SITE_NAME}`;
+  const title = czechiaSeo?.title ?? portugalSeo?.title ?? irelandSeo?.title ?? `${subscription.pricing.heading} · ${countryName} · ${SITE_NAME}`;
   const description =
-    czechiaSeo?.description ?? irelandSeo?.description ?? subscription.pricing.lede.replace("{country}", countryName);
+    czechiaSeo?.description ?? portugalSeo?.description ?? irelandSeo?.description ?? subscription.pricing.lede.replace("{country}", countryName);
   return buildPublicMetadata({
     path: `/${country}/${lang}/pricing`,
     title,
@@ -77,7 +84,9 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
   const overlay = await getPublicCountryByCode(code);
   if (!isCountryFeatureEnabled(overlay, "subscriptions")) notFound();
 
-  const plans = await getCountryPlans(code, lang);
+  const planResult = await getCountryPlansResult(code, lang);
+  if (!planResult.ok) notFound();
+  const plans = planResult.plans;
   const { subscription, common: c } = loadLocaleBundle(lang as LocaleCode);
   const countryName = c.countryNames?.[code] ?? config.name;
   const t = subscription.pricing;
@@ -85,6 +94,8 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
   const pp = c.pricingPage;
   const irelandSeo = code === "ie" ? irelandStaticPageSeo("PRICING", lang as LocaleCode) : null;
   const czechiaSeo = czechiaStaticPageSeo(code, lang, "pricing");
+  const portugalSeo = plans.length === 0 ? portugalStaticPageSeo(code, lang, "pricing") : null;
+  const marketSeo = czechiaSeo ?? portugalSeo ?? irelandSeo;
 
   return (
     <>
@@ -116,10 +127,10 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
         watermark={t.watermark}
         countryCode={config.code}
         countryLabel={t.countryLabel.replace("{country}", countryName)}
-        titleLead={czechiaSeo?.h1 ?? irelandSeo?.h1 ?? t.titleLead}
-        titleAccent={czechiaSeo || irelandSeo ? "" : t.titleAccent}
-        titleTrail={czechiaSeo || irelandSeo ? "" : t.titleTrail}
-        lede={t.lede.replace("{country}", countryName)}
+        titleLead={marketSeo?.h1 ?? t.titleLead}
+        titleAccent={marketSeo ? "" : t.titleAccent}
+        titleTrail={marketSeo ? "" : t.titleTrail}
+        lede={portugalSeo?.lede ?? t.lede.replace("{country}", countryName)}
         ctaLabel={t.ctaLabel}
         ctaHref="#plans"
         secondaryLabel={t.secondaryLabel}
