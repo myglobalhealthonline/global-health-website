@@ -321,3 +321,9 @@ requirements remain unchanged, and the 24/7 article remains on its measurement h
 The production writers now also preserve Czech default FAQs during an English-only
 update, structurally verify JSONB regardless of object-key order, and require reviewed
 PageContent HTML to pass the application sanitizer byte-for-byte before apply.
+The matrix now tallies 30 fully live pages, 15 source-pinned guarded drafts pending
+clinical review (including two that also require native-English review), three
+measurement holds and two reviewed-no-change pages. The GP and travel rows remain
+measurement holds but now record their exact prepared full-copy scope; the Czech
+Prague service is no longer counted fully live because its expanded body/FAQ payload
+has a new approval hash.

@@ -158,16 +158,16 @@ assert.equal(
   matrix.filter(({ implementation_status }) =>
     implementation_status.startsWith("source_pinned_guarded_draft_pending_"),
   ).length,
-  14,
-  "the 14 unapproved eligible clinical pages must remain guarded drafts",
+  15,
+  "the 15 unapproved or expanded-hash clinical pages must remain guarded drafts",
 );
 assert.equal(
   matrix.filter(
     ({ clinical_review_required, implementation_status }) =>
       clinical_review_required === "yes" && implementation_status === "live_verified_2026-09-01",
   ).length,
-  17,
-  "all 17 approved clinical pages must record verified live deployment",
+  16,
+  "the 16 fully live approved clinical pages must record verified deployment",
 );
 
 const exactFaqDraftUrls = [
@@ -261,7 +261,13 @@ assert.equal(
 );
 const clinicalProductionReceipt = JSON.parse(clinicalProductionReceiptText);
 const productionReadback = [...staticProductionReadback, ...clinicalProductionReadback];
-const liveMatrixRows = matrix.filter(({ implementation_status }) => implementation_status === "live_verified_2026-09-01");
+// Prague's deployed metadata remains evidence-verified while its expanded
+// body/FAQ payload waits on a new exact-hash approval.
+const deploymentVerifiedMatrixRows = matrix.filter(
+  ({ url, implementation_status }) =>
+    implementation_status === "live_verified_2026-09-01" ||
+    url === "https://www.myglobalhealth.online/czechia/cs/services/lekar-online-praha",
+);
 assert.equal(staticProductionReadback.length, 14);
 assert.equal(clinicalProductionReadback.length, 17);
 assert.equal(new Set(productionReadback.map(({ url }) => url)).size, productionReadback.length);
@@ -301,10 +307,10 @@ assert.deepEqual([...clinicalProductionReceipt.preserved].sort(), [
 ]);
 assert.deepEqual(
   productionReadback.map(({ url }) => url).sort(),
-  liveMatrixRows.map(({ url }) => url).sort(),
+  deploymentVerifiedMatrixRows.map(({ url }) => url).sort(),
 );
 const productionByUrl = new Map(productionReadback.map((row) => [row.url, row]));
-for (const row of liveMatrixRows) {
+for (const row of deploymentVerifiedMatrixRows) {
   const live = productionByUrl.get(row.url);
   assert.ok(live, `production readback missing ${row.url}`);
   assert.ok(strictUtcTimestamp(live.retrieved_at), `invalid production retrieval time for ${row.url}`);
@@ -356,7 +362,13 @@ for (const row of matrix.filter(({ clinical_review_required }) => clinical_revie
   assert.ok(gate.reviewer_requirement, `clinical reviewer missing for ${asset}`);
   assert.ok(["pending", "approved"].includes(gate.status), `unexpected clinical status for ${asset}`);
   if (gate.status === "approved") {
-    assert.equal(row.implementation_status, "live_verified_2026-09-01", `approved clinical row is not live for ${asset}`);
+    assert.equal(
+      row.implementation_status,
+      asset === "/czechia/cs/services/lekar-online-praha"
+        ? "source_pinned_guarded_draft_pending_clinical_review"
+        : "live_verified_2026-09-01",
+      `approved clinical row has the wrong deployment state for ${asset}`,
+    );
     assert.ok(gate.reviewer_name, `approved clinical reviewer name missing for ${asset}`);
     assert.ok(gate.reviewer_doctor_id, `approved clinical reviewer ID missing for ${asset}`);
     assert.ok(strictRfc3339Timestamp(gate.reviewed_at), `invalid clinical review time for ${asset}`);
