@@ -175,6 +175,8 @@ export function DoctorMarketForm({
     setBankAccountHolder(market.bank.accountHolder ?? "");
     setBankBic(market.bank.bic ?? "");
     setBankIban("");
+    setIbanFieldError(null);
+    setIbanFieldWarning(null);
     setActiveBioLocale(localeTabs.find((l) => l.isDefault)?.code ?? localeTabs[0].code);
     const bioSnapshot: Record<string, string> = {};
     for (const l of localeTabs) bioSnapshot[l.code] = initialBioForLocale(l.code);
@@ -298,7 +300,11 @@ export function DoctorMarketForm({
           return;
         }
         setPayoutMsg({ kind: "success", text: strings.payoutSaved });
+        // The field is cleared on save, so a warning about the value that was
+        // typed no longer refers to anything on screen — clear it with it.
         setBankIban("");
+        setIbanFieldError(null);
+        setIbanFieldWarning(null);
         router.refresh();
       } catch {
         setPayoutMsg({ kind: "error", text: strings.networkErrorRetry });
