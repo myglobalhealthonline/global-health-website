@@ -185,8 +185,8 @@ const metadataDrafts = [
   },
   {
     serviceId: "cmr85xq6u000070jufztsgfec",
-    expectedServiceUpdatedAt: "2026-07-19T05:02:20.805Z",
-    expectedSourceSha256: "54b952bc8cfb2b5e21f0d894b8473082ffe4b510905f4869271d2ab4d2fb9619",
+    expectedServiceUpdatedAt: "2026-09-01T18:18:02.359Z",
+    expectedSourceSha256: "c71ac9b6b975743c102646def4c4e1839d04bc15d5ae414f7103adcf35ffcc58",
     countryCode: "cz",
     locale: "EN",
     slug: "lekar-online-praha",

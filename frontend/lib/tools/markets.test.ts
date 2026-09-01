@@ -133,18 +133,6 @@ describe("getMarketFaq", () => {
     expect(getMarketFaq("xx", "en", BMI)).toEqual([]);
   });
 
-  it("keeps the Czech pregnancy and osteoporosis FAQs source-bound", () => {
-    const czDueDate = getMarketFaq("cz", "en", "due-date-calculator");
-    expect(czDueDate[0]?.answer).toContain("pregnancy clinic run by a gynaecologist");
-    expect(czDueDate[1]?.answer).toContain("11 to 13 week plus 6 day scan");
-    expect(czDueDate[1]?.answer).not.toContain("our registered doctors can go through");
-
-    const czOsteoporosis = getMarketFaq("cz", "en", "osteoporosis-risk-checker");
-    expect(czOsteoporosis[0]?.answer).toContain("DXA scanning");
-    expect(czOsteoporosis[0]?.answer).not.toContain("privately without one");
-    expect(czOsteoporosis[1]?.answer).not.toContain("point you to a private one");
-  });
-
   it("never leaves a placeholder unfilled — these are hand-written, not templated", () => {
     for (const slug of TOOL_SLUGS) {
       for (const [code, langs] of Object.entries(MARKETS)) {

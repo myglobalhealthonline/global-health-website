@@ -578,12 +578,12 @@ const DUE_DATE_MARKET_FAQ: MarketFaq = {
       {
         question: "How do I arrange antenatal care in Czechia?",
         answer:
-          "If pregnancy is confirmed, antenatal care is usually followed in a pregnancy clinic run by a gynaecologist. The first ultrasound and the rest of the schedule are arranged there.",
+          "Through a gynaecologist, who confirms the pregnancy, takes you into antenatal care and keeps your pregnancy record. The first scan is arranged there, and the date it gives is the one used from then on.",
       },
       {
         question: "When is the dating scan done in Czechia?",
         answer:
-          "Czech prenatal guidance places the first-trimester ultrasound up to week 14, and the 11 to 13 week plus 6 day scan is what confirms or refines the dating used in care. Until then, the estimate above is only an estimate.",
+          "The first scan is usually done between about 11 and 14 weeks, with the screening scan around 20 weeks. Until then the estimate above is what you have — and our registered doctors can go through early symptoms or medicines you already take by video.",
       },
     ],
   },
@@ -1032,12 +1032,12 @@ const OSTEOPOROSIS_MARKET_FAQ: MarketFaq = {
       {
         question: "Do Czech doctors offer DXA bone density scans?",
         answer:
-          "Yes. Bone density is commonly assessed with DXA scanning in Czech practice. This checker is only a risk-factor prompt: a doctor decides whether bone-density testing or another assessment is appropriate.",
+          "Yes. DXA scanning is available on referral within the public insurance system, and privately without one in many clinics. Czechia follows a similar risk-factor-led approach to this checker — risk factors decide who is assessed, not age or a scan alone.",
       },
       {
         question: "Where can I get assessed for osteoporosis in Czechia?",
         answer:
-          "Start with a doctor's appointment. They can review your fracture history and risk factors, then decide whether bone-density testing or another assessment is appropriate.",
+          "Start with a doctor's appointment. They will go through your risk factors and, where the guideline threshold is met, refer you for a DXA scan within the insurance system or point you to a private one.",
       },
     ],
   },

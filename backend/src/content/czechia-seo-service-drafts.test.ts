@@ -92,6 +92,18 @@ test("links each full-copy page to its official source and correct supporting ow
   assert.match(renewalBody, /\/czechia\/cs\/gp-consultation-online/);
 });
 
+test("pins the English Prague draft to the post-Czech-rollout service snapshot", () => {
+  const english = CZECHIA_SEO_SERVICE_DRAFTS.find(
+    ({ slug, locale }) => slug === "lekar-online-praha" && locale === "EN",
+  )!;
+
+  assert.equal(english.expectedServiceUpdatedAt, "2026-09-01T18:18:02.359Z");
+  assert.equal(
+    english.expectedSourceSha256,
+    "c71ac9b6b975743c102646def4c4e1839d04bc15d5ae414f7103adcf35ffcc58",
+  );
+});
+
 test("binds approval to the exact final copy, a real review date and an approved register row", () => {
   const draft = CZECHIA_SEO_SERVICE_DRAFTS[0]!;
   const hash = czechiaSeoApprovalSha256(draft);

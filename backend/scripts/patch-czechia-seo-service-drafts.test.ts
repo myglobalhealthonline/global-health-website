@@ -417,13 +417,10 @@ test("apply aborts when a non-CS locale would fall back to rewritten Czech FAQs"
 });
 
 test("an English variant updates only its translation and preserves the Czech base", async () => {
-  const czech = CZECHIA_SEO_SERVICE_DRAFTS.find(
-    ({ slug, locale }) => slug === "lekar-online-praha" && locale === "CS",
-  )!;
   const english = CZECHIA_SEO_SERVICE_DRAFTS.find(
     ({ slug, locale }) => slug === "lekar-online-praha" && locale === "EN",
   )!;
-  const service = seedService(czech);
+  const service = seedService(english);
   const draft = draftFor(service, english);
   const database = fakeDatabase(service);
 
