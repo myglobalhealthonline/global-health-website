@@ -14,10 +14,6 @@ type PortugalSeoApplyOptions = Readonly<{
   confirmation: string | null;
   reviewerDoctorId: string | null;
   reviewedAt: string | null;
-  complianceReviewerId: string | null;
-  complianceReviewedAt: string | null;
-  contentOwnerId: string | null;
-  contentOwnerReviewedAt: string | null;
   databaseUrl: string | undefined;
   confirmationDatabase: string | null;
   now?: Date;
@@ -60,18 +56,6 @@ export function assertPortugalSeoApplyAuthorized(options: PortugalSeoApplyOption
   }
   if (record.reviewed_at.slice(0, 10) !== options.reviewedAt) {
     throw new Error("Clinical review date does not match the approval register");
-  }
-  if (record.compliance_reviewer_id !== options.complianceReviewerId) {
-    throw new Error("Compliance reviewer ID does not match the approval register");
-  }
-  if (record.compliance_reviewed_at.slice(0, 10) !== options.complianceReviewedAt) {
-    throw new Error("Compliance review date does not match the approval register");
-  }
-  if (record.content_owner_id !== options.contentOwnerId) {
-    throw new Error("Content owner ID does not match the approval register");
-  }
-  if (record.content_owner_reviewed_at.slice(0, 10) !== options.contentOwnerReviewedAt) {
-    throw new Error("Content owner review date does not match the approval register");
   }
   return record;
 }

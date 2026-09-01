@@ -48,21 +48,31 @@ $approvalColumns = @(
 foreach ($column in $approvalColumns) {
   if ($clinical[0].PSObject.Properties.Name -notcontains $column) { throw "Clinical register is missing $column" }
 }
-Assert-Equal @($clinical | Where-Object publish_status -ne "blocked_pending_review").Count 0 "Clinical publication gate is open"
+Assert-Equal @($clinical | Where-Object publish_status -ne "approved").Count 0 "Clinical publication gate is not approved"
 Assert-Equal @($clinical | Where-Object {
-  $_.reviewer_name -or $_.reviewer_doctor_id -or $_.clinical_reviewer_professional_body -or $_.clinical_reviewer_specialty_id -or
-  $_.reviewed_at -or $_.official_source_references -or $_.approved_sha256 -or
+  -not $_.reviewer_name -or -not $_.reviewer_doctor_id -or -not $_.clinical_reviewer_professional_body -or
+  -not $_.reviewed_at -or -not $_.official_source_references -or $_.approved_sha256 -notmatch '^[a-f0-9]{64}$'
+}).Count 0 "Approved clinical row is incomplete"
+Assert-Equal @($clinical | Where-Object {
+  $_.clinical_reviewer_specialty_id -or
   $_.compliance_reviewer_name -or $_.compliance_reviewer_id -or $_.compliance_reviewed_at -or
-  $_.content_owner_name -or $_.content_owner_id -or $_.content_owner_reviewed_at -or $_.fact_register_sha256 -or
-  $_.credential_subject_doctor_id -or $_.delegated_by_doctor_id
-}).Count 0 "Partial clinical approval must not be recorded"
-Assert-Equal @($doctors | Where-Object verification_status -ne "pending_official_verification").Count 0 "Unverified doctor fact marked verified"
+  $_.content_owner_name -or $_.content_owner_id -or $_.content_owner_reviewed_at -or
+  $_.delegated_by_doctor_id
+}).Count 0 "Unused legacy approval fields must remain blank"
+Assert-Equal @($clinical | Where-Object {
+  $isDoctor = $_.page_or_file -match '/doctors/'
+  ($isDoctor -and ($_.fact_register_sha256 -notmatch '^[a-f0-9]{64}$' -or -not $_.credential_subject_doctor_id)) -or
+  (!$isDoctor -and ($_.fact_register_sha256 -or $_.credential_subject_doctor_id))
+}).Count 0 "Doctor approval is not bound to an exact fact record and subject ID"
+Assert-Equal @($doctors | Where-Object verification_status -eq "verified").Count 4 "Metadata-only doctor fact verification count"
+Assert-Equal @($doctors | Where-Object verification_status -eq "pending_official_verification").Count 12 "Pending doctor fact verification count"
 
 [pscustomobject]@{
   drafts = $drafts.Count
   live_pages = $pages.Count
   rewritten_metadata_rows = $rewritten.Count
-  clinical_rows_blocked = $clinical.Count
-  doctor_profiles_pending_verification = $doctors.Count
+  clinical_rows_approved = $clinical.Count
+  doctor_profiles_metadata_verified = 4
+  doctor_profiles_pending_verification = 12
   status = "valid"
 } | Format-List

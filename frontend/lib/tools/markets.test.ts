@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import czechiaApprovedToolSeo from "./czechia-approved-tool-seo.json";
+import portugalApprovedToolSeo from "./portugal-approved-tool-seo.json";
 import { isToolMarket, toolHreflangAlternates, toolMarkets } from "./markets";
 import { applyMarketBands, applyMarketToolCopy, getMarketFaq } from "./market-copy";
 import { TOOL_SLUGS, getToolCopy, getToolsCopy } from "./registry";
@@ -189,6 +190,18 @@ describe("applyMarketToolCopy / applyMarketBands", () => {
   it("leaves Portugal on the shared pt copy", () => {
     expect(applyMarketToolCopy("pt", "pt", "bmi-calculator", ptCopy)).toBe(ptCopy);
     expect(applyMarketToolCopy("ie", "en", "bmi-calculator", ptCopy)).toBe(ptCopy);
+  });
+
+  it("applies only the approved Portugal blood-pressure metadata", () => {
+    expect(Object.keys(portugalApprovedToolSeo)).toEqual(["blood-pressure-chart"]);
+    const shared = getToolCopy("pt", "blood-pressure-chart")!;
+    expect(applyMarketToolCopy("pt", "pt", "blood-pressure-chart", shared)).toMatchObject(
+      portugalApprovedToolSeo["blood-pressure-chart"],
+    );
+    expect(applyMarketToolCopy("br", "pt", "blood-pressure-chart", shared)).not.toMatchObject(
+      portugalApprovedToolSeo["blood-pressure-chart"],
+    );
+    expect(applyMarketToolCopy("pt", "en", "blood-pressure-chart", shared)).toBe(shared);
   });
 
   it("actually differentiates the two Portuguese markets", () => {

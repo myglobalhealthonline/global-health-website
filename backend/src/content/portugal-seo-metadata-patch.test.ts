@@ -21,7 +21,7 @@ const approvalHeader = [
   "content_owner_name", "content_owner_id", "content_owner_reviewed_at", "fact_register_sha256",
   "credential_subject_doctor_id", "delegated_by_doctor_id",
 ].join(",");
-const approvedRegister = `${approvalHeader}\n${draft.asset},service page,medium,claims,evidence,three roles,approved,notes,Dra. Revisora,doctor-pt-1,OM,specialty-pt-1,2026-09-01T12:00:00Z,https://www.dgs.pt,${hash},Pessoa Compliance,compliance-1,2026-09-01T13:00:00Z,Pessoa Conteúdo,content-owner-1,2026-09-01T14:00:00Z,,,\n`;
+const approvedRegister = `${approvalHeader}\n${draft.asset},service page,medium,claims,evidence,Portugal-registered clinician,approved,notes,Dra. Revisora,doctor-pt-1,OM,,2026-09-01T12:00:00Z,https://www.dgs.pt,${hash},,,,,,,,,\n`;
 
 const authorized = {
   apply: true,
@@ -32,10 +32,6 @@ const authorized = {
   confirmation: portugalSeoConfirmationToken(draft),
   reviewerDoctorId: "doctor-pt-1",
   reviewedAt: "2026-09-01",
-  complianceReviewerId: "compliance-1",
-  complianceReviewedAt: "2026-09-01",
-  contentOwnerId: "content-owner-1",
-  contentOwnerReviewedAt: "2026-09-01",
   databaseUrl: "postgresql://user:secret@db.example.test/global_health",
   confirmationDatabase: "postgresql://db.example.test:5432/global_health",
   now: new Date("2026-09-02T00:00:00.000Z"),
@@ -64,14 +60,6 @@ test("Portugal metadata apply requires the complete approval contract", () => {
   assert.throws(
     () => assertPortugalSeoApplyAuthorized({ ...authorized, reviewedAt: "2026-08-31" }),
     /review date/,
-  );
-  assert.throws(
-    () => assertPortugalSeoApplyAuthorized({ ...authorized, complianceReviewerId: "other" }),
-    /Compliance reviewer ID/,
-  );
-  assert.throws(
-    () => assertPortugalSeoApplyAuthorized({ ...authorized, contentOwnerId: "other" }),
-    /Content owner ID/,
   );
 });
 

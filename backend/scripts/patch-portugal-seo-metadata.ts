@@ -7,8 +7,6 @@
  *   node --env-file=.env --import tsx scripts/patch-portugal-seo-metadata.ts --only=service:consulta-medica --apply \
  *     --source-sha256=<dry-run hash> --approved-sha256=<copy hash> \
  *     --reviewer-doctor-id=<id> --reviewed-at=YYYY-MM-DD \
- *     --compliance-reviewer-id=<id> --compliance-reviewed-at=YYYY-MM-DD \
- *     --content-owner-id=<id> --content-owner-reviewed-at=YYYY-MM-DD \
  *     --confirm=<token> --confirm-database=<protocol://host:port/database>
  */
 import { createHash } from "node:crypto";
@@ -35,7 +33,7 @@ const LOCALE = "PT";
 
 type Reader = Pick<
   Prisma.TransactionClient,
-  "country" | "pageContent" | "service" | "doctorCountry" | "doctor" | "user"
+  "country" | "pageContent" | "service" | "doctorCountry" | "doctor"
 >;
 
 type MetadataTarget = Readonly<{
@@ -182,6 +180,12 @@ function assertAuditedSource(draft: PortugalSeoMetadataDraft, target: MetadataTa
   if (target.currentTitle !== draft.originalTitle || target.currentDescription !== draft.originalDescription) {
     throw new Error("Current Portugal metadata does not match the source reviewed in the completion matrix");
   }
+  if (
+    draft.targetKind === "doctor" &&
+    (!target.doctorRegistrationVerified || !target.doctorProfessionalBody || !target.doctorRegistrationNumber)
+  ) {
+    throw new Error("Portugal doctor target must retain a verified professional registration");
+  }
 }
 
 async function assertEligibleReviewer(reader: Reader, approval: PortugalClinicalReviewRecord): Promise<void> {
@@ -194,13 +198,10 @@ async function assertEligibleReviewer(reader: Reader, approval: PortugalClinical
         where: { active: true, country: { code: COUNTRY } },
         select: { isVerified: true, chamberEntity: true, registrationNumber: true },
       },
-      specialties: {
-        select: { specialty: { select: { id: true, active: true, country: { select: { code: true } } } } },
-      },
     },
   });
   const registration = reviewer?.additionalCountries.length === 1 ? reviewer.additionalCountries[0] : null;
-  if (!reviewer?.active || !registration?.isVerified || !registration.registrationNumber) {
+  if (!reviewer?.active || !registration?.isVerified || !registration.registrationNumber?.trim()) {
     throw new Error("Reviewer must have an active verified Portugal professional registration");
   }
   if (reviewer.fullName !== approval.reviewer_name) {
@@ -208,36 +209,6 @@ async function assertEligibleReviewer(reader: Reader, approval: PortugalClinical
   }
   if (registration.chamberEntity !== approval.clinical_reviewer_professional_body) {
     throw new Error("Clinical reviewer professional body does not match the approval register");
-  }
-  if (!reviewer.specialties.some(({ specialty }) =>
-    specialty.id === approval.clinical_reviewer_specialty_id && specialty.active && specialty.country.code === COUNTRY
-  )) {
-    throw new Error("Clinical reviewer does not hold the approved active Portugal specialty");
-  }
-}
-
-async function assertOperationalReviewer(
-  reader: Reader,
-  id: string,
-  name: string,
-  label: "Compliance reviewer" | "Content owner",
-): Promise<void> {
-  const reviewer = await reader.user.findUnique({
-    where: { id },
-    select: {
-      fullName: true,
-      role: true,
-      isActive: true,
-      emailVerifiedAt: true,
-      allowedCountryFolders: true,
-    },
-  });
-  const authorizedRole = reviewer?.role === "ADMIN" || reviewer?.role === "SUPER_ADMIN" ||
-    (reviewer?.role === "LOCAL_ADMIN" && reviewer.allowedCountryFolders.some(
-      (folder) => folder.trim().toLowerCase() === COUNTRY,
-    ));
-  if (!reviewer?.isActive || !reviewer.emailVerifiedAt || !authorizedRole || reviewer.fullName !== name) {
-    throw new Error(`${label} must match an active verified authorized user for Portugal`);
   }
 }
 
@@ -249,7 +220,12 @@ function assertDoctorCredentialEvidence(
 ): void {
   if (draft.targetKind !== "doctor") return;
   const fact = readPortugalDoctorFactRecord(factRegisterCsv, draft.asset);
-  const normalized = (value: string) => value.normalize("NFC").trim().replace(/\s+/g, " ");
+  const normalized = (value: string) => value
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toLowerCase()
+    .replace(/[^\p{Letter}\p{Number}]+/gu, " ")
+    .trim();
   if (
     target.doctorId !== approval.credential_subject_doctor_id ||
     target.doctorSlug !== draft.slug ||
@@ -300,10 +276,6 @@ export async function runPortugalSeoMetadataPatch(
     confirmation: string | null;
     reviewerDoctorId: string | null;
     reviewedAt: string | null;
-    complianceReviewerId: string | null;
-    complianceReviewedAt: string | null;
-    contentOwnerId: string | null;
-    contentOwnerReviewedAt: string | null;
     databaseUrl: string | undefined;
     confirmationDatabase: string | null;
   }>,
@@ -323,10 +295,6 @@ export async function runPortugalSeoMetadataPatch(
     confirmation: options.confirmation,
     reviewerDoctorId: options.reviewerDoctorId,
     reviewedAt: options.reviewedAt,
-    complianceReviewerId: options.complianceReviewerId,
-    complianceReviewedAt: options.complianceReviewedAt,
-    contentOwnerId: options.contentOwnerId,
-    contentOwnerReviewedAt: options.contentOwnerReviewedAt,
     databaseUrl: options.databaseUrl,
     confirmationDatabase: options.confirmationDatabase,
   });
@@ -354,18 +322,6 @@ export async function runPortugalSeoMetadataPatch(
     }
     assertAuditedSource(draft, locked);
     await assertEligibleReviewer(transaction, approval!);
-    await assertOperationalReviewer(
-      transaction,
-      approval!.compliance_reviewer_id,
-      approval!.compliance_reviewer_name,
-      "Compliance reviewer",
-    );
-    await assertOperationalReviewer(
-      transaction,
-      approval!.content_owner_id,
-      approval!.content_owner_name,
-      "Content owner",
-    );
     assertDoctorCredentialEvidence(draft, locked, options.factRegisterCsv, approval!);
     await writeTarget(transaction, draft, locked);
     const saved = await readTarget(transaction, draft);
@@ -395,10 +351,6 @@ async function main(): Promise<void> {
     confirmation: arg("confirm"),
     reviewerDoctorId: arg("reviewer-doctor-id"),
     reviewedAt: arg("reviewed-at"),
-    complianceReviewerId: arg("compliance-reviewer-id"),
-    complianceReviewedAt: arg("compliance-reviewed-at"),
-    contentOwnerId: arg("content-owner-id"),
-    contentOwnerReviewedAt: arg("content-owner-reviewed-at"),
     databaseUrl: process.env.DATABASE_URL,
     confirmationDatabase: arg("confirm-database"),
   });

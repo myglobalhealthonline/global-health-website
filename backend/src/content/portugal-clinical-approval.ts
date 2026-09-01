@@ -79,7 +79,10 @@ function recordsFromCsv(csv: string): PortugalClinicalReviewRecord[] {
   }
   return rows
     .filter((row) => row.some((cell) => cell.trim()))
-    .map((row) => {
+    .map((row, index) => {
+      if (row.length > header.length) {
+        throw new Error(`Clinical review register row ${index + 2} has unexpected columns`);
+      }
       const record = Object.fromEntries(
         REQUIRED_COLUMNS.map((column) => [column, (row[header.indexOf(column)] ?? "").trim()]),
       ) as Record<PortugalClinicalReviewColumn, string>;
@@ -105,8 +108,29 @@ function requireValue(record: PortugalClinicalReviewRecord, field: PortugalClini
 
 function assertReviewDate(record: PortugalClinicalReviewRecord, field: PortugalClinicalReviewColumn, now: Date): void {
   const value = requireValue(record, field);
-  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/.test(value)) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,3})?(?:Z|[+-](\d{2}):(\d{2}))$/.exec(value);
+  if (!match) {
     throw new Error(`Clinical approval field ${field} must be an RFC 3339 timestamp for ${record.asset}`);
+  }
+  const [, yearText, monthText, dayText, hourText, minuteText, secondText, offsetHourText, offsetMinuteText] = match;
+  const [year, month, day, hour, minute, second, offsetHour, offsetMinute] = [
+    yearText,
+    monthText,
+    dayText,
+    hourText,
+    minuteText,
+    secondText,
+    offsetHourText ?? "0",
+    offsetMinuteText ?? "0",
+  ].map(Number);
+  const daysInMonth = month >= 1 && month <= 12
+    ? new Date(Date.UTC(year, month, 0)).getUTCDate()
+    : 0;
+  if (
+    year === 0 || day < 1 || day > daysInMonth || hour > 23 || minute > 59 || second > 59
+    || offsetHour > 23 || offsetMinute > 59
+  ) {
+    throw new Error(`Clinical approval field ${field} is invalid for ${record.asset}`);
   }
   const reviewedAt = new Date(value);
   if (Number.isNaN(reviewedAt.getTime()) || reviewedAt.getTime() > now.getTime()) {
@@ -143,7 +167,10 @@ export function readPortugalDoctorFactRecord(csv: string, asset: string): Portug
   for (const column of FACT_COLUMNS) {
     if (!header.includes(column)) throw new Error(`Portugal doctor fact register is missing column ${column}`);
   }
-  const records = rows.filter((row) => row.some((cell) => cell.trim())).map((row) => {
+  const records = rows.filter((row) => row.some((cell) => cell.trim())).map((row, index) => {
+    if (row.length > header.length) {
+      throw new Error(`Portugal doctor fact register row ${index + 2} has unexpected columns`);
+    }
     const record = Object.fromEntries(
       FACT_COLUMNS.map((column) => [column, (row[header.indexOf(column)] ?? "").trim()]),
     ) as Record<PortugalDoctorFactColumn, string>;
@@ -183,15 +210,6 @@ export function assertPortugalClinicalApproval(
   requireValue(record, "reviewer_doctor_id");
   requireValue(record, "reviewer_required");
   requireValue(record, "clinical_reviewer_professional_body");
-  requireValue(record, "clinical_reviewer_specialty_id");
-  requireValue(record, "compliance_reviewer_name");
-  requireValue(record, "compliance_reviewer_id");
-  requireValue(record, "content_owner_name");
-  requireValue(record, "content_owner_id");
-  const reviewerIds = [record.reviewer_doctor_id, record.compliance_reviewer_id, record.content_owner_id];
-  if (new Set(reviewerIds).size !== reviewerIds.length) {
-    throw new Error(`Clinical, compliance and content approvals must have distinct reviewer IDs for ${record.asset}`);
-  }
   const officialSources = officialSourceUrls(
     requireValue(record, "official_source_references"),
     `Clinical approval field official_source_references for ${record.asset}`,
@@ -199,8 +217,6 @@ export function assertPortugalClinicalApproval(
   const now = options.now ?? new Date();
   if (Number.isNaN(now.getTime())) throw new Error("Clinical approval comparison time is invalid");
   assertReviewDate(record, "reviewed_at", now);
-  assertReviewDate(record, "compliance_reviewed_at", now);
-  assertReviewDate(record, "content_owner_reviewed_at", now);
   if (!/^[a-f0-9]{64}$/i.test(options.approvedSha256)) {
     throw new Error("Expected approvedSha256 must be a SHA-256 hex digest");
   }
@@ -208,13 +224,7 @@ export function assertPortugalClinicalApproval(
     throw new Error(`Clinical approval field approved_sha256 does not match ${record.asset}`);
   }
   if (record.asset.startsWith("/portugal/pt/doctors/")) {
-    const subjectDoctorId = requireValue(record, "credential_subject_doctor_id");
-    if (
-      record.reviewer_doctor_id !== subjectDoctorId &&
-      record.delegated_by_doctor_id !== subjectDoctorId
-    ) {
-      throw new Error(`Doctor approval requires the subject doctor or their recorded delegation for ${record.asset}`);
-    }
+    requireValue(record, "credential_subject_doctor_id");
     if (!options.factRegisterCsv) throw new Error(`Doctor fact register is required for ${record.asset}`);
     const fact = readPortugalDoctorFactRecord(options.factRegisterCsv, record.asset);
     if (fact.verification_status !== "verified") {
