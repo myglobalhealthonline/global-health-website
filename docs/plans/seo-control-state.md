@@ -119,7 +119,14 @@ ledger and historical evidence follow from §0.
   2026-09-01. The 14 non-clinical static rows now use a `cz` + `cs`-only frontend
   overlay for the approved metadata and six changed H1s; other countries and locales
   retain their existing sources. Legal bodies and unchanged H1s were not rewritten.
-- **Production remains unchanged.** The 31 eligible clinical recommendations are
+- Cache-bypassed public readback on 2026-09-01 verified all 14 static URLs as HTTP
+  200 with the approved title, meta description and H1, a self-canonical,
+  `index, follow`, self-hreflang and route-appropriate JSON-LD. Booking and existing
+  non-commercial link behavior remained intact. The matrix now records these rows as
+  `live_verified_2026-09-01`; the pre-deployment original snapshot remains preserved
+  as dated evidence. Production evidence is
+  `seo/czechia/raw/static-page-production-readback-2026-09-01.csv`.
+- **Clinically gated production copy remains unchanged.** The 31 eligible clinical recommendations are
   source-pinned guarded drafts whose apply commands remain blocked by the pending
   clinical register. Only the neschopenka and treatment-renewal services have exact
   FAQ replacements. The three GP/24-7/travel holds and two reviewed-no-change

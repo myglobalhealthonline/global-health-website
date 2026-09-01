@@ -137,7 +137,7 @@ for (const [field, values] of Object.entries(allowedFlags)) {
   assert.ok(matrix.every((row) => values.has(row[field])), `invalid ${field} value`);
 }
 const allowedStatuses = new Set([
-  "implemented_in_code_pending_deployment",
+  "live_verified_2026-09-01",
   "measurement_hold_travel_recrawl",
   "measurement_hold_until_2026-09-08",
   "reviewed_no_change",
@@ -148,10 +148,10 @@ assert.ok(matrix.every(({ implementation_status }) => allowedStatuses.has(implem
 assert.equal(
   matrix.filter(
     ({ clinical_review_required, implementation_status }) =>
-      clinical_review_required === "no" && implementation_status === "implemented_in_code_pending_deployment",
+      clinical_review_required === "no" && implementation_status === "live_verified_2026-09-01",
   ).length,
   14,
-  "all 14 non-clinical pages must record local code implementation",
+  "all 14 non-clinical pages must record verified live deployment",
 );
 assert.equal(
   matrix.filter(({ implementation_status }) =>
@@ -208,6 +208,40 @@ for (const row of matrix) {
   assert.equal(live.title, row.original_title, `original title drift for ${row.url}`);
   assert.equal(live.meta_description, row.original_meta_description, `original meta drift for ${row.url}`);
   assert.equal(live.h1, row.original_h1, `original H1 drift for ${row.url}`);
+}
+
+const productionReadback = records(await read("raw/static-page-production-readback-2026-09-01.csv"));
+const liveMatrixRows = matrix.filter(({ implementation_status }) => implementation_status === "live_verified_2026-09-01");
+assert.equal(productionReadback.length, 14);
+assert.deepEqual(
+  productionReadback.map(({ url }) => url).sort(),
+  liveMatrixRows.map(({ url }) => url).sort(),
+);
+const productionByUrl = new Map(productionReadback.map((row) => [row.url, row]));
+for (const row of liveMatrixRows) {
+  const live = productionByUrl.get(row.url);
+  assert.ok(live, `production readback missing ${row.url}`);
+  assert.ok(strictUtcTimestamp(live.retrieved_at), `invalid production retrieval time for ${row.url}`);
+  assert.ok(
+    Date.parse(live.retrieved_at) >= Date.parse("2026-08-31T19:00:00Z") &&
+      Date.parse(live.retrieved_at) < Date.parse("2026-09-01T19:00:00Z"),
+    `production readback is outside the 2026-09-01 Asia/Karachi capture window for ${row.url}`,
+  );
+  assert.equal(live.status, "200", `non-200 production status for ${row.url}`);
+  assert.equal(live.title, row.optimized_title, `deployed title mismatch for ${row.url}`);
+  assert.equal(live.meta_description, row.optimized_meta_description, `deployed meta mismatch for ${row.url}`);
+  assert.equal(live.h1, row.optimized_h1, `deployed H1 mismatch for ${row.url}`);
+  assert.equal(live.canonical, row.url, `deployed canonical mismatch for ${row.url}`);
+  assert.equal(live.robots, "index, follow", `deployed robots mismatch for ${row.url}`);
+  assert.equal(live.self_hreflang, "yes", `deployed self-hreflang missing for ${row.url}`);
+  assert.ok(Number.isInteger(Number(live.hreflang_count)) && Number(live.hreflang_count) > 0, `deployed hreflang set missing for ${row.url}`);
+  assert.ok(
+    live.schema_types
+      .split("|")
+      .every((type) => /^[A-Za-z][A-Za-z0-9]*$/.test(type) && !placeholderSchemaTypes.has(type.toLowerCase())),
+    `deployed schema types missing or invalid for ${row.url}`,
+  );
+  assert.ok(Number.isInteger(Number(live.internal_link_count)) && Number(live.internal_link_count) > 0, `deployed internal links missing for ${row.url}`);
 }
 
 const clinicalRegister = records(await read("clinical-review-register.csv"));

@@ -166,7 +166,7 @@ approved H1. A Czechia-only overlay returns copy only for country `cz` and local
 its previous generated metadata and headings. Legal bodies and unchanged H1s remain
 source-owned.
 
-The page-by-page matrix records those 14 rows as
+The page-by-page matrix initially recorded those 14 rows as
 `implemented_in_code_pending_deployment`. The remaining 36 clinically gated rows
 stay unpublished: 31 exact matrix-level drafts await clinical review, three remain
 measurement holds and two remain reviewed with no source change. Doctor biographies
@@ -210,13 +210,34 @@ both live fields exactly match the approved pair; otherwise its existing i18n he
 remains active. Focused frontend tests passed 19/19 and frontend type-check passed.
 
 The completion matrix now records the 31 targets as source-pinned guarded drafts
-pending clinical approval. The 14 non-clinical rows remain implemented in code and
-pending deployment; three measurement holds and two reviewed-no-change rows remain
-unchanged. No CMS/database apply, publication, push or deployment occurred.
+pending clinical approval. The 14 non-clinical rows are deployed and publicly
+verified; three measurement holds and two reviewed-no-change rows remain
+unchanged. No CMS/database apply or clinical publication occurred.
 
 ## Deployment verification
 
-After deployment, open a Czech article with a linked reviewer and verify the visible reviewer URL, Physician JSON-LD URL, canonical, and hreflang all retain `/czechia/cs/`. Then request URL Inspection only if production output differs.
+Cache-bypassed public readback on 2026-09-01 verified all 14 non-clinical static
+URLs. Every page returned HTTP 200 and matched its approved title, meta description
+and H1, self-canonical, `index, follow`, self-hreflang and route-appropriate JSON-LD.
+The booking flow still exposed live service choices; the other routes retained their
+existing route-appropriate CTA and internal-link behavior without a new commercial
+CTA. The matrix status for these 14 rows is `live_verified_2026-09-01`; exact replay
+evidence is `raw/static-page-production-readback-2026-09-01.csv`.
+
+The first cache-busting probe used an unknown query parameter on `/book`; its
+workflow guard correctly returned `noindex, follow` and removed hreflang. A clean
+request with `Cache-Control: no-cache` returned `index, follow` and all seven
+alternates, so this was probe behavior rather than a production defect.
+
+No clinical PageContent, service, profile, blog or tool payload was applied. All 37
+clinical-review-register rows remain pending, including the two English targets that
+also require native review.
+
+Representative live readback across PageContent, doctor directory, service, doctor,
+blog and tool targets still matched the recorded original title and H1. The Czechia
+English route and one `about` route in each of the other five markets returned 200
+without the Czech static overlay title, confirming the market/locale isolation path
+in production.
 
 ## Local verification
 
