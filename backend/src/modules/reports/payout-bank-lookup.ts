@@ -22,7 +22,40 @@ export type DoctorPayoutBanks = {
   marketsWithIban: string[];
   /** True when the doctor-level account carried a full IBAN. */
   fallbackHasIban: boolean;
+  /** Accounts whose stored IBAN could not be decrypted ("doctor", or a market
+   *  code). The statement renders these as "not on file" rather than failing —
+   *  see `safeDecryptIban`. Empty in the normal case. */
+  undecryptable: string[];
 };
+
+/**
+ * Decrypt a stored IBAN, or give up on THAT account only.
+ *
+ * A statement covers every account a doctor holds, so one unreadable ciphertext
+ * — a row written under a rotated/legacy PHI key, say — used to throw and take
+ * the whole export down with it ("Could not export report"), including the
+ * markets that were perfectly readable. A doctor with one bad row could not be
+ * paid at all. Now the bad account degrades to "not on file", the rest of the
+ * statement still renders, and the failure is logged and reported back through
+ * `undecryptable` so it can be found and repaired.
+ */
+function safeDecryptIban(
+  encrypted: string | null,
+  label: string,
+  failures: string[],
+): string | null {
+  if (!encrypted) return null;
+  try {
+    return decryptPhi(encrypted);
+  } catch (error) {
+    failures.push(label);
+    console.error("[payout-bank] IBAN could not be decrypted", {
+      account: label,
+      error: error instanceof Error ? error.message : error,
+    });
+    return null;
+  }
+}
 
 export async function loadDoctorPayoutBanks(doctorId: string): Promise<DoctorPayoutBanks> {
   const [globalRow, marketRows] = await Promise.all([
@@ -39,14 +72,19 @@ export async function loadDoctorPayoutBanks(doctorId: string): Promise<DoctorPay
     }),
   ]);
 
-  const fallbackIban = globalRow?.ibanEncrypted ? decryptPhi(globalRow.ibanEncrypted) : null;
+  const undecryptable: string[] = [];
+  const fallbackIban = safeDecryptIban(
+    globalRow?.ibanEncrypted ?? null,
+    "doctor",
+    undecryptable,
+  );
   const byMarket: PayoutBankByMarket = {};
   const marketsWithIban: string[] = [];
   for (const row of marketRows) {
     const account = row.bankAccount;
     if (!account) continue;
     const code = row.country.code.toLowerCase();
-    const iban = account.ibanEncrypted ? decryptPhi(account.ibanEncrypted) : null;
+    const iban = safeDecryptIban(account.ibanEncrypted, code, undecryptable);
     byMarket[code] = {
       accountHolder: account.accountHolder,
       iban,
@@ -64,5 +102,6 @@ export async function loadDoctorPayoutBanks(doctorId: string): Promise<DoctorPay
     byMarket,
     marketsWithIban,
     fallbackHasIban: Boolean(fallbackIban),
+    undecryptable,
   };
 }
