@@ -267,7 +267,27 @@ assert.equal(
   "clinical register contains duplicate assets",
 );
 assert.equal(clinicalRegister.filter(({ status }) => status === "approved").length, 31);
-assert.equal(clinicalRegister.filter(({ status }) => status === "super_admin_override").length, 3);
+// Retired 2026-09-03: one-clinician approval is the standard, so no register status
+// may authorize publication without a named clinician. These three pages were already
+// live when the override was retired, so they carry a backward-looking debt marker
+// instead. It authorizes nothing — every guarded writer rejects it exactly as it
+// rejects `pending` — and it must never grow beyond these three known assets.
+const LIVE_UNREVIEWED_DEBT = "live_unreviewed_debt";
+const LIVE_UNREVIEWED_DEBT_ASSETS = new Set([
+  "/czechia/cs/gp-consultation-online",
+  "/czechia/cs/blog/lekar-online-24-7-co-vyresi",
+  "/czechia/cs/services/cestovni-medicina-praha",
+]);
+assert.equal(
+  clinicalRegister.filter(({ status }) => status === "super_admin_override").length,
+  0,
+  "super_admin_override is retired; no register row may use it",
+);
+assert.deepEqual(
+  new Set(clinicalRegister.filter(({ status }) => status === LIVE_UNREVIEWED_DEBT).map(({ asset }) => asset)),
+  LIVE_UNREVIEWED_DEBT_ASSETS,
+  "live-unreviewed debt must cover exactly the three pages published without clinical review",
+);
 assert.equal(clinicalRegister.filter(({ status }) => status === "pending").length, 3);
 const clinicalByAsset = new Map(clinicalRegister.map((row) => [row.asset, row]));
 
@@ -397,7 +417,8 @@ const overrideDraftHashes = new Map([
 for (const page of remainingProductionReadback.pages) {
   const asset = new URL(page.url).pathname;
   const gate = clinicalByAsset.get(asset);
-  assert.equal(gate?.status, "super_admin_override", `missing super-admin override for ${asset}`);
+  assert.equal(gate?.status, LIVE_UNREVIEWED_DEBT, `missing live-unreviewed debt marker for ${asset}`);
+  assert.ok(LIVE_UNREVIEWED_DEBT_ASSETS.has(asset), `unexpected live-unreviewed asset ${asset}`);
   assert.equal(page.approved_payload_sha256, gate.approved_sha256, `override/readback hash drift for ${asset}`);
   assert.equal(page.approved_payload_sha256, overrideDraftHashes.get(asset), `override/draft hash drift for ${asset}`);
 }
@@ -442,7 +463,7 @@ assert.equal(clinicalProductionReadbackSep2SuperAdmin.length, 13);
 assert.equal(remainingProductionReadback.pages.length, 3);
 assert.equal(new Set(productionReadback.map(({ url }) => url)).size, productionReadback.length);
 const approvedClinicalAssets = new Set(
-  clinicalRegister.filter(({ status }) => ["approved", "super_admin_override"].includes(status)).map(({ asset }) => asset),
+  clinicalRegister.filter(({ status }) => ["approved", LIVE_UNREVIEWED_DEBT].includes(status)).map(({ asset }) => asset),
 );
 assert.ok(
   [...clinicalDeploymentReadback, ...remainingProductionReadback.pages].every(({ url }) =>
@@ -771,8 +792,8 @@ for (const row of matrix.filter(({ clinical_review_required }) => clinical_revie
   assert.ok(gate, `clinical register missing ${asset}`);
   assert.equal(new URL(gate.official_source).protocol, "https:", `clinical source must use HTTPS for ${asset}`);
   assert.ok(gate.reviewer_requirement, `clinical reviewer missing for ${asset}`);
-  assert.ok(["pending", "approved", "super_admin_override"].includes(gate.status), `unexpected clinical status for ${asset}`);
-  if (["approved", "super_admin_override"].includes(gate.status)) {
+  assert.ok(["pending", "approved", LIVE_UNREVIEWED_DEBT].includes(gate.status), `unexpected clinical status for ${asset}`);
+  if (["approved", LIVE_UNREVIEWED_DEBT].includes(gate.status)) {
     const deployedSep2 =
       asset === new URL(pragueProductionReadback.public.url).pathname ||
       [...clinicalProductionReadbackSep2, ...clinicalProductionReadbackSep2SuperAdmin].some(
@@ -791,7 +812,7 @@ for (const row of matrix.filter(({ clinical_review_required }) => clinical_revie
     } else {
       assert.ok(
         [gate.reviewer_name, gate.reviewer_doctor_id, gate.reviewed_at].every((value) => value === ""),
-        `super-admin override must not impersonate a named clinical reviewer for ${asset}`,
+        `live-unreviewed debt row must not name a clinical reviewer for ${asset}`,
       );
     }
     if (gate.status === "approved" && (asset === "/czechia/en" || asset === "/czechia/en/services/lekar-online-praha")) {

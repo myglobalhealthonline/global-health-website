@@ -7846,4 +7846,31 @@ existed for the site-wide forms/analytics scope. No change was invented for thos
 items. They remain pending the named regulatory/privacy evidence and do not block the
 three now-verified pages.
 
+> **RETIRED 2026-09-03 — `super_admin_override` no longer exists, and these three
+> pages are recorded as clinical-review debt.** Hassaan set one-clinician approval as
+> the standard for every market, so no register status may authorize publication
+> without a named clinician.
+>
+> A review found the status was never enforceable anyway: `super_admin_override`
+> appeared only in `seo/czechia/clinical-review-register.csv`, the Czechia validator,
+> the attestation artifact and this ledger. It existed in **zero lines of backend
+> code**, while `czechia-page-content-seo-drafts.ts`, `czechia-profile-blog-tool-seo-drafts.ts`
+> and `backend/scripts/lib/czechia-clinical-approval.ts` all require `approved`. The
+> authorization path for these three pages is therefore not reproducible from the
+> repository.
+>
+> The three rows now carry `live_unreviewed_debt`. That marker authorizes nothing —
+> every guarded writer rejects it exactly as it rejects `pending`, so these pages
+> cannot be republished or edited until a real clinical approval replaces it — and the
+> validator asserts it covers exactly these three assets and no more:
+> `/czechia/cs/gp-consultation-online`, `/czechia/cs/blog/lekar-online-24-7-co-vyresi`
+> and `/czechia/cs/services/cestovni-medicina-praha`. All three keep empty reviewer
+> fields, so the register states that no clinician reviewed them rather than naming
+> one who did not.
+>
+> **Outstanding:** MUDr. Ahmed Maklad owes retroactive approval of the three payload
+> hashes. Until then this is live medical copy that no clinician has reviewed. A
+> matching super-admin override built for Portugal was reverted unmerged under the
+> same decision; the Portugal gate has no override path.
+
 ---
