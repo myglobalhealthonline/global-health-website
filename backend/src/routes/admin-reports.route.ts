@@ -22,6 +22,10 @@ import {
 } from "../modules/reports/report-formatters.js";
 import { resolvePayoutStatementLocale } from "../modules/reports/payout-statement-content.js";
 import { loadDoctorPayoutBanks } from "../modules/reports/payout-bank-lookup.js";
+import {
+  CLINICAL_DIRECTOR_TERMS,
+  clinicalDirectorStatementReport,
+} from "../modules/reports/clinical-director-report.js";
 
 /**
  * GET /api/admin/reports/export?dataset=services|patients|appointments
@@ -45,6 +49,11 @@ const querySchema = z.object({
     // Commission markets (Brazil): what each doctor is owed, for the manual
     // bank-transfer run. Not doctor-scoped like "payout" — it covers everyone.
     "commission-payouts",
+    // Clinical director statements: everything invoiced in that market over the
+    // period, plus the director's tiered commission on the patient-paid gross.
+    // One dataset per market because the agreed terms differ per market.
+    "director-cz",
+    "director-ro",
   ]),
   format: z.enum(["csv", "excel", "pdf", "json"]).default("excel"),
   doctorId: z.string().trim().min(1).max(40).optional(),
@@ -119,7 +128,11 @@ const adminReportsRoute: FastifyPluginAsync = async (app) => {
       // Both payout datasets default to the previous full calendar month —
       // that's the cadence finance actually runs them on.
       const range =
-        (q.dataset === "payout" || q.dataset === "commission-payouts") && !q.from && !q.to
+        (q.dataset === "payout" ||
+          q.dataset === "commission-payouts" ||
+          q.dataset.startsWith("director-")) &&
+        !q.from &&
+        !q.to
           ? lastCalendarMonth()
           : resolveRange(q.from, q.to);
       const filters: ReportFilters = {
@@ -137,6 +150,15 @@ const adminReportsRoute: FastifyPluginAsync = async (app) => {
         table = await adminServicesReport(filters);
       } else if (q.dataset === "patients") {
         table = await adminPatientsReport(filters);
+      } else if (q.dataset.startsWith("director-")) {
+        // The market is fixed by the dataset, not by the country filter — a
+        // director statement is only meaningful for a market whose commission
+        // terms are actually agreed.
+        const terms = CLINICAL_DIRECTOR_TERMS[q.dataset.slice("director-".length)];
+        if (!terms) {
+          return reply.status(400).send(errorResponse("Unknown clinical director market"));
+        }
+        table = await clinicalDirectorStatementReport(terms, filters);
       } else if (q.dataset === "commission-payouts") {
         // Finance runs the bank transfer straight from this worksheet, so it
         // carries every covered doctor's bank details in the clear. Same rule
@@ -295,7 +317,9 @@ const adminReportsRoute: FastifyPluginAsync = async (app) => {
           ? `admin-payout-${resolvePayoutStatementLocale(q.locale)}-${stamp}`
           : q.dataset === "commission-payouts"
             ? `admin-commission-payouts-${resolvePayoutStatementLocale(q.locale, "pt")}-${stamp}`
-            : `admin-${q.dataset}-${stamp}`;
+            : q.dataset.startsWith("director-")
+              ? `admin-clinical-director-${q.dataset.slice("director-".length)}-${stamp}`
+              : `admin-${q.dataset}-${stamp}`;
       const out = await serializeReport(table, q.format);
       return reply
         .header("Content-Type", out.contentType)

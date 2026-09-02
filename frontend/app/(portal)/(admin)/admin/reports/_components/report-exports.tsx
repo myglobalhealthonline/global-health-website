@@ -17,6 +17,8 @@ import {
 type Dataset =
   | "payout"
   | "commission-payouts"
+  | "director-cz"
+  | "director-ro"
   | "services"
   | "patients"
   | "appointments";
@@ -31,6 +33,16 @@ const DATASETS: { value: Dataset; label: string; note: string }[] = [
     value: "commission-payouts",
     label: "Doctor payouts — commission markets (Brazil)",
     note: "What to transfer each doctor, for the manual bank run. Grouped by doctor — each header carries the doctor's account holder, IBAN and BIC on file — with the amount charged, Global Health's commission and the doctor's payout per consultation, plus a TO TRANSFER subtotal each and a grand total. Covers ALL doctors unless you pick one. Only paid, non-refunded orders count, and the figures are the ones frozen on the order at checkout — so the run always reconciles against the receipts actually issued, even if a service's payout was edited since. Defaults to last calendar month. Renders in Portuguese by default (Brazil is the only commission market) — pick another statement language to override.",
+  },
+  {
+    value: "director-cz",
+    label: "Clinical director statement — Czechia",
+    note: "Everything invoiced in Czechia over the period — order number, patient, the doctor who attended, the consultation date, the consultation and the amount the patient paid — followed by the clinical director's commission: 15% of the first CZK 4,900,000 invoiced, 10% on anything above. The commission is calculated on the patient-paid gross, not on doctor payouts, and the bands apply to THIS period (the month being paid). Counts every paid, non-refunded consultation whether or not the doctor finalised it. Defaults to last calendar month. Optionally narrow by doctor or consultation type.",
+  },
+  {
+    value: "director-ro",
+    label: "Clinical director statement — Romania",
+    note: "Everything invoiced in Romania over the period — order number, patient, the doctor who attended, the consultation date, the consultation and the amount the patient paid — followed by the clinical director's commission: 15% of the first €200,000 invoiced, 10% on anything above. The commission is calculated on the patient-paid gross, not on doctor payouts, and the bands apply to THIS period (the month being paid). Counts every paid, non-refunded consultation whether or not the doctor finalised it. Defaults to last calendar month. Optionally narrow by doctor or consultation type.",
   },
   {
     value: "services",
@@ -116,7 +128,10 @@ export function AdminReportExports({
   // honours — a control is only rendered where it changes the output. Every
   // dataset narrows by doctor, so that select is always shown. Payout now
   // honours a country filter too (for doctors working more than one market).
-  const showCountry = true;
+  // A director statement's market is fixed by the report itself — offering a
+  // country picker there would suggest it can be pointed somewhere else.
+  const isDirector = dataset.startsWith("director-");
+  const showCountry = !isDirector;
   const showType = dataset !== "services";
   const showStatusFilters = dataset === "appointments";
   // Services by doctor now honours an optional From/To (filters by assignment
