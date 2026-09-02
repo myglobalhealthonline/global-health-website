@@ -45,6 +45,12 @@ type AdminOrder = {
    *  already net of it — these say how much was taken off and at what rate. */
   discountPercent?: number | null;
   discountCents?: number | null;
+  /** Coupon redeemed on this order. Same convention as the pair above — the
+   *  totals are already net of it. A booking carries a coupon or an admin
+   *  discount, never both. */
+  couponCode?: string | null;
+  couponDiscountPercent?: number | null;
+  couponDiscountCents?: number | null;
   status: string;
   paymentStatus: string;
   stripeSessionId: string | null;
@@ -292,6 +298,12 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
                   <Row
                     label={`Admin discount (${order.discountPercent ?? 0}%)`}
                     value={`−${formatPrice(order.discountCents, order.currencyCode)} — already applied above`}
+                  />
+                ) : null}
+                {order.couponDiscountCents ? (
+                  <Row
+                    label={`Coupon ${order.couponCode ?? ""} (${order.couponDiscountPercent ?? 0}%)`}
+                    value={`−${formatPrice(order.couponDiscountCents, order.currencyCode)} — already applied above`}
                   />
                 ) : null}
                 <Row label="Total" value={formatPrice(order.totalCents, order.currencyCode)} bold />

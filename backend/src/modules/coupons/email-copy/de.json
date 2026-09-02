@@ -1,0 +1,19 @@
+{
+  "coupon": {
+    "subject": "Ihr Global Health Rabattcode über {discountPercent} %",
+    "title": "Ein Rabatt für Ihren nächsten Termin",
+    "greetingNamed": "Hallo {name},",
+    "greetingAnon": "Hallo,",
+    "personalIntro": "Wir haben einen Rabattcode nur für Sie erstellt.",
+    "generalIntro": "Hier ist ein Rabattcode, den Sie bei Ihrer nächsten Buchung bei Global Health einlösen können.",
+    "codeLabel": "Ihr Code",
+    "discountLine": "{discountPercent} % Rabatt auf Ihre Buchung",
+    "validLine": "Gültig bis {validUntil}",
+    "personalLock": "Dieser Code ist für {email} reserviert — verwenden Sie bei der Buchung dieselbe Adresse.",
+    "howTo": "Geben Sie den Code in der Bestellübersicht an der Kasse ein; der Rabatt wird vor der Zahlung abgezogen.",
+    "shippingNote": "Der Rabatt gilt für die Buchung selbst; Versandkosten werden nicht rabattiert.",
+    "cta": "Termin buchen",
+    "signoff": "Ihr Global Health Team",
+    "footer": "Falls Sie diese E-Mail nicht erwartet haben, können Sie sie ignorieren."
+  }
+}

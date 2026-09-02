@@ -10,7 +10,10 @@ import type {
 
 type Result<T> =
   | { ok: true; data: T; message?: string }
-  | { ok: false; message: string; conflict?: string };
+  /** `code`/`reason` are machine-readable failure tags (e.g. COUPON_INVALID +
+   *  the coupon's own reason), so the caller can clear the offending field
+   *  instead of only showing a sentence. */
+  | { ok: false; message: string; conflict?: string; code?: string; reason?: string };
 
 async function cartFetch<T>(
   input: RequestInfo | URL,
@@ -24,6 +27,8 @@ async function cartFetch<T>(
         ok: false,
         message: json?.message ?? "Cart request failed",
         conflict: json?.errors?.conflict,
+        code: typeof json?.code === "string" ? json.code : undefined,
+        reason: typeof json?.reason === "string" ? json.reason : undefined,
       };
     }
     return { ok: true, data: json.data as T, message: json.message };
@@ -131,7 +136,41 @@ export type CheckoutInput = {
    * country, which is the pre-feature behaviour.
    */
   notificationLocale?: "EN" | "PT" | "ES" | "CS" | "RO" | "DE";
+  /**
+   * Coupon code the buyer applied in the order summary. A HINT — the server
+   * re-resolves it and re-claims the redemption cap inside the checkout
+   * transaction, so a code that expired or ran out since it was applied comes
+   * back as a 422 with `code: "COUPON_INVALID"` rather than being honoured.
+   */
+  couponCode?: string;
 };
+
+/** What the coupon check gives back when the code is usable on this cart. */
+export type CouponCheckResult =
+  | { valid: true; code: string; discountPercent: number; discountCents: number; totalCents: number }
+  /**
+   * `reason` is null for every IDENTITY failure — no such code, expired,
+   * disabled, fully redeemed, reserved for another address. The server
+   * deliberately does not distinguish them, so the UI must not try to.
+   */
+  | { valid: false; reason: string | null };
+
+/**
+ * Check a code against THIS cart. Cart-aware because the refusal rules depend
+ * on the basket (insurance lines, benefit-priced lines, commission markets),
+ * and `discountCents` comes back computed the way the checkout will compute it
+ * — so the order summary never shows a figure the card is not charged.
+ */
+export async function checkCoupon(input: {
+  code: string;
+  email: string;
+}): Promise<Result<CouponCheckResult>> {
+  return cartFetch<CouponCheckResult>("/api/coupons/check", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(input),
+  });
+}
 
 export async function startCheckout(
   input: CheckoutInput,

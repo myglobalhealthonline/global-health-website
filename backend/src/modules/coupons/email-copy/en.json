@@ -1,0 +1,19 @@
+{
+  "coupon": {
+    "subject": "Your {discountPercent}% Global Health discount code",
+    "title": "A discount for your next booking",
+    "greetingNamed": "Hi {name},",
+    "greetingAnon": "Hello,",
+    "personalIntro": "We have created a discount code just for you.",
+    "generalIntro": "Here is a discount code you can use on your next Global Health booking.",
+    "codeLabel": "Your code",
+    "discountLine": "{discountPercent}% off your booking",
+    "validLine": "Valid until {validUntil}",
+    "personalLock": "This code is reserved for {email} — use that same address when you book.",
+    "howTo": "Enter the code in the order summary at checkout and the discount is applied before you pay.",
+    "shippingNote": "The discount applies to the booking itself; delivery charges are not discounted.",
+    "cta": "Book an appointment",
+    "signoff": "The Global Health team",
+    "footer": "If you were not expecting this email you can safely ignore it."
+  }
+}

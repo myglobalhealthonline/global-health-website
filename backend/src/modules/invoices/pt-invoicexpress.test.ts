@@ -47,6 +47,21 @@ describe("pt-invoicexpress", () => {
       assert.equal(resolveFiscalId("1234567890"), FALLBACK);
       assert.equal(resolveFiscalId("PT12345678"), FALLBACK);
     });
+
+    /**
+     * The regression this guards: `PatientProfile.taxIdNumber` is PHI, stored
+     * in the `phi:v1:` envelope. Passing the raw column here yields the
+     * "consumidor final" fallback, so a patient with a NIF on file gets a legal
+     * invoice that does not carry it. Callers MUST decrypt first.
+     */
+    it("rejects a still-encrypted PHI envelope rather than passing it through", () => {
+      const envelope = "phi:v1:Cbtls9EK7SzgR6-gDPtyDaM6hSMa6oKn1b3HQpBMxhQilHbJNg";
+      assert.equal(resolveFiscalId(envelope), "999999990");
+    });
+
+    it("keeps the NIF once decrypted", () => {
+      assert.equal(resolveFiscalId("298940841"), "298940841");
+    });
   });
 
   describe("formatIeDate", () => {

@@ -167,3 +167,22 @@ export function parseMembershipSelection(input: {
   if (enrollmentId) return { value: { enrollmentId }, error: null };
   return { value: null, error: null };
 }
+
+/**
+ * Parse the optional coupon field. Blank means "no coupon". Normalized to the
+ * uppercase form the backend stores and matches, so a lower-cased paste from an
+ * email still resolves.
+ *
+ * Shape only — whether the code exists, is in date, has uses left and is
+ * allowed on this booking is decided server-side by `createManualBooking`.
+ */
+export function parseCouponCode(
+  raw: string | null | undefined,
+): { value: string | null; error: string | null } {
+  const trimmed = (raw ?? "").trim().replace(/\s+/g, "").toUpperCase();
+  if (trimmed === "") return { value: null, error: null };
+  if (!/^[A-Z0-9][A-Z0-9-]{3,31}$/.test(trimmed)) {
+    return { value: null, error: "That is not a valid coupon code." };
+  }
+  return { value: trimmed, error: null };
+}

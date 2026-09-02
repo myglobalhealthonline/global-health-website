@@ -288,6 +288,10 @@ export const createManualAppointmentBodySchema = z
      *  price the server resolves (base / peak / insurance). 100 comps the
      *  booking outright — no payment link is issued. */
     discountPercent: z.number().int().min(0).max(100).optional().nullable(),
+    /** Coupon code, applied in place of `discountPercent` — sending both is
+     *  rejected with a 422. Normalized and resolved server-side; refused on
+     *  insurance bookings, benefit-priced bookings and commission markets. */
+    couponCode: z.string().trim().max(32).optional().nullable(),
     /**
      * Private-membership benefit for this booking (§11.7). Omit for none.
      *
