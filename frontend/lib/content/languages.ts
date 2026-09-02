@@ -25,7 +25,7 @@ export const LANGUAGES: readonly LanguageEntry[] = [
   { code: "ga", label: "Irish", aliases: ["gaeilge"] },
   { code: "pt", label: "Portuguese", aliases: ["português", "portugues"] },
   { code: "es", label: "Spanish", aliases: ["español", "espanol", "castellano"] },
-  { code: "cs", label: "Czech", aliases: ["čeština", "cestina"] },
+  { code: "cs", label: "Czech", aliases: ["cz", "čeština", "cestina"] },
   { code: "ro", label: "Romanian", aliases: ["română", "romana"] },
   { code: "fr", label: "French", aliases: ["français", "francais"] },
   { code: "de", label: "German", aliases: ["deutsch"] },

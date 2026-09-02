@@ -14,25 +14,7 @@ import {
   getBookabilityActionProps,
   type BookabilityMessages,
 } from "@/lib/content/bookability-presentation";
-
-const LANGUAGE_NAMES: Record<string, string> = {
-  en: "English",
-  fr: "French",
-  pt: "Portuguese",
-  es: "Spanish",
-  de: "German",
-  it: "Italian",
-  pl: "Polish",
-  ro: "Romanian",
-  cs: "Czech",
-  nl: "Dutch",
-  ar: "Arabic",
-  ru: "Russian",
-};
-
-function languageLabel(code: string): string {
-  return LANGUAGE_NAMES[code.toLowerCase()] ?? code.toUpperCase();
-}
+import { localizedLanguageLabel } from "@/lib/content/languages";
 
 export function LanguageFilteredDoctors({
   country,
@@ -138,7 +120,7 @@ export function LanguageFilteredDoctors({
                   : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:bg-[var(--color-background-soft)]"
               }`}
             >
-              {languageLabel(l)}
+              {localizedLanguageLabel(l, lang)}
             </button>
           ))}
         </div>
@@ -147,7 +129,10 @@ export function LanguageFilteredDoctors({
       {filtered.length === 0 ? (
         <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 text-center shadow-[var(--shadow-card)]">
           <p className="font-semibold text-[var(--color-text-primary)]">
-            {bp.noForLanguage.replace("{language}", languageLabel(selectedLanguage))}
+            {bp.noForLanguage.replace(
+              "{language}",
+              localizedLanguageLabel(selectedLanguage, lang),
+            )}
           </p>
           <p className="mt-2 text-sm text-[var(--color-text-muted)]">
             {bp.chooseAnotherLanguage}

@@ -42,6 +42,7 @@ import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { czechiaStaticPageSeo } from "@/lib/content/czechia-static-page-seo";
+import { localizedLanguageLabel } from "@/lib/content/languages";
 
 type Params = { country: string; lang: string };
 type SearchParams = {
@@ -65,6 +66,7 @@ type SearchParams = {
 type Notice = { tone: "info" | "warning"; message: string } | null;
 
 type BookT = import("@/lib/i18n/types").CommonLocale["bookPage"];
+type SameDayT = ReturnType<typeof loadLocaleBundle>["home"]["countryHero"]["sameDay"];
 
 export async function generateStaticParams(): Promise<Params[]> {
   return countryLangParams();
@@ -122,7 +124,7 @@ export default async function CountryLangBookPage({
   const code = countryCodeFromSlug(slug);
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) notFound();
-  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const { common: c, home } = loadLocaleBundle(lang as LocaleCode);
   const bf = c.bookingForm;
   const bp = c.bookPage;
   const czechiaSeo = czechiaStaticPageSeo(code, lang, "book");
@@ -155,6 +157,7 @@ export default async function CountryLangBookPage({
         c={c}
         bf={bf}
         bp={bp}
+        sameDay={home.countryHero.sameDay}
         bookingRequirements={await bookingRequirementsPromise}
       />
     );
@@ -513,26 +516,6 @@ export default async function CountryLangBookPage({
   );
 }
 
-const GP_LANGUAGE_NAMES: Record<string, string> = {
-  en: "English",
-  pt: "Portuguese",
-  es: "Spanish",
-  cs: "Czech",
-  cz: "Czech",
-  ro: "Romanian",
-  ar: "Arabic",
-  fr: "French",
-  de: "German",
-  it: "Italian",
-  pl: "Polish",
-  nl: "Dutch",
-  ru: "Russian",
-};
-
-function gpLanguageLabel(code: string): string {
-  return GP_LANGUAGE_NAMES[code.toLowerCase()] ?? code.toUpperCase();
-}
-
 /**
  * Same-day GP details step. The patient arrives from the homepage with a chosen
  * language + time (?gp=1&language=&at=); here they only fill patient details +
@@ -549,6 +532,7 @@ async function GpBookingFlow({
   c,
   bf,
   bp,
+  sameDay,
   bookingRequirements,
 }: {
   code: string;
@@ -560,13 +544,14 @@ async function GpBookingFlow({
   c: import("@/lib/i18n/types").CommonLocale;
   bf: import("@/lib/i18n/types").CommonLocale["bookingForm"];
   bp: BookT;
+  sameDay: SameDayT;
   bookingRequirements: import("@/lib/content/get-public-countries").PublicBookingRequirements;
 }) {
   const { service, clinicTimezone, slots } = await getGpAvailability(code, language, 14);
   const slot = slots.find((s) => s.startAt === at) ?? null;
   const valid = Boolean(service && slot);
-  const langName = gpLanguageLabel(language);
-  const steps = ["Language", bp.stepTime, bp.stepDetails];
+  const langName = localizedLanguageLabel(language, lang);
+  const steps = [sameDay.languageLabel, bp.stepTime, bp.stepDetails];
   const homeHref = `/${country}/${lang}#same-day-booking`;
   const czechiaSeo = czechiaStaticPageSeo(code, lang, "book");
 
@@ -607,10 +592,10 @@ async function GpBookingFlow({
                     {bp.bookingSteps}
                   </p>
                   <p className="mt-3 text-sm leading-relaxed text-white/90">
-                    {service.name} · {langName}
+                    {sameDay.title} · {langName}
                   </p>
                   <p className="mt-2 text-sm leading-relaxed text-white/60">
-                    We’ll automatically assign an available GP who speaks {langName}.
+                    {sameDay.reassure}
                   </p>
                   <ul className="mt-5 grid gap-2.5 border-t border-white/10 pt-5">
                     {[

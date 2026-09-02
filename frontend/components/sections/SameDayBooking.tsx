@@ -7,6 +7,7 @@ import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
 import { formatPriceRounded } from "@/lib/format-currency";
 import type { BookabilitySummary } from "@/lib/content/get-country-collections";
 import { getSameDayEmptyMessage } from "@/lib/content/same-day-booking-state";
+import { localizedLanguageLabel } from "@/lib/content/languages";
 
 /**
  * Same-day GP quick-book — the hero panel on the country home page. Replaces
@@ -79,42 +80,7 @@ const LIME_SCROLLBAR =
   "[&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent " +
   "[&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[var(--color-brand-accent)]";
 
-// Doctor.languages are free-text — some markets store ISO codes ("en"),
-// others full names ("english"). Map both to a clean Title-Case label.
-const LANGUAGE_NAMES: Record<string, string> = {
-  en: "English",
-  english: "English",
-  pt: "Portuguese",
-  portuguese: "Portuguese",
-  es: "Spanish",
-  spanish: "Spanish",
-  cs: "Czech",
-  cz: "Czech",
-  czech: "Czech",
-  ro: "Romanian",
-  romanian: "Romanian",
-  ar: "Arabic",
-  arabic: "Arabic",
-  fr: "French",
-  french: "French",
-  de: "German",
-  german: "German",
-  it: "Italian",
-  italian: "Italian",
-  pl: "Polish",
-  polish: "Polish",
-  nl: "Dutch",
-  dutch: "Dutch",
-  ru: "Russian",
-  russian: "Russian",
-};
-
 const ENGLISH_CODES = ["en", "english"];
-
-function languageLabel(code: string): string {
-  const key = code.toLowerCase();
-  return LANGUAGE_NAMES[key] ?? key.charAt(0).toUpperCase() + key.slice(1);
-}
 
 const DESKTOP_QUERY = "(min-width: 1024px)";
 
@@ -355,7 +321,11 @@ export function SameDayBooking({
             aria-haspopup="listbox"
             aria-expanded={dropdownOpen}
           >
-            <span>{selectedLanguage ? languageLabel(selectedLanguage) : t.languagePlaceholder}</span>
+            <span>
+              {selectedLanguage
+                ? localizedLanguageLabel(selectedLanguage, lang)
+                : t.languagePlaceholder}
+            </span>
             <ChevronDown
               className={`size-4 text-[var(--color-brand-accent)] transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`}
               strokeWidth={2.5}
@@ -386,7 +356,7 @@ export function SameDayBooking({
                     }`}
                   >
                     {isSelected ? <Check className="size-4 shrink-0" aria-hidden /> : null}
-                    {languageLabel(code)}
+                    {localizedLanguageLabel(code, lang)}
                   </li>
                 );
               })}
@@ -449,7 +419,7 @@ export function SameDayBooking({
             </button>
             {service?.durationMinutes ? (
               <p className="mt-2 text-center text-[11px] text-white/45">
-                {service.name} · {service.durationMinutes} {t.minSuffix}
+                {t.title} · {service.durationMinutes} {t.minSuffix}
               </p>
             ) : null}
           </>
