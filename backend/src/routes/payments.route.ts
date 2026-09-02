@@ -31,6 +31,7 @@ import {
 } from "../modules/subscriptions/redemption.service.js";
 import { releaseOrderCreditReservations } from "../modules/subscriptions/checkout-pricing.service.js";
 import { releaseOrderMembershipAllowance } from "../modules/memberships/membership-allowance.service.js";
+import { releaseCouponRedemption } from "../modules/coupons/coupon-release.service.js";
 import { sendOrderRefundNotifications } from "../modules/automation/refund-notifications.service.js";
 import { cancelOrderAppointments } from "../modules/appointments/appointments.service.js";
 import {
@@ -277,6 +278,11 @@ async function abandonUnpaidOrder(
   // payment never arrives.
   await releaseOrderMembershipAllowance(orderId).catch((err) => {
     log.error({ err, orderId }, "Release membership allowance failed");
+  });
+  // Same for the coupon use, claimed at order creation and otherwise held by an
+  // order nobody will ever pay for.
+  await releaseCouponRedemption(orderId, `abandoned:${opts.reason}`).catch((err) => {
+    log.error({ err, orderId }, "Release coupon redemption failed");
   });
   // Cancel the consultation appointment(s) — release BOOKED slots + drop the
   // events off the admin/doctor calendars.

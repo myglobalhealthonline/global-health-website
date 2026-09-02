@@ -130,7 +130,10 @@ const GLOBAL_GROUPS: { label: string; hrefs: string[] }[] = [
   { label: "Overview", hrefs: ["/admin", "/admin/calendar"] },
   { label: "Catalog", hrefs: ["/admin/countries", "/admin/doctors", "/admin/assets", "/admin/blog"] },
   { label: "People", hrefs: ["/admin/users", "/admin/patients", "/admin/messages", "/admin/support"] },
-  { label: "Commerce", hrefs: ["/admin/orders", "/admin/invoices", "/admin/subscriptions"] },
+  {
+    label: "Commerce",
+    hrefs: ["/admin/orders", "/admin/invoices", "/admin/subscriptions", "/admin/coupons"],
+  },
   {
     label: "System",
     hrefs: [
