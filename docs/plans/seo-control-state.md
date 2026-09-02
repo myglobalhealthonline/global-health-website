@@ -7294,3 +7294,39 @@ producing forty false mismatches.
 performed; it is now overdue.
 
 ---
+
+## 39. CZ-CLINICAL-COPY-003 — dual-reviewer and Head-authorized rollout (2026-09-02)
+
+**Status: 13 ADDITIONAL PAGES LIVE AND VERIFIED / SIX NON-AUTHORIZED ITEMS REMAIN
+CLOSED.** The dual-reviewer record and Head execution resolution authorized the exact
+13 hashes recorded in the Czechia clinical register. MUDr. Ahmed Maklad supplied the
+Czech clinical review scope; Dr Tiago Miguel Figueira supplied the delegated
+governance, credential and native-English scopes. The evidence artifact pins both
+source PDFs and is `seo/czechia/raw/dual-reviewer-head-resolution-approval-2026-09-02.md`.
+
+Ten guarded production transactions published two PageContent records, five Czech
+doctor-market SEO records and three service translations. Czechia/Czech-only frontend
+overlays published three approved tool metadata/H1 payloads and five exact doctor FAQ
+sets. Doctor biographies, qualifications, certifications, credentials, registrations,
+prices, durations, assignments, availability, booking behavior, non-Czech locales and
+tool algorithms were not changed.
+
+Production commit `3ada17c6eac1aceebcf21443649ea8c8d6dc70f1` completed on Railway frontend
+deployment `393990d9-1122-40ee-808b-5c543cab42a7` and backend deployment
+`5e8b701e-9895-444e-ad54-50d38ae40a50`. Public readback passed 13/13 for HTTP 200,
+approved title policy, exact meta/H1, self-canonical, indexability, self-hreflang,
+JSON-LD and internal links. All approved doctor FAQ sets were present, and the Czechia
+English home contained none of the Czech hero/widget phrases reported by the owner.
+Nine locale/market isolation checks also passed across Czechia EN/PT/ES/DE/RO,
+Ireland EN and Brazil PT. Evidence is in
+`seo/czechia/raw/clinical-production-readback-2026-09-02-super-admin.csv`,
+`seo/czechia/raw/locale-isolation-readback-2026-09-02-super-admin.json` and
+`seo/czechia/raw/production-write-receipt-2026-09-02-super-admin.json`.
+
+The Czechia matrix now contains 45 live pages, three measurement holds and two
+reviewed-no-change pages. The register contains 31 approved and six pending items.
+The remaining closed items are `/czechia/cs/gp-consultation-online`, the 24/7 article,
+travel medicine, two regulatory review/no-change articles, and Czech forms/analytics
+privacy review. This authorization did not widen any of those gates.
+
+---

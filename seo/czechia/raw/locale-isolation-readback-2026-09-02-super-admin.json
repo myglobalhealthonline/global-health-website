@@ -1,0 +1,58 @@
+{
+  "retrieved_at": "2026-09-02T17:03:49.464Z",
+  "checks": [
+    {
+      "url": "https://www.myglobalhealth.online/czechia/en",
+      "status": 200,
+      "h1": "Online medical care in the Czech Republic",
+      "czech_phrases_absent": true
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/pt",
+      "status": 200,
+      "h1": "Cuidados médicos online na Chéquia",
+      "czech_phrases_absent": true
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/es",
+      "status": 200,
+      "h1": "Atención médica online en Chequia",
+      "czech_phrases_absent": true
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/de",
+      "status": 200,
+      "h1": "Online-medizinische Versorgung in Tschechien",
+      "czech_phrases_absent": true
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/ro",
+      "status": 200,
+      "h1": "Îngrijire medicală online în Cehia",
+      "czech_phrases_absent": true
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/en/tools/adhd-test",
+      "status": 200,
+      "title": "ADHD Test Czechia | Free Adult ADHD Screening",
+      "czech_tool_copy_absent": true
+    },
+    {
+      "url": "https://www.myglobalhealth.online/ireland/en/tools/adhd-test",
+      "status": 200,
+      "title": "ADHD Test Ireland | Free Adult ADHD Screening",
+      "czech_tool_copy_absent": true
+    },
+    {
+      "url": "https://www.myglobalhealth.online/brazil/pt/tools/adhd-test",
+      "status": 200,
+      "title": "Teste de TDAH Brasil | Triagem Gratuita para Adultos",
+      "czech_tool_copy_absent": true
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/en/doctors/dr-ahmed-maklad",
+      "status": 200,
+      "czech_faq_overlay_absent": true
+    }
+  ]
+}

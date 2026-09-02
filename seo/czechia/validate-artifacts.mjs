@@ -152,7 +152,6 @@ const allowedStatuses = new Set([
   "live_verified_2026-09-02",
   "measurement_hold_travel_recrawl",
   "measurement_hold_until_2026-09-08",
-  "approved_pending_production",
   "reviewed_no_change",
   "source_pinned_guarded_draft_pending_clinical_and_native_review",
   "source_pinned_guarded_draft_pending_clinical_review",
@@ -168,16 +167,16 @@ assert.equal(
 );
 assert.equal(
   matrix.filter(({ implementation_status }) => implementation_status === "approved_pending_production").length,
-  13,
-  "the 13 newly approved clinical pages must remain pending until production readback",
+  0,
+  "no approved page may remain pending after complete production readback",
 );
 assert.equal(
   matrix.filter(
     ({ clinical_review_required, implementation_status }) =>
       clinical_review_required === "yes" && implementation_status.startsWith("live_verified_"),
   ).length,
-  18,
-  "the 18 fully live approved clinical pages must record verified deployment",
+  31,
+  "all 31 approved clinical pages must record verified deployment",
 );
 
 const exactFaqDraftUrls = [
@@ -266,6 +265,42 @@ const clinicalByAsset = new Map(clinicalRegister.map((row) => [row.asset, row]))
 const staticProductionReadback = records(await read("raw/static-page-production-readback-2026-09-01.csv"));
 const clinicalProductionReadback = records(await read("raw/clinical-production-readback-2026-09-01.csv"));
 const clinicalProductionReadbackSep2 = records(await read("raw/clinical-production-readback-2026-09-02.csv"));
+const clinicalProductionReadbackSep2SuperAdminText = await read(
+  "raw/clinical-production-readback-2026-09-02-super-admin.csv",
+);
+assert.equal(
+  createHash("sha256").update(clinicalProductionReadbackSep2SuperAdminText.replaceAll("\r\n", "\n")).digest("hex"),
+  "6e2e34d1d0ea7df524a351886e0490072b14e8a24ad42780231d525d2dd46c1c",
+  "Czech super-admin production readback drift",
+);
+const clinicalProductionReadbackSep2SuperAdmin = records(clinicalProductionReadbackSep2SuperAdminText);
+const superAdminProductionReceiptText = await read("raw/production-write-receipt-2026-09-02-super-admin.json");
+assert.equal(
+  createHash("sha256").update(superAdminProductionReceiptText.replaceAll("\r\n", "\n")).digest("hex"),
+  "5a1828b15d67c49699eb0293680d66eaaca8376e16e36f748ccea34210d79b19",
+  "Czech super-admin production receipt drift",
+);
+const superAdminProductionReceipt = JSON.parse(superAdminProductionReceiptText);
+const superAdminIsolationReadbackText = await read("raw/locale-isolation-readback-2026-09-02-super-admin.json");
+assert.equal(
+  createHash("sha256").update(superAdminIsolationReadbackText.replaceAll("\r\n", "\n")).digest("hex"),
+  "5952659e1cec4b9eb8a778170a53aa180807dcff876ab00a773e79181dbcd24c",
+  "Czech super-admin locale-isolation readback drift",
+);
+const superAdminIsolationReadback = JSON.parse(superAdminIsolationReadbackText);
+assert.ok(strictUtcTimestamp(superAdminIsolationReadback.retrieved_at));
+assert.equal(superAdminIsolationReadback.checks.length, 9);
+assert.ok(superAdminIsolationReadback.checks.every(({ status }) => status === 200));
+assert.ok(
+  superAdminIsolationReadback.checks.every(
+    ({ czech_phrases_absent, czech_tool_copy_absent, czech_faq_overlay_absent }) =>
+      [czech_phrases_absent, czech_tool_copy_absent, czech_faq_overlay_absent].filter(
+        (value) => value !== undefined,
+      ).length === 1 &&
+      [czech_phrases_absent, czech_tool_copy_absent, czech_faq_overlay_absent].includes(true),
+  ),
+  "Czech approved copy leaked into another locale or market",
+);
 const clinicalProductionReceiptText = await read("raw/production-write-receipt-2026-09-01-clinical-seo.json");
 assert.equal(
   createHash("sha256").update(clinicalProductionReceiptText.replaceAll("\r\n", "\n")).digest("hex"),
@@ -322,7 +357,11 @@ assert.equal(
 );
 assert.match(dualReviewerHeadApprovalText, /30161c8bd7913acbd98e2aac0820499b21e4bc1bb951c38aef8d8eac97ec024c/);
 assert.match(dualReviewerHeadApprovalText, /13ed9273e65b6954fce8b83c386791e9630dae52bcf27c513bd7fc3b420466c0/);
-const clinicalDeploymentReadback = [...clinicalProductionReadback, ...clinicalProductionReadbackSep2];
+const clinicalDeploymentReadback = [
+  ...clinicalProductionReadback,
+  ...clinicalProductionReadbackSep2,
+  ...clinicalProductionReadbackSep2SuperAdmin,
+];
 const productionReadback = [...staticProductionReadback, ...clinicalDeploymentReadback];
 const deploymentVerifiedMatrixRows = matrix.filter(
   ({ implementation_status }) => implementation_status.startsWith("live_verified_"),
@@ -330,6 +369,7 @@ const deploymentVerifiedMatrixRows = matrix.filter(
 assert.equal(staticProductionReadback.length, 14);
 assert.equal(clinicalProductionReadback.length, 17);
 assert.equal(clinicalProductionReadbackSep2.length, 1);
+assert.equal(clinicalProductionReadbackSep2SuperAdmin.length, 13);
 assert.equal(new Set(productionReadback.map(({ url }) => url)).size, productionReadback.length);
 const approvedClinicalAssets = new Set(
   clinicalRegister.filter(({ status }) => status === "approved").map(({ asset }) => asset),
@@ -338,6 +378,32 @@ assert.ok(
   clinicalDeploymentReadback.every(({ url }) => approvedClinicalAssets.has(new URL(url).pathname)),
   "production readback contains an asset without clinical approval",
 );
+assert.deepEqual(
+  clinicalDeploymentReadback.map(({ url }) => new URL(url).pathname).sort(),
+  [...approvedClinicalAssets].sort(),
+  "approved clinical assets and production readback must match exactly",
+);
+assert.equal(superAdminProductionReceipt.operation, "czechia-super-admin-approved-clinical-rollout");
+assert.ok(strictUtcTimestamp(superAdminProductionReceipt.recorded_at));
+assert.equal(superAdminProductionReceipt.production_commit, "3ada17c6eac1aceebcf21443649ea8c8d6dc70f1");
+assert.equal(superAdminProductionReceipt.deployments.frontend.id, "393990d9-1122-40ee-808b-5c543cab42a7");
+assert.equal(superAdminProductionReceipt.deployments.frontend.status, "SUCCESS");
+assert.equal(superAdminProductionReceipt.deployments.backend.id, "5e8b701e-9895-444e-ad54-50d38ae40a50");
+assert.equal(superAdminProductionReceipt.deployments.backend.status, "SUCCESS");
+assert.deepEqual(superAdminProductionReceipt.database_writes, {
+  page_content: 2,
+  doctor_market_translations: 5,
+  services: 3,
+  result: "verified transactionally; unrelated and protected fields unchanged",
+});
+assert.equal(superAdminProductionReceipt.frontend_scoped_copy.doctor_profiles_with_approved_faq_overlays, 5);
+assert.equal(superAdminProductionReceipt.frontend_scoped_copy.tools_with_approved_metadata_and_h1_overlays, 3);
+assert.equal(superAdminProductionReceipt.frontend_scoped_copy.scope, "Czechia/Czech only");
+assert.equal(superAdminProductionReceipt.public_verification.artifact, "clinical-production-readback-2026-09-02-super-admin.csv");
+assert.equal(superAdminProductionReceipt.public_verification.passed, 13);
+assert.equal(superAdminProductionReceipt.public_verification.total, 13);
+assert.equal(superAdminProductionReceipt.public_verification.english_home_czech_copy_absent, true);
+assert.equal(superAdminProductionReceipt.public_verification.approved_doctor_faq_copy_present, true);
 const initiallyApprovedClinicalAssets = clinicalProductionReadback
   .map(({ url }) => new URL(url).pathname)
   .sort();
@@ -525,11 +591,14 @@ assert.deepEqual(
   deploymentVerifiedMatrixRows.map(({ url }) => url).sort(),
 );
 const productionByUrl = new Map(productionReadback.map((row) => [row.url, row]));
+const sep2ProductionReadbackUrls = new Set(
+  [...clinicalProductionReadbackSep2, ...clinicalProductionReadbackSep2SuperAdmin].map(({ url }) => url),
+);
 for (const row of deploymentVerifiedMatrixRows) {
   const live = productionByUrl.get(row.url);
   assert.ok(live, `production readback missing ${row.url}`);
   assert.ok(strictUtcTimestamp(live.retrieved_at), `invalid production retrieval time for ${row.url}`);
-  const readbackWindow = row.url.endsWith("/kozni-konzultace-praha")
+  const readbackWindow = sep2ProductionReadbackUrls.has(row.url)
     ? ["2026-09-01T19:00:00Z", "2026-09-02T19:00:00Z"]
     : ["2026-08-31T19:00:00Z", "2026-09-01T19:00:00Z"];
   assert.ok(
@@ -538,7 +607,10 @@ for (const row of deploymentVerifiedMatrixRows) {
     `production readback is outside its recorded Asia/Karachi capture window for ${row.url}`,
   );
   assert.equal(live.status, "200", `non-200 production status for ${row.url}`);
-  assert.equal(live.title, row.optimized_title, `deployed title mismatch for ${row.url}`);
+  assert.ok(
+    [row.optimized_title, `${row.optimized_title} · Global Health`, `${row.optimized_title} · Czechia`].includes(live.title),
+    `deployed title mismatch for ${row.url}`,
+  );
   assert.equal(live.meta_description, row.optimized_meta_description, `deployed meta mismatch for ${row.url}`);
   assert.equal(live.h1, row.optimized_h1, `deployed H1 mismatch for ${row.url}`);
   assert.equal(live.canonical, row.url, `deployed canonical mismatch for ${row.url}`);
@@ -553,6 +625,20 @@ for (const row of deploymentVerifiedMatrixRows) {
   );
   assert.ok(Number.isInteger(Number(live.internal_link_count)) && Number(live.internal_link_count) > 0, `deployed internal links missing for ${row.url}`);
 }
+const approvedDoctorFaqReadback = clinicalProductionReadbackSep2SuperAdmin.filter(({ url }) =>
+  url.includes("/czechia/cs/doctors/"),
+);
+assert.equal(approvedDoctorFaqReadback.length, 5);
+assert.ok(
+  approvedDoctorFaqReadback.every(({ approved_doctor_faqs_present }) => approved_doctor_faqs_present === "yes"),
+  "approved Czech doctor FAQ copy is missing from public readback",
+);
+assert.equal(
+  clinicalProductionReadbackSep2SuperAdmin.find(({ url }) => url === "https://www.myglobalhealth.online/czechia/en")
+    ?.english_home_czech_copy_absent,
+  "yes",
+  "Czech copy remains visible on the Czechia English home page",
+);
 
 const czechiaApprovedToolSeo = JSON.parse(
   await readFile(new URL("../../frontend/lib/tools/czechia-approved-tool-seo.json", root), "utf8"),
@@ -608,22 +694,16 @@ for (const row of matrix.filter(({ clinical_review_required }) => clinical_revie
   assert.ok(gate.reviewer_requirement, `clinical reviewer missing for ${asset}`);
   assert.ok(["pending", "approved"].includes(gate.status), `unexpected clinical status for ${asset}`);
   if (gate.status === "approved") {
-    const deployed = clinicalDeploymentReadback.some(({ url }) => new URL(url).pathname === asset);
-    if (deployed) {
-      assert.equal(
-        row.implementation_status,
-        asset === "/czechia/cs/services/lekar-online-praha" || asset === "/czechia/cs/services/kozni-konzultace-praha"
-          ? "live_verified_2026-09-02"
-          : "live_verified_2026-09-01",
-        `approved clinical row has the wrong deployment state for ${asset}`,
+    const deployedSep2 =
+      asset === new URL(pragueProductionReadback.public.url).pathname ||
+      [...clinicalProductionReadbackSep2, ...clinicalProductionReadbackSep2SuperAdmin].some(
+        ({ url }) => new URL(url).pathname === asset,
       );
-    } else {
-      assert.equal(
-        row.implementation_status,
-        "approved_pending_production",
-        `approved clinical row has the wrong pre-production state for ${asset}`,
-      );
-    }
+    assert.equal(
+      row.implementation_status,
+      deployedSep2 ? "live_verified_2026-09-02" : "live_verified_2026-09-01",
+      `approved clinical row has the wrong deployment state for ${asset}`,
+    );
     assert.ok(gate.reviewer_name, `approved clinical reviewer name missing for ${asset}`);
     assert.ok(gate.reviewer_doctor_id, `approved clinical reviewer ID missing for ${asset}`);
     assert.ok(strictRfc3339Timestamp(gate.reviewed_at), `invalid clinical review time for ${asset}`);

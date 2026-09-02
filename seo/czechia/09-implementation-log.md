@@ -384,3 +384,42 @@ contains 18 approved and 19 pending rows. Evidence is
 `raw/production-write-receipt-2026-09-02-dermatology.json`,
 `raw/production-readback-2026-09-02-dermatology.json` and
 `raw/clinical-production-readback-2026-09-02.csv`.
+
+## Dual-reviewer and Head-authorized rollout — 2026-09-02
+
+The dual-reviewer approval and Head execution resolution authorized 13 additional
+exact payload hashes. Evidence is pinned in
+`raw/dual-reviewer-head-resolution-approval-2026-09-02.md`; it identifies MUDr.
+Ahmed Maklad for Czech clinical review and Dr Tiago Miguel Figueira for the delegated
+governance, credential and native-English scopes. No approval was inferred for a
+different hash or held page.
+
+Ten guarded production transactions published the Czech doctors directory, Czechia
+English home, five Czech doctor-market SEO records, two Czech services and the English
+Prague service translation. The Czechia/Czech-only frontend overlays published the
+three approved tool metadata/H1 payloads and five exact doctor FAQ sets. Doctor
+biographies, qualifications, certifications, credentials, registrations, prices,
+durations, assignments, availability, booking behavior, non-Czech locales and tool
+logic were unchanged.
+
+Production commit `3ada17c6eac1aceebcf21443649ea8c8d6dc70f1` deployed successfully as
+Railway frontend deployment `393990d9-1122-40ee-808b-5c543cab42a7` and backend
+deployment `5e8b701e-9895-444e-ad54-50d38ae40a50`. Cache-bypassed public readback
+passed 13/13 for HTTP 200, approved stored title policy, exact meta description and
+H1, self-canonical, `index, follow`, self-hreflang, JSON-LD and internal links. All
+five approved doctor FAQ sets were present. The English home no longer contained the
+Czech hero or consultation-widget phrases reported in the screenshots.
+
+Isolation readback passed nine production checks: Czechia EN/PT/ES/DE/RO home pages
+contained no target Czech phrases; Czechia English, Ireland English and Brazil
+Portuguese ADHD pages did not receive the Czech tool overlay; and the Czechia English
+Ahmed profile did not receive the Czech FAQ overlay. Evidence is
+`raw/clinical-production-readback-2026-09-02-super-admin.csv`,
+`raw/locale-isolation-readback-2026-09-02-super-admin.json` and
+`raw/production-write-receipt-2026-09-02-super-admin.json`.
+
+The matrix now records 45 live pages, three measurement holds and two reviewed-no-
+change pages. The clinical register records 31 approved and six pending items. The
+remaining items are the GP and 24/7 measurement holds, travel medicine, two regulatory
+review/no-change articles, and Czech forms/analytics privacy review; none was widened
+by this rollout.
