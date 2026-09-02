@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { ArrowLeft } from "lucide-react";
-import { requireSuperAdminAction } from "@/lib/admin/require-admin-action";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { postAdminCoupon } from "@/lib/admin/admin-api";
 import { parseCouponBodyFromForm } from "@/lib/admin/coupon-form-parse";
 import { AdminCard, Btn, PageHeader } from "../../_components/atoms";
@@ -18,9 +18,11 @@ export default async function AdminNewCouponPage({
 
   async function createAction(formData: FormData) {
     "use server";
-    // SUPER_ADMIN, not plain admin: a coupon gives money away, and a Server
-    // Action is a public endpoint until this line runs.
-    await requireSuperAdminAction();
+    // ADMIN, not SUPER_ADMIN: this must match the backend gate, which is
+    // `verifyGlobalAdminAccess` — every global admin, LOCAL_ADMIN denied. A
+    // stricter check here only produced an /unauthorized redirect for people
+    // the API would have accepted.
+    await requireAdminAction();
 
     const parsed = parseCouponBodyFromForm(formData);
     if (!parsed.ok) {

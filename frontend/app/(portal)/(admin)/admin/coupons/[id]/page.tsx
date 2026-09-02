@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { ArrowLeft, Send } from "lucide-react";
-import { requireSuperAdminAction } from "@/lib/admin/require-admin-action";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import {
   fetchAdminCouponById,
   patchAdminCoupon,
@@ -66,7 +66,11 @@ export default async function AdminCouponDetailPage({
 
   async function updateAction(formData: FormData) {
     "use server";
-    await requireSuperAdminAction();
+    // ADMIN, not SUPER_ADMIN: this must match the backend gate, which is
+    // `verifyGlobalAdminAccess` — every global admin, LOCAL_ADMIN denied. A
+    // stricter check here only produced an /unauthorized redirect for people
+    // the API would have accepted.
+    await requireAdminAction();
     const patch: { active?: boolean; validUntil?: string; maxRedemptions?: number } = {};
 
     const active = formData.get("active");
@@ -101,7 +105,11 @@ export default async function AdminCouponDetailPage({
 
   async function sendAction(formData: FormData) {
     "use server";
-    await requireSuperAdminAction();
+    // ADMIN, not SUPER_ADMIN: this must match the backend gate, which is
+    // `verifyGlobalAdminAccess` — every global admin, LOCAL_ADMIN denied. A
+    // stricter check here only produced an /unauthorized redirect for people
+    // the API would have accepted.
+    await requireAdminAction();
     const raw = String(formData.get("recipients") ?? "");
     const recipientId = String(formData.get("recipientId") ?? "").trim();
 
