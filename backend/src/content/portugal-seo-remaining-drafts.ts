@@ -10,9 +10,15 @@ import {
 
 export type PortugalRemainingAssetKind = "doctor" | "page_content" | "seo_landing" | "blog";
 
-export type PortugalSeoRemainingDraft = PortugalSeoMetadataDraft & Readonly<{
+export type PortugalSeoRemainingDraft = Omit<
+  PortugalSeoMetadataDraft,
+  "proposedTitle" | "proposedDescription" | "disposition"
+> & Readonly<{
   assetKind: PortugalRemainingAssetKind;
   assetPath: string;
+  proposedTitle: string;
+  proposedDescription: string;
+  disposition: "proposed";
 }>;
 
 const PHASE_TWO_STATUSES = new Set([
