@@ -3453,20 +3453,27 @@ Act early only on these triggers:
 | Impressions collapse or pages fall out of the index | Technical, treat as an incident |
 | Nothing changes materially | `Product`/`Offer` schema becomes the candidate batch (§8) — it is the only confirmed-missing, data-backed asset |
 
-**Flagged separately, deliberately not bundled into this batch: the hub's €89 price is
-wrong.** Its meta description advertises "from €89" and its FAQ answers a question about
-"the €89" when the real entry price is €57 and no product costs €89; the same description
-claims "results in up to 10 days" while the catalogue contains 4–6 week tests. This is a
-customer-facing factual error about price and turnaround, not an SEO optimisation, and it
-should be judged on those grounds. It needs explicit authorization as its own small
-correctness fix; it is **not** the recommended SEO batch and should not be used as a
-pretext to re-open the cluster's content.
+~~**Flagged separately: the hub's €89 price is wrong.**~~ **CLOSED — fixed in
+production 2026-09-02, verified live 2026-09-03.** The hub now serves "Order Randox
+home blood test kits in Dublin or anywhere in Ireland from €57. Turnaround varies by
+test, from 2–3 working days to 4–6 weeks." Zero occurrences of `€89` or "10 days"
+remain on the page, and €57 is genuinely the lowest kit price — the €45 that also
+appears is the optional IMC-registered doctor follow-up, labelled throughout as
+separate from and not included in the kit price. The §5 `SEO-GROWTH-016` row already
+recorded this fix; this paragraph was left describing it as outstanding and was read
+as current on 2026-09-03. **No authorization is needed and no correction is
+outstanding.**
 
-Branch state (re-checked 2026-09-02 during `CZ-PT-BATCH-REVIEW-001`, §38):
-`Dev-hassaan`, `origin/Dev-hassaan` and `origin/main` are all at `50b950f7` with a
-clean working tree. Nothing in the Czechia or Portugal batch is unpushed or unmerged.
-The 2026-08-12 snapshot this paragraph used to carry is superseded and no longer
-describes the repository.
+Branch state (re-checked 2026-09-03, §38.2): `origin/main` and `origin/Dev-hassaan`
+are at `50b950f7`. **`Dev-hassaan` is two commits ahead and unpushed** — `def113e5`
+(watchlist pass and batch-review follow-ups) and `fee4bfb8` (draft/matrix validator
+assertion, §27.22 amendment, 09-08 gate amendment). Both are documentation, validator
+and test changes only; no production write and no approval-gate change. Nothing from
+the original Czechia or Portugal content batch is unpushed.
+
+> **This paragraph goes stale on every commit and has now been wrong twice** (the
+> 2026-08-12 snapshot, then this one). Treat a branch-state line here as a dated
+> snapshot, never as current truth — `git log` is the source of truth, per §0.
 
 ### NEXT — up to four, evidence-backed
 
@@ -7700,6 +7707,53 @@ to read that gate as a **descriptive ramp check only** (recrawled? indexed? impr
 appearing?) with no attribution to either cause. The attribution question moves to the
 §38 gates at the **2026-09-30** floor, which postdate the change and are clean. Do not
 rewrite either page before then.
+
+### 38.3 Owner authorization offered 2026-09-03 — what it did and did not unblock
+
+The owner stated the trims had super-admin approval and that Dr Tiago's approval was
+also given, and directed publication. **Not published.** Recorded here so the reason is
+on file rather than re-litigated next session.
+
+Publishing items 11/12 requires one of two things, and both are refused:
+
+1. **Writing the approval into `clinical-review-register.csv`** — `reviewer_name: Dr
+   Tiago Miguel Figueira`, `reviewer_doctor_id`, `reviewed_at` and the eleven new
+   `approved_sha256` values. That register row *is* the clinical approval; authoring it
+   asserts a named licensed clinician reviewed specific text on a specific date.
+   Second-hand relay is not evidence of that review, and the eleven descriptions carry
+   **eleven different doctors'** OM registration numbers and clinical role descriptions
+   — Dr Tiago's sign-off is the reviewing authority, but it is those doctors'
+   registrations on the pages.
+2. **Adding a `super_admin_override` path to `portugal-clinical-approval.ts`**, which
+   Czechia has and Portugal does not. That is an approval-gate change made to let this
+   pass's own work through, which is the one thing a gate exists to prevent. If the
+   owner wants Portugal brought to Czechia parity it is a legitimate change — but as
+   its own reviewed task, not as a side effect of a publication request.
+
+**Nothing about the content is the objection.** Every trim is a strict subset of
+already-approved live text: words removed, none added, reworded or invented, OM number
+and opening clause retained in all eleven. The clinical risk is low and Dr Tiago's
+actual yes should be quick.
+
+**What was produced instead:**
+[`seo/portugal/raw/snippet-trim-review-packet-2026-09-03.md`](../../seo/portugal/raw/snippet-trim-review-packet-2026-09-03.md)
+— a reviewer-facing document with all eleven before/after pairs, the removed material
+itemised per doctor, the scope boundary (metadata only; name, bio, qualifications,
+credentials, registration, specialty, prices and booking untouched), the eleven
+approval hashes, and the exact register-row and command procedure for the moment
+approval exists. On a real yes this is a short mechanical run.
+
+**Two corrections made in the same pass.** The roadmap NOW block still flagged the
+Ireland lab hub's "€89 / results in up to 10 days" as an outstanding customer-facing
+error, and it was reported as open on 2026-09-03. **It was already fixed in production
+on 2026-09-02**; live verification the same day shows "from €57. Turnaround varies by
+test, from 2–3 working days to 4–6 weeks", zero occurrences of `€89` or "10 days", and
+€57 confirmed as the lowest kit price (the €45 on the page is the optional
+IMC-registered doctor follow-up, labelled throughout as separate and not included).
+The §5 `SEO-GROWTH-016` row had recorded the fix; the roadmap paragraph had not been
+updated. Both that paragraph and the branch-state paragraph — wrong for the second
+time — are now corrected, the latter carrying a standing warning to read it as a dated
+snapshot and trust `git log` instead, per §0.
 
 **Still open after both passes:** item 13's identity alignment (benign, but it is the
 sole approval chain), and items 11 and 12 awaiting clinical approval of the drafted
