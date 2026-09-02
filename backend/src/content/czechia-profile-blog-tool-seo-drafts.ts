@@ -237,6 +237,25 @@ export const CZECHIA_BLOG_SEO_DRAFTS = [
     },
     faqReplacements: [],
   },
+  {
+    assetKind: "blog",
+    assetPath: "/czechia/cs/blog/lekar-online-24-7-co-vyresi",
+    slug: "lekar-online-24-7-co-vyresi",
+    countryCode: "cz",
+    locale: "CS",
+    postId: "cmsep1slb000q7ojuna9x1ial",
+    expectedPostUpdatedAt: "2026-08-29T04:55:51.024Z",
+    expectedSourceSha256: "7a2c85eb20fd56c415e9b4ab8514b0382a1d055f82ed09d3114aff42cf78bc4a",
+    primaryKeyword: "co vyřeší lékař online 24/7",
+    secondaryKeywords: ["kdy online lékař nestačí", "jak funguje online konzultace"],
+    desired: {
+      title: "Co vyřeší lékař online a kdy nestačí",
+      seoTitle: "Lékař online 24/7: co lze řešit a kdy nestačí",
+      seoDescription:
+        "Zjistěte, co lze bezpečně probrat s lékařem online, jak konzultace probíhá a kdy je nutné osobní nebo akutní vyšetření.",
+    },
+    faqReplacements: [],
+  },
 ] as const satisfies readonly CzechiaBlogSeoDraft[];
 
 export const CZECHIA_TOOL_SEO_DRAFTS = [

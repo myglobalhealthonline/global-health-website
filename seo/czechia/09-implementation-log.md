@@ -423,3 +423,26 @@ change pages. The clinical register records 31 approved and six pending items. T
 remaining items are the GP and 24/7 measurement holds, travel medicine, two regulatory
 review/no-change articles, and Czech forms/analytics privacy review; none was widened
 by this rollout.
+
+## Super-admin verbal-approval rollout — 2026-09-02
+
+The project owner, acting as super admin, attested that all required doctors and
+administrators had approved the remaining publishable changes verbally and directed
+immediate implementation. The attestation is recorded accurately as verbal approval,
+not as an independently authenticated signature, in
+`raw/super-admin-verbal-approval-override-2026-09-02.md`. It also explicitly overrides
+the separate measurement/recrawl timing hold for the three exact candidate hashes.
+
+Guarded production writes published the Czech GP PageContent body and eight FAQs, the
+travel-medicine body and nine FAQs, and only the title/SEO metadata of the 24/7 blog.
+Transactional checks preserved the protected blog body/FAQs and all unrelated
+service fields, doctor biographies, qualifications, certifications, credentials,
+registrations, prices, durations, assignments, booking state and non-target locales.
+
+Public readback passed 3/3 with HTTP 200 and exact approved title policy, meta
+description and H1. Evidence is
+`raw/production-readback-2026-09-02-remaining-pages.json`. The matrix now records 48
+live pages and two reviewed-no-change pages; the clinical register records 31 named
+approvals, three exact-hash super-admin overrides and three pending items. The two no-change regulatory articles and the
+undefined forms/analytics scope received no invented production write and remain
+pending their named regulatory/privacy evidence.

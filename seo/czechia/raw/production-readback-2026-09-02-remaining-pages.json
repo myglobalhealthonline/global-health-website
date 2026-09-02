@@ -1,0 +1,61 @@
+{
+  "retrieved_at": "2026-09-02T19:31:10.7478564Z",
+  "approval_record": "super-admin-verbal-approval-override-2026-09-02.md",
+  "pages": [
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/gp-consultation-online",
+      "status": 200,
+      "approved_payload_sha256": "25d91b2b9a49c7e02356cf676a1b2b5a067d9f4672f8cf59652c9c5c938b3f56",
+      "title": "Praktický lékař online | Konzultace v Česku · Global Health",
+      "meta_description": "Online konzultace s praktickým lékařem. Lékař posoudí potíže a další postup; recepty, dokumenty a doporučení nejsou automatické.",
+      "h1": "Online konzultace s praktickým lékařem v Česku",
+      "canonical": "https://www.myglobalhealth.online/czechia/cs/gp-consultation-online",
+      "robots": "index, follow",
+      "self_hreflang": "yes",
+      "hreflang_count": "7",
+      "schema_types": "Answer|BreadcrumbList|ContactPoint|Country|FAQPage|ImageObject|ListItem|MedicalOrganization|MedicalProcedure|Offer|PostalAddress|PropertyValue|QuantitativeValue|Question|ReserveAction|Service|WebSite",
+      "internal_link_count": "107",
+      "api_body_sha256": "b76815fec54b4b5e2943d49bc2deadbc999f581380cd2ec0f9f31cdc25902972",
+      "api_faq_count": 8,
+      "api_faq_sha256": "1216d35f20a031e1a8da1744b64eca75e0d49673630ee6faf250f10d630c062f",
+      "html_sha256": "0b3671b8308ecbcab28d0d91d816dbd12ee198a744be882e012d43ea7edccb32"
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/blog/lekar-online-24-7-co-vyresi",
+      "status": 200,
+      "approved_payload_sha256": "33e7cf81a17f2f0214d1a5e47c02a37006281277103ab4e1acc692ea42c30c2b",
+      "title": "Lékař online 24/7: co lze řešit a kdy nestačí",
+      "meta_description": "Zjistěte, co lze bezpečně probrat s lékařem online, jak konzultace probíhá a kdy je nutné osobní nebo akutní vyšetření.",
+      "h1": "Co vyřeší lékař online a kdy nestačí",
+      "canonical": "https://www.myglobalhealth.online/czechia/cs/blog/lekar-online-24-7-co-vyresi",
+      "robots": "index, follow",
+      "self_hreflang": "yes",
+      "hreflang_count": "7",
+      "schema_types": "Answer|Article|BreadcrumbList|ContactPoint|Country|EducationalOccupationalCredential|FAQPage|ImageObject|ListItem|MedicalOrganization|MedicalWebPage|Organization|Person|PostalAddress|PropertyValue|Question|Thing|WebSite",
+      "internal_link_count": "100",
+      "api_body_sha256": "84e24807ba440faf69a812cbbad082edac3cd7c66fc32c2f5ef3538ce274ffc9",
+      "api_excerpt_sha256": "6bb5af254ad81e749f3b5c75ff57a4a98434331503927d7039403d4d01852024",
+      "api_metadata_exact": true,
+      "protected_body_and_faqs_transactionally_unchanged": true,
+      "html_sha256": "ddfbbc70a2dc4cf2ac47ac24422e8d644b623d09b2b0076d0f4e0bd2d7de3bdd"
+    },
+    {
+      "url": "https://www.myglobalhealth.online/czechia/cs/services/cestovni-medicina-praha",
+      "status": 200,
+      "approved_payload_sha256": "6ac32ac639b32b7cde67859fd29d7e08defc7902ec33e2ea317be650822ac8da",
+      "title": "Cestovní medicína Praha | Online konzultace · Global Health",
+      "meta_description": "Online konzultace cestovní medicíny před cestou. Proberte rizika, očkování a prevenci; recepty a potvrzení závisejí na posouzení.",
+      "h1": "Cestovní medicína: online konzultace",
+      "canonical": "https://www.myglobalhealth.online/czechia/cs/services/cestovni-medicina-praha",
+      "robots": "index, follow",
+      "self_hreflang": "yes",
+      "hreflang_count": "7",
+      "schema_types": "Answer|BreadcrumbList|ContactPoint|Country|EducationalOccupationalCredential|FAQPage|ImageObject|ListItem|MedicalOrganization|MedicalProcedure|MedicalWebPage|Offer|Organization|Person|PostalAddress|PropertyValue|QuantitativeValue|Question|ReserveAction|Service|WebSite",
+      "internal_link_count": "85",
+      "api_body_sha256": "cbe42077454200d6d51eec93278ec87a48855003f57b2861e71dfdaaffb6ea4f",
+      "api_faq_count": 9,
+      "api_faq_sha256": "6727a23dab8049bc1715dce9cfeb6fed36bd24177dfd5352b59c7352d366947c",
+      "html_sha256": "b062cce71bc5fbb94ac21a55c754ec3fb8060244ba3ca262a4c4a6efb2174db9"
+    }
+  ]
+}

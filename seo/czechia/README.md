@@ -41,12 +41,11 @@ covers all 50 in-scope URLs and is validated against all 481 keyword-owner rows.
 The exact live technical inputs are preserved in
 [`raw/live-page-seo-snapshot-2026-09-01.csv`](raw/live-page-seo-snapshot-2026-09-01.csv).
 
-The 31 eligible clinical recommendations have source-pinned guarded payloads for
-PageContent, services, doctor/profile metadata, one blog and seven tools. Eighteen
-distinct pages are now clinically approved and live: 17 from the 2026-09-01 rollout
-and the dermatology service approved on 2026-09-02. Thirteen eligible pages remain
-pending the reviewer role stated in `clinical-review-register.csv`. The register
-remains the promotion authority, and English targets still require native review.
+The clinical register now records 31 named approvals, three exact-hash super-admin
+overrides and three pending governance items. The matrix records 48 live pages and two reviewed-no-change pages.
+The remaining pending evidence is limited to the eNeschopenka article, the sick-pay
+article and the site-wide Czech forms/analytics privacy scope. The register remains
+the promotion authority, and English targets still require native review.
 
 Run the lightweight integrity check after editing any generated CSV:
 

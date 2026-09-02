@@ -7330,3 +7330,35 @@ travel medicine, two regulatory review/no-change articles, and Czech forms/analy
 privacy review. This authorization did not widen any of those gates.
 
 ---
+
+## 40. CZ-CLINICAL-COPY-004 — super-admin verbal-approval rollout (2026-09-02)
+
+**Status: THREE FINAL PUBLISHABLE PAYLOADS LIVE AND VERIFIED / THREE NO-PAYLOAD
+GOVERNANCE ITEMS REMAIN OPEN.** The project owner, acting as super admin, stated that
+all required doctors and administrators approved the remaining changes verbally and
+directed immediate implementation. The exact user-supplied statement and the explicit
+override of the earlier measurement/recrawl timing hold are preserved in
+`seo/czechia/raw/super-admin-verbal-approval-override-2026-09-02.md`. This is recorded
+as a verbal attestation, not as an independently authenticated signature.
+
+Three source-pinned guarded writes were applied: the Czech GP PageContent body and
+eight FAQs; the travel-medicine body and nine FAQs; and the 24/7 article's title and
+SEO metadata only. Protected article body/FAQs and unrelated service/page fields were
+verified unchanged. Doctor biographies, qualifications, certifications, credentials,
+registrations, prices, durations, assignments, booking behavior and non-target
+locales were outside scope and unchanged.
+
+Cache-bypassed public readback passed 3/3 for HTTP 200 and exact approved title policy,
+meta description and H1. Evidence is
+`seo/czechia/raw/production-readback-2026-09-02-remaining-pages.json`. The Czechia
+matrix now records 48 live pages and two reviewed-no-change pages; the clinical
+register records 31 named approvals, three exact-hash super-admin overrides and three
+pending items.
+
+No publishable payload existed for the eNeschopenka or sick-pay article, both already
+recorded as reviewed-no-change, and no reviewed URL manifest or controlling payload
+existed for the site-wide forms/analytics scope. No change was invented for those
+items. They remain pending the named regulatory/privacy evidence and do not block the
+three now-verified pages.
+
+---

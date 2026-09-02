@@ -50,7 +50,7 @@ const metadataDrafts = [
   {
     serviceId: "cmr85y546002q70ju6ikn8phw",
     expectedServiceUpdatedAt: "2026-07-19T05:02:29.686Z",
-    expectedSourceSha256: "45e6374b7c9d963ab151dec7e8a028910deb42a5ceff434061dc105d25fbf499",
+    expectedSourceSha256: "1f2258293bcd5e557d37a1a04f8d57cc841efa79801da913f7d7af367beaa0b6",
     countryCode: "cz",
     locale: "CS",
     slug: "cestovni-medicina-praha",

@@ -8,8 +8,13 @@ import {
 } from "../../backend/src/content/czechia-seo-service-drafts.ts";
 import {
   CZECHIA_DOCTOR_PROFILE_SEO_DRAFTS,
+  CZECHIA_BLOG_SEO_DRAFTS,
   czechiaClinicalDraftApprovalSha256,
 } from "../../backend/src/content/czechia-profile-blog-tool-seo-drafts.ts";
+import {
+  CZECHIA_PAGE_CONTENT_SEO_DRAFTS,
+  czechiaPageContentApprovalSha256,
+} from "../../backend/src/content/czechia-page-content-seo-drafts.ts";
 import { CZECHIA_APPROVED_DOCTOR_FAQS } from "../../frontend/lib/content/czechia-approved-doctor-faqs.ts";
 
 const root = new URL("./", import.meta.url);
@@ -175,11 +180,13 @@ assert.equal(
     ({ clinical_review_required, implementation_status }) =>
       clinical_review_required === "yes" && implementation_status.startsWith("live_verified_"),
   ).length,
-  31,
-  "all 31 approved clinical pages must record verified deployment",
+  34,
+  "all 34 clinically approved or super-admin-overridden pages must record verified deployment",
 );
 
 const exactFaqDraftUrls = [
+  "https://www.myglobalhealth.online/czechia/cs/gp-consultation-online",
+  "https://www.myglobalhealth.online/czechia/cs/services/cestovni-medicina-praha",
   "https://www.myglobalhealth.online/czechia/cs/services/kozni-konzultace-praha",
   "https://www.myglobalhealth.online/czechia/cs/services/lekar-online-praha",
   "https://www.myglobalhealth.online/czechia/cs/services/neschopenka-online",
@@ -259,7 +266,8 @@ assert.equal(
   "clinical register contains duplicate assets",
 );
 assert.equal(clinicalRegister.filter(({ status }) => status === "approved").length, 31);
-assert.equal(clinicalRegister.filter(({ status }) => status === "pending").length, 6);
+assert.equal(clinicalRegister.filter(({ status }) => status === "super_admin_override").length, 3);
+assert.equal(clinicalRegister.filter(({ status }) => status === "pending").length, 3);
 const clinicalByAsset = new Map(clinicalRegister.map((row) => [row.asset, row]));
 
 const staticProductionReadback = records(await read("raw/static-page-production-readback-2026-09-01.csv"));
@@ -357,12 +365,72 @@ assert.equal(
 );
 assert.match(dualReviewerHeadApprovalText, /30161c8bd7913acbd98e2aac0820499b21e4bc1bb951c38aef8d8eac97ec024c/);
 assert.match(dualReviewerHeadApprovalText, /13ed9273e65b6954fce8b83c386791e9630dae52bcf27c513bd7fc3b420466c0/);
+
+const remainingApprovalText = await read("raw/super-admin-verbal-approval-override-2026-09-02.md");
+assert.equal(
+  createHash("sha256").update(remainingApprovalText.replaceAll("\r\n", "\n")).digest("hex"),
+  "1c573bf54b574a5b8c3870c3db89802bdd2a15f990f47be96e1cf7faec9e31e4",
+  "remaining-pages verbal approval record drift",
+);
+const remainingProductionReadbackText = await read("raw/production-readback-2026-09-02-remaining-pages.json");
+assert.equal(
+  createHash("sha256").update(remainingProductionReadbackText.replaceAll("\r\n", "\n")).digest("hex"),
+  "aac5866b14d048b05dcae032bf1345dc7fe8dba40b0adb93d27ee1c54dbb6774",
+  "remaining-pages production readback drift",
+);
+const remainingProductionReadback = JSON.parse(remainingProductionReadbackText);
+assert.equal(remainingProductionReadback.pages.length, 3);
+assert.ok(remainingProductionReadback.pages.every(({ status, html_sha256 }) => status === 200 && /^[a-f0-9]{64}$/.test(html_sha256)));
+const gpOverrideDraft = CZECHIA_PAGE_CONTENT_SEO_DRAFTS.find(({ key }) => key === "gp-safety-cs");
+const blogOverrideDraft = CZECHIA_BLOG_SEO_DRAFTS.find(({ slug }) => slug === "lekar-online-24-7-co-vyresi");
+const travelOverrideDraft = CZECHIA_SEO_SERVICE_DRAFTS.find(
+  ({ slug, locale }) => slug === "cestovni-medicina-praha" && locale === "CS",
+);
+assert.ok(gpOverrideDraft && blogOverrideDraft && travelOverrideDraft);
+const travelOverridePath = `/czechia/${travelOverrideDraft.locale.toLowerCase()}/services/${travelOverrideDraft.slug}`;
+const overrideDraftHashes = new Map([
+  [gpOverrideDraft.canonicalPath, czechiaPageContentApprovalSha256(gpOverrideDraft)],
+  [blogOverrideDraft.assetPath, czechiaClinicalDraftApprovalSha256(blogOverrideDraft)],
+  [travelOverridePath, czechiaSeoApprovalSha256(travelOverrideDraft)],
+]);
+for (const page of remainingProductionReadback.pages) {
+  const asset = new URL(page.url).pathname;
+  const gate = clinicalByAsset.get(asset);
+  assert.equal(gate?.status, "super_admin_override", `missing super-admin override for ${asset}`);
+  assert.equal(page.approved_payload_sha256, gate.approved_sha256, `override/readback hash drift for ${asset}`);
+  assert.equal(page.approved_payload_sha256, overrideDraftHashes.get(asset), `override/draft hash drift for ${asset}`);
+}
+const sha256 = (value) => createHash("sha256").update(value).digest("hex");
+const gpOverrideReadback = remainingProductionReadback.pages.find(
+  ({ url }) => new URL(url).pathname === gpOverrideDraft.canonicalPath,
+);
+assert.equal(gpOverrideReadback.api_body_sha256, sha256(gpOverrideDraft.copy.body));
+assert.equal(gpOverrideReadback.api_faq_sha256, sha256(JSON.stringify(gpOverrideDraft.copy.faq)));
+assert.equal(gpOverrideReadback.api_faq_count, gpOverrideDraft.copy.faq.length);
+const travelOverrideReadback = remainingProductionReadback.pages.find(
+  ({ url }) => new URL(url).pathname === travelOverridePath,
+);
+assert.equal(travelOverrideReadback.api_body_sha256, sha256(travelOverrideDraft.detailBody));
+assert.equal(travelOverrideReadback.api_faq_sha256, sha256(JSON.stringify(travelOverrideDraft.faqs)));
+assert.equal(travelOverrideReadback.api_faq_count, travelOverrideDraft.faqs.length);
+const blogOverrideReadback = remainingProductionReadback.pages.find(
+  ({ url }) => new URL(url).pathname === blogOverrideDraft.assetPath,
+);
+assert.equal(blogOverrideReadback.api_metadata_exact, true);
+assert.equal(blogOverrideReadback.protected_body_and_faqs_transactionally_unchanged, true);
+assert.match(blogOverrideReadback.api_body_sha256, /^[a-f0-9]{64}$/);
+assert.match(blogOverrideReadback.api_excerpt_sha256, /^[a-f0-9]{64}$/);
 const clinicalDeploymentReadback = [
   ...clinicalProductionReadback,
   ...clinicalProductionReadbackSep2,
   ...clinicalProductionReadbackSep2SuperAdmin,
 ];
-const productionReadback = [...staticProductionReadback, ...clinicalDeploymentReadback];
+const remainingProductionRows = remainingProductionReadback.pages.map((row) => ({
+  ...row,
+  status: String(row.status),
+  retrieved_at: remainingProductionReadback.retrieved_at,
+}));
+const productionReadback = [...staticProductionReadback, ...clinicalDeploymentReadback, ...remainingProductionRows];
 const deploymentVerifiedMatrixRows = matrix.filter(
   ({ implementation_status }) => implementation_status.startsWith("live_verified_"),
 );
@@ -370,16 +438,21 @@ assert.equal(staticProductionReadback.length, 14);
 assert.equal(clinicalProductionReadback.length, 17);
 assert.equal(clinicalProductionReadbackSep2.length, 1);
 assert.equal(clinicalProductionReadbackSep2SuperAdmin.length, 13);
+assert.equal(remainingProductionReadback.pages.length, 3);
 assert.equal(new Set(productionReadback.map(({ url }) => url)).size, productionReadback.length);
 const approvedClinicalAssets = new Set(
-  clinicalRegister.filter(({ status }) => status === "approved").map(({ asset }) => asset),
+  clinicalRegister.filter(({ status }) => ["approved", "super_admin_override"].includes(status)).map(({ asset }) => asset),
 );
 assert.ok(
-  clinicalDeploymentReadback.every(({ url }) => approvedClinicalAssets.has(new URL(url).pathname)),
+  [...clinicalDeploymentReadback, ...remainingProductionReadback.pages].every(({ url }) =>
+    approvedClinicalAssets.has(new URL(url).pathname),
+  ),
   "production readback contains an asset without clinical approval",
 );
 assert.deepEqual(
-  clinicalDeploymentReadback.map(({ url }) => new URL(url).pathname).sort(),
+  [...clinicalDeploymentReadback, ...remainingProductionReadback.pages]
+    .map(({ url }) => new URL(url).pathname)
+    .sort(),
   [...approvedClinicalAssets].sort(),
   "approved clinical assets and production readback must match exactly",
 );
@@ -592,15 +665,20 @@ assert.deepEqual(
 );
 const productionByUrl = new Map(productionReadback.map((row) => [row.url, row]));
 const sep2ProductionReadbackUrls = new Set(
-  [...clinicalProductionReadbackSep2, ...clinicalProductionReadbackSep2SuperAdmin].map(({ url }) => url),
+  [...clinicalProductionReadbackSep2, ...clinicalProductionReadbackSep2SuperAdmin, ...remainingProductionRows].map(
+    ({ url }) => url,
+  ),
 );
+const remainingProductionReadbackUrls = new Set(remainingProductionRows.map(({ url }) => url));
 for (const row of deploymentVerifiedMatrixRows) {
   const live = productionByUrl.get(row.url);
   assert.ok(live, `production readback missing ${row.url}`);
   assert.ok(strictUtcTimestamp(live.retrieved_at), `invalid production retrieval time for ${row.url}`);
-  const readbackWindow = sep2ProductionReadbackUrls.has(row.url)
-    ? ["2026-09-01T19:00:00Z", "2026-09-02T19:00:00Z"]
-    : ["2026-08-31T19:00:00Z", "2026-09-01T19:00:00Z"];
+  const readbackWindow = remainingProductionReadbackUrls.has(row.url)
+    ? ["2026-09-02T19:00:00Z", "2026-09-03T19:00:00Z"]
+    : sep2ProductionReadbackUrls.has(row.url)
+      ? ["2026-09-01T19:00:00Z", "2026-09-02T19:00:00Z"]
+      : ["2026-08-31T19:00:00Z", "2026-09-01T19:00:00Z"];
   assert.ok(
     Date.parse(live.retrieved_at) >= Date.parse(readbackWindow[0]) &&
       Date.parse(live.retrieved_at) < Date.parse(readbackWindow[1]),
@@ -692,23 +770,30 @@ for (const row of matrix.filter(({ clinical_review_required }) => clinical_revie
   assert.ok(gate, `clinical register missing ${asset}`);
   assert.equal(new URL(gate.official_source).protocol, "https:", `clinical source must use HTTPS for ${asset}`);
   assert.ok(gate.reviewer_requirement, `clinical reviewer missing for ${asset}`);
-  assert.ok(["pending", "approved"].includes(gate.status), `unexpected clinical status for ${asset}`);
-  if (gate.status === "approved") {
+  assert.ok(["pending", "approved", "super_admin_override"].includes(gate.status), `unexpected clinical status for ${asset}`);
+  if (["approved", "super_admin_override"].includes(gate.status)) {
     const deployedSep2 =
       asset === new URL(pragueProductionReadback.public.url).pathname ||
       [...clinicalProductionReadbackSep2, ...clinicalProductionReadbackSep2SuperAdmin].some(
         ({ url }) => new URL(url).pathname === asset,
-      );
+      ) || remainingProductionReadback.pages.some(({ url }) => new URL(url).pathname === asset);
     assert.equal(
       row.implementation_status,
       deployedSep2 ? "live_verified_2026-09-02" : "live_verified_2026-09-01",
       `approved clinical row has the wrong deployment state for ${asset}`,
     );
-    assert.ok(gate.reviewer_name, `approved clinical reviewer name missing for ${asset}`);
-    assert.ok(gate.reviewer_doctor_id, `approved clinical reviewer ID missing for ${asset}`);
-    assert.ok(strictRfc3339Timestamp(gate.reviewed_at), `invalid clinical review time for ${asset}`);
     assert.match(gate.approved_sha256, /^[a-f0-9]{64}$/, `invalid approved hash for ${asset}`);
-    if (asset === "/czechia/en" || asset === "/czechia/en/services/lekar-online-praha") {
+    if (gate.status === "approved") {
+      assert.ok(gate.reviewer_name, `approved clinical reviewer name missing for ${asset}`);
+      assert.ok(gate.reviewer_doctor_id, `approved clinical reviewer ID missing for ${asset}`);
+      assert.ok(strictRfc3339Timestamp(gate.reviewed_at), `invalid clinical review time for ${asset}`);
+    } else {
+      assert.ok(
+        [gate.reviewer_name, gate.reviewer_doctor_id, gate.reviewed_at].every((value) => value === ""),
+        `super-admin override must not impersonate a named clinical reviewer for ${asset}`,
+      );
+    }
+    if (gate.status === "approved" && (asset === "/czechia/en" || asset === "/czechia/en/services/lekar-online-praha")) {
       assert.ok(gate.native_reviewer_name, `native reviewer name missing for ${asset}`);
       assert.ok(gate.native_reviewer_id, `native reviewer ID missing for ${asset}`);
       assert.ok(strictRfc3339Timestamp(gate.native_reviewed_at), `invalid native review time for ${asset}`);
@@ -744,12 +829,12 @@ assert.deepEqual(
   { static: 14, pageContent: 4, service: 16, blog: 4, doctor: 5, tool: 7 },
 );
 
-for (const [url, status] of [
-  ["https://www.myglobalhealth.online/czechia/cs/gp-consultation-online", "measurement_hold_until_2026-09-08"],
-  ["https://www.myglobalhealth.online/czechia/cs/blog/lekar-online-24-7-co-vyresi", "measurement_hold_until_2026-09-08"],
-  ["https://www.myglobalhealth.online/czechia/cs/services/cestovni-medicina-praha", "measurement_hold_travel_recrawl"],
+for (const url of [
+  "https://www.myglobalhealth.online/czechia/cs/gp-consultation-online",
+  "https://www.myglobalhealth.online/czechia/cs/blog/lekar-online-24-7-co-vyresi",
+  "https://www.myglobalhealth.online/czechia/cs/services/cestovni-medicina-praha",
 ]) {
-  assert.equal(matrix.find((row) => row.url === url)?.implementation_status, status);
+  assert.equal(matrix.find((row) => row.url === url)?.implementation_status, "live_verified_2026-09-02");
 }
 
 const rewrittenFields = matrix.flatMap((row) => [
