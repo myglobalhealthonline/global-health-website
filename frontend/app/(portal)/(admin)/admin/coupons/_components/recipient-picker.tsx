@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Loader2, X } from "lucide-react";
 import { IconBtn, Pill } from "../../_components/atoms";
+import { usePatientLookup } from "./use-patient-lookup";
 
 export type RecipientChip = {
   email: string;
@@ -14,12 +15,6 @@ export type RecipientChip = {
    * rows by address), so this is deliberately NOT submitted.
    */
   known: boolean;
-};
-
-type PatientOption = {
-  email: string;
-  fullName: string;
-  appointmentCount: number;
 };
 
 const LOCALES = ["EN", "PT", "ES", "CS", "RO", "DE"] as const;
@@ -34,8 +29,8 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
  * portal's native `<form action={serverAction}>` + FormData convention — no
  * react-hook-form, no client-side submit fetch.
  *
- * The lookup reuses `/api/admin/patients/by-email`, which is the same endpoint
- * and the same debounce+AbortController shape as the manual-booking form.
+ * The lookup is `usePatientLookup`, shared with the personal-coupon email
+ * field — the same endpoint and debounce the manual-booking form uses.
  */
 export function RecipientPicker({
   name = "recipients",
@@ -51,45 +46,12 @@ export function RecipientPicker({
 }) {
   const [chips, setChips] = useState<RecipientChip[]>([]);
   const [query, setQuery] = useState("");
-  const [options, setOptions] = useState<PatientOption[]>([]);
-  const [loading, setLoading] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { options, loading } = usePatientLookup(query);
 
   const atMax = max != null && chips.length >= max;
-
-  useEffect(() => {
-    const value = query.trim();
-    const controller = new AbortController();
-    const timer = setTimeout(() => {
-      if (value.length < 2) {
-        setOptions([]);
-        setLoading(false);
-        return;
-      }
-      void (async () => {
-        setLoading(true);
-        try {
-          const res = await fetch(
-            `/api/admin/patients/by-email?email=${encodeURIComponent(value)}`,
-            { signal: controller.signal },
-          );
-          const json = (await res.json()) as { ok?: boolean; data?: { patients?: PatientOption[] } };
-          if (controller.signal.aborted) return;
-          setOptions(res.ok && json.ok && Array.isArray(json.data?.patients) ? json.data!.patients! : []);
-        } catch {
-          if (!controller.signal.aborted) setOptions([]);
-        } finally {
-          if (!controller.signal.aborted) setLoading(false);
-        }
-      })();
-    }, 250);
-    return () => {
-      clearTimeout(timer);
-      controller.abort();
-    };
-  }, [query]);
 
   function add(chip: RecipientChip) {
     const email = chip.email.trim().toLowerCase();
@@ -106,7 +68,6 @@ export function RecipientPicker({
     if (atMax) return;
     setChips((prev) => [...prev, { ...chip, email }]);
     setQuery("");
-    setOptions([]);
     setError(null);
   }
 
@@ -138,6 +99,7 @@ export function RecipientPicker({
       <div className="relative">
         <input
           id={`${name}-input`}
+          ref={inputRef}
           className="gh-input"
           type="text"
           autoComplete="off"

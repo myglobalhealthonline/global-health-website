@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { PersonalEmailField } from "./personal-email-field";
 import { RecipientPicker } from "./recipient-picker";
 
 /** Local wall-clock value for a `datetime-local` input, `days` from now. */
@@ -146,22 +147,7 @@ export function CouponFields() {
       </div>
 
       {kind === "PERSONAL" ? (
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label>
-            <span className="gh-field-label">Their email</span>
-            <input className="gh-input" name="personalEmail" type="email" required />
-            <small className="mt-1 block text-[var(--color-text-muted)]">
-              The booking must be paid for from this address, or the code is refused.
-            </small>
-          </label>
-          <label>
-            <span className="gh-field-label">Their name (optional)</span>
-            <input className="gh-input" name="personalName" type="text" />
-            <small className="mt-1 block text-[var(--color-text-muted)]">
-              Used for the greeting in the email.
-            </small>
-          </label>
-        </div>
+        <PersonalEmailField />
       ) : (
         <RecipientPicker
           label="Email it to"
