@@ -731,7 +731,21 @@
     "shipping": "Versand",
     "total": "Gesamt",
     "trustSecure": "Sichere Zahlung powered by Stripe",
-    "trustEncrypted": "Verschlüsselt — Kartendaten werden niemals gespeichert"
+    "trustEncrypted": "Verschlüsselt — Kartendaten werden niemals gespeichert",
+    "couponLabel": "Rabattcode",
+    "couponPlaceholder": "Code eingeben",
+    "couponApply": "Einlösen",
+    "couponApplying": "Wird geprüft...",
+    "couponRemove": "Entfernen",
+    "couponApplied": "{code} eingelöst",
+    "couponDiscount": "Rabatt ({percent} %)",
+    "couponInvalid": "Dieser Code kann nicht verwendet werden. Bitte prüfen Sie ihn und versuchen Sie es erneut.",
+    "couponNotWithBenefit": "Rabattcodes lassen sich nicht mit einem Mitgliedschafts-, Firmen- oder Planvorteil kombinieren.",
+    "couponNotWithInsurance": "Rabattcodes lassen sich nicht mit einer Versicherung oder einer Kostenübernahmekarte kombinieren.",
+    "couponNotAvailableHere": "In diesem Land sind Rabattcodes nicht verfügbar.",
+    "couponBelowMinimum": "Mit diesem Code bleibt ein Betrag, der zu gering ist, um ihn abzubuchen.",
+    "couponNeedsEmail": "Bitte geben Sie oben zuerst Ihre E-Mail-Adresse ein.",
+    "couponExpiredAtCheckout": "Ihr Rabattcode ist nicht mehr gültig und wurde entfernt. Bitte prüfen Sie den Gesamtbetrag vor der Zahlung."
   },
   "checkoutStatus": {
     "successTitle": "Zahlung erhalten",

@@ -202,6 +202,15 @@ export function ManualBookingForm({
   // Admin discretionary discount, whole percent. Kept as a string so the field
   // can be empty (= no discount) rather than forcing a 0.
   const [discountPercent, setDiscountPercent] = useState("");
+  // Coupon code. Mutually exclusive with the discount above — a valid coupon
+  // greys that input out, mirroring the server's own refusal to accept both.
+  const [couponCode, setCouponCode] = useState("");
+  const [couponState, setCouponState] = useState<
+    | { status: "idle" }
+    | { status: "checking" }
+    | { status: "valid"; code: string; discountPercent: number }
+    | { status: "invalid"; message: string }
+  >({ status: "idle" });
   // Private membership (§11.7). One control for both cases: the value is
   // "membership:<enrollmentId>" for the patient's own benefit and
   // "override:<benefitId>" for the SUPER_ADMIN goodwill grant, so the two can
@@ -620,6 +629,62 @@ export function ManualBookingForm({
   // admin fill both and meet a 422 after the slot is picked.
   const benefitBlocksInsurance = selectedBenefit != null || isOverride;
 
+  // Debounced staff-facing code check. The admin endpoint returns the REAL
+  // reason (expired, reserved for another address, fully redeemed) because a
+  // person on the phone needs to know which one it is. It is advisory:
+  // `createManualBooking` re-resolves the code with the booking's real
+  // insurance / membership answers, and that is the decision that counts.
+  useEffect(() => {
+    const value = couponCode.trim().toUpperCase();
+    if (!value) {
+      setCouponState({ status: "idle" });
+      return;
+    }
+    const controller = new AbortController();
+    const timer = setTimeout(() => {
+      void (async () => {
+        setCouponState({ status: "checking" });
+        try {
+          const res = await fetch("/api/admin/coupons/validate", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ code: value, email: email.trim() || undefined, countryCode }),
+            signal: controller.signal,
+          });
+          const json = (await res.json()) as {
+            ok?: boolean;
+            message?: string;
+            data?: { valid: boolean; message?: string; code?: string; discountPercent?: number };
+          };
+          if (controller.signal.aborted) return;
+          if (!res.ok || !json.ok || !json.data) {
+            setCouponState({ status: "invalid", message: json.message ?? "Could not check that code." });
+            return;
+          }
+          if (!json.data.valid) {
+            setCouponState({ status: "invalid", message: json.data.message ?? "That code cannot be used." });
+            return;
+          }
+          setCouponState({
+            status: "valid",
+            code: json.data.code!,
+            discountPercent: json.data.discountPercent!,
+          });
+        } catch {
+          if (!controller.signal.aborted) {
+            setCouponState({ status: "invalid", message: "Could not check that code." });
+          }
+        }
+      })();
+    }, 400);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [couponCode, email, countryCode]);
+
+  const couponApplied = couponState.status === "valid";
+
   // ── Discount + live price preview ────────────────────────────────────────
   // The backend re-derives the price itself (base → peak → insurance) and
   // applies the discount to that; this preview mirrors the same order so the
@@ -656,10 +721,14 @@ export function ManualBookingForm({
   const grossPriceCents = memberPriceCents ?? resolvedPriceCents;
   const priceCurrency =
     selectedService?.currencyCode ?? selectedSlot?.currencyCode ?? "EUR";
+  // A coupon and the manual discount never both apply — the coupon wins in the
+  // preview because the server refuses the pair outright and the input is
+  // greyed while one is applied.
+  const appliedPct = couponApplied ? couponState.discountPercent : discountPct;
   const netPriceCents =
-    grossPriceCents == null || discountError || discountPct <= 0
+    grossPriceCents == null || (!couponApplied && (discountError || discountPct <= 0))
       ? grossPriceCents
-      : grossPriceCents - Math.round((grossPriceCents * discountPct) / 100);
+      : grossPriceCents - Math.round((grossPriceCents * appliedPct) / 100);
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     const result = validateManualBooking({
@@ -1119,6 +1188,45 @@ export function ManualBookingForm({
             * booking resolves to (base, peak, insurance, or the member price),
             * so the percentage always reads against what the patient would
             * otherwise pay. */}
+          {/* Coupon code. Sits directly above the discount because the two are
+            * alternatives, not additions: the server rejects a booking that
+            * carries both, so a valid code greys the discount input out rather
+            * than letting staff quote a compounded number nobody can see. */}
+          <label className="flex flex-col gap-1.5">
+            <span className="gh-field-label">Coupon code</span>
+            <input
+              type="text"
+              name="couponCode"
+              className="gh-input font-mono tracking-[0.08em] uppercase"
+              autoComplete="off"
+              spellCheck={false}
+              placeholder="Optional"
+              value={couponCode}
+              onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+              aria-invalid={couponState.status === "invalid"}
+            />
+            {couponState.status === "checking" ? (
+              <span className="text-portal-meta text-[var(--color-text-muted)]">
+                Checking the code…
+              </span>
+            ) : couponState.status === "invalid" ? (
+              <FieldError msg={couponState.message} />
+            ) : couponState.status === "valid" ? (
+              <span className="text-portal-meta text-[var(--color-text-body)]">
+                {couponState.code} — {couponState.discountPercent}% off
+                {grossPriceCents != null && netPriceCents != null
+                  ? netPriceCents === 0
+                    ? ". Comped in full — no payment link."
+                    : `. Charges ${(netPriceCents / 100).toFixed(2)} ${priceCurrency} instead of ${(grossPriceCents / 100).toFixed(2)} ${priceCurrency}.`
+                  : "."}
+              </span>
+            ) : (
+              <span className="text-portal-meta text-[var(--color-text-muted)]">
+                Optional. Not valid with insurance, a membership benefit, or in Brazil.
+              </span>
+            )}
+          </label>
+
           <label className="flex flex-col gap-1.5">
             <span className="gh-field-label">Discount %</span>
             <input
@@ -1130,11 +1238,17 @@ export function ManualBookingForm({
               max={100}
               step={1}
               placeholder="0"
-              value={discountPercent}
+              value={couponApplied ? "" : discountPercent}
+              disabled={couponApplied}
               onChange={(e) => setDiscountPercent(e.target.value)}
               aria-invalid={Boolean(discountError)}
             />
-            {discountError ? (
+            {couponApplied ? (
+              <span className="text-portal-meta text-[var(--color-text-muted)]">
+                Not available while a coupon is applied — clear the code above to
+                use a manual discount instead.
+              </span>
+            ) : discountError ? (
               <FieldError msg={discountError} />
             ) : grossPriceCents != null && netPriceCents != null && discountPct > 0 ? (
               <span className="text-portal-meta text-[var(--color-text-body)]">

@@ -9,6 +9,7 @@ import {
 import { stopPrePaymentFlowOnPaid } from "../automation/pre-payment-flow.service.js";
 import { emitOpsAlert } from "../subscriptions/ops/ops-alert.js";
 import { commitOrderCreditReservations } from "../subscriptions/checkout-pricing.service.js";
+import { markCouponRedemptionConsumed } from "../coupons/coupon-release.service.js";
 import { enqueueOrderPaidAutomations } from "../outbox/outbox.js";
 import { encryptPhi } from "../../lib/crypto/phi-crypto.js";
 import { markRequisitionsReadyOnOrderPaid } from "../lab-orders/lab-requisitions.service.js";
@@ -95,6 +96,14 @@ export async function completeOrderPaymentFromCheckoutSession(
     // retrying here on every redelivered webhook or sync-order call is
     // also a self-heal if the original commit attempt silently failed.
     await commitCreditsForPaidOrder(orderId, opts.stripeEventId, log);
+    // Coupon: RESERVED → CONSUMED. The counter does not move — the use was
+    // claimed when the order was created; this records that it stuck, so a
+    // later cancellation knows it is releasing a spent use rather than an
+    // abandoned one. Idempotent (updateMany filtered on RESERVED), so the
+    // redelivery / sync-order path self-heals like the commit above.
+    await markCouponRedemptionConsumed(orderId).catch((err) =>
+      log.error({ err, orderId }, "Coupon redemption consume failed"),
+    );
     // Cross-jurisdiction prescription: mint the async appointment + notify the
     // prescribing doctor on payment. Idempotent (guarded by request status +
     // unique asyncAppointmentId), so calling it on the redelivery / sync-order
@@ -122,6 +131,9 @@ export async function completeOrderPaymentFromCheckoutSession(
   }
 
   await commitCreditsForPaidOrder(orderId, opts.stripeEventId, log);
+  await markCouponRedemptionConsumed(orderId).catch((err) =>
+    log.error({ err, orderId }, "Coupon redemption consume failed"),
+  );
   await settleCrossBorderRxOnPaid(orderId, log);
   // Post-payment side effects (Meet link, confirmation email/WhatsApp, invoice
   // PDF) are NOT awaited here anymore. markOrderPaidFromStripeSession already

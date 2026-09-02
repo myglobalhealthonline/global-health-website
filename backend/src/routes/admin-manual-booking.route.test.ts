@@ -227,6 +227,27 @@ describe("admin manual booking route — auth + validation", () => {
     }
   });
 
+  it("schema accepts an omitted, null, or well-formed coupon code", () => {
+    for (const couponCode of [undefined, null, "SUMMER20", "AB-12"]) {
+      const ok = createManualAppointmentBodySchema.safeParse(validPayload({ couponCode }));
+      assert.equal(
+        ok.success,
+        true,
+        `expected couponCode ${String(couponCode)} to be accepted`,
+      );
+    }
+  });
+
+  it("schema rejects an over-long coupon code", () => {
+    // Shape only — whether the code exists, is in date, has uses left and is
+    // allowed on this booking is decided by createManualBooking, which is also
+    // where a coupon and a manual discount are refused as mutually exclusive.
+    const bad = createManualAppointmentBodySchema.safeParse(
+      validPayload({ couponCode: "X".repeat(33) }),
+    );
+    assert.equal(bad.success, false);
+  });
+
   it("schema accepts valid international phone formats across markets", () => {
     for (const phone of [
       "+353 871234567", // Ireland

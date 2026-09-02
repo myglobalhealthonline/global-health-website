@@ -1,0 +1,19 @@
+{
+  "coupon": {
+    "subject": "Váš slevový kód Global Health na {discountPercent} %",
+    "title": "Sleva na vaši další rezervaci",
+    "greetingNamed": "Dobrý den, {name},",
+    "greetingAnon": "Dobrý den,",
+    "personalIntro": "Vytvořili jsme pro vás slevový kód.",
+    "generalIntro": "Zde je slevový kód, který můžete použít při své další rezervaci u Global Health.",
+    "codeLabel": "Váš kód",
+    "discountLine": "Sleva {discountPercent} % na vaši rezervaci",
+    "validLine": "Platí do {validUntil}",
+    "personalLock": "Tento kód je vyhrazen pro {email} — při rezervaci použijte stejnou adresu.",
+    "howTo": "Zadejte kód v souhrnu objednávky u pokladny a sleva se uplatní ještě před platbou.",
+    "shippingNote": "Sleva se vztahuje na samotnou rezervaci; poštovné se neslevňuje.",
+    "cta": "Objednat se",
+    "signoff": "Tým Global Health",
+    "footer": "Pokud jste tento e-mail nečekali, můžete jej ignorovat."
+  }
+}

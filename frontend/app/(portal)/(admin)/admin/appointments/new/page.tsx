@@ -18,6 +18,7 @@ import { dialCodeForCountry } from "@/lib/phone/dial-codes";
 import { getPublicBookingRequirements } from "@/lib/content/get-public-countries";
 import {
   hasErrors,
+  parseCouponCode,
   parseDiscountPercent,
   parseMembershipSelection,
   validateManualBooking,
@@ -241,6 +242,17 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
       );
     }
 
+    // Optional coupon. Shape-checked here; whether the code exists, is in
+    // date, has uses left and is allowed on this booking is decided by the
+    // backend, which is also where a coupon and a manual discount are refused
+    // as mutually exclusive.
+    const coupon = parseCouponCode(readOpt("couponCode"));
+    if (coupon.error) {
+      redirect(
+        `/admin/appointments/new?countryCode=${encodeURIComponent(countryCode ?? "")}&error=${encodeURIComponent(coupon.error)}`,
+      );
+    }
+
     // Private membership (§11.7). Same treatment as the discount: a malformed
     // benefit stops the booking rather than quietly charging the full price
     // after the admin quoted the member price.
@@ -300,6 +312,8 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
       // insurance); 100 comps the booking and skips the payment link. On a
       // membership line it lands on the member price, not the list price.
       discountPercent: discount.value,
+      // Applied instead of the discount above — sending both is a 422.
+      couponCode: coupon.value,
       // The backend re-resolves the benefit from the database and refuses one
       // that is not this patient's, not active, or has no rule for the service.
       // These ids are an input to validate, never a price to trust.

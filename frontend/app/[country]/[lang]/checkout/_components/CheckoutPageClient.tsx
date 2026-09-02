@@ -54,6 +54,8 @@ const KIND_ICON: Record<CartItem["kind"], typeof Stethoscope> = {
  * line's patient snapshot (covers guest bookings that never logged
  * in). Each field stays editable so the buyer can override.
  */
+import { CouponField, type AppliedCoupon } from "./CouponField";
+
 export function CheckoutPageClient({
   t,
   cartT,
@@ -77,6 +79,11 @@ export function CheckoutPageClient({
   // amount Stripe charges (server recomputes the same benefits) (B5).
   const [coverageSaved, setCoverageSaved] = useState(0);
   const [coverageLines, setCoverageLines] = useState<CartCoverageLine[]>([]);
+  // Applied discount code. `discountCents` is server-computed against this very
+  // cart, so the summary never shows a figure the card is not charged — and it
+  // is still only a hint: the checkout re-resolves the code and re-claims the
+  // redemption cap inside its own transaction.
+  const [coupon, setCoupon] = useState<AppliedCoupon | null>(null);
   /**
    * The preview is a round-trip, and until it lands `coverageSaved` is 0 — so
    * the pay button reads "Pay €39 securely" for a second or two on an order
@@ -183,9 +190,18 @@ export function CheckoutPageClient({
       shipCountryCode: String(form.get("shipCountryCode") ?? cart.countryCode),
       returnTo,
       notificationLocale: notificationLocaleFromLang(lang),
+      couponCode: coupon?.code,
     });
     if (!res.ok) {
       setSubmitting(false);
+      // The code stopped being usable between Apply and Pay — expired, spent by
+      // somebody else, or disabled. Drop it and say so, rather than letting the
+      // buyer discover a higher number on the Stripe page.
+      if (res.code === "COUPON_INVALID") {
+        setCoupon(null);
+        setError(t.couponExpiredAtCheckout);
+        return;
+      }
       setError(res.message);
       return;
     }
@@ -287,7 +303,14 @@ export function CheckoutPageClient({
   );
   const total = cart.subtotalCents + shippingCents;
   const payableSaved = Math.min(Math.max(0, coverageSaved), cart.subtotalCents);
-  const payableTotal = Math.max(0, total - payableSaved);
+  // A coupon and a benefit are mutually exclusive server-side, so these two
+  // never both bite; clamped anyway so a stale figure can never invent a
+  // negative total.
+  const couponSaved = Math.min(
+    Math.max(0, coupon?.discountCents ?? 0),
+    Math.max(0, cart.subtotalCents - payableSaved),
+  );
+  const payableTotal = Math.max(0, total - payableSaved - couponSaved);
   // Split the savings row: corporate-membership discount gets its own labeled
   // line ("Corporate Standard (Acme) −10%"), plan benefits keep the generic
   // "Plan savings" label. Amounts are display-only — the server recomputes.
@@ -623,6 +646,19 @@ export function CheckoutPageClient({
                     );
                   })}
                 </ul>
+                <CouponField
+                  t={t}
+                  applied={coupon}
+                  onApply={setCoupon}
+                  onRemove={() => setCoupon(null)}
+                  readEmail={() =>
+                    String(
+                      (formRef.current?.elements.namedItem("email") as HTMLInputElement | null)
+                        ?.value ?? "",
+                    )
+                  }
+                  disabled={submitting}
+                />
                 <dl className="mt-4 space-y-2 border-t pt-4 text-sm" style={{ borderColor: "rgba(255,255,255,0.12)" }}>
                   <div className="flex justify-between">
                     <dt style={{ color: "var(--gh2-on-dark-muted)" }}>{t.subtotal}</dt>
@@ -657,6 +693,16 @@ export function CheckoutPageClient({
                       </dt>
                       <dd className="shrink-0 font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "var(--color-brand-accent)" }}>
                         −{formatPrice(corporateSaved, cart.currencyCode)}
+                      </dd>
+                    </div>
+                  ) : null}
+                  {couponSaved > 0 && coupon ? (
+                    <div className="flex justify-between gap-3">
+                      <dt style={{ color: "var(--color-brand-accent)" }}>
+                        {t.couponDiscount.replace("{percent}", String(coupon.discountPercent))}
+                      </dt>
+                      <dd className="shrink-0 font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "var(--color-brand-accent)" }}>
+                        −{formatPrice(couponSaved, cart.currencyCode)}
                       </dd>
                     </div>
                   ) : null}
