@@ -11,6 +11,7 @@ import { marketDisplayName } from "@/lib/content/doctor-market-name";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
+import { applyCzechiaApprovedDoctorFaqs } from "@/lib/content/czechia-approved-doctor-faqs";
 
 export type DoctorProfilePageData = {
   hero: {
@@ -351,7 +352,16 @@ export const resolveDoctorProfilePageData = cache(async function resolveDoctorPr
       ...(backend.seoTitle ? { seoTitle: backend.seoTitle } : {}),
       ...(backend.seoDescription ? { seoDescription: backend.seoDescription } : {}),
       ...(backend.seoKeywords ? { seoKeywords: backend.seoKeywords } : {}),
-      ...(backend.faqs ? { faqs: backend.faqs } : {}),
+      ...(backend.faqs
+        ? {
+            faqs: applyCzechiaApprovedDoctorFaqs(
+              countryCode,
+              locale,
+              backend.slug,
+              backend.faqs,
+            ),
+          }
+        : {}),
       ...(backend.editorialChecklist ? { editorialChecklist: backend.editorialChecklist } : {}),
       ...(backend.lastReviewedAt ? { lastReviewedAt: backend.lastReviewedAt } : {}),
       imageAltText: backend.profileImageAltText ?? displayName,

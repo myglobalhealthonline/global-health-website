@@ -269,6 +269,23 @@ test("apply rejects an unverified reviewer before any copy write", async () => {
   assert.deepEqual(database.writes, []);
 });
 
+test("doctor directory accepts an active delegated governance reviewer", async () => {
+  const source = CZECHIA_PAGE_CONTENT_SEO_DRAFTS.find(({ key }) => key === "doctors-cs")!;
+  const page = seedPage(source);
+  const draft = draftFor(page, source);
+  const database = fakeDatabase(page, false);
+
+  await runCzechiaPageContentSeoPatch(
+    database.client,
+    options(draft, true),
+    approvedRegister(draft.canonicalPath),
+    silentLogger,
+    [draft],
+  );
+
+  assert.deepEqual(database.writes, [draft.copy]);
+});
+
 test("dry-run verifies the source hash without starting a transaction", async () => {
   const source = CZECHIA_PAGE_CONTENT_SEO_DRAFTS[0];
   const page = seedPage(source);

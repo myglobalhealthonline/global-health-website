@@ -1,4 +1,11 @@
 {
+  "adhd-test": {
+    "metaTitle": "ADHD test pro dospělé zdarma | Screening",
+    "metaDescription": "Vyplňte šest otázek screeningového testu ADHD pro dospělé. Výsledek není diagnóza; tu stanoví psychiatr nebo klinický psycholog.",
+    "h1Lead": "ADHD",
+    "h1Accent": "test pro dospělé",
+    "h1Trail": ""
+  },
   "blood-pressure-chart": {
     "metaTitle": "Krevní tlak: kalkulačka a tabulka hodnot",
     "metaDescription": "Zkontrolujte orientační kategorii krevního tlaku, správný postup měření a situace, kdy je vhodná konzultace nebo akutní pomoc.",
@@ -20,11 +27,25 @@
     "h1Accent": "kalorií",
     "h1Trail": ""
   },
+  "due-date-calculator": {
+    "metaTitle": "Těhotenská kalkulačka | Termín porodu a týdny",
+    "metaDescription": "Odhadněte termín porodu a týden těhotenství podle prvního dne poslední menstruace a délky cyklu. Výsledek je orientační.",
+    "h1Lead": "Těhotenská",
+    "h1Accent": "kalkulačka",
+    "h1Trail": ""
+  },
   "osteoporosis-risk-checker": {
     "metaTitle": "Riziko osteoporózy | Orientační kontrola",
     "metaDescription": "Projděte orientační rizikové faktory osteoporózy a zjistěte, kdy může být vhodné odborné posouzení. Nejde o FRAX ani diagnózu.",
     "h1Lead": "Riziko",
     "h1Accent": "osteoporózy",
+    "h1Trail": ""
+  },
+  "ovulation-calculator": {
+    "metaTitle": "Ovulační kalkulačka | Plodné dny a ovulace",
+    "metaDescription": "Odhadněte den ovulace a plodné dny podle prvního dne poslední menstruace a délky cyklu. Výsledek je orientační.",
+    "h1Lead": "Ovulační",
+    "h1Accent": "kalkulačka",
     "h1Trail": ""
   }
 }

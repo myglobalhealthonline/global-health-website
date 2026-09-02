@@ -144,7 +144,7 @@ const metadataDrafts = [
   {
     serviceId: "cmr85ycjf004670juod6z2yqd",
     expectedServiceUpdatedAt: "2026-07-19T05:02:19.027Z",
-    expectedSourceSha256: "042ea5ba3cba053187e6d1c8e62eb93d4fb21555c632e9e66cdf580be8bed32c",
+    expectedSourceSha256: "5382a2857335ff52f1ec5dceab4bd7ab1ad958e2bb43cdf26b80e7737a6ad732",
     countryCode: "cz",
     locale: "CS",
     slug: "detsky-lekar-online",
@@ -236,7 +236,7 @@ const metadataDrafts = [
   {
     serviceId: "cmr85y1e7002170jutctxdjdx",
     expectedServiceUpdatedAt: "2026-07-19T05:02:15.472Z",
-    expectedSourceSha256: "5c5b2935ee12a43d391abf5dc03f2773574f3a9a6c590d6587026ae13cc13941",
+    expectedSourceSha256: "3839eaf5ad33d12809b326247cba8b7552929d712829dfa19c42000b26cec5ee",
     countryCode: "cz",
     locale: "CS",
     slug: "dusevni-zdravi-online",
@@ -438,7 +438,7 @@ const metadataDrafts = [
   {
     serviceId: "cmr85xq6u000070jufztsgfec",
     expectedServiceUpdatedAt: "2026-09-01T23:38:25.814Z",
-    expectedSourceSha256: "ce0462f59a854476b6061e5b0d4b253fdd09e3ce15066776935fa5ee949eacf6",
+    expectedSourceSha256: "929eb8ac281ad5383eb468a1783457c7aae55d5a87d576a67e16135b1a0b10bb",
     countryCode: "cz",
     locale: "EN",
     slug: "lekar-online-praha",

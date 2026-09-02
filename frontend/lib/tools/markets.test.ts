@@ -15,10 +15,13 @@ const MARKETS: Record<string, string[]> = {
   br: ["pt", "en"],
 };
 const APPROVED_CZECH_TOOL_SLUGS = [
+  "adhd-test",
   "blood-pressure-chart",
   "bmi-calculator",
   "calorie-calculator",
+  "due-date-calculator",
   "osteoporosis-risk-checker",
+  "ovulation-calculator",
 ] as const;
 
 describe("toolMarkets", () => {
@@ -161,10 +164,6 @@ describe("applyMarketToolCopy / applyMarketBands", () => {
       expect(applyMarketToolCopy("ie", "cs", slug, shared)).toBe(shared);
     }
 
-    for (const slug of ["adhd-test", "due-date-calculator", "ovulation-calculator"]) {
-      const shared = getToolCopy("cs", slug)!;
-      expect(applyMarketToolCopy("cz", "cs", slug, shared)).toBe(shared);
-    }
   });
 
   it("gives Brazil Brazilian Portuguese, not European", () => {

@@ -135,7 +135,7 @@ test("pins the English Prague draft to the post-Czech-rollout service snapshot",
   assert.equal(english.expectedServiceUpdatedAt, "2026-09-01T23:38:25.814Z");
   assert.equal(
     english.expectedSourceSha256,
-    "ce0462f59a854476b6061e5b0d4b253fdd09e3ce15066776935fa5ee949eacf6",
+    "929eb8ac281ad5383eb468a1783457c7aae55d5a87d576a67e16135b1a0b10bb",
   );
 });
 

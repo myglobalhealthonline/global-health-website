@@ -75,7 +75,7 @@ export const CZECHIA_DOCTOR_PROFILE_SEO_DRAFTS = [
     doctorCountryId: "cmqybpo1g01z601qk3cxn1l5r",
     translationId: "dcmt_57b6801799cd71b366ba",
     expectedTranslationUpdatedAt: "2026-07-29T18:54:53.718Z",
-    expectedSourceSha256: "d48324ffb6d083c5b21dbe4b3adeacca443399e24495968ea85ba6d3121e30ea",
+    expectedSourceSha256: "1c1598c0789ed5bc3287053387e5666c032d2eee3bd463d944e1ae5dd748fe05",
     primaryKeyword: "MUDr. Ahmed Maklad",
     secondaryKeywords: ["Ahmed Maklad praktický lékař", "Ahmed Maklad ČLK"],
     desired: {
@@ -102,7 +102,7 @@ export const CZECHIA_DOCTOR_PROFILE_SEO_DRAFTS = [
     doctorCountryId: "cmraouqf707ie01mz2vgn4icq",
     translationId: "cmrw6jr2y000201mzs7b9bphh",
     expectedTranslationUpdatedAt: "2026-07-29T18:54:30.145Z",
-    expectedSourceSha256: "3f084a6bce7375e87b4fcf1e6f0fa7897a0d9b5d569d400acea69f959bc1ae2e",
+    expectedSourceSha256: "11d7e3c8d799dfe60f520db8e7829f404e01691f7cfe79c396b866a9be662869",
     primaryKeyword: "MUDr. Khoiamul Islam",
     secondaryKeywords: ["Khoiamul Islam praktický lékař", "Khoiamul Islam ČLK"],
     desired: {
@@ -129,7 +129,7 @@ export const CZECHIA_DOCTOR_PROFILE_SEO_DRAFTS = [
     doctorCountryId: "cmqz4px1k007b01luk5w4t6q3",
     translationId: "dcmt_5a2ac631b7c0d6a230f0",
     expectedTranslationUpdatedAt: "2026-08-20T06:24:46.051Z",
-    expectedSourceSha256: "300a16b1a83d001cf3af79063f0e06dfb40a6f56bfc5424769a17053fb2a3087",
+    expectedSourceSha256: "b85c9f22c1a3493974447642ebae58432e6232e1d68dd37b457b2b4d10467f97",
     primaryKeyword: "MUDr. Romana Pavlů",
     secondaryKeywords: ["Romana Pavlů praktická lékařka", "Romana Pavlů ČLK"],
     desired: {
@@ -188,7 +188,7 @@ export const CZECHIA_DOCTOR_PROFILE_SEO_DRAFTS = [
     doctorCountryId: "cmqz3zdkp006s01lu95zjty6m",
     translationId: "dcmt_8710c21ec1d7130e2215",
     expectedTranslationUpdatedAt: "2026-08-20T06:24:54.769Z",
-    expectedSourceSha256: "1fbd2aa5961d97f16b45051151410b24c07b6136ba427a4523b82316591f154f",
+    expectedSourceSha256: "0a7b30fa8fa3f6914420a1e99d9e2c5cd54f600a36a5c8d63304d1947848fed7",
     primaryKeyword: "MUDr. Yasmin Holz",
     secondaryKeywords: ["Yasmin Holz praktická lékařka", "Yasmin Holz ČLK"],
     desired: {

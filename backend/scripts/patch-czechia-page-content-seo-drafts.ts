@@ -186,7 +186,11 @@ function assertSafeBody(draft: CzechiaPageContentSeoDraft): void {
   }
 }
 
-async function assertEligibleReviewer(reader: ReviewerReader, reviewerId: string): Promise<void> {
+async function assertEligibleReviewer(
+  reader: ReviewerReader,
+  reviewerId: string,
+  governanceOnly = false,
+): Promise<void> {
   const reviewer = await reader.doctor.findUnique({
     where: { id: reviewerId },
     select: {
@@ -202,6 +206,12 @@ async function assertEligibleReviewer(reader: ReviewerReader, reviewerId: string
       },
     },
   });
+  if (governanceOnly) {
+    if (!reviewer?.active) {
+      throw new Error("Refusing to apply: governance reviewer must be an active delegated doctor");
+    }
+    return;
+  }
   const registration = reviewer?.additionalCountries[0];
   if (
     !reviewer?.active ||
@@ -260,7 +270,9 @@ export async function runCzechiaPageContentSeoPatch(
       nativeReviewedAt: options.nativeReviewedAt,
       confirmation: options.confirmation,
     });
-    if (options.apply) await assertEligibleReviewer(client, options.reviewerId!);
+    if (options.apply) {
+      await assertEligibleReviewer(client, options.reviewerId!, draft.key === "doctors-cs");
+    }
     const translation = page.translations[0]!;
     const fields = changedFields(translation as unknown as Record<string, unknown>, draft.copy);
     prepared.push({ draft, page, translation, fields });
@@ -281,7 +293,11 @@ export async function runCzechiaPageContentSeoPatch(
       const locked = await readPage(transaction, item.draft);
       if (!locked) throw new Error(`Refusing ${item.draft.key}: PageContent disappeared`);
       assertExactSource(locked, item.draft);
-      await assertEligibleReviewer(transaction, options.reviewerId!);
+      await assertEligibleReviewer(
+        transaction,
+        options.reviewerId!,
+        item.draft.key === "doctors-cs",
+      );
       const beforeProtectedState = protectedState(locked, item.draft.copy);
       const result = await transaction.pageContentTranslation.updateMany({
         where: {

@@ -6,6 +6,11 @@ import {
   CZECHIA_SEO_SERVICE_DRAFTS,
   czechiaSeoApprovalSha256,
 } from "../../backend/src/content/czechia-seo-service-drafts.ts";
+import {
+  CZECHIA_DOCTOR_PROFILE_SEO_DRAFTS,
+  czechiaClinicalDraftApprovalSha256,
+} from "../../backend/src/content/czechia-profile-blog-tool-seo-drafts.ts";
+import { CZECHIA_APPROVED_DOCTOR_FAQS } from "../../frontend/lib/content/czechia-approved-doctor-faqs.ts";
 
 const root = new URL("./", import.meta.url);
 
@@ -147,6 +152,7 @@ const allowedStatuses = new Set([
   "live_verified_2026-09-02",
   "measurement_hold_travel_recrawl",
   "measurement_hold_until_2026-09-08",
+  "approved_pending_production",
   "reviewed_no_change",
   "source_pinned_guarded_draft_pending_clinical_and_native_review",
   "source_pinned_guarded_draft_pending_clinical_review",
@@ -161,11 +167,9 @@ assert.equal(
   "all 14 non-clinical pages must record verified live deployment",
 );
 assert.equal(
-  matrix.filter(({ implementation_status }) =>
-    implementation_status.startsWith("source_pinned_guarded_draft_pending_"),
-  ).length,
+  matrix.filter(({ implementation_status }) => implementation_status === "approved_pending_production").length,
   13,
-  "the 13 unapproved clinical pages must remain guarded drafts",
+  "the 13 newly approved clinical pages must remain pending until production readback",
 );
 assert.equal(
   matrix.filter(
@@ -255,8 +259,8 @@ assert.equal(
   clinicalRegister.length,
   "clinical register contains duplicate assets",
 );
-assert.equal(clinicalRegister.filter(({ status }) => status === "approved").length, 18);
-assert.equal(clinicalRegister.filter(({ status }) => status === "pending").length, 19);
+assert.equal(clinicalRegister.filter(({ status }) => status === "approved").length, 31);
+assert.equal(clinicalRegister.filter(({ status }) => status === "pending").length, 6);
 const clinicalByAsset = new Map(clinicalRegister.map((row) => [row.asset, row]));
 
 const staticProductionReadback = records(await read("raw/static-page-production-readback-2026-09-01.csv"));
@@ -310,6 +314,14 @@ assert.equal(
   "Czech dermatology production readback drift",
 );
 const dermatologyProductionReadback = JSON.parse(dermatologyProductionReadbackText);
+const dualReviewerHeadApprovalText = await read("raw/dual-reviewer-head-resolution-approval-2026-09-02.md");
+assert.equal(
+  createHash("sha256").update(dualReviewerHeadApprovalText.replaceAll("\r\n", "\n")).digest("hex"),
+  "5d7f8558c49ba148363260bf271b0168377926ba8da6a1208e1d874353648555",
+  "Czech dual-reviewer and Head approval evidence drift",
+);
+assert.match(dualReviewerHeadApprovalText, /30161c8bd7913acbd98e2aac0820499b21e4bc1bb951c38aef8d8eac97ec024c/);
+assert.match(dualReviewerHeadApprovalText, /13ed9273e65b6954fce8b83c386791e9630dae52bcf27c513bd7fc3b420466c0/);
 const clinicalDeploymentReadback = [...clinicalProductionReadback, ...clinicalProductionReadbackSep2];
 const productionReadback = [...staticProductionReadback, ...clinicalDeploymentReadback];
 const deploymentVerifiedMatrixRows = matrix.filter(
@@ -319,9 +331,12 @@ assert.equal(staticProductionReadback.length, 14);
 assert.equal(clinicalProductionReadback.length, 17);
 assert.equal(clinicalProductionReadbackSep2.length, 1);
 assert.equal(new Set(productionReadback.map(({ url }) => url)).size, productionReadback.length);
-assert.deepEqual(
-  clinicalDeploymentReadback.map(({ url }) => new URL(url).pathname).sort(),
-  clinicalRegister.filter(({ status }) => status === "approved").map(({ asset }) => asset).sort(),
+const approvedClinicalAssets = new Set(
+  clinicalRegister.filter(({ status }) => status === "approved").map(({ asset }) => asset),
+);
+assert.ok(
+  clinicalDeploymentReadback.every(({ url }) => approvedClinicalAssets.has(new URL(url).pathname)),
+  "production readback contains an asset without clinical approval",
 );
 const initiallyApprovedClinicalAssets = clinicalProductionReadback
   .map(({ url }) => new URL(url).pathname)
@@ -544,7 +559,15 @@ const czechiaApprovedToolSeo = JSON.parse(
 );
 assert.deepEqual(
   Object.keys(czechiaApprovedToolSeo).sort(),
-  ["blood-pressure-chart", "bmi-calculator", "calorie-calculator", "osteoporosis-risk-checker"].sort(),
+  [
+    "adhd-test",
+    "blood-pressure-chart",
+    "bmi-calculator",
+    "calorie-calculator",
+    "due-date-calculator",
+    "osteoporosis-risk-checker",
+    "ovulation-calculator",
+  ].sort(),
   "served Czech tool approval set drift",
 );
 for (const [slug, desired] of Object.entries(czechiaApprovedToolSeo)) {
@@ -557,6 +580,26 @@ for (const [slug, desired] of Object.entries(czechiaApprovedToolSeo)) {
   assert.equal(gate.approved_sha256, approvalHash, `served Czech tool copy approval hash drift for ${asset}`);
 }
 
+assert.deepEqual(
+  Object.keys(CZECHIA_APPROVED_DOCTOR_FAQS).sort(),
+  CZECHIA_DOCTOR_PROFILE_SEO_DRAFTS.map(({ slug }) => slug).sort(),
+  "served Czech doctor FAQ approval set drift",
+);
+for (const draft of CZECHIA_DOCTOR_PROFILE_SEO_DRAFTS) {
+  assert.deepEqual(
+    CZECHIA_APPROVED_DOCTOR_FAQS[draft.slug],
+    draft.faqReplacements,
+    `served Czech doctor FAQ copy drift for ${draft.assetPath}`,
+  );
+  const gate = clinicalByAsset.get(draft.assetPath);
+  assert.equal(gate?.status, "approved", `served Czech doctor copy is not approved for ${draft.assetPath}`);
+  assert.equal(
+    gate.approved_sha256,
+    czechiaClinicalDraftApprovalSha256(draft),
+    `served Czech doctor copy approval hash drift for ${draft.assetPath}`,
+  );
+}
+
 for (const row of matrix.filter(({ clinical_review_required }) => clinical_review_required === "yes")) {
   const asset = new URL(row.url).pathname;
   const gate = clinicalByAsset.get(asset);
@@ -565,13 +608,22 @@ for (const row of matrix.filter(({ clinical_review_required }) => clinical_revie
   assert.ok(gate.reviewer_requirement, `clinical reviewer missing for ${asset}`);
   assert.ok(["pending", "approved"].includes(gate.status), `unexpected clinical status for ${asset}`);
   if (gate.status === "approved") {
-    assert.equal(
-      row.implementation_status,
-      asset === "/czechia/cs/services/lekar-online-praha" || asset === "/czechia/cs/services/kozni-konzultace-praha"
-        ? "live_verified_2026-09-02"
-        : "live_verified_2026-09-01",
-      `approved clinical row has the wrong deployment state for ${asset}`,
-    );
+    const deployed = clinicalDeploymentReadback.some(({ url }) => new URL(url).pathname === asset);
+    if (deployed) {
+      assert.equal(
+        row.implementation_status,
+        asset === "/czechia/cs/services/lekar-online-praha" || asset === "/czechia/cs/services/kozni-konzultace-praha"
+          ? "live_verified_2026-09-02"
+          : "live_verified_2026-09-01",
+        `approved clinical row has the wrong deployment state for ${asset}`,
+      );
+    } else {
+      assert.equal(
+        row.implementation_status,
+        "approved_pending_production",
+        `approved clinical row has the wrong pre-production state for ${asset}`,
+      );
+    }
     assert.ok(gate.reviewer_name, `approved clinical reviewer name missing for ${asset}`);
     assert.ok(gate.reviewer_doctor_id, `approved clinical reviewer ID missing for ${asset}`);
     assert.ok(strictRfc3339Timestamp(gate.reviewed_at), `invalid clinical review time for ${asset}`);
