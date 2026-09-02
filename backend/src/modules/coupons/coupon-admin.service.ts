@@ -226,23 +226,45 @@ export async function createCoupon(
   throw new Error("Could not allocate a unique coupon code");
 }
 
+/** Raised when an edit would leave the validity window inverted. */
+export class CouponWindowInvalidError extends Error {
+  constructor() {
+    super("The end of the validity window must be after its start");
+    this.name = "CouponWindowInvalidError";
+  }
+}
+
 export async function updateCoupon(
   id: string,
-  patch: { active?: boolean; validUntil?: string; maxRedemptions?: number; internalNote?: string },
+  patch: {
+    active?: boolean;
+    validFrom?: string;
+    validUntil?: string;
+    maxRedemptions?: number;
+    internalNote?: string;
+  },
 ) {
   const existing = await prisma.coupon.findUnique({
     where: { id },
-    select: { redeemedCount: true },
+    select: { redeemedCount: true, validFrom: true, validUntil: true },
   });
   if (!existing) return null;
   if (patch.maxRedemptions != null && patch.maxRedemptions < existing.redeemedCount) {
     throw new CouponCapBelowRedeemedError(existing.redeemedCount);
   }
+
+  // Either end may be edited alone, so the check is against the RESULTING
+  // window, not against whatever happens to be in the patch.
+  const nextFrom = patch.validFrom ? new Date(patch.validFrom) : existing.validFrom;
+  const nextUntil = patch.validUntil ? new Date(patch.validUntil) : existing.validUntil;
+  if (nextUntil <= nextFrom) throw new CouponWindowInvalidError();
+
   return prisma.coupon.update({
     where: { id },
     data: {
       ...(patch.active != null ? { active: patch.active } : {}),
-      ...(patch.validUntil ? { validUntil: new Date(patch.validUntil) } : {}),
+      ...(patch.validFrom ? { validFrom: nextFrom } : {}),
+      ...(patch.validUntil ? { validUntil: nextUntil } : {}),
       ...(patch.maxRedemptions != null ? { maxRedemptions: patch.maxRedemptions } : {}),
       ...(patch.internalNote != null ? { internalNote: patch.internalNote } : {}),
     },

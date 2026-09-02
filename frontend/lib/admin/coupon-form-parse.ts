@@ -13,12 +13,16 @@ function str(form: FormData, key: string): string {
 }
 
 /**
- * `datetime-local` gives a wall-clock string with no zone (`2026-09-01T09:00`).
- * `new Date()` reads that as the ADMIN's local time, which is what they meant,
- * and `toISOString()` converts it to the UTC the API expects.
+ * The date fields arrive as absolute ISO instants, converted in the browser by
+ * `DateTimeField`. They must NOT be naive wall-clock strings: this parser runs
+ * inside a Server Action, so a zone-less string would resolve in the server's
+ * zone (UTC on Railway) rather than the admin's, and an admin in UTC+5 asking
+ * for "starts now" would get a coupon that reports "not valid yet" for the next
+ * five hours. Validated rather than trusted — a `Z`/offset must be present.
  */
 function toIso(value: string): string | null {
   if (!value) return null;
+  if (!/(?:Z|[+-]\d{2}:?\d{2})$/.test(value)) return null;
   const parsed = new Date(value);
   return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
 }

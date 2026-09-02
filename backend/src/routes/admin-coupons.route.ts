@@ -15,6 +15,7 @@ import {
 import {
   CouponCapBelowRedeemedError,
   CouponCodeTakenError,
+  CouponWindowInvalidError,
   addCouponRecipients,
   createCoupon,
   getCouponDetail,
@@ -184,7 +185,7 @@ const adminCouponsRoutes: FastifyPluginAsync = async (app) => {
         });
         return okResponse(updated, "Coupon updated");
       } catch (err) {
-        if (err instanceof CouponCapBelowRedeemedError) {
+        if (err instanceof CouponCapBelowRedeemedError || err instanceof CouponWindowInvalidError) {
           return reply.status(422).send(errorResponse(err.message));
         }
         if (err instanceof DatabaseUnavailableError) {
