@@ -313,3 +313,43 @@ certifications, registrations, specialties, languages, visible clinical copy, FA
 prices, booking or availability. The 212-FAQ decision also remains unchanged: page-
 level intent is already present, so no forced per-FAQ keyword field or rewrite was
 added.
+
+## 2026-09-03 snippet-trim drafts prepared, nothing published
+
+Ledger §38.1 items 11 and 12. Read-only pass; no production write, no register edit.
+
+Eleven live Portugal doctor meta descriptions run 191–220 characters against the
+~155–160 display budget, so between a quarter and a third of each is truncated. The
+Portugal tool pages carry the same problem plus English-style Title Case, which is
+what made them read differently from the Czechia tools rewritten in the same batch.
+`/tools/osteoporosis-risk-checker` is the worst row in either market at an 80-character
+title and a 228-character description.
+
+Trimmed replacements are in `raw/snippet-trim-drafts-2026-09-03.csv`, one row per
+field with the current value, the proposed value, both measured lengths and exactly
+what was dropped. The pattern is the one the batch review specified: keep the opening
+booking clause and the OM registration number, drop the credential tail. Every
+proposal is a strict subset of the live text plus punctuation — no fact was added,
+reworded or invented. Doctor descriptions land at 124–146 characters; all 22 drafted
+fields are inside budget.
+
+`backend/scripts/report-portugal-snippet-trim-drafts.ts` is the read-only proof. It
+opens no database connection, recomputes every recorded length, asserts each current
+value still equals the completion-matrix row the gated writer would read, and prints
+the approval SHA-256 and confirmation token that `patch-portugal-seo-metadata.ts
+--apply` would demand. All 11 doctor drafts resolve to exactly one eligible record
+each.
+
+Two constraints found while preparing this:
+
+- The tool rows cannot go through the gated writer at all.
+  `assertPortugalSeoApplyAuthorized` refuses `targetKind === "tool"` — they are
+  managed in a static runtime source, so they need the Czechia frontend-overlay route
+  rather than a register-gated database write. That route has not been chosen.
+- Publication of the doctor rows requires Dr Tiago Miguel Figueira's approval of the
+  exact new hashes. The existing approvals are bound to the current, longer copy, and
+  an approval is not transferable between hashes. Nothing was backfilled.
+
+`beatriz-carvalho` (189 characters) was left alone: its matrix row is
+`drafted; blocked pending clinical or credential review`, so it is not a live row and
+not part of the eleven.

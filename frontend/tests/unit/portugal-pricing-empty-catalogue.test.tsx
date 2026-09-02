@@ -19,6 +19,7 @@ vi.mock("@/app/[country]/[lang]/pricing/_components/PricingPlansGrid", () => ({
 }));
 
 import PricingPage from "@/app/[country]/[lang]/pricing/page";
+import { PublicContentUnavailableError } from "@/lib/content/public-content-source";
 
 const params = Promise.resolve({ country: "portugal", lang: "pt" });
 
@@ -57,5 +58,33 @@ describe("Portugal pricing with an empty catalogue", () => {
     expect(html).toContain("Escolha o seu plano mensal");
     expect(html).toContain("Essential, Comprehensive ou Premium Wellness");
     expect(html).toContain("PLAN_GRID");
+  });
+});
+
+/**
+ * Fail-closed on a malformed catalogue is deliberate (§38 review, §3.9).
+ * `getCountryPlansResult` throws when any plan/perk/kit row fails validation,
+ * and this route must NOT catch it: a caught error would render the "not
+ * available yet" empty state — a different title, H1 and no plan CTA — on a
+ * live revenue page, and Google would recrawl that. A 500 is retryable and
+ * leaves ISR serving the last good render.
+ *
+ * Its own `describe` because the block above resets the mock in `beforeEach`,
+ * and a rejecting mock combined with `mockReset()` double-reports the
+ * rejection as an unhandled error under Vitest 4.
+ */
+describe("Portugal pricing with a malformed catalogue", () => {
+  it("propagates the error instead of rendering the unavailable state", async () => {
+    getCountryPlansResult.mockImplementation(async () => {
+      throw new PublicContentUnavailableError("country-plans:pt:pt", "backend returned 200 with no usable plan catalogue");
+    });
+
+    let thrown: unknown;
+    try {
+      await PricingPage({ params });
+    } catch (error) {
+      thrown = error;
+    }
+    expect(thrown).toBeInstanceOf(PublicContentUnavailableError);
   });
 });

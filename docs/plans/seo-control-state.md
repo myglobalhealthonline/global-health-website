@@ -1047,9 +1047,9 @@ working tree when the fix was staged. Noted so a future bisect over that file is
 not confusing; no code is affected.
 
 | SEO-DOC-005 | Nothing validated the redirect map, the sitemap or `GONE_DOCTORS` against the live doctor set | CI / process | **CLOSED — gate shipped, and it fails on the real defect** | 2026-08-14 | `frontend/tests/unit/seo-live-urls.test.ts` + a `seo-live-urls` CI job (push to main, weekly cron, `workflow_dispatch`). `GoneDoctor` now *requires* `clickCost` and `approvedBy`, so an undocumented 410 is a type error, not a review miss | n/a | Re-run the job after every deploy that touches redirects; see the §4 notes below |
-| SEO-DOC-006 | SEO-DOC-001's recrawl tail measured: **117 doctor-locale URLs across 25 doctors** still carry a `noindex` verdict Google formed *before* the `52c42d1a` backfill | Indexation (measurement) | **OPEN — WAIT FOR GOOGLE, no action authorized** | 2026-08-14 | All 117 serve `index, follow`, self-canonical, 200, and are in the sitemap with `lastmod` `2026-08-08T20:22Z`. Bio substance re-verified on all 25 doctors (Physician JSON-LD 175–300 chars, doctor-specific, in-locale) — the guard correctly stopped applying, it did not break | Every one last crawled **2026-07-16 → 2026-08-06**, i.e. all before the 2026-08-08 fix. Zero exceptions | **Watchlist only — see §6.** Do NOT submit via URL Inspection: this is the same mechanism §19.5 classifies WAIT FOR GOOGLE for Telmo/Vitor Pais/Pedro Santos, all three of whom appear in this set. Reversing that posture is an owner decision, not a maintenance step. **`reviewBy: 2026-09-01`** — pass condition below |
+| SEO-DOC-006 | SEO-DOC-001's recrawl tail measured: **117 doctor-locale URLs across 25 doctors** still carry a `noindex` verdict Google formed *before* the `52c42d1a` backfill | Indexation (measurement) | **OPEN — WAIT FOR GOOGLE, no action authorized** | 2026-08-14 | All 117 serve `index, follow`, self-canonical, 200, and are in the sitemap with `lastmod` `2026-08-08T20:22Z`. Bio substance re-verified on all 25 doctors (Physician JSON-LD 175–300 chars, doctor-specific, in-locale) — the guard correctly stopped applying, it did not break | Every one last crawled **2026-07-16 → 2026-08-06**, i.e. all before the 2026-08-08 fix. Zero exceptions | **Watchlist only — see §6.** Do NOT submit via URL Inspection: this is the same mechanism §19.5 classifies WAIT FOR GOOGLE for Telmo/Vitor Pais/Pedro Santos, all three of whom appear in this set. Reversing that posture is an owner decision, not a maintenance step. **`reviewBy: 2026-09-24`** (extended once at the 2026-09-03 recheck; see §6) — pass condition below |
 
-#### SEO-DOC-006 — `reviewBy: 2026-09-01`, and what counts as pass
+#### SEO-DOC-006 — `reviewBy`, and what counts as pass
 
 **This row expires. It does not sit open indefinitely.** SEO-DOC-001 was a
 correct observation with no date attached, which is how "Recrawl pending" stayed
@@ -1804,8 +1804,74 @@ lag, not a live routing defect. The equivalent Czech row (`mudr-libor-hlavaty`) 
 the list until it shows the same verdict.
 
 Recheck cadence: **one `inspect_urls` pass every 2–3 weeks**, not per session. Next
-recheck due **2026-09-01**. Escalate an item only if its crawl date has advanced past
+recheck due **2026-09-24**. Escalate an item only if its crawl date has advanced past
 its fix date and Google's verdict is still wrong.
+
+#### Recheck of 2026-09-03 — the overdue 2026-09-01 pass, performed. Six items resolved, zero escalations
+
+20 URL Inspection calls (of 2,000/day): 12 named watchlist URLs plus an 8-URL
+stratified sample of the SEO-DOC-006 doctor cohort. Read-only; nothing submitted.
+Verdicts read from `indexStatusResult.coverageState` — there is no top-level
+`verdict` field for coverage, and a flat read reports every row as UNKNOWN.
+
+**Resolved — Google has accepted the fix. Remove from the table on the next edit:**
+
+| URL | Google's stored state, 2026-09-03 | Last crawl |
+| --- | --- | --- |
+| `/portugal/pt/doctors/dr-telmo-coelho` | PASS, "Submitted and indexed", self-canonical. Was "Excluded by `noindex`" | **2026-09-02** |
+| `/pt/portugal-doctors/dr-telmo-coelho` (legacy PT) | NEUTRAL, "Page with redirect", `googleCanonical` = the current-shape URL | 2026-08-24 |
+| `/service-page/ie-medical-consultation` (legacy Wix) | NEUTRAL, "Page with redirect" → `/ireland/en/see-a-specialist` | **2026-09-02** |
+| `/about` | NEUTRAL, "Page with redirect" → `/ireland/en/about` | **2026-09-01** |
+| `/blog` | NEUTRAL, "Page with redirect" → `/ireland/en/blog` | 2026-08-19 |
+| `/pt/about` (legacy) | NEUTRAL, "Page with redirect" → `/ireland/en/about` | 2026-08-19 |
+
+`/blog` was the one of the three retired hub URLs worth watching (position 4.65
+pre-retirement); its 308 is now consolidated.
+
+**Still waiting — crawl date has not advanced past the fix date, so nothing has been
+tested yet. Not an escalation:**
+
+| URL | Fix date | Last crawl | Note |
+| --- | --- | --- | --- |
+| `/ireland/sick-leave` | 2026-07-30 | 2026-07-05 | Unmoved since 2026-08-12 |
+| `/ireland/es/health/sick-cert-online` | 2026-08-09 | 2026-07-25 | Unmoved |
+| `/portugal/pt/health/atestado-medico-online` | 2026-08-10 | 2026-07-25 | Unmoved |
+| `/portugal/es/health/atestado-medico-online` | 2026-08-10 | **2026-07-25** | Crawl date advanced from 2026-06-04, still pre-fix |
+| `/faq` | 2026-08-15 | 2026-07-18 | Still "Submitted and indexed", self-canonical `/faq` |
+
+**One production-state correction — `/czechia-doctors/mudr-libor-hlavaty`.** The row
+above records the per-doctor Czech URL as returning 404 when probed on 2026-08-14.
+Re-probed live 2026-09-03, **both** URLs now return 308 to `/czechia/cs/doctors`:
+
+```
+/czechia-doctors/mudr-libor-hlavaty      -> 308 https://www.myglobalhealth.online/czechia/cs/doctors
+/czechia/cs/doctors/mudr-libor-hlavaty   -> 308 https://www.myglobalhealth.online/czechia/cs/doctors
+```
+
+Google's stored state for both is `Excluded by 'noindex'` with
+`googleCanonical` = `/czechia/cs/doctors/mudr-libor-hlavaty`, last crawled
+**2026-07-30** — before the 2026-08-14 fix, so it is stale, not wrong. WAIT FOR
+GOOGLE stands.
+
+**SEO-DOC-006 — PARTIAL PASS, zero FAIL. `reviewBy` extended to 2026-09-24.** The
+pass condition is crawl date only. Nine cohort URLs were read (the 8-URL sample plus
+Telmo Coelho from the named rows):
+
+- **Advanced past the 2026-08-08 fix — 2 of 9, and both came back INDEXED:**
+  `/portugal/pt/doctors/dr-vitor-hugo-de-matos-pais` (crawl 2026-08-30, PASS
+  "Submitted and indexed") and `/portugal/pt/doctors/dr-telmo-coelho` (crawl
+  2026-09-02, PASS). Both were §19.5 watchlist names. **The FAIL condition —
+  recrawled and still `noindex` — did not occur once.**
+- **Still pre-fix — 7 of 9:** `beatriz-carvalho` (pt, 2026-07-17),
+  `dr-pedro-santos` (pt, 2026-08-06), `mudr-romana-pavlu` (cs, 2026-08-04),
+  `dr-alexandra-palaga` (ro, 2026-08-03), `dr-renato-sarmento` (br, 2026-08-04),
+  `dr-silvina-irale` (es, 2026-08-04), `mudr-libor-hlavaty` (cs, 2026-07-30).
+
+Reading per the row's own rule: this is "NEITHER — extend, do not escalate", with the
+two recrawled URLs both landing on the PASS side. That is the first positive evidence
+that the `52c42d1a` backfill works once Google re-evaluates a page. This is extension
+**one** of the permitted three; a third consecutive extension makes it a §6/§13
+crawl-budget finding, not a doctor-indexability one.
 
 **Recheck of 2026-08-14 (SEO-DOC-006) — counts as the pass; next due stays
 2026-09-01.** 252 of the 2,000 daily URL Inspection calls used: 68 stratified
@@ -7292,6 +7358,244 @@ producing forty false mismatches.
 
 **Watchlist debt.** §6 records "Next recheck due 2026-09-01". That pass was not
 performed; it is now overdue.
+
+### 38.1 Remediation pass — 2026-09-03
+
+Report items 1–8 were applied in the review's own pass. This entry covers items 9–15
+and the two §3.9 code follow-ups. **No production write was made and no approval gate
+was edited, relaxed or backfilled.**
+
+**Item 15 — DONE, and it changed six rows.** The overdue watchlist pass ran
+2026-09-03; full results and the corrected `mudr-libor-hlavaty` production state are
+in §6. Six items resolved (both Telmo Coelho rows, `/service-page/ie-medical-consultation`,
+`/about`, `/blog`, `/pt/about`), five still waiting on a recrawl, zero escalations.
+SEO-DOC-006 is a **partial pass with zero FAIL**: of nine cohort URLs read, the two
+whose crawl date advanced past the 2026-08-08 fix both came back indexed. `reviewBy`
+and the §6 cadence are extended to **2026-09-24**. 20 of the 2,000 daily URL
+Inspection calls used.
+
+**Item 9 — CLOSED BY EVENTS, not a live decision.** The two drafts were reconciled in
+the **draft's** direction and both pages published under §40's super-admin verbal
+attestation on 2026-09-02, before this remediation started. Matrix, draft file and
+production now agree byte-for-byte on all three fields for
+`/czechia/cs/gp-consultation-online` and `/czechia/cs/services/cestovni-medicina-praha`
+(live re-fetch 2026-09-03; both serve the draft title with the ` · Global Health`
+suffix, the draft description and the draft H1). The 2026-09-08 gate no longer
+applies to either page.
+
+The keyword direction the reconciliation chose is the better one, and this is the
+evidence for it — `cestovní medicína Praha` is a **lower-volume but far cheaper**
+target than the bare head term:
+
+| Keyword (cs, CZ) | Volume/mo | KD |
+| --- | ---: | ---: |
+| `cestovní medicína` | 140 | **53** |
+| `cestovní medicína praha` | 90 | **6** |
+
+64% of the volume at roughly one-ninth the difficulty, on a domain with 58 referring
+domains. Keep it.
+
+**What did NOT get resolved is the governance question underneath item 9.** The
+review's concern was that the approval gate binds the hash of the draft file while
+the reviewer reads the matrix, so MUDr. Maklad would approve text he was never shown.
+That was closed by removing the clinician from the loop — §40 records a verbal
+super-admin attestation and an explicit override of the measurement/recrawl hold —
+not by showing him the changed text. **Decision for the owner:** either accept that
+precedent explicitly, or re-establish that a draft/matrix divergence must be
+reconciled *before* the reviewer signs. The copy is live either way; this is about
+what the next batch is allowed to do.
+
+**Item 10 — STILL OPEN, evidence confirmed, needs a decision.** Re-verified
+2026-09-03 against `seo/portugal/clinical-review-register.csv` (45 data rows) and
+`backend/src/content/portugal-clinical-approval.ts`:
+
+- `compliance_reviewer_name`, `compliance_reviewer_id`, `compliance_reviewed_at`,
+  `content_owner_name`, `content_owner_id`, `content_owner_reviewed_at` and
+  `clinical_reviewer_specialty_id` are **blank on 45 of 45 rows**.
+- The writer no longer requires any of them (`934fb834`); the surviving
+  `requireValue` calls cover `reviewer_name`, `reviewer_doctor_id`,
+  `reviewer_required`, `clinical_reviewer_professional_body`,
+  `official_source_references` and `reviewed_at` only.
+- 44 rows are `approved`, 1 `blocked_pending_review`, and **all 44 approvals carry
+  the same single `reviewer_name`**: Dr Tiago Miguel Figueira.
+
+§27.22 still describes the three-approver control in the present tense. The two
+options, unchanged from the review:
+
+- **(a) Amend §27.22** to describe the single-clinician gate that actually runs, and
+  record the reason (production exposes one eligible operational reviewer). Cheapest,
+  honest, and matches the Czechia and Ireland contracts. **Recommended.**
+- **(b) Restore the requirement** in code and backfill the four columns. This blocks
+  every future Portugal write until a second and third eligible reviewer exist in
+  production, which is an account-provisioning task, not a code one.
+
+Doing neither is the only bad outcome, because the ledger currently asserts a
+safeguard the system does not have.
+
+**Item 13 — INVESTIGATED, discrepancy is real and benign.** The official source is
+the Ordem dos Médicos *Cadernos Eleitorais*, Distrito Médico 11 Grande Lisboa, dated
+**29/05/2025** (`https://ordemdosmedicos.pt/files/pdfs/327K-GrandeLisboa_Cedula.pdf`,
+276 pages). Fetched and text-extracted 2026-09-03. It contains exactly one entry for
+the cédula and exactly one `TIAGO … FIGUEIRA` in the whole district:
+
+```
+77986-1 -TIAGO MIGUEL FALEIRO FIGUEIRA
+```
+
+Live production (`/portugal/pt/doctors/dr-tiago-miguel-figueira`, fetched
+2026-09-03) serves H1 and Person JSON-LD `name` = `Dr Tiago Miguel Figueira`, with
+`identifier` `{propertyID: "OM", value: "77986"}`. `Faleiro` appears nowhere on the
+page.
+
+**Assessment: same person, not a mismatched record.** The registration number,
+given names and final surname all agree, and `Faleiro` is a middle *apelido* — a
+Portuguese display name routinely omits one. The fact-register row already documents
+this as a "middle-name variant". Nothing here indicts the 44 approvals.
+
+It is still worth closing, for one reason the review named correctly: this is the
+**only** clinical approval behind the entire Portugal batch, so its identity chain
+should be exact rather than merely reconcilable. Aligning the production doctor
+record to the OM legal name is a doctor-profile approval workflow change and was not
+attempted here.
+
+**Items 11 and 12 — DRAFTED, NOT PUBLISHED.** Trimmed replacements for all 11 live
+over-budget Portugal doctor descriptions plus 11 tool-page fields are in
+[`seo/portugal/raw/snippet-trim-drafts-2026-09-03.csv`](../../seo/portugal/raw/snippet-trim-drafts-2026-09-03.csv),
+one row per field with current value, proposed value, both lengths and exactly what
+was dropped. The pattern the review specified was followed literally: keep the
+opening booking clause and the OM registration number, drop the credential tail. **No
+fact was added, reworded or invented** — every proposal is a strict subset of the
+live text plus punctuation.
+
+`backend/scripts/report-portugal-snippet-trim-drafts.ts` is the read-only proof. It
+opens no database connection, recomputes every recorded length, asserts each
+`current_value` still equals the matrix row the gated writer would read, and prints
+the approval hash the writer would demand:
+
+```
+11 doctor drafts resolve to exactly one eligible record each.
+0 proposed values still exceed the display budget.
+No database connection was opened and nothing was written.
+```
+
+Doctor descriptions drop from 191–220 to **124–146** characters. Approval hashes
+(these are what a clinician must approve; nothing here grants that):
+
+| Slug | Was | Now | `--approved-sha256` |
+| --- | ---: | ---: | --- |
+| `dr-ana-leal-neto` | 220 | 145 | `438cd089ca20a23aebe2fbfcb3b72ac2a89ccb1a8105663410f5aafece8023aa` |
+| `dr-egas-moura` | 192 | 140 | `2f190a58764cc583fbe45b1506f827b003958d89fbcfafa2ee3bd0f1b1aac891` |
+| `dr-joana-branco-maia` | 195 | 128 | `18ada7985eb2ef714f52af9cf7f0c6a80075c4c0d7a6dfa6de23276c260eb7e2` |
+| `dr-joao-de-oliveira-e-silva` | 194 | 142 | `20b4c4fefde41a7f7ff0f524cd07cfc86383fb5fe198fe8630446445852b7901` |
+| `dr-lucas-alvarenga-berto` | 208 | 136 | `87a9944ae0b9a0c3379c3d3258c12ebddc1b002225c60675d0e29c1e94fabd3e` |
+| `dr-margarida-andrade` | 207 | 146 | `5d8da36ba9556f872e8f3321ed7799db86fc18eb2b7b7571ffacbb19cbdea5e3` |
+| `dr-pedro-santos` | 191 | 137 | `240ab625bb0b2461c5d71a6149ee929ee8a3768fba572efe279ed76f44b439d4` |
+| `dr-ruben-pereira` | 201 | 128 | `42bc5281976ce5c7d8c98b2487893733fbb97484652f72174035f18f2edbe69e` |
+| `dr-rui-diogo-rodrigues` | 200 | 124 | `11ed155e8a0a4a16ab6057b42c7377b17d9162536e4edb93712a96113625e8d3` |
+| `dra-ana-varges-gomes` | 195 | 137 | `ac0ee3906f4db32e6ab6dc2ea308c9fcb626e833ac5eddb2c5f656dbd78f6817` |
+| `dra-nadia-cavaco` | 192 | 133 | `b2f86b013e62f01d57026869adfb4518f6960c8b086d7fc2c9002ea2b4fbd3fc` |
+
+Hashes are recomputed by the reporter on every run; run it rather than copying stale
+values. Publication requires Dr Tiago's approval of **those exact hashes** through
+`patch-portugal-seo-metadata.ts --apply`, which is not this pass's to grant.
+
+**One structural finding on item 12 the review did not have.** The Portugal tool
+pages **cannot be published through the gated writer at all**:
+`assertPortugalSeoApplyAuthorized` refuses `targetKind === "tool"` outright — *"is
+managed in a static runtime source"*. So "give the Portugal tool pages the same
+treatment Czechia gave its own" is a frontend-overlay change on the Czechia model,
+not a register-gated database write, and it needs its own route to production. The
+drafts are ready; the mechanism is not chosen. Worst offender confirmed:
+`/tools/osteoporosis-risk-checker` at **T80/D228**, proposed **T55/D146** on the
+Czech `Riziko osteoporózy | Orientační kontrola` pattern. The other five tool titles
+need only sentence-casing — they are inside budget but carry English-style Title
+Case, which is what made Portugal's tools read differently from Czechia's.
+
+**Item 14 and §3.8 — ANALYSED, RECOMMEND NO CONTENT CHANGE.** Both were re-checked
+against the pages' own Search Console data, 28 days to 2026-08-30.
+
+*`/portugal/pt` — the brand-led title is correct and the H1 mismatch costs nothing.*
+The hub's only clicks in the window are brand: `global health` 4 clicks / 32
+impressions / position 2.5, and `globalhealth` 1 click / 1 impression / position 1.
+Its largest generic query, `consulta medica online`, carries 31 impressions at
+**position 58.7**. An H1 cannot move a term at position 58, and the head-term H1 does
+not threaten the brand ranking, which is carried by the domain, title and site name.
+**Recommendation: record the rationale in the matrix, do not touch the H1.** That
+closes item 14 at zero risk and with no clinical re-approval. Revisit only if the
+2026-09-30 gate shows generic impressions moving inside position 20.
+
+*`/czechia/cs/tools/blood-pressure-chart` — the H1 moved TOWARD the winning family,
+not away from it.* The review's 720-vs-4,580 framing does not survive the page's own
+query data:
+
+| Query | Impressions | Clicks | Position |
+| --- | ---: | ---: | ---: |
+| `krevní tlak kalkulačka` | **418** | **10** | **4.9** |
+| `krevní tlak tabulka` | 44 | 0 | 12.5 |
+| every `normální …` variant combined | ~33 | **0** | 27–40 |
+
+The new H1, "Kalkulačka a tabulka krevního tlaku", names both families that produce
+the page's impressions and **all ten of its clicks**. The retired H1, "Normální
+krevní tlak Česko", named a family the page has never earned a click from and sits at
+position 27–40 for. **Recommendation: keep the new H1; close this §3.8 item as
+answered, not deferred.**
+
+A method note worth keeping: `get_keyword_metrics` prices `kalkulačka krevního tlaku`
+at **10 searches/month**, while GSC shows the word-ordered `krevní tlak kalkulačka`
+taking 418 impressions in 28 days on this page alone. This is §0's "an OpenSEO
+recommendation is a hypothesis" rule paying for itself — the volume tool was off by
+two orders of magnitude on the term that actually drives the page.
+
+**§3.9 first code follow-up — FAIL-CLOSED STANDS, regression test added.** The
+review's premise about the previous behaviour is not what the diff shows. Before
+`d5399b35`, `get-country-plans.ts` already invalidated the whole catalogue on one bad
+row (`if (plans.some((plan) => plan === null)) return { ok: false, plans: [] }`) — it
+did **not** drop just the offending row. What actually changed is that the whole-
+catalogue failure went from a silent `{ok: false, plans: []}` to a thrown
+`PublicContentUnavailableError`.
+
+That change is right, and specifically right on this route, because the silent path
+is now worse than it was: since `d5399b35` an empty catalogue makes
+`pricing/page.tsx` render `portugalStaticPageSeo(…, "pricing")` — a **different
+title, a different H1 and no plan CTA**. One malformed backend row would therefore
+have served Google a crawlable "memberships not available yet" page on a live revenue
+route. A 500 is retryable, leaves ISR serving the last good render, and fails the
+build loudly first (`logPublicContentFallback` throws during `next build` unless
+`ALLOW_DEGRADED_BUILD=1`). **No code change.** The decision is now pinned by a test in
+`frontend/tests/unit/portugal-pricing-empty-catalogue.test.tsx` asserting the route
+propagates rather than rendering the empty state.
+
+**§3.9 second code follow-up — spot-checked on production, no live instance.** Every
+country × page-key × locale combination the public API serves was read read-only on
+2026-09-03 (216 requests, 150 records, 66 disabled). The suppression introduced by
+`50b950f7` bites in 24 places, and **not one of them is reachable or visibly
+degraded**:
+
+- **9 records the sanitizer drops whole** (`resolvedLocale` != requested) are all
+  Brazil `cs`/`de`/`ro` on DOCTORS_INDEX, GENERAL_CONSULTATION and
+  SPECIALIST_CONSULTATION.
+- **3 partial records that would lose five sections each** (intro, whoFor, whyChoose,
+  faq, disclaimer) are all Brazil HOME in `cs`/`de`/`ro`.
+- **Every Brazil non-`pt` locale 308-redirects to `pt`.** Verified live:
+  `/brazil/{cs,de,ro}`, `/brazil/{cs,de,ro}/doctors`, `/brazil/{cs,de}/gp-consultation-online`.
+  So all 12 Brazil rows are unreachable content, not degraded pages.
+- **The 12 reachable partials lose hero and SEO fields only** — Czechia HOME
+  (`de`/`es`/`pt`/`ro`) and DOCTORS_INDEX (`de`/`en`/`es`/`pt`/`ro`), Portugal HOME
+  (`cs`/`es`/`ro`). No body section is suppressed on any of them.
+
+Live re-fetch of all nine reachable Czechia/Portugal pages confirms each renders a
+correct-locale title, description and H1 from the i18n bundle, with 13–15 `<h2>`
+sections intact — e.g. `/czechia/de` serves "Online-Arzt Tschechien | Registrierte
+Hausärzte & Fachärzte" / H1 "Online-medizinische Versorgung in Tschechien", and
+`/portugal/cs` serves "Online lékař Portugalsko | Registrovaní lékaři a specialisté".
+**Nothing goes dark. No content change made.** The theoretical regression is real but
+has zero production instances today; re-check it if a market ever gains a genuinely
+half-translated CMS row.
+
+**Still open after this pass:** item 10 (the §27.22 amendment-or-restore decision),
+item 13's identity alignment, items 11 and 12 awaiting clinical approval of the drafted
+hashes, and the item-9 governance precedent question above. The two measurement gates
+stay at their 2026-09-30 floor.
 
 ---
 
