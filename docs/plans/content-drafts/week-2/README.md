@@ -1,5 +1,31 @@
 # Week 2 editorial batch
 
+> **STATUS SUPERSEDED — all six topics are PUBLISHED. Verified against production
+> 2026-09-03.** Everything below is the dated implementation record of 24–29 August
+> 2026 and was accurate when written. It is **not** current status: the
+> "five parents still `DRAFT`" statements and the "Publication remains blocked
+> until" checklist at the end have both been overtaken by events.
+>
+> Read-only production query, 2026-09-03: **30 blog posts PUBLISHED, 0 DRAFT.** All
+> six Week 2 parents published 2026-08-29, each with full five-locale coverage:
+>
+> | Market | Slug | Published |
+> | --- | --- | --- |
+> | PT | `baixa-medica-quanto-se-recebe-como-calcular` | 2026-08-29 |
+> | PT | `atestado-medico-para-carta-de-conducao` | 2026-08-29 |
+> | IE | `illness-benefit-payment-ireland-rate-tax-timing` | 2026-08-29 |
+> | CZ | `vypocet-nemocenske-2026-co-plati-zamestnavatel-a-co-cssz` | 2026-08-29 |
+> | ES | `tension-alta-sintomas-cuando-urgencias` | 2026-08-29 |
+> | RO | `ce-scade-tensiunea-arteriala-rapid-sigur` | 2026-08-29 |
+>
+> The Spain parent had already been published before the 17-row translation
+> completion, which is why the historical text below singles it out.
+>
+> **Nothing in this directory is awaiting publication.** The `.html` files beside
+> this README are the working drafts the published records were built from, kept as
+> evidence. Current status for this and every other SEO/editorial item lives in
+> [`docs/plans/seo-control-state.md`](../../seo-control-state.md).
+
 Prepared 24 August 2026. These are AI-assisted working drafts. Every kept locale requires a native-language editor and the medical articles require clinician review before publication. **The six primary-language records were created in production on 25 August 2026, and all 30 translation rows were present by 29 August 2026.** The final audit found five Week 2 parents still `DRAFT`; the Spain urgent-blood-pressure parent had been published separately before the last 17 translations were added.
 
 Local and production coverage: every one of the six topics now has EN, PT, ES, CS, RO and DE copy, for 36 variants total. The original production-preparation manifest was restricted to 19 evidence-backed variants; the owner later approved completing the remaining 17 from the reviewed TypeScript sources. The article jurisdiction remains the topic market; the language variant does not replace the applicable local law, benefit system, emergency pathway or service route.
@@ -211,7 +237,10 @@ before this completion and was preserved verbatim. All six retained the `Global
 Health Medical Team` author byline. Existing keyword evidence covered every topic,
 so this completion used no OpenSEO credits.
 
-Publication remains blocked until:
+~~Publication remains blocked until:~~ **SUPERSEDED 2026-09-03 — all six parents were
+published on 2026-08-29 and this gate list no longer describes any live hold. Kept as
+the record of what the batch required at the time; see the banner at the top of this
+file for verified current state.**
 
 - a native editor reviews each locale before a draft parent is published or future translated copy is materially revised;
 - the named clinician accepts authorship/review attribution and reviews the article;

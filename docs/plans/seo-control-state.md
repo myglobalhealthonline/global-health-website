@@ -2857,8 +2857,18 @@ see the NOW decision for why it is not the first move either.
 
 #### 9. Metadata and snippet — one verified defect, on the hub
 
+> **RESOLVED 2026-09-02, verified live 2026-09-03.** Both factual errors described
+> below are gone. The hub now serves *"Order Randox home blood test kits in Dublin or
+> anywhere in Ireland **from €57**. Turnaround varies by test, **from 2–3 working days
+> to 4–6 weeks**."* A cache-bypassed fetch on 2026-09-03 found **zero** occurrences of
+> `€89` or "10 days" anywhere on the page, and confirmed €57 as the lowest kit price —
+> the €45 that also appears is the optional IMC-registered doctor follow-up, labelled
+> throughout as separate from and not included in the kit price. The `€89` figures
+> retained elsewhere in this section are **competitor** prices and remain accurate.
+> The finding below is kept as the dated record of the defect; it is not outstanding.
+
 The hub is the only page in the cluster ranking shallow enough to qualify under the
-project's own CTR rule (position 14.7 in the last 7 days). It has two factual errors:
+project's own CTR rule (position 14.7 in the last 7 days). It had two factual errors:
 
 - `<meta name="description">`: *"Order a Randox home blood test kit … **from €89** …
   Results in **up to 10 days**."* The catalogue's actual entry price is **€57**, and the
