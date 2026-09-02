@@ -107,7 +107,11 @@ const gpSafetyCs = {
   locale: "CS",
   canonicalPath: "/czechia/cs/gp-consultation-online",
   primaryKeyword: "praktický lékař online",
-  secondaryKeywords: ["online konzultace praktický lékař", "online lékař Česko"],
+  // Reconciled to the completion-matrix row 2026-09-03 (§38.1). Page-content
+  // secondary keywords are declarative only: they are not in
+  // `czechiaPageContentApprovalSha256` ({key, locale, copy}) and the patcher
+  // never writes them, so this cannot move an approval hash or a live page.
+  secondaryKeywords: ["online konzultace s lékařem", "praktik online", "promluvte si s lékařem"],
   copy: {
     seoTitle: "Praktický lékař online | Konzultace v Česku",
     seoDescription:

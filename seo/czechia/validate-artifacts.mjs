@@ -9,6 +9,7 @@ import {
 import {
   CZECHIA_DOCTOR_PROFILE_SEO_DRAFTS,
   CZECHIA_BLOG_SEO_DRAFTS,
+  CZECHIA_TOOL_SEO_DRAFTS,
   czechiaClinicalDraftApprovalSha256,
 } from "../../backend/src/content/czechia-profile-blog-tool-seo-drafts.ts";
 import {
@@ -865,6 +866,96 @@ for (const obsolete of [
   "blood-pressure-calculator",
 ]) {
   assert.ok(!ownership.includes(obsolete), `obsolete slug found: ${obsolete}`);
+}
+
+/**
+ * Draft-versus-matrix equality (§38.1, 2026-09-03).
+ *
+ * The approval gates bind the SHA-256 of the DRAFT FILE, but a reviewer reads
+ * the completion matrix. When those two disagree the clinician approves text
+ * they were never shown — which is exactly what happened to `gpSafetyCs` and
+ * `cestovni-medicina-praha` in the 08-31→09-02 batch. Asserting the equality
+ * here turns that governance question into a build failure, so nobody has to
+ * remember it on the next batch.
+ *
+ * Doctor rows carry no hero field, so their H1 is not compared; every other
+ * family compares title, description, H1, primary keyword and the secondary
+ * keyword list.
+ */
+const matrixByPath = new Map(matrix.map((row) => [new URL(row.url).pathname, row]));
+const toolPath = (draft) => draft.assetPath;
+const draftMatrixExpectations = [
+  ...CZECHIA_PAGE_CONTENT_SEO_DRAFTS.filter(({ locale }) => locale === "CS").map((draft) => ({
+    label: `page:${draft.key}`,
+    path: draft.canonicalPath,
+    title: draft.copy.seoTitle,
+    description: draft.copy.seoDescription,
+    h1: draft.copy.heroTitle,
+    primaryKeyword: draft.primaryKeyword,
+    secondaryKeywords: draft.secondaryKeywords,
+  })),
+  ...CZECHIA_SEO_SERVICE_DRAFTS.filter(({ locale }) => locale === "CS").map((draft) => ({
+    label: `service:${draft.slug}`,
+    path: `/czechia/cs/services/${draft.slug}`,
+    title: draft.seoTitle,
+    description: draft.seoDescription,
+    h1: draft.heroTitle,
+    primaryKeyword: draft.primaryKeyword,
+    secondaryKeywords: draft.secondaryKeywords,
+  })),
+  ...CZECHIA_DOCTOR_PROFILE_SEO_DRAFTS.map((draft) => ({
+    label: `doctor:${draft.slug}`,
+    path: draft.assetPath,
+    title: draft.desired.seoTitle,
+    description: draft.desired.seoDescription,
+    h1: null,
+    primaryKeyword: draft.primaryKeyword,
+    secondaryKeywords: draft.secondaryKeywords,
+  })),
+  ...CZECHIA_BLOG_SEO_DRAFTS.map((draft) => ({
+    label: `blog:${draft.slug}`,
+    path: draft.assetPath,
+    title: draft.desired.seoTitle,
+    description: draft.desired.seoDescription,
+    h1: draft.desired.title,
+    primaryKeyword: draft.primaryKeyword,
+    secondaryKeywords: draft.secondaryKeywords,
+  })),
+  ...CZECHIA_TOOL_SEO_DRAFTS.map((draft) => ({
+    label: `tool:${draft.slug}`,
+    path: toolPath(draft),
+    title: draft.desired.metaTitle,
+    description: draft.desired.metaDescription,
+    h1: [draft.desired.h1Lead, draft.desired.h1Accent, draft.desired.h1Trail]
+      .filter((part) => part && part.trim() !== "")
+      .join(" "),
+    primaryKeyword: draft.primaryKeyword,
+    secondaryKeywords: draft.secondaryKeywords,
+  })),
+];
+assert.ok(draftMatrixExpectations.length >= 30, "draft/matrix comparison covered too few drafts");
+for (const draft of draftMatrixExpectations) {
+  const row = matrixByPath.get(draft.path);
+  assert.ok(row, `${draft.label}: no completion-matrix row for ${draft.path}`);
+  assert.equal(row.optimized_title, draft.title, `${draft.label}: draft title differs from the matrix row a reviewer reads`);
+  assert.equal(
+    row.optimized_meta_description,
+    draft.description,
+    `${draft.label}: draft meta description differs from the matrix row a reviewer reads`,
+  );
+  if (draft.h1 !== null) {
+    assert.equal(row.optimized_h1, draft.h1, `${draft.label}: draft H1 differs from the matrix row a reviewer reads`);
+  }
+  assert.equal(
+    row.primary_keyword,
+    draft.primaryKeyword,
+    `${draft.label}: draft primary keyword differs from the matrix row a reviewer reads`,
+  );
+  assert.deepEqual(
+    row.secondary_keywords.split("|").map((keyword) => keyword.trim()).filter(Boolean),
+    [...draft.secondaryKeywords],
+    `${draft.label}: draft secondary keywords differ from the matrix row a reviewer reads`,
+  );
 }
 
 console.log("Czechia SEO artifacts: OK");

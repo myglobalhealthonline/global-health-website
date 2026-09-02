@@ -89,16 +89,44 @@ ledger and historical evidence follow from §0.
   A one-record-only, dry-run-first updater maps its 27 database-owned records to PT
   `PageContentTranslation`, `ServiceTranslation` or `DoctorMarketTranslation` rows.
   Every source mapping passed a production read-only dry run. The writer requires a
-  source fingerprint, an exact match to the audited title/description, three distinct
-  dated clinical/compliance/content-owner approvals, allowlisted HTTPS official
+  source fingerprint, an exact match to the audited title/description, **one dated
+  clinical approval** (see the amendment below), allowlisted HTTPS official
   sources, exact approved-copy hash, per-record token and credential-free database
   identity confirmation (protocol, host, effective port and database name),
   then rechecks and verifies inside a Serializable transaction. A clinical reviewer
   must match an active verified Portugal doctor record, professional body and active
-  Portugal specialty. Compliance and content-owner approvals must match active,
-  email-verified authorized users. Doctor writes additionally require the subject
+  Portugal specialty. Doctor writes additionally require the subject
   doctor or recorded delegation and a verified, hash-bound fact-register row whose
   canonical URL, doctor identity and registration match the live profile.
+
+  > **AMENDED 2026-09-03 (§38.1 item 10) — this paragraph previously described
+  > "three distinct dated clinical/compliance/content-owner approvals". It never
+  > ran that way in production.** Commit `934fb834` removed enforcement of
+  > `compliance_reviewer_name`, `compliance_reviewer_id`, `content_owner_name`,
+  > `content_owner_id`, their two review dates and
+  > `clinical_reviewer_specialty_id` from
+  > `backend/src/content/portugal-clinical-approval.ts` in the same commit that
+  > published Portugal, and all seven columns are **blank on 45 of 45 register
+  > rows**. All 44 approvals are held by one reviewer, Dr Tiago Miguel Figueira.
+  >
+  > **Why it was narrowed:** production exposes exactly one eligible operational
+  > reviewer user, so three distinct approvers were not obtainable. This was a
+  > provisioning limit, not a decision that the control was unnecessary.
+  >
+  > **What the gate still enforces**, and it is not weak: source fingerprint,
+  > exact approved-copy SHA-256, per-record confirmation token, credential-free
+  > database identity confirmation, official-source allowlisting, an active
+  > verified in-market clinician with a matching professional body, exact readback
+  > inside a Serializable transaction, and for doctor rows a hash-bound
+  > fact-register row. This is the same contract Czechia and Ireland run.
+  >
+  > **What would restore the three-approver gate:** two additional active,
+  > email-verified authorized users in production — one compliance, one content
+  > owner — after which the removed `requireValue` / `assertReviewDate` calls and
+  > the distinct-reviewer-ID check go back into
+  > `portugal-clinical-approval.ts` and the four columns get populated going
+  > forward. Until then, do not read this section as a gate that lapsed; read it
+  > as one waiting on account provisioning.
 - **Clinically gated production copy remains unchanged.** All 28 clinical-register
   rows are `blocked_pending_review`; factual verification remains `no`. All 16 live
   doctor profiles are listed in a fact register as pending official verification.
@@ -305,6 +333,20 @@ ledger and historical evidence follow from §0.
 - Travel-medicine legacy URL behavior remains a recrawl / indexing-lag watch item.
   No redirect change is reopened by this batch. Re-measure Czech GP and travel
   ownership on or after **2026-09-08**.
+  **AMENDED 2026-09-03 — this gate can no longer answer what it was set up to
+  answer.** It was written to measure GP and travel query ownership against an
+  *unchanged* page, so that a change in ownership would isolate the indexing ramp.
+  §40 then republished both `/czechia/cs/gp-consultation-online` and
+  `/czechia/cs/services/cestovni-medicina-praha` on **2026-09-02**, six days before
+  the gate, under a super-admin verbal override of this very hold. The confound is
+  now permanent: any 09-08 movement mixes "the indexing ramp resolved on its own"
+  with "the 09-02 rewrite worked", and no post-hoc split is available because the
+  pre-change window was never closed. So on 2026-09-08 read this gate as a
+  **descriptive ramp check only** — did the pages get recrawled, are they indexed,
+  did impressions appear — and do not attribute any delta to either cause. The
+  attribution question moves to the §38 measurement gate at the **2026-09-30**
+  floor, which postdates the change and is therefore clean. Do not rewrite either
+  page again before it.
 
 ### 27.15 Booking availability visibility — local implementation (2026-08-29)
 
@@ -7592,10 +7634,78 @@ Hausärzte & Fachärzte" / H1 "Online-medizinische Versorgung in Tschechien", an
 has zero production instances today; re-check it if a market ever gains a genuinely
 half-translated CMS row.
 
-**Still open after this pass:** item 10 (the §27.22 amendment-or-restore decision),
-item 13's identity alignment, items 11 and 12 awaiting clinical approval of the drafted
-hashes, and the item-9 governance precedent question above. The two measurement gates
-stay at their 2026-09-30 floor.
+### 38.2 Second pass — decisions taken, 2026-09-03
+
+Reviewer verified §38.1 independently and confirmed both pages serve the draft copy,
+the matrix reads 48 live / 2 no-change, and the Czechia validator passes. Two review
+findings were **withdrawn** and four decisions closed.
+
+**Two findings struck from the review report.** Both are struck in place in
+`docs/audits/seo/cz-pt-batch-review-2026-09-02.md` with the evidence, and the report
+now carries a §3.10 corrections section:
+
+- §3.9 first bullet — the pricing "per-row drop" premise is false. `d5399b35~1`
+  already ran `plans.some((plan) => plan === null)` over the whole catalogue.
+- §3.8 blood-pressure H1 — framed on keyword-master volume; the page's own query data
+  shows the new H1 naming the family that carries all ten of its clicks.
+
+**Item 9 — the mechanism is fixed, not the precedent.** Requiring draft/matrix
+reconciliation as a written policy would be forgotten by the next batch, and the
+wiring that caused it — approval gates bind the draft-file hash, reviewers read the
+matrix — was still in place for every future batch.
+`seo/czechia/validate-artifacts.mjs`, which already runs, now asserts draft-versus-
+matrix equality across **all 32 Czech drafts** (page-content, service, doctor, blog,
+tool) on optimized title, meta description, H1, primary keyword and secondary keyword
+list. Divergence is now a build failure. No policy to remember.
+
+**It found a fifth divergence on its first run.** §3.3 compared title, description, H1
+and primary keyword; it did not compare secondary keywords, and `gpSafetyCs` carried a
+different set from its matrix row:
+
+| | Secondary keywords |
+| --- | --- |
+| Matrix | `online konzultace s lékařem` / `praktik online` / `promluvte si s lékařem` |
+| Draft (before) | `online konzultace praktický lékař` / `online lékař Česko` |
+
+Reconciled **to the matrix**, the reviewed artifact. This field is declarative: it is
+not inside `czechiaPageContentApprovalSha256` (which hashes `{key, locale, copy}`) and
+the page-content patcher never writes it, so no approval gate was touched. Verified
+empirically — all four page-content approval hashes are byte-identical before and
+after the edit (`gp-safety-cs` stays
+`25d91b2b9a49c7e02356cf676a1b2b5a067d9f4672f8cf59652c9c5c938b3f56`). 31 of 32 drafts
+were already exact.
+
+**Item 10 — §27.22 AMENDED, decision closed.** The paragraph now describes the
+single-clinician gate that actually runs, and carries a blockquote recording why it
+was narrowed (production exposes one eligible operational reviewer — a provisioning
+limit, not a judgement that the control was unnecessary), what the gate still enforces,
+and exactly what would restore the three-approver version: two additional active,
+email-verified authorized users, after which the removed `requireValue` /
+`assertReviewDate` calls and the distinct-reviewer-ID check go back into
+`portugal-clinical-approval.ts`. A later reader should not mistake this for a gate that
+lapsed.
+
+**Item 14 — rationale recorded, no content change.** The `/portugal/pt` row of the
+Portugal completion matrix now carries the full reason its H1 deliberately differs from
+its brand-led title, with the GSC evidence and the revisit condition. Nothing on the
+page changed; no re-approval needed.
+
+**The 2026-09-08 Czech GP gate can no longer answer its own question.** Neither the
+review nor §38.1 caught this. §27.16 set that gate to measure GP and travel query
+ownership against an *unchanged* page, so that any movement would isolate the indexing
+ramp. §40 then republished both pages on **2026-09-02**, six days before the gate,
+under a super-admin verbal override of that same hold. The confound is permanent —
+the pre-change window was never closed, so no post-hoc split exists. §27.16 is amended
+to read that gate as a **descriptive ramp check only** (recrawled? indexed? impressions
+appearing?) with no attribution to either cause. The attribution question moves to the
+§38 gates at the **2026-09-30** floor, which postdate the change and are clean. Do not
+rewrite either page before then.
+
+**Still open after both passes:** item 13's identity alignment (benign, but it is the
+sole approval chain), and items 11 and 12 awaiting clinical approval of the drafted
+hashes — with item 12 additionally needing a publication route chosen, since the gated
+writer refuses `targetKind === "tool"`. The two §38 measurement gates stay at their
+2026-09-30 floor.
 
 ---
 

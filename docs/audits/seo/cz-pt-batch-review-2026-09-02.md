@@ -278,12 +278,19 @@ urgency copy, so nothing leaked. The gap is in the checker, not the content.
   routes that intent to `/services/consulta-medica`. But the H1 was left expressing
   the old intent, and Portugal is now the only market home page not leading with the
   head term, which Brazil, Spain, Romania and Czechia all still do.
-- **`/czechia/cs/tools/blood-pressure-chart` moved away from its largest cluster.**
+- ~~**`/czechia/cs/tools/blood-pressure-chart` moved away from its largest cluster.**
   The H1 changed from "Normální krevní tlak Česko" to "Kalkulačka a tabulka krevního
-  tlaku". The chosen primary keyword is worth 720 searches a month; the "normální"
-  family the page is assigned to own is worth about 4,580. The page does not
-  currently rank for those terms, so nothing was lost, but this is the market's
-  highest-impression page and the decision is worth revisiting.
+  tlaku", from a 720/mo keyword family to one worth about 4,580.~~
+  **WITHDRAWN 2026-09-03 — framed on keyword-master volume, contradicted by the
+  page's own query data.** In the same 28-day window, `krevní tlak kalkulačka` took
+  **418 impressions, 10 clicks, position 4.9** on this URL, and `krevní tlak tabulka`
+  another 44 at position 12.5. Every `normální …` variant combined took ~33
+  impressions and **zero clicks** at position 27-40. The new H1 names both families
+  that produce the page's impressions and all ten of its clicks; the retired H1 named
+  a family it has never earned a click from. The H1 moved toward what converts. Keep
+  it. (Method note: `get_keyword_metrics` prices `kalkulačka krevního tlaku` at 10
+  searches/month — two orders of magnitude below what GSC shows the word-ordered
+  variant doing on this page alone.) See ledger §38.1.
 - **`/czechia/cs/contact` H1 is a title tag.** `Kontakt | Global Health Česko`, pipe
   included, is the only H1 in either market using that pattern.
 - **`/portugal/pt/services/consulta-de-psicologia`** owns "psicólogo online" but is
@@ -297,13 +304,19 @@ urgency copy, so nothing leaked. The gap is in the checker, not the content.
 
 ### 3.9 Two code follow-ups from the frontend review
 
-- `frontend/lib/content/get-country-plans.ts` now invalidates the **entire** plan
-  catalogue if any single plan, perk or kit row fails validation, and
-  `pricing/page.tsx` does not catch the resulting error. One malformed row from the
-  backend would 500 the whole pricing route for a market with a live catalogue,
-  where previously it dropped that one row. This matches the site's established
-  fail-closed pattern, so it is a deliberate choice, but it is a new failure mode on
-  a revenue page.
+- ~~`frontend/lib/content/get-country-plans.ts` now invalidates the **entire** plan
+  catalogue if any single plan, perk or kit row fails validation, where previously it
+  dropped that one row.~~ **WITHDRAWN 2026-09-03 — the premise is wrong.**
+  `d5399b35~1` already ran `res.data.plans.map(parsePlan)` followed by
+  `if (plans.some((plan) => plan === null)) return { ok: false, plans: [] }`, so one
+  bad row already invalidated the whole catalogue. There was no per-row drop to
+  regress from. What actually changed is that the whole-catalogue failure went from a
+  silent empty result to a thrown `PublicContentUnavailableError` — and that is the
+  safer direction here, because since `d5399b35` an empty catalogue makes
+  `pricing/page.tsx` render a different title, a different H1 and no plan CTA. A 500
+  is retryable and leaves ISR serving the last good page; a crawlable "not available
+  yet" variant on a live revenue route is not. Fail-closed stands, pinned by a
+  regression test. See ledger §38.1.
 - `frontend/lib/content/get-page-content.ts` (commit `50b950f7`) now suppresses
   individual fields backfilled from another locale. That is the right fix for
   mixed-language rendering, but any page with a genuinely partial CMS translation
@@ -311,6 +324,46 @@ urgency copy, so nothing leaked. The gap is in the checker, not the content.
   translated locales.
 
 ---
+
+## 3.10 Corrections to this report — 2026-09-03
+
+Two findings above were checked against primary evidence and **withdrawn**; both are
+struck in place with the reason. They were the only two that did not survive
+verification.
+
+- **§3.9 first bullet (pricing fail-closed).** The claim that the route previously
+  dropped a single bad row is false — `d5399b35~1` already invalidated the whole
+  catalogue. There was no regression.
+- **§3.8 blood-pressure H1.** Framed on keyword-master volume; the page's own Search
+  Console data shows the new H1 pointing at the family carrying every one of its
+  clicks.
+
+One finding above was **closed by events before this remediation began**: §3.3's two
+draft/matrix divergences were reconciled toward the draft and both pages published
+under ledger §40 on 2026-09-02. The mechanism that produced them is now a build
+failure — see §3.11.
+
+## 3.11 The §3.3 defect class is now enforced, not just documented
+
+§3.3 identified the real problem correctly: the approval gates bind the SHA-256 of the
+**draft file**, while the reviewer reads the **completion matrix**. Reconciling the two
+specific rows fixed the instance; the wiring that produced them was untouched and would
+have produced the next one.
+
+`seo/czechia/validate-artifacts.mjs` now asserts draft-versus-matrix equality across
+all 32 Czech drafts — page-content, service, doctor, blog and tool — on optimized
+title, meta description, H1, primary keyword and the secondary keyword list. A
+divergence is a validator failure, so it cannot reach a reviewer.
+
+It found one more divergence on its first run that this report missed, because §3.3
+compared only title, description, H1 and primary keyword: `gpSafetyCs` also carried
+different **secondary keywords** from its matrix row. That field is declarative — it is
+not inside `czechiaPageContentApprovalSha256`, which hashes `{key, locale, copy}`, and
+the page-content patcher never writes it — so it was a bookkeeping divergence, not an
+approval-integrity one. Reconciled to the matrix; all four page-content approval hashes
+verified byte-identical before and after.
+
+31 of 32 drafts were already exact.
 
 ## 4. Recommended actions
 
