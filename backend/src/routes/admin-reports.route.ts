@@ -25,6 +25,8 @@ import { loadDoctorPayoutBanks } from "../modules/reports/payout-bank-lookup.js"
 import {
   CLINICAL_DIRECTOR_TERMS,
   clinicalDirectorStatementReport,
+  findClinicalDirector,
+  type ClinicalDirectorPayee,
 } from "../modules/reports/clinical-director-report.js";
 
 /**
@@ -158,7 +160,41 @@ const adminReportsRoute: FastifyPluginAsync = async (app) => {
         if (!terms) {
           return reply.status(400).send(errorResponse("Unknown clinical director market"));
         }
-        table = await clinicalDirectorStatementReport(terms, filters);
+
+        // Finance pays the director straight off this statement, so it carries
+        // their account in the clear — resolved exactly as a doctor payout is
+        // (their market account first, doctor-level as the fallback), and the
+        // full-IBAN reveal audited the same way. A missing director is not an
+        // error: the consultation list and commission still stand.
+        const director = await findClinicalDirector(terms.countryCode);
+        let payee: ClinicalDirectorPayee | null = null;
+        if (director) {
+          const banks = await loadDoctorPayoutBanks(director.id);
+          const marketBank = banks.byMarket[terms.countryCode.toLowerCase()];
+          const bank =
+            marketBank && (marketBank.iban || marketBank.accountHolder || marketBank.bic)
+              ? marketBank
+              : banks.fallback;
+          payee = {
+            fullName: director.fullName,
+            accountHolder: bank.accountHolder,
+            iban: bank.iban,
+            bic: bank.bic,
+          };
+          if (bank.iban) {
+            const actor = resolveAdminSessionActor(request);
+            await recordCriticalAudit({
+              actorUserId: actor?.userId ?? null,
+              actorRole: actor?.role ?? "ADMIN",
+              action: "DOCTOR_BANK_VIEWED",
+              entityType: "Doctor",
+              entityId: director.id,
+              metadata: { source: "clinical-director-statement", market: terms.countryCode },
+              request,
+            });
+          }
+        }
+        table = await clinicalDirectorStatementReport(terms, filters, payee);
       } else if (q.dataset === "commission-payouts") {
         // Finance runs the bank transfer straight from this worksheet, so it
         // carries every covered doctor's bank details in the clear. Same rule
