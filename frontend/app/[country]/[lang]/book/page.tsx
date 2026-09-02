@@ -97,16 +97,19 @@ export async function generateMetadata({
 
   const { common } = loadLocaleBundle(lang as LocaleCode);
   const czechiaSeo = czechiaStaticPageSeo(code, lang, "book");
-  const title = czechiaSeo?.title ?? `${common.bookPage.title} — ${config.name}`;
-  const description = czechiaSeo?.description ?? common.bookPage.subtitle.replace("{country}", config.name);
+  // `config.name` is English-only. Use the locale's own country name, as every
+  // sibling template does, so a Portuguese page does not read "Brazil".
+  const countryName = common.countryNames?.[code] ?? config.name;
+  const title = czechiaSeo?.title ?? `${common.bookPage.title} — ${countryName}`;
+  const description = czechiaSeo?.description ?? common.bookPage.subtitle.replace("{country}", countryName);
   const metadata = buildPublicMetadata({
     path: `/${country}/${lang}/book`,
     title,
     description,
     locale: ogLocales(config, lang).locale,
     kind: "service",
-    subtitle: config.name,
-    imageAlt: `${common.bookPage.title} — ${config.name}`,
+    subtitle: countryName,
+    imageAlt: `${common.bookPage.title} — ${countryName}`,
     languages: hreflangAlternates(config, "/book"),
   });
   return applyBookingWorkflowIndexing(metadata, await searchParams);
@@ -413,7 +416,7 @@ export default async function CountryLangBookPage({
 
       <GH2FlowHeader
         title={czechiaSeo?.h1 ?? bp.title}
-        subtitle={bp.subtitle.replace("{country}", config.name)}
+        subtitle={bp.subtitle.replace("{country}", c.countryNames?.[code] ?? config.name)}
         activeStep={currentStep}
         steps={stepLabels}
       />
@@ -441,7 +444,7 @@ export default async function CountryLangBookPage({
                     icon-tile treatment matches DoctorCard's dark variant. */}
                 <ul className="mt-5 grid gap-2.5 border-t border-white/10 pt-5">
                   {[
-                    { icon: ShieldCheck, label: c.serviceDetailPage.trustRegistered.replace("{country}", config.name) },
+                    { icon: ShieldCheck, label: c.serviceDetailPage.trustRegistered.replace("{country}", c.countryNames?.[code] ?? config.name) },
                     { icon: Video, label: c.serviceDetailPage.trustVideo },
                     { icon: Lock, label: c.serviceDetailPage.trustConfidential },
                   ].map(({ icon: Icon, label }) => (
