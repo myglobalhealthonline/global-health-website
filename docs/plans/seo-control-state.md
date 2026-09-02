@@ -7884,3 +7884,88 @@ three now-verified pages.
 > same decision; the Portugal gate has no override path.
 
 ---
+
+---
+
+## 41. OPEN-WORK-REGISTER-001 — verified backlog carried into 2026-09-04 (2026-09-03)
+
+**Status: RECORD ONLY. Nothing in this section was fixed today.** Every line below was
+re-verified against live production or the working tree on 2026-09-03 immediately
+before it was written, so this is the state of the backlog at the start of the next
+working day, not a restatement of an earlier audit.
+
+### 41.1 Four open defects
+
+| # | Defect | Verified state, 2026-09-03 | Evidence |
+| --- | --- | --- | --- |
+| 1 | Country name rendered in English on `/legal` and `/book` for non-EN locales | **Fixed in code only, not deployed.** `/spain/es/legal` still serves `<title>Información legal. · Spain · Global Health</title>`; `/romania/ro/legal` still serves `· Romania ·`. | live `curl`, both URLs |
+| 2 | Romania service pages carry no FAQ | **Open.** `medic-online-romania` and `a-doua-opinie-medicala` both return zero `FAQPage` blocks in served HTML. | live `curl \| grep -c FAQPage` = 0 on both |
+| 3 | Sitemap URL count disagrees with this ledger | **Open.** Live `sitemap.xml` contains **2,146** `<loc>` entries. §17 and §23.2 of this file both still assert 1,932. | live sitemap, `grep -c '<loc>'` |
+| 4 | Spain, Romania and Brazil have no clinical-approval gate | **Open.** Only two gates exist in the repository: `backend/src/content/portugal-clinical-approval.ts` and `backend/scripts/lib/czechia-clinical-approval.ts`. There is no ES/RO/BR equivalent. | `find . -name '*clinical-approval*'` |
+
+Defect 1 is the only one with a code fix. It sits in commit `30b239ae` on `Dev-hassaan`,
+together with `38089b2d` and `1bddd990`, all three unpushed and undeployed. The fix
+takes effect only after push and deploy.
+
+Defect 2 is content, not code. Seventeen Romanian service pages need authored FAQ sets
+in the Czech style, and under the single-clinician standard set on 2026-09-03 each
+payload needs one named Romanian clinician's approval. Romania has three registered
+doctors, so a reviewer exists.
+
+Defect 3 is a ledger correction, not a site change. The sitemap is not wrong; this
+document is stale.
+
+Defect 4 is the substantial one — roughly 150–250 lines plus tests per market,
+mirroring the Portugal or Czechia gate. It should land before any ES/RO/BR content
+batch, because those markets have already published doctor biographies and credentials
+with no gate in front of them.
+
+### 41.2 Drafted but never published — 22 rows, all Portugal
+
+Everything genuinely written-and-unpublished lives in one file:
+`seo/portugal/raw/snippet-trim-drafts-2026-09-03.csv` (22 data rows), with the reviewer
+packet at `seo/portugal/raw/snippet-trim-review-packet-2026-09-03.md`.
+
+- **11 doctor meta descriptions.** Drafted 2026-09-03, hashes computed, guarded dry run
+  proves each resolves to exactly one record. Blocked on clinical approval of the new
+  hashes. Live pages still carry the untrimmed 191–220 character versions.
+- **11 tool-page fields** — seven tools, titles and descriptions. Blocked twice over:
+  no approval, and no publication route exists at all, because the writer rejects
+  `targetKind === "tool"`. Unblocking these needs code, not just a reviewer.
+- **`beatriz-carvalho` title and description.** Her register row is the single
+  `blocked_pending_review` of 45, and her fact-register row is the single
+  `pending_official_verification` of 16 — the OPP directory returns Beatriz Sousa for
+  OPP 31618, not Beatriz Carvalho. Identity must be resolved before any copy ships.
+
+Portugal register totals as of today: 45 rows, 44 `approved`, 1 `blocked_pending_review`.
+
+### 41.3 Not drafted — no payload exists
+
+- **Czechia, three register rows.** The two eNeschopenka/sick-pay articles and the
+  site-wide forms/analytics privacy scope. §40 is explicit that no publishable payload
+  was ever produced and no change was invented. Register today: 37 rows — 31 `approved`,
+  3 `pending`, 3 `live_unreviewed_debt`. Nothing is sitting in a drawer; the work has
+  not been done.
+- **Ireland, 12 content briefs.** Briefs are specifications, not copy —
+  `online-gp-ireland`, `referral-and-investigations`, `home-blood-tests-ireland`,
+  `calorie-calculator-ireland` and eight more. The register's 10 rows show nine
+  `Published; …gated` variants and one `Draft only until reviewed`. The lab hub is
+  frozen until 2026-09-08. No finished text exists to publish.
+- **Spain, Romania, Brazil.** README stubs only — no matrix, no register, no briefs, no
+  drafts. Their evidence lives in this ledger. Zero unpublished SEO copy, because zero
+  was written.
+
+### 41.4 Suggested order for 2026-09-04
+
+1. Push the three `Dev-hassaan` commits and deploy, then re-verify defect 1 on
+   `/spain/es/legal` and `/romania/ro/legal`. Cheapest win, already written.
+2. Correct the 1,932 figure in §17 and §23.2 to the live 2,146. Five minutes.
+3. Resolve the `beatriz-carvalho` OPP identity conflict — it blocks one register row and
+   one fact-register row simultaneously.
+4. Build the ES/RO/BR clinical-approval gates before any content batch for those markets.
+5. Only then start Romania FAQ authoring, which depends on step 4.
+
+Two read-only inventory scripts were added to make this state reproducible:
+`backend/scripts/report-unpublished-content.ts` (what exists but is not publicly live,
+per country) and `backend/scripts/report-editorial-draft-state.ts`. Both open no write
+and run no transaction.
