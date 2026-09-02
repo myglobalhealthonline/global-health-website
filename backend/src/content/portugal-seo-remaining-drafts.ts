@@ -15,7 +15,10 @@ export type PortugalSeoRemainingDraft = PortugalSeoMetadataDraft & Readonly<{
   assetPath: string;
 }>;
 
-const BLOCKED_STATUS = "drafted; blocked pending clinical or credential review";
+const PHASE_TWO_STATUSES = new Set([
+  "drafted; blocked pending clinical or credential review",
+  "live verified 2026-09-02 phase two",
+]);
 
 function target(path: string): Readonly<{
   assetKind: PortugalRemainingAssetKind;
@@ -61,7 +64,7 @@ export function parsePortugalSeoRemainingDrafts(csv: string): PortugalSeoRemaini
 
   const value = (row: string[], column: string) => (row[header.indexOf(column)] ?? "").trim();
   return rows
-    .filter((row) => value(row, "implementation status") === BLOCKED_STATUS)
+    .filter((row) => PHASE_TWO_STATUSES.has(value(row, "implementation status")))
     .map((row) => {
       const url = value(row, "URL");
       const parsedUrl = new URL(url);

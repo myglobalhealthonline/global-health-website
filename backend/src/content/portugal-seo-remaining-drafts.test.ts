@@ -3,7 +3,10 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import test from "node:test";
 
-import { readPortugalClinicalReviewRecord } from "./portugal-clinical-approval.js";
+import {
+  assertPortugalClinicalApproval,
+  readPortugalClinicalReviewRecord,
+} from "./portugal-clinical-approval.js";
 import {
   parsePortugalSeoRemainingDrafts,
   portugalRemainingApprovalSha256,
@@ -15,6 +18,10 @@ const matrix = readFileSync(
 );
 const clinicalRegister = readFileSync(
   resolve(__dirname, "../../../seo/portugal/clinical-review-register.csv"),
+  "utf8",
+);
+const factRegister = readFileSync(
+  resolve(__dirname, "../../../seo/portugal/doctor-profile-fact-register.csv"),
   "utf8",
 );
 
@@ -38,7 +45,7 @@ const expectedAssets = [
   "/portugal/pt/see-a-specialist",
 ] as const;
 
-test("parses exactly the 17 blocked Portugal targets from the completion matrix", () => {
+test("parses exactly the 17 phase-two Portugal targets from the completion matrix", () => {
   const drafts = parsePortugalSeoRemainingDrafts(matrix);
 
   assert.deepEqual(drafts.map(({ assetPath }) => assetPath), expectedAssets);
@@ -101,11 +108,24 @@ test("approval hashes bind the exact proposed copy and target", () => {
   );
 });
 
-test("clinical register keeps every remaining copy hash blocked for exact review", () => {
+test("clinical register approves 16 exact hashes and keeps the conflicted profile blocked", () => {
   for (const draft of parsePortugalSeoRemainingDrafts(matrix)) {
     const record = readPortugalClinicalReviewRecord(clinicalRegister, draft.asset);
-    assert.equal(record.publish_status, "blocked_pending_review", draft.assetPath);
-    assert.match(record.notes, new RegExp(`Candidate SHA-256: ${portugalRemainingApprovalSha256(draft)}\\.`));
-    assert.equal(record.approved_sha256, "", draft.assetPath);
+    const approvedHash = portugalRemainingApprovalSha256(draft);
+    if (draft.assetPath.endsWith("/doctors/beatriz-carvalho")) {
+      assert.equal(record.publish_status, "blocked_pending_review", draft.assetPath);
+      assert.match(record.notes, new RegExp(`Candidate SHA-256: ${approvedHash}\\.`));
+      assert.equal(record.approved_sha256, "", draft.assetPath);
+      continue;
+    }
+    const approved = assertPortugalClinicalApproval(clinicalRegister, {
+      asset: draft.asset,
+      approvedSha256: approvedHash,
+      factRegisterCsv: factRegister,
+      now: new Date("2026-09-02T00:00:00.000Z"),
+    });
+    assert.equal(approved.reviewer_name, "Dr Tiago Miguel Figueira");
+    assert.equal(approved.reviewer_doctor_id, "cmp5r0if3002kssjug743x0p6");
+    assert.equal(approved.reviewed_at, "2026-09-02T01:58:00+02:00");
   }
 });

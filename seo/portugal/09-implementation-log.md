@@ -285,3 +285,31 @@ Publication requires Dr Tiago's exact approval of the 17 candidate hashes. Even 
 that approval, the Beatriz candidate must remain excluded until authoritative OPP
 documentation resolves the identity mismatch. Reconciliation passes with 45 clinical
 rows, 15 verified doctor facts and one pending fact.
+
+## 2026-09-02 remaining metadata production rollout
+
+Dr Tiago Miguel Figueira approved the exact phase-two candidate hashes at
+`2026-09-02T01:58:00+02:00`. The official-fact gate admitted 16 records and kept
+Beatriz Carvalho blocked because OPP 31618 resolves to Beatriz Sousa. No approval or
+credential fact was inferred for that profile.
+
+All 16 eligible source hashes still matched the recorded production dry runs. The
+one-record writer then applied one blog record, three published page-content
+translations, one health-landing translation and 11 doctor-market translations.
+Each Serializable transaction verified the exact approved title and description;
+doctor transactions also verified the exact SEO keyword array and registration-bound
+subject identity. The hand-foot-mouth description no longer attributes Portugal
+content to Ireland or the HSE.
+
+Independent database and cache-bypassed public readback passed 16 of 16 records:
+HTTP 200, approved title policy, exact description, self-canonical, `pt-PT`
+hreflang, indexability, Portuguese HTML language and JSON-LD. A separate source-hash
+read confirmed the held Beatriz record remained unchanged. The sanitized receipt is
+`raw/production-write-receipt-2026-09-02-remaining-metadata.json`; full readback is
+`raw/remaining-metadata-production-readback-2026-09-02.json`.
+
+The writer did not target names, biographies, qualifications, credentials,
+certifications, registrations, specialties, languages, visible clinical copy, FAQs,
+prices, booking or availability. The 212-FAQ decision also remains unchanged: page-
+level intent is already present, so no forced per-FAQ keyword field or rewrite was
+added.

@@ -1,6 +1,6 @@
 # SEO control state — canonical
 
-**Last operational update: 2026-09-01.** Historical audit files remain snapshots;
+**Last operational update: 2026-09-02.** Historical audit files remain snapshots;
 this ledger is the source of truth for current status, dated gates and future work.
 
 **This file is the single source of truth for the SEO workstream.** It carries the
@@ -7152,5 +7152,29 @@ The Czechia matrix now records 31 fully live pages, 14 source-pinned guarded dra
 pending review, three measurement holds and two reviewed-no-change pages. This
 approval was not widened to specialist, native-English, governance or measurement-
 hold rows.
+
+---
+
+## 37. PT-METADATA-002 — phase-two metadata rollout (2026-09-02)
+
+**Status: 16 RECORDS LIVE AND VERIFIED / 1 CREDENTIAL-CONFLICT HOLD.** Dr Tiago
+Miguel Figueira approved the exact phase-two hashes at
+`2026-09-02T01:58:00+02:00`. The guarded writer admitted one PT blog record, three
+published page-content translations, one PT health-landing translation and 11
+doctor-market translations. Every source hash matched its prior production dry run;
+each one-record Serializable transaction passed optimistic and exact readback guards.
+
+Independent database and cache-bypassed public verification passed all 16 URLs for
+approved title policy, exact description, HTTP 200, self-canonical, `pt-PT`
+hreflang, indexability, Portuguese HTML language and JSON-LD. The receipt and full
+readback are `seo/portugal/raw/production-write-receipt-2026-09-02-remaining-metadata.json`
+and `seo/portugal/raw/remaining-metadata-production-readback-2026-09-02.json`.
+
+Beatriz Carvalho remains `blocked_pending_review`: the official OPP directory maps
+31618 to Beatriz Sousa, so authoritative OPP resolution is required before any
+profile publication. Her pre-rollout source hash was re-read unchanged. No name,
+biography, qualification, credential/certification, registration, specialty,
+language, visible clinical copy, FAQ, price, booking or availability field changed
+on any doctor record.
 
 ---

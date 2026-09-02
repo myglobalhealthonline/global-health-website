@@ -55,6 +55,7 @@ const OFFICIAL_SOURCE_HOSTS = [
   "ers.pt",
   "ordemdosmedicos.pt",
   "ordemdospsicologos.pt",
+  "rpmgf.pt",
   "imt-ip.pt",
   "seg-social.pt",
   "dre.pt",

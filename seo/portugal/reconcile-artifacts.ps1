@@ -7,6 +7,8 @@ $doctors = @(Import-Csv (Join-Path $PSScriptRoot "doctor-profile-fact-register.c
 $readback = @(Import-Csv (Join-Path $PSScriptRoot "raw\clinical-seo-production-readback-2026-09-02.csv"))
 $remainingDryRun = @(Import-Csv (Join-Path $PSScriptRoot "raw\remaining-metadata-production-dry-run-2026-09-02.csv"))
 $receipt = Get-Content -Raw (Join-Path $PSScriptRoot "raw\production-write-receipt-2026-09-02-clinical-seo.json") | ConvertFrom-Json
+$remainingReadback = Get-Content -Raw (Join-Path $PSScriptRoot "raw\remaining-metadata-production-readback-2026-09-02.json") | ConvertFrom-Json
+$remainingReceipt = Get-Content -Raw (Join-Path $PSScriptRoot "raw\production-write-receipt-2026-09-02-remaining-metadata.json") | ConvertFrom-Json
 
 function Assert-Equal($actual, $expected, [string]$message) {
   if ($actual -ne $expected) { throw "$message (expected $expected; found $actual)" }
@@ -33,6 +35,7 @@ Assert-Equal $clinical.Count 45 "Portugal clinical register row count"
 Assert-Equal $doctors.Count 16 "Portugal doctor fact-register row count"
 Assert-Equal $readback.Count 27 "Portugal clinical SEO public readback row count"
 Assert-Equal $remainingDryRun.Count 17 "Portugal remaining metadata dry-run row count"
+Assert-Equal @($remainingReadback.rows).Count 16 "Portugal remaining metadata public readback row count"
 
 foreach ($set in @($drafts, $pages)) {
   Assert-Equal @($set | Group-Object URL | Where-Object Count -gt 1).Count 0 "Duplicate Portugal URL"
@@ -58,12 +61,16 @@ $guarantees = "mesmo dia|no mesmo dia|garantid[oa]|disponibilidade imediata"
 Assert-Equal @($rewritten | Where-Object { $_.'optimized title' -match $guarantees -or $_.'optimized meta description' -match $guarantees }).Count 0 "Unsupported availability guarantee in revised copy"
 $approvedClinical = @($clinical | Where-Object publish_status -eq "approved")
 $blockedClinical = @($clinical | Where-Object publish_status -eq "blocked_pending_review")
+$phaseTwoApproved = @($approvedClinical | Where-Object reviewed_at -eq "2026-09-02T01:58:00+02:00")
+$phaseOneApproved = @($approvedClinical | Where-Object reviewed_at -ne "2026-09-02T01:58:00+02:00")
 $approvedClinicalUrls = @($approvedClinical.page_or_file | ForEach-Object { ($_ -split " -> ", 2)[-1].Trim() })
+$phaseOneApprovedUrls = @($phaseOneApproved.page_or_file | ForEach-Object { ($_ -split " -> ", 2)[-1].Trim() })
+$phaseTwoApprovedUrls = @($phaseTwoApproved.page_or_file | ForEach-Object { ($_ -split " -> ", 2)[-1].Trim() })
 $allClinicalUrls = @($clinical.page_or_file | ForEach-Object { ($_ -split " -> ", 2)[-1].Trim() })
 Assert-Equal @($pages | Where-Object { $allClinicalUrls -contains $_.URL }).Count $clinical.Count "Clinical page is missing from the live matrix"
 Assert-Equal @($pages | Where-Object { $approvedClinicalUrls -contains $_.URL -and $_.'factual verification completed' -ne "yes" }).Count 0 "Approved clinical page is missing factual verification"
 $retainedUrls = @($drafts | Where-Object { $_.'implementation status' -eq "clinically reviewed; unchanged" } | ForEach-Object URL)
-$expectedReadbackUrls = @($approvedClinicalUrls | Where-Object { $retainedUrls -notcontains $_ })
+$expectedReadbackUrls = @($phaseOneApprovedUrls | Where-Object { $retainedUrls -notcontains $_ })
 Assert-Equal @($readback | Group-Object URL | Where-Object Count -gt 1).Count 0 "Duplicate production readback URL"
 Assert-Equal @($readback | Where-Object { $expectedReadbackUrls -notcontains $_.URL }).Count 0 "Unexpected URL in production readback"
 Assert-Equal @($expectedReadbackUrls | Where-Object { $readback.URL -notcontains $_ }).Count 0 "Approved URL missing from production readback"
@@ -86,7 +93,40 @@ foreach ($row in $readback) {
   Assert-Equal $row.canonical $row.URL "Rendered production canonical drift for $($row.URL)"
 }
 Assert-Equal @($drafts | Where-Object { $_.'implementation status' -eq "live verified $rolloutDate" }).Count $readback.Count "Draft rollout status count"
-Assert-Equal @($pages | Where-Object { $_.'implementation status' -eq "live verified $rolloutDate" }).Count $readback.Count "Live matrix rollout status count"
+$remainingRows = @($remainingReadback.rows)
+Assert-Equal ([int]$remainingReadback.databaseRecordsExact) $remainingRows.Count "Remaining database readback count"
+Assert-Equal ([int]$remainingReadback.publicPagesExact) $remainingRows.Count "Remaining public readback count"
+Assert-Equal ([int]$remainingReceipt.verification.database_records_exact) $remainingRows.Count "Remaining receipt database count"
+Assert-Equal ([int]$remainingReceipt.verification.public_pages_exact) $remainingRows.Count "Remaining receipt public count"
+$receiptSelectors = @($remainingReceipt.database_records | Sort-Object)
+$readbackSelectors = @($remainingRows.selector | Sort-Object)
+Assert-Equal @(Compare-Object $receiptSelectors $readbackSelectors).Count 0 "Remaining receipt selector membership"
+Assert-Equal $remainingReceipt.verification.verified_at_utc $remainingReadback.verifiedAtUtc "Remaining receipt verification timestamp"
+Assert-Equal $remainingReceipt.clinical_review.reviewed_at "2026-09-02T01:58:00+02:00" "Remaining receipt clinical approval timestamp"
+Assert-Equal @($remainingReceipt.held_without_write).Count 1 "Remaining receipt held-record count"
+Assert-Equal $remainingReceipt.held_without_write[0].selector "doctor:beatriz-carvalho" "Remaining receipt held selector"
+Assert-Equal $remainingReadback.heldProfile "/portugal/pt/doctors/beatriz-carvalho" "Remaining readback held profile"
+Assert-Equal @($remainingRows | Group-Object url | Where-Object Count -gt 1).Count 0 "Duplicate remaining production readback URL"
+Assert-Equal @($remainingRows | Where-Object { $phaseTwoApprovedUrls -notcontains $_.url }).Count 0 "Unexpected remaining production readback URL"
+Assert-Equal @($phaseTwoApprovedUrls | Where-Object { $remainingRows.url -notcontains $_ }).Count 0 "Approved phase-two URL missing from production readback"
+Assert-Equal @($remainingRows | Where-Object {
+  $_.httpStatus -ne 200 -or !$_.titleMatches -or !$_.descriptionExact -or !$_.selfCanonical -or
+  !$_.hreflangPt -or !$_.indexable -or !$_.htmlLangPt -or !$_.jsonLdPresent
+}).Count 0 "Failed remaining production public readback"
+foreach ($row in $remainingRows) {
+  $page = @($pages | Where-Object URL -eq $row.url)[0]
+  Assert-Equal $row.expectedTitle $page.'optimized title' "Remaining production title drift for $($row.url)"
+  Assert-Equal $row.expectedDescription $page.'optimized meta description' "Remaining production description drift for $($row.url)"
+  Assert-Equal $row.renderedDescription $row.expectedDescription "Remaining rendered description drift for $($row.url)"
+  Assert-Equal $row.canonical $row.url "Remaining rendered canonical drift for $($row.url)"
+}
+Assert-Equal @($pages | Where-Object { $_.'implementation status' -eq "live verified $rolloutDate" }).Count $readback.Count "Initial live matrix rollout status count"
+$phaseTwoReason = "Approved by Dr Tiago Miguel Figueira at 2026-09-02T01:58:00+02:00 and verified in production; visible clinical and profile content remains unchanged."
+$phaseTwoPages = @($pages | Where-Object { $_.'implementation status' -eq "live verified 2026-09-02 phase two" })
+Assert-Equal $phaseTwoPages.Count $remainingRows.Count "Phase-two live matrix rollout status count"
+Assert-Equal @($phaseTwoPages | Where-Object {
+  $_.'live reviewed at' -ne "2026-09-02" -or $_.'reason for anything left unchanged' -ne $phaseTwoReason
+}).Count 0 "Phase-two live matrix review evidence"
 
 $approvalColumns = @(
   "reviewer_name", "reviewer_doctor_id", "clinical_reviewer_professional_body", "clinical_reviewer_specialty_id",
@@ -98,8 +138,9 @@ $approvalColumns = @(
 foreach ($column in $approvalColumns) {
   if ($clinical[0].PSObject.Properties.Name -notcontains $column) { throw "Clinical register is missing $column" }
 }
-Assert-Equal $approvedClinical.Count 28 "Approved clinical row count"
-Assert-Equal $blockedClinical.Count 17 "Blocked clinical row count"
+Assert-Equal $approvedClinical.Count 44 "Approved clinical row count"
+Assert-Equal $blockedClinical.Count 1 "Blocked clinical row count"
+Assert-Equal $phaseTwoApproved.Count 16 "Approved phase-two clinical row count"
 Assert-Equal @($approvedClinical | Where-Object {
   -not $_.reviewer_name -or -not $_.reviewer_doctor_id -or -not $_.clinical_reviewer_professional_body -or
   -not $_.reviewed_at -or -not $_.official_source_references -or $_.approved_sha256 -notmatch '^[a-f0-9]{64}$'
@@ -111,7 +152,7 @@ Assert-Equal @($blockedClinical | Where-Object {
 $blockedClinicalUrls = @($blockedClinical.page_or_file | ForEach-Object { ($_ -split " -> ", 2)[-1].Trim() })
 Assert-Equal @($remainingDryRun | Group-Object url | Where-Object Count -gt 1).Count 0 "Duplicate remaining dry-run URL"
 Assert-Equal @($remainingDryRun | Where-Object {
-  $blockedClinicalUrls -notcontains $_.url -or
+  $allClinicalUrls -notcontains $_.url -or
   $_.source_sha256 -notmatch '^[a-f0-9]{64}$' -or $_.approval_sha256 -notmatch '^[a-f0-9]{64}$' -or
   $_.confirmation -ne "PT-SEO-$($_.approval_sha256.Substring(0, 12).ToUpperInvariant())" -or
   $_.result -ne "matched one production record; no write"
@@ -121,6 +162,11 @@ Assert-Equal @($blockedClinical | Where-Object {
   $evidence = @($remainingDryRun | Where-Object url -eq $url)[0]
   !$evidence -or $_.notes -notmatch [regex]::Escape("Candidate SHA-256: $($evidence.approval_sha256).")
 }).Count 0 "Blocked clinical row does not match its production dry-run copy hash"
+Assert-Equal @($phaseTwoApproved | Where-Object {
+  $url = ($_.page_or_file -split " -> ", 2)[-1].Trim()
+  $evidence = @($remainingDryRun | Where-Object url -eq $url)[0]
+  !$evidence -or $_.approved_sha256 -ne $evidence.approval_sha256
+}).Count 0 "Approved phase-two clinical row does not match its dry-run copy hash"
 Assert-Equal @($clinical | Where-Object {
   $_.clinical_reviewer_specialty_id -or
   $_.compliance_reviewer_name -or $_.compliance_reviewer_id -or $_.compliance_reviewed_at -or
@@ -142,6 +188,7 @@ Assert-Equal @($doctors | Where-Object verification_status -eq "pending_official
   clinical_rows_approved = $approvedClinical.Count
   clinical_rows_blocked = $blockedClinical.Count
   remaining_production_dry_runs = $remainingDryRun.Count
+  remaining_production_readbacks = $remainingRows.Count
   doctor_profiles_metadata_verified = 15
   doctor_profiles_pending_verification = 1
   status = "valid"
