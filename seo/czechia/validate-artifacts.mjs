@@ -139,6 +139,7 @@ for (const [field, values] of Object.entries(allowedFlags)) {
 }
 const allowedStatuses = new Set([
   "live_verified_2026-09-01",
+  "live_verified_2026-09-02",
   "measurement_hold_travel_recrawl",
   "measurement_hold_until_2026-09-08",
   "reviewed_no_change",
@@ -158,19 +159,20 @@ assert.equal(
   matrix.filter(({ implementation_status }) =>
     implementation_status.startsWith("source_pinned_guarded_draft_pending_"),
   ).length,
-  15,
-  "the 15 unapproved or expanded-hash clinical pages must remain guarded drafts",
+  14,
+  "the 14 unapproved clinical pages must remain guarded drafts",
 );
 assert.equal(
   matrix.filter(
     ({ clinical_review_required, implementation_status }) =>
-      clinical_review_required === "yes" && implementation_status === "live_verified_2026-09-01",
+      clinical_review_required === "yes" && implementation_status.startsWith("live_verified_"),
   ).length,
-  16,
-  "the 16 fully live approved clinical pages must record verified deployment",
+  17,
+  "the 17 fully live approved clinical pages must record verified deployment",
 );
 
 const exactFaqDraftUrls = [
+  "https://www.myglobalhealth.online/czechia/cs/services/lekar-online-praha",
   "https://www.myglobalhealth.online/czechia/cs/services/neschopenka-online",
   "https://www.myglobalhealth.online/czechia/cs/services/obnoveni-lecby",
 ].sort();
@@ -260,13 +262,30 @@ assert.equal(
   "clinical production receipt drift",
 );
 const clinicalProductionReceipt = JSON.parse(clinicalProductionReceiptText);
+const pragueProductionReceiptText = await read("raw/production-write-receipt-2026-09-02-cs-prague.json");
+assert.equal(
+  createHash("sha256").update(pragueProductionReceiptText.replaceAll("\r\n", "\n")).digest("hex"),
+  "a6dd4c83aaa916638102fc4c9d6148666c660f137660836e6d1d095bf67af4c2",
+  "Czech Prague production receipt drift",
+);
+const pragueProductionReceipt = JSON.parse(pragueProductionReceiptText);
+const pragueApprovalRecordText = await read("raw/owner-recorded-clinical-approval-2026-09-02-cs-prague.json");
+assert.equal(
+  createHash("sha256").update(pragueApprovalRecordText.replaceAll("\r\n", "\n")).digest("hex"),
+  "3ccd3ef39349509ca022e03a36ce7192f99214175cf2567e3a47a432c76f33db",
+  "Czech Prague owner-recorded approval drift",
+);
+const pragueApprovalRecord = JSON.parse(pragueApprovalRecordText);
+const pragueProductionReadbackText = await read("raw/production-readback-2026-09-02-cs-prague.json");
+assert.equal(
+  createHash("sha256").update(pragueProductionReadbackText.replaceAll("\r\n", "\n")).digest("hex"),
+  "8a258fd95aa88bd029e3c971735bfe9c464c9e4c344f8f24f5b09cb5f451156a",
+  "Czech Prague production readback drift",
+);
+const pragueProductionReadback = JSON.parse(pragueProductionReadbackText);
 const productionReadback = [...staticProductionReadback, ...clinicalProductionReadback];
-// Prague's deployed metadata remains evidence-verified while its expanded
-// body/FAQ payload waits on a new exact-hash approval.
 const deploymentVerifiedMatrixRows = matrix.filter(
-  ({ url, implementation_status }) =>
-    implementation_status === "live_verified_2026-09-01" ||
-    url === "https://www.myglobalhealth.online/czechia/cs/services/lekar-online-praha",
+  ({ implementation_status }) => implementation_status.startsWith("live_verified_"),
 );
 assert.equal(staticProductionReadback.length, 14);
 assert.equal(clinicalProductionReadback.length, 17);
@@ -305,6 +324,65 @@ assert.deepEqual([...clinicalProductionReceipt.preserved].sort(), [
   "service prices and durations",
   "tool algorithms and clinical thresholds",
 ]);
+const pragueApproval = clinicalByAsset.get(pragueProductionReceipt.asset);
+assert.equal(pragueProductionReceipt.operation, "czechia-cs-prague-expanded-copy-rollout");
+assert.ok(strictUtcTimestamp(pragueProductionReceipt.recorded_at), "invalid Czech Prague receipt time");
+assert.equal(pragueProductionReceipt.service_id, "cmr85xq6u000070jufztsgfec");
+assert.equal(pragueProductionReceipt.locale, "CS");
+assert.equal(pragueProductionReceipt.approval.reviewer_name, pragueApproval?.reviewer_name);
+assert.equal(pragueProductionReceipt.approval.reviewer_doctor_id, pragueApproval?.reviewer_doctor_id);
+assert.equal(pragueProductionReceipt.approval.reviewed_at, pragueApproval?.reviewed_at);
+assert.equal(pragueProductionReceipt.approval.approved_sha256, pragueApproval?.approved_sha256);
+assert.equal(pragueProductionReceipt.approval.owner_record_artifact, "owner-recorded-clinical-approval-2026-09-02-cs-prague.json");
+assert.equal(pragueProductionReceipt.approval.owner_record_sha256, "3ccd3ef39349509ca022e03a36ce7192f99214175cf2567e3a47a432c76f33db");
+assert.equal(pragueApprovalRecord.normalized_reviewer_name, pragueApproval?.reviewer_name);
+assert.equal(pragueApprovalRecord.normalized_reviewed_at, pragueApproval?.reviewed_at);
+assert.equal(pragueApprovalRecord.asset, pragueProductionReceipt.asset);
+assert.equal(pragueApprovalRecord.approved_payload_sha256, pragueApproval?.approved_sha256);
+assert.match(pragueApprovalRecord.signature_status, /^No cryptographic reviewer signature was supplied;/);
+assert.match(pragueProductionReceipt.approval.source_sha256, /^[a-f0-9]{64}$/);
+assert.equal(pragueProductionReceipt.database_readback.status, "verified_transactionally");
+assert.equal(pragueProductionReceipt.database_readback.faq_records_updated_in_place, 8);
+assert.equal(pragueProductionReceipt.public_readback.artifact, "production-readback-2026-09-02-cs-prague.json");
+assert.equal(pragueProductionReceipt.public_readback.status, "verified_exact_body_and_faqs");
+assert.equal(pragueProductionReadback.asset, pragueProductionReceipt.asset);
+assert.equal(pragueProductionReadback.approved_payload_sha256, pragueApproval?.approved_sha256);
+assert.ok(strictUtcTimestamp(pragueProductionReadback.database.retrieved_at));
+assert.ok(strictUtcTimestamp(pragueProductionReadback.database.service_updated_at));
+assert.ok(strictUtcTimestamp(pragueProductionReadback.database.cs_translation_updated_at));
+assert.equal(pragueProductionReadback.database.service_id, pragueProductionReceipt.service_id);
+assert.equal(
+  pragueProductionReadback.database.source_sha256,
+  "ce0462f59a854476b6061e5b0d4b253fdd09e3ce15066776935fa5ee949eacf6",
+);
+assert.match(pragueProductionReadback.database.detail_body_sha256, /^[a-f0-9]{64}$/);
+assert.equal(pragueProductionReadback.database.faq_records.length, 8);
+assert.ok(pragueProductionReadback.database.faq_records.every(({ id, sha256 }) => id && /^[a-f0-9]{64}$/.test(sha256)));
+assert.ok(strictUtcTimestamp(pragueProductionReadback.public.retrieved_at));
+assert.ok(
+  Date.parse(pragueProductionReadback.public.retrieved_at) > Date.parse(pragueProductionReadback.database.service_updated_at),
+  "Czech Prague public readback predates the production write",
+);
+assert.equal(pragueProductionReadback.public.url, "https://www.myglobalhealth.online/czechia/cs/services/lekar-online-praha");
+assert.equal(pragueProductionReadback.public.status, 200);
+assert.match(pragueProductionReadback.public.html_sha256, /^[a-f0-9]{64}$/);
+assert.ok(
+  [
+    pragueProductionReadback.public.approved_title_present,
+    pragueProductionReadback.public.approved_h1_present,
+    pragueProductionReadback.public.approved_description_present,
+    pragueProductionReadback.public.approved_body_present,
+  ].every(Boolean),
+  "Czech Prague public copy readback failed",
+);
+assert.deepEqual(
+  pragueProductionReadback.public.faq_records.map(({ id }) => id).sort(),
+  pragueProductionReadback.database.faq_records.map(({ id }) => id).sort(),
+);
+assert.ok(
+  pragueProductionReadback.public.faq_records.every(({ question_present, answer_present }) => question_present && answer_present),
+  "Czech Prague public FAQ readback failed",
+);
 assert.deepEqual(
   productionReadback.map(({ url }) => url).sort(),
   deploymentVerifiedMatrixRows.map(({ url }) => url).sort(),
@@ -365,7 +443,7 @@ for (const row of matrix.filter(({ clinical_review_required }) => clinical_revie
     assert.equal(
       row.implementation_status,
       asset === "/czechia/cs/services/lekar-online-praha"
-        ? "source_pinned_guarded_draft_pending_clinical_review"
+        ? "live_verified_2026-09-02"
         : "live_verified_2026-09-01",
       `approved clinical row has the wrong deployment state for ${asset}`,
     );
@@ -379,7 +457,7 @@ for (const row of matrix.filter(({ clinical_review_required }) => clinical_revie
       assert.ok(strictRfc3339Timestamp(gate.native_reviewed_at), `invalid native review time for ${asset}`);
     }
   } else {
-    assert.notEqual(row.implementation_status, "live_verified_2026-09-01", `pending clinical row is marked live for ${asset}`);
+    assert.ok(!row.implementation_status.startsWith("live_verified_"), `pending clinical row is marked live for ${asset}`);
     assert.ok(
       [
         gate.reviewer_name,

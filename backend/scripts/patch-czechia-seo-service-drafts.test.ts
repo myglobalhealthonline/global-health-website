@@ -438,3 +438,22 @@ test("an English variant updates only its translation and preserves the Czech ba
     assert.equal(englishFaq?.answer, draft.faqs[index]?.answer);
   }
 });
+
+test("default Czech FAQ rows do not require duplicate Czech translations", async () => {
+  const { draft: sourceDraft, service } = testDraft();
+  for (const faq of service.faqs) {
+    faq.translations.splice(faq.translations.findIndex(({ locale }) => locale === "CS"), 1);
+  }
+  const draft = draftFor(service, sourceDraft);
+  const database = fakeDatabase(service);
+
+  await runCzechiaSeoServicePatch(database.client, options(draft, true), silentLogger, [draft]);
+
+  const saved = database.state();
+  for (const [index, faq] of saved.faqs.entries()) {
+    assert.equal(faq.question, draft.faqs[index]?.question);
+    assert.equal(faq.answer, draft.faqs[index]?.answer);
+    assert.equal(faq.translations.some(({ locale }) => locale === "CS"), false);
+  }
+  assert.ok(database.writes.every((write) => !write.startsWith("faq-translation:")));
+});

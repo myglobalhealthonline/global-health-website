@@ -1,0 +1,67 @@
+{
+  "asset": "/czechia/cs/services/lekar-online-praha",
+  "approved_payload_sha256": "e1246dbc98c12e4f14f36daaf8981a7611c58183d51d5fbbbb4797c4a3ab0746",
+  "database": {
+    "retrieved_at": "2026-09-01T23:51:19.006Z",
+    "service_id": "cmr85xq6u000070jufztsgfec",
+    "service_updated_at": "2026-09-01T23:38:25.814Z",
+    "source_sha256": "ce0462f59a854476b6061e5b0d4b253fdd09e3ce15066776935fa5ee949eacf6",
+    "detail_body_sha256": "6e344fb4417833586d6e1efbb3782a324a8cc2665f0a7678b37682c0cc54eac6",
+    "cs_translation_updated_at": "2026-09-01T23:38:26.142Z",
+    "faq_records": [
+      {
+        "id": "cmr85xqeo000170ju6qb7bzbb",
+        "sha256": "00c6e2ae543a7915a6c5a7fc3d9f7592ce6f15401addd2517d796084818adc7d"
+      },
+      {
+        "id": "cmr85xqeo000270jug0dgtk42",
+        "sha256": "44ef203561b8b8baf03070514bdd5d61f17d8b60301f6d1b2265b78bf63e27e7"
+      },
+      {
+        "id": "cmr85xqeo000370ju5ryyh241",
+        "sha256": "89146c6aedc95938108d31cbfd11048caf8a8cf65456e7dbee5de1f7c8a32d25"
+      },
+      {
+        "id": "cmr85xqeo000470jukz64egnl",
+        "sha256": "cb6f818014cd986b5a1c68b1b2d4a2045b266155a745bed1ac16217549283f79"
+      },
+      {
+        "id": "cmr85xqeo000570july81xdfm",
+        "sha256": "f28053b5bb68a8e145335157b041628c74b51c64aa3152b88ce857b0500f3f40"
+      },
+      {
+        "id": "cmr85xqeo000670ju725p211x",
+        "sha256": "7d43429269ba93e68742c8d9585c312c44ca5978a6f33f7df135603fe2cdb90d"
+      },
+      {
+        "id": "cmr85xqeo000770jue4d5moju",
+        "sha256": "cefcff9d65240e9e1f57100350ed998d65a71154147411fee9448095ceb4a953"
+      },
+      {
+        "id": "cmr85xqeo000870ju1d7eavt5",
+        "sha256": "ff6bae346d3bfee8b4c9cdbd4cc4f10e802b9d931732625cd5ccfa60fb2bc03e"
+      }
+    ]
+  },
+  "public": {
+    "retrieved_at": "2026-09-01T23:53:26.509Z",
+    "url": "https://www.myglobalhealth.online/czechia/cs/services/lekar-online-praha",
+    "request_url": "https://www.myglobalhealth.online/czechia/cs/services/lekar-online-praha?readback=20260902-0151",
+    "status": 200,
+    "html_sha256": "a0e24196c6c19e300ffb02f6b4d373f2da257286c4c3ee628528a420b11a186c",
+    "approved_title_present": true,
+    "approved_h1_present": true,
+    "approved_description_present": true,
+    "approved_body_present": true,
+    "faq_records": [
+      { "id": "cmr85xqeo000170ju6qb7bzbb", "question_present": true, "answer_present": true },
+      { "id": "cmr85xqeo000270jug0dgtk42", "question_present": true, "answer_present": true },
+      { "id": "cmr85xqeo000370ju5ryyh241", "question_present": true, "answer_present": true },
+      { "id": "cmr85xqeo000470jukz64egnl", "question_present": true, "answer_present": true },
+      { "id": "cmr85xqeo000570july81xdfm", "question_present": true, "answer_present": true },
+      { "id": "cmr85xqeo000670ju725p211x", "question_present": true, "answer_present": true },
+      { "id": "cmr85xqeo000770jue4d5moju", "question_present": true, "answer_present": true },
+      { "id": "cmr85xqeo000870ju1d7eavt5", "question_present": true, "answer_present": true }
+    ]
+  }
+}

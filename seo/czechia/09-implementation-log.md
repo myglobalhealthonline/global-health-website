@@ -327,3 +327,27 @@ measurement holds and two reviewed-no-change pages. The GP and travel rows remai
 measurement holds but now record their exact prepared full-copy scope; the Czech
 Prague service is no longer counted fully live because its expanded body/FAQ payload
 has a new approval hash.
+
+## Czech Prague expanded-copy rollout — 2026-09-02
+
+MUDr. Ahmed Maklad approved the exact expanded Czech Prague service payload at
+`2026-09-02T01:30:00+02:00`. The production source fingerprint
+`c71ac9b6b975743c102646def4c4e1839d04bc15d5ae414f7103adcf35ffcc58`
+matched immediately before the write, and the approved payload hash was
+`e1246dbc98c12e4f14f36daaf8981a7611c58183d51d5fbbbb4797c4a3ab0746`.
+
+The transaction published the full Czech body and updated all eight existing FAQ
+records in place. Transactional readback confirmed the approved copy and preserved
+price, duration, assigned doctors, booking state and global review
+metadata. A public readback then confirmed the new body and all eight FAQ answers on
+the production URL. The date gate now uses the Prague calendar date, and default
+Czech FAQ rows no longer require redundant Czech translation rows; both production
+shapes are covered by regression tests.
+
+Because the English draft shares the same service and FAQ records, it was re-pinned
+to the post-write production snapshot before this change was committed. It remains
+guarded pending its separate clinical and native-English approvals.
+
+The matrix now tallies 31 fully live pages, 14 source-pinned guarded drafts pending
+review, three measurement holds and two reviewed-no-change pages. No other pending
+page was widened by this approval.

@@ -1,0 +1,32 @@
+{
+  "operation": "czechia-cs-prague-expanded-copy-rollout",
+  "recorded_at": "2026-09-01T23:40:22.8073909Z",
+  "asset": "/czechia/cs/services/lekar-online-praha",
+  "service_id": "cmr85xq6u000070jufztsgfec",
+  "locale": "CS",
+  "approval": {
+    "reviewer_name": "MUDr. Ahmed Maklad",
+    "reviewer_doctor_id": "cmqas8yh9000b01pgpc0yp1la",
+    "reviewed_at": "2026-09-02T01:30:00+02:00",
+    "source_sha256": "c71ac9b6b975743c102646def4c4e1839d04bc15d5ae414f7103adcf35ffcc58",
+    "approved_sha256": "e1246dbc98c12e4f14f36daaf8981a7611c58183d51d5fbbbb4797c4a3ab0746",
+    "owner_record_artifact": "owner-recorded-clinical-approval-2026-09-02-cs-prague.json",
+    "owner_record_sha256": "3ccd3ef39349509ca022e03a36ce7192f99214175cf2567e3a47a432c76f33db"
+  },
+  "database_readback": {
+    "status": "verified_transactionally",
+    "faq_records_updated_in_place": 8,
+    "protected_fields_preserved": [
+      "price",
+      "duration",
+      "assigned_doctors",
+      "booking_state",
+      "global_review_metadata"
+    ]
+  },
+  "public_readback": {
+    "artifact": "production-readback-2026-09-02-cs-prague.json",
+    "status": "verified_exact_body_and_faqs"
+  },
+  "repository_base_commit": "dc8b271c4dbf47dd7979ad75ddcae72d21154141"
+}

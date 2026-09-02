@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   CZECHIA_SEO_SERVICE_DRAFTS,
+  czechiaCalendarDate,
   assertCzechiaSeoApplyGate,
   czechiaSeoApprovalSha256,
   czechiaSeoConfirmationToken,
@@ -131,10 +132,10 @@ test("pins the English Prague draft to the post-Czech-rollout service snapshot",
     ({ slug, locale }) => slug === "lekar-online-praha" && locale === "EN",
   )!;
 
-  assert.equal(english.expectedServiceUpdatedAt, "2026-09-01T18:18:02.359Z");
+  assert.equal(english.expectedServiceUpdatedAt, "2026-09-01T23:38:25.814Z");
   assert.equal(
     english.expectedSourceSha256,
-    "c71ac9b6b975743c102646def4c4e1839d04bc15d5ae414f7103adcf35ffcc58",
+    "ce0462f59a854476b6061e5b0d4b253fdd09e3ce15066776935fa5ee949eacf6",
   );
 });
 
@@ -143,6 +144,7 @@ test("binds approval to the exact final copy, a real review date and an approved
   const hash = czechiaSeoApprovalSha256(draft);
 
   assert.match(hash, /^[a-f0-9]{64}$/);
+  assert.equal(czechiaCalendarDate(new Date("2026-09-01T23:00:00.000Z")), "2026-09-02");
   assert.equal(parseCzechiaSeoReviewDate("2026-08-31")?.toISOString(), "2026-08-31T12:00:00.000Z");
   assert.throws(() => parseCzechiaSeoReviewDate("2026-02-31"), /valid calendar date/i);
   assert.throws(() => parseCzechiaSeoReviewDate("2099-01-01"), /future/i);
@@ -241,6 +243,14 @@ test("requires a dated native-English review only for the English Prague variant
       ...approved(english),
       "native-editor-id",
       parseCzechiaSeoNativeReviewDate("2026-08-31"),
+    ),
+  );
+  assert.doesNotThrow(() =>
+    assertCzechiaSeoApplyGate(
+      ...approved(english),
+      "native-editor-id",
+      new Date("2026-09-02T12:00:00.000Z"),
+      new Date("2026-09-01T23:00:00.000Z"),
     ),
   );
   assert.doesNotThrow(() => assertCzechiaSeoApplyGate(...approved(czech)));

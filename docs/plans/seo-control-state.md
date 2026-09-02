@@ -7128,3 +7128,29 @@ field was changed. The production apply gate therefore remains closed for all 17
 candidates, and no production write occurred.
 
 ---
+
+## 36. CZ-CLINICAL-COPY-002 — approved Prague service expansion (2026-09-02)
+
+**Status: ONE ADDITIONAL PAGE LIVE / REMAINING GATES UNCHANGED.** MUDr. Ahmed
+Maklad approved the exact Czech payload for
+`/czechia/cs/services/lekar-online-praha` at
+`2026-09-02T01:30:00+02:00`. The guarded production writer matched source SHA-256
+`c71ac9b6b975743c102646def4c4e1839d04bc15d5ae414f7103adcf35ffcc58` and
+approval SHA-256
+`e1246dbc98c12e4f14f36daaf8981a7611c58183d51d5fbbbb4797c4a3ab0746`.
+
+The Serializable transaction published the full Czech body and updated all eight
+existing FAQ records in place. Transactional readback preserved price, duration,
+doctor assignments, booking state and global review metadata. A
+cache-bypassed public read confirmed HTTP 200, the approved title/H1/body and all
+eight approved FAQ answers. Evidence is in
+`seo/czechia/raw/production-write-receipt-2026-09-02-cs-prague.json` and
+`seo/czechia/raw/production-readback-2026-09-02-cs-prague.json`. The shared English
+draft was re-pinned to this post-write snapshot and remains separately gated.
+
+The Czechia matrix now records 31 fully live pages, 14 source-pinned guarded drafts
+pending review, three measurement holds and two reviewed-no-change pages. This
+approval was not widened to specialist, native-English, governance or measurement-
+hold rows.
+
+---

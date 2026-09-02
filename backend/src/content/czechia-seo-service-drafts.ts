@@ -437,8 +437,8 @@ const metadataDrafts = [
   },
   {
     serviceId: "cmr85xq6u000070jufztsgfec",
-    expectedServiceUpdatedAt: "2026-09-01T18:18:02.359Z",
-    expectedSourceSha256: "c71ac9b6b975743c102646def4c4e1839d04bc15d5ae414f7103adcf35ffcc58",
+    expectedServiceUpdatedAt: "2026-09-01T23:38:25.814Z",
+    expectedSourceSha256: "ce0462f59a854476b6061e5b0d4b253fdd09e3ce15066776935fa5ee949eacf6",
     countryCode: "cz",
     locale: "EN",
     slug: "lekar-online-praha",
@@ -747,6 +747,17 @@ export function czechiaSeoConfirmationToken(draft: CzechiaSeoServiceDraft): stri
   return `CZ-SEO-SERVICE:${draft.locale}:${draft.slug}:${czechiaSeoApprovalSha256(draft).slice(0, 16)}`;
 }
 
+export function czechiaCalendarDate(now: Date = new Date()): string {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Europe/Prague",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(now);
+  const value = Object.fromEntries(parts.map(({ type, value }) => [type, value]));
+  return `${value.year}-${value.month}-${value.day}`;
+}
+
 function parseReviewDate(value: string | undefined, label: string): Date | null {
   if (!value) return null;
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
@@ -756,7 +767,7 @@ function parseReviewDate(value: string | undefined, label: string): Date | null 
   if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== value) {
     throw new Error(`${label} must be a valid calendar date`);
   }
-  if (value > new Date().toISOString().slice(0, 10)) {
+  if (value > czechiaCalendarDate()) {
     throw new Error(`${label} cannot be in the future`);
   }
   return date;
@@ -780,6 +791,7 @@ export function assertCzechiaSeoApplyGate(
   clinicalReviewStatus: string | null = null,
   nativeReviewerId: string | null = null,
   nativeReviewedAt: Date | null = null,
+  now: Date = new Date(),
 ): void {
   if (!apply) return;
   if (!reviewedAt) throw new Error("Refusing to apply without a real clinical review date");
@@ -801,7 +813,7 @@ export function assertCzechiaSeoApplyGate(
   }
   if (
     draft.locale === "EN" &&
-    nativeReviewedAt!.toISOString().slice(0, 10) > new Date().toISOString().slice(0, 10)
+    nativeReviewedAt!.toISOString().slice(0, 10) > czechiaCalendarDate(now)
   ) {
     throw new Error("Refusing to apply English copy with a future native review date");
   }

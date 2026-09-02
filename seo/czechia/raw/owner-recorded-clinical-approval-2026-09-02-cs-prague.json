@@ -1,0 +1,10 @@
+{
+  "provenance": "owner-supplied reviewer approval in the implementation task",
+  "verbatim_owner_record": "approved by : `MUDr. Ahmed Maklad 026-09-02 01:30 Europe/Prague`",
+  "normalized_reviewer_name": "MUDr. Ahmed Maklad",
+  "normalized_reviewed_at": "2026-09-02T01:30:00+02:00",
+  "normalization_note": "The four-digit year was normalized from the owner's `026` shorthand to `2026`; the supplied Europe/Prague zone was retained.",
+  "asset": "/czechia/cs/services/lekar-online-praha",
+  "approved_payload_sha256": "e1246dbc98c12e4f14f36daaf8981a7611c58183d51d5fbbbb4797c4a3ab0746",
+  "signature_status": "No cryptographic reviewer signature was supplied; this artifact preserves the owner's explicit attribution and timestamp without upgrading it to a signed attestation."
+}
