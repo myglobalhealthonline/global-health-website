@@ -1,0 +1,19 @@
+{
+  "coupon": {
+    "subject": "O seu código de desconto Global Health de {discountPercent}%",
+    "title": "Um desconto para a sua próxima marcação",
+    "greetingNamed": "Olá {name},",
+    "greetingAnon": "Olá,",
+    "personalIntro": "Criámos um código de desconto só para si.",
+    "generalIntro": "Aqui está um código de desconto que pode usar na sua próxima marcação Global Health.",
+    "codeLabel": "O seu código",
+    "discountLine": "{discountPercent}% de desconto na sua marcação",
+    "validLine": "Válido até {validUntil}",
+    "personalLock": "Este código está reservado para {email} — use esse mesmo endereço ao marcar.",
+    "howTo": "Introduza o código no resumo da encomenda ao finalizar e o desconto é aplicado antes do pagamento.",
+    "shippingNote": "O desconto aplica-se à marcação; os custos de envio não são descontados.",
+    "cta": "Marcar consulta",
+    "signoff": "A equipa Global Health",
+    "footer": "Se não estava à espera deste email, pode ignorá-lo."
+  }
+}

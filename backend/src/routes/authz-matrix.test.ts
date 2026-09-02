@@ -1422,4 +1422,77 @@ describe("authorization matrix", () => {
     const count = await prisma.consultationService.count({ where: { consultationId: consultation2Id } });
     assert.equal(count, 0);
   });
+  // ── Coupons (global-admin only) ──────────────────────────────────────────
+  // Coupons carry no country scope — a code works in every non-commission
+  // market — so they are gated on `verifyGlobalAdminAccess`, which denies
+  // LOCAL_ADMIN. These assertions are what keeps that from silently
+  // regressing to plain `verifyAdminAccess` in a later edit.
+
+  it("rejects an unauthenticated coupon list → 401", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({ method: "GET", url: "/api/admin/coupons" });
+    assert.equal(res.statusCode, 401);
+  });
+
+  it("rejects an unauthenticated coupon create → 401, nothing written", async (t) => {
+    if (!app) return t.skip();
+    const before = await prisma.coupon.count();
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/admin/coupons",
+      payload: {
+        kind: "GENERAL",
+        discountPercent: 20,
+        validFrom: new Date().toISOString(),
+        validUntil: new Date(Date.now() + 86_400_000).toISOString(),
+        maxRedemptions: 5,
+      },
+    });
+    assert.equal(res.statusCode, 401);
+    assert.equal(await prisma.coupon.count(), before);
+  });
+
+  it("rejects a patient session on the coupon list → 401/403", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/admin/coupons",
+      cookies: patient1Cookie,
+    });
+    assert.ok([401, 403].includes(res.statusCode), res.body);
+  });
+
+  it("rejects a doctor session on the coupon list → 401/403", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/admin/coupons",
+      cookies: doctor1Cookie,
+    });
+    assert.ok([401, 403].includes(res.statusCode), res.body);
+  });
+
+  it("allows a global admin to list coupons → 200", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/admin/coupons",
+      cookies: adminCookie,
+    });
+    assert.equal(res.statusCode, 200, res.body);
+    assert.ok(Array.isArray(res.json().data?.items));
+  });
+
+  it("the public coupon check is reachable unauthenticated and leaks nothing", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/coupons/check",
+      payload: { code: "NOSUCHCODE", email: "nobody@example.com" },
+    });
+    // 400 = no cart on this request, which is a legitimate answer. What must
+    // never happen is a 401/500, or a body naming a coupon.
+    assert.ok([200, 400].includes(res.statusCode), res.body);
+    assert.ok(!res.body.includes("discountPercent"), res.body);
+  });
 });

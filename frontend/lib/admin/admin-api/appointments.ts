@@ -190,6 +190,10 @@ export type CreateManualAppointmentInput = {
    *  backend to whatever price it resolves (base / peak / insurance); 100 comps
    *  the booking, which is then created already paid with no payment link. */
   discountPercent?: number | null;
+  /** Coupon code, applied INSTEAD of `discountPercent` — sending both is a 422.
+   *  The backend resolves it and refuses it on insurance bookings,
+   *  benefit-priced bookings and in commission markets. */
+  couponCode?: string | null;
   /** Private-membership benefit (§11.7). Omit for none — the backend treats a
    *  missing value as "no benefit", so nothing changes for callers that never
    *  send it. `enrollmentId` is the patient's own membership; `override` is the
@@ -218,6 +222,11 @@ export type CreateManualAppointmentResult = {
   amountCents: number;
   discountPercent: number;
   discountCents: number;
+  /** The coupon that priced this booking, if any. A booking carries either a
+   *  coupon or a manual discount, never both. */
+  couponCode: string | null;
+  couponPercent: number;
+  couponDiscountCents: number;
   free: boolean;
 };
 
