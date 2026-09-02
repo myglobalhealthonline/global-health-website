@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Ireland head-term copy, August 2026. English rows ONLY — every edit is on a
  * per-locale translation row, so no English leaks into cs/de/es/pt/ro.
@@ -48,14 +49,14 @@ const SICK_CERT_SWAPS: Swap[] = [
 // --- 2. PageContent HEALTH_TESTS, EN translation ---------------------------
 const LAB_SWAPS: Swap[] = [
   {
-    label: "seoDescription · Dublin",
-    from: "Order a Randox home blood test kit in Ireland from €89",
-    to: "Order a Randox home blood test kit in Dublin or anywhere in Ireland from €89",
+    label: "seoDescription · current catalogue",
+    from: "Order a Randox home blood test kit in Dublin or anywhere in Ireland from €89 — Full Blood Count, Thyroid Function and more. Results in up to 10 days.",
+    to: "Order Randox home blood test kits in Dublin or anywhere in Ireland from €57. Turnaround varies by test, from 2–3 working days to 4–6 weeks.",
   },
   {
-    label: "heroSubtitle · Dublin",
-    from: "Order a Randox home blood test kit, take your sample at home, and receive your results in up to 10 days.",
-    to: "Order a Randox home blood test kit, take your sample at home, and receive your results in up to 10 days. Kits are posted to Dublin and every other county in Ireland.",
+    label: "heroSubtitle · current catalogue",
+    from: "Order a Randox home blood test kit, take your sample at home, and receive your results in up to 10 days. Kits are posted to Dublin and every other county in Ireland. Want a doctor to explain your results? Book a follow-up consultation with an IMC-registered Global Health doctor from €45.",
+    to: "Order a Randox home blood test kit from €57. Kits are posted to Dublin and every other county; turnaround varies by test, from 2–3 working days to 4–6 weeks after the lab receives your sample. Want a doctor to explain your results? Book a follow-up consultation with an IMC-registered Global Health doctor from €45.",
   },
 ];
 

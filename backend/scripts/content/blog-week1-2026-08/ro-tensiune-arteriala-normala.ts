@@ -18,7 +18,7 @@
  * query by giving a practical adult interpretation and explaining what age
  * really changes: risk, review frequency, and treatment context.
  */
-import { cite, lead, p, renderArticle, ul, warn, type Article } from "../blog-seo-2026-08/template.js";
+import { cite, lead, p, ul, warn, type Article } from "../blog-seo-2026-08/template.js";
 import type { LocalePost, PostSet } from "../blog-seo-2026-08/types.js";
 
 const ESC_2024 =
@@ -38,7 +38,7 @@ const ro: LocalePost = {
   slug: "tensiune-arteriala-normala-varsta-adulti",
   title: "Tensiunea arterială normală: ghid util după vârstă, fără tabele false",
   excerpt:
-    "Ce valori sunt normală de fapt la adulți, de ce nu există o altă „normă” doar pentru că înaintezi în vârstă și când o tensiune repetat crescută trebuie discutată cu medicul.",
+    "Care sunt valorile normale la adulți, de ce nu există o altă „normă” doar pentru că înaintezi în vârstă și când o tensiune repetat crescută trebuie discutată cu medicul.",
   seoTitle: "Tensiunea arterială normală după vârstă",
   seoDescription:
     "Ce tensiune arterială se consideră normală la adulți, ce se schimbă cu vârsta și când valorile repetat crescute trebuie discutate cu medicul.",
@@ -52,9 +52,9 @@ const ro: LocalePost = {
     h1: "Tensiunea arterială normală",
     deck: "Vârsta schimbă riscul și planul de urmărire. Nu schimbă faptul că o valoare prea mare rămâne prea mare.",
     intro:
-      "La adultul obișnuit, o tensiune <strong>clar normală</strong> este sub <strong>120/80 mmHg</strong>. Dacă valorile urcă repetat în zona <strong>120-139</strong> pentru sistolică sau <strong>70-89</strong> pentru diastolică, nu mai vorbim despre o tensiune ideală și merită urmărite cu metodă. <strong>Hipertensiunea</strong> se confirmă din măsurători repetate, ideal și în afara cabinetului, iar în practică o valoare de <strong>140/90 mmHg sau mai mare</strong> în cabinet, confirmată, intră deja în această zonă. Asta este partea importantă pentru căutarea „în funcție de vârstă”: nu există o valoare care devine brusc normală doar pentru că aveți 65 sau 75 de ani.",
+      "La adult, zona ne-elevată din ghidul ESC 2024 înseamnă o tensiune sub <strong>120/70 mmHg</strong>. Dacă sistolica este <strong>120-139</strong> sau diastolica <strong>70-89</strong>, tensiunea este elevată și merită urmărită corect. <strong>Hipertensiunea</strong> se confirmă din măsurători repetate, ideal și în afara cabinetului, iar o valoare de <strong>140/90 mmHg sau mai mare</strong> în cabinet, confirmată, intră în această zonă. Asta este partea importantă pentru căutarea „în funcție de vârstă”: nu există o valoare care devine brusc normală doar pentru că aveți 65 sau 75 de ani.",
     facts: [
-      "Sub 120/80 este o valoare clar normală",
+      "Sub 120/70 este zona ne-elevată în ghidul ESC 2024",
       "140/90 repetat în cabinet cere confirmare și evaluare",
       "Vârsta schimbă contextul, nu legile tensiunii arteriale",
     ],
@@ -72,8 +72,7 @@ const ro: LocalePost = {
       name: "Dr Robert Gabriel Brindus",
       line: "Medic de Familie · Director medical, Global Health România",
     },
-    reviewLine:
-      "Revizuit clinic de Dr Andreea Lorena Bica, medic specialist neurolog, Global Health România.",
+    reviewLine: "În așteptarea revizuirii clinice înainte de publicare.",
     navLabel: "În acest articol",
     sections: [
       {
@@ -82,11 +81,11 @@ const ro: LocalePost = {
         eyebrow: "Răspunsul scurt",
         h2: "Tabel rapid: ce tensiune se consideră normală la adult",
         blocks: [
-          lead("Reperul practic nu se schimbă la fiecare vârstă: sub 120/80 mmHg este clar normal, iar 140/90 mmHg repetat în cabinet intră deja în zona hipertensiunii."),
+          lead("Reperul practic nu se schimbă la fiecare vârstă: sub 120/70 mmHg este zona ne-elevată, iar 140/90 mmHg repetat în cabinet intră deja în zona hipertensiunii."),
           p("Zona care creează cele mai multe confuzii este cea intermediară. O persoană cu 132/84 poate să audă „nu e chiar rău” și să creadă că nu mai contează. Contează. Poate să nu fie încă hipertensiune confirmată, dar nu mai este nici lectura ideală și trebuie urmărită dacă se repetă."),
           ul([
-            "<strong>Sub 120/80</strong>: valoare clar normală.",
-            "<strong>120-139 sistolică sau 70-89 diastolică</strong>: nu mai este zona ideală; repetați măsurarea corect și urmăriți tendința.",
+            "<strong>Sub 120/70</strong>: zona ne-elevată în ghidul ESC 2024.",
+            "<strong>120-139 sistolică sau 70-89 diastolică</strong>: tensiune elevată; repetați măsurarea corect și urmăriți tendința.",
             "<strong>140/90 sau peste, repetat</strong>: compatibil cu hipertensiune și cere confirmare.",
             "<strong>O singură valoare</strong> nu pune singură diagnosticul dacă măsurarea a fost făcută prost sau într-un context nefavorabil.",
           ]),
@@ -139,7 +138,7 @@ const ro: LocalePost = {
           lead("Multe „valori rele” nu sunt rele, ci măsurate prost. Asta se corectează mai repede decât o schemă de tratament schimbată inutil."),
           ul([
             "Stați așezat cinci minute înainte, cu spatele sprijinit și picioarele neîncrucișate.",
-            "Nu măsurați imediat după cafea, țigară, efort sau după ce ați urcat scări.",
+            "Așteptați cel puțin 30 de minute după cafea, țigară sau efort înainte de măsurare.",
             "Folosiți un tensiometru de braț cu manșetă potrivită; la încheietură erorile sunt mai frecvente.",
             "Țineți brațul la nivelul inimii și nu vorbiți în timpul măsurării.",
             "Faceți două măsurători și notați ora, contextul și eventual simptomele.",
@@ -155,16 +154,17 @@ const ro: LocalePost = {
         eyebrow: "Decizia practică",
         h2: "Când este suficientă o programare și când trebuie mers urgent",
         blocks: [
-          lead("Cele mai multe valori mari nu înseamnă urgență. Urgența apare când cifra mare vine împreună cu simptome care sugerează afectare acută."),
+          lead("Cele mai multe valori mari nu înseamnă automat urgență, dar o valoare de 180/110 mmHg sau peste trebuie evaluată pentru a exclude o urgență hipertensivă."),
           ul([
             "<strong>Programați-vă</strong> dacă aveți mai multe zile cu valori crescute, chiar dacă vă simțiți bine.",
+            "<strong>Dacă valoarea este 180/110 mmHg sau peste și nu există semne de urgență</strong>, cereți confirmare medicală promptă, preferabil într-o săptămână.",
             "<strong>Nu amânați</strong> dacă aveți și diabet, boală renală, sarcină, boală cardiacă sau antecedente de AVC.",
             "<strong>Căutați ajutor urgent</strong> dacă apar durere în piept, lipsă de aer, slăbiciune pe o parte, leșin, confuzie sau o durere de cap bruscă și violentă.",
             "<strong>Nu luați singur</strong> medicamente „de urgență” rămase de la alt episod fără plan făcut cu medicul.",
           ]),
           warn(
             "Numărul singur nu spune toată povestea",
-            "O persoană cu 180/110 fără simptome și una cu 170/100 plus durere toracică nu au aceeași prioritate. Simptomul schimbă tot.",
+            "O persoană cu 180/110 fără simptome are nevoie de evaluare promptă; 170/100 cu durere toracică poate însemna urgență și impune apel la 112.",
           ),
         ],
       },
@@ -206,7 +206,7 @@ const ro: LocalePost = {
     sourcesEyebrow: "Surse",
     sourcesH2: "Unde merită verificat",
     sourcesLead:
-      "Pentru intervale și confirmare diagnosticului, ghidul european rămâne reperul; materialele pentru public ajută la traducerea lui într-un limbaj mai simplu.",
+      "Pentru intervale și confirmarea diagnosticului, ghidul european rămâne reperul; materialele pentru public ajută la traducerea lui într-un limbaj mai simplu.",
     sources: [
       { label: "ESC 2024 — Elevated blood pressure and hypertension", href: ESC_2024 },
       { label: "Cardioportal — Hipertensiunea arterială", href: CARDIOPORTAL_HTA },
@@ -228,7 +228,7 @@ const ro: LocalePost = {
       },
       {
         q: "13 cu 8 este bine?",
-        a: "Nu este o valoare catastrofală, dar nici cea ideală. Este peste o citire clar normală și merită repetată corect, în mai multe zile, ca să vedeți dacă este tendință sau excepție.",
+        a: "130/80 mmHg intră în zona tensiunii elevate din ghidul ESC 2024. Nu este automat hipertensiune, dar merită repetată corect, în mai multe zile, ca să vedeți dacă este tendință sau excepție.",
       },
       {
         q: "Vârsta face normală o tensiune mai mare?",
@@ -236,7 +236,7 @@ const ro: LocalePost = {
       },
       {
         q: "Când trebuie să merg urgent la medic pentru tensiune?",
-        a: "Când cifra mare vine cu simptome de alarmă: durere toracică, lipsă de aer, slăbiciune pe o parte, leșin, confuzie sau durere de cap bruscă și severă. Urgența o decide combinația dintre valoare și simptome.",
+        a: "Sunați la 112 când valoarea mare vine cu durere toracică, lipsă de aer, slăbiciune pe o parte, leșin, confuzie sau durere de cap bruscă și severă. La 180/110 mmHg sau peste este necesară evaluarea pentru a exclude urgența; dacă nu există afectare acută, cereți confirmare promptă, preferabil într-o săptămână.",
       },
       {
         q: "O consultație online chiar mă poate ajuta?",
@@ -245,7 +245,7 @@ const ro: LocalePost = {
     ],
     disclaimerTitle: "Aviz medical",
     disclaimer:
-      "Articol scris de Dr Robert Gabriel Brindus, medic de familie și director medical la Global Health România, și revizuit clinic de Dr Andreea Lorena Bica, medic specialist neurolog. Informațiile sunt generale și nu înlocuiesc consultația medicală individuală. Dacă apar simptome de alarmă sau o suspiciune de urgență hipertensivă, sunați la 112 sau prezentați-vă la camera de gardă.",
+      "Articol asistat de IA, în așteptarea revizuirii clinice înainte de publicare. Informațiile sunt generale și nu înlocuiesc consultația medicală individuală. Dacă apar simptome de alarmă sau o suspiciune de urgență hipertensivă, sunați la 112 sau prezentați-vă la camera de gardă.",
   } satisfies Article,
 };
 

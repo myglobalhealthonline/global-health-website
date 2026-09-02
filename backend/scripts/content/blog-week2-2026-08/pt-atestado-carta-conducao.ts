@@ -23,12 +23,12 @@
 import { cite, lead, p, renderArticle, ul, warn, type Article } from "../blog-seo-2026-08/template.js";
 import type { LocalePost, PostSet } from "../blog-seo-2026-08/types.js";
 
-const IMT = "https://www.imt-ip.pt/";
 const IMT_REVALIDACAO = "https://www.imt-ip.pt/sites/IMTT/Portugues/Condutores/RevalidacaoCartaConducao/Paginas/RevalidacaoCartaConducao.aspx";
 const IMT_REQUISITOS = "https://www.imt-ip.pt/sites/IMTT/Portugues/Condutores/CartaConducao/Paginas/CartaConducao.aspx";
 const DGS = "https://www.dgs.pt/";
-const ORDEM_MEDICOS = "https://ordemdosmedicos.pt/";
-const JUSTICA_REVALIDACAO = "https://justica.gov.pt/Servicos/Revalidar-carta-de-conducao";
+const ORDEM_MEDICOS =
+  "https://ordemdosmedicos.pt/emissao-online-de-atestados-medicos-para-carta-de-conducao";
+const JUSTICA_REVALIDACAO = "https://www2.gov.pt/pt-PT/servicos/revalidar-a-carta-de-conducao";
 const REGULAMENTO = "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/2012-114321099-114321913";
 
 const href = (lang: string, path: string) => `https://www.myglobalhealth.online/portugal/${lang}${path}`;
@@ -96,7 +96,7 @@ const pt: LocalePost = {
         h2: "Quando são pedidos atestado e avaliação psicológica?",
         blocks: [
           lead("Os prazos variam com categoria, habilitação e idade."),
-          p("A Justiça indica atestado a partir dos 60 anos no Grupo 1 e também certificado de aptidão psicológica depois dos 70. No Grupo 2, a revalidação periódica exige atestado e, depois dos 50, certificado psicológico. Primeira emissão, troca de carta estrangeira ou indicação da autoridade de saúde podem seguir regras próprias."),
+          p("No Grupo 1, é exigido atestado médico a partir dos 60 anos. O certificado de aptidão psicológica não se torna obrigatório apenas por atingir os 70; só é necessário quando existe indicação específica, como a restrição 138. No Grupo 2, a revalidação exige atestado e, a partir dos 50, certificado psicológico."),
           p('O teste psicotécnico é presencial. Quando for exigido, a Global Health encaminha-o para uma <a href="' + href("pt", "/services/certificado-medico-carta-de-conducao") + '">clínica parceira de confiança</a> e coordena os passos seguintes.'),
           warn("Confirme o prazo oficial", "Use a sua categoria, data de nascimento e data de habilitação. Se recebeu uma notificação do IMT, leve-a à consulta."),
         ],
@@ -113,9 +113,8 @@ const pt: LocalePost = {
             "Carta, categoria e eventual notificação do IMT.",
             "Medicação, relatórios relevantes, óculos ou lentes.",
           ]),
-          p("A teleconsulta pode bastar quando há informação suficiente; caso contrário, será indicado exame presencial, teste ou parecer."),
+          p("A avaliação não presencial não é, em regra, adequada. A Ordem dos Médicos admite-a apenas quando o médico assistente conhece o histórico ou tem toda a informação clínica essencial; caso contrário, exige presença."),
           warn("Sem garantia prévia", "A marcação paga uma avaliação, não um resultado. O atestado só pode ser emitido se o médico concluir que existem elementos suficientes e que os critérios aplicáveis estão cumpridos."),
-          p("Se não houver emissão, confirme o passo seguinte: relatório em falta, exame presencial, visão, especialidade ou psicologia. Reúna-o antes da revalidação."),
         ],
       },
       {
@@ -163,6 +162,7 @@ const pt: LocalePost = {
       { label: "IMT — carta de condução", href: IMT_REQUISITOS },
       { label: "IMT — revalidação", href: IMT_REVALIDACAO },
       { label: "Justiça — revalidar carta de condução", href: JUSTICA_REVALIDACAO },
+      { label: "Ordem dos Médicos — avaliação", href: ORDEM_MEDICOS },
       { label: "RHLC consolidado — grupos 1 e 2", href: REGULAMENTO },
     ],
     sourcesNote:
@@ -180,11 +180,11 @@ const pt: LocalePost = {
       },
       {
         q: "Quando é necessário certificado de aptidão psicológica?",
-        a: "A Justiça indica-o depois dos 70 anos no Grupo 1 e depois dos 50 nas revalidações do Grupo 2. Confirme o seu caso no IMT.",
+        a: "No Grupo 1, não é automático depois dos 70; é exigido quando existe indicação específica, como a restrição 138. Nas revalidações do Grupo 2, é exigido a partir dos 50. Confirme o seu caso no IMT.",
       },
       {
         q: "Uma teleconsulta garante o atestado?",
-        a: "Não. Pode ser suficiente em alguns casos, mas o médico pode pedir relatórios, avaliação presencial ou parecer complementar, ou concluir que não reúne os critérios.",
+        a: "Não. Só é excecionalmente possível quando o médico assistente conhece o histórico ou tem toda a informação clínica essencial; caso contrário, exige presença.",
       },
     ],
     disclaimerTitle: "Aviso Médico",
@@ -256,7 +256,7 @@ const en: LocalePost = {
         h2: "When are medical and psychological certificates required?",
         blocks: [
           lead("Deadlines depend on category, acquisition date and age."),
-          p("The Justice portal requires a medical certificate from age 60 for Group 1 and a psychological certificate after 70. Group 2 renewals require a medical certificate and, after 50, a psychological certificate. First licences, foreign-licence exchanges and health-authority directions may follow different rules."),
+          p("Group 1 requires a medical certificate from age 60. A psychological fitness certificate does not become automatic after 70; it is required only where specifically indicated, such as restriction 138. Group 2 renewals require a medical certificate and, from age 50, a psychological certificate."),
           p('The psychotechnical test must be completed in person. When required, Global Health refers the patient to a <a href="' + href("en", "/services/certificado-medico-carta-de-conducao") + '">trusted partner clinic</a> and coordinates the next steps.'),
           warn("Check the official deadline", "Use your category, birth date and acquisition date. Bring any IMT notice."),
         ],
@@ -273,7 +273,8 @@ const en: LocalePost = {
             "Your driving licence, category and any notice from IMT.",
             "Your medication, relevant medical reports, glasses or contact lenses.",
           ]),
-          p("An online appointment may suffice. Otherwise, the doctor will request an in-person examination, test or additional opinion."),
+          p("A remote assessment is not normally appropriate. The Portuguese Medical Association allows exceptions when the treating doctor knows the history or has all essential clinical information; otherwise an in-person assessment or further evidence is required."),
+          cite('Professional guidance: <a href="' + ORDEM_MEDICOS + '" rel="nofollow noopener" target="_blank">Portuguese Medical Association — driving-certificate assessments</a>.'),
           warn("No guarantee before assessment", "The appointment pays for an assessment, not an outcome. Issuance requires sufficient evidence and compliance with the rules."),
           p("If the certificate cannot be issued, ask whether you need a report, examination, vision check, specialist opinion or psychological assessment before renewal."),
         ],
@@ -338,11 +339,11 @@ const en: LocalePost = {
       },
       {
         q: "When is a psychological fitness certificate required?",
-        a: "The Justice portal requires it after 70 for Group 1 and after 50 for Group 2 renewals. Check with IMT.",
+        a: "It is not automatic after 70 in Group 1; it is required only where specifically indicated, such as restriction 138. It is required from age 50 for Group 2 renewals. Check your case with IMT.",
       },
       {
         q: "Does an online appointment guarantee the certificate?",
-        a: "No. It may suffice, but the doctor can request reports, an in-person assessment or another opinion, or find that the criteria are not met.",
+        a: "No. Remote assessment is a professional exception, limited to cases where the treating doctor knows the history or has all essential clinical information; otherwise an in-person assessment is required.",
       },
     ],
     disclaimerTitle: "Medical disclaimer",
@@ -414,7 +415,7 @@ const de: LocalePost = {
         h2: "Wann sind ein ärztliches und ein psychologisches Attest nötig?",
         blocks: [
           lead("Fristen richten sich nach Klasse, Erwerbsdatum und Alter."),
-          p("Laut Justizportal braucht Gruppe 1 ab 60 ein ärztliches und nach 70 zusätzlich ein psychologisches Attest. Für Gruppe 2 ist bei der Erneuerung ein ärztliches, nach 50 auch ein psychologisches Attest nötig. Bei Ersterteilung, ausländischem Führerschein oder behördlicher Anordnung können andere Regeln gelten."),
+          p("Gruppe 1 benötigt ab 60 ein ärztliches Attest. Ein psychologisches Attest wird nach 70 nicht automatisch Pflicht, sondern nur bei besonderer Auflage wie der Beschränkung 138. Für Gruppe 2 ist bei der Erneuerung ein ärztliches und ab 50 auch ein psychologisches Attest nötig."),
           p('Der psychotechnische Test muss persönlich stattfinden. Wenn er erforderlich ist, vermittelt Global Health den Patienten an eine <a href="' + href("de", "/services/certificado-medico-carta-de-conducao") + '">vertrauenswürdige Partnerklinik</a> und koordiniert die nächsten Schritte.'),
           warn("Amtliche Frist prüfen", "Nutzen Sie Klasse, Geburts- und Erwerbsdatum. Bringen Sie eine Mitteilung des IMT mit."),
         ],
@@ -431,7 +432,8 @@ const de: LocalePost = {
             "Führerschein, Klasse und eine mögliche Mitteilung des IMT.",
             "Medikamente, relevante Befunde, Brille oder Kontaktlinsen.",
           ]),
-          p("Eine Videosprechstunde kann ausreichen. Andernfalls folgt eine persönliche Untersuchung, ein Test oder eine zusätzliche Stellungnahme."),
+          p("Eine Fernbeurteilung ist in der Regel nicht angemessen. Ausnahmen gelten nur, wenn der behandelnde Arzt die Vorgeschichte kennt oder über alle wesentlichen klinischen Informationen verfügt; andernfalls ist eine persönliche Untersuchung nötig."),
+          cite(`Berufsrechtliche Orientierung: <a href="${ORDEM_MEDICOS}" rel="nofollow noopener" target="_blank">Ordem dos Médicos — Führerscheinatteste</a>.`),
           warn("Keine Zusage vor der Beurteilung", "Der Termin bezahlt die Beurteilung, nicht das Ergebnis. Für die Ausstellung müssen Unterlagen und Kriterien ausreichen."),
           p("Klären Sie bei ausbleibender Ausstellung, ob ein Befund, Sehtest, eine Untersuchung, fachärztliche Stellungnahme oder psychologische Begutachtung fehlt."),
         ],
@@ -496,11 +498,11 @@ const de: LocalePost = {
       },
       {
         q: "Wann ist ein psychologisches Eignungsattest nötig?",
-        a: "Nach Angaben des portugiesischen Justizportals ist es in Gruppe 1 nach dem 70. Lebensjahr und bei Erneuerungen der Gruppe 2 nach dem 50. Lebensjahr erforderlich. Prüfen Sie Ihren Fall beim IMT.",
+        a: "In Gruppe 1 wird es nach dem 70. Lebensjahr nicht automatisch Pflicht, sondern nur bei besonderer Auflage wie der Beschränkung 138. Bei Erneuerungen der Gruppe 2 ist es ab 50 erforderlich. Prüfen Sie Ihren Fall beim IMT.",
       },
       {
         q: "Garantiert eine Videosprechstunde das Attest?",
-        a: "Nein. Sie kann in manchen Fällen ausreichen. Der Arzt kann jedoch Befunde, eine persönliche Untersuchung oder eine zusätzliche Stellungnahme verlangen oder feststellen, dass die Kriterien nicht erfüllt sind.",
+        a: "Nein. Eine Fernbeurteilung ist nur ausnahmsweise möglich, wenn der behandelnde Arzt die Vorgeschichte kennt oder alle wesentlichen klinischen Informationen vorliegen; sonst ist eine persönliche Untersuchung nötig.",
       },
     ],
     disclaimerTitle: "Medizinischer Hinweis",
@@ -600,7 +602,7 @@ const es: LocalePost = {
             "Valoración suficiente para decidir si la conducción sigue siendo segura.",
             "Necesidad o no de informes, pruebas o derivaciones adicionales.",
           ]),
-          p("Muchos casos pueden aclararse en una consulta online si la historia es consistente y la documentación ya existe. Otros no. Si el caso requiere exploración presencial, confirmación visual más detallada, lectura de informes recientes o una segunda valoración especializada, el médico debe decirlo claramente. La obligación profesional no es acelerar el trámite a cualquier precio, sino emitir solo cuando la conclusión pueda sostenerse."),
+          p("La valoración no presencial no es adecuada como regla general. Solo cabe como excepción cuando el médico tratante conoce el historial o dispone de toda la información clínica esencial; de lo contrario, debe pedir exploración presencial o pruebas adicionales."),
           warn("Sin garantía previa", "Ningún profesional serio puede garantizarle el certificado antes de evaluar categoría, antecedentes, documentación y riesgo funcional real."),
           cite(`Referencia profesional: <a href="${ORDEM_MEDICOS}" rel="nofollow noopener" target="_blank">Ordem dos Médicos</a> · contexto sanitario general: <a href="${DGS}" rel="nofollow noopener" target="_blank">DGS</a>.`),
         ],
@@ -705,11 +707,11 @@ const es: LocalePost = {
       },
       {
         q: "¿Cuándo se pide evaluación psicológica?",
-        a: "No en todos los casos. Suele aparecer sobre todo en expedientes de Grupo 2 o cuando la categoría, la actividad o el historial del conductor requieren una confirmación adicional de aptitudes psicológicas para conducir.",
+        a: "No en todos los casos. En Grupo 1 no es automática por cumplir 70 años; se exige cuando existe una indicación específica, como la restricción 138. En renovaciones de Grupo 2 se exige desde los 50 años.",
       },
       {
         q: "¿Una consulta online garantiza el certificado?",
-        a: "No. Puede resolver muchos casos claros, pero no puede prometer el documento antes de la evaluación. Algunos expedientes requieren informes, exploración presencial o evaluación psicológica adicional.",
+        a: "No. La valoración remota es una excepción limitada a casos en los que el médico tratante conoce el historial o dispone de toda la información clínica esencial; si no, hace falta exploración presencial.",
       },
     ],
     disclaimerTitle: "Aviso médico",
@@ -809,7 +811,7 @@ const cs: LocalePost = {
             "Praktické zhodnocení, zda je řízení v dané kategorii nadále bezpečné.",
             "Rozhodnutí, zda jsou potřeba další zprávy, vyšetření nebo specializované stanovisko.",
           ]),
-          p("Řada jasných případů se dá vyřešit online, pokud je dokumentace úplná a průběh onemocnění přehledný. Jiné případy to neumožní. Pokud je nutné osobní vyšetření, přesnější kontrola zraku nebo doplnění odborné zprávy, je správnou odpovědí další krok, nikoli rychlý podpis bez opory."),
+          p("Posouzení na dálku není běžně vhodné. Výjimka je možná jen tehdy, když ošetřující lékař zná anamnézu nebo má všechny podstatné klinické informace; jinak je nutné osobní vyšetření nebo další podklady."),
           warn("Bez předběžného příslibu", "Žádný odpovědný lékař nemůže garantovat vystavení potvrzení ještě před vyhodnocením zdravotního stavu a dokumentace."),
           cite(`Profesní rámec: <a href="${ORDEM_MEDICOS}" rel="nofollow noopener" target="_blank">Ordem dos Médicos</a> · obecný zdravotní kontext: <a href="${DGS}" rel="nofollow noopener" target="_blank">DGS</a>.`),
         ],
@@ -914,11 +916,11 @@ const cs: LocalePost = {
       },
       {
         q: "Kdy je potřeba psychologické posouzení?",
-        a: "Ne v každém případě. Častěji se objevuje u řízení ve skupině 2 nebo tam, kde kategorie či zdravotní historie vyžadují další potvrzení psychické způsobilosti k řízení.",
+        a: "Ne v každém případě. Ve skupině 1 nevzniká automaticky po 70. roce; vyžaduje se při zvláštní podmínce, například omezení 138. Při obnově skupiny 2 je povinné od 50 let.",
       },
       {
         q: "Může online konzultace potvrzení garantovat?",
-        a: "Ne. Může pomoci vyřešit mnoho přehledných případů, ale nemůže slíbit výsledek před vyhodnocením zdravotního stavu, podkladů a případných doplňujících požadavků.",
+        a: "Ne. Posouzení na dálku je výjimka jen pro případy, kdy ošetřující lékař zná anamnézu nebo má všechny podstatné klinické informace; jinak je nutné osobní vyšetření.",
       },
     ],
     disclaimerTitle: "Lékařské upozornění",
@@ -1018,7 +1020,7 @@ const roPost: LocalePost = {
             "Evaluarea capacității de a conduce în siguranță în categoria respectivă.",
             "Decizia dacă sunt necesare rapoarte, investigații sau opinii suplimentare.",
           ]),
-          p("Multe cazuri clare pot fi gestionate online dacă istoricul este coerent și documentele există deja. Alte cazuri nu. Dacă este nevoie de examinare fizică, de clarificare oftalmologică sau de citirea unor rapoarte recente care lipsesc, răspunsul corect este un pas suplimentar, nu o semnătură dată pe presupuneri."),
+          p("Evaluarea la distanță nu este adecvată ca regulă generală. Este posibilă doar ca excepție atunci când medicul curant cunoaște istoricul sau are toate informațiile clinice esențiale; altfel este necesară examinarea în persoană ori documentație suplimentară."),
           warn("Fără garanție înainte de evaluare", "Niciun medic responsabil nu poate promite certificatul înainte de a evalua categoria, istoricul, medicația și documentele disponibile."),
           cite(`Cadru profesional: <a href="${ORDEM_MEDICOS}" rel="nofollow noopener" target="_blank">Ordem dos Médicos</a> · context sanitar general: <a href="${DGS}" rel="nofollow noopener" target="_blank">DGS</a>.`),
         ],
@@ -1123,11 +1125,11 @@ const roPost: LocalePost = {
       },
       {
         q: "Când este necesară evaluarea psihologică?",
-        a: "Nu în toate cazurile. Apare mai ales în dosare din grupa 2 sau atunci când categoria ori istoricul șoferului cer o confirmare suplimentară a aptitudinilor psihologice pentru condus.",
+        a: "Nu în toate cazurile. În grupa 1 nu devine automat necesară după 70 de ani; este cerută când există o indicație specifică, precum restricția 138. La reînnoirea grupei 2 este necesară de la 50 de ani.",
       },
       {
         q: "Poate o consultație online să garanteze certificatul?",
-        a: "Nu. Poate rezolva multe cazuri clare, dar nu poate promite documentul înainte de evaluare. Unele situații cer rapoarte suplimentare, examinare directă sau evaluare psihologică.",
+        a: "Nu. Evaluarea la distanță este o excepție, posibilă doar când medicul curant cunoaște istoricul sau are toate informațiile clinice esențiale; altfel este necesară examinarea în persoană.",
       },
     ],
     disclaimerTitle: "Avertisment medical",

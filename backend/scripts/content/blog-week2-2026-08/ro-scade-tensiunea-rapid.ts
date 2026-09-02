@@ -85,7 +85,7 @@ const ro: LocalePost = {
             "Notați pulsul, simptomele, ora, medicamentele obișnuite și contextul: durere, febră, efort sau lipsă de somn.",
           ]),
           p("Acești pași nu tratează hipertensiunea. Reduc erorile și ajută medicul. Nu măsurați continuu până obțineți cifra dorită și nu păstrați doar valoarea cea mai mică."),
-          p("Dacă valoarea rămâne în jurul sau peste 180/120 mmHg, cereți evaluare în aceeași zi: medic de familie, centru de permanență sau UPU. Dacă vă agravați ori apare un semn de alarmă, sunați la 112."),
+          p("Dacă valoarea rămâne în jurul sau peste 180/110 mmHg, cereți evaluare în aceeași zi pentru a exclude o urgență hipertensivă: medic de familie, centru de permanență sau UPU. Dacă vă agravați ori apare un semn de alarmă, sunați la 112."),
         ],
       },
       {
@@ -116,7 +116,7 @@ const ro: LocalePost = {
           lead("Captoprilul și celelalte antihipertensive se folosesc după istoricul, analizele, bolile asociate și schema fiecărei persoane."),
           p("Același rezultat pe tensiometru poate necesita decizii diferite. Funcția renală, potasiul, sarcina, deshidratarea și alte medicamente pot schimba riscul. O scădere prea rapidă poate reduce circulația către creier, inimă sau rinichi și poate provoca amețeală, cădere sau leșin."),
           warn("Nu luați o doză improvizată", "Nu dublați tratamentul, nu luați captopril neprescris și nu folosiți medicamentul unei rude. Urmați numai un plan de acțiune scris pentru dumneavoastră; cu semne de alarmă, sunați la 112."),
-          p("Lămâia, usturoiul, oțetul, apa rece și ceaiurile nu tratează un infarct, un accident vascular cerebral sau o altă urgență. Respirația lentă poate reduce anxietatea, dar o cifră mai mică după repaus nu demonstrează că pericolul a trecut. Unele plante interacționează cu anticoagulante, diuretice și alte tratamente."),
+          p("Lămâia, usturoiul, oțetul, apa rece și ceaiurile nu tratează un infarct, un accident vascular cerebral sau o altă urgență. Respirația lentă poate reduce anxietatea, dar o cifră mai mică după repaus nu demonstrează că pericolul a trecut. Unele plante și suplimente pot interacționa cu medicamentele; întrebați medicul sau farmacistul."),
         ],
       },
       {
@@ -188,7 +188,7 @@ const ro: LocalePost = {
       },
       {
         q: "Când este suficientă o consultație programată?",
-        a: "Când sunteți stabil, fără semne de alarmă, și doriți evaluarea unor valori crescute repetat. Pentru o valoare care rămâne în jurul sau peste 180/120 mmHg, cereți evaluare în aceeași zi prin medicul de familie, un centru de permanență sau UPU; cardiologia se adaugă dacă există motive clinice.",
+        a: "Când sunteți stabil, fără semne de alarmă, și doriți evaluarea unor valori crescute repetat. Pentru o valoare care rămâne în jurul sau peste 180/110 mmHg, cereți evaluare în aceeași zi prin medicul de familie, un centru de permanență sau UPU; cardiologia se adaugă dacă există motive clinice.",
       },
     ],
     disclaimerTitle: "Aviz medical și de urgență",
@@ -251,7 +251,7 @@ const en: LocalePost = {
             "Record your pulse, symptoms, the time, usual medicines and relevant context such as pain, fever or exertion.",
           ]),
           p("These steps do not treat hypertension. They reduce errors and give a clinician useful information. Do not keep measuring until you see the number you want or record only the lowest result."),
-          p("If the reading stays around 180/120 mmHg or higher, seek assessment that day through family medicine, an out-of-hours centre or an emergency department. If you become worse or a warning sign appears, call 112."),
+          p("If the reading stays around 180/110 mmHg or higher, seek assessment that day to exclude a hypertensive emergency through family medicine, an out-of-hours centre or an emergency department. If you become worse or a warning sign appears, call 112."),
         ],
       },
       {
@@ -340,7 +340,7 @@ const en: LocalePost = {
       { q: "What lowers blood pressure immediately at home?", a: "No remedy is safe for every situation. Check symptoms and, if stable, take two careful readings. Call 112 for chest pain, severe breathlessness or neurological signs." },
       { q: "At what blood pressure should I take captopril?", a: "There is no universal number. Take it only if prescribed and according to your personal plan. Never take an extra dose or unprescribed medicine." },
       { q: "Will lemon, garlic or tea lower blood pressure quickly?", a: "They do not treat an emergency. Rest may coincide with a lower reading but does not cancel serious symptoms; some herbal products interact with medicines." },
-      { q: "When is a scheduled consultation enough?", a: "When stable, without warning signs, and repeated high readings need assessment. If a reading remains around 180/120 mmHg or higher, seek same-day assessment through family medicine, an out-of-hours centre or an emergency department; add cardiology for a clinical reason." },
+      { q: "When is a scheduled consultation enough?", a: "When stable, without warning signs, and repeated high readings need assessment. If a reading remains around 180/110 mmHg or higher, seek same-day assessment through family medicine, an out-of-hours centre or an emergency department; add cardiology for a clinical reason." },
     ],
     disclaimerTitle: "Medical and emergency notice",
     disclaimer:
@@ -404,7 +404,7 @@ const pt: LocalePost = {
         eyebrow: "Sinais de alarme",
         h2: "Quando uma tensão muito alta exige o 112",
         blocks: [
-          lead("Uma leitura perto ou acima de 180/120 mmHg é muito elevada e precisa de avaliação rápida; com sintomas de lesão aguda, é uma emergência."),
+          lead("Uma leitura perto ou acima de 180/110 mmHg é muito elevada e precisa de avaliação para excluir uma emergência hipertensiva; com sintomas de lesão aguda, ligue 112."),
           p("Não espere que um chá, um duche ou um comprimido improvisado faça efeito quando os sintomas podem indicar AVC, enfarte ou líquido nos pulmões. Diga ao operador o valor, os sintomas, a hora de início, os medicamentos prescritos e as doenças conhecidas."),
           ul([
             "Dor ou pressão no peito, sobretudo com suor, náusea ou mal-estar intenso.",
@@ -436,7 +436,7 @@ const pt: LocalePost = {
         h2: "Chá, limão, alho e respiração não tratam uma emergência",
         blocks: [
           lead("Alguns hábitos ajudam a saúde cardiovascular a longo prazo. Nenhum substitui avaliação quando há sintomas ou uma leitura muito elevada."),
-          p("Uma infusão sem cafeína e respirar devagar podem ajudar a acalmar, mas uma leitura menor depois do repouso não prova que o risco acabou. Limão, alho, vinagre ou água fria não dilatam os vasos de imediato. Plantas e suplementos podem interagir com anticoagulantes, diuréticos e outros medicamentos."),
+          p("Uma infusão sem cafeína e respirar devagar podem ajudar a acalmar, mas uma leitura menor depois do repouso não prova que o risco acabou. Limão, alho, vinagre ou água fria não dilatam os vasos de imediato. Algumas plantas e suplementos podem interagir com medicamentos; pergunte ao médico ou farmacêutico."),
           ul([
             "Nunca adie o 112 para experimentar uma receita da internet.",
             "Não misture suplementos e medicamentos para forçar uma descida.",
@@ -523,7 +523,7 @@ const es: LocalePost = {
         warn("No conduzcas si te encuentras muy mal", "Ante dolor torácico, un déficit neurológico, confusión, desmayo o dificultad respiratoria intensa, llama al 112 y sigue las instrucciones."),
       ] },
       { id: "emergencia", nav: "Llamar al 112", eyebrow: "Señales de alarma", h2: "Cuándo una tensión muy alta exige llamar al 112", blocks: [
-        lead("Una lectura cercana o superior a 180/120 mmHg es muy alta y requiere valoración rápida; si hay síntomas de daño agudo, es una emergencia."),
+        lead("Una lectura cercana o superior a 180/110 mmHg es muy alta y requiere valoración para descartar una emergencia hipertensiva; si hay síntomas de daño agudo, llame al 112."),
         p("No esperes a que funcionen un té, una ducha o una pastilla improvisada cuando podría tratarse de un ictus, un infarto o edema pulmonar. Explica al operador el valor, los síntomas, la hora de inicio, tu medicación prescrita y enfermedades conocidas."),
         ul(["Dolor o presión en el pecho, especialmente con sudor, náusea o malestar intenso.", "Falta de aire grave o que empeora rápidamente.", "Cara caída, debilidad de un lado o habla arrastrada.", "Confusión nueva, convulsión, desmayo o pérdida de conciencia.", "Pérdida brusca de visión o dolor de cabeza explosivo y distinto del habitual."]),
         p("El embarazo o posparto, la enfermedad renal, un ictus previo y la cardiopatía aumentan la preocupación. No diagnostiques una emergencia solo por la cifra, pero tampoco permitas que una segunda lectura algo menor invalide síntomas serios."),
@@ -537,7 +537,7 @@ const es: LocalePost = {
       ] },
       { id: "mitos", nav: "Mitos", eyebrow: "Soluciones rápidas", h2: "El té, el limón, el ajo o respirar lento no tratan una emergencia", blocks: [
         lead("Algunos hábitos ayudan a largo plazo, pero ninguno sustituye una valoración ante síntomas o una lectura muy alta."),
-        p("Una infusión sin cafeína o respirar despacio puede ayudarte a calmarte. Una cifra menor tras descansar no demuestra que el riesgo haya desaparecido. Limón, ajo, vinagre o agua fría no dilatan los vasos de inmediato. Las plantas también pueden interactuar con anticoagulantes, diuréticos y otros fármacos."),
+        p("Una infusión sin cafeína o respirar despacio puede ayudarte a calmarte. Una cifra menor tras descansar no demuestra que el riesgo haya desaparecido. Limón, ajo, vinagre o agua fría no dilatan los vasos de inmediato. Algunas plantas y suplementos pueden interactuar con medicamentos; consulte al médico o farmacéutico."),
         ul(["No retrases el 112 para probar un remedio de internet.", "No combines suplementos y medicación para forzar una bajada.", "No abandones el tratamiento diario porque una lectura mejoró.", "No tomes la medicación de un familiar aunque comparta diagnóstico.", "Habla de sal, sueño, ejercicio, alcohol y peso como medidas a largo plazo, no como rescate."]),
         p("Sigue este orden: comprueba si hay una emergencia, confirma que la medición sea fiable y consulta tu plan personal. Así evitas el pánico y una demora peligrosa."),
       ] },
@@ -590,7 +590,7 @@ const cs: LocalePost = {
         warn("Při akutních potížích sami neřiďte", "Při bolesti na hrudi, nové neurologické poruše, zmatenosti, mdlobě nebo těžké dušnosti volejte 112 a postupujte podle pokynů dispečera."),
       ] },
       { id: "pohotovost", nav: "Volat 112", eyebrow: "Varovné příznaky", h2: "Kdy je vysoký tlak důvodem k volání 112", blocks: [
-        lead("Hodnota okolo nebo nad 180/120 mmHg je velmi vysoká a vyžaduje rychlé posouzení; s příznaky akutního orgánového poškození jde o emergentní stav."),
+        lead("Hodnota okolo nebo nad 180/110 mmHg je velmi vysoká a vyžaduje posouzení k vyloučení hypertenzní emergentní situace; při příznacích akutního orgánového poškození volejte 112."),
         p("Nečekejte na účinek čaje, sprchy nebo improvizované tablety, pokud příznaky mohou znamenat cévní mozkovou příhodu, infarkt nebo tekutinu v plicích. Dispečerovi sdělte naměřené hodnoty, příznaky, čas jejich začátku, předepsané léky a známé diagnózy. Pokud je s vámi někdo další, ať zůstane nablízku a připraví seznam léků."),
         ul(["Bolest či tlak na hrudi, zejména s pocením, nevolností nebo pocitem na omdlení.", "Těžká dušnost, pocit dušení nebo rychlé zhoršování dechu.", "Pokles koutku, slabost jedné strany, nesrozumitelná řeč nebo porucha porozumění.", "Nová zmatenost, křeče, mdloba nebo ztráta vědomí.", "Náhlá ztráta zraku nebo explozivní bolest hlavy odlišná od obvyklých bolestí."]),
         p("Těhotenství a období po porodu, onemocnění ledvin, prodělaná cévní příhoda a srdeční onemocnění zvyšují naléhavost. Emergentní stav nelze určit jen podle čísla, ale mírně nižší druhé měření také nesmí vést k přehlédnutí závažných příznaků."),
@@ -604,7 +604,7 @@ const cs: LocalePost = {
       ] },
       { id: "myty", nav: "Mýty", eyebrow: "Rychlá řešení", h2: "Čaj, citron, česnek ani dýchání neléčí akutní stav", blocks: [
         lead("Některé návyky podporují kardiovaskulární zdraví dlouhodobě. Žádný z nich nenahrazuje vyšetření při varovných příznacích."),
-        p("Bezkofeinový nálev nebo pomalé dýchání mohou pomoci se zklidnit, ale nižší hodnota po odpočinku nedokazuje, že riziko pominulo. Citron, česnek, ocet ani studená voda cévy okamžitě neuvolní. Byliny a doplňky mohou navíc ovlivňovat účinek antikoagulancií, diuretik a dalších léků."),
+        p("Bezkofeinový nálev nebo pomalé dýchání mohou pomoci se zklidnit, ale nižší hodnota po odpočinku nedokazuje, že riziko pominulo. Citron, česnek, ocet ani studená voda cévy okamžitě neuvolní. Některé byliny a doplňky mohou ovlivňovat léky; poraďte se s lékařem nebo lékárníkem."),
         ul(["Neodkládejte volání 112 kvůli internetovému receptu.", "Nekombinujte doplňky a léky, abyste vynutili pokles.", "Nevysazujte každodenní léčbu po jedné lepší hodnotě.", "Neužívejte lék příbuzného ani při stejné diagnóze.", "Sůl, spánek, pohyb, alkohol a hmotnost řešte jako dlouhodobá témata, ne jako okamžitou záchranu."]),
         p("Postupujte v tomto pořadí: zkontrolujte, zda nejde o emergentní stav, ověřte spolehlivost měření a podívejte se do svého osobního plánu. Tím omezíte zbytečnou paniku i nebezpečný odklad."),
       ] },
@@ -657,7 +657,7 @@ const de: LocalePost = {
         warn("Bei akuten Beschwerden nicht selbst fahren", "Bei Brustschmerz, neurologischem Ausfall, Verwirrtheit, Ohnmacht oder schwerer Atemnot rufen Sie 112 und folgen der Leitstelle."),
       ] },
       { id: "notfall", nav: "112 rufen", eyebrow: "Warnzeichen", h2: "Wann sehr hoher Blutdruck ein Notfall ist", blocks: [
-        lead("Ein Wert um oder über 180/120 mmHg ist sehr hoch und muss zeitnah beurteilt werden; zusammen mit Anzeichen einer akuten Organschädigung ist er ein Notfall."),
+        lead("Ein Wert um oder über 180/110 mmHg ist sehr hoch und muss zur Abklärung eines hypertensiven Notfalls beurteilt werden; bei Zeichen einer akuten Organschädigung wählen Sie 112."),
         p("Warten Sie bei möglichen Schlaganfall-, Herzinfarkt- oder Lungenödemzeichen nicht auf Tee, Dusche oder eine improvisierte Tablette. Nennen Sie der Leitstelle den Messwert, die Symptome, deren Beginn, Ihre regulären Medikamente und bekannte Erkrankungen. Ist jemand bei Ihnen, sollte die Person bleiben und Medikamentenliste sowie Ausweis bereithalten."),
         ul(["Brustschmerz oder Druck, besonders mit Schweiß, Übelkeit oder Kollapsgefühl.", "Schwere Atemnot, Erstickungsgefühl oder rasche Verschlechterung der Atmung.", "Hängender Mundwinkel, einseitige Schwäche oder verwaschene Sprache.", "Neue Verwirrtheit, Krampfanfall, Ohnmacht oder Bewusstlosigkeit.", "Plötzlicher Sehverlust oder explosionsartiger, ungewohnter Kopfschmerz."]),
         p("Schwangerschaft oder Wochenbett, Nierenerkrankung, früherer Schlaganfall und Herzerkrankung erhöhen die Dringlichkeit. Eine Notfallsituation wird nicht allein durch eine Zahl bestimmt. Umgekehrt darf ein etwas niedrigerer Kontrollwert ernste Symptome nicht entkräften."),
@@ -671,7 +671,7 @@ const de: LocalePost = {
       ] },
       { id: "mythen", nav: "Mythen", eyebrow: "Schnelle Hausmittel", h2: "Tee, Zitrone, Knoblauch und Atmen behandeln keinen Notfall", blocks: [
         lead("Manche Gewohnheiten fördern langfristig die Herz-Kreislauf-Gesundheit. Keine ersetzt die Akutbeurteilung bei Warnsymptomen."),
-        p("Koffeinfreier Tee oder langsames Atmen können beruhigen. Ein niedrigerer Wert nach Ruhe beweist jedoch nicht, dass die Gefahr vorbei ist. Zitrone, Knoblauch, Essig und kaltes Wasser öffnen Blutgefäße nicht sofort. Pflanzliche Produkte können außerdem mit Blutverdünnern, Entwässerungsmitteln und anderen Arzneien wechselwirken."),
+        p("Koffeinfreier Tee oder langsames Atmen können beruhigen. Ein niedrigerer Wert nach Ruhe beweist jedoch nicht, dass die Gefahr vorbei ist. Zitrone, Knoblauch, Essig und kaltes Wasser öffnen Blutgefäße nicht sofort. Manche Pflanzen und Ergänzungsmittel können mit Arzneien wechselwirken; fragen Sie Arzt oder Apotheker."),
         ul(["Verzögern Sie 112 nie, um ein Internetrezept auszuprobieren.", "Kombinieren Sie keine Ergänzungsmittel und Medikamente, um einen Abfall zu erzwingen.", "Setzen Sie die tägliche Therapie nicht nach einem besseren Einzelwert ab.", "Nehmen Sie nie das Medikament eines Angehörigen, auch nicht bei gleicher Diagnose.", "Besprechen Sie Salz, Schlaf, Bewegung, Alkohol und Gewicht als Langzeitmaßnahmen, nicht als Soforthilfe."]),
         p("Gehen Sie in dieser Reihenfolge vor: Prüfen Sie auf einen Notfall, kontrollieren Sie die Messung und halten Sie sich an Ihren persönlichen Plan. So vermeiden Sie unnötige Panik und gefährliches Warten."),
       ] },
