@@ -21,6 +21,43 @@ export {
 /** Same cap as the other exports — protects the DB and the response size. */
 const ROW_LIMIT = 10_000;
 
+/**
+ * The clinical director this market's statement is addressed to, with the
+ * account it is paid into. The IBAN is decrypted (and the reveal audited) by
+ * the ROUTE, never here — same contract as the doctor payout statement.
+ */
+export type ClinicalDirectorPayee = {
+  fullName: string;
+  accountHolder?: string | null;
+  /** Full, already-decrypted IBAN. Null when none is on file. */
+  iban?: string | null;
+  bic?: string | null;
+};
+
+/**
+ * Who holds the directorship for a market: the master switch on the doctor
+ * AND the per-market grant must both be set, matching how director access is
+ * checked everywhere else. Null when the market has no director on file.
+ */
+export async function findClinicalDirector(
+  countryCode: string,
+): Promise<{ id: string; fullName: string } | null> {
+  const row = await prisma.doctorCountry.findFirst({
+    where: {
+      directorAccess: true,
+      doctor: { isCountryDirector: true },
+      country: { code: { equals: countryCode, mode: "insensitive" } },
+    },
+    select: { doctor: { select: { id: true, fullName: true } } },
+  });
+  return row?.doctor ?? null;
+}
+
+/** Group a normalised IBAN into 4-char blocks, as the payout statement does. */
+function groupIban(iban: string): string {
+  return iban.replace(/[\s-]/g, "").toUpperCase().replace(/(.{4})/g, "$1 ").trim();
+}
+
 function rangeText(filters: ReportFilters): string {
   const from = filters.from ? fmtDate(filters.from) : "—";
   const to = filters.to ? fmtDate(filters.to) : "—";
@@ -39,6 +76,7 @@ function rangeText(filters: ReportFilters): string {
 export async function clinicalDirectorStatementReport(
   terms: ClinicalDirectorTerms,
   filters: ReportFilters,
+  director?: ClinicalDirectorPayee | null,
 ): Promise<ReportTable> {
   const { from, to } = filters;
   const dateRange =
@@ -144,7 +182,23 @@ export async function clinicalDirectorStatementReport(
   rows.push(totalRow("DIRECTOR COMMISSION", fmtMoney(fee.total, terms.currencyCode)));
 
   const summary: ReportSummaryItem[] = [
+    // Who is being paid, for which market, and into what — finance runs the
+    // transfer straight off this statement, exactly as with a doctor payout.
+    { label: "Clinical director", value: director?.fullName ?? "Not on file" },
     { label: "Market", value: terms.marketLabel },
+    ...(director
+      ? [
+          {
+            label: "Account holder",
+            value: director.accountHolder?.trim() || director.fullName,
+          },
+          {
+            label: "IBAN",
+            value: director.iban?.trim() ? groupIban(director.iban) : "Not on file",
+          },
+          ...(director.bic?.trim() ? [{ label: "BIC / SWIFT", value: director.bic.trim() }] : []),
+        ]
+      : []),
     { label: "Period", value: rangeText(filters) },
     { label: "Consultations", value: String(capped.length) },
     { label: "Total invoiced", value: fmtMoney(gross, terms.currencyCode) },
@@ -165,7 +219,7 @@ export async function clinicalDirectorStatementReport(
 
   return {
     title: `Clinical director statement — ${terms.marketLabel}`,
-    subtitle: `${rangeText(filters)} · ${capped.length} consultations`,
+    subtitle: `${director ? `${director.fullName} · ` : ""}${rangeText(filters)} · ${capped.length} consultations`,
     summary,
     generatedAt: new Date().toISOString(),
     truncated,
