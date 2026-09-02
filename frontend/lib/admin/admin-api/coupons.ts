@@ -110,7 +110,13 @@ export async function postAdminCoupon(body: CreateCouponBody) {
 
 export async function patchAdminCoupon(
   id: string,
-  body: { active?: boolean; validUntil?: string; maxRedemptions?: number; internalNote?: string },
+  body: {
+    active?: boolean;
+    validFrom?: string;
+    validUntil?: string;
+    maxRedemptions?: number;
+    internalNote?: string;
+  },
 ) {
   return adminRequest<{ id: string }>(`/api/admin/coupons/${encodeURIComponent(id)}`, {
     method: "PATCH",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { DateTimeField } from "./datetime-field";
 import { PersonalEmailField } from "./personal-email-field";
 import { RecipientPicker } from "./recipient-picker";
 
@@ -124,26 +125,20 @@ export function CouponFields() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <label>
-          <span className="gh-field-label">Valid from</span>
-          <input
-            className="gh-input"
-            name="validFrom"
-            type="datetime-local"
-            defaultValue={localDateTime(0)}
-            required
-          />
-        </label>
-        <label>
-          <span className="gh-field-label">Valid until</span>
-          <input
-            className="gh-input"
-            name="validUntil"
-            type="datetime-local"
-            defaultValue={localDateTime(30)}
-            required
-          />
-        </label>
+        <DateTimeField
+          name="validFrom"
+          label="Valid from"
+          defaultValue={localDateTime(0)}
+          hint="Your local time. Starts immediately by default."
+          required
+        />
+        <DateTimeField
+          name="validUntil"
+          label="Valid until"
+          defaultValue={localDateTime(30)}
+          hint="Your local time."
+          required
+        />
       </div>
 
       {kind === "PERSONAL" ? (

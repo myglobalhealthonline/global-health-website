@@ -79,10 +79,16 @@ export const createCouponSchema = z
  * `code`, `kind`, `discountPercent` and `personalEmail` are deliberately absent:
  * changing any of them under live redemptions rewrites what an already-taken
  * discount meant. Retire the coupon and mint a new one instead.
+ *
+ * The validity window IS editable, in both directions. Moving it does not
+ * change what any past redemption was worth, and a mis-set start date has to be
+ * correctable — a coupon whose window opens in the future answers "not valid
+ * yet" and is otherwise unusable until it does.
  */
 export const updateCouponSchema = z
   .object({
     active: z.boolean().optional(),
+    validFrom: z.string().datetime().optional(),
     validUntil: z.string().datetime().optional(),
     maxRedemptions: z.number().int().min(1).max(100_000).optional(),
     internalNote: z.string().trim().max(1000).optional(),

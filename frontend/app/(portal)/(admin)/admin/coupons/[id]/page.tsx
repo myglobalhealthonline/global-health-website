@@ -19,6 +19,7 @@ import {
   Pill,
   StatCard,
 } from "../../_components/atoms";
+import { DateTimeField } from "../_components/datetime-field";
 import { RecipientPicker } from "../_components/recipient-picker";
 
 export const dynamic = "force-dynamic";
@@ -71,18 +72,32 @@ export default async function AdminCouponDetailPage({
     // stricter check here only produced an /unauthorized redirect for people
     // the API would have accepted.
     await requireAdminAction();
-    const patch: { active?: boolean; validUntil?: string; maxRedemptions?: number } = {};
+    const patch: {
+      active?: boolean;
+      validFrom?: string;
+      validUntil?: string;
+      maxRedemptions?: number;
+    } = {};
 
     const active = formData.get("active");
     if (active != null) patch.active = active === "true";
 
-    const validUntil = String(formData.get("validUntil") ?? "").trim();
-    if (validUntil) {
-      const parsed = new Date(validUntil);
-      if (Number.isNaN(parsed.getTime())) {
-        redirect(`/admin/coupons/${id}?error=${encodeURIComponent("That end date is not valid.")}`);
+    // Both dates arrive as absolute instants from `DateTimeField`. A naive
+    // wall-clock string would be resolved in the SERVER's zone here, which is
+    // the bug that made freshly created coupons report "not valid yet".
+    for (const [field, label] of [
+      ["validFrom", "start date"],
+      ["validUntil", "end date"],
+    ] as const) {
+      const raw = String(formData.get(field) ?? "").trim();
+      if (!raw) continue;
+      const parsed = new Date(raw);
+      if (Number.isNaN(parsed.getTime()) || !/(?:Z|[+-]\d{2}:?\d{2})$/.test(raw)) {
+        redirect(
+          `/admin/coupons/${id}?error=${encodeURIComponent(`That ${label} is not valid.`)}`,
+        );
       }
-      patch.validUntil = parsed.toISOString();
+      patch[field] = parsed.toISOString();
     }
 
     const maxRedemptions = String(formData.get("maxRedemptions") ?? "").trim();
@@ -245,16 +260,19 @@ export default async function AdminCouponDetailPage({
       <AdminCard className="mt-4">
         <h2 className="mb-4 text-[15px] font-bold text-[var(--color-text-primary)]">Settings</h2>
         <form action={updateAction} className="grid gap-4">
-          <div className="grid gap-4 sm:grid-cols-3">
-            <label>
-              <span className="gh-field-label">Valid until</span>
-              <input
-                className="gh-input"
-                name="validUntil"
-                type="datetime-local"
-                defaultValue={coupon.validUntil.slice(0, 16)}
-              />
-            </label>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <DateTimeField
+              name="validFrom"
+              label="Valid from"
+              defaultIso={coupon.validFrom}
+              hint="Your local time. Move it back if the coupon reports “not valid yet”."
+            />
+            <DateTimeField
+              name="validUntil"
+              label="Valid until"
+              defaultIso={coupon.validUntil}
+              hint="Your local time."
+            />
             <label>
               <span className="gh-field-label">Redemption limit</span>
               <input
@@ -283,7 +301,9 @@ export default async function AdminCouponDetailPage({
           </div>
           <p className="text-portal-meta text-[var(--color-text-muted)]">
             The code, kind and percentage cannot be changed once a coupon exists — that would
-            rewrite what discounts already taken meant. Disable it and mint a new one instead.
+            rewrite what discounts already taken meant. Disable it and mint a new one instead. The
+            validity window can move in either direction; that changes nothing about redemptions
+            already taken.
           </p>
           <div className="flex justify-end">
             <button className="gh-btn gh-btn-primary" type="submit">
