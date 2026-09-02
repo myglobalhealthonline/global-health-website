@@ -88,15 +88,16 @@ The comparison preserves names, registrations, qualifications, languages, prices
 ## Implementation boundary
 
 The 14 non-clinical static pages and 18 clinician-approved Czech pages are live and
-publicly verified. The approved clinical batch comprises the Czech home, 12
-services, the diabetes article and four tools. Seventeen of those were approved on
-2026-09-01; `/czechia/cs/services/lekar-online-praha` was approved separately on
-2026-09-02 and is recorded in ledger §36. Exact replay evidence for the 2026-09-01
+publicly verified. The approved clinical set comprises the Czech home, 12 services,
+the diabetes article and four tools. Seventeen distinct pages were approved on
+2026-09-01; the Prague service's expanded copy was separately approved on 2026-09-02
+without increasing that page count, and the dermatology service became the eighteenth
+distinct approved page later on 2026-09-02. Exact replay evidence for the 2026-09-01
 approvals is
 [`raw/clinical-production-readback-2026-09-01.csv`](raw/clinical-production-readback-2026-09-01.csv),
 with the production operation recorded in
 [`raw/production-write-receipt-2026-09-01-clinical-seo.json`](raw/production-write-receipt-2026-09-01-clinical-seo.json).
-The remaining 14 eligible pages stay source-pinned and fail closed pending their
+The remaining 13 eligible pages stay source-pinned and fail closed pending their
 specialist, native-English or governance approval. The three measurement holds and
 two reviewed-no-change rows remain untouched. Doctor biographies, credentials,
 prices, durations, availability, booking behavior, clinical algorithms and

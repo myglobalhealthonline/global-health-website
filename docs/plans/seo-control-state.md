@@ -21,6 +21,28 @@ Property: `sc-domain:myglobalhealth.online` · Site: `https://www.myglobalhealth
 The active forward plan (§27) is surfaced first for operators; the numbered baseline,
 ledger and historical evidence follow from §0.
 
+### 27.23 Czechia dermatology approval and publication (2026-09-02)
+
+- MUDr. Ahmed Maklad approved the exact Czech dermatology candidate at
+  `2026-09-02T10:30:00+02:00`; approval SHA-256
+  `c7f821b4f7479c9d42e8d278e921b49fef9d051ee45b2197a942ed040a8dbe2c`
+  matched the guarded production dry run.
+- A one-record Serializable transaction published the approved title, metadata, H1,
+  body and six FAQs on `/czechia/cs/services/kozni-konzultace-praha`. Transactional
+  and cache-bypassed public readback passed; price, duration, doctors, booking state,
+  biographies, credentials, global review metadata and non-target locales were
+  preserved.
+- The same declaration lists 13 additional hashes as conditionally eligible to
+  record physician review only where personally reviewed; it does not affirm that
+  condition per hash. No completed review was inferred for those rows. Their
+  specialist, governance, credential or native-English gates remain pending, and the
+  holds, regulatory confirmations and privacy/legal review remain excluded.
+- Current state: 32 matrix pages live, 13 guarded candidates pending, three holds and
+  two reviewed-no-change pages; clinical register 18 approved and 19 pending.
+  Evidence: `seo/czechia/raw/reviewer-supplied-clinical-approval-2026-09-02-1030.md`,
+  `seo/czechia/raw/production-write-receipt-2026-09-02-dermatology.json` and
+  `seo/czechia/raw/production-readback-2026-09-02-dermatology.json`.
+
 ### 27.22 Portugal Ireland-parity implementation and publication gate (2026-09-01)
 
 - A 75-row completion matrix now covers every live canonical `/portugal/pt` sitemap

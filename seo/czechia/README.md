@@ -42,11 +42,11 @@ The exact live technical inputs are preserved in
 [`raw/live-page-seo-snapshot-2026-09-01.csv`](raw/live-page-seo-snapshot-2026-09-01.csv).
 
 The 31 eligible clinical recommendations have source-pinned guarded payloads for
-PageContent, services, doctor/profile metadata, one blog and seven tools. MUDr.
-Ahmed Maklad approved 17 exact payloads on 2026-09-01; those 17 are live and have
-transactional plus public readback evidence. Fourteen eligible pages remain pending
-the reviewer role stated in `clinical-review-register.csv`. The register remains the
-promotion authority, and English targets still require native review.
+PageContent, services, doctor/profile metadata, one blog and seven tools. Eighteen
+distinct pages are now clinically approved and live: 17 from the 2026-09-01 rollout
+and the dermatology service approved on 2026-09-02. Thirteen eligible pages remain
+pending the reviewer role stated in `clinical-review-register.csv`. The register
+remains the promotion authority, and English targets still require native review.
 
 Run the lightweight integrity check after editing any generated CSV:
 

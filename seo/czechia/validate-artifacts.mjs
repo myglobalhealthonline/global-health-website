@@ -2,6 +2,11 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readdir, readFile } from "node:fs/promises";
 
+import {
+  CZECHIA_SEO_SERVICE_DRAFTS,
+  czechiaSeoApprovalSha256,
+} from "../../backend/src/content/czechia-seo-service-drafts.ts";
+
 const root = new URL("./", import.meta.url);
 
 function csvRows(text) {
@@ -159,19 +164,20 @@ assert.equal(
   matrix.filter(({ implementation_status }) =>
     implementation_status.startsWith("source_pinned_guarded_draft_pending_"),
   ).length,
-  14,
-  "the 14 unapproved clinical pages must remain guarded drafts",
+  13,
+  "the 13 unapproved clinical pages must remain guarded drafts",
 );
 assert.equal(
   matrix.filter(
     ({ clinical_review_required, implementation_status }) =>
       clinical_review_required === "yes" && implementation_status.startsWith("live_verified_"),
   ).length,
-  17,
-  "the 17 fully live approved clinical pages must record verified deployment",
+  18,
+  "the 18 fully live approved clinical pages must record verified deployment",
 );
 
 const exactFaqDraftUrls = [
+  "https://www.myglobalhealth.online/czechia/cs/services/kozni-konzultace-praha",
   "https://www.myglobalhealth.online/czechia/cs/services/lekar-online-praha",
   "https://www.myglobalhealth.online/czechia/cs/services/neschopenka-online",
   "https://www.myglobalhealth.online/czechia/cs/services/obnoveni-lecby",
@@ -249,12 +255,13 @@ assert.equal(
   clinicalRegister.length,
   "clinical register contains duplicate assets",
 );
-assert.equal(clinicalRegister.filter(({ status }) => status === "approved").length, 17);
-assert.equal(clinicalRegister.filter(({ status }) => status === "pending").length, 20);
+assert.equal(clinicalRegister.filter(({ status }) => status === "approved").length, 18);
+assert.equal(clinicalRegister.filter(({ status }) => status === "pending").length, 19);
 const clinicalByAsset = new Map(clinicalRegister.map((row) => [row.asset, row]));
 
 const staticProductionReadback = records(await read("raw/static-page-production-readback-2026-09-01.csv"));
 const clinicalProductionReadback = records(await read("raw/clinical-production-readback-2026-09-01.csv"));
+const clinicalProductionReadbackSep2 = records(await read("raw/clinical-production-readback-2026-09-02.csv"));
 const clinicalProductionReceiptText = await read("raw/production-write-receipt-2026-09-01-clinical-seo.json");
 assert.equal(
   createHash("sha256").update(clinicalProductionReceiptText.replaceAll("\r\n", "\n")).digest("hex"),
@@ -283,20 +290,41 @@ assert.equal(
   "Czech Prague production readback drift",
 );
 const pragueProductionReadback = JSON.parse(pragueProductionReadbackText);
-const productionReadback = [...staticProductionReadback, ...clinicalProductionReadback];
+const dermatologyApprovalRecordText = await read("raw/reviewer-supplied-clinical-approval-2026-09-02-1030.md");
+assert.equal(
+  createHash("sha256").update(dermatologyApprovalRecordText.replaceAll("\r\n", "\n")).digest("hex"),
+  "ea50ff1e8ddaa9c927655ec5244bbe57c0207f488cb5681fb35f120922739c4b",
+  "Czech dermatology reviewer-supplied approval drift",
+);
+const dermatologyProductionReceiptText = await read("raw/production-write-receipt-2026-09-02-dermatology.json");
+assert.equal(
+  createHash("sha256").update(dermatologyProductionReceiptText.replaceAll("\r\n", "\n")).digest("hex"),
+  "0bd90b55ccca878bdcce3390d32d85bf6608d8213de2c3a085cc9bd6114a2b77",
+  "Czech dermatology production receipt drift",
+);
+const dermatologyProductionReceipt = JSON.parse(dermatologyProductionReceiptText);
+const dermatologyProductionReadbackText = await read("raw/production-readback-2026-09-02-dermatology.json");
+assert.equal(
+  createHash("sha256").update(dermatologyProductionReadbackText.replaceAll("\r\n", "\n")).digest("hex"),
+  "bccac1db082936cc9f9a85e86c128235bfbd4096d9bf802bebfdd66d3df084c0",
+  "Czech dermatology production readback drift",
+);
+const dermatologyProductionReadback = JSON.parse(dermatologyProductionReadbackText);
+const clinicalDeploymentReadback = [...clinicalProductionReadback, ...clinicalProductionReadbackSep2];
+const productionReadback = [...staticProductionReadback, ...clinicalDeploymentReadback];
 const deploymentVerifiedMatrixRows = matrix.filter(
   ({ implementation_status }) => implementation_status.startsWith("live_verified_"),
 );
 assert.equal(staticProductionReadback.length, 14);
 assert.equal(clinicalProductionReadback.length, 17);
+assert.equal(clinicalProductionReadbackSep2.length, 1);
 assert.equal(new Set(productionReadback.map(({ url }) => url)).size, productionReadback.length);
 assert.deepEqual(
-  clinicalProductionReadback.map(({ url }) => new URL(url).pathname).sort(),
+  clinicalDeploymentReadback.map(({ url }) => new URL(url).pathname).sort(),
   clinicalRegister.filter(({ status }) => status === "approved").map(({ asset }) => asset).sort(),
 );
-const approvedClinicalAssets = clinicalRegister
-  .filter(({ status }) => status === "approved")
-  .map(({ asset }) => asset)
+const initiallyApprovedClinicalAssets = clinicalProductionReadback
+  .map(({ url }) => new URL(url).pathname)
   .sort();
 const receiptAssets = Object.values(clinicalProductionReceipt.applied).flat().sort();
 assert.equal(clinicalProductionReceipt.operation, "czechia-approved-clinical-seo-rollout");
@@ -304,11 +332,11 @@ assert.ok(strictUtcTimestamp(clinicalProductionReceipt.performed_at), "invalid c
 assert.equal(clinicalProductionReceipt.approval.reviewer_name, "MUDr. Ahmed Maklad");
 assert.equal(clinicalProductionReceipt.approval.reviewer_doctor_id, "cmqas8yh9000b01pgpc0yp1la");
 assert.equal(clinicalProductionReceipt.approval.reviewed_at, "2026-09-01T18:30:00+02:00");
-assert.equal(clinicalProductionReceipt.approval.approved_assets, approvedClinicalAssets.length);
+assert.equal(clinicalProductionReceipt.approval.approved_assets, initiallyApprovedClinicalAssets.length);
 assert.equal(clinicalProductionReceipt.repository_commit, "04b98cdc3b86e54961e0916be823c7605f3f6c36");
 assert.equal(clinicalProductionReceipt.production_base_commit, "6c0c7fcf2aa7f31c7d434ce4ee46589761532ffd");
 assert.equal(clinicalProductionReceipt.railway_frontend_deployment_id, "52843a4c-059c-4441-9baf-510020683f70");
-assert.deepEqual(receiptAssets, approvedClinicalAssets, "clinical production receipt asset drift");
+assert.deepEqual(receiptAssets, initiallyApprovedClinicalAssets, "clinical production receipt asset drift");
 assert.equal(new Set(receiptAssets).size, receiptAssets.length, "clinical production receipt contains duplicate assets");
 assert.equal(clinicalProductionReceipt.database_readback, "verified transactionally; protected operational and non-target locale fields preserved");
 assert.equal(clinicalProductionReceipt.public_verification.artifact, "clinical-production-readback-2026-09-01.csv");
@@ -383,6 +411,100 @@ assert.ok(
   pragueProductionReadback.public.faq_records.every(({ question_present, answer_present }) => question_present && answer_present),
   "Czech Prague public FAQ readback failed",
 );
+const dermatologyApproval = clinicalByAsset.get(dermatologyProductionReceipt.asset);
+const dermatologyDraft = CZECHIA_SEO_SERVICE_DRAFTS.find(
+  ({ locale, slug }) => locale === "CS" && slug === "kozni-konzultace-praha",
+);
+assert.ok(dermatologyDraft, "Czech dermatology source draft is missing");
+assert.equal(
+  czechiaSeoApprovalSha256(dermatologyDraft),
+  dermatologyApproval?.approved_sha256,
+  "Czech dermatology approval no longer matches the source draft",
+);
+const dermatologyMatrixRow = matrix.find(
+  ({ url }) => url === "https://www.myglobalhealth.online/czechia/cs/services/kozni-konzultace-praha",
+);
+assert.ok(dermatologyMatrixRow, "Czech dermatology matrix row is missing");
+assert.equal(dermatologyDraft.seoTitle, dermatologyMatrixRow.optimized_title);
+assert.equal(dermatologyDraft.seoDescription, dermatologyMatrixRow.optimized_meta_description);
+assert.equal(dermatologyDraft.heroTitle, dermatologyMatrixRow.optimized_h1);
+assert.equal(dermatologyDraft.heroDescription, dermatologyMatrixRow.optimized_visible_description);
+assert.equal(dermatologyProductionReceipt.operation, "czechia-cs-dermatology-copy-rollout");
+assert.ok(strictUtcTimestamp(dermatologyProductionReceipt.recorded_at), "invalid Czech dermatology receipt time");
+assert.equal(dermatologyProductionReceipt.service_id, "cmr85y394002e70ju6x2wqb0h");
+assert.equal(dermatologyProductionReceipt.locale, "CS");
+assert.equal(dermatologyProductionReceipt.approval.reviewer_name, dermatologyApproval?.reviewer_name);
+assert.equal(dermatologyProductionReceipt.approval.reviewer_doctor_id, dermatologyApproval?.reviewer_doctor_id);
+assert.equal(dermatologyProductionReceipt.approval.reviewed_at, dermatologyApproval?.reviewed_at);
+assert.equal(dermatologyProductionReceipt.approval.approved_sha256, dermatologyApproval?.approved_sha256);
+assert.equal(
+  dermatologyProductionReceipt.approval.reviewer_record_artifact,
+  "reviewer-supplied-clinical-approval-2026-09-02-1030.md",
+);
+assert.equal(
+  dermatologyProductionReceipt.approval.reviewer_record_sha256,
+  "ea50ff1e8ddaa9c927655ec5244bbe57c0207f488cb5681fb35f120922739c4b",
+);
+assert.match(dermatologyApprovalRecordText, /Reviewer:\*\* MUDr\. Ahmed Maklad/);
+assert.match(dermatologyApprovalRecordText, /Reviewer confirmation\/signature:\*\* AM/);
+assert.match(dermatologyApprovalRecordText, new RegExp(dermatologyApproval.approved_sha256));
+assert.match(dermatologyApprovalRecordText, /not be marked fully review-complete/);
+assert.equal(dermatologyProductionReceipt.database_readback.status, "verified_transactionally");
+assert.equal(dermatologyProductionReceipt.database_readback.faq_records_updated_in_place, 6);
+assert.equal(dermatologyProductionReceipt.public_readback.artifact, "production-readback-2026-09-02-dermatology.json");
+assert.equal(dermatologyProductionReceipt.public_readback.status, "verified_exact_body_and_faqs");
+assert.equal(dermatologyProductionReadback.asset, dermatologyProductionReceipt.asset);
+assert.equal(dermatologyProductionReadback.approved_payload_sha256, dermatologyApproval?.approved_sha256);
+assert.ok(strictUtcTimestamp(dermatologyProductionReadback.database.retrieved_at));
+assert.ok(strictUtcTimestamp(dermatologyProductionReadback.database.service_updated_at));
+assert.ok(strictUtcTimestamp(dermatologyProductionReadback.database.cs_translation_updated_at));
+assert.equal(dermatologyProductionReadback.database.service_id, dermatologyProductionReceipt.service_id);
+assert.match(dermatologyProductionReadback.database.source_sha256, /^[a-f0-9]{64}$/);
+assert.equal(
+  dermatologyProductionReadback.database.detail_body_sha256,
+  createHash("sha256").update(dermatologyDraft.detailBody).digest("hex"),
+  "deployed Czech dermatology body no longer matches the approved draft",
+);
+assert.equal(dermatologyProductionReadback.database.faq_records.length, 6);
+assert.deepEqual(
+  dermatologyProductionReadback.database.faq_records,
+  dermatologyDraft.faqs.map(({ id, question, answer }) => ({
+    id,
+    sha256: createHash("sha256").update(JSON.stringify({ id, question, answer })).digest("hex"),
+  })),
+  "deployed Czech dermatology FAQs no longer match the approved draft",
+);
+assert.ok(strictUtcTimestamp(dermatologyProductionReadback.public.retrieved_at));
+assert.ok(
+  Date.parse(dermatologyProductionReadback.public.retrieved_at) >
+    Date.parse(dermatologyProductionReadback.database.service_updated_at),
+  "Czech dermatology public readback predates the production write",
+);
+assert.equal(
+  dermatologyProductionReadback.public.url,
+  "https://www.myglobalhealth.online/czechia/cs/services/kozni-konzultace-praha",
+);
+assert.equal(dermatologyProductionReadback.public.status, 200);
+assert.match(dermatologyProductionReadback.public.html_sha256, /^[a-f0-9]{64}$/);
+assert.ok(
+  [
+    dermatologyProductionReadback.public.approved_title_present,
+    dermatologyProductionReadback.public.approved_h1_present,
+    dermatologyProductionReadback.public.approved_description_present,
+    dermatologyProductionReadback.public.approved_body_present,
+  ].every(Boolean),
+  "Czech dermatology public copy readback failed",
+);
+assert.deepEqual(
+  dermatologyProductionReadback.public.faq_records.map(({ id }) => id).sort(),
+  dermatologyProductionReadback.database.faq_records.map(({ id }) => id).sort(),
+);
+assert.ok(
+  dermatologyProductionReadback.public.faq_records.every(
+    ({ question_present, answer_present }) => question_present && answer_present,
+  ),
+  "Czech dermatology public FAQ readback failed",
+);
 assert.deepEqual(
   productionReadback.map(({ url }) => url).sort(),
   deploymentVerifiedMatrixRows.map(({ url }) => url).sort(),
@@ -392,10 +514,13 @@ for (const row of deploymentVerifiedMatrixRows) {
   const live = productionByUrl.get(row.url);
   assert.ok(live, `production readback missing ${row.url}`);
   assert.ok(strictUtcTimestamp(live.retrieved_at), `invalid production retrieval time for ${row.url}`);
+  const readbackWindow = row.url.endsWith("/kozni-konzultace-praha")
+    ? ["2026-09-01T19:00:00Z", "2026-09-02T19:00:00Z"]
+    : ["2026-08-31T19:00:00Z", "2026-09-01T19:00:00Z"];
   assert.ok(
-    Date.parse(live.retrieved_at) >= Date.parse("2026-08-31T19:00:00Z") &&
-      Date.parse(live.retrieved_at) < Date.parse("2026-09-01T19:00:00Z"),
-    `production readback is outside the 2026-09-01 Asia/Karachi capture window for ${row.url}`,
+    Date.parse(live.retrieved_at) >= Date.parse(readbackWindow[0]) &&
+      Date.parse(live.retrieved_at) < Date.parse(readbackWindow[1]),
+    `production readback is outside its recorded Asia/Karachi capture window for ${row.url}`,
   );
   assert.equal(live.status, "200", `non-200 production status for ${row.url}`);
   assert.equal(live.title, row.optimized_title, `deployed title mismatch for ${row.url}`);
@@ -442,7 +567,7 @@ for (const row of matrix.filter(({ clinical_review_required }) => clinical_revie
   if (gate.status === "approved") {
     assert.equal(
       row.implementation_status,
-      asset === "/czechia/cs/services/lekar-online-praha"
+      asset === "/czechia/cs/services/lekar-online-praha" || asset === "/czechia/cs/services/kozni-konzultace-praha"
         ? "live_verified_2026-09-02"
         : "live_verified_2026-09-01",
       `approved clinical row has the wrong deployment state for ${asset}`,

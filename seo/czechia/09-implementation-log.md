@@ -351,3 +351,36 @@ guarded pending its separate clinical and native-English approvals.
 The matrix now tallies 31 fully live pages, 14 source-pinned guarded drafts pending
 review, three measurement holds and two reviewed-no-change pages. No other pending
 page was widened by this approval.
+
+## Dermatology clinical rollout — 2026-09-02
+
+MUDr. Ahmed Maklad supplied a signed direct statement approving the exact Czech
+dermatology payload at `2026-09-02T10:30:00+02:00`. A guarded production dry run
+matched source SHA-256
+`91f36115673d9d97f3a73cfb207c7e31a5049f825a9371c50bbc097620ee5966`
+and approval SHA-256
+`c7f821b4f7479c9d42e8d278e921b49fef9d051ee45b2197a942ed040a8dbe2c`.
+
+The one-record Serializable transaction published the approved title, description,
+H1, body and six FAQ replacements for
+`/czechia/cs/services/kozni-konzultace-praha`. Transactional verification preserved
+price, duration, assigned doctors, booking state, biographies, credentials, global
+review metadata and non-target locales. Cache-bypassed public readback confirmed the
+exact approved copy, HTTP 200, self-canonical, `index, follow`, self-hreflang and
+FAQ/Service/MedicalWebPage schema.
+
+The declaration lists 13 other hashes as conditionally eligible to record physician
+review only where the reviewer personally reviewed them. It does not affirm that
+condition per hash and does not satisfy their specialist, clinical-governance,
+credential or native-English requirements. This repository therefore records no
+additional completed review for those rows; they remain `pending` and fail closed.
+The three holds, two regulatory-confirmation pages and privacy/legal item are
+excluded.
+
+The matrix now tallies 32 live pages, 13 source-pinned guarded drafts pending review,
+three measurement holds and two reviewed-no-change pages. The clinical register now
+contains 18 approved and 19 pending rows. Evidence is
+`raw/reviewer-supplied-clinical-approval-2026-09-02-1030.md`,
+`raw/production-write-receipt-2026-09-02-dermatology.json`,
+`raw/production-readback-2026-09-02-dermatology.json` and
+`raw/clinical-production-readback-2026-09-02.csv`.
