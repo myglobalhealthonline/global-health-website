@@ -21,7 +21,7 @@ Property: `sc-domain:myglobalhealth.online` · Site: `https://www.myglobalhealth
 The active forward plan (§27) is surfaced first for operators; the numbered baseline,
 ledger and historical evidence follow from §0.
 
-### 27.17 Portugal Ireland-parity implementation and publication gate (2026-09-01)
+### 27.22 Portugal Ireland-parity implementation and publication gate (2026-09-01)
 
 - A 75-row completion matrix now covers every live canonical `/portugal/pt` sitemap
   URL: 23 services, 16 doctor profiles, seven tools, four health guides, seven
@@ -83,7 +83,7 @@ ledger and historical evidence follow from §0.
   including unique keyword ownership and removal of guarantee wording from proposed
   metadata.
 
-### 27.17 Czechia clinician-approved rollout live (2026-09-01)
+### 27.21 Czechia clinician-approved rollout live (2026-09-01)
 
 - MUDr. Ahmed Maklad approved 17 exact Czech payloads at
   `2026-09-01T18:30:00+02:00`. The scope was limited to rows requiring a
@@ -105,7 +105,7 @@ ledger and historical evidence follow from §0.
   `seo/czechia/raw/clinical-production-readback-2026-09-01.csv` and
   `seo/czechia/raw/production-write-receipt-2026-09-01-clinical-seo.json`.
 
-### 27.16 Czechia clinical rollout package prepared (2026-09-01)
+### 27.20 Czechia clinical rollout package prepared (2026-09-01)
 
 - The 31 eligible clinical recommendations now have source-pinned, dry-run-first
   implementation payloads: three PageContent records, 15 service locale targets,
@@ -136,7 +136,7 @@ ledger and historical evidence follow from §0.
   matching the declared canonical. This is a baseline refresh, not authorization to
   publish clinically gated copy.
 
-### 27.15 Czechia page-by-page local optimization package (2026-09-01)
+### 27.19 Czechia page-by-page local optimization package (2026-09-01)
 
 - A 50-row completion matrix now covers every current `/czechia/cs` sitemap URL plus
   `/czechia/en` and `/czechia/en/services/lekar-online-praha`. It records one primary
@@ -164,7 +164,7 @@ ledger and historical evidence follow from §0.
   `live_verified_2026-09-01`; the pre-deployment original snapshot remains preserved
   as dated evidence. Production evidence is
   `seo/czechia/raw/static-page-production-readback-2026-09-01.csv`.
-- Seventeen clinician-approved recommendations are now live as recorded in §27.17.
+- Seventeen clinician-approved recommendations are now live as recorded in §27.21.
   The remaining 14 eligible recommendations stay source-pinned and blocked by their
   pending specialist, native-English or governance review. Only neschopenka and
   treatment renewal have exact FAQ replacements. The three GP/24-7/travel holds and
@@ -172,7 +172,7 @@ ledger and historical evidence follow from §0.
   Evidence: `seo/czechia/11-page-by-page-optimization.md` and
   `seo/czechia/page-by-page-completion-matrix.csv`.
 
-### 27.14 Czechia review-gated service drafts (2026-09-01)
+### 27.18 Czechia review-gated service drafts (2026-09-01)
 
 - Repository-only Czech drafts now cover the two eligible P0 service records:
   `/czechia/cs/services/neschopenka-online` and
@@ -210,7 +210,7 @@ ledger and historical evidence follow from §0.
   `git diff --check`. Independent code, TypeScript and security reviews reported no
   remaining findings for the repository-only result.
 
-### 27.13 Czechia final-data refresh and GA4 scope correction (2026-08-31)
+### 27.17 Czechia final-data refresh and GA4 scope correction (2026-08-31)
 
 - Final GSC data for `2026-05-31`–`2026-08-28` returns 141 clicks and 7,702
   impressions for Czechia page rows. Privacy-thresholded Czech-searcher query rows
@@ -231,7 +231,7 @@ ledger and historical evidence follow from §0.
   authorized. All clinically material Czech rewrites remain pending review. Exact
   calls and limitations: `seo/czechia/raw/focused-refresh-2026-08-31.json`.
 
-### 27.12 Czechia refresh — local evidence and locale-link fix (2026-08-31)
+### 27.16 Czechia refresh — local evidence and locale-link fix (2026-08-31)
 
 - Fresh complete GSC data through **2026-08-27** confirms Czechia is no longer in a
   "missing page" state. `/czechia/cs`, `/czechia/cs/gp-consultation-online`,
@@ -252,7 +252,7 @@ ledger and historical evidence follow from §0.
   No redirect change is reopened by this batch. Re-measure Czech GP and travel
   ownership on or after **2026-09-08**.
 
-### 27.11 Booking availability visibility — local implementation (2026-08-29)
+### 27.15 Booking availability visibility — local implementation (2026-08-29)
 
 - Public doctor, specialist, consultation, and service pages remain lifecycle- and
   publication-driven when online booking is paused. Availability does not change
@@ -278,7 +278,7 @@ ledger and historical evidence follow from §0.
   remain open. Notification signup was not exposed because consent, unsubscribe,
   and idempotent delivery are not implemented.
 
-### 27.10 Ireland public-copy humanization (2026-08-26)
+### 27.14 Ireland public-copy humanization (2026-08-26)
 
 - Ireland home, doctors, plans, about, contact, tool, doctor-profile and public
   service copy was reviewed for formulaic em-dash-heavy wording across EN, PT, ES,
@@ -823,7 +823,7 @@ Status vocabulary: `CLOSED` · `FALSE POSITIVE` · `EXPECTED BEHAVIOR` ·
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | SEO-SEMRUSH-001 | 133 invalid structured-data items | Structured data | **READY TO IMPLEMENT** | 2026-08-30 | Authenticated SEMrush table fully audited: 52 individual `Physician` nodes were each counted twice as invalid `Local Business`/`Organization` items (`address`, `jobTitle`, `worksFor`) = 104; 23 service organizations used unsupported `availableService`; 6 `WebApplication` tool nodes lacked genuine `aggregateRating`/`review`. Local fix models clinicians as `Person`, services/tools as `MedicalWebPage`, uses canonical specialty URLs, and attaches review metadata only to WebPage-compatible nodes. Focused suites 68/68; frontend `tsc --noEmit` clean | Not deployed or reprocessed | Deploy, validate representative doctor/service/tool URLs, then rerun SEMrush |
 | SEO-SEMRUSH-002 | 144 external links reported broken | Links | **FALSE POSITIVE** | 2026-08-30 | The 144 rows contain only two destinations: 88 × `https://wa.me/353894715849` reported `429`, and 56 × `https://www.cnpd.pt` reported `500`. Both opened successfully in a normal browser on the evidence date; WhatsApp resolved to its valid chat page and CNPD served its current homepage. These are target-side bot/rate-limit responses, not dead links | n/a | No site edit. Optionally exclude this check for those two verified targets in SEMrush |
-| SEO-SEMRUSH-003 | 5 title tags reported too long | Metadata | **READY TO IMPLEMENT** | 2026-08-30 | Exact rows are the five non-English Ireland country homes: `/ireland/{cs,de,es,pt,ro}`. Their code-owned titles were 79–92 characters. Local titles now preserve `Online Doctor/IMC/same-day` intent in 59–65 characters; a six-locale ≤70 regression guard covers Ireland including EN | Not deployed or reprocessed | Deploy and rerun SEMrush |
+| SEO-SEMRUSH-003 | 5 title tags reported too long | Metadata | **LOCAL FIX UPDATED — DEPLOY PENDING** | 2026-09-02 | Exact rows are the five non-English Ireland country homes: `/ireland/{cs,de,es,pt,ro}`. Production still served the old long titles on 2026-09-02, and the live metadata path was traced to `frontend/lib/content/country-home-copy.ts`, not the separate Ireland static-page helper. The title source now uses 46–57 character titles and 138–151 character descriptions; IMC trust remains in the visible hero copy. Targeted frontend verification passed 89/89 tests and `pnpm --filter frontend typecheck` | Google still has the old live titles until the next deploy and recrawl | Deploy and rerun SEMrush |
 | SEO-SEMRUSH-004 | 2 pages reported low word count | Content | **FALSE POSITIVE** | 2026-08-30 | Both rows are the same root selector rendered as `https://www.myglobalhealth.online` and `https://www.myglobalhealth.online/`, each counted at 103 words. This is one concise market-selection page, not two thin content pages | n/a | None; do not add filler copy |
 | SEO-SEMRUSH-005 | 88 pages reported low text-to-HTML ratio | Performance / heuristic | **EXPECTED BEHAVIOR** | 2026-08-30 | Audit was capped at 100 URLs with JS rendering disabled and flagged 88 at ratios 0.02–0.08: 35 country homes, 23 services, 14 doctor pages, 6 tools and 10 other/root pages. The crawl is alphabetically/sample biased (mostly Portugal-CS after country homes), while historical byte tracing attributes the ratio to normal Next App Router RSC serialization and two data-heavy homepage islands (~41 KB) without removing rendered content | n/a | No ratio-only refactor. Reopen only with Core Web Vitals or transfer-size regression evidence |
 
@@ -3300,14 +3300,11 @@ should be judged on those grounds. It needs explicit authorization as its own sm
 correctness fix; it is **not** the recommended SEO batch and should not be used as a
 pretext to re-open the cluster's content.
 
-Branch state (re-checked 2026-08-12 during `SEO-FOUNDATION-001`): `Dev-hassaan` is
-**one commit ahead of `origin/Dev-hassaan`** — `26d5028c`, the `SEO-RESET-001` /
-`SEO-GROWTH-016` rebaseline of this file, is committed locally and **not pushed**.
-`origin/main` and `origin/Dev-hassaan` are both at `8d28b85e` and identical.
-SEO-GROWTH-015 and TRUST-METRIC-001 landed in `013a198f`/`edcfe868` and are pushed.
-The working tree also holds unrelated in-progress blog-UI work by a concurrent session
-(`BlogCard.tsx`, `blog-index-page.tsx`, `blog-post-page.tsx`, `scope-blog-html.ts` and
-its test, plus two untracked `backend/scripts/` probes) — **left untouched.**
+Branch state (re-checked 2026-09-02 during `CZ-PT-BATCH-REVIEW-001`, §38):
+`Dev-hassaan`, `origin/Dev-hassaan` and `origin/main` are all at `50b950f7` with a
+clean working tree. Nothing in the Czechia or Portugal batch is unpushed or unmerged.
+The 2026-08-12 snapshot this paragraph used to carry is superseded and no longer
+describes the repository.
 
 ### NEXT — up to four, evidence-backed
 
@@ -6990,7 +6987,7 @@ with `receita`/`consulta` seeds. All approved clusters map to
 existing URLs. No new page, location page, redirect, noindex, title rewrite or
 recurring paid rank tracker was created.
 
-Later operational state is recorded in §27.17. It supersedes this dated
+Later operational state is recorded in §27.22. It supersedes this dated
 predeployment status without rewriting the 2026-08-31 evidence.
 
 Fresh URL Inspection resolves most of the §19 doctor watchlist. Telmo Coelho's
@@ -7176,5 +7173,70 @@ profile publication. Her pre-rollout source hash was re-read unchanged. No name,
 biography, qualification, credential/certification, registration, specialty,
 language, visible clinical copy, FAQ, price, booking or availability field changed
 on any doctor record.
+
+---
+
+## 38. CZ-PT-BATCH-REVIEW-001 — independent review of the 08-31→09-02 batch (2026-09-02)
+
+**Status: PUBLISHED WORK VERIFIED / RECORD-KEEPING CORRECTED / THREE DECISIONS OPEN.**
+Full report: [`docs/audits/seo/cz-pt-batch-review-2026-09-02.md`](../audits/seo/cz-pt-batch-review-2026-09-02.md).
+
+An independent live re-fetch of all 125 URLs in the two completion matrices passed
+125/125 on HTTP 200, single `<h1>`, self-canonical, self-hreflang, `index, follow`
+and parseable JSON-LD. All 76 published rows serve exactly the title and meta
+description their matrix records. No cross-market or cross-locale leakage: Ireland,
+Spain, Romania, Brazil, `/czechia/{en,pt,de}`, `/portugal/{en,es}` were checked live
+and are unaffected. Frontend type-check is clean and the focused suites pass 624/624.
+Register and matrix tallies reconcile against every count claimed in §§36–37.
+
+Baseline for the measurement gates below, 28 days to 2026-08-30: Czechia 90 clicks
+and 5,629 impressions (1.60% CTR); Portugal 70 clicks and 4,317 impressions (1.62%).
+The batch rewrote metadata on pages holding 3,143 of Czechia's and 2,267 of
+Portugal's impressions.
+
+**Measurement gate — Czechia (§§27.19, 27.21, 36).** Compare page and query×page
+Search Console windows after 28 complete days plus the normal final-data lag, **on or
+after 2026-09-30**. Track impressions, clicks, CTR and query ownership for the 31
+published URLs against the baseline above. Do not rewrite an unchanged page or widen
+an approval from this comparison alone.
+
+**Measurement gate — Portugal (§§27.22, 35, 37).** Same method and the same
+2026-09-30 floor, covering the 43 published URLs. The driving-certificate authority-wall
+decision and the 28 reviewed-unchanged rows stay closed unless this comparison
+produces a new testable hypothesis.
+
+**Corrected in this pass, documentation only.** Five duplicated `### 27.x` section
+numbers were renumbered to 27.14–27.22 and the two cross-references that had become
+ambiguous now resolve; the `seo/README.md` market table records §§36–37; the stale
+`/portugal/pt/pricing` matrix row was closed to match the verified production state;
+`seo/czechia/11-page-by-page-optimization.md` carries the historical disclaimer and
+the corrected 12-service approval count; the Portugal reconciliation script reads
+UTF-8 so it runs under Windows PowerShell 5.1; and both country READMEs now record
+the ` · Global Health` title template so matrix-versus-live comparisons stop
+producing forty false mismatches.
+
+**Open decisions — do not clear the 2026-09-08 gate without settling the first two.**
+
+1. Two review-gated Czech drafts contain different copy than the matrix and clinical
+   register describe, so a reviewer would approve text they were not shown:
+   `gpSafetyCs` in `backend/src/content/czechia-page-content-seo-drafts.ts` (title,
+   description and H1 all differ; its H1 is still the unchanged live value) and
+   `cestovni-medicina-praha` in `backend/src/content/czechia-seo-service-drafts.ts`
+   (primary keyword itself differs: `cestovní medicína Praha` versus `cestovní
+   medicína`). Every other draft matches its matrix row exactly. Reconcile in
+   whichever direction is correct before either gate clears.
+2. §27.22 describes a writer requiring "three distinct dated clinical, compliance and
+   content-owner approvals". Commit `934fb834` removed the enforcement of the
+   compliance and content-owner fields from `portugal-clinical-approval.ts`, and those
+   four columns are blank on all 45 register rows. The implementation log states why:
+   production exposes only one eligible operational reviewer. The surviving gate is
+   still strong. Either restore the requirement or amend §27.22 so the ledger stops
+   asserting a control the code no longer runs.
+3. Eleven live Portugal doctor descriptions run 191–220 characters against a ~155–160
+   display budget, and 24 of 75 Portugal descriptions exceed it overall. Trimming them
+   is a content change and needs clinical re-approval by the existing process.
+
+**Watchlist debt.** §6 records "Next recheck due 2026-09-01". That pass was not
+performed; it is now overdue.
 
 ---

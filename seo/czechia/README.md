@@ -60,3 +60,17 @@ node seo/czechia/validate-artifacts.mjs
 - GA4 organic conversion data is sparse: the overview has 24 sitewide sessions, while Czechia organic landing pages have 4 sessions and no key events in the final-data refresh. A Czechia-wide unique-user count is unavailable from the landing-page rows. GSC is the primary performance baseline.
 - The 100-page technical crawl followed cross-market links into Ireland after the Czech start URL. Its Lighthouse coverage is useful, but its issue totals are not a Czech-only defect count.
 - Backlink exports contain provider anomalies and noisy sources. Every prospect requires manual relevance, editorial, and spam review before outreach.
+
+## How to compare a matrix row against the live page
+
+The matrices record the title as it is **stored**, not as it is **served**.
+`frontend/lib/seo/page-seo.ts` (`compactSearchTitle`) appends ` · Global Health`
+when the result still fits Google's ~60-character budget and drops it when it does
+not, so 40 of the 125 live Czechia and Portugal pages serve a title 16 characters
+longer than their matrix cell. A live title is correct when it equals the recorded
+title either exactly or with that one suffix added. Meta descriptions are served
+verbatim and must match exactly.
+
+Recorded 2026-09-02 by `CZ-PT-BATCH-REVIEW-001` (ledger §38) after an independent
+re-fetch of all 125 matrix URLs; without this rule the comparison reports 40 false
+mismatches.

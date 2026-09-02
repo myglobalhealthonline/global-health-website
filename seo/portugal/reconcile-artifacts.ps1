@@ -1,14 +1,17 @@
+﻿# Saved with a UTF-8 BOM on purpose: Windows PowerShell 5.1 parses a BOM-less .ps1
+# as ANSI, which corrupts the · separator on the rendered-title check below and makes
+# this validator throw on evidence that is actually correct.
 $ErrorActionPreference = "Stop"
 
-$drafts = @(Import-Csv (Join-Path $PSScriptRoot "content-completion-matrix.csv"))
-$pages = @(Import-Csv (Join-Path $PSScriptRoot "page-by-page-completion-matrix.csv"))
-$clinical = @(Import-Csv (Join-Path $PSScriptRoot "clinical-review-register.csv"))
-$doctors = @(Import-Csv (Join-Path $PSScriptRoot "doctor-profile-fact-register.csv"))
-$readback = @(Import-Csv (Join-Path $PSScriptRoot "raw\clinical-seo-production-readback-2026-09-02.csv"))
-$remainingDryRun = @(Import-Csv (Join-Path $PSScriptRoot "raw\remaining-metadata-production-dry-run-2026-09-02.csv"))
-$receipt = Get-Content -Raw (Join-Path $PSScriptRoot "raw\production-write-receipt-2026-09-02-clinical-seo.json") | ConvertFrom-Json
-$remainingReadback = Get-Content -Raw (Join-Path $PSScriptRoot "raw\remaining-metadata-production-readback-2026-09-02.json") | ConvertFrom-Json
-$remainingReceipt = Get-Content -Raw (Join-Path $PSScriptRoot "raw\production-write-receipt-2026-09-02-remaining-metadata.json") | ConvertFrom-Json
+$drafts = @(Import-Csv -Encoding UTF8 (Join-Path $PSScriptRoot "content-completion-matrix.csv"))
+$pages = @(Import-Csv -Encoding UTF8 (Join-Path $PSScriptRoot "page-by-page-completion-matrix.csv"))
+$clinical = @(Import-Csv -Encoding UTF8 (Join-Path $PSScriptRoot "clinical-review-register.csv"))
+$doctors = @(Import-Csv -Encoding UTF8 (Join-Path $PSScriptRoot "doctor-profile-fact-register.csv"))
+$readback = @(Import-Csv -Encoding UTF8 (Join-Path $PSScriptRoot "raw\clinical-seo-production-readback-2026-09-02.csv"))
+$remainingDryRun = @(Import-Csv -Encoding UTF8 (Join-Path $PSScriptRoot "raw\remaining-metadata-production-dry-run-2026-09-02.csv"))
+$receipt = Get-Content -Raw -Encoding UTF8 (Join-Path $PSScriptRoot "raw\production-write-receipt-2026-09-02-clinical-seo.json") | ConvertFrom-Json
+$remainingReadback = Get-Content -Raw -Encoding UTF8 (Join-Path $PSScriptRoot "raw\remaining-metadata-production-readback-2026-09-02.json") | ConvertFrom-Json
+$remainingReceipt = Get-Content -Raw -Encoding UTF8 (Join-Path $PSScriptRoot "raw\production-write-receipt-2026-09-02-remaining-metadata.json") | ConvertFrom-Json
 
 function Assert-Equal($actual, $expected, [string]$message) {
   if ($actual -ne $expected) { throw "$message (expected $expected; found $actual)" }
@@ -57,7 +60,11 @@ Assert-Equal @($pages | Where-Object {
 $rewritten = @($pages | Where-Object {
   $_.'optimized title' -ne $_.'original title' -or $_.'optimized meta description' -ne $_.'original meta description'
 })
-$guarantees = "mesmo dia|no mesmo dia|garantid[oa]|disponibilidade imediata"
+# Availability promises that are never acceptable in rewritten metadata. 'proprio dia'
+# and 'imediat*' are deliberately NOT listed: they appear in legitimate clinical-urgency
+# copy (a blood-pressure reading that needs same-day care), so they need a human read,
+# not an automatic failure.
+$guarantees = "mesmo dia|no mesmo dia|garantid[oa]|disponibilidade imediata|hoje mesmo|ainda hoje|sem espera|sem tempo de espera"
 Assert-Equal @($rewritten | Where-Object { $_.'optimized title' -match $guarantees -or $_.'optimized meta description' -match $guarantees }).Count 0 "Unsupported availability guarantee in revised copy"
 $approvedClinical = @($clinical | Where-Object publish_status -eq "approved")
 $blockedClinical = @($clinical | Where-Object publish_status -eq "blocked_pending_review")

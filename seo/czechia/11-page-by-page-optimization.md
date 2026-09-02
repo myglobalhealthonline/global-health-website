@@ -2,6 +2,12 @@
 
 **Prepared:** 2026-09-01
 
+> **Dated evidence, not current operational status.** The canonical global ledger
+> at [`docs/plans/seo-control-state.md`](../../docs/plans/seo-control-state.md) owns
+> current status, priorities and next actions. This document describes the 2026-09-01
+> package; the 2026-09-02 Prague approval that followed it is recorded in ledger §36,
+> and the independent review of the whole batch is ledger §38.
+
 **Scope:** 50 current public URLs: 48 Czech pages plus the two explicitly mapped English/expat pages.
 **Primary artifact:** [`page-by-page-completion-matrix.csv`](page-by-page-completion-matrix.csv)
 
@@ -81,9 +87,12 @@ The comparison preserves names, registrations, qualifications, languages, prices
 
 ## Implementation boundary
 
-The 14 non-clinical static pages and 17 clinician-approved Czech pages are live and
-publicly verified. The approved clinical batch comprises the Czech home, 11
-services, the diabetes article and four tools. Exact replay evidence is
+The 14 non-clinical static pages and 18 clinician-approved Czech pages are live and
+publicly verified. The approved clinical batch comprises the Czech home, 12
+services, the diabetes article and four tools. Seventeen of those were approved on
+2026-09-01; `/czechia/cs/services/lekar-online-praha` was approved separately on
+2026-09-02 and is recorded in ledger §36. Exact replay evidence for the 2026-09-01
+approvals is
 [`raw/clinical-production-readback-2026-09-01.csv`](raw/clinical-production-readback-2026-09-01.csv),
 with the production operation recorded in
 [`raw/production-write-receipt-2026-09-01-clinical-seo.json`](raw/production-write-receipt-2026-09-01-clinical-seo.json).

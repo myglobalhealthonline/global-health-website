@@ -72,3 +72,17 @@ Each component is 0–5. Priority additionally applies service reality, current 
 - **Inference:** opportunity scores, clusters, gap labels and recommendations. These are explicitly derived, not provider facts.
 
 No ranking promise is made. No patient data, credentials, internal database IDs or secrets are present.
+
+## How to compare a matrix row against the live page
+
+The matrices record the title as it is **stored**, not as it is **served**.
+`frontend/lib/seo/page-seo.ts` (`compactSearchTitle`) appends ` · Global Health`
+when the result still fits Google's ~60-character budget and drops it when it does
+not, so 40 of the 125 live Czechia and Portugal pages serve a title 16 characters
+longer than their matrix cell. A live title is correct when it equals the recorded
+title either exactly or with that one suffix added. Meta descriptions are served
+verbatim and must match exactly.
+
+Recorded 2026-09-02 by `CZ-PT-BATCH-REVIEW-001` (ledger §38) after an independent
+re-fetch of all 125 matrix URLs; without this rule the comparison reports 40 false
+mismatches.
