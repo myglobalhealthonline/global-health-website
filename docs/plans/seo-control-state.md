@@ -120,13 +120,28 @@ ledger and historical evidence follow from §0.
   > inside a Serializable transaction, and for doctor rows a hash-bound
   > fact-register row. This is the same contract Czechia and Ireland run.
   >
-  > **What would restore the three-approver gate:** two additional active,
-  > email-verified authorized users in production — one compliance, one content
-  > owner — after which the removed `requireValue` / `assertReviewDate` calls and
-  > the distinct-reviewer-ID check go back into
-  > `portugal-clinical-approval.ts` and the four columns get populated going
-  > forward. Until then, do not read this section as a gate that lapsed; read it
-  > as one waiting on account provisioning.
+  > **OWNER DECISION 2026-09-03 — single-clinician approval is the standard, and
+  > the three-approver requirement is not being restored.** Hassaan directed that
+  > Portugal publication requires one approval, not three. This resolves §38 open
+  > decision 2 in favour of amending the ledger rather than restoring the removed
+  > checks, and it makes the current code the intended design rather than a
+  > temporary narrowing.
+  >
+  > Consequences to keep in view. One active, verified in-market clinician is now
+  > the entire human approval chain for Portugal, and every other control listed
+  > above is mechanical — hashes, fingerprints, tokens and readback verify that the
+  > *approved bytes* are what publish, not that the copy is clinically right. Only
+  > the clinician does that. All 44 Portugal approvals to date are held by Dr Tiago
+  > Miguel Figueira, so his sign-off is a single point of failure by design; see
+  > §38.1 item 13 on the `FALEIRO` identity alignment.
+  >
+  > The seven columns stay in `clinical-review-register.csv` as unused schema. Do
+  > not populate them selectively, which would imply an approval chain that does
+  > not exist, and do not read their blankness as a lapsed control. Reversing this
+  > decision needs two additional active, email-verified authorized users in
+  > production, after which the removed `requireValue` / `assertReviewDate` calls
+  > and the distinct-reviewer-ID check return to
+  > `backend/src/content/portugal-clinical-approval.ts`.
 - **Clinically gated production copy remains unchanged.** All 28 clinical-register
   rows are `blocked_pending_review`; factual verification remains `no`. All 16 live
   doctor profiles are listed in a fact register as pending official verification.
@@ -7394,13 +7409,15 @@ producing forty false mismatches.
    (primary keyword itself differs: `cestovní medicína Praha` versus `cestovní
    medicína`). Every other draft matches its matrix row exactly. Reconcile in
    whichever direction is correct before either gate clears.
-2. §27.22 describes a writer requiring "three distinct dated clinical, compliance and
+2. **CLOSED 2026-09-03 by owner decision — single-clinician approval, not three.**
+   §27.22 described a writer requiring "three distinct dated clinical, compliance and
    content-owner approvals". Commit `934fb834` removed the enforcement of the
    compliance and content-owner fields from `portugal-clinical-approval.ts`, and those
-   four columns are blank on all 45 register rows. The implementation log states why:
-   production exposes only one eligible operational reviewer. The surviving gate is
-   still strong. Either restore the requirement or amend §27.22 so the ledger stops
-   asserting a control the code no longer runs.
+   four columns are blank on all 45 register rows. Hassaan directed that one approval
+   is the standard, so the ledger was amended to describe the gate that runs and the
+   removed checks are **not** being restored. The seven register columns remain as
+   unused schema. Full rationale, consequences and the conditions for reversing it are
+   in the amendment block in §27.22. No code change was required.
 3. Eleven live Portugal doctor descriptions run 191–220 characters against a ~155–160
    display budget, and 24 of 75 Portugal descriptions exceed it overall. Trimming them
    is a content change and needs clinical re-approval by the existing process.
