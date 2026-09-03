@@ -55,6 +55,7 @@ if (approvedTrims.size !== 11) throw new Error(`expected 11 approved doctor trim
 const matrix = load("seo/portugal/page-by-page-completion-matrix.csv");
 const mUrl = matrix.header.indexOf("URL");
 const mDesc = matrix.header.indexOf("optimized meta description");
+const mOrig = matrix.header.indexOf("original meta description");
 let matrixEdits = 0;
 for (const row of matrix.rows.slice(1)) {
   const trim = approvedTrims.get(row[mUrl]!);
@@ -63,6 +64,13 @@ for (const row of matrix.rows.slice(1)) {
     throw new Error(`${row[mUrl]}: matrix description matches neither the recorded current nor proposed value`);
   }
   if (row[mDesc] === trim.proposed) continue;
+  // The writer requires live production to equal the matrix's `original`
+  // column (patch-portugal-seo-metadata.ts: currentDescription !==
+  // originalDescription throws). These rows were already rewritten once, on
+  // 2026-09-02, so `original` still holds the PRE-09-02 text while production
+  // serves the 191-220 version. Re-point `original` at what is actually live
+  // now, so the row describes this round of change rather than the last one.
+  row[mOrig] = trim.current;
   row[mDesc] = trim.proposed;
   matrixEdits += 1;
 }
