@@ -192,6 +192,9 @@ export async function adminUpdateAppointment(
       data: {
         ...(input.scheduledAt !== undefined ? { scheduledAt: input.scheduledAt } : {}),
         ...(input.doctorId !== undefined ? { doctorId: input.doctorId } : {}),
+        // A no-show flag set for the OLD doctor must not silently exempt the
+        // NEW doctor from the no-show check.
+        ...(diff.doctorChanged ? { doctorNoShowNotifiedAt: null } : {}),
         updatedAt: new Date(),
       },
     });
