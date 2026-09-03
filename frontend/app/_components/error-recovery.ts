@@ -65,6 +65,14 @@ export function useErrorRetry(error: Error & { digest?: string }, reset: () => v
 }
 
 export type PublicErrorCopy = {
+  /** Pill above the panel — the 404's `notFound.eyebrow` slot. */
+  eyebrow: string;
+  monitorLabel: string;
+  /** Monitor chip. Deliberately a word, not "HTTP 500": a boundary also
+   *  catches client-side render failures, where the document itself was a
+   *  200 and quoting a status code would be false. */
+  code: string;
+  signalLabel: string;
   title: string;
   subtitle: string;
   tryAgain: string;
@@ -74,12 +82,12 @@ export type PublicErrorCopy = {
 /** One copy of the public-facing error strings, shared by `global-error`
  *  and the two public route-group boundaries so they can't drift. */
 const PUBLIC_ERROR_COPY: Record<string, PublicErrorCopy> = {
-  en: { title: "Something went wrong", subtitle: "An unexpected error occurred. Please try again.", tryAgain: "Try again", backToHome: "Back to home" },
-  pt: { title: "Algo correu mal", subtitle: "Ocorreu um erro inesperado. Por favor, tente novamente.", tryAgain: "Tentar novamente", backToHome: "Voltar ao início" },
-  es: { title: "Algo salió mal", subtitle: "Ocurrió un error inesperado. Por favor, inténtalo de nuevo.", tryAgain: "Intentar de nuevo", backToHome: "Volver al inicio" },
-  cs: { title: "Něco se pokazilo", subtitle: "Došlo k neočekávané chybě. Zkuste to prosím znovu.", tryAgain: "Zkusit znovu", backToHome: "Zpět na hlavní stránku" },
-  ro: { title: "Ceva a mers greșit", subtitle: "A apărut o eroare neașteptată. Vă rugăm să încercați din nou.", tryAgain: "Încearcă din nou", backToHome: "Înapoi acasă" },
-  de: { title: "Etwas ist schiefgelaufen", subtitle: "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.", tryAgain: "Erneut versuchen", backToHome: "Zurück zur Startseite" },
+  en: { eyebrow: "Unexpected error", monitorLabel: "Page monitor", code: "ERROR", signalLabel: "Signal interrupted on this page", title: "Something went wrong", subtitle: "An unexpected error occurred. Please try again.", tryAgain: "Try again", backToHome: "Back to home" },
+  pt: { eyebrow: "Erro inesperado", monitorLabel: "Monitor da página", code: "ERRO", signalLabel: "Sinal interrompido nesta página", title: "Algo correu mal", subtitle: "Ocorreu um erro inesperado. Por favor, tente novamente.", tryAgain: "Tentar novamente", backToHome: "Voltar ao início" },
+  es: { eyebrow: "Error inesperado", monitorLabel: "Monitor de página", code: "ERROR", signalLabel: "Señal interrumpida en esta página", title: "Algo salió mal", subtitle: "Ocurrió un error inesperado. Por favor, inténtalo de nuevo.", tryAgain: "Intentar de nuevo", backToHome: "Volver al inicio" },
+  cs: { eyebrow: "Neočekávaná chyba", monitorLabel: "Monitor stránky", code: "CHYBA", signalLabel: "Signál na této stránce byl přerušen", title: "Něco se pokazilo", subtitle: "Došlo k neočekávané chybě. Zkuste to prosím znovu.", tryAgain: "Zkusit znovu", backToHome: "Zpět na hlavní stránku" },
+  ro: { eyebrow: "Eroare neașteptată", monitorLabel: "Monitor pagină", code: "EROARE", signalLabel: "Semnal întrerupt pe această pagină", title: "Ceva a mers greșit", subtitle: "A apărut o eroare neașteptată. Vă rugăm să încercați din nou.", tryAgain: "Încearcă din nou", backToHome: "Înapoi acasă" },
+  de: { eyebrow: "Unerwarteter Fehler", monitorLabel: "Seiten-Monitor", code: "FEHLER", signalLabel: "Signal auf dieser Seite unterbrochen", title: "Etwas ist schiefgelaufen", subtitle: "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.", tryAgain: "Erneut versuchen", backToHome: "Zurück zur Startseite" },
 };
 
 /** Locale from the URL segment when the boundary has one, else the

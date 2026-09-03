@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
-import { GH2StatusPage } from "@/components/sections/GH2PagePrimitives";
+import {
+  GH2StatusMonitor,
+  GH2StatusReference,
+} from "@/components/sections/GH2StatusMonitor";
 import { publicErrorCopy } from "./_components/error-recovery";
 import "./globals.css";
 
@@ -27,6 +30,9 @@ import "./globals.css";
  * ones) render INSIDE their layout and keep the router alive, so they can
  * still refresh-and-reset — see `useErrorRetry`. Errors thrown by a root
  * layout itself have nowhere else to go and still land here.
+ *
+ * Same `GH2StatusMonitor` panel as the 404 and the nearer boundaries — this
+ * one just has no site chrome around it.
  */
 export default function GlobalErrorBoundary({
   error,
@@ -51,36 +57,33 @@ export default function GlobalErrorBoundary({
   return (
     <html lang="en" className="h-full antialiased" suppressHydrationWarning>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
-        <GH2StatusPage
-          status="error"
+        <GH2StatusMonitor
+          eyebrow={t.eyebrow}
+          monitorLabel={t.monitorLabel}
+          code={t.code}
+          signalLabel={t.signalLabel}
           title={t.title}
           body={t.subtitle}
-          reference={
-            error.digest ? (
-              <p className="text-[13px] text-[var(--color-text-muted)]">
-                Reference: <code>{error.digest}</code>
-              </p>
-            ) : undefined
+          reference={error.digest ? <GH2StatusReference digest={error.digest} /> : undefined}
+          actions={
+            <>
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="gh2-btn-lime"
+              >
+                {t.tryAgain}
+              </button>
+              {/* eslint-disable-next-line @next/next/no-html-link-for-pages --
+                  global-error renders outside the router, so next/link has no
+                  router to hand the navigation to. A real navigation is the
+                  point here. */}
+              <a href="/" className="gh2-btn-ghost">
+                {t.backToHome}
+              </a>
+            </>
           }
-        >
-          <button
-            type="button"
-            onClick={() => window.location.reload()}
-            className="gh2-btn-lime"
-          >
-            {t.tryAgain}
-          </button>
-          {/* eslint-disable-next-line @next/next/no-html-link-for-pages --
-              global-error renders outside the router, so next/link has no
-              router to hand the navigation to. A real navigation is the
-              point here. */}
-          <a
-            href="/"
-            className="rounded-full border border-[var(--color-border)] px-5 py-3 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-background-soft)]"
-          >
-            {t.backToHome}
-          </a>
-        </GH2StatusPage>
+        />
       </body>
     </html>
   );

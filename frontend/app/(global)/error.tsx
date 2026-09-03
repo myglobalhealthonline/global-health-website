@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
-import { GH2StatusPage } from "@/components/sections/GH2PagePrimitives";
+import Link from "next/link";
+import {
+  GH2StatusMonitor,
+  GH2StatusReference,
+} from "@/components/sections/GH2StatusMonitor";
 import { publicErrorCopy, useErrorRetry } from "@/app/_components/error-recovery";
 
 /**
@@ -26,21 +30,24 @@ export default function GlobalRouteError({
   const { retry, pending } = useErrorRetry(error, reset);
 
   return (
-    <GH2StatusPage
-      status="error"
+    <GH2StatusMonitor
+      eyebrow={t.eyebrow}
+      monitorLabel={t.monitorLabel}
+      code={t.code}
+      signalLabel={t.signalLabel}
       title={t.title}
       body={t.subtitle}
-      reference={
-        error.digest ? (
-          <p className="text-[13px] text-[var(--color-text-muted)]">
-            Reference: <code>{error.digest}</code>
-          </p>
-        ) : undefined
+      reference={error.digest ? <GH2StatusReference digest={error.digest} /> : undefined}
+      actions={
+        <>
+          <button type="button" onClick={retry} disabled={pending} className="gh2-btn-lime">
+            {t.tryAgain}
+          </button>
+          <Link href="/" className="gh2-btn-ghost">
+            {t.backToHome}
+          </Link>
+        </>
       }
-    >
-      <button type="button" onClick={retry} disabled={pending} className="gh2-btn-lime">
-        {t.tryAgain}
-      </button>
-    </GH2StatusPage>
+    />
   );
 }
