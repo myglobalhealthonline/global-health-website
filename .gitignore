@@ -41,6 +41,14 @@
 /backend/scripts/data/doctor-credentials.json
 /backend/scripts/out/
 
+# One-off outreach mailers — operational scripts, not application code. They
+# carry doctor/patient contact details and pinned audience lists, so they stay
+# local and are never committed.
+/backend/scripts/send-ireland-video-request.ts
+/backend/scripts/send-doctor-followups.ts
+/backend/scripts/doctor-followup-copy.ts
+/backend/scripts/lib/migadu-smtp.ts
+
 # SÚKL communication certificates (Czech eRecept/ePoukaz mTLS) and any other
 # private-key material. Test or production, the file never belongs in git —
 # the real certificate lives outside the repo and SUKL_TEST_PFX_PATH points at

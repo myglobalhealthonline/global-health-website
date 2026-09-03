@@ -5,6 +5,7 @@ import {
   type IeDocumentType,
 } from "../../lib/invoice-express/client.js";
 import { isObjectStorageConfigured, putObject } from "../../services/object-storage.js";
+import { archiveInvoiceToDrive } from "./invoice-drive-archive.service.js";
 import { emitOpsAlert } from "../subscriptions/ops/ops-alert.js";
 import type { PaymentLog } from "../orders/complete-order-payment.service.js";
 
@@ -79,7 +80,7 @@ export async function mirrorPortugalInvoiceDocument(
     // Keyed on invoiceExpressId (unique), so a retry after a half-finished run
     // updates the same row instead of minting a second document for one
     // InvoiceExpress id.
-    await prisma.invoice.upsert({
+    const mirrored = await prisma.invoice.upsert({
       where: { invoiceExpressId: String(invoiceExpressId) },
       create: {
         invoiceNumber: doc.sequence_number,
@@ -108,6 +109,21 @@ export async function mirrorPortugalInvoiceDocument(
     log.info(
       { orderId, invoiceExpressId, invoiceNumber: doc.sequence_number, storageKey },
       "PT InvoiceExpress document mirrored",
+    );
+
+    // Portugal's only route into the Drive archive — a PT document never passes
+    // through renderAndSendInvoiceDoc, because we do not draw it. Filed from the
+    // InvoiceExpress PDF we just stored, so PT/ holds the legal document itself.
+    await archiveInvoiceToDrive(
+      {
+        invoiceId: mirrored.id,
+        invoiceNumber: mirrored.invoiceNumber,
+        countryCode: order.countryCode,
+        documentType: mirrored.documentType,
+        issuedAt: mirrored.generatedAt,
+        pdfBuffer: pdf,
+      },
+      log,
     );
   } catch (err) {
     log.warn({ err, orderId, invoiceExpressId }, "PT invoice mirror failed — document still issued");
