@@ -131,6 +131,11 @@ export async function applyRescheduleSideEffects(
 
   if (input.timeChanged) {
     await recomputePrePaymentDueAt(orderId, scheduledAt).catch(() => undefined);
+  }
+  if (input.timeChanged || doctorChanged) {
+    // A doctor-only swap keeps the same start time, but the ladder must
+    // still rewind: a stage already fired (e.g. session-start) for the OLD
+    // doctor otherwise never re-fires for the NEW one.
     await rearmPostPaymentRemindersForReschedule(orderId, scheduledAt).catch(
       () => undefined,
     );
