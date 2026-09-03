@@ -69,7 +69,14 @@ Assert-Equal @($rewritten | Where-Object { $_.'optimized title' -match $guarante
 $approvedClinical = @($clinical | Where-Object publish_status -eq "approved")
 $blockedClinical = @($clinical | Where-Object publish_status -eq "blocked_pending_review")
 $phaseTwoApproved = @($approvedClinical | Where-Object reviewed_at -eq "2026-09-02T01:58:00+02:00")
-$phaseOneApproved = @($approvedClinical | Where-Object reviewed_at -ne "2026-09-02T01:58:00+02:00")
+# Third approval round: the 2026-09-03 snippet trims, approved by Dr Tiago
+# Miguel Figueira and published the same day. These rows were previously in the
+# phase-two bucket; re-approving the trimmed copy moved their reviewed_at, so
+# they need their own bucket and their own readback file rather than falling
+# through to phase one, whose readback predates them.
+$snippetTrimApproved = @($approvedClinical | Where-Object reviewed_at -eq "2026-09-03T17:59:00+01:00")
+$phaseOneApproved = @($approvedClinical | Where-Object { $_.reviewed_at -ne "2026-09-02T01:58:00+02:00" -and $_.reviewed_at -ne "2026-09-03T17:59:00+01:00" })
+$snippetTrimApprovedUrls = @($snippetTrimApproved.page_or_file | ForEach-Object { ($_ -split " -> ", 2)[-1].Trim() })
 $approvedClinicalUrls = @($approvedClinical.page_or_file | ForEach-Object { ($_ -split " -> ", 2)[-1].Trim() })
 $phaseOneApprovedUrls = @($phaseOneApproved.page_or_file | ForEach-Object { ($_ -split " -> ", 2)[-1].Trim() })
 $phaseTwoApprovedUrls = @($phaseTwoApproved.page_or_file | ForEach-Object { ($_ -split " -> ", 2)[-1].Trim() })
@@ -86,6 +93,18 @@ foreach ($column in $readbackChecks) {
   Assert-Equal @($readback | Where-Object { $_.$column -ne "True" }).Count 0 "Failed production readback check: $column"
 }
 Assert-Equal @($readback | Where-Object http_status -ne "200").Count 0 "Non-200 production readback"
+# 2026-09-03 snippet trims: eleven doctor meta descriptions, cache-bypassed
+# public readback after the guarded write.
+$trimReadback = @(Import-Csv -Encoding UTF8 (Join-Path $PSScriptRoot "raw\snippet-trim-production-readback-2026-09-03.csv"))
+Assert-Equal $snippetTrimApproved.Count 11 "Snippet-trim approved row count"
+Assert-Equal @($trimReadback | Group-Object url | Where-Object Count -gt 1).Count 0 "Duplicate snippet-trim readback URL"
+Assert-Equal @($trimReadback | Where-Object { $snippetTrimApprovedUrls -notcontains $_.url }).Count 0 "Unexpected URL in snippet-trim readback"
+Assert-Equal @($snippetTrimApprovedUrls | Where-Object { $trimReadback.url -notcontains $_ }).Count 0 "Approved snippet-trim URL missing from production readback"
+Assert-Equal @($trimReadback | Where-Object http_status -ne "200").Count 0 "Non-200 snippet-trim readback"
+foreach ($column in @("matches_approved_copy", "self_canonical")) {
+  Assert-Equal @($trimReadback | Where-Object { $_.$column -ne "True" }).Count 0 "Failed snippet-trim readback check: $column"
+}
+Assert-Equal @($trimReadback | Where-Object { [int]$_.description_length -gt 160 }).Count 0 "Snippet-trim description still over the display budget"
 Assert-Equal @($readback | Where-Object deployment_commit -ne $receipt.public_verification.deployment_commit).Count 0 "Production deployment commit mismatch"
 Assert-Equal ([int]$receipt.public_verification.expected_pages) $readback.Count "Receipt public page count"
 $rolloutDate = [string]$receipt.public_verification.operational_rollout_date
@@ -114,13 +133,24 @@ Assert-Equal @($remainingReceipt.held_without_write).Count 1 "Remaining receipt 
 Assert-Equal $remainingReceipt.held_without_write[0].selector "doctor:beatriz-carvalho" "Remaining receipt held selector"
 Assert-Equal $remainingReadback.heldProfile "/portugal/pt/doctors/beatriz-carvalho" "Remaining readback held profile"
 Assert-Equal @($remainingRows | Group-Object url | Where-Object Count -gt 1).Count 0 "Duplicate remaining production readback URL"
-Assert-Equal @($remainingRows | Where-Object { $phaseTwoApprovedUrls -notcontains $_.url }).Count 0 "Unexpected remaining production readback URL"
-Assert-Equal @($phaseTwoApprovedUrls | Where-Object { $remainingRows.url -notcontains $_ }).Count 0 "Approved phase-two URL missing from production readback"
+# The 2026-09-02 phase-two readback is historical evidence of that day's
+# publish. Eleven of those assets were re-approved and re-published on
+# 2026-09-03, so they now sit in the snippet-trim bucket; they were still
+# legitimately part of the phase-two rollout and must not read as strays here.
+$phaseTwoReadbackUrls = @($phaseTwoApprovedUrls + $snippetTrimApprovedUrls)
+Assert-Equal @($remainingRows | Where-Object { $phaseTwoReadbackUrls -notcontains $_.url }).Count 0 "Unexpected remaining production readback URL"
+Assert-Equal @($phaseTwoReadbackUrls | Where-Object { $remainingRows.url -notcontains $_ }).Count 0 "Approved phase-two URL missing from production readback"
 Assert-Equal @($remainingRows | Where-Object {
   $_.httpStatus -ne 200 -or !$_.titleMatches -or !$_.descriptionExact -or !$_.selfCanonical -or
   !$_.hreflangPt -or !$_.indexable -or !$_.htmlLangPt -or !$_.jsonLdPresent
 }).Count 0 "Failed remaining production public readback"
 foreach ($row in $remainingRows) {
+  # Rows superseded by the 2026-09-03 snippet trims are validated against that
+  # day's readback instead. This file records what was live on 2026-09-02 and
+  # stays as the dated evidence of that rollout; comparing its pre-trim copy to
+  # today's matrix would report drift for a change that was approved and
+  # verified.
+  if ($snippetTrimApprovedUrls -contains $row.url) { continue }
   $page = @($pages | Where-Object URL -eq $row.url)[0]
   Assert-Equal $row.expectedTitle $page.'optimized title' "Remaining production title drift for $($row.url)"
   Assert-Equal $row.expectedDescription $page.'optimized meta description' "Remaining production description drift for $($row.url)"
@@ -147,7 +177,10 @@ foreach ($column in $approvalColumns) {
 }
 Assert-Equal $approvedClinical.Count 44 "Approved clinical row count"
 Assert-Equal $blockedClinical.Count 1 "Blocked clinical row count"
-Assert-Equal $phaseTwoApproved.Count 16 "Approved phase-two clinical row count"
+# The 2026-09-02 phase-two rollout approved 16 rows. Eleven were re-approved on
+# 2026-09-03 for the trimmed descriptions and now carry that later timestamp, so
+# the two buckets together must still account for all 16.
+Assert-Equal ($phaseTwoApproved.Count + $snippetTrimApproved.Count) 16 "Approved phase-two clinical row count"
 Assert-Equal @($approvedClinical | Where-Object {
   -not $_.reviewer_name -or -not $_.reviewer_doctor_id -or -not $_.clinical_reviewer_professional_body -or
   -not $_.reviewed_at -or -not $_.official_source_references -or $_.approved_sha256 -notmatch '^[a-f0-9]{64}$'
