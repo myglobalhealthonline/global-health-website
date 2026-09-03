@@ -211,25 +211,86 @@ export function portugalDoctorFactHasRegistration(
   );
 }
 
+/**
+ * Register status that authorizes publication on the project owner's own
+ * super-admin attestation instead of a named clinician's review. Mirrors the
+ * Czechia convention, and is deliberately NOT a softer clinical approval.
+ *
+ * An override row must leave every reviewer-identity field **empty** — enforced
+ * below, not merely permitted — so the register can never be made to assert
+ * that a licensed clinician reviewed copy they did not see. Everything about
+ * the payload rather than the reviewer still applies in full: the exact
+ * `approved_sha256`, official-source allowlisting, and for doctor rows the
+ * verified, hash-bound fact-register binding.
+ */
+export const PORTUGAL_SUPER_ADMIN_OVERRIDE_STATUS = "super_admin_override";
+
+/** Fields that assert a *person* reviewed the copy. An override has none. */
+const CLINICAL_REVIEWER_ASSERTION_COLUMNS = [
+  "reviewer_name",
+  "reviewer_doctor_id",
+  "reviewed_at",
+  "clinical_reviewer_professional_body",
+  "clinical_reviewer_specialty_id",
+  "compliance_reviewer_name",
+  "compliance_reviewer_id",
+  "compliance_reviewed_at",
+  "content_owner_name",
+  "content_owner_id",
+  "content_owner_reviewed_at",
+] as const satisfies readonly PortugalClinicalReviewColumn[];
+
 export function assertPortugalClinicalApproval(
   csv: string,
-  options: Readonly<{ asset: string; approvedSha256: string; factRegisterCsv?: string; now?: Date }>,
+  options: Readonly<{
+    asset: string;
+    approvedSha256: string;
+    factRegisterCsv?: string;
+    now?: Date;
+    /**
+     * Opt-in for `super_admin_override` rows. The CLI sets this only when the
+     * operator passes `--super-admin-override` AND an attestation artifact, so
+     * an override can never fire from a register typo alone.
+     */
+    allowSuperAdminOverride?: boolean;
+  }>,
 ): PortugalClinicalReviewRecord {
   const record = readPortugalClinicalReviewRecord(csv, options.asset);
-  if (record.publish_status !== "approved") {
+  const isOverride = record.publish_status === PORTUGAL_SUPER_ADMIN_OVERRIDE_STATUS;
+  if (isOverride && !options.allowSuperAdminOverride) {
+    throw new Error(
+      `${record.asset} is recorded as ${PORTUGAL_SUPER_ADMIN_OVERRIDE_STATUS}. ` +
+        "Publishing it requires the explicit --super-admin-override flag and an attestation artifact.",
+    );
+  }
+  if (!isOverride && record.publish_status !== "approved") {
     throw new Error(`Clinical review status is ${record.publish_status || "blank"} for ${record.asset}`);
   }
-  requireValue(record, "reviewer_name");
-  requireValue(record, "reviewer_doctor_id");
+  if (isOverride) {
+    // An override asserts that NO clinician reviewed this copy. Any reviewer
+    // identity here would make the register claim otherwise, so it is a hard
+    // error rather than an ignored field.
+    for (const column of CLINICAL_REVIEWER_ASSERTION_COLUMNS) {
+      if (record[column].trim() !== "") {
+        throw new Error(
+          `${record.asset} is a super-admin override but records ${column}. ` +
+            "An override must not name a reviewer — clear the field, or record a real clinical approval instead.",
+        );
+      }
+    }
+  } else {
+    requireValue(record, "reviewer_name");
+    requireValue(record, "reviewer_doctor_id");
+    requireValue(record, "clinical_reviewer_professional_body");
+  }
   requireValue(record, "reviewer_required");
-  requireValue(record, "clinical_reviewer_professional_body");
   const officialSources = officialSourceUrls(
     requireValue(record, "official_source_references"),
     `Clinical approval field official_source_references for ${record.asset}`,
   );
   const now = options.now ?? new Date();
   if (Number.isNaN(now.getTime())) throw new Error("Clinical approval comparison time is invalid");
-  assertReviewDate(record, "reviewed_at", now);
+  if (!isOverride) assertReviewDate(record, "reviewed_at", now);
   if (!/^[a-f0-9]{64}$/i.test(options.approvedSha256)) {
     throw new Error("Expected approvedSha256 must be a SHA-256 hex digest");
   }
@@ -255,4 +316,53 @@ export function assertPortugalClinicalApproval(
     }
   }
   return record;
+}
+
+/**
+ * Validates the super-admin attestation artifact backing an override.
+ *
+ * The artifact is the only durable record of WHO authorized publication and in
+ * WHAT WORDS, so it is checked rather than trusted: it must quote the owner's
+ * own statement, bind the exact payload hash, and say plainly that it is a
+ * verbal attestation rather than an authenticated signature.
+ *
+ * The hash binding is what stops an override degrading into "someone said it
+ * was fine once": the authorization covers one exact payload, so any later
+ * edit to the copy invalidates it and needs a fresh attestation.
+ */
+export function assertPortugalSuperAdminAttestation(
+  markdown: string,
+  options: Readonly<{ asset: string; approvedSha256: string }>,
+): void {
+  if (!/^[a-f0-9]{64}$/i.test(options.approvedSha256)) {
+    throw new Error("Expected approvedSha256 must be a SHA-256 hex digest");
+  }
+  if (!markdown.includes(options.approvedSha256)) {
+    throw new Error(
+      `Super-admin attestation does not carry the exact payload hash for ${options.asset}. ` +
+        "The authorization must name the payload it authorizes.",
+    );
+  }
+  if (!markdown.includes(options.asset)) {
+    throw new Error(`Super-admin attestation does not name ${options.asset}`);
+  }
+  // A quoted first-person statement from the owner, not a paraphrase.
+  if (!/^>\s*\S/m.test(markdown)) {
+    throw new Error("Super-admin attestation must quote the owner's own statement as a blockquote");
+  }
+  if (!/verbal attestation/i.test(markdown)) {
+    throw new Error('Super-admin attestation must describe itself as a "verbal attestation"');
+  }
+  if (!/does not represent an independently authenticated/i.test(markdown)) {
+    throw new Error(
+      "Super-admin attestation must state that it is not an independently authenticated signature",
+    );
+  }
+  // It must not be dressed up as a clinician's approval.
+  if (/\bapproved by (?:dr|dra|mudr)\b/i.test(markdown)) {
+    throw new Error(
+      "Super-admin attestation must not describe itself as a named doctor's approval — " +
+        "record a real clinical approval instead.",
+    );
+  }
 }

@@ -515,6 +515,7 @@ async function main(): Promise<void> {
   const root = process.cwd().endsWith("backend") ? resolve(process.cwd(), "..") : process.cwd();
   const registerCsv = readFileSync(resolve(root, "seo/portugal/clinical-review-register.csv"), "utf8");
   const factRegisterCsv = readFileSync(resolve(root, "seo/portugal/doctor-profile-fact-register.csv"), "utf8");
+  const attestationPath = arg("attestation");
   await runPortugalSeoMetadataPatch(prisma, {
     only: arg("only"),
     apply: process.argv.includes("--apply"),
@@ -527,6 +528,12 @@ async function main(): Promise<void> {
     reviewedAt: arg("reviewed-at"),
     databaseUrl: process.env.DATABASE_URL,
     confirmationDatabase: arg("confirm-database"),
+    superAdminOverride: process.argv.includes("--super-admin-override"),
+    // Read eagerly so a missing or unreadable attestation fails before any
+    // database work rather than midway through it.
+    superAdminAttestation: attestationPath === null
+      ? null
+      : readFileSync(resolve(root, attestationPath), "utf8"),
   });
 }
 

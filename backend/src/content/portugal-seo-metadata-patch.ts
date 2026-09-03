@@ -1,4 +1,8 @@
-import { assertPortugalClinicalApproval } from "./portugal-clinical-approval.js";
+import {
+  assertPortugalClinicalApproval,
+  assertPortugalSuperAdminAttestation,
+  PORTUGAL_SUPER_ADMIN_OVERRIDE_STATUS,
+} from "./portugal-clinical-approval.js";
 import {
   portugalSeoApprovalSha256,
   portugalSeoConfirmationToken,
@@ -21,6 +25,10 @@ type PortugalSeoApplyOptions = Readonly<{
   reviewedAt: string | null;
   databaseUrl: string | undefined;
   confirmationDatabase: string | null;
+  /** Set only by `--super-admin-override`. */
+  superAdminOverride?: boolean;
+  /** Contents of the artifact named by `--attestation`. */
+  superAdminAttestation?: string | null;
   now?: Date;
 }>;
 
@@ -63,12 +71,41 @@ export function assertPortugalSeoApplyAuthorized(options: PortugalSeoApplyOption
   if (options.approvedHash !== expectedHash) {
     throw new Error("Approved SHA-256 does not match the selected Portugal SEO draft");
   }
+  // A super-admin override is reachable only when the operator passed the
+  // explicit flag AND an attestation artifact. Both are checked here, so a
+  // register status alone can never authorize a write.
+  const overrideRequested = options.superAdminOverride === true;
+  if (overrideRequested && !options.superAdminAttestation) {
+    throw new Error("--super-admin-override requires --attestation=<path to the recorded attestation>");
+  }
   const record = assertPortugalClinicalApproval(options.registerCsv, {
     asset: options.draft.asset,
     approvedSha256: expectedHash,
     factRegisterCsv: options.factRegisterCsv,
     now: options.now,
+    allowSuperAdminOverride: overrideRequested,
   });
+  if (record.publish_status === PORTUGAL_SUPER_ADMIN_OVERRIDE_STATUS) {
+    assertPortugalSuperAdminAttestation(options.superAdminAttestation ?? "", {
+      asset: options.draft.asset,
+      approvedSha256: expectedHash,
+    });
+    // An override has no clinician, so demanding reviewer identity here would
+    // ask the operator to supply one that does not exist.
+    if (options.reviewerDoctorId !== null || options.reviewedAt !== null) {
+      throw new Error(
+        "A super-admin override must not be given --reviewer-doctor-id or --reviewed-at — " +
+          "no clinician reviewed this copy.",
+      );
+    }
+    return record;
+  }
+  if (overrideRequested) {
+    throw new Error(
+      `--super-admin-override was passed but ${options.draft.asset} is recorded as ` +
+        `${record.publish_status}. Do not use the flag on a clinically approved row.`,
+    );
+  }
   if (record.reviewer_doctor_id !== options.reviewerDoctorId) {
     throw new Error("Clinical reviewer doctor ID does not match the approval register");
   }

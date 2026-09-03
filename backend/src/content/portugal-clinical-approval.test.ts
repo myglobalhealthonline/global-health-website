@@ -5,6 +5,7 @@ import test from "node:test";
 
 import {
   assertPortugalClinicalApproval,
+  assertPortugalSuperAdminAttestation,
   portugalDoctorFactHasRegistration,
   portugalDoctorFactSha256,
   readPortugalDoctorFactRecord,
@@ -169,4 +170,135 @@ test("the Portugal tool runtime metadata matches its approved draft", () => {
   assert.deepEqual(Object.keys(runtime), [draft.slug]);
   assert.equal(runtime[draft.slug]?.metaTitle, draft.proposedTitle);
   assert.equal(runtime[draft.slug]?.metaDescription, draft.proposedDescription);
+});
+
+/** A super-admin override row: authorized, but naming NO clinician. */
+function override(asset: string, hash: string) {
+  return {
+    page_or_file: asset,
+    topic: "service",
+    risk_level: "medium",
+    claims_requiring_review: "claims",
+    source_status: "evidence",
+    reviewer_required: "Portugal-registered clinician",
+    publish_status: "super_admin_override",
+    notes: "super-admin verbal attestation",
+    official_source_references: "https://www.dgs.pt",
+    approved_sha256: hash,
+  } as const;
+}
+
+test("super-admin override is unreachable without the explicit opt-in", () => {
+  const hash = "b".repeat(64);
+  assert.throws(
+    () => assertPortugalClinicalApproval(register(override("/portugal/pt", hash)), {
+      asset: "/portugal/pt",
+      approvedSha256: hash,
+      now,
+    }),
+    /requires the explicit --super-admin-override flag/,
+  );
+});
+
+test("super-admin override refuses to name a clinician", () => {
+  const hash = "b".repeat(64);
+  const options = { asset: "/portugal/pt", approvedSha256: hash, now, allowSuperAdminOverride: true };
+
+  // The point of the override: it records that NO clinician reviewed the copy.
+  // Any field asserting otherwise must be rejected, not ignored — otherwise the
+  // override becomes a way to attach a doctor's name to text they never saw.
+  for (const column of [
+    "reviewer_name",
+    "reviewer_doctor_id",
+    "reviewed_at",
+    "clinical_reviewer_professional_body",
+    "compliance_reviewer_name",
+    "content_owner_name",
+  ] as const) {
+    assert.throws(
+      () => assertPortugalClinicalApproval(
+        register({ ...override("/portugal/pt", hash), [column]: "Dr Someone" }),
+        options,
+      ),
+      new RegExp(`records ${column}`),
+      `${column} must be rejected on an override row`,
+    );
+  }
+
+  const record = assertPortugalClinicalApproval(register(override("/portugal/pt", hash)), options);
+  assert.equal(record.publish_status, "super_admin_override");
+  assert.equal(record.reviewer_name, "");
+  assert.equal(record.reviewer_doctor_id, "");
+  assert.equal(record.reviewed_at, "");
+});
+
+test("super-admin override still binds the exact payload hash", () => {
+  const hash = "b".repeat(64);
+  assert.throws(
+    () => assertPortugalClinicalApproval(register(override("/portugal/pt", hash)), {
+      asset: "/portugal/pt",
+      approvedSha256: "c".repeat(64),
+      now,
+      allowSuperAdminOverride: true,
+    }),
+    /approved_sha256 does not match/,
+  );
+});
+
+const attestation = (asset: string, hash: string) => [
+  "# Super-admin verbal-approval attestation",
+  "",
+  "> As super admin I authorize these exact changes.",
+  "",
+  "This record preserves that statement as a user-supplied verbal attestation. It",
+  "does not represent an independently authenticated signature.",
+  "",
+  `| ${asset} | \`${hash}\` |`,
+  "",
+].join("\n");
+
+test("super-admin attestation must quote the owner and bind the exact payload", () => {
+  const asset = "/portugal/pt";
+  const hash = "b".repeat(64);
+  const good = attestation(asset, hash);
+  assert.doesNotThrow(() => assertPortugalSuperAdminAttestation(good, { asset, approvedSha256: hash }));
+
+  // Authorization for one payload must not carry over to another.
+  assert.throws(
+    () => assertPortugalSuperAdminAttestation(good, { asset, approvedSha256: "c".repeat(64) }),
+    /does not carry the exact payload hash/,
+  );
+  assert.throws(
+    () => assertPortugalSuperAdminAttestation(good, { asset: "/portugal/pt/other", approvedSha256: hash }),
+    /does not name/,
+  );
+  assert.throws(
+    () => assertPortugalSuperAdminAttestation(good.replace("> As super admin", "As super admin"), {
+      asset,
+      approvedSha256: hash,
+    }),
+    /must quote the owner/,
+  );
+  assert.throws(
+    () => assertPortugalSuperAdminAttestation(good.replace("verbal attestation", "signed approval"), {
+      asset,
+      approvedSha256: hash,
+    }),
+    /verbal attestation/,
+  );
+  assert.throws(
+    () => assertPortugalSuperAdminAttestation(
+      good.replace("does not represent an independently authenticated", "is an authenticated"),
+      { asset, approvedSha256: hash },
+    ),
+    /not an independently authenticated signature/,
+  );
+  // It must not be dressed up as a doctor's sign-off.
+  assert.throws(
+    () => assertPortugalSuperAdminAttestation(`${good}\nApproved by Dr Tiago Miguel Figueira.`, {
+      asset,
+      approvedSha256: hash,
+    }),
+    /must not describe itself as a named doctor's approval/,
+  );
 });
