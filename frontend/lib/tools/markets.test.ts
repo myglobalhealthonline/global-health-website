@@ -174,21 +174,36 @@ describe("applyMarketToolCopy / applyMarketBands", () => {
     expect(br.trustPoints.join(" ")).toContain("salvo"); // pt-PT says "guardado"
   });
 
-  it("leaves Portugal on the shared pt copy", () => {
-    expect(applyMarketToolCopy("pt", "pt", "bmi-calculator", ptCopy)).toBe(ptCopy);
+  it("overrides only the metadata on Portugal tool pages, leaving body copy shared", () => {
+    // The overlay is metadata-only: title and description are replaced, every
+    // other field still comes from the shared pt copy. Ireland is untouched.
+    const pt = applyMarketToolCopy("pt", "pt", "bmi-calculator", ptCopy);
+    expect(pt.metaTitle).toBe(portugalApprovedToolSeo["bmi-calculator"].metaTitle);
+    expect(pt.lede).toBe(ptCopy.lede);
+    expect(pt.sections).toEqual(ptCopy.sections);
     expect(applyMarketToolCopy("ie", "en", "bmi-calculator", ptCopy)).toBe(ptCopy);
   });
 
-  it("applies only the approved Portugal blood-pressure metadata", () => {
-    expect(Object.keys(portugalApprovedToolSeo)).toEqual(["blood-pressure-chart"]);
-    const shared = getToolCopy("pt", "blood-pressure-chart")!;
-    expect(applyMarketToolCopy("pt", "pt", "blood-pressure-chart", shared)).toMatchObject(
-      portugalApprovedToolSeo["blood-pressure-chart"],
-    );
-    expect(applyMarketToolCopy("br", "pt", "blood-pressure-chart", shared)).not.toMatchObject(
-      portugalApprovedToolSeo["blood-pressure-chart"],
-    );
-    expect(applyMarketToolCopy("pt", "en", "blood-pressure-chart", shared)).toBe(shared);
+  it("applies the approved and overridden Portugal tool metadata", () => {
+    // blood-pressure-chart is clinically approved; the other six ship under the
+    // 2026-09-04 super-admin override. All seven are Portugal pt only.
+    expect(Object.keys(portugalApprovedToolSeo).sort()).toEqual([
+      "adhd-test",
+      "blood-pressure-chart",
+      "bmi-calculator",
+      "calorie-calculator",
+      "due-date-calculator",
+      "osteoporosis-risk-checker",
+      "ovulation-calculator",
+    ]);
+    for (const slug of Object.keys(portugalApprovedToolSeo) as (keyof typeof portugalApprovedToolSeo)[]) {
+      const shared = getToolCopy("pt", slug)!;
+      expect(applyMarketToolCopy("pt", "pt", slug, shared)).toMatchObject(portugalApprovedToolSeo[slug]);
+      // Brazil shares the pt locale and must never pick up Portugal's overlay.
+      expect(applyMarketToolCopy("br", "pt", slug, shared)).not.toMatchObject(portugalApprovedToolSeo[slug]);
+      // Portugal's non-pt locales keep the shared copy.
+      expect(applyMarketToolCopy("pt", "en", slug, shared)).toBe(shared);
+    }
   });
 
   it("actually differentiates the two Portuguese markets", () => {

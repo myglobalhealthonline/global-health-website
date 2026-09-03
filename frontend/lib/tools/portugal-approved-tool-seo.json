@@ -2,5 +2,29 @@
   "blood-pressure-chart": {
     "metaTitle": "Tabela de Tensão Arterial: Valores | Portugal",
     "metaDescription": "Compare a tensão sistólica e diastólica com a tabela europeia para adultos. Veja a categoria e as leituras que exigem cuidados médicos no próprio dia."
+  },
+  "adhd-test": {
+    "metaTitle": "Teste de PHDA Portugal | Rastreio gratuito para adultos",
+    "metaDescription": "Faça o rastreio de PHDA no adulto com seis perguntas (ASRS v1.1, parte A). Um rastreio não é um diagnóstico — cabe a um psiquiatra ou psicólogo clínico."
+  },
+  "bmi-calculator": {
+    "metaTitle": "Calculadora de IMC Portugal | Calcular IMC online",
+    "metaDescription": "Calcule o seu índice de massa corporal em segundos. Sistema métrico ou imperial, categorias da OMS para adultos e o que o resultado significa na prática."
+  },
+  "calorie-calculator": {
+    "metaTitle": "Calculadora de calorias Portugal | Calorias diárias",
+    "metaDescription": "Calcule quantas calorias precisa por dia para manter, perder ou ganhar peso. Equação de Mifflin-St Jeor e cinco níveis de atividade. Valor orientativo."
+  },
+  "due-date-calculator": {
+    "metaTitle": "Calculadora de gravidez Portugal | Semanas e data do parto",
+    "metaDescription": "Calcule a data provável do parto e de quantas semanas está a partir do primeiro dia da última menstruação. Ajusta-se à duração do seu ciclo."
+  },
+  "osteoporosis-risk-checker": {
+    "metaTitle": "Risco de osteoporose Portugal | Verificação orientativa",
+    "metaDescription": "Verifique os fatores de risco de osteoporose e fratura de fragilidade e veja quando é indicada avaliação clínica. Não é o FRAX nem um diagnóstico."
+  },
+  "ovulation-calculator": {
+    "metaTitle": "Período fértil Portugal | Calculadora de ovulação",
+    "metaDescription": "Calcule os seus dias férteis e o dia previsto de ovulação a partir do primeiro dia da última menstruação. Ajusta-se à duração do seu ciclo."
   }
 }

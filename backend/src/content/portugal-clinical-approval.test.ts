@@ -167,9 +167,30 @@ test("the Portugal tool runtime metadata matches its approved draft", () => {
   const draft = loadPortugalSeoMetadataDrafts().find(({ targetKind }) => targetKind === "tool");
 
   assert.ok(draft);
-  assert.deepEqual(Object.keys(runtime), [draft.slug]);
   assert.equal(runtime[draft.slug]?.metaTitle, draft.proposedTitle);
   assert.equal(runtime[draft.slug]?.metaDescription, draft.proposedDescription);
+
+  // Every other entry ships under the 2026-09-04 super-admin override, where
+  // the owner authorized publication and no clinician reviewed the copy. The
+  // guarantee that still has to hold is the display budget, since fixing an
+  // 80-character title was the point of the batch.
+  const overridden = Object.keys(runtime).filter((slug) => slug !== draft.slug);
+  assert.deepEqual(overridden.sort(), [
+    "adhd-test",
+    "bmi-calculator",
+    "calorie-calculator",
+    "due-date-calculator",
+    "osteoporosis-risk-checker",
+    "ovulation-calculator",
+  ]);
+  for (const slug of Object.keys(runtime)) {
+    const entry = runtime[slug]!;
+    assert.ok(entry.metaTitle.length > 0 && entry.metaTitle.length <= 60, `${slug} title length`);
+    assert.ok(
+      entry.metaDescription.length > 0 && entry.metaDescription.length <= 160,
+      `${slug} description length`,
+    );
+  }
 });
 
 /** A super-admin override row: authorized, but naming NO clinician. */
