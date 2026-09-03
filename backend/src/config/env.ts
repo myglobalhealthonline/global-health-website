@@ -589,6 +589,21 @@ const envSchema = z.object({
   // Deliberately separate from Calendar/Meet and Gmail refresh tokens.
   GOOGLE_SEO_REFRESH_TOKEN: optionalSecret,
   GOOGLE_CALENDAR_ID: z.string().trim().min(1).optional(),
+
+  // Google Drive archive of paid fiscal documents (Invoice/<COUNTRY>/<YYYY-MM>).
+  // OAuth refresh token, NOT a service account — the organisation enforces
+  // iam.disableServiceAccountKeyCreation, so no SA key can be minted. Its own
+  // token so re-consenting Drive cannot invalidate Meet/Calendar, same
+  // separation GOOGLE_SEO_REFRESH_TOKEN uses. Scope: .../auth/drive.
+  GOOGLE_DRIVE_REFRESH_TOKEN: optionalSecret,
+  /** Optional dedicated OAuth client; falls back to GOOGLE_OAUTH_CLIENT_ID/SECRET. */
+  GOOGLE_DRIVE_CLIENT_ID: optionalSecret,
+  GOOGLE_DRIVE_CLIENT_SECRET: optionalSecret,
+  /** Drive folder id of the "Invoice" root that holds the per-country folders. */
+  GOOGLE_DRIVE_INVOICE_ROOT_FOLDER_ID: optionalSecret,
+  /** "on" forces the archive on outside production, "off" kills it anywhere.
+   *  Unset = production only, because local runs use the LIVE database. */
+  INVOICE_DRIVE_ARCHIVE: blankAsUnset(z.enum(["on", "off"]).optional()),
 });
 
 /** Privileged (non-patient) roles that MUST be gated by 2FA in production.

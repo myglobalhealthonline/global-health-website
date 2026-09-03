@@ -37,6 +37,10 @@ export const createCouponSchema = z
       .regex(COUPON_CODE_REGEX, "4–32 characters: letters, digits and hyphens")
       .optional(),
     kind: z.enum(["PERSONAL", "GENERAL"]),
+    /** Which bookings the code covers. Absent = ANY, the pre-scoping default. */
+    scope: z
+      .enum(["ANY", "GENERAL_CONSULTATION", "SPECIALIST_CONSULTATION", "CONSULTATIONS"])
+      .default("ANY"),
     discountPercent: z.number().int().min(1).max(100),
     validFrom: z.string().datetime(),
     validUntil: z.string().datetime(),
@@ -110,6 +114,10 @@ export const adminValidateCouponSchema = z.object({
   code: z.string().trim().max(32),
   email: z.string().trim().toLowerCase().email().optional(),
   countryCode: z.string().trim().max(4).optional(),
+  /** The service being booked, so a scoped coupon is judged against it rather
+   *  than showing green and failing on submit. Optional: the admin may check a
+   *  code before picking one. */
+  serviceId: z.string().trim().max(64).optional(),
 });
 
 export type CreateCouponInput = z.infer<typeof createCouponSchema>;

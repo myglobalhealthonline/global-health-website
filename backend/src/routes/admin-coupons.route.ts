@@ -25,6 +25,8 @@ import {
 } from "../modules/coupons/coupon-admin.service.js";
 import { resolveCoupon } from "../modules/coupons/coupon-eligibility.js";
 import { couponRejectMessage } from "../modules/coupons/coupon-messages.js";
+import { COUPON_SCOPE_LABELS } from "../modules/coupons/coupon-scope.js";
+import { consultationCartKind } from "../modules/orders/consultation-kind.js";
 
 /**
  * Coupon administration.
@@ -107,6 +109,7 @@ const adminCouponsRoutes: FastifyPluginAsync = async (app) => {
             code: created.code,
             kind: body.data.kind,
             discountPercent: body.data.discountPercent,
+            scope: body.data.scope,
             maxRedemptions: body.data.maxRedemptions,
             recipientCount:
               body.data.kind === "PERSONAL" ? 1 : (body.data.recipients?.length ?? 0),
@@ -276,6 +279,16 @@ const adminCouponsRoutes: FastifyPluginAsync = async (app) => {
       }
 
       try {
+        // Scope is judged against the chosen service when there is one, so a
+        // GP-only code on a specialist booking is caught while the admin is
+        // still on the form rather than on submit.
+        const service = body.data.serviceId
+          ? await prisma.service.findUnique({
+              where: { id: body.data.serviceId },
+              select: { kind: true },
+            })
+          : null;
+
         const result = await resolveCoupon({
           code: body.data.code,
           email: body.data.email ?? null,
@@ -286,6 +299,7 @@ const adminCouponsRoutes: FastifyPluginAsync = async (app) => {
           // and is the decision that counts.
           hasCoverageLine: false,
           hasBenefitLine: false,
+          ...(service ? { lineKinds: [consultationCartKind(service.kind)] } : {}),
         });
         if (!result.ok) {
           return okResponse({
@@ -298,6 +312,8 @@ const adminCouponsRoutes: FastifyPluginAsync = async (app) => {
           valid: true,
           code: result.coupon.code,
           kind: result.coupon.kind,
+          scope: result.coupon.scope,
+          scopeLabel: COUPON_SCOPE_LABELS[result.coupon.scope],
           discountPercent: result.coupon.discountPercent,
           validUntil: result.coupon.validUntil,
         });

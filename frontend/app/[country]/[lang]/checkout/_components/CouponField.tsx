@@ -53,6 +53,8 @@ export function CouponField({
         return t.couponNotWithInsurance;
       case "COMMISSION_MARKET":
         return t.couponNotAvailableHere;
+      case "SCOPE_MISMATCH":
+        return t.couponNotForThisService;
       case "BELOW_MINIMUM":
         return t.couponBelowMinimum;
       default:

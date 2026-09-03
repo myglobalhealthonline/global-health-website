@@ -745,7 +745,8 @@
     "couponNotAvailableHere": "In diesem Land sind Rabattcodes nicht verfügbar.",
     "couponBelowMinimum": "Mit diesem Code bleibt ein Betrag, der zu gering ist, um ihn abzubuchen.",
     "couponNeedsEmail": "Bitte geben Sie oben zuerst Ihre E-Mail-Adresse ein.",
-    "couponExpiredAtCheckout": "Ihr Rabattcode ist nicht mehr gültig und wurde entfernt. Bitte prüfen Sie den Gesamtbetrag vor der Zahlung."
+    "couponExpiredAtCheckout": "Ihr Rabattcode ist nicht mehr gültig und wurde entfernt. Bitte prüfen Sie den Gesamtbetrag vor der Zahlung.",
+    "couponNotForThisService": "Dieser Code gilt nicht für die Art der Beratung in Ihrem Warenkorb."
   },
   "checkoutStatus": {
     "successTitle": "Zahlung erhalten",

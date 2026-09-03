@@ -2,6 +2,19 @@ import { cache } from "react";
 import { adminRequest } from "./core";
 
 export type CouponKind = "PERSONAL" | "GENERAL";
+/** Which bookings a code covers. ANY is the pre-scoping default. */
+export type CouponScope =
+  | "ANY"
+  | "GENERAL_CONSULTATION"
+  | "SPECIALIST_CONSULTATION"
+  | "CONSULTATIONS";
+
+export const COUPON_SCOPE_LABELS: Record<CouponScope, string> = {
+  ANY: "Any booking",
+  GENERAL_CONSULTATION: "GP consultations only",
+  SPECIALIST_CONSULTATION: "Specialist consultations only",
+  CONSULTATIONS: "GP and specialist consultations",
+};
 export type CouponStatus = "active" | "scheduled" | "expired" | "exhausted" | "disabled";
 export type CouponLocale = "EN" | "PT" | "ES" | "CS" | "RO" | "DE";
 
@@ -9,6 +22,7 @@ export type AdminCouponListItem = {
   id: string;
   code: string;
   kind: CouponKind;
+  scope: CouponScope;
   discountPercent: number;
   personalEmail: string | null;
   personalName: string | null;
@@ -69,6 +83,7 @@ export type AdminCouponRecipientInput = {
 export type CreateCouponBody = {
   code?: string;
   kind: CouponKind;
+  scope: CouponScope;
   discountPercent: number;
   validFrom: string;
   validUntil: string;

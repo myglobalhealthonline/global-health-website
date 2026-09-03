@@ -7,6 +7,7 @@ import { resolveActiveCart } from "../modules/cart/resolve-active-cart.js";
 import { computeEffectivePrices } from "../modules/orders/effective-pricing.service.js";
 import { resolveCoupon, isIdentityReason } from "../modules/coupons/coupon-eligibility.js";
 import { applyCouponToCart } from "../modules/coupons/coupon-distribution.js";
+import { couponAppliesToKind } from "../modules/coupons/coupon-scope.js";
 import { minimumChargeCents } from "../modules/orders/stripe-minimum-charge.js";
 
 /**
@@ -83,6 +84,7 @@ const couponsRoutes: FastifyPluginAsync = async (app) => {
           countryCode: cart.countryCode,
           hasCoverageLine,
           hasBenefitLine,
+          lineKinds: cart.items.map((i) => i.kind),
         });
 
         if (!result.ok) {
@@ -98,16 +100,26 @@ const couponsRoutes: FastifyPluginAsync = async (app) => {
         // unit. The page never has to approximate, so the number in the order
         // summary is the number charged.
         const effectivePriceByItemId = await computeEffectivePrices(cart.items);
-        const grossLines = cart.items.map((i) => ({
-          grossUnitCents: effectivePriceByItemId.get(i.id) ?? i.unitPriceCents,
-          quantity: i.quantity,
-        }));
+        // Lines outside the coupon's scope keep their full price, so the figure
+        // shown here is the one the checkout will charge.
+        const grossLines = cart.items
+          .filter((i) => couponAppliesToKind(result.coupon.scope, i.kind))
+          .map((i) => ({
+            grossUnitCents: effectivePriceByItemId.get(i.id) ?? i.unitPriceCents,
+            quantity: i.quantity,
+          }));
+        const outOfScopeCents = cart.items
+          .filter((i) => !couponAppliesToKind(result.coupon.scope, i.kind))
+          .reduce(
+            (sum, i) => sum + (effectivePriceByItemId.get(i.id) ?? i.unitPriceCents) * i.quantity,
+            0,
+          );
         const shippingCents = cart.items.reduce(
           (s, i) => s + (i.shippingCents ?? 0) * i.quantity,
           0,
         );
         const applied = applyCouponToCart(grossLines, result.coupon.discountPercent);
-        const totalCents = applied.subtotalCents + shippingCents;
+        const totalCents = applied.subtotalCents + outOfScopeCents + shippingCents;
 
         // Shown as a refusal rather than a silent surprise at the pay button:
         // between zero and the currency floor there is no chargeable session.

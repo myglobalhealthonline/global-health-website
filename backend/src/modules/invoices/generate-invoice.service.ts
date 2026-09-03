@@ -6,6 +6,7 @@ import { sendSalesInvoiceCopy } from "../../lib/email/sales-invoice-copy.js";
 import type { PaymentLog } from "../orders/complete-order-payment.service.js";
 import { buildInvoicePdfData, renderInvoicePdfBuffer, type CreditNoteReason } from "./invoice-pdf.js";
 import { issueInvoicePublicCapability } from "./invoice-public-link.service.js";
+import { archiveInvoiceToDrive } from "./invoice-drive-archive.service.js";
 
 const noopLog: PaymentLog = {
   info: () => {},
@@ -114,6 +115,23 @@ async function renderAndSendInvoiceDoc(
       log,
     );
   }
+
+  // Drive archive. NOT gated on `salesCopy`: the upload is idempotent on the
+  // filename, so letting an admin resend re-file a document is how a paid
+  // document that missed its upload (Drive outage at payment time) gets
+  // repaired, without ever producing a second copy. Self-gates on document
+  // type + month; never throws.
+  await archiveInvoiceToDrive(
+    {
+      invoiceId: opts.invoiceId,
+      invoiceNumber: opts.invoiceNumber,
+      countryCode: opts.countryCode,
+      documentType: opts.documentType,
+      issuedAt: new Date(opts.invoiceDateIso),
+      pdfBuffer,
+    },
+    log,
+  );
 }
 
 /**

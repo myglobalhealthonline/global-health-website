@@ -745,7 +745,8 @@
     "couponNotAvailableHere": "Codurile de reducere nu sunt disponibile în această țară.",
     "couponBelowMinimum": "Codul lasă o sumă prea mică pentru a putea fi încasată.",
     "couponNeedsEmail": "Introdu mai întâi adresa ta de e-mail de mai sus.",
-    "couponExpiredAtCheckout": "Codul tău de reducere nu mai este valabil, așa că a fost eliminat. Verifică totalul înainte de plată."
+    "couponExpiredAtCheckout": "Codul tău de reducere nu mai este valabil, așa că a fost eliminat. Verifică totalul înainte de plată.",
+    "couponNotForThisService": "Acest cod nu acoperă tipul de consultație din coșul tău."
   },
   "checkoutStatus": {
     "successTitle": "Plată primită",

@@ -19,6 +19,7 @@ const ADMIN_MESSAGES: Record<CouponRejectReason, string> = {
   COMMISSION_MARKET: "Coupons cannot be used in this market.",
   COVERAGE_LINE: "Coupons cannot be combined with insurance or a coverage card.",
   BENEFIT_LINE: "Coupons cannot be combined with a membership, corporate or plan benefit.",
+  SCOPE_MISMATCH: "That coupon does not cover this type of consultation.",
   BELOW_MINIMUM: "That coupon leaves an amount too small for the payment provider to charge.",
 };
 

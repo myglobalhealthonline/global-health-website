@@ -208,7 +208,7 @@ export function ManualBookingForm({
   const [couponState, setCouponState] = useState<
     | { status: "idle" }
     | { status: "checking" }
-    | { status: "valid"; code: string; discountPercent: number }
+    | { status: "valid"; code: string; discountPercent: number; scopeLabel: string }
     | { status: "invalid"; message: string }
   >({ status: "idle" });
   // Private membership (§11.7). One control for both cases: the value is
@@ -648,13 +648,27 @@ export function ManualBookingForm({
           const res = await fetch("/api/admin/coupons/validate", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ code: value, email: email.trim() || undefined, countryCode }),
+            body: JSON.stringify({
+              code: value,
+              email: email.trim() || undefined,
+              countryCode,
+              // Lets the server judge a GP-only / specialist-only code against
+              // the service being booked, instead of showing green here and
+              // refusing on submit.
+              serviceId: serviceId || undefined,
+            }),
             signal: controller.signal,
           });
           const json = (await res.json()) as {
             ok?: boolean;
             message?: string;
-            data?: { valid: boolean; message?: string; code?: string; discountPercent?: number };
+            data?: {
+              valid: boolean;
+              message?: string;
+              code?: string;
+              discountPercent?: number;
+              scopeLabel?: string;
+            };
           };
           if (controller.signal.aborted) return;
           if (!res.ok || !json.ok || !json.data) {
@@ -669,6 +683,7 @@ export function ManualBookingForm({
             status: "valid",
             code: json.data.code!,
             discountPercent: json.data.discountPercent!,
+            scopeLabel: json.data.scopeLabel ?? "",
           });
         } catch {
           if (!controller.signal.aborted) {
@@ -681,7 +696,7 @@ export function ManualBookingForm({
       clearTimeout(timer);
       controller.abort();
     };
-  }, [couponCode, email, countryCode]);
+  }, [couponCode, email, countryCode, serviceId]);
 
   const couponApplied = couponState.status === "valid";
 
@@ -1214,6 +1229,9 @@ export function ManualBookingForm({
             ) : couponState.status === "valid" ? (
               <span className="text-portal-meta text-[var(--color-text-body)]">
                 {couponState.code} — {couponState.discountPercent}% off
+                {couponState.scopeLabel && couponState.scopeLabel !== "Any booking"
+                  ? ` (${couponState.scopeLabel.toLowerCase()})`
+                  : ""}
                 {grossPriceCents != null && netPriceCents != null
                   ? netPriceCents === 0
                     ? ". Comped in full — no payment link."

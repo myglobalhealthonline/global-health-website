@@ -745,7 +745,8 @@
     "couponNotAvailableHere": "Discount codes are not available in this country.",
     "couponBelowMinimum": "That code leaves an amount too small to charge.",
     "couponNeedsEmail": "Enter your email above first.",
-    "couponExpiredAtCheckout": "Your discount code is no longer valid, so it was removed. Please review the total before paying."
+    "couponExpiredAtCheckout": "Your discount code is no longer valid, so it was removed. Please review the total before paying.",
+    "couponNotForThisService": "That code does not cover the type of consultation in your basket."
   },
   "checkoutStatus": {
     "successTitle": "Payment received",
