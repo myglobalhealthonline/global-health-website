@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { AlertTriangle } from "lucide-react";
 import { AdminEmptyState, Btn } from "./_components/atoms";
+import { useErrorRetry } from "@/app/_components/error-recovery";
 
 export default function AdminError({
   error,
@@ -14,6 +15,8 @@ export default function AdminError({
   useEffect(() => {
     console.error(error);
   }, [error]);
+
+  const { retry, pending } = useErrorRetry(error, reset);
 
   return (
     <div className="flex min-h-[50vh] items-center justify-center p-6">
@@ -27,7 +30,7 @@ export default function AdminError({
             : "An unexpected error occurred loading this page."
         }
         action={
-          <Btn variant="primary" onClick={reset}>
+          <Btn variant="primary" onClick={retry} loading={pending}>
             Try again
           </Btn>
         }
