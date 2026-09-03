@@ -842,7 +842,7 @@ Verified against production on 2026-08-12 unless noted.
 
 | Area | State | Evidence |
 | --- | --- | --- |
-| Sitemap | **1,932 URLs**, live. Supersedes every earlier count (1,906 / 1,353 / 1,304 / 1,153 / 1,924 all appear in older docs). Eight-row stratified sample returned 200, `index, follow`, self-canonical. | live sitemap + HTML probes, 2026-08-16 |
+| Sitemap | **2,146 URLs**, live, re-counted 2026-09-03 (§41.1 defect 3). Supersedes every earlier count — 1,932 / 1,924 / 1,906 / 1,353 / 1,304 / 1,153 all appear in older docs and are historical. The 1,932 figure held here until 2026-09-03 was the 2026-08-16 count. Eight-row stratified sample at that count returned 200, `index, follow`, self-canonical. | live sitemap `grep -c '<loc>'`, 2026-09-03 |
 | robots.txt | Correct. Site allowed; only `/admin`, `/account`, auth routes and `/api/` disallowed; per-agent blocks for AI crawlers. **No legacy-Wix Disallow** — deliberate, so Googlebot can reach the 308s. | live fetch 2026-08-12 |
 | `lastmod` | Real per-row dates; hub pages derive from newest child, so the section-pages loop **must stay last** in `frontend/app/sitemap.ts`. Never use build time. | design decision, unchanged |
 | Legacy redirects | 276 redirect rules in `frontend/next.config.ts`. Spot-checked families all 308 to correct current-shape targets. | live probes 2026-08-12 |
@@ -6512,7 +6512,8 @@ informational blogs and legacy redirect sources.
 - Host, protocol and trailing-slash canonicalization remain correct. `robots.txt`,
   sampled canonicals, `robots` directives, `hrefLang` clusters, schema and deliberate
   308/410 behavior all matched the architecture.
-- Live sitemap: **1,932 URLs** (+26 since 2026-08-12). Eight sampled URLs were 200,
+- Live sitemap: **1,932 URLs** (+26 since 2026-08-12) — *dated figure, correct on
+  2026-08-16; the live count on 2026-09-03 is **2,146**, see §1 and §41.1.* Eight sampled URLs were 200,
   indexable and self-canonical. 314 rows omit `lastmod`, up nine from the §5b sweep;
   many are deliberately undated static pages. No synthetic date is proposed.
 - Repository history since the baseline contains no SEO-affecting deploy regression.
@@ -7904,8 +7905,31 @@ working day, not a restatement of an earlier audit.
 | 4 | Spain, Romania and Brazil have no clinical-approval gate | **Open.** Only two gates exist in the repository: `backend/src/content/portugal-clinical-approval.ts` and `backend/scripts/lib/czechia-clinical-approval.ts`. There is no ES/RO/BR equivalent. | `find . -name '*clinical-approval*'` |
 
 Defect 1 is the only one with a code fix. It sits in commit `30b239ae` on `Dev-hassaan`,
-together with `38089b2d` and `1bddd990`, all three unpushed and undeployed. The fix
+together with `38089b2d` and `1bddd990`, all unpushed and undeployed. The fix
 takes effect only after push and deploy.
+
+> **Defect 1 was only half fixed when this was written; completed in `e5dbdfc1`.**
+> `30b239ae` corrected the `/legal` index and `/book`, but `legal/[type]/page.tsx` —
+> the document sub-pages — still built title, meta description, OG subtitle,
+> `og:image:alt` and hero eyebrow from `config.name`. Those sub-pages carry roughly
+> **ten times** the impressions of the index that was fixed
+> (`/portugal/es/legal/complaints-procedure` 49 in 90 days,
+> `/brazil/en/legal/refund-policy` 43, `/brazil/pt/legal/complaints-procedure` 41).
+> Left as-is, deploying `30b239ae` alone would have served `/brazil/pt/legal` as
+> "Brasil" and `/brazil/pt/legal/refund-policy` one click deeper as "Brazil" — same
+> breadcrumb, two spellings, more conspicuous than the original uniform bug.
+>
+> Verified before shipping, because these routes sit behind approval gates: Czechia's
+> five approved legal sub-pages are all in `czechiaStaticPageSeo`, so the overlay
+> short-circuits before `countryName` is read, and those five plus the index are
+> exactly the six Czechia legal matrix rows — none can move. `cookie-policy` is routed
+> but in neither the overlay nor the matrix, so it does change ("Czechia" → "Česko")
+> under no approval, at 4 impressions in 90 days. Portugal is a byte-for-byte no-op
+> (`countryNames.pt.pt` is `"Portugal"`). All six locale bundles carry complete
+> `countryNames`. `tsc` clean, suites 881 passed / 5 skipped across 83 files.
+>
+> **Both commits must deploy together** — shipping `30b239ae` without `e5dbdfc1` is
+> what produces the split-spelling state described above.
 
 Defect 2 is content, not code. Seventeen Romanian service pages need authored FAQ sets
 in the Czech style, and under the single-clinician standard set on 2026-09-03 each
@@ -7959,7 +7983,9 @@ Portugal register totals as of today: 45 rows, 44 `approved`, 1 `blocked_pending
 
 1. Push the three `Dev-hassaan` commits and deploy, then re-verify defect 1 on
    `/spain/es/legal` and `/romania/ro/legal`. Cheapest win, already written.
-2. Correct the 1,932 figure in §17 and §23.2 to the live 2,146. Five minutes.
+2. ~~Correct the 1,932 figure in §17 and §23.2 to the live 2,146.~~ **DONE 2026-09-03.**
+   §1 now carries 2,146 as the live count with the older figures marked historical, and
+   the §23.2 line is labelled as a dated 2026-08-16 figure pointing here.
 3. Resolve the `beatriz-carvalho` OPP identity conflict — it blocks one register row and
    one fact-register row simultaneously.
 4. Build the ES/RO/BR clinical-approval gates before any content batch for those markets.
