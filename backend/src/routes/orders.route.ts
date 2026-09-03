@@ -30,6 +30,7 @@ import { startPrePaymentFlow } from "../modules/automation/pre-payment-flow.serv
 import { completeOrderPaymentFromCheckoutSession } from "../modules/orders/complete-order-payment.service.js";
 import { resolveCoupon } from "../modules/coupons/coupon-eligibility.js";
 import { couponCutPerUnit } from "../modules/coupons/coupon-distribution.js";
+import { couponAppliesToKind } from "../modules/coupons/coupon-scope.js";
 import {
   CouponUnavailableError,
   reserveCouponSlot,
@@ -662,6 +663,10 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                 countryCode: cart.countryCode,
                 hasCoverageLine,
                 hasBenefitLine,
+                // Scope is decided against what is actually in the basket, so a
+                // GP-only code on a cart of health tests is refused here rather
+                // than applying a discount of zero.
+                lineKinds: cart.items.map((i) => i.kind),
                 now: couponNow,
                 client: tx,
               })
@@ -670,17 +675,23 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             throw new CouponUnavailableError(couponResult.reason);
           }
           const couponPercent = couponResult?.coupon.discountPercent ?? 0;
+          const couponScope = couponResult?.ok ? couponResult.coupon.scope : "ANY";
           // Deliberately a SEPARATE function rather than folded into
           // `finalUnitPrice`: the insurance and declared-coverage audit columns
           // below must keep recording the GROSS price their engine resolved.
           type CouponLine = {
             id: string;
+            kind: CartItemKind;
             unitPriceCents: number;
             insuranceCompanyId?: string | null;
             declaredCoverageSource?: string | null;
           };
+          // Per LINE: a mixed cart takes the cut only where the scope admits
+          // it, and pays full price on the rest.
           const couponCut = (i: CouponLine) =>
-            couponCutPerUnit(finalUnitPrice(i), couponPercent);
+            couponAppliesToKind(couponScope, i.kind)
+              ? couponCutPerUnit(finalUnitPrice(i), couponPercent)
+              : 0;
           const netUnitPrice = (i: CouponLine) => finalUnitPrice(i) - couponCut(i);
           const couponDiscountCents = cart.items.reduce(
             (s, i) => s + couponCut(i) * i.quantity,

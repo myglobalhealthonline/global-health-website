@@ -808,6 +808,7 @@ export type CommonLocale = {
     couponNotWithBenefit: string;
     couponNotWithInsurance: string;
     couponNotAvailableHere: string;
+    couponNotForThisService: string;
     couponBelowMinimum: string;
     couponNeedsEmail: string;
     couponExpiredAtCheckout: string;

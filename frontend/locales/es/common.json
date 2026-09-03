@@ -745,7 +745,8 @@
     "couponNotAvailableHere": "Los códigos de descuento no están disponibles en este país.",
     "couponBelowMinimum": "Ese código deja un importe demasiado pequeño para cobrarlo.",
     "couponNeedsEmail": "Introduce primero tu correo electrónico arriba.",
-    "couponExpiredAtCheckout": "Tu código de descuento ya no es válido, así que se ha quitado. Revisa el total antes de pagar."
+    "couponExpiredAtCheckout": "Tu código de descuento ya no es válido, así que se ha quitado. Revisa el total antes de pagar.",
+    "couponNotForThisService": "Ese código no cubre el tipo de consulta que tienes en la cesta."
   },
   "checkoutStatus": {
     "successTitle": "Pago recibido",

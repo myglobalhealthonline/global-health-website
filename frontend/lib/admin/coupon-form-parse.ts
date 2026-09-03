@@ -1,6 +1,16 @@
-import type { AdminCouponRecipientInput, CreateCouponBody } from "@/lib/admin/admin-api/coupons";
+import type {
+  AdminCouponRecipientInput,
+  CouponScope,
+  CreateCouponBody,
+} from "@/lib/admin/admin-api/coupons";
 
 const LOCALES = new Set(["EN", "PT", "ES", "CS", "RO", "DE"]);
+const SCOPES = new Set<CouponScope>([
+  "ANY",
+  "GENERAL_CONSULTATION",
+  "SPECIALIST_CONSULTATION",
+  "CONSULTATIONS",
+]);
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 export type ParseResult =
@@ -59,6 +69,11 @@ function parseRecipients(raw: string): AdminCouponRecipientInput[] {
 
 export function parseCouponBodyFromForm(form: FormData): ParseResult {
   const kind = str(form, "kind") === "PERSONAL" ? "PERSONAL" : "GENERAL";
+  // An unrecognised value falls back to ANY rather than failing the form: the
+  // select only offers the four, so anything else is a hand-edited payload, and
+  // ANY is the safe reading of "no restriction chosen".
+  const rawScope = str(form, "scope") as CouponScope;
+  const scope: CouponScope = SCOPES.has(rawScope) ? rawScope : "ANY";
 
   const discountPercent = Number(str(form, "discountPercent"));
   if (!Number.isInteger(discountPercent) || discountPercent < 1 || discountPercent > 100) {
@@ -105,6 +120,7 @@ export function parseCouponBodyFromForm(form: FormData): ParseResult {
     data: {
       ...(code ? { code } : {}),
       kind,
+      scope,
       discountPercent,
       validFrom,
       validUntil,

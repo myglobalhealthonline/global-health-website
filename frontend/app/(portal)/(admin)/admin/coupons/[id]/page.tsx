@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { ArrowLeft, Send } from "lucide-react";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import {
+  COUPON_SCOPE_LABELS,
   fetchAdminCouponById,
   patchAdminCoupon,
   postAdminCouponSend,
@@ -251,8 +252,9 @@ export default async function AdminCouponDetailPage({
         </p>
       ) : null}
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-4">
         <StatCard label="Discount" value={`${coupon.discountPercent}%`} />
+        <StatCard label="Applies to" value={COUPON_SCOPE_LABELS[coupon.scope]} />
         <StatCard label="Used" value={`${coupon.redeemedCount} / ${coupon.maxRedemptions}`} />
         <StatCard label="Status" value={<Pill tone={STATUS_TONE[coupon.status]}>{coupon.status}</Pill>} />
       </div>

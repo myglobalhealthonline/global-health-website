@@ -88,6 +88,20 @@ export function CouponFields() {
         </small>
       </label>
 
+      <label>
+        <span className="gh-field-label">Applies to</span>
+        <select className="gh-select" name="scope" defaultValue="ANY">
+          <option value="ANY">Any booking</option>
+          <option value="GENERAL_CONSULTATION">GP consultations only</option>
+          <option value="SPECIALIST_CONSULTATION">Specialist consultations only</option>
+          <option value="CONSULTATIONS">GP and specialist consultations</option>
+        </select>
+        <small className="mt-1 block text-[var(--color-text-muted)]">
+          Checked per line: on a mixed basket the discount lands on the lines it covers and the
+          rest pay full price. A basket with nothing in scope is refused outright.
+        </small>
+      </label>
+
       <div className="grid gap-4 sm:grid-cols-2">
         <label>
           <span className="gh-field-label">Discount %</span>
