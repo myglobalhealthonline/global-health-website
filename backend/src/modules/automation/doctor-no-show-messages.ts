@@ -118,6 +118,6 @@ export function doctorNoShowEmailHtml(ctx: DoctorNoShowMessageContext, lang: Lan
     title,
     `<p>${esc(greeting)}</p>
      <p>${esc(bodyLead(ctx, lang))}</p>
-     <p style="margin:24px 0;text-align:center;"><a href="${esc(ctx.meetingUrl)}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">${esc(joinLabel)}</a></p>`,
+     <p style="margin:24px 0;text-align:center;"><a href="${esc(ctx.meetingUrl)}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;">${esc(joinLabel)}</a></p>`,
   );
 }

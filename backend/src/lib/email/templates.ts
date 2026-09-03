@@ -18,7 +18,7 @@ import { clinicDocumentCopy } from "../../modules/notifications/clinic-document-
  *  inline styles, flat-color fallbacks behind gradients. */
 export function wrapHtml(title: string, bodyHtml: string): string {
   const logoSrc = absoluteSiteUrl(DEFAULT_EMAIL_LOGO_PATH);
-  return `<!doctype html><html><body style="margin:0;padding:0;background-color:#F6F8F1;">
+  return `<!doctype html><html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /></head><body style="margin:0;padding:0;background-color:#F6F8F1;">
 <div style="background-color:#F6F8F1;padding:28px 16px;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#2D3B36;">
   <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="max-width:100%;background-color:#ffffff;border:1px solid #E4E7DD;border-radius:20px;overflow:hidden;">
     <tr>
@@ -29,7 +29,7 @@ export function wrapHtml(title: string, bodyHtml: string): string {
       </td>
     </tr>
     <tr>
-      <td style="padding:36px 40px;line-height:1.65;font-size:15px;color:#2D3B36;">
+      <td style="padding:36px 40px;line-height:1.65;font-size:15px;color:#2D3B36;word-wrap:break-word;overflow-wrap:break-word;">
         ${bodyHtml}
       </td>
     </tr>
@@ -67,7 +67,7 @@ export async function sendPasswordResetEmail(opts: {
       "Reset your password",
       `<p>Hi ${escapeHtml(opts.fullName)},</p>
        <p>We got a request to reset your password. Click the button to set a new one. The link expires in 1 hour.</p>
-       <p style="margin:24px 0;text-align:center;"><a href="${link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Reset password</a></p>
+       <p style="margin:24px 0;text-align:center;"><a href="${link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;">Reset password</a></p>
        <p style="font-size:13px;color:#737373;">Or paste this URL into your browser:<br/><a href="${link}">${escapeHtml(link)}</a></p>
        <p>If you didn't request this, you can ignore the email — nothing has changed yet.</p>`,
     ),
@@ -100,7 +100,7 @@ export async function sendDoctorInviteEmail(opts: {
       "Welcome to Global Health",
       `<p>Hi ${escapeHtml(greetingName)},</p>
        <p>The Global Health team has set up a doctor portal account for you. Click the button to set a password — you'll land straight on your dashboard.</p>
-       <p style="margin:24px 0;text-align:center;"><a href="${link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Set password &amp; sign in</a></p>
+       <p style="margin:24px 0;text-align:center;"><a href="${link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;">Set password &amp; sign in</a></p>
        <p style="font-size:13px;color:#737373;">Or paste this URL into your browser:<br/><a href="${link}">${escapeHtml(link)}</a></p>
        <p>The link expires in 7 days. If you didn't expect this invite, you can ignore the email.</p>`,
     ),
@@ -133,7 +133,7 @@ export async function sendEmailChangedEmail(opts: {
       `<p>Hi ${escapeHtml(opts.fullName)},</p>
        <p>Our team corrected the email address on your Global Health account to this one. You can log in right away with the temporary password below, or set your own password using the link.</p>
        <p style="margin:20px 0;padding:14px 18px;background:#F6F8F1;border-radius:10px;font-family:'Cascadia Code',Consolas,Menlo,monospace;font-size:16px;letter-spacing:0.04em;color:#1B4D3E;">${escapeHtml(opts.tempPassword)}</p>
-       <p style="margin:24px 0;text-align:center;"><a href="${link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Set your own password</a></p>
+       <p style="margin:24px 0;text-align:center;"><a href="${link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;">Set your own password</a></p>
        <p style="font-size:13px;color:#737373;">Or paste this URL into your browser:<br/><a href="${link}">${escapeHtml(link)}</a></p>
        <p>The link expires in 7 days. If anything here looks wrong, please contact our support team.</p>`,
     ),
@@ -169,7 +169,7 @@ export async function sendSupportMessageAlertEmail(opts: {
            ? `<blockquote style="margin:18px 0;padding:12px 16px;border-left:3px solid #B0F122;background:#F6F8F1;border-radius:0 10px 10px 0;color:#2D3B36;">${escapeHtml(snippet)}</blockquote>`
            : ""
        }
-       <p style="margin:24px 0;text-align:center;"><a href="${opts.threadUrl}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Open the chat</a></p>
+       <p style="margin:24px 0;text-align:center;"><a href="${opts.threadUrl}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;">Open the chat</a></p>
        <p style="font-size:13px;color:#737373;">Or paste this URL into your browser:<br/><a href="${opts.threadUrl}">${escapeHtml(opts.threadUrl)}</a></p>
        <p style="font-size:13px;color:#737373;">Any admin can reply — your first name is shown to the doctor so they know who answered.</p>`,
     ),
@@ -214,7 +214,7 @@ ${opts.threadUrl}
            ? `<blockquote style="margin:18px 0;padding:12px 16px;border-left:3px solid #B0F122;background:#F6F8F1;border-radius:0 10px 10px 0;color:#2D3B36;">${escapeHtml(snippet)}</blockquote>`
            : ""
        }
-       <p style="margin:24px 0;text-align:center;"><a href="${opts.threadUrl}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Open the chat</a></p>
+       <p style="margin:24px 0;text-align:center;"><a href="${opts.threadUrl}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;">Open the chat</a></p>
        <p style="font-size:13px;color:#737373;">Or paste this URL into your browser:<br/><a href="${opts.threadUrl}">${escapeHtml(opts.threadUrl)}</a></p>
        <p style="font-size:13px;color:#737373;">Reply from your portal and the support team is notified straight away.</p>`,
     ),
@@ -248,7 +248,7 @@ export async function sendPatientMessageAdminAlertEmail(opts: {
            ? `<blockquote style="margin:18px 0;padding:12px 16px;border-left:3px solid #B0F122;background:#F6F8F1;border-radius:0 10px 10px 0;color:#2D3B36;">${escapeHtml(snippet)}</blockquote>`
            : ""
        }
-       <p style="margin:24px 0;text-align:center;"><a href="${opts.threadUrl}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Open the chat</a></p>
+       <p style="margin:24px 0;text-align:center;"><a href="${opts.threadUrl}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;">Open the chat</a></p>
        <p style="font-size:13px;color:#737373;">Or paste this URL into your browser:<br/><a href="${opts.threadUrl}">${escapeHtml(opts.threadUrl)}</a></p>`,
     ),
   });
@@ -280,7 +280,7 @@ export async function sendPatientMessageDoctorAlertEmail(opts: {
            ? `<blockquote style="margin:18px 0;padding:12px 16px;border-left:3px solid #B0F122;background:#F6F8F1;border-radius:0 10px 10px 0;color:#2D3B36;">${escapeHtml(snippet)}</blockquote>`
            : ""
        }
-       <p style="margin:24px 0;text-align:center;"><a href="${opts.threadUrl}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Open the chat</a></p>
+       <p style="margin:24px 0;text-align:center;"><a href="${opts.threadUrl}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;">Open the chat</a></p>
        <p style="font-size:13px;color:#737373;">Or paste this URL into your browser:<br/><a href="${opts.threadUrl}">${escapeHtml(opts.threadUrl)}</a></p>`,
     ),
   });
@@ -300,7 +300,7 @@ export async function sendEmailVerificationEmail(opts: {
       "Confirm your email",
       `<p>Hi ${escapeHtml(opts.fullName)},</p>
        <p>Thanks for signing up to Global Health. Confirm your email so we can keep your account secure.</p>
-       <p style="margin:24px 0;text-align:center;"><a href="${link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Confirm email</a></p>
+       <p style="margin:24px 0;text-align:center;"><a href="${link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;">Confirm email</a></p>
        <p style="font-size:13px;color:#737373;">Or paste into your browser:<br/><a href="${link}">${escapeHtml(link)}</a></p>
        <p>The link expires in 24 hours.</p>`,
     ),
@@ -353,7 +353,7 @@ export async function sendDuplicateRegistrationNoticeEmail(opts: {
       "Someone tried to sign up with your email",
       `<p>Hi ${escapeHtml(opts.fullName)},</p>
        <p>Someone just tried to create a Global Health account using this email address. You already have an account, so nothing changed — no new account was created.</p>
-       <p style="margin:24px 0;text-align:center;"><a href="${loginLink}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Sign in</a></p>
+       <p style="margin:24px 0;text-align:center;"><a href="${loginLink}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;">Sign in</a></p>
        <p style="font-size:13px;color:#737373;">Forgot your password? <a href="${resetLink}">Reset it here</a>.</p>
        <p>If you don't recognize this, no action is needed — your account is safe.</p>`,
     ),
@@ -396,7 +396,7 @@ export async function sendAppointmentScheduledEmail(opts: {
   const ctaHtml = meetLink
     ? `<p style="margin:24px 0;text-align:center;">
          <a href="${escapeHtml(meetLink)}"
-            style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">
+            style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;">
            Join the call
          </a>
        </p>
@@ -471,7 +471,7 @@ export async function sendAppointmentReminderEmail(opts: {
   const ctaHtml = meetLink
     ? `<p style="margin:24px 0;text-align:center;">
          <a href="${escapeHtml(meetLink)}"
-            style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">
+            style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;">
            Join the call
          </a>
        </p>
@@ -657,7 +657,7 @@ https://myglobalhealth.online/cart
        <p>You left <strong>${opts.itemCount} item${opts.itemCount === 1 ? "" : "s"}</strong> in your cart (${escapeHtml(opts.totalLabel)}).</p>
        <p style="margin:24px 0;text-align:center;">
          <a href="${absoluteSiteUrl("/cart")}"
-            style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">
+            style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;">
            Resume checkout
          </a>
        </p>
@@ -710,7 +710,7 @@ export async function sendBrazilFinalizationEmail(opts: {
       "Consulta concluída",
       `<p>Olá ${escapeHtml(opts.patientName)},</p>
        <p>A sua consulta foi concluída. Para os próximos passos no Brasil, complete o consentimento e o pagamento de processamento (€29).</p>
-       <p style="margin:24px 0;text-align:center;"><a href="${bookingUrl}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Continuar</a></p>`,
+       <p style="margin:24px 0;text-align:center;"><a href="${bookingUrl}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;">Continuar</a></p>`,
     ),
   });
 }
@@ -730,7 +730,7 @@ export async function sendReviewInviteEmail(opts: {
         opts.localeTitle,
         `<p>Hi ${escapeHtml(opts.patientName)},</p>
        <p>We would love your feedback on your recent visit.</p>
-       <p style="margin:24px 0;text-align:center;"><a href="${opts.link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Leave a review</a></p>`,
+       <p style="margin:24px 0;text-align:center;"><a href="${opts.link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;">Leave a review</a></p>`,
       ),
     },
     { recordLabel: "review_invite" },
@@ -837,7 +837,7 @@ export async function sendPatientUploadLinkEmail(opts: {
       copy.emailHeading,
       `<p>${escapeHtml(greeting)}</p>
        <p>${escapeHtml(copy.emailBody)}</p>
-       <p style="margin:24px 0;text-align:center;"><a href="${opts.link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">${escapeHtml(copy.emailCta)}</a></p>`,
+       <p style="margin:24px 0;text-align:center;"><a href="${opts.link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;">${escapeHtml(copy.emailCta)}</a></p>`,
     ),
   });
 }
@@ -874,7 +874,7 @@ ${opts.link}
       copy.emailHeading,
       `<p>${escapeHtml(greeting)}</p>
        <p>${escapeHtml(body)}</p>
-       <p style="margin:24px 0;text-align:center;"><a href="${opts.link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">${escapeHtml(copy.emailCta)}</a></p>`,
+       <p style="margin:24px 0;text-align:center;"><a href="${opts.link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;">${escapeHtml(copy.emailCta)}</a></p>`,
     ),
   });
 }
@@ -901,7 +901,7 @@ export async function sendMedicalAccessRequestEmail(opts: {
       `<p>Hi ${escapeHtml(opts.patientName)},</p>
        <p><strong>Dr. ${escapeHtml(opts.doctorName)}</strong> (${escapeHtml(opts.doctorCountry)}) is requesting access to your Global Health medical file:</p>
        <p style="font-style:italic;color:#555;">"${escapeHtml(opts.reason)}"</p>
-       <p style="margin:24px 0;text-align:center;"><a href="${opts.link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">Review request</a></p>
+       <p style="margin:24px 0;text-align:center;"><a href="${opts.link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;">Review request</a></p>
        <p style="font-size:13px;color:#777;">This link expires in 14 days. If you don't recognize this request, you can safely deny it or ignore this email.</p>`,
     ),
   });
@@ -1184,7 +1184,7 @@ export async function sendInvoiceEmail(opts: {
       </td>
     </tr>
     <tr>
-      <td style="padding:40px;line-height:1.6;font-size:15px;">
+      <td style="padding:40px;line-height:1.6;font-size:15px;word-wrap:break-word;overflow-wrap:break-word;">
         <p style="margin:0 0 16px;">${dear} ${escapeHtml(opts.fullName)},</p>
         <p style="margin:0 0 20px;">${body}</p>
         <p style="margin:28px 0;text-align:center;">

@@ -65,7 +65,7 @@ function toPlain(html: string): string {
 }
 
 function button(link: string, label: string): string {
-  return `<p style="margin:24px 0;text-align:center;"><a href="${link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;">${escapeHtml(label)}</a></p>
+  return `<p style="margin:24px 0;text-align:center;"><a href="${link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;">${escapeHtml(label)}</a></p>
   <p style="font-size:13px;color:#737373;">${escapeHtml(link)}</p>`;
 }
 
