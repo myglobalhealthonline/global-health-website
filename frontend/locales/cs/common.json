@@ -745,7 +745,8 @@
     "couponNotAvailableHere": "Slevové kódy nejsou v této zemi dostupné.",
     "couponBelowMinimum": "Po uplatnění tohoto kódu zbývá částka, kterou nelze zaplatit.",
     "couponNeedsEmail": "Nejprve zadejte výše svůj e-mail.",
-    "couponExpiredAtCheckout": "Váš slevový kód již není platný, a proto byl odebrán. Před platbou zkontrolujte celkovou částku."
+    "couponExpiredAtCheckout": "Váš slevový kód již není platný, a proto byl odebrán. Před platbou zkontrolujte celkovou částku.",
+    "couponNotForThisService": "Tento kód se nevztahuje na typ konzultace ve vašem košíku."
   },
   "checkoutStatus": {
     "successTitle": "Platba přijata",

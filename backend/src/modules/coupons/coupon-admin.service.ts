@@ -105,6 +105,7 @@ export async function listCoupons(filters: CouponListFilters) {
         id: true,
         code: true,
         kind: true,
+        scope: true,
         discountPercent: true,
         personalEmail: true,
         personalName: true,
@@ -194,6 +195,7 @@ export async function createCoupon(
         data: {
           code,
           kind: input.kind,
+          scope: input.scope,
           discountPercent: input.discountPercent,
           personalEmail: input.kind === "PERSONAL" ? (input.personalEmail ?? null) : null,
           personalName: input.kind === "PERSONAL" ? (input.personalName ?? null) : null,

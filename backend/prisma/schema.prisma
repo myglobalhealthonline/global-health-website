@@ -6918,6 +6918,19 @@ enum CouponKind {
   GENERAL
 }
 
+/// Which bookings a coupon may be spent on.
+enum CouponScope {
+  /// Any booking at all — consultations, health tests, products. The default,
+  /// and what every coupon minted before scoping existed carries.
+  ANY
+  /// GP / general consultations only.
+  GENERAL_CONSULTATION
+  /// Specialist consultations only.
+  SPECIALIST_CONSULTATION
+  /// Either kind of consultation, but nothing else.
+  CONSULTATIONS
+}
+
 enum CouponRedemptionStatus {
   /// The order exists and holds a slot of the cap; payment has not landed.
   /// Deliberate — the slot is claimed at order creation, the same semantics a
@@ -6939,17 +6952,22 @@ enum CouponRecipientStatus {
 /// A percentage discount code. Never deleted — `active = false` retires one, so
 /// `CouponRedemption` rows and `Order.couponCode` stay resolvable forever.
 model Coupon {
-  id              String     @id @default(cuid())
+  id              String      @id @default(cuid())
   /// ALWAYS stored uppercase, and matched uppercase. A CHECK constraint
   /// (`Coupon_code_upper_chk`, migration 20260901120000 — invisible to
   /// `migrate diff`, keep it) enforces it at the database, because a
   /// lower-cased row would be permanently unredeemable.
-  code            String     @unique
+  code            String      @unique
   kind            CouponKind
   /// 1..100. IMMUTABLE after creation — `updateCouponSchema` refuses to change
   /// it, because moving it would rewrite the meaning of redemptions already
   /// taken. CHECK `Coupon_percent_chk` backs that up.
   discountPercent Int
+  /// Which lines this coupon may discount. Enforced per LINE, not per order: a
+  /// mixed cart gets the cut on the lines in scope and full price on the rest,
+  /// and a cart with nothing in scope is refused outright rather than silently
+  /// discounted by zero. ANY (the default) keeps the pre-scoping behaviour.
+  scope           CouponScope @default(ANY)
   /// PERSONAL only, lowercase. The redeeming order's `email` must equal this.
   /// Required iff `kind = PERSONAL`; null on GENERAL.
   personalEmail   String?
@@ -6964,13 +6982,13 @@ model Coupon {
   /// (`redeemedCount <= maxRedemptions`) is the database's own backstop, so
   /// lowering `maxRedemptions` below it must be rejected in the route rather
   /// than surfacing as an opaque constraint error.
-  redeemedCount   Int        @default(0)
-  active          Boolean    @default(true)
+  redeemedCount   Int         @default(0)
+  active          Boolean     @default(true)
   /// Admin-only. Never rendered in an email.
   internalNote    String?
   createdByUserId String?
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 
   redemptions CouponRedemption[]
   recipients  CouponRecipient[]

@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { Eye, Plus } from "lucide-react";
-import { fetchAdminCoupons, type AdminCouponListItem } from "@/lib/admin/admin-api";
+import {
+  COUPON_SCOPE_LABELS,
+  fetchAdminCoupons,
+  type AdminCouponListItem,
+} from "@/lib/admin/admin-api";
 import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
 import { ResponsiveFilterBar } from "@/components/ResponsiveFilterBar";
 import {
@@ -45,6 +49,12 @@ function CouponsTable({ coupons }: { coupons: AdminCouponListItem[] }) {
       ),
     },
     { key: "kind", label: "Kind", priority: 2, render: (c) => c.kind },
+    {
+      key: "scope",
+      label: "Applies to",
+      priority: 3,
+      render: (c) => COUPON_SCOPE_LABELS[c.scope],
+    },
     {
       key: "discount",
       label: "Discount",

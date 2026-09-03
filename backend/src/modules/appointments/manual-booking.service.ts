@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { randomBytes, randomUUID } from "node:crypto";
-import { CartItemKind, PaymentStatus, ServiceKind } from "@prisma/client";
+import { PaymentStatus } from "@prisma/client";
 import type { LocaleCode } from "@prisma/client";
 import type { FastifyRequest } from "fastify";
 import { prisma } from "../../db/prisma.js";
@@ -13,6 +13,7 @@ import {
   reserveCouponSlot,
 } from "../coupons/coupon-reserve.service.js";
 import { minimumChargeCents } from "../orders/stripe-minimum-charge.js";
+import { consultationCartKind } from "../orders/consultation-kind.js";
 import { defaultNotificationLocaleForCountry } from "../automation/notification-language.js";
 import { env } from "../../config/env.js";
 import {
@@ -509,12 +510,6 @@ function parseDateOfBirth(raw: string | null | undefined): Date | null {
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
-function consultationCartKind(serviceKind: ServiceKind): CartItemKind {
-  return serviceKind === ServiceKind.SPECIALIST
-    ? CartItemKind.SPECIALIST_CONSULTATION
-    : CartItemKind.GENERAL_CONSULTATION;
-}
-
 export async function createManualBooking(
   input: CreateManualBookingInput,
 ): Promise<CreateManualBookingResult> {
@@ -925,6 +920,9 @@ export async function createManualBooking(
         countryCode: input.countryCode,
         hasCoverageLine: Boolean(insuranceCompanyId),
         hasBenefitLine: membershipLine != null,
+        // One service line, so its kind alone decides whether a scoped coupon
+        // covers this booking.
+        lineKinds: [consultationCartKind(service.kind)],
       })
     : null;
   if (couponResult && !couponResult.ok) {

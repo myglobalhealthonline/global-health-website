@@ -1,7 +1,8 @@
-import type { CouponKind, Prisma } from "@prisma/client";
+import type { CartItemKind, CouponKind, CouponScope, Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { isCommissionCountry } from "../orders/commission.service.js";
 import { isValidCouponCodeShape, normalizeCouponCode } from "./coupon-code.js";
+import { couponAppliesToAnyLine } from "./coupon-scope.js";
 
 /**
  * Why a coupon was refused.
@@ -28,6 +29,7 @@ export type CouponEligibilityRejectReason =
   | "COMMISSION_MARKET"
   | "COVERAGE_LINE"
   | "BENEFIT_LINE"
+  | "SCOPE_MISMATCH"
   | "BELOW_MINIMUM";
 
 export type CouponRejectReason = CouponIdentityRejectReason | CouponEligibilityRejectReason;
@@ -50,6 +52,8 @@ export type ResolvedCoupon = {
   code: string;
   kind: CouponKind;
   discountPercent: number;
+  /** Callers apply the cut only to lines this scope admits. */
+  scope: CouponScope;
   validUntil: Date;
 };
 
@@ -67,6 +71,13 @@ export type ResolveCouponInput = {
   hasCoverageLine: boolean;
   /** Any line priced by a membership, corporate or subscription-plan benefit. */
   hasBenefitLine: boolean;
+  /**
+   * What is actually in the basket, so a scoped coupon can be refused when
+   * nothing it covers is being bought. Omit where the caller genuinely does not
+   * know yet (the admin's pre-booking check) — the scope is then re-tested at
+   * the point the booking is priced.
+   */
+  lineKinds?: ReadonlyArray<CartItemKind>;
   now?: Date;
   client?: Prisma.TransactionClient;
 };
@@ -98,6 +109,7 @@ export async function resolveCoupon(input: ResolveCouponInput): Promise<ResolveC
       code: true,
       kind: true,
       discountPercent: true,
+      scope: true,
       personalEmail: true,
       validFrom: true,
       validUntil: true,
@@ -136,6 +148,12 @@ export async function resolveCoupon(input: ResolveCouponInput): Promise<ResolveC
   // No stacking on membership / corporate / plan benefits.
   if (input.hasBenefitLine) return { ok: false, reason: "BENEFIT_LINE" };
 
+  // Scoped to a consultation type this basket does not contain. Checked only
+  // when the caller knows what is being bought.
+  if (input.lineKinds && !couponAppliesToAnyLine(coupon.scope, input.lineKinds)) {
+    return { ok: false, reason: "SCOPE_MISMATCH" };
+  }
+
   return {
     ok: true,
     coupon: {
@@ -143,6 +161,7 @@ export async function resolveCoupon(input: ResolveCouponInput): Promise<ResolveC
       code: coupon.code,
       kind: coupon.kind,
       discountPercent: coupon.discountPercent,
+      scope: coupon.scope,
       validUntil: coupon.validUntil,
     },
   };
