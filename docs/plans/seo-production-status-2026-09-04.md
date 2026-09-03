@@ -102,11 +102,22 @@ Re-check any time, read-only:
 
 ## 3. Needs a decision or an answer
 
-**`beatriz-carvalho` — a live page publishing an unverifiable registration.** The OPP
-directory for cédula **31618** returns **Beatriz Sousa**, Porto, with no speciality
-recorded. Separate Beatriz Carvalho registrations exist at 26164 (Cascais, clinical
-psychology), 24832 and 3137. One question to her — *which cédula is yours?* — settles
-it. Independent of SEO and more urgent than snippet length.
+**`beatriz-carvalho` — CLOSED TO INVESTIGATION, OPEN ON ONE INPUT. Do not re-derive this.**
+The OPP directory has been queried three times (2026-09-02, 09-03, 09-04) with the same
+result: cédula **31618** returns **Beatriz Sousa**, Porto, no speciality recorded. A name
+search for Beatriz Sousa returns Ana Beatriz Sousa 27210 and Beatriz Sousa Fernandes
+32649 among others, none containing Carvalho — so 31618 is not a shortened form of the
+profile name. Separate Beatriz Carvalho registrations exist at 26164 (Cascais, clinical
+psychology), 24832, and Maria Beatriz Carvalho 3137.
+
+**The only thing that moves this** is her OPP card or member page showing name and
+cédula, or her stating the number. Then: set `verification_status` to `verified`, record
+any name variance in the fact-register note as the FALEIRO case did, unblock the row.
+No further directory searching is useful — it has been exhausted.
+
+Why it stays blocked meanwhile: the live profile tells patients *"Pode verificar este
+registo em ordemdospsicologos.pt"*, and that lookup currently resolves to a different
+person. This is a regulatory exposure question, not an SEO one.
 
 **Spain, Romania and Brazil have no clinical-approval gate.** Only Portugal and Czechia
 have one. Those three markets have already published doctor biographies, credentials
