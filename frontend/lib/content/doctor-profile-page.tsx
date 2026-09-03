@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { notFound, permanentRedirect } from "next/navigation";
+import { notFound, permanentRedirect, redirect } from "next/navigation";
 import { ArrowRight, CalendarClock } from "lucide-react";
 import { ServiceCard } from "@/components/cards/ServiceCard";
 import { DoctorProfileTemplate } from "@/components/templates/DoctorProfileTemplate";
@@ -157,6 +157,14 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
   // the same clinician.
   if (data.canonicalSlug && routeCountrySlug && routeLang) {
     permanentRedirect(`/${routeCountrySlug}/${routeLang}/doctors/${data.canonicalSlug}`);
+  }
+  // Real clinician, wrong market: they exist on the site but are not rostered
+  // in the country this URL names. Rendering anyway produced a profile wearing
+  // the route country's labels ("Registered in Ireland") for a doctor who never
+  // joined that market. Send the visitor to this market's roster instead — a
+  // TEMPORARY redirect, since the doctor may be enrolled here later.
+  if (data.wrongMarket && routeCountrySlug && routeLang) {
+    redirect(`/${routeCountrySlug}/${routeLang}/doctors`);
   }
   // No such clinician, confirmed by the backend (not an outage): 404 rather
   // than render a profile fabricated from the URL slug. Those placeholders
