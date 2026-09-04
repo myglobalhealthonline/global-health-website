@@ -108,6 +108,21 @@ test("approval hashes bind the exact proposed copy and target", () => {
   );
 });
 
+/**
+ * The register records these rows across two review sessions by the same
+ * clinician, not one: the 2026-09-02 phase-two metadata review, and the
+ * 2026-09-03 snippet-trim batch that re-approved the eleven doctor profiles
+ * with their shortened meta descriptions (ledger §41.2, §42.4).
+ *
+ * Both timestamps are pinned on purpose. Asserting the register against itself
+ * would prove nothing; pinning means a third review session has to be a
+ * deliberate edit here rather than something a register change slips past.
+ */
+const PHASE_TWO_REVIEW = "2026-09-02T01:58:00+02:00";
+const SNIPPET_TRIM_REVIEW = "2026-09-03T17:59:00+01:00";
+/** Any instant after the most recent pinned session; bump it when one is added. */
+const reviewComparisonTime = new Date("2026-09-04T00:00:00.000Z");
+
 test("clinical register approves 16 exact hashes and keeps the conflicted profile blocked", () => {
   for (const draft of parsePortugalSeoRemainingDrafts(matrix)) {
     const record = readPortugalClinicalReviewRecord(clinicalRegister, draft.asset);
@@ -122,10 +137,16 @@ test("clinical register approves 16 exact hashes and keeps the conflicted profil
       asset: draft.asset,
       approvedSha256: approvedHash,
       factRegisterCsv: factRegister,
-      now: new Date("2026-09-02T00:00:00.000Z"),
+      now: reviewComparisonTime,
     });
-    assert.equal(approved.reviewer_name, "Dr Tiago Miguel Figueira");
-    assert.equal(approved.reviewer_doctor_id, "cmp5r0if3002kssjug743x0p6");
-    assert.equal(approved.reviewed_at, "2026-09-02T01:58:00+02:00");
+    assert.equal(approved.reviewer_name, "Dr Tiago Miguel Figueira", draft.assetPath);
+    assert.equal(approved.reviewer_doctor_id, "cmp5r0if3002kssjug743x0p6", draft.assetPath);
+    // Only the doctor profiles went through the snippet-trim batch; the blog,
+    // landing and page-content rows still carry the phase-two approval.
+    assert.equal(
+      approved.reviewed_at,
+      draft.assetKind === "doctor" ? SNIPPET_TRIM_REVIEW : PHASE_TWO_REVIEW,
+      draft.assetPath,
+    );
   }
 });
