@@ -1,4 +1,5 @@
 import type { GeneratedDocumentType } from "@prisma/client";
+import { DateTime } from "luxon";
 
 export const TEMPLATE_FILE_BY_TYPE: Record<GeneratedDocumentType, string> = {
   EXAMS_PRESCRIPTION: "exams-prescription.html",
@@ -31,6 +32,14 @@ export function formatDateDdMmYyyy(value: string | Date | null | undefined): str
   const month = String(d.getMonth() + 1).padStart(2, "0");
   const year = d.getFullYear();
   return `${day}/${month}/${year}`;
+}
+
+/** Wall-clock "HH:mm" for an instant, in the given IANA zone. Falls back to
+ *  the UTC wall clock if the zone is unrecognized. */
+export function formatTimeHHmm(date: Date, timeZone: string): string {
+  const dt = DateTime.fromJSDate(date).setZone(timeZone);
+  if (dt.isValid) return dt.toFormat("HH:mm");
+  return `${String(date.getUTCHours()).padStart(2, "0")}:${String(date.getUTCMinutes()).padStart(2, "0")}`;
 }
 
 export const DEFAULT_DATA_PROTECTION_LAW = "GDPR";

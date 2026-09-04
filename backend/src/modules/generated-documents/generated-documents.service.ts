@@ -18,11 +18,13 @@ import {
   absenceDefaultReason,
   formatDateDdMmYyyy,
   formatExamsNotes,
+  formatTimeHHmm,
   isEmailSendableForCountry,
   isInReviewQueue,
   isVisibleInHistory,
 } from "./document-template-utils.js";
 import { getHealthPortalForCountry } from "./country-portals.js";
+import { resolveCountryTimeZone } from "../countries/country-timezone.service.js";
 import { createRequisitionFromPrescription } from "../lab-orders/lab-requisitions.service.js";
 import { renderDocxTemplatePdf, type DocxQrOptions } from "./docx-document-renderer.js";
 import { renderDocumentPdf } from "./html-document-renderer.js";
@@ -225,14 +227,6 @@ function buildTemplateContext(input: {
     // omitted entirely when blank so plain field-based certificates render
     // exactly as before.
     base.body = f.body?.trim() ?? "";
-  }
-
-  // Excuses the patient for the consultation window only — date + from/to
-  // time — as opposed to ABSENCE_CERTIFICATE's multi-day work/study period.
-  if (input.documentType === "ATTENDANCE_CERTIFICATE") {
-    base.fromTime = f.fromTime?.trim() ?? "";
-    base.toTime = f.toTime?.trim() ?? "";
-    base.reason = f.reason?.trim() ?? "";
   }
 
   return base;
@@ -447,6 +441,24 @@ async function generateAppointmentDocumentUnlocked(input: {
     identityVerification,
   });
 
+  // Excuses the patient for the consultation window only, not a multi-day
+  // absence — so the time itself is never doctor-entered. "From" is the
+  // booked start; "to" is the moment this document is generated, in the
+  // clinic's own timezone rather than the server's (UTC).
+  if (input.documentType === "ATTENDANCE_CERTIFICATE") {
+    const clinicTimeZone = await resolveCountryTimeZone(appt.countryCode);
+    templateContext.fromTime = formatTimeHHmm(appt.scheduledAt ?? new Date(), clinicTimeZone);
+    templateContext.toTime = formatTimeHHmm(new Date(), clinicTimeZone);
+  }
+
+  // Server-computed fields (never doctor-entered) still need to land in
+  // `metadata` — it's the only place the public verify page and a later
+  // edit/regenerate can read fromTime/toTime back from.
+  const metadataToStore: Record<string, string> | undefined =
+    input.documentType === "ATTENDANCE_CERTIFICATE"
+      ? { fromTime: templateContext.fromTime as string, toTime: templateContext.toTime as string }
+      : input.fields;
+
   const templateData: Record<string, string> = {
     patientName: appt.fullName,
     birthDate,
@@ -620,7 +632,7 @@ async function generateAppointmentDocumentUnlocked(input: {
         data: {
           fileName,
           storageKey,
-          metadata: input.fields ? (input.fields as object) : undefined,
+          metadata: metadataToStore ? (metadataToStore as object) : undefined,
           ...(upload
             ? {
                 prescriptionNumber: upload.prescriptionNumber,
@@ -668,7 +680,7 @@ async function generateAppointmentDocumentUnlocked(input: {
       documentType: input.documentType,
       fileName,
       storageKey,
-      metadata: input.fields ? (input.fields as object) : undefined,
+      metadata: metadataToStore ? (metadataToStore as object) : undefined,
       ...(upload
         ? {
             prescriptionNumber: upload.prescriptionNumber,

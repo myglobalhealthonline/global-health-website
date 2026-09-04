@@ -92,13 +92,8 @@ const generateSchema = z
       }
       // Date is optional — certificates may be issued without a date ("no date" mode).
     }
-    if (data.type === GeneratedDocumentType.ATTENDANCE_CERTIFICATE && !data.fields?.toTime?.trim()) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "toTime is required for attendance certificates",
-        path: ["fields", "toTime"],
-      });
-    }
+    // ATTENDANCE_CERTIFICATE takes no doctor-entered fields — the service
+    // computes fromTime/toTime itself from the booking + generation instant.
   });
 
 const sendSchema = z.object({

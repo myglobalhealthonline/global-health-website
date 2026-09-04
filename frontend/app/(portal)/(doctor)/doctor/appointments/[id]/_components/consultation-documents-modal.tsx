@@ -113,11 +113,6 @@ export type ConsultationDocumentsModalCopy = {
   certDateRequiredError: string;
   certEndDateRequiredError: string;
   attendanceQrNotice: string;
-  attendanceFromTimeLabel: string;
-  attendanceToTimeLabel: string;
-  attendanceReasonLabel: string;
-  attendanceReasonPlaceholder: string;
-  attendanceToTimeRequiredError: string;
   generateFailed: string;
   nationalPortalDefault: string;
   prescriptionPortalSuccess: string;
@@ -164,9 +159,6 @@ function applyEditDraftToForm(
     setCertStartDate: (v: string) => void;
     setCertEndDate: (v: string) => void;
     setCertReason: (v: string) => void;
-    setAttendanceFromTime: (v: string) => void;
-    setAttendanceToTime: (v: string) => void;
-    setAttendanceReason: (v: string) => void;
   },
 ) {
   const meta = draft.metadata ?? {};
@@ -204,14 +196,9 @@ function applyEditDraftToForm(
     setters.setCertStartDate(meta.startDate ?? "");
     setters.setCertEndDate(meta.endDate ?? "");
     setters.setCertReason(meta.reason ?? "");
-    return;
   }
-
-  if (draft.documentType === "ATTENDANCE_CERTIFICATE") {
-    setters.setAttendanceFromTime(meta.fromTime ?? "");
-    setters.setAttendanceToTime(meta.toTime ?? "");
-    setters.setAttendanceReason(meta.reason ?? "");
-  }
+  // ATTENDANCE_CERTIFICATE has no doctor-entered fields to restore — the tab
+  // switch above is all editing it means; regenerate recomputes the times.
 }
 
 export function ConsultationDocumentsModal({
@@ -264,9 +251,6 @@ export function ConsultationDocumentsModal({
   const [certStartDate, setCertStartDate] = useState("");
   const [certEndDate, setCertEndDate] = useState("");
   const [certReason, setCertReason] = useState("");
-  const [attendanceFromTime, setAttendanceFromTime] = useState("");
-  const [attendanceToTime, setAttendanceToTime] = useState("");
-  const [attendanceReason, setAttendanceReason] = useState("");
 
   // Focus trap + restore — same pattern as PortalDialog (query focusables
   // fresh on every Tab press; a tab switch inside this modal changes what's
@@ -326,9 +310,6 @@ export function ConsultationDocumentsModal({
         setCertStartDate,
         setCertEndDate,
         setCertReason,
-        setAttendanceFromTime,
-        setAttendanceToTime,
-        setAttendanceReason,
       });
     } else {
       setEditingDocId(null);
@@ -344,9 +325,6 @@ export function ConsultationDocumentsModal({
       setCertStartDate("");
       setCertEndDate("");
       setCertReason("");
-      setAttendanceFromTime("");
-      setAttendanceToTime("");
-      setAttendanceReason("");
       if (initialTab) setTab(initialTab);
     }
     const prev = document.body.style.overflow;
@@ -510,16 +488,11 @@ export function ConsultationDocumentsModal({
     });
   }
 
+  // Time and reason are never doctor-entered — the backend fills the
+  // consultation's booked start and the generation instant, in the clinic's
+  // own timezone.
   function generateAttendance() {
-    if (!attendanceToTime.trim()) {
-      setError(copy.attendanceToTimeRequiredError);
-      return;
-    }
-    void generate("ATTENDANCE_CERTIFICATE", {
-      ...(attendanceFromTime.trim() ? { fromTime: attendanceFromTime.trim() } : {}),
-      toTime: attendanceToTime.trim(),
-      ...(attendanceReason.trim() ? { reason: attendanceReason.trim() } : {}),
-    });
+    void generate("ATTENDANCE_CERTIFICATE", {});
   }
 
   function generateCertificate() {
@@ -952,37 +925,6 @@ export function ConsultationDocumentsModal({
           {tab === "attendanceCert" ? (
             <div className="space-y-3">
               <p className="text-xs text-[var(--portal-muted)]">{copy.attendanceQrNotice}</p>
-              <div className="grid gap-2 sm:grid-cols-2">
-                <div>
-                  <label className="text-sm font-semibold">{copy.attendanceFromTimeLabel}</label>
-                  <input
-                    type="time"
-                    value={attendanceFromTime}
-                    onChange={(e) => setAttendanceFromTime(e.target.value)}
-                    className="gh-input mt-1 w-full"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-semibold">
-                    {copy.attendanceToTimeLabel} <span className="text-red-600">*</span>
-                  </label>
-                  <input
-                    type="time"
-                    value={attendanceToTime}
-                    onChange={(e) => setAttendanceToTime(e.target.value)}
-                    className="gh-input mt-1 w-full"
-                    required
-                  />
-                </div>
-              </div>
-              <label className="block text-sm font-semibold">{copy.attendanceReasonLabel}</label>
-              <input
-                type="text"
-                value={attendanceReason}
-                onChange={(e) => setAttendanceReason(e.target.value)}
-                placeholder={copy.attendanceReasonPlaceholder}
-                className="gh-input w-full"
-              />
               <button
                 type="button"
                 disabled={pending}
