@@ -3,7 +3,7 @@ import {
   SUKL_SERVICE_LABELS,
   type SuklService,
 } from "./config.js";
-import { buildSoapEnvelope, extractAllElementText, extractElementText, extractFault } from "./envelope.js";
+import { buildSoapEnvelope, extractElementText, extractFault } from "./envelope.js";
 import { SuklError, SuklNotConfiguredError, isSuklError } from "./errors.js";
 import { suklPost } from "./transport.js";
 import { DEFAULT_ENDPOINT_PATH, SUKL_NAMESPACE_COMMON } from "./app-ping.js";
@@ -11,11 +11,17 @@ import { DEFAULT_ENDPOINT_PATH, SUKL_NAMESPACE_COMMON } from "./app-ping.js";
 /**
  * `GetAppInfo` — asks SÚKL which interface version they are actually running.
  *
- * Worth having for one specific reason: `SUKL_INTERFACE_VERSION` is currently
- * `202601B`, a value we INFERRED from a published table rather than were told.
- * Every message carries it in the `Zprava` header and a wrong value is
- * rejected outright, so an inference sitting under every future request is a
- * poor foundation. This replaces it with SÚKL's own answer.
+ * Reports SÚKL's software build (`AktualniVerze/Verze`, e.g. `1.110.10.29473`)
+ * and, when the service lists them, the per-document-type interface versions
+ * (`AktualniVerze/Doklad/Verze`) — the 202601B-shaped values that
+ * `SUKL_INTERFACE_VERSION` is actually comparable to.
+ *
+ * The distinction cost a wrong UI claim on 2026-09-04: the build number was
+ * presented as the interface version and as grounds for changing the env var.
+ * It is not. CUEP TEST returns build `1.110.10.29473`, name `Informační systém
+ * eRecept TEST`, and NO Doklad entries — so this operation does not currently
+ * confirm the interface version at all. AppPing returning HTTP 200 while
+ * sending 202601B remains the evidence for that.
  *
  * The request body is genuinely empty — `app_info_dotaz_type` in
  * CommonSchema.xsd is declared as `<xsd:complexType name="app_info_dotaz_type"/>`
@@ -27,21 +33,42 @@ import { DEFAULT_ENDPOINT_PATH, SUKL_NAMESPACE_COMMON } from "./app-ping.js";
  * Rate limited like everything else — a manual admin action, never a timer.
  */
 
+/**
+ * One entry of `AktualniVerze/Doklad` (`typ_dokladu_type`).
+ *
+ * THIS is where the interface version lives — the 202601B-shaped value that
+ * `SUKL_INTERFACE_VERSION` must match. Not to be confused with
+ * `AktualniVerze/Verze`, which is SÚKL's software build number.
+ */
+export interface SuklDocumentType {
+  /** Interface version for this document type, e.g. 202601B. */
+  version: string | null;
+  /** Document identifier prefix. */
+  prefix: string | null;
+  description: string | null;
+  validFrom: string | null;
+  validTo: string | null;
+}
+
 export interface SuklAppInfoResult {
   service: SuklService;
   label: string;
   ok: boolean;
   httpStatus: number;
   durationMs: number;
-  /** SÚKL's current interface version — compare against SUKL_INTERFACE_VERSION. */
-  version: string | null;
+  /**
+   * SÚKL's SOFTWARE BUILD, e.g. `1.110.10.29473` — NOT the message interface
+   * version. Confirmed against the live TEST service on 2026-09-04. Do not
+   * compare this with SUKL_INTERFACE_VERSION; that belongs to documentTypes.
+   */
+  applicationVersion: string | null;
   /** Application name, e.g. the module SÚKL believe we are talking to. */
   name: string | null;
   /** Server clock. A large skew against ours is worth knowing about early:
    *  `Zprava/Odeslano` is a timestamp SÚKL may validate. */
   serverTime: string | null;
-  /** Document types the service declares it handles, when it lists any. */
-  documentTypes: string[];
+  /** Document types with their own interface versions and validity windows. */
+  documentTypes: SuklDocumentType[];
   errorCode: string | null;
   errorMessage: string | null;
 }
@@ -55,12 +82,36 @@ export function buildAppInfoRequest(): string {
   });
 }
 
+/**
+ * `Doklad` is a complex element, so it cannot be read with the text extractor —
+ * doing so yields raw inner XML. Pull each block out, then read its children.
+ *
+ * Safe for THIS operation only: `app_info_odpoved_type` contains just
+ * AktualniVerze and DatumCasServeru, so every `Doklad` here belongs to
+ * AktualniVerze. Other responses reuse the name for unrelated things.
+ */
+function extractDocumentTypes(xml: string): SuklDocumentType[] {
+  const blocks = xml.matchAll(/<(?:\w+:)?Doklad(?:\s[^>]*)?>([\s\S]*?)<\/(?:\w+:)?Doklad>/gi);
+  const out: SuklDocumentType[] = [];
+  for (const b of blocks) {
+    const inner = b[1] ?? "";
+    out.push({
+      version: extractElementText(inner, "Verze"),
+      prefix: extractElementText(inner, "Prefix"),
+      description: extractElementText(inner, "Popis"),
+      validFrom: extractElementText(inner, "PlatOd"),
+      validTo: extractElementText(inner, "PlatDo"),
+    });
+  }
+  return out;
+}
+
 export function interpretAppInfoResponse(input: { httpStatus: number; body: string }): {
   ok: boolean;
-  version: string | null;
+  applicationVersion: string | null;
   name: string | null;
   serverTime: string | null;
-  documentTypes: string[];
+  documentTypes: SuklDocumentType[];
   errorCode: string | null;
   errorMessage: string | null;
 } {
@@ -68,7 +119,7 @@ export function interpretAppInfoResponse(input: { httpStatus: number; body: stri
   if (fault) {
     return {
       ok: false,
-      version: null,
+      applicationVersion: null,
       name: null,
       serverTime: null,
       documentTypes: [],
@@ -84,7 +135,7 @@ export function interpretAppInfoResponse(input: { httpStatus: number; body: stri
   if (input.httpStatus < 200 || input.httpStatus >= 300) {
     return {
       ok: false,
-      version: null,
+      applicationVersion: null,
       name: null,
       serverTime: null,
       documentTypes: [],
@@ -95,12 +146,20 @@ export function interpretAppInfoResponse(input: { httpStatus: number; body: stri
 
   // `Verze` appears inside AktualniVerze; there is no competing Verze element in
   // this response because the request carried no Zprava header to echo.
+  // Strip the Doklad blocks before reading the application version: each block
+  // carries its OWN <Verze>, and a first-match read would otherwise be at the
+  // mercy of element order.
+  const withoutDoklady = input.body.replace(
+    /<(?:\w+:)?Doklad(?:\s[^>]*)?>[\s\S]*?<\/(?:\w+:)?Doklad>/gi,
+    "",
+  );
+
   return {
     ok: true,
-    version: extractElementText(input.body, "Verze"),
-    name: extractElementText(input.body, "Nazev"),
+    applicationVersion: extractElementText(withoutDoklady, "Verze"),
+    name: extractElementText(withoutDoklady, "Nazev"),
     serverTime: extractElementText(input.body, "DatumCasServeru"),
-    documentTypes: extractAllElementText(input.body, "Doklad"),
+    documentTypes: extractDocumentTypes(input.body),
     errorCode: null,
     errorMessage: null,
   };
@@ -128,7 +187,7 @@ export async function suklGetAppInfo(service: SuklService): Promise<SuklAppInfoR
       ok: v.ok,
       httpStatus: response.httpStatus,
       durationMs: response.durationMs,
-      version: v.version,
+      applicationVersion: v.applicationVersion,
       name: v.name,
       serverTime: v.serverTime,
       documentTypes: v.documentTypes,
@@ -144,7 +203,7 @@ export async function suklGetAppInfo(service: SuklService): Promise<SuklAppInfoR
         ok: false,
         httpStatus: error.httpStatus ?? 0,
         durationMs: 0,
-        version: null,
+        applicationVersion: null,
         name: null,
         serverTime: null,
         documentTypes: [],
