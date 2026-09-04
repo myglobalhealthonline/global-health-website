@@ -17,7 +17,8 @@ import type { SuklAppInfoDto, SuklAppPingDto } from "@/lib/admin/admin-api/sukl"
  */
 
 const SERVICES = [
-  { value: "cuep", label: "ePoukaz (CUEP)" },
+  { value: "cuer", label: "eRecept (CUER) - medicines" },
+  { value: "cuep", label: "ePoukaz (CUEP) - devices" },
   { value: "common", label: "Common" },
 ];
 

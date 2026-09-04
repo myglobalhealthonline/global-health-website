@@ -337,6 +337,7 @@ const envSchema = z.object({
    *  Deliberately absent: the cross-border pharmacist endpoint. It is not
    *  configured until SÚKL confirms which cross-border workflow an outpatient
    *  workplace may perform — see docs/sukl/SCOPE_CONFIRMATION.md Q7. */
+  SUKL_ERECEPT_CUER_TEST_URL: blankAsUnset(z.string().trim().url().optional()),
   SUKL_EPOUKAZ_CUEP_TEST_URL: blankAsUnset(z.string().trim().url().optional()),
   SUKL_EPOUKAZ_COMMON_TEST_URL: blankAsUnset(z.string().trim().url().optional()),
 

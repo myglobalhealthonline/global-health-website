@@ -42,12 +42,13 @@ type WsdlResult = {
 };
 
 const SERVICES = [
-  { value: "cuep", label: "ePoukaz (CUEP)" },
+  { value: "cuer", label: "eRecept (CUER) - medicines" },
+  { value: "cuep", label: "ePoukaz (CUEP) - devices" },
   { value: "common", label: "Common" },
 ];
 
 export function SuklWsdlPanel({ configured }: { configured: boolean }) {
-  const [service, setService] = useState("cuep");
+  const [service, setService] = useState("cuer");
   const [path, setPath] = useState("/?wsdl");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
