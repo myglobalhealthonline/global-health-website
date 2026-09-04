@@ -26,7 +26,14 @@ export function isSuklConfigured(): boolean {
 /**
  * The ePoukaz SOAP services. SÚKL splits these across separate hosts:
  *
- *   cuep   — the ePoukaz voucher service (create / read / cancel).
+ *   cuer   — the eRecept PRESCRIPTION service. This is the one the product
+ *            needs: doctors here prescribe medicines.
+ *   cuep   — the ePoukaz VOUCHER service. Medical devices only — the CUEP
+ *            WSDL confirms it (typ_elektronickeho_poukazu is exactly
+ *            LecebnaOrtopedicka / Foniatricka / Opticka, and the optical
+ *            branch carries dioptres and prisms). It cannot prescribe a
+ *            medicine. Secondary capability, kept because SÚKL authorise both
+ *            modules on one account and one certificate.
  *   common — shared operations: code lists, interface versions, ping.
  *
  * Not listed, on purpose: the cross-border pharmacist service. It stays
@@ -34,16 +41,18 @@ export function isSuklConfigured(): boolean {
  * cross-border (SCOPE_CONFIRMATION.md Q7). Adding it here would be the first
  * step toward calling an operation we may not be permitted to call.
  */
-export const SUKL_SERVICES = ["cuep", "common"] as const;
+export const SUKL_SERVICES = ["cuer", "cuep", "common"] as const;
 export type SuklService = (typeof SUKL_SERVICES)[number];
 
 export const SUKL_SERVICE_LABELS: Record<SuklService, string> = {
-  cuep: "ePoukaz (CUEP)",
+  cuer: "eRecept (CUER) — medicines",
+  cuep: "ePoukaz (CUEP) — medical devices",
   common: "Common (code lists, versions, ping)",
 };
 
 /** Which env var configures each service — used in operator-facing messages. */
 export const SUKL_SERVICE_ENV_VARS: Record<SuklService, string> = {
+  cuer: "SUKL_ERECEPT_CUER_TEST_URL",
   cuep: "SUKL_EPOUKAZ_CUEP_TEST_URL",
   common: "SUKL_EPOUKAZ_COMMON_TEST_URL",
 };
@@ -55,11 +64,14 @@ export const SUKL_SERVICE_ENV_VARS: Record<SuklService, string> = {
  * in the current ePoukaz v19 WSDL — callers pass it explicitly and must not
  * invent one.
  */
+const SERVICE_URL_ENV: Record<SuklService, string | undefined> = {
+  cuer: env.SUKL_ERECEPT_CUER_TEST_URL,
+  cuep: env.SUKL_EPOUKAZ_CUEP_TEST_URL,
+  common: env.SUKL_EPOUKAZ_COMMON_TEST_URL,
+};
+
 export function suklServiceUrl(service: SuklService): string | null {
-  const raw =
-    service === "cuep"
-      ? env.SUKL_EPOUKAZ_CUEP_TEST_URL
-      : env.SUKL_EPOUKAZ_COMMON_TEST_URL;
+  const raw = SERVICE_URL_ENV[service];
   const trimmed = raw?.trim();
   return trimmed ? trimmed.replace(/\/+$/, "") : null;
 }

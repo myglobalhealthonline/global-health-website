@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { SUKL_SERVICES } from "../lib/sukl/config.js";
+
 /**
  * Request schemas for the admin SÚKL console (`routes/admin-sukl.route.ts`).
  *
@@ -37,12 +39,12 @@ const suklPathSchema = z
  *  deliberately a DIFFERENT default from the WSDL reader's `/?wsdl`, since
  *  pinging the WSDL URL would be a category error. */
 export const suklPingQuerySchema = z.object({
-  service: z.enum(["cuep", "common"]),
+  service: z.enum(SUKL_SERVICES),
   path: suklPathSchema.optional().default("/"),
 });
 
 export const suklWsdlQuerySchema = z.object({
-  service: z.enum(["cuep", "common"]),
+  service: z.enum(SUKL_SERVICES),
   path: z
     .string()
     .trim()

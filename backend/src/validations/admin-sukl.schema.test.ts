@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { suklWsdlQuerySchema } from "./admin-sukl.schema.js";
+import { SUKL_SERVICES } from "../lib/sukl/config.js";
+import { suklPingQuerySchema, suklWsdlQuerySchema } from "./admin-sukl.schema.js";
 
 /**
  * The WSDL endpoint fetches over mutual TLS using the facility's certificate,
@@ -38,7 +39,16 @@ test("rejects anything that could redirect the client certificate elsewhere", ()
   }
 });
 
-test("only the two known services are addressable", () => {
+test("every configured service is addressable, and nothing else is", () => {
+  // Derived from SUKL_SERVICES rather than a hardcoded list: adding a service
+  // must not leave the route rejecting the value the console offers.
+  for (const service of SUKL_SERVICES) {
+    assert.equal(suklWsdlQuerySchema.parse({ service }).service, service);
+    assert.equal(suklPingQuerySchema.parse({ service }).service, service);
+  }
+  // cuer is the eRecept (medicines) service the product needs — guard against
+  // a refactor quietly dropping it back to devices-only.
+  assert.ok((SUKL_SERVICES as readonly string[]).includes("cuer"));
   assert.throws(() => suklWsdlQuerySchema.parse({ service: "cross-border" }));
   assert.throws(() => suklWsdlQuerySchema.parse({ service: "" }));
 });
