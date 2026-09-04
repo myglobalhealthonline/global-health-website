@@ -33,20 +33,13 @@ Deployed and verified live: `/spain/es/legal` serves **España**, `/romania/ro/l
 serves **România**, `/brazil/pt/legal/refund-policy` serves **Brasil**. Both the index
 and the document sub-pages shipped together, so there is no split spelling.
 
-### 1.3 Earlier batches
+### 1.3 Six Portugal tool pages — LIVE (2026-09-04)
 
-Czechia 48 pages and Portugal 43, published 2026-08-31 → 09-02, independently
-re-verified 125/125. Week 2 editorial fully live — 30 blog posts, 0 drafts. Ireland lab
-hub "€89 / 10 days" price error corrected 2026-09-02.
-
----
-
-## 2. NOT live yet
-
-### 2.1 Merged-and-deploy pending — 6 Portugal tool pages
-
-Committed and pushed as `82a054d0`, **not yet on `main`**, so not deployed.
-`/portugal/pt/tools/osteoporosis-risk-checker` still serves its 80-character title.
+**Corrected later the same day.** `82a054d0` is on `origin/main` (`git merge-base
+--is-ancestor` passes) and deployed: every page serves
+`data-dpl-id="4067d8d6…"`, and `/portugal/pt/tools/osteoporosis-risk-checker` now
+serves the 57-character title `Risco de osteoporose Portugal | Verificação orientativa`.
+The section below records what shipped.
 
 | Page | Title | Description |
 | --- | --- | --- |
@@ -61,9 +54,20 @@ Ships as a frontend overlay on deploy, not through the database. Recorded as a
 **super-admin override** — no clinician reviewed this copy; see
 `seo/portugal/raw/super-admin-override-2026-09-04-tool-pages.md`.
 
-**To ship: merge `82a054d0` into `main` and deploy.**
+**Shipped.** Verified live 2026-09-04. No measurement gate was registered for this
+change; one is proposed as G19 in `docs/audits/seo/six-market-seo-audit-2026-09-04.md`.
 
-### 2.2 Blocked on one input — `beatriz-carvalho`
+### 1.4 Earlier batches
+
+Czechia 48 pages and Portugal 43, published 2026-08-31 → 09-02, independently
+re-verified 125/125. Week 2 editorial fully live — 30 blog posts, 0 drafts. Ireland lab
+hub "€89 / 10 days" price error corrected 2026-09-02.
+
+---
+
+## 2. NOT live yet
+
+### 2.1 Blocked on one input — `beatriz-carvalho`
 
 Her page publishes OPP **31618** and tells patients to verify at
 ordemdospsicologos.pt; that number returns **Beatriz Sousa** (Porto, no speciality).
@@ -73,7 +77,7 @@ Separate Beatriz Carvalho registrations exist at 26164, 24832 and 3137.
 under a different name. Directory searching is exhausted — do not re-investigate. See
 §3 of the fact register note.
 
-### 2.3 Not written — no payload exists
+### 2.2 Not written — no payload exists
 
 - **Czechia, 3 register rows** — two eNeschopenka/sick-pay articles, site-wide
   forms/analytics privacy scope. Nothing was ever drafted.
@@ -84,7 +88,7 @@ under a different name. Directory searching is exhausted — do not re-investiga
 - **Romania, 17 service pages with no FAQ** — verified live, zero `FAQPage` blocks.
 - **Spain, Romania, Brazil** — no matrix, no register, no drafts.
 
-### 2.4 Built but switched off — 90 specialist service pages
+### 2.3 Built but switched off — 90 specialist service pages
 
 | Market | Off | Priced | Unpriced |
 | --- | ---: | ---: | ---: |
@@ -114,18 +118,31 @@ registration numbers with nothing in front of them. ~150–250 lines plus tests 
 market. **Blocks Romania FAQ work** — authoring 17 clinical payloads with no approval
 mechanism just recreates the problem.
 
-**Three Czechia pages are live and unreviewed** (§2.3). Larger governance exposure than
+**Three Czechia pages are live and unreviewed** (§2.2). Larger governance exposure than
 anything in the drafts.
 
 **Nothing has been measured.** Both gates sit at a **2026-09-30** floor. Every rewrite
 in this programme is a hypothesis until then, including everything in §1.
 
+**GA4 has recorded nothing since 2026-08-02, and the cause is a wrong build variable.**
+Production is tagged `G-4PPGECG12X`; the property the tooling reads (`547083375`)
+streams `G-SP48D9LJJ5`. So the 2026-09-30 floor above buys only the Search Console half
+of each gate — `begin_booking`, `begin_checkout` and `purchase` will still have no data
+on that date unless the fix in §4.1 ships first, and even then the window starts from
+the redeploy, not from the change being measured. Ledger §42.1.
+
 ---
 
 ## 4. Next
 
-1. **Merge `82a054d0` to `main` and deploy** — the tool pages are written, tested and
-   pushed; only this stands between them and users.
+**Revised 2026-09-04 after the six-market audit** —
+`docs/audits/seo/six-market-seo-audit-2026-09-04.md`.
+
+1. **Fix the GA4 measurement id.** Production is tagged `G-4PPGECG12X`; the property
+   the SEO tooling reads (`547083375`) streams `G-SP48D9LJJ5` and has received no data
+   since 2026-08-02. Set `NEXT_PUBLIC_GA_MEASUREMENT_ID=G-SP48D9LJJ5` as a Railway
+   frontend **build** variable and redeploy. Register `begin_checkout` as a key event.
+   Every conversion number in this programme is unreadable until this lands.
 2. **Ask Beatriz for her cédula.** One message; unblocks a live unverifiable
    registration.
 3. **Build the ES/RO/BR approval gate.** Biggest exposure, and it gates step 4.

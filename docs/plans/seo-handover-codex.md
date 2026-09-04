@@ -104,11 +104,19 @@ the Indexing API is 200/day and officially JobPosting/BroadcastEvent-only, so do
 mass-submit.
 
 Handles (no credentials here): Search Console `sc-domain:myglobalhealth.online`, GA4
-property `547083375`. GA4 is consent-gated. The Docker build gap and conversion-funnel
-instrumentation were verified in production on 2026-08-25 (`f43ee835`):
-`begin_booking`, `begin_checkout`, and `purchase` are wired, and the booking/purchase
-events are registered as key events. Pre-2026-08-25 data cannot answer blog lead ROI;
-watch post-deployment event volume before drawing conversion conclusions.
+property `547083375`. GA4 is consent-gated.
+
+> **CORRECTED 2026-09-04 — this paragraph described a funnel that is not being
+> measured.** `begin_booking`, `begin_checkout` and `purchase` are all wired in code
+> (`frontend/lib/analytics/track.ts`) and the Docker build gap was genuinely fixed.
+> But only `purchase` and `begin_booking` are registered as key events on property
+> `547083375` — `begin_checkout` never was. More seriously, production is tagged
+> `G-4PPGECG12X` while that property's only stream is `G-SP48D9LJJ5`, so the property
+> stopped receiving data on **2026-08-02** and every GA4 read since returns zero rows.
+> The "24 sessions" the Ireland and Czechia packages each recorded as sparse coverage
+> is that property's entire lifetime. Draw no conversion conclusion from GA4 until the
+> Railway build variable is corrected and a redeploy lands. See ledger §42 and
+> `docs/audits/seo/six-market-seo-audit-2026-09-04.md`, findings SMA-01 and SMA-02.
 
 ---
 
@@ -119,7 +127,7 @@ watch post-deployment event volume before drawing conversion conclusions.
 | SEO workspace router | `seo/README.md` | Global/country ownership and six-market navigation |
 | Country evidence | `seo/<country>/` | Dated audits, keywords, competitors, content opportunities and raw exports |
 | Canonical ledger / roadmap / watchlist | `docs/plans/seo-control-state.md` | The one file that must stay current |
-| Redirects (all 364 rules) | `frontend/next.config.ts` | Runs **before** middleware. Rule order matters — a broad rule above a precise one kills it |
+| Redirects (276 rules) | `frontend/next.config.ts` | Runs **before** middleware. Rule order matters — a broad rule above a precise one kills it |
 | Middleware (410s, locale, headers) | `frontend/proxy.ts` | Next 16 convention here is `proxy.ts`, not `middleware.ts` |
 | Permanently removed entities | `frontend/lib/seo/gone-content.ts` | `GONE_DOCTORS`; requires a `clickCost` and a named `approvedBy` per entry, enforced by lint |
 | Sitemap | `frontend/app/sitemap.ts` | The section loop must stay last; `lastmod` must never be build time |
