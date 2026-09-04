@@ -152,17 +152,51 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
           {info.ok ? (
             <>
               <p className="m-0 text-sm">
-                SÚKL report interface version <strong>{info.version ?? "—"}</strong>
+                Build <strong>{info.applicationVersion ?? "—"}</strong>
                 {info.name ? ` · ${info.name}` : ""}
               </p>
               <p className="m-0 mt-1 text-xs" style={{ color: "var(--portal-muted)" }}>
-                Compare this with <code>SUKL_INTERFACE_VERSION</code>. Ours was inferred from a
-                published table; this is SÚKL&rsquo;s own answer, so it wins.
+                This is SÚKL&rsquo;s <strong>software build</strong>, not the message interface
+                version. Do not compare it with <code>SUKL_INTERFACE_VERSION</code> — that value
+                (<code>202601B</code>) is a document-interface version, and matches the entries
+                below when the service lists any.
                 {info.serverTime ? ` Server time: ${info.serverTime}.` : ""}
-                {info.documentTypes.length > 0
-                  ? ` Document types: ${info.documentTypes.join(", ")}.`
-                  : ""}
               </p>
+              {info.documentTypes.length > 0 ? (
+                <table className="mt-3 w-full text-xs">
+                  <thead>
+                    <tr style={{ color: "var(--portal-muted)" }}>
+                      <th className="pb-1 text-left font-medium">Document</th>
+                      <th className="pb-1 text-left font-medium">Prefix</th>
+                      <th className="pb-1 text-left font-medium">Interface version</th>
+                      <th className="pb-1 text-left font-medium">Valid</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {info.documentTypes.map((d, i) => (
+                      <tr key={`${d.prefix ?? "?"}-${d.version ?? i}`}>
+                        <td className="py-0.5">{d.description ?? "—"}</td>
+                        <td className="py-0.5">
+                          <code>{d.prefix ?? "—"}</code>
+                        </td>
+                        <td className="py-0.5">
+                          <code>{d.version ?? "—"}</code>
+                        </td>
+                        <td className="py-0.5">
+                          {d.validFrom ?? "—"}
+                          {d.validTo ? ` → ${d.validTo}` : " → open"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p className="m-0 mt-1 text-xs" style={{ color: "var(--portal-muted)" }}>
+                  This service lists no document types, so it does not confirm the interface
+                  version. AppPing succeeding while we send <code>SUKL_INTERFACE_VERSION</code> is
+                  the evidence for that.
+                </p>
+              )}
             </>
           ) : (
             <p className="m-0 whitespace-pre-wrap break-words text-sm">{info.errorMessage}</p>
