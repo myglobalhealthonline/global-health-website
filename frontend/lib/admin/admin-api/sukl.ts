@@ -123,17 +123,25 @@ export type SuklAppPingDto = {
   responseHeaders: Record<string, string> | null;
 };
 
-/** Result of GetAppInfo — SÚKL's own statement of the interface version. */
+export type SuklDocumentTypeDto = {
+  version: string | null;
+  prefix: string | null;
+  description: string | null;
+  validFrom: string | null;
+  validTo: string | null;
+};
+
+/** Result of GetAppInfo — SÚKL's software build plus document-type versions. */
 export type SuklAppInfoDto = {
   service: string;
   label: string;
   ok: boolean;
   httpStatus: number;
   durationMs: number;
-  version: string | null;
+  applicationVersion: string | null;
   name: string | null;
   serverTime: string | null;
-  documentTypes: string[];
+  documentTypes: SuklDocumentTypeDto[];
   errorCode: string | null;
   errorMessage: string | null;
 };

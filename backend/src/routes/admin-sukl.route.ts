@@ -221,7 +221,8 @@ const adminSuklRoute: FastifyPluginAsync = async (app) => {
           kind: "app-info",
           ok: result.ok,
           httpStatus: result.httpStatus,
-          reportedVersion: result.version,
+          reportedBuild: result.applicationVersion,
+          documentTypeCount: result.documentTypes.length,
           errorCode: result.errorCode,
         },
       });
