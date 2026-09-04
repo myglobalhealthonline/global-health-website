@@ -49,7 +49,7 @@ No credentials here — handles only. The tooling finds its own tokens.
 | Service | Handle | Notes |
 | --- | --- | --- |
 | Search Console | `sc-domain:myglobalhealth.online` | OAuth. **Token dies ~2026-08-10** — the consent screen is still in Testing, which caps refresh tokens at 7 days. Publish it to stop the weekly re-auth. |
-| GA4 | property `547083375` | Data API enabled 2026-08-03. Consent-gated tag. The Docker build gap is fixed and `begin_booking`, `begin_checkout`, and `purchase` were verified in production on 2026-08-25. Historical data before that deployment cannot prove blog lead ROI; evaluate only post-2026-08-25 event volume. |
+| GA4 | property `547083375` | **BROKEN since 2026-08-02 — do not read GA4 numbers until fixed.** Production is tagged `G-4PPGECG12X`; this property's only stream is `G-SP48D9LJJ5`, so it has received no data for a month and every query returns zero rows. Cause: `80bae092` moved the id to `NEXT_PUBLIC_GA_MEASUREMENT_ID` and left a different id in `.env.example`; the Railway build variable was set from it. Fix = set `NEXT_PUBLIC_GA_MEASUREMENT_ID=G-SP48D9LJJ5` as a frontend **build** variable and redeploy. Also: only `purchase` and `begin_booking` are registered key events — `begin_checkout` is not. All three are correctly wired in code. Ledger §42. |
 | CrUX + PageSpeed | API key | Key-based, so unaffected by the OAuth expiry. |
 | openseo MCP | tool list | SERP, keywords, backlinks, site audit. Announces itself — nothing to configure. |
 

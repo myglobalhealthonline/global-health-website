@@ -1,6 +1,6 @@
 # SEO control state — canonical
 
-**Last operational update: 2026-09-02.** Historical audit files remain snapshots;
+**Last operational update: 2026-09-04** — §42, the six-market audit, ledger reconciliation and one P0 measurement defect. Historical audit files remain snapshots;
 this ledger is the source of truth for current status, dated gates and future work.
 
 **This file is the single source of truth for the SEO workstream.** It carries the
@@ -843,7 +843,7 @@ Verified against production on 2026-08-12 unless noted.
 | Area | State | Evidence |
 | --- | --- | --- |
 | Sitemap | **2,146 URLs**, live, re-counted 2026-09-03 (§41.1 defect 3). Supersedes every earlier count — 1,932 / 1,924 / 1,906 / 1,353 / 1,304 / 1,153 all appear in older docs and are historical. The 1,932 figure held here until 2026-09-03 was the 2026-08-16 count. Eight-row stratified sample at that count returned 200, `index, follow`, self-canonical. | live sitemap `grep -c '<loc>'`, 2026-09-03 |
-| robots.txt | Correct. Site allowed; only `/admin`, `/account`, auth routes and `/api/` disallowed; per-agent blocks for AI crawlers. **No legacy-Wix Disallow** — deliberate, so Googlebot can reach the 308s. | live fetch 2026-08-12 |
+| robots.txt | Correct. Site allowed; `/admin`, `/admin/*`, `/account/*` and `/api/` disallowed; per-agent blocks for AI crawlers. **Corrected 2026-09-04 (§42):** this row previously said "auth routes" were disallowed. They are not — `/login`, `/access-request`, `/cart` and `/checkout` are held out of the index by `noindex` instead, as the utility-route row below correctly records. **No legacy-Wix Disallow** — deliberate, so Googlebot can reach the 308s. | live fetch 2026-08-12 |
 | `lastmod` | Real per-row dates; hub pages derive from newest child, so the section-pages loop **must stay last** in `frontend/app/sitemap.ts`. Never use build time. | design decision, unchanged |
 | Legacy redirects | 276 redirect rules in `frontend/next.config.ts`. Spot-checked families all 308 to correct current-shape targets. | live probes 2026-08-12 |
 | Metadata in `<head>` | Fixed. `generateMetadata()` hreflang resolution parallelised; Googlebot kept out of `htmlLimitedBots`. | `217c7ba9`, `29c2a917` |
@@ -5585,6 +5585,13 @@ services (20 active+sitemapped, **4 active+bookable+`noindex`** — see §19.5.1
 
 #### 19.5.1 4 Spain services correctly noindexed on a content gate — resolved exactly
 
+> **SUPERSEDED as a statement of current production state, 2026-08-19 by §5 `SEO-SVC-001`;
+> pointer added 2026-09-04 (§42).** All four services now serve 200, `index, follow`,
+> self-canonical, are in the sitemap and carry ~9,000 rendered characters — ES copy was
+> authored in `3fde5466`. Two already draw GSC impressions. The analysis below remains
+> the correct historical record of why they were withheld; it is no longer a description
+> of what production serves.
+
 `consulta-diagnotico-vascular`, `consulta-flebologia-y-linfologia`,
 `consulta-online-medicina-estetica`, `consulta-salud-vascular-circulatoria`:
 all `isActive=true`, `visibility=PUBLIC`, each has exactly 1 real bookable
@@ -5845,7 +5852,7 @@ ticket where the evidence says "wait" or "no."
 
 | Item | Target | Success condition | Failure condition | Recheck window |
 | --- | --- | --- | --- | --- |
-| Spain dermatología (`/spain/es/services/dermatologia-especialista-online`) | Position/CTR movement post-SEO-GROWTH-015 | Position improves from 42.9 and/or CTR rises off 0% within one normal recrawl-and-ramp cycle | No movement after cycle → treat as confirming the SERP wall, not the widget fix | ~2026-09-08 (matches SEO-GROWTH-016 cadence) |
+| Spain dermatología (`/spain/es/services/dermatologia-especialista-online`) | Position/CTR movement post-SEO-GROWTH-015 | Position improves from 42.9 and/or CTR rises off 0% within one normal recrawl-and-ramp cycle | No movement after cycle → treat as confirming the SERP wall, not the widget fix | ~~2026-09-08~~ **RE-ARMED 2026-09-04 (§42): the page's last crawl is 2026-07-19, before the 2026-08-12 fix. Reading this on 09-08 would measure the pre-fix page and record a false confirmation of the SERP wall. Re-arm to 28 complete days after the crawl date first advances past 2026-08-12.** |
 | Portugal doctor trio (Telmo, Vitor Pais, Pedro Santos) | Current-shape URL `coverageState` via `inspect_urls` | Coverage flips to "Submitted and indexed" / PASS and legacy URL impressions migrate to current URL | Coverage still stale past 2026-09-01 with no recrawl progress | ~2026-09-01 (existing §6 cadence) |
 | Spain 3 vascular/phlebology services | Property-wide Spanish-query GSC demand | New Spanish-query impressions appear property-wide for vascular/flebología/linfología stems | n/a — no SEO-side check needed unless demand appears | Not scheduled — no signal to watch for |
 | Spain medicina estética service | n/a — closed as SERP/business-model wall, not a content-completion watch item | n/a | n/a | Not scheduled |
@@ -7899,14 +7906,18 @@ working day, not a restatement of an earlier audit.
 
 | # | Defect | Verified state, 2026-09-03 | Evidence |
 | --- | --- | --- | --- |
-| 1 | Country name rendered in English on `/legal` and `/book` for non-EN locales | **Fixed in code only, not deployed.** `/spain/es/legal` still serves `<title>Información legal. · Spain · Global Health</title>`; `/romania/ro/legal` still serves `· Romania ·`. | live `curl`, both URLs |
+| 1 | Country name rendered in English on `/legal` and `/book` for non-EN locales | **CLOSED 2026-09-04 — deployed and verified live (§42).** `/spain/es/legal` serves `· España ·`, `/romania/ro/legal` serves `· România ·`, `/brazil/pt/legal/refund-policy` serves `· Brasil ·`. Index and document sub-pages shipped together, so there is no split spelling. | live `curl`, three URLs, 2026-09-04 |
 | 2 | Romania service pages carry no FAQ | **Open.** `medic-online-romania` and `a-doua-opinie-medicala` both return zero `FAQPage` blocks in served HTML. | live `curl \| grep -c FAQPage` = 0 on both |
-| 3 | Sitemap URL count disagrees with this ledger | **Open.** Live `sitemap.xml` contains **2,146** `<loc>` entries. §17 and §23.2 of this file both still assert 1,932. | live sitemap, `grep -c '<loc>'` |
-| 4 | Spain, Romania and Brazil have no clinical-approval gate | **Open.** Only two gates exist in the repository: `backend/src/content/portugal-clinical-approval.ts` and `backend/scripts/lib/czechia-clinical-approval.ts`. There is no ES/RO/BR equivalent. | `find . -name '*clinical-approval*'` |
+| 3 | Sitemap URL count disagrees with this ledger | **CLOSED 2026-09-04 — the ledger was corrected on 2026-09-03 (`e93bde31`) and re-verified today (§42).** §3 carries 2,146; the remaining 1,932 mention in §23.2 is explicitly labelled as a dated 2026-08-16 figure. Live re-count 2026-09-04: **2,146**. | live sitemap, `grep -c '<loc>'`, 2026-09-04 |
+| 4 | Spain, Romania and Brazil have no clinical-approval gate | **Open.** Only two gates exist in the repository: `backend/src/content/portugal-clinical-approval.ts` and `backend/scripts/lib/czechia-clinical-approval.ts`. There is no ES/RO/BR equivalent. **Widened 2026-09-05 (§43): those two gates are script-time only, so the generic admin routes bypass them as well — enforcement belongs at the mutation boundary, not in a per-market validator.** | `find . -name '*clinical-approval*'` |
 
 Defect 1 is the only one with a code fix. It sits in commit `30b239ae` on `Dev-hassaan`,
 together with `38089b2d` and `1bddd990`, all unpushed and undeployed. The fix
 takes effect only after push and deploy.
+
+> **Superseded 2026-09-04 (§42.2).** All four commits — `30b239ae`, `e5dbdfc1`,
+> `38089b2d`, `1bddd990` — are on `origin/main` and deployed. Defect 1 is closed and
+> verified live. The paragraph above is the state as it stood on 2026-09-03.
 
 > **Defect 1 was only half fixed when this was written; completed in `e5dbdfc1`.**
 > `30b239ae` corrected the `/legal` index and `/book`, but `legal/[type]/page.tsx` —
@@ -7995,3 +8006,293 @@ Two read-only inventory scripts were added to make this state reproducible:
 `backend/scripts/report-unpublished-content.ts` (what exists but is not publicly live,
 per country) and `backend/scripts/report-editorial-draft-state.ts`. Both open no write
 and run no transaction.
+
+---
+
+## 42. SIX-MARKET-AUDIT-001 — read-only audit, ledger reconciliation and a P0 measurement defect (2026-09-04)
+
+**Mode: read-only investigation plus documentation reconciliation.** No SEO change was
+implemented, no content published, no production or CMS record modified, no country
+artifact created. One repository file changed: `frontend/.env.example`, which was
+propagating the wrong GA4 measurement id (see 42.1). Full evidence:
+[`docs/audits/seo/six-market-seo-audit-2026-09-04.md`](../audits/seo/six-market-seo-audit-2026-09-04.md).
+
+Zero OpenSEO credits consumed — every call was GSC-, URL-Inspection- or GA4-backed.
+Balance 12,496 before and after.
+
+### 42.1 `SEO-MEASURE-001` — GA4 has been recording into an unread property since 2026-08-02. **P0**
+
+**Status: OPEN — BLOCKED ON AN OWNER ACTION OUTSIDE THIS REPOSITORY.**
+
+Production serves GA4 measurement id `G-4PPGECG12X`, read directly from the deployed
+client bundle. GA4 property `547083375` — the property named in `CLAUDE.md`, in the
+handover, and in all three country measurement plans — has exactly one web stream, and
+its measurement id is `G-SP48D9LJJ5`. They are different properties.
+
+Established from git, not inferred:
+
+| When | Commit | What happened |
+| --- | --- | --- |
+| 2026-07-25 | `7f553148` | GA4 shipped with `const GA_MEASUREMENT_ID = "G-SP48D9LJJ5"`. Property `547083375`'s stream was created the same day and began receiving data |
+| 2026-07-28 | `80bae092` | Moved the id onto `NEXT_PUBLIC_GA_MEASUREMENT_ID`. Its own message says *"the hardcoded G-SP48D9LJJ5 is gone"* — and the `.env.example` line added in the same diff reads `G-4PPGECG12X`. The Railway build variable was set from that example |
+| 2026-08-02 | — | Last day property `547083375` received any data |
+| 2026-08-03 | `0e1c2ff7` | Fixed the Docker build so the ids reach the build environment — locking the wrong id in |
+
+Measured today, property `547083375`, `dataState` complete:
+
+- `traffic_acquisition` by channel group, 2026-08-05 → 2026-09-01: **0 rows**.
+- `organic_landing_pages`, same window: **0 rows**.
+- `key_events`, same window, all channels: **0 rows**.
+- `organic_overview`, 2026-03-01 → 2026-09-01: **24 sessions total**, present in
+  exactly two ISO weeks (2026-W30: 6; 2026-W31: 18) and nothing after.
+
+Search Console over the same 28-day window recorded **861 clicks / 60,058 impressions**.
+
+**This retires an existing reading, and that is the important part.** The "24 sessions"
+that the Ireland package and the Czechia `README.md` each recorded as *sparse GA4
+coverage* is not a thin sample of a working property. It is the entire lifetime of a
+property that stopped collecting a month ago. Every conversion figure in this programme
+has been reading zero for a structural reason, and no session noticed.
+
+Second defect found in the same pass: only `purchase` and `begin_booking` are
+registered as key events on `547083375`. **`begin_checkout` never was**, contradicting
+the claim in `CLAUDE.md` and handover §2.3. All three are correctly wired in code
+(`frontend/lib/analytics/track.ts`).
+
+**Consequence for the roadmap.** The 90-day leg of every §27.4 gate — `begin_booking`,
+`begin_checkout`, `purchase`, qualified organic landings — is unreadable, and remains
+so until a corrected build is deployed **plus** a fresh measurement window accrues from
+that date. The 30- and 60-day legs are GSC-only and are unaffected.
+
+**Fix, two parts:**
+
+1. **Done in this pass.** `frontend/.env.example` now documents `G-SP48D9LJJ5` with the
+   incident recorded inline, so the wrong id stops propagating from the example file.
+2. **Owner, not resolvable from this repository.** Set
+   `NEXT_PUBLIC_GA_MEASUREMENT_ID=G-SP48D9LJJ5` on the Railway **frontend** service. It
+   is a *build* variable — Next inlines `NEXT_PUBLIC_*` at build time — so this needs a
+   redeploy, not a restart. Register `begin_checkout` as a key event. Before switching,
+   check GA4 admin for a property behind `G-4PPGECG12X`: a month of real traffic is
+   sitting somewhere and is worth exporting first.
+
+**Validation:** `get_google_analytics_traffic_acquisition` returns non-zero sessions for
+a 7-day window after the redeploy, and `get_google_analytics_key_events` returns
+`begin_booking` rows.
+
+### 42.2 Closed by this pass — verified against live production
+
+| Item | Prior state in this ledger | Verified 2026-09-04 |
+| --- | --- | --- |
+| §41.1 defect 1 — English country names on `/legal` and `/book` | "Fixed in code only, not deployed" | **CLOSED.** `/spain/es/legal` serves `· España ·`, `/romania/ro/legal` `· România ·`, `/brazil/pt/legal/refund-policy` `· Brasil ·`. `30b239ae` and `e5dbdfc1` are both on `origin/main` and deployed |
+| §41.1 defect 3 — stale sitemap count | "Open" | **CLOSED.** Corrected in `e93bde31` on 2026-09-03; live re-count today is **2,146**, matching §3 |
+| §3 robots.txt row | claimed "auth routes" were disallowed | **CORRECTED in place.** Live robots.txt disallows `/admin`, `/admin/*`, `/account/*` and `/api/` only; auth routes are held out by `noindex`, as the utility-route row already said |
+| Six Portugal tool pages | `seo-production-status-2026-09-04.md` §2.1 said "not yet on `main`, so not deployed" | **LIVE.** `82a054d0` is on `origin/main`; `/portugal/pt/tools/osteoporosis-risk-checker` serves the 57-character title. The status sheet has been corrected and the block moved into its §1 |
+| Handover §3 "all 364 rules" | 364 | **CORRECTED to 276**, matching §3 and `next.config.ts` |
+| §19.5.1 / §19.13 — four Spain vascular/aesthetic services | "correctly noindexed", "not indexed" | **Superseded pointer added.** §5 `SEO-SVC-001` already closed these on 2026-08-19; all four now serve 200, `index, follow`, self-canonical, are sitemapped and two draw impressions. The historical analysis is left intact |
+
+### 42.3 Dated gate readings taken today
+
+| Gate | Due | Reading, 2026-09-04 | Disposition |
+| --- | --- | --- | --- |
+| Brazil Sarmento recrawl (§21.10) | **2026-09-04** | `/brazil/pt/doctors/dr-renato-sarmento`: still `Excluded by 'noindex'`, last crawl **2026-08-04** — before the 2026-08-08 fix | **EXTEND, do not escalate.** Not re-evaluated, so nothing has been tested. This is extension **2** of the permitted 3 |
+| Romania doctor trio (§21.10) | 2026-09-06 | Palaga 2026-08-03, Brînduș 2026-08-01, **Bica 2026-07-20** — all pre-fix, all still `Excluded by 'noindex'`. Read two days early; judgement deferred to 09-06 | Extend on 09-06 |
+| Spain dermatología (§19.16) | 2026-09-08 | `/spain/es/services/dermatologia-especialista-online` is **PASS / Submitted and indexed** but last crawled **2026-07-19** — before the 2026-08-12 fix (`770ee012`) it is meant to measure | **RE-ARMED.** Reading it on 09-08 would measure the pre-fix page and record a false confirmation of the SERP wall. Re-arm to 28 complete days after the crawl date first advances past 2026-08-12. §19.16 amended in place |
+
+**Pattern worth naming.** Five ES/RO/BR deep pages were inspected and every one carries
+a crawl date 31–47 days old, all predating their fix. Portugal's trio flipped to
+indexed once recrawled, so the backfill demonstrably works; the constraint is crawl
+budget on the three smallest markets. If `SEO-DOC-006` extends again at its 2026-09-24
+review, that is the second consecutive PARTIAL and the question stops being doctor
+indexability and becomes crawl budget, per that row's own rule.
+
+### 42.4 Measurement gates registered late
+
+Three changes deployed in the last 48 hours with no gate. Registering them here closes
+the recurrence the 2026-09-02 batch review flagged as its §3.1 highest-impact finding.
+
+| Change | Deployed | 30-day read | Metric |
+| --- | --- | --- | --- |
+| Portugal — 11 doctor meta-description trims (191–220 → 124–146 chars) | 2026-09-03 | **2026-10-08** | CTR at held position, per URL |
+| Portugal — 6 tool-page title/description rewrites (super-admin override) | 2026-09-04 | **2026-10-09** | CTR on the tool cluster |
+| Global — localised country names on `/legal` and `/book` | 2026-09-04 | **2026-10-09** | CTR on legal routes in non-EN locales. Low volume; light gate |
+
+### 42.5 New findings carried forward, not actioned
+
+| ID | Scope | Finding | Severity |
+| --- | --- | --- | --- |
+| `SEO-META-002` | ES/RO/BR | Meta descriptions over the ~160-char budget on the commercial surface: **Spain 37 of 37, Romania 20 of 20, Brazil 19 of 19**, against Ireland 4 of 44, Portugal 4 of 39, Czechia 3 of 20. The trim batch that ran for the mature three has never run for these. Spain's two best converters (`dr-alfredo-del-valle` 13.6% CTR at position 4.7; `dr-tomas-ruiz-palacios` 29.7% at 3.1) both serve truncated snippets. **Blocked by the missing ES/RO/BR approval gate** (§41.1 defect 4) | P1 |
+| `SEO-SPAIN-002` | Spain | `/spain/es/blog/baja-laboral-por-ansiedad-como-funciona` ran 28–82 impressions/day from 2026-08-14, then **0 on each of 08-29, 08-30, 08-31 and 09-01**, while sitewide impressions held. Page is live, indexed, self-canonical, unchanged. Not a technical defect. Separately: its whole named query set is Spanish **state** sick-leave intent — the instrument the country FAQ programme explicitly says is not ours to issue. Re-check the daily series **2026-09-11**; do not rewrite the page, and do not scale the cluster without a commercial answer for that searcher | P1 |
+| `SEO-BRAZIL-002` | Brazil | A real cluster the ledger does not record: `solicitação de exames` holds positions 4–8 across four URLs (PT service 5.5, PT blog 7.8, EN blog 4.4, EN service 5.6). Action is a consolidation decision plus internal links, not new content. Also: `/brazil/pt` `<title>` reads "Registados" (pt-PT) on a `pt_BR` page — should be "Registrados" | P2 |
+| `SEO-TEST-001` | Global | Core-page SEO unit tests exist for Ireland and Czechia only. The localisation regression behind §41.1 defect 1 reached production in four markets and is exactly what such a test catches. Generalise the Czechia test into a table-driven six-market test rather than adding four copies | P2 |
+| `SEO-SCHEMA-003` | Global | 31 sitemapped legal document sub-pages emit no `BreadcrumbList`, uniformly across all six markets; their `/legal` index pages do | P3 |
+
+### 42.6 Verified clean — do not re-audit without new evidence
+
+A 410-URL Googlebot-UA crawl of **every** primary-locale sitemap URL (Ireland 107,
+Czechia 50, Portugal 89, Spain 67, Romania 51, Brazil 46) returned **410/410** HTTP 200,
+`index, follow`, self-referential canonical, exactly one `<h1>` and an `og:image`. Zero
+exceptions. Alongside that:
+
+- hreflang locale-eligibility gating works as designed — partial clusters appear only on
+  locale-gated FAQ, legal and medical-disclaimer URLs.
+- Brazil's three-locale configuration is intentional (`frontend/data/countries.ts:125`)
+  and its retired `cs`/`de`/`ro` locales one-hop 308 to `pt`. GSC rows for those paths
+  are redirect-source attribution lag, not live duplicates.
+- FAQ schema is bound to visible FAQ content
+  (`services/[serviceSlug]/page.tsx:475`); no fabricated structured data anywhere.
+- The `seo-live-urls` CI job is **green** on `main`. Five other CI jobs are red
+  (Semgrep, Backend Tests, Typecheck & Lint, OSV-Scanner, Trivy) — outside SEO scope,
+  but they are red.
+
+### 42.7 One finding raised and withdrawn the same day
+
+An earlier draft of the audit claimed the editorial cohort's best ES/RO/BR pages had no
+internal commercial path, on the evidence that GSC URL Inspection's `referringUrls`
+listed only `sitemap.xml` for the Romanian post. **That was wrong.** One `curl` per page
+shows the linking is present, live and reciprocal in all three markets:
+`scrisoare-medicala` ↔ `trimiteri-si-investigatii`, `baja-laboral-por-ansiedad` ↔
+`justificante-medico-online`, `solicitacao-de-exames-laboratoriais-online` ↔
+`solicitacao-exames-online`, each via `post.ctaService`
+(`frontend/lib/content/blog-post-page.tsx:245`), plus the blog index.
+
+`referringUrls` is a **sample** of link sources Google has recorded, not an
+internal-link inventory, and for a recently discovered page it commonly returns only the
+sitemap. This is the eighth instance of the corpus-assembly failure catalogued in the
+handover — an instrument run correctly over a corpus assembled by assumption rather than
+observation. Recorded here because the failure mode keeps recurring, and because a
+half-day of linking work was very nearly spent re-adding links that already exist.
+
+### 42.8 Next batch
+
+1. **`SEO-MEASURE-001`** (42.1) — owner sets the Railway build variable and redeploys;
+   registers `begin_checkout`. Everything downstream of the 90-day gates waits on this.
+2. **ES/RO/BR clinical-approval gates** — §41.1 defect 4, still the substantial item. It
+   gates `SEO-META-002` and the Romania FAQ work. Spain first: it has 13 clinicians,
+   the strongest demand growth of the three, and the clearest first batch.
+3. **Hold everything else** to its dated gate. No content batch is justified before
+   step 2, and no conversion conclusion is available before step 1.
+
+**NO SEO IMPLEMENTATION / NO PRODUCTION WRITE / NO CMS CHANGE IN THIS PASS.**
+
+---
+
+## 43. ES-CLINICAL-GATE-000 — clinical-approval enforcement gap, investigation only (2026-09-05)
+
+**Mode: read-only investigation. No gate was built, no content published, no register
+created, no production or CMS write.** §41.1 defect 4 stays **open** for all three
+markets, and §42.8 step 2 is unchanged. This section records what a trace of the write
+paths established, so the next agent does not re-derive it.
+
+### 43.1 No Spain guarded writer exists
+
+The Portugal and Czechia gates are enforced by being called from purpose-built batch
+scripts. Spain has no equivalent script, so there is nothing for a Spain gate to be
+wired into — building the validator is the smaller half of the job, and on its own it
+enforces nothing.
+
+Gated writers in the repository, all Portugal or Czechia:
+`scripts/patch-portugal-seo-metadata.ts`,
+`scripts/patch-czechia-page-content-seo-drafts.ts`,
+`scripts/patch-czechia-profile-blog-tool-seo-drafts.ts`,
+`scripts/patch-czechia-seo-service-drafts.ts`.
+
+Spain paths that do write clinical SEO fields, all ungated, none of them a writer
+`SEO-META-002` could use:
+
+| Path | Writes | State |
+| --- | --- | --- |
+| `scripts/import-spain-service-content.ts` | 22 ES services: `seoTitle`, `seoDescription`, hero and detail body HTML, FAQs | July 2026 one-off importer; its output is live (24 ES service URLs sitemapped). Create-only, `isActive: false` |
+| `scripts/import-spain-service-links.ts` | `ServiceLink` callouts | Link map, no clinical copy |
+| `scripts/import-spain-disclaimer.ts` | Spain medical disclaimer, `isPublished: false` | Held on AEPD registration, per its own header |
+| `scripts/applied/patch-spain-doctors-datasheet.ts`, `patch-spain-doctors-content.ts`, `patch-spain-vascular-aesthetic-services.ts` | Doctor bios, credentials, service copy | `scripts/applied/` = already run against production, kept only as a record |
+
+### 43.2 Spain remains ungated — the live surface, verified 2026-09-05
+
+Read from the live sitemap and live URLs, not from an earlier audit:
+
+| Reading | Value |
+| --- | --- |
+| `/spain/es` URLs in the live sitemap | **67** (agrees with §42.6) |
+| of which doctor profiles | **13** |
+| of which service pages | 24 |
+| of which blog posts | 5 |
+| Spain approval records of any kind | **0** |
+
+All 13 doctor profiles are **live-unreviewed debt**: published, indexable, asserting
+professional registrations with no approval record behind them. Spot-checked live
+today — `/spain/es/doctors/dr-alfredo-del-valle` serves "registrado en CGCOM (nº
+282885136)" and `/spain/es/doctors/dr-tomas-ruiz-palacios` serves "Psicólogo General
+Sanitario (nº MUO5691)", both inside the meta description `SEO-META-002` proposes to
+trim.
+
+`backend/scripts/data/spain-doctors-datasheet.ts` holds 14 profiles.
+`dr-irene-galve-moros` is the fourteenth and is **not live** — 404, correctly absent
+from the sitemap. The debt is 13 profiles, not 14.
+
+### 43.3 The generic admin routes bypass the Portugal and Czechia gates too
+
+This is the finding that changes the shape of the work. Both existing gates are
+**script-time** controls: they guard one batch pathway. The live CMS routes write the
+same fields for any country, behind `verifyAdminAccess` — an authorization check, not
+a clinical one — and consult no register:
+
+| Route | Field surface |
+| --- | --- |
+| `PATCH /api/admin/doctors/:doctorId/markets/:countryId` (`admin-doctor-markets.route.ts`) | **Per-market doctor `seoTitle` / `seoDescription` — the per-country doctor copy a clinical gate is most needed for** |
+| `admin-doctors.route.ts` | Base doctor `seoTitle` / `seoDescription` |
+| `admin-services.route.ts` | Service `seoTitle` / `seoDescription` |
+| `admin-page-content.route.ts`, `admin-blog.route.ts`, `admin-health-tests.route.ts` | Page, blog and health-test SEO fields |
+
+So Portugal and Czechia are **not** as covered as §41.1 defect 4 implies: their
+registers bind the scripted batches and nothing else. Anyone editing the same copy
+through the admin UI writes it unreviewed.
+
+### 43.4 A gate has to sit at the mutation boundary
+
+The consequence of 43.1 and 43.3: adding a per-market validator module does not close
+defect 4 for that market. Enforcement is the deliverable, and it has to be at the
+point of write — the service or transaction every path funnels through — not only in
+a batch script that one of several writers happens to call. A validator that nothing
+calls prevents nothing, and a validator called by only one of six writers prevents
+one-sixth.
+
+Scoping that route-layer check is a larger piece of work than the per-market gates
+this ledger has been budgeting for, and it should be scoped before more per-market
+validators are written.
+
+### 43.5 Spain's remaining dependencies, none of which are code
+
+Even with enforcement in place, Spain cannot run a content batch until:
+
+1. **Authentic registers.** `seo/spain/clinical-review-register.csv` and
+   `seo/spain/doctor-profile-fact-register.csv` do not exist. §41.3 stands: Spain has
+   a README stub and no register, brief or draft. Every doctor row needs its CGCOM or
+   COP registration checked against the official directory before any
+   `verification_status` may read `verified` — that check is what caught
+   `beatriz-carvalho` in Portugal (§41.2) and it is not a formality. **No empty
+   register was created and no approval was recorded in this pass.**
+2. **A named Spain-registered clinician reviewer**, with a doctor id. None is
+   nominated, and none was invented.
+3. **A review-age policy.** No document in this repository sets how long a clinical
+   review stays valid. Portugal and Czechia both reject a future-dated review but
+   neither expires an old one, so an approval recorded once currently holds forever.
+   Someone has to choose the window before a gate can enforce staleness at all.
+
+`SEO-META-002` remains blocked. Romania and Brazil are unchanged.
+
+### 43.6 One repair outside all of this
+
+`backend/src/content/portugal-seo-remaining-drafts.test.ts` pinned
+`now = 2026-09-02T00:00:00Z`, but the 2026-09-03 snippet-trim batch (§41.2, §42.4)
+re-approved the eleven Portugal doctor profiles at `2026-09-03T17:59:00+01:00`. The
+Portugal gate correctly rejected that as future-dated against the stale pinned clock,
+so the test — not the register — was wrong.
+
+The register was **not** edited: all 16 `approved_sha256` values still match the
+completion matrix exactly. The test now pins both review sessions by name and asserts
+the doctor rows carry the snippet-trim approval while the blog, landing and
+page-content rows still carry the phase-two one. That failure alone is enough to have
+kept the `Backend Tests` CI job red (§42.6); it was not checked whether it is the only
+cause.
+
+**NO GATE BUILT / NO CONTENT PUBLISHED / NO PRODUCTION WRITE / NO CMS CHANGE IN THIS PASS.**
