@@ -38,6 +38,17 @@ export interface WsdlSummary {
   interfaceVersion: string | null;
   /** Other WSDL/XSD documents this one pulls in — usually where the types live. */
   imports: string[];
+  /**
+   * The same imports rewritten into paths WE can actually fetch.
+   *
+   * SÚKL point their imports at internal hostnames — CUER's types live at
+   * `https://T-NERP-GW01/soap/CuerSoapService.asmx?xsd=cuer.xsd`, which does
+   * not resolve from outside. But the public proxy serves those documents off
+   * the service root by query string, exactly as it serves `/?wsdl` while the
+   * published soap:address points somewhere unreachable. So the fetchable form
+   * is the query alone, hung off the root.
+   */
+  importPaths: string[];
   byteLength: number;
 }
 
@@ -59,6 +70,11 @@ export function summariseWsdl(xml: string): WsdlSummary {
   }
 
   const ns = Object.values(namespaces);
+  const imports = all(
+    /<(?:\w+:)?(?:import|include)[^>]*\b(?:location|schemaLocation)\s*=\s*"([^"]+)"/gi,
+    xml,
+  );
+
   const soapVersions: Array<"1.1" | "1.2"> = [];
   // Order matters for the reader: 1.1 first because that is what the transport
   // sends (text/xml + a SOAPAction header).
@@ -90,10 +106,10 @@ export function summariseWsdl(xml: string): WsdlSummary {
     operations: all(/<(?:\w+:)?operation[^>]*\bname\s*=\s*"([^"]+)"/gi, xml),
     soapVersions,
     interfaceVersion,
-    imports: all(
-      /<(?:\w+:)?(?:import|include)[^>]*\b(?:location|schemaLocation)\s*=\s*"([^"]+)"/gi,
-      xml,
-    ),
+    imports,
+    importPaths: imports
+      .map(toFetchableImportPath)
+      .filter((value): value is string => value !== null),
     byteLength: Buffer.byteLength(xml),
   };
 }
@@ -114,4 +130,33 @@ export function addressToPath(address: string, configuredHostUrl: string): strin
   } catch {
     return null;
   }
+}
+
+
+/**
+ * Turn an import/schemaLocation URL into a path this integration can fetch.
+ *
+ * Returns null when nothing safe can be derived, rather than guessing: a wrong
+ * path here would point the facility's client certificate at an arbitrary
+ * location, which is the one thing suklPathSchema exists to prevent.
+ */
+export function toFetchableImportPath(importUrl: string): string | null {
+  const raw = importUrl.trim();
+  if (!raw) return null;
+
+  const q = raw.indexOf("?");
+  if (q >= 0) {
+    // The query is what selects the document (?xsd=cuer.xsd). The host and
+    // path in front of it are SÚKL's internal ones and are discarded.
+    const query = raw.slice(q + 1);
+    if (!query || /[^A-Za-z0-9._~=&%+-]/.test(query)) return null;
+    return `/?${query}`;
+  }
+
+  // No query: only a relative reference is safe. Anything with a scheme or an
+  // authority names a host we must not redirect the certificate to.
+  if (/^[a-z][a-z0-9+.-]*:/i.test(raw) || raw.startsWith("//")) return null;
+  const rel = raw.replace(/^\/+/, "");
+  if (!rel || !/^[A-Za-z0-9._~/-]+$/.test(rel)) return null;
+  return `/${rel}`;
 }

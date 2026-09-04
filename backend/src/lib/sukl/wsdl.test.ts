@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { addressToPath, summariseWsdl } from "./wsdl.js";
+import { addressToPath, summariseWsdl,
+  toFetchableImportPath,
+} from "./wsdl.js";
 
 /**
  * The WSDL reader is a diagnostic, so these tests pin the two things a human
@@ -107,4 +109,27 @@ test("addressToPath refuses to rewrite an address on a different host", () => {
     null,
   );
   assert.equal(addressToPath("not a url", "https://h.test"), null);
+});
+
+test("an import URL becomes a path we can actually fetch", () => {
+  // CUER's real import, read 2026-09-05. T-NERP-GW01 is an internal hostname
+  // that does not resolve from outside, but the public proxy serves the same
+  // document off the service root by query string — exactly as it serves
+  // /?wsdl while soap:address points somewhere unreachable.
+  assert.equal(
+    toFetchableImportPath(
+      "https://T-NERP-GW01/soap/CuerSoapService.asmx?xsd=cuer.xsd",
+    ),
+    "/?xsd=cuer.xsd",
+  );
+  assert.equal(toFetchableImportPath("CommonSchema.xsd"), "/CommonSchema.xsd");
+});
+
+test("nothing that could redirect the client certificate is derivable", () => {
+  // The facility certificate is presented on this fetch, so a host we did not
+  // configure must yield null rather than a guess.
+  assert.equal(toFetchableImportPath("https://evil.example/x.xsd"), null);
+  assert.equal(toFetchableImportPath("//evil.example/x.xsd"), null);
+  assert.equal(toFetchableImportPath(""), null);
+  assert.equal(toFetchableImportPath("   "), null);
 });

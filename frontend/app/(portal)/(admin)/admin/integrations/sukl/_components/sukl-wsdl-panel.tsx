@@ -35,6 +35,7 @@ type WsdlResult = {
     soapVersions: string[];
     interfaceVersion: string | null;
     imports: string[];
+    importPaths: string[];
     byteLength: number;
   };
   suggestedPaths: Array<{ address: string; path: string | null }>;
@@ -55,13 +56,15 @@ export function SuklWsdlPanel({ configured }: { configured: boolean }) {
   const [result, setResult] = useState<WsdlResult | null>(null);
   const [showRaw, setShowRaw] = useState(false);
 
-  async function run() {
+  async function run(pathOverride?: string) {
+    const target = pathOverride ?? path;
+    if (pathOverride) setPath(pathOverride);
     setBusy(true);
     setError(null);
     setResult(null);
     setShowRaw(false);
     try {
-      const qs = new URLSearchParams({ service, path });
+      const qs = new URLSearchParams({ service, path: target });
       const res = await fetch(`/api/admin/sukl/wsdl?${qs}`);
       const json = (await res.json().catch(() => null)) as
         | { ok?: boolean; message?: string; data?: WsdlResult }
@@ -123,7 +126,7 @@ export function SuklWsdlPanel({ configured }: { configured: boolean }) {
             style={{ minWidth: 260 }}
           />
         </label>
-        <Btn onClick={run} disabled={busy || !configured} variant="primary" size="sm">
+        <Btn onClick={() => void run()} disabled={busy || !configured} variant="primary" size="sm">
           {busy ? "Fetching…" : "Fetch WSDL"}
         </Btn>
       </div>
@@ -198,6 +201,26 @@ export function SuklWsdlPanel({ configured }: { configured: boolean }) {
               {s.imports.length ? (
                 <Line label="Imports">
                   <span className="break-all">{s.imports.join(", ")}</span>
+                  {s.importPaths.length ? (
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                      {s.importPaths.map((ip) => (
+                        <Btn
+                          key={ip}
+                          onClick={() => void run(ip)}
+                          disabled={busy}
+                          variant="secondary"
+                          size="sm"
+                        >
+                          Fetch <code>{ip}</code>
+                        </Btn>
+                      ))}
+                      <span className="text-xs" style={{ color: "var(--portal-muted)" }}>
+                        The import points at an internal SÚKL hostname that does not resolve
+                        from outside; this fetches the same document from the service root,
+                        which is where the types actually live.
+                      </span>
+                    </div>
+                  ) : null}
                 </Line>
               ) : null}
             </dl>
