@@ -41,13 +41,11 @@ covers all 50 in-scope URLs and is validated against all 481 keyword-owner rows.
 The exact live technical inputs are preserved in
 [`raw/live-page-seo-snapshot-2026-09-01.csv`](raw/live-page-seo-snapshot-2026-09-01.csv).
 
-The 31 eligible clinical recommendations now have source-pinned guarded payloads
-for PageContent, services, doctor/profile metadata, one blog and seven tools under
-`backend/src/content/`, with dry-run-first patchers under `backend/scripts/`.
-`clinical-review-register.csv` is the promotion authority: every real apply entry
-point requires an approved matching row, exact content hash and dated reviewer
-identity; English targets additionally require native review. All register rows are
-still pending, so these remain repository artifacts rather than production state.
+The clinical register now records 31 named approvals, three exact-hash super-admin
+overrides and three pending governance items. The matrix records 48 live pages and two reviewed-no-change pages.
+The remaining pending evidence is limited to the eNeschopenka article, the sick-pay
+article and the site-wide Czech forms/analytics privacy scope. The register remains
+the promotion authority, and English targets still require native review.
 
 Run the lightweight integrity check after editing any generated CSV:
 
@@ -61,3 +59,17 @@ node seo/czechia/validate-artifacts.mjs
 - GA4 organic conversion data is sparse: the overview has 24 sitewide sessions, while Czechia organic landing pages have 4 sessions and no key events in the final-data refresh. A Czechia-wide unique-user count is unavailable from the landing-page rows. GSC is the primary performance baseline.
 - The 100-page technical crawl followed cross-market links into Ireland after the Czech start URL. Its Lighthouse coverage is useful, but its issue totals are not a Czech-only defect count.
 - Backlink exports contain provider anomalies and noisy sources. Every prospect requires manual relevance, editorial, and spam review before outreach.
+
+## How to compare a matrix row against the live page
+
+The matrices record the title as it is **stored**, not as it is **served**.
+`frontend/lib/seo/page-seo.ts` (`compactSearchTitle`) appends ` · Global Health`
+when the result still fits Google's ~60-character budget and drops it when it does
+not, so 40 of the 125 live Czechia and Portugal pages serve a title 16 characters
+longer than their matrix cell. A live title is correct when it equals the recorded
+title either exactly or with that one suffix added. Meta descriptions are served
+verbatim and must match exactly.
+
+Recorded 2026-09-02 by `CZ-PT-BATCH-REVIEW-001` (ledger §38) after an independent
+re-fetch of all 125 matrix URLs; without this rule the comparison reports 40 false
+mismatches.

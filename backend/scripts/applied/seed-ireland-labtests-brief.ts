@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Ireland Lab Tests page — SEO/content brief remediation (July 2026).
  *
@@ -18,25 +19,33 @@
  *     requested.
  *
  *   npx tsx scripts/seed-ireland-labtests-brief.ts          # dry run
- *   npx tsx scripts/seed-ireland-labtests-brief.ts --apply  # write (PROD)
+ *   This historical seed is retired and cannot write to production.
  */
 import "dotenv/config";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 import { prisma } from "../../src/db/prisma.js";
 
-const APPLY = process.argv.includes("--apply");
+const APPLY = false;
 const PAGE_KEY = "HEALTH_TESTS";
 const LOCALE = "EN" as const;
 
+export function assertHistoricalSeedIsDryRun(args: readonly string[]): void {
+  if (args.includes("--apply")) {
+    throw new Error("This production seed is retired; use correct-published-ie-lab-hub-facts-2026-09.ts instead.");
+  }
+}
+
 // ── PageContent EN copy (Randox model) ──
-const HERO_TITLE = "Home Blood Tests Ireland — Randox Lab Kits, Results in Up to 10 Days";
+const HERO_TITLE = "Home Blood Tests Ireland — Randox Lab Kits";
 const HERO_SUBTITLE =
-  "Order a Randox home blood test kit, take your sample at home, and receive your results in up to 10 days. Want a doctor to explain your results? Book a follow-up consultation with an IMC-registered Global Health doctor from €45.";
+  "Order a Randox home blood test kit from €57. Kits are posted to Dublin and every other county; turnaround varies by test, from 2–3 working days to 4–6 weeks after the lab receives your sample. Want a doctor to explain your results? Book a follow-up consultation with an IMC-registered Global Health doctor from €45.";
 const SEO_TITLE = "Home Blood Tests Ireland — Randox Lab Kits | Global Health";
 const SEO_DESCRIPTION =
-  "Order a Randox home blood test kit in Ireland from €89. Full Blood Count, Thyroid Function and more. Take your sample at home and receive results in up to 10 days. Book a follow-up with an IMC-registered doctor from €45.";
+  "Order Randox home blood test kits in Dublin or anywhere in Ireland from €57. Turnaround varies by test, from 2–3 working days to 4–6 weeks.";
 
 const INTRO =
-  "Global Health offers Randox home blood test kits in Ireland — clinical-grade tests you take yourself at home. Order your kit, collect your sample following the instructions provided, and post it to the Randox laboratory in the freepost envelope included. Randox delivers your results digitally in up to 10 days. If you would like a doctor to talk you through what your results mean, you can book an optional follow-up consultation with an IMC-registered Global Health doctor from €45.";
+  "Global Health offers Randox home blood test kits in Ireland from €57. Order your kit, collect your sample following the instructions, and post it to the Randox laboratory in the included freepost envelope. Turnaround varies by test, from 2–3 working days to 4–6 weeks after the laboratory receives your sample. If you would like a doctor to explain your results, book an optional follow-up consultation with an IMC-registered Global Health doctor from €45.";
 
 const WHO_FOR_TITLE = "Who these tests are for";
 const WHO_FOR_INTRO = "Our home blood tests may be a good fit if you are looking into:";
@@ -53,7 +62,7 @@ const WHY_CHOOSE_ITEMS = [
   "Order your Randox kit — choose your test and add it to your cart. Your kit is dispatched within 1–2 working days.",
   "Take your sample at home — follow the instructions included in the kit (finger-prick or venous self-collection, depending on the test).",
   "Post your sample to the Randox lab — a freepost return envelope is included in every kit.",
-  "Receive your results — Randox delivers your results digitally in up to 10 days.",
+  "Receive your results — turnaround varies by test, from 2–3 working days to 4–6 weeks after your sample reaches the lab.",
   "Optional — book a follow-up consultation with an IMC-registered Global Health doctor from €45 to review your results and advise on next steps.",
 ];
 
@@ -61,7 +70,7 @@ const FAQ = [
   {
     question: "How does a home blood test kit work?",
     answer:
-      "You order your kit online, take your own sample at home following the step-by-step instructions provided, and post it to the Randox laboratory using the freepost envelope included. Randox analyses your sample and delivers your results digitally in up to 10 days.",
+      "You order your kit online, take your own sample at home following the step-by-step instructions provided, and post it to the Randox laboratory using the included freepost envelope. Randox analyses your sample and delivers your results digitally. Turnaround varies by test, from 2–3 working days to 4–6 weeks after the laboratory receives your sample.",
   },
   {
     question: "Is a venous blood draw difficult to do at home?",
@@ -69,8 +78,9 @@ const FAQ = [
       "The venous self-collection kit is designed for home use and comes with clear instructions. The Full Blood Count is also available as a simpler finger-prick sample. You do not need to visit a clinic.",
   },
   {
-    question: "How long do results take?",
-    answer: "Randox delivers your results digitally in up to 10 days after receiving your sample.",
+    question: "How long do home blood test results take in Ireland?",
+    answer:
+      "Turnaround varies by test. Current estimates range from 2–3 working days to 4–6 weeks after the laboratory receives your sample; check the timeline shown on the individual test page.",
   },
   {
     question: "Who analyses my blood sample?",
@@ -83,9 +93,9 @@ const FAQ = [
       "Your results are delivered to you by Randox. If anything looks abnormal, or you are unsure what your results mean, we recommend booking a follow-up consultation with an IMC-registered Global Health doctor (from €45), who can explain your results and advise on next steps. In a medical emergency, call 112 or attend your nearest emergency department.",
   },
   {
-    question: "Is the doctor consultation included in the €89?",
+    question: "Is a doctor consultation included in the home blood test price?",
     answer:
-      "No. The €89 covers the Randox test kit and its laboratory analysis. A doctor review is optional and booked separately as a follow-up consultation with an IMC-registered Global Health doctor, from €45.",
+      "No. The listed test price covers the Randox kit and laboratory analysis. A doctor review is optional and booked separately as a follow-up consultation with an IMC-registered Global Health doctor from €45.",
   },
   {
     question: "Can I get these tests on the HSE?",
@@ -129,6 +139,7 @@ const HEALTH_TESTS: Record<string, { resultsTimeline: string; sampleType: string
 };
 
 async function main(): Promise<void> {
+  assertHistoricalSeedIsDryRun(process.argv.slice(2));
   const ie = await prisma.country.findUnique({ where: { code: "ie" }, select: { id: true } });
   if (!ie) throw new Error("IE country not found");
 
@@ -219,15 +230,16 @@ async function main(): Promise<void> {
   console.log(`\nHealthTest cards — ${APPLY ? "APPLIED" : "DRY RUN"}:`);
   console.table(rows);
 
-  if (!APPLY) console.log("\nRe-run with --apply to write to PROD.");
-  else console.log("\n✅ Applied to PROD. IE non-EN locales still need a translation pass (see header).");
+  console.log("\nHistorical seed is retired; use the guarded correction script for production changes.");
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exitCode = 1;
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) {
+  main()
+    .catch((e) => {
+      console.error(e);
+      process.exitCode = 1;
+    })
+    .finally(async () => {
+      await prisma.$disconnect();
+    });
+}

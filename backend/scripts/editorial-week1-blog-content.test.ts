@@ -86,6 +86,19 @@ test("Romania links routine GP hypertension management to chronic care", () => {
   assert.match(html, /\/services\/boli-cronice-online/);
 });
 
+test("Romania normal-blood-pressure draft follows ESC 2024 thresholds and remains unapproved", () => {
+  const post = RO_TENSIUNE_ARTERIALA_NORMALA.posts[0];
+  const html = renderArticle(post.article);
+
+  assert.match(html, /sub 120\/70/i);
+  assert.doesNotMatch(html, /clar normal[ăa][^.<]*120\/80/i);
+  assert.match(html, /180\/110/);
+  assert.match(html, /30 de minute/i);
+  assert.match(html, /o săptămână/i);
+  assert.doesNotMatch(html, /revizuit clinic de Dr Andreea/i);
+  assert.match(html, /în așteptarea revizuirii clinice/i);
+});
+
 test("Ireland Illness Benefit guidance covers both electronic and paper certificates", () => {
   const expectedRoutes = {
     EN: [/electronically/i, /post the paper certificate/i],

@@ -1,9 +1,18 @@
-import { assertPortugalClinicalApproval } from "./portugal-clinical-approval.js";
+import {
+  assertPortugalClinicalApproval,
+  assertPortugalSuperAdminAttestation,
+  PORTUGAL_SUPER_ADMIN_OVERRIDE_STATUS,
+} from "./portugal-clinical-approval.js";
 import {
   portugalSeoApprovalSha256,
   portugalSeoConfirmationToken,
   type PortugalSeoMetadataDraft,
 } from "./portugal-seo-metadata-drafts.js";
+import {
+  portugalRemainingApprovalSha256,
+  portugalRemainingConfirmationToken,
+  type PortugalSeoRemainingDraft,
+} from "./portugal-seo-remaining-drafts.js";
 
 type PortugalSeoApplyOptions = Readonly<{
   apply: boolean;
@@ -14,14 +23,26 @@ type PortugalSeoApplyOptions = Readonly<{
   confirmation: string | null;
   reviewerDoctorId: string | null;
   reviewedAt: string | null;
-  complianceReviewerId: string | null;
-  complianceReviewedAt: string | null;
-  contentOwnerId: string | null;
-  contentOwnerReviewedAt: string | null;
   databaseUrl: string | undefined;
   confirmationDatabase: string | null;
+  /** Set only by `--super-admin-override`. */
+  superAdminOverride?: boolean;
+  /** Contents of the artifact named by `--attestation`. */
+  superAdminAttestation?: string | null;
   now?: Date;
 }>;
+
+export function portugalSeoDraftApprovalSha256(draft: PortugalSeoMetadataDraft): string {
+  return "assetKind" in draft
+    ? portugalRemainingApprovalSha256(draft as PortugalSeoRemainingDraft)
+    : portugalSeoApprovalSha256(draft);
+}
+
+export function portugalSeoDraftConfirmationToken(draft: PortugalSeoMetadataDraft): string {
+  return "assetKind" in draft
+    ? portugalRemainingConfirmationToken(draft as PortugalSeoRemainingDraft)
+    : portugalSeoConfirmationToken(draft);
+}
 
 export function assertPortugalSeoApplyAuthorized(options: PortugalSeoApplyOptions): ReturnType<typeof assertPortugalClinicalApproval> | null {
   if (!options.apply) return null;
@@ -31,7 +52,8 @@ export function assertPortugalSeoApplyAuthorized(options: PortugalSeoApplyOption
   if (options.draft.targetKind === "tool") {
     throw new Error(`${options.draft.asset} is managed in a static runtime source`);
   }
-  if (options.confirmation !== portugalSeoConfirmationToken(options.draft)) {
+  const expectedConfirmation = portugalSeoDraftConfirmationToken(options.draft);
+  if (options.confirmation !== expectedConfirmation) {
     throw new Error("Portugal SEO confirmation token does not match the selected draft");
   }
 
@@ -45,33 +67,50 @@ export function assertPortugalSeoApplyAuthorized(options: PortugalSeoApplyOption
     throw new Error("Confirmed database identity does not match DATABASE_URL");
   }
 
-  const expectedHash = portugalSeoApprovalSha256(options.draft);
+  const expectedHash = portugalSeoDraftApprovalSha256(options.draft);
   if (options.approvedHash !== expectedHash) {
     throw new Error("Approved SHA-256 does not match the selected Portugal SEO draft");
+  }
+  // A super-admin override is reachable only when the operator passed the
+  // explicit flag AND an attestation artifact. Both are checked here, so a
+  // register status alone can never authorize a write.
+  const overrideRequested = options.superAdminOverride === true;
+  if (overrideRequested && !options.superAdminAttestation) {
+    throw new Error("--super-admin-override requires --attestation=<path to the recorded attestation>");
   }
   const record = assertPortugalClinicalApproval(options.registerCsv, {
     asset: options.draft.asset,
     approvedSha256: expectedHash,
     factRegisterCsv: options.factRegisterCsv,
     now: options.now,
+    allowSuperAdminOverride: overrideRequested,
   });
+  if (record.publish_status === PORTUGAL_SUPER_ADMIN_OVERRIDE_STATUS) {
+    assertPortugalSuperAdminAttestation(options.superAdminAttestation ?? "", {
+      asset: options.draft.asset,
+      approvedSha256: expectedHash,
+    });
+    // An override has no clinician, so demanding reviewer identity here would
+    // ask the operator to supply one that does not exist.
+    if (options.reviewerDoctorId !== null || options.reviewedAt !== null) {
+      throw new Error(
+        "A super-admin override must not be given --reviewer-doctor-id or --reviewed-at — " +
+          "no clinician reviewed this copy.",
+      );
+    }
+    return record;
+  }
+  if (overrideRequested) {
+    throw new Error(
+      `--super-admin-override was passed but ${options.draft.asset} is recorded as ` +
+        `${record.publish_status}. Do not use the flag on a clinically approved row.`,
+    );
+  }
   if (record.reviewer_doctor_id !== options.reviewerDoctorId) {
     throw new Error("Clinical reviewer doctor ID does not match the approval register");
   }
   if (record.reviewed_at.slice(0, 10) !== options.reviewedAt) {
     throw new Error("Clinical review date does not match the approval register");
-  }
-  if (record.compliance_reviewer_id !== options.complianceReviewerId) {
-    throw new Error("Compliance reviewer ID does not match the approval register");
-  }
-  if (record.compliance_reviewed_at.slice(0, 10) !== options.complianceReviewedAt) {
-    throw new Error("Compliance review date does not match the approval register");
-  }
-  if (record.content_owner_id !== options.contentOwnerId) {
-    throw new Error("Content owner ID does not match the approval register");
-  }
-  if (record.content_owner_reviewed_at.slice(0, 10) !== options.contentOwnerReviewedAt) {
-    throw new Error("Content owner review date does not match the approval register");
   }
   return record;
 }
@@ -85,5 +124,8 @@ export function portugalDatabaseIdentity(databaseUrl: string): string {
   if (!url.hostname || !databaseName || databaseName.includes("/")) {
     throw new Error("DATABASE_URL is missing host or database name");
   }
-  return `${url.protocol}//${url.hostname}:${url.port || "5432"}/${databaseName}`;
+  const schema = url.searchParams.get("schema");
+  return `${url.protocol}//${url.hostname}:${url.port || "5432"}/${databaseName}${
+    schema ? `?schema=${encodeURIComponent(schema)}` : ""
+  }`;
 }

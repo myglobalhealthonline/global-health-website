@@ -1,0 +1,19 @@
+{
+  "coupon": {
+    "subject": "Codul tău de reducere Global Health de {discountPercent}%",
+    "title": "O reducere pentru următoarea ta programare",
+    "greetingNamed": "Bună, {name},",
+    "greetingAnon": "Bună,",
+    "personalIntro": "Am creat un cod de reducere special pentru tine.",
+    "generalIntro": "Iată un cod de reducere pe care îl poți folosi la următoarea ta programare Global Health.",
+    "codeLabel": "Codul tău",
+    "discountLine": "{discountPercent}% reducere la programarea ta",
+    "validLine": "Valabil până la {validUntil}",
+    "personalLock": "Acest cod este rezervat pentru {email} — folosește aceeași adresă când faci programarea.",
+    "howTo": "Introdu codul în rezumatul comenzii la finalizare și reducerea se aplică înainte de plată.",
+    "shippingNote": "Reducerea se aplică programării; costurile de livrare nu se reduc.",
+    "cta": "Fă o programare",
+    "signoff": "Echipa Global Health",
+    "footer": "Dacă nu te așteptai la acest e-mail, îl poți ignora."
+  }
+}

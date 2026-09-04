@@ -14,6 +14,7 @@ import {
   MessageBanner,
   bicError,
   ibanError,
+  ibanWarning,
   ibanExample,
   isPending,
   localeLabel,
@@ -153,6 +154,8 @@ export function DoctorMarketForm({
   const [bankIban, setBankIban] = useState("");
   const [bicFieldError, setBicFieldError] = useState<string | null>(null);
   const [ibanFieldError, setIbanFieldError] = useState<string | null>(null);
+  // Advisory only (failed check digits) — never blocks the save.
+  const [ibanFieldWarning, setIbanFieldWarning] = useState<string | null>(null);
 
   const [initialPayoutSnapshot, setInitialPayoutSnapshot] = useState(() =>
     JSON.stringify({ bankAccountHolder: market.bank.accountHolder ?? "", bankBic: market.bank.bic ?? "", bankIban: "" }),
@@ -172,6 +175,8 @@ export function DoctorMarketForm({
     setBankAccountHolder(market.bank.accountHolder ?? "");
     setBankBic(market.bank.bic ?? "");
     setBankIban("");
+    setIbanFieldError(null);
+    setIbanFieldWarning(null);
     setActiveBioLocale(localeTabs.find((l) => l.isDefault)?.code ?? localeTabs[0].code);
     const bioSnapshot: Record<string, string> = {};
     for (const l of localeTabs) bioSnapshot[l.code] = initialBioForLocale(l.code);
@@ -271,6 +276,9 @@ export function DoctorMarketForm({
     const iErr = ibanError(bankIban, strings);
     setBicFieldError(bErr);
     setIbanFieldError(iErr);
+    // Check digits that don't verify are surfaced, not enforced — the doctor
+    // holding the bank statement decides, and a save is never refused for it.
+    setIbanFieldWarning(iErr ? null : ibanWarning(bankIban, strings));
     if (bErr || iErr) return;
 
     const payload: MarketPayoutPatchBody["bank"] = {
@@ -292,7 +300,11 @@ export function DoctorMarketForm({
           return;
         }
         setPayoutMsg({ kind: "success", text: strings.payoutSaved });
+        // The field is cleared on save, so a warning about the value that was
+        // typed no longer refers to anything on screen — clear it with it.
         setBankIban("");
+        setIbanFieldError(null);
+        setIbanFieldWarning(null);
         router.refresh();
       } catch {
         setPayoutMsg({ kind: "error", text: strings.networkErrorRetry });
@@ -485,6 +497,7 @@ export function DoctorMarketForm({
               onChange={(e) => {
                 setBankIban(e.target.value);
                 setIbanFieldError(null);
+                setIbanFieldWarning(null);
               }}
               maxLength={42}
               autoComplete="off"
@@ -498,6 +511,8 @@ export function DoctorMarketForm({
             />
             {ibanFieldError ? (
               <span className="text-xs text-red-600">{ibanFieldError}</span>
+            ) : ibanFieldWarning ? (
+              <span className="text-xs text-amber-700">{ibanFieldWarning}</span>
             ) : (
               <span className="text-xs text-[var(--portal-muted)]">
                 {market.bank.ibanSet ? strings.ibanOnFileHint : strings.ibanNewHint}

@@ -1,0 +1,39 @@
+{
+  "asset": "/czechia/cs/services/kozni-konzultace-praha",
+  "approved_payload_sha256": "c7f821b4f7479c9d42e8d278e921b49fef9d051ee45b2197a942ed040a8dbe2c",
+  "database": {
+    "retrieved_at": "2026-09-02T11:01:01.246Z",
+    "service_id": "cmr85y394002e70ju6x2wqb0h",
+    "service_updated_at": "2026-09-02T10:59:33.531Z",
+    "source_sha256": "c15e5e2e2e007d2cc6f177ef4457c566fda1fe2825e0bd55d4c69628c4467f23",
+    "detail_body_sha256": "1d1a3fabd06b69ef9289c31fefa58faa311f59f4ebed40366c206e2fda9a1c62",
+    "cs_translation_updated_at": "2026-09-02T10:59:33.882Z",
+    "faq_records": [
+      { "id": "cmr85y3gk002f70juijk1cwpx", "sha256": "ccc9fbd21ec227fd34112642ddcc2fc6c1f02e0fead75b6aa1454c4793e52dc4" },
+      { "id": "cmr85y3gk002g70juoihnr73r", "sha256": "91cb27252795eed295f4afc20062400294f2c84264c631edb70322517ccb9b44" },
+      { "id": "cmr85y3gk002h70jugufwixmk", "sha256": "9a1898b0f33cb2451cd3c0e891214cb73ed371d18169353f8423fa5eb001da32" },
+      { "id": "cmr85y3gk002i70ju9c50fovc", "sha256": "2319204c53a75b535b492f6dc9eee7f65c99c1e76d338939bece867bf27ca737" },
+      { "id": "cmr85y3gk002j70juiffreilb", "sha256": "73722b001b24881a9c24f263ea49b8fc55e1546a386d3ce3f480fc98ac8f5120" },
+      { "id": "cmr85y3gk002k70ju62jwsib4", "sha256": "e2274634e55ec4ba7626a7a33e8d3dd214459b4e6fe9dd4b0601dc8f213c9487" }
+    ]
+  },
+  "public": {
+    "retrieved_at": "2026-09-02T11:01:01.248Z",
+    "url": "https://www.myglobalhealth.online/czechia/cs/services/kozni-konzultace-praha",
+    "request_url": "https://www.myglobalhealth.online/czechia/cs/services/kozni-konzultace-praha?readback=20260902-1030",
+    "status": 200,
+    "html_sha256": "9e74b7fbdca98230ffca0ee1b18c03cc49467116aa0b9bc5dd2f65791fddd124",
+    "approved_title_present": true,
+    "approved_h1_present": true,
+    "approved_description_present": true,
+    "approved_body_present": true,
+    "faq_records": [
+      { "id": "cmr85y3gk002f70juijk1cwpx", "question_present": true, "answer_present": true },
+      { "id": "cmr85y3gk002g70juoihnr73r", "question_present": true, "answer_present": true },
+      { "id": "cmr85y3gk002h70jugufwixmk", "question_present": true, "answer_present": true },
+      { "id": "cmr85y3gk002i70ju9c50fovc", "question_present": true, "answer_present": true },
+      { "id": "cmr85y3gk002j70juiffreilb", "question_present": true, "answer_present": true },
+      { "id": "cmr85y3gk002k70ju62jwsib4", "question_present": true, "answer_present": true }
+    ]
+  }
+}

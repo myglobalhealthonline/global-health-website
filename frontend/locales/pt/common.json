@@ -731,7 +731,22 @@
     "shipping": "Envio",
     "total": "Total",
     "trustSecure": "Pagamento seguro com tecnologia Stripe",
-    "trustEncrypted": "Encriptado — dados do cartão nunca guardados"
+    "trustEncrypted": "Encriptado — dados do cartão nunca guardados",
+    "couponLabel": "Código de desconto",
+    "couponPlaceholder": "Introduza o código",
+    "couponApply": "Aplicar",
+    "couponApplying": "A verificar...",
+    "couponRemove": "Remover",
+    "couponApplied": "{code} aplicado",
+    "couponDiscount": "Desconto ({percent}%)",
+    "couponInvalid": "Não é possível usar esse código. Verifique-o e tente novamente.",
+    "couponNotWithBenefit": "Os códigos de desconto não podem ser combinados com um benefício de adesão, empresarial ou de plano.",
+    "couponNotWithInsurance": "Os códigos de desconto não podem ser combinados com seguro ou um cartão de cobertura.",
+    "couponNotAvailableHere": "Os códigos de desconto não estão disponíveis neste país.",
+    "couponBelowMinimum": "Esse código deixa um valor demasiado baixo para ser cobrado.",
+    "couponNeedsEmail": "Introduza primeiro o seu email acima.",
+    "couponExpiredAtCheckout": "O seu código de desconto já não é válido e foi removido. Reveja o total antes de pagar.",
+    "couponNotForThisService": "Esse código não abrange o tipo de consulta no seu carrinho."
   },
   "checkoutStatus": {
     "successTitle": "Pagamento recebido",

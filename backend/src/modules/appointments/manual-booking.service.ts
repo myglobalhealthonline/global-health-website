@@ -1,9 +1,19 @@
 import bcrypt from "bcryptjs";
 import { randomBytes, randomUUID } from "node:crypto";
-import { CartItemKind, PaymentStatus, ServiceKind } from "@prisma/client";
+import { PaymentStatus } from "@prisma/client";
 import type { LocaleCode } from "@prisma/client";
 import type { FastifyRequest } from "fastify";
 import { prisma } from "../../db/prisma.js";
+import { resolveCoupon } from "../coupons/coupon-eligibility.js";
+import { couponCutPerUnit } from "../coupons/coupon-distribution.js";
+import {
+  CouponAndDiscountConflictError,
+  CouponUnavailableError,
+  releaseCouponSlotUnchecked,
+  reserveCouponSlot,
+} from "../coupons/coupon-reserve.service.js";
+import { minimumChargeCents } from "../orders/stripe-minimum-charge.js";
+import { consultationCartKind } from "../orders/consultation-kind.js";
 import { defaultNotificationLocaleForCountry } from "../automation/notification-language.js";
 import { env } from "../../config/env.js";
 import {
@@ -417,6 +427,11 @@ export type CreateManualBookingInput = {
    *  comps the booking: no Stripe session, the order is completed through the
    *  same free-order path a fully-credit cart uses. Null/0 = no discount. */
   discountPercent?: number | null;
+  /** Coupon code the admin typed. Mutually exclusive with `discountPercent` —
+   *  passing both is rejected rather than composed, so the price the admin
+   *  quotes on the phone is the one field they can see. Resolved server-side;
+   *  refused on insurance lines, benefit-priced lines and commission markets. */
+  couponCode?: string | null;
   /** Override `Appointment.consultationType`, which otherwise snapshots the
    *  service name. The follow-up flow passes `"follow-up"` so the doctor /
    *  admin list filters and the reports type breakdown classify it correctly. */
@@ -454,33 +469,14 @@ export type CreateManualBookingResult = {
   amountCents: number;
   discountPercent: number;
   discountCents: number;
+  /** Coupon actually applied, for the admin confirmation banner. Null when the
+   *  booking carried no coupon. Separate from the discount pair above — a
+   *  booking has one or the other, never both. */
+  couponCode: string | null;
+  couponPercent: number;
+  couponDiscountCents: number;
   free: boolean;
 };
-
-/**
- * Stripe rejects a Checkout line below its published per-currency minimum, so a
- * discount landing between zero and this floor would mint a booking whose
- * payment link is dead on arrival. Minor units, keyed by ISO currency; the
- * fallback covers any currency added to a country before this map is updated.
- */
-const STRIPE_MIN_CHARGE_CENTS: Record<string, number> = {
-  EUR: 50,
-  GBP: 30,
-  USD: 50,
-  CHF: 50,
-  CZK: 1500,
-  PLN: 200,
-  RON: 200,
-  HUF: 17_500,
-  SEK: 300,
-  DKK: 250,
-  NOK: 300,
-  BGN: 100,
-};
-
-function minimumChargeCents(currencyCode: string): number {
-  return STRIPE_MIN_CHARGE_CENTS[currencyCode.trim().toUpperCase()] ?? 50;
-}
 
 /** Clamp to a whole 0..100. Anything unusable (NaN, negative, > 100) becomes
  *  "no discount" rather than a surprise price — the route's Zod schema is the
@@ -512,12 +508,6 @@ function parseDateOfBirth(raw: string | null | undefined): Date | null {
   if (!trimmed || /^(null|undefined)$/i.test(trimmed)) return null;
   const parsed = new Date(`${trimmed.slice(0, 10)}T00:00:00.000Z`);
   return Number.isNaN(parsed.getTime()) ? null : parsed;
-}
-
-function consultationCartKind(serviceKind: ServiceKind): CartItemKind {
-  return serviceKind === ServiceKind.SPECIALIST
-    ? CartItemKind.SPECIALIST_CONSULTATION
-    : CartItemKind.GENERAL_CONSULTATION;
 }
 
 export async function createManualBooking(
@@ -914,15 +904,50 @@ export async function createManualBooking(
   // The slot is already HELD at this point, so a rejected discount has to hand
   // it back before throwing or the time is stranded until the HELD sweep runs.
   const discountPercent = normalizeDiscountPercent(input.discountPercent);
+  const currencyCode = service.currencyCode ?? "EUR";
+  const minChargeCents = minimumChargeCents(currencyCode);
+
+  // ── Coupon (§ Coupons) ─────────────────────────────────────────────────────
+  // A coupon and the admin discretionary discount are MUTUALLY EXCLUSIVE. Both
+  // are whole percentages applied to the same resolved price, and composing
+  // them means staff on the phone quoting a number neither field shows. The UI
+  // greys the discount input while a coupon is applied; this is the server's
+  // half of that rule.
+  const couponResult = input.couponCode
+    ? await resolveCoupon({
+        code: input.couponCode,
+        email,
+        countryCode: input.countryCode,
+        hasCoverageLine: Boolean(insuranceCompanyId),
+        hasBenefitLine: membershipLine != null,
+        // One service line, so its kind alone decides whether a scoped coupon
+        // covers this booking.
+        lineKinds: [consultationCartKind(service.kind)],
+      })
+    : null;
+  if (couponResult && !couponResult.ok) {
+    await releaseSlotsToBaseGrid([input.timeSlotId]).catch(() => {});
+    throw new CouponUnavailableError(couponResult.reason);
+  }
+  if (couponResult?.ok && discountPercent > 0) {
+    await releaseSlotsToBaseGrid([input.timeSlotId]).catch(() => {});
+    throw new CouponAndDiscountConflictError();
+  }
+  const couponPercent = couponResult?.coupon.discountPercent ?? 0;
+
   const grossAmountCents = amountCents;
   const discountCents =
     discountPercent > 0 ? Math.round((grossAmountCents * discountPercent) / 100) : 0;
-  amountCents = grossAmountCents - discountCents;
-  const currencyCode = service.currencyCode ?? "EUR";
-  const minChargeCents = minimumChargeCents(currencyCode);
+  const couponDiscountCents = couponCutPerUnit(grossAmountCents, couponPercent);
+  amountCents = grossAmountCents - discountCents - couponDiscountCents;
   // Only the discount is policed here — a service priced below the minimum on
   // its own is a pricing problem, not this booking's, and rejecting it would
-  // blame the wrong field.
+  // blame the wrong field. A coupon that lands in the same dead zone is refused
+  // as a coupon problem, so the admin is told which field to change.
+  if (couponDiscountCents > 0 && amountCents > 0 && amountCents < minChargeCents) {
+    await releaseSlotsToBaseGrid([input.timeSlotId]).catch(() => {});
+    throw new CouponUnavailableError("BELOW_MINIMUM");
+  }
   if (discountCents > 0 && amountCents > 0 && amountCents < minChargeCents) {
     await releaseSlotsToBaseGrid([input.timeSlotId]).catch(() => {});
     throw new DiscountTooLargeError(minChargeCents, currencyCode);
@@ -1039,6 +1064,7 @@ export async function createManualBooking(
   // This is a genuine compensating release, unlike the Stripe branch further
   // down: there the order and appointment survive a failed session and the admin
   // retries payment, so the consultation the unit paid for still exists.
+  let couponSlotClaimed = false;
   const releaseAllowanceOnFailure = async (err: unknown): Promise<never> => {
     if (allowanceSpent) {
       await prisma
@@ -1050,8 +1076,40 @@ export async function createManualBooking(
           );
         });
     }
+    // The coupon slot is claimed BEFORE the order row exists (this path has no
+    // transaction wrapping both), so a failed write has to hand it back or the
+    // cap loses a use to a booking that never happened. Gated on the flag, not
+    // on `couponResult`: the appointment-create failure below reaches here
+    // BEFORE the slot is claimed, and releasing then would decrement a counter
+    // nobody incremented.
+    if (couponSlotClaimed && couponResult?.ok) {
+      await releaseCouponSlotUnchecked(couponResult.coupon.id).catch((releaseErr) => {
+        input.request?.log.error(
+          { err: releaseErr, couponId: couponResult.coupon.id, orderId },
+          "[manual-booking] Coupon release after a failed booking failed",
+        );
+      });
+    }
     throw err;
   };
+
+  // Claim the coupon use BEFORE the first write. There is no transaction
+  // wrapping the appointment and the order here, so this sits above both and
+  // `releaseAllowanceOnFailure` compensates for either failing — placing it
+  // lower would let a rejected coupon throw with an orphan Appointment already
+  // created. The UPDATE re-asserts the window, `active` and the cap, so a
+  // coupon exhausted since it resolved a moment ago is caught here.
+  if (couponResult?.ok) {
+    const claimed = await reserveCouponSlot(prisma, {
+      couponId: couponResult.coupon.id,
+      now: new Date(),
+    });
+    if (!claimed) {
+      await releaseSlotsToBaseGrid([input.timeSlotId]).catch(() => {});
+      throw new CouponUnavailableError("EXHAUSTED");
+    }
+    couponSlotClaimed = true;
+  }
 
   try {
     await prisma.appointment.create({
@@ -1187,6 +1245,27 @@ export async function createManualBooking(
       // the discount (same convention as OrderItem.corporateDiscountCents).
       discountPercent: discountPercent > 0 ? discountPercent : null,
       discountCents: discountCents > 0 ? discountCents : null,
+      // Coupon columns, same audit-only convention as the discount pair above.
+      // The redemption row is nested so it commits with the order — the slot on
+      // the cap was already claimed above, and this is what ties it to a real
+      // booking.
+      couponId: couponResult?.ok ? couponResult.coupon.id : null,
+      couponCode: couponResult?.ok ? couponResult.coupon.code : null,
+      couponDiscountPercent: couponPercent > 0 ? couponPercent : null,
+      couponDiscountCents: couponPercent > 0 ? couponDiscountCents : null,
+      ...(couponResult?.ok
+        ? {
+            couponRedemption: {
+              create: {
+                couponId: couponResult.coupon.id,
+                email,
+                discountPercent: couponPercent,
+                discountCents: couponDiscountCents,
+                currencyCode,
+              },
+            },
+          }
+        : {}),
       // An admin doing a manual booking IS the verifier — they take the card
       // details directly from the patient — so the order is recorded as already
       // VERIFIED and goes straight to a payment link, rather than parking in
@@ -1207,6 +1286,7 @@ export async function createManualBooking(
           unitPriceCents: amountCents,
           quantity: 1,
           lineTotalCents: amountCents,
+          couponDiscountCents: couponDiscountCents > 0 ? couponDiscountCents : null,
           doctorId: input.doctorId,
           timeSlotId: input.timeSlotId,
           appointmentId,
@@ -1448,6 +1528,17 @@ export async function createManualBooking(
             comped: isFree,
           }
         : {}),
+      // Coupon trail: which code, how much it took, off what price.
+      ...(couponPercent > 0
+        ? {
+            couponCode: couponResult?.ok ? couponResult.coupon.code : null,
+            couponPercent,
+            couponDiscountCents,
+            grossAmountCents,
+            chargedAmountCents: amountCents,
+            comped: isFree,
+          }
+        : {}),
     },
     request: input.request,
   }).catch(() => {});
@@ -1492,6 +1583,9 @@ export async function createManualBooking(
     amountCents,
     discountPercent,
     discountCents,
+    couponCode: couponResult?.ok ? couponResult.coupon.code : null,
+    couponPercent,
+    couponDiscountCents,
     free: isFree,
   };
 }

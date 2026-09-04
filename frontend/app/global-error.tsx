@@ -1,8 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect } from "react";
-import { GH2StatusPage } from "@/components/sections/GH2PagePrimitives";
+import {
+  GH2StatusMonitor,
+  GH2StatusReference,
+} from "@/components/sections/GH2StatusMonitor";
+import { publicErrorCopy } from "./_components/error-recovery";
 import "./globals.css";
 
 /**
@@ -11,41 +14,41 @@ import "./globals.css";
  * a root-segment `error.tsx` to render inside, so this is the `global-error`
  * form, which owns its own `<html>`/`<body>`.
  *
- * Behaviour is unchanged from `app/error.tsx`: it sat ABOVE the `(site)`
- * layout, so an uncaught error already replaced the whole document including
- * the header/footer chrome. As the least-specific boundary it now also
- * catches failures inside the root layouts themselves, which the old file
- * could not.
+ * This is the LAST-RESORT boundary: reaching it means the whole document was
+ * replaced, taking the app router with it. Two consequences drive the markup
+ * below:
+ *
+ *  - `reset()` is not usable here. It re-renders a tree whose root layout is
+ *    already gone, so it either throws straight back into this boundary or
+ *    leaves a blank document — that is the "Try again does nothing" report.
+ *    A full document reload is the only recovery, so that is what the button
+ *    does.
+ *  - `next/link` is not usable here either, for the same reason: there is no
+ *    router to hand the navigation to. Plain `<a>` does a real navigation.
+ *
+ * The nearer boundaries (`[country]/[lang]`, `(global)`, and the portal
+ * ones) render INSIDE their layout and keep the router alive, so they can
+ * still refresh-and-reset — see `useErrorRetry`. Errors thrown by a root
+ * layout itself have nowhere else to go and still land here.
+ *
+ * Same `GH2StatusMonitor` panel as the 404 and the nearer boundaries — this
+ * one just has no site chrome around it.
  */
-const T: Record<string, { title: string; subtitle: string; tryAgain: string; backToHome: string }> = {
-  en: { title: "Something went wrong", subtitle: "An unexpected error occurred. Please try again.", tryAgain: "Try again", backToHome: "Back to home" },
-  pt: { title: "Algo correu mal", subtitle: "Ocorreu um erro inesperado. Por favor, tente novamente.", tryAgain: "Tentar novamente", backToHome: "Voltar ao início" },
-  es: { title: "Algo salió mal", subtitle: "Ocurrió un error inesperado. Por favor, inténtalo de nuevo.", tryAgain: "Intentar de nuevo", backToHome: "Volver al inicio" },
-  cs: { title: "Něco se pokazilo", subtitle: "Došlo k neoÄekávané chybě. Zkuste to prosím znovu.", tryAgain: "Zkusit znovu", backToHome: "Zpět na hlavní stránku" },
-  ro: { title: "Ceva a mers greșit", subtitle: "A apărut o eroare neașteptată. Vă rugăm să încercați din nou.", tryAgain: "Încearcă din nou", backToHome: "Înapoi acasă" },
-  de: { title: "Etwas ist schiefgelaufen", subtitle: "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.", tryAgain: "Erneut versuchen", backToHome: "Zurück zur Startseite" },
-};
-
-function getClientLocale(): string {
-  if (typeof document === "undefined") return "en";
-  const m = document.cookie.match(/(?:^|;\s*)gh_locale=([^;]+)/);
-  return m?.[1] ?? "en";
-}
-
 export default function GlobalErrorBoundary({
   error,
-  reset,
 }: {
   error: Error & { digest?: string };
+  /** Next always passes it; deliberately unused — see the note above. */
   reset: () => void;
 }) {
+  // Logged in production too. Nothing else records this: the failure is
+  // client-side (a server render error would already be in the container
+  // log), so suppressing it here left the crash with no trace anywhere.
   useEffect(() => {
-    if (process.env.NODE_ENV !== "production") {
-      console.error(error);
-    }
+    console.error("[global-error]", error);
   }, [error]);
 
-  const t = T[getClientLocale()] ?? T.en;
+  const t = publicErrorCopy();
 
   // ponytail: lang stays "en" — the copy locale is read from a cookie on the
   // client only, so deriving the attribute from it would guarantee a
@@ -54,17 +57,33 @@ export default function GlobalErrorBoundary({
   return (
     <html lang="en" className="h-full antialiased" suppressHydrationWarning>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
-        <GH2StatusPage status="error" title={t.title} body={t.subtitle}>
-          <button type="button" onClick={() => reset()} className="gh2-btn-lime">
-            {t.tryAgain}
-          </button>
-          <Link
-            href="/"
-            className="rounded-full border border-[var(--color-border)] px-5 py-3 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-background-soft)]"
-          >
-            {t.backToHome}
-          </Link>
-        </GH2StatusPage>
+        <GH2StatusMonitor
+          eyebrow={t.eyebrow}
+          monitorLabel={t.monitorLabel}
+          code={t.code}
+          signalLabel={t.signalLabel}
+          title={t.title}
+          body={t.subtitle}
+          reference={error.digest ? <GH2StatusReference digest={error.digest} /> : undefined}
+          actions={
+            <>
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="gh2-btn-lime"
+              >
+                {t.tryAgain}
+              </button>
+              {/* eslint-disable-next-line @next/next/no-html-link-for-pages --
+                  global-error renders outside the router, so next/link has no
+                  router to hand the navigation to. A real navigation is the
+                  point here. */}
+              <a href="/" className="gh2-btn-ghost">
+                {t.backToHome}
+              </a>
+            </>
+          }
+        />
       </body>
     </html>
   );

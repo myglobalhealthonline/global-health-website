@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { GH2StatusMonitor } from "./GH2StatusMonitor";
 import { cookies, headers } from "next/headers";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import { getSelectedLocale } from "@/lib/i18n/selected-locale";
@@ -8,11 +9,15 @@ import { toSupportedLocale } from "@/lib/i18n/resolve-locale";
 import type { CountryCode } from "@/data/countries";
 
 /**
- * The 404 body: a vitals-monitor panel whose ECG trace flatlines across the
- * missing URL. Rendered inside the normal public shell (header, footer,
- * trust bar) by `app/_components/not-found-page.tsx`, so this component owns
- * only the section — no document, no chrome, no emergency notice (the shell's
- * trust bar / medical disclaimer already carries it).
+ * The 404 body: the shared `GH2StatusMonitor` panel, read as HTTP 404 with
+ * in-country recovery links. Rendered inside the normal public shell (header,
+ * footer, trust bar) by `app/_components/not-found-page.tsx`, so this
+ * component owns only the section — no document, no chrome, no emergency
+ * notice (the shell's trust bar / medical disclaimer already carries it).
+ *
+ * This file is now only the DATA half: country scope, locale and link
+ * targets. The markup lives in `GH2StatusMonitor` so the error boundaries
+ * render the identical panel.
  *
  * The recovery links stay inside the visitor's country scope whenever the
  * dead URL still carried one (`/portugal/pt/typo`) or the `gh-last-country`
@@ -69,50 +74,29 @@ export async function NotFound404() {
       ];
 
   return (
-    <section className="gh2-404">
-      <div className="gh2-404-inner">
-        <span className="gh2-404-eyebrow">
-          <span className="gh2-live-dot" aria-hidden />
-          {t.notFound.eyebrow}
-        </span>
-
-        <div className="gh2-404-monitor">
-          <div className="gh2-404-monitor-top">
-            <span>{t.notFound.monitorLabel}</span>
-            <span className="gh2-404-code">HTTP 404</span>
-          </div>
-          {/* Decorative: the flatline says nothing the headline below doesn't,
-              so the whole trace (label included) is hidden from AT. */}
-          <svg className="gh2-404-ecg" viewBox="0 0 620 150" preserveAspectRatio="none" aria-hidden>
-            <path
-              className="gh2-404-trace"
-              d="M0,95 L70,95 L82,95 L92,72 L102,118 L112,60 L124,95 L150,95 L180,95 L215,95 L245,95 L400,95 L420,95 L432,95 L442,72 L452,118 L462,60 L474,95 L500,95 L620,95"
-            />
-            <text className="gh2-404-flatlabel" x="310" y="80" textAnchor="middle">
-              {t.notFound.noSignal}
-            </text>
-          </svg>
-          <nav className="gh2-404-monitor-bottom" aria-label={t.notFound.quickLinksLabel}>
-            {links.map((link) => (
-              <Link key={link.href} href={link.href} className="gh2-404-quicklink">
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
-
-        <h1 className="gh2-404-title">{t.notFound.title}</h1>
-        <p className="gh2-404-lede">{t.notFound.body}</p>
-
-        <div className="gh2-404-actions">
+    <GH2StatusMonitor
+      eyebrow={t.notFound.eyebrow}
+      monitorLabel={t.notFound.monitorLabel}
+      code="HTTP 404"
+      signalLabel={t.notFound.noSignal}
+      quickLinksLabel={t.notFound.quickLinksLabel}
+      quickLinks={links.map((link) => (
+        <Link key={link.href} href={link.href} className="gh2-404-quicklink">
+          {link.label}
+        </Link>
+      ))}
+      title={t.notFound.title}
+      body={t.notFound.body}
+      actions={
+        <>
           <Link href={base ?? "/"} className="gh2-btn-lime">
             {t.notFound.cta}
           </Link>
           <Link href={bookHref} className="gh2-btn-ghost">
             {t.navigation.bookOnline}
           </Link>
-        </div>
-      </div>
-    </section>
+        </>
+      }
+    />
   );
 }

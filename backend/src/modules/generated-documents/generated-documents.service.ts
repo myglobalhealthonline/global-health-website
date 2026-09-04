@@ -220,6 +220,11 @@ function buildTemplateContext(input: {
     base.startDate = f.startDate ? formatDateDdMmYyyy(f.startDate) : "";
     base.endDate = f.endDate ? formatDateDdMmYyyy(f.endDate) : "";
     base.reason = f.reason?.trim() ?? "";
+    // Free-text narrative (letters of support, "to whom it may concern" —
+    // anything that doesn't fit the date/reason fields above). Optional;
+    // omitted entirely when blank so plain field-based certificates render
+    // exactly as before.
+    base.body = f.body?.trim() ?? "";
   }
 
   // Excuses the patient for the consultation window only — date + from/to

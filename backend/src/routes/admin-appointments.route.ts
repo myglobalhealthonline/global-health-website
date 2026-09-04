@@ -15,6 +15,11 @@ import { sendAppointmentScheduledEmail } from "../lib/email/templates.js";
 import { formatDoctorForPatientNotification } from "../lib/doctor-name.js";
 import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
 import {
+  CouponAndDiscountConflictError,
+  CouponUnavailableError,
+} from "../modules/coupons/coupon-reserve.service.js";
+import { couponRejectMessage } from "../modules/coupons/coupon-messages.js";
+import {
   holdsMembershipSuperAdminRole,
   MEMBERSHIP_SUPER_ADMIN_FORBIDDEN,
   verifyManageMembershipsAccess,
@@ -152,6 +157,7 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         insuranceCompanyId: body.data.insuranceCompanyId ?? null,
         insurancePolicyNumber: body.data.insurancePolicyNumber ?? null,
         discountPercent: body.data.discountPercent ?? null,
+        couponCode: body.data.couponCode ?? null,
         membership: body.data.membership ?? null,
         returnTo: body.data.returnTo,
         request,
@@ -193,6 +199,18 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
       }
       // Discount left a total Stripe can't charge (above zero, below its
       // per-currency minimum). The slot was already handed back.
+      // Coupon refused — expired, exhausted, locked to another email, or not
+      // allowed on this booking (insurance / benefit-priced / commission
+      // market). The slot was already handed back. `reason` is machine-readable
+      // so the admin form can highlight the coupon field rather than the price.
+      if (error instanceof CouponUnavailableError) {
+        return reply
+          .status(422)
+          .send({ ok: false, message: couponRejectMessage(error.reason), code: "COUPON_INVALID", reason: error.reason });
+      }
+      if (error instanceof CouponAndDiscountConflictError) {
+        return reply.status(422).send(errorResponse(error.message));
+      }
       if (error instanceof DiscountTooLargeError) {
         return reply.status(422).send(errorResponse(error.message));
       }

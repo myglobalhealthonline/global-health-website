@@ -472,6 +472,16 @@ enum AuditAction {
   JOB_APPLICATION_CV_DOWNLOADED
   JOB_APPLICATION_STATUS_CHANGED
   JOB_APPLICATION_PURGED
+
+  // --- Coupons (percentage discount codes) ---
+  COUPON_CREATED
+  COUPON_UPDATED
+  COUPON_DISABLED
+  COUPON_EMAILS_SENT
+  /// Written when a checkout claims a use. The order id is the entity.
+  COUPON_REDEEMED
+  /// The use was given back — order cancelled, refunded, or rolled back.
+  COUPON_REDEMPTION_RELEASED
 }
 
 enum CountryAccessModel {
@@ -1051,73 +1061,73 @@ model DoctorAvailabilityException {
 /// for *additional* country listings only. We don't duplicate the primary
 /// row here — public list queries UNION the primary + linked sets.
 model DoctorCountry {
-  id                   String                     @id @default(cuid())
-  doctorId             String
-  countryId            String
-  sortOrder            Int                        @default(0)
-  active               Boolean                    @default(true)
+  id                       String                     @id @default(cuid())
+  doctorId                 String
+  countryId                String
+  sortOrder                Int                        @default(0)
+  active                   Boolean                    @default(true)
   /// Country medical-council short name as it should appear on PDFs
   /// (e.g. "IMC", "OM", "OMC", "ČLK", "CRM-SP"). Paired with
   /// `registrationNumber` for the appointment's country at PDF render
   /// time so prescriptions show the right credential.
-  chamberEntity        String?
+  chamberEntity            String?
   /// Doctor's license number issued by `chamberEntity` for this country.
-  registrationNumber   String?
+  registrationNumber       String?
   /// External verify-registration link for THIS country's chamber (e.g.
   /// lkcr.cz for CZ, medicalcouncil.ie for IE). Public payloads prefer this
   /// over the legacy doctor-level `Doctor.medicalRegistrationUrl`.
-  registrationUrl      String?
+  registrationUrl          String?
   /// Register division/scope where applicable (e.g. Irish Medical Council
   /// "General Division" / "Specialist Division"). Surfaced on doctor cards
   /// and profiles so patients see the exact register, not just a number.
-  division             String?
+  division                 String?
   /// Two-letter Brazilian state (UF) the CRM was issued in, e.g. "SP", "RJ".
   /// Required by Memed's prescriber-registration call (`board.board_state`)
   /// — they reject anything that isn't a real UF abbreviation. Brazil-only;
   /// meaningless (and unused) for every other country's registration.
-  boardState           String?
+  boardState               String?
   /// Admin marks the registration verified after sighting documentation;
   /// PDFs print "(unverified)" if `isVerified = false` so clinicians
   /// don't accidentally issue Rx under an unconfirmed credential.
-  isVerified           Boolean                    @default(false)
-  verifiedAt           DateTime?
+  isVerified               Boolean                    @default(false)
+  verifiedAt               DateTime?
   /// Memed's own prescriber id for this doctor+country, once registered
   /// (lazy-provisioned on first widget session request — see
   /// lib/memed/prescription-client.ts ensurePrescriber). BR only in
   /// practice; null everywhere else and until Memed credentials arrive.
-  memedPrescriberId    String?
+  memedPrescriberId        String?
   /// AES-256-GCM encrypted CPF (`phi:v1:` envelope via encryptPhi), same
   /// contract as `DoctorBankAccount.ibanEncrypted`. Brazil-only in
   /// practice — required by Memed's prescriber-registration call
   /// (`cpf` field). Never returned by any GET; write-only from the admin
   /// form, same pattern as the bank IBAN.
-  cpfEncrypted         String?
+  cpfEncrypted             String?
   /// Last 4 digits of the CPF for masked "CPF on file: ••••1234" display
   /// without decrypting. Mirrors `DoctorBankAccount.ibanLast4`.
-  cpfLast4             String?
+  cpfLast4                 String?
   /// Explicit admin opt-in gate for Memed e-prescription signing. Having a
   /// complete CRM+CPF+DOB is NOT enough by itself — a BR doctor must be
   /// deliberately switched on here before `ensurePrescriber` will register
   /// them with Memed at all. Default false: nobody gets it just by having
   /// their profile filled in.
-  memedPrescriptionEnabled Boolean                 @default(false)
+  memedPrescriptionEnabled Boolean                    @default(false)
   /// Country-director grant for THIS market. When true AND
   /// `Doctor.isCountryDirector`, the doctor may view every consultation booked
   /// in this country, across all doctors. Read-only and money-free — see
   /// /api/doctor/country-consultations. Untick the market in the admin profile
   /// form and the row is dropped, which correctly revokes the directorship.
-  directorAccess       Boolean                    @default(false)
-  doctor               Doctor                     @relation(fields: [doctorId], references: [id], onDelete: Cascade)
-  country              Country                    @relation(fields: [countryId], references: [id], onDelete: Cascade)
-  translations         DoctorMarketTranslation[]
+  directorAccess           Boolean                    @default(false)
+  doctor                   Doctor                     @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  country                  Country                    @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  translations             DoctorMarketTranslation[]
   /// Per-locale override of `division` only (registration text is a short
   /// label, not full market copy, so it gets its own tiny translation table
   /// rather than growing DoctorMarketTranslation). Mirrors
   /// CountryAuthorityLinkTranslation's pattern: base column above holds the
   /// country's default-locale copy, a row here overrides one other locale.
-  divisionTranslations DoctorCountryTranslation[]
-  bankAccount          DoctorMarketBankAccount?
-  createdAt            DateTime                   @default(now())
+  divisionTranslations     DoctorCountryTranslation[]
+  bankAccount              DoctorMarketBankAccount?
+  createdAt                DateTime                   @default(now())
 
   @@unique([doctorId, countryId])
   @@index([countryId, active])
@@ -1275,40 +1285,40 @@ model DoctorSpecialty {
 }
 
 model Service {
-  id                       String                         @id @default(cuid())
-  countryId                String
-  kind                     ServiceKind                    @default(GENERAL)
-  slug                     String
-  name                     String
-  summary                  String?
-  seoTitle                 String?
-  seoDescription           String?
-  seoKeywords              String[]                       @default([])
-  heroTitle                String?
-  heroDescription          String?
-  detailBody               String?
-  ctaLabel                 String?
-  legacyPath               String?
-  sortOrder                Int                            @default(0)
-  durationMinutes          Int?
-  basePriceCents           Int?
-  currencyCode             String?
+  id                     String                         @id @default(cuid())
+  countryId              String
+  kind                   ServiceKind                    @default(GENERAL)
+  slug                   String
+  name                   String
+  summary                String?
+  seoTitle               String?
+  seoDescription         String?
+  seoKeywords            String[]                       @default([])
+  heroTitle              String?
+  heroDescription        String?
+  detailBody             String?
+  ctaLabel               String?
+  legacyPath             String?
+  sortOrder              Int                            @default(0)
+  durationMinutes        Int?
+  basePriceCents         Int?
+  currencyCode           String?
   /// Shipping price the admin charges patients for this service when
   /// the item is physical (online prescription delivered by post).
   /// 0 = no shipping (the default — covers all online consultations).
   /// Read by the cart when computing the order total, and by the
   /// checkout flow when adding a Stripe shipping line.
-  shippingCents            Int                            @default(0)
-  editorialChecklist       Json?
-  isActive                 Boolean                        @default(true)
+  shippingCents          Int                            @default(0)
+  editorialChecklist     Json?
+  isActive               Boolean                        @default(true)
   /// Operational booking pause. This does not retire or unpublish the service.
   /// A null `bookingPausedUntil` means the pause is indefinite once it starts.
-  bookingPausedFrom        DateTime?
-  bookingPausedUntil       DateTime?
-  bookingPauseReason       String?
+  bookingPausedFrom      DateTime?
+  bookingPausedUntil     DateTime?
+  bookingPauseReason     String?
   /// Clinical review date shown on the service page as "Last reviewed"
   /// (E-E-A-T signal). Nullable, no backfill — set by admins going forward.
-  lastReviewedAt           DateTime?
+  lastReviewedAt         DateTime?
   /// Named author / clinical reviewer for THIS service's content — mirrors
   /// BlogPost's authorDisplayName/reviewerDisplayName/authorDoctorId/
   /// reviewerDoctorId shape. Free-text display names are the fallback when
@@ -1317,65 +1327,65 @@ model Service {
   /// Article schema already does for blog posts. Ships empty everywhere —
   /// no doctor is auto-assigned; a clinician review is a deliberate,
   /// per-service editorial action, not a migration default.
-  authorDisplayName        String?
-  reviewerDisplayName      String?
-  authorDoctorId           String?
-  reviewerDoctorId         String?
+  authorDisplayName      String?
+  reviewerDisplayName    String?
+  authorDoctorId         String?
+  reviewerDoctorId       String?
   /// Who may see/book this service. PUBLIC keeps today's behaviour;
   /// ADMIN_ONLY = internal, excluded from public listings, slug lookups,
   /// sitemaps and slot feeds, with cart-add gated server-side.
   /// Corporate consultations are NOT Service rows — see CorporatePlanService.
-  visibility               ServiceVisibility              @default(PUBLIC)
+  visibility             ServiceVisibility              @default(PUBLIC)
   /// Additional product images. Empty by default. Hero image still lives
   /// on the related Asset row (kind=IMAGE, synced via syncOwnedImageAsset).
-  galleryImagePaths        String[]                       @default([])
-  consultationSetting      Json?
-  bookingSetting           Json?
-  country                  Country                        @relation(fields: [countryId], references: [id], onDelete: Cascade)
-  authorDoctor             Doctor?                        @relation("ServiceAuthorDoctor", fields: [authorDoctorId], references: [id], onDelete: SetNull)
-  reviewerDoctor           Doctor?                        @relation("ServiceReviewerDoctor", fields: [reviewerDoctorId], references: [id], onDelete: SetNull)
-  assets                   Asset[]
+  galleryImagePaths      String[]                       @default([])
+  consultationSetting    Json?
+  bookingSetting         Json?
+  country                Country                        @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  authorDoctor           Doctor?                        @relation("ServiceAuthorDoctor", fields: [authorDoctorId], references: [id], onDelete: SetNull)
+  reviewerDoctor         Doctor?                        @relation("ServiceReviewerDoctor", fields: [reviewerDoctorId], references: [id], onDelete: SetNull)
+  assets                 Asset[]
   /// Inverse of `ServiceDoctor.serviceId`. Admin-controlled M:N — which
   /// doctors are bookable for this service.
-  assignedDoctors          ServiceDoctor[]
-  insuranceDoctorPayouts   ServiceDoctorInsurancePayout[]
-  appointments             Appointment[]
+  assignedDoctors        ServiceDoctor[]
+  insuranceDoctorPayouts ServiceDoctorInsurancePayout[]
+  appointments           Appointment[]
   /// Per-consultation services-rendered line items. Doctor logs which
   /// catalogue services they performed during the consult; admin uses
   /// these for invoicing.
-  consultationServices     ConsultationService[]
+  consultationServices   ConsultationService[]
   /// Per-locale CMS content (name, summary, SEO, hero, detail, CTA). The
   /// base columns above stay as the default-locale copy + final fallback;
   /// a translation row overrides them for a given locale. Operational
   /// fields (price, slug, doctors, booking) are NOT translated.
-  translations             ServiceTranslation[]
+  translations           ServiceTranslation[]
   /// Optional fixed peak-hour pricing override for this service. When
   /// enabled, slots inside the configured clinic-local window charge the
   /// peak price and slots outside it the off-peak price; otherwise the
   /// flat basePriceCents applies. See ServicePeakPricing.
-  peakPricing              ServicePeakPricing?
+  peakPricing            ServicePeakPricing?
   /// Insurance-company coverage rows for this service (which companies
   /// cover it + the negotiated per-service price). See InsuranceServiceCoverage.
-  insuranceCoverages       InsuranceServiceCoverage[]
+  insuranceCoverages     InsuranceServiceCoverage[]
   /// Admin-managed FAQ entries for this service's public detail page.
-  faqs                     ServiceFaq[]
+  faqs                   ServiceFaq[]
   /// Contextual internal-link callouts shown ON this page (upgrade/entry/etc).
-  sourceLinks              ServiceLink[]                  @relation("SourceLinks")
+  sourceLinks            ServiceLink[]                  @relation("SourceLinks")
   /// Inverse of BlogPost.ctaServiceId — blog posts whose bottom "Book a
   /// consultation" CTA links to this service.
-  blogCtaPosts             BlogPost[]                     @relation("BlogCtaService")
+  blogCtaPosts           BlogPost[]                     @relation("BlogCtaService")
   /// Callouts on OTHER pages that point AT this service.
-  targetLinks              ServiceLink[]                  @relation("TargetLinks")
+  targetLinks            ServiceLink[]                  @relation("TargetLinks")
   /// Subscription plan rules that reference this service (§20).
-  planConsultationRules    PlanConsultationRule[]
+  planConsultationRules  PlanConsultationRule[]
   /// Private-membership benefit rows pinned to this exact service (rare —
   /// most rows target a ServiceKind). See MembershipBenefit.
-  membershipBenefits       MembershipBenefit[]
+  membershipBenefits     MembershipBenefit[]
   /// Corporate benefit rules pinned to this exact service (rare — most
   /// rules match by kind).
-  corporateBenefitRules    CorporateBenefitRule[]
-  createdAt                DateTime                       @default(now())
-  updatedAt                DateTime                       @updatedAt
+  corporateBenefitRules  CorporateBenefitRule[]
+  createdAt              DateTime                       @default(now())
+  updatedAt              DateTime                       @updatedAt
 
   @@unique([countryId, slug])
   /// FK target for PlanConsultationRule.(serviceId, countryId) composite FK
@@ -3044,6 +3054,22 @@ model Order {
   /// the pricing chain (base → peak → insurance) resolved.
   discountPercent               Int?
   discountCents                 Int?
+  /// Coupon code redeemed on this order (§ Coupons). Deliberately SEPARATE from
+  /// `discountPercent`/`discountCents` above: an admin manual booking can carry
+  /// an admin discretionary discount, a coupon, or neither, and sharing one
+  /// column would destroy whichever audit trail was written second.
+  ///
+  /// `couponCode` is a denormalized snapshot so a retired or renamed coupon
+  /// still names itself on the order; `couponDiscountCents` is AUDIT ONLY —
+  /// `subtotalCents`, `totalCents` and every `OrderItem.unitPriceCents` are
+  /// ALREADY net of it, same convention as `discountCents`. Never rendered as
+  /// an invoice line: the discount lives inside the line prices.
+  couponId                      String?
+  coupon                        Coupon?               @relation(fields: [couponId], references: [id], onDelete: SetNull)
+  couponCode                    String?
+  couponDiscountPercent         Int?
+  couponDiscountCents           Int?
+  couponRedemption              CouponRedemption?
   /// Commission-model snapshot (markets with `Country.commissionReceiptEnabled`).
   /// `commissionTotalCents` is what the receipt we issue is FOR — the sum of every
   /// line's `commissionCents` plus shipping. It is deliberately NOT `totalCents`:
@@ -3167,6 +3193,7 @@ model Order {
   /// postPaymentStage as the leading equality condition.
   @@index([paymentStatus, postPaymentStage], map: "Order_paymentStatus_postPaymentStage_idx")
   @@index([corporateCompanyId])
+  @@index([couponId])
 }
 
 /// Outbound hand-off record for MEMED, the Brazilian e-prescription platform:
@@ -3383,6 +3410,13 @@ model OrderItem {
   /// `lineTotalCents − doctorPayoutCents * quantity`, clamped at ≥ 0. Lines with
   /// no doctor (health tests, products, lab exams) carry the full line total here.
   commissionCents                   Int?
+  /// Coupon audit trail — the per-line cut a coupon code took, mirroring the
+  /// `corporateDiscountCents` / `membershipDiscountCents` convention:
+  /// `unitPriceCents` and `lineTotalCents` above are ALREADY net of it. Null on
+  /// every line of an order with no coupon. Rounding happens per UNIT before the
+  /// quantity multiply, so `lineTotalCents == unitPriceCents * quantity` stays
+  /// exact and this column is always a whole multiple of the per-unit cut.
+  couponDiscountCents               Int?
 
   @@index([orderId])
   /// Corporate annual-limit counting. Partial in spirit — almost every line is
@@ -4469,26 +4503,26 @@ model ConsultationMessage {
 /// doctor's standing line to operations ("my payout looks wrong", "I can't set
 /// availability"), so it has no appointment to hang off.
 model SupportThread {
-  id               String                    @id @default(cuid())
-  doctorId         String                    @unique
-  doctor           Doctor                    @relation("DoctorSupportThread", fields: [doctorId], references: [id], onDelete: Cascade)
+  id                String                    @id @default(cuid())
+  doctorId          String                    @unique
+  doctor            Doctor                    @relation("DoctorSupportThread", fields: [doctorId], references: [id], onDelete: Cascade)
   /// Denormalised so the admin inbox can order threads without a correlated
   /// subquery per row.
-  lastMessageAt    DateTime?
-  lastMessageRole  SupportMessageAuthorRole?
+  lastMessageAt     DateTime?
+  lastMessageRole   SupportMessageAuthorRole?
   /// Throttle stamp for the "doctor has sent a text" admin email fan-out.
   /// Claimed atomically (conditional updateMany) before each send, and reset
   /// to null when an admin replies so the next doctor message alerts at once.
-  lastAdminEmailAt DateTime?
+  lastAdminEmailAt  DateTime?
   /// Mirror of `lastAdminEmailAt` for the other direction: throttles the
   /// email + WhatsApp fan-out to the doctor when an admin writes (or opens a
   /// thread). Reset to null when the doctor replies, so the next admin
   /// message reaches them at once.
   lastDoctorAlertAt DateTime?
-  messages         SupportMessage[]
-  readStates       SupportThreadRead[]
-  createdAt        DateTime                  @default(now())
-  updatedAt        DateTime                  @updatedAt
+  messages          SupportMessage[]
+  readStates        SupportThreadRead[]
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
 
   @@index([lastMessageAt])
 }
@@ -5257,28 +5291,28 @@ enum CreditNoteReason {
 /// two rows (the invoice it settles + the receipt). Orders may also carry a
 /// CREDIT_NOTE (own CN- number) on refund — hence orderId is indexed, not unique.
 model Invoice {
-  id               String              @id @default(cuid())
+  id                String              @id @default(cuid())
   /// Revocable nonce bound into the signed public invoice capability emailed
   /// to patients. The raw token is never stored; the server verifies the
   /// signature and requires the nonce to still match this row.
   publicAccessNonce String?
-  invoiceNumber    String
-  orderId          String
-  order            Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  countryCode      String
-  documentType     InvoiceDocumentType @default(INVOICE_RECEIPT)
+  invoiceNumber     String
+  orderId           String
+  order             Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  countryCode       String
+  documentType      InvoiceDocumentType @default(INVOICE_RECEIPT)
   /// Set only on CREDIT_NOTE rows. Persisted (not derived from order status) so a
   /// re-render / admin resend reproduces the original wording forever.
-  creditNoteReason CreditNoteReason?
-  generatedAt      DateTime            @default(now())
-  emailSentAt      DateTime?
-  emailSentTo      String?
+  creditNoteReason  CreditNoteReason?
+  generatedAt       DateTime            @default(now())
+  emailSentAt       DateTime?
+  emailSentTo       String?
 
   /// Portugal only. The InvoiceExpress document id this row mirrors. Its
   /// presence is what tells every reader (download, resend, PDF render) to use
   /// the mirrored copy instead of drawing our own template. Unique: one row per
   /// InvoiceExpress document, so a re-run of the mirror can never duplicate it.
-  invoiceExpressId        String?  @unique
+  invoiceExpressId        String? @unique
   /// "InvoiceReceipt" | "Invoice" — InvoiceExpress paths are type-scoped, so a
   /// resend has to know which one it is holding.
   invoiceExpressType      String?
@@ -5797,9 +5831,9 @@ enum CorporatePlanServiceRole {
 /// availability, and the resulting Appointment carries no Order, so it never
 /// reaches checkout, commission, doctor payout or invoicing.
 model CorporatePlanService {
-  id              String                   @id @default(cuid())
+  id              String                    @id @default(cuid())
   corporatePlanId String
-  corporatePlan   CorporatePlan            @relation(fields: [corporatePlanId], references: [id], onDelete: Cascade)
+  corporatePlan   CorporatePlan             @relation(fields: [corporatePlanId], references: [id], onDelete: Cascade)
   /// Null = offered to every company on the plan. Set = that market only, so
   /// a plan spanning markets can pin a local doctor per country. Matched
   /// against `CorporateCompany.countryCode`, which is how every other
@@ -5808,18 +5842,18 @@ model CorporatePlanService {
   name            String
   description     String?
   /// Minutes of the assigned doctor's base grid this booking consumes.
-  durationMinutes Int                      @default(30)
+  durationMinutes Int                       @default(30)
   /// The one doctor who delivers this consultation. Restrict, not Cascade:
   /// deleting a doctor must not silently drop a plan's benefit.
   doctorId        String
-  doctor          Doctor                   @relation(fields: [doctorId], references: [id], onDelete: Restrict)
-  role            CorporatePlanServiceRole @default(INCLUDED)
-  isActive        Boolean                  @default(true)
-  sortOrder       Int                      @default(0)
+  doctor          Doctor                    @relation(fields: [doctorId], references: [id], onDelete: Restrict)
+  role            CorporatePlanServiceRole  @default(INCLUDED)
+  isActive        Boolean                   @default(true)
+  sortOrder       Int                       @default(0)
   appointments    Appointment[]
   requests        CorporateServiceRequest[]
-  createdAt       DateTime                 @default(now())
-  updatedAt       DateTime                 @updatedAt
+  createdAt       DateTime                  @default(now())
+  updatedAt       DateTime                  @updatedAt
 
   @@index([corporatePlanId, isActive, sortOrder])
   @@index([countryCode])
@@ -6032,26 +6066,26 @@ model CorporateBenefitCard {
 /// CorporatePlanService row for that role; the employee books it free from
 /// the portal.
 model CorporateServiceRequest {
-  id                String                 @id @default(cuid())
-  companyId         String
-  company           CorporateCompany       @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  employeeId        String
-  employee          CorporateEmployee      @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  type              CorporateRequestType
+  id                 String                 @id @default(cuid())
+  companyId          String
+  company            CorporateCompany       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  employeeId         String
+  employee           CorporateEmployee      @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  type               CorporateRequestType
   corporateServiceId String
-  corporateService   CorporatePlanService  @relation(fields: [corporateServiceId], references: [id], onDelete: Cascade)
-  requestedByUserId String
-  reason            String?
-  status            CorporateRequestStatus @default(REQUESTED)
-  appointmentId     String?                @unique
-  appointment       Appointment?           @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+  corporateService   CorporatePlanService   @relation(fields: [corporateServiceId], references: [id], onDelete: Cascade)
+  requestedByUserId  String
+  reason             String?
+  status             CorporateRequestStatus @default(REQUESTED)
+  appointmentId      String?                @unique
+  appointment        Appointment?           @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
   /// Default +60 days; daily cron flips overdue open requests to EXPIRED.
-  expiresAt         DateTime?
-  notifiedAt        DateTime?
-  completedAt       DateTime?
-  cancelledAt       DateTime?
-  createdAt         DateTime               @default(now())
-  updatedAt         DateTime               @updatedAt
+  expiresAt          DateTime?
+  notifiedAt         DateTime?
+  completedAt        DateTime?
+  cancelledAt        DateTime?
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
 
   @@index([companyId, status])
   @@index([employeeId, status])
@@ -6868,4 +6902,156 @@ model MembershipClaimToken {
 
   @@index([enrollmentId])
   @@index([userId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Coupons — percentage discount codes (marketing / retention).
+//
+// The seventh discount engine, and the only CODE-based one. It runs LAST, after
+// base → peak → insurance/declared-coverage → plan → membership → corporate, and
+// only on lines none of those touched: a coupon is refused on insurance and
+// declared-coverage lines (their prices are contractual), on lines a
+// membership / corporate / plan benefit already priced (no stacking), and in
+// commission markets (a promotion must not make a doctor's payout ambiguous).
+// ─────────────────────────────────────────────────────────────────────────────
+
+enum CouponKind {
+  /// Minted for one named person and locked to their email at redemption.
+  PERSONAL
+  /// Anyone holding the code may redeem it, subject to window + cap.
+  GENERAL
+}
+
+/// Which bookings a coupon may be spent on.
+enum CouponScope {
+  /// Any booking at all — consultations, health tests, products. The default,
+  /// and what every coupon minted before scoping existed carries.
+  ANY
+  /// GP / general consultations only.
+  GENERAL_CONSULTATION
+  /// Specialist consultations only.
+  SPECIALIST_CONSULTATION
+  /// Either kind of consultation, but nothing else.
+  CONSULTATIONS
+}
+
+enum CouponRedemptionStatus {
+  /// The order exists and holds a slot of the cap; payment has not landed.
+  /// Deliberate — the slot is claimed at order creation, the same semantics a
+  /// HELD time slot has, so an abandoned PENDING order does hold a use until
+  /// the pre-payment cancel sweep releases it.
+  RESERVED
+  /// Payment completed (Stripe webhook, €0 order, or manual free booking).
+  CONSUMED
+  /// Order cancelled / refunded / rolled back — the use was given back.
+  RELEASED
+}
+
+enum CouponRecipientStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+/// A percentage discount code. Never deleted — `active = false` retires one, so
+/// `CouponRedemption` rows and `Order.couponCode` stay resolvable forever.
+model Coupon {
+  id              String      @id @default(cuid())
+  /// ALWAYS stored uppercase, and matched uppercase. A CHECK constraint
+  /// (`Coupon_code_upper_chk`, migration 20260901120000 — invisible to
+  /// `migrate diff`, keep it) enforces it at the database, because a
+  /// lower-cased row would be permanently unredeemable.
+  code            String      @unique
+  kind            CouponKind
+  /// 1..100. IMMUTABLE after creation — `updateCouponSchema` refuses to change
+  /// it, because moving it would rewrite the meaning of redemptions already
+  /// taken. CHECK `Coupon_percent_chk` backs that up.
+  discountPercent Int
+  /// Which lines this coupon may discount. Enforced per LINE, not per order: a
+  /// mixed cart gets the cut on the lines in scope and full price on the rest,
+  /// and a cart with nothing in scope is refused outright rather than silently
+  /// discounted by zero. ANY (the default) keeps the pre-scoping behaviour.
+  scope           CouponScope @default(ANY)
+  /// PERSONAL only, lowercase. The redeeming order's `email` must equal this.
+  /// Required iff `kind = PERSONAL`; null on GENERAL.
+  personalEmail   String?
+  /// PERSONAL only — the greeting in the coupon email.
+  personalName    String?
+  validFrom       DateTime
+  validUntil      DateTime
+  maxRedemptions  Int
+  /// The cap counter. Incremented by ONE conditional UPDATE inside the checkout
+  /// transaction (`reserveCouponSlot`), never by a read-then-write — see that
+  /// function for why `updateMany` cannot do this. CHECK `Coupon_cap_chk`
+  /// (`redeemedCount <= maxRedemptions`) is the database's own backstop, so
+  /// lowering `maxRedemptions` below it must be rejected in the route rather
+  /// than surfacing as an opaque constraint error.
+  redeemedCount   Int         @default(0)
+  active          Boolean     @default(true)
+  /// Admin-only. Never rendered in an email.
+  internalNote    String?
+  createdByUserId String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  redemptions CouponRedemption[]
+  recipients  CouponRecipient[]
+  orders      Order[]
+
+  @@index([active, validUntil])
+  @@index([kind])
+  @@index([personalEmail])
+}
+
+/// One row per order that claimed a use of a coupon.
+model CouponRedemption {
+  id              String                 @id @default(cuid())
+  couponId        String
+  coupon          Coupon                 @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  /// UNIQUE, and that is the idempotency gate: webhook redelivery, a retried
+  /// checkout or a double submit cannot mint a second use for one order.
+  orderId         String                 @unique
+  order           Order                  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  /// Lowercase `Order.email` at reserve time — the payer, kept even if the
+  /// order is later edited.
+  email           String
+  status          CouponRedemptionStatus @default(RESERVED)
+  discountPercent Int
+  /// Σ of every line's cut. Derived from the lines, never targeted.
+  discountCents   Int
+  currencyCode    String
+  createdAt       DateTime               @default(now())
+  consumedAt      DateTime?
+  releasedAt      DateTime?
+  releaseReason   String?
+
+  @@index([couponId, status])
+  @@index([email])
+}
+
+/// Email delivery log — one row per person the coupon was sent to. Each gets
+/// their OWN message (single `to`, no CC/BCC), so the copy can be personalised
+/// and localised per recipient.
+model CouponRecipient {
+  id               String                @id @default(cuid())
+  couponId         String
+  coupon           Coupon                @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  email            String
+  fullName         String?
+  /// Null = resolve at send time (account locale → patient country → admin
+  /// country → EN). An explicit value always wins.
+  locale           LocaleCode?
+  /// Set when the admin picked an existing customer from the autocomplete;
+  /// null for a freshly typed address. Bare id, no relation — the profile may
+  /// be merged away while the delivery record must stay intact.
+  patientProfileId String?
+  status           CouponRecipientStatus @default(PENDING)
+  error            String?
+  sentAt           DateTime?
+  createdAt        DateTime              @default(now())
+
+  /// Makes `createMany({ skipDuplicates: true })` idempotent, so pressing
+  /// "Send" twice never double-mails anyone.
+  @@unique([couponId, email])
+  @@index([couponId, status])
 }

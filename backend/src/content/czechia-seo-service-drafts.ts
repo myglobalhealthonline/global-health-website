@@ -48,6 +48,83 @@ const metadataDrafts = [
     faqs: [],
   },
   {
+    serviceId: "cmr85y546002q70ju6ikn8phw",
+    expectedServiceUpdatedAt: "2026-07-19T05:02:29.686Z",
+    expectedSourceSha256: "1f2258293bcd5e557d37a1a04f8d57cc841efa79801da913f7d7af367beaa0b6",
+    countryCode: "cz",
+    locale: "CS",
+    slug: "cestovni-medicina-praha",
+    primaryKeyword: "cestovní medicína Praha",
+    secondaryKeywords: ["cestovní medicína online", "očkování do zahraničí", "antimalarika konzultace"],
+    expectedFaqIds: [
+      "cmr85y5bq002r70juysq3pk1j", "cmr85y5bq002s70jujhbjds41", "cmr85y5br002t70jud8b29nlb",
+      "cmr85y5br002u70jusqmv6gyz", "cmr85y5br002v70jufdo4nh58", "cmr85y5br002w70ju1zqfz6i3",
+      "cmr85y5br002x70ju7yv1xtzi", "cmr85y5br002y70juy9kidavu", "cmr85y5br002z70jucj1sj5lw",
+    ],
+    summary: "Online konzultace před cestou zaměřená na zdravotní rizika, očkování a prevenci. Recept, očkování nebo potvrzení závisejí na individuálním posouzení.",
+    seoTitle: "Cestovní medicína Praha | Online konzultace",
+    seoDescription: "Online konzultace cestovní medicíny před cestou. Proberte rizika, očkování a prevenci; recepty a potvrzení závisejí na posouzení.",
+    heroTitle: "Cestovní medicína: online konzultace",
+    heroDescription: "Proberte destinaci, itinerář, zdravotní stav, očkování a prevenci. Lékař doporučí další postup; recept, očkování ani potvrzení nelze slíbit předem.",
+    detailBody: `<p><strong>Při náhlém závažném zhoršení zdravotního stavu volejte 155 nebo 112. Online konzultace nenahrazuje neodkladnou péči.</strong></p>
+<h2>Co si připravit</h2>
+<p>Připravte si destinaci, itinerář, délku a typ pobytu, datum odjezdu, plánované aktivity, zdravotní stav, užívané léky a dostupné záznamy o očkování.</p>
+<h2>Očkování a potvrzení</h2>
+<p>Vakcínu nelze podat při videokonzultaci. Cestovní očkování a mezinárodní očkovací průkaz zajišťují příslušná osobní pracoviště. Požadavky se liší podle destinace a mohou se měnit.</p>
+<h2>Antimalarika a další léky</h2>
+<p>Vhodnost chemoprofylaxe závisí mimo jiné na destinaci, délce pobytu, místní rezistenci, věku a zdravotním stavu. NZIP doporučuje řešit opatření s lékařem v centru cestovní medicíny s dostatečným předstihem; online konzultace recept nezaručuje.</p>
+<h2>Potíže po návratu</h2>
+<p>Horečka nebo jiné závažné potíže po návratu mohou vyžadovat rychlé osobní vyšetření. Uveďte navštívené země a datum návratu. Při závažném stavu volejte 155 nebo 112.</p>
+<p>Zdroje: <a href="https://www.nzip.cz/clanek/32-ockovani-do-zahranici">NZIP: očkování při cestách do zahraničí</a>, <a href="https://www.nzip.cz/clanek/33-mezinarodni-ockovaci-prukaz">NZIP: mezinárodní očkovací průkaz</a>, <a href="https://www.nzip.cz/clanek/2424-malarie">NZIP: malárie a chemoprofylaxe</a> a <a href="https://www.nzip.cz/clanek/205-zdravotnicka-zachranna-sluzba">NZIP: zdravotnická záchranná služba</a>.</p>`,
+    faqs: [
+      {
+        id: "cmr85y5bq002r70juysq3pk1j",
+        question: "Mohu při online konzultaci cestovní medicíny získat recept na antimalarika?",
+        answer: "Vhodnost profylaxe závisí mimo jiné na destinaci, délce pobytu, místní rezistenci, věku, zdravotním stavu a dalších lécích. NZIP doporučuje poradit se s lékařem v centru cestovní medicíny; online konzultace recept nezaručuje.",
+      },
+      {
+        id: "cmr85y5bq002s70jujhbjds41",
+        question: "Mohu online získat očkování nebo certifikát proti žluté zimnici?",
+        answer: "Ne. Vakcínu nelze podat online a příslušný záznam nebo certifikát vyžaduje osobní návštěvu oprávněného pracoviště. Aktuální požadavky si ověřte podle cílové země.",
+      },
+      {
+        id: "cmr85y5br002t70jud8b29nlb",
+        question: "Lze při online konzultaci podat cestovní vakcínu?",
+        answer: "Ne. Videokonzultace slouží k posouzení a plánování. Podání vakcíny vyžaduje osobní návštěvu praktického lékaře nebo specializovaného pracoviště podle typu očkování.",
+      },
+      {
+        id: "cmr85y5br002u70jusqmv6gyz",
+        question: "Co si připravit na konzultaci cestovní medicíny?",
+        answer: "Připravte si itinerář, destinace, datum odjezdu, délku pobytu, plánované aktivity, seznam nemocí a léků a dostupné záznamy o očkování.",
+      },
+      {
+        id: "cmr85y5br002v70jufdo4nh58",
+        question: "Jak dlouho před cestou řešit očkování a prevenci?",
+        answer: "Objednejte se co nejdříve, protože potřebný předstih závisí na destinaci, zdravotním stavu a očkovacím plánu. Některé vakcíny vyžadují více dávek nebo čas k vytvoření ochrany.",
+      },
+      {
+        id: "cmr85y5br002w70ju1zqfz6i3",
+        question: "Je online cestovní medicína vhodná při potížích po návratu?",
+        answer: "Může pomoci s úvodním posouzením, ale horečka nebo jiné závažné příznaky po návratu mohou vyžadovat rychlé osobní vyšetření. Při závažném stavu volejte 155 nebo 112.",
+      },
+      {
+        id: "cmr85y5br002x70ju7yv1xtzi",
+        question: "Je konzultace cestovní medicíny vhodná pro rodinu s dětmi?",
+        answer: "Vhodnost se posuzuje individuálně podle věku, zdravotního stavu, destinace a typu cesty. Očkování a vyšetření dítěte mohou vyžadovat osobní návštěvu příslušného pracoviště.",
+      },
+      {
+        id: "cmr85y5br002y70juy9kidavu",
+        question: "Má smysl cestovní konzultace při diabetu nebo jiném chronickém onemocnění?",
+        answer: "Ano, individuální plánování může být užitečné. Lékař probere léky, skladování, časová pásma a rizika, ale konkrétní změny dávkování závisejí na vašem stavu a ošetřujícím lékaři.",
+      },
+      {
+        id: "cmr85y5br002z70jucj1sj5lw",
+        question: "Může lékař vystavit potvrzení k lékům na cestu?",
+        answer: "Lékař může po posouzení vystavit zdravotní souhrn nebo jiné vhodné potvrzení, pokud má potřebné informace. Přijetí dokumentu celní správou, dopravcem nebo cizím státem nelze zaručit.",
+      },
+    ],
+  },
+  {
     serviceId: "cmr85yeea004i70ju3b7aiw7k",
     expectedServiceUpdatedAt: "2026-07-19T05:02:10.155Z",
     expectedSourceSha256: "56e1792fb5f5691371d735d9916a90fce42c979f6117bec472d585858008bee8",
@@ -67,19 +144,60 @@ const metadataDrafts = [
   {
     serviceId: "cmr85ycjf004670juod6z2yqd",
     expectedServiceUpdatedAt: "2026-07-19T05:02:19.027Z",
-    expectedSourceSha256: "042ea5ba3cba053187e6d1c8e62eb93d4fb21555c632e9e66cdf580be8bed32c",
+    expectedSourceSha256: "5382a2857335ff52f1ec5dceab4bd7ab1ad958e2bb43cdf26b80e7737a6ad732",
     countryCode: "cz",
     locale: "CS",
     slug: "detsky-lekar-online",
     primaryKeyword: "dětský lékař online",
     secondaryKeywords: ["pediatr online", "online konzultace pro dítě"],
     expectedFaqIds: ["cmr85ycqv004770jux22fnm86", "cmr85ycqv004870julkldu2kh", "cmr85ycqv004970juh4i934dv", "cmr85ycqv004a70juuvthy3ub", "cmr85ycqv004b70jut3xo112p", "cmr85ycqv004c70jupe7uctrf"],
-    summary: "Online konzultace zdravotních potíží dítěte za přítomnosti rodiče nebo zákonného zástupce. Lékař posoudí, zda stačí videohovor, nebo je nutné osobní či akutní vyšetření.",
+    summary: "Online konzultace zdravotních potíží dítěte. Podmínky rezervace a zapojení rodiče nebo zákonného zástupce závisí na věku, okolnostech a pravidlech služby.",
     seoTitle: "Dětský lékař online | Konzultace pro rodiče",
     seoDescription: "Online konzultace dětských potíží s lékařem. Zjistěte, jak se připravit a které příznaky vyžadují akutní nebo osobní péči.",
     heroTitle: "Dětský lékař online",
-    heroDescription: "Online konzultace zdravotních potíží dítěte za přítomnosti rodiče nebo zákonného zástupce. Lékař posoudí, zda stačí videohovor, nebo je nutné osobní či akutní vyšetření.",
-    faqs: [],
+    heroDescription: "Online konzultace zdravotních potíží dítěte. Podmínky rezervace a zapojení rodiče nebo zákonného zástupce závisí na věku, okolnostech a pravidlech služby.",
+    detailBody: `<p><strong>Při náhlém nebo závažném zhoršení zdravotního stavu dítěte volejte 155 nebo 112. Online konzultace není určena pro neodkladnou péči.</strong></p>
+<h2>Co lze při online konzultaci dítěte posoudit</h2>
+<p>Lékař probere příznaky, jejich průběh, věk dítěte, užívané léky a další důležité údaje. Videohovor může pomoci s prvním posouzením, ale nenahrazuje fyzikální vyšetření, odběry ani zobrazovací vyšetření.</p>
+<h2>Kdy je nutné osobní vyšetření</h2>
+<p>Lékař doporučí osobní nebo akutní péči, pokud stav nelze bezpečně posoudit na dálku. U malého kojence s horečkou kontaktujte lékaře; porucha vědomí, potíže s dýcháním, křeče nebo rychlé zhoršování vyžadují neodkladné posouzení.</p>
+<h2>Rodič nebo zákonný zástupce</h2>
+<p>Podmínky rezervace a způsob zapojení rodiče, zákonného zástupce a dítěte se posuzují podle věku, vyspělosti, okolností a pravidel služby.</p>
+<h2>Recepty a dokumenty</h2>
+<p>Recept, potvrzení nebo doporučení může lékař vystavit pouze tehdy, pokud je to klinicky odůvodněné a dovoluje to posouzení na dálku. Objednání konzultace žádný dokument ani léčbu nezaručuje.</p>
+<p>Zdroje: <a href="https://www.nzip.cz/clanek/205-zdravotnicka-zachranna-sluzba">NZIP: zdravotnická záchranná služba</a>, <a href="https://www.nzip.cz/clanek/641-horecka-u-deti">NZIP: horečka u dětí</a>, <a href="https://www.nzip.cz/clanek/239-prava-ditete">NZIP: práva dítěte</a> a <a href="https://ncez.mzcr.cz/cs/milnik-c-3-pravidladokumentypodklady-interoperabilita-telemedicina/pravidla-pro-rozvoj-telemediciny">NCEZ: pravidla pro telemedicínu</a>.</p>`,
+    faqs: [
+      {
+        id: "cmr85ycqv004770jux22fnm86",
+        question: "Může dětský lékař online posoudit nemoc dítěte přes videohovor?",
+        answer: "Videohovor může pomoci s prvním posouzením příznaků, ale vhodnost závisí na věku dítěte, průběhu obtíží a dostupných informacích. Některé stavy vyžadují fyzikální nebo akutní vyšetření.",
+      },
+      {
+        id: "cmr85ycqv004870julkldu2kh",
+        question: "Je online konzultace vhodná pro dítě s horečkou?",
+        answer: "Záleží na věku dítěte, výši a délce horečky a dalších příznacích. U malého kojence s horečkou kontaktujte lékaře. Při zhoršování, poruše vědomí, křečích nebo potížích s dýcháním vyhledejte neodkladnou péči; při závažném stavu volejte 155 nebo 112.",
+      },
+      {
+        id: "cmr85ycqv004970juh4i934dv",
+        question: "Mohu využít online konzultaci pro dítě bez registrujícího pediatra?",
+        answer: "Konzultaci si objednat můžete, ale služba nenahrazuje pravidelnou péči registrujícího praktického lékaře pro děti a dorost. Lékař podle potíží doporučí vhodný další postup.",
+      },
+      {
+        id: "cmr85ycqv004a70juuvthy3ub",
+        question: "Co když dítě potřebuje osobní nebo akutní vyšetření?",
+        answer: "Lékař vysvětlí, proč posouzení na dálku nestačí, a doporučí odpovídající osobní nebo akutní péči. Případné shrnutí nebo doporučení závisí na klinickém posouzení.",
+      },
+      {
+        id: "cmr85ycqv004b70jut3xo112p",
+        question: "Může online lékař vystavit potvrzení pro školu?",
+        answer: "Potvrzení může být vystaveno pouze tehdy, pokud je po konzultaci medicínsky a administrativně odůvodněné. Objednání konzultace vystavení potvrzení nezaručuje.",
+      },
+      {
+        id: "cmr85ycqv004c70jupe7uctrf",
+        question: "Jak probíhá online konzultace u dospívajícího?",
+        answer: "Podmínky rezervace, potřebný souhlas a způsob zapojení rodiče, zákonného zástupce a dospívajícího se posuzují podle věku, vyspělosti, okolností a pravidel služby.",
+      },
+    ],
   },
   {
     serviceId: "cmr85yg92004t70juaf7wjrsu",
@@ -118,7 +236,7 @@ const metadataDrafts = [
   {
     serviceId: "cmr85y1e7002170jutctxdjdx",
     expectedServiceUpdatedAt: "2026-07-19T05:02:15.472Z",
-    expectedSourceSha256: "5c5b2935ee12a43d391abf5dc03f2773574f3a9a6c590d6587026ae13cc13941",
+    expectedSourceSha256: "3839eaf5ad33d12809b326247cba8b7552929d712829dfa19c42000b26cec5ee",
     countryCode: "cz",
     locale: "CS",
     slug: "dusevni-zdravi-online",
@@ -130,7 +248,53 @@ const metadataDrafts = [
     seoDescription: "Diskrétní online konzultace duševních obtíží s lékařem. Při krizi nebo bezprostředním ohrožení volejte 155 nebo 112.",
     heroTitle: "Duševní zdraví: online konzultace s lékařem",
     heroDescription: "Diskrétní online konzultace duševních obtíží s lékařem. Lékař posoudí situaci a doporučí další postup; při krizi nebo ohrožení volejte 155 nebo 112.",
-    faqs: [],
+    detailBody: `<p><strong>Při bezprostředním ohrožení sebe nebo jiné osoby volejte 155 nebo 112. Tato služba není krizová linka ani akutní psychiatrická péče.</strong></p>
+<h2>Rozsah online konzultace duševního zdraví</h2>
+<p>Lékař probere vaše obtíže, jejich délku, dopad na běžný život, užívané léky a možné tělesné příčiny. Konzultace může pomoci s úvodním zdravotním posouzením a s volbou dalšího postupu.</p>
+<h2>Co služba nenahrazuje</h2>
+<p>Nejde o psychoterapii ani automatickou diagnózu či psychiatrickou léčbu. Pokud je potřeba specializované vyšetření, osobní péče nebo krizová pomoc, lékař doporučí odpovídající další krok.</p>
+<h2>ADHD a další obtíže</h2>
+<p>Screeningový dotazník může upozornit na příznaky, ale diagnózu nepotvrzuje. Diagnostika ADHD a rozhodnutí o léčbě vyžadují odborné klinické posouzení.</p>
+<h2>Soukromí</h2>
+<p>Zdravotníci mají povinnost mlčenlivosti. Její rozsah a zákonné výjimky se řídí českými právními předpisy; konkrétní postup vysvětlí poskytovatel.</p>
+<p>Zdroje: <a href="https://www.nzip.cz/clanek/205-zdravotnicka-zachranna-sluzba">NZIP: zdravotnická záchranná služba</a>, <a href="https://www.nzip.cz/clanek/239-prava-ditete">NZIP: práva dítěte</a>, <a href="https://www.nzip.cz/clanek/677-adhd-u-dospelych">NZIP: ADHD u dospělých</a> a <a href="https://mzd.gov.cz/wp-content/uploads/wepub/3478/8936/radce-pacienta.pdf">Ministerstvo zdravotnictví: Rádce pacienta</a>.</p>`,
+    faqs: [
+      {
+        id: "cmr85y1lm002270juhocgavdd",
+        question: "Co zahrnuje online konzultace duševního zdraví?",
+        answer: "Jde o lékařské posouzení obtíží, jejich průběhu, dopadu a možných dalších kroků. Služba není psychoterapie, krizová linka ani automatická psychiatrická diagnóza.",
+      },
+      {
+        id: "cmr85y1lm002370jul5kq2re1",
+        question: "Může mě online lékař doporučit k psychiatrovi?",
+        answer: "Pokud lékař vyhodnotí specializované vyšetření jako vhodné, doporučí další postup a vysvětlí dostupné možnosti. Objednání ani přijetí specialistou nelze předem zaručit.",
+      },
+      {
+        id: "cmr85y1ln002470juv37t93ib",
+        question: "Je online konzultace duševního zdraví důvěrná?",
+        answer: "Zdravotníci mají povinnost mlčenlivosti. Její rozsah a zákonné výjimky se řídí českými právními předpisy; konkrétní postup vysvětlí poskytovatel.",
+      },
+      {
+        id: "cmr85y1ln002570ju2j62y5fl",
+        question: "Nahrazuje online konzultace psychoterapii?",
+        answer: "Ne. Lékařská konzultace může doplnit péči terapeuta nebo pomoci určit další postup, ale nenahrazuje probíhající psychoterapii ani specializovanou psychiatrickou péči.",
+      },
+      {
+        id: "cmr85y1ln002670jugx5wqmqm",
+        question: "Je služba vhodná pro nezletilé?",
+        answer: "Vhodnost, potřebný souhlas a způsob zapojení rodiče, zákonného zástupce a nezletilého se posuzují individuálně podle věku, vyspělosti, obtíží, okolností a pravidel služby.",
+      },
+      {
+        id: "cmr85y1ln002770ju1g7p03g7",
+        question: "Co mám dělat při psychické krizi nebo bezprostředním ohrožení?",
+        answer: "Tato služba není určena pro krizi. Při bezprostředním ohrožení sebe nebo jiné osoby volejte 155 nebo 112 nebo vyhledejte nejbližší akutní péči.",
+      },
+      {
+        id: "cmr85y1ln002870juwlpqv3mh",
+        question: "Může online test nebo konzultace potvrdit ADHD?",
+        answer: "Ne. Screening může upozornit na příznaky, ale diagnózu nepotvrzuje. Diagnostika ADHD a rozhodnutí o léčbě vyžadují odborné klinické posouzení.",
+      },
+    ],
   },
   {
     serviceId: "cmr85xvtl001370jue9ackw9g",
@@ -164,12 +328,51 @@ const metadataDrafts = [
     seoDescription: "Konzultujte kožní potíže online s lékařem. Zjistěte, jak připravit fotografie a kdy je nutné osobní dermatologické vyšetření.",
     heroTitle: "Kožní konzultace online",
     heroDescription: "Online konzultace kožních potíží s lékařem. Připravte si kvalitní fotografie a průběh obtíží; lékař posoudí, zda je nutná dermatoskopie nebo osobní vyšetření.",
-    faqs: [],
+    detailBody: `<p><strong>Při závažné alergické reakci, potížích s dýcháním, rozsáhlém puchýřování nebo rychlém celkovém zhoršení volejte 155 nebo 112.</strong></p>
+<h2>Jak probíhá kožní konzultace online</h2>
+<p>Lékař probere vznik a vývoj potíží, další příznaky, používané přípravky a léky. Kvalitní fotografie mohou pomoci s orientačním posouzením, ale jejich výpovědní hodnota závisí na světle, ostrosti a zobrazené oblasti.</p>
+<h2>Omezení vyšetření na dálku</h2>
+<p>Fotografie ani videohovor nenahrazují pohmat, dermatoskopii, odběr nebo laboratorní vyšetření. Lékař může doporučit osobní dermatologické nebo jiné vyšetření, pokud na dálku nelze postup určit bezpečně.</p>
+<h2>Léčba, recept a doporučení</h2>
+<p>Konkrétní léčbu, recept nebo doporučení lze navrhnout pouze podle klinického posouzení. Objednání konzultace nezaručuje diagnózu, recept ani dokument.</p>
+<p>Zdroje: <a href="https://ncez.mzcr.cz/cs/milnik-c-3-pravidladokumentypodklady-interoperabilita-telemedicina/pravidla-pro-rozvoj-telemediciny">NCEZ: pravidla pro telemedicínu</a> a <a href="https://www.nzip.cz/clanek/205-zdravotnicka-zachranna-sluzba">NZIP: zdravotnická záchranná služba</a>.</p>`,
+    faqs: [
+      {
+        id: "cmr85y3gk002f70juijk1cwpx",
+        question: "Lze kožní problém spolehlivě posoudit online?",
+        answer: "Některé kožní potíže lze předběžně posoudit z anamnézy a kvalitních fotografií. Jiné vyžadují pohmat, dermatoskopii, odběr nebo osobní vyšetření; diagnózu nelze z fotografie zaručit.",
+      },
+      {
+        id: "cmr85y3gk002g70juoihnr73r",
+        question: "Může online lékař doporučit léčbu akné?",
+        answer: "Lékař může po posouzení doporučit vhodný další postup. Konkrétní léčba nebo recept závisí na závažnosti, předchozí léčbě, dalších onemocněních a na tom, zda je posouzení na dálku dostačující.",
+      },
+      {
+        id: "cmr85y3gk002h70jugufwixmk",
+        question: "Mohu přes video ukázat změněné znaménko?",
+        answer: "Fotografie může pomoci s prvním posouzením, ale podezřelé nebo měnící se znaménko často vyžaduje osobní vyšetření a dermatoskopii. Online konzultace nemůže vyloučit závažné onemocnění.",
+      },
+      {
+        id: "cmr85y3gk002i70ju9c50fovc",
+        question: "Je kožní konzultace online vhodná pro dítě s ekzémem?",
+        answer: "Vhodnost a způsob zapojení rodiče, zákonného zástupce a dítěte se posuzují podle věku, vyspělosti, průběhu potíží, okolností a pravidel služby. Při závažném či nejasném stavu je nutné osobní vyšetření.",
+      },
+      {
+        id: "cmr85y3gk002j70juiffreilb",
+        question: "Dostanu po kožní konzultaci doporučení ke specialistovi?",
+        answer: "Lékař může doporučit osobní dermatologické nebo jiné vyšetření, pokud je klinicky potřebné. Vystavení konkrétního doporučení ani jeho načasování nelze předem zaručit.",
+      },
+      {
+        id: "cmr85y3gk002k70ju62jwsib4",
+        question: "Kdy je kožní problém akutní?",
+        answer: "Při potížích s dýcháním, otoku obličeje nebo jazyka, rozsáhlém puchýřování, poruše vědomí nebo rychlém celkovém zhoršení volejte 155 nebo 112.",
+      },
+    ],
   },
   {
     serviceId: "cmr85xq6u000070jufztsgfec",
-    expectedServiceUpdatedAt: "2026-07-19T05:02:20.805Z",
-    expectedSourceSha256: "54b952bc8cfb2b5e21f0d894b8473082ffe4b510905f4869271d2ab4d2fb9619",
+    expectedServiceUpdatedAt: "2026-09-01T18:18:02.359Z",
+    expectedSourceSha256: "c71ac9b6b975743c102646def4c4e1839d04bc15d5ae414f7103adcf35ffcc58",
     countryCode: "cz",
     locale: "CS",
     slug: "lekar-online-praha",
@@ -181,12 +384,61 @@ const metadataDrafts = [
     seoDescription: "Online videokonzultace s lékařem pro pacienty v Praze a celém Česku. Lékař posoudí potíže a doporučí vhodný další postup.",
     heroTitle: "Lékař online v Praze",
     heroDescription: "Online videokonzultace s lékařem pro pacienty v Praze a celém Česku. Lékař posoudí potíže, vysvětlí další postup a doporučí osobní péči, pokud je nutná.",
-    faqs: [],
+    detailBody: `<p><strong>Při náhlém nebo závažném zhoršení zdravotního stavu volejte 155 nebo 112. Online konzultace není určena pro neodkladnou péči.</strong></p>
+<h2>Co zahrnuje online konzultace</h2>
+<p>Lékař probere vaše příznaky, anamnézu, užívané léky a dostupné zdravotní zprávy. Poté vysvětlí, zda lze doporučit postup na dálku, nebo je potřeba osobní vyšetření.</p>
+<h2>Recepty, neschopenka a doporučení</h2>
+<p>eRecept, eNeschopenku nebo doporučení lze vystavit pouze tehdy, pokud je to po klinickém posouzení medicínsky a administrativně odůvodněné. Objednání konzultace žádný dokument ani léčbu nezaručuje.</p>
+<h2>Termín a délka konzultace</h2>
+<p>Aktuální volné termíny a plánovaná délka se zobrazují v rezervačním kalendáři. Dostupnost se může měnit.</p>
+<p>Zdroje: <a href="https://ncez.mzcr.cz/cs/milnik-c-3-pravidladokumentypodklady-interoperabilita-telemedicina/pravidla-pro-rozvoj-telemediciny">NCEZ: pravidla pro telemedicínu</a> a <a href="https://www.nzip.cz/clanek/205-zdravotnicka-zachranna-sluzba">NZIP: zdravotnická záchranná služba</a>.</p>`,
+    faqs: [
+      {
+        id: "cmr85xqeo000170ju6qb7bzbb",
+        question: "Jak dlouho trvá online konzultace s lékařem?",
+        answer: "Plánovaná délka konzultace se zobrazí při rezervaci. Lékař během vyhrazeného času posoudí dostupné informace a podle potřeby doporučí další konzultaci nebo osobní vyšetření.",
+      },
+      {
+        id: "cmr85xqeo000270jug0dgtk42",
+        question: "Může online lékař vystavit eRecept?",
+        answer: "Lékař může eRecept vystavit, pokud je lék po klinickém posouzení vhodný a lze jej bezpečně předepsat na dálku. Objednání konzultace vystavení receptu nezaručuje.",
+      },
+      {
+        id: "cmr85xqeo000370ju5ryyh241",
+        question: "Mohu dostat eNeschopenku přes online konzultaci?",
+        answer: "Lékař může eNeschopenku vystavit pouze tehdy, pokud je pracovní neschopnost po klinickém posouzení odůvodněná a splňuje příslušné podmínky. Vystavení není automatické.",
+      },
+      {
+        id: "cmr85xqeo000470jukz64egnl",
+        question: "Co když nesouhlasím s doporučením lékaře?",
+        answer: "Sdělte lékaři své obavy a preference. Lékař vysvětlí důvody doporučení, možné alternativy a situace, kdy je nutné osobní nebo akutní vyšetření.",
+      },
+      {
+        id: "cmr85xqeo000570july81xdfm",
+        question: "Musím být pojištěn u české zdravotní pojišťovny?",
+        answer: "Služba je hrazena přímo pacientem. Případnou úhradu soukromou pojišťovnou nebo zaměstnavatelem si ověřte před rezervací přímo u příslušné organizace.",
+      },
+      {
+        id: "cmr85xqeo000670ju725p211x",
+        question: "Musím být v Praze, abych mohl využít online lékaře?",
+        answer: "Službu lze využít z České republiky, pokud máte stabilní připojení a zařízení s kamerou. Vhodnost online posouzení závisí na zdravotních potížích a okolnostech.",
+      },
+      {
+        id: "cmr85xqeo000770jue4d5moju",
+        question: "Jak rychle získám termín online konzultace?",
+        answer: "Aktuální volné termíny se zobrazují v rezervačním kalendáři a mohou se měnit. Rezervace je potvrzena až po dokončení objednávky.",
+      },
+      {
+        id: "cmr85xqeo000870ju1d7eavt5",
+        question: "Co když moje potíže vyžadují osobní vyšetření?",
+        answer: "Lékař vysvětlí, proč online posouzení nestačí, a doporučí odpovídající osobní nebo akutní péči. Při závažném zhoršení volejte 155 nebo 112.",
+      },
+    ],
   },
   {
     serviceId: "cmr85xq6u000070jufztsgfec",
-    expectedServiceUpdatedAt: "2026-07-19T05:02:20.805Z",
-    expectedSourceSha256: "54b952bc8cfb2b5e21f0d894b8473082ffe4b510905f4869271d2ab4d2fb9619",
+    expectedServiceUpdatedAt: "2026-09-01T23:38:25.814Z",
+    expectedSourceSha256: "929eb8ac281ad5383eb468a1783457c7aae55d5a87d576a67e16135b1a0b10bb",
     countryCode: "cz",
     locale: "EN",
     slug: "lekar-online-praha",
@@ -198,7 +450,56 @@ const metadataDrafts = [
     seoDescription: "Book an online consultation with a Czech-registered, English-speaking doctor. See scope, live availability and when in-person or urgent care is needed.",
     heroTitle: "English-speaking online doctor in Prague",
     heroDescription: "Book an online consultation with an English-speaking doctor registered in Czechia. The doctor will assess your symptoms and advise whether remote or in-person care is appropriate.",
-    faqs: [],
+    detailBody: `<p><strong>For a sudden or serious deterioration, call 155 or 112. An online consultation is not an emergency service.</strong></p>
+<h2>What an English-speaking online doctor can assess</h2>
+<p>The doctor will review your symptoms, medical history, current medicines and any records you provide. They will explain whether remote advice is appropriate or an in-person examination is needed.</p>
+<h2>Prescriptions and medical documents</h2>
+<p>An ePrescription, sick note or referral may be issued only when clinically appropriate and permitted after remote assessment. Booking a consultation does not guarantee medicine, a document or a particular outcome.</p>
+<h2>Appointments</h2>
+<p>Current appointment times and the scheduled consultation length are shown in the booking calendar. Availability can change.</p>
+<p>Sources: <a href="https://ncez.mzcr.cz/cs/milnik-c-3-pravidladokumentypodklady-interoperabilita-telemedicina/pravidla-pro-rozvoj-telemediciny">NCEZ telemedicine guidance</a> and <a href="https://www.nzip.cz/clanek/205-zdravotnicka-zachranna-sluzba">NZIP emergency medical service guidance</a>.</p>`,
+    faqs: [
+      {
+        id: "cmr85xqeo000170ju6qb7bzbb",
+        question: "How long does an online doctor consultation last?",
+        answer: "The scheduled length is shown when you book. The doctor will assess the available information during that time and may recommend a follow-up or an in-person examination if needed.",
+      },
+      {
+        id: "cmr85xqeo000270jug0dgtk42",
+        question: "Can an English-speaking doctor issue an ePrescription?",
+        answer: "The doctor may issue an ePrescription when the medicine is clinically appropriate and can be prescribed safely after remote assessment. Booking does not guarantee a prescription.",
+      },
+      {
+        id: "cmr85xqeo000370ju5ryyh241",
+        question: "Can I get a Czech sick note through this service?",
+        answer: "A doctor may issue an electronic sick note only when incapacity for work is clinically justified and the relevant requirements are met. Issuance is not automatic.",
+      },
+      {
+        id: "cmr85xqeo000470jukz64egnl",
+        question: "What if I disagree with the doctor's recommendation?",
+        answer: "Tell the doctor about your concerns and preferences. They will explain the reasons for the recommendation, possible alternatives and when in-person or urgent care is needed.",
+      },
+      {
+        id: "cmr85xqeo000570july81xdfm",
+        question: "Do I need Czech public health insurance?",
+        answer: "This is a private, self-pay service. Check any reimbursement from a private insurer or employer directly with that organisation before booking.",
+      },
+      {
+        id: "cmr85xqeo000670ju725p211x",
+        question: "Do I need to be in Prague for the online consultation?",
+        answer: "You can use the service from within Czechia with a stable internet connection and a camera-enabled device. Suitability for remote assessment depends on your symptoms and circumstances.",
+      },
+      {
+        id: "cmr85xqeo000770jue4d5moju",
+        question: "How quickly can I book an English-speaking doctor?",
+        answer: "Current appointment times are shown in the booking calendar and can change. Your appointment is confirmed only after you complete the booking process.",
+      },
+      {
+        id: "cmr85xqeo000870ju1d7eavt5",
+        question: "What if I need an in-person examination?",
+        answer: "The doctor will explain why remote assessment is not enough and recommend appropriate in-person or urgent care. For a serious deterioration, call 155 or 112.",
+      },
+    ],
   },
   {
     serviceId: "cmr85xxof001e70ju4i7habh8",
@@ -330,9 +631,9 @@ const sickNote = {
     },
     {
       id: "cmr85xsa7000l70ju0rerevdi",
-      question: "Jak rychle se informace objeví v systému ČSSZ?",
+      question: "Jak rychle se eNeschopenka objeví v systému ČSSZ, pokud ji lékař vystaví?",
       answer:
-        "Doba zpracování je individuální a může trvat hodiny nebo dny podle správnosti údajů a potřeby jejich ověření. Konzultace proto nemůže slíbit konkrétní čas notifikace.",
+        "Pokud lékař eNeschopenku vystaví, odešle údaje ČSSZ elektronicky. Zobrazení a notifikace závisejí na konkrétní službě ČSSZ, jejím nastavení a zpracování. Konzultace nemůže slíbit konkrétní čas; zaměstnavatele informujte neprodleně.",
     },
   ],
 } satisfies CzechiaSeoServiceDraft;
@@ -400,13 +701,13 @@ const treatmentRenewal = {
     },
     {
       id: "cmr85xu55000w70ju09qbtii5",
-      question: "Co když se můj stav od poslední kontroly změnil?",
+      question: "Co když se můj stav před obnovením receptu změnil?",
       answer:
         "Popište změnu hned na začátku konzultace. Lékař posoudí, zda stačí videokonzultace, nebo je bezpečnější širší či osobní vyšetření. Při náhlém závažném zhoršení volejte 155 nebo 112.",
     },
     {
       id: "cmr85xu55000x70jus9xjlihu",
-      question: "Mohu si konzultaci objednat bez registrovaného praktického lékaře?",
+      question: "Mohu si objednat obnovení léčby bez registrovaného praktického lékaře?",
       answer:
         "Ano, konzultaci si objednat můžete. Rozhodnutí o pokračování léčby závisí na dostupné dokumentaci a klinickém posouzení. Služba nenahrazuje pravidelné kontroly ani dlouhodobou péči praktického lékaře.",
     },
@@ -414,10 +715,10 @@ const treatmentRenewal = {
 } satisfies CzechiaSeoServiceDraft;
 
 export const CZECHIA_SEO_SERVICE_DRAFTS: readonly CzechiaSeoServiceDraft[] = [
-  ...metadataDrafts.slice(0, 11),
+  ...metadataDrafts.slice(0, 12),
   sickNote,
   treatmentRenewal,
-  ...metadataDrafts.slice(11),
+  ...metadataDrafts.slice(12),
 ];
 
 function approvalPayload(draft: CzechiaSeoServiceDraft) {
@@ -446,6 +747,17 @@ export function czechiaSeoConfirmationToken(draft: CzechiaSeoServiceDraft): stri
   return `CZ-SEO-SERVICE:${draft.locale}:${draft.slug}:${czechiaSeoApprovalSha256(draft).slice(0, 16)}`;
 }
 
+export function czechiaCalendarDate(now: Date = new Date()): string {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Europe/Prague",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(now);
+  const value = Object.fromEntries(parts.map(({ type, value }) => [type, value]));
+  return `${value.year}-${value.month}-${value.day}`;
+}
+
 function parseReviewDate(value: string | undefined, label: string): Date | null {
   if (!value) return null;
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
@@ -455,7 +767,7 @@ function parseReviewDate(value: string | undefined, label: string): Date | null 
   if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== value) {
     throw new Error(`${label} must be a valid calendar date`);
   }
-  if (value > new Date().toISOString().slice(0, 10)) {
+  if (value > czechiaCalendarDate()) {
     throw new Error(`${label} cannot be in the future`);
   }
   return date;
@@ -479,6 +791,7 @@ export function assertCzechiaSeoApplyGate(
   clinicalReviewStatus: string | null = null,
   nativeReviewerId: string | null = null,
   nativeReviewedAt: Date | null = null,
+  now: Date = new Date(),
 ): void {
   if (!apply) return;
   if (!reviewedAt) throw new Error("Refusing to apply without a real clinical review date");
@@ -500,7 +813,7 @@ export function assertCzechiaSeoApplyGate(
   }
   if (
     draft.locale === "EN" &&
-    nativeReviewedAt!.toISOString().slice(0, 10) > new Date().toISOString().slice(0, 10)
+    nativeReviewedAt!.toISOString().slice(0, 10) > czechiaCalendarDate(now)
   ) {
     throw new Error("Refusing to apply English copy with a future native review date");
   }

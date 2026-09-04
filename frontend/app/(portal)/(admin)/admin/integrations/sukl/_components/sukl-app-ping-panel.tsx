@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { Btn, Pill } from "../../../_components/atoms";
-import type { SuklAppPingDto } from "@/lib/admin/admin-api/sukl";
+import type { SuklAppInfoDto, SuklAppPingDto } from "@/lib/admin/admin-api/sukl";
 
 /**
  * Calls SÚKL's `AppPing` — the first real SOAP operation.
@@ -35,11 +35,34 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<SuklAppPingDto | null>(null);
+  const [info, setInfo] = useState<SuklAppInfoDto | null>(null);
+
+  async function runInfo() {
+    setBusy(true);
+    setError(null);
+    setInfo(null);
+    try {
+      const res = await fetch(`/api/admin/sukl/app-info?service=${service}`, { method: "POST" });
+      const json = (await res.json().catch(() => null)) as
+        | { ok?: boolean; message?: string; data?: SuklAppInfoDto }
+        | null;
+      if (!res.ok || !json?.ok || !json.data) {
+        setError(json?.message ?? "GetAppInfo could not be sent");
+        return;
+      }
+      setInfo(json.data);
+    } catch {
+      setError("GetAppInfo could not be sent");
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function run() {
     setBusy(true);
     setError(null);
     setResult(null);
+    setInfo(null);
     try {
       const qs = new URLSearchParams({ service, path });
       const res = await fetch(`/api/admin/sukl/app-ping?${qs}`, { method: "POST" });
@@ -94,6 +117,9 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
           <Btn onClick={run} disabled={busy || !callable} variant="primary" size="sm">
             {busy ? "Sending…" : "Send AppPing"}
           </Btn>
+          <Btn onClick={runInfo} disabled={busy || !callable} variant="secondary" size="sm">
+            {busy ? "…" : "GetAppInfo"}
+          </Btn>
         </div>
       </div>
 
@@ -108,6 +134,74 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
 
       {error ? (
         <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">{error}</p>
+      ) : null}
+
+      {info ? (
+        <div
+          className="mb-3 rounded-md border px-4 py-3 text-sm"
+          style={{ borderColor: "var(--portal-line)" }}
+        >
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <Pill tone={info.ok ? "active" : "inactive"} withDot>
+              {info.ok ? "GetAppInfo" : `Rejected — ${info.errorCode}`}
+            </Pill>
+            <span className="text-xs" style={{ color: "var(--portal-muted)" }}>
+              {info.label} · HTTP {info.httpStatus} · {info.durationMs} ms
+            </span>
+          </div>
+          {info.ok ? (
+            <>
+              <p className="m-0 text-sm">
+                Build <strong>{info.applicationVersion ?? "—"}</strong>
+                {info.name ? ` · ${info.name}` : ""}
+              </p>
+              <p className="m-0 mt-1 text-xs" style={{ color: "var(--portal-muted)" }}>
+                This is SÚKL&rsquo;s <strong>software build</strong>, not the message interface
+                version. Do not compare it with <code>SUKL_INTERFACE_VERSION</code> — that value
+                (<code>202601B</code>) is a document-interface version, and matches the entries
+                below when the service lists any.
+                {info.serverTime ? ` Server time: ${info.serverTime}.` : ""}
+              </p>
+              {info.documentTypes.length > 0 ? (
+                <table className="mt-3 w-full text-xs">
+                  <thead>
+                    <tr style={{ color: "var(--portal-muted)" }}>
+                      <th className="pb-1 text-left font-medium">Document</th>
+                      <th className="pb-1 text-left font-medium">Prefix</th>
+                      <th className="pb-1 text-left font-medium">Interface version</th>
+                      <th className="pb-1 text-left font-medium">Valid</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {info.documentTypes.map((d, i) => (
+                      <tr key={`${d.prefix ?? "?"}-${d.version ?? i}`}>
+                        <td className="py-0.5">{d.description ?? "—"}</td>
+                        <td className="py-0.5">
+                          <code>{d.prefix ?? "—"}</code>
+                        </td>
+                        <td className="py-0.5">
+                          <code>{d.version ?? "—"}</code>
+                        </td>
+                        <td className="py-0.5">
+                          {d.validFrom ?? "—"}
+                          {d.validTo ? ` → ${d.validTo}` : " → open"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p className="m-0 mt-1 text-xs" style={{ color: "var(--portal-muted)" }}>
+                  This service lists no document types, so it does not confirm the interface
+                  version. AppPing succeeding while we send <code>SUKL_INTERFACE_VERSION</code> is
+                  the evidence for that.
+                </p>
+              )}
+            </>
+          ) : (
+            <p className="m-0 whitespace-pre-wrap break-words text-sm">{info.errorMessage}</p>
+          )}
+        </div>
       ) : null}
 
       {result ? (

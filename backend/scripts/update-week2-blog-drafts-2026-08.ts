@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Update the six existing Week 2 production records without changing draft state.
  * Dry-run is the default. Published, reviewed, translated, unowned or manually
@@ -5,15 +6,33 @@
  *
  * From backend/:
  *   node --env-file=.env --import tsx scripts/update-week2-blog-drafts-2026-08.ts
+ *   node --env-file=.env --import tsx scripts/update-week2-blog-drafts-2026-08.ts --only=pt-baixa-medica-valor
  *   node --env-file=.env --import tsx scripts/update-week2-blog-drafts-2026-08.ts --apply
  */
 import { createHash } from "node:crypto";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "../src/db/prisma.js";
 import { renderArticle, wordCount } from "./content/blog-seo-2026-08/template.js";
 import { WEEK2_PRIMARY_POST_SETS } from "./content/blog-week2-2026-08/index.js";
 
 const APPLY = process.argv.includes("--apply");
+export function parseOnly(args: readonly string[]): string | undefined {
+  if (args.includes("--only")) throw new Error("Use --only=<key>");
+  const unknown = args.find((arg) => arg !== "--apply" && !arg.startsWith("--only="));
+  if (unknown) throw new Error(`Unknown argument: ${unknown}`);
+  const options = args.filter((arg) => arg.startsWith("--only="));
+  if (options.length === 0) return undefined;
+  if (options.length > 1) throw new Error("Pass --only=<key> at most once");
+  const option = options[0];
+  if (!option) throw new Error("Use --only=<key>");
+  const value = option.slice("--only=".length);
+  if (!value) throw new Error("--only requires a non-empty key");
+  return value;
+}
+
+const ONLY = parseOnly(process.argv.slice(2));
 const SEEDED_BY = "seed-week2-blog-drafts-2026-08";
 const expectedIds = new Map([
   ["pt-baixa-medica-valor", "cmt8la5mj0000csjuzvvr49bg"],
@@ -45,8 +64,12 @@ async function prepare(): Promise<Prepared[]> {
   if (WEEK2_PRIMARY_POST_SETS.length !== 6 || expectedIds.size !== 6) {
     throw new Error("Expected exactly six Week 2 primary drafts");
   }
+  const sets = ONLY
+    ? WEEK2_PRIMARY_POST_SETS.filter((set) => set.key === ONLY)
+    : WEEK2_PRIMARY_POST_SETS;
+  if (sets.length === 0) throw new Error(`--only=${ONLY} matched no Week 2 post set`);
   const prepared: Prepared[] = [];
-  for (const set of WEEK2_PRIMARY_POST_SETS) {
+  for (const set of sets) {
     const post = set.posts[0];
     const id = expectedIds.get(set.key);
     if (!post || !id) throw new Error(`${set.key}: missing primary post or approved record id`);
@@ -96,7 +119,7 @@ async function prepare(): Promise<Prepared[]> {
 
 async function main() {
   const prepared = await prepare();
-  console.log(`${APPLY ? "APPLY" : "DRY RUN"}: update six existing Week 2 DRAFT records`);
+  console.log(`${APPLY ? "APPLY" : "DRY RUN"}: update ${prepared.length} existing Week 2 DRAFT record(s)`);
   console.table(prepared.map((row) => ({
     id: row.id, key: row.key, locale: row.locale, slug: row.slug,
     words: wordCount(row.body), currentHash: row.currentHash,
@@ -138,12 +161,18 @@ async function main() {
       throw new Error(`${row.key}: post-write verification failed`);
     }
   }
-  console.log("VERIFIED: six DRAFT records updated; zero translations; nothing published");
+  console.log(
+    prepared.length === 6
+      ? "VERIFIED: six DRAFT records updated; zero translations; nothing published"
+      : `VERIFIED: ${prepared.length} DRAFT record(s) updated; zero translations; nothing published`,
+  );
 }
 
-main()
-  .catch((error) => {
-    console.error(error);
-    process.exitCode = 1;
-  })
-  .finally(() => prisma.$disconnect());
+if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) {
+  main()
+    .catch((error) => {
+      console.error(error);
+      process.exitCode = 1;
+    })
+    .finally(() => prisma.$disconnect());
+}

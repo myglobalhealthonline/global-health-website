@@ -40,3 +40,14 @@ export function buildLocalizedInsuranceLine(
 
   return template.replace("{list}", list);
 }
+
+/** Portugal's clinically approved SEO descriptions are exact reviewed copy. */
+export function composeServiceMetaDescription(
+  baseDescription: string,
+  insuranceLine: string | null,
+  countryCode: string,
+  locale: string,
+): string {
+  if (!insuranceLine || (countryCode === "pt" && locale === "pt")) return baseDescription;
+  return `${baseDescription} ${insuranceLine}`.slice(0, 320);
+}

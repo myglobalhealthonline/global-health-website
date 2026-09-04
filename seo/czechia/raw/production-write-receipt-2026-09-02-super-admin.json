@@ -1,0 +1,45 @@
+{
+  "operation": "czechia-super-admin-approved-clinical-rollout",
+  "recorded_at": "2026-09-02T16:59:16.668Z",
+  "approval_evidence": "dual-reviewer-head-resolution-approval-2026-09-02.md",
+  "production_commit": "3ada17c6eac1aceebcf21443649ea8c8d6dc70f1",
+  "deployments": {
+    "frontend": {
+      "id": "393990d9-1122-40ee-808b-5c543cab42a7",
+      "status": "SUCCESS"
+    },
+    "backend": {
+      "id": "5e8b701e-9895-444e-ad54-50d38ae40a50",
+      "status": "SUCCESS"
+    }
+  },
+  "database_writes": {
+    "page_content": 2,
+    "doctor_market_translations": 5,
+    "services": 3,
+    "result": "verified transactionally; unrelated and protected fields unchanged"
+  },
+  "frontend_scoped_copy": {
+    "doctor_profiles_with_approved_faq_overlays": 5,
+    "tools_with_approved_metadata_and_h1_overlays": 3,
+    "scope": "Czechia/Czech only"
+  },
+  "public_verification": {
+    "artifact": "clinical-production-readback-2026-09-02-super-admin.csv",
+    "passed": 13,
+    "total": 13,
+    "english_home_czech_copy_absent": true,
+    "approved_doctor_faq_copy_present": true
+  },
+  "preserved": [
+    "doctor biographies",
+    "doctor qualifications",
+    "doctor credentials and certifications",
+    "doctor registration records",
+    "prices and durations",
+    "doctor assignments and availability",
+    "booking behavior",
+    "non-Czech markets and locales",
+    "tool algorithms, questions, scoring and calculations"
+  ]
+}

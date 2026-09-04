@@ -123,6 +123,29 @@ export type SuklAppPingDto = {
   responseHeaders: Record<string, string> | null;
 };
 
+export type SuklDocumentTypeDto = {
+  version: string | null;
+  prefix: string | null;
+  description: string | null;
+  validFrom: string | null;
+  validTo: string | null;
+};
+
+/** Result of GetAppInfo — SÚKL's software build plus document-type versions. */
+export type SuklAppInfoDto = {
+  service: string;
+  label: string;
+  ok: boolean;
+  httpStatus: number;
+  durationMs: number;
+  applicationVersion: string | null;
+  name: string | null;
+  serverTime: string | null;
+  documentTypes: SuklDocumentTypeDto[];
+  errorCode: string | null;
+  errorMessage: string | null;
+};
+
 export async function fetchSuklStatus() {
   return adminRequest<{
     status: SuklHealthStatusDto;

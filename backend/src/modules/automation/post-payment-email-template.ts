@@ -321,7 +321,7 @@ export function buildPostPaymentPatientEmailHtml(
 
   const title = `#${esc(ctx.orderNumber)} · ${statusHeading(lang, variant)}`;
 
-  return `<!doctype html><html><body style="margin:0;padding:0;background-color:#F6F8F1;">
+  return `<!doctype html><html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /></head><body style="margin:0;padding:0;background-color:#F6F8F1;">
 <div style="background-color:#F6F8F1;padding:28px 16px;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#2D3B36;">
   <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="max-width:100%;background-color:#ffffff;border:1px solid #E4E7DD;border-radius:20px;overflow:hidden;">
     <tr>
@@ -332,7 +332,7 @@ export function buildPostPaymentPatientEmailHtml(
       </td>
     </tr>
     <tr>
-      <td style="padding:36px 40px;line-height:1.65;font-size:15px;color:#2D3B36;">
+      <td style="padding:36px 40px;line-height:1.65;font-size:15px;color:#2D3B36;word-wrap:break-word;overflow-wrap:break-word;">
         <p style="margin:0 0 16px;">${greeting},</p>
         <p style="margin:0 0 20px;">${intro}</p>
         <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;">

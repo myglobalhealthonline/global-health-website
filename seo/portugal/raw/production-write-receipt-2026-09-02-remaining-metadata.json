@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "receipt_id": "PT-REMAINING-METADATA-2026-09-02",
+  "environment": "production",
+  "result": "16_database_records_applied_and_verified; 1_conflicted_profile_held",
+  "database_identity": "production PostgreSQL target (credentials and endpoint omitted)",
+  "clinical_review": {
+    "reviewer": "Dr Tiago Miguel Figueira",
+    "professional_body": "OM",
+    "reviewed_at": "2026-09-02T01:58:00+02:00",
+    "approval_register": "seo/portugal/clinical-review-register.csv"
+  },
+  "database_records": [
+    "blog:doenca-mao-pe-boca-sinais-e-tratamento",
+    "page:DOCTORS_INDEX",
+    "doctor:dr-ana-leal-neto",
+    "doctor:dr-egas-moura",
+    "doctor:dr-joana-branco-maia",
+    "doctor:dr-joao-de-oliveira-e-silva",
+    "doctor:dr-lucas-alvarenga-berto",
+    "doctor:dr-margarida-andrade",
+    "doctor:dr-pedro-santos",
+    "doctor:dr-ruben-pereira",
+    "doctor:dr-rui-diogo-rodrigues",
+    "doctor:dra-ana-varges-gomes",
+    "doctor:dra-nadia-cavaco",
+    "page:GENERAL_CONSULTATION",
+    "landing:infecoes-respiratorias",
+    "page:SPECIALIST_CONSULTATION"
+  ],
+  "held_without_write": [
+    {
+      "selector": "doctor:beatriz-carvalho",
+      "reason": "OPP 31618 resolves to Beatriz Sousa, not Beatriz Carvalho; authoritative OPP resolution required",
+      "source_sha256_unchanged": "e3ef664bd8cec8f0f350ddbdb833cc1d86a98238a976a02921d0acf1601d74d0"
+    }
+  ],
+  "dry_run_evidence": "seo/portugal/raw/remaining-metadata-production-dry-run-2026-09-02.csv",
+  "readback_evidence": "seo/portugal/raw/remaining-metadata-production-readback-2026-09-02.json",
+  "verification": {
+    "verified_at_utc": "2026-09-02T00:16:03.912Z",
+    "database_records_exact": 16,
+    "public_pages_exact": 16,
+    "all_http_200": true,
+    "all_titles_match_runtime_brand_policy": true,
+    "all_descriptions_exact": true,
+    "all_self_canonical": true,
+    "all_hreflang_pt_PT": true,
+    "all_indexable": true,
+    "all_html_lang_pt": true,
+    "all_json_ld_present": true,
+    "doctor_keywords_exact": true,
+    "held_profile_source_unchanged": true
+  },
+  "writer_guards": {
+    "one_record_per_apply": true,
+    "approved_copy_sha256_confirmed": true,
+    "source_sha256_confirmed": true,
+    "database_identity_confirmed_without_credentials": true,
+    "serializable_transaction": true,
+    "optimistic_updated_at_check": true,
+    "transactional_readback_passed": true,
+    "independent_database_and_public_readback_passed": true
+  },
+  "protected_scope": {
+    "doctor_names_changed": false,
+    "doctor_biographies_changed": false,
+    "doctor_qualifications_changed": false,
+    "doctor_credentials_or_certifications_changed": false,
+    "doctor_registrations_changed": false,
+    "visible_clinical_copy_changed": false,
+    "faqs_changed": false,
+    "prices_changed": false,
+    "booking_or_availability_changed": false
+  }
+}

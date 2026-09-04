@@ -123,3 +123,233 @@ No clinical, service, profile, credential, availability, price, FAQ-answer or bo
 Final verification passed the 75-page read-only reconciliation, frontend typecheck and touched-file lint, seven focused frontend tests, 11 focused Portugal backend tests, backend production build, dependency-override drift check, production dependency audit and `git diff --check`. Independent code, TypeScript and security reviews found no remaining actionable issue. The backend package test script expands file arguments to the full suite; that broader local run reached unrelated database tests and failed because the test database at `127.0.0.1:5433` was unavailable. The direct Portugal test run had no failure or skip.
 
 Commit `48832d9cf493ba7a9006cde322fbe5f317af6b54` was pushed to `Dev-hassaan`. Railway reported successful frontend and backend deployments in its Development environment. At 2026-09-01T16:25:59Z the Railway frontend URL returned HTTP 200 from that commit with no plan CTA, plan-selection heading or subscription onboarding copy, and with the empty-state H2. The public custom domain still returned deployment `b0cebff87d49540ce3205c41adf45f65bf2dfa45` and the old lower-page copy. Production promotion remains pending; no `main` push, merge or manual Railway action was performed.
+
+The subsequent `main` merge reached the public custom domain as deployment
+`884dedfefd6ddf5f3232ed9b1566765ad718a607`. A cache-bypassed read returned the
+empty-state H2 and no plan CTA, plan-selection heading, named-plan sales copy or
+flexible-plan claim. This closes the earlier production-promotion hold.
+
+## 2026-09-01 Portugal FAQ safety correction and clinical-gate audit
+
+An official-source review found two retired or incorrect crisis contacts in five live
+FAQ answers and the medical disclaimer: `1024` in four doctor-profile FAQs and
+`808 200 204` in the Portugal mental-health service FAQ and three disclaimer list
+items. The official Government of Portugal announcement confirms
+the national suicide-prevention and psychological-support line `1411`; `112` remains
+the immediate-danger route. A one-record-only updater corrected the five answers in
+production. The same updater then corrected the one published Portugal medical
+disclaimer and advanced its public revision metadata to version 2, with a September
+2026 visible update date and the correction-time publication timestamp. Each write
+required the exact source hash, a patch-bound confirmation
+token and credential-free production database identity, then used an optimistic
+Serializable transaction and exact readback. Post-write dry runs returned
+`already applied`, and cache-bypassed public reads returned HTTP 200 with the new
+answers. The public backend legal-document readback returns version 2, September 2026,
+`1411` and no retired 808 contact. The rendered frontend on deployment
+`5b19ccba9512ef1ac5a7d2e62c447b578db267ac` returned the same revision and contact,
+with no retired 808 value. The sanitized receipt is
+`raw/production-write-receipt-2026-09-01-faq-safety.json`.
+
+The source assets that could reintroduce those FAQ/disclaimer contacts now use `1411`
+and `112`. Portugal FAQ-hub and shared contact copy was shortened and de-risked:
+same-day, guaranteed-document, blanket language-availability and blanket third-party
+acceptance claims were removed. The FAQ keyword audit did not force a head term into
+every question. Existing service and doctor questions already express their page
+intent; only a small number of hub questions use natural Portugal consultation,
+driving-certificate or data-rights wording. This avoids keyword stuffing and
+cross-service cannibalization.
+
+The protected biography audit found `1024` in four live doctor biographies, repeated
+across their base, PT and Portugal-market layers. Those fields were not changed:
+doctor biography edits must use the existing doctor-profile approval workflow. No
+qualification, credential, registration, specialty, language or biography fact was
+altered.
+
+The broader 28-row clinical publication gate remains closed. Dr Tiago's active,
+verified Portugal registration is present, but the database has no active Portugal
+specialty relationship for him; the only specialty relationship belongs to Ireland.
+The official registration evidence located in this review does not verify a Portugal
+specialty. Production also currently exposes only one eligible operational reviewer,
+while the guard requires three distinct, active identities for clinician, compliance
+and content ownership. Exact dated approvals, official source references and approved
+copy hashes remain blank. No gate was weakened and no clinical sign-off was invented.
+
+## 2026-09-02 production gate verification after user-attested Dr Tiago approval
+
+The production writer was checked read-only against the current database and the
+official Ordem dos Médicos source after the user supplied a clinical approval
+timestamp of `2026-09-01 18:30 Europe/Prague`.
+
+The blockers are still real:
+
+- production currently exposes one eligible operational reviewer user:
+  `nauman test` (`ADMIN`);
+- Dr Tiago's active Portugal doctor row exists and is verified under OM `77986`,
+  but his only active specialty relation is `General practice` for Ireland, not
+  Portugal;
+- the official OM source now linked in `doctor-profile-fact-register.csv` lists
+  that registration as `TIAGO MIGUEL FALEIRO FIGUEIRA`, while the production
+  doctor identity is `Dr Tiago Miguel Figueira`.
+
+Because the guarded writer compares the clinical register, production doctor
+record and fact register exactly, the Portugal clinical batch remains blocked
+even with the user-attested approval. No approval field was backfilled and no
+clinical write was attempted.
+
+## 2026-09-02 approved clinical SEO production rollout
+
+This section supersedes the preceding gate snapshot. Dr Tiago Miguel Figueira's
+approval was recorded as `2026-09-01T18:30:00+02:00`, the owner authorized the
+production rollout, and the gate was aligned with the already proven Czech and
+Ireland metadata-only contract: one active, verified in-market clinician, exact
+reviewed-copy hashes, official sources and explicit owner authorization. It did
+not change Dr Tiago's database identity or assert a Portugal specialty that the
+database does not contain.
+
+The final review covered all 28 approved rows and searched the proposed metadata
+for same-day guarantees, guaranteed documents or acceptance, immediacy, cures,
+definitive diagnoses, `100%`, `sem risco` and equivalent unsafe wording. The
+driving-certificate row remained a reviewed retain-current decision. The other
+27 changes comprised one homepage, 21 services, four doctor profiles and the
+frontend-owned blood-pressure tool.
+
+The production writer applied the 26 database-owned records one at a time. Each
+write was bound to the approved-copy and current-source SHA-256 values, the
+credential-free production database identity, the reviewer doctor record and the
+fact register, then used a Serializable transaction, optimistic `updatedAt`
+predicate and exact readback. The first HOME attempt failed closed before any
+write because production stores the inherited title as `null`; the reviewed
+source-variant guard was then added and tested. It recognizes only that exact
+HOME fallback, the retired Medicare suffix already absent from ten stored service
+descriptions and the redundant stored doctor brand suffix. Any other drift still
+blocks.
+
+An independent production query then matched all 26 approved titles and
+descriptions, the four exact doctor keyword arrays and the four active verified OM
+registrations. The doctor writer never targeted names, biographies,
+qualifications, credentials, certifications, registrations, specialties,
+languages, prices, booking data or FAQs. Visible service copy and tool logic or
+clinical thresholds were also outside the write scope.
+
+The first public readback found that the service page dynamically re-appended an
+insurer sentence after reading the reviewed description. Commit `a5d60dbc` now
+preserves the exact reviewed description only for Portugal Portuguese (`pt`/`pt`);
+Portugal's other locales and every other market retain their existing localized
+insurance behavior, and the visible real-time insurer UI is unchanged. The
+blood-pressure metadata overlay and this correction are active in production
+deployment `e165ab094989de15d35be2111b1262ae44588b36`. The 27-page cache-bypassed
+readback is `raw/clinical-seo-production-readback-2026-09-02.csv`; the sanitized
+write receipt is `raw/production-write-receipt-2026-09-02-clinical-seo.json`.
+
+The FAQ review covered 212 questions: six HOME, 18 FAQ-hub, 156 service, 24
+doctor-profile and eight blood-pressure-tool FAQs. No FAQ was rewritten and no
+per-FAQ keyword field was invented. Existing questions already express their page
+intent naturally; forcing a keyword into every question would create stuffing and
+cannibalization across consultation/family medicine, leave/certificates,
+cardiology/second opinion and mental-health clusters.
+
+Verification passed 12 focused backend tests, 28 focused frontend tests, both
+package typechecks, scoped ESLint, production dependency audit, reconciliation and
+independent code, TypeScript and security reviews. The frontend production build
+compiled and passed TypeScript; local static generation remained blocked by the
+unavailable content API, the same known environment limitation recorded earlier.
+
+## 2026-09-02 remaining 17-page guarded implementation
+
+The 17 sitemap pages outside the first approved manifest now use the same one-record,
+dry-run-first metadata writer. The added targets are 12 doctor-market translations,
+three published PT page-content translations, one PT health landing translation and
+the effective PT hand-foot-mouth blog record. The writer changes only title,
+description and, for doctors, the existing SEO keyword array. It does not target a
+doctor name, biography, qualification, credential/certification, registration,
+specialty, language, price, booking record, FAQ or clinical body field.
+
+Every proposed title and description was checked for same-day, immediacy, guarantee
+and other unsafe availability wording. The Nádia Cavaco draft's dangling separator
+was corrected before its hash was recorded. The existing FAQ review remains valid:
+212 questions already express page intent naturally, so no per-FAQ keyword field or
+keyword-stuffed rewrite was added.
+
+Read-only production dry runs matched exactly one eligible record for all 17 targets.
+Their source hashes, candidate copy hashes and confirmation tokens are recorded in
+`raw/remaining-metadata-production-dry-run-2026-09-02.csv`. Official OM/OPP evidence
+now verifies 15 of the 16 doctor fact rows. OM 74473 resolves to Rui Diogo Oliveira
+Rodrigues, consistent with the shortened professional display used on the live page.
+Beatriz Carvalho remains blocked because OPP 31618 resolves to Beatriz Sousa, not
+Beatriz Carvalho; no protected profile or credential field was changed.
+
+The clinical register contains 28 approved rows and 17 separate
+`blocked_pending_review` rows. The prior approval applies only to the exact first
+28 hashes, so it was not copied onto these candidates. No production write was made.
+Publication requires Dr Tiago's exact approval of the 17 candidate hashes. Even with
+that approval, the Beatriz candidate must remain excluded until authoritative OPP
+documentation resolves the identity mismatch. Reconciliation passes with 45 clinical
+rows, 15 verified doctor facts and one pending fact.
+
+## 2026-09-02 remaining metadata production rollout
+
+Dr Tiago Miguel Figueira approved the exact phase-two candidate hashes at
+`2026-09-02T01:58:00+02:00`. The official-fact gate admitted 16 records and kept
+Beatriz Carvalho blocked because OPP 31618 resolves to Beatriz Sousa. No approval or
+credential fact was inferred for that profile.
+
+All 16 eligible source hashes still matched the recorded production dry runs. The
+one-record writer then applied one blog record, three published page-content
+translations, one health-landing translation and 11 doctor-market translations.
+Each Serializable transaction verified the exact approved title and description;
+doctor transactions also verified the exact SEO keyword array and registration-bound
+subject identity. The hand-foot-mouth description no longer attributes Portugal
+content to Ireland or the HSE.
+
+Independent database and cache-bypassed public readback passed 16 of 16 records:
+HTTP 200, approved title policy, exact description, self-canonical, `pt-PT`
+hreflang, indexability, Portuguese HTML language and JSON-LD. A separate source-hash
+read confirmed the held Beatriz record remained unchanged. The sanitized receipt is
+`raw/production-write-receipt-2026-09-02-remaining-metadata.json`; full readback is
+`raw/remaining-metadata-production-readback-2026-09-02.json`.
+
+The writer did not target names, biographies, qualifications, credentials,
+certifications, registrations, specialties, languages, visible clinical copy, FAQs,
+prices, booking or availability. The 212-FAQ decision also remains unchanged: page-
+level intent is already present, so no forced per-FAQ keyword field or rewrite was
+added.
+
+## 2026-09-03 snippet-trim drafts prepared, nothing published
+
+Ledger §38.1 items 11 and 12. Read-only pass; no production write, no register edit.
+
+Eleven live Portugal doctor meta descriptions run 191–220 characters against the
+~155–160 display budget, so between a quarter and a third of each is truncated. The
+Portugal tool pages carry the same problem plus English-style Title Case, which is
+what made them read differently from the Czechia tools rewritten in the same batch.
+`/tools/osteoporosis-risk-checker` is the worst row in either market at an 80-character
+title and a 228-character description.
+
+Trimmed replacements are in `raw/snippet-trim-drafts-2026-09-03.csv`, one row per
+field with the current value, the proposed value, both measured lengths and exactly
+what was dropped. The pattern is the one the batch review specified: keep the opening
+booking clause and the OM registration number, drop the credential tail. Every
+proposal is a strict subset of the live text plus punctuation — no fact was added,
+reworded or invented. Doctor descriptions land at 124–146 characters; all 22 drafted
+fields are inside budget.
+
+`backend/scripts/report-portugal-snippet-trim-drafts.ts` is the read-only proof. It
+opens no database connection, recomputes every recorded length, asserts each current
+value still equals the completion-matrix row the gated writer would read, and prints
+the approval SHA-256 and confirmation token that `patch-portugal-seo-metadata.ts
+--apply` would demand. All 11 doctor drafts resolve to exactly one eligible record
+each.
+
+Two constraints found while preparing this:
+
+- The tool rows cannot go through the gated writer at all.
+  `assertPortugalSeoApplyAuthorized` refuses `targetKind === "tool"` — they are
+  managed in a static runtime source, so they need the Czechia frontend-overlay route
+  rather than a register-gated database write. That route has not been chosen.
+- Publication of the doctor rows requires Dr Tiago Miguel Figueira's approval of the
+  exact new hashes. The existing approvals are bound to the current, longer copy, and
+  an approval is not transferable between hashes. Nothing was backfilled.
+
+`beatriz-carvalho` (189 characters) was left alone: its matrix row is
+`drafted; blocked pending clinical or credential review`, so it is not a live row and
+not part of the eleven.

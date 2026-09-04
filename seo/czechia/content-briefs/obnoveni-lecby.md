@@ -33,7 +33,7 @@
 ## Repository execution — 2026-09-01
 
 - The service copy is prepared in `backend/src/content/czechia-seo-service-drafts.ts` and targets the existing service and all six existing FAQ records in place.
-- The final approval hash is `d085e67bd02effa715f64236adb7b03c76390fba35b8a110496a8feea0a4c647`.
+- The current proposed approval hash is `a02d12a3e9aada7f106233841bc55ec6b268805561660020734306e054ff5106`.
 - The full six-locale service and FAQ source is pinned to `8bd648915a8dce6651a6be34a161f3948b9d2861c39e41a305a4ed4805e74ad8`; the dry-run aborts if the record changes.
 - The draft removes the unsupported same-day/eRecept guarantee language, keeps clinical discretion explicit and links to the official ePreskripce resource.
 - Status: local draft only. Czech prescribing-physician approval and separate owner authorization are required before any production write.

@@ -15,6 +15,10 @@ import {
 // legal documents and need a credit note to unwind.
 import { emitOpsAlert } from "../subscriptions/ops/ops-alert.js";
 import { mirrorPortugalInvoiceDocument } from "./pt-invoice-mirror.service.js";
+// The leaf crypto module, deliberately — importing safeDecrypt from
+// invoice-detail.service would drag commission.service (and its config) onto the
+// paid-order path for the sake of a three-line try/catch.
+import { decryptPhi } from "../../lib/crypto/phi-crypto.js";
 import type { PaymentLog } from "../orders/complete-order-payment.service.js";
 
 const noopLog: PaymentLog = {
@@ -26,6 +30,20 @@ const noopLog: PaymentLog = {
 /** InvoiceExpress fallback NIF for a missing/invalid (non 9-digit) fiscal id. */
 const FALLBACK_NIF = "999999990";
 
+/**
+ * Decrypt a PHI field, treating an undecryptable value as absent. A missing key
+ * or a corrupt envelope must not abort the issuance — the invoice is still
+ * legally valid with the "consumidor final" fallback, whereas no invoice at all
+ * is a compliance problem.
+ */
+function safeDecryptPhi(value: string | null | undefined): string | null {
+  try {
+    return decryptPhi(value ?? null);
+  } catch {
+    return null;
+  }
+}
+
 /** dd/mm/yyyy — the date format InvoiceExpress expects. */
 export function formatIeDate(d: Date): string {
   const dd = String(d.getDate()).padStart(2, "0");
@@ -33,7 +51,16 @@ export function formatIeDate(d: Date): string {
   return `${dd}/${mm}/${d.getFullYear()}`;
 }
 
-/** Portuguese NIF is 9 digits; anything else → the InvoiceExpress fallback. */
+/**
+ * Portuguese NIF is 9 digits; anything else → the InvoiceExpress fallback.
+ *
+ * MUST be given the DECRYPTED value. `PatientProfile.taxIdNumber` is PHI and is
+ * stored in the `phi:v1:` envelope (see lib/crypto/phi-crypto.ts); handing this
+ * the raw column produces a string that fails the 9-digit test, so between
+ * 2026-08-25 and 2026-09-02 every Portuguese patient with a NIF on file was
+ * silently invoiced as "consumidor final" — a legal invoice their accountant
+ * cannot use.
+ */
 export function resolveFiscalId(taxIdNumber: string | null | undefined): string {
   const nif = (taxIdNumber ?? "").replace(/\s+/g, "");
   return /^\d{9}$/.test(nif) ? nif : FALLBACK_NIF;
@@ -101,8 +128,10 @@ export async function issuePortugalInvoiceExpress(
       return;
     }
 
-    const profile = await prisma.patientProfile.findUnique({
-      where: { email: order.email.toLowerCase() },
+    // Case-insensitive: order emails are not normalized on write, so an exact
+    // match on the lowercased address can miss a profile that exists.
+    const profile = await prisma.patientProfile.findFirst({
+      where: { email: { equals: order.email, mode: "insensitive" } },
       select: {
         taxIdNumber: true,
         addressLine1: true,
@@ -133,7 +162,9 @@ export async function issuePortugalInvoiceExpress(
         // Stable client key so InvoiceExpress de-dupes the patient's client
         // record across repeat orders.
         code: order.userId ?? order.email,
-        fiscal_id: resolveFiscalId(profile?.taxIdNumber),
+        // taxIdNumber is PHI-encrypted at rest — decrypt before validating, or
+        // every patient with a NIF on file is invoiced as "consumidor final".
+        fiscal_id: resolveFiscalId(safeDecryptPhi(profile?.taxIdNumber)),
         address: order.shipLine1 ?? profile?.addressLine1 ?? "-",
         postal_code: order.shipPostalCode ?? profile?.addressPostalCode ?? "0000-000",
         city: order.shipCity ?? profile?.addressCity ?? "-",

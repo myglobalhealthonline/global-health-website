@@ -291,17 +291,17 @@ export const COUNTRY_CONTACT: Record<string, CountryContact> = {
           {
             question: "O atestado médico online é aceite pela entidade patronal?",
             answer:
-              "O atestado é emitido por um médico inscrito na Ordem dos Médicos após avaliação. Cada entidade patronal define as suas exigências e o subsídio de doença é decidido pela Segurança Social, pelo que deve confirmar ambos.",
+              "O atestado é emitido por um médico inscrito na Ordem dos Médicos após avaliação clínica. A forma de comunicar a ausência ao empregador e a atribuição de subsídio de doença seguem as regras da empresa e da Segurança Social. Se tiver dúvidas sobre o seu caso, confirme os requisitos diretamente com essas entidades.",
           },
           {
-            question: "Emitem atestado para a carta de condução?",
+            question: "Emitem atestado médico para a carta de condução?",
             answer:
-              "Os atestados para carta de condução obedecem aos requisitos do IMT, que definem o que pode ser avaliado remotamente. Consulte a página do serviço para as condições aplicáveis antes de marcar.",
+              "Existe um serviço próprio para atestado médico para a carta de condução. Antes de marcar, consulte a página do serviço para ver o âmbito do atendimento e os passos previstos. Os atestados para carta de condução seguem os requisitos do IMT.",
           },
           {
-            question: "E se precisar de ajuda urgente?",
+            question: "O que devo fazer se precisar de ajuda urgente em Portugal?",
             answer:
-              "A Global Health não é um serviço de urgência e a linha telefónica não está preparada para emergências. Ligue 112 ou dirija-se ao serviço de urgência mais próximo.",
+              "A Global Health não é um serviço de urgência e a linha telefónica não está preparada para emergências. Se tiver sintomas graves ou outra situação de risco, ligue 112 ou dirija-se ao serviço de urgência mais próximo.",
           },
         ],
       },

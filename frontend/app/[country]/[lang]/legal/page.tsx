@@ -54,17 +54,21 @@ export async function generateMetadata({
   const code = countryCodeFromSlug(country);
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
-  const t = loadLocaleBundle(lang as LocaleCode).common.legalPage;
+  const { common } = loadLocaleBundle(lang as LocaleCode);
+  const t = common.legalPage;
+  // `config.name` is English-only. Use the locale's own country name, as every
+  // sibling template does, so a Spanish page does not read "Spain".
+  const countryName = common.countryNames?.[code] ?? config.name;
   const czechiaSeo = czechiaStaticPageSeo(code, lang, "legal");
-  const title = czechiaSeo?.title ?? `${t.heroTitle} ${t.heroAccent} · ${config.name}`;
-  const description = czechiaSeo?.description ?? t.heroBody.replace("{site}", SITE_NAME).replace("{country}", config.name);
+  const title = czechiaSeo?.title ?? `${t.heroTitle} ${t.heroAccent} · ${countryName}`;
+  const description = czechiaSeo?.description ?? t.heroBody.replace("{site}", SITE_NAME).replace("{country}", countryName);
   return buildPublicMetadata({
     path: `/${country}/${lang}/legal`,
     title,
     description,
     locale: `${lang}_${code.toUpperCase()}`,
-    subtitle: config.name,
-    imageAlt: `${t.heroTitle} ${t.heroAccent} — ${config.name}`,
+    subtitle: countryName,
+    imageAlt: `${t.heroTitle} ${t.heroAccent} — ${countryName}`,
     languages: hreflangAlternates(config, "/legal"),
   });
 }
@@ -255,11 +259,11 @@ export default async function CountryLegalIndexPage({
         ])}
       />
       <GH2CompactHero
-        eyebrow={t.heroEyebrow.replace("{country}", config.name)}
+        eyebrow={t.heroEyebrow.replace("{country}", c.countryNames?.[code] ?? config.name)}
         title={czechiaSeo?.h1 ?? t.heroTitle}
         accent={czechiaSeo ? "" : t.heroAccent}
         watermark={t.heroWatermark}
-        body={t.heroBody.replace("{site}", SITE_NAME).replace("{country}", config.name)}
+        body={t.heroBody.replace("{site}", SITE_NAME).replace("{country}", c.countryNames?.[code] ?? config.name)}
       />
 
       <section className="relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">

@@ -8,6 +8,7 @@ import { releaseSlotsToBaseGrid } from "../doctor-availability/doctor-availabili
 import { cancelOrderAppointments } from "../appointments/appointments.service.js";
 import { releaseOrderCreditReservations } from "../subscriptions/checkout-pricing.service.js";
 import { releaseOrderMembershipAllowance } from "../memberships/membership-allowance.service.js";
+import { releaseCouponRedemption } from "../coupons/coupon-release.service.js";
 import { absoluteSiteUrl } from "../../lib/email/send-email.js";
 import { resolveEmailLogoUrl } from "../../lib/email/resolve-email-logo-url.js";
 import { wrapHtml } from "../../lib/email/templates.js";
@@ -1278,6 +1279,11 @@ export async function cancelPrePaymentOrder(orderId: string): Promise<boolean> {
   // and have no TTL of their own — this cron and the abandoned-order cleanup
   // are the only things that give them back on a never-paid order (§7).
   await releaseOrderMembershipAllowance(orderId).catch(() => undefined);
+  // And the coupon use: the cap counts reserved-but-unpaid orders (the slot is
+  // claimed at order creation, like a HELD time slot), so a never-paid booking
+  // would otherwise burn a redemption forever. Idempotent — the abandoned-order
+  // path may have released it already.
+  await releaseCouponRedemption(orderId, "prepayment_cancelled").catch(() => undefined);
 
   return true;
 }

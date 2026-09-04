@@ -57,6 +57,59 @@ export type PublicPageContent = {
   disabled: boolean;
 };
 
+/**
+ * Whole-record fallback is useful to the admin API, but public locale routes
+ * must not render a market-default record under a different language URL.
+ * For an existing partial translation, retain its valid fields but remove the
+ * individual values that the backend reports as default-locale backfills.
+ */
+export function sanitizePageContentForLocale(
+  record: PublicPageContentRecord | null,
+  locale: PublicLocale,
+): PublicPageContentRecord | null {
+  if (record?.resolvedLocale?.toLowerCase() !== locale.toLowerCase()) return null;
+  if (record.mixedLocaleFields.length === 0) return record;
+
+  const mixed = new Set(record.mixedLocaleFields);
+  const localized = {
+    ...record,
+    heroTitle: mixed.has("heroTitle") ? null : record.heroTitle,
+    heroSubtitle: mixed.has("heroSubtitle") ? null : record.heroSubtitle,
+    heroTitleLead: mixed.has("heroTitleLead") ? null : record.heroTitleLead,
+    heroTitleAccent: mixed.has("heroTitleAccent") ? null : record.heroTitleAccent,
+    ctaLabel: mixed.has("ctaLabel") ? null : record.ctaLabel,
+    intro: mixed.has("intro") ? null : record.intro,
+    whoForTitle: mixed.has("whoForTitle") ? null : record.whoForTitle,
+    whoForIntro: mixed.has("whoForIntro") ? null : record.whoForIntro,
+    whoForItems: mixed.has("whoForItems") ? [] : record.whoForItems,
+    whyChooseTitle: mixed.has("whyChooseTitle") ? null : record.whyChooseTitle,
+    whyChooseItems: mixed.has("whyChooseItems") ? [] : record.whyChooseItems,
+    faq: mixed.has("faq") ? [] : record.faq,
+    disclaimerParagraphs: mixed.has("disclaimerParagraphs") ? [] : record.disclaimerParagraphs,
+    disclaimerShort: mixed.has("disclaimerShort") ? null : record.disclaimerShort,
+    body: mixed.has("body") ? null : record.body,
+    seoTitle: mixed.has("seoTitle") ? null : record.seoTitle,
+    seoDescription: mixed.has("seoDescription") ? null : record.seoDescription,
+  };
+
+  return {
+    ...localized,
+    sections: {
+      intro: record.sections.intro && localized.intro !== null,
+      whoFor:
+        record.sections.whoFor && localized.whoForTitle !== null && localized.whoForItems.length > 0,
+      whyChoose:
+        record.sections.whyChoose &&
+        localized.whyChooseTitle !== null &&
+        localized.whyChooseItems.length > 0,
+      faq: record.sections.faq && localized.faq.length > 0,
+      disclaimer:
+        record.sections.disclaimer && localized.disclaimerParagraphs.length > 0,
+      body: record.sections.body && localized.body !== null,
+    },
+  };
+}
+
 function str(v: unknown): string | null {
   return typeof v === "string" && v.length > 0 ? v : null;
 }
@@ -167,5 +220,9 @@ export const getPageContent = cache(async (
   const wrapper = res.data as { record?: unknown; disabled?: boolean } | null;
   if (!wrapper || typeof wrapper !== "object") return { record: null, disabled: false };
   if (wrapper.disabled) return { record: null, disabled: true };
-  return { record: normalizeRecord(wrapper.record), disabled: false };
+  const record = normalizeRecord(wrapper.record);
+  return {
+    record: sanitizePageContentForLocale(record, locale),
+    disabled: false,
+  };
 });

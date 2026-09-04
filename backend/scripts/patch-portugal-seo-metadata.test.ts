@@ -1,32 +1,50 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { portugalDoctorFactSha256, readPortugalDoctorFactRecord } from "../src/content/portugal-clinical-approval.js";
+import {
+  portugalDoctorFactSha256,
+  readPortugalDoctorFactRecord,
+} from "../src/content/portugal-clinical-approval.js";
 import {
   loadPortugalSeoMetadataDrafts,
-  portugalSeoApprovalSha256,
-  portugalSeoConfirmationToken,
   type PortugalSeoMetadataDraft,
 } from "../src/content/portugal-seo-metadata-drafts.js";
+import { loadPortugalSeoRemainingDrafts } from "../src/content/portugal-seo-remaining-drafts.js";
+import {
+  portugalSeoDraftApprovalSha256,
+  portugalSeoDraftConfirmationToken,
+} from "../src/content/portugal-seo-metadata-patch.js";
 import type { prisma as productionPrisma } from "../src/db/prisma.js";
 import { runPortugalSeoMetadataPatch } from "./patch-portugal-seo-metadata.js";
 
 type PrismaClient = typeof productionPrisma;
-type Failure = "concurrency" | "doctor-identity" | "operator" | "readback" | "reviewer";
+type Failure = "concurrency" | "doctor-identity" | "doctor-registration" | "readback" | "reviewer";
 
 const drafts = loadPortugalSeoMetadataDrafts();
 const serviceDraft = drafts.find(({ url }) => url.endsWith("/services/consulta-medica"))!;
 const homeDraft = drafts.find(({ targetKind }) => targetKind === "home")!;
 const doctorDraft = drafts.find(({ url }) => url.endsWith("/doctors/dr-martim-delgado"))!;
+const remainingDrafts = loadPortugalSeoRemainingDrafts();
+const pageDraft = remainingDrafts.find(({ targetKind }) => targetKind === "page")!;
+const landingDraft = remainingDrafts.find(({ targetKind }) => targetKind === "landing")!;
+const blogDraft = remainingDrafts.find(({ targetKind }) => targetKind === "blog")!;
 
-function fakeClient(draft: PortugalSeoMetadataDraft, failure?: Failure) {
+function fakeClient(draft: PortugalSeoMetadataDraft, failure?: Failure, translatedBlog = false) {
   const state = {
-    seoTitle: draft.originalTitle,
+    seoTitle: translatedBlog && draft.targetKind === "blog"
+      ? draft.originalTitle.replace(/ · Global Health$/, "")
+      : draft.originalTitle as string | null,
     seoDescription: draft.originalDescription,
     seoKeywords: ["existing keyword"],
     updatedAt: new Date("2026-09-01T12:00:00.000Z"),
     transactions: 0,
     reads: 0,
+    pageContentWrites: 0,
+    serviceWrites: 0,
+    doctorWrites: 0,
+    landingWrites: 0,
+    blogPostWrites: 0,
+    blogTranslationWrites: 0,
   };
   const translation = () => ({ id: "translation-pt-1", ...state });
   const updateMany = async ({ data }: { data: { seoTitle: string; seoDescription: string; seoKeywords?: string[] } }) => {
@@ -36,8 +54,13 @@ function fakeClient(draft: PortugalSeoMetadataDraft, failure?: Failure) {
     if (data.seoKeywords) state.seoKeywords = data.seoKeywords;
     return { count: 1 };
   };
-  let rawClient: unknown;
-  rawClient = {
+  const countedUpdateMany = (
+    counter: "pageContentWrites" | "serviceWrites" | "doctorWrites" | "landingWrites" | "blogPostWrites",
+  ) => async (args: Parameters<typeof updateMany>[0]) => {
+    state[counter] += 1;
+    return updateMany(args);
+  };
+  const rawClient: unknown = {
     country: { findUnique: async () => ({ id: "country-pt" }) },
     pageContent: {
       findUnique: async () => {
@@ -57,12 +80,12 @@ function fakeClient(draft: PortugalSeoMetadataDraft, failure?: Failure) {
         return [{
           id: "doctor-country-pt",
           chamberEntity: "OM",
-          registrationNumber: "70349",
-          isVerified: true,
+          registrationNumber: failure === "doctor-identity" ? "99999" : "70349",
+          isVerified: failure !== "doctor-registration",
           doctor: {
             id: "doctor-subject-1",
             slug: draft.slug,
-            fullName: failure === "doctor-identity" ? "Outra Pessoa" : "Dr. Martim Delgado",
+            fullName: "Dr. Martim Delgado",
           },
           translations: [translation()],
         }];
@@ -73,21 +96,46 @@ function fakeClient(draft: PortugalSeoMetadataDraft, failure?: Failure) {
         active: true,
         fullName: "Dra. Revisora",
         additionalCountries: [{ isVerified: true, chamberEntity: "OM", registrationNumber: "12345" }],
-        specialties: [{ specialty: { id: "specialty-pt-1", active: true, country: { code: "pt" } } }],
       }),
     },
-    user: {
-      findUnique: async ({ where }: { where: { id: string } }) => failure === "operator" ? null : ({
-        fullName: where.id === "compliance-1" ? "Pessoa Compliance" : "Pessoa Conteúdo",
-        role: "LOCAL_ADMIN",
-        isActive: true,
-        emailVerifiedAt: new Date("2026-08-30T00:00:00Z"),
-        allowedCountryFolders: ["  pT  "],
+    seoLandingPage: {
+      findUnique: async () => ({
+        id: "landing-pt",
+        isPublished: true,
+        translations: [translation()],
       }),
     },
-    pageContentTranslation: { updateMany },
-    serviceTranslation: { updateMany },
-    doctorMarketTranslation: { updateMany },
+    pageContentTranslation: { updateMany: countedUpdateMany("pageContentWrites") },
+    serviceTranslation: { updateMany: countedUpdateMany("serviceWrites") },
+    doctorMarketTranslation: { updateMany: countedUpdateMany("doctorWrites") },
+    seoLandingPageTranslation: { updateMany: countedUpdateMany("landingWrites") },
+    blogPost: {
+      updateMany: countedUpdateMany("blogPostWrites"),
+      findMany: async () => [{
+        id: "blog-pt",
+        slug: translatedBlog ? "hand-foot-and-mouth-disease-signs-and-treatment" : draft.slug,
+        locale: translatedBlog ? "EN" : "PT",
+        seoTitle: state.seoTitle,
+        seoDescription: state.seoDescription,
+        updatedAt: state.updatedAt,
+        translations: translatedBlog ? [{
+          id: "blog-translation-pt-1",
+          slug: draft.slug,
+          content: "Conteúdo PT",
+          seoTitle: state.seoTitle,
+          seoDesc: state.seoDescription,
+          updatedAt: state.updatedAt,
+        }] : [],
+      }],
+    },
+    blogTranslation: {
+      updateMany: async ({ data }: { data: { seoTitle: string; seoDesc: string } }) => {
+        state.blogTranslationWrites += 1;
+        state.seoTitle = data.seoTitle;
+        state.seoDescription = data.seoDesc;
+        return { count: 1 };
+      },
+    },
     $transaction: async (callback: (transaction: unknown) => Promise<unknown>) => {
       state.transactions += 1;
       return callback(rawClient);
@@ -106,64 +154,64 @@ const approvalColumns = [
   "delegated_by_doctor_id",
 ] as const;
 
-function approvalRegister(draft: PortugalSeoMetadataDraft, factHash = ""): string {
+const doctorFactRegister = [
+  "URL,slug,display_name,professional_body,registration_number,source_status,official_source,verification_status,notes",
+  '"https://www.myglobalhealth.online/portugal/pt/doctors/dr-martim-delgado","dr-martim-delgado","Dr. Martim Delgado","OM","70349","Official OM register verified for metadata-only rollout","https://ordemdosmedicos.pt/registo/70349","verified","Metadata only"',
+].join("\n");
+
+function approvalRegister(draft: PortugalSeoMetadataDraft): string {
+  const fact = draft.targetKind === "doctor"
+    ? readPortugalDoctorFactRecord(doctorFactRegister, draft.asset)
+    : null;
   const values: Record<(typeof approvalColumns)[number], string> = {
     page_or_file: draft.asset,
     topic: draft.targetKind,
     risk_level: "medium",
     claims_requiring_review: "claims",
     source_status: "evidence",
-    reviewer_required: "three roles",
+    reviewer_required: "Portugal-registered clinician",
     publish_status: "approved",
     notes: "reviewed",
     reviewer_name: "Dra. Revisora",
     reviewer_doctor_id: "doctor-pt-1",
     clinical_reviewer_professional_body: "OM",
-    clinical_reviewer_specialty_id: "specialty-pt-1",
+    clinical_reviewer_specialty_id: "",
     reviewed_at: "2026-08-31T12:00:00Z",
     official_source_references: draft.targetKind === "doctor"
       ? "https://ordemdosmedicos.pt/registo/70349"
       : "https://www.dgs.pt",
-    approved_sha256: portugalSeoApprovalSha256(draft),
-    compliance_reviewer_name: "Pessoa Compliance",
-    compliance_reviewer_id: "compliance-1",
-    compliance_reviewed_at: "2026-08-31T13:00:00Z",
-    content_owner_name: "Pessoa Conteúdo",
-    content_owner_id: "content-owner-1",
-    content_owner_reviewed_at: "2026-08-31T14:00:00Z",
-    fact_register_sha256: factHash,
-    credential_subject_doctor_id: draft.targetKind === "doctor" ? "doctor-subject-1" : "",
-    delegated_by_doctor_id: draft.targetKind === "doctor" ? "doctor-subject-1" : "",
+    approved_sha256: portugalSeoDraftApprovalSha256(draft),
+    compliance_reviewer_name: "",
+    compliance_reviewer_id: "",
+    compliance_reviewed_at: "",
+    content_owner_name: "",
+    content_owner_id: "",
+    content_owner_reviewed_at: "",
+    fact_register_sha256: fact ? portugalDoctorFactSha256(fact) : "",
+    credential_subject_doctor_id: fact ? "doctor-subject-1" : "",
+    delegated_by_doctor_id: "",
   };
   return `${approvalColumns.join(",")}\n${approvalColumns.map((column) => values[column]).join(",")}\n`;
 }
 
-const factHeader = "URL,slug,display_name,professional_body,registration_number,source_status,official_source,verification_status,notes";
-const doctorFacts = `${factHeader}\n${doctorDraft.url},${doctorDraft.slug},Dr. Martim Delgado,OM,70349,Official register checked,https://ordemdosmedicos.pt/registo/70349,verified,Checked\n`;
-const doctorFactHash = portugalDoctorFactSha256(readPortugalDoctorFactRecord(doctorFacts, doctorDraft.asset));
-
-function baseOptions(draft: PortugalSeoMetadataDraft, factRegisterCsv = "") {
+function baseOptions(draft: PortugalSeoMetadataDraft) {
   return {
     only: `${draft.targetKind}:${draft.slug}`,
     registerCsv: "",
-    factRegisterCsv,
+    factRegisterCsv: doctorFactRegister,
     approvedHash: null,
     sourceHash: null,
     confirmation: null,
     reviewerDoctorId: null,
     reviewedAt: null,
-    complianceReviewerId: null,
-    complianceReviewedAt: null,
-    contentOwnerId: null,
-    contentOwnerReviewedAt: null,
     databaseUrl: undefined,
     confirmationDatabase: null,
   } as const;
 }
 
-async function dryRun(client: PrismaClient, draft: PortugalSeoMetadataDraft, factRegisterCsv = ""): Promise<string> {
+async function dryRun(client: PrismaClient, draft: PortugalSeoMetadataDraft): Promise<string> {
   const log: string[] = [];
-  await runPortugalSeoMetadataPatch(client, { ...baseOptions(draft, factRegisterCsv), apply: false }, {
+  await runPortugalSeoMetadataPatch(client, { ...baseOptions(draft), apply: false }, {
     log: (message) => log.push(message),
   });
   const hash = log.find((message) => message.includes("source sha256:"))?.split(": ")[1];
@@ -171,20 +219,16 @@ async function dryRun(client: PrismaClient, draft: PortugalSeoMetadataDraft, fac
   return hash!;
 }
 
-function applyOptions(draft: PortugalSeoMetadataDraft, sourceHash: string, factRegisterCsv = "") {
+function applyOptions(draft: PortugalSeoMetadataDraft, sourceHash: string) {
   return {
-    ...baseOptions(draft, factRegisterCsv),
+    ...baseOptions(draft),
     apply: true,
-    registerCsv: approvalRegister(draft, draft.targetKind === "doctor" ? doctorFactHash : ""),
-    approvedHash: portugalSeoApprovalSha256(draft),
+    registerCsv: approvalRegister(draft),
+    approvedHash: portugalSeoDraftApprovalSha256(draft),
     sourceHash,
-    confirmation: portugalSeoConfirmationToken(draft),
+    confirmation: portugalSeoDraftConfirmationToken(draft),
     reviewerDoctorId: "doctor-pt-1",
     reviewedAt: "2026-08-31",
-    complianceReviewerId: "compliance-1",
-    complianceReviewedAt: "2026-08-31",
-    contentOwnerId: "content-owner-1",
-    contentOwnerReviewedAt: "2026-08-31",
     databaseUrl: "postgresql://user:secret@db.example.test/global_health",
     confirmationDatabase: "postgresql://db.example.test:5432/global_health",
   } as const;
@@ -192,6 +236,10 @@ function applyOptions(draft: PortugalSeoMetadataDraft, sourceHash: string, factR
 
 test("Portugal service metadata dry-runs and writes one approved record", async () => {
   const { client, state } = fakeClient(serviceDraft);
+  state.seoDescription = serviceDraft.originalDescription.replace(
+    / Aceitamos também Medicare para este serviço\.$/,
+    "",
+  );
   const sourceHash = await dryRun(client, serviceDraft);
   assert.equal(state.transactions, 0);
   await runPortugalSeoMetadataPatch(client, applyOptions(serviceDraft, sourceHash));
@@ -202,18 +250,65 @@ test("Portugal service metadata dry-runs and writes one approved record", async 
 
 test("Portugal home and verified doctor branches preserve their target-specific fields", async () => {
   const home = fakeClient(homeDraft);
+  home.state.seoTitle = null;
   await runPortugalSeoMetadataPatch(home.client, applyOptions(homeDraft, await dryRun(home.client, homeDraft)));
   assert.equal(home.state.seoTitle, homeDraft.proposedTitle);
 
   const doctor = fakeClient(doctorDraft);
+  doctor.state.seoTitle = `${doctorDraft.originalTitle} | Global Health Portugal`;
   await runPortugalSeoMetadataPatch(
     doctor.client,
-    applyOptions(doctorDraft, await dryRun(doctor.client, doctorDraft, doctorFacts), doctorFacts),
+    applyOptions(doctorDraft, await dryRun(doctor.client, doctorDraft)),
   );
   assert.deepEqual(doctor.state.seoKeywords, [doctorDraft.primaryKeyword, ...doctorDraft.secondaryKeywords]);
 });
 
+test("Portugal page, landing and authored-PT blog branches update metadata only", async () => {
+  for (const draft of [pageDraft, landingDraft, blogDraft]) {
+    const target = fakeClient(draft);
+    await runPortugalSeoMetadataPatch(
+      target.client,
+      applyOptions(draft, await dryRun(target.client, draft)),
+    );
+    assert.equal(target.state.seoTitle, draft.proposedTitle);
+    assert.equal(target.state.seoDescription, draft.proposedDescription);
+    assert.equal(target.state.transactions, 1);
+    const writes = [
+      target.state.pageContentWrites,
+      target.state.serviceWrites,
+      target.state.doctorWrites,
+      target.state.landingWrites,
+      target.state.blogPostWrites,
+      target.state.blogTranslationWrites,
+    ];
+    assert.equal(writes.reduce((total, count) => total + count, 0), 1);
+    assert.equal(
+      draft.targetKind === "page" ? target.state.pageContentWrites
+        : draft.targetKind === "landing" ? target.state.landingWrites
+          : target.state.blogPostWrites,
+      1,
+    );
+  }
+});
+
+test("Portugal translated blog branch updates and reads back only the PT translation", async () => {
+  const target = fakeClient(blogDraft, undefined, true);
+  await runPortugalSeoMetadataPatch(
+    target.client,
+    applyOptions(blogDraft, await dryRun(target.client, blogDraft)),
+  );
+  assert.equal(target.state.seoTitle, blogDraft.proposedTitle);
+  assert.equal(target.state.seoDescription, blogDraft.proposedDescription);
+  assert.equal(target.state.blogPostWrites, 0);
+  assert.equal(target.state.blogTranslationWrites, 1);
+  assert.equal(target.state.transactions, 1);
+});
+
 test("Portugal metadata writer rejects source drift, reviewer failure, concurrency and bad readback", async () => {
+  const staleDryRun = fakeClient(serviceDraft);
+  staleDryRun.state.seoTitle = "Changed after audit";
+  await assert.rejects(dryRun(staleDryRun.client, serviceDraft), /does not match the source reviewed/);
+
   const drift = fakeClient(serviceDraft);
   const driftHash = await dryRun(drift.client, serviceDraft);
   drift.state.seoTitle = "Changed after review";
@@ -221,7 +316,6 @@ test("Portugal metadata writer rejects source drift, reviewer failure, concurren
 
   for (const [failure, message] of [
     ["reviewer", /Reviewer must have/],
-    ["operator", /Compliance reviewer must match/],
     ["concurrency", /concurrency guard failed/],
     ["readback", /verification failed/],
   ] as const) {
@@ -230,10 +324,17 @@ test("Portugal metadata writer rejects source drift, reviewer failure, concurren
     await assert.rejects(runPortugalSeoMetadataPatch(target.client, applyOptions(serviceDraft, sourceHash)), message);
   }
 
-  const doctorIdentity = fakeClient(doctorDraft, "doctor-identity");
-  const doctorHash = await dryRun(doctorIdentity.client, doctorDraft, doctorFacts);
+  const doctorRegistration = fakeClient(doctorDraft, "doctor-registration");
   await assert.rejects(
-    runPortugalSeoMetadataPatch(doctorIdentity.client, applyOptions(doctorDraft, doctorHash, doctorFacts)),
+    dryRun(doctorRegistration.client, doctorDraft),
+    /verified professional registration/,
+  );
+  assert.equal(doctorRegistration.state.transactions, 0);
+
+  const doctorIdentity = fakeClient(doctorDraft, "doctor-identity");
+  const doctorIdentityHash = await dryRun(doctorIdentity.client, doctorDraft);
+  await assert.rejects(
+    runPortugalSeoMetadataPatch(doctorIdentity.client, applyOptions(doctorDraft, doctorIdentityHash)),
     /does not match the approved fact record/,
   );
 });
@@ -243,4 +344,16 @@ test("Portugal metadata patch rejects an apply before reading the database", asy
   await assert.rejects(runPortugalSeoMetadataPatch(client, { ...baseOptions(serviceDraft), apply: true }), /confirmation token/);
   assert.equal(state.reads, 0);
   assert.equal(state.transactions, 0);
+
+  const blocked = fakeClient(pageDraft);
+  const options = applyOptions(pageDraft, "0".repeat(64));
+  await assert.rejects(
+    runPortugalSeoMetadataPatch(blocked.client, {
+      ...options,
+      registerCsv: options.registerCsv.replace(",approved,", ",blocked_pending_review,"),
+    }),
+    /Clinical review status is blocked_pending_review/,
+  );
+  assert.equal(blocked.state.reads, 0);
+  assert.equal(blocked.state.transactions, 0);
 });

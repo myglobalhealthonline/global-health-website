@@ -80,9 +80,9 @@ block was rewritten, no deslop pass was applicable in this follow-up.
 Two existing Czech service records now have repository-only, clinically gated copy:
 
 - `/czechia/cs/services/neschopenka-online`, approval SHA-256
-  `14565e67950f0e84e4c176c8c4b40cdee460a4ce3dfc52bc07cc484e19b02c1a`;
+  `9d4b1ad095dab37b716d794301ca0607fab21940391da7f43df72020b91d0a0e`;
 - `/czechia/cs/services/obnoveni-lecby`, approval SHA-256
-  `3ff9b7a7aa88f80f15f28fab512fe86c5b65488e97a83f3f0e7432b31ab0244e`.
+  `a02d12a3e9aada7f106233841bc55ec6b268805561660020734306e054ff5106`.
 
 The drafts update title, description, H1, opening, structured body, CTA and every
 existing visible FAQ. Neschopenka keeps transactional assessment intent while the
@@ -91,6 +91,11 @@ online`. The final copy removes same-day promises, guaranteed documents/referral
 volatile benefit thresholds and automatic prescription language. It adds official
 ČSSZ/ePreskripce references, explicit clinical discretion and 155/112 escalation.
 The deslop and fact-preservation checks run in the focused content tests.
+Three vague FAQ questions now name their exact topic naturally: eNeschopenka,
+obnovení receptu and obnovení léčby. The other ten questions remain unchanged to
+avoid repetitive keyword stuffing. The seven Czech tool metadata/H1 payloads remain
+preview-only until their exact clinical-register rows are approved; adding them to
+the frontend before then would publish unapproved clinical copy on the next deploy.
 
 The updater is dry-run by default and allowlists only those two records. It checks
 the exact record ID, locale, `updatedAt`, source SHA-256 and FAQ IDs, preserves
@@ -249,3 +254,195 @@ in production.
 - Final general and TypeScript reviews: approved with no remaining findings; visible-link and schema URL resolution now share one localized value while preserving the unlinked fallback.
 - Backend suite: database-independent tests ran, then the suite failed where PostgreSQL at `127.0.0.1:5433` was unavailable. The documented test-database setup could not run because Docker Desktop was not running.
 - Strict production build: frontend compiled and type-checked, then correctly refused to prerender without backend content. A degraded-build attempt also compiled/type-checked but was stopped during 951-page fallback generation after repeated backend retries.
+
+## Approved clinical rollout — 2026-09-01
+
+MUDr. Ahmed Maklad approved 17 exact Czech payloads at
+`2026-09-01T18:30:00+02:00`. The register records his existing doctor ID and the
+exact SHA-256 for each approved page. The approval was limited to rows requiring a
+Czech-licensed physician; specialist, native-English and governance-owner rows were
+not widened.
+
+Production writes updated the Czech home PageContent, 11 Czech service pages and the
+existing diabetes article. Neschopenka kept its seven FAQ records and treatment
+renewal kept its six FAQ records; other services retained their FAQ sets. Prices,
+durations, assignments, availability, booking state, doctor biographies,
+credentials, tool logic and non-Czech locales were protected and read back after the
+transactions. The updater transaction timeout was raised to 30 seconds after one
+five-second timeout rolled back cleanly; the bounded timeout is covered by a focused
+test.
+
+The four approved tool metadata/H1 payloads are served from a `cz`/`cs`-only
+frontend overlay. The exact served JSON is hashed in the artifact validator against
+the clinical register. Railway deployment
+`52843a4c-059c-4441-9baf-510020683f70` used final production base `6c0c7fcf` plus
+only the two Czech runtime files from commit `04b98cdc`; no unrelated branch work was
+included.
+
+Public readback passed 17/17 for HTTP 200, approved title/meta/H1, self-canonical,
+`index, follow`, self-hreflang, JSON-LD and internal links. A seven-route isolation
+check kept the three pending Czech tools unchanged and confirmed no Czech copy on
+Czechia English, Ireland, Brazil or Portugal. Evidence is in
+`raw/clinical-production-readback-2026-09-01.csv` and
+`raw/production-write-receipt-2026-09-01-clinical-seo.json`.
+
+Current matrix totals are 31 live, 14 source-pinned clinical drafts pending review,
+three measurement holds and two reviewed-no-change pages. The register totals are
+17 approved and 20 pending; the extra pending row covers Czech forms and analytics
+privacy rather than a matrix page.
+
+## Remaining published-copy remediation prepared — 2026-09-02
+
+A second production comparison found unsafe wording below the already deployed
+metadata layer. Exact source-pinned replacements are now prepared for the Czech GP
+PageContent record; Czech paediatric, mental-health, dermatology, travel-medicine and
+Prague service records; the English Prague service translation; and five Czech doctor
+profiles. The service drafts replace the complete existing FAQ sets by immutable ID.
+The profile FAQ candidates are source-pinned by immutable ID, but production
+`DoctorFaq` rows are shared across countries. The writer therefore keeps all doctor
+profiles preview-only and performs no doctor or FAQ write until a country-scoped FAQ
+overlay exists and separate profile/credential plus clinical-governance approvals can
+be recorded. Biographies, titles, qualifications, credentials, registrations,
+languages, assignments and availability remain unchanged.
+
+The Czech doctor directory also has a `cz`/`cs`-only copy overlay that removes
+same-day and 24-hour promises while leaving every other market and language on its
+existing bundle. The Czech GP hero availability card uses the same country-only
+fallback, while other countries retain their existing localized copy. Keywords are
+used naturally in relevant FAQ questions; no keyword is repeated mechanically where
+it would make the answer less useful.
+
+Read-only production dry-runs matched all six service source hashes, all five doctor
+source hashes and the GP PageContent hash. The expanded Czech Prague service draft
+has a new exact approval hash, so its previous metadata-only approval cannot authorize
+the expanded copy; the CLI rejects the hash mismatch before applying. No production
+database write occurred. Specialist, profile-governance and native-English review
+requirements remain unchanged, and the 24/7 article remains on its measurement hold.
+The production writers now also preserve Czech default FAQs during an English-only
+update, structurally verify JSONB regardless of object-key order, and require reviewed
+PageContent HTML to pass the application sanitizer byte-for-byte before apply.
+The matrix now tallies 30 fully live pages, 15 source-pinned guarded drafts pending
+clinical review (including two that also require native-English review), three
+measurement holds and two reviewed-no-change pages. The GP and travel rows remain
+measurement holds but now record their exact prepared full-copy scope; the Czech
+Prague service is no longer counted fully live because its expanded body/FAQ payload
+has a new approval hash.
+
+## Czech Prague expanded-copy rollout — 2026-09-02
+
+MUDr. Ahmed Maklad approved the exact expanded Czech Prague service payload at
+`2026-09-02T01:30:00+02:00`. The production source fingerprint
+`c71ac9b6b975743c102646def4c4e1839d04bc15d5ae414f7103adcf35ffcc58`
+matched immediately before the write, and the approved payload hash was
+`e1246dbc98c12e4f14f36daaf8981a7611c58183d51d5fbbbb4797c4a3ab0746`.
+
+The transaction published the full Czech body and updated all eight existing FAQ
+records in place. Transactional readback confirmed the approved copy and preserved
+price, duration, assigned doctors, booking state and global review
+metadata. A public readback then confirmed the new body and all eight FAQ answers on
+the production URL. The date gate now uses the Prague calendar date, and default
+Czech FAQ rows no longer require redundant Czech translation rows; both production
+shapes are covered by regression tests.
+
+Because the English draft shares the same service and FAQ records, it was re-pinned
+to the post-write production snapshot before this change was committed. It remains
+guarded pending its separate clinical and native-English approvals.
+
+The matrix now tallies 31 fully live pages, 14 source-pinned guarded drafts pending
+review, three measurement holds and two reviewed-no-change pages. No other pending
+page was widened by this approval.
+
+## Dermatology clinical rollout — 2026-09-02
+
+MUDr. Ahmed Maklad supplied a signed direct statement approving the exact Czech
+dermatology payload at `2026-09-02T10:30:00+02:00`. A guarded production dry run
+matched source SHA-256
+`91f36115673d9d97f3a73cfb207c7e31a5049f825a9371c50bbc097620ee5966`
+and approval SHA-256
+`c7f821b4f7479c9d42e8d278e921b49fef9d051ee45b2197a942ed040a8dbe2c`.
+
+The one-record Serializable transaction published the approved title, description,
+H1, body and six FAQ replacements for
+`/czechia/cs/services/kozni-konzultace-praha`. Transactional verification preserved
+price, duration, assigned doctors, booking state, biographies, credentials, global
+review metadata and non-target locales. Cache-bypassed public readback confirmed the
+exact approved copy, HTTP 200, self-canonical, `index, follow`, self-hreflang and
+FAQ/Service/MedicalWebPage schema.
+
+The declaration lists 13 other hashes as conditionally eligible to record physician
+review only where the reviewer personally reviewed them. It does not affirm that
+condition per hash and does not satisfy their specialist, clinical-governance,
+credential or native-English requirements. This repository therefore records no
+additional completed review for those rows; they remain `pending` and fail closed.
+The three holds, two regulatory-confirmation pages and privacy/legal item are
+excluded.
+
+The matrix now tallies 32 live pages, 13 source-pinned guarded drafts pending review,
+three measurement holds and two reviewed-no-change pages. The clinical register now
+contains 18 approved and 19 pending rows. Evidence is
+`raw/reviewer-supplied-clinical-approval-2026-09-02-1030.md`,
+`raw/production-write-receipt-2026-09-02-dermatology.json`,
+`raw/production-readback-2026-09-02-dermatology.json` and
+`raw/clinical-production-readback-2026-09-02.csv`.
+
+## Dual-reviewer and Head-authorized rollout — 2026-09-02
+
+The dual-reviewer approval and Head execution resolution authorized 13 additional
+exact payload hashes. Evidence is pinned in
+`raw/dual-reviewer-head-resolution-approval-2026-09-02.md`; it identifies MUDr.
+Ahmed Maklad for Czech clinical review and Dr Tiago Miguel Figueira for the delegated
+governance, credential and native-English scopes. No approval was inferred for a
+different hash or held page.
+
+Ten guarded production transactions published the Czech doctors directory, Czechia
+English home, five Czech doctor-market SEO records, two Czech services and the English
+Prague service translation. The Czechia/Czech-only frontend overlays published the
+three approved tool metadata/H1 payloads and five exact doctor FAQ sets. Doctor
+biographies, qualifications, certifications, credentials, registrations, prices,
+durations, assignments, availability, booking behavior, non-Czech locales and tool
+logic were unchanged.
+
+Production commit `3ada17c6eac1aceebcf21443649ea8c8d6dc70f1` deployed successfully as
+Railway frontend deployment `393990d9-1122-40ee-808b-5c543cab42a7` and backend
+deployment `5e8b701e-9895-444e-ad54-50d38ae40a50`. Cache-bypassed public readback
+passed 13/13 for HTTP 200, approved stored title policy, exact meta description and
+H1, self-canonical, `index, follow`, self-hreflang, JSON-LD and internal links. All
+five approved doctor FAQ sets were present. The English home no longer contained the
+Czech hero or consultation-widget phrases reported in the screenshots.
+
+Isolation readback passed nine production checks: Czechia EN/PT/ES/DE/RO home pages
+contained no target Czech phrases; Czechia English, Ireland English and Brazil
+Portuguese ADHD pages did not receive the Czech tool overlay; and the Czechia English
+Ahmed profile did not receive the Czech FAQ overlay. Evidence is
+`raw/clinical-production-readback-2026-09-02-super-admin.csv`,
+`raw/locale-isolation-readback-2026-09-02-super-admin.json` and
+`raw/production-write-receipt-2026-09-02-super-admin.json`.
+
+The matrix now records 45 live pages, three measurement holds and two reviewed-no-
+change pages. The clinical register records 31 approved and six pending items. The
+remaining items are the GP and 24/7 measurement holds, travel medicine, two regulatory
+review/no-change articles, and Czech forms/analytics privacy review; none was widened
+by this rollout.
+
+## Super-admin verbal-approval rollout — 2026-09-02
+
+The project owner, acting as super admin, attested that all required doctors and
+administrators had approved the remaining publishable changes verbally and directed
+immediate implementation. The attestation is recorded accurately as verbal approval,
+not as an independently authenticated signature, in
+`raw/super-admin-verbal-approval-override-2026-09-02.md`. It also explicitly overrides
+the separate measurement/recrawl timing hold for the three exact candidate hashes.
+
+Guarded production writes published the Czech GP PageContent body and eight FAQs, the
+travel-medicine body and nine FAQs, and only the title/SEO metadata of the 24/7 blog.
+Transactional checks preserved the protected blog body/FAQs and all unrelated
+service fields, doctor biographies, qualifications, certifications, credentials,
+registrations, prices, durations, assignments, booking state and non-target locales.
+
+Public readback passed 3/3 with HTTP 200 and exact approved title policy, meta
+description and H1. Evidence is
+`raw/production-readback-2026-09-02-remaining-pages.json`. The matrix now records 48
+live pages and two reviewed-no-change pages; the clinical register records 31 named
+approvals, three exact-hash super-admin overrides and three pending items. The two no-change regulatory articles and the
+undefined forms/analytics scope received no invented production write and remain
+pending their named regulatory/privacy evidence.

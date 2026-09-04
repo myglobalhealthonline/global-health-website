@@ -70,10 +70,16 @@ describe("country home titleTemplate stays within the search-title budget for ev
 });
 
 describe("Ireland authored home titles stay within the crawler title budget", () => {
-  it.each(["en", "cs", "de", "es", "pt", "ro"])("IE:%s stays at 70 characters or fewer", (locale) => {
+  it("keeps the English title within its existing 70-character budget", () => {
+    const title = EXTRAS["IE:en"]?.seoTitle;
+    expect(title, "IE:en is missing its authored SEO title").toBeTruthy();
+    expect(len(title ?? "")).toBeLessThanOrEqual(70);
+  });
+
+  it.each(["cs", "de", "es", "pt", "ro"])("IE:%s stays at 60 characters or fewer", (locale) => {
     const title = EXTRAS[`IE:${locale}`]?.seoTitle;
     expect(title, `IE:${locale} is missing its authored SEO title`).toBeTruthy();
-    expect(len(title ?? "")).toBeLessThanOrEqual(70);
+    expect(len(title ?? "")).toBeLessThanOrEqual(60);
   });
 });
 

@@ -11,6 +11,7 @@ import { marketDisplayName } from "@/lib/content/doctor-market-name";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
+import { applyCzechiaApprovedDoctorFaqs } from "@/lib/content/czechia-approved-doctor-faqs";
 
 export type DoctorProfilePageData = {
   hero: {
@@ -71,6 +72,13 @@ export type DoctorProfilePageData = {
    * the placeholder rather than 404ing every real clinician on the site.
    */
   missingConfirmed: boolean;
+  /**
+   * True when the clinician exists on the site but is NOT rostered in the
+   * market this route names (country-scoped lookup 404'd, global roster hit).
+   * The route redirects to that market's doctor listing rather than rendering
+   * a profile for a country the doctor never joined.
+   */
+  wrongMarket: boolean;
   /**
    * Set when the requested slug did not resolve but its de-accented form did
    * (e.g. `mudr-vojtěch-černý` → `mudr-vojtech-cerny`). The route redirects
@@ -155,7 +163,7 @@ const doctorSeed: Record<
   string,
   Omit<
     DoctorProfilePageData,
-    "hero" | "bottomCta" | "recordFound" | "missingConfirmed" | "indexable"
+    "hero" | "bottomCta" | "recordFound" | "missingConfirmed" | "indexable" | "wrongMarket"
   >
 > = {
   "dr-khoiamul-islam": {
@@ -216,6 +224,7 @@ export function getDoctorProfileData(
     // Placeholder until `resolveDoctorProfilePageData` confirms a real record.
     recordFound: false,
     missingConfirmed: false,
+    wrongMarket: false,
     indexable: false,
     hero: {
       title: profile.name,
@@ -268,7 +277,15 @@ export const resolveDoctorProfilePageData = cache(async function resolveDoctorPr
     getPublicDoctorBySlug(doctorSlug, locale),
     resolveDoctorProfileImageUrl(doctorSlug),
   ]);
-  const backend = countryScopedDoctor ?? globalDoctor;
+  // A country-scoped 404 is a POSITIVE answer: this clinician is not rostered
+  // in the market the URL names (the backend query already covers cross-listed
+  // doctors via `additionalCountries`). Falling through to the global roster
+  // rendered e.g. a Portugal-only doctor under /ireland/* wearing Ireland's
+  // labels — "Registered in Ireland" for a country they never joined. Only a
+  // NON-404 country failure (timeout/5xx) still falls back, which is what keeps
+  // a backend blip from 404ing every profile.
+  const marketMissing = countryFetchStatus === 404;
+  const backend = countryScopedDoctor ?? (marketMissing ? undefined : globalDoctor);
 
   if (!backend) {
     const out: DoctorProfilePageData = profileImageSrc ? { ...base, profileImageSrc } : { ...base };
@@ -276,7 +293,7 @@ export const resolveDoctorProfilePageData = cache(async function resolveDoctorPr
       out.bookingCtaImage = { src: profileImageSrc, alt: base.profile.name };
     }
     out.recordFound = false;
-    out.missingConfirmed = countryFetchStatus === 404;
+    out.missingConfirmed = marketMissing;
 
     // Legacy Wix URLs differ from the live slugs in two mechanical ways:
     // diacritics (`…/mudr-vojtěch-černý` vs `mudr-vojtech-cerny`) and
@@ -296,6 +313,9 @@ export const resolveDoctorProfilePageData = cache(async function resolveDoctorPr
         break;
       }
     }
+    // Not in this market, but a real clinician elsewhere on the site — the
+    // route redirects to this market's roster instead of 404ing.
+    out.wrongMarket = out.missingConfirmed && !out.canonicalSlug && Boolean(globalDoctor);
     return out;
   }
 
@@ -311,6 +331,7 @@ export const resolveDoctorProfilePageData = cache(async function resolveDoctorPr
     ...base,
     recordFound: true,
     missingConfirmed: false,
+    wrongMarket: false,
     // The global roster (`getPublicDoctorBySlug`) carries no per-market
     // registration fields at all, so it can NEVER satisfy the credentials rule.
     // When we are on that record only because the country-scoped read failed
@@ -351,7 +372,16 @@ export const resolveDoctorProfilePageData = cache(async function resolveDoctorPr
       ...(backend.seoTitle ? { seoTitle: backend.seoTitle } : {}),
       ...(backend.seoDescription ? { seoDescription: backend.seoDescription } : {}),
       ...(backend.seoKeywords ? { seoKeywords: backend.seoKeywords } : {}),
-      ...(backend.faqs ? { faqs: backend.faqs } : {}),
+      ...(backend.faqs
+        ? {
+            faqs: applyCzechiaApprovedDoctorFaqs(
+              countryCode,
+              locale,
+              backend.slug,
+              backend.faqs,
+            ),
+          }
+        : {}),
       ...(backend.editorialChecklist ? { editorialChecklist: backend.editorialChecklist } : {}),
       ...(backend.lastReviewedAt ? { lastReviewedAt: backend.lastReviewedAt } : {}),
       imageAltText: backend.profileImageAltText ?? displayName,

@@ -13,11 +13,38 @@ SÚKL (Czech ePoukaz) integration. Read `SECURITY_MODEL.md` first if you have no
 | Certificate subject / issuer / expiry / fingerprint are read correctly | Yes |
 | Mutual TLS works against a server that demands a client certificate | Yes, against a local TLS server in the test suite |
 | Mutual TLS works **against SÚKL** | **YES — proven from Railway 2026-08-05.** Both services, ~135–141 ms. Not reachable from the office network; that was a local-network limit, not a SÚKL allowlist. |
-| An ePoukaz can be created | No — not implemented, and the operation paths still need reading from the ePoukaz v19 WSDL |
+| **A real SOAP operation succeeds** | **YES — AppPing returned HTTP 200 on 2026-09-01**, SÚKL message id returned. Certificate, endpoint, envelope, message header, namespace, Basic auth and a prescriber identity all accepted. |
+| An ePoukaz can be created | No — needs the payload layer and a qualified signature |
 
 Do not report the integration as working end to end. The honest statement is: the
 credential is valid and the transport is built; the endpoint and the payload are
 still missing.
+
+## Working configuration (test), as of 2026-09-01
+
+The combination that produced a successful AppPing. Every value here was
+established the hard way, so it is written down rather than rediscovered:
+
+| Setting | Value |
+|---|---|
+| `SUKL_EPOUKAZ_CUEP_TEST_URL` | `https://cuep-soap.test-erecept.sukl.cz/` |
+| `SUKL_EPOUKAZ_COMMON_TEST_URL` | `https://common-soap.test-erecept.sukl.cz/` |
+| Endpoint path | `/` — POST to the host root, NOT the internal `soap:address` |
+| `SUKL_TEST_WORKPLACE_CODE` | `00150928369` → the `Pracoviste` element |
+| `SUKL_TEST_UZIVATEL` | the DOCTOR's UUID, e.g. `141ea8aa-…` — never the entity account |
+| `SUKL_TEST_PASSWORD` | the doctor account's password, sent as HTTP Basic |
+| `SUKL_INTERFACE_VERSION` | `202601B` → the `Zprava/Verze` element |
+| AppPing namespace | `http://www.sukl.cz/erp/common` on BOTH services |
+
+Four traps, each of which cost a round trip:
+
+1. **The entity account is not a prescriber.** `00150928363` identifies the
+   organisation and is rejected with S026. `Uzivatel` must be a doctor's UUID.
+2. **Basic auth is required on top of mutual TLS.** Without it, S019.
+3. **AppPing lives in the COMMON namespace even on CUEP.** Sending
+   `cuep:AppPingDotaz` gives S009.
+4. **The published `soap:address` points at an internal host**
+   (`test-erp-as02`). Every path derived from it 404s; the host root works.
 
 ## SÚKL ships legacy-RC2 certificates — convert before use
 

@@ -55,6 +55,7 @@ const OFFICIAL_SOURCE_HOSTS = [
   "ers.pt",
   "ordemdosmedicos.pt",
   "ordemdospsicologos.pt",
+  "rpmgf.pt",
   "imt-ip.pt",
   "seg-social.pt",
   "dre.pt",
@@ -79,7 +80,10 @@ function recordsFromCsv(csv: string): PortugalClinicalReviewRecord[] {
   }
   return rows
     .filter((row) => row.some((cell) => cell.trim()))
-    .map((row) => {
+    .map((row, index) => {
+      if (row.length > header.length) {
+        throw new Error(`Clinical review register row ${index + 2} has unexpected columns`);
+      }
       const record = Object.fromEntries(
         REQUIRED_COLUMNS.map((column) => [column, (row[header.indexOf(column)] ?? "").trim()]),
       ) as Record<PortugalClinicalReviewColumn, string>;
@@ -105,8 +109,29 @@ function requireValue(record: PortugalClinicalReviewRecord, field: PortugalClini
 
 function assertReviewDate(record: PortugalClinicalReviewRecord, field: PortugalClinicalReviewColumn, now: Date): void {
   const value = requireValue(record, field);
-  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/.test(value)) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,3})?(?:Z|[+-](\d{2}):(\d{2}))$/.exec(value);
+  if (!match) {
     throw new Error(`Clinical approval field ${field} must be an RFC 3339 timestamp for ${record.asset}`);
+  }
+  const [, yearText, monthText, dayText, hourText, minuteText, secondText, offsetHourText, offsetMinuteText] = match;
+  const [year, month, day, hour, minute, second, offsetHour, offsetMinute] = [
+    yearText,
+    monthText,
+    dayText,
+    hourText,
+    minuteText,
+    secondText,
+    offsetHourText ?? "0",
+    offsetMinuteText ?? "0",
+  ].map(Number);
+  const daysInMonth = month >= 1 && month <= 12
+    ? new Date(Date.UTC(year, month, 0)).getUTCDate()
+    : 0;
+  if (
+    year === 0 || day < 1 || day > daysInMonth || hour > 23 || minute > 59 || second > 59
+    || offsetHour > 23 || offsetMinute > 59
+  ) {
+    throw new Error(`Clinical approval field ${field} is invalid for ${record.asset}`);
   }
   const reviewedAt = new Date(value);
   if (Number.isNaN(reviewedAt.getTime()) || reviewedAt.getTime() > now.getTime()) {
@@ -143,7 +168,10 @@ export function readPortugalDoctorFactRecord(csv: string, asset: string): Portug
   for (const column of FACT_COLUMNS) {
     if (!header.includes(column)) throw new Error(`Portugal doctor fact register is missing column ${column}`);
   }
-  const records = rows.filter((row) => row.some((cell) => cell.trim())).map((row) => {
+  const records = rows.filter((row) => row.some((cell) => cell.trim())).map((row, index) => {
+    if (row.length > header.length) {
+      throw new Error(`Portugal doctor fact register row ${index + 2} has unexpected columns`);
+    }
     const record = Object.fromEntries(
       FACT_COLUMNS.map((column) => [column, (row[header.indexOf(column)] ?? "").trim()]),
     ) as Record<PortugalDoctorFactColumn, string>;
@@ -171,36 +199,98 @@ export function portugalDoctorFactSha256(record: PortugalDoctorFactRecord): stri
   )).digest("hex");
 }
 
+export function portugalDoctorFactHasRegistration(
+  record: PortugalDoctorFactRecord,
+  professionalBody: string,
+  registrationNumber: string,
+): boolean {
+  const bodies = record.professional_body.split(";").map((value) => value.trim()).filter(Boolean);
+  const numbers = record.registration_number.split(";").map((value) => value.trim()).filter(Boolean);
+  return bodies.length === numbers.length && bodies.some(
+    (body, index) => body === professionalBody && numbers[index] === registrationNumber,
+  );
+}
+
+/**
+ * Register status that authorizes publication on the project owner's own
+ * super-admin attestation instead of a named clinician's review. Mirrors the
+ * Czechia convention, and is deliberately NOT a softer clinical approval.
+ *
+ * An override row must leave every reviewer-identity field **empty** — enforced
+ * below, not merely permitted — so the register can never be made to assert
+ * that a licensed clinician reviewed copy they did not see. Everything about
+ * the payload rather than the reviewer still applies in full: the exact
+ * `approved_sha256`, official-source allowlisting, and for doctor rows the
+ * verified, hash-bound fact-register binding.
+ */
+export const PORTUGAL_SUPER_ADMIN_OVERRIDE_STATUS = "super_admin_override";
+
+/** Fields that assert a *person* reviewed the copy. An override has none. */
+const CLINICAL_REVIEWER_ASSERTION_COLUMNS = [
+  "reviewer_name",
+  "reviewer_doctor_id",
+  "reviewed_at",
+  "clinical_reviewer_professional_body",
+  "clinical_reviewer_specialty_id",
+  "compliance_reviewer_name",
+  "compliance_reviewer_id",
+  "compliance_reviewed_at",
+  "content_owner_name",
+  "content_owner_id",
+  "content_owner_reviewed_at",
+] as const satisfies readonly PortugalClinicalReviewColumn[];
+
 export function assertPortugalClinicalApproval(
   csv: string,
-  options: Readonly<{ asset: string; approvedSha256: string; factRegisterCsv?: string; now?: Date }>,
+  options: Readonly<{
+    asset: string;
+    approvedSha256: string;
+    factRegisterCsv?: string;
+    now?: Date;
+    /**
+     * Opt-in for `super_admin_override` rows. The CLI sets this only when the
+     * operator passes `--super-admin-override` AND an attestation artifact, so
+     * an override can never fire from a register typo alone.
+     */
+    allowSuperAdminOverride?: boolean;
+  }>,
 ): PortugalClinicalReviewRecord {
   const record = readPortugalClinicalReviewRecord(csv, options.asset);
-  if (record.publish_status !== "approved") {
+  const isOverride = record.publish_status === PORTUGAL_SUPER_ADMIN_OVERRIDE_STATUS;
+  if (isOverride && !options.allowSuperAdminOverride) {
+    throw new Error(
+      `${record.asset} is recorded as ${PORTUGAL_SUPER_ADMIN_OVERRIDE_STATUS}. ` +
+        "Publishing it requires the explicit --super-admin-override flag and an attestation artifact.",
+    );
+  }
+  if (!isOverride && record.publish_status !== "approved") {
     throw new Error(`Clinical review status is ${record.publish_status || "blank"} for ${record.asset}`);
   }
-  requireValue(record, "reviewer_name");
-  requireValue(record, "reviewer_doctor_id");
-  requireValue(record, "reviewer_required");
-  requireValue(record, "clinical_reviewer_professional_body");
-  requireValue(record, "clinical_reviewer_specialty_id");
-  requireValue(record, "compliance_reviewer_name");
-  requireValue(record, "compliance_reviewer_id");
-  requireValue(record, "content_owner_name");
-  requireValue(record, "content_owner_id");
-  const reviewerIds = [record.reviewer_doctor_id, record.compliance_reviewer_id, record.content_owner_id];
-  if (new Set(reviewerIds).size !== reviewerIds.length) {
-    throw new Error(`Clinical, compliance and content approvals must have distinct reviewer IDs for ${record.asset}`);
+  if (isOverride) {
+    // An override asserts that NO clinician reviewed this copy. Any reviewer
+    // identity here would make the register claim otherwise, so it is a hard
+    // error rather than an ignored field.
+    for (const column of CLINICAL_REVIEWER_ASSERTION_COLUMNS) {
+      if (record[column].trim() !== "") {
+        throw new Error(
+          `${record.asset} is a super-admin override but records ${column}. ` +
+            "An override must not name a reviewer — clear the field, or record a real clinical approval instead.",
+        );
+      }
+    }
+  } else {
+    requireValue(record, "reviewer_name");
+    requireValue(record, "reviewer_doctor_id");
+    requireValue(record, "clinical_reviewer_professional_body");
   }
+  requireValue(record, "reviewer_required");
   const officialSources = officialSourceUrls(
     requireValue(record, "official_source_references"),
     `Clinical approval field official_source_references for ${record.asset}`,
   );
   const now = options.now ?? new Date();
   if (Number.isNaN(now.getTime())) throw new Error("Clinical approval comparison time is invalid");
-  assertReviewDate(record, "reviewed_at", now);
-  assertReviewDate(record, "compliance_reviewed_at", now);
-  assertReviewDate(record, "content_owner_reviewed_at", now);
+  if (!isOverride) assertReviewDate(record, "reviewed_at", now);
   if (!/^[a-f0-9]{64}$/i.test(options.approvedSha256)) {
     throw new Error("Expected approvedSha256 must be a SHA-256 hex digest");
   }
@@ -208,13 +298,7 @@ export function assertPortugalClinicalApproval(
     throw new Error(`Clinical approval field approved_sha256 does not match ${record.asset}`);
   }
   if (record.asset.startsWith("/portugal/pt/doctors/")) {
-    const subjectDoctorId = requireValue(record, "credential_subject_doctor_id");
-    if (
-      record.reviewer_doctor_id !== subjectDoctorId &&
-      record.delegated_by_doctor_id !== subjectDoctorId
-    ) {
-      throw new Error(`Doctor approval requires the subject doctor or their recorded delegation for ${record.asset}`);
-    }
+    requireValue(record, "credential_subject_doctor_id");
     if (!options.factRegisterCsv) throw new Error(`Doctor fact register is required for ${record.asset}`);
     const fact = readPortugalDoctorFactRecord(options.factRegisterCsv, record.asset);
     if (fact.verification_status !== "verified") {
@@ -232,4 +316,53 @@ export function assertPortugalClinicalApproval(
     }
   }
   return record;
+}
+
+/**
+ * Validates the super-admin attestation artifact backing an override.
+ *
+ * The artifact is the only durable record of WHO authorized publication and in
+ * WHAT WORDS, so it is checked rather than trusted: it must quote the owner's
+ * own statement, bind the exact payload hash, and say plainly that it is a
+ * verbal attestation rather than an authenticated signature.
+ *
+ * The hash binding is what stops an override degrading into "someone said it
+ * was fine once": the authorization covers one exact payload, so any later
+ * edit to the copy invalidates it and needs a fresh attestation.
+ */
+export function assertPortugalSuperAdminAttestation(
+  markdown: string,
+  options: Readonly<{ asset: string; approvedSha256: string }>,
+): void {
+  if (!/^[a-f0-9]{64}$/i.test(options.approvedSha256)) {
+    throw new Error("Expected approvedSha256 must be a SHA-256 hex digest");
+  }
+  if (!markdown.includes(options.approvedSha256)) {
+    throw new Error(
+      `Super-admin attestation does not carry the exact payload hash for ${options.asset}. ` +
+        "The authorization must name the payload it authorizes.",
+    );
+  }
+  if (!markdown.includes(options.asset)) {
+    throw new Error(`Super-admin attestation does not name ${options.asset}`);
+  }
+  // A quoted first-person statement from the owner, not a paraphrase.
+  if (!/^>\s*\S/m.test(markdown)) {
+    throw new Error("Super-admin attestation must quote the owner's own statement as a blockquote");
+  }
+  if (!/verbal attestation/i.test(markdown)) {
+    throw new Error('Super-admin attestation must describe itself as a "verbal attestation"');
+  }
+  if (!/does not represent an independently authenticated/i.test(markdown)) {
+    throw new Error(
+      "Super-admin attestation must state that it is not an independently authenticated signature",
+    );
+  }
+  // It must not be dressed up as a clinician's approval.
+  if (/\bapproved by (?:dr|dra|mudr)\b/i.test(markdown)) {
+    throw new Error(
+      "Super-admin attestation must not describe itself as a named doctor's approval — " +
+        "record a real clinical approval instead.",
+    );
+  }
 }

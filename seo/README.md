@@ -23,8 +23,8 @@ status ledgers.
 | Market | Primary route | Country workspace | Market evidence in global ledger |
 | --- | --- | --- | --- |
 | Ireland | `/ireland/en` | [Ireland](ireland/README.md) | Global ledger §§10, 18, 28–34 |
-| Czechia | `/czechia/cs` | [Czechia](czechia/README.md) | Global ledger §§10–17 |
-| Portugal | `/portugal/pt` | [Portugal](portugal/README.md) | Global ledger §§19 and 35 |
+| Czechia | `/czechia/cs` | [Czechia](czechia/README.md) | Global ledger §§10–17, 27.16–27.21 and 36 |
+| Portugal | `/portugal/pt` | [Portugal](portugal/README.md) | Global ledger §§19, 27.22, 35 and 37 |
 | Spain | `/spain/es` | [Spain](spain/README.md) | Global ledger §19 |
 | Romania | `/romania/ro` | [Romania](romania/README.md) | Global ledger §§20–21 |
 | Brazil | `/brazil/pt` | [Brazil](brazil/README.md) | Global ledger §20 |

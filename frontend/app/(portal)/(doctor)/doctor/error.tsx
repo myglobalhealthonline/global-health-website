@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { AlertTriangle } from "lucide-react";
 import { AdminEmptyState, Btn } from "@/components/portal-atoms";
 import { readClientLocale } from "@/lib/i18n/get-client-locale";
+import { useErrorRetry } from "@/app/_components/error-recovery";
 
 // ponytail: client-only error boundary can't call the async server locale
 // bundle — small inline map per locale, same pattern as app/error.tsx.
@@ -51,6 +52,7 @@ export default function DoctorError({
     console.error(error);
   }, [error]);
 
+  const { retry, pending } = useErrorRetry(error, reset);
   const t = T[readClientLocale()] ?? T.en;
 
   return (
@@ -61,7 +63,7 @@ export default function DoctorError({
         title={t.title}
         description={t.description}
         action={
-          <Btn variant="primary" onClick={reset}>
+          <Btn variant="primary" onClick={retry} loading={pending}>
             {t.tryAgain}
           </Btn>
         }

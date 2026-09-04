@@ -786,6 +786,32 @@ export type CommonLocale = {
     total: string;
     trustSecure: string;
     trustEncrypted: string;
+    /**
+     * Coupon code entry in the order summary.
+     *
+     * `couponInvalid` covers EVERY identity failure — unknown code, expired,
+     * disabled, fully redeemed, reserved for another address. The server does
+     * not distinguish them (it would be an enumeration oracle), so neither does
+     * the copy. The three `couponNot*` strings are the cart-shaped refusals,
+     * which are safe to explain and actionable.
+     */
+    couponLabel: string;
+    couponPlaceholder: string;
+    couponApply: string;
+    couponApplying: string;
+    couponRemove: string;
+    /** "{code} applied" */
+    couponApplied: string;
+    /** "Discount ({percent}%)" */
+    couponDiscount: string;
+    couponInvalid: string;
+    couponNotWithBenefit: string;
+    couponNotWithInsurance: string;
+    couponNotAvailableHere: string;
+    couponNotForThisService: string;
+    couponBelowMinimum: string;
+    couponNeedsEmail: string;
+    couponExpiredAtCheckout: string;
   };
   checkoutStatus: {
     successTitle: string;

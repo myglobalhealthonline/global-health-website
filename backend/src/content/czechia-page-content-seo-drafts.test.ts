@@ -7,17 +7,18 @@ import {
   czechiaPageContentApprovalSha256,
   czechiaPageContentConfirmationToken,
   validateCzechiaPageContentSeoDraft,
+  type CzechiaPageContentSeoDraft,
 } from "./czechia-page-content-seo-drafts.js";
 
-test("covers only the three eligible Czechia PageContent targets", () => {
+test("covers the four eligible Czechia PageContent targets", () => {
   assert.deepEqual(
     CZECHIA_PAGE_CONTENT_SEO_DRAFTS.map(({ key }) => key),
-    ["home-cs", "home-en", "doctors-cs"],
+    ["home-cs", "home-en", "doctors-cs", "gp-safety-cs"],
   );
   assert.ok(CZECHIA_PAGE_CONTENT_SEO_DRAFTS.every(({ countryCode }) => countryCode === "cz"));
   assert.deepEqual(
     CZECHIA_PAGE_CONTENT_SEO_DRAFTS.map(({ pageKey }) => pageKey),
-    ["HOME", "HOME", "DOCTORS_INDEX"],
+    ["HOME", "HOME", "DOCTORS_INDEX", "GENERAL_CONSULTATION"],
   );
 });
 
@@ -41,6 +42,16 @@ test("keeps every draft concise and free of unsupported promises", () => {
   for (const draft of CZECHIA_PAGE_CONTENT_SEO_DRAFTS) {
     assert.deepEqual(validateCzechiaPageContentSeoDraft(draft), [], draft.key);
   }
+});
+
+test("replaces the published Czech GP FAQ set without stale price or automatic-document promises", () => {
+  const gp = CZECHIA_PAGE_CONTENT_SEO_DRAFTS.find(
+    ({ key }) => key === "gp-safety-cs",
+  )! as CzechiaPageContentSeoDraft;
+  assert.equal(gp.copy.faq?.length, 8);
+  assert.match(gp.copy.body ?? "", /155.*112|112.*155/);
+  assert.match(gp.copy.body ?? "", /ncez\.mzcr\.cz/);
+  assert.doesNotMatch(JSON.stringify(gp.copy), /650|termín ve stejný den|vystaví elektronickou/i);
 });
 
 test("binds approval to the exact copy and blocks pending clinical rows", () => {

@@ -28,7 +28,9 @@ function isAllowed(method: string, segments: string[]): boolean {
   if (method === "POST") {
     return (
       segments.length === 1 &&
-      (segments[0] === "test-connection" || segments[0] === "app-ping")
+      (segments[0] === "test-connection" ||
+        segments[0] === "app-ping" ||
+        segments[0] === "app-info")
     );
   }
   if (method === "PUT" || method === "DELETE") {

@@ -12,37 +12,48 @@ import {
   czechiaClinicalDraftConfirmationToken,
   findCzechiaClinicalRegisterRow,
   validateCzechiaProfileBlogToolDrafts,
+  type CzechiaDoctorProfileSeoDraft,
 } from "./czechia-profile-blog-tool-seo-drafts.js";
 
 describe("Czechia profile, blog and tool SEO drafts", () => {
   it("contains exactly the approved metadata-only scope", () => {
     assert.equal(CZECHIA_DOCTOR_PROFILE_SEO_DRAFTS.length, 5);
-    assert.equal(CZECHIA_BLOG_SEO_DRAFTS.length, 1);
+    assert.equal(CZECHIA_BLOG_SEO_DRAFTS.length, 2);
     assert.equal(CZECHIA_TOOL_SEO_DRAFTS.length, 7);
 
     assert.deepEqual(
       CZECHIA_BLOG_SEO_DRAFTS.map(({ slug }) => slug),
-      ["diabetes-ticha-nemoc"],
+      ["diabetes-ticha-nemoc", "lekar-online-24-7-co-vyresi"],
     );
     assert.ok(
       !CZECHIA_BLOG_SEO_DRAFTS.some(({ slug }) =>
         [
-          "lekar-online-24-7-co-vyresi",
           "neschopenka-jak-funguje-eneschopenka",
           "vypocet-nemocenske-2026-co-plati-zamestnavatel-a-co-cssz",
         ].includes(slug),
       ),
     );
+    assert.deepEqual(
+      CZECHIA_BLOG_SEO_DRAFTS.find(({ slug }) => slug === "lekar-online-24-7-co-vyresi")
+        ?.desired,
+      {
+        title: "Co vyřeší lékař online a kdy nestačí",
+        seoTitle: "Lékař online 24/7: co lze řešit a kdy nestačí",
+        seoDescription:
+          "Zjistěte, co lze bezpečně probrat s lékařem online, jak konzultace probíhá a kdy je nutné osobní nebo akutní vyšetření.",
+      },
+    );
   });
 
-  it("does not mutate biographies, credentials, tool logic, article bodies or FAQs", () => {
+  it("keeps bios and credentials immutable while replacing only source-pinned doctor FAQs", () => {
     for (const draft of CZECHIA_DOCTOR_PROFILE_SEO_DRAFTS) {
       assert.deepEqual(Object.keys(draft.desired).sort(), [
         "seoDescription",
         "seoKeywords",
         "seoTitle",
       ]);
-      assert.deepEqual(draft.faqReplacements, []);
+      assert.ok(draft.faqReplacements.length >= 1);
+      assert.ok(draft.faqReplacements.every(({ id }) => /^cmr[a-z0-9]+$/.test(id)));
     }
     for (const draft of CZECHIA_BLOG_SEO_DRAFTS) {
       assert.deepEqual(Object.keys(draft.desired).sort(), [
@@ -62,6 +73,15 @@ describe("Czechia profile, blog and tool SEO drafts", () => {
       ]);
       assert.deepEqual(draft.faqReplacements, []);
     }
+  });
+
+  it("removes same-day and guaranteed-outcome claims from doctor FAQ replacements", () => {
+    const drafts: readonly CzechiaDoctorProfileSeoDraft[] = CZECHIA_DOCTOR_PROFILE_SEO_DRAFTS;
+    const text = JSON.stringify(
+      drafts.flatMap(({ faqReplacements }) => faqReplacements),
+    );
+    assert.doesNotMatch(text, /ve stejný den|ještě dnes|jistý výsledek|automaticky/i);
+    assert.match(text, /rezervačním kalendáři/);
   });
 
   it("keeps every draft hashable, source-pinned and deslop-clean", () => {

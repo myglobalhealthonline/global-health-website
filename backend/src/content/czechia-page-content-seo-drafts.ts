@@ -1,16 +1,16 @@
 import { createHash } from "node:crypto";
 
 export type CzechiaPageContentSeoDraft = Readonly<{
-  key: "home-cs" | "home-en" | "doctors-cs";
+  key: "home-cs" | "home-en" | "doctors-cs" | "gp-safety-cs";
   pageContentId: string;
   translationId: string;
   expectedPageUpdatedAt: string;
   expectedTranslationUpdatedAt: string;
   expectedSourceSha256: string;
   countryCode: "cz";
-  pageKey: "HOME" | "DOCTORS_INDEX";
+  pageKey: "HOME" | "DOCTORS_INDEX" | "GENERAL_CONSULTATION";
   locale: "CS" | "EN";
-  canonicalPath: "/czechia/cs" | "/czechia/en" | "/czechia/cs/doctors";
+  canonicalPath: "/czechia/cs" | "/czechia/en" | "/czechia/cs/doctors" | "/czechia/cs/gp-consultation-online";
   primaryKeyword: string;
   secondaryKeywords: readonly string[];
   copy: Readonly<{
@@ -19,6 +19,8 @@ export type CzechiaPageContentSeoDraft = Readonly<{
     heroTitle?: string;
     heroSubtitle?: string;
     intro?: string;
+    body?: string;
+    faq?: readonly Readonly<{ question: string; answer: string }>[];
   }>;
 }>;
 
@@ -93,7 +95,78 @@ const doctorsCs = {
   },
 } satisfies CzechiaPageContentSeoDraft;
 
-export const CZECHIA_PAGE_CONTENT_SEO_DRAFTS = [homeCs, homeEn, doctorsCs] as const;
+const gpSafetyCs = {
+  key: "gp-safety-cs",
+  pageContentId: "cmrijf0f30002soju8l76vgpb",
+  translationId: "cmrinddaf006401mzfr90x63h",
+  expectedPageUpdatedAt: "2026-07-14T21:32:28.046Z",
+  expectedTranslationUpdatedAt: "2026-07-14T21:32:27.766Z",
+  expectedSourceSha256: "32c157ef6306915199945ee6427b4599d8a853053f8dc13e9ceceb2b6acf9bdc",
+  countryCode: "cz",
+  pageKey: "GENERAL_CONSULTATION",
+  locale: "CS",
+  canonicalPath: "/czechia/cs/gp-consultation-online",
+  primaryKeyword: "praktický lékař online",
+  // Reconciled to the completion-matrix row 2026-09-03 (§38.1). Page-content
+  // secondary keywords are declarative only: they are not in
+  // `czechiaPageContentApprovalSha256` ({key, locale, copy}) and the patcher
+  // never writes them, so this cannot move an approval hash or a live page.
+  secondaryKeywords: ["online konzultace s lékařem", "praktik online", "promluvte si s lékařem"],
+  copy: {
+    seoTitle: "Praktický lékař online | Konzultace v Česku",
+    seoDescription:
+      "Online konzultace s praktickým lékařem. Lékař posoudí potíže a další postup; recepty, dokumenty a doporučení nejsou automatické.",
+    heroTitle: "Online konzultace s praktickým lékařem v Česku",
+    heroSubtitle:
+      "Proberte své potíže s lékařem. Vhodnost online péče a případné recepty, dokumenty nebo doporučení závisejí na klinickém posouzení.",
+    intro:
+      "Online konzultace může pomoci s posouzením běžných zdravotních potíží a volbou dalšího postupu. Pokud je nutné fyzikální, laboratorní nebo jiné osobní vyšetření, lékař vás na něj upozorní.",
+    body: `<p><strong>Při náhlém nebo závažném zhoršení zdravotního stavu volejte 155 nebo 112. Online konzultace není určena pro neodkladnou péči.</strong></p>
+<h2>Co může praktický lékař online posoudit</h2>
+<p>Lékař probere příznaky, anamnézu, užívané léky a dostupné zdravotní zprávy. Poté vysvětlí, zda je vhodný postup na dálku, nebo je nutné osobní vyšetření.</p>
+<h2>Recepty, eNeschopenka a doporučení</h2>
+<p>Recept, eNeschopenku, potvrzení nebo doporučení lze vystavit pouze tehdy, pokud je to po klinickém posouzení medicínsky a administrativně odůvodněné. Objednání konzultace žádný výsledek ani dokument nezaručuje.</p>
+<h2>Termíny a cena</h2>
+<p>Aktuální volné termíny a konečná cena se zobrazují před dokončením rezervace. Mohou se měnit podle zvolené služby a dostupnosti.</p>
+<p>Zdroje: <a href="https://ncez.mzcr.cz/cs/milnik-c-3-pravidladokumentypodklady-interoperabilita-telemedicina/pravidla-pro-rozvoj-telemediciny">NCEZ: pravidla pro telemedicínu</a> a <a href="https://www.nzip.cz/clanek/205-zdravotnicka-zachranna-sluzba">NZIP: zdravotnická záchranná služba</a>.</p>`,
+    faq: [
+      {
+        question: "Mohu absolvovat online konzultaci s praktickým lékařem?",
+        answer: "Ano, pokud jsou vaše potíže vhodné k posouzení na dálku. Lékař může podle příznaků doporučit osobní nebo akutní vyšetření.",
+      },
+      {
+        question: "Kolik stojí online konzultace s praktickým lékařem?",
+        answer: "Aktuální konečná cena se zobrazí před dokončením rezervace. Zkontrolujte ji spolu s délkou a podmínkami zvoleného termínu.",
+      },
+      {
+        question: "Kde ověřím registraci online lékaře?",
+        answer: "Registrační údaje uvedené u profilu ověřte v oficiálním seznamu České lékařské komory. Před rezervací zkontrolujte také jméno a rozsah služby vybraného lékaře.",
+      },
+      {
+        question: "Co se děje po online konzultaci s praktickým lékařem?",
+        answer: "Lékař shrne posouzení a doporučený další postup. Případné recepty, dokumenty nebo doporučení závisí na klinickém posouzení a dostupných informacích.",
+      },
+      {
+        question: "Může online praktický lékař vystavit doporučení?",
+        answer: "Lékař může doporučení vystavit, pokud je po posouzení klinicky vhodné a má potřebné informace. Objednání konzultace vystavení nezaručuje.",
+      },
+      {
+        question: "Musím si pro rezervaci založit účet?",
+        answer: "Postup rezervace a případná potřeba účtu se zobrazí během objednávky. Účet může sloužit k přístupu k informacím o konzultaci podle aktuálních funkcí služby.",
+      },
+      {
+        question: "Může online praktický lékař vystavit eNeschopenku?",
+        answer: "Lékař může eNeschopenku vystavit pouze tehdy, pokud je pracovní neschopnost po klinickém posouzení odůvodněná a splňuje příslušné podmínky. Vystavení není automatické.",
+      },
+      {
+        question: "Může online praktický lékař vystavit eRecept?",
+        answer: "Lékař může eRecept vystavit, pokud je lék klinicky vhodný a lze jej bezpečně předepsat na dálku. Objednání konzultace recept nezaručuje.",
+      },
+    ],
+  },
+} satisfies CzechiaPageContentSeoDraft;
+
+export const CZECHIA_PAGE_CONTENT_SEO_DRAFTS = [homeCs, homeEn, doctorsCs, gpSafetyCs] as const;
 
 export function czechiaPageContentApprovalSha256(draft: CzechiaPageContentSeoDraft): string {
   return createHash("sha256")
@@ -143,7 +216,7 @@ export function validateCzechiaPageContentSeoDraft(draft: CzechiaPageContentSeoD
   if (draft.copy.seoDescription.length < 110 || draft.copy.seoDescription.length > 160) {
     errors.push("SEO description must be 110-160 characters");
   }
-  if (/tentýž den|ve stejný den|same-day|guaranteed outcome|automaticky/i.test(copy)) {
+  if (/tentýž den|ve stejný den|same-day|guaranteed outcome|\b(?:je|jsou) automatick/i.test(copy)) {
     errors.push("Unsupported availability or outcome promise found");
   }
   if (/[—–]/.test(copy)) errors.push("Deslop failed: dash-heavy copy remains");

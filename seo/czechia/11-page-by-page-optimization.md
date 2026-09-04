@@ -2,6 +2,12 @@
 
 **Prepared:** 2026-09-01
 
+> **Dated evidence, not current operational status.** The canonical global ledger
+> at [`docs/plans/seo-control-state.md`](../../docs/plans/seo-control-state.md) owns
+> current status, priorities and next actions. This document describes the 2026-09-01
+> package; the 2026-09-02 Prague approval that followed it is recorded in ledger §36,
+> and the independent review of the whole batch is ledger §38.
+
 **Scope:** 50 current public URLs: 48 Czech pages plus the two explicitly mapped English/expat pages.
 **Primary artifact:** [`page-by-page-completion-matrix.csv`](page-by-page-completion-matrix.csv)
 
@@ -63,8 +69,8 @@ Two pages have complete review-gated repository drafts, not just matrix recommen
 
 | URL | Draft coverage | Approval hash | Production state |
 | --- | --- | --- | --- |
-| `/czechia/cs/services/neschopenka-online` | title, meta, H1, summary, hero, body, CTA, seven existing FAQs, ČSSZ link, emergency and explainer links | `14565e67950f0e84e4c176c8c4b40cdee460a4ce3dfc52bc07cc484e19b02c1a` | owner-authorized; locale fallbacks preserved; pending recorded clinical approval |
-| `/czechia/cs/services/obnoveni-lecby` | title, meta, H1, summary, hero, body, CTA, six existing FAQs, ePreskripce link, emergency and GP links | `3ff9b7a7aa88f80f15f28fab512fe86c5b65488e97a83f3f0e7432b31ab0244e` | owner-authorized; locale fallbacks preserved; pending recorded clinical approval |
+| `/czechia/cs/services/neschopenka-online` | title, meta, H1, summary, hero, body, CTA, seven existing FAQs, ČSSZ link, emergency and explainer links | `9d4b1ad095dab37b716d794301ca0607fab21940391da7f43df72020b91d0a0e` | owner-authorized; locale fallbacks preserved; pending recorded clinical approval |
+| `/czechia/cs/services/obnoveni-lecby` | title, meta, H1, summary, hero, body, CTA, six existing FAQs, ePreskripce link, emergency and GP links | `a02d12a3e9aada7f106233841bc55ec6b268805561660020734306e054ff5106` | owner-authorized; locale fallbacks preserved; pending recorded clinical approval |
 
 The guarded updater defaults to dry-run, verifies exact source fingerprints and refuses an apply when non-Czech fallback content would change.
 
@@ -81,4 +87,18 @@ The comparison preserves names, registrations, qualifications, languages, prices
 
 ## Implementation boundary
 
-The approved metadata and H1 changes for all 14 non-clinical static pages are live and publicly verified in a Czechia-Czech-only frontend overlay. Cache-bypassed checks on 2026-09-01 matched every approved title, meta description and H1 and confirmed HTTP 200, self-canonical, `index, follow`, self-hreflang and route-appropriate JSON-LD; exact replay evidence is [`raw/static-page-production-readback-2026-09-01.csv`](raw/static-page-production-readback-2026-09-01.csv). The 31 eligible clinical rows have exact source-pinned guarded payloads; their clinical-register entries are still `pending`, so the real apply entry points fail before a transaction opens. Rows with `FAQs optimized: no` have no executable FAQ replacement. The service updater preserves non-target locale fallbacks instead of leaking Czech copy. The three measurement holds and two reviewed-no-change rows remain untouched. No production CMS/database write or clinical publication was performed.
+The 14 non-clinical static pages and 18 clinician-approved Czech pages are live and
+publicly verified. The approved clinical set comprises the Czech home, 12 services,
+the diabetes article and four tools. Seventeen distinct pages were approved on
+2026-09-01; the Prague service's expanded copy was separately approved on 2026-09-02
+without increasing that page count, and the dermatology service became the eighteenth
+distinct approved page later on 2026-09-02. Exact replay evidence for the 2026-09-01
+approvals is
+[`raw/clinical-production-readback-2026-09-01.csv`](raw/clinical-production-readback-2026-09-01.csv),
+with the production operation recorded in
+[`raw/production-write-receipt-2026-09-01-clinical-seo.json`](raw/production-write-receipt-2026-09-01-clinical-seo.json).
+The remaining 13 eligible pages stay source-pinned and fail closed pending their
+specialist, native-English or governance approval. The three measurement holds and
+two reviewed-no-change rows remain untouched. Doctor biographies, credentials,
+prices, durations, availability, booking behavior, clinical algorithms and
+non-target locales were not changed.

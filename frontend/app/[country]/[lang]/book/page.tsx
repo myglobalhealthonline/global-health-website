@@ -42,6 +42,7 @@ import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { czechiaStaticPageSeo } from "@/lib/content/czechia-static-page-seo";
+import { localizedLanguageLabel } from "@/lib/content/languages";
 
 type Params = { country: string; lang: string };
 type SearchParams = {
@@ -65,6 +66,7 @@ type SearchParams = {
 type Notice = { tone: "info" | "warning"; message: string } | null;
 
 type BookT = import("@/lib/i18n/types").CommonLocale["bookPage"];
+type SameDayT = ReturnType<typeof loadLocaleBundle>["home"]["countryHero"]["sameDay"];
 
 export async function generateStaticParams(): Promise<Params[]> {
   return countryLangParams();
@@ -95,16 +97,19 @@ export async function generateMetadata({
 
   const { common } = loadLocaleBundle(lang as LocaleCode);
   const czechiaSeo = czechiaStaticPageSeo(code, lang, "book");
-  const title = czechiaSeo?.title ?? `${common.bookPage.title} — ${config.name}`;
-  const description = czechiaSeo?.description ?? common.bookPage.subtitle.replace("{country}", config.name);
+  // `config.name` is English-only. Use the locale's own country name, as every
+  // sibling template does, so a Portuguese page does not read "Brazil".
+  const countryName = common.countryNames?.[code] ?? config.name;
+  const title = czechiaSeo?.title ?? `${common.bookPage.title} — ${countryName}`;
+  const description = czechiaSeo?.description ?? common.bookPage.subtitle.replace("{country}", countryName);
   const metadata = buildPublicMetadata({
     path: `/${country}/${lang}/book`,
     title,
     description,
     locale: ogLocales(config, lang).locale,
     kind: "service",
-    subtitle: config.name,
-    imageAlt: `${common.bookPage.title} — ${config.name}`,
+    subtitle: countryName,
+    imageAlt: `${common.bookPage.title} — ${countryName}`,
     languages: hreflangAlternates(config, "/book"),
   });
   return applyBookingWorkflowIndexing(metadata, await searchParams);
@@ -122,7 +127,7 @@ export default async function CountryLangBookPage({
   const code = countryCodeFromSlug(slug);
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) notFound();
-  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const { common: c, home } = loadLocaleBundle(lang as LocaleCode);
   const bf = c.bookingForm;
   const bp = c.bookPage;
   const czechiaSeo = czechiaStaticPageSeo(code, lang, "book");
@@ -155,6 +160,7 @@ export default async function CountryLangBookPage({
         c={c}
         bf={bf}
         bp={bp}
+        sameDay={home.countryHero.sameDay}
         bookingRequirements={await bookingRequirementsPromise}
       />
     );
@@ -410,7 +416,7 @@ export default async function CountryLangBookPage({
 
       <GH2FlowHeader
         title={czechiaSeo?.h1 ?? bp.title}
-        subtitle={bp.subtitle.replace("{country}", config.name)}
+        subtitle={bp.subtitle.replace("{country}", c.countryNames?.[code] ?? config.name)}
         activeStep={currentStep}
         steps={stepLabels}
       />
@@ -438,7 +444,7 @@ export default async function CountryLangBookPage({
                     icon-tile treatment matches DoctorCard's dark variant. */}
                 <ul className="mt-5 grid gap-2.5 border-t border-white/10 pt-5">
                   {[
-                    { icon: ShieldCheck, label: c.serviceDetailPage.trustRegistered.replace("{country}", config.name) },
+                    { icon: ShieldCheck, label: c.serviceDetailPage.trustRegistered.replace("{country}", c.countryNames?.[code] ?? config.name) },
                     { icon: Video, label: c.serviceDetailPage.trustVideo },
                     { icon: Lock, label: c.serviceDetailPage.trustConfidential },
                   ].map(({ icon: Icon, label }) => (
@@ -513,26 +519,6 @@ export default async function CountryLangBookPage({
   );
 }
 
-const GP_LANGUAGE_NAMES: Record<string, string> = {
-  en: "English",
-  pt: "Portuguese",
-  es: "Spanish",
-  cs: "Czech",
-  cz: "Czech",
-  ro: "Romanian",
-  ar: "Arabic",
-  fr: "French",
-  de: "German",
-  it: "Italian",
-  pl: "Polish",
-  nl: "Dutch",
-  ru: "Russian",
-};
-
-function gpLanguageLabel(code: string): string {
-  return GP_LANGUAGE_NAMES[code.toLowerCase()] ?? code.toUpperCase();
-}
-
 /**
  * Same-day GP details step. The patient arrives from the homepage with a chosen
  * language + time (?gp=1&language=&at=); here they only fill patient details +
@@ -549,6 +535,7 @@ async function GpBookingFlow({
   c,
   bf,
   bp,
+  sameDay,
   bookingRequirements,
 }: {
   code: string;
@@ -560,13 +547,14 @@ async function GpBookingFlow({
   c: import("@/lib/i18n/types").CommonLocale;
   bf: import("@/lib/i18n/types").CommonLocale["bookingForm"];
   bp: BookT;
+  sameDay: SameDayT;
   bookingRequirements: import("@/lib/content/get-public-countries").PublicBookingRequirements;
 }) {
   const { service, clinicTimezone, slots } = await getGpAvailability(code, language, 14);
   const slot = slots.find((s) => s.startAt === at) ?? null;
   const valid = Boolean(service && slot);
-  const langName = gpLanguageLabel(language);
-  const steps = ["Language", bp.stepTime, bp.stepDetails];
+  const langName = localizedLanguageLabel(language, lang);
+  const steps = [sameDay.languageLabel, bp.stepTime, bp.stepDetails];
   const homeHref = `/${country}/${lang}#same-day-booking`;
   const czechiaSeo = czechiaStaticPageSeo(code, lang, "book");
 
@@ -607,10 +595,10 @@ async function GpBookingFlow({
                     {bp.bookingSteps}
                   </p>
                   <p className="mt-3 text-sm leading-relaxed text-white/90">
-                    {service.name} · {langName}
+                    {sameDay.title} · {langName}
                   </p>
                   <p className="mt-2 text-sm leading-relaxed text-white/60">
-                    We’ll automatically assign an available GP who speaks {langName}.
+                    {sameDay.reassure}
                   </p>
                   <ul className="mt-5 grid gap-2.5 border-t border-white/10 pt-5">
                     {[

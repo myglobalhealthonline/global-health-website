@@ -315,10 +315,15 @@ function assertSavedCopy(
   }
   for (const faqDraft of draft.faqs) {
     const faq = service.faqs.find(({ id }) => id === faqDraft.id);
+    const beforeFaq = before.faqs.find(({ id }) => id === faqDraft.id);
     const translated = faq?.translations.find(({ locale }) => locale === draft.locale);
+    const isDefaultLocale = service.country.defaultLocale === draft.locale;
+    const expectedBase = isDefaultLocale ? faqDraft : beforeFaq;
     if (
-      faq?.question !== faqDraft.question ||
-      faq.answer !== faqDraft.answer ||
+      !expectedBase ||
+      faq?.question !== expectedBase.question ||
+      faq.answer !== expectedBase.answer ||
+      (!isDefaultLocale && !translated) ||
       (translated &&
         (translated.question !== faqDraft.question || translated.answer !== faqDraft.answer))
     ) {
@@ -481,10 +486,16 @@ export async function runCzechiaSeoServicePatch(
     for (const faqDraft of prepared.faqs) {
       const faq = locked.faqs.find(({ id }) => id === faqDraft.id)!;
       const translationRow = faq.translations.find(({ locale }) => locale === prepared.locale);
-      await tx.serviceFaq.update({
-        where: { id: faq.id },
-        data: { question: faqDraft.question, answer: faqDraft.answer },
-      });
+      const isDefaultLocale = locked.country.defaultLocale === prepared.locale;
+      if (!isDefaultLocale && !translationRow) {
+        throw new Error(`Refusing to apply: ${prepared.slug} missing ${prepared.locale} FAQ translation`);
+      }
+      if (isDefaultLocale) {
+        await tx.serviceFaq.update({
+          where: { id: faq.id },
+          data: { question: faqDraft.question, answer: faqDraft.answer },
+        });
+      }
       if (translationRow) {
         await tx.serviceFaqTranslation.update({
           where: { id: translationRow.id },
@@ -500,7 +511,7 @@ export async function runCzechiaSeoServicePatch(
       throw new Error(`Verification failed: ${prepared.slug} protected operational state changed`);
     }
     return saved;
-  }, { isolationLevel: "Serializable" });
+  }, { isolationLevel: "Serializable", timeout: 30_000 });
 
   logger.log(`VERIFIED: ${updated.slug} review-gated CS copy saved; global review metadata preserved.`);
   return updated;

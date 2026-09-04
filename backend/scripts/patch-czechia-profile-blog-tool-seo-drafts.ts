@@ -1,12 +1,14 @@
 /**
  * Preview one Czech doctor-profile, diabetes-blog or tool metadata draft.
- * Doctor/blog apply is possible only after the clinical register is approved:
+ * Doctor metadata and blog apply are possible only after the relevant approval
+ * is recorded in the clinical register:
  *
  * node --env-file=.env --import tsx scripts/patch-czechia-profile-blog-tool-seo-drafts.ts --only=doctor:dr-ahmed-maklad
  * node --env-file=.env --import tsx scripts/patch-czechia-profile-blog-tool-seo-drafts.ts --only=doctor:dr-ahmed-maklad --apply --approved-sha256=<hash> --reviewed-at=YYYY-MM-DD --reviewer-doctor-id=<id> --confirm=<token>
  *
- * Tool drafts are preview-only. Their Czech JSON source is shared by every
- * market's CS route, so promotion requires a cz/cs-only country-scoped frontend overlay.
+ * Doctor apply changes only the existing Czech CS market-translation SEO
+ * fields. Doctor FAQs and all profile, credential and biography fields remain
+ * untouched. Tool drafts remain preview-only because Czech tool JSON is shared.
  */
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
@@ -200,7 +202,6 @@ export type CzechiaProfileBlogToolPatchOptions = Readonly<{
   reviewedAt: Date | null;
   reviewerDoctorId: string | null;
   confirmation: string | null;
-  clinicalReviewStatus: string | null;
 }>;
 
 export function czechiaProfileBlogToolSourceSha256(value: unknown): string {
@@ -213,6 +214,16 @@ type BlogCountryMapping = Readonly<{ country: CountryCode }>;
 export function assertCzechiaDoctorCountryCode(country: CountryCode): void {
   if (country.code.trim().toLowerCase() !== "cz") {
     throw new Error("Refusing to apply: doctor market must belong exclusively to Czechia");
+  }
+}
+
+export function assertActiveGovernanceReviewer(
+  reviewer: Readonly<{ active: boolean }> | null,
+): void {
+  if (!reviewer?.active) {
+    throw new Error(
+      "Refusing to apply: reviewer must be an active doctor delegated for governance review",
+    );
   }
 }
 
@@ -336,46 +347,74 @@ async function assertEligibleCzechReviewer(
   }
 }
 
-function protectedDoctorState(source: DoctorSource): string {
-  const translation = source.translations[0];
-  return JSON.stringify({
-    doctorId: source.doctorId,
-    countryId: source.countryId,
-    countryCode: source.country.code,
-    sortOrder: source.sortOrder,
-    marketActive: source.active,
-    chamberEntity: source.chamberEntity,
-    registrationUrl: source.registrationUrl,
-    division: source.division,
-    isVerified: source.isVerified,
-    verifiedAt: source.verifiedAt,
-    directorAccess: source.directorAccess,
-    marketCreatedAt: source.createdAt,
-    doctorCountryId: source.doctor.countryId,
-    fullName: source.doctor.fullName,
-    doctorBio: source.doctor.bio,
-    doctorTitle: source.doctor.title,
-    globalSeoTitle: source.doctor.seoTitle,
-    globalSeoDescription: source.doctor.seoDescription,
-    lastReviewedAt: source.doctor.lastReviewedAt,
-    medicalRegistrationUrl: source.doctor.medicalRegistrationUrl,
-    qualifications: source.doctor.qualifications,
-    languages: source.doctor.languages,
-    doctorActive: source.doctor.active,
-    bookingPausedFrom: source.doctor.bookingPausedFrom,
-    bookingPausedUntil: source.doctor.bookingPausedUntil,
-    bookingPauseReason: source.doctor.bookingPauseReason,
-    doctorUpdatedAt: source.doctor.updatedAt,
-    doctorCreatedAt: source.doctor.createdAt,
-    registrationNumber: source.registrationNumber,
-    credentials: source.doctor.credentials,
-    specialties: source.doctor.specialties,
-    assignments: source.doctor.assignedServices,
-    availabilities: source.doctor.availabilities,
-    translatedTitle: translation?.title,
-    translatedBio: translation?.bio,
-    faqs: source.doctor.faqs,
+async function assertEligibleActiveGovernanceReviewer(
+  client: Prisma.TransactionClient,
+  reviewerDoctorId: string,
+): Promise<void> {
+  const reviewer = await client.doctor.findUnique({
+    where: { id: reviewerDoctorId },
+    select: { active: true },
   });
+  assertActiveGovernanceReviewer(reviewer);
+}
+
+function protectedDoctorState(source: DoctorSource): string {
+  return JSON.stringify({
+    ...source,
+    translations: source.translations.map(
+      ({
+        seoTitle: _seoTitle,
+        seoDescription: _seoDescription,
+        seoKeywords: _seoKeywords,
+        updatedAt: _updatedAt,
+        ...translation
+      }) => translation,
+    ),
+  });
+}
+
+async function applyDoctor(
+  draft: CzechiaDoctorProfileSeoDraft,
+  options: CzechiaProfileBlogToolPatchOptions,
+): Promise<void> {
+  await prisma.$transaction(
+    async (transaction) => {
+      await assertEligibleActiveGovernanceReviewer(transaction, options.reviewerDoctorId!);
+      const before = await loadDoctorSource(transaction, draft);
+      assertSourceHash(draft, before);
+      const protectedBefore = protectedDoctorState(before);
+      const result = await transaction.doctorMarketTranslation.updateMany({
+        where: {
+          id: draft.translationId,
+          doctorCountryId: draft.doctorCountryId,
+          locale: "CS",
+          updatedAt: new Date(draft.expectedTranslationUpdatedAt),
+        },
+        data: {
+          seoTitle: draft.desired.seoTitle,
+          seoDescription: draft.desired.seoDescription,
+          seoKeywords: [...draft.desired.seoKeywords],
+        },
+      });
+      if (result.count !== 1) throw new Error(`${draft.assetPath} changed after preview`);
+      const saved = await transaction.doctorCountry.findUniqueOrThrow({
+        where: { id: draft.doctorCountryId },
+        select: doctorSourceSelect,
+      });
+      assertCzechiaDoctorCountryCode(saved.country);
+      if (protectedDoctorState(saved) !== protectedBefore) {
+        throw new Error(
+          `${draft.assetPath} protected profile, credential, biography or FAQ state changed`,
+        );
+      }
+      assertCzechiaDoctorMetadataReadback(draft, saved.translations[0]);
+    },
+    {
+      isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+      maxWait: 10_000,
+      timeout: 45_000,
+    },
+  );
 }
 
 function protectedBlogState(source: BlogSource): string {
@@ -402,43 +441,6 @@ function protectedBlogState(source: BlogSource): string {
     translations: source.translations,
     countries: source.countries,
   });
-}
-
-async function applyDoctor(
-  draft: CzechiaDoctorProfileSeoDraft,
-  options: CzechiaProfileBlogToolPatchOptions,
-): Promise<void> {
-  await prisma.$transaction(
-    async (transaction) => {
-      await assertEligibleCzechReviewer(transaction, options.reviewerDoctorId!);
-      const before = await loadDoctorSource(transaction, draft);
-      assertSourceHash(draft, before);
-      const protectedBefore = protectedDoctorState(before);
-      const result = await transaction.doctorMarketTranslation.updateMany({
-        where: {
-          id: draft.translationId,
-          doctorCountryId: draft.doctorCountryId,
-          locale: "CS",
-          updatedAt: new Date(draft.expectedTranslationUpdatedAt),
-        },
-        data: {
-          seoTitle: draft.desired.seoTitle,
-          seoDescription: draft.desired.seoDescription,
-          seoKeywords: [...draft.desired.seoKeywords],
-        },
-      });
-      if (result.count !== 1) throw new Error(`${draft.assetPath} changed after preview`);
-      const saved = await transaction.doctorCountry.findUniqueOrThrow({
-        where: { id: draft.doctorCountryId },
-        select: doctorSourceSelect,
-      });
-      if (protectedDoctorState(saved) !== protectedBefore) {
-        throw new Error(`${draft.assetPath} protected biography, credential or FAQ state changed`);
-      }
-      assertCzechiaDoctorMetadataReadback(draft, saved.translations[0]);
-    },
-    { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, maxWait: 10_000, timeout: 45_000 },
-  );
 }
 
 async function applyBlog(
@@ -494,11 +496,29 @@ export async function runCzechiaProfileBlogToolPatch(
   ];
   const draft = drafts.find((candidate) => key(candidate) === options.only);
   if (!draft) throw new Error(`Use --only=<kind>:<slug>; unknown target ${options.only}`);
+  const register = readFileSync(
+    resolve(import.meta.dirname, "../../seo/czechia/clinical-review-register.csv"),
+    "utf8",
+  );
+  const registerRow = findCzechiaClinicalRegisterRow(register, draft.assetPath);
+
+  if (options.apply) {
+    const approval = assertCzechiaClinicalApproval(register, {
+      asset: draft.assetPath,
+      approvedSha256: czechiaClinicalDraftApprovalSha256(draft),
+    });
+    if (approval.reviewer_doctor_id !== options.reviewerDoctorId) {
+      throw new Error("Refusing to apply: reviewer doctor ID does not match the recorded approval");
+    }
+    if (approval.reviewed_at.slice(0, 10) !== options.reviewedAt?.toISOString().slice(0, 10)) {
+      throw new Error("Refusing to apply: review date does not match the recorded approval");
+    }
+  }
 
   assertCzechiaClinicalPromotionGate({
     apply: options.apply,
     draft,
-    registerStatus: options.clinicalReviewStatus,
+    registerStatus: registerRow.status,
     reviewedAt: options.reviewedAt,
     reviewerId: options.reviewerDoctorId,
     approvedHash: options.approvedHash,
@@ -515,10 +535,17 @@ export async function runCzechiaProfileBlogToolPatch(
 
   logger.log(`${key(draft)} approval-sha256=${czechiaClinicalDraftApprovalSha256(draft)}`);
   logger.log(`${key(draft)} confirmation=${czechiaClinicalDraftConfirmationToken(draft)}`);
-  logger.log(`${key(draft)} clinical-register=${options.clinicalReviewStatus ?? "missing"}`);
+  logger.log(`${key(draft)} clinical-register=${registerRow.status || "missing"}`);
 
   if (!options.apply) {
-    logger.log("DRY-RUN ONLY. No biography, credential, article body, FAQ or tool runtime copy changed.");
+    logger.log("DRY-RUN ONLY. No biography, credential, article body, global FAQ or shared tool runtime copy changed.");
+    return;
+  }
+  if (draft.assetKind === "doctor") {
+    await applyDoctor(draft, options);
+    logger.log(
+      `APPLIED ${key(draft)} Czech market metadata only; protected profile state verified unchanged.`,
+    );
     return;
   }
   if (draft.assetKind === "tool") {
@@ -526,8 +553,7 @@ export async function runCzechiaProfileBlogToolPatch(
       "Tool promotion requires a reviewed cz/cs-only country-scoped frontend overlay; shared CS JSON will not be changed",
     );
   }
-  if (draft.assetKind === "doctor") await applyDoctor(draft, options);
-  else await applyBlog(draft, options);
+  await applyBlog(draft, options);
   logger.log(`APPLIED ${key(draft)} metadata only; protected content verified unchanged.`);
 }
 
@@ -545,24 +571,7 @@ async function main(): Promise<void> {
   ];
   const draft = drafts.find((candidate) => key(candidate) === only);
   if (!draft) throw new Error(`Unknown target ${only}`);
-  const register = readFileSync(
-    resolve(import.meta.dirname, "../../seo/czechia/clinical-review-register.csv"),
-    "utf8",
-  );
-  const registerRow = findCzechiaClinicalRegisterRow(register, draft.assetPath);
   const apply = process.argv.includes("--apply");
-  if (apply) {
-    const approval = assertCzechiaClinicalApproval(register, {
-      asset: draft.assetPath,
-      approvedSha256: czechiaClinicalDraftApprovalSha256(draft),
-    });
-    if (approval.reviewer_doctor_id !== arg("reviewer-doctor-id")) {
-      throw new Error("Refusing to apply: reviewer doctor ID does not match the recorded approval");
-    }
-    if (approval.reviewed_at.slice(0, 10) !== arg("reviewed-at")) {
-      throw new Error("Refusing to apply: review date does not match the recorded approval");
-    }
-  }
   await runCzechiaProfileBlogToolPatch({
     only,
     apply,
@@ -570,7 +579,6 @@ async function main(): Promise<void> {
     reviewedAt: parseReviewDate(arg("reviewed-at")),
     reviewerDoctorId: arg("reviewer-doctor-id"),
     confirmation: arg("confirm"),
-    clinicalReviewStatus: registerRow.status,
   });
 }
 

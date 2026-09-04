@@ -6,6 +6,7 @@ import {
   czechiaSeoApprovalSha256,
   czechiaSeoConfirmationToken,
   parseCzechiaSeoReviewDate,
+  validateCzechiaSeoServiceDraft,
   type CzechiaSeoServiceDraft,
 } from "../src/content/czechia-seo-service-drafts.js";
 import {
@@ -131,6 +132,7 @@ function fakeDatabase(seed: FakeService, failFaqTranslation = false) {
   let state = structuredClone(seed);
   let transactionCount = 0;
   let isolationLevel: string | undefined;
+  let transactionTimeout: number | undefined;
   const writes: string[] = [];
 
   function transactionClient(target: FakeService) {
@@ -193,10 +195,11 @@ function fakeDatabase(seed: FakeService, failFaqTranslation = false) {
     service: { findUnique: async () => structuredClone(state) },
     $transaction: async (
       operation: (tx: ReturnType<typeof transactionClient>) => Promise<unknown>,
-      config: { isolationLevel: string },
+      config: { isolationLevel: string; timeout?: number },
     ) => {
       transactionCount += 1;
       isolationLevel = config.isolationLevel;
+      transactionTimeout = config.timeout;
       const working = structuredClone(state);
       const result = await operation(transactionClient(working));
       state = working;
@@ -209,12 +212,41 @@ function fakeDatabase(seed: FakeService, failFaqTranslation = false) {
     state: () => structuredClone(state),
     transactionCount: () => transactionCount,
     isolationLevel: () => isolationLevel,
+    transactionTimeout: () => transactionTimeout,
     writes,
   };
 }
 
 const silentLogger = { log() {} };
 const fullDraft = CZECHIA_SEO_SERVICE_DRAFTS.find(({ slug }) => slug === "neschopenka-online")!;
+
+test("supported FAQ rewrites keep their records and use natural topic anchors", () => {
+  const expectedQuestions = new Map([
+    [
+      "cmr85xsa7000l70ju0rerevdi",
+      "Jak rychle se eNeschopenka objeví v systému ČSSZ, pokud ji lékař vystaví?",
+    ],
+    ["cmr85xu55000w70ju09qbtii5", "Co když se můj stav před obnovením receptu změnil?"],
+    [
+      "cmr85xu55000x70jus9xjlihu",
+      "Mohu si objednat obnovení léčby bez registrovaného praktického lékaře?",
+    ],
+  ]);
+
+  const faqDrafts = CZECHIA_SEO_SERVICE_DRAFTS.filter(({ faqs }) => faqs.length > 0);
+  for (const draft of faqDrafts) {
+    assert.deepEqual(
+      draft.faqs.map(({ id }) => id),
+      draft.expectedFaqIds,
+    );
+    assert.deepEqual(validateCzechiaSeoServiceDraft(draft), []);
+  }
+
+  const questionsById = new Map(faqDrafts.flatMap(({ faqs }) => faqs.map(({ id, question }) => [id, question])));
+  for (const [id, expectedQuestion] of expectedQuestions) {
+    assert.equal(questionsById.get(id), expectedQuestion);
+  }
+});
 
 test("reads approval only from the exact locale-specific clinical register row", () => {
   const czech = CZECHIA_SEO_SERVICE_DRAFTS.find(
@@ -307,6 +339,7 @@ test("apply updates only the exact base, CS translation and existing FAQ ids", a
   const saved = database.state();
   assert.equal(database.transactionCount(), 1);
   assert.equal(database.isolationLevel(), "Serializable");
+  assert.equal(database.transactionTimeout(), 30_000);
   assert.equal(saved.name, draft.name);
   assert.equal(saved.translations[0]?.name, draft.name);
   assert.equal(saved.basePriceCents, service.basePriceCents);
@@ -384,13 +417,10 @@ test("apply aborts when a non-CS locale would fall back to rewritten Czech FAQs"
 });
 
 test("an English variant updates only its translation and preserves the Czech base", async () => {
-  const czech = CZECHIA_SEO_SERVICE_DRAFTS.find(
-    ({ slug, locale }) => slug === "lekar-online-praha" && locale === "CS",
-  )!;
   const english = CZECHIA_SEO_SERVICE_DRAFTS.find(
     ({ slug, locale }) => slug === "lekar-online-praha" && locale === "EN",
   )!;
-  const service = seedService(czech);
+  const service = seedService(english);
   const draft = draftFor(service, english);
   const database = fakeDatabase(service);
 
@@ -400,4 +430,30 @@ test("an English variant updates only its translation and preserves the Czech ba
   assert.equal(saved.seoTitle, service.seoTitle);
   assert.equal(saved.translations.find(({ locale }) => locale === "CS")?.seoTitle, service.translations[0]?.seoTitle);
   assert.equal(saved.translations.find(({ locale }) => locale === "EN")?.seoTitle, draft.seoTitle);
+  for (const [index, faq] of saved.faqs.entries()) {
+    assert.equal(faq.question, service.faqs[index]?.question);
+    assert.equal(faq.answer, service.faqs[index]?.answer);
+    const englishFaq = faq.translations.find(({ locale }) => locale === "EN");
+    assert.equal(englishFaq?.question, draft.faqs[index]?.question);
+    assert.equal(englishFaq?.answer, draft.faqs[index]?.answer);
+  }
+});
+
+test("default Czech FAQ rows do not require duplicate Czech translations", async () => {
+  const { draft: sourceDraft, service } = testDraft();
+  for (const faq of service.faqs) {
+    faq.translations.splice(faq.translations.findIndex(({ locale }) => locale === "CS"), 1);
+  }
+  const draft = draftFor(service, sourceDraft);
+  const database = fakeDatabase(service);
+
+  await runCzechiaSeoServicePatch(database.client, options(draft, true), silentLogger, [draft]);
+
+  const saved = database.state();
+  for (const [index, faq] of saved.faqs.entries()) {
+    assert.equal(faq.question, draft.faqs[index]?.question);
+    assert.equal(faq.answer, draft.faqs[index]?.answer);
+    assert.equal(faq.translations.some(({ locale }) => locale === "CS"), false);
+  }
+  assert.ok(database.writes.every((write) => !write.startsWith("faq-translation:")));
 });

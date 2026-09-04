@@ -1,0 +1,70 @@
+{
+  "operation": "czechia-approved-clinical-seo-rollout",
+  "performed_at": "2026-09-01T18:56:09.522Z",
+  "approval": {
+    "reviewer_name": "MUDr. Ahmed Maklad",
+    "reviewer_doctor_id": "cmqas8yh9000b01pgpc0yp1la",
+    "reviewed_at": "2026-09-01T18:30:00+02:00",
+    "approved_assets": 17
+  },
+  "repository_commit": "04b98cdc3b86e54961e0916be823c7605f3f6c36",
+  "production_base_commit": "6c0c7fcf2aa7f31c7d434ce4ee46589761532ffd",
+  "railway_frontend_deployment_id": "52843a4c-059c-4441-9baf-510020683f70",
+  "applied": {
+    "page_content": [
+      "/czechia/cs"
+    ],
+    "services": [
+      "/czechia/cs/services/bolesti-pohyboveho-aparatu",
+      "/czechia/cs/services/chronicka-onemocneni",
+      "/czechia/cs/services/doporuceni-a-vysetreni",
+      "/czechia/cs/services/druhy-nazor-praha",
+      "/czechia/cs/services/kontrola-vahy-online",
+      "/czechia/cs/services/lekar-online-praha",
+      "/czechia/cs/services/muzske-zdravi-online",
+      "/czechia/cs/services/neschopenka-online",
+      "/czechia/cs/services/obnoveni-lecby",
+      "/czechia/cs/services/vypadavani-vlasu-online",
+      "/czechia/cs/services/zenske-zdravi-online"
+    ],
+    "blog": [
+      "/czechia/cs/blog/diabetes-ticha-nemoc"
+    ],
+    "tools": [
+      "/czechia/cs/tools/blood-pressure-chart",
+      "/czechia/cs/tools/bmi-calculator",
+      "/czechia/cs/tools/calorie-calculator",
+      "/czechia/cs/tools/osteoporosis-risk-checker"
+    ]
+  },
+  "database_readback": "verified transactionally; protected operational and non-target locale fields preserved",
+  "public_verification": {
+    "artifact": "clinical-production-readback-2026-09-01.csv",
+    "passed": 17,
+    "total": 17,
+    "checks": [
+      "HTTP 200",
+      "approved title",
+      "approved meta description",
+      "approved H1",
+      "self-canonical",
+      "index, follow",
+      "self-hreflang",
+      "JSON-LD",
+      "internal links"
+    ]
+  },
+  "isolation_verification": {
+    "passed": 7,
+    "total": 7,
+    "scope": "three pending Czech tools plus Czechia English, Ireland, Brazil and Portugal BMI pages"
+  },
+  "preserved": [
+    "doctor biographies and credentials",
+    "service prices and durations",
+    "doctor assignments and availability",
+    "booking behavior",
+    "tool algorithms and clinical thresholds",
+    "non-target countries and locales"
+  ]
+}

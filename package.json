@@ -42,11 +42,13 @@
       "vite": "8.0.16",
       "@babel/core": "7.29.6",
       "js-yaml": "4.3.1",
-      "fast-uri": "3.1.5",
+      "fast-uri": "3.1.6",
       "axios": "^1.18.1",
       "find-my-way": "^9.7.0",
       "sharp": "^0.35.3",
       "nanoid": "3.3.18",
+      "mysql2": "3.22.0",
+      "browserslist@<=4.28.6": "4.28.7",
       "deepmerge-ts": "8.0.0",
       "fastify": "5.12.0"
     }

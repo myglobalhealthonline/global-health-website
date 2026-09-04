@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   CZECHIA_SEO_SERVICE_DRAFTS,
+  czechiaCalendarDate,
   assertCzechiaSeoApplyGate,
   czechiaSeoApprovalSha256,
   czechiaSeoConfirmationToken,
@@ -14,6 +15,7 @@ import {
 
 const expectedAssets = [
   "CS:bolesti-pohyboveho-aparatu",
+  "CS:cestovni-medicina-praha",
   "CS:chronicka-onemocneni",
   "CS:detsky-lekar-online",
   "CS:doporuceni-a-vysetreni",
@@ -36,7 +38,6 @@ test("scopes the review-gated batch to every eligible Czech service variant", ()
     expectedAssets,
   );
   assert.ok(CZECHIA_SEO_SERVICE_DRAFTS.every(({ countryCode }) => countryCode === "cz"));
-  assert.ok(!CZECHIA_SEO_SERVICE_DRAFTS.some(({ slug }) => slug === "cestovni-medicina-praha"));
 });
 
 test("keeps one commercial keyword owner per service variant", () => {
@@ -60,13 +61,29 @@ test("ships concise, assessment-first metadata and content", () => {
   }
 });
 
-test("does not invent FAQ replacements where exact reviewed copy is absent", () => {
+test("rewrites only the unsafe published FAQ sets by exact record id", () => {
   const exactFaqAssets = CZECHIA_SEO_SERVICE_DRAFTS
     .filter(({ faqs }) => faqs.length > 0)
     .map(({ locale, slug }) => `${locale}:${slug}`);
 
-  assert.deepEqual(exactFaqAssets, ["CS:neschopenka-online", "CS:obnoveni-lecby"]);
+  assert.deepEqual(exactFaqAssets, [
+    "CS:cestovni-medicina-praha",
+    "CS:detsky-lekar-online",
+    "CS:dusevni-zdravi-online",
+    "CS:kozni-konzultace-praha",
+    "CS:lekar-online-praha",
+    "EN:lekar-online-praha",
+    "CS:neschopenka-online",
+    "CS:obnoveni-lecby",
+  ]);
   assert.ok(CZECHIA_SEO_SERVICE_DRAFTS.every(({ expectedFaqIds }) => expectedFaqIds.length >= 5));
+  assert.ok(
+    CZECHIA_SEO_SERVICE_DRAFTS
+      .filter(({ faqs }) => faqs.length > 0)
+      .every(({ faqs, expectedFaqIds }) =>
+        faqs.every(({ id }) => expectedFaqIds.includes(id)),
+      ),
+  );
 });
 
 test("removes volatile entitlement figures and unconditional medical promises", () => {
@@ -92,11 +109,42 @@ test("links each full-copy page to its official source and correct supporting ow
   assert.match(renewalBody, /\/czechia\/cs\/gp-consultation-online/);
 });
 
+test("gives every remaining high-risk service a sourced, emergency-aware full-copy draft", () => {
+  const required = new Set([
+    "CS:cestovni-medicina-praha",
+    "CS:detsky-lekar-online",
+    "CS:dusevni-zdravi-online",
+    "CS:kozni-konzultace-praha",
+    "CS:lekar-online-praha",
+    "EN:lekar-online-praha",
+  ]);
+
+  for (const draft of CZECHIA_SEO_SERVICE_DRAFTS) {
+    if (!required.has(`${draft.locale}:${draft.slug}`)) continue;
+    assert.ok(draft.detailBody, `${draft.locale}:${draft.slug}`);
+    assert.equal(draft.faqs.length, draft.expectedFaqIds.length);
+    assert.match(draft.detailBody, /https:\/\/(?:www\.)?(?:nzip\.cz|ncez\.mzcr\.cz)/);
+  }
+});
+
+test("pins the English Prague draft to the post-Czech-rollout service snapshot", () => {
+  const english = CZECHIA_SEO_SERVICE_DRAFTS.find(
+    ({ slug, locale }) => slug === "lekar-online-praha" && locale === "EN",
+  )!;
+
+  assert.equal(english.expectedServiceUpdatedAt, "2026-09-01T23:38:25.814Z");
+  assert.equal(
+    english.expectedSourceSha256,
+    "929eb8ac281ad5383eb468a1783457c7aae55d5a87d576a67e16135b1a0b10bb",
+  );
+});
+
 test("binds approval to the exact final copy, a real review date and an approved register row", () => {
   const draft = CZECHIA_SEO_SERVICE_DRAFTS[0]!;
   const hash = czechiaSeoApprovalSha256(draft);
 
   assert.match(hash, /^[a-f0-9]{64}$/);
+  assert.equal(czechiaCalendarDate(new Date("2026-09-01T23:00:00.000Z")), "2026-09-02");
   assert.equal(parseCzechiaSeoReviewDate("2026-08-31")?.toISOString(), "2026-08-31T12:00:00.000Z");
   assert.throws(() => parseCzechiaSeoReviewDate("2026-02-31"), /valid calendar date/i);
   assert.throws(() => parseCzechiaSeoReviewDate("2099-01-01"), /future/i);
@@ -195,6 +243,14 @@ test("requires a dated native-English review only for the English Prague variant
       ...approved(english),
       "native-editor-id",
       parseCzechiaSeoNativeReviewDate("2026-08-31"),
+    ),
+  );
+  assert.doesNotThrow(() =>
+    assertCzechiaSeoApplyGate(
+      ...approved(english),
+      "native-editor-id",
+      new Date("2026-09-02T12:00:00.000Z"),
+      new Date("2026-09-01T23:00:00.000Z"),
     ),
   );
   assert.doesNotThrow(() => assertCzechiaSeoApplyGate(...approved(czech)));

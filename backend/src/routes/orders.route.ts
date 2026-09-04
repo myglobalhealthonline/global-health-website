@@ -28,6 +28,16 @@ import {
 } from "../modules/admin-orders/generate-order-meet-link.service.js";
 import { startPrePaymentFlow } from "../modules/automation/pre-payment-flow.service.js";
 import { completeOrderPaymentFromCheckoutSession } from "../modules/orders/complete-order-payment.service.js";
+import { resolveCoupon } from "../modules/coupons/coupon-eligibility.js";
+import { couponCutPerUnit } from "../modules/coupons/coupon-distribution.js";
+import { couponAppliesToKind } from "../modules/coupons/coupon-scope.js";
+import {
+  CouponUnavailableError,
+  reserveCouponSlot,
+} from "../modules/coupons/coupon-reserve.service.js";
+import { releaseCouponRedemption } from "../modules/coupons/coupon-release.service.js";
+import { minimumChargeCents } from "../modules/orders/stripe-minimum-charge.js";
+import { resolveActiveCart } from "../modules/cart/resolve-active-cart.js";
 import {
   commitOrderCreditReservations,
   linkReservationsToOrderItems,
@@ -88,7 +98,6 @@ import type { DeclaredCoverageSource } from "../modules/benefits/declared-covera
  * `metadata.kind === "order"` events.
  */
 
-const CART_COOKIE = "gh_cart";
 
 // Prisma include that pulls each order's consultation appointment(s) plus the
 // assigned doctor's name — so every order surface (admin + patient) can show
@@ -239,6 +248,13 @@ const checkoutBodySchema = z.object({
   notificationLocale: z
     .enum(["EN", "PT", "ES", "CS", "RO", "DE"])
     .optional(),
+  /**
+   * Coupon code the customer applied in the order summary. A HINT ONLY — the
+   * code is re-resolved and the cap re-claimed inside the checkout transaction
+   * below, so a coupon that expired, was disabled or ran out between Apply and
+   * Pay is refused here rather than honoured on the client's word.
+   */
+  couponCode: z.string().trim().max(32).optional().or(z.literal("")),
 });
 
 const orderIdParamSchema = z.object({ id: z.string().min(1).max(120) });
@@ -263,27 +279,11 @@ const adminPatchSchema = z
 
 async function resolveActiveCartForCheckout(
   request: FastifyRequest,
-): Promise<{
-  cartId: string | null;
-  userId: string | null;
-}> {
-  let userId: string | null = null;
-  try {
-    const user = await resolveOptionalAuthUser(request);
-    if (user && user.role === "PATIENT") userId = user.id;
-  } catch {
-    // ignore
-  }
-
-  if (userId) {
-    const userCart = await prisma.cart.findUnique({ where: { userId } });
-    return { cartId: userCart?.id ?? null, userId };
-  }
-
-  const cookieToken = (request.cookies as Record<string, string | undefined>)[CART_COOKIE];
-  if (!cookieToken) return { cartId: null, userId: null };
-  const guestCart = await prisma.cart.findUnique({ where: { cookieToken } });
-  return { cartId: guestCart?.id ?? null, userId: null };
+): Promise<{ cartId: string | null; userId: string | null }> {
+  // Thin alias kept for readability at the call sites. The logic lives in
+  // `modules/cart/resolve-active-cart.ts` so the public coupon check resolves
+  // the SAME cart this checkout will price.
+  return resolveActiveCart(request);
 }
 
 /** Provider name behind a coverage id, per source. Null when the row is gone —
@@ -623,11 +623,96 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
               corporateLineDiscount(i)
             );
           };
+          // ── Coupon (§ Coupons) ────────────────────────────────────────────
+          // The last pricing layer, and the only one refused rather than
+          // layered: a coupon may not touch an insurance / declared-coverage
+          // line (those prices are contractual), a line another benefit engine
+          // already priced (no stacking), or any order in a commission market
+          // (a promotion must not make a doctor's payout ambiguous).
+          //
+          // Resolved INSIDE the transaction and re-checked again by
+          // `reserveCouponSlot` below — the client's applied code is never
+          // trusted, and the window between the two is closed by that UPDATE's
+          // own WHERE clause.
+          const couponNow = new Date();
+          const hasCoverageLine = cart.items.some(
+            (i) => i.insuranceCompanyId || i.declaredCoverageSource,
+          );
+          // Two tests, OR'd. The DECLARED source is the primary one, and is
+          // what the public coupon check can also see without re-running every
+          // engine — so the answer the customer got when they pressed Apply is
+          // the answer they get when they press Pay. The per-line test is the
+          // backstop for anything that priced a line without a declaration.
+          const hasBenefitLine =
+            benefitSource === "MEMBERSHIP" ||
+            benefitSource === "CORPORATE" ||
+            benefitSource === "PUBLIC_PLAN" ||
+            cart.items.some((i) => {
+              if (membershipPlan?.lines.has(i.id)) return true;
+              if (corporateLine(i)) return true;
+              const planLine = planResult.lines.get(i.id);
+              return Boolean(
+                planLine &&
+                  (planLine.creditCovered || planLine.finalUnitPriceCents < effectiveUnitPrice(i)),
+              );
+            });
+          const couponResult = body.data.couponCode
+            ? await resolveCoupon({
+                code: body.data.couponCode,
+                email: body.data.email,
+                countryCode: cart.countryCode,
+                hasCoverageLine,
+                hasBenefitLine,
+                // Scope is decided against what is actually in the basket, so a
+                // GP-only code on a cart of health tests is refused here rather
+                // than applying a discount of zero.
+                lineKinds: cart.items.map((i) => i.kind),
+                now: couponNow,
+                client: tx,
+              })
+            : null;
+          if (couponResult && !couponResult.ok) {
+            throw new CouponUnavailableError(couponResult.reason);
+          }
+          const couponPercent = couponResult?.coupon.discountPercent ?? 0;
+          const couponScope = couponResult?.ok ? couponResult.coupon.scope : "ANY";
+          // Deliberately a SEPARATE function rather than folded into
+          // `finalUnitPrice`: the insurance and declared-coverage audit columns
+          // below must keep recording the GROSS price their engine resolved.
+          type CouponLine = {
+            id: string;
+            kind: CartItemKind;
+            unitPriceCents: number;
+            insuranceCompanyId?: string | null;
+            declaredCoverageSource?: string | null;
+          };
+          // Per LINE: a mixed cart takes the cut only where the scope admits
+          // it, and pays full price on the rest.
+          const couponCut = (i: CouponLine) =>
+            couponAppliesToKind(couponScope, i.kind)
+              ? couponCutPerUnit(finalUnitPrice(i), couponPercent)
+              : 0;
+          const netUnitPrice = (i: CouponLine) => finalUnitPrice(i) - couponCut(i);
+          const couponDiscountCents = cart.items.reduce(
+            (s, i) => s + couponCut(i) * i.quantity,
+            0,
+          );
           const subtotalCents = cart.items.reduce(
-            (s, i) => s + finalUnitPrice(i) * i.quantity,
+            (s, i) => s + netUnitPrice(i) * i.quantity,
             0,
           );
           const totalCents = subtotalCents + shippingCents;
+          // A coupon must never leave a total Stripe will reject: between zero
+          // and the per-currency floor there is no payable session, so the
+          // booking would exist with a dead payment link. Zero itself is fine —
+          // it takes the free path below. CZK is the one that bites (1500).
+          if (
+            couponPercent > 0 &&
+            totalCents > 0 &&
+            totalCents < minimumChargeCents(cart.currencyCode)
+          ) {
+            throw new CouponUnavailableError("BELOW_MINIMUM");
+          }
 
           // Commission markets: freeze the doctor payout and our commission onto
           // the order now, at the final prices. A SNAPSHOT on purpose — the payout
@@ -670,6 +755,10 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
               subtotalCents,
               shippingCents,
               totalCents,
+              couponId: couponResult?.ok ? couponResult.coupon.id : null,
+              couponCode: couponResult?.ok ? couponResult.coupon.code : null,
+              couponDiscountPercent: couponPercent > 0 ? couponPercent : null,
+              couponDiscountCents: couponPercent > 0 ? couponDiscountCents : null,
               // Null outside commission markets — "not applicable", not zero.
               commissionTotalCents: commission?.commissionTotalCents ?? null,
               doctorPayoutTotalCents: commission?.doctorPayoutTotalCents ?? null,
@@ -683,6 +772,29 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                 : null,
             },
           });
+          // Claim the coupon use in the SAME transaction as the order, so a
+          // rollback anywhere below gives it back with no compensating code.
+          // The UPDATE re-asserts the window, `active`, and the cap, so a
+          // coupon exhausted or expired since it resolved a few statements ago
+          // fails here and takes the whole checkout down — the customer is told
+          // why rather than silently charged full price.
+          if (couponResult?.ok) {
+            const claimed = await reserveCouponSlot(tx, {
+              couponId: couponResult.coupon.id,
+              now: couponNow,
+            });
+            if (!claimed) throw new CouponUnavailableError("EXHAUSTED");
+            await tx.couponRedemption.create({
+              data: {
+                couponId: couponResult.coupon.id,
+                orderId: created.id,
+                email: body.data.email.trim().toLowerCase(),
+                discountPercent: couponPercent,
+                discountCents: couponDiscountCents,
+                currencyCode: cart.currencyCode,
+              },
+            });
+          }
           // Lines are created one at a time, not nested, so each CartItem's id
           // can be paired with the OrderItem it produced. The pairing used to
           // be inferred from `timeSlotId`, which silently skipped any line
@@ -694,9 +806,13 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   healthTestId: i.healthTestId,
                   serviceId: i.serviceId,
                   name: i.name,
-                  unitPriceCents: finalUnitPrice(i),
+                  unitPriceCents: netUnitPrice(i),
                   quantity: i.quantity,
-                  lineTotalCents: finalUnitPrice(i) * i.quantity,
+                  lineTotalCents: netUnitPrice(i) * i.quantity,
+                  // Coupon audit trail. `unitPriceCents` and `lineTotalCents`
+                  // above are ALREADY net of this; the cut is rounded per UNIT
+                  // so this stays a whole multiple of it.
+                  couponDiscountCents: couponCut(i) > 0 ? couponCut(i) * i.quantity : null,
                   timeSlotId: i.timeSlotId,
                   doctorId: i.doctorId,
                   // Patient intake snapshot: carry the cart-page form
@@ -829,11 +945,20 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
 
           let finalSubtotal = subtotalCents;
           for (const c of corrections) {
+            // `repriceWithoutAllowance` hands back a GROSS price, so the coupon
+            // has to be re-applied here or the correction would quietly restore
+            // this line to full price. Unreachable today — a membership-priced
+            // line makes `hasBenefitLine` true and the coupon is refused before
+            // any of this — but the guard costs one line and the failure it
+            // prevents is silent and financial.
+            const correctedCut = couponCutPerUnit(c.unitPriceCents, couponPercent);
+            const correctedUnit = c.unitPriceCents - correctedCut;
             await tx.orderItem.update({
               where: { id: c.orderItemId },
               data: {
-                unitPriceCents: c.unitPriceCents,
-                lineTotalCents: c.unitPriceCents * c.quantity,
+                unitPriceCents: correctedUnit,
+                lineTotalCents: correctedUnit * c.quantity,
+                couponDiscountCents: correctedCut > 0 ? correctedCut * c.quantity : null,
                 membershipDiscountCents: c.discountCents > 0 ? c.discountCents : null,
                 membershipAllowanceUsed: false,
               },
@@ -842,13 +967,29 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           if (corrections.length > 0) {
             const items = await tx.orderItem.findMany({
               where: { orderId: created.id },
-              select: { lineTotalCents: true },
+              select: { lineTotalCents: true, couponDiscountCents: true },
             });
             finalSubtotal = items.reduce((s, i) => s + i.lineTotalCents, 0);
+            const correctedCouponCents = items.reduce(
+              (s, i) => s + (i.couponDiscountCents ?? 0),
+              0,
+            );
             await tx.order.update({
               where: { id: created.id },
-              data: { subtotalCents: finalSubtotal, totalCents: finalSubtotal + shippingCents },
+              data: {
+                subtotalCents: finalSubtotal,
+                totalCents: finalSubtotal + shippingCents,
+                ...(couponPercent > 0 ? { couponDiscountCents: correctedCouponCents } : {}),
+              },
             });
+            // The redemption row carries the same figure, so the coupon report
+            // and the order agree about what was actually given away.
+            if (couponPercent > 0) {
+              await tx.couponRedemption.updateMany({
+                where: { orderId: created.id },
+                data: { discountCents: correctedCouponCents },
+              });
+            }
             // No commission recompute: §6.6 blocks membership plans outright in
             // `commissionReceiptEnabled` countries, so a corrected membership
             // line and a commission snapshot cannot coexist.
@@ -1022,6 +1163,9 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           await releaseOrderMembershipAllowance(order.id).catch((err) => {
             app.log.error({ err, orderId: order.id }, "Allowance release on unconfigured Stripe failed");
           });
+          await releaseCouponRedemption(order.id, "stripe_unconfigured").catch((err) => {
+            app.log.error({ err, orderId: order.id }, "Coupon release on unconfigured Stripe failed");
+          });
           return reply
             .status(503)
             .send(errorResponse("Payments not configured. Set STRIPE_SECRET_KEY."));
@@ -1156,6 +1300,25 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
               { err: releaseErr, orderId: uncommittedOrderId },
               "Allowance release after failed checkout failed",
             );
+          });
+          // Same reasoning for the coupon: the order committed holding a use of
+          // the cap against a payment that will now never be attempted.
+          await releaseCouponRedemption(uncommittedOrderId, "checkout_failed").catch((releaseErr) => {
+            app.log.error(
+              { err: releaseErr, orderId: uncommittedOrderId },
+              "Coupon release after failed checkout failed",
+            );
+          });
+        }
+        if (err instanceof CouponUnavailableError) {
+          // 422 with a machine-readable reason: the checkout page clears the
+          // applied coupon and shows why the price moved, instead of the
+          // customer discovering it on the Stripe page.
+          return reply.status(422).send({
+            ok: false,
+            message: "Coupon could not be applied",
+            code: "COUPON_INVALID",
+            reason: err.reason,
           });
         }
         if (err instanceof MembershipCheckoutError) {
@@ -2007,6 +2170,9 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             await releaseOrderMembershipAllowance(orderId).catch((err) => {
               request.log.error({ err, orderId }, "Bulk release membership allowance failed");
             });
+            await releaseCouponRedemption(orderId, "order_cancelled_bulk").catch((err) => {
+              request.log.error({ err, orderId }, "Bulk release coupon redemption failed");
+            });
           } else if (body.data.status === OrderStatus.FULFILLED) {
             await commitOrderCreditReservations(orderId).catch((err) => {
               request.log.error({ err, orderId }, "Bulk commit order credit reservations failed");
@@ -2098,6 +2264,9 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           });
           await releaseOrderMembershipAllowance(order.id).catch((err) => {
             request.log.error({ err, orderId: order.id }, "Release membership allowance failed");
+          });
+          await releaseCouponRedemption(order.id, "order_cancelled").catch((err) => {
+            request.log.error({ err, orderId: order.id }, "Release coupon redemption failed");
           });
           // Cancel the order's consultation appointments (releases BOOKED slots
           // and drops the events off the admin + doctor calendars).
@@ -2207,6 +2376,9 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         });
         await releaseOrderMembershipAllowance(order.id).catch((err) => {
           request.log.error({ err, orderId: order.id }, "Release membership allowance on refund failed");
+        });
+        await releaseCouponRedemption(order.id, "order_refunded").catch((err) => {
+          request.log.error({ err, orderId: order.id }, "Release coupon redemption on refund failed");
         });
         // Refund also cancels the consultation: cancel the appointments, which
         // releases their BOOKED slots and removes the admin + doctor calendar events.

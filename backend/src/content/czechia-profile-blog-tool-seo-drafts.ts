@@ -2,6 +2,12 @@ import { createHash } from "node:crypto";
 
 type AssetKind = "doctor" | "blog" | "tool";
 
+export type CzechiaDoctorFaqReplacement = Readonly<{
+  id: string;
+  question: string;
+  answer: string;
+}>;
+
 type DraftBase = Readonly<{
   assetKind: AssetKind;
   assetPath: string;
@@ -11,7 +17,7 @@ type DraftBase = Readonly<{
   primaryKeyword: string;
   secondaryKeywords: readonly string[];
   expectedSourceSha256: string;
-  faqReplacements: readonly [];
+  faqReplacements: readonly CzechiaDoctorFaqReplacement[];
 }>;
 
 export type CzechiaDoctorProfileSeoDraft = DraftBase &
@@ -69,7 +75,7 @@ export const CZECHIA_DOCTOR_PROFILE_SEO_DRAFTS = [
     doctorCountryId: "cmqybpo1g01z601qk3cxn1l5r",
     translationId: "dcmt_57b6801799cd71b366ba",
     expectedTranslationUpdatedAt: "2026-07-29T18:54:53.718Z",
-    expectedSourceSha256: "d48324ffb6d083c5b21dbe4b3adeacca443399e24495968ea85ba6d3121e30ea",
+    expectedSourceSha256: "1c1598c0789ed5bc3287053387e5666c032d2eee3bd463d944e1ae5dd748fe05",
     primaryKeyword: "MUDr. Ahmed Maklad",
     secondaryKeywords: ["Ahmed Maklad praktický lékař", "Ahmed Maklad ČLK"],
     desired: {
@@ -78,7 +84,13 @@ export const CZECHIA_DOCTOR_PROFILE_SEO_DRAFTS = [
         "Profil MUDr. Ahmeda Maklada, praktického lékaře registrovaného u ČLK č. 1176686198. Ověřte jazyky, kvalifikaci a aktuální dostupnost konzultací.",
       seoKeywords: ["MUDr. Ahmed Maklad", "Ahmed Maklad praktický lékař", "Ahmed Maklad ČLK"],
     },
-    faqReplacements: [],
+    faqReplacements: [
+      {
+        id: "cmrl5zxt80009a0juv89gv0hs",
+        question: "Jak si rezervovat konzultaci s MUDr. Makladem?",
+        answer: "Pokud je online rezervace pro tohoto lékaře aktivní, aktuální volné termíny se zobrazí v rezervačním kalendáři. Termín je potvrzen až po dokončení objednávky; pokud kalendář žádný termín nenabízí, dostupnost není potvrzena.",
+      },
+    ],
   },
   {
     assetKind: "doctor",
@@ -90,7 +102,7 @@ export const CZECHIA_DOCTOR_PROFILE_SEO_DRAFTS = [
     doctorCountryId: "cmraouqf707ie01mz2vgn4icq",
     translationId: "cmrw6jr2y000201mzs7b9bphh",
     expectedTranslationUpdatedAt: "2026-07-29T18:54:30.145Z",
-    expectedSourceSha256: "3f084a6bce7375e87b4fcf1e6f0fa7897a0d9b5d569d400acea69f959bc1ae2e",
+    expectedSourceSha256: "11d7e3c8d799dfe60f520db8e7829f404e01691f7cfe79c396b866a9be662869",
     primaryKeyword: "MUDr. Khoiamul Islam",
     secondaryKeywords: ["Khoiamul Islam praktický lékař", "Khoiamul Islam ČLK"],
     desired: {
@@ -99,7 +111,13 @@ export const CZECHIA_DOCTOR_PROFILE_SEO_DRAFTS = [
         "Profil MUDr. Khoiamula Islama, praktického lékaře registrovaného u ČLK č. 1178781199. Ověřte jazyky a aktuální dostupnost online konzultací.",
       seoKeywords: ["MUDr. Khoiamul Islam", "Khoiamul Islam praktický lékař", "Khoiamul Islam ČLK"],
     },
-    faqReplacements: [],
+    faqReplacements: [
+      {
+        id: "cmrl60dlo000ya0juiyioxt4v",
+        question: "Jak si rezervovat konzultaci s MUDr. Islamem?",
+        answer: "Pokud je online rezervace pro tohoto lékaře aktivní, aktuální volné termíny se zobrazí v rezervačním kalendáři. Termín je potvrzen až po dokončení objednávky; pokud kalendář žádný termín nenabízí, dostupnost není potvrzena.",
+      },
+    ],
   },
   {
     assetKind: "doctor",
@@ -111,7 +129,7 @@ export const CZECHIA_DOCTOR_PROFILE_SEO_DRAFTS = [
     doctorCountryId: "cmqz4px1k007b01luk5w4t6q3",
     translationId: "dcmt_5a2ac631b7c0d6a230f0",
     expectedTranslationUpdatedAt: "2026-08-20T06:24:46.051Z",
-    expectedSourceSha256: "300a16b1a83d001cf3af79063f0e06dfb40a6f56bfc5424769a17053fb2a3087",
+    expectedSourceSha256: "b85c9f22c1a3493974447642ebae58432e6232e1d68dd37b457b2b4d10467f97",
     primaryKeyword: "MUDr. Romana Pavlů",
     secondaryKeywords: ["Romana Pavlů praktická lékařka", "Romana Pavlů ČLK"],
     desired: {
@@ -120,7 +138,13 @@ export const CZECHIA_DOCTOR_PROFILE_SEO_DRAFTS = [
         "Profil MUDr. Romany Pavlů, praktické lékařky registrované u ČLK č. 5163514190. Ověřte jazyky, kvalifikaci a aktuální dostupnost konzultací.",
       seoKeywords: ["MUDr. Romana Pavlů", "Romana Pavlů praktická lékařka", "Romana Pavlů ČLK"],
     },
-    faqReplacements: [],
+    faqReplacements: [
+      {
+        id: "cmrl60a88000sa0juznacdn72",
+        question: "Jak si rezervovat konzultaci s MUDr. Pavlů?",
+        answer: "Pokud je online rezervace pro tohoto lékaře aktivní, aktuální volné termíny se zobrazí v rezervačním kalendáři. Termín je potvrzen až po dokončení objednávky; pokud kalendář žádný termín nenabízí, dostupnost není potvrzena.",
+      },
+    ],
   },
   {
     assetKind: "doctor",
@@ -141,7 +165,18 @@ export const CZECHIA_DOCTOR_PROFILE_SEO_DRAFTS = [
         "Profil MUDr. Vojtěcha Černého, praktického lékaře registrovaného u ČLK č. 1172330197. Ověřte jazyky, kvalifikaci a aktuální dostupnost konzultací.",
       seoKeywords: ["MUDr. Vojtěch Černý", "Vojtěch Černý praktický lékař", "Vojtěch Černý ČLK"],
     },
-    faqReplacements: [],
+    faqReplacements: [
+      {
+        id: "cmrl5zud70002a0juyprdpwtr",
+        question: "Je online konzultace s MUDr. Černým vhodná při náhlém nebo závažném zhoršení?",
+        answer: "Ne. Online konzultace není určena pro neodkladnou péči. Při náhlém nebo závažném zhoršení, nebo pokud si nejste jistí závažností stavu, nečekejte na online termín a volejte 155 nebo 112.",
+      },
+      {
+        id: "cmrl5zukd0003a0jua02nny7w",
+        question: "Jak si rezervovat konzultaci s MUDr. Černým?",
+        answer: "Pokud je online rezervace pro tohoto lékaře aktivní, aktuální volné termíny se zobrazí v rezervačním kalendáři. Termín je potvrzen až po dokončení objednávky; pokud kalendář žádný termín nenabízí, dostupnost není potvrzena.",
+      },
+    ],
   },
   {
     assetKind: "doctor",
@@ -153,7 +188,7 @@ export const CZECHIA_DOCTOR_PROFILE_SEO_DRAFTS = [
     doctorCountryId: "cmqz3zdkp006s01lu95zjty6m",
     translationId: "dcmt_8710c21ec1d7130e2215",
     expectedTranslationUpdatedAt: "2026-08-20T06:24:54.769Z",
-    expectedSourceSha256: "1fbd2aa5961d97f16b45051151410b24c07b6136ba427a4523b82316591f154f",
+    expectedSourceSha256: "0a7b30fa8fa3f6914420a1e99d9e2c5cd54f600a36a5c8d63304d1947848fed7",
     primaryKeyword: "MUDr. Yasmin Holz",
     secondaryKeywords: ["Yasmin Holz praktická lékařka", "Yasmin Holz ČLK"],
     desired: {
@@ -162,7 +197,23 @@ export const CZECHIA_DOCTOR_PROFILE_SEO_DRAFTS = [
         "Profil MUDr. Yasmin Holz, praktické lékařky registrované u ČLK č. 5178823192. Ověřte jazyky, kvalifikaci a aktuální dostupnost konzultací.",
       seoKeywords: ["MUDr. Yasmin Holz", "Yasmin Holz praktická lékařka", "Yasmin Holz ČLK"],
     },
-    faqReplacements: [],
+    faqReplacements: [
+      {
+        id: "cmrl601x4000ea0jutgyf2i2q",
+        question: "Jak ověřím možnost posouzení eNeschopenky při konzultaci s MUDr. Holz?",
+        answer: "Možnost eNeschopenky se ověřuje u konkrétní služby a termínu. Vystavit ji může pouze oprávněný lékař, pokud je pracovní neschopnost po klinickém posouzení odůvodněná a splňuje příslušné podmínky; rezervace vystavení nezaručuje.",
+      },
+      {
+        id: "cmrl6024a000fa0jumi26025q",
+        question: "V jakých jazycích MUDr. Holz konzultuje?",
+        answer: "MUDr. Holz konzultuje v jazycích uvedených v aktuálním profilu. Před rezervací zkontrolujte jazyk konkrétního termínu a při konzultaci sdělte, kterému jazyku dáváte přednost.",
+      },
+      {
+        id: "cmrl602bg000ga0jue0woiccy",
+        question: "Jak si rezervovat konzultaci s MUDr. Holz?",
+        answer: "Pokud je online rezervace pro tohoto lékaře aktivní, aktuální volné termíny se zobrazí v rezervačním kalendáři. Termín je potvrzen až po dokončení objednávky; pokud kalendář žádný termín nenabízí, dostupnost není potvrzena.",
+      },
+    ],
   },
 ] as const satisfies readonly CzechiaDoctorProfileSeoDraft[];
 
@@ -183,6 +234,25 @@ export const CZECHIA_BLOG_SEO_DRAFTS = [
       seoTitle: "Diabetes v Česku: příznaky, léčba a prevence",
       seoDescription:
         "Přehled příznaků, rizik, léčby a prevence diabetu v Česku. Článek napsal MUDr. Ahmed Maklad, registrovaný u ČLK č. 1176686198.",
+    },
+    faqReplacements: [],
+  },
+  {
+    assetKind: "blog",
+    assetPath: "/czechia/cs/blog/lekar-online-24-7-co-vyresi",
+    slug: "lekar-online-24-7-co-vyresi",
+    countryCode: "cz",
+    locale: "CS",
+    postId: "cmsep1slb000q7ojuna9x1ial",
+    expectedPostUpdatedAt: "2026-08-29T04:55:51.024Z",
+    expectedSourceSha256: "7a2c85eb20fd56c415e9b4ab8514b0382a1d055f82ed09d3114aff42cf78bc4a",
+    primaryKeyword: "co vyřeší lékař online 24/7",
+    secondaryKeywords: ["kdy online lékař nestačí", "jak funguje online konzultace"],
+    desired: {
+      title: "Co vyřeší lékař online a kdy nestačí",
+      seoTitle: "Lékař online 24/7: co lze řešit a kdy nestačí",
+      seoDescription:
+        "Zjistěte, co lze bezpečně probrat s lékařem online, jak konzultace probíhá a kdy je nutné osobní nebo akutní vyšetření.",
     },
     faqReplacements: [],
   },
@@ -366,6 +436,19 @@ export function assertCzechiaDoctorMetadataReadback(
   }
 }
 
+export function assertCzechiaDoctorFaqReadback(
+  draft: CzechiaDoctorProfileSeoDraft,
+  saved: readonly Readonly<{ id: string; question: string; answer: string }>[],
+): void {
+  const byId = new Map(saved.map((faq) => [faq.id, faq]));
+  for (const expected of draft.faqReplacements) {
+    const actual = byId.get(expected.id);
+    if (actual?.question !== expected.question || actual.answer !== expected.answer) {
+      throw new Error(`${draft.assetPath} FAQ readback did not match the approved draft`);
+    }
+  }
+}
+
 export function assertCzechiaBlogMetadataReadback(
   draft: CzechiaBlogSeoDraft,
   saved: Readonly<{
@@ -452,8 +535,20 @@ export function validateCzechiaProfileBlogToolDrafts(): string[] {
     if (/[—–]/.test(JSON.stringify(draft.desired))) {
       errors.push(`${draft.assetPath}: deslop failed`);
     }
-    if (draft.faqReplacements.length !== 0) {
+    if (draft.assetKind !== "doctor" && draft.faqReplacements.length !== 0) {
       errors.push(`${draft.assetPath}: unsupported FAQ replacement`);
+    }
+    if (draft.assetKind === "doctor") {
+      if (draft.faqReplacements.length === 0) {
+        errors.push(`${draft.assetPath}: missing source-pinned FAQ replacement`);
+      }
+      const ids = draft.faqReplacements.map(({ id }) => id);
+      if (new Set(ids).size !== ids.length) {
+        errors.push(`${draft.assetPath}: duplicate FAQ replacement id`);
+      }
+      if (/ve stejný den|ještě dnes|jistý výsledek/i.test(JSON.stringify(draft.faqReplacements))) {
+        errors.push(`${draft.assetPath}: unsafe FAQ promise remains`);
+      }
     }
   }
   return errors;

@@ -160,7 +160,7 @@ export const PORTUGAL_DOCTORS: PortugalDoctorSheet[] = [
       {
         question: "Como agendar uma sessão com a Beatriz?",
         answer:
-          "Selecione um horário disponível nesta página para agendar directamente com a Beatriz. O pagamento é processado de forma segura no momento do agendamento — a sessão é confirmada após a conclusão do pagamento. Receberá imediatamente um convite para o calendário. As sessões são realizadas por videochamada segura e confidencial em português ou inglês. Se está a experienciar uma crise psicológica ou pensamentos de autolesão, contacte a Linha de Apoio à Crise do SNS24 (1024) ou ligue ao 112 — não espere por uma sessão.",
+          "Selecione um horário disponível nesta página para agendar directamente com a Beatriz. O pagamento é processado de forma segura no momento do agendamento — a sessão é confirmada após a conclusão do pagamento. Receberá imediatamente um convite para o calendário. As sessões são realizadas por videochamada segura e confidencial em português ou inglês. Se está a experienciar uma crise psicológica ou pensamentos de autolesão, ligue 1411. Em caso de perigo imediato, ligue 112 — não espere por uma sessão.",
       },
       {
         question: "Quais são as qualificações da Beatriz Carvalho?",
@@ -539,7 +539,7 @@ export const PORTUGAL_DOCTORS: PortugalDoctorSheet[] = [
       {
         question: "Como agendar uma consulta com a Dra. Joana Branco Maia?",
         answer:
-          "Selecione um horário disponível nesta página para agendar directamente com a Dra. Joana Branco Maia. O pagamento é processado de forma segura no momento do agendamento — a consulta é confirmada após a conclusão do pagamento. Receberá imediatamente um convite para o calendário. As consultas são realizadas por videochamada segura em português, inglês ou espanhol. Se está a experienciar uma crise psicológica ou pensamentos de autolesão, contacte a Linha de Apoio à Crise do SNS24 (1024) ou ligue ao 112.",
+          "Selecione um horário disponível nesta página para agendar directamente com a Dra. Joana Branco Maia. O pagamento é processado de forma segura no momento do agendamento — a consulta é confirmada após a conclusão do pagamento. Receberá imediatamente um convite para o calendário. As consultas são realizadas por videochamada segura em português, inglês ou espanhol. Se está a experienciar uma crise psicológica ou pensamentos de autolesão, ligue 1411. Em caso de perigo imediato, ligue 112.",
       },
       {
         question: "Quais são as qualificações da Dra. Joana Branco Maia?",
@@ -985,7 +985,7 @@ export const PORTUGAL_DOCTORS: PortugalDoctorSheet[] = [
       {
         question: "Como agendar uma consulta com o Dr. Rúben Pereira?",
         answer:
-          "Selecione um horário disponível nesta página para agendar directamente com o Dr. Rúben Pereira. O pagamento é processado de forma segura no momento do agendamento — a consulta é confirmada após a conclusão do pagamento. Receberá imediatamente um convite para o calendário. As consultas são realizadas por videochamada segura em português ou inglês. Se está a experienciar uma crise psiquiátrica ou pensamentos de autolesão, contacte o SNS24 (1024) ou ligue ao 112 — não espere por uma consulta.",
+          "Selecione um horário disponível nesta página para agendar directamente com o Dr. Rúben Pereira. O pagamento é processado de forma segura no momento do agendamento — a consulta é confirmada após a conclusão do pagamento. Receberá imediatamente um convite para o calendário. As consultas são realizadas por videochamada segura em português ou inglês. Se está a experienciar uma crise psiquiátrica ou pensamentos de autolesão, ligue 1411. Em caso de perigo imediato, ligue 112 — não espere por uma consulta.",
       },
       {
         question: "Quais são as qualificações do Dr. Rúben Pereira?",
@@ -1141,7 +1141,7 @@ export const PORTUGAL_DOCTORS: PortugalDoctorSheet[] = [
       {
         question: "Como agendar uma consulta com o Dr. Telmo Coelho?",
         answer:
-          "Selecione um horário disponível nesta página para agendar directamente com o Dr. Telmo Coelho. O pagamento é processado de forma segura no momento do agendamento — a consulta é confirmada após a conclusão do pagamento. Receberá imediatamente um convite para o calendário. As consultas são realizadas por videochamada segura em português ou inglês. Se está a experienciar uma crise psiquiátrica ou pensamentos de autolesão, contacte a Linha de Apoio à Crise do SNS24 (1024) ou ligue ao 112 — não espere por uma consulta.",
+          "Selecione um horário disponível nesta página para agendar directamente com o Dr. Telmo Coelho. O pagamento é processado de forma segura no momento do agendamento — a consulta é confirmada após a conclusão do pagamento. Receberá imediatamente um convite para o calendário. As consultas são realizadas por videochamada segura em português ou inglês. Se está a experienciar uma crise psiquiátrica ou pensamentos de autolesão, ligue 1411. Em caso de perigo imediato, ligue 112 — não espere por uma consulta.",
       },
       {
         question: "Quais são as qualificações do Dr. Telmo Coelho?",

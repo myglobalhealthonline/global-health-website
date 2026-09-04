@@ -44,9 +44,13 @@ export async function generateMetadata({
     return { title: SITE_NAME };
   }
   const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  // `config.name` is English-only. Use the locale's own country name, as the
+  // /legal index and every sibling template do, so a Portuguese page does not
+  // read "Brazil". Falls back to config.name when a bundle lacks the code.
+  const countryName = c.countryNames?.[code] ?? config.name;
   const legalDescription = c.legalPage.heroBody
     .replace("{site}", SITE_NAME)
-    .replace("{country}", config.name);
+    .replace("{country}", countryName);
   const [result, legal] = await Promise.all([
     getCountryLegalDocument(code, legalType, lang),
     getCountryLegal(code),
@@ -64,7 +68,7 @@ export async function generateMetadata({
     if (!documentTitle) return { title: SITE_NAME };
   }
   const czechiaSeo = czechiaStaticPageSeo(code, lang, `legal/${type}`);
-  const title = czechiaSeo?.title ?? `${documentTitle} · ${config.name}`;
+  const title = czechiaSeo?.title ?? `${documentTitle} · ${countryName}`;
   // International-locale batch (2026-08-09): the exact-locale → "en" → any-
   // published-row fallback (get-country-legal.ts) lets a type with only ONE
   // real translation 200 for every supported locale — verified live: 46 of
@@ -81,8 +85,8 @@ export async function generateMetadata({
     title,
     description: czechiaSeo?.description ?? `${documentTitle}. ${legalDescription}`,
     locale: `${lang}_${code.toUpperCase()}`,
-    subtitle: config.name,
-    imageAlt: `${documentTitle} — ${config.name}`,
+    subtitle: countryName,
+    imageAlt: `${documentTitle} — ${countryName}`,
     languages: indexableHreflangCluster(config, `/legal/${type}`, exactLocales),
   });
   return isExactLocale ? metadata : noindexFollow(metadata);
@@ -138,7 +142,7 @@ export default async function CountryLegalDocumentPage({
   return (
     <>
       <GH2CompactHero
-        eyebrow={t.heroEyebrow.replace("{country}", config.name)}
+        eyebrow={t.heroEyebrow.replace("{country}", c.countryNames?.[code] ?? config.name)}
         title={title}
         accent=""
         watermark={t.heroWatermark}

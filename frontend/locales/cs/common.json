@@ -731,7 +731,22 @@
     "shipping": "Doprava",
     "total": "Celkem",
     "trustSecure": "Bezpečná platba zajištěná přes Stripe",
-    "trustEncrypted": "Šifrováno — údaje o kartě se nikdy neukládají"
+    "trustEncrypted": "Šifrováno — údaje o kartě se nikdy neukládají",
+    "couponLabel": "Slevový kód",
+    "couponPlaceholder": "Zadejte kód",
+    "couponApply": "Uplatnit",
+    "couponApplying": "Ověřuji...",
+    "couponRemove": "Odebrat",
+    "couponApplied": "{code} uplatněn",
+    "couponDiscount": "Sleva ({percent} %)",
+    "couponInvalid": "Tento kód nelze použít. Zkontrolujte jej a zkuste to znovu.",
+    "couponNotWithBenefit": "Slevové kódy nelze kombinovat s členskou, firemní ani programovou výhodou.",
+    "couponNotWithInsurance": "Slevové kódy nelze kombinovat s pojištěním ani kartou krytí.",
+    "couponNotAvailableHere": "Slevové kódy nejsou v této zemi dostupné.",
+    "couponBelowMinimum": "Po uplatnění tohoto kódu zbývá částka, kterou nelze zaplatit.",
+    "couponNeedsEmail": "Nejprve zadejte výše svůj e-mail.",
+    "couponExpiredAtCheckout": "Váš slevový kód již není platný, a proto byl odebrán. Před platbou zkontrolujte celkovou částku.",
+    "couponNotForThisService": "Tento kód se nevztahuje na typ konzultace ve vašem košíku."
   },
   "checkoutStatus": {
     "successTitle": "Platba přijata",

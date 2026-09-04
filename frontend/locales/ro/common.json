@@ -731,7 +731,22 @@
     "shipping": "Livrare",
     "total": "Total",
     "trustSecure": "Plată securizată oferită de Stripe",
-    "trustEncrypted": "Criptat — datele cardului nu sunt niciodată stocate"
+    "trustEncrypted": "Criptat — datele cardului nu sunt niciodată stocate",
+    "couponLabel": "Cod de reducere",
+    "couponPlaceholder": "Introdu codul",
+    "couponApply": "Aplică",
+    "couponApplying": "Se verifică...",
+    "couponRemove": "Elimină",
+    "couponApplied": "{code} aplicat",
+    "couponDiscount": "Reducere ({percent}%)",
+    "couponInvalid": "Codul nu poate fi folosit. Verifică-l și încearcă din nou.",
+    "couponNotWithBenefit": "Codurile de reducere nu pot fi combinate cu un beneficiu de abonament, corporativ sau de plan.",
+    "couponNotWithInsurance": "Codurile de reducere nu pot fi combinate cu asigurarea sau cu un card de acoperire.",
+    "couponNotAvailableHere": "Codurile de reducere nu sunt disponibile în această țară.",
+    "couponBelowMinimum": "Codul lasă o sumă prea mică pentru a putea fi încasată.",
+    "couponNeedsEmail": "Introdu mai întâi adresa ta de e-mail de mai sus.",
+    "couponExpiredAtCheckout": "Codul tău de reducere nu mai este valabil, așa că a fost eliminat. Verifică totalul înainte de plată.",
+    "couponNotForThisService": "Acest cod nu acoperă tipul de consultație din coșul tău."
   },
   "checkoutStatus": {
     "successTitle": "Plată primită",
