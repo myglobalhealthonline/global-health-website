@@ -6,7 +6,7 @@ import {
 import { buildSoapEnvelope, extractElementText, extractFault } from "./envelope.js";
 import { SuklError, SuklNotConfiguredError, isSuklError } from "./errors.js";
 import { suklPost } from "./transport.js";
-import { DEFAULT_ENDPOINT_PATH, SUKL_NAMESPACE_COMMON } from "./app-ping.js";
+import { DEFAULT_ENDPOINT_PATH, SHARED_ELEMENT_NAMESPACE } from "./app-ping.js";
 
 /**
  * `GetAppInfo` — asks SÚKL which interface version they are actually running.
@@ -73,11 +73,12 @@ export interface SuklAppInfoResult {
   errorMessage: string | null;
 }
 
-export function buildAppInfoRequest(): string {
-  // No children: app_info_dotaz_type is empty in the schema.
+export function buildAppInfoRequest(service: SuklService): string {
+  // No children: app_info_dotaz_type is empty in the schema. The namespace is
+  // per-service, not fixed — CUER declares this element in erp/201704.
   return buildSoapEnvelope({
     operationElement: "AppInfoDotaz",
-    namespace: SUKL_NAMESPACE_COMMON,
+    namespace: SHARED_ELEMENT_NAMESPACE[service],
     body: "",
   });
 }
@@ -175,7 +176,7 @@ export async function suklGetAppInfo(service: SuklService): Promise<SuklAppInfoR
   const shared = { service, label: SUKL_SERVICE_LABELS[service] };
 
   try {
-    const response = await suklPost(service, DEFAULT_ENDPOINT_PATH, buildAppInfoRequest(), {
+    const response = await suklPost(service, DEFAULT_ENDPOINT_PATH, buildAppInfoRequest(service), {
       soapAction: "GetAppInfo",
     });
     const v = interpretAppInfoResponse({
