@@ -64,9 +64,29 @@ import { suklPost } from "./transport.js";
  */
 export const SUKL_NAMESPACE_COMMON = "http://www.sukl.cz/erp/common";
 export const SUKL_NAMESPACE_CUEP = "http://www.sukl.cz/erp/cuep";
+/**
+ * CUER's targetNamespace is a DATE, not the module name: `erp/201704`, not
+ * `erp/cuer`. Read from the live CUER WSDL on 2026-09-05. The `erp/cuer`
+ * namespace does exist there but is used by only three peripheral operations
+ * (ZmenaPoznamkyVydeje and the two Doplatky lookups), so guessing it from the
+ * module name would be wrong for everything that matters.
+ */
+export const SUKL_NAMESPACE_CUER = "http://www.sukl.cz/erp/201704";
 
-/** AppPing is a shared operation: COMMON namespace on BOTH services. */
-const APP_PING_NAMESPACE = SUKL_NAMESPACE_COMMON;
+/**
+ * Namespace for the shared AppPing / GetAppInfo elements, BY SERVICE.
+ *
+ * Not a single constant. On CUEP and Common these elements are declared in the
+ * common namespace; on CUER the WSDL declares them as `tns:AppPingDotaz` with
+ * tns = erp/201704. Sending the common namespace to CUER would be rejected
+ * with S009 — the same fault this integration already spent a debugging cycle
+ * on when the namespace was mapped to the wrong axis.
+ */
+export const SHARED_ELEMENT_NAMESPACE: Record<SuklService, string> = {
+  cuer: SUKL_NAMESPACE_CUER,
+  cuep: SUKL_NAMESPACE_COMMON,
+  common: SUKL_NAMESPACE_COMMON,
+};
 
 /**
  * Default endpoint path. SÚKL's published `soap:address` points at an internal
@@ -226,7 +246,7 @@ export async function suklAppPing(
     swKlienta: suklSwKlienta(),
     idZpravy: requestId,
     odeslano: new Date(),
-    namespace: APP_PING_NAMESPACE,
+    namespace: SHARED_ELEMENT_NAMESPACE[service],
   });
 
   const path = options.path?.trim() || DEFAULT_ENDPOINT_PATH;

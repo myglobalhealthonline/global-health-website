@@ -6,6 +6,7 @@ import {
   interpretAppPingResponse,
   SUKL_NAMESPACE_COMMON,
   SUKL_NAMESPACE_CUEP,
+  SHARED_ELEMENT_NAMESPACE,
 } from "./app-ping.js";
 import { buildSoapEnvelope, el, escapeXml, extractElementText, extractFault } from "./envelope.js";
 
@@ -199,4 +200,14 @@ test("buildSoapEnvelope nests the body inside soap:Body", () => {
     body: "<A>1</A>",
   });
   assert.ok(xml.includes('<soap:Body><Op xmlns="urn:x"><A>1</A></Op></soap:Body>'));
+});
+
+test("the shared elements take CUER's own namespace, not common", () => {
+  // From the live CUER WSDL (2026-09-05): targetNamespace is erp/201704 and
+  // AppPingDotaz is declared as tns:, so common would be rejected with S009.
+  // erp/cuer exists in that WSDL but serves only three peripheral operations,
+  // so the module name is NOT the namespace.
+  assert.equal(SHARED_ELEMENT_NAMESPACE.cuer, "http://www.sukl.cz/erp/201704");
+  assert.equal(SHARED_ELEMENT_NAMESPACE.cuep, "http://www.sukl.cz/erp/common");
+  assert.equal(SHARED_ELEMENT_NAMESPACE.common, "http://www.sukl.cz/erp/common");
 });

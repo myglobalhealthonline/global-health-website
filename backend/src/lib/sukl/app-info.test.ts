@@ -11,8 +11,14 @@ import { buildAppInfoRequest, interpretAppInfoResponse } from "./app-info.js";
  */
 
 test("the request body is empty, with no identity and no message header", () => {
-  const xml = buildAppInfoRequest();
+  const xml = buildAppInfoRequest("cuep");
   assert.match(xml, /<AppInfoDotaz xmlns="http:\/\/www\.sukl\.cz\/erp\/common"><\/AppInfoDotaz>/);
+
+  // CUER declares these shared elements in erp/201704, not erp/common. Sending
+  // the common namespace there is an S009 rejection.
+  const cuer = buildAppInfoRequest("cuer");
+  assert.match(cuer, /<AppInfoDotaz xmlns="http:\/\/www\.sukl\.cz\/erp\/201704"><\/AppInfoDotaz>/);
+  assert.ok(!cuer.includes("erp/common"));
   // Adding these would be a natural-looking mistake — the schema has no room.
   assert.ok(!xml.includes("Pristupujici"));
   assert.ok(!xml.includes("Zprava"));
