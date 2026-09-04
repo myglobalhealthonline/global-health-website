@@ -13,6 +13,7 @@ import {
 import {
   ChevronRight,
   ClipboardList,
+  Clock,
   FileText,
   Loader2,
   Pill,
@@ -30,7 +31,13 @@ import {
   type ExamCataloguePickerCopy,
 } from "./exam-catalogue-picker";
 
-export type ConsultationDocTabId = "overview" | "exams" | "medicine" | "absence" | "certificate";
+export type ConsultationDocTabId =
+  | "overview"
+  | "exams"
+  | "medicine"
+  | "absence"
+  | "certificate"
+  | "attendanceCert";
 
 export type EditDraftDoc = {
   id: string;
@@ -48,6 +55,7 @@ export type ConsultationDocumentsModalCopy = {
   tabMedicine: string;
   tabAbsence: string;
   tabCertificate: string;
+  tabAttendance: string;
   editingDraftNotice: string;
   loading: string;
   loadContextError: string;
@@ -63,6 +71,8 @@ export type ConsultationDocumentsModalCopy = {
   cardAbsenceDesc: string;
   cardCertificateTitle: string;
   cardCertificateDesc: string;
+  cardAttendanceTitle: string;
+  cardAttendanceDesc: string;
   overviewFooterNote: string;
   examsLabel: string;
   examsHint: string;
@@ -102,6 +112,12 @@ export type ConsultationDocumentsModalCopy = {
   certNameRequiredError: string;
   certDateRequiredError: string;
   certEndDateRequiredError: string;
+  attendanceQrNotice: string;
+  attendanceFromTimeLabel: string;
+  attendanceToTimeLabel: string;
+  attendanceReasonLabel: string;
+  attendanceReasonPlaceholder: string;
+  attendanceToTimeRequiredError: string;
   generateFailed: string;
   nationalPortalDefault: string;
   prescriptionPortalSuccess: string;
@@ -123,6 +139,8 @@ export function tabForGeneratedDocumentType(documentType: string): ConsultationD
       return "absence";
     case "CUSTOM_CERTIFICATE":
       return "certificate";
+    case "ATTENDANCE_CERTIFICATE":
+      return "attendanceCert";
     default:
       return "overview";
   }
@@ -146,6 +164,9 @@ function applyEditDraftToForm(
     setCertStartDate: (v: string) => void;
     setCertEndDate: (v: string) => void;
     setCertReason: (v: string) => void;
+    setAttendanceFromTime: (v: string) => void;
+    setAttendanceToTime: (v: string) => void;
+    setAttendanceReason: (v: string) => void;
   },
 ) {
   const meta = draft.metadata ?? {};
@@ -183,6 +204,13 @@ function applyEditDraftToForm(
     setters.setCertStartDate(meta.startDate ?? "");
     setters.setCertEndDate(meta.endDate ?? "");
     setters.setCertReason(meta.reason ?? "");
+    return;
+  }
+
+  if (draft.documentType === "ATTENDANCE_CERTIFICATE") {
+    setters.setAttendanceFromTime(meta.fromTime ?? "");
+    setters.setAttendanceToTime(meta.toTime ?? "");
+    setters.setAttendanceReason(meta.reason ?? "");
   }
 }
 
@@ -210,6 +238,7 @@ export function ConsultationDocumentsModal({
     { id: "medicine", label: copy.tabMedicine },
     { id: "absence", label: copy.tabAbsence },
     { id: "certificate", label: copy.tabCertificate },
+    { id: "attendanceCert", label: copy.tabAttendance },
   ];
   const [tab, setTab] = useState<ConsultationDocTabId>(initialTab ?? "overview");
   const [context, setContext] = useState<DocumentContext | null>(null);
@@ -235,6 +264,9 @@ export function ConsultationDocumentsModal({
   const [certStartDate, setCertStartDate] = useState("");
   const [certEndDate, setCertEndDate] = useState("");
   const [certReason, setCertReason] = useState("");
+  const [attendanceFromTime, setAttendanceFromTime] = useState("");
+  const [attendanceToTime, setAttendanceToTime] = useState("");
+  const [attendanceReason, setAttendanceReason] = useState("");
 
   // Focus trap + restore — same pattern as PortalDialog (query focusables
   // fresh on every Tab press; a tab switch inside this modal changes what's
@@ -294,6 +326,9 @@ export function ConsultationDocumentsModal({
         setCertStartDate,
         setCertEndDate,
         setCertReason,
+        setAttendanceFromTime,
+        setAttendanceToTime,
+        setAttendanceReason,
       });
     } else {
       setEditingDocId(null);
@@ -309,6 +344,9 @@ export function ConsultationDocumentsModal({
       setCertStartDate("");
       setCertEndDate("");
       setCertReason("");
+      setAttendanceFromTime("");
+      setAttendanceToTime("");
+      setAttendanceReason("");
       if (initialTab) setTab(initialTab);
     }
     const prev = document.body.style.overflow;
@@ -420,7 +458,12 @@ export function ConsultationDocumentsModal({
         );
       } else if (type === "PRESCRIPTION") {
         setSuccess(pdfUrl ? copy.prescriptionSuccessPdf : copy.prescriptionSuccessNoPdf);
-      } else if (type === "EXAMS_PRESCRIPTION" || type === "ABSENCE_CERTIFICATE" || type === "CUSTOM_CERTIFICATE") {
+      } else if (
+        type === "EXAMS_PRESCRIPTION" ||
+        type === "ABSENCE_CERTIFICATE" ||
+        type === "CUSTOM_CERTIFICATE" ||
+        type === "ATTENDANCE_CERTIFICATE"
+      ) {
         setSuccess(pdfUrl ? copy.otherDocSuccessPdf : copy.otherDocSuccessNoPdf);
       } else {
         setSuccess(pdfUrl ? copy.genericSuccessPdf : copy.genericSuccessNoPdf);
@@ -464,6 +507,18 @@ export function ConsultationDocumentsModal({
       ...(startDate.trim() ? { startDate: startDate.trim() } : {}),
       endDate: endDate.trim(),
       ...(absenceReason.trim() ? { reason: absenceReason.trim() } : {}),
+    });
+  }
+
+  function generateAttendance() {
+    if (!attendanceToTime.trim()) {
+      setError(copy.attendanceToTimeRequiredError);
+      return;
+    }
+    void generate("ATTENDANCE_CERTIFICATE", {
+      ...(attendanceFromTime.trim() ? { fromTime: attendanceFromTime.trim() } : {}),
+      toTime: attendanceToTime.trim(),
+      ...(attendanceReason.trim() ? { reason: attendanceReason.trim() } : {}),
     });
   }
 
@@ -571,7 +626,12 @@ export function ConsultationDocumentsModal({
             </div>
           ) : null}
 
-          {(tab === "exams" || tab === "medicine" || tab === "absence" || tab === "certificate") && !contextLoading ? (
+          {(tab === "exams" ||
+            tab === "medicine" ||
+            tab === "absence" ||
+            tab === "certificate" ||
+            tab === "attendanceCert") &&
+          !contextLoading ? (
             <p className="mb-3 text-xs text-[var(--portal-muted)]">{copy.fieldsAutoNotice}</p>
           ) : null}
 
@@ -602,6 +662,12 @@ export function ConsultationDocumentsModal({
                   title={copy.cardCertificateTitle}
                   description={copy.cardCertificateDesc}
                   onClick={() => setTab("certificate")}
+                />
+                <OverviewCard
+                  icon={Clock}
+                  title={copy.cardAttendanceTitle}
+                  description={copy.cardAttendanceDesc}
+                  onClick={() => setTab("attendanceCert")}
                 />
               </div>
               <p className="text-xs text-[var(--portal-muted)]">{copy.overviewFooterNote}</p>
@@ -871,6 +937,56 @@ export function ConsultationDocumentsModal({
                 type="button"
                 disabled={pending}
                 onClick={generateCertificate}
+                className="gh-btn gh-btn-primary text-sm"
+              >
+                {pending ? (
+                  <Loader2 className="size-3.5 animate-spin" aria-hidden />
+                ) : (
+                  <FileText className="size-3.5" aria-hidden />
+                )}
+                {copy.generatePdf}
+              </button>
+            </div>
+          ) : null}
+
+          {tab === "attendanceCert" ? (
+            <div className="space-y-3">
+              <p className="text-xs text-[var(--portal-muted)]">{copy.attendanceQrNotice}</p>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <div>
+                  <label className="text-sm font-semibold">{copy.attendanceFromTimeLabel}</label>
+                  <input
+                    type="time"
+                    value={attendanceFromTime}
+                    onChange={(e) => setAttendanceFromTime(e.target.value)}
+                    className="gh-input mt-1 w-full"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-semibold">
+                    {copy.attendanceToTimeLabel} <span className="text-red-600">*</span>
+                  </label>
+                  <input
+                    type="time"
+                    value={attendanceToTime}
+                    onChange={(e) => setAttendanceToTime(e.target.value)}
+                    className="gh-input mt-1 w-full"
+                    required
+                  />
+                </div>
+              </div>
+              <label className="block text-sm font-semibold">{copy.attendanceReasonLabel}</label>
+              <input
+                type="text"
+                value={attendanceReason}
+                onChange={(e) => setAttendanceReason(e.target.value)}
+                placeholder={copy.attendanceReasonPlaceholder}
+                className="gh-input w-full"
+              />
+              <button
+                type="button"
+                disabled={pending}
+                onClick={generateAttendance}
                 className="gh-btn gh-btn-primary text-sm"
               >
                 {pending ? (

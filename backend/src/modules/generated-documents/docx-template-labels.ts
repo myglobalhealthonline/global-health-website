@@ -51,8 +51,15 @@ export type TemplateLabels = {
   docTitleAbsence: string;
   docTitleExams: string;
   docTitlePrescription: string;
+  docTitleAttendance: string;
   absenceCertifiesPre: string;
   absenceCertifiesPost: string;
+  /** Attendance certificate: "This is to certify that <patient>" */
+  attendanceCertifiesPre: string;
+  /** "...attended our medical facility on <date>" */
+  attendanceCertifiesOn: string;
+  /** "...for medical assessment." (tail, after the from/to time) */
+  attendanceCertifiesPost: string;
 };
 
 export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
@@ -97,8 +104,12 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     docTitleAbsence: "Medical Absence Certificate",
     docTitleExams: "Examinations Prescription",
     docTitlePrescription: "Medical Prescription",
+    docTitleAttendance: "Medical Attendance Certificate",
     absenceCertifiesPre: "This certifies that",
     absenceCertifiesPost: "is unfit for work or study for the period below.",
+    attendanceCertifiesPre: "This is to certify that",
+    attendanceCertifiesOn: "attended our medical facility on",
+    attendanceCertifiesPost: "for medical assessment.",
   },
   PT: {
     patientName: "Nome do paciente",
@@ -141,8 +152,12 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     docTitleAbsence: "Certificado de Incapacidade Médica",
     docTitleExams: "Prescrição de Exames",
     docTitlePrescription: "Receita Médica",
+    docTitleAttendance: "Certificado de Comparência Médica",
     absenceCertifiesPre: "Certifica-se que",
     absenceCertifiesPost: "se encontra incapacitado(a) para o trabalho ou estudo durante o período abaixo indicado.",
+    attendanceCertifiesPre: "Certifica-se que",
+    attendanceCertifiesOn: "compareceu à nossa unidade de saúde em",
+    attendanceCertifiesPost: "para avaliação médica.",
   },
   ES: {
     patientName: "Nombre del paciente",
@@ -185,8 +200,12 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     docTitleAbsence: "Certificado de Baja Médica",
     docTitleExams: "Prescripción de Pruebas",
     docTitlePrescription: "Receta Médica",
+    docTitleAttendance: "Certificado de Asistencia Médica",
     absenceCertifiesPre: "Se certifica que",
     absenceCertifiesPost: "no está en condiciones de trabajar o estudiar durante el período indicado a continuación.",
+    attendanceCertifiesPre: "Se certifica que",
+    attendanceCertifiesOn: "acudió a nuestro centro médico el",
+    attendanceCertifiesPost: "para valoración médica.",
   },
   CZ: {
     patientName: "Jméno pacienta",
@@ -230,8 +249,12 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     docTitleAbsence: "Potvrzení o pracovní neschopnosti",
     docTitleExams: "Žádanka na vyšetření",
     docTitlePrescription: "Lékařský předpis",
+    docTitleAttendance: "Potvrzení o lékařském vyšetření",
     absenceCertifiesPre: "Potvrzuje se, že",
     absenceCertifiesPost: "není schopen/schopna práce ani studia po níže uvedené období.",
+    attendanceCertifiesPre: "Potvrzuje se, že",
+    attendanceCertifiesOn: "navštívil(a) naše zdravotnické zařízení dne",
+    attendanceCertifiesPost: "za účelem lékařského vyšetření.",
   },
   RO: {
     patientName: "Numele pacientului",
@@ -274,8 +297,12 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     docTitleAbsence: "Certificat de Concediu Medical",
     docTitleExams: "Bilet de Trimitere pentru Investigații",
     docTitlePrescription: "Rețetă Medicală",
+    docTitleAttendance: "Certificat de Prezență Medicală",
     absenceCertifiesPre: "Se certifică faptul că",
     absenceCertifiesPost: "este inapt(ă) de muncă sau studiu pentru perioada de mai jos.",
+    attendanceCertifiesPre: "Se certifică faptul că",
+    attendanceCertifiesOn: "s-a prezentat la unitatea noastră medicală în data de",
+    attendanceCertifiesPost: "pentru evaluare medicală.",
   },
   // Brazilian Portuguese. Not an alias of PT: the clinical vocabulary genuinely
   // differs — a sick note is an "atestado médico" in BR and a "certificado de
@@ -323,9 +350,13 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     docTitleAbsence: "Atestado Médico",
     docTitleExams: "Solicitação de Exames",
     docTitlePrescription: "Receita Médica",
+    docTitleAttendance: "Certificado de Comparecimento Médico",
     absenceCertifiesPre: "Atesto que",
     absenceCertifiesPost:
       "esteve impossibilitado(a) de exercer suas atividades laborais ou escolares durante o período abaixo.",
+    attendanceCertifiesPre: "Atesto que",
+    attendanceCertifiesOn: "compareceu à nossa unidade de saúde em",
+    attendanceCertifiesPost: "para avaliação médica.",
   },
 };
 

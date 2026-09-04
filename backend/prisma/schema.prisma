@@ -208,6 +208,10 @@ enum GeneratedDocumentType {
   PRESCRIPTION
   OTHER
   CUSTOM_CERTIFICATE
+  /// Excuses the patient only for the duration of the consultation itself
+  /// (date + from/to time) — distinct from ABSENCE_CERTIFICATE, which covers
+  /// a work/study absence period of one or more days.
+  ATTENDANCE_CERTIFICATE
 }
 
 enum BrazilConsentPaymentStatus {

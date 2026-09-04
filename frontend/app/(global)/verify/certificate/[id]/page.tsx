@@ -17,7 +17,7 @@ type CertificateData = {
   patientName: string;
   consultationDate: string | null;
   issuedAt: string;
-  dateInfo: { date?: string; from?: string; to?: string };
+  dateInfo: { date?: string; from?: string; to?: string; fromTime?: string; toTime?: string };
   /** Ireland controlled medications. Absent unless the document itself made
    *  the claim — there is no "not verified" state to render. */
   identityVerified?: {
@@ -99,6 +99,12 @@ export default async function CertificateVerifyPage({
                 ) : null}
                 {result.data.dateInfo.to ? (
                   <Row label="To" value={result.data.dateInfo.to} />
+                ) : null}
+                {result.data.dateInfo.fromTime ? (
+                  <Row label="From" value={result.data.dateInfo.fromTime} />
+                ) : null}
+                {result.data.dateInfo.toTime ? (
+                  <Row label="To" value={result.data.dateInfo.toTime} />
                 ) : null}
               </div>
 

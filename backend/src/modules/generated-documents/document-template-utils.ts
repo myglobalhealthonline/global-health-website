@@ -6,6 +6,7 @@ export const TEMPLATE_FILE_BY_TYPE: Record<GeneratedDocumentType, string> = {
   PRESCRIPTION: "prescription.html",
   OTHER: "other.html",
   CUSTOM_CERTIFICATE: "custom-certificate.html",
+  ATTENDANCE_CERTIFICATE: "attendance-certificate.html",
 };
 
 /** Join newline-separated exams with ", " and append optional notes (spec). */
@@ -54,6 +55,7 @@ export const REVIEW_QUEUE_TYPES: GeneratedDocumentType[] = [
   "PRESCRIPTION",
   "OTHER",
   "CUSTOM_CERTIFICATE",
+  "ATTENDANCE_CERTIFICATE",
 ];
 
 /** Subset of review queue documents that can be emailed to the patient. */
@@ -62,6 +64,7 @@ export const EMAIL_SEND_QUEUE_TYPES: GeneratedDocumentType[] = [
   "ABSENCE_CERTIFICATE",
   "OTHER",
   "CUSTOM_CERTIFICATE",
+  "ATTENDANCE_CERTIFICATE",
 ];
 
 export function isInReviewQueue(documentType: GeneratedDocumentType, sentToPatient: boolean): boolean {

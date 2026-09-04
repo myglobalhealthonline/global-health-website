@@ -43,6 +43,7 @@ const TITLES: Record<GeneratedDocumentType, string> = {
   PRESCRIPTION: "Medical prescription",
   OTHER: "Document",
   CUSTOM_CERTIFICATE: "Medical certificate",
+  ATTENDANCE_CERTIFICATE: "Medical attendance certificate",
 };
 
 /** IE-only: shown on exams/examination-request documents (Healthmail/Healthlink, no post). */
@@ -221,6 +222,14 @@ function buildTemplateContext(input: {
     base.reason = f.reason?.trim() ?? "";
   }
 
+  // Excuses the patient for the consultation window only — date + from/to
+  // time — as opposed to ABSENCE_CERTIFICATE's multi-day work/study period.
+  if (input.documentType === "ATTENDANCE_CERTIFICATE") {
+    base.fromTime = f.fromTime?.trim() ?? "";
+    base.toTime = f.toTime?.trim() ?? "";
+    base.reason = f.reason?.trim() ?? "";
+  }
+
   return base;
 }
 
@@ -299,6 +308,7 @@ const VERIFIABLE_TYPES = new Set<GeneratedDocumentType>([
   "ABSENCE_CERTIFICATE",
   "PRESCRIPTION",
   "EXAMS_PRESCRIPTION",
+  "ATTENDANCE_CERTIFICATE",
 ]);
 
 async function buildCertificateArtifacts(
@@ -393,7 +403,9 @@ async function generateAppointmentDocumentUnlocked(input: {
           ? docLabels.docTitleExams
           : input.documentType === "PRESCRIPTION"
             ? docLabels.docTitlePrescription
-            : TITLES[input.documentType];
+            : input.documentType === "ATTENDANCE_CERTIFICATE"
+              ? docLabels.docTitleAttendance
+              : TITLES[input.documentType];
 
   // Absence certificates print a default confidentiality reason that names
   // the data-protection law. That name is per-country (GDPR, LGPD, …) and
@@ -478,7 +490,11 @@ async function generateAppointmentDocumentUnlocked(input: {
   const cert = await buildCertificateArtifacts(input.documentType, input.editDocumentId);
   if (cert) {
     templateContext.certificateId = cert.certificateId;
-    if (input.documentType === "ABSENCE_CERTIFICATE" || input.documentType === "CUSTOM_CERTIFICATE") {
+    if (
+      input.documentType === "ABSENCE_CERTIFICATE" ||
+      input.documentType === "CUSTOM_CERTIFICATE" ||
+      input.documentType === "ATTENDANCE_CERTIFICATE"
+    ) {
       templateContext.qrDataUrl = cert.dataUrl;
     }
     if (input.documentType === "ABSENCE_CERTIFICATE") {
@@ -564,6 +580,7 @@ async function generateAppointmentDocumentUnlocked(input: {
     ABSENCE_CERTIFICATE: "absence-certificate",
     OTHER: "document",
     CUSTOM_CERTIFICATE: "certificate",
+    ATTENDANCE_CERTIFICATE: "attendance-certificate",
   };
   const certNameForFile =
     input.documentType === "CUSTOM_CERTIFICATE"
@@ -864,7 +881,9 @@ export async function sendGeneratedDocuments(
               ? mailLabels.docTitleExams
               : doc.documentType === "PRESCRIPTION"
                 ? mailLabels.docTitlePrescription
-                : TITLES[doc.documentType];
+                : doc.documentType === "ATTENDANCE_CERTIFICATE"
+                  ? mailLabels.docTitleAttendance
+                  : TITLES[doc.documentType];
     const result = await sendGeneratedDocumentEmail({
       to: appt.email,
       patientName: appt.fullName,
@@ -1066,6 +1085,7 @@ const MEMED_DOC_TYPE_FILENAME: Record<GeneratedDocumentType, string> = {
   ABSENCE_CERTIFICATE: "absence-certificate",
   OTHER: "document",
   CUSTOM_CERTIFICATE: "certificate",
+  ATTENDANCE_CERTIFICATE: "attendance-certificate",
 };
 
 export class MemedDocumentAlreadyRecordedError extends Error {

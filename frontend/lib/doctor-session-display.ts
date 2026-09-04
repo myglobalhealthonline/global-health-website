@@ -4,6 +4,7 @@ export const GENERATED_DOCUMENT_TYPE_LABELS: Record<string, string> = {
   PRESCRIPTION: "Medicine prescription",
   OTHER: "Other",
   CUSTOM_CERTIFICATE: "Custom certificate",
+  ATTENDANCE_CERTIFICATE: "Attendance certificate",
 };
 
 export function formatOrderRef(appointmentId: string, orderRef?: string | null): string {

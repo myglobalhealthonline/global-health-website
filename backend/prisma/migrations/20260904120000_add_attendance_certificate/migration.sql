@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "GeneratedDocumentType" ADD VALUE IF NOT EXISTS 'ATTENDANCE_CERTIFICATE';

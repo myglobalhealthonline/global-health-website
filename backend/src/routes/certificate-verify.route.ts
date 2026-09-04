@@ -41,6 +41,7 @@ const certificateVerifyRoute: FastifyPluginAsync = async (app) => {
           "ABSENCE_CERTIFICATE",
           "PRESCRIPTION",
           "EXAMS_PRESCRIPTION",
+          "ATTENDANCE_CERTIFICATE",
         ]);
         if (!doc || !VERIFIED_TYPES.has(doc.documentType)) {
           return reply.status(404).send(errorResponse("Certificate not found"));
@@ -52,6 +53,7 @@ const certificateVerifyRoute: FastifyPluginAsync = async (app) => {
           CUSTOM_CERTIFICATE: meta.certificateName?.trim() || "Medical Certificate",
           PRESCRIPTION: "Medical Prescription",
           EXAMS_PRESCRIPTION: "Examinations Prescription",
+          ATTENDANCE_CERTIFICATE: "Medical Attendance Certificate",
         };
         const certName = TYPE_LABELS[doc.documentType] ?? "Medical Document";
         const doctorName = doc.doctor?.fullName ?? "Doctor";
@@ -65,6 +67,9 @@ const certificateVerifyRoute: FastifyPluginAsync = async (app) => {
         if (meta.singleDate) dateInfo.date = formatDateDdMmYyyy(meta.singleDate);
         if (meta.startDate) dateInfo.from = formatDateDdMmYyyy(meta.startDate);
         if (meta.endDate) dateInfo.to = formatDateDdMmYyyy(meta.endDate);
+        // Attendance certificate: consultation-window times rather than a date range.
+        if (meta.fromTime) dateInfo.fromTime = meta.fromTime;
+        if (meta.toTime) dateInfo.toTime = meta.toTime;
 
         // Ireland controlled medications. Reflects what the paper says, from
         // the pin taken at issuance — so a scan years later reports the check

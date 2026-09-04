@@ -8,6 +8,7 @@ export const GENERATED_DOCUMENT_TYPE_LABELS: Record<GeneratedDocumentType, strin
   PRESCRIPTION: "Medicine prescription",
   OTHER: "Other",
   CUSTOM_CERTIFICATE: "Custom certificate",
+  ATTENDANCE_CERTIFICATE: "Attendance certificate",
 };
 
 export function formatSessionParts(

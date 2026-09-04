@@ -30,6 +30,7 @@ export const PATIENT_VISIBLE_GENERATED_TYPES: GeneratedDocumentType[] = [
   GeneratedDocumentType.EXAMS_PRESCRIPTION,
   GeneratedDocumentType.ABSENCE_CERTIFICATE,
   GeneratedDocumentType.CUSTOM_CERTIFICATE,
+  GeneratedDocumentType.ATTENDANCE_CERTIFICATE,
   GeneratedDocumentType.OTHER,
 ];
 
@@ -80,6 +81,7 @@ function generatedTitle(documentType: string, metadata: unknown): string {
       ABSENCE_CERTIFICATE: "Absence certificate",
       EXAMS_PRESCRIPTION: "Exam prescription",
       CUSTOM_CERTIFICATE: "Certificate",
+      ATTENDANCE_CERTIFICATE: "Attendance certificate",
     }[documentType] ?? documentType
   );
 }

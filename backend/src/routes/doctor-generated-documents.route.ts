@@ -92,6 +92,13 @@ const generateSchema = z
       }
       // Date is optional — certificates may be issued without a date ("no date" mode).
     }
+    if (data.type === GeneratedDocumentType.ATTENDANCE_CERTIFICATE && !data.fields?.toTime?.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "toTime is required for attendance certificates",
+        path: ["fields", "toTime"],
+      });
+    }
   });
 
 const sendSchema = z.object({

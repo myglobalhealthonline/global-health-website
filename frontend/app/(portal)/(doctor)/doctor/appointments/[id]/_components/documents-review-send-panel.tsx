@@ -46,6 +46,7 @@ function canEmailDocument(documentType: string, countryCode: string | null): boo
     documentType === "ABSENCE_CERTIFICATE" ||
     documentType === "OTHER" ||
     documentType === "CUSTOM_CERTIFICATE" ||
+    documentType === "ATTENDANCE_CERTIFICATE" ||
     (documentType === "PRESCRIPTION" && prescriptionEmailAllowed(countryCode))
   );
 }
