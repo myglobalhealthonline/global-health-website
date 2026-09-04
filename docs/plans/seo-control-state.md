@@ -7909,7 +7909,7 @@ working day, not a restatement of an earlier audit.
 | 1 | Country name rendered in English on `/legal` and `/book` for non-EN locales | **CLOSED 2026-09-04 — deployed and verified live (§42).** `/spain/es/legal` serves `· España ·`, `/romania/ro/legal` serves `· România ·`, `/brazil/pt/legal/refund-policy` serves `· Brasil ·`. Index and document sub-pages shipped together, so there is no split spelling. | live `curl`, three URLs, 2026-09-04 |
 | 2 | Romania service pages carry no FAQ | **Open.** `medic-online-romania` and `a-doua-opinie-medicala` both return zero `FAQPage` blocks in served HTML. | live `curl \| grep -c FAQPage` = 0 on both |
 | 3 | Sitemap URL count disagrees with this ledger | **CLOSED 2026-09-04 — the ledger was corrected on 2026-09-03 (`e93bde31`) and re-verified today (§42).** §3 carries 2,146; the remaining 1,932 mention in §23.2 is explicitly labelled as a dated 2026-08-16 figure. Live re-count 2026-09-04: **2,146**. | live sitemap, `grep -c '<loc>'`, 2026-09-04 |
-| 4 | Spain, Romania and Brazil have no clinical-approval gate | **Open.** Only two gates exist in the repository: `backend/src/content/portugal-clinical-approval.ts` and `backend/scripts/lib/czechia-clinical-approval.ts`. There is no ES/RO/BR equivalent. | `find . -name '*clinical-approval*'` |
+| 4 | Spain, Romania and Brazil have no clinical-approval gate | **Open.** Only two gates exist in the repository: `backend/src/content/portugal-clinical-approval.ts` and `backend/scripts/lib/czechia-clinical-approval.ts`. There is no ES/RO/BR equivalent. **Widened 2026-09-05 (§43): those two gates are script-time only, so the generic admin routes bypass them as well — enforcement belongs at the mutation boundary, not in a per-market validator.** | `find . -name '*clinical-approval*'` |
 
 Defect 1 is the only one with a code fix. It sits in commit `30b239ae` on `Dev-hassaan`,
 together with `38089b2d` and `1bddd990`, all unpushed and undeployed. The fix
@@ -8173,3 +8173,126 @@ half-day of linking work was very nearly spent re-adding links that already exis
    step 2, and no conversion conclusion is available before step 1.
 
 **NO SEO IMPLEMENTATION / NO PRODUCTION WRITE / NO CMS CHANGE IN THIS PASS.**
+
+---
+
+## 43. ES-CLINICAL-GATE-000 — clinical-approval enforcement gap, investigation only (2026-09-05)
+
+**Mode: read-only investigation. No gate was built, no content published, no register
+created, no production or CMS write.** §41.1 defect 4 stays **open** for all three
+markets, and §42.8 step 2 is unchanged. This section records what a trace of the write
+paths established, so the next agent does not re-derive it.
+
+### 43.1 No Spain guarded writer exists
+
+The Portugal and Czechia gates are enforced by being called from purpose-built batch
+scripts. Spain has no equivalent script, so there is nothing for a Spain gate to be
+wired into — building the validator is the smaller half of the job, and on its own it
+enforces nothing.
+
+Gated writers in the repository, all Portugal or Czechia:
+`scripts/patch-portugal-seo-metadata.ts`,
+`scripts/patch-czechia-page-content-seo-drafts.ts`,
+`scripts/patch-czechia-profile-blog-tool-seo-drafts.ts`,
+`scripts/patch-czechia-seo-service-drafts.ts`.
+
+Spain paths that do write clinical SEO fields, all ungated, none of them a writer
+`SEO-META-002` could use:
+
+| Path | Writes | State |
+| --- | --- | --- |
+| `scripts/import-spain-service-content.ts` | 22 ES services: `seoTitle`, `seoDescription`, hero and detail body HTML, FAQs | July 2026 one-off importer; its output is live (24 ES service URLs sitemapped). Create-only, `isActive: false` |
+| `scripts/import-spain-service-links.ts` | `ServiceLink` callouts | Link map, no clinical copy |
+| `scripts/import-spain-disclaimer.ts` | Spain medical disclaimer, `isPublished: false` | Held on AEPD registration, per its own header |
+| `scripts/applied/patch-spain-doctors-datasheet.ts`, `patch-spain-doctors-content.ts`, `patch-spain-vascular-aesthetic-services.ts` | Doctor bios, credentials, service copy | `scripts/applied/` = already run against production, kept only as a record |
+
+### 43.2 Spain remains ungated — the live surface, verified 2026-09-05
+
+Read from the live sitemap and live URLs, not from an earlier audit:
+
+| Reading | Value |
+| --- | --- |
+| `/spain/es` URLs in the live sitemap | **67** (agrees with §42.6) |
+| of which doctor profiles | **13** |
+| of which service pages | 24 |
+| of which blog posts | 5 |
+| Spain approval records of any kind | **0** |
+
+All 13 doctor profiles are **live-unreviewed debt**: published, indexable, asserting
+professional registrations with no approval record behind them. Spot-checked live
+today — `/spain/es/doctors/dr-alfredo-del-valle` serves "registrado en CGCOM (nº
+282885136)" and `/spain/es/doctors/dr-tomas-ruiz-palacios` serves "Psicólogo General
+Sanitario (nº MUO5691)", both inside the meta description `SEO-META-002` proposes to
+trim.
+
+`backend/scripts/data/spain-doctors-datasheet.ts` holds 14 profiles.
+`dr-irene-galve-moros` is the fourteenth and is **not live** — 404, correctly absent
+from the sitemap. The debt is 13 profiles, not 14.
+
+### 43.3 The generic admin routes bypass the Portugal and Czechia gates too
+
+This is the finding that changes the shape of the work. Both existing gates are
+**script-time** controls: they guard one batch pathway. The live CMS routes write the
+same fields for any country, behind `verifyAdminAccess` — an authorization check, not
+a clinical one — and consult no register:
+
+| Route | Field surface |
+| --- | --- |
+| `PATCH /api/admin/doctors/:doctorId/markets/:countryId` (`admin-doctor-markets.route.ts`) | **Per-market doctor `seoTitle` / `seoDescription` — the per-country doctor copy a clinical gate is most needed for** |
+| `admin-doctors.route.ts` | Base doctor `seoTitle` / `seoDescription` |
+| `admin-services.route.ts` | Service `seoTitle` / `seoDescription` |
+| `admin-page-content.route.ts`, `admin-blog.route.ts`, `admin-health-tests.route.ts` | Page, blog and health-test SEO fields |
+
+So Portugal and Czechia are **not** as covered as §41.1 defect 4 implies: their
+registers bind the scripted batches and nothing else. Anyone editing the same copy
+through the admin UI writes it unreviewed.
+
+### 43.4 A gate has to sit at the mutation boundary
+
+The consequence of 43.1 and 43.3: adding a per-market validator module does not close
+defect 4 for that market. Enforcement is the deliverable, and it has to be at the
+point of write — the service or transaction every path funnels through — not only in
+a batch script that one of several writers happens to call. A validator that nothing
+calls prevents nothing, and a validator called by only one of six writers prevents
+one-sixth.
+
+Scoping that route-layer check is a larger piece of work than the per-market gates
+this ledger has been budgeting for, and it should be scoped before more per-market
+validators are written.
+
+### 43.5 Spain's remaining dependencies, none of which are code
+
+Even with enforcement in place, Spain cannot run a content batch until:
+
+1. **Authentic registers.** `seo/spain/clinical-review-register.csv` and
+   `seo/spain/doctor-profile-fact-register.csv` do not exist. §41.3 stands: Spain has
+   a README stub and no register, brief or draft. Every doctor row needs its CGCOM or
+   COP registration checked against the official directory before any
+   `verification_status` may read `verified` — that check is what caught
+   `beatriz-carvalho` in Portugal (§41.2) and it is not a formality. **No empty
+   register was created and no approval was recorded in this pass.**
+2. **A named Spain-registered clinician reviewer**, with a doctor id. None is
+   nominated, and none was invented.
+3. **A review-age policy.** No document in this repository sets how long a clinical
+   review stays valid. Portugal and Czechia both reject a future-dated review but
+   neither expires an old one, so an approval recorded once currently holds forever.
+   Someone has to choose the window before a gate can enforce staleness at all.
+
+`SEO-META-002` remains blocked. Romania and Brazil are unchanged.
+
+### 43.6 One repair outside all of this
+
+`backend/src/content/portugal-seo-remaining-drafts.test.ts` pinned
+`now = 2026-09-02T00:00:00Z`, but the 2026-09-03 snippet-trim batch (§41.2, §42.4)
+re-approved the eleven Portugal doctor profiles at `2026-09-03T17:59:00+01:00`. The
+Portugal gate correctly rejected that as future-dated against the stale pinned clock,
+so the test — not the register — was wrong.
+
+The register was **not** edited: all 16 `approved_sha256` values still match the
+completion matrix exactly. The test now pins both review sessions by name and asserts
+the doctor rows carry the snippet-trim approval while the blog, landing and
+page-content rows still carry the phase-two one. That failure alone is enough to have
+kept the `Backend Tests` CI job red (§42.6); it was not checked whether it is the only
+cause.
+
+**NO GATE BUILT / NO CONTENT PUBLISHED / NO PRODUCTION WRITE / NO CMS CHANGE IN THIS PASS.**
