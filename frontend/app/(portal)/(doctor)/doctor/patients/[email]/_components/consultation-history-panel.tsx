@@ -545,7 +545,12 @@ export function ConsultationHistoryPanel({
             fields={medicalNoteFields}
             rows={data.medicalNotes}
             getRowKey={(n) => n.id}
+            // First cell is a bare session date, which repeats across rows
+            // from the same day. Name the control by the section it expands
+            // plus the row's own visible order number.
+            getRowAriaLabel={(n) => `${copy.medicalNotesTitle} — ${n.orderNumber}`}
             onRowClick={(n) => setExpandedNote(expandedNote === n.id ? null : n.id)}
+            isRowExpanded={(n) => expandedNote === n.id}
             renderExpandedRow={(n, columnCount) =>
               expandedNote === n.id ? (
                 <tr className="border-t border-[var(--portal-line)] bg-[var(--portal-well)]">
@@ -568,7 +573,12 @@ export function ConsultationHistoryPanel({
             fields={consultationNoteFields}
             rows={consultationNotes}
             getRowKey={(c) => c.id}
+            // Same as the medical-notes table above: the wrapped first cell
+            // is a repeating date, so the label carries the row's own
+            // visible order number.
+            getRowAriaLabel={(c) => `${copy.consultationNotesTitle} — ${c.orderNumber}`}
             onRowClick={(c) => setExpandedConsult(expandedConsult === c.id ? null : c.id)}
+            isRowExpanded={(c) => expandedConsult === c.id}
             renderExpandedRow={(c, columnCount) =>
               expandedConsult === c.id ? (
                 <tr className="border-t border-[var(--portal-line)] bg-[var(--portal-well)]">

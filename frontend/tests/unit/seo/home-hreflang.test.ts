@@ -81,7 +81,11 @@ beforeAll(async () => {
       params: Promise.resolve({ country, lang }),
     });
   }
-});
+  // 30s, not the 10s default: this hook transforms two Next page modules and
+  // their whole import graph, and it runs alongside every other worker — it
+  // passes in isolation but has already tipped over the default once the
+  // suite grew. The budget is for module transform, not for the assertions.
+}, 30_000);
 
 const configFor = (slug: string) => {
   const config = seedCountries.find((c) => c.slug === slug);

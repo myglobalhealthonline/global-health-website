@@ -158,19 +158,39 @@ export function AppointmentMedicalNotesSection({
       label: copy.colMedicalNotes,
       priority: 1,
       cardPrimary: true,
-      render: (n) =>
-        expandedId === n.id ? (
-          <span className="flex items-center gap-2 whitespace-pre-wrap text-[var(--portal-text)]">
-            <ChevronDown className="size-3.5 shrink-0 text-[var(--portal-muted)]" />
-            {n.content}
-          </span>
-        ) : (
-          <span className="flex items-center gap-2 truncate text-[var(--portal-muted)]">
-            <ChevronRight className="size-3.5 shrink-0" />
-            {n.content.slice(0, 80)}
-            {n.content.length > 80 ? "…" : ""}
-          </span>
-        ),
+      // The note cell is its own disclosure control, mirroring
+      // `ExpandToggleCell` in consultation-history-panel: the row's first-cell
+      // button (the session date) and the mobile card's button toggle the same
+      // state, but the content they reveal renders HERE, in the last column —
+      // so the control that actually sits next to that content needs to exist
+      // and carry the state. No nesting risk: ColumnPriorityTable only wraps
+      // field index 0, and the mobile card is an inert container.
+      render: (n) => (
+        <button
+          type="button"
+          onClick={() => setExpandedId(expandedId === n.id ? null : n.id)}
+          aria-expanded={expandedId === n.id}
+          className={
+            expandedId === n.id
+              ? "flex w-full items-center gap-2 whitespace-pre-wrap text-left text-[var(--portal-text)]"
+              : "flex w-full items-center gap-2 truncate text-left text-[var(--portal-muted)]"
+          }
+          style={{ background: "none", border: "none", padding: 0, font: "inherit" }}
+        >
+          {expandedId === n.id ? (
+            <>
+              <ChevronDown className="size-3.5 shrink-0 text-[var(--portal-muted)]" />
+              {n.content}
+            </>
+          ) : (
+            <>
+              <ChevronRight className="size-3.5 shrink-0" />
+              {n.content.slice(0, 80)}
+              {n.content.length > 80 ? "…" : ""}
+            </>
+          )}
+        </button>
+      ),
     },
   ];
 
@@ -216,14 +236,29 @@ export function AppointmentMedicalNotesSection({
           fields={fields}
           rows={notes}
           getRowKey={(n) => n.id}
+          // The wrapped first cell is the session date, and every row here
+          // belongs to the SAME session — so the cell's own text names all of
+          // them identically. Name the control by what it does plus the one
+          // column that does vary per row (the note's author). Visible text
+          // only: no note content in the label.
+          getRowAriaLabel={(n) =>
+            `${expandedId === n.id ? copy.hideNote : copy.viewNote} — ${n.createdByName}, ${session.sessionDate} ${session.sessionTime}`
+          }
           onRowClick={(n) => setExpandedId(expandedId === n.id ? null : n.id)}
+          isRowExpanded={(n) => expandedId === n.id}
           cardActions={(n) => (
             <button
               type="button"
               onClick={() => setExpandedId(expandedId === n.id ? null : n.id)}
+              aria-expanded={expandedId === n.id}
               className="inline-flex items-center gap-1 text-portal-meta font-semibold text-[var(--portal-primary)]"
             >
               {expandedId === n.id ? copy.hideNote : copy.viewNote}
+              {/* Every card in this list belongs to the same session, so the
+                  button text repeats; the note's author is the one thing that
+                  varies. Hidden text, so the visible label survives in the
+                  accessible name (WCAG 2.2 §2.5.3). */}
+              <span className="sr-only"> — {n.createdByName}</span>
               {expandedId === n.id ? (
                 <ChevronDown className="size-3.5" />
               ) : (

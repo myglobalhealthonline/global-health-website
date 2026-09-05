@@ -26,7 +26,6 @@ export function PortalMobileCard({
   actions,
   href,
   children,
-  onClick,
 }: {
   /** Optional avatar/icon rendered before the title block. */
   leading?: ReactNode;
@@ -43,15 +42,20 @@ export function PortalMobileCard({
   meta?: PortalMobileCardMetaItem[];
   actions?: ReactNode;
   /** Makes the whole card a link (list → detail). Omit for an inline card
-   *  that carries its own action buttons instead. */
+   *  that carries its own action buttons instead.
+   *
+   *  There is deliberately no whole-card click handler counterpart. A card
+   *  body holds real controls (`actions`, `statusPill` menus, `children`
+   *  forms), and giving that wrapper a button role is invalid ARIA
+   *  (interactive descendants inside a button role), gives the wrapper an
+   *  accessible name assembled from its children, and makes activation
+   *  ambiguous for pointer and keyboard alike. Give the card an explicit
+   *  native control in `actions` instead. */
   href?: string;
   /** Full-width freeform content below meta/actions — for embedded
    *  sub-components (e.g. an expandable ledger) that don't fit the
    *  right-aligned actions row. */
   children?: ReactNode;
-  /** Makes the card body clickable (e.g. open a drawer) when there's no
-   *  `href`. Ignored if `href` is set. */
-  onClick?: () => void;
 }) {
   const content = (
     <>
@@ -89,25 +93,6 @@ export function PortalMobileCard({
       <Link href={href} className={className}>
         {content}
       </Link>
-    );
-  }
-  if (onClick) {
-    return (
-      <div
-        className={className}
-        onClick={onClick}
-        role="button"
-        tabIndex={0}
-        style={{ cursor: "pointer" }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            onClick();
-          }
-        }}
-      >
-        {content}
-      </div>
     );
   }
   return <div className={className}>{content}</div>;

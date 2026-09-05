@@ -39,6 +39,7 @@ export function ColumnPriorityTable<T>({
   getRowKey,
   onRowClick,
   getRowAriaLabel,
+  isRowExpanded,
   cardTone,
   emptyState,
   cardActions,
@@ -48,10 +49,21 @@ export function ColumnPriorityTable<T>({
   rows: T[];
   getRowKey: (row: T) => string;
   onRowClick?: (row: T) => void;
-  /** Accessible name for the row's click target (native <button>, see
-   *  4a/WCAG 2.1.1+4.1.2 fix). Defaults to a generic "View details for
-   *  {getRowKey(row)}" label so existing callers need no change. */
+  /** Overrides the accessible name of the row's click target (native
+   *  <button>, see 4a/WCAG 2.1.1+4.1.2 fix). Omit it and the button is named
+   *  by the first cell's own visible text — the patient name, email or
+   *  reference the sighted user reads. Pass one ONLY where that text is not
+   *  identifying on its own (a bare date, say): an aria-label REPLACES the
+   *  content as the accessible name, so a label that drops the visible text
+   *  fails WCAG 2.2 §2.5.3 Label in Name and makes every row sound alike. */
   getRowAriaLabel?: (row: T) => string;
+  /** Pass this ONLY when `onRowClick` toggles a disclosure (an expanded row
+   *  or an inline note), and return the caller's existing open state for the
+   *  row — this adds `aria-expanded` to the row's control on both surfaces
+   *  and introduces no state of its own. Leave it off for a row that opens a
+   *  drawer, dialog or page: `aria-expanded` there tells assistive tech the
+   *  control reveals adjacent content, which is not what happens. */
+  isRowExpanded?: (row: T) => boolean;
   /** Optional per-row tone for the mobile card's status edge. */
   cardTone?: (row: T) => PortalMobileCardTone;
   emptyState?: ReactNode;
@@ -95,11 +107,8 @@ export function ColumnPriorityTable<T>({
                         <button
                           type="button"
                           onClick={() => onRowClick(row)}
-                          aria-label={
-                            getRowAriaLabel
-                              ? getRowAriaLabel(row)
-                              : `View details for ${getRowKey(row)}`
-                          }
+                          aria-label={getRowAriaLabel ? getRowAriaLabel(row) : undefined}
+                          aria-expanded={isRowExpanded ? isRowExpanded(row) : undefined}
                           className="block w-full cursor-pointer text-left"
                           style={{ background: "none", border: "none", padding: 0, font: "inherit" }}
                         >
@@ -132,7 +141,11 @@ export function ColumnPriorityTable<T>({
                 label: f.cardLabel ?? (typeof f.label === "string" ? f.label : f.key),
                 value: f.render(row),
               }))}
-              onClick={onRowClick ? () => onRowClick(row) : undefined}
+              // No whole-card click handler: the card body holds real
+              // controls, so a clickable wrapper around them is invalid
+              // structure (see PortalMobileCard). The row action is reached
+              // through the explicit button below, or the caller's own
+              // `cardActions`.
               actions={
                 cardActions
                   ? cardActions(row)
@@ -141,9 +154,17 @@ export function ColumnPriorityTable<T>({
                         <button
                           type="button"
                           className="gh-btn gh-btn-soft"
+                          aria-expanded={isRowExpanded ? isRowExpanded(row) : undefined}
                           onClick={() => onRowClick(row)}
                         >
                           View
+                          {/* "View" alone repeats on every card in the list.
+                              The row label goes in as hidden text rather than
+                              an aria-label so the visible word stays part of
+                              the accessible name (WCAG 2.2 §2.5.3). */}
+                          {getRowAriaLabel ? (
+                            <span className="sr-only"> — {getRowAriaLabel(row)}</span>
+                          ) : null}
                         </button>
                       )
                     : undefined

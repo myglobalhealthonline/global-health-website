@@ -75,7 +75,6 @@ function userFields(): ColumnPriorityField<AdminUserDto>[] {
       render: (u) => (
         <Link
           href={`/admin/users/${u.id}`}
-          onClick={(e) => e.stopPropagation()}
           className="gh-btn gh-btn-secondary text-sm"
         >
           Open
@@ -109,9 +108,23 @@ export function AdminUsersTable({ items }: { items: AdminUserDto[] }) {
         getRowKey={(u) => u.id}
         onRowClick={openQuickView}
         cardActions={(u) => (
-          <Link href={`/admin/users/${u.id}`} className="gh-btn gh-btn-secondary text-sm">
-            Open user
-          </Link>
+          <>
+            {/* `cardActions` replaces the default View button, and the link
+                below goes to the full record — a different destination from
+                the row handler's quick view. Without this control the drawer
+                would have no mobile entry point. */}
+            <button
+              type="button"
+              onClick={() => openQuickView(u)}
+              aria-label={`Quick view user ${u.fullName || u.email}`}
+              className="gh-btn gh-btn-soft text-sm"
+            >
+              Quick view
+            </button>
+            <Link href={`/admin/users/${u.id}`} className="gh-btn gh-btn-secondary text-sm">
+              Open user
+            </Link>
+          </>
         )}
       />
 

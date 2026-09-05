@@ -136,13 +136,23 @@ export function EmployeesTable({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected?.id]);
 
-  const openEmployee = useCallback(
+  /** URL the quick-view drawer opens at - `?employee=<id>` on top of whatever
+   *  filters are already in the query. Open state is derived from this param
+   *  (`selectedId` above), so it is a real destination and can be linked to. */
+  const quickViewHref = useCallback(
     (id: string) => {
       const next = new URLSearchParams(searchParams.toString());
       next.set("employee", id);
-      router.replace(`${pathname}?${next.toString()}`, { scroll: false });
+      return `${pathname}?${next.toString()}`;
     },
-    [pathname, router, searchParams],
+    [pathname, searchParams],
+  );
+
+  const openEmployee = useCallback(
+    (id: string) => {
+      router.replace(quickViewHref(id), { scroll: false });
+    },
+    [quickViewHref, router],
   );
 
   const fields: ColumnPriorityField<CorporatePortalEmployeeDto>[] = [
@@ -155,7 +165,6 @@ export function EmployeesTable({
           <Link
             href={`/corporate/employees/${e.id}`}
             className="font-bold text-[var(--color-text-primary)] hover:underline"
-            onClick={(ev) => ev.stopPropagation()}
           >
             {e.firstName} {e.lastName}
           </Link>
@@ -188,6 +197,20 @@ export function EmployeesTable({
       desktopOnly: true,
       render: (e) => (
         <div className="flex flex-wrap items-center justify-end gap-1.5">
+          {/* Desktop path to the ?employee= quick view. It used to be the
+              row's click handler; `cardActions` (which carries the same item)
+              renders in the mobile card only, so without this the drawer had
+              no desktop entry point at all. A plain link, because the drawer's
+              open state is derived from the URL param - same destination and
+              same replace/no-scroll semantics as `openEmployee`. */}
+          <Link
+            href={quickViewHref(e.id)}
+            replace
+            scroll={false}
+            className="text-portal-compact font-semibold text-[var(--color-brand-primary)] hover:underline"
+          >
+            {t.viewDetails}
+          </Link>
           <EmployeeActionForms employee={e} employeeRowAction={employeeRowAction} t={t} />
         </div>
       ),
@@ -200,7 +223,14 @@ export function EmployeesTable({
         fields={fields}
         rows={employees}
         getRowKey={(e) => e.id}
-        onRowClick={(e) => openEmployee(e.id)}
+        // No `onRowClick`: the name cell already carries its own <Link> to
+        // /corporate/employees/{id}, and ColumnPriorityTable wraps the first
+        // cell in a <button> when a row handler is passed - which nested that
+        // anchor inside a button (invalid HTML, undefined activation) and hid
+        // its name behind the button's aria-label. The `?employee=` quick-view
+        // drawer keeps its own control on both breakpoints: the "View details"
+        // link in the desktop actions cell above, and the actions menu in
+        // `cardActions` below (which renders in the mobile card only).
         emptyState={
           <AdminEmptyState
             icon={<Users className="size-8" aria-hidden />}
@@ -209,7 +239,7 @@ export function EmployeesTable({
           />
         }
         cardActions={(e) => (
-          <span onClick={(ev) => ev.stopPropagation()}>
+          <span>
             <AppMenu
               trigger={
                 <IconBtn ariaLabel={t.employeeActionsAriaLabel} type="button">

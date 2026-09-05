@@ -93,7 +93,6 @@ function patientFields(): ColumnPriorityField<AdminPatientSearchItem>[] {
       render: (p) => (
         <Link
           href={`/admin/patients/${encodeURIComponent(p.email)}`}
-          onClick={(e) => e.stopPropagation()}
           className="gh-link text-sm font-medium"
         >
           View →
@@ -140,12 +139,28 @@ export function AdminPatientsTable({ items }: { items: AdminPatientSearchItem[] 
         getRowKey={(p) => p.id}
         onRowClick={openQuickView}
         cardActions={(p) => (
-          <Link
-            href={`/admin/patients/${encodeURIComponent(p.email)}`}
-            className="gh-btn gh-btn-secondary text-sm"
-          >
-            View patient
-          </Link>
+          <>
+            {/* `cardActions` replaces the default View button, and the link
+                below goes to the full record — a different destination from
+                the row handler's quick view. Without this control the drawer
+                would have no mobile entry point. */}
+            {p.globalHealthNumber ? (
+              <button
+                type="button"
+                onClick={() => openQuickView(p)}
+                aria-label={`Quick view patient ${p.globalHealthNumber}`}
+                className="gh-btn gh-btn-soft text-sm"
+              >
+                Quick view
+              </button>
+            ) : null}
+            <Link
+              href={`/admin/patients/${encodeURIComponent(p.email)}`}
+              className="gh-btn gh-btn-secondary text-sm"
+            >
+              View patient
+            </Link>
+          </>
         )}
       />
 

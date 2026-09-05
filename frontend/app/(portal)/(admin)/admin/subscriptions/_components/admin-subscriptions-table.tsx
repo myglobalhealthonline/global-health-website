@@ -221,7 +221,6 @@ export function AdminSubscriptionsTable({
             title={sub.user.fullName ?? sub.user.email}
             subtitle={`${sub.user.email} - ${sub.countryCode.toUpperCase()}`}
             statusPill={<Pill tone={statusTone(sub.status)}>{sub.status}</Pill>}
-            onClick={() => openQuickView(sub.id)}
             meta={[
               { label: "Plan", value: `${sub.plan.name} · ${billedPrice(sub)}` },
               {
@@ -238,7 +237,23 @@ export function AdminSubscriptionsTable({
                 ? [{ label: "Renewal", value: <Pill tone="draft">cancels at period end</Pill> }]
                 : []),
             ]}
-            actions={repairActions(sub)}
+            actions={
+              <>
+                {/* The desktop table opens the drawer from the subscriber
+                    cell; below 760px that cell is the card title, so the
+                    quick view needs its own control here. Same handler, so
+                    the `sub` param and the page's filters are preserved. */}
+                <button
+                  type="button"
+                  onClick={() => openQuickView(sub.id)}
+                  aria-label={`Quick view subscription for ${sub.user.fullName ?? sub.user.email}`}
+                  className="gh-btn gh-btn-soft text-sm"
+                >
+                  Quick view
+                </button>
+                {repairActions(sub)}
+              </>
+            }
           />
         ))}
       </div>

@@ -156,10 +156,25 @@ export function DuplicateGroupsTable({ groups }: { groups: DuplicateGroup[] }) {
         fields={fields()}
         rows={groups}
         getRowKey={groupKey}
+        // The wrapped first cell is the "matched on" pill, which repeats
+        // across groups — on its own it never says WHICH pair the control
+        // opens. The label keeps that visible pill text first (WCAG 2.5.3)
+        // and adds the two records already rendered in the same row; nothing
+        // here is not already on screen.
+        getRowAriaLabel={(g) =>
+          `${reasonLabels(g.matchReasons)} — ${g.a.fullName ?? g.a.email} and ${g.b.fullName ?? g.b.email}`
+        }
         onRowClick={openDialog}
         cardActions={(g) => (
           <button type="button" onClick={() => openDialog(g)} className="gh-btn gh-btn-secondary text-sm">
-            Review & merge
+            Review &amp; merge
+            {/* Same reason as `getRowAriaLabel` above: the button text is
+                identical on every card, so the pair it opens goes in as
+                hidden text after the visible label. */}
+            <span className="sr-only">
+              {" "}
+              — {g.a.fullName ?? g.a.email} and {g.b.fullName ?? g.b.email}
+            </span>
           </button>
         )}
       />
