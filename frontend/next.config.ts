@@ -103,6 +103,35 @@ const SECURITY_HEADERS = [
 ];
 
 /**
+ * Route-segment matchers for the localized public site, shared by `headers()`
+ * and `redirects()` so there is ONE locale list in this file.
+ *
+ * `PUBLIC_COUNTRY` lists the six seeded markets of `data/countries.ts` in both
+ * addressable forms: the SEO slug (`/ireland/en`, the canonical public URL)
+ * and the bare country code (`/ie/en`), which `lib/routing/country-slug.ts`
+ * registers as its own slug so it resolves too.
+ *
+ * Both groups are load-bearing, not cosmetic. A `/:country/:lang` source with
+ * unconstrained params is not a country route — path-to-regexp reads it as
+ * "any two segments", so `/admin/doctors`, `/account/profile`, `/api/example`
+ * and `/doctor/…` all matched the public shared-cache rules below and came
+ * back advertising themselves as CDN-cacheable. Pinned by
+ * `tests/unit/public-cache-headers.test.ts`, which builds the same regexes
+ * Next does and reads the market/locale lists out of `data/countries.ts`, so
+ * a seventh market fails that test until it is added here on purpose.
+ *
+ * An admin-added country (created in /admin/countries, resolvable at runtime
+ * via the slug registry) is deliberately NOT in this group: it renders fine,
+ * it just misses the CDN cache header until its code lands here. That is a
+ * perf gap for one market, where a wildcard is a cache-policy leak on every
+ * authenticated surface.
+ */
+const PUBLIC_COUNTRY = "(ireland|czechia|portugal|spain|romania|brazil|ie|cz|pt|es|ro|br)";
+/** The six real locale codes — `data/countries.ts` `supportedLocales`, unioned.
+ *  Applied uniformly to every market, as the redirect rules already do. */
+const PUBLIC_LANG = "(en|pt|es|cs|ro|de)";
+
+/**
  * The build's total concurrent load on the backend's connection pool is
  * `cpus x NEXT_BUILD_API_CONCURRENCY` (see frontend/lib/api/client.ts). That
  * product MUST stay under the backend's `pg` pool max of 10
@@ -292,14 +321,13 @@ const nextConfig: NextConfig = {
       // byte-for-byte identical per visitor. Published legal documents also
       // change far less often than the 60s window.
       {
-        source: "/:country/:lang",
+        source: `/:country${PUBLIC_COUNTRY}/:lang${PUBLIC_LANG}`,
         headers: [
           { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },
         ],
       },
       {
-        source:
-          "/:country/:lang/(gp-consultation-online|see-a-specialist|repeat-prescription-request|lab-tests|doctors|blog)",
+        source: `/:country${PUBLIC_COUNTRY}/:lang${PUBLIC_LANG}/(gp-consultation-online|see-a-specialist|repeat-prescription-request|lab-tests|doctors|blog)`,
         headers: [
           { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },
         ],
@@ -310,7 +338,7 @@ const nextConfig: NextConfig = {
         // (getCountryLandingPage/getCountryDoctors/getCountryTrust, same
         // cache()-wrapped fetches the already-cacheable routes above use)
         // was verified free of cookies()/headers()/searchParams/draftMode().
-        source: "/:country/:lang/(lab-tests|doctors|blog|services|health)/:slug",
+        source: `/:country${PUBLIC_COUNTRY}/:lang${PUBLIC_LANG}/(lab-tests|doctors|blog|services|health)/:slug`,
         headers: [
           { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },
         ],
@@ -321,19 +349,19 @@ const nextConfig: NextConfig = {
         // params only (no cookies()/headers()/searchParams), and the
         // interactive part runs client-side — so the HTML is byte-for-byte
         // identical per visitor.
-        source: "/:country/:lang/tools/:slug",
+        source: `/:country${PUBLIC_COUNTRY}/:lang${PUBLIC_LANG}/tools/:slug`,
         headers: [
           { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },
         ],
       },
       {
-        source: "/:country/:lang/legal",
+        source: `/:country${PUBLIC_COUNTRY}/:lang${PUBLIC_LANG}/legal`,
         headers: [
           { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },
         ],
       },
       {
-        source: "/:country/:lang/legal/:type",
+        source: `/:country${PUBLIC_COUNTRY}/:lang${PUBLIC_LANG}/legal/:type`,
         headers: [
           { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },
         ],
@@ -616,7 +644,7 @@ const nextConfig: NextConfig = {
     // country="cs", lang="portugal"), which rewrites into a second redirect
     // and turns one clean 308 into a 2-hop chain — or, where the destination
     // country hub does not exist, into 308→404.
-    const LANG = "(en|pt|es|cs|ro|de)";
+    const LANG = PUBLIC_LANG;
     // Destination-availability groups. `:country` is a wildcard, but several
     // destinations only exist in SOME markets — an unconstrained rule there is
     // a 308→404, which keeps the old URL in Google index as an error. Verified
