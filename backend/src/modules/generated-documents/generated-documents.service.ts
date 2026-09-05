@@ -15,6 +15,12 @@ import { resolveNotificationLang } from "../automation/notification-language.js"
 import { uploadLinkWhatsAppPrescription } from "../patient-upload/upload-link-messages.js";
 import { resolveAppointmentDocumentSource } from "./appointment-document-source.js";
 import {
+  CrossBorderRxTerminalAppointmentError,
+  finaliseCrossBorderRxInTransaction,
+  notifyCrossBorderRxFinalised,
+  type CrossBorderRxFinalisedContext,
+} from "../cross-border-rx/cross-border-rx.service.js";
+import {
   absenceDefaultReason,
   formatDateDdMmYyyy,
   formatExamsNotes,
@@ -1076,22 +1082,38 @@ export async function finalizeGeneratedDocument(doctorId: string, documentId: st
   if (doc.sentToPatient) {
     return { ok: false as const, status: 409, message: "Document is already finalized" };
   }
-  await prisma.generatedDocument.update({
-    where: { id: doc.id },
-    data: { sentToPatient: true },
-  });
-  // If this prescription belongs to a cross-border async consultation, finalising
-  // it is the "prescription issued" moment: complete the request + notify the
-  // patient (sent to pharmacy) and the requesting doctor. Best-effort + idempotent;
-  // dynamically imported to avoid a module cycle. Never blocks the finalise.
+  // If this prescription belongs to a cross-border async consultation,
+  // finalising it is the "prescription issued" moment: it also claims the
+  // request and completes the async appointment. Those writes and this flag
+  // have to land together — flipping `sentToPatient` first would latch the
+  // document (blocking edit and delete) even when the appointment turns out
+  // to be cancelled.
+  //
+  // For an ordinary prescription — the common case — the helper finds no open
+  // request, returns null, and the transaction reduces to the same single
+  // flag write as before. No appointment-status condition is applied to it.
+  let crossBorder: CrossBorderRxFinalisedContext | null = null;
   try {
-    const { onCrossBorderRxPrescriptionFinalised } = await import(
-      "../cross-border-rx/cross-border-rx.service.js"
-    );
-    await onCrossBorderRxPrescriptionFinalised(doc.appointmentId);
-  } catch {
-    // A non-cross-border prescription (the common case) or a notify hiccup must
-    // never fail the finalise itself.
+    crossBorder = await prisma.$transaction(async (tx) => {
+      await tx.generatedDocument.update({
+        where: { id: doc.id },
+        data: { sentToPatient: true },
+      });
+      return finaliseCrossBorderRxInTransaction(tx, doc.appointmentId);
+    });
+  } catch (error) {
+    if (error instanceof CrossBorderRxTerminalAppointmentError) {
+      // Everything above rolled back: the document is still unfinalised and
+      // still editable/deletable. Surfaced as a conflict, never as success.
+      return { ok: false as const, status: 409, message: error.message };
+    }
+    throw error;
+  }
+
+  // Only now that the writes have committed: patient + Doctor A "sent to
+  // pharmacy" messages. A notify hiccup must never fail the finalise itself.
+  if (crossBorder) {
+    void notifyCrossBorderRxFinalised(crossBorder).catch(() => {});
   }
   return { ok: true as const };
 }

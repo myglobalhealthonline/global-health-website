@@ -488,6 +488,20 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
         if (error instanceof Error && error.message.includes("already finalized")) {
           return reply.status(409).send(errorResponse(error.message));
         }
+        // Terminal appointment (cancelled, or completed by another request):
+        // a conflict, not a server fault.
+        if (error instanceof InvalidAppointmentStatusTransitionError) {
+          return reply
+            .status(409)
+            .send(
+              errorResponse(
+                "This consultation is no longer open — it has been cancelled or already completed.",
+              ),
+            );
+        }
+        if (error instanceof UnrecognizedAppointmentStatusError) {
+          return reply.status(409).send(errorResponse(error.message));
+        }
         if (error instanceof Error && error.message.includes("Both notes")) {
           return reply.status(400).send(errorResponse(error.message));
         }

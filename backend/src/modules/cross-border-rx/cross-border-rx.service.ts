@@ -1,6 +1,6 @@
 import type { FastifyRequest } from "fastify";
 import { createHash, randomBytes } from "node:crypto";
-import { CartItemKind, PaymentStatus } from "@prisma/client";
+import { CartItemKind, PaymentStatus, type Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { env } from "../../config/env.js";
 import { normalizeDbError } from "../shared/db-errors.js";
@@ -13,6 +13,7 @@ import { getStripeClient, isStripeConfigured } from "../../lib/stripe/client.js"
 import { buildPtStripeInvoiceData } from "../invoices/pt-stripe-invoice-data.js";
 import { checkoutBranding } from "../billing/checkout-branding.js";
 import { ensureConsultationDraft } from "../consultations/ensure-consultation-draft.js";
+import { assertValidStatusTransition } from "../appointments/appointment-status-transitions.js";
 import { notifyDoctor, notifyUser, notifyAdmins } from "../notifications/notify.service.js";
 import { sendEmail } from "../../lib/email/send-email.js";
 import { wrapHtml } from "../../lib/email/templates.js";
@@ -1396,7 +1397,7 @@ export async function decideCrossBorderRxRequest(
     // Accepting only commits Doctor B to prescribing and opens the workspace
     // (the frontend navigates there). The patient + Doctor A "prescription
     // sent" notifications and the appointment completion fire later, when the
-    // prescription DOCUMENT is finalised — see onCrossBorderRxPrescriptionFinalised.
+    // prescription DOCUMENT is finalised — see finaliseCrossBorderRxInTransaction.
     await prisma.crossBorderPrescriptionRequest.update({
       where: { id: request.id },
       data: { status: "ACCEPTED", decidedAt: new Date() },
@@ -1563,19 +1564,59 @@ export async function answerPendingMoreInfo(
 
   return { status: "ANSWERED" };
 }
+/**
+ * The async consultation behind a cross-border prescription was already
+ * terminal (cancelled, or completed by another request). Thrown from inside
+ * the caller's transaction so every write in it — the document flag, the
+ * request claim, the appointment completion — rolls back together.
+ */
+export class CrossBorderRxTerminalAppointmentError extends Error {
+  constructor(appointmentStatus: string) {
+    super(
+      `The consultation behind this prescription is ${appointmentStatus} and can no longer be finalised.`,
+    );
+    this.name = "CrossBorderRxTerminalAppointmentError";
+  }
+}
+
+/** Everything `notifyCrossBorderRxFinalised` needs once the writes commit. */
+export type CrossBorderRxFinalisedContext = {
+  sourceDoctorId: string;
+  sourceAppointmentId: string;
+  patientEmail: string;
+  patientFullName: string;
+  targetCountryCode: string;
+};
+
+/** The subset of the Prisma client this needs — a client or a transaction. */
+type CrossBorderRxTx = Pick<
+  Prisma.TransactionClient,
+  "crossBorderPrescriptionRequest" | "appointment"
+>;
 
 /**
- * Called when Doctor B finalises a prescription DOCUMENT on the async
- * consultation (finalizeGeneratedDocument). This is the true "prescription
- * issued" moment: mark the request ACCEPTED + finalised, complete the async
- * appointment (payout + chat lock), and fire the patient + Doctor A "sent to
- * pharmacy" notifications. Idempotent via `finalisedAt` — safe if the doctor
- * finalises more than one document. No-op for non-cross-border appointments.
+ * Database half of "Doctor B finalised the prescription DOCUMENT". This is the
+ * true "prescription issued" moment: mark the request ACCEPTED + finalised and
+ * complete the async appointment (payout + chat lock).
+ *
+ * Runs inside the CALLER's transaction so the caller's own writes — notably
+ * `GeneratedDocument.sentToPatient` — commit or roll back with these. A
+ * cancellation landing between the status read and the compare-and-swap
+ * matches zero rows and throws, taking the whole transaction with it.
+ *
+ * Returns null when there is no open cross-border request behind this
+ * appointment: either an ordinary prescription (the common case) or a
+ * consultation whose request one earlier document already finalised. Both must
+ * finalise the document normally — that is the documented idempotency.
+ *
+ * Notifications are deliberately NOT sent here; they belong after the commit.
+ * See `notifyCrossBorderRxFinalised`.
  */
-export async function onCrossBorderRxPrescriptionFinalised(
+export async function finaliseCrossBorderRxInTransaction(
+  tx: CrossBorderRxTx,
   asyncAppointmentId: string,
-): Promise<void> {
-  const request = await prisma.crossBorderPrescriptionRequest.findFirst({
+): Promise<CrossBorderRxFinalisedContext | null> {
+  const request = await tx.crossBorderPrescriptionRequest.findFirst({
     where: {
       asyncAppointmentId,
       finalisedAt: null,
@@ -1590,29 +1631,66 @@ export async function onCrossBorderRxPrescriptionFinalised(
       targetCountryCode: true,
     },
   });
-  if (!request) return;
+  if (!request) return null;
 
-  // Atomic guard: only the first finalise wins.
-  const claimed = await prisma.crossBorderPrescriptionRequest.updateMany({
+  // The async consultation must still be live. Completing a CANCELLED one
+  // counts it toward payout, reopens the chat-lock window and — because
+  // `doctorHasTreatmentRelationship` excludes only CANCELLED — re-establishes
+  // the prescriber's PHI access. Same "is this still live" probe the patient
+  // cancel/reschedule paths use: terminal statuses have no outgoing
+  // transitions, so probing against CANCELLED answers it without inventing a
+  // second matrix. Deliberately a liveness check only — it does not enforce
+  // ordered progression through CONTACTED, because every appointment is
+  // created REQUEST_RECEIVED and nothing auto-sets CONTACTED.
+  const appointment = await tx.appointment.findUnique({
+    where: { id: asyncAppointmentId },
+    select: { status: true },
+  });
+  if (!appointment) throw new CrossBorderRxTerminalAppointmentError("MISSING");
+  try {
+    assertValidStatusTransition(appointment.status, "CANCELLED");
+  } catch {
+    throw new CrossBorderRxTerminalAppointmentError(appointment.status);
+  }
+
+  // Atomic guard: only the first finalise wins. Losing here means a concurrent
+  // finalise already claimed the request, so this one has nothing to do —
+  // the document still finalises, matching the pre-existing idempotency.
+  const claimed = await tx.crossBorderPrescriptionRequest.updateMany({
     where: { id: request.id, finalisedAt: null },
     data: { status: "ACCEPTED", finalisedAt: new Date(), decidedAt: new Date() },
   });
-  if (claimed.count === 0) return;
+  if (claimed.count === 0) return null;
 
   // Complete the async appointment (counts toward payout; starts chat lock).
-  await prisma.appointment
-    .update({
-      where: { id: asyncAppointmentId, consultationCompletedAt: null },
-      data: { status: "COMPLETED", consultationCompletedAt: new Date() },
-    })
-    .catch(() =>
-      prisma.appointment.update({
-        where: { id: asyncAppointmentId },
-        data: { status: "COMPLETED" },
-      }),
-    )
-    .catch(() => {});
+  // Compare-and-swap on the status validated above: a cancellation landing in
+  // between matches zero rows and aborts the whole transaction.
+  const completed = await tx.appointment.updateMany({
+    where: { id: asyncAppointmentId, status: appointment.status },
+    data: { status: "COMPLETED", consultationCompletedAt: new Date() },
+  });
+  if (completed.count === 0) {
+    // The status moved between the read and this write. Re-read it so the
+    // message names what the appointment actually is now, rather than the
+    // value we validated a moment ago.
+    const current = await tx.appointment.findUnique({
+      where: { id: asyncAppointmentId },
+      select: { status: true },
+    });
+    throw new CrossBorderRxTerminalAppointmentError(current?.status ?? "MISSING");
+  }
 
+  return request;
+}
+
+/**
+ * Post-commit tail for a finalised cross-border prescription: the patient and
+ * Doctor A "sent to pharmacy" messages. Runs only after the writes have
+ * committed, so nobody is told about a completion that rolled back.
+ */
+export async function notifyCrossBorderRxFinalised(
+  request: CrossBorderRxFinalisedContext,
+): Promise<void> {
   // Doctor A (requesting): portal bell + email/WhatsApp.
   await notifySourceDoctor(request.sourceDoctorId, request.sourceAppointmentId, {
     snippet: `${request.patientFullName} · prescription finalised`,
