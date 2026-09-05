@@ -93,17 +93,34 @@ export function validatePublicServiceRecord(service: Pick<PublicServiceRecord, "
 /**
  * Practitioners on the roster who are NOT registered physicians — a manual
  * therapist, a rehabilitation consultant, a psychologist registered with a
- * non-medical body. `editorialChecklist.nonPhysician: true` is an explicit
- * admin/editorial assertion, never inferred from the free-text title, and it
- * waives EXACTLY ONE requirement: the medical-council registration. Bio depth,
- * name, title and the blocked-copy scan still apply, and the profile still has
- * to be marked `readyToIndex`.
+ * non-medical body. `nonPhysician: true` is an explicit admin/editorial
+ * assertion, never inferred from the free-text title, and it waives EXACTLY
+ * ONE requirement: the medical-council registration. Bio depth, name, title
+ * and the blocked-copy scan still apply, and the profile still has to be
+ * marked `readyToIndex`.
+ *
+ * PR-1: the public API now sends this as a derived boolean rather than the raw
+ * `editorialChecklist` blob. The blob is still read as a fallback so a
+ * frontend deployed ahead of the backend keeps behaving; see
+ * `PublicDoctorRecord`.
  */
-function isNonPhysician(checklist: Record<string, unknown> | undefined): boolean {
-  return checklist?.nonPhysician === true;
+type EditorialSignals = {
+  readyToIndex?: boolean;
+  nonPhysician?: boolean;
+  editorialChecklist?: Record<string, unknown>;
+};
+
+function isNonPhysician(doctor: EditorialSignals): boolean {
+  if (typeof doctor.nonPhysician === "boolean") return doctor.nonPhysician;
+  return doctor.editorialChecklist?.nonPhysician === true;
 }
 
-export function validatePublicDoctorRecord(doctor: Pick<PublicDoctorRecord, "fullName" | "title" | "bio" | "languages" | "specialties" | "imcRegistration" | "medicalRegistrationUrl" | "qualifications"> & { qualifications?: string[]; editorialChecklist?: Record<string, unknown> }): PublicationValidationResult {
+function isReadyToIndex(doctor: EditorialSignals): boolean {
+  if (typeof doctor.readyToIndex === "boolean") return doctor.readyToIndex;
+  return doctor.editorialChecklist?.readyToIndex === true;
+}
+
+export function validatePublicDoctorRecord(doctor: Pick<PublicDoctorRecord, "fullName" | "title" | "bio" | "languages" | "specialties" | "imcRegistration" | "medicalRegistrationUrl" | "qualifications"> & { qualifications?: string[] } & EditorialSignals): PublicationValidationResult {
   const issues: PublicationIssue[] = [];
 
   if (!doctor.fullName.trim()) {
@@ -115,11 +132,7 @@ export function validatePublicDoctorRecord(doctor: Pick<PublicDoctorRecord, "ful
   if (!doctor.bio || doctor.bio.trim().length < 120) {
     issues.push({ field: "bio", message: "Missing detailed public doctor bio.", severity: "error" });
   }
-  if (
-    !doctor.imcRegistration &&
-    !doctor.medicalRegistrationUrl &&
-    !isNonPhysician(doctor.editorialChecklist)
-  ) {
+  if (!doctor.imcRegistration && !doctor.medicalRegistrationUrl && !isNonPhysician(doctor)) {
     issues.push({ field: "credentials", message: "Missing registration number or verification URL.", severity: "error" });
   }
   if (!doctor.languages || doctor.languages.length === 0) {
@@ -151,11 +164,11 @@ export function isPublicDoctorRecordIndexable(
     | "imcRegistration"
     | "medicalRegistrationUrl"
     | "qualifications"
-    | "editorialChecklist"
-  >,
+  > &
+    EditorialSignals,
 ): boolean {
   const validation = validatePublicDoctorRecord(doctor);
-  return !validation.shouldNoindex && doctor.editorialChecklist?.readyToIndex === true;
+  return !validation.shouldNoindex && isReadyToIndex(doctor);
 }
 
 /* ------------------------------------------------------------------ *

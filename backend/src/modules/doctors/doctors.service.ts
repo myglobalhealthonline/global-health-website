@@ -142,6 +142,145 @@ const publicSpecialtyTranslationSelect = {
   cardSummary: true,
 } satisfies Prisma.SpecialtyTranslationSelect;
 
+/* ------------------------------------------------------------------ *
+ * PR-1 — public projection allow-lists.
+ *
+ * The public doctor readers used to `include:` the Doctor model root, so
+ * every scalar column shipped and a helper blacklisted four of them
+ * afterwards. That published `dateOfBirth`, `legacyMongoId`, the internal
+ * `editorialChecklist`, the per-doctor RBAC flags and the cross-border
+ * payout — and any column added to the model later would have joined them
+ * silently.
+ *
+ * Both layers below are allow-lists, and each one alone is sufficient:
+ *   • the `select` constants decide what leaves the database;
+ *   • `toPublicDoctor` names every key of the response object.
+ * A new Prisma column is invisible to both until it is added on purpose.
+ * ------------------------------------------------------------------ */
+
+/** Country fields a public payload may carry. */
+const publicCountrySelect = {
+  id: true,
+  code: true,
+  slug: true,
+  name: true,
+  defaultLocale: true,
+  teamPath: true,
+} satisfies Prisma.CountrySelect;
+
+/** Doctor portrait fields the public profile template renders. `usageNote`
+ *  is an internal admin note and is deliberately absent. */
+const publicDoctorAssetSelect = {
+  id: true,
+  kind: true,
+  key: true,
+  path: true,
+  altText: true,
+  title: true,
+  caption: true,
+  description: true,
+  focalX: true,
+  focalY: true,
+  zoom: true,
+} satisfies Prisma.AssetSelect;
+
+/** The specialty rows hanging off a public doctor. */
+const publicDoctorSpecialtySelect = {
+  specialty: {
+    select: {
+      id: true,
+      slug: true,
+      name: true,
+      cardSummary: true,
+      cardThemeColor: true,
+      sortOrder: true,
+      active: true,
+      translations: { select: publicSpecialtyTranslationSelect },
+    },
+  },
+} satisfies Prisma.DoctorSpecialtySelect;
+
+/**
+ * Doctor columns a public reader may read. `editorialChecklist` is here
+ * because `toPublicDoctor` derives two booleans from it — the raw
+ * admin-authored blob never reaches a response.
+ */
+const publicDoctorScalars = {
+  id: true,
+  slug: true,
+  fullName: true,
+  title: true,
+  bio: true,
+  seoTitle: true,
+  seoDescription: true,
+  lastReviewedAt: true,
+  medicalRegistrationUrl: true,
+  qualifications: true,
+  instagramUrl: true,
+  facebookUrl: true,
+  linkedinUrl: true,
+  languages: true,
+  active: true,
+  updatedAt: true,
+  editorialChecklist: true,
+} satisfies Prisma.DoctorSelect;
+
+/**
+ * The two keys of `editorialChecklist` the public site consumes:
+ * `readyToIndex` gates the profile's robots tag and its sitemap entry,
+ * `nonPhysician` waives the medical-council rule and switches the JSON-LD
+ * node from Physician to Person. Everything else in that blob is an
+ * internal editorial note.
+ */
+function editorialSignals(checklist: Prisma.JsonValue | null | undefined): {
+  readyToIndex: boolean;
+  nonPhysician: boolean;
+} {
+  const row =
+    checklist && typeof checklist === "object" && !Array.isArray(checklist)
+      ? (checklist as Record<string, unknown>)
+      : null;
+  return {
+    readyToIndex: row?.readyToIndex === true,
+    nonPhysician: row?.nonPhysician === true,
+  };
+}
+
+/** Derived from the select rather than hand-copied, so the two cannot drift
+ *  (same idiom as `publicJobSelect` in recruitment.service.ts). */
+type PublicDoctorSource = Prisma.DoctorGetPayload<{ select: typeof publicDoctorScalars }> & {
+  resolvedLocale: LocaleCode;
+};
+
+/**
+ * THE public doctor projection. Every key a public doctor response carries
+ * from the Doctor row is named here — nothing arrives by spreading a Prisma
+ * object. Callers add their own relations (specialties, assets, faqs,
+ * market registration, bookability) on top.
+ */
+function toPublicDoctor(doctor: PublicDoctorSource) {
+  return {
+    id: doctor.id,
+    slug: doctor.slug,
+    fullName: doctor.fullName,
+    title: doctor.title,
+    bio: doctor.bio,
+    seoTitle: doctor.seoTitle,
+    seoDescription: doctor.seoDescription,
+    lastReviewedAt: doctor.lastReviewedAt,
+    medicalRegistrationUrl: doctor.medicalRegistrationUrl,
+    qualifications: doctor.qualifications,
+    instagramUrl: doctor.instagramUrl,
+    facebookUrl: doctor.facebookUrl,
+    linkedinUrl: doctor.linkedinUrl,
+    languages: doctor.languages,
+    active: doctor.active,
+    updatedAt: doctor.updatedAt,
+    resolvedLocale: doctor.resolvedLocale,
+    ...editorialSignals(doctor.editorialChecklist),
+  };
+}
+
 type PublicSpecialtyRow = {
   id: string;
   slug: string;
@@ -438,18 +577,14 @@ export async function listDoctors(locale?: LocaleCode) {
       where: { active: true },
       orderBy: [{ country: { name: "asc" } }, { fullName: "asc" }],
       take: PUBLIC_DOCTORS_LIST_CAP,
-      include: {
-        country: true,
-        specialties: {
-          include: {
-            specialty: {
-              include: { translations: { select: publicSpecialtyTranslationSelect } },
-            },
-          },
-        },
+      select: {
+        ...publicDoctorScalars,
+        country: { select: publicCountrySelect },
+        specialties: { select: publicDoctorSpecialtySelect },
         assets: {
           where: { isActive: true, kind: AssetKind.IMAGE },
           orderBy: [{ updatedAt: "desc" }, { id: "desc" }],
+          select: publicDoctorAssetSelect,
         },
         translations: { select: doctorTranslationSelect },
       },
@@ -459,14 +594,16 @@ export async function listDoctors(locale?: LocaleCode) {
     const mapped = rows.map((d) => {
       const requestedLocale = locale ?? d.country.defaultLocale;
       const merged = mergeDoctorTranslation(d, requestedLocale, d.country.defaultLocale);
-      return stripPrivateContact({
-        ...merged,
+      return {
+        ...toPublicDoctor(merged),
+        country: d.country,
+        assets: d.assets,
         specialties: mergeDoctorSpecialties(
           d.specialties,
           requestedLocale,
           d.country.defaultLocale,
         ),
-      });
+      };
     });
     const summaries = await mapBounded(
       rows,
@@ -519,15 +656,10 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
       },
       orderBy: [{ fullName: "asc" }],
       take: PUBLIC_DOCTORS_LIST_CAP,
-      include: {
-        country: { select: { id: true, code: true, slug: true, name: true, defaultLocale: true, teamPath: true } },
-        specialties: {
-          include: {
-            specialty: {
-              include: { translations: { select: publicSpecialtyTranslationSelect } },
-            },
-          },
-        },
+      select: {
+        ...publicDoctorScalars,
+        country: { select: publicCountrySelect },
+        specialties: { select: publicDoctorSpecialtySelect },
         translations: { select: doctorTranslationSelect },
         faqs: {
           where: { isActive: true },
@@ -540,19 +672,7 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
           // admin image flows both update the canonical profile asset, so
           // updatedAt DESC makes the latest confirmed profile image win.
           orderBy: [{ updatedAt: "desc" }, { id: "desc" }],
-          select: {
-            id: true,
-            kind: true,
-            key: true,
-            path: true,
-            altText: true,
-            title: true,
-            caption: true,
-            description: true,
-            focalX: true,
-            focalY: true,
-            zoom: true,
-          },
+          select: publicDoctorAssetSelect,
         },
         // Per-market registration row. The single DoctorCountry record
         // for the country being viewed replaces the legacy
@@ -617,15 +737,25 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
         marketDefaultLocale,
       );
       return {
-        ...stripPrivateContact(
-          overrideImcRegistrationFromCountry({
-            ...marketMerged,
-            specialties: mergeDoctorSpecialties(
-              d.specialties,
-              requestedLocale,
-              marketDefaultLocale,
-            ),
-          }, countryCode, requestedLocale, marketDefaultLocale),
+        ...toPublicDoctor(marketMerged),
+        ...resolveMarketRegistration(
+          marketMerged,
+          d.additionalCountries,
+          d.credentials,
+          countryCode,
+          requestedLocale,
+          marketDefaultLocale,
+        ),
+        country: d.country,
+        assets: d.assets,
+        additionalCountries: d.additionalCountries,
+        assignedServices: d.assignedServices,
+        seoKeywords: marketMerged.seoKeywords,
+        resolvedMarketLocale: marketMerged.resolvedMarketLocale,
+        specialties: mergeDoctorSpecialties(
+          d.specialties,
+          requestedLocale,
+          marketDefaultLocale,
         ),
         faqs: resolveDoctorFaqs(d.faqs, requestedLocale, marketDefaultLocale),
         isFeatured: d.id === featuredId,
@@ -652,35 +782,14 @@ type DoctorCredentialRow = {
   countryCode: string | null;
 };
 
-/**
- * Strip clinic-private contact details from a PUBLIC doctor payload. A
- * doctor's phone (WhatsApp) number is for clinic↔clinician contact only and
- * must never appear on public pages or in the public API. (The doctor's email
- * lives on the linked User record, which these public reads never select — so
- * email is already admin/clinic-only.)
+/*
+ * `stripPrivateContact` is gone (PR-1). The clinic-private WhatsApp number
+ * and the three internal booking-pause columns it used to delete are simply
+ * not in `publicDoctorScalars` and not named by `toPublicDoctor`, so no
+ * public reader can fetch or return them in the first place. (The doctor's
+ * email lives on the linked User record, which these reads never touch.)
+ * The public surface still sees the pause through `bookability`.
  */
-function stripPrivateContact<
-  T extends {
-    whatsappNumber?: string | null;
-    bookingPausedFrom?: Date | null;
-    bookingPausedUntil?: Date | null;
-    bookingPauseReason?: string | null;
-  },
->(
-  doctor: T,
-): Omit<
-  T,
-  "whatsappNumber" | "bookingPausedFrom" | "bookingPausedUntil" | "bookingPauseReason"
-> {
-  const {
-    whatsappNumber: _whatsappNumber,
-    bookingPausedFrom: _bookingPausedFrom,
-    bookingPausedUntil: _bookingPausedUntil,
-    bookingPauseReason: _bookingPauseReason,
-    ...rest
-  } = doctor;
-  return rest;
-}
 
 /**
  * Phase 2 shim: the legacy `Doctor.imcRegistration` column is gone.
@@ -692,35 +801,38 @@ function stripPrivateContact<
  * Trust-authority extension: also surfaces the chamber (IMC/OM/…), the
  * register division (IMC General/Specialist), the verified flag, and the
  * doctor's confirmed extra credentials filtered to this country (or global).
+ *
+ * PR-1: returns ONLY the fields it computes. It used to spread the whole
+ * doctor through, which is how a Prisma row reached the response; callers
+ * now merge these named keys onto `toPublicDoctor(...)` themselves.
  */
-function overrideImcRegistrationFromCountry<
-  T extends {
-    additionalCountries?: Array<{
-      chamberEntity: string | null;
-      registrationNumber: string | null;
-      registrationUrl?: string | null;
-      division?: string | null;
-      divisionTranslations?: DoctorCountryDivisionTranslationRow[];
-      isVerified: boolean;
-    }>;
-    credentials?: DoctorCredentialRow[];
-    medicalRegistrationUrl?: string | null;
-  },
->(
-  doctor: T,
+type DoctorMarketLink = {
+  chamberEntity: string | null;
+  registrationNumber: string | null;
+  registrationUrl?: string | null;
+  division?: string | null;
+  divisionTranslations?: DoctorCountryDivisionTranslationRow[];
+  isVerified: boolean;
+};
+
+function resolveMarketRegistration(
+  doctor: { medicalRegistrationUrl: string | null },
+  additionalCountries: readonly DoctorMarketLink[],
+  doctorCredentials: readonly DoctorCredentialRow[],
   countryCode: string,
   requestedLocale: LocaleCode,
   defaultLocale: LocaleCode,
-): T & {
+): {
+  medicalRegistrationUrl: string | null;
   imcRegistration: string | null;
   registrationChamber: string | null;
   registrationDivision: string | null;
   registrationVerified: boolean;
   credentials: DoctorCredentialRow[];
 } {
-  const link = doctor.additionalCountries?.[0];
+  const link = additionalCountries[0];
   const code = countryCode.toUpperCase();
-  const credentials = (doctor.credentials ?? []).filter(
+  const credentials = doctorCredentials.filter(
     (c) => !c.countryCode || c.countryCode.toUpperCase() === code,
   );
   const { tr: divisionTr } = resolveTranslation(
@@ -729,7 +841,6 @@ function overrideImcRegistrationFromCountry<
     defaultLocale,
   );
   return {
-    ...doctor,
     // Per-country verify link wins over the legacy doctor-level URL so a
     // multi-country doctor links to the right chamber on each market's page.
     medicalRegistrationUrl: link?.registrationUrl ?? doctor.medicalRegistrationUrl ?? null,
@@ -770,15 +881,10 @@ export async function getDoctorByCountryAndSlug(
           },
         ],
       },
-      include: {
-        country: { select: { id: true, code: true, slug: true, name: true, defaultLocale: true, teamPath: true } },
-        specialties: {
-          include: {
-            specialty: {
-              include: { translations: { select: publicSpecialtyTranslationSelect } },
-            },
-          },
-        },
+      select: {
+        ...publicDoctorScalars,
+        country: { select: publicCountrySelect },
+        specialties: { select: publicDoctorSpecialtySelect },
         translations: { select: doctorTranslationSelect },
         faqs: {
           where: { isActive: true },
@@ -790,22 +896,10 @@ export async function getDoctorByCountryAndSlug(
           // Match the listing endpoint's newest-first asset ordering so
           // the same doctor renders the same portrait on list and detail.
           orderBy: [{ updatedAt: "desc" }, { id: "desc" }],
-          select: {
-            id: true,
-            kind: true,
-            key: true,
-            path: true,
-            altText: true,
-            title: true,
-            caption: true,
-            description: true,
-            focalX: true,
-            focalY: true,
-            zoom: true,
-          },
+          select: publicDoctorAssetSelect,
         },
-        // Per-market registration row for this country (see Phase 2
-        // note on overrideImcRegistrationFromCountry below).
+        // Per-market registration row for this country (see the Phase 2
+        // note on resolveMarketRegistration below).
         additionalCountries: {
           where: { country: { code: countryCode } },
           select: {
@@ -843,7 +937,8 @@ export async function getDoctorByCountryAndSlug(
             },
           },
           orderBy: { sortOrder: "asc" },
-          include: {
+          select: {
+            serviceId: true,
             service: {
               select: {
                 id: true,
@@ -877,16 +972,26 @@ export async function getDoctorByCountryAndSlug(
       serviceIds: doctor.assignedServices.map((assignment) => assignment.serviceId),
     });
     return {
-        ...stripPrivateContact(
-          overrideImcRegistrationFromCountry({
-            ...marketMerged,
-            specialties: mergeDoctorSpecialties(
-              doctor.specialties,
-              requestedLocale,
-              marketDefaultLocale,
-            ),
-          }, countryCode, requestedLocale, marketDefaultLocale),
-        ),
+      ...toPublicDoctor(marketMerged),
+      ...resolveMarketRegistration(
+        marketMerged,
+        doctor.additionalCountries,
+        doctor.credentials,
+        countryCode,
+        requestedLocale,
+        marketDefaultLocale,
+      ),
+      country: doctor.country,
+      assets: doctor.assets,
+      additionalCountries: doctor.additionalCountries,
+      assignedServices: doctor.assignedServices,
+      seoKeywords: marketMerged.seoKeywords,
+      resolvedMarketLocale: marketMerged.resolvedMarketLocale,
+      specialties: mergeDoctorSpecialties(
+        doctor.specialties,
+        requestedLocale,
+        marketDefaultLocale,
+      ),
       faqs: resolveDoctorFaqs(doctor.faqs, requestedLocale, marketDefaultLocale),
       ...bookabilityPayload,
     };

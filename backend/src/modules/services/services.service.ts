@@ -45,23 +45,85 @@ async function mapBookabilityBounded<T, R>(
   return results;
 }
 
-function stripOperationalBookingPause<
-  T extends {
-    bookingPausedFrom?: Date | null;
-    bookingPausedUntil?: Date | null;
-    bookingPauseReason?: string | null;
-  },
->(
-  service: T,
-): Omit<T, "bookingPausedFrom" | "bookingPausedUntil" | "bookingPauseReason"> {
-  const {
-    bookingPausedFrom: _bookingPausedFrom,
-    bookingPausedUntil: _bookingPausedUntil,
-    bookingPauseReason: _bookingPauseReason,
-    ...publicService
-  } = service;
-  return publicService;
-}
+/* ------------------------------------------------------------------ *
+ * PR-1 — public projection allow-lists.
+ *
+ * The public catalogue readers used to `include:` the model root, so every
+ * scalar column shipped and `stripOperationalBookingPause` blacklisted three
+ * of them afterwards. That published the legacy migration path, the internal
+ * `editorialChecklist`, and the internal per-country routing/booking config
+ * blobs. The `select` constants below decide what leaves the database, so a
+ * column added to the Prisma model later cannot appear in public JSON until
+ * it is added here on purpose. The three booking-pause columns are simply
+ * absent — the public surface sees the pause through `bookability`.
+ *
+ * Deliberately ONE layer here, unlike doctors. `doctors.service.ts` carries a
+ * second `toPublicDoctor` projection only because one selected column
+ * (`editorialChecklist`) has to be transformed into two booleans rather than
+ * returned; nothing in the catalogue needs transforming, so the `select` is
+ * the whole boundary. Do not assume `toPublicDoctor`-style protection exists
+ * in this file — widen these consts and the field ships.
+ * ------------------------------------------------------------------ */
+
+/** Country fields a public payload may carry. */
+const publicCountrySelect = {
+  id: true,
+  code: true,
+  slug: true,
+  name: true,
+  defaultLocale: true,
+  teamPath: true,
+} satisfies Prisma.CountrySelect;
+
+/** Catalogue image fields. `usageNote` is an internal admin note. */
+const publicCatalogueAssetSelect = {
+  id: true,
+  kind: true,
+  key: true,
+  path: true,
+  altText: true,
+} satisfies Prisma.AssetSelect;
+
+/** Service columns a public reader may return. */
+const publicServiceScalars = {
+  id: true,
+  kind: true,
+  slug: true,
+  name: true,
+  summary: true,
+  seoTitle: true,
+  seoDescription: true,
+  seoKeywords: true,
+  heroTitle: true,
+  heroDescription: true,
+  detailBody: true,
+  ctaLabel: true,
+  sortOrder: true,
+  durationMinutes: true,
+  basePriceCents: true,
+  currencyCode: true,
+  shippingCents: true,
+  isActive: true,
+  visibility: true,
+  galleryImagePaths: true,
+  lastReviewedAt: true,
+  authorDisplayName: true,
+  reviewerDisplayName: true,
+  authorDoctorId: true,
+  reviewerDoctorId: true,
+  updatedAt: true,
+} satisfies Prisma.ServiceSelect;
+
+/** Specialty columns a public reader may return. */
+const publicSpecialtyScalars = {
+  id: true,
+  slug: true,
+  name: true,
+  cardSummary: true,
+  cardThemeColor: true,
+  sortOrder: true,
+  active: true,
+} satisfies Prisma.SpecialtySelect;
 
 /** One insurance option surfaced to the public service payload / booking form. */
 export type InsuranceOption = {
@@ -450,19 +512,20 @@ export async function listServices(locale?: LocaleCode) {
     const rows = await prisma.service.findMany({
       where: { isActive: true, visibility: "PUBLIC" },
       orderBy: [{ country: { name: "asc" } }, { kind: "asc" }, { sortOrder: "asc" }, { name: "asc" }],
-      include: {
-        country: true,
+      select: {
+        ...publicServiceScalars,
+        country: { select: publicCountrySelect },
         assets: {
           where: { isActive: true, kind: "IMAGE" },
           orderBy: { createdAt: "asc" },
-          select: { id: true, kind: true, key: true, path: true, altText: true, usageNote: true },
+          select: publicCatalogueAssetSelect,
         },
         translations: { select: serviceTranslationSelect },
       },
     });
-    const mapped = rows.map((row) => stripOperationalBookingPause(
-        mergeServiceTranslation(row, locale ?? row.country.defaultLocale, row.country.defaultLocale),
-    ));
+    const mapped = rows.map((row) =>
+      mergeServiceTranslation(row, locale ?? row.country.defaultLocale, row.country.defaultLocale),
+    );
     const summaries = await mapBookabilityBounded(
       rows,
       (service) =>
@@ -494,14 +557,13 @@ export async function listServicesByCountry(
         ...(kind ? { kind } : {}),
       },
       orderBy: [{ kind: "asc" }, { sortOrder: "asc" }, { name: "asc" }],
-      include: {
-        country: {
-          select: { id: true, code: true, slug: true, name: true, defaultLocale: true },
-        },
+      select: {
+        ...publicServiceScalars,
+        country: { select: publicCountrySelect },
         assets: {
           where: { isActive: true, kind: "IMAGE" },
           orderBy: { createdAt: "asc" },
-          select: { id: true, kind: true, key: true, path: true, altText: true, usageNote: true },
+          select: publicCatalogueAssetSelect,
         },
         // Doctor assignments — only the join rows whose doctor is
         // currently active. The public consult flow uses this to
@@ -566,11 +628,11 @@ export async function listServicesByCountry(
         insuranceDoctorPayouts: _insuranceDoctorPayouts,
         ...mergedRest
       } = merged;
-      return stripOperationalBookingPause({
+      return {
         ...mergedRest,
         insuranceOptions,
         insuranceSeoLine: buildInsuranceSeoLine(insuranceOptions.map((o) => o.name)),
-      });
+      };
     });
     const summaries = await mapBookabilityBounded(
       rows,
@@ -590,10 +652,9 @@ export async function listSpecialtiesByCountry(countryCode: string, locale?: Loc
     const rows = await prisma.specialty.findMany({
       where: { active: true, country: { code: countryCode, isActive: true } },
       orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
-      include: {
-        country: {
-          select: { id: true, code: true, slug: true, name: true, defaultLocale: true },
-        },
+      select: {
+        ...publicSpecialtyScalars,
+        country: { select: publicCountrySelect },
         translations: { select: specialtyTranslationSelect },
       },
     });
@@ -614,12 +675,13 @@ export async function listSpecialties(locale?: LocaleCode) {
     const items = await prisma.specialty.findMany({
       where: { active: true },
       orderBy: [{ country: { name: "asc" } }, { sortOrder: "asc" }, { name: "asc" }],
-      include: {
-        country: true,
+      select: {
+        ...publicSpecialtyScalars,
+        country: { select: publicCountrySelect },
         assets: {
           where: { isActive: true, kind: "IMAGE" },
           orderBy: { createdAt: "asc" },
-          select: { id: true, kind: true, key: true, path: true, altText: true, usageNote: true },
+          select: publicCatalogueAssetSelect,
         },
         translations: { select: specialtyTranslationSelect },
       },
@@ -1203,14 +1265,13 @@ export async function getPublicServiceBySlug(
         visibility: "PUBLIC",
         ...(countryCode ? { country: { code: countryCode, isActive: true } } : {}),
       },
-      include: {
-        country: {
-          select: { id: true, code: true, slug: true, name: true, defaultLocale: true },
-        },
+      select: {
+        ...publicServiceScalars,
+        country: { select: publicCountrySelect },
         assets: {
           where: { isActive: true, kind: "IMAGE" },
           orderBy: { createdAt: "asc" },
-          select: { id: true, kind: true, key: true, path: true, altText: true, usageNote: true },
+          select: publicCatalogueAssetSelect,
         },
         faqs: {
           where: { isVisible: true },
@@ -1306,7 +1367,7 @@ export async function getPublicServiceBySlug(
       assignedDoctors: _assignedDoctors,
       ...mergedRest
     } = merged;
-    return stripOperationalBookingPause({
+    return {
       ...mergedRest,
       faqs,
       links,
@@ -1317,7 +1378,7 @@ export async function getPublicServiceBySlug(
       insuranceOptions,
       insuranceSeoLine: buildInsuranceSeoLine(insuranceOptions.map((o) => o.name)),
       bookability,
-    });
+    };
   } catch (error) {
     throw normalizeDbError(error, "Service data is unavailable");
   }

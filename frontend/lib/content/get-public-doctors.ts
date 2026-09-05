@@ -63,6 +63,20 @@ export type PublicDoctorRecord = {
   profileImageFocalX: number;
   profileImageFocalY: number;
   profileImageZoom: number;
+  /**
+   * PR-1: the public API sends two derived booleans instead of the raw
+   * admin-authored editorial checklist. `readyToIndex` gates the profile's
+   * robots tag and its sitemap entry; `nonPhysician` waives the
+   * medical-council rule and switches the JSON-LD node to Person.
+   */
+  readyToIndex: boolean;
+  nonPhysician: boolean;
+  /**
+   * Legacy shape, kept only so a frontend deployed ahead of the backend does
+   * not mass-noindex the roster on the version skew — the same tolerance
+   * `translatedFields: null` already gets. Remove once the backend that sends
+   * the booleans above is live everywhere.
+   */
   editorialChecklist?: Record<string, unknown>;
   /** ISO timestamp string, when the backend row includes one (Prisma @updatedAt). */
   updatedAt?: string;
@@ -225,6 +239,16 @@ export function normalizePublicDoctorRecord(row: unknown): PublicDoctorRecord | 
     r.editorialChecklist && typeof r.editorialChecklist === "object"
       ? (r.editorialChecklist as Record<string, unknown>)
       : undefined;
+  // Prefer the derived booleans; fall back to the legacy blob so a backend
+  // that predates PR-1 keeps the roster indexable (see the type above).
+  const readyToIndex =
+    typeof r.readyToIndex === "boolean"
+      ? r.readyToIndex
+      : editorialChecklist?.readyToIndex === true;
+  const nonPhysician =
+    typeof r.nonPhysician === "boolean"
+      ? r.nonPhysician
+      : editorialChecklist?.nonPhysician === true;
   const updatedAt = typeof r.updatedAt === "string" ? r.updatedAt : undefined;
   const lastReviewedAt = typeof r.lastReviewedAt === "string" ? r.lastReviewedAt : undefined;
 
@@ -257,6 +281,8 @@ export function normalizePublicDoctorRecord(row: unknown): PublicDoctorRecord | 
     profileImageFocalX: profileImage?.focalX ?? 50,
     profileImageFocalY: profileImage?.focalY ?? 50,
     profileImageZoom: profileImage?.zoom ?? 1,
+    readyToIndex,
+    nonPhysician,
     ...(editorialChecklist ? { editorialChecklist } : {}),
     ...(updatedAt ? { updatedAt } : {}),
     ...(lastReviewedAt ? { lastReviewedAt } : {}),

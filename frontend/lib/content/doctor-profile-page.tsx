@@ -359,7 +359,9 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
             imageAltText: data.profile.imageAltText,
             imageCaption: data.profile.imageCaption ?? data.profile.imageDescription,
             bio: data.profile.bio,
-            nonPhysician: data.profile.editorialChecklist?.nonPhysician === true,
+            nonPhysician:
+              data.profile.nonPhysician ??
+              data.profile.editorialChecklist?.nonPhysician === true,
           }),
           breadcrumbJsonLd([
             { name: c.navigation.home, url: "/" },

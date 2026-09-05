@@ -628,9 +628,13 @@ export const getCountryDoctors = cache(async (
       bookability: normalizeBookabilitySummary(r.bookability),
       bookabilityByServiceId: normalizeBookabilityByServiceId(r.bookabilityByServiceId),
       isFeatured: r.isFeatured === true,
-      ...(r.editorialChecklist &&
-      typeof r.editorialChecklist === "object" &&
-      (r.editorialChecklist as Record<string, unknown>).nonPhysician === true
+      // PR-1: derived boolean first; the raw checklist is only a fallback for
+      // a frontend deployed ahead of the backend.
+      ...(r.nonPhysician === true ||
+      (typeof r.nonPhysician !== "boolean" &&
+        r.editorialChecklist &&
+        typeof r.editorialChecklist === "object" &&
+        (r.editorialChecklist as Record<string, unknown>).nonPhysician === true)
         ? { nonPhysician: true }
         : {}),
       ...(imcRegistration ? { imcRegistration } : {}),

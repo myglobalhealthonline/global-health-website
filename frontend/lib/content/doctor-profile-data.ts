@@ -35,6 +35,10 @@ export type DoctorProfilePageData = {
     seoDescription?: string;
     seoKeywords?: string[];
     faqs?: Array<{ id: string; question: string; answer: string; category?: string | null }>;
+    /** PR-1 derived editorial signals — see `PublicDoctorRecord`. */
+    readyToIndex?: boolean;
+    nonPhysician?: boolean;
+    /** Legacy blob, kept only as the version-skew fallback. */
     editorialChecklist?: Record<string, unknown>;
     /** Admin-set clinical review date (E-E-A-T "Last reviewed" byline).
      *  Absent until an admin sets it — never auto-populated. */
@@ -382,6 +386,8 @@ export const resolveDoctorProfilePageData = cache(async function resolveDoctorPr
             ),
           }
         : {}),
+      readyToIndex: backend.readyToIndex,
+      nonPhysician: backend.nonPhysician,
       ...(backend.editorialChecklist ? { editorialChecklist: backend.editorialChecklist } : {}),
       ...(backend.lastReviewedAt ? { lastReviewedAt: backend.lastReviewedAt } : {}),
       imageAltText: backend.profileImageAltText ?? displayName,
