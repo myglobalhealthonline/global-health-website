@@ -1,4 +1,5 @@
 import { AdminCard } from "@/components/portal-atoms";
+import { PendingSubmitButton } from "@/components/admin/pending-submit";
 import { utcInstantToZonedInput } from "@/lib/booking-pause-time";
 import { timeZoneLabel } from "@/lib/timezones";
 
@@ -60,15 +61,27 @@ export function BookingPauseCard({
             <option value="OTHER">Other operational reason</option>
           </select>
         </label>
-        <button type="submit" className="gh-btn gh-btn-primary justify-center">
+        {/* Pausing bookings is a real state change on a live service, and the
+            action redirects back to this same route — so a second click while
+            the first is in flight re-posts the same window. Each of this
+            card's two forms carries its own `PendingSubmitButton`, so
+            `useFormStatus` scopes the lock to the form it sits in and the
+            Clear button below stays live while this one saves. */}
+        <PendingSubmitButton
+          className="gh-btn gh-btn-primary justify-center"
+          busyLabel="Saving…"
+        >
           {active ? "Update pause" : "Pause bookings"}
-        </button>
+        </PendingSubmitButton>
       </form>
       {active ? (
         <form action={clearAction} className="mt-2">
-          <button type="submit" className="gh-btn gh-btn-ghost w-full justify-center">
+          <PendingSubmitButton
+            className="gh-btn gh-btn-ghost w-full justify-center"
+            busyLabel="Clearing…"
+          >
             Clear pause
-          </button>
+          </PendingSubmitButton>
         </form>
       ) : null}
     </AdminCard>

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import type { AdminDoctorMarketDto } from "@/lib/admin/admin-api";
 import { PortalTabs } from "@/components/PortalTabs";
+import { PendingSubmitButton } from "@/components/admin/pending-submit";
 
 const RichTextHtmlField = dynamic(
   () =>
@@ -257,9 +258,13 @@ function CountryForm({
       </div>
 
       <div className="gh-admin-doctor-form-actions mt-4 flex justify-end">
-        <button type="submit" className="gh-btn gh-btn-primary">
+        {/* One of these renders per country tab, alongside the main
+            `doctor-edit-form` on the same page. Each is its own `<form>`, so
+            `useFormStatus` locks only the country being saved and leaves the
+            profile form and the other countries interactive. */}
+        <PendingSubmitButton busyLabel="Saving…">
           Save {market.country.name}
-        </button>
+        </PendingSubmitButton>
       </div>
     </form>
   );

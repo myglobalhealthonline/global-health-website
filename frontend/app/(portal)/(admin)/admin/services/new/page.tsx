@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache";
 import { ArrowLeft } from "lucide-react";
 import { ServiceFields } from "../_components/service-fields";
+import { PendingSubmitButton } from "@/components/admin/pending-submit";
+import { UnsavedFormTracker } from "@/components/admin/unsaved-form-tracker";
 import {
   parseServiceBodyFromForm,
   resolveCountryLocaleTabs,
@@ -267,6 +269,7 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
 
       <AdminCard>
         <form action={createServiceAction} className="gh-admin-service-form">
+          <UnsavedFormTracker />
           <ServiceFields
             countries={countries}
             kind={kind}
@@ -282,9 +285,9 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
             >
               Cancel
             </Link>
-            <button type="submit" className="gh-btn gh-btn-primary">
+            <PendingSubmitButton busyLabel="Creating…">
               Create {meta.singularLabel.toLowerCase()}
-            </button>
+            </PendingSubmitButton>
           </div>
         </form>
       </AdminCard>

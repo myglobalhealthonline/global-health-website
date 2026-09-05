@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache";
 import { ArrowLeft } from "lucide-react";
 import { ServiceFields } from "../../_components/service-fields";
+import { PendingSubmitButton } from "@/components/admin/pending-submit";
+import { UnsavedFormTracker } from "@/components/admin/unsaved-form-tracker";
 import {
   parseServiceBodyFromForm,
   resolveCountryLocaleTabs,
@@ -551,13 +553,13 @@ export default async function AdminEditServicePage({
               maxLength={8}
               className="gh-input h-9 w-20 min-w-0 uppercase"
             />
-            <button
-              type="submit"
+            <PendingSubmitButton
               className="gh-btn gh-btn-primary"
               style={{ minHeight: 36 }}
+              busyLabel="Saving…"
             >
               Save
-            </button>
+            </PendingSubmitButton>
           </form>
         </div>
         <div>
@@ -587,6 +589,7 @@ export default async function AdminEditServicePage({
         >
           <div className="gh-form-section__span-2">
           <form action={updateServiceAction} className="gh-admin-service-form">
+            <UnsavedFormTracker />
             <ServiceFields
               countries={countries}
               kind={kind}
@@ -603,9 +606,9 @@ export default async function AdminEditServicePage({
               >
                 Cancel
               </Link>
-              <button type="submit" className="gh-btn gh-btn-primary">
+              <PendingSubmitButton busyLabel="Saving…">
                 Save changes
-              </button>
+              </PendingSubmitButton>
             </div>
           </form>
           </div>

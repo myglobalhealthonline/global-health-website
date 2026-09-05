@@ -5,6 +5,11 @@ import { revalidateTag } from "next/cache";
 import { ArrowLeft } from "lucide-react";
 import { FlagBadge } from "../../../_components/flag-badge";
 import { DoctorFields } from "../../_components/doctor-fields";
+import {
+  ExternalSubmitButton,
+  PendingSubmitButton,
+} from "@/components/admin/pending-submit";
+import { UnsavedFormTracker } from "@/components/admin/unsaved-form-tracker";
 import { DoctorProfileImageField } from "../../_components/doctor-profile-image-field";
 import { DoctorCountryProfileEditor } from "../../_components/doctor-country-profile-editor";
 import { parseDoctorBodyFromForm } from "@/lib/admin/doctor-form-parse";
@@ -402,6 +407,7 @@ export default async function AdminEditDoctorPage({
             action={updateDoctorAction}
             className="gh-admin-doctor-form flex flex-col gap-8"
           >
+            <UnsavedFormTracker />
             <DoctorFields
               countries={countries}
               specialties={specialtiesResult.data.specialties}
@@ -418,9 +424,12 @@ export default async function AdminEditDoctorPage({
               >
                 Cancel
               </Link>
-              <button type="submit" className="gh-btn gh-btn-primary">
+              {/* `formId` publishes this button's pending state for the
+                  sidebar's second "Save changes", which submits the same form
+                  from outside it and so has no `useFormStatus` of its own. */}
+              <PendingSubmitButton formId="doctor-edit-form" busyLabel="Saving…">
                 Save changes
-              </button>
+              </PendingSubmitButton>
             </div>
           </form>
           </AdminCard>
@@ -535,13 +544,13 @@ export default async function AdminEditDoctorPage({
                 `doctor-edit-form` (via the checkboxes' `form` attribute
                 above) — this button just makes that save reachable without
                 scrolling back to the Profile card. */}
-            <button
-              type="submit"
-              form="doctor-edit-form"
+            <ExternalSubmitButton
+              formId="doctor-edit-form"
               className="gh-btn gh-btn-primary mt-4 w-full"
+              busyLabel="Saving…"
             >
               Save changes
-            </button>
+            </ExternalSubmitButton>
           </AdminCard>
 
           <AdminCard>

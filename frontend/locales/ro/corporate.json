@@ -16,7 +16,8 @@
     "cancel": "Anulare",
     "save": "Salvare",
     "yes": "✓",
-    "no": "—"
+    "no": "—",
+    "loadingAriaLabel": "Se încarcă portalul corporativ"
   },
   "dashboard": {
     "eyebrow": "Corporativ",

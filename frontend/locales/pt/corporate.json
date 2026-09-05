@@ -16,7 +16,8 @@
     "cancel": "Cancelar",
     "save": "Guardar",
     "yes": "✓",
-    "no": "—"
+    "no": "—",
+    "loadingAriaLabel": "A carregar o portal empresarial"
   },
   "dashboard": {
     "eyebrow": "Corporativo",

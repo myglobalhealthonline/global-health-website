@@ -16,7 +16,8 @@
     "cancel": "Cancel",
     "save": "Save",
     "yes": "✓",
-    "no": "—"
+    "no": "—",
+    "loadingAriaLabel": "Loading corporate portal"
   },
   "dashboard": {
     "eyebrow": "Corporate",

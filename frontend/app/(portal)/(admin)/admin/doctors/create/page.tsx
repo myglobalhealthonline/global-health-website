@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache";
 import { ArrowLeft } from "lucide-react";
 import { DoctorFields } from "../_components/doctor-fields";
+import { PendingSubmitButton } from "@/components/admin/pending-submit";
+import { UnsavedFormTracker } from "@/components/admin/unsaved-form-tracker";
 import { DoctorProfileImageField } from "../_components/doctor-profile-image-field";
 import { parseDoctorBodyFromForm } from "@/lib/admin/doctor-form-parse";
 import { resolveCountryLocaleTabs } from "@/lib/admin/service-form-parse";
@@ -242,6 +244,7 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
 
       <AdminCard className="gh-admin-doctor-form-card">
         <form action={createDoctorAction} className="gh-admin-doctor-form flex flex-col gap-8">
+          <UnsavedFormTracker />
           <DoctorFields
             countries={countries}
             specialties={specialtiesResult.data.specialties}
@@ -260,9 +263,9 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
             >
               Cancel
             </Link>
-            <button type="submit" className="gh-btn gh-btn-primary">
+            <PendingSubmitButton busyLabel="Creating…">
               Create profile
-            </button>
+            </PendingSubmitButton>
           </div>
         </form>
       </AdminCard>

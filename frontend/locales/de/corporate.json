@@ -16,7 +16,8 @@
     "cancel": "Abbrechen",
     "save": "Speichern",
     "yes": "✓",
-    "no": "—"
+    "no": "—",
+    "loadingAriaLabel": "Firmenportal wird geladen"
   },
   "dashboard": {
     "eyebrow": "Unternehmen",

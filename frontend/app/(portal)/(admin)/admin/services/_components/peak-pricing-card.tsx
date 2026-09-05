@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { AdminCard } from "../../_components/atoms";
+import { PendingSubmitButton } from "@/components/admin/pending-submit";
 import type { AdminPeakPricingDto } from "@/lib/admin/admin-api";
 
 /** Minute-of-day (0..1440) → "HH:MM" for a native <input type="time">. */
@@ -231,9 +232,12 @@ export function PeakPricingCard({
         </div>
 
         <div>
-          <button type="submit" className="gh-btn gh-btn-primary">
+          {/* Prices on a live service — a double submit upserts the same
+              config twice and the second write races the redirect that
+              carries the success message. */}
+          <PendingSubmitButton busyLabel="Saving…">
             Save peak pricing
-          </button>
+          </PendingSubmitButton>
         </div>
       </form>
     </AdminCard>

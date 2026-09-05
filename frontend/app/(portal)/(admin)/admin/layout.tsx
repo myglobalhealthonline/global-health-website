@@ -19,6 +19,7 @@ import {
 } from "@/lib/admin/admin-api";
 import { AdminShell, type NavBadge } from "./_components/admin-shell";
 import { PortalDomGuards } from "@/app/_components/RootDocument";
+import { UnsavedChangesGuard } from "@/components/UnsavedChangesGuard";
 import {
   profileChangeFieldLabel,
   serviceKindLabel,
@@ -278,6 +279,11 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     >
       <PortalDomGuards />
       {children}
+      {/* Same mount point as the account and doctor layouts. Inert until a
+          form registers as dirty through `useUnsavedChanges`, so it costs the
+          rest of the admin surface nothing. Default English copy, like the
+          rest of the admin portal — this layout loads no locale bundle. */}
+      <UnsavedChangesGuard />
     </AdminShell>
   );
 }

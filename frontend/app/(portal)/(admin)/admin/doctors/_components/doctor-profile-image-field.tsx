@@ -5,6 +5,7 @@ import { Trash2, Upload, Crop } from "lucide-react";
 import { PortalDialog } from "@/components/PortalDialog";
 import { FocalPointEditor, type FocalValue } from "@/components/media/focal-point-editor";
 import { focalStyle } from "@/components/media/doctor-photo";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
 type Props = {
   initialPath?: string;
@@ -108,6 +109,23 @@ export function DoctorProfileImageField({
     zoom: initialZoom ?? 1,
   });
   const [editorOpen, setEditorOpen] = useState(false);
+
+  // The photo, crop and zoom live in React state and reach the server action
+  // through a CONTROLLED hidden input, which React writes imperatively — no
+  // native `input`/`change` event is ever dispatched, so the editor's
+  // `UnsavedFormTracker` (which listens for exactly those) cannot see a photo
+  // swap or a re-crop. Register here instead, the way the account and doctor
+  // portals' own forms do: a value-vs-initial compare fed to the shared hook.
+  const savedState = JSON.stringify({
+    path: initialPath ?? "",
+    focalX: initialFocalX ?? 50,
+    focalY: initialFocalY ?? 50,
+    zoom: initialZoom ?? 1,
+  });
+  useUnsavedChanges(
+    JSON.stringify({ path, focalX: focal.focalX, focalY: focal.focalY, zoom: focal.zoom }) !==
+      savedState,
+  );
 
   const previewSrc = resolvePreviewSrc(path);
   const hasImage = Boolean(previewSrc);

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import type { AdminServiceLinkDto, AdminServiceLinkType } from "@/lib/admin/admin-api";
 import { PortalTabs } from "@/components/PortalTabs";
+import { PendingSubmitButton } from "@/components/admin/pending-submit";
 
 type SaveAction = (formData: FormData) => void | Promise<void>;
 
@@ -298,9 +299,11 @@ export function ServiceLinksPanel({
         <button type="button" onClick={add} className="gh-btn inline-flex items-center gap-1.5">
           <Plus className="size-3.5" aria-hidden /> Add link
         </button>
-        <button type="submit" className="gh-btn gh-btn-primary">
-          Save links
-        </button>
+        {/* The panel replaces the whole link set from one hidden `payload`,
+            so a duplicate submit re-posts the same JSON and the callouts are
+            rewritten twice. `useFormStatus` reads this form only — the
+            editor's own Save on the same page is unaffected. */}
+        <PendingSubmitButton busyLabel="Saving…">Save links</PendingSubmitButton>
       </div>
     </form>
   );

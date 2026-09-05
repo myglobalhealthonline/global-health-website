@@ -16,7 +16,8 @@
     "cancel": "Zrušit",
     "save": "Uložit",
     "yes": "✓",
-    "no": "—"
+    "no": "—",
+    "loadingAriaLabel": "Načítání firemního portálu"
   },
   "dashboard": {
     "eyebrow": "Firemní",
