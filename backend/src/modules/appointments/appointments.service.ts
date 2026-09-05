@@ -1129,11 +1129,14 @@ export async function rescheduleAppointmentForPatient(
         timeSlotId: newTimeSlotId,
         scheduledAt: claimed.startAt,
         doctorId: claimed.doctorId,
-        // Re-arm both 24h reminders in the SAME commit as the move — the time
-        // always changes here (the same-slot case returned above), and the
-        // claimed slot can belong to a different doctor.
+        // Re-arm both 24h reminders and the no-show check in the SAME commit as
+        // the move — the time always changes here (the same-slot case returned
+        // above), and the claimed slot can belong to a different doctor. No
+        // condition to evaluate, so no re-read: this writer cannot leave the
+        // time where it was.
         reminderSentAt: null,
         doctorReminderSentAt: null,
+        doctorNoShowNotifiedAt: null,
       },
     });
     // Old slot is now detached — delete the collapsed row; base slots are
@@ -1219,6 +1222,11 @@ export async function scheduleAppointment(
       if (diff.timeChanged) {
         data.reminderSentAt = null;
         data.doctorReminderSentAt = null;
+        // The no-show flag records a check made against the start time the
+        // consultation had THEN. Once it starts elsewhere that check says
+        // nothing, and the cron's `doctorNoShowNotifiedAt IS NULL` gate means
+        // nothing ever looks at the row again.
+        data.doctorNoShowNotifiedAt = null;
       }
       if (diff.doctorChanged) {
         // A no-show flag stamped for the OLD doctor otherwise exempts the NEW

@@ -362,9 +362,13 @@ describe("24h reminder re-arm — every scheduledAt/doctor writer", () => {
    * doctor-no-show-check.service.ts). A flag stamped while the OLD doctor held
    * the appointment therefore exempts the NEW doctor from the check for good.
    *
-   * `adminUpdateAppointment` has always cleared it on a doctor change; this is
-   * the same rule on the other admin writer, not a new one. Note what the
-   * sibling deliberately does NOT do: a pure time move leaves the flag alone.
+   * A time move is the same class of defect. The flag records that the doctor
+   * was checked against the start time the consultation had THEN; once it
+   * starts somewhere else, that check says nothing about whether they turned
+   * up, and the cron will never look at the row again. So every writer that
+   * really changes `scheduledAt` clears it, doctor swap or not — and a
+   * submission that changes neither leaves it standing, because re-arming an
+   * unchanged consultation re-nudges a doctor who was already chased.
    */
   const NO_SHOW_WINDOW_START = () => new Date(Date.now() - 30 * 60_000);
   const NO_SHOW_WINDOW_END = () => new Date(Date.now() - 5 * 60_000);
@@ -384,9 +388,12 @@ describe("24h reminder re-arm — every scheduledAt/doctor writer", () => {
       select: { id: true },
     })) !== null;
 
+  /** A start time `minutesAgo` in the past — inside the cron's -30..-5min window. */
+  const inWindow = (minutesAgo: number) => new Date(Date.now() - minutesAgo * 60_000);
+
   const mkNoShowAppointment = async (over: Record<string, unknown> = {}) =>
     mkAppointment({
-      scheduledAt: new Date(Date.now() - 10 * 60_000),
+      scheduledAt: inWindow(10),
       meetingUrl: "https://meet.google.com/abc-defg-hij",
       paymentStatus: "PAID",
       doctorNoShowNotifiedAt: SENT,
@@ -439,20 +446,26 @@ describe("24h reminder re-arm — every scheduledAt/doctor writer", () => {
     assert.equal(row.doctorReminderSentAt?.toISOString(), SENT.toISOString());
   });
 
-  it("3f. scheduleAppointment — a time-only move leaves the no-show flag alone, as the sibling does", async (t) => {
+  it("3f. scheduleAppointment — a time-only move re-arms the no-show check", async (t) => {
     if (!boot(t)) return;
     const id = await mkNoShowAppointment();
+    const moved = inWindow(7);
 
-    await svcAppointments.scheduleAppointment(id, { scheduledAt: T2 });
+    await svcAppointments.scheduleAppointment(id, { scheduledAt: moved });
 
     const row = await markers(id);
-    assert.equal(row.scheduledAt?.toISOString(), T2.toISOString());
+    assert.equal(row.scheduledAt?.toISOString(), moved.toISOString());
     assert.equal(row.reminderSentAt, null);
     assert.equal(row.doctorReminderSentAt, null);
     assert.equal(
-      row.doctorNoShowNotifiedAt?.toISOString(),
-      SENT.toISOString(),
-      "adminUpdateAppointment resets this on doctorChanged only — same rule here, not a new one",
+      row.doctorNoShowNotifiedAt,
+      null,
+      "the flag says the doctor was checked against the OLD start time; the consultation now starts somewhere else and has never been checked",
+    );
+    assert.equal(
+      await isNoShowCandidate(id),
+      true,
+      "the moved consultation is eligible for the no-show check at its new time",
     );
   });
 
@@ -469,6 +482,189 @@ describe("24h reminder re-arm — every scheduledAt/doctor writer", () => {
       row.doctorNoShowNotifiedAt,
       null,
       "the two resets are independent branches — a change that does both must clear both",
+    );
+  });
+
+  // ── No-show re-arm across the other three scheduledAt writers ─────────────
+
+  it("1c. adminUpdateAppointment — a time-only move re-arms the no-show check", async (t) => {
+    if (!boot(t)) return;
+    const id = await mkNoShowAppointment();
+    const moved = inWindow(7);
+    assert.equal(
+      await isNoShowCandidate(id),
+      false,
+      "precondition: the stamp from the check at the OLD time keeps this row out of the cron",
+    );
+
+    await svcAdminUpdate.adminUpdateAppointment({
+      appointmentId: id,
+      scheduledAt: moved,
+      changeReason: "patient asked to move",
+    });
+
+    const row = await markers(id);
+    assert.equal(row.scheduledAt?.toISOString(), moved.toISOString());
+    assert.equal(row.doctorId, doctorAId, "the doctor never changed — the time alone re-arms");
+    assert.equal(row.doctorNoShowNotifiedAt, null);
+    assert.equal(await isNoShowCandidate(id), true);
+  });
+
+  it("1d. adminUpdateAppointment — a combined time AND doctor change clears the flag once", async (t) => {
+    if (!boot(t)) return;
+    const id = await mkNoShowAppointment();
+    const moved = inWindow(7);
+
+    await svcAdminUpdate.adminUpdateAppointment({
+      appointmentId: id,
+      scheduledAt: moved,
+      doctorId: doctorBId,
+      changeReason: "moved and reassigned",
+    });
+
+    const row = await markers(id);
+    assert.equal(row.doctorId, doctorBId);
+    assert.equal(
+      row.doctorNoShowNotifiedAt,
+      null,
+      "two branches both asking for null must not fight — the row ends up re-armed exactly once",
+    );
+    assert.equal(row.reminderSentAt, null);
+    assert.equal(row.doctorReminderSentAt, null);
+    assert.equal(await isNoShowCandidate(id), true);
+  });
+
+  it("1e. adminUpdateAppointment — a doctor-only swap leaves the time, and still re-arms", async (t) => {
+    if (!boot(t)) return;
+    const id = await mkNoShowAppointment();
+    const before = await markers(id);
+
+    await svcAdminUpdate.adminUpdateAppointment({
+      appointmentId: id,
+      doctorId: doctorBId,
+      changeReason: "reassigned",
+    });
+
+    const row = await markers(id);
+    assert.equal(
+      row.scheduledAt?.toISOString(),
+      before.scheduledAt?.toISOString(),
+      "an unchanged time is left exactly as it was",
+    );
+    assert.equal(row.doctorNoShowNotifiedAt, null, "pre-existing rule, unchanged");
+    assert.equal(
+      await isNoShowCandidate(id),
+      true,
+      "the newly assigned doctor's no-show check can now run",
+    );
+    assert.equal(
+      row.reminderSentAt?.toISOString(),
+      SENT.toISOString(),
+      "no time change, so the patient reminder stays delivered",
+    );
+  });
+
+  it("2b. rescheduleAppointmentForPatient re-arms the no-show check with the move", async (t) => {
+    if (!boot(t)) return;
+    // The patient path refuses an appointment whose held time has already
+    // passed (AppointmentAlreadyStartedError), so this one is in the future:
+    // the property under test is the writer's re-arm rule, not cron eligibility.
+    const base = new Date(Date.now() + 60 * 24 * 3600 * 1000);
+    base.setUTCMinutes(0, 0, 0);
+    const mkSlot = async (offsetHours: number, status: "OPEN" | "BOOKED") => {
+      const startAt = new Date(base.getTime() + offsetHours * 3600 * 1000);
+      const slot = await prisma.doctorTimeSlot.create({
+        data: {
+          doctorId: doctorAId,
+          startAt,
+          endAt: new Date(startAt.getTime() + 30 * 60_000),
+          status,
+          isAdHoc: true,
+        },
+      });
+      slotIds.push(slot.id);
+      return slot;
+    };
+    const oldSlot = await mkSlot(0, "BOOKED");
+    const newSlot = await mkSlot(2, "OPEN");
+    const id = await mkAppointment({
+      userId: patientUserId,
+      timeSlotId: oldSlot.id,
+      scheduledAt: oldSlot.startAt,
+      doctorNoShowNotifiedAt: SENT,
+    });
+
+    await svcAppointments.rescheduleAppointmentForPatient(id, patientUserId, newSlot.id);
+
+    const row = await markers(id);
+    assert.equal(row.scheduledAt?.toISOString(), newSlot.startAt.toISOString());
+    assert.equal(
+      row.doctorNoShowNotifiedAt,
+      null,
+      "this writer always moves the time (the same-slot case returns early), so it always re-arms",
+    );
+  });
+
+  it("4b. PATCH /api/doctor/appointments/:id re-arms the no-show check on a move", async (t) => {
+    if (!boot(t)) return;
+    const id = await mkNoShowAppointment();
+    const moved = inWindow(7);
+
+    const res = await app!.inject({
+      method: "PATCH",
+      url: `/api/doctor/appointments/${id}`,
+      cookies: doctorCookie,
+      payload: { scheduledAt: moved.toISOString() },
+    });
+    assert.equal(res.statusCode, 200, res.body);
+
+    const row = await markers(id);
+    assert.equal(row.scheduledAt?.toISOString(), moved.toISOString());
+    assert.equal(row.doctorNoShowNotifiedAt, null);
+    assert.equal(await isNoShowCandidate(id), true);
+  });
+
+  it("4c. PATCH /api/doctor/appointments/:id — an unchanged time leaves the flag standing", async (t) => {
+    if (!boot(t)) return;
+    const id = await mkNoShowAppointment();
+    const before = await markers(id);
+
+    const res = await app!.inject({
+      method: "PATCH",
+      url: `/api/doctor/appointments/${id}`,
+      cookies: doctorCookie,
+      payload: { scheduledAt: before.scheduledAt!.toISOString() },
+    });
+    assert.equal(res.statusCode, 200, res.body);
+
+    const row = await markers(id);
+    assert.equal(
+      row.doctorNoShowNotifiedAt?.toISOString(),
+      SENT.toISOString(),
+      "re-submitting the time the row already has is not a move — clearing here re-nudges a doctor already chased",
+    );
+    assert.equal(row.reminderSentAt?.toISOString(), SENT.toISOString());
+    assert.equal(row.doctorReminderSentAt?.toISOString(), SENT.toISOString());
+  });
+
+  it("5b. a failed move rolls back the no-show re-arm with it", async (t) => {
+    if (!boot(t)) return;
+    const id = await mkNoShowAppointment();
+    const before = await markers(id);
+
+    await assert.rejects(() =>
+      svcAppointments.scheduleAppointment(id, {
+        scheduledAt: inWindow(7),
+        clinicId: "clinic-that-does-not-exist",
+      }),
+    );
+
+    const row = await markers(id);
+    assert.equal(row.scheduledAt?.toISOString(), before.scheduledAt?.toISOString());
+    assert.equal(
+      row.doctorNoShowNotifiedAt?.toISOString(),
+      SENT.toISOString(),
+      "the move never landed, so the consultation still starts where it was checked",
     );
   });
 });

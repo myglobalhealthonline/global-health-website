@@ -386,6 +386,41 @@ describe("adminUpdateAppointment — stale pre-transaction diff", () => {
     assert.equal(result.orderId, null);
   });
 
+  /**
+   * `doctorNoShowNotifiedAt` re-arms on a real time change too, so it is
+   * subject to the same stale-diff hazard as the reminder markers — and this
+   * is the direction that discriminates. The opposite one (stale says
+   * "unchanged", the write really moves the row) cannot be staged on its own:
+   * `hasChanges` is computed from the same stale diff, so a submission it
+   * reads as unchanged is rejected before any write, and admitting it needs a
+   * doctor change — which clears the flag by its own rule and hides the bug.
+   * Test 1 covers that direction for the reminder markers.
+   */
+  it("7. a time the row already carries leaves the no-show flag standing", async (t) => {
+    if (!boot(t)) return;
+    // The doctor was checked, and chased, while the consultation stood at T2.
+    const id = await mkAppointment({ doctorNoShowNotifiedAt: SENT });
+    // Someone else has already moved it to the very time this admin submits.
+    armedFor = id;
+    armed = async () => {
+      await prisma.appointment.update({ where: { id }, data: { scheduledAt: T2 } });
+    };
+
+    await adminUpdateAppointment({
+      appointmentId: id,
+      scheduledAt: T2,
+      changeReason: "move",
+    });
+
+    const row = await readBack(id);
+    assert.equal(row.scheduledAt?.toISOString(), T2.toISOString());
+    assert.equal(
+      row.doctorNoShowNotifiedAt?.toISOString(),
+      SENT.toISOString(),
+      "the stale diff calls this a move, but the write changes nothing — re-arming off it would chase a doctor who was already chased about this very start time",
+    );
+  });
+
   it("6. an unchanged submission is still rejected before any write", async (t) => {
     if (!boot(t)) return;
     const id = await mkAppointment();

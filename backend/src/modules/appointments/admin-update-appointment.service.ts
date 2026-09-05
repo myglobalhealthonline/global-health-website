@@ -229,9 +229,24 @@ export async function adminUpdateAppointment(
         // Re-arm in the SAME commit as the move. A post-commit reset would have
         // a crash window in which the row carries the new time with the old
         // "already sent" marker still standing.
-        ...(applied.timeChanged ? { reminderSentAt: null, doctorReminderSentAt: null } : {}),
+        //
+        // `doctorNoShowNotifiedAt` re-arms here too: it records that the doctor
+        // was checked against the start time the consultation had THEN, and the
+        // no-show cron's entry condition is `doctorNoShowNotifiedAt IS NULL`, so
+        // a flag left standing across a move means the consultation is never
+        // checked again at the time it now actually starts.
+        ...(applied.timeChanged
+          ? {
+              reminderSentAt: null,
+              doctorReminderSentAt: null,
+              doctorNoShowNotifiedAt: null,
+            }
+          : {}),
         // A no-show flag or a doctor reminder marked for the OLD doctor must
-        // not silently exempt the NEW doctor.
+        // not silently exempt the NEW doctor. Independent of the branch above,
+        // not an `else`: a change that moves the time AND swaps the doctor has
+        // to clear everything, and both branches asking for the same null is
+        // harmless.
         ...(applied.doctorChanged
           ? { doctorNoShowNotifiedAt: null, doctorReminderSentAt: null }
           : {}),

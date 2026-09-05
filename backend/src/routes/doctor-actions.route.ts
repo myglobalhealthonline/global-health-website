@@ -346,8 +346,15 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
               // Re-arm in the SAME commit as the move: a post-commit reset has
               // a crash window in which the row carries the new time with the
               // old marker still standing, and that reminder is missed for good.
+              // `doctorNoShowNotifiedAt` rides along for the same reason — it
+              // records a check made against the OLD start time, and the
+              // no-show cron only ever looks at rows where it is null.
               ...(timeReallyChanges
-                ? { reminderSentAt: null, doctorReminderSentAt: null }
+                ? {
+                    reminderSentAt: null,
+                    doctorReminderSentAt: null,
+                    doctorNoShowNotifiedAt: null,
+                  }
                 : {}),
             },
             select: {
