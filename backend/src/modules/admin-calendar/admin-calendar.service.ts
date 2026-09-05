@@ -60,7 +60,11 @@ export type AdminCalendarFilters = {
   toUtc: Date;
   doctorId?: string | null;
   consultationType?: string | null;
-  countryCode?: string | null;
+  /** A single country code, or `{ in: [...] }` when the caller has clamped the
+   *  window to a LOCAL_ADMIN's assigned folders (AZ-1). An empty `in` list is
+   *  intentional: an out-of-scope request draws an empty calendar rather than
+   *  falling back to every country. */
+  countryCode?: string | { in: string[] } | null;
 };
 
 export async function getAdminCalendar(

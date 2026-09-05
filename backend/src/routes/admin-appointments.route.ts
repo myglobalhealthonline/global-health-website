@@ -1,4 +1,4 @@
-import type { FastifyPluginAsync } from "fastify";
+import type { FastifyPluginAsync, FastifyRequest } from "fastify";
 import {
   getAppointmentById,
   InvalidAppointmentStatusTransitionError,
@@ -14,6 +14,11 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { sendAppointmentScheduledEmail } from "../lib/email/templates.js";
 import { formatDoctorForPatientNotification } from "../lib/doctor-name.js";
 import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
+import {
+  assertAdminCountryFolderScope,
+  buildCountryCodeFilter,
+  resolveAdminListCountryFolders,
+} from "../utils/order-country-scope.js";
 import {
   CouponAndDiscountConflictError,
   CouponUnavailableError,
@@ -58,6 +63,37 @@ import {
   NoAppointmentChangesError,
 } from "../modules/appointments/admin-update-appointment.service.js";
 
+/**
+ * AZ-1: `verifyAdminAccess` treats LOCAL_ADMIN exactly like ADMIN, so every
+ * route below was reachable for any country's appointment. Resolve the target's
+ * own country and run the same folder check `/api/admin/orders*` has used since
+ * the 2026-07-05 review. Called BEFORE any mutation, so a denial leaves the
+ * appointment untouched. ADMIN, SUPER_ADMIN and the admin-token fallback are
+ * unscoped and pass straight through.
+ */
+async function assertAppointmentCountryScope(
+  request: FastifyRequest,
+  appointmentId: string,
+): Promise<{ allowed: true } | { allowed: false; status: 403 | 404; message: string }> {
+  // ADMIN, SUPER_ADMIN and the admin-token fallback are never scoped, so skip
+  // the lookup entirely for them rather than fetching a row only to discard it.
+  // `resolveAdminSessionActor` is a synchronous JWT decode — no DB call.
+  if (resolveAdminSessionActor(request)?.role !== "LOCAL_ADMIN") return { allowed: true };
+
+  const target = await prisma.appointment.findUnique({
+    where: { id: appointmentId },
+    select: { countryCode: true },
+  });
+  if (!target) return { allowed: false, status: 404, message: "Appointment not found" };
+  return assertAdminCountryFolderScope(request, {
+    entityType: "Appointment",
+    entityId: appointmentId,
+    countryCode: target.countryCode,
+    auditReason: "LOCAL_ADMIN appointment access outside assigned country scope",
+    deniedMessage: "This appointment is outside your assigned country scope",
+  });
+}
+
 const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
   app.addHook("onRequest", async (request, reply) => {
     const auth = await verifyAdminAccess(request);
@@ -73,11 +109,16 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
     }
 
     try {
+      // AZ-1: clamp the list to a LOCAL_ADMIN's assigned folders. An explicit
+      // out-of-scope `?countryCode=` returns nothing rather than falling back
+      // to the admin's own country or to every country.
+      const scopedFolders = await resolveAdminListCountryFolders(request);
+
       const data = await listAppointments({
         page: query.data.page,
         pageSize: query.data.pageSize,
         status: query.data.status,
-        countryCode: query.data.countryCode,
+        countryCode: buildCountryCodeFilter(query.data.countryCode, scopedFolders),
         consultationType: query.data.consultationType,
         search: query.data.search,
         email: query.data.email,
@@ -140,6 +181,23 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
     }
 
     try {
+      // AZ-1 (security review): creation took `countryCode` straight from the
+      // body, so a LOCAL_ADMIN could open a booking in someone else's country —
+      // patient account, order, Stripe session and a claimed slot on that
+      // country's doctor. Checked here, before `createManualBooking` resolves
+      // any id, so a denial writes nothing at all. `countryCodeSchema` has
+      // already lowercased the value.
+      const createScope = await assertAdminCountryFolderScope(request, {
+        entityType: "Appointment",
+        entityId: "new",
+        countryCode: body.data.countryCode,
+        auditReason: "LOCAL_ADMIN manual booking outside assigned country scope",
+        deniedMessage: "This country is outside your assigned country scope",
+      });
+      if (!createScope.allowed) {
+        return reply.status(createScope.status).send(errorResponse(createScope.message));
+      }
+
       const result = await createManualBooking({
         adminUserId,
         patient: body.data.patient,
@@ -248,6 +306,13 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
     }
 
     try {
+      // AZ-1: country scope BEFORE the detail (patient name, email, phone,
+      // notes) is loaded at all, so a denied read never materialises it.
+      const scope = await assertAppointmentCountryScope(request, params.data.id);
+      if (!scope.allowed) {
+        return reply.status(scope.status).send(errorResponse(scope.message));
+      }
+
       const appointment = await getAppointmentById(params.data.id);
       if (!appointment) {
         return reply.status(404).send(errorResponse("Appointment not found"));
@@ -312,6 +377,12 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         : body.data.locationAddress;
 
     try {
+      // AZ-1: country scope BEFORE any slot release or write.
+      const scope = await assertAppointmentCountryScope(request, params.data.id);
+      if (!scope.allowed) {
+        return reply.status(scope.status).send(errorResponse(scope.message));
+      }
+
       // Snapshot the pre-update state and the previous doctor+slot in
       // parallel. Without the before-snapshot guard the email re-fires
       // on every admin save even for unrelated edits; the slot snapshot
@@ -495,6 +566,12 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
     const adminUserId: string | null = actor?.userId ?? null;
 
     try {
+      // AZ-1: country scope BEFORE the update service runs.
+      const scope = await assertAppointmentCountryScope(request, params.data.id);
+      if (!scope.allowed) {
+        return reply.status(scope.status).send(errorResponse(scope.message));
+      }
+
       const result = await adminUpdateAppointment({
         appointmentId: params.data.id,
         scheduledAt: scheduledAtInput,
@@ -540,6 +617,12 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
     }
 
     try {
+      // AZ-1: country scope BEFORE the status transition and slot release.
+      const scope = await assertAppointmentCountryScope(request, params.data.id);
+      if (!scope.allowed) {
+        return reply.status(scope.status).send(errorResponse(scope.message));
+      }
+
       const before = await prisma.appointment.findUnique({
         where: { id: params.data.id },
         // timeSlotId is read here because the slot release below nulls it, and

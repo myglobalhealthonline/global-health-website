@@ -461,7 +461,11 @@ export type ListAppointmentsOptions = {
   page: number;
   pageSize: number;
   status?: AppointmentStatus;
-  countryCode?: string;
+  /** A single country code, or `{ in: [...] }` when the caller has clamped the
+   *  query to a LOCAL_ADMIN's assigned folders (AZ-1). An empty `in` list is
+   *  intentional and returns nothing — an out-of-scope filter must never fall
+   *  back to the unfiltered set. */
+  countryCode?: string | { in: string[] };
   consultationType?: string;
   search?: string;
   /** Exact (case-insensitive) patient email — the per-patient history view.

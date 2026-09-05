@@ -3,6 +3,10 @@ import { z } from "zod";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { getAdminCalendar } from "../modules/admin-calendar/admin-calendar.service.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
+import {
+  buildCountryCodeFilter,
+  resolveAdminListCountryFolders,
+} from "../utils/order-country-scope.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
 /**
@@ -51,12 +55,21 @@ const adminCalendarRoute: FastifyPluginAsync = async (app) => {
         toUtc = new Date(fromUtc.getTime() + MAX_RANGE_MS);
       }
 
+      // AZ-1: `verifyAdminAccess` treats LOCAL_ADMIN like ADMIN, so this
+      // cross-doctor calendar returned every country's consultations —
+      // patient name included — to a single-country admin. Clamp to the
+      // admin's assigned folders; ADMIN/SUPER_ADMIN resolve to null (unscoped)
+      // and are unaffected.
+      const scopedFolders = await resolveAdminListCountryFolders(request);
+      const countryCode =
+        buildCountryCodeFilter(query.data.countryCode, scopedFolders) ?? null;
+
       const data = await getAdminCalendar({
         fromUtc,
         toUtc,
         doctorId: query.data.doctorId ?? null,
         consultationType: query.data.consultationType ?? null,
-        countryCode: query.data.countryCode ?? null,
+        countryCode,
       });
       return okResponse(data);
     } catch (error) {
