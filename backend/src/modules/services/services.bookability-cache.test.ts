@@ -16,7 +16,16 @@ let updateAdminService:
   (typeof import("./services.service.js"))["updateAdminService"];
 
 before(async () => {
+  // Two different transaction clients flow through this path now (CA-4):
+  // the base-service + translations one opened by updateAdminService, and
+  // the roster one opened by syncServiceDoctorAssignments. One stub covers
+  // both.
   const tx = {
+    service: {
+      update: async () => service,
+      findUniqueOrThrow: async () => service,
+    },
+    serviceTranslation: { upsert: async () => ({}) },
     serviceDoctor: {
       deleteMany: async () => ({ count: 0 }),
       upsert: async () => ({}),

@@ -220,40 +220,40 @@ function mergeServiceTranslation<
 /**
  * Upsert one ServiceTranslation row per supplied entry, keyed by
  * (serviceId, locale). Validates each locale is enabled for the country
- * and sanitizes rich HTML per locale. Sequential + additive, mirroring the
- * existing asset/doctor sync (not wrapped in a single transaction).
+ * and sanitizes rich HTML per locale. Additive per submitted locale.
+ *
+ * CA-4: writes go through the caller's transaction client so the base
+ * Service row and its translations commit together — a failing locale
+ * used to leave the base row committed with the edit half-applied.
  */
 async function upsertServiceTranslations(
+  tx: Prisma.TransactionClient,
   serviceId: string,
   countryId: string,
   translations: ServiceTranslationInput[],
 ): Promise<void> {
-  // Validate every locale up front (in parallel — was N sequential reads),
-  // then write all translations in one atomic transaction instead of a
-  // sequential per-locale upsert loop.
+  // Validate every locale up front (in parallel — was N sequential reads).
   await Promise.all(
     translations.map((entry) => assertLocaleSupported(countryId, entry.locale)),
   );
-  await prisma.$transaction(
-    translations.map((entry) => {
-      const detailBody = entry.detailBody === null ? null : sanitizeRichHtml(entry.detailBody);
-      const data = {
-        name: entry.name,
-        summary: entry.summary,
-        seoTitle: entry.seoTitle,
-        seoDescription: entry.seoDescription,
-        heroTitle: entry.heroTitle,
-        heroDescription: entry.heroDescription,
-        detailBody,
-        ctaLabel: entry.ctaLabel,
-      };
-      return prisma.serviceTranslation.upsert({
-        where: { serviceId_locale: { serviceId, locale: entry.locale } },
-        create: { serviceId, locale: entry.locale, ...data },
-        update: data,
-      });
-    }),
-  );
+  for (const entry of translations) {
+    const detailBody = entry.detailBody === null ? null : sanitizeRichHtml(entry.detailBody);
+    const data = {
+      name: entry.name,
+      summary: entry.summary,
+      seoTitle: entry.seoTitle,
+      seoDescription: entry.seoDescription,
+      heroTitle: entry.heroTitle,
+      heroDescription: entry.heroDescription,
+      detailBody,
+      ctaLabel: entry.ctaLabel,
+    };
+    await tx.serviceTranslation.upsert({
+      where: { serviceId_locale: { serviceId, locale: entry.locale } },
+      create: { serviceId, locale: entry.locale, ...data },
+      update: data,
+    });
+  }
 }
 
 const specialtyTranslationSelect = {
@@ -285,8 +285,11 @@ function mergeSpecialtyTranslation<
   };
 }
 
-/** Upsert one SpecialtyTranslation row per entry, keyed (specialtyId, locale). */
+/** Upsert one SpecialtyTranslation row per entry, keyed (specialtyId, locale).
+ *  CA-4: writes through the caller's transaction client so the base Specialty
+ *  row and its translations commit together. */
 async function upsertSpecialtyTranslations(
+  tx: Prisma.TransactionClient,
   specialtyId: string,
   countryId: string,
   translations: SpecialtyTranslationInput[],
@@ -294,17 +297,20 @@ async function upsertSpecialtyTranslations(
   await Promise.all(
     translations.map((entry) => assertLocaleSupported(countryId, entry.locale)),
   );
-  await prisma.$transaction(
-    translations.map((entry) => {
-      const data = { name: entry.name, cardSummary: entry.cardSummary };
-      return prisma.specialtyTranslation.upsert({
-        where: { specialtyId_locale: { specialtyId, locale: entry.locale } },
-        create: { specialtyId, locale: entry.locale, ...data },
-        update: data,
-      });
-    }),
-  );
+  for (const entry of translations) {
+    const data = { name: entry.name, cardSummary: entry.cardSummary };
+    await tx.specialtyTranslation.upsert({
+      where: { specialtyId_locale: { specialtyId, locale: entry.locale } },
+      create: { specialtyId, locale: entry.locale, ...data },
+      update: data,
+    });
+  }
 }
+
+/** Base content + its translation rows commit in one interactive transaction
+ *  (CA-4). Prisma's default 5s timeout is too low on Windows dev boxes, same
+ *  reason as ADMIN_DOCTOR_TX_OPTIONS in doctors.service.ts. */
+const CONTENT_TX_OPTIONS = { maxWait: 10_000, timeout: 20_000 } as const;
 
 export class ServiceCountryNotFoundError extends Error {
   constructor() {
@@ -714,27 +720,32 @@ export async function getAdminSpecialtyById(id: string) {
 export async function createAdminSpecialty(input: AdminSpecialtyCreateBody) {
   await assertCountryExists(input.countryId);
   try {
-    const specialty = await prisma.specialty.create({
-      data: {
-        countryId: input.countryId,
-        slug: input.slug,
-        name: input.name,
-        ...(input.cardSummary !== undefined && { cardSummary: input.cardSummary }),
-        ...(input.cardThemeColor !== undefined && { cardThemeColor: input.cardThemeColor }),
-        ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
-        active: input.active ?? true,
-      },
-      include: adminSpecialtyInclude,
-    });
+    const specialty = await prisma.$transaction(async (tx) => {
+      const created = await tx.specialty.create({
+        data: {
+          countryId: input.countryId,
+          slug: input.slug,
+          name: input.name,
+          ...(input.cardSummary !== undefined && { cardSummary: input.cardSummary }),
+          ...(input.cardThemeColor !== undefined && { cardThemeColor: input.cardThemeColor }),
+          ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
+          active: input.active ?? true,
+        },
+        include: adminSpecialtyInclude,
+      });
+      if (input.translations !== undefined) {
+        await upsertSpecialtyTranslations(tx, created.id, created.countryId, input.translations);
+      }
+      return created;
+    }, CONTENT_TX_OPTIONS);
+    // Image assets are not part of the content/translation unit — kept out of
+    // the transaction above so its scope stays the dependent writes only.
     await syncOwnedImageAsset({
       owner: { countryId: specialty.countryId, specialtyId: specialty.id },
       path: input.imagePath,
       key: `specialty-card:${specialty.id}`,
       usageNote: "Specialty listing card image",
     });
-    if (input.translations !== undefined) {
-      await upsertSpecialtyTranslations(specialty.id, specialty.countryId, input.translations);
-    }
     return await prisma.specialty.findUniqueOrThrow({
       where: { id: specialty.id },
       include: adminSpecialtyInclude,
@@ -752,18 +763,24 @@ export async function updateAdminSpecialty(id: string, body: AdminSpecialtyUpdat
   if (!existing) return null;
 
   try {
-    const specialty = await prisma.specialty.update({
-      where: { id },
-      data: {
-        ...(body.slug !== undefined && { slug: body.slug }),
-        ...(body.name !== undefined && { name: body.name }),
-        ...(body.cardSummary !== undefined && { cardSummary: body.cardSummary }),
-        ...(body.cardThemeColor !== undefined && { cardThemeColor: body.cardThemeColor }),
-        ...(body.sortOrder !== undefined && { sortOrder: body.sortOrder }),
-        ...(body.active !== undefined && { active: body.active }),
-      },
-      include: adminSpecialtyInclude,
-    });
+    const specialty = await prisma.$transaction(async (tx) => {
+      const updated = await tx.specialty.update({
+        where: { id },
+        data: {
+          ...(body.slug !== undefined && { slug: body.slug }),
+          ...(body.name !== undefined && { name: body.name }),
+          ...(body.cardSummary !== undefined && { cardSummary: body.cardSummary }),
+          ...(body.cardThemeColor !== undefined && { cardThemeColor: body.cardThemeColor }),
+          ...(body.sortOrder !== undefined && { sortOrder: body.sortOrder }),
+          ...(body.active !== undefined && { active: body.active }),
+        },
+        include: adminSpecialtyInclude,
+      });
+      if (body.translations !== undefined) {
+        await upsertSpecialtyTranslations(tx, id, existing.countryId, body.translations);
+      }
+      return updated;
+    }, CONTENT_TX_OPTIONS);
     if (body.imagePath !== undefined) {
       await syncOwnedImageAsset({
         owner: { countryId: existing.countryId, specialtyId: id },
@@ -771,9 +788,6 @@ export async function updateAdminSpecialty(id: string, body: AdminSpecialtyUpdat
         key: `specialty-card:${id}`,
         usageNote: "Specialty listing card image",
       });
-    }
-    if (body.translations !== undefined) {
-      await upsertSpecialtyTranslations(id, existing.countryId, body.translations);
     }
     return await prisma.specialty.findUniqueOrThrow({
       where: { id: specialty.id },
@@ -972,47 +986,65 @@ export async function createAdminService(input: AdminServiceCreateBody): Promise
   await assertCountryExists(input.countryId);
 
   try {
-    const service = await prisma.service.create({
-      data: {
-        countryId: input.countryId,
-        kind: input.kind,
-        slug: input.slug,
-        name: input.name,
-        ...(input.summary !== undefined && { summary: input.summary }),
-        ...(input.seoTitle !== undefined && { seoTitle: input.seoTitle }),
-        ...(input.seoDescription !== undefined && { seoDescription: input.seoDescription }),
-        ...(input.heroTitle !== undefined && { heroTitle: input.heroTitle }),
-        ...(input.heroDescription !== undefined && { heroDescription: input.heroDescription }),
-        ...(input.detailBody !== undefined && {
-          detailBody: input.detailBody === null ? null : sanitizeRichHtml(input.detailBody),
-        }),
-        ...(input.ctaLabel !== undefined && { ctaLabel: input.ctaLabel }),
-        ...(input.lastReviewedAt !== undefined && { lastReviewedAt: input.lastReviewedAt }),
-        ...(input.authorDisplayName !== undefined && { authorDisplayName: input.authorDisplayName }),
-        ...(input.reviewerDisplayName !== undefined && {
-          reviewerDisplayName: input.reviewerDisplayName,
-        }),
-        ...(input.authorDoctorId !== undefined && { authorDoctorId: input.authorDoctorId }),
-        ...(input.reviewerDoctorId !== undefined && { reviewerDoctorId: input.reviewerDoctorId }),
-        ...(input.legacyPath !== undefined && { legacyPath: input.legacyPath }),
-        ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
-        ...(input.durationMinutes !== undefined && { durationMinutes: input.durationMinutes }),
-        ...(input.basePriceCents !== undefined && { basePriceCents: input.basePriceCents }),
-        ...(input.currencyCode !== undefined && { currencyCode: input.currencyCode }),
-        ...(input.galleryImagePaths !== undefined && {
-          galleryImagePaths: input.galleryImagePaths,
-        }),
-        ...(input.shippingCents !== undefined && { shippingCents: input.shippingCents }),
-        ...(input.visibility !== undefined && { visibility: input.visibility }),
-        // The inner cross-jurisdiction prescription service is never public —
-        // force ADMIN_ONLY so it can't leak into listings / slug lookups /
-        // sitemaps / the public cart, regardless of the form. Deliberately
-        // AFTER the explicit visibility above so it always wins.
-        ...(input.kind === "ASYNC_PRESCRIPTION" && { visibility: "ADMIN_ONLY" as const }),
-        isActive: input.isActive ?? true,
-      },
-      include: adminServiceInclude,
-    });
+    const service = await prisma.$transaction(async (tx) => {
+      const created = await tx.service.create({
+        data: {
+          countryId: input.countryId,
+          kind: input.kind,
+          slug: input.slug,
+          name: input.name,
+          ...(input.summary !== undefined && { summary: input.summary }),
+          ...(input.seoTitle !== undefined && { seoTitle: input.seoTitle }),
+          ...(input.seoDescription !== undefined && { seoDescription: input.seoDescription }),
+          ...(input.heroTitle !== undefined && { heroTitle: input.heroTitle }),
+          ...(input.heroDescription !== undefined && { heroDescription: input.heroDescription }),
+          ...(input.detailBody !== undefined && {
+            detailBody: input.detailBody === null ? null : sanitizeRichHtml(input.detailBody),
+          }),
+          ...(input.ctaLabel !== undefined && { ctaLabel: input.ctaLabel }),
+          ...(input.lastReviewedAt !== undefined && { lastReviewedAt: input.lastReviewedAt }),
+          ...(input.authorDisplayName !== undefined && {
+            authorDisplayName: input.authorDisplayName,
+          }),
+          ...(input.reviewerDisplayName !== undefined && {
+            reviewerDisplayName: input.reviewerDisplayName,
+          }),
+          ...(input.authorDoctorId !== undefined && { authorDoctorId: input.authorDoctorId }),
+          ...(input.reviewerDoctorId !== undefined && { reviewerDoctorId: input.reviewerDoctorId }),
+          ...(input.legacyPath !== undefined && { legacyPath: input.legacyPath }),
+          ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
+          ...(input.durationMinutes !== undefined && { durationMinutes: input.durationMinutes }),
+          ...(input.basePriceCents !== undefined && { basePriceCents: input.basePriceCents }),
+          ...(input.currencyCode !== undefined && { currencyCode: input.currencyCode }),
+          ...(input.galleryImagePaths !== undefined && {
+            galleryImagePaths: input.galleryImagePaths,
+          }),
+          ...(input.shippingCents !== undefined && { shippingCents: input.shippingCents }),
+          ...(input.visibility !== undefined && { visibility: input.visibility }),
+          // The inner cross-jurisdiction prescription service is never public —
+          // force ADMIN_ONLY so it can't leak into listings / slug lookups /
+          // sitemaps / the public cart, regardless of the form. Deliberately
+          // AFTER the explicit visibility above so it always wins.
+          ...(input.kind === "ASYNC_PRESCRIPTION" && { visibility: "ADMIN_ONLY" as const }),
+          isActive: input.isActive ?? true,
+        },
+        include: adminServiceInclude,
+      });
+      if (input.translations !== undefined) {
+        await upsertServiceTranslations(tx, created.id, input.countryId, input.translations);
+      }
+      return created;
+    }, CONTENT_TX_OPTIONS);
+    // Assets and doctor assignments are separate write units (the latter runs
+    // its own transaction) — kept outside so the CA-4 transaction stays scoped
+    // to the base row + its translations, and never nests.
+    //
+    // Consequence, deliberate: a failure below leaves the base row AND its
+    // translations committed while the request reports an error. That is the
+    // coherent half — base copy and its locales always agree — whereas the
+    // pre-CA-4 order (translations last) could leave a renamed base row next
+    // to stale translations. Widening the transaction to cover these is the
+    // only alternative and would nest inside syncServiceDoctorAssignments.
     await syncOwnedImageAsset({
       owner: { countryId: input.countryId, serviceId: service.id },
       path: input.imagePath,
@@ -1025,9 +1057,6 @@ export async function createAdminService(input: AdminServiceCreateBody): Promise
         input.doctorIds,
         input.countryId,
       );
-    }
-    if (input.translations !== undefined) {
-      await upsertServiceTranslations(service.id, input.countryId, input.translations);
     }
     return prisma.service.findUniqueOrThrow({
       where: { id: service.id },
@@ -1054,50 +1083,58 @@ export async function updateAdminService(
   }
 
   try {
-    const service = await prisma.service.update({
-      where: { id },
-      data: {
-        ...(body.countryId !== undefined && { countryId: body.countryId }),
-        ...(body.kind !== undefined && { kind: body.kind }),
-        ...(body.visibility !== undefined && { visibility: body.visibility }),
-        // Keep the inner cross-jurisdiction prescription service ADMIN_ONLY
-        // (mirror of create above). Checked against the EFFECTIVE kind so an
-        // explicit `visibility: PUBLIC` cannot expose an existing
-        // ASYNC_PRESCRIPTION row. Listed last so it always wins.
-        ...((body.kind ?? existing.kind) === "ASYNC_PRESCRIPTION" && {
-          visibility: "ADMIN_ONLY" as const,
-        }),
-        ...(body.slug !== undefined && { slug: body.slug }),
-        ...(body.name !== undefined && { name: body.name }),
-        ...(body.summary !== undefined && { summary: body.summary }),
-        ...(body.seoTitle !== undefined && { seoTitle: body.seoTitle }),
-        ...(body.seoDescription !== undefined && { seoDescription: body.seoDescription }),
-        ...(body.heroTitle !== undefined && { heroTitle: body.heroTitle }),
-        ...(body.heroDescription !== undefined && { heroDescription: body.heroDescription }),
-        ...(body.detailBody !== undefined && {
-          detailBody: body.detailBody === null ? null : sanitizeRichHtml(body.detailBody),
-        }),
-        ...(body.ctaLabel !== undefined && { ctaLabel: body.ctaLabel }),
-        ...(body.lastReviewedAt !== undefined && { lastReviewedAt: body.lastReviewedAt }),
-        ...(body.authorDisplayName !== undefined && { authorDisplayName: body.authorDisplayName }),
-        ...(body.reviewerDisplayName !== undefined && {
-          reviewerDisplayName: body.reviewerDisplayName,
-        }),
-        ...(body.authorDoctorId !== undefined && { authorDoctorId: body.authorDoctorId }),
-        ...(body.reviewerDoctorId !== undefined && { reviewerDoctorId: body.reviewerDoctorId }),
-        ...(body.legacyPath !== undefined && { legacyPath: body.legacyPath }),
-        ...(body.sortOrder !== undefined && { sortOrder: body.sortOrder }),
-        ...(body.durationMinutes !== undefined && { durationMinutes: body.durationMinutes }),
-        ...(body.basePriceCents !== undefined && { basePriceCents: body.basePriceCents }),
-        ...(body.currencyCode !== undefined && { currencyCode: body.currencyCode }),
-        ...(body.galleryImagePaths !== undefined && {
-          galleryImagePaths: body.galleryImagePaths,
-        }),
-        ...(body.shippingCents !== undefined && { shippingCents: body.shippingCents }),
-        ...(body.isActive !== undefined && { isActive: body.isActive }),
-      },
-      include: adminServiceInclude,
-    });
+    const service = await prisma.$transaction(async (tx) => {
+      const updated = await tx.service.update({
+        where: { id },
+        data: {
+          ...(body.countryId !== undefined && { countryId: body.countryId }),
+          ...(body.kind !== undefined && { kind: body.kind }),
+          ...(body.visibility !== undefined && { visibility: body.visibility }),
+          // Keep the inner cross-jurisdiction prescription service ADMIN_ONLY
+          // (mirror of create above). Checked against the EFFECTIVE kind so an
+          // explicit `visibility: PUBLIC` cannot expose an existing
+          // ASYNC_PRESCRIPTION row. Listed last so it always wins.
+          ...((body.kind ?? existing.kind) === "ASYNC_PRESCRIPTION" && {
+            visibility: "ADMIN_ONLY" as const,
+          }),
+          ...(body.slug !== undefined && { slug: body.slug }),
+          ...(body.name !== undefined && { name: body.name }),
+          ...(body.summary !== undefined && { summary: body.summary }),
+          ...(body.seoTitle !== undefined && { seoTitle: body.seoTitle }),
+          ...(body.seoDescription !== undefined && { seoDescription: body.seoDescription }),
+          ...(body.heroTitle !== undefined && { heroTitle: body.heroTitle }),
+          ...(body.heroDescription !== undefined && { heroDescription: body.heroDescription }),
+          ...(body.detailBody !== undefined && {
+            detailBody: body.detailBody === null ? null : sanitizeRichHtml(body.detailBody),
+          }),
+          ...(body.ctaLabel !== undefined && { ctaLabel: body.ctaLabel }),
+          ...(body.lastReviewedAt !== undefined && { lastReviewedAt: body.lastReviewedAt }),
+          ...(body.authorDisplayName !== undefined && {
+            authorDisplayName: body.authorDisplayName,
+          }),
+          ...(body.reviewerDisplayName !== undefined && {
+            reviewerDisplayName: body.reviewerDisplayName,
+          }),
+          ...(body.authorDoctorId !== undefined && { authorDoctorId: body.authorDoctorId }),
+          ...(body.reviewerDoctorId !== undefined && { reviewerDoctorId: body.reviewerDoctorId }),
+          ...(body.legacyPath !== undefined && { legacyPath: body.legacyPath }),
+          ...(body.sortOrder !== undefined && { sortOrder: body.sortOrder }),
+          ...(body.durationMinutes !== undefined && { durationMinutes: body.durationMinutes }),
+          ...(body.basePriceCents !== undefined && { basePriceCents: body.basePriceCents }),
+          ...(body.currencyCode !== undefined && { currencyCode: body.currencyCode }),
+          ...(body.galleryImagePaths !== undefined && {
+            galleryImagePaths: body.galleryImagePaths,
+          }),
+          ...(body.shippingCents !== undefined && { shippingCents: body.shippingCents }),
+          ...(body.isActive !== undefined && { isActive: body.isActive }),
+        },
+        include: adminServiceInclude,
+      });
+      if (body.translations !== undefined) {
+        await upsertServiceTranslations(tx, id, nextCountryId, body.translations);
+      }
+      return updated;
+    }, CONTENT_TX_OPTIONS);
     if (body.imagePath !== undefined) {
       await syncOwnedImageAsset({
         owner: { countryId: nextCountryId, serviceId: id },
@@ -1108,9 +1145,6 @@ export async function updateAdminService(
     }
     if (body.doctorIds !== undefined) {
       await syncServiceDoctorAssignments(id, body.doctorIds, nextCountryId);
-    }
-    if (body.translations !== undefined) {
-      await upsertServiceTranslations(id, nextCountryId, body.translations);
     }
     return prisma.service.findUniqueOrThrow({
       where: { id: service.id },

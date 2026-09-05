@@ -371,8 +371,12 @@ export async function getCountryLegalProfile(countryId: string) {
 /** Upsert per-locale disclaimer overrides. Additive per submitted locale; an
  *  entry whose fields are both empty removes the row so that locale falls back
  *  to the default-locale base columns. Locale must be enabled for the country
- *  (or be its default) — throws LocaleNotSupportedError otherwise. */
+ *  (or be its default) — throws LocaleNotSupportedError otherwise.
+ *
+ *  CA-4: writes through the caller's transaction client so the base
+ *  CountryLegalProfile row and its disclaimer overrides commit together. */
 async function upsertDisclaimerTranslations(
+  tx: Prisma.TransactionClient,
   countryId: string,
   legalProfileId: string,
   translations: DisclaimerTranslationInput[],
@@ -380,40 +384,46 @@ async function upsertDisclaimerTranslations(
   await Promise.all(
     translations.map((entry) => assertLocaleSupported(countryId, entry.locale)),
   );
-  await prisma.$transaction(
-    translations.map((entry) => {
-      const shortDisclaimer = entry.shortDisclaimer ?? null;
-      const fullDisclaimer = entry.fullDisclaimer ?? null;
-      if (!shortDisclaimer && !fullDisclaimer) {
-        return prisma.countryDisclaimerTranslation.deleteMany({
-          where: { legalProfileId, locale: entry.locale },
-        });
-      }
-      const row = { shortDisclaimer, fullDisclaimer };
-      return prisma.countryDisclaimerTranslation.upsert({
-        where: { legalProfileId_locale: { legalProfileId, locale: entry.locale } },
-        create: { legalProfileId, locale: entry.locale, ...row },
-        update: row,
+  for (const entry of translations) {
+    const shortDisclaimer = entry.shortDisclaimer ?? null;
+    const fullDisclaimer = entry.fullDisclaimer ?? null;
+    if (!shortDisclaimer && !fullDisclaimer) {
+      await tx.countryDisclaimerTranslation.deleteMany({
+        where: { legalProfileId, locale: entry.locale },
       });
-    }),
-  );
+      continue;
+    }
+    const row = { shortDisclaimer, fullDisclaimer };
+    await tx.countryDisclaimerTranslation.upsert({
+      where: { legalProfileId_locale: { legalProfileId, locale: entry.locale } },
+      create: { legalProfileId, locale: entry.locale, ...row },
+      update: row,
+    });
+  }
 }
+
+/** Base legal profile + its disclaimer overrides commit in one interactive
+ *  transaction (CA-4). Prisma's default 5s timeout is too low on Windows dev
+ *  boxes, same reason as ADMIN_DOCTOR_TX_OPTIONS in doctors.service.ts. */
+const LEGAL_PROFILE_TX_OPTIONS = { maxWait: 10_000, timeout: 20_000 } as const;
 
 export async function upsertCountryLegalProfile(countryId: string, data: CountryLegalProfileBody) {
   const { disclaimerTranslations, ...profileData } = data;
   try {
-    const profile = await prisma.countryLegalProfile.upsert({
-      where: { countryId },
-      create: { countryId, ...profileData },
-      update: profileData,
-    });
-    if (disclaimerTranslations !== undefined) {
-      await upsertDisclaimerTranslations(countryId, profile.id, disclaimerTranslations);
-    }
-    return await prisma.countryLegalProfile.findUniqueOrThrow({
-      where: { id: profile.id },
-      include: { disclaimerTranslations: true, trustTranslations: true },
-    });
+    return await prisma.$transaction(async (tx) => {
+      const profile = await tx.countryLegalProfile.upsert({
+        where: { countryId },
+        create: { countryId, ...profileData },
+        update: profileData,
+      });
+      if (disclaimerTranslations !== undefined) {
+        await upsertDisclaimerTranslations(tx, countryId, profile.id, disclaimerTranslations);
+      }
+      return await tx.countryLegalProfile.findUniqueOrThrow({
+        where: { id: profile.id },
+        include: { disclaimerTranslations: true, trustTranslations: true },
+      });
+    }, LEGAL_PROFILE_TX_OPTIONS);
   } catch (error) {
     // Locale-support rejection is a client error (400), not a DB failure.
     if (error instanceof LocaleNotSupportedError) throw error;

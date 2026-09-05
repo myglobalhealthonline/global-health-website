@@ -81,37 +81,42 @@ function mergeHealthTestTranslation<
   };
 }
 
-/** Upsert one HealthTestTranslation row per entry, keyed (healthTestId, locale). */
+/** Upsert one HealthTestTranslation row per entry, keyed (healthTestId, locale).
+ *  CA-4: writes through the caller's transaction client so the base HealthTest
+ *  row and its translations commit together. */
 async function upsertHealthTestTranslations(
+  tx: Prisma.TransactionClient,
   healthTestId: string,
   countryId: string,
   translations: HealthTestTranslationInput[],
 ): Promise<void> {
-  // Validate locales in parallel, then write all rows in one atomic
-  // transaction (was a sequential per-locale check + upsert loop).
+  // Validate locales in parallel (was a sequential per-locale check).
   await Promise.all(
     translations.map((entry) => assertLocaleSupported(countryId, entry.locale)),
   );
-  await prisma.$transaction(
-    translations.map((entry) => {
-      const data = {
-        title: entry.title,
-        shortDescription: entry.shortDescription,
-        sampleType: entry.sampleType,
-        resultsTimeline: entry.resultsTimeline,
-        heroButtonLabel: entry.heroButtonLabel,
-        detailIntro: entry.detailIntro,
-        seoTitle: entry.seoTitle,
-        seoDescription: entry.seoDescription,
-      };
-      return prisma.healthTestTranslation.upsert({
-        where: { healthTestId_locale: { healthTestId, locale: entry.locale } },
-        create: { healthTestId, locale: entry.locale, ...data },
-        update: data,
-      });
-    }),
-  );
+  for (const entry of translations) {
+    const data = {
+      title: entry.title,
+      shortDescription: entry.shortDescription,
+      sampleType: entry.sampleType,
+      resultsTimeline: entry.resultsTimeline,
+      heroButtonLabel: entry.heroButtonLabel,
+      detailIntro: entry.detailIntro,
+      seoTitle: entry.seoTitle,
+      seoDescription: entry.seoDescription,
+    };
+    await tx.healthTestTranslation.upsert({
+      where: { healthTestId_locale: { healthTestId, locale: entry.locale } },
+      create: { healthTestId, locale: entry.locale, ...data },
+      update: data,
+    });
+  }
 }
+
+/** Base content + its translation rows commit in one interactive transaction
+ *  (CA-4). Prisma's default 5s timeout is too low on Windows dev boxes, same
+ *  reason as ADMIN_DOCTOR_TX_OPTIONS in doctors.service.ts. */
+const CONTENT_TX_OPTIONS = { maxWait: 10_000, timeout: 20_000 } as const;
 
 export class HealthTestCountryNotFoundError extends Error {
   constructor() {
@@ -317,41 +322,43 @@ export async function createAdminHealthTest(input: AdminHealthTestCreateBody): P
   await assertCountryExists(input.countryId);
   await assertCurrencyCodeExists(input.currencyCode);
   try {
-    const created = await prisma.healthTest.create({
-      data: {
-        countryId: input.countryId,
-        slug: input.slug,
-        title: input.title,
-        shortDescription: input.shortDescription,
-        priceCents: input.priceCents,
-        currencyCode: input.currencyCode.trim().toUpperCase(),
-        productImagePath: input.productImagePath.trim(),
-        galleryImagePaths: input.galleryImagePaths ?? [],
-        sampleType: input.sampleType,
-        resultsTimeline: input.resultsTimeline,
-        heroButtonLabel: input.heroButtonLabel,
-        detailIntro: input.detailIntro,
-        whatThisTestCovers: input.whatThisTestCovers ?? [],
-        whyGetTested: input.whyGetTested ?? [],
-        extraSections: input.extraSections ?? Prisma.JsonNull,
-        sortOrder: input.sortOrder ?? 0,
-        isActive: input.isActive ?? true,
-        stock: input.stock ?? null,
-        shippingCents: input.shippingCents ?? 0,
-        seoTitle: input.seoTitle,
-        seoDescription: input.seoDescription,
-        legacyPath: input.legacyPath,
-      },
-      include: adminHealthTestInclude,
-    });
-    if (input.translations !== undefined) {
-      await upsertHealthTestTranslations(created.id, input.countryId, input.translations);
-      return await prisma.healthTest.findUniqueOrThrow({
-        where: { id: created.id },
+    return await prisma.$transaction(async (tx) => {
+      const created = await tx.healthTest.create({
+        data: {
+          countryId: input.countryId,
+          slug: input.slug,
+          title: input.title,
+          shortDescription: input.shortDescription,
+          priceCents: input.priceCents,
+          currencyCode: input.currencyCode.trim().toUpperCase(),
+          productImagePath: input.productImagePath.trim(),
+          galleryImagePaths: input.galleryImagePaths ?? [],
+          sampleType: input.sampleType,
+          resultsTimeline: input.resultsTimeline,
+          heroButtonLabel: input.heroButtonLabel,
+          detailIntro: input.detailIntro,
+          whatThisTestCovers: input.whatThisTestCovers ?? [],
+          whyGetTested: input.whyGetTested ?? [],
+          extraSections: input.extraSections ?? Prisma.JsonNull,
+          sortOrder: input.sortOrder ?? 0,
+          isActive: input.isActive ?? true,
+          stock: input.stock ?? null,
+          shippingCents: input.shippingCents ?? 0,
+          seoTitle: input.seoTitle,
+          seoDescription: input.seoDescription,
+          legacyPath: input.legacyPath,
+        },
         include: adminHealthTestInclude,
       });
-    }
-    return created;
+      if (input.translations !== undefined) {
+        await upsertHealthTestTranslations(tx, created.id, input.countryId, input.translations);
+        return await tx.healthTest.findUniqueOrThrow({
+          where: { id: created.id },
+          include: adminHealthTestInclude,
+        });
+      }
+      return created;
+    }, CONTENT_TX_OPTIONS);
   } catch (error) {
     throw normalizeDbError(error, "Health test data is unavailable");
   }
@@ -367,39 +374,41 @@ export async function updateAdminHealthTest(id: string, body: AdminHealthTestUpd
   if (body.currencyCode !== undefined) await assertCurrencyCodeExists(body.currencyCode);
 
   try {
-    await prisma.healthTest.update({
-      where: { id },
-      data: {
-        ...(body.slug !== undefined && { slug: body.slug }),
-        ...(body.title !== undefined && { title: body.title }),
-        ...(body.shortDescription !== undefined && { shortDescription: body.shortDescription }),
-        ...(body.priceCents !== undefined && { priceCents: body.priceCents }),
-        ...(body.currencyCode !== undefined && { currencyCode: body.currencyCode.trim().toUpperCase() }),
-        ...(body.productImagePath !== undefined && { productImagePath: body.productImagePath.trim() }),
-        ...(body.galleryImagePaths !== undefined && { galleryImagePaths: body.galleryImagePaths }),
-        ...(body.sampleType !== undefined && { sampleType: body.sampleType }),
-        ...(body.resultsTimeline !== undefined && { resultsTimeline: body.resultsTimeline }),
-        ...(body.heroButtonLabel !== undefined && { heroButtonLabel: body.heroButtonLabel }),
-        ...(body.detailIntro !== undefined && { detailIntro: body.detailIntro }),
-        ...(body.whatThisTestCovers !== undefined && { whatThisTestCovers: body.whatThisTestCovers }),
-        ...(body.whyGetTested !== undefined && { whyGetTested: body.whyGetTested }),
-        ...(body.extraSections !== undefined && { extraSections: body.extraSections ?? Prisma.JsonNull }),
-        ...(body.sortOrder !== undefined && { sortOrder: body.sortOrder }),
-        ...(body.isActive !== undefined && { isActive: body.isActive }),
-        ...(body.stock !== undefined && { stock: body.stock }),
-        ...(body.shippingCents !== undefined && { shippingCents: body.shippingCents }),
-        ...(body.seoTitle !== undefined && { seoTitle: body.seoTitle }),
-        ...(body.seoDescription !== undefined && { seoDescription: body.seoDescription }),
-        ...(body.legacyPath !== undefined && { legacyPath: body.legacyPath }),
-      },
-    });
-    if (body.translations !== undefined) {
-      await upsertHealthTestTranslations(id, existing.countryId, body.translations);
-    }
-    return await prisma.healthTest.findUniqueOrThrow({
-      where: { id },
-      include: adminHealthTestInclude,
-    });
+    return await prisma.$transaction(async (tx) => {
+      await tx.healthTest.update({
+        where: { id },
+        data: {
+          ...(body.slug !== undefined && { slug: body.slug }),
+          ...(body.title !== undefined && { title: body.title }),
+          ...(body.shortDescription !== undefined && { shortDescription: body.shortDescription }),
+          ...(body.priceCents !== undefined && { priceCents: body.priceCents }),
+          ...(body.currencyCode !== undefined && { currencyCode: body.currencyCode.trim().toUpperCase() }),
+          ...(body.productImagePath !== undefined && { productImagePath: body.productImagePath.trim() }),
+          ...(body.galleryImagePaths !== undefined && { galleryImagePaths: body.galleryImagePaths }),
+          ...(body.sampleType !== undefined && { sampleType: body.sampleType }),
+          ...(body.resultsTimeline !== undefined && { resultsTimeline: body.resultsTimeline }),
+          ...(body.heroButtonLabel !== undefined && { heroButtonLabel: body.heroButtonLabel }),
+          ...(body.detailIntro !== undefined && { detailIntro: body.detailIntro }),
+          ...(body.whatThisTestCovers !== undefined && { whatThisTestCovers: body.whatThisTestCovers }),
+          ...(body.whyGetTested !== undefined && { whyGetTested: body.whyGetTested }),
+          ...(body.extraSections !== undefined && { extraSections: body.extraSections ?? Prisma.JsonNull }),
+          ...(body.sortOrder !== undefined && { sortOrder: body.sortOrder }),
+          ...(body.isActive !== undefined && { isActive: body.isActive }),
+          ...(body.stock !== undefined && { stock: body.stock }),
+          ...(body.shippingCents !== undefined && { shippingCents: body.shippingCents }),
+          ...(body.seoTitle !== undefined && { seoTitle: body.seoTitle }),
+          ...(body.seoDescription !== undefined && { seoDescription: body.seoDescription }),
+          ...(body.legacyPath !== undefined && { legacyPath: body.legacyPath }),
+        },
+      });
+      if (body.translations !== undefined) {
+        await upsertHealthTestTranslations(tx, id, existing.countryId, body.translations);
+      }
+      return await tx.healthTest.findUniqueOrThrow({
+        where: { id },
+        include: adminHealthTestInclude,
+      });
+    }, CONTENT_TX_OPTIONS);
   } catch (error) {
     throw normalizeDbError(error, "Health test data is unavailable");
   }
