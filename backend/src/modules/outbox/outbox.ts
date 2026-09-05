@@ -12,6 +12,10 @@ export type OutboxLog = { info: (m: string) => void; error: (m: string) => void 
 export const OUTBOX_KIND_ORDER_PAID_AUTOMATIONS = "order_paid_automations";
 export const OUTBOX_KIND_RECRUITMENT_APPLICATION_NOTIFICATION =
   "recruitment_application_notification";
+/** 24h appointment reminders — one row per audience, keyed on the appointment
+ *  state the reminder was minted for (see appointment-reminder.service.ts). */
+export const OUTBOX_KIND_APPOINTMENT_REMINDER_PATIENT = "appointment_reminder_patient_24h";
+export const OUTBOX_KIND_APPOINTMENT_REMINDER_DOCTOR = "appointment_reminder_doctor_24h";
 
 // Minimal client surface so enqueue can run inside a Prisma interactive
 // transaction (tx) OR standalone against the shared client.
@@ -133,6 +137,20 @@ async function dispatchOutboxRow(
         "../recruitment/recruitment-email.js"
       );
       await sendRecruitmentApplicationNotification(payload.applicationId);
+      return;
+    }
+    case OUTBOX_KIND_APPOINTMENT_REMINDER_PATIENT: {
+      const { dispatchPatientAppointmentReminder } = await import(
+        "../appointments/appointment-reminder.service.js"
+      );
+      await dispatchPatientAppointmentReminder(row.payload);
+      return;
+    }
+    case OUTBOX_KIND_APPOINTMENT_REMINDER_DOCTOR: {
+      const { dispatchDoctorAppointmentReminder } = await import(
+        "../appointments/appointment-reminder.service.js"
+      );
+      await dispatchDoctorAppointmentReminder(row.payload);
       return;
     }
     default:

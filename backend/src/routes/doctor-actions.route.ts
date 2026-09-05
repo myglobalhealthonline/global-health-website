@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
@@ -251,12 +252,15 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
         // admin pathway in admin-appointments.route.ts — without this
         // a doctor reschedule leaves the old DoctorTimeSlot in BOOKED
         // state forever.
+        const nextScheduledIso =
+          body.data.scheduledAt === null
+            ? null
+            : body.data.scheduledAt === undefined
+              ? undefined
+              : new Date(body.data.scheduledAt).toISOString();
         const isReschedule =
           body.data.scheduledAt !== undefined &&
-          (appt.scheduledAt?.toISOString() ?? null) !==
-            (body.data.scheduledAt === null
-              ? null
-              : new Date(body.data.scheduledAt).toISOString());
+          (appt.scheduledAt?.toISOString() ?? null) !== nextScheduledIso;
         const isCancelling =
           body.data.status === "CANCELLED" && appt.status !== "CANCELLED";
         // Length of the slot being released — the re-claim below keeps the
@@ -306,17 +310,55 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
           }
         }
 
-        const updated = await prisma.appointment.update({
-          where: { id: appt.id },
-          data: updateData,
-          select: {
-            id: true,
-            status: true,
-            meetingUrl: true,
-            scheduledAt: true,
-            consultationMode: true,
-            updatedAt: true,
-          },
+        const updated = await prisma.$transaction(async (tx) => {
+          // `appt` was read before the slot release above — three round trips
+          // ago — so `isReschedule` describes what the DOCTOR asked for, not
+          // necessarily what this write changes. It still drives slot release,
+          // the audit row and the notifications below, matching the admin path.
+          //
+          // KNOWN GAP, deliberately unchanged (same wording as
+          // admin-update-appointment.service.ts): when the two disagree, those
+          // consumers follow the stale snapshot, so a net time change can go
+          // un-audited and leave the old DoctorTimeSlot BOOKED. Only the
+          // reminder markers are hardened here, because only they fail in a way
+          // nothing ever revisits.
+          //
+          // The reminder markers cannot use it. They mean "already delivered",
+          // so they have to be judged against the state this write actually
+          // overwrites: a doctor submitting the time still on their screen while
+          // another writer has moved the row elsewhere really does change
+          // `scheduledAt`, and a stale "no time change" leaves a delivered
+          // marker standing over a time that no longer exists — which nothing
+          // ever revisits. The mirror case clears a marker for a change that
+          // never happened and re-sends a reminder the patient already has.
+          const [current] = await tx.$queryRaw<{ scheduledAt: Date | null }[]>(
+            Prisma.sql`
+              SELECT "scheduledAt" FROM "Appointment" WHERE "id" = ${appt.id} FOR UPDATE
+            `,
+          );
+          const timeReallyChanges =
+            nextScheduledIso !== undefined &&
+            (current?.scheduledAt?.toISOString() ?? null) !== nextScheduledIso;
+          return tx.appointment.update({
+            where: { id: appt.id },
+            data: {
+              ...updateData,
+              // Re-arm in the SAME commit as the move: a post-commit reset has
+              // a crash window in which the row carries the new time with the
+              // old marker still standing, and that reminder is missed for good.
+              ...(timeReallyChanges
+                ? { reminderSentAt: null, doctorReminderSentAt: null }
+                : {}),
+            },
+            select: {
+              id: true,
+              status: true,
+              meetingUrl: true,
+              scheduledAt: true,
+              consultationMode: true,
+              updatedAt: true,
+            },
+          });
         });
 
         // Audit + notifications keyed off WHAT actually changed.

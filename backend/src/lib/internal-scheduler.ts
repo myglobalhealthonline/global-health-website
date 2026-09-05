@@ -24,6 +24,7 @@ import { runRetentionSweepReport } from "../modules/data-policy/country-data-pol
 import { dispatchDueTrustpilotInvites } from "../modules/review-invites/review-invite.service.js";
 import { runSuklCertificateMonitor } from "../modules/sukl/sukl-certificate-monitor.service.js";
 import { runRecruitmentRetentionSweep } from "../modules/recruitment/recruitment-retention.service.js";
+import { enqueueDueAppointmentReminders } from "../modules/appointments/appointment-reminder.service.js";
 
 type Logger = { info: (msg: string) => void; error: (msg: string) => void };
 
@@ -52,6 +53,10 @@ const SUKL_CERTIFICATE_INTERVAL_MS = 24 * 60 * 60 * 1000;
 // 60s — doctor no-show check fires as soon as an appointment crosses
 // scheduledAt+5min; a coarser interval would blur that "+5min" precision.
 const DOCTOR_NO_SHOW_INTERVAL_MS = 60 * 1000;
+// Hourly - 24h appointment-reminder enqueue. The window is 23-25h wide, so an
+// hourly scan sees every appointment at least twice before it is due; the
+// unique outbox keys collapse the repeats.
+const APPOINTMENT_REMINDER_INTERVAL_MS = 60 * 60 * 1000;
 
 // Distinct advisory-lock keys, one per job, so only one replica runs a given
 // tick when horizontally scaled. Single-replica (today) always acquires → no
@@ -70,6 +75,7 @@ const LOCK_SUKL_CERTIFICATE = 4010011;
 const LOCK_MEMBERSHIP_EXPIRY = 4010012;
 const LOCK_DOCTOR_NO_SHOW = 4010013;
 const LOCK_RECRUITMENT_RETENTION = 4010014;
+const LOCK_APPOINTMENT_REMINDERS = 4010015;
 
 // SESSION-level advisory lock (pg_advisory_lock / pg_advisory_unlock) on a
 // single manually-checked-out `pg.Pool` client, NOT a Prisma-managed
@@ -377,6 +383,30 @@ async function tickOutboxDispatch(log: Logger) {
   );
 }
 
+async function tickAppointmentReminders(log: Logger) {
+  // Idempotent: the pass only writes Outbox rows behind unique idempotency
+  // keys (skipDuplicates), sends nothing itself, and touches no delivery
+  // marker - a concurrent duplicate run is a no-op. Fail OPEN.
+  await withAdvisoryLock(
+    LOCK_APPOINTMENT_REMINDERS,
+    async () => {
+      try {
+        const r = await enqueueDueAppointmentReminders();
+        if (r.created > 0) {
+          log.info(
+            `[cron] appointment-reminders: scanned=${r.scanned} patient=${r.patientQueued} doctor=${r.doctorQueued} created=${r.created}`,
+          );
+        }
+      } catch (err) {
+        log.error(
+          `[cron] appointment-reminders error: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+    { failClosed: false },
+  );
+}
+
 async function tickDataRetention(log: Logger) {
   // Read-only report (counts + one SecurityAlert, dedupe'd per UTC day) — no
   // deletion, no customer messaging. Fail OPEN.
@@ -500,7 +530,7 @@ export function startInternalScheduler(log: Logger): () => void {
 
   setOpsAlertLogger({ warn: (m) => log.info(m), error: (m) => log.error(m) });
   log.info(
-    "[cron] internal scheduler — pre-payment 15m, post-payment 5m, subs-ops 5m, reconciliation 60m, renewal-reminders 24h, account-purge 60m, outbox 30s, data-retention 24h, recruitment-retention 24h, trustpilot-invites 60m, sukl-certificate 24h, doctor-no-show 60s",
+    "[cron] internal scheduler — pre-payment 15m, post-payment 5m, subs-ops 5m, reconciliation 60m, renewal-reminders 24h, account-purge 60m, outbox 30s, data-retention 24h, recruitment-retention 24h, trustpilot-invites 60m, sukl-certificate 24h, doctor-no-show 60s, appointment-reminders 60m",
   );
 
   const timers: NodeJS.Timeout[] = [];
@@ -537,6 +567,8 @@ export function startInternalScheduler(log: Logger): () => void {
       // a redeploy can't double-notify — and it's exactly when a missed
       // check during the previous process's downtime should get caught up.
       void tickDoctorNoShow(log);
+      // Safe on boot: enqueue-only, behind unique outbox keys.
+      void tickAppointmentReminders(log);
     }, startupJitterMs),
   );
 
@@ -558,6 +590,9 @@ export function startInternalScheduler(log: Logger): () => void {
   timers.push(setInterval(() => void tickSuklCertificate(log), SUKL_CERTIFICATE_INTERVAL_MS));
   timers.push(setInterval(() => void tickMembershipExpiry(log), DAILY_INTERVAL_MS));
   timers.push(setInterval(() => void tickDoctorNoShow(log), DOCTOR_NO_SHOW_INTERVAL_MS));
+  timers.push(
+    setInterval(() => void tickAppointmentReminders(log), APPOINTMENT_REMINDER_INTERVAL_MS),
+  );
 
   return () => {
     for (const t of timers) clearTimeout(t);

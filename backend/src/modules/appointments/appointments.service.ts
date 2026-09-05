@@ -27,6 +27,7 @@ import {
   SlotAlreadyTakenError,
 } from "../doctor-availability/doctor-availability.service.js";
 import { isPauseActiveAt, slotOverlapsPause } from "../bookability/bookability-policy.js";
+import { computeAppointmentUpdateDiff } from "./admin-update-appointment.diff.js";
 
 /**
  * Thrown when a patient tries to reschedule onto a slot that belongs to a
@@ -1128,6 +1129,11 @@ export async function rescheduleAppointmentForPatient(
         timeSlotId: newTimeSlotId,
         scheduledAt: claimed.startAt,
         doctorId: claimed.doctorId,
+        // Re-arm both 24h reminders in the SAME commit as the move — the time
+        // always changes here (the same-slot case returned above), and the
+        // claimed slot can belong to a different doctor.
+        reminderSentAt: null,
+        doctorReminderSentAt: null,
       },
     });
     // Old slot is now detached — delete the collapsed row; base slots are
@@ -1183,8 +1189,45 @@ export async function scheduleAppointment(
   if (Object.keys(data).length === 0) {
     return getAppointmentById(id);
   }
+
+  let missing = false;
   try {
     await prisma.$transaction(async (tx) => {
+      // Re-arm the 24h reminders in the SAME commit as the move, and only when
+      // the value actually changes — resetting a marker for an unchanged time
+      // would re-send a reminder the patient already has.
+      //
+      // Read the before-state INSIDE the transaction and lock the row: deciding
+      // the re-arm from a snapshot taken outside would let a concurrent move
+      // land in between, and the marker would be left standing over a new time
+      // — the exact reminder-is-silently-missed bug this reset exists to close.
+      const [before] = await tx.$queryRaw<
+        { scheduledAt: Date | null; doctorId: string | null }[]
+      >(Prisma.sql`
+        SELECT "scheduledAt", "doctorId" FROM "Appointment" WHERE "id" = ${id} FOR UPDATE
+      `);
+      if (!before) {
+        missing = true;
+        return;
+      }
+      // Same field-for-field reset as the admin order page's
+      // `adminUpdateAppointment` — the two are the only writers that can move
+      // the time and swap the doctor, so they must re-arm identically. Two
+      // independent branches, not `else if`: a change that does both has to
+      // clear both sets.
+      const diff = computeAppointmentUpdateDiff(before, input);
+      if (diff.timeChanged) {
+        data.reminderSentAt = null;
+        data.doctorReminderSentAt = null;
+      }
+      if (diff.doctorChanged) {
+        // A no-show flag stamped for the OLD doctor otherwise exempts the NEW
+        // one from the check entirely: the cron's entry condition is
+        // `doctorNoShowNotifiedAt IS NULL`, so it never looks at this
+        // appointment again.
+        data.doctorNoShowNotifiedAt = null;
+        data.doctorReminderSentAt = null;
+      }
       await tx.appointment.update({ where: { id }, data });
       // Mirror the doctor onto the consultation order line(s) so the
       // post-payment reminder cron — which resolves its recipient from
@@ -1197,6 +1240,9 @@ export async function scheduleAppointment(
         });
       }
     });
+    // Preserve the null-on-missing contract for a row that vanished before we
+    // could lock it, the same way the P2025 branch below does.
+    if (missing) return null;
     return getAppointmentById(id);
   } catch (error) {
     // P2025 = record to update not found — preserve the previous

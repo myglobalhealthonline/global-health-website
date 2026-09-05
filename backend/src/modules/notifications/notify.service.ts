@@ -1,5 +1,9 @@
-import type { NotificationType } from "@prisma/client";
+import type { NotificationType, Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
+
+/** Just enough of the client for `notifyDoctor` to run inside an interactive
+ *  transaction — the shared `prisma` client satisfies it too. */
+type NotifyClient = Pick<Prisma.TransactionClient, "user" | "notification">;
 
 /**
  * Lightweight notification writers. Routes call these after a
@@ -61,18 +65,23 @@ export async function notifyAdmins(
  * an internal message, assigns the appointment, or a patient sends a
  * consultation chat message. No-op when the doctor profile has no login
  * user attached yet.
+ *
+ * Pass `client` (a Prisma transaction client) to write the bell in the SAME
+ * commit as the caller's own state change — the 24h reminder dispatcher does
+ * this so a crash can't leave a notification without its delivery marker.
  */
 export async function notifyDoctor(
   doctorProfileId: string,
   type: NotificationType,
   payload: NotificationPayload,
+  client: NotifyClient = prisma,
 ): Promise<void> {
-  const link = await prisma.user.findFirst({
+  const link = await client.user.findFirst({
     where: { doctorId: doctorProfileId, isActive: true },
     select: { id: true },
   });
   if (!link) return;
-  await prisma.notification.create({
+  await client.notification.create({
     data: { recipientUserId: link.id, type, payload },
   });
 }

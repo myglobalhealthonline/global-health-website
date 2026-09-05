@@ -1,5 +1,5 @@
 import type { FastifyRequest } from "fastify";
-import { CartItemKind } from "@prisma/client";
+import { CartItemKind, Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import {
   DoctorNotAssignedToServiceError,
@@ -187,14 +187,54 @@ export async function adminUpdateAppointment(
   }
 
   await prisma.$transaction(async (tx) => {
+    // `diff` above was computed from a row read before doctor validation, the
+    // previous-slot read and the slot release — three round trips ago. It still
+    // decides admission (`hasChanges`), validation, slot handling and the
+    // notification pass, all of which describe what the ADMIN asked for.
+    //
+    // The reminder markers cannot use it. They mean "already delivered", so
+    // they must be judged against the state this write is actually overwriting.
+    // A concurrent move landing in that window makes the two disagree: an admin
+    // submitting the time still on their screen while another writer has moved
+    // the row elsewhere really does change `scheduledAt`, yet the stale diff
+    // reports no time change and leaves a delivered-marker standing over a time
+    // that no longer exists — and nothing revisits it, so the reminder is missed
+    // permanently. The mirror case clears a marker for a change that never
+    // happened and re-rings a doctor who was already told.
+    //
+    // So: re-read the row inside the transaction, locked, and diff against that.
+    //
+    // KNOWN GAP, deliberately unchanged: when the two diffs disagree, the slot
+    // release/reclaim and the notification payload above still follow the outer
+    // `diff`, so a net time change can be bookkept as "time unchanged" — the old
+    // DoctorTimeSlot stays booked and the "appointment updated" notice describes
+    // the wrong dimension. That is pre-existing behaviour for the same narrow
+    // race; only the reminder markers are hardened here, because only they fail
+    // in a way nothing ever revisits.
+    const [current] = await tx.$queryRaw<
+      { scheduledAt: Date | null; doctorId: string | null }[]
+    >(Prisma.sql`
+      SELECT "scheduledAt", "doctorId" FROM "Appointment"
+      WHERE "id" = ${input.appointmentId} FOR UPDATE
+    `);
+    // `current` is only ever empty if the row was deleted since the read above,
+    // in which case the update two lines down throws P2025 and rolls the whole
+    // transaction back — the fallback keeps the types honest, nothing more.
+    const applied = computeAppointmentUpdateDiff(current ?? row, input);
     await tx.appointment.update({
       where: { id: input.appointmentId },
       data: {
         ...(input.scheduledAt !== undefined ? { scheduledAt: input.scheduledAt } : {}),
         ...(input.doctorId !== undefined ? { doctorId: input.doctorId } : {}),
-        // A no-show flag set for the OLD doctor must not silently exempt the
-        // NEW doctor from the no-show check.
-        ...(diff.doctorChanged ? { doctorNoShowNotifiedAt: null } : {}),
+        // Re-arm in the SAME commit as the move. A post-commit reset would have
+        // a crash window in which the row carries the new time with the old
+        // "already sent" marker still standing.
+        ...(applied.timeChanged ? { reminderSentAt: null, doctorReminderSentAt: null } : {}),
+        // A no-show flag or a doctor reminder marked for the OLD doctor must
+        // not silently exempt the NEW doctor.
+        ...(applied.doctorChanged
+          ? { doctorNoShowNotifiedAt: null, doctorReminderSentAt: null }
+          : {}),
         updatedAt: new Date(),
       },
     });
