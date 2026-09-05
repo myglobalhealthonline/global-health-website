@@ -2725,6 +2725,10 @@ a.gh-portal-mobile-card:active,
 /* Internal/system note — DESIGN.md §5.17: dashed neutral chip, centered,
  * 12px muted, so staff notes read distinctly from patient-facing chat. */
 .gh-chat-note {
+  /* position/overflow moved here from globals.css (Batch 13): these classes
+     are portal-only, so the whole family lives in one sheet. */
+  position: relative;
+  overflow: hidden;
   max-width: 90%;
   margin-inline: auto;
   padding: 10px 14px;
@@ -2749,6 +2753,11 @@ a.gh-portal-mobile-card:active,
 }
 
 .gh-chat-alert {
+  /* position/overflow moved here from globals.css (Batch 13) — see
+     .gh-chat-note above. Plain, not !important: the globals.css rule they
+     replace carried neither, so the computed value is unchanged. */
+  position: relative;
+  overflow: hidden;
   border: 1px solid rgba(176, 124, 26, 0.3) !important;
   border-radius: var(--portal-radius-sm, 8px) !important;
   background: var(--portal-warning-soft, rgba(255, 247, 225, 0.94)) !important;
@@ -6019,6 +6028,17 @@ a.gh-appointment-card:hover {
   animation: gh-dialog-fade 200ms ease-out;
 }
 
+@supports not (backdrop-filter: blur(1px)) {
+  .gh-portal-dialog-overlay {
+    /* --lux-overlay-fill is rgba(7, 18, 12, 0.60); with nothing blurring the
+       page behind it the scrim alone does not separate the modal from the
+       content under it. Same opaque value and same single-layer pattern as
+       .gh-doctor-doc-modal's fallback further down this file. Background
+       only, so z-index, position and pointer behaviour are untouched. */
+    background: rgba(9, 15, 12, 0.72);
+  }
+}
+
 .gh-portal-dialog {
   position: relative;
   z-index: var(--z-modal);
@@ -6981,8 +7001,11 @@ html::-webkit-scrollbar-thumb:hover {
   }
 
   /* AppSheet portal skin — stacked blur (scrim + panel) is the exact
-     GPU-tile pattern that corrupts on Android; solidify both layers. */
-  .gh-app-sheet-overlay--portal {
+     GPU-tile pattern that corrupts on Android; solidify both layers.
+     .gh-portal-dialog-overlay is the same shape (blurred scrim under an
+     opaque panel), so it joins on the same terms. */
+  .gh-app-sheet-overlay--portal,
+  .gh-portal-dialog-overlay {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
     background: rgba(9, 15, 12, 0.72);

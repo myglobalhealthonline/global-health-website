@@ -440,6 +440,17 @@ export function AdminShell({
     // (insertBefore "not a child" errors). Opt the whole portal out.
     <div className="gh-portal-shell min-h-screen notranslate" translate="no" data-portal="admin" data-density="dense">
       <IdleLogout />
+      {/* First focusable element in the shell — <IdleLogout /> renders null,
+          so this is what the first Tab reaches, ahead of the mobile nav
+          button and the ~20-item sidebar below. Plain anchor to the
+          landmark: no handler, no router, works with JS off. Reuses the
+          public site's `.gh-skip-link` (globals.css, shared) and the same
+          `#main-content` target id as SiteChrome and PortalShell, rather
+          than a fourth convention. English like the rest of this shell's
+          chrome copy — /admin loads no locale bundle by design. */}
+      <a href="#main-content" className="gh-skip-link">
+        Skip to main content
+      </a>
       {/* Sidebar — fixed on every breakpoint so it stays put while the
           main column scrolls. On mobile it slides in/out via translate;
           on desktop it's always visible and the main column is offset by
@@ -694,7 +705,7 @@ export function AdminShell({
             </div>
           ) : null}
 
-          <main className="gh-admin-main gh-portal-main min-w-0 flex-1">
+          <main id="main-content" className="gh-admin-main gh-portal-main min-w-0 flex-1">
             <CrumbTitleContext.Provider value={setCrumbTitle}>
               {children}
             </CrumbTitleContext.Provider>

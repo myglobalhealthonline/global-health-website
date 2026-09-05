@@ -4067,6 +4067,18 @@ a.gh-stat-card:hover .gh-stat-card__underline {
   backdrop-filter: none;
 }
 
+@supports not (backdrop-filter: blur(1px)) {
+  .gh-card,
+  .gh-stat-card {
+    /* Solid equivalent of --lux-card-fill's white-tint gradient. Same value
+       and same pattern as .gh-admin-card's fallback in portal.css, which
+       carries a byte-identical fill + blur pair — without it the 0.82/0.66
+       white gradient sits unblurred over the canvas and page texture reads
+       straight through the card. */
+    background-color: #f2f4ef;
+  }
+}
+
 
 /* §7.1 jewel card + §13 V2 — the ONE primary card on a band-less screen:
  * accent corner bloom over card-silk.webp behind a 0.76 ivory veil
@@ -5402,11 +5414,11 @@ html.js .gh-reveal-stagger > .gh-reveal-in {
   background-clip: padding-box, border-box;
   box-shadow: var(--lux-elev-modal);
 }
-.gh-chat-note,
-.gh-chat-alert {
-  position: relative;
-  overflow: hidden;
-}
+/* .gh-chat-note / .gh-chat-alert moved to app/portal.css (portal-only) —
+ * ChatThread, ConsultationChat and InternalMessagesThread are reachable
+ * only from app/(portal)/**, and portal.css already owns the rest of the
+ * family (__meta, __body, .gh-chat-empty). Their `position: relative` and
+ * `overflow: hidden` moved with them, so the computed style is unchanged. */
 
 
 /* WebKit pseudos — any non-initial `scrollbar-width`/`scrollbar-color`
