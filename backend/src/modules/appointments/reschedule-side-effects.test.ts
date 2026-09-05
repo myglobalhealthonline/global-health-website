@@ -267,9 +267,14 @@ describe("applyRescheduleSideEffects", () => {
     });
 
     assert.equal(state.meetCalls.length, 1);
-    // Time didn't move, so nothing downstream of the clock should be touched.
+    // The start time didn't move, so the pre-payment deadline — which is
+    // purely clock-derived — stays put.
     assert.deepEqual(state.dueAtCalls, []);
-    assert.deepEqual(state.rearmCalls, []);
+    // The reminder ladder is NOT purely clock-derived (3939c28f): a rung that
+    // already fired against the OLD doctor would otherwise never re-fire for
+    // the NEW one, so a doctor-only swap still rewinds it — on the unchanged
+    // start time.
+    assert.deepEqual(state.rearmCalls, [{ orderId: ORDER_ID, start: NEW_START }]);
     assert.equal(state.notifyCalls[0].changeReason, "Doctor unavailable");
   });
 });
