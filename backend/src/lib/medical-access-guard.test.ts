@@ -152,6 +152,73 @@ describe("medical access guard — route authorization decision", () => {
     assert.equal(result.denyReason, "PATIENT_NOT_OWN_RECORD");
   });
 
+  // ── Positive PHI-access regression cases (Batch 1b) ────────────────────────
+  // The deny side of the guard was already pinned; the ALLOW side was not, so a
+  // future authorization change could quietly revoke legitimate access without
+  // failing a single test. These lock in the three unconditional allow paths
+  // exactly as branch 1 and branch 2 of assertMedicalAccess implement them
+  // today. No production behaviour is asserted here that the guard does not
+  // already produce.
+
+  it("allows a PATIENT reading their OWN record (self-access)", async () => {
+    const patientProfileId = "patient-profile-self";
+    fixtures.patientProfiles[patientProfileId] = { userId: "user-self" };
+
+    const result = await assertMedicalAccess({
+      actor: { userId: "user-self", role: "PATIENT", name: "Own Record" },
+      resource: { ...resource, patientProfileId },
+    });
+
+    assert.equal(result.allowed, true);
+    assert.equal(result.consentLevelUsed, "SELF");
+  });
+
+  it("allows a SUPER_ADMIN (global override)", async () => {
+    const result = await assertMedicalAccess({
+      actor: { userId: "super-admin-1", role: "SUPER_ADMIN", name: "Super Admin" },
+      resource,
+    });
+
+    assert.equal(result.allowed, true);
+    assert.equal(result.consentLevelUsed, "ADMIN_OVERRIDE");
+  });
+
+  it("keeps SUPER_ADMIN unconditional while a plain ADMIN needs a break-glass reason", async () => {
+    // S-002 asymmetry: ADMIN_PHI_REQUIRE_REASON gates the plain ADMIN only.
+    // Enforcement is pinned off so a deny returns a decision instead of
+    // throwing (denyDecision), which is what the surrounding suite assumes.
+    const originalRequireReason = env.ADMIN_PHI_REQUIRE_REASON;
+    const originalEnforce = env.MEDICAL_ACCESS_ENFORCE;
+    env.ADMIN_PHI_REQUIRE_REASON = true;
+    env.MEDICAL_ACCESS_ENFORCE = false;
+    try {
+      const admin = await assertMedicalAccess({
+        actor: { userId: "admin-1", role: "ADMIN", name: "Admin" },
+        resource,
+      });
+      assert.equal(admin.allowed, false);
+      assert.equal(admin.denyReason, "ADMIN_BREAK_GLASS_REASON_REQUIRED");
+
+      const superAdmin = await assertMedicalAccess({
+        actor: { userId: "super-admin-1", role: "SUPER_ADMIN", name: "Super Admin" },
+        resource,
+      });
+      assert.equal(superAdmin.allowed, true);
+      assert.equal(superAdmin.consentLevelUsed, "ADMIN_OVERRIDE");
+
+      // The reason unblocks the plain ADMIN rather than permanently denying it.
+      const adminWithReason = await assertMedicalAccess({
+        actor: { userId: "admin-1", role: "ADMIN", name: "Admin" },
+        resource,
+        reason: "Batch 1b regression probe",
+      });
+      assert.equal(adminWithReason.allowed, true);
+    } finally {
+      env.ADMIN_PHI_REQUIRE_REASON = originalRequireReason;
+      env.MEDICAL_ACCESS_ENFORCE = originalEnforce;
+    }
+  });
+
   it("allows a DOCTOR with direct consent and a COMPLETED appointment (doctor-of-record)", async () => {
     const patientProfileId = "patient-profile-completed";
     fixtures.patientProfiles[patientProfileId] = { userId: "user-completed" };

@@ -749,6 +749,42 @@ describe("authorization matrix", () => {
     assert.ok(after > before, "a new MedicalAccessLog row was written for this read");
   });
 
+  // ── Batch 1b: patient self-access to their own medical documents ───────────
+  // The admin document read above is pinned, and the cross-tenant doctor read
+  // is pinned as a 403, but nothing pinned the patient's own view of their own
+  // documents. medical-documents.route.ts requires role === "PATIENT" and then
+  // routes the read through guardMedicalRead, which resolves the guard's SELF
+  // branch. Without this, a change to the guard's patient branch could revoke a
+  // patient's access to their own record and every existing test would still
+  // pass.
+  it("patient self-access: a patient can read their own medical documents → 200", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/account/medical-documents",
+      cookies: patient1Cookie,
+    });
+    assert.equal(res.statusCode, 200, res.body);
+    const documents: Array<{ id: string }> = res.json().data.documents;
+    assert.ok(
+      documents.some((d) => d.id === medicalDocumentId),
+      "the patient's own seeded MedicalDocument appears in their own view",
+    );
+  });
+
+  it("patient self-access: the same route refuses a doctor session → 403", async (t) => {
+    if (!app) return t.skip();
+    // doctor3Cookie, NOT doctor1Cookie: the sign-out-all-devices test above
+    // bumps doctor1's tokenVersion, so from that point on doctor1 is rejected
+    // by requireAuth with a 401 and never reaches the route's PATIENT gate.
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/account/medical-documents",
+      cookies: doctor3Cookie,
+    });
+    assert.equal(res.statusCode, 403, res.body);
+  });
+
   it("S-032 fix: blocks the admin read once a break-glass reason is required but not supplied", async (t) => {
     if (!app) return t.skip();
     const originalRequireReason = envModule.ADMIN_PHI_REQUIRE_REASON;
