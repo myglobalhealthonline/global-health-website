@@ -184,13 +184,79 @@ function buildWhere(query: AdminHealthTestsQuery): Prisma.HealthTestWhereInput {
   return where;
 }
 
+/* ------------------------------------------------------------------ *
+ * PR-1 — public projection allow-lists.
+ *
+ * The public health-test readers used to `include:` the HealthTest model
+ * root, so every scalar column shipped — including the legacy migration
+ * path, the country FK and the row's creation timestamp — and
+ * `listHealthTests` nested `country: true` on top, publishing a COMPLETE
+ * Country row (routing paths, `currencyId`, `accessModel`,
+ * `commissionReceiptEnabled`, timestamps) inside every catalogue item.
+ *
+ * The two `select` constants below decide what leaves the database, so a
+ * column added to either Prisma model later cannot appear in public JSON
+ * until it is added here on purpose.
+ *
+ * There is deliberately ONE layer here, unlike doctors: nothing in the
+ * catalogue needs a scalar transformed on the way out, so the `select` is
+ * the whole boundary — widen it and the field ships.
+ * ------------------------------------------------------------------ */
+
+/** Country fields a public health-test payload may carry — the narrow shape
+ *  `getPublicHealthTestBySlug` already used, now shared by all three public
+ *  readers. Harmonizing costs `listHealthTestsByCountry` one extra field:
+ *  its old inline select had no `slug`, so that endpoint's nested country
+ *  gains `slug` on purpose (the detail endpoint has always published it).
+ *
+ *  Narrower than the same-named constant in doctors.service.ts /
+ *  services.service.ts, which also carry `teamPath` — nothing in the
+ *  health-test payload links to a country's team page. */
+const publicCountrySelect = {
+  id: true,
+  code: true,
+  slug: true,
+  name: true,
+  defaultLocale: true,
+} satisfies Prisma.CountrySelect;
+
+/** HealthTest columns a public reader may return. `legacyPath` (legacy
+ *  migration), `countryId` (internal FK) and `createdAt` are absent on
+ *  purpose — the nested `country` carries the market, and the sitemap reads
+ *  `updatedAt`. */
+const publicHealthTestScalars = {
+  id: true,
+  slug: true,
+  title: true,
+  shortDescription: true,
+  priceCents: true,
+  shippingCents: true,
+  currencyCode: true,
+  productImagePath: true,
+  galleryImagePaths: true,
+  sampleType: true,
+  resultsTimeline: true,
+  heroButtonLabel: true,
+  detailIntro: true,
+  whatThisTestCovers: true,
+  whyGetTested: true,
+  extraSections: true,
+  sortOrder: true,
+  isActive: true,
+  stock: true,
+  seoTitle: true,
+  seoDescription: true,
+  updatedAt: true,
+} satisfies Prisma.HealthTestSelect;
+
 export async function listHealthTests(locale?: LocaleCode) {
   try {
     return await prisma.healthTest.findMany({
       where: { isActive: true },
       orderBy: [{ country: { name: "asc" } }, { sortOrder: "asc" }, { title: "asc" }],
-      include: {
-        country: true,
+      select: {
+        ...publicHealthTestScalars,
+        country: { select: publicCountrySelect },
         translations: { select: healthTestTranslationSelect },
       },
     }).then((rows) =>
@@ -208,8 +274,9 @@ export async function listHealthTestsByCountry(countryCode: string, locale?: Loc
     const rows = await prisma.healthTest.findMany({
       where: { isActive: true, country: { code: { equals: countryCode, mode: "insensitive" } } },
       orderBy: [{ sortOrder: "asc" }, { title: "asc" }],
-      include: {
-        country: { select: { id: true, code: true, name: true, defaultLocale: true } },
+      select: {
+        ...publicHealthTestScalars,
+        country: { select: publicCountrySelect },
         translations: { select: healthTestTranslationSelect },
       },
     });
@@ -247,8 +314,9 @@ export async function getPublicHealthTestBySlug(
           ? { country: { code: { equals: countryCode, mode: "insensitive" } } }
           : {}),
       },
-      include: {
-        country: { select: { id: true, code: true, slug: true, name: true, defaultLocale: true } },
+      select: {
+        ...publicHealthTestScalars,
+        country: { select: publicCountrySelect },
         translations: { select: healthTestTranslationSelect },
         faqs: {
           where: { isVisible: true },

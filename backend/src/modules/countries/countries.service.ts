@@ -67,32 +67,71 @@ export async function getPublicCountryByCode(code: string): Promise<{ id: string
   return country;
 }
 
+/* ------------------------------------------------------------------ *
+ * PR-1 — the public `/api/countries` projection.
+ *
+ * `listCountries` used to `include:` the Country model root plus the whole
+ * `Currency` relation, so the endpoint published the FK `currencyId`, the
+ * medical-access `accessModel`, the billing-model `commissionReceiptEnabled`,
+ * both row timestamps and a `Currency` row nothing public reads. This
+ * `select` decides what leaves the database, so a column added to the model
+ * later cannot appear in public JSON until it is added here on purpose.
+ *
+ * This projection is deliberately WIDER than the nested country selection in
+ * doctors.service.ts / services.service.ts: `/api/countries` is where the
+ * frontend builds its routing table, so the four path columns, the feature
+ * gates and the booking intake rules are public contract, not leaks. Their
+ * single consumer is `frontend/lib/content/get-public-countries.ts`
+ * (`extractBackendCountryOverlay` + `getPublicBookingRequirements`) — check
+ * it before narrowing anything below.
+ *
+ * `isActive` is absent on purpose rather than by oversight: the reader's own
+ * `where` pins it to `true`, and availability reaches the frontend as
+ * presence in this array (an inactive market is simply skipped).
+ * ------------------------------------------------------------------ */
+const publicCountrySelect = {
+  id: true,
+  code: true,
+  name: true,
+  slug: true,
+  defaultLocale: true,
+  // Country/locale routing + the legacy redirect targets.
+  legacyHomePath: true,
+  teamPath: true,
+  generalConsultationPath: true,
+  specialistConsultationPath: true,
+  // Nav, footer and sitemap feature gates (/admin/country-features).
+  enabledFeatures: true,
+  // Supported locales. Only `locale` is read; `isDefault` is redundant with
+  // the `defaultLocale` column above.
+  countryLocales: {
+    orderBy: { locale: "asc" as const },
+    select: { locale: true },
+  },
+  // Clinic timezone drives patient-facing slot display. The intake
+  // requiredness flags are public too — the storefront booking form needs
+  // them to mark phone/DOB/address/national-ID as required (or not) instead
+  // of guessing, which previously caused a mismatch between the form's
+  // "(optional)" label and the server's 400. `bookingEnabled` and
+  // `doctorServiceSelfSelectApproval` are internal and stay out.
+  bookingSetting: {
+    select: {
+      timezone: true,
+      requirePhone: true,
+      requireDateOfBirth: true,
+      requireNationalId: true,
+      requireAddress: true,
+      collectUtenteNumber: true,
+    },
+  },
+} satisfies Prisma.CountrySelect;
+
 export async function listCountries() {
   try {
     return await prisma.country.findMany({
       where: { isActive: true },
       orderBy: { name: "asc" },
-      include: {
-        currency: true,
-        countryLocales: {
-          orderBy: { locale: "asc" },
-        },
-        // Clinic timezone drives patient-facing slot display. The intake
-        // requiredness flags are public too — the storefront booking form
-        // needs them to mark phone/DOB/address/national-ID as required (or
-        // not) instead of guessing, which previously caused a mismatch
-        // between the form's "(optional)" label and the server's 400.
-        bookingSetting: {
-          select: {
-            timezone: true,
-            requirePhone: true,
-            requireDateOfBirth: true,
-            requireNationalId: true,
-            requireAddress: true,
-            collectUtenteNumber: true,
-          },
-        },
-      },
+      select: publicCountrySelect,
     });
   } catch (error) {
     throw normalizeDbError(error, "Countries data is unavailable");
