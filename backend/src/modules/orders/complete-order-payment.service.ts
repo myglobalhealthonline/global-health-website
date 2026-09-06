@@ -1,4 +1,4 @@
-import { PaymentStatus } from "@prisma/client";
+import { PaymentStatus, Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { sendOrderConfirmationEmail } from "../../lib/email/templates.js";
 import { getStripeClient, isStripeConfigured } from "../../lib/stripe/client.js";
@@ -195,8 +195,73 @@ async function settleCrossBorderRxOnPaid(orderId: string, log: PaymentLog): Prom
   }
 }
 
+/**
+ * PM-1. The route's top-level dedupe is a read-then-act, so two concurrent
+ * deliveries of the SAME Stripe event both reach this function. The
+ * `ProcessedWebhookEvent.stripeEventId` insert below is what actually settles
+ * the race — it lives in the same transaction as the PAID flip and the outbox
+ * rows, so the loser rolls back having applied nothing.
+ *
+ * Recognising that conflict is only about the response: without this the loser
+ * threw, answered Stripe 500 and burned a retry to reach the `alreadyPaid`
+ * branch it was always going to reach. It is NOT a blanket unique-error
+ * swallow — the caller re-reads durable state and rethrows unless the event
+ * really did complete.
+ */
+function isProcessedWebhookEventConflict(error: unknown): boolean {
+  if (!(error instanceof Prisma.PrismaClientKnownRequestError) || error.code !== "P2002") {
+    return false;
+  }
+  // Discriminate on the model, not the field name: `Payment.stripeEventId` is
+  // unique too, so a bare field match would let a future `Payment` write in
+  // this transaction be misread as this race and silently reported as applied.
+  //
+  // `modelName` is what Prisma 7.9.1 actually populates here — verified against
+  // a real violation on Postgres 18, which produced
+  // `{ modelName: "ProcessedWebhookEvent", driverAdapterError: … }` and NO
+  // `meta.target`. If a future client stops sending it, this returns false and
+  // the caller rethrows: back to a 500 and a Stripe retry, which is where this
+  // started, never a swallowed failure.
+  return (error.meta as { modelName?: unknown } | undefined)?.modelName === "ProcessedWebhookEvent";
+}
+
 /** Idempotent: records Stripe event + flips order to PAID. Never throws on fulfillment errors. */
 async function markOrderPaidFromStripeSession(
+  orderId: string,
+  session: CheckoutSessionSnapshot,
+  opts: { stripeEventId: string; eventType: string },
+  log: PaymentLog,
+): Promise<{ alreadyPaid: boolean; resurrectedFromCancelled: boolean }> {
+  try {
+    return await markOrderPaidInTransaction(orderId, session, opts, log);
+  } catch (error) {
+    if (!isProcessedWebhookEventConflict(error)) throw error;
+
+    // Re-read outside the rolled-back transaction: the conflict alone does not
+    // prove the winner committed. Only the event row AND a paid order together
+    // do — anything else is a real failure Stripe should retry.
+    const [seen, order] = await Promise.all([
+      prisma.processedWebhookEvent.findUnique({
+        where: { stripeEventId: opts.stripeEventId },
+        select: { id: true },
+      }),
+      prisma.order.findUnique({
+        where: { id: orderId },
+        select: { paymentStatus: true, status: true },
+      }),
+    ]);
+    if (seen && (order?.paymentStatus === "PAID" || order?.status === "PAID")) {
+      log.info(
+        { orderId, stripeEventId: opts.stripeEventId },
+        "Concurrent delivery of the same Stripe event lost the race; already applied",
+      );
+      return { alreadyPaid: true, resurrectedFromCancelled: false };
+    }
+    throw error;
+  }
+}
+
+async function markOrderPaidInTransaction(
   orderId: string,
   session: CheckoutSessionSnapshot,
   opts: { stripeEventId: string; eventType: string },

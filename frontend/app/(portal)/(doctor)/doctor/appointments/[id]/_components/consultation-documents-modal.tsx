@@ -231,6 +231,12 @@ export function ConsultationDocumentsModal({
   const [context, setContext] = useState<DocumentContext | null>(null);
   const [contextLoading, setContextLoading] = useState(false);
   const [pending, startTransition] = useTransition();
+  /**
+   * `pending` only turns the button grey after React re-renders, so a fast
+   * double-click can fire two identical generates. This is the synchronous
+   * half of the lock; the server coalesces whatever still gets through.
+   */
+  const generateInFlight = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [editingDocId, setEditingDocId] = useState<string | null>(null);
@@ -388,63 +394,74 @@ export function ConsultationDocumentsModal({
   }
 
   async function generate(type: string, fields: Record<string, string>) {
+    if (generateInFlight.current) return;
+    generateInFlight.current = true;
     setError(null);
     setSuccess(null);
     startTransition(async () => {
-      const res = await fetch(
-        `/api/doctor/appointments/${appointmentId}/documents-generate`,
-        {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(buildFields(type, fields)),
-        },
-      );
-      const json = await parseDoctorApiJson<{
-        ok?: boolean;
-        message?: string;
-        data?: {
-          pdfUrl?: string;
-          document?: { id: string };
-          healthPortalUrl?: string | null;
-          healthPortalLabel?: string | null;
-        };
-      }>(res);
-      if (!res.ok || !json?.ok) {
-        setError(doctorApiErrorMessage(res, json, copy.generateFailed));
-        return;
-      }
-      setEditingDocId(null);
-      onDocumentsChange?.();
-      const pdfUrl =
-        json.data?.pdfUrl ??
-        (json.data?.document?.id
-          ? `/api/doctor/documents/generated/${json.data.document.id}/pdf`
-          : null);
-      if (pdfUrl) {
-        openDoctorPdfInNewTab(pdfUrl);
-      }
-      onClose();
-      focusDoctorReviewSend();
-      if (type === "PRESCRIPTION" && json.data?.healthPortalUrl) {
-        setSuccess(
-          pdfUrl
-            ? copy.prescriptionPortalSuccess.replace(
-                "{portal}",
-                json.data.healthPortalLabel ?? copy.nationalPortalDefault,
-              )
-            : copy.prescriptionSuccessNoPdf,
+      try {
+        const res = await fetch(
+          `/api/doctor/appointments/${appointmentId}/documents-generate`,
+          {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(buildFields(type, fields)),
+          },
         );
-      } else if (type === "PRESCRIPTION") {
-        setSuccess(pdfUrl ? copy.prescriptionSuccessPdf : copy.prescriptionSuccessNoPdf);
-      } else if (
-        type === "EXAMS_PRESCRIPTION" ||
-        type === "ABSENCE_CERTIFICATE" ||
-        type === "CUSTOM_CERTIFICATE" ||
-        type === "ATTENDANCE_CERTIFICATE"
-      ) {
-        setSuccess(pdfUrl ? copy.otherDocSuccessPdf : copy.otherDocSuccessNoPdf);
-      } else {
-        setSuccess(pdfUrl ? copy.genericSuccessPdf : copy.genericSuccessNoPdf);
+        const json = await parseDoctorApiJson<{
+          ok?: boolean;
+          message?: string;
+          data?: {
+            pdfUrl?: string;
+            document?: { id: string };
+            healthPortalUrl?: string | null;
+            healthPortalLabel?: string | null;
+          };
+        }>(res);
+        if (!res.ok || !json?.ok) {
+          setError(doctorApiErrorMessage(res, json, copy.generateFailed));
+          return;
+        }
+        setEditingDocId(null);
+        onDocumentsChange?.();
+        const pdfUrl =
+          json.data?.pdfUrl ??
+          (json.data?.document?.id
+            ? `/api/doctor/documents/generated/${json.data.document.id}/pdf`
+            : null);
+        if (pdfUrl) {
+          openDoctorPdfInNewTab(pdfUrl);
+        }
+        onClose();
+        focusDoctorReviewSend();
+        if (type === "PRESCRIPTION" && json.data?.healthPortalUrl) {
+          setSuccess(
+            pdfUrl
+              ? copy.prescriptionPortalSuccess.replace(
+                  "{portal}",
+                  json.data.healthPortalLabel ?? copy.nationalPortalDefault,
+                )
+              : copy.prescriptionSuccessNoPdf,
+          );
+        } else if (type === "PRESCRIPTION") {
+          setSuccess(pdfUrl ? copy.prescriptionSuccessPdf : copy.prescriptionSuccessNoPdf);
+        } else if (
+          type === "EXAMS_PRESCRIPTION" ||
+          type === "ABSENCE_CERTIFICATE" ||
+          type === "CUSTOM_CERTIFICATE" ||
+          type === "ATTENDANCE_CERTIFICATE"
+        ) {
+          setSuccess(pdfUrl ? copy.otherDocSuccessPdf : copy.otherDocSuccessNoPdf);
+        } else {
+          setSuccess(pdfUrl ? copy.genericSuccessPdf : copy.genericSuccessNoPdf);
+        }
+      } catch {
+        // Only the fetch itself can land here (parseDoctorApiJson swallows its
+        // own parse errors) — offline, DNS, aborted. Without this the button
+        // just quietly re-enabled with no PDF and no explanation.
+        setError(copy.generateFailed);
+      } finally {
+        generateInFlight.current = false;
       }
     });
   }

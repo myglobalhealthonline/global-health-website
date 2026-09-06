@@ -1,5 +1,5 @@
 import type { GeneratedDocument, GeneratedDocumentType, LocaleCode } from "@prisma/client";
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { prisma } from "../../db/prisma.js";
 import { env } from "../../config/env.js";
 import {
@@ -339,29 +339,84 @@ async function buildCertificateArtifacts(
   return { certificateId, verifyUrl, pngBuffer, dataUrl };
 }
 
-export async function generateAppointmentDocument(input: {
+type GenerateInput = {
   appointmentId: string;
   doctorId: string;
   documentType: GeneratedDocumentType;
   fields?: Record<string, string>;
   editDocumentId?: string;
-}) {
+};
+
+/**
+ * Identical generate requests that overlap in time (a double-clicked
+ * "Generate PDF") join the one already running instead of queuing a second
+ * render behind it.
+ *
+ * `withGenerateLock` serialises but does not deduplicate, so before this the
+ * second click cost a second PDF render, a second object upload, a second
+ * patient-upload token for EXAMS_PRESCRIPTION, a second durable row for OTHER
+ * — and handed the first caller a document id that the second call's
+ * old-draft cleanup then deleted, so that browser tab 404'd.
+ *
+ * Coalescing only, never suppression: the entry is dropped as soon as the
+ * request settles, so a later deliberate generate, or a retry after a failed
+ * attempt, runs normally.
+ */
+const inFlightGenerateByFingerprint = new Map<
+  string,
+  ReturnType<typeof generateAppointmentDocumentUnlocked>
+>();
+
+/**
+ * Opaque identity of one generate request. SHA-256 so no clinical field value
+ * is ever held in a map key; the digest is never logged, persisted or
+ * returned. Doctor + appointment + edit target are part of the digest, so two
+ * doctors, two appointments or two edit targets can never share a result.
+ */
+function generateFingerprint(input: GenerateInput): string {
+  const fields = Object.entries(input.fields ?? {}).sort(([a], [b]) => a.localeCompare(b));
+  return createHash("sha256")
+    .update(
+      JSON.stringify([
+        input.appointmentId,
+        input.doctorId,
+        input.documentType,
+        input.editDocumentId ?? null,
+        fields,
+      ]),
+    )
+    .digest("hex");
+}
+
+export async function generateAppointmentDocument(input: GenerateInput) {
   if (!isMediaStorageConfigured()) {
     throw new Error("Document storage is not configured");
   }
 
-  return withGenerateLock(input.appointmentId, input.documentType, () =>
-    generateAppointmentDocumentUnlocked(input),
-  );
+  const fingerprint = generateFingerprint(input);
+  const joined = inFlightGenerateByFingerprint.get(fingerprint);
+  if (joined) return joined;
+
+  // ponytail: single-process coalescing, matching the mutex above it. Two
+  // backend processes would each render once; per-appointment durable
+  // idempotency would need a DB claim row, which no observed defect requires.
+  const run: ReturnType<typeof generateAppointmentDocumentUnlocked> = (async () => {
+    try {
+      return await withGenerateLock(input.appointmentId, input.documentType, () =>
+        generateAppointmentDocumentUnlocked(input),
+      );
+    } finally {
+      // Unconditional: nothing else can own this key while we hold it. A later
+      // request only reaches the `set` above after its own `get` missed, and
+      // that miss can only happen once this delete has run.
+      inFlightGenerateByFingerprint.delete(fingerprint);
+    }
+  })();
+  inFlightGenerateByFingerprint.set(fingerprint, run);
+  return run;
 }
 
-async function generateAppointmentDocumentUnlocked(input: {
-  appointmentId: string;
-  doctorId: string;
-  documentType: GeneratedDocumentType;
-  fields?: Record<string, string>;
-  editDocumentId?: string;
-}) {
+async function generateAppointmentDocumentUnlocked(input: GenerateInput) {
   const source = await resolveAppointmentDocumentSource(
     input.appointmentId,
     input.doctorId,

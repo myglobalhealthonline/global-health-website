@@ -558,6 +558,16 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
 
       // Idempotency: have we recorded this event already? Stripe retries on
       // 5xx responses, so we must be safe to receive the same event twice.
+      //
+      // PM-1 — this check is a fast path, NOT the guarantee. It is a
+      // read-then-act outside any transaction, so two concurrent deliveries of
+      // one event both get past it. Every branch below therefore owes its own
+      // durable guard, in the same transaction as its business writes:
+      // a unique key (`ProcessedWebhookEvent.stripeEventId`,
+      // `Payment.stripeEventId`), a conditional `updateMany`, or a
+      // compare-and-set. A branch that only relies on this read is unprotected
+      // against a concurrent redelivery — treat that as a review blocker when
+      // adding one.
       try {
         const [seenPayment, seenEvent] = await Promise.all([
           prisma.payment.findUnique({
