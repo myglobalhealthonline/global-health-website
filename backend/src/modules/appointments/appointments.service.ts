@@ -28,6 +28,7 @@ import {
 } from "../doctor-availability/doctor-availability.service.js";
 import { isPauseActiveAt, slotOverlapsPause } from "../bookability/bookability-policy.js";
 import { computeAppointmentUpdateDiff } from "./admin-update-appointment.diff.js";
+import { resolvePatientProfileIdForNewAppointment } from "../patient-profile/appointment-patient-link.js";
 
 /**
  * Thrown when a patient tries to reschedule onto a slot that belongs to a
@@ -136,6 +137,15 @@ export async function createAppointmentWithOptionalOwner(
 ) {
   try {
     const id = randomUUID();
+
+    // The patient this booking is FOR. The public booking form collects the
+    // patient's own details — `input.email` IS the patient's address, so an
+    // exact profile match on it is the patient, not a payer. Null when they
+    // have no profile yet (guest booking); the guest-claim path links it once
+    // a verified account exists.
+    const patientProfileId = await resolvePatientProfileIdForNewAppointment(prisma, {
+      patientEmail: input.email,
+    });
 
     // dateOfBirth — `YYYY-MM-DD` string from the form. Coerce to a
     // proper Date (UTC midnight) so the DB column is a real date+time.
@@ -265,6 +275,7 @@ export async function createAppointmentWithOptionalOwner(
           data: {
             id,
             userId: options.userId ?? null,
+            patientProfileId,
             countryCode: input.country,
             consultationType: input.consultationType,
             fullName: input.fullName,
@@ -291,6 +302,7 @@ export async function createAppointmentWithOptionalOwner(
     const untimedData = {
       id,
       userId: options.userId ?? null,
+      patientProfileId,
       countryCode: input.country,
       consultationType: input.consultationType,
       fullName: input.fullName,

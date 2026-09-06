@@ -36,6 +36,7 @@ import {
   copyDisclosedPatientContext,
 } from "./cross-border-rx-disclosure.service.js";
 import type { PaymentLog } from "../orders/complete-order-payment.service.js";
+import { resolvePatientProfileIdForNewAppointment } from "../patient-profile/appointment-patient-link.js";
 
 /**
  * Patient consent token: the raw token lives ONLY in the emailed consent link;
@@ -1039,9 +1040,19 @@ export async function onCrossBorderRxFeePaid(
     select: { orderNumber: true, currencyCode: true, totalCents: true, phone: true, userId: true },
   });
 
+  // The patient of a cross-border request is the patient of the consultation it
+  // came from — propagated from the source appointment, never recomputed from
+  // the order's payer. `patientEmail` is the request's own record of the
+  // patient and is only consulted when the source carries no link yet.
+  const patientProfileId = await resolvePatientProfileIdForNewAppointment(prisma, {
+    sourceAppointmentId: request.sourceAppointmentId,
+    patientEmail: request.patientEmail,
+  });
+
   const appt = await prisma.appointment.create({
     data: {
       userId: order?.userId ?? null,
+      patientProfileId,
       countryCode: request.targetCountryCode,
       consultationType: "cross-border-prescription",
       fullName: request.patientFullName,

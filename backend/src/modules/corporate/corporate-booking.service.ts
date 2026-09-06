@@ -7,6 +7,7 @@ import {
 } from "../doctor-availability/doctor-availability.service.js";
 import { assertCorporateServiceBookable } from "./corporate-benefit.service.js";
 import { claimCorporateRequest } from "./corporate-status.service.js";
+import { resolvePatientProfileIdForNewAppointment } from "../patient-profile/appointment-patient-link.js";
 
 /**
  * Booking for the plan's own corporate consultations.
@@ -176,10 +177,16 @@ export async function bookCorporateConsultation(input: {
         input.timeSlotId,
         corporateService.durationMinutes,
       );
+      // Corporate members book for themselves — `input.patient.email` is the
+      // member's own address, so an exact profile match on it is the patient.
+      const patientProfileId = await resolvePatientProfileIdForNewAppointment(tx, {
+        patientEmail: input.patient.email,
+      });
       await tx.appointment.create({
         data: {
           id: appointmentId,
           userId: input.userId,
+          patientProfileId,
           // The consultation's own market when pinned, else the doctor's.
           countryCode: corporateService.countryCode ?? corporateService.doctor.country.code,
           // `consultationType` is what every downstream surface already

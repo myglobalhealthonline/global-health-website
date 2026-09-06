@@ -2127,7 +2127,25 @@ model Appointment {
   /// strict:false overflow from the Mongo import — source keys not promoted to
   /// a real column. Nothing dropped silently.
   legacyExtra                    Json?
+  /// The PURCHASER's account, not reliably the patient's. A family/dependent
+  /// booking has the payer here while the consultation belongs to someone
+  /// else, so this column must never be used on its own to answer "whose
+  /// medical record is this?" — use `patientProfileId` below.
   userId                         String?
+  /// The ACTUAL patient this consultation is for. Written from the concrete
+  /// patient identity at booking time (the manual-booking upsert, the
+  /// dependent's `FamilyMember.patientProfileId`, the source appointment for a
+  /// follow-up / cross-border request, or an exact match on the patient's own
+  /// email) — never derived from `userId`.
+  ///
+  /// Deliberately NULLABLE and left null for anything ambiguous: legacy rows,
+  /// guest bookings made before a profile exists, and family bookings whose
+  /// dependent has no profile yet. A missing link makes every reader fail
+  /// closed, which is the safe direction; a guessed link would be a
+  /// wrong-patient PHI disclosure. Restrict on delete — a retained clinical
+  /// record must never be removed as a side effect of a profile deletion.
+  patientProfileId               String?
+  patientProfile                 PatientProfile?           @relation("AppointmentPatient", fields: [patientProfileId], references: [id], onDelete: Restrict)
   countryCode                    String
   consultationType               String
   /// BCP-47 language code chosen by patient at booking time (e.g. "en", "pt", "fr").
@@ -2351,6 +2369,7 @@ model Appointment {
 
   @@index([clinicId])
   @@index([userId])
+  @@index([patientProfileId])
   @@index([email])
   @@index([doctorId])
   @@index([doctorId, email])
@@ -2545,6 +2564,11 @@ model PatientProfile {
   /// Append-only history of statusAlert/clinicAlert changes, including the
   /// mandatory note captured when an alert is removed.
   alertLogs                 PatientAlertLog[]
+  /// Consultations this patient is the SUBJECT of — see
+  /// `Appointment.patientProfileId`. Deliberately NOT the same set as the
+  /// appointments hanging off this profile's `user`, which are the ones this
+  /// account PAID for and can include a dependent's consultation.
+  appointments              Appointment[]                @relation("AppointmentPatient")
   createdAt                 DateTime                     @default(now())
   updatedAt                 DateTime                     @updatedAt
 

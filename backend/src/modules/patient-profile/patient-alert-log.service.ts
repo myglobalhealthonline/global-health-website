@@ -105,7 +105,13 @@ export async function recordAlertChanges(params: {
  * Returns the updated profile row plus the log entry that was written.
  */
 export async function removePatientAlert(params: {
-  email: string;
+  /** The RESOLVED chart. Deliberately not an email: every caller has already
+   *  settled which patient this is and authorized the write against that id,
+   *  and re-deriving the row from an address here would let a released or
+   *  reassigned address point the removal at somebody else's chart between the
+   *  two lookups. An address is what the caller was given; the id is who it
+   *  turned out to be. */
+  patientProfileId: string;
   alertType: PatientAlertType;
   note: string;
   actor: AlertActor;
@@ -117,7 +123,7 @@ export async function removePatientAlert(params: {
   const field = FIELD_BY_TYPE[params.alertType];
   try {
     const profile = await prisma.patientProfile.findUnique({
-      where: { email: params.email },
+      where: { id: params.patientProfileId },
       select: { id: true, statusAlert: true, clinicAlert: true },
     });
     const previousValue = normalizeAlert(profile?.[field]);

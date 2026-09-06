@@ -969,7 +969,7 @@ export async function createManualBooking(
   // shared helper. `created: true` means we minted a brand-new
   // account (and applied the temp hash); `false` means we matched an
   // existing patient — their password is left untouched.
-  const { userId, created } = await upsertPatientProfileByEmail(
+  const { userId, created, profile: bookingPatientProfile } = await upsertPatientProfileByEmail(
     {
       email,
       fullName,
@@ -1116,6 +1116,11 @@ export async function createManualBooking(
       data: {
         id: appointmentId,
         userId,
+        // The patient this consultation is FOR, straight off the upsert above —
+        // the one identity in this flow that is known to be the patient's and
+        // not the payer's. Doctor-manual, follow-up and partner-API bookings
+        // all route through here, so they inherit the link.
+        patientProfileId: bookingPatientProfile.id,
         countryCode: input.countryCode,
         consultationType: input.consultationTypeOverride?.trim() || service.name,
         notificationLocale,

@@ -11,6 +11,7 @@ import {
 } from "./generated-documents-fields.js";
 import { formatDateDdMmYyyy } from "./document-template-utils.js";
 import { labelsForPrefix } from "./docx-template-labels.js";
+import { resolvePatientProfileIdForAppointmentId } from "../patient-profile/appointment-patient-link.js";
 import {
   labelPrefixForCountry,
   templatePrefixForCountry,
@@ -112,21 +113,30 @@ export async function resolveAppointmentDocumentSource(
   const registrationVerified = formatted.verified;
   const registrationMissing = formatted.missing;
 
-  const patientProfileRaw = await prisma.patientProfile.findUnique({
-    where: { email: appt.email.toLowerCase() },
-    select: {
-      nationalIdNumber: true,
-      taxIdNumber: true,
-      passportNumber: true,
-      addressLine1: true,
-      addressLine2: true,
-      addressCity: true,
-      addressState: true,
-      addressPostalCode: true,
-      addressCountryCode: true,
-      dateOfBirth: true,
-    },
-  });
+  // Through the durable appointment→patient link, not the booking address. A
+  // prescription prints the patient's government-ID numbers, so resolving by
+  // an address a later patient could reuse is a wrong-identity document, not
+  // just a missing one. Falls back to the address only for legacy rows that
+  // carry no link, which is what `resolvePatientProfileIdForAppointmentId`
+  // does — and yields null rather than a guess when it cannot tell.
+  const documentPatientProfileId = await resolvePatientProfileIdForAppointmentId(appt.id);
+  const patientProfileRaw = documentPatientProfileId
+    ? await prisma.patientProfile.findUnique({
+        where: { id: documentPatientProfileId },
+        select: {
+          nationalIdNumber: true,
+          taxIdNumber: true,
+          passportNumber: true,
+          addressLine1: true,
+          addressLine2: true,
+          addressCity: true,
+          addressState: true,
+          addressPostalCode: true,
+          addressCountryCode: true,
+          dateOfBirth: true,
+        },
+      })
+    : null;
   // Decrypt the government-ID fields before they're rendered into documents
   // (passthrough on legacy plaintext / when encryption is off).
   const patientProfile = patientProfileRaw ? decryptPhiFields(patientProfileRaw) : null;

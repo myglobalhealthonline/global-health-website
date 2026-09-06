@@ -1,5 +1,6 @@
 import { prisma } from "../../db/prisma.js";
 import { recordAudit } from "../audit/audit.service.js";
+import { resolvePatientProfileIdForAppointmentId } from "../patient-profile/appointment-patient-link.js";
 import { requestVerification } from "./identity-verification.service.js";
 import { notifyPatientVerificationRequested } from "./notify-identity-verification.service.js";
 
@@ -23,8 +24,18 @@ export async function onAppointmentConfirmed(appointmentId: string): Promise<voi
   });
   if (!appt?.email) return;
 
-  const profile = await prisma.patientProfile.findFirst({
-    where: { email: { equals: appt.email.trim(), mode: "insensitive" } },
+  // The patient behind THIS appointment, by the shared conservative rules —
+  // the durable link, or a legacy row corroborated by account + address + no
+  // booked-for-other order line. A `findFirst` on the appointment's address
+  // used to stand in for that, which meant a released address handed this hook
+  // whoever registered with it next: the request was stamped onto their chart
+  // and the message went to them. Null (a dependent, a guest, an address with
+  // more than one claimant) simply asks nobody.
+  const patientProfileId = await resolvePatientProfileIdForAppointmentId(appt.id);
+  if (!patientProfileId) return;
+
+  const profile = await prisma.patientProfile.findUnique({
+    where: { id: patientProfileId },
     select: { id: true, idVerificationStatus: true, idVerifyRequestedAt: true },
   });
   if (!profile) return;
@@ -48,5 +59,8 @@ export async function onAppointmentConfirmed(appointmentId: string): Promise<voi
     metadata: { appointmentId: appt.id, trigger: "APPOINTMENT_CONFIRMED", countryCode: appt.countryCode },
   });
 
-  await notifyPatientVerificationRequested({ patientEmail: appt.email });
+  await notifyPatientVerificationRequested({
+    patientProfileId: profile.id,
+    appointmentId: appt.id,
+  });
 }

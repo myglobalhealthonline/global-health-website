@@ -102,11 +102,14 @@ function pickAppointment(appts: Appt[], authorDoctorId: string | null, when: Dat
   )[0].id;
 }
 
+// `patientProfileId` is passed in, never derived from an account id: the caller
+// already resolved the concrete PatientProfile these notes belong to.
 async function ensureSyntheticAppointment(
   patientLegacyId: string,
   countryCode: string,
   email: string,
   fullName: string,
+  patientProfileId: string,
 ): Promise<string> {
   const legacyMongoId = `legacy-records:${patientLegacyId}`;
   const appt = await prisma.appointment.upsert({
@@ -116,6 +119,7 @@ async function ensureSyntheticAppointment(
       legacyMongoId,
       countryCode,
       consultationType: "legacy-records",
+      patientProfileId,
       fullName: fullName || "Unknown",
       email,
       consentAccepted: true,
@@ -200,6 +204,7 @@ async function main() {
                 marketToCountryCode(market),
                 profile.email,
                 profile.fullName ?? "Unknown",
+                profile.id,
               );
               appts.push({
                 id: syntheticId,

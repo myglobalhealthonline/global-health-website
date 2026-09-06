@@ -4,6 +4,9 @@ import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { revokeTrustedDevices } from "../two-factor/login-otp.service.js";
 import { createSecurityAlert } from "../security-alerts/security-alert.service.js";
+import { enqueuePersonalObjectPurge } from "../outbox/outbox.js";
+import { linkAppointmentsToPatientProfile } from "../patient-profile/appointment-patient-link.js";
+import { patientFolderInScope } from "../patient-merge/patient-merge.service.js";
 
 // ─── PRIV-002 per-country retention hints ─────────────────────────────────────
 //
@@ -36,33 +39,24 @@ export type DataPolicyRow = {
   legalNotes: string | null;
 };
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-async function recordAudit(params: {
-  actorUserId?: string | null;
-  actorRole?: string | null;
-  action: string;
-  entityType: string;
-  entityId: string;
-  metadata?: Record<string, unknown>;
-}): Promise<void> {
-  try {
-    await (prisma as unknown as {
-      auditLog: { create: (args: unknown) => Promise<unknown> };
-    }).auditLog.create({
-      data: {
-        actorUserId: params.actorUserId ?? null,
-        actorRole: params.actorRole ?? null,
-        action: params.action as never,
-        entityType: params.entityType,
-        entityId: params.entityId,
-        metadata: params.metadata ?? null,
-      },
-    });
-  } catch {
-    // Fire-and-forget — never block the main path.
+/**
+ * A LOCAL_ADMIN reached for a patient outside their assigned country folders.
+ * Thrown from inside the anonymization transaction, so raising it rolls back
+ * everything — nothing is erased, enqueued or audited. Carries no patient
+ * detail: the message is what the route sends back.
+ */
+export class PatientAnonymizeOutOfScopeError extends Error {
+  constructor() {
+    super("This patient is outside your assigned country scope");
+    this.name = "PatientAnonymizeOutOfScopeError";
   }
 }
+
+// PR-5: this file used to carry a local fail-open `recordAudit` helper that
+// swallowed every insert error. Its one caller was the anonymization completion
+// record, which now writes on the transaction itself so a failed audit rolls the
+// erasure back. Nothing else used it, so the fail-open path is gone rather than
+// left available to the next caller.
 
 // ─── Data Policy CRUD ─────────────────────────────────────────────────────────
 
@@ -185,6 +179,10 @@ export async function listDeletionRequests(opts: {
   status?: string;
   limit?: number;
   offset?: number;
+  /** AZ-2 folder scope. `null`/undefined for ADMIN, SUPER_ADMIN and the
+   *  admin-token fallback (unscoped); a lowercase folder list for a real
+   *  LOCAL_ADMIN — an empty list means "sees nothing", never everything. */
+  allowedCountryFolders?: string[] | null;
 }): Promise<{ requests: unknown[]; total: number }> {
   const limit = opts.limit ?? 50;
   const offset = opts.offset ?? 0;
@@ -192,6 +190,21 @@ export async function listDeletionRequests(opts: {
   const where: Record<string, unknown> = {};
   if (opts.status) {
     where.requestStatus = opts.status;
+  }
+  // Scoped in the DB query, not after the fetch: a LOCAL_ADMIN must never
+  // materialize another country's deletion-request rows, and `total` has to
+  // count the same set the page shows or pagination advertises rows they
+  // cannot see. A patient with no folder matches no `in` list, so a null
+  // folder fails closed.
+  if (opts.allowedCountryFolders) {
+    // `mode: "insensitive"` for the same reason `findPotentialDuplicates` needs
+    // it: the allow-list is always lowercased but the stored column is not
+    // always written that way (the profile auto-create in consents.route.ts
+    // copies `Appointment.countryCode` verbatim). Without it an uppercase row
+    // would silently vanish from its own admin's queue.
+    where.patient = {
+      countryFolderCode: { in: opts.allowedCountryFolders, mode: "insensitive" as const },
+    };
   }
 
   try {
@@ -341,8 +354,15 @@ export async function runRetentionSweepReport(): Promise<{
 export async function anonymizePatient(params: {
   patientProfileId: string;
   adminId: string;
+  /** AZ-2 folder scope, re-checked inside the transaction. `null`/undefined
+   *  for ADMIN, SUPER_ADMIN and the admin-token fallback (unscoped); a
+   *  lowercase folder list for a real LOCAL_ADMIN. Passing it is what makes a
+   *  route-level precheck un-bypassable: the folder is re-read on the
+   *  transaction's own snapshot, so a folder changed in between cannot slip a
+   *  foreign patient through. */
+  allowedCountryFolders?: string[] | null;
 }): Promise<void> {
-  const { patientProfileId, adminId } = params;
+  const { patientProfileId, adminId, allowedCountryFolders } = params;
 
   try {
     const profile = await prisma.patientProfile.findUnique({
@@ -369,9 +389,10 @@ export async function anonymizePatient(params: {
     const originalEmail = profile.email;
 
     // Personal-upload storage keys (login-account docs, NOT clinical
-    // MedicalDocument files). No object-storage delete pipeline is wired into
-    // this admin path, so the columns are nulled (unreachable through the app)
-    // and the keys recorded in the completion record for a later purge job.
+    // MedicalDocument files). The columns are nulled below and the objects
+    // themselves queued on the durable outbox in the same commit (PR-3) — this
+    // used to record the raw keys in the audit row for "a later purge job"
+    // that did not exist, so the files stayed in the bucket indefinitely.
     const nationalityDocs = await prisma.patientNationalityDocument.findMany({
       where: { patientProfileId: profile.id },
       select: { frontFileKey: true, backFileKey: true },
@@ -383,7 +404,45 @@ export async function anonymizePatient(params: {
       ...nationalityDocs.flatMap((d) => [d.frontFileKey, d.backFileKey]),
     ].filter((k): k is string => !!k);
 
+    let personalObjectsQueuedForPurge = 0;
+
     await prisma.$transaction(async (tx) => {
+      // ── AZ-2 authorization, on the transaction's own snapshot ────────────
+      // The route already refused an out-of-scope request before opening this
+      // transaction. This is the authoritative re-check, on the row this
+      // transaction will actually erase, and it runs BEFORE any write so a
+      // denial leaves the profile, its uploads and its audit trail untouched.
+      // Same predicate as the patient-merge guard: a null folder is out of
+      // scope for a LOCAL_ADMIN, never a wildcard.
+      if (allowedCountryFolders) {
+        const current = await tx.patientProfile.findUnique({
+          where: { id: patientProfileId },
+          select: { countryFolderCode: true },
+        });
+        // Same predicate the merge transaction uses, imported rather than
+        // restated — three copies of "is this folder in the allow-list" is how
+        // one of them drifts.
+        if (
+          !patientFolderInScope(current?.countryFolderCode ?? null, allowedCountryFolders)
+        ) {
+          throw new PatientAnonymizeOutOfScopeError();
+        }
+      }
+
+      // ── Retained-record access: link BEFORE the email is tombstoned ──────
+      // The doctor and admin patient surfaces are keyed by the address the
+      // portal holds, which comes from `Appointment.email` — retained here.
+      // `PatientProfile.email` is about to become a tombstone, so anything
+      // still resolving by that address alone would lose the retained record.
+      // Stamping the durable link first is what keeps the treating doctor,
+      // ADMIN and SUPER_ADMIN reaching it afterwards. Corroborated (email AND
+      // purchaser account must agree) and never overwrites an existing link.
+      await linkAppointmentsToPatientProfile(tx, {
+        patientProfileId: profile.id,
+        email: profile.email,
+        userId: profile.userId,
+      });
+
       // ── PatientProfile: ERASE identity, RETAIN clinical ──────────────────
       await tx.patientProfile.update({
         where: { id: profile.id },
@@ -464,6 +523,56 @@ export async function anonymizePatient(params: {
         // User we keep, so they must be removed explicitly).
         await tx.loginOtp.deleteMany({ where: { userId: profile.userId } });
       }
+
+      // PR-3: the objects behind the keys just nulled above. Queued in THIS
+      // commit, so the DB references and the work that deletes the files can
+      // never disagree — previously the keys went into audit metadata for a
+      // purge job that did not exist, and the files stayed in the bucket.
+      personalObjectsQueuedForPurge = await enqueuePersonalObjectPurge(
+        tx,
+        personalStorageKeys,
+        { patientProfileId },
+      );
+
+      // PR-5: the anonymization audit row commits WITH the scrub. `recordAudit`
+      // is deliberately fail-open and ran after the transaction, so a failed
+      // audit insert used to leave the PHI erased with no record that it
+      // happened. Written directly on `tx` — the smallest transaction-capable
+      // write, same row shape recordAudit produces.
+      await tx.auditLog.create({
+        data: {
+          actorUserId: adminId,
+          actorRole: "ADMIN",
+          action: "PATIENT_ANONYMIZED",
+          entityType: "PatientProfile",
+          entityId: patientProfileId,
+          metadata: {
+            adminId,
+            userId: profile.userId,
+            countryFolderCode: profile.countryFolderCode,
+            // ⚠️ LEGAL SIGN-OFF PENDING — legal bases are the engineering default.
+            fieldsErased: [
+              "User.{fullName,email,phone,dateOfBirth,passwordHash,twoFactor*}",
+              "PatientProfile.{identity,contact,nationalIds,uploadKeys,email,blindIndexHashes}",
+              "PatientNationalityDocument.{documentNumber,frontFileKey,backFileKey}",
+              "TrustedDevice(all)",
+              "LoginOtp(all)",
+              "NewsletterSubscriber(byEmail)",
+            ],
+            sessionsRevoked: true,
+            categoriesRetained: {
+              clinical: `RETAINED (medical-record retention ~${retention.clinicalYears}y)`,
+              financial: `RETAINED (tax/financial retention ~${retention.financialYears}y)`,
+            },
+            // PR-3: a count, never the keys. AuditLog is long-lived and widely
+            // readable; storage keys addressing identity documents are not
+            // something it should carry.
+            personalObjectsQueuedForPurge,
+            purgeMechanism: "outbox",
+            legalSignOff: "PENDING",
+          },
+        },
+      });
     });
 
     // TrustedDevice rows: reuse the shared revoker (its own deleteMany, outside
@@ -472,37 +581,12 @@ export async function anonymizePatient(params: {
       await revokeTrustedDevices(profile.userId).catch(() => {});
     }
 
-    // ── Auditable completion record ──────────────────────────────────────────
-    await recordAudit({
-      actorUserId: adminId,
-      actorRole: "ADMIN",
-      action: "PATIENT_ANONYMIZED",
-      entityType: "PatientProfile",
-      entityId: patientProfileId,
-      metadata: {
-        adminId,
-        userId: profile.userId,
-        countryFolderCode: profile.countryFolderCode,
-        // ⚠️ LEGAL SIGN-OFF PENDING — legal bases are the engineering default.
-        fieldsErased: [
-          "User.{fullName,email,phone,dateOfBirth,passwordHash,twoFactor*}",
-          "PatientProfile.{identity,contact,nationalIds,uploadKeys,email,blindIndexHashes}",
-          "PatientNationalityDocument.{documentNumber,frontFileKey,backFileKey}",
-          "TrustedDevice(all)",
-          "LoginOtp(all)",
-          "NewsletterSubscriber(byEmail)",
-        ],
-        sessionsRevoked: true,
-        categoriesRetained: {
-          clinical: `RETAINED (medical-record retention ~${retention.clinicalYears}y)`,
-          financial: `RETAINED (tax/financial retention ~${retention.financialYears}y)`,
-        },
-        // For a later batch purge job — no S3 delete pipeline on this path yet.
-        personalStorageKeysQueuedForPurge: personalStorageKeys,
-        legalSignOff: "PENDING",
-      },
-    });
+    // The completion audit row and the object-purge queue both commit inside
+    // the transaction above (PR-3/PR-5) — nothing auditable happens out here.
   } catch (error) {
+    // An authorization refusal is not a database fault: normalizing it would
+    // turn a 403 into a generic 500 and lose the reason.
+    if (error instanceof PatientAnonymizeOutOfScopeError) throw error;
     throw normalizeDbError(error, "Could not anonymize patient");
   }
 }

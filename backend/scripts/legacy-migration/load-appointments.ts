@@ -49,14 +49,17 @@ async function preloadDoctors(): Promise<Map<string, string>> {
   return map;
 }
 
-// Maps lowercased email -> PatientProfile.userId (null when the profile has
-// no linked account yet). Used both for the orphan check and — critically —
-// to resolve Appointment.userId at import time so a legacy row whose email
-// matches an already-linked patient doesn't end up with userId=null (that
-// silently breaks the medical-access guard's doctor-treatment-relationship
-// join, which requires Appointment.userId; see backend/scripts/relink-appointment-users.ts).
-async function preloadEmails(): Promise<Map<string, string | null>> {
-  const map = new Map<string, string | null>();
+// Maps lowercased email -> the concrete PatientProfile (id, and the linked
+// account's userId when there is one). Used for the orphan check and to
+// resolve both appointment->patient columns at import time:
+//   * `patientProfileId` — the durable clinical link. Safe to set here because
+//     this is a resolved PatientProfile row, not a guess from an account id.
+//   * `userId` — so a legacy row whose email matches an already-linked patient
+//     doesn't end up with userId=null (that silently breaks the medical-access
+//     guard's legacy treatment-relationship join; see
+//     backend/scripts/relink-appointment-users.ts).
+async function preloadEmails(): Promise<Map<string, { id: string; userId: string | null }>> {
+  const map = new Map<string, { id: string; userId: string | null }>();
   const take = 1000;
   let cursor: string | undefined;
   for (;;) {
@@ -67,7 +70,7 @@ async function preloadEmails(): Promise<Map<string, string | null>> {
       select: { id: true, email: true, userId: true },
     });
     if (rows.length === 0) break;
-    for (const r of rows) map.set(r.email.toLowerCase(), r.userId);
+    for (const r of rows) map.set(r.email.toLowerCase(), { id: r.id, userId: r.userId });
     cursor = rows[rows.length - 1].id;
     if (rows.length < take) break;
   }
@@ -137,7 +140,9 @@ async function main() {
     }
 
     // Orphan check (informational): does a patient exist for this email?
-    const patientUserId = emailSet.get(email) ?? null;
+    const patientProfileRow = emailSet.get(email) ?? null;
+    const patientUserId = patientProfileRow?.userId ?? null;
+    const patientProfileId = patientProfileRow?.id ?? null;
     if (!emailSet.has(email)) {
       await logUnresolved({
         stage: STAGE,
@@ -173,6 +178,7 @@ async function main() {
       email,
       doctorId,
       userId: patientUserId,
+      patientProfileId,
       legacyExtra: Object.keys(legacyExtra).length ? (legacyExtra as object) : undefined,
       formResponses: (m.data.formResponses ?? undefined) as object | undefined,
     };
@@ -187,6 +193,9 @@ async function main() {
         // Never clears an existing userId back to null (patientUserId is
         // only ever a resolved id or omitted).
         ...(patientUserId ? { userId: patientUserId } : {}),
+        // `patientProfileId` is deliberately CREATE-only. A re-run must not
+        // rewrite a link that live application code has since set from a more
+        // authoritative source (a family booking, a merge, an anonymization).
         scheduledAt: data.scheduledAt,
         meetingUrl: data.meetingUrl,
         finalized: data.finalized,

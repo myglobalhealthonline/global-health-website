@@ -27,6 +27,7 @@ const state: {
   created: Record<string, unknown>[];
   claimedRequests: string[];
   claimDuration: number | null;
+  patientProfile: { id: string; email: string } | null;
 } = {
   corporateService: null,
   slot: null,
@@ -34,6 +35,7 @@ const state: {
   created: [],
   claimedRequests: [],
   claimDuration: null,
+  patientProfile: null,
 };
 
 let svc: typeof import("./corporate-booking.service.js");
@@ -46,6 +48,16 @@ before(async () => {
         return args.data;
       },
     },
+    // The booking resolves the member's own PatientProfile so the appointment
+    // carries a durable link to the ACTUAL patient rather than only the payer
+    // account. `state.patientProfile` is what that lookup finds.
+    patientProfile: {
+      findUnique: async ({ where }: { where: { email: string } }) =>
+        state.patientProfile && state.patientProfile.email === where.email
+          ? { id: state.patientProfile.id }
+          : null,
+    },
+    familyMember: { findUnique: async () => null },
   };
   mock.module("../../db/prisma.js", {
     namedExports: {
@@ -100,6 +112,7 @@ beforeEach(() => {
   state.created = [];
   state.claimedRequests = [];
   state.claimDuration = null;
+  state.patientProfile = null;
 });
 
 const input = {
@@ -124,6 +137,20 @@ describe("bookCorporateConsultation", () => {
     assert.equal(appointment.consultationType, "Fit-for-Work Consultation");
     assert.equal(appointment.serviceId, undefined);
     assert.equal(appointment.email, "ann@example.com");
+  });
+
+  it("links the appointment to the member's own PatientProfile", async () => {
+    // `userId` is the account that booked; the durable patient link has to come
+    // from the member's own profile, resolved by their own address.
+    state.patientProfile = { id: "pp-corp-1", email: "ann@example.com" };
+    await svc.bookCorporateConsultation(input);
+    assert.equal(state.created[0].patientProfileId, "pp-corp-1");
+  });
+
+  it("leaves the link null when the member has no profile yet", async () => {
+    state.patientProfile = null;
+    await svc.bookCorporateConsultation(input);
+    assert.equal(state.created[0].patientProfileId, null, "fails closed, never guesses");
   });
 
   it("consumes the doctor's grid at the consultation's real length", async () => {

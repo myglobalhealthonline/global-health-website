@@ -1481,9 +1481,15 @@ const cartRoute: FastifyPluginAsync = async (app) => {
             bookingForOther: patient?.bookingForOther ?? false,
             // New booking snapshot — mirrors the Appointment columns the
             // post-payment webhook will write when minting from this row.
-            patientNationalIdNumber: patient?.nationalIdNumber || null,
-            patientPassportNumber: patient?.passportNumber || null,
-            patientUtenteNumber: patient?.utenteNumber || null,
+            // PR-4: encrypted before the first CartItem write, not at the
+            // webhook. These sat in plaintext for the whole life of the cart,
+            // and an abandoned cart is never checked out — so they sat there
+            // indefinitely. Same `phi:v1:` envelope the PatientProfile columns
+            // use; `encryptPhi` is idempotent, so the OrderItem copy and the
+            // payment-completion write below can stay exactly as they are.
+            patientNationalIdNumber: encryptPhi(patient?.nationalIdNumber || null),
+            patientPassportNumber: encryptPhi(patient?.passportNumber || null),
+            patientUtenteNumber: encryptPhi(patient?.utenteNumber || null),
             patientTimezone: patient?.patientTimezone || null,
             patientAddressLine1: patient?.addressLine1 || null,
             patientAddressLine2: patient?.addressLine2 || null,

@@ -13,6 +13,7 @@ import { markCouponRedemptionConsumed } from "../coupons/coupon-release.service.
 import { enqueueOrderPaidAutomations } from "../outbox/outbox.js";
 import { encryptPhi } from "../../lib/crypto/phi-crypto.js";
 import { markRequisitionsReadyOnOrderPaid } from "../lab-orders/lab-requisitions.service.js";
+import { resolvePatientProfileIdForNewAppointment } from "../patient-profile/appointment-patient-link.js";
 
 export type PaymentLog = {
   info: (obj: unknown, msg?: string) => void;
@@ -505,9 +506,20 @@ async function fulfillPaidOrderFromCheckoutSession(
         where: { timeSlotId: item.timeSlotId },
         select: { languageCode: true, reason: true },
       });
+      // The patient this consultation is FOR, which is NOT `order.userId` —
+      // that is the payer. A family line names the dependent through
+      // `familyMemberId`; a "booking for other" line names them through their
+      // own `patientEmail` and must never fall back to the order's address.
+      // Only a plain self-booking may use `aptEmail`, where the two agree.
+      const patientProfileId = await resolvePatientProfileIdForNewAppointment(tx, {
+        familyMemberId: item.familyMemberId,
+        patientEmail: item.bookingForOther ? item.patientEmail : aptEmail,
+      });
+
       const apt = await tx.appointment.create({
         data: {
           userId: order.userId,
+          patientProfileId,
           countryCode: order.countryCode,
           consultationType,
           // Carried from the order so every appointment-level message (doctor
@@ -600,14 +612,22 @@ async function fulfillPaidOrderFromCheckoutSession(
           : null;
         const fill = <T>(existingVal: T | null, snapshotVal: T | null): T | null =>
           existingVal ?? snapshotVal ?? null;
-        await tx.patientProfile.upsert({
+        const upsertedProfile = await tx.patientProfile.upsert({
           where: { email: aptEmail.toLowerCase() },
           update: {
+            // PR-4: `nationalIdNumber`/`taxIdNumber` are in PHI_ENCRYPTED_FIELDS
+            // but were the only two written through raw. Wrapped like their
+            // siblings below; idempotent, so a cart item that already arrived
+            // encrypted is not double-wrapped and a legacy plaintext one is
+            // encrypted on the way in.
             nationalIdNumber: fill(
               existing?.nationalIdNumber ?? null,
-              item.patientNationalIdNumber,
+              encryptPhi(item.patientNationalIdNumber),
             ),
-            taxIdNumber: fill(existing?.taxIdNumber ?? null, item.patientNationalIdNumber),
+            taxIdNumber: fill(
+              existing?.taxIdNumber ?? null,
+              encryptPhi(item.patientNationalIdNumber),
+            ),
             // Encrypted on the way in: `existing` is already ciphertext when a
             // key is configured, so keeping it as-is is correct and only the
             // fresh snapshot value needs wrapping.
@@ -653,8 +673,8 @@ async function fulfillPaidOrderFromCheckoutSession(
             fullName: aptFullName,
             phone: aptPhone,
             dateOfBirth: aptDob,
-            nationalIdNumber: item.patientNationalIdNumber,
-            taxIdNumber: item.patientNationalIdNumber,
+            nationalIdNumber: encryptPhi(item.patientNationalIdNumber),
+            taxIdNumber: encryptPhi(item.patientNationalIdNumber),
             passportNumber: encryptPhi(item.patientPassportNumber),
             utenteNumber: encryptPhi(item.patientUtenteNumber),
             addressLine1: item.patientAddressLine1,
@@ -668,6 +688,19 @@ async function fulfillPaidOrderFromCheckoutSession(
             ...(item.insuranceCompanyId ? { insuranceDocumentStatus: "VERIFIED" as const } : {}),
           },
         });
+
+        // The upsert may have just MINTED the profile for a first-time patient,
+        // in which case the link resolved above found nothing. Stamp it now —
+        // but only when this row is keyed by the patient's own address. A
+        // family / booking-for-other line upserts a profile for whichever
+        // address the snapshot carried, and that is not authority to point the
+        // consultation at it.
+        if (!patientProfileId && !item.familyMemberId && !item.bookingForOther) {
+          await tx.appointment.update({
+            where: { id: apt.id },
+            data: { patientProfileId: upsertedProfile.id },
+          });
+        }
       }
     }
 

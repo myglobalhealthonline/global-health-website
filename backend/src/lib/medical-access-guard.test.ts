@@ -24,10 +24,25 @@ type FakeConsent = {
   consentValue: boolean;
   createdAt: Date;
 };
-type FakeAppointment = { doctorId: string; userId: string; status: string };
+type FakeAppointment = {
+  /** Synthetic row id, so the order-line lookup can name it. */
+  id?: string;
+  /** Booked for someone other than the account that paid (a dependent). Such
+   *  a row can carry the PURCHASER's email AND userId, so it must never be
+   *  accepted by the legacy corroboration branch. */
+  bookedForSomeoneElse?: boolean;
+  doctorId: string;
+  userId: string;
+  status: string;
+  /** The durable appointment->patient link. Null/absent models a legacy row. */
+  patientProfileId?: string | null;
+  /** The patient address captured at booking. Absent means "agrees with the
+   *  profile" — the ordinary self-booking shape these fixtures describe. */
+  email?: string;
+};
 
 const fixtures: {
-  patientProfiles: Record<string, { userId: string }>;
+  patientProfiles: Record<string, { userId: string; email?: string }>;
   consents: FakeConsent[];
   appointments: FakeAppointment[];
   countryAccessModels: Record<string, string>;
@@ -52,7 +67,12 @@ before(async () => {
         patientProfile: {
           findUnique: async ({ where }: { where: { id: string } }) =>
             fixtures.patientProfiles[where.id]
-              ? { userId: fixtures.patientProfiles[where.id].userId }
+              ? {
+                  userId: fixtures.patientProfiles[where.id].userId,
+                  email:
+                    fixtures.patientProfiles[where.id].email ??
+                    `${where.id}@fixture.invalid`,
+                }
               : null,
         },
         patientConsent: {
@@ -72,20 +92,64 @@ before(async () => {
           },
         },
         appointment: {
+          // The stored link is authoritative and needs no corroboration.
           findFirst: async ({
             where,
           }: {
-            where: { doctorId: string; userId: string; status: { notIn: string[] } };
+            where: {
+              doctorId: string;
+              patientProfileId: string;
+              status: { notIn: string[] };
+            };
           }) => {
-            const excluded = where.status.notIn;
             const match = fixtures.appointments.find(
               (a) =>
                 a.doctorId === where.doctorId &&
-                a.userId === where.userId &&
-                !excluded.includes(a.status),
+                a.patientProfileId === where.patientProfileId &&
+                !where.status.notIn.includes(a.status),
             );
-            return match ? { id: "fake-appt" } : null;
+            return match ? { id: match.id ?? "fake-appt" } : null;
           },
+          // The legacy branch: unlinked rows only, and the patient email must
+          // agree with the profile's. Written out rather than simplified so a
+          // regression to a bare `userId` match cannot pass here.
+          findMany: async ({
+            where,
+          }: {
+            where: {
+              doctorId: string;
+              status: { notIn: string[] };
+              patientProfileId: null;
+              userId: string;
+              email: { equals: string; mode: string };
+            };
+          }) =>
+            fixtures.appointments
+              .filter((a) => {
+                if (a.doctorId !== where.doctorId) return false;
+                if (where.status.notIn.includes(a.status)) return false;
+                if (a.patientProfileId) return false;
+                if (a.userId !== where.userId) return false;
+                // An absent fixture email means the addresses agree.
+                if (a.email === undefined) return true;
+                return a.email.toLowerCase() === where.email.equals.toLowerCase();
+              })
+              .map((a, i) => ({ id: a.id ?? `fake-appt-${i}` })),
+        },
+        orderItem: {
+          findMany: async ({
+            where,
+          }: {
+            where: { appointmentId: { in: string[] } };
+          }) =>
+            fixtures.appointments
+              .filter(
+                (a) =>
+                  a.bookedForSomeoneElse &&
+                  a.id &&
+                  where.appointmentId.in.includes(a.id),
+              )
+              .map((a) => ({ appointmentId: a.id as string })),
         },
         medicalAccessGrant: { findFirst: async () => null },
         medicalAccessLog: {
@@ -422,6 +486,149 @@ describe("medical access guard — route authorization decision", () => {
     });
     assert.equal(result.allowed, true);
     assert.equal(result.consentLevelUsed, "DIRECT_ONLY");
+  });
+
+  // ── Cross-patient: the purchaser is not the patient ─────────────────────
+  //
+  // A family booking carries the payer on `Appointment.userId` and the
+  // dependent on `Appointment.patientProfileId`. The pair below is the unit
+  // form of that: treating the dependent must not open the payer's chart, and
+  // the dependent's own profile — which has no user account at all — must
+  // still resolve.
+  it("does not treat a dependent's appointment as a relationship with the PURCHASER", async () => {
+    const purchaserProfileId = "patient-profile-purchaser";
+    const dependentProfileId = "patient-profile-dependent";
+    fixtures.patientProfiles[purchaserProfileId] = {
+      userId: "user-purchaser",
+      email: "purchaser@fixture.invalid",
+    };
+    fixtures.patientProfiles[dependentProfileId] = {
+      // A dependent has no login of their own — the `userId` join finds nothing.
+      userId: "",
+      email: "dependent@fixture.invalid",
+    };
+    for (const patientProfileId of [purchaserProfileId, dependentProfileId]) {
+      fixtures.consents.push({
+        patientProfileId,
+        consentType: "MEDICAL_ACCESS_DIRECT",
+        consentValue: true,
+        createdAt: new Date(),
+      });
+    }
+    fixtures.appointments.push({
+      doctorId: "doc-family",
+      userId: "user-purchaser",
+      patientProfileId: dependentProfileId,
+      email: "dependent@fixture.invalid",
+      status: "COMPLETED",
+    });
+
+    const actor = {
+      userId: "doctor-family",
+      role: "DOCTOR",
+      name: "Dr Family",
+      doctorId: "doc-family",
+      confidentialityAgreementAccepted: true,
+      twoFactorVerifiedAt: new Date(),
+    };
+
+    const onDependent = await assertMedicalAccess({
+      actor,
+      resource: {
+        ...resource,
+        patientProfileId: dependentProfileId,
+        patientCountryFolder: null,
+      },
+    });
+    assert.equal(onDependent.allowed, true, "the actual patient's chart is reachable");
+
+    const onPurchaser = await assertMedicalAccess({
+      actor,
+      resource: {
+        ...resource,
+        patientProfileId: purchaserProfileId,
+        patientCountryFolder: null,
+      },
+    });
+    assert.equal(onPurchaser.allowed, false, "the payer's chart is NOT");
+    assert.equal(onPurchaser.denyReason, "DOCTOR_NO_VALID_ACCESS_PATH");
+  });
+
+  it("ignores a legacy row booked for someone else, even when email AND userId agree", async () => {
+    // A dependent with no email on file leaves the appointment carrying the
+    // PURCHASER's address and account, so email+userId agreement proves
+    // nothing. Only the order line knows, and the guard has to consult it.
+    const patientProfileId = "patient-profile-disguised-dependent";
+    fixtures.patientProfiles[patientProfileId] = {
+      userId: "user-disguised",
+      email: "payer@fixture.invalid",
+    };
+    fixtures.consents.push({
+      patientProfileId,
+      consentType: "MEDICAL_ACCESS_DIRECT",
+      consentValue: true,
+      createdAt: new Date(),
+    });
+    fixtures.appointments.push({
+      id: "appt-disguised-dependent",
+      doctorId: "doc-disguised",
+      userId: "user-disguised",
+      patientProfileId: null,
+      email: "payer@fixture.invalid",
+      status: "COMPLETED",
+      bookedForSomeoneElse: true,
+    });
+
+    const result = await assertMedicalAccess({
+      actor: {
+        userId: "doctor-disguised",
+        role: "DOCTOR",
+        name: "Dr Disguised",
+        doctorId: "doc-disguised",
+        confidentialityAgreementAccepted: true,
+        twoFactorVerifiedAt: new Date(),
+      },
+      resource: { ...resource, patientProfileId, patientCountryFolder: null },
+    });
+    assert.equal(result.allowed, false);
+    assert.equal(result.denyReason, "DOCTOR_NO_VALID_ACCESS_PATH");
+  });
+
+  it("ignores a legacy userId match when the patient email disagrees", async () => {
+    // Corroboration, not `userId` alone: an unlinked legacy row booked by this
+    // account for somebody else must not open this account's own chart.
+    const patientProfileId = "patient-profile-email-mismatch";
+    fixtures.patientProfiles[patientProfileId] = {
+      userId: "user-email-mismatch",
+      email: "account-holder@fixture.invalid",
+    };
+    fixtures.consents.push({
+      patientProfileId,
+      consentType: "MEDICAL_ACCESS_DIRECT",
+      consentValue: true,
+      createdAt: new Date(),
+    });
+    fixtures.appointments.push({
+      doctorId: "doc-email-mismatch",
+      userId: "user-email-mismatch",
+      patientProfileId: null,
+      email: "someone-else@fixture.invalid",
+      status: "COMPLETED",
+    });
+
+    const result = await assertMedicalAccess({
+      actor: {
+        userId: "doctor-email-mismatch",
+        role: "DOCTOR",
+        name: "Dr Mismatch",
+        doctorId: "doc-email-mismatch",
+        confidentialityAgreementAccepted: true,
+        twoFactorVerifiedAt: new Date(),
+      },
+      resource: { ...resource, patientProfileId, patientCountryFolder: null },
+    });
+    assert.equal(result.allowed, false);
+    assert.equal(result.denyReason, "DOCTOR_NO_VALID_ACCESS_PATH");
   });
 
 describe("guard-medical-read — 403 body shape (SEC-008 reason surfacing)", () => {

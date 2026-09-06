@@ -10,6 +10,7 @@ import {
   decryptClinicalFields,
 } from "../../lib/crypto/phi-crypto.js";
 import { generateGlobalHealthNumber } from "../../lib/global-health-number.js";
+import { linkAppointmentsToPatientProfile } from "./appointment-patient-link.js";
 import {
   computeEmailBlindIndex,
   computePhoneBlindIndex,
@@ -173,6 +174,17 @@ export async function upsertPatientProfileByEmail(
       data: { userId: user.role === UserRole.PATIENT ? user.id : undefined },
     });
 
+    // Same claim for the clinical link, through the ONE helper that owns the
+    // corroboration rules. Doing it inline here with an email-only filter is a
+    // cross-patient disclosure: this function is called with the PURCHASER's
+    // address from the order-portal-access path, so an email-only sweep would
+    // attribute a dependent's consultation to whoever paid for it.
+    await linkAppointmentsToPatientProfile(prisma, {
+      patientProfileId: profile.id,
+      email,
+      userId: user.role === UserRole.PATIENT ? user.id : null,
+    });
+
     return {
       profile,
       userId: user.role === UserRole.PATIENT ? user.id : null,
@@ -194,6 +206,27 @@ export class PricingPlanCountryMismatchError extends Error {
  *  after it has already passed VERIFIED status. Support/admin can still
  *  change it via the admin route (that path never sets `actor.role`
  *  to "PATIENT"). */
+/** The resolved chart is gone (deleted or re-keyed) by the time the write
+ *  lands. Raised only by the id-keyed path, where there is no address to fall
+ *  back to and inventing a replacement chart is exactly the bug. */
+export class PatientProfileNotFoundError extends Error {
+  constructor(message = "Patient profile not found") {
+    super(message);
+    this.name = "PatientProfileNotFoundError";
+  }
+}
+
+/** Somebody claimed the address between the eligibility proof and the insert.
+ *  A first-chart create must fail here rather than degrade into updating the
+ *  row that appeared concurrently — that row belongs to whoever just took the
+ *  address, who was never the patient this caller proved. */
+export class PatientProfileEmailConflictError extends Error {
+  constructor(message = "Patient profile already exists for this address") {
+    super(message);
+    this.name = "PatientProfileEmailConflictError";
+  }
+}
+
 export class VerifiedPhoneLockedError extends Error {
   constructor() {
     super("Verified phone number can only be changed by support/admin");
@@ -295,7 +328,7 @@ type WriteOutcome = {
  * any plan — first-time signups shouldn't be blocked.
  */
 async function validatePricingPlan(
-  email: string,
+  scope: { email: string } | { patientProfileId: string },
   pricingPlanId: string,
 ): Promise<void> {
   const plan = await prisma.pricingPlan.findUnique({
@@ -305,8 +338,28 @@ async function validatePricingPlan(
   if (!plan) {
     throw new PricingPlanCountryMismatchError();
   }
+  // For the id scope, the patient's own address is looked up rather than
+  // trusted from the caller, and BOTH shapes are searched: a patient resolved
+  // through the legacy corroboration path has appointments that predate the
+  // durable link, and matching on the link alone would find no history and
+  // skip the country check entirely for exactly that population.
+  let where;
+  if ("patientProfileId" in scope) {
+    const owner = await prisma.patientProfile.findUnique({
+      where: { id: scope.patientProfileId },
+      select: { email: true },
+    });
+    where = {
+      OR: [
+        { patientProfileId: scope.patientProfileId },
+        ...(owner ? [{ email: { equals: owner.email, mode: "insensitive" as const } }] : []),
+      ],
+    };
+  } else {
+    where = { email: { equals: scope.email, mode: "insensitive" as const } };
+  }
   const recentAppt = await prisma.appointment.findFirst({
-    where: { email: { equals: email, mode: "insensitive" } },
+    where,
     orderBy: { createdAt: "desc" },
     select: { countryCode: true },
   });
@@ -316,12 +369,44 @@ async function validatePricingPlan(
 }
 
 /**
+ * Which row this write lands on — and how it is allowed to get there.
+ *
+ * An email address is not a write identity. `upsertByEmail` is the legacy
+ * shape, kept for the surfaces whose patient IS the address holder by
+ * construction (a patient editing their own account, an admin who looked the
+ * row up by address and re-checked it). Everywhere identity had to be RESOLVED
+ * first — the doctor portal, where a released address can be held by a stranger
+ * — the resolved id is carried through to persistence instead, because
+ * "check by id, then upsert by email" names two different rows the moment
+ * ownership of the address moves in between, and the upsert half silently
+ * creates the duplicate chart.
+ *
+ * `create` exists so first-chart creation does not have to borrow the upsert:
+ * an upsert asked to create will happily UPDATE the row that appeared
+ * concurrently, which is the same wrong-patient write by another route.
+ */
+export type ProfileWriteTarget =
+  | { kind: "upsertByEmail"; email: string }
+  | { kind: "id"; patientProfileId: string }
+  | {
+      kind: "create";
+      email: string;
+      /** The account the caller PROVED owns this booking, or null for a guest
+       *  row. It is stamped on the new chart and used to claim the appointments
+       *  that belong to it — without both, the chart is created and then never
+       *  resolves again, because the resolver has no link and no account to
+       *  corroborate against, and the doctor is locked out of the patient they
+       *  just created. */
+      userId?: string | null;
+    };
+
+/**
  * Persist the writable subset onto the PatientProfile row. Returns the
  * full row + which alerts mutated (so the route can decide whether to
  * emit a PATIENT_ALERT_UPDATED audit event).
  */
-export async function applyPatientProfileUpdate(
-  email: string,
+export async function writePatientProfile(
+  target: ProfileWriteTarget,
   input: ProfileWriteFieldsWithAlerts,
   options: {
     fallbackFullName?: string | null;
@@ -333,21 +418,37 @@ export async function applyPatientProfileUpdate(
   } = {},
 ): Promise<WriteOutcome> {
   if (input.pricingPlanId) {
-    await validatePricingPlan(email, input.pricingPlanId);
+    await validatePricingPlan(
+      target.kind === "id"
+        ? { patientProfileId: target.patientProfileId }
+        : { email: target.email },
+      input.pricingPlanId,
+    );
   }
-  const before = await prisma.patientProfile.findUnique({
-    where: { email },
-    select: {
-      id: true,
-      statusAlert: true,
-      clinicAlert: true,
-      fullName: true,
-      dateOfBirth: true,
-      phone: true,
-      phoneVerificationStatus: true,
-      globalHealthNumber: true,
-    },
-  });
+  const before =
+    target.kind === "create"
+      ? null
+      : await prisma.patientProfile.findUnique({
+          where:
+            target.kind === "id"
+              ? { id: target.patientProfileId }
+              : { email: target.email },
+          select: {
+            id: true,
+            statusAlert: true,
+            clinicAlert: true,
+            fullName: true,
+            dateOfBirth: true,
+            phone: true,
+            phoneVerificationStatus: true,
+            globalHealthNumber: true,
+          },
+        });
+  // The id-keyed path addresses one immutable row. If it is gone, there is no
+  // address to fall back to and no chart to invent — say so and stop.
+  if (target.kind === "id" && !before) {
+    throw new PatientProfileNotFoundError();
+  }
 
   // Task 1c: a patient (never admin/doctor) may not change their own phone
   // once it's VERIFIED — only support/admin can, via the admin route (which
@@ -392,32 +493,79 @@ export async function applyPatientProfileUpdate(
   const mergedDob =
     "dateOfBirth" in input ? input.dateOfBirth ?? null : before?.dateOfBirth ?? null;
 
+  const createData = (email: string) => ({
+    email,
+    fullName: writeInput.fullName ?? options.fallbackFullName ?? null,
+    phone: writeInput.phone ?? options.fallbackPhone ?? null,
+    ...writeInput,
+    emailHash: computeEmailBlindIndex(email),
+    phoneHash: createPhone ? computePhoneBlindIndex(createPhone) : null,
+    nameDobHash: nameDobHashFor(createFullName, createDob),
+  });
+  const updateData = {
+    ...writeInput,
+    ...("phone" in input
+      ? {
+          phoneHash: input.phone
+            ? computePhoneBlindIndex(input.phone)
+            : null,
+        }
+      : {}),
+    ...("fullName" in input || "dateOfBirth" in input
+      ? { nameDobHash: nameDobHashFor(mergedFullName, mergedDob) }
+      : {}),
+  };
+
+  // The profile write gets its own try, because the classification below is by
+  // error CODE and the calls further down raise the same codes for entirely
+  // different reasons — a concurrently deleted `User` row makes the sync update
+  // throw P2025, which read as "the chart is gone" and returned a 404 for a
+  // profile write that had already committed.
+  let profile: Awaited<ReturnType<typeof prisma.patientProfile.update>>;
   try {
-    const profile = await prisma.patientProfile.upsert({
-      where: { email },
-      create: {
-        email,
-        fullName: writeInput.fullName ?? options.fallbackFullName ?? null,
-        phone: writeInput.phone ?? options.fallbackPhone ?? null,
-        ...writeInput,
-        emailHash: computeEmailBlindIndex(email),
-        phoneHash: createPhone ? computePhoneBlindIndex(createPhone) : null,
-        nameDobHash: nameDobHashFor(createFullName, createDob),
-      },
-      update: {
-        ...writeInput,
-        ...("phone" in input
-          ? {
-              phoneHash: input.phone
-                ? computePhoneBlindIndex(input.phone)
-                : null,
-            }
-          : {}),
-        ...("fullName" in input || "dateOfBirth" in input
-          ? { nameDobHash: nameDobHashFor(mergedFullName, mergedDob) }
-          : {}),
-      },
-    });
+    profile =
+      target.kind === "id"
+        ? await prisma.patientProfile.update({
+            where: { id: target.patientProfileId },
+            data: updateData,
+          })
+        : target.kind === "create"
+          ? await prisma.patientProfile.create({
+              data: { ...createData(target.email), userId: target.userId ?? null },
+            })
+          : await prisma.patientProfile.upsert({
+              where: { email: target.email },
+              create: createData(target.email),
+              update: updateData,
+            });
+  } catch (error) {
+    // P2025 = the id-keyed row vanished between the read and the update;
+    // P2002 = somebody took the address between the eligibility proof and the
+    // insert. Both mean "this is no longer the patient you resolved", and both
+    // have to surface as a refusal rather than land on whoever is there now.
+    const code = (error as { code?: string }).code;
+    if (target.kind === "id" && code === "P2025") {
+      throw new PatientProfileNotFoundError();
+    }
+    if (target.kind === "create" && code === "P2002") {
+      throw new PatientProfileEmailConflictError();
+    }
+    throw normalizeDbError(error, "Patient profile update temporarily unavailable");
+  }
+
+  try {
+    // A brand-new chart claims the appointments that provably belong to it,
+    // through the one helper that owns those rules. Without it the chart has no
+    // durable link and nothing corroborates it, so the next lookup by the same
+    // address resolves to nobody and the doctor who just created the patient
+    // gets a 404 for them forever.
+    if (target.kind === "create") {
+      await linkAppointmentsToPatientProfile(prisma, {
+        patientProfileId: profile.id,
+        email: target.email,
+        userId: target.userId ?? null,
+      });
+    }
     const alertChanges: WriteOutcome["alertChanges"] = {};
     if ("statusAlert" in input && (before?.statusAlert ?? null) !== (input.statusAlert ?? null)) {
       alertChanges.statusAlert = true;
@@ -478,6 +626,25 @@ export async function applyPatientProfileUpdate(
   } catch (error) {
     throw normalizeDbError(error, "Patient profile update temporarily unavailable");
   }
+}
+
+/**
+ * Legacy address-keyed shape. Safe only where the caller's patient IS the
+ * current holder of the address by construction; anything that had to resolve
+ * an identity first must carry the resolved id (`writePatientProfile` with an
+ * `id` target) all the way to persistence instead.
+ */
+export async function applyPatientProfileUpdate(
+  email: string,
+  input: ProfileWriteFieldsWithAlerts,
+  options: {
+    fallbackFullName?: string | null;
+    fallbackPhone?: string | null;
+    actor?: { userId: string | null; role: string };
+    ipAddress?: string | null;
+  } = {},
+): Promise<WriteOutcome> {
+  return writePatientProfile({ kind: "upsertByEmail", email }, input, options);
 }
 
 /**

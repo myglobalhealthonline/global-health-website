@@ -9,6 +9,7 @@ import { getObject, isMediaStorageConfigured, putObject, streamToNodeReadable } 
 import { guardMedicalRead, MedicalAccessDeniedError, medicalAccessDeniedResponse } from "../utils/guard-medical-read.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { verifySniffedMime } from "../utils/sniff-mime.js";
+import { resolvePatientProfileIdByPatientEmail } from "../modules/patient-profile/appointment-patient-link.js";
 import {
   createMedicalDocument,
   getPatientAccessibleDocument,
@@ -330,11 +331,13 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
       }
 
       try {
-        const profile = await prisma.patientProfile.findUnique({
-          where: { email },
-          select: { id: true },
-        });
-        if (!profile) return reply.status(404).send(errorResponse("Patient not found"));
+        // Resolved through the durable appointment->patient link, so a
+        // retained clinical record stays listable after anonymization
+        // tombstones `PatientProfile.email`. Null, never a guess, when the
+        // address maps to more than one patient.
+        const profileId = await resolvePatientProfileIdByPatientEmail(email);
+        if (!profileId) return reply.status(404).send(errorResponse("Patient not found"));
+        const profile = { id: profileId };
 
         const actor = resolveAdminSessionActor(request);
         try {

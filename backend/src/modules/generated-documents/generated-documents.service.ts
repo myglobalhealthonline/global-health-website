@@ -44,6 +44,7 @@ import {
 } from "../patient-upload/patient-upload-link.service.js";
 import { resolveVerificationForPrescription } from "../identity-verification/identity-verification.service.js";
 import { recordCriticalAudit } from "../audit/audit.service.js";
+import { resolvePatientProfileIdForAppointmentId } from "../patient-profile/appointment-patient-link.js";
 
 const TITLES: Record<GeneratedDocumentType, string> = {
   ABSENCE_CERTIFICATE: "Medical absence certificate",
@@ -485,7 +486,7 @@ async function generateAppointmentDocumentUnlocked(input: GenerateInput) {
   // document is byte-for-byte what it was before this feature existed.
   const identityVerification =
     input.documentType === "PRESCRIPTION"
-      ? await resolveVerificationForPrescription({ patientEmail: appt.email })
+      ? await resolveVerificationForPrescription({ appointmentId: appt.id })
       : null;
 
   const templateContext = buildTemplateContext({
@@ -891,10 +892,11 @@ async function openLabRequisitionForPrescription(
     .filter((e) => e.label.length > 0);
   if (exams.length === 0) return;
 
-  const patientProfile = await prisma.patientProfile.findUnique({
-    where: { email: appt.email },
-    select: { id: true },
-  });
+  // Through the durable appointment->patient link (with the same conservative
+  // legacy fallback), so a requisition is never filed against a patient who
+  // merely reused the booking address.
+  const patientProfileId = await resolvePatientProfileIdForAppointmentId(appt.id);
+  const patientProfile = patientProfileId ? { id: patientProfileId } : null;
   // No profile means nothing to attach a requisition to. The prescription PDF
   // still reached the patient; the queue entry appears once they have a record.
   if (!patientProfile) return;

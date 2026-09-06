@@ -7,6 +7,7 @@ import {
   type AccessResult,
 } from "../lib/medical-access-guard.js";
 import { hasAcceptedCurrentAgreement } from "../modules/confidentiality/confidentiality.service.js";
+import { resolvePatientProfileIdForAppointmentId } from "../modules/patient-profile/appointment-patient-link.js";
 import { errorResponse } from "./response.js";
 
 export { MedicalAccessDeniedError };
@@ -184,8 +185,8 @@ export async function guardMedicalRead(
  * by appointmentId rather than patientProfileId directly (prescriptions,
  * consultations, exam results, forms, doctor invoices, appointment
  * documents, consultation services). Resolves the PatientProfile behind the
- * appointment (by userId, falling back to the appointment's email for guest
- * bookings that were never claimed) and runs the central guard.
+ * appointment through its durable `patientProfileId` link and runs the central
+ * guard.
  *
  * Returns `null` when the appointment has no matching PatientProfile yet
  * (e.g. a guest booking with no profile row) — callers should treat that as
@@ -209,28 +210,21 @@ export async function guardMedicalReadForAppointment(
 }
 
 /**
- * Resolve the PatientProfile.id behind an appointment (by userId, falling
- * back to the appointment's email for guest bookings never claimed).
- * Extracted out of `guardMedicalReadForAppointment` so other call sites that
- * need the same appointment→profile mapping — e.g. the medical-access-request
- * "request access" flow, which is appointment-scoped from the doctor portal —
- * don't duplicate it. Returns null when there's no appointment or no profile
- * yet, matching the existing `if (profile) { ... }` pattern used elsewhere.
+ * Resolve the PatientProfile.id behind an appointment. Kept here as the name
+ * every appointment-scoped PHI path already imports — e.g. the
+ * medical-access-request "request access" flow, which is appointment-scoped
+ * from the doctor portal. Returns null when there's no appointment or no
+ * profile yet, matching the existing `if (profile) { ... }` pattern used
+ * elsewhere.
+ *
+ * This used to resolve `Appointment.userId → PatientProfile.userId`, which is
+ * the PURCHASER's account: on a family booking that returns the payer's chart
+ * while the doctor asked for the dependent's. It now reads the durable
+ * `Appointment.patientProfileId` link, with an email-corroborated fallback for
+ * legacy rows only — see `appointment-patient-link.ts`.
  */
 export async function resolvePatientProfileIdForAppointment(
   appointmentId: string,
 ): Promise<string | null> {
-  const appt = await prisma.appointment.findUnique({
-    where: { id: appointmentId },
-    select: { userId: true, email: true },
-  });
-  if (!appt) return null;
-
-  const profile = appt.userId
-    ? await prisma.patientProfile.findUnique({ where: { userId: appt.userId }, select: { id: true } })
-    : await prisma.patientProfile.findUnique({
-        where: { email: appt.email.toLowerCase() },
-        select: { id: true },
-      });
-  return profile?.id ?? null;
+  return resolvePatientProfileIdForAppointmentId(appointmentId);
 }

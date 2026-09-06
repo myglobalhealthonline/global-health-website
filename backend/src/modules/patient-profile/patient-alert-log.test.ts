@@ -32,7 +32,7 @@ describe("patient alert log — removal note", () => {
       await assert.rejects(
         () =>
           removePatientAlert({
-            email: "patient@example.com",
+            patientProfileId: "synthetic-profile-id",
             alertType: "STATUS",
             note,
             actor: { userId: null, role: "DOCTOR" },

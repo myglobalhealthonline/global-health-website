@@ -129,7 +129,10 @@ async function main() {
 
   const syntheticByPatientDoctor = new Map<string, string>();
 
-  async function ensureSyntheticAppt(patientLegacyId: string, market: string, email: string, fullName: string, doctorId: string): Promise<string> {
+  // `patientProfileId` is passed in, never derived from an account id: the
+  // caller already resolved the concrete PatientProfile this synthetic
+  // consultation is being created to hold documents for.
+  async function ensureSyntheticAppt(patientLegacyId: string, market: string, email: string, fullName: string, doctorId: string, patientProfileId: string): Promise<string> {
     const key = `${patientLegacyId}:${doctorId}`;
     const cached = syntheticByPatientDoctor.get(key);
     if (cached) return cached;
@@ -139,6 +142,7 @@ async function main() {
       update: { doctorId },
       create: {
         legacyMongoId, countryCode: marketToCountryCode(market as never), consultationType: "legacy-records",
+        patientProfileId,
         fullName: fullName || "Unknown", email, consentAccepted: true, status: "COMPLETED", manualEntry: true,
         finalized: true, doctorId, notes: "Auto-created during migration to hold imported legacy documents.",
       },
@@ -202,7 +206,7 @@ async function main() {
           }
 
           if (!appointmentId) {
-            appointmentId = await ensureSyntheticAppt(legacyId, market, profile.email, profile.fullName ?? "Unknown", doctorId);
+            appointmentId = await ensureSyntheticAppt(legacyId, market, profile.email, profile.fullName ?? "Unknown", doctorId, profile.id);
           }
 
           if (m.uploadedByRole === "SYSTEM") {

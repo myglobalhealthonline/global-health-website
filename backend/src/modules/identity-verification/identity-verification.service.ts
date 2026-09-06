@@ -2,6 +2,7 @@ import { randomBytes } from "node:crypto";
 import { Prisma, type IdentityVerificationEvent, type VerificationStatus } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { compareSelfieToIdDocument, isFaceMatchConfigured } from "../../services/face-match.service.js";
+import { resolvePatientProfileIdForAppointmentId } from "../patient-profile/appointment-patient-link.js";
 
 /**
  * Ireland controlled-medication patient identity verification.
@@ -418,15 +419,20 @@ export async function requestVerification(input: {
  * exactly what the pre-existing behaviour produced.
  */
 export async function resolveVerificationForPrescription(input: {
-  patientEmail: string;
+  /** The appointment the prescription is being issued from. Resolved through
+   *  the durable appointment->patient link rather than the booking address:
+   *  `PatientProfile.email` is tombstoned by anonymization, so an
+   *  address-keyed lookup silently drops the verification line from a retained
+   *  patient's prescription, and a reused address could attach a DIFFERENT
+   *  patient's verification to it. */
+  appointmentId: string;
 }): Promise<{ eventId: string; referenceId: string; verifiedAt: Date } | null> {
-  const profile = await prisma.patientProfile.findFirst({
-    where: { email: { equals: input.patientEmail.trim(), mode: "insensitive" } },
-    select: { id: true },
-  });
-  if (!profile) return null;
+  const patientProfileId = await resolvePatientProfileIdForAppointmentId(
+    input.appointmentId,
+  );
+  if (!patientProfileId) return null;
 
-  return prescriptionGradeVerification(profile.id);
+  return prescriptionGradeVerification(patientProfileId);
 }
 
 /**

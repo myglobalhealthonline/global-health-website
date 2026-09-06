@@ -5,13 +5,17 @@ import bcrypt from "bcryptjs";
 import { randomBytes } from "node:crypto";
 import { prisma } from "../db/prisma.js";
 import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
+import { resolvePatientProfileIdByPatientEmail } from "../modules/patient-profile/appointment-patient-link.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
   applyPatientProfileUpdate,
   upsertPatientProfileByEmail,
+  PatientProfileEmailConflictError,
+  PatientProfileNotFoundError,
   PricingPlanCountryMismatchError,
   serializeProfile,
+  writePatientProfile,
 } from "../modules/patient-profile/patient-profile.service.js";
 import { issuePasswordResetToken } from "../modules/auth/auth.service.js";
 import { absoluteSiteUrl } from "../lib/email/send-email.js";
@@ -241,7 +245,15 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid email param"));
       }
       try {
-        const profile = await prisma.patientProfile.findUnique({ where: { email } });
+        // Resolved through the durable appointment→patient link: admins reach
+        // patients by the address the portal holds, which comes from
+        // `Appointment.email` and survives anonymization, while
+        // `PatientProfile.email` becomes a tombstone. Null (never a guess) when
+        // the address maps to more than one patient.
+        const profileId = await resolvePatientProfileIdByPatientEmail(email);
+        const profile = profileId
+          ? await prisma.patientProfile.findUnique({ where: { id: profileId } })
+          : null;
         if (!profile) {
           return reply.status(404).send(errorResponse("Patient profile not found"));
         }
@@ -293,17 +305,61 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
       if (!body.success) {
         return reply.status(400).send(errorResponse("Invalid profile", body.error.flatten()));
       }
+      // Identity before persistence, the same rule the doctor portal now
+      // follows. The GET above already resolves through the durable link; this
+      // PATCH went straight to the address-keyed upsert, so the two could name
+      // different rows. Two concrete failures: an admin editing a retained
+      // record whose address was released got a brand-new duplicate chart at
+      // that address instead of an edit, and an admin working from a stale
+      // reference to an address a new person has since registered wrote onto
+      // THAT person's chart. The admin shape pools the live holder with every
+      // linked patient and requires exactly one, so an ambiguous address is a
+      // refusal rather than a guess.
+      const resolvedId = await resolvePatientProfileIdByPatientEmail(email);
+      const resolved = resolvedId
+        ? await prisma.patientProfile.findUnique({
+            where: { id: resolvedId },
+            select: { id: true, anonymizedAt: true },
+          })
+        : null;
+      if (resolvedId && !resolved) {
+        return reply.status(404).send(errorResponse("Patient profile not found"));
+      }
+      // An anonymized chart is a retained clinical record whose personal data
+      // was erased on a legal instruction. Writing it back would undo that.
+      if (resolved?.anonymizedAt) {
+        return reply
+          .status(409)
+          .send(errorResponse("This record has been anonymized and can no longer be edited"));
+      }
+      if (!resolvedId) {
+        // Nothing resolved. A live holder in that state is somebody the address
+        // cannot be shown to identify — refuse rather than write onto them.
+        const holder = await prisma.patientProfile.findUnique({
+          where: { email },
+          select: { id: true },
+        });
+        if (holder) {
+          return reply.status(404).send(errorResponse("Patient profile not found"));
+        }
+      }
       try {
         const { dateOfBirth, ...rest } = body.data;
         const actor = resolveAdminSessionActor(request);
-        const { profile, alertChanges, alertPrevious } = await applyPatientProfileUpdate(
-          email,
-          {
-            ...rest,
-            ...(dateOfBirth !== undefined
-              ? { dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null }
-              : {}),
-          },
+        const fields = {
+          ...rest,
+          ...(dateOfBirth !== undefined
+            ? { dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null }
+            : {}),
+        };
+        const { profile, alertChanges, alertPrevious } = await writePatientProfile(
+          // The resolved id where there is one; otherwise the address is
+          // genuinely unheld and this is the admin's long-standing
+          // create-on-edit path, which stays as it was.
+          resolvedId
+            ? { kind: "id", patientProfileId: resolvedId }
+            : { kind: "upsertByEmail", email },
+          fields,
           {
             actor: { userId: actor?.userId ?? null, role: actor?.role ?? "ADMIN" },
             ipAddress: request.ip,
@@ -363,6 +419,15 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         }
         if (error instanceof PricingPlanCountryMismatchError) {
           return reply.status(400).send(errorResponse(error.message));
+        }
+        // The resolved chart went away, or the address was claimed, between the
+        // resolution above and the write — the patient this edit was aimed at
+        // is no longer the one a retry would reach.
+        if (error instanceof PatientProfileNotFoundError) {
+          return reply.status(404).send(errorResponse("Patient profile not found"));
+        }
+        if (error instanceof PatientProfileEmailConflictError) {
+          return reply.status(409).send(errorResponse(error.message));
         }
         if (error instanceof DatabaseUnavailableError) {
           return reply.status(503).send(errorResponse(error.message));
@@ -1089,7 +1154,8 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
 
       try {
         const { profile, previousValue } = await removePatientAlert({
-          email,
+          // The id the guard above authorized, not the address it came from.
+          patientProfileId: existing.id,
           alertType: alertType.data,
           note: body.data.note,
           actor: {

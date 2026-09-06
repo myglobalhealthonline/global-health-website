@@ -30,7 +30,7 @@ export class PatientMergeOutOfScopeError extends Error {
  * empty list means "sees nothing", and a patient with no folder at all is out
  * of scope, never a wildcard.
  */
-function patientFolderInScope(
+export function patientFolderInScope(
   countryFolderCode: string | null,
   allowedCountryFolders: string[],
 ): boolean {
@@ -251,6 +251,16 @@ export async function mergePatients(params: {
           data: { userId: primarySnapshot.userId ?? null },
         });
       }
+
+      // Appointment.patientProfileId — the clinical half of the same move, and
+      // unconditional: it is keyed on the profile, so it must follow the merge
+      // even for a duplicate with no User row at all (a dependent's profile).
+      // Inside the transaction, after the AZ-2 re-check above, so a rollback
+      // leaves every consultation pointing where it did before.
+      await tx.appointment.updateMany({
+        where: { patientProfileId: duplicatePatientId },
+        data: { patientProfileId: primaryPatientId },
+      });
 
       // MedicalDocument
       await tx.medicalDocument.updateMany({

@@ -1,4 +1,5 @@
 import type { Prisma } from "@prisma/client";
+import { createHash } from "node:crypto";
 import { prisma } from "../../db/prisma.js";
 import { emitOpsAlert } from "../subscriptions/ops/ops-alert.js";
 // Type-only: erased at compile time, so no runtime import cycle with
@@ -16,6 +17,28 @@ export const OUTBOX_KIND_RECRUITMENT_APPLICATION_NOTIFICATION =
  *  state the reminder was minted for (see appointment-reminder.service.ts). */
 export const OUTBOX_KIND_APPOINTMENT_REMINDER_PATIENT = "appointment_reminder_patient_24h";
 export const OUTBOX_KIND_APPOINTMENT_REMINDER_DOCTOR = "appointment_reminder_doctor_24h";
+/** PR-3: deletion of ONE personal (non-clinical) upload from object storage. */
+export const OUTBOX_KIND_PERSONAL_OBJECT_PURGE = "personal_object_purge";
+
+/**
+ * The only object-storage namespaces this queue may ever delete from.
+ *
+ * Personal uploads and clinical files share the `patient-docs/<profileId>/`
+ * root — clinical MedicalDocument files live under `.../medical/` and
+ * identity-verification selfies under `.../identity-verification/`, neither of
+ * which anonymization clears and neither of which may be purged here. Matching
+ * on the sub-namespace is what makes "a clinical file can never be deleted by
+ * this queue" a property of the code rather than of the caller.
+ *
+ * Derived from the upload writers in account-profile.route.ts:
+ *   insurance/  id-document/  nationality-<slot>/
+ */
+const PERSONAL_UPLOAD_KEY_PATTERN =
+  /^patient-docs\/[^/]+\/(?:insurance|id-document|nationality-[^/]*)\//;
+
+export function isPersonalUploadStorageKey(key: string): boolean {
+  return PERSONAL_UPLOAD_KEY_PATTERN.test(key);
+}
 
 // Minimal client surface so enqueue can run inside a Prisma interactive
 // transaction (tx) OR standalone against the shared client.
@@ -50,6 +73,74 @@ export async function enqueueOrderPaidAutomations(
     ],
     skipDuplicates: true,
   });
+}
+
+/**
+ * Durably queue the deletion of personal (non-clinical) uploads, one row per
+ * object, in the SAME transaction that clears the DB references to them.
+ *
+ * Before this, the two anonymization paths each lost objects a different way:
+ * the admin path nulled the columns and wrote the keys into AuditLog metadata
+ * for "a later purge job" that never existed, and the self-service purge called
+ * deleteObject inline, logged the raw key on failure and carried on — so a
+ * failed delete became an untracked orphan either way.
+ *
+ * The idempotency key is a SHA-256 digest, never the storage key itself: an
+ * Outbox row is operational data with a much wider audience than the object it
+ * names. Duplicate and blank keys collapse, so re-running anonymization enqueues
+ * nothing new.
+ *
+ * @returns how many distinct objects were queued (safe to log — a count, not a key).
+ */
+export async function enqueuePersonalObjectPurge(
+  client: OutboxEnqueueClient,
+  storageKeys: readonly (string | null | undefined)[],
+  opts: { patientProfileId?: string } = {},
+): Promise<number> {
+  const unique = [
+    ...new Set(
+      storageKeys.filter((k): k is string => typeof k === "string" && k.trim().length > 0),
+    ),
+  ];
+  if (unique.length === 0) return 0;
+  // The INSERTED count, not the requested one: this number is written into the
+  // PATIENT_ANONYMIZED audit row as evidence, and `skipDuplicates` means a
+  // re-run inserts fewer rows than it asked for. Claiming the requested count
+  // would overstate what this call actually queued.
+  const created = await client.outbox.createMany({
+    data: unique.map((storageKey) => ({
+      kind: OUTBOX_KIND_PERSONAL_OBJECT_PURGE,
+      idempotencyKey: `${OUTBOX_KIND_PERSONAL_OBJECT_PURGE}:${createHash("sha256")
+        .update(storageKey)
+        .digest("hex")}`,
+      // patientProfileId is an opaque id, and it is what lets the deletion-request
+      // workflow tell "purge queued" from "purge done" before claiming COMPLETED.
+      payload: opts.patientProfileId
+        ? { storageKey, patientProfileId: opts.patientProfileId }
+        : { storageKey },
+    })),
+    skipDuplicates: true,
+  });
+  return created.count;
+}
+
+/**
+ * Is any personal-object purge for this patient still outstanding (queued,
+ * running, or permanently failed)? A deletion request must not be reported
+ * COMPLETED while one is.
+ */
+export async function hasOutstandingPersonalObjectPurge(
+  patientProfileId: string,
+): Promise<boolean> {
+  const row = await prisma.outbox.findFirst({
+    where: {
+      kind: OUTBOX_KIND_PERSONAL_OBJECT_PURGE,
+      status: { in: ["PENDING", "PROCESSING", "FAILED"] },
+      payload: { path: ["patientProfileId"], equals: patientProfileId },
+    },
+    select: { id: true },
+  });
+  return row !== null;
 }
 
 // ── Retry/backoff decision (pure, unit-tested) ───────────────────────────────
@@ -109,10 +200,46 @@ function toPaymentLog(log: OutboxLog): PaymentLog {
 }
 
 async function dispatchOutboxRow(
-  row: { kind: string; payload: unknown },
+  row: { id: string; kind: string; payload: unknown },
   log: OutboxLog,
 ): Promise<void> {
   switch (row.kind) {
+    case OUTBOX_KIND_PERSONAL_OBJECT_PURGE: {
+      const payload = row.payload as { storageKey?: unknown; purged?: unknown } | null;
+      // Already deleted on an earlier attempt; the key was scrubbed then.
+      if (payload?.purged === true) return;
+      const storageKey = payload?.storageKey;
+      if (typeof storageKey !== "string" || storageKey.length === 0) {
+        throw new Error("personal_object_purge: missing storageKey in payload");
+      }
+      if (!isPersonalUploadStorageKey(storageKey)) {
+        // Never widen this. Failing loudly beats deleting a clinical file:
+        // the row retries, then alerts, and nothing is removed.
+        throw new Error(
+          "personal_object_purge: storage key is outside the personal-upload namespace",
+        );
+      }
+      const { deleteObject } = await import("../../services/object-storage.js");
+      try {
+        // Idempotent: a missing object is success (object-storage.ts:186).
+        await deleteObject(storageKey);
+      } catch (error) {
+        // The provider's message can embed the key, and this message becomes
+        // Outbox.lastError, a log line and an ops alert. Replace it.
+        throw new Error(
+          `personal_object_purge: object deletion failed (${
+            error instanceof Error ? error.name : "unknown error"
+          })`,
+        );
+      }
+      // The object is gone, so the queue must stop holding a key that points
+      // at a patient's identity document.
+      await prisma.outbox.update({
+        where: { id: row.id },
+        data: { payload: { purged: true } },
+      });
+      return;
+    }
     case OUTBOX_KIND_ORDER_PAID_AUTOMATIONS: {
       const payload = row.payload as { orderId?: string; sendShopConfirmation?: boolean } | null;
       if (!payload?.orderId) throw new Error("order_paid_automations: missing orderId in payload");

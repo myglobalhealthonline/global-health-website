@@ -9,11 +9,11 @@ import {
   computeEmailBlindIndex,
   computePhoneBlindIndex,
 } from "../../lib/blind-index.js";
-import { deleteObject } from "../../services/object-storage.js";
-import { recordAudit } from "../audit/audit.service.js";
+import { enqueuePersonalObjectPurge } from "../outbox/outbox.js";
 import { revokeTrustedDevices } from "../two-factor/login-otp.service.js";
 import { linkMembershipsInBackground } from "../memberships/membership-linking.service.js";
 import { applyPatientProfileUpdate } from "../patient-profile/patient-profile.service.js";
+import { linkAppointmentsToPatientProfile } from "../patient-profile/appointment-patient-link.js";
 
 export type SafeUser = {
   id: string;
@@ -230,6 +230,25 @@ export async function claimGuestAppointmentsForUser(
       },
       data: { userId },
     });
+
+    // Clinical half of the claim, through the ONE helper that owns the
+    // corroboration rules (email + purchaser account agree, and the line was
+    // not booked for someone else). Rows that already carry a link are left
+    // alone, which is what stops a released email from moving an anonymized
+    // patient's consultation onto whoever registers with the address next:
+    // anonymization links their appointments before it tombstones the email,
+    // so those rows are no longer claimable.
+    const profile = await prisma.patientProfile.findUnique({
+      where: { userId },
+      select: { id: true, email: true },
+    });
+    if (profile && profile.email.toLowerCase() === email.trim().toLowerCase()) {
+      await linkAppointmentsToPatientProfile(prisma, {
+        patientProfileId: profile.id,
+        email,
+        userId,
+      });
+    }
     return result.count;
   } catch {
     return 0;
@@ -540,22 +559,12 @@ async function purgeOneAccount(userId: string): Promise<void> {
       if (doc.backFileKey) fileKeys.push(doc.backFileKey);
     }
   }
-  // Delete files before the DB write: a crash mid-purge should leave the
-  // row still a candidate (safe to retry) rather than a DB row marked
-  // "purged" with orphaned files still sitting in the bucket.
-  for (const key of fileKeys) {
-    try {
-      await deleteObject(key);
-    } catch (error) {
-      // deleteObject already treats a missing key as a no-op; a real error
-      // here (permissions/network) shouldn't abort the whole account purge
-      // over one stuck file — log it and continue.
-      console.error(
-        `[account-purge] object-storage delete failed for ${key}:`,
-        error instanceof Error ? error.message : error,
-      );
-    }
-  }
+  // PR-3: the objects are no longer deleted inline here. That loop swallowed
+  // permission/network failures and logged the raw storage key, so a failed
+  // delete became an untracked orphan announced in the application log. The
+  // keys are now queued on the durable outbox inside the same transaction that
+  // clears their DB references (below), which retries with backoff and alerts
+  // if it ever gives up.
 
   // Unusable, unguessable replacement — belt-and-suspenders on top of
   // isActive:false / deletionScheduledAt already blocking login everywhere
@@ -624,19 +633,43 @@ async function purgeOneAccount(userId: string): Promise<void> {
         tokenVersion: { increment: 1 },
       },
     });
+
+    // PR-3: queue the personal uploads whose columns this transaction just
+    // cleared. Same commit, so a DB row can never claim "purged" while the
+    // work that removes the files was lost.
+    const queued = await enqueuePersonalObjectPurge(tx, fileKeys, {
+      ...(patientProfile ? { patientProfileId: patientProfile.id } : {}),
+    });
+
+    // The completion record commits WITH the scrub and the enqueue. It used to
+    // be written afterwards through the deliberately fail-open `recordAudit`,
+    // so an audit insert that failed left the identity erased and the objects
+    // queued with no durable evidence the purge had ever happened. Written
+    // directly on `tx` — same row shape recordAudit produces.
+    await tx.auditLog.create({
+      data: {
+        actorUserId: null,
+        actorRole: "SYSTEM",
+        action: "ENTITY_PURGED",
+        entityType: "User",
+        entityId: userId,
+        metadata: {
+          reason: "gdpr_deletion_grace_period_expired",
+          patientProfileId: patientProfile?.id ?? null,
+          // The INSERTED count, not `fileKeys.length`: the enqueue collapses
+          // duplicate keys and skips rows a previous run already queued, so the
+          // requested count would overstate what this purge actually queued.
+          // Queued, not deleted — the outbox owns the deletion now, so claiming
+          // "deleted" here would be the same untruth PR-5 removed elsewhere.
+          personalObjectsQueuedForPurge: queued,
+          purgeMechanism: "outbox",
+        },
+      },
+    });
   });
 
-  await recordAudit({
-    actorRole: "SYSTEM",
-    action: "ENTITY_PURGED",
-    entityType: "User",
-    entityId: userId,
-    metadata: {
-      reason: "gdpr_deletion_grace_period_expired",
-      patientProfileId: patientProfile?.id ?? null,
-      objectsDeleted: fileKeys.length,
-    },
-  });
+  // Nothing auditable happens out here: the ENTITY_PURGED record commits inside
+  // the transaction above, alongside the scrub and the purge queue.
 }
 
 // GDPR export paging. We page in bounded batches (so a long-lived account

@@ -1,6 +1,7 @@
 import { prisma } from "../db/prisma.js";
 import { env } from "../config/env.js";
 import { alertUnauthorizedAccess } from "../modules/security-alerts/security-alert.service.js";
+import { appointmentIdsBookedForSomeoneElse } from "../modules/patient-profile/appointment-patient-link.js";
 
 /**
  * Medical Access Guard — §22 of the repo security plan.
@@ -212,30 +213,64 @@ async function hasActiveConsent(
  * afterward to write post-consult notes and review history. Only CANCELLED
  * is excluded (never treated the patient).
  *
- * Appointment does not carry patientProfileId directly — it links via
- * Appointment.userId which matches PatientProfile.userId.
+ * Appointment carries `patientProfileId` — the durable link to the ACTUAL
+ * patient — and that is the authoritative relationship. `Appointment.userId` is
+ * the PURCHASER's account and is NOT a patient link: on a family booking it
+ * names the payer, so matching on it alone both grants a dependent's doctor
+ * access to the payer's chart and misses a dependent whose own
+ * `PatientProfile.userId` is null.
+ *
+ * Legacy rows (created before the link existed) fall back to `userId`, but only
+ * when they carry no link at all AND the appointment's own patient email agrees
+ * with the profile's — corroboration, not `userId` on its own.
  */
 async function doctorHasTreatmentRelationship(
   doctorId: string,
   patientProfileId: string,
 ): Promise<boolean> {
   try {
-    // Resolve the userId for this patient profile first.
     const profile = await prisma.patientProfile.findUnique({
       where: { id: patientProfileId },
-      select: { userId: true },
+      select: { userId: true, email: true },
     });
-    if (!profile?.userId) return false;
+    if (!profile) return false;
 
-    const appt = await prisma.appointment.findFirst({
-      where: {
-        doctorId,
-        userId: profile.userId,
-        status: { notIn: ["CANCELLED"] },
-      },
+    // The stored link is authoritative and needs no corroboration.
+    const linked = await prisma.appointment.findFirst({
+      where: { doctorId, patientProfileId, status: { notIn: ["CANCELLED"] } },
       select: { id: true },
     });
-    return appt !== null;
+    if (linked) return true;
+
+    // Legacy rows only, and only with corroboration. `userId` alone would put
+    // a dependent's doctor on the purchaser's chart; the agreeing email rules
+    // out most of that, and the order-line check below rules out the rest —
+    // a dependent with no email on file leaves the appointment carrying the
+    // purchaser's address AND account, so those two agreeing proves nothing.
+    if (!profile.userId) return false;
+    const legacy = await prisma.appointment.findMany({
+      where: {
+        doctorId,
+        status: { notIn: ["CANCELLED"] },
+        patientProfileId: null,
+        userId: profile.userId,
+        email: { equals: profile.email, mode: "insensitive" },
+      },
+      // No `take`. The excluded rows are only identifiable AFTER the order-line
+      // subtraction below, so capping here caps correctness: a doctor whose
+      // first N legacy rows for this patient are all dependent bookings would
+      // be denied even though a genuine self-booking sits behind them. The set
+      // is already narrow — one doctor, one account, one matching address —
+      // and only ids are selected.
+      select: { id: true },
+    });
+    if (legacy.length === 0) return false;
+
+    const bookedForOthers = await appointmentIdsBookedForSomeoneElse(
+      prisma,
+      legacy.map((a) => a.id),
+    );
+    return legacy.some((a) => !bookedForOthers.has(a.id));
   } catch {
     return false;
   }
