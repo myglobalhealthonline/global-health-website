@@ -8,6 +8,36 @@ import {
 import { sendPatientMergeNotificationEmail } from "../../lib/email/templates.js";
 import { movePatientEmailReferences } from "../patient-profile/patient-email-move.js";
 
+/**
+ * AZ-2: a LOCAL_ADMIN reached a patient outside their assigned country
+ * folders. Raised from INSIDE the merge transaction, so the rollback is what
+ * guarantees zero writes; the route maps it to the same 403 its pre-flight
+ * check produces. Kept distinct from `normalizeDbError` so an authorization
+ * refusal never gets laundered into a generic database failure.
+ */
+export class PatientMergeOutOfScopeError extends Error {
+  constructor(message = "This patient is outside your assigned country scope") {
+    super(message);
+    this.name = "PatientMergeOutOfScopeError";
+  }
+}
+
+/**
+ * AZ-2 scope predicate, shared by the duplicate-search filter and the
+ * in-transaction merge check so both answer the identical question.
+ * `allowedCountryFolders` is null for ADMIN / SUPER_ADMIN / the admin-token
+ * fallback (unscoped) and a lowercase folder list for a real LOCAL_ADMIN — an
+ * empty list means "sees nothing", and a patient with no folder at all is out
+ * of scope, never a wildcard.
+ */
+function patientFolderInScope(
+  countryFolderCode: string | null,
+  allowedCountryFolders: string[],
+): boolean {
+  if (!countryFolderCode) return false;
+  return allowedCountryFolders.includes(countryFolderCode.toLowerCase());
+}
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 async function recordAudit(params: {
@@ -44,6 +74,9 @@ async function recordAudit(params: {
  */
 export async function findPotentialDuplicates(
   patientProfileId: string,
+  /** AZ-2: lowercase folder allow-list for a LOCAL_ADMIN, or null when the
+   *  caller is unscoped (ADMIN / SUPER_ADMIN / admin-token fallback). */
+  allowedCountryFolders: string[] | null = null,
 ): Promise<
   Array<{
     patientProfileId: string;
@@ -95,6 +128,23 @@ export async function findPotentialDuplicates(
         AND: [
           { id: { not: patientProfileId } },
           { isMerged: false },
+          // AZ-2: the folder clamp is part of the QUERY, not a post-filter —
+          // a scoped admin must never have foreign candidate rows (name,
+          // email, GHN) materialised in this process at all. `in` also
+          // excludes NULL folders, which is the fail-closed answer, and an
+          // empty allow-list correctly matches nothing.
+          //
+          // `mode: "insensitive"` because the allow-list is always lowercased
+          // but the stored column is not always written that way — the profile
+          // auto-create in consents.route.ts copies `Appointment.countryCode`
+          // verbatim. Without it an uppercase row would be silently dropped
+          // from a scoped admin's results, hiding a real duplicate rather than
+          // leaking one. Matches how the two non-query checks in this flow
+          // (`patientFolderInScope`, `assertAdminCountryFolderScope`) already
+          // lowercase before comparing.
+          ...(allowedCountryFolders
+            ? [{ countryFolderCode: { in: allowedCountryFolders, mode: "insensitive" as const } }]
+            : []),
           { OR: orClauses },
         ],
       },
@@ -139,8 +189,12 @@ export async function mergePatients(params: {
   duplicatePatientId: string;
   adminId: string;
   reason: string;
+  /** AZ-2: lowercase folder allow-list for a LOCAL_ADMIN, or null when the
+   *  caller is unscoped (ADMIN / SUPER_ADMIN / admin-token fallback). */
+  allowedCountryFolders?: string[] | null;
 }): Promise<void> {
   const { primaryPatientId, duplicatePatientId, adminId, reason } = params;
+  const allowedCountryFolders = params.allowedCountryFolders ?? null;
 
   // Populated inside the transaction below, read afterwards for the
   // fire-and-forget notification email.
@@ -156,6 +210,23 @@ export async function mergePatients(params: {
         tx.patientProfile.findUniqueOrThrow({ where: { id: primaryPatientId } }),
         tx.patientProfile.findUniqueOrThrow({ where: { id: duplicatePatientId } }),
       ]);
+
+      // ── 0. AZ-2 authorization, on the transaction's own snapshots ────────
+      // The route already refused an out-of-scope merge before opening this
+      // transaction. This is the authoritative re-check: it reads the rows
+      // the merge will actually rewrite, so a country folder changed between
+      // the pre-flight check and the transaction cannot slip a foreign
+      // patient through. It runs before the merge log and before any
+      // dependent row moves, so the rollback leaves both profiles, their
+      // documents, appointments and the merge log exactly as they were.
+      if (
+        allowedCountryFolders &&
+        (!patientFolderInScope(primarySnapshot.countryFolderCode, allowedCountryFolders) ||
+          !patientFolderInScope(duplicateSnapshot.countryFolderCode, allowedCountryFolders))
+      ) {
+        throw new PatientMergeOutOfScopeError();
+      }
+
       // ── 1. Write the merge log with both snapshots ───────────────────────
       const mergeLog = await tx.patientMergeLog.create({
         data: {
@@ -366,6 +437,9 @@ export async function mergePatients(params: {
         });
       });
   } catch (error) {
+    // An authorization refusal is not a database failure — rethrow it intact
+    // so the route can answer 403 instead of a generic 500.
+    if (error instanceof PatientMergeOutOfScopeError) throw error;
     throw normalizeDbError(error, "Could not merge patients");
   }
 }

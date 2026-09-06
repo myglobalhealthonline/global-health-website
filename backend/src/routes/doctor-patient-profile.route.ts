@@ -451,6 +451,30 @@ const doctorPatientProfileRoute: FastifyPluginAsync = async (app) => {
       const found = await resolveOwnPatient(request, auth.doctorId);
       if (!found.ok) return reply.status(found.status).send(errorResponse(found.message));
 
+      // AZ-4: `resolveOwnPatient` only proves this doctor has an appointment
+      // with this email. The confidentiality agreement, 2FA and the patient's
+      // consent are the guard's business, and this route skipped it — so a
+      // doctor blocked from reading the chart could still stamp a verification
+      // request onto the profile. Guarded here, after ownership and before the
+      // write, so a denial leaves the profile untouched.
+      try {
+        await guardMedicalRead(
+          request,
+          { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+          {
+            patientProfileId: found.profileId,
+            resourceType: "ID_DOC",
+            accessAction: "UPDATED",
+            relatedAppointmentId: found.appointmentId,
+          },
+        );
+      } catch (guardError) {
+        if (guardError instanceof MedicalAccessDeniedError) {
+          return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+        }
+        throw guardError;
+      }
+
       try {
         const requestedAt = await requestVerification({
           patientProfileId: found.profileId,
@@ -513,6 +537,27 @@ const doctorPatientProfileRoute: FastifyPluginAsync = async (app) => {
       const body = reviewSchema.safeParse(request.body ?? {});
       if (!body.success) {
         return reply.status(400).send(errorResponse("Invalid review", body.error.flatten()));
+      }
+
+      // AZ-4: this is the ONLY route to VERIFIED, so it is the last place that
+      // should have been reachable without the central guard. Same placement
+      // as the request endpoint — after ownership, before any mutation.
+      try {
+        await guardMedicalRead(
+          request,
+          { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+          {
+            patientProfileId: found.profileId,
+            resourceType: "ID_DOC",
+            accessAction: "UPDATED",
+            relatedAppointmentId: found.appointmentId,
+          },
+        );
+      } catch (guardError) {
+        if (guardError instanceof MedicalAccessDeniedError) {
+          return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+        }
+        throw guardError;
       }
 
       try {
@@ -596,8 +641,33 @@ const doctorPatientProfileRoute: FastifyPluginAsync = async (app) => {
           select: { id: true },
         });
         // No profile row yet means no alert was ever raised — an empty list,
-        // not a 404, so the chart card renders its empty state.
+        // not a 404, so the chart card renders its empty state. Nothing to
+        // authorize against either, matching the `if (profile) { guard }`
+        // pattern the profile GET above uses.
         if (!profile) return okResponse({ entries: [] });
+
+        // AZ-4: the alert log is verbatim clinical text (status/clinic alert
+        // wording, plus the removal rationale). It went out with no guard call
+        // at all — no decision, and no MedicalAccessLog row. Guarded before
+        // the alert rows are read, so a denial returns no alert content.
+        try {
+          await guardMedicalRead(
+            request,
+            { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+            {
+              patientProfileId: profile.id,
+              resourceType: "SENSITIVE_PROFILE",
+              accessAction: "VIEWED",
+              relatedAppointmentId: hasAppt.id,
+            },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+          }
+          throw guardError;
+        }
+
         return okResponse({ entries: await listPatientAlertLog(profile.id) });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
