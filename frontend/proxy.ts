@@ -29,7 +29,93 @@ import { countries } from "@/data/countries";
  *   2. Stamp `x-gh-country`, `x-gh-locale`, `x-gh-pathname` request
  *      headers so downstream RSCs can read locale context.
  */
-const PUBLIC_FILE = /\.(.*)$/;
+
+/**
+ * The fetch destinations that mark a request as a SUBRESOURCE — an `<img>`, an
+ * `@font-face` file, a stylesheet, media — rather than a page. Only these may
+ * skip the proxy entirely.
+ *
+ * This replaces `PUBLIC_FILE = /\.(.*)$/`, a pathname test that called any
+ * dotted path a file. `/admin/patients/[email]` and `/doctor/patients/[email]`
+ * address the patient by email, and `encodeURIComponent` does not encode `.`,
+ * so `/admin/patients/john.doe%40example.test` — a portal document rendering
+ * PHI — short-circuited before the role gate, before `x-gh-pathname` was
+ * stamped, and before the portal nonce CSP was built. Those pages shipped with
+ * no Content-Security-Policy at all.
+ *
+ * Narrowing that regex to a trailing extension would NOT have fixed it: an
+ * address ending `.com`, `.pt` or `.org` is extension-shaped, and so is a slug
+ * like `record.v2`. The pathname does not carry the answer. `Sec-Fetch-Dest`
+ * does — the browser sets it from the fetch that initiated the request, and
+ * script cannot forge it (it is a forbidden header name).
+ *
+ * Fail-safe by construction. A client that sends no `Sec-Fetch-Dest` (curl, a
+ * crawler, an older browser) matches nothing here and gets the FULL treatment:
+ * the cost is a locale resolve plus a local JWT verify on a handful of
+ * `/public` files, and nothing that matters is ever skipped. `_next/static`,
+ * `_next/image` and `favicon.ico` are excluded by the matcher below regardless.
+ */
+const ASSET_FETCH_DESTINATIONS = new Set(["image", "font", "style", "audio", "video", "track"]);
+
+function isStaticAssetRequest(request: NextRequest): boolean {
+  return ASSET_FETCH_DESTINATIONS.has(request.headers.get("sec-fetch-dest") ?? "");
+}
+
+/**
+ * Request headers downstream code reads as proxy-stamped truth. A client can
+ * put any of them on the wire, so on the processed path below each one is
+ * SET or DELETED, never merged.
+ *
+ * The skip path needs the same guarantee and never had it: `_next`, `/api`,
+ * `favicon.ico` and (before Batch 15b) every dotted pathname returned
+ * `NextResponse.next()` with the client's headers intact. `Sec-Fetch-Dest` is
+ * browser-set and forbidden to script, but a non-browser client can put any
+ * value on it, so "only assets take this path" is a browser-context
+ * guarantee, not a server-side one — the scrub cannot be conditional on it.
+ */
+const TRUSTED_REQUEST_HEADERS = [
+  "x-gh-pathname",
+  "x-gh-locale",
+  "x-gh-country",
+  "x-gh-role",
+  "x-gh-email",
+  "x-nonce",
+  "content-security-policy",
+];
+
+/** Continue to the normal pipeline, dropping any trusted header the client
+ *  sent. Allocates nothing in the overwhelmingly common case (none present). */
+function passThrough(request: NextRequest) {
+  const spoofed = TRUSTED_REQUEST_HEADERS.filter((name) => request.headers.has(name));
+  if (spoofed.length === 0) return NextResponse.next();
+  const headers = new Headers(request.headers);
+  for (const name of spoofed) headers.delete(name);
+  return NextResponse.next({ request: { headers } });
+}
+
+/**
+ * Pathnames `next.config.ts` stamps with a SHARED-cacheable
+ * `Cache-Control: public, max-age=3600, must-revalidate` — the
+ * `/:all*(svg|jpg|jpeg|png|webp|avif|gif|ico|woff2)` rule in its `headers()`.
+ * The two must agree; `tests/unit/proxy-static-asset-bypass.test.ts` reads that
+ * rule out of the config and asserts they do.
+ *
+ * Used at the cookie writes at the end of `proxy()`, and NOWHERE else. Before
+ * Batch 15b every one of these paths carried a dot and so returned above,
+ * which is the only reason those writes never met a cacheable asset response;
+ * now a client that sends no `Sec-Fetch-Dest` (a crawler, curl, pre-16.4
+ * Safari) reaches them for a genuine `/public` file. That response has no
+ * `private` and no `Vary: Cookie`, so a shared cache in front of the origin
+ * would be holding a `Set-Cookie` against an asset URL.
+ *
+ * An extension test is the right instrument HERE, and only here: the thing it
+ * has to agree with is itself extension-based, and it decides caching, never
+ * authorization — the CSP, the role gate and the header scrub have all already
+ * run by this point. (Consequence, accepted: a patient whose address ends in
+ * one of these extensions gets no locale/auth-hint cookie refresh on their own
+ * record page. Both cookies are cosmetic.)
+ */
+export const CACHEABLE_ASSET_PATH = /\.(svg|jpg|jpeg|png|webp|avif|gif|ico|woff2)$/i;
 
 // SEO audit Phase 4 #2 — bare `/{country}/` with a trailing slash.
 const COUNTRY_TRAILING_SLASH_RE = /^\/([a-z0-9-]+)\/$/;
@@ -386,9 +472,9 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
     pathname === "/favicon.ico" ||
-    PUBLIC_FILE.test(pathname)
+    isStaticAssetRequest(request)
   ) {
-    return NextResponse.next();
+    return passThrough(request);
   }
 
   // Permanently removed content — answer 410 Gone here and stop.
@@ -616,8 +702,15 @@ export async function proxy(request: NextRequest) {
       !request.headers.has("rsc") &&
       !request.headers.has("next-router-prefetch"));
 
+  // ...and never onto a response a shared cache has been told it may reuse.
+  // See CACHEABLE_ASSET_PATH: `next.config.ts` marks these extensions
+  // `public, max-age=3600` with no `private` and no `Vary: Cookie`, and since
+  // Batch 15b a metadata-less client reaches this code for a real /public file.
+  const isCacheableAsset = CACHEABLE_ASSET_PATH.test(pathname);
+
   if (
     isDocumentNavigation &&
+    !isCacheableAsset &&
     context.pathLocale &&
     context.pathLocale !== request.cookies.get("gh_locale")?.value
   ) {
@@ -636,7 +729,12 @@ export async function proxy(request: NextRequest) {
   // check" — the real auth decision still happens against the httpOnly
   // session cookie server-side. Left untouched when `resolveSession` itself
   // is misconfigured (no verification key available) rather than guessing.
-  if (session.kind === "ok") {
+  // Skipped on a shared-cacheable asset response for the same reason as the
+  // locale cookie above — and this one is not gated on `isDocumentNavigation`,
+  // deliberately: it must still be CLEARED on the RSC request that follows a
+  // sign-out action, or a signed-out visitor keeps a stale `1` until their
+  // next full page load.
+  if (!isCacheableAsset && session.kind === "ok") {
     if (session.role !== null) {
       response.cookies.set("gh-auth-hint", "1", {
         path: "/",

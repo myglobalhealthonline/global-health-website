@@ -50,10 +50,25 @@ export default function GlobalErrorBoundary({
 
   const t = publicErrorCopy();
 
-  // ponytail: lang stays "en" — the copy locale is read from a cookie on the
-  // client only, so deriving the attribute from it would guarantee a
-  // hydration mismatch on the one element that must not have suppressed
-  // diffs sitewide.
+  // lang stays "en" — the accepted residual limitation of A11Y-001 (Batch 15,
+  // 2026-09-06). Stated plainly, because it IS a defect and not a non-issue:
+  // `publicErrorCopy()` above reads `gh_locale` from `document.cookie`, so a
+  // Czech or German visitor gets Czech or German error copy inside an
+  // `<html lang="en">` document — WCAG 2.2 §3.1.1 fails here, in the one place
+  // the rest of that batch could not reach.
+  //
+  // It stays this way because every fix is worse than the defect. This is the
+  // last-resort client boundary: the whole document was replaced, so there is
+  // no server request context to read the language from, and the cookie is
+  // only legible after the component is already running on the client. On the
+  // SSR path (a root layout that threw) the server would emit "en" and the
+  // client would then have to rewrite the attribute — post-hydration DOM
+  // mutation on <html>, which is exactly the approach this batch rejected for
+  // the portal. Trading a correct `lang` for a less reliable error boundary is
+  // not a good trade on the screen a user reaches only when everything else
+  // has already failed.
+  //
+  // Recorded in docs/plans/frontend-accessibility-backlog.md (A11Y-001).
   return (
     <html lang="en" className="h-full antialiased" suppressHydrationWarning>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
