@@ -151,6 +151,67 @@ export async function deleteAdminCountry(id: string) {
   });
 }
 
+/**
+ * What a hard delete of a country would destroy, detach or refuse (AZ-3).
+ * Counts only — the endpoint returns no names, emails or record identifiers.
+ *
+ * Categories are counted independently, so one record can appear in two of
+ * them (an appointment for a consultation with one of this market's doctors is
+ * both `appointments` and `clinicalRecords`); they are not a deletion total.
+ */
+export type CountryDeleteBlockers = {
+  doctors: number;
+  appointments: number;
+  clinicalRecords: number;
+  patientRecords: number;
+  membershipEnrollments: number;
+  allowanceBalances: number;
+  allowanceUsage: number;
+  subscriptions: number;
+  financialRecords: number;
+  corporateRecords: number;
+  legalDocuments: number;
+  jobListings: number;
+};
+
+/** Country-owned configuration the cascade removes when the purge is allowed. */
+export type CountryDeleteRemovableConfiguration = {
+  locales: number;
+  domains: number;
+  clinics: number;
+  specialties: number;
+  services: number;
+  healthTests: number;
+  pricingPlans: number;
+  membershipPlans: number;
+  contentPages: number;
+  seoLandingPages: number;
+  mediaAssets: number;
+  testCenters: number;
+  insuranceCompanies: number;
+  marketSettings: number;
+};
+
+/** Editorial rows that survive the purge but lose their country link. */
+export type CountryDeleteDetachedRecords = {
+  blogPosts: number;
+  faqs: number;
+  reviews: number;
+};
+
+export type CountryDeleteImpact = {
+  blocked: boolean;
+  blockers: CountryDeleteBlockers;
+  removableConfiguration: CountryDeleteRemovableConfiguration;
+  detachedRecords: CountryDeleteDetachedRecords;
+};
+
+/** Informational: the backend recomputes the same blockers inside the deletion
+ *  transaction, and that recomputation — not this — is the safety decision. */
+export async function getAdminCountryDeleteImpact(id: string) {
+  return adminRequest<CountryDeleteImpact>(`/api/admin/countries/${id}/delete-impact`);
+}
+
 export async function purgeAdminCountry(id: string) {
   return adminRequest<Record<string, never>>(`/api/admin/countries/${id}/purge`, {
     method: "DELETE",

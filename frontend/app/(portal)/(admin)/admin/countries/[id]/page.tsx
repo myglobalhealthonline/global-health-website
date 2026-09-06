@@ -16,7 +16,7 @@ import {
 } from "@/lib/admin/admin-api";
 import { FlagBadge } from "../../_components/flag-badge";
 import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
-import { ConfirmDeleteButton } from "../../_components/confirm-delete-button";
+import { DeleteCountryButton } from "../../_components/delete-country-button";
 import { FormSection } from "@/components/FormSection";
 import { SetCrumbTitle } from "@/components/crumb-title";
 
@@ -363,15 +363,15 @@ export default async function AdminCountryDetailPage({
               Permanent delete removes this country and dependent admin content.
             </p>
             <form action={deleteCountryAction}>
-              <ConfirmDeleteButton
-                title={`Delete ${c.name}?`}
-                message={`Permanently delete ${c.name} and all its dependent admin content? This cannot be undone.`}
+              <DeleteCountryButton
+                countryId={c.id}
+                countryName={c.name}
+                confirmValue={c.slug}
                 className="gh-btn gh-btn-danger w-full"
                 ariaLabel="Delete country permanently"
-                requireTypedConfirmation={c.slug}
               >
                 Delete permanently
-              </ConfirmDeleteButton>
+              </DeleteCountryButton>
             </form>
           </AdminCard>
         </div>

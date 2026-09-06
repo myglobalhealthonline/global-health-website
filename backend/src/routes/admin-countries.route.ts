@@ -1,13 +1,16 @@
 import type { FastifyPluginAsync } from "fastify";
 import { recordEntityPurge } from "../modules/audit/audit.service.js";
 import { Prisma } from "@prisma/client";
+import type { CountryDeleteBlockers } from "../modules/countries/countries.service.js";
 import {
   CountryCurrencyNotFoundError,
+  CountryDeleteBlockedError,
   CountryLocaleValidationError,
   LegalProfileMissingError,
   createAdminCountry,
   disableAdminCountry,
   getAdminCountryById,
+  getCountryDeleteImpact,
   listAdminCountries,
   listAdminCurrencies,
   purgeAdminCountry,
@@ -51,6 +54,33 @@ function handleCountriesWriteError(
   }
   app.log.error(error);
   return reply.status(500).send(errorResponse("Unexpected admin countries error"));
+}
+
+const COUNTRY_BLOCKER_LABELS: Record<keyof CountryDeleteBlockers, [string, string]> = {
+  doctors: ["doctor profile", "doctor profiles"],
+  appointments: ["appointment", "appointments"],
+  clinicalRecords: ["clinical record", "clinical records"],
+  patientRecords: ["patient record", "patient records"],
+  membershipEnrollments: ["membership enrollment", "membership enrollments"],
+  allowanceBalances: ["allowance balance", "allowance balances"],
+  allowanceUsage: ["allowance usage entry", "allowance usage entries"],
+  subscriptions: ["subscription", "subscriptions"],
+  financialRecords: ["financial record", "financial records"],
+  corporateRecords: ["corporate record", "corporate records"],
+  legalDocuments: ["legal document", "legal documents"],
+  jobListings: ["job listing", "job listings"],
+};
+
+/** "3 membership enrollments, 1 doctor profile" — non-zero counts only, in
+ *  declaration order. Counts, never identifiers. */
+function describeCountryBlockers(blockers: CountryDeleteBlockers): string {
+  return (Object.entries(blockers) as [keyof CountryDeleteBlockers, number][])
+    .filter(([, count]) => count > 0)
+    .map(([key, count]) => {
+      const [one, many] = COUNTRY_BLOCKER_LABELS[key];
+      return `${count} ${count === 1 ? one : many}`;
+    })
+    .join(", ");
 }
 
 const adminCountriesRoute: FastifyPluginAsync = async (app) => {
@@ -167,6 +197,26 @@ const adminCountriesRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
+  // Read-only: what a hard delete of this country would destroy, detach or
+  // refuse. Counts only — never a name, an address or any patient field.
+  // Informational; `purgeAdminCountry` recomputes the same blockers under a
+  // lock inside its own transaction, and that recomputation is the decision.
+  app.get("/api/admin/countries/:id/delete-impact", async (request, reply) => {
+    const params = countryIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid country id", params.error.flatten()));
+    }
+    try {
+      const impact = await getCountryDeleteImpact(params.data.id);
+      if (!impact) {
+        return reply.status(404).send(errorResponse("Country not found"));
+      }
+      return okResponse(impact);
+    } catch (error) {
+      return handleCountriesWriteError(app, reply, error);
+    }
+  });
+
   app.delete("/api/admin/countries/:id/purge", async (request, reply) => {
     const params = countryIdParamsSchema.safeParse(request.params);
     if (!params.success) {
@@ -181,6 +231,29 @@ const adminCountriesRoute: FastifyPluginAsync = async (app) => {
       recordEntityPurge(request, "Country", params.data.id);
       return okResponse({}, "Country deleted");
     } catch (error) {
+      // Durable membership, financial, appointment, patient, clinical, legal
+      // or corporate history. Not overridable by any confirmation — nothing
+      // was deleted, and no purge audit event is emitted.
+      if (error instanceof CountryDeleteBlockedError) {
+        return reply.status(409).send(
+          errorResponse(
+            `Cannot delete: this country still has ${describeCountryBlockers(error.impact.blockers)}. ` +
+              "These records must be retained — deactivate the country instead.",
+            { code: "COUNTRY_HAS_DURABLE_RECORDS", impact: error.impact },
+          ),
+        );
+      }
+      // A Restrict relation refused the delete after the recount cleared it.
+      // The lock inside the purge transaction is meant to make this
+      // unreachable; it is the backstop so a race surfaces as 409, not 500.
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2003") {
+        return reply.status(409).send(
+          errorResponse(
+            "Cannot delete: linked records still reference this country. Deactivate it instead.",
+            { code: "COUNTRY_HAS_DURABLE_RECORDS" },
+          ),
+        );
+      }
       return handleCountriesWriteError(app, reply, error);
     }
   });

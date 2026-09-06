@@ -3,7 +3,7 @@
 import { Edit3, Eye, Globe2 } from "lucide-react";
 import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
 import { AdminEmptyState, Btn, IconBtn, Pill } from "../../_components/atoms";
-import { ConfirmDeleteButton } from "../../_components/confirm-delete-button";
+import { DeleteCountryButton } from "../../_components/delete-country-button";
 import { FlagBadge } from "../../_components/flag-badge";
 import type { AdminCountryDto } from "@/lib/admin/admin-api/countries";
 
@@ -77,11 +77,11 @@ export function AdminCountriesTable({
           </IconBtn>
           <form action={deleteCountryAction} className="inline-flex">
             <input type="hidden" name="id" value={c.id} />
-            <ConfirmDeleteButton
-              title={`Delete ${c.name}?`}
-              message={`Delete ${c.name}? This deactivates the country and cannot be undone from this action.`}
+            <DeleteCountryButton
+              countryId={c.id}
+              countryName={c.name}
+              confirmValue={c.slug}
               ariaLabel={`Delete ${c.name}`}
-              requireTypedConfirmation={c.slug}
             />
           </form>
         </div>

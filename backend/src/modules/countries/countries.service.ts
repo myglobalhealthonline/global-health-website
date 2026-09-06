@@ -379,14 +379,463 @@ export async function disableAdminCountry(id: string): Promise<AdminCountryRecor
   }
 }
 
+// ── Country delete impact (AZ-3) ───────────────────────────────────────────
+
+/**
+ * Categories of durable record that a country purge must never destroy. Any
+ * non-zero count refuses the delete outright — there is no `force` override,
+ * because none of these can be recreated and several are legally retained.
+ *
+ * `Country` is the root of an 80-table `ON DELETE CASCADE` closure (measured
+ * against this schema, not assumed from the model names), so a bare
+ * `country.delete()` reached, among others:
+ *
+ *   MembershipPlan.primaryCountryId → MembershipEnrollment → allowance
+ *   balances, usage ledger, claim tokens and invite logs; Service.countryId →
+ *   MembershipBenefit → allowance balances; Doctor.countryId → the doctor's
+ *   bank account, credentials, signed confidentiality agreement and support
+ *   threads; CountryLegalDocument.
+ *
+ * and SET NULL gutted what it did not delete: `Appointment.doctorId`,
+ * `.serviceId`, `.clinicId`, `.healthTestId`, `.timeSlotId` and
+ * `PatientProfile.pricingPlanId`.
+ *
+ * A few of these categories are `onDelete: Restrict` and would have refused
+ * the delete anyway (the clinical records, `JobListing`, `UserSubscription`,
+ * `HealthTestRedemption`) — but as a bare P2003, after the caller had already
+ * been told the delete was safe. They are counted here so the answer is the
+ * same one the admin was shown.
+ *
+ * Composite categories are documented where they occur. Counts are per
+ * category, and one record can be counted in two of them (an appointment for a
+ * consultation with one of this country's doctors is both `appointments` and
+ * `clinicalRecords`), so they do not sum to a row total and are never
+ * presented as one.
+ */
+export type CountryDeleteBlockers = {
+  /** Doctor rows primary to this market, plus DoctorCountry roster links from
+   *  doctors primary elsewhere (whose market bank account cascades with it). */
+  doctors: number;
+  /** Appointments in this market, or attached to one of its doctors,
+   *  services, clinics, health tests or time slots. */
+  appointments: number;
+  /** Consultations, prescriptions, exam results, generated documents,
+   *  attached documents and medical notes authored by this market's doctors. */
+  clinicalRecords: number;
+  /** Patient profiles pointing at one of this market's pricing plans — a
+   *  purge would silently null the reference on a patient row. */
+  patientRecords: number;
+  membershipEnrollments: number;
+  allowanceBalances: number;
+  allowanceUsage: number;
+  /** Subscriptions billed in this market or on one of its pricing plans. */
+  subscriptions: number;
+  /** Orders, order items, doctor bank accounts, market bank accounts and
+   *  health-test redemptions. */
+  financialRecords: number;
+  /** Corporate companies, plan services and benefit rules reaching this
+   *  market. */
+  corporateRecords: number;
+  /** Published legal terms — the versions patients accepted. */
+  legalDocuments: number;
+  /** `onDelete: Restrict`; the delete cannot succeed while any exist. */
+  jobListings: number;
+};
+
+/**
+ * Country-owned configuration that the cascade removes. Safe to lose ONLY
+ * because the blocker list above is exhaustive over these rows' durable
+ * descendants: a service with allowance balances or appointments, a pricing
+ * plan with subscriptions, a health test with redemptions and a membership
+ * plan with enrollments each block before any of this is reached.
+ *
+ * A summary of the principal groups, not a row-by-row inventory of all 80
+ * cascaded tables — translations, FAQs, peak-pricing windows and the like
+ * follow their parent.
+ */
+export type CountryDeleteRemovableConfiguration = {
+  locales: number;
+  domains: number;
+  clinics: number;
+  specialties: number;
+  services: number;
+  healthTests: number;
+  pricingPlans: number;
+  membershipPlans: number;
+  /** Content pages and their per-section content rows. */
+  contentPages: number;
+  seoLandingPages: number;
+  /** Media assets, badges and partners. */
+  mediaAssets: number;
+  testCenters: number;
+  insuranceCompanies: number;
+  /** Consultation/booking settings, footer, data policy, legal profile and
+   *  authority links — the country's singleton settings rows. */
+  marketSettings: number;
+};
+
+/**
+ * `onDelete: SetNull` rows that SURVIVE the purge but lose their country
+ * link. Reported, never blocked and never touched by this code: they are
+ * editorial rows, not durable member, financial or clinical history. The
+ * SET NULL edges that WOULD corrupt durable data — appointments, patient
+ * profiles — are counted as blockers above instead.
+ */
+export type CountryDeleteDetachedRecords = {
+  blogPosts: number;
+  faqs: number;
+  reviews: number;
+};
+
+export type CountryDeleteImpact = {
+  /** True when any blocker count is non-zero, i.e. the purge cannot proceed. */
+  blocked: boolean;
+  blockers: CountryDeleteBlockers;
+  removableConfiguration: CountryDeleteRemovableConfiguration;
+  detachedRecords: CountryDeleteDetachedRecords;
+};
+
+export class CountryDeleteBlockedError extends Error {
+  constructor(readonly impact: CountryDeleteImpact) {
+    super("Country has durable records that must be retained");
+    this.name = "CountryDeleteBlockedError";
+  }
+}
+
+/** Reads through either the shared client or a transaction client, so the
+ *  informational endpoint and the enforced re-check share one implementation. */
+type CountryCountClient = Prisma.TransactionClient;
+
+const sum = (counts: number[]) => counts.reduce((total, n) => total + n, 0);
+
+async function countCountryBlockers(
+  db: CountryCountClient,
+  countryId: string,
+  countryCode: string,
+): Promise<CountryDeleteBlockers> {
+  const doctorInCountry = { doctor: { countryId } };
+  const [
+    doctors,
+    doctorCountryLinks,
+    appointments,
+    consultations,
+    prescriptions,
+    examResults,
+    generatedDocuments,
+    appointmentDocuments,
+    medicalNotes,
+    patientRecords,
+    membershipEnrollments,
+    allowanceBalances,
+    allowanceUsage,
+    subscriptions,
+    orders,
+    orderItems,
+    doctorBankAccounts,
+    marketBankAccounts,
+    healthTestRedemptions,
+    corporateCompanies,
+    corporatePlanServices,
+    corporateBenefitRules,
+    legalDocuments,
+    jobListings,
+  ] = await Promise.all([
+    db.doctor.count({ where: { countryId } }),
+    db.doctorCountry.count({ where: { countryId } }),
+    db.appointment.count({
+      where: {
+        OR: [
+          { countryCode },
+          doctorInCountry,
+          { service: { countryId } },
+          { clinic: { countryId } },
+          { healthTest: { countryId } },
+          { timeSlot: { doctor: { countryId } } },
+        ],
+      },
+    }),
+    db.consultation.count({ where: doctorInCountry }),
+    db.prescription.count({ where: doctorInCountry }),
+    db.examResult.count({ where: doctorInCountry }),
+    db.generatedDocument.count({ where: doctorInCountry }),
+    db.appointmentDocument.count({ where: doctorInCountry }),
+    db.medicalNote.count({ where: { createdByDoctor: { countryId } } }),
+    db.patientProfile.count({ where: { pricingPlan: { countryId } } }),
+    db.membershipEnrollment.count({ where: { countryId } }),
+    db.membershipAllowanceBalance.count({
+      where: { OR: [{ holderEnrollment: { countryId } }, { benefit: { countryId } }] },
+    }),
+    db.membershipUsageLedger.count({ where: { enrollment: { countryId } } }),
+    db.userSubscription.count({ where: { OR: [{ countryCode }, { plan: { countryId } }] } }),
+    db.order.count({ where: { countryCode } }),
+    db.orderItem.count({ where: { healthTest: { countryId } } }),
+    db.doctorBankAccount.count({ where: doctorInCountry }),
+    db.doctorMarketBankAccount.count({ where: { doctorCountry: { countryId } } }),
+    db.healthTestRedemption.count({ where: { healthTest: { countryId } } }),
+    db.corporateCompany.count({ where: { countryCode } }),
+    db.corporatePlanService.count({ where: { OR: [{ countryCode }, doctorInCountry] } }),
+    db.corporateBenefitRule.count({ where: { service: { countryId } } }),
+    db.countryLegalDocument.count({ where: { countryId } }),
+    db.jobListing.count({ where: { countryId } }),
+  ]);
+
+  return {
+    doctors: doctors + doctorCountryLinks,
+    appointments,
+    clinicalRecords: sum([
+      consultations,
+      prescriptions,
+      examResults,
+      generatedDocuments,
+      appointmentDocuments,
+      medicalNotes,
+    ]),
+    patientRecords,
+    membershipEnrollments,
+    allowanceBalances,
+    allowanceUsage,
+    subscriptions,
+    financialRecords: sum([
+      orders,
+      orderItems,
+      doctorBankAccounts,
+      marketBankAccounts,
+      healthTestRedemptions,
+    ]),
+    corporateRecords: sum([corporateCompanies, corporatePlanServices, corporateBenefitRules]),
+    legalDocuments,
+    jobListings,
+  };
+}
+
+async function countRemovableConfiguration(
+  db: CountryCountClient,
+  countryId: string,
+): Promise<CountryDeleteRemovableConfiguration> {
+  const where = { where: { countryId } };
+  const [
+    locales,
+    domains,
+    clinics,
+    specialties,
+    services,
+    healthTests,
+    pricingPlans,
+    membershipPlans,
+    contentPages,
+    pageContents,
+    seoLandingPages,
+    assets,
+    badges,
+    partners,
+    testCenters,
+    insuranceCompanies,
+    consultationSettings,
+    bookingSettings,
+    footers,
+    dataPolicies,
+    legalProfiles,
+    authorityLinks,
+  ] = await Promise.all([
+    db.countryLocale.count(where),
+    db.countryDomain.count(where),
+    db.clinic.count(where),
+    db.specialty.count(where),
+    db.service.count(where),
+    db.healthTest.count(where),
+    db.pricingPlan.count(where),
+    db.membershipPlan.count({ where: { primaryCountryId: countryId } }),
+    db.contentPage.count(where),
+    db.pageContent.count(where),
+    db.seoLandingPage.count(where),
+    db.asset.count(where),
+    db.badge.count(where),
+    db.partner.count(where),
+    db.testCenter.count(where),
+    db.insuranceCompany.count(where),
+    db.consultationSetting.count(where),
+    db.bookingSetting.count(where),
+    db.countryFooter.count(where),
+    db.countryDataPolicy.count(where),
+    db.countryLegalProfile.count(where),
+    db.countryAuthorityLink.count(where),
+  ]);
+
+  return {
+    locales,
+    domains,
+    clinics,
+    specialties,
+    services,
+    healthTests,
+    pricingPlans,
+    membershipPlans,
+    contentPages: contentPages + pageContents,
+    seoLandingPages,
+    mediaAssets: sum([assets, badges, partners]),
+    testCenters,
+    insuranceCompanies,
+    marketSettings: sum([
+      consultationSettings,
+      bookingSettings,
+      footers,
+      dataPolicies,
+      legalProfiles,
+      authorityLinks,
+    ]),
+  };
+}
+
+async function countDetachedRecords(
+  db: CountryCountClient,
+  countryId: string,
+): Promise<CountryDeleteDetachedRecords> {
+  const where = { where: { countryId } };
+  const [blogPosts, faqs, reviews] = await Promise.all([
+    db.blogPost.count(where),
+    db.faq.count(where),
+    db.review.count(where),
+  ]);
+  return { blogPosts, faqs, reviews };
+}
+
+async function buildCountryDeleteImpact(
+  db: CountryCountClient,
+  countryId: string,
+  countryCode: string,
+): Promise<CountryDeleteImpact> {
+  const [blockers, removableConfiguration, detachedRecords] = await Promise.all([
+    countCountryBlockers(db, countryId, countryCode),
+    countRemovableConfiguration(db, countryId),
+    countDetachedRecords(db, countryId),
+  ]);
+  return {
+    blocked: Object.values(blockers).some((count) => count > 0),
+    blockers,
+    removableConfiguration,
+    detachedRecords,
+  };
+}
+
+/**
+ * Count everything a hard delete of this country would destroy, detach or
+ * refuse, so the admin UI can warn precisely. Counts only — no names, no
+ * addresses, no identifiers, nothing derived from a patient record.
+ *
+ * Informational: a caller must NOT treat a clear result as permission to
+ * delete. `purgeAdminCountry` recomputes the same blockers inside the
+ * deletion transaction, under a lock, and that recomputation is the decision.
+ *
+ * Returns null when the country does not exist.
+ */
+export async function getCountryDeleteImpact(id: string): Promise<CountryDeleteImpact | null> {
+  const existing = await prisma.country.findUnique({
+    where: { id },
+    select: { id: true, code: true },
+  });
+  if (!existing) return null;
+
+  try {
+    return await buildCountryDeleteImpact(prisma, existing.id, existing.code);
+  } catch (error) {
+    throw normalizeDbError(error, "Countries data is unavailable");
+  }
+}
+
+/**
+ * Rows whose EXISTENCE is what a blocker counts, and which are reached
+ * through a direct child of Country rather than through Country itself.
+ *
+ * Locking the Country row `FOR UPDATE` is necessary but not sufficient. It
+ * does close the obvious race — every direct child's INSERT takes
+ * `FOR KEY SHARE` on the Country row, which `FOR UPDATE` conflicts with, so
+ * no new doctor, service, pricing plan or membership plan can appear between
+ * the count and the delete. But `MembershipEnrollment` has no foreign key to
+ * Country at all: its INSERT takes `FOR KEY SHARE` on the MembershipPlan row,
+ * so a country lock alone leaves exactly the race AZ-3 is about — impact says
+ * zero, an enrollment is created, the purge cascades it away.
+ *
+ * Locking these parent rows too closes it: the dependent INSERT and the
+ * purge's `FOR UPDATE` contend for the same row, so either the writer commits
+ * first and the recount inside this transaction sees it, or the purge holds
+ * the lock and the writer cannot commit before the decision is made. There is
+ * no interleaving in which the write is accepted and then silently cascaded.
+ *
+ * Fixed order, so two concurrent purges of different countries cannot
+ * deadlock against each other.
+ *
+ * KNOWN RESIDUAL, stated rather than hidden: some durable rows reach a market
+ * only through a plain `countryCode` STRING with no foreign key at all —
+ * `Order`, `UserSubscription`, `CorporateCompany`, and an `Appointment` booked
+ * before a doctor or service is assigned. There is no row to lock for those,
+ * so one created between the recount and the commit is not seen. It is NOT a
+ * cascade: nothing references the Country row, so the record survives the
+ * purge intact and merely carries a country code that no longer resolves.
+ * That is the entire exposure — a dangling market code on a surviving record,
+ * never a deleted or corrupted one — and it needs a schema change (real
+ * foreign keys on those columns) to close, which is out of scope here.
+ */
+const COUNTRY_PURGE_LOCK_TABLES = [
+  "Doctor",
+  "DoctorCountry",
+  "Service",
+  "PricingPlan",
+  "HealthTest",
+  "Clinic",
+  "MembershipPlan",
+] as const;
+
+/**
+ * Hard-delete a country, but only when nothing durable hangs off it.
+ *
+ * Returns false when the country does not exist, true when it was deleted,
+ * and throws `CountryDeleteBlockedError` (carrying the recomputed impact)
+ * when it holds membership, financial, appointment, patient, clinical, legal
+ * or corporate history. There is deliberately no override: the caller's
+ * confirmation is not part of the safety decision.
+ */
 export async function purgeAdminCountry(id: string): Promise<boolean> {
   const existing = await prisma.country.findUnique({ where: { id }, select: { id: true } });
   if (!existing) return false;
 
   try {
-    await prisma.country.delete({ where: { id } });
-    return true;
+    return await prisma.$transaction(
+      async (tx) => {
+        // Re-read the row locked. Anything decided before this point is a
+        // stale snapshot, including the impact the admin was shown.
+        const [locked] = await tx.$queryRaw<{ id: string; code: string }[]>(
+          Prisma.sql`SELECT "id", "code" FROM "Country" WHERE "id" = ${id} FOR UPDATE`,
+        );
+        if (!locked) return false;
+
+        for (const table of COUNTRY_PURGE_LOCK_TABLES) {
+          const column = table === "MembershipPlan" ? "primaryCountryId" : "countryId";
+          await tx.$executeRaw(
+            Prisma.sql`SELECT "id" FROM ${Prisma.raw(`"${table}"`)} WHERE ${Prisma.raw(`"${column}"`)} = ${id} FOR UPDATE`,
+          );
+        }
+
+        const blockers = await countCountryBlockers(tx, locked.id, locked.code);
+        if (Object.values(blockers).some((count) => count > 0)) {
+          const [removableConfiguration, detachedRecords] = await Promise.all([
+            countRemovableConfiguration(tx, locked.id),
+            countDetachedRecords(tx, locked.id),
+          ]);
+          throw new CountryDeleteBlockedError({
+            blocked: true,
+            blockers,
+            removableConfiguration,
+            detachedRecords,
+          });
+        }
+
+        await tx.country.delete({ where: { id } });
+        return true;
+      },
+      { timeout: 20_000, maxWait: 10_000 },
+    );
   } catch (error) {
+    if (error instanceof CountryDeleteBlockedError) throw error;
     throw normalizeDbError(error, "Countries data is unavailable");
   }
 }
