@@ -141,11 +141,13 @@ ${threadUrl}`;
       numbers.map((to) => sendWhatsAppText({ to, message: waText })),
     );
     waResults.forEach((r, i) => {
+      // PR-6: the alert number identifies a person, so the log names WHICH
+      // configured recipient failed by position, never the number itself.
       if (r.status === "rejected") {
-        log.warn({ threadId, to: numbers[i], err: r.reason }, "support admin WhatsApp alert failed");
+        log.warn({ threadId, recipientIndex: i, err: r.reason }, "support admin WhatsApp alert failed");
       } else if (!r.value.ok && !r.value.skipped) {
         log.warn(
-          { threadId, to: numbers[i], error: formatWhatsAppSendError(r.value) },
+          { threadId, recipientIndex: i, error: formatWhatsAppSendError(r.value) },
           "support admin WhatsApp alert failed",
         );
       }

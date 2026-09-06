@@ -68,11 +68,13 @@ export async function alertAdminsOfPatientMessage(args: {
       numbers.map((to) => sendWhatsAppText({ to, message: waText })),
     );
     waResults.forEach((r, i) => {
+      // PR-6: the alert number identifies a person, so the log names WHICH
+      // configured recipient failed by position, never the number itself.
       if (r.status === "rejected") {
-        log.warn({ appointmentId, to: numbers[i] }, "patient message admin WhatsApp alert failed");
+        log.warn({ appointmentId, recipientIndex: i }, "patient message admin WhatsApp alert failed");
       } else if (!r.value.ok && !r.value.skipped) {
         log.warn(
-          { appointmentId, to: numbers[i], error: formatWhatsAppSendError(r.value) },
+          { appointmentId, recipientIndex: i, error: formatWhatsAppSendError(r.value) },
           "patient message admin WhatsApp alert failed",
         );
       }

@@ -62,23 +62,59 @@ export function isWhatsAppConfigured(): boolean {
   return Boolean(resolveAuthHeader());
 }
 
-function formatWaSenderError(rawBody: string, httpStatus: number): string {
-  const trimmed = rawBody.trim();
-  if (!trimmed) return `WaSender HTTP ${httpStatus}`;
-
-  try {
-    const json = JSON.parse(trimmed) as { message?: string; error?: string; success?: boolean };
-    const detail = json.message || json.error;
-    if (detail) {
-      return typeof detail === "string" ? detail : JSON.stringify(detail);
-    }
-  } catch {
-    // keep raw body
+/**
+ * PR-6: a safe, non-identifying class for a WaSender HTTP failure.
+ *
+ * The provider echoes the recipient — and sometimes the message we just sent —
+ * back inside its own error text, so that body is never the returned message.
+ * The status code and the failure class are enough to triage, and neither is
+ * personal data.
+ */
+function classifyWaSenderHttpError(httpStatus: number): string {
+  if (httpStatus === 401 || httpStatus === 403) {
+    return `WaSender rejected the credentials (HTTP ${httpStatus})`;
   }
-
-  return trimmed.length > 500 ? `${trimmed.slice(0, 500)}…` : trimmed;
+  if (httpStatus === 429) return `WaSender rate limited (HTTP ${httpStatus})`;
+  if (httpStatus >= 500) return `WaSender unavailable (HTTP ${httpStatus})`;
+  return `WaSender rejected the request (HTTP ${httpStatus})`;
 }
 
+/**
+ * PR-6: a stable class for a transport failure. The HTTP client's own message
+ * can embed the whole request (recipient + message body), so only the errno is
+ * kept — it names the failure without naming anyone.
+ */
+function classifyRequestError(err: unknown): string {
+  const e = err as { name?: string; cause?: { code?: string } } | null;
+  if (e?.name === "TimeoutError" || e?.name === "AbortError") {
+    return "WaSender request timed out";
+  }
+  const code = e?.cause?.code;
+  return code ? `WaSender request failed (${code})` : "WaSender request failed";
+}
+
+/**
+ * The provider's own error text, extracted exactly as it used to be before
+ * PR-6 — but INTERNAL ONLY. It can echo the recipient and the message body, so
+ * it exists solely to feed `isRateLimitMessage` and is discarded immediately;
+ * it is never returned, logged or persisted. Keeping the extraction identical
+ * keeps the rate-limit retry firing in exactly the same cases as before.
+ */
+function waSenderErrorDetail(rawBody: string, httpStatus: number): string {
+  const trimmed = rawBody.trim();
+  if (!trimmed) return `WaSender HTTP ${httpStatus}`;
+  try {
+    const json = JSON.parse(trimmed) as { message?: string; error?: string };
+    const detail = json.message || json.error;
+    if (detail) return typeof detail === "string" ? detail : JSON.stringify(detail);
+  } catch {
+    // not JSON — the raw body is the detail
+  }
+  return trimmed;
+}
+
+/** Does the provider's reply mean "slow down"? Read internally only — the text
+ *  it inspects is discarded, never returned or logged. */
 function isRateLimitMessage(message: string): boolean {
   const lower = message.toLowerCase();
   return (
@@ -92,20 +128,35 @@ function isRateLimitMessage(message: string): boolean {
 export type SendWhatsAppResult = {
   ok: boolean;
   skipped?: boolean;
+  /**
+   * Safe diagnostic text (PR-6). Never contains the recipient, the group JID,
+   * the message body, a credential, or a provider body that could echo them —
+   * it is persisted to `AutomationRun.error`, forwarded to `Outbox.lastError`
+   * and ops alerts, written to application logs, and returned verbatim by
+   * `POST /api/admin/invoices/:id/resend`.
+   */
   message?: string;
-  /** Normalized E.164 recipient (for logs). */
+  /**
+   * Normalized E.164 recipient — the ONE deliberate recipient field, kept
+   * because automation callers copy it into `AutomationRun.recipient`, a
+   * dedicated column on a restricted admin table. It is never concatenated
+   * into `message` nor emitted by `formatWhatsAppSendError`; do not log or
+   * serialize the result object as a whole.
+   */
   to?: string;
-  /** Digits-only recipient sent to WaSender. */
-  apiTo?: string;
-  raw?: string;
+  /** ISO country the number was normalized against. Not personal data. */
   countryUsed?: string | null;
+  /** Provider asked us to slow down — drives the single immediate retry. */
+  rateLimited?: boolean;
 };
 
-/** Full diagnostic string for automation run logs. */
+/**
+ * Diagnostic string for automation-run errors, `Outbox.lastError`, ops alerts,
+ * application logs and admin API responses. PR-6: failure class and country
+ * only — no recipient, no group JID, no message body.
+ */
 export function formatWhatsAppSendError(result: SendWhatsAppResult): string {
   const parts = [result.message ?? "WhatsApp send failed"];
-  if (result.raw) parts.push(`raw=${result.raw}`);
-  if (result.to) parts.push(`e164=${result.to}`);
   if (result.countryUsed) parts.push(`country=${result.countryUsed}`);
   return parts.join(" | ");
 }
@@ -114,9 +165,7 @@ async function postWhatsAppMessage(
   auth: string,
   apiTo: string,
   message: string,
-  e164: string,
-  raw: string,
-  countryUsed: string | null,
+  meta: { to?: string; countryUsed?: string | null },
 ): Promise<SendWhatsAppResult> {
   const res = await fetch(resolveSendUrl(), {
     method: "POST",
@@ -128,17 +177,16 @@ async function postWhatsAppMessage(
     signal: AbortSignal.timeout(15_000),
   });
   if (!res.ok) {
+    // Read to classify the rate limit, then dropped — see waSenderErrorDetail.
     const body = await res.text().catch(() => "");
     return {
       ok: false,
-      message: formatWaSenderError(body, res.status),
-      to: e164,
-      apiTo,
-      raw,
-      countryUsed,
+      message: classifyWaSenderHttpError(res.status),
+      rateLimited: isRateLimitMessage(waSenderErrorDetail(body, res.status)),
+      ...meta,
     };
   }
-  return { ok: true, to: e164, apiTo, raw, countryUsed };
+  return { ok: true, ...meta };
 }
 
 /**
@@ -152,24 +200,20 @@ export async function sendWhatsAppGroupText(opts: {
 }): Promise<SendWhatsAppResult> {
   const auth = resolveAuthHeader();
   if (!auth) {
-    return { ok: true, skipped: true, raw: opts.to };
+    return { ok: true, skipped: true };
   }
+  // The JID is the delivery address only — it is deliberately kept out of the
+  // result, so no sink can pick it up (PR-6).
   const sendOnce = (): Promise<SendWhatsAppResult> =>
-    withWhatsAppSendLock(() =>
-      postWhatsAppMessage(auth, opts.to, opts.message, opts.to, opts.to, null),
-    );
+    withWhatsAppSendLock(() => postWhatsAppMessage(auth, opts.to, opts.message, {}));
   try {
     let result = await sendOnce();
-    if (!result.ok && result.message && isRateLimitMessage(result.message)) {
+    if (!result.ok && result.rateLimited) {
       result = await sendOnce();
     }
     return result;
   } catch (err) {
-    return {
-      ok: false,
-      message: err instanceof Error ? err.message : "WaSender request failed",
-      raw: opts.to,
-    };
+    return { ok: false, message: classifyRequestError(err) };
   }
 }
 
@@ -199,11 +243,11 @@ export async function sendWhatsAppText(opts: {
   patientConsent?: boolean | null;
 }): Promise<SendWhatsAppResult> {
   if (opts.patientConsent === false || opts.patientConsent === null) {
-    return { ok: true, skipped: true, raw: opts.to, message: "Skipped — no WhatsApp consent" };
+    return { ok: true, skipped: true, message: "Skipped — no WhatsApp consent" };
   }
   const auth = resolveAuthHeader();
   if (!auth) {
-    return { ok: true, skipped: true, raw: opts.to };
+    return { ok: true, skipped: true };
   }
 
   const hints: PhoneNormalizeHints = opts.hints ?? {
@@ -212,10 +256,10 @@ export async function sendWhatsAppText(opts: {
 
   const normalized = normalizePhoneForWhatsApp(opts.to, hints);
   if (!normalized.e164 || !normalized.digits) {
+    // PR-6: the rejected input IS the personal data — report the class, not it.
     return {
       ok: false,
-      message: `Invalid phone number (raw="${opts.to}", country=${normalized.countryUsed ?? hints.orderCountryCode ?? "?"})`,
-      raw: opts.to,
+      message: `Invalid WhatsApp recipient (country=${normalized.countryUsed ?? hints.orderCountryCode ?? "?"})`,
       countryUsed: normalized.countryUsed,
     };
   }
@@ -225,23 +269,20 @@ export async function sendWhatsAppText(opts: {
 
   const sendOnce = (): Promise<SendWhatsAppResult> =>
     withWhatsAppSendLock(() =>
-      postWhatsAppMessage(auth, apiTo, opts.message, e164, opts.to, normalized.countryUsed),
+      postWhatsAppMessage(auth, apiTo, opts.message, {
+        to: e164,
+        countryUsed: normalized.countryUsed,
+      }),
     );
-
-  function extractErrMessage(err: unknown): string {
-    if (!(err instanceof Error)) return "WaSender request failed";
-    const cause = (err as { cause?: { code?: string } }).cause;
-    return cause?.code ? `${err.message} (${cause.code})` : err.message;
-  }
 
   try {
     let result = await sendOnce();
-    if (!result.ok && result.message && isRateLimitMessage(result.message)) {
+    if (!result.ok && result.rateLimited) {
       result = await sendOnce();
     }
     return result;
   } catch (err) {
-    const msg1 = extractErrMessage(err);
+    const msg1 = classifyRequestError(err);
     // wait 10 s before first retry — longer than the 6 s lock gap
     await new Promise((r) => setTimeout(r, 10_000));
     try {
@@ -254,7 +295,7 @@ export async function sendWhatsAppText(opts: {
       }
       return retry;
     } catch (retryErr) {
-      const msg2 = extractErrMessage(retryErr);
+      const msg2 = classifyRequestError(retryErr);
       // second retry after another 20 s
       await new Promise((r) => setTimeout(r, 20_000));
       try {
@@ -267,13 +308,11 @@ export async function sendWhatsAppText(opts: {
         }
         return retry2;
       } catch (retry2Err) {
-        const msg3 = extractErrMessage(retry2Err);
+        const msg3 = classifyRequestError(retry2Err);
         return {
           ok: false,
           message: `${msg1}; retry1: ${msg2}; retry2: ${msg3}`,
           to: e164,
-          apiTo,
-          raw: opts.to,
           countryUsed: normalized.countryUsed,
         };
       }
