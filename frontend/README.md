@@ -130,7 +130,7 @@ Implemented:
 
 - `app/sitemap.ts` added for canonical sitemap generation from public route registry.
 - `app/robots.ts` added with disallow rules for auth/account/admin surfaces.
-- `app/layout.tsx` now sets `metadataBase` and Open Graph defaults from `NEXT_PUBLIC_SITE_URL`.
+- `lib/seo/root-metadata.ts` sets `metadataBase` and Open Graph defaults from `NEXT_PUBLIC_SITE_URL`. Since the multi-root split it is imported by the three content-bearing root layouts (`(global)`, `[country]/[lang]`, `(portal)`); the `(redirect)` root and the `global-not-found`/`global-error` shells deliberately export no metadata.
 - Security behavior preserved: no admin/public secrets exposed in browser bundles; admin API client remains server-only.
 
 Launch QA:

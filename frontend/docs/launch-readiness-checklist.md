@@ -44,7 +44,7 @@ Test each route at breakpoints **320 / 390 / 768 / 1024 / 1440**:
 - [ ] `/admin/countries` accessible for `ADMIN`.
 - [ ] `/admin/services` accessible for `ADMIN`.
 - [ ] `/admin/doctors` accessible for `ADMIN`.
-- [ ] `/admin/pricing` accessible for `ADMIN`.
+- [ ] `/admin/plans` accessible for `ADMIN` (denied for `LOCAL_ADMIN` — the plans API requires MANAGE_SUBSCRIPTIONS).
 - [ ] `/admin/assets` accessible for `ADMIN`.
 - [ ] `/admin/blog-posts` accessible for `ADMIN`.
 - [ ] `/admin/faqs` accessible for `ADMIN`.

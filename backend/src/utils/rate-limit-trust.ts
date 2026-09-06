@@ -50,8 +50,6 @@ export const PUBLIC_READ_PREFIXES = [
   "/api/health-tests",
   "/api/assets",
   "/api/blog",
-  "/api/blog-posts",
-  "/api/pricing",
   // Added 2026-08-08 alongside the SSR bucket — the ONLY entry not inherited
   // from the original build allowlist. The root layout of every public page
   // reads it, so leaving it on the shared visitor bucket recreated a smaller

@@ -68,8 +68,6 @@ const PUBLIC_READ_PREFIXES = [
   "/api/health-tests",
   "/api/assets",
   "/api/blog",
-  "/api/blog-posts",
-  "/api/pricing",
   // Read by the root layout of every public page — see the matching note in
   // backend/src/utils/rate-limit-trust.ts for why this one was added.
   "/api/public/reviews-config",

@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
 /**
  * Batch 13 — CSS ownership and foundational accessibility.
@@ -227,6 +227,27 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 
+/**
+ * The three portal/auth shells each pull in a large Next component graph, and
+ * transforming it is the dominant cost in this file. Imported here rather than
+ * inside the `it`s so the one-off transform is paid by the hook (whose budget
+ * is separate) instead of landing inside a 5s test timeout — measured 2.4s for
+ * AdminShell alone under full-suite load, and over 5s when a second test
+ * process competes for CPU. Vitest hoists the `vi.mock` above this file's
+ * top-level code, so these imports still see the mocked `next/navigation`.
+ */
+let AdminShell: typeof import("@/app/(portal)/(admin)/admin/_components/admin-shell")["AdminShell"];
+let PortalShell: typeof import("@/components/portal-shell")["PortalShell"];
+let GH2AuthShell: typeof import("@/components/sections/GH2PagePrimitives")["GH2AuthShell"];
+
+beforeAll(async () => {
+  [{ AdminShell }, { PortalShell }, { GH2AuthShell }] = await Promise.all([
+    import("@/app/(portal)/(admin)/admin/_components/admin-shell"),
+    import("@/components/portal-shell"),
+    import("@/components/sections/GH2PagePrimitives"),
+  ]);
+});
+
 const anchors = (html: string) =>
   [...html.matchAll(/<a\b[^>]*>/g)].map((m) => m[0]);
 
@@ -269,10 +290,7 @@ function assertSkipLinkContract(html: string, surface: string) {
 }
 
 describe("A11Y — skip link on the authenticated portal", () => {
-  it("the admin shell offers one, ahead of its ~15-item sidebar", async () => {
-    const { AdminShell } = await import(
-      "@/app/(portal)/(admin)/admin/_components/admin-shell"
-    );
+  it("the admin shell offers one, ahead of its ~15-item sidebar", () => {
     const html = renderToStaticMarkup(
       <AdminShell
         user={{ fullName: "Ada Lovelace", email: "ada@example.com", role: "SUPER_ADMIN" }}
@@ -289,8 +307,7 @@ describe("A11Y — skip link on the authenticated portal", () => {
     assertSkipLinkContract(html, "AdminShell");
   });
 
-  it("the shared portal shell (account / doctor / corporate) offers one", async () => {
-    const { PortalShell } = await import("@/components/portal-shell");
+  it("the shared portal shell (account / doctor / corporate) offers one", () => {
     const html = renderToStaticMarkup(
       <PortalShell
         portalKey="patient"
@@ -312,8 +329,7 @@ describe("A11Y — skip link on the authenticated portal", () => {
 });
 
 describe("A11Y — skip link on the public localized site", () => {
-  it("the auth shell used by the localized login/register pages offers one", async () => {
-    const { GH2AuthShell } = await import("@/components/sections/GH2PagePrimitives");
+  it("the auth shell used by the localized login/register pages offers one", () => {
     const html = renderToStaticMarkup(
       <GH2AuthShell
         eyebrow="Global Health"
@@ -388,10 +404,7 @@ describe("A11Y — skip-link label localization", () => {
 });
 
 describe("existing landmarks stay valid", () => {
-  it("each shell renders exactly one <main>", async () => {
-    const { AdminShell } = await import(
-      "@/app/(portal)/(admin)/admin/_components/admin-shell"
-    );
+  it("each shell renders exactly one <main>", () => {
     const html = renderToStaticMarkup(
       <AdminShell
         user={{ fullName: "Ada Lovelace", email: "ada@example.com", role: "SUPER_ADMIN" }}

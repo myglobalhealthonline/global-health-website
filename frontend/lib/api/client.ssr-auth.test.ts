@@ -79,8 +79,6 @@ describe("SSR auth headers — what is sent", () => {
       "/api/health-tests/full-blood-count",
       "/api/assets",
       "/api/blog?countryCode=ie",
-      "/api/blog-posts",
-      "/api/pricing",
     ]) {
       await m.apiRequest(p, { revalidate: 60 });
     }

@@ -17,9 +17,7 @@ import { apiRequest } from "./client";
  *   global:services          // legacy /api/services
  *   global:specialties       // legacy /api/specialties
  *   global:assets            // legacy /api/assets
- *   global:pricing           // legacy /api/pricing
  *   global:health-tests      // legacy /api/health-tests
- *   global:blog              // legacy /api/blog-posts
  */
 const REVALIDATE_SECONDS = 60;
 const COUNTRIES_REVALIDATE_SECONDS = 120;
@@ -48,9 +46,7 @@ export const SITE_CACHE_TAGS = {
   globalServices: () => "global:services",
   globalSpecialties: () => "global:specialties",
   globalAssets: () => "global:assets",
-  globalPricing: () => "global:pricing",
   globalHealthTests: () => "global:health-tests",
-  globalBlog: () => "global:blog",
 };
 
 export async function fetchCountries(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) {
@@ -105,28 +101,12 @@ export async function fetchDoctorsCount(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT
   });
 }
 
-export async function fetchPricing(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) {
-  return apiRequest<unknown[]>("/api/pricing", {
-    timeoutMs,
-    revalidate: REVALIDATE_SECONDS,
-    tags: [SITE_CACHE_TAGS.globalPricing()],
-  });
-}
-
 export async function fetchHealthTests(locale?: string, timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) {
   const upper = toBackendLocale(locale);
   return apiRequest<unknown[]>(upper ? `/api/health-tests?locale=${upper}` : "/api/health-tests", {
     timeoutMs,
     revalidate: REVALIDATE_SECONDS,
     tags: upper ? [SITE_CACHE_TAGS.globalHealthTests(), `global:health-tests:${upper}`] : [SITE_CACHE_TAGS.globalHealthTests()],
-  });
-}
-
-export async function fetchBlogPosts(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) {
-  return apiRequest<unknown[]>("/api/blog-posts", {
-    timeoutMs,
-    revalidate: REVALIDATE_SECONDS,
-    tags: [SITE_CACHE_TAGS.globalBlog()],
   });
 }
 

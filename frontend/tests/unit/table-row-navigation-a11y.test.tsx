@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
 /**
  * Batch 14 — accessible clickable table rows.
@@ -42,6 +42,27 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/corporate/employees",
   useSearchParams: () => new URLSearchParams(),
 }));
+
+/**
+ * The three rendered components pull in large Next component graphs whose
+ * transform dominates this file. Imported once here rather than inside the
+ * `it`s so the cost is paid by the hook instead of landing inside a 5s test
+ * timeout — measured 1.5s for the employees table under full-suite load, and
+ * enough to exceed the timeout when a second test process competes for CPU.
+ * Vitest hoists the `vi.mock` above this file's top-level code, so these
+ * imports still see the mocked `next/navigation`.
+ */
+let EmployeesTable: typeof import("@/app/(portal)/(corporate)/corporate/employees/employees-table")["EmployeesTable"];
+let AdminSubscriptionsTable: typeof import("@/app/(portal)/(admin)/admin/subscriptions/_components/admin-subscriptions-table")["AdminSubscriptionsTable"];
+let PortalMobileCard: typeof import("@/components/PortalMobileCard")["PortalMobileCard"];
+
+beforeAll(async () => {
+  [{ EmployeesTable }, { AdminSubscriptionsTable }, { PortalMobileCard }] = await Promise.all([
+    import("@/app/(portal)/(corporate)/corporate/employees/employees-table"),
+    import("@/app/(portal)/(admin)/admin/subscriptions/_components/admin-subscriptions-table"),
+    import("@/components/PortalMobileCard"),
+  ]);
+});
 
 import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
 
@@ -228,10 +249,7 @@ const EMPLOYEES = [
   },
 ];
 
-async function renderEmployeesTable(): Promise<string> {
-  const { EmployeesTable } = await import(
-    "@/app/(portal)/(corporate)/corporate/employees/employees-table"
-  );
+function renderEmployeesTable(): string {
   return renderToStaticMarkup(
     <EmployeesTable
       // Synthetic rows only; the component's props are structurally typed
@@ -245,8 +263,8 @@ async function renderEmployeesTable(): Promise<string> {
 }
 
 describe("ROW-3 — corporate employees rows expose one native link, unnested", () => {
-  it("never nests an anchor inside the row control", async () => {
-    const html = tableHalf(await renderEmployeesTable());
+  it("never nests an anchor inside the row control", () => {
+    const html = tableHalf(renderEmployeesTable());
 
     for (const button of buttons(html)) {
       // `<a>` inside `<button>` is invalid HTML: activation behaviour is
@@ -255,8 +273,8 @@ describe("ROW-3 — corporate employees rows expose one native link, unnested", 
     }
   });
 
-  it("gives each row a native link to the employee, named by the visible name", async () => {
-    const html = tableHalf(await renderEmployeesTable());
+  it("gives each row a native link to the employee, named by the visible name", () => {
+    const html = tableHalf(renderEmployeesTable());
 
     for (const employee of EMPLOYEES) {
       const rowLink = links(html).find(
@@ -268,8 +286,8 @@ describe("ROW-3 — corporate employees rows expose one native link, unnested", 
     }
   });
 
-  it("keeps the per-row action controls outside that link", async () => {
-    const html = tableHalf(await renderEmployeesTable());
+  it("keeps the per-row action controls outside that link", () => {
+    const html = tableHalf(renderEmployeesTable());
 
     for (const link of links(html)) {
       expect(link).not.toMatch(/<button\b/);
@@ -278,8 +296,8 @@ describe("ROW-3 — corporate employees rows expose one native link, unnested", 
     }
   });
 
-  it("still renders the row's own action forms as real submit controls", async () => {
-    const html = tableHalf(await renderEmployeesTable());
+  it("still renders the row's own action forms as real submit controls", () => {
+    const html = tableHalf(renderEmployeesTable());
     // The desktop actions cell posts to the existing server action; this
     // batch must not touch it.
     expect(html).toContain('name="employeeId"');
@@ -290,8 +308,8 @@ describe("ROW-3 — corporate employees rows expose one native link, unnested", 
 /* ── the corporate employees drawer keeps a desktop entry point ──────────── */
 
 describe("ROW-4 — removing the row handler did not strand the quick view", () => {
-  it("offers a native link to ?employee=<id> in the desktop actions cell", async () => {
-    const html = tableHalf(await renderEmployeesTable());
+  it("offers a native link to ?employee=<id> in the desktop actions cell", () => {
+    const html = tableHalf(renderEmployeesTable());
 
     for (const employee of EMPLOYEES) {
       // The drawer's open state is derived from this param, so the quick view
@@ -306,8 +324,8 @@ describe("ROW-4 — removing the row handler did not strand the quick view", () 
     }
   });
 
-  it("keeps the two row links pointing at different destinations", async () => {
-    const html = tableHalf(await renderEmployeesTable());
+  it("keeps the two row links pointing at different destinations", () => {
+    const html = tableHalf(renderEmployeesTable());
     const hrefs = links(html).map((a) => attr(a, "href"));
     expect(new Set(hrefs).size).toBe(hrefs.length);
   });
@@ -360,8 +378,7 @@ const cardTags = (html: string) =>
   html.match(/<(?:div|a)\b[^>]*class="gh-portal-mobile-card(?: [^"]*)?"[^>]*>/g) ?? [];
 
 describe("ROW-6 — the mobile card is not a fake button", () => {
-  it("renders a plain, non-interactive container around its own controls", async () => {
-    const { PortalMobileCard } = await import("@/components/PortalMobileCard");
+  it("renders a plain, non-interactive container around its own controls", () => {
     const html = renderToStaticMarkup(
       <PortalMobileCard title="Ada Lovelace" actions={<button type="button">Open</button>} />,
     );
@@ -395,8 +412,7 @@ describe("ROW-6 — the mobile card is not a fake button", () => {
     );
   });
 
-  it("still renders a native link card when `href` is given", async () => {
-    const { PortalMobileCard } = await import("@/components/PortalMobileCard");
+  it("still renders a native link card when `href` is given", () => {
     const html = renderToStaticMarkup(
       <PortalMobileCard title="Ada Lovelace" href="/admin/patients/ada" />,
     );
@@ -540,10 +556,7 @@ const SUBSCRIPTIONS = [
   },
 ];
 
-async function renderSubscriptionsTable(): Promise<string> {
-  const { AdminSubscriptionsTable } = await import(
-    "@/app/(portal)/(admin)/admin/subscriptions/_components/admin-subscriptions-table"
-  );
+function renderSubscriptionsTable(): string {
   return renderToStaticMarkup(
     <AdminSubscriptionsTable
       // Synthetic rows only — no real subscriber or payment data.
@@ -557,8 +570,8 @@ async function renderSubscriptionsTable(): Promise<string> {
 }
 
 describe("ROW-8 — admin subscriptions keeps its quick view without a clickable card", () => {
-  it("renders the mobile card as an inert container", async () => {
-    const html = mobileHalf(await renderSubscriptionsTable());
+  it("renders the mobile card as an inert container", () => {
+    const html = mobileHalf(renderSubscriptionsTable());
     const cards = cardTags(html);
     expect(cards).toHaveLength(SUBSCRIPTIONS.length);
     for (const card of cards) {
@@ -568,8 +581,8 @@ describe("ROW-8 — admin subscriptions keeps its quick view without a clickable
     }
   });
 
-  it("offers one labelled Quick view control per card", async () => {
-    const html = mobileHalf(await renderSubscriptionsTable());
+  it("offers one labelled Quick view control per card", () => {
+    const html = mobileHalf(renderSubscriptionsTable());
     const quickView = buttons(html).filter((b) => /Quick view/.test(textOf(b)));
     expect(quickView).toHaveLength(SUBSCRIPTIONS.length);
     for (const button of quickView) {
@@ -580,8 +593,8 @@ describe("ROW-8 — admin subscriptions keeps its quick view without a clickable
     }
   });
 
-  it("keeps the repair actions as their own submit controls, not drawer openers", async () => {
-    const html = mobileHalf(await renderSubscriptionsTable());
+  it("keeps the repair actions as their own submit controls, not drawer openers", () => {
+    const html = mobileHalf(renderSubscriptionsTable());
     // Each repair action is a <form> posting to an existing server action. It
     // used to sit inside the card's onClick wrapper, so a click that missed a
     // button opened the drawer; the inert card removes that path entirely.

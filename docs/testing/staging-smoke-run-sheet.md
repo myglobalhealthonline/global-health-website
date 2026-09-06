@@ -85,7 +85,6 @@ API_BASE_URL="https://<staging-backend>"
 - [ ] `GET /api/countries` -> `200`
 - [ ] `GET /api/services` -> `200`
 - [ ] `GET /api/doctors` -> `200`
-- [ ] `GET /api/pricing` -> `200`
 - [ ] `GET /api/assets` -> `200`
 
 ### Auth flow
@@ -157,7 +156,7 @@ Expected for all public routes:
 - [ ] `/admin/countries`
 - [ ] `/admin/services`
 - [ ] `/admin/doctors`
-- [ ] `/admin/pricing`
+- [ ] `/admin/plans`
 - [ ] `/admin/assets`
 - [ ] `/admin/blog-posts`
 - [ ] `/admin/faqs`

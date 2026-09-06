@@ -8,8 +8,10 @@ Since 2026-07-08 the hand-authored CSS is split in two:
   anything shared. Imported once in the root layout → ships on every route.
 - `frontend/app/portal.css` — authenticated-portal-only rules: `.gh-admin-*`,
   `.gh-doctor-*`, `.gh-portal-*`, `.lux-*` / `--lux-*` (Obsidian Ivory system).
-  Imported ONLY by the `(admin)`, `(doctor)`, `(auth)` route-group layouts, so
-  public visitors never download it.
+  Imported ONLY by the four portal layouts — `(admin)/admin`, `(doctor)/doctor`,
+  `(auth)/account` and `(corporate)/corporate` — so public visitors never
+  download it. The shared `(portal)` root layout deliberately does not import it,
+  which is what keeps /login, /pay, /print and /share off portal-only rules.
 
 Rules:
 - Adding/editing a portal-only style → `portal.css`. Public or shared → `globals.css`.

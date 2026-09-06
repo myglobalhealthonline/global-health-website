@@ -38,7 +38,6 @@ Implemented:
 - `GET /api/countries`
 - `GET /api/services`
 - `GET /api/doctors`
-- `GET /api/pricing`
 - `GET /api/assets`
 - `POST /api/appointments`
 

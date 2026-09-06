@@ -29,7 +29,6 @@ Public endpoints:
 - [ ] `/api/countries`
 - [ ] `/api/services`
 - [ ] `/api/doctors`
-- [ ] `/api/pricing`
 - [ ] `/api/assets`
 
 Auth/account:

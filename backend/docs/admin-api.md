@@ -1,4 +1,4 @@
-# Admin API (Phase 2 + 2.1 + 3.1 countries + 3.2 services + 3.3 doctors + 3.4 pricing + 3.5 assets + 6 session guard)
+# Admin API (Phase 2 + 2.1 + 3.1 countries + 3.2 services + 3.3 doctors + 3.4 subscription plans + 3.5 assets + 6 session guard)
 
 ## Account scope
 
@@ -368,50 +368,98 @@ Partial update; empty body → **`400`**. **`countryId`** change → **`400`** (
 
 ---
 
-## Pricing plans — display only (Phase 3.4)
+## Subscription plans (`/api/admin/plans*`)
 
-Same bearer auth as other admin routes.
+Implemented in `src/routes/admin-plans.route.ts`. The Phase 3.4 `/api/admin/pricing*`
+endpoints this section used to document were deleted (commit `8ca03945`, 2026-05-17)
+together with the public `GET /api/pricing`; neither exists today.
 
-**Pricing vs payments:** these endpoints manage **`PricingPlan`** rows for **public marketing pricing**. They do **not** create payment sessions, collect cards, integrate Stripe (or any provider), confirm paid appointments, or process money. Future payment flows may **reference** this data later; this phase does not.
+**Authorization — narrower than the rest of this document.** Every route below calls
+`requireManageSubscriptions` (`src/utils/manage-subscriptions-auth.ts`), which is
+`verifyAdminAccess` plus a MANAGE_SUBSCRIPTIONS elevation. **`LOCAL_ADMIN` is denied
+`403`** — plan configuration is global, not country-scoped. `ADMIN` and `SUPER_ADMIN`
+sessions pass, as does the master-token fallback (audited as `ADMIN`, no actor id).
+Failures: `401` unauthenticated or an invalid/absent bearer token, `403` a
+non-admin session role or `LOCAL_ADMIN`, `503` when the token fallback is enabled
+but `ADMIN_API_TOKEN` is unset.
 
-Prisma **`PricingPlan`** fields:
+**Scope.** These endpoints manage `PricingPlan` rows (subscription plan tiers)
+and their per-locale translations. Distinct surfaces, do not conflate them:
 
-| Field | Notes |
+| | what it is |
 | --- | --- |
-| `countryId` | Required on **create**; **cannot be changed** via **`PATCH`** |
-| `slug` | Required; URL-safe; **`@@unique([countryId, slug])`** |
-| `name` | Required |
-| `description` | Optional |
-| `priceCents` | Non-negative integer (minor units) |
-| `currencyCode` | Required; must exist on **`Currency`** table (validated case-insensitively, stored uppercase) |
-| `interval` | Required string (e.g. `month`, `year`, `once`) — product-defined; max length in Zod |
-| `isActive` | Boolean (default `true` on create) |
+| `/api/admin/plans*` | this admin API |
+| `GET /api/countries/:countryCode/plans` | the public read (`country-scoped.route.ts`) |
+| `/admin/plans` | the admin UI page that consumes this API |
+| `/admin/memberships` | a different admin page — private membership programmes (`MembershipPlan`), not `PricingPlan` |
 
-**Schema gaps:** no **`serviceId`** link to **`Service`**; no **`features`** list; no **`sortOrder`**. Filter **`serviceId`** on list is **not** supported until the schema gains a relation.
+Responses use the standard envelope: `{ ok: true, message?, data }` on success,
+`{ ok: false, message, ... }` on error.
 
-### `GET /api/admin/pricing`
+### `GET /api/admin/plans`
 
-Paginated list.
+List, not paginated. **Query** (`adminPlansQuerySchema`): `countryId`, `countryCode`,
+`includeInactive`. Inactive plans are excluded unless `includeInactive=true`. Ordered
+by country name, then `displayOrder`, then `monthlyPriceCents`. Invalid query → `400`.
+→ `data.plans`.
 
-**Query:** `page`, `pageSize`, `countryId`, `countryCode`, `isActive`, `search` (matches **`name`**, **`slug`**, **`description`**).
+### `GET /api/admin/plans/:id`
 
-### `GET /api/admin/pricing/:id`
+→ `data.plan`, or `404` when the id does not exist.
 
-Returns **`plan`** with **`country`**, or **`404`**.
+### `POST /api/admin/plans`
 
-### `POST /api/admin/pricing`
+Validated by `adminPlanCreateBodySchema`. `countryId`, `slug` (lowercase URL-safe),
+`planType` (`ESSENTIAL` | `COMPREHENSIVE` | `PREMIUM`), `name`, `monthlyPriceCents`
+and `currencyCode` are required; `billingInterval` is `MONTHLY` only. Tier caps are
+enforced at the schema: consultation credits max 1 / 2 / 3 by tier, and both
+`wellnessCreditsPerMonth` and `familyEnabled` are PREMIUM-only. `planType` is
+immutable after create. Audits `PLAN_CREATED`. → `data.plan`.
 
-Validated by **`adminPricingCreateBodySchema`**. Duplicate **`countryId + slug`** → **`409`**.
+### `PATCH /api/admin/plans/:id`
 
-### `PATCH /api/admin/pricing/:id`
+Partial update (`adminPlanUpdateBodySchema` = the create shape minus `countryId` and
+`planType`, all optional). Empty body → `400`. Unknown id → `404`. Audits
+`PLAN_UPDATED` with the changed field names. → `data.plan`.
 
-Partial update; empty body → **`400`**. **`countryId`** change → **`400`**. Unknown **`currencyCode`** → **`400`**.
+### `DELETE /api/admin/plans/:id`
 
-### `DELETE /api/admin/pricing/:id`
+**Soft-deactivation:** sets `isActive: false` and returns the updated row; nothing is
+deleted. Unknown id → `404`. Audits `PLAN_DEACTIVATED`. → `data.plan`.
 
-**Soft-disable:** sets **`isActive: false`**. Public **`GET /api/pricing`** continues **`isActive: true`** only — unchanged.
+### `POST /api/admin/plans/reorder`
 
-**Public safety:** fallback adapters remain; pages are not forced to depend on CMS pricing rows exclusively.
+Body `{ items: [{ id, displayOrder }, …] }`, at least one item, applied in a single
+transaction. Audits `PLAN_REORDERED`. → `data` is `{}`.
+
+### `GET /api/admin/plans/:id/translations/:locale`
+
+→ `data.translation`, or `null` when that locale has no row yet — including a
+locale that is not enabled for the plan's country, which this route does NOT
+reject (only the PUT below checks locale support). Unknown plan id → `404`; a
+`locale` outside the `LocaleCode` enum → `400`.
+
+### `PUT /api/admin/plans/:id/translations/:locale`
+
+Upsert, and the only translation route that enforces locale support: a locale not
+enabled for the plan's country → `400` (`assertLocaleSupported`).
+
+Body (`adminPlanTranslationBodySchema`): `name` required; `shortDescription`,
+`longDescription`, `notesTerms` optional; `features` up to 20 bullets, empty array
+means the public card falls back to auto-generated defaults. Audits `PLAN_UPDATED` on
+`PlanTranslation`. → `data.translation`.
+
+### `GET /api/admin/plans/:id/preview`
+
+Renders the plan as the public card would show it. **Query:** optional `locale`;
+when omitted it falls back to the country's `defaultLocale`. Unknown plan id → `404`.
+→ `data.preview`.
+
+### Shared write errors
+
+`400` unknown country, unsupported locale, non-PREMIUM family plan, tier-limit
+breach · `404` plan not found · `409` duplicate tier, or duplicate `countryId + slug`
+(Prisma `P2002`) · `502` Stripe price sync failure · `503` database unavailable.
 
 ---
 
@@ -541,7 +589,7 @@ Validation notes:
 - `admin-countries.schema.test.ts` (Zod rules for countries)
 - `admin-services.schema.test.ts` (service slug, price/duration, query filters)
 - `admin-doctors.schema.test.ts` (doctor slug, name/title, profile image ref, query filters)
-- `admin-pricing.schema.test.ts` (pricing slug, negative price, query filters)
+- `admin-plans.schema.test.ts` / `admin-plans.route.test.ts` (plan slug, tier caps, reorder, translations)
 - `admin-assets.schema.test.ts` (safe path/URL, alt rules, query filters)
 - `admin-blog-posts.schema.test.ts` (slug safety, locale, published body rules, query filters)
 - `admin-faqs.schema.test.ts` (required fields, locale, numeric sort order, query filters)
