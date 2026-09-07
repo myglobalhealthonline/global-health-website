@@ -339,6 +339,33 @@ export async function sendLoginOtpEmail(opts: {
  * whether the email is new or already taken (no distinct conflict status),
  * so this is the only signal the real owner gets that someone tried.
  */
+/**
+ * Guest-account claim: sent instead of the duplicate-registration notice
+ * when the existing row was never verified (guest booking shadow account
+ * or unfinished signup). The link consumes an EmailVerificationToken that
+ * carries the password chosen on /register.
+ */
+export async function sendAccountClaimEmail(opts: {
+  to: string;
+  fullName: string;
+  token: string;
+}) {
+  const link = absoluteSiteUrl(`/verify-email?token=${encodeURIComponent(opts.token)}`);
+  return sendEmail({
+    to: opts.to,
+    subject: "Finish creating your account — Global Health",
+    text: `Hi ${opts.fullName},\n\nThis email address was already used with Global Health (for example for a booking), so we linked your new account to it. Confirm it was you to activate the password you just chose and sign in:\n\n${link}\n\nThe link expires in 24 hours. If you did not just create an account, ignore this email — nothing changes.\n\n— Global Health`,
+    html: wrapHtml(
+      "Finish creating your account",
+      `<p>Hi ${escapeHtml(opts.fullName)},</p>
+       <p>This email address was already used with Global Health (for example for a booking), so we linked your new account to it. Confirm it was you to activate the password you just chose and sign in.</p>
+       <p style="margin:24px 0;text-align:center;"><a href="${link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;">Confirm and sign in</a></p>
+       <p style="font-size:13px;color:#737373;">Or paste into your browser:<br/><a href="${link}">${escapeHtml(link)}</a></p>
+       <p>The link expires in 24 hours. If you did not just create an account, ignore this email — nothing changes.</p>`,
+    ),
+  });
+}
+
 export async function sendDuplicateRegistrationNoticeEmail(opts: {
   to: string;
   fullName: string;

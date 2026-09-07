@@ -3719,6 +3719,11 @@ model EmailVerificationToken {
   tokenHash String    @unique
   expiresAt DateTime
   usedAt    DateTime?
+  /// Guest-account claim: bcrypt hash chosen on /register for an email that
+  /// already had a never-verified User row. Applied to the user (and the
+  /// account signed in) when this token is consumed — never before, because
+  /// the row may already own guest bookings/PHI.
+  pendingPasswordHash String?
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime  @default(now())
 
