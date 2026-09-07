@@ -166,8 +166,8 @@ const pt: LocalePost = {
       secondary: { label: "Ver médicos", href: links.doctors },
     },
     sourcesEyebrow: "Fontes oficiais",
-    sourcesH2: "Regras verificadas a 7 de setembro de 2026",
-    sourcesLead: "Percentagens e prazos retirados das páginas da Segurança Social e da legislação em vigor.",
+    sourcesH2: "Fontes deste guia",
+    sourcesLead: "Percentagens e prazos retirados das páginas da Segurança Social e da legislação em vigor, verificados a 7 de setembro de 2026.",
     sources: [
       { label: "Segurança Social — Guia Prático do Subsídio de Doença", href: SS_GUIA },
       { label: "Segurança Social — Subsídio de doença", href: SS_SUBSIDIO },

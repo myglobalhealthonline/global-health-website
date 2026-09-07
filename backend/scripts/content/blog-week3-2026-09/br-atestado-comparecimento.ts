@@ -169,8 +169,8 @@ const pt: LocalePost = {
       secondary: { label: "Ver médicos", href: links.doctors },
     },
     sourcesEyebrow: "Fontes oficiais",
-    sourcesH2: "Consultadas em 7 de setembro de 2026",
-    sourcesLead: "Legislação federal, Tribunal Superior do Trabalho e Conselho Federal de Medicina.",
+    sourcesH2: "Fontes deste guia",
+    sourcesLead: "Legislação federal, Tribunal Superior do Trabalho e Conselho Federal de Medicina, consultados em 7 de setembro de 2026.",
     sources: [
       { label: "TST — diferença entre atestado médico e atestado de comparecimento", href: TST_DIFERENCA },
       { label: "TST — existe limite em lei para atestados de comparecimento?", href: TST_LIMITE },

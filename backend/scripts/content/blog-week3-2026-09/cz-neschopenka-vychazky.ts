@@ -167,8 +167,8 @@ const cs: LocalePost = {
       secondary: { label: "Zobrazit lékaře", href: links.doctors },
     },
     sourcesEyebrow: "Oficiální zdroje",
-    sourcesH2: "Pravidla ověřena 7. září 2026",
-    sourcesLead: "Text vychází ze zákona a z výkladu ČSSZ.",
+    sourcesH2: "Zdroje tohoto článku",
+    sourcesLead: "Text vychází ze zákona a z výkladu ČSSZ; pravidla ověřena 7. září 2026.",
     sources: [
       { label: "ČSSZ — Nemoc snadno a přehledně", href: CSSZ_NEMOC },
       { label: "ČSSZ — Nejčastější otázky k dočasné pracovní neschopnosti", href: CSSZ_FAQ },

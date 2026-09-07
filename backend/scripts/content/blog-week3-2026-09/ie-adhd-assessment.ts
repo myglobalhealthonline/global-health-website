@@ -160,8 +160,8 @@ const en: LocalePost = {
       secondary: { label: "View doctors", href: links.doctors },
     },
     sourcesEyebrow: "Sources",
-    sourcesH2: "Checked 7 September 2026",
-    sourcesLead: "Clinical standards from NICE; Irish service facts from peer-reviewed evaluations and the HSE programme.",
+    sourcesH2: "Sources for this guide",
+    sourcesLead: "Clinical standards from NICE; Irish service facts from peer-reviewed evaluations and the HSE programme. All checked 7 September 2026.",
     sources: [
       { label: "NICE NG87 — ADHD: diagnosis and management", href: NICE_NG87 },
       { label: "HSE National Clinical Programme for ADHD in Adults", href: HSE_PROGRAMME },

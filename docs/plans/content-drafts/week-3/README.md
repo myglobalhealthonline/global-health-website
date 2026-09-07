@@ -8,9 +8,18 @@ native-language editing and the clinical drafts need clinician review; the
 Brazil row has no reviewer doctor assigned yet.
 
 Source of truth for the content: `backend/scripts/content/blog-week3-2026-09/`.
-The `.html` files beside this README are deterministic renders produced by
+The `.html` files beside this README are previews produced by
 `node --import tsx scripts/render-week3-blog-drafts-2026-09.ts --write`
-(`--check` verifies they are current). The seeder is dry-run by default and skips any slug/title collision.
+(`--check` verifies they are current). **They mirror production's
+calm-editorial presentation** (live since `9971db26`, 2026-08-26): the body is
+run through the frontend's own `calmEditorialBlogHtml` / `prepareBlogArticleHtml`
+and wrapped in the page hero, "On this page" sidebar and CTA, with the blog CSS
+block and root tokens inlined verbatim from `frontend/app/globals.css`. The
+retired dark-hero stylesheet embedded by `blog-seo-2026-08/template.ts` is
+stripped exactly as production strips it. Content edits go in the TypeScript
+module, then `render --write` and `update-week3-blog-drafts-2026-09.ts --apply`
+(hash-guarded: never overwrites a row edited in the CMS, never touches a
+published row). The seeder is dry-run by default and skips any slug/title collision.
 
 ## The six topics
 

@@ -166,8 +166,8 @@ const es: LocalePost = {
       secondary: { label: "Ver médicos", href: links.doctors },
     },
     sourcesEyebrow: "Fuentes clínicas",
-    sourcesH2: "Consultadas el 7 de septiembre de 2026",
-    sourcesLead: "Guías europeas y sociedades españolas. Ninguna cifra procede de blogs de remedios.",
+    sourcesH2: "Fuentes de esta guía",
+    sourcesLead: "Guías europeas y sociedades españolas, consultadas el 7 de septiembre de 2026.",
     sources: [
       { label: "ESC 2024 — Guidelines for elevated blood pressure and hypertension", href: ESC_2024 },
       { label: "OMS — Hipertensión, ficha informativa", href: WHO_HTA },
