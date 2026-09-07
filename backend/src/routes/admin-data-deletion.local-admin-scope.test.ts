@@ -47,6 +47,14 @@ describe("admin data-deletion — LOCAL_ADMIN country scope", () => {
   let ieAdminCookie: Record<string, string> = {};
   let fullAdminCookie: Record<string, string> = {};
   let superAdminCookie: Record<string, string> = {};
+  let patientCookie: Record<string, string> = {};
+  let doctorCookie: Record<string, string> = {};
+
+  /** Throwaway target for the unauthenticated / wrong-role cases, so that a
+   *  hole in the role gate cannot mutate the fixtures the scope cases below
+   *  depend on. */
+  let outsiderProfileId = "";
+  let outsiderRequestId = "";
 
   const profileIds: string[] = [];
   const adminIds: string[] = [];
@@ -123,6 +131,21 @@ describe("admin data-deletion — LOCAL_ADMIN country scope", () => {
       return user;
     };
 
+    const mkNonAdmin = async (label: string, role: "PATIENT" | "DOCTOR") => {
+      const user = await prisma.user.create({
+        data: {
+          email: `${label}-${uniq}@test.local`,
+          passwordHash: "x",
+          fullName: `${label} ${uniq}`,
+          role,
+        },
+      });
+      adminIds.push(user.id);
+      return {
+        gh_auth: signAuthToken({ sub: user.id, role, email: user.email }),
+      };
+    };
+
     const ieAdmin = await mkAdmin("ie-local-admin", "LOCAL_ADMIN", [ieFolder]);
     const fullAdmin = await mkAdmin("full-admin", "ADMIN", []);
     const superAdmin = await mkAdmin("super-admin", "SUPER_ADMIN", []);
@@ -140,12 +163,17 @@ describe("admin data-deletion — LOCAL_ADMIN country scope", () => {
       gh_auth: signAuthToken({ sub: superAdminId, role: "SUPER_ADMIN", email: superAdmin.email }),
     };
 
+    patientCookie = await mkNonAdmin("patient", "PATIENT");
+    doctorCookie = await mkNonAdmin("doctor", "DOCTOR");
+
     ieProfileId = await makeProfile("ie-patient", ieFolder);
     brProfileId = await makeProfile("br-patient", brFolder);
     nullFolderProfileId = await makeProfile("nofolder-patient", null);
     ieRequestId = await makeRequest(ieProfileId);
     brRequestId = await makeRequest(brProfileId);
     nullFolderRequestId = await makeRequest(nullFolderProfileId);
+    outsiderProfileId = await makeProfile("outsider-patient", ieFolder);
+    outsiderRequestId = await makeRequest(outsiderProfileId);
   });
 
   after(async () => {
@@ -162,6 +190,57 @@ describe("admin data-deletion — LOCAL_ADMIN country scope", () => {
     await prisma.user.deleteMany({ where: { id: { in: adminIds } } });
     await app.close();
   });
+
+  // ── Authentication and role gate ─────────────────────────────────────────
+  // The cases below this section all arrive with a real admin session, so they
+  // only ever exercised LOCAL_ADMIN vs ADMIN vs SUPER_ADMIN — the gate that
+  // decides whether a caller is an admin AT ALL was never asserted. These three
+  // endpoints list every country's deletion requests, advance them, and
+  // irreversibly anonymize a patient, so "no session" and "wrong role" are the
+  // cases with the largest blast radius.
+  //
+  // They run first and against their own fixtures: a hole here would mean the
+  // PATCH or the anonymize actually succeeded, and pointing them at the scope
+  // fixtures would then corrupt every case below rather than just failing.
+  const roleCases: [string, () => Record<string, string>][] = [
+    ["unauthenticated", () => ({})],
+    ["a PATIENT", () => patientCookie],
+    ["a DOCTOR", () => doctorCookie],
+  ];
+  //   401 with no session at all, 403 with a valid session in the wrong role —
+  //   authentication and authorization are distinct answers, and collapsing
+  //   them would hide a broken session check behind a passing test.
+  const expectedStatus = (label: string) => (label === "unauthenticated" ? 401 : 403);
+
+  for (const [label, cookies] of roleCases) {
+    it(`refuses the deletion-request LIST for ${label}`, async (t) => {
+      if (!app) return t.skip(`buildApp failed: ${String(bootError)}`);
+      const res = await listAs(cookies());
+      assert.equal(res.statusCode, expectedStatus(label), res.body);
+      assert.equal(res.body.includes(outsiderRequestId), false, "no request id leaks");
+    });
+
+    it(`refuses the deletion-request PATCH for ${label}`, async (t) => {
+      if (!app) return t.skip(`buildApp failed: ${String(bootError)}`);
+      const res = await patchAs(outsiderRequestId, cookies());
+      assert.equal(res.statusCode, expectedStatus(label), res.body);
+      const row = await prisma.dataDeletionRequest.findUniqueOrThrow({
+        where: { id: outsiderRequestId },
+      });
+      assert.equal(row.requestStatus, "SUBMITTED", "status unchanged");
+      assert.equal(row.reviewedByAdminId, null, "no reviewer stamped");
+    });
+
+    it(`refuses patient anonymization for ${label}`, async (t) => {
+      if (!app) return t.skip(`buildApp failed: ${String(bootError)}`);
+      const res = await anonymizeAs(outsiderProfileId, cookies());
+      assert.equal(res.statusCode, expectedStatus(label), res.body);
+      const profile = await prisma.patientProfile.findUniqueOrThrow({
+        where: { id: outsiderProfileId },
+      });
+      assert.equal(profile.anonymizedAt, null, "patient not erased");
+    });
+  }
 
   // ── LIST ─────────────────────────────────────────────────────────────────
   it("shows a LOCAL_ADMIN only their own country's requests", async (t) => {
