@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { env } from "../../config/env.js";
 import { prisma } from "../../db/prisma.js";
+import type { MemedBookingStatus } from "@prisma/client";
 import {
   createBooking,
   isMemedConfigured,
@@ -64,7 +65,15 @@ export async function bookHealthTestInMemed(orderId: string, log: PaymentLog = n
     quantity: i.quantity,
   }));
 
-  let outcome: { status: string; memedReferenceId?: string; error?: string; raw?: unknown };
+  // SC-1: MemedBooking.status is a Prisma enum now, so the outcome carries the
+  // enum type rather than a bare string — an unlisted status is a compile
+  // error here instead of a runtime write of an unknown value.
+  let outcome: {
+    status: MemedBookingStatus;
+    memedReferenceId?: string;
+    error?: string;
+    raw?: unknown;
+  };
 
   if (!isMemedConfigured()) {
     outcome = { status: "SKIPPED", error: "Memed not configured — set MEMED_BASE_URL/MEMED_CLIENT_ID/MEMED_CLIENT_SECRET" };
