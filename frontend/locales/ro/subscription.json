@@ -61,6 +61,7 @@
     "secureLine": "Consultații online/video securizate",
     "bookingLine": "Acces la programarea consultațiilor online generale",
     "specialistLine": "Reduceri la consultații selectate la specialiști, acolo unde este cazul",
+    "specialistDiscountLine": "{percent}% reducere la consultațiile de specialitate selectate",
     "wellnessRedeemLine": "Strângeți credite de wellness pentru kituri eligibile de teste de sănătate la domiciliu",
     "choosePlan": "Alegeți {plan}",
     "chooseCta": "Alege acest plan",

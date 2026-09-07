@@ -61,6 +61,7 @@
     "secureLine": "Sichere Online-/Videoberatungen",
     "bookingLine": "Zugang zur allgemeinen Online-Terminbuchung",
     "specialistLine": "Rabatte auf ausgewählte Facharztberatungen, sofern verfügbar",
+    "specialistDiscountLine": "{percent} % Rabatt auf ausgewählte Facharztkonsultationen",
     "wellnessRedeemLine": "Sammeln Sie Wellness-Guthaben für berechtigte Gesundheitstests für zu Hause",
     "choosePlan": "{plan} wählen",
     "chooseCta": "Diesen Plan wählen",

@@ -61,6 +61,7 @@
     "secureLine": "Consultas online/por vídeo seguras",
     "bookingLine": "Acesso à marcação de consultas online gerais",
     "specialistLine": "Descontos em consultas de especialidade selecionadas, quando aplicável",
+    "specialistDiscountLine": "{percent}% de desconto em consultas de especialidade selecionadas",
     "wellnessRedeemLine": "Acumule créditos de bem-estar para kits de testes de saúde ao domicílio elegíveis",
     "choosePlan": "Escolher {plan}",
     "chooseCta": "Escolher este plano",

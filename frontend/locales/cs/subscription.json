@@ -61,6 +61,7 @@
     "secureLine": "Zabezpečené online/video konzultace",
     "bookingLine": "Přístup k rezervaci běžných online konzultací",
     "specialistLine": "Slevy na vybrané konzultace u specialistů, kde je to relevantní",
+    "specialistDiscountLine": "Sleva {percent} % na vybrané konzultace se specialisty",
     "wellnessRedeemLine": "Sbírejte wellness kredity na nárokové domácí sady zdravotních testů",
     "choosePlan": "Vybrat {plan}",
     "chooseCta": "Vybrat tento plán",
