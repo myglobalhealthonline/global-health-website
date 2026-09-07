@@ -123,6 +123,20 @@ export type SuklAppPingDto = {
   responseHeaders: Record<string, string> | null;
 };
 
+/** Result of AppPingZEP — the signed ping. */
+export type SuklAppPingZepDto = {
+  service: string;
+  label: string;
+  ok: boolean;
+  httpStatus: number;
+  durationMs: number;
+  requestId: string;
+  signed: boolean;
+  errorCode: string | null;
+  errorMessage: string | null;
+  bodyExcerpt: string | null;
+};
+
 /** Result of Login — SÚKL's own statement of who this account is. */
 export type SuklLoginDto = {
   service: string;

@@ -8,6 +8,7 @@ import {
   runSuklAppPing,
   runSuklGetAppInfo,
   runSuklLogin,
+  runSuklAppPingZep,
   listSuklDoctorIdentities,
   revokeSuklDoctorIdentity,
   runSuklConnectionTest,
@@ -260,6 +261,39 @@ const adminSuklRoute: FastifyPluginAsync = async (app) => {
           // point of the call; the person's name is not recorded here.
           providerCode: result.providerCode,
           personRoles: result.personRoles,
+          errorCode: result.errorCode,
+        },
+      });
+      return okResponse(result);
+    } catch (error) {
+      return handleError(app, reply, error);
+    }
+  });
+
+  /**
+   * AppPingZEP — AppPing carrying a real XML-DSig signature. SÚKL provide it
+   * precisely as the signature self-test; it creates nothing.
+   */
+  app.post("/api/admin/sukl/app-ping-zep", async (request, reply) => {
+    const query = suklPingQuerySchema.pick({ service: true }).safeParse(request.query);
+    if (!query.success) {
+      return reply.status(400).send(errorResponse("Invalid service", query.error.flatten()));
+    }
+    const actor = resolveAdminSessionActor(request);
+    try {
+      const result = await runSuklAppPingZep(query.data.service);
+      await recordAudit({
+        actorUserId: actor?.userId ?? null,
+        actorRole: actor?.role ?? null,
+        action: "SUKL_CONNECTION_TESTED",
+        entityType: "SuklFacilityIntegration",
+        entityId: query.data.service,
+        request,
+        metadata: {
+          kind: "app-ping-zep",
+          ok: result.ok,
+          httpStatus: result.httpStatus,
+          signed: result.signed,
           errorCode: result.errorCode,
         },
       });

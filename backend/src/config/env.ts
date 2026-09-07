@@ -337,6 +337,16 @@ const envSchema = z.object({
    *  Deliberately absent: the cross-border pharmacist endpoint. It is not
    *  configured until SÚKL confirms which cross-border workflow an outpatient
    *  workplace may perform — see docs/sukl/SCOPE_CONFIRMATION.md Q7. */
+  /**
+   * The SIGNING credential — deliberately separate from the facility
+   * certificate. SÚKL require the prescriber's own qualified signature on
+   * ZalozitPredpis, so these are different keys with different custody rules
+   * and must never be conflated. In test this may be a PostSignum DEMO
+   * certificate. See docs/sukl/SIGNING_SPEC.md.
+   */
+  SUKL_SIGNING_PFX_BASE64: optionalSecret,
+  SUKL_SIGNING_PFX_PATH: z.string().trim().min(1).optional(),
+  SUKL_SIGNING_PFX_PASSWORD: optionalSecret,
   SUKL_ERECEPT_CUER_TEST_URL: blankAsUnset(z.string().trim().url().optional()),
   SUKL_EPOUKAZ_CUEP_TEST_URL: blankAsUnset(z.string().trim().url().optional()),
   SUKL_EPOUKAZ_COMMON_TEST_URL: blankAsUnset(z.string().trim().url().optional()),

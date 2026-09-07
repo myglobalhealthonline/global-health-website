@@ -31,7 +31,8 @@ function isAllowed(method: string, segments: string[]): boolean {
       (segments[0] === "test-connection" ||
         segments[0] === "app-ping" ||
         segments[0] === "app-info" ||
-        segments[0] === "login")
+        segments[0] === "login" ||
+        segments[0] === "app-ping-zep")
     );
   }
   if (method === "PUT" || method === "DELETE") {

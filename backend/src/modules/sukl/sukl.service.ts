@@ -27,6 +27,7 @@ import {
   SUKL_SERVICE_ENV_VARS,
   SUKL_SERVICE_LABELS,
   suklLogin,
+  suklAppPingZep,
   type SuklCertificateInfo,
   type SuklHealthStatus,
   type SuklService,
@@ -587,7 +588,15 @@ export type { SuklAppInfoResult } from "../../lib/sukl/index.js";
  * leaves open: which roles the account holds and which provider (PZS) it is
  * bound to, without asking SÚKL by email.
  */
-export type { SuklLoginResult } from "../../lib/sukl/index.js";
+export type { SuklLoginResult, SuklAppPingZepResult } from "../../lib/sukl/index.js";
+
+/**
+ * AppPingZEP — the signed ping. Creates nothing, and is the only signed
+ * operation that can be run safely against SÚKL to prove the signature path.
+ */
+export async function runSuklAppPingZep(service: SuklService) {
+  return suklAppPingZep(service);
+}
 
 export async function runSuklLogin(service: SuklService) {
   return suklLogin(service);

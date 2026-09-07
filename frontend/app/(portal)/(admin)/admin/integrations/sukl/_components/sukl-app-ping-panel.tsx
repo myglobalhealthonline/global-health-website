@@ -3,7 +3,12 @@
 import { useState } from "react";
 
 import { Btn, Pill } from "../../../_components/atoms";
-import type { SuklAppInfoDto, SuklAppPingDto, SuklLoginDto } from "@/lib/admin/admin-api/sukl";
+import type {
+  SuklAppInfoDto,
+  SuklAppPingDto,
+  SuklAppPingZepDto,
+  SuklLoginDto,
+} from "@/lib/admin/admin-api/sukl";
 
 /**
  * Calls SÚKL's `AppPing` — the first real SOAP operation.
@@ -38,12 +43,39 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
   const [result, setResult] = useState<SuklAppPingDto | null>(null);
   const [info, setInfo] = useState<SuklAppInfoDto | null>(null);
   const [login, setLogin] = useState<SuklLoginDto | null>(null);
+  const [zep, setZep] = useState<SuklAppPingZepDto | null>(null);
+
+  async function runZep() {
+    setBusy(true);
+    setError(null);
+    setInfo(null);
+    setLogin(null);
+    setZep(null);
+    try {
+      const res = await fetch(`/api/admin/sukl/app-ping-zep?service=${service}`, {
+        method: "POST",
+      });
+      const json = (await res.json().catch(() => null)) as
+        | { ok?: boolean; message?: string; data?: SuklAppPingZepDto }
+        | null;
+      if (!res.ok || !json?.ok || !json.data) {
+        setError(json?.message ?? "AppPingZEP could not be sent");
+        return;
+      }
+      setZep(json.data);
+    } catch {
+      setError("AppPingZEP could not be sent");
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function runLogin() {
     setBusy(true);
     setError(null);
     setInfo(null);
     setLogin(null);
+    setZep(null);
     try {
       const res = await fetch(`/api/admin/sukl/login?service=${service}`, { method: "POST" });
       const json = (await res.json().catch(() => null)) as
@@ -66,6 +98,7 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
     setError(null);
     setInfo(null);
     setLogin(null);
+    setZep(null);
     try {
       const res = await fetch(`/api/admin/sukl/app-info?service=${service}`, { method: "POST" });
       const json = (await res.json().catch(() => null)) as
@@ -89,6 +122,7 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
     setResult(null);
     setInfo(null);
     setLogin(null);
+    setZep(null);
     try {
       const qs = new URLSearchParams({ service, path });
       const res = await fetch(`/api/admin/sukl/app-ping?${qs}`, { method: "POST" });
@@ -149,6 +183,9 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
           <Btn onClick={runLogin} disabled={busy || !callable} variant="secondary" size="sm">
             {busy ? "…" : "Login"}
           </Btn>
+          <Btn onClick={runZep} disabled={busy || !callable} variant="secondary" size="sm">
+            {busy ? "…" : "AppPingZEP (signed)"}
+          </Btn>
         </div>
       </div>
 
@@ -163,6 +200,46 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
 
       {error ? (
         <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">{error}</p>
+      ) : null}
+
+      {zep ? (
+        <div
+          className="mb-3 rounded-md border px-4 py-3 text-sm"
+          style={{ borderColor: "var(--portal-line)" }}
+        >
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <Pill tone={zep.ok ? "active" : "inactive"} withDot>
+              {zep.ok ? "Signature accepted" : `Rejected — ${zep.errorCode}`}
+            </Pill>
+            <span className="text-xs" style={{ color: "var(--portal-muted)" }}>
+              {zep.label} · HTTP {zep.httpStatus} · {zep.durationMs} ms
+            </span>
+          </div>
+          {zep.ok ? (
+            <p className="m-0 text-xs" style={{ color: "var(--portal-muted)" }}>
+              SÚKL accepted a signed message. That proves the whole signing path — digest scope,
+              canonicalisation and certificate delivery — which is what
+              <code> ZalozitPredpis</code> additionally requires. It creates nothing.
+            </p>
+          ) : (
+            <>
+              <p className="m-0 whitespace-pre-wrap break-words text-sm">{zep.errorMessage}</p>
+              {!zep.signed ? (
+                <p className="m-0 mt-1 text-xs" style={{ color: "var(--portal-muted)" }}>
+                  No signing certificate is configured. Set <code>SUKL_SIGNING_PFX_BASE64</code>{" "}
+                  and <code>SUKL_SIGNING_PFX_PASSWORD</code> — a PostSignum DEMO certificate is
+                  accepted in test. This is the doctor&rsquo;s signing key, not the facility
+                  certificate.
+                </p>
+              ) : null}
+              {zep.bodyExcerpt ? (
+                <pre className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap break-all text-xs">
+                  {zep.bodyExcerpt}
+                </pre>
+              ) : null}
+            </>
+          )}
+        </div>
       ) : null}
 
       {login ? (

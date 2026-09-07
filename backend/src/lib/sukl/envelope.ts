@@ -46,13 +46,40 @@ export interface SoapEnvelopeInput {
 }
 
 export function buildSoapEnvelope(input: SoapEnvelopeInput): string {
+  return wrapInSoapEnvelope(buildMessageElement(input));
+}
+
+/**
+ * The message element on its own — no envelope, namespace declared on the
+ * element itself.
+ *
+ * This is the exact unit SÚKL sign: elektronicky_podpis_zprav_v2.docx requires
+ * the digest to be taken over the message root WITHOUT the SOAP envelope, with
+ * the namespace declared on that root. Signing therefore builds this, signs it,
+ * and only then wraps it — see signing.ts.
+ */
+export function buildMessageElement(input: SoapEnvelopeInput): string {
+  return (
+    `<${input.operationElement} xmlns="${input.namespace}">` +
+    input.body +
+    `</${input.operationElement}>`
+  );
+}
+
+/**
+ * Wraps an already-built message element in the SOAP envelope.
+ *
+ * The element is inserted VERBATIM. For a signed message that is not a style
+ * preference but a correctness requirement: reformatting it, re-encoding it, or
+ * hoisting its namespace declaration onto the Envelope all invalidate the
+ * signature, and SÚKL's document forbids each explicitly.
+ */
+export function wrapInSoapEnvelope(messageElement: string): string {
   return (
     '<?xml version="1.0" encoding="utf-8"?>' +
     '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">' +
     "<soap:Body>" +
-    `<${input.operationElement} xmlns="${input.namespace}">` +
-    input.body +
-    `</${input.operationElement}>` +
+    messageElement +
     "</soap:Body>" +
     "</soap:Envelope>"
   );
