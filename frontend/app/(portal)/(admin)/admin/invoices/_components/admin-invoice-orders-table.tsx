@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { ChevronRight, ExternalLink, FileText } from "lucide-react";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDate } from "@/lib/format-datetime";
@@ -78,6 +77,44 @@ function EmailedPill({ emailSentAt }: { emailSentAt: string | null }) {
   );
 }
 
+/**
+ * Opens the same public capability link the patient's invoice email carries
+ * (minted on click via /view-link), rather than the admin-session print page —
+ * that path 404s from a fresh tab because guardMedicalRead's PHI-reason gate
+ * only fires from the in-app reason modal, not a plain navigation.
+ */
+function ViewInvoiceButton({ invoiceId }: { invoiceId: string }) {
+  const [loading, setLoading] = useState(false);
+
+  async function open() {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/admin/invoices/${invoiceId}/view-link`);
+      if (!res.ok) throw new Error(`View link failed (${res.status})`);
+      const json = (await res.json()) as { data?: { url?: string } };
+      if (json.data?.url) {
+        window.open(json.data.url, "_blank", "noopener,noreferrer");
+      }
+    } catch {
+      // Silent — the row's Download button remains a working fallback.
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={open}
+      disabled={loading}
+      className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-1.5 text-portal-thead font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)]"
+    >
+      <ExternalLink className="size-3" aria-hidden />
+      {loading ? "Opening…" : "View"}
+    </button>
+  );
+}
+
 /** One document row inside an expanded order: title + status + per-document actions. */
 function DocumentRow({ doc }: { doc: InvoiceDocument }) {
   return (
@@ -110,15 +147,7 @@ function DocumentRow({ doc }: { doc: InvoiceDocument }) {
             </a>
           ) : null
         ) : (
-          <Link
-            href={`/print/order-invoices/${doc.id}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-1.5 text-portal-thead font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)]"
-          >
-            <ExternalLink className="size-3" aria-hidden />
-            View
-          </Link>
+          <ViewInvoiceButton invoiceId={doc.id} />
         )}
         {/* Download + Send-to-patient (email / WhatsApp) — one document each. */}
         <InvoiceRowActions invoiceId={doc.id} />

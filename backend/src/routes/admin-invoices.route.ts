@@ -14,6 +14,8 @@ import { resolveOrderPaymentUrl } from "../modules/orders/order-payment-url.serv
 import { buildInvoicePdfData, renderInvoicePdfBuffer } from "../modules/invoices/invoice-pdf.js";
 import { resendInvoiceDocument, resendInvoiceWhatsApp } from "../modules/invoices/generate-invoice.service.js";
 import { buildInvoiceDetailPayload } from "../modules/invoices/invoice-detail.service.js";
+import { issueInvoicePublicCapability } from "../modules/invoices/invoice-public-link.service.js";
+import { absoluteSiteUrl } from "../lib/email/send-email.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import { getObject, streamToNodeReadable } from "../services/object-storage.js";
 
@@ -475,6 +477,52 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(err);
         return reply.status(500).send(errorResponse("Could not load invoice"));
+      }
+    },
+  );
+
+  // ── View link: the same public capability URL the patient's email carries ──
+  // The print page's admin-session path is subject to guardMedicalRead's
+  // PHI-reason gate, which only fires from the in-app reason modal — a fresh
+  // browser tab opened straight at /print/order-invoices/:id has no reason
+  // cookie/header, so the guard denies it and the page 404s. The public
+  // capability link (already minted for the patient's email, see
+  // generate-invoice.service.ts) is unguarded by design, so reusing it here
+  // gives admins a View button that always opens, not a second code path.
+  app.get<{ Params: { invoiceId: string } }>(
+    "/api/admin/invoices/:invoiceId/view-link",
+    async (request, reply) => {
+      const auth = await verifyAdminAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+
+      const params = idParamSchema.safeParse(request.params);
+      if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
+
+      try {
+        const invoice = await prisma.invoice.findUnique({
+          where: { id: params.data.invoiceId },
+          select: { orderId: true, countryCode: true },
+        });
+        if (!invoice) return reply.status(404).send(errorResponse("Invoice not found"));
+
+        const scope = await assertOrderCountryScope(request, invoice.orderId, invoice.countryCode);
+        if (!scope.allowed) {
+          return reply.status(scope.status).send(errorResponse(scope.message));
+        }
+
+        const token = await issueInvoicePublicCapability(params.data.invoiceId);
+        if (!token) return reply.status(404).send(errorResponse("Invoice not found"));
+
+        const url = absoluteSiteUrl(
+          `/print/order-invoices/${params.data.invoiceId}?token=${encodeURIComponent(token)}`,
+        );
+        return okResponse({ url });
+      } catch (err) {
+        if (err instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(err.message));
+        }
+        app.log.error(err);
+        return reply.status(500).send(errorResponse("Could not build view link"));
       }
     },
   );
