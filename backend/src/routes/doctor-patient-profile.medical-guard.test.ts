@@ -555,4 +555,38 @@ describe("doctor patient profile — medical access guard (AZ-4)", () => {
     assert.equal(res.statusCode, 200, res.body);
     assert.equal(res.json().data.status, "VERIFIED");
   });
+
+  // ── 7. The alert-update audit row carries no clinical free-text ───────────
+
+  it("13. an alert update is audited by field name, never by value", async (t) => {
+    if (!boot(t)) return;
+    const secret = `az4-audit-leak-${uniq}`;
+    const res = await app!.inject({
+      method: "PATCH",
+      url: `/api/doctor/patients/${enc(patientAEmail)}/profile`,
+      cookies: doctorACookie,
+      payload: { statusAlert: secret },
+    });
+    assert.equal(res.statusCode, 200, res.body);
+
+    const rows = await prisma.auditLog.findMany({
+      where: { action: "PATIENT_ALERT_UPDATED", entityId: patientAProfileId },
+      select: { metadata: true },
+    });
+    assert.ok(rows.length > 0, "the alert update must have been audited");
+    for (const row of rows) {
+      const metadata = (row.metadata ?? {}) as Record<string, unknown>;
+      assert.equal(metadata.patientProfileId, patientAProfileId);
+      // AuditLog is CSV-exported through /api/admin/audit-log with no
+      // per-record consent or country check, so the alert wording must never
+      // reach it — only which field changed. The text lives on the
+      // chart-scoped PatientAlertLog.
+      assert.ok(!("statusAlert" in metadata), "no alert value in the audit row");
+      assert.ok(!("clinicAlert" in metadata), "no alert value in the audit row");
+      assert.ok(
+        !JSON.stringify(metadata).includes(secret),
+        "the alert text must not appear anywhere in the audit metadata",
+      );
+    }
+  });
 });

@@ -455,11 +455,17 @@ const doctorPatientProfileRoute: FastifyPluginAsync = async (app) => {
             // typed — at a reused address the two name different people, and an
             // audit row keyed on the address records the wrong one.
             entityId: profile?.id ?? "unknown",
+            // Which alerts changed, never what they now say. The alert wording
+            // is clinical free-text about a named patient, and `AuditLog` is
+            // read and CSV-exported through /api/admin/audit-log with no
+            // per-record consent or country-folder check — so a value here is
+            // the same disclosure `MedicalAccessLog` exists to gate, written
+            // to the one log that does not gate it. The text itself lives on
+            // the chart-scoped `PatientAlertLog`, which is where the sibling
+            // removal event already keeps it.
             metadata: {
               patientProfileId: profile?.id ?? null,
               changes: alertChanges,
-              statusAlert: profile?.statusAlert ?? null,
-              clinicAlert: profile?.clinicAlert ?? null,
             },
             request,
           });
