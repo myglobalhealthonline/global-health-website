@@ -96,7 +96,15 @@ unused.
 ## What this leaves open
 
 - **`Lekar`** is verified against External Identities, so it must be the
-  doctor's own SÚKL login. `Login` on the Common service returns it.
+  doctor's own SÚKL login. `Login` returns it — confirmed 2026-09-07 as
+  `141EA8AA-F82D-4D74-A725-CDABE9973ACA`.
+- **`PZS` is not yet known.** Login returned an empty provider, so the required
+  11-digit provider code is unconfirmed. `00150928369` is the right shape, but
+  guessing it into a prescription is not acceptable.
+- **`ID_Zpravy` must be persisted.** On a create it doubles as the submission
+  identifier AND the authorisation id for any later amendment, so generating it
+  per call and discarding it — which the ping operations do — would make a
+  prescription unamendable.
 - **`Telefon`** is mandatory for the prescriber and we do not currently store a
   phone against `SuklDoctorIdentity`.
 - The product code lists (`hvlp_type` and the rest) are separate; a prescription

@@ -48,7 +48,10 @@ export interface SuklLoginResult {
   userCode: string | null;
   userSurname: string | null;
   userGivenNames: string | null;
-  /** Roles held by the person, e.g. LEKAR. */
+  /** Roles held by the person. Confirmed live 2026-09-07: `eRPlekar` is the
+   *  eRecept prescriber role, `ePPracovnikVydeje` the ePoukaz dispensing one.
+   *  NOT the `typ_pristupujiciho` enum (LEKAR, LEKARNIK…), which is a
+   *  different vocabulary used inside document payloads. */
   personRoles: string[];
   /** Roles held by the subject/organisation. */
   subjectRoles: string[];

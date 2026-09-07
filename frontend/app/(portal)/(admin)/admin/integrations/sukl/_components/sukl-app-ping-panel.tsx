@@ -281,9 +281,11 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
               <p className="m-0 mt-1 text-xs" style={{ color: "var(--portal-muted)" }}>
                 Roles: {login.personRoles.join(", ") || "—"}
                 {login.subjectRoles.length ? ` · subject: ${login.subjectRoles.join(", ")}` : ""}.
-                A prescriber should hold <code>LEKAR</code>, and the provider code should match
-                the workplace code above — this is SÚKL&rsquo;s own answer, so it settles whether
-                the registration is correctly linked.
+                A prescriber holds <code>eRPlekar</code>; <code>eRPambulance</code> is the
+                outpatient subject role. This is SÚKL&rsquo;s own answer about the account, so it
+                settles whether the doctor is registered to prescribe. An empty provider does not
+                by itself mean unregistered — but <code>Predepisujici.PZS</code> is required when
+                issuing a prescription, so that value still has to come from somewhere.
               </p>
             </>
           ) : (
