@@ -192,3 +192,83 @@ export async function deleteAdminTestCenterExam(testCenterId: string, offeringId
     { method: "DELETE" },
   );
 }
+
+// ─── Availability ("Book a Test" booking inventory) ────────────────────────
+
+/**
+ * One recurring weekly opening-hours window. Same shape the doctor availability
+ * API returns, deliberately: the admin week grid renders either owner from this.
+ *
+ * Minutes are center-LOCAL wall clock, resolved against the center's country
+ * timezone — which is why the list endpoint returns `timeZone` alongside.
+ */
+export type AdminTestCenterAvailabilityDto = {
+  id: string;
+  /** 0 = Sunday … 6 = Saturday. Matches `Date#getDay()`. */
+  weekday: number;
+  startMinute: number;
+  endMinute: number;
+  slotDurationMinutes: number;
+  effectiveFrom: string | null;
+  effectiveUntil: string | null;
+  isActive: boolean;
+};
+
+export type AdminTestCenterSlotDto = {
+  id: string;
+  startAt: string;
+  endAt: string;
+  status: "OPEN" | "HELD" | "BOOKED" | "BLOCKED";
+  blockReason: string | null;
+  isAdHoc: boolean;
+};
+
+export async function fetchAdminTestCenterAvailability(testCenterId: string) {
+  return adminRequest<{
+    availability: AdminTestCenterAvailabilityDto[];
+    timeZone: string;
+  }>(`/api/admin/test-centers/${testCenterId}/availability`);
+}
+
+export async function createAdminTestCenterAvailability(
+  testCenterId: string,
+  body: unknown,
+) {
+  return adminRequest<{ availability: AdminTestCenterAvailabilityDto }>(
+    `/api/admin/test-centers/${testCenterId}/availability`,
+    { method: "POST", body },
+  );
+}
+
+export async function patchAdminTestCenterAvailability(
+  testCenterId: string,
+  availabilityId: string,
+  body: unknown,
+) {
+  return adminRequest<{ availability: AdminTestCenterAvailabilityDto }>(
+    `/api/admin/test-centers/${testCenterId}/availability/${availabilityId}`,
+    { method: "PATCH", body },
+  );
+}
+
+export async function deleteAdminTestCenterAvailability(
+  testCenterId: string,
+  availabilityId: string,
+) {
+  return adminRequest<{ deleted: boolean }>(
+    `/api/admin/test-centers/${testCenterId}/availability/${availabilityId}`,
+    { method: "DELETE" },
+  );
+}
+
+/** Every slot in a UTC range, whatever its status — the week grid's read. */
+export async function fetchAdminTestCenterSlots(
+  testCenterId: string,
+  fromUtc: string,
+  toUtc: string,
+) {
+  const params = new URLSearchParams({ fromUtc, toUtc });
+  return adminRequest<{ slots: AdminTestCenterSlotDto[] }>(
+    `/api/admin/test-centers/${testCenterId}/time-slots?${params.toString()}`,
+  );
+}
