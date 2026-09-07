@@ -222,6 +222,9 @@ const nextConfig: NextConfig = {
   // throttles itself instead. Builds are slower; they are also correct.
   experimental: {
     cpus: buildCpus,
+    // The blog editor posts every language's HTML body in one submit; six
+    // articles of ~80 KB brush the 1 MB default. Matches the backend bodyLimit.
+    serverActions: { bodySizeLimit: "5mb" },
     // Required now that there is no `app/layout.tsx` (each subtree owns its
     // own root layout so `[country]/[lang]` can emit the real `<html lang>`):
     // the `/_not-found` route has no root layout to render inside, so the 404
