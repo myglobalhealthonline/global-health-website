@@ -14,7 +14,7 @@ import { resolveOrderPaymentUrl } from "../modules/orders/order-payment-url.serv
 import { buildInvoicePdfData, renderInvoicePdfBuffer } from "../modules/invoices/invoice-pdf.js";
 import { resendInvoiceDocument, resendInvoiceWhatsApp } from "../modules/invoices/generate-invoice.service.js";
 import { buildInvoiceDetailPayload } from "../modules/invoices/invoice-detail.service.js";
-import { issueInvoicePublicCapability } from "../modules/invoices/invoice-public-link.service.js";
+import { issueInvoiceShortCapability } from "../modules/invoices/invoice-public-link.service.js";
 import { absoluteSiteUrl } from "../lib/email/send-email.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import { getObject, streamToNodeReadable } from "../services/object-storage.js";
@@ -510,11 +510,11 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
           return reply.status(scope.status).send(errorResponse(scope.message));
         }
 
-        const token = await issueInvoicePublicCapability(params.data.invoiceId);
+        const token = await issueInvoiceShortCapability(params.data.invoiceId);
         if (!token) return reply.status(404).send(errorResponse("Invoice not found"));
 
         const url = absoluteSiteUrl(
-          `/print/order-invoices/${params.data.invoiceId}?token=${encodeURIComponent(token)}`,
+          `/print/order-invoices/${params.data.invoiceId}?t=${encodeURIComponent(token)}`,
         );
         return okResponse({ url });
       } catch (err) {

@@ -84,21 +84,22 @@ function EmailedPill({ emailSentAt }: { emailSentAt: string | null }) {
  * only fires from the in-app reason modal, not a plain navigation.
  */
 function ViewInvoiceButton({ invoiceId }: { invoiceId: string }) {
-  const [loading, setLoading] = useState(false);
+  const [state, setState] = useState<"idle" | "loading" | "error">("idle");
 
   async function open() {
-    setLoading(true);
+    setState("loading");
     try {
       const res = await fetch(`/api/admin/invoices/${invoiceId}/view-link`);
       if (!res.ok) throw new Error(`View link failed (${res.status})`);
       const json = (await res.json()) as { data?: { url?: string } };
-      if (json.data?.url) {
-        window.open(json.data.url, "_blank", "noopener,noreferrer");
-      }
+      if (!json.data?.url) throw new Error("View link response carried no url");
+      window.open(json.data.url, "_blank", "noopener,noreferrer");
+      setState("idle");
     } catch {
-      // Silent — the row's Download button remains a working fallback.
-    } finally {
-      setLoading(false);
+      // Surfaced, not swallowed: a silent catch here is what made a missing
+      // proxy route look like a button that does nothing at all.
+      setState("error");
+      setTimeout(() => setState("idle"), 4000);
     }
   }
 
@@ -106,11 +107,11 @@ function ViewInvoiceButton({ invoiceId }: { invoiceId: string }) {
     <button
       type="button"
       onClick={open}
-      disabled={loading}
+      disabled={state === "loading"}
       className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-1.5 text-portal-thead font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)]"
     >
       <ExternalLink className="size-3" aria-hidden />
-      {loading ? "Opening…" : "View"}
+      {state === "loading" ? "Opening…" : state === "error" ? "Failed — retry" : "View"}
     </button>
   );
 }

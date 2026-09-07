@@ -5,7 +5,7 @@ import { absoluteSiteUrl } from "../../lib/email/send-email.js";
 import { sendSalesInvoiceCopy } from "../../lib/email/sales-invoice-copy.js";
 import type { PaymentLog } from "../orders/complete-order-payment.service.js";
 import { buildInvoicePdfData, renderInvoicePdfBuffer, type CreditNoteReason } from "./invoice-pdf.js";
-import { issueInvoicePublicCapability } from "./invoice-public-link.service.js";
+import { issueInvoiceShortCapability } from "./invoice-public-link.service.js";
 import { archiveInvoiceToDrive } from "./invoice-drive-archive.service.js";
 
 const noopLog: PaymentLog = {
@@ -75,12 +75,12 @@ async function renderAndSendInvoiceDoc(
 ): Promise<void> {
   const pdfBuffer = await renderInvoiceDocPdf(opts, log);
   try {
-    const token = await issueInvoicePublicCapability(opts.invoiceId);
+    const token = await issueInvoiceShortCapability(opts.invoiceId);
     if (!token) {
       throw new Error(`Could not mint a public capability for invoice ${opts.invoiceId}`);
     }
     const invoiceUrl = absoluteSiteUrl(
-      `/print/order-invoices/${opts.invoiceId}?token=${encodeURIComponent(token)}`,
+      `/print/order-invoices/${opts.invoiceId}?t=${encodeURIComponent(token)}`,
     );
     await sendInvoiceEmail({
       to: opts.email,
@@ -288,13 +288,13 @@ export async function resendInvoiceWhatsApp(
         ? "CREDIT_NOTE"
         : "INVOICE"
   ];
-  const token = await issueInvoicePublicCapability(invoice.id);
+  const token = await issueInvoiceShortCapability(invoice.id);
   if (!token) {
     log.warn({ invoiceId }, "Invoice WhatsApp resend skipped — could not mint public capability");
     return { ok: false, reason: "send_failed", message: "Could not generate the invoice link" };
   }
   const invoiceUrl = absoluteSiteUrl(
-    `/print/order-invoices/${invoice.id}?token=${encodeURIComponent(token)}`,
+    `/print/order-invoices/${invoice.id}?t=${encodeURIComponent(token)}`,
   );
   const result = await sendWhatsAppText({
     to: invoice.order.phone,
