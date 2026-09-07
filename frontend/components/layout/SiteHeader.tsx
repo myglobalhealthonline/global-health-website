@@ -138,14 +138,16 @@ function sectionNavForCountryLang(
   if (features?.includes("subscriptions")) {
     items.push({ href: `${base}/pricing`, label: nav.navPlans });
   }
-  items.push({ href: `${base}/blog`, label: nav.navBlog });
   // In-country: the market's own About, FAQ and contact pages (local NAP,
   // register, languages, offering, regulatory FAQs). About is a dropdown so
-  // the company pages (Careers, Press) ride along without new top-level pills.
+  // Blog and the company pages (Careers, Press) ride along without extra
+  // top-level pills — fewer pills is what keeps long locales (RO/PT/CZ) inside
+  // the header (Hassaan, 2026-09-07).
   items.push({
     label: nav.navAbout,
     children: [
       { href: `${base}/about`, label: nav.navAbout },
+      { href: `${base}/blog`, label: nav.navBlog },
       { href: `${base}/careers`, label: nav.footerCareers },
       { href: `${base}/press`, label: nav.footerPress },
     ],
@@ -171,11 +173,11 @@ function sectionNavGlobal(nav: SiteNavigationData): SectionNavItem[] {
       label: nav.navAbout,
       children: [
         { href: "/ireland/en/about", label: nav.navAbout },
+        { href: "/ireland/en/blog", label: nav.navBlog },
         { href: "/ireland/en/careers", label: nav.footerCareers },
         { href: "/ireland/en/press", label: nav.footerPress },
       ],
     },
-    { href: "/ireland/en/blog", label: nav.navBlog },
     // FAQ is footer-only sitewide (Hassaan, 2026-08-15).
     { href: "/contact", label: nav.navContact },
   ];
@@ -322,7 +324,9 @@ export function SiteHeader({
       </Link>
 
       {/* Section tabs — full set at xl+ only; below that the drawer
-          (hamburger) is the sole nav, no partial in-between row. */}
+          (hamburger) is the sole nav, no partial in-between row. At xl+ the
+          shell also measures: when a locale's labels do not fit the pill it
+          sets data-nav-overflow and CSS swaps nav+switchers for the drawer. */}
       <nav aria-label={a11y.sections} className="gh-header-navCenter hidden min-w-0 justify-center xl:flex">
         {sectionItems.length > 0 ? (
           <SectionNav items={sectionItems} variant="dark" label={a11y.sectionNavigation} />
@@ -331,7 +335,7 @@ export function SiteHeader({
 
       {/* Right — switchers + auth + CTA */}
       <div className="gh-header-actions flex items-center gap-2.5">
-        <div className="hidden xl:flex xl:items-center xl:gap-2">
+        <div className="gh-header-switchers hidden xl:flex xl:items-center xl:gap-2">
           <CountrySwitcher
             activeCountryCode={activeCountryCode}
             countries={countries}
@@ -381,7 +385,7 @@ export function SiteHeader({
             CTA (see MobileNav) — no duplicate pill in the header bar. */}
 
         {/* Mobile + tablet drawer trigger — shown below xl (incl. iPad). */}
-        <div className="xl:hidden">
+        <div className="gh-header-drawer xl:hidden">
           <MobileNav
             siteName={siteName}
             navigation={navigation}

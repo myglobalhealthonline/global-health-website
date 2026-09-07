@@ -2036,6 +2036,17 @@ img {
   justify-self: end;
 }
 
+/* Content-based collapse (HeaderScrollShell measures at xl+): a locale whose
+   labels overflow the pill drops to the drawer instead of spilling over the
+   switchers. Class+attr beats Tailwind's single-class xl: utilities. */
+.gh-header-sticky[data-nav-overflow] .gh-header-navCenter,
+.gh-header-sticky[data-nav-overflow] .gh-header-switchers {
+  display: none;
+}
+.gh-header-sticky[data-nav-overflow] .gh-header-drawer {
+  display: block;
+}
+
 .gh-header-authLink {
   min-height: 44px;
   align-items: center;
