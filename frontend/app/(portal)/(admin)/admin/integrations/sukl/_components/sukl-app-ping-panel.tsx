@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { Btn, Pill } from "../../../_components/atoms";
-import type { SuklAppInfoDto, SuklAppPingDto } from "@/lib/admin/admin-api/sukl";
+import type { SuklAppInfoDto, SuklAppPingDto, SuklLoginDto } from "@/lib/admin/admin-api/sukl";
 
 /**
  * Calls SÚKL's `AppPing` — the first real SOAP operation.
@@ -37,11 +37,35 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<SuklAppPingDto | null>(null);
   const [info, setInfo] = useState<SuklAppInfoDto | null>(null);
+  const [login, setLogin] = useState<SuklLoginDto | null>(null);
+
+  async function runLogin() {
+    setBusy(true);
+    setError(null);
+    setInfo(null);
+    setLogin(null);
+    try {
+      const res = await fetch(`/api/admin/sukl/login?service=${service}`, { method: "POST" });
+      const json = (await res.json().catch(() => null)) as
+        | { ok?: boolean; message?: string; data?: SuklLoginDto }
+        | null;
+      if (!res.ok || !json?.ok || !json.data) {
+        setError(json?.message ?? "Login could not be sent");
+        return;
+      }
+      setLogin(json.data);
+    } catch {
+      setError("Login could not be sent");
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function runInfo() {
     setBusy(true);
     setError(null);
     setInfo(null);
+    setLogin(null);
     try {
       const res = await fetch(`/api/admin/sukl/app-info?service=${service}`, { method: "POST" });
       const json = (await res.json().catch(() => null)) as
@@ -64,6 +88,7 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
     setError(null);
     setResult(null);
     setInfo(null);
+    setLogin(null);
     try {
       const qs = new URLSearchParams({ service, path });
       const res = await fetch(`/api/admin/sukl/app-ping?${qs}`, { method: "POST" });
@@ -121,6 +146,9 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
           <Btn onClick={runInfo} disabled={busy || !callable} variant="secondary" size="sm">
             {busy ? "…" : "GetAppInfo"}
           </Btn>
+          <Btn onClick={runLogin} disabled={busy || !callable} variant="secondary" size="sm">
+            {busy ? "…" : "Login"}
+          </Btn>
         </div>
       </div>
 
@@ -135,6 +163,56 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
 
       {error ? (
         <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">{error}</p>
+      ) : null}
+
+      {login ? (
+        <div
+          className="mb-3 rounded-md border px-4 py-3 text-sm"
+          style={{ borderColor: "var(--portal-line)" }}
+        >
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <Pill tone={login.ok ? "active" : "inactive"} withDot>
+              {login.ok ? "Login" : `Rejected — ${login.errorCode}`}
+            </Pill>
+            <span className="text-xs" style={{ color: "var(--portal-muted)" }}>
+              {login.label} · HTTP {login.httpStatus} · {login.durationMs} ms
+            </span>
+          </div>
+          {login.ok ? (
+            <>
+              <p className="m-0 text-sm">
+                SÚKL recognise this account as{" "}
+                <strong>
+                  {[login.userGivenNames, login.userSurname].filter(Boolean).join(" ") || "—"}
+                </strong>
+                {login.userCode ? (
+                  <>
+                    {" "}
+                    (<code>{login.userCode}</code>)
+                  </>
+                ) : null}
+              </p>
+              <p className="m-0 mt-1 text-sm">
+                Provider: <strong>{login.providerName ?? "—"}</strong>
+                {login.providerCode ? (
+                  <>
+                    {" "}
+                    · <code>{login.providerCode}</code>
+                  </>
+                ) : null}
+              </p>
+              <p className="m-0 mt-1 text-xs" style={{ color: "var(--portal-muted)" }}>
+                Roles: {login.personRoles.join(", ") || "—"}
+                {login.subjectRoles.length ? ` · subject: ${login.subjectRoles.join(", ")}` : ""}.
+                A prescriber should hold <code>LEKAR</code>, and the provider code should match
+                the workplace code above — this is SÚKL&rsquo;s own answer, so it settles whether
+                the registration is correctly linked.
+              </p>
+            </>
+          ) : (
+            <p className="m-0 whitespace-pre-wrap break-words text-sm">{login.errorMessage}</p>
+          )}
+        </div>
       ) : null}
 
       {info ? (

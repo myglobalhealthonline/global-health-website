@@ -123,6 +123,24 @@ export type SuklAppPingDto = {
   responseHeaders: Record<string, string> | null;
 };
 
+/** Result of Login — SÚKL's own statement of who this account is. */
+export type SuklLoginDto = {
+  service: string;
+  label: string;
+  ok: boolean;
+  httpStatus: number;
+  durationMs: number;
+  userCode: string | null;
+  userSurname: string | null;
+  userGivenNames: string | null;
+  personRoles: string[];
+  subjectRoles: string[];
+  providerCode: string | null;
+  providerName: string | null;
+  errorCode: string | null;
+  errorMessage: string | null;
+};
+
 export type SuklDocumentTypeDto = {
   version: string | null;
   prefix: string | null;

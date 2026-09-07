@@ -7,6 +7,7 @@ import {
   getSuklHealthStatus,
   runSuklAppPing,
   runSuklGetAppInfo,
+  runSuklLogin,
   listSuklDoctorIdentities,
   revokeSuklDoctorIdentity,
   runSuklConnectionTest,
@@ -223,6 +224,42 @@ const adminSuklRoute: FastifyPluginAsync = async (app) => {
           httpStatus: result.httpStatus,
           reportedBuild: result.applicationVersion,
           documentTypeCount: result.documentTypes.length,
+          errorCode: result.errorCode,
+        },
+      });
+      return okResponse(result);
+    } catch (error) {
+      return handleError(app, reply, error);
+    }
+  });
+
+  /**
+   * Login — asks SÚKL which roles the account holds and which provider it is
+   * bound to. Read-only; it creates nothing and sends no prescription.
+   */
+  app.post("/api/admin/sukl/login", async (request, reply) => {
+    const query = suklPingQuerySchema.pick({ service: true }).safeParse(request.query);
+    if (!query.success) {
+      return reply.status(400).send(errorResponse("Invalid service", query.error.flatten()));
+    }
+    const actor = resolveAdminSessionActor(request);
+    try {
+      const result = await runSuklLogin(query.data.service);
+      await recordAudit({
+        actorUserId: actor?.userId ?? null,
+        actorRole: actor?.role ?? null,
+        action: "SUKL_CONNECTION_TESTED",
+        entityType: "SuklFacilityIntegration",
+        entityId: query.data.service,
+        request,
+        metadata: {
+          kind: "login",
+          ok: result.ok,
+          httpStatus: result.httpStatus,
+          // The provider code and role names are not secrets and are the whole
+          // point of the call; the person's name is not recorded here.
+          providerCode: result.providerCode,
+          personRoles: result.personRoles,
           errorCode: result.errorCode,
         },
       });
