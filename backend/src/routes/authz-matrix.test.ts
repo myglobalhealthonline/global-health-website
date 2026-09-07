@@ -908,6 +908,119 @@ describe("authorization matrix", () => {
     }
   });
 
+  // ── AZ-6: the same ten swallows in account-profile.route.ts ──────────────
+  // Identical defect and identical fix to AZ-5 above, on the patient's own
+  // insurance / ID-document / selfie / verification / nationality endpoints.
+  //
+  // Note on coverage: GET and PATCH `/api/account/profile` themselves call no
+  // guard at all — there is no swallow there to fix and nothing for enforce
+  // mode to deny — so the read/write pair exercised here is the guarded
+  // equivalent, GET `/api/account/profile/insurance` and the insurance
+  // document upload. That gap is reported, not closed, in this item.
+  it("AZ-6: enforce mode — a linked patient reads their own insurance → 200", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/account/profile/insurance",
+      cookies: patient1Cookie,
+    });
+    assert.equal(res.statusCode, 200, res.body);
+  });
+
+  it("AZ-6: enforce mode — an unlinked patient's insurance read is denied → 403", async (t) => {
+    if (!app) return t.skip();
+    const before = await prisma.medicalAccessLog.count({
+      where: { patientProfileId: unlinkedPatientProfileId },
+    });
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/account/profile/insurance",
+      cookies: unlinkedPatientCookie,
+    });
+    assert.equal(res.statusCode, 403, res.body);
+    assert.equal(res.json().details.reasonCode, "PATIENT_NOT_OWN_RECORD", res.body);
+    const after = await prisma.medicalAccessLog.count({
+      where: { patientProfileId: unlinkedPatientProfileId },
+    });
+    assert.ok(after > before, "the denied read is still written to MedicalAccessLog");
+  });
+
+  it("AZ-6: enforce mode — the verification-status read is denied → 403", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/account/profile/verification",
+      cookies: unlinkedPatientCookie,
+    });
+    assert.equal(res.statusCode, 403, res.body);
+  });
+
+  it("AZ-6: enforce mode — the insurance upload is denied → 403, nothing stored", async (t) => {
+    if (!app) return t.skip();
+    const before = await prisma.patientProfile.findUniqueOrThrow({
+      where: { id: unlinkedPatientProfileId },
+      select: { insuranceDocumentKey: true, insuranceDocumentStatus: true },
+    });
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/account/profile/insurance/document",
+      cookies: unlinkedPatientCookie,
+      payload: "",
+      headers: { "content-type": "multipart/form-data; boundary=authz" },
+    });
+    // 403, not the 503 the unconfigured object store would give: the guard now
+    // runs BEFORE the storage-capability check and the multipart read, so a
+    // denial can never land on a file that has already been written.
+    assert.equal(res.statusCode, 403, res.body);
+    const after = await prisma.patientProfile.findUniqueOrThrow({
+      where: { id: unlinkedPatientProfileId },
+      select: { insuranceDocumentKey: true, insuranceDocumentStatus: true },
+    });
+    assert.deepEqual(after, before, "a denied upload writes nothing to the chart");
+  });
+
+  it("AZ-6: enforce mode — the ID-document download is denied → 403", async (t) => {
+    if (!app) return t.skip();
+    // The route answers 404 for a chart with no ID document, and that check
+    // precedes the guard by design — a 404 for a document that does not exist
+    // discloses nothing. Give the chart a key so the request actually reaches
+    // the guard, which is what this test is about.
+    await prisma.patientProfile.update({
+      where: { id: unlinkedPatientProfileId },
+      data: { idDocumentKey: `authz-test/${uniq}/unlinked-id.pdf` },
+    });
+    try {
+      const res = await app.inject({
+        method: "GET",
+        url: "/api/account/profile/id-document/download",
+        cookies: unlinkedPatientCookie,
+      });
+      // 403, not the 500 the unconfigured object store would give — the guard
+      // denies before getObject is ever reached.
+      assert.equal(res.statusCode, 403, res.body);
+    } finally {
+      await prisma.patientProfile.update({
+        where: { id: unlinkedPatientProfileId },
+        data: { idDocumentKey: null },
+      });
+    }
+  });
+
+  it("AZ-6: shadow mode — the same insurance read is served, denial logged only", async (t) => {
+    if (!app) return t.skip();
+    envModule.MEDICAL_ACCESS_ENFORCE = false;
+    try {
+      const res = await app.inject({
+        method: "GET",
+        url: "/api/account/profile/insurance",
+        cookies: unlinkedPatientCookie,
+      });
+      assert.equal(res.statusCode, 200, res.body);
+    } finally {
+      envModule.MEDICAL_ACCESS_ENFORCE = true;
+    }
+  });
+
   it("S-032 fix: blocks the admin read once a break-glass reason is required but not supplied", async (t) => {
     if (!app) return t.skip();
     const originalRequireReason = envModule.ADMIN_PHI_REQUIRE_REASON;

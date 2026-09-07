@@ -30,7 +30,11 @@ import {
 } from "../modules/identity-verification/identity-verification.service.js";
 import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 import { verifySniffedMime } from "../utils/sniff-mime.js";
-import { guardMedicalRead, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
+import {
+  guardMedicalRead,
+  MedicalAccessDeniedError,
+  medicalAccessDeniedResponse,
+} from "../utils/guard-medical-read.js";
 import {
   putObject,
   isMediaStorageConfigured,
@@ -126,6 +130,45 @@ async function requirePatient(request: { authUser?: { role: string; email: strin
   return profile;
 }
 
+/**
+ * Run the medical-access guard and HONOUR its verdict.
+ *
+ * Returns the sent 403 reply when access is denied (so the caller's
+ * `if (denied) return denied;` ends the handler), and `null` when it is
+ * allowed. Anything that is not a denial is re-thrown — a guard that fails for
+ * an unrelated reason must not read as permission.
+ *
+ * Every call site here used to be
+ * `guardMedicalRead(...).catch((e) => { if (!(e instanceof
+ * MedicalAccessDeniedError)) throw e; })` — the same swallow 636b1432 fixed in
+ * medical-documents.route.ts, and the same mechanical carry-over from the
+ * fire-and-forget `logAccess()` these guard calls replaced. In enforce mode
+ * (production: COMPLIANCE_MODE defaults to "strict") the deny decision was
+ * computed, logged, alerted on, and then discarded, and the PHI was served
+ * anyway. Shadow mode is unaffected: there the guard never throws, so this
+ * stays log-only exactly as before.
+ *
+ * For a PATIENT actor the guard has one deny path, PATIENT_NOT_OWN_RECORD:
+ * `requirePatient` above resolves the chart by the session's own address, so a
+ * denial means that chart carries the patient's address but is not linked to
+ * their account (`PatientProfile.userId` null or pointing elsewhere).
+ */
+async function denyIfMedicalAccessBlocked(
+  request: Parameters<typeof guardMedicalRead>[0] & { authUser?: { sub: string } | null },
+  reply: { status: (code: number) => { send: (body: unknown) => unknown } },
+  target: Parameters<typeof guardMedicalRead>[2],
+): Promise<unknown | null> {
+  try {
+    await guardMedicalRead(request, { userId: request.authUser!.sub, role: "PATIENT" }, target);
+    return null;
+  } catch (guardError) {
+    if (guardError instanceof MedicalAccessDeniedError) {
+      return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+    }
+    throw guardError;
+  }
+}
+
 
 const accountProfileRoute: FastifyPluginAsync = async (app) => {
   app.addHook("preHandler", requireAuth);
@@ -212,11 +255,12 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
       });
       if (!row) return reply.status(404).send(errorResponse("Profile not found"));
 
-      await guardMedicalRead(
-        request,
-        { userId: request.authUser!.sub, role: "PATIENT" },
-        { patientProfileId: profile.id, resourceType: "INSURANCE_DOC", accessAction: "VIEWED" },
-      ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
+      const denied = await denyIfMedicalAccessBlocked(request, reply, {
+        patientProfileId: profile.id,
+        resourceType: "INSURANCE_DOC",
+        accessAction: "VIEWED",
+      });
+      if (denied) return denied;
 
       return okResponse({
         insurance: {
@@ -262,6 +306,18 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/account/profile/insurance/document", async (request, reply) => {
     const profile = await requirePatient(request);
     if (!profile) return reply.status(403).send(errorResponse("Patient access required"));
+
+    // Authorize BEFORE anything is stored. This guard used to run after
+    // putObject + the profile write, so honouring its denial there would have
+    // reported 403 on a file already written to another patient's chart — the
+    // same ordering 636b1432 corrected on the medical-documents upload.
+    const denied = await denyIfMedicalAccessBlocked(request, reply, {
+      patientProfileId: profile.id,
+      resourceType: "INSURANCE_DOC",
+      accessAction: "UPLOADED",
+    });
+    if (denied) return denied;
+
     if (!isMediaStorageConfigured()) {
       return reply.status(503).send(errorResponse("Upload storage not configured"));
     }
@@ -301,15 +357,6 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
         },
       });
 
-      // Log-only by design: a patient's own-record access is never blocked
-      // (even in enforce mode), so the guard runs after the write to record
-      // only uploads that actually happened.
-      await guardMedicalRead(
-        request,
-        { userId: request.authUser!.sub, role: "PATIENT" },
-        { patientProfileId: profile.id, resourceType: "INSURANCE_DOC", accessAction: "UPLOADED" },
-      ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
-
       return okResponse({ uploaded: true }, "Insurance document uploaded");
     } catch (error) {
       app.log.error(error);
@@ -322,6 +369,15 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/account/profile/id-document", async (request, reply) => {
     const profile = await requirePatient(request);
     if (!profile) return reply.status(403).send(errorResponse("Patient access required"));
+
+    // Authorize BEFORE anything is stored — see the insurance upload above.
+    const denied = await denyIfMedicalAccessBlocked(request, reply, {
+      patientProfileId: profile.id,
+      resourceType: "ID_DOC",
+      accessAction: "UPLOADED",
+    });
+    if (denied) return denied;
+
     if (!isMediaStorageConfigured()) {
       return reply.status(503).send(errorResponse("Upload storage not configured"));
     }
@@ -383,12 +439,6 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
         await reopenVerificationCycleForEditing(profile.id).catch(() => false);
       }
 
-      await guardMedicalRead(
-        request,
-        { userId: request.authUser!.sub, role: "PATIENT" },
-        { patientProfileId: profile.id, resourceType: "ID_DOC", accessAction: "UPLOADED" },
-      ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
-
       return okResponse({ uploaded: true, side }, `ID document (${side}) uploaded`);
     } catch (error) {
       app.log.error(error);
@@ -401,6 +451,18 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/account/profile/identity-verification/selfie", async (request, reply) => {
     const profile = await requirePatient(request);
     if (!profile) return reply.status(403).send(errorResponse("Patient access required"));
+
+    // Authorize BEFORE anything is stored — see the insurance upload above.
+    // It matters most here: this is the moment biometric-adjacent data enters
+    // the workflow, and the guard used to run after both the object write and
+    // the verification cycle had already been opened.
+    const denied = await denyIfMedicalAccessBlocked(request, reply, {
+      patientProfileId: profile.id,
+      resourceType: "SELFIE_IMAGE",
+      accessAction: "UPLOADED",
+    });
+    if (denied) return denied;
+
     if (!isMediaStorageConfigured()) {
       return reply.status(503).send(errorResponse("Upload storage not configured"));
     }
@@ -455,12 +517,6 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
       if (!event) {
         return reply.status(500).send(errorResponse("Could not open verification"));
       }
-
-      await guardMedicalRead(
-        request,
-        { userId: request.authUser!.sub, role: "PATIENT" },
-        { patientProfileId: profile.id, resourceType: "SELFIE_IMAGE", accessAction: "UPLOADED" },
-      ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
 
       // Critical (not fire-and-forget): this is the moment biometric-adjacent
       // data enters the workflow, so a lost audit row must surface as an error.
@@ -593,11 +649,12 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
       });
       if (!row) return reply.status(404).send(errorResponse("Profile not found"));
 
-      await guardMedicalRead(
-        request,
-        { userId: request.authUser!.sub, role: "PATIENT" },
-        { patientProfileId: profile.id, resourceType: "VERIFICATION_STATUS", accessAction: "VIEWED" },
-      ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
+      const denied = await denyIfMedicalAccessBlocked(request, reply, {
+        patientProfileId: profile.id,
+        resourceType: "VERIFICATION_STATUS",
+        accessAction: "VIEWED",
+      });
+      if (denied) return denied;
 
       // The storage key itself never leaves the server — the portal only needs
       // to know whether a document exists, so it can offer "replace" instead
@@ -621,11 +678,12 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
     try {
       const docs = await listNationalityDocuments(profile.id);
 
-      await guardMedicalRead(
-        request,
-        { userId: request.authUser!.sub, role: "PATIENT" },
-        { patientProfileId: profile.id, resourceType: "NATIONALITY_DOC", accessAction: "VIEWED" },
-      ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
+      const denied = await denyIfMedicalAccessBlocked(request, reply, {
+        patientProfileId: profile.id,
+        resourceType: "NATIONALITY_DOC",
+        accessAction: "VIEWED",
+      });
+      if (denied) return denied;
 
       return okResponse({ nationalityDocuments: docs });
     } catch (error) {
@@ -691,6 +749,15 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/account/profile/nationality/:slot/upload", async (request, reply) => {
     const profile = await requirePatient(request);
     if (!profile) return reply.status(403).send(errorResponse("Patient access required"));
+
+    // Authorize BEFORE anything is stored — see the insurance upload above.
+    const denied = await denyIfMedicalAccessBlocked(request, reply, {
+      patientProfileId: profile.id,
+      resourceType: "NATIONALITY_DOC",
+      accessAction: "UPLOADED",
+    });
+    if (denied) return denied;
+
     if (!isMediaStorageConfigured()) {
       return reply.status(503).send(errorResponse("Upload storage not configured"));
     }
@@ -749,12 +816,6 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
         data,
       });
 
-      await guardMedicalRead(
-        request,
-        { userId: request.authUser!.sub, role: "PATIENT" },
-        { patientProfileId: profile.id, resourceType: "NATIONALITY_DOC", accessAction: "UPLOADED" },
-      ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
-
       return okResponse({ uploaded: true, side, slot: slotRaw }, "Document uploaded");
     } catch (error) {
       app.log.error(error);
@@ -778,11 +839,12 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
       const key = side === "back" ? row?.idDocumentBackKey : row?.idDocumentKey;
       if (!key) return reply.status(404).send(errorResponse("Document not found"));
 
-      await guardMedicalRead(
-        request,
-        { userId: request.authUser!.sub, role: "PATIENT" },
-        { patientProfileId: profile.id, resourceType: "ID_DOC", accessAction: "DOWNLOADED" },
-      ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
+      const denied = await denyIfMedicalAccessBlocked(request, reply, {
+        patientProfileId: profile.id,
+        resourceType: "ID_DOC",
+        accessAction: "DOWNLOADED",
+      });
+      if (denied) return denied;
 
       const obj = await getObject(key);
       const stream = streamToNodeReadable(obj.Body);
@@ -810,11 +872,12 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
       });
       if (!row?.selfieImageKey) return reply.status(404).send(errorResponse("Photo not found"));
 
-      await guardMedicalRead(
-        request,
-        { userId: request.authUser!.sub, role: "PATIENT" },
-        { patientProfileId: profile.id, resourceType: "SELFIE_IMAGE", accessAction: "DOWNLOADED" },
-      ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
+      const denied = await denyIfMedicalAccessBlocked(request, reply, {
+        patientProfileId: profile.id,
+        resourceType: "SELFIE_IMAGE",
+        accessAction: "DOWNLOADED",
+      });
+      if (denied) return denied;
 
       const obj = await getObject(row.selfieImageKey);
       const stream = streamToNodeReadable(obj.Body);
@@ -848,11 +911,12 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
       const key = side === "back" ? doc?.backFileKey : doc?.frontFileKey;
       if (!key) return reply.status(404).send(errorResponse("Document not found"));
 
-      await guardMedicalRead(
-        request,
-        { userId: request.authUser!.sub, role: "PATIENT" },
-        { patientProfileId: profile.id, resourceType: "NATIONALITY_DOC", accessAction: "DOWNLOADED" },
-      ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
+      const denied = await denyIfMedicalAccessBlocked(request, reply, {
+        patientProfileId: profile.id,
+        resourceType: "NATIONALITY_DOC",
+        accessAction: "DOWNLOADED",
+      });
+      if (denied) return denied;
 
       const obj = await getObject(key);
       const stream = streamToNodeReadable(obj.Body);
