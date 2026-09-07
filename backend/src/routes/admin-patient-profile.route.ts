@@ -39,7 +39,7 @@ import {
 import { getObject, streamToNodeReadable } from "../services/object-storage.js";
 import { VerificationStatus } from "@prisma/client";
 import { guardMedicalRead, MedicalAccessDeniedError, medicalAccessDeniedResponse } from "../utils/guard-medical-read.js";
-import { decryptPhi } from "../lib/crypto/phi-crypto.js";
+import { resolveAdminListCountryFolders } from "../utils/order-country-scope.js";
 
 const stringField = (max: number) =>
   z.string().trim().max(max).nullable().optional();
@@ -626,6 +626,25 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
   // the distinct patients from Appointment history, de-duplicated by
   // (email, fullName, dateOfBirth). Registered profile holders are included
   // too, so a patient who registered but never booked still shows.
+  //
+  // It returns ONLY what a booking form selects on — email, name, date of
+  // birth, phone and the booking counters. It deliberately does NOT return the
+  // decrypted identity surface (national ID, tax ID, passport, utente number,
+  // postal address, insurance policy number) it used to: this fires per
+  // keystroke and hands back up to 50 patients at a time, so those documents
+  // were being disclosed in bulk for patients nobody chose to open, with no
+  // `MedicalAccessLog` row behind any of it. Guarding it per row is not the
+  // answer either — 50 guard calls per keystroke would bury the access log in
+  // rows nobody read and make the trail useless. The identity prefill belongs
+  // on `GET /api/admin/patients/:email/profile`, which already runs
+  // `guardMedicalRead` and writes exactly one log row for the one patient the
+  // admin actually selected; the booking forms call it from `selectPatient`.
+  //
+  // With nothing sensitive left in the response there is nothing here for
+  // `MedicalAccessLog` to record, which is why this handler stays unguarded.
+  // It is still country-clamped: a LOCAL_ADMIN must not even be offered a
+  // patient from a folder they do not administer, the same clamp the sibling
+  // `/api/admin/patients/search` applies.
   app.get("/api/admin/patients/by-email", async (request, reply) => {
     const query = z
       .object({ email: z.string().trim().max(254) })
@@ -641,9 +660,21 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
     }
 
     try {
+      // Same country clamp the rest of the admin lists use: null for
+      // ADMIN / SUPER_ADMIN, who legitimately reach every folder, and the
+      // assigned folders for a LOCAL_ADMIN. An empty array is a country-scoped
+      // admin with no folders assigned — `{ in: [] }` correctly matches
+      // nothing rather than falling open.
+      const scopedFolders = await resolveAdminListCountryFolders(request);
       const [appointments, profiles] = await Promise.all([
         prisma.appointment.findMany({
-          where: { email: { contains: q, mode: "insensitive" } },
+          // Both legs have to be clamped: a patient is reachable through their
+          // appointment history as well as their profile row, so clamping only
+          // one still offers the other.
+          where: {
+            email: { contains: q, mode: "insensitive" },
+            ...(scopedFolders ? { countryCode: { in: scopedFolders } } : {}),
+          },
           select: { email: true, fullName: true, dateOfBirth: true, phone: true, createdAt: true },
           orderBy: { createdAt: "desc" },
           take: 300,
@@ -652,77 +683,20 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           // Never offer a merged duplicate as a booking target — picking it
           // would start building a record on a profile that has already been
           // folded into someone else.
-          where: { email: { contains: q, mode: "insensitive" }, isMerged: false },
+          where: {
+            email: { contains: q, mode: "insensitive" },
+            isMerged: false,
+            ...(scopedFolders ? { countryFolderCode: { in: scopedFolders } } : {}),
+          },
           select: {
             email: true,
             fullName: true,
             dateOfBirth: true,
             phone: true,
-            nationalIdNumber: true,
-            taxIdNumber: true,
-            passportNumber: true,
-            utenteNumber: true,
-            addressLine1: true,
-            addressCity: true,
-            addressState: true,
-            addressPostalCode: true,
-            addressCountryCode: true,
-            insuranceProviderName: true,
-            insurancePolicyNumber: true,
           },
           take: 50,
         }),
       ]);
-
-      // PatientProfile is unique per email, so its ID / address fields are
-      // shared by every distinct person booked under that email. Index them
-      // by email to attach to each returned patient.
-      const profileByEmail = new Map<
-        string,
-        {
-          nationalIdNumber: string | null;
-          taxIdNumber: string | null;
-          passportNumber: string | null;
-          utenteNumber: string | null;
-          addressLine1: string | null;
-          addressCity: string | null;
-          addressState: string | null;
-          addressPostalCode: string | null;
-          addressCountryCode: string | null;
-          insuranceProviderName: string | null;
-          insurancePolicyNumber: string | null;
-        }
-      >();
-      // The booking picker must NEVER blank out just because one matched
-      // profile has a PHI field that won't decrypt (legacy row, key rotation,
-      // corrupt ciphertext). decryptPhi throws in those cases; here a single
-      // bad field would otherwise reject the whole Promise and empty the
-      // dropdown. Degrade per-field to null instead — the admin still sees the
-      // patient to book them; the prefill field is just blank.
-      const safeDecrypt = (value: string | null): string | null => {
-        try {
-          return decryptPhi(value);
-        } catch {
-          return null;
-        }
-      };
-      for (const profile of profiles) {
-        const email = profile.email?.trim().toLowerCase();
-        if (!email) continue;
-        profileByEmail.set(email, {
-          nationalIdNumber: safeDecrypt(profile.nationalIdNumber),
-          taxIdNumber: safeDecrypt(profile.taxIdNumber),
-          passportNumber: safeDecrypt(profile.passportNumber),
-          utenteNumber: safeDecrypt(profile.utenteNumber),
-          addressLine1: profile.addressLine1 ?? null,
-          addressCity: profile.addressCity ?? null,
-          addressState: profile.addressState ?? null,
-          addressPostalCode: profile.addressPostalCode ?? null,
-          addressCountryCode: profile.addressCountryCode ?? null,
-          insuranceProviderName: profile.insuranceProviderName ?? null,
-          insurancePolicyNumber: safeDecrypt(profile.insurancePolicyNumber),
-        });
-      }
 
       type Agg = {
         email: string;
@@ -777,19 +751,6 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         }
       }
 
-      const emptyProfile = {
-        nationalIdNumber: null,
-        taxIdNumber: null,
-        passportNumber: null,
-        utenteNumber: null,
-        addressLine1: null,
-        addressCity: null,
-        addressState: null,
-        addressPostalCode: null,
-        addressCountryCode: null,
-        insuranceProviderName: null,
-        insurancePolicyNumber: null,
-      };
       const patients = [...byKey.values()]
         .sort((a, b) => (b.lastBookedAt?.getTime() ?? 0) - (a.lastBookedAt?.getTime() ?? 0))
         .slice(0, 20)
@@ -800,7 +761,6 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           phone: p.phone,
           appointmentCount: p.appointmentCount,
           lastBookedAt: p.lastBookedAt ? p.lastBookedAt.toISOString() : null,
-          ...(profileByEmail.get(p.email) ?? emptyProfile),
         }));
 
       return okResponse({ patients });

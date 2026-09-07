@@ -24,19 +24,17 @@ export type ClinicOption = { id: string; name: string; city: string | null };
 /** Bookable consultation lengths (multiples of the 15-min base grid). */
 const DURATION_OPTIONS = [15, 30, 45, 60];
 
-/** An existing patient matching the typed email — from /api/admin/patients/by-email. */
+/** An existing patient matching the typed email — from /api/admin/patients/by-email.
+ *  That endpoint returns no identity documents (it fires per keystroke across
+ *  many patients); this dialog only asks for a name, email, date of birth and
+ *  phone, so it needs none. The full manual-booking form, which does prefill
+ *  identity fields, reads them from the guarded per-patient profile route. */
 type PatientOption = {
   email: string;
   fullName: string;
   dateOfBirth: string | null;
   phone: string | null;
   appointmentCount: number;
-  nationalIdNumber: string | null;
-  taxIdNumber: string | null;
-  passportNumber: string | null;
-  addressLine1: string | null;
-  addressCity: string | null;
-  addressCountryCode: string | null;
 };
 
 type Props = {

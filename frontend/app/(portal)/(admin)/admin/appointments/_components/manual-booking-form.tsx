@@ -81,7 +81,12 @@ type DoctorOption = {
 type ClinicOption = { id: string; name: string; city: string | null };
 
 /** A distinct existing patient matching the typed email — returned by
- *  /api/admin/patients/by-email and offered in the email-field dropdown. */
+ *  /api/admin/patients/by-email and offered in the email-field dropdown.
+ *
+ *  Suggestions carry no identity documents: that endpoint fires per keystroke
+ *  over many patients, so it returns only what this dropdown selects on. The
+ *  identity prefill arrives from the guarded per-patient read once a row is
+ *  actually clicked — see `selectPatient`. */
 type PatientOption = {
   email: string;
   fullName: string;
@@ -89,6 +94,11 @@ type PatientOption = {
   phone: string | null;
   appointmentCount: number;
   lastBookedAt: string | null;
+};
+
+/** The identity surface of `GET /api/admin/patients/:email/profile` — the
+ *  guarded read that replaces the fields the typeahead used to hand out. */
+type PatientIdentity = {
   nationalIdNumber: string | null;
   taxIdNumber: string | null;
   passportNumber: string | null;
@@ -502,7 +512,100 @@ export function ManualBookingForm({
     };
   }, [email]);
 
+  // The prefill below used to be synchronous — the identity fields arrived on
+  // the same typeahead payload the admin clicked. It is now a round trip, so
+  // by the time it lands the form may have moved on. These mirror the two
+  // fields it has to re-read at that point; the closure that fired the request
+  // captured their pre-fetch values.
+  const liveEmailRef = useRef(email);
+  const liveServiceIdRef = useRef(serviceId);
+  useEffect(() => {
+    liveEmailRef.current = email;
+    liveServiceIdRef.current = serviceId;
+  }, [email, serviceId]);
+
+  /**
+   * Fetch the chosen patient's identity documents from the guarded per-patient
+   * read. This is the endpoint that runs `guardMedicalRead`: one
+   * `MedicalAccessLog` row for the one patient the admin opened, and a 403 for
+   * a patient outside their country folders. The typeahead no longer carries
+   * these fields at all.
+   */
+  async function prefillIdentity(patientEmail: string) {
+    try {
+      const res = await fetch(
+        `/api/admin/patients/${encodeURIComponent(patientEmail)}/profile`,
+      );
+      const json = (await res.json()) as {
+        ok?: boolean;
+        data?: { profile?: Partial<PatientIdentity> | null };
+      };
+      // The booking is no longer for this address — another suggestion was
+      // picked, or the admin corrected the email by hand. Either way, stamping
+      // this patient's identity documents onto it would be a misidentification.
+      if (
+        liveEmailRef.current.trim().toLowerCase() !== patientEmail.trim().toLowerCase()
+      ) {
+        return;
+      }
+      if (!res.ok || !json.ok || !json.data?.profile) return;
+      const profile = json.data.profile;
+      // `selectPatient` blanked every one of these before firing the request,
+      // so a field that is no longer blank is one the admin typed into while
+      // this was in flight. Server data must not overwrite their keystrokes.
+      const fillIfUntouched = (value: string | null | undefined) => (current: string) =>
+        current === "" ? (value ?? "") : current;
+      setNationalIdNumber(fillIfUntouched(profile.nationalIdNumber));
+      setTaxIdNumber(fillIfUntouched(profile.taxIdNumber));
+      setPassportNumber(fillIfUntouched(profile.passportNumber));
+      setUtenteNumber(fillIfUntouched(profile.utenteNumber));
+      setAddressLine1(fillIfUntouched(profile.addressLine1));
+      setAddressCity(fillIfUntouched(profile.addressCity));
+      setAddressState(fillIfUntouched(profile.addressState));
+      setAddressPostalCode(fillIfUntouched(profile.addressPostalCode));
+      setAddressCountryCode(fillIfUntouched(profile.addressCountryCode));
+
+      const card =
+        profile.insuranceProviderName && profile.insurancePolicyNumber
+          ? { name: profile.insuranceProviderName, policyNumber: profile.insurancePolicyNumber }
+          : null;
+      setCardOnFile(card);
+      // A card that lands AFTER the admin has already picked a service needs
+      // care: `cardServices` narrows the list to what the card covers, and the
+      // effect above drops a `serviceId` that falls outside `visibleServices` —
+      // silently taking the service, doctor and slot with it. When the card
+      // covers the picked service, apply its insurer, exactly as
+      // `handleServiceChange` would have done had the card arrived in time.
+      // When it does not, leave the full list showing so the admin's pick
+      // survives; they can still narrow it with the card banner's toggle.
+      const pickedServiceId = liveServiceIdRef.current;
+      if (card && pickedServiceId) {
+        const cardMatch = services
+          .find((s) => s.id === pickedServiceId)
+          ?.insuranceOptions.find(
+            (o) => o.name.trim().toLowerCase() === card.name.trim().toLowerCase(),
+          );
+        if (cardMatch) {
+          setInsuranceCompanyId(cardMatch.companyId);
+          setInsurancePolicyNumber(card.policyNumber);
+        } else {
+          setShowAllServices(true);
+        }
+      }
+    } catch {
+      // Network failure: the fields stay as `selectPatient` cleared them and
+      // the admin fills them in by hand.
+    }
+  }
+
   // Prefill the patient identity fields from a chosen existing patient.
+  //
+  // Everything the dropdown itself knows is applied synchronously; the identity
+  // documents come from `GET /api/admin/patients/:email/profile`, which is
+  // guarded — it logs one `MedicalAccessLog` row for this one patient and 403s
+  // if they sit outside the admin's country folders. A failed or refused read
+  // leaves those fields blank and the admin types them, which is exactly the
+  // new-patient path; it must never block the booking.
   function selectPatient(p: PatientOption) {
     setEmail(p.email);
     setFullName(p.fullName);
@@ -512,20 +615,21 @@ export function ManualBookingForm({
       setDialCode(parts.dial);
       setPhoneNational(parts.national);
     }
-    setNationalIdNumber(p.nationalIdNumber ?? "");
-    setTaxIdNumber(p.taxIdNumber ?? "");
-    setPassportNumber(p.passportNumber ?? "");
-    setUtenteNumber(p.utenteNumber ?? "");
-    setAddressLine1(p.addressLine1 ?? "");
-    setAddressCity(p.addressCity ?? "");
-    setAddressState(p.addressState ?? "");
-    setAddressPostalCode(p.addressPostalCode ?? "");
-    setAddressCountryCode(p.addressCountryCode ?? "");
-    setCardOnFile(
-      p.insuranceProviderName && p.insurancePolicyNumber
-        ? { name: p.insuranceProviderName, policyNumber: p.insurancePolicyNumber }
-        : null,
-    );
+    // Clear the previous patient's identity documents FIRST. The guarded read
+    // below is asynchronous and may return nothing (denied, or the patient has
+    // none), and carrying the last patient's national ID or insurance card
+    // into this booking would be worse than an empty form.
+    setNationalIdNumber("");
+    setTaxIdNumber("");
+    setPassportNumber("");
+    setUtenteNumber("");
+    setAddressLine1("");
+    setAddressCity("");
+    setAddressState("");
+    setAddressPostalCode("");
+    setAddressCountryCode("");
+    setCardOnFile(null);
+    void prefillIdentity(p.email);
     setShowAllServices(false);
     // The service pick (if any) predates this card — force a reselect so
     // the filtered list and insurer auto-apply take effect.
