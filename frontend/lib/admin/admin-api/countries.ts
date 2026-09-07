@@ -109,9 +109,10 @@ type AdminCurrenciesListPayload = {
 
 export const fetchAdminClinicsByCountryCode = cache(async (countryCode: string) => {
   const code = countryCode.trim().toUpperCase();
+  // The clinics API pages at 50; this feeds dropdowns that must list every clinic.
   const path = code
-    ? `/api/admin/clinics?countryCode=${encodeURIComponent(code)}`
-    : "/api/admin/clinics";
+    ? `/api/admin/clinics?countryCode=${encodeURIComponent(code)}&pageSize=100`
+    : "/api/admin/clinics?pageSize=100";
   return adminRequest<{ clinics: AdminClinicDto[] }>(path);
 });
 

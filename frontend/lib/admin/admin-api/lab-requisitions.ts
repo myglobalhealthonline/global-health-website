@@ -63,6 +63,9 @@ export async function fetchLabRequisitions(params: {
   q?: string;
 } = {}) {
   const search = new URLSearchParams();
+  // The API pages at 25 and the list has no pager; ask for its maximum so a
+  // 26th requisition does not silently vanish.
+  search.set("pageSize", "100");
   if (params.page) search.set("page", String(params.page));
   if (params.status) search.set("status", params.status);
   if (params.countryCode) search.set("countryCode", params.countryCode);
