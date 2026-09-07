@@ -6,6 +6,7 @@ const state = {
 };
 
 let issueInvoicePublicCapability: (typeof import("./invoice-public-link.service.js"))["issueInvoicePublicCapability"];
+let issueInvoiceShortCapability: (typeof import("./invoice-public-link.service.js"))["issueInvoiceShortCapability"];
 let verifyInvoicePublicCapability: (typeof import("./invoice-public-link.service.js"))["verifyInvoicePublicCapability"];
 
 before(async () => {
@@ -57,9 +58,8 @@ before(async () => {
     },
   });
 
-  ({ issueInvoicePublicCapability, verifyInvoicePublicCapability } = await import(
-    "./invoice-public-link.service.js"
-  ));
+  ({ issueInvoicePublicCapability, issueInvoiceShortCapability, verifyInvoicePublicCapability } =
+    await import("./invoice-public-link.service.js"));
 });
 
 beforeEach(() => {
@@ -79,6 +79,28 @@ describe("invoice public capability", () => {
     state.nonceByInvoiceId.set("inv_1", "rotated-nonce");
 
     assert.equal(await verifyInvoicePublicCapability("inv_1", token ?? undefined), false);
+  });
+
+  it("issues the short capability as the raw nonce and verifies it", async () => {
+    const token = await issueInvoiceShortCapability("inv_1");
+
+    assert.equal(token, "invoice-nonce");
+    assert.equal(await verifyInvoicePublicCapability("inv_1", token ?? undefined), true);
+  });
+
+  it("rejects a short capability after the invoice nonce rotates", async () => {
+    const token = await issueInvoiceShortCapability("inv_1");
+    state.nonceByInvoiceId.set("inv_1", "rotated-nonce");
+
+    assert.equal(await verifyInvoicePublicCapability("inv_1", token ?? undefined), false);
+  });
+
+  it("still verifies the long signed capability from older emails", async () => {
+    const shortToken = await issueInvoiceShortCapability("inv_1");
+    const signed = await issueInvoicePublicCapability("inv_1");
+
+    assert.notEqual(signed, shortToken);
+    assert.equal(await verifyInvoicePublicCapability("inv_1", signed ?? undefined), true);
   });
 
   it("rejects a missing token", async () => {

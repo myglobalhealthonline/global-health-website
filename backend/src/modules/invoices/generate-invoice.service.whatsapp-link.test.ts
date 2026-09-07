@@ -49,7 +49,7 @@ before(async () => {
   });
   mock.module("./invoice-public-link.service.js", {
     namedExports: {
-      issueInvoicePublicCapability: async () => "invoice-capability-token",
+      issueInvoiceShortCapability: async () => "invoice-capability-token",
     },
   });
   mock.module("../../lib/whatsapp/wasender.js", {
@@ -98,7 +98,7 @@ describe("resendInvoiceWhatsApp secure link", () => {
     assert.deepEqual(result, { ok: true });
     assert.match(
       sentMessage,
-      /https:\/\/www\.myglobalhealth\.test\/print\/order-invoices\/inv_1\?token=invoice-capability-token/,
+      /https:\/\/www\.myglobalhealth\.test\/print\/order-invoices\/inv_1\?t=invoice-capability-token/,
     );
   });
 
