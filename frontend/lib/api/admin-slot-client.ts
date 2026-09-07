@@ -7,17 +7,33 @@ type Result<T> =
   | { ok: false; message: string };
 
 /**
- * Block / unblock / remove many of one doctor's slots in a single request —
+ * Which calendar these writes address. Both owners expose the SAME slot API
+ * shape (`/api/admin/<kind>/<id>/time-slots...`), so the only thing that varies
+ * is the path segment — parameterising it here is what lets one admin week grid
+ * drive a doctor's calendar or a test center's.
+ *
+ * `kind` is a closed union rather than a free string so a typo cannot silently
+ * produce a 404 against a path that does not exist.
+ */
+export type SlotOwner = { kind: "doctors" | "test-centers"; id: string };
+
+/** `/api/admin/doctors/<id>` or `/api/admin/test-centers/<id>`. */
+function ownerBase(owner: SlotOwner): string {
+  return `/api/admin/${owner.kind}/${encodeURIComponent(owner.id)}`;
+}
+
+/**
+ * Block / unblock / remove many of one owner's slots in a single request —
  * either a date × time sweep (`spans`, already expanded to UTC by the caller,
  * which owns the display timezone) or an explicit selection (`slotIds`).
  * BOOKED/HELD slots come back in `skippedOccupied` rather than failing it.
  */
 export async function adminBulkSlotAction(
-  doctorId: string,
+  owner: SlotOwner,
   input: BulkSlotInput,
 ): Promise<Result<BulkSlotResult>> {
   const res = await fetch(
-    `/api/admin/doctors/${encodeURIComponent(doctorId)}/time-slots/bulk`,
+    `${ownerBase(owner)}/time-slots/bulk`,
     {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -32,19 +48,19 @@ export async function adminBulkSlotAction(
 }
 
 /**
- * Admin block/unblock of one doctor slot. The doctor-side twin lives in
- * `doctor-availability-client.ts`; this one carries the doctorId because an
- * admin session has no doctor anchor of its own — the backend scopes the
- * write to that doctor's country.
+ * Admin block/unblock of one slot. The doctor-side twin lives in
+ * `doctor-availability-client.ts`; this one carries the owner because an admin
+ * session has no doctor anchor of its own — the backend scopes the write to
+ * that owner's country.
  */
 export async function adminToggleSlotStatus(
-  doctorId: string,
+  owner: SlotOwner,
   slotId: string,
   status: "OPEN" | "BLOCKED",
   reason?: string,
 ): Promise<Result<{ slot: { id: string; status: string; blockReason: string | null } }>> {
   const res = await fetch(
-    `/api/admin/doctors/${encodeURIComponent(doctorId)}/time-slots/${encodeURIComponent(slotId)}`,
+    `${ownerBase(owner)}/time-slots/${encodeURIComponent(slotId)}`,
     {
       method: "PATCH",
       headers: { "content-type": "application/json" },
@@ -64,12 +80,12 @@ export async function adminToggleSlotStatus(
  * the same status. Refused (409) if a booked or held slot is in the way.
  */
 export async function adminResizeSlot(
-  doctorId: string,
+  owner: SlotOwner,
   slotId: string,
   durationMinutes: number,
 ): Promise<Result<{ slot: { id: string; status: string } }>> {
   const res = await fetch(
-    `/api/admin/doctors/${encodeURIComponent(doctorId)}/time-slots/${encodeURIComponent(slotId)}`,
+    `${ownerBase(owner)}/time-slots/${encodeURIComponent(slotId)}`,
     {
       method: "PATCH",
       headers: { "content-type": "application/json" },
@@ -84,7 +100,7 @@ export async function adminResizeSlot(
 }
 
 /**
- * Add one-off slots at the given instants. Nothing to do with the doctor's
+ * Add one-off slots at the given instants. Nothing to do with the owner's
  * recurring weekly windows — the rows are flagged ad-hoc server-side so a later
  * window edit can't sweep them away. `startAtIsos` must be UTC instants: the
  * caller expands the date + time range the admin picked using the timezone the
@@ -94,14 +110,14 @@ export async function adminResizeSlot(
  * batch; the counts come back so the UI can say what actually happened.
  */
 export async function adminCreateSlots(
-  doctorId: string,
+  owner: SlotOwner,
   startAtIsos: string[],
   durationMinutes: number,
 ): Promise<
   Result<{ created: number; skippedOverlap: number; skippedPast: number }>
 > {
   const res = await fetch(
-    `/api/admin/doctors/${encodeURIComponent(doctorId)}/time-slots`,
+    `${ownerBase(owner)}/time-slots`,
     {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -123,14 +139,14 @@ export async function adminCreateSlots(
  * produces slots. BOOKED/HELD slots are refused (409).
  */
 export async function adminRemoveSlot(
-  doctorId: string,
+  owner: SlotOwner,
   slotId: string,
   reason?: string,
 ): Promise<
   Result<{ removed: { id: string; startAt: string; endAt: string } }>
 > {
   const res = await fetch(
-    `/api/admin/doctors/${encodeURIComponent(doctorId)}/time-slots/${encodeURIComponent(slotId)}`,
+    `${ownerBase(owner)}/time-slots/${encodeURIComponent(slotId)}`,
     {
       method: "DELETE",
       headers: { "content-type": "application/json" },

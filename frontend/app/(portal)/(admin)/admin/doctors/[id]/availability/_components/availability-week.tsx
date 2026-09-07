@@ -71,13 +71,14 @@ export function AvailabilityWeek({
 
   // Every slot mutation runs through the shared manager; the adapter is the
   // only admin-specific part (doctor-scoped endpoints + a server refresh).
+  const owner = { kind: "doctors", id: doctorId } as const;
   const slotManager = useSlotManager({
     setStatus: (slotId, status, reason) =>
-      adminToggleSlotStatus(doctorId, slotId, status, reason),
-    remove: (slotId, reason) => adminRemoveSlot(doctorId, slotId, reason),
+      adminToggleSlotStatus(owner, slotId, status, reason),
+    remove: (slotId, reason) => adminRemoveSlot(owner, slotId, reason),
     create: (startAtIsos, durationMinutes) =>
-      adminCreateSlots(doctorId, startAtIsos, durationMinutes),
-    bulk: (input) => adminBulkSlotAction(doctorId, input),
+      adminCreateSlots(owner, startAtIsos, durationMinutes),
+    bulk: (input) => adminBulkSlotAction(owner, input),
     onChanged: () => router.refresh(),
     describeAdd: (result) => describeAddResult(result),
     describeBulk: (action, result) => describeBulkResult(action, result),
