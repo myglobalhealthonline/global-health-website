@@ -6495,6 +6495,17 @@ model SuklDoctorIdentity {
   workplaceCode              String
   /// Medical speciality code (odbornost), when the interface requires one.
   specialityCode             String?
+  /// Prescriber's phone. REQUIRED by SÚKL in Predepisujici.Telefon on every
+  /// prescription — see docs/sukl/PRESCRIPTION_PAYLOAD.md — so a prescription
+  /// cannot be issued without it.
+  phone                      String?
+  /// IČP, 8 digits. Required in the payload; SÚKL confirmed any value is
+  /// accepted in the test environment (SCOPE_CONFIRMATION Q6).
+  icp                        String?
+  /// PZS, 11 digits — the provider code SÚKL require in Predepisujici.PZS.
+  /// Stored per doctor rather than derived from the workplace code, because
+  /// Login returned an empty PZS and the relationship is unconfirmed.
+  pzs                        String?
 
   status          SuklDoctorIdentityStatus @default(UNVERIFIED)
   /// Set when a real SÚKL call succeeded under this identifier.
@@ -6509,6 +6520,58 @@ model SuklDoctorIdentity {
   @@unique([doctorUserId, environment])
   @@index([environment, workplaceCode])
   @@index([status])
+}
+
+/// An eRecept submitted to SÚKL (CUER), or attempted.
+///
+/// Exists mainly to hold two identifiers that cannot be recovered once lost.
+/// `submissionId` is the ID_Zpravy we generated for the create call: SÚKL treat
+/// it as the submission identifier AND as the authorisation id required to
+/// amend or cancel the prescription later, so discarding it — which the ping
+/// operations do — would make the prescription permanently unamendable.
+/// `documentId` is SÚKL's own identifier for the issued eRecept.
+model SuklPrescription {
+  id           String @id @default(cuid())
+  environment  String
+  /// Our appointment, when the prescription came from a consultation.
+  appointmentId String?
+  doctorUserId String
+  patientUserId String?
+
+  /// ID_Zpravy sent on the create. Doubles as AutorizacniID for cancellation.
+  submissionId String
+  /// ID_Dokladu assigned by SÚKL. Null until a create succeeds.
+  documentId   String?
+
+  status       SuklPrescriptionStatus @default(PENDING)
+  /// SÚKL's own state (PREDEPSANY, CASTECNE_VYDANY…), as last seen.
+  suklState    String?
+
+  issuedAt     DateTime?
+  validUntil   DateTime?
+  cancelledAt  DateTime?
+
+  /// Last error SÚKL returned, for operator diagnosis. Never patient data.
+  lastErrorCode    String?
+  lastErrorMessage String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([environment, submissionId])
+  @@unique([environment, documentId])
+  @@index([doctorUserId, createdAt])
+  @@index([appointmentId])
+  @@index([status])
+}
+
+enum SuklPrescriptionStatus {
+  /// Built and about to be sent, or sent with no answer yet. A create in this
+  /// state must never be blindly retried — SÚKL may already hold it.
+  PENDING
+  ISSUED
+  CANCELLED
+  FAILED
 }
 
 // ---------------------------------------------------------------------------
