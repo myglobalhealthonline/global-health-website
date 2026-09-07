@@ -521,6 +521,14 @@ export async function writePatientProfile(
   // different reasons — a concurrently deleted `User` row makes the sync update
   // throw P2025, which read as "the chart is gone" and returned a 404 for a
   // profile write that had already committed.
+  //
+  // The `create` branch's transaction body is INSIDE this classified try, so
+  // anything it raises is classified too. That is safe only while
+  // `linkAppointmentsToPatientProfile` stays a `findMany` + `updateMany` over
+  // `Appointment.patientProfileId`, which carries no unique constraint and so
+  // cannot raise P2002/P2025 of its own. Give that helper a write that can, and
+  // its error would surface here as "somebody took the address" — tag the
+  // transaction's internal failures before widening it.
   let profile: Awaited<ReturnType<typeof prisma.patientProfile.update>>;
   try {
     profile =
@@ -530,8 +538,22 @@ export async function writePatientProfile(
             data: updateData,
           })
         : target.kind === "create"
-          ? await prisma.patientProfile.create({
-              data: { ...createData(target.email), userId: target.userId ?? null },
+          ? // ONE unit: the insert and the claim that makes the new chart
+            // resolvable afterwards. As two statements, a failure between them
+            // left an unlinked, accountless chart — the exact lock-out the link
+            // call exists to prevent, since the resolver then has no link and
+            // no account to corroborate and the creator gets a 404 for the
+            // patient they just made.
+            await prisma.$transaction(async (tx) => {
+              const created = await tx.patientProfile.create({
+                data: { ...createData(target.email), userId: target.userId ?? null },
+              });
+              await linkAppointmentsToPatientProfile(tx, {
+                patientProfileId: created.id,
+                email: target.email,
+                userId: target.userId ?? null,
+              });
+              return created;
             })
           : await prisma.patientProfile.upsert({
               where: { email: target.email },
@@ -554,18 +576,6 @@ export async function writePatientProfile(
   }
 
   try {
-    // A brand-new chart claims the appointments that provably belong to it,
-    // through the one helper that owns those rules. Without it the chart has no
-    // durable link and nothing corroborates it, so the next lookup by the same
-    // address resolves to nobody and the doctor who just created the patient
-    // gets a 404 for them forever.
-    if (target.kind === "create") {
-      await linkAppointmentsToPatientProfile(prisma, {
-        patientProfileId: profile.id,
-        email: target.email,
-        userId: target.userId ?? null,
-      });
-    }
     const alertChanges: WriteOutcome["alertChanges"] = {};
     if ("statusAlert" in input && (before?.statusAlert ?? null) !== (input.statusAlert ?? null)) {
       alertChanges.statusAlert = true;

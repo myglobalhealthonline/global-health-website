@@ -5,7 +5,10 @@ import bcrypt from "bcryptjs";
 import { randomBytes } from "node:crypto";
 import { prisma } from "../db/prisma.js";
 import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
-import { resolvePatientProfileIdByPatientEmail } from "../modules/patient-profile/appointment-patient-link.js";
+import {
+  resolvePatientContextByPatientEmail,
+  resolvePatientProfileIdByPatientEmail,
+} from "../modules/patient-profile/appointment-patient-link.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
@@ -214,9 +217,13 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         // No dedicated CREATED enum value exists; flag the create in metadata.
         action: "PATIENT_PROFILE_UPDATED",
         entityType: "PatientProfile",
-        entityId: profile?.id ?? email,
-        // Email only — never the PHI/PII field values.
-        metadata: { email, created: true },
+        // The chart that was written, never the address it was typed under: an
+        // address can be released by an anonymized patient and re-registered by
+        // somebody new, so an audit row keyed on one names the wrong person the
+        // moment it moves.
+        entityId: profile?.id ?? "unknown",
+        // Identity only — never the PHI/PII field values.
+        metadata: { patientProfileId: profile?.id ?? null, created: true },
         request,
       }).catch(() => {});
 
@@ -315,7 +322,8 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
       // THAT person's chart. The admin shape pools the live holder with every
       // linked patient and requires exactly one, so an ambiguous address is a
       // refusal rather than a guess.
-      const resolvedId = await resolvePatientProfileIdByPatientEmail(email);
+      const context = await resolvePatientContextByPatientEmail(email);
+      const resolvedId = context?.patientProfileId ?? null;
       const resolved = resolvedId
         ? await prisma.patientProfile.findUnique({
             where: { id: resolvedId },
@@ -325,23 +333,77 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
       if (resolvedId && !resolved) {
         return reply.status(404).send(errorResponse("Patient profile not found"));
       }
+      if (!resolvedId) {
+        // A null resolution means "no candidate" OR "several" — the resolver
+        // deliberately reports both the same way. Only the first is the
+        // create-on-edit case, so both kinds of candidate have to be excluded
+        // before inventing a chart here: a live holder the address cannot be
+        // shown to identify, AND any patient a linked appointment already puts
+        // at it. Checking the live holder alone left the ambiguous shape that
+        // has no current holder — two retained/re-addressed patients each with
+        // a linked appointment here — falling through to the upsert, which
+        // creates a THIRD chart at the address, skips the guard below (there is
+        // no resolved id to authorize against) and leaves no medical-access
+        // trail.
+        const [holder, linked] = await Promise.all([
+          prisma.patientProfile.findUnique({ where: { email }, select: { id: true } }),
+          prisma.appointment.findFirst({
+            where: {
+              email: { equals: email, mode: "insensitive" },
+              patientProfileId: { not: null },
+            },
+            select: { id: true },
+          }),
+        ]);
+        if (holder || linked) {
+          return reply.status(404).send(errorResponse("Patient profile not found"));
+        }
+      }
+      // Central guard, the same one the sibling GET already ran. This handler
+      // writes the entire clinical + identity surface and had no guard call at
+      // all, so a LOCAL_ADMIN's country scope — which nothing else on this
+      // route enforces — went unchecked on WRITES while it was enforced on the
+      // read next door, and no MedicalAccessLog row was ever produced for an
+      // admin edit. Skipped only where `resolvedId` is null, which is the
+      // long-standing create-on-edit path: no record exists yet, so there is
+      // nothing to authorize against (same shape as the doctor portal's
+      // `absent` branch).
+      if (resolvedId) {
+        const guardActor = resolveAdminSessionActor(request);
+        try {
+          await guardMedicalRead(
+            request,
+            { userId: guardActor?.userId ?? "", role: guardActor?.role ?? "ADMIN" },
+            {
+              patientProfileId: resolvedId,
+              resourceType: "SENSITIVE_PROFILE",
+              accessAction: "UPDATED",
+              // The resolver's OWN appointment, never a separately-picked row:
+              // at a reused address a row chosen by email can belong to a
+              // different patient than the chart being written.
+              relatedAppointmentId: context?.appointmentId ?? null,
+            },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+          }
+          throw guardError;
+        }
+      }
       // An anonymized chart is a retained clinical record whose personal data
       // was erased on a legal instruction. Writing it back would undo that.
+      // Deliberately AFTER the guard, unlike the doctor portal: there
+      // `resolveChartTarget` is narrowed by `doctorId`, so reaching this point
+      // already proves a treatment relationship. The admin resolver narrows by
+      // nothing, so answering 409 first told an out-of-scope LOCAL_ADMIN that a
+      // record exists and is anonymized without ever passing the scope check
+      // that is this route's only country boundary — and without logging the
+      // attempt.
       if (resolved?.anonymizedAt) {
         return reply
           .status(409)
           .send(errorResponse("This record has been anonymized and can no longer be edited"));
-      }
-      if (!resolvedId) {
-        // Nothing resolved. A live holder in that state is somebody the address
-        // cannot be shown to identify — refuse rather than write onto them.
-        const holder = await prisma.patientProfile.findUnique({
-          where: { email },
-          select: { id: true },
-        });
-        if (holder) {
-          return reply.status(404).send(errorResponse("Patient profile not found"));
-        }
       }
       try {
         const { dateOfBirth, ...rest } = body.data;
@@ -373,8 +435,13 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           actorRole: actor?.role ?? "ADMIN",
           action: "PATIENT_PROFILE_UPDATED",
           entityType: "PatientProfile",
-          entityId: profile?.id ?? email,
-          metadata: { email, changedFields: Object.keys(body.data) },
+          // The chart that was actually written, never the address that was
+          // typed — at a reused address the two name different people.
+          entityId: profile?.id ?? "unknown",
+          metadata: {
+            patientProfileId: profile?.id ?? null,
+            changedFields: Object.keys(body.data),
+          },
           request,
         }).catch(() => {});
         if ((alertChanges.statusAlert || alertChanges.clinicAlert) && profile) {
@@ -400,12 +467,18 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
             actorRole: actor?.role ?? "ADMIN",
             action: "PATIENT_ALERT_UPDATED",
             entityType: "PatientProfile",
-            entityId: profile?.id ?? email,
+            entityId: profile?.id ?? "unknown",
+            // Which alerts changed, never what they now say. The alert wording
+            // is clinical free-text about a named patient, and `AuditLog` is
+            // read and CSV-exported through /api/admin/audit-log with no
+            // per-record consent or country-folder check — so a value here is
+            // the same disclosure `MedicalAccessLog` exists to gate, written
+            // to the one log that does not gate it. The text itself lives on
+            // the chart-scoped `PatientAlertLog`, which is where the sibling
+            // removal event already keeps it.
             metadata: {
-              email,
+              patientProfileId: profile?.id ?? null,
               changes: alertChanges,
-              statusAlert: profile?.statusAlert ?? null,
-              clinicAlert: profile?.clinicAlert ?? null,
             },
             request,
           }).catch(() => {});
@@ -1092,12 +1165,41 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid email param"));
       }
       try {
-        const profile = await prisma.patientProfile.findUnique({
-          where: { email },
-          select: { id: true },
-        });
-        if (!profile) return okResponse({ entries: [] });
-        return okResponse({ entries: await listPatientAlertLog(profile.id) });
+        // Identity before authorization. This endpoint used to read the live
+        // holder of the address directly, which is wrong in both directions:
+        // anonymization tombstones `PatientProfile.email`, so a retained
+        // patient's own history became unreachable, while the address it
+        // released now answers for whoever registered with it next.
+        const context = await resolvePatientContextByPatientEmail(email);
+        // Nobody the address can be shown to identify — an empty list, not a
+        // 404, so the chart card renders its empty state. Nothing is
+        // authorized here and nothing is disclosed, so nothing is logged.
+        if (!context) return okResponse({ entries: [] });
+
+        // The alert log is verbatim clinical free-text (the alert wording plus
+        // the removal rationale) and went out with no guard call at all — no
+        // decision, no MedicalAccessLog row, and a LOCAL_ADMIN's country scope
+        // unenforced. Guarded BEFORE the rows are read, so a denial carries no
+        // alert content.
+        const actor = resolveAdminSessionActor(request);
+        try {
+          await guardMedicalRead(
+            request,
+            { userId: actor?.userId ?? "", role: actor?.role ?? "ADMIN" },
+            {
+              patientProfileId: context.patientProfileId,
+              resourceType: "SENSITIVE_PROFILE",
+              accessAction: "VIEWED",
+              relatedAppointmentId: context.appointmentId,
+            },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+          }
+          throw guardError;
+        }
+        return okResponse({ entries: await listPatientAlertLog(context.patientProfileId) });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
           return reply.status(503).send(errorResponse(error.message));
@@ -1128,10 +1230,16 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           .send(errorResponse("A removal note is required", body.error.flatten()));
       }
       const actor = resolveAdminSessionActor(request);
-      const existing = await prisma.patientProfile.findUnique({
-        where: { email },
-        select: { id: true },
-      });
+      // Same resolver as the read above, for the same reason: the raw
+      // address lookup this replaced missed a retained patient's own alerts
+      // and hit whoever holds the released address now.
+      const context = await resolvePatientContextByPatientEmail(email);
+      const existing = context
+        ? await prisma.patientProfile.findUnique({
+            where: { id: context.patientProfileId },
+            select: { id: true, anonymizedAt: true },
+          })
+        : null;
       if (!existing) {
         return reply.status(404).send(errorResponse("No alert to remove"));
       }
@@ -1143,6 +1251,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
             patientProfileId: existing.id,
             resourceType: "SENSITIVE_PROFILE",
             accessAction: "UPDATED",
+            relatedAppointmentId: context?.appointmentId ?? null,
           },
         );
       } catch (guardError) {
@@ -1150,6 +1259,17 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           return reply.status(403).send(medicalAccessDeniedResponse(guardError));
         }
         throw guardError;
+      }
+      // An anonymized chart is a retained clinical record whose personal data
+      // was erased on a legal instruction; clearing a banner off it is a write
+      // that would undo part of that. Reads still work. Checked AFTER the guard
+      // for the same reason as the profile PATCH above — the admin resolver
+      // proves no relationship, so a 409 ahead of the scope check would answer
+      // an out-of-scope LOCAL_ADMIN's probe and log nothing.
+      if (existing.anonymizedAt) {
+        return reply
+          .status(409)
+          .send(errorResponse("This record has been anonymized and can no longer be edited"));
       }
 
       try {
@@ -1171,8 +1291,13 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           entityType: "PatientProfile",
           entityId: profile.id,
           // Values stay out of the audit log (they are clinical free-text);
-          // the text + note live on PatientAlertLog.
-          metadata: { email, removed: alertType.data, hadValue: previousValue !== null },
+          // the text + note live on PatientAlertLog. Keyed on the chart, not
+          // the address it was reached by — an address is reassignable.
+          metadata: {
+            patientProfileId: profile.id,
+            removed: alertType.data,
+            hadValue: previousValue !== null,
+          },
           request,
         }).catch(() => {});
         return okResponse({
