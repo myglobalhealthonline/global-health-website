@@ -522,6 +522,18 @@ const authRoute: FastifyPluginAsync = async (app) => {
           "Linked guest appointments/orders on verified email",
         );
       }
+      // Guest-account claim: the token carried the password chosen on
+      // /register, so this click completes the signup — sign the user in.
+      // Only PATIENT rows are claimable (see auth.service), so no 2FA gate.
+      if (result.passwordApplied) {
+        const user = await getSafeUserById(result.userId);
+        if (user && !env.REQUIRE_2FA_FOR_ROLES.has(user.role)) {
+          const tokenVersion = await getUserTokenVersion(user.id);
+          const sessionToken = signAuthToken({ sub: user.id, role: user.role, email: user.email, tokenVersion });
+          reply.setCookie(env.AUTH_COOKIE_NAME, sessionToken, authCookieOptions());
+          return okResponse({ verified: true, user }, "Email verified — you are signed in");
+        }
+      }
       return okResponse({ verified: true }, "Email verified");
     } catch (error) {
       return replyWithError(reply, app.log, error, "Could not verify email");

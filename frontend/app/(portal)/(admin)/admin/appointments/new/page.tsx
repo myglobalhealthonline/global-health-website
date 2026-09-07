@@ -318,6 +318,9 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
       // that is not this patient's, not active, or has no rule for the service.
       // These ids are an input to validate, never a price to trust.
       membership: membership.value,
+      // Only meaningful after DuplicatePatientError; the backend ignores it
+      // whenever the email already belongs to an account.
+      allowDuplicatePatient: formData.get("allowDuplicatePatient") === "on",
     });
 
     if (!result.ok) {
@@ -389,6 +392,7 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
         clinics={clinics}
         defaultDialCode={dialCodeForCountry(countryCode)}
         collectUtenteNumber={collectUtente}
+        showDuplicateOverride={/separate record/i.test(createError ?? "")}
         action={createManualAppointmentAction}
       />
     </>

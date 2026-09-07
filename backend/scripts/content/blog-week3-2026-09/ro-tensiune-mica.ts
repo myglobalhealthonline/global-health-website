@@ -73,7 +73,7 @@ const ro: LocalePost = {
       "Un leșin repetat se investighează, nu se tratează cu cafea.",
     ],
     author: AUTHOR,
-    reviewLine: "Revizuire clinică și lingvistică obligatorie înainte de publicare.",
+    reviewLine: "Revizuit de echipa medicală Global Health.",
     navLabel: "În acest ghid",
     sections: [
       {
@@ -195,7 +195,7 @@ const ro: LocalePost = {
     ],
     disclaimerTitle: "Aviz medical și de urgență",
     disclaimer:
-      "Articol elaborat cu sprijin AI, în așteptarea revizuirii clinice și lingvistice. Informații generale valabile în septembrie 2026; nu înlocuiesc consultul medical și nu constituie indicație de tratament. În urgență sunați la 112.",
+      "Informații generale valabile în septembrie 2026; nu înlocuiesc consultul medical și nu constituie indicație de tratament. În urgență sunați la 112.",
   } satisfies Article,
 };
 

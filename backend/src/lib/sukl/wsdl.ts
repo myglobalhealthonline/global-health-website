@@ -36,6 +36,13 @@ export interface WsdlSummary {
    *  not negotiated — a wrong one is rejected — so extracting it here saves
    *  hunting through 150 KB of XML for the single string that matters. */
   interfaceVersion: string | null;
+  /**
+   * Whether the document defines any types itself, rather than only importing
+   * them. CUER's WSDL declares 30 operations and not one field: everything is
+   * behind a single xsd:import. Distinguishing the two is what lets the fetch
+   * decide whether a second request is needed.
+   */
+  hasInlineTypes: boolean;
   /** Other WSDL/XSD documents this one pulls in — usually where the types live. */
   imports: string[];
   /**
@@ -106,6 +113,7 @@ export function summariseWsdl(xml: string): WsdlSummary {
     operations: all(/<(?:\w+:)?operation[^>]*\bname\s*=\s*"([^"]+)"/gi, xml),
     soapVersions,
     interfaceVersion,
+    hasInlineTypes: /<(?:\w+:)?(?:element|complexType|simpleType)\b/i.test(xml),
     imports,
     importPaths: imports
       .map(toFetchableImportPath)

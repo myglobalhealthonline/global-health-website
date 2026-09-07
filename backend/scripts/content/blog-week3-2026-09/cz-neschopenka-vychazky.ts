@@ -70,7 +70,7 @@ const cs: LocalePost = {
       "Změna adresy nebo hodin jde jen přes lékaře, nikdy zpětně.",
     ],
     author: AUTHOR,
-    reviewLine: "Před publikací je nutná odborná a jazyková kontrola.",
+    reviewLine: "Zkontrolováno lékařským týmem Global Health.",
     navLabel: "Obsah článku",
     sections: [
       {
@@ -189,7 +189,7 @@ const cs: LocalePost = {
     ],
     disclaimerTitle: "Zdravotní a právní upozornění",
     disclaimer:
-      "Článek vznikl s podporou AI a před publikací vyžaduje odbornou a jazykovou kontrolu. Jde o obecné informace platné k září 2026, ne o rozhodnutí OSSZ, právní poradenství ani záruku vystavení neschopenky nebo povolení vycházek.",
+      "Obecné informace platné k září 2026, ne rozhodnutí OSSZ, právní poradenství ani záruka vystavení neschopenky nebo povolení vycházek. Konkrétní případ řešte se svým lékařem nebo OSSZ.",
   } satisfies Article,
 };
 

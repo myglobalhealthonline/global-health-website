@@ -140,6 +140,9 @@ type Props = {
    *  open) are auto-selected. */
   initialDoctorId?: string;
   initialSlotId?: string;
+  /** Shown only after the backend refused the booking as a likely duplicate
+   *  patient. Ticking it resubmits with `allowDuplicatePatient`. */
+  showDuplicateOverride?: boolean;
 };
 
 /**
@@ -165,6 +168,7 @@ export function ManualBookingForm({
   action,
   initialDoctorId,
   initialSlotId,
+  showDuplicateOverride = false,
 }: Props) {
   // Brazil is the one market that addresses by UF + CEP rather than
   // city + postal code — same split the public BR booking form uses.
@@ -1521,6 +1525,20 @@ export function ManualBookingForm({
             consultation notes and medical records.
           </span>
         </label>
+
+        {showDuplicateOverride ? (
+          <label className="mt-3 flex items-start gap-2 text-portal-compact text-[var(--color-text-body)]">
+            <input
+              type="checkbox"
+              name="allowDuplicatePatient"
+              className="mt-0.5 size-4 rounded border-[var(--color-border)]"
+            />
+            <span>
+              This is a different person — create a separate patient record even though the
+              phone number or name and date of birth match an existing patient.
+            </span>
+          </label>
+        ) : null}
 
         {errors.venue ? (
           <div className="mt-3">

@@ -202,6 +202,9 @@ export type CreateManualAppointmentInput = {
     enrollmentId?: string | null;
     override?: { benefitId: string; reason: string } | null;
   } | null;
+  /** Admin confirmed the phone / name+DOB match is a different person, so the
+   *  backend may mint a second patient record instead of throwing. */
+  allowDuplicatePatient?: boolean;
   returnTo?: string;
 };
 

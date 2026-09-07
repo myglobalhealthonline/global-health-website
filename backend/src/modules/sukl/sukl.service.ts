@@ -26,6 +26,8 @@ import {
   SUKL_SERVICES,
   SUKL_SERVICE_ENV_VARS,
   SUKL_SERVICE_LABELS,
+  suklLogin,
+  suklAppPingZep,
   type SuklCertificateInfo,
   type SuklHealthStatus,
   type SuklService,
@@ -446,6 +448,23 @@ export interface SuklWsdlResult {
   suggestedPaths: Array<{ address: string; path: string | null }>;
   /** The document itself. The summary is a convenience; this is the evidence. */
   raw: string;
+  /**
+   * The imported schema, fetched automatically when the WSDL defines no types
+   * of its own. Null when the document was self-contained (nothing to follow)
+   * or when no safe path could be derived from the import.
+   */
+  followedSchema: SuklFollowedSchema | null;
+}
+
+export interface SuklFollowedSchema {
+  path: string;
+  httpStatus: number;
+  contentType: string | null;
+  durationMs: number;
+  byteLength: number;
+  /** Null when the follow failed; errorMessage then says why. */
+  raw: string | null;
+  errorMessage?: string;
 }
 
 /**
@@ -480,7 +499,46 @@ export async function fetchSuklWsdl(
   const response = await suklGet(service, path, { maxBytes: 4 * 1024 * 1024 });
   const summary = summariseWsdl(response.body);
 
+  /**
+   * Follow the import when the WSDL defines no types of its own.
+   *
+   * CUER's is exactly that: 30 operations and a single xsd:import, with every
+   * field of a prescription in the imported file, behind an internal hostname
+   * that does not resolve. Leaving it as a second manual step produced the same
+   * typeless document four times over, so the fetch completes itself. A
+   * document that already carries types needs no second request.
+   */
+  let followedSchema: SuklFollowedSchema | null = null;
+  if (!summary.hasInlineTypes && summary.importPaths.length > 0) {
+    const importPath = summary.importPaths[0]!;
+    try {
+      const imported = await suklGet(service, importPath, { maxBytes: 4 * 1024 * 1024 });
+      followedSchema = {
+        path: importPath,
+        httpStatus: imported.httpStatus,
+        contentType: imported.contentType,
+        durationMs: imported.durationMs,
+        byteLength: Buffer.byteLength(imported.body),
+        raw: imported.body,
+      };
+    } catch (error) {
+      // A failed follow must not discard the WSDL we already hold.
+      followedSchema = {
+        path: importPath,
+        httpStatus: isSuklError(error) ? (error.httpStatus ?? 0) : 0,
+        contentType: null,
+        durationMs: 0,
+        byteLength: 0,
+        raw: null,
+        errorMessage: isSuklError(error)
+          ? error.safeMessage
+          : "The imported schema could not be fetched.",
+      };
+    }
+  }
+
   return {
+    followedSchema,
     service,
     label: SUKL_SERVICE_LABELS[service],
     requestedUrl: `${host}${path.startsWith("/") ? path : `/${path}`}`,
@@ -523,6 +581,27 @@ export type { SuklAppInfoResult } from "../../lib/sukl/index.js";
  * currently a value read off a published table, and it travels in the Zprava
  * header of every message we will ever send.
  */
+/**
+ * `Login` — verifies a prescriber's registration from SÚKL's own answer.
+ *
+ * Read-only, and the response settles a question the registration web form
+ * leaves open: which roles the account holds and which provider (PZS) it is
+ * bound to, without asking SÚKL by email.
+ */
+export type { SuklLoginResult, SuklAppPingZepResult } from "../../lib/sukl/index.js";
+
+/**
+ * AppPingZEP — the signed ping. Creates nothing, and is the only signed
+ * operation that can be run safely against SÚKL to prove the signature path.
+ */
+export async function runSuklAppPingZep(service: SuklService) {
+  return suklAppPingZep(service);
+}
+
+export async function runSuklLogin(service: SuklService) {
+  return suklLogin(service);
+}
+
 export async function runSuklGetAppInfo(service: SuklService) {
   return suklGetAppInfo(service);
 }

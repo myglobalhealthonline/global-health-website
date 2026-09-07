@@ -189,7 +189,7 @@ export async function registerPatient(input: RegisterBody): Promise<RegisterResu
       // conflict — return the same shape a fresh signup does, and notify
       // the real owner instead of the caller. Best-effort; never let a
       // notice-email failure turn into a registration error.
-      notifyExistingAccountOfDuplicateRegistration(email).catch((err) => {
+      notifyExistingAccountOfDuplicateRegistration(email, passwordHash).catch((err) => {
         console.error("Failed to send duplicate-registration notice", err);
       });
       return { kind: "exists" };
@@ -201,11 +201,24 @@ export async function registerPatient(input: RegisterBody): Promise<RegisterResu
 /** S-024: heads-up email to an existing account when someone attempts to
  *  register with its email — used instead of revealing the conflict to
  *  the caller (account-enumeration defense). Best-effort/fire-and-forget. */
-async function notifyExistingAccountOfDuplicateRegistration(email: string): Promise<void> {
+async function notifyExistingAccountOfDuplicateRegistration(
+  email: string,
+  passwordHash: string,
+): Promise<void> {
   const user = await findUserByEmail(email);
-  if (!user || !user.isActive) return;
-  const { sendDuplicateRegistrationNoticeEmail } = await import("../../lib/email/templates.js");
-  await sendDuplicateRegistrationNoticeEmail({ to: user.email, fullName: user.fullName });
+  if (!user || !user.isActive || isPastDeletionDate(user)) return;
+  const templates = await import("../../lib/email/templates.js");
+  // Guest-account claim: a patient row that was never verified is either a
+  // guest-booking shadow account (random password, owner never chose one)
+  // or an unfinished signup. Either way the mailbox owner is the rightful
+  // owner, so park the chosen password on a verification token and let the
+  // link apply it. A verified account is never overwritten this way.
+  if (user.role === UserRole.PATIENT && !user.emailVerifiedAt) {
+    const token = await issueEmailVerificationToken(user.id, { pendingPasswordHash: passwordHash });
+    await templates.sendAccountClaimEmail({ to: user.email, fullName: user.fullName, token });
+    return;
+  }
+  await templates.sendDuplicateRegistrationNoticeEmail({ to: user.email, fullName: user.fullName });
 }
 
 /**
@@ -903,13 +916,16 @@ export async function consumePasswordResetToken(
 }
 
 /** Issue an email-verification token; expires in 24 hours. */
-export async function issueEmailVerificationToken(userId: string): Promise<string> {
+export async function issueEmailVerificationToken(
+  userId: string,
+  options?: { pendingPasswordHash?: string },
+): Promise<string> {
   const token = generateToken();
   const tokenHash = hashToken(token);
   const expiresAt = new Date(Date.now() + EMAIL_VERIFICATION_TTL_HOURS * 60 * 60 * 1000);
   try {
     await prisma.emailVerificationToken.create({
-      data: { userId, tokenHash, expiresAt },
+      data: { userId, tokenHash, expiresAt, pendingPasswordHash: options?.pendingPasswordHash ?? null },
     });
   } catch (error) {
     throw normalizeDbError(error, "Could not issue verification token");
@@ -930,7 +946,15 @@ export async function issueEmailVerificationToken(userId: string): Promise<strin
  */
 export async function consumeEmailVerificationToken(
   token: string,
-): Promise<{ userId: string; email: string; claimedAppointments: number; claimedOrders: number } | null> {
+): Promise<{
+  userId: string;
+  email: string;
+  claimedAppointments: number;
+  claimedOrders: number;
+  /** True when this token carried a /register password (guest-account
+   *  claim) that has now been applied — the route signs the user in. */
+  passwordApplied: boolean;
+} | null> {
   const tokenHash = hashToken(token);
   try {
     const claim = await prisma.emailVerificationToken.updateMany({
@@ -942,9 +966,18 @@ export async function consumeEmailVerificationToken(
     const row = await prisma.emailVerificationToken.findUnique({ where: { tokenHash } });
     if (!row) return null;
 
+    const passwordApplied = Boolean(row.pendingPasswordHash);
     const user = await prisma.user.update({
       where: { id: row.userId },
-      data: { emailVerifiedAt: new Date() },
+      data: {
+        emailVerifiedAt: new Date(),
+        // Guest-account claim: the password chosen on /register becomes
+        // live only now that the mailbox is proven. Bumping tokenVersion
+        // drops any session that predates it.
+        ...(row.pendingPasswordHash
+          ? { passwordHash: row.pendingPasswordHash, mustChangePassword: false, tokenVersion: { increment: 1 } }
+          : {}),
+      },
       select: { id: true, email: true },
     });
 
@@ -955,7 +988,7 @@ export async function consumeEmailVerificationToken(
     // for. Fire-and-forget — a membership must never fail a verification.
     linkMembershipsInBackground(user.id);
 
-    return { userId: user.id, email: user.email, claimedAppointments, claimedOrders };
+    return { userId: user.id, email: user.email, claimedAppointments, claimedOrders, passwordApplied };
   } catch (error) {
     throw normalizeDbError(error, "Could not verify email");
   }

@@ -62,6 +62,53 @@ Build against **`202605A`**, which is what the test environment serves and what
 production will become. Announcements appear at https://epreskripce.gov.cz/ .
 Still verify against the downloaded WSDL rather than trusting this table.
 
+## Endpoints — CONFIRMED by SÚKL 2026-09-05
+
+From *Supplement to the technological change for priority services eRecept*.
+"All roles are directed to single URL endpoints", which is why the host root
+works and every path derived from the published `soap:address` 404s.
+
+| Environment | Service | URL |
+|---|---|---|
+| Test | CÚER (priority web services) | `https://cuer-soap.test-erecept.sukl.cz/` |
+| Test | RLPO | `https://rlpo-soap.test-erecept.sukl.cz/` |
+| Production | CÚER | `https://cuer-soap.erecept.sukl.cz/` |
+| Production | RLPO | `https://rlpo-soap.erecept.sukl.cz/` |
+
+Two operational facts from the same answer:
+
+- **No VPN router is required.** These are public HTTPS endpoints. (Pharmacies
+  may need one for non-ePrescription agendas; that is not us.)
+- **TLS 1.2 and 1.3 only.** `transport.ts` already sets `minVersion: "TLSv1.2"`,
+  so this is confirmation rather than a change.
+
+Production URLs are recorded for completeness only. `SUKL_ENVIRONMENT=production`
+still hard-fails at boot by design — production needs a different certificate,
+per-doctor registrations and a security review, not an env flip.
+
+## Signatures — CONFIRMED by SÚKL 2026-09-05
+
+Table 1 of the same document. For a prescriber, exactly three operations require
+the doctor's personal qualified electronic signature:
+
+| Operation | Actor |
+|---|---|
+| `AppPingZEP` — signature self-test, creates nothing | Doctor, Pharmacist |
+| `ZalozitPredpis` — issue a prescription | Doctor |
+| `ZmenitPredpis` — amend a prescription | Doctor |
+
+The pharmacist-side dispensing operations also require it, but we never call
+them. **`ZrusitPredpis` is absent from the list**, as are `NacistPredpis`,
+`SeznamPredpisu` and `StahnoutPruvodku` — those run on the workplace
+certificate alone.
+
+The signing profile itself (what is signed, canonicalisation, where the
+signature sits) is in **`electronic_signature_of_messages_v2.docx`**, which SÚKL
+name but which we do not yet hold. Do not write signing code against a guess.
+
+A demo qualified certificate (PostSignum DEMO) is accepted in test, so the whole
+signing path can be proven before any real qualified certificate exists.
+
 ## Inventory
 
 ### Service names
