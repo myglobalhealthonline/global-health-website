@@ -274,21 +274,27 @@ Numbered so replies can cite them.
   The signature is the doctor's own qualified signature, so either the doctor
   signs per prescription, or Identita občana replaces it (Q16, still open).
 
-- **Q16** What does "authentication using Identita občana" mean concretely for a
-  server-to-server integration where the doctor is already authenticated in our
-  portal? What does it replace — the signature only, or part of the transport
-  authentication? What is the onboarding process?
+- **Q16** ~~What does "authentication using Identita občana" replace?~~
+  **PARTIALLY ANSWERED 2026-09-05 — from the regulation, not from support.**
+  `elektronicky_podpis_zprav_v2.docx` quotes vyhláška 329/2019 Sb. § 3(4): the
+  requirement to sign with a recognised electronic signature *"se nepoužije,
+  přistupuje-li lékař nebo farmaceut k systému eRecept prostřednictvím
+  Národního bodu pro identifikaci a autentizaci"* — it does not apply when the
+  doctor accesses eRecept through NIA / Identita občana.
 
-  **Still open, and now the decisive question.** Q15 confirms a qualified
-  signature is required to issue; this asks whether Identita občana removes
-  that requirement, which decides whether issuing can stay server-side.
+  So it replaces **the signature**, not the transport authentication. What
+  remains unknown is the **onboarding process** and what a server-to-server
+  integration sends in place of the signature when the doctor is already
+  authenticated in our portal. That is the remaining question for SÚKL.
 
 - **Q17** ~~What is signed, which XML-DSig profile and canonicalisation?~~
-  **ANSWERED BY REFERENCE 2026-09-05, document not yet in hand.** SÚKL: the
-  rules are the same as for ePoukaz, specified in
-  **`electronic_signature_of_messages_v2.docx`** (Elektronický podpis zpráv).
-  Nothing may be built against a guessed profile — obtain that file before
-  writing any signing code. Tracked as the one remaining blocker.
+  **ANSWERED 2026-09-05 — document received and recorded in
+  `docs/sukl/SIGNING_SPEC.md`.** In short: the digest is taken over the message
+  root element WITHOUT the SOAP envelope, that root holds only `Doklad` and
+  `Zprava`, `Signature` must be absent when the digest is computed, SHA-2 is
+  mandatory, the certificate travels in `X509Certificate`, and the signed XML
+  must not be reformatted or have its namespaces hoisted to the envelope
+  afterwards. No longer a blocker.
 
 - **Q20** ~~May a demo qualified certificate be used in test?~~ **ANSWERED
   2026-09-05 — YES.** PostSignum DEMO is acceptable in the test environment, so
