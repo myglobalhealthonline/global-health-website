@@ -7,6 +7,10 @@ import {
   invalidateAvailabilityCaches,
   registerAvailabilityCache,
 } from "./availability-cache-bus.js";
+// `ensureServiceSlotsForRange` still does its own day iteration: it overrides
+// the window duration with the service's and mutates a running collision list
+// as it generates, so it is NOT the same computation as
+// `expandWindowCandidates` and deliberately was not folded into it.
 import {
   calendarDayNumber,
   eachClinicLocalDay,
@@ -14,6 +18,28 @@ import {
   utcCalendarDayNumber,
   zonedWallClockToUtc,
 } from "./timezone.js";
+import {
+  expandWindowCandidates,
+  isExclusionViolation,
+  isUniqueViolation,
+} from "../scheduling/slot-grid.js";
+// Owner-agnostic grid rules now live in `scheduling/slot-grid.ts` so the
+// test-center availability service can share them. Re-exported below so every
+// existing importer of this module is unaffected.
+export {
+  BASE_SLOT_MINUTES,
+  SlotAlreadyTakenError,
+  intervalsOverlap,
+  selectMissingSlots,
+  selectStaleSlots,
+} from "../scheduling/slot-grid.js";
+import {
+  BASE_SLOT_MINUTES,
+  SlotAlreadyTakenError,
+  intervalsOverlap,
+  selectMissingSlots,
+  selectStaleSlots,
+} from "../scheduling/slot-grid.js";
 
 /**
  * Doctor availability + concrete time-slot service.
@@ -34,20 +60,6 @@ import {
  *   `UPDATE … WHERE id=? AND status='OPEN'` so two patients hitting
  *   submit at the same instant can't both grab the same slot.
  */
-
-/**
- * Product-wide base grid. Recurring windows generate on it and consultations
- * consume consecutive base slots to fit their real length, so a resize snaps to
- * it too. Mirrors the frontend's `BASE_SLOT_MINUTES`.
- */
-export const BASE_SLOT_MINUTES = 15;
-
-export class SlotAlreadyTakenError extends Error {
-  constructor() {
-    super("This slot is no longer available. Please pick another.");
-    this.name = "SlotAlreadyTakenError";
-  }
-}
 
 /**
  * The timezone a doctor's availability wall-clock minutes are expressed in:
@@ -369,13 +381,7 @@ async function deleteSlotsWithExceptions(
  * breaks that assumption — the leftovers out-number the new window's
  * candidates, generation skips the write, and the new window produces nothing.
  */
-export function selectMissingSlots<T extends { startAt: Date }>(
-  generated: T[],
-  existingStarts: Date[],
-): T[] {
-  const taken = new Set(existingStarts.map((d) => d.getTime()));
-  return generated.filter((g) => !taken.has(g.startAt.getTime()));
-}
+/* moved to scheduling/slot-grid.ts (re-exported at the top of this file) */
 
 /**
  * Single-date holes in the recurring windows (`DoctorAvailabilityException`).
@@ -744,39 +750,11 @@ async function windowSlotCandidates(
   // Admin-removed single dates. A candidate overlapping one of these is never
   // re-created, which is the whole point of the exception row.
   const exceptions = await listAvailabilityExceptions(doctorId, fromUtc, toUtc);
-  const generated: { doctorId: string; startAt: Date; endAt: Date }[] = [];
-
-  // Iterate clinic-local calendar days (not UTC midnights). `startMinute` is
-  // wall-clock in `tz`; `zonedWallClockToUtc` resolves the per-date offset so
-  // DST transitions land on the right instant. Edge days are over-generated
-  // (eachClinicLocalDay pads ±1) and trimmed by the fromUtc/toUtc guard below.
-  for (const day of eachClinicLocalDay(fromUtc, toUtc, tz)) {
-    for (const win of windows) {
-      if (win.weekday !== day.weekday) continue;
-      // Effective bounds are date-only ("from date → to date"); compare as
-      // calendar dates so a positive-offset clinic isn't off by one at edges.
-      const dayNum = calendarDayNumber(day);
-      if (win.effectiveFrom && dayNum < utcCalendarDayNumber(win.effectiveFrom))
-        continue;
-      if (win.effectiveUntil && dayNum > utcCalendarDayNumber(win.effectiveUntil))
-        continue;
-      const duration = Math.max(5, win.slotDurationMinutes);
-      for (
-        let minute = win.startMinute;
-        minute + duration <= win.endMinute;
-        minute += duration
-      ) {
-        const startAt = zonedWallClockToUtc(day, minute, tz);
-        const endAt = new Date(startAt.getTime() + duration * 60 * 1000);
-        if (startAt < fromUtc || startAt >= toUtc) continue;
-        if (exceptions.some((ex) => intervalsOverlap({ startAt, endAt }, ex))) {
-          continue;
-        }
-        generated.push({ doctorId, startAt, endAt });
-      }
-    }
-  }
-  return generated;
+  // Day/window/minute arithmetic is owner-agnostic and lives in
+  // `scheduling/slot-grid.ts`; only the doctor tag is added back here.
+  return expandWindowCandidates(windows, exceptions, tz, fromUtc, toUtc).map(
+    (span) => ({ doctorId, ...span }),
+  );
 }
 
 /**
@@ -866,19 +844,7 @@ async function refreshWindowSlots(doctorId: string): Promise<GenerationResult> {
  * exists to prevent, pointed at the doctor instead. Only a block that overlaps
  * NO live window is a true orphan, and those are what this deletes.
  */
-export function selectStaleSlots<
-  T extends { startAt: Date; endAt: Date; status?: DoctorSlotStatus },
->(existing: T[], candidates: { startAt: Date; endAt: Date }[]): T[] {
-  const span = (s: { startAt: Date; endAt: Date }) =>
-    `${s.startAt.getTime()}:${s.endAt.getTime()}`;
-  const owned = new Set(candidates.map(span));
-  return existing.filter((e) => {
-    if (e.status === "BLOCKED") {
-      return !candidates.some((c) => intervalsOverlap(e, c));
-    }
-    return !owned.has(span(e));
-  });
-}
+/* moved to scheduling/slot-grid.ts (re-exported at the top of this file) */
 
 /**
  * Reconcile a doctor's future slots against their CURRENT windows — run after
@@ -1238,26 +1204,6 @@ export async function listOpenSlotsForDoctor(
  * the second ends AND ends after the second starts. Exposed for unit
  * tests of the mixed-duration generation rules.
  */
-export function intervalsOverlap(
-  a: { startAt: Date; endAt: Date },
-  b: { startAt: Date; endAt: Date },
-): boolean {
-  return a.startAt < b.endAt && a.endAt > b.startAt;
-}
-
-/** Prisma unique-constraint violation — here, @@unique([doctorId, startAt]). */
-function isUniqueViolation(error: unknown): boolean {
-  return (
-    error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002"
-  );
-}
-
-/** Postgres exclusion-constraint violation (23P01) — not modeled in the Prisma schema. */
-function isExclusionViolation(error: unknown): boolean {
-  const message = error instanceof Error ? error.message : String(error);
-  return message.includes("23P01") || message.toLowerCase().includes("exclusion constraint");
-}
-
 /**
  * Mixed-duration-safe slot generation for a specific service. Same
  * shape as `ensureSlotsForRange` but the slot duration comes from the
