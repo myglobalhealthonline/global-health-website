@@ -29,7 +29,9 @@ const DATE_FMT = new Intl.DateTimeFormat("en-GB", {
  *  lands. */
 function orderedLocales(p: AdminBlogDto): Array<{ locale: string; isOriginal: boolean }> {
   const original = p.locale.toUpperCase();
-  return [original, ...p.translations.map((t) => t.locale.toUpperCase())]
+  // A BlogTranslation row in the post's own locale is a data defect (the
+  // public renderer never reads it), but it must not draw the chip twice.
+  return [...new Set([original, ...p.translations.map((t) => t.locale.toUpperCase())])]
     .sort((a, b) => (a === "EN" ? -1 : b === "EN" ? 1 : a.localeCompare(b)))
     .map((locale) => ({ locale, isOriginal: locale === original }));
 }
