@@ -102,4 +102,8 @@ Do not translate before native review of the primary draft.
   `cmtqt4y960002e0juqqz9i01g`, CZ `cmtqt52f50004e0jugistr9vm`, ES
   `cmtqt56ko0006e0ju9bucdgfo`, RO `cmtqt5apk0008e0ju26kiv9qr`, BR
   `cmtqt5ec2000ae0juz1vxys7x`). Published: **0**. Translations: **0**.
+- Hero covers: 6 uploaded to S3 as WebP (1600×900, 82–257 KB) and linked via
+  `backend/scripts/seed-blog-covers-2026-09.ts --apply` on 7 September 2026;
+  prompts in `backend/scripts/content/blog-week3-2026-09/IMAGE-PROMPTS.md`.
+  Media URLs verified 200 image/webp on production.
 - Ledger entry in `docs/plans/seo-control-state.md`: **not yet written**.
