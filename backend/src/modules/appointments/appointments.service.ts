@@ -6,10 +6,15 @@ import { prisma } from "../../db/prisma.js";
  *  appointment. Kept in sync on every doctor change so post-payment
  *  reminders (which read `OrderItem.doctorId`) never target a stale
  *  clinician. */
+// Booking lines that carry an appointment — test bookings included. They have
+// no doctor and no meeting link, but they are looked up, rescheduled and
+// notified through exactly these paths.
 const CONSULTATION_KINDS: CartItemKind[] = [
   CartItemKind.GENERAL_CONSULTATION,
   CartItemKind.SPECIALIST_CONSULTATION,
+  CartItemKind.TEST_BOOKING,
 ];
+import { releaseAnyAppointmentSlot } from "../scheduling/appointment-slot-release.js";
 import type { BookingInput } from "../../validations/booking.schema.js";
 import type { AppointmentStatus } from "../../validations/admin-appointments.schema.js";
 import {
@@ -22,7 +27,6 @@ import { releaseMembershipAllowanceForSlot } from "../memberships/membership-all
 import { mapAppointmentOrderNumbers, mapAppointmentOrders } from "../orders/appointment-order-number.js";
 import {
   claimConsecutiveSlots,
-  releaseAppointmentSlot,
   ensureSlotsForRange,
   SlotAlreadyTakenError,
 } from "../doctor-availability/doctor-availability.service.js";
@@ -932,9 +936,9 @@ export async function cancelAppointmentForPatient(
   // only link from this appointment back to its order line (§7).
   await releaseMembershipAllowanceForSlot(owned.timeSlotId).catch(() => undefined);
 
-  if (owned.timeSlotId) {
-    await releaseAppointmentSlot(id).catch(() => undefined);
-  }
+  // Whichever engine owns it — a test booking holds a TestCenterTimeSlot, and
+  // the doctor release would match nothing and fail silently.
+  await releaseAnyAppointmentSlot(id).catch(() => undefined);
 
   await updateAppointmentStatus(id, "CANCELLED");
   return getAppointmentForUser(id, userId);
@@ -971,9 +975,7 @@ export async function cancelOrderAppointments(orderId: string): Promise<void> {
       });
       if (!appt) continue;
       if (appt.status === "CANCELLED" || appt.status === "COMPLETED") continue;
-      if (appt.timeSlotId) {
-        await releaseAppointmentSlot(id).catch(() => undefined);
-      }
+      await releaseAnyAppointmentSlot(id).catch(() => undefined);
       await updateAppointmentStatus(id, "CANCELLED");
     } catch {
       // best-effort per appointment

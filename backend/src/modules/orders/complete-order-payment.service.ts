@@ -2,6 +2,7 @@ import { PaymentStatus, Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { sendOrderConfirmationEmail } from "../../lib/email/templates.js";
 import { getStripeClient, isStripeConfigured } from "../../lib/stripe/client.js";
+import { orderHasTestBookingItem } from "./booking-kinds.js";
 import {
   orderHasConsultationItem,
   orderIsPaidForMeet,
@@ -323,6 +324,177 @@ async function markOrderPaidInTransaction(
   });
 }
 
+/**
+ * Back-fill the patient's PatientProfile from an order line's intake snapshot,
+ * and point the freshly-minted appointment at it when this line is keyed by the
+ * patient's own address.
+ *
+ * Extracted so the consultation and test-booking mint loops share it verbatim.
+ * Duplicating it would mean two copies of the PHI encryption rules and of the
+ * family / booking-for-other guard, which is the kind of drift that turns into
+ * a wrong-patient disclosure.
+ */
+async function backfillPatientProfile(
+  tx: Prisma.TransactionClient,
+  input: {
+    item: Prisma.OrderItemGetPayload<Record<string, never>>;
+    appointmentId: string;
+    aptEmail: string | null;
+    aptFullName: string;
+    aptPhone: string | null;
+    aptDob: Date | null;
+    patientProfileId: string | null;
+  },
+): Promise<void> {
+  const { item, appointmentId, aptEmail, aptFullName, aptPhone, aptDob, patientProfileId } =
+    input;
+  if (
+    aptEmail &&
+    (item.patientNationalIdNumber ||
+      item.patientPassportNumber ||
+      item.patientUtenteNumber ||
+      item.patientAddressLine1 ||
+      item.patientAddressCity ||
+      item.insuranceCompanyId)
+  ) {
+    const existing = await tx.patientProfile.findUnique({
+      where: { email: aptEmail.toLowerCase() },
+      select: {
+        nationalIdNumber: true,
+        taxIdNumber: true,
+        passportNumber: true,
+        utenteNumber: true,
+        addressLine1: true,
+        addressLine2: true,
+        addressCity: true,
+        addressState: true,
+        addressPostalCode: true,
+        addressCountryCode: true,
+        insuranceProviderName: true,
+        insurancePolicyNumber: true,
+      },
+    });
+    // Card snapshot lives on the order — resolve the company name once
+    // so it lands on the profile alongside the (already-encrypted)
+    // policy number instead of just the opaque insuranceCompanyId.
+    const insuranceCompany = item.insuranceCompanyId
+      ? await tx.insuranceCompany.findUnique({
+          where: { id: item.insuranceCompanyId },
+          select: { name: true },
+        })
+      : null;
+    const fill = <T>(existingVal: T | null, snapshotVal: T | null): T | null =>
+      existingVal ?? snapshotVal ?? null;
+    const upsertedProfile = await tx.patientProfile.upsert({
+      where: { email: aptEmail.toLowerCase() },
+      update: {
+        // PR-4: `nationalIdNumber`/`taxIdNumber` are in PHI_ENCRYPTED_FIELDS
+        // but were the only two written through raw. Wrapped like their
+        // siblings below; idempotent, so a cart item that already arrived
+        // encrypted is not double-wrapped and a legacy plaintext one is
+        // encrypted on the way in.
+        nationalIdNumber: fill(
+          existing?.nationalIdNumber ?? null,
+          encryptPhi(item.patientNationalIdNumber),
+        ),
+        taxIdNumber: fill(
+          existing?.taxIdNumber ?? null,
+          encryptPhi(item.patientNationalIdNumber),
+        ),
+        // Encrypted on the way in: `existing` is already ciphertext when a
+        // key is configured, so keeping it as-is is correct and only the
+        // fresh snapshot value needs wrapping.
+        passportNumber: fill(
+          existing?.passportNumber ?? null,
+          encryptPhi(item.patientPassportNumber),
+        ),
+        utenteNumber: fill(
+          existing?.utenteNumber ?? null,
+          encryptPhi(item.patientUtenteNumber),
+        ),
+        addressLine1: fill(existing?.addressLine1 ?? null, item.patientAddressLine1),
+        addressLine2: fill(existing?.addressLine2 ?? null, item.patientAddressLine2),
+        addressCity: fill(existing?.addressCity ?? null, item.patientAddressCity),
+        addressState: fill(existing?.addressState ?? null, item.patientAddressState),
+        addressPostalCode: fill(
+          existing?.addressPostalCode ?? null,
+          item.patientAddressPostalCode,
+        ),
+        addressCountryCode: fill(
+          existing?.addressCountryCode ?? null,
+          item.patientAddressCountryCode,
+        ),
+        insuranceProviderName: fill(
+          existing?.insuranceProviderName ?? null,
+          insuranceCompany?.name ?? null,
+        ),
+        // Already ciphertext (same phi:v1: envelope) — copied verbatim,
+        // same treatment as the Appointment snapshot above.
+        insurancePolicyNumber: fill(
+          existing?.insurancePolicyNumber ?? null,
+          item.insurancePolicyNumber,
+        ),
+        // Not a `fill()` — the enum default is NOT_VERIFIED (not null), so
+        // nullish-coalescing would never let this flip. An insurance line
+        // only reaches payment once its order cleared the PENDING
+        // verification gate (or was VERIFIED outright by an admin taking
+        // a manual booking), so its presence here IS the verified signal.
+        ...(item.insuranceCompanyId ? { insuranceDocumentStatus: "VERIFIED" as const } : {}),
+      },
+      create: {
+        email: aptEmail.toLowerCase(),
+        fullName: aptFullName,
+        phone: aptPhone,
+        dateOfBirth: aptDob,
+        nationalIdNumber: encryptPhi(item.patientNationalIdNumber),
+        taxIdNumber: encryptPhi(item.patientNationalIdNumber),
+        passportNumber: encryptPhi(item.patientPassportNumber),
+        utenteNumber: encryptPhi(item.patientUtenteNumber),
+        addressLine1: item.patientAddressLine1,
+        addressLine2: item.patientAddressLine2,
+        addressCity: item.patientAddressCity,
+        addressState: item.patientAddressState,
+        addressPostalCode: item.patientAddressPostalCode,
+        addressCountryCode: item.patientAddressCountryCode,
+        insuranceProviderName: insuranceCompany?.name ?? null,
+        insurancePolicyNumber: item.insurancePolicyNumber,
+        ...(item.insuranceCompanyId ? { insuranceDocumentStatus: "VERIFIED" as const } : {}),
+      },
+    });
+
+    // The upsert may have just MINTED the profile for a first-time patient,
+    // in which case the link resolved above found nothing. Stamp it now —
+    // but only when this row is keyed by the patient's own address. A
+    // family / booking-for-other line upserts a profile for whichever
+    // address the snapshot carried, and that is not authority to point the
+    // consultation at it.
+    if (!patientProfileId && !item.familyMemberId && !item.bookingForOther) {
+      await tx.appointment.update({
+        where: { id: appointmentId },
+        data: { patientProfileId: upsertedProfile.id },
+      });
+    }
+  }
+}
+
+/**
+ * The centre address written onto a test booking's `locationAddress`.
+ *
+ * A SNAPSHOT, matching how every other address on an Appointment behaves: a
+ * later edit to the centre must not silently rewrite what a patient was already
+ * told to attend. Empty parts are dropped so a centre with no city does not
+ * render a dangling comma.
+ */
+function formatTestCentreAddress(
+  centre: { name: string; addressLine: string | null; city: string | null } | null,
+): string | null {
+  if (!centre) return null;
+  const parts = [centre.name, centre.addressLine, centre.city].filter(
+    (part): part is string => Boolean(part && part.trim()),
+  );
+  return parts.length > 0 ? parts.join(", ") : null;
+}
+
 /** Stock decrement + appointment minting. Failures here do not revert PAID status. */
 async function fulfillPaidOrderFromCheckoutSession(
   orderId: string,
@@ -340,6 +512,8 @@ async function fulfillPaidOrderFromCheckoutSession(
     const consultationItems = order.items.filter(
       (i) => i.kind === "GENERAL_CONSULTATION" || i.kind === "SPECIALIST_CONSULTATION",
     );
+    // Deliberately NOT folded into the filter above — see the second loop.
+    const testBookingItems = order.items.filter((i) => i.kind === "TEST_BOOKING");
 
     // Self-pay laboratory exams: advance the requisition this order was paying
     // for so the admin queue shows it as ready to send to Synlab. Inside the
@@ -575,133 +749,201 @@ async function fulfillPaidOrderFromCheckoutSession(
       });
       appointmentIds.push(apt.id);
 
-      if (
-        aptEmail &&
-        (item.patientNationalIdNumber ||
-          item.patientPassportNumber ||
-          item.patientUtenteNumber ||
-          item.patientAddressLine1 ||
-          item.patientAddressCity ||
-          item.insuranceCompanyId)
-      ) {
-        const existing = await tx.patientProfile.findUnique({
-          where: { email: aptEmail.toLowerCase() },
-          select: {
-            nationalIdNumber: true,
-            taxIdNumber: true,
-            passportNumber: true,
-            utenteNumber: true,
-            addressLine1: true,
-            addressLine2: true,
-            addressCity: true,
-            addressState: true,
-            addressPostalCode: true,
-            addressCountryCode: true,
-            insuranceProviderName: true,
-            insurancePolicyNumber: true,
-          },
-        });
-        // Card snapshot lives on the order — resolve the company name once
-        // so it lands on the profile alongside the (already-encrypted)
-        // policy number instead of just the opaque insuranceCompanyId.
-        const insuranceCompany = item.insuranceCompanyId
-          ? await tx.insuranceCompany.findUnique({
-              where: { id: item.insuranceCompanyId },
-              select: { name: true },
-            })
-          : null;
-        const fill = <T>(existingVal: T | null, snapshotVal: T | null): T | null =>
-          existingVal ?? snapshotVal ?? null;
-        const upsertedProfile = await tx.patientProfile.upsert({
-          where: { email: aptEmail.toLowerCase() },
-          update: {
-            // PR-4: `nationalIdNumber`/`taxIdNumber` are in PHI_ENCRYPTED_FIELDS
-            // but were the only two written through raw. Wrapped like their
-            // siblings below; idempotent, so a cart item that already arrived
-            // encrypted is not double-wrapped and a legacy plaintext one is
-            // encrypted on the way in.
-            nationalIdNumber: fill(
-              existing?.nationalIdNumber ?? null,
-              encryptPhi(item.patientNationalIdNumber),
-            ),
-            taxIdNumber: fill(
-              existing?.taxIdNumber ?? null,
-              encryptPhi(item.patientNationalIdNumber),
-            ),
-            // Encrypted on the way in: `existing` is already ciphertext when a
-            // key is configured, so keeping it as-is is correct and only the
-            // fresh snapshot value needs wrapping.
-            passportNumber: fill(
-              existing?.passportNumber ?? null,
-              encryptPhi(item.patientPassportNumber),
-            ),
-            utenteNumber: fill(
-              existing?.utenteNumber ?? null,
-              encryptPhi(item.patientUtenteNumber),
-            ),
-            addressLine1: fill(existing?.addressLine1 ?? null, item.patientAddressLine1),
-            addressLine2: fill(existing?.addressLine2 ?? null, item.patientAddressLine2),
-            addressCity: fill(existing?.addressCity ?? null, item.patientAddressCity),
-            addressState: fill(existing?.addressState ?? null, item.patientAddressState),
-            addressPostalCode: fill(
-              existing?.addressPostalCode ?? null,
-              item.patientAddressPostalCode,
-            ),
-            addressCountryCode: fill(
-              existing?.addressCountryCode ?? null,
-              item.patientAddressCountryCode,
-            ),
-            insuranceProviderName: fill(
-              existing?.insuranceProviderName ?? null,
-              insuranceCompany?.name ?? null,
-            ),
-            // Already ciphertext (same phi:v1: envelope) — copied verbatim,
-            // same treatment as the Appointment snapshot above.
-            insurancePolicyNumber: fill(
-              existing?.insurancePolicyNumber ?? null,
-              item.insurancePolicyNumber,
-            ),
-            // Not a `fill()` — the enum default is NOT_VERIFIED (not null), so
-            // nullish-coalescing would never let this flip. An insurance line
-            // only reaches payment once its order cleared the PENDING
-            // verification gate (or was VERIFIED outright by an admin taking
-            // a manual booking), so its presence here IS the verified signal.
-            ...(item.insuranceCompanyId ? { insuranceDocumentStatus: "VERIFIED" as const } : {}),
-          },
-          create: {
-            email: aptEmail.toLowerCase(),
-            fullName: aptFullName,
-            phone: aptPhone,
-            dateOfBirth: aptDob,
-            nationalIdNumber: encryptPhi(item.patientNationalIdNumber),
-            taxIdNumber: encryptPhi(item.patientNationalIdNumber),
-            passportNumber: encryptPhi(item.patientPassportNumber),
-            utenteNumber: encryptPhi(item.patientUtenteNumber),
-            addressLine1: item.patientAddressLine1,
-            addressLine2: item.patientAddressLine2,
-            addressCity: item.patientAddressCity,
-            addressState: item.patientAddressState,
-            addressPostalCode: item.patientAddressPostalCode,
-            addressCountryCode: item.patientAddressCountryCode,
-            insuranceProviderName: insuranceCompany?.name ?? null,
-            insurancePolicyNumber: item.insurancePolicyNumber,
-            ...(item.insuranceCompanyId ? { insuranceDocumentStatus: "VERIFIED" as const } : {}),
-          },
-        });
+      await backfillPatientProfile(tx, {
+        item,
+        appointmentId: apt.id,
+        aptEmail,
+        aptFullName,
+        aptPhone,
+        aptDob,
+        patientProfileId,
+      });
+    }
 
-        // The upsert may have just MINTED the profile for a first-time patient,
-        // in which case the link resolved above found nothing. Stamp it now —
-        // but only when this row is keyed by the patient's own address. A
-        // family / booking-for-other line upserts a profile for whichever
-        // address the snapshot carried, and that is not authority to point the
-        // consultation at it.
-        if (!patientProfileId && !item.familyMemberId && !item.bookingForOther) {
+    // ── Test-centre bookings ────────────────────────────────────────────
+    //
+    // A SECOND loop rather than a widened `consultationItems` filter: the loop
+    // above reads item.doctorId, the GP assignment log and DoctorTimeSlot
+    // throughout, none of which a test line has. Both loops push into the same
+    // `appointmentIds` / `unfulfilled` arrays, so everything after them —
+    // Order.appointmentIds, the OrderAppointment dual-write, the ops alert —
+    // covers test bookings for free.
+    for (const item of testBookingItems) {
+      // Already minted (an admin manual test booking, paid later). Commit the
+      // held slot and record the payment; do not mint a second appointment.
+      if (item.appointmentId) {
+        if (item.testCenterTimeSlotId) {
+          const claim = await tx.testCenterTimeSlot.updateMany({
+            where: {
+              id: item.testCenterTimeSlotId,
+              status: { in: ["HELD", "OPEN"] },
+            },
+            data: { status: "BOOKED" },
+          });
+          if (claim.count === 0) {
+            log.warn(
+              { orderId, itemId: item.id, slotId: item.testCenterTimeSlotId },
+              "Manual test booking slot already claimed — appointment payment still recorded",
+            );
+          }
+        }
+        await tx.appointment.update({
+          where: { id: item.appointmentId },
+          data: {
+            paymentStatus: PaymentStatus.PAID,
+            paidAt: new Date(),
+            stripePaymentIntentId:
+              typeof session.payment_intent === "string" ? session.payment_intent : null,
+          },
+        });
+        if (!appointmentIds.includes(item.appointmentId)) {
+          appointmentIds.push(item.appointmentId);
+        }
+        continue;
+      }
+
+      if (!item.testCenterTimeSlotId || !item.testCenterId || !item.examTypeId) {
+        log.warn(
+          { orderId, itemId: item.id },
+          "Test booking order item missing slot/centre/exam",
+        );
+        unfulfilled.push({
+          itemId: item.id,
+          slotId: item.testCenterTimeSlotId,
+          reason: "missing slot/centre/exam on the order line",
+        });
+        continue;
+      }
+
+      const existingOnSlot = await tx.appointment.findUnique({
+        where: { testCenterTimeSlotId: item.testCenterTimeSlotId },
+        select: { id: true, paymentStatus: true },
+      });
+      if (existingOnSlot) {
+        if (existingOnSlot.paymentStatus !== PaymentStatus.PAID) {
           await tx.appointment.update({
-            where: { id: apt.id },
-            data: { patientProfileId: upsertedProfile.id },
+            where: { id: existingOnSlot.id },
+            data: {
+              paymentStatus: PaymentStatus.PAID,
+              paidAt: new Date(),
+              stripePaymentIntentId:
+                typeof session.payment_intent === "string" ? session.payment_intent : null,
+            },
           });
         }
+        await tx.orderItem.update({
+          where: { id: item.id },
+          data: { appointmentId: existingOnSlot.id },
+        });
+        if (!appointmentIds.includes(existingOnSlot.id)) {
+          appointmentIds.push(existingOnSlot.id);
+        }
+        continue;
       }
+
+      // BOOKED is claimable here for the same reason as the consultation loop:
+      // the lookup above proved no appointment occupies this slot.
+      const claim = await tx.testCenterTimeSlot.updateMany({
+        where: {
+          id: item.testCenterTimeSlotId,
+          status: { in: ["HELD", "OPEN", "BOOKED"] },
+        },
+        data: { status: "BOOKED" },
+      });
+      if (claim.count === 0) {
+        log.warn(
+          { orderId, itemId: item.id, slotId: item.testCenterTimeSlotId },
+          "Test centre slot already claimed by someone else — appointment skipped",
+        );
+        unfulfilled.push({
+          itemId: item.id,
+          slotId: item.testCenterTimeSlotId,
+          reason: "held slot is gone or no longer claimable",
+        });
+        continue;
+      }
+
+      const slot = await tx.testCenterTimeSlot.findUniqueOrThrow({
+        where: { id: item.testCenterTimeSlotId },
+      });
+      const centre = await tx.testCenter.findUnique({
+        where: { id: item.testCenterId },
+        select: { name: true, addressLine: true, city: true },
+      });
+
+      const aptFullName = item.patientFullName ?? order.fullName;
+      const aptEmail = item.patientEmail ?? order.email;
+      const aptPhone = item.patientPhone ?? order.phone;
+      const aptDob = item.patientDateOfBirth ?? null;
+      const aptNotes = item.patientNotes ?? null;
+      const patientProfileId = await resolvePatientProfileIdForNewAppointment(tx, {
+        familyMemberId: item.familyMemberId,
+        patientEmail: item.bookingForOther ? item.patientEmail : aptEmail,
+      });
+
+      const apt = await tx.appointment.create({
+        data: {
+          userId: order.userId,
+          patientProfileId,
+          countryCode: order.countryCode,
+          // The exam name, snapshotted on the line at add-to-cart in the
+          // patient's own locale.
+          consultationType: item.name,
+          notificationLocale: order.notificationLocale ?? null,
+          fullName: aptFullName,
+          email: aptEmail,
+          phone: aptPhone,
+          dateOfBirth: aptDob,
+          notes: aptNotes,
+          consentAccepted: true,
+          status: "REQUEST_RECEIVED",
+          examTypeId: item.examTypeId,
+          testCenterId: item.testCenterId,
+          testCenterTimeSlotId: item.testCenterTimeSlotId,
+          scheduledAt: slot.startAt,
+          amountCents: item.unitPriceCents,
+          currencyCode: order.currencyCode,
+          paymentStatus: PaymentStatus.PAID,
+          paidAt: new Date(),
+          // No doctor, no meeting link. IN_PERSON + a locationAddress snapshot
+          // is what makes every existing notification and reminder path render
+          // the centre's address where a consultation shows its Meet link —
+          // see appointment-reminder.service.ts, which needs no change at all.
+          doctorId: null,
+          serviceId: null,
+          consultationMode: "IN_PERSON",
+          meetingUrl: null,
+          locationAddress: formatTestCentreAddress(centre),
+          patientTimezone: item.patientTimezone,
+          addressLine1: item.patientAddressLine1,
+          addressLine2: item.patientAddressLine2,
+          addressCity: item.patientAddressCity,
+          addressState: item.patientAddressState,
+          addressPostalCode: item.patientAddressPostalCode,
+          addressCountryCode: item.patientAddressCountryCode,
+          gdprConsentClinic: item.patientGdprConsentClinic,
+          gdprConsentPlatform: item.patientGdprConsentPlatform,
+          gdprConsentedAt: item.patientGdprConsentedAt,
+          whatsappConsent: item.patientWhatsappConsent,
+          crossBorderConsentAccepted: item.patientCrossBorderConsentAccepted,
+          medicalAccessConsentScope: item.patientMedicalAccessConsentScope ?? "DIRECT",
+        },
+      });
+      await tx.orderItem.update({
+        where: { id: item.id },
+        data: { appointmentId: apt.id },
+      });
+      appointmentIds.push(apt.id);
+
+      await backfillPatientProfile(tx, {
+        item,
+        appointmentId: apt.id,
+        aptEmail,
+        aptFullName,
+        aptPhone,
+        aptDob,
+        patientProfileId,
+      });
     }
 
     await tx.order.update({
@@ -898,6 +1140,28 @@ export async function ensureOrderPaidAutomations(
     Boolean(paidOrder && orderHasConsultationItem(paidOrder.items)) ||
     (paidOrder?.appointmentIds.length ?? 0) > 0;
   if (!paidOrder || !orderIsPaidForMeet(paidOrder)) return;
+
+  // Test-centre booking with no consultation on the order: there is no meeting
+  // link to provision, only an address the patient already has on the line.
+  //
+  // This MUST stay ABOVE the `hasConsult` branch. `hasConsult` ORs in
+  // `appointmentIds.length > 0`, and a test order DOES mint an appointment — so
+  // without this early return it satisfies that term, walks into the
+  // meeting-link path, finds no consultation item to build a Meet link from,
+  // and returns having advanced nothing. The order would sit at
+  // POST_PAYMENT_STAGE_PAID indefinitely and the patient would never be told
+  // their booking is confirmed. Their money is taken either way.
+  const hasTestBooking = orderHasTestBookingItem(paidOrder.items);
+  const hasConsultItem = orderHasConsultationItem(paidOrder.items);
+  if (hasTestBooking && !hasConsultItem) {
+    const { post_sendMeetingLinkNotifications } = await import(
+      "../automation/post-payment-flow.service.js"
+    );
+    await post_sendMeetingLinkNotifications(orderId).catch((err) => {
+      log.warn({ err, orderId }, "Test booking confirmation notifications failed");
+    });
+    return;
+  }
 
   if (hasConsult) {
     const {

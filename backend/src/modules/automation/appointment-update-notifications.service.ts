@@ -38,9 +38,13 @@ import {
 import { sendAdminBookingAlert } from "./admin-booking-alert.service.js";
 import { resolveStaffTimeZone } from "./staff-timezone.js";
 
+// Booking lines that carry an appointment — test bookings included. They have
+// no doctor and no meeting link, but they are looked up, rescheduled and
+// notified through exactly these paths.
 const CONSULTATION_KINDS: CartItemKind[] = [
   CartItemKind.GENERAL_CONSULTATION,
   CartItemKind.SPECIALIST_CONSULTATION,
+  CartItemKind.TEST_BOOKING,
 ];
 
 export type AppointmentUpdateNotifyInput = {

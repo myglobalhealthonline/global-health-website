@@ -61,6 +61,7 @@ import {
   adminUpdateAppointment,
   AppointmentNotFoundError,
   NoAppointmentChangesError,
+  TestBookingRescheduleUnsupportedError,
 } from "../modules/appointments/admin-update-appointment.service.js";
 
 /**
@@ -586,6 +587,9 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(404).send(errorResponse(error.message));
       }
       if (error instanceof NoAppointmentChangesError) {
+        return reply.status(422).send(errorResponse(error.message));
+      }
+      if (error instanceof TestBookingRescheduleUnsupportedError) {
         return reply.status(422).send(errorResponse(error.message));
       }
       if (error instanceof DoctorNotFoundError) {

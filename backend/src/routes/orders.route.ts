@@ -125,9 +125,17 @@ type OrderConsultationDto = {
   consultationType: string;
 };
 
+/**
+ * Lines that mint an Appointment, so the order page can surface it.
+ *
+ * Includes TEST_BOOKING: a test line carries no doctor and no meeting link, but
+ * it does claim a slot and produce an appointment, which is what this list is
+ * asking about.
+ */
 const CONSULTATION_ITEM_KINDS: CartItemKind[] = [
   CartItemKind.GENERAL_CONSULTATION,
   CartItemKind.SPECIALIST_CONSULTATION,
+  CartItemKind.TEST_BOOKING,
 ];
 
 type OrderItemForConsultationFallback = {
@@ -815,6 +823,13 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   couponDiscountCents: couponCut(i) > 0 ? couponCut(i) * i.quantity : null,
                   timeSlotId: i.timeSlotId,
                   doctorId: i.doctorId,
+                  // TEST_BOOKING refs — the fulfilment path mints the
+                  // appointment from these exactly as it does from
+                  // timeSlotId/doctorId for a consultation.
+                  examTypeId: i.examTypeId,
+                  testCenterId: i.testCenterId,
+                  testCenterExamId: i.testCenterExamId,
+                  testCenterTimeSlotId: i.testCenterTimeSlotId,
                   // Patient intake snapshot: carry the cart-page form
                   // data onto the order line so the payment webhook can
                   // mint the Appointment without re-reading the (now
@@ -1104,6 +1119,13 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           // Firmly reserve the slot(s): HELD auto-releases after ~15 min, so
           // commit HELD→BOOKED for the whole verification window. No appointment
           // is minted yet — that happens on payment like any cart consultation.
+          //
+          // DoctorTimeSlot only, and that is correct: add-to-cart rejects
+          // insurance and declared coverage on a TEST_BOOKING line, so a centre
+          // slot can never reach this branch. If test bookings ever accept
+          // coverage, this needs a TestCenterTimeSlot twin — a centre-slot id
+          // passed to doctorTimeSlot.updateMany matches nothing and fails
+          // silently.
           const slotIds = order.items
             .map((i) => i.timeSlotId)
             .filter((x): x is string => Boolean(x));

@@ -8,9 +8,13 @@ import { recomputePrePaymentDueAt } from "../automation/pre-payment-flow.service
 import { rearmPostPaymentRemindersForReschedule } from "../automation/post-payment-flow.service.js";
 import { sendAppointmentUpdateNotifications } from "../automation/appointment-update-notifications.service.js";
 
+// Booking lines that carry an appointment — test bookings included. They have
+// no doctor and no meeting link, but they are looked up, rescheduled and
+// notified through exactly these paths.
 const CONSULTATION_KINDS: CartItemKind[] = [
   CartItemKind.GENERAL_CONSULTATION,
   CartItemKind.SPECIALIST_CONSULTATION,
+  CartItemKind.TEST_BOOKING,
 ];
 
 export type RescheduleSideEffectsInput = {

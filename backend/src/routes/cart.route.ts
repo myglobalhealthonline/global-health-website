@@ -18,6 +18,33 @@ import {
   SlotAlreadyTakenError,
 } from "../modules/doctor-availability/doctor-availability.service.js";
 import {
+  holdTestCenterConsecutiveSlots,
+  releaseTestCenterSlotsToBaseGrid,
+} from "../modules/test-center-availability/test-center-availability.service.js";
+import { computePatientPriceCents } from "../modules/test-centers/test-centers.service.js";
+import { BOOKING_KINDS, isConsultationKind as isConsultationCartKind } from "../modules/orders/booking-kinds.js";
+
+/**
+ * Release held slots, routing each id to the engine that owns its table.
+ *
+ * This partition is load-bearing. `releaseSlotsToBaseGrid` filters by id
+ * against `DoctorTimeSlot`; handed a `TestCenterTimeSlot` id it matches zero
+ * rows and returns silently — leaving the centre slot HELD forever, with no
+ * error anywhere. Every release site in this file goes through here.
+ */
+async function releaseBookingSlots(
+  rows: { timeSlotId?: string | null; testCenterTimeSlotId?: string | null }[],
+): Promise<void> {
+  const doctorSlotIds = rows
+    .map((r) => r.timeSlotId)
+    .filter((id): id is string => Boolean(id));
+  const centerSlotIds = rows
+    .map((r) => r.testCenterTimeSlotId)
+    .filter((id): id is string => Boolean(id));
+  if (doctorSlotIds.length) await releaseSlotsToBaseGrid(doctorSlotIds);
+  if (centerSlotIds.length) await releaseTestCenterSlotsToBaseGrid(centerSlotIds);
+}
+import {
   computeSlotPrice,
   getServicePeakConfig,
 } from "../modules/pricing/peak-pricing.service.js";
@@ -113,9 +140,14 @@ const addItemBodySchema = z.object({
     CartItemKind.PRESCRIPTION_SERVICE,
     CartItemKind.GENERAL_CONSULTATION,
     CartItemKind.SPECIALIST_CONSULTATION,
+    CartItemKind.TEST_BOOKING,
   ]),
   healthTestId: z.string().min(1).max(120).optional(),
   serviceId: z.string().min(1).max(120).optional(),
+  /** TEST_BOOKING lines — the exam, the centre, and the centre slot picked. */
+  examTypeId: z.string().min(1).max(120).optional(),
+  testCenterId: z.string().min(1).max(120).optional(),
+  testCenterTimeSlotId: z.string().min(1).max(120).optional(),
   /** Capped at 5 per item per cart so casual product orders stay sensible. */
   quantity: z.number().int().min(1).max(5).optional(),
   /** Consultation cart items only — slot + doctor selected up front. */
@@ -509,15 +541,20 @@ async function sweepExpiredHolds(cartId: string): Promise<SweepResult> {
     where: {
       cartId,
       heldUntil: { lt: now },
-      timeSlotId: { not: null },
+      // Either slot column marks a held booking line. Filtering on timeSlotId
+      // alone would leave an expired test-centre hold in the cart forever.
+      OR: [{ timeSlotId: { not: null } }, { testCenterTimeSlotId: { not: null } }],
     },
-    select: { id: true, timeSlotId: true, name: true, doctorId: true },
+    select: {
+      id: true,
+      timeSlotId: true,
+      testCenterTimeSlotId: true,
+      name: true,
+      doctorId: true,
+    },
   });
   if (expired.length === 0) return EMPTY_SWEEP;
 
-  const slotIds = expired
-    .map((i) => i.timeSlotId)
-    .filter((id): id is string => Boolean(id));
   const itemIds = expired.map((i) => i.id);
   const doctorIds = Array.from(
     new Set(expired.map((i) => i.doctorId).filter((id): id is string => Boolean(id))),
@@ -525,7 +562,7 @@ async function sweepExpiredHolds(cartId: string): Promise<SweepResult> {
 
   // Return the held time back to the base grid (delete collapsed HELD rows +
   // re-materialise base slots), then drop the cart items.
-  await releaseSlotsToBaseGrid(slotIds);
+  await releaseBookingSlots(expired);
   const [, doctors] = await Promise.all([
     prisma.cartItem.deleteMany({ where: { id: { in: itemIds } } }),
     doctorIds.length
@@ -551,14 +588,15 @@ async function sweepExpiredHolds(cartId: string): Promise<SweepResult> {
  * abandoned consultation.
  */
 async function releaseHeldSlotsForItems(
-  items: { id: string; timeSlotId: string | null }[],
+  items: {
+    id: string;
+    timeSlotId: string | null;
+    testCenterTimeSlotId?: string | null;
+  }[],
 ) {
-  const slotIds = items
-    .map((i) => i.timeSlotId)
-    .filter((id): id is string => typeof id === "string" && id.length > 0);
   const itemIds = items.map((i) => i.id);
-  if (slotIds.length === 0 && itemIds.length === 0) return;
-  if (slotIds.length) await releaseSlotsToBaseGrid(slotIds);
+  if (itemIds.length === 0) return;
+  await releaseBookingSlots(items);
   if (itemIds.length) {
     await prisma.cartItem.deleteMany({ where: { id: { in: itemIds } } });
   }
@@ -596,7 +634,10 @@ export async function mergeCarts(sourceId: string, targetId: string) {
   // after the commit, so a failed merge just leaves the slots HELD until the
   // 10-minute sweep — the safe direction to fail in.
   const ops: Prisma.PrismaPromise<unknown>[] = [];
-  const slotsToRelease: string[] = [];
+  const slotsToRelease: {
+    timeSlotId: string | null;
+    testCenterTimeSlotId: string | null;
+  }[] = [];
 
   // If target is empty, just move country/currency from source.
   if (!target.countryCode && source.countryCode) {
@@ -635,15 +676,16 @@ export async function mergeCarts(sourceId: string, targetId: string) {
   for (const item of source.items) {
     const itemIsInsurance = Boolean(item.insuranceCompanyId);
     if ((itemIsInsurance && targetHasOther) || (!itemIsInsurance && targetHasInsurance)) {
-      if (item.timeSlotId) {
-        slotsToRelease.push(item.timeSlotId);
-      }
+      slotsToRelease.push({
+        timeSlotId: item.timeSlotId,
+        testCenterTimeSlotId: item.testCenterTimeSlotId,
+      });
       continue;
     }
 
-    const isConsultation =
-      item.kind === "GENERAL_CONSULTATION" ||
-      item.kind === "SPECIALIST_CONSULTATION";
+    // Booking lines (consultation OR test) carry a globally @unique slot
+    // column, so they are re-parented rather than copied — see below.
+    const isConsultation = BOOKING_KINDS.includes(item.kind);
 
     const dupe = isConsultation
       ? undefined
@@ -690,7 +732,7 @@ export async function mergeCarts(sourceId: string, targetId: string) {
   ops.push(prisma.cart.deleteMany({ where: { id: sourceId } }));
   await prisma.$transaction(ops);
 
-  if (slotsToRelease.length) await releaseSlotsToBaseGrid(slotsToRelease);
+  if (slotsToRelease.length) await releaseBookingSlots(slotsToRelease);
 }
 
 function serializeCart(
@@ -799,7 +841,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       }
       const queryParse = cartQuerySchema.safeParse(request.query);
       const requestedLocale = queryParse.success ? queryParse.data.locale : undefined;
-      const { kind, healthTestId, serviceId, quantity, timeSlotId, doctorId, patient, benefitSelection, familyMemberId, insuranceCompanyId, insurancePolicyNumber, benefit, declaredCoverage } =
+      const { kind, healthTestId, serviceId, examTypeId, testCenterId, testCenterTimeSlotId, quantity, timeSlotId, doctorId, patient, benefitSelection, familyMemberId, insuranceCompanyId, insurancePolicyNumber, benefit, declaredCoverage } =
         body.data;
       const qty = quantity ?? 1;
       // A declared INSURANCE coverage is the same thing the legacy insurance
@@ -816,19 +858,30 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       /** Resolved coverage price, set by the pricing block below. */
       let declaredPriceCents: number | null = null;
 
-      // Consultation kinds require the patient intake snapshot up
-      // front — the consult page collects it before add-to-cart so
-      // checkout only handles payment. Product items don't take any
-      // patient data on the cart line.
-      const isConsultationKind =
-        kind === CartItemKind.GENERAL_CONSULTATION ||
-        kind === CartItemKind.SPECIALIST_CONSULTATION;
-      if (isConsultationKind) {
+      // Booking kinds require the patient intake snapshot up front — the
+      // booking page collects it before add-to-cart so checkout only handles
+      // payment. Product items don't take any patient data on the cart line.
+      //
+      // A test booking needs it for the same reason a consultation does: the
+      // payment webhook mints its Appointment from this snapshot.
+      const isConsultationKind = isConsultationCartKind(kind);
+      const isTestBookingKind = kind === CartItemKind.TEST_BOOKING;
+      const isBookingKind = isConsultationKind || isTestBookingKind;
+      if (isBookingKind) {
         if (!patient) {
           return reply
             .status(400)
-            .send(errorResponse("Patient details required for consultation bookings"));
+            .send(errorResponse("Patient details required for bookings"));
         }
+      }
+
+      // Self-pay only in v1. Rejecting here is what keeps the insurance
+      // pre-BOOKED path in the checkout route (which claims DoctorTimeSlot rows
+      // directly) provably unreachable for a centre slot.
+      if (isTestBookingKind && (insuranceCompanyId || declaredCoverage)) {
+        return reply
+          .status(400)
+          .send(errorResponse("Test bookings are self-pay and cannot use insurance or a coverage plan"));
       }
 
       // Parse DOB → start-of-day UTC so it survives Stripe / webhook
@@ -849,6 +902,8 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       let shippingCents = 0;
       let countryCode = "";
       let currencyCode = "";
+      /** TEST_BOOKING lines: the offering the price was snapshotted from. */
+      let testCenterExamId: string | null = null;
 
       try {
         if (kind === "HEALTH_TEST") {
@@ -885,6 +940,63 @@ const cartRoute: FastifyPluginAsync = async (app) => {
           shippingCents = ht.shippingCents ?? 0;
           countryCode = ht.country.code;
           currencyCode = ht.currencyCode ?? "EUR";
+        } else if (kind === "TEST_BOOKING") {
+          if (!examTypeId || !testCenterId || !testCenterTimeSlotId) {
+            return reply
+              .status(400)
+              .send(
+                errorResponse(
+                  "Test bookings require examTypeId, testCenterId and testCenterTimeSlotId",
+                ),
+              );
+          }
+          // The offering IS the price. Resolving it here also proves the exam
+          // is published, the centre carries it, and the centre's market is
+          // live — one read instead of three separate existence checks.
+          const offering = await prisma.testCenterExam.findFirst({
+            where: {
+              testCenterId,
+              examTypeId,
+              isActive: true,
+              examType: { isActive: true, isBookable: true },
+              testCenter: { isActive: true, country: { isActive: true } },
+            },
+            include: {
+              examType: {
+                select: {
+                  name: true,
+                  translations: { select: { locale: true, name: true } },
+                },
+              },
+              testCenter: {
+                select: { country: { select: { code: true, defaultLocale: true } } },
+              },
+            },
+          });
+          // Same 404 whichever gate failed — an unpublished exam must not be
+          // distinguishable from a nonexistent one.
+          if (!offering) {
+            return reply.status(404).send(errorResponse("Test not available at that centre"));
+          }
+          name = requestedLocale
+            ? (resolveTranslation(
+                offering.examType.translations,
+                requestedLocale,
+                offering.testCenter.country.defaultLocale,
+              ).tr?.name ?? offering.examType.name)
+            : offering.examType.name;
+          // Computed from cost + markup at read time and snapshotted onto the
+          // line here, so a markup edit mid-checkout cannot surprise the
+          // patient. Nothing is shipped — the patient attends in person.
+          unitPriceCents = computePatientPriceCents(
+            offering.costCents,
+            offering.markupMode,
+            offering.markupValue,
+          );
+          shippingCents = 0;
+          countryCode = offering.testCenter.country.code;
+          currencyCode = offering.currencyCode;
+          testCenterExamId = offering.id;
         } else if (
           kind === "PRESCRIPTION_SERVICE" ||
           kind === "GENERAL_CONSULTATION" ||
@@ -1281,6 +1393,29 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       // the cart first. Applies to every declared source, not just insurance:
       // the parked-order gate at checkout is one flag for the whole order, so
       // a mixed cart would strand the pay-now lines behind a verification.
+      // A test booking and a doctor consultation cannot share a cart (v1).
+      //
+      // This is not cosmetic: the post-payment message flow picks ONE primary
+      // line per order to build the confirmation from, so a mixed order would
+      // send a doctor's meeting link labelled with a test, or a centre address
+      // labelled with a consultation. Forbidding the mix here is what makes it
+      // safe to widen those flows from CONSULTATION_KINDS to BOOKING_KINDS.
+      const cartHasTestBooking = cart.items.some(
+        (i) => i.kind === CartItemKind.TEST_BOOKING,
+      );
+      const cartHasConsultation = cart.items.some((i) => isConsultationCartKind(i.kind));
+      if (
+        (isTestBookingKind && cartHasConsultation) ||
+        (isConsultationKind && cartHasTestBooking)
+      ) {
+        return reply.status(409).send(
+          errorResponse(
+            "A test booking and a doctor consultation must be booked separately. Check out your cart first, then book the other one.",
+            { conflict: "test_and_consultation_mixed" },
+          ),
+        );
+      }
+
       const cartHasCoverage = cart.items.some(
         (i) => i.insuranceCompanyId || i.declaredCoverageSource,
       );
@@ -1327,8 +1462,9 @@ const cartRoute: FastifyPluginAsync = async (app) => {
         });
       }
 
-      // De-dupe: same product → bump qty (consultations are unique per slot)
-      const isConsultation = isConsultationKind;
+      // De-dupe: same product → bump qty. Booking lines (consultation OR
+      // test) are unique per slot and never merge by quantity.
+      const isConsultation = isBookingKind;
 
       if (!isConsultation) {
         const existing = cart.items.find(
@@ -1346,14 +1482,20 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       } else {
         const existingInCart = timeSlotId
           ? cart.items.find((i) => i.timeSlotId === timeSlotId)
-          : null;
+          : testCenterTimeSlotId
+            ? cart.items.find((i) => i.testCenterTimeSlotId === testCenterTimeSlotId)
+            : null;
         if (existingInCart) {
           return okResponse(await serializeFreshCart(cart.id, expiredHolds));
         }
 
+        // Both slot columns are globally @unique on CartItem precisely so this
+        // check can be a single indexed read.
         const slotTaken = timeSlotId
           ? await prisma.cartItem.findUnique({ where: { timeSlotId } })
-          : null;
+          : testCenterTimeSlotId
+            ? await prisma.cartItem.findUnique({ where: { testCenterTimeSlotId } })
+            : null;
         if (slotTaken) {
           return reply
             .status(409)
@@ -1366,6 +1508,57 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       // CartItem. The picked slot is the first base slot; we hold the
       // consecutive base slots covering the service duration as one collapsed
       // HELD row. If another patient grabbed any of them we bail with 409.
+      // Test bookings: hold the centre slots covering the exam's length. No
+      // service/doctor/assignment policy applies — a centre is either live
+      // (with its country) or it generates no inventory at all — but the
+      // market's booking switch still has to be honoured, and re-read inside
+      // the same transaction so a market closed mid-request cannot slip
+      // through.
+      if (isTestBookingKind && testCenterTimeSlotId && testCenterId) {
+        const exam = examTypeId
+          ? await prisma.examType.findUnique({
+              where: { id: examTypeId },
+              select: { durationMinutes: true },
+            })
+          : null;
+        try {
+          await prisma.$transaction(async (tx) => {
+            const held = await holdTestCenterConsecutiveSlots(
+              tx,
+              testCenterTimeSlotId,
+              exam?.durationMinutes ?? null,
+            );
+            // The slot must belong to the centre the client named, or a caller
+            // could hold one centre's inventory against another's price.
+            if (held.testCenterId !== testCenterId) throw new SlotAlreadyTakenError();
+            const [centre, bookingSetting] = await Promise.all([
+              tx.testCenter.findFirst({
+                where: {
+                  id: testCenterId,
+                  isActive: true,
+                  country: { code: countryCode, isActive: true },
+                },
+                select: { id: true },
+              }),
+              tx.bookingSetting.findFirst({
+                where: { country: { code: countryCode } },
+                select: { bookingEnabled: true },
+              }),
+            ]);
+            if (!centre || bookingSetting?.bookingEnabled === false) {
+              throw new SlotAlreadyTakenError();
+            }
+          });
+        } catch (err) {
+          if (err instanceof SlotAlreadyTakenError) {
+            return reply
+              .status(409)
+              .send(errorResponse("That time slot is no longer available"));
+          }
+          throw err;
+        }
+      }
+
       if (isConsultation && timeSlotId && doctorId) {
         const svc = serviceId
           ? await prisma.service.findUnique({
@@ -1443,7 +1636,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       // Consultation slots get a 10-minute reservation; product items
       // never expire from the cart on their own.
       const heldUntil =
-        isConsultation && timeSlotId
+        isConsultation && (timeSlotId || testCenterTimeSlotId)
           ? new Date(Date.now() + HOLD_TTL_MS)
           : null;
 
@@ -1460,13 +1653,20 @@ const cartRoute: FastifyPluginAsync = async (app) => {
             quantity: isConsultation ? 1 : qty,
             timeSlotId: timeSlotId ?? null,
             doctorId: doctorId ?? null,
+            examTypeId: examTypeId ?? null,
+            testCenterId: testCenterId ?? null,
+            testCenterExamId,
+            testCenterTimeSlotId: testCenterTimeSlotId ?? null,
             heldUntil,
             // Per-line benefit choice (default PAY_NORMAL never reserves a
             // credit) + the approved dependent this line is booked for. Both are
             // consultation-only concepts — products always pay normally with no
             // beneficiary, regardless of what the client sent.
-            benefitSelection: isConsultation ? benefitSelection ?? "PAY_NORMAL" : "PAY_NORMAL",
-            familyMemberId: isConsultation ? familyMember?.id ?? null : null,
+            // Consultation-only, deliberately NOT isBookingKind: membership,
+            // corporate and family-member benefits do not apply to lab exams
+            // in v1, so a test line always pays normally for itself.
+            benefitSelection: isConsultationKind ? benefitSelection ?? "PAY_NORMAL" : "PAY_NORMAL",
+            familyMemberId: isConsultationKind ? familyMember?.id ?? null : null,
             // Consultation patient snapshot. Stamped here so cart →
             // order → webhook can mint the Appointment without
             // collecting any of this at checkout. When booking for a family
@@ -1642,10 +1842,8 @@ const cartRoute: FastifyPluginAsync = async (app) => {
 
       await prisma.cartItem.delete({ where: { id: item.id } });
 
-      // Return the held run to the base grid for consultation items.
-      if (item.timeSlotId) {
-        await releaseSlotsToBaseGrid([item.timeSlotId]);
-      }
+      // Return the held run to the base grid — whichever engine owns it.
+      await releaseBookingSlots([item]);
 
       // If cart is now empty, clear country/currency stamps
       const remaining = await prisma.cartItem.count({ where: { cartId: sweptCart.id } });
@@ -1665,12 +1863,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
     if (!cart) return okResponse(EMPTY_CART);
 
     // Return all held runs to the base grid before deleting cart items
-    const heldSlotIds = cart.items
-      .map((i) => i.timeSlotId)
-      .filter((id): id is string => Boolean(id));
-    if (heldSlotIds.length > 0) {
-      await releaseSlotsToBaseGrid(heldSlotIds);
-    }
+    await releaseBookingSlots(cart.items);
 
     await prisma.cartItem.deleteMany({ where: { cartId: cart.id } });
     await prisma.cart.update({
