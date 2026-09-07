@@ -94,11 +94,18 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
         // sent GeneratedDocument PDFs + AppointmentDocument uploads, kept in
         // sync with the doctor portal Documents section.
         const docs = await listPatientUnifiedDocuments(profile.id, request.authUser.email);
-        await guardMedicalRead(
-          request,
-          { userId: request.authUser.sub, role: "PATIENT" },
-          { patientProfileId: profile.id, resourceType: "MEDICAL_DOC", accessAction: "VIEWED" },
-        ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
+        try {
+          await guardMedicalRead(
+            request,
+            { userId: request.authUser.sub, role: "PATIENT" },
+            { patientProfileId: profile.id, resourceType: "MEDICAL_DOC", accessAction: "VIEWED" },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+          }
+          throw guardError;
+        }
         return okResponse({ documents: docs });
       } catch (error) {
         app.log.error(error);
@@ -114,12 +121,28 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
       if (!request.authUser || request.authUser.role !== "PATIENT") {
         return reply.status(403).send(errorResponse("Patient access required"));
       }
+      const profile = await resolvePatientProfile(request.authUser.email);
+      if (!profile) return reply.status(404).send(errorResponse("Profile not found"));
+
+      // Authorize before anything is read or written. The guard used to run
+      // after putObject + createMedicalDocument, so a denial could only be
+      // reported once the document already existed on someone else's profile.
+      try {
+        await guardMedicalRead(
+          request,
+          { userId: request.authUser.sub, role: "PATIENT" },
+          { patientProfileId: profile.id, resourceType: "MEDICAL_DOC", accessAction: "UPLOADED" },
+        );
+      } catch (guardError) {
+        if (guardError instanceof MedicalAccessDeniedError) {
+          return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+        }
+        throw guardError;
+      }
+
       if (!isMediaStorageConfigured()) {
         return reply.status(503).send(errorResponse("Upload storage not configured"));
       }
-
-      const profile = await resolvePatientProfile(request.authUser.email);
-      if (!profile) return reply.status(404).send(errorResponse("Profile not found"));
 
       let fileBuffer: Buffer | null = null;
       let mimetype = "application/octet-stream";
@@ -180,11 +203,6 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
           visibleToPatient: true,
         });
 
-        await guardMedicalRead(
-          request,
-          { userId: request.authUser.sub, role: "PATIENT" },
-          { patientProfileId: profile.id, resourceType: "MEDICAL_DOC", accessAction: "UPLOADED", resourceId: doc.id },
-        ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
 
         return okResponse({ document: serializeDoc(doc) }, "Document uploaded");
       } catch (error) {
@@ -290,11 +308,18 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
 
         if (!storageKey) return reply.status(404).send(errorResponse("Document not found"));
 
-        await guardMedicalRead(
-          request,
-          { userId: request.authUser.sub, role: "PATIENT" },
-          { patientProfileId: profile.id, resourceType: "MEDICAL_DOC", accessAction: "DOWNLOADED", resourceId: request.params.id },
-        ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
+        try {
+          await guardMedicalRead(
+            request,
+            { userId: request.authUser.sub, role: "PATIENT" },
+            { patientProfileId: profile.id, resourceType: "MEDICAL_DOC", accessAction: "DOWNLOADED", resourceId: request.params.id },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+          }
+          throw guardError;
+        }
 
         const obj = await getObject(storageKey);
         const stream = streamToNodeReadable(obj.Body);

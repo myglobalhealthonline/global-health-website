@@ -68,6 +68,15 @@ describe("authorization matrix", () => {
   let adminUserId = "";
   let adminCookie: Record<string, string> = {};
   let medicalDocumentId = "";
+  // AZ-5 fixtures: a PATIENT whose PatientProfile row carries their email but
+  // is NOT linked to their User (userId null) — exactly what the guest-booking
+  // upsert in complete-order-payment.service.ts mints. The patient routes
+  // resolve the profile by email, so this session reaches the guard, and the
+  // guard's SELF branch denies it (PATIENT_NOT_OWN_RECORD).
+  let unlinkedPatientUserId = "";
+  let unlinkedPatientProfileId = "";
+  let unlinkedPatientCookie: Record<string, string> = {};
+  let unlinkedDocumentId = "";
   let orderId = "";
   let invoiceId = "";
   /** Cheapest cart line that needs no slot — carries the benefit probes below. */
@@ -277,6 +286,45 @@ describe("authorization matrix", () => {
     });
     medicalDocumentId = medicalDocument.id;
 
+    const unlinkedPatientUser = await prisma.user.create({
+      data: {
+        email: `patient-unlinked-${uniq}@test.local`,
+        passwordHash: "x",
+        fullName: "Authz Test Unlinked Patient",
+        role: "PATIENT",
+      },
+    });
+    unlinkedPatientUserId = unlinkedPatientUser.id;
+    unlinkedPatientCookie = {
+      gh_auth: signAuthToken({
+        sub: unlinkedPatientUser.id,
+        role: "PATIENT",
+        email: unlinkedPatientUser.email,
+      }),
+    };
+    const unlinkedProfile = await prisma.patientProfile.create({
+      data: {
+        email: unlinkedPatientUser.email,
+        userId: null,
+        fullName: "Authz Test Unlinked Patient",
+      },
+    });
+    unlinkedPatientProfileId = unlinkedProfile.id;
+    const unlinkedDocument = await prisma.medicalDocument.create({
+      data: {
+        patientProfileId: unlinkedProfile.id,
+        uploadedByRole: "PATIENT",
+        documentType: "OTHER",
+        title: "Authz Unlinked Upload",
+        fileKey: `authz-test/${uniq}/unlinked.pdf`,
+        fileName: "unlinked.pdf",
+        mimetype: "application/pdf",
+        byteSize: 1024,
+        visibleToPatient: true,
+      },
+    });
+    unlinkedDocumentId = unlinkedDocument.id;
+
     // Order + Invoice for S-031's admin-invoices.route.ts single-read test.
     const order = await prisma.order.create({
       data: {
@@ -402,11 +450,11 @@ describe("authorization matrix", () => {
     if (!app) return;
     envModule.MEDICAL_ACCESS_ENFORCE = originalEnforce;
     await deleteMedicalAccessLogs(prisma, {
-      patientProfileId: { in: [patient1ProfileId, patient2ProfileId] },
+      patientProfileId: { in: [patient1ProfileId, patient2ProfileId, unlinkedPatientProfileId] },
     });
     await deleteAuditLogs(prisma, {
       actorUserId: {
-        in: [doctor1UserId, doctor2UserId, doctor3UserId, patient1UserId, patient2UserId, adminUserId],
+        in: [doctor1UserId, doctor2UserId, doctor3UserId, patient1UserId, patient2UserId, adminUserId, unlinkedPatientUserId],
       },
     });
     await prisma.invoice.deleteMany({ where: { id: invoiceId } });
@@ -415,18 +463,22 @@ describe("authorization matrix", () => {
     await prisma.cart.deleteMany({ where: { userId: patient1UserId } });
     await prisma.healthTest.deleteMany({ where: { id: healthTestId } });
     await prisma.service.deleteMany({ where: { id: pauseServiceId } });
-    await prisma.medicalDocument.deleteMany({ where: { id: medicalDocumentId } });
+    await prisma.medicalDocument.deleteMany({
+      where: { id: { in: [medicalDocumentId, unlinkedDocumentId] } },
+    });
     await prisma.prescription.deleteMany({ where: { id: prescriptionId } });
     await prisma.consultationService.deleteMany({ where: { consultationId: consultation2Id } });
     await prisma.examResult.deleteMany({ where: { appointmentId: appointment2Id } });
     await prisma.medicalNote.deleteMany({ where: { appointmentId: appointment2Id } }).catch(() => {});
     await prisma.consultation.deleteMany({ where: { id: { in: [consultationId, consultation2Id] } } });
     await prisma.appointment.deleteMany({ where: { id: { in: [appointmentId, appointment2Id] } } });
-    await prisma.patientProfile.deleteMany({ where: { id: { in: [patient1ProfileId, patient2ProfileId] } } });
+    await prisma.patientProfile.deleteMany({
+      where: { id: { in: [patient1ProfileId, patient2ProfileId, unlinkedPatientProfileId] } },
+    });
     await prisma.user.deleteMany({
       where: {
         id: {
-          in: [doctor1UserId, doctor2UserId, doctor3UserId, patient1UserId, patient2UserId, adminUserId],
+          in: [doctor1UserId, doctor2UserId, doctor3UserId, patient1UserId, patient2UserId, adminUserId, unlinkedPatientUserId],
         },
       },
     });
@@ -783,6 +835,77 @@ describe("authorization matrix", () => {
       cookies: doctor3Cookie,
     });
     assert.equal(res.statusCode, 403, res.body);
+  });
+
+  // ── AZ-5: the patient self-service routes must honour a guard denial ──────
+  // Before the fix, all three patient routes in medical-documents.route.ts
+  // wrapped guardMedicalRead in a `.catch()` that discarded
+  // MedicalAccessDeniedError — a mechanical carry-over from the
+  // fire-and-forget `logAccess()` call the guard replaced in 263bac97. In
+  // ENFORCE mode (production's default, per the strict COMPLIANCE_MODE boot
+  // guard) that swallowed the guard's verdict and served the PHI anyway.
+  it("AZ-5: enforce mode — an unlinked patient's own-document list is denied → 403", async (t) => {
+    if (!app) return t.skip();
+    const before = await prisma.medicalAccessLog.count({
+      where: { patientProfileId: unlinkedPatientProfileId },
+    });
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/account/medical-documents",
+      cookies: unlinkedPatientCookie,
+    });
+    assert.equal(res.statusCode, 403, res.body);
+    assert.equal(res.json().details.reasonCode, "PATIENT_NOT_OWN_RECORD", res.body);
+    const after = await prisma.medicalAccessLog.count({
+      where: { patientProfileId: unlinkedPatientProfileId },
+    });
+    assert.ok(after > before, "the denied read is still written to MedicalAccessLog");
+  });
+
+  it("AZ-5: enforce mode — the same patient's document download is denied → 403", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({
+      method: "GET",
+      url: `/api/account/medical-documents/${unlinkedDocumentId}/download`,
+      cookies: unlinkedPatientCookie,
+    });
+    // 403, not 500: the guard must deny before the object-storage read (which
+    // is unconfigured in the test env and would otherwise surface as a 500).
+    assert.equal(res.statusCode, 403, res.body);
+  });
+
+  it("AZ-5: enforce mode — the same patient's upload is denied → 403, nothing written", async (t) => {
+    if (!app) return t.skip();
+    const before = await prisma.medicalDocument.count({
+      where: { patientProfileId: unlinkedPatientProfileId },
+    });
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/account/medical-documents",
+      cookies: unlinkedPatientCookie,
+      payload: "",
+      headers: { "content-type": "multipart/form-data; boundary=authz" },
+    });
+    assert.equal(res.statusCode, 403, res.body);
+    const after = await prisma.medicalDocument.count({
+      where: { patientProfileId: unlinkedPatientProfileId },
+    });
+    assert.equal(after, before, "a denied upload creates no MedicalDocument row");
+  });
+
+  it("AZ-5: shadow mode — the same request is served, denial logged only", async (t) => {
+    if (!app) return t.skip();
+    envModule.MEDICAL_ACCESS_ENFORCE = false;
+    try {
+      const res = await app.inject({
+        method: "GET",
+        url: "/api/account/medical-documents",
+        cookies: unlinkedPatientCookie,
+      });
+      assert.equal(res.statusCode, 200, res.body);
+    } finally {
+      envModule.MEDICAL_ACCESS_ENFORCE = true;
+    }
   });
 
   it("S-032 fix: blocks the admin read once a break-glass reason is required but not supplied", async (t) => {
