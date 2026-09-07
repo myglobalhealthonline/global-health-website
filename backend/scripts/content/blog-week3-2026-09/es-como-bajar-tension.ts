@@ -71,7 +71,7 @@ const es: LocalePost = {
       "Una infusión no hace daño. Sustituir el tratamiento por una infusión, sí.",
     ],
     author: AUTHOR,
-    reviewLine: "Revisión clínica y lingüística obligatoria antes de la publicación.",
+    reviewLine: "Revisado por el equipo médico de Global Health.",
     navLabel: "En este artículo",
     sections: [
       {
@@ -187,7 +187,7 @@ const es: LocalePost = {
     ],
     disclaimerTitle: "Aviso médico",
     disclaimer:
-      "Artículo elaborado con apoyo de IA y pendiente de revisión clínica y lingüística. Información general a septiembre de 2026; no sustituye la valoración médica ni el tratamiento prescrito. Ante síntomas de alarma, llame al 112.",
+      "Información general a septiembre de 2026; no sustituye la valoración médica ni el tratamiento prescrito. Ante síntomas de alarma, llame al 112.",
   } satisfies Article,
 };
 

@@ -6,6 +6,213 @@
 <title>Tensiune mică: cauze, ce să faci și când suni la 112</title>
 <meta name="description" content="Ce înseamnă tensiune mică, cauzele frecvente, manevrele recomandate de ghidul european când amețești, de ce apa cu zahăr nu ajută și când e urgență.">
 <style>
+:root {
+  --font-manrope: "Aptos", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-plus-jakarta: var(--font-manrope);
+  --font-display: var(--font-manrope);
+  --font-geist-mono: "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+
+  /* ── Brand (EXACT values from Manual da Marca) ────────────
+   * Source: Global Health Manual da Marca PDF page 1. The previous
+   * tokens drifted off-spec (forest at #1B4D3E vs brand #1D4B36, no
+   * mid-mint #8FB021 in the system). All five brand swatches are
+   * now declared verbatim with no rounding. */
+  --color-brand-primary:       #1D4B36;   /* Forest deep — primary */
+  --color-brand-primary-hover: #163826;   /* Darker forest — hover */
+  --color-brand-secondary:     #FFFFFF;
+  /* Mid-mint — the missing brand swatch. Used for icon tiles, on-dark
+   * CTAs, secondary accents that need more saturation than the
+   * pastel mint but less punch than the lime. */
+  --color-brand-mint:           #8FB021;
+  --color-brand-mint-soft:      rgba(143, 176, 33, 0.18);
+  --color-brand-mint-dim:       rgba(143, 176, 33, 0.10);
+  /* Brand lime aliased under --color-accent so legacy call sites
+   * (portal/admin sidebar, CountryEntryGate, icon tiles) resolve to
+   * the correct on-brand colour without a mass rename. The old pastel
+   * #C8E6A0 was off-spec; these values are now exact-palette tints. */
+  --color-accent:              #B0F122;
+  --color-accent-soft:         rgba(176, 241, 34, 0.20);
+  --color-accent-dim:          rgba(176, 241, 34, 0.10);
+  /* Bright lime — the loud brand accent. Notification dots, hero
+   * highlights, "available now" indicators. Brand spec value. */
+  --color-brand-accent:        #B0F122;
+  --color-brand-accent-soft:   rgba(176, 241, 34, 0.55);  /* lime at 55% — hover/soft states */
+
+  /* Readable muted-on-dark tokens (spec §9) — text on .gh2-section-forest /
+   * .gh2-glass-forest surfaces without dropping below AA contrast. */
+  --gh2-on-dark-muted: rgba(255, 255, 255, 0.72);
+  --gh2-on-dark-faint: rgba(255, 255, 255, 0.60);
+
+  /* Backgrounds */
+  --color-background:       #FFFFFF; /* alias for --color-background-page */
+  --color-background-page:  #FFFFFF;
+  --color-background-soft:  #F6F8F1;   /* warm off-white */
+  --color-background-panel: #EDF2E2;   /* mint-tinted panel */
+  --color-background-dark:  #1D4B36;   /* brand forest deep — exact swatch from Manual da Marca */
+
+  /* Text — brand spec uses #6D6D6D as mid grey. Carry it through as
+   * the muted tier; primary + body remain forest-toned. */
+  --color-text-primary:     #1D4B36;   /* aligned to brand primary swatch */
+  --color-text-body:        #2D3B36;
+  --color-text-muted:       #6D6D6D;
+  --color-text-placeholder: #9A9A9A;
+
+  /* Borders */
+  --color-border:        #E4E7DD;
+  --color-border-strong: #C3CCB5;
+
+  --color-hero-overlay: rgba(29, 75, 54, 0.72);
+
+  /* Status */
+  --color-status-error:        #B91C1C;
+  --color-status-error-bg:     #FEF2F2;
+  --color-status-error-text:   #991B1B;
+  --color-status-error-border: #FECACA;
+  --color-status-success-bg:   #F0FDF4;
+  --color-status-success-text: #15803D;
+  --color-status-success-border:#BBF7D0;
+  --color-status-warning-bg:   #FFFBEB;
+  --color-status-warning-text: #92400E;
+  --color-status-warning-border:#FDE68A;
+  --color-status-info-bg:      #F0F9FF;
+  --color-status-info-text:    #075985;
+  --color-status-info-border:  #BAE6FD;
+
+  /* Radius */
+  --radius-card:    20px;
+  --radius-card-sm: 12px;
+  --radius-button:  999px;
+  --radius-tile:    16px;
+  --radius-chip:    999px;
+
+  /* Shadows — forest-tinted, never neutral black */
+  --shadow-soft:       0 1px 3px rgba(29, 75, 54, 0.06);
+  --shadow-card:       0 1px 3px rgba(29, 75, 54, 0.08), 0 4px 12px rgba(29, 75, 54, 0.04);
+  --shadow-card-hover: 0 4px 12px rgba(29, 75, 54, 0.12), 0 8px 24px rgba(29, 75, 54, 0.08);
+  --shadow-elevated:   0 8px 30px rgba(29, 75, 54, 0.14), 0 2px 8px rgba(29, 75, 54, 0.08);
+  --shadow-focus:      0 0 0 3px rgba(29, 75, 54, 0.28);
+  --shadow-focus-error:0 0 0 3px rgba(185, 28, 28, 0.28);
+
+  /* Medical pattern tokens */
+  --medical-pattern-size: 28px;
+  --medical-pattern-color: var(--color-brand-primary);
+  --medical-pattern-opacity: 0.022;
+  --medical-pattern-dark-opacity: 0.04;
+  --medical-pattern-soft-opacity: 0.016;
+
+  /* Fluid type — bigger, more confident display sizes. */
+  --text-display: clamp(2.5rem, 7vw + 1rem, 6rem);
+  --text-h1: clamp(2.25rem, 5vw + 0.5rem, 4.25rem);
+  --text-h2: clamp(1.75rem, 3.5vw + 0.4rem, 3rem);
+  --text-h3: clamp(1.25rem, 2vw + 0.3rem, 1.75rem);
+  --text-body-lg: clamp(1.05rem, 1vw + 0.6rem, 1.25rem);
+  --text-body: clamp(0.95rem, 0.5vw + 0.7rem, 1.05rem);
+  /* Fixed sizes for meta + eyebrow — these stay legible at any viewport.
+   * Eyebrow is the only place positive letter-tracking exists in the
+   * system; the +0.06em opens uppercase taxonomy labels against the
+   * negative-tracked display headlines. */
+  --text-eyebrow: 0.8125rem;
+  --text-meta: 0.875rem;
+
+  /* Layout */
+  --container-width: 1280px;
+  --section-padding-y: 112px;
+  --section-padding-y-sm: 64px;
+  --header-height: 88px;
+
+  /* Shared layering bands. Overlay roles use these values instead of ad-hoc
+   * Tailwind steps so portals can escape header and shell stacking contexts. */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 100;
+  --z-header: 200;
+  --z-fixed-bar: 250;
+  --z-dropdown: 300;
+  --z-drawer-overlay: 400;
+  --z-drawer: 410;
+  --z-modal-overlay: 500;
+  --z-modal: 510;
+  --z-toast: 600;
+  --z-skip-link: 700;
+
+  /* Spacing — fluid block tokens. Drive every section + card inner
+   * padding from these instead of hand-coded px values, so the whole
+   * page rhythm can be retuned from one place. */
+  --space-section: clamp(4rem, calc(2.5rem + 3vw + 2svh), 7.5rem);
+  --space-section-sm: clamp(56px, 7vw, 96px);
+  --space-section-tight: clamp(40px, 5vw, 64px);
+  --space-stack: clamp(16px, calc(0.5rem + 1vw + 1svh), 24px);
+  --space-inset: clamp(20px, 3vw, 32px);
+
+  /* Radius alias — kept as a separate name from --radius-card-sm so
+   * inputs + cards can diverge later without find-and-replace. */
+  --radius-input: 12px;
+
+  /* Unified glass chrome — one recipe for the footer + the navbar in BOTH
+   * states (expanded bar + collapsed pill). Translucent forest glass + blur,
+   * lime hairline edge, layered drop + inset highlight. --gh-chrome is the
+   * fill; pair with backdrop-filter: blur(var(--gh-chrome-blur)),
+   * border var(--gh-chrome-border) and box-shadow var(--gh-chrome-shadow). */
+  --gh-chrome: rgba(4, 32, 24, 0.78);
+  --gh-chrome-blur: 18px;
+  /* Full liquid-glass filter for chrome surfaces — blur alone reads flat
+   * and grey; saturate() pulls colour *through* the pane and brightness()
+   * lifts it so it reads as lit glass, matching the portal lux recipe. */
+  --gh-chrome-filter: blur(var(--gh-chrome-blur)) saturate(170%) brightness(1.05);
+  --gh-chrome-border: 1px solid rgba(167, 243, 11, 0.22);
+  --gh-chrome-shadow: 0 18px 45px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    inset 0 -1px 0 rgba(176, 241, 34, 0.05);
+
+  /* Missing token fixes — --color-text-secondary and --ease-out were
+   * referenced downstream but never declared (secondary text was silently
+   * inheriting; transitions fell back to linear-ish `ease`). */
+  --color-text-secondary: #46584F;   /* between body #2D3B36 and muted #6D6D6D, forest-toned */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);        /* premium decelerate */
+  --ease-liquid: cubic-bezier(0.34, 1.3, 0.42, 1);   /* soft overshoot for glass hovers */
+
+  /* ── Liquid glass tokens ──────────────────────────────────────
+   * One shared recipe so every frosted surface reads as the same
+   * physical material: heavy refraction (blur + saturate + brightness),
+   * a lit top edge (specular), a faint lime under-rim (caustic), and a
+   * diagonal sheen. Consumed by the upgraded gh/gh2 glass classes and
+   * the new .gh-liquid utilities at the end of this file. */
+  --liquid-filter: blur(22px) saturate(180%) brightness(1.06);
+  --liquid-filter-strong: blur(28px) saturate(200%) brightness(1.08);
+  --liquid-filter-light: blur(16px) saturate(160%);
+  /* Dark (forest) pane fill — translucent gradient, lighter at the lit
+   * top-left corner like real glass catching light. */
+  --liquid-fill-dark: linear-gradient(
+      152deg,
+      rgba(255, 255, 255, 0.10) 0%,
+      rgba(255, 255, 255, 0.03) 34%,
+      rgba(255, 255, 255, 0.00) 62%,
+      rgba(176, 241, 34, 0.03) 100%
+    );
+  --liquid-fill-light: linear-gradient(
+      152deg,
+      rgba(255, 255, 255, 0.72) 0%,
+      rgba(255, 255, 255, 0.42) 48%,
+      rgba(245, 255, 248, 0.55) 100%
+    );
+  /* Specular + caustic inset stack — pair on top of a drop shadow. */
+  --liquid-specular: inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 1px 0 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 rgba(176, 241, 34, 0.07);
+  --liquid-specular-light: inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(29, 75, 54, 0.05);
+  /* Diagonal sheen band — the "liquid" streak that sweeps on hover. */
+  --liquid-sheen: linear-gradient(
+      115deg,
+      transparent 32%,
+      rgba(255, 255, 255, 0.10) 46%,
+      rgba(255, 255, 255, 0.16) 50%,
+      rgba(255, 255, 255, 0.10) 54%,
+      transparent 68%
+    );
+  --liquid-edge: rgba(255, 255, 255, 0.16);
+  --liquid-edge-lime: rgba(176, 241, 34, 0.24);
+}
 
 .gh-article-body {
   overflow-wrap: break-word;
@@ -684,6 +891,18 @@
   border-radius: 4px;
   background: #e8eee7;
   color: #294137;
+}
+
+/* Every designed article opens its disclaimer/institution panel with an inline
+   <strong> title followed directly by the notice text (180 bodies share that
+   markup). Give the title its own line instead of letting the sentence run on
+   from it. */
+.gh-article-editorial--authored-sections :is(.disclaimer, .institution-bar, .author-bar) > strong:first-child {
+  display: block;
+  margin-bottom: 8px;
+  color: #173c2f;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
 }
 
 .gh-article-editorial--authored-sections :is(.cta-btns, .hero-actions) {
@@ -2804,7 +3023,7 @@ body{margin:0;background:var(--color-background-page,#fff);font-family:var(--fon
 <body>
 <div class="preview-banner">Previzualizare · layout editorial de producție · nepublicat</div>
 <header class="gh-blog-calm-hero"><div class="gh-blog-calm-hero-inner"><a class="gh-blog-calm-back" href="https://www.myglobalhealth.online/romania/ro/blog">← Toate articolele</a><p class="gh-blog-calm-category">Medicină generală</p><h1>Tensiune mică: de ce apare, ce faci pe loc și când nu mai aștepți</h1><p class="gh-blog-calm-dek">Sub 90/60 fără simptome nu e boală. Cu amețeli și leșin este. Cauzele frecvente, manevrele care chiar ridică tensiunea în câteva minute, ce nu ajută și lista scurtă pentru 112.</p><div class="gh-blog-calm-byline"><span>Global Health Medical Team</span><span>7 septembrie 2026</span><span>5 min de citit</span></div><p class="gh-blog-calm-reviewer">✓ Revizuit clinic de Dr Andreea Lorena Bica</p></div></header>
-<section class="gh-blog-calm-article-shell"><div class="gh-blog-reading-layout"><nav class="gh-blog-reading-toc" aria-labelledby="blog-reading-toc-title"><div class="gh-blog-reading-toc-heading"><span aria-hidden="true">+</span><h2 id="blog-reading-toc-title">Pe această pagină</h2></div><ol class="gh-blog-reading-toc-list"><li><a href="#ce-inseamna-tensiune-mica-si-cand-conteaza">Ce înseamnă tensiune mică și când contează</a></li><li><a href="#cauzele-frecvente-ale-tensiunii-mici">Cauzele frecvente ale tensiunii mici</a></li><li><a href="#ce-sa-faci-cand-ai-tensiune-mica-si-ametesti">Ce să faci când ai tensiune mică și amețești</a></li><li><a href="#ce-ridica-tensiunea-mica-si-ce-doar-pare-ca-o-ridica">Ce ridică tensiunea mică și ce doar pare că o ridică</a></li><li><a href="#cand-mergi-la-medic-pentru-tensiune-mica">Când mergi la medic pentru tensiune mică</a></li><li><a href="#urmatorul-pas">Următorul pas</a></li><li><a href="#sursele-acestui-ghid">Sursele acestui ghid</a></li><li><a href="#intrebari-despre-tensiunea-mica">Întrebări despre tensiunea mică</a></li></ol></nav><div id="blog-article-content" class="gh-blog-reading-body"><div class="gh-article-body gh-article-editorial gh-article-editorial--authored-sections"><main class="gh-blog" lang="ro-RO"><header class="article-intro"><div class="hero-copy"><div class="hero-brandline"><strong>Global Health</strong> · Medicină oricând, oriunde <a href="https://www.myglobalhealth.online/romania/ro/blog" rel="noopener noreferrer">Medicină generală</a></div><span class="eyebrow">România · Ghid de hipotensiune</span><h2 data-blog-h1>Tensiune mică: cauze, ce să faci pe loc și când mergi la medic</h2><p class="hero-deck">O tensiune de 9 cu 6 la cineva care se simte bine nu se tratează. Aceeași tensiune cu amețeli, vedere încețoșată sau leșin are cauze care se pot găsi.</p><p class="intro-lead"><strong>Tensiunea mică</strong>, adică sub 90/60 mmHg, nu este o boală în sine. Dacă nu aveți simptome, ghidurile spun clar că nu are nevoie de tratament. Problema apare când tensiunea scade cu 20 mmHg sau mai mult la ridicarea în picioare și aduce amețeală, vedere neagră sau leșin. Atunci soluția pe loc este să vă așezați sau să vă întindeți cu picioarele ridicate, să beți apă și să încrucișați picioarele strângând mușchii. Apa cu zahăr, vitaminele și ceaiurile nu apar în niciun ghid. Leșinul cu durere în piept, respirație grea sau confuzie înseamnă 112.</p><div class="hero-facts"><span class="hero-fact">Sub 90/60 mmHg fără simptome: de obicei nu necesită tratament</span><span class="hero-fact">Scădere de 20/10 mmHg la ridicare, în 3 minute: hipotensiune ortostatică</span><span class="hero-fact">Pe loc: așezat sau întins, picioare ridicate, apă, mușchi încordați</span></div><div class="hero-actions"><a class="btn-lime" href="https://academic.oup.com/eurheartj/article/39/21/1883/4939241" rel="noopener noreferrer">Ghidul ESC pentru sincopă</a><a class="btn-ghost" href="https://www.myglobalhealth.online/romania/ro/blog/tensiune-arteriala-normala-varsta-adulti" rel="noopener noreferrer">Valori normale ale tensiunii pe vârste</a></div></div><aside class="hero-panel"><span class="meta-chip">Ordinea corectă</span><p class="intro-support">Măsurați corect, șapte zile, înainte să vă declarați hipotensiv.</p><p class="intro-support">Căutați cauza înainte de remediu: deshidratare, căldură, un medicament nou, o masă mare.</p><p class="intro-support">Un leșin repetat se investighează, nu se tratează cu cafea.</p><div class="hero-author"><div aria-hidden="true" class="hero-author-mark">GH</div><div><strong>Global Health Medical Team</strong></div></div><span class="hero-review-line">Revizuire clinică și lingvistică obligatorie înainte de publicare.</span></aside></header><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="ce-inseamna" /><span class="eyebrow">Definiții</span><h2 id="ce-inseamna-tensiune-mica-si-cand-conteaza">Ce înseamnă tensiune mică și când contează</h2><p class="section-lead">Sub același nume se ascund două situații diferite, iar doar una dintre ele are nevoie de tratament.</p><p>Prima este tensiunea constant scăzută, sub 90/60 mmHg, la cineva care se simte bine. NHS și NHLBI spun același lucru: fără simptome, de obicei nu se tratează. A doua este hipotensiunea ortostatică: ghidul european o definește ca o scădere a sistolicei cu cel puțin 20 mmHg sau a diastolicei cu 10 mmHg în primele 3 minute după ridicare. Aceasta dă amețeala de la ridicarea din pat și negrul în fața ochilor, iar aici merită căutată cauza.</p><p class="cite-note"><a href="https://academic.oup.com/eurheartj/article/39/21/1883/4939241" rel="noopener noreferrer" target="_blank">Ghidul ESC 2018 pentru sincopă</a>, <a href="https://www.nhs.uk/conditions/low-blood-pressure-hypotension/" rel="noopener noreferrer" target="_blank">NHS — tensiune arterială mică</a>, <a href="https://www.nhlbi.nih.gov/health/low-blood-pressure" rel="noopener noreferrer" target="_blank">NHLBI</a>. Consultate la 7 septembrie 2026.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="cauze" /><span class="eyebrow">De unde vine</span><h2 id="cauzele-frecvente-ale-tensiunii-mici">Cauzele frecvente ale tensiunii mici</h2><p class="section-lead">Cele mai multe cauze sunt banale și reversibile. Câteva nu sunt, de aceea merită parcursă lista.</p><ul class="check-list"><li><strong>Lichide puține:</strong> deshidratare, căldură, diaree, vărsături. Cea mai frecventă cauză vara.</li><li><strong>Medicamente:</strong> diuretice, vasodilatatoare, unele antidepresive, medicamente pentru inimă și tensiune, unele calmante. Verificați ce ați început recent.</li><li><strong>După masă:</strong> hipotensiunea postprandială, mai ales la vârstnici și după mese mari.</li><li><strong>Stat mult în picioare, repaus prelungit la pat, alcool.</strong></li><li><strong>Sarcina</strong>, în special în primele două trimestre.</li><li><strong>Inima:</strong> insuficiență cardiacă, aritmii, infarct.</li><li><strong>Sistemul nervos:</strong> diabetul cu afectare a nervilor, boala Parkinson.</li><li><strong>Boala Addison</strong> (insuficiența suprarenală), în care tensiunea scade mai ales la schimbarea poziției.</li><li><strong>Sângerare sau infecție severă:</strong> tensiune mică cu puls rapid, piele rece și transpirată. Urgență.</li></ul><p class="cite-note"><a href="https://academic.oup.com/eurheartj/article/39/21/1883/4939241" rel="noopener noreferrer" target="_blank">ESC 2018, tabelul cauzelor</a> și <a href="https://medlineplus.gov/ency/article/007278.htm" rel="noopener noreferrer" target="_blank">MedlinePlus — hipotensiune</a>.</p></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="pe-loc" /><span class="eyebrow">Ghidul european</span><h2 id="ce-sa-faci-cand-ai-tensiune-mica-si-ametesti">Ce să faci când ai tensiune mică și amețești</h2><p class="section-lead">Manevrele de mai jos sunt cele din ghidul ESC și din recomandările NHS. Funcționează în minute și nu costă nimic.</p><ul class="check-list"><li><strong>Așezați-vă sau întindeți-vă imediat</strong>, cu picioarele ridicate deasupra nivelului inimii. Dacă nu puteți, stați jos cu capul între genunchi.</li><li><strong>Manevre de contrapresiune:</strong> încrucișați picioarele și încordați coapsele și fesele, strângeți pumnii, ridicați-vă pe vârfuri. Ghidul le clasifică IIa, adică recomandate.</li><li><strong>Beți apă.</strong> Ghidul menționează ingestia rapidă de apă; hidratarea adecvată este în aceeași clasă de recomandare.</li><li><strong>Ridicați-vă încet</strong>, în etape: pe marginea patului, apoi în picioare, cu sprijin.</li></ul><p>Pe termen lung, la hipotensiune ortostatică confirmată, ghidul recomandă 2–3 litri de lichide pe zi, sare în plus doar la indicația medicului, ciorapi compresivi, dormitul cu capul patului ridicat și reducerea medicamentelor care scad tensiunea. Midodrina și fludrocortizonul există, dar sunt decizia unui specialist, cu rețetă.</p><p class="cite-note"><a href="https://academic.oup.com/eurheartj/article/39/21/1883/4939241" rel="noopener noreferrer" target="_blank">ESC 2018, secțiunea 5.3</a> și <a href="https://www.nhs.uk/conditions/fainting/" rel="noopener noreferrer" target="_blank">NHS — leșin</a>.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="ce-nu-ajuta" /><span class="eyebrow">Apă cu zahăr, vitamine, ceaiuri</span><h2 id="ce-ridica-tensiunea-mica-si-ce-doar-pare-ca-o-ridica">Ce ridică tensiunea mică și ce doar pare că o ridică</h2><p class="section-lead">Remediile pe care le caută cei mai mulți oameni nu apar în niciun ghid european. Nu sunt periculoase, dar nici nu fac ce se crede despre ele.</p><ul class="check-list"><li><strong>Apa cu zahăr:</strong> ghidurile recomandă apa; zahărul nu apare nicăieri. Apa simplă face același lucru.</li><li><strong>Cafeaua:</strong> o analiză sistematică din 2021 a găsit doar studii foarte mici, cu rezultate inconsecvente, și recomandă cafeina doar după epuizarea tratamentelor cu dovezi. Nu este tratament.</li><li><strong>Vitaminele:</strong> nicio vitamină nu apare în ghiduri ca tratament al tensiunii mici. Dacă hipotensiunea vine dintr-o anemie sau o boală endocrină, se tratează cauza, după analize.</li><li><strong>Ceaiurile, ciocolata, sarea în plus:</strong> fără dovezi. Ghidul ESC prevede creșterea aportului de sare doar ca măsură indicată de medic, la pacienți selectați.</li></ul><div class="alert-warn"><strong>Pentru ce suni la 112</strong>Leșin cu durere în piept, respirație grea, bătăi rapide sau neregulate ale inimii, confuzie, slăbiciune pe o parte a corpului sau vorbire încurcată. Leșin în timpul efortului sau întins în pat. Scaune negre, vărsături cu sânge, febră mare cu tensiune mică, piele rece și transpirată. Persoana nu își revine complet într-un minut. Apelul la 112 este gratuit, din orice rețea.</div><p class="cite-note"><a href="https://pubmed.ncbi.nlm.nih.gov/34143333/" rel="noopener noreferrer" target="_blank">Clinical Autonomic Research 2021, cafeina în hipotensiunea ortostatică</a>; <a href="https://serviciipublice.gov.ro/serviciu/serviciul-de-urgenta-112-asigurat-cetatenilor" rel="noopener noreferrer" target="_blank">Gov.ro — serviciul 112</a>.</p></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="cand-la-medic" /><span class="eyebrow">Fără urgență, dar cu programare</span><h2 id="cand-mergi-la-medic-pentru-tensiune-mica">Când mergi la medic pentru tensiune mică</h2><p class="section-lead">Când amețelile se repetă, când ați leșinat o dată fără explicație, sau când tensiunea mică a apărut odată cu un medicament nou.</p><p>Un medic de familie sau un medic generalist poate face cele trei lucruri care contează: măsurarea tensiunii culcat și în picioare, revizuirea listei de medicamente și un set de analize de bază, hemoleucogramă, glicemie, funcție tiroidiană, electroliți, plus o electrocardiogramă. Într-o <a href="https://www.myglobalhealth.online/romania/ro/services/medic-online-romania" rel="noopener noreferrer">consultație cu un medic online</a> la Global Health puteți parcurge istoricul și lista de medicamente și puteți primi <a href="https://www.myglobalhealth.online/romania/ro/services/trimiteri-si-investigatii" rel="noopener noreferrer">trimiteri pentru analize</a>. Măsurarea ortostatică și EKG-ul rămân de făcut fizic.</p><p>Înainte, măsurați șapte zile, dimineața și seara, două citiri la un minut distanță, așezat, după cinci minute de repaus, cu tensiometru de braț validat. O singură valoare mică într-o zi caldă nu înseamnă nimic; o medie mică, însoțită de simptome, contează.</p><p class="cite-note">Protocol de măsurare din <a href="https://academic.oup.com/eurheartj/article/45/38/3912/7741010" rel="noopener noreferrer" target="_blank">ghidul ESC 2024</a>.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="global-health" /><span class="eyebrow">Global Health România</span><h2 id="urmatorul-pas">Următorul pas</h2><p class="section-lead">Manevrele de moment le puteți face singur. Cauza o stabilește medicul.</p><ul class="check-list"><li><a href="https://www.myglobalhealth.online/romania/ro/services/medic-online-romania" rel="noopener noreferrer">Consultație medic online</a></li><li><a href="https://www.myglobalhealth.online/romania/ro/services/trimiteri-si-investigatii" rel="noopener noreferrer">Trimiteri și investigații</a></li><li><a href="https://www.myglobalhealth.online/romania/ro/blog/tensiune-arteriala-normala-varsta-adulti" rel="noopener noreferrer">Tensiune arterială normală pe vârste</a></li><li><a href="https://www.myglobalhealth.online/romania/ro/doctors" rel="noopener noreferrer">Medici în România</a></li><li><a href="https://www.myglobalhealth.online/romania/ro/contact" rel="noopener noreferrer">Contactați Global Health</a></li></ul><div class="cta-box"><h3>Amețeli repetate sau un leșin neexplicat?</h3><p>Un medic revizuiește simptomele și medicamentele și indică analizele potrivite. Nu înlocuiește 112 în urgență.</p><div class="cta-btns"><a class="btn-primary" href="https://www.myglobalhealth.online/romania/ro/services/medic-online-romania" rel="noopener noreferrer">Programează o consultație</a><a class="btn-secondary" href="https://www.myglobalhealth.online/romania/ro/doctors" rel="noopener noreferrer">Vezi medicii</a></div></div></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="sources" /><span class="eyebrow">Surse medicale</span><h2 id="sursele-acestui-ghid">Sursele acestui ghid</h2><p class="section-lead">Ghiduri europene și surse instituționale, consultate la 7 septembrie 2026.</p><div class="institution-bar"><a class="inst-link" href="https://academic.oup.com/eurheartj/article/39/21/1883/4939241" rel="noopener noreferrer" target="_blank">ESC 2018 — Guidelines for the diagnosis and management of syncope</a><a class="inst-link" href="https://academic.oup.com/eurheartj/article/45/38/3912/7741010" rel="noopener noreferrer" target="_blank">ESC 2024 — Guidelines for elevated blood pressure and hypertension</a><a class="inst-link" href="https://www.nhs.uk/conditions/low-blood-pressure-hypotension/" rel="noopener noreferrer" target="_blank">NHS — Low blood pressure (hypotension)</a><a class="inst-link" href="https://www.nhs.uk/conditions/fainting/" rel="noopener noreferrer" target="_blank">NHS — Fainting</a><a class="inst-link" href="https://www.nhlbi.nih.gov/health/low-blood-pressure" rel="noopener noreferrer" target="_blank">NHLBI — Low blood pressure</a><a class="inst-link" href="https://medlineplus.gov/ency/article/007278.htm" rel="noopener noreferrer" target="_blank">MedlinePlus — Low blood pressure</a><a class="inst-link" href="https://pubmed.ncbi.nlm.nih.gov/34143333/" rel="noopener noreferrer" target="_blank">Clinical Autonomic Research 2021 — caffeine for orthostatic hypotension</a><a class="inst-link" href="https://serviciipublice.gov.ro/serviciu/serviciul-de-urgenta-112-asigurat-cetatenilor" rel="noopener noreferrer" target="_blank">Gov.ro — Serviciul de urgență 112</a></div><p class="cite-note">Valorile-prag sunt cele din ghiduri; medicul le interpretează în funcție de vârstă, sarcină și boli asociate.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="faq" /><span class="eyebrow">Întrebări frecvente</span><h2 id="intrebari-despre-tensiunea-mica">Întrebări despre tensiunea mică</h2><div class="faq-section"><details class="faq-item"><summary class="faq-q">Tensiune 9 cu 6 este periculoasă?</summary><div class="faq-a"><p>Fără simptome, de obicei nu, și nu se tratează. Cu amețeli, leșin sau dacă a apărut odată cu un medicament nou, merită o consultație.</p></div></details><details class="faq-item"><summary class="faq-q">Ce să beau când am tensiunea mică?</summary><div class="faq-a"><p>Apă, băută repede. Zahărul nu aduce nimic în plus. Pentru cafea, dovezile sunt foarte slabe.</p></div></details><details class="faq-item"><summary class="faq-q">Ce ridică tensiunea mică repede?</summary><div class="faq-a"><p>Să vă așezați sau întindeți cu picioarele ridicate, să încrucișați picioarele și să încordați mușchii, și apa. Sunt manevrele din ghidul european. Medicamentele care cresc tensiunea sunt doar cu rețetă.</p></div></details><details class="faq-item"><summary class="faq-q">Când este tensiunea mică o urgență?</summary><div class="faq-a"><p>Când vine cu leșin și durere în piept, respirație grea, confuzie, sângerare, febră mare sau piele rece și umedă. Sunați la 112.</p></div></details></div></div></section><section class="article-section section-ivory"><div class="section-inner"><div class="disclaimer"><strong>Aviz medical și de urgență</strong>Articol elaborat cu sprijin AI, în așteptarea revizuirii clinice și lingvistice. Informații generale valabile în septembrie 2026; nu înlocuiesc consultul medical și nu constituie indicație de tratament. În urgență sunați la 112.</div></div></section></main></div></div></div></section>
+<section class="gh-blog-calm-article-shell"><div class="gh-blog-reading-layout"><nav class="gh-blog-reading-toc" aria-labelledby="blog-reading-toc-title"><div class="gh-blog-reading-toc-heading"><span aria-hidden="true">+</span><h2 id="blog-reading-toc-title">Pe această pagină</h2></div><ol class="gh-blog-reading-toc-list"><li><a href="#ce-inseamna-tensiune-mica-si-cand-conteaza">Ce înseamnă tensiune mică și când contează</a></li><li><a href="#cauzele-frecvente-ale-tensiunii-mici">Cauzele frecvente ale tensiunii mici</a></li><li><a href="#ce-sa-faci-cand-ai-tensiune-mica-si-ametesti">Ce să faci când ai tensiune mică și amețești</a></li><li><a href="#ce-ridica-tensiunea-mica-si-ce-doar-pare-ca-o-ridica">Ce ridică tensiunea mică și ce doar pare că o ridică</a></li><li><a href="#cand-mergi-la-medic-pentru-tensiune-mica">Când mergi la medic pentru tensiune mică</a></li><li><a href="#urmatorul-pas">Următorul pas</a></li><li><a href="#sursele-acestui-ghid">Sursele acestui ghid</a></li><li><a href="#intrebari-despre-tensiunea-mica">Întrebări despre tensiunea mică</a></li></ol></nav><div id="blog-article-content" class="gh-blog-reading-body"><div class="gh-article-body gh-article-editorial gh-article-editorial--authored-sections"><main class="gh-blog" lang="ro-RO"><header class="article-intro"><div class="hero-copy"><div class="hero-brandline"><strong>Global Health</strong> · Medicină oricând, oriunde <a href="https://www.myglobalhealth.online/romania/ro/blog" rel="noopener noreferrer">Medicină generală</a></div><span class="eyebrow">România · Ghid de hipotensiune</span><h2 data-blog-h1>Tensiune mică: cauze, ce să faci pe loc și când mergi la medic</h2><p class="hero-deck">O tensiune de 9 cu 6 la cineva care se simte bine nu se tratează. Aceeași tensiune cu amețeli, vedere încețoșată sau leșin are cauze care se pot găsi.</p><p class="intro-lead"><strong>Tensiunea mică</strong>, adică sub 90/60 mmHg, nu este o boală în sine. Dacă nu aveți simptome, ghidurile spun clar că nu are nevoie de tratament. Problema apare când tensiunea scade cu 20 mmHg sau mai mult la ridicarea în picioare și aduce amețeală, vedere neagră sau leșin. Atunci soluția pe loc este să vă așezați sau să vă întindeți cu picioarele ridicate, să beți apă și să încrucișați picioarele strângând mușchii. Apa cu zahăr, vitaminele și ceaiurile nu apar în niciun ghid. Leșinul cu durere în piept, respirație grea sau confuzie înseamnă 112.</p><div class="hero-facts"><span class="hero-fact">Sub 90/60 mmHg fără simptome: de obicei nu necesită tratament</span><span class="hero-fact">Scădere de 20/10 mmHg la ridicare, în 3 minute: hipotensiune ortostatică</span><span class="hero-fact">Pe loc: așezat sau întins, picioare ridicate, apă, mușchi încordați</span></div><div class="hero-actions"><a class="btn-lime" href="https://academic.oup.com/eurheartj/article/39/21/1883/4939241" rel="noopener noreferrer">Ghidul ESC pentru sincopă</a><a class="btn-ghost" href="https://www.myglobalhealth.online/romania/ro/blog/tensiune-arteriala-normala-varsta-adulti" rel="noopener noreferrer">Valori normale ale tensiunii pe vârste</a></div></div><aside class="hero-panel"><span class="meta-chip">Ordinea corectă</span><p class="intro-support">Măsurați corect, șapte zile, înainte să vă declarați hipotensiv.</p><p class="intro-support">Căutați cauza înainte de remediu: deshidratare, căldură, un medicament nou, o masă mare.</p><p class="intro-support">Un leșin repetat se investighează, nu se tratează cu cafea.</p><div class="hero-author"><div aria-hidden="true" class="hero-author-mark">GH</div><div><strong>Global Health Medical Team</strong></div></div><span class="hero-review-line">Revizuit de echipa medicală Global Health.</span></aside></header><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="ce-inseamna" /><span class="eyebrow">Definiții</span><h2 id="ce-inseamna-tensiune-mica-si-cand-conteaza">Ce înseamnă tensiune mică și când contează</h2><p class="section-lead">Sub același nume se ascund două situații diferite, iar doar una dintre ele are nevoie de tratament.</p><p>Prima este tensiunea constant scăzută, sub 90/60 mmHg, la cineva care se simte bine. NHS și NHLBI spun același lucru: fără simptome, de obicei nu se tratează. A doua este hipotensiunea ortostatică: ghidul european o definește ca o scădere a sistolicei cu cel puțin 20 mmHg sau a diastolicei cu 10 mmHg în primele 3 minute după ridicare. Aceasta dă amețeala de la ridicarea din pat și negrul în fața ochilor, iar aici merită căutată cauza.</p><p class="cite-note"><a href="https://academic.oup.com/eurheartj/article/39/21/1883/4939241" rel="noopener noreferrer" target="_blank">Ghidul ESC 2018 pentru sincopă</a>, <a href="https://www.nhs.uk/conditions/low-blood-pressure-hypotension/" rel="noopener noreferrer" target="_blank">NHS — tensiune arterială mică</a>, <a href="https://www.nhlbi.nih.gov/health/low-blood-pressure" rel="noopener noreferrer" target="_blank">NHLBI</a>. Consultate la 7 septembrie 2026.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="cauze" /><span class="eyebrow">De unde vine</span><h2 id="cauzele-frecvente-ale-tensiunii-mici">Cauzele frecvente ale tensiunii mici</h2><p class="section-lead">Cele mai multe cauze sunt banale și reversibile. Câteva nu sunt, de aceea merită parcursă lista.</p><ul class="check-list"><li><strong>Lichide puține:</strong> deshidratare, căldură, diaree, vărsături. Cea mai frecventă cauză vara.</li><li><strong>Medicamente:</strong> diuretice, vasodilatatoare, unele antidepresive, medicamente pentru inimă și tensiune, unele calmante. Verificați ce ați început recent.</li><li><strong>După masă:</strong> hipotensiunea postprandială, mai ales la vârstnici și după mese mari.</li><li><strong>Stat mult în picioare, repaus prelungit la pat, alcool.</strong></li><li><strong>Sarcina</strong>, în special în primele două trimestre.</li><li><strong>Inima:</strong> insuficiență cardiacă, aritmii, infarct.</li><li><strong>Sistemul nervos:</strong> diabetul cu afectare a nervilor, boala Parkinson.</li><li><strong>Boala Addison</strong> (insuficiența suprarenală), în care tensiunea scade mai ales la schimbarea poziției.</li><li><strong>Sângerare sau infecție severă:</strong> tensiune mică cu puls rapid, piele rece și transpirată. Urgență.</li></ul><p class="cite-note"><a href="https://academic.oup.com/eurheartj/article/39/21/1883/4939241" rel="noopener noreferrer" target="_blank">ESC 2018, tabelul cauzelor</a> și <a href="https://medlineplus.gov/ency/article/007278.htm" rel="noopener noreferrer" target="_blank">MedlinePlus — hipotensiune</a>.</p></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="pe-loc" /><span class="eyebrow">Ghidul european</span><h2 id="ce-sa-faci-cand-ai-tensiune-mica-si-ametesti">Ce să faci când ai tensiune mică și amețești</h2><p class="section-lead">Manevrele de mai jos sunt cele din ghidul ESC și din recomandările NHS. Funcționează în minute și nu costă nimic.</p><ul class="check-list"><li><strong>Așezați-vă sau întindeți-vă imediat</strong>, cu picioarele ridicate deasupra nivelului inimii. Dacă nu puteți, stați jos cu capul între genunchi.</li><li><strong>Manevre de contrapresiune:</strong> încrucișați picioarele și încordați coapsele și fesele, strângeți pumnii, ridicați-vă pe vârfuri. Ghidul le clasifică IIa, adică recomandate.</li><li><strong>Beți apă.</strong> Ghidul menționează ingestia rapidă de apă; hidratarea adecvată este în aceeași clasă de recomandare.</li><li><strong>Ridicați-vă încet</strong>, în etape: pe marginea patului, apoi în picioare, cu sprijin.</li></ul><p>Pe termen lung, la hipotensiune ortostatică confirmată, ghidul recomandă 2–3 litri de lichide pe zi, sare în plus doar la indicația medicului, ciorapi compresivi, dormitul cu capul patului ridicat și reducerea medicamentelor care scad tensiunea. Midodrina și fludrocortizonul există, dar sunt decizia unui specialist, cu rețetă.</p><p class="cite-note"><a href="https://academic.oup.com/eurheartj/article/39/21/1883/4939241" rel="noopener noreferrer" target="_blank">ESC 2018, secțiunea 5.3</a> și <a href="https://www.nhs.uk/conditions/fainting/" rel="noopener noreferrer" target="_blank">NHS — leșin</a>.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="ce-nu-ajuta" /><span class="eyebrow">Apă cu zahăr, vitamine, ceaiuri</span><h2 id="ce-ridica-tensiunea-mica-si-ce-doar-pare-ca-o-ridica">Ce ridică tensiunea mică și ce doar pare că o ridică</h2><p class="section-lead">Remediile pe care le caută cei mai mulți oameni nu apar în niciun ghid european. Nu sunt periculoase, dar nici nu fac ce se crede despre ele.</p><ul class="check-list"><li><strong>Apa cu zahăr:</strong> ghidurile recomandă apa; zahărul nu apare nicăieri. Apa simplă face același lucru.</li><li><strong>Cafeaua:</strong> o analiză sistematică din 2021 a găsit doar studii foarte mici, cu rezultate inconsecvente, și recomandă cafeina doar după epuizarea tratamentelor cu dovezi. Nu este tratament.</li><li><strong>Vitaminele:</strong> nicio vitamină nu apare în ghiduri ca tratament al tensiunii mici. Dacă hipotensiunea vine dintr-o anemie sau o boală endocrină, se tratează cauza, după analize.</li><li><strong>Ceaiurile, ciocolata, sarea în plus:</strong> fără dovezi. Ghidul ESC prevede creșterea aportului de sare doar ca măsură indicată de medic, la pacienți selectați.</li></ul><div class="alert-warn"><strong>Pentru ce suni la 112</strong>Leșin cu durere în piept, respirație grea, bătăi rapide sau neregulate ale inimii, confuzie, slăbiciune pe o parte a corpului sau vorbire încurcată. Leșin în timpul efortului sau întins în pat. Scaune negre, vărsături cu sânge, febră mare cu tensiune mică, piele rece și transpirată. Persoana nu își revine complet într-un minut. Apelul la 112 este gratuit, din orice rețea.</div><p class="cite-note"><a href="https://pubmed.ncbi.nlm.nih.gov/34143333/" rel="noopener noreferrer" target="_blank">Clinical Autonomic Research 2021, cafeina în hipotensiunea ortostatică</a>; <a href="https://serviciipublice.gov.ro/serviciu/serviciul-de-urgenta-112-asigurat-cetatenilor" rel="noopener noreferrer" target="_blank">Gov.ro — serviciul 112</a>.</p></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="cand-la-medic" /><span class="eyebrow">Fără urgență, dar cu programare</span><h2 id="cand-mergi-la-medic-pentru-tensiune-mica">Când mergi la medic pentru tensiune mică</h2><p class="section-lead">Când amețelile se repetă, când ați leșinat o dată fără explicație, sau când tensiunea mică a apărut odată cu un medicament nou.</p><p>Un medic de familie sau un medic generalist poate face cele trei lucruri care contează: măsurarea tensiunii culcat și în picioare, revizuirea listei de medicamente și un set de analize de bază, hemoleucogramă, glicemie, funcție tiroidiană, electroliți, plus o electrocardiogramă. Într-o <a href="https://www.myglobalhealth.online/romania/ro/services/medic-online-romania" rel="noopener noreferrer">consultație cu un medic online</a> la Global Health puteți parcurge istoricul și lista de medicamente și puteți primi <a href="https://www.myglobalhealth.online/romania/ro/services/trimiteri-si-investigatii" rel="noopener noreferrer">trimiteri pentru analize</a>. Măsurarea ortostatică și EKG-ul rămân de făcut fizic.</p><p>Înainte, măsurați șapte zile, dimineața și seara, două citiri la un minut distanță, așezat, după cinci minute de repaus, cu tensiometru de braț validat. O singură valoare mică într-o zi caldă nu înseamnă nimic; o medie mică, însoțită de simptome, contează.</p><p class="cite-note">Protocol de măsurare din <a href="https://academic.oup.com/eurheartj/article/45/38/3912/7741010" rel="noopener noreferrer" target="_blank">ghidul ESC 2024</a>.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="global-health" /><span class="eyebrow">Global Health România</span><h2 id="urmatorul-pas">Următorul pas</h2><p class="section-lead">Manevrele de moment le puteți face singur. Cauza o stabilește medicul.</p><ul class="check-list"><li><a href="https://www.myglobalhealth.online/romania/ro/services/medic-online-romania" rel="noopener noreferrer">Consultație medic online</a></li><li><a href="https://www.myglobalhealth.online/romania/ro/services/trimiteri-si-investigatii" rel="noopener noreferrer">Trimiteri și investigații</a></li><li><a href="https://www.myglobalhealth.online/romania/ro/blog/tensiune-arteriala-normala-varsta-adulti" rel="noopener noreferrer">Tensiune arterială normală pe vârste</a></li><li><a href="https://www.myglobalhealth.online/romania/ro/doctors" rel="noopener noreferrer">Medici în România</a></li><li><a href="https://www.myglobalhealth.online/romania/ro/contact" rel="noopener noreferrer">Contactați Global Health</a></li></ul><div class="cta-box"><h3>Amețeli repetate sau un leșin neexplicat?</h3><p>Un medic revizuiește simptomele și medicamentele și indică analizele potrivite. Nu înlocuiește 112 în urgență.</p><div class="cta-btns"><a class="btn-primary" href="https://www.myglobalhealth.online/romania/ro/services/medic-online-romania" rel="noopener noreferrer">Programează o consultație</a><a class="btn-secondary" href="https://www.myglobalhealth.online/romania/ro/doctors" rel="noopener noreferrer">Vezi medicii</a></div></div></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="sources" /><span class="eyebrow">Surse medicale</span><h2 id="sursele-acestui-ghid">Sursele acestui ghid</h2><p class="section-lead">Ghiduri europene și surse instituționale, consultate la 7 septembrie 2026.</p><div class="institution-bar"><a class="inst-link" href="https://academic.oup.com/eurheartj/article/39/21/1883/4939241" rel="noopener noreferrer" target="_blank">ESC 2018 — Guidelines for the diagnosis and management of syncope</a><a class="inst-link" href="https://academic.oup.com/eurheartj/article/45/38/3912/7741010" rel="noopener noreferrer" target="_blank">ESC 2024 — Guidelines for elevated blood pressure and hypertension</a><a class="inst-link" href="https://www.nhs.uk/conditions/low-blood-pressure-hypotension/" rel="noopener noreferrer" target="_blank">NHS — Low blood pressure (hypotension)</a><a class="inst-link" href="https://www.nhs.uk/conditions/fainting/" rel="noopener noreferrer" target="_blank">NHS — Fainting</a><a class="inst-link" href="https://www.nhlbi.nih.gov/health/low-blood-pressure" rel="noopener noreferrer" target="_blank">NHLBI — Low blood pressure</a><a class="inst-link" href="https://medlineplus.gov/ency/article/007278.htm" rel="noopener noreferrer" target="_blank">MedlinePlus — Low blood pressure</a><a class="inst-link" href="https://pubmed.ncbi.nlm.nih.gov/34143333/" rel="noopener noreferrer" target="_blank">Clinical Autonomic Research 2021 — caffeine for orthostatic hypotension</a><a class="inst-link" href="https://serviciipublice.gov.ro/serviciu/serviciul-de-urgenta-112-asigurat-cetatenilor" rel="noopener noreferrer" target="_blank">Gov.ro — Serviciul de urgență 112</a></div><p class="cite-note">Valorile-prag sunt cele din ghiduri; medicul le interpretează în funcție de vârstă, sarcină și boli asociate.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="faq" /><span class="eyebrow">Întrebări frecvente</span><h2 id="intrebari-despre-tensiunea-mica">Întrebări despre tensiunea mică</h2><div class="faq-section"><details class="faq-item"><summary class="faq-q">Tensiune 9 cu 6 este periculoasă?</summary><div class="faq-a"><p>Fără simptome, de obicei nu, și nu se tratează. Cu amețeli, leșin sau dacă a apărut odată cu un medicament nou, merită o consultație.</p></div></details><details class="faq-item"><summary class="faq-q">Ce să beau când am tensiunea mică?</summary><div class="faq-a"><p>Apă, băută repede. Zahărul nu aduce nimic în plus. Pentru cafea, dovezile sunt foarte slabe.</p></div></details><details class="faq-item"><summary class="faq-q">Ce ridică tensiunea mică repede?</summary><div class="faq-a"><p>Să vă așezați sau întindeți cu picioarele ridicate, să încrucișați picioarele și să încordați mușchii, și apa. Sunt manevrele din ghidul european. Medicamentele care cresc tensiunea sunt doar cu rețetă.</p></div></details><details class="faq-item"><summary class="faq-q">Când este tensiunea mică o urgență?</summary><div class="faq-a"><p>Când vine cu leșin și durere în piept, respirație grea, confuzie, sângerare, febră mare sau piele rece și umedă. Sunați la 112.</p></div></details></div></div></section><section class="article-section section-ivory"><div class="section-inner"><div class="disclaimer"><strong>Aviz medical și de urgență</strong>Informații generale valabile în septembrie 2026; nu înlocuiesc consultul medical și nu constituie indicație de tratament. În urgență sunați la 112.</div></div></section></main></div></div></div></section>
 <section class="preview-cta gh2-section-forest"><div class="preview-cta-inner"><p class="k">Pasul următor</p><h2>Vreți să vorbiți cu un medic?</h2><a href="https://www.myglobalhealth.online/romania/ro/services/medic-online-romania">Programează o consultație</a></div></section>
 </body>
 </html>

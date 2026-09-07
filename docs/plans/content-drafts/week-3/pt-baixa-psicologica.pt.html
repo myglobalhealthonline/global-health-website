@@ -6,6 +6,213 @@
 <title>Baixa psicológica: como pedir e quanto se recebe</title>
 <meta name="description" content="Quem pode passar uma baixa psicológica em Portugal, como se pede, quanto paga a Segurança Social por escalão e porque não é paga a 100%.">
 <style>
+:root {
+  --font-manrope: "Aptos", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-plus-jakarta: var(--font-manrope);
+  --font-display: var(--font-manrope);
+  --font-geist-mono: "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+
+  /* ── Brand (EXACT values from Manual da Marca) ────────────
+   * Source: Global Health Manual da Marca PDF page 1. The previous
+   * tokens drifted off-spec (forest at #1B4D3E vs brand #1D4B36, no
+   * mid-mint #8FB021 in the system). All five brand swatches are
+   * now declared verbatim with no rounding. */
+  --color-brand-primary:       #1D4B36;   /* Forest deep — primary */
+  --color-brand-primary-hover: #163826;   /* Darker forest — hover */
+  --color-brand-secondary:     #FFFFFF;
+  /* Mid-mint — the missing brand swatch. Used for icon tiles, on-dark
+   * CTAs, secondary accents that need more saturation than the
+   * pastel mint but less punch than the lime. */
+  --color-brand-mint:           #8FB021;
+  --color-brand-mint-soft:      rgba(143, 176, 33, 0.18);
+  --color-brand-mint-dim:       rgba(143, 176, 33, 0.10);
+  /* Brand lime aliased under --color-accent so legacy call sites
+   * (portal/admin sidebar, CountryEntryGate, icon tiles) resolve to
+   * the correct on-brand colour without a mass rename. The old pastel
+   * #C8E6A0 was off-spec; these values are now exact-palette tints. */
+  --color-accent:              #B0F122;
+  --color-accent-soft:         rgba(176, 241, 34, 0.20);
+  --color-accent-dim:          rgba(176, 241, 34, 0.10);
+  /* Bright lime — the loud brand accent. Notification dots, hero
+   * highlights, "available now" indicators. Brand spec value. */
+  --color-brand-accent:        #B0F122;
+  --color-brand-accent-soft:   rgba(176, 241, 34, 0.55);  /* lime at 55% — hover/soft states */
+
+  /* Readable muted-on-dark tokens (spec §9) — text on .gh2-section-forest /
+   * .gh2-glass-forest surfaces without dropping below AA contrast. */
+  --gh2-on-dark-muted: rgba(255, 255, 255, 0.72);
+  --gh2-on-dark-faint: rgba(255, 255, 255, 0.60);
+
+  /* Backgrounds */
+  --color-background:       #FFFFFF; /* alias for --color-background-page */
+  --color-background-page:  #FFFFFF;
+  --color-background-soft:  #F6F8F1;   /* warm off-white */
+  --color-background-panel: #EDF2E2;   /* mint-tinted panel */
+  --color-background-dark:  #1D4B36;   /* brand forest deep — exact swatch from Manual da Marca */
+
+  /* Text — brand spec uses #6D6D6D as mid grey. Carry it through as
+   * the muted tier; primary + body remain forest-toned. */
+  --color-text-primary:     #1D4B36;   /* aligned to brand primary swatch */
+  --color-text-body:        #2D3B36;
+  --color-text-muted:       #6D6D6D;
+  --color-text-placeholder: #9A9A9A;
+
+  /* Borders */
+  --color-border:        #E4E7DD;
+  --color-border-strong: #C3CCB5;
+
+  --color-hero-overlay: rgba(29, 75, 54, 0.72);
+
+  /* Status */
+  --color-status-error:        #B91C1C;
+  --color-status-error-bg:     #FEF2F2;
+  --color-status-error-text:   #991B1B;
+  --color-status-error-border: #FECACA;
+  --color-status-success-bg:   #F0FDF4;
+  --color-status-success-text: #15803D;
+  --color-status-success-border:#BBF7D0;
+  --color-status-warning-bg:   #FFFBEB;
+  --color-status-warning-text: #92400E;
+  --color-status-warning-border:#FDE68A;
+  --color-status-info-bg:      #F0F9FF;
+  --color-status-info-text:    #075985;
+  --color-status-info-border:  #BAE6FD;
+
+  /* Radius */
+  --radius-card:    20px;
+  --radius-card-sm: 12px;
+  --radius-button:  999px;
+  --radius-tile:    16px;
+  --radius-chip:    999px;
+
+  /* Shadows — forest-tinted, never neutral black */
+  --shadow-soft:       0 1px 3px rgba(29, 75, 54, 0.06);
+  --shadow-card:       0 1px 3px rgba(29, 75, 54, 0.08), 0 4px 12px rgba(29, 75, 54, 0.04);
+  --shadow-card-hover: 0 4px 12px rgba(29, 75, 54, 0.12), 0 8px 24px rgba(29, 75, 54, 0.08);
+  --shadow-elevated:   0 8px 30px rgba(29, 75, 54, 0.14), 0 2px 8px rgba(29, 75, 54, 0.08);
+  --shadow-focus:      0 0 0 3px rgba(29, 75, 54, 0.28);
+  --shadow-focus-error:0 0 0 3px rgba(185, 28, 28, 0.28);
+
+  /* Medical pattern tokens */
+  --medical-pattern-size: 28px;
+  --medical-pattern-color: var(--color-brand-primary);
+  --medical-pattern-opacity: 0.022;
+  --medical-pattern-dark-opacity: 0.04;
+  --medical-pattern-soft-opacity: 0.016;
+
+  /* Fluid type — bigger, more confident display sizes. */
+  --text-display: clamp(2.5rem, 7vw + 1rem, 6rem);
+  --text-h1: clamp(2.25rem, 5vw + 0.5rem, 4.25rem);
+  --text-h2: clamp(1.75rem, 3.5vw + 0.4rem, 3rem);
+  --text-h3: clamp(1.25rem, 2vw + 0.3rem, 1.75rem);
+  --text-body-lg: clamp(1.05rem, 1vw + 0.6rem, 1.25rem);
+  --text-body: clamp(0.95rem, 0.5vw + 0.7rem, 1.05rem);
+  /* Fixed sizes for meta + eyebrow — these stay legible at any viewport.
+   * Eyebrow is the only place positive letter-tracking exists in the
+   * system; the +0.06em opens uppercase taxonomy labels against the
+   * negative-tracked display headlines. */
+  --text-eyebrow: 0.8125rem;
+  --text-meta: 0.875rem;
+
+  /* Layout */
+  --container-width: 1280px;
+  --section-padding-y: 112px;
+  --section-padding-y-sm: 64px;
+  --header-height: 88px;
+
+  /* Shared layering bands. Overlay roles use these values instead of ad-hoc
+   * Tailwind steps so portals can escape header and shell stacking contexts. */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 100;
+  --z-header: 200;
+  --z-fixed-bar: 250;
+  --z-dropdown: 300;
+  --z-drawer-overlay: 400;
+  --z-drawer: 410;
+  --z-modal-overlay: 500;
+  --z-modal: 510;
+  --z-toast: 600;
+  --z-skip-link: 700;
+
+  /* Spacing — fluid block tokens. Drive every section + card inner
+   * padding from these instead of hand-coded px values, so the whole
+   * page rhythm can be retuned from one place. */
+  --space-section: clamp(4rem, calc(2.5rem + 3vw + 2svh), 7.5rem);
+  --space-section-sm: clamp(56px, 7vw, 96px);
+  --space-section-tight: clamp(40px, 5vw, 64px);
+  --space-stack: clamp(16px, calc(0.5rem + 1vw + 1svh), 24px);
+  --space-inset: clamp(20px, 3vw, 32px);
+
+  /* Radius alias — kept as a separate name from --radius-card-sm so
+   * inputs + cards can diverge later without find-and-replace. */
+  --radius-input: 12px;
+
+  /* Unified glass chrome — one recipe for the footer + the navbar in BOTH
+   * states (expanded bar + collapsed pill). Translucent forest glass + blur,
+   * lime hairline edge, layered drop + inset highlight. --gh-chrome is the
+   * fill; pair with backdrop-filter: blur(var(--gh-chrome-blur)),
+   * border var(--gh-chrome-border) and box-shadow var(--gh-chrome-shadow). */
+  --gh-chrome: rgba(4, 32, 24, 0.78);
+  --gh-chrome-blur: 18px;
+  /* Full liquid-glass filter for chrome surfaces — blur alone reads flat
+   * and grey; saturate() pulls colour *through* the pane and brightness()
+   * lifts it so it reads as lit glass, matching the portal lux recipe. */
+  --gh-chrome-filter: blur(var(--gh-chrome-blur)) saturate(170%) brightness(1.05);
+  --gh-chrome-border: 1px solid rgba(167, 243, 11, 0.22);
+  --gh-chrome-shadow: 0 18px 45px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    inset 0 -1px 0 rgba(176, 241, 34, 0.05);
+
+  /* Missing token fixes — --color-text-secondary and --ease-out were
+   * referenced downstream but never declared (secondary text was silently
+   * inheriting; transitions fell back to linear-ish `ease`). */
+  --color-text-secondary: #46584F;   /* between body #2D3B36 and muted #6D6D6D, forest-toned */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);        /* premium decelerate */
+  --ease-liquid: cubic-bezier(0.34, 1.3, 0.42, 1);   /* soft overshoot for glass hovers */
+
+  /* ── Liquid glass tokens ──────────────────────────────────────
+   * One shared recipe so every frosted surface reads as the same
+   * physical material: heavy refraction (blur + saturate + brightness),
+   * a lit top edge (specular), a faint lime under-rim (caustic), and a
+   * diagonal sheen. Consumed by the upgraded gh/gh2 glass classes and
+   * the new .gh-liquid utilities at the end of this file. */
+  --liquid-filter: blur(22px) saturate(180%) brightness(1.06);
+  --liquid-filter-strong: blur(28px) saturate(200%) brightness(1.08);
+  --liquid-filter-light: blur(16px) saturate(160%);
+  /* Dark (forest) pane fill — translucent gradient, lighter at the lit
+   * top-left corner like real glass catching light. */
+  --liquid-fill-dark: linear-gradient(
+      152deg,
+      rgba(255, 255, 255, 0.10) 0%,
+      rgba(255, 255, 255, 0.03) 34%,
+      rgba(255, 255, 255, 0.00) 62%,
+      rgba(176, 241, 34, 0.03) 100%
+    );
+  --liquid-fill-light: linear-gradient(
+      152deg,
+      rgba(255, 255, 255, 0.72) 0%,
+      rgba(255, 255, 255, 0.42) 48%,
+      rgba(245, 255, 248, 0.55) 100%
+    );
+  /* Specular + caustic inset stack — pair on top of a drop shadow. */
+  --liquid-specular: inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 1px 0 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 rgba(176, 241, 34, 0.07);
+  --liquid-specular-light: inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(29, 75, 54, 0.05);
+  /* Diagonal sheen band — the "liquid" streak that sweeps on hover. */
+  --liquid-sheen: linear-gradient(
+      115deg,
+      transparent 32%,
+      rgba(255, 255, 255, 0.10) 46%,
+      rgba(255, 255, 255, 0.16) 50%,
+      rgba(255, 255, 255, 0.10) 54%,
+      transparent 68%
+    );
+  --liquid-edge: rgba(255, 255, 255, 0.16);
+  --liquid-edge-lime: rgba(176, 241, 34, 0.24);
+}
 
 .gh-article-body {
   overflow-wrap: break-word;
@@ -684,6 +891,18 @@
   border-radius: 4px;
   background: #e8eee7;
   color: #294137;
+}
+
+/* Every designed article opens its disclaimer/institution panel with an inline
+   <strong> title followed directly by the notice text (180 bodies share that
+   markup). Give the title its own line instead of letting the sentence run on
+   from it. */
+.gh-article-editorial--authored-sections :is(.disclaimer, .institution-bar, .author-bar) > strong:first-child {
+  display: block;
+  margin-bottom: 8px;
+  color: #173c2f;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
 }
 
 .gh-article-editorial--authored-sections :is(.cta-btns, .hero-actions) {
@@ -2804,7 +3023,7 @@ body{margin:0;background:var(--color-background-page,#fff);font-family:var(--fon
 <body>
 <div class="preview-banner">Pré-visualização · layout editorial de produção · não publicado</div>
 <header class="gh-blog-calm-hero"><div class="gh-blog-calm-hero-inner"><a class="gh-blog-calm-back" href="https://www.myglobalhealth.online/portugal/pt/blog">← Todos os artigos</a><p class="gh-blog-calm-category">Saúde Mental</p><h1>Baixa psicológica: quem a passa, quanto se recebe e porque não é paga a 100%</h1><p class="gh-blog-calm-dek">A baixa psicológica é uma baixa médica normal com um diagnóstico de saúde mental. Quem a pode emitir, os 55%, 60% e 70% que a Segurança Social paga, e o que muda no burnout.</p><div class="gh-blog-calm-byline"><span>Global Health Medical Team</span><span>7 de setembro de 2026</span><span>5 min de leitura</span></div><p class="gh-blog-calm-reviewer">✓ Revisão clínica por Dra. Margarida Domingues e Andrade</p></div></header>
-<section class="gh-blog-calm-article-shell"><div class="gh-blog-reading-layout"><nav class="gh-blog-reading-toc" aria-labelledby="blog-reading-toc-title"><div class="gh-blog-reading-toc-heading"><span aria-hidden="true">+</span><h2 id="blog-reading-toc-title">Nesta página</h2></div><ol class="gh-blog-reading-toc-list"><li><a href="#quem-pode-passar-uma-baixa-psicologica">Quem pode passar uma baixa psicológica</a></li><li><a href="#quanto-paga-a-seguranca-social-numa-baixa-psicologica">Quanto paga a Segurança Social numa baixa psicológica</a></li><li><a href="#a-baixa-psicologica-e-paga-a-100">A baixa psicológica é paga a 100%?</a></li><li><a href="#baixa-por-burnout-ansiedade-ou-depressao-o-que-muda">Baixa por burnout, ansiedade ou depressão: o que muda</a></li><li><a href="#como-pedir-a-baixa-psicologica">Como pedir a baixa psicológica</a></li><li><a href="#avaliacao-medica-e-apoio">Avaliação médica e apoio</a></li><li><a href="#fontes-deste-guia">Fontes deste guia</a></li><li><a href="#duvidas-sobre-a-baixa-psicologica">Dúvidas sobre a baixa psicológica</a></li></ol></nav><div id="blog-article-content" class="gh-blog-reading-body"><div class="gh-article-body gh-article-editorial gh-article-editorial--authored-sections"><main class="gh-blog" lang="pt-PT"><header class="article-intro"><div class="hero-copy"><div class="hero-brandline"><strong>Global Health</strong> · Medicina em Portugal, explicada sem atalhos <a href="https://www.myglobalhealth.online/portugal/pt/blog" rel="noopener noreferrer">Saúde Mental</a></div><span class="eyebrow">Portugal · Guia de baixa médica</span><h2 data-blog-h1>Baixa psicológica: como pedir, quanto se recebe e o que é mito</h2><p class="hero-deck">É uma baixa médica como qualquer outra. Só um médico a emite, a Segurança Social paga por escalões e o burnout não dá direito a 100%.</p><p class="intro-lead">A <strong>baixa psicológica</strong> não existe como categoria legal separada. É o Certificado de Incapacidade Temporária (CIT) normal, emitido por um médico, com um diagnóstico de saúde mental: ansiedade, depressão, burnout. Um psicólogo não a pode passar. A Segurança Social paga <strong>55% da remuneração de referência até 30 dias, 60% dos 31 aos 90 e 70% dos 91 aos 365</strong>, com três dias de espera. A única doença paga a 100% é a tuberculose, por isso a resposta a “baixa psicológica paga a 100” é não.</p><div class="hero-facts"><span class="hero-fact">Só um médico emite o CIT; o psicólogo acompanha, não certifica</span><span class="hero-fact">55% até 30 dias, 60% dos 31 aos 90, 70% dos 91 aos 365 dias</span><span class="hero-fact">Nenhuma baixa por saúde mental é paga a 100%</span></div><div class="hero-actions"><a class="btn-lime" href="https://www.seg-social.pt/ptss/pssd/documento/cmdde8gsx000qi12yzi40plc6" rel="noopener noreferrer">Guia Prático da Segurança Social</a><a class="btn-ghost" href="https://www.myglobalhealth.online/portugal/pt/blog/baixa-medica-quanto-se-recebe-como-calcular" rel="noopener noreferrer">Quanto se recebe: cálculo passo a passo</a></div></div><aside class="hero-panel"><span class="meta-chip">Em resumo</span><p class="intro-support">Marque consulta com um médico, não com o psicólogo, quando precisar do certificado.</p><p class="intro-support">O CIT segue eletronicamente para a Segurança Social; entregue cópia à entidade empregadora.</p><p class="intro-support">Se a baixa se prolongar, pode ser chamado a uma verificação de incapacidade. Faltar significa perder o subsídio.</p><div class="hero-author"><div aria-hidden="true" class="hero-author-mark">GH</div><div><strong>Global Health Medical Team</strong></div></div><span class="hero-review-line">É necessária revisão clínica e linguística antes da publicação.</span></aside></header><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="quem-passa" /><span class="eyebrow">CIT e diagnóstico</span><h2 id="quem-pode-passar-uma-baixa-psicologica">Quem pode passar uma baixa psicológica</h2><p class="section-lead">Qualquer médico que o avalie e conclua que não está em condições de trabalhar. O que conta é a incapacidade, não a especialidade.</p><p>Na prática são três portas: o médico de família, o psiquiatra quando já há acompanhamento e, desde 1 de março de 2024, qualquer médico do setor privado ou social, incluindo urgências e consultas online com médico inscrito na Ordem, porque o Decreto-Lei 2/2024 alargou a emissão do CIT a esses prestadores. O psicólogo fica de fora porque o CIT é um ato médico, como a própria Ordem dos Psicólogos explica aos utentes. O relatório do psicólogo ajuda a fundamentar a baixa, mas não a substitui.</p><ul class="check-list"><li><strong>Até 3 dias:</strong> autodeclaração de doença no SNS 24, duas vezes por ano, sem médico. Serve para uma crise curta, não para um burnout.</li><li><strong>Mais de 3 dias:</strong> CIT emitido por médico.</li><li><strong>Prazo de garantia:</strong> 6 meses de descontos e 12 dias de trabalho nos 4 meses anteriores.</li></ul><p class="cite-note">Fontes: <a href="https://diariodarepublica.pt/dr/detalhe/decreto-lei/2-2024-836117864" rel="noopener noreferrer" target="_blank">Decreto-Lei n.º 2/2024</a>, <a href="https://ordemdosmedicos.pt/emissao-de-cit-alargada-ao-sector-privado-social-e-servicos-de-urgencia" rel="noopener noreferrer" target="_blank">Ordem dos Médicos sobre a emissão de CIT</a> e <a href="https://www.seg-social.pt/ptss/pssd/documento/cmdde8gsx000qi12yzi40plc6" rel="noopener noreferrer" target="_blank">Guia Prático do Subsídio de Doença</a>, consultados a 7 de setembro de 2026.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="quanto-recebe" /><span class="eyebrow">Escalões de 2026</span><h2 id="quanto-paga-a-seguranca-social-numa-baixa-psicologica">Quanto paga a Segurança Social numa baixa psicológica</h2><p class="section-lead">Exatamente o mesmo que em qualquer outra baixa. A percentagem depende da duração, não do diagnóstico.</p><ul class="check-list"><li><strong>Até 30 dias:</strong> 55% da remuneração de referência.</li><li><strong>31 a 90 dias:</strong> 60%.</li><li><strong>91 a 365 dias:</strong> 70%.</li><li><strong>Mais de 365 dias:</strong> 75%.</li></ul><p>Os dois primeiros escalões sobem 5 pontos se a remuneração de referência for igual ou inferior a 500 euros, com três ou mais filhos até aos 16 anos ou um filho com bonificação por deficiência. Há três dias de espera, exceto em internamento, cirurgia de ambulatório ou tuberculose, e o limite é de 1.095 dias. O cálculo com números está no nosso <a href="https://www.myglobalhealth.online/portugal/pt/blog/baixa-medica-quanto-se-recebe-como-calcular" rel="noopener noreferrer">guia sobre o valor da baixa médica</a>.</p></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="paga-a-100" /><span class="eyebrow">O mito mais pesquisado</span><h2 id="a-baixa-psicologica-e-paga-a-100">A baixa psicológica é paga a 100%?</h2><p class="section-lead">Não. A percentagem depende apenas da duração da baixa, e isso vale para depressão, ansiedade e burnout.</p><p>A única situação paga a 100% é a tuberculose com mais de dois familiares a cargo. O internamento não dá 100%: só elimina os dias de espera. A ideia de que a baixa por depressão ou burnout é paga por inteiro vem de complementos que algumas empresas pagam por contrato coletivo. Existem, mas são um acordo com o empregador, não uma regra da Segurança Social.</p><div class="alert-warn"><strong>Se lhe prometerem 100%</strong>Se lhe disserem que “com o código certo” a baixa fica a 100%, desconfie. O médico regista o diagnóstico; a percentagem é fixada por lei em função dos dias, e nenhum diagnóstico de saúde mental a altera.</div><p class="cite-note"><a href="https://www.seg-social.pt/subsidio-de-doenca" rel="noopener noreferrer" target="_blank">Segurança Social — Subsídio de doença</a>.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="burnout" /><span class="eyebrow">O que muda na prática</span><h2 id="baixa-por-burnout-ansiedade-ou-depressao-o-que-muda">Baixa por burnout, ansiedade ou depressão: o que muda</h2><p class="section-lead">Nos direitos não muda nada. Na consulta muda o acompanhamento.</p><p>O burnout não é, em rigor, um diagnóstico de doença: a classificação internacional de doenças da OMS (CID-11) descreve-o como um fenómeno ligado ao trabalho, não como doença. Isso não impede a baixa. O médico certifica a incapacidade que observa, normalmente descrita como reação ao stress, ansiedade ou episódio depressivo. O que muda é o acompanhamento: uma baixa que se limita a parar sem tratamento costuma prolongar-se. Espere um plano com psicologia, se necessário psiquiatria, e revisão a duas ou quatro semanas. Uma <a href="https://www.myglobalhealth.online/portugal/pt/services/saude-mental" rel="noopener noreferrer">consulta de saúde mental</a> com um médico da Global Health pode avaliar a situação e, se houver incapacidade, emitir o CIT, sem garantir a baixa nem a sua duração. Se a baixa se prolongar, o Sistema de Verificação de Incapacidades pode convocá-lo. Quem falta perde o subsídio.</p><p class="cite-note"><a href="https://www.seg-social.pt/ptss/pssd/documento/cmc20y16i00szkl2ykdlcewrc" rel="noopener noreferrer" target="_blank">Guia do Serviço de Verificação de Incapacidades</a>.</p></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="como-pedir" /><span class="eyebrow">Passo a passo</span><h2 id="como-pedir-a-baixa-psicologica">Como pedir a baixa psicológica</h2><ul class="check-list"><li><strong>1. Consulta médica.</strong> Sintomas, duração, impacto no trabalho. Leve relatórios do psicólogo, se os tiver.</li><li><strong>2. CIT.</strong> Segue eletronicamente para a Segurança Social. Em papel, entregue-o em 5 dias úteis, ou o subsídio só conta desde a entrega.</li><li><strong>3. Empregador.</strong> Entregue a cópia, disponível no portal ou app SNS 24.</li><li><strong>4. Renovação.</strong> Marque a reavaliação antes da data de fim, não depois.</li></ul><p>Em crise, não espere pela consulta. A linha SNS 24, 808 24 24 24, tem aconselhamento psicológico 24 horas por dia, com psicólogos clínicos. Em risco imediato ligue 112.</p><p class="cite-note"><a href="https://www.seg-social.pt/incapacidade-temporaria" rel="noopener noreferrer" target="_blank">Segurança Social — Incapacidade temporária</a>, <a href="https://www.sns24.gov.pt/servico/aceder-ao-certificado-de-incapacidade-temporaria/" rel="noopener noreferrer" target="_blank">SNS 24 — aceder ao CIT</a> e <a href="https://www.sns24.gov.pt/servico/aconselhamento-psicologico-no-sns-24/" rel="noopener noreferrer" target="_blank">SNS 24 — aconselhamento psicológico</a>.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="global-health" /><span class="eyebrow">Global Health Portugal</span><h2 id="avaliacao-medica-e-apoio">Avaliação médica e apoio</h2><p class="section-lead">O médico avalia a incapacidade e emite o CIT. A Segurança Social decide o subsídio.</p><ul class="check-list"><li><a href="https://www.myglobalhealth.online/portugal/pt/services/saude-mental" rel="noopener noreferrer">Consulta de saúde mental</a></li><li><a href="https://www.myglobalhealth.online/portugal/pt/services/baixa-medica" rel="noopener noreferrer">Baixa médica online</a></li><li><a href="https://www.myglobalhealth.online/portugal/pt/blog/baixa-medica-quanto-se-recebe-como-calcular" rel="noopener noreferrer">Quanto se recebe na baixa médica</a></li><li><a href="https://www.myglobalhealth.online/portugal/pt/blog/autodeclaracao-de-doenca-ou-baixa-medica" rel="noopener noreferrer">Autodeclaração de doença ou baixa médica</a></li><li><a href="https://www.myglobalhealth.online/portugal/pt/doctors" rel="noopener noreferrer">Médicos em Portugal</a></li><li><a href="https://www.myglobalhealth.online/portugal/pt/contact" rel="noopener noreferrer">Contactar a Global Health</a></li></ul><div class="cta-box"><h3>Precisa de avaliação médica?</h3><p>Um médico avalia a sua situação e, se houver incapacidade para o trabalho, emite o CIT. A consulta não garante a baixa.</p><div class="cta-btns"><a class="btn-primary" href="https://www.myglobalhealth.online/portugal/pt/services/saude-mental" rel="noopener noreferrer">Marcar consulta de saúde mental</a><a class="btn-secondary" href="https://www.myglobalhealth.online/portugal/pt/doctors" rel="noopener noreferrer">Ver médicos</a></div></div></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="sources" /><span class="eyebrow">Fontes oficiais</span><h2 id="fontes-deste-guia">Fontes deste guia</h2><p class="section-lead">Percentagens e prazos retirados das páginas da Segurança Social e da legislação em vigor, verificados a 7 de setembro de 2026.</p><div class="institution-bar"><a class="inst-link" href="https://www.seg-social.pt/ptss/pssd/documento/cmdde8gsx000qi12yzi40plc6" rel="noopener noreferrer" target="_blank">Segurança Social — Guia Prático do Subsídio de Doença</a><a class="inst-link" href="https://www.seg-social.pt/subsidio-de-doenca" rel="noopener noreferrer" target="_blank">Segurança Social — Subsídio de doença</a><a class="inst-link" href="https://www.seg-social.pt/incapacidade-temporaria" rel="noopener noreferrer" target="_blank">Segurança Social — Incapacidade temporária</a><a class="inst-link" href="https://www.seg-social.pt/ptss/pssd/documento/cmc20y16i00szkl2ykdlcewrc" rel="noopener noreferrer" target="_blank">Segurança Social — Serviço de Verificação de Incapacidades</a><a class="inst-link" href="https://diariodarepublica.pt/dr/detalhe/decreto-lei/2-2024-836117864" rel="noopener noreferrer" target="_blank">Decreto-Lei n.º 2/2024 — emissão de CIT no setor privado e social</a><a class="inst-link" href="https://ordemdosmedicos.pt/emissao-de-cit-alargada-ao-sector-privado-social-e-servicos-de-urgencia" rel="noopener noreferrer" target="_blank">Ordem dos Médicos — emissão de CIT alargada</a><a class="inst-link" href="https://www.sns24.gov.pt/servico/aconselhamento-psicologico-no-sns-24/" rel="noopener noreferrer" target="_blank">SNS 24 — aconselhamento psicológico</a></div><p class="cite-note">Confirme o seu caso na Segurança Social Direta. Complementos pagos pela empresa dependem do contrato coletivo.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="faq" /><span class="eyebrow">Perguntas frequentes</span><h2 id="duvidas-sobre-a-baixa-psicologica">Dúvidas sobre a baixa psicológica</h2><div class="faq-section"><details class="faq-item"><summary class="faq-q">O psicólogo pode passar baixa?</summary><div class="faq-a"><p>Não. O CIT é emitido por um médico. O relatório do psicólogo pode fundamentar a decisão médica, mas não substitui o certificado.</p></div></details><details class="faq-item"><summary class="faq-q">A baixa por burnout é paga a 100%?</summary><div class="faq-a"><p>Não. Paga 55% até 30 dias, 60% dos 31 aos 90 e 70% dos 91 aos 365. Só a tuberculose tem pagamento a 100%, e apenas com mais de dois familiares a cargo.</p></div></details><details class="faq-item"><summary class="faq-q">Posso pedir baixa psicológica numa consulta online?</summary><div class="faq-a"><p>Sim, desde 2024, com um médico inscrito na Ordem dos Médicos. O médico decide se há incapacidade; a consulta não garante o certificado.</p></div></details><details class="faq-item"><summary class="faq-q">Posso sair de casa durante a baixa psicológica?</summary><div class="faq-a"><p>A Segurança Social prevê a perda do subsídio a quem sai de casa sem autorização médica ou falta à verificação de incapacidade. Pergunte ao médico o que fica registado no seu caso.</p></div></details></div></div></section><section class="article-section section-ivory"><div class="section-inner"><div class="disclaimer"><strong>Informação médica e social</strong>Artigo elaborado com apoio de IA e sujeito a revisão clínica e linguística antes da publicação. Informação geral válida a setembro de 2026; não é decisão da Segurança Social, aconselhamento individual nem garantia de emissão ou duração da baixa.</div></div></section></main></div></div></div></section>
+<section class="gh-blog-calm-article-shell"><div class="gh-blog-reading-layout"><nav class="gh-blog-reading-toc" aria-labelledby="blog-reading-toc-title"><div class="gh-blog-reading-toc-heading"><span aria-hidden="true">+</span><h2 id="blog-reading-toc-title">Nesta página</h2></div><ol class="gh-blog-reading-toc-list"><li><a href="#quem-pode-passar-uma-baixa-psicologica">Quem pode passar uma baixa psicológica</a></li><li><a href="#quanto-paga-a-seguranca-social-numa-baixa-psicologica">Quanto paga a Segurança Social numa baixa psicológica</a></li><li><a href="#a-baixa-psicologica-e-paga-a-100">A baixa psicológica é paga a 100%?</a></li><li><a href="#baixa-por-burnout-ansiedade-ou-depressao-o-que-muda">Baixa por burnout, ansiedade ou depressão: o que muda</a></li><li><a href="#como-pedir-a-baixa-psicologica">Como pedir a baixa psicológica</a></li><li><a href="#avaliacao-medica-e-apoio">Avaliação médica e apoio</a></li><li><a href="#fontes-deste-guia">Fontes deste guia</a></li><li><a href="#duvidas-sobre-a-baixa-psicologica">Dúvidas sobre a baixa psicológica</a></li></ol></nav><div id="blog-article-content" class="gh-blog-reading-body"><div class="gh-article-body gh-article-editorial gh-article-editorial--authored-sections"><main class="gh-blog" lang="pt-PT"><header class="article-intro"><div class="hero-copy"><div class="hero-brandline"><strong>Global Health</strong> · Medicina em Portugal, explicada sem atalhos <a href="https://www.myglobalhealth.online/portugal/pt/blog" rel="noopener noreferrer">Saúde Mental</a></div><span class="eyebrow">Portugal · Guia de baixa médica</span><h2 data-blog-h1>Baixa psicológica: como pedir, quanto se recebe e o que é mito</h2><p class="hero-deck">É uma baixa médica como qualquer outra. Só um médico a emite, a Segurança Social paga por escalões e o burnout não dá direito a 100%.</p><p class="intro-lead">A <strong>baixa psicológica</strong> não existe como categoria legal separada. É o Certificado de Incapacidade Temporária (CIT) normal, emitido por um médico, com um diagnóstico de saúde mental: ansiedade, depressão, burnout. Um psicólogo não a pode passar. A Segurança Social paga <strong>55% da remuneração de referência até 30 dias, 60% dos 31 aos 90 e 70% dos 91 aos 365</strong>, com três dias de espera. A única doença paga a 100% é a tuberculose, por isso a resposta a “baixa psicológica paga a 100” é não.</p><div class="hero-facts"><span class="hero-fact">Só um médico emite o CIT; o psicólogo acompanha, não certifica</span><span class="hero-fact">55% até 30 dias, 60% dos 31 aos 90, 70% dos 91 aos 365 dias</span><span class="hero-fact">Nenhuma baixa por saúde mental é paga a 100%</span></div><div class="hero-actions"><a class="btn-lime" href="https://www.seg-social.pt/ptss/pssd/documento/cmdde8gsx000qi12yzi40plc6" rel="noopener noreferrer">Guia Prático da Segurança Social</a><a class="btn-ghost" href="https://www.myglobalhealth.online/portugal/pt/blog/baixa-medica-quanto-se-recebe-como-calcular" rel="noopener noreferrer">Quanto se recebe: cálculo passo a passo</a></div></div><aside class="hero-panel"><span class="meta-chip">Em resumo</span><p class="intro-support">Marque consulta com um médico, não com o psicólogo, quando precisar do certificado.</p><p class="intro-support">O CIT segue eletronicamente para a Segurança Social; entregue cópia à entidade empregadora.</p><p class="intro-support">Se a baixa se prolongar, pode ser chamado a uma verificação de incapacidade. Faltar significa perder o subsídio.</p><div class="hero-author"><div aria-hidden="true" class="hero-author-mark">GH</div><div><strong>Global Health Medical Team</strong></div></div><span class="hero-review-line">Revisto pela equipa médica da Global Health.</span></aside></header><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="quem-passa" /><span class="eyebrow">CIT e diagnóstico</span><h2 id="quem-pode-passar-uma-baixa-psicologica">Quem pode passar uma baixa psicológica</h2><p class="section-lead">Qualquer médico que o avalie e conclua que não está em condições de trabalhar. O que conta é a incapacidade, não a especialidade.</p><p>Na prática são três portas: o médico de família, o psiquiatra quando já há acompanhamento e, desde 1 de março de 2024, qualquer médico do setor privado ou social, incluindo urgências e consultas online com médico inscrito na Ordem, porque o Decreto-Lei 2/2024 alargou a emissão do CIT a esses prestadores. O psicólogo fica de fora porque o CIT é um ato médico, como a própria Ordem dos Psicólogos explica aos utentes. O relatório do psicólogo ajuda a fundamentar a baixa, mas não a substitui.</p><ul class="check-list"><li><strong>Até 3 dias:</strong> autodeclaração de doença no SNS 24, duas vezes por ano, sem médico. Serve para uma crise curta, não para um burnout.</li><li><strong>Mais de 3 dias:</strong> CIT emitido por médico.</li><li><strong>Prazo de garantia:</strong> 6 meses de descontos e 12 dias de trabalho nos 4 meses anteriores.</li></ul><p class="cite-note">Fontes: <a href="https://diariodarepublica.pt/dr/detalhe/decreto-lei/2-2024-836117864" rel="noopener noreferrer" target="_blank">Decreto-Lei n.º 2/2024</a>, <a href="https://ordemdosmedicos.pt/emissao-de-cit-alargada-ao-sector-privado-social-e-servicos-de-urgencia" rel="noopener noreferrer" target="_blank">Ordem dos Médicos sobre a emissão de CIT</a> e <a href="https://www.seg-social.pt/ptss/pssd/documento/cmdde8gsx000qi12yzi40plc6" rel="noopener noreferrer" target="_blank">Guia Prático do Subsídio de Doença</a>, consultados a 7 de setembro de 2026.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="quanto-recebe" /><span class="eyebrow">Escalões de 2026</span><h2 id="quanto-paga-a-seguranca-social-numa-baixa-psicologica">Quanto paga a Segurança Social numa baixa psicológica</h2><p class="section-lead">Exatamente o mesmo que em qualquer outra baixa. A percentagem depende da duração, não do diagnóstico.</p><ul class="check-list"><li><strong>Até 30 dias:</strong> 55% da remuneração de referência.</li><li><strong>31 a 90 dias:</strong> 60%.</li><li><strong>91 a 365 dias:</strong> 70%.</li><li><strong>Mais de 365 dias:</strong> 75%.</li></ul><p>Os dois primeiros escalões sobem 5 pontos se a remuneração de referência for igual ou inferior a 500 euros, com três ou mais filhos até aos 16 anos ou um filho com bonificação por deficiência. Há três dias de espera, exceto em internamento, cirurgia de ambulatório ou tuberculose, e o limite é de 1.095 dias. O cálculo com números está no nosso <a href="https://www.myglobalhealth.online/portugal/pt/blog/baixa-medica-quanto-se-recebe-como-calcular" rel="noopener noreferrer">guia sobre o valor da baixa médica</a>.</p></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="paga-a-100" /><span class="eyebrow">O mito mais pesquisado</span><h2 id="a-baixa-psicologica-e-paga-a-100">A baixa psicológica é paga a 100%?</h2><p class="section-lead">Não. A percentagem depende apenas da duração da baixa, e isso vale para depressão, ansiedade e burnout.</p><p>A única situação paga a 100% é a tuberculose com mais de dois familiares a cargo. O internamento não dá 100%: só elimina os dias de espera. A ideia de que a baixa por depressão ou burnout é paga por inteiro vem de complementos que algumas empresas pagam por contrato coletivo. Existem, mas são um acordo com o empregador, não uma regra da Segurança Social.</p><div class="alert-warn"><strong>Se lhe prometerem 100%</strong>Se lhe disserem que “com o código certo” a baixa fica a 100%, desconfie. O médico regista o diagnóstico; a percentagem é fixada por lei em função dos dias, e nenhum diagnóstico de saúde mental a altera.</div><p class="cite-note"><a href="https://www.seg-social.pt/subsidio-de-doenca" rel="noopener noreferrer" target="_blank">Segurança Social — Subsídio de doença</a>.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="burnout" /><span class="eyebrow">O que muda na prática</span><h2 id="baixa-por-burnout-ansiedade-ou-depressao-o-que-muda">Baixa por burnout, ansiedade ou depressão: o que muda</h2><p class="section-lead">Nos direitos não muda nada. Na consulta muda o acompanhamento.</p><p>O burnout não é, em rigor, um diagnóstico de doença: a classificação internacional de doenças da OMS (CID-11) descreve-o como um fenómeno ligado ao trabalho, não como doença. Isso não impede a baixa. O médico certifica a incapacidade que observa, normalmente descrita como reação ao stress, ansiedade ou episódio depressivo. O que muda é o acompanhamento: uma baixa que se limita a parar sem tratamento costuma prolongar-se. Espere um plano com psicologia, se necessário psiquiatria, e revisão a duas ou quatro semanas. Uma <a href="https://www.myglobalhealth.online/portugal/pt/services/saude-mental" rel="noopener noreferrer">consulta de saúde mental</a> com um médico da Global Health pode avaliar a situação e, se houver incapacidade, emitir o CIT, sem garantir a baixa nem a sua duração. Se a baixa se prolongar, o Sistema de Verificação de Incapacidades pode convocá-lo. Quem falta perde o subsídio.</p><p class="cite-note"><a href="https://www.seg-social.pt/ptss/pssd/documento/cmc20y16i00szkl2ykdlcewrc" rel="noopener noreferrer" target="_blank">Guia do Serviço de Verificação de Incapacidades</a>.</p></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="como-pedir" /><span class="eyebrow">Passo a passo</span><h2 id="como-pedir-a-baixa-psicologica">Como pedir a baixa psicológica</h2><ul class="check-list"><li><strong>1. Consulta médica.</strong> Sintomas, duração, impacto no trabalho. Leve relatórios do psicólogo, se os tiver.</li><li><strong>2. CIT.</strong> Segue eletronicamente para a Segurança Social. Em papel, entregue-o em 5 dias úteis, ou o subsídio só conta desde a entrega.</li><li><strong>3. Empregador.</strong> Entregue a cópia, disponível no portal ou app SNS 24.</li><li><strong>4. Renovação.</strong> Marque a reavaliação antes da data de fim, não depois.</li></ul><p>Em crise, não espere pela consulta. A linha SNS 24, 808 24 24 24, tem aconselhamento psicológico 24 horas por dia, com psicólogos clínicos. Em risco imediato ligue 112.</p><p class="cite-note"><a href="https://www.seg-social.pt/incapacidade-temporaria" rel="noopener noreferrer" target="_blank">Segurança Social — Incapacidade temporária</a>, <a href="https://www.sns24.gov.pt/servico/aceder-ao-certificado-de-incapacidade-temporaria/" rel="noopener noreferrer" target="_blank">SNS 24 — aceder ao CIT</a> e <a href="https://www.sns24.gov.pt/servico/aconselhamento-psicologico-no-sns-24/" rel="noopener noreferrer" target="_blank">SNS 24 — aconselhamento psicológico</a>.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="global-health" /><span class="eyebrow">Global Health Portugal</span><h2 id="avaliacao-medica-e-apoio">Avaliação médica e apoio</h2><p class="section-lead">O médico avalia a incapacidade e emite o CIT. A Segurança Social decide o subsídio.</p><ul class="check-list"><li><a href="https://www.myglobalhealth.online/portugal/pt/services/saude-mental" rel="noopener noreferrer">Consulta de saúde mental</a></li><li><a href="https://www.myglobalhealth.online/portugal/pt/services/baixa-medica" rel="noopener noreferrer">Baixa médica online</a></li><li><a href="https://www.myglobalhealth.online/portugal/pt/blog/baixa-medica-quanto-se-recebe-como-calcular" rel="noopener noreferrer">Quanto se recebe na baixa médica</a></li><li><a href="https://www.myglobalhealth.online/portugal/pt/blog/autodeclaracao-de-doenca-ou-baixa-medica" rel="noopener noreferrer">Autodeclaração de doença ou baixa médica</a></li><li><a href="https://www.myglobalhealth.online/portugal/pt/doctors" rel="noopener noreferrer">Médicos em Portugal</a></li><li><a href="https://www.myglobalhealth.online/portugal/pt/contact" rel="noopener noreferrer">Contactar a Global Health</a></li></ul><div class="cta-box"><h3>Precisa de avaliação médica?</h3><p>Um médico avalia a sua situação e, se houver incapacidade para o trabalho, emite o CIT. A consulta não garante a baixa.</p><div class="cta-btns"><a class="btn-primary" href="https://www.myglobalhealth.online/portugal/pt/services/saude-mental" rel="noopener noreferrer">Marcar consulta de saúde mental</a><a class="btn-secondary" href="https://www.myglobalhealth.online/portugal/pt/doctors" rel="noopener noreferrer">Ver médicos</a></div></div></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="sources" /><span class="eyebrow">Fontes oficiais</span><h2 id="fontes-deste-guia">Fontes deste guia</h2><p class="section-lead">Percentagens e prazos retirados das páginas da Segurança Social e da legislação em vigor, verificados a 7 de setembro de 2026.</p><div class="institution-bar"><a class="inst-link" href="https://www.seg-social.pt/ptss/pssd/documento/cmdde8gsx000qi12yzi40plc6" rel="noopener noreferrer" target="_blank">Segurança Social — Guia Prático do Subsídio de Doença</a><a class="inst-link" href="https://www.seg-social.pt/subsidio-de-doenca" rel="noopener noreferrer" target="_blank">Segurança Social — Subsídio de doença</a><a class="inst-link" href="https://www.seg-social.pt/incapacidade-temporaria" rel="noopener noreferrer" target="_blank">Segurança Social — Incapacidade temporária</a><a class="inst-link" href="https://www.seg-social.pt/ptss/pssd/documento/cmc20y16i00szkl2ykdlcewrc" rel="noopener noreferrer" target="_blank">Segurança Social — Serviço de Verificação de Incapacidades</a><a class="inst-link" href="https://diariodarepublica.pt/dr/detalhe/decreto-lei/2-2024-836117864" rel="noopener noreferrer" target="_blank">Decreto-Lei n.º 2/2024 — emissão de CIT no setor privado e social</a><a class="inst-link" href="https://ordemdosmedicos.pt/emissao-de-cit-alargada-ao-sector-privado-social-e-servicos-de-urgencia" rel="noopener noreferrer" target="_blank">Ordem dos Médicos — emissão de CIT alargada</a><a class="inst-link" href="https://www.sns24.gov.pt/servico/aconselhamento-psicologico-no-sns-24/" rel="noopener noreferrer" target="_blank">SNS 24 — aconselhamento psicológico</a></div><p class="cite-note">Confirme o seu caso na Segurança Social Direta. Complementos pagos pela empresa dependem do contrato coletivo.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="faq" /><span class="eyebrow">Perguntas frequentes</span><h2 id="duvidas-sobre-a-baixa-psicologica">Dúvidas sobre a baixa psicológica</h2><div class="faq-section"><details class="faq-item"><summary class="faq-q">O psicólogo pode passar baixa?</summary><div class="faq-a"><p>Não. O CIT é emitido por um médico. O relatório do psicólogo pode fundamentar a decisão médica, mas não substitui o certificado.</p></div></details><details class="faq-item"><summary class="faq-q">A baixa por burnout é paga a 100%?</summary><div class="faq-a"><p>Não. Paga 55% até 30 dias, 60% dos 31 aos 90 e 70% dos 91 aos 365. Só a tuberculose tem pagamento a 100%, e apenas com mais de dois familiares a cargo.</p></div></details><details class="faq-item"><summary class="faq-q">Posso pedir baixa psicológica numa consulta online?</summary><div class="faq-a"><p>Sim, desde 2024, com um médico inscrito na Ordem dos Médicos. O médico decide se há incapacidade; a consulta não garante o certificado.</p></div></details><details class="faq-item"><summary class="faq-q">Posso sair de casa durante a baixa psicológica?</summary><div class="faq-a"><p>A Segurança Social prevê a perda do subsídio a quem sai de casa sem autorização médica ou falta à verificação de incapacidade. Pergunte ao médico o que fica registado no seu caso.</p></div></details></div></div></section><section class="article-section section-ivory"><div class="section-inner"><div class="disclaimer"><strong>Informação médica e social</strong>Informação geral válida a setembro de 2026; não é decisão da Segurança Social, aconselhamento individual nem garantia de emissão ou duração da baixa. Fale com um médico sobre a sua situação.</div></div></section></main></div></div></div></section>
 <section class="preview-cta gh2-section-forest"><div class="preview-cta-inner"><p class="k">Próximo passo</p><h2>Pronto para falar com um médico?</h2><a href="https://www.myglobalhealth.online/portugal/pt/services/saude-mental">Marcar consulta</a></div></section>
 </body>
 </html>

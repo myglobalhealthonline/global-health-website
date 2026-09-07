@@ -6,6 +6,213 @@
 <title>Adult ADHD assessment in Ireland: routes and cost</title>
 <meta name="description" content="Public HSE pathway, private assessment costs, who can diagnose ADHD in Ireland and what a NICE-standard adult ADHD assessment involves.">
 <style>
+:root {
+  --font-manrope: "Aptos", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-plus-jakarta: var(--font-manrope);
+  --font-display: var(--font-manrope);
+  --font-geist-mono: "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+
+  /* ── Brand (EXACT values from Manual da Marca) ────────────
+   * Source: Global Health Manual da Marca PDF page 1. The previous
+   * tokens drifted off-spec (forest at #1B4D3E vs brand #1D4B36, no
+   * mid-mint #8FB021 in the system). All five brand swatches are
+   * now declared verbatim with no rounding. */
+  --color-brand-primary:       #1D4B36;   /* Forest deep — primary */
+  --color-brand-primary-hover: #163826;   /* Darker forest — hover */
+  --color-brand-secondary:     #FFFFFF;
+  /* Mid-mint — the missing brand swatch. Used for icon tiles, on-dark
+   * CTAs, secondary accents that need more saturation than the
+   * pastel mint but less punch than the lime. */
+  --color-brand-mint:           #8FB021;
+  --color-brand-mint-soft:      rgba(143, 176, 33, 0.18);
+  --color-brand-mint-dim:       rgba(143, 176, 33, 0.10);
+  /* Brand lime aliased under --color-accent so legacy call sites
+   * (portal/admin sidebar, CountryEntryGate, icon tiles) resolve to
+   * the correct on-brand colour without a mass rename. The old pastel
+   * #C8E6A0 was off-spec; these values are now exact-palette tints. */
+  --color-accent:              #B0F122;
+  --color-accent-soft:         rgba(176, 241, 34, 0.20);
+  --color-accent-dim:          rgba(176, 241, 34, 0.10);
+  /* Bright lime — the loud brand accent. Notification dots, hero
+   * highlights, "available now" indicators. Brand spec value. */
+  --color-brand-accent:        #B0F122;
+  --color-brand-accent-soft:   rgba(176, 241, 34, 0.55);  /* lime at 55% — hover/soft states */
+
+  /* Readable muted-on-dark tokens (spec §9) — text on .gh2-section-forest /
+   * .gh2-glass-forest surfaces without dropping below AA contrast. */
+  --gh2-on-dark-muted: rgba(255, 255, 255, 0.72);
+  --gh2-on-dark-faint: rgba(255, 255, 255, 0.60);
+
+  /* Backgrounds */
+  --color-background:       #FFFFFF; /* alias for --color-background-page */
+  --color-background-page:  #FFFFFF;
+  --color-background-soft:  #F6F8F1;   /* warm off-white */
+  --color-background-panel: #EDF2E2;   /* mint-tinted panel */
+  --color-background-dark:  #1D4B36;   /* brand forest deep — exact swatch from Manual da Marca */
+
+  /* Text — brand spec uses #6D6D6D as mid grey. Carry it through as
+   * the muted tier; primary + body remain forest-toned. */
+  --color-text-primary:     #1D4B36;   /* aligned to brand primary swatch */
+  --color-text-body:        #2D3B36;
+  --color-text-muted:       #6D6D6D;
+  --color-text-placeholder: #9A9A9A;
+
+  /* Borders */
+  --color-border:        #E4E7DD;
+  --color-border-strong: #C3CCB5;
+
+  --color-hero-overlay: rgba(29, 75, 54, 0.72);
+
+  /* Status */
+  --color-status-error:        #B91C1C;
+  --color-status-error-bg:     #FEF2F2;
+  --color-status-error-text:   #991B1B;
+  --color-status-error-border: #FECACA;
+  --color-status-success-bg:   #F0FDF4;
+  --color-status-success-text: #15803D;
+  --color-status-success-border:#BBF7D0;
+  --color-status-warning-bg:   #FFFBEB;
+  --color-status-warning-text: #92400E;
+  --color-status-warning-border:#FDE68A;
+  --color-status-info-bg:      #F0F9FF;
+  --color-status-info-text:    #075985;
+  --color-status-info-border:  #BAE6FD;
+
+  /* Radius */
+  --radius-card:    20px;
+  --radius-card-sm: 12px;
+  --radius-button:  999px;
+  --radius-tile:    16px;
+  --radius-chip:    999px;
+
+  /* Shadows — forest-tinted, never neutral black */
+  --shadow-soft:       0 1px 3px rgba(29, 75, 54, 0.06);
+  --shadow-card:       0 1px 3px rgba(29, 75, 54, 0.08), 0 4px 12px rgba(29, 75, 54, 0.04);
+  --shadow-card-hover: 0 4px 12px rgba(29, 75, 54, 0.12), 0 8px 24px rgba(29, 75, 54, 0.08);
+  --shadow-elevated:   0 8px 30px rgba(29, 75, 54, 0.14), 0 2px 8px rgba(29, 75, 54, 0.08);
+  --shadow-focus:      0 0 0 3px rgba(29, 75, 54, 0.28);
+  --shadow-focus-error:0 0 0 3px rgba(185, 28, 28, 0.28);
+
+  /* Medical pattern tokens */
+  --medical-pattern-size: 28px;
+  --medical-pattern-color: var(--color-brand-primary);
+  --medical-pattern-opacity: 0.022;
+  --medical-pattern-dark-opacity: 0.04;
+  --medical-pattern-soft-opacity: 0.016;
+
+  /* Fluid type — bigger, more confident display sizes. */
+  --text-display: clamp(2.5rem, 7vw + 1rem, 6rem);
+  --text-h1: clamp(2.25rem, 5vw + 0.5rem, 4.25rem);
+  --text-h2: clamp(1.75rem, 3.5vw + 0.4rem, 3rem);
+  --text-h3: clamp(1.25rem, 2vw + 0.3rem, 1.75rem);
+  --text-body-lg: clamp(1.05rem, 1vw + 0.6rem, 1.25rem);
+  --text-body: clamp(0.95rem, 0.5vw + 0.7rem, 1.05rem);
+  /* Fixed sizes for meta + eyebrow — these stay legible at any viewport.
+   * Eyebrow is the only place positive letter-tracking exists in the
+   * system; the +0.06em opens uppercase taxonomy labels against the
+   * negative-tracked display headlines. */
+  --text-eyebrow: 0.8125rem;
+  --text-meta: 0.875rem;
+
+  /* Layout */
+  --container-width: 1280px;
+  --section-padding-y: 112px;
+  --section-padding-y-sm: 64px;
+  --header-height: 88px;
+
+  /* Shared layering bands. Overlay roles use these values instead of ad-hoc
+   * Tailwind steps so portals can escape header and shell stacking contexts. */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 100;
+  --z-header: 200;
+  --z-fixed-bar: 250;
+  --z-dropdown: 300;
+  --z-drawer-overlay: 400;
+  --z-drawer: 410;
+  --z-modal-overlay: 500;
+  --z-modal: 510;
+  --z-toast: 600;
+  --z-skip-link: 700;
+
+  /* Spacing — fluid block tokens. Drive every section + card inner
+   * padding from these instead of hand-coded px values, so the whole
+   * page rhythm can be retuned from one place. */
+  --space-section: clamp(4rem, calc(2.5rem + 3vw + 2svh), 7.5rem);
+  --space-section-sm: clamp(56px, 7vw, 96px);
+  --space-section-tight: clamp(40px, 5vw, 64px);
+  --space-stack: clamp(16px, calc(0.5rem + 1vw + 1svh), 24px);
+  --space-inset: clamp(20px, 3vw, 32px);
+
+  /* Radius alias — kept as a separate name from --radius-card-sm so
+   * inputs + cards can diverge later without find-and-replace. */
+  --radius-input: 12px;
+
+  /* Unified glass chrome — one recipe for the footer + the navbar in BOTH
+   * states (expanded bar + collapsed pill). Translucent forest glass + blur,
+   * lime hairline edge, layered drop + inset highlight. --gh-chrome is the
+   * fill; pair with backdrop-filter: blur(var(--gh-chrome-blur)),
+   * border var(--gh-chrome-border) and box-shadow var(--gh-chrome-shadow). */
+  --gh-chrome: rgba(4, 32, 24, 0.78);
+  --gh-chrome-blur: 18px;
+  /* Full liquid-glass filter for chrome surfaces — blur alone reads flat
+   * and grey; saturate() pulls colour *through* the pane and brightness()
+   * lifts it so it reads as lit glass, matching the portal lux recipe. */
+  --gh-chrome-filter: blur(var(--gh-chrome-blur)) saturate(170%) brightness(1.05);
+  --gh-chrome-border: 1px solid rgba(167, 243, 11, 0.22);
+  --gh-chrome-shadow: 0 18px 45px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    inset 0 -1px 0 rgba(176, 241, 34, 0.05);
+
+  /* Missing token fixes — --color-text-secondary and --ease-out were
+   * referenced downstream but never declared (secondary text was silently
+   * inheriting; transitions fell back to linear-ish `ease`). */
+  --color-text-secondary: #46584F;   /* between body #2D3B36 and muted #6D6D6D, forest-toned */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);        /* premium decelerate */
+  --ease-liquid: cubic-bezier(0.34, 1.3, 0.42, 1);   /* soft overshoot for glass hovers */
+
+  /* ── Liquid glass tokens ──────────────────────────────────────
+   * One shared recipe so every frosted surface reads as the same
+   * physical material: heavy refraction (blur + saturate + brightness),
+   * a lit top edge (specular), a faint lime under-rim (caustic), and a
+   * diagonal sheen. Consumed by the upgraded gh/gh2 glass classes and
+   * the new .gh-liquid utilities at the end of this file. */
+  --liquid-filter: blur(22px) saturate(180%) brightness(1.06);
+  --liquid-filter-strong: blur(28px) saturate(200%) brightness(1.08);
+  --liquid-filter-light: blur(16px) saturate(160%);
+  /* Dark (forest) pane fill — translucent gradient, lighter at the lit
+   * top-left corner like real glass catching light. */
+  --liquid-fill-dark: linear-gradient(
+      152deg,
+      rgba(255, 255, 255, 0.10) 0%,
+      rgba(255, 255, 255, 0.03) 34%,
+      rgba(255, 255, 255, 0.00) 62%,
+      rgba(176, 241, 34, 0.03) 100%
+    );
+  --liquid-fill-light: linear-gradient(
+      152deg,
+      rgba(255, 255, 255, 0.72) 0%,
+      rgba(255, 255, 255, 0.42) 48%,
+      rgba(245, 255, 248, 0.55) 100%
+    );
+  /* Specular + caustic inset stack — pair on top of a drop shadow. */
+  --liquid-specular: inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 1px 0 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 rgba(176, 241, 34, 0.07);
+  --liquid-specular-light: inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(29, 75, 54, 0.05);
+  /* Diagonal sheen band — the "liquid" streak that sweeps on hover. */
+  --liquid-sheen: linear-gradient(
+      115deg,
+      transparent 32%,
+      rgba(255, 255, 255, 0.10) 46%,
+      rgba(255, 255, 255, 0.16) 50%,
+      rgba(255, 255, 255, 0.10) 54%,
+      transparent 68%
+    );
+  --liquid-edge: rgba(255, 255, 255, 0.16);
+  --liquid-edge-lime: rgba(176, 241, 34, 0.24);
+}
 
 .gh-article-body {
   overflow-wrap: break-word;
@@ -684,6 +891,18 @@
   border-radius: 4px;
   background: #e8eee7;
   color: #294137;
+}
+
+/* Every designed article opens its disclaimer/institution panel with an inline
+   <strong> title followed directly by the notice text (180 bodies share that
+   markup). Give the title its own line instead of letting the sentence run on
+   from it. */
+.gh-article-editorial--authored-sections :is(.disclaimer, .institution-bar, .author-bar) > strong:first-child {
+  display: block;
+  margin-bottom: 8px;
+  color: #173c2f;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
 }
 
 .gh-article-editorial--authored-sections :is(.cta-btns, .hero-actions) {
@@ -2804,7 +3023,7 @@ body{margin:0;background:var(--color-background-page,#fff);font-family:var(--fon
 <body>
 <div class="preview-banner">Draft preview · production calm-editorial layout · not published</div>
 <header class="gh-blog-calm-hero"><div class="gh-blog-calm-hero-inner"><a class="gh-blog-calm-back" href="https://www.myglobalhealth.online/ireland/en/blog">← All articles</a><p class="gh-blog-calm-category">Mental Health</p><h1>Adult ADHD assessment in Ireland: the public route, the private route and what actually happens in the room</h1><p class="gh-blog-calm-dek">How an adult gets assessed for ADHD in Ireland, why the HSE pathway goes through your local mental health team first, what a private assessment costs, and what a proper assessment involves.</p><div class="gh-blog-calm-byline"><span>Global Health Medical Team</span><span>7 September 2026</span><span>5 min read</span></div><p class="gh-blog-calm-reviewer">✓ Clinically reviewed by Dr Ahmed Maklad</p></div></header>
-<section class="gh-blog-calm-article-shell"><div class="gh-blog-reading-layout"><nav class="gh-blog-reading-toc" aria-labelledby="blog-reading-toc-title"><div class="gh-blog-reading-toc-heading"><span aria-hidden="true">+</span><h2 id="blog-reading-toc-title">On this page</h2></div><ol class="gh-blog-reading-toc-list"><li><a href="#the-hse-route-what-the-pathway-looks-like">The HSE route: what the pathway looks like</a></li><li><a href="#how-long-is-the-wait">How long is the wait?</a></li><li><a href="#private-adhd-assessment-in-ireland-cost-and-questions-to-ask">Private ADHD assessment in Ireland: cost and questions to ask</a></li><li><a href="#what-a-proper-adult-adhd-assessment-involves">What a proper adult ADHD assessment involves</a></li><li><a href="#medication-who-can-start-it-and-who-continues-it">Medication: who can start it and who continues it</a></li><li><a href="#where-to-start">Where to start</a></li><li><a href="#sources-for-this-guide">Sources for this guide</a></li><li><a href="#adult-adhd-assessment-in-ireland">Adult ADHD assessment in Ireland</a></li></ol></nav><div id="blog-article-content" class="gh-blog-reading-body"><div class="gh-article-body gh-article-editorial gh-article-editorial--authored-sections"><main class="gh-blog" lang="en-IE"><header class="article-intro"><div class="hero-copy"><div class="hero-brandline"><strong>Global Health</strong> · Medicine Anytime, Anywhere <a href="https://www.myglobalhealth.online/ireland/en/blog" rel="noopener noreferrer">Mental Health</a></div><span class="eyebrow">Ireland · Adult ADHD guide</span><h2 data-blog-h1>Adult ADHD assessment in Ireland: how it works and what it costs</h2><p class="hero-deck">The public route is free and slow. The private route is quick and costs several hundred euro. The assessment itself should look the same either way.</p><p class="intro-lead">An <strong>adult ADHD assessment in Ireland</strong> starts with a GP referral. On the public route the GP refers you to your local adult Community Mental Health Team, which treats any other significant mental illness first and then refers on to a HSE Adult ADHD team, where a psychiatrist trained in ADHD carries out the assessment. Privately, you book a consultant psychiatrist or a psychologist-led clinic directly, at roughly EUR 600 to 1,600. Either way, the diagnosis rests on a structured interview and a developmental history, never on a questionnaire alone.</p><div class="hero-facts"><span class="hero-fact">Public route: GP → Community Mental Health Team → HSE Adult ADHD team</span><span class="hero-fact">Private route: direct booking, typically EUR 600–1,600 (ADHD Ireland range)</span><span class="hero-fact">Medication can only be started by a clinician with ADHD training and expertise</span></div><div class="hero-actions"><a class="btn-lime" href="https://adult.adhdirl.ie/amp/about-hse-clinical-programme-adhd" rel="noopener noreferrer">HSE Adult ADHD programme</a><a class="btn-ghost" href="https://adhdireland.ie/general-information/diagnosis/" rel="noopener noreferrer">ADHD Ireland: getting a diagnosis</a></div></div><aside class="hero-panel"><span class="meta-chip">Before you book anything</span><p class="intro-support">A free online screener can tell you whether an assessment is worth pursuing. It cannot tell you that you have ADHD.</p><p class="intro-support">Ask any private clinic who will see you, whether a consultant psychiatrist signs the report, and whether they offer shared care with your GP for medication.</p><p class="intro-support">If you already attend a mental health team, ask them about the ADHD pathway before paying privately.</p><div class="hero-author"><div aria-hidden="true" class="hero-author-mark">GH</div><div><strong>Global Health Medical Team</strong></div></div><span class="hero-review-line">Clinical and editorial review is required before publication.</span></aside></header><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="public-route" /><span class="eyebrow">HSE National Clinical Programme</span><h2 id="the-hse-route-what-the-pathway-looks-like">The HSE route: what the pathway looks like</h2><p class="section-lead">Ireland has had a National Clinical Programme for ADHD in Adults since 2021. It is free, and it does not yet cover every county.</p><p>The pathway is deliberately indirect. Your GP does not refer you to an ADHD clinic. The referral goes to the adult Community Mental Health Team for your area. That team's job is to check for, and treat, any other significant condition first: depression, anxiety disorders, bipolar disorder, psychosis. Only then does the team refer you onward to the specialist Adult ADHD team, where a consultant psychiatrist with specific ADHD training leads a multidisciplinary assessment.</p><p>That ordering has a clinical reason. Untreated depression or anxiety mimics ADHD. In the pathway evaluation published in 2025 (using 2023 data from three pilot teams), 25% of people referred for ADHD needed treatment for another condition first.</p><ul class="check-list"><li><strong>Coverage:</strong> teams exist in named catchments such as Sligo, Leitrim and Donegal; Limerick, Clare and North Tipperary; Dún Laoghaire, south-east Dublin and Wicklow; and Cork. Not every county has one yet.</li><li><strong>Demand:</strong> the same evaluation found the pilot teams receiving three to four times more referrals than they could assess.</li><li><strong>Local pauses happen:</strong> in October 2024 the HSE stopped taking new ADHD referrals in Cork and Kerry. Ask your GP about your area today.</li></ul><p class="cite-note">Sources: <a href="https://www.isha.ie/article/new-hse-national-clinical-programme-adhd-adults-27" rel="noopener noreferrer" target="_blank">ISHA summary of the HSE programme</a>, <a href="https://www.cambridge.org/core/journals/irish-journal-of-psychological-medicine/article/evaluation-of-the-referral-pathway-to-irish-specialist-adult-attention-deficit-hyperactivity-disorder-services/537B79B14E0276290367E175359B2866" rel="noopener noreferrer" target="_blank">Irish Journal of Psychological Medicine pathway evaluation (2025)</a> and the <a href="https://www.irishexaminer.com/news/arid-41493401.html" rel="noopener noreferrer" target="_blank">Irish Examiner, 11 October 2024</a>. Accessed 7 September 2026.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="waiting-times" /><span class="eyebrow">What the evidence shows</span><h2 id="how-long-is-the-wait">How long is the wait?</h2><p class="section-lead">The HSE does not publish a national waiting-time figure for adult ADHD.</p><p>What is documented: when Cork and Kerry paused referrals in October 2024, the Irish Examiner reported 413 people waiting in Cork city and north Cork and 217 in Kerry and west Cork, with teams staffed at 4.5 posts against the 6 required. Private clinics on the first page of Google for this search advertise waits of a week or two. Before paying for that speed, read the next two sections. A fast assessment your GP will not act on solves nothing.</p></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="private-route" /><span class="eyebrow">Cost and what to check</span><h2 id="private-adhd-assessment-in-ireland-cost-and-questions-to-ask">Private ADHD assessment in Ireland: cost and questions to ask</h2><p class="section-lead">ADHD Ireland puts private assessments at EUR 600 to 1,600. Where you land in that range depends mostly on who does the assessing.</p><ul class="check-list"><li><strong>Consultant psychiatrist:</strong> can diagnose and prescribe. Usually the upper part of the range, and often the only route that leads smoothly to medication.</li><li><strong>Psychologist-led assessment:</strong> can diagnose, cannot prescribe. If you later want medication, a psychiatrist may need to review or repeat the assessment.</li><li><strong>Multidisciplinary clinic:</strong> a mix of the two, sometimes at a lower price. Check who signs the final report.</li></ul><p>Ask three questions before booking. Will a consultant psychiatrist sign the report? If medication is recommended, who prescribes it, and for how long before it is handed to my GP? And has my GP agreed to take over? A clinic that cannot arrange a handover leaves you paying for every repeat review. Keep receipts, and check the current Revenue rules on medical-expense relief yourself rather than relying on a clinic's claim.</p><div class="alert-warn"><strong>Watch for</strong>Assessments completed in a single short video call, or built mainly around a self-report questionnaire, do not meet the NICE standard described below. A diagnosis made that way may not be accepted by the HSE, by your GP or by an employer.</div></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="what-happens" /><span class="eyebrow">NICE NG87 standard</span><h2 id="what-a-proper-adult-adhd-assessment-involves">What a proper adult ADHD assessment involves</h2><p class="section-lead">Irish services work to the NICE guideline. It says the diagnosis must be made by a specialist and must not rest on rating scales alone.</p><p>Expect a long appointment, or two. The clinician takes a full psychiatric and developmental history back to childhood, because symptoms must have been present early, and will want an informant where possible: a parent, partner or old school reports. They check impairment in more than one setting. Structured interviews such as the DIVA and rating scales are used inside that process; NICE says the diagnosis must not rest on rating scales alone. The free ASRS questionnaire you may have done was designed by a WHO work group as a screener, so a positive result is a reason to seek assessment, nothing more.</p><p class="cite-note"><a href="https://www.ncbi.nlm.nih.gov/books/NBK493361/" rel="noopener noreferrer" target="_blank">NICE NG87, recommendations 1.3.1 and 1.7.1</a>; <a href="https://www.cambridge.org/core/journals/bjpsych-bulletin/article/adult-adhd-in-the-republic-of-ireland-the-evolving-response/B6211EAB48560C5922A31423065C8F49" rel="noopener noreferrer" target="_blank">BJPsych Bulletin, Adult ADHD in the Republic of Ireland</a>.</p></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="medication" /><span class="eyebrow">Who prescribes</span><h2 id="medication-who-can-start-it-and-who-continues-it">Medication: who can start it and who continues it</h2><p class="section-lead">Under NICE, ADHD medication is only started by a professional with training and expertise in diagnosing and managing ADHD. In the HSE programme that is the consultant-led ADHD team.</p><p>The HSE model of care then hands prescribing and physical monitoring back to the GP or local mental health team, with annual recall to the ADHD clinic. A GP also helps before any of this: ruling out sleep problems, thyroid disease or anaemia, treating low mood, and writing the referral letter. A <a href="https://www.myglobalhealth.online/ireland/en/services/mental-health-consultation" rel="noopener noreferrer">mental health consultation</a> with a Global Health GP can cover that first conversation, and a <a href="https://www.myglobalhealth.online/ireland/en/services/psychiatry-specialist-consultation" rel="noopener noreferrer">psychiatry consultation</a> is available where a specialist opinion is needed. Neither replaces a specialist ADHD assessment, and a single consultation cannot produce an ADHD diagnosis or a stimulant prescription.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="global-health" /><span class="eyebrow">Global Health Ireland</span><h2 id="where-to-start">Where to start</h2><p class="section-lead">A GP can rule out look-alike conditions and refer you. The assessment itself is specialist work.</p><ul class="check-list"><li><a href="https://www.myglobalhealth.online/ireland/en/services/mental-health-consultation" rel="noopener noreferrer">Mental health consultation</a></li><li><a href="https://www.myglobalhealth.online/ireland/en/services/psychiatry-specialist-consultation" rel="noopener noreferrer">Psychiatry specialist consultation</a></li><li><a href="https://www.myglobalhealth.online/ireland/en/blog/when-to-see-a-gp-online-vs-in-person" rel="noopener noreferrer">When to see a GP online vs in person</a></li><li><a href="https://www.myglobalhealth.online/ireland/en/doctors" rel="noopener noreferrer">Doctors in Ireland</a></li><li><a href="https://www.myglobalhealth.online/ireland/en/contact" rel="noopener noreferrer">Contact Global Health</a></li></ul><div class="cta-box"><h3>Want to talk it through with a GP first?</h3><p>A GP consultation can assess your symptoms, check for other causes and prepare a referral. It is not an ADHD diagnosis.</p><div class="cta-btns"><a class="btn-primary" href="https://www.myglobalhealth.online/ireland/en/services/mental-health-consultation" rel="noopener noreferrer">Book a mental health consultation</a><a class="btn-secondary" href="https://www.myglobalhealth.online/ireland/en/doctors" rel="noopener noreferrer">View doctors</a></div></div></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="sources" /><span class="eyebrow">Sources</span><h2 id="sources-for-this-guide">Sources for this guide</h2><p class="section-lead">Clinical standards from NICE; Irish service facts from peer-reviewed evaluations and the HSE programme. All checked 7 September 2026.</p><div class="institution-bar"><a class="inst-link" href="https://www.ncbi.nlm.nih.gov/books/NBK493361/" rel="noopener noreferrer" target="_blank">NICE NG87 — ADHD: diagnosis and management</a><a class="inst-link" href="https://adult.adhdirl.ie/amp/about-hse-clinical-programme-adhd" rel="noopener noreferrer" target="_blank">HSE National Clinical Programme for ADHD in Adults</a><a class="inst-link" href="https://www.isha.ie/article/new-hse-national-clinical-programme-adhd-adults-27" rel="noopener noreferrer" target="_blank">ISHA — summary of the HSE adult ADHD programme</a><a class="inst-link" href="https://www.cambridge.org/core/journals/bjpsych-bulletin/article/adult-adhd-in-the-republic-of-ireland-the-evolving-response/B6211EAB48560C5922A31423065C8F49" rel="noopener noreferrer" target="_blank">BJPsych Bulletin — Adult ADHD in the Republic of Ireland</a><a class="inst-link" href="https://www.cambridge.org/core/journals/irish-journal-of-psychological-medicine/article/evaluation-of-the-referral-pathway-to-irish-specialist-adult-attention-deficit-hyperactivity-disorder-services/537B79B14E0276290367E175359B2866" rel="noopener noreferrer" target="_blank">Irish Journal of Psychological Medicine — referral pathway evaluation</a><a class="inst-link" href="https://www.irishexaminer.com/news/arid-41493401.html" rel="noopener noreferrer" target="_blank">Irish Examiner — Cork and Kerry referral pause, October 2024</a><a class="inst-link" href="https://adhdireland.ie/general-information/diagnosis/" rel="noopener noreferrer" target="_blank">ADHD Ireland — Diagnosis</a></div><p class="cite-note">Service coverage and waiting positions change. Confirm the current situation with your GP or local mental health team.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="faq" /><span class="eyebrow">Frequently asked questions</span><h2 id="adult-adhd-assessment-in-ireland">Adult ADHD assessment in Ireland</h2><div class="faq-section"><details class="faq-item"><summary class="faq-q">Can a GP diagnose ADHD in Ireland?</summary><div class="faq-a"><p>No. A GP assesses, excludes other causes and refers, and may continue prescribing after a specialist stabilises treatment. The diagnosis is made by a psychiatrist or, privately, a psychologist.</p></div></details><details class="faq-item"><summary class="faq-q">Is a psychologist's ADHD diagnosis enough to get medication?</summary><div class="faq-a"><p>Not on its own. Only a doctor can prescribe, and a psychiatrist will usually want to review or repeat the assessment before starting medication.</p></div></details><details class="faq-item"><summary class="faq-q">How much does a private ADHD assessment cost in Ireland?</summary><div class="faq-a"><p>ADHD Ireland gives a range of about EUR 600 to 1,600. Consultant-psychiatrist assessments sit towards the top; psychologist-led ones lower. Ask what is included and who signs the report.</p></div></details><details class="faq-item"><summary class="faq-q">Does a positive ASRS score mean I have ADHD?</summary><div class="faq-a"><p>No. The ASRS is a screening tool. A positive score is a reason to seek an assessment, not a diagnosis.</p></div></details></div></div></section><section class="article-section section-ivory"><div class="section-inner"><div class="disclaimer"><strong>Medical information</strong>AI-assisted article pending clinical and editorial review. General information as of September 2026, not a diagnosis, a referral decision or a guarantee of assessment, medication or HSE service availability.</div></div></section></main></div></div></div></section>
+<section class="gh-blog-calm-article-shell"><div class="gh-blog-reading-layout"><nav class="gh-blog-reading-toc" aria-labelledby="blog-reading-toc-title"><div class="gh-blog-reading-toc-heading"><span aria-hidden="true">+</span><h2 id="blog-reading-toc-title">On this page</h2></div><ol class="gh-blog-reading-toc-list"><li><a href="#the-hse-route-what-the-pathway-looks-like">The HSE route: what the pathway looks like</a></li><li><a href="#how-long-is-the-wait">How long is the wait?</a></li><li><a href="#private-adhd-assessment-in-ireland-cost-and-questions-to-ask">Private ADHD assessment in Ireland: cost and questions to ask</a></li><li><a href="#what-a-proper-adult-adhd-assessment-involves">What a proper adult ADHD assessment involves</a></li><li><a href="#medication-who-can-start-it-and-who-continues-it">Medication: who can start it and who continues it</a></li><li><a href="#where-to-start">Where to start</a></li><li><a href="#sources-for-this-guide">Sources for this guide</a></li><li><a href="#adult-adhd-assessment-in-ireland">Adult ADHD assessment in Ireland</a></li></ol></nav><div id="blog-article-content" class="gh-blog-reading-body"><div class="gh-article-body gh-article-editorial gh-article-editorial--authored-sections"><main class="gh-blog" lang="en-IE"><header class="article-intro"><div class="hero-copy"><div class="hero-brandline"><strong>Global Health</strong> · Medicine Anytime, Anywhere <a href="https://www.myglobalhealth.online/ireland/en/blog" rel="noopener noreferrer">Mental Health</a></div><span class="eyebrow">Ireland · Adult ADHD guide</span><h2 data-blog-h1>Adult ADHD assessment in Ireland: how it works and what it costs</h2><p class="hero-deck">The public route is free and slow. The private route is quick and costs several hundred euro. The assessment itself should look the same either way.</p><p class="intro-lead">An <strong>adult ADHD assessment in Ireland</strong> starts with a GP referral. On the public route the GP refers you to your local adult Community Mental Health Team, which treats any other significant mental illness first and then refers on to a HSE Adult ADHD team, where a psychiatrist trained in ADHD carries out the assessment. Privately, you book a consultant psychiatrist or a psychologist-led clinic directly, at roughly EUR 600 to 1,600. Either way, the diagnosis rests on a structured interview and a developmental history, never on a questionnaire alone.</p><div class="hero-facts"><span class="hero-fact">Public route: GP → Community Mental Health Team → HSE Adult ADHD team</span><span class="hero-fact">Private route: direct booking, typically EUR 600–1,600 (ADHD Ireland range)</span><span class="hero-fact">Medication can only be started by a clinician with ADHD training and expertise</span></div><div class="hero-actions"><a class="btn-lime" href="https://adult.adhdirl.ie/amp/about-hse-clinical-programme-adhd" rel="noopener noreferrer">HSE Adult ADHD programme</a><a class="btn-ghost" href="https://adhdireland.ie/general-information/diagnosis/" rel="noopener noreferrer">ADHD Ireland: getting a diagnosis</a></div></div><aside class="hero-panel"><span class="meta-chip">Before you book anything</span><p class="intro-support">A free online screener can tell you whether an assessment is worth pursuing. It cannot tell you that you have ADHD.</p><p class="intro-support">Ask any private clinic who will see you, whether a consultant psychiatrist signs the report, and whether they offer shared care with your GP for medication.</p><p class="intro-support">If you already attend a mental health team, ask them about the ADHD pathway before paying privately.</p><div class="hero-author"><div aria-hidden="true" class="hero-author-mark">GH</div><div><strong>Global Health Medical Team</strong></div></div><span class="hero-review-line">Reviewed by the Global Health medical team.</span></aside></header><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="public-route" /><span class="eyebrow">HSE National Clinical Programme</span><h2 id="the-hse-route-what-the-pathway-looks-like">The HSE route: what the pathway looks like</h2><p class="section-lead">Ireland has had a National Clinical Programme for ADHD in Adults since 2021. It is free, and it does not yet cover every county.</p><p>The pathway is deliberately indirect. Your GP does not refer you to an ADHD clinic. The referral goes to the adult Community Mental Health Team for your area. That team's job is to check for, and treat, any other significant condition first: depression, anxiety disorders, bipolar disorder, psychosis. Only then does the team refer you onward to the specialist Adult ADHD team, where a consultant psychiatrist with specific ADHD training leads a multidisciplinary assessment.</p><p>That ordering has a clinical reason. Untreated depression or anxiety mimics ADHD. In the pathway evaluation published in 2025 (using 2023 data from three pilot teams), 25% of people referred for ADHD needed treatment for another condition first.</p><ul class="check-list"><li><strong>Coverage:</strong> teams exist in named catchments such as Sligo, Leitrim and Donegal; Limerick, Clare and North Tipperary; Dún Laoghaire, south-east Dublin and Wicklow; and Cork. Not every county has one yet.</li><li><strong>Demand:</strong> the same evaluation found the pilot teams receiving three to four times more referrals than they could assess.</li><li><strong>Local pauses happen:</strong> in October 2024 the HSE stopped taking new ADHD referrals in Cork and Kerry. Ask your GP about your area today.</li></ul><p class="cite-note">Sources: <a href="https://www.isha.ie/article/new-hse-national-clinical-programme-adhd-adults-27" rel="noopener noreferrer" target="_blank">ISHA summary of the HSE programme</a>, <a href="https://www.cambridge.org/core/journals/irish-journal-of-psychological-medicine/article/evaluation-of-the-referral-pathway-to-irish-specialist-adult-attention-deficit-hyperactivity-disorder-services/537B79B14E0276290367E175359B2866" rel="noopener noreferrer" target="_blank">Irish Journal of Psychological Medicine pathway evaluation (2025)</a> and the <a href="https://www.irishexaminer.com/news/arid-41493401.html" rel="noopener noreferrer" target="_blank">Irish Examiner, 11 October 2024</a>. Accessed 7 September 2026.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="waiting-times" /><span class="eyebrow">What the evidence shows</span><h2 id="how-long-is-the-wait">How long is the wait?</h2><p class="section-lead">The HSE does not publish a national waiting-time figure for adult ADHD.</p><p>What is documented: when Cork and Kerry paused referrals in October 2024, the Irish Examiner reported 413 people waiting in Cork city and north Cork and 217 in Kerry and west Cork, with teams staffed at 4.5 posts against the 6 required. Private clinics on the first page of Google for this search advertise waits of a week or two. Before paying for that speed, read the next two sections. A fast assessment your GP will not act on solves nothing.</p></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="private-route" /><span class="eyebrow">Cost and what to check</span><h2 id="private-adhd-assessment-in-ireland-cost-and-questions-to-ask">Private ADHD assessment in Ireland: cost and questions to ask</h2><p class="section-lead">ADHD Ireland puts private assessments at EUR 600 to 1,600. Where you land in that range depends mostly on who does the assessing.</p><ul class="check-list"><li><strong>Consultant psychiatrist:</strong> can diagnose and prescribe. Usually the upper part of the range, and often the only route that leads smoothly to medication.</li><li><strong>Psychologist-led assessment:</strong> can diagnose, cannot prescribe. If you later want medication, a psychiatrist may need to review or repeat the assessment.</li><li><strong>Multidisciplinary clinic:</strong> a mix of the two, sometimes at a lower price. Check who signs the final report.</li></ul><p>Ask three questions before booking. Will a consultant psychiatrist sign the report? If medication is recommended, who prescribes it, and for how long before it is handed to my GP? And has my GP agreed to take over? A clinic that cannot arrange a handover leaves you paying for every repeat review. Keep receipts, and check the current Revenue rules on medical-expense relief yourself rather than relying on a clinic's claim.</p><div class="alert-warn"><strong>Watch for</strong>Assessments completed in a single short video call, or built mainly around a self-report questionnaire, do not meet the NICE standard described below. A diagnosis made that way may not be accepted by the HSE, by your GP or by an employer.</div></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="what-happens" /><span class="eyebrow">NICE NG87 standard</span><h2 id="what-a-proper-adult-adhd-assessment-involves">What a proper adult ADHD assessment involves</h2><p class="section-lead">Irish services work to the NICE guideline. It says the diagnosis must be made by a specialist and must not rest on rating scales alone.</p><p>Expect a long appointment, or two. The clinician takes a full psychiatric and developmental history back to childhood, because symptoms must have been present early, and will want an informant where possible: a parent, partner or old school reports. They check impairment in more than one setting. Structured interviews such as the DIVA and rating scales are used inside that process; NICE says the diagnosis must not rest on rating scales alone. The free ASRS questionnaire you may have done was designed by a WHO work group as a screener, so a positive result is a reason to seek assessment, nothing more.</p><p class="cite-note"><a href="https://www.ncbi.nlm.nih.gov/books/NBK493361/" rel="noopener noreferrer" target="_blank">NICE NG87, recommendations 1.3.1 and 1.7.1</a>; <a href="https://www.cambridge.org/core/journals/bjpsych-bulletin/article/adult-adhd-in-the-republic-of-ireland-the-evolving-response/B6211EAB48560C5922A31423065C8F49" rel="noopener noreferrer" target="_blank">BJPsych Bulletin, Adult ADHD in the Republic of Ireland</a>.</p></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="medication" /><span class="eyebrow">Who prescribes</span><h2 id="medication-who-can-start-it-and-who-continues-it">Medication: who can start it and who continues it</h2><p class="section-lead">Under NICE, ADHD medication is only started by a professional with training and expertise in diagnosing and managing ADHD. In the HSE programme that is the consultant-led ADHD team.</p><p>The HSE model of care then hands prescribing and physical monitoring back to the GP or local mental health team, with annual recall to the ADHD clinic. A GP also helps before any of this: ruling out sleep problems, thyroid disease or anaemia, treating low mood, and writing the referral letter. A <a href="https://www.myglobalhealth.online/ireland/en/services/mental-health-consultation" rel="noopener noreferrer">mental health consultation</a> with a Global Health GP can cover that first conversation, and a <a href="https://www.myglobalhealth.online/ireland/en/services/psychiatry-specialist-consultation" rel="noopener noreferrer">psychiatry consultation</a> is available where a specialist opinion is needed. Neither replaces a specialist ADHD assessment, and a single consultation cannot produce an ADHD diagnosis or a stimulant prescription.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="global-health" /><span class="eyebrow">Global Health Ireland</span><h2 id="where-to-start">Where to start</h2><p class="section-lead">A GP can rule out look-alike conditions and refer you. The assessment itself is specialist work.</p><ul class="check-list"><li><a href="https://www.myglobalhealth.online/ireland/en/services/mental-health-consultation" rel="noopener noreferrer">Mental health consultation</a></li><li><a href="https://www.myglobalhealth.online/ireland/en/services/psychiatry-specialist-consultation" rel="noopener noreferrer">Psychiatry specialist consultation</a></li><li><a href="https://www.myglobalhealth.online/ireland/en/blog/when-to-see-a-gp-online-vs-in-person" rel="noopener noreferrer">When to see a GP online vs in person</a></li><li><a href="https://www.myglobalhealth.online/ireland/en/doctors" rel="noopener noreferrer">Doctors in Ireland</a></li><li><a href="https://www.myglobalhealth.online/ireland/en/contact" rel="noopener noreferrer">Contact Global Health</a></li></ul><div class="cta-box"><h3>Want to talk it through with a GP first?</h3><p>A GP consultation can assess your symptoms, check for other causes and prepare a referral. It is not an ADHD diagnosis.</p><div class="cta-btns"><a class="btn-primary" href="https://www.myglobalhealth.online/ireland/en/services/mental-health-consultation" rel="noopener noreferrer">Book a mental health consultation</a><a class="btn-secondary" href="https://www.myglobalhealth.online/ireland/en/doctors" rel="noopener noreferrer">View doctors</a></div></div></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="sources" /><span class="eyebrow">Sources</span><h2 id="sources-for-this-guide">Sources for this guide</h2><p class="section-lead">Clinical standards from NICE; Irish service facts from peer-reviewed evaluations and the HSE programme. All checked 7 September 2026.</p><div class="institution-bar"><a class="inst-link" href="https://www.ncbi.nlm.nih.gov/books/NBK493361/" rel="noopener noreferrer" target="_blank">NICE NG87 — ADHD: diagnosis and management</a><a class="inst-link" href="https://adult.adhdirl.ie/amp/about-hse-clinical-programme-adhd" rel="noopener noreferrer" target="_blank">HSE National Clinical Programme for ADHD in Adults</a><a class="inst-link" href="https://www.isha.ie/article/new-hse-national-clinical-programme-adhd-adults-27" rel="noopener noreferrer" target="_blank">ISHA — summary of the HSE adult ADHD programme</a><a class="inst-link" href="https://www.cambridge.org/core/journals/bjpsych-bulletin/article/adult-adhd-in-the-republic-of-ireland-the-evolving-response/B6211EAB48560C5922A31423065C8F49" rel="noopener noreferrer" target="_blank">BJPsych Bulletin — Adult ADHD in the Republic of Ireland</a><a class="inst-link" href="https://www.cambridge.org/core/journals/irish-journal-of-psychological-medicine/article/evaluation-of-the-referral-pathway-to-irish-specialist-adult-attention-deficit-hyperactivity-disorder-services/537B79B14E0276290367E175359B2866" rel="noopener noreferrer" target="_blank">Irish Journal of Psychological Medicine — referral pathway evaluation</a><a class="inst-link" href="https://www.irishexaminer.com/news/arid-41493401.html" rel="noopener noreferrer" target="_blank">Irish Examiner — Cork and Kerry referral pause, October 2024</a><a class="inst-link" href="https://adhdireland.ie/general-information/diagnosis/" rel="noopener noreferrer" target="_blank">ADHD Ireland — Diagnosis</a></div><p class="cite-note">Service coverage and waiting positions change. Confirm the current situation with your GP or local mental health team.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="faq" /><span class="eyebrow">Frequently asked questions</span><h2 id="adult-adhd-assessment-in-ireland">Adult ADHD assessment in Ireland</h2><div class="faq-section"><details class="faq-item"><summary class="faq-q">Can a GP diagnose ADHD in Ireland?</summary><div class="faq-a"><p>No. A GP assesses, excludes other causes and refers, and may continue prescribing after a specialist stabilises treatment. The diagnosis is made by a psychiatrist or, privately, a psychologist.</p></div></details><details class="faq-item"><summary class="faq-q">Is a psychologist's ADHD diagnosis enough to get medication?</summary><div class="faq-a"><p>Not on its own. Only a doctor can prescribe, and a psychiatrist will usually want to review or repeat the assessment before starting medication.</p></div></details><details class="faq-item"><summary class="faq-q">How much does a private ADHD assessment cost in Ireland?</summary><div class="faq-a"><p>ADHD Ireland gives a range of about EUR 600 to 1,600. Consultant-psychiatrist assessments sit towards the top; psychologist-led ones lower. Ask what is included and who signs the report.</p></div></details><details class="faq-item"><summary class="faq-q">Does a positive ASRS score mean I have ADHD?</summary><div class="faq-a"><p>No. The ASRS is a screening tool. A positive score is a reason to seek an assessment, not a diagnosis.</p></div></details></div></div></section><section class="article-section section-ivory"><div class="section-inner"><div class="disclaimer"><strong>Medical information</strong>General information as of September 2026, not a diagnosis, a referral decision or a guarantee of assessment, medication or HSE service availability. Speak to a doctor about your own situation.</div></div></section></main></div></div></div></section>
 <section class="preview-cta gh2-section-forest"><div class="preview-cta-inner"><p class="k">Next step</p><h2>Ready to speak to a doctor?</h2><a href="https://www.myglobalhealth.online/ireland/en/services/mental-health-consultation">Book a consultation</a></div></section>
 </body>
 </html>

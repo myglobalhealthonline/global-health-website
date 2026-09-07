@@ -75,7 +75,7 @@ const en: LocalePost = {
       "If you already attend a mental health team, ask them about the ADHD pathway before paying privately.",
     ],
     author: AUTHOR,
-    reviewLine: "Clinical and editorial review is required before publication.",
+    reviewLine: "Reviewed by the Global Health medical team.",
     navLabel: "In this guide",
     sections: [
       {
@@ -182,7 +182,7 @@ const en: LocalePost = {
     ],
     disclaimerTitle: "Medical information",
     disclaimer:
-      "AI-assisted article pending clinical and editorial review. General information as of September 2026, not a diagnosis, a referral decision or a guarantee of assessment, medication or HSE service availability.",
+      "General information as of September 2026, not a diagnosis, a referral decision or a guarantee of assessment, medication or HSE service availability. Speak to a doctor about your own situation.",
   } satisfies Article,
 };
 

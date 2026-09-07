@@ -40,6 +40,15 @@ type WsdlResult = {
   };
   suggestedPaths: Array<{ address: string; path: string | null }>;
   raw: string;
+  followedSchema: {
+    path: string;
+    httpStatus: number;
+    contentType: string | null;
+    durationMs: number;
+    byteLength: number;
+    raw: string | null;
+    errorMessage?: string;
+  } | null;
 };
 
 const SERVICES = [
@@ -55,6 +64,7 @@ export function SuklWsdlPanel({ configured }: { configured: boolean }) {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<WsdlResult | null>(null);
   const [showRaw, setShowRaw] = useState(false);
+  const [showSchema, setShowSchema] = useState(false);
 
   async function run(pathOverride?: string) {
     const target = pathOverride ?? path;
@@ -63,6 +73,7 @@ export function SuklWsdlPanel({ configured }: { configured: boolean }) {
     setError(null);
     setResult(null);
     setShowRaw(false);
+    setShowSchema(false);
     try {
       const qs = new URLSearchParams({ service, path: target });
       const res = await fetch(`/api/admin/sukl/wsdl?${qs}`);
@@ -224,6 +235,45 @@ export function SuklWsdlPanel({ configured }: { configured: boolean }) {
                 </Line>
               ) : null}
             </dl>
+          ) : null}
+
+          {result.followedSchema ? (
+            <div
+              className="mt-3 rounded-md border px-3 py-2 text-sm"
+              style={{ borderColor: "var(--portal-line)" }}
+            >
+              {result.followedSchema.raw ? (
+                <>
+                  <p className="m-0 text-sm">
+                    Imported schema fetched automatically —{" "}
+                    <code>{result.followedSchema.path}</code> ·{" "}
+                    {result.followedSchema.byteLength.toLocaleString()} bytes ·{" "}
+                    {result.followedSchema.durationMs} ms
+                  </p>
+                  <p className="m-0 mt-1 text-xs" style={{ color: "var(--portal-muted)" }}>
+                    This WSDL declares no types of its own; the prescription payload is defined
+                    here.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setShowSchema((v) => !v)}
+                    className="mt-2 text-xs underline"
+                  >
+                    {showSchema ? "Hide schema" : "Show schema"}
+                  </button>
+                  {showSchema ? (
+                    <pre className="mt-2 max-h-96 overflow-auto whitespace-pre-wrap break-all text-xs">
+                      {result.followedSchema.raw}
+                    </pre>
+                  ) : null}
+                </>
+              ) : (
+                <p className="m-0 text-sm">
+                  The imported schema at <code>{result.followedSchema.path}</code> could not be
+                  fetched: {result.followedSchema.errorMessage}
+                </p>
+              )}
+            </div>
           ) : null}
 
           <div className="mt-3">

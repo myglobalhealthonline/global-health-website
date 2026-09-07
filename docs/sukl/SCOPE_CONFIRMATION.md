@@ -318,6 +318,34 @@ Numbered so replies can cite them.
   https://testpristupy.sukl.cz/documents/nasledneVydaniCert.pdf
 - **Q12** Are there rate limits or maintenance windows on the test environment?
 
+## Live account facts — Login, 2026-09-07
+
+First successful `Login` against Common. Recorded because several of these
+replace values that had been guessed.
+
+| Field | Value |
+|---|---|
+| Interface version | **`202501A`** — from SÚKL's own CUER documentation (`Verze rozhraní`), NOT 202601B or 202605A. Both earlier values returned S014. |
+| `Uzivatel.Kod` | `141EA8AA-F82D-4D74-A725-CDABE9973ACA` (SÚKL return it upper-cased) |
+| Name | Ahmed Samy Mohamed Maklad |
+| `RoleOsoby` | `eRPlekar`, `ePPracovnikVydeje` |
+| `RoleSubjektu` | `eRPambulance` |
+| `PZS` | **empty** |
+
+**`eRPlekar` is the eRecept prescriber role**, so the doctor IS registered to
+prescribe. `eRPambulance` matches the outpatient workplace role SÚKL described.
+
+These are not the `typ_pristupujiciho` values (LEKAR, LEKARNIK, …) that appear
+inside document payloads — a different vocabulary, and an easy confusion. The
+console previously told operators to look for `LEKAR`, which would never appear.
+
+**Open: `Predepisujici.PZS` is required to issue a prescription** (11 digits) and
+Login returned no provider. The roles parsed correctly from the same response, so
+the element is genuinely absent rather than mis-read. Whether the correct value
+is simply the workplace code `00150928369`, or whether the account still needs
+binding to a provider, is unresolved — and it blocks `ZalozitPredpis`, not the
+reads.
+
 ## Decision record
 
 - **2026-08-04** — Cross-border eRecept deliberately excluded from the build.

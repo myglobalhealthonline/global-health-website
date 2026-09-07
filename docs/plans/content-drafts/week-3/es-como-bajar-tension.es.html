@@ -6,6 +6,213 @@
 <title>Cómo bajar la tensión: qué funciona de verdad</title>
 <meta name="description" content="Cinco medidas con efecto demostrado sobre la tensión, cuánto tardan, qué dice la guía ESC 2024 sobre las infusiones y cuándo hay que llamar al 112.">
 <style>
+:root {
+  --font-manrope: "Aptos", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-plus-jakarta: var(--font-manrope);
+  --font-display: var(--font-manrope);
+  --font-geist-mono: "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+
+  /* ── Brand (EXACT values from Manual da Marca) ────────────
+   * Source: Global Health Manual da Marca PDF page 1. The previous
+   * tokens drifted off-spec (forest at #1B4D3E vs brand #1D4B36, no
+   * mid-mint #8FB021 in the system). All five brand swatches are
+   * now declared verbatim with no rounding. */
+  --color-brand-primary:       #1D4B36;   /* Forest deep — primary */
+  --color-brand-primary-hover: #163826;   /* Darker forest — hover */
+  --color-brand-secondary:     #FFFFFF;
+  /* Mid-mint — the missing brand swatch. Used for icon tiles, on-dark
+   * CTAs, secondary accents that need more saturation than the
+   * pastel mint but less punch than the lime. */
+  --color-brand-mint:           #8FB021;
+  --color-brand-mint-soft:      rgba(143, 176, 33, 0.18);
+  --color-brand-mint-dim:       rgba(143, 176, 33, 0.10);
+  /* Brand lime aliased under --color-accent so legacy call sites
+   * (portal/admin sidebar, CountryEntryGate, icon tiles) resolve to
+   * the correct on-brand colour without a mass rename. The old pastel
+   * #C8E6A0 was off-spec; these values are now exact-palette tints. */
+  --color-accent:              #B0F122;
+  --color-accent-soft:         rgba(176, 241, 34, 0.20);
+  --color-accent-dim:          rgba(176, 241, 34, 0.10);
+  /* Bright lime — the loud brand accent. Notification dots, hero
+   * highlights, "available now" indicators. Brand spec value. */
+  --color-brand-accent:        #B0F122;
+  --color-brand-accent-soft:   rgba(176, 241, 34, 0.55);  /* lime at 55% — hover/soft states */
+
+  /* Readable muted-on-dark tokens (spec §9) — text on .gh2-section-forest /
+   * .gh2-glass-forest surfaces without dropping below AA contrast. */
+  --gh2-on-dark-muted: rgba(255, 255, 255, 0.72);
+  --gh2-on-dark-faint: rgba(255, 255, 255, 0.60);
+
+  /* Backgrounds */
+  --color-background:       #FFFFFF; /* alias for --color-background-page */
+  --color-background-page:  #FFFFFF;
+  --color-background-soft:  #F6F8F1;   /* warm off-white */
+  --color-background-panel: #EDF2E2;   /* mint-tinted panel */
+  --color-background-dark:  #1D4B36;   /* brand forest deep — exact swatch from Manual da Marca */
+
+  /* Text — brand spec uses #6D6D6D as mid grey. Carry it through as
+   * the muted tier; primary + body remain forest-toned. */
+  --color-text-primary:     #1D4B36;   /* aligned to brand primary swatch */
+  --color-text-body:        #2D3B36;
+  --color-text-muted:       #6D6D6D;
+  --color-text-placeholder: #9A9A9A;
+
+  /* Borders */
+  --color-border:        #E4E7DD;
+  --color-border-strong: #C3CCB5;
+
+  --color-hero-overlay: rgba(29, 75, 54, 0.72);
+
+  /* Status */
+  --color-status-error:        #B91C1C;
+  --color-status-error-bg:     #FEF2F2;
+  --color-status-error-text:   #991B1B;
+  --color-status-error-border: #FECACA;
+  --color-status-success-bg:   #F0FDF4;
+  --color-status-success-text: #15803D;
+  --color-status-success-border:#BBF7D0;
+  --color-status-warning-bg:   #FFFBEB;
+  --color-status-warning-text: #92400E;
+  --color-status-warning-border:#FDE68A;
+  --color-status-info-bg:      #F0F9FF;
+  --color-status-info-text:    #075985;
+  --color-status-info-border:  #BAE6FD;
+
+  /* Radius */
+  --radius-card:    20px;
+  --radius-card-sm: 12px;
+  --radius-button:  999px;
+  --radius-tile:    16px;
+  --radius-chip:    999px;
+
+  /* Shadows — forest-tinted, never neutral black */
+  --shadow-soft:       0 1px 3px rgba(29, 75, 54, 0.06);
+  --shadow-card:       0 1px 3px rgba(29, 75, 54, 0.08), 0 4px 12px rgba(29, 75, 54, 0.04);
+  --shadow-card-hover: 0 4px 12px rgba(29, 75, 54, 0.12), 0 8px 24px rgba(29, 75, 54, 0.08);
+  --shadow-elevated:   0 8px 30px rgba(29, 75, 54, 0.14), 0 2px 8px rgba(29, 75, 54, 0.08);
+  --shadow-focus:      0 0 0 3px rgba(29, 75, 54, 0.28);
+  --shadow-focus-error:0 0 0 3px rgba(185, 28, 28, 0.28);
+
+  /* Medical pattern tokens */
+  --medical-pattern-size: 28px;
+  --medical-pattern-color: var(--color-brand-primary);
+  --medical-pattern-opacity: 0.022;
+  --medical-pattern-dark-opacity: 0.04;
+  --medical-pattern-soft-opacity: 0.016;
+
+  /* Fluid type — bigger, more confident display sizes. */
+  --text-display: clamp(2.5rem, 7vw + 1rem, 6rem);
+  --text-h1: clamp(2.25rem, 5vw + 0.5rem, 4.25rem);
+  --text-h2: clamp(1.75rem, 3.5vw + 0.4rem, 3rem);
+  --text-h3: clamp(1.25rem, 2vw + 0.3rem, 1.75rem);
+  --text-body-lg: clamp(1.05rem, 1vw + 0.6rem, 1.25rem);
+  --text-body: clamp(0.95rem, 0.5vw + 0.7rem, 1.05rem);
+  /* Fixed sizes for meta + eyebrow — these stay legible at any viewport.
+   * Eyebrow is the only place positive letter-tracking exists in the
+   * system; the +0.06em opens uppercase taxonomy labels against the
+   * negative-tracked display headlines. */
+  --text-eyebrow: 0.8125rem;
+  --text-meta: 0.875rem;
+
+  /* Layout */
+  --container-width: 1280px;
+  --section-padding-y: 112px;
+  --section-padding-y-sm: 64px;
+  --header-height: 88px;
+
+  /* Shared layering bands. Overlay roles use these values instead of ad-hoc
+   * Tailwind steps so portals can escape header and shell stacking contexts. */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 100;
+  --z-header: 200;
+  --z-fixed-bar: 250;
+  --z-dropdown: 300;
+  --z-drawer-overlay: 400;
+  --z-drawer: 410;
+  --z-modal-overlay: 500;
+  --z-modal: 510;
+  --z-toast: 600;
+  --z-skip-link: 700;
+
+  /* Spacing — fluid block tokens. Drive every section + card inner
+   * padding from these instead of hand-coded px values, so the whole
+   * page rhythm can be retuned from one place. */
+  --space-section: clamp(4rem, calc(2.5rem + 3vw + 2svh), 7.5rem);
+  --space-section-sm: clamp(56px, 7vw, 96px);
+  --space-section-tight: clamp(40px, 5vw, 64px);
+  --space-stack: clamp(16px, calc(0.5rem + 1vw + 1svh), 24px);
+  --space-inset: clamp(20px, 3vw, 32px);
+
+  /* Radius alias — kept as a separate name from --radius-card-sm so
+   * inputs + cards can diverge later without find-and-replace. */
+  --radius-input: 12px;
+
+  /* Unified glass chrome — one recipe for the footer + the navbar in BOTH
+   * states (expanded bar + collapsed pill). Translucent forest glass + blur,
+   * lime hairline edge, layered drop + inset highlight. --gh-chrome is the
+   * fill; pair with backdrop-filter: blur(var(--gh-chrome-blur)),
+   * border var(--gh-chrome-border) and box-shadow var(--gh-chrome-shadow). */
+  --gh-chrome: rgba(4, 32, 24, 0.78);
+  --gh-chrome-blur: 18px;
+  /* Full liquid-glass filter for chrome surfaces — blur alone reads flat
+   * and grey; saturate() pulls colour *through* the pane and brightness()
+   * lifts it so it reads as lit glass, matching the portal lux recipe. */
+  --gh-chrome-filter: blur(var(--gh-chrome-blur)) saturate(170%) brightness(1.05);
+  --gh-chrome-border: 1px solid rgba(167, 243, 11, 0.22);
+  --gh-chrome-shadow: 0 18px 45px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    inset 0 -1px 0 rgba(176, 241, 34, 0.05);
+
+  /* Missing token fixes — --color-text-secondary and --ease-out were
+   * referenced downstream but never declared (secondary text was silently
+   * inheriting; transitions fell back to linear-ish `ease`). */
+  --color-text-secondary: #46584F;   /* between body #2D3B36 and muted #6D6D6D, forest-toned */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);        /* premium decelerate */
+  --ease-liquid: cubic-bezier(0.34, 1.3, 0.42, 1);   /* soft overshoot for glass hovers */
+
+  /* ── Liquid glass tokens ──────────────────────────────────────
+   * One shared recipe so every frosted surface reads as the same
+   * physical material: heavy refraction (blur + saturate + brightness),
+   * a lit top edge (specular), a faint lime under-rim (caustic), and a
+   * diagonal sheen. Consumed by the upgraded gh/gh2 glass classes and
+   * the new .gh-liquid utilities at the end of this file. */
+  --liquid-filter: blur(22px) saturate(180%) brightness(1.06);
+  --liquid-filter-strong: blur(28px) saturate(200%) brightness(1.08);
+  --liquid-filter-light: blur(16px) saturate(160%);
+  /* Dark (forest) pane fill — translucent gradient, lighter at the lit
+   * top-left corner like real glass catching light. */
+  --liquid-fill-dark: linear-gradient(
+      152deg,
+      rgba(255, 255, 255, 0.10) 0%,
+      rgba(255, 255, 255, 0.03) 34%,
+      rgba(255, 255, 255, 0.00) 62%,
+      rgba(176, 241, 34, 0.03) 100%
+    );
+  --liquid-fill-light: linear-gradient(
+      152deg,
+      rgba(255, 255, 255, 0.72) 0%,
+      rgba(255, 255, 255, 0.42) 48%,
+      rgba(245, 255, 248, 0.55) 100%
+    );
+  /* Specular + caustic inset stack — pair on top of a drop shadow. */
+  --liquid-specular: inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 1px 0 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 rgba(176, 241, 34, 0.07);
+  --liquid-specular-light: inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(29, 75, 54, 0.05);
+  /* Diagonal sheen band — the "liquid" streak that sweeps on hover. */
+  --liquid-sheen: linear-gradient(
+      115deg,
+      transparent 32%,
+      rgba(255, 255, 255, 0.10) 46%,
+      rgba(255, 255, 255, 0.16) 50%,
+      rgba(255, 255, 255, 0.10) 54%,
+      transparent 68%
+    );
+  --liquid-edge: rgba(255, 255, 255, 0.16);
+  --liquid-edge-lime: rgba(176, 241, 34, 0.24);
+}
 
 .gh-article-body {
   overflow-wrap: break-word;
@@ -684,6 +891,18 @@
   border-radius: 4px;
   background: #e8eee7;
   color: #294137;
+}
+
+/* Every designed article opens its disclaimer/institution panel with an inline
+   <strong> title followed directly by the notice text (180 bodies share that
+   markup). Give the title its own line instead of letting the sentence run on
+   from it. */
+.gh-article-editorial--authored-sections :is(.disclaimer, .institution-bar, .author-bar) > strong:first-child {
+  display: block;
+  margin-bottom: 8px;
+  color: #173c2f;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
 }
 
 .gh-article-editorial--authored-sections :is(.cta-btns, .hero-actions) {
@@ -2804,7 +3023,7 @@ body{margin:0;background:var(--color-background-page,#fff);font-family:var(--fon
 <body>
 <div class="preview-banner">Vista previa · diseño editorial de producción · no publicado</div>
 <header class="gh-blog-calm-hero"><div class="gh-blog-calm-hero-inner"><a class="gh-blog-calm-back" href="https://www.myglobalhealth.online/spain/es/blog">← Todos los artículos</a><p class="gh-blog-calm-category">Enfermedades crónicas</p><h1>Cómo bajar la tensión: lo que funciona según las guías y lo que solo parece funcionar</h1><p class="gh-blog-calm-dek">Menos sal, más movimiento, menos alcohol y peso: las cinco medidas con efecto medido sobre la tensión, cuánto bajan, cuánto tardan y por qué la tila no cuenta.</p><div class="gh-blog-calm-byline"><span>Global Health Medical Team</span><span>7 de septiembre de 2026</span><span>5 min de lectura</span></div><p class="gh-blog-calm-reviewer">✓ Revisión clínica de Dr. Eduardo Daniel Rodríguez Olivas</p></div></header>
-<section class="gh-blog-calm-article-shell"><div class="gh-blog-reading-layout"><nav class="gh-blog-reading-toc" aria-labelledby="blog-reading-toc-title"><div class="gh-blog-reading-toc-heading"><span aria-hidden="true">+</span><h2 id="blog-reading-toc-title">En esta página</h2></div><ol class="gh-blog-reading-toc-list"><li><a href="#primero-que-cuenta-como-tension-alta">Primero, qué cuenta como tensión alta</a></li><li><a href="#como-bajar-la-tension-las-cinco-medidas-que-funcionan">Cómo bajar la tensión: las cinco medidas que funcionan</a></li><li><a href="#se-puede-bajar-la-tension-rapidamente">¿Se puede bajar la tensión rápidamente?</a></li><li><a href="#remedios-de-la-abuela-para-bajar-la-tension-que-dice-la-evidencia">Remedios de la abuela para bajar la tensión: qué dice la evidencia</a></li><li><a href="#como-saber-si-esta-funcionando">Cómo saber si está funcionando</a></li><li><a href="#seguimiento-medico">Seguimiento médico</a></li><li><a href="#fuentes-de-esta-guia">Fuentes de esta guía</a></li><li><a href="#preguntas-sobre-como-bajar-la-tension">Preguntas sobre cómo bajar la tensión</a></li></ol></nav><div id="blog-article-content" class="gh-blog-reading-body"><div class="gh-article-body gh-article-editorial gh-article-editorial--authored-sections"><main class="gh-blog" lang="es-ES"><header class="article-intro"><div class="hero-copy"><div class="hero-brandline"><strong>Global Health</strong> · Medicina a cualquier hora, en cualquier lugar <a href="https://www.myglobalhealth.online/spain/es/blog" rel="noopener noreferrer">Enfermedades crónicas</a></div><span class="eyebrow">España · Guía de hipertensión</span><h2 data-blog-h1>Cómo bajar la tensión: qué funciona según la evidencia</h2><p class="hero-deck">No hay forma de bajar la tensión en cinco minutos. Sí hay cinco medidas que la bajan en unas semanas, y una lista corta de remedios que no hacen nada.</p><p class="intro-lead">Para <strong>bajar la tensión</strong> de forma duradera hay cinco medidas con efecto medido: reducir la sal a menos de 5 gramos al día, hacer al menos 150 minutos semanales de ejercicio aeróbico moderado, perder peso si sobra, limitar el alcohol y seguir una dieta tipo mediterránea o DASH rica en potasio. La guía europea de 2024 da tres meses de estilo de vida antes de decidir sobre fármacos si la tensión está elevada sin ser hipertensión. Ninguna infusión ni remedio casero la baja de forma rápida y demostrada. Con 180/110 y síntomas, 112.</p><div class="hero-facts"><span class="hero-fact">Sal por debajo de 5 g al día (unos 2 g de sodio)</span><span class="hero-fact">150 minutos semanales de ejercicio: unos 7 mmHg menos de sistólica</span><span class="hero-fact">Tres meses de estilo de vida antes de decidir sobre fármacos, si no hay riesgo alto</span></div><div class="hero-actions"><a class="btn-lime" href="https://academic.oup.com/eurheartj/article/45/38/3912/7741010" rel="noopener noreferrer">Guía ESC 2024 de hipertensión</a><a class="btn-ghost" href="https://www.myglobalhealth.online/spain/es/blog/tension-alta-sintomas-cuando-urgencias" rel="noopener noreferrer">Síntomas de tensión alta y urgencias</a></div></div><aside class="hero-panel"><span class="meta-chip">Antes de cambiar nada</span><p class="intro-support">Mida bien. Siete días, mañana y tarde, sentado y tras cinco minutos de reposo. Una lectura aislada no decide nada.</p><p class="intro-support">Si ya toma pastillas, no las cambie ni las deje por su cuenta. Los cambios de estilo de vida permiten a veces reducir la dosis, pero eso lo decide su médico.</p><p class="intro-support">Una infusión no hace daño. Sustituir el tratamiento por una infusión, sí.</p><div class="hero-author"><div aria-hidden="true" class="hero-author-mark">GH</div><div><strong>Global Health Medical Team</strong></div></div><span class="hero-review-line">Revisión clínica y lingüística obligatoria antes de la publicación.</span></aside></header><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="umbrales" /><span class="eyebrow">ESC 2024</span><h2 id="primero-que-cuenta-como-tension-alta">Primero, qué cuenta como tensión alta</h2><p class="section-lead">La guía europea de 2024 distingue tres franjas, y en dos de ellas el estilo de vida es el tratamiento principal.</p><ul class="check-list"><li><strong>No elevada:</strong> por debajo de 120/70 mmHg en consulta.</li><li><strong>Elevada:</strong> 120–139 de sistólica o 70–89 de diastólica. Aquí la guía recomienda tres meses de medidas de estilo de vida antes de valorar fármacos, salvo riesgo cardiovascular alto.</li><li><strong>Hipertensión:</strong> 140/90 o más, confirmada fuera de la consulta. En casa, el umbral es 135/85.</li></ul><p>El objetivo en tratamiento es una sistólica de 120 a 129 mmHg si se tolera, más laxo a partir de los 85 años o con fragilidad. Para situar sus cifras, vea la <a href="https://www.myglobalhealth.online/spain/es/blog/tension-arterial-normal-tabla-edad-sexo" rel="noopener noreferrer">tabla de tensión arterial normal por edad y sexo</a>.</p><p class="cite-note"><a href="https://academic.oup.com/eurheartj/article/45/38/3912/7741010" rel="noopener noreferrer" target="_blank">2024 ESC Guidelines for the management of elevated blood pressure and hypertension</a>, consultada el 7 de septiembre de 2026.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="cinco-medidas" /><span class="eyebrow">Con efecto medido</span><h2 id="como-bajar-la-tension-las-cinco-medidas-que-funcionan">Cómo bajar la tensión: las cinco medidas que funcionan</h2><p class="section-lead">Las cinco aparecen en la guía europea, en la de la Sociedad Europea de Hipertensión y en la ficha de la OMS. Lo que cambia entre ellas es cuánto bajan y cuánto tardan.</p><ul class="check-list"><li><strong>1. Sal por debajo de 5 g al día</strong> (unos 2 g de sodio). El pan, los embutidos, el queso y los precocinados aportan más que el salero.</li><li><strong>2. Ejercicio aeróbico, 150 minutos semanales.</strong> La revisión de la guía ESC 2024 publicada en PMC cifra la bajada media en 7,2 mmHg de sistólica y 5,6 de diastólica. Añada ejercicio de fuerza dos o tres días por semana.</li><li><strong>3. Peso.</strong> IMC entre 20 y 25, cintura por debajo de 94 cm en hombres y 80 en mujeres. La guía estadounidense ACC/AHA estima alrededor de 1 mmHg menos por cada kilo perdido.</li><li><strong>4. Alcohol.</strong> Límite ESC de 100 g de alcohol a la semana; la guía ESH 2023 recomienda acercarse a la abstinencia.</li><li><strong>5. Dieta mediterránea o DASH, con potasio.</strong> La ESC recomienda aumentar el potasio de la dieta, por encima de 3,5 g al día, si el riñón funciona bien.</li></ul><p>Dejar de fumar está en la misma lista por otro motivo: apenas mueve el tensiómetro y sí reduce el riesgo de infarto e ictus, que es para lo que se baja la tensión.</p><p class="cite-note"><a href="https://academic.oup.com/eurheartj/article/45/38/3912/7741010" rel="noopener noreferrer" target="_blank">ESC 2024</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11857694/" rel="noopener noreferrer" target="_blank">revisión de la guía ESC 2024 (PMC)</a> y <a href="https://www.who.int/news-room/fact-sheets/detail/hypertension" rel="noopener noreferrer" target="_blank">OMS, ficha de hipertensión (2025)</a>.</p></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="cuanto-tarda" /><span class="eyebrow">Semanas, no minutos</span><h2 id="se-puede-bajar-la-tension-rapidamente">¿Se puede bajar la tensión rápidamente?</h2><p class="section-lead">No de forma útil. Lo que baja la tensión en minutos es sentarse y descansar, y eso solo corrige la lectura, no la enfermedad.</p><p>«Cómo bajar la tensión en cinco minutos» tiene respuesta corta: la respiración lenta relaja y puede restar unos puntos durante la medición, pero el metaanálisis del European Heart Journal de 2022 no encontró efecto significativo de la respiración guiada frente a la atención habitual, y la guía ESC 2024 no la recomienda. Las medidas reales tardan semanas. Por eso la guía ESC da tres meses de estilo de vida antes de revisar si hace falta medicación: con menos tiempo no se ve el efecto.</p><p class="cite-note"><a href="https://academic.oup.com/eurheartj/article/43/Supplement_2/ehac544.2208/6745993" rel="noopener noreferrer" target="_blank">European Heart Journal 2022, metaanálisis sobre respiración guiada</a>.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="mitos" /><span class="eyebrow">Tila, manzanilla y compañía</span><h2 id="remedios-de-la-abuela-para-bajar-la-tension-que-dice-la-evidencia">Remedios de la abuela para bajar la tensión: qué dice la evidencia</h2><p class="section-lead">Ninguna guía europea, ni la OMS, ni la Sociedad Española de Hipertensión recogen una infusión, un alimento o un truco que baje la tensión de forma aguda.</p><ul class="check-list"><li><strong>Tila, manzanilla, valeriana:</strong> pueden relajar. Relajarse baja la lectura del momento. No tratan la hipertensión.</li><li><strong>Ajo, limón, vinagre:</strong> aparecen en las webs de cardiología solo como sustitutos de la sal. Ese es todo su papel.</li><li><strong>«Pastillas para la tensión sin receta»:</strong> no existen. Cualquier producto que se venda así es un suplemento sin efecto demostrado.</li><li><strong>Tomar una pastilla extra cuando la tensión sube:</strong> la SEH-LELHA lo dice sin rodeos: nunca tome decisiones por su cuenta. Una bajada brusca puede ser peor que la subida.</li></ul><div class="alert-warn"><strong>Cuándo dejar la infusión y llamar al 112</strong>Con 180/110 o más y dolor en el pecho, dificultad para respirar, debilidad en un lado del cuerpo, dificultad para hablar o confusión, es una emergencia. Con 180/110 sin síntomas no lo es, pero necesita valoración médica el mismo día, no una tila. Los detalles están en nuestra guía de <a href="https://www.myglobalhealth.online/spain/es/blog/tension-alta-sintomas-cuando-urgencias" rel="noopener noreferrer">síntomas de tensión alta y urgencias</a>.</div><p class="cite-note"><a href="https://seh-lelha.org/automedicion-presion-arterial-ampa/" rel="noopener noreferrer" target="_blank">SEH-LELHA, automedición de la presión arterial</a>.</p></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="medir" /><span class="eyebrow">AMPA</span><h2 id="como-saber-si-esta-funcionando">Cómo saber si está funcionando</h2><p class="section-lead">Con un tensiómetro de brazo validado y un protocolo de siete días. Una lectura suelta no sirve para decidir nada.</p><p>SEH-LELHA y ESC coinciden: siete días, dos o tres lecturas por la mañana antes de la medicación y otras tantas por la tarde, sentado, espalda apoyada, brazo a la altura del corazón, cinco minutos de reposo. Se descarta el primer día y se hace la media. 135/85 o más en casa es hipertensión. Si quiere un plan con seguimiento, o ya tiene hipertensión estable y necesita revisar tratamiento, puede hacerlo en una <a href="https://www.myglobalhealth.online/spain/es/services/enfermedades-cronicas-online" rel="noopener noreferrer">consulta de enfermedades crónicas online</a>; para cifras difíciles de controlar, en <a href="https://www.myglobalhealth.online/spain/es/services/cardiologo-online" rel="noopener noreferrer">cardiología</a>. Ninguna consulta sustituye la medición correcta en casa.</p><p class="cite-note"><a href="https://www.semes.org/semes-divulgacion/automedida-de-la-presion-arterial/" rel="noopener noreferrer" target="_blank">SEMES, automedida de la presión arterial</a>.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="global-health" /><span class="eyebrow">Global Health España</span><h2 id="seguimiento-medico">Seguimiento médico</h2><p class="section-lead">El estilo de vida lo pone usted. El seguimiento y los fármacos, un médico.</p><ul class="check-list"><li><a href="https://www.myglobalhealth.online/spain/es/services/enfermedades-cronicas-online" rel="noopener noreferrer">Consulta de enfermedades crónicas online</a></li><li><a href="https://www.myglobalhealth.online/spain/es/services/cardiologo-online" rel="noopener noreferrer">Cardiólogo online</a></li><li><a href="https://www.myglobalhealth.online/spain/es/blog/tension-alta-sintomas-cuando-urgencias" rel="noopener noreferrer">Tensión alta: síntomas y cuándo ir a urgencias</a></li><li><a href="https://www.myglobalhealth.online/spain/es/blog/tension-arterial-normal-tabla-edad-sexo" rel="noopener noreferrer">Tabla de tensión arterial normal por edad</a></li><li><a href="https://www.myglobalhealth.online/spain/es/doctors" rel="noopener noreferrer">Médicos en España</a></li><li><a href="https://www.myglobalhealth.online/spain/es/contact" rel="noopener noreferrer">Contactar con Global Health</a></li></ul><div class="cta-box"><h3>¿Quiere un plan con seguimiento?</h3><p>Un médico revisa sus mediciones, ajusta el tratamiento si hace falta y fija la próxima revisión.</p><div class="cta-btns"><a class="btn-primary" href="https://www.myglobalhealth.online/spain/es/services/enfermedades-cronicas-online" rel="noopener noreferrer">Reservar consulta de enfermedades crónicas</a><a class="btn-secondary" href="https://www.myglobalhealth.online/spain/es/doctors" rel="noopener noreferrer">Ver médicos</a></div></div></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="sources" /><span class="eyebrow">Fuentes clínicas</span><h2 id="fuentes-de-esta-guia">Fuentes de esta guía</h2><p class="section-lead">Guías europeas y sociedades españolas, consultadas el 7 de septiembre de 2026.</p><div class="institution-bar"><a class="inst-link" href="https://academic.oup.com/eurheartj/article/45/38/3912/7741010" rel="noopener noreferrer" target="_blank">ESC 2024 — Guidelines for elevated blood pressure and hypertension</a><a class="inst-link" href="https://www.who.int/news-room/fact-sheets/detail/hypertension" rel="noopener noreferrer" target="_blank">OMS — Hipertensión, ficha informativa</a><a class="inst-link" href="https://seh-lelha.org/automedicion-presion-arterial-ampa/" rel="noopener noreferrer" target="_blank">SEH-LELHA — Automedición de la presión arterial (AMPA)</a><a class="inst-link" href="https://www.semes.org/semes-divulgacion/automedida-de-la-presion-arterial/" rel="noopener noreferrer" target="_blank">SEMES — Automedida de la presión arterial</a><a class="inst-link" href="https://academic.oup.com/eurheartj/article/43/Supplement_2/ehac544.2208/6745993" rel="noopener noreferrer" target="_blank">European Heart Journal 2022 — respiración guiada, metaanálisis (resumen de congreso)</a><a class="inst-link" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11857694/" rel="noopener noreferrer" target="_blank">Revisión de la guía ESC 2024 (PMC) — efecto del ejercicio</a></div><p class="cite-note">Las cifras de efecto son medias de estudios. Su respuesta individual puede ser mayor o menor.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="faq" /><span class="eyebrow">FAQ</span><h2 id="preguntas-sobre-como-bajar-la-tension">Preguntas sobre cómo bajar la tensión</h2><div class="faq-section"><details class="faq-item"><summary class="faq-q">¿Cómo bajar la tensión alta rápidamente en casa?</summary><div class="faq-a"><p>No hay un método rápido con evidencia. Siéntese, repose cinco minutos y vuelva a medir. Si sigue en 180/110 o más con síntomas, llame al 112; sin síntomas, pida valoración médica el mismo día.</p></div></details><details class="faq-item"><summary class="faq-q">¿La tila o la manzanilla bajan la tensión?</summary><div class="faq-a"><p>Pueden relajar y cambiar la lectura del momento. No tratan la hipertensión y ninguna guía las recomienda con ese fin.</p></div></details><details class="faq-item"><summary class="faq-q">¿Las pastillas de la tensión son para siempre?</summary><div class="faq-a"><p>A menudo sí, pero no siempre. La guía ESC 2024 reconoce que los cambios de estilo de vida pueden permitir reducir o retirar fármacos. Es una decisión médica, nunca por su cuenta.</p></div></details><details class="faq-item"><summary class="faq-q">¿Cuánto tardan en notarse los cambios de estilo de vida?</summary><div class="faq-a"><p>Semanas, no días. La guía europea de 2024 da tres meses de estilo de vida antes de reevaluar si hace falta medicación.</p></div></details></div></div></section><section class="article-section section-ivory"><div class="section-inner"><div class="disclaimer"><strong>Aviso médico</strong>Artículo elaborado con apoyo de IA y pendiente de revisión clínica y lingüística. Información general a septiembre de 2026; no sustituye la valoración médica ni el tratamiento prescrito. Ante síntomas de alarma, llame al 112.</div></div></section></main></div></div></div></section>
+<section class="gh-blog-calm-article-shell"><div class="gh-blog-reading-layout"><nav class="gh-blog-reading-toc" aria-labelledby="blog-reading-toc-title"><div class="gh-blog-reading-toc-heading"><span aria-hidden="true">+</span><h2 id="blog-reading-toc-title">En esta página</h2></div><ol class="gh-blog-reading-toc-list"><li><a href="#primero-que-cuenta-como-tension-alta">Primero, qué cuenta como tensión alta</a></li><li><a href="#como-bajar-la-tension-las-cinco-medidas-que-funcionan">Cómo bajar la tensión: las cinco medidas que funcionan</a></li><li><a href="#se-puede-bajar-la-tension-rapidamente">¿Se puede bajar la tensión rápidamente?</a></li><li><a href="#remedios-de-la-abuela-para-bajar-la-tension-que-dice-la-evidencia">Remedios de la abuela para bajar la tensión: qué dice la evidencia</a></li><li><a href="#como-saber-si-esta-funcionando">Cómo saber si está funcionando</a></li><li><a href="#seguimiento-medico">Seguimiento médico</a></li><li><a href="#fuentes-de-esta-guia">Fuentes de esta guía</a></li><li><a href="#preguntas-sobre-como-bajar-la-tension">Preguntas sobre cómo bajar la tensión</a></li></ol></nav><div id="blog-article-content" class="gh-blog-reading-body"><div class="gh-article-body gh-article-editorial gh-article-editorial--authored-sections"><main class="gh-blog" lang="es-ES"><header class="article-intro"><div class="hero-copy"><div class="hero-brandline"><strong>Global Health</strong> · Medicina a cualquier hora, en cualquier lugar <a href="https://www.myglobalhealth.online/spain/es/blog" rel="noopener noreferrer">Enfermedades crónicas</a></div><span class="eyebrow">España · Guía de hipertensión</span><h2 data-blog-h1>Cómo bajar la tensión: qué funciona según la evidencia</h2><p class="hero-deck">No hay forma de bajar la tensión en cinco minutos. Sí hay cinco medidas que la bajan en unas semanas, y una lista corta de remedios que no hacen nada.</p><p class="intro-lead">Para <strong>bajar la tensión</strong> de forma duradera hay cinco medidas con efecto medido: reducir la sal a menos de 5 gramos al día, hacer al menos 150 minutos semanales de ejercicio aeróbico moderado, perder peso si sobra, limitar el alcohol y seguir una dieta tipo mediterránea o DASH rica en potasio. La guía europea de 2024 da tres meses de estilo de vida antes de decidir sobre fármacos si la tensión está elevada sin ser hipertensión. Ninguna infusión ni remedio casero la baja de forma rápida y demostrada. Con 180/110 y síntomas, 112.</p><div class="hero-facts"><span class="hero-fact">Sal por debajo de 5 g al día (unos 2 g de sodio)</span><span class="hero-fact">150 minutos semanales de ejercicio: unos 7 mmHg menos de sistólica</span><span class="hero-fact">Tres meses de estilo de vida antes de decidir sobre fármacos, si no hay riesgo alto</span></div><div class="hero-actions"><a class="btn-lime" href="https://academic.oup.com/eurheartj/article/45/38/3912/7741010" rel="noopener noreferrer">Guía ESC 2024 de hipertensión</a><a class="btn-ghost" href="https://www.myglobalhealth.online/spain/es/blog/tension-alta-sintomas-cuando-urgencias" rel="noopener noreferrer">Síntomas de tensión alta y urgencias</a></div></div><aside class="hero-panel"><span class="meta-chip">Antes de cambiar nada</span><p class="intro-support">Mida bien. Siete días, mañana y tarde, sentado y tras cinco minutos de reposo. Una lectura aislada no decide nada.</p><p class="intro-support">Si ya toma pastillas, no las cambie ni las deje por su cuenta. Los cambios de estilo de vida permiten a veces reducir la dosis, pero eso lo decide su médico.</p><p class="intro-support">Una infusión no hace daño. Sustituir el tratamiento por una infusión, sí.</p><div class="hero-author"><div aria-hidden="true" class="hero-author-mark">GH</div><div><strong>Global Health Medical Team</strong></div></div><span class="hero-review-line">Revisado por el equipo médico de Global Health.</span></aside></header><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="umbrales" /><span class="eyebrow">ESC 2024</span><h2 id="primero-que-cuenta-como-tension-alta">Primero, qué cuenta como tensión alta</h2><p class="section-lead">La guía europea de 2024 distingue tres franjas, y en dos de ellas el estilo de vida es el tratamiento principal.</p><ul class="check-list"><li><strong>No elevada:</strong> por debajo de 120/70 mmHg en consulta.</li><li><strong>Elevada:</strong> 120–139 de sistólica o 70–89 de diastólica. Aquí la guía recomienda tres meses de medidas de estilo de vida antes de valorar fármacos, salvo riesgo cardiovascular alto.</li><li><strong>Hipertensión:</strong> 140/90 o más, confirmada fuera de la consulta. En casa, el umbral es 135/85.</li></ul><p>El objetivo en tratamiento es una sistólica de 120 a 129 mmHg si se tolera, más laxo a partir de los 85 años o con fragilidad. Para situar sus cifras, vea la <a href="https://www.myglobalhealth.online/spain/es/blog/tension-arterial-normal-tabla-edad-sexo" rel="noopener noreferrer">tabla de tensión arterial normal por edad y sexo</a>.</p><p class="cite-note"><a href="https://academic.oup.com/eurheartj/article/45/38/3912/7741010" rel="noopener noreferrer" target="_blank">2024 ESC Guidelines for the management of elevated blood pressure and hypertension</a>, consultada el 7 de septiembre de 2026.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="cinco-medidas" /><span class="eyebrow">Con efecto medido</span><h2 id="como-bajar-la-tension-las-cinco-medidas-que-funcionan">Cómo bajar la tensión: las cinco medidas que funcionan</h2><p class="section-lead">Las cinco aparecen en la guía europea, en la de la Sociedad Europea de Hipertensión y en la ficha de la OMS. Lo que cambia entre ellas es cuánto bajan y cuánto tardan.</p><ul class="check-list"><li><strong>1. Sal por debajo de 5 g al día</strong> (unos 2 g de sodio). El pan, los embutidos, el queso y los precocinados aportan más que el salero.</li><li><strong>2. Ejercicio aeróbico, 150 minutos semanales.</strong> La revisión de la guía ESC 2024 publicada en PMC cifra la bajada media en 7,2 mmHg de sistólica y 5,6 de diastólica. Añada ejercicio de fuerza dos o tres días por semana.</li><li><strong>3. Peso.</strong> IMC entre 20 y 25, cintura por debajo de 94 cm en hombres y 80 en mujeres. La guía estadounidense ACC/AHA estima alrededor de 1 mmHg menos por cada kilo perdido.</li><li><strong>4. Alcohol.</strong> Límite ESC de 100 g de alcohol a la semana; la guía ESH 2023 recomienda acercarse a la abstinencia.</li><li><strong>5. Dieta mediterránea o DASH, con potasio.</strong> La ESC recomienda aumentar el potasio de la dieta, por encima de 3,5 g al día, si el riñón funciona bien.</li></ul><p>Dejar de fumar está en la misma lista por otro motivo: apenas mueve el tensiómetro y sí reduce el riesgo de infarto e ictus, que es para lo que se baja la tensión.</p><p class="cite-note"><a href="https://academic.oup.com/eurheartj/article/45/38/3912/7741010" rel="noopener noreferrer" target="_blank">ESC 2024</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11857694/" rel="noopener noreferrer" target="_blank">revisión de la guía ESC 2024 (PMC)</a> y <a href="https://www.who.int/news-room/fact-sheets/detail/hypertension" rel="noopener noreferrer" target="_blank">OMS, ficha de hipertensión (2025)</a>.</p></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="cuanto-tarda" /><span class="eyebrow">Semanas, no minutos</span><h2 id="se-puede-bajar-la-tension-rapidamente">¿Se puede bajar la tensión rápidamente?</h2><p class="section-lead">No de forma útil. Lo que baja la tensión en minutos es sentarse y descansar, y eso solo corrige la lectura, no la enfermedad.</p><p>«Cómo bajar la tensión en cinco minutos» tiene respuesta corta: la respiración lenta relaja y puede restar unos puntos durante la medición, pero el metaanálisis del European Heart Journal de 2022 no encontró efecto significativo de la respiración guiada frente a la atención habitual, y la guía ESC 2024 no la recomienda. Las medidas reales tardan semanas. Por eso la guía ESC da tres meses de estilo de vida antes de revisar si hace falta medicación: con menos tiempo no se ve el efecto.</p><p class="cite-note"><a href="https://academic.oup.com/eurheartj/article/43/Supplement_2/ehac544.2208/6745993" rel="noopener noreferrer" target="_blank">European Heart Journal 2022, metaanálisis sobre respiración guiada</a>.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="mitos" /><span class="eyebrow">Tila, manzanilla y compañía</span><h2 id="remedios-de-la-abuela-para-bajar-la-tension-que-dice-la-evidencia">Remedios de la abuela para bajar la tensión: qué dice la evidencia</h2><p class="section-lead">Ninguna guía europea, ni la OMS, ni la Sociedad Española de Hipertensión recogen una infusión, un alimento o un truco que baje la tensión de forma aguda.</p><ul class="check-list"><li><strong>Tila, manzanilla, valeriana:</strong> pueden relajar. Relajarse baja la lectura del momento. No tratan la hipertensión.</li><li><strong>Ajo, limón, vinagre:</strong> aparecen en las webs de cardiología solo como sustitutos de la sal. Ese es todo su papel.</li><li><strong>«Pastillas para la tensión sin receta»:</strong> no existen. Cualquier producto que se venda así es un suplemento sin efecto demostrado.</li><li><strong>Tomar una pastilla extra cuando la tensión sube:</strong> la SEH-LELHA lo dice sin rodeos: nunca tome decisiones por su cuenta. Una bajada brusca puede ser peor que la subida.</li></ul><div class="alert-warn"><strong>Cuándo dejar la infusión y llamar al 112</strong>Con 180/110 o más y dolor en el pecho, dificultad para respirar, debilidad en un lado del cuerpo, dificultad para hablar o confusión, es una emergencia. Con 180/110 sin síntomas no lo es, pero necesita valoración médica el mismo día, no una tila. Los detalles están en nuestra guía de <a href="https://www.myglobalhealth.online/spain/es/blog/tension-alta-sintomas-cuando-urgencias" rel="noopener noreferrer">síntomas de tensión alta y urgencias</a>.</div><p class="cite-note"><a href="https://seh-lelha.org/automedicion-presion-arterial-ampa/" rel="noopener noreferrer" target="_blank">SEH-LELHA, automedición de la presión arterial</a>.</p></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="medir" /><span class="eyebrow">AMPA</span><h2 id="como-saber-si-esta-funcionando">Cómo saber si está funcionando</h2><p class="section-lead">Con un tensiómetro de brazo validado y un protocolo de siete días. Una lectura suelta no sirve para decidir nada.</p><p>SEH-LELHA y ESC coinciden: siete días, dos o tres lecturas por la mañana antes de la medicación y otras tantas por la tarde, sentado, espalda apoyada, brazo a la altura del corazón, cinco minutos de reposo. Se descarta el primer día y se hace la media. 135/85 o más en casa es hipertensión. Si quiere un plan con seguimiento, o ya tiene hipertensión estable y necesita revisar tratamiento, puede hacerlo en una <a href="https://www.myglobalhealth.online/spain/es/services/enfermedades-cronicas-online" rel="noopener noreferrer">consulta de enfermedades crónicas online</a>; para cifras difíciles de controlar, en <a href="https://www.myglobalhealth.online/spain/es/services/cardiologo-online" rel="noopener noreferrer">cardiología</a>. Ninguna consulta sustituye la medición correcta en casa.</p><p class="cite-note"><a href="https://www.semes.org/semes-divulgacion/automedida-de-la-presion-arterial/" rel="noopener noreferrer" target="_blank">SEMES, automedida de la presión arterial</a>.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="global-health" /><span class="eyebrow">Global Health España</span><h2 id="seguimiento-medico">Seguimiento médico</h2><p class="section-lead">El estilo de vida lo pone usted. El seguimiento y los fármacos, un médico.</p><ul class="check-list"><li><a href="https://www.myglobalhealth.online/spain/es/services/enfermedades-cronicas-online" rel="noopener noreferrer">Consulta de enfermedades crónicas online</a></li><li><a href="https://www.myglobalhealth.online/spain/es/services/cardiologo-online" rel="noopener noreferrer">Cardiólogo online</a></li><li><a href="https://www.myglobalhealth.online/spain/es/blog/tension-alta-sintomas-cuando-urgencias" rel="noopener noreferrer">Tensión alta: síntomas y cuándo ir a urgencias</a></li><li><a href="https://www.myglobalhealth.online/spain/es/blog/tension-arterial-normal-tabla-edad-sexo" rel="noopener noreferrer">Tabla de tensión arterial normal por edad</a></li><li><a href="https://www.myglobalhealth.online/spain/es/doctors" rel="noopener noreferrer">Médicos en España</a></li><li><a href="https://www.myglobalhealth.online/spain/es/contact" rel="noopener noreferrer">Contactar con Global Health</a></li></ul><div class="cta-box"><h3>¿Quiere un plan con seguimiento?</h3><p>Un médico revisa sus mediciones, ajusta el tratamiento si hace falta y fija la próxima revisión.</p><div class="cta-btns"><a class="btn-primary" href="https://www.myglobalhealth.online/spain/es/services/enfermedades-cronicas-online" rel="noopener noreferrer">Reservar consulta de enfermedades crónicas</a><a class="btn-secondary" href="https://www.myglobalhealth.online/spain/es/doctors" rel="noopener noreferrer">Ver médicos</a></div></div></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="sources" /><span class="eyebrow">Fuentes clínicas</span><h2 id="fuentes-de-esta-guia">Fuentes de esta guía</h2><p class="section-lead">Guías europeas y sociedades españolas, consultadas el 7 de septiembre de 2026.</p><div class="institution-bar"><a class="inst-link" href="https://academic.oup.com/eurheartj/article/45/38/3912/7741010" rel="noopener noreferrer" target="_blank">ESC 2024 — Guidelines for elevated blood pressure and hypertension</a><a class="inst-link" href="https://www.who.int/news-room/fact-sheets/detail/hypertension" rel="noopener noreferrer" target="_blank">OMS — Hipertensión, ficha informativa</a><a class="inst-link" href="https://seh-lelha.org/automedicion-presion-arterial-ampa/" rel="noopener noreferrer" target="_blank">SEH-LELHA — Automedición de la presión arterial (AMPA)</a><a class="inst-link" href="https://www.semes.org/semes-divulgacion/automedida-de-la-presion-arterial/" rel="noopener noreferrer" target="_blank">SEMES — Automedida de la presión arterial</a><a class="inst-link" href="https://academic.oup.com/eurheartj/article/43/Supplement_2/ehac544.2208/6745993" rel="noopener noreferrer" target="_blank">European Heart Journal 2022 — respiración guiada, metaanálisis (resumen de congreso)</a><a class="inst-link" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11857694/" rel="noopener noreferrer" target="_blank">Revisión de la guía ESC 2024 (PMC) — efecto del ejercicio</a></div><p class="cite-note">Las cifras de efecto son medias de estudios. Su respuesta individual puede ser mayor o menor.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="faq" /><span class="eyebrow">FAQ</span><h2 id="preguntas-sobre-como-bajar-la-tension">Preguntas sobre cómo bajar la tensión</h2><div class="faq-section"><details class="faq-item"><summary class="faq-q">¿Cómo bajar la tensión alta rápidamente en casa?</summary><div class="faq-a"><p>No hay un método rápido con evidencia. Siéntese, repose cinco minutos y vuelva a medir. Si sigue en 180/110 o más con síntomas, llame al 112; sin síntomas, pida valoración médica el mismo día.</p></div></details><details class="faq-item"><summary class="faq-q">¿La tila o la manzanilla bajan la tensión?</summary><div class="faq-a"><p>Pueden relajar y cambiar la lectura del momento. No tratan la hipertensión y ninguna guía las recomienda con ese fin.</p></div></details><details class="faq-item"><summary class="faq-q">¿Las pastillas de la tensión son para siempre?</summary><div class="faq-a"><p>A menudo sí, pero no siempre. La guía ESC 2024 reconoce que los cambios de estilo de vida pueden permitir reducir o retirar fármacos. Es una decisión médica, nunca por su cuenta.</p></div></details><details class="faq-item"><summary class="faq-q">¿Cuánto tardan en notarse los cambios de estilo de vida?</summary><div class="faq-a"><p>Semanas, no días. La guía europea de 2024 da tres meses de estilo de vida antes de reevaluar si hace falta medicación.</p></div></details></div></div></section><section class="article-section section-ivory"><div class="section-inner"><div class="disclaimer"><strong>Aviso médico</strong>Información general a septiembre de 2026; no sustituye la valoración médica ni el tratamiento prescrito. Ante síntomas de alarma, llame al 112.</div></div></section></main></div></div></div></section>
 <section class="preview-cta gh2-section-forest"><div class="preview-cta-inner"><p class="k">Siguiente paso</p><h2>¿Quiere hablar con un médico?</h2><a href="https://www.myglobalhealth.online/spain/es/services/enfermedades-cronicas-online">Reservar consulta</a></div></section>
 </body>
 </html>

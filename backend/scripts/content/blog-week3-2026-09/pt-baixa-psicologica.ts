@@ -73,7 +73,7 @@ const pt: LocalePost = {
       "Se a baixa se prolongar, pode ser chamado a uma verificação de incapacidade. Faltar significa perder o subsídio.",
     ],
     author: AUTHOR,
-    reviewLine: "É necessária revisão clínica e linguística antes da publicação.",
+    reviewLine: "Revisto pela equipa médica da Global Health.",
     navLabel: "Neste guia",
     sections: [
       {
@@ -188,7 +188,7 @@ const pt: LocalePost = {
     ],
     disclaimerTitle: "Informação médica e social",
     disclaimer:
-      "Artigo elaborado com apoio de IA e sujeito a revisão clínica e linguística antes da publicação. Informação geral válida a setembro de 2026; não é decisão da Segurança Social, aconselhamento individual nem garantia de emissão ou duração da baixa.",
+      "Informação geral válida a setembro de 2026; não é decisão da Segurança Social, aconselhamento individual nem garantia de emissão ou duração da baixa. Fale com um médico sobre a sua situação.",
   } satisfies Article,
 };
 

@@ -6,6 +6,213 @@
 <title>Vycházky na neschopence: pravidla a kontroly 2026</title>
 <meta name="description" content="Kolik hodin vycházek lékař povolí, zda existují neomezené vycházky, kdy může přijít kontrola z OSSZ a co hrozí, když vás doma nezastihne.">
 <style>
+:root {
+  --font-manrope: "Aptos", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-plus-jakarta: var(--font-manrope);
+  --font-display: var(--font-manrope);
+  --font-geist-mono: "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+
+  /* ── Brand (EXACT values from Manual da Marca) ────────────
+   * Source: Global Health Manual da Marca PDF page 1. The previous
+   * tokens drifted off-spec (forest at #1B4D3E vs brand #1D4B36, no
+   * mid-mint #8FB021 in the system). All five brand swatches are
+   * now declared verbatim with no rounding. */
+  --color-brand-primary:       #1D4B36;   /* Forest deep — primary */
+  --color-brand-primary-hover: #163826;   /* Darker forest — hover */
+  --color-brand-secondary:     #FFFFFF;
+  /* Mid-mint — the missing brand swatch. Used for icon tiles, on-dark
+   * CTAs, secondary accents that need more saturation than the
+   * pastel mint but less punch than the lime. */
+  --color-brand-mint:           #8FB021;
+  --color-brand-mint-soft:      rgba(143, 176, 33, 0.18);
+  --color-brand-mint-dim:       rgba(143, 176, 33, 0.10);
+  /* Brand lime aliased under --color-accent so legacy call sites
+   * (portal/admin sidebar, CountryEntryGate, icon tiles) resolve to
+   * the correct on-brand colour without a mass rename. The old pastel
+   * #C8E6A0 was off-spec; these values are now exact-palette tints. */
+  --color-accent:              #B0F122;
+  --color-accent-soft:         rgba(176, 241, 34, 0.20);
+  --color-accent-dim:          rgba(176, 241, 34, 0.10);
+  /* Bright lime — the loud brand accent. Notification dots, hero
+   * highlights, "available now" indicators. Brand spec value. */
+  --color-brand-accent:        #B0F122;
+  --color-brand-accent-soft:   rgba(176, 241, 34, 0.55);  /* lime at 55% — hover/soft states */
+
+  /* Readable muted-on-dark tokens (spec §9) — text on .gh2-section-forest /
+   * .gh2-glass-forest surfaces without dropping below AA contrast. */
+  --gh2-on-dark-muted: rgba(255, 255, 255, 0.72);
+  --gh2-on-dark-faint: rgba(255, 255, 255, 0.60);
+
+  /* Backgrounds */
+  --color-background:       #FFFFFF; /* alias for --color-background-page */
+  --color-background-page:  #FFFFFF;
+  --color-background-soft:  #F6F8F1;   /* warm off-white */
+  --color-background-panel: #EDF2E2;   /* mint-tinted panel */
+  --color-background-dark:  #1D4B36;   /* brand forest deep — exact swatch from Manual da Marca */
+
+  /* Text — brand spec uses #6D6D6D as mid grey. Carry it through as
+   * the muted tier; primary + body remain forest-toned. */
+  --color-text-primary:     #1D4B36;   /* aligned to brand primary swatch */
+  --color-text-body:        #2D3B36;
+  --color-text-muted:       #6D6D6D;
+  --color-text-placeholder: #9A9A9A;
+
+  /* Borders */
+  --color-border:        #E4E7DD;
+  --color-border-strong: #C3CCB5;
+
+  --color-hero-overlay: rgba(29, 75, 54, 0.72);
+
+  /* Status */
+  --color-status-error:        #B91C1C;
+  --color-status-error-bg:     #FEF2F2;
+  --color-status-error-text:   #991B1B;
+  --color-status-error-border: #FECACA;
+  --color-status-success-bg:   #F0FDF4;
+  --color-status-success-text: #15803D;
+  --color-status-success-border:#BBF7D0;
+  --color-status-warning-bg:   #FFFBEB;
+  --color-status-warning-text: #92400E;
+  --color-status-warning-border:#FDE68A;
+  --color-status-info-bg:      #F0F9FF;
+  --color-status-info-text:    #075985;
+  --color-status-info-border:  #BAE6FD;
+
+  /* Radius */
+  --radius-card:    20px;
+  --radius-card-sm: 12px;
+  --radius-button:  999px;
+  --radius-tile:    16px;
+  --radius-chip:    999px;
+
+  /* Shadows — forest-tinted, never neutral black */
+  --shadow-soft:       0 1px 3px rgba(29, 75, 54, 0.06);
+  --shadow-card:       0 1px 3px rgba(29, 75, 54, 0.08), 0 4px 12px rgba(29, 75, 54, 0.04);
+  --shadow-card-hover: 0 4px 12px rgba(29, 75, 54, 0.12), 0 8px 24px rgba(29, 75, 54, 0.08);
+  --shadow-elevated:   0 8px 30px rgba(29, 75, 54, 0.14), 0 2px 8px rgba(29, 75, 54, 0.08);
+  --shadow-focus:      0 0 0 3px rgba(29, 75, 54, 0.28);
+  --shadow-focus-error:0 0 0 3px rgba(185, 28, 28, 0.28);
+
+  /* Medical pattern tokens */
+  --medical-pattern-size: 28px;
+  --medical-pattern-color: var(--color-brand-primary);
+  --medical-pattern-opacity: 0.022;
+  --medical-pattern-dark-opacity: 0.04;
+  --medical-pattern-soft-opacity: 0.016;
+
+  /* Fluid type — bigger, more confident display sizes. */
+  --text-display: clamp(2.5rem, 7vw + 1rem, 6rem);
+  --text-h1: clamp(2.25rem, 5vw + 0.5rem, 4.25rem);
+  --text-h2: clamp(1.75rem, 3.5vw + 0.4rem, 3rem);
+  --text-h3: clamp(1.25rem, 2vw + 0.3rem, 1.75rem);
+  --text-body-lg: clamp(1.05rem, 1vw + 0.6rem, 1.25rem);
+  --text-body: clamp(0.95rem, 0.5vw + 0.7rem, 1.05rem);
+  /* Fixed sizes for meta + eyebrow — these stay legible at any viewport.
+   * Eyebrow is the only place positive letter-tracking exists in the
+   * system; the +0.06em opens uppercase taxonomy labels against the
+   * negative-tracked display headlines. */
+  --text-eyebrow: 0.8125rem;
+  --text-meta: 0.875rem;
+
+  /* Layout */
+  --container-width: 1280px;
+  --section-padding-y: 112px;
+  --section-padding-y-sm: 64px;
+  --header-height: 88px;
+
+  /* Shared layering bands. Overlay roles use these values instead of ad-hoc
+   * Tailwind steps so portals can escape header and shell stacking contexts. */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 100;
+  --z-header: 200;
+  --z-fixed-bar: 250;
+  --z-dropdown: 300;
+  --z-drawer-overlay: 400;
+  --z-drawer: 410;
+  --z-modal-overlay: 500;
+  --z-modal: 510;
+  --z-toast: 600;
+  --z-skip-link: 700;
+
+  /* Spacing — fluid block tokens. Drive every section + card inner
+   * padding from these instead of hand-coded px values, so the whole
+   * page rhythm can be retuned from one place. */
+  --space-section: clamp(4rem, calc(2.5rem + 3vw + 2svh), 7.5rem);
+  --space-section-sm: clamp(56px, 7vw, 96px);
+  --space-section-tight: clamp(40px, 5vw, 64px);
+  --space-stack: clamp(16px, calc(0.5rem + 1vw + 1svh), 24px);
+  --space-inset: clamp(20px, 3vw, 32px);
+
+  /* Radius alias — kept as a separate name from --radius-card-sm so
+   * inputs + cards can diverge later without find-and-replace. */
+  --radius-input: 12px;
+
+  /* Unified glass chrome — one recipe for the footer + the navbar in BOTH
+   * states (expanded bar + collapsed pill). Translucent forest glass + blur,
+   * lime hairline edge, layered drop + inset highlight. --gh-chrome is the
+   * fill; pair with backdrop-filter: blur(var(--gh-chrome-blur)),
+   * border var(--gh-chrome-border) and box-shadow var(--gh-chrome-shadow). */
+  --gh-chrome: rgba(4, 32, 24, 0.78);
+  --gh-chrome-blur: 18px;
+  /* Full liquid-glass filter for chrome surfaces — blur alone reads flat
+   * and grey; saturate() pulls colour *through* the pane and brightness()
+   * lifts it so it reads as lit glass, matching the portal lux recipe. */
+  --gh-chrome-filter: blur(var(--gh-chrome-blur)) saturate(170%) brightness(1.05);
+  --gh-chrome-border: 1px solid rgba(167, 243, 11, 0.22);
+  --gh-chrome-shadow: 0 18px 45px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    inset 0 -1px 0 rgba(176, 241, 34, 0.05);
+
+  /* Missing token fixes — --color-text-secondary and --ease-out were
+   * referenced downstream but never declared (secondary text was silently
+   * inheriting; transitions fell back to linear-ish `ease`). */
+  --color-text-secondary: #46584F;   /* between body #2D3B36 and muted #6D6D6D, forest-toned */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);        /* premium decelerate */
+  --ease-liquid: cubic-bezier(0.34, 1.3, 0.42, 1);   /* soft overshoot for glass hovers */
+
+  /* ── Liquid glass tokens ──────────────────────────────────────
+   * One shared recipe so every frosted surface reads as the same
+   * physical material: heavy refraction (blur + saturate + brightness),
+   * a lit top edge (specular), a faint lime under-rim (caustic), and a
+   * diagonal sheen. Consumed by the upgraded gh/gh2 glass classes and
+   * the new .gh-liquid utilities at the end of this file. */
+  --liquid-filter: blur(22px) saturate(180%) brightness(1.06);
+  --liquid-filter-strong: blur(28px) saturate(200%) brightness(1.08);
+  --liquid-filter-light: blur(16px) saturate(160%);
+  /* Dark (forest) pane fill — translucent gradient, lighter at the lit
+   * top-left corner like real glass catching light. */
+  --liquid-fill-dark: linear-gradient(
+      152deg,
+      rgba(255, 255, 255, 0.10) 0%,
+      rgba(255, 255, 255, 0.03) 34%,
+      rgba(255, 255, 255, 0.00) 62%,
+      rgba(176, 241, 34, 0.03) 100%
+    );
+  --liquid-fill-light: linear-gradient(
+      152deg,
+      rgba(255, 255, 255, 0.72) 0%,
+      rgba(255, 255, 255, 0.42) 48%,
+      rgba(245, 255, 248, 0.55) 100%
+    );
+  /* Specular + caustic inset stack — pair on top of a drop shadow. */
+  --liquid-specular: inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 1px 0 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 rgba(176, 241, 34, 0.07);
+  --liquid-specular-light: inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(29, 75, 54, 0.05);
+  /* Diagonal sheen band — the "liquid" streak that sweeps on hover. */
+  --liquid-sheen: linear-gradient(
+      115deg,
+      transparent 32%,
+      rgba(255, 255, 255, 0.10) 46%,
+      rgba(255, 255, 255, 0.16) 50%,
+      rgba(255, 255, 255, 0.10) 54%,
+      transparent 68%
+    );
+  --liquid-edge: rgba(255, 255, 255, 0.16);
+  --liquid-edge-lime: rgba(176, 241, 34, 0.24);
+}
 
 .gh-article-body {
   overflow-wrap: break-word;
@@ -684,6 +891,18 @@
   border-radius: 4px;
   background: #e8eee7;
   color: #294137;
+}
+
+/* Every designed article opens its disclaimer/institution panel with an inline
+   <strong> title followed directly by the notice text (180 bodies share that
+   markup). Give the title its own line instead of letting the sentence run on
+   from it. */
+.gh-article-editorial--authored-sections :is(.disclaimer, .institution-bar, .author-bar) > strong:first-child {
+  display: block;
+  margin-bottom: 8px;
+  color: #173c2f;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
 }
 
 .gh-article-editorial--authored-sections :is(.cta-btns, .hero-actions) {
@@ -2804,7 +3023,7 @@ body{margin:0;background:var(--color-background-page,#fff);font-family:var(--fon
 <body>
 <div class="preview-banner">Náhled konceptu · produkční editorial layout · nepublikováno</div>
 <header class="gh-blog-calm-hero"><div class="gh-blog-calm-hero-inner"><a class="gh-blog-calm-back" href="https://www.myglobalhealth.online/czechia/cs/blog">← Všechny články</a><p class="gh-blog-calm-category">Praktické lékařství</p><h1>Vycházky na neschopence: kolik hodin, kdy chodí kontrola a co když vás nezastihne</h1><p class="gh-blog-calm-dek">Šest hodin denně mezi 7. a 19. hodinou, kontrola kdykoli včetně večera a víkendu. Co přesně říká zákon, co je mýtus a co dělat, když kontrola zazvonila u prázdného bytu.</p><div class="gh-blog-calm-byline"><span>Global Health Medical Team</span><span>7. září 2026</span><span>5 min čtení</span></div><p class="gh-blog-calm-reviewer">✓ Odborně zkontroloval/a MUDr. Romana Pavlů</p></div></header>
-<section class="gh-blog-calm-article-shell"><div class="gh-blog-reading-layout"><nav class="gh-blog-reading-toc" aria-labelledby="blog-reading-toc-title"><div class="gh-blog-reading-toc-heading"><span aria-hidden="true">+</span><h2 id="blog-reading-toc-title">Na této stránce</h2></div><ol class="gh-blog-reading-toc-list"><li><a href="#kolik-hodin-vychazek-na-neschopence-muzete-mit">Kolik hodin vycházek na neschopence můžete mít</a></li><li><a href="#existuji-neomezene-vychazky">Existují neomezené vycházky?</a></li><li><a href="#kdo-vas-kontroluje-a-kdy-muze-prijit">Kdo vás kontroluje a kdy může přijít</a></li><li><a href="#kontrola-prisla-a-vy-jste-nebyli-doma">Kontrola přišla a vy jste nebyli doma</a></li><li><a href="#jak-zmenit-adresu-hodiny-vychazek-nebo-odjet-k-rodicum">Jak změnit adresu, hodiny vycházek nebo odjet k rodičům</a></li><li><a href="#neschopenka-a-lekarske-posouzeni">Neschopenka a lékařské posouzení</a></li><li><a href="#zdroje-tohoto-clanku">Zdroje tohoto článku</a></li><li><a href="#vychazky-a-kontroly-na-neschopence">Vycházky a kontroly na neschopence</a></li></ol></nav><div id="blog-article-content" class="gh-blog-reading-body"><div class="gh-article-body gh-article-editorial gh-article-editorial--authored-sections"><main class="gh-blog" lang="cs-CZ"><header class="article-intro"><div class="hero-copy"><div class="hero-brandline"><strong>Global Health</strong> · Medicína kdykoli a kdekoli <a href="https://www.myglobalhealth.online/czechia/cs/blog" rel="noopener noreferrer">Praktické lékařství</a></div><span class="eyebrow">Česko · Průvodce neschopenkou</span><h2 data-blog-h1>Vycházky na neschopence: pravidla, kontroly a co dělat, když vás nezastihnou</h2><p class="hero-deck">Zákon dovoluje nejvýše šest hodin vycházek denně mezi 7. a 19. hodinou. Kontrola může přijít kdykoli, i v sobotu večer.</p><p class="intro-lead"><strong>Vycházky na neschopence</strong> povoluje ošetřující lékař, a to <strong>nejvýše 6 hodin denně v době od 7 do 19 hodin</strong>. Mimo tyto hodiny máte být na adrese, kterou jste lékaři nahlásili. Kontrolovat vás může zaměstnavatel v prvních 14 dnech a OSSZ po celou dobu neschopnosti, bez ohledu na denní dobu. Tzv. neomezené vycházky zákon nezná, existuje jen úzká výjimka se souhlasem OSSZ. Pokud vás kontrola nezastihne, nechá vám oznámení a čeká na vaše vysvětlení.</p><div class="hero-facts"><span class="hero-fact">Maximálně 6 hodin vycházek denně, jen mezi 7:00 a 19:00</span><span class="hero-fact">Kontrola z OSSZ může přijít kdykoli, i o víkendu nebo večer</span><span class="hero-fact">Za porušení režimu hrozí krácení nemocenské až na 100 dnů a pokuta do 20 000 Kč</span></div><div class="hero-actions"><a class="btn-lime" href="https://www.cssz.gov.cz/nemoc-snadne-a-prehledne" rel="noopener noreferrer">Oficiální pravidla ČSSZ</a><a class="btn-ghost" href="https://www.myglobalhealth.online/czechia/cs/blog/neschopenka-jak-funguje-eneschopenka" rel="noopener noreferrer">Jak funguje eNeschopenka</a></div></div><aside class="hero-panel"><span class="meta-chip">Rychlé vysvětlení</span><p class="intro-support">Vycházky nedostanete automaticky. Zapisuje je lékař do eNeschopenky, včetně konkrétních hodin.</p><p class="intro-support">Mimo povolené hodiny se zdržujete doma. Na zvonku a schránce musí být vaše jmenovka.</p><p class="intro-support">Změna adresy nebo hodin jde jen přes lékaře, nikdy zpětně.</p><div class="hero-author"><div aria-hidden="true" class="hero-author-mark">GH</div><div><strong>Global Health Medical Team</strong></div></div><span class="hero-review-line">Před publikací je nutná odborná a jazyková kontrola.</span></aside></header><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="pravidla" /><span class="eyebrow">§ 56 zákona o nemocenském pojištění</span><h2 id="kolik-hodin-vychazek-na-neschopence-muzete-mit">Kolik hodin vycházek na neschopence můžete mít</h2><p class="section-lead">Zákon je zde nezvykle konkrétní: šest hodin denně, mezi sedmou ráno a sedmou večer, a přesný úsek určí lékař.</p><p>Lékař nemusí povolit vůbec nic. Pokud vycházky dostanete, mohou být v jednom bloku (třeba 13:00 až 19:00) nebo rozdělené. Platí každý den, i o víkendu, a nepřenášejí se: když v pondělí nikam nejdete, v úterý nemáte dvanáct hodin.</p><ul class="check-list"><li><strong>Maximum:</strong> 6 hodin denně, vždy mezi 7:00 a 19:00.</li><li><strong>Kdo rozhoduje:</strong> ošetřující lékař, zápisem do eNeschopenky.</li><li><strong>Kde vycházky platí:</strong> zákon neomezuje vzdálenost od adresy, jen čas. Cesta k lékaři nebo na vyšetření je součástí léčebného režimu.</li><li><strong>Mimo vycházky:</strong> jste na nahlášené adrese. Nemusí to být trvalé bydliště, ale musí být uvedená v neschopence.</li></ul><p class="cite-note">Pravidla ověřena 7. září 2026 v <a href="https://www.mesec.cz/zakony/zakon-o-nemocenskem-pojisteni/f3033969/" rel="noopener noreferrer" target="_blank">§ 56 zákona č. 187/2006 Sb.</a> a na stránce <a href="https://www.cssz.gov.cz/nemoc-snadne-a-prehledne" rel="noopener noreferrer" target="_blank">ČSSZ Nemoc snadno a přehledně</a>.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="neomezene" /><span class="eyebrow">Co zákon nezná</span><h2 id="existuji-neomezene-vychazky">Existují neomezené vycházky?</h2><p class="section-lead">Ne v tom smyslu, jak se o nich mluví v diskuzích. Zákon má jen jednu výjimku a je úzká.</p><p>Podle druhé věty § 56 odst. 6 může lékař ve výjimečných případech povolit, abyste si dobu vycházek volili podle aktuálního zdravotního stavu. Týká se to mimořádně náročného léčebného plánu, probíhající intenzivní léčby, nepříznivých vedlejších účinků léčby nebo celkově závažného stavu. Zpravidla jde o onkologické pacienty nebo lidi po náročných operacích.</p><p>Zůstávají dvě podmínky: žádáte vy a lékař souhlasí, a OSSZ dá předchozí písemný souhlas. Bez něj režim neplatí. Limit šesti hodin v době od 7 do 19 hodin platí dál; volíte si pouze, kdy je vyčerpáte.</p><div class="alert-warn"><strong>Pozor na rady z internetu</strong>Návody „jak získat neomezené vycházky“ obvykle popisují právě tuhle výjimku, jen bez podmínek. Pokud nesplňujete zdravotní důvod, lékař vám ji povolit nemůže a OSSZ ji neschválí.</div></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="kontrola" /><span class="eyebrow">Zaměstnavatel a OSSZ</span><h2 id="kdo-vas-kontroluje-a-kdy-muze-prijit">Kdo vás kontroluje a kdy může přijít</h2><p class="section-lead">Prvních 14 dní může kontrolovat zaměstnavatel. OSSZ může přijít kdykoli po celou dobu neschopnosti.</p><p>V prvních 14 kalendářních dnech vám zaměstnavatel platí náhradu mzdy, a proto má podle § 192 zákoníku práce právo ověřit, že jste doma a dodržujete vycházky. Kontroluje pouze pobyt a dodržení vycházek, nikoli léčbu. Když zjistí porušení, sepíše záznam a pošle ho vám, OSSZ i lékaři.</p><p>OSSZ kontroluje celý režim, včetně léčebného, a to od prvního dne až do ukončení neschopnosti. Na dotaz, jestli může kontrola přijít večer nebo o víkendu, odpovídá ČSSZ přímo: možnost kontroly není omezena na běžnou pracovní dobu a kontrolor může přijít i o víkendu nebo mimo pracovní dobu. Otázka „kontrola po 22. hodině“ tedy nemá v zákoně hranici. Pokud máte vycházky do 19:00, ve 22:00 jste prostě doma.</p><ul class="check-list"><li>Podle § 64 zákona o nemocenském pojištění musíte kontrolu umožnit a poskytnout součinnost, tedy prokázat totožnost.</li><li>Nefunkční zvonek nebo chybějící jmenovka jdou k vaší tíži, protože označení bytu jmenovkou je vaše zákonná povinnost.</li></ul><p class="cite-note">Zdroj: <a href="https://www.cssz.gov.cz/-/nejcastejsi-otazky-k-docasne-pracovni-neschopnosti" rel="noopener noreferrer" target="_blank">Nejčastější otázky ČSSZ k dočasné pracovní neschopnosti</a>, <a href="https://www.pracepropravniky.cz/zakony/zakonik-prace-uplne-zneni/paragraf-192/" rel="noopener noreferrer" target="_blank">§ 192 zákoníku práce</a> a <a href="https://www.cssz.gov.cz/nemocenske" rel="noopener noreferrer" target="_blank">ČSSZ Nemocenské (povinnosti pojištěnce)</a>, čteno 7. září 2026.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="nezastizeni" /><span class="eyebrow">Postup OSSZ</span><h2 id="kontrola-prisla-a-vy-jste-nebyli-doma">Kontrola přišla a vy jste nebyli doma</h2><p class="section-lead">Nejdřív přijde písemná výzva, ne trest. Rozhoduje, jak rychle a jak věrohodně reagujete.</p><p>Podle ČSSZ nechají pracovníci OSSZ v případě nezastižení písemné oznámení s výzvou, abyste se ozvali. Důvody nepřítomnosti OSSZ posoudí a teprve potom případně zahájí správní řízení. Návštěva lékaře, vyšetření v nemocnici nebo hospitalizace jsou důvody, které se dají doložit. „Byl jsem si jen pro rohlíky“ mimo povolené hodiny důvod není.</p><p>Ozvěte se co nejdřív, ideálně týž den, a mějte po ruce doklad: lékařskou zprávu, žádanku, propouštěcí zprávu. Pokud jste byli doma a jen jste neslyšeli zvonek, řekněte to rovnou a zkontrolujte, jestli zvonek funguje a nese vaše jméno.</p><div class="alert-warn"><strong>Co se stane při prokázaném porušení</strong>OSSZ může nemocenské krátit nebo odejmout ode dne porušení, nejdéle na 100 kalendářních dnů. Za porušení režimu nebo odmítnutí součinnosti je možná pokuta až 20 000 Kč. Zaměstnavatel může v prvních 14 dnech snížit nebo neposkytnout náhradu mzdy a při zvlášť hrubém porušení dát výpověď do jednoho měsíce od zjištění.</div><p class="cite-note"><a href="https://www.mesec.cz/zakony/zakon-o-nemocenskem-pojisteni/f3034964/" rel="noopener noreferrer" target="_blank">§ 125 a § 128 zákona o nemocenském pojištění</a>, <a href="https://www.suip.cz/vsechny-clanky/-/asset_publisher/BwIpyjT9IXe0/content/vypoved-pro-poruseni-jine-povinnosti-zamestnance-stanovene-v-301a-zakoniku-pra-1" rel="noopener noreferrer" target="_blank">výklad SÚIP k § 301a zákoníku práce</a> a <a href="https://www.cssz.gov.cz/nemocenske" rel="noopener noreferrer" target="_blank">stránka ČSSZ Nemocenské</a>.</p></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="zmeny" /><span class="eyebrow">Praktické situace</span><h2 id="jak-zmenit-adresu-hodiny-vychazek-nebo-odjet-k-rodicum">Jak změnit adresu, hodiny vycházek nebo odjet k rodičům</h2><p class="section-lead">Všechno jde jen přes ošetřujícího lékaře a vždy dopředu.</p><ul class="check-list"><li><strong>Změna adresy:</strong> požádejte lékaře předem, zapíše ji do eNeschopenky. V prvních 14 dnech změnu navíc oznamte zaměstnavateli.</li><li><strong>Změna hodin vycházek:</strong> stejně, přes lékaře. Zpětně to nejde, kontrola porovnává skutečnost se zápisem v den návštěvy.</li><li><strong>Pobyt v cizině:</strong> vyžaduje předchozí souhlas OSSZ, ne jen lékaře.</li><li><strong>Hospitalizace nebo lázně:</strong> při přijetí do lůžkové péče se o změnu nežádá. Po propuštění ohlásíte lékaři, kde se zdržujete.</li></ul><p>Na psa a zahradu zákon výslovně nemyslí. Platí obecné pravidlo: mimo byt pouze v povolených hodinách, a ty začínají nejdříve v 7:00. Pokud potřebujete vycházet dřív, domluvte hodiny s lékařem podle toho.</p><p class="cite-note"><a href="https://www.mesec.cz/zakony/zakon-o-nemocenskem-pojisteni/f3033969/" rel="noopener noreferrer" target="_blank">§ 56 odst. 3 zákona č. 187/2006 Sb.</a> (změna místa pobytu, pobyt v cizině, hospitalizace) a <a href="https://www.cssz.gov.cz/nemocenske" rel="noopener noreferrer" target="_blank">ČSSZ Nemocenské</a>.</p><p>Pokud řešíte samotné vystavení nebo prodloužení neschopenky, lékaři Global Health v Praze ji umí posoudit i online, viz <a href="https://www.myglobalhealth.online/czechia/cs/services/neschopenka-online" rel="noopener noreferrer">neschopenka online</a>. Vycházky ale zapisuje výhradně lékař, který neschopenku vede, a rozhoduje podle vašeho stavu, ne podle přání.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="global-health" /><span class="eyebrow">Global Health Česko</span><h2 id="neschopenka-a-lekarske-posouzeni">Neschopenka a lékařské posouzení</h2><p class="section-lead">Lékař posuzuje zdravotní stav a vycházky. Kontroly a dávky řeší zaměstnavatel a OSSZ.</p><ul class="check-list"><li><a href="https://www.myglobalhealth.online/czechia/cs/blog/neschopenka-jak-funguje-eneschopenka" rel="noopener noreferrer">Jak funguje eNeschopenka krok za krokem</a></li><li><a href="https://www.myglobalhealth.online/czechia/cs/blog/vypocet-nemocenske-2026-co-plati-zamestnavatel-a-co-cssz" rel="noopener noreferrer">Výpočet nemocenské 2026</a></li><li><a href="https://www.myglobalhealth.online/czechia/cs/services/neschopenka-online" rel="noopener noreferrer">Neschopenka online</a></li><li><a href="https://www.myglobalhealth.online/czechia/cs/doctors" rel="noopener noreferrer">Lékaři v Česku</a></li><li><a href="https://www.myglobalhealth.online/czechia/cs/contact" rel="noopener noreferrer">Kontaktovat Global Health</a></li></ul><div class="cta-box"><h3>Potřebujete posoudit neschopenku?</h3><p>Lékař posoudí váš stav a v odůvodněných případech vystaví nebo prodlouží neschopenku online.</p><div class="cta-btns"><a class="btn-primary" href="https://www.myglobalhealth.online/czechia/cs/services/neschopenka-online" rel="noopener noreferrer">Objednat posouzení</a><a class="btn-secondary" href="https://www.myglobalhealth.online/czechia/cs/doctors" rel="noopener noreferrer">Zobrazit lékaře</a></div></div></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="sources" /><span class="eyebrow">Oficiální zdroje</span><h2 id="zdroje-tohoto-clanku">Zdroje tohoto článku</h2><p class="section-lead">Text vychází ze zákona a z výkladu ČSSZ; pravidla ověřena 7. září 2026.</p><div class="institution-bar"><a class="inst-link" href="https://www.cssz.gov.cz/nemoc-snadne-a-prehledne" rel="noopener noreferrer" target="_blank">ČSSZ — Nemoc snadno a přehledně</a><a class="inst-link" href="https://www.cssz.gov.cz/-/nejcastejsi-otazky-k-docasne-pracovni-neschopnosti" rel="noopener noreferrer" target="_blank">ČSSZ — Nejčastější otázky k dočasné pracovní neschopnosti</a><a class="inst-link" href="https://www.cssz.gov.cz/nemocenske" rel="noopener noreferrer" target="_blank">ČSSZ — Nemocenské</a><a class="inst-link" href="https://www.mesec.cz/zakony/zakon-o-nemocenskem-pojisteni/f3033969/" rel="noopener noreferrer" target="_blank">Zákon č. 187/2006 Sb., § 56 (režim a vycházky)</a><a class="inst-link" href="https://www.mesec.cz/zakony/zakon-o-nemocenskem-pojisteni/f3034964/" rel="noopener noreferrer" target="_blank">Zákon č. 187/2006 Sb., § 125 a § 128 (krácení a pokuty)</a><a class="inst-link" href="https://www.pracepropravniky.cz/zakony/zakonik-prace-uplne-zneni/paragraf-192/" rel="noopener noreferrer" target="_blank">Zákoník práce, § 192 (kontrola zaměstnavatelem)</a><a class="inst-link" href="https://www.suip.cz/vsechny-clanky/-/asset_publisher/BwIpyjT9IXe0/content/vypoved-pro-poruseni-jine-povinnosti-zamestnance-stanovene-v-301a-zakoniku-pra-1" rel="noopener noreferrer" target="_blank">SÚIP — výpověď pro porušení § 301a</a></div><p class="cite-note">Konkrétní případ vždy ověřte u své OSSZ nebo ošetřujícího lékaře.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="faq" /><span class="eyebrow">Časté otázky</span><h2 id="vychazky-a-kontroly-na-neschopence">Vycházky a kontroly na neschopence</h2><div class="faq-section"><details class="faq-item"><summary class="faq-q">Může kontrola přijít po 22. hodině?</summary><div class="faq-a"><p>Zákon denní dobu kontroly neomezuje a ČSSZ výslovně uvádí, že kontrolor může přijít mimo pracovní dobu i o víkendu. Vycházky ale končí nejpozději v 19:00, takže večer máte být doma.</p></div></details><details class="faq-item"><summary class="faq-q">Co když kontrola přijde a já spím?</summary><div class="faq-a"><p>Zákon ukládá kontrolu umožnit a poskytnout součinnost; zvonek a jmenovka jsou vaše povinnost. Pokud vás kontrola nezastihne, nechá výzvu a OSSZ posoudí důvody.</p></div></details><details class="faq-item"><summary class="faq-q">Můžu si vycházky přesunout, když mám ten den lékaře?</summary><div class="faq-a"><p>Cesta na vyšetření je součástí léčebného režimu a nepočítá se jako vycházka. Trvalou změnu hodin ale musí zapsat lékař dopředu.</p></div></details><details class="faq-item"><summary class="faq-q">Jak dlouho může OSSZ krátit nemocenské?</summary><div class="faq-a"><p>Ode dne porušení nejdéle na 100 kalendářních dnů. Vedle toho je možná pokuta až 20 000 Kč a v prvních 14 dnech postih od zaměstnavatele.</p></div></details></div></div></section><section class="article-section section-ivory"><div class="section-inner"><div class="disclaimer"><strong>Zdravotní a právní upozornění</strong>Článek vznikl s podporou AI a před publikací vyžaduje odbornou a jazykovou kontrolu. Jde o obecné informace platné k září 2026, ne o rozhodnutí OSSZ, právní poradenství ani záruku vystavení neschopenky nebo povolení vycházek.</div></div></section></main></div></div></div></section>
+<section class="gh-blog-calm-article-shell"><div class="gh-blog-reading-layout"><nav class="gh-blog-reading-toc" aria-labelledby="blog-reading-toc-title"><div class="gh-blog-reading-toc-heading"><span aria-hidden="true">+</span><h2 id="blog-reading-toc-title">Na této stránce</h2></div><ol class="gh-blog-reading-toc-list"><li><a href="#kolik-hodin-vychazek-na-neschopence-muzete-mit">Kolik hodin vycházek na neschopence můžete mít</a></li><li><a href="#existuji-neomezene-vychazky">Existují neomezené vycházky?</a></li><li><a href="#kdo-vas-kontroluje-a-kdy-muze-prijit">Kdo vás kontroluje a kdy může přijít</a></li><li><a href="#kontrola-prisla-a-vy-jste-nebyli-doma">Kontrola přišla a vy jste nebyli doma</a></li><li><a href="#jak-zmenit-adresu-hodiny-vychazek-nebo-odjet-k-rodicum">Jak změnit adresu, hodiny vycházek nebo odjet k rodičům</a></li><li><a href="#neschopenka-a-lekarske-posouzeni">Neschopenka a lékařské posouzení</a></li><li><a href="#zdroje-tohoto-clanku">Zdroje tohoto článku</a></li><li><a href="#vychazky-a-kontroly-na-neschopence">Vycházky a kontroly na neschopence</a></li></ol></nav><div id="blog-article-content" class="gh-blog-reading-body"><div class="gh-article-body gh-article-editorial gh-article-editorial--authored-sections"><main class="gh-blog" lang="cs-CZ"><header class="article-intro"><div class="hero-copy"><div class="hero-brandline"><strong>Global Health</strong> · Medicína kdykoli a kdekoli <a href="https://www.myglobalhealth.online/czechia/cs/blog" rel="noopener noreferrer">Praktické lékařství</a></div><span class="eyebrow">Česko · Průvodce neschopenkou</span><h2 data-blog-h1>Vycházky na neschopence: pravidla, kontroly a co dělat, když vás nezastihnou</h2><p class="hero-deck">Zákon dovoluje nejvýše šest hodin vycházek denně mezi 7. a 19. hodinou. Kontrola může přijít kdykoli, i v sobotu večer.</p><p class="intro-lead"><strong>Vycházky na neschopence</strong> povoluje ošetřující lékař, a to <strong>nejvýše 6 hodin denně v době od 7 do 19 hodin</strong>. Mimo tyto hodiny máte být na adrese, kterou jste lékaři nahlásili. Kontrolovat vás může zaměstnavatel v prvních 14 dnech a OSSZ po celou dobu neschopnosti, bez ohledu na denní dobu. Tzv. neomezené vycházky zákon nezná, existuje jen úzká výjimka se souhlasem OSSZ. Pokud vás kontrola nezastihne, nechá vám oznámení a čeká na vaše vysvětlení.</p><div class="hero-facts"><span class="hero-fact">Maximálně 6 hodin vycházek denně, jen mezi 7:00 a 19:00</span><span class="hero-fact">Kontrola z OSSZ může přijít kdykoli, i o víkendu nebo večer</span><span class="hero-fact">Za porušení režimu hrozí krácení nemocenské až na 100 dnů a pokuta do 20 000 Kč</span></div><div class="hero-actions"><a class="btn-lime" href="https://www.cssz.gov.cz/nemoc-snadne-a-prehledne" rel="noopener noreferrer">Oficiální pravidla ČSSZ</a><a class="btn-ghost" href="https://www.myglobalhealth.online/czechia/cs/blog/neschopenka-jak-funguje-eneschopenka" rel="noopener noreferrer">Jak funguje eNeschopenka</a></div></div><aside class="hero-panel"><span class="meta-chip">Rychlé vysvětlení</span><p class="intro-support">Vycházky nedostanete automaticky. Zapisuje je lékař do eNeschopenky, včetně konkrétních hodin.</p><p class="intro-support">Mimo povolené hodiny se zdržujete doma. Na zvonku a schránce musí být vaše jmenovka.</p><p class="intro-support">Změna adresy nebo hodin jde jen přes lékaře, nikdy zpětně.</p><div class="hero-author"><div aria-hidden="true" class="hero-author-mark">GH</div><div><strong>Global Health Medical Team</strong></div></div><span class="hero-review-line">Zkontrolováno lékařským týmem Global Health.</span></aside></header><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="pravidla" /><span class="eyebrow">§ 56 zákona o nemocenském pojištění</span><h2 id="kolik-hodin-vychazek-na-neschopence-muzete-mit">Kolik hodin vycházek na neschopence můžete mít</h2><p class="section-lead">Zákon je zde nezvykle konkrétní: šest hodin denně, mezi sedmou ráno a sedmou večer, a přesný úsek určí lékař.</p><p>Lékař nemusí povolit vůbec nic. Pokud vycházky dostanete, mohou být v jednom bloku (třeba 13:00 až 19:00) nebo rozdělené. Platí každý den, i o víkendu, a nepřenášejí se: když v pondělí nikam nejdete, v úterý nemáte dvanáct hodin.</p><ul class="check-list"><li><strong>Maximum:</strong> 6 hodin denně, vždy mezi 7:00 a 19:00.</li><li><strong>Kdo rozhoduje:</strong> ošetřující lékař, zápisem do eNeschopenky.</li><li><strong>Kde vycházky platí:</strong> zákon neomezuje vzdálenost od adresy, jen čas. Cesta k lékaři nebo na vyšetření je součástí léčebného režimu.</li><li><strong>Mimo vycházky:</strong> jste na nahlášené adrese. Nemusí to být trvalé bydliště, ale musí být uvedená v neschopence.</li></ul><p class="cite-note">Pravidla ověřena 7. září 2026 v <a href="https://www.mesec.cz/zakony/zakon-o-nemocenskem-pojisteni/f3033969/" rel="noopener noreferrer" target="_blank">§ 56 zákona č. 187/2006 Sb.</a> a na stránce <a href="https://www.cssz.gov.cz/nemoc-snadne-a-prehledne" rel="noopener noreferrer" target="_blank">ČSSZ Nemoc snadno a přehledně</a>.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="neomezene" /><span class="eyebrow">Co zákon nezná</span><h2 id="existuji-neomezene-vychazky">Existují neomezené vycházky?</h2><p class="section-lead">Ne v tom smyslu, jak se o nich mluví v diskuzích. Zákon má jen jednu výjimku a je úzká.</p><p>Podle druhé věty § 56 odst. 6 může lékař ve výjimečných případech povolit, abyste si dobu vycházek volili podle aktuálního zdravotního stavu. Týká se to mimořádně náročného léčebného plánu, probíhající intenzivní léčby, nepříznivých vedlejších účinků léčby nebo celkově závažného stavu. Zpravidla jde o onkologické pacienty nebo lidi po náročných operacích.</p><p>Zůstávají dvě podmínky: žádáte vy a lékař souhlasí, a OSSZ dá předchozí písemný souhlas. Bez něj režim neplatí. Limit šesti hodin v době od 7 do 19 hodin platí dál; volíte si pouze, kdy je vyčerpáte.</p><div class="alert-warn"><strong>Pozor na rady z internetu</strong>Návody „jak získat neomezené vycházky“ obvykle popisují právě tuhle výjimku, jen bez podmínek. Pokud nesplňujete zdravotní důvod, lékař vám ji povolit nemůže a OSSZ ji neschválí.</div></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="kontrola" /><span class="eyebrow">Zaměstnavatel a OSSZ</span><h2 id="kdo-vas-kontroluje-a-kdy-muze-prijit">Kdo vás kontroluje a kdy může přijít</h2><p class="section-lead">Prvních 14 dní může kontrolovat zaměstnavatel. OSSZ může přijít kdykoli po celou dobu neschopnosti.</p><p>V prvních 14 kalendářních dnech vám zaměstnavatel platí náhradu mzdy, a proto má podle § 192 zákoníku práce právo ověřit, že jste doma a dodržujete vycházky. Kontroluje pouze pobyt a dodržení vycházek, nikoli léčbu. Když zjistí porušení, sepíše záznam a pošle ho vám, OSSZ i lékaři.</p><p>OSSZ kontroluje celý režim, včetně léčebného, a to od prvního dne až do ukončení neschopnosti. Na dotaz, jestli může kontrola přijít večer nebo o víkendu, odpovídá ČSSZ přímo: možnost kontroly není omezena na běžnou pracovní dobu a kontrolor může přijít i o víkendu nebo mimo pracovní dobu. Otázka „kontrola po 22. hodině“ tedy nemá v zákoně hranici. Pokud máte vycházky do 19:00, ve 22:00 jste prostě doma.</p><ul class="check-list"><li>Podle § 64 zákona o nemocenském pojištění musíte kontrolu umožnit a poskytnout součinnost, tedy prokázat totožnost.</li><li>Nefunkční zvonek nebo chybějící jmenovka jdou k vaší tíži, protože označení bytu jmenovkou je vaše zákonná povinnost.</li></ul><p class="cite-note">Zdroj: <a href="https://www.cssz.gov.cz/-/nejcastejsi-otazky-k-docasne-pracovni-neschopnosti" rel="noopener noreferrer" target="_blank">Nejčastější otázky ČSSZ k dočasné pracovní neschopnosti</a>, <a href="https://www.pracepropravniky.cz/zakony/zakonik-prace-uplne-zneni/paragraf-192/" rel="noopener noreferrer" target="_blank">§ 192 zákoníku práce</a> a <a href="https://www.cssz.gov.cz/nemocenske" rel="noopener noreferrer" target="_blank">ČSSZ Nemocenské (povinnosti pojištěnce)</a>, čteno 7. září 2026.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="nezastizeni" /><span class="eyebrow">Postup OSSZ</span><h2 id="kontrola-prisla-a-vy-jste-nebyli-doma">Kontrola přišla a vy jste nebyli doma</h2><p class="section-lead">Nejdřív přijde písemná výzva, ne trest. Rozhoduje, jak rychle a jak věrohodně reagujete.</p><p>Podle ČSSZ nechají pracovníci OSSZ v případě nezastižení písemné oznámení s výzvou, abyste se ozvali. Důvody nepřítomnosti OSSZ posoudí a teprve potom případně zahájí správní řízení. Návštěva lékaře, vyšetření v nemocnici nebo hospitalizace jsou důvody, které se dají doložit. „Byl jsem si jen pro rohlíky“ mimo povolené hodiny důvod není.</p><p>Ozvěte se co nejdřív, ideálně týž den, a mějte po ruce doklad: lékařskou zprávu, žádanku, propouštěcí zprávu. Pokud jste byli doma a jen jste neslyšeli zvonek, řekněte to rovnou a zkontrolujte, jestli zvonek funguje a nese vaše jméno.</p><div class="alert-warn"><strong>Co se stane při prokázaném porušení</strong>OSSZ může nemocenské krátit nebo odejmout ode dne porušení, nejdéle na 100 kalendářních dnů. Za porušení režimu nebo odmítnutí součinnosti je možná pokuta až 20 000 Kč. Zaměstnavatel může v prvních 14 dnech snížit nebo neposkytnout náhradu mzdy a při zvlášť hrubém porušení dát výpověď do jednoho měsíce od zjištění.</div><p class="cite-note"><a href="https://www.mesec.cz/zakony/zakon-o-nemocenskem-pojisteni/f3034964/" rel="noopener noreferrer" target="_blank">§ 125 a § 128 zákona o nemocenském pojištění</a>, <a href="https://www.suip.cz/vsechny-clanky/-/asset_publisher/BwIpyjT9IXe0/content/vypoved-pro-poruseni-jine-povinnosti-zamestnance-stanovene-v-301a-zakoniku-pra-1" rel="noopener noreferrer" target="_blank">výklad SÚIP k § 301a zákoníku práce</a> a <a href="https://www.cssz.gov.cz/nemocenske" rel="noopener noreferrer" target="_blank">stránka ČSSZ Nemocenské</a>.</p></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="zmeny" /><span class="eyebrow">Praktické situace</span><h2 id="jak-zmenit-adresu-hodiny-vychazek-nebo-odjet-k-rodicum">Jak změnit adresu, hodiny vycházek nebo odjet k rodičům</h2><p class="section-lead">Všechno jde jen přes ošetřujícího lékaře a vždy dopředu.</p><ul class="check-list"><li><strong>Změna adresy:</strong> požádejte lékaře předem, zapíše ji do eNeschopenky. V prvních 14 dnech změnu navíc oznamte zaměstnavateli.</li><li><strong>Změna hodin vycházek:</strong> stejně, přes lékaře. Zpětně to nejde, kontrola porovnává skutečnost se zápisem v den návštěvy.</li><li><strong>Pobyt v cizině:</strong> vyžaduje předchozí souhlas OSSZ, ne jen lékaře.</li><li><strong>Hospitalizace nebo lázně:</strong> při přijetí do lůžkové péče se o změnu nežádá. Po propuštění ohlásíte lékaři, kde se zdržujete.</li></ul><p>Na psa a zahradu zákon výslovně nemyslí. Platí obecné pravidlo: mimo byt pouze v povolených hodinách, a ty začínají nejdříve v 7:00. Pokud potřebujete vycházet dřív, domluvte hodiny s lékařem podle toho.</p><p class="cite-note"><a href="https://www.mesec.cz/zakony/zakon-o-nemocenskem-pojisteni/f3033969/" rel="noopener noreferrer" target="_blank">§ 56 odst. 3 zákona č. 187/2006 Sb.</a> (změna místa pobytu, pobyt v cizině, hospitalizace) a <a href="https://www.cssz.gov.cz/nemocenske" rel="noopener noreferrer" target="_blank">ČSSZ Nemocenské</a>.</p><p>Pokud řešíte samotné vystavení nebo prodloužení neschopenky, lékaři Global Health v Praze ji umí posoudit i online, viz <a href="https://www.myglobalhealth.online/czechia/cs/services/neschopenka-online" rel="noopener noreferrer">neschopenka online</a>. Vycházky ale zapisuje výhradně lékař, který neschopenku vede, a rozhoduje podle vašeho stavu, ne podle přání.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="global-health" /><span class="eyebrow">Global Health Česko</span><h2 id="neschopenka-a-lekarske-posouzeni">Neschopenka a lékařské posouzení</h2><p class="section-lead">Lékař posuzuje zdravotní stav a vycházky. Kontroly a dávky řeší zaměstnavatel a OSSZ.</p><ul class="check-list"><li><a href="https://www.myglobalhealth.online/czechia/cs/blog/neschopenka-jak-funguje-eneschopenka" rel="noopener noreferrer">Jak funguje eNeschopenka krok za krokem</a></li><li><a href="https://www.myglobalhealth.online/czechia/cs/blog/vypocet-nemocenske-2026-co-plati-zamestnavatel-a-co-cssz" rel="noopener noreferrer">Výpočet nemocenské 2026</a></li><li><a href="https://www.myglobalhealth.online/czechia/cs/services/neschopenka-online" rel="noopener noreferrer">Neschopenka online</a></li><li><a href="https://www.myglobalhealth.online/czechia/cs/doctors" rel="noopener noreferrer">Lékaři v Česku</a></li><li><a href="https://www.myglobalhealth.online/czechia/cs/contact" rel="noopener noreferrer">Kontaktovat Global Health</a></li></ul><div class="cta-box"><h3>Potřebujete posoudit neschopenku?</h3><p>Lékař posoudí váš stav a v odůvodněných případech vystaví nebo prodlouží neschopenku online.</p><div class="cta-btns"><a class="btn-primary" href="https://www.myglobalhealth.online/czechia/cs/services/neschopenka-online" rel="noopener noreferrer">Objednat posouzení</a><a class="btn-secondary" href="https://www.myglobalhealth.online/czechia/cs/doctors" rel="noopener noreferrer">Zobrazit lékaře</a></div></div></div></section><section class="article-section section-ivory"><div class="section-inner"><hr class="section-anchor" id="sources" /><span class="eyebrow">Oficiální zdroje</span><h2 id="zdroje-tohoto-clanku">Zdroje tohoto článku</h2><p class="section-lead">Text vychází ze zákona a z výkladu ČSSZ; pravidla ověřena 7. září 2026.</p><div class="institution-bar"><a class="inst-link" href="https://www.cssz.gov.cz/nemoc-snadne-a-prehledne" rel="noopener noreferrer" target="_blank">ČSSZ — Nemoc snadno a přehledně</a><a class="inst-link" href="https://www.cssz.gov.cz/-/nejcastejsi-otazky-k-docasne-pracovni-neschopnosti" rel="noopener noreferrer" target="_blank">ČSSZ — Nejčastější otázky k dočasné pracovní neschopnosti</a><a class="inst-link" href="https://www.cssz.gov.cz/nemocenske" rel="noopener noreferrer" target="_blank">ČSSZ — Nemocenské</a><a class="inst-link" href="https://www.mesec.cz/zakony/zakon-o-nemocenskem-pojisteni/f3033969/" rel="noopener noreferrer" target="_blank">Zákon č. 187/2006 Sb., § 56 (režim a vycházky)</a><a class="inst-link" href="https://www.mesec.cz/zakony/zakon-o-nemocenskem-pojisteni/f3034964/" rel="noopener noreferrer" target="_blank">Zákon č. 187/2006 Sb., § 125 a § 128 (krácení a pokuty)</a><a class="inst-link" href="https://www.pracepropravniky.cz/zakony/zakonik-prace-uplne-zneni/paragraf-192/" rel="noopener noreferrer" target="_blank">Zákoník práce, § 192 (kontrola zaměstnavatelem)</a><a class="inst-link" href="https://www.suip.cz/vsechny-clanky/-/asset_publisher/BwIpyjT9IXe0/content/vypoved-pro-poruseni-jine-povinnosti-zamestnance-stanovene-v-301a-zakoniku-pra-1" rel="noopener noreferrer" target="_blank">SÚIP — výpověď pro porušení § 301a</a></div><p class="cite-note">Konkrétní případ vždy ověřte u své OSSZ nebo ošetřujícího lékaře.</p></div></section><section class="article-section section-forest"><div class="section-inner"><hr class="section-anchor" id="faq" /><span class="eyebrow">Časté otázky</span><h2 id="vychazky-a-kontroly-na-neschopence">Vycházky a kontroly na neschopence</h2><div class="faq-section"><details class="faq-item"><summary class="faq-q">Může kontrola přijít po 22. hodině?</summary><div class="faq-a"><p>Zákon denní dobu kontroly neomezuje a ČSSZ výslovně uvádí, že kontrolor může přijít mimo pracovní dobu i o víkendu. Vycházky ale končí nejpozději v 19:00, takže večer máte být doma.</p></div></details><details class="faq-item"><summary class="faq-q">Co když kontrola přijde a já spím?</summary><div class="faq-a"><p>Zákon ukládá kontrolu umožnit a poskytnout součinnost; zvonek a jmenovka jsou vaše povinnost. Pokud vás kontrola nezastihne, nechá výzvu a OSSZ posoudí důvody.</p></div></details><details class="faq-item"><summary class="faq-q">Můžu si vycházky přesunout, když mám ten den lékaře?</summary><div class="faq-a"><p>Cesta na vyšetření je součástí léčebného režimu a nepočítá se jako vycházka. Trvalou změnu hodin ale musí zapsat lékař dopředu.</p></div></details><details class="faq-item"><summary class="faq-q">Jak dlouho může OSSZ krátit nemocenské?</summary><div class="faq-a"><p>Ode dne porušení nejdéle na 100 kalendářních dnů. Vedle toho je možná pokuta až 20 000 Kč a v prvních 14 dnech postih od zaměstnavatele.</p></div></details></div></div></section><section class="article-section section-ivory"><div class="section-inner"><div class="disclaimer"><strong>Zdravotní a právní upozornění</strong>Obecné informace platné k září 2026, ne rozhodnutí OSSZ, právní poradenství ani záruka vystavení neschopenky nebo povolení vycházek. Konkrétní případ řešte se svým lékařem nebo OSSZ.</div></div></section></main></div></div></div></section>
 <section class="preview-cta gh2-section-forest"><div class="preview-cta-inner"><p class="k">Další krok</p><h2>Chcete mluvit s lékařem?</h2><a href="https://www.myglobalhealth.online/czechia/cs/services/neschopenka-online">Objednat konzultaci</a></div></section>
 </body>
 </html>

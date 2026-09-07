@@ -41,8 +41,8 @@ test("reads the user, roles and provider without confusing the two Kod fields", 
     '<LoginOdpoved xmlns="http://www.sukl.cz/erp/common"><Doklad>' +
     "<Uzivatel><Kod>141ea8aa-f82d-4d74-a725-cdabe9973aca</Kod>" +
     "<Jmeno><Prijmeni>Nováková</Prijmeni><Jmena>Jana</Jmena></Jmeno></Uzivatel>" +
-    "<RoleOsoby><Role>LEKAR</Role></RoleOsoby>" +
-    "<RoleSubjektu><Role>PZS</Role><Role>AMBULANCE</Role></RoleSubjektu>" +
+    "<RoleOsoby><Role>eRPlekar</Role><Role>ePPracovnikVydeje</Role></RoleOsoby>" +
+    "<RoleSubjektu><Role>eRPambulance</Role></RoleSubjektu>" +
     "<PZS><Kod>00150928369</Kod><Nazev>Global Guest s.r.o.</Nazev></PZS>" +
     "</Doklad></LoginOdpoved></soap:Body></soap:Envelope>";
 
@@ -51,8 +51,8 @@ test("reads the user, roles and provider without confusing the two Kod fields", 
   assert.equal(v.userCode, "141ea8aa-f82d-4d74-a725-cdabe9973aca");
   assert.equal(v.userSurname, "Nováková");
   assert.equal(v.userGivenNames, "Jana");
-  assert.deepEqual(v.personRoles, ["LEKAR"]);
-  assert.deepEqual(v.subjectRoles, ["PZS", "AMBULANCE"]);
+  assert.deepEqual(v.personRoles, ["eRPlekar", "ePPracovnikVydeje"]);
+  assert.deepEqual(v.subjectRoles, ["eRPambulance"]);
   // The provider code, NOT the user's UUID.
   assert.equal(v.providerCode, "00150928369");
   assert.equal(v.providerName, "Global Guest s.r.o.");

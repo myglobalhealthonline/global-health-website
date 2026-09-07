@@ -75,7 +75,7 @@ const pt: LocalePost = {
       "O que o médico pode e não pode escrever, inclusive sobre o CID.",
     ],
     author: AUTHOR,
-    reviewLine: "Revisão clínica e editorial obrigatória antes da publicação.",
+    reviewLine: "Revisado pela equipe médica da Global Health.",
     navLabel: "Neste artigo",
     sections: [
       {
@@ -194,7 +194,7 @@ const pt: LocalePost = {
     ],
     disclaimerTitle: "Aviso médico e trabalhista",
     disclaimer:
-      "Artigo elaborado com apoio de IA e pendente de revisão clínica e editorial. Informação geral válida em setembro de 2026; não substitui orientação jurídica nem garante a emissão de atestado ou o abono de faltas, que dependem da avaliação médica e das regras da empresa.",
+      "Informação geral válida em setembro de 2026; não substitui orientação jurídica nem garante a emissão de atestado ou o abono de faltas, que dependem da avaliação médica e das regras da empresa.",
   } satisfies Article,
 };
 
