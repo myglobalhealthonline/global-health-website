@@ -1645,8 +1645,10 @@ model ExamType {
   /// per-locale; these columns stay the default copy and the final fallback,
   /// exactly as `Service` ↔ `ServiceTranslation` works.
   summary           String?
-  /// Hero image. Written as a related `Asset` row via `syncOwnedImageAsset`
-  /// (key `exam-type-hero:<id>`); this column holds the resolved public path.
+  /// Hero image path, e.g. `/api/media/<key>`. A plain column rather than a
+  /// related `Asset` row: ExamType is country-independent and `Asset` is
+  /// country-owned. Follows `HealthTest.productImagePath`, the same kind of
+  /// catalogue product image.
   imagePath         String?
   galleryImagePaths String[] @default([])
   seoTitle          String?
@@ -1668,7 +1670,6 @@ model ExamType {
 
   translations ExamTypeTranslation[]
   appointments Appointment[]
-  assets       Asset[]
 
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
@@ -2075,7 +2076,6 @@ model Asset {
   doctorId            String?
   specialtyId         String?
   serviceId           String?
-  examTypeId          String?
   kind                AssetKind
   key                 String
   path                String
@@ -2094,7 +2094,6 @@ model Asset {
   doctor              Doctor?       @relation(fields: [doctorId], references: [id], onDelete: Cascade)
   specialty           Specialty?    @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
   service             Service?      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  examType            ExamType?     @relation(fields: [examTypeId], references: [id], onDelete: Cascade)
   badges              Badge[]
   partners            Partner[]
   blogPostCovers      BlogPost[]    @relation("BlogPostCover")

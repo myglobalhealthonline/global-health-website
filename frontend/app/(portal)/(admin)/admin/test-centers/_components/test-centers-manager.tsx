@@ -1,4 +1,12 @@
 import Link from "next/link";
+import { parseLocaleTranslations } from "@/lib/admin/translation-form-parse";
+import { ManagedImageField } from "../../_components/managed-image-field";
+import { MultiImageField } from "../../_components/multi-image-field";
+import { ExamTypeTranslationTabs } from "./exam-type-translation-tabs";
+
+/** Every supported locale. An ExamType is one global catalogue row shared by
+ *  every market, so its copy is not gated by a country's enabled locales. */
+const LOCALE_CODES = ["EN", "PT", "ES", "CS", "RO", "DE"];
 import { Plus, Trash2 } from "lucide-react";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
@@ -386,15 +394,48 @@ export async function TestCentersManager({
     if (!name || !slug) {
       redirect(backTo(base, formData, "error", "Exam name and slug are required"));
     }
+    const optional = (field: string) =>
+      String(formData.get(field) ?? "").trim() || null;
+
+    // MultiImageField serialises to one newline-joined hidden input.
+    const galleryImagePaths = String(formData.get("galleryImagePaths") ?? "")
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+
     const body = {
       // Blank clears the reference; the API validates the GH1-0001 shape.
       code: String(formData.get("code") ?? "").trim().toUpperCase() || null,
       name,
       slug,
-      category: String(formData.get("category") ?? "").trim() || null,
-      description: String(formData.get("description") ?? "").trim() || null,
+      category: optional("category"),
+      description: optional("description"),
       sortOrder: Number(formData.get("sortOrder") ?? 0) || 0,
       isActive: formData.get("isActive") === "on",
+
+      // Public "Book a Test" content.
+      summary: optional("summary"),
+      imagePath: optional("imagePath"),
+      galleryImagePaths,
+      seoTitle: optional("seoTitle"),
+      seoDescription: optional("seoDescription"),
+      heroTitle: optional("heroTitle"),
+      heroDescription: optional("heroDescription"),
+      preparationBody: optional("preparationBody"),
+      ctaLabel: optional("ctaLabel"),
+      durationMinutes: Number(formData.get("durationMinutes") ?? 15) || 15,
+      isBookable: formData.get("isBookable") === "on",
+      // Locales whose name is blank are skipped, so an untouched tab never
+      // creates an empty translation row.
+      translations: parseLocaleTranslations(formData, [
+        "name",
+        "summary",
+        "heroTitle",
+        "heroDescription",
+        "preparationBody",
+        "seoTitle",
+        "seoDescription",
+      ]),
     };
     const result = typeId
       ? await updateAdminExamType(typeId, body)
@@ -1124,6 +1165,81 @@ export async function TestCentersManager({
                 <input type="checkbox" name="isActive" defaultChecked={editExamType?.isActive ?? true} className="size-4" />
                 <span className="text-[13px] text-[var(--color-text-body)]">Active (selectable when pricing centers)</span>
               </label>
+
+              {/* ── Public "Book a Test" listing ───────────────────────── */}
+              <div className="gh-admin-divider mt-2 border-t border-[var(--color-border)] pt-4">
+                <h3 className="m-0 text-sm font-bold text-[var(--color-text-primary)]">
+                  Public listing
+                </h3>
+                <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                  Only bookable exams appear under Book a Test. Price and
+                  available times come from the centres that offer this exam,
+                  not from here.
+                </p>
+              </div>
+
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  name="isBookable"
+                  defaultChecked={editExamType?.isBookable ?? false}
+                  className="size-4"
+                />
+                <span className="text-[13px] text-[var(--color-text-body)]">
+                  Bookable — publish to the patient-facing Book a Test catalogue
+                </span>
+              </label>
+
+              <div className="grid gap-4 sm:grid-cols-[1fr_160px]">
+                <label className="flex flex-col gap-1">
+                  <span className="gh-field-label">Call to action label</span>
+                  <input
+                    name="ctaLabel"
+                    defaultValue={editExamType?.ctaLabel ?? ""}
+                    placeholder="Book this test"
+                    className="gh-input"
+                  />
+                </label>
+                <label className="flex flex-col gap-1">
+                  <span className="gh-field-label">Appointment length</span>
+                  <input
+                    name="durationMinutes"
+                    type="number"
+                    min={5}
+                    max={480}
+                    step={5}
+                    defaultValue={editExamType?.durationMinutes ?? 15}
+                    className="gh-input"
+                  />
+                </label>
+              </div>
+
+              <ManagedImageField
+                name="imagePath"
+                label="Hero image"
+                initialPath={editExamType?.imagePath ?? ""}
+              />
+              <MultiImageField
+                name="galleryImagePaths"
+                label="Gallery images"
+                initialPaths={editExamType?.galleryImagePaths ?? []}
+              />
+
+              <ExamTypeTranslationTabs
+                locales={LOCALE_CODES}
+                defaultLocale="EN"
+                initialTranslations={editExamType?.translations ?? []}
+                baseFallback={{
+                  name: editExamType?.name ?? "",
+                  summary: editExamType?.summary ?? null,
+                  heroTitle: editExamType?.heroTitle ?? null,
+                  heroDescription: editExamType?.heroDescription ?? null,
+                  preparationBody: editExamType?.preparationBody ?? null,
+                  seoTitle: editExamType?.seoTitle ?? null,
+                  seoDescription: editExamType?.seoDescription ?? null,
+                }}
+              />
+
               <div className="flex items-center gap-3">
                 <button type="submit" className="gh-btn gh-btn-primary">Save exam type</button>
                 <Link href={href({ editType: null })} className="gh-btn gh-btn-soft">Cancel</Link>

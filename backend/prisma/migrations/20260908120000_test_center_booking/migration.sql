@@ -197,9 +197,6 @@ ALTER TABLE "OrderItem"
   ADD COLUMN IF NOT EXISTS "testCenterId" TEXT,
   ADD COLUMN IF NOT EXISTS "testCenterTimeSlotId" TEXT;
 
-ALTER TABLE "Asset"
-  ADD COLUMN IF NOT EXISTS "examTypeId" TEXT;
-
 CREATE UNIQUE INDEX IF NOT EXISTS "Appointment_testCenterTimeSlotId_key"
   ON "Appointment"("testCenterTimeSlotId");
 CREATE INDEX IF NOT EXISTS "Appointment_testCenterId_scheduledAt_idx"
@@ -243,11 +240,6 @@ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'Appointment_testCenterTimeSlotId_fkey') THEN
     ALTER TABLE "Appointment" ADD CONSTRAINT "Appointment_testCenterTimeSlotId_fkey"
       FOREIGN KEY ("testCenterTimeSlotId") REFERENCES "TestCenterTimeSlot"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-  END IF;
-
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'Asset_examTypeId_fkey') THEN
-    ALTER TABLE "Asset" ADD CONSTRAINT "Asset_examTypeId_fkey"
-      FOREIGN KEY ("examTypeId") REFERENCES "ExamType"("id") ON DELETE CASCADE ON UPDATE CASCADE;
   END IF;
 END
 $$;

@@ -20,8 +20,43 @@ export type AdminExamTypeDto = {
   isActive: boolean;
   sortOrder: number;
   offeringCount?: number;
+
+  /** ── Public "Book a Test" content ──
+   *  `isBookable` publishes the exam to the patient catalogue and is separate
+   *  from `isActive`, which gates admin/referral usability. Price and available
+   *  times are NOT here — they come from the centres offering the exam. */
+  isBookable: boolean;
+  summary: string | null;
+  imagePath: string | null;
+  galleryImagePaths: string[];
+  seoTitle: string | null;
+  seoDescription: string | null;
+  heroTitle: string | null;
+  heroDescription: string | null;
+  detailBody: string | null;
+  preparationBody: string | null;
+  ctaLabel: string | null;
+  /** Wall-clock time a centre blocks for this exam. */
+  durationMinutes: number;
+  translations: AdminExamTypeTranslationDto[];
+
   createdAt: string;
   updatedAt: string;
+};
+
+/** Per-locale public copy. Every LocaleCode is valid — an ExamType is one
+ *  global catalogue row, so no country gates which languages it may carry. */
+export type AdminExamTypeTranslationDto = {
+  locale: string;
+  name: string;
+  summary: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  heroTitle: string | null;
+  heroDescription: string | null;
+  detailBody: string | null;
+  preparationBody: string | null;
+  ctaLabel: string | null;
 };
 
 export type AdminTestCenterExamDto = {
