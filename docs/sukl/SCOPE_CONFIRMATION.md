@@ -248,16 +248,53 @@ Numbered so replies can cite them.
 
 **Signature / authentication (raised 2026-08-13 — blocks the ePoukaz build)**
 
-- **Q15** Exactly which ePoukaz operations require a personal qualified
-  signature? "Some active operations" needs to become a list, per operation,
-  cross-referenced with the role table from Q2.
+- **Q15** ~~Exactly which operations require a personal qualified signature?~~
+  **ANSWERED 2026-09-05.** SÚKL supplied the list from *Supplement to the
+  technological change for priority services eRecept*, Table 1. For a
+  PRESCRIBER, exactly three:
+
+  | Operation | Actor | Signature |
+  |---|---|---|
+  | `AppPingZEP` | Doctor, Pharmacist | **required** |
+  | `ZalozitPredpis` (create) | Doctor | **required** |
+  | `ZmenitPredpis` (change) | Doctor | **required** |
+  | `ZalozitVydej` / `ZmenitVydej` / the two OTC variants | Pharmacist | required, not ours |
+  | everything else we call | — | not required |
+
+  **`ZrusitPredpis` is NOT on the list** — cancelling needs no signature, and
+  neither do `NacistPredpis`, `SeznamPredpisu` or `StahnoutPruvodku`. So reads,
+  listing and cancellation can run server-side on the workplace certificate
+  alone; only issuing and amending need the doctor.
+
+  Beware the machine translation SÚKL's reply came through: "Create a
+  Prescription" is `ZalozitPredpis` and "ChangeRegulation" is `ZmenitPredpis`
+  (*předpis* renders as both "prescription" and "regulation").
+
+  **Consequence.** Issuing a prescription cannot be a plain server-side call.
+  The signature is the doctor's own qualified signature, so either the doctor
+  signs per prescription, or Identita občana replaces it (Q16, still open).
+
 - **Q16** What does "authentication using Identita občana" mean concretely for a
   server-to-server integration where the doctor is already authenticated in our
   portal? What does it replace — the signature only, or part of the transport
   authentication? What is the onboarding process?
-- **Q17** If we take the signature route: what is signed (the whole envelope, a
-  specific element), which XML-DSig profile and canonicalisation, and where does
-  the signature belong in the message? Are there reference examples?
+
+  **Still open, and now the decisive question.** Q15 confirms a qualified
+  signature is required to issue; this asks whether Identita občana removes
+  that requirement, which decides whether issuing can stay server-side.
+
+- **Q17** ~~What is signed, which XML-DSig profile and canonicalisation?~~
+  **ANSWERED BY REFERENCE 2026-09-05, document not yet in hand.** SÚKL: the
+  rules are the same as for ePoukaz, specified in
+  **`electronic_signature_of_messages_v2.docx`** (Elektronický podpis zpráv).
+  Nothing may be built against a guessed profile — obtain that file before
+  writing any signing code. Tracked as the one remaining blocker.
+
+- **Q20** ~~May a demo qualified certificate be used in test?~~ **ANSWERED
+  2026-09-05 — YES.** PostSignum DEMO is acceptable in the test environment, so
+  signing can be built and proven end to end before any real qualified
+  certificate is procured. `AppPingZEP` exists precisely as the signature test
+  and creates nothing.
 
 **Operational**
 
