@@ -329,6 +329,9 @@ async function prepare(): Promise<void> {
   const { normalizePhoneForWhatsApp, isPlaceholderWhatsAppNumber } = await import(
     "../src/lib/whatsapp/normalize-phone.js"
   );
+  const { linkPatientProfileToUserByEmail } = await import(
+    "../src/lib/patient-profile-user-link.js"
+  );
   const bcrypt = (await import("bcryptjs")).default;
   const { randomBytes } = await import("node:crypto");
 
@@ -358,6 +361,8 @@ async function prepare(): Promise<void> {
     notPatient: 0,
     inactive: 0,
     phoneRecovered: 0,
+    profileLinked: 0,
+    profileLinkConflict: 0,
   };
 
   for (const r of rows.slice(1)) {
@@ -480,6 +485,19 @@ async function prepare(): Promise<void> {
       tally.created += 1;
     }
 
+    // The chart usually predates the account: these patients were loaded from
+    // the legacy export long before this script minted them a login. Without
+    // this claim the PatientProfile keeps `userId: null`, and the enforced
+    // medical-access guard then denies the patient their OWN records with
+    // PATIENT_NOT_OWN_RECORD. Runs for the `existing` branch too — an account
+    // that was already there is just as capable of having an unclaimed chart.
+    const linkOutcome = await linkPatientProfileToUserByEmail(prisma, { email, userId });
+    if (linkOutcome === "linked") tally.profileLinked += 1;
+    else if (linkOutcome === "owned-by-another-account" || linkOutcome === "account-holds-another-chart") {
+      tally.profileLinkConflict += 1;
+      log(`  NOTE: ${email} — chart NOT linked (${linkOutcome}); needs a human merge decision.`);
+    }
+
     // Two live set-password links for one account means an old one can still
     // take it over after the patient has set their password from the new one.
     await prisma.passwordResetToken.updateMany({
@@ -505,6 +523,8 @@ async function prepare(): Promise<void> {
   log(`    existing accts : ${tally.existing}`);
   log(`    new accounts   : ${tally.created}${LIVE ? "" : " (would create)"}`);
   log(`    phone recovered: ${tally.phoneRecovered} (CSV had none — taken from the account/booking)`);
+  log(`    charts linked  : ${tally.profileLinked} (unlinked PatientProfile pointed at its account)`);
+  log(`    chart conflicts: ${tally.profileLinkConflict} (left unlinked — see NOTEs above)`);
   log(`  skipped          : ${tally.total - tally.sendable}`);
   log(`    duplicate email: ${tally.dupEmail}`);
   log(`    invalid email  : ${tally.badEmail}`);
