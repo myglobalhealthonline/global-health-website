@@ -29,16 +29,22 @@ import {
 export {
   BASE_SLOT_MINUTES,
   SlotAlreadyTakenError,
+  WINDOW_PREGENERATE_DAYS,
+  WINDOW_SWEEP_HORIZON_DAYS,
   intervalsOverlap,
   selectMissingSlots,
   selectStaleSlots,
+  type GenerationResult,
 } from "../scheduling/slot-grid.js";
 import {
   BASE_SLOT_MINUTES,
   SlotAlreadyTakenError,
+  WINDOW_PREGENERATE_DAYS,
+  WINDOW_SWEEP_HORIZON_DAYS,
   intervalsOverlap,
   selectMissingSlots,
   selectStaleSlots,
+  type GenerationResult,
 } from "../scheduling/slot-grid.js";
 
 /**
@@ -757,12 +763,7 @@ async function windowSlotCandidates(
   );
 }
 
-/**
- * How far ahead a window change reconciles. Windows recur forever, so the sweep
- * needs a horizon; a year matches the frontend bulk tools' `MAX_RANGE_DAYS` and
- * covers every range the portal or a patient can browse to.
- */
-export const WINDOW_SWEEP_HORIZON_DAYS = 366;
+
 
 /**
  * How far ahead a window change materialises slots up front.
@@ -779,10 +780,9 @@ export const WINDOW_SWEEP_HORIZON_DAYS = 366;
  * request further out than this, so anything a doctor or patient can navigate to
  * is already materialised. Beyond it, the lazy path still covers reads.
  */
-export const WINDOW_PREGENERATE_DAYS = 120;
 
-/** What a generation pass actually wrote. See `ensureSlotsForRange`. */
-export type GenerationResult = { created: number; skippedOverlap: number };
+
+
 
 /**
  * `Doctor.active = false` is the platform's single suspension switch: it hides

@@ -188,3 +188,20 @@ export function isExclusionViolation(error: unknown): boolean {
     message.includes("23P01") || message.toLowerCase().includes("exclusion constraint")
   );
 }
+
+/**
+ * How far ahead a window change reconciles. Windows recur forever, so the sweep
+ * needs a horizon; a year matches the frontend bulk tools' `MAX_RANGE_DAYS` and
+ * covers every range the portal or a patient can browse to.
+ */
+export const WINDOW_SWEEP_HORIZON_DAYS = 366;
+
+/**
+ * How far ahead a window change materialises slots up front, so widening a
+ * window fills every week in reach rather than only the weeks someone happens
+ * to open.
+ */
+export const WINDOW_PREGENERATE_DAYS = 120;
+
+/** What a generation pass actually wrote. See `ensureSlotsForRange`. */
+export type GenerationResult = { created: number; skippedOverlap: number };
