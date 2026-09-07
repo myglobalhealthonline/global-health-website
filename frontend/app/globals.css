@@ -1210,6 +1210,18 @@ img {
   color: #294137;
 }
 
+/* Every designed article opens its disclaimer/institution panel with an inline
+   <strong> title followed directly by the notice text (180 bodies share that
+   markup). Give the title its own line instead of letting the sentence run on
+   from it. */
+.gh-article-editorial--authored-sections :is(.disclaimer, .institution-bar, .author-bar) > strong:first-child {
+  display: block;
+  margin-bottom: 8px;
+  color: #173c2f;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+}
+
 .gh-article-editorial--authored-sections :is(.cta-btns, .hero-actions) {
   display: flex;
   flex-wrap: wrap;
