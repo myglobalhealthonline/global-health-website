@@ -6,6 +6,7 @@ import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { fetchAdminCountries } from "@/lib/admin/admin-api";
 import { fetchCorporatePlans, postCorporateCompany } from "@/lib/admin/admin-api/corporate";
 import { AdminCard, Btn, PageHeader, SectionHeader } from "../../_components/atoms";
+import { PendingSubmitButton } from "@/components/admin/pending-submit";
 
 export const dynamic = "force-dynamic";
 
@@ -190,9 +191,9 @@ export default async function AdminNewCorporateCompanyPage({ searchParams }: Pag
             >
               Cancel
             </Link>
-            <Btn type="submit" variant="primary" size="md">
+            <PendingSubmitButton className="gh-btn gh-btn-primary" style={{ minHeight: 40, padding: "0 20px" }} busyLabel="Creating…">
               Create company
-            </Btn>
+            </PendingSubmitButton>
           </div>
         </form>
       </AdminCard>
