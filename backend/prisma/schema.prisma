@@ -1639,11 +1639,72 @@ model ExamType {
   isActive    Boolean          @default(true)
   sortOrder   Int              @default(0)
   offerings   TestCenterExam[]
+
+  /// ── Public "Book a Test" content ────────────────────────────────────────
+  /// Base-locale marketing copy. `ExamTypeTranslation` overrides these
+  /// per-locale; these columns stay the default copy and the final fallback,
+  /// exactly as `Service` ↔ `ServiceTranslation` works.
+  summary           String?
+  /// Hero image. Written as a related `Asset` row via `syncOwnedImageAsset`
+  /// (key `exam-type-hero:<id>`); this column holds the resolved public path.
+  imagePath         String?
+  galleryImagePaths String[] @default([])
+  seoTitle          String?
+  seoDescription    String?
+  heroTitle         String?
+  heroDescription   String?
+  detailBody        String?
+  /// Patient prep instructions ("fast for 12h", "bring your prescription").
+  preparationBody   String?
+  ctaLabel          String?
+  /// Wall-clock time the center blocks for this exam. Consumed off the
+  /// center's base slot grid exactly as `Service.durationMinutes` is consumed
+  /// off a doctor's.
+  durationMinutes   Int      @default(15)
+  /// Public bookability gate, separate from `isActive` (which gates admin
+  /// usability and the insurance/referral catalogue). Defaults FALSE so the
+  /// imported Synlab catalogue is not published by the migration that adds it.
+  isBookable        Boolean  @default(false)
+
+  translations ExamTypeTranslation[]
+  appointments Appointment[]
+  assets       Asset[]
+
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
 
   @@index([category])
   @@index([isActive])
+  @@index([isBookable])
+}
+
+/// Per-locale display content for an ExamType. Mirrors `ServiceTranslation`.
+///
+/// ONE DELIBERATE DIVERGENCE from the Service pattern: `ExamType` is
+/// country-independent (one global catalogue reused by every country's
+/// centers), so there is no `CountryLocale` row to gate against and
+/// `upsertExamTypeTranslations` accepts ANY `LocaleCode` rather than calling
+/// `assertLocaleSupported`. Price and availability remain per-center; only the
+/// copy is global.
+model ExamTypeTranslation {
+  id              String     @id @default(cuid())
+  examTypeId      String
+  locale          LocaleCode
+  name            String
+  summary         String?
+  seoTitle        String?
+  seoDescription  String?
+  heroTitle       String?
+  heroDescription String?
+  detailBody      String?
+  preparationBody String?
+  ctaLabel        String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  examType        ExamType   @relation(fields: [examTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([examTypeId, locale])
+  @@index([examTypeId])
 }
 
 /// A physical test center / exam clinic in a single country where patients can
@@ -1666,11 +1727,88 @@ model TestCenter {
   sortOrder   Int              @default(0)
   country     Country          @relation(fields: [countryId], references: [id], onDelete: Cascade)
   exams       TestCenterExam[]
+
+  /// Booking surface (§"Book a Test"). Same three-layer availability model the
+  /// doctors use: weekly template → generated concrete slots → date-scoped
+  /// tombstones.
+  availabilities       TestCenterAvailability[]
+  timeSlots            TestCenterTimeSlot[]
+  availabilityExceptions TestCenterAvailabilityException[]
+  appointments         Appointment[]
+
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
 
   @@unique([countryId, slug])
   @@index([countryId, isActive])
+}
+
+/// Weekly opening-hours template for a test center. Exact analogue of
+/// `DoctorAvailability` — concrete `TestCenterTimeSlot` rows are DERIVED from
+/// these windows by `ensureSlotsForRange`, never hand-maintained.
+model TestCenterAvailability {
+  id                  String     @id @default(cuid())
+  testCenterId        String
+  /// 0 = Sunday … 6 = Saturday. Matches `Date#getDay()` in JS.
+  weekday             Int
+  /// Minute offset from midnight, LOCAL to the center's country timezone
+  /// (`Country.bookingSetting.timezone`).
+  startMinute         Int
+  endMinute           Int
+  slotDurationMinutes Int        @default(30)
+  effectiveFrom       DateTime?
+  effectiveUntil      DateTime?
+  isActive            Boolean    @default(true)
+  testCenter          TestCenter @relation(fields: [testCenterId], references: [id], onDelete: Cascade)
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+
+  @@index([testCenterId, weekday])
+}
+
+/// A concrete, claimable appointment slot at a test center, in UTC.
+///
+/// `@@unique([testCenterId, startAt])` is the atomic-claim contract, same as
+/// `DoctorTimeSlot`: a claim is a conditional `UPDATE … WHERE status = 'OPEN'`,
+/// so two patients can never take the same slot. A partial EXCLUDE constraint
+/// (`no_overlapping_test_center_slots`, added in the same migration) additionally
+/// forbids overlapping non-BLOCKED spans.
+///
+/// Naming wart, deliberate: `status` reuses `DoctorSlotStatus`. The whole
+/// calendar UI stack (`WeekCalendar`, `use-slot-manager`, the block/remove
+/// dialogs) is typed on that enum's literals, and a parallel `TestCenterSlotStatus`
+/// would fork every one of them for no semantic gain.
+model TestCenterTimeSlot {
+  id           String           @id @default(cuid())
+  testCenterId String
+  startAt      DateTime
+  endAt        DateTime
+  status       DoctorSlotStatus @default(OPEN)
+  blockReason  String?
+  isAdHoc      Boolean          @default(false)
+  testCenter   TestCenter       @relation(fields: [testCenterId], references: [id], onDelete: Cascade)
+  appointment  Appointment?     @relation("AppointmentTestSlot")
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@unique([testCenterId, startAt])
+  @@index([testCenterId, startAt, status])
+}
+
+/// Single-date tombstone so a slot an admin removed is not immediately
+/// regenerated from the weekly template by `ensureSlotsForRange`. Analogue of
+/// `DoctorAvailabilityException`.
+model TestCenterAvailabilityException {
+  id           String     @id @default(cuid())
+  testCenterId String
+  startAt      DateTime
+  endAt        DateTime
+  reason       String?
+  testCenter   TestCenter @relation(fields: [testCenterId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+
+  @@unique([testCenterId, startAt])
+  @@index([testCenterId, startAt])
 }
 
 /// Join row: a specific exam offered at a specific test center, with pricing.
@@ -1937,6 +2075,7 @@ model Asset {
   doctorId            String?
   specialtyId         String?
   serviceId           String?
+  examTypeId          String?
   kind                AssetKind
   key                 String
   path                String
@@ -1955,6 +2094,7 @@ model Asset {
   doctor              Doctor?       @relation(fields: [doctorId], references: [id], onDelete: Cascade)
   specialty           Specialty?    @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
   service             Service?      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  examType            ExamType?     @relation(fields: [examTypeId], references: [id], onDelete: Cascade)
   badges              Badge[]
   partners            Partner[]
   blogPostCovers      BlogPost[]    @relation("BlogPostCover")
@@ -2213,6 +2353,22 @@ model Appointment {
   /// matches a HealthTest row. Symmetric with `serviceId` above.
   healthTestId                   String?
   healthTest                     HealthTest?               @relation(fields: [healthTestId], references: [id], onDelete: SetNull)
+  /// ── "Book a Test" linkage ───────────────────────────────────────────────
+  /// Set together, and only for a test-center booking. Such a row has
+  /// `doctorId = null`, `meetingUrl = null`, `consultationMode = IN_PERSON`
+  /// and `locationAddress` = the center's address snapshot — which is what
+  /// makes every existing IN_PERSON notification path work unchanged.
+  examTypeId                     String?
+  examType                       ExamType?                 @relation(fields: [examTypeId], references: [id], onDelete: SetNull)
+  testCenterId                   String?
+  testCenter                     TestCenter?               @relation(fields: [testCenterId], references: [id], onDelete: SetNull)
+  /// The claimed center slot. Deliberately a SEPARATE column from
+  /// `timeSlotId` below, which is a typed FK to `DoctorTimeSlot`: the paid-order
+  /// fulfilment path runs `prisma.doctorTimeSlot.updateMany` over ids drawn
+  /// from that column, and a center-slot id there would match zero rows —
+  /// silently leaving a paid order whose slot is never committed.
+  testCenterTimeSlotId           String?                   @unique
+  testCenterTimeSlot             TestCenterTimeSlot?       @relation("AppointmentTestSlot", fields: [testCenterTimeSlotId], references: [id], onDelete: SetNull)
   /// Doctor assigned to take the call. Set by admin on the schedule form;
   /// the doctor's portal at /doctor scopes queries to `doctorId = self`.
   /// Optional because not every appointment has a doctor yet.
@@ -2389,6 +2545,7 @@ model Appointment {
   updatedAt                      DateTime                  @updatedAt
 
   @@index([clinicId])
+  @@index([testCenterId, scheduledAt])
   @@index([userId])
   @@index([patientProfileId])
   @@index([email])
@@ -2862,10 +3019,19 @@ enum CartItemKind {
   PRESCRIPTION_SERVICE
   GENERAL_CONSULTATION
   SPECIALIST_CONSULTATION
+  /// Patient-booked exam appointment at a physical TestCenter ("Book a Test").
+  /// Carries `examTypeId` + `testCenterId` + `testCenterTimeSlotId` and mints an
+  /// IN_PERSON Appointment with no doctor and no meeting link — the center's
+  /// address stands in for the Meet link in every notification.
+  ///
+  /// Deliberately NOT `LAB_EXAM`: that kind drives
+  /// `markRequisitionsReadyOnOrderPaid` (complete-order-payment.service.ts), so
+  /// reusing it would advance a Synlab requisition that does not exist.
+  TEST_BOOKING
   /// Laboratory exam billed to the patient (self-pay) after a doctor
   /// prescribed it and an admin agreed the basket. Never addable through the
-  /// public cart — `routes/cart.route.ts` allowlists the four kinds above, and
-  /// these lines are only ever minted by the lab-orders module.
+  /// public cart — `routes/cart.route.ts` allowlists the public kinds above,
+  /// and these lines are only ever minted by the lab-orders module.
   LAB_EXAM
 }
 
@@ -2980,6 +3146,14 @@ model CartItem {
   /// Consultation items: which slot the patient claimed.
   timeSlotId                        String?          @unique
   doctorId                          String?
+  /// TEST_BOOKING lines: the exam, the center, the priced offering the price
+  /// was snapshotted from, and the claimed center slot. `testCenterExamId` is
+  /// provenance only — `unitPriceCents` above is the charged amount, computed
+  /// from that offering's cost + markup at add-to-cart time.
+  examTypeId                        String?
+  testCenterId                      String?
+  testCenterExamId                  String?
+  testCenterTimeSlotId              String?          @unique
   /// Consultation-only reservation deadline. Set to now+10min when a
   /// consultation slot is added. Sweep on every cart op releases
   /// expired items (slot HELD→OPEN + cart item deleted) so the same
@@ -3332,6 +3506,14 @@ model OrderItem {
   /// Consultation-only refs (v2).
   timeSlotId                        String?
   doctorId                          String?
+  /// TEST_BOOKING refs, copied from the CartItem at checkout. NOT unique here
+  /// (matching `timeSlotId` above) — a cancelled-and-rebooked slot legitimately
+  /// appears on more than one order line over time. The offering this line was
+  /// priced from is the pre-existing `testCenterExamId` column below, shared
+  /// with LAB_EXAM lines.
+  examTypeId                        String?
+  testCenterId                      String?
+  testCenterTimeSlotId              String?
   appointmentId                     String?
   /// Patient intake snapshot — copied from CartItem at checkout time so
   /// the payment webhook mints the Appointment with the right name,
@@ -3437,10 +3619,10 @@ model OrderItem {
   declaredCoverageRefId             String?
   declaredCoverageCardNumber        String?
   declaredCoveragePriceCents        Int?
-  /// LAB_EXAM lines only — the `TestCenterExam` this line was priced from, so
-  /// the paid order can be reconciled against the laboratory's own invoice.
-  /// Plain id, not an FK: the catalogue entry may be retired while the paid
-  /// line must stay intact.
+  /// LAB_EXAM and TEST_BOOKING lines — the `TestCenterExam` this line was
+  /// priced from, so the paid order can be reconciled against the laboratory's
+  /// own invoice. Plain id, not an FK: the catalogue entry may be retired while
+  /// the paid line must stay intact.
   testCenterExamId                  String?
   /// Commission-model snapshot (markets with `Country.commissionReceiptEnabled`).
   /// SNAPSHOT, not a live lookup: `doctorPayoutCents` is a copy of
