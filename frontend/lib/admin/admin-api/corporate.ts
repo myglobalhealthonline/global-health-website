@@ -315,8 +315,14 @@ export async function deleteCorporateRule(ruleId: string) {
 
 // ── Companies ────────────────────────────────────────────────────────────────
 
+/** Backend list endpoints cap pageSize at 100; the admin UI renders no pager. */
+const PAGE_ALL = "100";
+
 export async function fetchCorporateCompanies(query?: { query?: string; status?: string }) {
   const params = new URLSearchParams();
+  // These list endpoints page at 25 by default and the admin UI has no
+  // pager, so request the API maximum (100) — see PAGE_ALL.
+  params.set("pageSize", PAGE_ALL);
   if (query?.query) params.set("query", query.query);
   if (query?.status) params.set("status", query.status);
   const qs = params.toString();
@@ -354,7 +360,7 @@ export async function postCorporateAdminInvite(companyId: string, email: string)
 
 export async function fetchCorporateEmployees(companyId: string) {
   return adminRequest<{ employees: CorporateEmployeeDto[] }>(
-    `/api/admin/corporate/companies/${companyId}/employees`,
+    `/api/admin/corporate/companies/${companyId}/employees?pageSize=${PAGE_ALL}`,
   );
 }
 
@@ -410,7 +416,7 @@ export async function resendCorporateEmployeeInvite(id: string) {
 
 export async function fetchCorporateBeneficiaries(companyId: string) {
   return adminRequest<{ beneficiaries: CorporateBeneficiaryDto[] }>(
-    `/api/admin/corporate/companies/${companyId}/beneficiaries`,
+    `/api/admin/corporate/companies/${companyId}/beneficiaries?pageSize=${PAGE_ALL}`,
   );
 }
 
@@ -434,7 +440,7 @@ export async function resendCorporateBeneficiaryInvite(id: string) {
 
 export async function fetchCorporateRequests(companyId: string) {
   return adminRequest<{ requests: CorporateRequestDto[] }>(
-    `/api/admin/corporate/companies/${companyId}/requests`,
+    `/api/admin/corporate/companies/${companyId}/requests?pageSize=${PAGE_ALL}`,
   );
 }
 

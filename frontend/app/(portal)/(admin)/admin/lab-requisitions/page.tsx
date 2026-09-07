@@ -31,6 +31,14 @@ export default async function AdminLabRequisitionsPage({
         description="Exams prescribed by doctors, ready to agree with the patient and book with the laboratory."
       />
 
+      {fetched.ok && fetched.data.pagination.total > fetched.data.requisitions.length ? (
+        <AdminCard>
+          <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">
+            Showing the {fetched.data.requisitions.length} most recent of {fetched.data.pagination.total} requisitions.
+            Narrow the status, country or search to reach the rest.
+          </p>
+        </AdminCard>
+      ) : null}
       {!fetched.ok ? (
         <AdminCard>
           <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">
