@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { InvoiceDocument, type InvoiceDetail } from "../../_components/invoice-document";
+import { InvoicePhiReasonGate } from "../../_components/invoice-phi-reason-gate";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,9 @@ export const metadata: Metadata = buildPublicMetadata({
 });
 
 type Params = { invoiceId: string };
-type SearchParams = { token?: string };
+/** `t` is the short capability in links emailed today; `token` is the long
+ *  signed JWT older invoice emails still carry. Both are forwarded as-is. */
+type SearchParams = { t?: string; token?: string; reasonError?: string };
 
 /**
  * Reads the public billing endpoint, NOT /api/admin/invoices/:id. This page is
@@ -44,27 +47,52 @@ async function fetchPublicInvoiceDetail(
   }
 }
 
-async function fetchAuthenticatedInvoiceDetail(
-  invoiceId: string,
-): Promise<{ data: InvoiceDetail; source: "account" | "admin" } | null> {
+/**
+ * Result of the signed-in read. `phi-reason-required` is its own outcome, not a
+ * failure: the admin detail route runs the S-002 break-glass guard, so a plain
+ * ADMIN with no `gh_phi_reason` cookie is denied 403
+ * ADMIN_BREAK_GLASS_REASON_REQUIRED. Collapsing that into "no document" is what
+ * turned the admin portal's View button into a 404.
+ */
+type AuthenticatedRead =
+  | { kind: "data"; data: InvoiceDetail; source: "account" | "admin" }
+  | { kind: "phi-reason-required" }
+  | null;
+
+async function fetchAuthenticatedInvoiceDetail(invoiceId: string): Promise<AuthenticatedRead> {
   const backend = getBackendOrigin();
   if (!backend) return null;
   const requestHeaders = await headers();
   const cookie = requestHeaders.get("cookie") ?? "";
   if (!cookie) return null;
 
+  let phiReasonRequired = false;
+
   for (const source of ["account", "admin"] as const) {
     const res = await fetch(`${backend}/api/${source}/invoices/${encodeURIComponent(invoiceId)}`, {
       cache: "no-store",
       headers: { cookie },
     }).catch(() => null);
-    if (!res?.ok) continue;
+    if (!res) continue;
+
+    if (res.status === 403) {
+      const denial = (await res.json().catch(() => null)) as {
+        details?: { reasonCode?: string };
+      } | null;
+      if (denial?.details?.reasonCode === "ADMIN_BREAK_GLASS_REASON_REQUIRED") {
+        phiReasonRequired = true;
+      }
+      continue;
+    }
+
+    if (!res.ok) continue;
     const json = (await res.json()) as { ok?: boolean; data?: InvoiceDetail };
     if (json.ok && json.data) {
-      return { data: json.data, source };
+      return { kind: "data", data: json.data, source };
     }
   }
-  return null;
+
+  return phiReasonRequired ? { kind: "phi-reason-required" } : null;
 }
 
 export default async function PrintOrderInvoicePage({
@@ -75,17 +103,29 @@ export default async function PrintOrderInvoicePage({
   searchParams: Promise<SearchParams>;
 }) {
   const { invoiceId } = await params;
-  const { token } = await searchParams;
-  const publicToken = typeof token === "string" && token.trim().length > 0 ? token.trim() : null;
+  const { t, token, reasonError } = await searchParams;
+  const rawToken = typeof t === "string" && t.trim().length > 0 ? t : token;
+  const publicToken =
+    typeof rawToken === "string" && rawToken.trim().length > 0 ? rawToken.trim() : null;
 
   const publicData = publicToken ? await fetchPublicInvoiceDetail(invoiceId, publicToken) : null;
   const authed = publicData ? null : await fetchAuthenticatedInvoiceDetail(invoiceId);
-  const data = publicData ?? authed?.data ?? null;
+
+  if (authed?.kind === "phi-reason-required") {
+    return (
+      <InvoicePhiReasonGate
+        returnTo={`/print/order-invoices/${encodeURIComponent(invoiceId)}`}
+        showError={reasonError === "1"}
+      />
+    );
+  }
+
+  const data = publicData ?? (authed?.kind === "data" ? authed.data : null);
   if (!data) notFound();
 
   const downloadHref = publicToken
     ? `/api/public/invoices/${encodeURIComponent(invoiceId)}/pdf?token=${encodeURIComponent(publicToken)}`
-    : authed?.source === "admin"
+    : authed?.kind === "data" && authed.source === "admin"
       ? `/api/admin/invoices/${encodeURIComponent(invoiceId)}/pdf`
       : `/api/account/invoices/${encodeURIComponent(invoiceId)}/pdf`;
 

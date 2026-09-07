@@ -1,3 +1,4 @@
+import { wrapHtml } from "../../lib/email/templates.js";
 import type { AutomationLang } from "../automation/pre-payment-messages.js";
 
 /**
@@ -20,6 +21,8 @@ export type IdentityVerificationCtx = {
 
 type Copy = {
   subject: string;
+  /** Short heading for the branded email shell — the subject is a sentence. */
+  heading: string;
   /** Opening differs depending on whether a real doctor asked. */
   openingByDoctor: (doctor: string) => string;
   openingSystem: string;
@@ -35,6 +38,7 @@ type Copy = {
 const COPY: Record<AutomationLang, Copy> = {
   en: {
     subject: "Please confirm your identity before your consultation",
+    heading: "Confirm your identity",
     openingByDoctor: (d) =>
       `${d} has asked you to confirm your identity before your consultation.`,
     openingSystem: "Before your consultation we need to confirm your identity.",
@@ -54,6 +58,7 @@ const COPY: Record<AutomationLang, Copy> = {
   },
   pt: {
     subject: "Confirme a sua identidade antes da consulta",
+    heading: "Confirme a sua identidade",
     openingByDoctor: (d) =>
       `${d} pediu-lhe para confirmar a sua identidade antes da consulta.`,
     openingSystem: "Antes da sua consulta precisamos de confirmar a sua identidade.",
@@ -73,6 +78,7 @@ const COPY: Record<AutomationLang, Copy> = {
   },
   es: {
     subject: "Confirme su identidad antes de la consulta",
+    heading: "Confirme su identidad",
     openingByDoctor: (d) =>
       `${d} le ha pedido que confirme su identidad antes de la consulta.`,
     openingSystem: "Antes de su consulta necesitamos confirmar su identidad.",
@@ -92,6 +98,7 @@ const COPY: Record<AutomationLang, Copy> = {
   },
   cs: {
     subject: "Před konzultací potvrďte prosím svou totožnost",
+    heading: "Potvrďte svou totožnost",
     openingByDoctor: (d) =>
       `${d} vás požádal(a) o potvrzení totožnosti před konzultací.`,
     openingSystem: "Před konzultací potřebujeme potvrdit vaši totožnost.",
@@ -111,6 +118,7 @@ const COPY: Record<AutomationLang, Copy> = {
   },
   ro: {
     subject: "Vă rugăm să vă confirmați identitatea înainte de consultație",
+    heading: "Confirmați-vă identitatea",
     openingByDoctor: (d) =>
       `${d} v-a cerut să vă confirmați identitatea înainte de consultație.`,
     openingSystem: "Înainte de consultație trebuie să vă confirmăm identitatea.",
@@ -172,15 +180,27 @@ export function identityEmailHtml(
   const opening = ctx.doctorName
     ? c.openingByDoctor(escapeHtml(ctx.doctorName))
     : c.openingSystem;
-  return `<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#0F2E25">
-  <p>${escapeHtml(ctx.patientName)},</p>
-  <p>${opening}</p>
-  <p>${c.why}</p>
-  <ol>${c.steps.map((s) => `<li>${s}</li>`).join("")}</ol>
-  <p><a href="${ctx.verificationUrl}" style="background:#0F2E25;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none;display:inline-block">${c.cta}</a></p>
-  <p style="color:#5b6b66;font-size:13px">${c.privacy}</p>
-  <p>Global Health</p>
-</div>`;
+  const steps = c.steps
+    .map(
+      (s, i) => `<tr>
+          <td valign="top" style="padding:0 12px 12px 0;width:26px;">
+            <div style="width:26px;height:26px;border-radius:999px;background-color:#EDF7D4;color:#2D4F3D;font-family:'Cascadia Code',Consolas,Menlo,monospace;font-size:12px;font-weight:700;text-align:center;line-height:26px;">${i + 1}</div>
+          </td>
+          <td valign="top" style="padding:3px 0 12px;font-size:15px;color:#2D3B36;line-height:1.5;">${s}</td>
+        </tr>`,
+    )
+    .join("");
+  return wrapHtml(
+    c.heading,
+    `<p style="margin:0 0 16px;">${escapeHtml(ctx.patientName)},</p>
+     <p style="margin:0 0 16px;">${opening}</p>
+     <p style="margin:0 0 20px;">${c.why}</p>
+     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 8px;">
+       <tbody>${steps}</tbody>
+     </table>
+     <p style="margin:26px 0;text-align:center;"><a href="${escapeHtml(ctx.verificationUrl)}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;">${c.cta}</a></p>
+     <p style="font-size:13px;color:#737373;margin:0;">${c.privacy}</p>`,
+  );
 }
 
 export function identityWhatsAppMessage(

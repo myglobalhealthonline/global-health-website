@@ -30,7 +30,15 @@ import { verifyInvoicePublicCapability } from "../modules/invoices/invoice-publi
  * content is exposed — this is a billing document, not a consultation record.
  */
 const paramsSchema = z.object({ invoiceId: z.string().trim().min(1).max(120) });
-const querySchema = z.object({ token: z.string().trim().min(20).max(1200).optional() });
+/**
+ * `t` is the short capability (the invoice's raw nonce) emailed today; `token`
+ * is the long signed JWT older links still carry. Both verify through
+ * verifyInvoicePublicCapability, which tells the two apart.
+ */
+const querySchema = z.object({
+  t: z.string().trim().min(20).max(1200).optional(),
+  token: z.string().trim().min(20).max(1200).optional(),
+});
 
 const publicInvoicesRoute: FastifyPluginAsync = async (app) => {
   app.get<{ Params: { invoiceId: string } }>(
@@ -42,7 +50,7 @@ const publicInvoicesRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid invoice id"));
       }
       const query = querySchema.safeParse(request.query);
-      const token = query.success ? query.data.token : undefined;
+      const token = query.success ? (query.data.t ?? query.data.token) : undefined;
 
       try {
         const allowed = await verifyInvoicePublicCapability(params.data.invoiceId, token);
@@ -90,7 +98,7 @@ const publicInvoicesRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid invoice id"));
       }
       const query = querySchema.safeParse(request.query);
-      const token = query.success ? query.data.token : undefined;
+      const token = query.success ? (query.data.t ?? query.data.token) : undefined;
 
       try {
         const allowed = await verifyInvoicePublicCapability(params.data.invoiceId, token);
