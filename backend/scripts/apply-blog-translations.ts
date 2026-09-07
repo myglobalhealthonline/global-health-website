@@ -178,22 +178,27 @@ async function main() {
   assertApplySafe({ dryRun, approveHumanReview, staleGroups, inactiveGroups, reviewFields });
   if (dryRun) return;
 
-  await prisma.$transaction(async (tx) => {
-    for (const item of planned) {
-      if (item.existingRow) {
-        await tx.blogTranslation.update({
-          where: { postId_locale: { postId: item.group.postId, locale: item.group.targetLocale } },
-          data: item.applied,
-        });
-      } else {
-        const title = item.applied.title;
-        if (!title) throw new Error(`Internal preflight error: create plan for ${item.group.postId}:${item.group.targetLocale} has no title`);
-        await tx.blogTranslation.create({
-          data: { ...item.applied, postId: item.group.postId, locale: item.group.targetLocale, slug: item.slug!, title },
-        });
+  await prisma.$transaction(
+    async (tx) => {
+      for (const item of planned) {
+        if (item.existingRow) {
+          await tx.blogTranslation.update({
+            where: { postId_locale: { postId: item.group.postId, locale: item.group.targetLocale } },
+            data: item.applied,
+          });
+        } else {
+          const title = item.applied.title;
+          if (!title) throw new Error(`Internal preflight error: create plan for ${item.group.postId}:${item.group.targetLocale} has no title`);
+          await tx.blogTranslation.create({
+            data: { ...item.applied, postId: item.group.postId, locale: item.group.targetLocale, slug: item.slug!, title },
+          });
+        }
       }
-    }
-  });
+    },
+    // Blog article bodies are tens of KB each; the default 5s interactive-transaction
+    // timeout isn't enough for a batch that creates/updates many rows in one go.
+    { timeout: 60_000 },
+  );
   console.log(`\nAPPLIED ${fieldWrites} field(s) across ${planned.length} translation row(s).`);
 }
 
