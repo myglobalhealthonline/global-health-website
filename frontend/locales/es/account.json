@@ -476,7 +476,17 @@
     "closeDialog": "Cerrar ventana",
     "tabsAria": "Secciones de seguridad",
     "tabPassword": "Contraseña",
-    "tabAccess": "Acceso a la cuenta"
+    "tabAccess": "Acceso a la cuenta",
+    "formalRequestBody": "¿Necesita algo más que la eliminación automática en 30 días? Pida a nuestro equipo de privacidad que revise y borre formalmente sus datos personales. Respondemos en un plazo de 30 días. Los registros que la clínica debe conservar por ley se anonimizan en lugar de eliminarse.",
+    "formalRequestCta": "Solicitar eliminación formal",
+    "formalRequestDialogTitle": "¿Solicitar eliminación formal?",
+    "formalRequestDialogBody": "Esto envía una solicitud de supresión (RGPD) para que la revise nuestro equipo de privacidad. No programa la eliminación de su cuenta: para eso use «Eliminar mi cuenta».",
+    "formalRequestReasonLabel": "Motivo (opcional)",
+    "formalRequestReasonPlaceholder": "Díganos por qué lo solicita",
+    "formalRequestSubmit": "Enviar solicitud",
+    "formalRequestSubmitting": "Enviando…",
+    "formalRequestPending": "Solicitud de eliminación formal enviada el {date}. Nuestro equipo de privacidad responderá en un plazo de 30 días.",
+    "formalRequestFailed": "No se pudo enviar su solicitud"
   },
   "family": {
     "breadcrumb": "Cuenta",

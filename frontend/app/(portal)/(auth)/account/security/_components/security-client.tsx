@@ -14,6 +14,10 @@ import {
 } from "@/lib/api/auth-api";
 import { formatAppDate } from "@/lib/format-datetime";
 import { DeleteAccountButton } from "./delete-account-button";
+import {
+  DataDeletionRequestAction,
+  type DataDeletionRequestSummary,
+} from "./data-deletion-request";
 import type { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
 import { PortalTabs, PortalTabPanel } from "@/components/PortalTabs";
@@ -46,6 +50,13 @@ export function AccountSecurityClient({ i18n }: { i18n: SecurityI18n }) {
   const [cancellingDeletion, setCancellingDeletion] = useState(false);
   const [deletionMsg, setDeletionMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
+  // PR-2: the latest formal (admin-reviewed) GDPR erasure request, loaded
+  // alongside the user so the Data tab can show a pending one instead of
+  // letting the patient stack a second request on it.
+  const [deletionRequest, setDeletionRequest] = useState<DataDeletionRequestSummary | null>(
+    null,
+  );
+
   // Sign-out-all-devices state.
   const [signingOutAll, setSigningOutAll] = useState(false);
   const [signOutMsg, setSignOutMsg] = useState<string | null>(null);
@@ -60,6 +71,16 @@ export function AccountSecurityClient({ i18n }: { i18n: SecurityI18n }) {
         setDeletionScheduledAt(res.data.user.deletionScheduledAt);
       }
       setLoading(false);
+
+      const requests = await fetch("/api/account/data-deletion", {
+        credentials: "include",
+      })
+        .then((r) => r.json())
+        .catch(() => ({}) as { ok?: boolean });
+      if (cancelled) return;
+      const latest = (requests as { ok?: boolean; data?: { requests?: DataDeletionRequestSummary[] } })
+        .data?.requests?.[0];
+      if (latest) setDeletionRequest(latest);
     }
     void load();
     return () => {
@@ -383,6 +404,21 @@ export function AccountSecurityClient({ i18n }: { i18n: SecurityI18n }) {
                   i18n={a.security}
                   onScheduled={setDeletionScheduledAt}
                 />
+              </div>
+
+              {/* PR-2: the formal, admin-reviewed erasure request — the
+                  escalation path beside the self-service scheduled delete. */}
+              <div className="gh-form-section__span-2 flex flex-col gap-2">
+                <p className="text-sm text-[var(--portal-muted)]">
+                  {a.security.formalRequestBody}
+                </p>
+                <div className="flex justify-end">
+                  <DataDeletionRequestAction
+                    i18n={a.security}
+                    request={deletionRequest}
+                    onSubmitted={setDeletionRequest}
+                  />
+                </div>
               </div>
             </FormSection>
             </PortalTabPanel>

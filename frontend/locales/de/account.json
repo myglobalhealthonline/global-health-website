@@ -476,7 +476,17 @@
     "closeDialog": "Dialog schließen",
     "tabsAria": "Sicherheitsbereiche",
     "tabPassword": "Passwort",
-    "tabAccess": "Kontozugriff"
+    "tabAccess": "Kontozugriff",
+    "formalRequestBody": "Reicht die automatische Löschung nach 30 Tagen nicht aus? Bitten Sie unser Datenschutzteam, Ihre personenbezogenen Daten förmlich zu prüfen und zu löschen. Wir antworten innerhalb von 30 Tagen. Unterlagen, die die Klinik gesetzlich aufbewahren muss, werden anonymisiert statt gelöscht.",
+    "formalRequestCta": "Förmliche Löschung beantragen",
+    "formalRequestDialogTitle": "Förmliche Löschung beantragen?",
+    "formalRequestDialogBody": "Damit senden Sie einen DSGVO-Löschantrag zur Prüfung an unser Datenschutzteam. Ihr Konto wird dadurch nicht zur Löschung vorgemerkt – nutzen Sie dafür „Mein Konto löschen“.",
+    "formalRequestReasonLabel": "Grund (optional)",
+    "formalRequestReasonPlaceholder": "Sagen Sie uns, warum Sie das beantragen",
+    "formalRequestSubmit": "Antrag senden",
+    "formalRequestSubmitting": "Wird gesendet…",
+    "formalRequestPending": "Förmlicher Löschantrag am {date} gesendet. Unser Datenschutzteam antwortet innerhalb von 30 Tagen.",
+    "formalRequestFailed": "Ihr Antrag konnte nicht gesendet werden"
   },
   "family": {
     "breadcrumb": "Konto",

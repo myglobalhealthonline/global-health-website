@@ -476,7 +476,17 @@
     "closeDialog": "Close dialog",
     "tabsAria": "Security sections",
     "tabPassword": "Password",
-    "tabAccess": "Account access"
+    "tabAccess": "Account access",
+    "formalRequestBody": "Need more than the 30-day self-service deletion? Ask our privacy team to review and erase your personal data formally. We respond within 30 days. Records the clinic must keep by law are anonymised rather than deleted.",
+    "formalRequestCta": "Request formal deletion",
+    "formalRequestDialogTitle": "Request formal deletion?",
+    "formalRequestDialogBody": "This sends a GDPR erasure request to our privacy team for review. It does not schedule your account for deletion — use “Delete my account” for that.",
+    "formalRequestReasonLabel": "Reason (optional)",
+    "formalRequestReasonPlaceholder": "Tell us why you are asking",
+    "formalRequestSubmit": "Submit request",
+    "formalRequestSubmitting": "Submitting…",
+    "formalRequestPending": "Formal deletion request submitted on {date}. Our privacy team will respond within 30 days.",
+    "formalRequestFailed": "Could not submit your request"
   },
   "family": {
     "breadcrumb": "Account",

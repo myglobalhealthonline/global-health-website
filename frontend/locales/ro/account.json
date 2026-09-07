@@ -476,7 +476,17 @@
     "closeDialog": "Închide fereastra",
     "tabsAria": "Secțiuni de securitate",
     "tabPassword": "Parolă",
-    "tabAccess": "Acces la cont"
+    "tabAccess": "Acces la cont",
+    "formalRequestBody": "Aveți nevoie de mai mult decât ștergerea automată în 30 de zile? Cereți echipei noastre de confidențialitate să analizeze și să șteargă formal datele dumneavoastră personale. Răspundem în termen de 30 de zile. Înregistrările pe care clinica trebuie să le păstreze conform legii sunt anonimizate, nu șterse.",
+    "formalRequestCta": "Solicitați ștergerea formală",
+    "formalRequestDialogTitle": "Solicitați ștergerea formală?",
+    "formalRequestDialogBody": "Aceasta trimite o cerere de ștergere (GDPR) spre analiză echipei noastre de confidențialitate. Nu programează ștergerea contului — pentru asta folosiți „Șterge contul meu”.",
+    "formalRequestReasonLabel": "Motiv (opțional)",
+    "formalRequestReasonPlaceholder": "Spuneți-ne de ce solicitați acest lucru",
+    "formalRequestSubmit": "Trimiteți cererea",
+    "formalRequestSubmitting": "Se trimite…",
+    "formalRequestPending": "Cerere de ștergere formală trimisă la {date}. Echipa noastră de confidențialitate va răspunde în termen de 30 de zile.",
+    "formalRequestFailed": "Cererea nu a putut fi trimisă"
   },
   "family": {
     "breadcrumb": "Cont",

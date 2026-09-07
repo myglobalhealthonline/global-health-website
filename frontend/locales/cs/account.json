@@ -476,7 +476,17 @@
     "closeDialog": "Zavřít dialog",
     "tabsAria": "Sekce zabezpečení",
     "tabPassword": "Heslo",
-    "tabAccess": "Přístup k účtu"
+    "tabAccess": "Přístup k účtu",
+    "formalRequestBody": "Potřebujete více než automatické smazání do 30 dnů? Požádejte náš tým pro ochranu osobních údajů o formální posouzení a výmaz vašich osobních údajů. Odpovíme do 30 dnů. Záznamy, které musí klinika ze zákona uchovávat, anonymizujeme místo smazání.",
+    "formalRequestCta": "Požádat o formální výmaz",
+    "formalRequestDialogTitle": "Požádat o formální výmaz?",
+    "formalRequestDialogBody": "Odešle se žádost o výmaz podle GDPR k posouzení našemu týmu pro ochranu osobních údajů. Smazání účtu tím nenaplánujete – k tomu použijte „Smazat můj účet“.",
+    "formalRequestReasonLabel": "Důvod (nepovinné)",
+    "formalRequestReasonPlaceholder": "Napište nám, proč o to žádáte",
+    "formalRequestSubmit": "Odeslat žádost",
+    "formalRequestSubmitting": "Odesílání…",
+    "formalRequestPending": "Žádost o formální výmaz odeslána {date}. Náš tým pro ochranu osobních údajů odpoví do 30 dnů.",
+    "formalRequestFailed": "Žádost se nepodařilo odeslat"
   },
   "family": {
     "breadcrumb": "Účet",
