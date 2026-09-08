@@ -7,9 +7,10 @@ import {
   DoctorNotFoundError,
 } from "./manual-booking.service.js";
 import {
-  reclaimSlotForRescheduledAppointment,
-  releaseAppointmentSlot,
-} from "../doctor-availability/doctor-availability.service.js";
+  assertTargetSlotFree,
+  moveAppointmentSlot,
+  readSlotMinutes,
+} from "./appointment-slot-move.service.js";
 import { applyRescheduleSideEffects } from "./reschedule-side-effects.service.js";
 import { recordAudit } from "../audit/audit.service.js";
 import { getAppointmentById, type AdminAppointmentDetail } from "./appointments.service.js";
@@ -48,6 +49,8 @@ export class NoAppointmentChangesError extends Error {
     this.name = "NoAppointmentChangesError";
   }
 }
+
+export { TargetSlotUnavailableError } from "./appointment-slot-move.service.js";
 
 export type AdminUpdateAppointmentInput = {
   appointmentId: string;
@@ -160,7 +163,16 @@ export async function adminUpdateAppointment(
   // Refusing loudly is the honest interim. Rescheduling a test booking means
   // cancelling it (which now releases the centre slot correctly) and booking
   // again.
-  if (diff.timeChanged && row.testCenterTimeSlotId) {
+  // A DoctorTimeSlot belongs to ONE doctor, so a doctor swap has to move the
+  // reservation even when the clock time is untouched. Gating the slot work on
+  // `timeChanged` alone left the slot sitting on the OLD doctor's calendar
+  // while the appointment pointed at the new one — so the new doctor's hour was
+  // never marked BOOKED and the public booking page happily sold it again. That
+  // is exactly how one doctor ended up with a manual booking and a website
+  // booking on the same hour (2026-09-08).
+  const slotMoveNeeded = diff.timeChanged || diff.doctorChanged;
+
+  if (slotMoveNeeded && row.testCenterTimeSlotId) {
     throw new TestBookingRescheduleUnsupportedError();
   }
 
@@ -200,21 +212,16 @@ export async function adminUpdateAppointment(
 
   // Read the released slot's length before it goes, so the consultation keeps
   // its true duration when we re-claim a slot at the new time.
-  const previousSlot =
-    diff.timeChanged && row.timeSlotId
-      ? await prisma.doctorTimeSlot.findUnique({
-          where: { id: row.timeSlotId },
-          select: { startAt: true, endAt: true },
-        })
-      : null;
-  const previousSlotMinutes = previousSlot
-    ? Math.round(
-        (previousSlot.endAt.getTime() - previousSlot.startAt.getTime()) / 60_000,
-      )
+  const previousSlotMinutes = slotMoveNeeded
+    ? await readSlotMinutes(row.timeSlotId)
     : null;
 
-  if (diff.timeChanged && row.timeSlotId) {
-    await releaseAppointmentSlot(input.appointmentId).catch(() => undefined);
+  if (slotMoveNeeded) {
+    await assertTargetSlotFree(
+      diff.nextDoctorId,
+      diff.nextScheduledAt,
+      row.timeSlotId,
+    );
   }
 
   await prisma.$transaction(async (tx) => {
@@ -292,17 +299,20 @@ export async function adminUpdateAppointment(
     }
   });
 
-  // The move above only wrote `scheduledAt` — the old slot is already
-  // released, so without this the new time is backed by no DoctorTimeSlot and
-  // the booking page keeps offering it to other patients. Best-effort: an
-  // off-grid admin time simply stays slotless, as before.
-  if (diff.timeChanged) {
-    await reclaimSlotForRescheduledAppointment(
-      input.appointmentId,
-      diff.nextDoctorId,
-      diff.nextScheduledAt,
-      previousSlotMinutes,
-    ).catch(() => null);
+  // The move above only wrote `scheduledAt`/`doctorId`. Hand the old
+  // reservation back and claim one at the new time/doctor — without this the
+  // new time is backed by no DoctorTimeSlot and the booking page keeps offering
+  // it to other patients. Best-effort: an off-grid admin time simply stays
+  // slotless, as before; a taken slot was rejected up front.
+  let reclaimedSlotId: string | null = null;
+  if (slotMoveNeeded) {
+    reclaimedSlotId = await moveAppointmentSlot({
+      appointmentId: input.appointmentId,
+      currentSlotId: row.timeSlotId,
+      nextDoctorId: diff.nextDoctorId,
+      nextScheduledAt: diff.nextScheduledAt,
+      slotMinutes: previousSlotMinutes,
+    });
   }
 
   // Deadline move, reminder re-arm, Meet reissue and the patient/doctor
@@ -340,6 +350,11 @@ export async function adminUpdateAppointment(
         meetingUrl,
       },
       orderId,
+      // Whether the new time/doctor is actually backed by a reservation. A null
+      // here on a slotMoveNeeded edit means the appointment is slotless (admin
+      // picked an off-grid time), which is the state to look at first when a
+      // doctor reports a surprise double-booking.
+      ...(slotMoveNeeded ? { slotId: reclaimedSlotId } : {}),
     },
     request: input.request,
   }).catch(() => undefined);

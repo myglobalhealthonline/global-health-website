@@ -8,6 +8,11 @@ import {
   updateAppointmentStatus,
 } from "../modules/appointments/appointments.service.js";
 import { releaseAppointmentSlot } from "../modules/doctor-availability/doctor-availability.service.js";
+import {
+  assertTargetSlotFree,
+  moveAppointmentSlot,
+  readSlotMinutes,
+} from "../modules/appointments/appointment-slot-move.service.js";
 import { releaseMembershipAllowanceForSlot } from "../modules/memberships/membership-allowance.service.js";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
@@ -30,6 +35,8 @@ import {
   verifyManageMembershipsAccess,
 } from "../utils/manage-memberships-auth.js";
 import { notifyDoctor } from "../modules/notifications/notify.service.js";
+import { recomputePrePaymentDueAt } from "../modules/automation/pre-payment-flow.service.js";
+import { rearmPostPaymentRemindersForReschedule } from "../modules/automation/post-payment-flow.service.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import {
   adminAppointmentsQuerySchema,
@@ -61,6 +68,7 @@ import {
   adminUpdateAppointment,
   AppointmentNotFoundError,
   NoAppointmentChangesError,
+  TargetSlotUnavailableError,
   TestBookingRescheduleUnsupportedError,
 } from "../modules/appointments/admin-update-appointment.service.js";
 
@@ -397,37 +405,64 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
       ]);
       const beforeDoctorId = beforeSnapshot?.doctorId ?? null;
 
-      // Reschedule guard: if scheduledAt is changing AND a slot is
-      // currently linked, release the booked slot before applying the
-      // update. Without this the original time stays BOOKED forever
-      // and can't be re-offered. `before.scheduledAt` is the ISO
-      // string (AdminAppointmentDetail.scheduledAt: string | null),
-      // so compare strings directly.
+      // Reschedule guard: a DoctorTimeSlot belongs to ONE doctor at ONE time,
+      // so BOTH dimensions have to move the reservation. Releasing the old slot
+      // without claiming a new one left the appointment slotless and its hour
+      // still on sale; ignoring a doctor swap left the reservation on the OLD
+      // doctor's calendar while the new doctor's hour stayed open — which is
+      // how one doctor ended up with two consultations in the same hour
+      // (2026-09-08). `before.scheduledAt` is the ISO string
+      // (AdminAppointmentDetail.scheduledAt: string | null), so compare
+      // strings directly.
       const isReschedule =
         scheduledAtInput !== undefined &&
         (before?.scheduledAt ?? null) !==
           (scheduledAtInput === null ? null : scheduledAtInput.toISOString());
-      if (isReschedule && beforeSnapshot?.timeSlotId) {
-        const releasedSlotId = await releaseAppointmentSlot(
-          params.data.id,
-        ).catch((err) => {
-          app.log.warn({ err }, "Slot release failed on admin reschedule");
-          return null;
-        });
-        if (releasedSlotId) {
-          recordAudit({
-            actorRole: "ADMIN",
-            action: "TIMESLOT_RELEASED",
-            entityType: "DoctorTimeSlot",
-            entityId: releasedSlotId,
-            metadata: {
-              reason: "admin_reschedule",
-              appointmentId: params.data.id,
-            },
-            request,
-          }).catch(() => {});
+      const isDoctorChange =
+        doctorIdInput !== undefined && doctorIdInput !== beforeDoctorId;
+      const slotMoveNeeded = isReschedule || isDoctorChange;
+
+      const nextScheduledAt =
+        scheduledAtInput !== undefined
+          ? scheduledAtInput
+          : before?.scheduledAt
+            ? new Date(before.scheduledAt)
+            : null;
+      const nextDoctorId =
+        doctorIdInput !== undefined ? doctorIdInput : beforeDoctorId;
+
+      // Refuse a move onto an hour the target doctor has already given away,
+      // before anything is written. 409, not 422: the payload is fine, the
+      // diary is not.
+      if (slotMoveNeeded) {
+        try {
+          await assertTargetSlotFree(
+            nextDoctorId,
+            nextScheduledAt,
+            beforeSnapshot?.timeSlotId ?? null,
+          );
+        } catch (slotErr) {
+          if (slotErr instanceof TargetSlotUnavailableError) {
+            return reply.status(409).send(errorResponse(slotErr.message));
+          }
+          throw slotErr;
         }
       }
+
+      const previousSlotMinutes = slotMoveNeeded
+        ? await readSlotMinutes(beforeSnapshot?.timeSlotId ?? null)
+        : null;
+
+      // The order behind this consultation, for the deadline/ladder re-anchor
+      // below. Null for legacy and manual rows with no order line.
+      const orderIdForAppointment = slotMoveNeeded
+        ? (
+            await prisma.orderItem.findFirst({
+              where: { appointmentId: params.data.id },
+              select: { orderId: true },
+            })
+          )?.orderId ?? null
+        : null;
 
       // For IN_PERSON consults, refuse to land the patch in a state with
       // no location source. Compute the *post-patch* mode (in case admin
@@ -466,6 +501,61 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
       });
       if (!appointment) {
         return reply.status(404).send(errorResponse("Appointment not found"));
+      }
+
+      // `scheduleAppointment` writes the scalar columns only. Hand the old
+      // reservation back to the grid and claim one at the new time/doctor —
+      // best-effort, so an off-grid admin time still saves and simply stays
+      // slotless.
+      if (slotMoveNeeded) {
+        const releasedSlotId = beforeSnapshot?.timeSlotId ?? null;
+        const claimedSlotId = await moveAppointmentSlot({
+          appointmentId: params.data.id,
+          currentSlotId: releasedSlotId,
+          nextDoctorId,
+          nextScheduledAt,
+          slotMinutes: previousSlotMinutes,
+        });
+        if (releasedSlotId) {
+          recordAudit({
+            actorRole: "ADMIN",
+            action: "TIMESLOT_RELEASED",
+            entityType: "DoctorTimeSlot",
+            entityId: releasedSlotId,
+            metadata: {
+              reason: isDoctorChange ? "admin_doctor_change" : "admin_reschedule",
+              appointmentId: params.data.id,
+              // null = the appointment is now slotless (off-grid time). First
+              // thing to check when a doctor reports a surprise double-booking.
+              claimedSlotId,
+            },
+            request,
+          }).catch(() => {});
+        }
+      }
+
+      // Deadlines and ladders are anchored to the consultation's start, so a
+      // move through this form has to re-anchor them the way every other
+      // reschedule path does. Without this the pre-payment cancel sweep still
+      // counts down to the OLD time (it can void a booking that was moved
+      // later), and a post-payment stage already fired for the old time — or
+      // for the previous doctor — never fires again.
+      //
+      // Deliberately NOT the full `applyRescheduleSideEffects`: this endpoint
+      // takes the meeting link from the admin and sends its own schedule email,
+      // so regenerating Meet and firing the "appointment updated" notification
+      // here would contradict both.
+      if (slotMoveNeeded && orderIdForAppointment) {
+        if (isReschedule) {
+          await recomputePrePaymentDueAt(
+            orderIdForAppointment,
+            nextScheduledAt,
+          ).catch(() => undefined);
+        }
+        await rearmPostPaymentRemindersForReschedule(
+          orderIdForAppointment,
+          nextScheduledAt,
+        ).catch(() => undefined);
       }
 
       // Fire the schedule email only when the appointment has enough
@@ -591,6 +681,10 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
       }
       if (error instanceof TestBookingRescheduleUnsupportedError) {
         return reply.status(422).send(errorResponse(error.message));
+      }
+      // 409: nothing wrong with the payload — the target diary entry is taken.
+      if (error instanceof TargetSlotUnavailableError) {
+        return reply.status(409).send(errorResponse(error.message));
       }
       if (error instanceof DoctorNotFoundError) {
         return reply.status(404).send(errorResponse(error.message));
