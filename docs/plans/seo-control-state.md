@@ -8311,3 +8311,17 @@ The 2026-09-08 live readback also passed: HTTP 200, current title and meta
 description, `index, follow`, self-canonical, `pt-PT` hreflang and visible `FAQPage`
 structured data. The Portugal FAQ recrawl monitor is **closed**. No implementation or
 production write was required.
+
+---
+
+## 45. Mala removal deployed; German careers retained (2026-09-08)
+
+Commit `1a8891f7` is live. All 13 legacy and current-locale URL shapes for
+`dr-mala-vili-rajan` return a direct HTTP 410, no redirect, with `X-Robots-Tag:
+noindex`. The owner confirmed the clinician is permanently gone; the recorded 90-day
+cost was 0 clicks / 61 impressions. No GSC validation should be restarted for this
+intentional removal.
+
+`/portugal/de/careers` remains HTTP 200, `index, follow`, and self-canonical. GSC URL
+Inspection reports the URL is on Google and indexed, so the bulk “Crawled — currently
+not indexed” row is stale. Keep the URL in the sitemap for German candidates.
