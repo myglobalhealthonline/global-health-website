@@ -1,3 +1,4 @@
+import { tracePublicRead } from "@/lib/content/trace-public-read";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -229,16 +230,16 @@ export default async function CountryLangHomePage({
     gpLanguages,
   ] =
     await Promise.all([
-      getPageContent(code, "HOME", lang as PublicLocale),
-      getCountryDoctors(code, lang),
+      tracePublicRead(`home.${code}.page`, () => getPageContent(code, "HOME", lang as PublicLocale)),
+      tracePublicRead(`home.${code}.doctors`, () => getCountryDoctors(code, lang, "marketing")),
       // One query for every kind, partitioned in memory below — replaces the
       // former three per-kind round-trips (each with its own country check).
-      getCountryServices(code, undefined, lang),
+      tracePublicRead(`home.${code}.services`, () => getCountryServices(code, undefined, lang, "marketing")),
       // Count projection, not the full global roster (was fetched only for
       // its `.length`).
-      getPublicDoctorsCount(),
-      getCountryTrust(code, lang as LocaleCode),
-      getGpLanguages(code),
+      tracePublicRead(`home.${code}.doctor-count`, () => getPublicDoctorsCount()),
+      tracePublicRead(`home.${code}.trust`, () => getCountryTrust(code, lang as LocaleCode)),
+      tracePublicRead(`home.${code}.gp-languages`, () => getGpLanguages(code, "marketing")),
     ]);
 
   const prioritizedCountryServices = allCountryServices
@@ -605,11 +606,9 @@ export default async function CountryLangHomePage({
           countryCode: code,
           countrySlug: slug,
           lang,
-          // Dropdown must only offer languages bookable right now — the full
-          // pool (gpLanguages.languages) still backs the trust/marquee copy
-          // above, where "N languages spoken" is a stable roster stat, not a
-          // same-day availability claim.
-          languages: gpLanguages.bookableLanguages,
+          // Configured languages are not a promise of open slots. The panel
+          // validates the selected language in its separate live request.
+          languages: gpLanguages.languages,
           configured: gpLanguages.configured,
         }}
         heroTitle={

@@ -546,6 +546,7 @@ export async function listServicesByCountry(
   countryCode: string,
   kind?: ServiceKind,
   locale?: LocaleCode,
+  options: { marketing?: boolean } = {},
 ) {
   try {
     const rows = await prisma.service.findMany({
@@ -634,13 +635,15 @@ export async function listServicesByCountry(
         insuranceSeoLine: buildInsuranceSeoLine(insuranceOptions.map((o) => o.name)),
       };
     });
-    const summaries = await mapBookabilityBounded(
-      rows,
-      (service) =>
-        resolveBookabilityFailClosed(() =>
-          getServiceBookability({ countryCode, serviceId: service.id }),
-        ),
-    );
+    const summaries = options.marketing
+      ? mapped.map(() => ({ state: "UNKNOWN" as const, reasonCode: null, nextAvailableAt: null }))
+      : await mapBookabilityBounded(
+        rows,
+        (service) =>
+          resolveBookabilityFailClosed(() =>
+            getServiceBookability({ countryCode, serviceId: service.id }),
+          ),
+      );
     return mapped.map((service, index) => ({ ...service, bookability: summaries[index]! }));
   } catch (error) {
     throw normalizeDbError(error, "Services data is unavailable");

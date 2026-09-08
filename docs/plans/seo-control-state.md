@@ -1,6 +1,6 @@
 # SEO control state — canonical
 
-**Last operational update: 2026-09-04** — §42, the six-market audit, ledger reconciliation and one P0 measurement defect. Historical audit files remain snapshots;
+**Last operational update: 2026-09-09** — §43 records local, undeployed performance remediation; §42 retains the six-market audit and P0 measurement defect. Historical audit files remain snapshots;
 this ledger is the source of truth for current status, dated gates and future work.
 
 **This file is the single source of truth for the SEO workstream.** It carries the
@@ -8325,3 +8325,10 @@ intentional removal.
 `/portugal/de/careers` remains HTTP 200, `index, follow`, and self-canonical. GSC URL
 Inspection reports the URL is on Google and indexed, so the bulk “Crawled — currently
 not indexed” row is stale. Keep the URL in the sitemap for German candidates.
+
+
+## 43. Performance remediation working tree (2026-09-09)
+
+Owner-requested follow-up to the [performance audit](../audits/performance/2026-09-09/README.md): local application changes improve booking feedback/deadlines, remove homepage scheduling dependencies, reduce card/dictionary work, and remove unconditional shared document caching that also applied to errors. Full status and verification limits: [remediation record](../audits/performance/2026-09-09/REMEDIATION.md). These changes are **not deployed**; no indexation or ranking finding is reopened or closed.
+
+Two live six-market smoke passes returned complete 200 documents, including Brazil; its earlier intermittent upstream failure still needs authenticated Railway logs. Remaining gates are a successful production build/bundle analysis, deployment connection budget, post-deployment browser/cold-cache measurements and the existing GA property correction. This performance-only batch made no SEO content or indexation submission, and did not access GSC/CrUX credentials.

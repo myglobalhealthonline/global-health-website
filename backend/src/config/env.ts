@@ -85,6 +85,13 @@ const envSchema = z.object({
    *  on the Postgres max_connections ceiling for a larger total
    *  (DB_POOL_MAX × CLUSTER_WORKERS). */
   DB_POOL_MAX: z.coerce.number().int().min(1).max(100).optional(),
+  /**
+   * Connections reserved for scheduler advisory locks. These are separate
+   * from the Prisma request pool; keep the combined per-worker total within
+   * the database connection budget. Two permits concurrent cron ticks while
+   * leaving the request pool available for application queries.
+   */
+  SCHEDULER_LOCK_POOL_MAX: z.coerce.number().int().min(1).max(16).default(2),
   ADMIN_API_TOKEN: z.string().trim().min(1, "ADMIN_API_TOKEN cannot be empty").optional(),
   ADMIN_TOKEN_FALLBACK_ENABLED: z
     .union([z.literal("true"), z.literal("false"), z.boolean()])

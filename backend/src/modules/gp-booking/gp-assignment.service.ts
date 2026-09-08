@@ -204,10 +204,13 @@ export async function getGpAvailability(args: {
   countryCode: string;
   languageCode: string;
   days: number;
+  /** Calendar days from the clinic-local midnight, used by the homepage's
+   * today/tomorrow panel. Other consumers retain their rolling horizon. */
+  clinicDays?: boolean;
 }): Promise<GpAvailabilityResult> {
   const { countryCode, languageCode } = args;
   const days = Math.min(30, Math.max(1, args.days));
-  const cacheKey = `${countryCode.toLowerCase()}:${languageCode.toLowerCase()}:${days}`;
+  const cacheKey = `${countryCode.toLowerCase()}:${languageCode.toLowerCase()}:${days}:${args.clinicDays ? "clinic" : "rolling"}`;
   const cached = availabilityCache.get(cacheKey);
   if (cached) return cached;
   try {
@@ -224,7 +227,9 @@ export async function getGpAvailability(args: {
 
     const now = Date.now();
     const fromUtc = new Date(now + START_BUFFER_MS);
-    const toUtc = new Date(now + days * DAY_MS);
+    const toUtc = args.clinicDays
+      ? DateTime.now().setZone(clinicTimezone).startOf("day").plus({ days }).toUTC().toJSDate()
+      : new Date(now + days * DAY_MS);
 
     const peakConfig = await getServicePeakConfig(service.id);
     const fallbackCurrency = service.currencyCode;
@@ -319,8 +324,11 @@ function endOfClinicTomorrowUtc(timeZone: string): Date {
  * as `getGpAvailability`, so a language survives the filter only when the
  * availability endpoint would actually return times for it.
  */
-export async function getGpLanguages(countryCode: string): Promise<GpLanguagesResult> {
-  const cacheKey = countryCode.toLowerCase();
+export async function getGpLanguages(
+  countryCode: string,
+  mode: "live" | "marketing" = "live",
+): Promise<GpLanguagesResult> {
+  const cacheKey = `${countryCode.toLowerCase()}:${mode}`;
   const cached = languagesCache.get(cacheKey);
   if (cached) return cached;
   const store = (value: GpLanguagesResult) => {
@@ -359,6 +367,11 @@ export async function getGpLanguages(countryCode: string): Promise<GpLanguagesRe
       for (const lang of normalizeLanguages(row.languages)) set.add(lang);
     }
     const languages = Array.from(set).sort();
+    // Homepage SSR needs stable pool configuration only. The browser performs
+    // the live, clinic-day slot read after its shell is visible.
+    if (mode === "marketing") {
+      return store({ configured: Boolean(service), languages, bookableLanguages: [] });
+    }
     if (
       rows.length === 0
       || !policy.countryBookingEnabled

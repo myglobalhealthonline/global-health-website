@@ -1,10 +1,18 @@
 "use client";
 
 import Script from "next/script";
+import { MessageCircle } from "lucide-react";
+import { useState } from "react";
+import { useParams } from "next/navigation";
 import { useConsent } from "@/components/compliance/use-consent";
 
 const CONVAI_AGENT_ID = "agent_3501kk8pxt0yetdss61p5qa7qs2e";
 const CONVAI_EMBED_SRC = "https://unpkg.com/@elevenlabs/convai-widget-embed";
+const LAUNCHER_LABELS: Record<string, string> = {
+  en: "Open voice assistant", cs: "Otevřít hlasového asistenta",
+  pt: "Abrir assistente de voz", es: "Abrir asistente de voz",
+  ro: "Deschide asistentul vocal", de: "Sprachassistent öffnen",
+};
 
 /**
  * ElevenLabs Conversational AI widget — the bottom-RIGHT floating launcher.
@@ -23,14 +31,29 @@ const CONVAI_EMBED_SRC = "https://unpkg.com/@elevenlabs/convai-widget-embed";
  */
 export function ElevenLabsConvai() {
   const { consent } = useConsent();
+  const [opened, setOpened] = useState(false);
+  const { lang } = useParams<{ lang?: string }>();
 
   if (consent?.thirdParty !== true) return null;
 
   return (
     <>
-      <link rel="preconnect" href="https://unpkg.com" />
-      <elevenlabs-convai agent-id={CONVAI_AGENT_ID} />
-      <Script id="elevenlabs-convai-embed" src={CONVAI_EMBED_SRC} strategy="lazyOnload" async />
+      {!opened ? <button
+        type="button"
+        className="gh-whatsapp-fab"
+        style={{ left: "auto", right: "1.25rem" }}
+        aria-label={LAUNCHER_LABELS[lang ?? "en"] ?? LAUNCHER_LABELS.en}
+        onClick={() => setOpened(true)}
+      >
+        <MessageCircle className="size-5" aria-hidden />
+      </button> : null}
+      {opened ? (
+        <>
+          <link rel="preconnect" href="https://unpkg.com" />
+          <elevenlabs-convai agent-id={CONVAI_AGENT_ID} />
+          <Script id="elevenlabs-convai-embed" src={CONVAI_EMBED_SRC} strategy="afterInteractive" async />
+        </>
+      ) : null}
     </>
   );
 }

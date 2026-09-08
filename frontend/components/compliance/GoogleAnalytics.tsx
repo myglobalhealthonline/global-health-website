@@ -1,5 +1,6 @@
 "use client";
 
+import { WebVitals } from "@/components/analytics/WebVitals";
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Script from "next/script";
@@ -99,6 +100,7 @@ export function GoogleAnalytics() {
 
   return (
     <>
+      <WebVitals />
       <link rel="preconnect" href="https://www.googletagmanager.com" />
       <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
       {/* anonymize_ip is deliberately absent: it is a Universal Analytics

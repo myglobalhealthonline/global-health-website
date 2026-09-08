@@ -1,0 +1,120 @@
+[
+  {
+    "url": "https://www.myglobalhealth.online/brazil/pt",
+    "finalUrl": "https://www.myglobalhealth.online/brazil/pt",
+    "status": 500,
+    "headersMs": 8948,
+    "totalMs": 9025,
+    "decodedBytes": 72135,
+    "headers": {
+      "cache-control": "public, max-age=0, s-maxage=60, stale-while-revalidate=300",
+      "content-encoding": "gzip",
+      "content-length": null,
+      "x-railway-request-id": "PGzN_bl2QVqiSfItss7a6g",
+      "x-railway-edge": "sin1"
+    },
+    "errorDigest": [
+      "digest\\\":\\\"1545395240\\\"}\\n\"])</script></body></html>"
+    ]
+  },
+  {
+    "url": "https://www.myglobalhealth.online/ireland/en/book?service=acute-medical-consultation",
+    "finalUrl": "https://www.myglobalhealth.online/ireland/en/book?service=acute-medical-consultation",
+    "status": 200,
+    "headersMs": 11198,
+    "totalMs": 11284,
+    "decodedBytes": 383210,
+    "headers": {
+      "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "content-encoding": "gzip",
+      "content-length": null,
+      "x-railway-request-id": "yF3Q-Sf1T-mF-DWH5nX1uw",
+      "x-railway-edge": "sin1"
+    }
+  },
+  {
+    "url": "https://www.myglobalhealth.online/ireland/en/services/acute-medical-consultation",
+    "finalUrl": "https://www.myglobalhealth.online/ireland/en/services/acute-medical-consultation",
+    "status": 200,
+    "headersMs": 275,
+    "totalMs": 319,
+    "decodedBytes": 283350,
+    "headers": {
+      "cache-control": "public, max-age=0, s-maxage=60, stale-while-revalidate=300",
+      "content-encoding": "gzip",
+      "content-length": null,
+      "x-railway-request-id": "q2kXVdWVTDqR-wIx7fhULg",
+      "x-railway-edge": "sin1"
+    }
+  },
+  {
+    "url": "https://www.myglobalhealth.online/ireland/en/pricing",
+    "finalUrl": "https://www.myglobalhealth.online/ireland/en/pricing",
+    "status": 200,
+    "headersMs": 274,
+    "totalMs": 301,
+    "decodedBytes": 208300,
+    "headers": {
+      "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "content-encoding": "gzip",
+      "content-length": null,
+      "x-railway-request-id": "4L0NUybaSnCFc0Ej7fhULg",
+      "x-railway-edge": "sin1"
+    }
+  },
+  {
+    "url": "https://www.myglobalhealth.online/ireland/en/health-tests",
+    "finalUrl": "https://www.myglobalhealth.online/ireland/en/health-tests",
+    "status": 404,
+    "headersMs": 266,
+    "totalMs": 286,
+    "decodedBytes": 131148,
+    "headers": {
+      "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "content-encoding": "gzip",
+      "content-length": null,
+      "x-railway-request-id": "lexcgM9ZSm68-MQ42JZdWA",
+      "x-railway-edge": "sin1"
+    }
+  },
+  {
+    "url": "https://www.myglobalhealth.online/api/public/gp-availability?country=ie&language=english&days=7",
+    "finalUrl": "https://www.myglobalhealth.online/api/public/gp-availability?country=ie&language=english&days=7",
+    "status": 200,
+    "headersMs": 693,
+    "totalMs": 744,
+    "decodedBytes": 91476,
+    "headers": {
+      "cache-control": "no-store",
+      "content-encoding": null,
+      "content-length": null,
+      "x-railway-request-id": "pODbC9U_R0GRFlKajUJq2g",
+      "x-railway-edge": "sin1"
+    }
+  },
+  {
+    "chunk": "https://www.myglobalhealth.online/_next/static/chunks/2gtsnwxz99v31.js?dpl=7ce893ffdbb2693463bc1bca7759385e156e0eb1",
+    "bytes": 274269,
+    "localeMarkers": [
+      "Nastavení cookies",
+      "Cookie settings",
+      "Cookie-Einstellungen",
+      "Setări"
+    ]
+  },
+  {
+    "chunk": "https://www.myglobalhealth.online/_next/static/chunks/004puq1rychii.js?dpl=7ce893ffdbb2693463bc1bca7759385e156e0eb1",
+    "bytes": 231796,
+    "localeMarkers": []
+  },
+  {
+    "chunk": "https://www.myglobalhealth.online/_next/static/chunks/2ox5gtfxqdg_c.js?dpl=7ce893ffdbb2693463bc1bca7759385e156e0eb1",
+    "bytes": 137998,
+    "localeMarkers": []
+  },
+  {
+    "chunk": "https://www.myglobalhealth.online/_next/static/chunks/2hi0q7s8m4r24.js?dpl=7ce893ffdbb2693463bc1bca7759385e156e0eb1",
+    "bytes": 57103,
+    "localeMarkers": []
+  }
+]

@@ -1009,15 +1009,32 @@ export async function ensureSlotsForRange(
     if (isExclusionViolation(error)) {
       let created = 0;
       let skippedOverlap = 0;
-      for (const row of missing) {
+      // Preserve exclusion-constraint correctness while avoiding one round
+      // trip per candidate after a single conflicting row aborts a large
+      // batch. Clean chunks still insert together; only the conflicting
+      // chunk falls back to individual inserts to identify its loser(s).
+      const BATCH_SIZE = 32;
+      for (let offset = 0; offset < missing.length; offset += BATCH_SIZE) {
+        const batch = missing.slice(offset, offset + BATCH_SIZE);
         try {
-          await prisma.doctorTimeSlot.create({ data: row });
-          created += 1;
-        } catch (rowError) {
-          if (!isExclusionViolation(rowError) && !isUniqueViolation(rowError)) {
-            throw normalizeDbError(rowError, "Slot generation unavailable");
+          const result = await prisma.doctorTimeSlot.createMany({ data: batch, skipDuplicates: true });
+          created += result.count;
+          continue;
+        } catch (batchError) {
+          if (!isExclusionViolation(batchError) && !isUniqueViolation(batchError)) {
+            throw normalizeDbError(batchError, "Slot generation unavailable");
           }
-          skippedOverlap += 1;
+        }
+        for (const row of batch) {
+          try {
+            await prisma.doctorTimeSlot.create({ data: row });
+            created += 1;
+          } catch (rowError) {
+            if (!isExclusionViolation(rowError) && !isUniqueViolation(rowError)) {
+              throw normalizeDbError(rowError, "Slot generation unavailable");
+            }
+            skippedOverlap += 1;
+          }
         }
       }
       return { created, skippedOverlap };
@@ -1161,6 +1178,10 @@ function loadDoctorSlotInventory(
     return { rows, pause };
   })()
     .then((result) => {
+      // Retry against the current generation after an inventory write.
+      if (generation !== slotCacheGeneration) {
+        return loadDoctorSlotInventory(doctorId, fromUtc, toUtc, skipExpiredRelease);
+      }
       if (generation === slotCacheGeneration) {
         slotInventoryCache.set(key, result, SLOT_CACHE_TTL_MS);
       }
@@ -1189,7 +1210,8 @@ function resolveCachedSlotRead(
   const request = load()
     .then((result) => {
       // A booking or admin slot write may clear caches while this read is still
-      // running. Never re-seed the cache with pre-invalidation data.
+      // running. Never re-seed or return pre-invalidation data.
+      if (generation !== slotCacheGeneration) return resolveCachedSlotRead(key, load);
       if (generation === slotCacheGeneration) slotCache.set(key, result, SLOT_CACHE_TTL_MS);
       return result;
     })

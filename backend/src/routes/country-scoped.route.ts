@@ -64,10 +64,12 @@ const servicesQuerySchema = z.object({
     z.nativeEnum(ServiceKind).optional(),
   ),
   locale: localeQuerySchema,
+  mode: z.enum(["live", "marketing"]).optional(),
 });
 
 const collectionLocaleQuerySchema = z.object({
   locale: localeQuerySchema,
+  mode: z.enum(["live", "marketing"]).optional(),
 });
 
 const serviceAvailabilityParamsSchema = z.object({
@@ -136,7 +138,9 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
     }
     try {
       if (!(await ensureCountryExists(params.data.countryCode, reply))) return;
-      const doctors = await listDoctorsByCountry(params.data.countryCode, query.data.locale);
+      const doctors = await listDoctorsByCountry(params.data.countryCode, query.data.locale, {
+        marketing: query.data.mode === "marketing",
+      });
       return okResponse(doctors);
     } catch (error) {
       return handleError(app, reply, error, "Unexpected doctors error");
@@ -250,6 +254,7 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
         params.data.countryCode,
         query.data.kind,
         query.data.locale,
+        { marketing: query.data.mode === "marketing" },
       );
       return okResponse(services);
     } catch (error) {

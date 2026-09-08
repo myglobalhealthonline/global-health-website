@@ -102,33 +102,7 @@ const SECURITY_HEADERS = [
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
 ];
 
-/**
- * Route-segment matchers for the localized public site, shared by `headers()`
- * and `redirects()` so there is ONE locale list in this file.
- *
- * `PUBLIC_COUNTRY` lists the six seeded markets of `data/countries.ts` in both
- * addressable forms: the SEO slug (`/ireland/en`, the canonical public URL)
- * and the bare country code (`/ie/en`), which `lib/routing/country-slug.ts`
- * registers as its own slug so it resolves too.
- *
- * Both groups are load-bearing, not cosmetic. A `/:country/:lang` source with
- * unconstrained params is not a country route — path-to-regexp reads it as
- * "any two segments", so `/admin/doctors`, `/account/profile`, `/api/example`
- * and `/doctor/…` all matched the public shared-cache rules below and came
- * back advertising themselves as CDN-cacheable. Pinned by
- * `tests/unit/public-cache-headers.test.ts`, which builds the same regexes
- * Next does and reads the market/locale lists out of `data/countries.ts`, so
- * a seventh market fails that test until it is added here on purpose.
- *
- * An admin-added country (created in /admin/countries, resolvable at runtime
- * via the slug registry) is deliberately NOT in this group: it renders fine,
- * it just misses the CDN cache header until its code lands here. That is a
- * perf gap for one market, where a wildcard is a cache-policy leak on every
- * authenticated surface.
- */
-const PUBLIC_COUNTRY = "(ireland|czechia|portugal|spain|romania|brazil|ie|cz|pt|es|ro|br)";
-/** The six real locale codes — `data/countries.ts` `supportedLocales`, unioned.
- *  Applied uniformly to every market, as the redirect rules already do. */
+/** Locale matcher for legacy redirects; document cache policy belongs to Next. */
 const PUBLIC_LANG = "(en|pt|es|cs|ro|de)";
 
 /**
@@ -275,123 +249,10 @@ const nextConfig: NextConfig = {
             },
           ]
         : []),
-      // SEO-audit perf fix — CDN/edge caching for the anonymous-only public
-      // marketing pages under `[country]/[lang]`. These document responses
-      // were shipping the Next.js dynamic-render default
-      // (`private, no-cache, no-store, must-revalidate`), forcing full
-      // origin revalidation on every crawler/anonymous hit.
-      //
-      // Root cause (see backend investigation notes / PR description): every
-      // page below is verified free of `cookies()`/`headers()`/`searchParams`
-      // reads in its entire render tree (layouts included) — the header/nav
-      // auth state is hydrated client-side post-mount (PublicAuthContext),
-      // never read server-side, so the HTML byte-for-byte does NOT vary by
-      // visitor. All their data reads already go through Next's Data Cache
-      // (`revalidate: 60`/tags — see lib/api/site-content-api.ts), so the
-      // underlying content is cache-coherent too. Despite that, this Next.js
-      // 16/Turbopack build still classifies the whole `[country]/[lang]`
-      // segment as dynamic (`ƒ`) in `next build`'s route table — verified via
-      // a `dynamic = "error"` bisection that even a fully stripped page+layout
-      // tree (zero dynamic-API calls anywhere) still gets flagged, so this
-      // looks like a platform-level classification quirk tied to sibling
-      // routes under the same segment (pricing/book/cart/checkout) that
-      // *do* need per-request auth cookies, not a per-page bug. That's a
-      // separate, deeper investigation — NOT attempted here.
-      //
-      // This header doesn't change that (the origin still re-renders on
-      // every request that reaches it), but it lets any CDN/reverse-proxy in
-      // front of the origin — and the browser — treat the response as
-      // cacheable, which is exactly what the audit flagged as missing.
-      // `max-age=0` keeps the browser itself always revalidating (so a user
-      // never sees content older than they'd expect); `s-maxage=60` mirrors
-      // the 60s origin data-cache window; `stale-while-revalidate=300` gives
-      // a 5-minute grace window so a slow origin re-render never blocks a
-      // cache hit. Deliberately EXCLUDES `/pricing` (reads the visitor's auth
-      // session + active subscription — genuinely personalized, confirmed via
-      // `getServerAuthUser`/`getServerSubscription`) and `/book`, `/cart`,
-      // `/checkout*` — those keep the default no-store behavior.
-      //
-      // 2026-08-03 (SEO audit follow-up): `/legal*` was previously on that
-      // excluded list as "unverified / auth-adjacent". It has now been
-      // verified and moved onto the cacheable list below. All three legal
-      // pages (`legal/page.tsx`, `legal/[type]/page.tsx`,
-      // `legal/subscription-terms/page.tsx`) and every module in their import
-      // trees (GH2PagePrimitives, JsonLd, get-country-legal,
-      // sanitize-page-body, load-locale, country-slug, hreflang, page-seo,
-      // structured-data) contain zero `cookies()`/`headers()`/`searchParams`/
-      // `draftMode()` reads, and the `[country]/[lang]` layout above them is
-      // already documented as static-generation-safe. The response is
-      // byte-for-byte identical per visitor. Published legal documents also
-      // change far less often than the 60s window.
-      {
-        source: `/:country${PUBLIC_COUNTRY}/:lang${PUBLIC_LANG}`,
-        headers: [
-          { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },
-        ],
-      },
-      {
-        source: `/:country${PUBLIC_COUNTRY}/:lang${PUBLIC_LANG}/(gp-consultation-online|see-a-specialist|repeat-prescription-request|lab-tests|doctors|blog)`,
-        headers: [
-          { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },
-        ],
-      },
-      {
-        // `health` added 2026-08-03 (SEO audit 2.4b/2.4c follow-up): the
-        // route dropped `force-dynamic` after its whole import tree
-        // (getCountryLandingPage/getCountryDoctors/getCountryTrust, same
-        // cache()-wrapped fetches the already-cacheable routes above use)
-        // was verified free of cookies()/headers()/searchParams/draftMode().
-        source: `/:country${PUBLIC_COUNTRY}/:lang${PUBLIC_LANG}/(lab-tests|doctors|blog|services|health)/:slug`,
-        headers: [
-          { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },
-        ],
-      },
-      {
-        // Free health tools. Same treatment as the routes above and for the
-        // same reason: the copy is code-resident, the render reads route
-        // params only (no cookies()/headers()/searchParams), and the
-        // interactive part runs client-side — so the HTML is byte-for-byte
-        // identical per visitor.
-        source: `/:country${PUBLIC_COUNTRY}/:lang${PUBLIC_LANG}/tools/:slug`,
-        headers: [
-          { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },
-        ],
-      },
-      {
-        source: `/:country${PUBLIC_COUNTRY}/:lang${PUBLIC_LANG}/legal`,
-        headers: [
-          { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },
-        ],
-      },
-      {
-        source: `/:country${PUBLIC_COUNTRY}/:lang${PUBLIC_LANG}/legal/:type`,
-        headers: [
-          { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },
-        ],
-      },
-      // 2026-08-03 (SEO audit 2.3 follow-up): the 7 root-level global pages
-      // (`/`, `/about`, `/faq`, `/blog`, `/contact`, `/terms`, `/privacy` —
-      // `app/(global)/*`) were investigated for the same treatment and
-      // DELIBERATELY EXCLUDED — unlike `/:country/:lang*` above, they are
-      // genuinely visitor-varying, not just flagged dynamic by the
-      // build. Every one of them has no `[lang]` URL segment, so every call
-      // to `getPageLocale()` in their render tree (page + metadata) falls
-      // through with no `explicitLocale` straight into `getSelectedLocale()`
-      // (`lib/i18n/selected-locale.ts`), which reads the `gh_locale` cookie,
-      // the `x-gh-locale`/`Accept-Language` headers, and — for signed-in
-      // visitors — `User.preferredLocale` from the DB, on every request. The
-      // rendered HTML (hero copy, headings, FAQ answers, everything) is in
-      // that resolved language, so two visitors hitting the same URL
-      // genuinely get different bytes back. `/blog` additionally reads the
-      // `gh-last-country` cookie to pick its "back to home" link. A shared
-      // CDN cache keyed on the URL alone would serve one visitor's language
-      // (or a stale signed-out visitor's copy to a signed-in one) to
-      // everyone else. This is the opposite case from the country pages
-      // above, where the `[lang]` URL segment IS the explicit locale, so
-      // `getPageLocale(lang)` short-circuits before ever touching
-      // `cookies()`/`headers()` and the HTML is byte-for-byte identical per
-      // visitor. Do not add a Cache-Control override for these routes
-      // without first removing or gating the `getSelectedLocale()` call.
+      // Let Next own document cache headers: headers() cannot distinguish a
+      // successful render from a 500, private session, or RSC variant. Public
+      // content still uses the tagged Data Cache. Shared document caching needs
+      // a status-aware delivery layer with cookie/variant tests.
       // Unhashed /public assets (icons, hero images, stock photos — see
       // public/) are NOT content-hashed: a redeploy can overwrite
       // public/foo.png at the same URL. `immutable` previously cached these

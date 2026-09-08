@@ -16,6 +16,8 @@ import { timezoneLabel } from "./timezone-label";
 
 const DISPLAY_LOCALE = "en-IE";
 const DEFAULT_TIME_ZONE = "Europe/Dublin";
+const FORMATTER_CACHE_LIMIT = 48;
+const formatterCache = new Map<string, Intl.DateTimeFormat>();
 
 function resolveTz(tz: string | undefined | null): string {
   // Falsy guard handles "", null, undefined, and "UTC" (which should
@@ -24,13 +26,30 @@ function resolveTz(tz: string | undefined | null): string {
   return tz;
 }
 
+function formatter(locale: string, options: Intl.DateTimeFormatOptions): Intl.DateTimeFormat {
+  const key = `${locale}:${JSON.stringify(options)}`;
+  const cached = formatterCache.get(key);
+  if (cached) {
+    formatterCache.delete(key);
+    formatterCache.set(key, cached);
+    return cached;
+  }
+  const created = new Intl.DateTimeFormat(locale, options);
+  formatterCache.set(key, created);
+  if (formatterCache.size > FORMATTER_CACHE_LIMIT) {
+    const oldest = formatterCache.keys().next().value;
+    if (oldest) formatterCache.delete(oldest);
+  }
+  return created;
+}
+
 export function formatAppDateTime(
   dateLike: string,
   tz?: string | null,
 ): string {
   const value = new Date(dateLike);
   if (Number.isNaN(value.getTime())) return dateLike;
-  return new Intl.DateTimeFormat(DISPLAY_LOCALE, {
+  return formatter(DISPLAY_LOCALE, {
     dateStyle: "medium",
     timeStyle: "short",
     timeZone: resolveTz(tz),
@@ -43,7 +62,7 @@ export function formatAppDateTimeShort(
 ): string {
   const value = new Date(dateLike);
   if (Number.isNaN(value.getTime())) return dateLike;
-  return new Intl.DateTimeFormat(DISPLAY_LOCALE, {
+  return formatter(DISPLAY_LOCALE, {
     month: "short",
     day: "2-digit",
     hour: "2-digit",
@@ -58,7 +77,7 @@ export function formatAppDate(
 ): string {
   const value = new Date(dateLike);
   if (Number.isNaN(value.getTime())) return dateLike;
-  return new Intl.DateTimeFormat(DISPLAY_LOCALE, {
+  return formatter(DISPLAY_LOCALE, {
     dateStyle: "medium",
     timeZone: resolveTz(tz),
   }).format(value);
@@ -74,7 +93,7 @@ export function formatAppDayMonth(
 ): string {
   const value = new Date(dateLike);
   if (Number.isNaN(value.getTime())) return dateLike;
-  return new Intl.DateTimeFormat(DISPLAY_LOCALE, {
+  return formatter(DISPLAY_LOCALE, {
     month: "short",
     day: "2-digit",
     timeZone: resolveTz(tz),
@@ -87,7 +106,7 @@ export function formatAppTime(
 ): string {
   const value = new Date(dateLike);
   if (Number.isNaN(value.getTime())) return dateLike;
-  return new Intl.DateTimeFormat(DISPLAY_LOCALE, {
+  return formatter(DISPLAY_LOCALE, {
     hour: "2-digit",
     minute: "2-digit",
     timeZone: resolveTz(tz),
@@ -112,9 +131,24 @@ export function formatAppDateTimeWithZone(
 
 export type AppointmentDayBucket = "today" | "tomorrow" | "later";
 
-function dayKeyInTz(value: Date, tz: string): string {
-  // en-CA gives YYYY-MM-DD directly — a sortable/comparable grouping key.
-  return new Intl.DateTimeFormat("en-CA", { timeZone: tz }).format(value);
+export function dayKeyInTz(value: Date, tz: string): string {
+  const parts = formatter("en", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    timeZone: tz,
+  }).formatToParts(value);
+  const part = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((item) => item.type === type)?.value ?? "";
+  return `${part("year")}-${part("month")}-${part("day")}`;
+}
+
+/** Calendar days in the clinic zone, safe across daylight-saving changes. */
+export function clinicTodayTomorrowKeys(now: Date, tz: string): [string, string] {
+  const today = dayKeyInTz(now, tz);
+  const [year, month, day] = today.split("-").map(Number);
+  const tomorrow = new Date(Date.UTC(year, month - 1, day + 1));
+  return [today, tomorrow.toISOString().slice(0, 10)];
 }
 
 /**
@@ -132,14 +166,13 @@ export function getAppointmentDayBucket(
 ): { bucket: AppointmentDayBucket; dayKey: string; label: string } {
   const zone = resolveTz(tz);
   const value = new Date(dateLike);
-  const todayKey = dayKeyInTz(new Date(), zone);
-  const tomorrowKey = dayKeyInTz(new Date(Date.now() + 24 * 60 * 60 * 1000), zone);
+  const [todayKey, tomorrowKey] = clinicTodayTomorrowKeys(new Date(), zone);
   const dayKey = Number.isNaN(value.getTime()) ? "" : dayKeyInTz(value, zone);
   const bucket: AppointmentDayBucket =
     dayKey === todayKey ? "today" : dayKey === tomorrowKey ? "tomorrow" : "later";
   const label =
     bucket === "later" && dayKey
-      ? new Intl.DateTimeFormat(DISPLAY_LOCALE, {
+      ? formatter(DISPLAY_LOCALE, {
           weekday: "short",
           month: "short",
           day: "2-digit",
@@ -166,13 +199,13 @@ export function formatAppDualTz(
   const value = new Date(dateLike);
   if (Number.isNaN(value.getTime())) return dateLike;
   const doctorIana = resolveTz(doctorTz);
-  const docTime = new Intl.DateTimeFormat(DISPLAY_LOCALE, {
+  const docTime = formatter(DISPLAY_LOCALE, {
     hour: "2-digit",
     minute: "2-digit",
     timeZone: doctorIana,
   }).format(value);
   if (!patientTz || patientTz === doctorIana) return docTime;
-  const patTime = new Intl.DateTimeFormat(DISPLAY_LOCALE, {
+  const patTime = formatter(DISPLAY_LOCALE, {
     hour: "2-digit",
     minute: "2-digit",
     timeZone: patientTz,

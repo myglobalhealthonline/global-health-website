@@ -10,6 +10,7 @@ import multipart from "@fastify/multipart";
 import rateLimit from "@fastify/rate-limit";
 import Fastify, { type FastifyError } from "fastify";
 import { env } from "./config/env.js";
+import { pool } from "./db/prisma.js";
 import { buildOriginGuardHook } from "./utils/origin-guard.js";
 import { isTrustedBuildRead, isTrustedSsrPublicRead } from "./utils/rate-limit-trust.js";
 import { errorResponse } from "./utils/response.js";
@@ -59,6 +60,25 @@ export async function buildApp() {
     bodyLimit: 5 * 1024 * 1024,
     trustProxy: 1,
     routerOptions: { maxParamLength: MAX_PARAM_LENGTH },
+  });
+
+  // Route templates and aggregate pool counters only: no URL values, query
+  // strings, headers, or booking identifiers enter this timing telemetry.
+  app.addHook("onResponse", (request, reply, done) => {
+    request.log.info(
+      {
+        event: "api_timing",
+        route: request.routeOptions.url ?? "unmatched",
+        method: request.method,
+        statusCode: reply.statusCode,
+        durationMs: Number(reply.elapsedTime.toFixed(1)),
+        dbPoolWaiting: pool.waitingCount,
+        dbPoolIdle: pool.idleCount,
+        dbPoolTotal: pool.totalCount,
+      },
+      "api timing",
+    );
+    done();
   });
 
   // Idempotent additive DDL — keeps the live DB in sync with the Prisma

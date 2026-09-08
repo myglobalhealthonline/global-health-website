@@ -1,0 +1,30 @@
+[
+  {
+    "route": "ireland/en",
+    "metrics": "200 0.530562 0.990176 728194"
+  },
+  {
+    "route": "czechia/cs",
+    "metrics": "200 0.547097 0.955020 509749"
+  },
+  {
+    "route": "portugal/pt",
+    "metrics": "200 0.545522 0.981547 666023"
+  },
+  {
+    "route": "spain/es",
+    "metrics": "200 0.516858 0.929488 612169"
+  },
+  {
+    "route": "romania/ro",
+    "metrics": "200 0.521951 0.898381 480672"
+  },
+  {
+    "route": "brazil/pt",
+    "metrics": "200 0.520686 0.920166 425633"
+  },
+  {
+    "route": "brazil/pt",
+    "metrics": "200 0.513467 0.880092 425633"
+  }
+]

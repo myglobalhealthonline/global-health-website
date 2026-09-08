@@ -103,6 +103,7 @@ export function HeroBookingWizard({
   const [slots, setSlots] = useState<Slot[]>([]);
   const [clinicTz, setClinicTz] = useState("UTC");
   const [loading, setLoading] = useState(false);
+  const [availabilityError, setAvailabilityError] = useState(false);
   const [routing, setRouting] = useState(false);
 
   const serviceById = new Map(services.map((s) => [s.id, s]));
@@ -117,12 +118,14 @@ export function HeroBookingWizard({
     setService(s);
     setStep(3);
     setSlots([]);
+    setAvailabilityError(false);
     setLoading(true);
     try {
       const res = await fetch(
         `/api/public/booking-availability?country=${encodeURIComponent(countryCode)}&service=${encodeURIComponent(s.slug)}&doctor=${encodeURIComponent(d.slug)}`,
-        { cache: "no-store" },
+        { cache: "no-store", signal: AbortSignal.timeout(8_000) },
       );
+      if (!res.ok) throw new Error("Availability request failed");
       const json = (await res.json()) as {
         ok?: boolean;
         data?: { slots?: Slot[]; clinicTimezone?: string };
@@ -131,6 +134,7 @@ export function HeroBookingWizard({
       setClinicTz(json.data?.clinicTimezone ?? "UTC");
     } catch {
       setSlots([]);
+      setAvailabilityError(true);
     } finally {
       setLoading(false);
     }
@@ -317,6 +321,17 @@ export function HeroBookingWizard({
               <Loader2 className="size-4 animate-spin" aria-hidden />
               {t.loading}
             </p>
+          ) : availabilityError ? (
+            <div className="py-4 text-[12.5px] text-white/70">
+              <p>Couldn&apos;t load appointment times.</p>
+              <button
+                type="button"
+                onClick={() => void pickService(doctor, service)}
+                className="mt-3 rounded-full border border-[var(--color-brand-accent)]/50 px-3 py-1.5 font-semibold text-[var(--color-brand-accent)]"
+              >
+                Try again
+              </button>
+            </div>
           ) : slots.length === 0 ? (
             <p className="py-4 text-[12.5px] text-white/60">{t.noSlots}</p>
           ) : (

@@ -12,16 +12,13 @@ import { env } from "../config/env.js";
 type GlobalWithPrisma = typeof globalThis & {
   __prisma?: PrismaClient;
   __prismaPool?: Pool;
+  __schedulerLockPool?: Pool;
 };
 
 const g = globalThis as GlobalWithPrisma;
 
-// Exported (not just module-private) so callers that need a real dedicated
-// physical connection — e.g. the scheduler's session-level pg_advisory_lock,
-// which must live on one checked-out client for the lock's whole duration,
-// not a Prisma-managed transaction with its own timeout — can `pool.connect()`
-// directly instead of constructing a second competing Pool against the same
-// DATABASE_URL.
+// Prisma workload pool. Scheduler advisory locks use schedulerLockPool below
+// so an external delivery wait never holds a request-pool lock connection.
 // Each cluster worker (see ../cluster.ts) is a separate OS process with its
 // own module registry, so each gets its own independent Pool — total DB
 // connections across the container are DB_POOL_MAX × CLUSTER_WORKERS.
@@ -46,6 +43,24 @@ export const pool =
     statement_timeout: 15_000,
   });
 
+/**
+ * Session advisory locks deliberately use a small, separate pool. A slow
+ * scheduled job keeps its lock client checked out for the whole job; sharing
+ * that client with request queries allowed cron work to consume request-pool
+ * capacity. This pool is only for lock sessions, never Prisma queries.
+ *
+ * Deployment must budget DB_POOL_MAX + SCHEDULER_LOCK_POOL_MAX per worker.
+ */
+export const schedulerLockPool =
+  g.__schedulerLockPool ??
+  new Pool({
+    connectionString: process.env.DATABASE_URL,
+    max: env.SCHEDULER_LOCK_POOL_MAX,
+    idleTimeoutMillis: 30_000,
+    connectionTimeoutMillis: 5_000,
+    statement_timeout: 15_000,
+  });
+
 const prismaClient =
   g.__prisma ??
   new PrismaClient({
@@ -55,6 +70,7 @@ const prismaClient =
 if (process.env.NODE_ENV !== "production") {
   g.__prisma = prismaClient;
   g.__prismaPool = pool;
+  g.__schedulerLockPool = schedulerLockPool;
 }
 
 export const prisma = prismaClient;
@@ -70,4 +86,5 @@ export const prisma = prismaClient;
 export async function disconnectDb(): Promise<void> {
   await prisma.$disconnect().catch(() => {});
   await pool.end().catch(() => {});
+  await schedulerLockPool.end().catch(() => {});
 }

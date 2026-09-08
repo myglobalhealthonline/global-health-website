@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
-import { getCommonLocale } from "@/lib/i18n/get-common-locale";
-import { resolveLocale } from "@/lib/i18n/resolve-locale";
+import { getReviewMessages } from "@/lib/i18n/review-messages";
 import {
   openCookiePreferences,
   readConsent,
@@ -117,7 +116,7 @@ function DoctifyPlaceholder({
   onDark?: boolean;
   className?: string;
 }) {
-  const t = getCommonLocale(resolveLocale({ explicitLocale: language })).cookie;
+  const t = getReviewMessages(language);
 
   function allowThirdParty() {
     const existing = readConsent();
@@ -132,22 +131,22 @@ function DoctifyPlaceholder({
     <div
       className={`gh-cookie-placeholder ${onDark ? "gh-cookie-placeholder-dark" : ""} ${minHeightClass} ${className ?? ""}`}
     >
-      <p className="gh-cookie-placeholder-title">{t.doctifyBlockedTitle}</p>
-      <p className="gh-cookie-placeholder-body">{t.doctifyBlockedBody}</p>
+      <p className="gh-cookie-placeholder-title">{t.blockedTitle}</p>
+      <p className="gh-cookie-placeholder-body">{t.blockedBody}</p>
       <div className="gh-cookie-placeholder-actions">
         <button
           type="button"
           onClick={allowThirdParty}
           className={onDark ? "gh2-btn-lime" : "gh-btn gh-btn-primary"}
         >
-          {t.doctifyLoad}
+          {t.load}
         </button>
         <button
           type="button"
           onClick={openCookiePreferences}
           className={onDark ? "gh-cookie-link" : "text-sm font-semibold text-[var(--color-brand-primary)] underline"}
         >
-          {t.settingsLink}
+          {t.settings}
         </button>
       </div>
     </div>
@@ -198,7 +197,7 @@ export function DoctifyRatingStrip({
     <iframe
       id={id}
       src={src}
-      title={getCommonLocale(resolveLocale({ explicitLocale: language })).a11y.doctifyReviews}
+      title={getReviewMessages(language).doctifyReviews}
       name="average-carousel-rating-widget"
       className={`doctify-widget block min-h-[160px] w-full border-0 ${className ?? ""}`}
       loading="lazy"
@@ -389,7 +388,7 @@ export function DoctifyInlineRating({
     <iframe
       id={id}
       src={src}
-      title={getCommonLocale(resolveLocale({ explicitLocale: language })).a11y.doctifyReviews}
+      title={getReviewMessages(language).doctifyReviews}
       name="average-carousel-rating-widget"
       className={`doctify-widget block min-h-[120px] w-full border-0 ${className ?? ""}`}
       loading="lazy"

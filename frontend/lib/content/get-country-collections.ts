@@ -50,7 +50,7 @@ export type CountryServiceCard = {
   bookability: BookabilitySummary;
 };
 
-export type BookabilityState = "BOOKABLE" | "RETURNING" | "UNAVAILABLE";
+export type BookabilityState = "BOOKABLE" | "RETURNING" | "UNAVAILABLE" | "UNKNOWN";
 
 export type BookabilityReasonCode =
   | "COUNTRY_PAUSED"
@@ -75,6 +75,7 @@ const BOOKABILITY_STATES = new Set<BookabilityState>([
   "BOOKABLE",
   "RETURNING",
   "UNAVAILABLE",
+  "UNKNOWN",
 ]);
 
 const BOOKABILITY_REASON_CODES = new Set<BookabilityReasonCode>([
@@ -436,8 +437,9 @@ export const getCountryServices = cache(async (
   countryCode: string,
   kind: "GENERAL" | "SPECIALIST" | "PRESCRIPTION" | "HEALTH_TEST" | "HOME_DELIVERY" | undefined,
   locale?: string,
+  mode: "live" | "marketing" = "live",
 ): Promise<CountryServiceCard[]> => {
-  const res = await fetchServicesByCountry(countryCode, kind, locale);
+  const res = await fetchServicesByCountry(countryCode, kind, locale, undefined, mode);
   if (!res.ok) {
     assertCollectionAvailable(`country-services:${countryCode}:${kind ?? "all"}`, res);
     logPublicContentFallback(`country-services:${countryCode}:${kind ?? "all"}`, res.message);
@@ -540,8 +542,9 @@ export const getCountrySpecialties = cache(async (
 export const getCountryDoctors = cache(async (
   countryCode: string,
   locale?: string,
+  mode: "live" | "marketing" = "live",
 ): Promise<CountryDoctorCard[]> => {
-  const res = await fetchDoctorsByCountry(countryCode, locale);
+  const res = await fetchDoctorsByCountry(countryCode, locale, undefined, mode);
   if (!res.ok) {
     assertCollectionAvailable(`country-doctors:${countryCode}`, res);
     logPublicContentFallback(`country-doctors:${countryCode}`, res.message);

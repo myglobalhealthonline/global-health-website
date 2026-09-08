@@ -1,8 +1,10 @@
 "use client";
 
 import type { CSSProperties, ReactNode } from "react";
-import Link from "next/link";
+import { useTransition } from "react";
+import Link, { useLinkStatus } from "next/link";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 import { isBookingWorkflowHref } from "@/lib/routing/book-href";
 import { trackAnalyticsEvent } from "@/lib/analytics/track";
 import type { BookabilitySummary } from "@/lib/content/get-country-collections";
@@ -56,6 +58,11 @@ function trackBeginBooking(href: string): void {
   trackAnalyticsEvent("begin_booking", { booking_path: path.slice(0, 100) });
 }
 
+function LinkPendingIndicator() {
+  const { pending } = useLinkStatus();
+  return pending ? <Loader2 className="size-[1em] animate-spin" aria-hidden /> : null;
+}
+
 export function BookNowButton({
   href,
   className,
@@ -74,6 +81,7 @@ export function BookNowButton({
   ariaLabel?: string;
 } & BookabilityActionProps) {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const status = actionStatus({
     bookability,
     unavailableLabel,
@@ -82,20 +90,22 @@ export function BookNowButton({
   return (
     <button
       type="button"
-      disabled={status.disabled}
+      disabled={status.disabled || isPending}
       onClick={
         status.disabled
           ? undefined
           : () => {
               trackBeginBooking(href);
-              router.push(href);
+              startTransition(() => router.push(href));
             }
       }
       className={`${className ?? ""} disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:brightness-100`}
       style={style}
       aria-label={status.disabled ? status.label : ariaLabel}
+      aria-busy={isPending || undefined}
     >
       {status.disabled ? status.label : children}
+      {isPending ? <Loader2 className="size-[1em] animate-spin" aria-hidden /> : null}
       {!status.disabled && status.label ? (
         <span className="text-[0.78em] font-semibold opacity-75">{status.label}</span>
       ) : null}
@@ -169,6 +179,7 @@ export function BookCta({
       onClick={() => trackBeginBooking(href)}
     >
       {children}
+      <LinkPendingIndicator />
       {status.label ? (
         <span className="text-[0.78em] font-semibold opacity-75">{status.label}</span>
       ) : null}

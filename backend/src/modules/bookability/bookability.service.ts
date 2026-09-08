@@ -55,7 +55,10 @@ function resolveCachedBookability(
   const request = compute()
     .then((result) => {
       // A pause/slot/assignment write may invalidate while this read is still
-      // running. Never repopulate the cache with a pre-invalidation result.
+      // running. Never repopulate *or return* a pre-invalidation result: the
+      // caller that started before the write must join the current generation
+      // rather than advertising a slot that has just been removed.
+      if (generation !== cacheGeneration) return resolveCachedBookability(key, compute);
       if (generation === cacheGeneration) cache.set(key, result, CACHE_TTL_MS);
       return result;
     })

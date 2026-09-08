@@ -37,7 +37,7 @@ function extractIrelandFaqBlock(source: string, sectionName: string): string {
     `const\\s+${sectionName}\\s*:\\s*MarketFaq\\s*=\\s*\\{[\\s\\S]*?\\bie:\\s*\\{([\\s\\S]*?)\\n\\s*\\},\\n\\s*pt:\\s*\\{`,
     "u",
   );
-  const match = source.match(pattern);
+  const match = source.replace(/\r\n/g, "\n").match(pattern);
   expect(match, `Could not find Ireland block for ${sectionName}`).toBeTruthy();
   return match?.[1] ?? "";
 }

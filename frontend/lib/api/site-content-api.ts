@@ -166,11 +166,14 @@ export async function fetchDoctorsByCountry(
   countryCode: string,
   locale?: string,
   timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
+  mode: "live" | "marketing" = "live",
 ) {
   const upper = toBackendLocale(locale);
-  const url = upper
-    ? `/api/countries/${encodeURIComponent(countryCode)}/doctors?locale=${upper}`
-    : `/api/countries/${encodeURIComponent(countryCode)}/doctors`;
+  const params = new URLSearchParams();
+  if (upper) params.set("locale", upper);
+  if (mode === "marketing") params.set("mode", mode);
+  const qs = params.toString();
+  const url = `/api/countries/${encodeURIComponent(countryCode)}/doctors${qs ? `?${qs}` : ""}`;
   return apiRequest<unknown[]>(url, {
     timeoutMs,
     revalidate: REVALIDATE_SECONDS,
@@ -282,11 +285,13 @@ export async function fetchServicesByCountry(
   kind: "GENERAL" | "SPECIALIST" | "PRESCRIPTION" | "HEALTH_TEST" | "HOME_DELIVERY" | undefined,
   locale?: string,
   timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
+  mode: "live" | "marketing" = "live",
 ) {
   const upper = toBackendLocale(locale);
   const params = new URLSearchParams();
   if (kind) params.set("kind", kind);
   if (upper) params.set("locale", upper);
+  if (mode === "marketing") params.set("mode", mode);
   const qs = params.toString();
   const url = qs
     ? `/api/countries/${encodeURIComponent(countryCode)}/services?${qs}`
