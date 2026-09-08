@@ -14,6 +14,7 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
   applyPatientProfileUpdate,
   upsertPatientProfileByEmail,
+  PatientProfileAnonymizedError,
   PatientProfileEmailConflictError,
   PatientProfileNotFoundError,
   PricingPlanCountryMismatchError,
@@ -420,7 +421,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           // create-on-edit path, which stays as it was.
           resolvedId
             ? { kind: "id", patientProfileId: resolvedId }
-            : { kind: "upsertByEmail", email },
+            : { kind: "create", email },
           fields,
           {
             actor: { userId: actor?.userId ?? null, role: actor?.role ?? "ADMIN" },
@@ -498,6 +499,11 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         // is no longer the one a retry would reach.
         if (error instanceof PatientProfileNotFoundError) {
           return reply.status(404).send(errorResponse("Patient profile not found"));
+        }
+        if (error instanceof PatientProfileAnonymizedError) {
+          return reply
+            .status(409)
+            .send(errorResponse("This record has been anonymized and can no longer be edited"));
         }
         if (error instanceof PatientProfileEmailConflictError) {
           return reply.status(409).send(errorResponse(error.message));

@@ -448,15 +448,31 @@ async function fulfillPaidOrderFromCheckoutSession(
         select: { id: true, paymentStatus: true },
       });
       if (existingOnSlot) {
-        if (existingOnSlot.paymentStatus !== PaymentStatus.PAID) {
+        const paymentData = {
+          paymentStatus: PaymentStatus.PAID,
+          paidAt: new Date(),
+          stripePaymentIntentId:
+            typeof session.payment_intent === "string" ? session.payment_intent : null,
+        };
+        if (item.bookingForOther || item.familyMemberId) {
+          const claim = await tx.appointment.updateMany({
+            where: { id: existingOnSlot.id, patientProfileId: null },
+            data: existingOnSlot.paymentStatus === PaymentStatus.PAID
+              ? { paymentStatus: PaymentStatus.PAID }
+              : paymentData,
+          });
+          if (claim.count !== 1) {
+            unfulfilled.push({
+              itemId: item.id,
+              slotId: item.timeSlotId,
+              reason: "existing appointment is already bound to a patient",
+            });
+            continue;
+          }
+        } else if (existingOnSlot.paymentStatus !== PaymentStatus.PAID) {
           await tx.appointment.update({
             where: { id: existingOnSlot.id },
-            data: {
-              paymentStatus: PaymentStatus.PAID,
-              paidAt: new Date(),
-              stripePaymentIntentId:
-                typeof session.payment_intent === "string" ? session.payment_intent : null,
-            },
+            data: paymentData,
           });
         }
         await tx.orderItem.update({

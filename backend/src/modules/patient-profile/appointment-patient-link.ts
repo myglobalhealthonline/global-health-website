@@ -112,7 +112,7 @@ export async function resolvePatientProfileIdForNewAppointment(
       where: { id: input.sourceAppointmentId },
       select: { patientProfileId: true },
     });
-    if (source?.patientProfileId) return source.patientProfileId;
+    return source?.patientProfileId ?? null;
   }
 
   // 2. Approved dependent. No email fallback from here: a family line's
@@ -224,13 +224,13 @@ export async function resolvePatientProfileIdForAppointmentId(
  */
 export async function provableLegacyAppointmentsForDoctor(
   email: string,
-  doctorId: string,
+  doctorId?: string | null,
 ): Promise<Map<string, string[]>> {
   const normalizedEmail = email.trim().toLowerCase();
   if (!normalizedEmail) return new Map();
   const rows = await prisma.appointment.findMany({
     where: {
-      doctorId,
+      ...(doctorId ? { doctorId } : {}),
       patientProfileId: null,
       email: { equals: normalizedEmail, mode: "insensitive" },
       // A guest row identifies nobody, and `userId` is the only account this
@@ -403,17 +403,13 @@ export async function resolvePatientProfileIdByPatientEmail(
 /**
  * Link the appointments that provably belong to `patientProfileId`.
  *
- * THE only place that claims unlinked appointments for a profile. Every caller
- * — anonymization, the guest-account claim, the profile upsert — routes through
- * here so the corroboration rules live in one place; a second hand-rolled copy
- * is how one of them silently ends up weaker than the others.
+ * THE only place that claims unlinked appointments for a profile.
  *
- * Three conditions, all required:
- *   1. the appointment's own address matches the profile's;
- *   2. the purchaser account agrees (both the profile's user, or both absent);
- *   3. no order line marks the appointment as booked for someone else.
+ * Two proof modes are accepted: a non-null account corroborated by address,
+ * or exact appointment ids already proved by the caller. A nullable-account
+ * address sweep is always refused because multiple guests can share an email.
  *
- * (3) is not redundant with (1) and (2): a dependent with no email on file
+ * The order-line check is not redundant: a dependent with no email on file
  * leaves the appointment carrying the PURCHASER's address and account, so the
  * first two conditions pass on a consultation that belongs to somebody else.
  * Attributing it to the payer would put the dependent's treating doctor on the
@@ -424,27 +420,46 @@ export async function resolvePatientProfileIdByPatientEmail(
  * released email from moving an older patient's consultation onto whoever
  * registers with that address next.
  *
- * Accepts a transaction client so anonymization can link before it tombstones
- * the email it matches on, and the plain client for the claim paths.
+ * Accepts a transaction client so exact evidence can be revalidated and linked
+ * atomically with profile creation.
  *
  * @returns how many appointments were linked.
  */
 export async function linkAppointmentsToPatientProfile(
   client: Prisma.TransactionClient,
-  params: { patientProfileId: string; email: string; userId: string | null },
+  params:
+    | {
+        patientProfileId: string;
+        appointmentIds: readonly string[];
+        email: string;
+        userId: string | null;
+        doctorId: string;
+      }
+    | { patientProfileId: string; email: string; userId: string | null },
 ): Promise<number> {
-  const email = params.email.trim().toLowerCase();
-  if (!email) return 0;
+  const exactEvidence = "appointmentIds" in params ? params : null;
+  const exactIds = exactEvidence ? [...new Set(exactEvidence.appointmentIds)] : null;
+  if (exactIds?.length === 0) return 0;
+  const email = "email" in params ? params.email.trim().toLowerCase() : null;
+  if (email === "") return 0;
+  if (!exactIds && "userId" in params && !params.userId) return 0;
   const candidates = await client.appointment.findMany({
     where: {
       patientProfileId: null,
-      email: { equals: email, mode: "insensitive" },
-      // `userId: null` is Prisma's IS NULL, so this covers both the claimed
-      // account and the never-claimed guest row without a second query.
-      userId: params.userId,
+      ...(exactEvidence
+        ? {
+            id: { in: exactIds ?? [] },
+            email: { equals: exactEvidence.email.trim().toLowerCase(), mode: "insensitive" },
+            userId: exactEvidence.userId,
+            doctorId: exactEvidence.doctorId,
+          }
+        : { email: { equals: email!, mode: "insensitive" }, userId: params.userId }),
     },
     select: { id: true },
   });
+  if (exactIds && candidates.length !== exactIds.length) {
+    throw new AppointmentPatientLinkConflictError();
+  }
   if (candidates.length === 0) return 0;
 
   const bookedForOthers = await appointmentIdsBookedForSomeoneElse(
@@ -454,11 +469,38 @@ export async function linkAppointmentsToPatientProfile(
   const claimable = candidates
     .map((a) => a.id)
     .filter((id) => !bookedForOthers.has(id));
+  if (exactIds && claimable.length !== exactIds.length) {
+    throw new AppointmentPatientLinkConflictError();
+  }
   if (claimable.length === 0) return 0;
 
   const result = await client.appointment.updateMany({
-    where: { id: { in: claimable }, patientProfileId: null },
+    where: {
+      id: { in: claimable },
+      patientProfileId: null,
+      ...(exactEvidence
+        ? {
+            email: { equals: exactEvidence.email.trim().toLowerCase(), mode: "insensitive" },
+            userId: exactEvidence.userId,
+            doctorId: exactEvidence.doctorId,
+          }
+        : {}),
+    },
     data: { patientProfileId: params.patientProfileId },
   });
+  if (exactIds && result.count !== exactIds.length) {
+    throw new AppointmentPatientLinkConflictError();
+  }
+  const becameBookedForOther = await appointmentIdsBookedForSomeoneElse(client, claimable);
+  if (becameBookedForOther.size > 0) {
+    throw new AppointmentPatientLinkConflictError();
+  }
   return result.count;
+}
+
+export class AppointmentPatientLinkConflictError extends Error {
+  constructor() {
+    super("Appointment identity changed before it could be linked");
+    this.name = "AppointmentPatientLinkConflictError";
+  }
 }

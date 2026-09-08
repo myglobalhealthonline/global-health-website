@@ -1,13 +1,120 @@
 import assert from "node:assert/strict";
-import { join } from "node:path";
-import { config as loadEnv } from "dotenv";
 import { after, before, describe, it } from "node:test";
 import type { FastifyInstance } from "fastify";
 import type { PrismaClient } from "@prisma/client";
 import { deleteAuditLogs, deleteMedicalAccessLogs } from "../test-utils/audit-cleanup.js";
 import { uniqueCurrencyCode } from "../test-utils/unique-currency-code.js";
+import {
+  AppointmentPatientLinkConflictError,
+  linkAppointmentsToPatientProfile,
+  resolvePatientProfileIdForNewAppointment,
+} from "../modules/patient-profile/appointment-patient-link.js";
 
-loadEnv({ path: join(__dirname, "../..", ".env") });
+describe("new appointment source authority", () => {
+  const linkedProfileId = "11111111-1111-4111-8111-111111111111";
+  const currentEmailHolderId = "22222222-2222-4222-8222-222222222222";
+
+  function client(source: { patientProfileId: string | null } | null) {
+    return {
+      appointment: { findUnique: async () => source },
+      familyMember: { findUnique: async () => ({ patientProfileId: linkedProfileId }) },
+      patientProfile: { findUnique: async () => ({ id: currentEmailHolderId }) },
+      orderItem: { findMany: async () => [] },
+    };
+  }
+
+  it("inherits a supplied source's durable patient link", async () => {
+    assert.equal(
+      await resolvePatientProfileIdForNewAppointment(client({ patientProfileId: linkedProfileId }), {
+        sourceAppointmentId: "33333333-3333-4333-8333-333333333333",
+        patientEmail: "current-holder@example.invalid",
+      }),
+      linkedProfileId,
+    );
+  });
+
+  it("returns null when the supplied source is unlinked", async () => {
+    assert.equal(
+      await resolvePatientProfileIdForNewAppointment(client({ patientProfileId: null }), {
+        sourceAppointmentId: "44444444-4444-4444-8444-444444444444",
+        patientEmail: "reused@example.invalid",
+      }),
+      null,
+      "must not fall through to the current email holder",
+    );
+  });
+
+  it("returns null when the supplied source is missing", async () => {
+    assert.equal(
+      await resolvePatientProfileIdForNewAppointment(client(null), {
+        sourceAppointmentId: "55555555-5555-4555-8555-555555555555",
+        patientEmail: "missing-source@example.invalid",
+      }),
+      null,
+      "must not fall through to the current email holder",
+    );
+  });
+
+  it("preserves family-member and own-email resolution without a source", async () => {
+    const fakeClient = client(null);
+    assert.equal(
+      await resolvePatientProfileIdForNewAppointment(fakeClient, {
+        familyMemberId: "66666666-6666-4666-8666-666666666666",
+        patientEmail: "dependent@example.invalid",
+      }),
+      linkedProfileId,
+    );
+    assert.equal(
+      await resolvePatientProfileIdForNewAppointment(fakeClient, {
+        patientEmail: "self@example.invalid",
+      }),
+      currentEmailHolderId,
+    );
+  });
+});
+
+describe("appointment link rejects late dependent evidence", () => {
+  for (const mode of ["exact", "account"] as const) {
+    it(`rolls back a ${mode} claim when an order line appears before commit`, async () => {
+      let orderLineReads = 0;
+      const fakeClient = {
+        appointment: {
+          findMany: async () => [{ id: "late-dependent-appointment" }],
+          updateMany: async () => ({ count: 1 }),
+        },
+        orderItem: {
+          findMany: async () => {
+            orderLineReads += 1;
+            return orderLineReads === 1
+              ? []
+              : [{ appointmentId: "late-dependent-appointment" }];
+          },
+        },
+      } as unknown as Parameters<typeof linkAppointmentsToPatientProfile>[0];
+
+      await assert.rejects(
+        linkAppointmentsToPatientProfile(
+          fakeClient,
+          mode === "exact"
+            ? {
+                patientProfileId: "profile",
+                appointmentIds: ["late-dependent-appointment"],
+                email: "late-dependent@example.invalid",
+                userId: null,
+                doctorId: "doctor",
+              }
+            : {
+                patientProfileId: "profile",
+                email: "late-dependent@example.invalid",
+                userId: "account",
+              },
+        ),
+        AppointmentPatientLinkConflictError,
+      );
+      assert.equal(orderLineReads, 2);
+    });
+  }
+});
 
 /**
  * Group 2 completion gate — the appointment → patient link, from the outside.
@@ -80,7 +187,6 @@ describe("appointment → patient link", () => {
   // D — guest booking
   let guestApptId = "";
   let guestUserId = "";
-  let guestProfileId = "";
   let unrelatedGuestApptId = "";
   const guestEmail = `guest-${uniq}@test.local`;
 
@@ -749,7 +855,7 @@ describe("appointment → patient link", () => {
   });
 
   // ══ D — guest booking ════════════════════════════════════════════════════
-  describe("D — guest booking links only on a verified claim", () => {
+  describe("D — guest booking is not claimed from email ownership", () => {
     it("exists with a null link before any profile does", async (t) => {
       if (!app) return t.skip(`buildApp failed: ${String(bootError)}`);
       const appt = await prisma.appointment.findUnique({ where: { id: guestApptId } });
@@ -757,17 +863,20 @@ describe("appointment → patient link", () => {
       assert.equal(await resolveByAppointment(guestApptId), null, "resolver fails closed");
     });
 
-    it("links exactly the claimed rows once the account exists, and nothing else", async (t) => {
+    it("leaves historical guest rows unclaimed when an account takes the address", async (t) => {
       if (!app) return t.skip(`buildApp failed: ${String(bootError)}`);
       const created = (await makePatient(guestEmail)) as { profileId: string; userId: string };
-      guestProfileId = created.profileId;
       guestUserId = created.userId;
 
       await claimGuestAppointmentsForUser(guestUserId, guestEmail);
+      const { upsertPatientProfileByEmail } = await import(
+        "../modules/patient-profile/patient-profile.service.js"
+      );
+      await upsertPatientProfileByEmail({ email: guestEmail });
 
       const claimed = await prisma.appointment.findUnique({ where: { id: guestApptId } });
-      assert.equal(claimed!.userId, guestUserId);
-      assert.equal(claimed!.patientProfileId, guestProfileId);
+      assert.equal(claimed!.userId, null);
+      assert.equal(claimed!.patientProfileId, null);
 
       const untouched = await prisma.appointment.findUnique({
         where: { id: unrelatedGuestApptId },

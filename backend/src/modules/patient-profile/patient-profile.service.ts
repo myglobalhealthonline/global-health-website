@@ -10,7 +10,10 @@ import {
   decryptClinicalFields,
 } from "../../lib/crypto/phi-crypto.js";
 import { generateGlobalHealthNumber } from "../../lib/global-health-number.js";
-import { linkAppointmentsToPatientProfile } from "./appointment-patient-link.js";
+import {
+  AppointmentPatientLinkConflictError,
+  linkAppointmentsToPatientProfile,
+} from "./appointment-patient-link.js";
 import {
   computeEmailBlindIndex,
   computePhoneBlindIndex,
@@ -169,22 +172,6 @@ export async function upsertPatientProfileByEmail(
       },
     });
 
-    await prisma.appointment.updateMany({
-      where: { email: { equals: email, mode: "insensitive" }, userId: null },
-      data: { userId: user.role === UserRole.PATIENT ? user.id : undefined },
-    });
-
-    // Same claim for the clinical link, through the ONE helper that owns the
-    // corroboration rules. Doing it inline here with an email-only filter is a
-    // cross-patient disclosure: this function is called with the PURCHASER's
-    // address from the order-portal-access path, so an email-only sweep would
-    // attribute a dependent's consultation to whoever paid for it.
-    await linkAppointmentsToPatientProfile(prisma, {
-      patientProfileId: profile.id,
-      email,
-      userId: user.role === UserRole.PATIENT ? user.id : null,
-    });
-
     return {
       profile,
       userId: user.role === UserRole.PATIENT ? user.id : null,
@@ -224,6 +211,13 @@ export class PatientProfileEmailConflictError extends Error {
   constructor(message = "Patient profile already exists for this address") {
     super(message);
     this.name = "PatientProfileEmailConflictError";
+  }
+}
+
+export class PatientProfileAnonymizedError extends Error {
+  constructor(message = "This record has been anonymized and can no longer be edited") {
+    super(message);
+    this.name = "PatientProfileAnonymizedError";
   }
 }
 
@@ -388,17 +382,20 @@ async function validatePricingPlan(
 export type ProfileWriteTarget =
   | { kind: "upsertByEmail"; email: string }
   | { kind: "id"; patientProfileId: string }
-  | {
+  | ({
       kind: "create";
       email: string;
       /** The account the caller PROVED owns this booking, or null for a guest
        *  row. It is stamped on the new chart and used to claim the appointments
        *  that belong to it — without both, the chart is created and then never
-       *  resolves again, because the resolver has no link and no account to
-       *  corroborate against, and the doctor is locked out of the patient they
-       *  just created. */
+      *  resolves again, because the resolver has no link and no account to
+      *  corroborate against, and the doctor is locked out of the patient they
+      *  just created. */
       userId?: string | null;
-    };
+    } & (
+      | { appointmentIds: readonly string[]; appointmentDoctorId: string }
+      | { appointmentIds?: undefined; appointmentDoctorId?: undefined }
+    ));
 
 /**
  * Persist the writable subset onto the PatientProfile row. Returns the
@@ -534,7 +531,7 @@ export async function writePatientProfile(
     profile =
       target.kind === "id"
         ? await prisma.patientProfile.update({
-            where: { id: target.patientProfileId },
+            where: { id: target.patientProfileId, anonymizedAt: null },
             data: updateData,
           })
         : target.kind === "create"
@@ -548,11 +545,15 @@ export async function writePatientProfile(
               const created = await tx.patientProfile.create({
                 data: { ...createData(target.email), userId: target.userId ?? null },
               });
-              await linkAppointmentsToPatientProfile(tx, {
-                patientProfileId: created.id,
-                email: target.email,
-                userId: target.userId ?? null,
-              });
+              if (target.appointmentIds) {
+                await linkAppointmentsToPatientProfile(tx, {
+                  patientProfileId: created.id,
+                  appointmentIds: target.appointmentIds,
+                  email: target.email,
+                  userId: target.userId ?? null,
+                  doctorId: target.appointmentDoctorId,
+                });
+              }
               return created;
             })
           : await prisma.patientProfile.upsert({
@@ -567,9 +568,17 @@ export async function writePatientProfile(
     // have to surface as a refusal rather than land on whoever is there now.
     const code = (error as { code?: string }).code;
     if (target.kind === "id" && code === "P2025") {
+      const retained = await prisma.patientProfile.findUnique({
+        where: { id: target.patientProfileId },
+        select: { anonymizedAt: true },
+      });
+      if (retained?.anonymizedAt) throw new PatientProfileAnonymizedError();
       throw new PatientProfileNotFoundError();
     }
-    if (target.kind === "create" && code === "P2002") {
+    if (
+      target.kind === "create" &&
+      (code === "P2002" || error instanceof AppointmentPatientLinkConflictError)
+    ) {
       throw new PatientProfileEmailConflictError();
     }
     throw normalizeDbError(error, "Patient profile update temporarily unavailable");

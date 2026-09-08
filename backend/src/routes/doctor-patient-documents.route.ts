@@ -1,11 +1,11 @@
 import type { FastifyPluginAsync } from "fastify";
 import { prisma } from "../db/prisma.js";
-import { verifyDoctorAccess } from "../utils/doctor-auth.js";
+import { verifyClinicalReadAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { guardMedicalRead, MedicalAccessDeniedError, medicalAccessDeniedResponse } from "../utils/guard-medical-read.js";
 import {
-  appointmentIdsBookedForSomeoneElse,
+  provableLegacyAppointmentsForDoctor,
   resolvePatientContextByPatientEmail,
 } from "../modules/patient-profile/appointment-patient-link.js";
 
@@ -31,7 +31,7 @@ const doctorPatientDocumentsRoute: FastifyPluginAsync = async (app) => {
   app.get<{ Params: { email: string } }>(
     "/api/doctor/patients/:email/documents",
     async (request, reply) => {
-      const auth = await verifyDoctorAccess(request);
+      const auth = await verifyClinicalReadAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
       // GDPR plan: downloadable patient-document archive is admin-only.
       // Doctors still view documents in-context on the per-appointment
@@ -116,44 +116,21 @@ const doctorPatientDocumentsRoute: FastifyPluginAsync = async (app) => {
         // Every appointment-id that belongs to THIS patient, so both child
         // tables can be filtered by that set in one round-trip each.
         //
-        // The durable `Appointment.patientProfileId` is the answer wherever it
-        // is present. Unlinked rows at the address are admitted too, but only
-        // because getting here already proved the address has exactly ONE
-        // claimant system-wide: the admin-shape resolution above pools the live
-        // profile with every distinct linked patient and returns null on two or
-        // more, so an address a second person could claim never reaches this
-        // line. What it does NOT prove is that a booking was for the account
-        // holder themselves, so rows an order line marks as booked for a
-        // dependent or for someone else are subtracted — a dependent's
-        // consultation documents are not the payer's.
-        //
-        // Requiring an ACCOUNT on those unlinked rows, as the doctor-scoped
-        // legacy path does, would be wrong here: a guest checkout leaves both
-        // `userId` and `patientProfileId` null forever, and the patient's own
-        // clinical documents would silently vanish from the archive with no
-        // error to say so.
-        const [linkedAppointments, unlinkedAtAddress] = await Promise.all([
+        // Durable links always win. An unlinked legacy row is included only
+        // when account + address + order-line evidence proves it belongs to
+        // this exact profile. Accountless guest rows stay out: the address by
+        // itself cannot prove whose documents they contain.
+        const [linkedAppointments, legacyAppointments] = await Promise.all([
           prisma.appointment.findMany({
-            where: { doctorId: auth.doctorId, patientProfileId },
+            where: { patientProfileId },
             select: { id: true },
           }),
-          prisma.appointment.findMany({
-            where: {
-              doctorId: auth.doctorId,
-              patientProfileId: null,
-              email: { equals: email, mode: "insensitive" },
-            },
-            select: { id: true },
-          }),
+          provableLegacyAppointmentsForDoctor(email),
         ]);
-        const bookedForOthers = await appointmentIdsBookedForSomeoneElse(
-          prisma,
-          unlinkedAtAddress.map((a) => a.id),
-        );
-        const appointmentIds = [
+        const appointmentIds = [...new Set([
           ...linkedAppointments.map((a) => a.id),
-          ...unlinkedAtAddress.map((a) => a.id).filter((id) => !bookedForOthers.has(id)),
-        ];
+          ...(legacyAppointments.get(patientProfileId) ?? []),
+        ])];
         if (appointmentIds.length === 0) {
           return okResponse({
             uploads: [],

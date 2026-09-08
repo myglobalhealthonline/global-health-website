@@ -1394,20 +1394,18 @@ describe("doctor identity verification — a reused email never resolves to the 
       }
     });
 
-    it("still returns the documents of an accountless guest booking", async (t) => {
+    it("does not assign an accountless guest booking to the profile at its email", async (t) => {
       if (!app) return t.skip(`buildApp failed: ${String(bootError)}`);
-      // A guest checkout leaves both `userId` and `patientProfileId` null on the
-      // appointment forever, so requiring an account to admit an unlinked row
-      // would silently drop this patient's own clinical documents — no error,
-      // no 404, just a short list. Getting here already proved the address has
-      // exactly one claimant, so there is no second patient to mix in.
+      // A guest checkout leaves both durable identity fields null. The live
+      // profile at the address does not prove that the old guest row belongs to
+      // it, even when no second claimant is currently visible.
       const res = await get(`/api/doctor/patients/${enc(guestEmail)}/documents`, adminCookie);
       assert.equal(res.statusCode, 200, res.body);
       const data = res.json().data;
       assert.equal(
         data.uploads.some((u: { storageKey: string }) => u.storageKey === guestApptDocKey),
-        true,
-        "the guest booking's appointment documents are still returned",
+        false,
+        "an accountless guest row is not identity evidence",
       );
       for (const marker of markers()) {
         assert.equal(res.body.includes(marker), false, `mixed in ${marker}`);

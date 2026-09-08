@@ -7,6 +7,7 @@ import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
   PatientProfileEmailConflictError,
+  PatientProfileAnonymizedError,
   PatientProfileNotFoundError,
   PricingPlanCountryMismatchError,
   serializeProfile,
@@ -204,27 +205,42 @@ async function resolveChartTarget(email: string, doctorId: string): Promise<Char
  *
  * Conditions, all required:
  *   1. this doctor has at least one appointment at the address;
- *   2. none of them carries a durable patient link — a link means a patient
+ *   2. no appointment system-wide carries a durable patient link — a link means a patient
  *      already exists behind this address, so an unresolved read is ambiguity,
  *      not a blank slate (this is what keeps a TOMBSTONED linked patient from
  *      getting a duplicate chart at the address they released);
  *   3. no order line marks any of them as booked for a dependent or for
  *      someone else;
- *   4. at most one account appears on them, and that account holds no chart of
- *      its own — an account whose chart lives at another address would be
- *      duplicated by creating a second one here.
+ *   4. every row is account-backed by one account that holds no chart, OR
+ *      exactly one accountless guest row exists system-wide.
  *
- * A guest row (no account at all) passes: nobody is being misattributed,
- * because there is no account to misattribute to, and the new chart is built
- * from the appointment's own name and phone.
+ * The result carries the exact proving appointment ids and fallback fields;
+ * persistence never performs a second address lookup.
  */
 async function firstChartEligible(
   email: string,
   doctorId: string,
-): Promise<{ ok: true; userId: string | null } | { ok: false }> {
+): Promise<
+  | {
+      ok: true;
+      userId: string | null;
+      appointmentIds: string[];
+      doctorId: string;
+      fallbackFullName: string | null;
+      fallbackPhone: string | null;
+    }
+  | { ok: false }
+> {
   const rows = await prisma.appointment.findMany({
-    where: { doctorId, email: { equals: email, mode: "insensitive" } },
-    select: { id: true, userId: true, patientProfileId: true },
+    where: { email: { equals: email, mode: "insensitive" } },
+    select: {
+      id: true,
+      doctorId: true,
+      userId: true,
+      patientProfileId: true,
+      fullName: true,
+      phone: true,
+    },
   });
   if (rows.length === 0) return { ok: false };
   if (rows.some((r) => r.patientProfileId)) return { ok: false };
@@ -236,7 +252,20 @@ async function firstChartEligible(
   const accountIds = [
     ...new Set(rows.map((r) => r.userId).filter((id): id is string => Boolean(id))),
   ];
-  if (accountIds.length === 0) return { ok: true, userId: null };
+  const provingAppointment = rows.find((row) => row.doctorId === doctorId);
+  if (!provingAppointment) return { ok: false };
+  if (accountIds.length === 0) {
+    if (rows.length !== 1) return { ok: false };
+    return {
+      ok: true,
+      userId: null,
+      appointmentIds: [provingAppointment.id],
+      doctorId,
+      fallbackFullName: provingAppointment.fullName,
+      fallbackPhone: provingAppointment.phone,
+    };
+  }
+  if (rows.some((row) => !row.userId)) return { ok: false };
   if (accountIds.length > 1) return { ok: false };
   const existing = await prisma.patientProfile.findUnique({
     where: { userId: accountIds[0] },
@@ -246,7 +275,14 @@ async function firstChartEligible(
   // The account is returned, not just approved: the new chart has to CARRY it,
   // or nothing corroborates the chart afterwards and the doctor who just
   // created the patient can never resolve them again.
-  return { ok: true, userId: accountIds[0]! };
+  return {
+    ok: true,
+    userId: accountIds[0]!,
+    appointmentIds: rows.filter((row) => row.doctorId === doctorId).map((row) => row.id),
+    doctorId,
+    fallbackFullName: provingAppointment.fullName,
+    fallbackPhone: provingAppointment.phone,
+  };
 }
 
 /**
@@ -405,21 +441,23 @@ const doctorPatientProfileRoute: FastifyPluginAsync = async (app) => {
           if (!eligible.ok) {
             return reply.status(404).send(errorResponse("Patient profile not found"));
           }
-          const appt = await prisma.appointment.findFirst({
-            where: { doctorId: auth.doctorId, email: { equals: email, mode: "insensitive" } },
-            select: { fullName: true, phone: true },
-          });
           // CREATE, never upsert: if the address was claimed between the
           // eligibility proof and the insert, the unique constraint has to
           // fail the request rather than quietly update whoever just took it.
           // The proven account rides along so the new chart is linked to its
           // appointments and stays resolvable on the next request.
           outcome = await writePatientProfile(
-            { kind: "create", email, userId: eligible.userId },
+            {
+              kind: "create",
+              email,
+              userId: eligible.userId,
+              appointmentIds: eligible.appointmentIds,
+              appointmentDoctorId: eligible.doctorId,
+            },
             fields,
             {
-              fallbackFullName: appt?.fullName ?? null,
-              fallbackPhone: appt?.phone ?? null,
+              fallbackFullName: eligible.fallbackFullName,
+              fallbackPhone: eligible.fallbackPhone,
               actor: { userId: auth.userId, role: auth.role },
               ipAddress: request.ip,
             },
@@ -485,6 +523,9 @@ const doctorPatientProfileRoute: FastifyPluginAsync = async (app) => {
         // the one a retry would reach — refuse rather than land somewhere else.
         if (error instanceof PatientProfileNotFoundError) {
           return reply.status(404).send(errorResponse("Patient profile not found"));
+        }
+        if (error instanceof PatientProfileAnonymizedError) {
+          return reply.status(409).send(errorResponse(ANONYMIZED_WRITE_MESSAGE));
         }
         if (error instanceof PatientProfileEmailConflictError) {
           return reply.status(409).send(errorResponse(error.message));
