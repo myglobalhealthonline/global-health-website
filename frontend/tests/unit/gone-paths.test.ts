@@ -38,6 +38,19 @@ const GONE = [
   "/ireland/cs/doctors/dr-grainne-ahern",
   "/ireland/ro/doctors/dr-grainne-ahern",
   "/ireland/de/doctors/dr-grainne-ahern",
+  "/ireland-doctors/dr-mala-vili-rajan",
+  "/en/ireland-doctors/dr-mala-vili-rajan",
+  "/pt/ireland-doctors/dr-mala-vili-rajan",
+  "/es/ireland-doctors/dr-mala-vili-rajan",
+  "/cs/ireland-doctors/dr-mala-vili-rajan",
+  "/ro/ireland-doctors/dr-mala-vili-rajan",
+  "/de/ireland-doctors/dr-mala-vili-rajan",
+  "/ireland/en/doctors/dr-mala-vili-rajan",
+  "/ireland/pt/doctors/dr-mala-vili-rajan",
+  "/ireland/es/doctors/dr-mala-vili-rajan",
+  "/ireland/cs/doctors/dr-mala-vili-rajan",
+  "/ireland/ro/doctors/dr-mala-vili-rajan",
+  "/ireland/de/doctors/dr-mala-vili-rajan",
 ];
 
 /** The four variants that actually carried traffic — must never regress. */
@@ -46,6 +59,7 @@ const GSC_OBSERVED = [
   "/ireland/en/doctors/dr-grainne-ahern", // 5 / 101
   "/ireland/cs/doctors/dr-grainne-ahern", // 0 / 6
   "/ireland/ro/doctors/dr-grainne-ahern", // 0 / 4
+  "/ireland-doctors/dr-mala-vili-rajan", // 0 / 55
 ];
 
 describe("gone paths — departed clinician", () => {

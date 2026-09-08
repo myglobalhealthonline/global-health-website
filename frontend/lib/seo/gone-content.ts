@@ -77,6 +77,13 @@ export const GONE_DOCTORS: readonly GoneDoctor[] = [
       "74 clicks / 600 impressions over 90 days across 4 URL variants, average position 3.8 (measured 2026-08-08)",
     approvedBy: "Owner decision, 2026-08-08 — confirmed departed",
   },
+  {
+    country: "ireland",
+    legacyPrefix: "ireland-doctors",
+    slug: "dr-mala-vili-rajan",
+    clickCost: "0 clicks / 61 impressions over 90 days (measured 2026-08-08)",
+    approvedBy: "Owner decision, 2026-09-08 — confirmed permanently gone",
+  },
 ];
 
 /** Site locales — the `[lang]` segment, and the legacy Wix locale prefix. */
