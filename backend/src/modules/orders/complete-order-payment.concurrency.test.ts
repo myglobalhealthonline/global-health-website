@@ -31,7 +31,15 @@ const store: {
    *  `enqueueOrderPaidAutomations` uses `skipDuplicates` — being called again
    *  on a redelivery is a no-op, not a second set of side effects. */
   outboxOrders: Set<string>;
-} = { order: {}, processedEvents: new Set(), outboxOrders: new Set() };
+  /** Orders with a Meta Conversions API Purchase enqueued — same
+   *  `skipDuplicates` semantics as `outboxOrders`. */
+  metaCapiOrders: Set<string>;
+} = {
+  order: {},
+  processedEvents: new Set(),
+  outboxOrders: new Set(),
+  metaCapiOrders: new Set(),
+};
 
 const effects = { creditCommits: 0, opsAlerts: 0 };
 /** Arms one simulated failure inside the PAID transaction, after the event row. */
@@ -158,6 +166,14 @@ before(async () => {
         store.outboxOrders.add(orderId);
         onRollback(() => store.outboxOrders.delete(orderId));
       },
+      // Enqueued in the same transaction as the PAID flip. Tracked separately
+      // from `outboxOrders` so a test can tell the two enqueues apart, and
+      // rolled back with the transaction like the automations row above.
+      enqueueMetaCapiPurchase: async (_tx: unknown, orderId: string) => {
+        if (store.metaCapiOrders.has(orderId)) return;
+        store.metaCapiOrders.add(orderId);
+        onRollback(() => store.metaCapiOrders.delete(orderId));
+      },
     },
   });
   mock.module("../subscriptions/ops/ops-alert.js", {
@@ -221,6 +237,7 @@ beforeEach(() => {
   };
   store.processedEvents = new Set();
   store.outboxOrders = new Set();
+  store.metaCapiOrders = new Set();
   effects.creditCommits = 0;
   effects.opsAlerts = 0;
   failOutboxOnce = false;

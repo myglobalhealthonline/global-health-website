@@ -37,6 +37,7 @@ import {
 } from "../modules/coupons/coupon-reserve.service.js";
 import { releaseCouponRedemption } from "../modules/coupons/coupon-release.service.js";
 import { minimumChargeCents } from "../modules/orders/stripe-minimum-charge.js";
+import { orderAdCampaign, orderAdSource } from "../modules/orders/order-ad-source.js";
 import { resolveActiveCart } from "../modules/cart/resolve-active-cart.js";
 import {
   commitOrderCreditReservations,
@@ -1883,6 +1884,9 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           countryCode: o.countryCode,
           currencyCode: o.currencyCode,
           bookingSource: o.bookingSource,
+          // Derived on read, not stored — see order-ad-source.ts. Drives the
+          // Meta glyph in the admin orders table's Source column.
+          adSource: orderAdSource(o.adAttribution),
           isFirstOrder: firstOrderIdByEmail.get(o.email) === o.id,
           totalCents: o.totalCents,
           itemCount: o.items.reduce((s, i) => s + i.quantity, 0),
@@ -2034,6 +2038,11 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           fullName: order.fullName,
           phone: order.phone,
           userId: order.userId,
+          // Ad provenance, derived on read (order-ad-source.ts). `adCampaign`
+          // is the admin-safe subset of `adAttribution` — campaign fields only,
+          // never the fbp/fbc/IP/user-agent match identifiers.
+          adSource: orderAdSource(order.adAttribution),
+          adCampaign: orderAdCampaign(order.adAttribution),
           ship: {
             name: order.shipName,
             line1: order.shipLine1,

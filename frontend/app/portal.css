@@ -2410,6 +2410,13 @@ a.gh-portal-mobile-card:active,
   color: var(--color-text-muted);
 }
 
+/* Meta-ads provenance glyph — brand blue, deliberately NOT muted like the
+   booking-source icon next to it: it appears on a minority of orders and its
+   whole job is to be spotted while scanning the Source column. */
+.gh-ad-source-icon {
+  color: #0081fb;
+}
+
 @media (max-width: 1024px) {
   .gh-admin-order-detail-layout {
     grid-template-columns: 1fr;

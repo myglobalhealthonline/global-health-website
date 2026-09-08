@@ -21,6 +21,9 @@ function isAdminOrderRow(v: unknown): v is AdminOrderRow {
     typeof o.countryCode === "string" &&
     typeof o.currencyCode === "string" &&
     typeof o.bookingSource === "string" &&
+    // Derived ad provenance. Optional on purpose: an older backend that
+    // predates it must not fail the whole list, so absent/null both pass.
+    (o.adSource === null || o.adSource === undefined || typeof o.adSource === "string") &&
     typeof o.isFirstOrder === "boolean" &&
     typeof o.totalCents === "number" &&
     typeof o.itemCount === "number" &&

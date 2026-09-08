@@ -15,6 +15,7 @@ import {
   Star,
 } from "lucide-react";
 import { BookingSourceIcon } from "@/components/BookingSourceIcon";
+import { AdSourceIcon, type AdSource } from "@/components/AdSourceIcon";
 import {
   AdminEmptyState,
   AdminTable,
@@ -57,6 +58,10 @@ export type AdminOrderRow = {
   countryCode: string;
   currencyCode: string;
   bookingSource: string;
+  /** Ad network the customer came from, derived server-side from the order's
+   *  landing attribution. Absent/null for organic, direct and non-Meta paid
+   *  traffic — see `AdSourceIcon`. */
+  adSource?: AdSource;
   /** True when this is the customer's earliest order by email — drives the
    *  new-customer star badge next to their name. */
   isFirstOrder: boolean;
@@ -358,7 +363,10 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
                     </span>
                   </Td>
                   <Td>
-                    <BookingSourceIcon source={o.bookingSource} />
+                    <span className="inline-flex items-center gap-1.5">
+                      <BookingSourceIcon source={o.bookingSource} />
+                      <AdSourceIcon source={o.adSource} />
+                    </span>
                   </Td>
                   <Td>
                     <span className="text-sm text-[var(--color-text-primary)]">
@@ -433,7 +441,15 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
             }
             statusPill={<Pill tone={statusTone(o.status)}>{o.status.toLowerCase()}</Pill>}
             meta={[
-              { label: "Source", value: <BookingSourceIcon source={o.bookingSource} /> },
+              {
+                label: "Source",
+                value: (
+                  <span className="inline-flex items-center gap-1.5">
+                    <BookingSourceIcon source={o.bookingSource} />
+                    <AdSourceIcon source={o.adSource} />
+                  </span>
+                ),
+              },
               { label: "Total", value: formatPrice(o.totalCents, o.currencyCode) },
               { label: "Country", value: o.countryCode.toUpperCase() },
               { label: "Items", value: o.itemCount },
@@ -588,6 +604,20 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
               />
               <RecordDetailsField label="Item count" value={quickViewOrder.itemCount} />
             </RecordDetailsSection>
+
+            {quickViewOrder.adSource === "META" ? (
+              <RecordDetailsSection title="Marketing">
+                <RecordDetailsField
+                  label="Ad source"
+                  value={
+                    <span className="inline-flex items-center gap-1.5">
+                      <AdSourceIcon source={quickViewOrder.adSource} />
+                      Meta ads
+                    </span>
+                  }
+                />
+              </RecordDetailsSection>
+            ) : null}
 
             <RecordDetailsSection title="Payment">
               <RecordDetailsField
