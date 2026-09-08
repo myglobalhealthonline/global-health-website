@@ -42,11 +42,16 @@ import {
   adminAppointmentsQuerySchema,
   appointmentIdParamsSchema,
   createManualAppointmentBodySchema,
+  createManualTestBookingBodySchema,
   scheduleAppointmentBodySchema,
   updateAppointmentBodySchema,
   updateAppointmentStatusBodySchema,
 } from "../validations/admin-appointments.schema.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import {
+  createManualTestBooking,
+  TestCenterNotBookableError,
+} from "../modules/appointments/manual-test-booking.service.js";
 import {
   createManualBooking,
   DiscountTooLargeError,
@@ -305,6 +310,85 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
       return reply
         .status(500)
         .send(errorResponse("Unexpected manual booking error"));
+    }
+  });
+
+  /**
+   * Admin books a test-centre appointment for a patient.
+   *
+   * Same pipeline as the consultation route above — patient account + temp
+   * password + Stripe Checkout + the pre-payment message ladder — through the
+   * sibling service. The response carries the temp password and set-password
+   * URL so the admin can read them out if email delivery fails.
+   */
+  app.post("/api/admin/appointments/test-booking", async (request, reply) => {
+    const body = createManualTestBookingBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply
+        .status(400)
+        .send(errorResponse("Invalid test booking payload", body.error.flatten()));
+    }
+
+    const actor = resolveAdminSessionActor(request);
+    const adminUserId: string | null = actor?.userId ?? null;
+
+    try {
+      // Same AZ-1 guard the consultation route carries: countryCode arrives in
+      // the body, so a LOCAL_ADMIN could otherwise open a booking — patient
+      // account, order, Stripe session and a claimed centre slot — in a market
+      // outside their scope. Checked before the service resolves any id, so a
+      // denial writes nothing at all.
+      const createScope = await assertAdminCountryFolderScope(request, {
+        entityType: "Appointment",
+        entityId: "new",
+        countryCode: body.data.countryCode,
+        auditReason: "LOCAL_ADMIN manual test booking outside assigned country scope",
+        deniedMessage: "This country is outside your assigned country scope",
+      });
+      if (!createScope.allowed) {
+        return reply.status(createScope.status).send(errorResponse(createScope.message));
+      }
+
+      const result = await createManualTestBooking({
+        adminUserId,
+        patient: body.data.patient,
+        allowDuplicatePatient: body.data.allowDuplicatePatient ?? false,
+        testCenterId: body.data.testCenterId,
+        examTypeId: body.data.examTypeId,
+        testCenterTimeSlotId: body.data.testCenterTimeSlotId,
+        countryCode: body.data.countryCode,
+        notes: body.data.notes ?? null,
+        discountPercent: body.data.discountPercent ?? null,
+        returnTo: body.data.returnTo,
+        request,
+      });
+      return reply.status(201).send(okResponse(result, "Test booking created"));
+    } catch (error) {
+      // Exam not published, not carried by this centre, or the centre/market is
+      // inactive. One message for all of them — an unpublished exam must not be
+      // distinguishable from a nonexistent one.
+      if (error instanceof TestCenterNotBookableError) {
+        return reply.status(422).send(errorResponse(error.message));
+      }
+      if (error instanceof ServicePriceMissingError) {
+        return reply.status(422).send(errorResponse(error.message));
+      }
+      // Slot taken or stale between picker load and submit → 409 so the admin
+      // re-picks rather than double-booking. The slot was already handed back.
+      if (error instanceof SlotNotAvailableError) {
+        return reply.status(409).send(errorResponse(error.message));
+      }
+      // The typed email is new but this person already exists. 409 with the
+      // matches attached so the form can offer the existing patient rather than
+      // quietly minting a second chart. Nothing was reserved — the check runs
+      // before the slot is held.
+      if (error instanceof DuplicatePatientError) {
+        return reply
+          .status(409)
+          .send(errorResponse(error.message, { matches: error.matches }));
+      }
+      request.log.error({ err: error }, "[admin] manual test booking failed");
+      return reply.status(500).send(errorResponse("Could not create the test booking"));
     }
   });
 

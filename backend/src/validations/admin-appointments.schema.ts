@@ -220,6 +220,53 @@ export const adminAppointmentsQuerySchema = z.object({
  * a patient User account, generates a unique temp password, fires a
  * payment link via Stripe, and emails the patient with both CTAs.
  */
+/**
+ * Admin books a test-centre appointment for a patient.
+ *
+ * Shares the consultation payload's patient block, minus the identity-document
+ * fields (a lab visit does not collect them) and minus everything keyed on a
+ * service or doctor: no insurance, no coupon, no membership, no peak duration
+ * override. Price comes from the centre's offering; the only lever is a
+ * discretionary discount.
+ */
+export const createManualTestBookingBodySchema = z
+  .object({
+    patient: z
+      .object({
+        email: z.string().trim().toLowerCase().email("Invalid patient email").max(254),
+        fullName: z.string().trim().min(2).max(120),
+        phone: z
+          .string()
+          .trim()
+          .regex(
+            /^\+[1-9]\d{0,3}[\s-]?\d{6,14}$/,
+            "Phone must include a country code, e.g. +353 871234567",
+          ),
+        dateOfBirth: z.string().trim().max(40).optional().nullable(),
+        addressLine1: z.string().trim().max(200).optional().nullable(),
+        addressCity: z.string().trim().max(100).optional().nullable(),
+        addressState: z.string().trim().max(100).optional().nullable(),
+        addressPostalCode: z.string().trim().max(32).optional().nullable(),
+        addressCountryCode: z.string().trim().max(8).optional().nullable(),
+      })
+      .strict(),
+    allowDuplicatePatient: z.boolean().optional(),
+    testCenterId: z.string().trim().min(1).max(60),
+    examTypeId: z.string().trim().min(1).max(60),
+    /** The centre's OPEN TestCenterTimeSlot the admin picked. */
+    testCenterTimeSlotId: z.string().trim().min(1).max(120),
+    countryCode: countryCodeSchema,
+    notes: z.string().trim().max(2000).optional().nullable(),
+    /** Discretionary discount. 100 comps the booking outright. */
+    discountPercent: z.number().int().min(0).max(100).optional().nullable(),
+    returnTo: z.string().trim().max(300).optional(),
+  })
+  .strict();
+
+export type CreateManualTestBookingBody = z.infer<
+  typeof createManualTestBookingBodySchema
+>;
+
 export const createManualAppointmentBodySchema = z
   .object({
     patient: z

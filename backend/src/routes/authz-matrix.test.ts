@@ -532,6 +532,24 @@ describe("authorization matrix", () => {
     }
   });
 
+  it("manual test booking: unauthenticated POST → 401", async (t) => {
+    if (!app) return t.skip();
+    const res: InjectStatusResponse = await app.inject({
+      method: "POST",
+      url: "/api/admin/appointments/test-booking",
+      payload: {
+        patient: { email: "authz@example.com", fullName: "Authz Test", phone: "+353871234567" },
+        testCenterId: "tc_authz",
+        examTypeId: "ex_authz",
+        testCenterTimeSlotId: "slot_authz",
+        countryCode: "ie",
+      },
+    });
+    // 401 before the payload is acted on — this endpoint creates a patient
+    // account, an order and a Stripe session, so it must never run unauthenticated.
+    assert.equal(res.statusCode, 401, res.body);
+  });
+
   // ── Test-center booking inventory ("Book a Test") ─────────────────────
   // A center's availability and slots are bookable inventory, exactly like a
   // doctor's. Both route families guard with a plugin-level onRequest hook, so
