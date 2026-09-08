@@ -19,6 +19,8 @@ import { MobileOrderTotalBar } from "@/components/cart/MobileOrderTotalBar";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 import { startCheckout } from "@/lib/api/cart-client";
 import { notificationLocaleFromLang } from "@/lib/notification-locale";
+import { readCheckoutAttribution } from "@/lib/analytics/attribution";
+import { trackMetaEvent } from "@/lib/analytics/meta";
 import { getCartPreview, type CartCoverageLine } from "@/lib/api/me-subscription";
 import { fetchCurrentUser, type AuthUser } from "@/lib/api/auth-api";
 import { PhoneField } from "@/components/forms/phone-field";
@@ -191,6 +193,7 @@ export function CheckoutPageClient({
       returnTo,
       notificationLocale: notificationLocaleFromLang(lang),
       couponCode: coupon?.code,
+      attribution: readCheckoutAttribution(),
     });
     if (!res.ok) {
       setSubmitting(false);
@@ -212,6 +215,10 @@ export function CheckoutPageClient({
       setInsurancePending(true);
       return;
     }
+    // Fired here rather than the success page: this is where we know a
+    // checkout was actually started (payment or free confirmation), and it
+    // covers both outcomes below in one place.
+    trackMetaEvent("InitiateCheckout", { value: payableTotal / 100, currency: cart.currencyCode }, `ic_${res.data.orderId}`);
     // Zero-total orders (fully covered by plan credit/discount) never get a
     // Stripe session — the order is already complete, so go straight to the
     // success page instead of assigning a null Stripe URL.

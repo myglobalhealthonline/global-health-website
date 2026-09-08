@@ -615,6 +615,17 @@ const envSchema = z.object({
   /** "on" forces the archive on outside production, "off" kills it anywhere.
    *  Unset = production only, because local runs use the LIVE database. */
   INVOICE_DRIVE_ARCHIVE: blankAsUnset(z.enum(["on", "off"]).optional()),
+
+  /** Meta Conversions API — server-side Purchase events for paid cart orders,
+   *  sent alongside (and deduped with, via a shared event_id) the browser
+   *  pixel's own Purchase. All three optional; `isMetaCapiConfigured()` gates
+   *  the outbox dispatcher, same shape as `isInvoiceExpressConfigured()`.
+   *  META_TEST_EVENT_CODE must NEVER be set in production — see the boot
+   *  guard below — it routes real events into Meta's Test Events tab instead
+   *  of counting them. */
+  META_CAPI_ACCESS_TOKEN: optionalSecret,
+  META_PIXEL_ID: blankAsUnset(z.string().trim().regex(/^\d+$/).optional()),
+  META_TEST_EVENT_CODE: optionalSecret,
 });
 
 /** Privileged (non-patient) roles that MUST be gated by 2FA in production.
@@ -829,6 +840,17 @@ if (
   throw new Error(
     "ADMIN_TOKEN_FALLBACK_ENABLED must not be true in production — session-based admin auth must be " +
       "the sole path. Remove this env var from Railway.",
+  );
+}
+
+// A test-event code routes Purchase events into Meta's Test Events tab
+// instead of counting them toward real campaign conversions/ROAS — never
+// acceptable on a live production deployment (it would silently zero out ad
+// reporting while the app otherwise appears to work).
+if (parsed.NODE_ENV === "production" && parsed.META_TEST_EVENT_CODE?.trim()) {
+  throw new Error(
+    "META_TEST_EVENT_CODE must not be set in production — it diverts real Purchase events away from " +
+      "Meta's ad reporting. Remove this env var from Railway.",
   );
 }
 

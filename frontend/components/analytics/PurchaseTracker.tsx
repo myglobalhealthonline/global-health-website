@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { trackAnalyticsEvent } from "@/lib/analytics/track";
+import { trackMetaEvent } from "@/lib/analytics/meta";
 
 /**
  * Fires GA4's `purchase` from the checkout success page.
@@ -18,7 +19,12 @@ import { trackAnalyticsEvent } from "@/lib/analytics/track";
  * after the hit has already been counted in realtime — the guard is cheaper.
  *
  * `trackAnalyticsEvent` still applies the consent, production and gtag gates,
- * so nothing here fires for a visitor who declined analytics.
+ * so nothing here fires for a visitor who declined analytics. `trackMetaEvent`
+ * applies its own marketing-consent gate the same way.
+ *
+ * The Meta `eventID` is the bare `orderId` (no prefix) — it must match the
+ * `event_id` the backend sends to the Conversions API for this order so Meta
+ * dedupes the browser and server events into one conversion.
  */
 export function PurchaseTracker({
   orderId,
@@ -38,12 +44,14 @@ export function PurchaseTracker({
       // Private mode / storage disabled. Firing an occasional duplicate is
       // better than never recording revenue at all.
     }
+    const value = Math.round(totalCents) / 100;
     trackAnalyticsEvent("purchase", {
       transaction_id: orderId,
       // GA4 wants a major-unit number, not cents.
-      value: Math.round(totalCents) / 100,
+      value,
       currency: currencyCode,
     });
+    trackMetaEvent("Purchase", { value, currency: currencyCode }, orderId);
   }, [orderId, totalCents, currencyCode]);
 
   return null;

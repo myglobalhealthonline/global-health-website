@@ -3170,6 +3170,11 @@ model Order {
   shipCity                      String?
   shipPostalCode                String?
   shipCountryCode               String?
+  /// Ad-click / campaign attribution captured at landing and carried through
+  /// checkout: fbclid, fbp, fbc, utm_*, landingPath, marketingConsent (bool —
+  /// gates the Meta Conversions API send), clientIp, clientUserAgent. Null for
+  /// organic/direct orders. See backend/src/lib/meta/capi-client.ts.
+  adAttribution                 Json?
   /// Appointment ids minted for consultation items in this order (v2).
   /// @deprecated no FK integrity — an appointment id here can survive
   /// deletion of the appointment it names, or drift out of sync. Dual-

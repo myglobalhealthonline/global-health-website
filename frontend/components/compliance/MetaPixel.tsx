@@ -1,6 +1,7 @@
 "use client";
 
 import Script from "next/script";
+import { flushMetaQueue } from "@/lib/analytics/meta";
 import { useConsent } from "./use-consent";
 
 const META_PIXEL_ID = "5455895281301269";
@@ -22,7 +23,12 @@ export function MetaPixel() {
     <>
       <link rel="preconnect" href="https://connect.facebook.net" />
       <link rel="dns-prefetch" href="https://connect.facebook.net" />
-      <Script id="meta-pixel" strategy="lazyOnload">
+      <Script
+        id="meta-pixel"
+        strategy="lazyOnload"
+        onReady={flushMetaQueue}
+        onLoad={flushMetaQueue}
+      >
         {`!function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
 n.callMethod.apply(n,arguments):n.queue.push(arguments)};
