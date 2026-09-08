@@ -52,15 +52,24 @@ import {
   type PostPaymentMessageContext,
 } from "./post-payment-messages.js";
 import {
+  attendanceAdviceLine,
+  attendanceLine,
+  attendeeLine,
+  type Attendance,
+} from "./attendance-line.js";
+import {
   createPatientUploadToken,
   buildPatientUploadUrl,
 } from "../patient-upload/patient-upload-link.service.js";
 
 const MS_MINUTE = 60 * 1000;
 
+// Every line that carries an appointment — test bookings included. They have
+// no doctor and no meeting link; the venue fork below is what differs.
 const CONSULTATION_KINDS: CartItemKind[] = [
   CartItemKind.GENERAL_CONSULTATION,
   CartItemKind.SPECIALIST_CONSULTATION,
+  CartItemKind.TEST_BOOKING,
 ];
 
 /** Stage 1 — payment confirmation sent. */
@@ -94,6 +103,16 @@ async function resolveConsultationStartForOrder(orderId: string): Promise<Date |
     if (slot?.startAt) return slot.startAt;
   }
 
+  const centreSlotId =
+    order.items.find((i) => i.testCenterTimeSlotId)?.testCenterTimeSlotId ?? null;
+  if (centreSlotId) {
+    const slot = await prisma.testCenterTimeSlot.findUnique({
+      where: { id: centreSlotId },
+      select: { startAt: true },
+    });
+    if (slot?.startAt) return slot.startAt;
+  }
+
   const linkedAppointmentId =
     order.items.find((i) => i.appointmentId)?.appointmentId ?? null;
   if (linkedAppointmentId) {
@@ -105,6 +124,20 @@ async function resolveConsultationStartForOrder(orderId: string): Promise<Date |
   }
 
   return null;
+}
+
+/**
+ * Does this order have somewhere for the patient to actually attend?
+ *
+ * A consultation has a Google Meet link; a test booking has the centre's
+ * address and will never have a link. Both render into `attendanceLine`, and an
+ * order with neither must not send a "confirmed" message telling the patient
+ * nothing about where to go.
+ */
+function hasAttendanceInfo(ctx: { meetingLink: string; attendanceLine: string }): boolean {
+  if (ctx.meetingLink.trim()) return true;
+  // The em-dash fallback means "nothing resolved" — see attendanceLine().
+  return ctx.attendanceLine.trim().length > 0 && !ctx.attendanceLine.endsWith("—");
 }
 
 async function loadPostPaymentContext(orderId: string) {
@@ -125,7 +158,12 @@ async function loadPostPaymentContext(orderId: string) {
         where: { id: primary.timeSlotId },
         select: { startAt: true },
       })
-    : null;
+    : primary.testCenterTimeSlotId
+      ? await prisma.testCenterTimeSlot.findUnique({
+          where: { id: primary.testCenterTimeSlotId },
+          select: { startAt: true },
+        })
+      : null;
   let appointmentStart = slot?.startAt ?? null;
   if (!appointmentStart && primary.appointmentId) {
     const appt = await prisma.appointment.findUnique({
@@ -149,6 +187,38 @@ async function loadPostPaymentContext(orderId: string) {
     ? formatDoctorDisplayName(doctorContact)
     : "Assigned doctor";
 
+  // How the patient attends. A test line has no doctor and no meeting link —
+  // the centre's address, snapshotted onto the appointment at fulfilment, is
+  // what stands in its place.
+  const testCentre = primary.testCenterId
+    ? await prisma.testCenter.findUnique({
+        where: { id: primary.testCenterId },
+        select: { name: true, addressLine: true, city: true },
+      })
+    : null;
+  const venueAddress = primary.appointmentId
+    ? ((
+        await prisma.appointment.findUnique({
+          where: { id: primary.appointmentId },
+          select: { locationAddress: true },
+        })
+      )?.locationAddress ?? null)
+    : null;
+  const attendance: Attendance = testCentre
+    ? {
+        kind: "VENUE",
+        // Prefer the appointment's snapshot: it is what the patient was told
+        // at booking, and a later edit to the centre must not silently change
+        // the address in a reminder for an appointment already made.
+        display:
+          venueAddress ??
+          [testCentre.name, testCentre.addressLine, testCentre.city]
+            .filter((part): part is string => Boolean(part && part.trim()))
+            .join(", "),
+        venueName: testCentre.name,
+      }
+    : { kind: "MEET", display: meetingLink ? formatMeetingLinkDisplay(meetingLink) : "" };
+
   const ctx: PostPaymentMessageContext = {
     patientName: patientFullName,
     patientFirstName: firstName,
@@ -165,6 +235,9 @@ async function loadPostPaymentContext(orderId: string) {
       : pendingAppointmentDateLabel(lang),
     meetingLink,
     meetingLinkDisplay: meetingLink ? formatMeetingLinkDisplay(meetingLink) : "",
+    attendeeLine: attendeeLine(attendance, doctorName, lang),
+    attendanceLine: attendanceLine(attendance, lang),
+    attendanceAdvice: attendanceAdviceLine(attendance, lang),
     orderNumber: formatOrderDisplayId({ id: order.id, orderNumber: order.orderNumber }),
     totalLabel: formatOrderTotal(order.totalCents, order.currencyCode),
   };
@@ -390,7 +463,10 @@ export async function post_sendMeetingLinkNotifications(orderId: string) {
   }
 
   if (loaded.order.postPaymentStage >= POST_PAYMENT_STAGE_MEETING_LINK) return;
-  if (!loaded.ctx.meetingLink) return;
+  // A consultation needs its meeting link; a test booking needs its address.
+  // `attendanceLine` is non-empty for either, so this is the one gate that
+  // covers both without letting a link-less consultation through.
+  if (!hasAttendanceInfo(loaded.ctx)) return;
 
   // Atomic stage claim — prevents duplicate notifications when cron and direct
   // call (from ensureOrderPaidAutomations) fire simultaneously for website orders.
@@ -403,6 +479,11 @@ export async function post_sendMeetingLinkNotifications(orderId: string) {
   const { order, primary, doctorContact, doctorEmail, lang, staffCtx, phoneHints, portal } =
     loaded;
   const baseKey = "post_payment_meeting_link";
+  // A test booking has no doctor BY DESIGN. Without this, its "no doctor
+  // WhatsApp / email" fallbacks below would file SKIPPED automation runs
+  // telling an admin to go set a WhatsApp number on a doctor profile that does
+  // not exist — noise that hides the real ones.
+  const hasDoctor = Boolean(primary.doctorId);
 
   // Mint the patient's first upload link here — the same (email, appointmentId,
   // doctorId) scope the admin/doctor "resend" button uses, so a later resend
@@ -463,7 +544,7 @@ export async function post_sendMeetingLinkNotifications(orderId: string) {
       lang,
       doctorContact.whatsappHints,
     );
-  } else {
+  } else if (hasDoctor) {
     await createAutomationRun({
       automationKey: `${baseKey}_doctor_whatsapp`,
       orderId,
@@ -488,7 +569,7 @@ export async function post_sendMeetingLinkNotifications(orderId: string) {
       "meeting_link",
       doctorEmailSubjectMeetingLink(lang),
     );
-  } else {
+  } else if (hasDoctor) {
     await createAutomationRun({
       automationKey: `${baseKey}_doctor_email`,
       orderId,
@@ -525,12 +606,27 @@ export async function post_sendMeetingLinkNotifications(orderId: string) {
   }).catch(() => undefined);
 }
 
+/**
+ * The same stage-2 confirmation, named for what it does on a test booking:
+ * send the centre's address instead of a meeting link.
+ *
+ * An alias rather than a second function because the flow is genuinely
+ * identical — same stage claim, same idempotency, same ladder position. Only
+ * the two lines of copy differ, and those come from the context. Renaming the
+ * original would have touched six call sites for no behavioural gain.
+ */
+export const post_sendVenueNotifications = post_sendMeetingLinkNotifications;
+
+
 /** Re-send meeting-link WhatsApp only (e.g. after fixing phone format). */
 export async function post_resendMeetingLinkWhatsApp(orderId: string) {
   const loaded = await loadPostPaymentContext(orderId);
   if (!loaded) return;
   if (loaded.order.paymentStatus !== "PAID" && loaded.order.status !== "PAID") return;
-  if (!loaded.ctx.meetingLink) return;
+  // A consultation needs its meeting link; a test booking needs its address.
+  // `attendanceLine` is non-empty for either, so this is the one gate that
+  // covers both without letting a link-less consultation through.
+  if (!hasAttendanceInfo(loaded.ctx)) return;
 
   const { order, primary, doctorContact, lang, ctx, staffCtx, phoneHints, portal } = loaded;
   const baseKey = "post_payment_meeting_link_resend";
@@ -578,7 +674,7 @@ export async function post_sendOneHourReminder(orderId: string) {
   if (loaded.order.paymentStatus !== "PAID") return;
   if (loaded.order.postPaymentStage < POST_PAYMENT_STAGE_MEETING_LINK) return;
   if (loaded.order.postPaymentStage >= POST_PAYMENT_STAGE_ONE_HOUR) return;
-  if (!loaded.ctx.meetingLink || !loaded.consultStart) return;
+  if (!hasAttendanceInfo(loaded.ctx) || !loaded.consultStart) return;
 
   const { order, primary, doctorContact, doctorEmail, lang, ctx, staffCtx, phoneHints, portal } =
     loaded;
@@ -667,7 +763,7 @@ export async function post_sendFiveMinuteReminder(orderId: string) {
   if (loaded.order.paymentStatus !== "PAID") return;
   if (loaded.order.postPaymentStage < POST_PAYMENT_STAGE_ONE_HOUR) return;
   if (loaded.order.postPaymentStage >= POST_PAYMENT_STAGE_SESSION_START) return;
-  if (!loaded.ctx.meetingLink || !loaded.consultStart) return;
+  if (!hasAttendanceInfo(loaded.ctx) || !loaded.consultStart) return;
 
   const { order, primary, doctorContact, doctorEmail, lang, ctx, staffCtx, phoneHints, portal } =
     loaded;
@@ -879,7 +975,15 @@ export async function runPostPaymentReminderCron() {
       postPaymentStage: { gte: POST_PAYMENT_STAGE_PAID, lt: POST_PAYMENT_STAGE_SESSION_START },
       items: { some: { kind: { in: CONSULTATION_KINDS } } },
     },
-    select: { id: true, postPaymentStage: true, meetingUrl: true },
+    select: {
+      id: true,
+      postPaymentStage: true,
+      meetingUrl: true,
+      // A test booking has no meetingUrl and never will — its attendance info
+      // is the centre address. Without this the reminder ladder would skip
+      // every test order forever.
+      items: { select: { testCenterId: true } },
+    },
     take: 100,
     orderBy: { updatedAt: "asc" },
   });
@@ -889,17 +993,18 @@ export async function runPostPaymentReminderCron() {
   let fiveMinSent = 0;
 
   for (const row of paidOrders) {
-    if (
-      row.postPaymentStage === POST_PAYMENT_STAGE_PAID &&
-      row.meetingUrl?.trim()
-    ) {
+    // "Has somewhere for the patient to attend": a meeting link, or a centre.
+    const hasAttendance =
+      Boolean(row.meetingUrl?.trim()) || row.items.some((i) => i.testCenterId);
+
+    if (row.postPaymentStage === POST_PAYMENT_STAGE_PAID && hasAttendance) {
       await post_sendMeetingLinkNotifications(row.id).catch(() => undefined);
       meetingLinkSent++;
       continue;
     }
 
     const consultStart = await resolveConsultationStartForOrder(row.id);
-    if (!consultStart || !row.meetingUrl?.trim()) continue;
+    if (!consultStart || !hasAttendance) continue;
 
     if (
       row.postPaymentStage === POST_PAYMENT_STAGE_MEETING_LINK &&

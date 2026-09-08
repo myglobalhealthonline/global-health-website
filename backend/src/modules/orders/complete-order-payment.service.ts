@@ -1154,10 +1154,10 @@ export async function ensureOrderPaidAutomations(
   const hasTestBooking = orderHasTestBookingItem(paidOrder.items);
   const hasConsultItem = orderHasConsultationItem(paidOrder.items);
   if (hasTestBooking && !hasConsultItem) {
-    const { post_sendMeetingLinkNotifications } = await import(
+    const { post_sendVenueNotifications } = await import(
       "../automation/post-payment-flow.service.js"
     );
-    await post_sendMeetingLinkNotifications(orderId).catch((err) => {
+    await post_sendVenueNotifications(orderId).catch((err) => {
       log.warn({ err, orderId }, "Test booking confirmation notifications failed");
     });
     return;

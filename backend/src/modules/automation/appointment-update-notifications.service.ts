@@ -35,6 +35,12 @@ import {
   patientWhatsAppAppointmentUpdated,
   type PostPaymentMessageContext,
 } from "./post-payment-messages.js";
+import {
+  attendanceAdviceLine,
+  attendanceLine,
+  attendeeLine,
+  type Attendance,
+} from "./attendance-line.js";
 import { sendAdminBookingAlert } from "./admin-booking-alert.service.js";
 import { resolveStaffTimeZone } from "./staff-timezone.js";
 
@@ -72,7 +78,14 @@ async function loadUpdateContext(input: AppointmentUpdateNotifyInput) {
   const primary = order.items[0]!;
   const appointment = await prisma.appointment.findUnique({
     where: { id: input.appointmentId },
-    select: { scheduledAt: true, doctorId: true, serviceId: true, countryCode: true },
+    select: {
+      scheduledAt: true,
+      doctorId: true,
+      serviceId: true,
+      countryCode: true,
+      locationAddress: true,
+      testCenter: { select: { name: true } },
+    },
   });
   if (!appointment) return null;
 
@@ -90,6 +103,17 @@ async function loadUpdateContext(input: AppointmentUpdateNotifyInput) {
     : "Assigned doctor";
   const appointmentStart = appointment.scheduledAt;
 
+  // A test booking is attended at an address, not a link. Read from the
+  // appointment rather than the centre so an "appointment updated" message
+  // quotes the address the patient was actually given.
+  const attendance: Attendance = appointment.testCenter
+    ? {
+        kind: "VENUE",
+        display: appointment.locationAddress ?? "",
+        venueName: appointment.testCenter.name,
+      }
+    : { kind: "MEET", display: meetingLink ? formatMeetingLinkDisplay(meetingLink) : "" };
+
   const ctx: PostPaymentMessageContext = {
     patientName: patientFullName,
     patientFirstName: firstName,
@@ -106,6 +130,9 @@ async function loadUpdateContext(input: AppointmentUpdateNotifyInput) {
       : pendingAppointmentDateLabel(lang),
     meetingLink,
     meetingLinkDisplay: meetingLink ? formatMeetingLinkDisplay(meetingLink) : "",
+    attendeeLine: attendeeLine(attendance, doctorName, lang),
+    attendanceLine: attendanceLine(attendance, lang),
+    attendanceAdvice: attendanceAdviceLine(attendance, lang),
     orderNumber: formatOrderDisplayId({ id: order.id, orderNumber: order.orderNumber }),
     totalLabel: formatOrderTotal(order.totalCents, order.currencyCode),
     changeReason: input.changeReason.trim(),
