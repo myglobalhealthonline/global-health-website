@@ -8296,3 +8296,18 @@ kept the `Backend Tests` CI job red (§42.6); it was not checked whether it is t
 cause.
 
 **NO GATE BUILT / NO CONTENT PUBLISHED / NO PRODUCTION WRITE / NO CMS CHANGE IN THIS PASS.**
+
+---
+
+## 44. Portugal FAQ recrawl accepted (2026-09-08)
+
+OpenSEO Search Console URL Inspection reports
+`https://www.myglobalhealth.online/portugal/pt/faq` as **submitted and indexed**.
+Google's stored crawl advanced from the `2026-08-15T16:11:21Z` baseline to
+`2026-08-17T21:49:56Z`. The fetch succeeded, indexing is allowed, and Google's
+selected canonical exactly matches the user-declared self-canonical.
+
+The 2026-09-08 live readback also passed: HTTP 200, current title and meta
+description, `index, follow`, self-canonical, `pt-PT` hreflang and visible `FAQPage`
+structured data. The Portugal FAQ recrawl monitor is **closed**. No implementation or
+production write was required.

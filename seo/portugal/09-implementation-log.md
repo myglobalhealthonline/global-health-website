@@ -353,3 +353,16 @@ Two constraints found while preparing this:
 `beatriz-carvalho` (189 characters) was left alone: its matrix row is
 `drafted; blocked pending clinical or credential review`, so it is not a live row and
 not part of the eleven.
+
+## 2026-09-08 Portugal FAQ Google recrawl closure
+
+Search Console URL Inspection now reports the Portugal FAQ as submitted and indexed
+with a successful mobile fetch. Google's stored crawl advanced from
+`2026-08-15T16:11:21Z` to `2026-08-17T21:49:56Z`; the Google-selected and
+user-declared canonicals both remain
+`https://www.myglobalhealth.online/portugal/pt/faq`, and indexing is allowed.
+
+A cache-bypassed public read on 2026-09-08 returned HTTP 200 with the approved title
+and meta description, self-canonical, `index, follow`, `pt-PT` hreflang and visible
+`FAQPage` structured data. The FAQ recrawl watch is closed. No code, CMS, clinical,
+doctor-profile or production content write was made during this verification.
