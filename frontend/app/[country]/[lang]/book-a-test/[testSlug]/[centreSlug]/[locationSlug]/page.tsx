@@ -84,14 +84,26 @@ export default async function BookTestAtCentrePage({
   const centreTz = overlay?.bookingTimezone ?? "UTC";
 
   return (
-    <section className="gh-section">
-      <div className="gh-container grid gap-6">
+    <section
+      className="gh2-section-ivory"
+      style={{ padding: "clamp(40px,5vw,72px) 0" }}
+    >
+      <div className="mx-auto grid max-w-[var(--container-width)] gap-6 px-5 md:px-10">
         <div>
-          <p className="gh-eyebrow">{t.hero.eyebrow}</p>
-          <h1 className="gh-h1">{test.name}</h1>
-          <p className="gh-lede">
+          <p
+            className="text-[11px] font-bold uppercase tracking-[0.2em]"
+            style={{ color: "var(--color-brand-primary)" }}
+          >
+            {t.hero.eyebrow}
+          </p>
+          <h1 className="mt-2 text-3xl font-extrabold tracking-[-0.02em] text-[var(--color-text-primary)]">
+            {test.name}
+          </h1>
+          <p className="mt-2 text-[var(--color-text-muted)]">
             {centre.name} — {location.name} ·{" "}
-            {formatPriceRounded(centre.patientPriceCents, centre.currencyCode)}
+            <span className="font-extrabold text-[var(--color-text-primary)]">
+              {formatPriceRounded(centre.patientPriceCents, centre.currencyCode)}
+            </span>
           </p>
         </div>
 

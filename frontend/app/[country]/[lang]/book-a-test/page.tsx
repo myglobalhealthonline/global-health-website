@@ -11,6 +11,7 @@ import { isSupportedLocale } from "@/lib/content/get-page-content";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { breadcrumbJsonLd, catalogueItemListJsonLd } from "@/lib/seo/structured-data";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -43,9 +44,12 @@ export async function generateMetadata({
 /**
  * Public "Book a Test" catalogue for one market.
  *
- * Lists only exams an admin has marked bookable AND that at least one active
- * centre in this country performs — the backend applies that gate, so nothing
- * here re-filters. Price is a from-price across the centres offering each exam.
+ * Styled as a forest section on the dark public theme, matching the health-test
+ * and consultation hubs — the earlier version used bare utility classes, which
+ * rendered dark text on the dark ground and unstyled cards.
+ *
+ * Lists only exams an admin marked bookable AND that an active centre in this
+ * country performs; the backend applies that gate, so nothing here re-filters.
  */
 export default async function BookATestPage({
   params,
@@ -85,30 +89,56 @@ export default async function BookATestPage({
         />
       ) : null}
 
-      <section className="gh-section">
-        <div className="gh-container">
-          <p className="gh-eyebrow">{t.hero.eyebrow}</p>
-          <h1 className="gh-h1">{t.hero.title}</h1>
-          <p className="gh-lede max-w-[60ch]">{t.hero.subtitle}</p>
-        </div>
-      </section>
+      <section
+        id="book-a-test"
+        className="scroll-mt-24 relative overflow-hidden gh2-section-forest gh-medical-pattern gh-medical-pattern-dark"
+        style={{ padding: "clamp(64px,8vw,120px) 0" }}
+      >
+        <SectionSeam theme="dark" />
+        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          <p
+            className="text-[11px] font-bold uppercase tracking-[0.2em]"
+            style={{ color: "var(--color-brand-accent)" }}
+          >
+            {t.hero.eyebrow}
+          </p>
+          <h1
+            className="mt-3 font-extrabold tracking-[-0.03em] leading-[1.02]"
+            style={{
+              fontSize: "clamp(2rem, 4vw + 0.5rem, 3.5rem)",
+              color: "rgba(255,255,255,0.92)",
+            }}
+          >
+            {t.hero.title}
+          </h1>
+          <p
+            className="mt-4 max-w-[60ch]"
+            style={{ color: "rgba(255,255,255,0.65)" }}
+          >
+            {t.hero.subtitle}
+          </p>
 
-      <section className="gh-section">
-        <div className="gh-container">
           {tests.length === 0 ? (
-            <p className="gh-lede">{t.catalogue.empty}</p>
+            <p className="mt-10" style={{ color: "rgba(255,255,255,0.65)" }}>
+              {t.catalogue.empty}
+            </p>
           ) : (
-            <ul className="grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="mt-10 grid list-none gap-5 p-0 sm:grid-cols-2 lg:grid-cols-3">
               {tests.map((test) => (
-                <li key={test.id} className="gh-card flex flex-col gap-2 p-5">
-                  <h2 className="gh-h3 m-0">{test.name}</h2>
+                <li
+                  key={test.id}
+                  className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-white p-6 shadow-sm"
+                >
+                  <h2 className="m-0 text-lg font-extrabold text-[var(--color-text-primary)]">
+                    {test.name}
+                  </h2>
                   {test.summary ? (
                     <p className="m-0 text-sm text-[var(--color-text-muted)]">
                       {test.summary}
                     </p>
                   ) : null}
                   <p className="m-0 flex items-center gap-1.5 text-sm text-[var(--color-text-muted)]">
-                    <MapPin className="size-3.5" aria-hidden />
+                    <MapPin className="size-3.5 shrink-0" aria-hidden />
                     {test.centreCount === 1
                       ? t.catalogue.centreCount_one.replace("{count}", "1")
                       : t.catalogue.centreCount_other.replace(
@@ -116,7 +146,7 @@ export default async function BookATestPage({
                           String(test.centreCount),
                         )}
                   </p>
-                  <p className="m-0 font-semibold">
+                  <p className="m-0 text-xl font-extrabold text-[var(--color-text-primary)]">
                     {t.catalogue.fromPrice.replace(
                       "{price}",
                       formatPriceRounded(test.fromPriceCents, test.currencyCode),
@@ -124,7 +154,7 @@ export default async function BookATestPage({
                   </p>
                   <Link
                     href={`${base}/book-a-test/${test.slug}`}
-                    className="gh-btn gh-btn-primary mt-auto"
+                    className="gh-btn gh-btn-primary mt-auto w-full justify-center"
                   >
                     {t.catalogue.viewTest}
                   </Link>

@@ -10,6 +10,7 @@ import { isSupportedLocale } from "@/lib/content/get-page-content";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -78,16 +79,33 @@ export default async function BookATestDetailPage({
         ])}
       />
 
-      <section className="gh-section">
-        <div className="gh-container">
-          <p className="gh-eyebrow">{t.hero.eyebrow}</p>
-          <h1 className="gh-h1">{test.heroTitle ?? test.name}</h1>
+      <section
+        className="relative overflow-hidden gh2-section-forest gh-medical-pattern gh-medical-pattern-dark"
+        style={{ padding: "clamp(56px,7vw,96px) 0" }}
+      >
+        <SectionSeam theme="dark" />
+        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          <p
+            className="text-[11px] font-bold uppercase tracking-[0.2em]"
+            style={{ color: "var(--color-brand-accent)" }}
+          >
+            {t.hero.eyebrow}
+          </p>
+          <h1
+            className="mt-3 font-extrabold tracking-[-0.03em] leading-[1.02]"
+            style={{
+              fontSize: "clamp(2rem, 4vw + 0.5rem, 3.25rem)",
+              color: "rgba(255,255,255,0.92)",
+            }}
+          >
+            {test.heroTitle ?? test.name}
+          </h1>
           {test.heroDescription ?? test.summary ? (
-            <p className="gh-lede max-w-[65ch]">
+            <p className="mt-4 max-w-[65ch]" style={{ color: "rgba(255,255,255,0.65)" }}>
               {test.heroDescription ?? test.summary}
             </p>
           ) : null}
-          <p className="font-semibold">
+          <p className="mt-4 text-lg font-extrabold" style={{ color: "#fff" }}>
             {t.catalogue.fromPrice.replace(
               "{price}",
               formatPriceRounded(test.fromPriceCents, test.currencyCode),
@@ -97,9 +115,11 @@ export default async function BookATestDetailPage({
       </section>
 
       {test.detailBody ? (
-        <section className="gh-section">
-          <div className="gh-container">
-            <h2 className="gh-h2">{t.detail.aboutThisTest}</h2>
+        <section style={{ padding: "clamp(40px,5vw,72px) 0" }}>
+          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+            <h2 className="text-2xl font-extrabold text-[var(--color-text-primary)]">
+              {t.detail.aboutThisTest}
+            </h2>
             {/* Sanitized server-side on write (sanitizeRichHtml), never here. */}
             <div
               className="gh-prose"
@@ -110,9 +130,11 @@ export default async function BookATestDetailPage({
       ) : null}
 
       {test.preparationBody ? (
-        <section className="gh-section">
-          <div className="gh-container">
-            <h2 className="gh-h2">{t.detail.preparation}</h2>
+        <section style={{ padding: "clamp(40px,5vw,72px) 0" }}>
+          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+            <h2 className="text-2xl font-extrabold text-[var(--color-text-primary)]">
+              {t.detail.preparation}
+            </h2>
             <div
               className="gh-prose"
               dangerouslySetInnerHTML={{ __html: test.preparationBody }}
@@ -121,14 +143,26 @@ export default async function BookATestDetailPage({
         </section>
       ) : null}
 
-      <section className="gh-section">
-        <div className="gh-container">
-          <h2 className="gh-h2">{t.detail.chooseCentre}</h2>
-          <p className="gh-lede">{t.detail.chooseCentreHint}</p>
-          <ul className="grid list-none gap-4 p-0 sm:grid-cols-2">
+      <section
+        className="gh2-section-ivory"
+        style={{ padding: "clamp(48px,6vw,88px) 0" }}
+      >
+        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          <h2 className="text-2xl font-extrabold text-[var(--color-text-primary)]">
+            {t.detail.chooseCentre}
+          </h2>
+          <p className="mt-2 text-[var(--color-text-muted)]">
+            {t.detail.chooseCentreHint}
+          </p>
+          <ul className="mt-6 grid list-none gap-5 p-0 sm:grid-cols-2">
             {test.centres.map((centre) => (
-              <li key={centre.id} className="gh-card flex flex-col gap-2 p-5">
-                <h3 className="gh-h3 m-0">{centre.name}</h3>
+              <li
+                key={centre.id}
+                className="flex flex-col gap-2 rounded-[var(--radius-card)] bg-white p-6 shadow-sm"
+              >
+                <h3 className="m-0 text-lg font-extrabold text-[var(--color-text-primary)]">
+                  {centre.name}
+                </h3>
                 <p className="m-0 flex items-center gap-1.5 text-sm text-[var(--color-text-muted)]">
                   <Clock className="size-3.5" aria-hidden />
                   {centre.turnaroundDays
@@ -138,7 +172,7 @@ export default async function BookATestDetailPage({
                       )
                     : t.detail.turnaroundUnknown}
                 </p>
-                <p className="m-0 font-semibold">
+                <p className="m-0 text-xl font-extrabold text-[var(--color-text-primary)]">
                   {formatPriceRounded(centre.patientPriceCents, centre.currencyCode)}
                 </p>
 

@@ -169,9 +169,14 @@ export function BookTestForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="grid gap-6">
+    <form
+      onSubmit={onSubmit}
+      className="grid gap-6 rounded-[var(--radius-card)] bg-white p-6 shadow-sm sm:p-8"
+    >
       <section>
-        <h2 className="gh-h2">{t.booking.chooseTime}</h2>
+        <h2 className="m-0 text-xl font-extrabold text-[var(--color-text-primary)]">
+          {t.booking.chooseTime}
+        </h2>
         <p className="m-0 flex items-start gap-1.5 text-sm text-[var(--color-text-muted)]">
           <MapPin className="mt-0.5 size-3.5 shrink-0" aria-hidden />
           {centreAddress ?? centreName}
@@ -193,7 +198,9 @@ export function BookTestForm({
           <div className="grid gap-4">
             {byDay.map(([day, daySlots]) => (
               <div key={day}>
-                <h3 className="gh-h4 mb-2">{day}</h3>
+                <h3 className="mb-2 text-sm font-extrabold text-[var(--color-text-primary)]">
+                  {day}
+                </h3>
                 <div className="flex flex-wrap gap-2">
                   {daySlots.map((slot) => (
                     <button
@@ -218,7 +225,9 @@ export function BookTestForm({
       </section>
 
       <section className="grid gap-3">
-        <h2 className="gh-h2">{t.booking.yourDetails}</h2>
+        <h2 className="m-0 text-xl font-extrabold text-[var(--color-text-primary)]">
+          {t.booking.yourDetails}
+        </h2>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="flex flex-col gap-1.5">
             <span className="gh-field-label">{t.booking.fullName}</span>
@@ -300,7 +309,7 @@ export function BookTestForm({
 
       <button
         type="submit"
-        className="gh-btn gh-btn-primary"
+        className="gh-btn gh-btn-primary w-full justify-center"
         disabled={submitting || !selectedSlotId || !consented || slots === null}
       >
         {submitting ? (
