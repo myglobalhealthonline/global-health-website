@@ -104,13 +104,20 @@ const RO: ReviewFormLocale = {
   },
 };
 
+const PT_BR: ReviewFormLocale = {
+  ...PT,
+  intro: "Seu feedback nos ajuda a melhorar o atendimento para todos os pacientes.",
+  publicTitle: "Compartilhe sua experiência",
+  labels: { ...PT.labels, valueForMoney: "Custo-benefício", bookingExperience: "Experiência de agendamento" },
+};
+
 const LOCALES: Record<string, ReviewFormLocale> = {
   en: EN,
   "en-ie": EN,
   "en-gb": EN,
   pt: PT,
-  "pt-br": PT,
-  br: PT,
+  "pt-br": PT_BR,
+  br: PT_BR,
   cs: CS,
   cz: CS,
   es: ES,

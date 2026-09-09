@@ -188,7 +188,7 @@ const CANONICAL_HOST = new URL(PROD_SITE_URL).host;
 //     auto-nonced and is CSP-blocked on these routes — desirable: no ad tracking
 //     on PHI portals.)
 const CSP_BASE = "frame-ancestors 'self'; object-src 'none'; base-uri 'self'";
-const NONCE_ROUTES = /^\/(account|admin|doctor|corporate)(\/|$)/;
+const NONCE_ROUTES = /^\/(account|admin|doctor|corporate|reviews)(\/|$)/;
 // Backend API / media origin — portal client fetches (`NEXT_PUBLIC_API_URL`) and
 // media <img> need to be reachable under connect-src / img-src. Empty on deploys
 // where the public env is unset (same-origin only), which is fine.
@@ -678,6 +678,14 @@ export async function proxy(request: NextRequest) {
     },
   });
   response.headers.set("Content-Security-Policy", csp);
+
+  // Review URLs carry patient capabilities. Keep both HTML and RSC responses
+  // private and prevent the URL reaching an external review site's referrer.
+  if (/^\/reviews(?:\/|$)/.test(pathname)) {
+    response.headers.set("Cache-Control", "private, no-store");
+    response.headers.set("Referrer-Policy", "no-referrer");
+    response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+  }
 
   const host = request.headers.get("host") ?? "";
   if (host !== CANONICAL_HOST && host.endsWith(".up.railway.app")) {

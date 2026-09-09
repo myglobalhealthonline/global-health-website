@@ -7,19 +7,14 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { dispatchDueTrustpilotInvites } from "../modules/review-invites/review-invite.service.js";
 
 /**
- * Cron-triggered dispatch of Trustpilot review invitations.
+ * Compatibility cron endpoint for the unified review campaign scheduler.
  *
  *   POST /api/cron/trustpilot-invites
  *   Header: X-Cron-Token: <CRON_SECRET>
  *
- * Legacy TRUSTPILOT ReviewInvite rows still need dispatching after rollout of
- * the universal internal review hub. This endpoint turns those due rows into
- * Trustpilot AFS triggers; Trustpilot then emails the patient. Point Railway
- * cron at it hourly — the 24h delay lives on the row, so tick frequency only
- * affects punctuality, never correctness.
- *
- * Runs are idempotent: a row is claimed by stamping `dispatchedAt`, so an
- * overlapping tick re-reads it as already handled.
+ * Discovers eligible completed consultations and queues due campaign stages
+ * in the existing outbox. Historical AFS rows are never dispatched. Unique
+ * campaign/stage keys and delivery claims protect overlapping ticks.
  */
 const trustpilotInvitesCronRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/cron/trustpilot-invites", async (request, reply) => {

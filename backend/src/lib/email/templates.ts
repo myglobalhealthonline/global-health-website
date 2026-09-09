@@ -1,3 +1,4 @@
+import { getReviewCampaignCopy } from "../i18n/review-campaign-copy.js";
 import { env } from "../../config/env.js";
 import { sendAutomationEmail } from "../../modules/automation/send-automation-notification.js";
 import { formatOrderDisplayId } from "../../modules/automation/automation-catalog.js";
@@ -742,26 +743,27 @@ export async function sendBrazilFinalizationEmail(opts: {
   });
 }
 
-export async function sendReviewInviteEmail(opts: {
-  to: string;
-  patientName: string;
+export function buildReviewInviteEmail(opts: {
+  to?: string;
+  patientName?: string;
   link: string;
-  localeTitle: string;
+  localeTitle?: string;
+  localeCode?: string;
+  reminder?: boolean;
 }) {
-  return sendAutomationEmail(
-    {
-      to: opts.to,
-      subject: `${opts.localeTitle} — Global Health`,
-      text: `Hi ${opts.patientName},\n\nWe would love your feedback on your recent visit:\n\n${opts.link}\n\n— Global Health`,
-      html: wrapHtml(
-        opts.localeTitle,
-        `<p>Hi ${escapeHtml(opts.patientName)},</p>
-       <p>We would love your feedback on your recent visit.</p>
-       <p style="margin:24px 0;text-align:center;"><a href="${opts.link}" style="background:#B0F122;color:#0a1f14;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:700;display:inline-block;">Leave a review</a></p>`,
-      ),
-    },
-    { recordLabel: "review_invite" },
-  );
+  const copy = getReviewCampaignCopy(opts.localeCode);
+  const title = opts.reminder ? copy.reminderTitle : copy.title;
+  const body = opts.reminder ? copy.reminder : copy.intro;
+  const link = escapeHtml(opts.link);
+  return {
+    subject: title + " — Global Health",
+    text: [body, copy.cta + ": " + opts.link, copy.privacy, copy.alreadyReviewed + " / " + copy.optOut + ": " + opts.link].join("\n\n"),
+    html: wrapHtml(title, `<p>${escapeHtml(body)}</p><p><a href="${link}">${escapeHtml(copy.cta)}</a></p><p>${escapeHtml(copy.privacy)}</p><p><a href="${link}">${escapeHtml(copy.alreadyReviewed)}</a> · <a href="${link}">${escapeHtml(copy.optOut)}</a></p>`),
+  };
+}
+
+export async function sendReviewInviteEmail(opts: Parameters<typeof buildReviewInviteEmail>[0] & { to: string }) {
+  return sendAutomationEmail({ to: opts.to, ...buildReviewInviteEmail(opts) }, { recordLabel: "review_invite" });
 }
 
 export async function sendGeneratedDocumentEmail(opts: {

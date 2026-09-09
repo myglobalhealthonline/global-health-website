@@ -1,3 +1,5 @@
+import { stopReviewCampaign } from "../modules/review-invites/review-campaign.service.js";
+import { getReviewCampaignCopy } from "../lib/i18n/review-campaign-copy.js";
 import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { env } from "../config/env.js";
@@ -23,37 +25,24 @@ const ratingSchema = z.object({
 });
 
 const reviewInvitesRoute: FastifyPluginAsync = async (app) => {
+  app.addHook("onRequest", async (_request, reply) => { reply.header("Cache-Control", "no-store").header("Referrer-Policy", "no-referrer"); });
   app.get("/api/public/reviews/rate", async (request, reply) => {
-    const token = (request.query as { token?: string }).token?.trim();
-    if (!token) return reply.status(400).send(errorResponse("token is required"));
+    const query = z.object({ token: z.string().trim().min(1).max(256) }).safeParse(request.query);
+    if (!query.success) return reply.status(400).send(errorResponse("Invalid token"));
+    const token = query.data.token;
     try {
       const invite = await getReviewInviteByToken(token);
       if (!invite) return reply.status(404).send(errorResponse("Review not found"));
-      if (invite.submittedAt) {
-        const destinations = await getPatientReviewDestinations(
-          invite.appointment?.countryCode,
-        );
-        return okResponse({
-          submitted: true,
-          locale: getReviewFormLocale(invite.localeCode),
-          destinations,
-        });
-      }
-      if (invite.expiresAt < new Date()) {
+      if (invite.expiresAt <= new Date()) {
         return reply.status(410).send(errorResponse("Review link has expired"));
       }
-      const destinations = await getPatientReviewDestinations(
-        invite.appointment?.countryCode,
-      );
+      const destinations = await getPatientReviewDestinations(invite.countryCode ?? invite.appointment?.countryCode);
+      reply.header("Cache-Control", "no-store").header("Referrer-Policy", "no-referrer");
       return okResponse({
-        submitted: false,
-        invite: {
-          customerName: invite.customerName,
-          doctorName: invite.doctorName,
-          serviceName: invite.serviceName,
-          localeCode: invite.localeCode,
-        },
-        locale: getReviewFormLocale(invite.localeCode),
+        submitted: Boolean(invite.submittedAt),
+        stopped: Boolean(invite.stoppedAt),
+        localeCode: invite.localeCode, locale: getReviewFormLocale(invite.localeCode),
+        copy: getReviewCampaignCopy(invite.localeCode),
         destinations,
       });
     } catch (error) {
@@ -66,8 +55,9 @@ const reviewInvitesRoute: FastifyPluginAsync = async (app) => {
   });
 
   app.post("/api/public/reviews/rate", async (request, reply) => {
-    const token = (request.query as { token?: string }).token?.trim();
-    if (!token) return reply.status(400).send(errorResponse("token is required"));
+    const query = z.object({ token: z.string().trim().min(1).max(256) }).safeParse(request.query);
+    if (!query.success) return reply.status(400).send(errorResponse("Invalid token"));
+    const token = query.data.token;
     const body = ratingSchema.safeParse(request.body ?? {});
     if (!body.success) {
       return reply.status(400).send(errorResponse("Invalid ratings", body.error.flatten()));
@@ -124,6 +114,26 @@ const reviewInvitesRoute: FastifyPluginAsync = async (app) => {
     }
     },
   );
+  app.post("/api/public/reviews/action", {
+    config: { rateLimit: { max: 30, timeWindow: "1 hour", skipOnError: false } },
+  }, async (request, reply) => {
+    const body = z.object({ token: z.string().trim().min(1).max(256), action: z.enum(["provider_opened", "patient_reviewed", "opted_out"]), provider: z.enum(["GOOGLE", "DOCTIFY", "TRUSTPILOT"]).optional() }).safeParse(request.body);
+    if (!body.success) return reply.status(400).send(errorResponse("Invalid action"));
+    try {
+      const invite = await getReviewInviteByToken(body.data.token);
+      if (!invite || invite.expiresAt <= new Date()) return reply.status(410).send(errorResponse("Review link has expired"));
+      let url: string | undefined;
+      if (body.data.action === "provider_opened") {
+        const destinations = await getPatientReviewDestinations(invite.countryCode ?? invite.appointment?.countryCode);
+        url = destinations.find((destination) => destination.provider === body.data.provider)?.url;
+        if (!url) return reply.status(400).send(errorResponse("Review destination unavailable"));
+      }
+      await stopReviewCampaign(invite.id, body.data.action, body.data.provider);
+      return okResponse({ stopped: true, ...(url ? { url } : {}) });
+    } catch {
+      return reply.status(500).send(errorResponse("Could not update review preferences"));
+    }
+  });
 };
 
 export default reviewInvitesRoute;

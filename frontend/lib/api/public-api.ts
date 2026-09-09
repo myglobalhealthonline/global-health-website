@@ -53,29 +53,19 @@ export function submitBrazilConsent(body: Record<string, unknown>) {
   );
 }
 
-export function fetchReviewForm(token: string) {
-  return publicFetch<{
-    submitted: boolean;
-    invite?: {
-      customerName: string | null;
-      doctorName: string | null;
-      serviceName: string | null;
-    };
-    locale: {
-      title: string;
-      intro: string;
-      submit: string;
-      thanks: string;
-      publicTitle: string;
-      publicIntro: string;
-      publicCta: string;
-      labels: Record<string, string>;
-    };
-    destinations: Array<{
-      provider: "GOOGLE" | "DOCTIFY" | "TRUSTPILOT";
-      url: string;
-    }>;
-  }>(`/api/public/reviews/rate?token=${encodeURIComponent(token)}`);
+export type ReviewFormData = {
+  localeCode: string;
+  submitted: boolean;
+  stopped: boolean;
+  locale: { title: string; intro: string; submit: string; thanks: string; labels: Record<string, string> };
+  copy: import("@/lib/i18n/review-campaign-copy").ReviewCampaignCopy;
+  destinations: Array<{ provider: "GOOGLE" | "DOCTIFY" | "TRUSTPILOT"; url: string }>;
+};
+export function fetchReviewForm(token: string, campaign?: string) {
+  return publicFetch<ReviewFormData>(campaign ? `/api/account/trustpilot-reminder?campaign=${encodeURIComponent(campaign)}` : `/api/public/reviews/rate?token=${encodeURIComponent(token)}`);
+}
+export function performReviewAction(token: string, action: "provider_opened" | "patient_reviewed" | "opted_out", provider?: "GOOGLE" | "DOCTIFY" | "TRUSTPILOT", campaign?: string) {
+  return publicFetch<{ stopped: boolean; url?: string }>(campaign ? "/api/account/trustpilot-reminder" : "/api/public/reviews/action", { method: "POST", body: JSON.stringify(campaign ? { campaign, action, provider } : { token, action, provider }) });
 }
 
 export function submitReviewForm(

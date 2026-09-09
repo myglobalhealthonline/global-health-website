@@ -182,3 +182,14 @@ describe("review settings validation", () => {
     assert.equal(r.success, false);
   });
 });
+
+it("accepts automation limits and rejects unsafe values or client activation dates", () => {
+  const defaults = { enabled: false, delayHours: 24, maxFollowups: 1, followupIntervalDays: 7 };
+  for (const maxFollowups of [0, 1, 2]) assert.equal(reviewSettingsSchema.safeParse({ automation: { ...defaults, maxFollowups } }).success, true);
+  for (const patch of [{ enabled: "false" }, { delayHours: 0 }, { delayHours: 169 }, { delayHours: 1.5 }, { maxFollowups: 3 }, { maxFollowups: -1 }, { followupIntervalDays: 2 }, { followupIntervalDays: 15 }, { activatedAt: "2020-01-01" }]) {
+    assert.equal(reviewSettingsSchema.safeParse({ automation: { ...defaults, ...patch } }).success, false, JSON.stringify(patch));
+  }
+  const website = reviewSettingsSchema.parse({ doctify: { clinicId: "clinic" } });
+  assert.equal(website.automation, undefined);
+  assert.equal(website.doctify?.reviewUrl, undefined);
+});

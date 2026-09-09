@@ -1,16 +1,19 @@
 import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
-import { fetchAdminReviewSettings, patchAdminReviewSettings } from "@/lib/admin/admin-api";
+import { fetchAdminReviewSettings, patchAdminReviewSettings, fetchReviewEmailPreviews } from "@/lib/admin/admin-api";
 import { AdminCard, Btn, PageHeader } from "../../_components/atoms";
 import { FormSection } from "@/components/FormSection";
 import { Star } from "lucide-react";
-import { ReviewCountrySettings } from "./ReviewCountrySettings";
+import Link from "next/link";
+import { ReviewAutomationSettings } from "./ReviewAutomationSettings";
+import { ReviewEmailPreviews } from "./ReviewEmailPreviews";
+import { ReviewActivity } from "./ReviewActivity";
 
 export const dynamic = "force-dynamic";
 
 type PageProps = {
-  searchParams?: Promise<{ error?: string; success?: string }>;
+  searchParams?: Promise<{ error?: string; success?: string; tab?: string; page?: string; country?: string; status?: string }>;
 };
 
 /** One provider block's three form fields → the PATCH payload shape the
@@ -24,6 +27,7 @@ function parseAggregate(
   const ratingRaw = String(formData.get(`${prefix}Rating`) ?? "").trim();
   const countRaw = String(formData.get(`${prefix}Count`) ?? "").trim();
   if (ratingRaw === "" && countRaw === "") return null;
+  if (!ratingRaw || !countRaw) throw new Error(`${prefix}: enter both rating and count, or leave both blank`);
   const rating = Number(ratingRaw);
   const count = Number(countRaw);
   if (!Number.isFinite(rating) || rating < 0 || rating > 5) {
@@ -43,13 +47,15 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
     "use server";
     await requireAdminAction();
 
+    const website = formData.get("section") === "website";
+    const tab = website ? "website" : "automation";
     let body: Record<string, unknown>;
     try {
       const primaryRaw = String(formData.get("primaryProvider") ?? "").trim();
       body = {
         trustpilot: {
           businessUnitId: String(formData.get("trustpilotId") ?? "").trim() || null,
-          reviewUrl: String(formData.get("trustpilotReviewUrl") ?? "").trim() || null,
+
           aggregate: parseAggregate(formData, "trustpilot"),
         },
         google: {
@@ -58,21 +64,21 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
         },
         doctify: {
           clinicId: String(formData.get("doctifyId") ?? "").trim() || null,
-          reviewUrl: String(formData.get("doctifyReviewUrl") ?? "").trim() || null,
+
           aggregate: parseAggregate(formData, "doctify"),
         },
         primaryProvider: primaryRaw === "" ? null : primaryRaw,
-        destinations: settings.destinations.map((destination) => ({
-          countryCode: destination.countryCode,
-          sendReviewRequests:
-            formData.get(`sendReviewRequests_${destination.countryCode}`) === "true",
-          googleReviewUrl:
-            String(formData.get(`googleReviewUrl_${destination.countryCode}`) ?? "").trim() || null,
-        })),
+
+      };
+      if (!website) body = {
+        automation: { enabled: formData.get("enabled") === "on", delayHours: Number(formData.get("delayHours")), maxFollowups: Number(formData.get("maxFollowups")), followupIntervalDays: Number(formData.get("followupIntervalDays")) },
+        doctify: { reviewUrl: String(formData.get("doctifyReviewUrl") ?? "").trim() || null },
+        trustpilot: { reviewUrl: String(formData.get("trustpilotReviewUrl") ?? "").trim() || null },
+        destinations: settings.destinations.map((d) => ({ countryCode: d.countryCode, sendReviewRequests: formData.get(`sendReviewRequests_${d.countryCode}`) === "true", googleReviewUrl: String(formData.get(`googleReviewUrl_${d.countryCode}`) ?? "").trim() || null })),
       };
     } catch (err) {
       redirect(
-        `/admin/settings/reviews?error=${encodeURIComponent(
+        `/admin/settings/reviews?tab=${tab}&error=${encodeURIComponent(
           err instanceof Error ? err.message : "Invalid review settings",
         )}`,
       );
@@ -80,14 +86,14 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
 
     const res = await patchAdminReviewSettings(body);
     if (!res.ok) {
-      redirect(`/admin/settings/reviews?error=${encodeURIComponent(res.message)}`);
+      redirect(`/admin/settings/reviews?tab=${tab}&error=${encodeURIComponent(res.message)}`);
     }
 
     // Public reviews-config read (Doctify widget numbers + the site-wide
     // AggregateRating JSON-LD) is tagged so this takes effect immediately
     // instead of waiting out the 5-minute revalidate window.
     revalidateTag("reviews-config", "max");
-    redirect(`/admin/settings/reviews?success=${encodeURIComponent("Review settings saved")}`);
+    redirect(`/admin/settings/reviews?tab=${tab}&success=${encodeURIComponent("Review settings saved")}`);
   }
 
   if (!result.ok) {
@@ -104,6 +110,7 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
   }
 
   const settings = result.data;
+  const previews = sp.tab !== "activity" && sp.tab !== "website" ? await fetchReviewEmailPreviews() : null;
 
   return (
     <>
@@ -125,43 +132,18 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
         </p>
       ) : null}
 
-      <form action={saveAction} className="grid gap-4">
-        <FormSection
-          title="Global review profiles"
-          description="Trustpilot and Doctify use one profile across every country. These links are shown to patients only when their country is enabled below."
-        >
-          <label className="flex flex-col gap-2">
-            <span className="gh-field-label">Trustpilot review URL</span>
-            <input
-              name="trustpilotReviewUrl"
-              type="url"
-              className="gh-input min-w-0"
-              maxLength={500}
-              placeholder="https://www.trustpilot.com/evaluate/myglobalhealth.online"
-              defaultValue={settings.trustpilot.reviewUrl ?? ""}
-            />
-            <span className="text-xs text-[var(--color-text-muted)]">
-              One Trustpilot profile is used for all countries.
-            </span>
-          </label>
-          <label className="flex flex-col gap-2">
-            <span className="gh-field-label">Doctify review URL</span>
-            <input
-              name="doctifyReviewUrl"
-              type="url"
-              className="gh-input min-w-0"
-              maxLength={500}
-              placeholder="https://www.doctify.com/..."
-              defaultValue={settings.doctify.reviewUrl ?? ""}
-            />
-            <span className="text-xs text-[var(--color-text-muted)]">
-              One Doctify profile is used for all countries.
-            </span>
-          </label>
-        </FormSection>
-
-        <ReviewCountrySettings destinations={settings.destinations} />
-
+      <nav aria-label="Review settings" className="mb-5 flex flex-wrap gap-3">
+        {[["automation", "Automation"], ["activity", "Activity"], ["website", "Website display"]].map(([key, label]) => <Link key={key} href={`?tab=${key}`} aria-current={(sp.tab ?? "automation") === key ? "page" : undefined} className="gh-btn gh-btn-secondary">{label}</Link>)}
+      </nav>
+      {sp.tab === "activity" ? <ReviewActivity searchParams={sp} /> : sp.tab !== "website" ? (
+        <form action={saveAction} className="grid gap-4">
+          <input type="hidden" name="section" value="automation" />
+          <ReviewAutomationSettings settings={settings} />
+          {previews?.ok ? <ReviewEmailPreviews previews={previews.data} /> : <p role="status">Email preview unavailable.</p>}
+          <div className="flex justify-end"><Btn type="submit" variant="primary">Save automation</Btn></div>
+        </form>
+      ) : <form action={saveAction} className="grid gap-4">
+        <input type="hidden" name="section" value="website" />
         <FormSection
           title="Primary provider"
           description="Whichever provider is selected here feeds the site-wide AggregateRating structured data (the star rating Google can show in search results). Leave unset to keep emitting no rating markup at all."
@@ -182,7 +164,7 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
         </FormSection>
 
         <FormSection
-          title="Doctify rating and widget"
+          title="Doctify global rating and widget"
           description="Widget identifier and verified public rating data. These fields do not control where patients leave reviews."
         >
           <label className="flex flex-col gap-2">
@@ -225,7 +207,7 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
         </FormSection>
 
         <FormSection
-          title="Trustpilot rating data"
+          title="Trustpilot global rating data"
           description="Business identifier and verified public rating data. The patient review URL is configured above."
         >
           <label className="flex flex-col gap-2">
@@ -268,8 +250,8 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
         </FormSection>
 
         <FormSection
-          title="Google rating data"
-          description="Site-wide rating data for search markup. Country-specific patient review links are configured above."
+          title="Google rating data (legacy display)"
+          description="This saved rating belongs to one Google Business Profile, not all six countries. Existing website rendering is preserved; country review links are managed in Automation."
         >
           <label className="flex flex-col gap-2">
             <span className="gh-field-label">Place id</span>
@@ -317,10 +299,10 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
 
         <div className="flex justify-end gap-3">
           <Btn type="submit" variant="primary">
-            Save review settings
+            Save website display
           </Btn>
         </div>
-      </form>
+      </form>}
     </>
   );
 }

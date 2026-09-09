@@ -56,6 +56,8 @@ export async function getSetting<T = unknown>(key: string): Promise<T | null> {
 // featured-doctor rows keyed `featured_doctor:<code>`).
 const WRITABLE_SETTING_KEYS = new Set<string>([
   "coupons.birthday",
+  "review.automation",
+  "review.discoveryCursor",
   "review.trustpilot.businessUnitId",
   "review.trustpilot.reviewUrl",
   "review.trustpilot.aggregate",
@@ -167,6 +169,7 @@ export async function getPublicReviewConfig(): Promise<PublicReviewConfig> {
 }
 
 export type AdminCountryReviewDestination = {
+  isActive: boolean;
   countryCode: string;
   countryName: string;
   sendReviewRequests: boolean;
@@ -176,8 +179,8 @@ export type AdminCountryReviewDestination = {
 export async function getAdminCountryReviewDestinations(): Promise<AdminCountryReviewDestination[]> {
   try {
     const countries = await prisma.country.findMany({
-      where: { isActive: true },
-      select: { code: true, name: true },
+      where: { code: { in: ["IE", "CZ", "PT", "ES", "RO", "BR"] } },
+      select: { code: true, name: true, isActive: true },
       orderBy: { name: "asc" },
     });
     const keys = countries.map((country) => countryReviewSettingKey(country.code));
@@ -191,6 +194,7 @@ export async function getAdminCountryReviewDestinations(): Promise<AdminCountryR
       return {
         countryCode: country.code.toUpperCase(),
         countryName: country.name,
+        isActive: country.isActive,
         sendReviewRequests: stored?.sendReviewRequests ?? false,
         googleReviewUrl: stored?.googleReviewUrl ?? null,
       };

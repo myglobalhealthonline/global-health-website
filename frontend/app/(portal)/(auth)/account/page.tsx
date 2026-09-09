@@ -1,3 +1,4 @@
+import { getReviewCampaignCopy } from "@/lib/i18n/review-campaign-copy";
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 import {
@@ -28,7 +29,6 @@ import {
   SectionHeader,
   StatCard,
 } from "@/components/portal-atoms";
-import { Star } from "lucide-react";
 import { IdentityVerificationBanner } from "./_components/identity-verification-banner";
 import type { PillTone } from "@/components/portal-atoms";
 import { formatAppDateTime } from "@/lib/format-datetime";
@@ -323,42 +323,12 @@ export default async function AccountOverviewPage() {
           once verified. */}
       <IdentityVerificationBanner copy={a.dashboard.identityBanner} />
 
-      {/* ── Trustpilot review reminder ────────────────────────────── */}
-      {/* Trustpilot green (#00b67a) is the third-party brand's own color,
-          not a design-system token — scoped as a local CSS var rather than
-          forced into --portal-accent, which would misrepresent the brand. */}
-      {trustpilot.showCta && trustpilot.trustpilotUrl ? (
-        <div className="mt-6" style={{ ["--trustpilot-green" as string]: "#00b67a" }}>
-          <AdminCard style={{ borderLeft: "3px solid var(--trustpilot-green)" }}>
-            <div className="gh-patient-alert-row flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <Star
-                  className="size-5 shrink-0"
-                  style={{ color: "var(--trustpilot-green)" }}
-                  aria-hidden
-                />
-                <div>
-                  <p className="text-portal-thead font-bold uppercase tracking-[0.18em]" style={{ color: "var(--trustpilot-green)" }}>
-                    {a.dashboard.trustpilotEyebrow}
-                  </p>
-                  <p className="mt-0.5 text-sm font-medium text-[var(--portal-text)]">
-                    {a.dashboard.trustpilotBody}
-                  </p>
-                </div>
-              </div>
-              <Btn
-                href={trustpilot.trustpilotUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                variant="primary"
-                size="sm"
-                iconLeft={<Star className="size-4" />}
-              >
-                {a.dashboard.trustpilotCta}
-              </Btn>
-            </div>
-          </AdminCard>
-        </div>
+      {trustpilot.showCta && trustpilot.campaignId ? (
+        <AdminCard>
+          <p className="font-semibold">{getReviewCampaignCopy(locale).title}</p>
+          <p className="mt-2 text-sm">{getReviewCampaignCopy(locale).intro}</p>
+          <a className="gh2-btn-lime mt-4" href={`/reviews/rate?campaign=${encodeURIComponent(trustpilot.campaignId)}`}>{getReviewCampaignCopy(locale).cta}</a>
+        </AdminCard>
       ) : null}
 
       {/* ── Plan section: plan card only (owner request — everything

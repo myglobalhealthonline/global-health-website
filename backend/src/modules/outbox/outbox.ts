@@ -229,6 +229,13 @@ async function dispatchOutboxRow(
   log: OutboxLog,
 ): Promise<void> {
   switch (row.kind) {
+    case "review_campaign_email": {
+      const payload = row.payload as { deliveryId?: unknown } | null;
+      if (typeof payload?.deliveryId !== "string") throw new Error("Invalid review delivery payload");
+      const { dispatchReviewDelivery } = await import("../review-invites/review-campaign.service.js");
+      await dispatchReviewDelivery(payload.deliveryId);
+      return;
+    }
     case "birthday_coupon_email": {
       const { dispatchBirthdayOffer } = await import("../coupons/birthday-offers.service.js");
       try {

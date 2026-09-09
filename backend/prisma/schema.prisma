@@ -809,14 +809,8 @@ model Doctor {
   /// `crossBorderRxEnabled` gates `crossBorderRxCountries`. Grants a read-only,
   /// money-free consultation list; admin bypasses via role=ADMIN. Default false.
   isCountryDirector               Boolean                          @default(false)
-  /// Review destination for this doctor's completed consultations.
-  /// false (default) — the patient gets our own 7-dimension form at
-  ///   /reviews/rate, sent immediately on completion. Unchanged behaviour.
-  /// true            — the patient gets NOTHING from us. 24h after the
-  ///   consultation ends a trigger email goes to Trustpilot's Automatic
-  ///   Feedback Service and Trustpilot mails its own invite. The internal
-  ///   form is skipped so the patient is never asked twice for one visit.
-  /// Admin flips this per doctor on the doctor edit page. See ReviewInvite.
+  /// Legacy preference retained for compatibility. Unified review campaigns
+  /// use global automation and country destinations, regardless of this value.
   trustpilotInviteEnabled         Boolean                          @default(false)
   /// Cross-border PRESCRIBER master toggle (the fulfilling side, Doctor B).
   /// When on, this doctor CAN be a cross-border prescriber; the actual per-market
@@ -3024,6 +3018,22 @@ model ReviewInvite {
   @@index([appointmentId])
   /// Backs the cron's "due and not yet handled" scan.
   @@index([channel, dispatchedAt, scheduledFor])
+  campaignVersion Int @default(0)
+  countryCode String?
+  recipientKey String?
+  completedAt DateTime?
+  nextSendAt DateTime?
+  stoppedAt DateTime?
+  stopReason String?
+  selectedProvider String?
+  patientReviewedAt DateTime?
+  maxFollowups Int @default(1)
+  followupIntervalDays Int @default(7)
+  deliveries ReviewDelivery[]
+  tokens ReviewInviteToken[]
+  @@index([campaignVersion, stoppedAt, nextSendAt])
+  @@index([recipientKey, completedAt])
+
 }
 
 /// Lightweight chat thread for the patient ↔ admin pre-consult conversation.
@@ -7463,4 +7473,29 @@ model CouponRecipient {
   /// "Send" twice never double-mails anyone.
   @@unique([couponId, email])
   @@index([couponId, status])
+}
+
+model ReviewDelivery {
+  id String @id @default(cuid())
+  inviteId String
+  invite ReviewInvite @relation(fields: [inviteId], references: [id], onDelete: Cascade)
+  stage Int
+  status String @default("PENDING")
+  attempts Int @default(0)
+  attemptedAt DateTime?
+  sentAt DateTime?
+  providerMessageId String?
+  error String?
+  @@unique([inviteId, stage])
+  @@index([status, attemptedAt])
+}
+model ReviewInviteToken {
+  tokenHash String @id
+  inviteId String
+  invite ReviewInvite @relation(fields: [inviteId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+model ReviewSuppression {
+  recipientKey String @id
+  createdAt DateTime @default(now())
 }

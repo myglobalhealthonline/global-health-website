@@ -1,220 +1,50 @@
 import assert from "node:assert/strict";
-import { before, beforeEach, describe, it, mock } from "node:test";
+import { before, beforeEach, it, mock } from "node:test";
+import { createHash } from "node:crypto";
 
-type ReviewInviteRow = {
-  id: string;
-  channel: "INTERNAL" | "TRUSTPILOT";
-  expiresAt: Date;
-  localeCode?: string | null;
-  scheduledFor?: Date | null;
-  submittedAt?: Date | null;
-};
-
-const state: {
-  appointment: Record<string, unknown> | null;
-  existingInvite: ReviewInviteRow | null;
-  createCalls: Array<Record<string, unknown>>;
-  emailCalls: Array<Record<string, unknown>>;
-  whatsappCalls: Array<Record<string, unknown>>;
-  settingRows: Array<{ key: string; value: unknown }>;
-} = {
-  appointment: null,
-  existingInvite: null,
-  createCalls: [],
-  emailCalls: [],
-  whatsappCalls: [],
-  settingRows: [],
-};
-
+let lookup: unknown;
+let capability: { inviteId: string } | null = null;
+let invite: { id: string; expiresAt: Date; submittedAt: Date | null } | null;
+let queued = "";
+let updated = false;
 let service: typeof import("./review-invite.service.js");
-
 before(async () => {
-  mock.module("../../db/prisma.js", {
-    namedExports: {
-      prisma: {
-        appointment: {
-          findUnique: async () => state.appointment,
-        },
-        setting: {
-          findMany: async () => state.settingRows,
-        },
-        reviewInvite: {
-          findFirst: async () => state.existingInvite,
-          create: async ({ data }: { data: Record<string, unknown> }) => {
-            state.createCalls.push(data);
-            return {
-              id: "invite_new",
-              submittedAt: null,
-              ...data,
-            };
-          },
-          count: async () => 0,
-          findMany: async () => [],
-          updateMany: async () => ({ count: 0 }),
-          update: async () => ({}),
-          findUnique: async () => null,
-        },
-      },
+  mock.module("../../db/prisma.js", { namedExports: { prisma: {
+    reviewInviteToken: { findUnique: async () => capability },
+    reviewInvite: {
+      findUnique: async (input: unknown) => { lookup = input; return invite; },
+      update: async () => { updated = true; },
+      count: async () => 0,
     },
-  });
-  mock.module("../../config/env.js", {
-    namedExports: {
-      env: {
-        PUBLIC_SITE_URL: "https://myglobalhealth.online",
-        TRUSTPILOT_MONTHLY_INVITE_LIMIT: 50,
-      },
-    },
-  });
-  mock.module("../../lib/email/templates.js", {
-    namedExports: {
-      sendReviewInviteEmail: async (input: Record<string, unknown>) => {
-        state.emailCalls.push(input);
-      },
-    },
-  });
-  mock.module("../../lib/whatsapp/wasender.js", {
-    namedExports: {
-      sendWhatsAppText: async (input: Record<string, unknown>) => {
-        state.whatsappCalls.push(input);
-        return { ok: true };
-      },
-    },
-  });
-  mock.module("../../lib/trustpilot/afs-trigger.js", {
-    namedExports: {
-      isTrustpilotAfsConfigured: () => false,
-      sendTrustpilotAfsTrigger: async () => ({ ok: true, message: "" }),
-      toTrustpilotLocale: () => undefined,
-    },
-  });
-
+  } } });
+  mock.module("./review-campaign.service.js", { namedExports: {
+    createReviewCampaignForAppointment: async (id: string) => { queued = id; return { id: "campaign" }; },
+    scheduleReviewCampaigns: async () => ({ scanned: 2, queued: 1 }),
+  } });
   service = await import("./review-invite.service.js");
 });
-
 beforeEach(() => {
-  state.appointment = {
-    id: "appt_1",
-    status: "COMPLETED",
-    fullName: "Maria Silva",
-    email: "maria@example.com",
-    phone: "+351910000000",
-    consultationType: "GP consultation",
-    countryCode: "BR",
-    notificationLocale: null,
-    doctor: { fullName: "Dr Sofia Costa" },
-    service: { name: "General practice" },
-  };
-  state.existingInvite = null;
-  state.createCalls = [];
-  state.emailCalls = [];
-  state.whatsappCalls = [];
-  state.settingRows = [
-    {
-      key: "review.destination:BR",
-      value: {
-        sendReviewRequests: true,
-        googleReviewUrl: "https://search.google.com/local/writereview?placeid=br",
-      },
-    },
-  ];
+  capability = null; queued = ""; updated = false;
+  invite = { id: "campaign", expiresAt: new Date("2099-01-01"), submittedAt: null };
 });
-
-describe("createReviewInviteForAppointment", () => {
-  it("does not create or send an invite when the country toggle is disabled", async () => {
-    state.settingRows = [
-      {
-        key: "review.destination:BR",
-        value: {
-          sendReviewRequests: false,
-          googleReviewUrl: "https://search.google.com/local/writereview?placeid=br",
-        },
-      },
-    ];
-
-    const result = await service.createReviewInviteForAppointment("appt_1");
-
-    assert.equal(result, null);
-    assert.equal(state.createCalls.length, 0);
-    assert.equal(state.emailCalls.length, 0);
-    assert.equal(state.whatsappCalls.length, 0);
+it("routes old issuance and cron entry points through the one campaign scheduler", async () => {
+  await service.createReviewInviteForAppointment("appointment");
+  assert.equal(queued, "appointment");
+  assert.deepEqual(await service.dispatchDueTrustpilotInvites(), { scanned: 2, queued: 1, sent: 0, retrying: 0, skipped: 0, quotaRemaining: 0 });
+});
+it("supports hashed legacy links and new per-attempt links", async () => {
+  await service.getReviewInviteByToken("synthetic-token");
+  assert.deepEqual((lookup as { where: unknown }).where, { tokenHash: createHash("sha256").update("synthetic-token").digest("hex") });
+  capability = { inviteId: "campaign" };
+  await service.getReviewInviteByToken("another-token");
+  assert.deepEqual((lookup as { where: unknown }).where, { id: "campaign" });
+});
+it("expired private feedback cannot be submitted", async () => {
+  invite!.expiresAt = new Date("2000-01-01");
+  const result = await service.submitReviewInvite("synthetic", {
+    overallSatisfaction: 1, doctorProfessionalism: 1, communicationClarity: 1,
+    timelinessOfService: 1, valueForMoney: 1, likeliness: 1, bookingExperience: 1,
   });
-
-  it("does not send when enabled but no valid review profile is configured", async () => {
-    state.settingRows = [
-      {
-        key: "review.destination:BR",
-        value: {
-          sendReviewRequests: true,
-          googleReviewUrl: null,
-        },
-      },
-    ];
-
-    const result = await service.createReviewInviteForAppointment("appt_1");
-
-    assert.equal(result, null);
-    assert.equal(state.createCalls.length, 0);
-    assert.equal(state.emailCalls.length, 0);
-    assert.equal(state.whatsappCalls.length, 0);
-  });
-
-  it("sends for an enabled country when only the global Doctify profile exists", async () => {
-    state.settingRows = [
-      {
-        key: "review.destination:BR",
-        value: { sendReviewRequests: true, googleReviewUrl: null },
-      },
-      {
-        key: "review.doctify.reviewUrl",
-        value: "https://www.doctify.com/review/global-health",
-      },
-    ];
-
-    const result = await service.createReviewInviteForAppointment("appt_1");
-
-    assert.equal(result?.channel, "INTERNAL");
-    assert.equal(state.emailCalls.length, 1);
-  });
-
-  it("reuses an unexpired legacy Trustpilot invite instead of minting a second ask", async () => {
-    const legacyInvite: ReviewInviteRow = {
-      id: "invite_legacy",
-      channel: "TRUSTPILOT",
-      expiresAt: new Date("2099-01-01T00:00:00.000Z"),
-      localeCode: "en",
-      scheduledFor: new Date("2099-01-02T00:00:00.000Z"),
-      submittedAt: null,
-    };
-    state.existingInvite = legacyInvite;
-
-    const result = await service.createReviewInviteForAppointment("appt_1");
-
-    assert.equal(result, legacyInvite);
-    assert.equal(state.createCalls.length, 0);
-    assert.equal(state.emailCalls.length, 0);
-    assert.equal(state.whatsappCalls.length, 0);
-  });
-
-  it("creates the universal internal invite with the market locale and sends the hub link", async () => {
-    const result = await service.createReviewInviteForAppointment("appt_1");
-
-    assert.equal(state.createCalls.length, 1);
-    assert.equal(state.createCalls[0].channel, "INTERNAL");
-    assert.equal(state.createCalls[0].localeCode, "pt-br");
-    assert.equal(state.createCalls[0].scheduledFor, null);
-    assert.equal(result?.channel, "INTERNAL");
-
-    assert.equal(state.emailCalls.length, 1);
-    assert.equal(state.emailCalls[0].localeTitle, "Como foi a sua consulta?");
-    assert.match(
-      String(state.emailCalls[0].link),
-      /^https:\/\/myglobalhealth\.online\/reviews\/rate\?token=/,
-    );
-
-    assert.equal(state.whatsappCalls.length, 1);
-    assert.match(
-      String(state.whatsappCalls[0].message),
-      /^Como foi a sua consulta\?\nhttps:\/\/myglobalhealth\.online\/reviews\/rate\?token=/,
-    );
-  });
+  assert.equal(result.ok, false);
+  assert.equal(updated, false);
 });

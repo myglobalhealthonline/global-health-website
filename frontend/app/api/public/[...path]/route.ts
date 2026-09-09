@@ -25,6 +25,7 @@ const ALLOWED_PATHS: Record<string, Set<string>> = {
   POST: new Set([
     "brazil-consent/submit",
     "reviews/rate",
+    "reviews/action",
     "patient-upload",
     "cross-border-rx-consent",
   ]),
@@ -87,6 +88,7 @@ async function proxyPublic(
     status: upstream.status,
     headers: {
       "content-type": upstream.headers.get("content-type") ?? "application/json",
+      ...(path.startsWith("reviews/") ? { "Cache-Control": "no-store", "Referrer-Policy": "no-referrer" } : {}),
     },
   });
 }

@@ -17,7 +17,15 @@ export const aggregateSchema = z
  * row" — see admin-settings.route.ts. This lets the admin form clear values
  * by submitting empty strings (the route layer maps "" → null).
  */
+export const reviewAutomationSchema = z.object({
+  enabled: z.boolean(),
+  delayHours: z.number().int().min(1).max(168),
+  maxFollowups: z.number().int().min(0).max(2),
+  followupIntervalDays: z.number().int().min(3).max(14),
+}).strict();
+
 export const reviewSettingsSchema = z.object({
+  automation: reviewAutomationSchema.optional(),
   trustpilot: z
     .object({
       businessUnitId: z.string().trim().max(120).nullable().optional(),

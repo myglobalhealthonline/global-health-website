@@ -311,7 +311,7 @@ export async function buildApp() {
   app.setErrorHandler((err: FastifyError, request, reply) => {
     const status = typeof err.statusCode === "number" ? err.statusCode : 500;
     if (status < 500) return reply.send(err);
-    request.log.error({ err, url: request.url }, "unhandled route error");
+    request.log.error({ err, route: request.routeOptions.url }, "unhandled route error");
     return reply
       .status(500)
       .send(errorResponse("Something went wrong. Please try again."));
