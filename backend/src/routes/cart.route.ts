@@ -144,9 +144,10 @@ const addItemBodySchema = z.object({
   ]),
   healthTestId: z.string().min(1).max(120).optional(),
   serviceId: z.string().min(1).max(120).optional(),
-  /** TEST_BOOKING lines — the exam, the centre, and the centre slot picked. */
+  /** TEST_BOOKING lines — the exam, the provider, the branch, and the slot. */
   examTypeId: z.string().min(1).max(120).optional(),
   testCenterId: z.string().min(1).max(120).optional(),
+  testCenterLocationId: z.string().min(1).max(120).optional(),
   testCenterTimeSlotId: z.string().min(1).max(120).optional(),
   /** Capped at 5 per item per cart so casual product orders stay sensible. */
   quantity: z.number().int().min(1).max(5).optional(),
@@ -841,7 +842,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       }
       const queryParse = cartQuerySchema.safeParse(request.query);
       const requestedLocale = queryParse.success ? queryParse.data.locale : undefined;
-      const { kind, healthTestId, serviceId, examTypeId, testCenterId, testCenterTimeSlotId, quantity, timeSlotId, doctorId, patient, benefitSelection, familyMemberId, insuranceCompanyId, insurancePolicyNumber, benefit, declaredCoverage } =
+      const { kind, healthTestId, serviceId, examTypeId, testCenterId, testCenterLocationId, testCenterTimeSlotId, quantity, timeSlotId, doctorId, patient, benefitSelection, familyMemberId, insuranceCompanyId, insurancePolicyNumber, benefit, declaredCoverage } =
         body.data;
       const qty = quantity ?? 1;
       // A declared INSURANCE coverage is the same thing the legacy insurance
@@ -941,12 +942,12 @@ const cartRoute: FastifyPluginAsync = async (app) => {
           countryCode = ht.country.code;
           currencyCode = ht.currencyCode ?? "EUR";
         } else if (kind === "TEST_BOOKING") {
-          if (!examTypeId || !testCenterId || !testCenterTimeSlotId) {
+          if (!examTypeId || !testCenterId || !testCenterLocationId || !testCenterTimeSlotId) {
             return reply
               .status(400)
               .send(
                 errorResponse(
-                  "Test bookings require examTypeId, testCenterId and testCenterTimeSlotId",
+                  "Test bookings require examTypeId, testCenterId, testCenterLocationId and testCenterTimeSlotId",
                 ),
               );
           }
@@ -1514,7 +1515,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       // market's booking switch still has to be honoured, and re-read inside
       // the same transaction so a market closed mid-request cannot slip
       // through.
-      if (isTestBookingKind && testCenterTimeSlotId && testCenterId) {
+      if (isTestBookingKind && testCenterTimeSlotId && testCenterLocationId) {
         const exam = examTypeId
           ? await prisma.examType.findUnique({
               where: { id: examTypeId },
@@ -1528,15 +1529,22 @@ const cartRoute: FastifyPluginAsync = async (app) => {
               testCenterTimeSlotId,
               exam?.durationMinutes ?? null,
             );
-            // The slot must belong to the centre the client named, or a caller
-            // could hold one centre's inventory against another's price.
-            if (held.testCenterId !== testCenterId) throw new SlotAlreadyTakenError();
+            // The slot must belong to the LOCATION the client named, and that
+            // location to the centre — otherwise a caller could hold one
+            // branch's inventory against another's booking.
+            if (held.testCenterLocationId !== testCenterLocationId) {
+              throw new SlotAlreadyTakenError();
+            }
             const [centre, bookingSetting] = await Promise.all([
-              tx.testCenter.findFirst({
+              tx.testCenterLocation.findFirst({
                 where: {
-                  id: testCenterId,
+                  id: testCenterLocationId,
                   isActive: true,
-                  country: { code: countryCode, isActive: true },
+                  testCenter: {
+                    id: testCenterId,
+                    isActive: true,
+                    country: { code: countryCode, isActive: true },
+                  },
                 },
                 select: { id: true },
               }),
@@ -1655,6 +1663,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
             doctorId: doctorId ?? null,
             examTypeId: examTypeId ?? null,
             testCenterId: testCenterId ?? null,
+            testCenterLocationId: testCenterLocationId ?? null,
             testCenterExamId,
             testCenterTimeSlotId: testCenterTimeSlotId ?? null,
             heldUntil,

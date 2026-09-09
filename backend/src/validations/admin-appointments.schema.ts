@@ -252,6 +252,8 @@ export const createManualTestBookingBodySchema = z
       .strict(),
     allowDuplicatePatient: z.boolean().optional(),
     testCenterId: z.string().trim().min(1).max(60),
+    /** The branch being attended. Its calendar owns the slot below. */
+    testCenterLocationId: z.string().trim().min(1).max(60),
     examTypeId: z.string().trim().min(1).max(60),
     /** The centre's OPEN TestCenterTimeSlot the admin picked. */
     testCenterTimeSlotId: z.string().trim().min(1).max(120),

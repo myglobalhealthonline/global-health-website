@@ -949,6 +949,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   // timeSlotId/doctorId for a consultation.
                   examTypeId: i.examTypeId,
                   testCenterId: i.testCenterId,
+                  testCenterLocationId: i.testCenterLocationId,
                   testCenterExamId: i.testCenterExamId,
                   testCenterTimeSlotId: i.testCenterTimeSlotId,
                   // Patient intake snapshot: carry the cart-page form

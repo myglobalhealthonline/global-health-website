@@ -32,10 +32,13 @@ import { errorResponse, okResponse } from "../utils/response.js";
 
 const centerParamsSchema = z.object({
   id: z.string().trim().min(1).max(64),
+  /** The branch whose calendar is being edited. */
+  locationId: z.string().trim().min(1).max(64),
 });
 
 const slotParamsSchema = z.object({
   id: z.string().trim().min(1).max(64),
+  locationId: z.string().trim().min(1).max(64),
   slotId: z.string().trim().min(1).max(64),
 });
 
@@ -135,6 +138,7 @@ export function createAdminTestCenterTimeSlotsRoute(
     async function authorizeCenter(
       request: FastifyRequest,
       testCenterId: string,
+      locationId: string,
       operation: string,
     ): Promise<
       | { ok: true }
@@ -148,13 +152,17 @@ export function createAdminTestCenterTimeSlotsRoute(
           message: "Admin authorization is temporarily unavailable",
         };
       }
-      const center = await prisma.testCenter.findUnique({
-        where: { id: testCenterId },
-        select: { id: true, countryId: true },
+      // Resolve the BRANCH, scoped to the centre in the path — that pairing is
+      // what stops a caller editing another centre's inventory by guessing a
+      // location id — and take the country scope from its provider.
+      const location = await prisma.testCenterLocation.findFirst({
+        where: { id: locationId, testCenterId },
+        select: { id: true, testCenter: { select: { countryId: true } } },
       });
-      if (!center) {
-        return { ok: false, status: 404, message: "Test center not found" };
+      if (!location) {
+        return { ok: false, status: 404, message: "Test center location not found" };
       }
+      const center = { countryId: location.testCenter.countryId };
       const scope = await dependencies.verifyCountryScope({
         request,
         authenticatedAccess,
@@ -177,7 +185,7 @@ export function createAdminTestCenterTimeSlotsRoute(
 
     /** Every slot in a range, whatever its status — the grid's read. */
     app.get<{ Params: { id: string } }>(
-      "/api/admin/test-centers/:id/time-slots",
+      "/api/admin/test-centers/:id/locations/:locationId/time-slots",
       async (request, reply) => {
         const params = centerParamsSchema.safeParse(request.params);
         if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
@@ -188,11 +196,11 @@ export function createAdminTestCenterTimeSlotsRoute(
             .send(errorResponse("Invalid range", query.error.flatten()));
         }
         try {
-          const auth = await authorizeCenter(request, params.data.id, "list_slots");
+          const auth = await authorizeCenter(request, params.data.id, params.data.locationId, "list_slots");
           if (!auth.ok) return fail(reply, auth);
 
           const slots = await listAdminSlotsInRange(
-            params.data.id,
+            params.data.locationId,
             new Date(query.data.fromUtc),
             new Date(query.data.toUtc),
           );
@@ -214,7 +222,7 @@ export function createAdminTestCenterTimeSlotsRoute(
      * covers times the center is already booked for.
      */
     app.post<{ Params: { id: string } }>(
-      "/api/admin/test-centers/:id/time-slots",
+      "/api/admin/test-centers/:id/locations/:locationId/time-slots",
       async (request, reply) => {
         const params = centerParamsSchema.safeParse(request.params);
         if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
@@ -229,11 +237,11 @@ export function createAdminTestCenterTimeSlotsRoute(
           return reply.status(400).send(errorResponse("Invalid start time"));
         }
         try {
-          const auth = await authorizeCenter(request, params.data.id, "add_slot");
+          const auth = await authorizeCenter(request, params.data.id, params.data.locationId, "add_slot");
           if (!auth.ok) return fail(reply, auth);
 
           const result = await createAdHocSlots(
-            params.data.id,
+            params.data.locationId,
             startAts,
             body.data.durationMinutes,
           );
@@ -270,7 +278,7 @@ export function createAdminTestCenterTimeSlotsRoute(
      * and counted, never mutated.
      */
     app.post<{ Params: { id: string } }>(
-      "/api/admin/test-centers/:id/time-slots/bulk",
+      "/api/admin/test-centers/:id/locations/:locationId/time-slots/bulk",
       async (request, reply) => {
         const params = centerParamsSchema.safeParse(request.params);
         if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
@@ -281,10 +289,10 @@ export function createAdminTestCenterTimeSlotsRoute(
             .send(errorResponse("Invalid request", body.error.flatten()));
         }
         try {
-          const auth = await authorizeCenter(request, params.data.id, "bulk_slots");
+          const auth = await authorizeCenter(request, params.data.id, params.data.locationId, "bulk_slots");
           if (!auth.ok) return fail(reply, auth);
 
-          const result = await runBulkSlotAction(params.data.id, body.data);
+          const result = await runBulkSlotAction(params.data.locationId, body.data);
           return okResponse(result);
         } catch (error) {
           if (error instanceof DatabaseUnavailableError) {
@@ -298,7 +306,7 @@ export function createAdminTestCenterTimeSlotsRoute(
 
     /** Flip status, resize on the base grid, or both. */
     app.patch<{ Params: { id: string; slotId: string } }>(
-      "/api/admin/test-centers/:id/time-slots/:slotId",
+      "/api/admin/test-centers/:id/locations/:locationId/time-slots/:slotId",
       async (request, reply) => {
         const params = slotParamsSchema.safeParse(request.params);
         if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
@@ -309,12 +317,12 @@ export function createAdminTestCenterTimeSlotsRoute(
             .send(errorResponse("Invalid body", body.error.flatten()));
         }
         try {
-          const auth = await authorizeCenter(request, params.data.id, "update_slot");
+          const auth = await authorizeCenter(request, params.data.id, params.data.locationId, "update_slot");
           if (!auth.ok) return fail(reply, auth);
 
           if (body.data.durationMinutes !== undefined) {
             const resized = await resizeSlot(
-              params.data.id,
+              params.data.locationId,
               params.data.slotId,
               body.data.durationMinutes,
             );
@@ -335,7 +343,7 @@ export function createAdminTestCenterTimeSlotsRoute(
           }
 
           if (body.data.status !== undefined) {
-            const result = await runBulkSlotAction(params.data.id, {
+            const result = await runBulkSlotAction(params.data.locationId, {
               action: body.data.status === "BLOCKED" ? "BLOCK" : "UNBLOCK",
               slotIds: [params.data.slotId],
               reason: body.data.reason,
@@ -363,7 +371,7 @@ export function createAdminTestCenterTimeSlotsRoute(
 
     /** Remove one slot for one date, leaving a tombstone. */
     app.delete<{ Params: { id: string; slotId: string } }>(
-      "/api/admin/test-centers/:id/time-slots/:slotId",
+      "/api/admin/test-centers/:id/locations/:locationId/time-slots/:slotId",
       async (request, reply) => {
         const params = slotParamsSchema.safeParse(request.params);
         if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
@@ -374,11 +382,11 @@ export function createAdminTestCenterTimeSlotsRoute(
             .send(errorResponse("Invalid body", body.error.flatten()));
         }
         try {
-          const auth = await authorizeCenter(request, params.data.id, "remove_slot");
+          const auth = await authorizeCenter(request, params.data.id, params.data.locationId, "remove_slot");
           if (!auth.ok) return fail(reply, auth);
 
           const result = await removeSlotForDate(
-            params.data.id,
+            params.data.locationId,
             params.data.slotId,
             body.data.reason,
           );

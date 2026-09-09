@@ -354,6 +354,7 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         patient: body.data.patient,
         allowDuplicatePatient: body.data.allowDuplicatePatient ?? false,
         testCenterId: body.data.testCenterId,
+        testCenterLocationId: body.data.testCenterLocationId,
         examTypeId: body.data.examTypeId,
         testCenterTimeSlotId: body.data.testCenterTimeSlotId,
         countryCode: body.data.countryCode,

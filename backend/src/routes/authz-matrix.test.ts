@@ -562,35 +562,47 @@ describe("authorization matrix", () => {
       endMinute: 17 * 60,
     };
     const targets = [
-      ["GET", "/api/admin/test-centers/tc_authz/availability", undefined],
-      ["POST", "/api/admin/test-centers/tc_authz/availability", availabilityWindow],
+      ["GET", "/api/admin/test-centers/tc_authz/locations", undefined],
+      [
+        "POST",
+        "/api/admin/test-centers/tc_authz/locations",
+        { name: "Authz branch", slug: "authz-branch" },
+      ],
       [
         "PATCH",
-        "/api/admin/test-centers/tc_authz/availability/av_authz",
+        "/api/admin/test-centers/tc_authz/locations/loc_authz",
         { isActive: false },
       ],
-      ["DELETE", "/api/admin/test-centers/tc_authz/availability/av_authz", undefined],
+      ["DELETE", "/api/admin/test-centers/tc_authz/locations/loc_authz", undefined],
+      ["GET", "/api/admin/test-centers/tc_authz/locations/loc_authz/availability", undefined],
+      ["POST", "/api/admin/test-centers/tc_authz/locations/loc_authz/availability", availabilityWindow],
+      [
+        "PATCH",
+        "/api/admin/test-centers/tc_authz/locations/loc_authz/availability/av_authz",
+        { isActive: false },
+      ],
+      ["DELETE", "/api/admin/test-centers/tc_authz/locations/loc_authz/availability/av_authz", undefined],
       [
         "GET",
-        "/api/admin/test-centers/tc_authz/time-slots?fromUtc=2026-09-01T00:00:00.000Z&toUtc=2026-09-02T00:00:00.000Z",
+        "/api/admin/test-centers/tc_authz/locations/loc_authz/time-slots?fromUtc=2026-09-01T00:00:00.000Z&toUtc=2026-09-02T00:00:00.000Z",
         undefined,
       ],
       [
         "POST",
-        "/api/admin/test-centers/tc_authz/time-slots",
+        "/api/admin/test-centers/tc_authz/locations/loc_authz/time-slots",
         { startAts: ["2026-09-01T09:00:00.000Z"], durationMinutes: 30 },
       ],
       [
         "POST",
-        "/api/admin/test-centers/tc_authz/time-slots/bulk",
+        "/api/admin/test-centers/tc_authz/locations/loc_authz/time-slots/bulk",
         { action: "BLOCK", slotIds: ["slot_authz"] },
       ],
       [
         "PATCH",
-        "/api/admin/test-centers/tc_authz/time-slots/slot_authz",
+        "/api/admin/test-centers/tc_authz/locations/loc_authz/time-slots/slot_authz",
         { status: "BLOCKED" },
       ],
-      ["DELETE", "/api/admin/test-centers/tc_authz/time-slots/slot_authz", undefined],
+      ["DELETE", "/api/admin/test-centers/tc_authz/locations/loc_authz/time-slots/slot_authz", undefined],
     ] as const;
     for (const [method, url, payload] of targets) {
       const res: InjectStatusResponse = await app.inject({

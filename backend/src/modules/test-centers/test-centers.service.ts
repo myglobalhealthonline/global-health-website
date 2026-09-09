@@ -671,6 +671,147 @@ export async function deleteTestCenterExam(offeringId: string): Promise<boolean>
   }
 }
 
+// ─── Test-centre locations (physical branches) ─────────────────────────────
+
+export class TestCenterLocationNotFoundError extends Error {
+  constructor() {
+    super("Test center location not found");
+    this.name = "TestCenterLocationNotFoundError";
+  }
+}
+
+/**
+ * A centre must always keep at least one location: the calendar, the bookings
+ * and the address a patient is told to attend all hang off one. Deleting the
+ * last one would leave a centre that can be priced but never booked, and would
+ * orphan the address on any appointment already made.
+ */
+export class LastTestCenterLocationError extends Error {
+  constructor() {
+    super("A test center must keep at least one location");
+    this.name = "LastTestCenterLocationError";
+  }
+}
+
+export async function listTestCenterLocations(testCenterId: string) {
+  try {
+    return await prisma.testCenterLocation.findMany({
+      where: { testCenterId },
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Test center data is unavailable");
+  }
+}
+
+export async function createTestCenterLocation(
+  testCenterId: string,
+  input: {
+    name: string;
+    slug: string;
+    addressLine?: string | null;
+    city?: string | null;
+    phone?: string | null;
+    notes?: string | null;
+    isActive?: boolean;
+    sortOrder?: number;
+  },
+) {
+  const centre = await prisma.testCenter.findUnique({
+    where: { id: testCenterId },
+    select: { id: true },
+  });
+  if (!centre) throw new TestCenterNotFoundError();
+  try {
+    return await prisma.testCenterLocation.create({
+      data: {
+        testCenterId,
+        name: input.name,
+        slug: input.slug,
+        addressLine: input.addressLine ?? null,
+        city: input.city ?? null,
+        phone: input.phone ?? null,
+        notes: input.notes ?? null,
+        isActive: input.isActive ?? true,
+        sortOrder: input.sortOrder ?? 0,
+      },
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Test center data is unavailable");
+  }
+}
+
+export async function updateTestCenterLocation(
+  testCenterId: string,
+  locationId: string,
+  body: {
+    name?: string;
+    slug?: string;
+    addressLine?: string | null;
+    city?: string | null;
+    phone?: string | null;
+    notes?: string | null;
+    isActive?: boolean;
+    sortOrder?: number;
+  },
+) {
+  // Scoped by centre as well as id — that pairing is what stops one centre
+  // editing another's branch by guessing an id.
+  const existing = await prisma.testCenterLocation.findFirst({
+    where: { id: locationId, testCenterId },
+    select: { id: true },
+  });
+  if (!existing) return null;
+  try {
+    return await prisma.testCenterLocation.update({
+      where: { id: locationId },
+      data: {
+        ...(body.name !== undefined && { name: body.name }),
+        ...(body.slug !== undefined && { slug: body.slug }),
+        ...(body.addressLine !== undefined && { addressLine: body.addressLine }),
+        ...(body.city !== undefined && { city: body.city }),
+        ...(body.phone !== undefined && { phone: body.phone }),
+        ...(body.notes !== undefined && { notes: body.notes }),
+        ...(body.isActive !== undefined && { isActive: body.isActive }),
+        ...(body.sortOrder !== undefined && { sortOrder: body.sortOrder }),
+      },
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Test center data is unavailable");
+  }
+}
+
+/**
+ * Delete a branch. Refuses the last one (see LastTestCenterLocationError) and
+ * refuses any branch that still has a booked or held slot — deleting it would
+ * cascade the slot away and strand a patient holding an appointment for it.
+ */
+export async function deleteTestCenterLocation(
+  testCenterId: string,
+  locationId: string,
+): Promise<boolean> {
+  const existing = await prisma.testCenterLocation.findFirst({
+    where: { id: locationId, testCenterId },
+    select: { id: true },
+  });
+  if (!existing) return false;
+
+  const remaining = await prisma.testCenterLocation.count({ where: { testCenterId } });
+  if (remaining <= 1) throw new LastTestCenterLocationError();
+
+  const liveSlots = await prisma.testCenterTimeSlot.count({
+    where: { testCenterLocationId: locationId, status: { in: ["HELD", "BOOKED"] } },
+  });
+  if (liveSlots > 0) throw new LastTestCenterLocationError();
+
+  try {
+    await prisma.testCenterLocation.delete({ where: { id: locationId } });
+    return true;
+  } catch (error) {
+    throw normalizeDbError(error, "Test center data is unavailable");
+  }
+}
+
 // ─── Public "Book a Test" catalogue ────────────────────────────────────────
 
 /**
@@ -715,9 +856,21 @@ function publicOfferingsFilter(countryCode: string) {
           id: true,
           name: true,
           slug: true,
-          addressLine: true,
-          city: true,
           phone: true,
+          // Only live branches: an inactive one generates no slots, so
+          // offering it would be a dead end for the patient.
+          locations: {
+            where: { isActive: true },
+            orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+              addressLine: true,
+              city: true,
+              phone: true,
+            },
+          },
         },
       },
     },
@@ -799,16 +952,31 @@ export async function listPublicExamTypes(
   }
 }
 
-export type PublicExamCentre = {
+/** One physical branch a patient can attend. */
+export type PublicExamLocation = {
   id: string;
   name: string;
   slug: string;
   addressLine: string | null;
   city: string | null;
   phone: string | null;
+};
+
+/**
+ * A provider offering the exam, and the branches it can be attended at.
+ *
+ * The price is on the PROVIDER, not the branch: a chain charges the same for an
+ * exam everywhere, so the patient chooses a branch for convenience, not cost.
+ */
+export type PublicExamCentre = {
+  id: string;
+  name: string;
+  slug: string;
+  phone: string | null;
   patientPriceCents: number;
   currencyCode: string;
   turnaroundDays: number | null;
+  locations: PublicExamLocation[];
 };
 
 export type PublicExamDetail = PublicExamCard & {
@@ -856,8 +1024,6 @@ export async function getPublicExamTypeBySlug(
         id: o.testCenter.id,
         name: o.testCenter.name,
         slug: o.testCenter.slug,
-        addressLine: o.testCenter.addressLine,
-        city: o.testCenter.city,
         phone: o.testCenter.phone,
         patientPriceCents: computePatientPriceCents(
           o.costCents,
@@ -866,8 +1032,13 @@ export async function getPublicExamTypeBySlug(
         ),
         currencyCode: o.currencyCode,
         turnaroundDays: o.turnaroundDays,
+        locations: o.testCenter.locations,
       }))
+      // A provider with no live branch cannot be attended, so it is not an
+      // option — offering it would dead-end the patient at the slot picker.
+      .filter((centre) => centre.locations.length > 0)
       .sort((a, b) => a.patientPriceCents - b.patientPriceCents);
+    if (centres.length === 0) return null;
 
     return {
       id: row.id,
@@ -908,9 +1079,11 @@ export async function resolvePublicExamOffering(
   countryCode: string,
   examSlug: string,
   centreSlug: string,
+  locationSlug: string,
 ): Promise<{
   examTypeId: string;
   testCenterId: string;
+  testCenterLocationId: string;
   durationMinutes: number;
   patientPriceCents: number;
   currencyCode: string;
@@ -924,17 +1097,32 @@ export async function resolvePublicExamOffering(
           slug: centreSlug,
           isActive: true,
           country: { code: { equals: countryCode, mode: "insensitive" }, isActive: true },
+          // The branch must belong to this provider and be live — resolving
+          // the pair together is what stops a slot read against a branch the
+          // provider no longer operates.
+          locations: { some: { slug: locationSlug, isActive: true } },
         },
       },
       include: {
         examType: { select: { id: true, durationMinutes: true } },
-        testCenter: { select: { id: true } },
+        testCenter: {
+          select: {
+            id: true,
+            locations: {
+              where: { slug: locationSlug, isActive: true },
+              select: { id: true },
+            },
+          },
+        },
       },
     });
     if (!offering) return null;
+    const location = offering.testCenter.locations[0];
+    if (!location) return null;
     return {
       examTypeId: offering.examType.id,
       testCenterId: offering.testCenter.id,
+      testCenterLocationId: location.id,
       durationMinutes: offering.examType.durationMinutes,
       patientPriceCents: computePatientPriceCents(
         offering.costCents,

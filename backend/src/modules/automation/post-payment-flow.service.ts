@@ -190,11 +190,27 @@ async function loadPostPaymentContext(orderId: string) {
   // How the patient attends. A test line has no doctor and no meeting link —
   // the centre's address, snapshotted onto the appointment at fulfilment, is
   // what stands in its place.
-  const testCentre = primary.testCenterId
-    ? await prisma.testCenter.findUnique({
-        where: { id: primary.testCenterId },
-        select: { name: true, addressLine: true, city: true },
-      })
+  // The BRANCH, not the provider: its address is where the patient goes.
+  const testCentre = primary.testCenterLocationId
+    ? await prisma.testCenterLocation
+        .findUnique({
+          where: { id: primary.testCenterLocationId },
+          select: {
+            name: true,
+            addressLine: true,
+            city: true,
+            testCenter: { select: { name: true } },
+          },
+        })
+        .then((loc) =>
+          loc
+            ? {
+                name: `${loc.testCenter.name} — ${loc.name}`,
+                addressLine: loc.addressLine,
+                city: loc.city,
+              }
+            : null,
+        )
     : null;
   const venueAddress = primary.appointmentId
     ? ((
@@ -1030,6 +1046,17 @@ export async function runPostPaymentReminderCron() {
       if (leadMs > FIVE_MIN_DUE_MS) {
         await post_sendOneHourReminder(row.id).catch(() => undefined);
         oneHourSent++;
+      } else {
+        // Skipping the 1-hour send outright — post_sendOneHourReminder isn't
+        // called to carry the DB stage forward, so bump it here. Without this
+        // the row stays at MEETING_LINK and the 5-minute check below is a
+        // no-op forever: post_sendFiveMinuteReminder itself refuses to send
+        // below stage ONE_HOUR, so the order stalls with neither reminder
+        // sent — the exact failure this fallthrough exists to avoid.
+        await prisma.order.update({
+          where: { id: row.id },
+          data: { postPaymentStage: POST_PAYMENT_STAGE_ONE_HOUR },
+        });
       }
       stage = POST_PAYMENT_STAGE_ONE_HOUR;
     }
