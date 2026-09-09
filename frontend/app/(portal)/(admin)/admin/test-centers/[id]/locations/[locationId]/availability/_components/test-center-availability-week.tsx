@@ -149,6 +149,18 @@ export function TestCenterAvailabilityWeek({
         </p>
       ) : null}
 
+      {items.length === 0 ? (
+        <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-3 py-2 text-portal-compact">
+          No times exist for this week yet. Add weekly opening hours below (or
+          use <strong>Add slots</strong> above for one-off times) — then click a
+          green time here to book a patient in.
+        </p>
+      ) : (
+        <p className="gh-status-info rounded-[var(--radius-card-sm)] border px-3 py-2 text-portal-compact">
+          Click a green (open) time to <strong>book a test for a patient</strong>.
+        </p>
+      )}
+
       <div className="min-w-0">
         <WeekCalendar
           anchorDayKey={weekAnchor}

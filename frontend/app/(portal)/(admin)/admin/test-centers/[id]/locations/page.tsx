@@ -145,7 +145,7 @@ export default async function AdminTestCenterLocationsPage({
       <PageHeader
         eyebrow="Test centre"
         title={`${center.name} · Locations`}
-        description="The physical sites patients travel to. Each has its own address and its own opening hours. Prices are set once per centre under Manage exams — every location charges the same."
+        description="The physical sites patients travel to. Each has its own address and its own opening hours. To BOOK A TEST FOR A PATIENT, open a location's calendar below and click a green time. Prices are set once per centre under Manage exams — every location charges the same."
       />
 
       {messages.error ? (
@@ -198,7 +198,7 @@ export default async function AdminTestCenterLocationsPage({
                         href={`${basePath}/${loc.id}/availability`}
                         className="gh-btn gh-btn-soft text-[12px]"
                       >
-                        <CalendarDays className="size-3.5" aria-hidden /> Availability
+                        <CalendarDays className="size-3.5" aria-hidden /> Calendar &amp; booking
                       </Link>
                       <Link
                         href={`${basePath}?edit=${loc.id}`}
