@@ -7,7 +7,7 @@ import { ExamTypeTranslationTabs } from "./exam-type-translation-tabs";
 /** Every supported locale. An ExamType is one global catalogue row shared by
  *  every market, so its copy is not gated by a country's enabled locales. */
 const LOCALE_CODES = ["EN", "PT", "ES", "CS", "RO", "DE"];
-import { Plus, Trash2 } from "lucide-react";
+import { CalendarDays, Plus, Trash2 } from "lucide-react";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
@@ -554,9 +554,17 @@ export async function TestCentersManager({
         title="Test centers &amp; exam clinics"
         description="Register the labs and clinics where prescribed exams can be performed in this market. For each center, list the exams it offers with our cost and a markup — the patient price is computed automatically. Exam names come from a shared catalogue you manage below."
         actions={
-          <Btn href={`${base}?edit=`} variant="primary" size="md">
-            <Plus className="size-3.5" /> New center
-          </Btn>
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Booking happens on a branch's calendar (a booking has to claim a
+                real open slot), so this leads to the branch picker rather than
+                a form. It exists because the way in was previously undiscoverable. */}
+            <Btn href={`${base}/book`} variant="soft" size="md">
+              <CalendarDays className="size-3.5" /> Book a test for a patient
+            </Btn>
+            <Btn href={`${base}?edit=`} variant="primary" size="md">
+              <Plus className="size-3.5" /> New center
+            </Btn>
+          </div>
         }
       />
 
