@@ -155,6 +155,14 @@ export function MobileNav({
                 },
               ]
             : []),
+          ...(isFeatureOn("book-a-test")
+            ? [
+                {
+                  href: `/${navCountrySlug}/${navLang}/book-a-test`,
+                  label: navigation.navBookATest,
+                },
+              ]
+            : []),
           // Strict opt-in: only where subscriptions is explicitly enabled (§36.15).
           ...(activeFeatures?.includes("subscriptions")
             ? [

@@ -40,6 +40,8 @@ export type SiteNavigationData = {
   navRepeatPrescriptionDesc: string;
   navLabTests: string;
   navLabTestsDesc: string;
+  navBookATest: string;
+  navBookATestDesc: string;
   navHowItWorks: string;
   navChooseCountry: string;
   navCountrySwitchConfirmTemplate: string;
@@ -181,6 +183,8 @@ export function buildSiteNavigationData(
     navRepeatPrescriptionDesc: copy.navigation.repeatPrescriptionDesc,
     navLabTests: copy.navigation.labTests,
     navLabTestsDesc: copy.navigation.labTestsDesc,
+    navBookATest: copy.navigation.bookATest,
+    navBookATestDesc: copy.navigation.bookATestDesc,
     navHowItWorks: copy.navigation.howItWorks,
     navChooseCountry: copy.navigation.chooseCountry,
     navCountrySwitchConfirmTemplate: copy.navigation.countrySwitchConfirmTemplate,

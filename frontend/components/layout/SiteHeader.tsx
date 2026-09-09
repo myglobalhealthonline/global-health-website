@@ -90,6 +90,15 @@ function sectionNavForCountryLang(
       description: nav.navLabTestsDesc,
     });
   }
+  // Test-centre booking. Separate from lab-tests above: that hub sells the
+  // mail-order kit, this books an appointment at a physical centre.
+  if (enabled("book-a-test")) {
+    servicesChildren.push({
+      href: `${base}/book-a-test`,
+      label: nav.navBookATest,
+      description: nav.navBookATestDesc,
+    });
+  }
 
   // Free calculators, sitting beside Services. Built from the tool registry
   // rather than a hand-kept list, so shipping a calculator puts it in the nav —

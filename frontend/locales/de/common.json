@@ -34,6 +34,8 @@
     "repeatPrescriptionDesc": "Von lizenzierten Ärzten geprüft, an Ihre Apotheke gesendet",
     "labTests": "Labortest-Buchung",
     "labTestsDesc": "Kits in Laborqualität von unseren Ärzten geprüft",
+    "bookATest": "Book a Test",
+    "bookATestDesc": "Blood tests and scans at a centre near you",
     "howItWorks": "Wie es funktioniert",
     "chooseCountry": "Land wählen",
     "language": "Sprache",

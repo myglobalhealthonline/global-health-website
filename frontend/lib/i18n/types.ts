@@ -36,6 +36,10 @@ export type CommonLocale = {
     repeatPrescriptionDesc: string;
     labTests: string;
     labTestsDesc: string;
+    /** Test-centre booking — distinct from labTests, which is the mail-order
+     *  health-test kit hub. */
+    bookATest: string;
+    bookATestDesc: string;
     howItWorks: string;
     chooseCountry: string;
     countrySwitchConfirmTemplate: string;

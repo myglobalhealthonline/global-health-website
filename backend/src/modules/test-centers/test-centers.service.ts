@@ -508,6 +508,22 @@ export async function createAdminTestCenter(input: AdminTestCenterCreateBody) {
         notes: input.notes,
         sortOrder: input.sortOrder ?? 0,
         isActive: input.isActive ?? true,
+        // A centre is not bookable until it has a site, so its FIRST location
+        // is created here from the address the admin just typed — same shape
+        // the backfill migration gives every pre-existing centre. Without this
+        // a new centre would land with an address that lives nowhere the
+        // booking flow reads, and an empty Locations tab.
+        locations: {
+          create: {
+            name: input.city?.trim() || input.name,
+            slug: "main",
+            addressLine: input.addressLine,
+            city: input.city,
+            phone: input.phone,
+            isActive: input.isActive ?? true,
+            sortOrder: 0,
+          },
+        },
       },
       include: testCenterInclude,
     });
@@ -535,6 +551,29 @@ export async function updateAdminTestCenter(id: string, body: AdminTestCenterUpd
         ...(body.isActive !== undefined && { isActive: body.isActive }),
       },
     });
+    // Single-site centre: keep its one location's address in step with the
+    // centre form, so an admin who has never opened the Locations tab can still
+    // correct an address where they typed it. Once a second location exists the
+    // admin is managing branches explicitly and we stop touching them —
+    // silently rewriting one branch's address from the centre form is exactly
+    // the wrong-address-in-a-patient-email bug this model was meant to end.
+    if (body.addressLine !== undefined || body.city !== undefined || body.phone !== undefined) {
+      const locations = await prisma.testCenterLocation.findMany({
+        where: { testCenterId: id },
+        select: { id: true, slug: true },
+      });
+      const only = locations.length === 1 ? locations[0] : null;
+      if (only && only.slug === "main") {
+        await prisma.testCenterLocation.update({
+          where: { id: only.id },
+          data: {
+            ...(body.addressLine !== undefined && { addressLine: body.addressLine }),
+            ...(body.city !== undefined && { city: body.city }),
+            ...(body.phone !== undefined && { phone: body.phone }),
+          },
+        });
+      }
+    }
     const row = await prisma.testCenter.findUniqueOrThrow({ where: { id }, include: testCenterInclude });
     return toTestCenterDto(row);
   } catch (error) {

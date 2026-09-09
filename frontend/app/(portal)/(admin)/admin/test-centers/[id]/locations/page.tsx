@@ -41,6 +41,18 @@ function slugify(value: string): string {
  * the same for an exam everywhere, so exams are priced once on the centre under
  * "Manage exams".
  */
+/**
+ * Redirect back to the page with a flash message.
+ *
+ * MODULE scope, deliberately: an inline `"use server"` action may only close
+ * over serializable values, and capturing a component-scoped function throws at
+ * render time ("Something went wrong" on the whole page). Taking `basePath` as
+ * an argument keeps the only captured value a plain string.
+ */
+function backTo(basePath: string, message: string, ok: boolean): never {
+  redirect(`${basePath}?${ok ? "success" : "error"}=${encodeURIComponent(message)}`);
+}
+
 export default async function AdminTestCenterLocationsPage({
   params,
   searchParams,
@@ -78,17 +90,13 @@ export default async function AdminTestCenterLocationsPage({
   const locations = locationsResult.ok ? (locationsResult.data?.locations ?? []) : [];
   const editing = editingId ? locations.find((l) => l.id === editingId) ?? null : null;
 
-  function back(message: string, ok: boolean): never {
-    redirect(`${basePath}?${ok ? "success" : "error"}=${encodeURIComponent(message)}`);
-  }
-
   async function saveAction(formData: FormData) {
     "use server";
     // The layout guard does not cover server actions — every one re-checks.
     await requireAdminAction();
     const locationId = String(formData.get("locationId") ?? "").trim();
     const name = String(formData.get("name") ?? "").trim();
-    if (!name) back("A location needs a name", false);
+    if (!name) backTo(basePath, "A location needs a name", false);
 
     const read = (field: string) => String(formData.get(field) ?? "").trim() || null;
     const body = {
@@ -107,22 +115,22 @@ export default async function AdminTestCenterLocationsPage({
     const result = locationId
       ? await updateAdminTestCenterLocation(id, locationId, body)
       : await createAdminTestCenterLocation(id, body);
-    if (!result.ok) back(result.message, false);
+    if (!result.ok) backTo(basePath, result.message, false);
     revalidatePath(basePath);
-    back(locationId ? "Location updated" : "Location added", true);
+    backTo(basePath, locationId ? "Location updated" : "Location added", true);
   }
 
   async function deleteAction(formData: FormData) {
     "use server";
     await requireAdminAction();
     const locationId = String(formData.get("locationId") ?? "").trim();
-    if (!locationId) back("Missing id", false);
+    if (!locationId) backTo(basePath, "Missing id", false);
     const result = await deleteAdminTestCenterLocation(id, locationId);
     // The API refuses the last location, and any branch still holding a booked
     // slot — both come back as a message worth showing verbatim.
-    if (!result.ok) back(result.message, false);
+    if (!result.ok) backTo(basePath, result.message, false);
     revalidatePath(basePath);
-    back("Location removed", true);
+    backTo(basePath, "Location removed", true);
   }
 
   return (

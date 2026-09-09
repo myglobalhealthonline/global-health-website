@@ -80,6 +80,7 @@ const CARE_FIELDS: ReadonlyArray<CareField> = [
   { flag: "specialist-consultations", labelKey: "navSeeSpecialist", slug: "see-a-specialist" },
   { flag: "online-prescriptions", labelKey: "navRepeatPrescription", slug: "repeat-prescription-request" },
   { flag: "health-tests", labelKey: "navLabTests", slug: "lab-tests" },
+  { flag: "book-a-test", labelKey: "navBookATest", slug: "book-a-test" },
   { flag: null, labelKey: "footerOurDoctors", slug: "doctors" },
 ];
 
