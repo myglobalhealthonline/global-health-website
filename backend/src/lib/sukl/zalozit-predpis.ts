@@ -57,6 +57,15 @@ export interface SuklPrescribedItem {
    * keep; issueSuklPrescription generates one when it is not.
    */
   sourceItemId: string;
+  /**
+   * Send the product as UNREGISTERED (`HVLPNereg`) instead of registered.
+   *
+   * SÚKL match a registered medicine against their DLP register by name, form,
+   * strength and package and reject a near-miss with C013. An unregistered
+   * product carries no such lookup, which makes it the reliable shape when the
+   * 7-digit code is not to hand.
+   */
+  unregistered?: boolean;
 }
 
 export interface SuklPatientIdentity {
@@ -133,16 +142,19 @@ function prescriberBlock(d: SuklPrescriberIdentity): string {
 }
 
 function itemBlock(item: SuklPrescribedItem): string {
-  // Exactly one of HVLPReg / HVLPNereg / IPLP / INN identifies the product; we
-  // send the registered form, where only Nazev is mandatory.
+  // Exactly one of HVLPReg / HVLPNereg / IPLP / INN identifies the product.
+  // Registered products are checked against SÚKL's DLP register, so the code
+  // is what makes a match reliable; without it the name/form/strength must
+  // agree with the register exactly or SÚKL answer C013.
+  const element = item.unregistered ? "HVLPNereg" : "HVLPReg";
   const hvlp =
-    "<HVLPReg>" +
+    `<${element}>` +
     el("Kod", item.medicineCode) +
     el("ATC", item.atcCode) +
     el("Nazev", item.medicineName) +
     el("Forma", item.form) +
     el("Sila", item.strength) +
-    "</HVLPReg>";
+    `</${element}>`;
 
   return (
     "<PLP>" +

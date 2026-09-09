@@ -168,3 +168,18 @@ test("a rejection keeps SÚKL's code and their recommended remedy", () => {
   assert.equal(v.errorMessage, "Neplatný kód pojišťovny");
   assert.equal(v.errorAdvice, "Zkontrolujte kód ZP dle číselníku");
 });
+
+test("an unregistered product avoids the DLP register lookup", () => {
+  // SÚKL match HVLPReg against their register by name/form/strength/package
+  // and reject a near-miss with C013 — which is what "PARALEN 500" as free
+  // text did on 2026-09-09. HVLPNereg carries no such lookup.
+  const registered = buildCreatePrescriptionRequest(input());
+  assert.match(registered, /<HVLPReg>/);
+  assert.ok(!registered.includes("<HVLPNereg>"));
+
+  const unregistered = buildCreatePrescriptionRequest(
+    input({ items: [{ ...input().items[0]!, unregistered: true }] }),
+  );
+  assert.match(unregistered, /<HVLPNereg>.*<\/HVLPNereg>/s);
+  assert.ok(!unregistered.includes("<HVLPReg>"));
+});

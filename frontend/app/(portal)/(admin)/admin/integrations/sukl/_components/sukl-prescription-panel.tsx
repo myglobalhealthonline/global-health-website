@@ -34,6 +34,8 @@ export function SuklPrescriptionPanel({ callable }: { callable: boolean }) {
     insuranceNumber: "",
     insurerCode: "",
     medicineName: "",
+    medicineCode: "",
+    unregistered: true,
     quantity: "1",
     instructions: "",
     note: "",
@@ -70,6 +72,8 @@ export function SuklPrescriptionPanel({ callable }: { callable: boolean }) {
               instructions: form.instructions.trim(),
               reimbursement: "PACIENT",
               medicineName: form.medicineName.trim(),
+              ...(form.medicineCode.trim() ? { medicineCode: form.medicineCode.trim() } : {}),
+              unregistered: form.unregistered,
             },
           ],
           note: form.note.trim() || undefined,
@@ -134,6 +138,29 @@ export function SuklPrescriptionPanel({ callable }: { callable: boolean }) {
         <F label="Date of birth (YYYY-MM-DD)" value={form.dateOfBirth} on={(v) => setForm((f) => ({ ...f, dateOfBirth: v }))} />
         <F label="Insurance number (9–10 digits)" value={form.insuranceNumber} on={(v) => setForm((f) => ({ ...f, insuranceNumber: v }))} />
         <F label="Insurer code — 111 VZP, 201 VoZP, 205 ČPZP, 207 OZP, 209 ZPŠ, 211 ZPMV, 213 RBP" value={form.insurerCode} on={(v) => setForm((f) => ({ ...f, insurerCode: v }))} />
+        <F
+          label="SÚKL medicine code — 7 digits, optional"
+          value={form.medicineCode}
+          on={(v) => setForm((f) => ({ ...f, medicineCode: v }))}
+        />
+        <label className="flex items-center gap-2 text-xs">
+          <input
+            type="checkbox"
+            checked={form.unregistered}
+            onChange={(e) => setForm((f) => ({ ...f, unregistered: e.target.checked }))}
+          />
+          <span>
+            Send as an unregistered product (<code>HVLPNereg</code>)
+          </span>
+        </label>
+        <div className="sm:col-span-2">
+          <p className="m-0 text-xs" style={{ color: "var(--portal-muted)" }}>
+            A REGISTERED product is matched against SÚKL&rsquo;s DLP register by name, form,
+            strength and package; a near-miss is rejected with C013. Leave the box ticked unless
+            you have the exact registered name or the 7-digit code — codes are searchable at
+            prehledy.sukl.cz.
+          </p>
+        </div>
         <F label="Quantity (1–999)" value={form.quantity} on={(v) => setForm((f) => ({ ...f, quantity: v }))} />
         <div className="sm:col-span-2">
           <F
