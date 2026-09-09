@@ -15,6 +15,12 @@ import esServices from "@/locales/es/services.json";
 import csServices from "@/locales/cs/services.json";
 import roServices from "@/locales/ro/services.json";
 import deServices from "@/locales/de/services.json";
+import enBookATest from "@/locales/en/book-a-test.json";
+import ptBookATest from "@/locales/pt/book-a-test.json";
+import esBookATest from "@/locales/es/book-a-test.json";
+import csBookATest from "@/locales/cs/book-a-test.json";
+import roBookATest from "@/locales/ro/book-a-test.json";
+import deBookATest from "@/locales/de/book-a-test.json";
 
 import enFaq from "@/locales/en/faq.json";
 import ptFaq from "@/locales/pt/faq.json";
@@ -102,6 +108,7 @@ import deTools from "@/locales/de/tools.json";
 
 const homeByLocale = { en: enHome, pt: ptHome, es: esHome, cs: csHome, ro: roHome, de: deHome } as const;
 const servicesByLocale = { en: enServices, pt: ptServices, es: esServices, cs: csServices, ro: roServices, de: deServices } as const;
+const bookATestByLocale = { en: enBookATest, pt: ptBookATest, es: esBookATest, cs: csBookATest, ro: roBookATest, de: deBookATest } as const;
 const faqByLocale = { en: enFaq, pt: ptFaq, es: esFaq, cs: csFaq, ro: roFaq, de: deFaq } as const;
 const legalByLocale = { en: enLegal, pt: ptLegal, es: esLegal, cs: csLegal, ro: roLegal, de: deLegal } as const;
 const formsByLocale = { en: enForms, pt: ptForms, es: esForms, cs: csForms, ro: roForms, de: deForms } as const;
@@ -120,6 +127,7 @@ function buildLocaleBundle(locale: LocaleCode) {
     common: getCommonLocale(locale),
     home: deepMergeLocale(homeByLocale.en, homeByLocale[locale]),
     services: deepMergeLocale(servicesByLocale.en, servicesByLocale[locale]),
+    bookATest: deepMergeLocale(bookATestByLocale.en, bookATestByLocale[locale]),
     faq: deepMergeLocale(faqByLocale.en, faqByLocale[locale]),
     legal: deepMergeLocale(legalByLocale.en, legalByLocale[locale]),
     forms: deepMergeLocale(formsByLocale.en, formsByLocale[locale]),

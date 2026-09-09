@@ -670,3 +670,280 @@ export async function deleteTestCenterExam(offeringId: string): Promise<boolean>
     throw normalizeDbError(error, "Test center data is unavailable");
   }
 }
+
+// ─── Public "Book a Test" catalogue ────────────────────────────────────────
+
+/**
+ * The gate every public read shares: the exam is published AND at least one
+ * active centre in a live market carries it.
+ *
+ * Written once because the three public endpoints must agree exactly — a
+ * catalogue that lists an exam whose detail page 404s (or worse, whose slots
+ * are bookable when it should be hidden) is the failure mode this prevents.
+ */
+function publicExamWhere(countryCode: string): Prisma.ExamTypeWhereInput {
+  return {
+    isActive: true,
+    isBookable: true,
+    offerings: {
+      some: {
+        isActive: true,
+        testCenter: {
+          isActive: true,
+          // Country codes are stored lowercase; match insensitively so a
+          // "PT" in the URL resolves the same as "pt".
+          country: { code: { equals: countryCode, mode: "insensitive" }, isActive: true },
+        },
+      },
+    },
+  };
+}
+
+/** The centres in this country that carry a given exam, cheapest first. */
+function publicOfferingsFilter(countryCode: string) {
+  return {
+    where: {
+      isActive: true,
+      testCenter: {
+        isActive: true,
+        country: { code: { equals: countryCode, mode: "insensitive" }, isActive: true },
+      },
+    },
+    include: {
+      testCenter: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          addressLine: true,
+          city: true,
+          phone: true,
+        },
+      },
+    },
+  } satisfies Prisma.ExamType$offeringsArgs;
+}
+
+export type PublicExamCard = {
+  id: string;
+  slug: string;
+  name: string;
+  summary: string | null;
+  imagePath: string | null;
+  category: string | null;
+  /** Cheapest patient price across the centres offering it in this country. */
+  fromPriceCents: number;
+  currencyCode: string;
+  centreCount: number;
+  resolvedLocale: LocaleCode;
+  translatedFields: string[];
+};
+
+/**
+ * Bookable exams in one country, with the cheapest price a patient could pay.
+ *
+ * Price is computed from cost + markup at read time and never stored — see
+ * `computePatientPriceCents`. The cart snapshots it at add-to-cart, so a markup
+ * edit mid-checkout cannot surprise the patient.
+ */
+export async function listPublicExamTypes(
+  countryCode: string,
+  locale?: LocaleCode,
+): Promise<PublicExamCard[]> {
+  try {
+    const country = await prisma.country.findFirst({
+      where: { code: { equals: countryCode, mode: "insensitive" }, isActive: true },
+      select: { defaultLocale: true },
+    });
+    if (!country) return [];
+
+    const rows = await prisma.examType.findMany({
+      where: publicExamWhere(countryCode),
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+      include: {
+        translations: { select: examTypeTranslationSelect },
+        offerings: publicOfferingsFilter(countryCode),
+      },
+    });
+
+    return rows
+      .map((row) => {
+        const prices = row.offerings.map((o) =>
+          computePatientPriceCents(o.costCents, o.markupMode, o.markupValue),
+        );
+        // Defensive: publicExamWhere guarantees at least one offering, but a
+        // row with none must not surface a nonsense "from €0".
+        if (prices.length === 0) return null;
+        const merged = mergeExamTypeTranslation(
+          { ...row, translations: row.translations },
+          locale ?? country.defaultLocale,
+          country.defaultLocale,
+        );
+        return {
+          id: row.id,
+          slug: row.slug,
+          name: merged.name,
+          summary: merged.summary,
+          imagePath: row.imagePath,
+          category: row.category,
+          fromPriceCents: Math.min(...prices),
+          currencyCode: row.offerings[0]!.currencyCode,
+          centreCount: row.offerings.length,
+          resolvedLocale: merged.resolvedLocale,
+          translatedFields: merged.translatedFields,
+        };
+      })
+      .filter((card): card is PublicExamCard => card !== null);
+  } catch (error) {
+    throw normalizeDbError(error, "Test catalogue is unavailable");
+  }
+}
+
+export type PublicExamCentre = {
+  id: string;
+  name: string;
+  slug: string;
+  addressLine: string | null;
+  city: string | null;
+  phone: string | null;
+  patientPriceCents: number;
+  currencyCode: string;
+  turnaroundDays: number | null;
+};
+
+export type PublicExamDetail = PublicExamCard & {
+  heroTitle: string | null;
+  heroDescription: string | null;
+  detailBody: string | null;
+  preparationBody: string | null;
+  ctaLabel: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  galleryImagePaths: string[];
+  durationMinutes: number;
+  centres: PublicExamCentre[];
+};
+
+/** One exam plus every centre in this country that performs it. */
+export async function getPublicExamTypeBySlug(
+  countryCode: string,
+  slug: string,
+  locale?: LocaleCode,
+): Promise<PublicExamDetail | null> {
+  try {
+    const country = await prisma.country.findFirst({
+      where: { code: { equals: countryCode, mode: "insensitive" }, isActive: true },
+      select: { defaultLocale: true },
+    });
+    if (!country) return null;
+
+    const row = await prisma.examType.findFirst({
+      where: { ...publicExamWhere(countryCode), slug },
+      include: {
+        translations: { select: examTypeTranslationSelect },
+        offerings: publicOfferingsFilter(countryCode),
+      },
+    });
+    if (!row || row.offerings.length === 0) return null;
+
+    const merged = mergeExamTypeTranslation(
+      { ...row, translations: row.translations },
+      locale ?? country.defaultLocale,
+      country.defaultLocale,
+    );
+    const centres: PublicExamCentre[] = row.offerings
+      .map((o) => ({
+        id: o.testCenter.id,
+        name: o.testCenter.name,
+        slug: o.testCenter.slug,
+        addressLine: o.testCenter.addressLine,
+        city: o.testCenter.city,
+        phone: o.testCenter.phone,
+        patientPriceCents: computePatientPriceCents(
+          o.costCents,
+          o.markupMode,
+          o.markupValue,
+        ),
+        currencyCode: o.currencyCode,
+        turnaroundDays: o.turnaroundDays,
+      }))
+      .sort((a, b) => a.patientPriceCents - b.patientPriceCents);
+
+    return {
+      id: row.id,
+      slug: row.slug,
+      name: merged.name,
+      summary: merged.summary,
+      imagePath: row.imagePath,
+      category: row.category,
+      fromPriceCents: Math.min(...centres.map((c) => c.patientPriceCents)),
+      currencyCode: centres[0]!.currencyCode,
+      centreCount: centres.length,
+      resolvedLocale: merged.resolvedLocale,
+      translatedFields: merged.translatedFields,
+      heroTitle: merged.heroTitle,
+      heroDescription: merged.heroDescription,
+      detailBody: merged.detailBody,
+      preparationBody: merged.preparationBody,
+      ctaLabel: merged.ctaLabel,
+      seoTitle: merged.seoTitle,
+      seoDescription: merged.seoDescription,
+      galleryImagePaths: row.galleryImagePaths,
+      durationMinutes: row.durationMinutes,
+      centres,
+    };
+  } catch (error) {
+    throw normalizeDbError(error, "Test catalogue is unavailable");
+  }
+}
+
+/**
+ * Resolve an (exam, centre) pair for booking, re-applying every public gate.
+ *
+ * The slot endpoint calls this rather than trusting the URL: a patient could
+ * otherwise ask for slots at a centre that no longer carries the exam, book
+ * one, and arrive for a test nobody there performs.
+ */
+export async function resolvePublicExamOffering(
+  countryCode: string,
+  examSlug: string,
+  centreSlug: string,
+): Promise<{
+  examTypeId: string;
+  testCenterId: string;
+  durationMinutes: number;
+  patientPriceCents: number;
+  currencyCode: string;
+} | null> {
+  try {
+    const offering = await prisma.testCenterExam.findFirst({
+      where: {
+        isActive: true,
+        examType: { slug: examSlug, isActive: true, isBookable: true },
+        testCenter: {
+          slug: centreSlug,
+          isActive: true,
+          country: { code: { equals: countryCode, mode: "insensitive" }, isActive: true },
+        },
+      },
+      include: {
+        examType: { select: { id: true, durationMinutes: true } },
+        testCenter: { select: { id: true } },
+      },
+    });
+    if (!offering) return null;
+    return {
+      examTypeId: offering.examType.id,
+      testCenterId: offering.testCenter.id,
+      durationMinutes: offering.examType.durationMinutes,
+      patientPriceCents: computePatientPriceCents(
+        offering.costCents,
+        offering.markupMode,
+        offering.markupValue,
+      ),
+      currencyCode: offering.currencyCode,
+    };
+  } catch (error) {
+    throw normalizeDbError(error, "Test catalogue is unavailable");
+  }
+}

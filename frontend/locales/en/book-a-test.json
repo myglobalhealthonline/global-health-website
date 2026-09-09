@@ -1,0 +1,43 @@
+{
+  "hero": {
+    "eyebrow": "Book a Test",
+    "title": "Lab tests and scans, booked in minutes",
+    "subtitle": "Choose a test, pick a centre near you, and turn up at a time that suits."
+  },
+  "catalogue": {
+    "empty": "No tests are available in this country yet. Please check back soon.",
+    "fromPrice": "From {price}",
+    "centreCount_one": "{count} centre",
+    "centreCount_other": "{count} centres",
+    "viewTest": "View test",
+    "bookNow": "Book this test"
+  },
+  "detail": {
+    "chooseCentre": "Choose a test centre",
+    "chooseCentreHint": "Prices and available times vary by centre.",
+    "preparation": "How to prepare",
+    "turnaround": "Results in {days} working days",
+    "turnaroundUnknown": "Turnaround confirmed by the centre",
+    "aboutThisTest": "About this test",
+    "selectCentre": "Select this centre"
+  },
+  "booking": {
+    "chooseTime": "Select a time",
+    "noSlots": "No available times at this centre in the next two weeks. Try another centre.",
+    "loadingSlots": "Loading available times...",
+    "slotTaken": "That time was just taken. Please pick another.",
+    "yourDetails": "Your details",
+    "fullName": "Full name",
+    "email": "Email",
+    "phone": "Phone",
+    "dateOfBirth": "Date of birth",
+    "notes": "Anything the centre should know (optional)",
+    "addToCart": "Continue to checkout",
+    "arriveEarly": "Please arrive 5-10 minutes before your appointment.",
+    "centreTime": "Times shown in the centre's local time."
+  },
+  "meta": {
+    "title": "Book a Test",
+    "description": "Book a lab test or scan at a test centre near you."
+  }
+}

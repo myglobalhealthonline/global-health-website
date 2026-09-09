@@ -1,0 +1,43 @@
+{
+  "hero": {
+    "eyebrow": "Reservar una prueba",
+    "title": "Analisis y pruebas, reservados en minutos",
+    "subtitle": "Elija una prueba, elija un centro cercano y acuda a la hora que le convenga."
+  },
+  "catalogue": {
+    "empty": "Todavia no hay pruebas disponibles en este pais. Vuelva pronto.",
+    "fromPrice": "Desde {price}",
+    "centreCount_one": "{count} centro",
+    "centreCount_other": "{count} centros",
+    "viewTest": "Ver prueba",
+    "bookNow": "Reservar esta prueba"
+  },
+  "detail": {
+    "chooseCentre": "Elija un centro de pruebas",
+    "chooseCentreHint": "Los precios y horarios varian segun el centro.",
+    "preparation": "Como prepararse",
+    "turnaround": "Resultados en {days} dias laborables",
+    "turnaroundUnknown": "Plazo confirmado por el centro",
+    "aboutThisTest": "Sobre esta prueba",
+    "selectCentre": "Seleccionar este centro"
+  },
+  "booking": {
+    "chooseTime": "Seleccione una hora",
+    "noSlots": "No hay horarios disponibles en este centro en las proximas dos semanas. Pruebe otro centro.",
+    "loadingSlots": "Cargando horarios...",
+    "slotTaken": "Esa hora acaba de ocuparse. Elija otra.",
+    "yourDetails": "Sus datos",
+    "fullName": "Nombre completo",
+    "email": "Correo electronico",
+    "phone": "Telefono",
+    "dateOfBirth": "Fecha de nacimiento",
+    "notes": "Algo que el centro deba saber (opcional)",
+    "addToCart": "Continuar al pago",
+    "arriveEarly": "Por favor llegue 5-10 minutos antes de su cita.",
+    "centreTime": "Horarios en la hora local del centro."
+  },
+  "meta": {
+    "title": "Reservar una prueba",
+    "description": "Reserve un analisis o prueba en un centro cercano."
+  }
+}

@@ -2,7 +2,10 @@ export type CartItemKind =
   | "HEALTH_TEST"
   | "PRESCRIPTION_SERVICE"
   | "GENERAL_CONSULTATION"
-  | "SPECIALIST_CONSULTATION";
+  | "SPECIALIST_CONSULTATION"
+  /** Exam appointment at a physical test centre. No doctor, no meeting link —
+   *  the centre address stands in for it in every notification. */
+  | "TEST_BOOKING";
 
 /** Per-consultation-line subscription benefit choice (§ appointment-claim). */
 export type BenefitSelection = "PAY_NORMAL" | "USE_PLAN_CREDIT" | "USE_PLAN_DISCOUNT";

@@ -48,6 +48,12 @@ export type AddItemInput = {
   quantity?: number;
   timeSlotId?: string;
   doctorId?: string;
+  /** TEST_BOOKING lines — the exam, the centre, and the centre slot picked.
+   *  All three are required together; the server re-resolves the offering from
+   *  them rather than trusting any price sent by the client. */
+  examTypeId?: string;
+  testCenterId?: string;
+  testCenterTimeSlotId?: string;
   /** Patient intake — required for GENERAL_CONSULTATION /
    *  SPECIALIST_CONSULTATION (the consult-page form collects it). */
   patient?: CartItemPatientInput;
@@ -127,6 +133,14 @@ export type CheckoutInput = {
   shipCity: string;
   shipPostalCode: string;
   shipCountryCode: string;
+  /**
+   * Order-level WhatsApp consent for shipped (product) orders — the default-ON
+   * opt-out on the checkout shipping panel. Product lines carry no booking form,
+   * so `OrderItem.patientWhatsappConsent` is always false for them and the
+   * consent for these orders has to live on the Order. Omitted (consultation-
+   * only checkout, older client) → the server keeps the column's `true` default.
+   */
+  whatsappConsent?: boolean;
   returnTo?: string;
   /**
    * Site locale the customer is browsing in, upper-cased (the `[lang]` route
