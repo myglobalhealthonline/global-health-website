@@ -20,10 +20,10 @@ const REQ = {
 
 test("the request carries only Zprava — no Doklad, no Pristupujici", () => {
   const xml = buildLoginRequest(REQ);
-  assert.match(xml, /<LoginDotaz xmlns="http:\/\/www\.sukl\.cz\/erp\/common" xmlns:com="http:\/\/www\.sukl\.cz\/erp\/common">/);
-  assert.match(xml, /<com:Zprava><com:ID_Zpravy>11111111-2222-3333-4444-555555555555<\/com:ID_Zpravy>/);
-  assert.match(xml, /<com:Verze>202601B<\/com:Verze>/);
-  assert.match(xml, /<com:SW_Klienta>GH\/1\.0<\/com:SW_Klienta>/);
+  assert.match(xml, /<LoginDotaz xmlns="http:\/\/www\.sukl\.cz\/erp\/common">/);
+  assert.match(xml, /<Zprava><ID_Zpravy>11111111-2222-3333-4444-555555555555<\/ID_Zpravy>/);
+  assert.match(xml, /<Verze>202601B<\/Verze>/);
+  assert.match(xml, /<SW_Klienta>GH\/1\.0<\/SW_Klienta>/);
   // zprava_bez_doklad_type has no Doklad at all, so adding the accessing
   // identity here — which every other operation carries — would be wrong.
   assert.ok(!xml.includes("Pristupujici"));
@@ -39,7 +39,7 @@ test("reads the user, roles and provider without confusing the two Kod fields", 
   const body =
     '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body>' +
     '<LoginOdpoved xmlns="http://www.sukl.cz/erp/common"><Doklad>' +
-    "<com:Uzivatel><Kod>141ea8aa-f82d-4d74-a725-cdabe9973aca</Kod>" +
+    "<Uzivatel><Kod>141ea8aa-f82d-4d74-a725-cdabe9973aca</Kod>" +
     "<Jmeno><Prijmeni>Nováková</Prijmeni><Jmena>Jana</Jmena></Jmeno></Uzivatel>" +
     "<RoleOsoby><Role>eRPlekar</Role><Role>ePPracovnikVydeje</Role></RoleOsoby>" +
     "<RoleSubjektu><Role>eRPambulance</Role></RoleSubjektu>" +

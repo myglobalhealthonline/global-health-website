@@ -431,6 +431,21 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
             </div>
           ) : null}
 
+          {result.requestEnvelope ? (
+            <details className="mt-2">
+              <summary className="cursor-pointer text-xs" style={{ color: "var(--portal-muted)" }}>
+                Show the request we sent
+              </summary>
+              <p className="m-0 mt-1 text-xs" style={{ color: "var(--portal-muted)" }}>
+                S009 does not say which element is wrong, so compare this against the schema in
+                SÚKL&rsquo;s documentation rather than guessing at the shape.
+              </p>
+              <pre className="mt-1 max-h-64 overflow-auto whitespace-pre-wrap break-all text-xs">
+                {result.requestEnvelope}
+              </pre>
+            </details>
+          ) : null}
+
           {result.bodyExcerpt ? (
             <div className="mt-3">
               <p

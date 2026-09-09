@@ -12,16 +12,13 @@ import { buildAppInfoRequest, interpretAppInfoResponse } from "./app-info.js";
 
 test("the request body is empty, with no identity and no message header", () => {
   const xml = buildAppInfoRequest("cuep");
-  assert.match(xml, /<AppInfoDotaz xmlns="http:\/\/www\.sukl\.cz\/erp\/common" xmlns:com="http:\/\/www\.sukl\.cz\/erp\/common"><\/AppInfoDotaz>/);
+  assert.match(xml, /<AppInfoDotaz xmlns="http:\/\/www\.sukl\.cz\/erp\/common"><\/AppInfoDotaz>/);
 
   // CUER declares these shared elements in erp/201704, not erp/common. Sending
   // the common namespace there is an S009 rejection.
   const cuer = buildAppInfoRequest("cuer");
-  assert.match(cuer, /<AppInfoDotaz xmlns="http:\/\/www\.sukl\.cz\/erp\/201704" xmlns:com="http:\/\/www\.sukl\.cz\/erp\/common"><\/AppInfoDotaz>/);
-  // The DEFAULT namespace must be CUER's. erp/common still appears, because
-  // the com: prefix is declared for Pristupujici and Zprava — that is the fix
-  // for S009, not a regression.
-  assert.ok(!/<AppInfoDotaz xmlns="http:\/\/www\.sukl\.cz\/erp\/common"/.test(cuer));
+  assert.match(cuer, /<AppInfoDotaz xmlns="http:\/\/www\.sukl\.cz\/erp\/201704"><\/AppInfoDotaz>/);
+  assert.ok(!cuer.includes("erp/common"));
   // Adding these would be a natural-looking mistake — the schema has no room.
   assert.ok(!xml.includes("Pristupujici"));
   assert.ok(!xml.includes("Zprava"));
@@ -35,10 +32,10 @@ test("separates the software build from the document interface versions", () => 
   const body =
     '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body>' +
     '<AppInfoOdpoved xmlns="http://www.sukl.cz/erp/common">' +
-    "<AktualniVerze><com:Verze>1.110.10.29473</Verze><Nazev>eRecept TEST</Nazev>" +
-    "<Doklad><com:Verze>202601B</Verze><Prefix>EP</Prefix><Popis>ePoukaz</Popis>" +
+    "<AktualniVerze><Verze>1.110.10.29473</Verze><Nazev>eRecept TEST</Nazev>" +
+    "<Doklad><Verze>202601B</Verze><Prefix>EP</Prefix><Popis>ePoukaz</Popis>" +
     "<PlatOd>2026-01-01</PlatOd><PlatDo>2026-12-31</PlatDo></Doklad>" +
-    "<Doklad><com:Verze>202605A</Verze><Prefix>ER</Prefix><Popis>eRecept</Popis>" +
+    "<Doklad><Verze>202605A</Verze><Prefix>ER</Prefix><Popis>eRecept</Popis>" +
     "<PlatOd>2026-05-01</PlatOd></Doklad></AktualniVerze>" +
     "<DatumCasServeru>2026-09-01T10:20:30</DatumCasServeru>" +
     "</AppInfoOdpoved></soap:Body></soap:Envelope>";
@@ -69,7 +66,7 @@ test("the live CUEP shape: a build, a name, and no document types", () => {
   const body =
     '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body>' +
     '<AppInfoOdpoved xmlns="http://www.sukl.cz/erp/common">' +
-    "<AktualniVerze><com:Verze>1.110.10.29473</Verze>" +
+    "<AktualniVerze><Verze>1.110.10.29473</Verze>" +
     "<Nazev>Informační systém eRecept TEST</Nazev></AktualniVerze>" +
     "<DatumCasServeru>2026-09-04T19:51:19.753579+02:00</DatumCasServeru>" +
     "</AppInfoOdpoved></soap:Body></soap:Envelope>";
