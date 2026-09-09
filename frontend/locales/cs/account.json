@@ -137,13 +137,28 @@
     "timeTbc": "Čas bude upřesněn",
     "notesLabel": "Poznámky",
     "whereLabel": "Kde",
+    "labReferenceLabel": "Referenční číslo rezervace",
     "directionsLabel": "Trasa",
     "metaOrder": "Objednávka",
     "metaCountry": "Země",
     "metaDoctor": "Lékař",
     "metaScheduled": "Naplánováno",
     "metaPayment": "Platba",
-    "tabsAria": "Zobrazení rezervací"
+    "tabsAria": "Zobrazení rezervací",
+    "labTestsHeading": "Laboratorní vyšetření",
+    "labTestsSubtitle": "Vyšetření předepsaná pro vás a odeslaná do laboratoře.",
+    "labCollectionPointLabel": "Odběrové místo",
+    "labExamsLabel": "Vyšetření",
+    "labResultsReadyLabel": "Výsledky jsou k dispozici",
+    "labStatusLabels": {
+      "PATIENT_CONFIRMED": "Potvrzeno s vámi",
+      "AWAITING_PAYMENT": "Čeká na platbu",
+      "READY_TO_SEND": "Připravuje se",
+      "SENT_TO_LAB": "Odesláno do laboratoře",
+      "SAMPLE_COLLECTED": "Vzorek odebrán",
+      "RESULT_RECEIVED": "Výsledky jsou k dispozici",
+      "CLOSED": "Dokončeno"
+    }
   },
   "orders": {
     "breadcrumb": "Účet",

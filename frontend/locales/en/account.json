@@ -137,13 +137,28 @@
     "timeTbc": "Time to be confirmed",
     "notesLabel": "Notes",
     "whereLabel": "Where",
+    "labReferenceLabel": "Booking reference",
     "directionsLabel": "Directions",
     "metaOrder": "Order",
     "metaCountry": "Country",
     "metaDoctor": "Doctor",
     "metaScheduled": "Scheduled",
     "metaPayment": "Payment",
-    "tabsAria": "Booking views"
+    "tabsAria": "Booking views",
+    "labTestsHeading": "Lab tests",
+    "labTestsSubtitle": "Tests prescribed for you and sent to the laboratory.",
+    "labCollectionPointLabel": "Collection point",
+    "labExamsLabel": "Tests",
+    "labResultsReadyLabel": "Results ready",
+    "labStatusLabels": {
+      "PATIENT_CONFIRMED": "Confirmed with you",
+      "AWAITING_PAYMENT": "Awaiting payment",
+      "READY_TO_SEND": "Being prepared",
+      "SENT_TO_LAB": "Sent to the laboratory",
+      "SAMPLE_COLLECTED": "Sample collected",
+      "RESULT_RECEIVED": "Results ready",
+      "CLOSED": "Completed"
+    }
   },
   "orders": {
     "breadcrumb": "Account",

@@ -45,6 +45,7 @@ import {
   createManualTestBookingBodySchema,
   scheduleAppointmentBodySchema,
   updateAppointmentBodySchema,
+  updateAppointmentLabReferenceBodySchema,
   updateAppointmentStatusBodySchema,
 } from "../validations/admin-appointments.schema.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -891,6 +892,96 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
       }
       app.log.error(error);
       return reply.status(500).send(errorResponse("Unexpected admin appointment update error"));
+    }
+  });
+
+  // ── Admin: lab reference + patient confirmation for a test-centre booking ──
+  //
+  // The booking is replicated by hand in the laboratory's own system, so this
+  // is where whatever reference that system hands back gets recorded, and where
+  // an admin tells the patient it is really booked. Saving and sending are
+  // separate for the same reason they are on a kit's tracking code: a reference
+  // pasted from another tab is worth checking before it goes out.
+  app.patch("/api/admin/appointments/:id/lab-reference", async (request, reply) => {
+    const auth = await verifyAdminAccess(request);
+    if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+
+    const params = appointmentIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid admin appointment id", params.error.flatten()));
+    }
+    const body = updateAppointmentLabReferenceBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.status(400).send(errorResponse("Invalid lab reference", body.error.flatten()));
+    }
+
+    try {
+      const scope = await assertAppointmentCountryScope(request, params.data.id);
+      if (!scope.allowed) {
+        return reply.status(scope.status).send(errorResponse(scope.message));
+      }
+      const existing = await prisma.appointment.findUnique({
+        where: { id: params.data.id },
+        select: { id: true, testCenterLocationId: true },
+      });
+      if (!existing) return reply.status(404).send(errorResponse("Appointment not found"));
+      if (!existing.testCenterLocationId) {
+        return reply
+          .status(400)
+          .send(errorResponse("This appointment is not a test-centre booking"));
+      }
+
+      const appointment = await prisma.appointment.update({
+        where: { id: params.data.id },
+        data: { labReference: body.data.labReference?.trim() || null },
+        select: { id: true, labReference: true, labConfirmationSentAt: true },
+      });
+      return okResponse({
+        id: appointment.id,
+        labReference: appointment.labReference,
+        labConfirmationSentAt: appointment.labConfirmationSentAt?.toISOString() ?? null,
+      });
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not save the lab reference"));
+    }
+  });
+
+  app.post("/api/admin/appointments/:id/send-confirmation", async (request, reply) => {
+    const auth = await verifyAdminAccess(request);
+    if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+
+    const params = appointmentIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid admin appointment id", params.error.flatten()));
+    }
+
+    try {
+      const scope = await assertAppointmentCountryScope(request, params.data.id);
+      if (!scope.allowed) {
+        return reply.status(scope.status).send(errorResponse(scope.message));
+      }
+      const { sendTestBookingConfirmationToPatient } = await import(
+        "../modules/automation/test-booking-confirmation.service.js"
+      );
+      const result = await sendTestBookingConfirmationToPatient(params.data.id);
+      if (!result.ok) {
+        // Nothing reached the patient. 200 + ok:false would read as success in
+        // the admin UI, so this is a real failure status.
+        return reply
+          .status(502)
+          .send(errorResponse(result.notes.join("; ") || "Could not notify the patient"));
+      }
+      return okResponse(result);
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not notify the patient"));
     }
   });
 };

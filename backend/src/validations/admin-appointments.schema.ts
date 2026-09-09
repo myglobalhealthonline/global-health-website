@@ -30,6 +30,16 @@ export const updateAppointmentStatusBodySchema = z.object({
 });
 
 /**
+ * The laboratory's own reference for a test-centre booking, typed in by an
+ * admin after they replicate the booking in the lab's system. Free text —
+ * every provider formats theirs differently — and nullable, because plenty of
+ * them hand back no code at all.
+ */
+export const updateAppointmentLabReferenceBodySchema = z.object({
+  labReference: z.string().trim().max(120).nullable().optional(),
+});
+
+/**
  * Schedule the call. Each field is independently optional so the admin can
  * set just the slot, just the URL, or both. Sending `null` clears the
  * value; omitting it leaves the existing value alone. The URL is

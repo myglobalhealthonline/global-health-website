@@ -137,13 +137,28 @@
     "timeTbc": "Uhrzeit noch zu bestätigen",
     "notesLabel": "Notizen",
     "whereLabel": "Wo",
+    "labReferenceLabel": "Buchungsreferenz",
     "directionsLabel": "Wegbeschreibung",
     "metaOrder": "Bestellung",
     "metaCountry": "Land",
     "metaDoctor": "Arzt",
     "metaScheduled": "Geplant",
     "metaPayment": "Zahlung",
-    "tabsAria": "Buchungsansichten"
+    "tabsAria": "Buchungsansichten",
+    "labTestsHeading": "Labortests",
+    "labTestsSubtitle": "Für Sie verordnete und an das Labor gesendete Tests.",
+    "labCollectionPointLabel": "Entnahmestelle",
+    "labExamsLabel": "Tests",
+    "labResultsReadyLabel": "Ergebnisse verfügbar",
+    "labStatusLabels": {
+      "PATIENT_CONFIRMED": "Mit Ihnen bestätigt",
+      "AWAITING_PAYMENT": "Zahlung ausstehend",
+      "READY_TO_SEND": "In Vorbereitung",
+      "SENT_TO_LAB": "An das Labor gesendet",
+      "SAMPLE_COLLECTED": "Probe entnommen",
+      "RESULT_RECEIVED": "Ergebnisse verfügbar",
+      "CLOSED": "Abgeschlossen"
+    }
   },
   "orders": {
     "breadcrumb": "Konto",

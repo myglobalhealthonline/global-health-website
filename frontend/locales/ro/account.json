@@ -137,13 +137,28 @@
     "timeTbc": "Ora urmează să fie confirmată",
     "notesLabel": "Note",
     "whereLabel": "Unde",
+    "labReferenceLabel": "Referință programare",
     "directionsLabel": "Indicații",
     "metaOrder": "Comandă",
     "metaCountry": "Țară",
     "metaDoctor": "Medic",
     "metaScheduled": "Programată",
     "metaPayment": "Plată",
-    "tabsAria": "Vizualizări rezervări"
+    "tabsAria": "Vizualizări rezervări",
+    "labTestsHeading": "Analize de laborator",
+    "labTestsSubtitle": "Analize prescrise pentru dumneavoastră și trimise laboratorului.",
+    "labCollectionPointLabel": "Punct de recoltare",
+    "labExamsLabel": "Analize",
+    "labResultsReadyLabel": "Rezultate disponibile",
+    "labStatusLabels": {
+      "PATIENT_CONFIRMED": "Confirmat cu dumneavoastră",
+      "AWAITING_PAYMENT": "În așteptarea plății",
+      "READY_TO_SEND": "În pregătire",
+      "SENT_TO_LAB": "Trimis laboratorului",
+      "SAMPLE_COLLECTED": "Probă recoltată",
+      "RESULT_RECEIVED": "Rezultate disponibile",
+      "CLOSED": "Finalizat"
+    }
   },
   "orders": {
     "breadcrumb": "Cont",
