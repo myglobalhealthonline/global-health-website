@@ -1,10 +1,10 @@
 {
   "birthday": {
-    "subject": "La mulți ani — {discountPercent}% reducere la un control de medicină generală",
-    "title": "La mulți ani!",
+    "subject": "🎉 La mulți ani — {discountPercent}% reducere la un control de medicină generală",
+    "title": "🎂 La mulți ani!",
     "greetingNamed": "La mulți ani, {name}!",
     "greetingAnon": "La mulți ani!",
-    "discountLine": "De ziua ta, ai {discountPercent}% reducere la un control de sănătate cu un medic generalist la Global Health.",
+    "discountLine": "🎁 De ziua ta, ai {discountPercent}% reducere la un control de sănătate cu un medic generalist la Global Health.",
     "codeLabel": "Codul tău",
     "validLine": "Valabil până la {validUntil}",
     "personalLock": "Acest cod este rezervat pentru tine și poate fi folosit o singură dată.",

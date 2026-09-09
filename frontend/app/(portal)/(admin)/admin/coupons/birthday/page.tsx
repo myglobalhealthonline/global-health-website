@@ -127,6 +127,7 @@ export default async function AdminBirthdayOfferPage({ searchParams }: { searchP
           <span className="gh-field-label">Validity in days</span>
           <input className="gh-input" type="number" name="validityDays" min="1" max="365" step="1" required defaultValue={validity} />
         </label>
+        <p className="text-sm">Email language: automatically uses the patient’s platform language, then their latest selected consultation language. Missing or unsupported languages use English. The preview language below does not change delivery.</p>
         <label>
           <span className="gh-field-label">Preview language</span>
           <select className="gh-select" name="locale" defaultValue={locale}>

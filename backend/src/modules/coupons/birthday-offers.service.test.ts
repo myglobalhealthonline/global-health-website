@@ -11,7 +11,7 @@ function patientFixture() {
     dateOfBirth: new Date("1990-09-09T00:00:00Z"), currentCountryCode: "ie",
     countryFolderCode: "ie", isMerged: false, anonymizedAt: null as Date | null,
     user: { email: "patient@example.com", dateOfBirth: new Date("1990-09-09T00:00:00Z"),
-      preferredLocale: "EN", isActive: true, deletionScheduledAt: null as Date | null, role: "PATIENT" },
+      preferredLocale: "EN" as string | null, isActive: true, deletionScheduledAt: null as Date | null, role: "PATIENT" },
     consents: [{ consentValue: true }], deletionRequests: [] as { id: string }[],
     appointments: [{ patientTimezone: "Europe/Dublin" }],
   };
@@ -44,6 +44,7 @@ let transactions: number;
 let reads: Record<string, any>[];
 let writes: { table: string; args: any; transaction: boolean }[];
 let messages: any[];
+let spokenLanguage: string | null;
 let committed: string[];
 let service: typeof import("./birthday-offers.service.js");
 
@@ -51,6 +52,10 @@ function write(table: string, args: any, transaction = false) {
   writes.push({ table, args, transaction });
 }
 const prisma = {
+  appointment: { findFirst: async (args: any) => {
+    assert.deepEqual(args.where, { patientProfileId: patient.id, consultationLanguageCode: { not: null } });
+    return spokenLanguage ? { consultationLanguageCode: spokenLanguage } : null;
+  } },
   country: { findMany: async () => [country], findFirst: async () => country },
   patientProfile: { findMany: async (args: any) => {
     reads.push(args);
@@ -120,9 +125,28 @@ beforeEach(() => {
   settings = { enabled: true, discountPercent: 20, validityDays: 30 };
   suppressed = duplicate = failOutbox = false; configured = true;
   fault = null;
+  spokenLanguage = null;
   provider = async () => ({ ok: true, mode: "smtp" });
   pages = transactions = 0; reads = []; writes = []; messages = []; committed = [];
 });
+
+for (const [preferred, spoken] of [
+  ["ES", "pt"],
+  [null, "pt-BR"],
+  [null, null],
+  [null, "fr"],
+] as const) {
+  it(`birthday language uses platform ${preferred}, spoken ${spoken}, then English`, async () => {
+    patient.user.preferredLocale = preferred;
+    spokenLanguage = spoken;
+    country.defaultLocale = "RO";
+    await service.dispatchBirthdayOffer({ offerId: offer.id }, 1, NOW);
+    assert.equal(messages.length, 1);
+    const locale = preferred ?? (spoken === "pt-BR" ? "PT" : "EN");
+    const copy = (await import(`./email-copy/${locale.toLowerCase()}.json`)).default;
+    assert.equal(messages[0].subject, copy.birthday.subject.replace("{discountPercent}", "20"));
+  });
+}
 
 it("missing settings disables scanning and delivery by default", async () => {
   settings = null;

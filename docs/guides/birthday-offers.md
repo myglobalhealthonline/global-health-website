@@ -19,8 +19,9 @@ an active public GP service are excluded. Existing checkout restrictions on
 insurance and membership benefits apply. Concurrent scans cannot issue a second
 offer for the same profile/year or normalized address/year.
 
-Email content follows the patient's preferred language, with the country locale
-as fallback. The booking link opens an existing public GP service; the patient
+Email content follows the patient's selected platform language, then the most
+recent selected consultation language. Missing or unsupported languages fall
+back to English. Preview language does not change delivery. The booking link opens an existing public GP service; the patient
 enters their code at checkout. The unsubscribe link opens a public confirmation
 form. Only submitting the form withdraws MARKETING consent and suppresses existing
 newsletter subscriptions; email scanners opening the link do not unsubscribe.

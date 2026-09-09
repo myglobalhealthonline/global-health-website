@@ -205,7 +205,16 @@ async function dispatchBirthdayOfferAttempt(payload: unknown, attempts: number, 
     if (attempts >= OUTBOX_MAX_ATTEMPTS) await finishDelivery(offer.id, offer.couponId, "FAILED", "No email provider configured.");
     throw new Error("Birthday email provider is not configured");
   }
-  const locale = patient.user?.preferredLocale ?? country.defaultLocale;
+  const spoken = patient.user?.preferredLocale ? null : await prisma.appointment.findFirst({
+    where: { patientProfileId: patient.id, consultationLanguageCode: { not: null } },
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    select: { consultationLanguageCode: true },
+  });
+  const selectedLanguage = patient.user?.preferredLocale ?? spoken?.consultationLanguageCode;
+  const language = z.enum(["EN", "PT", "ES", "CS", "RO", "DE"]).safeParse(
+    selectedLanguage?.trim().split(/[-_]/)[0].toUpperCase(),
+  );
+  const locale = language.success ? language.data : "EN";
   const bookingLocale = country.countryLocales.some((row) => row.locale === locale) ? locale : country.defaultLocale;
   const message = renderBirthdayEmail({
     fullName: patient.fullName, locale, code: offer.coupon.code, discountPercent: offer.coupon.discountPercent,

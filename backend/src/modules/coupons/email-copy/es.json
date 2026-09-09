@@ -1,10 +1,10 @@
 {
   "birthday": {
-    "subject": "Feliz cumpleaños: {discountPercent}% de descuento en una revisión de medicina general",
-    "title": "¡Feliz cumpleaños!",
+    "subject": "🎉 Feliz cumpleaños: {discountPercent}% de descuento en una revisión de medicina general",
+    "title": "🎂 ¡Feliz cumpleaños!",
     "greetingNamed": "¡Feliz cumpleaños, {name}!",
     "greetingAnon": "¡Feliz cumpleaños!",
-    "discountLine": "Celebra tu cumpleaños con un {discountPercent}% de descuento en una revisión de salud con un médico general en Global Health.",
+    "discountLine": "🎁 Celebra tu cumpleaños con un {discountPercent}% de descuento en una revisión de salud con un médico general en Global Health.",
     "codeLabel": "Tu código",
     "validLine": "Válido hasta el {validUntil}",
     "personalLock": "Este código está reservado para ti y solo se puede usar una vez.",
