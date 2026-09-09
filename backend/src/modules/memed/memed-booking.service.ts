@@ -8,13 +8,8 @@ import {
   MemedNotConfiguredError,
   type MemedBookingItem,
 } from "../../lib/memed/client.js";
-import {
-  sendWhatsAppText,
-  sendWhatsAppGroupText,
-  formatWhatsAppSendError,
-} from "../../lib/whatsapp/wasender.js";
-import { adminNotifyWhatsAppNumbers } from "../automation/admin-booking-alert.service.js";
-import { createAutomationRun, finishAutomationRun } from "../automation/automation-run.service.js";
+import { wrapHtml } from "../../lib/email/templates.js";
+import { deliverAdminAlert, escapeHtml } from "../automation/admin-alert-delivery.js";
 
 /**
  * Auto-books a paid HEALTH_TEST kit order into Memed (doc.memed.com.br),
@@ -22,12 +17,17 @@ import { createAutomationRun, finishAutomationRun } from "../automation/automati
  * Tiago), then alerts admin (in-app bell + WhatsApp numbers + WhatsApp
  * group) with the outcome.
  *
- * Called fire-and-forget from `ensureOrderPaidAutomations`
- * (modules/orders/complete-order-payment.service.ts) — deliberately OUTSIDE
- * the paid-order DB transaction, since this makes a real outbound HTTP call
- * and must never hold that transaction open. Idempotent: a `MemedBooking`
- * row already existing for the order is a no-op, so retries (payment sync,
- * webhook redelivery) can't double-book.
+ * NOT CURRENTLY WIRED to the payment flow — Memed partner onboarding is still
+ * in progress and no credentials exist, so nothing calls this yet. The staff
+ * alert for a kit sale does NOT depend on it: `notifyHealthTestOrderPaid`
+ * (modules/automation/health-test-order-notifications.service.ts) fires for
+ * every market from `ensureOrderPaidAutomations`, and this function's alert is
+ * the Brazil-only Memed-outcome follow-up on top of it. Wire this in from the
+ * same place once credentials land — fire-and-forget and deliberately OUTSIDE
+ * the paid-order DB transaction, since it makes a real outbound HTTP call and
+ * must never hold that transaction open. Idempotent: a `MemedBooking` row
+ * already existing for the order is a no-op, so retries (payment sync, webhook
+ * redelivery) can't double-book.
  *
  * No Memed credentials exist yet (partner onboarding in progress) — with
  * `isMemedConfigured()` false this records a SKIPPED booking row and still
@@ -153,99 +153,31 @@ function buildAlertText(ctx: HealthTestBookedContext): string {
   ].join("\n");
 }
 
+
+/**
+ * Report the Memed outcome to the staff channels.
+ *
+ * The kit sale itself is announced by `notifyHealthTestOrderPaid`
+ * (modules/automation/health-test-order-notifications.service.ts), which fires
+ * for every market on payment. This alert is the Brazil-specific follow-up:
+ * whether the paid kit reached Memed, so a FAILED booking gets picked up
+ * manually. Delivery is the shared fan-out — same recipients, same per-channel
+ * AutomationRun logging as every other staff alert.
+ */
 async function notifyHealthTestBooked(orderId: string, ctx: HealthTestBookedContext): Promise<void> {
   const text = buildAlertText(ctx);
-  const summary = "Admin alert — health test booked";
-
-  // In-portal bell — always fires, needs no env configuration.
-  try {
-    const { notifyAdmins } = await import("../notifications/notify.service.js");
-    await notifyAdmins("HEALTH_TEST_BOOKED", { snippet: text.replace(/\n/g, " · ") });
-    await createAutomationRun({
-      automationKey: "health_test_booked_admin_portal",
-      orderId,
-      channel: "portal",
-      status: "SUCCESS",
-      summary,
-      executedAt: new Date(),
-    });
-  } catch {
-    // best-effort
-  }
-
-  const numbers = adminNotifyWhatsAppNumbers();
-  for (const to of numbers) {
-    const run = await createAutomationRun({
-      automationKey: "health_test_booked_admin_whatsapp",
-      orderId,
-      channel: "whatsapp",
-      recipient: to,
-      summary,
-      status: "RUNNING",
-    }).catch(() => null);
-    try {
-      const result = await sendWhatsAppText({ to, message: text });
-      if (!run) continue;
-      if (!result.ok && !result.skipped) {
-        await finishAutomationRun(run.id, {
-          status: "FAILED",
-          summary,
-          error: formatWhatsAppSendError(result),
-          recipient: result.to ?? to,
-        });
-        continue;
-      }
-      await finishAutomationRun(run.id, {
-        status: result.skipped ? "SKIPPED" : "SUCCESS",
-        summary: result.skipped ? `${summary} (WhatsApp not configured)` : summary,
-        recipient: result.to ?? to,
-      });
-    } catch (err) {
-      if (!run) continue;
-      await finishAutomationRun(run.id, {
-        status: "FAILED",
-        summary,
-        error: err instanceof Error ? err.message : String(err),
-      }).catch(() => undefined);
-    }
-  }
-
-  const groupJid = env.ADMIN_NOTIFY_WHATSAPP_GROUP_JID?.trim();
-  if (groupJid) {
-    const run = await createAutomationRun({
-      automationKey: "health_test_booked_admin_whatsapp_group",
-      orderId,
-      channel: "whatsapp",
-      recipient: groupJid,
-      summary,
-      status: "RUNNING",
-    }).catch(() => null);
-    try {
-      const result = await sendWhatsAppGroupText({ to: groupJid, message: text });
-      if (run) {
-        if (!result.ok && !result.skipped) {
-          await finishAutomationRun(run.id, {
-            status: "FAILED",
-            summary,
-            error: formatWhatsAppSendError(result),
-            recipient: groupJid,
-          });
-        } else {
-          await finishAutomationRun(run.id, {
-            status: result.skipped ? "SKIPPED" : "SUCCESS",
-            summary: result.skipped ? `${summary} (WhatsApp not configured)` : summary,
-            recipient: groupJid,
-          });
-        }
-      }
-    } catch (err) {
-      if (run) {
-        await finishAutomationRun(run.id, {
-          status: "FAILED",
-          summary,
-          error: err instanceof Error ? err.message : String(err),
-        }).catch(() => undefined);
-      }
-    }
-  }
+  await deliverAdminAlert({
+    orderId,
+    automationKeyPrefix: "health_test_booked",
+    summary: "Admin alert — health test booked",
+    text,
+    emailSubject: `Health-test kit booked — ${ctx.customerName}`,
+    emailHtml: wrapHtml(
+      "Health-test kit booked",
+      `<pre style="font-family:inherit;font-size:14px;white-space:pre-wrap;margin:0;">${escapeHtml(text)}</pre>`,
+    ),
+    toGroup: true,
+    portalType: "HEALTH_TEST_BOOKED",
+    emailRecordLabel: orderId,
+  });
 }

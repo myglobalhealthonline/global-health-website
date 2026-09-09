@@ -1169,6 +1169,53 @@ export async function ensureOrderPaidAutomations(
     (paidOrder?.appointmentIds.length ?? 0) > 0;
   if (!paidOrder || !orderIsPaidForMeet(paidOrder)) return;
 
+  // Promote the checkout shipping address onto the patient's chart. Product
+  // orders carry their address ONLY on `Order.ship*` — no booking form, so
+  // `backfillPatientProfile` above has nothing to copy — and the chart is what
+  // every clinician and admin reads. Fill-only + idempotent, so running it for
+  // every paid order (not just product ones) never overwrites a consultation
+  // patient's own address. Best-effort: a paid order must not fail on it.
+  //
+  // MUST stay above every `return` below, so a test-centre or kit order still
+  // gets its address promoted.
+  try {
+    const { saveOrderShippingAddressToProfile } = await import(
+      "./order-shipping-profile.service.js"
+    );
+    const outcome = await saveOrderShippingAddressToProfile(prisma, paidOrder);
+    log.info({ orderId, outcome }, "Shipping address → patient profile");
+  } catch (profileErr) {
+    log.warn(
+      { err: profileErr, orderId },
+      "Shipping address → patient profile failed — order still paid",
+    );
+  }
+
+  const hasTestBooking = orderHasTestBookingItem(paidOrder.items);
+  const hasConsultItem = orderHasConsultationItem(paidOrder.items);
+
+  // Health-test kit order: staff fulfilment alert (WhatsApp numbers + group +
+  // email + bell) and the customer's own WhatsApp confirmation. A kit is a
+  // product, not a booking, so nothing below this point would ever notify
+  // anyone about it — ORD-000490 was paid, addressed, and silent.
+  //
+  // Gated on the order carrying no booking of either kind. A mixed cart runs
+  // the appointment / venue ladder instead, and that ladder owns
+  // `postPaymentStage` — the kit flow claims the same column, so letting both
+  // run would have one swallow the other's stage and drop a send.
+  if (
+    !hasTestBooking &&
+    !hasConsultItem &&
+    paidOrder.items.some((i) => i.kind === "HEALTH_TEST")
+  ) {
+    const { notifyHealthTestOrderPaid } = await import(
+      "../automation/health-test-order-notifications.service.js"
+    );
+    await notifyHealthTestOrderPaid(orderId, log).catch((err) => {
+      log.warn({ err, orderId }, "Health-test order notifications failed");
+    });
+  }
+
   // Test-centre booking with no consultation on the order: there is no meeting
   // link to provision, only an address the patient already has on the line.
   //
@@ -1179,8 +1226,6 @@ export async function ensureOrderPaidAutomations(
   // and returns having advanced nothing. The order would sit at
   // POST_PAYMENT_STAGE_PAID indefinitely and the patient would never be told
   // their booking is confirmed. Their money is taken either way.
-  const hasTestBooking = orderHasTestBookingItem(paidOrder.items);
-  const hasConsultItem = orderHasConsultationItem(paidOrder.items);
   if (hasTestBooking && !hasConsultItem) {
     const { post_sendVenueNotifications } = await import(
       "../automation/post-payment-flow.service.js"

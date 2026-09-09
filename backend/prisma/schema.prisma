@@ -3343,6 +3343,13 @@ model Order {
   shipCity                      String?
   shipPostalCode                String?
   shipCountryCode               String?
+  /// Order-level WhatsApp consent for PRODUCT orders (health-test kits,
+  /// prescription delivery) — the buyer IS the patient and there is no booking
+  /// form to carry `OrderItem.patientWhatsappConsent`, which those lines always
+  /// leave `false`. Default ON, opted OUT with the checkbox on the checkout
+  /// shipping panel. Consultation orders keep using the per-item consent; this
+  /// column is never read for them.
+  whatsappConsent               Boolean               @default(true)
   /// Ad-click / campaign attribution captured at landing and carried through
   /// checkout: fbclid, fbp, fbc, utm_*, landingPath, marketingConsent (bool —
   /// gates the Meta Conversions API send), clientIp, clientUserAgent. Null for
