@@ -34,6 +34,8 @@
     "repeatPrescriptionDesc": "Revisado por médicos con licencia, enviado a su farmacia",
     "labTests": "Reserva de análisis",
     "labTestsDesc": "Kits de calidad de laboratorio revisados por nuestros médicos",
+    "bookATest": "Reservar una prueba",
+    "bookATestDesc": "Analisis y pruebas en un centro cercano",
     "howItWorks": "Cómo funciona",
     "chooseCountry": "Elige el país",
     "language": "Idioma",

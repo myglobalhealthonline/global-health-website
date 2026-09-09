@@ -344,7 +344,7 @@ export default async function AdminTestCenterAvailabilityPage({
 
       <FormSection
         title="Week calendar"
-        description="Open slots for this centre. Click a slot to block it (⃠ keeps the slot but marks it unavailable) or remove it (🗑 deletes it for that date only, leaving the weekly hours untouched); clicking a blocked slot re-opens it. Select several to act on them together."
+        description="Click a green (open) time to BOOK IT FOR A PATIENT — the dialog asks for the patient, which test, and an optional discount; the location and time come from the slot you clicked. The corner buttons on a slot block it (⃠ — keeps the slot, marks it unavailable) or remove it (🗑 — deletes it for that date only, leaving the weekly hours untouched); clicking a blocked slot re-opens it. Select several to act on them together."
       >
         <div className="gh-form-section__span-2 mt-4 min-w-0">
           {slotsResult.ok ? (

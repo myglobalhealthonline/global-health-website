@@ -34,6 +34,8 @@
     "repeatPrescriptionDesc": "Reviewed by licensed doctors, sent to your pharmacy",
     "labTests": "Lab Test Booking",
     "labTestsDesc": "Clinical-grade home blood test kits",
+    "bookATest": "Book a Test",
+    "bookATestDesc": "Blood tests and scans at a centre near you",
     "howItWorks": "How It Works",
     "chooseCountry": "Choose country",
     "countrySwitchConfirmTemplate": "Your cart has {count} {item} from {country}. Switching to a new country will clear it. Continue?",
