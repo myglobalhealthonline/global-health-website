@@ -133,7 +133,7 @@ export function SuklPrescriptionPanel({ callable }: { callable: boolean }) {
         <F label="Patient given names" value={form.givenNames} on={(v) => setForm((f) => ({ ...f, givenNames: v }))} />
         <F label="Date of birth (YYYY-MM-DD)" value={form.dateOfBirth} on={(v) => setForm((f) => ({ ...f, dateOfBirth: v }))} />
         <F label="Insurance number (9–10 digits)" value={form.insuranceNumber} on={(v) => setForm((f) => ({ ...f, insuranceNumber: v }))} />
-        <F label="Insurer code (3 digits)" value={form.insurerCode} on={(v) => setForm((f) => ({ ...f, insurerCode: v }))} />
+        <F label="Insurer code — 111 VZP, 201 VoZP, 205 ČPZP, 207 OZP, 209 ZPŠ, 211 ZPMV, 213 RBP" value={form.insurerCode} on={(v) => setForm((f) => ({ ...f, insurerCode: v }))} />
         <F label="Quantity (1–999)" value={form.quantity} on={(v) => setForm((f) => ({ ...f, quantity: v }))} />
         <div className="sm:col-span-2">
           <F
