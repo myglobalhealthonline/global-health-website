@@ -9,6 +9,12 @@ import {
   runSuklGetAppInfo,
   runSuklLogin,
   runSuklAppPingZep,
+} from "../modules/sukl/sukl.service.js";
+import {
+  cancelSuklPrescription,
+  issueSuklPrescription,
+} from "../modules/sukl/sukl-prescription.service.js";
+import {
   listSuklDoctorIdentities,
   revokeSuklDoctorIdentity,
   runSuklConnectionTest,
@@ -19,8 +25,10 @@ import { isSuklError, suklErrorStatus } from "../lib/sukl/index.js";
 import { resolveAdminSessionActor, verifyGlobalAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import {
+  suklCancelPrescriptionSchema,
   suklDoctorIdentityBodySchema,
   suklDoctorParamsSchema,
+  suklIssuePrescriptionSchema,
   suklPingQuerySchema,
   suklWsdlQuerySchema,
 } from "../validations/admin-sukl.schema.js";
@@ -294,6 +302,74 @@ const adminSuklRoute: FastifyPluginAsync = async (app) => {
           ok: result.ok,
           httpStatus: result.httpStatus,
           signed: result.signed,
+          errorCode: result.errorCode,
+        },
+      });
+      return okResponse(result);
+    } catch (error) {
+      return handleError(app, reply, error);
+    }
+  });
+
+  /**
+   * Issue an eRecept. This CREATES a real prescription in SÚKL's test system —
+   * it is not a probe — so it is audited unconditionally, including failures.
+   */
+  app.post("/api/admin/sukl/prescriptions", async (request, reply) => {
+    const parsed = suklIssuePrescriptionSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply
+        .status(400)
+        .send(errorResponse("Invalid prescription", parsed.error.flatten()));
+    }
+    const actor = resolveAdminSessionActor(request);
+    try {
+      const result = await issueSuklPrescription(parsed.data);
+      await recordAudit({
+        actorUserId: actor?.userId ?? null,
+        actorRole: actor?.role ?? null,
+        action: "SUKL_CONNECTION_TESTED",
+        entityType: "SuklPrescription",
+        entityId: result.prescriptionId,
+        request,
+        metadata: {
+          kind: "prescription-issued",
+          ok: result.ok,
+          httpStatus: result.httpStatus,
+          // Identifiers only — never the patient or the medicine.
+          documentId: result.documentId,
+          submissionId: result.submissionId,
+          errorCode: result.errorCode,
+        },
+      });
+      return okResponse(result);
+    } catch (error) {
+      return handleError(app, reply, error);
+    }
+  });
+
+  /** Withdraw an issued eRecept. Unsigned — SÚKL do not require a signature. */
+  app.post("/api/admin/sukl/prescriptions/cancel", async (request, reply) => {
+    const parsed = suklCancelPrescriptionSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply
+        .status(400)
+        .send(errorResponse("Invalid cancellation", parsed.error.flatten()));
+    }
+    const actor = resolveAdminSessionActor(request);
+    try {
+      const result = await cancelSuklPrescription(parsed.data);
+      await recordAudit({
+        actorUserId: actor?.userId ?? null,
+        actorRole: actor?.role ?? null,
+        action: "SUKL_CONNECTION_TESTED",
+        entityType: "SuklPrescription",
+        entityId: parsed.data.prescriptionId,
+        request,
+        metadata: {
+          kind: "prescription-cancelled",
+          ok: result.ok,
+          documentId: result.documentId,
           errorCode: result.errorCode,
         },
       });

@@ -32,7 +32,12 @@ function isAllowed(method: string, segments: string[]): boolean {
         segments[0] === "app-ping" ||
         segments[0] === "app-info" ||
         segments[0] === "login" ||
-        segments[0] === "app-ping-zep")
+        segments[0] === "app-ping-zep" ||
+        // Issuing creates a real prescription; cancelling withdraws one.
+        segments[0] === "prescriptions") ||
+      (segments.length === 2 &&
+        segments[0] === "prescriptions" &&
+        segments[1] === "cancel")
     );
   }
   if (method === "PUT" || method === "DELETE") {
