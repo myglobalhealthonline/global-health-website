@@ -127,3 +127,114 @@ export function buildAdminHealthTestAlertLines(ctx: AdminHealthTestAlertContext)
 export function buildAdminHealthTestAlertText(ctx: AdminHealthTestAlertContext): string {
   return buildAdminHealthTestAlertLines(ctx).join("\n");
 }
+
+/**
+ * Dispatch details an admin hands the patient once the kit is on its way.
+ *
+ * Every field is optional except the order number, because couriers differ in
+ * what they give you: some hand over a code and no link, some a link and no
+ * code, small local couriers neither (the admin then sends a bare "it has
+ * shipped", which is still worth sending). The builders below drop the lines
+ * they have nothing for rather than printing an empty label.
+ */
+export type HealthTestTrackingContext = {
+  patientName: string;
+  orderNumber: string;
+  kits: string[];
+  trackingNumber: string | null;
+  trackingCarrier: string | null;
+  trackingUrl: string | null;
+};
+
+type TrackingLabels = {
+  carrier: string;
+  code: string;
+  link: string;
+};
+
+const TRACKING_LABELS: Record<Lang, TrackingLabels> = {
+  en: { carrier: "Carrier", code: "Tracking number", link: "Track your kit" },
+  pt: { carrier: "Transportadora", code: "Número de seguimento", link: "Siga o seu kit" },
+  ro: { carrier: "Curier", code: "Număr de urmărire", link: "Urmăriți kitul" },
+  cs: { carrier: "Dopravce", code: "Číslo zásilky", link: "Sledovat zásilku" },
+  es: { carrier: "Transportista", code: "Número de seguimiento", link: "Siga su kit" },
+};
+
+/** The carrier / code / link block, minus whatever the courier didn't give us. */
+function trackingLines(ctx: HealthTestTrackingContext, lang: Lang): string[] {
+  const l = TRACKING_LABELS[lang] ?? TRACKING_LABELS.en;
+  const lines: string[] = [];
+  if (ctx.trackingCarrier?.trim()) lines.push(`🚚 ${l.carrier}: ${ctx.trackingCarrier.trim()}`);
+  if (ctx.trackingNumber?.trim()) lines.push(`🔎 ${l.code}: ${ctx.trackingNumber.trim()}`);
+  if (ctx.trackingUrl?.trim()) lines.push(`🔗 ${l.link}: ${ctx.trackingUrl.trim()}`);
+  return lines;
+}
+
+/** True when there is nothing to track — the message becomes a plain "shipped". */
+export function hasTrackingDetails(ctx: HealthTestTrackingContext): boolean {
+  return Boolean(
+    ctx.trackingCarrier?.trim() || ctx.trackingNumber?.trim() || ctx.trackingUrl?.trim(),
+  );
+}
+
+/** Patient WhatsApp — the kit has shipped, here is how to follow it. */
+export function patientWhatsAppHealthTestTracking(
+  ctx: HealthTestTrackingContext,
+  lang: Lang,
+): string {
+  const kits = ctx.kits.join("\n• ");
+  const tracking = trackingLines(ctx, lang);
+  const trackingBlock = tracking.length > 0 ? `\n${tracking.join("\n")}` : "";
+  const body = t(lang, {
+    en: `Hi ${ctx.patientName},
+Good news — your test kit is on its way.
+📌 Order: #${ctx.orderNumber}
+🧪 Kit(s):
+• ${kits}${trackingBlock}
+Follow the instructions inside the kit and return your sample in the prepaid envelope provided. We will send your results as soon as the laboratory reports them.
+Global Health Team`,
+    pt: `Olá ${ctx.patientName},
+Boas notícias — o seu kit de análises já segue para si.
+📌 Encomenda: #${ctx.orderNumber}
+🧪 Kit(s):
+• ${kits}${trackingBlock}
+Siga as instruções incluídas no kit e devolva a sua amostra no envelope pré-pago fornecido. Enviaremos os resultados assim que o laboratório os comunicar.
+Equipa Global Health`,
+    ro: `Bună ${ctx.patientName},
+Vești bune — kitul dumneavoastră de testare este pe drum.
+📌 Comandă: #${ctx.orderNumber}
+🧪 Kit(uri):
+• ${kits}${trackingBlock}
+Urmați instrucțiunile din kit și returnați proba în plicul preplătit furnizat. Vă vom trimite rezultatele imediat ce laboratorul le raportează.
+Echipa Global Health`,
+    cs: `Dobrý den ${ctx.patientName},
+dobrá zpráva — vaše testovací sada je na cestě.
+📌 Objednávka: #${ctx.orderNumber}
+🧪 Sada(y):
+• ${kits}${trackingBlock}
+Postupujte podle pokynů v sadě a vzorek vraťte v přiložené předplacené obálce. Výsledky vám zašleme, jakmile je laboratoř nahlásí.
+Tým Global Health`,
+    es: `Hola ${ctx.patientName},
+Buenas noticias: su kit de análisis ya está en camino.
+📌 Pedido: #${ctx.orderNumber}
+🧪 Kit(s):
+• ${kits}${trackingBlock}
+Siga las instrucciones incluidas en el kit y devuelva su muestra en el sobre prepagado facilitado. Le enviaremos los resultados en cuanto el laboratorio los informe.
+Equipo Global Health`,
+  });
+  return body + whatsappContactFooter(lang);
+}
+
+/** Subject line for the same message by email. */
+export function patientEmailSubjectHealthTestTracking(
+  ctx: HealthTestTrackingContext,
+  lang: Lang,
+): string {
+  return t(lang, {
+    en: `Your test kit is on its way — order #${ctx.orderNumber}`,
+    pt: `O seu kit de análises segue para si — encomenda #${ctx.orderNumber}`,
+    ro: `Kitul dumneavoastră de testare este pe drum — comanda #${ctx.orderNumber}`,
+    cs: `Vaše testovací sada je na cestě — objednávka #${ctx.orderNumber}`,
+    es: `Su kit de análisis está en camino — pedido #${ctx.orderNumber}`,
+  });
+}

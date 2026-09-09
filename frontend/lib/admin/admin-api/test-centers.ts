@@ -258,40 +258,96 @@ export type AdminTestCenterSlotDto = {
   isAdHoc: boolean;
 };
 
-export async function fetchAdminTestCenterAvailability(testCenterId: string) {
+/** One physical branch of a centre. Calendar and address both live here. */
+export type AdminTestCenterLocationDto = {
+  id: string;
+  testCenterId: string;
+  name: string;
+  slug: string;
+  addressLine: string | null;
+  city: string | null;
+  phone: string | null;
+  notes: string | null;
+  isActive: boolean;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export async function fetchAdminTestCenterLocations(testCenterId: string) {
+  return adminRequest<{ locations: AdminTestCenterLocationDto[] }>(
+    `/api/admin/test-centers/${testCenterId}/locations`,
+  );
+}
+
+export async function createAdminTestCenterLocation(testCenterId: string, body: unknown) {
+  return adminRequest<{ location: AdminTestCenterLocationDto }>(
+    `/api/admin/test-centers/${testCenterId}/locations`,
+    { method: "POST", body },
+  );
+}
+
+export async function updateAdminTestCenterLocation(
+  testCenterId: string,
+  locationId: string,
+  body: unknown,
+) {
+  return adminRequest<{ location: AdminTestCenterLocationDto }>(
+    `/api/admin/test-centers/${testCenterId}/locations/${locationId}`,
+    { method: "PATCH", body },
+  );
+}
+
+export async function deleteAdminTestCenterLocation(
+  testCenterId: string,
+  locationId: string,
+) {
+  return adminRequest<{ deleted: boolean }>(
+    `/api/admin/test-centers/${testCenterId}/locations/${locationId}`,
+    { method: "DELETE" },
+  );
+}
+
+export async function fetchAdminTestCenterAvailability(
+  testCenterId: string,
+  locationId: string,
+) {
   return adminRequest<{
     availability: AdminTestCenterAvailabilityDto[];
     timeZone: string;
-  }>(`/api/admin/test-centers/${testCenterId}/availability`);
+  }>(`/api/admin/test-centers/${testCenterId}/locations/${locationId}/availability`);
 }
 
 export async function createAdminTestCenterAvailability(
   testCenterId: string,
+  locationId: string,
   body: unknown,
 ) {
   return adminRequest<{ availability: AdminTestCenterAvailabilityDto }>(
-    `/api/admin/test-centers/${testCenterId}/availability`,
+    `/api/admin/test-centers/${testCenterId}/locations/${locationId}/availability`,
     { method: "POST", body },
   );
 }
 
 export async function patchAdminTestCenterAvailability(
   testCenterId: string,
+  locationId: string,
   availabilityId: string,
   body: unknown,
 ) {
   return adminRequest<{ availability: AdminTestCenterAvailabilityDto }>(
-    `/api/admin/test-centers/${testCenterId}/availability/${availabilityId}`,
+    `/api/admin/test-centers/${testCenterId}/locations/${locationId}/availability/${availabilityId}`,
     { method: "PATCH", body },
   );
 }
 
 export async function deleteAdminTestCenterAvailability(
   testCenterId: string,
+  locationId: string,
   availabilityId: string,
 ) {
   return adminRequest<{ deleted: boolean }>(
-    `/api/admin/test-centers/${testCenterId}/availability/${availabilityId}`,
+    `/api/admin/test-centers/${testCenterId}/locations/${locationId}/availability/${availabilityId}`,
     { method: "DELETE" },
   );
 }
@@ -299,12 +355,13 @@ export async function deleteAdminTestCenterAvailability(
 /** Every slot in a UTC range, whatever its status — the week grid's read. */
 export async function fetchAdminTestCenterSlots(
   testCenterId: string,
+  locationId: string,
   fromUtc: string,
   toUtc: string,
 ) {
   const params = new URLSearchParams({ fromUtc, toUtc });
   return adminRequest<{ slots: AdminTestCenterSlotDto[] }>(
-    `/api/admin/test-centers/${testCenterId}/time-slots?${params.toString()}`,
+    `/api/admin/test-centers/${testCenterId}/locations/${locationId}/time-slots?${params.toString()}`,
   );
 }
 

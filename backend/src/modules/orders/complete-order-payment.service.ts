@@ -894,10 +894,27 @@ async function fulfillPaidOrderFromCheckoutSession(
       const slot = await tx.testCenterTimeSlot.findUniqueOrThrow({
         where: { id: item.testCenterTimeSlotId },
       });
-      const centre = await tx.testCenter.findUnique({
-        where: { id: item.testCenterId },
-        select: { name: true, addressLine: true, city: true },
-      });
+      // The BRANCH is what the patient attends, so its address is what the
+      // appointment snapshots. The provider name is prefixed so a confirmation
+      // reads "Synlab — Saldanha, Rua ..." rather than a bare branch name.
+      const location = item.testCenterLocationId
+        ? await tx.testCenterLocation.findUnique({
+            where: { id: item.testCenterLocationId },
+            select: {
+              name: true,
+              addressLine: true,
+              city: true,
+              testCenter: { select: { name: true } },
+            },
+          })
+        : null;
+      const centre = location
+        ? {
+            name: `${location.testCenter.name} — ${location.name}`,
+            addressLine: location.addressLine,
+            city: location.city,
+          }
+        : null;
 
       const aptFullName = item.patientFullName ?? order.fullName;
       const aptEmail = item.patientEmail ?? order.email;
@@ -927,6 +944,7 @@ async function fulfillPaidOrderFromCheckoutSession(
           status: "REQUEST_RECEIVED",
           examTypeId: item.examTypeId,
           testCenterId: item.testCenterId,
+          testCenterLocationId: item.testCenterLocationId,
           testCenterTimeSlotId: item.testCenterTimeSlotId,
           scheduledAt: slot.startAt,
           amountCents: item.unitPriceCents,

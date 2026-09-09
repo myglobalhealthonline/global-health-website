@@ -80,6 +80,8 @@ export type CreateManualTestBookingInput = {
   /** Proceed despite an existing patient matching on phone or name+DOB. */
   allowDuplicatePatient?: boolean;
   testCenterId: string;
+  /** The branch being attended — the calendar and the address both live here. */
+  testCenterLocationId: string;
   examTypeId: string;
   testCenterTimeSlotId: string;
   countryCode: string;
@@ -159,14 +161,21 @@ export async function createManualTestBooking(
       testCenter: {
         select: {
           name: true,
-          addressLine: true,
-          city: true,
           country: { select: { code: true, defaultLocale: true } },
+          // Only the branch named in the request, so a mismatched pair
+          // resolves to no location and fails below rather than booking at
+          // whichever site happened to sort first.
+          locations: {
+            where: { id: input.testCenterLocationId, isActive: true },
+            select: { id: true, name: true, addressLine: true, city: true },
+          },
         },
       },
     },
   });
   if (!offering) throw new TestCenterNotBookableError();
+  const location = offering.testCenter.locations[0];
+  if (!location) throw new TestCenterNotBookableError();
 
   const currencyCode = offering.currencyCode;
   const listPriceCents = computePatientPriceCents(
@@ -208,7 +217,7 @@ export async function createManualTestBooking(
   // Reserve the slot BEFORE any patient/order/email side effect, so a stale or
   // taken slot fails the whole booking cleanly. HELD, not BOOKED — the payment
   // webhook flips it, exactly as it does for a consultation.
-  let claimedSlot: { testCenterId: string; startAt: Date; endAt: Date };
+  let claimedSlot: { testCenterLocationId: string; startAt: Date; endAt: Date };
   try {
     claimedSlot = await prisma.$transaction((tx) =>
       holdTestCenterConsecutiveSlots(
@@ -221,9 +230,9 @@ export async function createManualTestBooking(
     if (err instanceof SlotAlreadyTakenError) throw new SlotNotAvailableError();
     throw err;
   }
-  // A slot from another centre would price this booking against the wrong
-  // offering, so refuse rather than book it.
-  if (claimedSlot.testCenterId !== input.testCenterId) {
+  // A slot from another branch would put the patient at the wrong address, so
+  // refuse rather than book it.
+  if (claimedSlot.testCenterLocationId !== input.testCenterLocationId) {
     await releaseTestCenterSlotsToBaseGrid([input.testCenterTimeSlotId]).catch(
       () => undefined,
     );
@@ -285,7 +294,11 @@ export async function createManualTestBooking(
   const appointmentId = randomUUID();
   const orderId = randomUUID();
   const orderItemId = randomUUID();
-  const locationAddress = formatTestCentreAddress(offering.testCenter);
+  const locationAddress = formatTestCentreAddress({
+    name: `${offering.testCenter.name} — ${location.name}`,
+    addressLine: location.addressLine,
+    city: location.city,
+  });
 
   try {
     await prisma.appointment.create({
@@ -320,6 +333,7 @@ export async function createManualTestBooking(
         serviceId: null,
         examTypeId: input.examTypeId,
         testCenterId: input.testCenterId,
+        testCenterLocationId: input.testCenterLocationId,
         testCenterTimeSlotId: input.testCenterTimeSlotId,
         scheduledAt,
         consultationMode: "IN_PERSON",
@@ -376,6 +390,7 @@ export async function createManualTestBooking(
           lineTotalCents: amountCents,
           examTypeId: input.examTypeId,
           testCenterId: input.testCenterId,
+          testCenterLocationId: input.testCenterLocationId,
           testCenterExamId: offering.id,
           testCenterTimeSlotId: input.testCenterTimeSlotId,
           appointmentId,
@@ -557,6 +572,7 @@ export async function createManualTestBooking(
       testBooking: true,
       orderId: order.id,
       testCenterId: input.testCenterId,
+      testCenterLocationId: input.testCenterLocationId,
       examTypeId: input.examTypeId,
       amountCents,
       discountPercent,

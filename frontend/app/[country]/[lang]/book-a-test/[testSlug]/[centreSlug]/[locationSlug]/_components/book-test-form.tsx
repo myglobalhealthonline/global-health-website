@@ -16,6 +16,7 @@ type Props = {
   lang: string;
   testSlug: string;
   centreSlug: string;
+  locationSlug: string;
   centreName: string;
   centreAddress: string | null;
   /** The centre's own timezone — slots are rendered in it, not the viewer's. */
@@ -43,6 +44,7 @@ export function BookTestForm({
   lang,
   testSlug,
   centreSlug,
+  locationSlug,
   centreName,
   centreAddress,
   centreTz,
@@ -51,9 +53,11 @@ export function BookTestForm({
 }: Props) {
   const router = useRouter();
   const [slots, setSlots] = useState<Slot[] | null>(null);
-  const [ids, setIds] = useState<{ examTypeId: string; testCenterId: string } | null>(
-    null,
-  );
+  const [ids, setIds] = useState<{
+    examTypeId: string;
+    testCenterId: string;
+    testCenterLocationId: string;
+  } | null>(null);
   const [selectedSlotId, setSelectedSlotId] = useState<string>("");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -71,20 +75,31 @@ export function BookTestForm({
         const res = await fetch(
           `/api/public/test-availability?country=${encodeURIComponent(countryCode)}` +
             `&test=${encodeURIComponent(testSlug)}` +
-            `&centre=${encodeURIComponent(centreSlug)}&days=14`,
+            `&centre=${encodeURIComponent(centreSlug)}` +
+            `&location=${encodeURIComponent(locationSlug)}&days=14`,
           { signal: controller.signal },
         );
         const json = (await res.json()) as {
           ok?: boolean;
-          data?: { slots?: Slot[]; examTypeId?: string; testCenterId?: string };
+          data?: {
+            slots?: Slot[];
+            examTypeId?: string;
+            testCenterId?: string;
+            testCenterLocationId?: string;
+          };
         };
         if (controller.signal.aborted) return;
         if (res.ok && json.ok && json.data) {
           setSlots(json.data.slots ?? []);
-          if (json.data.examTypeId && json.data.testCenterId) {
+          if (
+            json.data.examTypeId &&
+            json.data.testCenterId &&
+            json.data.testCenterLocationId
+          ) {
             setIds({
               examTypeId: json.data.examTypeId,
               testCenterId: json.data.testCenterId,
+              testCenterLocationId: json.data.testCenterLocationId,
             });
           }
         } else {
@@ -95,7 +110,7 @@ export function BookTestForm({
       }
     })();
     return () => controller.abort();
-  }, [countryCode, testSlug, centreSlug]);
+  }, [countryCode, testSlug, centreSlug, locationSlug]);
 
   /** Group by the centre's local day so the picker reads as a calendar. */
   const byDay = useMemo(() => {
@@ -121,6 +136,7 @@ export function BookTestForm({
       kind: "TEST_BOOKING",
       examTypeId: ids.examTypeId,
       testCenterId: ids.testCenterId,
+      testCenterLocationId: ids.testCenterLocationId,
       testCenterTimeSlotId: selectedSlotId,
       patient: {
         fullName: fullName.trim(),

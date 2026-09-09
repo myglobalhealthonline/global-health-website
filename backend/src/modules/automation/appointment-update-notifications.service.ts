@@ -85,6 +85,7 @@ async function loadUpdateContext(input: AppointmentUpdateNotifyInput) {
       countryCode: true,
       locationAddress: true,
       testCenter: { select: { name: true } },
+      testCenterLocation: { select: { name: true } },
     },
   });
   if (!appointment) return null;
@@ -110,7 +111,9 @@ async function loadUpdateContext(input: AppointmentUpdateNotifyInput) {
     ? {
         kind: "VENUE",
         display: appointment.locationAddress ?? "",
-        venueName: appointment.testCenter.name,
+        venueName: appointment.testCenterLocation
+          ? `${appointment.testCenter.name} — ${appointment.testCenterLocation.name}`
+          : appointment.testCenter.name,
       }
     : { kind: "MEET", display: meetingLink ? formatMeetingLinkDisplay(meetingLink) : "" };
 

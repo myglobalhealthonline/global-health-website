@@ -63,14 +63,21 @@ import {
  * Single-valued, unlike `resolveDoctorTimeZones`: a center is a physical
  * address in exactly one country, so there is no multi-market roster to offer.
  */
-export async function resolveTestCenterTimeZone(testCenterId: string): Promise<string> {
-  const row = await prisma.testCenter.findUnique({
-    where: { id: testCenterId },
+export async function resolveTestCenterTimeZone(testCenterLocationId: string): Promise<string> {
+  // Through the location to its provider's country — a branch has no country
+  // of its own, and looking the id up on TestCenter directly would match
+  // nothing and silently fall back to UTC.
+  const row = await prisma.testCenterLocation.findUnique({
+    where: { id: testCenterLocationId },
     select: {
-      country: { select: { bookingSetting: { select: { timezone: true } } } },
+      testCenter: {
+        select: {
+          country: { select: { bookingSetting: { select: { timezone: true } } } },
+        },
+      },
     },
   });
-  const tz = row?.country?.bookingSetting?.timezone;
+  const tz = row?.testCenter?.country?.bookingSetting?.timezone;
   return tz && isValidTimeZone(tz) ? tz : "UTC";
 }
 
@@ -85,13 +92,25 @@ export async function resolveTestCenterTimeZone(testCenterId: string): Promise<s
  * last until the next view. Windows are left intact so re-activating restores
  * the schedule exactly as it was.
  */
-export async function isTestCenterInactive(testCenterId: string): Promise<boolean> {
-  const center = await prisma.testCenter.findUnique({
-    where: { id: testCenterId },
-    select: { isActive: true, country: { select: { isActive: true } } },
+export async function isTestCenterInactive(testCenterLocationId: string): Promise<boolean> {
+  // Fail closed at THREE levels: the branch, its provider, and the market. A
+  // deactivated provider must stop every one of its branches taking bookings,
+  // and a branch read alone cannot see that.
+  const location = await prisma.testCenterLocation.findUnique({
+    where: { id: testCenterLocationId },
+    select: {
+      isActive: true,
+      testCenter: {
+        select: { isActive: true, country: { select: { isActive: true } } },
+      },
+    },
   });
-  if (!center) return true;
-  return !center.isActive || !center.country?.isActive;
+  if (!location) return true;
+  return (
+    !location.isActive ||
+    !location.testCenter?.isActive ||
+    !location.testCenter?.country?.isActive
+  );
 }
 
 /**
@@ -100,14 +119,14 @@ export async function isTestCenterInactive(testCenterId: string): Promise<boolea
  * exception is still dropped.
  */
 async function listAvailabilityExceptions(
-  testCenterId: string,
+  testCenterLocationId: string,
   fromUtc: Date,
   toUtc: Date,
 ): Promise<SlotSpan[]> {
   const pad = 24 * 60 * 60 * 1000;
   return prisma.testCenterAvailabilityException.findMany({
     where: {
-      testCenterId,
+      testCenterLocationId,
       startAt: { gte: new Date(fromUtc.getTime() - pad) },
       endAt: { lte: new Date(toUtc.getTime() + pad) },
     },
@@ -121,15 +140,15 @@ async function listAvailabilityExceptions(
  * two can never disagree about what a window owns.
  */
 async function windowSlotCandidates(
-  testCenterId: string,
+  testCenterLocationId: string,
   fromUtc: Date,
   toUtc: Date,
-): Promise<{ testCenterId: string; startAt: Date; endAt: Date }[]> {
+): Promise<{ testCenterLocationId: string; startAt: Date; endAt: Date }[]> {
   if (toUtc <= fromUtc) return [];
 
   const windows = await prisma.testCenterAvailability.findMany({
     where: {
-      testCenterId,
+      testCenterLocationId,
       isActive: true,
       OR: [
         { effectiveFrom: null, effectiveUntil: null },
@@ -149,17 +168,17 @@ async function windowSlotCandidates(
   });
   if (windows.length === 0) return [];
 
-  const tz = await resolveTestCenterTimeZone(testCenterId);
-  const exceptions = await listAvailabilityExceptions(testCenterId, fromUtc, toUtc);
+  const tz = await resolveTestCenterTimeZone(testCenterLocationId);
+  const exceptions = await listAvailabilityExceptions(testCenterLocationId, fromUtc, toUtc);
   return expandWindowCandidates(windows, exceptions, tz, fromUtc, toUtc).map(
-    (span) => ({ testCenterId, ...span }),
+    (span) => ({ testCenterLocationId, ...span }),
   );
 }
 
 /**
  * Ensure `TestCenterTimeSlot` rows exist for every window across the requested
  * range. Idempotent — inserts only the genuinely missing instants (comparing
- * actual starts, never counts) and relies on `@@unique([testCenterId, startAt])`
+ * actual starts, never counts) and relies on `@@unique([testCenterLocationId, startAt])`
  * plus the exclusion constraint as the concurrent-writer backstop.
  *
  * `skippedOverlap` in the return matters: candidates the exclusion constraint
@@ -168,20 +187,20 @@ async function windowSlotCandidates(
  * from "generated nothing, silently".
  */
 export async function ensureSlotsForRange(
-  testCenterId: string,
+  testCenterLocationId: string,
   fromUtc: Date,
   toUtc: Date,
 ): Promise<GenerationResult> {
   if (toUtc <= fromUtc) return { created: 0, skippedOverlap: 0 };
-  if (await isTestCenterInactive(testCenterId)) {
+  if (await isTestCenterInactive(testCenterLocationId)) {
     return { created: 0, skippedOverlap: 0 };
   }
 
-  const generated = await windowSlotCandidates(testCenterId, fromUtc, toUtc);
+  const generated = await windowSlotCandidates(testCenterLocationId, fromUtc, toUtc);
   if (generated.length === 0) return { created: 0, skippedOverlap: 0 };
 
   const existingRows = await prisma.testCenterTimeSlot.findMany({
-    where: { testCenterId, startAt: { gte: fromUtc, lt: toUtc } },
+    where: { testCenterLocationId, startAt: { gte: fromUtc, lt: toUtc } },
     select: { startAt: true },
   });
   const missing = selectMissingSlots(
@@ -237,7 +256,7 @@ export async function ensureSlotsForRange(
  * generates. See `selectStaleSlots` for why BLOCKED uses an overlap rule.
  */
 export async function reconcileWindowDerivedSlots(
-  testCenterId: string,
+  testCenterLocationId: string,
   now: Date = new Date(),
 ): Promise<number> {
   try {
@@ -245,10 +264,10 @@ export async function reconcileWindowDerivedSlots(
       now.getTime() + WINDOW_SWEEP_HORIZON_DAYS * 24 * 60 * 60 * 1000,
     );
     const [candidates, existing] = await Promise.all([
-      windowSlotCandidates(testCenterId, now, horizonEnd),
+      windowSlotCandidates(testCenterLocationId, now, horizonEnd),
       prisma.testCenterTimeSlot.findMany({
         where: {
-          testCenterId,
+          testCenterLocationId,
           status: { in: ["OPEN", "BLOCKED"] },
           isAdHoc: false,
           startAt: { gte: now, lt: horizonEnd },
@@ -266,7 +285,7 @@ export async function reconcileWindowDerivedSlots(
     const deleted = await prisma.testCenterTimeSlot.deleteMany({
       where: {
         id: { in: stale.map((s) => s.id) },
-        testCenterId,
+        testCenterLocationId,
         status: { in: ["OPEN", "BLOCKED"] },
       },
     });
@@ -283,12 +302,12 @@ export async function reconcileWindowDerivedSlots(
  * weeks someone happens to open. Never throws — a generation failure must not
  * fail the admin's window edit, which is already committed.
  */
-async function refreshWindowSlots(testCenterId: string): Promise<GenerationResult> {
+async function refreshWindowSlots(testCenterLocationId: string): Promise<GenerationResult> {
   try {
-    await reconcileWindowDerivedSlots(testCenterId);
+    await reconcileWindowDerivedSlots(testCenterLocationId);
     const now = new Date();
     return await ensureSlotsForRange(
-      testCenterId,
+      testCenterLocationId,
       now,
       new Date(now.getTime() + WINDOW_PREGENERATE_DAYS * 24 * 60 * 60 * 1000),
     );
@@ -319,8 +338,8 @@ registerAvailabilityCache(() => {
   expiredHoldSweepCache.clear();
 });
 
-function slotCacheKey(testCenterId: string, fromUtc: Date, toUtc: Date): string {
-  return `${testCenterId}:${fromUtc.getTime()}:${toUtc.getTime()}`;
+function slotCacheKey(testCenterLocationId: string, fromUtc: Date, toUtc: Date): string {
+  return `${testCenterLocationId}:${fromUtc.getTime()}:${toUtc.getTime()}`;
 }
 
 /**
@@ -335,23 +354,23 @@ function slotCacheKey(testCenterId: string, fromUtc: Date, toUtc: Date): string 
  * slot that a booked appointment starts right after.
  */
 export async function listOpenSlotsForTestCenter(
-  testCenterId: string,
+  testCenterLocationId: string,
   fromUtc: Date,
   toUtc: Date,
   minimumDurationMinutes = 0,
 ): Promise<PublicSlot[]> {
   if (toUtc <= fromUtc) return [];
-  const key = `${slotCacheKey(testCenterId, fromUtc, toUtc)}:${minimumDurationMinutes}`;
+  const key = `${slotCacheKey(testCenterLocationId, fromUtc, toUtc)}:${minimumDurationMinutes}`;
   const cached = slotCache.get(key);
   if (cached) return cached;
 
   try {
-    await releaseExpiredHeldSlotsForTestCenters([testCenterId]);
-    await ensureSlotsForRange(testCenterId, fromUtc, toUtc);
+    await releaseExpiredHeldSlotsForTestCenters([testCenterLocationId]);
+    await ensureSlotsForRange(testCenterLocationId, fromUtc, toUtc);
 
     const rows = await prisma.testCenterTimeSlot.findMany({
       where: {
-        testCenterId,
+        testCenterLocationId,
         status: "OPEN",
         startAt: { gte: fromUtc, lt: toUtc },
       },
@@ -420,16 +439,16 @@ export function filterSlotsWithContiguousRun<T extends { startAt: Date; endAt: D
 export async function claimTestCenterSlot(
   client: Prisma.TransactionClient,
   slotId: string,
-): Promise<{ testCenterId: string; startAt: Date; endAt: Date }> {
+): Promise<{ testCenterLocationId: string; startAt: Date; endAt: Date }> {
   const rows = await client.$queryRaw<
-    { testCenterId: string; startAt: Date; endAt: Date }[]
+    { testCenterLocationId: string; startAt: Date; endAt: Date }[]
   >(Prisma.sql`
     UPDATE "TestCenterTimeSlot" AS slot
     SET "status" = 'BOOKED', "updatedAt" = NOW()
     WHERE slot."id" = ${slotId}
       AND slot."status" = 'OPEN'
       AND slot."startAt" > NOW()
-    RETURNING slot."testCenterId", slot."startAt", slot."endAt"
+    RETURNING slot."testCenterLocationId", slot."startAt", slot."endAt"
   `);
   if (rows.length === 0) {
     throw new SlotAlreadyTakenError();
@@ -460,19 +479,19 @@ async function consumeConsecutiveSlots(
   startSlotId: string,
   durationMinutes: number | null,
   finalStatus: "BOOKED" | "HELD",
-): Promise<{ testCenterId: string; startAt: Date; endAt: Date }> {
+): Promise<{ testCenterLocationId: string; startAt: Date; endAt: Date }> {
   try {
     // 1. Lock the start slot; must be OPEN + future.
     const startRows = await client.$queryRaw<
       {
         id: string;
-        testCenterId: string;
+        testCenterLocationId: string;
         startAt: Date;
         endAt: Date;
         status: string;
       }[]
     >(Prisma.sql`
-      SELECT "id", "testCenterId", "startAt", "endAt", "status"
+      SELECT "id", "testCenterLocationId", "startAt", "endAt", "status"
       FROM "TestCenterTimeSlot"
       WHERE "id" = ${startSlotId}
       FOR UPDATE
@@ -495,7 +514,7 @@ async function consumeConsecutiveSlots(
     >(Prisma.sql`
       SELECT "id", "startAt", "endAt", "status"
       FROM "TestCenterTimeSlot"
-      WHERE "testCenterId" = ${start.testCenterId}
+      WHERE "testCenterLocationId" = ${start.testCenterLocationId}
         AND "startAt" >= ${start.startAt}
         AND "startAt" < ${targetEnd}
       ORDER BY "startAt" ASC
@@ -523,14 +542,14 @@ async function consumeConsecutiveSlots(
       `);
     }
     const updated = await client.$queryRaw<
-      { testCenterId: string; startAt: Date; endAt: Date }[]
+      { testCenterLocationId: string; startAt: Date; endAt: Date }[]
     >(Prisma.sql`
       UPDATE "TestCenterTimeSlot"
       SET "endAt" = ${targetEnd},
           "status" = ${finalStatus}::"DoctorSlotStatus",
           "updatedAt" = NOW()
       WHERE "id" = ${startSlotId} AND "status" = 'OPEN'
-      RETURNING "testCenterId", "startAt", "endAt"
+      RETURNING "testCenterLocationId", "startAt", "endAt"
     `);
     if (updated.length === 0) throw new SlotAlreadyTakenError();
     return updated[0];
@@ -546,7 +565,7 @@ export async function claimConsecutiveTestCenterSlots(
   client: Prisma.TransactionClient,
   startSlotId: string,
   durationMinutes: number | null,
-): Promise<{ testCenterId: string; startAt: Date; endAt: Date }> {
+): Promise<{ testCenterLocationId: string; startAt: Date; endAt: Date }> {
   return consumeConsecutiveSlots(client, startSlotId, durationMinutes, "BOOKED");
 }
 
@@ -558,7 +577,7 @@ export async function holdTestCenterConsecutiveSlots(
   client: Prisma.TransactionClient,
   startSlotId: string,
   durationMinutes: number | null,
-): Promise<{ testCenterId: string; startAt: Date; endAt: Date }> {
+): Promise<{ testCenterLocationId: string; startAt: Date; endAt: Date }> {
   return consumeConsecutiveSlots(client, startSlotId, durationMinutes, "HELD");
 }
 
@@ -579,7 +598,7 @@ export async function releaseTestCenterSlotsToBaseGrid(
   try {
     const rows = await prisma.testCenterTimeSlot.findMany({
       where: { id: { in: slotIds }, status: { in: ["HELD", "BOOKED"] } },
-      select: { id: true, testCenterId: true, startAt: true, endAt: true },
+      select: { id: true, testCenterLocationId: true, startAt: true, endAt: true },
     });
     if (rows.length === 0) return;
     await prisma.testCenterTimeSlot.deleteMany({
@@ -587,14 +606,14 @@ export async function releaseTestCenterSlotsToBaseGrid(
     });
     const spans = new Map<string, { from: Date; to: Date }>();
     for (const r of rows) {
-      const cur = spans.get(r.testCenterId);
-      spans.set(r.testCenterId, {
+      const cur = spans.get(r.testCenterLocationId);
+      spans.set(r.testCenterLocationId, {
         from: cur && cur.from < r.startAt ? cur.from : r.startAt,
         to: cur && cur.to > r.endAt ? cur.to : r.endAt,
       });
     }
-    for (const [testCenterId, span] of spans) {
-      await ensureSlotsForRange(testCenterId, span.from, span.to);
+    for (const [testCenterLocationId, span] of spans) {
+      await ensureSlotsForRange(testCenterLocationId, span.from, span.to);
     }
     invalidateAvailabilityCaches();
   } catch (error) {
@@ -621,7 +640,7 @@ async function sweepExpiredHeldSlots(testCenterIds: string[]): Promise<void> {
   try {
     const stale = await prisma.testCenterTimeSlot.findMany({
       where: {
-        testCenterId: { in: testCenterIds },
+        testCenterLocationId: { in: testCenterIds },
         status: "HELD",
         updatedAt: { lt: new Date(Date.now() - 15 * 60_000) },
         appointment: { is: null },
@@ -662,7 +681,7 @@ export async function reclaimTestCenterSlotForRescheduledAppointment(
   appointmentId: string,
   newSlotId: string,
   durationMinutes: number | null,
-): Promise<{ testCenterId: string; startAt: Date; endAt: Date }> {
+): Promise<{ testCenterLocationId: string; startAt: Date; endAt: Date }> {
   const appointment = await prisma.appointment.findUnique({
     where: { id: appointmentId },
     select: { testCenterTimeSlotId: true },
@@ -737,11 +756,11 @@ function toAdminRow(r: {
 }
 
 export async function listAdminAvailability(
-  testCenterId: string,
+  testCenterLocationId: string,
 ): Promise<AdminAvailabilityRow[]> {
   try {
     const rows = await prisma.testCenterAvailability.findMany({
-      where: { testCenterId },
+      where: { testCenterLocationId },
       orderBy: [{ weekday: "asc" }, { startMinute: "asc" }],
     });
     return rows.map(toAdminRow);
@@ -751,7 +770,7 @@ export async function listAdminAvailability(
 }
 
 export async function createAdminAvailability(
-  testCenterId: string,
+  testCenterLocationId: string,
   input: {
     weekday: number;
     startMinute: number;
@@ -764,7 +783,7 @@ export async function createAdminAvailability(
   try {
     const row = await prisma.testCenterAvailability.create({
       data: {
-        testCenterId,
+        testCenterLocationId,
         weekday: input.weekday,
         startMinute: input.startMinute,
         endMinute: input.endMinute,
@@ -775,7 +794,7 @@ export async function createAdminAvailability(
         effectiveUntil: input.effectiveUntil ?? null,
       },
     });
-    await refreshWindowSlots(testCenterId);
+    await refreshWindowSlots(testCenterLocationId);
     invalidateAvailabilityCaches();
     return toAdminRow(row);
   } catch (error) {
@@ -784,7 +803,7 @@ export async function createAdminAvailability(
 }
 
 export async function patchAdminAvailability(
-  testCenterId: string,
+  testCenterLocationId: string,
   availabilityId: string,
   input: {
     weekday?: number;
@@ -798,7 +817,7 @@ export async function patchAdminAvailability(
 ): Promise<AdminAvailabilityRow | null> {
   try {
     const existing = await prisma.testCenterAvailability.findFirst({
-      where: { id: availabilityId, testCenterId },
+      where: { id: availabilityId, testCenterLocationId },
       select: { id: true },
     });
     if (!existing) return null;
@@ -825,7 +844,7 @@ export async function patchAdminAvailability(
     // may no longer be justified. Reconcile before returning: leaving it to a
     // later read would mean a patient can book a slot on a day the center just
     // removed.
-    await refreshWindowSlots(testCenterId);
+    await refreshWindowSlots(testCenterLocationId);
     invalidateAvailabilityCaches();
     return toAdminRow(row);
   } catch (error) {
@@ -834,17 +853,17 @@ export async function patchAdminAvailability(
 }
 
 export async function deleteAdminAvailability(
-  testCenterId: string,
+  testCenterLocationId: string,
   availabilityId: string,
 ): Promise<boolean> {
   try {
     const result = await prisma.testCenterAvailability.deleteMany({
-      where: { id: availabilityId, testCenterId },
+      where: { id: availabilityId, testCenterLocationId },
     });
     // After the row is gone, so the reconcile's candidate set no longer counts
     // this window. Drops every future OPEN/BLOCKED slot it was the only source
     // for; slots another window still justifies stay.
-    if (result.count > 0) await reconcileWindowDerivedSlots(testCenterId);
+    if (result.count > 0) await reconcileWindowDerivedSlots(testCenterLocationId);
     invalidateAvailabilityCaches();
     return result.count > 0;
   } catch (error) {
@@ -882,18 +901,18 @@ export type BulkSlotResult = {
  * the caller's read and here keeps its slot.
  */
 async function deleteSlotsWithExceptions(
-  testCenterId: string,
+  testCenterLocationId: string,
   slots: { id: string; startAt: Date; endAt: Date }[],
   reason?: string | null,
 ): Promise<number> {
   const note = reason?.trim() || null;
   return prisma.$transaction(async (tx) => {
     await tx.testCenterAvailabilityException.deleteMany({
-      where: { testCenterId, startAt: { in: slots.map((s) => s.startAt) } },
+      where: { testCenterLocationId, startAt: { in: slots.map((s) => s.startAt) } },
     });
     await tx.testCenterAvailabilityException.createMany({
       data: slots.map((s) => ({
-        testCenterId,
+        testCenterLocationId,
         startAt: s.startAt,
         endAt: s.endAt,
         reason: note,
@@ -903,7 +922,7 @@ async function deleteSlotsWithExceptions(
     const deleted = await tx.testCenterTimeSlot.deleteMany({
       where: {
         id: { in: slots.map((s) => s.id) },
-        testCenterId,
+        testCenterLocationId,
         status: { in: ["OPEN", "BLOCKED"] },
       },
     });
@@ -924,7 +943,7 @@ async function deleteSlotsWithExceptions(
  * make the tool unusable; clashes and past instants are counted, never raised.
  */
 export async function createAdHocSlots(
-  testCenterId: string,
+  testCenterLocationId: string,
   startAts: Date[],
   durationMinutes: number,
 ): Promise<{ created: number; skippedOverlap: number; skippedPast: number }> {
@@ -945,12 +964,12 @@ export async function createAdHocSlots(
     // One read for the whole span. Every status counts: a BOOKED exam blocks an
     // add just as an OPEN slot does.
     const occupied = await prisma.testCenterTimeSlot.findMany({
-      where: { testCenterId, startAt: { lt: rangeEnd }, endAt: { gt: rangeStart } },
+      where: { testCenterLocationId, startAt: { lt: rangeEnd }, endAt: { gt: rangeStart } },
       select: { startAt: true, endAt: true },
     });
 
     const accepted: {
-      testCenterId: string;
+      testCenterLocationId: string;
       startAt: Date;
       endAt: Date;
       isAdHoc: true;
@@ -958,7 +977,7 @@ export async function createAdHocSlots(
     for (const startAt of future) {
       const endAt = new Date(startAt.getTime() + durationMs);
       if (occupied.some((row) => intervalsOverlap({ startAt, endAt }, row))) continue;
-      accepted.push({ testCenterId, startAt, endAt, isAdHoc: true });
+      accepted.push({ testCenterLocationId, startAt, endAt, isAdHoc: true });
       // Track it so two candidates in the same request can't overlap each other.
       occupied.push({ startAt, endAt });
     }
@@ -968,7 +987,7 @@ export async function createAdHocSlots(
     const created = await prisma.$transaction(async (tx) => {
       await tx.testCenterAvailabilityException.deleteMany({
         where: {
-          testCenterId,
+          testCenterLocationId,
           OR: accepted.map((row) => ({
             startAt: { lt: row.endAt },
             endAt: { gt: row.startAt },
@@ -988,14 +1007,14 @@ export async function createAdHocSlots(
     // Lost a race the pre-flight read missed. A batch insert aborts entirely on
     // one conflicting row, so retry one at a time and count the losers.
     if (isExclusionViolation(error) || isUniqueViolation(error)) {
-      return createAdHocSlotsOneByOne(testCenterId, future, durationMs, skippedPast);
+      return createAdHocSlotsOneByOne(testCenterLocationId, future, durationMs, skippedPast);
     }
     throw normalizeDbError(error, "Could not add slots");
   }
 }
 
 async function createAdHocSlotsOneByOne(
-  testCenterId: string,
+  testCenterLocationId: string,
   startAts: Date[],
   durationMs: number,
   skippedPast: number,
@@ -1007,10 +1026,10 @@ async function createAdHocSlotsOneByOne(
     try {
       await prisma.$transaction(async (tx) => {
         await tx.testCenterAvailabilityException.deleteMany({
-          where: { testCenterId, startAt: { lt: endAt }, endAt: { gt: startAt } },
+          where: { testCenterLocationId, startAt: { lt: endAt }, endAt: { gt: startAt } },
         });
         await tx.testCenterTimeSlot.create({
-          data: { testCenterId, startAt, endAt, status: "OPEN", isAdHoc: true },
+          data: { testCenterLocationId, startAt, endAt, status: "OPEN", isAdHoc: true },
         });
       });
       created += 1;
@@ -1031,7 +1050,7 @@ async function createAdHocSlotsOneByOne(
  * does not simply mint it again on the next read.
  */
 export async function removeSlotForDate(
-  testCenterId: string,
+  testCenterLocationId: string,
   slotId: string,
   reason?: string | null,
 ): Promise<
@@ -1040,7 +1059,7 @@ export async function removeSlotForDate(
 > {
   try {
     const slot = await prisma.testCenterTimeSlot.findFirst({
-      where: { id: slotId, testCenterId },
+      where: { id: slotId, testCenterLocationId },
       select: { id: true, status: true, startAt: true, endAt: true },
     });
     if (!slot) return { ok: false, code: "NOT_FOUND" };
@@ -1050,9 +1069,9 @@ export async function removeSlotForDate(
 
     await prisma.$transaction(async (tx) => {
       await tx.testCenterAvailabilityException.upsert({
-        where: { testCenterId_startAt: { testCenterId, startAt: slot.startAt } },
+        where: { testCenterLocationId_startAt: { testCenterLocationId, startAt: slot.startAt } },
         create: {
-          testCenterId,
+          testCenterLocationId,
           startAt: slot.startAt,
           endAt: slot.endAt,
           reason: reason?.trim() || null,
@@ -1063,7 +1082,7 @@ export async function removeSlotForDate(
       // read above and here, and a paid booking must never lose its slot to a
       // stale Remove click.
       const deleted = await tx.testCenterTimeSlot.deleteMany({
-        where: { id: slot.id, testCenterId, status: { in: ["OPEN", "BLOCKED"] } },
+        where: { id: slot.id, testCenterLocationId, status: { in: ["OPEN", "BLOCKED"] } },
       });
       if (deleted.count === 0) throw new SlotAlreadyTakenError();
     });
@@ -1078,7 +1097,7 @@ export async function removeSlotForDate(
 
 /** Block or unblock every eligible slot inside the given ranges. */
 export async function bulkSetSlotBlockInSpans(
-  testCenterId: string,
+  testCenterLocationId: string,
   ranges: SlotRange[],
   action: "BLOCK" | "UNBLOCK",
   reason?: string | null,
@@ -1091,12 +1110,12 @@ export async function bulkSetSlotBlockInSpans(
     // generate first — otherwise "block next Tuesday" silently does nothing.
     if (action === "BLOCK") {
       for (const range of valid) {
-        await ensureSlotsForRange(testCenterId, range.fromUtc, range.toUtc);
+        await ensureSlotsForRange(testCenterLocationId, range.fromUtc, range.toUtc);
       }
     }
 
     const where = {
-      testCenterId,
+      testCenterLocationId,
       OR: valid.map((s) => ({ startAt: { gte: s.fromUtc, lt: s.toUtc } })),
     };
     const skippedOccupied = await prisma.testCenterTimeSlot.count({
@@ -1120,7 +1139,7 @@ export async function bulkSetSlotBlockInSpans(
 
 /** Remove every eligible slot inside the given ranges, leaving tombstones. */
 export async function bulkRemoveSlotsInSpans(
-  testCenterId: string,
+  testCenterLocationId: string,
   ranges: SlotRange[],
   reason?: string | null,
 ): Promise<BulkSlotResult> {
@@ -1130,7 +1149,7 @@ export async function bulkRemoveSlotsInSpans(
   try {
     const rows = await prisma.testCenterTimeSlot.findMany({
       where: {
-        testCenterId,
+        testCenterLocationId,
         OR: valid.map((s) => ({ startAt: { gte: s.fromUtc, lt: s.toUtc } })),
       },
       select: { id: true, status: true, startAt: true, endAt: true },
@@ -1141,7 +1160,7 @@ export async function bulkRemoveSlotsInSpans(
       return { changed: 0, skippedOccupied, skippedMissing: 0 };
     }
 
-    const changed = await deleteSlotsWithExceptions(testCenterId, removable, reason);
+    const changed = await deleteSlotsWithExceptions(testCenterLocationId, removable, reason);
     invalidateAvailabilityCaches();
     return { changed, skippedOccupied, skippedMissing: 0 };
   } catch (error) {
@@ -1151,7 +1170,7 @@ export async function bulkRemoveSlotsInSpans(
 
 /** Same three actions, addressed by explicit slot id. */
 export async function bulkSlotActionByIds(
-  testCenterId: string,
+  testCenterLocationId: string,
   slotIds: string[],
   action: "BLOCK" | "UNBLOCK" | "REMOVE",
   reason?: string | null,
@@ -1161,7 +1180,7 @@ export async function bulkSlotActionByIds(
 
   try {
     const rows = await prisma.testCenterTimeSlot.findMany({
-      where: { id: { in: ids }, testCenterId },
+      where: { id: { in: ids }, testCenterLocationId },
       select: { id: true, status: true, startAt: true, endAt: true },
     });
     const skippedMissing = ids.length - rows.length;
@@ -1172,7 +1191,7 @@ export async function bulkSlotActionByIds(
     }
 
     if (action === "REMOVE") {
-      const changed = await deleteSlotsWithExceptions(testCenterId, eligible, reason);
+      const changed = await deleteSlotsWithExceptions(testCenterLocationId, eligible, reason);
       invalidateAvailabilityCaches();
       return { changed, skippedOccupied, skippedMissing };
     }
@@ -1182,7 +1201,7 @@ export async function bulkSlotActionByIds(
     const result = await prisma.testCenterTimeSlot.updateMany({
       where: {
         id: { in: eligible.map((r) => r.id) },
-        testCenterId,
+        testCenterLocationId,
         status: action === "BLOCK" ? "OPEN" : "BLOCKED",
       },
       data:
@@ -1200,7 +1219,7 @@ export async function bulkSlotActionByIds(
 
 /** Entry point for the grid's bulk toolbar: ids win over ranges when both come. */
 export async function runBulkSlotAction(
-  testCenterId: string,
+  testCenterLocationId: string,
   input: {
     action: "BLOCK" | "UNBLOCK" | "REMOVE";
     spans?: { fromUtc: string; toUtc: string }[];
@@ -1209,15 +1228,15 @@ export async function runBulkSlotAction(
   },
 ): Promise<BulkSlotResult> {
   if (input.slotIds) {
-    return bulkSlotActionByIds(testCenterId, input.slotIds, input.action, input.reason);
+    return bulkSlotActionByIds(testCenterLocationId, input.slotIds, input.action, input.reason);
   }
   const ranges: SlotRange[] = (input.spans ?? []).map((s) => ({
     fromUtc: new Date(s.fromUtc),
     toUtc: new Date(s.toUtc),
   }));
   return input.action === "REMOVE"
-    ? bulkRemoveSlotsInSpans(testCenterId, ranges, input.reason)
-    : bulkSetSlotBlockInSpans(testCenterId, ranges, input.action, input.reason);
+    ? bulkRemoveSlotsInSpans(testCenterLocationId, ranges, input.reason)
+    : bulkSetSlotBlockInSpans(testCenterLocationId, ranges, input.action, input.reason);
 }
 
 /**
@@ -1229,7 +1248,7 @@ export async function runBulkSlotAction(
  * the whole resize.
  */
 export async function resizeSlot(
-  testCenterId: string,
+  testCenterLocationId: string,
   slotId: string,
   durationMinutes: number,
 ): Promise<
@@ -1239,7 +1258,7 @@ export async function resizeSlot(
   const durationMs = durationMinutes * 60 * 1000;
   try {
     const slot = await prisma.testCenterTimeSlot.findFirst({
-      where: { id: slotId, testCenterId },
+      where: { id: slotId, testCenterLocationId },
       select: {
         id: true,
         status: true,
@@ -1264,7 +1283,7 @@ export async function resizeSlot(
 
     const neighbours = await prisma.testCenterTimeSlot.findMany({
       where: {
-        testCenterId,
+        testCenterLocationId,
         id: { not: slot.id },
         startAt: { lt: newEnd },
         endAt: { gt: slot.startAt },
@@ -1282,7 +1301,7 @@ export async function resizeSlot(
         });
       }
       await tx.testCenterAvailabilityException.deleteMany({
-        where: { testCenterId, startAt: { lt: newEnd }, endAt: { gt: slot.startAt } },
+        where: { testCenterLocationId, startAt: { lt: newEnd }, endAt: { gt: slot.startAt } },
       });
       const row = await tx.testCenterTimeSlot.update({
         where: { id: slot.id },
@@ -1292,7 +1311,7 @@ export async function resizeSlot(
 
       if (newEnd < slot.endAt) {
         const freed: {
-          testCenterId: string;
+          testCenterLocationId: string;
           startAt: Date;
           endAt: Date;
           status: DoctorSlotStatus;
@@ -1302,7 +1321,7 @@ export async function resizeSlot(
         const stepMs = BASE_SLOT_MINUTES * 60 * 1000;
         for (let t = newEnd.getTime(); t + stepMs <= slot.endAt.getTime(); t += stepMs) {
           freed.push({
-            testCenterId,
+            testCenterLocationId,
             startAt: new Date(t),
             endAt: new Date(t + stepMs),
             status: slot.status,
@@ -1332,7 +1351,7 @@ export async function resizeSlot(
  * Generates first so an unvisited week renders its windows.
  */
 export async function listAdminSlotsInRange(
-  testCenterId: string,
+  testCenterLocationId: string,
   fromUtc: Date,
   toUtc: Date,
 ): Promise<
@@ -1347,10 +1366,10 @@ export async function listAdminSlotsInRange(
 > {
   if (toUtc <= fromUtc) return [];
   try {
-    await releaseExpiredHeldSlotsForTestCenters([testCenterId]);
-    await ensureSlotsForRange(testCenterId, fromUtc, toUtc);
+    await releaseExpiredHeldSlotsForTestCenters([testCenterLocationId]);
+    await ensureSlotsForRange(testCenterLocationId, fromUtc, toUtc);
     const rows = await prisma.testCenterTimeSlot.findMany({
-      where: { testCenterId, startAt: { gte: fromUtc, lt: toUtc } },
+      where: { testCenterLocationId, startAt: { gte: fromUtc, lt: toUtc } },
       orderBy: { startAt: "asc" },
       select: {
         id: true,

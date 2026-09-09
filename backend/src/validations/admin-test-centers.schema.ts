@@ -126,6 +126,34 @@ export const adminExamTypeUpdateBodySchema = examTypeBaseObject
   .superRefine((value, ctx) => validateUniqueLocales(value.translations, ctx));
 export type AdminExamTypeUpdateBody = z.infer<typeof adminExamTypeUpdateBodySchema>;
 
+/** A physical branch of a centre. Address and calendar both live here. */
+const testCenterLocationBaseObject = z.object({
+  name: z.string().trim().min(1).max(200),
+  slug: serviceSlugSchema,
+  addressLine: optionalTrimmed(300),
+  city: optionalTrimmed(120),
+  phone: optionalTrimmed(60),
+  notes: optionalTrimmed(2000),
+  isActive: z.boolean().optional(),
+  sortOrder: z.coerce.number().int().min(0).max(9999).default(0),
+});
+
+export const adminTestCenterLocationCreateBodySchema = testCenterLocationBaseObject;
+export type AdminTestCenterLocationCreateBody = z.infer<
+  typeof adminTestCenterLocationCreateBodySchema
+>;
+
+export const adminTestCenterLocationUpdateBodySchema =
+  testCenterLocationBaseObject.partial();
+export type AdminTestCenterLocationUpdateBody = z.infer<
+  typeof adminTestCenterLocationUpdateBodySchema
+>;
+
+export const testCenterLocationIdParamsSchema = z.object({
+  id: z.string().trim().min(1),
+  locationId: z.string().trim().min(1),
+});
+
 // ─── Test centers (country-scoped) ─────────────────────────────────────────
 
 export const testCenterIdParamsSchema = z.object({

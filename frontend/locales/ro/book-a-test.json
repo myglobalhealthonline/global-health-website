@@ -15,6 +15,7 @@
   "detail": {
     "chooseCentre": "Alege un centru de analize",
     "chooseCentreHint": "Preturile si orele disponibile difera de la un centru la altul.",
+    "chooseLocation": "Alege o locatie",
     "preparation": "Cum te pregatesti",
     "turnaround": "Rezultate in {days} zile lucratoare",
     "turnaroundUnknown": "Termen confirmat de centru",

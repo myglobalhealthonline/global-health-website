@@ -39,6 +39,7 @@ type Props = {
   onClose: () => void;
   slot: CalendarItem | null;
   testCenterId: string;
+  testCenterLocationId: string;
   testCenterName: string;
   countryCode: string;
   centerTz: string;
@@ -61,6 +62,7 @@ export function BookTestSlotDialog({
   onClose,
   slot,
   testCenterId,
+  testCenterLocationId,
   testCenterName,
   countryCode,
   centerTz,
@@ -180,6 +182,11 @@ export function BookTestSlotDialog({
       <form action={action} onSubmit={onSubmit} noValidate className="grid gap-4">
         <input type="hidden" name="countryCode" value={countryCode} />
         <input type="hidden" name="testCenterId" value={testCenterId} />
+        <input
+          type="hidden"
+          name="testCenterLocationId"
+          value={testCenterLocationId}
+        />
         <input type="hidden" name="testCenterTimeSlotId" value={slotId} />
         <input type="hidden" name="phone" value={combinedPhone} />
 

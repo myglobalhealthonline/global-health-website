@@ -129,12 +129,6 @@ export default async function BookATestDetailPage({
             {test.centres.map((centre) => (
               <li key={centre.id} className="gh-card flex flex-col gap-2 p-5">
                 <h3 className="gh-h3 m-0">{centre.name}</h3>
-                {centre.addressLine || centre.city ? (
-                  <p className="m-0 flex items-start gap-1.5 text-sm text-[var(--color-text-muted)]">
-                    <MapPin className="mt-0.5 size-3.5 shrink-0" aria-hidden />
-                    {[centre.addressLine, centre.city].filter(Boolean).join(", ")}
-                  </p>
-                ) : null}
                 <p className="m-0 flex items-center gap-1.5 text-sm text-[var(--color-text-muted)]">
                   <Clock className="size-3.5" aria-hidden />
                   {centre.turnaroundDays
@@ -147,12 +141,34 @@ export default async function BookATestDetailPage({
                 <p className="m-0 font-semibold">
                   {formatPriceRounded(centre.patientPriceCents, centre.currencyCode)}
                 </p>
-                <Link
-                  href={`${base}/book-a-test/${test.slug}/${centre.slug}`}
-                  className="gh-btn gh-btn-primary mt-auto"
-                >
-                  {test.ctaLabel ?? t.detail.selectCentre}
-                </Link>
+
+                {/* The branch is the real choice: same price everywhere, so the
+                    patient is picking where to travel to, not what to pay. */}
+                <p className="m-0 mt-1 text-portal-meta font-semibold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                  {t.detail.chooseLocation}
+                </p>
+                <ul className="m-0 grid list-none gap-2 p-0">
+                  {centre.locations.map((loc) => (
+                    <li key={loc.id}>
+                      <Link
+                        href={`${base}/book-a-test/${test.slug}/${centre.slug}/${loc.slug}`}
+                        className="flex w-full items-start gap-1.5 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] px-3 py-2 text-left text-sm hover:border-[var(--color-brand-primary)]"
+                      >
+                        <MapPin className="mt-0.5 size-3.5 shrink-0" aria-hidden />
+                        <span>
+                          <span className="block font-semibold text-[var(--color-text-primary)]">
+                            {loc.name}
+                          </span>
+                          {loc.addressLine || loc.city ? (
+                            <span className="block text-[var(--color-text-muted)]">
+                              {[loc.addressLine, loc.city].filter(Boolean).join(", ")}
+                            </span>
+                          ) : null}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </li>
             ))}
           </ul>

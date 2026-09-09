@@ -32,6 +32,7 @@ import { BookTestSlotDialog, type ExamOption } from "./book-test-slot-dialog";
 
 type Props = {
   testCenterId: string;
+  testCenterLocationId: string;
   testCenterName: string;
   countryCode: string;
   /** The center's country timezone — its windows are authored in this. */
@@ -61,6 +62,7 @@ type Props = {
  */
 export function TestCenterAvailabilityWeek({
   testCenterId,
+  testCenterLocationId,
   testCenterName,
   countryCode,
   centerTz,
@@ -77,7 +79,12 @@ export function TestCenterAvailabilityWeek({
   // up with the "From/To (center time)" table on the page.
   const [tz, setTz] = useState<string>(centerTz);
 
-  const owner = { kind: "test-centers", id: testCenterId } as const;
+  // The calendar belongs to the BRANCH, so the owner is the pair.
+  const owner = {
+    kind: "test-centers",
+    id: testCenterId,
+    locationId: testCenterLocationId,
+  } as const;
   const slotManager = useSlotManager({
     setStatus: (slotId, status, reason) =>
       adminToggleSlotStatus(owner, slotId, status, reason),
@@ -178,6 +185,7 @@ export function TestCenterAvailabilityWeek({
         onClose={() => setSelectedSlot(null)}
         slot={selectedSlot}
         testCenterId={testCenterId}
+        testCenterLocationId={testCenterLocationId}
         testCenterName={testCenterName}
         countryCode={countryCode}
         centerTz={centerTz}

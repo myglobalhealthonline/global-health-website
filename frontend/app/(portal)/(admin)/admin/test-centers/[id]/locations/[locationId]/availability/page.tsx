@@ -9,13 +9,14 @@ import {
   fetchAdminTestCenterAvailability,
   fetchAdminTestCenterById,
   fetchAdminTestCenterExams,
+  fetchAdminTestCenterLocations,
   fetchAdminTestCenterSlots,
   patchAdminTestCenterAvailability,
   postAdminManualTestBooking,
 } from "@/lib/admin/admin-api/test-centers";
-import { AdminCard, PageHeader, Pill } from "../../../_components/atoms";
-import { ConfirmDeleteButton } from "../../../_components/confirm-delete-button";
-import { EditWindowButton } from "../../../doctors/[id]/availability/_components/edit-window-button";
+import { AdminCard, PageHeader, Pill } from "../../../../../_components/atoms";
+import { ConfirmDeleteButton } from "../../../../../_components/confirm-delete-button";
+import { EditWindowButton } from "../../../../../doctors/[id]/availability/_components/edit-window-button";
 import { FormSection } from "@/components/FormSection";
 import { SetCrumbTitle } from "@/components/crumb-title";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
@@ -47,7 +48,7 @@ const WEEKDAYS = [
 ];
 
 type PageProps = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; locationId: string }>;
   searchParams?: Promise<{ success?: string; error?: string; wk?: string }>;
 };
 
@@ -64,16 +65,17 @@ export default async function AdminTestCenterAvailabilityPage({
   params,
   searchParams,
 }: PageProps) {
-  const { id } = await params;
+  const { id, locationId } = await params;
   const messages = searchParams ? await searchParams : {};
-  const basePath = `/admin/test-centers/${id}/availability`;
+  const basePath = `/admin/test-centers/${id}/locations/${locationId}/availability`;
 
   // The centre + its windows first, because the week range has to be resolved
   // in the CENTRE's timezone — asking for "this week" in the server's zone
   // would fetch the wrong days for any centre not sitting on UTC.
-  const [centerResult, availabilityResult] = await Promise.all([
+  const [centerResult, availabilityResult, locationsResult] = await Promise.all([
     fetchAdminTestCenterById(id),
-    fetchAdminTestCenterAvailability(id),
+    fetchAdminTestCenterAvailability(id, locationId),
+    fetchAdminTestCenterLocations(id),
   ]);
 
   if (!centerResult.ok) {
@@ -100,6 +102,20 @@ export default async function AdminTestCenterAvailabilityPage({
   // Lowercase throughout — country codes are stored lowercase and the booking
   // API matches on them.
   const countryCode = center.country.code.toLowerCase();
+  // The branch whose calendar this is — its name and address head the page, so
+  // an admin editing hours can see which site they are editing.
+  const location = (locationsResult.ok ? locationsResult.data?.locations : [])?.find(
+    (l) => l.id === locationId,
+  );
+  if (!location) {
+    return (
+      <AdminCard>
+        <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">
+          That location does not belong to this test centre.
+        </p>
+      </AdminCard>
+    );
+  }
 
   const windows = availabilityResult.ok
     ? (availabilityResult.data?.availability ?? [])
@@ -113,7 +129,7 @@ export default async function AdminTestCenterAvailabilityPage({
   const weekAnchor = parseWeekAnchor(messages.wk, centerTz);
   const { fromIso, toIso } = weekRangeIso(weekAnchor, centerTz);
   const [slotsResult, examsResult] = await Promise.all([
-    fetchAdminTestCenterSlots(id, fromIso, toIso),
+    fetchAdminTestCenterSlots(id, locationId, fromIso, toIso),
     fetchAdminTestCenterExams(id, { isActive: "true", pageSize: 250 }),
   ]);
 
@@ -163,7 +179,7 @@ export default async function AdminTestCenterAvailabilityPage({
       if (endMinute <= startMinute) {
         throw new Error("End time must be after start time");
       }
-      const res = await createAdminTestCenterAvailability(id, {
+      const res = await createAdminTestCenterAvailability(id, locationId, {
         weekday,
         startMinute,
         endMinute,
@@ -195,7 +211,7 @@ export default async function AdminTestCenterAvailabilityPage({
       if (endMinute <= startMinute) {
         throw new Error("End time must be after start time");
       }
-      const res = await patchAdminTestCenterAvailability(id, availabilityId, {
+      const res = await patchAdminTestCenterAvailability(id, locationId, availabilityId, {
         weekday,
         startMinute,
         endMinute,
@@ -216,7 +232,7 @@ export default async function AdminTestCenterAvailabilityPage({
     await requireAdminAction();
     const availabilityId = String(formData.get("availabilityId") ?? "");
     if (!availabilityId) back("Missing id", false);
-    const res = await deleteAdminTestCenterAvailability(id, availabilityId);
+    const res = await deleteAdminTestCenterAvailability(id, locationId, availabilityId);
     if (!res.ok) back(res.message, false);
     revalidatePath(basePath);
     back("Opening hours removed", true);
@@ -282,16 +298,16 @@ export default async function AdminTestCenterAvailabilityPage({
 
   return (
     <>
-      <SetCrumbTitle label={center.name} />
+      <SetCrumbTitle label={`${center.name} — ${location.name}`} />
       <Link
-        href="/admin/test-centers"
+        href={`/admin/test-centers/${id}/locations`}
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
-        <ArrowLeft className="size-3.5" /> Back to test centers
+        <ArrowLeft className="size-3.5" /> Back to locations
       </Link>
       <PageHeader
         eyebrow="Test centre"
-        title={`${center.name} · Availability`}
+        title={`${center.name} — ${location.name} · Availability`}
         description="Week calendar of this centre's bookable slots. The recurring weekly opening hours below generate them, in the centre's country timezone."
       />
 
@@ -303,6 +319,13 @@ export default async function AdminTestCenterAvailabilityPage({
       {messages.success ? (
         <p className="gh-status-success mb-4 rounded-md border px-4 py-3 text-sm">
           {messages.success}
+        </p>
+      ) : null}
+
+      {!location.isActive ? (
+        <p className="gh-status-warning mb-4 rounded-md border px-4 py-3 text-sm">
+          This location is inactive, so it generates no bookable slots. Opening
+          hours set here are kept and take effect again when it is reactivated.
         </p>
       ) : null}
 
@@ -321,6 +344,7 @@ export default async function AdminTestCenterAvailabilityPage({
           {slotsResult.ok ? (
             <TestCenterAvailabilityWeek
               testCenterId={id}
+              testCenterLocationId={locationId}
               testCenterName={center.name}
               countryCode={countryCode}
               centerTz={centerTz}

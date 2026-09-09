@@ -1719,6 +1719,10 @@ model TestCenter {
   countryId   String
   name        String
   slug        String
+  /// DEPRECATED as an address of record — the authoritative address is on
+  /// `TestCenterLocation`. These two columns are the pre-locations data, kept
+  /// so the backfill migration has a source and so nothing 404s mid-deploy.
+  /// Every read path uses locations; do not add new readers here.
   addressLine String?
   city        String?
   phone       String?
@@ -1727,15 +1731,14 @@ model TestCenter {
   isActive    Boolean          @default(true)
   sortOrder   Int              @default(0)
   country     Country          @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  /// Pricing is per PROVIDER, not per location: a chain charges the same for a
+  /// given exam at every branch, so an admin prices each exam once here.
   exams       TestCenterExam[]
 
-  /// Booking surface (§"Book a Test"). Same three-layer availability model the
-  /// doctors use: weekly template → generated concrete slots → date-scoped
-  /// tombstones.
-  availabilities       TestCenterAvailability[]
-  timeSlots            TestCenterTimeSlot[]
-  availabilityExceptions TestCenterAvailabilityException[]
-  appointments         Appointment[]
+  /// The physical sites this provider operates. A centre always has at least
+  /// one; single-site providers simply have exactly one.
+  locations   TestCenterLocation[]
+  appointments Appointment[]
 
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
@@ -1744,12 +1747,48 @@ model TestCenter {
   @@index([countryId, isActive])
 }
 
-/// Weekly opening-hours template for a test center. Exact analogue of
+/// A physical site of a test centre — the thing a patient actually travels to.
+///
+/// The calendar lives HERE, not on `TestCenter`, and that is the whole point:
+/// two branches cannot share one slot grid, because a 09:00 slot can only be at
+/// one building. Availability, generated slots, date tombstones and the booked
+/// appointment all key on the location.
+///
+/// Pricing deliberately does NOT live here — see `TestCenter.exams`. A chain
+/// charges the same for an exam at every branch, so the admin prices it once.
+model TestCenterLocation {
+  id           String     @id @default(cuid())
+  testCenterId String
+  /// Branch name shown to the patient, e.g. "Saldanha" or "Porto - Boavista".
+  name         String
+  slug         String
+  addressLine  String?
+  city         String?
+  /// Branch-specific line when it differs from the provider's main number.
+  phone        String?
+  notes        String?
+  isActive     Boolean    @default(true)
+  sortOrder    Int        @default(0)
+  testCenter   TestCenter @relation(fields: [testCenterId], references: [id], onDelete: Cascade)
+
+  availabilities         TestCenterAvailability[]
+  timeSlots              TestCenterTimeSlot[]
+  availabilityExceptions TestCenterAvailabilityException[]
+  appointments           Appointment[]
+
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([testCenterId, slug])
+  @@index([testCenterId, isActive])
+}
+
+/// Weekly opening-hours template for a test center location. Exact analogue of
 /// `DoctorAvailability` — concrete `TestCenterTimeSlot` rows are DERIVED from
 /// these windows by `ensureSlotsForRange`, never hand-maintained.
 model TestCenterAvailability {
   id                  String     @id @default(cuid())
-  testCenterId        String
+  testCenterLocationId String
   /// 0 = Sunday … 6 = Saturday. Matches `Date#getDay()` in JS.
   weekday             Int
   /// Minute offset from midnight, LOCAL to the center's country timezone
@@ -1760,11 +1799,11 @@ model TestCenterAvailability {
   effectiveFrom       DateTime?
   effectiveUntil      DateTime?
   isActive            Boolean    @default(true)
-  testCenter          TestCenter @relation(fields: [testCenterId], references: [id], onDelete: Cascade)
+  location            TestCenterLocation @relation(fields: [testCenterLocationId], references: [id], onDelete: Cascade)
   createdAt           DateTime   @default(now())
   updatedAt           DateTime   @updatedAt
 
-  @@index([testCenterId, weekday])
+  @@index([testCenterLocationId, weekday])
 }
 
 /// A concrete, claimable appointment slot at a test center, in UTC.
@@ -1781,19 +1820,19 @@ model TestCenterAvailability {
 /// would fork every one of them for no semantic gain.
 model TestCenterTimeSlot {
   id           String           @id @default(cuid())
-  testCenterId String
+  testCenterLocationId String
   startAt      DateTime
   endAt        DateTime
   status       DoctorSlotStatus @default(OPEN)
   blockReason  String?
   isAdHoc      Boolean          @default(false)
-  testCenter   TestCenter       @relation(fields: [testCenterId], references: [id], onDelete: Cascade)
+  location     TestCenterLocation @relation(fields: [testCenterLocationId], references: [id], onDelete: Cascade)
   appointment  Appointment?     @relation("AppointmentTestSlot")
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
 
-  @@unique([testCenterId, startAt])
-  @@index([testCenterId, startAt, status])
+  @@unique([testCenterLocationId, startAt])
+  @@index([testCenterLocationId, startAt, status])
 }
 
 /// Single-date tombstone so a slot an admin removed is not immediately
@@ -1801,15 +1840,15 @@ model TestCenterTimeSlot {
 /// `DoctorAvailabilityException`.
 model TestCenterAvailabilityException {
   id           String     @id @default(cuid())
-  testCenterId String
+  testCenterLocationId String
   startAt      DateTime
   endAt        DateTime
   reason       String?
-  testCenter   TestCenter @relation(fields: [testCenterId], references: [id], onDelete: Cascade)
+  location     TestCenterLocation @relation(fields: [testCenterLocationId], references: [id], onDelete: Cascade)
   createdAt    DateTime   @default(now())
 
-  @@unique([testCenterId, startAt])
-  @@index([testCenterId, startAt])
+  @@unique([testCenterLocationId, startAt])
+  @@index([testCenterLocationId, startAt])
 }
 
 /// Join row: a specific exam offered at a specific test center, with pricing.
@@ -2361,6 +2400,10 @@ model Appointment {
   examType                       ExamType?                 @relation(fields: [examTypeId], references: [id], onDelete: SetNull)
   testCenterId                   String?
   testCenter                     TestCenter?               @relation(fields: [testCenterId], references: [id], onDelete: SetNull)
+  /// The physical branch attended. `testCenterId` above is the provider and is
+  /// kept for reporting; this is the site whose address the patient was given.
+  testCenterLocationId           String?
+  testCenterLocation             TestCenterLocation?       @relation(fields: [testCenterLocationId], references: [id], onDelete: SetNull)
   /// The claimed center slot. Deliberately a SEPARATE column from
   /// `timeSlotId` below, which is a typed FK to `DoctorTimeSlot`: the paid-order
   /// fulfilment path runs `prisma.doctorTimeSlot.updateMany` over ids drawn
@@ -2545,6 +2588,7 @@ model Appointment {
 
   @@index([clinicId])
   @@index([testCenterId, scheduledAt])
+  @@index([testCenterLocationId, scheduledAt])
   @@index([userId])
   @@index([patientProfileId])
   @@index([email])
@@ -3151,6 +3195,7 @@ model CartItem {
   /// from that offering's cost + markup at add-to-cart time.
   examTypeId                        String?
   testCenterId                      String?
+  testCenterLocationId              String?
   testCenterExamId                  String?
   testCenterTimeSlotId              String?          @unique
   /// Consultation-only reservation deadline. Set to now+10min when a
@@ -3407,6 +3452,14 @@ model Order {
   trackingNumber                String?
   trackingCarrier               String?
   trackingUrl                   String?
+  /// When an admin last SENT the tracking details to the customer (email +
+  /// WhatsApp), as opposed to merely saving them. Saving and sending are
+  /// deliberately separate — an admin pastes a code from the courier's site,
+  /// checks it, and only then presses "Save & notify" — so a null here with a
+  /// `trackingNumber` set means "entered but the patient has not been told".
+  /// Also the re-send audit: the column carries the LAST send, and every
+  /// individual attempt is an AutomationRun row.
+  trackingNotifiedAt            DateTime?
   createdAt                     DateTime              @default(now())
   updatedAt                     DateTime              @updatedAt
 
@@ -3524,6 +3577,7 @@ model OrderItem {
   /// with LAB_EXAM lines.
   examTypeId                        String?
   testCenterId                      String?
+  testCenterLocationId              String?
   testCenterTimeSlotId              String?
   appointmentId                     String?
   /// Patient intake snapshot — copied from CartItem at checkout time so

@@ -16,12 +16,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const country = searchParams.get("country")?.trim();
   const test = searchParams.get("test")?.trim();
   const centre = searchParams.get("centre")?.trim();
+  const location = searchParams.get("location")?.trim();
   const daysRaw = Number(searchParams.get("days") ?? 14);
   const days = Math.min(60, Math.max(1, Number.isFinite(daysRaw) ? daysRaw : 14));
 
-  if (!country || !test || !centre) {
+  if (!country || !test || !centre || !location) {
     return NextResponse.json(
-      { ok: false, message: "country, test and centre are required" },
+      { ok: false, message: "country, test, centre and location are required" },
       { status: 400 },
     );
   }
@@ -37,7 +38,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const url =
     `${backend}/api/tests/${encodeURIComponent(country)}` +
     `/${encodeURIComponent(test)}/centres/${encodeURIComponent(centre)}` +
-    `/availability?days=${days}`;
+    `/locations/${encodeURIComponent(location)}/availability?days=${days}`;
 
   try {
     // no-store: slot inventory is the one public read that must never be

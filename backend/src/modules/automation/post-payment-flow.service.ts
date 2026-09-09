@@ -190,11 +190,27 @@ async function loadPostPaymentContext(orderId: string) {
   // How the patient attends. A test line has no doctor and no meeting link —
   // the centre's address, snapshotted onto the appointment at fulfilment, is
   // what stands in its place.
-  const testCentre = primary.testCenterId
-    ? await prisma.testCenter.findUnique({
-        where: { id: primary.testCenterId },
-        select: { name: true, addressLine: true, city: true },
-      })
+  // The BRANCH, not the provider: its address is where the patient goes.
+  const testCentre = primary.testCenterLocationId
+    ? await prisma.testCenterLocation
+        .findUnique({
+          where: { id: primary.testCenterLocationId },
+          select: {
+            name: true,
+            addressLine: true,
+            city: true,
+            testCenter: { select: { name: true } },
+          },
+        })
+        .then((loc) =>
+          loc
+            ? {
+                name: `${loc.testCenter.name} — ${loc.name}`,
+                addressLine: loc.addressLine,
+                city: loc.city,
+              }
+            : null,
+        )
     : null;
   const venueAddress = primary.appointmentId
     ? ((
@@ -962,12 +978,89 @@ export async function rearmPostPaymentRemindersForAppointment(
   await rearmPostPaymentRemindersForReschedule(item.orderId, newConsultStart);
 }
 
+// Ceiling-only thresholds — "due at or before this much lead time" — not a
+// [start, end) window. A window with a floor can be walked past entirely: a
+// short-notice booking whose lead time is already under the floor when it's
+// first seen, or a tick that gets delayed (deploy, restart, DB hiccup) past
+// the window's far edge, would never enter it and would sit stalled at its
+// stage forever. Ceilings can't be missed that way — the very next tick that
+// runs still sees leadMs under the ceiling and fires.
+const ONE_HOUR_DUE_MS = 65 * MS_MINUTE;
+const FIVE_MIN_DUE_MS = 8 * MS_MINUTE;
+// Still fire a reminder up to this long after the consult's start rather than
+// silently giving up — a late reminder beats a missed one.
+const LATE_REMINDER_GRACE_MS = 60 * MS_MINUTE;
+
+/**
+ * What one paid order is due for on this tick.
+ *
+ * Pure, and exported, because the ladder's rules are the part worth testing and
+ * `runPostPaymentReminderCron` itself is all Prisma. Keep the decisions here
+ * and the I/O in the loop.
+ */
+export type ReminderPlan = {
+  /** Stage 1 → 2: send the meeting link / venue details. */
+  sendMeetingLink: boolean;
+  /** Stage 2 → 3, with the 1-hour message. */
+  sendOneHour: boolean;
+  /**
+   * Stage 2 → 3 WITHOUT a message: lead time is already inside 5-minute
+   * territory, so a "your consultation is in 1 hour" would be a lie. The stage
+   * still has to move in the DATABASE — `post_sendFiveMinuteReminder` gates on
+   * `postPaymentStage >= ONE_HOUR`, so leaving the column behind means the
+   * patient gets neither reminder and the order stalls at MEETING_LINK forever.
+   */
+  advanceToOneHourSilently: boolean;
+  /** Stage 3 → 4: send the 5-minute message. */
+  sendFiveMinute: boolean;
+};
+
+const NOTHING_DUE: ReminderPlan = {
+  sendMeetingLink: false,
+  sendOneHour: false,
+  advanceToOneHourSilently: false,
+  sendFiveMinute: false,
+};
+
+export function planPostPaymentReminder(input: {
+  stage: number;
+  /** ms until the consultation starts; negative once it has begun. */
+  leadMs: number;
+  /** A meeting link, or a test centre to attend. */
+  hasAttendance: boolean;
+}): ReminderPlan {
+  const { stage, leadMs, hasAttendance } = input;
+  if (!hasAttendance) return NOTHING_DUE;
+
+  if (stage === POST_PAYMENT_STAGE_PAID) {
+    return { ...NOTHING_DUE, sendMeetingLink: true };
+  }
+
+  // Long past — reminding is pointless now, and the stage is left alone so the
+  // row stays visible to anyone auditing stalled orders.
+  if (leadMs < -LATE_REMINDER_GRACE_MS) return NOTHING_DUE;
+
+  let effectiveStage = stage;
+  const plan: ReminderPlan = { ...NOTHING_DUE };
+
+  if (effectiveStage === POST_PAYMENT_STAGE_MEETING_LINK && leadMs <= ONE_HOUR_DUE_MS) {
+    if (leadMs > FIVE_MIN_DUE_MS) {
+      plan.sendOneHour = true;
+    } else {
+      plan.advanceToOneHourSilently = true;
+    }
+    effectiveStage = POST_PAYMENT_STAGE_ONE_HOUR;
+  }
+
+  if (effectiveStage === POST_PAYMENT_STAGE_ONE_HOUR && leadMs <= FIVE_MIN_DUE_MS) {
+    plan.sendFiveMinute = true;
+  }
+
+  return plan;
+}
+
 export async function runPostPaymentReminderCron() {
   const now = new Date();
-  const oneHourWindowStart = new Date(now.getTime() + 55 * MS_MINUTE);
-  const oneHourWindowEnd = new Date(now.getTime() + 65 * MS_MINUTE);
-  const fiveMinWindowStart = new Date(now.getTime() + 0 * MS_MINUTE);
-  const fiveMinWindowEnd = new Date(now.getTime() + 8 * MS_MINUTE);
 
   const paidOrders = await prisma.order.findMany({
     where: {
@@ -1004,23 +1097,30 @@ export async function runPostPaymentReminderCron() {
     }
 
     const consultStart = await resolveConsultationStartForOrder(row.id);
-    if (!consultStart || !hasAttendance) continue;
+    if (!consultStart) continue;
 
-    if (
-      row.postPaymentStage === POST_PAYMENT_STAGE_MEETING_LINK &&
-      consultStart >= oneHourWindowStart &&
-      consultStart <= oneHourWindowEnd
-    ) {
+    const plan = planPostPaymentReminder({
+      stage: row.postPaymentStage,
+      leadMs: consultStart.getTime() - now.getTime(),
+      hasAttendance,
+    });
+
+    if (plan.sendOneHour) {
+      // The sender advances the column to ONE_HOUR itself on success.
       await post_sendOneHourReminder(row.id).catch(() => undefined);
       oneHourSent++;
-      continue;
+    } else if (plan.advanceToOneHourSilently) {
+      // Conditional on the stage we read, so a concurrent tick (or the sender
+      // itself) that already moved this order on cannot be rewound.
+      await prisma.order
+        .updateMany({
+          where: { id: row.id, postPaymentStage: POST_PAYMENT_STAGE_MEETING_LINK },
+          data: { postPaymentStage: POST_PAYMENT_STAGE_ONE_HOUR },
+        })
+        .catch(() => undefined);
     }
 
-    if (
-      row.postPaymentStage === POST_PAYMENT_STAGE_ONE_HOUR &&
-      consultStart >= fiveMinWindowStart &&
-      consultStart <= fiveMinWindowEnd
-    ) {
+    if (plan.sendFiveMinute) {
       await post_sendFiveMinuteReminder(row.id).catch(() => undefined);
       fiveMinSent++;
     }

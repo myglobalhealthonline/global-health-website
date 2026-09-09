@@ -15,11 +15,18 @@ type Result<T> =
  * `kind` is a closed union rather than a free string so a typo cannot silently
  * produce a 404 against a path that does not exist.
  */
-export type SlotOwner = { kind: "doctors" | "test-centers"; id: string };
+export type SlotOwner =
+  | { kind: "doctors"; id: string }
+  /** A test centre's calendar belongs to one of its physical branches, so the
+   *  owner is the (centre, location) pair — the centre alone has no calendar. */
+  | { kind: "test-centers"; id: string; locationId: string };
 
-/** `/api/admin/doctors/<id>` or `/api/admin/test-centers/<id>`. */
+/** `/api/admin/doctors/<id>` or `/api/admin/test-centers/<id>/locations/<locationId>`. */
 function ownerBase(owner: SlotOwner): string {
-  return `/api/admin/${owner.kind}/${encodeURIComponent(owner.id)}`;
+  const base = `/api/admin/${owner.kind}/${encodeURIComponent(owner.id)}`;
+  return owner.kind === "test-centers"
+    ? `${base}/locations/${encodeURIComponent(owner.locationId)}`
+    : base;
 }
 
 /**

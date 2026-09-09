@@ -36,9 +36,14 @@ const adminTestCenterAvailabilityRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
-  async function testCenterExists(id: string): Promise<boolean> {
-    const row = await prisma.testCenter.findUnique({
-      where: { id },
+  /**
+   * The branch must exist AND belong to the centre in the path. Scoping by both
+   * is what stops one centre editing another's opening hours by guessing a
+   * location id.
+   */
+  async function locationExists(centreId: string, locationId: string): Promise<boolean> {
+    const row = await prisma.testCenterLocation.findFirst({
+      where: { id: locationId, testCenterId: centreId },
       select: { id: true },
     });
     return row !== null;
@@ -60,19 +65,19 @@ const adminTestCenterAvailabilityRoute: FastifyPluginAsync = async (app) => {
    * expressed in — the grid cannot render "09:00" correctly without it.
    */
   app.get<{ Params: { id: string } }>(
-    "/api/admin/test-centers/:id/availability",
+    "/api/admin/test-centers/:id/locations/:locationId/availability",
     async (request, reply) => {
       const params = testCenterIdParamsSchema.safeParse(request.params);
       if (!params.success) {
         return reply.status(400).send(errorResponse("Invalid test center id"));
       }
       try {
-        if (!(await testCenterExists(params.data.id))) {
-          return reply.status(404).send(errorResponse("Test center not found"));
+        if (!(await locationExists(params.data.id, params.data.locationId))) {
+          return reply.status(404).send(errorResponse("Test center location not found"));
         }
         const [availability, timeZone] = await Promise.all([
-          listAdminAvailability(params.data.id),
-          resolveTestCenterTimeZone(params.data.id),
+          listAdminAvailability(params.data.locationId),
+          resolveTestCenterTimeZone(params.data.locationId),
         ]);
         return okResponse({ availability, timeZone });
       } catch (error) {
@@ -82,7 +87,7 @@ const adminTestCenterAvailabilityRoute: FastifyPluginAsync = async (app) => {
   );
 
   app.post<{ Params: { id: string } }>(
-    "/api/admin/test-centers/:id/availability",
+    "/api/admin/test-centers/:id/locations/:locationId/availability",
     async (request, reply) => {
       const params = testCenterIdParamsSchema.safeParse(request.params);
       if (!params.success) {
@@ -97,10 +102,10 @@ const adminTestCenterAvailabilityRoute: FastifyPluginAsync = async (app) => {
           .send(errorResponse("Invalid availability", parsed.error.flatten()));
       }
       try {
-        if (!(await testCenterExists(params.data.id))) {
-          return reply.status(404).send(errorResponse("Test center not found"));
+        if (!(await locationExists(params.data.id, params.data.locationId))) {
+          return reply.status(404).send(errorResponse("Test center location not found"));
         }
-        const row = await createAdminAvailability(params.data.id, {
+        const row = await createAdminAvailability(params.data.locationId, {
           weekday: parsed.data.weekday,
           startMinute: parsed.data.startMinute,
           endMinute: parsed.data.endMinute,
@@ -120,7 +125,7 @@ const adminTestCenterAvailabilityRoute: FastifyPluginAsync = async (app) => {
   );
 
   app.patch<{ Params: { id: string; availabilityId: string } }>(
-    "/api/admin/test-centers/:id/availability/:availabilityId",
+    "/api/admin/test-centers/:id/locations/:locationId/availability/:availabilityId",
     async (request, reply) => {
       const params = testCenterAvailabilityParamsSchema.safeParse(request.params);
       if (!params.success) {
@@ -136,7 +141,7 @@ const adminTestCenterAvailabilityRoute: FastifyPluginAsync = async (app) => {
       }
       try {
         const row = await patchAdminAvailability(
-          params.data.id,
+          params.data.locationId,
           params.data.availabilityId,
           {
             ...(parsed.data.weekday !== undefined && {
@@ -179,7 +184,7 @@ const adminTestCenterAvailabilityRoute: FastifyPluginAsync = async (app) => {
   );
 
   app.delete<{ Params: { id: string; availabilityId: string } }>(
-    "/api/admin/test-centers/:id/availability/:availabilityId",
+    "/api/admin/test-centers/:id/locations/:locationId/availability/:availabilityId",
     async (request, reply) => {
       const params = testCenterAvailabilityParamsSchema.safeParse(request.params);
       if (!params.success) {
@@ -187,7 +192,7 @@ const adminTestCenterAvailabilityRoute: FastifyPluginAsync = async (app) => {
       }
       try {
         const removed = await deleteAdminAvailability(
-          params.data.id,
+          params.data.locationId,
           params.data.availabilityId,
         );
         if (!removed) {

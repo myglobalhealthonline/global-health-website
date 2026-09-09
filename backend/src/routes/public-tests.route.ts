@@ -42,6 +42,7 @@ const examParams = countryParams.extend({
 
 const availabilityParams = examParams.extend({
   centreSlug: z.string().trim().min(1).max(200),
+  locationSlug: z.string().trim().min(1).max(200),
 });
 
 const availabilityQuery = z.object({
@@ -133,9 +134,14 @@ const publicTestsRoute: FastifyPluginAsync = async (app) => {
    * exam, so the picker never offers a start the claim would reject.
    */
   app.get<{
-    Params: { countryCode: string; examSlug: string; centreSlug: string };
+    Params: {
+      countryCode: string;
+      examSlug: string;
+      centreSlug: string;
+      locationSlug: string;
+    };
   }>(
-    "/api/tests/:countryCode/:examSlug/centres/:centreSlug/availability",
+    "/api/tests/:countryCode/:examSlug/centres/:centreSlug/locations/:locationSlug/availability",
     async (request, reply) => {
       applyAvailabilityCache(reply);
       const params = availabilityParams.safeParse(request.params);
@@ -153,17 +159,20 @@ const publicTestsRoute: FastifyPluginAsync = async (app) => {
           params.data.countryCode,
           params.data.examSlug,
           params.data.centreSlug,
+          params.data.locationSlug,
         );
         if (!offering) {
-          return reply.status(404).send(errorResponse("Test not available at that centre"));
+          return reply
+            .status(404)
+            .send(errorResponse("Test not available at that location"));
         }
 
         const from = new Date();
         const to = new Date(from.getTime() + query.data.days * 24 * 60 * 60 * 1000);
         // Generate first so a centre nobody has viewed still offers its windows.
-        await ensureSlotsForRange(offering.testCenterId, from, to);
+        await ensureSlotsForRange(offering.testCenterLocationId, from, to);
         const slots = await listOpenSlotsForTestCenter(
-          offering.testCenterId,
+          offering.testCenterLocationId,
           from,
           to,
           offering.durationMinutes,
@@ -172,6 +181,7 @@ const publicTestsRoute: FastifyPluginAsync = async (app) => {
         return okResponse({
           slots,
           testCenterId: offering.testCenterId,
+          testCenterLocationId: offering.testCenterLocationId,
           examTypeId: offering.examTypeId,
           durationMinutes: offering.durationMinutes,
           patientPriceCents: offering.patientPriceCents,

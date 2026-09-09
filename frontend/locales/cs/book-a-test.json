@@ -15,6 +15,7 @@
   "detail": {
     "chooseCentre": "Vyberte odberove centrum",
     "chooseCentreHint": "Ceny a dostupne casy se u jednotlivych center lisi.",
+    "chooseLocation": "Vyberte pobocku",
     "preparation": "Jak se pripravit",
     "turnaround": "Vysledky do {days} pracovnich dnu",
     "turnaroundUnknown": "Termin potvrdi centrum",

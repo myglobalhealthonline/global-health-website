@@ -11,10 +11,13 @@ import { z } from "zod";
 
 export const testCenterIdParamsSchema = z.object({
   id: z.string().min(1),
+  /** The branch whose calendar is being edited. */
+  locationId: z.string().min(1),
 });
 
 export const testCenterAvailabilityParamsSchema = z.object({
   id: z.string().min(1),
+  locationId: z.string().min(1),
   availabilityId: z.string().min(1),
 });
 
