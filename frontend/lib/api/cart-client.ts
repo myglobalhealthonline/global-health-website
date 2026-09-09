@@ -147,6 +147,14 @@ export type CheckoutInput = {
   shipCity: string;
   shipPostalCode: string;
   shipCountryCode: string;
+  /**
+   * Order-level WhatsApp consent for shipped (product) orders — the default-ON
+   * opt-out on the checkout shipping panel. Product lines carry no booking form,
+   * so `OrderItem.patientWhatsappConsent` is always false for them and the
+   * consent for these orders has to live on the Order. Omitted (consultation-
+   * only checkout, older client) → the server keeps the column's `true` default.
+   */
+  whatsappConsent?: boolean;
   returnTo?: string;
   /**
    * Site locale the customer is browsing in, upper-cased (the `[lang]` route

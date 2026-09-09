@@ -763,6 +763,11 @@ export type CommonLocale = {
     editCartLine: string;
     shippingAddress: string;
     shippingNote: string;
+    /**
+     * Default-ON WhatsApp opt-out, shown only on shipped (product) orders.
+     * Consultation lines carry their own consent from the booking form.
+     */
+    whatsappConsent: string;
     recipientName: string;
     countryCodeIso: string;
     addressLine1: string;

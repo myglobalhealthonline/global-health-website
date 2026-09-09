@@ -219,6 +219,68 @@ function buildOrderConsultations(
     .map((c) => ({ ...c, scheduledAt: c.scheduledAt?.toISOString() ?? null }));
 }
 
+/**
+ * The address to show an admin under "Customer" on an order.
+ *
+ * Two sources, in priority order:
+ *   1. `Order.ship*` — what the buyer typed at THIS checkout. Most specific and
+ *      most recent, and for a kit order it is the only address that exists.
+ *   2. `PatientProfile.address*` — the chart's persistent home address, which
+ *      is where a consultation booking form's address ends up.
+ *
+ * `source` is returned so the UI can label a chart address as such rather than
+ * implying the buyer gave it on this order.
+ */
+async function resolveOrderPatientAddress(order: {
+  email: string;
+  shipLine1: string | null;
+  shipLine2: string | null;
+  shipCity: string | null;
+  shipPostalCode: string | null;
+  shipCountryCode: string | null;
+}): Promise<{
+  source: "ORDER" | "PROFILE";
+  line1: string | null;
+  line2: string | null;
+  city: string | null;
+  state: string | null;
+  postalCode: string | null;
+  countryCode: string | null;
+} | null> {
+  if (order.shipLine1?.trim() || order.shipCity?.trim()) {
+    return {
+      source: "ORDER",
+      line1: order.shipLine1,
+      line2: order.shipLine2,
+      city: order.shipCity,
+      state: null,
+      postalCode: order.shipPostalCode,
+      countryCode: order.shipCountryCode,
+    };
+  }
+  const profile = await prisma.patientProfile.findUnique({
+    where: { email: order.email.trim().toLowerCase() },
+    select: {
+      addressLine1: true,
+      addressLine2: true,
+      addressCity: true,
+      addressState: true,
+      addressPostalCode: true,
+      addressCountryCode: true,
+    },
+  });
+  if (!profile?.addressLine1?.trim() && !profile?.addressCity?.trim()) return null;
+  return {
+    source: "PROFILE",
+    line1: profile.addressLine1,
+    line2: profile.addressLine2,
+    city: profile.addressCity,
+    state: profile.addressState,
+    postalCode: profile.addressPostalCode,
+    countryCode: profile.addressCountryCode,
+  };
+}
+
 const checkoutBodySchema = z.object({
   email: z.string().trim().email("Invalid email"),
   fullName: z.string().trim().min(2, "Name too short").max(120),
@@ -232,6 +294,14 @@ const checkoutBodySchema = z.object({
   shipCity: z.string().trim().max(120).optional().or(z.literal("")),
   shipPostalCode: z.string().trim().max(40).optional().or(z.literal("")),
   shipCountryCode: z.string().trim().max(4).optional().or(z.literal("")),
+  /**
+   * Order-level WhatsApp consent for product orders (kits, prescription
+   * delivery). Default ON, opted out with the checkbox on the checkout shipping
+   * panel. Consultation lines carry their own `patientWhatsappConsent` from the
+   * booking form and ignore this. Absent (older clients) = consented, matching
+   * the column default.
+   */
+  whatsappConsent: z.boolean().optional(),
   /** Where Stripe should return after success / cancel — relative path. */
   returnTo: z
     .string()
@@ -810,6 +880,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
               shipCountryCode: body.data.shipCountryCode
                 ? body.data.shipCountryCode.toUpperCase()
                 : null,
+              whatsappConsent: body.data.whatsappConsent !== false,
               adAttribution: body.data.attribution
                 ? {
                     ...body.data.attribution,
@@ -2043,6 +2114,14 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           // never the fbp/fbc/IP/user-agent match identifiers.
           adSource: orderAdSource(order.adAttribution),
           adCampaign: orderAdCampaign(order.adAttribution),
+          whatsappConsent: order.whatsappConsent,
+          // The patient's address as the ADMIN needs it under "Customer": the
+          // shipping address the buyer typed at this checkout, falling back to
+          // the chart's persistent address. Before this, a kit order's address
+          // lived only in the Shipping panel and a consultation patient's only
+          // on their chart — so an admin looking at the customer block saw no
+          // address at all (ORD-000490).
+          patientAddress: await resolveOrderPatientAddress(order),
           ship: {
             name: order.shipName,
             line1: order.shipLine1,

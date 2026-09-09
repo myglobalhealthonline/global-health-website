@@ -715,6 +715,7 @@
     "editCartLine": "Edit the cart line",
     "shippingAddress": "Shipping address",
     "shippingNote": "Your test kit is delivered to this address.",
+    "whatsappConsent": "Send me WhatsApp updates about this order (confirmation, dispatch and results).",
     "recipientName": "Recipient name",
     "countryCodeIso": "Country code (ISO)",
     "addressLine1": "Address line 1",

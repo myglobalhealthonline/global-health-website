@@ -715,6 +715,7 @@
     "editCartLine": "Warenkorbposition bearbeiten",
     "shippingAddress": "Lieferadresse",
     "shippingNote": "Ihr Testkit wird an diese Adresse geliefert.",
+    "whatsappConsent": "Senden Sie mir WhatsApp-Updates zu dieser Bestellung (Bestätigung, Versand und Ergebnisse).",
     "recipientName": "Name des Empfängers",
     "countryCodeIso": "Ländercode (ISO)",
     "addressLine1": "Adresszeile 1",
