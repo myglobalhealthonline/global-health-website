@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "scope": "Anonymous invalid-query/missing-resource errors on both service availability endpoints",
+  "results": [
+    {
+      "path": "/api/services/ie/acute-medical-consultation/aggregated-availability?days=invalid",
+      "status": 400,
+      "cacheControl": "no-store"
+    },
+    {
+      "path": "/api/services/ie/acute-medical-consultation/doctors/missing/availability?from=invalid&to=invalid",
+      "status": 404,
+      "cacheControl": "no-store"
+    }
+  ]
+}

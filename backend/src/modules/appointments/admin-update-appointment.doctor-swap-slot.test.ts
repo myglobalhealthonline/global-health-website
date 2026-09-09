@@ -168,10 +168,11 @@ describe("adminUpdateAppointment — doctor swap moves the slot", () => {
 
   it("refuses the swap when the new doctor's hour is already taken", async (t) => {
     if (!boot(t)) return;
-    const slotA = await mkSlot(doctorAId, T1, 15, "BOOKED");
-    const takenOnB = await mkSlot(doctorBId, T1, 15, "BOOKED");
-    const other = await mkAppointment({ doctorId: doctorBId, timeSlotId: takenOnB });
-    const id = await mkAppointment({ timeSlotId: slotA });
+    const time = new Date(T1.getTime() + 24 * 60 * 60 * 1000);
+    const slotA = await mkSlot(doctorAId, time, 15, "BOOKED");
+    const takenOnB = await mkSlot(doctorBId, time, 15, "BOOKED");
+    const other = await mkAppointment({ doctorId: doctorBId, scheduledAt: time, timeSlotId: takenOnB });
+    const id = await mkAppointment({ scheduledAt: time, timeSlotId: slotA });
 
     await assert.rejects(
       svc.adminUpdateAppointment({

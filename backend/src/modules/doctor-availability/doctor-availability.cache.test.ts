@@ -1,3 +1,4 @@
+import "../../test-module-mocks.js";
 import assert from "node:assert/strict";
 import { before, beforeEach, describe, it, mock } from "node:test";
 
@@ -8,6 +9,7 @@ let slotReads = 0;
 let windowReads = 0;
 let delayStaleDoctorRead = false;
 let releaseStaleDoctorRead: (() => void) | undefined;
+let signalStaleDoctorReadStarted: (() => void) | undefined;
 const registeredCaches: Array<(scope?: { doctorIds?: readonly string[] }) => void> = [];
 
 let listOpenSlotsForDoctorAndService:
@@ -65,6 +67,7 @@ before(async () => {
               delayStaleDoctorRead = false;
               await new Promise<void>((resolve) => {
                 releaseStaleDoctorRead = resolve;
+                signalStaleDoctorReadStarted?.();
               });
             }
             slotReads += 1;
@@ -108,6 +111,7 @@ beforeEach(() => {
   windowReads = 0;
   delayStaleDoctorRead = false;
   releaseStaleDoctorRead = undefined;
+  signalStaleDoctorReadStarted = undefined;
   invalidateAvailabilityCaches();
 });
 
@@ -203,9 +207,12 @@ describe("public slot cache", () => {
     const fromUtc = new Date("2026-09-10T00:00:00.000Z");
     const toUtc = new Date("2026-09-11T00:00:00.000Z");
     delayStaleDoctorRead = true;
+    const readStarted = new Promise<void>((resolve) => {
+      signalStaleDoctorReadStarted = resolve;
+    });
 
     const pending = listOpenSlotsForDoctorAndService("doctor-stale", 30, fromUtc, toUtc);
-    await new Promise((resolve) => setImmediate(resolve));
+    await readStarted;
     invalidateAvailabilityCaches({ doctorIds: ["doctor-stale"] });
     releaseStaleDoctorRead?.();
 

@@ -1,6 +1,6 @@
 # Performance remediation — 9 September 2026
 
-Follow-up to the [historical audit](README.md). Baseline `499f4076` is pushed to `Dev-hassaan` and deployed to Development. The continuation below has passed local production build and focused checks; deployment status must be verified separately. No production database writes were performed by this task.
+Follow-up to the [historical audit](README.md). Baseline `499f4076` is pushed to `Dev-hassaan` and deployed to Development. Continuation `cd9afaf9` is pushed and deployed to both Development services. Follow-up `996cee42` is deployed and verified to remove shared live-availability response caching. Code remediation is complete on Development; production/field acceptance remains open. No direct production database access or write scripts were used.
 
 ## Implemented
 
@@ -18,7 +18,7 @@ Follow-up to the [historical audit](README.md). Baseline `499f4076` is pushed to
 | Oversized blog cache entry | Optional `view=summary` omits article bodies from list responses while retaining computed reading times, locale variants and card metadata. Frontend lists request summaries; detail fallback explicitly requests full content. The default API response remains compatible. A synthetic 2.5 MB article becomes a summary under 2 KB. |
 | Hero and optional scripts | Critical hero copy/actions render immediately. Voice scripts load only after consent and a launcher click. |
 | Admin reads | Independent notification/approval reads run concurrently after required country scoping. |
-| Delivery safety | Unconditional public document-cache headers were removed so errors cannot inherit them. Absent auth-hint cookies are no longer redundantly deleted. Content Data Cache and immutable assets remain cached. |
+| Delivery safety | Unconditional public document-cache headers were removed so errors cannot inherit them. Absent auth-hint cookies are no longer redundantly deleted. The two service slot-availability routes now use no-store for successes and validation errors, matching GP/doctor inventory. Content Data Cache and immutable assets remain cached. |
 | Measurement | Consent-gated Web Vitals use public route templates without patient identifiers, attribution objects or booking queries. API spans, job durations and pool counters provide operational evidence. |
 
 ## Verification
@@ -35,9 +35,19 @@ Follow-up to the [historical audit](README.md). Baseline `499f4076` is pushed to
 
 ## Deployment evidence still required
 
-1. Deploy backend and frontend continuation together to Development, verify their deployed commit IDs, then repeat six-market and bounded anonymous booking reads. Production remains a separate promotion from `main`.
+1. Production promotion from `main` has not been performed. Both performance commits are verified on Development; production acceptance cannot be inferred from that environment.
 2. Correlate genuine cold/warm API timings with new pool/job telemetry. Production and Development backend settings each show one replica in EU West Amsterdam; actual PostgreSQL `max_connections`, other consumers and database region remain unverified. Do not increase capacity from service CPU/RAM limits alone.
-3. Verify HTML/RSC variants, authenticated pages, error status and live availability caching at the deployed delivery layer. Never restore unconditional public document-cache headers.
+3. Anonymous deployed HTML/RSC/login/protected-route/404 checks passed. Authenticated-session and real shared-CDN behavior are not established by those anonymous checks. Never restore unconditional public document-cache headers.
 4. Collect rolling real-user CWV after deployment. GA collection was separately restored on existing production code (ledger §47); that does not establish deployment of these Web Vitals changes or a field performance improvement.
 
 The code remediation and the production performance acceptance criteria are separate. No cold-cache p95, field CWV pass, ranking improvement or permanent elimination of the intermittent Brazil failure is claimed from local tests.
+
+## Development and CI follow-through
+
+- Exact code commit `cd9afaf967b316e0d23ed16061032d0c3cd47b2b` deployed successfully: backend `bdd8f31e-0748-4df0-b821-b18ed369d9fe`, frontend `2a4b4a75-0530-42f7-acf3-f39f1b8d32a1`.
+- Post-deployment homepages: **12/12 complete 200 documents** ([development-final-smoke.json](development-final-smoke.json)). Anonymous delivery: **5/5 passed** ([development-final-delivery.json](development-final-delivery.json)).
+- The same Development blog list contained one public post: full response **49,598 bytes**, summary **1,249 bytes**, preserving the post ID and computed reading time. Marketing doctor/service reads passed. Two observed availability responses completed in **408 ms and 267 ms**; these are workstation samples, not cold-cache or percentile measurements. The probe discovered shared availability headers and drove follow-up `996cee42`; original evidence is retained in [development-before-cache-fix-api.json](development-before-cache-fix-api.json).
+- Railway API telemetry confirms configured capacity **14**. A sampled availability route completed server work in **9.1 ms**, with request pool total/idle **8/8**, scheduler **2/2**, lock **2/2**, and numbering **0/0**. Across 245 visible waiting-counter fields, six request-waiting observations were nonzero (**2, 6, 5, 7, 2, 2**). This does not prove persistent starvation or zero contention. PostgreSQL max_connections remains unverified.
+- [CI run 34295965190](https://github.com/myglobalhealthonline/global-health-website/actions/runs/34295965190) exercises `cd9afaf9`. Frontend tests and authorization E2E passed. Typecheck/lint commands completed; that job failed at its dependency audit. The overall workflow is **not green**: dependency audits, generic/custom Semgrep and historical Gitleaks findings block it. Dependency manifests and the reported security-source files were unchanged by this performance continuation. Backend integration completed with **2,614 passed and 17 failed**. Fifteen failures came from Node 22/tsx mock-module identity (including the cache invalidation case); two appointment tests reused slots from preceding cases. The follow-up restores synthetic mock URLs in four affected test files, synchronizes the cold-read test with an explicit start signal, and moves conflicting fixtures onto distinct days. **26 focused tests pass on Node 22.23.0**; Node 24 also passed 26 before adding the helper import to the cache test. Backend typecheck passed. Local ESLint is unavailable; CI lint and database validation remain required. Security remediation is separate from the requested performance-file scope.
+
+- Final header deployment: backend `4ce265d7-44d7-4503-b4fb-ea46f37825b8`, exact commit `996cee422d12a8d14c8a53945b30ab6016023282`, is active. Repeated public API verification passed **6/6** with live availability explicitly `no-store` ([development-final-api.json](development-final-api.json)). Both service availability routes also returned `no-store` on observed 400/404 errors ([development-final-error-cache.json](development-final-error-cache.json)). GP and doctor inventory routes already applied `no-store`. No production promotion occurred.
