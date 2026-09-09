@@ -94,6 +94,8 @@ type AdminOrder = {
   trackingNumber: string | null;
   trackingCarrier: string | null;
   trackingUrl: string | null;
+  /** Last time the tracking details actually reached the customer. */
+  trackingNotifiedAt?: string | null;
   insurance: {
     verificationStatus: string;
     /** Which cover the card belongs to — insurance, or one of the three
@@ -174,6 +176,9 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
   const hasConsultation = order.items.some(
     (i) => i.kind === "GENERAL_CONSULTATION" || i.kind === "SPECIALIST_CONSULTATION",
   );
+  // Only a posted kit can be "dispatched" — a consultation or a test-centre
+  // booking has nothing to track, so the notify action stays hidden there.
+  const hasHealthTestItem = order.items.some((i) => i.kind === "HEALTH_TEST");
   const consultationAppointmentId =
     order.items.find(
       (i) =>
@@ -444,6 +449,8 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
               trackingNumber={order.trackingNumber}
               trackingCarrier={order.trackingCarrier}
               trackingUrl={order.trackingUrl}
+              trackingNotifiedAt={order.trackingNotifiedAt}
+              hasHealthTestItem={hasHealthTestItem}
             />
           </AdminCard>
 
