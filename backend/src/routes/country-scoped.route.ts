@@ -111,18 +111,12 @@ function applyPublicCache(reply: { header: (k: string, v: string) => void }) {
 }
 
 /**
- * Cache hint for slot-availability responses specifically. Booked slots must
- * not stay advertised as open for long — a short cap (worst case max-age +
- * SWR ≈ 25s) is enough to absorb the request bursts a single patient
- * navigating the booking flow generates, without the 5-minute stale window
- * `applyPublicCache` allows for genuinely stable content (doctors, services,
- * specialties...).
+ * Live slot responses must not be stored by browsers or intermediaries.
+ * Stable marketing content retains the separate public cache policy above.
  */
 function applyAvailabilityCache(reply: { header: (k: string, v: string) => void }) {
-  reply.header(
-    "Cache-Control",
-    "public, max-age=10, s-maxage=10, stale-while-revalidate=15",
-  );
+  // Apply before validation so successful and error responses share the policy.
+  reply.header("Cache-Control", "no-store");
 }
 
 const countryScopedRoute: FastifyPluginAsync = async (app) => {
