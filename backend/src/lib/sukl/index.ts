@@ -101,3 +101,4 @@ export * from "./signing.js";
 export * from "./app-ping-zep.js";
 export * from "./zalozit-predpis.js";
 export * from "./zrusit-predpis.js";
+export * from "./nia.js";

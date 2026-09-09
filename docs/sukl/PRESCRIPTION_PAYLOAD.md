@@ -98,9 +98,10 @@ unused.
 - **`Lekar`** is verified against External Identities, so it must be the
   doctor's own SÚKL login. `Login` returns it — confirmed 2026-09-07 as
   `141EA8AA-F82D-4D74-A725-CDABE9973ACA`.
-- **`PZS` is not yet known.** Login returned an empty provider, so the required
-  11-digit provider code is unconfirmed. `00150928369` is the right shape, but
-  guessing it into a prescription is not acceptable.
+- **`PZS` = `00150928369`** — confirmed by SÚKL 2026-09-09: *"the workplace code
+  assigned in External Identities"*, and *"there is no need to bind the user in
+  any way"*. The empty PZS in the Login response is therefore expected, not a
+  registration defect.
 - **`ID_Zpravy` must be persisted.** On a create it doubles as the submission
   identifier AND the authorisation id for any later amendment, so generating it
   per call and discarding it — which the ping operations do — would make a

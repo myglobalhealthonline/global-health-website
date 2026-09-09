@@ -358,6 +358,12 @@ const envSchema = z.object({
    * and must never be conflated. In test this may be a PostSignum DEMO
    * certificate. See docs/sukl/SIGNING_SPEC.md.
    */
+  /**
+   * NIA (Národní bod / Identita občana) API root. A DIFFERENT host from the
+   * SOAP services: https://testnia.sukl.cz for test, https://nia.sukl.cz for
+   * production. See docs/sukl/NIA_AUTH.md.
+   */
+  SUKL_NIA_BASE_URL: blankAsUnset(z.string().trim().url().optional()),
   SUKL_SIGNING_PFX_BASE64: optionalSecret,
   SUKL_SIGNING_PFX_PATH: z.string().trim().min(1).optional(),
   SUKL_SIGNING_PFX_PASSWORD: optionalSecret,
