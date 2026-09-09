@@ -48,6 +48,15 @@ export interface SuklPrescribedItem {
   doNotSubstitute?: boolean;
   /** The "exclamation mark" — dosing deliberately exceeds the norm. */
   doseExceeded?: boolean;
+  /**
+   * `ID_LP_Zdroj` — OUR identifier for this prescribed line, exactly 14 digits.
+   *
+   * REQUIRED by SÚKL, and easy to miss: it is the source system's own id, not
+   * anything SÚKL issue, and omitting it is rejected as "the element 'PLP' has
+   * incomplete content". Supplied by the caller so it can be tied to a row we
+   * keep; issueSuklPrescription generates one when it is not.
+   */
+  sourceItemId: string;
 }
 
 export interface SuklPatientIdentity {
@@ -144,6 +153,8 @@ function itemBlock(item: SuklPrescribedItem): string {
     hvlp +
     (item.doNotSubstitute ? "<Nezamenovat>true</Nezamenovat>" : "") +
     (item.doseExceeded ? "<Prekroceni>true</Prekroceni>" : "") +
+    // Last in the sequence, and mandatory.
+    el("ID_LP_Zdroj", item.sourceItemId) +
     "</PLP>"
   );
 }
@@ -172,6 +183,9 @@ export function assertCreatePrescriptionValid(input: SuklCreatePrescriptionInput
     if (!item.medicineName.trim()) problems.push(`${at}: a medicine name is required`);
     if (item.medicineCode && !/^\d{7}$/.test(item.medicineCode)) {
       problems.push(`${at}: the SÚKL medicine code is 7 digits`);
+    }
+    if (!/^\d{14}$/.test(item.sourceItemId)) {
+      problems.push(`${at}: ID_LP_Zdroj must be exactly 14 digits`);
     }
   }
 

@@ -53,6 +53,7 @@ function input(overrides: Partial<SuklCreatePrescriptionInput> = {}): SuklCreate
         instructions: "1 tableta denně po jídle",
         reimbursement: "PACIENT",
         medicineName: "PARALEN 500",
+        sourceItemId: "17578000000001",
       },
     ],
     key: key(),
@@ -73,6 +74,9 @@ test("the request carries the required fields in SÚKL's shape", () => {
   assert.match(xml, /<Navod>1 tableta denně po jídle<\/Navod>/);
   // PREDEPSANY is the state a newly issued eRecept carries.
   assert.match(xml, /<Stav>PREDEPSANY<\/Stav>/);
+  // Required, last in the PLP sequence, and the omission SÚKL reported as
+  // "the element 'PLP' has incomplete content" on 2026-09-09.
+  assert.match(xml, /<ID_LP_Zdroj>17578000000001<\/ID_LP_Zdroj>/);
 });
 
 test("the submission id is the one supplied, not a fresh one", () => {
@@ -119,6 +123,13 @@ test("invalid input is refused locally rather than by SÚKL", () => {
   assert.throws(
     () => assertCreatePrescriptionValid(input({ items: [{ ...input().items[0]!, quantity: 0 }] })),
     /between 1 and 999/,
+  );
+  assert.throws(
+    () =>
+      assertCreatePrescriptionValid(
+        input({ items: [{ ...input().items[0]!, sourceItemId: "123" }] }),
+      ),
+    /ID_LP_Zdroj must be exactly 14 digits/,
   );
 });
 

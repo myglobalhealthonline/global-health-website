@@ -46,7 +46,12 @@ export interface IssuePrescriptionInput {
   appointmentId?: string;
   patientUserId?: string;
   patient: SuklPatientIdentity;
-  items: SuklPrescribedItem[];
+  /**
+   * ID_LP_Zdroj is optional to the caller and filled in below. It is our own
+   * identifier for the line, so a caller with a meaningful one should pass it;
+   * the admin console has none and gets a generated value.
+   */
+  items: Array<Omit<SuklPrescribedItem, "sourceItemId"> & { sourceItemId?: string }>;
   /** ISO date. Defaults to today. */
   issuedOn?: string;
   /** ISO date. Defaults to 30 days out, the usual eRecept validity. */
@@ -65,6 +70,18 @@ export interface IssuePrescriptionResult {
   errorCode: string | null;
   errorMessage: string | null;
   errorAdvice: string | null;
+}
+
+/**
+ * A 14-digit `ID_LP_Zdroj` for a prescribed line.
+ *
+ * SÚKL require the source system's own identifier and constrain it to exactly
+ * 14 digits, so it cannot be a cuid or a UUID. A millisecond timestamp is 13
+ * digits, leaving one for the line index — unique within a prescription, and
+ * ordered, which is what makes it useful when reconciling with SÚKL later.
+ */
+function sourceItemId(index: number, now = Date.now()): string {
+  return `${now}${index % 10}`;
 }
 
 function isoDate(d: Date): string {
@@ -157,7 +174,12 @@ export async function issueSuklPrescription(
       validUntil,
       patient: input.patient,
       prescriber,
-      items: input.items,
+      // SÚKL require ID_LP_Zdroj on every line; supply one when the caller
+      // has no identifier of its own to give.
+      items: input.items.map((item, index) => ({
+        ...item,
+        sourceItemId: item.sourceItemId || sourceItemId(index, now.getTime()),
+      })),
       note: input.note,
       urgent: input.urgent,
       key: loadSuklSigningKey(),

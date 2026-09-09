@@ -76,6 +76,14 @@ Signature  xmldsig#SignatureType                     (required in practice — s
 | `INN` | inn_predpis_type | | International non-proprietary name |
 | `Nezamenovat` | boolean | | Do not substitute |
 | `Prekroceni` | boolean | | Dose exceeded ("exclamation mark") |
+| `ZadankaZP` | integer, 7 digits | | Insurer request number |
+| **`ID_LP_Zdroj`** | integer, **14 digits** | **yes** | OUR identifier for the line. Not issued by SÚKL |
+
+`ID_LP_Zdroj` is easy to miss because it is the last element of the sequence and
+is our own value rather than anything SÚKL supply. Omitting it is rejected as
+*"the element 'PLP' … has incomplete content"*, which names every optional
+element around it and not the missing mandatory one — confirmed live
+2026-09-09.
 
 Exactly one of `HVLPReg` / `HVLPNereg` / `IPLP` / `INN` identifies the product.
 

@@ -123,6 +123,8 @@ export const suklIssuePrescriptionSchema = z.object({
         diagnosis: z.string().trim().max(5).optional(),
         doNotSubstitute: z.boolean().optional(),
         doseExceeded: z.boolean().optional(),
+        // ID_LP_Zdroj — generated when absent.
+        sourceItemId: z.string().trim().regex(/^\d{14}$/).optional(),
       }),
     )
     .min(1),
