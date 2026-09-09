@@ -77,7 +77,10 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
     setLogin(null);
     setZep(null);
     try {
-      const res = await fetch(`/api/admin/sukl/login?service=${service}`, { method: "POST" });
+      // Login always targets Common, whatever the selector says: CUER's 30
+      // operations do not include it, and following the dropdown would refuse
+      // the call whenever CUER is selected — which is what AppPing needs.
+      const res = await fetch("/api/admin/sukl/login?service=common", { method: "POST" });
       const json = (await res.json().catch(() => null)) as
         | { ok?: boolean; message?: string; data?: SuklLoginDto }
         | null;
@@ -181,7 +184,7 @@ export function SuklAppPingPanel({ callable }: { callable: boolean }) {
             {busy ? "…" : "GetAppInfo"}
           </Btn>
           <Btn onClick={runLogin} disabled={busy || !callable} variant="secondary" size="sm">
-            {busy ? "…" : "Login"}
+            {busy ? "…" : "Login (Common)"}
           </Btn>
           <Btn onClick={runZep} disabled={busy || !callable} variant="secondary" size="sm">
             {busy ? "…" : "AppPingZEP (signed)"}
