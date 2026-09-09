@@ -1,5 +1,19 @@
 # Review campaigns: implementation and rollout
 
+## Provider links configured
+
+The user-supplied links below were saved and read back successfully in Railway Development and Production. Country sending switches remain off; Trustpilot and the other country settings were not changed.
+
+| Destination | Collection link |
+| --- | --- |
+| Global Doctify | https://www.doctify.com/ie/review/Qatcoi/single |
+| Czechia Google | https://g.page/r/CZPoObaUvwL8ECE/review |
+| Spain Google | https://g.page/r/CdQc6ihTgickECE/review |
+| Ireland Google | https://g.page/r/CV4_oW0VhwWmEBM/review |
+| Portugal Google | https://g.page/r/CVGqjuiJmRUZEBM/review |
+
+These are stored collection URLs, not a claim that provider account ownership or review submission has been verified.
+
 Implemented the September 9 plan. The portal now separates Automation, Activity and Website display. Collection uses global Doctify, optional global Trustpilot and each country's Google review URL. The patient page offers providers immediately; private ratings are optional.
 
 The existing scheduler and outbox own delivery. Defaults are 24 hours after a completed consultation, one reminder seven days after successful delivery, a configurable zero-to-two reminder limit, a 90-day recipient cooldown and a 45-day sequence lifetime. Booking alone does not trigger a request. Explicit platform choice, self-report and opt-out stop reminders; a platform choice is never counted as a verified review. Unknown email acceptance cannot automatically resend.

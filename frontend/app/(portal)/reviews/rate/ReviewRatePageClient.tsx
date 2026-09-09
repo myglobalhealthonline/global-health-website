@@ -19,8 +19,8 @@ function ReviewRateForm({ language }: { language: string }) {
     fetchReviewForm(token, campaign).then((res) => {
       if (!active) return;
       if (!res.ok || !res.data.copy) setError(true);
-      else setData(res.data);
-    });
+      else { setError(false); setData(res.data); }
+    }).catch(() => { if (active) setError(true); });
     return () => { active = false; };
   }, [token, campaign]);
   function act(action: "provider_opened" | "patient_reviewed" | "opted_out", provider?: "GOOGLE" | "DOCTIFY" | "TRUSTPILOT") {
@@ -29,7 +29,9 @@ function ReviewRateForm({ language }: { language: string }) {
       const res = await performReviewAction(token, action, provider, campaign);
       if (!res.ok) { setError(true); return; }
       setData((old) => old ? { ...old, stopped: true } : old);
-      if (res.data.url) { setRetryUrl(res.data.url); window.open(res.data.url, "_blank", "noopener,noreferrer"); }
+      // Same-tab navigation remains reliable after the request completes;
+      // browsers can block window.open after an asynchronous action.
+      if (res.data.url) { setRetryUrl(res.data.url); window.location.assign(res.data.url); }
     });
   }
   function submit(event: React.FormEvent) {
@@ -42,8 +44,8 @@ function ReviewRateForm({ language }: { language: string }) {
       setData((old) => old ? { ...old, submitted: true } : old);
     });
   }
-  return <main className="bg-[var(--color-background-soft)] px-5 py-12 sm:py-16" lang={data?.localeCode ?? params.get("lang") ?? language}>
-    <div className="gh-card mx-auto max-w-lg p-8">
+  return <main className="min-h-svh bg-[var(--color-background-soft)] px-4 py-8 sm:py-16" lang={data?.localeCode ?? params.get("lang") ?? language}>
+    <div className="gh-card mx-auto max-w-lg p-5 sm:p-8">
       <p className="mb-4 text-sm font-semibold">Global Health</p>
       <h1 className="text-2xl font-bold">{copy.title}</h1>
       {error && <p role="alert" className="gh-status-error mt-4 p-3">{data ? copy.error : copy.invalid}</p>}
@@ -53,11 +55,11 @@ function ReviewRateForm({ language }: { language: string }) {
         <p className="mt-3 text-sm text-[var(--color-text-muted)]">{copy.privacy}</p>
         {data.stopped && <p className="mt-4" role="status">{copy.stopped}</p>}
         <div className="mt-6 grid gap-3">
-          {data.destinations.map((d) => <button key={d.provider} disabled={pending} onClick={() => act("provider_opened", d.provider)} className="gh2-btn-lime justify-center disabled:opacity-60">{copy.cta} · {d.provider === "GOOGLE" ? "Google" : d.provider === "DOCTIFY" ? "Doctify" : "Trustpilot"}</button>)}
+          {data.destinations.map((d) => <button key={d.provider} disabled={pending} onClick={() => act("provider_opened", d.provider)} className="flex min-h-16 w-full items-center justify-between gap-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] px-5 py-4 text-left transition-colors hover:border-[var(--color-brand-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60"><span><span className="block text-base font-semibold">{d.provider === "GOOGLE" ? "Google" : d.provider === "DOCTIFY" ? "Doctify" : "Trustpilot"}</span><span className="mt-1 block text-sm text-[var(--color-text-muted)]">{copy.cta}</span></span><span aria-hidden="true">→</span></button>)}
           {!data.destinations.length && <p>{copy.unavailable}</p>}
           {retryUrl && <a href={retryUrl} target="_blank" rel="noopener noreferrer" className="underline">{copy.retry}</a>}
-          <button disabled={pending} onClick={() => act("patient_reviewed")} className="gh2-btn-outline justify-center">{copy.alreadyReviewed}</button>
-          <button disabled={pending} onClick={() => act("opted_out")} className="underline">{copy.optOut}</button>
+          <button disabled={pending} onClick={() => act("patient_reviewed")} className="gh2-btn-ghost min-h-12 justify-center disabled:opacity-60">{copy.alreadyReviewed}</button>
+          <button disabled={pending} onClick={() => act("opted_out")} className="min-h-12 text-sm underline underline-offset-4 disabled:opacity-60">{copy.optOut}</button>
         </div>
         {!campaign && <details className="mt-8 border-t border-[var(--color-border)] pt-5">
           <summary className="cursor-pointer font-semibold">{copy.optionalFeedback}</summary>
