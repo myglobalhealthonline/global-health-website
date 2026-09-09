@@ -38,6 +38,15 @@ const STATUS_TONES: Record<SuklDoctorIdentityStatus, PillTone> = {
   REVOKED: "inactive",
 };
 
+/**
+ * Reads the list back from the server after every change.
+ *
+ * router.refresh() alone reported "Mapping saved" and then showed an empty
+ * table, which is the worst of both: it claims a write happened and gives no
+ * way to tell whether it did. Re-fetching means the table always shows what
+ * SÚKL's mapping actually contains, and a save that did not persist is
+ * visible immediately rather than at the next prescription attempt.
+ */
 export function SuklDoctorIdentities({
   identities,
   configured,
@@ -48,6 +57,8 @@ export function SuklDoctorIdentities({
   workplaceCode: string | null;
 }) {
   const router = useRouter();
+  // Seeded from the server render, then kept in step by reload().
+  const [rows, setRows] = useState<SuklDoctorIdentityDto[]>(identities);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<{ tone: "ok" | "error"; text: string } | null>(null);
   const [form, setForm] = useState({
@@ -60,6 +71,27 @@ export function SuklDoctorIdentities({
     pzs: "",
     notes: "",
   });
+
+  async function reload() {
+    try {
+      const res = await fetch("/api/admin/sukl/doctor-identities");
+      const json = (await res.json().catch(() => null)) as
+        | { ok?: boolean; data?: { doctorIdentities?: SuklDoctorIdentityDto[] } }
+        | null;
+      if (res.ok && json?.ok && json.data?.doctorIdentities) {
+        setRows(json.data.doctorIdentities);
+        if (json.data.doctorIdentities.length === 0) {
+          setMessage({
+            tone: "error",
+            text: "The server reports no mappings. The save did not persist — check the backend logs.",
+          });
+        }
+      }
+    } catch {
+      // Leave the table as it was; the save message already told the operator
+      // what happened, and inventing a row here would be worse than stale.
+    }
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -100,6 +132,7 @@ export function SuklDoctorIdentities({
         pzs: "",
         notes: "",
       });
+      await reload();
       router.refresh();
     } catch {
       setMessage({ tone: "error", text: "The mapping could not be saved" });
@@ -142,7 +175,7 @@ export function SuklDoctorIdentities({
         the facility certificate.
       </p>
 
-      {identities.length === 0 ? (
+      {rows.length === 0 ? (
         <AdminEmptyState
           title="No doctors mapped"
           description="Map a doctor once SÚKL has issued their test prescriber identifier."
@@ -158,7 +191,7 @@ export function SuklDoctorIdentities({
             <Th> </Th>
           </Thead>
           <tbody>
-            {identities.map((i) => (
+            {rows.map((i) => (
               <Tr key={i.id}>
                 <Td>
                   <code className="text-xs">{i.doctorUserId}</code>
