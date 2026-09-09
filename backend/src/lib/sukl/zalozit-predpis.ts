@@ -68,6 +68,26 @@ export interface SuklPrescribedItem {
   unregistered?: boolean;
 }
 
+/**
+ * `adresa_type`. `NazevObce` and `PSC` are the mandatory pair; the rest refine.
+ */
+export interface SuklAddress {
+  /** NazevUlice, max 48. */
+  street?: string;
+  /** CisloPopisne, max 5. */
+  houseNumber?: string;
+  /** CisloOrientacni, max 4. */
+  orientationNumber?: string;
+  /** NazevObce — REQUIRED when an address is sent at all. */
+  city: string;
+  /** NazevCastiObce, max 48. */
+  cityPart?: string;
+  /** NazevOkresu, max 32. */
+  district?: string;
+  /** PSC — REQUIRED, exactly 5 characters. */
+  postcode: string;
+}
+
 export interface SuklPatientIdentity {
   surname?: string;
   givenNames?: string;
@@ -78,6 +98,13 @@ export interface SuklPatientIdentity {
   insurerCode?: string;
   phone?: string;
   email?: string;
+  /**
+   * Needed whenever SÚKL cannot identify the patient in the population
+   * register (ROB). Their C018 is explicit: the address may be omitted ONLY if
+   * the patient can be found there from the other details, which a foreign or
+   * fictional patient cannot be.
+   */
+  address?: SuklAddress;
 }
 
 export interface SuklPrescriberIdentity {
@@ -116,7 +143,19 @@ function patientBlock(p: SuklPatientIdentity): string {
     p.surname || p.givenNames
       ? "<Jmeno>" + el("Prijmeni", p.surname) + el("Jmena", p.givenNames) + "</Jmeno>"
       : "";
-  const totoznost = "<Totoznost>" + jmeno + el("DatumNarozeni", p.dateOfBirth) + "</Totoznost>";
+  const adresa = p.address
+    ? "<Adresa>" +
+      el("NazevUlice", p.address.street) +
+      el("CisloPopisne", p.address.houseNumber) +
+      el("CisloOrientacni", p.address.orientationNumber) +
+      el("NazevObce", p.address.city) +
+      el("NazevCastiObce", p.address.cityPart) +
+      el("NazevOkresu", p.address.district) +
+      el("PSC", p.address.postcode) +
+      "</Adresa>"
+    : "";
+  const totoznost =
+    "<Totoznost>" + jmeno + el("DatumNarozeni", p.dateOfBirth) + adresa + "</Totoznost>";
   return (
     "<Pacient>" +
     totoznost +

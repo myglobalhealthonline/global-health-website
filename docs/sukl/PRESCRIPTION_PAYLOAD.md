@@ -38,6 +38,7 @@ Signature  xmldsig#SignatureType                     (required in practice — s
 | Field | Type | Req | Notes |
 |---|---|---|---|
 | `Totoznost` | totoznost_type | **yes** | Name, birth date, address, ID document, ROB |
+| ↳ `Adresa` | adresa_type | conditional | **Required whenever SÚKL cannot find the patient in the population register (ROB)** — always true of a fictional or foreign patient. `NazevObce` and `PSC` are mandatory within it. Omitting it is answered with C018 |
 | `CP` | `[0-9]{9,10}` | | Insurance number, no slash |
 | `ZP` | `[0-9]{3}` | | Insurer code |
 | `Telefon` | ≤20 | | |

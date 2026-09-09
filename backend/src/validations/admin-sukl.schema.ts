@@ -108,6 +108,19 @@ export const suklIssuePrescriptionSchema = z.object({
     insurerCode: z.string().trim().regex(/^\d{3}$/).optional(),
     phone: z.string().trim().max(20).optional(),
     email: z.string().trim().email().max(256).optional(),
+    // Required by SÚKL whenever the patient cannot be found in the population
+    // register — see C018. City and postcode are the mandatory pair.
+    address: z
+      .object({
+        street: z.string().trim().max(48).optional(),
+        houseNumber: z.string().trim().max(5).optional(),
+        orientationNumber: z.string().trim().max(4).optional(),
+        city: z.string().trim().min(1).max(48),
+        cityPart: z.string().trim().max(48).optional(),
+        district: z.string().trim().max(32).optional(),
+        postcode: z.string().trim().length(5),
+      })
+      .optional(),
   }),
   items: z
     .array(

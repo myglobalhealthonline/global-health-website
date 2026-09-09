@@ -33,6 +33,10 @@ export function SuklPrescriptionPanel({ callable }: { callable: boolean }) {
     dateOfBirth: "",
     insuranceNumber: "",
     insurerCode: "",
+    street: "",
+    houseNumber: "",
+    city: "",
+    postcode: "",
     medicineName: "",
     medicineCode: "",
     unregistered: true,
@@ -65,6 +69,19 @@ export function SuklPrescriptionPanel({ callable }: { callable: boolean }) {
             dateOfBirth: form.dateOfBirth.trim() || undefined,
             insuranceNumber: form.insuranceNumber.trim() || undefined,
             insurerCode: form.insurerCode.trim() || undefined,
+            // Sent only when the mandatory pair is present; a partial address
+            // is rejected, and omitting it entirely is valid for a patient
+            // SÚKL can find in the population register.
+            ...(form.city.trim() && form.postcode.trim()
+              ? {
+                  address: {
+                    street: form.street.trim() || undefined,
+                    houseNumber: form.houseNumber.trim() || undefined,
+                    city: form.city.trim(),
+                    postcode: form.postcode.trim(),
+                  },
+                }
+              : {}),
           },
           items: [
             {
@@ -137,6 +154,18 @@ export function SuklPrescriptionPanel({ callable }: { callable: boolean }) {
         <F label="Patient given names" value={form.givenNames} on={(v) => setForm((f) => ({ ...f, givenNames: v }))} />
         <F label="Date of birth (YYYY-MM-DD)" value={form.dateOfBirth} on={(v) => setForm((f) => ({ ...f, dateOfBirth: v }))} />
         <F label="Insurance number (9–10 digits)" value={form.insuranceNumber} on={(v) => setForm((f) => ({ ...f, insuranceNumber: v }))} />
+        <F label="Patient street" value={form.street} on={(v) => setForm((f) => ({ ...f, street: v }))} />
+        <F label="Patient house number" value={form.houseNumber} on={(v) => setForm((f) => ({ ...f, houseNumber: v }))} />
+        <F label="Patient city (required with postcode)" value={form.city} on={(v) => setForm((f) => ({ ...f, city: v }))} />
+        <F label="Patient postcode — 5 characters" value={form.postcode} on={(v) => setForm((f) => ({ ...f, postcode: v }))} />
+        <div className="sm:col-span-2">
+          <p className="m-0 text-xs" style={{ color: "var(--portal-muted)" }}>
+            SÚKL look the patient up in the population register (ROB). When they cannot find them
+            — which is always true of a fictional or foreign patient — they require name, date of
+            birth AND address, and answer C018 without it. City and postcode are the mandatory
+            pair; both or neither.
+          </p>
+        </div>
         <div>
           {/* The codes belong under the field, not in the label: with the list
               inline an operator reasonably types "111 VZP", which fails the

@@ -183,3 +183,22 @@ test("an unregistered product avoids the DLP register lookup", () => {
   assert.match(unregistered, /<HVLPNereg>.*<\/HVLPNereg>/s);
   assert.ok(!unregistered.includes("<HVLPReg>"));
 });
+
+test("the patient address is sent inside Totoznost when supplied", () => {
+  // SÚKL answer C018 when they cannot find the patient in the population
+  // register and no address was given — always the case for a fictional or
+  // foreign patient. City and postcode are the mandatory pair.
+  const xml = buildCreatePrescriptionRequest(
+    input({
+      patient: {
+        ...input().patient,
+        address: { street: "Václavské náměstí", houseNumber: "1", city: "Praha", postcode: "11000" },
+      },
+    }),
+  );
+  assert.match(xml, /<Totoznost>[\s\S]*<Adresa>[\s\S]*<\/Adresa><\/Totoznost>/);
+  assert.match(xml, /<NazevObce>Praha<\/NazevObce>/);
+  assert.match(xml, /<PSC>11000<\/PSC>/);
+  // Absent by default — a patient SÚKL can find needs no address.
+  assert.ok(!buildCreatePrescriptionRequest(input()).includes("<Adresa>"));
+});
