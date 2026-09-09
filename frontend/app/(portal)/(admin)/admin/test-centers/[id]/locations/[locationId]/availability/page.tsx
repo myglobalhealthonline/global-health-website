@@ -61,6 +61,18 @@ type PageProps = {
  * is the product rule. What it does NOT carry is the manual booking flow: that
  * arrives with manual test bookings in a later phase.
  */
+/**
+ * Redirect back to the page with a flash message.
+ *
+ * MODULE scope, deliberately: an inline `"use server"` action may only close
+ * over serializable values, and capturing a component-scoped function throws at
+ * render time ("Something went wrong" on the whole page). Taking `basePath` as
+ * an argument keeps the only captured value a plain string.
+ */
+function backTo(basePath: string, message: string, ok: boolean): never {
+  redirect(`${basePath}?${ok ? "success" : "error"}=${encodeURIComponent(message)}`);
+}
+
 export default async function AdminTestCenterAvailabilityPage({
   params,
   searchParams,
@@ -159,12 +171,6 @@ export default async function AdminTestCenterAvailabilityPage({
       }))
     : [];
 
-  function back(message: string, ok: boolean): never {
-    redirect(
-      `${basePath}?${ok ? "success" : "error"}=${encodeURIComponent(message)}`,
-    );
-  }
-
   async function createAction(formData: FormData) {
     "use server";
     // The layout guard does not cover server actions — every one re-checks.
@@ -185,12 +191,12 @@ export default async function AdminTestCenterAvailabilityPage({
         endMinute,
         slotDurationMinutes: BASE_SLOT_MINUTES,
       });
-      if (!res.ok) back(res.message, false);
+      if (!res.ok) backTo(basePath, res.message, false);
       revalidatePath(basePath);
-      back("Opening hours added", true);
+      backTo(basePath, "Opening hours added", true);
     } catch (err) {
       if (err instanceof Error && err.message === "NEXT_REDIRECT") throw err;
-      back(err instanceof Error ? err.message : "Could not save", false);
+      backTo(basePath, err instanceof Error ? err.message : "Could not save", false);
     }
   }
 
@@ -218,12 +224,12 @@ export default async function AdminTestCenterAvailabilityPage({
         slotDurationMinutes: BASE_SLOT_MINUTES,
         isActive,
       });
-      if (!res.ok) back(res.message, false);
+      if (!res.ok) backTo(basePath, res.message, false);
       revalidatePath(basePath);
-      back("Opening hours updated", true);
+      backTo(basePath, "Opening hours updated", true);
     } catch (err) {
       if (err instanceof Error && err.message === "NEXT_REDIRECT") throw err;
-      back(err instanceof Error ? err.message : "Could not save", false);
+      backTo(basePath, err instanceof Error ? err.message : "Could not save", false);
     }
   }
 
@@ -231,11 +237,11 @@ export default async function AdminTestCenterAvailabilityPage({
     "use server";
     await requireAdminAction();
     const availabilityId = String(formData.get("availabilityId") ?? "");
-    if (!availabilityId) back("Missing id", false);
+    if (!availabilityId) backTo(basePath, "Missing id", false);
     const res = await deleteAdminTestCenterAvailability(id, locationId, availabilityId);
-    if (!res.ok) back(res.message, false);
+    if (!res.ok) backTo(basePath, res.message, false);
     revalidatePath(basePath);
-    back("Opening hours removed", true);
+    backTo(basePath, "Opening hours removed", true);
   }
 
   /**
@@ -258,7 +264,7 @@ export default async function AdminTestCenterAvailabilityPage({
       testCenterTimeSlotId: read("testCenterTimeSlotId"),
     });
     if (hasTestBookingErrors(validation)) {
-      back(
+      backTo(basePath, 
         Object.values(validation)[0] ?? "Please complete all required fields.",
         false,
       );
@@ -267,7 +273,7 @@ export default async function AdminTestCenterAvailabilityPage({
     // A malformed discount stops the booking rather than silently charging the
     // full price.
     const discount = parseDiscountPercent(read("discountPercent"));
-    if (discount.error) back(discount.error, false);
+    if (discount.error) backTo(basePath, discount.error, false);
 
     const result = await postAdminManualTestBooking({
       patient: {
@@ -284,9 +290,9 @@ export default async function AdminTestCenterAvailabilityPage({
       discountPercent: discount.value,
     });
 
-    if (!result.ok) back(result.message, false);
+    if (!result.ok) backTo(basePath, result.message, false);
     revalidatePath(basePath);
-    back(
+    backTo(basePath, 
       result.ok && result.data.free
         ? "Test booked and comped in full — recorded as paid."
         : discount.value
