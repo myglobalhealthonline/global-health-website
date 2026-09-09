@@ -24,6 +24,23 @@ const PAYMENT_STATUS_OPTIONS: { value: string; label: string }[] = [
   { value: "FAILED", label: "Failed" },
 ];
 
+/**
+ * What was bought. Matches orders carrying at least one line of the chosen
+ * kind, so a mixed basket appears under either of its kinds.
+ *
+ * "Consultations" deliberately covers both general and specialist: that split
+ * is a pricing concern, and nobody filtering an order list wants to run the
+ * same search twice.
+ */
+const KIND_OPTIONS: { value: string; label: string }[] = [
+  { value: "", label: "All order types" },
+  { value: "HEALTH_TEST", label: "Health test kits" },
+  { value: "TEST_BOOKING", label: "Test-centre bookings" },
+  { value: "CONSULTATION", label: "Consultations" },
+  { value: "PRESCRIPTION_SERVICE", label: "Prescriptions" },
+  { value: "LAB_EXAM", label: "Lab exams" },
+];
+
 import { ORDER_FILTER_KEYS, type OrderFilterValues } from "./order-filter-keys";
 
 const labelCls =
@@ -120,6 +137,24 @@ export function OrderFilters({
             className={fieldCls}
           >
             {PAYMENT_STATUS_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className={labelCls} htmlFor="order-filter-kind">
+            Order type
+          </label>
+          <select
+            id="order-filter-kind"
+            name="kind"
+            defaultValue={values.kind ?? ""}
+            className={fieldCls}
+          >
+            {KIND_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
                 {o.label}
               </option>
