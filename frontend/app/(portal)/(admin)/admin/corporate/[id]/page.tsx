@@ -41,6 +41,7 @@ import {
   Thead,
   Tr,
 } from "../../_components/atoms";
+import { PendingSubmitButton } from "@/components/admin/pending-submit";
 import {
   companyStatusLabel,
   companyStatusTone,
@@ -441,9 +442,9 @@ export default async function AdminCorporateCompanyPage({ params, searchParams }
                 </span>
               </label>
               <div className="sm:col-span-2">
-                <Btn type="submit" variant="primary" size="sm">
+                <PendingSubmitButton className="gh-btn gh-btn-primary" style={{ minHeight: 32, padding: "0 14px" }} busyLabel="Saving…">
                   Save company
-                </Btn>
+                </PendingSubmitButton>
               </div>
             </form>
             {/* Deleting a company erases its employees, beneficiaries, invites

@@ -741,7 +741,7 @@ export async function proxy(request: NextRequest) {
         sameSite: "lax",
         secure: process.env.NODE_ENV === "production",
       });
-    } else {
+    } else if (request.cookies.has("gh-auth-hint")) {
       response.cookies.delete("gh-auth-hint");
     }
   }

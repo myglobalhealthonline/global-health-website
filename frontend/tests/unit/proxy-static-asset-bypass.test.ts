@@ -607,9 +607,20 @@ describe("BYPASS-7 — cookies never land on a shared-cacheable asset response",
     expect(response.headers.get("set-cookie")).toContain("gh-auth-hint=1");
   });
 
-  it("still clears the auth hint on an anonymous document", async () => {
-    const response = await run("/blog/a-post", { dest: "document" });
+  it("clears an existing auth hint on an anonymous document", async () => {
+    const response = await run("/blog/a-post", { dest: "document", headers: { cookie: "gh-auth-hint=1" } });
     expect(response.headers.get("set-cookie")).toContain("gh-auth-hint=");
+  });
+
+  it("does not delete an absent auth hint", async () => {
+    const response = await run("/blog/a-post", { dest: "document" });
+    expect(response.headers.get("set-cookie")).toBeNull();
+  });
+
+  it("does not force shared caching on page errors or RSC variants", async () => {
+    const rules = await nextConfig.headers!();
+    expect(rules.filter((rule) => rule.source.includes(":country")).flatMap((rule) => rule.headers)
+      .some((header) => header.key.toLowerCase() === "cache-control")).toBe(false);
   });
 
   it("covers exactly the extensions next.config.ts marks shared-cacheable", async () => {

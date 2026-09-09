@@ -21,7 +21,7 @@ const blogRoute: FastifyPluginAsync = async (app) => {
       return reply.status(400).send(errorResponse("Invalid blog query", query.error.flatten()));
     }
     try {
-      const posts = await getPublicBlogPosts(query.data.locale, query.data.countryCode);
+      const posts = await getPublicBlogPosts(query.data.locale, query.data.countryCode, query.data.view);
       return okResponse({ posts });
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {

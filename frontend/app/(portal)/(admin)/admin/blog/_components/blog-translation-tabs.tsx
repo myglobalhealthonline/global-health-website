@@ -88,8 +88,21 @@ export function BlogTranslationTabs({ locales, originalLocale, original, initial
     return field === "seoDesc" ? "seoDescription" : field;
   }
 
+  /** Native validation cannot focus a field inside a hidden tab panel, so a
+   *  bad slug in an inactive language blocked the submit with no message at
+   *  all. Reveal that panel synchronously (before React re-renders) so the
+   *  browser can focus the field and show its own bubble. */
+  function revealInvalid(e: React.FormEvent<HTMLDivElement>) {
+    const panel = (e.target as HTMLElement).closest<HTMLElement>("[data-locale]");
+    if (!panel || !panel.hidden) return;
+    for (const sibling of panel.parentElement?.querySelectorAll<HTMLElement>("[data-locale]") ?? []) {
+      sibling.hidden = sibling !== panel;
+    }
+    setActive(panel.dataset.locale ?? ordered[0]);
+  }
+
   return (
-    <div className="gh-admin-blog-translation-tabs flex flex-col gap-4">
+    <div className="gh-admin-blog-translation-tabs flex flex-col gap-4" onInvalidCapture={revealInvalid}>
       <p className="m-0 text-portal-meta text-[var(--color-text-muted)]">
         Every language of this article, including the original. Each one has its own title, slug
         and body — the slug is the URL that language is published at. Saving writes them all at
@@ -118,6 +131,7 @@ export function BlogTranslationTabs({ locales, originalLocale, original, initial
           <div
             key={code}
             role="tabpanel"
+            data-locale={code}
             hidden={code !== active}
             className="gh-admin-blog-tab-panel flex flex-col gap-4"
           >

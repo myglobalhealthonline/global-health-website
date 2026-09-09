@@ -175,16 +175,18 @@ describe("admin /schedule — the new time is actually reserved", () => {
 
   it("2. a move onto an hour that is already taken is refused with 409", async (t) => {
     if (!boot(t)) return;
-    const oldSlot = await mkSlot(T1, "BOOKED");
-    const takenSlot = await mkSlot(T2, "BOOKED");
-    const other = await mkAppointment({ scheduledAt: T2, timeSlotId: takenSlot });
-    const id = await mkAppointment({ timeSlotId: oldSlot });
+    const oldTime = new Date(T1.getTime() + 24 * 60 * 60 * 1000);
+    const takenTime = new Date(T2.getTime() + 24 * 60 * 60 * 1000);
+    const oldSlot = await mkSlot(oldTime, "BOOKED");
+    const takenSlot = await mkSlot(takenTime, "BOOKED");
+    const other = await mkAppointment({ scheduledAt: takenTime, timeSlotId: takenSlot });
+    const id = await mkAppointment({ scheduledAt: oldTime, timeSlotId: oldSlot });
 
     const res = await app!.inject({
       method: "PATCH",
       url: `/api/admin/appointments/${id}/schedule`,
       cookies: adminCookie,
-      payload: { scheduledAt: T2.toISOString() },
+      payload: { scheduledAt: takenTime.toISOString() },
     });
     assert.equal(res.statusCode, 409, res.body);
 
@@ -192,7 +194,7 @@ describe("admin /schedule — the new time is actually reserved", () => {
       where: { id },
       select: { scheduledAt: true, timeSlotId: true },
     });
-    assert.equal(row.scheduledAt?.toISOString(), T1.toISOString());
+    assert.equal(row.scheduledAt?.toISOString(), oldTime.toISOString());
     assert.equal(
       row.timeSlotId,
       oldSlot,

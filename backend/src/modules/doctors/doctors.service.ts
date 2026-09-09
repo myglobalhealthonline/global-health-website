@@ -637,7 +637,11 @@ export async function countActiveDoctors(): Promise<number> {
  * this one PLUS doctors linked in via the DoctorCountry join (active rows
  * only). Linked rows are deduped if the primary already matches.
  */
-export async function listDoctorsByCountry(countryCode: string, locale?: LocaleCode) {
+export async function listDoctorsByCountry(
+  countryCode: string,
+  locale?: LocaleCode,
+  options: { marketing?: boolean } = {},
+) {
   try {
     const rows = await prisma.doctor.findMany({
       where: {
@@ -761,14 +765,25 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
         isFeatured: d.id === featuredId,
       };
     });
-    const summaries = await mapBounded(
-      rows,
-      (doctor) => doctorBookabilityPayload({
-        countryCode,
-        doctorId: doctor.id,
-        serviceIds: doctor.assignedServices.map((assignment) => assignment.serviceId),
-      }),
-    );
+    const summaries = options.marketing
+      ? mapped.map((doctor) => ({
+        bookability: { state: "UNKNOWN" as const, reasonCode: null, nextAvailableAt: null },
+        bookabilityByServiceId: Object.fromEntries(
+          doctor.assignedServices.map(({ serviceId }) => [
+            serviceId,
+            { state: "UNKNOWN" as const, reasonCode: null, nextAvailableAt: null },
+          ]),
+        ),
+      }))
+      : await mapBounded(
+        rows,
+        (doctor) => doctorBookabilityPayload({
+          countryCode,
+          doctorId: doctor.id,
+          serviceIds: doctor.assignedServices.map((assignment) => assignment.serviceId),
+        }),
+      );
+
     return mapped.map((doctor, index) => ({ ...doctor, ...summaries[index]! }));
   } catch (error) {
     throw normalizeDbError(error, "Doctors data is unavailable");
@@ -1661,7 +1676,7 @@ export async function updateAdminDoctor(
       } satisfies UpdateAdminDoctorResult;
     }, ADMIN_DOCTOR_TX_OPTIONS);
 
-    if (countryChanging) {
+    if (countryChanging || body.active !== undefined) {
       invalidateBookabilityCache();
     }
 

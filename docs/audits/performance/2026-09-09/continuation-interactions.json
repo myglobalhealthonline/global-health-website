@@ -1,0 +1,46 @@
+{
+  "passed": true,
+  "scope": "Real React components with mocked network, Next and consent adapters; not full Next navigation or performance timings.",
+  "results": [
+    {
+      "width": 1440,
+      "checks": [
+        "pending",
+        "HTTP failure",
+        "malformed envelope",
+        "retry",
+        "back cancellation",
+        "late response ignored",
+        "abort failure retryable",
+        "eight-second deadline"
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 390,
+      "checks": [
+        "pending",
+        "HTTP failure",
+        "malformed envelope",
+        "retry",
+        "back cancellation",
+        "late response ignored",
+        "abort failure retryable",
+        "eight-second deadline"
+      ],
+      "pageErrors": []
+    },
+    {
+      "checks": [
+        "Portuguese retry",
+        "voice script absent before launcher click",
+        "voice script mounted on launcher click"
+      ]
+    },
+    {
+      "checks": [
+        "voice launcher absent without consent"
+      ]
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 ﻿import type { Metadata } from "next";
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -184,11 +185,19 @@ export default async function CountryLangBookPage({
   const generalEnabled = isCountryFeatureEnabled(overlay, "general-consultations");
   const specialistEnabled = isCountryFeatureEnabled(overlay, "specialist-consultations");
 
-  const [generalServicesRaw, specialistServicesRaw, doctors] = await Promise.all([
-    generalEnabled ? getCountryServices(code, "GENERAL", lang) : Promise.resolve([]),
-    specialistEnabled ? getCountryServices(code, "SPECIALIST", lang) : Promise.resolve([]),
+  const [allCountryServices, doctors] = await Promise.all([
+    generalEnabled || specialistEnabled
+      ? getCountryServices(code, undefined, lang)
+      : Promise.resolve([]),
     getCountryDoctors(code, lang),
   ]);
+
+  const generalServicesRaw = generalEnabled
+    ? allCountryServices.filter((service) => service.kind === "GENERAL")
+    : [];
+  const specialistServicesRaw = specialistEnabled
+    ? allCountryServices.filter((service) => service.kind === "SPECIALIST")
+    : [];
 
   // Corporate consultations never appear here: they are CorporatePlanService
   // rows, not catalogue services, and are booked from /account/corporate.
@@ -492,7 +501,11 @@ export default async function CountryLangBookPage({
                   bp={bp}
                 />
               ) : (
-                <SelectedServiceFlow
+                <Suspense
+                  key={`${selectedService.id}:${doctorSlugParam ?? ""}:${atParam ?? ""}:${slotParam ?? ""}:${insuranceCompanyId ?? ""}`}
+                  fallback={<AvailabilityStepLoading label={bp.timesShown} />}
+                >
+                  <SelectedServiceFlow
                   code={code}
                   country={slug}
                   lang={lang}
@@ -509,13 +522,30 @@ export default async function CountryLangBookPage({
                   insuranceCompanyId={insuranceCompanyId}
                   selectedInsurance={selectedInsurance}
                   benefitHrefParam={benefitHrefParam}
-                />
+                  />
+                </Suspense>
               )}
             </div>
           </div>
         </div>
       </section>
     </>
+  );
+}
+
+function AvailabilityStepLoading({ label }: { label: string }) {
+  return (
+    <div
+      className="gh2-glass-forest gh2-dark-content flex min-h-64 items-center justify-center gap-3 p-6"
+      aria-busy="true"
+    >
+      <span
+        className="size-5 animate-spin rounded-full border-2 border-white/30 border-t-[var(--color-brand-accent)]"
+        aria-hidden
+      />
+      <p className="text-sm font-semibold text-white/80">{label}</p>
+      <span className="sr-only" role="status">Loading appointment availability</span>
+    </div>
   );
 }
 

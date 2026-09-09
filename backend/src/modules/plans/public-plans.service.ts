@@ -59,6 +59,9 @@ export interface PublicPlanView {
    *  savings only when this holds — otherwise a plan with no specialist rule
    *  promises a discount it cannot honour. */
   hasSpecialistDiscount: boolean;
+  /** Highest active percentage discount on specialist consultations; null when
+   *  no PERCENT rule exists (fixed-price rules do not surface a percentage). */
+  specialistDiscountPercent: number | null;
   /** Representative "after N paid months" unlock for the card's universal note,
    *  or null when nothing is gated. Data-driven — reflects the plan-level D25
    *  floor (which gates credits + discounts) as the headline. */
@@ -80,7 +83,7 @@ const publicPlanInclude = {
   perkRules: { orderBy: { perkKey: "asc" as const } },
   consultationRules: {
     where: { isActive: true },
-    select: { unlockAfterPaidMonths: true, discountMode: true },
+    select: { unlockAfterPaidMonths: true, discountMode: true, discountPercent: true },
   },
   healthTestRules: {
     where: { isActive: true },
@@ -142,6 +145,10 @@ function serializePublicPlan(plan: PublicPlanRecord, requested: LocaleCode, defa
     features: tr?.features ?? [],
     // consultationRules is already filtered to isActive by publicPlanInclude.
     hasSpecialistDiscount: plan.consultationRules.some((r) => r.discountMode !== "NONE"),
+    specialistDiscountPercent: plan.consultationRules.reduce<number | null>(
+      (max, r) => (r.discountMode === "PERCENT" && r.discountPercent && r.discountPercent > (max ?? 0) ? r.discountPercent : max),
+      null,
+    ),
     perkUnlockMonths: derivePerkUnlockMonths(plan),
     perks: plan.perkRules.map((p) => ({
       perkKey: p.perkKey,

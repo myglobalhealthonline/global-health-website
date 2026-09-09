@@ -2,9 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { getCommonLocale } from "@/lib/i18n/get-common-locale";
-import type { LocaleCode } from "@/lib/i18n/types";
-import { readClientLocale } from "@/lib/i18n/get-client-locale";
+import type { CommonLocale } from "@/lib/i18n/types";
 import {
   ACCEPT_ALL,
   CONSENT_OPEN_EVENT,
@@ -15,10 +13,9 @@ import {
   type ConsentChoices,
 } from "./cookie-consent";
 
-export function CookieBanner() {
+export function CookieBanner({ messages }: { messages: CommonLocale["cookie"] }) {
   const [visible, setVisible] = useState(false);
   const [expanded, setExpanded] = useState(false);
-  const [locale, setLocale] = useState<LocaleCode>("en");
   const [choices, setChoices] = useState<ConsentChoices>(DENY_ALL);
   const headingRef = useRef<HTMLHeadingElement | null>(null);
   const barRef = useRef<HTMLDivElement | null>(null);
@@ -34,12 +31,10 @@ export function CookieBanner() {
   useEffect(() => {
     purgeLegacyConsent();
     // eslint-disable-next-line react-hooks/set-state-in-effect -- reads browser-only consent storage, must run post-mount for SSR-safety
-    setLocale(readClientLocale());
     if (!readConsent()) setVisible(true);
 
     function onOpen() {
       const existing = readConsent();
-      setLocale(readClientLocale());
       setChoices(
         existing
           ? {
@@ -100,7 +95,7 @@ export function CookieBanner() {
 
   if (!visible) return null;
 
-  const t = getCommonLocale(locale).cookie;
+  const t = messages;
 
   return (
     <div

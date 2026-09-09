@@ -29,7 +29,9 @@ const DATE_FMT = new Intl.DateTimeFormat("en-GB", {
  *  lands. */
 function orderedLocales(p: AdminBlogDto): Array<{ locale: string; isOriginal: boolean }> {
   const original = p.locale.toUpperCase();
-  return [original, ...p.translations.map((t) => t.locale.toUpperCase())]
+  // A BlogTranslation row in the post's own locale is a data defect (the
+  // public renderer never reads it), but it must not draw the chip twice.
+  return [...new Set([original, ...p.translations.map((t) => t.locale.toUpperCase())])]
     .sort((a, b) => (a === "EN" ? -1 : b === "EN" ? 1 : a.localeCompare(b)))
     .map((locale) => ({ locale, isOriginal: locale === original }));
 }
@@ -196,12 +198,18 @@ export default async function AdminBlogListPage({
     authorDisplayName: spRead(sp, "authorDisplayName"),
     hasTranslation: spRead(sp, "hasTranslation"),
   };
+  // The API pages at 20 by default and this list has no pager, so any 21st
+  // article silently vanished (2026-09-07: four fresh drafts dropped off after
+  // a bulk edit bumped twenty published rows above them). Ask for the API's
+  // maximum; the blog is far below 100 articles and grouping by country
+  // needs the whole set anyway.
   const [result, countriesResult] = await Promise.all([
-    fetchAdminBlogPosts(filters),
+    fetchAdminBlogPosts({ ...filters, pageSize: "100" }),
     fetchAdminCountries(),
   ]);
   const countries = countriesResult.ok ? countriesResult.data.countries : [];
   const posts = result.ok ? result.data.items : [];
+  const hiddenByPaging = result.ok ? Math.max(0, result.data.pagination.total - posts.length) : 0;
   const publishedCount = posts.filter((p) => p.status === "PUBLISHED" && p.isActive).length;
   const translatedCount = posts.filter((p) => p.translations.length > 0).length;
   const groups = groupByCountry(posts);
@@ -293,6 +301,14 @@ export default async function AdminBlogListPage({
       </AdminCard>
 
       <div className="gh-admin-blog-list mt-6">
+        {hiddenByPaging > 0 ? (
+          <AdminCard>
+            <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">
+              Showing the {posts.length} most recently updated of {result.ok ? result.data.pagination.total : 0} articles.
+              Use the filters to find the rest.
+            </p>
+          </AdminCard>
+        ) : null}
         {!result.ok ? (
           <AdminCard>
             <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">

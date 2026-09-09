@@ -1,5 +1,4 @@
-import { Pool } from "pg";
-import { env } from "../config/env.js";
+import { numberingPool } from "../db/prisma.js";
 
 /**
  * Sequential invoice number generator, one counter per country.
@@ -31,18 +30,9 @@ export function invoicePrefix(countryCode: string): string | null {
   return COUNTRY_PREFIX[countryCode.toLowerCase()] ?? null;
 }
 
-let pool: Pool | null = null;
-
-function getPool(): Pool {
-  if (!pool) {
-    pool = new Pool({ connectionString: env.DATABASE_URL });
-  }
-  return pool;
-}
-
 /** Atomically bump a counter row (any key) and return the next sequence. */
 async function nextSeq(counterKey: string): Promise<number> {
-  const client = await getPool().connect();
+  const client = await numberingPool.connect();
   try {
     await client.query("BEGIN");
 

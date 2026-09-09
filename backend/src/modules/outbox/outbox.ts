@@ -13,6 +13,7 @@ export type OutboxLog = { info: (m: string) => void; error: (m: string) => void 
 export const OUTBOX_KIND_ORDER_PAID_AUTOMATIONS = "order_paid_automations";
 export const OUTBOX_KIND_RECRUITMENT_APPLICATION_NOTIFICATION =
   "recruitment_application_notification";
+export const OUTBOX_KIND_META_CAPI_PURCHASE = "meta_capi_purchase";
 /** 24h appointment reminders — one row per audience, keyed on the appointment
  *  state the reminder was minted for (see appointment-reminder.service.ts). */
 export const OUTBOX_KIND_APPOINTMENT_REMINDER_PATIENT = "appointment_reminder_patient_24h";
@@ -143,6 +144,30 @@ export async function hasOutstandingPersonalObjectPurge(
   return row !== null;
 }
 
+/**
+ * Durably enqueue a Meta Conversions API Purchase send for a paid order.
+ * Idempotent (one row per order), same shape as `enqueueOrderPaidAutomations`.
+ * Pass the transaction client so it commits in the SAME transaction as the
+ * PAID flip — the dispatcher (below) is where consent/config gating happens,
+ * not here, so an order created before this feature shipped (no
+ * `adAttribution`) still gets a row that the dispatcher then skips.
+ */
+export async function enqueueMetaCapiPurchase(
+  client: OutboxEnqueueClient,
+  orderId: string,
+): Promise<void> {
+  await client.outbox.createMany({
+    data: [
+      {
+        kind: OUTBOX_KIND_META_CAPI_PURCHASE,
+        idempotencyKey: `${OUTBOX_KIND_META_CAPI_PURCHASE}:${orderId}`,
+        payload: { orderId },
+      },
+    ],
+    skipDuplicates: true,
+  });
+}
+
 // ── Retry/backoff decision (pure, unit-tested) ───────────────────────────────
 
 export const OUTBOX_MAX_ATTEMPTS = 8;
@@ -249,6 +274,15 @@ async function dispatchOutboxRow(
       await ensureOrderPaidAutomations(payload.orderId, toPaymentLog(log), {
         sendShopConfirmation: payload.sendShopConfirmation === true,
       });
+      return;
+    }
+    case OUTBOX_KIND_META_CAPI_PURCHASE: {
+      const payload = row.payload as { orderId?: string } | null;
+      if (!payload?.orderId) throw new Error("meta_capi_purchase: missing orderId in payload");
+      const { dispatchMetaCapiPurchaseForOrder } = await import(
+        "../orders/meta-capi-dispatch.service.js"
+      );
+      await dispatchMetaCapiPurchaseForOrder(payload.orderId);
       return;
     }
     case OUTBOX_KIND_RECRUITMENT_APPLICATION_NOTIFICATION: {

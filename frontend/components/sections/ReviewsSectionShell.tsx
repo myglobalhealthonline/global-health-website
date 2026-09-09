@@ -1,5 +1,4 @@
-import { getCommonLocale } from "@/lib/i18n/get-common-locale";
-import { resolveLocale } from "@/lib/i18n/resolve-locale";
+import { getReviewMessages } from "@/lib/i18n/review-messages";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 
 /**
@@ -35,9 +34,9 @@ export function ReviewsSectionShell({
   // `eyebrow`/`body` used to default to English string literals. No caller
   // passes either, so every non-en page rendered an English eyebrow and lede
   // above a translated headline — resolve them from the locale instead.
-  const common = getCommonLocale(resolveLocale({ explicitLocale: language }));
-  const eyebrowText = eyebrow ?? common.a11y.patientReviews;
-  const bodyText = body ?? common.doctify.body;
+  const messages = getReviewMessages(language);
+  const eyebrowText = eyebrow ?? messages.patientReviews;
+  const bodyText = body ?? messages.body;
   return (
     <section
       className={

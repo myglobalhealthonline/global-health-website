@@ -344,7 +344,8 @@ export async function SubscriptionDashboard({
           )}
         </AdminCard>
 
-        {/* Wellness */}
+        {/* Wellness — only markets whose plan grants wellness credits (Ireland). */}
+        {hasWellness || wellnessBalance > 0 ? (
         <AdminCard>
           <div className="flex items-start justify-between gap-3">
             <span
@@ -391,6 +392,7 @@ export async function SubscriptionDashboard({
             <p className="mt-2 text-sm" style={{ color: "var(--portal-muted)" }}>{t.wellnessNone}</p>
           )}
         </AdminCard>
+        ) : null}
       </div>
 
       {/* Perks */}

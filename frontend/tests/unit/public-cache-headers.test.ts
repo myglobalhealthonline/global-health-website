@@ -3,28 +3,8 @@ import { pathToRegexp } from "next/dist/compiled/path-to-regexp";
 import nextConfig from "../../next.config";
 import { countries } from "@/data/countries";
 
-/**
- * FE-1 — the public shared-cache policy must reach ONLY localized public
- * country pages.
- *
- * `headers()` carries a family of rules shaped `/:country/:lang…` that hand
- * out `public, s-maxage=60, stale-while-revalidate=300`. Both params were
- * unconstrained, so path-to-regexp — the matcher Next itself compiles these
- * sources with — read any two-segment path as a country/locale pair:
- * `/admin/doctors`, `/account/profile`, `/api/example`, `/doctor/…` and the
- * portal, payment and print surfaces all collected a header telling every
- * CDN and reverse proxy in front of the origin that the response is shared
- * cacheable. The deeper rules widened it further: `/api/admin/doctors/:id`
- * matched `/:country/:lang/(…|doctors|…)/:slug`.
- *
- * Cookies, auth and dynamic rendering may each keep such a response out of a
- * cache in practice, but a response that explicitly SAYS `public` cannot rely
- * on them — the header is the contract, so it is what this test pins.
- *
- * Uses `next/dist/compiled/path-to-regexp` (the same compiled copy Next uses,
- * and the same harness as `redirect-chains.test.ts`) so the assertions run on
- * real matcher semantics, not on how the source string reads.
- */
+/** Document headers belong to Next's final response handling. Static rules
+ * cannot tell a successful page from a temporary render error. */
 
 type HeaderRule = { source: string; headers: { key: string; value: string }[] };
 
@@ -84,23 +64,21 @@ describe("FE-1 — public cache header is scoped to localized public country rou
     expect(LOCALE_SEGMENTS).toEqual(["cs", "de", "en", "es", "pt", "ro"]);
   });
 
-  it("every valid country/locale landing route keeps the public policy", () => {
+  it("every valid country/locale landing route defers document policy to Next", () => {
     for (const country of COUNTRY_SEGMENTS) {
       for (const lang of LOCALE_SEGMENTS) {
-        expect(cacheControlFor(`/${country}/${lang}`), `/${country}/${lang}`).toBe(
-          PUBLIC_PAGE_CACHE,
-        );
+        expect(cacheControlFor(`/${country}/${lang}`), `/${country}/${lang}`).toBeNull();
       }
     }
   });
 
-  it("the six market defaults named in the FE-1 brief keep the public policy", () => {
+  it("the six market defaults named in the FE-1 brief defer document policy to Next", () => {
     for (const path of ["/ie/en", "/cz/cs", "/pt/pt", "/es/es", "/ro/ro", "/br/pt"]) {
-      expect(cacheControlFor(path), path).toBe(PUBLIC_PAGE_CACHE);
+      expect(cacheControlFor(path), path).toBeNull();
     }
   });
 
-  it("the localized public sub-routes keep the public policy", () => {
+  it("the localized public sub-routes defer document policy to Next", () => {
     const paths = [
       "/ireland/en/gp-consultation-online",
       "/ireland/en/see-a-specialist",
@@ -121,7 +99,7 @@ describe("FE-1 — public cache header is scoped to localized public country rou
       "/ie/en/doctors",
     ];
     for (const path of paths) {
-      expect(cacheControlFor(path), path).toBe(PUBLIC_PAGE_CACHE);
+      expect(cacheControlFor(path), path).toBeNull();
     }
   });
 
@@ -158,7 +136,7 @@ describe("FE-1 — public cache header is scoped to localized public country rou
       "/invalid/invalid",
     ];
     for (const path of paths) {
-      expect(cacheControlFor(path), path).not.toBe(PUBLIC_PAGE_CACHE);
+      expect(cacheControlFor(path), path).toBeNull();
     }
   });
 
@@ -178,7 +156,7 @@ describe("FE-1 — public cache header is scoped to localized public country rou
         (h) => h.key.toLowerCase() === "cache-control" && h.value === PUBLIC_PAGE_CACHE,
       ),
     );
-    expect(publicRules.length).toBeGreaterThan(0);
+    expect(publicRules).toHaveLength(0);
     for (const path of ["/admin/doctors", "/account/profile", "/api/example", "/doctor/x"]) {
       for (const { rule, regexp } of publicRules) {
         expect(regexp.test(path), `${rule.source} must not match ${path}`).toBe(false);

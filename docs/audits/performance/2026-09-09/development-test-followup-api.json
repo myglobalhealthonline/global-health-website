@@ -1,0 +1,56 @@
+{
+  "passed": true,
+  "origin": "https://backendmyglobalhealth.up.railway.app",
+  "scope": "Six sequential anonymous Development GETs. Availability is live; samples do not establish cold-cache behavior, p95 or field performance.",
+  "publicPosts": 1,
+  "results": [
+    {
+      "label": "blog full",
+      "status": 200,
+      "firstByteMs": 1719,
+      "totalMs": 1727,
+      "decodedBytes": 49598,
+      "cacheControl": "public, max-age=60, s-maxage=60, stale-while-revalidate=300"
+    },
+    {
+      "label": "blog summary",
+      "status": 200,
+      "firstByteMs": 598,
+      "totalMs": 601,
+      "decodedBytes": 1249,
+      "cacheControl": "public, max-age=60, s-maxage=60, stale-while-revalidate=300"
+    },
+    {
+      "label": "marketing services",
+      "status": 200,
+      "firstByteMs": 317,
+      "totalMs": 445,
+      "decodedBytes": 272094,
+      "cacheControl": "public, max-age=60, s-maxage=60, stale-while-revalidate=300"
+    },
+    {
+      "label": "marketing doctors",
+      "status": 200,
+      "firstByteMs": 313,
+      "totalMs": 398,
+      "decodedBytes": 501398,
+      "cacheControl": "public, max-age=60, s-maxage=60, stale-while-revalidate=300"
+    },
+    {
+      "label": "live availability sample 1",
+      "status": 200,
+      "firstByteMs": 657,
+      "totalMs": 662,
+      "decodedBytes": 167607,
+      "cacheControl": "no-store"
+    },
+    {
+      "label": "live availability sample 2",
+      "status": 200,
+      "firstByteMs": 257,
+      "totalMs": 267,
+      "decodedBytes": 167607,
+      "cacheControl": "no-store"
+    }
+  ]
+}

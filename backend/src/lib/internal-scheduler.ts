@@ -1,4 +1,5 @@
-import { pool } from "../db/prisma.js";
+import { runWithSchedulerDb, schedulerLockPool } from "../db/prisma.js";
+import { BoundedJobQueue } from "./bounded-job-queue.js";
 import {
   runPrePaymentCancelSweep,
   runPrePaymentReminderCron,
@@ -25,8 +26,16 @@ import { dispatchDueTrustpilotInvites } from "../modules/review-invites/review-i
 import { runSuklCertificateMonitor } from "../modules/sukl/sukl-certificate-monitor.service.js";
 import { runRecruitmentRetentionSweep } from "../modules/recruitment/recruitment-retention.service.js";
 import { enqueueDueAppointmentReminders } from "../modules/appointments/appointment-reminder.service.js";
+import { prewarmDoctorSlotCoverage } from "../modules/doctor-availability/doctor-availability.service.js";
 
 type Logger = { info: (msg: string) => void; error: (msg: string) => void };
+
+// A lock client remains checked out for a job's entire lifetime. Keep only a
+// small number of jobs in that state per process so boot ticks and short
+// intervals cannot stampede the database or consume all lock permits.
+const MAX_CONCURRENT_SCHEDULER_JOBS = 2;
+let schedulerLogger: Logger | null = null;
+let schedulerQueue: BoundedJobQueue | null = null;
 
 const PRE_PAYMENT_INTERVAL_MS = 15 * 60 * 1000; // 15 min — reminder stages only
 // 60s — payment-deadline cancels. Deliberately NOT folded back into the
@@ -57,6 +66,7 @@ const DOCTOR_NO_SHOW_INTERVAL_MS = 60 * 1000;
 // hourly scan sees every appointment at least twice before it is due; the
 // unique outbox keys collapse the repeats.
 const APPOINTMENT_REMINDER_INTERVAL_MS = 60 * 60 * 1000;
+const SLOT_PREWARM_INTERVAL_MS = 60 * 1000;
 
 // Distinct advisory-lock keys, one per job, so only one replica runs a given
 // tick when horizontally scaled. Single-replica (today) always acquires → no
@@ -76,6 +86,7 @@ const LOCK_MEMBERSHIP_EXPIRY = 4010012;
 const LOCK_DOCTOR_NO_SHOW = 4010013;
 const LOCK_RECRUITMENT_RETENTION = 4010014;
 const LOCK_APPOINTMENT_REMINDERS = 4010015;
+const LOCK_SLOT_PREWARM = 4010016;
 
 // SESSION-level advisory lock (pg_advisory_lock / pg_advisory_unlock) on a
 // single manually-checked-out `pg.Pool` client, NOT a Prisma-managed
@@ -103,7 +114,7 @@ async function withAdvisoryLock(
 ): Promise<void> {
   let client: import("pg").PoolClient;
   try {
-    client = await pool.connect();
+    client = await schedulerLockPool.connect();
   } catch {
     // Couldn't even check out a connection to attempt the lock (pool
     // exhaustion, DB blip) — same "can't attempt to lock" case as the query
@@ -407,6 +418,17 @@ async function tickAppointmentReminders(log: Logger) {
   );
 }
 
+async function tickSlotPrewarm(log: Logger) {
+  await withAdvisoryLock(LOCK_SLOT_PREWARM, async () => {
+    try {
+      const result = await prewarmDoctorSlotCoverage();
+      if (result.doctors > 0) log.info(`[cron] slot-prewarm: doctors=${result.doctors} created=${result.created} failed=${result.failed}`);
+    } catch (err) {
+      log.error(`[cron] slot-prewarm error: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }, { failClosed: false });
+}
+
 async function tickDataRetention(log: Logger) {
   // Read-only report (counts + one SecurityAlert, dedupe'd per UTC day) — no
   // deletion, no customer messaging. Fail OPEN.
@@ -529,11 +551,22 @@ export function startInternalScheduler(log: Logger): () => void {
   }
 
   setOpsAlertLogger({ warn: (m) => log.info(m), error: (m) => log.error(m) });
+  schedulerLogger = log;
+  schedulerQueue = new BoundedJobQueue(MAX_CONCURRENT_SCHEDULER_JOBS, (name, durationMs) => {
+    const lockPool = schedulerLockPool;
+    schedulerLogger?.info(
+      `[cron] metric job=${name} durationMs=${Math.round(durationMs)} active=${schedulerQueue?.activeCount ?? 0} queued=${schedulerQueue?.queuedCount ?? 0} lockPoolWaiting=${lockPool.waitingCount} lockPoolIdle=${lockPool.idleCount} lockPoolTotal=${lockPool.totalCount}`,
+    );
+  });
+  const runScheduledJob = (name: string, fn: () => Promise<void>) =>
+    schedulerQueue?.enqueue(name, () => runWithSchedulerDb(fn));
   log.info(
     "[cron] internal scheduler — pre-payment 15m, post-payment 5m, subs-ops 5m, reconciliation 60m, renewal-reminders 24h, account-purge 60m, outbox 30s, data-retention 24h, recruitment-retention 24h, trustpilot-invites 60m, sukl-certificate 24h, doctor-no-show 60s, appointment-reminders 60m",
   );
 
   const timers: NodeJS.Timeout[] = [];
+  const schedule = (name: string, tick: () => Promise<void>, intervalMs: number) =>
+    timers.push(setInterval(() => runScheduledJob(name, tick), intervalMs));
 
   // Random startup jitter so a rolling deploy's overlapping old/new processes
   // don't fire their immediate boot ticks in lockstep.
@@ -545,56 +578,55 @@ export function startInternalScheduler(log: Logger): () => void {
       // mid-window could double-send) — they fire only on the daily interval, and
       // POST /api/cron/subscriptions/daily remains the robust external trigger.
       // Account purge IS safe on boot — idempotent, no dedup window.
-      void tickPrePayment(log);
-      void tickPrePaymentCancel(log);
-      void tickPostPayment(log);
-      void tickSubscriptionOps(log);
-      void tickReconciliation(log);
-      void tickAccountPurge(log);
-      void tickOutboxDispatch(log);
+      runScheduledJob("pre-payment", () => tickPrePayment(log));
+      runScheduledJob("pre-payment-cancel", () => tickPrePaymentCancel(log));
+      runScheduledJob("post-payment", () => tickPostPayment(log));
+      runScheduledJob("subscription-ops", () => tickSubscriptionOps(log));
+      runScheduledJob("reconciliation", () => tickReconciliation(log));
+      runScheduledJob("account-purge", () => tickAccountPurge(log));
+      runScheduledJob("outbox", () => tickOutboxDispatch(log));
       // Safe on boot: a row is only due once its stored 24h delay has passed,
       // and the advisory lock keeps a rolling deploy's overlapping processes
       // from both dispatching it.
-      void tickTrustpilotInvites(log);
+      runScheduledJob("trustpilot-invites", () => tickTrustpilotInvites(log));
       // Safe on boot and useful there: a deploy that ships a bad certificate
       // should say so immediately rather than 24h later.
-      void tickSuklCertificate(log);
+      runScheduledJob("sukl-certificate", () => tickSuklCertificate(log));
       // Safe on boot: idempotent, and a deploy is exactly when a stale ACTIVE
       // badge or a leaked allowance unit is most likely to be noticed.
-      void tickMembershipExpiry(log);
-      void tickRecruitmentRetention(log);
+      runScheduledJob("membership-expiry", () => tickMembershipExpiry(log));
+      runScheduledJob("recruitment-retention", () => tickRecruitmentRetention(log));
       // Safe on boot: the per-appointment doctorNoShowNotifiedAt guard means
       // a redeploy can't double-notify — and it's exactly when a missed
       // check during the previous process's downtime should get caught up.
-      void tickDoctorNoShow(log);
+      runScheduledJob("doctor-no-show", () => tickDoctorNoShow(log));
       // Safe on boot: enqueue-only, behind unique outbox keys.
-      void tickAppointmentReminders(log);
+      runScheduledJob("appointment-reminders", () => tickAppointmentReminders(log));
+      runScheduledJob("slot-prewarm", () => tickSlotPrewarm(log));
     }, startupJitterMs),
   );
 
-  timers.push(setInterval(() => void tickPrePayment(log), PRE_PAYMENT_INTERVAL_MS));
-  timers.push(
-    setInterval(() => void tickPrePaymentCancel(log), PRE_PAYMENT_CANCEL_INTERVAL_MS),
-  );
-  timers.push(setInterval(() => void tickPostPayment(log), POST_PAYMENT_INTERVAL_MS));
-  timers.push(setInterval(() => void tickSubscriptionOps(log), SUBSCRIPTION_OPS_INTERVAL_MS));
-  timers.push(setInterval(() => void tickAccountPurge(log), ACCOUNT_PURGE_INTERVAL_MS));
-  timers.push(setInterval(() => void tickReconciliation(log), RECONCILIATION_INTERVAL_MS));
-  timers.push(setInterval(() => void tickDailyReminders(log), DAILY_INTERVAL_MS));
-  timers.push(setInterval(() => void tickOutboxDispatch(log), OUTBOX_INTERVAL_MS));
-  timers.push(setInterval(() => void tickDataRetention(log), DATA_RETENTION_INTERVAL_MS));
-  timers.push(setInterval(() => void tickRecruitmentRetention(log), DATA_RETENTION_INTERVAL_MS));
-  timers.push(
-    setInterval(() => void tickTrustpilotInvites(log), TRUSTPILOT_INVITES_INTERVAL_MS),
-  );
-  timers.push(setInterval(() => void tickSuklCertificate(log), SUKL_CERTIFICATE_INTERVAL_MS));
-  timers.push(setInterval(() => void tickMembershipExpiry(log), DAILY_INTERVAL_MS));
-  timers.push(setInterval(() => void tickDoctorNoShow(log), DOCTOR_NO_SHOW_INTERVAL_MS));
-  timers.push(
-    setInterval(() => void tickAppointmentReminders(log), APPOINTMENT_REMINDER_INTERVAL_MS),
-  );
+  schedule("pre-payment", () => tickPrePayment(log), PRE_PAYMENT_INTERVAL_MS);
+  schedule("pre-payment-cancel", () => tickPrePaymentCancel(log), PRE_PAYMENT_CANCEL_INTERVAL_MS);
+  schedule("post-payment", () => tickPostPayment(log), POST_PAYMENT_INTERVAL_MS);
+  schedule("subscription-ops", () => tickSubscriptionOps(log), SUBSCRIPTION_OPS_INTERVAL_MS);
+  schedule("account-purge", () => tickAccountPurge(log), ACCOUNT_PURGE_INTERVAL_MS);
+  schedule("reconciliation", () => tickReconciliation(log), RECONCILIATION_INTERVAL_MS);
+  schedule("daily-reminders", () => tickDailyReminders(log), DAILY_INTERVAL_MS);
+  schedule("outbox", () => tickOutboxDispatch(log), OUTBOX_INTERVAL_MS);
+  schedule("data-retention", () => tickDataRetention(log), DATA_RETENTION_INTERVAL_MS);
+  schedule("recruitment-retention", () => tickRecruitmentRetention(log), DATA_RETENTION_INTERVAL_MS);
+  schedule("trustpilot-invites", () => tickTrustpilotInvites(log), TRUSTPILOT_INVITES_INTERVAL_MS);
+  schedule("sukl-certificate", () => tickSuklCertificate(log), SUKL_CERTIFICATE_INTERVAL_MS);
+  schedule("membership-expiry", () => tickMembershipExpiry(log), DAILY_INTERVAL_MS);
+  schedule("doctor-no-show", () => tickDoctorNoShow(log), DOCTOR_NO_SHOW_INTERVAL_MS);
+  schedule("appointment-reminders", () => tickAppointmentReminders(log), APPOINTMENT_REMINDER_INTERVAL_MS);
+  schedule("slot-prewarm", () => tickSlotPrewarm(log), SLOT_PREWARM_INTERVAL_MS);
 
   return () => {
     for (const t of timers) clearTimeout(t);
+    schedulerQueue?.stop();
+    schedulerQueue = null;
+    schedulerLogger = null;
   };
 }

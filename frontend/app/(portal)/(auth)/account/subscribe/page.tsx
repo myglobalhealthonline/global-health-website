@@ -77,7 +77,13 @@ export default async function SubscribeConfirmPage({
     interpolate(pluralTemplate(credits, pricing.creditLabel, pricing.creditsLabel), { count: credits }),
     pricing.secureLine,
     pricing.bookingLine,
-    pricing.specialistLine,
+    ...(plan.hasSpecialistDiscount
+      ? [
+          plan.specialistDiscountPercent
+            ? interpolate(pricing.specialistDiscountLine, { percent: plan.specialistDiscountPercent })
+            : pricing.specialistLine,
+        ]
+      : []),
     ...(wellness > 0
       ? [
           interpolate(pluralTemplate(wellness, pricing.wellnessLabelSingular, pricing.wellnessLabel), {

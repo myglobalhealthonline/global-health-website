@@ -197,7 +197,7 @@ export function MobileNav({
       <Dialog.Trigger asChild>
         <button
           type="button"
-          className="gh-focus-on-dark inline-flex size-11 items-center justify-center rounded-full border border-white/15 bg-white/[0.04] text-white/85 transition-colors duration-200 hover:border-white/30 hover:bg-white/10 hover:text-white xl:hidden"
+          className="gh-focus-on-dark inline-flex size-11 items-center justify-center rounded-full border border-white/15 bg-white/[0.04] text-white/85 transition-colors duration-200 hover:border-white/30 hover:bg-white/10 hover:text-white"
           aria-label={a11y.openMenu}
         >
           <Menu className="size-5" aria-hidden />
@@ -206,7 +206,7 @@ export function MobileNav({
 
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-[var(--z-drawer-overlay)] bg-black/50 backdrop-blur-sm" />
-        <Dialog.Content className="fixed inset-x-0 top-0 z-[var(--z-drawer)] flex max-h-[100dvh] flex-col bg-white shadow-[var(--shadow-elevated)] xl:hidden">
+        <Dialog.Content className="fixed inset-x-0 top-0 z-[var(--z-drawer)] flex max-h-[100dvh] flex-col bg-white shadow-[var(--shadow-elevated)]">
           {/* Was `{navigation.navHome} navigation` — a localized label glued
               to a hardcoded English noun, which read as half-translated to a
               screen reader on every non-en page. */}

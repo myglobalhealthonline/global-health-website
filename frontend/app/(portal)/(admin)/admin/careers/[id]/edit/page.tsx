@@ -6,6 +6,7 @@ import { fetchAdminCountries, fetchAdminJob, updateAdminJobGroup } from "@/lib/a
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { PUBLIC_JOBS_TAG } from "@/lib/content/get-public-jobs";
 import { AdminCard, Btn, PageHeader, Pill } from "../../../_components/atoms";
+import { PendingSubmitButton } from "@/components/admin/pending-submit";
 import { ConfirmDeleteButton } from "../../../_components/confirm-delete-button";
 import { JobFields } from "../../_components/job-fields";
 import { parseJobForm, toAdminJobGroupInput, validateJobInput } from "../../_components/job-form-parse";
@@ -39,7 +40,7 @@ export default async function EditCareerJobPage({ params, searchParams }: { para
     {sp.error ? <p className="gh-status-warning mb-4 rounded-md border px-4 py-3">{sp.error}</p> : null}
     {sp.success ? <p className="gh-status-success mb-4 rounded-md border px-4 py-3">{sp.success}</p> : null}
     <form action={save} className="gh-admin-careers-form"><JobFields countries={countriesResult.data.countries} job={job} />
-      <div className="mt-4 flex justify-end gap-2"><Btn href="/admin/careers" variant="ghost">Cancel</Btn><Btn type="submit">Save changes</Btn></div>
+      <div className="mt-4 flex justify-end gap-2"><Btn href="/admin/careers" variant="ghost">Cancel</Btn><PendingSubmitButton style={{ minHeight: 40, padding: "0 20px" }} busyLabel="Saving…">Save changes</PendingSubmitButton></div>
     </form>
     {job.status !== "ARCHIVED" ? <form action={archive} className="mt-4"><ConfirmDeleteButton title="Archive job?" message="The public page and application form will close immediately." className="gh-btn gh-btn-danger"><Archive className="size-4" />Archive</ConfirmDeleteButton></form> : null}
   </>;

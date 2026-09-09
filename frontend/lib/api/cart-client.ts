@@ -123,6 +123,26 @@ export async function clearCart(): Promise<Result<Cart>> {
   return cartFetch<Cart>("/api/cart", { method: "DELETE" });
 }
 
+/**
+ * Ad-click / campaign attribution captured on landing (see
+ * `components/analytics/AttributionCapture.tsx`), forwarded so the order can
+ * be tied to the ad that drove it and so the backend's Meta Conversions API
+ * send is gated on `marketingConsent`. All fields optional except the
+ * consent flag — most orders carry none of this (organic/direct traffic).
+ */
+export type CheckoutAttribution = {
+  marketingConsent: boolean;
+  fbclid?: string;
+  fbp?: string;
+  fbc?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  utmTerm?: string;
+  utmContent?: string;
+  landingPath?: string;
+};
+
 export type CheckoutInput = {
   email: string;
   fullName: string;
@@ -157,6 +177,8 @@ export type CheckoutInput = {
    * back as a 422 with `code: "COUPON_INVALID"` rather than being honoured.
    */
   couponCode?: string;
+
+  attribution?: CheckoutAttribution;
 };
 
 /** What the coupon check gives back when the code is usable on this cart. */

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, ArrowRight, CalendarClock, Check, ChevronDown, Globe, Loader2, RotateCw } from "lucide-react";
-import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
+import { clinicTodayTomorrowKeys, dayKeyInTz, formatAppDate, formatAppTime } from "@/lib/format-datetime";
 import { formatPriceRounded } from "@/lib/format-currency";
 import type { BookabilitySummary } from "@/lib/content/get-country-collections";
 import { getSameDayEmptyMessage } from "@/lib/content/same-day-booking-state";
@@ -84,6 +84,36 @@ const ENGLISH_CODES = ["en", "english"];
 
 const DESKTOP_QUERY = "(min-width: 1024px)";
 
+export function isAvailabilityResponse(
+  responseOk: boolean,
+  json: {
+    ok?: boolean;
+    data?: {
+      slots?: unknown;
+      clinicTimezone?: string;
+      service?: ServiceInfo | null;
+      bookability?: BookabilitySummary | null;
+    };
+  },
+): json is {
+  ok: true;
+  data: {
+    slots: Slot[];
+    clinicTimezone?: string;
+    service?: ServiceInfo | null;
+    bookability?: BookabilitySummary | null;
+  };
+} {
+  return responseOk && json.ok === true && Array.isArray(json.data?.slots);
+}
+
+export function shouldIgnoreAvailabilityFailure(
+  requestIsCurrent: boolean,
+  wasSuperseded: boolean,
+): boolean {
+  return !requestIsCurrent || wasSuperseded;
+}
+
 export function SameDayBooking({
   country,
   lang,
@@ -156,18 +186,38 @@ export function SameDayBooking({
   // renders real content on both instances (no blank/no-index first paint).
   const [isActive, setIsActive] = useState(true);
   const loadedRef = useRef(false);
+  const availabilityRequestRef = useRef<{ id: number; controller: AbortController | null }>({
+    id: 0,
+    controller: null,
+  });
 
   async function loadAvailability(code: string) {
+    if (!code) {
+      setSlots([]);
+      setSelectedStart(null);
+      setFetchError(false);
+      setBookability(null);
+      setLoading(false);
+      return;
+    }
+    availabilityRequestRef.current.controller?.abort();
+    const id = availabilityRequestRef.current.id + 1;
+    const controller = new AbortController();
+    availabilityRequestRef.current = { id, controller };
+    let timedOut = false;
+    const timeout = window.setTimeout(() => {
+      timedOut = true;
+      controller.abort();
+    }, 8_000);
     setSlots([]);
     setSelectedStart(null);
     setFetchError(false);
     setBookability(null);
-    if (!code) return;
     setLoading(true);
     try {
       const res = await fetch(
-        `/api/public/gp-availability?country=${encodeURIComponent(countryCode)}&language=${encodeURIComponent(code)}&days=7`,
-        { cache: "no-store" },
+        `/api/public/gp-availability?country=${encodeURIComponent(countryCode)}&language=${encodeURIComponent(code)}&days=2&clinicDays=1`,
+        { cache: "no-store", signal: controller.signal },
       );
       const json = (await res.json()) as {
         ok?: boolean;
@@ -178,16 +228,20 @@ export function SameDayBooking({
           bookability?: BookabilitySummary | null;
         };
       };
-      const nextSlots = json.ok && json.data?.slots ? json.data.slots : [];
+      if (!isAvailabilityResponse(res.ok, json)) throw new Error("Availability request failed");
+      const nextSlots = json.data.slots;
+      if (availabilityRequestRef.current.id !== id) return;
       setSlots(nextSlots);
       setService(json.data?.service ?? null);
       setBookability(json.data?.bookability ?? null);
       setClinicTz(json.data?.clinicTimezone ?? "UTC");
     } catch {
+      if (shouldIgnoreAvailabilityFailure(availabilityRequestRef.current.id === id, controller.signal.aborted && !timedOut)) return;
       setSlots([]);
       setFetchError(true);
     } finally {
-      setLoading(false);
+      window.clearTimeout(timeout);
+      if (availabilityRequestRef.current.id === id) setLoading(false);
     }
   }
 
@@ -219,20 +273,21 @@ export function SameDayBooking({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => () => availabilityRequestRef.current.controller?.abort(), []);
+
   // Same-day flow only ever offers TODAY + TOMORROW (clinic-local). Bucket the
   // returned slots into those two days and drop anything later.
   const { today, tomorrow } = useMemo(() => {
     const now = new Date();
-    const tomorrowDate = new Date(now);
-    tomorrowDate.setDate(now.getDate() + 1);
+    const [todayDayKey, tomorrowDayKey] = clinicTodayTomorrowKeys(now, clinicTz);
     const todayKey = formatAppDate(now.toISOString(), clinicTz);
-    const tomorrowKey = formatAppDate(tomorrowDate.toISOString(), clinicTz);
+    const tomorrowKey = formatAppDate(`${tomorrowDayKey}T12:00:00Z`, clinicTz);
     const todaySlots: Slot[] = [];
     const tomorrowSlots: Slot[] = [];
     for (const s of slots) {
-      const key = formatAppDate(s.startAt, clinicTz);
-      if (key === todayKey) todaySlots.push(s);
-      else if (key === tomorrowKey) tomorrowSlots.push(s);
+      const key = dayKeyInTz(new Date(s.startAt), clinicTz);
+      if (key === todayDayKey) todaySlots.push(s);
+      else if (key === tomorrowDayKey) tomorrowSlots.push(s);
     }
     return {
       today: { label: todayKey, slots: todaySlots },

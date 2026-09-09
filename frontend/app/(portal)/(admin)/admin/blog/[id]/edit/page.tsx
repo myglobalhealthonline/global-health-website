@@ -23,6 +23,7 @@ import { BlogTranslationTabs } from "../../_components/blog-translation-tabs";
 import { parseBlogBody, validateBlogBody } from "../../_components/blog-form-parse";
 import { FormSection } from "@/components/FormSection";
 import { SetCrumbTitle } from "@/components/crumb-title";
+import { PendingSubmitButton } from "@/components/admin/pending-submit";
 
 export const dynamic = "force-dynamic";
 
@@ -107,17 +108,16 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
     const removed: string[] = [];
     const touchedSlugs: string[] = [post.slug, updated.data.post.slug, ...translations.map((t) => t.slug)];
 
+    // Validate every language before any write, then write them all at once:
+    // five sequential round-trips to the backend made "Save article" feel dead.
+    const writes: Array<{ code: string; slug: string; run: () => Promise<{ ok: boolean; message?: string }> }> = [];
     for (const code of translatableLocales) {
       const title = (formData.get(`tr_${code}_title`) as string)?.trim() ?? "";
       const slug = (formData.get(`tr_${code}_slug`) as string)?.trim() ?? "";
 
       if (!title && !slug) {
         if (!existingLocales.has(code)) continue;
-        const dropped = await deleteAdminBlogTranslation(id, code);
-        if (!dropped.ok) {
-          redirect(`/admin/blog/${id}/edit?error=${encodeURIComponent(`${code}: ${dropped.message}`)}`);
-        }
-        removed.push(code);
+        writes.push({ code, slug: "", run: () => deleteAdminBlogTranslation(id, code) });
         continue;
       }
       if (!title || !slug) {
@@ -125,21 +125,33 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
           `/admin/blog/${id}/edit?error=${encodeURIComponent(`${code} needs both a title and a slug`)}`,
         );
       }
-
-      const result = await putAdminBlogTranslation(id, code, {
-        title,
+      writes.push({
+        code,
         slug,
-        excerpt: (formData.get(`tr_${code}_excerpt`) as string)?.trim() || null,
-        content: (formData.get(`tr_${code}_content`) as string)?.trim() || null,
-        seoTitle: (formData.get(`tr_${code}_seoTitle`) as string)?.trim() || null,
-        seoDesc: (formData.get(`tr_${code}_seoDesc`) as string)?.trim() || null,
-        coverImageAlt: (formData.get(`tr_${code}_coverImageAlt`) as string)?.trim() || null,
+        run: () =>
+          putAdminBlogTranslation(id, code, {
+            title,
+            slug,
+            excerpt: (formData.get(`tr_${code}_excerpt`) as string)?.trim() || null,
+            content: (formData.get(`tr_${code}_content`) as string)?.trim() || null,
+            seoTitle: (formData.get(`tr_${code}_seoTitle`) as string)?.trim() || null,
+            seoDesc: (formData.get(`tr_${code}_seoDesc`) as string)?.trim() || null,
+            coverImageAlt: (formData.get(`tr_${code}_coverImageAlt`) as string)?.trim() || null,
+          }),
       });
-      if (!result.ok) {
-        redirect(`/admin/blog/${id}/edit?error=${encodeURIComponent(`${code}: ${result.message}`)}`);
+    }
+    const results = await Promise.all(writes.map((w) => w.run()));
+    for (const [i, w] of writes.entries()) {
+      const r = results[i];
+      if (!r.ok) {
+        redirect(`/admin/blog/${id}/edit?error=${encodeURIComponent(`${w.code}: ${r.message}`)}`);
       }
-      saved.push(code);
-      touchedSlugs.push(slug);
+      if (w.slug) {
+        saved.push(w.code);
+        touchedSlugs.push(w.slug);
+      } else {
+        removed.push(w.code);
+      }
     }
 
     bustBlogCaches(...touchedSlugs);
@@ -285,9 +297,9 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
           <Btn href="/admin/blog" variant="ghost" size="md">
             Cancel
           </Btn>
-          <Btn type="submit" variant="primary" size="md">
+<PendingSubmitButton className="gh-btn gh-btn-primary" style={{ minHeight: 40, padding: "0 20px" }} busyLabel="Saving article…">
             Save article
-          </Btn>
+          </PendingSubmitButton>
         </div>
       </form>
 
@@ -321,9 +333,7 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
               ))}
             </div>
             <div className="mt-4">
-              <button type="submit" className="gh-btn gh-btn-primary">
-                Save country visibility
-              </button>
+              <PendingSubmitButton busyLabel="Saving…">Save country visibility</PendingSubmitButton>
             </div>
           </form>
         </FormSection>

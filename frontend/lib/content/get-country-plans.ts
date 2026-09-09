@@ -101,6 +101,7 @@ function parsePlan(row: unknown): PublicPlan | null {
     !Array.isArray(r.features) ||
     !r.features.every(nonEmptyStr) ||
     (r.hasSpecialistDiscount !== undefined && typeof r.hasSpecialistDiscount !== "boolean") ||
+    (r.specialistDiscountPercent !== undefined && !(r.specialistDiscountPercent === null || (typeof r.specialistDiscountPercent === "number" && r.specialistDiscountPercent > 0))) ||
     !nullableNonNegativeInt(r.perkUnlockMonths) ||
     !perks ||
     perks.some((perk) => perk === null) ||
@@ -124,6 +125,7 @@ function parsePlan(row: unknown): PublicPlan | null {
     wellnessCreditsPerMonth: r.wellnessCreditsPerMonth,
     features: r.features,
     ...(typeof r.hasSpecialistDiscount === "boolean" && { hasSpecialistDiscount: r.hasSpecialistDiscount }),
+    ...(r.specialistDiscountPercent !== undefined && { specialistDiscountPercent: r.specialistDiscountPercent as number | null }),
     perkUnlockMonths: r.perkUnlockMonths,
     perks: perks as PublicPlanPerk[],
     wellnessKits: wellnessKits as PublicPlanWellnessKit[],

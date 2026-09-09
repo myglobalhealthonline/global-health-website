@@ -434,9 +434,9 @@ export async function anonymizePatient(params: {
       // portal holds, which comes from `Appointment.email` — retained here.
       // `PatientProfile.email` is about to become a tombstone, so anything
       // still resolving by that address alone would lose the retained record.
-      // Stamping the durable link first is what keeps the treating doctor,
-      // ADMIN and SUPER_ADMIN reaching it afterwards. Corroborated (email AND
-      // purchaser account must agree) and never overwrites an existing link.
+      // Account-backed rows can be stamped from account + address evidence.
+      // Accountless rows cannot be inferred from an address and are left
+      // untouched; safely created guest charts already carry exact links.
       await linkAppointmentsToPatientProfile(tx, {
         patientProfileId: profile.id,
         email: profile.email,

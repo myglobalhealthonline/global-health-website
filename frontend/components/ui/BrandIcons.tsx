@@ -38,6 +38,21 @@ export function IconFacebook({ className }: IconProps) {
   );
 }
 
+/**
+ * Meta's infinity-loop wordmark glyph — used by `AdSourceIcon` to mark an
+ * order that came from a Facebook/Instagram ad. Deliberately the corporate
+ * Meta mark rather than the Facebook "f": the attribution it stands for covers
+ * both surfaces, and `IconFacebook` above already means the Facebook page link
+ * in the site footer.
+ */
+export function IconMeta({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
+      <path d="M6.06 5.2c-1.9 0-3.35 1.36-4.14 3.15C1.2 9.98.94 11.74.94 13.1c0 1.5.28 2.72.84 3.6.6.94 1.53 1.45 2.71 1.45 1.02 0 1.9-.4 2.72-1.24.7-.72 1.35-1.7 2.1-3.02l1.2-2.12c.1-.18.2-.35.3-.52.42.68.87 1.44 1.38 2.32l.86 1.48c.85 1.47 1.5 2.42 2.19 3.06.72.67 1.5.98 2.47.98 1.18 0 2.1-.5 2.7-1.42.57-.87.87-2.1.87-3.65 0-1.42-.28-3.24-.99-4.87C20.5 6.56 19.05 5.2 17.1 5.2c-1.16 0-2.19.45-3.14 1.32-.66.6-1.3 1.4-1.99 2.4-.69-1-1.33-1.8-1.99-2.4-.95-.87-1.97-1.32-3.13-1.32H6.06zm-.04 2.32c.62 0 1.2.26 1.79.79.48.44.98 1.06 1.53 1.86l-.35.53-1.2 2.12c-.66 1.16-1.16 1.9-1.6 2.35-.4.4-.75.56-1.16.56-.44 0-.76-.18-1-.56-.28-.44-.44-1.16-.44-2.13 0-1.12.22-2.53.7-3.63.44-1 1.05-1.89 1.73-1.89zm11.06 0c.7 0 1.32.9 1.77 1.93.48 1.1.7 2.5.7 3.6 0 .96-.14 1.66-.4 2.09-.23.38-.55.56-1 .56-.42 0-.79-.17-1.2-.57-.46-.46-.98-1.2-1.66-2.38l-.86-1.48c-.5-.86-.94-1.6-1.35-2.25.55-.8 1.05-1.42 1.53-1.86.58-.53 1.16-.79 1.78-.79h.69z" />
+    </svg>
+  );
+}
+
 export function IconLinkedin({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>

@@ -21,6 +21,7 @@ import { OrderMeetLinkDisplay } from "../_components/order-meet-link-display";
 import { UpdateAppointmentPanel } from "./_components/update-appointment-panel";
 import { AdminTrackingForm } from "./_components/tracking-form";
 import { SetCrumbTitle } from "@/components/crumb-title";
+import { AdSourceIcon } from "@/components/AdSourceIcon";
 
 export const dynamic = "force-dynamic";
 
@@ -63,6 +64,16 @@ type AdminOrder = {
   shipPostalCode: string | null;
   shipCountryCode: string | null;
   appointmentIds: string[];
+  /** Ad provenance derived server-side from the order's landing attribution
+   *  (`backend/src/modules/orders/order-ad-source.ts`). Null for organic,
+   *  direct and non-Meta paid traffic. */
+  adSource?: "META" | null;
+  adCampaign?: {
+    utmSource: string | null;
+    utmMedium: string | null;
+    utmCampaign: string | null;
+    landingPath: string | null;
+  } | null;
   meetingUrl: string | null;
   trackingNumber: string | null;
   trackingCarrier: string | null;
@@ -216,6 +227,27 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
             hint: hasConsultation ? "Consultation order" : "Commerce order",
             tone: hasConsultation ? "brand" : "neutral",
           },
+          ...(order.adSource === "META"
+            ? [
+                {
+                  label: "Traffic source",
+                  value: (
+                    <span className="inline-flex items-center gap-1.5">
+                      <AdSourceIcon source={order.adSource} />
+                      Meta ads
+                    </span>
+                  ),
+                  hint:
+                    order.adCampaign?.utmCampaign ||
+                    [order.adCampaign?.utmSource, order.adCampaign?.utmMedium]
+                      .filter(Boolean)
+                      .join(" · ") ||
+                    "Facebook/Instagram click",
+                  tone: "brand" as const,
+                  valueSize: "sm" as const,
+                },
+              ]
+            : []),
           ...(primaryConsult
             ? [
                 {

@@ -49,6 +49,9 @@ export interface PublicPlan {
   /** At least one active rule discounts a specialist service. Gates the card's
    *  default "specialist savings" bullet — see PricingPlanCard. */
   hasSpecialistDiscount?: boolean;
+  /** Highest active % discount on specialist consultations; null/absent when
+   *  none. Lets the default bullet name the real figure ("10% off ..."). */
+  specialistDiscountPercent?: number | null;
   /** Soonest "after N paid months" gate; null hides the universal note. */
   perkUnlockMonths: number | null;
   perks: PublicPlanPerk[];

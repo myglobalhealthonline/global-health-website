@@ -2,6 +2,8 @@ import "server-only";
 import { serverReadAuthHeaders } from "@/lib/api/client";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 import { marketDisplayName } from "@/lib/content/doctor-market-name";
+import { AvailabilityUnavailableError, fetchLiveAvailability } from "./availability-fetch";
+import { tracePublicRead } from "./trace-public-read";
 
 /**
  * Server-side fetcher for the public doctor availability endpoint.
@@ -38,27 +40,33 @@ export async function getDoctorAvailability(
 ): Promise<DoctorAvailabilityResult> {
   const empty: DoctorAvailabilityResult = { slots: [], clinicTimezone: "UTC" };
   const backend = getBackendOrigin();
-  if (!backend) return empty;
+  if (!backend) throw new AvailabilityUnavailableError();
   const url = `${backend}/api/doctors/${encodeURIComponent(countryCode)}/${encodeURIComponent(
     doctorSlug,
   )}/availability?days=${days}`;
   try {
-    const res = await fetch(url, {
-      cache: "no-store",
-      headers: serverReadAuthHeaders(url.slice(backend.length), "GET"),
-    });
-    if (!res.ok) return empty;
+    const res = await tracePublicRead("booking_doctor_availability", () =>
+      fetchLiveAvailability(url, {
+        cache: "no-store",
+        headers: serverReadAuthHeaders(url.slice(backend.length), "GET"),
+      }),
+    );
+    if (!res.ok) {
+      if (res.status === 404) return empty;
+      throw new AvailabilityUnavailableError(`Availability request failed (${res.status})`);
+    }
     const json = (await res.json()) as {
       ok?: boolean;
       data?: { slots?: PublicSlot[]; clinicTimezone?: string };
     };
-    if (!json.ok || !json.data?.slots) return empty;
+    if (!json.ok || !Array.isArray(json.data?.slots)) throw new AvailabilityUnavailableError();
     return {
       slots: json.data.slots,
       clinicTimezone: json.data.clinicTimezone ?? "UTC",
     };
-  } catch {
-    return empty;
+  } catch (error) {
+    if (error instanceof AvailabilityUnavailableError) throw error;
+    throw new AvailabilityUnavailableError();
   }
 }
 
@@ -92,7 +100,7 @@ export async function getServiceDoctorAvailability(
 ): Promise<DoctorAvailabilityResult> {
   const empty: DoctorAvailabilityResult = { slots: [], clinicTimezone: "UTC" };
   const backend = getBackendOrigin();
-  if (!backend) return empty;
+  if (!backend) throw new AvailabilityUnavailableError();
   const insuranceParam = insuranceCompanyId
     ? `&insurance=${encodeURIComponent(insuranceCompanyId)}`
     : "";
@@ -102,22 +110,28 @@ export async function getServiceDoctorAvailability(
     doctorSlug,
   )}/availability?days=${days}${insuranceParam}`;
   try {
-    const res = await fetch(url, {
-      cache: "no-store",
-      headers: serverReadAuthHeaders(url.slice(backend.length), "GET"),
-    });
-    if (!res.ok) return empty;
+    const res = await tracePublicRead("booking_service_doctor_availability", () =>
+      fetchLiveAvailability(url, {
+        cache: "no-store",
+        headers: serverReadAuthHeaders(url.slice(backend.length), "GET"),
+      }),
+    );
+    if (!res.ok) {
+      if (res.status === 404) return empty;
+      throw new AvailabilityUnavailableError(`Availability request failed (${res.status})`);
+    }
     const json = (await res.json()) as {
       ok?: boolean;
       data?: { slots?: PublicSlot[]; clinicTimezone?: string };
     };
-    if (!json.ok || !json.data?.slots) return empty;
+    if (!json.ok || !Array.isArray(json.data?.slots)) throw new AvailabilityUnavailableError();
     return {
       slots: json.data.slots,
       clinicTimezone: json.data.clinicTimezone ?? "UTC",
     };
-  } catch {
-    return empty;
+  } catch (error) {
+    if (error instanceof AvailabilityUnavailableError) throw error;
+    throw new AvailabilityUnavailableError();
   }
 }
 

@@ -37,6 +37,7 @@ import {
 } from "../modules/coupons/coupon-reserve.service.js";
 import { releaseCouponRedemption } from "../modules/coupons/coupon-release.service.js";
 import { minimumChargeCents } from "../modules/orders/stripe-minimum-charge.js";
+import { orderAdCampaign, orderAdSource } from "../modules/orders/order-ad-source.js";
 import { resolveActiveCart } from "../modules/cart/resolve-active-cart.js";
 import {
   commitOrderCreditReservations,
@@ -263,7 +264,46 @@ const checkoutBodySchema = z.object({
    * Pay is refused here rather than honoured on the client's word.
    */
   couponCode: z.string().trim().max(32).optional().or(z.literal("")),
+  /**
+   * Ad-click / campaign attribution captured at landing (see
+   * `frontend/components/analytics/AttributionCapture.tsx`), forwarded so
+   * the order can be tied to the ad that drove it. `marketingConsent` is the
+   * hard gate on the Meta Conversions API send (backend/src/lib/meta) — CAPI
+   * must never fire for a visitor who declined marketing consent, and the
+   * webhook that flips PAID has no cookies of its own to check.
+   */
+  attribution: z
+    .object({
+      marketingConsent: z.boolean(),
+      fbclid: z.string().trim().max(200).optional(),
+      fbp: z.string().trim().max(200).optional(),
+      fbc: z.string().trim().max(200).optional(),
+      utmSource: z.string().trim().max(200).optional(),
+      utmMedium: z.string().trim().max(200).optional(),
+      utmCampaign: z.string().trim().max(200).optional(),
+      utmTerm: z.string().trim().max(200).optional(),
+      utmContent: z.string().trim().max(200).optional(),
+      landingPath: z.string().trim().max(300).optional(),
+    })
+    .optional(),
 });
+
+/**
+ * The real visitor IP for a proxied checkout POST, same trust rule as the
+ * rate limiter in app.ts: only when the frontend authenticates itself with
+ * PROXY_CLIENT_IP_SECRET does the forwarded `x-gh-client-ip` header get
+ * trusted — otherwise request.ip (the frontend's own egress IP on a proxied
+ * call) is what we record. Used only to raise Meta Conversions API match
+ * quality; never for rate-limiting here.
+ */
+function checkoutVisitorIp(request: FastifyRequest): string {
+  const secret = env.PROXY_CLIENT_IP_SECRET;
+  if (secret && request.headers["x-gh-proxy-secret"] === secret) {
+    const fwd = request.headers["x-gh-client-ip"];
+    if (typeof fwd === "string" && fwd.length > 0 && fwd.length <= 64) return fwd;
+  }
+  return request.ip;
+}
 
 const orderIdParamSchema = z.object({ id: z.string().min(1).max(120) });
 // Status transition and tracking-field updates share this endpoint. Both are
@@ -778,6 +818,16 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
               shipCountryCode: body.data.shipCountryCode
                 ? body.data.shipCountryCode.toUpperCase()
                 : null,
+              adAttribution: body.data.attribution
+                ? {
+                    ...body.data.attribution,
+                    clientIp: checkoutVisitorIp(request),
+                    clientUserAgent:
+                      typeof request.headers["user-agent"] === "string"
+                        ? request.headers["user-agent"].slice(0, 300)
+                        : null,
+                  }
+                : undefined,
             },
           });
           // Claim the coupon use in the SAME transaction as the order, so a
@@ -1856,6 +1906,9 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           countryCode: o.countryCode,
           currencyCode: o.currencyCode,
           bookingSource: o.bookingSource,
+          // Derived on read, not stored — see order-ad-source.ts. Drives the
+          // Meta glyph in the admin orders table's Source column.
+          adSource: orderAdSource(o.adAttribution),
           isFirstOrder: firstOrderIdByEmail.get(o.email) === o.id,
           totalCents: o.totalCents,
           itemCount: o.items.reduce((s, i) => s + i.quantity, 0),
@@ -2007,6 +2060,11 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           fullName: order.fullName,
           phone: order.phone,
           userId: order.userId,
+          // Ad provenance, derived on read (order-ad-source.ts). `adCampaign`
+          // is the admin-safe subset of `adAttribution` — campaign fields only,
+          // never the fbp/fbc/IP/user-agent match identifiers.
+          adSource: orderAdSource(order.adAttribution),
+          adCampaign: orderAdCampaign(order.adAttribution),
           ship: {
             name: order.shipName,
             line1: order.shipLine1,

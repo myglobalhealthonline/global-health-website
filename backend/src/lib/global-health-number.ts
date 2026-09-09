@@ -1,5 +1,4 @@
-import { Pool } from "pg";
-import { env } from "../config/env.js";
+import { numberingPool } from "../db/prisma.js";
 
 /**
  * Global Health Number generator.
@@ -14,18 +13,9 @@ import { env } from "../config/env.js";
  * be written to PatientProfile.globalHealthNumber in the same transaction.
  */
 
-let pool: Pool | null = null;
-
-function getPool(): Pool {
-  if (!pool) {
-    pool = new Pool({ connectionString: env.DATABASE_URL });
-  }
-  return pool;
-}
-
 export async function generateGlobalHealthNumber(): Promise<string> {
   const year = new Date().getFullYear().toString();
-  const client = await getPool().connect();
+  const client = await numberingPool.connect();
   try {
     await client.query("BEGIN");
 

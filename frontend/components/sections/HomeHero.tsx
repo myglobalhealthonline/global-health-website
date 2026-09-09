@@ -200,8 +200,7 @@ export function HomeHero({
 
           {/* fade=false: the headline is the LCP candidate — first paint at
               opacity 0 would exclude it from LCP entirely (NO_LCP). */}
-          <HeroReveal delay={130} fade={false}>
-            <h1
+          <h1
               id="hero-title"
               className="gh-home-hero-title text-white"
               style={{ fontSize: titleFontSize, maxWidth: `${IDEAL_HEADING_CHARS}ch` }}
@@ -224,16 +223,13 @@ export function HomeHero({
                   </span>
                 </>
               )}
-            </h1>
-          </HeroReveal>
+          </h1>
 
-          <HeroReveal delay={240}>
-            <p className="gh-home-hero-subtitle mt-8 max-w-[46ch] text-[length:var(--text-body-lg)] leading-relaxed">
+          <p className="gh-home-hero-subtitle mt-8 max-w-[46ch] text-[length:var(--text-body-lg)] leading-relaxed">
               {displayHeroSubtitle ??
                 (i18n?.subtitle ??
                   "Choose a service, select an open time, and speak with licensed clinicians registered with national medical councils across Europe.")}
-            </p>
-          </HeroReveal>
+          </p>
 
           {displayHeroPriceBadge ? (
             <HeroReveal delay={280}>
@@ -243,8 +239,7 @@ export function HomeHero({
             </HeroReveal>
           ) : null}
 
-          <HeroReveal delay={340}>
-            <div className="mt-11 flex flex-wrap items-center gap-4">
+          <div className="mt-11 flex flex-wrap items-center gap-4">
               <BookCta
                 href={bookHref}
                 bookability={bookability}
@@ -262,8 +257,7 @@ export function HomeHero({
               >
                 {i18n?.secondary ?? "Browse services"}
               </Link>
-            </div>
-          </HeroReveal>
+          </div>
 
           <HeroReveal delay={430}>
             <div className="gh-home-hero-trustDivider mt-12 pt-7">
@@ -287,7 +281,7 @@ export function HomeHero({
 
           {/* Same-day quick-book on mobile/tablet (hero panel is lg-only). */}
           {showSameDay && sameDay ? (
-            <HeroReveal delay={300} className="mt-12 lg:hidden">
+            <div className="mt-12 lg:hidden">
               <SameDayBooking
                 country={sameDay.countrySlug}
                 lang={sameDay.lang}
@@ -298,12 +292,12 @@ export function HomeHero({
                 i18n={i18n?.sameDay}
                 viewport="mobile"
               />
-            </HeroReveal>
+            </div>
           ) : null}
         </div>
 
         {/* ── RIGHT — same-day GP quick-book (falls back to the static panel) ── */}
-        <HeroReveal delay={380} className="relative hidden min-h-[660px] w-full lg:flex lg:items-end">
+        <div className="relative hidden min-h-[660px] w-full lg:flex lg:items-end">
           {showSameDay && sameDay ? (
             <div className="gh-home-hero-availabilityPanel w-full pb-8">
               <SameDayBooking
@@ -370,7 +364,7 @@ export function HomeHero({
               </div>
             </aside>
           ) : null}
-        </HeroReveal>
+        </div>
       </div>
 
       <div

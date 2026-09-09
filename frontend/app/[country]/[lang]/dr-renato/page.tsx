@@ -129,8 +129,8 @@ export default async function DrRenatoSharePage({ params }: { params: Params }) 
       ),
     }))
     .sort((a, b) => {
-      const rank = (state: "BOOKABLE" | "RETURNING" | "UNAVAILABLE") =>
-        state === "BOOKABLE" ? 0 : state === "RETURNING" ? 1 : 2;
+      const rank = (state: "BOOKABLE" | "RETURNING" | "UNAVAILABLE" | "UNKNOWN") =>
+        state === "BOOKABLE" ? 0 : state === "RETURNING" ? 1 : state === "UNKNOWN" ? 1 : 2;
       return rank(a.pairBookability.state) - rank(b.pairBookability.state) ||
         a.position - b.position;
     });

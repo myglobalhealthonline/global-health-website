@@ -1,5 +1,4 @@
-import { Pool } from "pg";
-import { env } from "../config/env.js";
+import { numberingPool } from "../db/prisma.js";
 
 /**
  * Sequential order number generator.
@@ -10,17 +9,8 @@ import { env } from "../config/env.js";
  * never collide. Never call from the frontend.
  */
 
-let pool: Pool | null = null;
-
-function getPool(): Pool {
-  if (!pool) {
-    pool = new Pool({ connectionString: env.DATABASE_URL });
-  }
-  return pool;
-}
-
 export async function generateOrderNumber(): Promise<string> {
-  const client = await getPool().connect();
+  const client = await numberingPool.connect();
   try {
     await client.query("BEGIN");
 

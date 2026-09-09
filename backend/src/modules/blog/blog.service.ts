@@ -407,6 +407,20 @@ export type PublicBlogPost = {
   ctaService: { slug: string; name: string; countrySlug: string } | null;
 };
 
+export type PublicBlogSummary = Omit<PublicBlogPost, "body"> & { readingTime: number };
+
+/** Keep the existing 200-wpm card estimate without sending HTML to list callers. */
+function toPublicBlogSummary(post: PublicBlogPost): PublicBlogSummary {
+  const { body, ...summary } = post;
+  const text = body
+    .replace(/<(style|script)\b[^>]*>[\s\S]*?<\/\1>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  const words = text ? text.split(" ").length : 0;
+  return { ...summary, readingTime: Math.max(1, Math.ceil(words / 200)) };
+}
+
 type BlogDoctorRow = {
   fullName: string;
   slug: string;
@@ -581,7 +595,8 @@ function countryVisibilityWhere(countryCode: string): Prisma.BlogPostWhereInput 
 export async function getPublicBlogPosts(
   locale?: LocaleCode,
   countryCode?: string,
-): Promise<PublicBlogPost[]> {
+  view: "full" | "summary" = "full",
+): Promise<Array<PublicBlogPost | PublicBlogSummary>> {
   try {
     const rows = await prisma.blogPost.findMany({
       where: {
@@ -614,7 +629,12 @@ export async function getPublicBlogPosts(
       take: PUBLIC_BLOG_LIST_CAP,
       select: publicBlogSelect,
     });
-    return rows.map((row) => toPublicBlogPost(row, locale));
+    // Mapping first preserves translation servability, routing and localized
+    // reading time. Only detail/full consumers receive article HTML.
+    return rows.map((row) => {
+      const post = toPublicBlogPost(row, locale);
+      return view === "summary" ? toPublicBlogSummary(post) : post;
+    });
   } catch (error) {
     throw normalizeDbError(error, "Blog data is unavailable");
   }

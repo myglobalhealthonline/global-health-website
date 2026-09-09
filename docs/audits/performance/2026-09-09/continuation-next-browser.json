@@ -1,0 +1,10 @@
+{
+  "passed": false,
+  "scope": "Local Next webpack development server, anonymous public GET proxy",
+  "observations": [
+    "Booking landing page rendered its public catalogue with HTTP 200.",
+    "Production CSP blocked webpack development eval. Test-context bypass removed that error but controls still did not acquire React handlers within 30 seconds.",
+    "Development HMR WebSocket handshake failed; remote media rewritten to localhost was blocked by Next image private-IP protection."
+  ],
+  "limit": "Full Next navigation/back/retry and production visual/latency acceptance remain unverified. Component-level browser regressions passed separately. No security setting changed."
+}

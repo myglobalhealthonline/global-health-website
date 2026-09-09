@@ -13,7 +13,6 @@ import { enqueuePersonalObjectPurge } from "../outbox/outbox.js";
 import { revokeTrustedDevices } from "../two-factor/login-otp.service.js";
 import { linkMembershipsInBackground } from "../memberships/membership-linking.service.js";
 import { applyPatientProfileUpdate } from "../patient-profile/patient-profile.service.js";
-import { linkAppointmentsToPatientProfile } from "../patient-profile/appointment-patient-link.js";
 
 export type SafeUser = {
   id: string;
@@ -221,51 +220,12 @@ async function notifyExistingAccountOfDuplicateRegistration(
   await templates.sendDuplicateRegistrationNoticeEmail({ to: user.email, fullName: user.fullName });
 }
 
-/**
- * Claim any guest appointments whose email matches this user's. Guests can
- * book without an account; on first register or login we want their
- * historic bookings to surface in /account/bookings instead of vanishing.
- *
- * Match is case-insensitive on email AND scoped to rows that have no
- * existing owner (userId IS NULL). Returns the count of rows linked.
- * Failure is logged at the caller; we don't throw because account creation
- * / login shouldn't be blocked by a backfill miss.
- */
+/** A verified mailbox alone cannot prove ownership of historical guest PHI. */
 export async function claimGuestAppointmentsForUser(
-  userId: string,
-  email: string,
+  _userId: string,
+  _email: string,
 ): Promise<number> {
-  try {
-    const result = await prisma.appointment.updateMany({
-      where: {
-        userId: null,
-        email: { equals: email, mode: "insensitive" },
-      },
-      data: { userId },
-    });
-
-    // Clinical half of the claim, through the ONE helper that owns the
-    // corroboration rules (email + purchaser account agree, and the line was
-    // not booked for someone else). Rows that already carry a link are left
-    // alone, which is what stops a released email from moving an anonymized
-    // patient's consultation onto whoever registers with the address next:
-    // anonymization links their appointments before it tombstones the email,
-    // so those rows are no longer claimable.
-    const profile = await prisma.patientProfile.findUnique({
-      where: { userId },
-      select: { id: true, email: true },
-    });
-    if (profile && profile.email.toLowerCase() === email.trim().toLowerCase()) {
-      await linkAppointmentsToPatientProfile(prisma, {
-        patientProfileId: profile.id,
-        email,
-        userId,
-      });
-    }
-    return result.count;
-  } catch {
-    return 0;
-  }
+  return 0;
 }
 
 /**

@@ -11,7 +11,7 @@ import { stopPrePaymentFlowOnPaid } from "../automation/pre-payment-flow.service
 import { emitOpsAlert } from "../subscriptions/ops/ops-alert.js";
 import { commitOrderCreditReservations } from "../subscriptions/checkout-pricing.service.js";
 import { markCouponRedemptionConsumed } from "../coupons/coupon-release.service.js";
-import { enqueueOrderPaidAutomations } from "../outbox/outbox.js";
+import { enqueueOrderPaidAutomations, enqueueMetaCapiPurchase } from "../outbox/outbox.js";
 import { encryptPhi } from "../../lib/crypto/phi-crypto.js";
 import { markRequisitionsReadyOnOrderPaid } from "../lab-orders/lab-requisitions.service.js";
 import { resolvePatientProfileIdForNewAppointment } from "../patient-profile/appointment-patient-link.js";
@@ -88,6 +88,13 @@ export async function completeOrderPaymentFromCheckoutSession(
     // paid before the outbox existed. Off the awaited critical path either way.
     await enqueueOrderPaidAutomations(prisma, orderId, { sendShopConfirmation: false }).catch(
       (err) => log.error({ err, orderId }, "Outbox enqueue (already-paid) failed"),
+    );
+    // Same self-heal for the Meta Conversions API send: skipDuplicates makes a
+    // re-delivery a no-op, and an order whose first PAID flip predated this
+    // feature still gets a row (the dispatcher then skips it if it carries no
+    // consented attribution).
+    await enqueueMetaCapiPurchase(prisma, orderId).catch((err) =>
+      log.error({ err, orderId }, "Outbox enqueue (meta capi, already-paid) failed"),
     );
     // Still attempt the credit commit on every call, not just the one that
     // first flipped PAID (bug found in a prior review pass: the
@@ -319,6 +326,11 @@ async function markOrderPaidInTransaction(
     // provider is unreachable at payment time. sendShopConfirmation mirrors the
     // old first-flip behaviour (shop-only orders got the confirmation email).
     await enqueueOrderPaidAutomations(tx, orderId, { sendShopConfirmation: true });
+    // Same durable-outbox reasoning as above, for the Meta Conversions API
+    // Purchase send: the dispatcher (meta-capi-dispatch.service.ts) is where
+    // consent/config/zero-total gating happens, not here, so every paid order
+    // gets a row and older orders with no adAttribution are simply skipped.
+    await enqueueMetaCapiPurchase(tx, orderId);
 
     return { alreadyPaid: false, resurrectedFromCancelled };
   });
@@ -610,15 +622,31 @@ async function fulfillPaidOrderFromCheckoutSession(
         select: { id: true, paymentStatus: true },
       });
       if (existingOnSlot) {
-        if (existingOnSlot.paymentStatus !== PaymentStatus.PAID) {
+        const paymentData = {
+          paymentStatus: PaymentStatus.PAID,
+          paidAt: new Date(),
+          stripePaymentIntentId:
+            typeof session.payment_intent === "string" ? session.payment_intent : null,
+        };
+        if (item.bookingForOther || item.familyMemberId) {
+          const claim = await tx.appointment.updateMany({
+            where: { id: existingOnSlot.id, patientProfileId: null },
+            data: existingOnSlot.paymentStatus === PaymentStatus.PAID
+              ? { paymentStatus: PaymentStatus.PAID }
+              : paymentData,
+          });
+          if (claim.count !== 1) {
+            unfulfilled.push({
+              itemId: item.id,
+              slotId: item.timeSlotId,
+              reason: "existing appointment is already bound to a patient",
+            });
+            continue;
+          }
+        } else if (existingOnSlot.paymentStatus !== PaymentStatus.PAID) {
           await tx.appointment.update({
             where: { id: existingOnSlot.id },
-            data: {
-              paymentStatus: PaymentStatus.PAID,
-              paidAt: new Date(),
-              stripePaymentIntentId:
-                typeof session.payment_intent === "string" ? session.payment_intent : null,
-            },
+            data: paymentData,
           });
         }
         await tx.orderItem.update({
@@ -1228,6 +1256,9 @@ export async function syncOrderPaymentFromStripe(
     // already exists, re-queues legacy orders paid before the outbox existed.
     await enqueueOrderPaidAutomations(prisma, orderId, { sendShopConfirmation: false }).catch(
       (err) => log.error({ err, orderId }, "Outbox enqueue (sync already-paid) failed"),
+    );
+    await enqueueMetaCapiPurchase(prisma, orderId).catch((err) =>
+      log.error({ err, orderId }, "Outbox enqueue (meta capi, sync already-paid) failed"),
     );
     return { ok: true, code: "ALREADY_PAID" };
   }

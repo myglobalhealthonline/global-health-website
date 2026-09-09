@@ -8,6 +8,7 @@ import { PUBLIC_BLOG_TAG } from "@/lib/content/get-public-blog";
 import { AdminCard, Btn, PageHeader } from "../../_components/atoms";
 import { BlogFields } from "../_components/blog-fields";
 import { parseBlogBody, validateBlogBody } from "../_components/blog-form-parse";
+import { PendingSubmitButton } from "@/components/admin/pending-submit";
 
 export const dynamic = "force-dynamic";
 
@@ -68,9 +69,9 @@ export default async function AdminNewBlogPage({ searchParams }: PageProps) {
           <Btn href="/admin/blog" variant="ghost" size="md">
             Cancel
           </Btn>
-          <Btn type="submit" variant="primary" size="md">
+<PendingSubmitButton className="gh-btn gh-btn-primary" style={{ minHeight: 40, padding: "0 20px" }} busyLabel="Creating…">
             Create post
-          </Btn>
+          </PendingSubmitButton>
         </div>
       </form>
     </>

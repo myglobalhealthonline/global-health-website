@@ -6,6 +6,7 @@ import { createAdminJobGroup, fetchAdminCountries } from "@/lib/admin/admin-api"
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { PUBLIC_JOBS_TAG } from "@/lib/content/get-public-jobs";
 import { AdminCard, Btn, PageHeader } from "../../_components/atoms";
+import { PendingSubmitButton } from "@/components/admin/pending-submit";
 import { JobFields } from "../_components/job-fields";
 import { parseJobForm, toAdminJobGroupInput, validateJobInput } from "../_components/job-form-parse";
 
@@ -31,7 +32,7 @@ export default async function NewCareerJobPage({ searchParams }: { searchParams?
     <PageHeader eyebrow="Careers" title="New job" description="Create one listing with content for each market language." />
     {sp.error ? <p className="gh-status-warning mb-4 rounded-md border px-4 py-3">{sp.error}</p> : null}
     <form action={create} className="gh-admin-careers-form"><JobFields countries={countriesResult.data.countries} />
-      <div className="mt-4 flex justify-end gap-2"><Btn href="/admin/careers" variant="ghost">Cancel</Btn><Btn type="submit">Create job</Btn></div>
+      <div className="mt-4 flex justify-end gap-2"><Btn href="/admin/careers" variant="ghost">Cancel</Btn><PendingSubmitButton style={{ minHeight: 40, padding: "0 20px" }} busyLabel="Creating…">Create job</PendingSubmitButton></div>
     </form>
   </>;
 }

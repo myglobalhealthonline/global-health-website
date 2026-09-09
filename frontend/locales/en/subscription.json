@@ -61,6 +61,7 @@
     "secureLine": "Secure online/video consultations",
     "bookingLine": "Access to general online consultation booking",
     "specialistLine": "Discounts on selected specialist consultations, where applicable",
+    "specialistDiscountLine": "{percent}% off selected specialist consultations",
     "wellnessRedeemLine": "Collect wellness credits toward eligible home health test kits",
     "choosePlan": "Choose {plan}",
     "chooseCta": "Choose this plan",
