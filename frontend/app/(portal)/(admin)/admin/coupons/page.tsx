@@ -139,9 +139,14 @@ export default async function AdminCouponsPage({
         title="Coupons"
         description="Percentage discount codes — personal ones locked to one address, general ones anyone can use."
         actions={
-          <Btn href="/admin/coupons/new" iconLeft={<Plus className="size-4" />}>
-            New coupon
-          </Btn>
+          <>
+            <Btn href="/admin/coupons/birthday" variant="ghost">
+              Birthday offer settings
+            </Btn>
+            <Btn href="/admin/coupons/new" iconLeft={<Plus className="size-4" />}>
+              New coupon
+            </Btn>
+          </>
         }
       />
 

@@ -69,6 +69,7 @@ export type AdminCouponRedemption = {
 };
 
 export type AdminCouponDetail = AdminCouponListItem & {
+  birthdayOffer: { id: string; status: BirthdayOfferDelivery["status"]; error: string | null } | null;
   recipients: AdminCouponRecipient[];
   redemptions: AdminCouponRedemption[];
 };
@@ -145,6 +146,44 @@ export async function postAdminCouponSend(
 ) {
   return adminRequest<{ queued: boolean; sent?: number; failed?: number }>(
     `/api/admin/coupons/${encodeURIComponent(id)}/send`,
+    { method: "POST", body },
+  );
+}
+
+export type BirthdayOfferSettings = {
+  enabled: boolean;
+  discountPercent: number | null;
+  validityDays: number;
+};
+
+export type BirthdayOfferDelivery = {
+  id: string;
+  couponId: string;
+  year: number;
+  status: "PENDING" | "SENDING" | "SENT" | "FAILED" | "UNKNOWN" | "SKIPPED";
+  error: string | null;
+  sentAt: string | null;
+  createdAt: string;
+  coupon: { code: string };
+};
+
+export type BirthdayOfferOverview = {
+  settings: BirthdayOfferSettings;
+  summary: { sent: number; failed: number; unknown: number; pending: number; skipped: number; redeemed: number };
+  recent: BirthdayOfferDelivery[];
+};
+
+export function fetchAdminBirthdayOffer() {
+  return adminRequest<BirthdayOfferOverview>("/api/admin/coupons/birthday");
+}
+
+export function putAdminBirthdayOffer(body: BirthdayOfferSettings) {
+  return adminRequest<BirthdayOfferSettings>("/api/admin/coupons/birthday", { method: "PUT", body });
+}
+
+export function previewAdminBirthdayOffer(body: { discountPercent: number; validityDays: number; locale: CouponLocale }) {
+  return adminRequest<{ subject: string; html: string; text: string }>(
+    "/api/admin/coupons/birthday/preview",
     { method: "POST", body },
   );
 }

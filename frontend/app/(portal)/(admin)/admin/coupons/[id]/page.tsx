@@ -181,7 +181,9 @@ export default async function AdminCouponDetailPage({
       cardLabel: "Resend",
       priority: 1,
       align: "right",
-      render: (r) => (
+      render: (r) => coupon.birthdayOffer ? (
+        <Link href="/admin/coupons/birthday" className="underline">Delivery details</Link>
+      ) : (
         <form action={sendAction}>
           <input type="hidden" name="recipientId" value={r.id} />
           <button className="gh-btn" type="submit">
@@ -284,6 +286,7 @@ export default async function AdminCouponDetailPage({
                 min={coupon.redeemedCount || 1}
                 step={1}
                 defaultValue={coupon.maxRedemptions}
+                readOnly={Boolean(coupon.birthdayOffer)}
               />
               <small className="mt-1 block text-[var(--color-text-muted)]">
                 Cannot go below the {coupon.redeemedCount} already redeemed.
@@ -315,7 +318,10 @@ export default async function AdminCouponDetailPage({
         </form>
       </AdminCard>
 
-      <AdminCard className="mt-4">
+      {coupon.birthdayOffer ? <AdminCard className="mt-4">
+        <p>Birthday email: {coupon.birthdayOffer.status}. {coupon.birthdayOffer.error}</p>
+        <Btn href="/admin/coupons/birthday" variant="ghost">Birthday offer settings</Btn>
+      </AdminCard> : <AdminCard className="mt-4">
         <h2 className="mb-4 text-[15px] font-bold text-[var(--color-text-primary)]">Send to more people</h2>
         <form action={sendAction} className="grid gap-4">
           <RecipientPicker
@@ -328,7 +334,7 @@ export default async function AdminCouponDetailPage({
             </button>
           </div>
         </form>
-      </AdminCard>
+      </AdminCard>}
 
       <AdminCard padding={0} className="mt-4 overflow-hidden">
         <h2 className="px-4 pt-4 text-[15px] font-bold text-[var(--color-text-primary)]">Recipients</h2>

@@ -62,7 +62,7 @@ export type SendEmailResult =
   | { ok: true; id: string | null; mode: "gmail" }
   | { ok: true; id: string | null; mode: "sendgrid" }
   | { ok: true; id: null; mode: "log"; reason: string }
-  | { ok: false; mode: "smtp" | "gmail" | "sendgrid" | "log"; message: string };
+  | { ok: false; mode: "smtp" | "gmail" | "sendgrid" | "log"; message: string; notAccepted?: boolean };
 
 /** Mask an email so logs never carry a full patient address. */
 function maskEmail(email: string): string {
@@ -108,7 +108,7 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
     if (result.ok) {
       return { ok: true, id: result.id, mode: "smtp" };
     }
-    return { ok: false, mode: "smtp", message: result.message };
+    return { ok: false, mode: "smtp", message: result.message, notAccepted: result.notAccepted };
   }
 
   if (isGmailConfigured()) {
@@ -116,7 +116,7 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
     if (result.ok) {
       return { ok: true, id: result.id, mode: "gmail" };
     }
-    return { ok: false, mode: "gmail", message: result.message };
+    return { ok: false, mode: "gmail", message: result.message, notAccepted: result.notAccepted };
   }
 
   const from = env.EMAIL_FROM;
@@ -155,6 +155,7 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
     return { ok: true, id: messageId, mode: "sendgrid" };
   } catch (error) {
     const err = error as {
+      code?: number;
       message?: string;
       response?: { body?: { errors?: Array<{ message?: string }> } };
     };
@@ -162,7 +163,7 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
       err.response?.body?.errors?.map((e) => e.message).filter(Boolean).join("; ") ||
       err.message ||
       "Email send failed";
-    return { ok: false, mode: "sendgrid", message: detail };
+    return { ok: false, mode: "sendgrid", message: detail, notAccepted: typeof err.code === "number" && err.code >= 400 && err.code < 500 };
   }
 }
 

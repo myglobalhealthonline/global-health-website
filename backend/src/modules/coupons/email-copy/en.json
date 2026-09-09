@@ -1,4 +1,19 @@
 {
+  "birthday": {
+    "subject": "Happy birthday — {discountPercent}% off a GP check-up",
+    "title": "Happy birthday!",
+    "greetingNamed": "Happy birthday, {name}!",
+    "greetingAnon": "Happy birthday!",
+    "discountLine": "Celebrate your birthday with {discountPercent}% off a GP check-up at Global Health.",
+    "codeLabel": "Your code",
+    "validLine": "Valid until {validUntil}",
+    "personalLock": "This code is reserved for you and can be used once.",
+    "howTo": "Enter the code at checkout before paying.",
+    "terms": "Valid only for GP check-ups. Cannot be combined with insurance coverage or membership benefits.",
+    "cta": "Book a check-up",
+    "signoff": "The Global Health team",
+    "unsubscribe": "Unsubscribe from birthday emails"
+  },
   "coupon": {
     "subject": "Your {discountPercent}% Global Health discount code",
     "title": "A discount for your next booking",

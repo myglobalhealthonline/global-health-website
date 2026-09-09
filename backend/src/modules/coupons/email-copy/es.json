@@ -1,4 +1,19 @@
 {
+  "birthday": {
+    "subject": "Feliz cumpleaños: {discountPercent}% de descuento en una revisión de medicina general",
+    "title": "¡Feliz cumpleaños!",
+    "greetingNamed": "¡Feliz cumpleaños, {name}!",
+    "greetingAnon": "¡Feliz cumpleaños!",
+    "discountLine": "Celebra tu cumpleaños con un {discountPercent}% de descuento en una revisión de salud con un médico general en Global Health.",
+    "codeLabel": "Tu código",
+    "validLine": "Válido hasta el {validUntil}",
+    "personalLock": "Este código está reservado para ti y solo se puede usar una vez.",
+    "howTo": "Introduce el código al finalizar la reserva, antes de pagar.",
+    "terms": "Válido solo para revisiones de medicina general. No se puede combinar con cobertura de seguro ni con beneficios de membresía.",
+    "cta": "Reservar una revisión",
+    "signoff": "El equipo de Global Health",
+    "unsubscribe": "Darse de baja de los correos de cumpleaños"
+  },
   "coupon": {
     "subject": "Tu código de descuento Global Health del {discountPercent}%",
     "title": "Un descuento para tu próxima cita",

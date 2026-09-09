@@ -225,10 +225,21 @@ function toPaymentLog(log: OutboxLog): PaymentLog {
 }
 
 async function dispatchOutboxRow(
-  row: { id: string; kind: string; payload: unknown },
+  row: { id: string; kind: string; payload: unknown; attempts?: number },
   log: OutboxLog,
 ): Promise<void> {
   switch (row.kind) {
+    case "birthday_coupon_email": {
+      const { dispatchBirthdayOffer } = await import("../coupons/birthday-offers.service.js");
+      try {
+        await dispatchBirthdayOffer(row.payload, (row.attempts ?? 0) + 1);
+      } catch {
+        // Queries/provider failures can contain recipient data. Delivery detail
+        // is recorded separately using fixed, non-identifying messages.
+        throw new Error("Birthday email dispatch failed; check the birthday delivery dashboard");
+      }
+      return;
+    }
     case OUTBOX_KIND_PERSONAL_OBJECT_PURGE: {
       const payload = row.payload as { storageKey?: unknown; purged?: unknown } | null;
       // Already deleted on an earlier attempt; the key was scrubbed then.

@@ -88,7 +88,7 @@ export function closeSmtpTransport(): void {
 
 export type SmtpSendResult =
   | { ok: true; id: string | null }
-  | { ok: false; message: string };
+  | { ok: false; message: string; notAccepted?: boolean };
 
 export async function sendViaSmtp(input: SendEmailInput): Promise<SmtpSendResult> {
   const from = smtpFrom()!;
@@ -121,14 +121,16 @@ export async function sendViaSmtp(input: SendEmailInput): Promise<SmtpSendResult
     // A message accepted by the relay but rejected for every recipient is not a
     // send — surface it as a failure instead of a silent success.
     if (info.accepted?.length === 0 && info.rejected?.length) {
-      return { ok: false, message: `SMTP rejected recipient: ${info.rejected.join(", ")}` };
+      return { ok: false, notAccepted: true, message: `SMTP rejected recipient: ${info.rejected.join(", ")}` };
     }
 
     return { ok: true, id: info.messageId ?? null };
   } catch (error) {
-    const err = error as { message?: string; response?: string; code?: string };
+    const err = error as { message?: string; response?: string; code?: string; responseCode?: number };
     const message =
       [err.code, err.response || err.message].filter(Boolean).join(" ") || "SMTP send failed";
-    return { ok: false, message };
+    // Explicit negative SMTP replies prove the relay did not accept the message.
+    // A dropped connection/timeout alone does not prove that.
+    return { ok: false, message, notAccepted: typeof err.responseCode === "number" && err.responseCode >= 400 && err.responseCode < 600 };
   }
 }

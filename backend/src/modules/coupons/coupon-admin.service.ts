@@ -16,6 +16,13 @@ export class CouponCodeTakenError extends Error {
   }
 }
 
+export class BirthdayCouponManagedError extends Error {
+  constructor() {
+    super("Birthday coupons are single-use and emailed only by the birthday automation. Review delivery in Birthday offer settings.");
+    this.name = "BirthdayCouponManagedError";
+  }
+}
+
 /**
  * Raised when a PATCH would set `maxRedemptions` below what has already been
  * redeemed. Caught here rather than left to the `Coupon_cap_chk` constraint,
@@ -147,6 +154,7 @@ export async function getCouponDetail(id: string) {
   const coupon = await prisma.coupon.findUnique({
     where: { id },
     include: {
+      birthdayOffer: { select: { id: true, status: true, error: true } },
       recipients: { orderBy: { createdAt: "desc" } },
       redemptions: {
         orderBy: { createdAt: "desc" },
@@ -248,9 +256,12 @@ export async function updateCoupon(
 ) {
   const existing = await prisma.coupon.findUnique({
     where: { id },
-    select: { redeemedCount: true, validFrom: true, validUntil: true },
+    select: { redeemedCount: true, validFrom: true, validUntil: true, birthdayOffer: { select: { id: true } } },
   });
   if (!existing) return null;
+  if (existing.birthdayOffer && patch.maxRedemptions !== undefined && patch.maxRedemptions !== 1) {
+    throw new BirthdayCouponManagedError();
+  }
   if (patch.maxRedemptions != null && patch.maxRedemptions < existing.redeemedCount) {
     throw new CouponCapBelowRedeemedError(existing.redeemedCount);
   }
@@ -275,6 +286,7 @@ export async function updateCoupon(
 
 export async function addCouponRecipients(couponId: string, recipients: CouponRecipientInput[]) {
   if (recipients.length === 0) return { added: 0 };
+  if (await prisma.birthdayOffer.findUnique({ where: { couponId }, select: { id: true } })) throw new BirthdayCouponManagedError();
   const result = await prisma.couponRecipient.createMany({
     data: recipients.map((r) => ({
       couponId,
@@ -310,6 +322,7 @@ export async function sendCouponEmails(
   couponId: string,
   opts: { onlyRecipientIds?: string[]; adminCountryCode?: string | null } = {},
 ): Promise<{ sent: number; failed: number }> {
+  if (await prisma.birthdayOffer.findUnique({ where: { couponId }, select: { id: true } })) throw new BirthdayCouponManagedError();
   const coupon = await prisma.coupon.findUnique({
     where: { id: couponId },
     select: {

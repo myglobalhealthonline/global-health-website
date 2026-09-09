@@ -1,4 +1,19 @@
 {
+  "birthday": {
+    "subject": "Vše nejlepší k narozeninám — sleva {discountPercent} % na prohlídku u praktického lékaře",
+    "title": "Vše nejlepší k narozeninám!",
+    "greetingNamed": "Vše nejlepší k narozeninám, {name}!",
+    "greetingAnon": "Vše nejlepší k narozeninám!",
+    "discountLine": "K narozeninám vám nabízíme slevu {discountPercent} % na zdravotní prohlídku u praktického lékaře v Global Health.",
+    "codeLabel": "Váš kód",
+    "validLine": "Platí do {validUntil}",
+    "personalLock": "Tento kód je vyhrazen pouze pro vás a lze jej použít jednou.",
+    "howTo": "Zadejte kód při dokončení rezervace před zaplacením.",
+    "terms": "Platí pouze pro zdravotní prohlídky u praktického lékaře. Nelze kombinovat s úhradou z pojištění ani s členskými výhodami.",
+    "cta": "Objednat prohlídku",
+    "signoff": "Tým Global Health",
+    "unsubscribe": "Odhlásit narozeninové e-maily"
+  },
   "coupon": {
     "subject": "Váš slevový kód Global Health na {discountPercent} %",
     "title": "Sleva na vaši další rezervaci",

@@ -185,7 +185,7 @@ function buildMimeMessage(from: string, input: SendEmailInput): string {
 
 export type GmailSendResult =
   | { ok: true; id: string | null }
-  | { ok: false; message: string };
+  | { ok: false; message: string; notAccepted?: boolean };
 
 export async function sendViaGmail(input: SendEmailInput): Promise<GmailSendResult> {
   const from = env.GMAIL_SEND_FROM!.trim();
@@ -214,6 +214,7 @@ export async function sendViaGmail(input: SendEmailInput): Promise<GmailSendResu
       return {
         ok: false,
         message: data.error?.message ?? `Gmail API HTTP ${response.status}`,
+        notAccepted: response.status >= 400 && response.status < 500,
       };
     }
 

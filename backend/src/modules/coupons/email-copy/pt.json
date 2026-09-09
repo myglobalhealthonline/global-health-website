@@ -1,4 +1,19 @@
 {
+  "birthday": {
+    "subject": "Feliz aniversário — {discountPercent}% de desconto numa consulta de clínica geral",
+    "title": "Feliz aniversário!",
+    "greetingNamed": "Feliz aniversário, {name}!",
+    "greetingAnon": "Feliz aniversário!",
+    "discountLine": "Para celebrar o seu aniversário, oferecemos {discountPercent}% de desconto numa consulta de avaliação de saúde com um médico de clínica geral na Global Health.",
+    "codeLabel": "O seu código",
+    "validLine": "Válido até {validUntil}",
+    "personalLock": "Este código é de uso pessoal e exclusivo de quem recebe esta mensagem e pode ser usado uma única vez.",
+    "howTo": "Use o código ao finalizar a reserva, antes do pagamento.",
+    "terms": "Válido apenas para consultas de avaliação de saúde com um médico de clínica geral. Não pode ser combinado com cobertura de seguro ou plano de saúde, nem com benefícios de assinatura.",
+    "cta": "Agendar consulta",
+    "signoff": "Global Health",
+    "unsubscribe": "Cancelar o envio de emails de aniversário"
+  },
   "coupon": {
     "subject": "O seu código de desconto Global Health de {discountPercent}%",
     "title": "Um desconto para a sua próxima marcação",

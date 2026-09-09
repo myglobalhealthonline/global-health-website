@@ -286,6 +286,7 @@ enum AuditAction {
   MEET_LINK_GENERATED
   COUNTRY_FOOTER_UPDATED
   GP_SETTINGS_UPDATED
+  BIRTHDAY_SETTINGS_UPDATED
   USER_UPDATED
   USER_ROLE_CHANGED
   USER_PASSWORD_RESET
@@ -2765,6 +2766,7 @@ model PatientProfile {
   nationalityDocuments      PatientNationalityDocument[]
   medicalDocuments          MedicalDocument[]
   consents                  PatientConsent[]
+  birthdayOffers            BirthdayOffer[]
   medicalAccessLogs         MedicalAccessLog[]
   /// External-laboratory requisitions (Synlab CZ). Cascades on erasure.
   labRequisitions           LabRequisition[]
@@ -7370,12 +7372,44 @@ model Coupon {
   updatedAt       DateTime    @updatedAt
 
   redemptions CouponRedemption[]
+  birthdayOffer BirthdayOffer?
   recipients  CouponRecipient[]
   orders      Order[]
 
   @@index([active, validUntil])
   @@index([kind])
   @@index([personalEmail])
+}
+
+enum BirthdayOfferStatus {
+  PENDING
+  SENDING
+  SENT
+  FAILED
+  UNKNOWN
+  SKIPPED
+}
+
+/// Annual issuance and delivery claim. No message body or DOB is copied here.
+model BirthdayOffer {
+  id               String              @id @default(cuid())
+  patientProfileId String
+  patient          PatientProfile      @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  year             Int
+  /// Hash of normalized recipient address + year, also deduplicates profile merges.
+  annualAddressKey String              @unique
+  couponId         String              @unique
+  coupon           Coupon              @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  countryCode      String
+  timezone         String
+  status           BirthdayOfferStatus @default(PENDING)
+  attemptedAt      DateTime?
+  sentAt           DateTime?
+  error            String?
+  createdAt        DateTime            @default(now())
+
+  @@unique([patientProfileId, year])
+  @@index([status, createdAt])
 }
 
 /// One row per order that claimed a use of a coupon.

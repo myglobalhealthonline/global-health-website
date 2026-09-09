@@ -27,6 +27,7 @@ import { runSuklCertificateMonitor } from "../modules/sukl/sukl-certificate-moni
 import { runRecruitmentRetentionSweep } from "../modules/recruitment/recruitment-retention.service.js";
 import { enqueueDueAppointmentReminders } from "../modules/appointments/appointment-reminder.service.js";
 import { prewarmDoctorSlotCoverage } from "../modules/doctor-availability/doctor-availability.service.js";
+import { enqueueBirthdayOffers } from "../modules/coupons/birthday-offers.service.js";
 
 type Logger = { info: (msg: string) => void; error: (msg: string) => void };
 
@@ -87,6 +88,7 @@ const LOCK_DOCTOR_NO_SHOW = 4010013;
 const LOCK_RECRUITMENT_RETENTION = 4010014;
 const LOCK_APPOINTMENT_REMINDERS = 4010015;
 const LOCK_SLOT_PREWARM = 4010016;
+const LOCK_BIRTHDAY_OFFERS = 4010017;
 
 // SESSION-level advisory lock (pg_advisory_lock / pg_advisory_unlock) on a
 // single manually-checked-out `pg.Pool` client, NOT a Prisma-managed
@@ -429,6 +431,18 @@ async function tickSlotPrewarm(log: Logger) {
   }, { failClosed: false });
 }
 
+async function tickBirthdayOffers(log: Logger) {
+  await withAdvisoryLock(LOCK_BIRTHDAY_OFFERS, async () => {
+    try {
+      const result = await enqueueBirthdayOffers();
+      if (result.created) log.info(`[cron] birthday-offers: created=${result.created}`);
+    } catch {
+      // DB errors may include patient fields; log no exception payload.
+      log.error("[cron] birthday-offers enqueue failed");
+    }
+  }, { failClosed: true });
+}
+
 async function tickDataRetention(log: Logger) {
   // Read-only report (counts + one SecurityAlert, dedupe'd per UTC day) — no
   // deletion, no customer messaging. Fail OPEN.
@@ -603,6 +617,7 @@ export function startInternalScheduler(log: Logger): () => void {
       // Safe on boot: enqueue-only, behind unique outbox keys.
       runScheduledJob("appointment-reminders", () => tickAppointmentReminders(log));
       runScheduledJob("slot-prewarm", () => tickSlotPrewarm(log));
+      runScheduledJob("birthday-offers", () => tickBirthdayOffers(log));
     }, startupJitterMs),
   );
 
@@ -622,6 +637,7 @@ export function startInternalScheduler(log: Logger): () => void {
   schedule("doctor-no-show", () => tickDoctorNoShow(log), DOCTOR_NO_SHOW_INTERVAL_MS);
   schedule("appointment-reminders", () => tickAppointmentReminders(log), APPOINTMENT_REMINDER_INTERVAL_MS);
   schedule("slot-prewarm", () => tickSlotPrewarm(log), SLOT_PREWARM_INTERVAL_MS);
+  schedule("birthday-offers", () => tickBirthdayOffers(log), 15 * 60 * 1000);
 
   return () => {
     for (const t of timers) clearTimeout(t);

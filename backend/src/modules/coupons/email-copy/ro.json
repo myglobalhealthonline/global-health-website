@@ -1,4 +1,19 @@
 {
+  "birthday": {
+    "subject": "La mulți ani — {discountPercent}% reducere la un control de medicină generală",
+    "title": "La mulți ani!",
+    "greetingNamed": "La mulți ani, {name}!",
+    "greetingAnon": "La mulți ani!",
+    "discountLine": "De ziua ta, ai {discountPercent}% reducere la un control de sănătate cu un medic generalist la Global Health.",
+    "codeLabel": "Codul tău",
+    "validLine": "Valabil până la {validUntil}",
+    "personalLock": "Acest cod este rezervat pentru tine și poate fi folosit o singură dată.",
+    "howTo": "Introdu codul la finalizarea programării, înainte de plată.",
+    "terms": "Valabil doar pentru controale de medicină generală. Nu se cumulează cu acoperirea prin asigurare sau cu beneficiile unui abonament.",
+    "cta": "Programează un control",
+    "signoff": "Echipa Global Health",
+    "unsubscribe": "Dezabonare de la e-mailurile aniversare"
+  },
   "coupon": {
     "subject": "Codul tău de reducere Global Health de {discountPercent}%",
     "title": "O reducere pentru următoarea ta programare",

@@ -55,6 +55,7 @@ export async function getSetting<T = unknown>(key: string): Promise<T | null> {
 // Exact keys plus a small set of dynamic prefixes (e.g. per-country
 // featured-doctor rows keyed `featured_doctor:<code>`).
 const WRITABLE_SETTING_KEYS = new Set<string>([
+  "coupons.birthday",
   "review.trustpilot.businessUnitId",
   "review.trustpilot.reviewUrl",
   "review.trustpilot.aggregate",

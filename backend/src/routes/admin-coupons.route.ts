@@ -14,6 +14,7 @@ import {
 } from "../validations/admin-coupons.schema.js";
 import {
   CouponCapBelowRedeemedError,
+  BirthdayCouponManagedError,
   CouponCodeTakenError,
   CouponWindowInvalidError,
   addCouponRecipients,
@@ -188,7 +189,7 @@ const adminCouponsRoutes: FastifyPluginAsync = async (app) => {
         });
         return okResponse(updated, "Coupon updated");
       } catch (err) {
-        if (err instanceof CouponCapBelowRedeemedError || err instanceof CouponWindowInvalidError) {
+        if (err instanceof CouponCapBelowRedeemedError || err instanceof CouponWindowInvalidError || err instanceof BirthdayCouponManagedError) {
           return reply.status(422).send(errorResponse(err.message));
         }
         if (err instanceof DatabaseUnavailableError) {
@@ -218,9 +219,10 @@ const adminCouponsRoutes: FastifyPluginAsync = async (app) => {
       try {
         const coupon = await prisma.coupon.findUnique({
           where: { id: params.data.id },
-          select: { id: true, code: true },
+          select: { id: true, code: true, birthdayOffer: { select: { id: true } } },
         });
         if (!coupon) return reply.status(404).send(errorResponse("Coupon not found"));
+        if (coupon.birthdayOffer) throw new BirthdayCouponManagedError();
 
         if (body.data.recipients?.length) {
           await addCouponRecipients(coupon.id, body.data.recipients);
@@ -251,6 +253,9 @@ const adminCouponsRoutes: FastifyPluginAsync = async (app) => {
 
         return okResponse({ queued: result == null, ...(result ?? {}) }, "Coupon emails sent");
       } catch (err) {
+        if (err instanceof BirthdayCouponManagedError) {
+          return reply.status(409).send(errorResponse(err.message));
+        }
         if (err instanceof DatabaseUnavailableError) {
           return reply.status(503).send(errorResponse(err.message));
         }

@@ -76,7 +76,7 @@ export async function recordAudit(input: AuditInput): Promise<void> {
   }
 }
 
-function toAuditLogData(input: AuditInput): Prisma.AuditLogUncheckedCreateInput {
+export function toAuditLogData(input: AuditInput): Prisma.AuditLogUncheckedCreateInput {
   return {
     actorUserId: input.actorUserId ?? null,
     actorRole: input.actorRole ?? null,

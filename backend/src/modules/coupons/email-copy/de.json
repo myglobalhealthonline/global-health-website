@@ -1,4 +1,19 @@
 {
+  "birthday": {
+    "subject": "Alles Gute zum Geburtstag — {discountPercent} % Rabatt auf einen hausärztlichen Check-up",
+    "title": "Alles Gute zum Geburtstag!",
+    "greetingNamed": "Alles Gute zum Geburtstag, {name}!",
+    "greetingAnon": "Alles Gute zum Geburtstag!",
+    "discountLine": "Zu Ihrem Geburtstag erhalten Sie {discountPercent} % Rabatt auf einen hausärztlichen Gesundheits-Check-up bei Global Health.",
+    "codeLabel": "Ihr Code",
+    "validLine": "Gültig bis {validUntil}",
+    "personalLock": "Dieser Code ist für Sie reserviert und kann einmal verwendet werden.",
+    "howTo": "Geben Sie den Code beim Abschluss der Buchung vor der Zahlung ein.",
+    "terms": "Gilt nur für hausärztliche Gesundheits-Check-ups. Nicht mit Versicherungsleistungen oder Mitgliedschaftsvorteilen kombinierbar.",
+    "cta": "Check-up buchen",
+    "signoff": "Ihr Global Health Team",
+    "unsubscribe": "Geburtstags-E-Mails abbestellen"
+  },
   "coupon": {
     "subject": "Ihr Global Health Rabattcode über {discountPercent} %",
     "title": "Ein Rabatt für Ihren nächsten Termin",
