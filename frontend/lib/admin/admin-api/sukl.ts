@@ -122,6 +122,8 @@ export type SuklAppPingDto = {
   path: string;
   /** Truncated upstream excerpt on a 401/403. Untrusted text — render as text. */
   bodyExcerpt: string | null;
+  /** The envelope we sent — present only on failure, for diagnosis. */
+  requestEnvelope?: string | null;
   /** Selected response headers on a 401/403. `www-authenticate` is the useful one. */
   responseHeaders: Record<string, string> | null;
 };

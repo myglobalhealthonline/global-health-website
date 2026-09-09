@@ -133,6 +133,16 @@ export interface SuklAppPingResult {
   path: string;
   /** Truncated upstream excerpt, present only for a 401/403. Untrusted text. */
   bodyExcerpt: string | null;
+  /**
+   * The exact envelope we sent, on failure only.
+   *
+   * S009 ("the data does not have the required structure") says nothing about
+   * WHICH element is wrong, so the only way to close the gap is to compare the
+   * request we actually produced against SÚKL's schema by eye. Guessing at the
+   * shape instead has already cost two wrong fixes. Admin-only, and omitted on
+   * success so it is not logged routinely.
+   */
+  requestEnvelope: string | null;
   /** Selected response headers on a 401/403 — `www-authenticate` above all. */
   responseHeaders: Record<string, string> | null;
 }
@@ -271,6 +281,7 @@ export async function suklAppPing(
         errorMessage: error.safeMessage,
         path,
         bodyExcerpt: error.bodyExcerpt ?? null,
+        requestEnvelope: envelope,
         responseHeaders: error.responseHeaders ?? null,
       };
     }
@@ -294,7 +305,11 @@ export async function suklAppPing(
     errorCode: verdict.errorCode,
     errorMessage: verdict.errorMessage,
     path,
-    bodyExcerpt: null,
+    // On a fault, keep BOTH sides: SÚKL's own words and the exact bytes we
+    // sent. S009 names no element, so the pair is the only way to find the
+    // difference without guessing.
+    bodyExcerpt: verdict.ok ? null : response.body.slice(0, 4000),
+    requestEnvelope: verdict.ok ? null : envelope,
     responseHeaders: null,
   };
 }
