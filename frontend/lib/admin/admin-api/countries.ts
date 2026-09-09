@@ -90,6 +90,7 @@ export const COUNTRY_FEATURE_KEYS = [
   "specialist-consultations",
   "online-prescriptions",
   "health-tests",
+  "book-a-test",
   "appointments",
   "subscriptions",
 ] as const;

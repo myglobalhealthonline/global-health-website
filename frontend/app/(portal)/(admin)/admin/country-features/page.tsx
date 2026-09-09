@@ -117,6 +117,14 @@ const FEATURE_META: FeatureMeta[] = [
     href: "/admin/health-tests",
   },
   {
+    key: "book-a-test",
+    label: "Book a Test",
+    description:
+      "Test-centre bookings: patients pick a test, a centre and a branch, then a time. Distinct from Health tests above, which is the home-collected kit.",
+    icon: TestTube,
+    href: "/admin/test-centers",
+  },
+  {
     key: "appointments",
     label: "Appointments",
     description: "Booking inbox and per-appointment workflow for this country.",
