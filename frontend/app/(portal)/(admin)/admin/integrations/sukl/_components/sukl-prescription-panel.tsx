@@ -137,7 +137,19 @@ export function SuklPrescriptionPanel({ callable }: { callable: boolean }) {
         <F label="Patient given names" value={form.givenNames} on={(v) => setForm((f) => ({ ...f, givenNames: v }))} />
         <F label="Date of birth (YYYY-MM-DD)" value={form.dateOfBirth} on={(v) => setForm((f) => ({ ...f, dateOfBirth: v }))} />
         <F label="Insurance number (9–10 digits)" value={form.insuranceNumber} on={(v) => setForm((f) => ({ ...f, insuranceNumber: v }))} />
-        <F label="Insurer code — 111 VZP, 201 VoZP, 205 ČPZP, 207 OZP, 209 ZPŠ, 211 ZPMV, 213 RBP" value={form.insurerCode} on={(v) => setForm((f) => ({ ...f, insurerCode: v }))} />
+        <div>
+          {/* The codes belong under the field, not in the label: with the list
+              inline an operator reasonably types "111 VZP", which fails the
+              three-digit rule and is rejected before SÚKL is ever contacted. */}
+          <F
+            label="Insurer code (3 digits)"
+            value={form.insurerCode}
+            on={(v) => setForm((f) => ({ ...f, insurerCode: v }))}
+          />
+          <p className="m-0 mt-1 text-xs" style={{ color: "var(--portal-muted)" }}>
+            Digits only. 111 VZP · 201 VoZP · 205 ČPZP · 207 OZP · 209 ZPŠ · 211 ZPMV · 213 RBP
+          </p>
+        </div>
         <F
           label="SÚKL medicine code — 7 digits, optional"
           value={form.medicineCode}
