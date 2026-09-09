@@ -8,6 +8,8 @@ export type OrderFilterValues = {
   q?: string;
   status?: string;
   paymentStatus?: string;
+  /** What was bought — health test kit, test-centre booking, consultation... */
+  kind?: string;
   doctorName?: string;
   createdFrom?: string;
   createdTo?: string;
@@ -20,6 +22,7 @@ export const ORDER_FILTER_KEYS = [
   "q",
   "status",
   "paymentStatus",
+  "kind",
   "doctorName",
   "createdFrom",
   "createdTo",

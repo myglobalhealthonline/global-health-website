@@ -191,6 +191,10 @@ export type AdminOrderFilters = {
   status?: string;
   paymentStatus?: string;
   countryCode?: string;
+  /** Order type — HEALTH_TEST | TEST_BOOKING | CONSULTATION |
+   *  PRESCRIPTION_SERVICE | LAB_EXAM. Matches orders with at least one such
+   *  line, so a mixed basket appears under either kind. */
+  kind?: string;
   doctorName?: string;
   createdFrom?: string;
   createdTo?: string;
