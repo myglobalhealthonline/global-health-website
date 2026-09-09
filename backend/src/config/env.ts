@@ -408,7 +408,13 @@ const envSchema = z.object({
       .optional(),
   ),
   SUKL_SW_KLIENTA: blankAsUnset(
-    z.string().trim().min(1).max(12, "SUKL_SW_KLIENTA is limited to 12 characters").optional(),
+    // EXACTLY 12: CUER declares SW_Klienta with a fixed length facet, so a
+    // 10-character value is accepted by Common and rejected by CUER with S009.
+    z
+      .string()
+      .trim()
+      .length(12, "SUKL_SW_KLIENTA must be exactly 12 characters — CUER requires a fixed length")
+      .optional(),
   ),
 
   SUKL_REQUEST_TIMEOUT_MS: blankAsUnset(

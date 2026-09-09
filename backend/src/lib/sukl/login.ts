@@ -153,7 +153,23 @@ export function interpretLoginResponse(input: { httpStatus: number; body: string
   };
 }
 
+/**
+ * Login exists only on the Common service.
+ *
+ * CUER's WSDL lists 30 operations and Login is not among them, so sending it
+ * there returns "No operation found for specified action: Login" — a confusing
+ * failure that looks like a broken integration rather than a wrong target.
+ */
+export const LOGIN_SERVICE: SuklService = "common";
+
 export async function suklLogin(service: SuklService): Promise<SuklLoginResult> {
+  if (service !== LOGIN_SERVICE) {
+    throw new SuklNotConfiguredError(
+      `Login is only available on ${SUKL_SERVICE_LABELS[LOGIN_SERVICE]}. ` +
+        `${SUKL_SERVICE_LABELS[service]} does not publish that operation.`,
+    );
+  }
+
   // Same gate as AppPing: the message header carries the interface version, so
   // an unconfigured version is a refusal rather than a request SÚKL rejects.
   if (!isSuklCallable(service)) {
