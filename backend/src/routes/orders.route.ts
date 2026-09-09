@@ -1825,6 +1825,28 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
     /** Consultation-date (appointment.scheduledAt) range, inclusive. */
     consultFrom: z.preprocess(blankToUndefined, z.coerce.date().optional()),
     consultTo: z.preprocess(blankToUndefined, z.coerce.date().optional()),
+    /**
+     * What was actually bought. Matches orders carrying AT LEAST ONE line of
+     * the chosen kind, so a mixed basket (a consultation plus a kit) shows
+     * under either — an admin looking for "kit orders to post" needs that
+     * order in the list.
+     *
+     * `CONSULTATION` is a group rather than a raw enum value: the split
+     * between general and specialist is a pricing concern, and nobody
+     * filtering an order list wants to run the same search twice.
+     */
+    kind: z.preprocess(
+      blankToUndefined,
+      z
+        .enum([
+          "HEALTH_TEST",
+          "TEST_BOOKING",
+          "CONSULTATION",
+          "PRESCRIPTION_SERVICE",
+          "LAB_EXAM",
+        ])
+        .optional(),
+    ),
   });
 
   /** Push a plain `YYYY-MM-DD` to the last instant of that day so `lte` covers it. */
@@ -1854,6 +1876,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
       createdTo,
       consultFrom,
       consultTo,
+      kind,
     } = query.data;
 
     // LOCAL_ADMIN folder scope (code review 2026-07-05, bug #4) — restrict
@@ -1903,6 +1926,14 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           { orderAppointments: { some: { appointment: { doctor: { fullName: contains } } } } },
         ],
       });
+    }
+
+    if (kind) {
+      const kinds: CartItemKind[] =
+        kind === "CONSULTATION"
+          ? [CartItemKind.GENERAL_CONSULTATION, CartItemKind.SPECIALIST_CONSULTATION]
+          : [kind as CartItemKind];
+      and.push({ items: { some: { kind: { in: kinds } } } });
     }
 
     if (doctorName) {
