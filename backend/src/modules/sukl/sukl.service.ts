@@ -624,6 +624,9 @@ export interface SuklDoctorIdentityDto {
   suklUsernameOrReference: string | null;
   workplaceCode: string;
   specialityCode: string | null;
+  phone: string | null;
+  icp: string | null;
+  pzs: string | null;
   status: SuklDoctorIdentityStatus;
   verifiedAt: string | null;
   notes: string | null;
@@ -639,6 +642,9 @@ function toDto(row: {
   suklUsernameOrReference: string | null;
   workplaceCode: string;
   specialityCode: string | null;
+  phone: string | null;
+  icp: string | null;
+  pzs: string | null;
   status: SuklDoctorIdentityStatus;
   verifiedAt: Date | null;
   notes: string | null;
@@ -676,6 +682,9 @@ export async function upsertSuklDoctorIdentity(input: {
   suklProfessionalIdentifier: string;
   suklUsernameOrReference?: string | null;
   specialityCode?: string | null;
+  phone?: string | null;
+  icp?: string | null;
+  pzs?: string | null;
   notes?: string | null;
   updatedByUserId?: string | null;
 }): Promise<SuklDoctorIdentityDto> {
@@ -692,6 +701,9 @@ export async function upsertSuklDoctorIdentity(input: {
     suklProfessionalIdentifier: input.suklProfessionalIdentifier.trim(),
     suklUsernameOrReference: input.suklUsernameOrReference?.trim() || null,
     specialityCode: input.specialityCode?.trim() || null,
+    phone: input.phone?.trim() || null,
+    icp: input.icp?.trim() || null,
+    pzs: input.pzs?.trim() || null,
     notes: input.notes?.trim() || null,
     workplaceCode,
     updatedByUserId: input.updatedByUserId ?? null,

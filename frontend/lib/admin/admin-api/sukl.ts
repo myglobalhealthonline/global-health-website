@@ -60,6 +60,9 @@ export type SuklDoctorIdentityDto = {
   suklUsernameOrReference: string | null;
   workplaceCode: string;
   specialityCode: string | null;
+  phone: string | null;
+  icp: string | null;
+  pzs: string | null;
   status: SuklDoctorIdentityStatus;
   verifiedAt: string | null;
   notes: string | null;

@@ -55,6 +55,9 @@ export function SuklDoctorIdentities({
     suklProfessionalIdentifier: "",
     suklUsernameOrReference: "",
     specialityCode: "",
+    phone: "",
+    icp: "",
+    pzs: "",
     notes: "",
   });
 
@@ -72,6 +75,9 @@ export function SuklDoctorIdentities({
             suklProfessionalIdentifier: form.suklProfessionalIdentifier.trim(),
             suklUsernameOrReference: form.suklUsernameOrReference.trim() || null,
             specialityCode: form.specialityCode.trim() || null,
+            phone: form.phone.trim() || null,
+            icp: form.icp.trim() || null,
+            pzs: form.pzs.trim() || null,
             notes: form.notes.trim() || null,
           }),
         },
@@ -89,6 +95,9 @@ export function SuklDoctorIdentities({
         suklProfessionalIdentifier: "",
         suklUsernameOrReference: "",
         specialityCode: "",
+        phone: "",
+        icp: "",
+        pzs: "",
         notes: "",
       });
       router.refresh();
@@ -201,6 +210,30 @@ export function SuklDoctorIdentities({
           value={form.specialityCode}
           onChange={(v) => setForm((f) => ({ ...f, specialityCode: v }))}
         />
+        <Field
+          label="Phone (required to prescribe)"
+          value={form.phone}
+          onChange={(v) => setForm((f) => ({ ...f, phone: v }))}
+        />
+        <Field
+          label="IČP — 8 digits (required to prescribe)"
+          value={form.icp}
+          onChange={(v) => setForm((f) => ({ ...f, icp: v }))}
+        />
+        <Field
+          label="PZS — 11 digits (required to prescribe)"
+          value={form.pzs}
+          onChange={(v) => setForm((f) => ({ ...f, pzs: v }))}
+        />
+        <div className="sm:col-span-2">
+          <p className="m-0 text-xs" style={{ color: "var(--portal-muted)" }}>
+            SÚKL require the prescriber&rsquo;s phone, IČP and PZS on every prescription. PZS is
+            the workplace code assigned in External Identities — <code>00150928369</code> — which
+            SÚKL confirmed on 2026-09-09; the empty PZS in a Login response is expected and does
+            not mean the doctor is unregistered. Without all three, issuing is refused before
+            anything reaches SÚKL.
+          </p>
+        </div>
         <div className="sm:col-span-2">
           <Field
             label="Notes"

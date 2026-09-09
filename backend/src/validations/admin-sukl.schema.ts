@@ -68,6 +68,22 @@ export const suklDoctorIdentityBodySchema = z
       .regex(/^[A-Za-z0-9._/-]+$/, "Only letters, digits and . _ / - are allowed"),
     suklUsernameOrReference: z.string().trim().max(120).nullable().optional(),
     specialityCode: z.string().trim().max(32).nullable().optional(),
+    // Required by SÚKL on every prescription — see PRESCRIPTION_PAYLOAD.md.
+    // Optional here so a mapping can be created before they are known, but the
+    // prescription service refuses by name until they are set.
+    phone: z.string().trim().max(20).nullable().optional(),
+    icp: z
+      .string()
+      .trim()
+      .regex(/^\d{8}$/, "IČP is 8 digits")
+      .nullable()
+      .optional(),
+    pzs: z
+      .string()
+      .trim()
+      .regex(/^\d{11}$/, "PZS is 11 digits")
+      .nullable()
+      .optional(),
     doctorId: z.string().trim().max(120).nullable().optional(),
     notes: z.string().trim().max(2000).nullable().optional(),
   })
