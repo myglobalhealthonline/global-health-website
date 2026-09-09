@@ -3452,6 +3452,14 @@ model Order {
   trackingNumber                String?
   trackingCarrier               String?
   trackingUrl                   String?
+  /// When an admin last SENT the tracking details to the customer (email +
+  /// WhatsApp), as opposed to merely saving them. Saving and sending are
+  /// deliberately separate — an admin pastes a code from the courier's site,
+  /// checks it, and only then presses "Save & notify" — so a null here with a
+  /// `trackingNumber` set means "entered but the patient has not been told".
+  /// Also the re-send audit: the column carries the LAST send, and every
+  /// individual attempt is an AutomationRun row.
+  trackingNotifiedAt            DateTime?
   createdAt                     DateTime              @default(now())
   updatedAt                     DateTime              @updatedAt
 

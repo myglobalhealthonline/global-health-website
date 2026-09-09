@@ -88,6 +88,15 @@ export const AUTOMATION_CATALOG: AutomationDefinition[] = [
     maxStages: 1,
   },
   {
+    key: "health_test_tracking",
+    name: "Health test kit — dispatch details",
+    flow: "Admin action (kit shipped)",
+    description:
+      "An admin books the kit into the courier's system by hand, enters the carrier, tracking number and/or link on the order page, and presses \"Save & notify\". The customer is sent the dispatch details by email (always — transactional order correspondence) and by WhatsApp (gated on the checkout opt-out), in their booking language. Re-sendable: couriers reissue codes and a failed WhatsApp leg is often fixable, so each attempt is logged separately and `Order.trackingNotifiedAt` carries the last success.",
+    channels: ["email", "whatsapp"],
+    maxStages: 1,
+  },
+  {
     key: "health_test_booked",
     name: "Health test kit — Memed booking outcome",
     flow: "Order paid (Brazil)",
