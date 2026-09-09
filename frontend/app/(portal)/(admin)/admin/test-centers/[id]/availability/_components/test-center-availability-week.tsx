@@ -28,15 +28,21 @@ import {
   adminRemoveSlot,
   adminToggleSlotStatus,
 } from "@/lib/api/admin-slot-client";
+import { BookTestSlotDialog, type ExamOption } from "./book-test-slot-dialog";
 
 type Props = {
   testCenterId: string;
   testCenterName: string;
+  countryCode: string;
   /** The center's country timezone — its windows are authored in this. */
   centerTz: string;
   /** Any calendar date inside the visible week ("YYYY-MM-DD"). */
   weekAnchor: string;
   items: CalendarItem[];
+  /** Active exams this centre offers, priced. Empty disables booking. */
+  exams: ExamOption[];
+  defaultDialCode: string;
+  bookAction: (formData: FormData) => void | Promise<void>;
 };
 
 /**
@@ -56,10 +62,15 @@ type Props = {
 export function TestCenterAvailabilityWeek({
   testCenterId,
   testCenterName,
+  countryCode,
   centerTz,
   weekAnchor,
   items,
+  exams,
+  defaultDialCode,
+  bookAction,
 }: Props) {
+  const [selectedSlot, setSelectedSlot] = useState<CalendarItem | null>(null);
   const router = useRouter();
   const pathname = usePathname();
   // Default to center time — the windows are authored in it, so the grid lines
@@ -138,18 +149,11 @@ export function TestCenterAvailabilityWeek({
           itemsByDay={itemsByDay}
           tz={tz}
           todayKey={todayKey(tz)}
-          // A center calendar carries no consultations, and no booking dialog
-          // exists for it yet — clicking a slot toggles it instead.
-          onSelectOpenSlot={() => {}}
+          // Clicking an open slot books it, matching the doctor grid. Blocking
+          // and removing stay on the corner buttons, so booking never costs the
+          // admin an extra step.
+          onSelectOpenSlot={setSelectedSlot}
           onSelectConsultation={() => {}}
-          onToggleSlot={(item) => {
-            slotManager.setError(null);
-            if (item.status === "BLOCKED") {
-              void slotManager.setStatus(item, "OPEN");
-            } else {
-              slotManager.setBlockTarget(item);
-            }
-          }}
           onBlockSlot={(item) => {
             slotManager.setError(null);
             slotManager.setBlockTarget(item);
@@ -167,6 +171,20 @@ export function TestCenterAvailabilityWeek({
           onToday={() => goToWeek(todayKey(tz))}
         />
       </div>
+
+      <BookTestSlotDialog
+        key={selectedSlot?.id ?? "none"}
+        open={selectedSlot !== null}
+        onClose={() => setSelectedSlot(null)}
+        slot={selectedSlot}
+        testCenterId={testCenterId}
+        testCenterName={testCenterName}
+        countryCode={countryCode}
+        centerTz={centerTz}
+        exams={exams}
+        defaultDialCode={defaultDialCode}
+        action={bookAction}
+      />
 
       <SelectionActionBar
         count={slotManager.selected.size}

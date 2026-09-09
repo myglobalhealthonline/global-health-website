@@ -307,3 +307,25 @@ export async function fetchAdminTestCenterSlots(
     `/api/admin/test-centers/${testCenterId}/time-slots?${params.toString()}`,
   );
 }
+
+/**
+ * Admin books a test at this centre on a patient's behalf. Same pipeline the
+ * consultation manual booking uses — patient account, held slot, payment link,
+ * message ladder — so the response carries the portal credentials to read out
+ * if email delivery fails.
+ */
+export async function postAdminManualTestBooking(body: unknown) {
+  return adminRequest<{
+    appointmentId: string;
+    orderId: string;
+    patientUserId: string;
+    paymentUrl: string | null;
+    tempPassword: string | null;
+    setPasswordUrl: string;
+    emailQueued: boolean;
+    amountCents: number;
+    discountPercent: number;
+    discountCents: number;
+    free: boolean;
+  }>("/api/admin/appointments/test-booking", { method: "POST", body });
+}

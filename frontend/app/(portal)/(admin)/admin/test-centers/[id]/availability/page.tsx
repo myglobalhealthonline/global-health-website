@@ -8,8 +8,10 @@ import {
   deleteAdminTestCenterAvailability,
   fetchAdminTestCenterAvailability,
   fetchAdminTestCenterById,
+  fetchAdminTestCenterExams,
   fetchAdminTestCenterSlots,
   patchAdminTestCenterAvailability,
+  postAdminManualTestBooking,
 } from "@/lib/admin/admin-api/test-centers";
 import { AdminCard, PageHeader, Pill } from "../../../_components/atoms";
 import { ConfirmDeleteButton } from "../../../_components/confirm-delete-button";
@@ -24,6 +26,12 @@ import {
   minutesToTimeLabel,
   timeToMinutes,
 } from "@/lib/time-of-day";
+import { dialCodeForCountry } from "@/lib/phone/dial-codes";
+import {
+  hasTestBookingErrors,
+  parseDiscountPercent,
+  validateTestBooking,
+} from "@/lib/admin/manual-booking-validation";
 import { TestCenterAvailabilityWeek } from "./_components/test-center-availability-week";
 
 export const dynamic = "force-dynamic";
@@ -89,6 +97,10 @@ export default async function AdminTestCenterAvailabilityPage({
     );
   }
 
+  // Lowercase throughout — country codes are stored lowercase and the booking
+  // API matches on them.
+  const countryCode = center.country.code.toLowerCase();
+
   const windows = availabilityResult.ok
     ? (availabilityResult.data?.availability ?? [])
     : [];
@@ -100,7 +112,22 @@ export default async function AdminTestCenterAvailabilityPage({
 
   const weekAnchor = parseWeekAnchor(messages.wk, centerTz);
   const { fromIso, toIso } = weekRangeIso(weekAnchor, centerTz);
-  const slotsResult = await fetchAdminTestCenterSlots(id, fromIso, toIso);
+  const [slotsResult, examsResult] = await Promise.all([
+    fetchAdminTestCenterSlots(id, fromIso, toIso),
+    fetchAdminTestCenterExams(id, { isActive: "true", pageSize: 250 }),
+  ]);
+
+  // What the booking dialog can offer. Price is the centre's own — computed
+  // server-side from cost + markup, never recomputed here.
+  const exams = examsResult.ok
+    ? (examsResult.data?.exams ?? []).map((offering) => ({
+        examTypeId: offering.examTypeId,
+        name: offering.examTypeName,
+        patientPriceCents: offering.patientPriceCents,
+        currencyCode: offering.currencyCode,
+        durationMinutes: null,
+      }))
+    : [];
 
   // Slots map onto the shared CalendarItem shape the grid renders. Ids are
   // namespaced `s-` to match the other admin surfaces (see bareSlotId).
@@ -195,6 +222,64 @@ export default async function AdminTestCenterAvailabilityPage({
     back("Opening hours removed", true);
   }
 
+  /**
+   * Book the clicked slot for a patient. Re-validates server-side: the dialog's
+   * checks are a convenience, and a hand-crafted POST must not reach the
+   * service with a blank patient.
+   */
+  async function bookAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+
+    const read = (field: string) => String(formData.get(field) ?? "").trim();
+    const optional = (field: string) => read(field) || null;
+
+    const validation = validateTestBooking({
+      fullName: read("fullName"),
+      email: read("email"),
+      phone: read("phone"),
+      examTypeId: read("examTypeId"),
+      testCenterTimeSlotId: read("testCenterTimeSlotId"),
+    });
+    if (hasTestBookingErrors(validation)) {
+      back(
+        Object.values(validation)[0] ?? "Please complete all required fields.",
+        false,
+      );
+    }
+
+    // A malformed discount stops the booking rather than silently charging the
+    // full price.
+    const discount = parseDiscountPercent(read("discountPercent"));
+    if (discount.error) back(discount.error, false);
+
+    const result = await postAdminManualTestBooking({
+      patient: {
+        email: read("email"),
+        fullName: read("fullName"),
+        phone: read("phone"),
+        dateOfBirth: optional("dateOfBirth"),
+      },
+      testCenterId: read("testCenterId"),
+      examTypeId: read("examTypeId"),
+      testCenterTimeSlotId: read("testCenterTimeSlotId"),
+      countryCode: read("countryCode"),
+      notes: optional("notes"),
+      discountPercent: discount.value,
+    });
+
+    if (!result.ok) back(result.message, false);
+    revalidatePath(basePath);
+    back(
+      result.ok && result.data.free
+        ? "Test booked and comped in full — recorded as paid."
+        : discount.value
+          ? `Test booked with a ${discount.value}% discount — payment link sent.`
+          : "Test booked — payment link sent.",
+      true,
+    );
+  }
+
   return (
     <>
       <SetCrumbTitle label={center.name} />
@@ -237,9 +322,13 @@ export default async function AdminTestCenterAvailabilityPage({
             <TestCenterAvailabilityWeek
               testCenterId={id}
               testCenterName={center.name}
+              countryCode={countryCode}
               centerTz={centerTz}
               weekAnchor={weekAnchor}
               items={calendarItems}
+              exams={exams}
+              defaultDialCode={dialCodeForCountry(countryCode)}
+              bookAction={bookAction}
             />
           ) : (
             <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">

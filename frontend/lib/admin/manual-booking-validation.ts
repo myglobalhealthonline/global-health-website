@@ -186,3 +186,67 @@ export function parseCouponCode(
   }
   return { value: trimmed, error: null };
 }
+
+export type TestBookingValues = {
+  fullName: string;
+  email: string;
+  /** Combined "+<dial> <national>" string built by the form. */
+  phone: string;
+  examTypeId: string;
+  testCenterTimeSlotId: string;
+};
+
+export type TestBookingErrorKey =
+  | "fullName"
+  | "email"
+  | "phone"
+  | "examTypeId"
+  | "testCenterTimeSlotId";
+
+export type TestBookingErrors = Partial<Record<TestBookingErrorKey, string>>;
+
+/**
+ * Patient + exam validation for an admin test-centre booking.
+ *
+ * A sibling of `validateManualBooking` rather than a reuse of it: that one
+ * requires a service, a doctor and a consultation mode, none of which exist for
+ * a test booking, and feeding it placeholders would surface errors about fields
+ * the form does not show. The patient rules — and, importantly, the EMAIL_RE
+ * and PHONE_RE the backend schema mirrors — are shared by living in this file.
+ */
+export function validateTestBooking(values: TestBookingValues): TestBookingErrors {
+  const errors: TestBookingErrors = {};
+
+  if (values.fullName.trim().length < 2) {
+    errors.fullName = "Enter the patient's full name (min 2 characters).";
+  }
+
+  const email = values.email.trim();
+  if (!email) {
+    errors.email = "Email is required.";
+  } else if (!EMAIL_RE.test(email)) {
+    errors.email = "Enter a valid email address.";
+  }
+
+  const phone = values.phone.trim();
+  if (!phone) {
+    errors.phone = "Phone number is required.";
+  } else if (!phone.startsWith("+")) {
+    errors.phone = "Select a country code for the phone number.";
+  } else if (!PHONE_RE.test(phone)) {
+    errors.phone = "Enter a valid phone number, e.g. +353 871234567.";
+  }
+
+  if (!values.examTypeId.trim()) {
+    errors.examTypeId = "Pick the test being booked.";
+  }
+  if (!values.testCenterTimeSlotId.trim()) {
+    errors.testCenterTimeSlotId = "Pick a time slot.";
+  }
+
+  return errors;
+}
+
+export function hasTestBookingErrors(errors: TestBookingErrors): boolean {
+  return Object.keys(errors).length > 0;
+}
