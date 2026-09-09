@@ -33,7 +33,7 @@ test("cancellation is NOT signed", () => {
   // their personal signing key. Adding a signature here would be wrong.
   const xml = buildCancelPrescriptionRequest(input());
   assert.ok(!xml.includes("Signature"));
-  assert.match(xml, /^<ZruseniPredpisuDotaz xmlns="http:\/\/www\.sukl\.cz\/erp\/201704">/);
+  assert.match(xml, /^<ZruseniPredpisuDotaz xmlns="http:\/\/www\.sukl\.cz\/erp\/201704" xmlns:com="http:\/\/www\.sukl\.cz\/erp\/common">/);
 });
 
 test("the authorisation id is the ORIGINAL submission id, not this message's", () => {
@@ -41,7 +41,7 @@ test("the authorisation id is the ORIGINAL submission id, not this message's", (
   assert.match(xml, new RegExp(`<AutorizacniID>${SUBMISSION_ID}</AutorizacniID>`));
   // The message carries its own fresh id; confusing the two makes the
   // cancellation unauthorised.
-  assert.match(xml, /<ID_Zpravy>11111111-2222-3333-4444-555555555555<\/ID_Zpravy>/);
+  assert.match(xml, /<com:ID_Zpravy>11111111-2222-3333-4444-555555555555<\/com:ID_Zpravy>/);
   assert.match(xml, /<DuvodZruseni>Chybné dávkování<\/DuvodZruseni>/);
 });
 

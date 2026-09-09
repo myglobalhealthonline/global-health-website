@@ -1,6 +1,6 @@
 import { SHARED_ELEMENT_NAMESPACE } from "./app-ping.js";
 import { type SuklService } from "./config.js";
-import { buildMessageElement, el, extractElementText, extractFault } from "./envelope.js";
+import { buildMessageElement, comEl, el, extractElementText, extractFault } from "./envelope.js";
 import { SuklError } from "./errors.js";
 import { signSuklMessage, type SuklSigningKey } from "./signing.js";
 
@@ -201,12 +201,12 @@ export function buildCreatePrescriptionRequest(input: SuklCreatePrescriptionInpu
     "</Doklad>";
 
   const zprava =
-    "<Zprava>" +
-    el("ID_Zpravy", input.submissionId) +
-    el("Verze", input.interfaceVersion) +
-    el("Odeslano", input.sentAt.toISOString()) +
-    el("SW_Klienta", input.swKlienta) +
-    "</Zprava>";
+    "<com:Zprava>" +
+    comEl("ID_Zpravy", input.submissionId) +
+    comEl("Verze", input.interfaceVersion) +
+    comEl("Odeslano", input.sentAt.toISOString()) +
+    comEl("SW_Klienta", input.swKlienta) +
+    "</com:Zprava>";
 
   const message = buildMessageElement({
     operationElement: "ZalozeniPredpisuDotaz",

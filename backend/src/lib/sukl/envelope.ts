@@ -59,11 +59,33 @@ export function buildSoapEnvelope(input: SoapEnvelopeInput): string {
  * and only then wraps it — see signing.ts.
  */
 export function buildMessageElement(input: SoapEnvelopeInput): string {
+  // `com` is declared unconditionally. Pristupujici and Zprava always live in
+  // erp/common regardless of which module the operation belongs to — see
+  // comEl() — and on CUEP/Common the two URIs coincide, so declaring it there
+  // costs nothing and keeps one shape for every service.
   return (
-    `<${input.operationElement} xmlns="${input.namespace}">` +
+    `<${input.operationElement} xmlns="${input.namespace}" xmlns:com="${SUKL_COMMON_NAMESPACE}">` +
     input.body +
     `</${input.operationElement}>`
   );
+}
+
+/** The namespace shared across every SÚKL module. */
+export const SUKL_COMMON_NAMESPACE = "http://www.sukl.cz/erp/common";
+
+/**
+ * `<com:Name>value</com:Name>` — a leaf in the COMMON namespace.
+ *
+ * SÚKL's own example (NIA_v0.8) shows the shape: the operation element and
+ * `Doklad` carry the module namespace, while `Pristupujici` and `Zprava` are
+ * `com:`-prefixed. A single default xmlns on the operation element puts those
+ * two in the module namespace instead, which CUER rejects with S009 — and
+ * which passed unnoticed on CUEP and Common only because their module
+ * namespace IS erp/common.
+ */
+export function comEl(name: string, value: string | null | undefined): string {
+  if (value === null || value === undefined || value === "") return "";
+  return `<com:${name}>${escapeXml(value)}</com:${name}>`;
 }
 
 /**
