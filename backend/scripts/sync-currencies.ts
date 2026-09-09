@@ -22,6 +22,8 @@ const CURRENCIES: { code: string; symbol: string; decimals?: number }[] = [
   { code: "EUR", symbol: "€" },
   { code: "CZK", symbol: "Kč" },
   { code: "BRL", symbol: "R$" },
+  { code: "PKR", symbol: "Rs" },
+  { code: "CNY", symbol: "¥" },
 ];
 
 async function main() {

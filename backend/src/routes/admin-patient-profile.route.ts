@@ -624,7 +624,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
   });
 
   // ─── Existing-patient typeahead for manual booking ─────────────────────────
-  // The admin types part of an email; we substring-match it (case-insensitive)
+  // The admin types part of a name or email; we substring-match it (case-insensitive)
   // and return the distinct patients behind the matching emails. A single
   // account email can have booked MORE THAN ONE distinct person (e.g. a parent
   // booking for themselves and a child); those people are not separate
@@ -653,12 +653,23 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
   // `/api/admin/patients/search` applies.
   app.get("/api/admin/patients/by-email", async (request, reply) => {
     const query = z
-      .object({ email: z.string().trim().max(254) })
+      .object({
+        email: z.string().trim().max(254).optional(),
+        q: z.string().trim().max(254).optional(),
+      })
+      .refine((value) => value.q !== undefined || value.email !== undefined)
       .safeParse(request.query);
     if (!query.success) {
       return reply.status(400).send(errorResponse("Invalid query", query.error.flatten()));
     }
-    const q = query.data.email.toLowerCase();
+    const q = (query.data.q ?? query.data.email ?? "").toLowerCase();
+    // Keep existing email-only callers compatible; booking search also matches names.
+    const match = query.data.q !== undefined
+      ? { OR: [
+          { email: { contains: q, mode: "insensitive" as const } },
+          { fullName: { contains: q, mode: "insensitive" as const } },
+        ] }
+      : { email: { contains: q, mode: "insensitive" as const } };
     // Need at least a couple of characters before searching — a 1-char
     // substring would match almost every patient.
     if (q.length < 2) {
@@ -678,7 +689,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           // appointment history as well as their profile row, so clamping only
           // one still offers the other.
           where: {
-            email: { contains: q, mode: "insensitive" },
+            ...match,
             ...(scopedFolders ? { countryCode: { in: scopedFolders } } : {}),
           },
           select: { email: true, fullName: true, dateOfBirth: true, phone: true, createdAt: true },
@@ -690,7 +701,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           // would start building a record on a profile that has already been
           // folded into someone else.
           where: {
-            email: { contains: q, mode: "insensitive" },
+            ...match,
             isMerged: false,
             ...(scopedFolders ? { countryFolderCode: { in: scopedFolders } } : {}),
           },

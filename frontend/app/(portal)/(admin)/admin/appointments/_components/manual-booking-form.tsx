@@ -190,7 +190,9 @@ export function ManualBookingForm({
   const [addressPostalCode, setAddressPostalCode] = useState("");
   const [addressCountryCode, setAddressCountryCode] = useState("");
 
-  // Existing-patient typeahead for the email field. Multiple distinct people
+  const [patientQuery, setPatientQuery] = useState("");
+
+  // Existing-patient typeahead for names and email addresses. Multiple distinct people
   // can share one account email, so the dropdown lets the admin pick the
   // right one and prefill name / DOB / phone instead of re-typing.
   const [patientOptions, setPatientOptions] = useState<PatientOption[]>([]);
@@ -474,10 +476,10 @@ export function ManualBookingForm({
   }, [slots, clinicTimezone, monthOffset, MONTH_OPTIONS]);
 
   // Debounced substring lookup of existing patients as the admin types the
-  // email. Fires once there are at least 2 characters; aborts in-flight
+  // name or email. Fires once there are at least 2 characters; aborts in-flight
   // requests so the last keystroke wins.
   useEffect(() => {
-    const value = email.trim();
+    const value = patientQuery.trim();
     const controller = new AbortController();
     const timer = setTimeout(() => {
       // Too short to search — clear any stale matches and skip the fetch.
@@ -490,7 +492,7 @@ export function ManualBookingForm({
         setLookupLoading(true);
         try {
           const res = await fetch(
-            `/api/admin/patients/by-email?email=${encodeURIComponent(value)}`,
+            `/api/admin/patients/by-email?q=${encodeURIComponent(value)}`,
             { signal: controller.signal },
           );
           const json = (await res.json()) as {
@@ -514,7 +516,7 @@ export function ManualBookingForm({
       controller.abort();
       clearTimeout(timer);
     };
-  }, [email]);
+  }, [patientQuery]);
 
   // The prefill below used to be synchronous — the identity fields arrived on
   // the same typeahead payload the admin clicked. It is now a round trip, so
@@ -898,40 +900,29 @@ export function ManualBookingForm({
           Existing accounts with this email are reused; otherwise a new patient User is created with a
           unique temporary password.
         </p>
-        <div className="gh-admin-manual-booking-grid mt-4">
-          <label className="flex flex-col gap-1.5">
-            <span className="gh-field-label">Full name *</span>
-            <input
-              type="text"
-              name="fullName"
-              className="gh-input"
-              maxLength={120}
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              aria-invalid={Boolean(errors.fullName)}
-            />
-            {errors.fullName ? <FieldError msg={errors.fullName} /> : null}
-          </label>
-
-          <label className="relative flex flex-col gap-1.5">
-            <span className="gh-field-label">Email *</span>
-            <input
-              type="email"
-              name="email"
-              className="gh-input"
-              maxLength={254}
-              autoComplete="off"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setShowPatientMenu(true);
-              }}
-              onFocus={() => setShowPatientMenu(true)}
-              // Delay so a click on a menu option registers before close.
-              onBlur={() => setTimeout(() => setShowPatientMenu(false), 150)}
-              aria-invalid={Boolean(errors.email)}
-            />
-            {errors.email ? <FieldError msg={errors.email} /> : null}
+        <div className="relative mt-4" onBlur={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget)) setShowPatientMenu(false);
+        }}>
+          <label htmlFor="patient-search" className="gh-field-label">Find existing patient</label>
+          <input
+            id="patient-search"
+            type="search"
+            className="gh-input"
+            placeholder="Search by patient name or email"
+            maxLength={254}
+            autoComplete="off"
+            value={patientQuery}
+            onChange={(event) => {
+              setPatientQuery(event.target.value);
+              setPatientOptions([]);
+              setShowPatientMenu(true);
+            }}
+            onFocus={() => setShowPatientMenu(true)}
+            onKeyDown={(event) => {
+              if (event.key === "Escape") setShowPatientMenu(false);
+              if (event.key === "Enter") event.preventDefault();
+            }}
+          />
             {showPatientMenu && (lookupLoading || patientOptions.length > 0) ? (
               <div className="gh-admin-manual-patient-menu absolute left-0 right-0 top-[calc(100%+4px)] z-[var(--z-dropdown)] max-h-64 overflow-auto rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] shadow-lg">
                 {lookupLoading ? (
@@ -975,6 +966,36 @@ export function ManualBookingForm({
                 )}
               </div>
             ) : null}
+        </div>
+        <div className="gh-admin-manual-booking-grid mt-4">
+          <label className="flex flex-col gap-1.5">
+            <span className="gh-field-label">Full name *</span>
+            <input
+              type="text"
+              name="fullName"
+              className="gh-input"
+              maxLength={120}
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              aria-invalid={Boolean(errors.fullName)}
+            />
+            {errors.fullName ? <FieldError msg={errors.fullName} /> : null}
+          </label>
+
+          <label className="relative flex flex-col gap-1.5">
+            <span className="gh-field-label">Email *</span>
+            <input
+              type="email"
+              name="email"
+              className="gh-input"
+              maxLength={254}
+              autoComplete="off"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              aria-invalid={Boolean(errors.email)}
+            />
+            {errors.email ? <FieldError msg={errors.email} /> : null}
+
           </label>
 
           <label className="flex flex-col gap-1.5">

@@ -267,6 +267,27 @@ describe("admin patient typeahead — country scope + PHI disclosure", () => {
     );
   });
 
+  it("matches names case-insensitively while preserving country scope", async (t) => {
+    if (!boot(t)) return;
+    // The prefix exists in the full name, but not in the email address.
+    const res = await app!.inject({
+      method: "GET",
+      url: `/api/admin/patients/by-email?q=${encodeURIComponent(`PATIENT PA-${uniq}`)}`,
+      cookies: localAdminACookie,
+    });
+    assert.equal(res.statusCode, 200, res.body);
+    const patients = res.json().data.patients as Suggestion[];
+    assert.ok(patients.some((p) => p.email === patientAEmail));
+
+    const outside = await app!.inject({
+      method: "GET",
+      url: `/api/admin/patients/by-email?q=${encodeURIComponent(`Patient pb-${uniq}`)}`,
+      cookies: localAdminACookie,
+    });
+    assert.equal(outside.statusCode, 200, outside.body);
+    assert.deepEqual(outside.json().data.patients, []);
+  });
+
   // ── The gap: decrypted identity documents in a multi-row suggestion list ───
 
   it("returns no decrypted identity numbers to an out-of-scope LOCAL_ADMIN", async (t) => {

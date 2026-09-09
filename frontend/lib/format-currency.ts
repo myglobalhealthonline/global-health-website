@@ -8,6 +8,8 @@ const CURRENCY_SYMBOLS: Record<string, string> = {
   CZK: "Kč",
   BRL: "R$",
   RON: "lei",
+  PKR: "Rs",
+  CNY: "¥",
 };
 
 /** Position of the symbol relative to the amount. Default: prefix.
