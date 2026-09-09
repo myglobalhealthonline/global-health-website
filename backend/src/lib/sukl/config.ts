@@ -144,9 +144,34 @@ export function suklPassword(): string | null {
   return env.SUKL_TEST_PASSWORD?.trim() ?? null;
 }
 
-/** Interface version for the `Zprava` header, e.g. "202601B". */
-export function suklInterfaceVersion(): string | null {
-  return env.SUKL_INTERFACE_VERSION?.trim() ?? null;
+/**
+ * Interface version for the `Zprava` header — PER SERVICE.
+ *
+ * The modules are versioned independently and a wrong value is rejected with
+ * S014. Proven the hard way on 2026-09-09: setting one global value to CUER's
+ * 202501A fixed CUER and immediately broke CUEP, whose fault carried
+ * `xmlns="http://www.sukl.cz/erp/201912"` — a different module namespace
+ * again, and a different version.
+ *
+ *   cuer   202501A — SÚKL's CUER documentation, "Verze rozhraní"
+ *   cuep   202601B — the value CUEP accepted with HTTP 200
+ *   common 202501A — accepted by Login
+ *
+ * `SUKL_INTERFACE_VERSION` is NO LONGER consulted. It was a single global
+ * value, and a single value cannot be right for services that version
+ * independently — configuring it to CUER's version is exactly what broke CUEP.
+ * It is left in the env schema so existing deployments still boot, and is
+ * ignored here on purpose. When SÚKL move a module on, correct the constant
+ * below.
+ */
+const SERVICE_INTERFACE_VERSIONS: Record<SuklService, string> = {
+  cuer: "202501A",
+  cuep: "202601B",
+  common: "202501A",
+};
+
+export function suklInterfaceVersion(service: SuklService): string {
+  return SERVICE_INTERFACE_VERSIONS[service];
 }
 
 /** Our software identifier, max 12 chars. Defaulted — SÚKL does not issue it. */
@@ -178,7 +203,7 @@ export function isSuklCallable(service: SuklService): boolean {
     isSuklConfigured() &&
     isSuklServiceConfigured(service) &&
     Boolean(suklUzivatel()) &&
-    Boolean(suklInterfaceVersion()) &&
+    Boolean(suklInterfaceVersion(service)) &&
     Boolean(suklWorkplaceCode())
   );
 }
@@ -188,7 +213,7 @@ export function suklMissingCallConfig(service: SuklService): string[] {
   const missing = suklMissingConfig();
   if (!isSuklServiceConfigured(service)) missing.push(SUKL_SERVICE_ENV_VARS[service]);
   if (!suklUzivatel()) missing.push("SUKL_TEST_UZIVATEL");
-  if (!suklInterfaceVersion()) missing.push("SUKL_INTERFACE_VERSION");
+  if (!suklInterfaceVersion(service)) missing.push("SUKL_INTERFACE_VERSION");
   return missing;
 }
 

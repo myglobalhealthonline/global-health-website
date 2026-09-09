@@ -234,7 +234,7 @@ export async function suklAppPing(
 ): Promise<SuklAppPingResult> {
   const uzivatel = suklUzivatel();
   const pracoviste = suklWorkplaceCode();
-  const verze = suklInterfaceVersion();
+  const verze = suklInterfaceVersion(service);
 
   const missing: string[] = [];
   if (!isSuklServiceConfigured(service)) missing.push("the service URL");

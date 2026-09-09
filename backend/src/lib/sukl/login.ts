@@ -181,7 +181,7 @@ export async function suklLogin(service: SuklService): Promise<SuklLoginResult> 
   const shared = { service, label: SUKL_SERVICE_LABELS[service] };
   const envelope = buildLoginRequest({
     service,
-    verze: suklInterfaceVersion()!,
+    verze: suklInterfaceVersion(service),
     swKlienta: suklSwKlienta(),
     idZpravy: randomUUID(),
     odeslano: new Date(),

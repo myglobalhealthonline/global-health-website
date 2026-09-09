@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { SUKL_SW_KLIENTA_LENGTH, suklSwKlienta } from "./config.js";
+import {
+  SUKL_SW_KLIENTA_LENGTH,
+  suklInterfaceVersion,
+  suklSwKlienta,
+} from "./config.js";
 import {
   buildAppPingRequest,
   interpretAppPingResponse,
@@ -219,4 +223,17 @@ test("SW_Klienta is exactly 12 characters, because CUER fixes its length", () =>
   // CUER with S009 — which is exactly what "GlobalHlth" (10) did on
   // 2026-09-09, and the fault text named this element.
   assert.equal(suklSwKlienta().length, SUKL_SW_KLIENTA_LENGTH);
+});
+
+test("each service gets its own interface version", () => {
+  // The modules version independently. Proven on 2026-09-09: one global value
+  // set to CUER's 202501A fixed CUER and immediately broke CUEP with S014,
+  // whose fault carried yet another module namespace, erp/201912.
+  assert.equal(suklInterfaceVersion("cuer"), "202501A");
+  assert.equal(suklInterfaceVersion("cuep"), "202601B");
+  assert.notEqual(suklInterfaceVersion("cuer"), suklInterfaceVersion("cuep"));
+  for (const service of ["cuer", "cuep", "common"] as const) {
+    // SÚKL's own pattern: six digits then one capital.
+    assert.match(suklInterfaceVersion(service), /^\d{6}[A-Z]$/);
+  }
 });

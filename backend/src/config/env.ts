@@ -400,6 +400,13 @@ const envSchema = z.object({
    *  header), because sending a password to a server that never requested one
    *  is its own mistake. This is the test-access account password. */
   SUKL_TEST_PASSWORD: optionalSecret,
+  /**
+   * IGNORED since 2026-09-09. The modules version independently — CUER runs
+   * 202501A while CUEP runs 202601B — so a single global value cannot be
+   * correct, and setting it to one module's version broke the other. The
+   * values now live per service in lib/sukl/config.ts. Kept only so existing
+   * deployments that still set it continue to boot; safe to remove.
+   */
   SUKL_INTERFACE_VERSION: blankAsUnset(
     z
       .string()

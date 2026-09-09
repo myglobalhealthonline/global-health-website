@@ -150,7 +150,7 @@ export async function issueSuklPrescription(
     const signed = buildCreatePrescriptionRequest({
       service,
       submissionId,
-      interfaceVersion: suklInterfaceVersion()!,
+      interfaceVersion: suklInterfaceVersion(service),
       swKlienta: suklSwKlienta(),
       sentAt: new Date(),
       issuedOn,
@@ -263,7 +263,7 @@ export async function cancelSuklPrescription(input: {
     buildCancelPrescriptionRequest({
       service,
       messageId: randomUUID(),
-      interfaceVersion: suklInterfaceVersion()!,
+      interfaceVersion: suklInterfaceVersion(service),
       swKlienta: suklSwKlienta(),
       sentAt: new Date(),
       uzivatel: suklUzivatel()!,

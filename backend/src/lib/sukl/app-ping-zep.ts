@@ -183,7 +183,7 @@ export async function suklAppPingZep(service: SuklService): Promise<SuklAppPingZ
       service,
       uzivatel: suklUzivatel()!,
       pracoviste: suklWorkplaceCode()!,
-      verze: suklInterfaceVersion()!,
+      verze: suklInterfaceVersion(service),
       swKlienta: suklSwKlienta(),
       idZpravy: requestId,
       odeslano: new Date(),
