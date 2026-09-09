@@ -1,6 +1,14 @@
 # Booking conversion tracking — 9 September 2026
 
-Implementation is in the working tree. Deployment and joint GA4 DebugView validation are pending; do not mark this complete yet.
+Tracking commit `1051c552` is deployed to both production services. Live GA4 Realtime has received `book_appointment_click` and `select_time_slot`; the slot event has `market=ireland` and `service_category=gp`. Confirmation and joint DebugView validation remain pending; do not mark this complete yet.
+
+## Live verification — 10 September 2026
+
+- Railway Backend: ACTIVE, deployment successful, `f7e46cbb-9540-4e8d-91aa-68aa36618bd7`, booking-tracking commit.
+- Railway Frontend: ACTIVE, `c754fb97-6a91-43de-ae17-83adf40804cd`, booking-tracking commit; live assets identify `1051c552499c5f28acc5e3d8ea248cd1d803b52c`.
+- `https://api.myglobalhealth.online/ready`: `ok=true`, `database.connected=true`.
+- GA4 Realtime received both first-step events. A live event also inherited `page_path`; a follow-up fix now overrides that field alongside location/title/referrer. This follow-up is not yet deployed.
+- A paid test order/confirmation URL has been requested to verify actual receipt evidence, `booking_confirmed` delivery and reload deduplication. No patient order was reused and no production appointment or payment was created for the check.
 
 ## GA4 configuration applied
 

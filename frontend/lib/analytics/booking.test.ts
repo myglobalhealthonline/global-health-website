@@ -23,6 +23,7 @@ it("sends broad categories and redacted context for all three events", () => {
     expect(window.gtag).toHaveBeenLastCalledWith("event", event, {
       service_category: "specialist_care", market: "ireland",
       page_location: "https://example.test/ireland/booking",
+      page_path: "/ireland/booking",
       page_title: "Appointment booking", page_referrer: "",
     });
   }

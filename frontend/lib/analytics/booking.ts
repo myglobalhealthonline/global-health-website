@@ -24,6 +24,7 @@ export function trackBookingEvent(event: BookingEvent, market: string, category:
     market: normalized,
     // Override automatic event context: no specialty URLs, titles or referrers.
     page_location: `${window.location.origin}/${normalized}/booking`,
+    page_path: `/${normalized}/booking`,
     page_title: "Appointment booking",
     page_referrer: "",
   });
