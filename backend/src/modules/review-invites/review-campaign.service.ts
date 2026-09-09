@@ -46,8 +46,8 @@ export async function createReviewCampaignForAppointment(appointmentId: string, 
       !z.string().email().safeParse(appt.email).success || appt.user?.isActive === false || appt.user?.deletionScheduledAt ||
       appt.patientProfile?.isMerged || appt.patientProfile?.anonymizedAt || appt.patientProfile?.deletionRequests.length ||
       !(await canSendReviewInviteForCountry(appt.countryCode))) return null;
-  const activeCountries = await prisma.country.findMany({ where: { isActive: true, code: { in: ["IE","CZ","PT","ES","RO","BR"] } }, select: { code: true } });
-  if (!activeCountries.some(country => country.code === appt.countryCode)) return null;
+  const activeCountries = await prisma.country.findMany({ where: { isActive: true, code: { in: ["IE","CZ","PT","ES","RO","BR"], mode: "insensitive" } }, select: { code: true } });
+  if (!activeCountries.some(country => country.code.toUpperCase() === appt.countryCode?.toUpperCase())) return null;
   const eligibleCountries = (await Promise.all(activeCountries.map(({ code }) => code).map(async code =>
     await canSendReviewInviteForCountry(code) ? code : null))).filter((code): code is string => code !== null);
   const recipientKey = reviewRecipientKey(appt.email);
@@ -65,12 +65,12 @@ export async function createReviewCampaignForAppointment(appointmentId: string, 
       completedAt: { gte: new Date(appt.consultationCompletedAt!.getTime() - 90 * DAY) } } });
     if (prior) return null;
     const earlier = await tx.appointment.findFirst({ where: { OR: identity, status: "COMPLETED",
-      countryCode: { in: eligibleCountries }, email: { not: "" },
+      countryCode: { in: eligibleCountries, mode: "insensitive" }, email: { not: "" },
       consultationCompletedAt: { gte: new Date(Math.max(new Date(settings.activatedAt!).getTime(), now.getTime()-45*DAY)), lt: appt.consultationCompletedAt! },
     }, select: { id: true } });
     if (earlier) return null;
     return tx.reviewInvite.create({ data: {
-      appointmentId, campaignVersion: 1, countryCode: appt.countryCode, recipientKey,
+      appointmentId, campaignVersion: 1, countryCode: appt.countryCode?.toUpperCase(), recipientKey,
       completedAt: appt.consultationCompletedAt, contactEmail: appt.email, customerName: appt.fullName,
       localeCode: resolveUniversalReviewInviteRouting(appt).localeCode,
       tokenHash: reviewTokenHash(randomBytes(32).toString("base64url")),
@@ -159,7 +159,7 @@ export async function dispatchReviewDelivery(deliveryId: string) {
   const { invite } = delivery;
   const patient = invite.appointment?.patientProfile;
   const user = invite.appointment?.user;
-  const country = invite.countryCode ? await prisma.country.findUnique({ where: { code: invite.countryCode }, select: { isActive: true } }) : null;
+  const country = invite.countryCode ? await prisma.country.findFirst({ where: { code: { equals: invite.countryCode, mode: "insensitive" } }, select: { isActive: true } }) : null;
   const settings = await getReviewAutomationSettings();
   if (!settings.enabled || !(await canSendReviewInviteForCountry(invite.countryCode))) {
     return;

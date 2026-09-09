@@ -179,7 +179,7 @@ export type AdminCountryReviewDestination = {
 export async function getAdminCountryReviewDestinations(): Promise<AdminCountryReviewDestination[]> {
   try {
     const countries = await prisma.country.findMany({
-      where: { code: { in: ["IE", "CZ", "PT", "ES", "RO", "BR"] } },
+      where: { code: { in: ["IE", "CZ", "PT", "ES", "RO", "BR"], mode: "insensitive" } },
       select: { code: true, name: true, isActive: true },
       orderBy: { name: "asc" },
     });

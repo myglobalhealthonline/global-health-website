@@ -19,7 +19,7 @@ let stopBeforeClaim = false;
 let service: typeof import("./review-campaign.service.js");
 
 const tables = {
-  country: { findMany: async () => [{ code: "BR" }], findUnique: async () => ({ isActive: true }) },
+  country: { findMany: async () => [{ code: "br" }], findFirst: async () => ({ isActive: true }) },
   $executeRaw: async () => 1,
   $queryRaw: async () => [],
   appointment: { findUnique: async () => appointment, findFirst: async () => null, findMany: async () => [] },
