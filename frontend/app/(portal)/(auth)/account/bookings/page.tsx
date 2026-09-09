@@ -3,7 +3,11 @@ import { BookingsShell } from "./ui";
 import { BookingsTabsClient } from "./_components/BookingsTabsClient";
 import { PatientCalendarUI } from "../calendar/ui";
 import { SyncOrderPaymentOnReturn } from "@/components/payments/SyncOrderPaymentOnReturn";
-import { fetchAccountAppointments } from "@/lib/api/account-appointments-api";
+import {
+  fetchAccountAppointments,
+  fetchAccountLabRequisitions,
+} from "@/lib/api/account-appointments-api";
+import { LabRequisitionsList } from "./_components/LabRequisitionsList";
 import { syncOrderPaymentServer } from "@/lib/api/cart-server";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
 import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
@@ -37,8 +41,9 @@ export default async function AccountBookingsPage({ searchParams }: Props) {
 
   // Calendar was merged into this page as a tab (IA-2) — one fetch feeds
   // both the list view and the calendar's CalendarItem mapping.
-  const [history, locale] = await Promise.all([
+  const [history, labRequisitions, locale] = await Promise.all([
     fetchAccountAppointments(),
+    fetchAccountLabRequisitions(),
     getPortalLocale(),
   ]);
   const { account: a } = loadLocaleBundle(locale);
@@ -123,6 +128,21 @@ export default async function AccountBookingsPage({ searchParams }: Props) {
                 dashboard: a.dashboard,
                 messages: a.messages,
                 consultationChat: a.consultationChat,
+              }}
+            />
+            {/* Lab requisitions: same page, own block. They carry no slot to
+                cancel and their own status vocabulary, so they are not folded
+                into the appointments list above. */}
+            <LabRequisitionsList
+              items={labRequisitions.ok ? labRequisitions.data.items : []}
+              locale={locale}
+              labels={{
+                heading: a.bookings.labTestsHeading,
+                subtitle: a.bookings.labTestsSubtitle,
+                collectionPointLabel: a.bookings.labCollectionPointLabel,
+                examsLabel: a.bookings.labExamsLabel,
+                resultsReadyLabel: a.bookings.labResultsReadyLabel,
+                statusLabels: a.bookings.labStatusLabels,
               }}
             />
           </>

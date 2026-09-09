@@ -20,6 +20,7 @@ import { InsuranceVerifyPanel } from "./_components/insurance-verify-panel";
 import { OrderMeetLinkDisplay } from "../_components/order-meet-link-display";
 import { UpdateAppointmentPanel } from "./_components/update-appointment-panel";
 import { AdminTrackingForm } from "./_components/tracking-form";
+import { LabConfirmationForm } from "./_components/lab-confirmation-form";
 import { SetCrumbTitle } from "@/components/crumb-title";
 import { AdSourceIcon } from "@/components/AdSourceIcon";
 
@@ -121,6 +122,15 @@ type AdminOrder = {
     scheduledAt: string | null;
     consultationType: string;
   }[];
+  /** Present when the order carries a test-centre booking. Drives the lab
+   *  reference + patient confirmation panel. */
+  testBooking?: {
+    appointmentId: string;
+    labReference: string | null;
+    labConfirmationSentAt: string | null;
+    testCentreName: string | null;
+    scheduledAt: string | null;
+  } | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -438,6 +448,23 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
                 meetingUrl={order.meetingUrl}
                 hasConsultation={hasConsultation}
                 variant="panel"
+              />
+            </AdminCard>
+          ) : null}
+
+          {order.testBooking ? (
+            <AdminCard padding={0}>
+              <SectionHeader
+                title={
+                  order.testBooking.testCentreName
+                    ? `Test booking — ${order.testBooking.testCentreName}`
+                    : "Test booking"
+                }
+              />
+              <LabConfirmationForm
+                appointmentId={order.testBooking.appointmentId}
+                labReference={order.testBooking.labReference}
+                labConfirmationSentAt={order.testBooking.labConfirmationSentAt}
               />
             </AdminCard>
           ) : null}

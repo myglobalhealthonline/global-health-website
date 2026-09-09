@@ -457,6 +457,13 @@ export type AccountAppointmentListItem = {
    *  appointment isn't linked to an order. Shown alongside the patient
    *  name in the Messages inbox. */
   orderNumber: string | null;
+  /** Test-centre booking: "Provider — Branch". Null for consultations.
+   *  `clinicName` stays null for these — a test centre is not a Clinic — so
+   *  without this the portal showed a bare address and no name. */
+  testCentreName: string | null;
+  /** The laboratory's own booking code, once an admin has recorded it, so the
+   *  patient can quote it at the desk. */
+  labReference: string | null;
 };
 
 export type AccountAppointmentDetail = {
@@ -822,8 +829,14 @@ export async function listAppointmentsForUser(userId: string): Promise<AccountAp
       select: {
         ...ADMIN_APPT_SELECT,
         patientTimezone: true,
+        labReference: true,
         clinic: { select: { name: true, city: true } },
         doctor: { select: { fullName: true } },
+        // A test-centre booking has no Clinic and no doctor — the branch is
+        // what the patient needs to see next to the address.
+        testCenterLocation: {
+          select: { name: true, testCenter: { select: { name: true } } },
+        },
       },
       orderBy: { createdAt: "desc" },
       take: 200,
@@ -854,6 +867,13 @@ export async function listAppointmentsForUser(userId: string): Promise<AccountAp
       patientTimezone: row.patientTimezone ?? null,
       doctorName: row.doctor?.fullName ?? null,
       orderNumber: orderNumbers.get(row.id) ?? null,
+      testCentreName: row.testCenterLocation
+        ? [row.testCenterLocation.testCenter?.name, row.testCenterLocation.name]
+            .map((part) => part?.trim())
+            .filter(Boolean)
+            .join(" — ")
+        : null,
+      labReference: row.labReference ?? null,
     }));
   } catch (error) {
     throw normalizeDbError(error, "Appointments are temporarily unavailable");

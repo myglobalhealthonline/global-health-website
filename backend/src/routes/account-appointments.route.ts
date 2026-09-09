@@ -67,6 +67,50 @@ const accountAppointmentsRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
+  // Laboratory requisitions belonging to this account. A separate list from
+  // the appointments above because a requisition is a different record with a
+  // different lifecycle — prescribed, priced on a call, paid, handed to the lab
+  // — and carries no slot to cancel or reschedule.
+  app.get("/api/account/lab-requisitions", async (request, reply) => {
+    let authUser: SafeUser | null = null;
+    try {
+      authUser = await resolveOptionalAuthUser(request);
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Unexpected authentication error"));
+    }
+    if (!authUser) {
+      return reply.status(401).send(errorResponse("Not authenticated"));
+    }
+    if (authUser.role !== "PATIENT" && authUser.role !== "ADMIN") {
+      return reply.status(403).send(errorResponse("Forbidden"));
+    }
+
+    const query = accountAppointmentsQuerySchema.safeParse(request.query);
+    if (!query.success) {
+      return reply.status(400).send(errorResponse("Invalid query", query.error.flatten()));
+    }
+    const targetUserId =
+      authUser.role === "ADMIN" ? (query.data.userId ?? authUser.id) : authUser.id;
+
+    try {
+      const { listLabRequisitionsForUser } = await import(
+        "../modules/lab-orders/patient-lab-requisitions.service.js"
+      );
+      const items = await listLabRequisitionsForUser(targetUserId);
+      return okResponse({ items });
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Unexpected lab requisition error"));
+    }
+  });
+
   app.get("/api/account/appointments/:id", async (request, reply) => {
     let authUser: SafeUser | null = null;
     try {

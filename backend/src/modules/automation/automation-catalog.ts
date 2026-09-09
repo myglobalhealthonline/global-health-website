@@ -79,6 +79,15 @@ export const AUTOMATION_CATALOG: AutomationDefinition[] = [
     maxStages: 1,
   },
   {
+    key: "test_booking_confirmation",
+    name: "Test-centre booking — admin confirmation",
+    flow: "Admin action (booked with the lab)",
+    description:
+      "After an admin replicates a test-centre booking in the laboratory's own system, they record its reference (optional — many labs give none) and send the patient a confirmation naming the exam, the centre and branch, the address, the date and time, the arrival instruction and what to bring. Email always; WhatsApp when the booking's consent allows. Re-sendable, each attempt logged; `Appointment.labConfirmationSentAt` holds the last success. Separate from the automatic post-payment venue confirmation, which fires the moment payment lands.",
+    channels: ["email", "whatsapp"],
+    maxStages: 1,
+  },
+  {
     key: "health_test_order_paid",
     name: "Health test kit — booking received",
     flow: "Order paid",

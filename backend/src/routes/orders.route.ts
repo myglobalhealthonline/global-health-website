@@ -289,6 +289,53 @@ async function resolveOrderPatientAddress(order: {
   };
 }
 
+/**
+ * The test-centre booking on an order, if it has one.
+ *
+ * Surfaced so the admin order page can show the lab-reference panel. Keyed on
+ * `testCenterLocationId` rather than the item kind: that column is what the
+ * confirmation service itself requires, so the panel appears exactly when the
+ * send would work.
+ */
+async function resolveOrderTestBooking(orderId: string): Promise<{
+  appointmentId: string;
+  labReference: string | null;
+  labConfirmationSentAt: string | null;
+  testCentreName: string | null;
+  scheduledAt: string | null;
+} | null> {
+  const link = await prisma.orderAppointment.findFirst({
+    where: { orderId, appointment: { testCenterLocationId: { not: null } } },
+    select: {
+      appointment: {
+        select: {
+          id: true,
+          labReference: true,
+          labConfirmationSentAt: true,
+          scheduledAt: true,
+          testCenterLocation: {
+            select: { name: true, testCenter: { select: { name: true } } },
+          },
+        },
+      },
+    },
+  });
+  const appt = link?.appointment;
+  if (!appt) return null;
+  return {
+    appointmentId: appt.id,
+    labReference: appt.labReference,
+    labConfirmationSentAt: appt.labConfirmationSentAt?.toISOString() ?? null,
+    scheduledAt: appt.scheduledAt?.toISOString() ?? null,
+    testCentreName: appt.testCenterLocation
+      ? [appt.testCenterLocation.testCenter?.name, appt.testCenterLocation.name]
+          .map((part) => part?.trim())
+          .filter(Boolean)
+          .join(" — ")
+      : null,
+  };
+}
+
 const checkoutBodySchema = z.object({
   email: z.string().trim().email("Invalid email"),
   fullName: z.string().trim().min(2, "Name too short").max(120),
@@ -2177,6 +2224,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           trackingCarrier: order.trackingCarrier,
           trackingUrl: order.trackingUrl,
           trackingNotifiedAt: order.trackingNotifiedAt?.toISOString() ?? null,
+          testBooking: await resolveOrderTestBooking(order.id),
           paidAt: order.paidAt?.toISOString() ?? null,
           createdAt: order.createdAt.toISOString(),
           updatedAt: order.updatedAt.toISOString(),

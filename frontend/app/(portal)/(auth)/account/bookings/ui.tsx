@@ -86,6 +86,13 @@ type BookingsI18n = {
     timeTbc: string;
     notesLabel: string;
     whereLabel: string;
+    labReferenceLabel: string;
+    labTestsHeading: string;
+    labTestsSubtitle: string;
+    labCollectionPointLabel: string;
+    labExamsLabel: string;
+    labResultsReadyLabel: string;
+    labStatusLabels: Partial<Record<string, string>>;
     directionsLabel: string;
     metaOrder: string;
     metaCountry: string;
@@ -153,6 +160,13 @@ const DEFAULT_BOOKINGS_I18N: BookingsI18n = {
     timeTbc: "Time to be confirmed",
     notesLabel: "Notes",
     whereLabel: "Where",
+    labReferenceLabel: "Booking reference",
+    labTestsHeading: "Lab tests",
+    labTestsSubtitle: "Tests prescribed for you and sent to the laboratory.",
+    labCollectionPointLabel: "Collection point",
+    labExamsLabel: "Tests",
+    labResultsReadyLabel: "Results ready",
+    labStatusLabels: {},
     directionsLabel: "Directions",
     metaOrder: "Order",
     metaCountry: "Country",
@@ -759,13 +773,27 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
                   {/* In-person "Where" block — appears when consultationMode is
                       IN_PERSON and admin has set a Clinic or a free-text address. */}
                   {item.consultationMode === "IN_PERSON" &&
-                  (item.clinicName || item.locationAddress) ? (
+                  (item.clinicName || item.locationAddress || item.testCentreName) ? (
                     <WhereBlock
                       clinicName={item.clinicName ?? null}
                       clinicCity={item.clinicCity ?? null}
                       locationAddress={item.locationAddress ?? null}
+                      venueName={item.testCentreName ?? null}
                       i18n={b}
                     />
+                  ) : null}
+
+                  {/* The lab's own booking code, once an admin has recorded it
+                      — the patient quotes this at the desk. */}
+                  {item.labReference ? (
+                    <div className="mt-3 rounded-[var(--radius-card-sm)] bg-[var(--portal-well)] px-3 py-2">
+                      <p className="text-xs font-semibold text-[var(--portal-muted)]">
+                        {b.labReferenceLabel}
+                      </p>
+                      <p className="mt-0.5 text-sm font-medium text-[var(--portal-text)]">
+                        {item.labReference}
+                      </p>
+                    </div>
                   ) : null}
 
                   {item.notesPreview ? (
@@ -940,20 +968,32 @@ function WhereBlock({
   clinicName,
   clinicCity,
   locationAddress,
+  venueName,
   i18n,
 }: {
   clinicName: string | null;
   clinicCity: string | null;
   locationAddress: string | null;
+  /** Test-centre booking: "Provider — Branch". A test centre is not a Clinic,
+   *  so without this the patient saw a bare address and no name. */
+  venueName?: string | null;
   i18n: BookingsI18n["bookings"];
 }) {
-  const primary = clinicName ?? locationAddress ?? "";
-  const secondary = clinicName && clinicCity ? clinicCity : null;
+  // Name first, address underneath — a patient navigating to a blood draw
+  // looks for the centre's name on the door.
+  const primary = venueName ?? clinicName ?? locationAddress ?? "";
+  const secondary = venueName
+    ? locationAddress
+    : clinicName && clinicCity
+      ? clinicCity
+      : null;
   // Build a Maps link from whichever address parts we have. Patient
   // gets a one-tap directions launcher.
-  const query = clinicName
-    ? [clinicName, clinicCity].filter(Boolean).join(", ")
-    : (locationAddress ?? "");
+  const query = venueName
+    ? [venueName, locationAddress].filter(Boolean).join(", ")
+    : clinicName
+      ? [clinicName, clinicCity].filter(Boolean).join(", ")
+      : (locationAddress ?? "");
   const mapsHref = query
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`
     : null;

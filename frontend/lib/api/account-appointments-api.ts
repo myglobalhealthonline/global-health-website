@@ -33,6 +33,25 @@ export type AccountAppointment = {
   doctorName?: string | null;
   /** Human-facing order reference (e.g. ORD-000001), null when unlinked. */
   orderNumber?: string | null;
+  /** Test-centre booking: "Provider — Branch". Null for consultations —
+   *  `clinicName` stays null for these, since a test centre is not a Clinic. */
+  testCentreName?: string | null;
+  /** The laboratory's own booking code, once an admin has recorded it. */
+  labReference?: string | null;
+};
+
+/** A laboratory requisition as the patient sees it. Read-only: every
+ *  transition is driven by an admin or the lab. */
+export type AccountLabRequisition = {
+  id: string;
+  status: string;
+  countryCode: string;
+  createdAt: string;
+  collectionDate: string | null;
+  collectionPointName: string | null;
+  collectionPointAddress: string | null;
+  exams: string[];
+  hasResults: boolean;
 };
 
 type ApiResult<T> =
@@ -76,6 +95,36 @@ export async function fetchAccountAppointments(): Promise<ApiResult<{ items: Acc
         ok: false,
         status: response.status,
         message: json.message ?? "Unable to load appointment history",
+      };
+    }
+    return { ok: true, data: { items: json.data.items }, message: json.message };
+  } catch {
+    return { ok: false, message: "Backend is unavailable" };
+  }
+}
+
+export async function fetchAccountLabRequisitions(): Promise<
+  ApiResult<{ items: AccountLabRequisition[] }>
+> {
+  const apiUrl = getBackendOrigin();
+  if (!apiUrl) return { ok: false, message: "Public API URL is not configured" };
+  const cookieHeader = await buildCookieHeader();
+  try {
+    const response = await fetch(`${apiUrl}/api/account/lab-requisitions`, {
+      method: "GET",
+      headers: cookieHeader ? { cookie: cookieHeader } : undefined,
+      cache: "no-store",
+    });
+    const json = (await response.json()) as {
+      ok?: boolean;
+      data?: { items?: AccountLabRequisition[] };
+      message?: string;
+    };
+    if (!response.ok || !json.ok || !json.data?.items) {
+      return {
+        ok: false,
+        status: response.status,
+        message: json.message ?? "Unable to load lab tests",
       };
     }
     return { ok: true, data: { items: json.data.items }, message: json.message };

@@ -137,13 +137,28 @@
     "timeTbc": "Hora por confirmar",
     "notesLabel": "Notas",
     "whereLabel": "Dónde",
+    "labReferenceLabel": "Referencia de la reserva",
     "directionsLabel": "Cómo llegar",
     "metaOrder": "Pedido",
     "metaCountry": "País",
     "metaDoctor": "Médico",
     "metaScheduled": "Programada",
     "metaPayment": "Pago",
-    "tabsAria": "Vistas de reservas"
+    "tabsAria": "Vistas de reservas",
+    "labTestsHeading": "Análisis",
+    "labTestsSubtitle": "Análisis prescritos para usted y enviados al laboratorio.",
+    "labCollectionPointLabel": "Punto de extracción",
+    "labExamsLabel": "Análisis",
+    "labResultsReadyLabel": "Resultados disponibles",
+    "labStatusLabels": {
+      "PATIENT_CONFIRMED": "Confirmado con usted",
+      "AWAITING_PAYMENT": "Pendiente de pago",
+      "READY_TO_SEND": "En preparación",
+      "SENT_TO_LAB": "Enviado al laboratorio",
+      "SAMPLE_COLLECTED": "Muestra recogida",
+      "RESULT_RECEIVED": "Resultados disponibles",
+      "CLOSED": "Completado"
+    }
   },
   "orders": {
     "breadcrumb": "Cuenta",

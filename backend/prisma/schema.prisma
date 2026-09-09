@@ -2404,6 +2404,21 @@ model Appointment {
   /// kept for reporting; this is the site whose address the patient was given.
   testCenterLocationId           String?
   testCenterLocation             TestCenterLocation?       @relation(fields: [testCenterLocationId], references: [id], onDelete: SetNull)
+  /// The laboratory's OWN reference for this booking, typed in by an admin
+  /// after they replicate it in the lab's external system (Synlab WebLIMS and
+  /// the like). Free text because every provider formats theirs differently,
+  /// and optional because plenty of them give no code at all — the patient's
+  /// confirmation goes out with or without it.
+  ///
+  /// Shown to the patient in their confirmation and in the portal so they can
+  /// quote it at the desk. Deliberately NOT `Order.trackingNumber`: that column
+  /// is a courier shipment for a posted kit, and overloading it would put a
+  /// "track your parcel" concept on an appointment that ships nothing.
+  labReference                   String?
+  /// When the confirmation carrying the details above was last SENT to the
+  /// patient by an admin. Null = never sent by hand; the automatic
+  /// post-payment confirmation is separate and always fires on payment.
+  labConfirmationSentAt          DateTime?
   /// The claimed center slot. Deliberately a SEPARATE column from
   /// `timeSlotId` below, which is a typed FK to `DoctorTimeSlot`: the paid-order
   /// fulfilment path runs `prisma.doctorTimeSlot.updateMany` over ids drawn
