@@ -866,12 +866,21 @@ export async function rearmPostPaymentRemindersForAppointment(
   await rearmPostPaymentRemindersForReschedule(item.orderId, newConsultStart);
 }
 
+// Ceiling-only thresholds — "due at or before this much lead time" — not a
+// [start, end) window. A window with a floor can be walked past entirely: a
+// short-notice booking whose lead time is already under the floor when it's
+// first seen, or a tick that gets delayed (deploy, restart, DB hiccup) past
+// the window's far edge, would never enter it and would sit stalled at its
+// stage forever. Ceilings can't be missed that way — the very next tick that
+// runs still sees leadMs under the ceiling and fires.
+const ONE_HOUR_DUE_MS = 65 * MS_MINUTE;
+const FIVE_MIN_DUE_MS = 8 * MS_MINUTE;
+// Still fire a reminder up to this long after the consult's start rather than
+// silently giving up — a late reminder beats a missed one.
+const LATE_REMINDER_GRACE_MS = 60 * MS_MINUTE;
+
 export async function runPostPaymentReminderCron() {
   const now = new Date();
-  const oneHourWindowStart = new Date(now.getTime() + 55 * MS_MINUTE);
-  const oneHourWindowEnd = new Date(now.getTime() + 65 * MS_MINUTE);
-  const fiveMinWindowStart = new Date(now.getTime() + 0 * MS_MINUTE);
-  const fiveMinWindowEnd = new Date(now.getTime() + 8 * MS_MINUTE);
 
   const paidOrders = await prisma.order.findMany({
     where: {
@@ -901,21 +910,26 @@ export async function runPostPaymentReminderCron() {
     const consultStart = await resolveConsultationStartForOrder(row.id);
     if (!consultStart || !row.meetingUrl?.trim()) continue;
 
-    if (
-      row.postPaymentStage === POST_PAYMENT_STAGE_MEETING_LINK &&
-      consultStart >= oneHourWindowStart &&
-      consultStart <= oneHourWindowEnd
-    ) {
-      await post_sendOneHourReminder(row.id).catch(() => undefined);
-      oneHourSent++;
-      continue;
+    const leadMs = consultStart.getTime() - now.getTime();
+    // Long past — reminding is pointless now, leave the stage alone.
+    if (leadMs < -LATE_REMINDER_GRACE_MS) continue;
+
+    let stage = row.postPaymentStage;
+
+    // Due for the 1-hour rung. When lead time has already dropped to 5-minute
+    // territory (a short-notice booking, or a tick that only resumed after a
+    // gap), skip the now-meaningless "1 hour" message and fall straight
+    // through to the 5-minute check below instead of waiting on a rung that
+    // no longer makes sense.
+    if (stage === POST_PAYMENT_STAGE_MEETING_LINK && leadMs <= ONE_HOUR_DUE_MS) {
+      if (leadMs > FIVE_MIN_DUE_MS) {
+        await post_sendOneHourReminder(row.id).catch(() => undefined);
+        oneHourSent++;
+      }
+      stage = POST_PAYMENT_STAGE_ONE_HOUR;
     }
 
-    if (
-      row.postPaymentStage === POST_PAYMENT_STAGE_ONE_HOUR &&
-      consultStart >= fiveMinWindowStart &&
-      consultStart <= fiveMinWindowEnd
-    ) {
+    if (stage === POST_PAYMENT_STAGE_ONE_HOUR && leadMs <= FIVE_MIN_DUE_MS) {
       await post_sendFiveMinuteReminder(row.id).catch(() => undefined);
       fiveMinSent++;
     }
