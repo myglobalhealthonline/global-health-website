@@ -13,7 +13,13 @@ import {
   SUKL_SERVICE_LABELS,
   type SuklService,
 } from "./config.js";
-import { buildMessageElement, comEl, extractElementText, extractFault, wrapInSoapEnvelope } from "./envelope.js";
+import {
+  buildMessageElement,
+  el,
+  extractElementText,
+  extractFault,
+  wrapInSoapEnvelope,
+} from "./envelope.js";
 import { SuklError, SuklNotConfiguredError, isSuklError } from "./errors.js";
 import { readSigningKeyFromPkcs12, signSuklMessage, type SuklSigningKey } from "./signing.js";
 import { suklPost } from "./transport.js";
@@ -110,16 +116,16 @@ export function buildAppPingZepRequest(input: {
   // Same Doklad/Zprava shape as AppPing — zprava_zep_dotaz_type adds only the
   // Signature, which signSuklMessage appends.
   const body =
-    "<Doklad><com:Pristupujici>" +
-    comEl("Uzivatel", input.uzivatel) +
-    comEl("Pracoviste", input.pracoviste) +
-    "</com:Pristupujici></Doklad>" +
-    "<com:Zprava>" +
-    comEl("ID_Zpravy", input.idZpravy) +
-    comEl("Verze", input.verze) +
-    comEl("Odeslano", input.odeslano.toISOString()) +
-    comEl("SW_Klienta", input.swKlienta) +
-    "</com:Zprava>";
+    "<Doklad><Pristupujici>" +
+    el("Uzivatel", input.uzivatel) +
+    el("Pracoviste", input.pracoviste) +
+    "</Pristupujici></Doklad>" +
+    "<Zprava>" +
+    el("ID_Zpravy", input.idZpravy) +
+    el("Verze", input.verze) +
+    el("Odeslano", input.odeslano.toISOString()) +
+    el("SW_Klienta", input.swKlienta) +
+    "</Zprava>";
 
   const message = buildMessageElement({
     operationElement: "AppPingZEPDotaz",

@@ -10,7 +10,7 @@ import {
 } from "./config.js";
 import {
   buildSoapEnvelope,
-  comEl,
+  el,
   extractAllElementText,
   extractElementText,
   extractFault,
@@ -75,12 +75,12 @@ export function buildLoginRequest(input: {
   // value, so passing built-up markup through it would emit &lt;ID_Zpravy&gt;
   // and SÚKL would reject the message. el() is for leaves only.
   const body =
-    "<com:Zprava>" +
-    comEl("ID_Zpravy", input.idZpravy) +
-    comEl("Verze", input.verze) +
-    comEl("Odeslano", input.odeslano.toISOString()) +
-    comEl("SW_Klienta", input.swKlienta) +
-    "</com:Zprava>";
+    "<Zprava>" +
+    el("ID_Zpravy", input.idZpravy) +
+    el("Verze", input.verze) +
+    el("Odeslano", input.odeslano.toISOString()) +
+    el("SW_Klienta", input.swKlienta) +
+    "</Zprava>";
 
   return buildSoapEnvelope({
     operationElement: "LoginDotaz",

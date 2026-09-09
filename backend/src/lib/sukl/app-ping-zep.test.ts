@@ -40,10 +40,10 @@ test("the signed message sits inside the envelope, namespace still on the messag
   // CUER declares the shared elements in erp/201704, and the declaration must
   // stay on the message root — hoisting it to the Envelope invalidates the
   // signature, which SÚKL's document forbids explicitly.
-  assert.match(xml, /<AppPingZEPDotaz xmlns="http:\/\/www\.sukl\.cz\/erp\/201704" xmlns:com="http:\/\/www\.sukl\.cz\/erp\/common">/);
+  assert.match(xml, /<AppPingZEPDotaz xmlns="http:\/\/www\.sukl\.cz\/erp\/201704">/);
   assert.ok(!/<soap:Envelope[^>]*www\.sukl\.cz/.test(xml));
   assert.match(xml, /<Signature xmlns="http:\/\/www\.w3\.org\/2000\/09\/xmldsig#"/);
-  assert.match(xml, /<com:Pracoviste>00150928369<\/com:Pracoviste>/);
+  assert.match(xml, /<Pracoviste>00150928369<\/Pracoviste>/);
 });
 
 test("the signature verifies against the message extracted from the envelope", () => {

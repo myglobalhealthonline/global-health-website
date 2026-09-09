@@ -63,7 +63,7 @@ function input(overrides: Partial<SuklCreatePrescriptionInput> = {}): SuklCreate
 test("the request carries the required fields in SÚKL's shape", () => {
   const xml = buildCreatePrescriptionRequest(input());
 
-  assert.match(xml, /^<ZalozeniPredpisuDotaz xmlns="http:\/\/www\.sukl\.cz\/erp\/201704" xmlns:com="http:\/\/www\.sukl\.cz\/erp\/common">/);
+  assert.match(xml, /^<ZalozeniPredpisuDotaz xmlns="http:\/\/www\.sukl\.cz\/erp\/201704">/);
   assert.match(xml, /<DatumVystaveni>2026-09-07<\/DatumVystaveni>/);
   assert.match(xml, /<PlatnostDo>2026-10-07<\/PlatnostDo>/);
   assert.match(xml, /<Lekar>141EA8AA-F82D-4D74-A725-CDABE9973ACA<\/Lekar>/);
@@ -79,7 +79,7 @@ test("the submission id is the one supplied, not a fresh one", () => {
   // SÚKL treat ID_Zpravy on a create as the authorisation id for later
   // amendment, so generating it internally would strand the prescription.
   const xml = buildCreatePrescriptionRequest(input());
-  assert.match(xml, /<com:ID_Zpravy>3fa85f64-5717-4562-b3fc-2c963f66afa6<\/com:ID_Zpravy>/);
+  assert.match(xml, /<ID_Zpravy>3fa85f64-5717-4562-b3fc-2c963f66afa6<\/ID_Zpravy>/);
 });
 
 test("the message is signed, unenveloped, and verifies over its own bytes", () => {
