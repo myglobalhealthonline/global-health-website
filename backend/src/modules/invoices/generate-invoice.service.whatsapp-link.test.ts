@@ -1,3 +1,4 @@
+import "../../test-module-mocks.js";
 import assert from "node:assert/strict";
 import { before, describe, it, mock } from "node:test";
 

@@ -167,6 +167,14 @@ export interface SuklRequestOptions {
    * rather than always-on.
    */
   basicAuth?: { username: string; password: string };
+  /**
+   * NIA bearer token. Mutually exclusive with basicAuth and takes precedence.
+   *
+   * When the doctor authenticated through NIA, SÚKL expect
+   * `Authorization: Bearer <token>` on EVERY call, and business messages then
+   * need no XML signature at all. See docs/sukl/NIA_AUTH.md.
+   */
+  bearerToken?: string;
   /** Hard cap on the response we will buffer. Guards against a huge document. */
   maxBytes?: number;
 }
@@ -218,15 +226,19 @@ export async function suklRequest(options: SuklRequestOptions): Promise<SuklResp
         timeout,
         headers: {
           accept: "text/xml, application/soap+xml, application/wsdl+xml, */*",
-          ...(options.basicAuth
-            ? {
-                authorization:
-                  "Basic " +
-                  Buffer.from(
-                    `${options.basicAuth.username}:${options.basicAuth.password}`,
-                  ).toString("base64"),
-              }
-            : {}),
+          // Bearer wins: a NIA-authenticated call must not also carry Basic,
+          // which would identify a different principal to SÚKL.
+          ...(options.bearerToken
+            ? { authorization: `Bearer ${options.bearerToken}` }
+            : options.basicAuth
+              ? {
+                  authorization:
+                    "Basic " +
+                    Buffer.from(
+                      `${options.basicAuth.username}:${options.basicAuth.password}`,
+                    ).toString("base64"),
+                }
+              : {}),
           ...(method === "POST"
             ? {
                 "content-type": options.contentType ?? "text/xml; charset=utf-8",

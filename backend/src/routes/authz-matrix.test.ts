@@ -532,6 +532,78 @@ describe("authorization matrix", () => {
     }
   });
 
+  it("manual test booking: unauthenticated POST → 401", async (t) => {
+    if (!app) return t.skip();
+    const res: InjectStatusResponse = await app.inject({
+      method: "POST",
+      url: "/api/admin/appointments/test-booking",
+      payload: {
+        patient: { email: "authz@example.com", fullName: "Authz Test", phone: "+353871234567" },
+        testCenterId: "tc_authz",
+        examTypeId: "ex_authz",
+        testCenterTimeSlotId: "slot_authz",
+        countryCode: "ie",
+      },
+    });
+    // 401 before the payload is acted on — this endpoint creates a patient
+    // account, an order and a Stripe session, so it must never run unauthenticated.
+    assert.equal(res.statusCode, 401, res.body);
+  });
+
+  // ── Test-center booking inventory ("Book a Test") ─────────────────────
+  // A center's availability and slots are bookable inventory, exactly like a
+  // doctor's. Both route families guard with a plugin-level onRequest hook, so
+  // this covers every verb they register.
+  it("test center availability + slots: unauthenticated requests → 401", async (t) => {
+    if (!app) return t.skip();
+    const availabilityWindow = {
+      weekday: 1,
+      startMinute: 9 * 60,
+      endMinute: 17 * 60,
+    };
+    const targets = [
+      ["GET", "/api/admin/test-centers/tc_authz/availability", undefined],
+      ["POST", "/api/admin/test-centers/tc_authz/availability", availabilityWindow],
+      [
+        "PATCH",
+        "/api/admin/test-centers/tc_authz/availability/av_authz",
+        { isActive: false },
+      ],
+      ["DELETE", "/api/admin/test-centers/tc_authz/availability/av_authz", undefined],
+      [
+        "GET",
+        "/api/admin/test-centers/tc_authz/time-slots?fromUtc=2026-09-01T00:00:00.000Z&toUtc=2026-09-02T00:00:00.000Z",
+        undefined,
+      ],
+      [
+        "POST",
+        "/api/admin/test-centers/tc_authz/time-slots",
+        { startAts: ["2026-09-01T09:00:00.000Z"], durationMinutes: 30 },
+      ],
+      [
+        "POST",
+        "/api/admin/test-centers/tc_authz/time-slots/bulk",
+        { action: "BLOCK", slotIds: ["slot_authz"] },
+      ],
+      [
+        "PATCH",
+        "/api/admin/test-centers/tc_authz/time-slots/slot_authz",
+        { status: "BLOCKED" },
+      ],
+      ["DELETE", "/api/admin/test-centers/tc_authz/time-slots/slot_authz", undefined],
+    ] as const;
+    for (const [method, url, payload] of targets) {
+      const res: InjectStatusResponse = await app.inject({
+        method,
+        url,
+        ...(payload ? { payload } : {}),
+      });
+      // 401 before any lookup — the ids above do not exist, so a 404 here would
+      // mean the handler ran before authorization did.
+      assert.equal(res.statusCode, 401, `${method} ${url}: ${res.body}`);
+    }
+  });
+
   it("doctor booking pause: unauthenticated PATCH and DELETE → 401", async (t) => {
     if (!app) return t.skip();
     for (const method of ["PATCH", "DELETE"] as const) {

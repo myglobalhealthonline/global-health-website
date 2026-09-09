@@ -651,6 +651,7 @@
     "kindSpecialist": "Consulta de especialidade",
     "kindTest": "Análise de saúde",
     "kindPrescription": "Prescrição online",
+    "kindTestBooking": "Marcacao de exame",
     "stepCart": "Carrinho",
     "stepCheckout": "Finalizar compra",
     "stepPayment": "Pagamento",

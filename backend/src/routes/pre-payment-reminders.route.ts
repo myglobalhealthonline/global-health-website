@@ -1,4 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
+import { runWithSchedulerDb } from "../db/prisma.js";
 import { env } from "../config/env.js";
 import { isValidCronSecret } from "../utils/cron-auth.js";
 import {
@@ -19,6 +20,7 @@ const prePaymentRemindersRoute: FastifyPluginAsync = async (app) => {
       return reply.status(401).send(errorResponse("Not authorised"));
     }
 
+    return runWithSchedulerDb(async () => {
     try {
       // Deadline cancels first, and before the reminders: this endpoint is the
       // fallback for when the internal scheduler isn't running, so it has to
@@ -43,6 +45,7 @@ const prePaymentRemindersRoute: FastifyPluginAsync = async (app) => {
       app.log.error(error);
       return reply.status(500).send(errorResponse("Could not run pre-payment reminders"));
     }
+    });
   });
 };
 

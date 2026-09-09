@@ -57,6 +57,7 @@ const KIND_ICON: Record<CartItem["kind"], typeof Stethoscope> = {
   SPECIALIST_CONSULTATION: Stethoscope,
   HEALTH_TEST: FlaskConical,
   PRESCRIPTION_SERVICE: Pill,
+  TEST_BOOKING: FlaskConical,
 };
 
 function kindLabel(kind: CartItem["kind"], t: CartT): string {
@@ -69,6 +70,8 @@ function kindLabel(kind: CartItem["kind"], t: CartT): string {
       return t.kindTest;
     case "PRESCRIPTION_SERVICE":
       return t.kindPrescription;
+    case "TEST_BOOKING":
+      return t.kindTestBooking;
   }
 }
 

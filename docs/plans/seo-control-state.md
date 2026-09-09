@@ -1,6 +1,6 @@
 # SEO control state — canonical
 
-**Last operational update: 2026-09-04** — §42, the six-market audit, ledger reconciliation and one P0 measurement defect. Historical audit files remain snapshots;
+**Last operational update: 2026-09-09** — §43 records local, undeployed performance remediation; §42 retains the six-market audit and P0 measurement defect. Historical audit files remain snapshots;
 this ledger is the source of truth for current status, dated gates and future work.
 
 **This file is the single source of truth for the SEO workstream.** It carries the
@@ -8325,3 +8325,18 @@ intentional removal.
 `/portugal/de/careers` remains HTTP 200, `index, follow`, and self-canonical. GSC URL
 Inspection reports the URL is on Google and indexed, so the bulk “Crawled — currently
 not indexed” row is stale. Keep the URL in the sitemap for German candidates.
+
+
+## 46. Performance remediation (2026-09-09)
+
+Owner-requested follow-up to the [performance audit](../audits/performance/2026-09-09/README.md). Baseline `499f4076`, continuation `cd9afaf9` and live-availability cache follow-up `996cee42` are pushed to `Dev-hassaan`. The code fixes are deployed and verified on Development. Full status and evidence: [remediation record](../audits/performance/2026-09-09/REMEDIATION.md).
+
+Completed: scheduler query isolation, capped shared numbering capacity, dependency-scoped aggregate caches, bounded slot prewarming/successful coverage, compact blog summaries, localized booking retry/cancellation and no-store live-availability responses. Production Turbopack build passed all 951 static pages; native analyzer confirmed no full common dictionaries in homepage client chunks. Frontend: 132 files, 1,595 passed, five skipped. Backend: 54 focused tests passed. Both package typechecks and locale checks passed. Production-browser snapshot checks passed all three desktop/mobile consent cases, including failed retry, recovery and Back navigation.
+
+Post-deployment Development checks: 12/12 complete homepage responses, 5/5 anonymous delivery checks, 6/6 API checks and no-store on both service-availability error routes. Railway telemetry confirms configured per-worker pool capacity14; transient request waiting was observed, so zero contention is not claimed. Brazil logs correlate digest `1545395240` with failure of `country-services:br:all`; the deeper original cause remains unproven.
+
+Production promotion, genuine cold-cache/percentile measurements, actual database connection ceiling, authenticated/CDN delivery verification and rolling field CWV remain open acceptance gates. [CI34295965190](https://github.com/myglobalhealthonline/global-health-website/actions/runs/34295965190) passed frontend tests and authorization E2E; dependency/security findings in unchanged manifests/source/history block the overall run. Backend integration finished with 2,614 passed and 17 failed; the scoped test-loader/fixture follow-up passes 26 focused tests on Node 22 and backend typecheck. [Follow-up CI 34299337278](https://github.com/myglobalhealthonline/global-health-website/actions/runs/34299337278) passed all 2,631 backend tests (zero failures/skips), resolving all seventeen failures; frontend tests, authorization E2E, typecheck, lint and build also passed. Test follow-up `feb15e33` is active on both Development services, with another 6/6 API pass. These security findings are separate from the performance-file scope. GA collection was independently restored (§47); no SEO content/indexation submission or GSC/CrUX credential access occurred in this batch.
+
+## 47. GA4 collection restored (2026-09-09)
+
+Owner requested repair of the empty GA4 property 547083375. Live consented homepage inspection confirmed the wrong destination G-4PPGECG12X. Corrected only Production Frontend NEXT_PUBLIC_GA_MEASUREMENT_ID to G-SP48D9LJJ5 in Railway and applied the one-variable deployment. Deployment 2f1cd860-f93e-4dfc-b2e4-4611771ac3f9 completed successfully, including healthcheck. Reloaded live homepage renders ga4-init and ga4-loader with G-SP48D9LJJ5. GA4 Realtime then showed 1 active user, page_view, session_start and first_visit. Collection is restored; historical missing data is not backfilled. This redeployed the existing production code; it does not establish deployment of the separate Dev-hassaan Web Vitals/performance batch. No database or Analytics property settings changed.

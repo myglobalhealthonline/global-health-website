@@ -36,6 +36,7 @@ const CART_ITEM_KINDS = [
   "PRESCRIPTION_SERVICE",
   "GENERAL_CONSULTATION",
   "SPECIALIST_CONSULTATION",
+  "TEST_BOOKING",
 ] as const;
 
 /** Fiscal document types — must mirror the Prisma `InvoiceDocumentType` enum. */

@@ -1,6 +1,8 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, type LocaleCode } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
+import { resolveTranslation } from "../shared/resolve-translation.js";
+import { sanitizeRichHtml } from "../../utils/sanitize-html.js";
 import type {
   AdminExamTypeCreateBody,
   AdminExamTypesQuery,
@@ -11,6 +13,7 @@ import type {
   AdminTestCenterExamCreateBody,
   AdminTestCenterExamsQuery,
   AdminTestCenterExamUpdateBody,
+  ExamTypeTranslationInput,
 } from "../../validations/admin-test-centers.schema.js";
 
 /** Shape shared by every paginated list in this module. */
@@ -128,6 +131,181 @@ function buildExamTypeWhere(query: {
   return where;
 }
 
+// ─── Exam-type public content + translations ───────────────────────────────
+
+type ExamTypeDisplayBase = {
+  name: string;
+  summary: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  heroTitle: string | null;
+  heroDescription: string | null;
+  detailBody: string | null;
+  preparationBody: string | null;
+  ctaLabel: string | null;
+};
+
+type ExamTypeTranslationRow = ExamTypeDisplayBase & { locale: LocaleCode };
+
+const EXAM_TYPE_DISPLAY_FIELDS = [
+  "name",
+  "summary",
+  "seoTitle",
+  "seoDescription",
+  "heroTitle",
+  "heroDescription",
+  "detailBody",
+  "preparationBody",
+  "ctaLabel",
+] as const satisfies readonly (keyof ExamTypeDisplayBase)[];
+
+export const examTypeTranslationSelect = {
+  locale: true,
+  name: true,
+  summary: true,
+  seoTitle: true,
+  seoDescription: true,
+  heroTitle: true,
+  heroDescription: true,
+  detailBody: true,
+  preparationBody: true,
+  ctaLabel: true,
+} satisfies Prisma.ExamTypeTranslationSelect;
+
+/**
+ * Merge an exam type's base display columns with the best translation for the
+ * requested locale (requested → default → base). Returns the row with display
+ * fields overwritten, the raw `translations` array stripped, and the locale
+ * that actually resolved.
+ *
+ * `translatedFields` names the fields the resolved row actually supplied.
+ * Everything else fell through to the base columns, so a consumer rendering a
+ * non-default locale can tell "this is in my language" from "this is the
+ * catalogue's own language leaking through the fallback" — which is what the
+ * public site needs to decide indexability.
+ */
+export function mergeExamTypeTranslation<
+  E extends ExamTypeDisplayBase & { translations: ExamTypeTranslationRow[] },
+>(
+  examType: E,
+  requested: LocaleCode,
+  defaultLocale: LocaleCode,
+): Omit<E, "translations"> & {
+  resolvedLocale: LocaleCode;
+  translatedFields: string[];
+} {
+  const { tr, resolvedLocale } = resolveTranslation(
+    examType.translations,
+    requested,
+    defaultLocale,
+  );
+  const { translations: _translations, ...rest } = examType;
+  const translatedFields = tr
+    ? EXAM_TYPE_DISPLAY_FIELDS.filter((field) => tr[field] != null)
+    : [];
+  return {
+    ...rest,
+    translatedFields,
+    name: tr?.name ?? examType.name,
+    summary: tr?.summary ?? examType.summary,
+    seoTitle: tr?.seoTitle ?? examType.seoTitle,
+    seoDescription: tr?.seoDescription ?? examType.seoDescription,
+    heroTitle: tr?.heroTitle ?? examType.heroTitle,
+    heroDescription: tr?.heroDescription ?? examType.heroDescription,
+    detailBody: tr?.detailBody ?? examType.detailBody,
+    preparationBody: tr?.preparationBody ?? examType.preparationBody,
+    ctaLabel: tr?.ctaLabel ?? examType.ctaLabel,
+    resolvedLocale,
+  };
+}
+
+/**
+ * Upsert one ExamTypeTranslation per supplied entry, keyed by
+ * (examTypeId, locale). Additive per submitted locale; rich HTML is sanitized.
+ *
+ * ONE DELIBERATE DIVERGENCE from `upsertServiceTranslations`: no
+ * `assertLocaleSupported` call. That guard checks the locale is enabled for the
+ * owning COUNTRY, and an ExamType has none — it is one global catalogue reused
+ * by every market, so any LocaleCode is valid here. Price and availability stay
+ * per-center; only the copy is global.
+ *
+ * Writes go through the caller's transaction client so the base row and its
+ * translations commit together.
+ */
+async function upsertExamTypeTranslations(
+  tx: Prisma.TransactionClient,
+  examTypeId: string,
+  translations: ExamTypeTranslationInput[],
+): Promise<void> {
+  for (const entry of translations) {
+    const detailBody =
+      entry.detailBody == null ? entry.detailBody : sanitizeRichHtml(entry.detailBody);
+    const preparationBody =
+      entry.preparationBody == null
+        ? entry.preparationBody
+        : sanitizeRichHtml(entry.preparationBody);
+    const data = {
+      name: entry.name,
+      summary: entry.summary,
+      seoTitle: entry.seoTitle,
+      seoDescription: entry.seoDescription,
+      heroTitle: entry.heroTitle,
+      heroDescription: entry.heroDescription,
+      detailBody,
+      preparationBody,
+      ctaLabel: entry.ctaLabel,
+    };
+    await tx.examTypeTranslation.upsert({
+      where: { examTypeId_locale: { examTypeId, locale: entry.locale } },
+      create: { examTypeId, locale: entry.locale, ...data },
+      update: data,
+    });
+  }
+}
+
+/** Base-column content fields shared by the create and update writers. */
+function examTypeContentData(body: {
+  summary?: string | null;
+  imagePath?: string | null;
+  galleryImagePaths?: string[];
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  heroTitle?: string | null;
+  heroDescription?: string | null;
+  detailBody?: string | null;
+  preparationBody?: string | null;
+  ctaLabel?: string | null;
+  durationMinutes?: number;
+  isBookable?: boolean;
+}) {
+  return {
+    ...(body.summary !== undefined && { summary: body.summary }),
+    ...(body.imagePath !== undefined && { imagePath: body.imagePath }),
+    ...(body.galleryImagePaths !== undefined && {
+      galleryImagePaths: body.galleryImagePaths,
+    }),
+    ...(body.seoTitle !== undefined && { seoTitle: body.seoTitle }),
+    ...(body.seoDescription !== undefined && { seoDescription: body.seoDescription }),
+    ...(body.heroTitle !== undefined && { heroTitle: body.heroTitle }),
+    ...(body.heroDescription !== undefined && {
+      heroDescription: body.heroDescription,
+    }),
+    // Rich HTML — sanitized on the way in, never on the way out.
+    ...(body.detailBody !== undefined && {
+      detailBody: body.detailBody == null ? null : sanitizeRichHtml(body.detailBody),
+    }),
+    ...(body.preparationBody !== undefined && {
+      preparationBody:
+        body.preparationBody == null ? null : sanitizeRichHtml(body.preparationBody),
+    }),
+    ...(body.ctaLabel !== undefined && { ctaLabel: body.ctaLabel }),
+    ...(body.durationMinutes !== undefined && {
+      durationMinutes: body.durationMinutes,
+    }),
+    ...(body.isBookable !== undefined && { isBookable: body.isBookable }),
+  };
+}
+
 /** Paginated — the catalogue carries thousands of rows once a supplier price
  *  list is imported, so this never returns the whole table. */
 export async function listAdminExamTypes(query: AdminExamTypesQuery) {
@@ -140,7 +318,13 @@ export async function listAdminExamTypes(query: AdminExamTypesQuery) {
       skip,
       take: query.pageSize,
       orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
-      include: { _count: { select: { offerings: true } } },
+      include: {
+        _count: { select: { offerings: true } },
+        // The admin edit form prefills its per-locale tabs from these. Bounded
+        // by pageSize and by six locales, so this stays a small join even once
+        // a supplier price list has filled the catalogue.
+        translations: { select: examTypeTranslationSelect },
+      },
     });
     return {
       items: rows.map((row) => ({ ...row, offeringCount: row._count.offerings })),
@@ -169,16 +353,25 @@ export async function listAdminExamTypeCategories(): Promise<string[]> {
 
 export async function createAdminExamType(input: AdminExamTypeCreateBody) {
   try {
-    return await prisma.examType.create({
-      data: {
-        code: input.code,
-        name: input.name,
-        slug: input.slug,
-        category: input.category,
-        description: input.description,
-        sortOrder: input.sortOrder ?? 0,
-        isActive: input.isActive ?? true,
-      },
+    // Base row and its translations commit together — a failing locale must
+    // not leave the exam type created with the copy half-applied.
+    return await prisma.$transaction(async (tx) => {
+      const row = await tx.examType.create({
+        data: {
+          code: input.code,
+          name: input.name,
+          slug: input.slug,
+          category: input.category,
+          description: input.description,
+          sortOrder: input.sortOrder ?? 0,
+          isActive: input.isActive ?? true,
+          ...examTypeContentData(input),
+        },
+      });
+      if (input.translations?.length) {
+        await upsertExamTypeTranslations(tx, row.id, input.translations);
+      }
+      return row;
     });
   } catch (error) {
     throw normalizeDbError(error, "Exam type data is unavailable");
@@ -189,17 +382,24 @@ export async function updateAdminExamType(id: string, body: AdminExamTypeUpdateB
   const existing = await prisma.examType.findUnique({ where: { id }, select: { id: true } });
   if (!existing) return null;
   try {
-    return await prisma.examType.update({
-      where: { id },
-      data: {
-        ...(body.code !== undefined && { code: body.code }),
-        ...(body.name !== undefined && { name: body.name }),
-        ...(body.slug !== undefined && { slug: body.slug }),
-        ...(body.category !== undefined && { category: body.category }),
-        ...(body.description !== undefined && { description: body.description }),
-        ...(body.sortOrder !== undefined && { sortOrder: body.sortOrder }),
-        ...(body.isActive !== undefined && { isActive: body.isActive }),
-      },
+    return await prisma.$transaction(async (tx) => {
+      const row = await tx.examType.update({
+        where: { id },
+        data: {
+          ...(body.code !== undefined && { code: body.code }),
+          ...(body.name !== undefined && { name: body.name }),
+          ...(body.slug !== undefined && { slug: body.slug }),
+          ...(body.category !== undefined && { category: body.category }),
+          ...(body.description !== undefined && { description: body.description }),
+          ...(body.sortOrder !== undefined && { sortOrder: body.sortOrder }),
+          ...(body.isActive !== undefined && { isActive: body.isActive }),
+          ...examTypeContentData(body),
+        },
+      });
+      if (body.translations?.length) {
+        await upsertExamTypeTranslations(tx, row.id, body.translations);
+      }
+      return row;
     });
   } catch (error) {
     throw normalizeDbError(error, "Exam type data is unavailable");
@@ -468,5 +668,282 @@ export async function deleteTestCenterExam(offeringId: string): Promise<boolean>
     return true;
   } catch (error) {
     throw normalizeDbError(error, "Test center data is unavailable");
+  }
+}
+
+// ─── Public "Book a Test" catalogue ────────────────────────────────────────
+
+/**
+ * The gate every public read shares: the exam is published AND at least one
+ * active centre in a live market carries it.
+ *
+ * Written once because the three public endpoints must agree exactly — a
+ * catalogue that lists an exam whose detail page 404s (or worse, whose slots
+ * are bookable when it should be hidden) is the failure mode this prevents.
+ */
+function publicExamWhere(countryCode: string): Prisma.ExamTypeWhereInput {
+  return {
+    isActive: true,
+    isBookable: true,
+    offerings: {
+      some: {
+        isActive: true,
+        testCenter: {
+          isActive: true,
+          // Country codes are stored lowercase; match insensitively so a
+          // "PT" in the URL resolves the same as "pt".
+          country: { code: { equals: countryCode, mode: "insensitive" }, isActive: true },
+        },
+      },
+    },
+  };
+}
+
+/** The centres in this country that carry a given exam, cheapest first. */
+function publicOfferingsFilter(countryCode: string) {
+  return {
+    where: {
+      isActive: true,
+      testCenter: {
+        isActive: true,
+        country: { code: { equals: countryCode, mode: "insensitive" }, isActive: true },
+      },
+    },
+    include: {
+      testCenter: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          addressLine: true,
+          city: true,
+          phone: true,
+        },
+      },
+    },
+  } satisfies Prisma.ExamType$offeringsArgs;
+}
+
+export type PublicExamCard = {
+  id: string;
+  slug: string;
+  name: string;
+  summary: string | null;
+  imagePath: string | null;
+  category: string | null;
+  /** Cheapest patient price across the centres offering it in this country. */
+  fromPriceCents: number;
+  currencyCode: string;
+  centreCount: number;
+  resolvedLocale: LocaleCode;
+  translatedFields: string[];
+};
+
+/**
+ * Bookable exams in one country, with the cheapest price a patient could pay.
+ *
+ * Price is computed from cost + markup at read time and never stored — see
+ * `computePatientPriceCents`. The cart snapshots it at add-to-cart, so a markup
+ * edit mid-checkout cannot surprise the patient.
+ */
+export async function listPublicExamTypes(
+  countryCode: string,
+  locale?: LocaleCode,
+): Promise<PublicExamCard[]> {
+  try {
+    const country = await prisma.country.findFirst({
+      where: { code: { equals: countryCode, mode: "insensitive" }, isActive: true },
+      select: { defaultLocale: true },
+    });
+    if (!country) return [];
+
+    const rows = await prisma.examType.findMany({
+      where: publicExamWhere(countryCode),
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+      include: {
+        translations: { select: examTypeTranslationSelect },
+        offerings: publicOfferingsFilter(countryCode),
+      },
+    });
+
+    return rows
+      .map((row) => {
+        const prices = row.offerings.map((o) =>
+          computePatientPriceCents(o.costCents, o.markupMode, o.markupValue),
+        );
+        // Defensive: publicExamWhere guarantees at least one offering, but a
+        // row with none must not surface a nonsense "from €0".
+        if (prices.length === 0) return null;
+        const merged = mergeExamTypeTranslation(
+          { ...row, translations: row.translations },
+          locale ?? country.defaultLocale,
+          country.defaultLocale,
+        );
+        return {
+          id: row.id,
+          slug: row.slug,
+          name: merged.name,
+          summary: merged.summary,
+          imagePath: row.imagePath,
+          category: row.category,
+          fromPriceCents: Math.min(...prices),
+          currencyCode: row.offerings[0]!.currencyCode,
+          centreCount: row.offerings.length,
+          resolvedLocale: merged.resolvedLocale,
+          translatedFields: merged.translatedFields,
+        };
+      })
+      .filter((card): card is PublicExamCard => card !== null);
+  } catch (error) {
+    throw normalizeDbError(error, "Test catalogue is unavailable");
+  }
+}
+
+export type PublicExamCentre = {
+  id: string;
+  name: string;
+  slug: string;
+  addressLine: string | null;
+  city: string | null;
+  phone: string | null;
+  patientPriceCents: number;
+  currencyCode: string;
+  turnaroundDays: number | null;
+};
+
+export type PublicExamDetail = PublicExamCard & {
+  heroTitle: string | null;
+  heroDescription: string | null;
+  detailBody: string | null;
+  preparationBody: string | null;
+  ctaLabel: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  galleryImagePaths: string[];
+  durationMinutes: number;
+  centres: PublicExamCentre[];
+};
+
+/** One exam plus every centre in this country that performs it. */
+export async function getPublicExamTypeBySlug(
+  countryCode: string,
+  slug: string,
+  locale?: LocaleCode,
+): Promise<PublicExamDetail | null> {
+  try {
+    const country = await prisma.country.findFirst({
+      where: { code: { equals: countryCode, mode: "insensitive" }, isActive: true },
+      select: { defaultLocale: true },
+    });
+    if (!country) return null;
+
+    const row = await prisma.examType.findFirst({
+      where: { ...publicExamWhere(countryCode), slug },
+      include: {
+        translations: { select: examTypeTranslationSelect },
+        offerings: publicOfferingsFilter(countryCode),
+      },
+    });
+    if (!row || row.offerings.length === 0) return null;
+
+    const merged = mergeExamTypeTranslation(
+      { ...row, translations: row.translations },
+      locale ?? country.defaultLocale,
+      country.defaultLocale,
+    );
+    const centres: PublicExamCentre[] = row.offerings
+      .map((o) => ({
+        id: o.testCenter.id,
+        name: o.testCenter.name,
+        slug: o.testCenter.slug,
+        addressLine: o.testCenter.addressLine,
+        city: o.testCenter.city,
+        phone: o.testCenter.phone,
+        patientPriceCents: computePatientPriceCents(
+          o.costCents,
+          o.markupMode,
+          o.markupValue,
+        ),
+        currencyCode: o.currencyCode,
+        turnaroundDays: o.turnaroundDays,
+      }))
+      .sort((a, b) => a.patientPriceCents - b.patientPriceCents);
+
+    return {
+      id: row.id,
+      slug: row.slug,
+      name: merged.name,
+      summary: merged.summary,
+      imagePath: row.imagePath,
+      category: row.category,
+      fromPriceCents: Math.min(...centres.map((c) => c.patientPriceCents)),
+      currencyCode: centres[0]!.currencyCode,
+      centreCount: centres.length,
+      resolvedLocale: merged.resolvedLocale,
+      translatedFields: merged.translatedFields,
+      heroTitle: merged.heroTitle,
+      heroDescription: merged.heroDescription,
+      detailBody: merged.detailBody,
+      preparationBody: merged.preparationBody,
+      ctaLabel: merged.ctaLabel,
+      seoTitle: merged.seoTitle,
+      seoDescription: merged.seoDescription,
+      galleryImagePaths: row.galleryImagePaths,
+      durationMinutes: row.durationMinutes,
+      centres,
+    };
+  } catch (error) {
+    throw normalizeDbError(error, "Test catalogue is unavailable");
+  }
+}
+
+/**
+ * Resolve an (exam, centre) pair for booking, re-applying every public gate.
+ *
+ * The slot endpoint calls this rather than trusting the URL: a patient could
+ * otherwise ask for slots at a centre that no longer carries the exam, book
+ * one, and arrive for a test nobody there performs.
+ */
+export async function resolvePublicExamOffering(
+  countryCode: string,
+  examSlug: string,
+  centreSlug: string,
+): Promise<{
+  examTypeId: string;
+  testCenterId: string;
+  durationMinutes: number;
+  patientPriceCents: number;
+  currencyCode: string;
+} | null> {
+  try {
+    const offering = await prisma.testCenterExam.findFirst({
+      where: {
+        isActive: true,
+        examType: { slug: examSlug, isActive: true, isBookable: true },
+        testCenter: {
+          slug: centreSlug,
+          isActive: true,
+          country: { code: { equals: countryCode, mode: "insensitive" }, isActive: true },
+        },
+      },
+      include: {
+        examType: { select: { id: true, durationMinutes: true } },
+        testCenter: { select: { id: true } },
+      },
+    });
+    if (!offering) return null;
+    return {
+      examTypeId: offering.examType.id,
+      testCenterId: offering.testCenter.id,
+      durationMinutes: offering.examType.durationMinutes,
+      patientPriceCents: computePatientPriceCents(
+        offering.costCents,
+        offering.markupMode,
+        offering.markupValue,
+      ),
+      currencyCode: offering.currencyCode,
+    };
+  } catch (error) {
+    throw normalizeDbError(error, "Test catalogue is unavailable");
   }
 }

@@ -135,6 +135,9 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     { href: "/admin/integrations/sukl", label: "SÚKL ePoukaz" },
   ];
 
+  // Catch immediately while country scope resolves to avoid unhandled rejection.
+  const notificationsPromise = fetchAdminNotifications().catch(() => null);
+
   // Country options for the topbar picker. Pulled best-effort; if backend is
   // unreachable, render the shell without a picker.
   let countryOptions: CountryPickerOption[] = [];
@@ -161,6 +164,10 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     // ignore — shell still renders
   }
 
+  const approvalScope = activeCountry ? { countryCode: activeCountry.code } : undefined;
+  const serviceRequestsPromise = fetchAdminPendingServiceRequests(approvalScope).catch(() => null);
+  const profileRequestsPromise = fetchAdminPendingProfileChangeRequests(approvalScope).catch(() => null);
+
   // Pending approval requests → topbar bell feed + sidebar count badge.
   // Scoped to the active country (matches the rest of the portal); global
   // when no country is selected. Best-effort: a failure leaves the shell
@@ -180,8 +187,8 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   let unreadTotal = 0;
 
   try {
-    const notifRes = await fetchAdminNotifications();
-    if (notifRes.ok) {
+    const notifRes = await notificationsPromise;
+    if (notifRes?.ok) {
       unreadTotal += notifRes.data.unreadCount;
       for (const n of notifRes.data.items.slice(0, 12)) {
         feedItems.push(mapAdminNotification(n));
@@ -201,10 +208,8 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   const doctorApprovalSources: string[] = [];
 
   try {
-    const res = await fetchAdminPendingServiceRequests(
-      activeCountry ? { countryCode: activeCountry.code } : undefined,
-    );
-    if (res.ok) {
+    const res = await serviceRequestsPromise;
+    if (res?.ok) {
       const { count, items } = res.data;
       doctorApprovalCount += count;
       unreadTotal += count;
@@ -225,10 +230,8 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   }
 
   try {
-    const res = await fetchAdminPendingProfileChangeRequests(
-      activeCountry ? { countryCode: activeCountry.code } : undefined,
-    );
-    if (res.ok) {
+    const res = await profileRequestsPromise;
+    if (res?.ok) {
       const { count, items } = res.data;
       doctorApprovalCount += count;
       unreadTotal += count;

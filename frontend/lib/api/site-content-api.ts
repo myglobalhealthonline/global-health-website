@@ -36,6 +36,10 @@ export const SITE_CACHE_TAGS = {
   countryHealthTests: (code: string, locale?: string) =>
     locale ? `country:${code}:health-tests:${locale}` : `country:${code}:health-tests`,
   healthTestBySlug: (slug: string) => `health-test:${slug}`,
+  countryTests: (code: string, locale?: string) =>
+    locale ? `country:${code}:tests:${locale}` : `country:${code}:tests`,
+  testBySlug: (code: string, slug: string, locale?: string) =>
+    locale ? `country:${code}:tests:${slug}:${locale}` : `country:${code}:tests:${slug}`,
   countryPlans: (code: string) => `country:${code}:plans`,
   countryPage: (code: string, pageKey: string, locale: string) =>
     `country:${code}:pages:${pageKey}:${locale}`,
@@ -166,11 +170,14 @@ export async function fetchDoctorsByCountry(
   countryCode: string,
   locale?: string,
   timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
+  mode: "live" | "marketing" = "live",
 ) {
   const upper = toBackendLocale(locale);
-  const url = upper
-    ? `/api/countries/${encodeURIComponent(countryCode)}/doctors?locale=${upper}`
-    : `/api/countries/${encodeURIComponent(countryCode)}/doctors`;
+  const params = new URLSearchParams();
+  if (upper) params.set("locale", upper);
+  if (mode === "marketing") params.set("mode", mode);
+  const qs = params.toString();
+  const url = `/api/countries/${encodeURIComponent(countryCode)}/doctors${qs ? `?${qs}` : ""}`;
   return apiRequest<unknown[]>(url, {
     timeoutMs,
     revalidate: REVALIDATE_SECONDS,
@@ -282,11 +289,13 @@ export async function fetchServicesByCountry(
   kind: "GENERAL" | "SPECIALIST" | "PRESCRIPTION" | "HEALTH_TEST" | "HOME_DELIVERY" | undefined,
   locale?: string,
   timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
+  mode: "live" | "marketing" = "live",
 ) {
   const upper = toBackendLocale(locale);
   const params = new URLSearchParams();
   if (kind) params.set("kind", kind);
   if (upper) params.set("locale", upper);
+  if (mode === "marketing") params.set("mode", mode);
   const qs = params.toString();
   const url = qs
     ? `/api/countries/${encodeURIComponent(countryCode)}/services?${qs}`
@@ -415,5 +424,92 @@ export async function fetchCrossBorderRxFees(
   return apiRequest<{ fees: PublicCrossBorderFee[] }>(
     "/api/public/cross-border-rx/fees",
     { timeoutMs, revalidate: REVALIDATE_SECONDS, tags: ["cross-border-rx:fees"] },
+  );
+}
+
+// ─── "Book a Test" catalogue ───────────────────────────────────────────────
+
+export type PublicTestCard = {
+  id: string;
+  slug: string;
+  name: string;
+  summary: string | null;
+  imagePath: string | null;
+  category: string | null;
+  /** Cheapest patient price across the centres offering it in this country. */
+  fromPriceCents: number;
+  currencyCode: string;
+  centreCount: number;
+};
+
+export type PublicTestCentre = {
+  id: string;
+  name: string;
+  slug: string;
+  addressLine: string | null;
+  city: string | null;
+  phone: string | null;
+  patientPriceCents: number;
+  currencyCode: string;
+  turnaroundDays: number | null;
+};
+
+export type PublicTestDetail = PublicTestCard & {
+  heroTitle: string | null;
+  heroDescription: string | null;
+  detailBody: string | null;
+  preparationBody: string | null;
+  ctaLabel: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  galleryImagePaths: string[];
+  durationMinutes: number;
+  centres: PublicTestCentre[];
+};
+
+/** Bookable tests in one country, with a from-price per test. */
+export async function fetchTestsByCountry(
+  countryCode: string,
+  locale?: string,
+  timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
+) {
+  const upper = toBackendLocale(locale);
+  const qs = upper ? `?locale=${encodeURIComponent(upper)}` : "";
+  return apiRequest<{ tests: PublicTestCard[] }>(
+    `/api/tests/${encodeURIComponent(countryCode)}${qs}`,
+    {
+      timeoutMs,
+      revalidate: REVALIDATE_SECONDS,
+      tags: upper
+        ? [
+            SITE_CACHE_TAGS.countryTests(countryCode),
+            SITE_CACHE_TAGS.countryTests(countryCode, upper),
+          ]
+        : [SITE_CACHE_TAGS.countryTests(countryCode)],
+    },
+  );
+}
+
+/** One test plus every centre in this country that performs it. */
+export async function fetchTestDetail(
+  countryCode: string,
+  slug: string,
+  locale?: string,
+  timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
+) {
+  const upper = toBackendLocale(locale);
+  const qs = upper ? `?locale=${encodeURIComponent(upper)}` : "";
+  return apiRequest<{ test: PublicTestDetail }>(
+    `/api/tests/${encodeURIComponent(countryCode)}/${encodeURIComponent(slug)}${qs}`,
+    {
+      timeoutMs,
+      revalidate: REVALIDATE_SECONDS,
+      tags: upper
+        ? [
+            SITE_CACHE_TAGS.testBySlug(countryCode, slug),
+            SITE_CACHE_TAGS.testBySlug(countryCode, slug, upper),
+          ]
+        : [SITE_CACHE_TAGS.testBySlug(countryCode, slug)],
+    },
   );
 }

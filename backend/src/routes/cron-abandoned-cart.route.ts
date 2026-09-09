@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
-import { prisma } from "../db/prisma.js";
+import { prisma, runWithSchedulerDb } from "../db/prisma.js";
 import { env } from "../config/env.js";
 import { isValidCronSecret } from "../utils/cron-auth.js";
 import { sendAbandonedCartEmail } from "../lib/email/templates.js";
@@ -35,6 +35,7 @@ const abandonedCartCronRoute: FastifyPluginAsync = async (app) => {
       return reply.status(401).send(errorResponse("Invalid cron token"));
     }
 
+    return runWithSchedulerDb(async () => {
     const cutoff = new Date(Date.now() - IDLE_MS);
 
     try {
@@ -101,6 +102,7 @@ const abandonedCartCronRoute: FastifyPluginAsync = async (app) => {
       app.log.error(err);
       return reply.status(500).send(errorResponse("Cron job failed"));
     }
+    });
   });
 };
 

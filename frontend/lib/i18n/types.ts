@@ -698,6 +698,9 @@ export type CommonLocale = {
     kindSpecialist: string;
     kindTest: string;
     kindPrescription: string;
+    /** A test-centre appointment line — distinct from `kindTest`, which is the
+     *  mail-order health-test kit. */
+    kindTestBooking: string;
     stepCart: string;
     stepCheckout: string;
     stepPayment: string;

@@ -282,10 +282,23 @@ Numbered so replies can cite them.
   Národního bodu pro identifikaci a autentizaci"* — it does not apply when the
   doctor accesses eRecept through NIA / Identita občana.
 
-  So it replaces **the signature**, not the transport authentication. What
-  remains unknown is the **onboarding process** and what a server-to-server
-  integration sends in place of the signature when the doctor is already
-  authenticated in our portal. That is the remaining question for SÚKL.
+  **FULLY ANSWERED 2026-09-09 — see docs/sukl/NIA_AUTH.md.** SÚKL, in writing:
+  *"do not send any signature in the XML request — you will skip the signature
+  part. But you must have it implemented in your system."*
+
+  It replaces the signature, not the transport authentication, and it is not
+  headless: the doctor signs in interactively at Identita občana, and the
+  resulting JWT then covers every server-side call until midnight of that day.
+  So a doctor authenticates roughly once per working day rather than once per
+  prescription, and we hold no signing key.
+
+  `AppPingZEP` still requires a signature always — which is why the signing
+  implementation stays rather than being deleted.
+
+  Remaining practical question, not raised with SÚKL yet: NIA requires the
+  doctor to be identified against the population register (ROB), i.e. to hold a
+  Czech Identita občana. Whether every prescriber on this platform can obtain
+  one is unresolved.
 
 - **Q17** ~~What is signed, which XML-DSig profile and canonicalisation?~~
   **ANSWERED 2026-09-05 — document received and recorded in
@@ -339,8 +352,12 @@ These are not the `typ_pristupujiciho` values (LEKAR, LEKARNIK, …) that appear
 inside document payloads — a different vocabulary, and an easy confusion. The
 console previously told operators to look for `LEKAR`, which would never appear.
 
-**Open: `Predepisujici.PZS` is required to issue a prescription** (11 digits) and
-Login returned no provider. The roles parsed correctly from the same response, so
+**RESOLVED 2026-09-09: `Predepisujici.PZS` = `00150928369`** — SÚKL confirmed it
+is the workplace code assigned in External Identities, and that the user needs no
+binding of any kind. The empty PZS in the Login response is expected.
+
+Superseded note: **`Predepisujici.PZS` is required to issue a prescription**
+(11 digits) and Login returned no provider. The roles parsed correctly from the same response, so
 the element is genuinely absent rather than mis-read. Whether the correct value
 is simply the workplace code `00150928369`, or whether the account still needs
 binding to a provider, is unresolved — and it blocks `ZalozitPredpis`, not the

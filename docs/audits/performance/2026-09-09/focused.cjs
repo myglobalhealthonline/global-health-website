@@ -1,0 +1,9 @@
+const fs=require('node:fs');const path=require('node:path');
+(async()=>{
+ const urls=['https://www.myglobalhealth.online/brazil/pt','https://www.myglobalhealth.online/ireland/en/book?service=acute-medical-consultation','https://www.myglobalhealth.online/ireland/en/services/acute-medical-consultation','https://www.myglobalhealth.online/ireland/en/pricing','https://www.myglobalhealth.online/ireland/en/health-tests','https://www.myglobalhealth.online/api/public/gp-availability?country=ie&language=english&days=7'];
+ const results=[];
+ for(const url of urls){const t=performance.now();try{const r=await fetch(url,{signal:AbortSignal.timeout(45000),headers:{'accept-encoding':'gzip, br'}});const first=performance.now()-t;const b=await r.text();const row={url,finalUrl:r.url,status:r.status,headersMs:Math.round(first),totalMs:Math.round(performance.now()-t),decodedBytes:Buffer.byteLength(b),headers:Object.fromEntries(['cache-control','content-encoding','content-length','x-railway-request-id','x-railway-edge'].map(k=>[k,r.headers.get(k)])),errorDigest:r.status>=500?[...b.matchAll(/digest.{0,60}/g)].map(x=>x[0]).slice(0,3):undefined};results.push(row);console.log(JSON.stringify(row));}catch(e){results.push({url,error:e.message});}}
+ const base=require('./baseline.json');const scripts=base.browser[0].resources.filter(r=>r.initiatorType==='script').sort((a,b)=>b.decodedBodySize-a.decodedBodySize).slice(0,4);
+ for(const s of scripts){const r=await fetch(s.name);const b=await r.text();results.push({chunk:s.name,bytes:Buffer.byteLength(b),localeMarkers:['Nastavení cookies','Cookie settings','Configurações','Cookie-Einstellungen','Setări','cookieSettings'].filter(x=>b.includes(x))});}
+ fs.writeFileSync(path.join(__dirname,'focused.json'),JSON.stringify(results,null,2));
+})().catch(e=>{console.error(e.message);process.exitCode=1;});

@@ -1,6 +1,6 @@
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
-import { TtlCache } from "../../lib/ttl-cache.js";
+import { AvailabilityDependencyCache, type UpdateAvailabilityDependencies } from "../../lib/availability-dependency-cache.js";
 import { registerAvailabilityCache } from "../doctor-availability/availability-cache-bus.js";
 import {
   listOpenSlotsForDoctorAndService,
@@ -51,10 +51,8 @@ export type ServiceAggregatedAvailability = {
 // ponytail: keyed by country:service:days — bounded by real catalog size,
 // cap just guards against unbounded growth in a long-lived process.
 const CACHE_MAX_ENTRIES = 2000;
-const cache = new TtlCache<ServiceAggregatedAvailability>(CACHE_MAX_ENTRIES);
-// A blocked or removed slot must leave the aggregated view immediately, not
-// after the TTL — the write paths clear every registered cache.
-registerAvailabilityCache(() => cache.clear());
+const cache = new AvailabilityDependencyCache<ServiceAggregatedAvailability>(CACHE_MAX_ENTRIES, CACHE_TTL_MS);
+registerAvailabilityCache((scope) => cache.invalidate(scope));
 
 async function resolveCountryTimeZone(countryCode: string): Promise<string> {
   try {
@@ -81,9 +79,18 @@ export async function getServiceAggregatedAvailability(
   // Insurer is part of the key — the eligible doctor pool differs per network,
   // so a shared key would serve one insurer's slots to another.
   const cacheKey = `${code}:${serviceSlug}:${clampedDays}:${insuranceCompanyId ?? "none"}`;
-  const cached = cache.get(cacheKey);
-  if (cached) return cached;
+  return cache.resolve(cacheKey, {
+    countryCode: code, requestServiceId: serviceSlug, pendingDoctors: true, pendingServices: true,
+  }, (update) => loadServiceAggregatedAvailability(code, serviceSlug, clampedDays, insuranceCompanyId, update));
+}
 
+async function loadServiceAggregatedAvailability(
+  code: string,
+  serviceSlug: string,
+  clampedDays: number,
+  insuranceCompanyId: string | null | undefined,
+  update: UpdateAvailabilityDependencies,
+): Promise<ServiceAggregatedAvailability> {
   try {
     const clinicTimezone = await resolveCountryTimeZone(code);
     const empty: ServiceAggregatedAvailability = {
@@ -115,8 +122,9 @@ export async function getServiceAggregatedAvailability(
         },
       },
     });
+    update({ serviceIds: service ? [service.id] : [], pendingServices: false });
     if (!service) {
-      cache.set(cacheKey, empty, CACHE_TTL_MS);
+      update({ doctorIds: [], pendingDoctors: false });
       return empty;
     }
 
@@ -149,6 +157,7 @@ export async function getServiceAggregatedAvailability(
       },
       select: { id: true, slug: true },
     });
+    update({ doctorIds: doctors.map((doctor) => doctor.id), pendingDoctors: false });
 
     const found: ServiceAggregatedAvailability = {
       found: true,
@@ -157,11 +166,9 @@ export async function getServiceAggregatedAvailability(
       doctorsByStart: {},
     };
     if (service.country.bookingSetting?.bookingEnabled === false) {
-      cache.set(cacheKey, found, CACHE_TTL_MS);
       return found;
     }
     if (doctors.length === 0) {
-      cache.set(cacheKey, found, CACHE_TTL_MS);
       return found;
     }
 
@@ -239,7 +246,6 @@ export async function getServiceAggregatedAvailability(
       a.startAt < b.startAt ? -1 : a.startAt > b.startAt ? 1 : 0,
     );
     found.doctorsByStart = doctorsByStart;
-    cache.set(cacheKey, found, CACHE_TTL_MS);
     return found;
   } catch (error) {
     throw normalizeDbError(error, "Service availability is unavailable");

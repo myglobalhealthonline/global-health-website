@@ -1,15 +1,22 @@
 /**
  * SÚKL (Czech State Institute for Drug Control) integration — public surface.
  *
- * Scope today is the *foundation*: configuration gate, certificate loading and
- * validation, and a mutual-TLS transport. The ePoukaz payload layer is not here
- * because it cannot be written yet — operation names, namespaces and message
- * shapes come from SÚKL's WSDL/XSD, which has not been supplied. See
- * docs/sukl/INTERFACE_INVENTORY.md for the blocker list.
+ * Covers the configuration gate, certificate handling, a mutual-TLS transport,
+ * the diagnostic operations (AppPing, GetAppInfo, Login, WSDL), XML-DSig
+ * signing, and the eRecept payload layer — ZalozitPredpis and ZrusitPredpis.
  *
- * Authentication is the workplace communication certificate over mTLS, which
- * SÚKL confirmed is sufficient. No doctor personal signing key is accepted or
- * stored anywhere in this module.
+ * The module to build against is CUER (medicines), not CUEP (medical devices):
+ * the CUEP schema carries only orthopaedic, hearing and optical vouchers.
+ *
+ * Authentication has two shapes and they differ in what they demand:
+ *
+ *   - Workplace certificate over mTLS plus HTTP Basic. Business operations then
+ *     require the prescriber's qualified XML signature.
+ *   - NIA / Identita občana. The doctor signs in interactively, the resulting
+ *     bearer token covers the day, and NO message signature is required —
+ *     except AppPingZEP, which always needs one.
+ *
+ * See docs/sukl/NIA_AUTH.md, SIGNING_SPEC.md and PRESCRIPTION_PAYLOAD.md.
  */
 
 export {
@@ -101,3 +108,4 @@ export * from "./signing.js";
 export * from "./app-ping-zep.js";
 export * from "./zalozit-predpis.js";
 export * from "./zrusit-predpis.js";
+export * from "./nia.js";

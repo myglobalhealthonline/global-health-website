@@ -1,0 +1,22 @@
+{
+  "method": "Isolated Chromium microbenchmark; 4x CPU slowdown; same live public slot dates and locale/timezone; not whole-page speedup",
+  "slotCount": 663,
+  "zone": "Europe/Dublin",
+  "rows": [
+    {
+      "constructPerSlotMs": 580.8999999985099,
+      "reuseMs": 7.399999998509884,
+      "equal": true
+    },
+    {
+      "constructPerSlotMs": 477.3999999985099,
+      "reuseMs": 5.400000002235174,
+      "equal": true
+    },
+    {
+      "constructPerSlotMs": 409,
+      "reuseMs": 4.399999998509884,
+      "equal": true
+    }
+  ]
+}

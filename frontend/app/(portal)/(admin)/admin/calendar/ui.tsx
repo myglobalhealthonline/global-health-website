@@ -142,7 +142,7 @@ export function AdminCalendarUI({
     setSlotError(null);
     setSlotBusy(true);
     const res = await adminToggleSlotStatus(
-      doctorId,
+      { kind: "doctors", id: doctorId },
       item.id.replace(/^s-/, ""),
       status,
       reason,
@@ -171,7 +171,11 @@ export function AdminCalendarUI({
     }
     setSlotError(null);
     setSlotBusy(true);
-    const res = await adminRemoveSlot(doctorId, item.id.replace(/^s-/, ""), reason);
+    const res = await adminRemoveSlot(
+      { kind: "doctors", id: doctorId },
+      item.id.replace(/^s-/, ""),
+      reason,
+    );
     setSlotBusy(false);
     if (!res.ok) {
       setSlotError(res.message);
@@ -188,7 +192,11 @@ export function AdminCalendarUI({
     if (!filters.doctorId) return;
     setSlotError(null);
     setSlotBusy(true);
-    const res = await adminCreateSlots(filters.doctorId, startAtIsos, durationMinutes);
+    const res = await adminCreateSlots(
+      { kind: "doctors", id: filters.doctorId },
+      startAtIsos,
+      durationMinutes,
+    );
     setSlotBusy(false);
     if (!res.ok) {
       setSlotError(res.message);
@@ -239,7 +247,7 @@ export function AdminCalendarUI({
     if (!bulkDoctorId) return;
     setSlotError(null);
     setSlotBusy(true);
-    const res = await adminBulkSlotAction(bulkDoctorId, {
+    const res = await adminBulkSlotAction({ kind: "doctors", id: bulkDoctorId }, {
       action,
       ...payload,
       ...(reason ? { reason } : {}),

@@ -1,12 +1,15 @@
 import "server-only";
 import { serverReadAuthHeaders } from "@/lib/api/client";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
+import { AvailabilityUnavailableError, fetchLiveAvailability } from "./availability-fetch";
+import { tracePublicRead } from "./trace-public-read";
 
 /**
  * Aggregated availability for a service across all its assigned doctors —
  * backs the service-first booking flow's TIME step (service → time → doctor).
  * Returns the de-duplicated open times plus which doctors (+ their concrete
- * slot) can take each time. Degrades to an empty shape on any failure.
+ * slot) can take each time. A failed live read throws a retryable error; it is
+ * deliberately never represented as an empty appointment list.
  */
 
 export type ServiceAggSlot = {
@@ -44,7 +47,7 @@ export async function getServiceAggregatedAvailability(
     doctorsByStart: {},
   };
   const backend = getBackendOrigin();
-  if (!backend) return empty;
+  if (!backend) throw new AvailabilityUnavailableError();
   const insuranceParam = insuranceCompanyId
     ? `&insurance=${encodeURIComponent(insuranceCompanyId)}`
     : "";
@@ -52,20 +55,35 @@ export async function getServiceAggregatedAvailability(
     serviceSlug,
   )}/aggregated-availability?days=${days}${insuranceParam}`;
   try {
-    const res = await fetch(url, {
-      cache: "no-store",
-      headers: serverReadAuthHeaders(url.slice(backend.length), "GET"),
-    });
-    if (!res.ok) return empty;
+    const res = await tracePublicRead("booking_service_aggregated_availability", () =>
+      fetchLiveAvailability(url, {
+        cache: "no-store",
+        headers: serverReadAuthHeaders(url.slice(backend.length), "GET"),
+      }),
+    );
+    if (!res.ok) {
+      if (res.status === 404) return empty;
+      throw new AvailabilityUnavailableError(`Availability request failed (${res.status})`);
+    }
     const json = (await res.json()) as { ok?: boolean; data?: ServiceAggregatedAvailability };
-    if (!json.ok || !json.data) return empty;
+    if (
+      !json.ok ||
+      !json.data ||
+      !Array.isArray(json.data.slots) ||
+      !json.data.doctorsByStart ||
+      typeof json.data.doctorsByStart !== "object" ||
+      Array.isArray(json.data.doctorsByStart)
+    ) {
+      throw new AvailabilityUnavailableError();
+    }
     return {
       found: Boolean(json.data.found),
       clinicTimezone: json.data.clinicTimezone ?? "UTC",
-      slots: Array.isArray(json.data.slots) ? json.data.slots : [],
-      doctorsByStart: json.data.doctorsByStart ?? {},
+      slots: json.data.slots,
+      doctorsByStart: json.data.doctorsByStart,
     };
-  } catch {
-    return empty;
+  } catch (error) {
+    if (error instanceof AvailabilityUnavailableError) throw error;
+    throw new AvailabilityUnavailableError();
   }
 }

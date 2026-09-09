@@ -14,6 +14,10 @@ export const COUNTRY_FEATURE_KEYS = [
   "specialist-consultations",
   "online-prescriptions",
   "health-tests",
+  // Patient-facing test-centre booking. Not strict opt-in: publication is
+  // gated per exam by ExamType.isBookable, which defaults false, so an
+  // enabled market with no bookable exam simply shows an empty catalogue.
+  "book-a-test",
   "appointments",
   // Monthly subscription plans (Wave 0). STRICT OPT-IN — see below.
   "subscriptions",

@@ -651,6 +651,7 @@
     "kindSpecialist": "Facharztberatung",
     "kindTest": "Gesundheitstest",
     "kindPrescription": "Online-Rezept",
+    "kindTestBooking": "Test appointment",
     "stepCart": "Warenkorb",
     "stepCheckout": "Kasse",
     "stepPayment": "Zahlung",

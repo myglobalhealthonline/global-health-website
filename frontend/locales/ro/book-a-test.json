@@ -1,0 +1,43 @@
+{
+  "hero": {
+    "eyebrow": "Programeaza o analiza",
+    "title": "Analize si investigatii, programate in cateva minute",
+    "subtitle": "Alege o analiza, alege un centru din apropiere si vino la ora care ti se potriveste."
+  },
+  "catalogue": {
+    "empty": "Nu exista inca analize disponibile in aceasta tara. Reveniti in curand.",
+    "fromPrice": "De la {price}",
+    "centreCount_one": "{count} centru",
+    "centreCount_other": "{count} centre",
+    "viewTest": "Vezi analiza",
+    "bookNow": "Programeaza aceasta analiza"
+  },
+  "detail": {
+    "chooseCentre": "Alege un centru de analize",
+    "chooseCentreHint": "Preturile si orele disponibile difera de la un centru la altul.",
+    "preparation": "Cum te pregatesti",
+    "turnaround": "Rezultate in {days} zile lucratoare",
+    "turnaroundUnknown": "Termen confirmat de centru",
+    "aboutThisTest": "Despre aceasta analiza",
+    "selectCentre": "Selecteaza acest centru"
+  },
+  "booking": {
+    "chooseTime": "Selecteaza o ora",
+    "noSlots": "Nu exista ore disponibile la acest centru in urmatoarele doua saptamani. Incearca alt centru.",
+    "loadingSlots": "Se incarca orele disponibile...",
+    "slotTaken": "Ora tocmai a fost ocupata. Alege alta.",
+    "yourDetails": "Datele tale",
+    "fullName": "Nume complet",
+    "email": "Email",
+    "phone": "Telefon",
+    "dateOfBirth": "Data nasterii",
+    "notes": "Ceva ce ar trebui sa stie centrul (optional)",
+    "addToCart": "Continua spre plata",
+    "arriveEarly": "Va rugam sa ajungeti cu 5-10 minute inainte de programare.",
+    "centreTime": "Orele sunt afisate in ora locala a centrului."
+  },
+  "meta": {
+    "title": "Programeaza o analiza",
+    "description": "Programeaza o analiza sau investigatie la un centru din apropiere."
+  }
+}

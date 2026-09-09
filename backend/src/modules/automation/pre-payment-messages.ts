@@ -91,6 +91,16 @@ export type PrePaymentMessageContext = {
   patientLastName: string;
   serviceName: string;
   doctorName: string;
+  /**
+   * Who the patient is seeing, pre-rendered and localized by the flow service:
+   * "👤 Doctor: Dr Silva" for a consultation, "🏥 Test centre: Synlab Lisboa"
+   * for a test booking. See `attendance-line.ts`.
+   *
+   * No `attendanceLine` twin here on purpose — a pre-payment message never
+   * carries a meeting link or an address. The booking is not confirmed until
+   * it is paid for.
+   */
+  attendeeLine: string;
   appointmentDate: string;
   paymentLink: string;
   deadline: string;
@@ -117,7 +127,7 @@ export function patientWhatsAppInitial(ctx: PrePaymentMessageContext, lang: Lang
     en: `Hi ${ctx.patientName},
 Thank you for booking with Global Health. Your appointment has been reserved.
 📌 Service: ${ctx.serviceName}
-👤 Doctor: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Date & Time: ${ctx.appointmentDate}
 💳 Complete Payment: ${ctx.paymentLink}
 ⚠️ IMPORTANT — Payment must be completed before ${ctx.deadline} or your reservation may be cancelled.
@@ -125,7 +135,7 @@ Global Health Team`,
     pt: `Olá ${ctx.patientName},
 Obrigado por marcar com a Global Health. A sua consulta foi reservada.
 📌 Serviço: ${ctx.serviceName}
-👤 Médico: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Data e hora: ${ctx.appointmentDate}
 💳 Pagamento: ${ctx.paymentLink}
 ⚠️ IMPORTANTE — pagamento até ${ctx.deadline} ou a reserva pode ser cancelada.
@@ -133,7 +143,7 @@ Equipa Global Health`,
     ro: `Bună ${ctx.patientName},
 Vă mulțumim pentru programarea la Global Health. Consultația a fost rezervată.
 📌 Serviciu: ${ctx.serviceName}
-👤 Medic: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Data și ora: ${ctx.appointmentDate}
 💳 Plată: ${ctx.paymentLink}
 ⚠️ IMPORTANT — plata până la ${ctx.deadline}, altfel rezervarea poate fi anulată.
@@ -141,7 +151,7 @@ Echipa Global Health`,
     cs: `Dobrý den ${ctx.patientName},
 děkujeme za rezervaci u Global Health. Termín byl rezervován.
 📌 Služba: ${ctx.serviceName}
-👤 Lékař: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Datum a čas: ${ctx.appointmentDate}
 💳 Platba: ${ctx.paymentLink}
 ⚠️ DŮLEŽITÉ — platba do ${ctx.deadline}, jinak může být rezervace zrušena.
@@ -149,7 +159,7 @@ Tým Global Health`,
     es: `Hola ${ctx.patientName},
 Gracias por reservar con Global Health. Su cita ha sido reservada.
 📌 Servicio: ${ctx.serviceName}
-👤 Doctor: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Fecha y hora: ${ctx.appointmentDate}
 💳 Pago: ${ctx.paymentLink}
 ⚠️ IMPORTANTE — pago antes de ${ctx.deadline} o la reserva puede cancelarse.
@@ -367,7 +377,7 @@ function reminderWhatsAppBody(
   });
   return `${lead}
 📌 Service: ${ctx.serviceName}
-👤 Doctor: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Date & Time: ${ctx.appointmentDate}
 💳 ${payLabel}: ${ctx.paymentLink}
 ⚠️ ${deadlineLabel}: ${ctx.deadline}
@@ -438,7 +448,7 @@ export function checkoutAbandonedMessage(
     en: `Hi ${ctx.patientName},
 We noticed you left the checkout page without completing payment for your consultation.
 📌 Service: ${ctx.serviceName}
-👤 Doctor: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Date & Time: ${ctx.appointmentDate}
 💳 Complete payment: ${ctx.paymentLink}
 ⚠️ Your reserved slot will be released at ${ctx.deadline} if payment is not completed.
@@ -447,7 +457,7 @@ Global Health Team`,
     pt: `Olá ${ctx.patientName},
 Reparámos que saiu da página de pagamento sem concluir o pagamento da sua consulta.
 📌 Serviço: ${ctx.serviceName}
-👤 Médico: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Data e hora: ${ctx.appointmentDate}
 💳 Concluir pagamento: ${ctx.paymentLink}
 ⚠️ A sua reserva será libertada às ${ctx.deadline} se o pagamento não for concluído.
@@ -456,7 +466,7 @@ Equipa Global Health`,
     ro: `Bună ${ctx.patientName},
 Am observat că ați părăsit pagina de plată fără a finaliza plata consultației.
 📌 Serviciu: ${ctx.serviceName}
-👤 Medic: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Data și ora: ${ctx.appointmentDate}
 💳 Finalizați plata: ${ctx.paymentLink}
 ⚠️ Intervalul rezervat va fi eliberat la ${ctx.deadline} dacă plata nu este finalizată.
@@ -465,7 +475,7 @@ Echipa Global Health`,
     cs: `Dobrý den ${ctx.patientName},
 všimli jsme si, že jste opustil(a) platební stránku, aniž byste dokončil(a) platbu za konzultaci.
 📌 Služba: ${ctx.serviceName}
-👤 Lékař: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Datum a čas: ${ctx.appointmentDate}
 💳 Dokončit platbu: ${ctx.paymentLink}
 ⚠️ Rezervovaný termín bude uvolněn v ${ctx.deadline}, pokud platba nebude dokončena.
@@ -474,7 +484,7 @@ Tým Global Health`,
     es: `Hola ${ctx.patientName},
 Hemos visto que salió de la página de pago sin completar el pago de su consulta.
 📌 Servicio: ${ctx.serviceName}
-👤 Doctor: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Fecha y hora: ${ctx.appointmentDate}
 💳 Completar el pago: ${ctx.paymentLink}
 ⚠️ Su reserva se liberará a las ${ctx.deadline} si no se completa el pago.
@@ -641,7 +651,7 @@ Pay with these details at an ATM or in your homebanking:
 
 Reserved appointment:
 📌 Service: ${ctx.serviceName}
-👤 Doctor: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Date and time: ${ctx.appointmentDate}
 
 As soon as the bank confirms the payment we will send your booking confirmation and the meeting link.
@@ -658,7 +668,7 @@ Pague com estes dados num ATM ou no seu homebanking:
 
 Consulta reservada:
 📌 Serviço: ${ctx.serviceName}
-👤 Médico: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Data e hora: ${ctx.appointmentDate}
 
 Assim que o banco confirmar o pagamento, enviamos a confirmação da marcação e o link da reunião.
@@ -675,7 +685,7 @@ Plătiți cu aceste date la ATM sau în homebanking:
 
 Consultație rezervată:
 📌 Serviciu: ${ctx.serviceName}
-👤 Medic: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Data și ora: ${ctx.appointmentDate}
 
 Imediat ce banca confirmă plata, vă trimitem confirmarea rezervării și linkul întâlnirii.
@@ -692,7 +702,7 @@ Zaplaťte těmito údaji v bankomatu nebo v internetovém bankovnictví:
 
 Rezervovaná konzultace:
 📌 Služba: ${ctx.serviceName}
-👤 Lékař: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Datum a čas: ${ctx.appointmentDate}
 
 Jakmile banka platbu potvrdí, zašleme vám potvrzení rezervace a odkaz na schůzku.
@@ -709,7 +719,7 @@ Pague con estos datos en un cajero o en su banca electrónica:
 
 Consulta reservada:
 📌 Servicio: ${ctx.serviceName}
-👤 Médico: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Fecha y hora: ${ctx.appointmentDate}
 
 En cuanto el banco confirme el pago le enviaremos la confirmación de la reserva y el enlace de la reunión.

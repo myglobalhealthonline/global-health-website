@@ -137,17 +137,8 @@ export function ServiceCatalog({
       ? 1
       : 1 + Math.ceil((allShown.length - firstPageSize) / PAGE_SIZE_REGULAR);
   const showPager = totalPages > 1;
-  // SEO batch (2026-08-10): every page's items, not just the current one —
-  // `shown`/`useFeaturedFirst` used to slice to ONE page, so a crawler's
-  // initial-HTML read (no click interaction) only ever saw page 0. All pages
-  // now render into the DOM; only the current one is visually shown (see
-  // `hidden={idx !== page}` below). Featured-tile styling is structural to
-  // group index 0, independent of which page is currently visible.
-  const pageGroups: ServiceCatalogItem[][] = Array.from({ length: totalPages }, (_, idx) => {
-    const start = idx === 0 ? 0 : firstPageSize + (idx - 1) * PAGE_SIZE_REGULAR;
-    const end = idx === 0 ? firstPageSize : start + PAGE_SIZE_REGULAR;
-    return allShown.slice(start, end);
-  });
+  const start = page === 0 ? 0 : firstPageSize + (page - 1) * PAGE_SIZE_REGULAR;
+  const shown = allShown.slice(start, page === 0 ? firstPageSize : start + PAGE_SIZE_REGULAR);
 
   function handleFilter(id: FilterId) {
     setFilter(id);
@@ -274,42 +265,27 @@ export function ServiceCatalog({
         </header>
 
         <div {...(showPager ? swipe : {})}>
-          {pageGroups.map((group, idx) => (
-            // Plain `hidden` (not client-side slicing) so every group's links
-            // are real DOM anchors in the initial server HTML — a crawler
-            // sees all of them regardless of which page is visually active.
-            // `hidden` removes the inactive groups from the a11y tree/tab
-            // order too, matching how a well-built carousel/panel already
-            // behaves. Trade-off: the fade-up stagger only plays the first
-            // time a group is scrolled to, not on every manual page-flip
-            // back to it (RevealOnScroll's mount-time visibility check reads
-            // a zero-size rect while `hidden`) — cosmetic only, never hides
-            // content or breaks a link.
-            <div key={`${filter}-${idx}`} hidden={idx !== page}>
-              {/* No RevealOnScroll here: this section is wrapped in
-                  <LazyHydrate>, so it mounts ~600px BEFORE the viewport —
-                  i.e. after its server HTML has already painted. The reveal
-                  effect would then re-hide cards the visitor had already seen
-                  and wait on an IntersectionObserver to un-hide them, which is
-                  exactly the "cards load slow / sometimes never appear" bug. */}
-              <div
-                className={cn(
-                  "gh-card-grid",
-                  idx === 0 && canFeatureFirst ? "gh-card-grid--featured" : null,
-                )}
-              >
-                {group.map((s, i) => (
-                  <ServiceTile
-                    key={`${s.type}-${s.title}-${s.href}`}
-                    service={s}
-                    variant={idx === 0 && canFeatureFirst && i === 0 ? "featured" : "default"}
-                    i18n={i18n}
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
+          <div className={cn("gh-card-grid", page === 0 && canFeatureFirst ? "gh-card-grid--featured" : null)}>
+            {shown.map((service, index) => (
+              <ServiceTile key={service.href} service={service}
+                variant={page === 0 && canFeatureFirst && index === 0 ? "featured" : "default"} i18n={i18n} />
+            ))}
+          </div>
         </div>
+
+        {/* Keep every detail link in server HTML without all full card trees. */}
+        <details className="mt-8 text-white/80">
+          <summary className="cursor-pointer py-3 font-semibold">{i18n.filters.all} · {i18n.eyebrow}</summary>
+          <ul className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {services.map((service) => (
+              <li key={service.href}>
+                <Link href={service.detailHref ?? service.href} prefetch={false} className="inline-block py-2 underline underline-offset-4">
+                  {service.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </details>
 
         {/* Bottom pager — mirrors the header one so paging past row 1
             doesn't force a scroll back to the top of the list. */}

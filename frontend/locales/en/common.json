@@ -651,6 +651,7 @@
     "kindSpecialist": "Specialist consultation",
     "kindTest": "Health test",
     "kindPrescription": "Online prescription",
+    "kindTestBooking": "Test appointment",
     "stepCart": "Cart",
     "stepCheckout": "Checkout",
     "stepPayment": "Payment",

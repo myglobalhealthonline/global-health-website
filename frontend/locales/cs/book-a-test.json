@@ -1,0 +1,43 @@
+{
+  "hero": {
+    "eyebrow": "Objednat vysetreni",
+    "title": "Laboratorni testy a vysetreni behem par minut",
+    "subtitle": "Vyberte vysetreni, zvolte centrum ve svem okoli a prijdte v case, ktery vam vyhovuje."
+  },
+  "catalogue": {
+    "empty": "V teto zemi zatim nejsou dostupna zadna vysetreni. Zkuste to prosim pozdeji.",
+    "fromPrice": "Od {price}",
+    "centreCount_one": "{count} centrum",
+    "centreCount_other": "{count} center",
+    "viewTest": "Zobrazit vysetreni",
+    "bookNow": "Objednat toto vysetreni"
+  },
+  "detail": {
+    "chooseCentre": "Vyberte odberove centrum",
+    "chooseCentreHint": "Ceny a dostupne casy se u jednotlivych center lisi.",
+    "preparation": "Jak se pripravit",
+    "turnaround": "Vysledky do {days} pracovnich dnu",
+    "turnaroundUnknown": "Termin potvrdi centrum",
+    "aboutThisTest": "O tomto vysetreni",
+    "selectCentre": "Vybrat toto centrum"
+  },
+  "booking": {
+    "chooseTime": "Vyberte cas",
+    "noSlots": "V tomto centru nejsou v nasledujicich dvou tydnech volne casy. Zkuste jine centrum.",
+    "loadingSlots": "Nacitani volnych casu...",
+    "slotTaken": "Tento cas byl prave obsazen. Vyberte prosim jiny.",
+    "yourDetails": "Vase udaje",
+    "fullName": "Cele jmeno",
+    "email": "E-mail",
+    "phone": "Telefon",
+    "dateOfBirth": "Datum narozeni",
+    "notes": "Co by melo centrum vedet (nepovinne)",
+    "addToCart": "Pokracovat k platbe",
+    "arriveEarly": "Dostavte se prosim 5-10 minut pred terminem.",
+    "centreTime": "Casy jsou v mistnim case centra."
+  },
+  "meta": {
+    "title": "Objednat vysetreni",
+    "description": "Objednejte si laboratorni test nebo vysetreni v centru ve svem okoli."
+  }
+}

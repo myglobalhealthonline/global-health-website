@@ -7,7 +7,15 @@ import { useCart } from "@/components/cart/CartContext";
 import { Btn } from "@/components/portal-atoms";
 
 type ReorderableItem = {
-  kind: "HEALTH_TEST" | "PRESCRIPTION_SERVICE" | "GENERAL_CONSULTATION" | "SPECIALIST_CONSULTATION";
+  // TEST_BOOKING is accepted but never re-added: like a consultation it carries
+  // no healthTestId/serviceId, so the filter below skips it. A past test needs
+  // a fresh centre slot, not a cart re-add.
+  kind:
+    | "HEALTH_TEST"
+    | "PRESCRIPTION_SERVICE"
+    | "GENERAL_CONSULTATION"
+    | "SPECIALIST_CONSULTATION"
+    | "TEST_BOOKING";
   healthTestId: string | null;
   serviceId: string | null;
   quantity: number;

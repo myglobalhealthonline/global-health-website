@@ -18,15 +18,28 @@ import { computeAppointmentUpdateDiff } from "./admin-update-appointment.diff.js
 
 export { computeAppointmentUpdateDiff, type AppointmentUpdateDiff } from "./admin-update-appointment.diff.js";
 
+// Booking lines that carry an appointment — test bookings included. They have
+// no doctor and no meeting link, but they are looked up, rescheduled and
+// notified through exactly these paths.
 const CONSULTATION_KINDS: CartItemKind[] = [
   CartItemKind.GENERAL_CONSULTATION,
   CartItemKind.SPECIALIST_CONSULTATION,
+  CartItemKind.TEST_BOOKING,
 ];
 
 export class AppointmentNotFoundError extends Error {
   constructor() {
     super("Appointment not found");
     this.name = "AppointmentNotFoundError";
+  }
+}
+
+export class TestBookingRescheduleUnsupportedError extends Error {
+  constructor() {
+    super(
+      "A test centre booking cannot be moved from here. Cancel it and book the new time.",
+    );
+    this.name = "TestBookingRescheduleUnsupportedError";
   }
 }
 
@@ -129,6 +142,7 @@ export async function adminUpdateAppointment(
       serviceId: true,
       countryCode: true,
       timeSlotId: true,
+      testCenterTimeSlotId: true,
     },
   });
   if (!row) throw new AppointmentNotFoundError();
@@ -136,6 +150,19 @@ export async function adminUpdateAppointment(
   const diff = computeAppointmentUpdateDiff(row, input);
   if (!diff.hasChanges) throw new NoAppointmentChangesError();
 
+  // Test-centre bookings cannot be rescheduled through this path.
+  //
+  // Every slot step below is doctor-shaped: it reads the previous DoctorTimeSlot
+  // for its length, releases via the doctor engine, and re-claims with
+  // reclaimSlotForRescheduledAppointment. A test booking holds a
+  // TestCenterTimeSlot, so all three would match nothing and return quietly —
+  // moving `scheduledAt` while leaving the old centre slot BOOKED and claiming
+  // no new one. Two silent inventory bugs and a patient told a time the centre
+  // has no appointment for.
+  //
+  // Refusing loudly is the honest interim. Rescheduling a test booking means
+  // cancelling it (which now releases the centre slot correctly) and booking
+  // again.
   // A DoctorTimeSlot belongs to ONE doctor, so a doctor swap has to move the
   // reservation even when the clock time is untouched. Gating the slot work on
   // `timeChanged` alone left the slot sitting on the OLD doctor's calendar
@@ -144,6 +171,10 @@ export async function adminUpdateAppointment(
   // is exactly how one doctor ended up with a manual booking and a website
   // booking on the same hour (2026-09-08).
   const slotMoveNeeded = diff.timeChanged || diff.doctorChanged;
+
+  if (slotMoveNeeded && row.testCenterTimeSlotId) {
+    throw new TestBookingRescheduleUnsupportedError();
+  }
 
   if (diff.nextDoctorId) {
     await validateDoctorForAppointment(

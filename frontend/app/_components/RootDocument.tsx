@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { headers } from "next/headers";
 import { CookieBanner } from "@/components/compliance/CookieBanner";
+import { getCommonLocale } from "@/lib/i18n/get-common-locale";
+import { supportedLocaleCodes, type LocaleCode } from "@/lib/i18n/types";
 import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import "../globals.css";
 
@@ -76,6 +78,9 @@ export function RootDocument({
   cookieBanner?: boolean;
   children: ReactNode;
 }) {
+  const locale: LocaleCode = supportedLocaleCodes.includes(lang as LocaleCode)
+    ? (lang as LocaleCode)
+    : "en";
   return (
     <html lang={lang} className="h-full antialiased" suppressHydrationWarning>
       <head>
@@ -100,7 +105,7 @@ export function RootDocument({
             in the two public root layouts only. */}
         <ScrollToTop />
         {children}
-        {cookieBanner ? <CookieBanner /> : null}
+        {cookieBanner ? <CookieBanner messages={getCommonLocale(locale).cookie} /> : null}
       </body>
     </html>
   );

@@ -18,6 +18,24 @@ export type PostPaymentMessageContext = {
   appointmentDateTime: string;
   meetingLink: string;
   meetingLinkDisplay: string;
+  /**
+   * The two lines that differ between a consultation and a test booking:
+   * who the patient is seeing, and where to go. Pre-rendered (and localized)
+   * by the flow service — see `attendance-line.ts` — because the builders below
+   * hold one literal block per language, and threading a label table through
+   * every one of them would mean editing five blocks per wording change.
+   *
+   * `attendeeLine`   → "👤 Doctor: Dr Silva"  |  "🏥 Test centre: Synlab Lisboa"
+   * `attendanceLine` → "💻 Meeting Link: …"   |  "📍 Address: …"
+   */
+  attendeeLine: string;
+  attendanceLine: string;
+  /**
+   * Closing instruction, which differs in kind: "join a few minutes before"
+   * for a video consultation, "arrive 5-10 minutes before" for an in-person
+   * exam. Telling a patient to *join* a blood draw is not a wording nit.
+   */
+  attendanceAdvice: string;
   orderNumber: string;
   totalLabel: string;
   /** Admin-entered reason when an appointment is updated after booking. */
@@ -72,7 +90,7 @@ Thank you for your payment.
 Your booking has now been confirmed.
 Appointment Details:
 📌 Service: ${ctx.serviceName}
-👤 Doctor: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Date & Time: ${ctx.appointmentDateTime}
 We will send your meeting link shortly.
 Global Health Team`,
@@ -81,7 +99,7 @@ Obrigado pelo seu pagamento.
 A sua marcação foi confirmada.
 Detalhes da consulta:
 📌 Serviço: ${ctx.serviceName}
-👤 Médico: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Data și ora: ${ctx.appointmentDateTime}
 Enviaremos o link da reunião em breve.
 Equipa Global Health`,
@@ -90,7 +108,7 @@ Vă mulțumim pentru plată.
 Programarea dumneavoastră a fost confirmată.
 Detalii consultație:
 📌 Serviciu: ${ctx.serviceName}
-👤 Medic: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Data și ora: ${ctx.appointmentDateTime}
 Linkul de meeting va fi trimis în curând.
 Echipa Global Health`,
@@ -99,7 +117,7 @@ děkujeme za platbu.
 Vaše rezervace byla potvrzena.
 Detaily konzultace:
 📌 Služba: ${ctx.serviceName}
-👤 Lékař: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Datum a čas: ${ctx.appointmentDateTime}
 Odkaz na setkání vám brzy zašleme.
 Tým Global Health`,
@@ -108,7 +126,7 @@ Gracias por su pago.
 Su reserva ha sido confirmada.
 Detalles de la cita:
 📌 Servicio: ${ctx.serviceName}
-👤 Doctor: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Fecha y hora: ${ctx.appointmentDateTime}
 Enviaremos el enlace de la reunión en breve.
 Equipo Global Health`,
@@ -175,50 +193,50 @@ Thank you for your payment.
 Your booking has now been confirmed.
 Appointment Details:
 📌 Service: ${ctx.serviceName}
-👤 Doctor: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Date & Time: ${ctx.appointmentDateTime}
-💻 Meeting Link: ${ctx.meetingLinkDisplay}
-Please join a few minutes before your appointment.
+${ctx.attendanceLine}
+${ctx.attendanceAdvice}
 Global Health Team`,
     pt: `Olá ${ctx.patientName},
 Obrigado pelo seu pagamento.
 A sua marcação foi confirmada.
 Detalhes da consulta:
 📌 Serviço: ${ctx.serviceName}
-👤 Médico: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Data și ora: ${ctx.appointmentDateTime}
-💻 Link da reunião: ${ctx.meetingLinkDisplay}
-Por favor entre alguns minutos antes da consulta.
+${ctx.attendanceLine}
+${ctx.attendanceAdvice}
 Equipa Global Health`,
     ro: `Bună ${ctx.patientName},
 Vă mulțumim pentru plată.
 Programarea dumneavoastră a fost confirmată.
 Detalii consultație:
 📌 Serviciu: ${ctx.serviceName}
-👤 Medic: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Data și ora: ${ctx.appointmentDateTime}
-💻 Link meeting: ${ctx.meetingLinkDisplay}
-Vă rugăm să intrați cu câteva minute înainte.
+${ctx.attendanceLine}
+${ctx.attendanceAdvice}
 Echipa Global Health`,
     cs: `Dobrý den ${ctx.patientName},
 děkujeme za platbu.
 Vaše rezervace byla potvrzena.
 Detaily konzultace:
 📌 Služba: ${ctx.serviceName}
-👤 Lékař: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Datum a čas: ${ctx.appointmentDateTime}
-💻 Odkaz na setkání: ${ctx.meetingLinkDisplay}
-Připojte se prosím několik minut předem.
+${ctx.attendanceLine}
+${ctx.attendanceAdvice}
 Tým Global Health`,
     es: `Hola ${ctx.patientName},
 Gracias por su pago.
 Su reserva ha sido confirmada.
 Detalles de la cita:
 📌 Servicio: ${ctx.serviceName}
-👤 Doctor: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Fecha y hora: ${ctx.appointmentDateTime}
-💻 Enlace de reunión: ${ctx.meetingLinkDisplay}
-Únase unos minutos antes de su cita.
+${ctx.attendanceLine}
+${ctx.attendanceAdvice}
 Equipo Global Health`,
   });
 }
@@ -479,41 +497,41 @@ export function patientWhatsAppAppointmentUpdated(
 Your appointment has been updated.
 Appointment Details:
 📌 Service: ${ctx.serviceName}
-👤 Doctor: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Date & Time: ${ctx.appointmentDateTime}
-💻 Meeting Link: ${ctx.meetingLinkDisplay || "—"}${reasonLine}
+${ctx.attendanceLine}${reasonLine}
 Global Health Team`,
     pt: `Olá ${ctx.patientName},
 A sua consulta foi atualizada.
 Detalhes da consulta:
 📌 Serviço: ${ctx.serviceName}
-👤 Médico: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Data e hora: ${ctx.appointmentDateTime}
-💻 Link da reunião: ${ctx.meetingLinkDisplay || "—"}${reasonLine}
+${ctx.attendanceLine}${reasonLine}
 Equipa Global Health`,
     ro: `Bună ${ctx.patientName},
 Programarea dumneavoastră a fost actualizată.
 Detalii consultație:
 📌 Serviciu: ${ctx.serviceName}
-👤 Medic: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Data și ora: ${ctx.appointmentDateTime}
-💻 Link meeting: ${ctx.meetingLinkDisplay || "—"}${reasonLine}
+${ctx.attendanceLine}${reasonLine}
 Echipa Global Health`,
     cs: `Dobrý den ${ctx.patientName},
 vaše konzultace byla aktualizována.
 Detaily konzultace:
 📌 Služba: ${ctx.serviceName}
-👤 Lékař: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Datum a čas: ${ctx.appointmentDateTime}
-💻 Odkaz na setkání: ${ctx.meetingLinkDisplay || "—"}${reasonLine}
+${ctx.attendanceLine}${reasonLine}
 Tým Global Health`,
     es: `Hola ${ctx.patientName},
 Su cita ha sido actualizada.
 Detalles de la cita:
 📌 Servicio: ${ctx.serviceName}
-👤 Doctor: ${ctx.doctorName}
+${ctx.attendeeLine}
 📅 Fecha y hora: ${ctx.appointmentDateTime}
-💻 Enlace de reunión: ${ctx.meetingLinkDisplay || "—"}${reasonLine}
+${ctx.attendanceLine}${reasonLine}
 Equipo Global Health`,
   });
 }

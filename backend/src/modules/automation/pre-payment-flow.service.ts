@@ -1,5 +1,6 @@
 import { CartItemKind, PrePaymentFlow } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
+import { attendeeLine } from "./attendance-line.js";
 import {
   resolveNotificationLang,
   type NotificationLang,
@@ -104,9 +105,11 @@ const WEB_CHECKOUT_NUDGE_LEAD_MIN = 10;
 export const WEB_CHECKOUT_NUDGE_STAGE = 2;
 export const WEB_CHECKOUT_CANCEL_STAGE = 3;
 
+// Test bookings ride the same pay-link + reminder ladder as consultations.
 const CONSULTATION_KINDS: CartItemKind[] = [
   CartItemKind.GENERAL_CONSULTATION,
   CartItemKind.SPECIALIST_CONSULTATION,
+  CartItemKind.TEST_BOOKING,
 ];
 
 /** Reminder thresholds (hours before consultation) for orders booked >48h out. */
@@ -325,6 +328,15 @@ async function loadOrderContext(orderId: string, paymentUrl: string | null) {
         select: { fullName: true, title: true, whatsappNumber: true },
       })
     : null;
+  // A test booking names the centre where a consultation names the doctor.
+  // No address here — a pre-payment message is a request to pay, not a
+  // confirmation, and the booking is not the patient's until it is paid for.
+  const testCentre = primary.testCenterId
+    ? await prisma.testCenter.findUnique({
+        where: { id: primary.testCenterId },
+        select: { name: true },
+      })
+    : null;
 
   const lang = resolveNotificationLang({
     notificationLocale: order.notificationLocale,
@@ -347,6 +359,15 @@ async function loadOrderContext(orderId: string, paymentUrl: string | null) {
     doctorName: doctor
       ? formatDoctorForPatientNotification(doctor.fullName, doctor.title)
       : "Assigned doctor",
+    attendeeLine: attendeeLine(
+      testCentre
+        ? { kind: "VENUE", display: "", venueName: testCentre.name }
+        : { kind: "MEET", display: "" },
+      doctor
+        ? formatDoctorForPatientNotification(doctor.fullName, doctor.title)
+        : "Assigned doctor",
+      lang,
+    ),
     appointmentDate: appointmentStart
       ? formatDeadline(appointmentStart, primary.patientTimezone, lang)
       : pendingAppointmentDateLabel(lang),

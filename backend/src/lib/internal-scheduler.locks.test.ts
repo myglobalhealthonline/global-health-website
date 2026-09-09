@@ -45,8 +45,17 @@ describe("internal scheduler advisory locks", () => {
   it("schedules the appointment-reminder enqueue on an interval and on boot", () => {
     assert.match(
       source,
-      /setInterval\(\(\) => void tickAppointmentReminders\(log\), APPOINTMENT_REMINDER_INTERVAL_MS\)/,
+      /schedule\("appointment-reminders", \(\) => tickAppointmentReminders\(log\), APPOINTMENT_REMINDER_INTERVAL_MS\)/,
     );
-    assert.match(source, /void tickAppointmentReminders\(log\);\n {4}\}, startupJitterMs\)/);
+    assert.match(
+      source,
+      /runScheduledJob\("appointment-reminders", \(\) => tickAppointmentReminders\(log\)\);/,
+    );
+  });
+
+  it("runs bounded slot prewarming behind its own distributed lock", () => {
+    assert.match(source, /const LOCK_SLOT_PREWARM = \d+;/);
+    assert.match(source, /withAdvisoryLock\(LOCK_SLOT_PREWARM/);
+    assert.match(source, /schedule\("slot-prewarm", \(\) => tickSlotPrewarm\(log\), SLOT_PREWARM_INTERVAL_MS\)/);
   });
 });

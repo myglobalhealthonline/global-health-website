@@ -27,6 +27,7 @@ const availabilityQuerySchema = z.object({
   country: countryCodeSchema,
   language: z.string().trim().min(2).max(12),
   days: z.coerce.number().int().min(1).max(30).default(14),
+  clinicDays: z.literal("1").optional().transform((value) => value === "1"),
 });
 
 const assignBodySchema = z
@@ -37,10 +38,13 @@ const assignBodySchema = z
   })
   .strict();
 
-const languagesQuerySchema = z.object({ country: countryCodeSchema });
+const languagesQuerySchema = z.object({
+  country: countryCodeSchema,
+  mode: z.enum(["marketing"]).optional(),
+});
 
 const publicGpBookingRoute: FastifyPluginAsync = async (app) => {
-  app.get<{ Querystring: { country?: string } }>(
+  app.get<{ Querystring: { country?: string; mode?: string } }>(
     "/api/public/gp-languages",
     async (request, reply) => {
       const parsed = languagesQuerySchema.safeParse(request.query);
@@ -48,7 +52,7 @@ const publicGpBookingRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid query", parsed.error.flatten()));
       }
       try {
-        const result = await getGpLanguages(parsed.data.country);
+        const result = await getGpLanguages(parsed.data.country, parsed.data.mode ?? "live");
         return okResponse({
           configured: result.configured,
           languages: result.languages,
@@ -64,7 +68,7 @@ const publicGpBookingRoute: FastifyPluginAsync = async (app) => {
     },
   );
 
-  app.get<{ Querystring: { country?: string; language?: string; days?: string } }>(
+  app.get<{ Querystring: { country?: string; language?: string; days?: string; clinicDays?: string } }>(
     "/api/public/gp-availability",
     async (request, reply) => {
       // Booked slots must never be advertised as open by a stale cache —
@@ -79,6 +83,7 @@ const publicGpBookingRoute: FastifyPluginAsync = async (app) => {
           countryCode: parsed.data.country,
           languageCode: parsed.data.language,
           days: parsed.data.days,
+          clinicDays: parsed.data.clinicDays,
         });
         const bookability = result.service
           ? await getServiceBookability({

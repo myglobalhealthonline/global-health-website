@@ -20,8 +20,43 @@ export type AdminExamTypeDto = {
   isActive: boolean;
   sortOrder: number;
   offeringCount?: number;
+
+  /** ── Public "Book a Test" content ──
+   *  `isBookable` publishes the exam to the patient catalogue and is separate
+   *  from `isActive`, which gates admin/referral usability. Price and available
+   *  times are NOT here — they come from the centres offering the exam. */
+  isBookable: boolean;
+  summary: string | null;
+  imagePath: string | null;
+  galleryImagePaths: string[];
+  seoTitle: string | null;
+  seoDescription: string | null;
+  heroTitle: string | null;
+  heroDescription: string | null;
+  detailBody: string | null;
+  preparationBody: string | null;
+  ctaLabel: string | null;
+  /** Wall-clock time a centre blocks for this exam. */
+  durationMinutes: number;
+  translations: AdminExamTypeTranslationDto[];
+
   createdAt: string;
   updatedAt: string;
+};
+
+/** Per-locale public copy. Every LocaleCode is valid — an ExamType is one
+ *  global catalogue row, so no country gates which languages it may carry. */
+export type AdminExamTypeTranslationDto = {
+  locale: string;
+  name: string;
+  summary: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  heroTitle: string | null;
+  heroDescription: string | null;
+  detailBody: string | null;
+  preparationBody: string | null;
+  ctaLabel: string | null;
 };
 
 export type AdminTestCenterExamDto = {
@@ -191,4 +226,106 @@ export async function deleteAdminTestCenterExam(testCenterId: string, offeringId
     `/api/admin/test-centers/${testCenterId}/exams/${offeringId}`,
     { method: "DELETE" },
   );
+}
+
+// ─── Availability ("Book a Test" booking inventory) ────────────────────────
+
+/**
+ * One recurring weekly opening-hours window. Same shape the doctor availability
+ * API returns, deliberately: the admin week grid renders either owner from this.
+ *
+ * Minutes are center-LOCAL wall clock, resolved against the center's country
+ * timezone — which is why the list endpoint returns `timeZone` alongside.
+ */
+export type AdminTestCenterAvailabilityDto = {
+  id: string;
+  /** 0 = Sunday … 6 = Saturday. Matches `Date#getDay()`. */
+  weekday: number;
+  startMinute: number;
+  endMinute: number;
+  slotDurationMinutes: number;
+  effectiveFrom: string | null;
+  effectiveUntil: string | null;
+  isActive: boolean;
+};
+
+export type AdminTestCenterSlotDto = {
+  id: string;
+  startAt: string;
+  endAt: string;
+  status: "OPEN" | "HELD" | "BOOKED" | "BLOCKED";
+  blockReason: string | null;
+  isAdHoc: boolean;
+};
+
+export async function fetchAdminTestCenterAvailability(testCenterId: string) {
+  return adminRequest<{
+    availability: AdminTestCenterAvailabilityDto[];
+    timeZone: string;
+  }>(`/api/admin/test-centers/${testCenterId}/availability`);
+}
+
+export async function createAdminTestCenterAvailability(
+  testCenterId: string,
+  body: unknown,
+) {
+  return adminRequest<{ availability: AdminTestCenterAvailabilityDto }>(
+    `/api/admin/test-centers/${testCenterId}/availability`,
+    { method: "POST", body },
+  );
+}
+
+export async function patchAdminTestCenterAvailability(
+  testCenterId: string,
+  availabilityId: string,
+  body: unknown,
+) {
+  return adminRequest<{ availability: AdminTestCenterAvailabilityDto }>(
+    `/api/admin/test-centers/${testCenterId}/availability/${availabilityId}`,
+    { method: "PATCH", body },
+  );
+}
+
+export async function deleteAdminTestCenterAvailability(
+  testCenterId: string,
+  availabilityId: string,
+) {
+  return adminRequest<{ deleted: boolean }>(
+    `/api/admin/test-centers/${testCenterId}/availability/${availabilityId}`,
+    { method: "DELETE" },
+  );
+}
+
+/** Every slot in a UTC range, whatever its status — the week grid's read. */
+export async function fetchAdminTestCenterSlots(
+  testCenterId: string,
+  fromUtc: string,
+  toUtc: string,
+) {
+  const params = new URLSearchParams({ fromUtc, toUtc });
+  return adminRequest<{ slots: AdminTestCenterSlotDto[] }>(
+    `/api/admin/test-centers/${testCenterId}/time-slots?${params.toString()}`,
+  );
+}
+
+/**
+ * Admin books a test at this centre on a patient's behalf. Same pipeline the
+ * consultation manual booking uses — patient account, held slot, payment link,
+ * message ladder — so the response carries the portal credentials to read out
+ * if email delivery fails.
+ */
+export async function postAdminManualTestBooking(body: unknown) {
+  return adminRequest<{
+    appointmentId: string;
+    orderId: string;
+    patientUserId: string;
+    paymentUrl: string | null;
+    tempPassword: string | null;
+    setPasswordUrl: string;
+    emailQueued: boolean;
+    amountCents: number;
+    discountPercent: number;
+    discountCents: number;
+    free: boolean;
+  }>("/api/admin/appointments/test-booking", { method: "POST", body });
 }

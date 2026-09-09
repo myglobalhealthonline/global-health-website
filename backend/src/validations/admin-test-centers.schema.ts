@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { serviceSlugSchema } from "./admin-services.schema.js";
+import { serviceSlugSchema, validateUniqueLocales } from "./admin-services.schema.js";
+import { localeCodeSchema } from "./admin-countries.schema.js";
 
 /** Trimmed optional string that collapses "" / undefined → null so partial
  *  updates and blank form fields clear the column consistently (matches the
@@ -64,6 +65,29 @@ const examTypeCodeSchema = z
   .nullable()
   .transform((value) => (value === "" || value === undefined ? null : value));
 
+/**
+ * Per-locale public copy for an exam type. `name` is required (the table's
+ * invariant); everything else falls back to the base column when absent.
+ *
+ * Every LocaleCode is accepted, unlike the service equivalent: an ExamType is
+ * one global catalogue row reused by every market, so there is no country whose
+ * enabled locales could gate it. Price and availability stay per-center.
+ */
+const examTypeTranslationEntrySchema = z.object({
+  locale: localeCodeSchema,
+  name: z.string().trim().min(1).max(200),
+  summary: optionalTrimmed(4000),
+  seoTitle: optionalTrimmed(200),
+  seoDescription: optionalTrimmed(500),
+  heroTitle: optionalTrimmed(200),
+  heroDescription: optionalTrimmed(2000),
+  detailBody: optionalTrimmed(100000),
+  preparationBody: optionalTrimmed(20000),
+  ctaLabel: optionalTrimmed(120),
+});
+
+export type ExamTypeTranslationInput = z.infer<typeof examTypeTranslationEntrySchema>;
+
 const examTypeBaseObject = z.object({
   code: examTypeCodeSchema,
   name: z.string().trim().min(1).max(200),
@@ -72,12 +96,34 @@ const examTypeBaseObject = z.object({
   description: optionalTrimmed(2000),
   sortOrder: z.coerce.number().int().min(0).max(9999).default(0),
   isActive: z.boolean().optional(),
+
+  // ── Public "Book a Test" content ──
+  summary: optionalTrimmed(4000),
+  imagePath: optionalTrimmed(500),
+  galleryImagePaths: z.array(z.string().trim().min(1).max(500)).max(12).optional(),
+  seoTitle: optionalTrimmed(200),
+  seoDescription: optionalTrimmed(500),
+  heroTitle: optionalTrimmed(200),
+  heroDescription: optionalTrimmed(2000),
+  detailBody: optionalTrimmed(100000),
+  preparationBody: optionalTrimmed(20000),
+  ctaLabel: optionalTrimmed(120),
+  /** Wall-clock time a centre blocks for this exam; consumed off the base grid. */
+  durationMinutes: z.coerce.number().int().min(5).max(480).optional(),
+  /** Publishes the exam to the public catalogue. Separate from `isActive`,
+   *  which gates admin/referral usability. */
+  isBookable: z.boolean().optional(),
+  translations: z.array(examTypeTranslationEntrySchema).max(12).optional(),
 });
 
-export const adminExamTypeCreateBodySchema = examTypeBaseObject;
+export const adminExamTypeCreateBodySchema = examTypeBaseObject.superRefine(
+  (value, ctx) => validateUniqueLocales(value.translations, ctx),
+);
 export type AdminExamTypeCreateBody = z.infer<typeof adminExamTypeCreateBodySchema>;
 
-export const adminExamTypeUpdateBodySchema = examTypeBaseObject.partial();
+export const adminExamTypeUpdateBodySchema = examTypeBaseObject
+  .partial()
+  .superRefine((value, ctx) => validateUniqueLocales(value.translations, ctx));
 export type AdminExamTypeUpdateBody = z.infer<typeof adminExamTypeUpdateBodySchema>;
 
 // ─── Test centers (country-scoped) ─────────────────────────────────────────

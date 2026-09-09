@@ -40,6 +40,7 @@ const KIND_ICON: Record<CartItem["kind"], typeof Stethoscope> = {
   SPECIALIST_CONSULTATION: Stethoscope,
   HEALTH_TEST: FlaskConical,
   PRESCRIPTION_SERVICE: Pill,
+  TEST_BOOKING: FlaskConical,
 };
 
 /**

@@ -1,0 +1,43 @@
+{
+  "hero": {
+    "eyebrow": "Marcar um exame",
+    "title": "Analises e exames, marcados em minutos",
+    "subtitle": "Escolha um exame, escolha um centro perto de si e compareca a hora que lhe convier."
+  },
+  "catalogue": {
+    "empty": "Ainda nao ha exames disponiveis neste pais. Volte em breve.",
+    "fromPrice": "Desde {price}",
+    "centreCount_one": "{count} centro",
+    "centreCount_other": "{count} centros",
+    "viewTest": "Ver exame",
+    "bookNow": "Marcar este exame"
+  },
+  "detail": {
+    "chooseCentre": "Escolha um centro de exames",
+    "chooseCentreHint": "Os precos e os horarios variam consoante o centro.",
+    "preparation": "Como se preparar",
+    "turnaround": "Resultados em {days} dias uteis",
+    "turnaroundUnknown": "Prazo confirmado pelo centro",
+    "aboutThisTest": "Sobre este exame",
+    "selectCentre": "Selecionar este centro"
+  },
+  "booking": {
+    "chooseTime": "Selecione uma hora",
+    "noSlots": "Sem horarios disponiveis neste centro nas proximas duas semanas. Experimente outro centro.",
+    "loadingSlots": "A carregar horarios...",
+    "slotTaken": "Esse horario acabou de ser ocupado. Escolha outro.",
+    "yourDetails": "Os seus dados",
+    "fullName": "Nome completo",
+    "email": "Email",
+    "phone": "Telefone",
+    "dateOfBirth": "Data de nascimento",
+    "notes": "Algo que o centro deva saber (opcional)",
+    "addToCart": "Continuar para pagamento",
+    "arriveEarly": "Por favor chegue 5-10 minutos antes da sua marcacao.",
+    "centreTime": "Horarios na hora local do centro."
+  },
+  "meta": {
+    "title": "Marcar um exame",
+    "description": "Marque uma analise ou exame num centro perto de si."
+  }
+}

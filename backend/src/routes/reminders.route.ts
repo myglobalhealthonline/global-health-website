@@ -1,4 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
+import { runWithSchedulerDb } from "../db/prisma.js";
 import { env } from "../config/env.js";
 import { isValidCronSecret } from "../utils/cron-auth.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
@@ -29,6 +30,7 @@ const remindersRoute: FastifyPluginAsync = async (app) => {
       return reply.status(401).send(errorResponse("Not authorised"));
     }
 
+    return runWithSchedulerDb(async () => {
     try {
       const result = await enqueueDueAppointmentReminders();
       return okResponse(
@@ -42,6 +44,7 @@ const remindersRoute: FastifyPluginAsync = async (app) => {
       app.log.error(error);
       return reply.status(500).send(errorResponse("Could not run reminders"));
     }
+    });
   });
 };
 

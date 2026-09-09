@@ -133,6 +133,10 @@ export const COUNTRY_FEATURE_KEYS = [
   "specialist-consultations",
   "online-prescriptions",
   "health-tests",
+  // Patient-facing test-centre booking. Publication is additionally gated per
+  // exam by ExamType.isBookable (default false), so enabling this market-wide
+  // publishes nothing on its own.
+  "book-a-test",
   "appointments",
   // Monthly subscription plans (Wave 0). Strict opt-in — a country only
   // offers subscriptions when this key is explicitly added (§36.15).

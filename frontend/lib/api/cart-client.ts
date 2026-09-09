@@ -48,6 +48,12 @@ export type AddItemInput = {
   quantity?: number;
   timeSlotId?: string;
   doctorId?: string;
+  /** TEST_BOOKING lines — the exam, the centre, and the centre slot picked.
+   *  All three are required together; the server re-resolves the offering from
+   *  them rather than trusting any price sent by the client. */
+  examTypeId?: string;
+  testCenterId?: string;
+  testCenterTimeSlotId?: string;
   /** Patient intake — required for GENERAL_CONSULTATION /
    *  SPECIALIST_CONSULTATION (the consult-page form collects it). */
   patient?: CartItemPatientInput;

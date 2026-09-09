@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServiceDoctorAvailability } from "@/lib/content/get-doctor-availability";
+import { jsonAvailabilityResponse } from "@/lib/server/json-availability-response";
 
 export const dynamic = "force-dynamic";
 
@@ -25,5 +26,5 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   const result = await getServiceDoctorAvailability(country, service, doctor, days);
-  return NextResponse.json({ ok: true, data: result });
+  return jsonAvailabilityResponse(request, { ok: true, data: result }, { "cache-control": "no-store" });
 }

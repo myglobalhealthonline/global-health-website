@@ -72,3 +72,53 @@ export const suklDoctorIdentityBodySchema = z
     notes: z.string().trim().max(2000).nullable().optional(),
   })
   .strict();
+
+/**
+ * Issuing a test prescription from the admin console.
+ *
+ * Deliberately strict about the things SÚKL constrain, so a bad value fails
+ * here rather than becoming a rejected — and therefore ambiguous — create.
+ */
+export const suklIssuePrescriptionSchema = z.object({
+  service: z.enum(SUKL_SERVICES).optional(),
+  doctorUserId: z.string().trim().min(1),
+  appointmentId: z.string().trim().min(1).optional(),
+  patientUserId: z.string().trim().min(1).optional(),
+  patient: z.object({
+    surname: z.string().trim().min(1).max(100).optional(),
+    givenNames: z.string().trim().min(1).max(100).optional(),
+    dateOfBirth: z.string().trim().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+    insuranceNumber: z.string().trim().regex(/^\d{9,10}$/).optional(),
+    insurerCode: z.string().trim().regex(/^\d{3}$/).optional(),
+    phone: z.string().trim().max(20).optional(),
+    email: z.string().trim().email().max(256).optional(),
+  }),
+  items: z
+    .array(
+      z.object({
+        quantity: z.coerce.number().int().min(1).max(999),
+        instructions: z.string().trim().min(1).max(80),
+        reimbursement: z.enum(["PACIENT", "UHR1", "UHR2", "UHR3"]),
+        medicineName: z.string().trim().min(1).max(146),
+        medicineCode: z.string().trim().regex(/^\d{7}$/).optional(),
+        atcCode: z.string().trim().max(7).optional(),
+        form: z.string().trim().max(27).optional(),
+        strength: z.string().trim().max(24).optional(),
+        diagnosis: z.string().trim().max(5).optional(),
+        doNotSubstitute: z.boolean().optional(),
+        doseExceeded: z.boolean().optional(),
+      }),
+    )
+    .min(1),
+  issuedOn: z.string().trim().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  validUntil: z.string().trim().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  note: z.string().trim().max(1000).optional(),
+  urgent: z.boolean().optional(),
+});
+
+export const suklCancelPrescriptionSchema = z.object({
+  prescriptionId: z.string().trim().min(1),
+  // SÚKL require a reason; an empty one is a rejected cancellation.
+  reason: z.string().trim().min(1).max(1000),
+  service: z.enum(SUKL_SERVICES).optional(),
+});

@@ -64,10 +64,12 @@ const servicesQuerySchema = z.object({
     z.nativeEnum(ServiceKind).optional(),
   ),
   locale: localeQuerySchema,
+  mode: z.enum(["live", "marketing"]).optional(),
 });
 
 const collectionLocaleQuerySchema = z.object({
   locale: localeQuerySchema,
+  mode: z.enum(["live", "marketing"]).optional(),
 });
 
 const serviceAvailabilityParamsSchema = z.object({
@@ -109,18 +111,12 @@ function applyPublicCache(reply: { header: (k: string, v: string) => void }) {
 }
 
 /**
- * Cache hint for slot-availability responses specifically. Booked slots must
- * not stay advertised as open for long — a short cap (worst case max-age +
- * SWR ≈ 25s) is enough to absorb the request bursts a single patient
- * navigating the booking flow generates, without the 5-minute stale window
- * `applyPublicCache` allows for genuinely stable content (doctors, services,
- * specialties...).
+ * Live slot responses must not be stored by browsers or intermediaries.
+ * Stable marketing content retains the separate public cache policy above.
  */
 function applyAvailabilityCache(reply: { header: (k: string, v: string) => void }) {
-  reply.header(
-    "Cache-Control",
-    "public, max-age=10, s-maxage=10, stale-while-revalidate=15",
-  );
+  // Apply before validation so successful and error responses share the policy.
+  reply.header("Cache-Control", "no-store");
 }
 
 const countryScopedRoute: FastifyPluginAsync = async (app) => {
@@ -136,7 +132,9 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
     }
     try {
       if (!(await ensureCountryExists(params.data.countryCode, reply))) return;
-      const doctors = await listDoctorsByCountry(params.data.countryCode, query.data.locale);
+      const doctors = await listDoctorsByCountry(params.data.countryCode, query.data.locale, {
+        marketing: query.data.mode === "marketing",
+      });
       return okResponse(doctors);
     } catch (error) {
       return handleError(app, reply, error, "Unexpected doctors error");
@@ -250,6 +248,7 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
         params.data.countryCode,
         query.data.kind,
         query.data.locale,
+        { marketing: query.data.mode === "marketing" },
       );
       return okResponse(services);
     } catch (error) {
