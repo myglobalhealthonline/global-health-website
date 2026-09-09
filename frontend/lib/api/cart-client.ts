@@ -53,6 +53,8 @@ export type AddItemInput = {
    *  them rather than trusting any price sent by the client. */
   examTypeId?: string;
   testCenterId?: string;
+  /** The branch being attended — its calendar owns the slot. */
+  testCenterLocationId?: string;
   testCenterTimeSlotId?: string;
   /** Patient intake — required for GENERAL_CONSULTATION /
    *  SPECIALIST_CONSULTATION (the consult-page form collects it). */

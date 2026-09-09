@@ -611,14 +611,14 @@ export async function TestCentersManager({
                         <Link href={`${base}?center=${c.id}`} className="gh-btn gh-btn-soft text-[12px]">
                           Manage exams
                         </Link>
-                        {/* Bookable inventory lives on its own page — the week
-                            grid needs the centre's timezone and a slot range,
-                            neither of which this list carries. */}
+                        {/* Locations own the address and the calendar, so the
+                            week grid lives under one of them rather than under
+                            the centre. */}
                         <Link
-                          href={`/admin/test-centers/${c.id}/availability`}
+                          href={`/admin/test-centers/${c.id}/locations`}
                           className="gh-btn gh-btn-soft text-[12px]"
                         >
-                          Availability
+                          Locations
                         </Link>
                         <Link href={`${base}?edit=${c.id}`} className="gh-btn gh-btn-soft text-[12px]">
                           Edit

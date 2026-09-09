@@ -15,6 +15,7 @@
   "detail": {
     "chooseCentre": "Choose a test centre",
     "chooseCentreHint": "Prices and available times vary by centre.",
+    "chooseLocation": "Choose a location",
     "preparation": "How to prepare",
     "turnaround": "Results in {days} working days",
     "turnaroundUnknown": "Turnaround confirmed by the centre",

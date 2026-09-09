@@ -15,6 +15,7 @@
   "detail": {
     "chooseCentre": "Elija un centro de pruebas",
     "chooseCentreHint": "Los precios y horarios varian segun el centro.",
+    "chooseLocation": "Elija una ubicacion",
     "preparation": "Como prepararse",
     "turnaround": "Resultados en {days} dias laborables",
     "turnaroundUnknown": "Plazo confirmado por el centro",

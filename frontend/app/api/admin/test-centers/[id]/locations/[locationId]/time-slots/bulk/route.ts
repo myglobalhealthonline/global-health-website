@@ -9,13 +9,13 @@ export const dynamic = "force-dynamic";
  * `skippedOccupied` rather than failing the request.
  */
 
-type Params = Promise<{ id: string }>;
+type Params = Promise<{ id: string; locationId: string }>;
 
 export async function POST(request: NextRequest, { params }: { params: Params }) {
-  const { id } = await params;
+  const { id, locationId } = await params;
   return forwardToBackend(
     request,
-    `/api/admin/test-centers/${encodeURIComponent(id)}/time-slots/bulk`,
+    `/api/admin/test-centers/${encodeURIComponent(id)}/locations/${encodeURIComponent(locationId)}/time-slots/bulk`,
     "POST",
   );
 }

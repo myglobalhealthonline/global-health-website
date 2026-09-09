@@ -3,7 +3,7 @@ import { getBackendOrigin } from "@/lib/server/backend-origin";
 
 export const dynamic = "force-dynamic";
 
-type Params = Promise<{ id: string; slotId: string }>;
+type Params = Promise<{ id: string; locationId: string; slotId: string }>;
 
 /**
  * One slot of one test center: block/unblock or resize (PATCH), or remove for
@@ -27,12 +27,12 @@ async function forward(
       { status: 503 },
     );
   }
-  const { id, slotId } = await params;
+  const { id, locationId, slotId } = await params;
   const cookieHeader = request.headers.get("cookie") ?? "";
   const bodyText = await request.text();
 
   const upstream = await fetch(
-    `${backend}/api/admin/test-centers/${encodeURIComponent(id)}/time-slots/${encodeURIComponent(slotId)}`,
+    `${backend}/api/admin/test-centers/${encodeURIComponent(id)}/locations/${encodeURIComponent(locationId)}/time-slots/${encodeURIComponent(slotId)}`,
     {
       method,
       headers: {

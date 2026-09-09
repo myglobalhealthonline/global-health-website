@@ -442,16 +442,30 @@ export type PublicTestCard = {
   centreCount: number;
 };
 
-export type PublicTestCentre = {
+/** One physical branch a patient can attend. */
+export type PublicTestLocation = {
   id: string;
   name: string;
   slug: string;
   addressLine: string | null;
   city: string | null;
   phone: string | null;
+};
+
+/**
+ * A provider offering the test, and the branches it can be attended at.
+ * The price is on the provider — every branch of a chain charges the same, so
+ * the patient picks a branch for convenience, not cost.
+ */
+export type PublicTestCentre = {
+  id: string;
+  name: string;
+  slug: string;
+  phone: string | null;
   patientPriceCents: number;
   currencyCode: string;
   turnaroundDays: number | null;
+  locations: PublicTestLocation[];
 };
 
 export type PublicTestDetail = PublicTestCard & {

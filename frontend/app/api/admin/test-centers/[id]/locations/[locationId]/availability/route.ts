@@ -14,18 +14,18 @@ export const dynamic = "force-dynamic";
  * Per-window operations (PATCH / DELETE) live under `[availabilityId]/route.ts`.
  */
 
-type Params = Promise<{ id: string }>;
+type Params = Promise<{ id: string; locationId: string }>;
 
-function backendPath(id: string): string {
-  return `/api/admin/test-centers/${encodeURIComponent(id)}/availability`;
+function backendPath(id: string, locationId: string): string {
+  return `/api/admin/test-centers/${encodeURIComponent(id)}/locations/${encodeURIComponent(locationId)}/availability`;
 }
 
 export async function GET(request: NextRequest, { params }: { params: Params }) {
-  const { id } = await params;
-  return forwardToBackend(request, backendPath(id), "GET");
+  const { id, locationId } = await params;
+  return forwardToBackend(request, backendPath(id, locationId), "GET");
 }
 
 export async function POST(request: NextRequest, { params }: { params: Params }) {
-  const { id } = await params;
-  return forwardToBackend(request, backendPath(id), "POST");
+  const { id, locationId } = await params;
+  return forwardToBackend(request, backendPath(id, locationId), "POST");
 }
