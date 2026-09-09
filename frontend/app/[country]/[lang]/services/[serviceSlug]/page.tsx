@@ -752,7 +752,7 @@ export default async function ServiceDetailPage({
                   </ul>
 
                   {/* CTA */}
-                  <BookCta
+                  <BookCta serviceKind={detail.kind}
                     href={bookHref}
                     {...serviceActionProps}
                     className="mt-4 flex h-[52px] w-full items-center justify-center gap-2.5 rounded-[12px] bg-[var(--color-brand-accent)] text-[clamp(14px,1vw,16px)] font-bold text-[#0a1f14] shadow-[0_4px_12px_rgba(176,241,34,0.14)] transition-all"
@@ -942,7 +942,7 @@ export default async function ServiceDetailPage({
               </p>
             </div>
             <div className="flex lg:justify-end">
-              <BookCta
+              <BookCta serviceKind={detail.kind}
                 href={bookHref}
                 {...serviceActionProps}
                 className="gh2-btn-lime gh-focus-on-dark"

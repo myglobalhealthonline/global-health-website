@@ -1,4 +1,5 @@
 "use client";
+import { trackBookingEvent, bookingCategory } from "@/lib/analytics/booking";
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -22,6 +23,7 @@ type Props = {
   country: string;
   lang: string;
   serviceSlug: string;
+  serviceKind?: string;
   doctorSlug: string;
   slots: Slot[];
   clinicTimezone?: string;
@@ -38,6 +40,7 @@ type Props = {
  * scroll, which read as "the Time tab is asking for my details").
  */
 export function SlotPickerStep({
+  serviceKind,
   country,
   lang,
   serviceSlug,
@@ -75,6 +78,7 @@ export function SlotPickerStep({
   );
 
   function chooseSlot(slotId: string) {
+    trackBookingEvent("select_time_slot", country, bookingCategory(serviceKind ?? serviceSlug));
     startNavigate(() => {
       router.push(
         `${buildBookHref({ country, lang, service: serviceSlug, benefit, doctor: doctorSlug, slot: slotId })}#booking`,

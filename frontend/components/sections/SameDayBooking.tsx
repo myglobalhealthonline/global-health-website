@@ -1,4 +1,5 @@
 "use client";
+import { trackBookingEvent } from "@/lib/analytics/booking";
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -313,7 +314,10 @@ export function SameDayBooking({
             <button
               key={s.startAt}
               type="button"
-              onClick={() => setSelectedStart(s.startAt)}
+              onClick={() => {
+                setSelectedStart(s.startAt);
+                trackBookingEvent("select_time_slot", country, "gp");
+              }}
               aria-pressed={active}
               className="gh2-selectable-dark inline-flex flex-col items-center justify-center rounded-lg px-2 py-1.5 text-[13.5px] font-semibold [font-variant-numeric:tabular-nums]"
             >

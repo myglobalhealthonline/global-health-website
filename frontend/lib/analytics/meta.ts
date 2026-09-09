@@ -10,8 +10,8 @@ import { readConsent } from "@/components/compliance/cookie-consent";
 declare global {
   interface Window {
     fbq?: (
-      command: "track",
-      eventName: MetaEventName,
+      command: "track" | "consent",
+      eventName: MetaEventName | "PageView" | "grant" | "revoke",
       params?: Record<string, string | number>,
       options?: { eventID: string },
     ) => void;
@@ -55,13 +55,14 @@ let pending: [MetaEventName, MetaEventParams, string][] = [];
 export function trackMetaEvent(eventName: MetaEventName, params: MetaEventParams, eventID: string): void {
   if (typeof window === "undefined") return;
   if (readConsent()?.marketing !== true) return;
+  const safe = { value: params.value, currency: params.currency };
 
   const fn = window.fbq;
   if (fn) {
-    fn("track", eventName, params, { eventID });
+    fn("track", eventName, safe, { eventID });
     return;
   }
-  if (pending.length < MAX_PENDING) pending.push([eventName, params, eventID]);
+  if (pending.length < MAX_PENDING) pending.push([eventName, safe, eventID]);
 }
 
 export function flushMetaQueue(): void {
@@ -70,6 +71,7 @@ export function flushMetaQueue(): void {
   if (!fn) return;
   const queued = pending;
   pending = [];
+  if (readConsent()?.marketing !== true) return;
   for (const [eventName, params, eventID] of queued) fn("track", eventName, params, { eventID });
 }
 

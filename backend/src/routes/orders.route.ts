@@ -8,6 +8,7 @@ import {
   type Prisma,
 } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
+import { bookedConsultations } from "../modules/orders/booking-analytics.js";
 import {
   getStripeClient,
   isStripeConfigured,
@@ -1607,6 +1608,13 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             items: {
               select: { id: true, kind: true, name: true, quantity: true, lineTotalCents: true },
             },
+            orderAppointments: {
+              select: { appointment: { select: {
+                status: true,
+                countryCode: true,
+                service: { select: { kind: true } },
+              } } },
+            },
           },
         });
         if (!order) return reply.status(404).send(errorResponse("Order not found"));
@@ -1624,6 +1632,9 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           shippingCents: order.shippingCents,
           totalCents: order.totalCents,
           items: order.items,
+          // Payment alone is not proof of slot fulfilment. Return only broad
+          // service kinds from real appointments, never their identifiers.
+          bookedConsultations: bookedConsultations(order.paymentStatus, order.orderAppointments),
           paidAt: order.paidAt?.toISOString() ?? null,
           createdAt: order.createdAt.toISOString(),
         });

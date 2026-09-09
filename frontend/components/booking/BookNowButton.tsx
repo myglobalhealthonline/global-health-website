@@ -7,9 +7,11 @@ import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { isBookingWorkflowHref } from "@/lib/routing/book-href";
 import { trackAnalyticsEvent } from "@/lib/analytics/track";
+import { trackBookingClick } from "@/lib/analytics/booking";
 import type { BookabilitySummary } from "@/lib/content/get-country-collections";
 
 export type BookabilityActionProps = {
+  serviceKind?: string;
   bookability?: BookabilitySummary;
   unavailableLabel?: string;
   returningLabel?: string;
@@ -53,7 +55,8 @@ function actionStatus({
  * ids are exactly the kind of thing that must not land in an analytics
  * property. `trackAnalyticsEvent` still applies the consent/production gates.
  */
-function trackBeginBooking(href: string): void {
+function trackBeginBooking(href: string, serviceKind?: string): void {
+  trackBookingClick(href, serviceKind);
   const path = href.split("?")[0]?.split("#")[0] ?? "";
   trackAnalyticsEvent("begin_booking", { booking_path: path.slice(0, 100) });
 }
@@ -64,6 +67,7 @@ function LinkPendingIndicator() {
 }
 
 export function BookNowButton({
+  serviceKind,
   href,
   className,
   style,
@@ -95,7 +99,7 @@ export function BookNowButton({
         status.disabled
           ? undefined
           : () => {
-              trackBeginBooking(href);
+              trackBeginBooking(href, serviceKind);
               startTransition(() => router.push(href));
             }
       }
@@ -122,6 +126,7 @@ export function BookNowButton({
  * decision runs in the same place for SSR and hydration.
  */
 export function BookCta({
+  serviceKind,
   href,
   className,
   style,
@@ -159,6 +164,7 @@ export function BookCta({
   if (isBookingWorkflowHref(href)) {
     return (
       <BookNowButton
+        serviceKind={serviceKind}
         href={href}
         className={className}
         style={style}
@@ -176,7 +182,7 @@ export function BookCta({
       className={className}
       style={style}
       aria-label={ariaLabel}
-      onClick={() => trackBeginBooking(href)}
+      onClick={() => trackBeginBooking(href, serviceKind)}
     >
       {children}
       <LinkPendingIndicator />

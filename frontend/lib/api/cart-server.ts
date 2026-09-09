@@ -111,6 +111,7 @@ export async function fetchAccountOrder(id: string): Promise<Result<OrderDetail>
 }
 
 export type OrderReceipt = {
+  bookedConsultations?: { market: string; serviceKind: string }[];
   id: string;
   status: string;
   paymentStatus: string;

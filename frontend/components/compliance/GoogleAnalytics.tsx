@@ -57,6 +57,13 @@ export function GoogleAnalytics() {
 
   useEffect(() => {
     if (!granted) return;
+    window[`ga-disable-${GA_MEASUREMENT_ID}` as const] = false;
+    gtagCall("consent", "update", {
+      analytics_storage: "granted",
+      ad_storage: "denied",
+      ad_user_data: "denied",
+      ad_personalization: "denied",
+    });
     const path = sanitizePagePath(pathname);
     // `granted` is a boolean, so this effect does not re-run just because
     // useConsent() handed back a fresh ConsentRecord object.
@@ -112,7 +119,7 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js',new Date());
 gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied'});
 gtag('consent','update',{analytics_storage:'granted'});
-gtag('config',${JSON.stringify(GA_MEASUREMENT_ID)},{send_page_view:false,allow_google_signals:false,allow_ad_personalization_signals:false});`}
+gtag('config',${JSON.stringify(GA_MEASUREMENT_ID)},{send_page_view:false,allow_google_signals:false,allow_ad_personalization_signals:false${process.env.NEXT_PUBLIC_ANALYTICS_DEBUG === "true" ? ",debug_mode:true" : ""}});`}
       </Script>
       <Script
         id="ga4-loader"

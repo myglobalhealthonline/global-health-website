@@ -1,4 +1,5 @@
 "use client";
+import { trackBookingEvent, bookingCategory } from "@/lib/analytics/booking";
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
@@ -178,6 +179,7 @@ export function HeroBookingWizard({
 
   function pickSlot(slot: Slot) {
     if (!doctor || !service) return;
+    trackBookingEvent("select_time_slot", countrySlug, bookingCategory(service.slug));
     setRouting(true);
     router.push(
       buildBookHref({

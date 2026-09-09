@@ -857,6 +857,7 @@ async function SelectedServiceFlow({
           ) : (
             <div className="mt-6">
               <ServiceTimePicker
+                serviceKind={service.kind}
                 country={country}
                 lang={lang}
                 serviceSlug={service.slug}
@@ -939,6 +940,7 @@ async function SelectedServiceFlow({
           // Step 3 — TIME only. Picking a time writes ?slot= and advances.
           <div className="mt-6">
             <SlotPickerStep
+              serviceKind={service.kind}
               country={country}
               lang={lang}
               serviceSlug={service.slug}

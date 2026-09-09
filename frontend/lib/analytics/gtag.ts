@@ -19,13 +19,15 @@ const MAX_PENDING = 32;
 
 let pending: GtagArgs[] = [];
 
-export function gtagCall(...args: GtagArgs): void {
+export function gtagCall(...args: GtagArgs): boolean {
   const fn = typeof window === "undefined" ? undefined : window.gtag;
   if (fn) {
     fn(...args);
-    return;
+    return true;
   }
-  if (pending.length < MAX_PENDING) pending.push(args);
+  if (pending.length >= MAX_PENDING) return false;
+  pending.push(args);
+  return true;
 }
 
 export function flushGtagQueue(): void {
@@ -35,6 +37,7 @@ export function flushGtagQueue(): void {
   const queued = pending;
   pending = [];
   for (const args of queued) fn(...args);
+  window.dispatchEvent(new Event("gh-ga-ready"));
 }
 
 /** Drop anything buffered — used when consent is withdrawn before gtag loads. */

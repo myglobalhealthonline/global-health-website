@@ -1,5 +1,6 @@
 import { readConsent } from "@/components/compliance/cookie-consent";
 import { ANALYTICS_ENABLED, GA_MEASUREMENT_ID } from "./config";
+import { gtagCall } from "./gtag";
 
 /**
  * The only sanctioned way to send a custom event to Google Analytics. Nothing
@@ -11,6 +12,9 @@ import { ANALYTICS_ENABLED, GA_MEASUREMENT_ID } from "./config";
  * compile error instead of a code-review question.
  */
 export type AnalyticsEventName =
+  | "book_appointment_click"
+  | "select_time_slot"
+  | "booking_confirmed"
   | "add_to_cart"
   | "begin_checkout"
   | "select_service"
@@ -40,23 +44,17 @@ function isSafe(value: SafeAnalyticsValue): boolean {
 export function trackAnalyticsEvent(
   eventName: AnalyticsEventName,
   parameters: SafeAnalyticsParameters = {},
-): void {
-  if (typeof window === "undefined") return;
-  if (!ANALYTICS_ENABLED || GA_MEASUREMENT_ID === "") return;
+): boolean {
+  if (typeof window === "undefined") return false;
+  if (!ANALYTICS_ENABLED || GA_MEASUREMENT_ID === "") return false;
   // Read the cookie at call time rather than going through useConsent(), so
   // this is callable from event handlers and context providers and is always
   // current — including in the render right after a withdrawal.
-  if (readConsent()?.analytics !== true) return;
-
-  const gtag = window.gtag;
-  // Deliberately DROPPED, not queued, when gtag.js hasn't loaded: an
-  // interaction event that arrives twenty seconds late is noise. A page_view
-  // is different, and that one is buffered (see lib/analytics/gtag.ts).
-  if (!gtag) return;
+  if (readConsent()?.analytics !== true) return false;
 
   const safe: Record<string, SafeAnalyticsValue> = {};
   for (const [key, value] of Object.entries(parameters)) {
     if (isSafe(value)) safe[key] = value;
   }
-  gtag("event", eventName, safe);
+  return gtagCall("event", eventName, safe);
 }

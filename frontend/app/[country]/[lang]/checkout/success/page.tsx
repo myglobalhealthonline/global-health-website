@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { GH2StatusPage } from "@/components/sections/GH2PagePrimitives";
 import { SyncOrderPaymentOnReturn } from "@/components/payments/SyncOrderPaymentOnReturn";
 import { PurchaseTracker } from "@/components/analytics/PurchaseTracker";
+import { BookingConfirmedTracker } from "@/components/analytics/BookingConfirmedTracker";
 import { fetchOrderReceipt, syncOrderPaymentServer } from "@/lib/api/cart-server";
 import { formatPrice } from "@/lib/format-currency";
 import { formatOrderDisplayId } from "@/lib/format-order-display";
@@ -106,6 +107,9 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
         <SyncOrderPaymentOnReturn skipIfSynced={paymentSynced} />
       </Suspense>
       {/* Only on this branch: `processing` above is an unconfirmed payment. */}
+      {order?.bookedConsultations?.length ? (
+        <BookingConfirmedTracker orderId={order.id} bookings={order.bookedConsultations} />
+      ) : null}
       {order ? (
         <PurchaseTracker
           orderId={order.id}

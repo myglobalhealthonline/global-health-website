@@ -1,8 +1,10 @@
 "use client";
 
 import Script from "next/script";
-import { flushMetaQueue } from "@/lib/analytics/meta";
+import { useEffect } from "react";
+import { flushMetaQueue, resetMetaQueue } from "@/lib/analytics/meta";
 import { useConsent } from "./use-consent";
+import { readConsent } from "./cookie-consent";
 
 const META_PIXEL_ID = "5455895281301269";
 
@@ -16,8 +18,24 @@ const META_PIXEL_ID = "5455895281301269";
  */
 export function MetaPixel() {
   const { consent } = useConsent();
+  useEffect(() => {
+    window.fbq?.("consent", consent?.marketing === true ? "grant" : "revoke");
+    if (consent?.marketing !== true) resetMetaQueue();
+  }, [consent?.marketing]);
 
   if (consent?.marketing !== true) return null;
+
+  function onReady() {
+    // The lazy script can finish after consent was withdrawn.
+    if (readConsent()?.marketing !== true) {
+      window.fbq?.("consent", "revoke");
+      resetMetaQueue();
+      return;
+    }
+    window.fbq?.("consent", "grant");
+    window.fbq?.("track", "PageView");
+    flushMetaQueue();
+  }
 
   return (
     <>
@@ -26,8 +44,7 @@ export function MetaPixel() {
       <Script
         id="meta-pixel"
         strategy="lazyOnload"
-        onReady={flushMetaQueue}
-        onLoad={flushMetaQueue}
+        onReady={onReady}
       >
         {`!function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -37,8 +54,9 @@ n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '${META_PIXEL_ID}');
-fbq('track', 'PageView');`}
+fbq('consent', 'revoke');
+fbq('set', 'autoConfig', false, '${META_PIXEL_ID}');
+fbq('init', '${META_PIXEL_ID}');`}
       </Script>
       <noscript>
         {/* eslint-disable-next-line @next/next/no-img-element -- Meta Pixel noscript fallback; next/image can't render inside noscript */}

@@ -1,4 +1,5 @@
 "use client";
+import { trackBookingEvent, bookingCategory } from "@/lib/analytics/booking";
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -21,6 +22,7 @@ type Props = {
   country: string;
   lang: string;
   serviceSlug: string;
+  serviceKind?: string;
   /** Aggregated open times across all doctors assigned to the service. */
   slots: Slot[];
   clinicTimezone?: string;
@@ -36,6 +38,7 @@ type Props = {
  * Mirrors SlotPickerStep's date-pill UI but is doctor-agnostic.
  */
 export function ServiceTimePicker({
+  serviceKind,
   country,
   lang,
   serviceSlug,
@@ -72,6 +75,7 @@ export function ServiceTimePicker({
   );
 
   function chooseTime(startAt: string) {
+    trackBookingEvent("select_time_slot", country, bookingCategory(serviceKind ?? serviceSlug));
     startNavigate(() => {
       router.push(
         `${buildBookHref({ country, lang, service: serviceSlug, benefit, at: startAt })}#booking`,
