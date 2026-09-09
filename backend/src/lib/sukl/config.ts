@@ -150,8 +150,18 @@ export function suklInterfaceVersion(): string | null {
 }
 
 /** Our software identifier, max 12 chars. Defaulted — SÚKL does not issue it. */
+/**
+ * The client software registration code.
+ *
+ * EXACTLY 12 characters. CUER declares SW_Klienta as `length: 12` while the
+ * common schema allows 1-12, so a shorter value passes on CUEP and Common and
+ * is rejected by CUER with S009 — which is precisely what "GlobalHlth" (10)
+ * did, and it cost a debugging cycle before the fault text named the element.
+ */
+export const SUKL_SW_KLIENTA_LENGTH = 12;
+
 export function suklSwKlienta(): string {
-  return env.SUKL_SW_KLIENTA?.trim() || "GlobalHlth";
+  return env.SUKL_SW_KLIENTA?.trim() || "GLOBALHEALTH";
 }
 
 /**

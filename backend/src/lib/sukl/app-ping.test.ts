@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import { SUKL_SW_KLIENTA_LENGTH, suklSwKlienta } from "./config.js";
 import {
   buildAppPingRequest,
   interpretAppPingResponse,
@@ -210,4 +211,12 @@ test("the shared elements take CUER's own namespace, not common", () => {
   assert.equal(SHARED_ELEMENT_NAMESPACE.cuer, "http://www.sukl.cz/erp/201704");
   assert.equal(SHARED_ELEMENT_NAMESPACE.cuep, "http://www.sukl.cz/erp/common");
   assert.equal(SHARED_ELEMENT_NAMESPACE.common, "http://www.sukl.cz/erp/common");
+});
+
+test("SW_Klienta is exactly 12 characters, because CUER fixes its length", () => {
+  // CUER declares SW_Klienta as `length: 12`; the common schema allows 1-12.
+  // A shorter value therefore passes on CUEP and Common and is rejected by
+  // CUER with S009 — which is exactly what "GlobalHlth" (10) did on
+  // 2026-09-09, and the fault text named this element.
+  assert.equal(suklSwKlienta().length, SUKL_SW_KLIENTA_LENGTH);
 });

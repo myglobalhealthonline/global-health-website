@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { buildLoginRequest, interpretLoginResponse } from "./login.js";
+import { buildLoginRequest, interpretLoginResponse, suklLogin } from "./login.js";
 
 /**
  * Login's value is that it answers, from SÚKL rather than from us, which roles
@@ -75,4 +75,11 @@ test("a non-2xx without a fault still fails", () => {
   const v = interpretLoginResponse({ httpStatus: 503, body: "<html/>" });
   assert.equal(v.ok, false);
   assert.equal(v.errorCode, "HTTP_503");
+});
+
+test("Login is refused on a service that does not publish it", () => {
+  // CUER's WSDL has 30 operations and Login is not one of them; sending it
+  // there returns "No operation found for specified action: Login", which
+  // reads as a broken integration rather than a wrong target.
+  return assert.rejects(() => suklLogin("cuer"), /only available on/);
 });
