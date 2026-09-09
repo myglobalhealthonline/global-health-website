@@ -63,6 +63,22 @@ type AdminOrder = {
   shipCity: string | null;
   shipPostalCode: string | null;
   shipCountryCode: string | null;
+  /** Order-level WhatsApp opt-out for product orders. */
+  whatsappConsent?: boolean;
+  /**
+   * The patient's address for the Customer block — this checkout's shipping
+   * address when there is one, otherwise the chart's persistent address.
+   * Null when neither exists.
+   */
+  patientAddress?: {
+    source: "ORDER" | "PROFILE";
+    line1: string | null;
+    line2: string | null;
+    city: string | null;
+    state: string | null;
+    postalCode: string | null;
+    countryCode: string | null;
+  } | null;
   appointmentIds: string[];
   /** Ad provenance derived server-side from the order's landing attribution
    *  (`backend/src/modules/orders/order-ad-source.ts`). Null for organic,
@@ -350,6 +366,37 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
               <p className="text-[var(--color-text-muted)]">{order.email}</p>
               {order.phone ? (
                 <p className="text-[var(--color-text-muted)]">{order.phone}</p>
+              ) : null}
+              {order.patientAddress ? (
+                <div className="mt-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">
+                    Address
+                    {order.patientAddress.source === "PROFILE" ? " (from patient profile)" : null}
+                  </p>
+                  <p className="mt-1">{order.patientAddress.line1}</p>
+                  {order.patientAddress.line2 ? <p>{order.patientAddress.line2}</p> : null}
+                  <p>
+                    {[
+                      order.patientAddress.city,
+                      order.patientAddress.state,
+                      order.patientAddress.postalCode,
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
+                  </p>
+                  {order.patientAddress.countryCode ? (
+                    <p>{order.patientAddress.countryCode.toUpperCase()}</p>
+                  ) : null}
+                </div>
+              ) : (
+                <p className="mt-3 text-xs text-[var(--color-text-muted)]">
+                  No address on this order or on the patient profile.
+                </p>
+              )}
+              {order.whatsappConsent === false ? (
+                <p className="mt-2 text-xs text-[var(--color-text-muted)]">
+                  Opted out of WhatsApp updates for this order.
+                </p>
               ) : null}
               {order.userId ? (
                 <Link
