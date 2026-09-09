@@ -2175,6 +2175,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           trackingNumber: order.trackingNumber,
           trackingCarrier: order.trackingCarrier,
           trackingUrl: order.trackingUrl,
+          trackingNotifiedAt: order.trackingNotifiedAt?.toISOString() ?? null,
           paidAt: order.paidAt?.toISOString() ?? null,
           createdAt: order.createdAt.toISOString(),
           updatedAt: order.updatedAt.toISOString(),
@@ -2185,6 +2186,57 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(err);
         return reply.status(500).send(errorResponse("Could not load order"));
+      }
+    },
+  );
+
+  // ── Admin: send the kit's tracking details to the customer ─────────
+  //
+  // Saving tracking (the PATCH above) and SENDING it are separate on purpose:
+  // an admin pastes a code off the courier's site, checks it, and only then
+  // presses "Save & notify". Re-sendable — couriers reissue codes, and a failed
+  // WhatsApp leg is often fixable (a corrected phone) — so this is not
+  // one-shot-guarded; every attempt is its own AutomationRun.
+  app.post<{ Params: { id: string } }>(
+    "/api/admin/orders/:id/tracking-notify",
+    async (request, reply) => {
+      const auth = await verifyAdminAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+
+      const params = orderIdParamSchema.safeParse(request.params);
+      if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
+
+      try {
+        const order = await prisma.order.findUnique({
+          where: { id: params.data.id },
+          select: { id: true, countryCode: true },
+        });
+        if (!order) return reply.status(404).send(errorResponse("Order not found"));
+
+        const scope = await assertOrderCountryScope(request, order.id, order.countryCode);
+        if (!scope.allowed) {
+          return reply.status(scope.status).send(errorResponse(scope.message));
+        }
+
+        const { sendHealthTestTrackingToCustomer } = await import(
+          "../modules/automation/health-test-tracking-notify.service.js"
+        );
+        const result = await sendHealthTestTrackingToCustomer(order.id);
+        if (!result.ok) {
+          // Nothing reached the customer. A 200 with ok:false would read as
+          // success in the admin UI, so this is a real failure status — the
+          // notes say which leg broke.
+          return reply
+            .status(502)
+            .send(errorResponse(result.notes.join("; ") || "Could not notify the customer"));
+        }
+        return okResponse(result);
+      } catch (err) {
+        if (err instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(err.message));
+        }
+        app.log.error(err);
+        return reply.status(500).send(errorResponse("Could not notify the customer"));
       }
     },
   );
