@@ -1,0 +1,47 @@
+{
+  "passed": true,
+  "origin": "http://127.0.0.1:3018",
+  "scope": "Anonymous HTML/RSC/login/protected-route delivery; no authenticated-session or shared-CDN-hit claim",
+  "results": [
+    {
+      "kind": "HTML",
+      "status": 200,
+      "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+      "setsCookie": true,
+      "bytes": 608358
+    },
+    {
+      "kind": "RSC",
+      "status": 200,
+      "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+      "setsCookie": true,
+      "bytes": 210991
+    },
+    {
+      "kind": "anonymous login",
+      "status": 200,
+      "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+      "setsCookie": false,
+      "bytes": 44514
+    },
+    {
+      "kind": "anonymous protected route",
+      "status": 307,
+      "cacheControl": "",
+      "vary": null,
+      "setsCookie": false,
+      "bytes": 22
+    },
+    {
+      "kind": "404 document",
+      "status": 404,
+      "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+      "setsCookie": false,
+      "bytes": 54738
+    }
+  ]
+}

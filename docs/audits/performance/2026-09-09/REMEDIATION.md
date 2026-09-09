@@ -1,44 +1,43 @@
 # Performance remediation — 9 September 2026
 
-Implementation batch for `Dev-hassaan`. No production deployment or production database writes were performed by this task. The original README remains the historical baseline.
+Follow-up to the [historical audit](README.md). Baseline `499f4076` is pushed to `Dev-hassaan` and deployed to Development. The continuation below has passed local production build and focused checks; deployment status must be verified separately. No production database writes were performed by this task.
 
 ## Implemented
 
-| Audit finding | Change |
+| Finding | Completed change |
 | --- | --- |
-| Brazil failure / diagnostics | Added fixed-label slow/error timing spans for each homepage dependency. Removed unconditional shared document-cache headers so a render error cannot inherit them. Preserved temporary errors versus real 404s. |
-| Blocking booking availability | Keyed Suspense boundary for the selected-service step; eight-second live-read deadlines; explicit retryable errors, including malformed upstream payloads. One service catalogue request replaces two. |
-| Missing click feedback | Transition spinner and disabled state on parameterized booking buttons; pending feedback on clean booking links; localized loading/error boundaries for booking and consultation routes. Retry refreshes the server response. |
-| Scheduler contention | Separate capped advisory-lock pool; queue limits jobs to two, coalesces repeated ticks, and cancels pending work on stop. Distributed locks remain. API route-template and pool counters plus job-duration telemetry were added. |
-| Marketing invokes scheduling | Opt-in marketing mode for public doctor/service collections and GP language configuration. Homepages use this mode; UNKNOWN means availability has not been checked, not that appointments are absent. The same-day panel reads live slots separately. Other consumers retain live mode by default. |
-| Mobile slot work | Bounded formatter cache; clinic-calendar two-day horizon; stale/unmounted request cancellation and retryable deadlines. Timezone/DST output checks added. |
-| Common dictionaries | Cookie banner receives active-language messages from its server parent. Review-message imports are narrowed separately so that client dependency does not retain the full common dictionaries. |
-| Large card trees | Only the selected service-card page renders. A compact, native details/list index preserves all service detail links in initial server HTML. Regression fixture: 17 service links with five image cards. |
-| Hero animation | Critical headline, copy and primary actions render immediately. Decorative effects remain. |
-| Optional voice scripts | Voice embed loads only after a consented visitor clicks its launcher. Existing tracker consent gates remain. |
-| Cold invalidation / overlapping slots | In-flight readers detect invalidated generations; overlapping inventory retries use batches of 32 before falling back only within conflicting batches. Exclusion constraints remain authoritative. |
-| Sequential admin reads | Notifications begin while countries resolve; independent approval feeds run together after country scope is known. |
-| JSON delivery | Same-origin availability responses support gzip negotiation, including q=0, while preserving no-store. |
-| Visitor measurement | Consent-gated Web Vitals use the existing GA integration, with public route templates and no metric attribution objects, patient identifiers, or booking queries. |
+| Brazil failure | Railway frontend logs correlate digest `1545395240` with `country-services:br:all PublicContentUnavailableError: Backend is unavailable` at five timestamps. Homepage dependency timing now identifies slow/error reads. Marketing collections avoid live scheduling. The lower-level transport/database cause is not established. |
+| Booking wait and feedback | Selected-service Suspense, transition spinners, duplicate-navigation guards, eight-second live-read deadlines and localized retryable failures. Retry uses the Next 16.2.11 built-in batched server refresh/boundary reset and preserves the current document, selected URL and browser history. Hero requests cancel on back/unmount and ignore superseded responses. |
+| Database contention | Scheduler Prisma workload is isolated through asynchronous context. Internal jobs remain bounded to two with separate advisory-lock sessions. Authenticated external cron queries select scheduler capacity too. Three raw numbering pools are consolidated into one capped pool while preserving transaction semantics. |
+| Pool budget | Defaults per worker: eight request, two scheduler, two advisory-lock and two numbering connections, total fourteen. `DB_POOL_MAX` bounds the combined Prisma workload; `SCHEDULER_DB_POOL_MAX`, `SCHEDULER_LOCK_POOL_MAX` and `NUMBERING_POOL_MAX` expose the split. Runtime telemetry reports capacity and waiting counters. This is not a verified database-wide capacity budget. |
+| Broad cache invalidation | Doctor inventory caches have scoped generations. Service/GP/bookability caches track country, service and candidate-doctor dependencies, including candidates with no slots. Unrelated warm and pending entries survive; invalidated in-flight reads retry. Lifecycle/assignment changes can conservatively clear all entries. Metadata and values are bounded together. |
+| Public inventory generation | Bounded background prewarming advances through active doctors, twenty per minute over a 120-day horizon. Successful coverage is remembered for fifteen minutes; warm reads skip repeated materialization. Missing/cold coverage retains the correctness fallback. Per-doctor generation is serialized; stale writes are reconciled before coverage is certified. Failed doctors cannot starve later pages. Write-side repair remains mandatory. |
+| Marketing scheduling work | Homepage doctor/service lists use explicit marketing mode and configured GP languages. UNKNOWN means unchecked availability. Live slots remain separate and final booking validation is unchanged. |
+| Mobile slot processing | Bounded formatter reuse, clinic-calendar two-day queries, timezone/DST checks, cancellation and deadlines. Same-origin availability JSON supports gzip negotiation including q=0 and remains no-store. |
+| Client payload | Cookie messages are passed from the server for the active language; reviews use narrow dictionaries. Only the selected card page renders, with all service links retained in a compact native details index. |
+| Oversized blog cache entry | Optional `view=summary` omits article bodies from list responses while retaining computed reading times, locale variants and card metadata. Frontend lists request summaries; detail fallback explicitly requests full content. The default API response remains compatible. A synthetic 2.5 MB article becomes a summary under 2 KB. |
+| Hero and optional scripts | Critical hero copy/actions render immediately. Voice scripts load only after consent and a launcher click. |
+| Admin reads | Independent notification/approval reads run concurrently after required country scoping. |
+| Delivery safety | Unconditional public document-cache headers were removed so errors cannot inherit them. Absent auth-hint cookies are no longer redundantly deleted. Content Data Cache and immutable assets remain cached. |
+| Measurement | Consent-gated Web Vitals use public route templates without patient identifiers, attribution objects or booking queries. API spans, job durations and pool counters provide operational evidence. |
 
-## Verification and limits
+## Verification
 
-- Final full frontend suite: **132 files passed; 1,593 tests passed; five skipped**. This includes review SSR and exact canonical copy in all six languages.
-- Queue, scheduler-lock and marketing-contract checks: **nine passed**. Queue behavior covers two-permit enforcement, active/queued coalescing, rejection recovery, finite drain and cancellation of queued work.
-- Final frontend and backend package typechecks passed; locale keys passed for six locales across 16 namespaces. No production DB tests were run.
-- Public smoke gate: **12/12 complete HTTP 200 documents** (two sequential passes over all six markets) on the existing deployment. Brazil also returned 200 on earlier repeat GETs. These observations do not prove the intermittent fault is fixed or constitute cold-cache/load testing.
-- Reusable read-only gate: `node scripts/check-public-performance.mjs`. `PERFORMANCE_ORIGIN` can point at a staging deployment. It checks status, complete HTML and streamed error markers; it does not prove every CMS record is present.
-- Webpack production analyzer failed from Node heap exhaustion at both approximately 2 GB and 4 GB. See `remediation-build.log`. No production build, byte reduction, browser interaction target, or field CWV improvement is claimed.
-- Semgrep was not available locally. Existing CI security gates and deployment checks still apply.
+- Full production Turbopack build succeeded, including all **951 static pages**. Command from `frontend`: `node --max-old-space-size=3072 node_modules/next/dist/bin/next build --turbopack`, with `NEXT_BUILD_CPUS=1` and the restricted anonymous local API proxy. No degraded-build override. Local log: `final-validation-build.log`.
+- Native Turbopack analyzer succeeded: `node --max-old-space-size=3072 node_modules/next/dist/bin/next experimental-analyze --output`. Report lives in `frontend/.next/diagnostics/analyze`; tracked summary: [final-bundle-summary.json](final-bundle-summary.json). Homepage client chunk parts contain **no full common.json dictionaries**. The report includes reachable asynchronous assets; its total is not initial transfer size or a before/after saving. Earlier webpack heap failures are superseded by this successful production build.
+- Full frontend suite: **132 files, 1,595 passed, five skipped**. Both package typechecks and six-locale/sixteen-namespace key checks passed.
+- Focused backend suite: **54 passed**, covering pool budgeting/context selection, numbering ownership, bounded jobs/locks, dependency-scoped cache races, slot coverage/prewarming and blog summaries. No production DB tests.
+- The broader backend suite was attempted with the test guard and stopped after database-dependent failures at `127.0.0.1:5433`. Docker Desktop's Linux engine is unavailable. This is not a full backend-suite pass. Semgrep is unavailable locally; database integration and existing CI security gates remain required.
+- Component browser checks passed desktop/mobile error, retry, back cancellation, stale response and deadline cases, plus Portuguese retry and voice consent gates: [continuation-interactions.json](continuation-interactions.json).
+- Final production-browser verification passed all three desktop/mobile consent cases: failed retry remains usable, successful retry preserves the document/URL/history, Back restores the catalogue, pending feedback appears and the voice consent gate holds. See [final-booking-browser.json](final-booking-browser.json). The fixture snapshots successful anonymous public responses and injects failures/delays; external scripts are blocked and proxy images excluded. Earlier intermittent Back failures did not recur in three stabilized runs; this is not a live latency claim. No production security settings were relaxed.
+- Anonymous delivery gate passed for HTML, RSC, login, protected-route redirect and a 404 document. No sampled document advertised shared public caching; RSC content type and variant headers were preserved. See [final-delivery.json](final-delivery.json). Authenticated-session/CDN-hit behavior remains outside this local anonymous check.
+- Development baseline smoke: **12/12 complete HTTP 200 documents**, two sequential passes across all six markets: [development-smoke.json](development-smoke.json). Frontend and backend Development services both track `Dev-hassaan` with automatic deployment. These samples precede deployment of the continuation.
 
-## Still requires production/CI work
+## Deployment evidence still required
 
-1. Authenticate Railway log access and correlate Brazil digest `1545395240` / request ID `PGzN_bl2QVqiSfItss7a6g`. The current deployment recovered without these local edits; the exact original upstream failure remains unproven.
-2. Build on a runner with sufficient memory, inspect its bundle report, and validate responsive browser navigation/back/retry with both consent choices. CSS route splitting and further client-tree reductions remain measurement-led follow-up work; no broad CSS move was made across the public/portal boundary.
-3. Deploy backend marketing-mode support before or together with the frontend. Run the six-market smoke gate afterward, plus genuine cold-cache checks and booking latency measurements.
-4. Budget total Postgres connections across workers/replicas: request pool plus `SCHEDULER_LOCK_POOL_MAX` (default two) per worker. Job Prisma queries still use the shared workload pool; the bounded queue limits demand but is not full workload isolation. Correlate waiting counters, job durations and API latency before changing capacity.
-5. Global cache invalidation remains conservative. Doctor/service/country-scoped invalidation and moving all routine inventory generation to background jobs require a separately validated dependency map. Live booking reads still materialize missing inventory; marketing homepage reads no longer do so.
-6. Verify delivery-layer cache behavior for RSC variants, cookies, errors and authenticated pages. Unconditional document caching was removed; content Data Cache and asset caching remain. Do not reintroduce public cache headers without final-status-aware handling.
-7. Correct the already-recorded GA build-variable/property mismatch and collect the rolling field data. No Google credential was read or used here. Tracker removal decisions, origin/DB region and platform sizing remain operational work.
+1. Deploy backend and frontend continuation together to Development, verify their deployed commit IDs, then repeat six-market and bounded anonymous booking reads. Production remains a separate promotion from `main`.
+2. Correlate genuine cold/warm API timings with new pool/job telemetry. Production and Development backend settings each show one replica in EU West Amsterdam; actual PostgreSQL `max_connections`, other consumers and database region remain unverified. Do not increase capacity from service CPU/RAM limits alone.
+3. Verify HTML/RSC variants, authenticated pages, error status and live availability caching at the deployed delivery layer. Never restore unconditional public document-cache headers.
+4. Collect rolling real-user CWV after deployment. GA collection was separately restored on existing production code (ledger §47); that does not establish deployment of these Web Vitals changes or a field performance improvement.
 
-These remaining items prevent calling the entire audit closed.
+The code remediation and the production performance acceptance criteria are separate. No cold-cache p95, field CWV pass, ranking improvement or permanent elimination of the intermittent Brazil failure is claimed from local tests.

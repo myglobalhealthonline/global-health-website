@@ -1,5 +1,5 @@
 import { prisma } from "../../db/prisma.js";
-import { TtlCache } from "../../lib/ttl-cache.js";
+import { AvailabilityDependencyCache } from "../../lib/availability-dependency-cache.js";
 import {
   invalidateAvailabilityCaches,
   registerAvailabilityCache,
@@ -29,45 +29,8 @@ const DEFAULT_LOOKAHEAD_DAYS = 90;
 const CACHE_TTL_MS = 60_000;
 const CONCURRENCY = 8;
 
-const cache = new TtlCache<BookabilitySummary>(2000);
-const inFlight = new Map<string, Promise<BookabilitySummary>>();
-let cacheGeneration = 0;
-
-function clearBookabilityCaches(): void {
-  cacheGeneration += 1;
-  cache.clear();
-  inFlight.clear();
-}
-
-registerAvailabilityCache(clearBookabilityCaches);
-
-function resolveCachedBookability(
-  key: string,
-  compute: () => Promise<BookabilitySummary>,
-): Promise<BookabilitySummary> {
-  const cached = cache.get(key);
-  if (cached) return Promise.resolve(cached);
-
-  const pending = inFlight.get(key);
-  if (pending) return pending;
-
-  const generation = cacheGeneration;
-  const request = compute()
-    .then((result) => {
-      // A pause/slot/assignment write may invalidate while this read is still
-      // running. Never repopulate *or return* a pre-invalidation result: the
-      // caller that started before the write must join the current generation
-      // rather than advertising a slot that has just been removed.
-      if (generation !== cacheGeneration) return resolveCachedBookability(key, compute);
-      if (generation === cacheGeneration) cache.set(key, result, CACHE_TTL_MS);
-      return result;
-    })
-    .finally(() => {
-      if (inFlight.get(key) === request) inFlight.delete(key);
-    });
-  inFlight.set(key, request);
-  return request;
-}
+const cache = new AvailabilityDependencyCache<BookabilitySummary>(2000, CACHE_TTL_MS);
+registerAvailabilityCache((scope) => cache.invalidate(scope));
 
 export function invalidateBookabilityCache(): void {
   invalidateAvailabilityCaches();
@@ -286,7 +249,10 @@ export async function getServiceBookability(
   const lookaheadDays = horizon(args.lookaheadDays, DEFAULT_LOOKAHEAD_DAYS, 90);
   const code = args.countryCode.trim().toLowerCase();
   const key = `service:${code}:${args.serviceId ?? args.serviceSlug}:${primaryDays}:${lookaheadDays}:${Math.floor(now.getTime() / CACHE_TTL_MS)}`;
-  return resolveCachedBookability(key, async () => {
+  return cache.resolve(key, {
+    countryCode: code, requestServiceId: args.serviceId ?? args.serviceSlug,
+    pendingDoctors: true, pendingServices: true,
+  }, async (update) => {
     const service = await prisma.service.findFirst({
       where: {
         ...(args.serviceId ? { id: args.serviceId } : { slug: args.serviceSlug }),
@@ -328,6 +294,11 @@ export async function getServiceBookability(
         },
       },
     });
+    update({
+      serviceIds: service ? [service.id] : [],
+      doctorIds: service?.assignedDoctors.map((assignment) => assignment.doctor.id) ?? [],
+      pendingDoctors: false, pendingServices: false,
+    });
     return service
       ? evaluateService(service, now, primaryDays, Math.max(primaryDays, lookaheadDays))
       : { state: "UNAVAILABLE", reasonCode: "NO_APPROVED_DOCTOR", nextAvailableAt: null };
@@ -342,7 +313,10 @@ export async function getDoctorBookability(
   const lookaheadDays = horizon(args.lookaheadDays, DEFAULT_LOOKAHEAD_DAYS, 90);
   const code = args.countryCode.trim().toLowerCase();
   const key = `doctor:${code}:${args.doctorId}:${args.serviceId ?? "any"}:${primaryDays}:${lookaheadDays}:${Math.floor(now.getTime() / CACHE_TTL_MS)}`;
-  return resolveCachedBookability(key, async () => {
+  return cache.resolve(key, {
+    countryCode: code, requestServiceId: args.serviceId,
+    doctorIds: [args.doctorId], pendingServices: !args.serviceId,
+  }, async (update) => {
     const services = await prisma.service.findMany({
       where: {
         ...(args.serviceId ? { id: args.serviceId } : {}),
@@ -388,6 +362,7 @@ export async function getDoctorBookability(
         },
       },
     });
+    update({ serviceIds: services.map((service) => service.id), pendingServices: false });
     if (services.length === 0) {
       return {
         state: "UNAVAILABLE",

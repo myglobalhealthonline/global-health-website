@@ -14,6 +14,7 @@ import {
   utcCalendarDayNumber,
   zonedWallClockToUtc,
 } from "./timezone.js";
+import { SlotCoverage } from "./slot-coverage.js";
 
 /**
  * Doctor availability + concrete time-slot service.
@@ -186,7 +187,7 @@ export async function bulkSetSlotBlockInSpans(
 
     // Inventory changed either way — an unblocked slot must become bookable now,
     // not after the read cache's TTL.
-    invalidateAvailabilityCaches();
+    invalidateAvailabilityCaches({ doctorIds: [doctorId] });
     return { changed: result.count, skippedOccupied, skippedMissing: 0 };
   } catch (error) {
     throw normalizeDbError(error, "Could not update availability");
@@ -229,7 +230,7 @@ export async function bulkRemoveSlotsInSpans(
     }
 
     const changed = await deleteSlotsWithExceptions(doctorId, removable, reason);
-    invalidateAvailabilityCaches();
+    invalidateAvailabilityCaches({ doctorIds: [doctorId] });
     return { changed, skippedOccupied, skippedMissing: 0 };
   } catch (error) {
     throw normalizeDbError(error, "Could not remove slots");
@@ -269,7 +270,7 @@ export async function bulkSlotActionByIds(
 
     if (action === "REMOVE") {
       const changed = await deleteSlotsWithExceptions(doctorId, eligible, reason);
-      invalidateAvailabilityCaches();
+      invalidateAvailabilityCaches({ doctorIds: [doctorId] });
       return { changed, skippedOccupied, skippedMissing };
     }
 
@@ -288,7 +289,7 @@ export async function bulkSlotActionByIds(
           : { status: "OPEN", blockReason: null },
     });
 
-    invalidateAvailabilityCaches();
+    invalidateAvailabilityCaches({ doctorIds: [doctorId] });
     return { changed: result.count, skippedOccupied, skippedMissing };
   } catch (error) {
     throw normalizeDbError(error, "Could not update slots");
@@ -332,7 +333,7 @@ async function deleteSlotsWithExceptions(
   reason?: string | null,
 ): Promise<number> {
   const note = reason?.trim() || null;
-  return prisma.$transaction(async (tx) => {
+  const changed = await prisma.$transaction(async (tx) => {
     // Exceptions first: if the delete loses a race the hole is already recorded.
     await tx.doctorAvailabilityException.deleteMany({
       where: { doctorId, startAt: { in: slots.map((s) => s.startAt) } },
@@ -357,6 +358,9 @@ async function deleteSlotsWithExceptions(
     });
     return deleted.count;
   });
+  // Exception writes change what a later generator is allowed to materialise.
+  invalidateDoctorSlotCoverage(doctorId);
+  return changed;
 }
 
 /**
@@ -478,7 +482,8 @@ export async function createAdHocSlots(
 
     // New bookable slots must show up in public listings now, not after the
     // read cache's TTL.
-    invalidateAvailabilityCaches();
+    invalidateDoctorSlotCoverage(doctorId);
+    invalidateAvailabilityCaches({ doctorIds: [doctorId] });
     return { created, skippedOverlap, skippedPast };
   } catch (error) {
     // Lost a race against a concurrent write the pre-flight read missed. The
@@ -512,6 +517,7 @@ async function createAdHocSlotsOneByOne(
         });
       });
       created += 1;
+      invalidateDoctorSlotCoverage(doctorId);
     } catch (rowError) {
       if (isExclusionViolation(rowError) || isUniqueViolation(rowError)) {
         skippedOverlap += 1;
@@ -520,7 +526,7 @@ async function createAdHocSlotsOneByOne(
       throw normalizeDbError(rowError, "Could not add slots");
     }
   }
-  invalidateAvailabilityCaches();
+  invalidateAvailabilityCaches({ doctorIds: [doctorId] });
   return { created, skippedOverlap, skippedPast };
 }
 
@@ -630,7 +636,8 @@ export async function resizeSlot(
       return row;
     });
 
-    invalidateAvailabilityCaches();
+    invalidateAvailabilityCaches({ doctorIds: [doctorId] });
+    invalidateDoctorSlotCoverage(doctorId);
     return { ok: true, slot: updated };
   } catch (error) {
     if (isExclusionViolation(error) || isUniqueViolation(error)) {
@@ -694,7 +701,8 @@ export async function removeSlotForDate(
 
     // The read caches key on doctor + date bucket, so a removed slot would
     // linger in a public listing for up to the TTL otherwise.
-    invalidateAvailabilityCaches();
+    invalidateDoctorSlotCoverage(doctorId);
+    invalidateAvailabilityCaches({ doctorIds: [doctorId] });
     return { ok: true, startAt: slot.startAt, endAt: slot.endAt };
   } catch (error) {
     if (error instanceof SlotAlreadyTakenError) return { ok: false, code: "OCCUPIED" };
@@ -802,6 +810,17 @@ export const WINDOW_SWEEP_HORIZON_DAYS = 366;
  * is already materialised. Beyond it, the lazy path still covers reads.
  */
 export const WINDOW_PREGENERATE_DAYS = 120;
+const slotCoverage = new SlotCoverage(15 * 60_000, 8);
+// Country timezone, doctor lifecycle and assignment edits already publish a
+// full invalidation. Ordinary scoped inventory events retain coverage.
+registerAvailabilityCache((scope) => {
+  if (!scope || scope.countryCodes?.length || scope.serviceIds?.length) slotCoverage.clear();
+});
+
+/** Call from window, exception, timezone, or lifecycle mutations. */
+export function invalidateDoctorSlotCoverage(doctorId: string): void {
+  slotCoverage.invalidate(doctorId);
+}
 
 /** What a generation pass actually wrote. See `ensureSlotsForRange`. */
 export type GenerationResult = { created: number; skippedOverlap: number };
@@ -835,9 +854,8 @@ export async function isDoctorSuspended(doctorId: string): Promise<boolean> {
  */
 async function refreshWindowSlots(doctorId: string): Promise<GenerationResult> {
   try {
-    await reconcileWindowDerivedSlots(doctorId);
     const now = new Date();
-    return await ensureSlotsForRange(
+    return await ensureInventoryCoverage(
       doctorId,
       now,
       new Date(now.getTime() + WINDOW_PREGENERATE_DAYS * 24 * 60 * 60 * 1000),
@@ -936,7 +954,7 @@ export async function reconcileWindowDerivedSlots(
         status: { in: ["OPEN", "BLOCKED"] },
       },
     });
-    invalidateAvailabilityCaches();
+    invalidateAvailabilityCaches({ doctorIds: [doctorId] });
     return deleted.count;
   } catch (error) {
     throw normalizeDbError(error, "Could not reconcile doctor slots");
@@ -1043,6 +1061,73 @@ export async function ensureSlotsForRange(
   }
 }
 
+/** Records only successful materialisation; misses and failures keep the safe on-demand fallback. */
+async function ensureInventoryCoverage(
+  doctorId: string,
+  fromUtc: Date,
+  toUtc: Date,
+): Promise<GenerationResult> {
+  if (slotCoverage.covers(doctorId, fromUtc, toUtc)) return { created: 0, skippedOverlap: 0 };
+  return slotCoverage.exclusive(doctorId, async () => {
+    while (true) {
+    if (slotCoverage.covers(doctorId, fromUtc, toUtc)) return { created: 0, skippedOverlap: 0 };
+    const version = slotCoverage.version(doctorId);
+    // Reconcile on a cold/invalidated coverage entry before certifying it.
+    // If a prior window refresh failed, stale derived rows cannot become a
+    // successful cached answer. Write-side repair callers never use this cache.
+    if (!slotCoverage.hasRanges(doctorId)) await reconcileWindowDerivedSlots(doctorId);
+    const result: GenerationResult = { created: 0, skippedOverlap: 0 };
+    for (const gap of slotCoverage.missingRanges(doctorId, fromUtc, toUtc)) {
+      const generated = await ensureSlotsForRange(doctorId, gap.from, gap.to);
+      result.created += generated.created;
+      result.skippedOverlap += generated.skippedOverlap;
+    }
+    if (await isDoctorSuspended(doctorId)) {
+      // The underlying generator deliberately does no work for a suspended
+      // doctor; zero rows in that case are not proof of successful coverage.
+      invalidateDoctorSlotCoverage(doctorId);
+      return result;
+    }
+    if (version !== slotCoverage.version(doctorId)) {
+      // The old generator may have inserted obsolete rows after a newer
+      // refresh completed. Discard even newer coverage before reconciliation.
+      invalidateDoctorSlotCoverage(doctorId);
+      invalidateAvailabilityCaches({ doctorIds: [doctorId] });
+      continue;
+    }
+    slotCoverage.record(doctorId, fromUtc, toUtc, version);
+    return result;
+    }
+  });
+}
+
+/** Bounded scheduler pass; it extends active recurring-window coverage without inspecting slot rows. */
+let prewarmAfterDoctorId: string | undefined;
+export async function prewarmDoctorSlotCoverage(limit = 20): Promise<{ doctors: number; created: number; failed: number }> {
+  const doctors = await prisma.doctor.findMany({
+    where: { active: true, availabilities: { some: { isActive: true } }, ...(prewarmAfterDoctorId ? { id: { gt: prewarmAfterDoctorId } } : {}) },
+    orderBy: { id: "asc" }, select: { id: true }, take: Math.min(20, Math.max(1, limit)),
+  });
+  const fromUtc = new Date();
+  const toUtc = new Date(fromUtc.getTime() + WINDOW_PREGENERATE_DAYS * 24 * 60 * 60 * 1000);
+  let created = 0;
+  let failed = 0;
+  for (const { id } of doctors) {
+    try {
+      const result = await ensureInventoryCoverage(id, fromUtc, toUtc);
+      created += result.created;
+      if (result.created > 0) invalidateAvailabilityCaches({ doctorIds: [id] });
+    } catch {
+      failed += 1;
+    } finally {
+      // One failing doctor's coverage must not starve later doctors forever.
+      prewarmAfterDoctorId = id;
+    }
+  }
+  if (doctors.length < Math.min(20, Math.max(1, limit))) prewarmAfterDoctorId = undefined;
+  return { doctors: doctors.length, created, failed };
+}
+
 export type PublicSlot = {
   id: string;
   startAt: string;
@@ -1080,10 +1165,21 @@ const slotInventoryReadsInFlight = new Map<string, Promise<DoctorSlotInventory>>
 const expiredHoldSweepCache = new TtlCache<true>(SLOT_CACHE_MAX_ENTRIES);
 const expiredHoldSweepsInFlight = new Map<string, Promise<void>>();
 let slotCacheGeneration = 0;
+const doctorCacheGenerations = new Map<string, number>();
+const doctorCacheGeneration = (doctorId: string) =>
+  `${slotCacheGeneration}:${doctorCacheGenerations.get(doctorId) ?? 0}`;
 // Any write that changes inventory clears every availability cache, not just
 // this one — see availability-cache-bus.
-registerAvailabilityCache(() => {
+registerAvailabilityCache((scope) => {
+  const doctorIds = scope?.doctorIds;
+  if (doctorIds && doctorIds.length > 0) {
+    for (const doctorId of new Set(doctorIds)) {
+      doctorCacheGenerations.set(doctorId, (doctorCacheGenerations.get(doctorId) ?? 0) + 1);
+    }
+    return;
+  }
   slotCacheGeneration += 1;
+  doctorCacheGenerations.clear();
   slotReadsInFlight.clear();
   slotInventoryReadsInFlight.clear();
   expiredHoldSweepsInFlight.clear();
@@ -1127,7 +1223,7 @@ function slotCacheKey(
   skipExpiredRelease: boolean,
 ): string {
   const bucket = (d: Date) => Math.floor(d.getTime() / SLOT_CACHE_TTL_MS);
-  return `${doctorId}:${serviceDurationMinutes ?? "base"}:${skipExpiredRelease ? "skip" : "released"}:${bucket(fromUtc)}:${bucket(toUtc)}`;
+  return `${doctorCacheGeneration(doctorId)}:${doctorId}:${serviceDurationMinutes ?? "base"}:${skipExpiredRelease ? "skip" : "released"}:${bucket(fromUtc)}:${bucket(toUtc)}`;
 }
 
 function slotInventoryCacheKey(
@@ -1137,7 +1233,7 @@ function slotInventoryCacheKey(
   skipExpiredRelease: boolean,
 ): string {
   const bucket = (d: Date) => Math.floor(d.getTime() / SLOT_CACHE_TTL_MS);
-  return `${doctorId}:${skipExpiredRelease ? "skip" : "released"}:${bucket(fromUtc)}:${bucket(toUtc)}`;
+  return `${doctorCacheGeneration(doctorId)}:${doctorId}:${skipExpiredRelease ? "skip" : "released"}:${bucket(fromUtc)}:${bucket(toUtc)}`;
 }
 
 /**
@@ -1159,14 +1255,14 @@ function loadDoctorSlotInventory(
   const pending = slotInventoryReadsInFlight.get(key);
   if (pending) return pending;
 
-  const generation = slotCacheGeneration;
+  const generation = doctorCacheGeneration(doctorId);
   const request = (async () => {
     // Public slot rows minted before a doctor was suspended must stay hidden.
     // Keep this guard inside the shared inventory load so concurrent service
     // durations perform the lifecycle check once for the doctor/date window.
     if (await isDoctorSuspended(doctorId)) return { rows: [], pause: null };
     if (!skipExpiredRelease) await releaseExpiredHeldSlots(doctorId);
-    await ensureSlotsForRange(doctorId, fromUtc, toUtc);
+    await ensureInventoryCoverage(doctorId, fromUtc, toUtc);
     const [rows, pause] = await Promise.all([
       prisma.doctorTimeSlot.findMany({
         where: { doctorId, startAt: { gte: fromUtc, lt: toUtc } },
@@ -1178,11 +1274,12 @@ function loadDoctorSlotInventory(
     return { rows, pause };
   })()
     .then((result) => {
-      // Retry against the current generation after an inventory write.
-      if (generation !== slotCacheGeneration) {
+      // Do not let a caller that began before an inventory write observe the
+      // old generation. Join/recompute against the post-invalidation map.
+      if (generation !== doctorCacheGeneration(doctorId)) {
         return loadDoctorSlotInventory(doctorId, fromUtc, toUtc, skipExpiredRelease);
       }
-      if (generation === slotCacheGeneration) {
+      if (generation === doctorCacheGeneration(doctorId)) {
         slotInventoryCache.set(key, result, SLOT_CACHE_TTL_MS);
       }
       return result;
@@ -1197,22 +1294,28 @@ function loadDoctorSlotInventory(
 }
 
 function resolveCachedSlotRead(
-  key: string,
+  doctorId: string,
+  getKey: () => string,
   load: () => Promise<PublicSlot[]>,
 ): Promise<PublicSlot[]> {
+  const key = getKey();
   const cached = slotCache.get(key);
   if (cached) return Promise.resolve(cached);
 
   const pending = slotReadsInFlight.get(key);
   if (pending) return pending;
 
-  const generation = slotCacheGeneration;
+  const generation = doctorCacheGeneration(doctorId);
   const request = load()
     .then((result) => {
       // A booking or admin slot write may clear caches while this read is still
       // running. Never re-seed or return pre-invalidation data.
-      if (generation !== slotCacheGeneration) return resolveCachedSlotRead(key, load);
-      if (generation === slotCacheGeneration) slotCache.set(key, result, SLOT_CACHE_TTL_MS);
+      if (generation !== doctorCacheGeneration(doctorId)) {
+        return resolveCachedSlotRead(doctorId, getKey, load);
+      }
+      if (generation === doctorCacheGeneration(doctorId)) {
+        slotCache.set(key, result, SLOT_CACHE_TTL_MS);
+      }
       return result;
     })
     .finally(() => {
@@ -1227,8 +1330,7 @@ export async function listOpenSlotsForDoctor(
   fromUtc: Date,
   toUtc: Date,
 ): Promise<PublicSlot[]> {
-  const cacheKey = slotCacheKey(doctorId, null, fromUtc, toUtc, false);
-  return resolveCachedSlotRead(cacheKey, async () => {
+  return resolveCachedSlotRead(doctorId, () => slotCacheKey(doctorId, null, fromUtc, toUtc, false), async () => {
     try {
       const { rows, pause } = await loadDoctorSlotInventory(
         doctorId,
@@ -1445,14 +1547,13 @@ export async function listOpenSlotsForDoctorAndService(
   },
 ): Promise<PublicSlot[]> {
   const skipExpiredRelease = opts?.skipExpiredRelease === true;
-  const cacheKey = slotCacheKey(
+  return resolveCachedSlotRead(doctorId, () => slotCacheKey(
     doctorId,
     serviceDurationMinutes,
     fromUtc,
     toUtc,
     skipExpiredRelease,
-  );
-  return resolveCachedSlotRead(cacheKey, async () => {
+  ), async () => {
     try {
       // Fetch ALL slots (not just OPEN) so a BOOKED/BLOCKED/HELD slot correctly
       // breaks a run — a consult can't start where it wouldn't fit before the
@@ -1862,30 +1963,33 @@ export async function releaseExpiredHeldSlotsForDoctors(
   const waits = new Set<Promise<void>>();
   const unsweptDoctorIds: string[] = [];
   for (const doctorId of uniqueDoctorIds) {
-    if (expiredHoldSweepCache.get(doctorId)) continue;
-    const pending = expiredHoldSweepsInFlight.get(doctorId);
+    const key = `${doctorCacheGeneration(doctorId)}:${doctorId}`;
+    if (expiredHoldSweepCache.get(key)) continue;
+    const pending = expiredHoldSweepsInFlight.get(key);
     if (pending) waits.add(pending);
     else unsweptDoctorIds.push(doctorId);
   }
 
   if (unsweptDoctorIds.length > 0) {
-    const generation = slotCacheGeneration;
+    const generations = new Map(unsweptDoctorIds.map((doctorId) => [doctorId, doctorCacheGeneration(doctorId)]));
     const request = sweepExpiredHeldSlots(unsweptDoctorIds)
       .then(() => {
-        if (generation !== slotCacheGeneration) return;
         for (const doctorId of unsweptDoctorIds) {
-          expiredHoldSweepCache.set(doctorId, true, SLOT_CACHE_TTL_MS);
+          if (generations.get(doctorId) === doctorCacheGeneration(doctorId)) {
+            expiredHoldSweepCache.set(`${doctorCacheGeneration(doctorId)}:${doctorId}`, true, SLOT_CACHE_TTL_MS);
+          }
         }
       })
       .finally(() => {
         for (const doctorId of unsweptDoctorIds) {
-          if (expiredHoldSweepsInFlight.get(doctorId) === request) {
-            expiredHoldSweepsInFlight.delete(doctorId);
+          const key = `${generations.get(doctorId)}:${doctorId}`;
+          if (expiredHoldSweepsInFlight.get(key) === request) {
+            expiredHoldSweepsInFlight.delete(key);
           }
         }
       });
     for (const doctorId of unsweptDoctorIds) {
-      expiredHoldSweepsInFlight.set(doctorId, request);
+      expiredHoldSweepsInFlight.set(`${generations.get(doctorId)}:${doctorId}`, request);
     }
     waits.add(request);
   }
@@ -2067,9 +2171,10 @@ export async function createAdminAvailability(
     });
     // Materialise the new window's slots now rather than leaving each week to
     // whoever opens it first — see WINDOW_PREGENERATE_DAYS.
+    invalidateDoctorSlotCoverage(doctorId);
     await refreshWindowSlots(doctorId);
     // The windows drive generation, so the cached slot views are now stale.
-    invalidateAvailabilityCaches();
+    invalidateAvailabilityCaches({ doctorIds: [doctorId] });
     return {
       id: row.id,
       weekday: row.weekday,
@@ -2124,9 +2229,10 @@ export async function patchAdminAvailability(
     // leaving it to a later read would mean a patient can book a slot on a day
     // the doctor just removed. Then re-materialise the new shape, so widening a
     // window fills every week in the horizon rather than only the visited ones.
+    invalidateDoctorSlotCoverage(doctorId);
     await refreshWindowSlots(doctorId);
     // The windows drive generation, so the cached slot views are now stale.
-    invalidateAvailabilityCaches();
+    invalidateAvailabilityCaches({ doctorIds: [doctorId] });
     return {
       id: row.id,
       weekday: row.weekday,
@@ -2153,9 +2259,12 @@ export async function deleteAdminAvailability(
     // After the row is gone, so the reconcile's candidate set no longer counts
     // this window. Drops every future OPEN/BLOCKED slot it was the only source
     // for; slots another window still justifies stay.
-    if (result.count > 0) await reconcileWindowDerivedSlots(doctorId);
+    if (result.count > 0) {
+      invalidateDoctorSlotCoverage(doctorId);
+      await reconcileWindowDerivedSlots(doctorId);
+    }
     // The windows drive generation, so the cached slot views are now stale.
-    invalidateAvailabilityCaches();
+    invalidateAvailabilityCaches({ doctorIds: [doctorId] });
     return result.count > 0;
   } catch (error) {
     throw normalizeDbError(error, "Doctor availability is unavailable");

@@ -1,12 +1,17 @@
 import assert from "node:assert/strict";
-import { before, describe, it, mock } from "node:test";
+import { before, beforeEach, describe, it, mock } from "node:test";
 
 let serviceWhere: Record<string, unknown> | undefined;
 let doctorWhere: Record<string, unknown> | undefined;
 let listSlotCalls = 0;
+let serviceLookups = 0;
+let delayServiceLookup = false;
+let releaseServiceLookup: (() => void) | undefined;
 
 let getServiceAggregatedAvailability:
   (typeof import("./service-availability.service.js"))["getServiceAggregatedAvailability"];
+let invalidateAvailabilityCaches:
+  (typeof import("../doctor-availability/availability-cache-bus.js"))["invalidateAvailabilityCaches"];
 
 before(async () => {
   mock.module("../../db/prisma.js", {
@@ -18,6 +23,13 @@ before(async () => {
         service: {
           findFirst: async ({ where }: { where: Record<string, unknown> }) => {
             serviceWhere = where;
+            serviceLookups += 1;
+            if (delayServiceLookup) {
+              delayServiceLookup = false;
+              await new Promise<void>((resolve) => {
+                releaseServiceLookup = resolve;
+              });
+            }
             return {
               id: "service-1",
               durationMinutes: 30,
@@ -62,6 +74,15 @@ before(async () => {
   });
 
   ({ getServiceAggregatedAvailability } = await import("./service-availability.service.js"));
+  ({ invalidateAvailabilityCaches } = await import("../doctor-availability/availability-cache-bus.js"));
+});
+
+beforeEach(() => {
+  listSlotCalls = 0;
+  serviceLookups = 0;
+  delayServiceLookup = false;
+  releaseServiceLookup = undefined;
+  invalidateAvailabilityCaches();
 });
 
 describe("service aggregated availability booking gates", () => {
@@ -82,5 +103,19 @@ describe("service aggregated availability booking gates", () => {
     assert.deepEqual(result.slots, []);
     assert.deepEqual(result.doctorsByStart, {});
     assert.equal(listSlotCalls, 0);
+  });
+
+  it("deduplicates a cold aggregate read and retries it after late invalidation", async () => {
+    delayServiceLookup = true;
+    const first = getServiceAggregatedAvailability("IE", "late-invalidation", 14);
+    const second = getServiceAggregatedAvailability("IE", "late-invalidation", 14);
+    await new Promise((resolve) => setImmediate(resolve));
+
+    assert.equal(serviceLookups, 1);
+    invalidateAvailabilityCaches({ doctorIds: ["doctor-1"] });
+    releaseServiceLookup?.();
+
+    await Promise.all([first, second]);
+    assert.equal(serviceLookups, 2);
   });
 });

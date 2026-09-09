@@ -1,7 +1,7 @@
 import { DateTime } from "luxon";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
-import { TtlCache } from "../../lib/ttl-cache.js";
+import { AvailabilityDependencyCache, type UpdateAvailabilityDependencies } from "../../lib/availability-dependency-cache.js";
 import { registerAvailabilityCache } from "../doctor-availability/availability-cache-bus.js";
 import {
   listOpenSlotsForDoctorAndService,
@@ -58,11 +58,12 @@ const LANGUAGES_TTL_MS = 60_000;
 // ponytail: keyed by country[:language], so real growth is tiny — the cap
 // just guards against unbounded growth in a long-lived process.
 const CACHE_MAX_ENTRIES = 1000;
-const availabilityCache = new TtlCache<GpAvailabilityResult>(CACHE_MAX_ENTRIES);
-// Same reason as the aggregated cache: a slot taken out of inventory must stop
-// being offered on the quick-book path straight away.
-registerAvailabilityCache(() => availabilityCache.clear());
-const languagesCache = new TtlCache<GpLanguagesResult>(CACHE_MAX_ENTRIES);
+const availabilityCache = new AvailabilityDependencyCache<GpAvailabilityResult>(CACHE_MAX_ENTRIES, AVAILABILITY_TTL_MS);
+const languagesCache = new AvailabilityDependencyCache<GpLanguagesResult>(CACHE_MAX_ENTRIES, LANGUAGES_TTL_MS);
+registerAvailabilityCache((scope) => {
+  availabilityCache.invalidate(scope);
+  languagesCache.invalidate(scope);
+});
 
 export type GpAvailabilitySlot = {
   /** ISO start (UTC). Distinct across the eligible doctor pool. */
@@ -195,11 +196,6 @@ async function resolveCountryTimeZone(countryCode: string): Promise<string> {
  * doctors are free then. Prices are resolved per slot from the service's
  * peak-pricing config exactly as the cart will charge.
  */
-function cacheAvailability(key: string, value: GpAvailabilityResult): GpAvailabilityResult {
-  availabilityCache.set(key, value, AVAILABILITY_TTL_MS);
-  return value;
-}
-
 export async function getGpAvailability(args: {
   countryCode: string;
   languageCode: string;
@@ -211,19 +207,38 @@ export async function getGpAvailability(args: {
   const { countryCode, languageCode } = args;
   const days = Math.min(30, Math.max(1, args.days));
   const cacheKey = `${countryCode.toLowerCase()}:${languageCode.toLowerCase()}:${days}:${args.clinicDays ? "clinic" : "rolling"}`;
-  const cached = availabilityCache.get(cacheKey);
-  if (cached) return cached;
+  return availabilityCache.resolve(cacheKey, {
+    countryCode, pendingDoctors: true, pendingServices: true,
+  }, (update) => loadGpAvailability(args, update));
+}
+
+async function loadGpAvailability(
+  args: {
+    countryCode: string;
+    languageCode: string;
+    days: number;
+    clinicDays?: boolean;
+  },
+  update: UpdateAvailabilityDependencies,
+): Promise<GpAvailabilityResult> {
+  const { countryCode, languageCode } = args;
+  const days = Math.min(30, Math.max(1, args.days));
   try {
     const clinicTimezone = await resolveCountryTimeZone(countryCode);
     const service = await resolveGpSameDayService(countryCode);
-    if (!service) return cacheAvailability(cacheKey, { service: null, clinicTimezone, slots: [] });
+    update({ serviceIds: service ? [service.id] : [], pendingServices: false });
+    if (!service) {
+      update({ doctorIds: [], pendingDoctors: false });
+      return { service: null, clinicTimezone, slots: [] };
+    }
+    const eligible = await listEligibleGpDoctors(countryCode, service.id, languageCode);
+    update({ doctorIds: eligible.map((doctor) => doctor.id), pendingDoctors: false });
     const policy = await loadGpBookingPolicy(service.id);
     if (!policy.countryBookingEnabled || isPauseActiveAt(policy.servicePause, new Date())) {
-      return cacheAvailability(cacheKey, { service, clinicTimezone, slots: [] });
+      return { service, clinicTimezone, slots: [] };
     }
 
-    const eligible = await listEligibleGpDoctors(countryCode, service.id, languageCode);
-    if (eligible.length === 0) return cacheAvailability(cacheKey, { service, clinicTimezone, slots: [] });
+    if (eligible.length === 0) return { service, clinicTimezone, slots: [] };
 
     const now = Date.now();
     const fromUtc = new Date(now + START_BUFFER_MS);
@@ -294,7 +309,7 @@ export async function getGpAvailability(args: {
     const slots = Array.from(byStart.values()).sort((a, b) =>
       a.startAt < b.startAt ? -1 : a.startAt > b.startAt ? 1 : 0,
     );
-    return cacheAvailability(cacheKey, { service, clinicTimezone, slots });
+    return { service, clinicTimezone, slots };
   } catch (error) {
     throw normalizeDbError(error, "Same-day availability is unavailable");
   }
@@ -329,15 +344,23 @@ export async function getGpLanguages(
   mode: "live" | "marketing" = "live",
 ): Promise<GpLanguagesResult> {
   const cacheKey = `${countryCode.toLowerCase()}:${mode}`;
-  const cached = languagesCache.get(cacheKey);
-  if (cached) return cached;
-  const store = (value: GpLanguagesResult) => {
-    languagesCache.set(cacheKey, value, LANGUAGES_TTL_MS);
-    return value;
-  };
+  return languagesCache.resolve(cacheKey, {
+    countryCode, pendingDoctors: true, pendingServices: true,
+  }, (update) => loadGpLanguages(countryCode, mode, update));
+}
+
+async function loadGpLanguages(
+  countryCode: string,
+  mode: "live" | "marketing",
+  update: UpdateAvailabilityDependencies,
+): Promise<GpLanguagesResult> {
   try {
     const service = await resolveGpSameDayService(countryCode);
-    if (!service) return store({ configured: false, languages: [], bookableLanguages: [] });
+    update({ serviceIds: service ? [service.id] : [], pendingServices: false });
+    if (!service) {
+      update({ doctorIds: [], pendingDoctors: false });
+      return { configured: false, languages: [], bookableLanguages: [] };
+    }
     const policy = await loadGpBookingPolicy(service.id);
 
     const code = countryCode.trim().toLowerCase();
@@ -359,6 +382,8 @@ export async function getGpLanguages(
       select: { id: true, languages: true },
     });
 
+    update({ doctorIds: rows.map((doctor) => doctor.id), pendingDoctors: false });
+
     const normalizeLanguages = (languages: string[]) =>
       languages.map((l) => l.trim().toLowerCase()).filter((l) => l.length > 0);
 
@@ -370,14 +395,14 @@ export async function getGpLanguages(
     // Homepage SSR needs stable pool configuration only. The browser performs
     // the live, clinic-day slot read after its shell is visible.
     if (mode === "marketing") {
-      return store({ configured: Boolean(service), languages, bookableLanguages: [] });
+      return { configured: Boolean(service), languages, bookableLanguages: [] };
     }
     if (
       rows.length === 0
       || !policy.countryBookingEnabled
       || isPauseActiveAt(policy.servicePause, new Date())
     ) {
-      return store({ configured: true, languages, bookableLanguages: [] });
+      return { configured: true, languages, bookableLanguages: [] };
     }
 
     // Which of those languages can actually be booked today/tomorrow: sweep the
@@ -385,7 +410,7 @@ export async function getGpLanguages(
     const clinicTimezone = await resolveCountryTimeZone(countryCode);
     const fromUtc = new Date(Date.now() + START_BUFFER_MS);
     const toUtc = endOfClinicTomorrowUtc(clinicTimezone);
-    if (toUtc <= fromUtc) return store({ configured: true, languages, bookableLanguages: [] });
+    if (toUtc <= fromUtc) return { configured: true, languages, bookableLanguages: [] };
 
     // One batched release for the whole pool instead of one per doctor (P-005);
     // each slot read below then skips its own release.
@@ -419,11 +444,11 @@ export async function getGpLanguages(
       });
     }
 
-    return store({
+    return {
       configured: true,
       languages,
       bookableLanguages: Array.from(bookable).sort(),
-    });
+    };
   } catch (error) {
     throw normalizeDbError(error, "Could not load consultation languages");
   }

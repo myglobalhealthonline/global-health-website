@@ -8327,8 +8327,14 @@ Inspection reports the URL is on Google and indexed, so the bulk “Crawled — 
 not indexed” row is stale. Keep the URL in the sitemap for German candidates.
 
 
-## 43. Performance remediation working tree (2026-09-09)
+## 46. Performance remediation (2026-09-09)
 
-Owner-requested follow-up to the [performance audit](../audits/performance/2026-09-09/README.md): local application changes improve booking feedback/deadlines, remove homepage scheduling dependencies, reduce card/dictionary work, and remove unconditional shared document caching that also applied to errors. Full status and verification limits: [remediation record](../audits/performance/2026-09-09/REMEDIATION.md). These changes are **not deployed**; no indexation or ranking finding is reopened or closed.
+Owner-requested follow-up to the [performance audit](../audits/performance/2026-09-09/README.md). Baseline `499f4076` is pushed and deployed to Development. The continuation completes scheduler query isolation, capped shared numbering capacity, dependency-scoped aggregate caches, bounded slot prewarming/successful coverage, compact blog summaries and localized booking retry/cancellation. Full status: [remediation record](../audits/performance/2026-09-09/REMEDIATION.md).
 
-Two live six-market smoke passes returned complete 200 documents, including Brazil; its earlier intermittent upstream failure still needs authenticated Railway logs. Remaining gates are a successful production build/bundle analysis, deployment connection budget, post-deployment browser/cold-cache measurements and the existing GA property correction. This performance-only batch made no SEO content or indexation submission, and did not access GSC/CrUX credentials.
+Production Turbopack build passed all 951 static pages; native analyzer passed and confirms no full common dictionaries in homepage client chunks. Frontend: 132 files, 1,595 passed, five skipped. Backend: 54 focused regression tests passed. Both package typechecks and locale checks passed. Full backend integration remains blocked by the unavailable local test database; no production database tests were run.
+
+Railway logs correlate Brazil digest `1545395240` with failure of `country-services:br:all`; the lower-level cause remains unproven. Development baseline returned 12/12 complete 200 documents across six markets. Both Development services auto-deploy `Dev-hassaan`. Continuation deployment, genuine cold/warm latency and pool-capacity correlation, delivery-layer checks and rolling field CWV remain verification gates. GA collection was separately restored (§47). This batch made no SEO content/indexation submission and did not access GSC/CrUX credentials.
+
+## 47. GA4 collection restored (2026-09-09)
+
+Owner requested repair of the empty GA4 property 547083375. Live consented homepage inspection confirmed the wrong destination G-4PPGECG12X. Corrected only Production Frontend NEXT_PUBLIC_GA_MEASUREMENT_ID to G-SP48D9LJJ5 in Railway and applied the one-variable deployment. Deployment 2f1cd860-f93e-4dfc-b2e4-4611771ac3f9 completed successfully, including healthcheck. Reloaded live homepage renders ga4-init and ga4-loader with G-SP48D9LJJ5. GA4 Realtime then showed 1 active user, page_view, session_start and first_visit. Collection is restored; historical missing data is not backfilled. This redeployed the existing production code; it does not establish deployment of the separate Dev-hassaan Web Vitals/performance batch. No database or Analytics property settings changed.

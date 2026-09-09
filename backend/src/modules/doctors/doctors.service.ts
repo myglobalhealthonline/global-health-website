@@ -1676,7 +1676,7 @@ export async function updateAdminDoctor(
       } satisfies UpdateAdminDoctorResult;
     }, ADMIN_DOCTOR_TX_OPTIONS);
 
-    if (countryChanging) {
+    if (countryChanging || body.active !== undefined) {
       invalidateBookabilityCache();
     }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, CalendarClock, Check, Loader2 } from "lucide-react";
@@ -78,6 +78,15 @@ const DEFAULT_I18N: HeroWizardI18n = {
   reassure: "Most appointments confirmed within minutes.",
 };
 
+const AVAILABILITY_MESSAGES: Record<string, { error: string; retry: string }> = {
+  en: { error: "Couldn't load appointment times.", retry: "Try again" },
+  cs: { error: "Termíny se nepodařilo načíst.", retry: "Zkusit znovu" },
+  pt: { error: "Não foi possível carregar os horários.", retry: "Tentar novamente" },
+  es: { error: "No se pudieron cargar los horarios.", retry: "Intentar de nuevo" },
+  ro: { error: "Nu s-au putut încărca orele disponibile.", retry: "Încearcă din nou" },
+  de: { error: "Termine konnten nicht geladen werden.", retry: "Erneut versuchen" },
+};
+
 export function HeroBookingWizard({
   doctors,
   services,
@@ -105,16 +114,34 @@ export function HeroBookingWizard({
   const [loading, setLoading] = useState(false);
   const [availabilityError, setAvailabilityError] = useState(false);
   const [routing, setRouting] = useState(false);
+  const activeRequest = useRef<AbortController | null>(null);
+  const availabilityMessages = AVAILABILITY_MESSAGES[lang] ?? AVAILABILITY_MESSAGES.en;
+  useEffect(() => () => {
+    activeRequest.current?.abort();
+    activeRequest.current = null;
+  }, []);
+
+  function returnToStep(nextStep: 1 | 2) {
+    activeRequest.current?.abort();
+    activeRequest.current = null;
+    setLoading(false);
+    setAvailabilityError(false);
+    setStep(nextStep);
+  }
 
   const serviceById = new Map(services.map((s) => [s.id, s]));
 
   function pickDoctor(d: WizardDoctor) {
+    returnToStep(2);
     setDoctor(d);
     setService(null);
-    setStep(2);
   }
 
   async function pickService(d: WizardDoctor, s: WizardService) {
+    activeRequest.current?.abort();
+    const controller = new AbortController();
+    activeRequest.current = controller;
+    const timeout = setTimeout(() => controller.abort(), 8_000);
     setService(s);
     setStep(3);
     setSlots([]);
@@ -123,20 +150,29 @@ export function HeroBookingWizard({
     try {
       const res = await fetch(
         `/api/public/booking-availability?country=${encodeURIComponent(countryCode)}&service=${encodeURIComponent(s.slug)}&doctor=${encodeURIComponent(d.slug)}`,
-        { cache: "no-store", signal: AbortSignal.timeout(8_000) },
+        { cache: "no-store", signal: controller.signal },
       );
       if (!res.ok) throw new Error("Availability request failed");
       const json = (await res.json()) as {
         ok?: boolean;
         data?: { slots?: Slot[]; clinicTimezone?: string };
       };
-      setSlots(json.ok && json.data?.slots ? json.data.slots : []);
+      if (json.ok !== true || !Array.isArray(json.data?.slots)) {
+        throw new Error("Invalid availability response");
+      }
+      if (activeRequest.current !== controller || controller.signal.aborted) return;
+      setSlots(json.data.slots);
       setClinicTz(json.data?.clinicTimezone ?? "UTC");
     } catch {
+      if (activeRequest.current !== controller) return;
       setSlots([]);
       setAvailabilityError(true);
     } finally {
-      setLoading(false);
+      clearTimeout(timeout);
+      if (activeRequest.current === controller) {
+        activeRequest.current = null;
+        setLoading(false);
+      }
     }
   }
 
@@ -222,7 +258,7 @@ export function HeroBookingWizard({
           {doctor ? (
             <button
               type="button"
-              onClick={() => setStep(1)}
+              onClick={() => returnToStep(1)}
               className="inline-flex items-center gap-1 rounded-full bg-white/[0.07] px-2 py-0.5 font-semibold text-white hover:bg-white/[0.12]"
             >
               <Check className="size-3 text-[var(--color-brand-accent)]" strokeWidth={2.5} aria-hidden />
@@ -234,7 +270,7 @@ export function HeroBookingWizard({
               <span aria-hidden>·</span>
               <button
                 type="button"
-                onClick={() => doctor && setStep(2)}
+                onClick={() => doctor && returnToStep(2)}
                 className="inline-flex items-center gap-1 rounded-full bg-white/[0.07] px-2 py-0.5 font-semibold text-white hover:bg-white/[0.12]"
               >
                 <Check className="size-3 text-[var(--color-brand-accent)]" strokeWidth={2.5} aria-hidden />
@@ -273,7 +309,7 @@ export function HeroBookingWizard({
       {/* STEP 2 — consultation */}
       {step === 2 && doctor ? (
         <>
-          <StepHeader label={t.stepConsultation} onBack={() => setStep(1)} backLabel={t.back} />
+          <StepHeader label={t.stepConsultation} onBack={() => returnToStep(1)} backLabel={t.back} />
           {doctorServices.length === 0 ? (
             <p className="py-4 text-[12.5px] text-white/60">{t.noConsultations}</p>
           ) : (
@@ -315,7 +351,7 @@ export function HeroBookingWizard({
       {/* STEP 3 — time slot */}
       {step === 3 && doctor && service ? (
         <>
-          <StepHeader label={t.stepTime} onBack={() => setStep(2)} backLabel={t.back} />
+          <StepHeader label={t.stepTime} onBack={() => returnToStep(2)} backLabel={t.back} />
           {loading ? (
             <p className="flex items-center gap-2 py-5 text-[12.5px] text-white/65">
               <Loader2 className="size-4 animate-spin" aria-hidden />
@@ -323,13 +359,13 @@ export function HeroBookingWizard({
             </p>
           ) : availabilityError ? (
             <div className="py-4 text-[12.5px] text-white/70">
-              <p>Couldn&apos;t load appointment times.</p>
+              <p role="alert">{availabilityMessages.error}</p>
               <button
                 type="button"
                 onClick={() => void pickService(doctor, service)}
                 className="mt-3 rounded-full border border-[var(--color-brand-accent)]/50 px-3 py-1.5 font-semibold text-[var(--color-brand-accent)]"
               >
-                Try again
+                {availabilityMessages.retry}
               </button>
             </div>
           ) : slots.length === 0 ? (

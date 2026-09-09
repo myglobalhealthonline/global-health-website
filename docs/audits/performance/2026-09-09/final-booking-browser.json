@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "scope": "Local production Next build, CSP enforced, snapshotted anonymous public content/availability and injected failures/delays. External tracker/script loads blocked; proxy images excluded. Not production latency or field CWV.",
+  "results": [
+    {
+      "width": 1440,
+      "accepted": false,
+      "overflow": 0,
+      "errorBoundary": true,
+      "failedRetryRecoverable": true,
+      "retryRecovered": true,
+      "backNavigation": true,
+      "pendingFeedback": true,
+      "voiceConsentGate": true,
+      "recoveredText": "Book your consultation\n\nIreland medical clinic. Choose a service, clinician, time, and patient details.\n\n01\nService\n02\nTime\n03\nDoctor\n04\nDetails\n\nBOOKING STEPS\n\nService\nGP Consultation Online\n2\nTime\n— Step 2 of 4\n3\nDoctor\n4\nDetails\n\nMost appointments are confirmed within minutes. We will email your confirmation as soon as your booking is complete.\n\nRegistered doctors · Ireland\nSecure video consultation\nConfidential & GDPR-compliant\n\nTIME\n\nPick a time\n\nTimes are shown in the clinic timezone. The appointment is added to your cart before checkout.\n\nSELECTED CONSULTATION\n\nGP Consultation Online\n\nPICK A DATE\n\n15 days available · times in Dublin\n\nWED\n9\nSEPT\n88 slots\nTHU\n10\nSEPT\n95 slots\nFRI\n11\nSEPT\n95 slots\nSAT\n12\nSEPT\n96 slots\nSUN\n13\nSEPT\n96 slots\nMON\n14\nSEPT\n95 slots\nTUE\n15\nSEPT\n95 slots\nWED\n16\nSEPT\n95 slots\nTHU\n17\nSEPT\n95 slots\nFRI\n18\nSEPT\n95 slots\nSAT\n19\nSEPT\n96 slots\nSUN\n20\nSEPT\n96 slots\nMON\n21\nSEPT\n95 slots\nTUE\n22\nSEPT\n95 slots\nWED\n23\nSEPT\n7 slots\n\nPICK A TIME ON 9 SEPT 2026\n\n01:45\n€45\nOFF-PEAK\n02:00\n€45\nOFF-PEAK\n02:15\n€45\nOFF-PEAK\n02:30\n€45\nOFF-PEAK\n02:45\n€45\nOFF-PEAK\n03:00\n€45\nOFF-PEAK\n03:15\n€45\nOFF-PEAK\n03:30\n€45\nOFF-PEAK\n03:45\n€45\nOFF-PEAK\n04:00\n€45\nOFF-PEAK\n04:15\n€45\nOFF-PEAK\n04:30\n€45\nOFF-PEAK\n04:45\n€45\nOFF-PEAK\n05:00\n€45\nOFF-PEAK\n05:15\n€45\nOFF-PEAK\n05:30\n€45\nOFF-PEAK\n05:45\n€45\nOFF-PEAK\n06:00\n€45\nOFF-PEAK\n06:15\n€45\nOFF-PEAK\n06:30\n€45\nOFF-PEAK\n06:45\n€45\nOFF-PEAK\n07:00\n€45\nOFF-PEAK\n07:15\n€45\nOFF-PEAK\n07:30\n€45\nOFF-PEAK\n07:45\n€45\nOFF-PEAK\n08:00\n€45\nOFF-PEAK\n08:15\n€45\nOFF-PEAK\n08:30\n€45\nOFF-PEAK\n08:45\n€45\nOFF-PEAK\n09:00\n€45\nOFF-PEAK\n09:15\n€45\nOFF-PEAK\n09:30\n€45\nOFF-PEAK\n09:45\n€45\nOFF-PEAK\n10:00\n€45\nOFF-PEAK\n10:15\n€45\nOFF-PEAK\n10:30\n€45\nOFF-PEAK\n10:45\n€45\nOFF-PEAK\n11:00\n€45\nOFF-PEAK\n11:15\n€45\nOFF-PEAK\n11:30\n€45\nOFF-PEAK\n11:45\n€45\nOFF-PEAK\n12:00\n€39\nPEAK\n12:15\n€39\nPEAK\n"
+    },
+    {
+      "width": 390,
+      "accepted": false,
+      "overflow": 0,
+      "errorBoundary": true,
+      "failedRetryRecoverable": true,
+      "retryRecovered": true,
+      "backNavigation": true,
+      "pendingFeedback": true,
+      "voiceConsentGate": true,
+      "recoveredText": "Book your consultation\n\nIreland medical clinic. Choose a service, clinician, time, and patient details.\n\n02\n/ 04\nTime\n\nBOOKING STEPS\n\nService\nGP Consultation Online\n2\nTime\n— Step 2 of 4\n3\nDoctor\n4\nDetails\n\nMost appointments are confirmed within minutes. We will email your confirmation as soon as your booking is complete.\n\nRegistered doctors · Ireland\nSecure video consultation\nConfidential & GDPR-compliant\n\nTIME\n\nPick a time\n\nTimes are shown in the clinic timezone. The appointment is added to your cart before checkout.\n\nSELECTED CONSULTATION\n\nGP Consultation Online\n\nPICK A DATE\n\n15 days available · times in Dublin\n\nWED\n9\nSEPT\n88 slots\nTHU\n10\nSEPT\n95 slots\nFRI\n11\nSEPT\n95 slots\nSAT\n12\nSEPT\n96 slots\nSUN\n13\nSEPT\n96 slots\nMON\n14\nSEPT\n95 slots\nTUE\n15\nSEPT\n95 slots\nWED\n16\nSEPT\n95 slots\nTHU\n17\nSEPT\n95 slots\nFRI\n18\nSEPT\n95 slots\nSAT\n19\nSEPT\n96 slots\nSUN\n20\nSEPT\n96 slots\nMON\n21\nSEPT\n95 slots\nTUE\n22\nSEPT\n95 slots\nWED\n23\nSEPT\n7 slots\n\nPICK A TIME ON 9 SEPT 2026\n\n01:45\n€45\nOFF-PEAK\n02:00\n€45\nOFF-PEAK\n02:15\n€45\nOFF-PEAK\n02:30\n€45\nOFF-PEAK\n02:45\n€45\nOFF-PEAK\n03:00\n€45\nOFF-PEAK\n03:15\n€45\nOFF-PEAK\n03:30\n€45\nOFF-PEAK\n03:45\n€45\nOFF-PEAK\n04:00\n€45\nOFF-PEAK\n04:15\n€45\nOFF-PEAK\n04:30\n€45\nOFF-PEAK\n04:45\n€45\nOFF-PEAK\n05:00\n€45\nOFF-PEAK\n05:15\n€45\nOFF-PEAK\n05:30\n€45\nOFF-PEAK\n05:45\n€45\nOFF-PEAK\n06:00\n€45\nOFF-PEAK\n06:15\n€45\nOFF-PEAK\n06:30\n€45\nOFF-PEAK\n06:45\n€45\nOFF-PEAK\n07:00\n€45\nOFF-PEAK\n07:15\n€45\nOFF-PEAK\n07:30\n€45\nOFF-PEAK\n07:45\n€45\nOFF-PEAK\n08:00\n€45\nOFF-PEAK\n08:15\n€45\nOFF-PEAK\n08:30\n€45\nOFF-PEAK\n08:45\n€45\nOFF-PEAK\n09:00\n€45\nOFF-PEAK\n09:15\n€45\nOFF-PEAK\n09:30\n€45\nOFF-PEAK\n09:45\n€45\nOFF-PEAK\n10:00\n€45\nOFF-PEAK\n10:15\n€45\nOFF-PEAK\n10:30\n€45\nOFF-PEAK\n10:45\n€45\nOFF-PEAK\n11:00\n€45\nOFF-PEAK\n11:15\n€45\nOFF-PEAK\n11:30\n€45\nOFF-PEAK\n11:45\n€45\nOFF-PEAK\n12:00\n€39\nPEAK\n12:15\n€39\nPEAK\n12:30\n€45\nOFF-PEAK\n12:45\n€4"
+    },
+    {
+      "width": 390,
+      "accepted": true,
+      "overflow": 0,
+      "errorBoundary": true,
+      "failedRetryRecoverable": true,
+      "retryRecovered": true,
+      "backNavigation": true,
+      "pendingFeedback": true,
+      "voiceConsentGate": true,
+      "recoveredText": "Book your consultation\n\nIreland medical clinic. Choose a service, clinician, time, and patient details.\n\n02\n/ 04\nTime\n\nBOOKING STEPS\n\nService\nGP Consultation Online\n2\nTime\n— Step 2 of 4\n3\nDoctor\n4\nDetails\n\nMost appointments are confirmed within minutes. We will email your confirmation as soon as your booking is complete.\n\nRegistered doctors · Ireland\nSecure video consultation\nConfidential & GDPR-compliant\n\nTIME\n\nPick a time\n\nTimes are shown in the clinic timezone. The appointment is added to your cart before checkout.\n\nSELECTED CONSULTATION\n\nGP Consultation Online\n\nPICK A DATE\n\n15 days available · times in Dublin\n\nWED\n9\nSEPT\n88 slots\nTHU\n10\nSEPT\n95 slots\nFRI\n11\nSEPT\n95 slots\nSAT\n12\nSEPT\n96 slots\nSUN\n13\nSEPT\n96 slots\nMON\n14\nSEPT\n95 slots\nTUE\n15\nSEPT\n95 slots\nWED\n16\nSEPT\n95 slots\nTHU\n17\nSEPT\n95 slots\nFRI\n18\nSEPT\n95 slots\nSAT\n19\nSEPT\n96 slots\nSUN\n20\nSEPT\n96 slots\nMON\n21\nSEPT\n95 slots\nTUE\n22\nSEPT\n95 slots\nWED\n23\nSEPT\n7 slots\n\nPICK A TIME ON 9 SEPT 2026\n\n01:45\n€45\nOFF-PEAK\n02:00\n€45\nOFF-PEAK\n02:15\n€45\nOFF-PEAK\n02:30\n€45\nOFF-PEAK\n02:45\n€45\nOFF-PEAK\n03:00\n€45\nOFF-PEAK\n03:15\n€45\nOFF-PEAK\n03:30\n€45\nOFF-PEAK\n03:45\n€45\nOFF-PEAK\n04:00\n€45\nOFF-PEAK\n04:15\n€45\nOFF-PEAK\n04:30\n€45\nOFF-PEAK\n04:45\n€45\nOFF-PEAK\n05:00\n€45\nOFF-PEAK\n05:15\n€45\nOFF-PEAK\n05:30\n€45\nOFF-PEAK\n05:45\n€45\nOFF-PEAK\n06:00\n€45\nOFF-PEAK\n06:15\n€45\nOFF-PEAK\n06:30\n€45\nOFF-PEAK\n06:45\n€45\nOFF-PEAK\n07:00\n€45\nOFF-PEAK\n07:15\n€45\nOFF-PEAK\n07:30\n€45\nOFF-PEAK\n07:45\n€45\nOFF-PEAK\n08:00\n€45\nOFF-PEAK\n08:15\n€45\nOFF-PEAK\n08:30\n€45\nOFF-PEAK\n08:45\n€45\nOFF-PEAK\n09:00\n€45\nOFF-PEAK\n09:15\n€45\nOFF-PEAK\n09:30\n€45\nOFF-PEAK\n09:45\n€45\nOFF-PEAK\n10:00\n€45\nOFF-PEAK\n10:15\n€45\nOFF-PEAK\n10:30\n€45\nOFF-PEAK\n10:45\n€45\nOFF-PEAK\n11:00\n€45\nOFF-PEAK\n11:15\n€45\nOFF-PEAK\n11:30\n€45\nOFF-PEAK\n11:45\n€45\nOFF-PEAK\n12:00\n€39\nPEAK\n12:15\n€39\nPEAK\n12:30\n€45\nOFF-PEAK\n12:45\n€4"
+    }
+  ]
+}

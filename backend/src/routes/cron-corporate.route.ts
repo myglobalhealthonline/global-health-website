@@ -1,7 +1,7 @@
 import type { FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
 import { env } from "../config/env.js";
 import { isValidCronSecret } from "../utils/cron-auth.js";
-import { prisma } from "../db/prisma.js";
+import { prisma, runWithSchedulerDb } from "../db/prisma.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { mintAndSendInvite } from "../modules/corporate/corporate-invite.service.js";
 import { notifyCompanyExpired } from "../modules/corporate/corporate-status.service.js";
@@ -34,6 +34,7 @@ const cronCorporateRoute: FastifyPluginAsync = async (app) => {
 
   app.post("/api/cron/corporate/daily", async (request, reply) => {
     if (!checkToken(request, reply)) return;
+    return runWithSchedulerDb(async () => {
     const now = new Date();
     try {
       const expiredRequests = await prisma.corporateServiceRequest.updateMany({
@@ -118,6 +119,7 @@ const cronCorporateRoute: FastifyPluginAsync = async (app) => {
       app.log.error(error);
       return reply.status(500).send(errorResponse("Corporate cron failed"));
     }
+    });
   });
 };
 

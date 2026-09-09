@@ -63,6 +63,7 @@ type ApiBlogPost = {
   title?: unknown;
   excerpt?: unknown;
   body?: unknown;
+  readingTime?: unknown;
   locale?: unknown;
   countries?: unknown;
   localeVariants?: unknown;
@@ -167,7 +168,9 @@ function normalizeApiPost(raw: ApiBlogPost): BlogPostFull | null {
     category: str(raw.category) || "Health guide",
     author: str(raw.author) || BLOG_AUTHOR_NAME,
     publishedAt,
-    readingTime: readingTimeFromHtml(body),
+    readingTime: typeof raw.readingTime === "number" && Number.isFinite(raw.readingTime) && raw.readingTime >= 1
+      ? Math.ceil(raw.readingTime)
+      : readingTimeFromHtml(body),
     coverImageSrc: coverUrl ? resolveTrustedAssetUrl(coverUrl) ?? coverUrl : null,
     coverImageAlt: str(raw.coverImageAlt) || null,
     seoTitle: str(raw.seoTitle) || null,
@@ -183,8 +186,9 @@ function normalizeApiPost(raw: ApiBlogPost): BlogPostFull | null {
 /** All published, admin-managed posts (newest-first). [] when unavailable.
  *  No countryCode = global posts only (see blog.service.ts's
  *  countryVisibilityWhere) — the bare, no-country-context /blog route. */
-const fetchPublishedPosts = cache(async (countryCode?: string, locale?: string): Promise<BlogPostFull[]> => {
+const fetchPublishedPosts = cache(async (countryCode?: string, locale?: string, view: "summary" | "full" = "summary"): Promise<BlogPostFull[]> => {
   const params = new URLSearchParams();
+  params.set("view", view);
   if (countryCode) params.set("countryCode", countryCode);
   if (locale) params.set("locale", locale.toUpperCase());
   const qs = params.size > 0 ? `?${params.toString()}` : "";
@@ -267,7 +271,7 @@ export async function getBlogPost(slug: string, countryCode?: string, locale?: s
   if (!res.ok) {
     // Fall back to the all-posts list (handles the case where the backend
     // supports listing but the single-post endpoint is unavailable).
-    const posts = await fetchPublishedPosts(countryCode, locale);
+    const posts = await fetchPublishedPosts(countryCode, locale, "full");
     return posts.find((p) => p.slug === slug || p.localeVariants.some((v) => v.slug === slug)) ?? null;
   }
   return res.data?.post ? normalizeApiPost(res.data.post) : null;

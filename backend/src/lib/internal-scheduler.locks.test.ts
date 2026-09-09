@@ -52,4 +52,10 @@ describe("internal scheduler advisory locks", () => {
       /runScheduledJob\("appointment-reminders", \(\) => tickAppointmentReminders\(log\)\);/,
     );
   });
+
+  it("runs bounded slot prewarming behind its own distributed lock", () => {
+    assert.match(source, /const LOCK_SLOT_PREWARM = \d+;/);
+    assert.match(source, /withAdvisoryLock\(LOCK_SLOT_PREWARM/);
+    assert.match(source, /schedule\("slot-prewarm", \(\) => tickSlotPrewarm\(log\), SLOT_PREWARM_INTERVAL_MS\)/);
+  });
 });

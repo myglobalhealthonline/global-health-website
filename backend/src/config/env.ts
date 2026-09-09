@@ -69,7 +69,8 @@ const envSchema = z.object({
    *   - REDIS_URL must be set. Without it, @fastify/rate-limit's in-process
    *     store is per-worker, so the effective global limit becomes max×workers.
    *   - DB_POOL_MAX should be reviewed (below) — each worker gets its own
-   *     independent pg.Pool, so total DB connections = DB_POOL_MAX×workers.
+   *     independent pools. Include workload, advisory-lock and numbering
+   *     capacity for every worker/replica, plus other database consumers.
    *  KNOWN GAP: the WhatsApp outbound-send gap in lib/whatsapp/wasender.ts is
    *  enforced in-process only (a per-worker Promise chain, no cross-process
    *  lock). With workers>1 the effective minimum gap between WhatsApp sends
@@ -85,6 +86,12 @@ const envSchema = z.object({
    *  on the Postgres max_connections ceiling for a larger total
    *  (DB_POOL_MAX × CLUSTER_WORKERS). */
   DB_POOL_MAX: z.coerce.number().int().min(1).max(100).optional(),
+  /** Portion of DB_POOL_MAX reserved for in-process scheduler Prisma work.
+   * Unset gives the scheduler up to two connections while preserving at least
+   * one request connection; 0 disables workload isolation safely. */
+  SCHEDULER_DB_POOL_MAX: z.coerce.number().int().min(0).max(100).optional(),
+  /** Dedicated raw SQL counter transactions; separate to avoid nested Prisma transaction checkout deadlocks. */
+  NUMBERING_POOL_MAX: z.coerce.number().int().min(1).max(16).default(2),
   /**
    * Connections reserved for scheduler advisory locks. These are separate
    * from the Prisma request pool; keep the combined per-worker total within

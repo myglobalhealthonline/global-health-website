@@ -1,4 +1,5 @@
 import type { FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
+import { runWithSchedulerDb } from "../db/prisma.js";
 import { env } from "../config/env.js";
 import { isValidCronSecret } from "../utils/cron-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -36,6 +37,7 @@ const cronSubscriptionsRoute: FastifyPluginAsync = async (app) => {
   // Every ~5 minutes.
   app.post("/api/cron/subscriptions", async (request, reply) => {
     if (!checkToken(request, reply)) return;
+    return runWithSchedulerDb(async () => {
     try {
       const [sweep, grace] = await Promise.all([
         sweepExpiredReservations(),
@@ -50,12 +52,14 @@ const cronSubscriptionsRoute: FastifyPluginAsync = async (app) => {
       app.log.error(err, "Subscription cron failed");
       return reply.status(500).send(errorResponse("Subscription cron failed"));
     }
+    });
   });
 
   // Once a day. The 24h match window dedups; running this more than once a day
   // would send duplicate reminders.
   app.post("/api/cron/subscriptions/daily", async (request, reply) => {
     if (!checkToken(request, reply)) return;
+    return runWithSchedulerDb(async () => {
     try {
       const { remindersSent } = await sendDueRenewalReminders();
       return okResponse({ remindersSent });
@@ -63,6 +67,7 @@ const cronSubscriptionsRoute: FastifyPluginAsync = async (app) => {
       app.log.error(err, "Subscription daily cron failed");
       return reply.status(500).send(errorResponse("Subscription daily cron failed"));
     }
+    });
   });
 };
 

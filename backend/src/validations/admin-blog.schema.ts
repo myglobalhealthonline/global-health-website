@@ -132,6 +132,7 @@ export const publicBlogParamsSchema = z.object({
 });
 
 export const publicBlogQuerySchema = z.object({
+  view: z.enum(["full", "summary"]).optional(),
   locale: z.preprocess(
     (v) => (v === "" || v === undefined || v === null ? undefined : v),
     localeCodeSchema.optional(),

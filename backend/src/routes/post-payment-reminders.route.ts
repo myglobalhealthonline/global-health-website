@@ -1,4 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
+import { runWithSchedulerDb } from "../db/prisma.js";
 import { env } from "../config/env.js";
 import { isValidCronSecret } from "../utils/cron-auth.js";
 import { runPostPaymentReminderCron } from "../modules/automation/post-payment-flow.service.js";
@@ -15,6 +16,7 @@ const postPaymentRemindersRoute: FastifyPluginAsync = async (app) => {
       return reply.status(401).send(errorResponse("Not authorised"));
     }
 
+    return runWithSchedulerDb(async () => {
     try {
       const result = await runPostPaymentReminderCron();
       return okResponse(
@@ -28,6 +30,7 @@ const postPaymentRemindersRoute: FastifyPluginAsync = async (app) => {
       app.log.error(error);
       return reply.status(500).send(errorResponse("Could not run post-payment reminders"));
     }
+    });
   });
 };
 

@@ -10,7 +10,7 @@ import multipart from "@fastify/multipart";
 import rateLimit from "@fastify/rate-limit";
 import Fastify, { type FastifyError } from "fastify";
 import { env } from "./config/env.js";
-import { pool } from "./db/prisma.js";
+import { dbPoolCapacity, numberingPool, pool, schedulerPool, schedulerLockPool } from "./db/prisma.js";
 import { buildOriginGuardHook } from "./utils/origin-guard.js";
 import { isTrustedBuildRead, isTrustedSsrPublicRead } from "./utils/rate-limit-trust.js";
 import { errorResponse } from "./utils/response.js";
@@ -75,6 +75,16 @@ export async function buildApp() {
         dbPoolWaiting: pool.waitingCount,
         dbPoolIdle: pool.idleCount,
         dbPoolTotal: pool.totalCount,
+        schedulerDbPoolWaiting: schedulerPool.waitingCount,
+        schedulerDbPoolIdle: schedulerPool.idleCount,
+        schedulerDbPoolTotal: schedulerPool.totalCount,
+        schedulerLockPoolWaiting: schedulerLockPool.waitingCount,
+        schedulerLockPoolIdle: schedulerLockPool.idleCount,
+        schedulerLockPoolTotal: schedulerLockPool.totalCount,
+        numberingPoolWaiting: numberingPool.waitingCount,
+        numberingPoolIdle: numberingPool.idleCount,
+        numberingPoolTotal: numberingPool.totalCount,
+        dbPoolConfiguredCapacity: dbPoolCapacity.total,
       },
       "api timing",
     );

@@ -16,7 +16,15 @@
  * These are read-through caches — a miss costs a query, never correctness.
  */
 
-type ClearFn = () => void;
+export type AvailabilityCacheInvalidation = {
+  /** Inventory writes can name the doctors they changed. Omit for a full flush. */
+  doctorIds?: readonly string[];
+  /** Kept for callers that know a broader service or country dependency. */
+  serviceIds?: readonly string[];
+  countryCodes?: readonly string[];
+};
+
+type ClearFn = (scope?: AvailabilityCacheInvalidation) => void;
 
 const registered = new Set<ClearFn>();
 
@@ -24,6 +32,6 @@ export function registerAvailabilityCache(clear: ClearFn): void {
   registered.add(clear);
 }
 
-export function invalidateAvailabilityCaches(): void {
-  for (const clear of registered) clear();
+export function invalidateAvailabilityCaches(scope?: AvailabilityCacheInvalidation): void {
+  for (const clear of registered) clear(scope);
 }
