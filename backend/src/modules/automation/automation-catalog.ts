@@ -79,6 +79,24 @@ export const AUTOMATION_CATALOG: AutomationDefinition[] = [
     maxStages: 1,
   },
   {
+    key: "health_test_order_paid",
+    name: "Health test kit — booking received",
+    flow: "Order paid",
+    description:
+      "A health test kit order is paid. Staff get the fulfilment alert (admin WhatsApp numbers, the admin WhatsApp group, admin emails and the portal bell) carrying the customer's name, phone, kit(s) and full delivery address. The customer gets a WhatsApp order confirmation in their booking language, gated on the WhatsApp opt-out on the checkout shipping panel. Fires once per order (idempotent across the webhook, the outbox retry and the Stripe sync fallback).",
+    channels: ["whatsapp", "email", "portal"],
+    maxStages: 1,
+  },
+  {
+    key: "health_test_booked",
+    name: "Health test kit — Memed booking outcome",
+    flow: "Order paid (Brazil)",
+    description:
+      "Brazil-only follow-up to the alert above: whether the paid kit reached Memed, so a failed booking is picked up manually. Dormant until Memed credentials are configured.",
+    channels: ["whatsapp", "email", "portal"],
+    maxStages: 1,
+  },
+  {
     key: "order_refund",
     name: "Order refund",
     flow: "Order refunded",

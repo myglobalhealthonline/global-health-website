@@ -191,6 +191,10 @@ export function CheckoutPageClient({
       shipCity: String(form.get("shipCity") ?? ""),
       shipPostalCode: String(form.get("shipPostalCode") ?? ""),
       shipCountryCode: String(form.get("shipCountryCode") ?? cart.countryCode),
+      // Default-ON opt-out: the checkbox only appears on shipped (product)
+      // orders, so an unchecked box on a consultation-only checkout — where the
+      // field is never rendered — must not read as a refusal.
+      whatsappConsent: needsShipping ? form.get("whatsappConsent") === "on" : undefined,
       returnTo,
       notificationLocale: notificationLocaleFromLang(lang),
       couponCode: coupon?.code,
@@ -550,6 +554,18 @@ export function CheckoutPageClient({
                     <Field name="shipCity" label={t.city} required />
                     <Field name="shipPostalCode" label={t.postalCode} required />
                   </div>
+                  {/* Default-ON opt-out. A kit order has no booking form, so
+                      this is the only place the buyer can decline WhatsApp
+                      updates about their own delivery. */}
+                  <label className="mt-5 flex items-start gap-2.5 text-sm">
+                    <input
+                      type="checkbox"
+                      name="whatsappConsent"
+                      defaultChecked
+                      className="mt-0.5 size-4 shrink-0 accent-[var(--color-brand-primary)]"
+                    />
+                    <span style={{ color: "var(--color-text-muted)" }}>{t.whatsappConsent}</span>
+                  </label>
                 </fieldset>
               ) : null}
 
