@@ -2,6 +2,7 @@ import { fetchSuklStatus } from "@/lib/admin/admin-api";
 import { AdminCard, PageHeader, Pill, StatCard } from "../../_components/atoms";
 import { SuklConnectionPanel } from "./_components/sukl-connection-panel";
 import { SuklDoctorIdentities } from "./_components/sukl-doctor-identities";
+import { SuklPrescriptionPanel } from "./_components/sukl-prescription-panel";
 import { SuklWsdlPanel } from "./_components/sukl-wsdl-panel";
 import { SuklAppPingPanel } from "./_components/sukl-app-ping-panel";
 
@@ -208,15 +209,17 @@ export default async function AdminSuklPage() {
         />
       </AdminCard>
 
+      <SuklPrescriptionPanel callable={status.callable} />
+
       <AdminCard>
         <h2 className="m-0 mb-2 text-sm font-bold">Not yet implemented</h2>
         <p className="m-0 text-sm" style={{ color: "var(--portal-text-2)" }}>
-          ePoukaz creation, status lookup and cancellation are not built. Their operation names,
-          XML namespaces and required fields come from SÚKL&rsquo;s WSDL/XSD, which has not been
-          supplied — see <code>docs/sukl/INTERFACE_INVENTORY.md</code> for the blocker list and
-          <code> docs/sukl/SCOPE_CONFIRMATION.md</code> for the questions still open with SÚKL.
-          Cross-border eRecept is out of scope until SÚKL confirms an outpatient workplace may
-          perform it.
+          Amending a prescription (<code>ZmenitPredpis</code>), reading one back
+          (<code>NacistPredpis</code>), listing a prescriber&rsquo;s prescriptions
+          (<code>SeznamPredpisu</code>) and downloading the patient&rsquo;s průvodka
+          (<code>StahnoutPruvodku</code>) are not built yet. Issuing and withdrawal are.
+          Cross-border eRecept stays out of scope until SÚKL confirm an outpatient workplace may
+          perform it — see <code>docs/sukl/SCOPE_CONFIRMATION.md</code>.
         </p>
       </AdminCard>
     </>

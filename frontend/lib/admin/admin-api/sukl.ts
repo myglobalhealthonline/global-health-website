@@ -128,6 +128,20 @@ export type SuklAppPingDto = {
   responseHeaders: Record<string, string> | null;
 };
 
+/** Result of issuing an eRecept. */
+export type SuklIssuePrescriptionDto = {
+  prescriptionId: string;
+  /** SÚKL treat this as the authorisation id for withdrawal and amendment. */
+  submissionId: string;
+  ok: boolean;
+  documentId: string | null;
+  httpStatus: number;
+  durationMs: number;
+  errorCode: string | null;
+  errorMessage: string | null;
+  errorAdvice: string | null;
+};
+
 /** Result of AppPingZEP — the signed ping. */
 export type SuklAppPingZepDto = {
   service: string;
