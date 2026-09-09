@@ -9,7 +9,12 @@ import {
   SUKL_SERVICE_LABELS,
   type SuklService,
 } from "./config.js";
-import { buildSoapEnvelope, el, extractElementText, extractFault } from "./envelope.js";
+import {
+  buildSoapEnvelope,
+  comEl,
+  extractElementText,
+  extractFault,
+} from "./envelope.js";
 import { isSuklError, SuklError, SuklNotConfiguredError } from "./errors.js";
 import { suklPost } from "./transport.js";
 
@@ -147,16 +152,16 @@ export function buildAppPingRequest(input: {
   namespace: string;
 }): string {
   const body =
-    "<Doklad><Pristupujici>" +
-    el("Uzivatel", input.uzivatel) +
-    el("Pracoviste", input.pracoviste) +
-    "</Pristupujici></Doklad>" +
-    "<Zprava>" +
-    el("ID_Zpravy", input.idZpravy) +
-    el("Verze", input.verze) +
-    el("Odeslano", input.odeslano.toISOString()) +
-    el("SW_Klienta", input.swKlienta) +
-    "</Zprava>";
+    "<Doklad><com:Pristupujici>" +
+    comEl("Uzivatel", input.uzivatel) +
+    comEl("Pracoviste", input.pracoviste) +
+    "</com:Pristupujici></Doklad>" +
+    "<com:Zprava>" +
+    comEl("ID_Zpravy", input.idZpravy) +
+    comEl("Verze", input.verze) +
+    comEl("Odeslano", input.odeslano.toISOString()) +
+    comEl("SW_Klienta", input.swKlienta) +
+    "</com:Zprava>";
 
   return buildSoapEnvelope({
     operationElement: "AppPingDotaz",

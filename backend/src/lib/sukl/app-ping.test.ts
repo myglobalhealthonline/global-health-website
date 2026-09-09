@@ -35,21 +35,21 @@ test("builds the request exactly as zprava_bez_dotaz_type specifies", () => {
 
   // The schemas are elementFormDefault="qualified", so the operation element
   // carries a DEFAULT xmlns and the children inherit it unprefixed.
-  assert.match(xml, /<AppPingDotaz xmlns="http:\/\/www\.sukl\.cz\/erp\/common">/);
+  assert.match(xml, /<AppPingDotaz xmlns="http:\/\/www\.sukl\.cz\/erp\/common" xmlns:com="http:\/\/www\.sukl\.cz\/erp\/common">/);
 
   // Order is not cosmetic — xsd:sequence means SÚKL rejects a reordered body.
   const order = [
     "<Doklad>",
-    "<Pristupujici>",
-    "<Uzivatel>",
-    "<Pracoviste>",
-    "</Pristupujici>",
+    "<com:Pristupujici>",
+    "<com:Uzivatel>",
+    "<com:Pracoviste>",
+    "</com:Pristupujici>",
     "</Doklad>",
-    "<Zprava>",
-    "<ID_Zpravy>",
-    "<Verze>",
-    "<Odeslano>",
-    "<SW_Klienta>",
+    "<com:Zprava>",
+    "<com:ID_Zpravy>",
+    "<com:Verze>",
+    "<com:Odeslano>",
+    "<com:SW_Klienta>",
   ];
   let cursor = -1;
   for (const token of order) {
@@ -58,9 +58,9 @@ test("builds the request exactly as zprava_bez_dotaz_type specifies", () => {
     cursor = at;
   }
 
-  assert.ok(xml.includes(`<Pracoviste>${INPUT.pracoviste}</Pracoviste>`));
-  assert.ok(xml.includes("<Verze>202601B</Verze>"));
-  assert.ok(xml.includes("<Odeslano>2026-08-13T10:20:30.000Z</Odeslano>"));
+  assert.ok(xml.includes(`<com:Pracoviste>${INPUT.pracoviste}</com:Pracoviste>`));
+  assert.ok(xml.includes("<com:Verze>202601B</com:Verze>"));
+  assert.ok(xml.includes("<com:Odeslano>2026-08-13T10:20:30.000Z</com:Odeslano>"));
 });
 
 test("AppPing uses the COMMON namespace even on the CUEP service", () => {
@@ -74,7 +74,9 @@ test("AppPing uses the COMMON namespace even on the CUEP service", () => {
   // Asserting the negative matters as much as the positive here: the cuep
   // namespace on this element is the exact bug SÚKL rejected.
   const xml = buildAppPingRequest({ ...INPUT, namespace: SUKL_NAMESPACE_COMMON });
-  assert.ok(xml.includes(`<AppPingDotaz xmlns="${SUKL_NAMESPACE_COMMON}">`));
+  assert.ok(
+    xml.includes(`<AppPingDotaz xmlns="${SUKL_NAMESPACE_COMMON}" xmlns:com="${SUKL_NAMESPACE_COMMON}">`),
+  );
   assert.ok(!xml.includes(SUKL_NAMESPACE_CUEP));
 });
 
@@ -125,8 +127,8 @@ test("falls back to the SOAP faultcode when there is no structured Chyba", () =>
 test("a clean 200 is a pass, and echoes the message id", () => {
   const body =
     '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body>' +
-    '<AppPingOdpoved xmlns="http://www.sukl.cz/erp/common"><Zprava>' +
-    "<ID_Zpravy>99999999-8888-7777-6666-555555555555</ID_Zpravy>" +
+    '<AppPingOdpoved xmlns="http://www.sukl.cz/erp/common"><com:Zprava>' +
+    "<com:ID_Zpravy>99999999-8888-7777-6666-555555555555</com:ID_Zpravy>" +
     "</Zprava></AppPingOdpoved></soap:Body></soap:Envelope>";
   const v = interpretAppPingResponse({ httpStatus: 200, body });
   assert.equal(v.ok, true);
@@ -169,7 +171,7 @@ test("a non-2xx with no fault body still fails, with the status", () => {
 test("values are XML-escaped so a stray character cannot break the envelope", () => {
   assert.equal(escapeXml(`a&b<c>"d"'e'`), "a&amp;b&lt;c&gt;&quot;d&quot;&apos;e&apos;");
   const xml = buildAppPingRequest({ ...INPUT, swKlienta: "a&b" });
-  assert.ok(xml.includes("<SW_Klienta>a&amp;b</SW_Klienta>"));
+  assert.ok(xml.includes("<com:SW_Klienta>a&amp;b</com:SW_Klienta>"));
 });
 
 test("el() omits an element rather than emitting an empty one", () => {
@@ -199,7 +201,11 @@ test("buildSoapEnvelope nests the body inside soap:Body", () => {
     namespace: "urn:x",
     body: "<A>1</A>",
   });
-  assert.ok(xml.includes('<soap:Body><Op xmlns="urn:x"><A>1</A></Op></soap:Body>'));
+  assert.ok(
+    xml.includes(
+      `<soap:Body><Op xmlns="urn:x" xmlns:com="${SUKL_NAMESPACE_COMMON}"><A>1</A></Op></soap:Body>`,
+    ),
+  );
 });
 
 test("the shared elements take CUER's own namespace, not common", () => {

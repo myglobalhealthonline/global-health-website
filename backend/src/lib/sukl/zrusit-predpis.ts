@@ -1,6 +1,6 @@
 import { SHARED_ELEMENT_NAMESPACE } from "./app-ping.js";
 import { type SuklService } from "./config.js";
-import { buildMessageElement, el, extractElementText, extractFault } from "./envelope.js";
+import { buildMessageElement, comEl, el, extractElementText, extractFault } from "./envelope.js";
 import { SuklError } from "./errors.js";
 
 /**
@@ -64,8 +64,8 @@ export function buildCancelPrescriptionRequest(input: SuklCancelPrescriptionInpu
 
   const doklad =
     "<Doklad>" +
-    el("Uzivatel", input.uzivatel) +
-    el("Pracoviste", input.pracoviste) +
+    comEl("Uzivatel", input.uzivatel) +
+    comEl("Pracoviste", input.pracoviste) +
     el("ID_Dokladu", input.documentId) +
     el("AutorizacniID", input.authorisationId) +
     el("DatumZruseni", input.cancelledOn) +
@@ -73,12 +73,12 @@ export function buildCancelPrescriptionRequest(input: SuklCancelPrescriptionInpu
     "</Doklad>";
 
   const zprava =
-    "<Zprava>" +
-    el("ID_Zpravy", input.messageId) +
-    el("Verze", input.interfaceVersion) +
-    el("Odeslano", input.sentAt.toISOString()) +
-    el("SW_Klienta", input.swKlienta) +
-    "</Zprava>";
+    "<com:Zprava>" +
+    comEl("ID_Zpravy", input.messageId) +
+    comEl("Verze", input.interfaceVersion) +
+    comEl("Odeslano", input.sentAt.toISOString()) +
+    comEl("SW_Klienta", input.swKlienta) +
+    "</com:Zprava>";
 
   // No Signature: cancellation is not on SÚKL's signed-operations list.
   return buildMessageElement({

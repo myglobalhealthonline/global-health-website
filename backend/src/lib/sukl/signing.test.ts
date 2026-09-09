@@ -19,11 +19,13 @@ const FIXTURE = VALID_PFX;
 const PASSWORD = FIXTURE_PASSWORD;
 
 const MESSAGE =
-  '<AppPingZEPDotaz xmlns="http://www.sukl.cz/erp/201704">' +
-  "<Doklad><Pristupujici><Uzivatel>u-1</Uzivatel>" +
-  "<Pracoviste>00150928369</Pracoviste></Pristupujici></Doklad>" +
-  "<Zprava><ID_Zpravy>msg-1</ID_Zpravy><Verze>202601B</Verze>" +
-  "<Odeslano>2026-09-05T08:00:00.000Z</Odeslano></Zprava>" +
+  '<AppPingZEPDotaz xmlns="http://www.sukl.cz/erp/201704" ' +
+  'xmlns:com="http://www.sukl.cz/erp/common">' +
+  "<Doklad><com:Pristupujici><com:Uzivatel>u-1</com:Uzivatel>" +
+  "<com:Pracoviste>00150928369</com:Pracoviste></com:Pristupujici></Doklad>" +
+  "<com:Zprava><com:ID_Zpravy>msg-1</com:ID_Zpravy>" +
+  "<com:Verze>202501A</com:Verze>" +
+  "<com:Odeslano>2026-09-05T08:00:00.000Z</com:Odeslano></com:Zprava>" +
   "</AppPingZEPDotaz>";
 
 function key() {
@@ -68,12 +70,12 @@ test("the signed message is still the message — no envelope, root unchanged", 
   assert.ok(!signed.includes("<?xml"));
   // The namespace must stay declared on the message root; hoisting it to the
   // Envelope later is what SÚKL's document forbids.
-  assert.match(signed, /^<AppPingZEPDotaz xmlns="http:\/\/www\.sukl\.cz\/erp\/201704">/);
+  assert.match(signed, /^<AppPingZEPDotaz xmlns="http:\/\/www\.sukl\.cz\/erp\/201704" xmlns:com="http:\/\/www\.sukl\.cz\/erp\/common">/);
   // xml-crypto will stamp Id="_0" on the root unless isEmptyUri is set, and
   // that attribute is not in SÚKL's schema.
   assert.ok(!/^<AppPingZEPDotaz[^>]*\sId=/.test(signed));
   assert.ok(signed.includes("<Doklad>"));
-  assert.ok(signed.includes("<Zprava>"));
+  assert.ok(signed.includes("<com:Zprava>"));
 });
 
 test("the signature actually verifies over the produced bytes", () => {
