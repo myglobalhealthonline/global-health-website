@@ -527,6 +527,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (isCountryFeatureEnabled(country, "health-tests")) {
       pushLocalized(country, "/lab-tests", 0.7, dated(newest(code, "test")));
     }
+    // Test-centre booking hub. Gated like the others so a market without it
+    // does not get a dead 404 submitted to Search Console. Undated: the
+    // catalogue is built from the global ExamType list plus per-country
+    // offerings, neither of which the `newest()` index tracks.
+    if (isCountryFeatureEnabled(country, "book-a-test")) {
+      pushLocalized(country, "/book-a-test", 0.7);
+    }
     if (isCountryFeatureEnabled(country, "subscriptions")) {
       pushLocalized(country, "/pricing", 0.6, dated(newest(code, "plan")));
     }

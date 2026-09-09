@@ -64,6 +64,9 @@ export async function GET() {
     if (isCountryFeatureEnabled(c, "health-tests")) {
       lines.push(`- [${c.name} - lab tests](${origin}/${slug}/${lang}/lab-tests): at-home and in-clinic laboratory tests.`);
     }
+    if (isCountryFeatureEnabled(c, "book-a-test")) {
+      lines.push(`- [${c.name} - book a test](${origin}/${slug}/${lang}/book-a-test): book a lab test or scan at a test centre, by location and time.`);
+    }
   }
 
   lines.push(
