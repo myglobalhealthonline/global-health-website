@@ -2,7 +2,7 @@
 export const reviewCampaignMessages = {
   "en": {
     "title": "Share your experience",
-    "intro": "Thank you for using Global Health. If you would like, leave an honest review on your preferred platform. Choose one platform below.",
+    "intro": "Thank you for using Global Health. If you would like, leave an honest review on your preferred platform.",
     "reminderTitle": "A reminder to share your experience",
     "reminder": "If you have not shared your experience yet and would like to, you can leave a review here. If you have already reviewed, thank you.",
     "cta": "Leave a review",
@@ -22,7 +22,7 @@ export const reviewCampaignMessages = {
   },
   "cs": {
     "title": "Podělte se o svou zkušenost",
-    "intro": "Děkujeme, že využíváte Global Health. Pokud chcete, napište upřímné hodnocení na platformě, kterou si zvolíte. Vyberte jednu možnost níže.",
+    "intro": "Děkujeme, že využíváte Global Health. Pokud chcete, napište upřímné hodnocení na platformě, kterou si zvolíte.",
     "reminderTitle": "Připomenutí hodnocení",
     "reminder": "Pokud jste se ještě nepodělili o svou zkušenost a chcete tak učinit, můžete napsat hodnocení zde. Pokud jste již hodnotili, děkujeme.",
     "cta": "Napsat hodnocení",
@@ -42,7 +42,7 @@ export const reviewCampaignMessages = {
   },
   "pt": {
     "title": "Partilhe a sua experiência",
-    "intro": "Obrigado por utilizar a Global Health. Se desejar, deixe uma avaliação honesta na plataforma que preferir. Escolha uma opção abaixo.",
+    "intro": "Obrigado por utilizar a Global Health. Se desejar, deixe uma avaliação honesta na plataforma que preferir.",
     "reminderTitle": "Lembrete para partilhar a sua experiência",
     "reminder": "Se ainda não partilhou a sua experiência e desejar fazê-lo, pode deixar uma avaliação aqui. Se já avaliou, obrigado.",
     "cta": "Deixar uma avaliação",
@@ -62,7 +62,7 @@ export const reviewCampaignMessages = {
   },
   "es": {
     "title": "Comparta su experiencia",
-    "intro": "Gracias por utilizar Global Health. Si lo desea, deje una reseña honesta en su plataforma preferida. Elija una opción a continuación.",
+    "intro": "Gracias por utilizar Global Health. Si lo desea, deje una reseña honesta en su plataforma preferida.",
     "reminderTitle": "Un recordatorio para compartir su experiencia",
     "reminder": "Si aún no ha compartido su experiencia y desea hacerlo, puede dejar una reseña aquí. Si ya lo ha hecho, gracias.",
     "cta": "Dejar una reseña",
@@ -82,7 +82,7 @@ export const reviewCampaignMessages = {
   },
   "ro": {
     "title": "Împărtășiți experiența",
-    "intro": "Vă mulțumim că utilizați Global Health. Dacă doriți, lăsați o recenzie sinceră pe platforma preferată. Alegeți o opțiune de mai jos.",
+    "intro": "Vă mulțumim că utilizați Global Health. Dacă doriți, lăsați o recenzie sinceră pe platforma preferată.",
     "reminderTitle": "Un memento pentru a împărtăși experiența",
     "reminder": "Dacă nu v-ați împărtășit încă experiența și doriți să o faceți, puteți lăsa o recenzie aici. Dacă ați scris deja o recenzie, vă mulțumim.",
     "cta": "Scrieți o recenzie",
@@ -102,7 +102,7 @@ export const reviewCampaignMessages = {
   },
   "pt-br": {
     "title": "Compartilhe sua experiência",
-    "intro": "Obrigado por usar a Global Health. Se quiser, deixe uma avaliação honesta na plataforma de sua preferência. Escolha uma opção abaixo.",
+    "intro": "Obrigado por usar a Global Health. Se quiser, deixe uma avaliação honesta na plataforma de sua preferência.",
     "reminderTitle": "Um lembrete para compartilhar sua experiência",
     "reminder": "Se ainda não compartilhou sua experiência e quiser fazer isso, você pode deixar uma avaliação aqui. Se já avaliou, obrigado.",
     "cta": "Deixar uma avaliação",

@@ -755,10 +755,12 @@ export function buildReviewInviteEmail(opts: {
   const title = opts.reminder ? copy.reminderTitle : copy.title;
   const body = opts.reminder ? copy.reminder : copy.intro;
   const link = escapeHtml(opts.link);
+  // Inline styles and table layout survive email clients that strip page CSS.
+  const button = (label: string, primary = false) => `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:16px 0;"><tr><td bgcolor="${primary ? "#B0F122" : "#F6F8F1"}" style="border:1px solid ${primary ? "#B0F122" : "#D5DDD2"};border-radius:8px;text-align:center;"><a href="${link}" style="display:inline-block;padding:16px 24px;font-family:Arial,sans-serif;font-size:16px;line-height:22px;font-weight:700;color:#143529;text-decoration:none;border-radius:8px;">${escapeHtml(label)}</a></td></tr></table>`;
   return {
     subject: title + " — Global Health",
     text: [body, copy.cta + ": " + opts.link, copy.privacy, copy.alreadyReviewed + " / " + copy.optOut + ": " + opts.link].join("\n\n"),
-    html: wrapHtml(title, `<p>${escapeHtml(body)}</p><p><a href="${link}">${escapeHtml(copy.cta)}</a></p><p>${escapeHtml(copy.privacy)}</p><p><a href="${link}">${escapeHtml(copy.alreadyReviewed)}</a> · <a href="${link}">${escapeHtml(copy.optOut)}</a></p>`),
+    html: wrapHtml(title, `<div style="font-family:Arial,sans-serif;font-size:16px;line-height:1.6;color:#143529;"><p>${escapeHtml(body)}</p>${button(copy.cta, true)}<p style="font-size:14px;color:#52645B;">${escapeHtml(copy.privacy)}</p>${button(copy.alreadyReviewed)}${button(copy.optOut)}</div>`),
   };
 }
 

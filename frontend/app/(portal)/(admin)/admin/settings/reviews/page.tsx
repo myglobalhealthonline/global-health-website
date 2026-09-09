@@ -48,7 +48,8 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
     await requireAdminAction();
 
     const website = formData.get("section") === "website";
-    const tab = website ? "website" : "automation";
+    const links = formData.get("section") === "links";
+    const tab = website ? "website" : links ? "links" : "automation";
     let body: Record<string, unknown>;
     try {
       const primaryRaw = String(formData.get("primaryProvider") ?? "").trim();
@@ -70,8 +71,10 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
         primaryProvider: primaryRaw === "" ? null : primaryRaw,
 
       };
-      if (!website) body = {
+      if (!website && !links) body = {
         automation: { enabled: formData.get("enabled") === "on", delayHours: Number(formData.get("delayHours")), maxFollowups: Number(formData.get("maxFollowups")), followupIntervalDays: Number(formData.get("followupIntervalDays")) },
+      };
+      if (links) body = {
         doctify: { reviewUrl: String(formData.get("doctifyReviewUrl") ?? "").trim() || null },
         trustpilot: { reviewUrl: String(formData.get("trustpilotReviewUrl") ?? "").trim() || null },
         destinations: settings.destinations.map((d) => ({ countryCode: d.countryCode, sendReviewRequests: formData.get(`sendReviewRequests_${d.countryCode}`) === "true", googleReviewUrl: String(formData.get(`googleReviewUrl_${d.countryCode}`) ?? "").trim() || null })),
@@ -110,7 +113,8 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
   }
 
   const settings = result.data;
-  const previews = sp.tab !== "activity" && sp.tab !== "website" ? await fetchReviewEmailPreviews() : null;
+  const activeTab = ["links", "automation", "activity", "website"].includes(sp.tab ?? "") ? sp.tab! : "links";
+  const previews = activeTab === "automation" ? await fetchReviewEmailPreviews() : null;
 
   return (
     <>
@@ -133,29 +137,37 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
       ) : null}
 
       <nav aria-label="Review settings" className="mb-5 flex flex-wrap gap-3">
-        {[["automation", "Automation"], ["activity", "Activity"], ["website", "Website display"]].map(([key, label]) => <Link key={key} href={`?tab=${key}`} aria-current={(sp.tab ?? "automation") === key ? "page" : undefined} className="gh-btn gh-btn-secondary">{label}</Link>)}
+        {[["links", "Review links & GBP"], ["automation", "Email automation"], ["activity", "Email activity"], ["website", "Website ratings (optional)"]].map(([key, label]) => <Link key={key} href={`?tab=${key}`} aria-current={activeTab === key ? "page" : undefined} className={`inline-flex min-h-11 items-center justify-center rounded-lg border px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 ${activeTab === key ? "border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)] text-white" : "border-[var(--color-border)] hover:bg-[var(--color-background-soft)]"}`}>{label}</Link>)}
       </nav>
-      {sp.tab === "activity" ? <ReviewActivity searchParams={sp} /> : sp.tab !== "website" ? (
+      {activeTab === "activity" ? <ReviewActivity searchParams={sp} /> : activeTab !== "website" ? (
         <form action={saveAction} className="grid gap-4">
-          <input type="hidden" name="section" value="automation" />
-          <ReviewAutomationSettings settings={settings} />
-          {previews?.ok ? <ReviewEmailPreviews previews={previews.data} /> : <p role="status">Email preview unavailable.</p>}
-          <div className="flex justify-end"><Btn type="submit" variant="primary">Save automation</Btn></div>
+          <input type="hidden" name="section" value={activeTab} />
+          <ReviewAutomationSettings key={activeTab} settings={settings} section={activeTab === "links" ? "links" : "automation"} />
+          <div className="flex justify-end"><Btn type="submit" variant="primary">{activeTab === "links" ? "Save review links" : "Save email automation"}</Btn></div>
+          {activeTab === "automation" && (previews?.ok ? <ReviewEmailPreviews previews={previews.data} /> : <p role="status">Email preview unavailable.</p>)}
         </form>
       ) : <form action={saveAction} className="grid gap-4">
         <input type="hidden" name="section" value="website" />
+        <AdminCard>
+          <h2 className="text-lg font-semibold">Ratings shown on your public website</h2>
+          <p className="mt-2 text-sm">This optional section controls rating totals and provider widgets. You can leave it empty and still collect reviews. Use only ratings and counts verified on the provider profile.</p>
+          <Link href="?tab=links" className="mt-3 inline-flex min-h-11 items-center rounded-lg border border-[var(--color-border)] px-4 font-semibold">Add or edit GBP and Doctify review links →</Link>
+        </AdminCard>
+        <details className="rounded-xl border border-[var(--color-border)] p-4">
+        <summary className="cursor-pointer py-2 font-semibold">Edit website ratings and widget settings</summary>
+        <div className="mt-4 grid gap-4">
         <FormSection
-          title="Primary provider"
-          description="Whichever provider is selected here feeds the site-wide AggregateRating structured data (the star rating Google can show in search results). Leave unset to keep emitting no rating markup at all."
+          title="Featured rating source"
+          description="Choose the provider whose verified rating the website shares with search engines. This does not change where patients leave reviews or guarantee stars in search results."
         >
           <label className="flex flex-col gap-2">
-            <span className="gh-field-label">Primary provider</span>
+            <span className="gh-field-label">Rating source</span>
             <select
               name="primaryProvider"
               className="gh-select min-w-0"
               defaultValue={settings.primaryProvider ?? ""}
             >
-              <option value="">— None (emit no AggregateRating) —</option>
+              <option value="">Do not publish a rating</option>
               <option value="TRUSTPILOT">Trustpilot</option>
               <option value="GOOGLE">Google</option>
               <option value="DOCTIFY">Doctify</option>
@@ -208,7 +220,7 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
 
         <FormSection
           title="Trustpilot global rating data"
-          description="Business identifier and verified public rating data. The patient review URL is configured above."
+          description="Optional widget identifier and verified public rating. Add the patient collection link in Review links & GBP."
         >
           <label className="flex flex-col gap-2">
             <span className="gh-field-label">Business unit id</span>
@@ -251,7 +263,7 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
 
         <FormSection
           title="Google rating data (legacy display)"
-          description="This saved rating belongs to one Google Business Profile, not all six countries. Existing website rendering is preserved; country review links are managed in Automation."
+          description="This optional website rating represents a single Google profile. Add all country GBP collection links in Review links & GBP."
         >
           <label className="flex flex-col gap-2">
             <span className="gh-field-label">Place id</span>
@@ -299,9 +311,11 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
 
         <div className="flex justify-end gap-3">
           <Btn type="submit" variant="primary">
-            Save website display
+            Save website ratings
           </Btn>
         </div>
+        </div>
+        </details>
       </form>}
     </>
   );
