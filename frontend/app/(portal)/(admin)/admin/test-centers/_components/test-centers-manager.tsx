@@ -1054,6 +1054,7 @@ export async function TestCentersManager({
               <Th>Category</Th>
               <Th>In use</Th>
               <Th>Status</Th>
+              <Th>On website</Th>
               <Th align="right">Actions</Th>
             </Thead>
             <tbody>
@@ -1066,6 +1067,7 @@ export async function TestCentersManager({
                         : "No exam types yet. Add one to start pricing centers."}
                     </span>
                   </Td>
+                  <Td></Td>
                   <Td></Td>
                   <Td></Td>
                   <Td></Td>
@@ -1084,6 +1086,15 @@ export async function TestCentersManager({
                     <Td>
                       <Pill tone={t.isActive ? "published" : "inactive"}>
                         {t.isActive ? "Active" : "Inactive"}
+                      </Pill>
+                    </Td>
+                    {/* Publication is a SEPARATE gate from Active: Active means
+                        an admin may price it at a centre, On website means
+                        patients can find and book it. A test needs both, plus
+                        at least one active centre offering it. */}
+                    <Td>
+                      <Pill tone={t.isBookable ? "published" : "inactive"}>
+                        {t.isBookable ? "Live" : "Hidden"}
                       </Pill>
                     </Td>
                     <Td align="right">
