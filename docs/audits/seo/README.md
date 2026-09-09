@@ -21,7 +21,20 @@ canonical status ledger.
 8. `../../plans/seo-editorial-next-agent-brief-2026-08-25.md` — detailed, copy-paste
    execution brief for the next agent.
 
-## Current position, 4 September 2026
+## Latest ledger updates, 9 September 2026
+
+[Google access and measurement review](google-access-review-2026-09-09.md) verifies
+both browser logins, recent GSC totals and GA4 collection; it confirms the missing
+checkout key-event registration and absent GSC integration link (ledger §49).
+
+GA4 collection was restored and Realtime events verified (§47); the historical gap
+and unverified funnel/key-event work remain. Portugal FAQ recrawl is closed (§44).
+Performance remediation is verified on Development, with production promotion still
+open (§46). Clinical-approval enforcement remains open (§43).
+See [session recovery](../../../seo/README.md) for the full file inventory and the
+canonical ledger §48 for recovered results and measurement dates.
+
+## Audit snapshot, 4 September 2026
 
 - **GA4 is not measuring anything and has not been since 2026-08-02.** Production is
   tagged `G-4PPGECG12X`; the property the tooling reads (`547083375`) streams
@@ -64,8 +77,8 @@ recommendations must not be silently rewritten to look current. When live eviden
 changes a status, update `seo-control-state.md` and record the new dated report.
 
 The July audit directory and the 16 August HTML review are historical snapshots.
-The 25 August roadmap review is the current human-readable report until a later dated
-report replaces it.
+The 4 September six-market audit is the latest full report. Later dated ledger
+entries supersede its status conclusions without rewriting its historical evidence.
 
 ## Audit rule
 

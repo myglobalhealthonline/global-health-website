@@ -1,6 +1,6 @@
 # SEO control state — canonical
 
-**Last operational update: 2026-09-09** — §43 records local, undeployed performance remediation; §42 retains the six-market audit and P0 measurement defect. Historical audit files remain snapshots;
+**Last operational update: 2026-09-09** — §50 records the owner's next markets (Spain, Romania, Brazil) and active recrawl monitoring; §49 verifies Google browser access and records fresh aggregate measurements; §48 indexes session recovery; §47 records restored GA4 collection; §46 records performance remediation verified on Development, with production promotion still open. §43 covers clinical-approval enforcement and §42 retains the dated six-market audit. Historical audit files remain snapshots;
 this ledger is the source of truth for current status, dated gates and future work.
 
 **This file is the single source of truth for the SEO workstream.** It carries the
@@ -8022,7 +8022,11 @@ Balance 12,496 before and after.
 
 ### 42.1 `SEO-MEASURE-001` — GA4 has been recording into an unread property since 2026-08-02. **P0**
 
-**Status: OPEN — BLOCKED ON AN OWNER ACTION OUTSIDE THIS REPOSITORY.**
+**Status updated 2026-09-09: PARTIAL — collection restored (§47).** The production
+measurement ID was corrected and Realtime events verified. Registering
+`begin_checkout` as a key event and validating a fresh organic conversion window
+remain unverified; §47 records no Analytics property-setting change. The incident
+evidence below describes the 2026-09-04 state, not a still-broken production tag.
 
 Production serves GA4 measurement id `G-4PPGECG12X`, read directly from the deployed
 client bundle. GA4 property `547083375` — the property named in `CLAUDE.md`, in the
@@ -8340,3 +8344,111 @@ Production promotion, genuine cold-cache/percentile measurements, actual databas
 ## 47. GA4 collection restored (2026-09-09)
 
 Owner requested repair of the empty GA4 property 547083375. Live consented homepage inspection confirmed the wrong destination G-4PPGECG12X. Corrected only Production Frontend NEXT_PUBLIC_GA_MEASUREMENT_ID to G-SP48D9LJJ5 in Railway and applied the one-variable deployment. Deployment 2f1cd860-f93e-4dfc-b2e4-4611771ac3f9 completed successfully, including healthcheck. Reloaded live homepage renders ga4-init and ga4-loader with G-SP48D9LJJ5. GA4 Realtime then showed 1 active user, page_view, session_start and first_visit. Collection is restored; historical missing data is not backfilled. This redeployed the existing production code; it does not establish deployment of the separate Dev-hassaan Web Vitals/performance batch. No database or Analytics property settings changed.
+
+## 48. Session recovery and evidence tracking (2026-09-09)
+
+Owner reported losing saved sessions after reinstalling Windows. Repository evidence
+and Git history remain available. [SEO entry point](../../seo/README.md) now links
+the full audit history, country packages, editorial drafts and performance records;
+[file inventory](../../seo/file-inventory.csv) lists the recovered evidence paths.
+This is documentation recovery, not a fresh audit, restored conversation history,
+new ranking measurement or production change.
+
+### Recorded results recovered
+
+| Evidence date/window | Recorded result | Source / interpretation |
+| --- | --- | --- |
+| GSC 2026-08-05 through 2026-09-01 | 861 clicks; 60,058 impressions | §42.1, dated first-party snapshot; not a current live pull |
+| 2026-09-04 technical audit | 410/410 primary-locale sitemap URLs passed HTTP/indexability/canonical/H1/OG checks | §42.6; technical program remains complete / monitor exceptions |
+| 2026-09-08 Portugal FAQ | Submitted and indexed; canonical matched; live readback passed | §44; recrawl monitor closed |
+| 2026-09-08 Mala removal | 13 URL shapes returned intentional 410/noindex | §45; removal complete, not an indexing regression |
+| 2026-09-09 GA4 | Correct tag and Realtime page/session events verified | §47; historical gap remains; organic conversion outcomes not established |
+| 2026-09-09 performance | Development deployment and verification recorded | §46; production promotion and field measurements remain open |
+
+### Resume from these items
+
+- **Measurement:** finish the unverified portion of `SEO-MEASURE-001` (§42.1),
+  including `begin_checkout` key-event registration and a fresh conversion window.
+  Collection restoration alone does not prove the booking/purchase funnel.
+- **Passed measurement dates:** review the ledger's early-September gates before
+  treating them as completed. Brazil/Romania doctor recrawls and Spain dermatology
+  were still pre-fix Google snapshots at the last audit (§42.3). Spain's outcome
+  gate is re-armed relative to a post-fix crawl, not automatically overdue.
+- **Upcoming reads:** Spain sick-leave daily series on **2026-09-11** (§42.5);
+  global doctor/indexation review on **2026-09-24** (§6); FAQ, consolidation and
+  applicable editorial/market measurements on **2026-09-30** (§§5–7, 22, 27).
+  Portugal snippet/tool measurements are **2026-10-08/09** (§42.4).
+- **Implementation dependencies:** mutation-boundary clinical approval remains open
+  (§43). Spain/Romania/Brazil metadata and Romania FAQs retain their review gates
+  (§§41–43); no new clinical approval is implied by recovering these files.
+
+### Tool recovery and persistence
+
+On this machine, the handover's `~/.config/claude-seo/google-api.json` and
+`oauth-token.json` paths are absent. The legacy `google_auth.py` script exists.
+No OpenSEO/GSC/GA4 connector is exposed in this session's available tool inventory;
+browser access was subsequently verified in §49; API access remains unverified.
+Reconnect the appropriate account/connector or
+restore local authorization before requesting fresh measurements. Do not infer that
+the cloud data was deleted from missing local credentials, or copy secrets into Git.
+
+Keep this ledger as the sole operational tracker. Save new detailed evidence in its
+existing country/global directory, refresh the file inventory when paths change, and
+record date, data window, source, result, change/deployment proof and next gate here.
+The new documentation is local until committed and pushed; a session or local clone
+alone is not a remote backup. No recurring background monitor was configured by this
+recovery pass.
+
+## 49. Google login verified and measurement reviewed (2026-09-09)
+
+Owner completed sign-in; read-only browser access verified for GA4 `547083375` and
+GSC `sc-domain:myglobalhealth.online`. [Dated review and sources](../audits/seo/google-access-review-2026-09-09.md).
+GA4 Realtime showed two active users and incoming page/session/engagement events;
+the empty September 2–8 historical window predates the repair. GSC Web performance
+for **August 10–September 6** shows **918 clicks / 61.3K impressions / 1.5% CTR**.
+The prior 861-click snapshot overlaps this window; no period-growth claim is made.
+Indexing overview shows 2,098 indexed / 1,744 not indexed (September 4 data), including
+intentional exclusion categories; this does not reopen the technical program.
+
+`SEO-MEASURE-001` remains **PARTIAL**: collection works; Admin confirms
+`begin_booking` and `purchase` as the only key events. `begin_checkout` registration
+is now **confirmed missing**, not merely unverified. Search Console links shows
+**no links yet**. Next configuration work is to register the checkout key event and
+link the intended domain property/web stream, followed by separate funnel delivery
+verification and a fresh processed-data window. No settings were changed by this
+review. Existing dated GSC gates remain unchanged. Browser login does not restore
+local API credentials or connect OpenSEO.
+
+## 50. Owner priority: next markets and recrawl watch (2026-09-09)
+
+**Owner direction: Hassaan, 2026-09-09, this task.** Spain, Romania and Brazil are
+the next country SEO programs. Their shared technical foundation and legacy research
+do not mean that country research, optimization, reviewed implementation and outcome
+measurement are finished. Preserve existing evidence in §§19–21 and the country
+READMEs; refresh it when each market starts. Clinical-review and publication
+dependencies in §§41–43 remain in force. No country implementation started here.
+
+The second active workstream is watching existing changed pages for Google's
+post-change recrawl. Use unresolved URLs in §6, the SEO-DOC-006 cohort and market
+gates in §42.3. This is a selected pending cohort, not a claim that every current
+page is uncrawled: §§6 and 44 already record successful recrawls. Keep closed pages
+closed unless new evidence warrants reopening them.
+
+An active Codex task heartbeat, `watch-seo-recrawls-and-measurement-gates`, checks
+the ledger daily at 10:00 for due work. Actual URL Inspection retains the documented
+2–3-week cadence (next global pass **2026-09-24**) and separately dated focused
+gates, including the **2026-09-11** Spain daily-series check. It reports meaningful
+changes, regressions, completed checks or required user action and stays quiet when
+unchanged. It may save evidence and ledger updates but may not publish, change Google
+settings, submit indexing requests, restart validation or push Git changes.
+
+For each due inspected URL, record the exact URL, inspection date, Google's last
+crawl, fix/deployment date, coverage, canonicals and relevant live behavior. Pre-fix
+crawl means **waiting**; a correct post-fix result closes the recrawl item; a wrong
+post-fix result triggers focused investigation. Retain the existing extension and
+crawl-budget escalation rules. Recrawl is not proof of ranking or conversion gain.
+
+Monitoring depends on this machine/task being available and authenticated Google
+access. If access fails, record the missed check and request reconnection once;
+never report an inspection as completed without evidence. No fresh URL Inspection
+was performed when registering this monitor.

@@ -81,8 +81,10 @@ evidence; the control file alone holds current remediation status, the growth ro
 the indexation watchlist, deadlines and next actions. Other SEO status audits are
 historical evidence unless this section identifies them as a current operating
 document.
-The current plain-language audit is
-`docs/audits/seo/seo-roadmap-review-2026-08-25.html`; the active content-growth
+The latest full plain-language audit is
+`docs/audits/seo/six-market-seo-audit-2026-09-04.html`; later ledger entries supersede
+its dated status findings. Session recovery and the evidence inventory start at
+`seo/README.md` (ledger §48). The active content-growth
 execution rules are in `docs/plans/editorial-plan-2026-08-19.md` §7.
 
 Two rules that override any older SEO document:

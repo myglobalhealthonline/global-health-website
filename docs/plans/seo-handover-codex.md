@@ -10,6 +10,11 @@ what changes because the work moved to Codex, and what will silently mislead you
 does **not** duplicate the ledger — where the two disagree, the ledger wins on facts
 and this file wins on process.
 
+**Recovery update, 2026-09-09:** start at `seo/README.md` and ledger §48 after the
+Windows reinstall. This file's historical tool-connectivity and local-credential
+claims are not verified on the replacement installation. GA4 collection was restored
+in ledger §47; the September 4 incident note below remains historical context.
+
 ---
 
 ## 1. Read in this order

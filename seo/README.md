@@ -4,6 +4,45 @@ This is the entry point for SEO work across Global Health's six markets. The
 workspace separates detailed country evidence without creating six competing
 status ledgers.
 
+## Session recovery — 9 September 2026
+
+The repository retains the SEO audit history, country research, raw exports,
+publication receipts and measurement plans. Lost chat sessions are not needed to
+resume from this evidence. This recovery checked repository files and Git history;
+it did not take a new live SEO measurement or recover deleted conversations.
+
+| What to recover | Where to start |
+| --- | --- |
+| Current work, results and next measurement dates | [Canonical ledger](../docs/plans/seo-control-state.md): §§5–7, 27, 41–50; Spain/Romania/Brazil next, existing changed pages on recrawl watch |
+| Google login and latest aggregate measurement check | [9 September review](../docs/audits/seo/google-access-review-2026-09-09.md); browser access verified, API reconnection remains separate |
+| Latest full six-market audit | [4 September report](../docs/audits/seo/six-market-seo-audit-2026-09-04.md) and [HTML](../docs/audits/seo/six-market-seo-audit-2026-09-04.html); apply later ledger updates |
+| Global audit history from July onward | [Audit index](../docs/audits/seo/README.md) |
+| Original audit, GSC/GA4 baselines and offsite research | [Original audit](../myglobalhealth.online-audit/FULL-AUDIT-REPORT.md) and its sibling files |
+| Country keywords, competitors, briefs and write receipts | The six country READMEs below; Spain/Romania/Brazil also use embedded ledger evidence |
+| Editorial plan and saved article drafts | [Editorial plan](../docs/plans/editorial-plan-2026-08-19.md), [briefs](../docs/plans/content-briefs/) and [drafts](../docs/plans/content-drafts/) |
+| Performance audit and deployment evidence | [9 September audit](../docs/audits/performance/2026-09-09/README.md) and [remediation](../docs/audits/performance/2026-09-09/REMEDIATION.md) |
+| Searchable list of recovered evidence files | [File inventory](file-inventory.csv); paths are relative to the repository root |
+| Operating rules and tool setup | [Handover](../docs/plans/seo-handover-codex.md); old machine paths and connectivity claims require verification |
+
+The inventory covers the country workspaces, global and original SEO audits,
+performance evidence, SEO/editorial plans, briefs and drafts. It is a navigation
+snapshot, not a second status ledger or a complete application-source inventory.
+To rebuild it from the repository root in PowerShell:
+
+```powershell
+git ls-files --cached --others --exclude-standard -- seo docs/audits/seo myglobalhealth.online-audit docs/audits/performance docs/plans |
+  Where-Object { $_ -ne 'seo/file-inventory.csv' -and ($_ -match '^(seo/|docs/audits/seo/|myglobalhealth.online-audit/|docs/audits/performance/)' -or $_ -match '^docs/plans/(.*seo.*|editorial-.*|content-briefs/.*|content-drafts/.*)$') } |
+  Sort-Object -Unique |
+  ForEach-Object { [pscustomobject]@{ path = $_ } } |
+  Export-Csv -LiteralPath seo/file-inventory.csv -NoTypeInformation -Encoding utf8
+```
+
+For future sessions, start here and read ledger §48 for the recovery checkpoint.
+Save each new audit/export with its date, then record its measured window, source,
+result, implementation/deployment evidence and next check in the canonical ledger.
+Commit evidence and ledger updates together using explicit paths; remote backup
+requires a push. Uncommitted local recovery changes are not yet a remote backup.
+
 ## Source-of-truth contract
 
 - [`docs/plans/seo-control-state.md`](../docs/plans/seo-control-state.md) is the
