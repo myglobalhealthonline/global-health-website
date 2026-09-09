@@ -359,8 +359,8 @@ export async function getPublicPageContent(
   locale: LocaleCode,
 ): Promise<PublicPageContentResult> {
   try {
-    const country = await prisma.country.findUnique({
-      where: { code: countryCode },
+    const country = await prisma.country.findFirst({
+      where: { code: { equals: countryCode, mode: "insensitive" } },
       select: { id: true, defaultLocale: true, isActive: true },
     });
     if (!country || !country.isActive) return { record: null, disabled: false };

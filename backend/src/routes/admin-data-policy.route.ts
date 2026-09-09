@@ -73,8 +73,8 @@ const adminDataPolicyRoute: FastifyPluginAsync = async (app) => {
       }
 
       // Look up the Country row so we can pass countryId.
-      const countryRow = await prisma.country.findUnique({
-        where: { code: countryCode },
+      const countryRow = await prisma.country.findFirst({
+        where: { code: { equals: countryCode, mode: "insensitive" } },
         select: { id: true },
       });
       if (!countryRow) {

@@ -114,7 +114,7 @@ export const pageContentAdminParamsSchema = z.object({
 });
 
 export const pageContentPublicParamsSchema = z.object({
-  countryCode: z.string().trim().min(1).max(8),
+  countryCode: z.string().trim().min(1).max(8).toLowerCase(),
   pageKey: pageContentPageKeySchema,
 });
 

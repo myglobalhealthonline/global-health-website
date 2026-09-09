@@ -96,7 +96,7 @@ export const adminPageUpdateBodySchema = adminPageCreateBodySchema.partial();
 export type AdminPageUpdateBody = z.infer<typeof adminPageUpdateBodySchema>;
 
 export const publicPageParamsSchema = z.object({
-  countryCode: z.string().trim().min(1).max(8),
+  countryCode: z.string().trim().min(1).max(8).toLowerCase(),
   pageKey: pageKeySchema,
 });
 

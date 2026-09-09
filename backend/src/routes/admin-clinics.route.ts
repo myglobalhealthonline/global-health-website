@@ -34,10 +34,11 @@ const adminClinicsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid clinics query", query.error.flatten()));
       }
       const { page, pageSize, countryCode } = query.data;
-      const code = countryCode?.toUpperCase();
       const where = {
         active: true,
-        ...(code ? { country: { code } } : {}),
+        ...(countryCode
+          ? { country: { code: { equals: countryCode, mode: "insensitive" as const } } }
+          : {}),
       };
       try {
         const [total, rows] = await prisma.$transaction([
