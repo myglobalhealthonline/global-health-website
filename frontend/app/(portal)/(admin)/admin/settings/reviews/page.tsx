@@ -39,10 +39,6 @@ function parseAggregate(
   return { rating, count };
 }
 
-export default async function AdminReviewSettingsPage({ searchParams }: PageProps) {
-  const sp = searchParams ? await searchParams : {};
-  const result = await fetchAdminReviewSettings();
-
   async function saveAction(formData: FormData) {
     "use server";
     await requireAdminAction();
@@ -74,11 +70,17 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
       if (!website && !links) body = {
         automation: { enabled: formData.get("enabled") === "on", delayHours: Number(formData.get("delayHours")), maxFollowups: Number(formData.get("maxFollowups")), followupIntervalDays: Number(formData.get("followupIntervalDays")) },
       };
-      if (links) body = {
+      if (links) {
+        // Server actions run in a separate request: resolve countries here,
+        // rather than capturing the page's render-time settings.
+        const current = await fetchAdminReviewSettings();
+        if (!current.ok) throw new Error(current.message || "Could not load review settings");
+        body = {
         doctify: { reviewUrl: String(formData.get("doctifyReviewUrl") ?? "").trim() || null },
         trustpilot: { reviewUrl: String(formData.get("trustpilotReviewUrl") ?? "").trim() || null },
-        destinations: settings.destinations.map((d) => ({ countryCode: d.countryCode, sendReviewRequests: formData.get(`sendReviewRequests_${d.countryCode}`) === "true", googleReviewUrl: String(formData.get(`googleReviewUrl_${d.countryCode}`) ?? "").trim() || null })),
+        destinations: current.data.destinations.filter((d) => formData.has(`googleReviewUrl_${d.countryCode}`)).map((d) => ({ countryCode: d.countryCode, sendReviewRequests: formData.get(`sendReviewRequests_${d.countryCode}`) === "true", googleReviewUrl: String(formData.get(`googleReviewUrl_${d.countryCode}`) ?? "").trim() || null })),
       };
+      }
     } catch (err) {
       redirect(
         `/admin/settings/reviews?tab=${tab}&error=${encodeURIComponent(
@@ -98,6 +100,10 @@ export default async function AdminReviewSettingsPage({ searchParams }: PageProp
     revalidateTag("reviews-config", "max");
     redirect(`/admin/settings/reviews?tab=${tab}&success=${encodeURIComponent("Review settings saved")}`);
   }
+
+export default async function AdminReviewSettingsPage({ searchParams }: PageProps) {
+  const sp = searchParams ? await searchParams : {};
+  const result = await fetchAdminReviewSettings();
 
   if (!result.ok) {
     return (
