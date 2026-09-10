@@ -207,8 +207,13 @@ export async function dispatchPatientAppointmentReminder(payload: unknown): Prom
       meetingUrl: true,
       consultationMode: true,
       locationAddress: true,
+      countryCode: true,
+      patientTimezone: true,
       clinic: { select: { name: true, city: true } },
       doctor: { select: { fullName: true } },
+      service: {
+        select: { country: { select: { bookingSetting: { select: { timezone: true } } } } },
+      },
     },
   });
   if (!a || !a.scheduledAt) return;
@@ -222,6 +227,20 @@ export async function dispatchPatientAppointmentReminder(payload: unknown): Prom
   if (isInPerson && !where) return;
   if (!isInPerson && !a.meetingUrl) return;
 
+  // Patient's own zone wins (captured at booking); free-text/legacy rows fall
+  // back to the booked service's market clock, same chain as the doctor path.
+  let patientTz = a.patientTimezone ?? undefined;
+  if (!patientTz) {
+    patientTz = a.service?.country?.bookingSetting?.timezone ?? undefined;
+    if (!patientTz && a.countryCode) {
+      const country = await prisma.country.findFirst({
+        where: { code: a.countryCode.toLowerCase() },
+        select: { bookingSetting: { select: { timezone: true } } },
+      });
+      patientTz = country?.bookingSetting?.timezone ?? undefined;
+    }
+  }
+
   const sent = await sendAppointmentReminderEmail({
     to: a.email,
     fullName: a.fullName,
@@ -230,6 +249,7 @@ export async function dispatchPatientAppointmentReminder(payload: unknown): Prom
     meetingUrl: isInPerson ? null : a.meetingUrl,
     where: isInPerson ? where : null,
     doctorName: a.doctor ? formatDoctorForPatientNotification(a.doctor.fullName) : null,
+    timeZone: patientTz,
   });
   if (!sent.ok) {
     // `sendEmail` reports a rejected/failed delivery as `{ ok: false }` rather

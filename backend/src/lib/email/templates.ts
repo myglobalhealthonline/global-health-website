@@ -11,6 +11,7 @@ import {
   uploadLinkEmailGreeting,
 } from "../../modules/patient-upload/upload-link-messages.js";
 import { clinicDocumentCopy } from "../../modules/notifications/clinic-document-messages.js";
+import { formatDeadline } from "../../modules/automation/pre-payment-messages.js";
 
 /** Shared branded transactional email shell — matches the public site's
  *  "Clinical Editorial" system (docs/design/design-system-gh2-clinical-editorial.md): deep-night forest
@@ -390,9 +391,8 @@ export async function sendDuplicateRegistrationNoticeEmail(opts: {
 
 /**
  * Sent when admin schedules a call slot for the patient. The Meet link is
- * front-and-center; we also include the slot in the patient's local
- * timezone hint (the date is formatted in UTC + offset, and clients
- * render it in local time).
+ * front-and-center; the slot is formatted in the patient's own timezone
+ * (`opts.timeZone`, captured at booking) — not the server's UTC clock.
  */
 export async function sendAppointmentScheduledEmail(opts: {
   to: string;
@@ -405,8 +405,10 @@ export async function sendAppointmentScheduledEmail(opts: {
   where?: string | null;
   /** Display name of the assigned doctor. Omitted when none is assigned yet. */
   doctorName?: string | null;
+  /** IANA zone the slot should render in — the patient's, captured at booking. Falls back to UTC. */
+  timeZone?: string | null;
 }) {
-  const formatted = opts.scheduledAt.toUTCString();
+  const formatted = formatDeadline(opts.scheduledAt, opts.timeZone);
   const localHint = opts.scheduledAt.toISOString();
   const meetLink = opts.meetingUrl?.trim() || null;
   const where = opts.where?.trim() || null;
@@ -481,8 +483,10 @@ export async function sendAppointmentReminderEmail(opts: {
   where?: string | null;
   /** Display name of the assigned doctor. Omitted when none is assigned yet. */
   doctorName?: string | null;
+  /** IANA zone the slot should render in — the patient's, captured at booking. Falls back to UTC. */
+  timeZone?: string | null;
 }) {
-  const formatted = opts.scheduledAt.toUTCString();
+  const formatted = formatDeadline(opts.scheduledAt, opts.timeZone);
   const localHint = opts.scheduledAt.toISOString();
   const meetLink = opts.meetingUrl?.trim() || null;
   const where = opts.where?.trim() || null;
