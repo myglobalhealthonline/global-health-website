@@ -261,7 +261,12 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
   const [authorPhysician, reviewerPhysician, relatedPosts] = await Promise.all([
     blogPhysicianInput(post.authorDoctor, locale),
     blogPhysicianInput(post.reviewerDoctor, locale),
-    listBlogPosts(routeCode ?? undefined).then((posts) =>
+    // Ask for the page's own locale, exactly as the blog index does: without
+    // it the API serves each post in its AUTHORED locale, so an English page
+    // in a Spanish market recommended Spanish-titled cards pointing at Spanish
+    // slugs. With it, only posts servable in this locale are listed, each with
+    // its translated title, excerpt and native slug.
+    listBlogPosts(routeCode ?? undefined, locale).then((posts) =>
       posts.filter((p) => p.slug !== post.slug).slice(0, 3),
     ),
   ]);
