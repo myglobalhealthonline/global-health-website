@@ -108,6 +108,27 @@ function monthOffsetForDate(now: Date, iso: string | null): number | null {
   return Math.min(Math.max(offset, 0), MONTH_PICKER_SPAN - 1);
 }
 
+/**
+ * The fetch itself always spans from today through the end of the selected
+ * month (there's no "start at month N" query param), so switching to a later
+ * month re-fetches a WIDER range that still includes every earlier month's
+ * slots too. Without this filter the picker highlighted "November" but kept
+ * showing October's dates — the earliest slot in that wider range — because
+ * nothing had narrowed the list down to just the month the patient picked.
+ */
+function filterSlotsToMonth<T extends { startAt: string }>(
+  slots: T[],
+  now: Date,
+  monthOffset: number,
+): T[] {
+  const monthStart = new Date(now.getFullYear(), now.getMonth() + monthOffset, 1).getTime();
+  const monthEnd = new Date(now.getFullYear(), now.getMonth() + monthOffset + 1, 1).getTime();
+  return slots.filter((slot) => {
+    const at = new Date(slot.startAt).getTime();
+    return at >= monthStart && at < monthEnd;
+  });
+}
+
 export async function generateStaticParams(): Promise<Params[]> {
   return countryLangParams();
 }
@@ -830,12 +851,16 @@ async function SelectedServiceFlow({
       availabilityDays,
       insuranceCompanyId,
     );
+    // The fetch spans today through the end of the selected month, so a later
+    // month's request still carries every earlier month's slots too — narrow
+    // down to just the month the patient picked before showing/counting them.
+    const monthSlots = filterSlotsToMonth(agg.slots, new Date(), monthOffset);
 
     // The default landing fetched only the current month and came up empty —
     // rather than tell the patient "no slots" while a later month has real
     // openings, jump straight to the month that does (service.bookability is
     // the same aggregate summary the catalogue card's "reopens on X" reads).
-    if (!monthWasExplicit && !at && agg.slots.length === 0) {
+    if (!monthWasExplicit && !at && monthSlots.length === 0) {
       const jumpTo = monthOffsetForDate(new Date(), service.bookability.nextAvailableAt);
       if (jumpTo !== null && jumpTo !== monthOffset) {
         redirect(
@@ -921,7 +946,7 @@ async function SelectedServiceFlow({
               }
             />
           </div>
-          {agg.slots.length === 0 ? (
+          {monthSlots.length === 0 ? (
             <EmptyMonthCard
               monthWasExplicit={monthWasExplicit}
               monthOffset={monthOffset}
@@ -960,7 +985,7 @@ async function SelectedServiceFlow({
                 country={country}
                 lang={lang}
                 serviceSlug={service.slug}
-                slots={agg.slots}
+                slots={monthSlots}
                 clinicTimezone={agg.clinicTimezone}
                 i18n={bf}
                 benefit={benefitHrefParam}
@@ -986,6 +1011,10 @@ async function SelectedServiceFlow({
   // step (the form). A stale ?slot= falls back to the time step with a notice.
   const slotConfirmed = Boolean(slotId) && slots.some((slot) => slot.id === slotId);
   const slotStale = Boolean(slotId) && !slotConfirmed;
+  // The fetch spans today through the end of the selected month, so a later
+  // month's request still carries every earlier month's slots too — narrow
+  // down to just the month the patient picked before showing/counting them.
+  const monthSlots = filterSlotsToMonth(slots, new Date(), monthOffset);
 
   // Same auto-jump as the aggregated flow: the default landing came up empty
   // for this doctor, but their per-service bookability summary already knows
@@ -1056,7 +1085,7 @@ async function SelectedServiceFlow({
           />
         ) : null}
 
-        {slots.length === 0 ? (
+        {monthSlots.length === 0 ? (
           <EmptyMonthCard
             monthWasExplicit={monthWasExplicit}
             monthOffset={monthOffset}
@@ -1095,7 +1124,7 @@ async function SelectedServiceFlow({
               lang={lang}
               serviceSlug={service.slug}
               doctorSlug={selectedDoctor.slug}
-              slots={slots}
+              slots={monthSlots}
               clinicTimezone={clinicTimezone}
               i18n={bf}
               benefit={benefitHrefParam}
