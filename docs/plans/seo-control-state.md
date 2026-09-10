@@ -8568,3 +8568,183 @@ pass. `git diff --numstat` shows insertions only on every locale file.
 
 That is structural proof, not a build. Run the real gates from a shell with Node before
 any push.
+
+## 52. The 2026-09-08 measurement gate, read (2026-09-10)
+
+Measurement only. **No content, route, schema, redirect or link change was made.**
+All figures are GSC via OpenSEO (project `GlobalHealthNew`,
+`sc-domain:myglobalhealth.online`), window **2026-08-10 → 2026-09-07**, plus live
+Googlebot-UA production probes. Both GSC tools are credit-free; no credits spent.
+
+The gate opened 2026-09-08 and was unread for two days. This section closes it.
+
+### 52.1 SEO-GROWTH-016 — Ireland lab cluster: the ramp is OVER, and it landed badly
+
+**Verdict: the indexing-ramp explanation has expired. Reclassify from WAIT/MEASURE.**
+
+28-day cluster total across 17 URLs: **3,041 impressions, 16 clicks, CTR 0.53%,
+impression-weighted position 27.7** (prior reading: 1,041 / 4 / 27.1).
+
+The headline tripling is an artifact of the prior window including the pre-ramp zero
+period. The daily series is the real result:
+
+| Week | Impressions | Clicks |
+| --- | --- | --- |
+| 08-10 → 08-16 | 954 | 2 |
+| 08-17 → 08-23 | 776 | 7 |
+| 08-24 → 08-30 | 577 | 3 |
+| 08-31 → 09-06 | 599 | 4 |
+
+Impressions **peaked in the first week of the window and fell 37%, then flattened**.
+Position did not improve across the ramp (27.1 → 27.7). This is not a cluster still
+climbing; it is a cluster that finished climbing and settled on page 3.
+
+The hub→detail hand-off also **did not hold**. `/ireland/en/lab-tests` was recorded
+dropping to ~11 impressions as detail pages took over; it is back to **423
+impressions, 3 clicks, position 22.8** — the second-largest earner in the cluster.
+
+Indexation is healthy and is not the constraint: hub crawled 2026-09-07 PASS
+"Submitted and indexed", `vitamin-d-test` crawled 2026-08-30 PASS, both
+self-canonical, Breadcrumbs rich result PASS.
+
+The biggest impression earners are the worst converters:
+
+| URL | Impr | Clicks | Position |
+| --- | --- | --- | --- |
+| `gut-microbiome-test` | 762 | 4 | 23.8 |
+| `vitamin-d-test` | 443 | 0 | 25.2 |
+| `lab-tests` (hub) | 423 | 3 | 22.8 |
+| `heart-health-cholesterol-test` | 292 | 0 | 36.7 |
+| `vitamin-b12-test` | 221 | 0 | 27.1 |
+| `psa-prostate-test` | 109 | 1 | 61.7 |
+
+**Consequence: the embargo's premise is gone.** `SEO-FOUNDATION-001-F` (lab detail
+pages carry zero sibling/service internal links) and the Product/Offer schema item
+were blocked *only* to avoid acting mid-ramp. The ramp has resolved. Both are now
+unblocked on their stated condition. Neither is authorized by this section — they
+need their own decision — but "wait for the re-measure" is no longer a reason.
+
+### 52.2 CZ-SEO-001 — the gate cannot be read, for a second reason
+
+§27.16 already recorded this gate as confounded by the 2026-09-02 republish. There is
+now a further problem: **Google has not crawled the republished page.**
+`/czechia/cs/gp-consultation-online` last crawl is **2026-08-24**, nine days before the
+rewrite went live. PASS, indexed, self-canonical — but the indexed content predates the
+change.
+
+Current: **233 impressions, 1 click, position 15.8** (prior: 103 / 0 / 12.9–14.7).
+Impressions more than doubled, position slightly worse. Read as a descriptive ramp
+check only, per the §27.16 amendment — and now not even the rewrite is in scope,
+because Google has not seen it.
+
+**Re-read this after a post-09-02 crawl is confirmed, not on a date.**
+
+### 52.3 Czechia's CTR advantage has gone
+
+Recorded repeatedly as "the best CTR of any market" (6.39% → 4.76%), and the stated
+reason Czechia was paired into COUNTRY-WAVE-001. Current window:
+
+| Market | Clicks | Impressions | CTR | Position |
+| --- | --- | --- | --- | --- |
+| Ireland | 250 | 12,434 | 2.01% | 19.1 |
+| Portugal | 126 | 5,828 | 2.16% | 16.7 |
+| **Czechia** | **119** | **7,674** | **1.55%** | **16.2** |
+| Spain | 112 | 8,241 | 1.36% | 22.8 |
+| Romania | 78 | 5,039 | 1.55% | 15.5 |
+| Brazil | 36 | 5,556 | 0.65% | 12.5 |
+
+Czechia is now **mid-pack, below Portugal and Ireland**. Its impression base nearly
+doubled while clicks did not follow — consistent with the SEO-GROWTH-012 tool-mix
+dilution (`blood-pressure-chart` 950 impr, `calorie-calculator` 1,455,
+`bmi-calculator` 921, the last at 0 clicks), not a ranking loss.
+
+**This invalidates the stated rationale for COUNTRY-WAVE-001's pairing.** Portugal now
+has both a larger base and a better CTR than Czechia. The wave order was explicitly set
+by "current organic base, evidence quality and the presence of a real commercial
+cluster" — on current data that ordering wants re-deriving before the wave starts.
+
+### 52.4 SEO-DOC-004 — PASS on the falsifiable prediction
+
+The 2026-08-14 prediction was that Czech traffic on the three legacy URLs stays flat
+and Cyplinská's 48 clicks / 30% CTR / position 4.4 do **not** return. **Confirmed.**
+Across all `/czechia-doctors/` shapes the entire 28-day total is 5 clicks / 124
+impressions; Cyplinská's own legacy rows return 1 click (locale-prefixed `/cs/`) and 1
+click (`/ro/`). Flat is the PASS condition — recorded as passing.
+
+URL Inspection is split, and the split is explained:
+
+| Legacy URL | Google's stored state | Last crawl |
+| --- | --- | --- |
+| `mudr-andrei-lavrov` | "Page with redirect", NEUTRAL, canonical → `/czechia/cs/doctors` | 2026-08-30 (**post-fix**) |
+| `mudr-jana-cyplinska` | "Excluded by 'noindex' tag", BLOCKED_BY_META_TAG | 2026-07-25 (pre-fix) |
+| `mudr-libor-hlavaty` | "Excluded by 'noindex' tag", BLOCKED_BY_META_TAG | 2026-07-30 (pre-fix) |
+
+Only Lavrov has been recrawled since the 2026-08-14 fix, and Lavrov shows **exactly**
+the predicted state. The other two carry a stored state from before the fix existed.
+This is recrawl lag, which §14 says explicitly not to act on. **Do not act. Re-check.**
+
+Production routing re-probed live 2026-09-10 and is clean — every shape terminates 200
+in one hop, including three locale-prefixed variants not covered by the original
+11-URL sweep:
+
+```
+/czechia-doctors/mudr-jana-cyplinska      hops=1 200 -> /czechia/cs/doctors
+/cs/czechia-doctors/mudr-jana-cyplinska   hops=1 200 -> /czechia/cs/doctors
+/ro/czechia-doctors/mudr-jana-cyplinska   hops=1 200 -> /czechia/cs/doctors
+/es/czechia-doctors/mudr-ahmed-maklad     hops=1 200 -> /czechia/cs/doctors/dr-ahmed-maklad
+/specialty-cz                             hops=1 200 -> /czechia/cs
+```
+
+`inspect_urls` lists `/dynamic-czechia-doctors-sitemap.xml` and
+`/dynamic-czechia-doctors_p_7d77387a…-sitemap.xml` as referring URLs. **Checked: both
+404.** They are Wix-era artifacts still in Google's referrer memory, not live sitemaps
+feeding the crawl queue. No defect, no action — recorded so this is not re-investigated.
+
+### 52.5 SEO-GROWTH-013 — Spain dermatology wall unchanged, one page badly placed
+
+`/spain/es/services/dermatologia-especialista-online`: 11 impressions, 1 click,
+position 14.6. The supporting blog
+`/spain/es/blog/dermatologo-online-que-puede-resolver` draws **285 impressions** — 26×
+the service page it supports.
+
+`/spain/en/services/dermatologia-especialista-online` draws **223 impressions at
+position 73.4** with zero clicks. This is the known wrong-locale page (a Spanish-slug
+page under `/en`); position 73 across 223 impressions is a stable non-result. Recorded
+against the existing wrong-locale item, not opened as new work.
+
+Wall confirmed unchanged. No action.
+
+### 52.6 One finding outside the gate — the global root's Organization schema
+
+Raised from a separate live check on 2026-09-10, recorded here because it is the only
+edit-shaped finding of the session.
+
+`/` emits `MedicalOrganization.sameAs` containing 14 **Ireland-specific** URLs —
+`medicalcouncil.ie`, `hse.ie`, `hiqa.ie`, `hpra.ie`, `rcpi.ie`, `icgp.ie`,
+`dataprotection.ie`, `pieta.ie`, `samaritans.org/ireland`, `gov.ie` and others.
+Verified identical under `en-US`, `pt-BR` and `cs-CZ` Accept-Language, so it is a
+stable fallback rather than geo-varying output.
+
+Two problems. `PublicShell.tsx:101` states the intent as *"Outside a country scope it
+stays empty"*, but `/` has no country URL segment, so `resolvedCountryCode` falls
+through to the edge proxy's `x-gh-country` header, which defaults to Ireland
+(`PublicShell.tsx:70`). And separately, `sameAs` denotes the entity's **own** official
+profiles; HSE, HIQA and Samaritans are not Global Health profiles on any page, which is
+a broader question than the root.
+
+This also contradicts SEO-FOUNDATION-004, which deliberately decoupled `/` from every
+market on the grounds that it is a selector with no market entity behind it.
+
+**Not fixed in this pass. Needs a decision on the wider `sameAs` convention first** —
+the per-country regulator merge is deliberate and documented in
+`structured-data.ts:102` as the AI-search authority signal, so narrowing it is a
+policy change, not a bug fix.
+
+### 52.7 What this section does NOT do
+
+No edit was made to any page, route, schema, sitemap, redirect or link.
+`SEO-FOUNDATION-001-A`, `-F`, the Product/Offer schema item and COUNTRY-WAVE-001 are
+**unblocked, not authorized** — each still needs an explicit decision. The findings in
+52.1/52.3 that contradict earlier recorded rationale (ramp expired, hub hand-off
+reversed, Czechia CTR advantage gone) are recorded here as evidence; the roadmap rows
+they affect are not rewritten in this pass.
