@@ -8,6 +8,7 @@ import {
   fetchAdminUserById,
   patchAdminUser,
   resetAdminUserPassword,
+  mergeAdminPatients,
   type AdminUserRole,
 } from "@/lib/admin/admin-api";
 import { getServerAuthUser } from "@/lib/api/server-auth";
@@ -22,7 +23,23 @@ export const dynamic = "force-dynamic";
 
 type PageProps = {
   params: Promise<{ id: string }>;
-  searchParams?: Promise<{ error?: string; success?: string; reasonError?: string }>;
+  searchParams?: Promise<{
+    error?: string;
+    success?: string;
+    reasonError?: string;
+    /** Set by the email editor when the new address already belongs to another
+     *  patient record — renders the "merge these two?" prompt below. Only the
+     *  address travels in the URL; both PatientProfile ids are re-resolved
+     *  server-side, so a crafted link cannot aim the merge at other patients. */
+    mergeEmail?: string;
+  }>;
+};
+
+/** Shape of the `details` payload the backend attaches to its 409 when the
+ *  requested email already belongs to someone else. */
+type EmailConflictDetails = {
+  code?: string;
+  mergeable?: boolean;
 };
 
 export default async function AdminUserDetailPage({ params, searchParams }: PageProps) {
@@ -140,11 +157,82 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
     }
     const res = await patchAdminUser(id, { email });
     if (!res.ok) {
+      // The address already belongs to another record. That is usually not an
+      // operator error — the patient booked a second time under a different
+      // (or misspelled) address, so the two records are the same person. When
+      // both sides carry a clinical chart, offer the merge instead of leaving
+      // the admin at a dead end.
+      const details = res.details as EmailConflictDetails | undefined;
+      if (details?.code === "EMAIL_TAKEN" && details.mergeable) {
+        redirect(
+          `/admin/users/${id}?mergeEmail=${encodeURIComponent(email)}&error=${encodeURIComponent(
+            res.message,
+          )}`,
+        );
+      }
       redirect(`/admin/users/${id}?error=${encodeURIComponent(res.message)}`);
     }
     redirect(
       `/admin/users/${id}?success=${encodeURIComponent(
         "Email updated. The account is now unverified and has been signed out of all devices.",
+      )}`,
+    );
+  }
+
+  // Fold this account's patient record into the record that already owns the
+  // address the admin just tried to move it to. Direction is fixed and stated
+  // in the UI: the address the admin typed is the one they consider correct,
+  // so the record already holding it survives and this one is folded into it —
+  // which is also the only direction that resolves the unique-email collision
+  // without inventing a placeholder address for the loser.
+  async function mergeAccountsAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+    const fail = (message: string) =>
+      redirect(`/admin/users/${id}?error=${encodeURIComponent(message)}`);
+
+    const targetEmail = String(formData.get("targetEmail") ?? "").trim().toLowerCase();
+    if (!targetEmail.includes("@")) {
+      fail("Enter a valid email address");
+    }
+    if (targetEmail === user.email.toLowerCase()) {
+      fail("That is already this account's email address");
+    }
+    const reason = String(formData.get("reason") ?? "").trim();
+    if (reason.length < 10) {
+      fail("Give a reason of at least 10 characters — it is stored on the merge log");
+    }
+
+    // Re-resolve BOTH ids here rather than trusting anything the form carried:
+    // a merge is irreversible, so the only ids it may act on are the ones
+    // derived from this account and from the address typed into it.
+    const [targetResult, sourceResult] = await Promise.all([
+      fetchAdminPatientProfile(targetEmail),
+      fetchAdminPatientProfile(user.email),
+    ]);
+    const target = targetResult.ok ? targetResult.data.profile : null;
+    const source = sourceResult.ok ? sourceResult.data.profile : null;
+    if (!target || !source) {
+      fail("Both accounts need a patient record before they can be merged");
+    }
+    if (target!.id === source!.id) {
+      fail("Both addresses already point at the same patient record");
+    }
+
+    const res = await mergeAdminPatients({
+      primaryPatientId: target!.id,
+      duplicatePatientId: source!.id,
+      reason,
+    });
+    if (!res.ok) {
+      fail(res.message);
+    }
+    // The surviving record lives under the other address, so this user page is
+    // no longer where the patient is — send the admin to the record that kept
+    // the history.
+    redirect(
+      `/admin/patients/${encodeURIComponent(targetEmail)}?success=${encodeURIComponent(
+        `Records merged into ${targetEmail}. The old account has been deactivated.`,
       )}`,
     );
   }
@@ -215,6 +303,20 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
     );
   }
 
+  // Only resolved when the email edit above bounced off an existing record.
+  // Both charts must exist for a merge to mean anything, and they must be two
+  // different rows.
+  const mergeTargetEmail = messages.mergeEmail?.trim().toLowerCase() ?? "";
+  const mergeTargetResult =
+    mergeTargetEmail && mergeTargetEmail !== user.email.toLowerCase()
+      ? await fetchAdminPatientProfile(mergeTargetEmail)
+      : null;
+  const mergeTarget =
+    mergeTargetResult && mergeTargetResult.ok ? mergeTargetResult.data.profile : null;
+  const canOfferMerge = Boolean(
+    mergeTarget && patientProfile && mergeTarget.id !== patientProfile.id,
+  );
+
   return (
     <>
       <SetCrumbTitle label={user.fullName || user.email} />
@@ -244,6 +346,85 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
         <p className="gh-status-success mb-4 rounded-md border px-4 py-3 text-sm">
           {messages.success}
         </p>
+      ) : null}
+
+      {canOfferMerge ? (
+        <div className="mb-4">
+          <FormSection title="That address already has a patient record — merge them?">
+            <div className="gh-form-section__span-2 grid gap-3">
+              <p className="text-portal-compact text-[var(--color-text-muted)]">
+                This is what usually happens when a patient books again under a
+                second (or misspelled) address. Merging keeps{" "}
+                <strong>{mergeTargetEmail}</strong> as the single record: every
+                appointment, order, document, note and consent from this account
+                moves onto it, and this account is deactivated so nobody can log
+                in with it again.{" "}
+                <strong>The merge cannot be undone.</strong>
+              </p>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-md border border-[var(--color-border)] px-3 py-2">
+                  <p className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                    Folded in and deactivated
+                  </p>
+                  <p className="mt-1 text-portal-body text-[var(--color-text-primary)]">
+                    {user.fullName || "—"}
+                  </p>
+                  <p className="text-portal-compact text-[var(--color-text-muted)]">
+                    {user.email}
+                  </p>
+                  <p className="text-portal-meta text-[var(--color-text-muted)]">
+                    {stats.appointmentCount} booking
+                    {stats.appointmentCount === 1 ? "" : "s"}
+                    {patientProfile?.globalHealthNumber
+                      ? ` · ${patientProfile.globalHealthNumber}`
+                      : ""}
+                  </p>
+                </div>
+                <div className="rounded-md border border-[var(--color-border)] px-3 py-2">
+                  <p className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                    Surviving record
+                  </p>
+                  <p className="mt-1 text-portal-body text-[var(--color-text-primary)]">
+                    {mergeTarget?.fullName || "—"}
+                  </p>
+                  <p className="text-portal-compact text-[var(--color-text-muted)]">
+                    {mergeTargetEmail}
+                  </p>
+                  <p className="text-portal-meta text-[var(--color-text-muted)]">
+                    {mergeTarget?.globalHealthNumber ?? "No Global Health Number"}
+                  </p>
+                </div>
+              </div>
+
+              <form action={mergeAccountsAction} className="grid gap-2">
+                <input type="hidden" name="targetEmail" value={mergeTargetEmail} />
+                <label className="flex flex-col gap-1">
+                  <span className="gh-field-label">
+                    Reason (stored on the merge log, min 10 characters)
+                  </span>
+                  <textarea
+                    name="reason"
+                    required
+                    minLength={10}
+                    maxLength={500}
+                    rows={2}
+                    defaultValue={`Duplicate patient record — same person booked under ${user.email} and ${mergeTargetEmail}.`}
+                    className="gh-input"
+                  />
+                </label>
+                <div className="flex flex-wrap justify-end gap-2">
+                  <Btn href={`/admin/users/${id}`} variant="ghost">
+                    Cancel
+                  </Btn>
+                  <button type="submit" className="gh-btn gh-btn-primary">
+                    Merge into {mergeTargetEmail}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </FormSection>
+        </div>
       ) : null}
 
       <div className="gh-admin-user-detail-layout grid gap-4">
