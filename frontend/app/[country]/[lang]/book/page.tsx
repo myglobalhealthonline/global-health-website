@@ -97,6 +97,16 @@ function daysUntilMonthEnd(now: Date, monthOffset: number): number {
   return Math.max(1, Math.ceil((monthEnd.getTime() - now.getTime()) / (24 * 60 * 60 * 1000)) + 1);
 }
 
+/** Days of window needed to reach a given instant. Null when there's no valid
+ *  date to reach (nothing pinned in the URL, or an unparseable value). */
+function daysToCover(now: Date, iso: string | null): number | null {
+  if (!iso) return null;
+  const at = new Date(iso);
+  if (Number.isNaN(at.getTime())) return null;
+  const days = Math.ceil((at.getTime() - now.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+  return days > 0 ? days : null;
+}
+
 /** Which month-picker offset a given instant falls in, clamped to the picker's
  *  range. Null (no known next opening) clamps to nothing — caller checks first. */
 function monthOffsetForDate(now: Date, iso: string | null): number | null {
@@ -243,7 +253,15 @@ export default async function CountryLangBookPage({
     ? Math.min(Math.max(Math.trunc(monthParamRaw), 0), MONTH_PICKER_SPAN - 1)
     : 0;
   const now = new Date();
-  const availabilityDays = daysUntilMonthEnd(now, monthOffset);
+  // The window has to cover BOTH the month being browsed and any time already
+  // pinned in the URL. Sizing it off the month alone made every step-advancing
+  // link that omitted `?month=` silently shrink the fetch back to the current
+  // month — which then "lost" a slot the patient had already chosen and told
+  // them it was no longer open.
+  const availabilityDays = Math.max(
+    daysUntilMonthEnd(now, monthOffset),
+    daysToCover(now, atParam) ?? 0,
+  );
   const monthOptions = buildMonthOptions(now, lang);
 
   // Independent of `bookingRequirementsPromise` (both only need `code`) — run
@@ -913,6 +931,7 @@ async function SelectedServiceFlow({
               doctors={doctorsAtTime}
               slotByDoctorId={slotByDoctorId}
               at={at}
+              month={monthOffset}
               bp={bp}
               cardI18n={doctorCardI18n(loadLocaleBundle(lang as LocaleCode).common.doctors)}
               bookingAvailability={loadLocaleBundle(lang as LocaleCode).common.bookingAvailability}
@@ -1086,7 +1105,11 @@ async function SelectedServiceFlow({
           />
         ) : null}
 
-        {monthSlots.length === 0 ? (
+        {/* A confirmed slot wins over every month-scoped view: the patient has
+          * already chosen a time, so the month they happen to be "browsing"
+          * (which defaults back to the current one whenever a link omits
+          * ?month=) must never bounce them back to the picker. */}
+        {!slotConfirmed && monthSlots.length === 0 ? (
           <EmptyMonthCard
             monthWasExplicit={monthWasExplicit}
             monthOffset={monthOffset}
