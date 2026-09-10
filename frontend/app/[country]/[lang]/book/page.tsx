@@ -2,7 +2,7 @@
 import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { ArrowRight, CalendarDays, CheckCircle2, Lock, ShieldCheck, Stethoscope, UserRound, Video } from "lucide-react";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
@@ -95,6 +95,17 @@ function buildMonthOptions(now: Date, locale: string): MonthOption[] {
 function daysUntilMonthEnd(now: Date, monthOffset: number): number {
   const monthEnd = new Date(now.getFullYear(), now.getMonth() + monthOffset + 1, 0);
   return Math.max(1, Math.ceil((monthEnd.getTime() - now.getTime()) / (24 * 60 * 60 * 1000)) + 1);
+}
+
+/** Which month-picker offset a given instant falls in, clamped to the picker's
+ *  range. Null (no known next opening) clamps to nothing — caller checks first. */
+function monthOffsetForDate(now: Date, iso: string | null): number | null {
+  if (!iso) return null;
+  const at = new Date(iso);
+  if (Number.isNaN(at.getTime())) return null;
+  const offset =
+    (at.getFullYear() - now.getFullYear()) * 12 + (at.getMonth() - now.getMonth());
+  return Math.min(Math.max(offset, 0), MONTH_PICKER_SPAN - 1);
 }
 
 export async function generateStaticParams(): Promise<Params[]> {
@@ -203,6 +214,9 @@ export default async function CountryLangBookPage({
   // before a clinician. Its presence also distinguishes a service-first journey
   // from a doctor-first one even once ?doctor= has been added.
   const atParam = firstParam(sp.at);
+  // Whether the patient deliberately picked a month vs. landing on the default
+  // view — only the default is worth auto-jumping when it turns out empty.
+  const monthWasExplicit = firstParam(sp.month) !== null;
   const monthParamRaw = Number(firstParam(sp.month) ?? "0");
   const monthOffset = Number.isFinite(monthParamRaw)
     ? Math.min(Math.max(Math.trunc(monthParamRaw), 0), MONTH_PICKER_SPAN - 1)
@@ -558,6 +572,7 @@ export default async function CountryLangBookPage({
                   availabilityDays={availabilityDays}
                   monthOffset={monthOffset}
                   monthOptions={monthOptions}
+                  monthWasExplicit={monthWasExplicit}
                   />
                 </Suspense>
               )}
@@ -752,6 +767,7 @@ async function SelectedServiceFlow({
   availabilityDays,
   monthOffset,
   monthOptions,
+  monthWasExplicit,
 }: {
   code: string;
   country: string;
@@ -776,6 +792,9 @@ async function SelectedServiceFlow({
   /** Which month the TIME step is browsing (0 = this month). */
   monthOffset: number;
   monthOptions: MonthOption[];
+  /** False on the default (no `?month=`) landing — only that view is worth
+   *  auto-jumping to a later month when it turns out empty. */
+  monthWasExplicit: boolean;
 }) {
   const assignedDoctorIds = new Set(service.assignedDoctorIds);
   const serviceDoctors =
@@ -811,6 +830,25 @@ async function SelectedServiceFlow({
       availabilityDays,
       insuranceCompanyId,
     );
+
+    // The default landing fetched only the current month and came up empty —
+    // rather than tell the patient "no slots" while a later month has real
+    // openings, jump straight to the month that does (service.bookability is
+    // the same aggregate summary the catalogue card's "reopens on X" reads).
+    if (!monthWasExplicit && !at && agg.slots.length === 0) {
+      const jumpTo = monthOffsetForDate(new Date(), service.bookability.nextAvailableAt);
+      if (jumpTo !== null && jumpTo !== monthOffset) {
+        redirect(
+          buildBookHref({
+            country,
+            lang,
+            service: service.slug,
+            benefit: benefitHrefParam,
+            month: String(jumpTo),
+          }),
+        );
+      }
+    }
 
     // DOCTOR step — a time was chosen (?at=): offer the doctors free then.
     if (at) {
@@ -939,6 +977,30 @@ async function SelectedServiceFlow({
   // step (the form). A stale ?slot= falls back to the time step with a notice.
   const slotConfirmed = Boolean(slotId) && slots.some((slot) => slot.id === slotId);
   const slotStale = Boolean(slotId) && !slotConfirmed;
+
+  // Same auto-jump as the aggregated flow: the default landing came up empty
+  // for this doctor, but their per-service bookability summary already knows
+  // the real next opening — send the patient straight there instead of
+  // showing "no slots" on a month that was never their choice.
+  if (!monthWasExplicit && !slotId && slots.length === 0) {
+    const nextAvailableAt = getDoctorServiceBookability(
+      selectedDoctor.bookabilityByServiceId,
+      service.id,
+    ).nextAvailableAt;
+    const jumpTo = monthOffsetForDate(new Date(), nextAvailableAt);
+    if (jumpTo !== null && jumpTo !== monthOffset) {
+      redirect(
+        buildBookHref({
+          country,
+          lang,
+          service: service.slug,
+          doctor: selectedDoctor.slug,
+          benefit: benefitHrefParam,
+          month: String(jumpTo),
+        }),
+      );
+    }
+  }
 
   return (
     <div className="grid gap-6">
