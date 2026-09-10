@@ -221,7 +221,7 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
       if (buffer.length > MAX_BYTES) {
         return reply.status(413).send(errorResponse("File too large (max 10MB)"));
       }
-      const mimetype = verifySniffedMime(buffer, declaredMime, ALLOWED_MIME);
+      const mimetype = verifySniffedMime(buffer, ALLOWED_MIME);
       if (!mimetype) {
         return reply
           .status(415)
@@ -379,7 +379,7 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
       if (buffer.length > MAX_BYTES) {
         return reply.status(413).send(errorResponse("File too large (max 10MB)"));
       }
-      const mimetype = verifySniffedMime(buffer, declaredMime, ALLOWED_MIME);
+      const mimetype = verifySniffedMime(buffer, ALLOWED_MIME);
       if (!mimetype) {
         return reply.status(415).send(errorResponse("File content does not match declared type"));
       }
@@ -746,7 +746,7 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
       if (buffer.length > MAX_BYTES) {
         return reply.status(413).send(errorResponse("File too large (max 10MB)"));
       }
-      const mimetype = verifySniffedMime(buffer, declaredMime, ALLOWED_MIME);
+      const mimetype = verifySniffedMime(buffer, ALLOWED_MIME);
       if (!mimetype) {
         return reply.status(415).send(errorResponse("File content does not match declared type"));
       }

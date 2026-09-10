@@ -62,7 +62,7 @@ const adminMediaUploadRoute: FastifyPluginAsync = async (app) => {
     // Verify the actual bytes match the declared type — stops a script/HTML
     // payload mislabelled as image/jpeg or application/pdf from being stored
     // and later served with a trusted Content-Type (stored XSS / phishing).
-    const sniffedMime = verifySniffedMime(buffer, declaredMime, ALLOWED_MIME);
+    const sniffedMime = verifySniffedMime(buffer, ALLOWED_MIME);
     if (!sniffedMime) {
       return reply.status(415).send(errorResponse("File content does not match declared type"));
     }

@@ -36,18 +36,18 @@ export function sniffFileMime(buf: Buffer): string | null {
 }
 
 /**
- * Validate an uploaded buffer's declared MIME against its sniffed magic
- * bytes. Returns the verified MIME on success, or null when the content
- * doesn't match an allowed type or doesn't match what the client declared.
+ * Validate an uploaded buffer against an allowlist using its magic bytes.
+ * Returns the sniffed MIME on success, or null when the content is not a
+ * recognized, allowed type.
+ *
+ * The client-declared Content-Type is deliberately not an input. It is not a
+ * property of the file: browsers derive it from the extension via the OS, so a
+ * genuine PDF arrives as an empty type on Windows with no registered handler
+ * and as application/octet-stream from most phone file pickers. It is also
+ * fully attacker-controlled, so requiring it to match the magic bytes stopped
+ * no attacker while turning away honest uploads.
  */
-export function verifySniffedMime(
-  buf: Buffer,
-  declaredMime: string,
-  allowed: ReadonlySet<string>,
-): string | null {
-  if (!allowed.has(declaredMime)) return null;
+export function verifySniffedMime(buf: Buffer, allowed: ReadonlySet<string>): string | null {
   const sniffed = sniffFileMime(buf);
-  if (!sniffed || !allowed.has(sniffed)) return null;
-  if (sniffed !== declaredMime) return null;
-  return sniffed;
+  return sniffed && allowed.has(sniffed) ? sniffed : null;
 }

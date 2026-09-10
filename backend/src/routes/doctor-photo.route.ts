@@ -114,7 +114,7 @@ const doctorPhotoRoute: FastifyPluginAsync = async (app) => {
         .status(413)
         .send(errorResponse("File too large (max 5MB)"));
     }
-    const sniffedMime = verifySniffedMime(buffer, declaredMime, ALLOWED_MIME);
+    const sniffedMime = verifySniffedMime(buffer, ALLOWED_MIME);
     if (!sniffedMime) {
       return reply.status(400).send(errorResponse("File content does not match an allowed type"));
     }

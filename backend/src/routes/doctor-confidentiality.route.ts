@@ -252,7 +252,7 @@ const doctorConfidentialityRoute: FastifyPluginAsync = async (app) => {
     if (buffer.length > CONFIDENTIALITY_SIGNED_MAX_BYTES) {
       return reply.status(413).send(errorResponse("File too large (max 10MB)"));
     }
-    const mimetype = verifySniffedMime(buffer, declaredMime, CONFIDENTIALITY_SIGNED_ALLOWED_MIME);
+    const mimetype = verifySniffedMime(buffer, CONFIDENTIALITY_SIGNED_ALLOWED_MIME);
     if (!mimetype) {
       return reply
         .status(400)

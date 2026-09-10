@@ -953,7 +953,7 @@ async function storeUpload(
   if (buffer.length > MAX_BYTES) {
     return { ok: false, status: 413, message: "File too large (max 10 MB)" };
   }
-  const mimeType = verifySniffedMime(buffer, declaredMime, ALLOWED_MIME);
+  const mimeType = verifySniffedMime(buffer, ALLOWED_MIME);
   if (!mimeType) {
     return { ok: false, status: 400, message: "File content does not match an allowed type" };
   }

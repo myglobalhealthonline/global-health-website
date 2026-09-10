@@ -338,7 +338,7 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
     if (fileBuffer.length > MAX_BYTES) {
       return reply.status(413).send(errorResponse("File too large (max 10 MB)"));
     }
-    const sniffedMime = verifySniffedMime(fileBuffer, mimetype, ALLOWED_MIME);
+    const sniffedMime = verifySniffedMime(fileBuffer, ALLOWED_MIME);
     if (!sniffedMime) {
       return reply.status(400).send(errorResponse("File content does not match an allowed type (PDF, JPG, PNG, WebP)"));
     }
@@ -406,7 +406,7 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
     if (fileBuffer.length > MAX_BYTES) {
       return reply.status(413).send(errorResponse("File too large (max 10 MB)"));
     }
-    const sniffedMime = verifySniffedMime(fileBuffer, mimetype, ALLOWED_MIME);
+    const sniffedMime = verifySniffedMime(fileBuffer, ALLOWED_MIME);
     if (!sniffedMime) {
       return reply.status(400).send(errorResponse("File content does not match an allowed type"));
     }
@@ -483,7 +483,7 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
     if (fileBuffer.length > MAX_BYTES) {
       return reply.status(413).send(errorResponse("Photo too large (max 10 MB)"));
     }
-    const sniffedMime = verifySniffedMime(fileBuffer, mimetype, SELFIE_ALLOWED_MIME);
+    const sniffedMime = verifySniffedMime(fileBuffer, SELFIE_ALLOWED_MIME);
     if (!sniffedMime) {
       return reply.status(400).send(errorResponse("Photo must be a JPG, PNG or WebP image"));
     }
@@ -787,7 +787,7 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
     if (fileBuffer.length > MAX_BYTES) {
       return reply.status(413).send(errorResponse("File too large (max 10 MB)"));
     }
-    const sniffedMime = verifySniffedMime(fileBuffer, mimetype, ALLOWED_MIME);
+    const sniffedMime = verifySniffedMime(fileBuffer, ALLOWED_MIME);
     if (!sniffedMime) {
       return reply.status(400).send(errorResponse("File content does not match an allowed type"));
     }

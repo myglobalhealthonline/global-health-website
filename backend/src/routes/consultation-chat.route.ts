@@ -362,7 +362,7 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
         if (buffer.length > MAX_BYTES) {
           return reply.status(413).send(errorResponse("File too large (max 10 MB)"));
         }
-        const mimetype = verifySniffedMime(buffer, declaredMime, ALLOWED_MIME);
+        const mimetype = verifySniffedMime(buffer, ALLOWED_MIME);
         if (!mimetype) {
           return reply.status(400).send(errorResponse("File content does not match an allowed type"));
         }
@@ -603,7 +603,7 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
         if (buffer.length > MAX_BYTES) {
           return reply.status(413).send(errorResponse("File too large (max 10 MB)"));
         }
-        const mimetype = verifySniffedMime(buffer, declaredMime, ALLOWED_MIME);
+        const mimetype = verifySniffedMime(buffer, ALLOWED_MIME);
         if (!mimetype) {
           return reply.status(400).send(errorResponse("File content does not match an allowed type"));
         }

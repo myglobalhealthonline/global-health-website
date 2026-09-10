@@ -171,7 +171,7 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
       if (fileBuffer.length > MEDICAL_DOC_MAX_BYTES) {
         return reply.status(413).send(errorResponse("File too large (max 10 MB)"));
       }
-      const sniffedMime = verifySniffedMime(fileBuffer, mimetype, MEDICAL_DOC_ALLOWED_MIME);
+      const sniffedMime = verifySniffedMime(fileBuffer, MEDICAL_DOC_ALLOWED_MIME);
       if (!sniffedMime) {
         return reply.status(400).send(
           errorResponse("File content does not match an allowed type (PDF, JPG, PNG, WebP)"),
@@ -516,7 +516,7 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
       if (fileBuffer.length > MEDICAL_DOC_MAX_BYTES) {
         return reply.status(413).send(errorResponse("File too large (max 10 MB)"));
       }
-      const sniffedMime = verifySniffedMime(fileBuffer, mimetype, MEDICAL_DOC_ALLOWED_MIME);
+      const sniffedMime = verifySniffedMime(fileBuffer, MEDICAL_DOC_ALLOWED_MIME);
       if (!sniffedMime) {
         return reply.status(400).send(errorResponse("File content does not match an allowed type"));
       }
