@@ -16,6 +16,7 @@ const state = {
   saveFails: false,
 };
 
+const logLines: Array<Record<string, unknown>> = [];
 let app: FastifyInstance;
 
 class FakeJobClosedError extends Error {}
@@ -25,7 +26,9 @@ before(async () => {
     namedExports: {
       scanBufferForMalware: async () => {
         state.scanCalls++;
-        return { result: state.scanResult };
+        return state.scanResult === "ERROR"
+          ? { result: "ERROR", reason: "unreachable" }
+          : { result: state.scanResult };
       },
     },
   });
@@ -54,7 +57,9 @@ before(async () => {
   });
 
   const jobsRoute = (await import("./jobs.route.js")).default as unknown as FastifyPluginAsync;
-  app = Fastify({ logger: false });
+  app = Fastify({
+    logger: { level: "error", stream: { write: (line) => void logLines.push(JSON.parse(line)) } },
+  });
   await app.register(multipart);
   await app.register(jobsRoute);
   await app.ready();
@@ -72,6 +77,7 @@ beforeEach(() => {
   state.saveCalls = 0;
   state.deleteCalls = 0;
   state.saveFails = false;
+  logLines.length = 0;
 });
 
 function multipartBody(file: Buffer, filename = "candidate.pdf", mimetype = "application/pdf") {
@@ -181,5 +187,11 @@ describe("public job application upload fail-closed boundaries", () => {
     assert.equal(response.statusCode, 503, response.body);
     assert.equal(state.scanCalls, 1);
     assertNothingStored();
+    // A scanner outage takes the whole careers funnel down. It must never be
+    // silent again, and the reason has to say which scanner failure it was.
+    assert.deepEqual(
+      logLines.map(({ msg, scanFailure }) => ({ msg, scanFailure })),
+      [{ msg: "recruitment CV scan unavailable", scanFailure: "unreachable" }],
+    );
   });
 });

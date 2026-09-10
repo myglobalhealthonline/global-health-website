@@ -17,7 +17,11 @@ const state: {
   transactionCalls: number;
   archiveBeforeUpdate: boolean;
   enabledLocales: Array<"CS" | "EN">;
-} = { rows: [], sanitized: [], transactionCalls: 0, archiveBeforeUpdate: false, enabledLocales: ["CS", "EN"] };
+  scannerReachable: boolean;
+} = {
+  rows: [], sanitized: [], transactionCalls: 0, archiveBeforeUpdate: false,
+  enabledLocales: ["CS", "EN"], scannerReachable: true,
+};
 
 const decorate = (row: Row) => ({
   ...row,
@@ -66,6 +70,9 @@ before(async () => {
   mock.module("../../services/object-storage.js", {
     namedExports: { isMediaStorageConfigured: () => true },
   });
+  mock.module("../../services/malware-scan.js", {
+    namedExports: { pingMalwareScanner: async () => state.scannerReachable },
+  });
   mock.module("../../utils/sanitize-html.js", {
     namedExports: {
       sanitizeCareerHtml: (html: string) => {
@@ -106,6 +113,7 @@ beforeEach(() => {
   state.transactionCalls = 0;
   state.archiveBeforeUpdate = false;
   state.enabledLocales = ["CS", "EN"];
+  state.scannerReachable = true;
 });
 
 const localization = (locale: "CS" | "EN", title: string) => ({
@@ -272,5 +280,22 @@ describe("localized admin job groups", () => {
 
     assert.equal(result?.job.localizations.length, 2);
     assert.equal(state.rows.find(({ locale }) => locale === "EN")?.title, "Updated doctor");
+  });
+
+  it("refuses to publish while the scanner does not answer", async () => {
+    // A publish that only proves CLAMAV_HOST is a non-empty string puts a job
+    // in front of candidates whose applications every one of them will fail.
+    state.scannerReachable = false;
+
+    await assert.rejects(() => service.createAdminJobGroup({
+      countryId: "country-cz",
+      slug: "doctor",
+      workplaceMode: "REMOTE",
+      status: "PUBLISHED",
+      closesAt: null,
+      localizations: [localization("CS", "Praktický lékař")],
+    }, "admin-1"), service.RecruitmentNotReadyError);
+    assert.deepEqual(state.rows, []);
+    assert.equal(state.transactionCalls, 0);
   });
 });
