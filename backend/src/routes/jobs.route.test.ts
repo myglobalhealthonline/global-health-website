@@ -173,6 +173,20 @@ describe("public job application upload fail-closed boundaries", () => {
     assertNothingStored();
   });
 
+  it("accepts a real PDF that the browser labelled application/octet-stream", async () => {
+    // Windows with no registered PDF handler reports an empty File.type, which
+    // the HTML spec puts on the wire as application/octet-stream, and so do most
+    // phone file pickers. Rejecting on that label turned away genuine CVs while
+    // stopping no attacker, who just declares application/pdf.
+    const response = await apply(
+      Buffer.from("%PDF-1.4 valid fixture"), "candidate.pdf", "application/octet-stream",
+    );
+    assert.equal(response.statusCode, 201, response.body);
+    assert.equal(state.scanCalls, 1);
+    assert.equal(state.putCalls, 1);
+    assert.equal(state.saveCalls, 1);
+  });
+
   it("rejects an infected PDF without storing a row or object", async () => {
     state.scanResult = "INFECTED";
     const response = await apply(Buffer.from("%PDF-1.4\n% EICAR-like fixture\n"));

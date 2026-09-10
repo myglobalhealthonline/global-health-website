@@ -113,10 +113,9 @@ describe("recruitment validation", () => {
 
   it("accepts only a real, size-bounded PDF with a single .pdf suffix", () => {
     const pdf = Buffer.from("%PDF-1.4\n% test\n");
-    assert.deepEqual(validateCvPdf(pdf, "resume.PDF", "application/pdf"), { ok: true });
-    assert.equal(validateCvPdf(Buffer.from("not a pdf here"), "resume.pdf", "application/pdf").ok, false);
-    assert.equal(validateCvPdf(pdf, "resume.pdf.exe", "application/pdf").ok, false);
-    assert.equal(validateCvPdf(pdf, "resume.pdf", "text/plain").ok, false);
-    assert.equal(validateCvPdf(Buffer.alloc(5 * 1024 * 1024 + 1), "resume.pdf", "application/pdf").ok, false);
+    assert.deepEqual(validateCvPdf(pdf, "resume.PDF"), { ok: true });
+    assert.equal(validateCvPdf(Buffer.from("not a pdf here"), "resume.pdf").ok, false);
+    assert.equal(validateCvPdf(pdf, "resume.pdf.exe").ok, false);
+    assert.equal(validateCvPdf(Buffer.alloc(5 * 1024 * 1024 + 1), "resume.pdf").ok, false);
   });
 });

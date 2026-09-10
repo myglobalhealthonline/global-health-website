@@ -22,7 +22,11 @@ export function JobApplicationForm({ jobId, privacyHref, locale, copy }: { jobId
     const form = event.currentTarget;
     const data = new FormData(form);
     const file = data.get("cv");
-    if (!(file instanceof File) || !file.name.toLowerCase().endsWith(".pdf") || file.type !== "application/pdf") {
+    // Only the name is checked here. `file.type` is the OS's guess, not the
+    // file's contents: empty for a real PDF on Windows with no registered PDF
+    // handler, and application/octet-stream from most phone pickers. Gating on
+    // it turned away genuine CVs. The server verifies the magic bytes.
+    if (!(file instanceof File) || !file.name.toLowerCase().endsWith(".pdf")) {
       return setState({ status: "error", message: copy.invalidPdf });
     }
     if (file.size > MAX_PDF_BYTES) return setState({ status: "error", message: copy.tooLarge });

@@ -94,7 +94,7 @@ const jobsRoute: FastifyPluginAsync = async (app) => {
         // Bot trap: indistinguishable success, with no scan/storage/database write.
         if (parsedFields.data.website) return reply.status(201).send(okResponse({}, "Application received."));
         if (!cv) return reply.status(400).send(errorResponse("Please upload a valid PDF."));
-        const cvCheck = validateCvPdf(cv.buffer, cv.filename, cv.mimetype);
+        const cvCheck = validateCvPdf(cv.buffer, cv.filename);
         if (!cvCheck.ok) return reply.status(cvCheck.status).send(errorResponse(cvCheck.message));
 
         const scan = await scanBufferForMalware(cv.buffer);

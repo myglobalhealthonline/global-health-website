@@ -1,6 +1,6 @@
 import { JobApplicationStatus, JobListingStatus, JobWorkplaceMode, LocaleCode } from "@prisma/client";
 import { z } from "zod";
-import { verifySniffedMime } from "../../utils/sniff-mime.js";
+import { sniffFileMime } from "../../utils/sniff-mime.js";
 
 export const MAX_CV_BYTES = 5 * 1024 * 1024;
 
@@ -146,10 +146,15 @@ export function addCalendarMonths(date: Date, months: number): Date {
 
 export type CvValidationResult = { ok: true } | { ok: false; status: 400 | 413; message: string };
 
-export function validateCvPdf(buffer: Buffer, filename: string, declaredMime: string): CvValidationResult {
+export function validateCvPdf(buffer: Buffer, filename: string): CvValidationResult {
   if (buffer.length > MAX_CV_BYTES) return { ok: false, status: 413, message: "The PDF must be 5 MB or smaller." };
   if (!/^[^\\/]+\.pdf$/i.test(filename)) return { ok: false, status: 400, message: "Please upload a valid PDF." };
-  if (!verifySniffedMime(buffer, declaredMime, new Set(["application/pdf"]))) {
+  // The browser-declared MIME is deliberately not consulted. It is the OS's
+  // guess - empty for a real PDF on Windows with no registered handler, and
+  // application/octet-stream from most phone file pickers - and an attacker
+  // simply declares whatever passes. The magic bytes are the check that means
+  // something.
+  if (sniffFileMime(buffer) !== "application/pdf") {
     return { ok: false, status: 400, message: "Please upload a valid PDF." };
   }
   return { ok: true };
