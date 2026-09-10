@@ -25,6 +25,13 @@ function actionStatus({
   nextAvailableLabel,
 }: BookabilityActionProps): { disabled: boolean; label?: string } {
   if (!bookability) return { disabled: false };
+  // UNKNOWN means bookability was never actually checked — cheap "marketing
+  // mode" reads (e.g. the homepage's service list) deliberately skip the
+  // live per-doctor slot query and fake this placeholder instead of a real
+  // answer. Disabling the CTA here would assert "not accepting bookings"
+  // for a claim that was never verified, so this stays a live, unlabeled
+  // click-through — /book resolves the real state once clicked.
+  if (bookability.state === "UNKNOWN") return { disabled: false };
   // RETURNING + NO_OPEN_SLOT means nothing opens within the short marketing
   // horizon but a real later slot exists (nextAvailableAt is set) — the
   // /book wizard's own month picker can reach it, so the CTA must stay live.
