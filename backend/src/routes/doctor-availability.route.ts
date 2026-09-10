@@ -103,9 +103,14 @@ const doctorAvailabilityRoute: FastifyPluginAsync = async (app) => {
       // `bookability` classifies against a short "primary" horizon purely for
       // the marketing card/CTA copy (BOOKABLE vs "reopens on X"). A caller
       // asking for a wider `days` window can legitimately reach real open
-      // slots beyond that horizon — only a genuine pause/no-doctor reason
-      // means there is truly nothing to list, regardless of the requested range.
-      if (bookability.state !== "BOOKABLE" && bookability.reasonCode !== "NO_OPEN_SLOT") {
+      // slots beyond that horizon — that's RETURNING + NO_OPEN_SLOT
+      // (nextAvailableAt points at that later slot). UNAVAILABLE + NO_OPEN_SLOT
+      // is different: nothing is open even in the wider lookahead, so — like
+      // any pause/no-doctor reason — there is truly nothing to list regardless
+      // of the requested range.
+      const reachableBeyondHorizon =
+        bookability.state === "RETURNING" && bookability.reasonCode === "NO_OPEN_SLOT";
+      if (bookability.state !== "BOOKABLE" && !reachableBeyondHorizon) {
         const clinicTimezone = await resolveCountryTimeZone(countryParse.data);
         return okResponse({ slots: [], clinicTimezone, bookability });
       }

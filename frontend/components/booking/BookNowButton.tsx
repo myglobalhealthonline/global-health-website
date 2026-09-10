@@ -22,17 +22,25 @@ function actionStatus({
   bookability,
   unavailableLabel,
   returningLabel,
+  nextAvailableLabel,
 }: BookabilityActionProps): { disabled: boolean; label?: string } {
-  if (bookability?.state === "UNAVAILABLE") {
-    return { disabled: true, label: unavailableLabel ?? "Not accepting online bookings" };
-  }
-  if (bookability?.state === "RETURNING") {
+  if (!bookability) return { disabled: false };
+  // RETURNING + NO_OPEN_SLOT means nothing opens within the short marketing
+  // horizon but a real later slot exists (nextAvailableAt is set) — the
+  // /book wizard's own month picker can reach it, so the CTA must stay live.
+  // UNAVAILABLE + NO_OPEN_SLOT is the different case where nothing is open
+  // even in the wider lookahead (nextAvailableAt is null) — that one, and
+  // any pause/no-doctor reason, has genuinely nothing to book.
+  const reachable = bookability.state === "BOOKABLE" ||
+    (bookability.state === "RETURNING" && bookability.reasonCode === "NO_OPEN_SLOT");
+  if (!reachable) {
+    if (bookability.state === "UNAVAILABLE") {
+      return { disabled: true, label: unavailableLabel ?? "Not accepting online bookings" };
+    }
     return { disabled: true, label: returningLabel ?? "Appointments are not open yet" };
   }
-  // A verified future slot makes this action BOOKABLE; it should not rewrite
-  // the familiar CTA with inventory detail. Return/leave dates belong only to
-  // the disabled RETURNING state above.
-  return { disabled: false };
+  // Still hint at the later date when it's known, without blocking the click.
+  return { disabled: false, label: bookability.state === "RETURNING" ? nextAvailableLabel : undefined };
 }
 
 /**
@@ -90,6 +98,7 @@ export function BookNowButton({
     bookability,
     unavailableLabel,
     returningLabel,
+    nextAvailableLabel,
   });
   return (
     <button
@@ -147,6 +156,7 @@ export function BookCta({
     bookability,
     unavailableLabel,
     returningLabel,
+    nextAvailableLabel,
   });
   if (status.disabled) {
     return (
