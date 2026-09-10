@@ -360,7 +360,13 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
           doctorId: doctor.id,
           serviceId: service.id,
         });
-        if (bookability.state !== "BOOKABLE") {
+        // `bookability` classifies against a short "primary" horizon purely for
+        // the marketing card/CTA copy (BOOKABLE vs "reopens on X"). A caller
+        // asking for a wider window (the admin's month picker, or a longer
+        // `days`) can legitimately reach real open slots beyond that horizon —
+        // only a genuine pause/no-doctor reason means there is truly nothing to
+        // list, regardless of the requested range.
+        if (bookability.state !== "BOOKABLE" && bookability.reasonCode !== "NO_OPEN_SLOT") {
           const clinicTimezone = await resolveCountryTimeZone(countryCode);
           return okResponse({ slots: [], clinicTimezone, bookability });
         }
