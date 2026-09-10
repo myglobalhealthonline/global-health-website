@@ -1427,6 +1427,7 @@ function MonthPicker({
             key={opt.offset}
             role="tab"
             aria-selected={isActive}
+            data-selected={isActive}
             href={hrefFor(String(opt.offset))}
             className={
               isActive
