@@ -24,6 +24,11 @@ import { slotOverlapsPause } from "../bookability/bookability-policy.js";
 const DAY_MS = 24 * 60 * 60 * 1000;
 const CONCURRENCY = 8;
 const CACHE_TTL_MS = 45_000;
+/** Matches the per-doctor/per-service availability routes' declared max
+ *  (serviceAvailabilityQuerySchema) and the /book wizard's month picker span —
+ *  a patient browsing 3-4 months out needs the fetch to actually reach that
+ *  far, not just the near-term window this cap used to silently truncate to. */
+const MAX_DAYS = 120;
 
 export type ServiceAggSlot = {
   startAt: string;
@@ -75,7 +80,7 @@ export async function getServiceAggregatedAvailability(
   insuranceCompanyId?: string | null,
 ): Promise<ServiceAggregatedAvailability> {
   const code = countryCode.trim().toLowerCase();
-  const clampedDays = Math.min(30, Math.max(1, days));
+  const clampedDays = Math.min(MAX_DAYS, Math.max(1, days));
   // Insurer is part of the key — the eligible doctor pool differs per network,
   // so a shared key would serve one insurer's slots to another.
   const cacheKey = `${code}:${serviceSlug}:${clampedDays}:${insuranceCompanyId ?? "none"}`;
