@@ -147,6 +147,18 @@ export function getDoctorServiceBookability(
   return byServiceId[serviceId] ?? { ...UNAVAILABLE_BOOKABILITY };
 }
 
+/**
+ * True when a service/doctor can be reached through the booking wizard at all —
+ * either bookable right now, or `RETURNING`/`UNAVAILABLE` purely because the
+ * nearest opening falls outside the short marketing horizon (`NO_OPEN_SLOT`).
+ * The wizard's own month picker lets the patient reach that later opening, so
+ * only a genuine pause/no-approved-doctor reason should hide the option
+ * entirely — the same distinction the availability routes make server-side.
+ */
+export function canReachThroughBookingWizard(bookability: BookabilitySummary): boolean {
+  return bookability.state === "BOOKABLE" || bookability.reasonCode === "NO_OPEN_SLOT";
+}
+
 /** One selectable insurance company for a covered service (public payload). */
 export type InsuranceOption = {
   companyId: string;
