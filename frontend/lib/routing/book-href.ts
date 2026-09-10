@@ -20,6 +20,9 @@ type BookHrefInput = {
    * and mapped, so live links and indexed URLs keep working.
    */
   benefit?: string | null;
+  /** Which calendar month (0 = this month) the patient is browsing for slots —
+   *  see MONTH_OPTIONS in the book page. Omitted/"0" for the default view. */
+  month?: string | null;
 };
 
 export const BOOKING_WORKFLOW_PARAM_KEYS = [
@@ -33,6 +36,7 @@ export const BOOKING_WORKFLOW_PARAM_KEYS = [
   "insurance",
   "benefit",
   "from",
+  "month",
 ] as const;
 
 export function buildBookHref({
@@ -45,6 +49,7 @@ export function buildBookHref({
   at,
   insurance,
   benefit,
+  month,
 }: BookHrefInput): string {
   const params = new URLSearchParams();
   if (service) params.set("service", service);
@@ -54,6 +59,7 @@ export function buildBookHref({
   if (doctor) params.set("doctor", doctor);
   if (slot) params.set("slot", slot);
   if (at) params.set("at", at);
+  if (month && month !== "0") params.set("month", month);
   const query = params.toString();
   return `/${country}/${lang}/book${query ? `?${query}` : ""}`;
 }

@@ -13,6 +13,7 @@ import {
   getCountryDoctors,
   getCountryServices,
   getDoctorServiceBookability,
+  canReachThroughBookingWizard,
   type CountryDoctorCard,
   type CountryServiceCard,
 } from "@/lib/content/get-country-collections";
@@ -62,12 +63,39 @@ type SearchParams = {
   /** Portal-return chrome (04-001/04-002): set on every "Book consultation"
    *  CTA inside `/account` via `resolveBookConsultationHref`. */
   from?: string | string[];
+  /** Which calendar month (0 = this month, up to MONTH_PICKER_SPAN - 1) the
+   *  TIME step is browsing. Lets a patient reach an opening further out than
+   *  the default near-term window — see MONTH_OPTIONS below. */
+  month?: string | string[];
 };
 
 type Notice = { tone: "info" | "warning"; message: string } | null;
 
 type BookT = import("@/lib/i18n/types").CommonLocale["bookPage"];
 type SameDayT = ReturnType<typeof loadLocaleBundle>["home"]["countryHero"]["sameDay"];
+
+/** How many months ahead the TIME step's month picker offers — matches the
+ *  admin manual-booking form's own picker and the backend's availability
+ *  pregeneration horizon (comfortably under its 120-day cap). */
+const MONTH_PICKER_SPAN = 4;
+
+type MonthOption = { offset: number; label: string };
+
+function buildMonthOptions(now: Date, locale: string): MonthOption[] {
+  return Array.from({ length: MONTH_PICKER_SPAN }, (_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+    return {
+      offset: i,
+      label: d.toLocaleDateString(locale, { month: "long", year: "numeric" }),
+    };
+  });
+}
+
+/** Days to fetch so the requested month's slots are fully covered. */
+function daysUntilMonthEnd(now: Date, monthOffset: number): number {
+  const monthEnd = new Date(now.getFullYear(), now.getMonth() + monthOffset + 1, 0);
+  return Math.max(1, Math.ceil((monthEnd.getTime() - now.getTime()) / (24 * 60 * 60 * 1000)) + 1);
+}
 
 export async function generateStaticParams(): Promise<Params[]> {
   return countryLangParams();
@@ -175,6 +203,13 @@ export default async function CountryLangBookPage({
   // before a clinician. Its presence also distinguishes a service-first journey
   // from a doctor-first one even once ?doctor= has been added.
   const atParam = firstParam(sp.at);
+  const monthParamRaw = Number(firstParam(sp.month) ?? "0");
+  const monthOffset = Number.isFinite(monthParamRaw)
+    ? Math.min(Math.max(Math.trunc(monthParamRaw), 0), MONTH_PICKER_SPAN - 1)
+    : 0;
+  const now = new Date();
+  const availabilityDays = daysUntilMonthEnd(now, monthOffset);
+  const monthOptions = buildMonthOptions(now, lang);
 
   // Independent of `bookingRequirementsPromise` (both only need `code`) — run
   // concurrently instead of waiting for bookingRequirements to settle first.
@@ -202,7 +237,7 @@ export default async function CountryLangBookPage({
   // Corporate consultations never appear here: they are CorporatePlanService
   // rows, not catalogue services, and are booked from /account/corporate.
   const allServices = [...generalServicesRaw, ...specialistServicesRaw];
-  const services = allServices.filter((service) => service.bookability.state === "BOOKABLE");
+  const services = allServices.filter((service) => canReachThroughBookingWizard(service.bookability));
   const selectedService =
     services.find((s) => s.slug === serviceSlugParam || s.id === serviceIdParam) ?? null;
   const requestedDoctorCandidate = doctorSlugParam
@@ -211,24 +246,22 @@ export default async function CountryLangBookPage({
       ) ?? null
     : null;
   const requestedDoctor =
-    requestedDoctorCandidate?.bookability.state === "BOOKABLE"
+    requestedDoctorCandidate && canReachThroughBookingWizard(requestedDoctorCandidate.bookability)
       ? requestedDoctorCandidate
       : null;
   const requestedDoctorAssigned =
     Boolean(selectedService && requestedDoctor) &&
     selectedService!.assignedDoctorIds.includes(requestedDoctor!.id) &&
-    getDoctorServiceBookability(
-      requestedDoctor!.bookabilityByServiceId,
-      selectedService!.id,
-    ).state === "BOOKABLE";
+    canReachThroughBookingWizard(
+      getDoctorServiceBookability(requestedDoctor!.bookabilityByServiceId, selectedService!.id),
+    );
   const servicesForRequestedDoctor = requestedDoctor
     ? services.filter(
         (service) =>
           service.assignedDoctorIds.includes(requestedDoctor.id) &&
-          getDoctorServiceBookability(
-            requestedDoctor.bookabilityByServiceId,
-            service.id,
-          ).state === "BOOKABLE",
+          canReachThroughBookingWizard(
+            getDoctorServiceBookability(requestedDoctor.bookabilityByServiceId, service.id),
+          ),
       )
     : services;
 
@@ -502,7 +535,7 @@ export default async function CountryLangBookPage({
                 />
               ) : (
                 <Suspense
-                  key={`${selectedService.id}:${doctorSlugParam ?? ""}:${atParam ?? ""}:${slotParam ?? ""}:${insuranceCompanyId ?? ""}`}
+                  key={`${selectedService.id}:${doctorSlugParam ?? ""}:${atParam ?? ""}:${slotParam ?? ""}:${insuranceCompanyId ?? ""}:${monthOffset}`}
                   fallback={<AvailabilityStepLoading label={bp.timesShown} />}
                 >
                   <SelectedServiceFlow
@@ -522,6 +555,9 @@ export default async function CountryLangBookPage({
                   insuranceCompanyId={insuranceCompanyId}
                   selectedInsurance={selectedInsurance}
                   benefitHrefParam={benefitHrefParam}
+                  availabilityDays={availabilityDays}
+                  monthOffset={monthOffset}
+                  monthOptions={monthOptions}
                   />
                 </Suspense>
               )}
@@ -713,6 +749,9 @@ async function SelectedServiceFlow({
   insuranceCompanyId,
   selectedInsurance,
   benefitHrefParam,
+  availabilityDays,
+  monthOffset,
+  monthOptions,
 }: {
   code: string;
   country: string;
@@ -732,6 +771,11 @@ async function SelectedServiceFlow({
   selectedInsurance: import("@/lib/content/get-country-collections").InsuranceOption | null;
   /** The `benefit` value to carry on downstream links (`<source>:<refId>` or "none"). */
   benefitHrefParam: string | null;
+  /** Days of slots to fetch — wide enough to cover the selected month. */
+  availabilityDays: number;
+  /** Which month the TIME step is browsing (0 = this month). */
+  monthOffset: number;
+  monthOptions: MonthOption[];
 }) {
   const assignedDoctorIds = new Set(service.assignedDoctorIds);
   const serviceDoctors =
@@ -739,10 +783,9 @@ async function SelectedServiceFlow({
       ? doctors.filter(
           (doctor) =>
             assignedDoctorIds.has(doctor.id) &&
-            getDoctorServiceBookability(
-              doctor.bookabilityByServiceId,
-              service.id,
-            ).state === "BOOKABLE",
+            canReachThroughBookingWizard(
+              getDoctorServiceBookability(doctor.bookabilityByServiceId, service.id),
+            ),
         )
       : [];
   // Slug OR id — the corporate pre-assessment deep link carries the pinned
@@ -765,7 +808,7 @@ async function SelectedServiceFlow({
     const agg = await getServiceAggregatedAvailability(
       code,
       service.slug,
-      14,
+      availabilityDays,
       insuranceCompanyId,
     );
 
@@ -831,6 +874,15 @@ async function SelectedServiceFlow({
               {service.name}
             </h2>
           </header>
+          <div className="mt-5">
+            <MonthPicker
+              options={monthOptions}
+              monthOffset={monthOffset}
+              hrefFor={(month) =>
+                buildBookHref({ country, lang, service: service.slug, benefit: benefitHrefParam, month })
+              }
+            />
+          </div>
           {agg.slots.length === 0 ? (
             <div className="gh2-status-card mt-6 text-center">
               <CalendarDays className="mx-auto size-6 text-[var(--color-text-muted)]" aria-hidden />
@@ -879,7 +931,7 @@ async function SelectedServiceFlow({
     code,
     service.slug,
     selectedDoctor.slug,
-    14,
+    availabilityDays,
     insuranceCompanyId,
   );
   // Slot is confirmed only when ?slot= is set AND still open. Until then the
@@ -907,6 +959,25 @@ async function SelectedServiceFlow({
             {selectedDoctor.fullName} · {selectedDoctor.title}
           </p>
         </header>
+
+        {!slotConfirmed ? (
+          <div className="mt-5">
+            <MonthPicker
+              options={monthOptions}
+              monthOffset={monthOffset}
+              hrefFor={(month) =>
+                buildBookHref({
+                  country,
+                  lang,
+                  service: service.slug,
+                  doctor: selectedDoctor.slug,
+                  benefit: benefitHrefParam,
+                  month,
+                })
+              }
+            />
+          </div>
+        ) : null}
 
         {slotStale ? (
           <InlineNotice
@@ -1247,6 +1318,50 @@ function StepIndicator({
   );
 }
 
+
+/**
+ * Month browser for the TIME step. The default view only fetches the near-term
+ * window, so a doctor/service whose next opening is further out (shown as
+ * "reopens on X" on the catalogue card) would otherwise look fully booked here
+ * too — this lets the patient jump straight to the month that actually has it,
+ * the same escape hatch the admin's manual-booking form already offers.
+ */
+function MonthPicker({
+  options,
+  monthOffset,
+  hrefFor,
+}: {
+  options: MonthOption[];
+  monthOffset: number;
+  hrefFor: (month: string | null) => string;
+}) {
+  return (
+    <div
+      role="tablist"
+      aria-label="Browse month"
+      className="mb-5 flex flex-wrap gap-2"
+    >
+      {options.map((opt) => {
+        const isActive = opt.offset === monthOffset;
+        return (
+          <Link
+            key={opt.offset}
+            role="tab"
+            aria-selected={isActive}
+            href={hrefFor(opt.offset > 0 ? String(opt.offset) : null)}
+            className={
+              isActive
+                ? "gh2-selectable-dark rounded-full px-4 py-2 text-xs font-bold text-[#0a1f1a]"
+                : "gh2-selectable-dark rounded-full px-4 py-2 text-xs font-semibold text-white/75"
+            }
+          >
+            {opt.label}
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
 
 function InlineNotice({ notice }: { notice: NonNullable<Notice> }) {
   const isWarning = notice.tone === "warning";
