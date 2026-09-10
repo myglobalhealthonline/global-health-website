@@ -103,7 +103,7 @@ function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise
   ]);
 }
 
-export async function putObject(key: string, body: Buffer, contentType: string): Promise<void> {
+export async function putObject(key: string, body: Buffer, contentType: string, ifMatch?: string): Promise<void> {
   if (isObjectStorageConfigured()) {
     await getClient().send(
       new PutObjectCommand({
@@ -111,6 +111,7 @@ export async function putObject(key: string, body: Buffer, contentType: string):
         Key: key,
         Body: body,
         ContentType: contentType,
+        ...(ifMatch ? { IfMatch: ifMatch } : {}),
         // S-018: encrypt at rest by default. AES256 (SSE-S3) needs no extra
         // env/KMS config — every S3-compatible provider we target (Railway,
         // Scaleway, MinIO, AWS) supports it. Swap to SSE-KMS if/when a
@@ -122,6 +123,7 @@ export async function putObject(key: string, body: Buffer, contentType: string):
   }
 
   if (isDevLocalMediaEnabled()) {
+    if (ifMatch) throw new Error("Conditional writes require object storage");
     const full = safeLocalFilePath(key);
     await mkdir(path.dirname(full), { recursive: true });
     await writeFile(full, body);

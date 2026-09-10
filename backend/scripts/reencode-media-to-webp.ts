@@ -19,9 +19,9 @@
  *     (media-public.route.ts) serves `Content-Type` from the stored S3
  *     object metadata, not from the key's extension, so a `.png` key holding
  *     WebP bytes is served — and optimized — correctly.
- *   - The original bytes are copied to `media-original/<key>` first, so the
- *     lossy re-encode is reversible. Existing backups are never overwritten,
- *     which keeps re-runs idempotent.
+ *   - The original bytes are copied to a unique `media-original/<key>.<uuid>`
+ *     first, so every replacement is reversible. A conditional write refuses
+ *     to overwrite a newer upload made while this script was working.
  *
  * Matches new-upload behaviour (quality 82, original pixel dimensions).
  *
@@ -37,6 +37,10 @@
  * the 1.8 MB masters; the run is I/O-bound on S3 anyway.
  */
 import { convertToWebpIfEligible } from "../src/utils/image-webp.js";
+import { randomUUID } from "node:crypto";
+import { pathToFileURL } from "node:url";
+import assert from "node:assert/strict";
+import sharp from "sharp";
 import {
   getObject,
   headObject,
@@ -61,12 +65,15 @@ const CONCURRENCY = Math.max(1, Number(arg("concurrency", "4")) || 4);
 
 type Result = { key: string; before: number; after: number; note?: string };
 
-async function processKey(key: string): Promise<Result | null> {
+export async function processKey(key: string, apply = APPLY): Promise<Result | null> {
+  // Avoid opening unread GET streams for already optimized objects: enough
+  // unconsumed bodies exhaust the SDK socket pool and stall the entire audit.
+  const metadata = await headObject(key);
+  if (!CONVERTIBLE.has((metadata?.contentType ?? "").toLowerCase())) return null;
   const obj = await getObject(key);
   const contentType = (obj.ContentType ?? "").toLowerCase();
-  if (!CONVERTIBLE.has(contentType)) return null;
-
   const original = await readObjectBodyToBuffer(obj.Body);
+  if (!CONVERTIBLE.has(contentType)) return null;
   if (!original) return { key, before: 0, after: 0, note: "unreadable body" };
 
   const converted = await convertToWebpIfEligible(original, contentType);
@@ -75,12 +82,23 @@ async function processKey(key: string): Promise<Result | null> {
     return { key, before: original.length, after: original.length, note: "webp not smaller — skipped" };
   }
 
-  if (APPLY) {
-    const backupKey = `${BACKUP_PREFIX}${key}`;
-    if (!(await headObject(backupKey))) {
-      await putObject(backupKey, original, contentType);
-    }
-    await putObject(key, converted.buffer, converted.mimetype);
+  if (apply) {
+    if (!obj.ETag) throw new Error("Missing ETag; cannot safely replace this object");
+    const source = await sharp(original).metadata();
+    const output = await sharp(converted.buffer).metadata();
+    const rotated = (source.orientation ?? 1) >= 5;
+    assert.equal(output.width, rotated ? source.height : source.width);
+    assert.equal(output.height, rotated ? source.width : source.height);
+    const backupKey = `${BACKUP_PREFIX}${key}.${randomUUID()}`;
+    await putObject(backupKey, original, contentType);
+    const backup = await getObject(backupKey);
+    const backupBytes = await readObjectBodyToBuffer(backup.Body);
+    assert.ok(backupBytes?.equals(original), "Original backup verification failed");
+    console.log(`  Backup: ${backupKey}`);
+    await putObject(key, converted.buffer, converted.mimetype, obj.ETag);
+    const saved = await getObject(key);
+    const savedBytes = await readObjectBodyToBuffer(saved.Body);
+    assert.ok(savedBytes?.equals(converted.buffer), "Saved image verification failed");
   }
   return { key, before: original.length, after: converted.buffer.length };
 }
@@ -95,6 +113,8 @@ async function main() {
 
   const results: Result[] = [];
   let cursor = 0;
+  let checked = 0;
+  let failed = 0;
   await Promise.all(
     Array.from({ length: Math.min(CONCURRENCY, objects.length) }, async () => {
       while (cursor < objects.length) {
@@ -109,7 +129,11 @@ async function main() {
             );
           }
         } catch (error) {
+          failed++;
           console.error(`  ${key}\n    FAILED: ${(error as Error).message}`);
+        } finally {
+          checked++;
+          if (checked % 50 === 0) console.log(`Checked ${checked}/${objects.length} objects`);
         }
       }
     }),
@@ -122,9 +146,13 @@ async function main() {
       (before ? ` (-${Math.round((1 - after / before) * 100)}%)` : ""),
   );
   if (!APPLY) console.log("Dry run — nothing written. Re-run with --apply.");
+  console.log(`${checked} checked; ${failed} failed`);
+  if (failed) process.exitCode = 1;
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+}
