@@ -209,6 +209,16 @@ export function ManualBookingForm({
   );
   const [showAllServices, setShowAllServices] = useState(false);
 
+  // S-002 break-glass: when ADMIN_PHI_REQUIRE_REASON is on, the identity
+  // prefill 403s until a reason is on file. Rather than the full-page
+  // PhiReasonGate (which would navigate away mid-booking), an inline prompt
+  // collects one, stores it in the same 15-min gh_phi_reason cookie, and
+  // retries the prefill — see `prefillIdentity` / `submitPhiReason` below.
+  const [phiReasonPrompt, setPhiReasonPrompt] = useState<{ patientEmail: string } | null>(null);
+  const [phiReasonText, setPhiReasonText] = useState("");
+  const [phiReasonSubmitting, setPhiReasonSubmitting] = useState(false);
+  const [phiReasonError, setPhiReasonError] = useState<string | null>(null);
+
   const [serviceId, setServiceId] = useState("");
   const [doctorId, setDoctorId] = useState("");
   // Insurance choice for this booking ("" = standard price). Picked after the
@@ -545,6 +555,7 @@ export function ManualBookingForm({
       const json = (await res.json()) as {
         ok?: boolean;
         data?: { profile?: Partial<PatientIdentity> | null };
+        details?: { reasonCode?: string; selfFixable?: boolean };
       };
       // The booking is no longer for this address — another suggestion was
       // picked, or the admin corrected the email by hand. Either way, stamping
@@ -552,6 +563,13 @@ export function ManualBookingForm({
       if (
         liveEmailRef.current.trim().toLowerCase() !== patientEmail.trim().toLowerCase()
       ) {
+        return;
+      }
+      // Break-glass gate: a reason on file fixes this without leaving the
+      // booking. Anything else 403 (out-of-scope folder, etc.) is not
+      // self-fixable here — fall through and leave the fields blank.
+      if (res.status === 403 && json.details?.reasonCode === "ADMIN_BREAK_GLASS_REASON_REQUIRED") {
+        setPhiReasonPrompt({ patientEmail });
         return;
       }
       if (!res.ok || !json.ok || !json.data?.profile) return;
@@ -601,6 +619,39 @@ export function ManualBookingForm({
     } catch {
       // Network failure: the fields stay as `selectPatient` cleared them and
       // the admin fills them in by hand.
+    }
+  }
+
+  /** Stores the inline break-glass reason, then retries the identity prefill
+   *  for the patient that triggered the prompt. */
+  async function submitPhiReason() {
+    if (!phiReasonPrompt) return;
+    const reason = phiReasonText.trim();
+    if (reason.length < 5 || reason.length > 300) {
+      setPhiReasonError("Reason must be between 5 and 300 characters.");
+      return;
+    }
+    setPhiReasonSubmitting(true);
+    setPhiReasonError(null);
+    try {
+      const res = await fetch("/api/admin/phi-reason", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ reason }),
+      });
+      const json = (await res.json()) as { ok?: boolean; message?: string };
+      if (!res.ok || !json.ok) {
+        setPhiReasonError(json.message ?? "Could not save the reason.");
+        return;
+      }
+      const patientEmail = phiReasonPrompt.patientEmail;
+      setPhiReasonPrompt(null);
+      setPhiReasonText("");
+      await prefillIdentity(patientEmail);
+    } catch {
+      setPhiReasonError("Network error — try again.");
+    } finally {
+      setPhiReasonSubmitting(false);
     }
   }
 
@@ -967,6 +1018,46 @@ export function ManualBookingForm({
               </div>
             ) : null}
         </div>
+        {phiReasonPrompt ? (
+          <div className="gh-status-warning mt-3 rounded-[var(--radius-card-sm)] border px-4 py-3 text-portal-compact">
+            <p className="font-semibold">Reason required to prefill this patient&apos;s ID and address</p>
+            <p className="mt-1 text-portal-meta">
+              Access to patient health information requires a documented reason. It&apos;s logged
+              against this record and stays valid for 15 minutes.
+            </p>
+            <textarea
+              className="gh-input mt-2 w-full"
+              rows={2}
+              maxLength={300}
+              placeholder='e.g. "Verifying ID documents for booking"'
+              value={phiReasonText}
+              onChange={(e) => setPhiReasonText(e.target.value)}
+            />
+            {phiReasonError ? <FieldError msg={phiReasonError} /> : null}
+            <div className="mt-2 flex gap-2">
+              <button
+                type="button"
+                className="gh-btn gh-btn-primary px-3 py-1.5 text-portal-compact"
+                disabled={phiReasonSubmitting}
+                onClick={() => void submitPhiReason()}
+              >
+                {phiReasonSubmitting ? "Saving…" : "Confirm and prefill"}
+              </button>
+              <button
+                type="button"
+                className="gh-btn gh-btn-secondary px-3 py-1.5 text-portal-compact"
+                disabled={phiReasonSubmitting}
+                onClick={() => {
+                  setPhiReasonPrompt(null);
+                  setPhiReasonText("");
+                  setPhiReasonError(null);
+                }}
+              >
+                Skip — fill in manually
+              </button>
+            </div>
+          </div>
+        ) : null}
         <div className="gh-admin-manual-booking-grid mt-4">
           <label className="flex flex-col gap-1.5">
             <span className="gh-field-label">Full name *</span>
