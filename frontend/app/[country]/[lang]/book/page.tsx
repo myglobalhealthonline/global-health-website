@@ -989,6 +989,7 @@ async function SelectedServiceFlow({
                 clinicTimezone={agg.clinicTimezone}
                 i18n={bf}
                 benefit={benefitHrefParam}
+                month={monthOffset}
               />
             </div>
           )}
@@ -1128,6 +1129,7 @@ async function SelectedServiceFlow({
               clinicTimezone={clinicTimezone}
               i18n={bf}
               benefit={benefitHrefParam}
+              month={monthOffset}
             />
           </div>
         ) : (
