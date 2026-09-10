@@ -49,6 +49,27 @@ describe("appointment update messages", () => {
     assert.match(msg, /Payment deadline: 17 Jun 2026, 14:30 \(Ireland\)/);
   });
 
+  it("patient WhatsApp resends the payment link alongside the deadline", () => {
+    const msg = patientWhatsAppAppointmentUpdated(
+      {
+        ...baseCtx,
+        paymentDeadline: "17 Jun 2026, 14:30 (Ireland)",
+        paymentLink: "https://pay.example.com/abc123",
+      },
+      "en",
+    );
+    assert.match(msg, /Complete Payment: https:\/\/pay\.example\.com\/abc123/);
+    assert.match(msg, /Payment deadline: 17 Jun 2026, 14:30 \(Ireland\)/);
+  });
+
+  it("patient WhatsApp omits the payment link when there is no deadline (paid order)", () => {
+    const msg = patientWhatsAppAppointmentUpdated(
+      { ...baseCtx, paymentLink: "https://pay.example.com/abc123" },
+      "en",
+    );
+    assert.doesNotMatch(msg, /pay\.example\.com/);
+  });
+
   it("patient WhatsApp restates the payment deadline in Portuguese", () => {
     const msg = patientWhatsAppAppointmentUpdated(
       { ...baseCtx, paymentDeadline: "17 Jun 2026, 14:30 (Irlanda)" },
