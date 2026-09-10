@@ -1,11 +1,7 @@
 import sharp from "sharp";
 
-/** Photo-quality WebP setting — visually lossless, ~25-35% smaller than source JPEG/PNG. */
+/** High-quality WebP for public photos; original pixel dimensions are retained. */
 const WEBP_QUALITY = 82;
-
-/** No rendered image on the site is wider than this — caps byte size on
- *  camera-resolution uploads without visible quality loss. */
-const MAX_WIDTH = 1920;
 
 const CONVERTIBLE_MIME = new Set(["image/jpeg", "image/png"]);
 
@@ -25,10 +21,18 @@ export async function convertToWebpIfEligible(
   mimetype: string,
 ): Promise<ConvertedImage | null> {
   if (!CONVERTIBLE_MIME.has(mimetype)) return null;
-  const webpBuffer = await sharp(buffer, { animated: false })
-    .resize({ width: MAX_WIDTH, withoutEnlargement: true })
+  // libvips does not expose APNG frames. Conservatively preserve files with
+  // an animation-control marker instead of flattening them to one frame.
+  if (mimetype === "image/png" && buffer.includes(Buffer.from("acTL"))) return null;
+  const metadata = await sharp(buffer).metadata();
+  if ((metadata.pages ?? 1) > 1) return null;
+  // WebP's format limit must not force a resize or reject a valid original.
+  if ((metadata.width ?? 0) > 16383 || (metadata.height ?? 0) > 16383) return null;
+  const webpBuffer = await sharp(buffer)
+    .autoOrient()
     .webp({ quality: WEBP_QUALITY })
     .toBuffer();
+  if (webpBuffer.length >= buffer.length) return null;
   return { buffer: webpBuffer, mimetype: "image/webp", extension: "webp" };
 }
 

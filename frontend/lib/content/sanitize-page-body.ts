@@ -1,5 +1,6 @@
 import sanitizeHtml from "sanitize-html";
 import type { IOptions } from "sanitize-html";
+import { optimizeBodyImage } from "./optimize-body-image";
 
 /**
  * Render-time sanitizer for the admin-authored `body` field of a ContentPage.
@@ -45,7 +46,7 @@ const PAGE_BODY_ALLOWED_TAGS = [
 const PAGE_BODY_ALLOWED_ATTRIBUTES: IOptions["allowedAttributes"] = {
   "*": ["class", "aria-label", "aria-hidden"],
   a: ["href", "target", "rel", "title"],
-  img: ["src", "alt", "title", "width", "height", "loading"],
+  img: ["src", "srcset", "sizes", "alt", "title", "width", "height", "loading", "decoding"],
   th: ["scope", "colspan", "rowspan"],
   td: ["colspan", "rowspan"],
 };
@@ -59,6 +60,7 @@ export function sanitizePageBodyHtml(html: string | null | undefined): string {
     allowedSchemesByTag: { img: ["http", "https", "data"] },
     allowProtocolRelative: false,
     transformTags: {
+      img: optimizeBodyImage,
       a: sanitizeHtml.simpleTransform("a", { rel: "noopener noreferrer" }, true),
     },
   });

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { getImageProps } from "next/image";
 import { ArrowUpRight, CheckCircle2, XCircle, Loader2, ShieldCheck, Clock, Lock } from "lucide-react";
 
 export function GH2SectionHeader({
@@ -328,7 +329,7 @@ export function GH2AuthShell({
           aria-hidden
           className="pointer-events-none absolute inset-0"
           style={{
-            backgroundImage: "url('/images/stock/gp.jpg')",
+            backgroundImage: `url("${getImageProps({ src: "/images/stock/gp.jpg", alt: "", width: 1200, height: 900 }).props.src}")`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             opacity: 0.65,

@@ -1,6 +1,7 @@
 import sanitizeHtml from "sanitize-html";
 import type { IOptions } from "sanitize-html";
 import postcss from "postcss";
+import { optimizeBodyImage } from "./optimize-body-image";
 
 /** Wrapper class the public article body + its scoped CSS hang off. */
 export const BLOG_SCOPE_CLASS = "gh-article-body";
@@ -83,7 +84,7 @@ const BLOG_ALLOWED_ATTRIBUTES: IOptions["allowedAttributes"] = {
   ...sanitizeHtml.defaults.allowedAttributes,
   "*": ["class", "id", "style", "title", "role", "dir", "lang", "aria-label", "aria-hidden", "aria-labelledby", "aria-describedby", DEMOTED_H1_ATTR],
   a: ["class", "id", "href", "name", "target", "rel", "title"],
-  img: ["class", "id", "src", "srcset", "sizes", "alt", "title", "width", "height", "loading"],
+  img: ["class", "id", "src", "srcset", "sizes", "alt", "title", "width", "height", "loading", "decoding"],
   source: ["src", "srcset", "sizes", "type", "media"],
   details: ["class", "id", "open"],
   time: ["class", "id", "datetime"],
@@ -140,6 +141,7 @@ export function scopeBlogHtml(html: string): string {
     allowedSchemesByTag: { img: ["http", "https", "data"] },
     allowProtocolRelative: false,
     transformTags: {
+      img: optimizeBodyImage,
       // Defence-in-depth: force rel="noopener noreferrer" on every link so a
       // target="_blank" in admin-authored HTML can't reverse-tabnab the opener.
       a: sanitizeHtml.simpleTransform("a", { rel: "noopener noreferrer" }, true),

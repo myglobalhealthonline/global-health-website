@@ -2,6 +2,8 @@
 
 import type React from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 import { ArrowRight, Clock, Tag, Stethoscope, FlaskConical } from "lucide-react";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import type { CartItemKind } from "@/lib/api/cart-types";
@@ -93,10 +95,12 @@ export function CartServiceCard({
           className={`relative overflow-hidden ${soldOut ? "opacity-60" : ""}`}
           style={{ aspectRatio: "16 / 10" }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={trimmed!}
             alt={title}
+            fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            unoptimized={isUnoptimizedImageSrc(trimmed!)}
             className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.05] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
           />
           <div

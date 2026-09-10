@@ -23,8 +23,7 @@
  *     lossy re-encode is reversible. Existing backups are never overwritten,
  *     which keeps re-runs idempotent.
  *
- * Matches new-upload behaviour exactly (quality 82, max width 1920), so a
- * master wider than 1920px is downscaled. Nothing on the site renders wider.
+ * Matches new-upload behaviour (quality 82, original pixel dimensions).
  *
  * Dry run (default):
  *   node --env-file=.env --import tsx scripts/reencode-media-to-webp.ts
@@ -71,7 +70,7 @@ async function processKey(key: string): Promise<Result | null> {
   if (!original) return { key, before: 0, after: 0, note: "unreadable body" };
 
   const converted = await convertToWebpIfEligible(original, contentType);
-  if (!converted) return { key, before: original.length, after: original.length, note: "no converter" };
+  if (!converted) return { key, before: original.length, after: original.length, note: "animation or no size saving — skipped" };
   if (converted.buffer.length >= original.length) {
     return { key, before: original.length, after: original.length, note: "webp not smaller — skipped" };
   }

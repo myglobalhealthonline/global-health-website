@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
+import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 import {
   ArrowLeft,
   Clock,
@@ -151,10 +153,14 @@ export default async function HealthTestDetailPage({
          *  front of the photo instead of it being a stacked block above. */}
         {detail.imageSrc ? (
           <div aria-hidden className="gh-medical-pattern-layer absolute inset-0 lg:hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={detail.imageSrc}
               alt=""
+              fill
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              loading="eager"
+              fetchPriority="high"
+              unoptimized={isUnoptimizedImageSrc(detail.imageSrc)}
               style={{
                 position: "absolute",
                 inset: 0,
@@ -180,10 +186,14 @@ export default async function HealthTestDetailPage({
           {/* ── LEFT — full-bleed test image (desktop only) ─────────────── */}
           <div className="relative hidden h-full overflow-hidden lg:block">
             {detail.imageSrc ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <Image
                 src={detail.imageSrc}
                 alt={detail.title}
+                fill
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                loading="eager"
+                fetchPriority="high"
+                unoptimized={isUnoptimizedImageSrc(detail.imageSrc)}
                 style={{
                   position: "absolute",
                   inset: 0,
