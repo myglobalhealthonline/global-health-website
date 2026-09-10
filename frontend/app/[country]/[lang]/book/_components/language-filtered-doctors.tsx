@@ -24,6 +24,7 @@ export function LanguageFilteredDoctors({
   slotByDoctorId,
   cardI18n,
   at,
+  month,
   bp,
   benefit,
   bookingAvailability,
@@ -42,6 +43,10 @@ export function LanguageFilteredDoctors({
   /** Chosen time (ISO) retained on the card href so the details step keeps the
    *  service-first ordering. */
   at?: string;
+  /** Month being browsed — carried onto the card href so the details step
+   *  fetches the same window and still finds the slot chosen back at the
+   *  time step. */
+  month: number;
   bp: import("@/lib/i18n/types").CommonLocale["bookPage"];
   cardI18n: DoctorCardI18n;
   bookingAvailability: BookabilityMessages;
@@ -175,6 +180,7 @@ export function LanguageFilteredDoctors({
                   doctor: doctor.slug,
                   slot: slotByDoctorId?.[doctor.id] ?? null,
                   at: at ?? null,
+                  month: String(month),
                 })}
                 primaryLabel={bp.continue}
                 ctaLabel={cardI18n.viewProfileLabel}

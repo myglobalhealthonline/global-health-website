@@ -30,6 +30,10 @@ type Props = {
   i18n: CommonLocale["bookingForm"];
   /** Carry the chosen insurer (id or "none") across the step links. */
   benefit?: string | null;
+  /** Which month this list of slots was fetched for — must carry forward to
+   *  the DETAILS step, or its own re-fetch falls back to the default (current)
+   *  month's narrower window and can lose the very slot just picked here. */
+  month: number;
 };
 
 /**
@@ -49,6 +53,7 @@ export function SlotPickerStep({
   clinicTimezone,
   i18n,
   benefit,
+  month,
 }: Props) {
   const router = useRouter();
   const [navigating, startNavigate] = useTransition();
@@ -81,7 +86,7 @@ export function SlotPickerStep({
     trackBookingEvent("select_time_slot", country, bookingCategory(serviceKind ?? serviceSlug));
     startNavigate(() => {
       router.push(
-        `${buildBookHref({ country, lang, service: serviceSlug, benefit, doctor: doctorSlug, slot: slotId })}#booking`,
+        `${buildBookHref({ country, lang, service: serviceSlug, benefit, doctor: doctorSlug, slot: slotId, month: String(month) })}#booking`,
       );
     });
   }
