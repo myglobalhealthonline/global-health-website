@@ -165,6 +165,40 @@
         "label": "Ningún factor de riesgo específico señalado",
         "summary": "Nada de lo que has introducido coincide con los factores de riesgo publicados que las guías utilizan para el cribado de la osteoporosis. Eso es tranquilizador, pero no es una garantía — comenta cualquier fractura o caída nueva a un médico de todos modos."
       }
+    },
+    "soreThroat": {
+      "emergency": {
+        "label": "Busca atención médica urgente ahora",
+        "summary": "Lo que has descrito puede apuntar a un problema en la vía aérea o a una infección profunda junto a la amígdala, y eso no se juzga con una puntuación. Acude a urgencias o llama ahora al número de emergencias de tu país."
+      },
+      "see-today": {
+        "label": "Que te vean hoy",
+        "summary": "Has descrito algo que debería revisarse hoy en vez de esperar a ver. Contacta con un médico o con un servicio de atención fuera de horario — no esperes a comprobar si se resuelve solo."
+      },
+      "too-young": {
+        "label": "Que lo valore un médico",
+        "summary": "Esta puntuación se diseñó para mayores de 3 años y no es fiable por debajo de esa edad. El dolor de garganta en un bebé o en un niño pequeño debe valorarlo un médico en lugar de puntuarlo — sobre todo si hay fiebre, bebe menos o moja menos pañales."
+      },
+      "very-low": {
+        "label": "Infección bacteriana muy improbable",
+        "summary": "Casi todos los dolores de garganta con este patrón son víricos y se resuelven solos en torno a una semana. El descanso, los líquidos y los analgésicos son el tratamiento. Consulta al médico si dura más de una semana o si empeora en vez de mejorar."
+      },
+      "low": {
+        "label": "Infección bacteriana improbable",
+        "summary": "Este patrón sigue siendo mucho más a menudo vírico que bacteriano. El autocuidado suele ser lo correcto, pero esto no es una prueba negativa — consulta al médico si el dolor empeora, si la fiebre sube o si no estás mejor al cabo de una semana."
+      },
+      "moderate": {
+        "label": "Infección bacteriana posible",
+        "summary": "Este patrón queda en el medio: puede ir en cualquier dirección, y es el punto en el que un médico normalmente querría examinarte la garganta o tomar un frotis en vez de suponerlo. Merece la pena consultar."
+      },
+      "raised": {
+        "label": "Infección bacteriana probable",
+        "summary": "Hay suficientes criterios presentes como para que las guías lleven a un clínico a explorarte y a plantear una prueba. Pide una consulta — un frotis o una exploración es lo que separa esto de un dolor de garganta vírico."
+      },
+      "high": {
+        "label": "Infección bacteriana muy probable",
+        "summary": "Es la banda más alta de la escala. Sigue sin ser un diagnóstico — solo una exploración o un frotis faríngeo pueden confirmarlo — pero es el grupo en el que un médico tiene más probabilidades de hacer una prueba y de plantearse antibióticos. Pide que te vean."
+      }
     }
   },
   "tools": {
@@ -1237,6 +1271,167 @@
       "cta": {
         "heading": "¿Buscando el embarazo?",
         "body": "Habla por vídeo con un médico colegiado sobre ciclos irregulares, revisiones preconcepcionales o la medicación que ya tomas.",
+        "label": "Reservar consulta"
+      }
+    },
+    "sore-throat-checker": {
+      "cardTitle": "Test de amigdalitis y dolor de garganta",
+      "cardBlurb": "Si un dolor de garganta parece bacteriano o vírico, con la puntuación ajustada por edad que usan los médicos — además de las señales de alarma que hay que ver hoy mismo.",
+      "eyebrow": "Herramienta de salud gratuita",
+      "h1Lead": "Test de amigdalitis y",
+      "h1Accent": "dolor de garganta",
+      "h1Trail": "{country}",
+      "metaTitle": "Test de Amigdalitis y Dolor de Garganta {country} | Centor",
+      "metaDescription": "Responde cinco preguntas sobre tu dolor de garganta y descubre qué probabilidad hay de una causa bacteriana, con la escala de McIsaac que usan los médicos. Incluye las señales de alarma que necesitan atención urgente. No es un diagnóstico ni una prueba de estreptococo.",
+      "lede": "Responde unas preguntas sobre tu dolor de garganta para ver qué probabilidad hay de una causa bacteriana y cuál sería el siguiente paso habitual. Tardas alrededor de un minuto.",
+      "trustPoints": [
+        "Usa la escala publicada de McIsaac, ajustada por edad — no una puntuación inventada por nosotros",
+        "Detecta las señales de alarma que necesitan atención urgente antes de puntuar nada",
+        "Funciona en tu navegador — nada se envía ni se guarda"
+      ],
+      "suggestionsIntro": "Una puntuación alta es motivo para que te exploren la garganta, no un diagnóstico. Estas son las consultas que pueden llevarlo más allá.",
+      "widget": {
+        "title": "Tus síntomas",
+        "placeholder": "Responde a las preguntas para ver qué probabilidad hay de una causa bacteriana.",
+        "note": "Esto estima la probabilidad de que un dolor de garganta sea bacteriano. No es una prueba de estreptococo ni un diagnóstico — solo un frotis faríngeo o una exploración pueden confirmarlo. Una puntuación baja significa que una infección bacteriana es improbable, no que se haya descartado. Nunca empieces ni dejes antibióticos por lo que diga esta página.",
+        "feverLabel": "Fiebre durante esta enfermedad",
+        "feverHint": "Una temperatura superior a 38 °C, o sensación de fiebre y escalofríos, en algún momento desde que empezó.",
+        "coughLabel": "¿Tienes tos?",
+        "coughHint": "La tos apunta a un virus, así que la escala puntúa su ausencia y no su presencia.",
+        "nodesLabel": "Ganglios inflamados y dolorosos en la parte delantera del cuello",
+        "nodesHint": "Justo debajo de la mandíbula, a ambos lados, dolorosos al presionarlos — no los ganglios de la nuca.",
+        "exudateLabel": "Placas blancas o inflamación en las amígdalas",
+        "exudateHint": "Mira el fondo de la garganta con una linterna. Esto es difícil de valorar en uno mismo y es la respuesta más débil de la escala.",
+        "airwayLabel": "Dificultad para respirar, para tragar tu propia saliva o para abrir la boca",
+        "airwayHint": "También babeo, voz apagada, dolor intenso en un solo lado, o cuello rígido o hinchado.",
+        "rashLabel": "Una erupción en la piel junto con el dolor de garganta",
+        "rashHint": "A menudo una erupción fina y áspera, como papel de lija, en el pecho o el cuello.",
+        "immunosuppressedLabel": "Una enfermedad o un medicamento que debilita tu sistema inmunitario",
+        "immunosuppressedHint": "Incluye quimioterapia, carbimazol, metotrexato o corticoides de larga duración. Un dolor de garganta puede ser el primer signo de un problema en los glóbulos blancos.",
+        "emergencyValue": "Urgente",
+        "seeTodayValue": "Hoy",
+        "tooYoungValue": "Menor de 3",
+        "pointsLabel": "puntos",
+        "criteriaLabel": "Síntomas presentes",
+        "ageAdjustmentLabel": "Ajuste por edad"
+      },
+      "sections": [
+        {
+          "heading": "Qué significa tu puntuación",
+          "body": [
+            "La escala de McIsaac, es decir, los criterios de Centor ajustados por edad, va de -1 a 5. Cuatro criterios suman un punto cada uno — fiebre, ausencia de tos, ganglios dolorosos en la parte delantera del cuello y placas blancas en las amígdalas — y la edad ajusta el total hacia arriba o hacia abajo. Los niños de 3 a 14 años ganan un punto; los adultos de más de 45 pierden uno, porque la faringitis estreptocócica se vuelve poco frecuente con la edad.",
+            "Las bandas de abajo describen la probabilidad de una causa bacteriana, no lo mal que se pasa con el dolor de garganta. Unas anginas víricas pueden doler muchísimo y aun así puntuar cero."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Qué suele significar cada banda de puntuación",
+            "columns": [
+              "Puntuación",
+              "Causa bacteriana",
+              "Qué suele significar"
+            ],
+            "rows": [
+              [
+                "0 o menos",
+                "Muy improbable",
+                "Autocuidado. Descanso, líquidos y analgésicos; consulta al médico si no estás mejor al cabo de una semana."
+              ],
+              [
+                "1",
+                "Improbable",
+                "Normalmente autocuidado, con una revisión si empeora en vez de calmarse."
+              ],
+              [
+                "2",
+                "Posible",
+                "El punto en el que un médico normalmente querría verte la garganta en lugar de suponerlo."
+              ],
+              [
+                "3",
+                "Más probable",
+                "Las guías llevan a explorar y a menudo a tomar un frotis. Pide una consulta."
+              ],
+              [
+                "4 o 5",
+                "Lo más probable",
+                "El grupo con más probabilidades de que le hagan una prueba y de que se planteen antibióticos. Pide que te vean."
+              ]
+            ],
+            "footnote": "Basado en la escala de McIsaac (los criterios de Centor ajustados por edad), la regla que la guía NG84 de NICE acepta para valorar un dolor de garganta. Las bandas se muestran como probabilidades y no como porcentajes a propósito: los porcentajes publicados proceden de médicos que exploran una garganta, y las respuestas que das sobre tu propia garganta no son la misma medida."
+          }
+        },
+        {
+          "heading": "Los cinco elementos que valora la escala",
+          "body": [
+            "Cada uno está ahí porque inclina la balanza entre un virus y una infección bacteriana, y juntos aciertan más que cualquier síntoma por separado."
+          ],
+          "bullets": [
+            "Fiebre — las infecciones bacterianas de garganta se acompañan de una temperatura superior a 38 °C más a menudo que las víricas.",
+            "Ausencia de tos — la tos apunta con fuerza a un virus, así que la escala puntúa que no la haya. Es el criterio que más gente entiende al revés.",
+            "Ganglios inflamados y dolorosos en la parte delantera del cuello — los ganglios linfáticos que drenan las amígdalas, que se hinchan y duelen cuando estas se infectan.",
+            "Placas blancas o inflamación en las amígdalas — el pus en las amígdalas aumenta las probabilidades de una causa bacteriana, aunque un virus también puede producirlo.",
+            "Edad — la faringitis estreptocócica alcanza su pico entre los 5 y los 15 años y se vuelve poco frecuente después de los 45, así que la escala suma un punto en los niños y resta uno en los adultos mayores."
+          ]
+        },
+        {
+          "heading": "Lo que este test no puede decirte",
+          "body": [
+            "Una puntuación ordena probabilidades. No identifica qué está creciendo en tu garganta, y se diseñó para un clínico que la está mirando."
+          ],
+          "bullets": [
+            "No es una prueba de estreptococo. Solo un frotis faríngeo o un test rápido de antígeno pueden confirmar una causa bacteriana, y lo toma un médico.",
+            "Una puntuación baja no es un resultado negativo. Significa que una causa bacteriana es improbable según el balance de probabilidades, no que se haya descartado.",
+            "Dos de las respuestas son hallazgos de exploración. Un clínico palpa los ganglios y mira las amígdalas con una luz; valorar eso en uno mismo es la parte menos fiable de esta página.",
+            "No decide nada sobre los antibióticos. Esa es una decisión de prescripción que toma un médico después de explorarte, valorando tu historia y a menudo el resultado de un frotis.",
+            "No dice nada sobre la mononucleosis infecciosa, que al principio puede parecer idéntica y es frecuente en adolescentes y adultos jóvenes a quienes el dolor de garganta se les alarga.",
+            "No se aplica a los menores de 3 años, en quienes no es fiable y a quienes debe valorar un médico."
+          ]
+        },
+        {
+          "heading": "Cuándo un dolor de garganta necesita atención urgente",
+          "body": [
+            "Esto anula por completo la puntuación. Una infección de garganta grave puede empezar pareciendo leve y puntuar bajo, así que ninguno de estos signos debe pesarse nunca frente a un número tranquilizador."
+          ],
+          "bullets": [
+            "Dificultad para respirar, respiración ruidosa o sensación de que la garganta se cierra — busca ayuda de urgencia de inmediato.",
+            "No poder tragar la propia saliva, o babeo.",
+            "No poder abrir la boca del todo, o dolor intenso en un solo lado con la voz apagada — puede ser un absceso junto a la amígdala.",
+            "Cuello rígido, o hinchazón en el cuello que va a más.",
+            "Una erupción fina y áspera, como papel de lija, junto con el dolor de garganta — la escarlatina necesita tratamiento.",
+            "Un dolor de garganta durante un tratamiento con quimioterapia, carbimazol, metotrexato o corticoides de larga duración — necesita valoración el mismo día y un hemograma.",
+            "Un dolor de garganta que sigue empeorando después de una semana, o una fiebre que no consigues bajar."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "¿Esto es lo mismo que una prueba de estreptococo?",
+          "answer": "No. Una prueba de estreptococo es un frotis de la garganta, que se envía al laboratorio o se realiza como test rápido de antígeno en la consulta. Esta página estima, a partir de tus síntomas, qué probabilidad hay de una causa bacteriana, que es lo que un clínico usa para decidir si merece la pena tomar ese frotis. No puede sustituirlo."
+        },
+        {
+          "question": "¿Qué diferencia hay entre amigdalitis, anginas y faringitis estreptocócica?",
+          "answer": "Amigdalitis significa amígdalas inflamadas, sea cual sea la causa — casi siempre un virus. «Anginas» es el término coloquial que se usa en España para lo mismo. La faringitis estreptocócica es una amigdalitis o faringitis causada por una bacteria concreta, Streptococcus pyogenes, el estreptococo del grupo A. Toda faringitis estreptocócica es una amigdalitis; la mayoría de las amigdalitis no son estreptocócicas."
+        },
+        {
+          "question": "¿Necesito antibióticos para un dolor de garganta?",
+          "answer": "Esa es una decisión del médico, no de esta página. La mayoría de los dolores de garganta son víricos, y ahí los antibióticos no hacen nada y siguen teniendo efectos secundarios. Una puntuación alta significa que las probabilidades de una causa bacteriana son lo bastante altas como para que un médico normalmente te explore y se plantee una prueba — no significa que los antibióticos estén indicados."
+        },
+        {
+          "question": "¿Cuánto debería durar un dolor de garganta?",
+          "answer": "La mayoría se resuelven en torno a una semana, sean víricos o bacterianos. Un dolor de garganta que sigue empeorando después de una semana, o que viene con una fiebre que no consigues bajar, merece que lo revisen sea cual sea el resultado de este test."
+        },
+        {
+          "question": "¿Por qué la escala resta un punto si tengo más de 45 años?",
+          "answer": "Porque la faringitis estreptocócica se vuelve poco frecuente con la edad. Los criterios de Centor originales se crearon para adultos y sobreestimaban la infección bacteriana en los pacientes mayores; el ajuste por edad de McIsaac lo corrige en ambos sentidos, y suma un punto en los niños de 3 a 14 años, donde el estreptococo es más frecuente."
+        },
+        {
+          "question": "¿Este test guarda mis respuestas?",
+          "answer": "No. La puntuación se calcula por completo en tu navegador. Nada de lo que selecciones se envía a nuestros servidores ni se guarda."
+        }
+      ],
+      "cta": {
+        "heading": "¿Necesitas que alguien te mire la garganta?",
+        "body": "Reserva una videoconsulta con un médico colegiado, repasa tus síntomas y descubre si un frotis, una receta o simple autocuidado es el siguiente paso adecuado.",
         "label": "Reservar consulta"
       }
     }

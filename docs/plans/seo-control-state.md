@@ -8452,3 +8452,119 @@ Monitoring depends on this machine/task being available and authenticated Google
 access. If access fails, record the missed check and request reconnection once;
 never report an inspection as completed without evidence. No fresh URL Inspection
 was performed when registering this monitor.
+
+## 51. Eighth free tool built: sore-throat / tonsillitis checker (2026-09-10)
+
+**Status: IMPLEMENTED, NOT DEPLOYED, NOT CLINICALLY REVIEWED.** Code and copy are
+on the working tree only. Nothing has been pushed, nothing is live, and no URL has
+been submitted. Two blocking dependencies before deploy, in this order: a medical
+reviewer signs off the scoring bands and the red-flag list, then the build gates run
+(see "Verification not performed" below).
+
+### 51.1 What was built
+
+`sore-throat-checker`, the eighth calculator, at `/{country}/{lang}/tools/sore-throat-checker`.
+It scores McIsaac (age-adjusted Centor): fever, absence of cough, tender anterior
+cervical nodes, tonsillar exudate, plus an age term (+1 for 3-14, -1 for 45+).
+
+It follows the recipe in `lib/tools/registry.ts` exactly - one `ToolMeta`, one widget
+branch, one copy block per locale - so the 33 market/locale URLs, the single shared
+hreflang cluster, the sitemap entries, the header dropdown and the footer links all
+follow from the registry with no further wiring. Tool URLs go from 198 to 264 on deploy.
+
+Three behaviours are safety decisions rather than product scope, and are enforced in
+`soreThroatScore` with tests rather than left to copy:
+
+- Red flags SHORT-CIRCUIT the score. Airway signs return `emergency`; rash or
+  immunosuppression return `see-today`. A peritonsillar abscess or epiglottitis can
+  present with a LOW McIsaac score, so a reassuring band beside a red flag is the
+  wrong output. `scoreSuppressed` tells the widget to hide the number entirely.
+- It refuses to score under-3s (`too-young`). McIsaac was validated from age 3.
+- No band ever says antibiotics are or are not needed. A low score means bacterial
+  infection is UNLIKELY, never excluded.
+
+### 51.2 Why this one is not another SEO-GROWTH-012 page
+
+The DEFERRED entry on the calculator long tail stands: the existing seven draw
+thousands of impressions at 0.48% CTR with no commercial value, because a BMI or
+ovulation searcher has no booking intent and the SERP belongs to Omni Calculator.
+
+This tool differs in one specific, testable way: its OUTPUT IS A TRIAGE DECISION whose
+answer is the product. A score of 3-5 resolves to "be examined, possibly swabbed" -
+which is the online GP consultation, not a CTA bolted onto an informational page. Its
+`TOOL_SLOTS` entry is `["gp"]` alone for that reason.
+
+**That is a hypothesis, not a measurement.** If it converts like the other seven it
+should be reclassified into the same DEFERRED bucket rather than optimised. See the
+gate in 51.5.
+
+### 51.3 Keyword evidence (measured 2026-09-10, OpenSEO/DataForSEO, project GlobalHealthNew)
+
+Refreshed for this batch rather than taken from any earlier audit.
+
+| market | head term | volume/mo | KD |
+| --- | --- | --- | --- |
+| Brazil | `garganta inflamada` | 135,000 | 0 |
+| Brazil | `amigdalite` | 110,000 | 0 |
+| Brazil | `faringite` | 74,000 | 0 |
+| Brazil | `dor de garganta` | 40,500 | 0 |
+| Spain | `anginas` | 18,100 | 0 |
+| Spain | `dolor de garganta` | 9,900 | 9 |
+| Ireland | `tonsillitis` | 8,100 | 24 |
+| Ireland | `strep throat` | 8,100 | 35 |
+| Czechia | `bolest v krku` | 5,400 | 0 |
+| Czechia | `streptokok v krku` | 3,600 | 0 |
+| Romania | `amigdalita` | 4,400 | 0 |
+| Portugal | `amigdalite` | 9,900 | 0 |
+
+**The clinical rule's own name is not the query.** `centor score` returned no current
+volume in Ireland; `criterios de centor` is 1,600 in Spain and 1,900 in Brazil,
+`scor centor` 110 in Romania. The page is therefore titled in each market's consumer
+language and names Centor/McIsaac only inside the body copy, which harvests the
+clinician tail without spending the H1 on it.
+
+**Seasonality confirmed for the five Northern-Hemisphere markets.** Ireland
+`tonsillitis` runs 5,400 in July against 9,900 Nov-Jan (+83%); `strep throat` 4,400
+against 9,900 (+125%); Spain `dolor de garganta` 4,400 against 18,100. Brazil is the
+largest market for this topic and is Southern-Hemisphere, so its peak does not align -
+do not plan a single launch date around a European winter.
+
+### 51.4 Two copy layers, deliberately
+
+- **Locale layer** - `locales/{en,cs,de,es,pt,ro}/tools.json`, six full translations,
+  each targeting that language's own head term rather than translating the English one.
+- **Market layer** - `lib/tools/market-copy.ts`. `SORE_THROAT_MARKET_FAQ` adds two
+  hand-written market-specific FAQ entries for six markets across their default
+  language plus English (prescription rules and where to be examined, both true of
+  every one of these systems and neither price- nor programme-dependent, per that
+  file's standing rule). `BR_PT_SORE_THROAT` overrides the shared `pt` bundle for
+  Brazil, because Portugal and Brazil share one locale file and their head terms
+  differ by 14x - `garganta inflamada` 135,000 in Brazil against `amigdalite` 9,900
+  in Portugal. This is the second use of the Brazil override mechanism after BMI.
+
+No German volume was pulled; the `de` block is a faithful translation and carries no
+volume-backed claim.
+
+### 51.5 Measurement gate
+
+Register **2026-10-10 or 30 days after deploy, whichever is later**. Measure clicks and
+CTR on the `sore-throat-checker` cluster, and consultations attributed to it, separately
+from the other seven tools. If CTR and conversion track the existing tool cluster rather
+than beating it, reclassify into the DEFERRED calculator entry and stop investing.
+
+Deploy timing note: the last tool launch took Google roughly weeks to crawl and rank new
+tool URLs. To be ranking for the Nov-Jan European peak this needs to be live in early
+October, which makes the clinical review the critical path, not the code.
+
+### 51.6 Verification not performed
+
+`node`, `npx` and `pnpm` are absent from this machine's PATH and no Node install was
+found, so **`tsc`, `eslint`, `vitest` and `scripts/check-locale-keys.mjs` were NOT run**.
+What was run instead: a Python re-implementation of every assertion in
+`lib/tools/registry.test.ts` across all six locales, plus checks that test file does not
+make - widget-key parity against what `SoreThroatWidget` actually reads, HTML-entity
+scan, read-out string length against the 3rem clamp, and CRLF integrity. All six locales
+pass. `git diff --numstat` shows insertions only on every locale file.
+
+That is structural proof, not a build. Run the real gates from a shell with Node before
+any push.

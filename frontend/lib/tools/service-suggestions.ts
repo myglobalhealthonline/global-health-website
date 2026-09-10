@@ -184,6 +184,10 @@ const TOOL_SLOTS: Record<string, SuggestionSlot[]> = {
   "ovulation-calculator": ["women", "gp"],
   "adhd-test": ["mental", "gp"],
   "osteoporosis-risk-checker": ["bone", "women", "gp"],
+  // GP only, and that is the point rather than a gap: the answer to a raised
+  // McIsaac score IS a consultation - a swab, an examination, a prescribing
+  // decision. No market sells a "sore throat" service to route it to.
+  "sore-throat-checker": ["gp"],
 };
 
 const TERMS_FOR_SLOT: Record<Exclude<SuggestionSlot, "gp">, string[]> = {

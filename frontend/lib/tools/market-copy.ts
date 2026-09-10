@@ -1095,6 +1095,153 @@ const OSTEOPOROSIS_MARKET_FAQ: MarketFaq = {
   },
 };
 
+const SORE_THROAT_MARKET_FAQ: MarketFaq = {
+  ie: {
+    en: [
+      {
+        question: "Can I get antibiotics for a sore throat without seeing a doctor in Ireland?",
+        answer:
+          "No. Antibiotics are prescription-only in Ireland, so a pharmacy cannot supply them for a sore throat without one. A pharmacist can help with pain relief and tell you whether they think you need to be seen — but the prescribing decision needs a doctor who has examined you.",
+      },
+      {
+        question: "Where can I get my throat looked at in Ireland?",
+        answer:
+          "A GP can examine your throat and take a swab if the pattern warrants it. Out-of-hours GP services cover evenings and weekends, and an emergency department is for the warning signs listed above rather than an ordinary sore throat. Our Irish-registered doctors can review your symptoms by video and advise whether a swab or an in-person examination is the right next step.",
+      },
+    ],
+  },
+  pt: {
+    pt: [
+      {
+        question: "Preciso de receita para antibióticos em Portugal?",
+        answer:
+          "Sim. Os antibióticos são medicamentos sujeitos a receita médica em Portugal, pelo que a farmácia não os pode dispensar para uma dor de garganta sem ela. O farmacêutico pode aconselhar sobre analgésicos e dizer-lhe se acha que deve ser observado, mas a decisão de prescrever é de um médico que o examine.",
+      },
+      {
+        question: "Onde posso ser observado por causa de uma dor de garganta em Portugal?",
+        answer:
+          "O médico de família pode observar a garganta e colher uma zaragatoa se o quadro o justificar. O serviço de urgência destina-se aos sinais de alarme indicados acima, não a uma amigdalite comum. Os nossos médicos registados podem rever os seus sintomas por videoconsulta e indicar-lhe se o passo seguinte é uma zaragatoa ou uma observação presencial.",
+      },
+    ],
+    en: [
+      {
+        question: "Do I need a prescription for antibiotics in Portugal?",
+        answer:
+          "Yes. Antibiotics are prescription-only in Portugal, so a pharmacy cannot dispense them for a sore throat without one. A pharmacist can advise on pain relief and tell you whether they think you should be seen, but the prescribing decision belongs to a doctor who has examined you.",
+      },
+      {
+        question: "Where can I get a sore throat examined in Portugal?",
+        answer:
+          "A family doctor can look at your throat and take a swab if the pattern warrants it. Emergency services are for the warning signs listed above, not for ordinary tonsillitis. Our registered doctors can review your symptoms by video consultation and advise whether a swab or an in-person examination is the right next step.",
+      },
+    ],
+  },
+  es: {
+    es: [
+      {
+        question: "¿Necesito receta para los antibióticos en España?",
+        answer:
+          "Sí. Los antibióticos son medicamentos sujetos a prescripción médica en España, por lo que una farmacia no puede dispensarlos para un dolor de garganta sin receta. El farmacéutico puede orientarte sobre analgésicos y decirte si cree que deberías acudir al médico, pero la decisión de prescribir corresponde a un médico que te haya explorado.",
+      },
+      {
+        question: "¿Dónde pueden mirarme la garganta en España?",
+        answer:
+          "El médico de familia puede explorarte la garganta y tomar un frotis faríngeo si el cuadro lo justifica. Urgencias es para los signos de alarma que aparecen más arriba, no para unas anginas corrientes. Nuestros médicos colegiados pueden revisar tus síntomas por videoconsulta e indicarte si el siguiente paso es un frotis o una exploración presencial.",
+      },
+    ],
+    en: [
+      {
+        question: "Do I need a prescription for antibiotics in Spain?",
+        answer:
+          "Yes. Antibiotics are prescription-only in Spain, so a pharmacy cannot dispense them for a sore throat without one. A pharmacist can advise on pain relief and tell you whether they think you should be seen, but the prescribing decision belongs to a doctor who has examined you.",
+      },
+      {
+        question: "Where can I get a sore throat examined in Spain?",
+        answer:
+          "A family doctor can look at your throat and take a throat swab if the pattern warrants it. Emergency departments are for the warning signs listed above, not for ordinary tonsillitis. Our registered doctors can review your symptoms by video consultation and advise whether a swab or an in-person examination is the right next step.",
+      },
+    ],
+  },
+  cz: {
+    cs: [
+      {
+        question: "Potřebuji v Česku na antibiotika recept?",
+        answer:
+          "Ano. Antibiotika jsou v Česku vázána na lékařský předpis, lékárna je tedy na bolest v krku bez receptu nevydá. Lékárník poradí s úlevou od bolesti a řekne vám, zda považuje vyšetření za potřebné, ale rozhodnutí o předpisu patří lékaři, který vás vyšetří.",
+      },
+      {
+        question: "Kde mi v Česku prohlédnou krk?",
+        answer:
+          "Praktický lékař vám prohlédne krk a při odpovídajícím nálezu odebere výtěr. Pohotovost je pro varovné příznaky uvedené výše, ne pro běžnou angínu. Naši registrovaní lékaři mohou vaše příznaky posoudit při videokonzultaci a doporučit, zda je dalším krokem výtěr, nebo osobní vyšetření.",
+      },
+    ],
+    en: [
+      {
+        question: "Do I need a prescription for antibiotics in Czechia?",
+        answer:
+          "Yes. Antibiotics are prescription-only in Czechia, so a pharmacy cannot dispense them for a sore throat without one. A pharmacist can advise on pain relief and tell you whether they think you should be seen, but the prescribing decision belongs to a doctor who has examined you.",
+      },
+      {
+        question: "Where can I get a sore throat examined in Czechia?",
+        answer:
+          "A general practitioner can look at your throat and take a swab if the pattern warrants it. Emergency services are for the warning signs listed above, not for ordinary tonsillitis. Our registered doctors can review your symptoms by video consultation and advise whether a swab or an in-person examination is the right next step.",
+      },
+    ],
+  },
+  ro: {
+    ro: [
+      {
+        question: "Am nevoie de rețetă pentru antibiotice în România?",
+        answer:
+          "Da. Antibioticele se eliberează numai pe bază de rețetă în România, așa că farmacia nu ți le poate elibera pentru o durere în gât fără ea. Farmacistul îți poate recomanda ceva pentru durere și îți poate spune dacă ar trebui să fii consultat, dar decizia de a prescrie îi aparține medicului care te examinează.",
+      },
+      {
+        question: "Unde îmi pot consulta gâtul în România?",
+        answer:
+          "Medicul de familie îți poate examina gâtul și poate recolta o probă (exsudat faringian) dacă tabloul o justifică. Urgența este pentru semnele de alarmă de mai sus, nu pentru o amigdalită obișnuită. Medicii noștri înregistrați îți pot evalua simptomele prin videoconsultație și îți pot spune dacă urmează un exsudat sau o examinare fizică.",
+      },
+    ],
+    en: [
+      {
+        question: "Do I need a prescription for antibiotics in Romania?",
+        answer:
+          "Yes. Antibiotics are prescription-only in Romania, so a pharmacy cannot dispense them for a sore throat without one. A pharmacist can advise on pain relief and tell you whether they think you should be seen, but the prescribing decision belongs to a doctor who has examined you.",
+      },
+      {
+        question: "Where can I get a sore throat examined in Romania?",
+        answer:
+          "A family doctor can look at your throat and take a throat swab if the pattern warrants it. Emergency services are for the warning signs listed above, not for ordinary tonsillitis. Our registered doctors can review your symptoms by video consultation and advise whether a swab or an in-person examination is the right next step.",
+      },
+    ],
+  },
+  br: {
+    pt: [
+      {
+        question: "Preciso de receita para antibiótico no Brasil?",
+        answer:
+          "Sim. Antibióticos só são vendidos com receita no Brasil, e a farmácia retém a via da receita — não dá para comprar por conta própria por causa de uma dor de garganta. O farmacêutico pode orientar sobre analgésicos e dizer se acha que você precisa ser avaliado, mas quem decide prescrever é o médico que examina você.",
+      },
+      {
+        question: "Onde posso examinar a garganta no Brasil?",
+        answer:
+          "O clínico geral ou o médico de família examina a garganta e colhe o swab quando o quadro justifica. O pronto-socorro é para os sinais de alerta listados acima, não para uma amigdalite comum. Nossos médicos registrados podem avaliar seus sintomas por videoconsulta e dizer se o próximo passo é um swab ou um exame presencial.",
+      },
+    ],
+    en: [
+      {
+        question: "Do I need a prescription for antibiotics in Brazil?",
+        answer:
+          "Yes. Antibiotics are sold only on prescription in Brazil and the pharmacy retains a copy, so they cannot be bought over the counter for a sore throat. A pharmacist can advise on pain relief and tell you whether they think you should be seen, but the prescribing decision belongs to a doctor who has examined you.",
+      },
+      {
+        question: "Where can I get a sore throat examined in Brazil?",
+        answer:
+          "A general practitioner or family doctor can look at your throat and take a swab if the pattern warrants it. Emergency care is for the warning signs listed above, not for ordinary tonsillitis. Our registered doctors can review your symptoms by video consultation and advise whether a swab or an in-person examination is the right next step.",
+      },
+    ],
+  },
+};
+
 const MARKET_FAQ: Record<string, MarketFaq> = {
   "bmi-calculator": BMI_MARKET_FAQ,
   "calorie-calculator": CALORIE_MARKET_FAQ,
@@ -1103,6 +1250,7 @@ const MARKET_FAQ: Record<string, MarketFaq> = {
   "ovulation-calculator": OVULATION_MARKET_FAQ,
   "adhd-test": ADHD_MARKET_FAQ,
   "osteoporosis-risk-checker": OSTEOPOROSIS_MARKET_FAQ,
+  "sore-throat-checker": SORE_THROAT_MARKET_FAQ,
 };
 
 /**
@@ -2169,7 +2317,104 @@ const BR_PT_OSTEOPOROSIS: DeepPartial<ToolCopy> = {
   },
 };
 
+
+/**
+ * Brazil is the biggest sore-throat market on the site by a wide margin, and
+ * its head term is not the clinical one: `garganta inflamada` runs 135,000/mo
+ * and `amigdalite` 110,000 (both KD 0, measured 2026-09-10), against 9,900 for
+ * `amigdalite` in Portugal. Portugal keeps the shared `pt` file; Brazil gets
+ * the colloquial term in the H1 and title, plus pt-BR vocabulary throughout
+ * ("swab" and "pronto-socorro" rather than "zaragatoa" and "urgência").
+ */
+const BR_PT_SORE_THROAT: DeepPartial<ToolCopy> = {
+  cardTitle: "Avaliação de dor de garganta",
+  cardBlurb:
+    "Se a sua dor de garganta tem cara de bacteriana ou viral, pelo escore que os médicos usam — e os sinais de alerta que precisam de atendimento hoje.",
+  eyebrow: "Ferramenta de saúde gratuita",
+  h1Lead: "Garganta inflamada e",
+  h1Accent: "amigdalite",
+  h1Trail: "{country}",
+  metaTitle: "Garganta Inflamada ou Amigdalite? Teste {country}",
+  metaDescription:
+    "Responda a cinco perguntas sobre a sua dor de garganta e veja qual a chance de ser bacteriana, pelo escore de McIsaac usado na clínica. Inclui os sinais de alerta que pedem atendimento imediato. Não é diagnóstico nem teste de estreptococo.",
+  lede: "Responda a algumas perguntas sobre a sua dor de garganta para ver qual a chance de uma causa bacteriana e qual costuma ser o próximo passo. Leva cerca de um minuto.",
+  trustPoints: [
+    "Usa o escore de McIsaac publicado, ajustado por idade — não um escore inventado por nós",
+    "Sinaliza os alertas que exigem atendimento imediato antes de pontuar qualquer coisa",
+    "Funciona no seu navegador — nada é enviado nem salvo",
+  ],
+  suggestionsIntro:
+    "Uma dor de garganta com escore alto é motivo para ser examinado, não um diagnóstico. Estas são as consultas que podem levar o caso adiante.",
+  widget: {
+    title: "Seus sintomas",
+    placeholder: "Responda às perguntas para ver qual a chance de uma causa bacteriana.",
+    note: "Isto estima a chance de uma dor de garganta ser bacteriana. Não é um teste de estreptococo nem um diagnóstico — só um swab de garganta ou um exame confirmam. Escore baixo significa que a infecção bacteriana é pouco provável, não que foi descartada. Nunca comece nem interrompa antibiótico com base nesta página.",
+    feverLabel: "Febre durante esta doença",
+    feverHint: "Temperatura acima de 38 °C, ou sensação de febre e calafrios, em algum momento desde que começou.",
+    coughLabel: "Você está com tosse?",
+    coughHint: "Tosse aponta para vírus, então o escore conta a ausência dela, e não a presença.",
+    nodesLabel: "Ínguas doloridas e inchadas na frente do pescoço",
+    nodesHint: "Logo abaixo da mandíbula, dos dois lados, doloridas ao apertar — não as da nuca.",
+    exudateLabel: "Placas brancas ou inchado nas amígdalas",
+    exudateHint: "Olhe o fundo da garganta com uma lanterna. Isso é difícil de julgar em si mesmo e é a resposta mais frágil do escore.",
+    airwayLabel: "Dificuldade para respirar, engolir a própria saliva ou abrir a boca",
+    airwayHint: "Também babar, voz abafada, dor forte só de um lado, ou pescoço rígido ou inchado.",
+    rashLabel: "Manchas na pele junto com a dor de garganta",
+    rashHint: "Muitas vezes uma erupção fina e áspera, como lixa, no peito ou no pescoço.",
+    immunosuppressedLabel: "Uma condição ou remédio que baixa a imunidade",
+    immunosuppressedHint: "Inclui quimioterapia, carbimazol, metotrexato ou corticoide de uso prolongado. Dor de garganta pode ser o primeiro sinal de um problema nos glóbulos brancos.",
+    emergencyValue: "Urgente",
+    seeTodayValue: "Hoje",
+    tooYoungValue: "Menor de 3",
+    pointsLabel: "pontos",
+    criteriaLabel: "Sintomas marcados",
+    ageAdjustmentLabel: "Ajuste por idade",
+  },
+};
+
 const BR_PT_BANDS: DeepPartial<ToolsBandsCopy> = {
+  soreThroat: {
+    emergency: {
+      label: "Procure atendimento de urgência agora",
+      summary:
+        "O que você descreveu pode indicar um problema na via aérea ou uma infecção profunda ao redor da amígdala, e isso não se avalia por escore. Vá a um pronto-socorro ou chame o serviço de emergência agora.",
+    },
+    "see-today": {
+      label: "Seja avaliado hoje",
+      summary:
+        "Você descreveu algo que precisa ser olhado hoje, e não apenas observado. Procure um médico ou um serviço de atendimento no mesmo dia — não espere para ver se melhora sozinho.",
+    },
+    "too-young": {
+      label: "Leve para um médico avaliar",
+      summary:
+        "Este escore foi feito para 3 anos ou mais e não é confiável abaixo disso. Dor de garganta em bebê ou criança pequena deve ser avaliada por um médico, e não pontuada — principalmente com febre, menos líquido aceito ou menos fraldas molhadas.",
+    },
+    "very-low": {
+      label: "Infecção bacteriana muito pouco provável",
+      summary:
+        "Quase toda dor de garganta com esse padrão é viral e melhora sozinha em cerca de uma semana. Repouso, líquidos e analgesia são o tratamento. Procure um médico se passar de uma semana ou se piorar em vez de melhorar.",
+    },
+    low: {
+      label: "Infecção bacteriana pouco provável",
+      summary:
+        "Esse padrão ainda é bem mais viral do que bacteriano. Cuidar em casa costuma ser o certo, mas isto não é um exame negativo — procure um médico se a dor piorar, a febre subir, ou se não houver melhora depois de uma semana.",
+    },
+    moderate: {
+      label: "Infecção bacteriana possível",
+      summary:
+        "Esse padrão fica no meio: pode ir para os dois lados, e é o ponto em que um médico normalmente prefere examinar a garganta ou colher um swab a chutar. Vale uma consulta.",
+    },
+    raised: {
+      label: "Infecção bacteriana mais provável",
+      summary:
+        "Há sinais suficientes para que as diretrizes indiquem exame médico e consideração de teste. Agende uma consulta — é o swab ou o exame que separa isto de uma dor de garganta viral.",
+    },
+    high: {
+      label: "Infecção bacteriana mais provável de todas",
+      summary:
+        "Esta é a faixa mais alta da escala. Ainda assim não é diagnóstico — só um exame ou um swab confirmam — mas é o grupo em que o médico mais costuma testar e considerar antibiótico. Agende para ser avaliado.",
+    },
+  },
   // pt-PT calls the condition PHDA and pt-BR calls it TDAH, so the result
   // read-out has to be swapped wholesale, not just re-worded.
   adhd: {
@@ -2307,6 +2552,7 @@ const MARKET_COPY: Partial<Record<CountryCode, Record<string, MarketCopyOverride
         "ovulation-calculator": BR_PT_OVULATION,
         "adhd-test": BR_PT_ADHD,
         "osteoporosis-risk-checker": BR_PT_OSTEOPOROSIS,
+        "sore-throat-checker": BR_PT_SORE_THROAT,
       },
       bands: BR_PT_BANDS,
     },

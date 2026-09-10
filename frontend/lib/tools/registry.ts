@@ -11,8 +11,9 @@
  * (KD 11), `bmi kalkulačka` 40,500/mo in Czechia (KD 5), against 2,900/mo for
  * `bmi calculator ireland`. Hence: every country, every locale.
  *
- * All six are live: BMI, calorie, blood-pressure, due-date, ovulation and the
- * ADHD screener. There is deliberately NO `/tools` index — an index page would
+ * All eight are live: BMI, calorie, blood-pressure, due-date, ovulation, the
+ * ADHD screener, the osteoporosis risk checker and the sore-throat checker.
+ * There is deliberately NO `/tools` index — an index page would
  * compete with the six for the same queries and rank for none of them. The
  * header dropdown and the footer link straight to each calculator. Adding one
  * means: a `ToolMeta` entry here, a widget branch in `ToolWidget.tsx`, and its
@@ -40,7 +41,8 @@ export type WidgetKey =
   | "due-date"
   | "adhd"
   | "ovulation"
-  | "osteoporosis";
+  | "osteoporosis"
+  | "sore-throat";
 
 /** Row tone drives the colour dot in the rendered chart tables. */
 export type ToneKey = "good" | "warn" | "alert" | "muted";
@@ -215,6 +217,27 @@ export const TOOLS: ToolMeta[] = [
       { id: "guideline", theme: "forest" },
       { id: "limits", theme: "ivory" },
       { id: "next", theme: "forest" },
+    ],
+    related: [],
+    ctaPath: "/gp-consultation-online",
+  },
+  {
+    slug: "sore-throat-checker",
+    widget: "sore-throat",
+    sections: [
+      // The chart is the McIsaac ladder, one row per score band, so the tones
+      // ARE the triage: the two low bands are good, the middle two warn, and
+      // 4-5 is the alert row. Deliberately five rows, not seven: the red-flag
+      // and under-3 outcomes are not points on this ladder and must never be
+      // read as "a worse score" - they live in the `urgent` section instead.
+      {
+        id: "score",
+        theme: "ivory",
+        rowTones: ["good", "good", "warn", "warn", "alert"],
+      },
+      { id: "criteria", theme: "forest" },
+      { id: "limits", theme: "ivory" },
+      { id: "urgent", theme: "forest" },
     ],
     related: [],
     ctaPath: "/gp-consultation-online",

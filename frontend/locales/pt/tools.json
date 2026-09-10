@@ -165,6 +165,40 @@
         "label": "Nenhum fator de risco específico identificado",
         "summary": "Nada do que introduziu corresponde aos fatores de risco publicados que as orientações utilizam para identificar quem deve ser avaliado para osteoporose. Isto é tranquilizador, mas não é uma garantia — mencione sempre uma nova fratura ou queda a um médico."
       }
+    },
+    "soreThroat": {
+      "emergency": {
+        "label": "Procure cuidados médicos urgentes agora",
+        "summary": "O que descreveu pode indicar um problema na via aérea ou uma infeção profunda junto à amígdala, e isso não se avalia por uma pontuação. Dirija-se agora a um serviço de urgência ou ligue para o número de emergência."
+      },
+      "see-today": {
+        "label": "Deve ser observado hoje",
+        "summary": "Descreveu algo que deve ser observado hoje, e não vigiado. Contacte um médico ou um serviço de atendimento fora de horas — não espere para ver se melhora sozinho."
+      },
+      "too-young": {
+        "label": "Peça a um médico que observe a criança",
+        "summary": "Esta pontuação foi concebida para os 3 anos ou mais e não é fiável abaixo dessa idade. Uma dor de garganta num bebé ou numa criança pequena deve ser avaliada por um médico em vez de pontuada — sobretudo se houver febre, menor ingestão de líquidos ou menos fraldas molhadas."
+      },
+      "very-low": {
+        "label": "Infeção bacteriana muito improvável",
+        "summary": "Quase todas as dores de garganta com este padrão são virais e resolvem-se sozinhas em cerca de uma semana. Repouso, líquidos e analgesia são o tratamento. Consulte um médico se durar mais de uma semana ou se piorar em vez de melhorar."
+      },
+      "low": {
+        "label": "Infeção bacteriana improvável",
+        "summary": "Este padrão continua a ser muito mais frequentemente viral do que bacteriano. Os autocuidados são normalmente a resposta certa, mas isto não é um teste negativo — consulte um médico se a dor piorar, se a febre subir ou se não estiver melhor ao fim de uma semana."
+      },
+      "moderate": {
+        "label": "Infeção bacteriana possível",
+        "summary": "Este padrão fica a meio caminho: pode ser uma coisa ou outra, e é o ponto a partir do qual um médico normalmente quer observar a sua garganta ou colher uma zaragatoa em vez de adivinhar. Vale a pena uma consulta."
+      },
+      "raised": {
+        "label": "Infeção bacteriana mais provável",
+        "summary": "Estão presentes critérios suficientes para que as orientações levem um clínico a observá-lo e a ponderar um exame. Marque uma consulta — é uma zaragatoa ou uma observação que distingue isto de uma dor de garganta viral."
+      },
+      "high": {
+        "label": "Infeção bacteriana muito provável",
+        "summary": "Este é o escalão mais alto da escala. Continua a não ser um diagnóstico — só uma observação ou uma zaragatoa da garganta o pode confirmar — mas é o grupo em que um médico tem maior probabilidade de pedir um exame e de ponderar antibióticos. Marque uma consulta."
+      }
     }
   },
   "tools": {
@@ -1237,6 +1271,167 @@
       "cta": {
         "heading": "A tentar engravidar?",
         "body": "Fale por vídeo com um médico registado sobre ciclos irregulares, exames antes de engravidar ou a medicação que já toma.",
+        "label": "Marcar consulta"
+      }
+    },
+    "sore-throat-checker": {
+      "cardTitle": "Avaliação de dor de garganta",
+      "cardBlurb": "Se uma dor de garganta parece bacteriana ou viral, com a pontuação ajustada à idade que os clínicos utilizam — e os sinais de alarme que precisam de ser vistos hoje.",
+      "eyebrow": "Ferramenta de saúde gratuita",
+      "h1Lead": "Amigdalite e",
+      "h1Accent": "dor de garganta",
+      "h1Trail": "{country}",
+      "metaTitle": "Amigdalite ou Vírus? Avaliação da Dor de Garganta {country}",
+      "metaDescription": "Responda a cinco perguntas sobre a sua dor de garganta e veja qual a probabilidade de uma causa bacteriana, com a escala de McIsaac que os clínicos utilizam. Inclui os sinais de alarme que exigem cuidados urgentes. Não é um diagnóstico nem um teste de estreptococos.",
+      "lede": "Responda a algumas perguntas sobre a sua dor de garganta para ver qual a probabilidade de uma causa bacteriana e qual seria o passo seguinte habitual. Demora cerca de um minuto.",
+      "trustPoints": [
+        "Utiliza a escala de McIsaac publicada, ajustada à idade — não uma pontuação inventada por nós",
+        "Assinala os sinais de alarme que exigem cuidados urgentes antes de pontuar seja o que for",
+        "Funciona no seu navegador — nada é enviado nem guardado"
+      ],
+      "suggestionsIntro": "Uma dor de garganta com pontuação alta é motivo para ser observado, não um diagnóstico. Estas são as consultas que podem aprofundar o assunto.",
+      "widget": {
+        "title": "Os seus sintomas",
+        "placeholder": "Responda às perguntas para ver qual a probabilidade de uma causa bacteriana.",
+        "note": "Isto estima a probabilidade de uma dor de garganta ser bacteriana. Não é um teste de estreptococos nem um diagnóstico — só uma zaragatoa da garganta ou uma observação o pode confirmar. Uma pontuação baixa significa que uma infeção bacteriana é improvável, não que tenha sido excluída. Nunca inicie nem interrompa antibióticos com base nesta página.",
+        "feverLabel": "Febre durante esta doença",
+        "feverHint": "Uma temperatura superior a 38 °C, ou sentir-se febril e com arrepios, em qualquer momento desde que começou.",
+        "coughLabel": "Tem tosse?",
+        "coughHint": "A tosse aponta para um vírus, pelo que a pontuação conta a sua ausência e não a sua presença.",
+        "nodesLabel": "Gânglios dolorosos e inchados na frente do pescoço",
+        "nodesHint": "Mesmo por baixo do maxilar, de cada lado, doridos quando os pressiona — não os gânglios da nuca.",
+        "exudateLabel": "Placas brancas ou inchaço nas amígdalas",
+        "exudateHint": "Observe o fundo da garganta com uma lanterna. Isto é difícil de avaliar em si próprio e é a resposta menos fiável da pontuação.",
+        "airwayLabel": "Dificuldade em respirar, em engolir a própria saliva ou em abrir a boca",
+        "airwayHint": "Também babar-se, voz abafada, dor intensa só de um lado, ou pescoço rígido ou inchado.",
+        "rashLabel": "Erupção cutânea acompanhada da dor de garganta",
+        "rashHint": "Muitas vezes uma erupção fina e áspera, como lixa, no peito ou no pescoço.",
+        "immunosuppressedLabel": "Uma doença ou medicamento que enfraquece o sistema imunitário",
+        "immunosuppressedHint": "Incluindo quimioterapia, carbimazol, metotrexato ou corticosteroides de longa duração. Uma dor de garganta pode ser o primeiro sinal de um problema nos glóbulos brancos.",
+        "emergencyValue": "Urgente",
+        "seeTodayValue": "Hoje",
+        "tooYoungValue": "< 3 anos",
+        "pointsLabel": "pontos",
+        "criteriaLabel": "Sintomas presentes",
+        "ageAdjustmentLabel": "Ajuste pela idade"
+      },
+      "sections": [
+        {
+          "heading": "O que significa a sua pontuação",
+          "body": [
+            "A pontuação vai de -1 a 5. Quatro critérios somam um ponto cada — febre, ausência de tosse, gânglios dolorosos na frente do pescoço e placas brancas nas amígdalas — e a idade ajusta o total para cima ou para baixo. As crianças dos 3 aos 14 anos ganham um ponto; os adultos com mais de 45 perdem um, porque a infeção por estreptococos se torna rara com a idade.",
+            "Os escalões abaixo descrevem qual a probabilidade de uma causa bacteriana, e não a intensidade da dor. Uma garganta inflamada de origem viral pode doer muito e ainda assim somar zero pontos."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "O que cada escalão de pontuação costuma significar",
+            "columns": [
+              "Pontuação",
+              "Causa bacteriana",
+              "O que costuma significar"
+            ],
+            "rows": [
+              [
+                "0 ou menos",
+                "Muito improvável",
+                "Autocuidados. Repouso, líquidos e analgesia; consulte um médico se não estiver melhor ao fim de uma semana."
+              ],
+              [
+                "1",
+                "Improvável",
+                "Normalmente autocuidados, com reavaliação se piorar em vez de melhorar."
+              ],
+              [
+                "2",
+                "Possível",
+                "O ponto a partir do qual um médico normalmente quer observar a sua garganta em vez de adivinhar."
+              ],
+              [
+                "3",
+                "Mais provável",
+                "As orientações levam a uma observação e, muitas vezes, a uma zaragatoa. Marque uma consulta."
+              ],
+              [
+                "4 ou 5",
+                "Muito provável",
+                "O grupo com maior probabilidade de fazer um exame e de ser ponderado para antibióticos. Marque uma consulta."
+              ]
+            ],
+            "footnote": "Baseado na escala de McIsaac (critérios de Centor ajustados à idade), a regra que a orientação NG84 da NICE aceita para avaliar uma dor de garganta. Os escalões são apresentados como probabilidades e não como percentagens de propósito: as percentagens publicadas provêm de clínicos que observaram a garganta, e as respostas que dá sobre a sua própria garganta não são a mesma medição."
+          }
+        },
+        {
+          "heading": "Os cinco elementos que a pontuação avalia",
+          "body": [
+            "Cada um está presente porque desloca a probabilidade entre um vírus e uma infeção bacteriana e, em conjunto, funcionam melhor do que qualquer sintoma isolado. São os quatro critérios de Centor mais a idade, a correção que dá origem à escala de McIsaac."
+          ],
+          "bullets": [
+            "Febre — as infeções bacterianas da garganta acompanham-se de uma temperatura superior a 38 °C com mais frequência do que as virais.",
+            "Ausência de tosse — a tosse aponta fortemente para um vírus, pelo que a pontuação conta a sua ausência. É o critério que as pessoas mais vezes interpretam ao contrário.",
+            "Gânglios dolorosos e inchados na frente do pescoço — os gânglios linfáticos que drenam as amígdalas, que incham e doem quando as amígdalas estão infetadas.",
+            "Placas brancas ou inchaço nas amígdalas — pus nas amígdalas aumenta a probabilidade de uma causa bacteriana, embora um vírus também o possa produzir.",
+            "Idade — a infeção por estreptococos atinge o pico entre os 5 e os 15 anos e torna-se rara depois dos 45, pelo que a pontuação soma um ponto às crianças e subtrai um aos adultos mais velhos."
+          ]
+        },
+        {
+          "heading": "O que esta avaliação não lhe pode dizer",
+          "body": [
+            "Uma pontuação ordena probabilidades. Não identifica o que está a crescer na sua garganta, e foi concebida para um clínico que a está a observar."
+          ],
+          "bullets": [
+            "Não é um teste de estreptococos. Só uma zaragatoa da garganta ou um teste rápido de antigénio pode confirmar uma causa bacteriana, e é um médico que a colhe.",
+            "Uma pontuação baixa não é um resultado negativo. Significa que uma causa bacteriana é improvável em termos de probabilidade, não que tenha sido excluída.",
+            "Duas das respostas são achados de observação. Um clínico palpa os gânglios e observa as amígdalas com uma luz; avaliar isso em si próprio é a parte menos fiável desta página.",
+            "Não decide nada sobre antibióticos. Essa é uma decisão de prescrição que um médico toma depois de o observar, ponderando o seu historial e, muitas vezes, o resultado de uma zaragatoa.",
+            "Não diz nada sobre a mononucleose infeciosa, que pode parecer igual no início e é frequente em adolescentes e jovens adultos cuja dor de garganta se arrasta.",
+            "Não se aplica a crianças com menos de 3 anos, idade em que não é fiável e em que deve ser um médico a avaliar."
+          ]
+        },
+        {
+          "heading": "Quando uma dor de garganta precisa de cuidados urgentes",
+          "body": [
+            "Estes sinais sobrepõem-se completamente à pontuação. Uma infeção grave da garganta pode começar por parecer ligeira e somar poucos pontos, pelo que nenhum dos sinais seguintes deve alguma vez ser pesado contra um número tranquilizador."
+          ],
+          "bullets": [
+            "Dificuldade em respirar, respiração ruidosa ou a sensação de que a garganta está a fechar — peça ajuda de emergência imediatamente.",
+            "Incapacidade de engolir a própria saliva, ou babar-se.",
+            "Incapacidade de abrir totalmente a boca, ou dor intensa de um só lado com voz abafada — pode ser um abcesso junto à amígdala.",
+            "Pescoço rígido, ou inchaço no pescoço que está a piorar.",
+            "Uma erupção fina, como lixa, acompanhada da dor de garganta — a escarlatina precisa de ser tratada.",
+            "Uma dor de garganta durante quimioterapia, carbimazol, metotrexato ou corticosteroides de longa duração — exige avaliação no próprio dia e um hemograma.",
+            "Uma dor de garganta que continua a piorar ao fim de uma semana, ou febre que não consegue baixar."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Isto é o mesmo que um teste de estreptococos?",
+          "answer": "Não. Um teste de estreptococos é uma zaragatoa da garganta, enviada para um laboratório ou feita como teste rápido de antigénio na consulta. Esta página estima, a partir dos seus sintomas, qual a probabilidade de uma causa bacteriana — que é o que um clínico usa para decidir se vale a pena colher essa zaragatoa. Não substitui a zaragatoa."
+        },
+        {
+          "question": "Qual é a diferença entre amigdalite e faringite?",
+          "answer": "A amigdalite é a inflamação das amígdalas; a faringite é a inflamação da faringe, a parede do fundo da garganta. Na prática, uma garganta inflamada envolve muitas vezes as duas, e ambas são, na maioria dos casos, causadas por um vírus. Quando a causa é a bactéria Streptococcus pyogenes — o estreptococo do grupo A, o das chamadas anginas — o quadro pode ser o mesmo em qualquer dos casos, e é essa probabilidade que esta pontuação tenta estimar."
+        },
+        {
+          "question": "Preciso de antibióticos para uma dor de garganta?",
+          "answer": "Essa é uma decisão de um médico, não desta página. A maioria das dores de garganta é viral, situação em que os antibióticos não fazem nada e continuam a ter efeitos secundários. Uma pontuação alta significa que a probabilidade de uma causa bacteriana é suficientemente elevada para que um médico normalmente o observe e pondere um exame — não significa que os antibióticos estejam indicados."
+        },
+        {
+          "question": "Quanto tempo deve durar uma dor de garganta?",
+          "answer": "A maioria resolve-se em cerca de uma semana, seja viral ou bacteriana. Uma dor de garganta que continua a piorar ao fim de uma semana, ou que vem acompanhada de febre que não consegue baixar, merece ser observada, seja qual for o resultado desta avaliação."
+        },
+        {
+          "question": "Porque é que a pontuação subtrai um ponto se tenho mais de 45 anos?",
+          "answer": "Porque a infeção por estreptococos se torna rara com a idade. Os critérios de Centor originais foram criados para adultos e sobrestimavam a infeção bacteriana nos doentes mais velhos; o ajuste pela idade de McIsaac corrige isso nos dois sentidos, somando um ponto às crianças dos 3 aos 14 anos, a faixa em que o estreptococo é mais frequente."
+        },
+        {
+          "question": "Esta avaliação guarda as minhas respostas?",
+          "answer": "Não. O cálculo é feito inteiramente no seu navegador. Nada do que selecionar é enviado para os nossos servidores nem guardado."
+        }
+      ],
+      "cta": {
+        "heading": "Precisa que alguém observe a sua garganta?",
+        "body": "Marque uma teleconsulta com um médico registado, descreva os seus sintomas e saiba se o passo seguinte é uma zaragatoa, uma receita ou simples autocuidados.",
         "label": "Marcar consulta"
       }
     }

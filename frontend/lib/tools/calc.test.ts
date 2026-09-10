@@ -10,9 +10,11 @@ import {
   calorieTargets,
   dueDateFromLmp,
   healthyWeightRange,
+  mcIsaacAgePoints,
   osteoporosisRiskTier,
   ovulationFromLmp,
   parseISODate,
+  soreThroatScore,
   tdee,
   weightToHealthyRange,
 } from "./calc";
@@ -300,5 +302,104 @@ describe("suggestionForBand", () => {
   it("returns null rather than throwing when there is nothing to suggest", () => {
     expect(suggestionForBand("healthy", [])).toBeNull();
     expect(suggestionForBand("healthy", undefined)).toBeNull();
+  });
+});
+
+describe("mcIsaacAgePoints", () => {
+  it("adds a point for school-age children and subtracts one after 45", () => {
+    expect(mcIsaacAgePoints(3)).toBe(1);
+    expect(mcIsaacAgePoints(14)).toBe(1);
+    expect(mcIsaacAgePoints(15)).toBe(0);
+    expect(mcIsaacAgePoints(44)).toBe(0);
+    expect(mcIsaacAgePoints(45)).toBe(-1);
+    expect(mcIsaacAgePoints(80)).toBe(-1);
+  });
+});
+
+describe("soreThroatScore", () => {
+  const base = {
+    age: 30,
+    fever: false,
+    noCough: false,
+    tenderNodes: false,
+    tonsillarExudate: false,
+    airway: false,
+    rash: false,
+    immunosuppressed: false,
+  };
+
+  it("walks the McIsaac ladder for an adult", () => {
+    expect(soreThroatScore(base).outcome).toBe("very-low");
+    expect(soreThroatScore({ ...base, fever: true }).outcome).toBe("low");
+    expect(soreThroatScore({ ...base, fever: true, noCough: true }).outcome).toBe("moderate");
+    expect(
+      soreThroatScore({ ...base, fever: true, noCough: true, tenderNodes: true }).outcome,
+    ).toBe("raised");
+    expect(
+      soreThroatScore({
+        ...base,
+        fever: true,
+        noCough: true,
+        tenderNodes: true,
+        tonsillarExudate: true,
+      }).outcome,
+    ).toBe("high");
+  });
+
+  it("applies the age term, so the same symptoms band differently by age", () => {
+    const symptoms = { ...base, fever: true, noCough: true, tenderNodes: true };
+    // Three criteria: +1 at 8 makes 4, 0 at 30 makes 3, −1 at 60 makes 2.
+    expect(soreThroatScore({ ...symptoms, age: 8 }).outcome).toBe("high");
+    expect(soreThroatScore({ ...symptoms, age: 30 }).outcome).toBe("raised");
+    expect(soreThroatScore({ ...symptoms, age: 60 }).outcome).toBe("moderate");
+  });
+
+  it("floors at −1 rather than banding below the bottom of the ladder", () => {
+    const result = soreThroatScore({ ...base, age: 60 });
+    expect(result.score).toBe(-1);
+    expect(result.outcome).toBe("very-low");
+  });
+
+  it("lets an airway red flag override even a reassuring score", () => {
+    // No criteria met at all: the score alone would read "very-low".
+    const result = soreThroatScore({ ...base, airway: true });
+    expect(result.outcome).toBe("emergency");
+    expect(result.scoreSuppressed).toBe(true);
+    expect(result.redFlags).toEqual(["airway"]);
+  });
+
+  it("sends rash and immunosuppression to be seen today, not to an emergency", () => {
+    expect(soreThroatScore({ ...base, rash: true }).outcome).toBe("see-today");
+    expect(soreThroatScore({ ...base, immunosuppressed: true }).outcome).toBe("see-today");
+  });
+
+  it("ranks airway above the other flags when several fire at once", () => {
+    const result = soreThroatScore({ ...base, airway: true, rash: true });
+    expect(result.outcome).toBe("emergency");
+    expect(result.redFlags).toEqual(["airway", "rash"]);
+  });
+
+  it("refuses to score an under-3, whatever the symptoms", () => {
+    const result = soreThroatScore({
+      ...base,
+      age: 2,
+      fever: true,
+      noCough: true,
+      tenderNodes: true,
+      tonsillarExudate: true,
+    });
+    expect(result.outcome).toBe("too-young");
+    expect(result.scoreSuppressed).toBe(true);
+  });
+
+  it("still ranks a red flag above the age floor", () => {
+    expect(soreThroatScore({ ...base, age: 1, airway: true }).outcome).toBe("emergency");
+  });
+
+  it("counts the four criteria separately from the age term", () => {
+    const result = soreThroatScore({ ...base, age: 8, fever: true, noCough: true });
+    expect(result.criteriaMet).toBe(2);
+    expect(result.agePoints).toBe(1);
+    expect(result.score).toBe(3);
   });
 });

@@ -165,6 +165,40 @@
         "label": "Niciun factor de risc specific semnalat",
         "summary": "Nimic din ce ai completat nu se potrivește cu factorii de risc publicați pe care ghidurile îi folosesc pentru identificarea persoanelor cu risc de osteoporoză. Este liniștitor, dar nu este o garanție — menționează oricum unui medic orice fractură sau cădere nouă."
       }
+    },
+    "soreThroat": {
+      "emergency": {
+        "label": "Solicită îngrijire medicală de urgență acum",
+        "summary": "Ceea ce ai descris poate indica o problemă a căilor respiratorii sau o infecție profundă în jurul amigdalei, iar acestea nu se judecă după un scor. Mergi acum la o unitate de primiri urgențe sau sună la numărul local de urgență."
+      },
+      "see-today": {
+        "label": "Trebuie consultat astăzi",
+        "summary": "Ai descris ceva ce ar trebui examinat astăzi, nu doar urmărit. Contactează un medic sau un serviciu de gardă — nu aștepta să vezi dacă trece de la sine."
+      },
+      "too-young": {
+        "label": "Cere evaluarea unui medic",
+        "summary": "Acest scor a fost conceput pentru vârsta de 3 ani și peste și nu este fiabil sub această vârstă. Durerea în gât la un copil mic sau la un sugar ar trebui evaluată de un medic, nu punctată — mai ales dacă apare împreună cu febră, cu scăderea consumului de lichide sau cu mai puține scutece ude."
+      },
+      "very-low": {
+        "label": "Infecție bacteriană foarte puțin probabilă",
+        "summary": "Aproape toate durerile în gât cu acest tipar sunt virale și trec de la sine în aproximativ o săptămână. Odihna, lichidele și calmarea durerii sunt tratamentul. Mergi la medic dacă durează mai mult de o săptămână sau dacă se agravează în loc să se amelioreze."
+      },
+      "low": {
+        "label": "Infecție bacteriană puțin probabilă",
+        "summary": "Acest tipar este în continuare mult mai des viral decât bacterian. De obicei, îngrijirea la domiciliu este potrivită, dar acesta nu este un test negativ — mergi la medic dacă durerea se agravează, dacă febra crește sau dacă nu te simți mai bine după o săptămână."
+      },
+      "moderate": {
+        "label": "Infecție bacteriană posibilă",
+        "summary": "Acest tipar se află la mijloc: poate fi în oricare dintre direcții și este punctul în care un medic ar vrea în mod normal să îți examineze gâtul sau să recolteze o probă, nu să ghicească. Merită o consultație."
+      },
+      "raised": {
+        "label": "Infecție bacteriană mai probabilă",
+        "summary": "Sunt prezente suficiente elemente încât ghidurile ar determina un medic să te examineze și să ia în calcul testarea. Programează o consultație — o probă recoltată din gât sau o examinare este ceea ce separă acest caz de o durere în gât virală."
+      },
+      "high": {
+        "label": "Infecție bacteriană cea mai probabilă",
+        "summary": "Aceasta este cea mai înaltă categorie de pe scală. Tot nu este un diagnostic — doar o examinare sau o probă recoltată din gât poate confirma unul — dar este grupul în care un medic este cel mai probabil să testeze și să ia în calcul antibioticele. Programează o consultație."
+      }
     }
   },
   "tools": {
@@ -1237,6 +1271,167 @@
       "cta": {
         "heading": "Încerci să rămâi însărcinată?",
         "body": "Discută prin video cu un medic înregistrat despre cicluri neregulate, analizele dinaintea sarcinii sau medicamentele pe care le iei deja.",
+        "label": "Programează o consultație"
+      }
+    },
+    "sore-throat-checker": {
+      "cardTitle": "Verificare durere în gât",
+      "cardBlurb": "Dacă o durere în gât pare bacteriană sau virală, folosind scorul ajustat după vârstă pe care îl folosesc medicii — plus semnele de alarmă care trebuie văzute astăzi.",
+      "eyebrow": "Instrument gratuit",
+      "h1Lead": "Verificare amigdalită și",
+      "h1Accent": "durere în gât",
+      "h1Trail": "{country}",
+      "metaTitle": "Amigdalită sau Virus? Verificare Durere în Gât {country}",
+      "metaDescription": "Răspunde la cinci întrebări despre durerea ta în gât și vezi cât de probabilă este o cauză bacteriană, folosind scorul McIsaac pe care îl folosesc medicii. Include semnele de alarmă care necesită îngrijire urgentă. Nu este un diagnostic și nu este un test pentru streptococ.",
+      "lede": "Răspunde la câteva întrebări despre durerea ta în gât pentru a vedea cât de probabilă este o cauză bacteriană și care ar fi de obicei pasul următor. Durează aproximativ un minut.",
+      "trustPoints": [
+        "Folosește scorul McIsaac publicat, ajustat după vârstă — nu un scor inventat de noi",
+        "Semnalează semnele de alarmă care necesită îngrijire urgentă înainte de a calcula orice scor",
+        "Funcționează în browser — nimic nu este trimis sau stocat"
+      ],
+      "suggestionsIntro": "O durere în gât cu scor mare este un motiv să fii examinat, nu un diagnostic. Acestea sunt consultațiile care pot duce lucrurile mai departe.",
+      "widget": {
+        "title": "Simptomele tale",
+        "placeholder": "Răspunde la întrebări pentru a vedea cât de probabilă este o cauză bacteriană.",
+        "note": "Acest instrument estimează cât de probabil este ca o durere în gât să fie bacteriană. Nu este un test pentru streptococ și nu este un diagnostic — doar o probă recoltată din gât sau o examinare poate confirma unul. Un scor mic înseamnă că o infecție bacteriană este puțin probabilă, nu că a fost exclusă. Nu începe și nu opri niciodată antibiotice pe baza acestei pagini.",
+        "feverLabel": "Febră în timpul acestei boli",
+        "feverHint": "O temperatură peste 38 °C, sau senzația de febră și frisoane, în orice moment de la debut.",
+        "coughLabel": "Ai tuse?",
+        "coughHint": "Tusea indică mai degrabă un virus, așa că scorul punctează absența ei, nu prezența.",
+        "nodesLabel": "Ganglioni sensibili și măriți în partea din față a gâtului",
+        "nodesHint": "Chiar sub maxilar, pe ambele părți, dureroși la apăsare — nu ganglionii din partea din spate a gâtului.",
+        "exudateLabel": "Depozite albe sau tumefiere pe amigdale",
+        "exudateHint": "Privește cu o lanternă în fundul gâtului. Este greu de apreciat la tine însuți și este cel mai slab răspuns din scor.",
+        "airwayLabel": "Dificultate la respirație, la înghițirea propriei salive sau la deschiderea gurii",
+        "airwayHint": "De asemenea salivare abundentă, voce înfundată, durere severă pe o singură parte sau gât înțepenit ori tumefiat.",
+        "rashLabel": "Erupție pe piele împreună cu durerea în gât",
+        "rashHint": "Adesea o erupție fină, aspră, ca șmirghelul, pe piept sau pe gât.",
+        "immunosuppressedLabel": "O afecțiune sau un medicament care îți slăbește sistemul imunitar",
+        "immunosuppressedHint": "Inclusiv chimioterapie, carbimazol, metotrexat sau corticosteroizi de lungă durată. O durere în gât poate fi primul semn al unei probleme cu globulele albe.",
+        "emergencyValue": "Urgent",
+        "seeTodayValue": "Astăzi",
+        "tooYoungValue": "Sub 3 ani",
+        "pointsLabel": "puncte",
+        "criteriaLabel": "Criterii îndeplinite",
+        "ageAdjustmentLabel": "Ajustare după vârstă"
+      },
+      "sections": [
+        {
+          "heading": "Ce înseamnă scorul tău",
+          "body": [
+            "Scorul — cunoscut ca scorul McIsaac, adică scorul Centor ajustat după vârstă — merge de la -1 la 5. Patru elemente adaugă câte un punct fiecare — febra, absența tusei, ganglionii sensibili din partea din față a gâtului și depozitele albe pe amigdale — iar vârsta ajustează totalul în sus sau în jos. Copiii între 3 și 14 ani primesc un punct; adulții peste 45 de ani pierd unul, pentru că infecția streptococică a gâtului devine rară odată cu vârsta.",
+            "Categoriile de mai jos descriu cât de probabilă este o cauză bacteriană, nu cât de tare doare gâtul. O durere în gât virală poate fi foarte puternică și tot să obțină scorul zero."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Ce înseamnă de obicei fiecare categorie de scor",
+            "columns": [
+              "Scor",
+              "Cauză bacteriană",
+              "Ce înseamnă de obicei"
+            ],
+            "rows": [
+              [
+                "0 sau mai puțin",
+                "Foarte puțin probabilă",
+                "Îngrijire la domiciliu. Odihnă, lichide și calmarea durerii; mergi la medic dacă nu este mai bine după o săptămână."
+              ],
+              [
+                "1",
+                "Puțin probabilă",
+                "De obicei îngrijire la domiciliu, cu o reevaluare dacă se agravează în loc să se amelioreze."
+              ],
+              [
+                "2",
+                "Posibilă",
+                "Punctul în care un medic ar vrea în mod normal să îți privească gâtul, nu să ghicească."
+              ],
+              [
+                "3",
+                "Mai probabilă",
+                "Ghidurile impun o examinare și adesea o probă recoltată din gât. Programează o consultație."
+              ],
+              [
+                "4 sau 5",
+                "Cel mai probabil",
+                "Grupul cel mai probabil să fie testat și pentru care se iau în calcul antibioticele. Programează o consultație."
+              ]
+            ],
+            "footnote": "Bazat pe scorul McIsaac (scorul Centor ajustat după vârstă), regula pe care ghidul NICE NG84 o acceptă pentru evaluarea unei dureri în gât. Categoriile sunt prezentate ca probabilități, nu ca procente, în mod intenționat: procentele publicate provin de la medici care examinează un gât, iar răspunsurile pe care le dai despre propriul gât nu sunt aceeași măsurătoare."
+          }
+        },
+        {
+          "heading": "Cele cinci lucruri despre care întreabă scorul",
+          "body": [
+            "Fiecare se află acolo pentru că schimbă șansele între un virus și o infecție bacteriană, iar împreună funcționează mai bine decât orice simptom luat separat."
+          ],
+          "bullets": [
+            "Febra — infecțiile bacteriene ale gâtului sunt mai probabil decât cele virale să vină cu o temperatură peste 38 °C.",
+            "Absența tusei — tusea indică puternic un virus, așa că scorul punctează lipsa ei. Este criteriul pe care oamenii îl înțeleg cel mai des invers.",
+            "Ganglioni sensibili și măriți în partea din față a gâtului — ganglionii limfatici care drenează amigdalele, care se măresc și dor când amigdalele sunt infectate.",
+            "Depozite albe sau tumefiere pe amigdale — puroiul de pe amigdale crește șansele unei cauze bacteriene, deși și un virus îl poate produce.",
+            "Vârsta — infecția streptococică a gâtului are vârful între 5 și 15 ani și devine rară după 45, așa că scorul adaugă un punct pentru copii și scade unul pentru adulții mai în vârstă."
+          ]
+        },
+        {
+          "heading": "Ce nu îți poate spune această verificare",
+          "body": [
+            "Un scor ordonează probabilități. Nu identifică ce se dezvoltă în gâtul tău și a fost conceput pentru un medic care îl privește direct."
+          ],
+          "bullets": [
+            "Nu este un test pentru streptococ. Doar o probă recoltată din gât sau un test antigenic rapid poate confirma o cauză bacteriană, iar recoltarea o face un medic.",
+            "Un scor mic nu este un rezultat negativ. Înseamnă că o cauză bacteriană este puțin probabilă în balanța șanselor, nu că a fost exclusă.",
+            "Două dintre răspunsuri sunt constatări de examinare. Un medic palpează ganglionii și privește amigdalele cu o sursă de lumină; aprecierea lor la tine însuți este partea cea mai puțin fiabilă a acestei pagini.",
+            "Nu decide nimic legat de antibiotice. Aceasta este o decizie de prescriere pe care un medic o ia după ce te examinează, cântărind istoricul tău și adesea rezultatul unei probe recoltate din gât.",
+            "Nu spune nimic despre mononucleoza infecțioasă, care poate arăta identic la început și este frecventă la adolescenți și la adulții tineri a căror durere în gât se prelungește.",
+            "Nu se aplică la copiii sub 3 ani, la care nu este fiabil și unde evaluarea trebuie făcută de un medic."
+          ]
+        },
+        {
+          "heading": "Când o durere în gât necesită îngrijire urgentă",
+          "body": [
+            "Acestea au prioritate absolută față de scor. O infecție gravă a gâtului poate începe prin a părea ușoară și a obține un scor mic, așa că niciunul dintre semnele de mai jos nu ar trebui pus vreodată în balanță cu un număr liniștitor."
+          ],
+          "bullets": [
+            "Dificultate la respirație, respirație zgomotoasă sau senzația că gâtul se închide — cere ajutor de urgență imediat.",
+            "Imposibilitatea de a-ți înghiți propria salivă sau salivare abundentă.",
+            "Imposibilitatea de a deschide complet gura sau durere severă pe o singură parte, cu voce înfundată — poate fi un abces lângă amigdală.",
+            "Gât înțepenit sau o tumefiere a gâtului care se agravează.",
+            "O erupție fină, ca șmirghelul, împreună cu durerea în gât — scarlatina trebuie tratată.",
+            "O durere în gât în timpul chimioterapiei sau al tratamentului cu carbimazol, metotrexat ori corticosteroizi de lungă durată — necesită evaluare în aceeași zi și o hemoleucogramă.",
+            "O durere în gât care încă se agravează după o săptămână sau o febră pe care nu o poți scădea."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Este același lucru cu un test pentru streptococ?",
+          "answer": "Nu. Un test pentru streptococ înseamnă o probă recoltată din gât, trimisă la laborator sau efectuată ca test antigenic rapid în cabinet. Această pagină estimează, pornind de la simptomele tale, cât de probabilă este o cauză bacteriană — exact ceea ce folosește un medic pentru a decide dacă merită recoltată acea probă. Nu poate înlocui proba."
+        },
+        {
+          "question": "Care este diferența dintre amigdalită și faringită streptococică?",
+          "answer": "Amigdalita înseamnă amigdale inflamate, indiferent de cauză — cel mai adesea un virus. Faringita este inflamația peretelui gâtului, iar faringita streptococică este cea provocată de o bacterie anume, Streptococcus pyogenes, cunoscută ca streptococ de grup A. Ceea ce se numește popular gât roșu poate fi oricare dintre ele. Orice faringită streptococică înseamnă un gât inflamat; majoritatea amigdalitelor nu sunt însă streptococice."
+        },
+        {
+          "question": "Am nevoie de antibiotice pentru durerea în gât?",
+          "answer": "Aceasta este o decizie a medicului, nu a acestei pagini. Majoritatea durerilor în gât sunt virale, iar acolo antibioticele nu ajută cu nimic și au totuși efecte adverse. Un scor mare înseamnă că șansele unei cauze bacteriene sunt suficient de mari încât un medic te-ar examina de obicei și ar lua în calcul testarea — nu înseamnă că antibioticele sunt indicate."
+        },
+        {
+          "question": "Cât ar trebui să dureze o durere în gât?",
+          "answer": "Majoritatea trec în aproximativ o săptămână, fie că sunt virale, fie bacteriene. O durere în gât care încă se agravează după o săptămână, sau care vine cu o febră pe care nu o poți scădea, merită să fie văzută de un medic, indiferent ce arată această verificare."
+        },
+        {
+          "question": "De ce scade scorul cu un punct dacă am peste 45 de ani?",
+          "answer": "Pentru că faringita streptococică devine rară odată cu vârsta. Scorul Centor original a fost construit pentru adulți și supraestima infecția bacteriană la pacienții mai în vârstă; ajustarea după vârstă a lui McIsaac corectează acest lucru în ambele direcții, adăugând un punct pentru copiii între 3 și 14 ani, la care streptococul este cel mai frecvent."
+        },
+        {
+          "question": "Această verificare îmi stochează răspunsurile?",
+          "answer": "Nu. Calculul se face în întregime în browserul tău. Nimic din ce selectezi nu este trimis către serverele noastre și nu este salvat."
+        }
+      ],
+      "cta": {
+        "heading": "Ai nevoie ca cineva să îți examineze gâtul?",
+        "body": "Programează o videoconsultație cu un medic înregistrat, treci în revistă simptomele tale și află dacă pasul următor potrivit este o probă recoltată din gât, o rețetă sau simpla îngrijire la domiciliu.",
         "label": "Programează o consultație"
       }
     }

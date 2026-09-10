@@ -1,9 +1,8 @@
 "use client";
 
 /**
- * The interactive health-tool widgets. BMI is the only one live today — the
- * rest of the planned set (calories, blood pressure, due date, ovulation,
- * ADHD) ships one at a time; their maths already sits, tested, in `calc.ts`.
+ * The interactive health-tool widgets. All eight are live; each one's maths
+ * sits, tested, in `calc.ts` — this file only ever renders it.
  *
  * Two rules hold this file together:
  *
@@ -48,6 +47,8 @@ import {
   osteoporosisRiskTier,
   ovulationFromLmp,
   parseISODate,
+  SORE_THROAT_CRITERIA_COUNT,
+  soreThroatScore,
   todayUTC,
   weightToHealthyRange,
 } from "@/lib/tools/calc";
@@ -137,6 +138,8 @@ export function ToolWidget({
       return <OvulationWidget copy={copy} />;
     case "osteoporosis":
       return <OsteoporosisWidget copy={copy} />;
+    case "sore-throat":
+      return <SoreThroatWidget copy={copy} />;
   }
 }
 
@@ -1554,6 +1557,174 @@ function OsteoporosisWidget({ copy }: { copy: WidgetCopy }) {
             { label: w.contributingLabel, value: number.format(result.contributingCount) },
           ]}
         />
+      </ToolResult>
+
+      <ToolNote>{w.note}</ToolNote>
+    </ToolCard>
+  );
+}
+
+/* ------------------------------------------------------------ Sore throat */
+
+/**
+ * McIsaac (age-adjusted Centor) for a sore throat. See `soreThroatScore` in
+ * `calc.ts` for the rule and the three things it deliberately refuses to do.
+ *
+ * TWO PRESENTATION RULES THAT ARE SAFETY RULES, not styling:
+ *
+ * 1. When `scoreSuppressed` is set the number NEVER renders. A red flag or an
+ *    under-3 age means the score is not the answer, and showing "1 point"
+ *    beside "get urgent care" invites the reader to average the two. The
+ *    read-out shows a short word instead — keep those copy strings to roughly
+ *    ten characters so they survive the 3rem clamp on a 320px screen.
+ * 2. The cough question is asked in the POSITIVE ("do you have a cough?") and
+ *    inverted here, because the criterion is the ABSENCE of one. Asking people
+ *    to answer "no cough: yes" is how a scoring tool collects wrong answers.
+ */
+function SoreThroatWidget({ copy }: { copy: WidgetCopy }) {
+  const id = useId();
+  const { ui, bands } = copy;
+  const { number } = useFormatters(copy.formatLocale);
+  const w = copy.widget;
+
+  const [age, setAge] = useState("30");
+  const [fever, setFever] = useState(false);
+  // Stored as the patient answers it; inverted when scored.
+  const [cough, setCough] = useState(false);
+  const [tenderNodes, setTenderNodes] = useState(false);
+  const [tonsillarExudate, setTonsillarExudate] = useState(false);
+  const [airway, setAirway] = useState(false);
+  const [rash, setRash] = useState(false);
+  const [immunosuppressed, setImmunosuppressed] = useState(false);
+
+  const result = soreThroatScore({
+    age: num(age),
+    fever,
+    noCough: !cough,
+    tenderNodes,
+    tonsillarExudate,
+    airway,
+    rash,
+    immunosuppressed,
+  });
+
+  const bandCopy = bands.soreThroat[result.outcome];
+
+  /** The big read-out: a short word when the score is suppressed, else the score. */
+  const SUPPRESSED_VALUE: Partial<Record<typeof result.outcome, string>> = {
+    emergency: w.emergencyValue,
+    "see-today": w.seeTodayValue,
+    "too-young": w.tooYoungValue,
+  };
+  const value = result.scoreSuppressed
+    ? (SUPPRESSED_VALUE[result.outcome] ?? w.emergencyValue)
+    : number.format(result.score);
+
+  const agePointsText =
+    result.agePoints > 0
+      ? `+${number.format(result.agePoints)}`
+      : number.format(result.agePoints);
+
+  return (
+    <ToolCard title={w.title}>
+      <ToolField label={ui.age} htmlFor={`${id}-age`} suffix={ui.years}>
+        <input
+          id={`${id}-age`}
+          className={TOOL_INPUT_CLASS}
+          style={TOOL_INPUT_STYLE}
+          inputMode="numeric"
+          value={age}
+          onChange={(event) => setAge(event.target.value)}
+        />
+        <ToolSlider
+          id={`${id}-age-range`}
+          ariaLabel={ui.age}
+          min={1}
+          max={100}
+          value={num(age)}
+          onChange={(next) => setAge(String(next))}
+        />
+      </ToolField>
+
+      <YesNoField
+        legend={w.feverLabel}
+        hint={w.feverHint}
+        name={`${id}-fever`}
+        value={fever}
+        onChange={setFever}
+        ui={ui}
+      />
+      <YesNoField
+        legend={w.coughLabel}
+        hint={w.coughHint}
+        name={`${id}-cough`}
+        value={cough}
+        onChange={setCough}
+        ui={ui}
+      />
+      <YesNoField
+        legend={w.nodesLabel}
+        hint={w.nodesHint}
+        name={`${id}-nodes`}
+        value={tenderNodes}
+        onChange={setTenderNodes}
+        ui={ui}
+      />
+      <YesNoField
+        legend={w.exudateLabel}
+        hint={w.exudateHint}
+        name={`${id}-exudate`}
+        value={tonsillarExudate}
+        onChange={setTonsillarExudate}
+        ui={ui}
+      />
+
+      <YesNoField
+        legend={w.airwayLabel}
+        hint={w.airwayHint}
+        name={`${id}-airway`}
+        value={airway}
+        onChange={setAirway}
+        ui={ui}
+      />
+      <YesNoField
+        legend={w.rashLabel}
+        hint={w.rashHint}
+        name={`${id}-rash`}
+        value={rash}
+        onChange={setRash}
+        ui={ui}
+      />
+      <YesNoField
+        legend={w.immunosuppressedLabel}
+        hint={w.immunosuppressedHint}
+        name={`${id}-immunosuppressed`}
+        value={immunosuppressed}
+        onChange={setImmunosuppressed}
+        ui={ui}
+      />
+
+      <ToolResult
+        placeholder={w.placeholder}
+        value={value}
+        unit={result.scoreSuppressed ? undefined : w.pointsLabel}
+        label={bandCopy.label}
+        summary={bandCopy.summary}
+        tone={result.tone}
+      >
+        {result.scoreSuppressed ? null : (
+          <ToolStatRow
+            items={[
+              {
+                label: w.criteriaLabel,
+                value: `${number.format(result.criteriaMet)} / ${number.format(
+                  SORE_THROAT_CRITERIA_COUNT,
+                )}`,
+              },
+              { label: w.ageAdjustmentLabel, value: agePointsText },
+            ]}
+          />
+        )}
       </ToolResult>
 
       <ToolNote>{w.note}</ToolNote>

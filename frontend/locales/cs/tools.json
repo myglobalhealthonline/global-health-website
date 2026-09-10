@@ -165,6 +165,40 @@
         "label": "Nebyl zjištěn žádný konkrétní rizikový faktor",
         "summary": "Nic z toho, co jste zadali, neodpovídá zveřejněným rizikovým faktorům, které se používají k vyhledávání osteoporózy. To je uklidňující, ale není to záruka — jakoukoli novou zlomeninu nebo pád vždy zmiňte lékaři."
       }
+    },
+    "soreThroat": {
+      "emergency": {
+        "label": "Vyhledejte okamžitě lékařskou pomoc",
+        "summary": "To, co jste popsali, může ukazovat na problém s dýchacími cestami nebo na hlubokou infekci kolem mandle, a ty se podle skóre neposuzují. Jděte okamžitě na urgentní příjem nebo volejte tísňovou linku."
+      },
+      "see-today": {
+        "label": "Nechte se vyšetřit ještě dnes",
+        "summary": "Popsali jste něco, co je třeba nechat posoudit ještě dnes, a ne to jen sledovat. Kontaktujte lékaře nebo lékařskou pohotovostní službu — nečekejte, zda to samo odezní."
+      },
+      "too-young": {
+        "label": "Nechte to posoudit lékařem",
+        "summary": "Toto skóre bylo vytvořeno pro věk od 3 let a pod touto hranicí není spolehlivé. Bolest v krku u batolete nebo kojence by měl posoudit lékař, místo aby se bodovala — zvlášť pokud ji doprovází horečka, menší příjem tekutin nebo méně mokrých plen."
+      },
+      "very-low": {
+        "label": "Bakteriální infekce je velmi nepravděpodobná",
+        "summary": "Téměř všechny bolesti v krku s tímto vzorcem jsou virové a samy odezní zhruba do týdne. Léčbou je odpočinek, tekutiny a úleva od bolesti. Pokud potíže trvají déle než týden nebo se místo zlepšování zhoršují, jděte k lékaři."
+      },
+      "low": {
+        "label": "Bakteriální infekce je nepravděpodobná",
+        "summary": "I tento vzorec bývá mnohem častěji virový než bakteriální. Obvykle stačí domácí péče, ale není to negativní test — jděte k lékaři, pokud se bolest zhoršuje, stoupá horečka nebo vám po týdnu není lépe."
+      },
+      "moderate": {
+        "label": "Bakteriální infekce je možná",
+        "summary": "Tento vzorec leží uprostřed: může jít o obojí, a je to bod, ve kterém lékař obvykle chce krk prohlédnout nebo odebrat výtěr, místo aby hádal. Konzultace stojí za to."
+      },
+      "raised": {
+        "label": "Bakteriální infekce je pravděpodobnější",
+        "summary": "Je přítomno dost znaků na to, aby doporučené postupy vedly lékaře k vyšetření a ke zvážení testu. Domluvte si konzultaci — právě výtěr nebo vyšetření odliší tento stav od virové bolesti v krku."
+      },
+      "high": {
+        "label": "Bakteriální infekce je nejpravděpodobnější",
+        "summary": "Toto je nejvyšší pásmo škály. Stále to není diagnóza — potvrdit ji může jen vyšetření nebo výtěr z krku — ale je to skupina, u které lékař nejčastěji testuje a zvažuje antibiotika. Domluvte si vyšetření."
+      }
     }
   },
   "tools": {
@@ -1237,6 +1271,167 @@
       "cta": {
         "heading": "Snažíte se otěhotnět?",
         "body": "Proberte po videu s registrovaným lékařem nepravidelné cykly, vyšetření před otěhotněním nebo léky, které už berete.",
+        "label": "Objednat konzultaci"
+      }
+    },
+    "sore-throat-checker": {
+      "cardTitle": "Kontrola bolesti v krku",
+      "cardBlurb": "Zda bolest v krku vypadá spíš bakteriálně, nebo virově, podle skóre s věkovou korekcí, které používají lékaři — plus varovné příznaky, které vyžadují lékaře ještě dnes.",
+      "eyebrow": "Bezplatný nástroj",
+      "h1Lead": "Angína, nebo virová",
+      "h1Accent": "bolest v krku",
+      "h1Trail": "{country}",
+      "metaTitle": "Bolest v Krku {country} | Kontrola Angíny a Streptokoka",
+      "metaDescription": "Odpovězte na pět otázek o bolesti v krku a zjistěte, jak pravděpodobná je bakteriální příčina, podle McIsaacova skóre, které používají lékaři. Včetně varovných příznaků vyžadujících neodkladnou péči. Nejde o diagnózu ani o test na streptokoka.",
+      "lede": "Odpovězte na několik otázek o své bolesti v krku a zjistěte, jak pravděpodobná je bakteriální příčina a jaký bývá obvyklý další krok. Zabere to asi minutu.",
+      "trustPoints": [
+        "Používá zveřejněné McIsaacovo skóre s věkovou korekcí — ne skóre, které jsme si vymysleli",
+        "Varovné příznaky vyžadující neodkladnou péči označí dřív, než cokoli spočítá",
+        "Běží ve vašem prohlížeči — nic se neodesílá ani neukládá"
+      ],
+      "suggestionsIntro": "Vysoké skóre je důvod nechat se vyšetřit, ne diagnóza. Toto jsou konzultace, které mohou jít dál.",
+      "widget": {
+        "title": "Vaše příznaky",
+        "placeholder": "Odpovězte na otázky a zjistěte, jak pravděpodobná je bakteriální příčina.",
+        "note": "Toto odhaduje, jak pravděpodobně je bolest v krku bakteriální. Není to test na streptokoka ani diagnóza — potvrdit ji může jen výtěr z krku nebo vyšetření lékařem. Nízké skóre znamená, že bakteriální infekce je nepravděpodobná, ne že byla vyloučena. Nikdy podle této stránky nezačínejte ani nevysazujte antibiotika.",
+        "feverLabel": "Horečka v průběhu tohoto onemocnění",
+        "feverHint": "Teplota nad 38 °C, nebo pocit horkosti a zimnice, kdykoli od začátku potíží.",
+        "coughLabel": "Máte kašel?",
+        "coughHint": "Kašel ukazuje spíš na virus, takže skóre počítá jeho nepřítomnost, ne jeho přítomnost.",
+        "nodesLabel": "Citlivé, zvětšené uzliny na přední straně krku",
+        "nodesHint": "Těsně pod čelistí po obou stranách, bolestivé při stisknutí — ne uzliny na zadní straně krku.",
+        "exudateLabel": "Bílé povlaky nebo zduření na mandlích",
+        "exudateHint": "Posviťte si baterkou do zadní části krku. U sebe sama se to posuzuje těžko a je to nejslabší odpověď v celém skóre.",
+        "airwayLabel": "Potíže s dýcháním, polykáním vlastních slin nebo otevřením úst",
+        "airwayHint": "Také slinění, huhňavý hlas, silná bolest jen na jedné straně nebo ztuhlý či oteklý krk.",
+        "rashLabel": "Vyrážka spolu s bolestí v krku",
+        "rashHint": "Často jemná, drsná vyrážka připomínající smirkový papír na hrudi nebo na krku.",
+        "immunosuppressedLabel": "Onemocnění nebo lék, který oslabuje imunitní systém",
+        "immunosuppressedHint": "Včetně chemoterapie, karbimazolu, metotrexátu nebo dlouhodobých kortikosteroidů. Bolest v krku může být prvním příznakem poruchy bílých krvinek.",
+        "emergencyValue": "Ihned",
+        "seeTodayValue": "Dnes",
+        "tooYoungValue": "Do 3 let",
+        "pointsLabel": "bodů",
+        "criteriaLabel": "Shodné příznaky",
+        "ageAdjustmentLabel": "Věková korekce"
+      },
+      "sections": [
+        {
+          "heading": "Co vaše skóre znamená",
+          "body": [
+            "Skóre jde od -1 do 5. Čtyři znaky přidávají po jednom bodu — horečka, nepřítomnost kašle, citlivé uzliny na přední straně krku a bílé povlaky na mandlích — a věk celkový součet posouvá nahoru nebo dolů. Děti od 3 do 14 let bod získávají, dospělí nad 45 let o bod přicházejí, protože streptokok v krku je s přibývajícím věkem stále vzácnější. Tomuto pravidlu se říká McIsaacovo skóre: Centorovo skóre doplněné o věkovou korekci.",
+            "Pásma níže popisují, jak pravděpodobná je bakteriální příčina, ne jak silně krk bolí. Virová bolest v krku může být velmi nepříjemná a přesto mít nulové skóre."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Co jednotlivá pásma skóre obvykle znamenají",
+            "columns": [
+              "Skóre",
+              "Bakteriální příčina",
+              "Co to obvykle znamená"
+            ],
+            "rows": [
+              [
+                "0 nebo méně",
+                "Velmi nepravděpodobná",
+                "Domácí péče. Odpočinek, tekutiny a úleva od bolesti; pokud po týdnu není lépe, jděte k lékaři."
+              ],
+              [
+                "1",
+                "Nepravděpodobná",
+                "Obvykle domácí péče, s kontrolou, pokud se stav místo zlepšování zhoršuje."
+              ],
+              [
+                "2",
+                "Možná",
+                "Bod, ve kterém lékař obvykle chce krk prohlédnout, místo aby hádal."
+              ],
+              [
+                "3",
+                "Pravděpodobnější",
+                "Doporučené postupy vedou k vyšetření a často i k výtěru. Domluvte si konzultaci."
+              ],
+              [
+                "4 nebo 5",
+                "Nejpravděpodobnější",
+                "Skupina, u které se nejčastěji testuje a zvažují antibiotika. Domluvte si vyšetření."
+              ]
+            ],
+            "footnote": "Založeno na McIsaacově skóre (Centorovo skóre s věkovou korekcí), pravidle, které pro posouzení bolesti v krku uznává doporučený postup NICE NG84. Pásma jsou záměrně uvedena jako pravděpodobnosti, ne jako procenta: zveřejněná procenta pocházejí od lékařů, kteří krk skutečně prohlédli, a odpovědi, které o vlastním krku dáte vy, nejsou totéž měření."
+          }
+        },
+        {
+          "heading": "Pět věcí, na které se skóre ptá",
+          "body": [
+            "Každá z nich je v seznamu proto, že posouvá poměr pravděpodobností mezi virem a bakteriální infekcí, a dohromady fungují lépe než kterýkoli jednotlivý příznak sám o sobě."
+          ],
+          "bullets": [
+            "Horečka — bakteriální infekce krku bývají častěji než virové doprovázeny teplotou nad 38 °C.",
+            "Nepřítomnost kašle — kašel silně ukazuje na virus, takže skóre počítá jeho nepřítomnost. Právě tohle si lidé nejčastěji pletou obráceně.",
+            "Citlivé, zvětšené uzliny na přední straně krku — mízní uzliny, které odvádějí lymfu z mandlí a při jejich infekci otékají a bolí.",
+            "Bílé povlaky nebo zduření na mandlích — hnisavá angína zvyšuje pravděpodobnost bakteriální příčiny, i když povlaky umí vyvolat i virus.",
+            "Věk — streptokok v krku má vrchol mezi 5. a 15. rokem a po 45. roce je vzácný, takže skóre dětem bod přidává a starším dospělým ho odebírá."
+          ]
+        },
+        {
+          "heading": "Co vám tato kontrola nesdělí",
+          "body": [
+            "Skóre třídí pravděpodobnosti. Neurčí, co vám v krku roste, a bylo navrženo pro lékaře, který se do krku dívá."
+          ],
+          "bullets": [
+            "Není to test na streptokoka. Bakteriální příčinu může potvrdit jen výtěr z krku nebo rychlý antigenní test, a odebírá ho lékař.",
+            "Nízké skóre není negativní výsledek. Znamená, že bakteriální příčina je podle poměru pravděpodobností nepravděpodobná, ne že byla vyloučena.",
+            "Dvě z odpovědí jsou nálezy z vyšetření. Lékař uzliny nahmatá a na mandle si posvítí; posuzovat to sám na sobě je nejméně spolehlivá část této stránky.",
+            "Nerozhoduje nic o antibiotikách. To je rozhodnutí o léčbě, které činí lékař po vyšetření, se zvážením vaší anamnézy a často i výsledku výtěru.",
+            "Neříká nic o infekční mononukleóze, která může zpočátku vypadat úplně stejně a je častá u dospívajících a mladých dospělých, jimž se bolest v krku vleče.",
+            "Neplatí pro děti do 3 let, kde není spolehlivé a stav by měl posoudit lékař."
+          ]
+        },
+        {
+          "heading": "Kdy bolest v krku vyžaduje neodkladnou péči",
+          "body": [
+            "Tyto situace skóre zcela přebíjejí. Závažná infekce krku může zpočátku vypadat mírně a mít nízké skóre, takže nic z následujícího nesmí být nikdy poměřováno s uklidňujícím číslem."
+          ],
+          "bullets": [
+            "Potíže s dýcháním, hlučné dýchání nebo pocit, že se krk uzavírá — vyhledejte okamžitě neodkladnou pomoc.",
+            "Neschopnost polknout vlastní sliny nebo slinění.",
+            "Neschopnost úplně otevřít ústa, nebo silná bolest na jedné straně s huhňavým hlasem — může jít o absces vedle mandle.",
+            "Ztuhlá šíje nebo otok na krku, který se zhoršuje.",
+            "Jemná vyrážka připomínající smirkový papír spolu s bolestí v krku — spála vyžaduje léčbu.",
+            "Bolest v krku při chemoterapii, léčbě karbimazolem, metotrexátem nebo dlouhodobých kortikosteroidech — vyžaduje posouzení týž den a krevní obraz.",
+            "Bolest v krku, která se po týdnu stále zhoršuje, nebo horečka, kterou nedokážete srazit."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Je to totéž co test na streptokoka?",
+          "answer": "Ne. Test na streptokoka je výtěr z krku, buď poslaný do laboratoře, nebo provedený přímo v ordinaci jako rychlý antigenní test. Tato stránka z vašich příznaků odhaduje, jak pravděpodobná je bakteriální příčina — což je přesně to, podle čeho lékař zvažuje, zda výtěr odebrat. Výtěr nahradit nemůže."
+        },
+        {
+          "question": "Jaký je rozdíl mezi angínou a streptokokem v krku?",
+          "answer": "Angína, odborně zánět mandlí, popisuje zanícené mandle, ať už je příčina jakákoli — nejčastěji virus. Streptokok v krku je zánět mandlí nebo hltanu způsobený jednou konkrétní bakterií, Streptococcus pyogenes, známou jako streptokok skupiny A. Každý streptokokový zánět v krku je angínou; většina angín ale streptokokem způsobena není."
+        },
+        {
+          "question": "Potřebuji na bolest v krku antibiotika?",
+          "answer": "To je rozhodnutí pro lékaře, ne pro tuto stránku. Většina bolestí v krku je virových a u nich antibiotika nezabírají, přitom nežádoucí účinky mají. Vysoké skóre znamená, že pravděpodobnost bakteriální příčiny je dost vysoká na to, aby vás lékař obvykle vyšetřil a zvážil test — neznamená, že jsou antibiotika indikována."
+        },
+        {
+          "question": "Jak dlouho by měla bolest v krku trvat?",
+          "answer": "Většina odezní zhruba do týdne, ať už je virová, nebo bakteriální. Bolest v krku, která se po týdnu stále zhoršuje, nebo kterou doprovází horečka, již nedokážete srazit, stojí za vyšetření bez ohledu na to, co tato kontrola ukáže."
+        },
+        {
+          "question": "Proč skóre odečítá bod, když je mi přes 45 let?",
+          "answer": "Protože streptokok v krku je s přibývajícím věkem stále vzácnější. Původní Centorovo skóre bylo sestaveno pro dospělé a u starších pacientů bakteriální infekci nadhodnocovalo; McIsaacova věková korekce to napravuje v obou směrech a dětem od 3 do 14 let, kde je streptokok nejčastější, naopak bod přidává."
+        },
+        {
+          "question": "Ukládá si tato kontrola moje odpovědi?",
+          "answer": "Ne. Výpočet probíhá celý ve vašem prohlížeči. Nic z toho, co vyberete, se neodesílá na naše servery ani se neukládá."
+        }
+      ],
+      "cta": {
+        "heading": "Potřebujete, aby se vám někdo podíval do krku?",
+        "body": "Objednejte si videokonzultaci s registrovaným lékařem, projděte si své příznaky a zjistěte, zda je dalším krokem výtěr, recept, nebo prostá domácí péče.",
         "label": "Objednat konzultaci"
       }
     }

@@ -411,3 +411,153 @@ export function adhdScore(answers: Array<number | null>): AdhdResult {
   });
   return { positives, answered, screenPositive: positives >= 4 };
 }
+
+/* ---------------------------------------------------------- Sore throat */
+
+/**
+ * McIsaac score — Centor's four criteria plus the age term McIsaac added in
+ * 1998 and revalidated in 2004. The age adjustment is the whole reason this,
+ * rather than raw Centor, is safe to put in front of the public: strep
+ * pharyngitis is common in school-age children and uncommon after 45, and
+ * unadjusted Centor over-calls the second group and under-calls the first.
+ *
+ *   age 3–14  +1 · age 15–44  0 · age 45+  −1
+ *   fever during this illness             +1
+ *   NO cough                              +1
+ *   tender, swollen glands at the front of the neck  +1
+ *   white patches or swelling on the tonsils         +1
+ *
+ * Total runs −1 to 5.
+ *
+ * THREE THINGS THIS DELIBERATELY DOES NOT DO, and every one of them is a
+ * safety decision rather than a scope decision:
+ *
+ * 1. It never says "no antibiotics needed". The score estimates how likely a
+ *    sore throat is bacterial. A low score means UNLIKELY, not negative, and
+ *    only a throat swab or rapid antigen test can say otherwise.
+ * 2. Red flags short-circuit the score entirely (`redFlagOutcome`). A
+ *    peritonsillar abscess or epiglottitis can present with a LOW McIsaac
+ *    score — no fever yet, no exudate visible — so a reassuring band is
+ *    exactly the wrong output. Presentation must branch on `scoreSuppressed`,
+ *    never render a band alongside a red flag.
+ * 3. It refuses to score under-3s. McIsaac was validated from age 3, strep is
+ *    rare below it, and acute rheumatic fever essentially does not occur —
+ *    a toddler with a sore throat needs looking at, not scoring.
+ *
+ * Centor's original two exam findings (exudate, tender nodes) are things a
+ * clinician palpates and inspects. Self-reported, they are the weakest inputs
+ * here, which is why the copy frames the output as "how likely" and the next
+ * step as a consultation rather than a conclusion.
+ */
+
+/** Lowest age McIsaac was validated from. Below this the tool declines to score. */
+export const SORE_THROAT_MIN_AGE = 3;
+
+/** The four Centor criteria, excluding the age term. Drives the "n of 4" read-out. */
+export const SORE_THROAT_CRITERIA_COUNT = 4;
+
+export const MCISAAC_MIN = -1;
+export const MCISAAC_MAX = 5;
+
+/**
+ * Grouped rather than one toggle per symptom: seven segmented controls would
+ * bury the form, and the grouping matches how the answer differs. `airway` is
+ * "go now", the other two are "be seen today" — over-triaging a scarlet-fever
+ * rash to an emergency department is its own kind of harm.
+ */
+export type SoreThroatRedFlagKey = "airway" | "rash" | "immunosuppressed";
+
+export type SoreThroatOutcomeKey =
+  | "emergency"
+  | "see-today"
+  | "too-young"
+  | "very-low"
+  | "low"
+  | "moderate"
+  | "raised"
+  | "high";
+
+export type SoreThroatInput = {
+  age: number;
+  /** Fever, or felt feverish, at any point in this illness. */
+  fever: boolean;
+  /** True when there is NO cough — the criterion is the absence. */
+  noCough: boolean;
+  /** Tender, swollen glands at the front of the neck. */
+  tenderNodes: boolean;
+  /** White patches or visible swelling on the tonsils. */
+  tonsillarExudate: boolean;
+  /** Breathing, swallowing saliva, mouth-opening, muffled voice, neck stiffness. */
+  airway: boolean;
+  rash: boolean;
+  immunosuppressed: boolean;
+};
+
+export type SoreThroatResult = {
+  outcome: SoreThroatOutcomeKey;
+  tone: ToneKey;
+  /** McIsaac total, −1 to 5. Still computed when suppressed — never displayed then. */
+  score: number;
+  agePoints: number;
+  /** How many of the four Centor criteria are met, 0–4. */
+  criteriaMet: number;
+  redFlags: SoreThroatRedFlagKey[];
+  /**
+   * True when the outcome came from a red flag or the age floor rather than
+   * the score. The widget MUST hide the number and the band when this is set.
+   */
+  scoreSuppressed: boolean;
+};
+
+/** McIsaac's age term. Ages below `SORE_THROAT_MIN_AGE` never reach this. */
+export function mcIsaacAgePoints(age: number): number {
+  if (!Number.isFinite(age)) return 0;
+  if (age < 15) return 1;
+  if (age < 45) return 0;
+  return -1;
+}
+
+const SORE_THROAT_BANDS: Array<{ max: number; key: SoreThroatOutcomeKey; tone: ToneKey }> = [
+  { max: 0, key: "very-low", tone: "good" },
+  { max: 1, key: "low", tone: "good" },
+  { max: 2, key: "moderate", tone: "warn" },
+  { max: 3, key: "raised", tone: "warn" },
+  { max: Infinity, key: "high", tone: "alert" },
+];
+
+/** `max` is INCLUSIVE here — the score is an integer ladder, not a range. */
+export function soreThroatBand(score: number): { key: SoreThroatOutcomeKey; tone: ToneKey } {
+  const band =
+    SORE_THROAT_BANDS.find((entry) => score <= entry.max) ??
+    SORE_THROAT_BANDS[SORE_THROAT_BANDS.length - 1];
+  return { key: band.key, tone: band.tone };
+}
+
+export function soreThroatScore(input: SoreThroatInput): SoreThroatResult {
+  const redFlags: SoreThroatRedFlagKey[] = [];
+  if (input.airway) redFlags.push("airway");
+  if (input.rash) redFlags.push("rash");
+  if (input.immunosuppressed) redFlags.push("immunosuppressed");
+
+  const criteria = [input.fever, input.noCough, input.tenderNodes, input.tonsillarExudate];
+  const criteriaMet = criteria.filter(Boolean).length;
+  const agePoints = mcIsaacAgePoints(input.age);
+  const score = criteriaMet + agePoints;
+
+  const base = { score, agePoints, criteriaMet, redFlags };
+
+  // Precedence: airway beats everything, then the other flags, then the age
+  // floor. Only when none of those fire does the number get to speak.
+  if (input.airway) {
+    return { ...base, outcome: "emergency", tone: "alert", scoreSuppressed: true };
+  }
+  if (input.rash || input.immunosuppressed) {
+    return { ...base, outcome: "see-today", tone: "alert", scoreSuppressed: true };
+  }
+  if (Number.isFinite(input.age) && input.age < SORE_THROAT_MIN_AGE) {
+    return { ...base, outcome: "too-young", tone: "warn", scoreSuppressed: true };
+  }
+
+  const band = soreThroatBand(score);
+  return { ...base, outcome: band.key, tone: band.tone, scoreSuppressed: false };
+}

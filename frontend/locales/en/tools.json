@@ -165,6 +165,40 @@
         "label": "No specific risk factors flagged",
         "summary": "Nothing you entered matches the published risk factors guidelines use for osteoporosis case-finding. That is reassuring, but it is not a guarantee — mention any new fracture or fall to a doctor regardless."
       }
+    },
+    "soreThroat": {
+      "emergency": {
+        "label": "Get urgent medical care now",
+        "summary": "What you have described can point to a problem with the airway or a deep infection around the tonsil, and those are not judged on a score. Go to an emergency department or call your local emergency number now."
+      },
+      "see-today": {
+        "label": "Be seen today",
+        "summary": "You have described something that should be looked at today rather than watched. Contact a doctor or an out-of-hours service — do not wait to see whether it settles on its own."
+      },
+      "too-young": {
+        "label": "Have a doctor look at this",
+        "summary": "This score was designed for age 3 and above and is not reliable below it. A sore throat in a toddler or baby should be assessed by a doctor rather than scored — especially alongside a fever, reduced drinking, or fewer wet nappies."
+      },
+      "very-low": {
+        "label": "Bacterial infection very unlikely",
+        "summary": "Almost all sore throats with this pattern are viral and settle on their own within about a week. Rest, fluids and pain relief are the treatment. See a doctor if it lasts beyond a week or gets worse instead of better."
+      },
+      "low": {
+        "label": "Bacterial infection unlikely",
+        "summary": "This pattern is still much more often viral than bacterial. Self-care is usually right, but this is not a negative test — see a doctor if the pain worsens, a fever climbs, or you are no better after a week."
+      },
+      "moderate": {
+        "label": "Bacterial infection possible",
+        "summary": "This pattern sits in the middle: it could go either way, and it is the point at which a doctor would normally want to examine your throat or take a swab rather than guess. A consultation is worth it."
+      },
+      "raised": {
+        "label": "Bacterial infection more likely",
+        "summary": "Enough features are present that guidelines would prompt a clinician to examine you and consider testing. Arrange a consultation — a swab or an examination is what separates this from a viral sore throat."
+      },
+      "high": {
+        "label": "Bacterial infection most likely",
+        "summary": "This is the highest band on the scale. It is still not a diagnosis — only an examination or a throat swab can confirm one — but it is the group in which a doctor is most likely to test and to consider antibiotics. Arrange to be seen."
+      }
     }
   },
   "tools": {
@@ -1237,6 +1271,167 @@
       "cta": {
         "heading": "Trying to conceive?",
         "body": "Talk to a registered doctor by video about irregular cycles, preconception checks or the medicines you already take.",
+        "label": "Book a consultation"
+      }
+    },
+    "sore-throat-checker": {
+      "cardTitle": "Sore throat checker",
+      "cardBlurb": "Whether a sore throat looks bacterial or viral, using the age-adjusted score clinicians use — plus the warning signs that need seeing today.",
+      "eyebrow": "Free health tool",
+      "h1Lead": "Tonsillitis and strep throat",
+      "h1Accent": "checker",
+      "h1Trail": "{country}",
+      "metaTitle": "Tonsillitis or Strep Throat? Checker {country}",
+      "metaDescription": "Answer five questions about your sore throat and see how likely a bacterial cause is, using the McIsaac score clinicians use. Includes the warning signs that need urgent care. Not a diagnosis and not a strep test.",
+      "lede": "Answer a few questions about your sore throat to see how likely a bacterial cause is, and what the usual next step would be. It takes about a minute.",
+      "trustPoints": [
+        "Uses the published McIsaac score, age-adjusted — not a score we invented",
+        "Flags the warning signs that need urgent care before it scores anything",
+        "Runs in your browser — nothing is sent or stored"
+      ],
+      "suggestionsIntro": "A sore throat that scores high is a reason to be examined, not a diagnosis. These are the consultations that can take it further.",
+      "widget": {
+        "title": "Your symptoms",
+        "placeholder": "Answer the questions to see how likely a bacterial cause is.",
+        "note": "This estimates how likely a sore throat is to be bacterial. It is not a strep test and not a diagnosis — only a throat swab or an examination can confirm one. A low score means a bacterial infection is unlikely, not that it has been ruled out. Never start or stop antibiotics based on this page.",
+        "feverLabel": "Fever during this illness",
+        "feverHint": "A temperature over 38 °C, or feeling feverish and shivery, at any point since it started.",
+        "coughLabel": "Do you have a cough?",
+        "coughHint": "A cough points towards a virus, so the score counts its absence rather than its presence.",
+        "nodesLabel": "Tender, swollen glands in the front of the neck",
+        "nodesHint": "Just under the jaw on either side, sore when you press them — not the glands at the back of the neck.",
+        "exudateLabel": "White patches or swelling on the tonsils",
+        "exudateHint": "Look with a torch at the back of the throat. This is hard to judge on yourself and is the weakest answer in the score.",
+        "airwayLabel": "Trouble breathing, swallowing your own saliva, or opening your mouth",
+        "airwayHint": "Also drooling, a muffled voice, severe pain on one side only, or a stiff or swollen neck.",
+        "rashLabel": "A rash along with the sore throat",
+        "rashHint": "Often a fine, rough, sandpaper-like rash on the chest or neck.",
+        "immunosuppressedLabel": "A condition or medicine that weakens your immune system",
+        "immunosuppressedHint": "Including chemotherapy, carbimazole, methotrexate or long-term steroids. A sore throat can be the first sign of a problem with your white blood cells.",
+        "emergencyValue": "Urgent",
+        "seeTodayValue": "Today",
+        "tooYoungValue": "Under 3",
+        "pointsLabel": "points",
+        "criteriaLabel": "Symptoms matched",
+        "ageAdjustmentLabel": "Age adjustment"
+      },
+      "sections": [
+        {
+          "heading": "What your score means",
+          "body": [
+            "The score runs from -1 to 5. Four features each add a point — a fever, no cough, tender glands at the front of the neck, and white patches on the tonsils — and age adjusts the total up or down. Children aged 3 to 14 gain a point; adults over 45 lose one, because strep throat becomes uncommon with age.",
+            "The bands below describe how likely a bacterial cause is, not how bad the sore throat feels. A viral sore throat can hurt a great deal and still score zero."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "What each score band usually means",
+            "columns": [
+              "Score",
+              "Bacterial cause",
+              "What it usually means"
+            ],
+            "rows": [
+              [
+                "0 or below",
+                "Very unlikely",
+                "Self-care. Rest, fluids and pain relief; see a doctor if it is no better after a week."
+              ],
+              [
+                "1",
+                "Unlikely",
+                "Usually self-care, with a review if it worsens rather than settles."
+              ],
+              [
+                "2",
+                "Possible",
+                "The point at which a doctor would normally want to look at your throat rather than guess."
+              ],
+              [
+                "3",
+                "More likely",
+                "Guidelines prompt an examination and often a swab. Arrange a consultation."
+              ],
+              [
+                "4 or 5",
+                "Most likely",
+                "The group most likely to be tested and to be considered for antibiotics. Arrange to be seen."
+              ]
+            ],
+            "footnote": "Based on the McIsaac (age-adjusted Centor) score, the rule NICE guideline NG84 accepts for assessing a sore throat. Bands are shown as likelihoods rather than percentages on purpose: the published percentages come from clinicians examining a throat, and answers you give about your own throat are not the same measurement."
+          }
+        },
+        {
+          "heading": "The five things the score asks about",
+          "body": [
+            "Each one is there because it shifts the odds between a virus and a bacterial infection, and together they do better than any single symptom on its own."
+          ],
+          "bullets": [
+            "Fever — bacterial throat infections are more likely than viral ones to come with a temperature over 38 °C.",
+            "No cough — a cough points strongly towards a virus, so the score counts its absence. This is the criterion people most often get backwards.",
+            "Tender, swollen glands at the front of the neck — the lymph nodes that drain the tonsils, which swell and hurt when the tonsils are infected.",
+            "White patches or swelling on the tonsils — pus on the tonsils raises the odds of a bacterial cause, although a virus can produce it too.",
+            "Age — strep throat peaks between 5 and 15 and becomes uncommon after 45, so the score adds a point for children and subtracts one for older adults."
+          ]
+        },
+        {
+          "heading": "What this checker cannot tell you",
+          "body": [
+            "A score sorts likelihoods. It does not identify what is growing in your throat, and it was designed for a clinician who is looking at one."
+          ],
+          "bullets": [
+            "It is not a strep test. Only a throat swab or a rapid antigen test can confirm a bacterial cause, and a doctor takes it.",
+            "A low score is not a negative result. It means a bacterial cause is unlikely on the balance of odds, not that it has been ruled out.",
+            "Two of the answers are examination findings. A clinician feels the glands and looks at the tonsils with a light; judging those on yourself is the least reliable part of this page.",
+            "It does not decide anything about antibiotics. That is a prescribing decision a doctor makes after examining you, weighing your history and often a swab result.",
+            "It says nothing about glandular fever, which can look identical at first and is common in teenagers and young adults whose sore throat drags on.",
+            "It does not apply to children under 3, where it is not reliable and a doctor should assess instead."
+          ]
+        },
+        {
+          "heading": "When a sore throat needs urgent care",
+          "body": [
+            "These override the score completely. A serious throat infection can start out looking mild and score low, so none of the following should ever be weighed against a reassuring number."
+          ],
+          "bullets": [
+            "Difficulty breathing, noisy breathing, or a sense that the throat is closing — get emergency help immediately.",
+            "Unable to swallow your own saliva, or drooling.",
+            "Unable to open the mouth fully, or severe pain on one side with a muffled voice — this can be an abscess beside the tonsil.",
+            "A stiff neck, or swelling in the neck that is getting worse.",
+            "A fine, sandpaper-like rash alongside the sore throat — scarlet fever needs treating.",
+            "A sore throat while on chemotherapy, carbimazole, methotrexate or long-term steroids — this needs same-day assessment and a blood count.",
+            "A sore throat that is still getting worse after a week, or a fever you cannot bring down."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Is this the same as a strep test?",
+          "answer": "No. A strep test is a swab of the throat, either sent to a laboratory or run as a rapid antigen test in the clinic. This page estimates how likely a bacterial cause is from your symptoms, which is what a clinician uses to decide whether that swab is worth taking. It cannot replace the swab."
+        },
+        {
+          "question": "What is the difference between tonsillitis and strep throat?",
+          "answer": "Tonsillitis describes inflamed tonsils, whatever the cause — most often a virus. Strep throat is tonsillitis or pharyngitis caused by one particular bacterium, Streptococcus pyogenes, known as group A strep. Every case of strep throat is tonsillitis; most tonsillitis is not strep throat."
+        },
+        {
+          "question": "Do I need antibiotics for a sore throat?",
+          "answer": "That is a decision for a doctor, not for this page. Most sore throats are viral, where antibiotics do nothing and still carry side effects. A high score means the odds of a bacterial cause are high enough that a doctor would usually examine you and consider testing — it does not mean antibiotics are indicated."
+        },
+        {
+          "question": "How long should a sore throat last?",
+          "answer": "Most settle within about a week, whether viral or bacterial. A sore throat that is still worsening after a week, or that comes with a fever you cannot bring down, is worth having looked at regardless of what this checker says."
+        },
+        {
+          "question": "Why does the score subtract a point if I am over 45?",
+          "answer": "Because strep throat becomes uncommon with age. The original Centor score was built for adults and over-called bacterial infection in older patients; McIsaac's age adjustment corrects for that in both directions, adding a point for children aged 3 to 14, where strep is most common."
+        },
+        {
+          "question": "Does this checker store my answers?",
+          "answer": "No. The scoring runs entirely in your browser. Nothing you select is sent to our servers or saved."
+        }
+      ],
+      "cta": {
+        "heading": "Need someone to look at your throat?",
+        "body": "Book a video consultation with a registered doctor, go through your symptoms, and find out whether a swab, a prescription or simple self-care is the right next step.",
         "label": "Book a consultation"
       }
     }

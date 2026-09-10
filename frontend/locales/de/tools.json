@@ -165,6 +165,40 @@
         "label": "Keine spezifischen Risikofaktoren festgestellt",
         "summary": "Nichts von dem, was Sie angegeben haben, entspricht den veröffentlichten Risikofaktoren, die Leitlinien zur Osteoporose-Früherkennung nutzen. Das ist beruhigend, aber keine Garantie — melden Sie jede neue Fraktur oder jeden Sturz trotzdem ärztlich."
       }
+    },
+    "soreThroat": {
+      "emergency": {
+        "label": "Jetzt dringend ärztliche Hilfe holen",
+        "summary": "Was Sie beschrieben haben, kann auf ein Problem mit den Atemwegen oder eine tiefe Infektion neben der Mandel hindeuten, und das wird nicht nach einem Score beurteilt. Gehen Sie jetzt in eine Notaufnahme oder rufen Sie den örtlichen Notruf."
+      },
+      "see-today": {
+        "label": "Heute noch abklären lassen",
+        "summary": "Sie haben etwas beschrieben, das heute angesehen werden sollte, statt es zu beobachten. Wenden Sie sich an eine Ärztin oder einen Arzt oder an einen ärztlichen Bereitschaftsdienst — warten Sie nicht ab, ob es von selbst abklingt."
+      },
+      "too-young": {
+        "label": "Das ärztlich abklären lassen",
+        "summary": "Dieser Score wurde für ein Alter ab 3 Jahren entwickelt und ist darunter nicht verlässlich. Halsschmerzen bei einem Kleinkind oder Säugling gehören ärztlich beurteilt statt bewertet — besonders zusammen mit Fieber, verringerter Trinkmenge oder weniger nassen Windeln."
+      },
+      "very-low": {
+        "label": "Bakterielle Infektion sehr unwahrscheinlich",
+        "summary": "Fast alle Halsschmerzen mit diesem Muster sind viral und klingen innerhalb von etwa einer Woche von selbst ab. Ruhe, Flüssigkeit und Schmerzlinderung sind die Behandlung. Gehen Sie ärztlich hin, wenn es länger als eine Woche dauert oder schlimmer statt besser wird."
+      },
+      "low": {
+        "label": "Bakterielle Infektion unwahrscheinlich",
+        "summary": "Dieses Muster ist immer noch deutlich häufiger viral als bakteriell. Selbstbehandlung ist meist richtig, aber das ist kein negativer Test — gehen Sie ärztlich hin, wenn die Schmerzen zunehmen, das Fieber steigt oder es Ihnen nach einer Woche nicht besser geht."
+      },
+      "moderate": {
+        "label": "Bakterielle Infektion möglich",
+        "summary": "Dieses Muster liegt in der Mitte: Es kann in beide Richtungen gehen, und es ist der Punkt, an dem eine Ärztin oder ein Arzt normalerweise Ihren Rachen ansehen oder einen Abstrich nehmen würde, statt zu raten. Eine Sprechstunde lohnt sich."
+      },
+      "raised": {
+        "label": "Bakterielle Infektion wahrscheinlicher",
+        "summary": "Es liegen genug Merkmale vor, dass Leitlinien eine ärztliche Untersuchung und die Erwägung eines Tests nahelegen. Vereinbaren Sie einen Termin — ein Abstrich oder eine Untersuchung ist das, was dies von viralen Halsschmerzen unterscheidet."
+      },
+      "high": {
+        "label": "Bakterielle Infektion am wahrscheinlichsten",
+        "summary": "Das ist der höchste Bereich der Skala. Es ist trotzdem keine Diagnose — nur eine Untersuchung oder ein Rachenabstrich kann eine bestätigen —, aber es ist die Gruppe, in der eine Ärztin oder ein Arzt am ehesten testet und Antibiotika erwägt. Lassen Sie sich untersuchen."
+      }
     }
   },
   "tools": {
@@ -1237,6 +1271,167 @@
       "cta": {
         "heading": "Kinderwunsch?",
         "body": "Sprechen Sie per Video mit einer registrierten Ärztin oder einem registrierten Arzt über unregelmäßige Zyklen, Untersuchungen vor der Schwangerschaft oder Medikamente, die Sie schon nehmen.",
+        "label": "Termin buchen"
+      }
+    },
+    "sore-throat-checker": {
+      "cardTitle": "Halsschmerzen-Check",
+      "cardBlurb": "Ob Halsschmerzen eher bakteriell oder viral aussehen — mit dem altersangepassten Score, den Ärztinnen und Ärzte nutzen, plus den Warnzeichen, die heute abgeklärt gehören.",
+      "eyebrow": "Kostenloses Tool",
+      "h1Lead": "Mandelentzündung und",
+      "h1Accent": "Halsschmerzen-Check",
+      "h1Trail": "{country}",
+      "metaTitle": "Mandelentzündung-Check {country} | Halsschmerzen einordnen",
+      "metaDescription": "Beantworten Sie fünf Fragen zu Ihren Halsschmerzen und sehen Sie, wie wahrscheinlich eine bakterielle Ursache ist — mit dem McIsaac-Score, den Ärztinnen und Ärzte nutzen. Inklusive der Warnzeichen, die dringend abgeklärt gehören. Keine Diagnose und kein Streptokokken-Test.",
+      "lede": "Beantworten Sie ein paar Fragen zu Ihren Halsschmerzen, um zu sehen, wie wahrscheinlich eine bakterielle Ursache ist und was der übliche nächste Schritt wäre. Es dauert etwa eine Minute.",
+      "trustPoints": [
+        "Nutzt den veröffentlichten, altersangepassten McIsaac-Score — keinen selbst erfundenen Score",
+        "Weist auf Warnzeichen hin, die dringend abgeklärt gehören, bevor überhaupt gewertet wird",
+        "Läuft in Ihrem Browser — nichts wird gesendet oder gespeichert"
+      ],
+      "suggestionsIntro": "Ein hoher Score ist ein Grund für eine Untersuchung, keine Diagnose. Das sind die Sprechstunden, die das weiter abklären können.",
+      "widget": {
+        "title": "Ihre Symptome",
+        "placeholder": "Beantworten Sie die Fragen, um zu sehen, wie wahrscheinlich eine bakterielle Ursache ist.",
+        "note": "Dieses Tool schätzt, wie wahrscheinlich Halsschmerzen bakteriell sind. Es ist kein Streptokokken-Test und keine Diagnose — nur ein Rachenabstrich oder eine Untersuchung kann eine bestätigen. Ein niedriger Score bedeutet, dass eine bakterielle Infektion unwahrscheinlich ist, nicht dass sie ausgeschlossen wäre. Beginnen oder beenden Sie niemals eine Antibiotikabehandlung aufgrund dieser Seite.",
+        "feverLabel": "Fieber im Verlauf dieser Erkrankung",
+        "feverHint": "Eine Temperatur über 38 °C oder ein fiebriges, frösteliges Gefühl zu irgendeinem Zeitpunkt seit Beginn.",
+        "coughLabel": "Haben Sie Husten?",
+        "coughHint": "Husten spricht für einen Virusinfekt, deshalb zählt der Score sein Fehlen und nicht sein Vorhandensein.",
+        "nodesLabel": "Druckempfindliche, geschwollene Lymphknoten vorn am Hals",
+        "nodesHint": "Direkt unter dem Kiefer auf beiden Seiten, schmerzhaft beim Drücken — nicht die Lymphknoten im Nacken.",
+        "exudateLabel": "Weiße Beläge oder Schwellung auf den Mandeln",
+        "exudateHint": "Schauen Sie mit einer Lampe in den hinteren Rachen. Das ist bei sich selbst schwer zu beurteilen und die unsicherste Antwort im Score.",
+        "airwayLabel": "Atemnot, Probleme beim Schlucken des eigenen Speichels oder beim Öffnen des Mundes",
+        "airwayHint": "Auch Speichelfluss, eine kloßige Stimme, starke Schmerzen nur auf einer Seite oder ein steifer oder geschwollener Hals.",
+        "rashLabel": "Ein Hautausschlag zusammen mit den Halsschmerzen",
+        "rashHint": "Oft ein feiner, rauer, sandpapierartiger Ausschlag an Brust oder Hals.",
+        "immunosuppressedLabel": "Eine Erkrankung oder ein Medikament, das Ihr Immunsystem schwächt",
+        "immunosuppressedHint": "Dazu zählen Chemotherapie, Carbimazol, Methotrexat oder langfristige Kortikosteroide. Halsschmerzen können das erste Anzeichen eines Problems mit den weißen Blutkörperchen sein.",
+        "emergencyValue": "Sofort",
+        "seeTodayValue": "Heute",
+        "tooYoungValue": "Unter 3",
+        "pointsLabel": "Punkte",
+        "criteriaLabel": "Zutreffende Symptome",
+        "ageAdjustmentLabel": "Altersanpassung"
+      },
+      "sections": [
+        {
+          "heading": "Was Ihr Score bedeutet",
+          "body": [
+            "Der Score reicht von -1 bis 5. Vier Merkmale geben je einen Punkt — Fieber, kein Husten, druckempfindliche Lymphknoten vorn am Hals und weiße Beläge auf den Mandeln —, und das Alter verschiebt die Summe nach oben oder unten. Kinder von 3 bis 14 Jahren erhalten einen Punkt; Erwachsene über 45 verlieren einen, weil Streptokokken im Hals mit dem Alter selten werden.",
+            "Die Bereiche unten beschreiben, wie wahrscheinlich eine bakterielle Ursache ist, nicht wie stark die Halsschmerzen sich anfühlen. Eine virale Rachenentzündung kann sehr wehtun und trotzdem null Punkte ergeben."
+          ],
+          "bullets": [],
+          "table": {
+            "caption": "Was die einzelnen Score-Bereiche in der Regel bedeuten",
+            "columns": [
+              "Score",
+              "Bakterielle Ursache",
+              "Was das in der Regel bedeutet"
+            ],
+            "rows": [
+              [
+                "0 oder darunter",
+                "Sehr unwahrscheinlich",
+                "Selbstbehandlung. Ruhe, Flüssigkeit und Schmerzlinderung; ärztlich abklären, wenn es nach einer Woche nicht besser ist."
+              ],
+              [
+                "1",
+                "Unwahrscheinlich",
+                "Meist Selbstbehandlung, mit einer Kontrolle, wenn es schlimmer wird statt abzuklingen."
+              ],
+              [
+                "2",
+                "Möglich",
+                "Der Punkt, an dem eine Ärztin oder ein Arzt normalerweise in Ihren Rachen sehen würde, statt zu raten."
+              ],
+              [
+                "3",
+                "Wahrscheinlicher",
+                "Leitlinien legen eine Untersuchung und oft einen Abstrich nahe. Vereinbaren Sie einen Termin."
+              ],
+              [
+                "4 oder 5",
+                "Am wahrscheinlichsten",
+                "Die Gruppe, die am ehesten getestet wird und für die Antibiotika erwogen werden. Lassen Sie sich untersuchen."
+              ]
+            ],
+            "footnote": "Basiert auf dem McIsaac-Score (dem altersangepassten Centor-Score), der Regel, die die NICE-Leitlinie NG84 für die Beurteilung von Halsschmerzen akzeptiert. Die Bereiche sind bewusst als Wahrscheinlichkeiten und nicht als Prozentwerte angegeben: Die veröffentlichten Prozentwerte stammen von Ärztinnen und Ärzten, die einen Rachen untersuchen, und Ihre eigenen Angaben zu Ihrem Rachen sind nicht dieselbe Messung."
+          }
+        },
+        {
+          "heading": "Die fünf Dinge, nach denen der Score fragt",
+          "body": [
+            "Jedes davon ist enthalten, weil es die Wahrscheinlichkeit zwischen einem Virus und einer bakteriellen Infektion verschiebt — und zusammen sind sie treffsicherer als jedes einzelne Symptom für sich."
+          ],
+          "bullets": [
+            "Fieber — bakterielle Racheninfektionen gehen häufiger als virale mit einer Temperatur über 38 °C einher.",
+            "Kein Husten — Husten spricht stark für einen Virusinfekt, deshalb zählt der Score sein Fehlen. Dieses Kriterium wird am häufigsten falsch herum verstanden.",
+            "Druckempfindliche, geschwollene Lymphknoten vorn am Hals — die Lymphknoten, die die Mandeln drainieren und anschwellen und schmerzen, wenn die Mandeln infiziert sind.",
+            "Weiße Beläge oder Schwellung auf den Mandeln — Eiter auf den Mandeln erhöht die Wahrscheinlichkeit einer bakteriellen Ursache, auch wenn ein Virus ihn ebenfalls hervorrufen kann.",
+            "Alter — Streptokokken im Hals treten am häufigsten zwischen 5 und 15 Jahren auf und werden nach 45 selten, deshalb addiert der Score bei Kindern einen Punkt und zieht bei älteren Erwachsenen einen ab."
+          ]
+        },
+        {
+          "heading": "Was dieser Check Ihnen nicht sagen kann",
+          "body": [
+            "Ein Score sortiert Wahrscheinlichkeiten. Er benennt nicht, was in Ihrem Rachen wächst, und er wurde für eine Ärztin oder einen Arzt entwickelt, die oder der diesen Rachen ansieht."
+          ],
+          "bullets": [
+            "Es ist kein Streptokokken-Test. Nur ein Rachenabstrich oder ein Antigen-Schnelltest kann eine bakterielle Ursache bestätigen, und den nimmt eine Ärztin oder ein Arzt ab.",
+            "Ein niedriger Score ist kein negatives Ergebnis. Er bedeutet, dass eine bakterielle Ursache nach Abwägung der Wahrscheinlichkeiten unwahrscheinlich ist, nicht dass sie ausgeschlossen wäre.",
+            "Zwei der Antworten sind Untersuchungsbefunde. Eine Ärztin oder ein Arzt tastet die Lymphknoten und sieht die Mandeln mit einer Lampe an; das bei sich selbst zu beurteilen ist der unzuverlässigste Teil dieser Seite.",
+            "Er entscheidet nichts über Antibiotika. Das ist eine Verordnungsentscheidung, die eine Ärztin oder ein Arzt nach der Untersuchung trifft, unter Abwägung Ihrer Vorgeschichte und oft eines Abstrichergebnisses.",
+            "Er sagt nichts über das Pfeiffersche Drüsenfieber aus, das anfangs identisch aussehen kann und bei Jugendlichen und jungen Erwachsenen mit lang anhaltenden Halsschmerzen häufig ist.",
+            "Er gilt nicht für Kinder unter 3 Jahren, bei denen er nicht verlässlich ist und stattdessen eine ärztliche Beurteilung erfolgen sollte."
+          ]
+        },
+        {
+          "heading": "Wann Halsschmerzen dringend abgeklärt gehören",
+          "body": [
+            "Diese Punkte setzen den Score vollständig außer Kraft. Eine ernste Racheninfektion kann anfangs harmlos aussehen und niedrig punkten, deshalb sollte keiner der folgenden Punkte je gegen eine beruhigende Zahl abgewogen werden."
+          ],
+          "bullets": [
+            "Atemnot, geräuschvolle Atmung oder das Gefühl, dass sich der Hals zuschnürt — holen Sie sofort Notfallhilfe.",
+            "Der eigene Speichel lässt sich nicht mehr schlucken, oder Speichel läuft aus dem Mund.",
+            "Der Mund lässt sich nicht mehr vollständig öffnen, oder starke Schmerzen auf einer Seite mit kloßiger Stimme — das kann ein Abszess neben der Mandel sein.",
+            "Ein steifer Nacken oder eine Schwellung am Hals, die zunimmt.",
+            "Ein feiner, sandpapierartiger Ausschlag zusammen mit den Halsschmerzen — Scharlach muss behandelt werden.",
+            "Halsschmerzen unter Chemotherapie, Carbimazol, Methotrexat oder langfristigen Kortikosteroiden — das gehört noch am selben Tag abgeklärt, mit einem Blutbild.",
+            "Halsschmerzen, die nach einer Woche weiter zunehmen, oder Fieber, das sich nicht senken lässt."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Ist das dasselbe wie ein Streptokokken-Test?",
+          "answer": "Nein. Ein Streptokokken-Test ist ein Rachenabstrich, der entweder ins Labor geschickt oder als Antigen-Schnelltest in der Praxis ausgewertet wird. Diese Seite schätzt anhand Ihrer Symptome, wie wahrscheinlich eine bakterielle Ursache ist — genau das nutzt eine Ärztin oder ein Arzt, um zu entscheiden, ob sich dieser Abstrich lohnt. Den Abstrich ersetzen kann sie nicht."
+        },
+        {
+          "question": "Was ist der Unterschied zwischen Mandelentzündung und Streptokokken im Hals?",
+          "answer": "Mandelentzündung beschreibt entzündete Mandeln, unabhängig von der Ursache — meist ein Virus. Eine Streptokokken-Angina ist eine Mandel- oder Rachenentzündung, die durch ein bestimmtes Bakterium verursacht wird: Streptococcus pyogenes, bekannt als Streptokokken der Gruppe A. Jede Streptokokken-Angina ist eine Mandelentzündung; die meisten Mandelentzündungen sind keine Streptokokken-Angina."
+        },
+        {
+          "question": "Brauche ich bei Halsschmerzen Antibiotika?",
+          "answer": "Das ist eine ärztliche Entscheidung, nicht die dieser Seite. Die meisten Halsschmerzen sind viral, und dabei bewirken Antibiotika nichts, haben aber trotzdem Nebenwirkungen. Ein hoher Score bedeutet, dass die Wahrscheinlichkeit einer bakteriellen Ursache hoch genug ist, dass eine Ärztin oder ein Arzt Sie in der Regel untersuchen und einen Test erwägen würde — er bedeutet nicht, dass Antibiotika angezeigt sind."
+        },
+        {
+          "question": "Wie lange sollten Halsschmerzen dauern?",
+          "answer": "Die meisten klingen innerhalb von etwa einer Woche ab, ob viral oder bakteriell. Halsschmerzen, die nach einer Woche weiter zunehmen, oder die mit Fieber einhergehen, das sich nicht senken lässt, gehören ärztlich angesehen — unabhängig davon, was dieser Check anzeigt."
+        },
+        {
+          "question": "Warum zieht der Score einen Punkt ab, wenn ich über 45 bin?",
+          "answer": "Weil Streptokokken im Hals mit dem Alter selten werden. Der ursprüngliche Centor-Score wurde für Erwachsene entwickelt und überschätzte bakterielle Infektionen bei älteren Patientinnen und Patienten; die Altersanpassung von McIsaac korrigiert das in beide Richtungen und addiert einen Punkt für Kinder von 3 bis 14 Jahren, bei denen Streptokokken am häufigsten sind."
+        },
+        {
+          "question": "Speichert dieser Check meine Antworten?",
+          "answer": "Nein. Die Berechnung läuft vollständig in Ihrem Browser. Nichts, was Sie auswählen, wird an unsere Server gesendet oder gespeichert."
+        }
+      ],
+      "cta": {
+        "heading": "Soll jemand Ihren Rachen ansehen?",
+        "body": "Vereinbaren Sie eine Videosprechstunde mit einer registrierten Ärztin oder einem registrierten Arzt, gehen Sie Ihre Symptome durch und finden Sie heraus, ob ein Abstrich, ein Rezept oder einfache Selbstbehandlung der richtige nächste Schritt ist.",
         "label": "Termin buchen"
       }
     }
