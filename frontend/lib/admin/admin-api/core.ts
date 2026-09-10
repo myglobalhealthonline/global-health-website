@@ -24,7 +24,11 @@ function isAdminTokenFallbackEnabled() {
 
 export type AdminApiResponse<T> =
   | { ok: true; data: T; message?: string }
-  | { ok: false; message: string; status?: number };
+  // `details` is the backend's machine-readable half of an error. Most callers
+  // only render `message`; the ones that offer a recovery path (e.g. the
+  // email-collision → merge prompt on the admin user page) need the structured
+  // payload, which used to be dropped here.
+  | { ok: false; message: string; status?: number; details?: unknown };
 
 type AdminErrorDetails = {
   formErrors?: string[];
@@ -114,6 +118,7 @@ export async function adminRequest<T>(
         ok: false,
         message: formatAdminErrorMessage(json.message, json.details),
         status: response.status,
+        details: json.details,
       };
     }
 

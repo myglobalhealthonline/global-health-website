@@ -21,7 +21,34 @@ class LastSuperAdminError extends Error {}
 // Raised inside the update transaction when the requested email is already
 // taken by another User or by an unrelated PatientProfile row, so the route
 // replies 409 instead of surfacing a raw P2002.
-class EmailTakenError extends Error {}
+//
+// It carries a description of BOTH sides of the collision, because the usual
+// cause is not a mistake: the patient booked twice under two addresses and the
+// admin is correcting one of them. The admin UI needs enough to offer "merge
+// these two records into one" instead of a dead-end error, and it can only
+// offer that when both addresses have a clinical chart to merge.
+type EmailConflictInfo = {
+  code: "EMAIL_TAKEN";
+  /** The address the admin tried to move this account to. */
+  targetEmail: string;
+  /** The account that already owns the target address, when there is one. */
+  conflictUserId: string | null;
+  conflictFullName: string | null;
+  conflictIsActive: boolean | null;
+  /** PatientProfile of the target address (the record that would survive). */
+  conflictPatientProfileId: string | null;
+  /** PatientProfile of the account being edited (the record that would be
+   *  folded into the one above). */
+  currentPatientProfileId: string | null;
+  /** True only when both sides have a chart, i.e. a merge is actually possible. */
+  mergeable: boolean;
+};
+
+class EmailTakenError extends Error {
+  constructor(readonly conflict: EmailConflictInfo | null = null) {
+    super("Email already in use");
+  }
+}
 
 /**
  * Admin patient + admin-user management.
@@ -370,7 +397,41 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
             }),
           ]);
           if (takenByUser || takenByProfile) {
-            throw new EmailTakenError();
+            // Describe the collision before rolling back, so the admin gets an
+            // actionable "merge these two?" prompt rather than a dead end. All
+            // reads, all inside the tx that is about to abort — nothing here
+            // can leave a write behind.
+            // nosemgrep: gh-phi-route-missing-guard -- admin-authenticated (verifyGlobalAdminAccess plugin hook); identity fields already returned by this route, no clinical content.
+            const [conflictUser, conflictProfile, currentProfile] = await Promise.all([
+              tx.user.findFirst({
+                where: { email: nextEmail, id: { not: params.data.id } },
+                select: { id: true, fullName: true, isActive: true },
+              }),
+              // nosemgrep: gh-phi-route-missing-guard -- same, narrow { id } select.
+              tx.patientProfile.findFirst({
+                where: { email: nextEmail },
+                select: { id: true },
+              }),
+              // nosemgrep: gh-phi-route-missing-guard -- same, narrow { id } select.
+              tx.patientProfile.findFirst({
+                where: { email: before.email },
+                select: { id: true },
+              }),
+            ]);
+            throw new EmailTakenError({
+              code: "EMAIL_TAKEN",
+              targetEmail: nextEmail,
+              conflictUserId: conflictUser?.id ?? null,
+              conflictFullName: conflictUser?.fullName ?? null,
+              conflictIsActive: conflictUser?.isActive ?? null,
+              conflictPatientProfileId: conflictProfile?.id ?? null,
+              currentPatientProfileId: currentProfile?.id ?? null,
+              mergeable: Boolean(
+                conflictProfile &&
+                  currentProfile &&
+                  conflictProfile.id !== currentProfile.id,
+              ),
+            });
           }
           // PatientProfile is joined by email, not by userId — every admin
           // and doctor read does findUnique({ where: { email } }). Moving the
@@ -541,7 +602,12 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
       if (error instanceof EmailTakenError) {
         return reply
           .status(409)
-          .send(errorResponse("That email is already in use by another account"));
+          .send(
+            errorResponse(
+              "That email is already in use by another account",
+              error.conflict ?? { code: "EMAIL_TAKEN" },
+            ),
+          );
       }
       // Backstop for the pre-check losing a race against a concurrent insert.
       if (
@@ -550,7 +616,11 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
       ) {
         return reply
           .status(409)
-          .send(errorResponse("That email is already in use by another account"));
+          .send(
+            errorResponse("That email is already in use by another account", {
+              code: "EMAIL_TAKEN",
+            }),
+          );
       }
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));
