@@ -5,7 +5,7 @@ import { BlogCard } from "@/components/cards/BlogCard";
 import { PageHero } from "@/components/sections/PageHero";
 import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
 import { SectionSeam } from "@/components/ui/SectionSeam";
-import { Stethoscope, ShieldCheck, BookOpen } from "lucide-react";
+import { Stethoscope, ShieldCheck, BookOpen, BadgeCheck } from "lucide-react";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -68,6 +68,12 @@ export async function renderBlogIndexPage({ countrySlug, lang, page }: BlogIndex
   }
 
   const blogHref = countrySlug && lang ? `/${countrySlug}/${lang}/blog` : "/blog";
+  // The review policy is country-scoped (its regulator, emergency number and
+  // register link all resolve per market), so it is only linked from a country
+  // index. The bare hub has no market to resolve against — and 301s to Ireland
+  // anyway (next.config.ts), where the link is present.
+  const reviewPolicyHref = countrySlug && lang ? `${blogHref}/medical-review-policy` : null;
+  const reviewPolicyI18n = loadLocaleBundle(locale).company.medicalReview;
 
   const totalPages = Math.max(1, Math.ceil(ordered.length / PAGE_SIZE));
   const currentPage = Math.min(Math.max(1, page ?? 1), totalPages);
@@ -172,6 +178,27 @@ export async function renderBlogIndexPage({ countrySlug, lang, page }: BlogIndex
       >
         <SectionSeam theme="light" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          {/* Editorial-standards bar. Sits above the grid rather than in the
+              hero trust cards, which take no href — this is the one place a
+              reader can act on "doctor reviewed" instead of just reading it. */}
+          {reviewPolicyHref ? (
+            <div className="mb-10 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-2xl border border-[rgba(29,75,54,0.12)] bg-[rgba(29,75,54,0.04)] px-5 py-4">
+              <BadgeCheck
+                className="size-4 shrink-0 text-[var(--color-brand-primary)]"
+                strokeWidth={2}
+                aria-hidden
+              />
+              <p className="text-[14px] font-semibold text-[var(--color-text-primary)]">
+                {reviewPolicyI18n.indexLinkTitle}
+              </p>
+              <Link
+                href={reviewPolicyHref}
+                className="text-[14px] font-medium text-[var(--color-brand-primary)] underline underline-offset-4"
+              >
+                {reviewPolicyI18n.indexLinkCta}
+              </Link>
+            </div>
+          ) : null}
           {ordered.length === 0 ? (
             <div className="mx-auto max-w-[520px] text-center">
               <p aria-hidden className="gh2-index text-[4rem] leading-none text-[rgba(29,75,54,0.16)]">

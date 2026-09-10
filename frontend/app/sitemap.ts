@@ -538,6 +538,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       pushLocalized(country, "/pricing", 0.6, dated(newest(code, "plan")));
     }
     pushLocalized(country, "/blog", 0.6, dated(newest(code, "blog")));
+    // Editorial/clinical review policy for the market's blog. Undated: the copy
+    // is code-resident (company.json), so there is no child timestamp — and its
+    // own "last updated" is a hand-maintained statement about the policy, not a
+    // build date. Submitted in every locale the market serves, since the copy is
+    // genuinely translated rather than falling back to English.
+    pushLocalized(country, "/blog/medical-review-policy", 0.4);
     // Country contact pages carry the market's NAP (where premises exist),
     // registration and regulatory FAQs. Undated — the copy is code-resident,
     // not CMS content, so there is no child timestamp to derive from.

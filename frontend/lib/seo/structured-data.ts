@@ -457,7 +457,19 @@ export function articleJsonLd(input: {
    *  `about.name`. Deliberately typed `Thing`, not `MedicalCondition`: we
    *  only have a category label here, never a coded clinical entity. */
   about?: string | null;
+  /** URL of the editorial/clinical review policy that governs this article
+   *  (the market's `/blog/medical-review-policy`). Emitted on BOTH the Article
+   *  and the publisher Organization, which is where schema.org defines
+   *  `publishingPrinciples` — it is the machine-readable half of the named
+   *  `reviewedBy` clinician, telling search and AI engines the review process
+   *  behind the byline is documented rather than asserted. */
+  publishingPrinciples?: string | null;
 }) {
+  const publishingPrinciples = input.publishingPrinciples
+    ? input.publishingPrinciples.startsWith("http")
+      ? input.publishingPrinciples
+      : `${SITE_URL}${input.publishingPrinciples}`
+    : null;
   const url = input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`;
   const author = input.authorName === BLOG_AUTHOR_NAME
     ? { "@type": "Organization", name: BLOG_AUTHOR_NAME, url: SITE_URL }
@@ -498,12 +510,14 @@ export function articleJsonLd(input: {
     ...(input.about ? { about: { "@type": "Thing", name: input.about } } : {}),
     ...(input.datePublished ? { datePublished: input.datePublished } : {}),
     ...(input.dateModified ? { dateModified: input.dateModified } : {}),
+    ...(publishingPrinciples ? { publishingPrinciples } : {}),
     author,
     publisher: {
       "@type": "MedicalOrganization",
       "@id": ORGANIZATION_ID,
       name: SITE_NAME,
       url: SITE_URL,
+      ...(publishingPrinciples ? { publishingPrinciples } : {}),
     },
   };
 }

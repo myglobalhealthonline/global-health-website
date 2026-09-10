@@ -238,6 +238,12 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
   // grid shares the blog index's card, so it needs the index's label bundle.
   const blogPageI18n = getCommonLocale(locale).blogPage;
   const commonNav = getCommonLocale(locale).navigation;
+  // Editorial/clinical review policy for this market. `backHref` is already
+  // the market's blog index (`/{country}/{lang}/blog`, or Ireland's on the
+  // retired bare route), so this is always a real URL rather than one built
+  // from route params that may be absent.
+  const reviewPolicyHref = `${backHref}/medical-review-policy`;
+  const reviewPolicyI18n = loadLocaleBundle(locale).company.medicalReview;
 
   // Ranking-growth batch (2026-08-10): was hardcoded `/en/` regardless of the
   // article's own locale — a PT/ES/CS/RO article's CTA sent readers to an
@@ -312,6 +318,7 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
             // rendered elsewhere on the page, never a fabricated reviewer.
             reviewerPhysician: reviewerPhysician ?? authorPhysician,
             about: post.category,
+            publishingPrinciples: reviewPolicyHref,
           }),
           breadcrumbJsonLd([
             { name: commonNav.home, url: "/" },
@@ -699,6 +706,21 @@ export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {
             </p>
           </div>
         ) : null}
+        {/* Deliberately OUTSIDE the block above. That one is suppressed when a
+            designed body ships its own disclaimer, and it needs a reviewer to
+            render at all — but the review policy governs every article, so the
+            link to it must not inherit either condition. */}
+        <div className="mx-auto max-w-[var(--container-width)] px-5 pb-2 md:px-10">
+          <p className="mx-auto mt-3 max-w-[76ch] text-[13px] leading-relaxed text-[var(--color-text-secondary)]">
+            <Link
+              href={reviewPolicyHref}
+              className="inline-flex items-center gap-1.5 font-medium text-[var(--color-brand-primary)] underline underline-offset-4"
+            >
+              <BadgeCheck className="size-3.5 shrink-0" aria-hidden />
+              {reviewPolicyI18n.postLinkLabel}
+            </Link>
+          </p>
+        </div>
       </section>
 
       {usesCalmEditorialPresentation ? (
