@@ -167,7 +167,12 @@ export default async function CountryMedicalReviewPolicyPage({
    * number, which on a page about verifiable credentials would be exactly the
    * claim it tells readers to distrust. Falls back to a placeholder-shaped
    * example when the market has no admin-verified registration yet. */
-  const [doctors, trust] = await Promise.all([getCountryDoctors(code, lang), getCountryTrust(code)]);
+  const [doctors, trust] = await Promise.all([
+    getCountryDoctors(code, lang),
+    // `lang` is already narrowed by isSupportedLocale() in resolve() above;
+    // every other caller of getCountryTrust asserts the same way.
+    getCountryTrust(code, lang as LocaleCode),
+  ]);
   const sampleReviewer =
     doctors.find((d) => d.registrationVerified && d.imcRegistration) ?? null;
   const registerUrl = doctorVerificationUrl(trust) ?? contact.regulator.url;
