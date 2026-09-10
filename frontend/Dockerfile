@@ -1,4 +1,29 @@
 # syntax=docker/dockerfile:1
+# check=skip=SecretsUsedInArgOrEnv
+#
+# ^ BuildKit flags the PROXY_CLIENT_IP_SECRET ARG/ENV pair in the builder stage.
+# The rule's premise — "build args persist on the final image" — does not hold
+# here, and its prescribed fix is unavailable on this platform:
+#
+#   1. Railway does not support BuildKit build secrets. A Railway engineer
+#      confirmed "railway does not support this" (2024-07-15); the feature
+#      request has been open since 2024-07-01 and was still unimplemented as of
+#      January 2026. Build-visible values reach a Railway Docker build ONLY as
+#      ARGs sourced from service variables, so `RUN --mount=type=secret` would
+#      simply fail to receive the value and break every deploy.
+#      https://station.railway.com/feedback/docker-build-kit-build-secrets-support-777c36cc
+#   2. The secret never reaches the shipped image. It is declared in the
+#      `builder` stage only; `runner` (stage 3) starts from a clean
+#      node:22-bookworm-slim and copies just standalone_out, .next/static and
+#      public — it re-declares neither the ARG nor the ENV. Intermediate stages
+#      are not pushed.
+#   3. The value is not baked into build output either. It is not a
+#      NEXT_PUBLIC_* var, so Next never inlines it; lib/api/client.ts keeps it
+#      as a `process.env.PROXY_CLIENT_IP_SECRET` lookup resolved at runtime.
+#
+# Re-evaluate if Railway ships build-secret support, or if the runner stage ever
+# starts needing this value at build time.
+#
 # Railway: set service Root Directory to `frontend` so this Dockerfile is used.
 # Multi-stage build: only the standalone Next.js output reaches the final image,
 # stripping devDependencies, source files, and build cache.
