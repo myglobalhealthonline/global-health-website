@@ -1,5 +1,7 @@
 "use client";
 import { Suspense, useEffect, useState, useTransition } from "react";
+import Image from "next/image";
+import styles from "@/components/sections/CountryEntryGate.module.css";
 import { useSearchParams } from "next/navigation";
 import { fetchReviewForm, performReviewAction, type ReviewFormData } from "@/lib/api/public-api";
 import { getReviewCampaignCopy } from "@/lib/i18n/review-campaign-copy";
@@ -14,10 +16,20 @@ function ReviewRateForm({ language }: { language: string }) {
   const copy = data?.copy ?? getReviewCampaignCopy(params.get("lang") ?? language);
   useEffect(() => {
     let active = true;
-    fetchReviewForm(token, campaign).then((res) => {
+    fetchReviewForm(token, campaign).then(async (res) => {
       if (!active) return;
       if (!res.ok || !res.data.copy) setError(true);
-      else { setError(false); setData(res.data); }
+      else {
+        setError(false); setData(res.data);
+        if (res.data.destinations.length === 1) {
+          const result = await performReviewAction(token, "provider_opened", res.data.destinations[0].provider, campaign);
+          if (!active) return;
+          if (!result.ok || !result.data.url) { setError(true); return; }
+          setData(old => old ? { ...old, stopped: true } : old);
+          setRetryUrl(result.data.url);
+          window.location.replace(result.data.url);
+        }
+      }
     }).catch(() => { if (active) setError(true); });
     return () => { active = false; };
   }, [token, campaign]);
@@ -32,25 +44,49 @@ function ReviewRateForm({ language }: { language: string }) {
       if (res.data.url) { setRetryUrl(res.data.url); window.location.assign(res.data.url); }
     });
   }
-  return <main className="min-h-svh bg-[var(--color-background-soft)] px-4 py-8 sm:py-16" lang={data?.localeCode ?? params.get("lang") ?? language}>
-    <div className="mx-auto max-w-xl rounded-[2rem] border border-[var(--color-border)] bg-[var(--color-background)] p-6 sm:p-12">
-      <p className="mb-8 flex items-center gap-3 text-lg font-bold text-[var(--color-brand-primary)]"><span aria-hidden="true" className="flex size-10 items-center justify-center rounded-xl bg-[var(--color-brand-primary)] text-3xl text-[var(--color-brand-accent)]">+</span>Global Health</p>
-      <h1 className="text-3xl font-bold leading-tight tracking-tight text-balance text-[var(--color-brand-primary)] sm:text-4xl">{copy.title}</h1>
-      {error && <p role="alert" className="gh-status-error mt-4 p-3">{data ? copy.error : copy.invalid}</p>}
-      {!data && !error && <p role="status">{copy.loading}</p>}
-      {data && <>
-        <p className="mt-4 text-base leading-relaxed">{copy.intro}</p>
-        <p className="mt-3 text-sm leading-relaxed text-[var(--color-text-muted)]">{copy.privacy}</p>
-        {data.stopped && <p className="mt-4" role="status">{copy.stopped}</p>}
-        <div className="mt-6 grid gap-3">
-          {data.destinations.map((d) => <button key={d.provider} disabled={pending} onClick={() => act("provider_opened", d.provider)} className="flex min-h-20 w-full cursor-pointer items-center justify-between gap-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-background-soft)] px-5 py-4 text-left text-[var(--color-brand-primary)] transition-colors hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-brand-accent-soft)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-brand-primary)] disabled:cursor-wait disabled:opacity-60"><span><span className="block text-lg font-semibold">{d.provider === "GOOGLE" ? "Google" : d.provider === "DOCTIFY" ? "Doctify" : "Trustpilot"}</span><span className="mt-1 block text-sm text-[var(--color-text-muted)]">{copy.cta}</span></span><span aria-hidden="true" className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-primary)] text-[var(--color-brand-accent)]">→</span></button>)}
-          {!data.destinations.length && <p>{copy.unavailable}</p>}
-          {retryUrl && <a href={retryUrl} target="_blank" rel="noopener noreferrer" className="underline">{copy.retry}</a>}
-          <button disabled={pending} onClick={() => act("patient_reviewed")} className="mt-2 min-h-11 cursor-pointer text-sm text-[var(--color-brand-primary)] underline underline-offset-4 hover:decoration-2 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60">{copy.alreadyReviewed}</button>
-          <button disabled={pending} onClick={() => act("opted_out")} className="min-h-11 cursor-pointer text-sm text-[var(--color-brand-primary)] underline underline-offset-4 hover:decoration-2 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60">{copy.optOut}</button>
-        </div>
-      </>}
+  return <main className={`${styles.root} relative flex min-h-dvh flex-col overflow-x-hidden text-white`} lang={data?.localeCode ?? params.get("lang") ?? language}>
+    <div aria-hidden="true" className={styles.backgroundLayer}>
+      <Image src="/images/hero/country-entry-clinic-hero-2560.webp" alt="" fill sizes="100vw" className={styles.backgroundImage} priority />
     </div>
+    <div aria-hidden="true" className={`${styles.tint} pointer-events-none fixed inset-0`} />
+    <div aria-hidden="true" className={`${styles.pattern} pointer-events-none fixed inset-0`} />
+    <header className={`${styles.header} relative flex justify-center`}>
+      <a href="https://www.myglobalhealth.online/" className="gh-focus-on-dark inline-flex rounded-lg p-2" aria-label="Global Health homepage"><Image src="/logos/global-health-light.png" alt="Global Health" width={240} height={144} className="h-24 w-auto object-contain brightness-0 invert sm:h-28" priority /></a>
+    </header>
+    <section className={`${styles.body} relative flex flex-1 items-center`}>
+      <div className={`${styles.content} w-full`}>
+        <div className="mx-auto grid w-full max-w-xl gap-7 pb-12 pt-4 text-center sm:gap-9">
+          <div className="min-w-0">
+            <p className={styles.eyebrow}>Global Health</p>
+            <h1 className="mt-4 text-balance text-4xl font-extrabold leading-[1.08] tracking-[-0.035em] text-white sm:text-5xl">{copy.title}</h1>
+            {data && <p className="mx-auto mt-5 max-w-lg text-pretty text-base leading-relaxed text-white/75">{copy.intro}</p>}
+          </div>
+          <div className="gh-review-glass min-w-0 w-full rounded-[2rem]">
+            <div className="p-6 sm:p-8">
+              <h2 className={styles.selectTitle}>{copy.cta}</h2>
+              {error && <p role="alert" className="mt-4 text-white">{data ? copy.error : copy.invalid}</p>}
+              {!data && !error && <p role="status" className="mt-4 text-white/75">{copy.loading}</p>}
+              {data && <>
+                <p className="mx-auto mb-6 mt-3 max-w-sm text-sm leading-relaxed text-white/65">{copy.privacy}</p>
+                {data.stopped && <p className="mb-5 text-sm text-[var(--color-brand-accent)]" role="status">{copy.stopped}</p>}
+                <div className="grid gap-3">
+                  {data.destinations.map(d => <button key={d.provider} disabled={pending} onClick={() => act("provider_opened", d.provider)} className={`group flex min-h-16 w-full cursor-pointer items-center justify-between gap-4 rounded-2xl border border-white/20 bg-white/10 px-5 py-4 text-left text-white transition-colors hover:border-[var(--color-brand-accent)] hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-brand-accent)] disabled:cursor-wait disabled:opacity-60`}>
+                    <span className="text-base font-bold">{d.provider === "GOOGLE" ? "Google" : d.provider === "DOCTIFY" ? "Doctify" : "Trustpilot"}</span>
+                    <span aria-hidden="true" className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-accent)] text-lg text-[var(--color-brand-primary)]">→</span>
+                  </button>)}
+                  {!data.destinations.length && <p className="text-white/75">{copy.unavailable}</p>}
+                  {retryUrl && <a href={retryUrl} target="_blank" rel="noopener noreferrer" className="text-white underline">{copy.retry}</a>}
+                </div>
+                <div className="mt-6 flex flex-wrap justify-center gap-x-5 gap-y-1 border-t border-white/15 pt-4">
+                  <button disabled={pending} onClick={() => act("patient_reviewed")} className="gh-focus-on-dark min-h-11 cursor-pointer text-sm text-white/80 underline underline-offset-4 hover:text-white disabled:opacity-60">{copy.alreadyReviewed}</button>
+                  <button disabled={pending} onClick={() => act("opted_out")} className="gh-focus-on-dark min-h-11 cursor-pointer text-sm text-white/80 underline underline-offset-4 hover:text-white disabled:opacity-60">{copy.optOut}</button>
+                </div>
+              </>}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>;
 }
 export function ReviewRatePageClient({ language }: { language: string }) {

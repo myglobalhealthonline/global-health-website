@@ -6609,3 +6609,18 @@ body:has(.gh2-404) elevenlabs-convai {
   .gh-careers-application form { grid-template-columns: 1fr; }
   .gh-careers-group a { align-items: flex-start; flex-direction: column; gap: .2rem; }
 }
+
+/* One public review panel: translucent forest glass over the clinic image. */
+.gh-review-glass {
+  background: rgba(6, 34, 26, .78);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, .2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12), 0 20px 60px rgba(0, 15, 10, .3);
+}
+@media (pointer: coarse) {
+  .gh-review-glass { background: #0b3026; backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+@supports not (backdrop-filter: blur(1px)) {
+  .gh-review-glass { background: #0b3026; }
+}
