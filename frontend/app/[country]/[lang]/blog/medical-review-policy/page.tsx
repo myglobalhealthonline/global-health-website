@@ -79,73 +79,6 @@ export async function generateMetadata({
   });
 }
 
-/**
- * The stamped verification seal from the policy design, rebuilt on the site's
- * own tokens (forest hero + accent) instead of the mock-up's standalone
- * palette. Inline SVG rather than new CSS classes — it is used once, so it
- * needs no entry in globals.css.
- */
-function ReviewSeal({ label, sublabel }: { label: string; sublabel: string }) {
-  return (
-    <div className="relative mx-auto hidden w-full max-w-[380px] place-items-center lg:grid">
-      <div
-        className="grid aspect-square w-full place-items-center rounded-full"
-        style={{
-          background:
-            "radial-gradient(circle at 50% 40%, rgba(176,241,34,0.10), rgba(255,255,255,0.02) 62%)",
-          border: "1px solid rgba(255,255,255,0.10)",
-        }}
-      >
-        <svg viewBox="0 0 100 100" className="w-[74%]" role="img" aria-label={`${label} — ${sublabel}`}>
-          <circle
-            cx="50"
-            cy="50"
-            r="46"
-            fill="none"
-            stroke="var(--color-brand-accent)"
-            strokeWidth="1.1"
-            opacity="0.85"
-          />
-          <circle cx="50" cy="50" r="38" fill="none" stroke="#FFFFFF" strokeWidth="0.7" opacity="0.28" />
-          <text
-            fill="var(--color-brand-accent)"
-            fontSize="6"
-            fontWeight="700"
-            letterSpacing="1.6"
-            textAnchor="middle"
-            x="50"
-            y="21"
-          >
-            {label}
-          </text>
-          <text
-            fill="rgba(255,255,255,0.55)"
-            fontSize="5"
-            fontWeight="700"
-            letterSpacing="1.4"
-            textAnchor="middle"
-            x="50"
-            y="85"
-          >
-            {sublabel}
-          </text>
-          <text
-            fill="rgba(255,255,255,0.92)"
-            fontSize="21"
-            fontWeight="800"
-            letterSpacing="-0.5"
-            textAnchor="middle"
-            x="50"
-            y="58"
-          >
-            GH
-          </text>
-        </svg>
-      </div>
-    </div>
-  );
-}
-
 export default async function CountryMedicalReviewPolicyPage({
   params,
 }: {
@@ -237,7 +170,11 @@ export default async function CountryMedicalReviewPolicyPage({
         secondaryLabel={t.ctaContact}
         secondaryHref="#report"
         trustCards={trustCards}
-        rightSlot={<ReviewSeal label={t.trustNamedTitle} sublabel={SITE_NAME} />}
+        heroImage={{
+          src: "/images/stock/medical-review-policy.webp",
+          alt: t.heroImageAlt,
+          priority: true,
+        }}
       />
 
       {/* LIGHT — 01 who writes */}
