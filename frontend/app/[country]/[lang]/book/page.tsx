@@ -922,28 +922,37 @@ async function SelectedServiceFlow({
             />
           </div>
           {agg.slots.length === 0 ? (
-            <div className="gh2-status-card mt-6 text-center">
-              <CalendarDays className="mx-auto size-6 text-[var(--color-text-muted)]" aria-hidden />
-              <p className="mt-3 font-semibold text-[var(--color-text-primary)]">{bp.noOpenSlots}</p>
-              <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-                {selectedInsurance
+            <EmptyMonthCard
+              monthWasExplicit={monthWasExplicit}
+              monthOffset={monthOffset}
+              monthOptions={monthOptions}
+              nextAvailableAt={service.bookability.nextAvailableAt}
+              clinicTimezone={agg.clinicTimezone}
+              bodyMessage={
+                selectedInsurance
                   ? bp.noInsuranceDoctors.replace("{insurer}", selectedInsurance.name)
-                  : bp.checkBackClinician.replace("{service}", service.name)}
-              </p>
-              {/* Under an insurer with no in-network doctor, the useful escape is
-                * back to the insurance step (pay standard instead), not the
-                * service list. */}
-              <Link
-                href={
-                  selectedInsurance
-                    ? buildBookHref({ country, lang, service: service.slug })
-                    : buildBookHref({ country, lang })
-                }
-                className="gh2-btn-lime mt-5"
-              >
-                {selectedInsurance ? bp.stepInsurance : bp.changeService}
-              </Link>
-            </div>
+                  : bp.checkBackClinician.replace("{service}", service.name)
+              }
+              // Under an insurer with no in-network doctor, jumping months
+              // wouldn't help — the useful escape is the insurance step instead.
+              canJump={!selectedInsurance}
+              buildMonthHref={(month) =>
+                buildBookHref({
+                  country,
+                  lang,
+                  service: service.slug,
+                  benefit: benefitHrefParam,
+                  month: String(month),
+                })
+              }
+              fallbackHref={
+                selectedInsurance
+                  ? buildBookHref({ country, lang, service: service.slug })
+                  : buildBookHref({ country, lang })
+              }
+              fallbackLabel={selectedInsurance ? bp.stepInsurance : bp.changeService}
+              bp={bp}
+            />
           ) : (
             <div className="mt-6">
               <ServiceTimePicker
@@ -1048,27 +1057,35 @@ async function SelectedServiceFlow({
         ) : null}
 
         {slots.length === 0 ? (
-          <div className="gh2-status-card mt-6 text-center">
-            <CalendarDays className="mx-auto size-6 text-[var(--color-text-muted)]" aria-hidden />
-            <p className="mt-3 font-semibold text-[var(--color-text-primary)]">
-              {bp.noOpenSlots}
-            </p>
-            <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-              {selectedInsurance
+          <EmptyMonthCard
+            monthWasExplicit={monthWasExplicit}
+            monthOffset={monthOffset}
+            monthOptions={monthOptions}
+            nextAvailableAt={
+              getDoctorServiceBookability(selectedDoctor.bookabilityByServiceId, service.id)
+                .nextAvailableAt
+            }
+            clinicTimezone={clinicTimezone}
+            bodyMessage={
+              selectedInsurance
                 ? bp.noInsuranceDoctors.replace("{insurer}", selectedInsurance.name)
-                : bp.checkBackClinician.replace("{service}", service.name)}
-            </p>
-            <Link
-              href={
-                selectedInsurance
-                  ? buildBookHref({ country, lang, service: service.slug })
-                  : buildBookHref({ country, lang, service: service.slug })
-              }
-              className="gh2-btn-lime mt-5"
-            >
-              {selectedInsurance ? bp.stepInsurance : bp.pickAnotherClinician}
-            </Link>
-          </div>
+                : bp.checkBackClinician.replace("{service}", service.name)
+            }
+            canJump
+            buildMonthHref={(month) =>
+              buildBookHref({
+                country,
+                lang,
+                service: service.slug,
+                doctor: selectedDoctor.slug,
+                benefit: benefitHrefParam,
+                month: String(month),
+              })
+            }
+            fallbackHref={buildBookHref({ country, lang, service: service.slug })}
+            fallbackLabel={selectedInsurance ? bp.stepInsurance : bp.pickAnotherClinician}
+            bp={bp}
+          />
         ) : !slotConfirmed ? (
           // Step 3 — TIME only. Picking a time writes ?slot= and advances.
           <div className="mt-6">
@@ -1421,6 +1438,67 @@ function MonthPicker({
           </Link>
         );
       })}
+    </div>
+  );
+}
+
+/**
+ * Empty state for a month with no open slots. Explicitly picking an empty
+ * month (via MonthPicker) is a deliberate check, so it gets an honest "no
+ * slots in <month>" plus, when a real later opening is known, a direct link
+ * to it — rather than a generic dead end.
+ */
+function EmptyMonthCard({
+  monthWasExplicit,
+  monthOffset,
+  monthOptions,
+  nextAvailableAt,
+  clinicTimezone,
+  bodyMessage,
+  canJump,
+  buildMonthHref,
+  fallbackHref,
+  fallbackLabel,
+  bp,
+}: {
+  monthWasExplicit: boolean;
+  monthOffset: number;
+  monthOptions: MonthOption[];
+  nextAvailableAt: string | null;
+  clinicTimezone: string;
+  bodyMessage: string;
+  /** False when an unrelated reason (e.g. no in-network doctor for this
+   *  insurer) already explains the empty state — jumping months won't help. */
+  canJump: boolean;
+  buildMonthHref: (month: number) => string;
+  fallbackHref: string;
+  fallbackLabel: string;
+  bp: BookT;
+}) {
+  const jumpToOffset = canJump ? monthOffsetForDate(new Date(), nextAvailableAt) : null;
+  const showJump = jumpToOffset !== null && jumpToOffset !== monthOffset;
+  return (
+    <div className="gh2-status-card mt-6 text-center">
+      <CalendarDays className="mx-auto size-6 text-[var(--color-text-muted)]" aria-hidden />
+      <p className="mt-3 font-semibold text-[var(--color-text-primary)]">
+        {monthWasExplicit
+          ? `No open slots in ${monthOptions[monthOffset]?.label ?? "this month"}.`
+          : bp.noOpenSlots}
+      </p>
+      <p className="mt-2 text-sm text-[var(--color-text-muted)]">{bodyMessage}</p>
+      {showJump ? (
+        <p className="mt-3 text-sm font-semibold text-[var(--color-brand-accent)]">
+          Next available: {formatAppDate(nextAvailableAt!, clinicTimezone)}
+        </p>
+      ) : null}
+      <Link
+        href={showJump ? buildMonthHref(jumpToOffset!) : fallbackHref}
+        className="gh2-btn-lime mt-5"
+      >
+        {showJump
+          ? `View ${monthOptions[jumpToOffset!]?.label ?? "next available month"}`
+          : fallbackLabel}
+      </Link>
     </div>
   );
 }
