@@ -8,6 +8,7 @@ import {
 import { prisma } from "../../db/prisma.js";
 import { env } from "../../config/env.js";
 import { isMediaStorageConfigured } from "../../services/object-storage.js";
+import { pingMalwareScanner } from "../../services/malware-scan.js";
 import { sanitizeCareerHtml } from "../../utils/sanitize-html.js";
 import { OUTBOX_KIND_RECRUITMENT_APPLICATION_NOTIFICATION } from "../outbox/outbox.js";
 import {
@@ -119,16 +120,19 @@ function sanitizeDescription(input: string): string {
   return sanitized;
 }
 
-function assertPublishSettings(
+async function assertPublishSettings(
   status: JobListingStatus,
   closesAt: Date | null | undefined,
   now: Date,
-): void {
+): Promise<void> {
   if (status !== JobListingStatus.PUBLISHED) return;
   if (closesAt && closesAt <= now) {
     throw new RecruitmentValidationError("Closing time must be in the future when publishing");
   }
-  if (!env.CLAMAV_HOST || !isMediaStorageConfigured()) {
+  // A non-empty CLAMAV_HOST only proved someone set a string. Applying needs the
+  // scanner to actually answer, so publishing must clear the same bar - otherwise
+  // a job goes live that no candidate can apply to.
+  if (!isMediaStorageConfigured() || !(await pingMalwareScanner())) {
     throw new RecruitmentNotReadyError("Recruitment intake is not configured");
   }
 }
@@ -330,7 +334,7 @@ export async function createAdminJobGroup(input: AdminJobGroupInput, actorUserId
     }
   }
   const now = new Date();
-  assertPublishSettings(input.status, input.closesAt, now);
+  await assertPublishSettings(input.status, input.closesAt, now);
   return prisma.$transaction(async (tx) => {
     const jobs = [];
     for (const localization of input.localizations) {
@@ -420,7 +424,7 @@ export async function updateAdminJobGroup(id: string, patch: AdminJobGroupPatch,
 
   const now = new Date();
   if (status === JobListingStatus.PUBLISHED && siblings.some(({ publishedAt }) => !publishedAt)) {
-    assertPublishSettings(status, closesAt, now);
+    await assertPublishSettings(status, closesAt, now);
   }
   const publishedAt = siblings.find((job) => job.publishedAt)?.publishedAt ??
     (status === JobListingStatus.PUBLISHED ? now : null);

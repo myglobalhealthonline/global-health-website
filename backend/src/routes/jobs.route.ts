@@ -101,7 +101,16 @@ const jobsRoute: FastifyPluginAsync = async (app) => {
         if (scan.result === "INFECTED") {
           return reply.status(422).send(errorResponse("This PDF could not be accepted."));
         }
-        if (scan.result !== "CLEAN") return reply.status(503).send(errorResponse(APPLICATION_UNAVAILABLE));
+        if (scan.result !== "CLEAN") {
+          // The only 503 branch that used to return silently: a scanner that is
+          // unprovisioned or unreachable takes the careers funnel down in every
+          // market, so it has to be visible in the logs like the others.
+          app.log.error(
+            { jobId: params.data.id, scanFailure: scan.reason },
+            "recruitment CV scan unavailable",
+          );
+          return reply.status(503).send(errorResponse(APPLICATION_UNAVAILABLE));
+        }
 
         const storageKey = `recruitment/cv/${randomUUID()}.pdf`;
         try {

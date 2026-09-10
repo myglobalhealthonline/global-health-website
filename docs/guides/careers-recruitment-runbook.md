@@ -45,7 +45,7 @@ For an approved data-subject request or correction, use the portal purge action.
 
 ## Incident response
 
-- Scanner unavailable or malformed response: keep intake fail-closed, restore ClamAV/signatures, and retest with clean and EICAR files.
+- Scanner unavailable or malformed response: keep intake fail-closed, restore ClamAV/signatures, and retest with clean and EICAR files. Every rejected submission logs `recruitment CV scan unavailable` at error level with a `scanFailure` of `not-configured`, `unreachable`, `timeout` or `unexpected-reply`. Alert on that message: a scanner outage takes the careers funnel down in every market at once. Publishing is gated on the same live `PING`, so a job cannot go live while intake is down.
 - Object-store failure: do not purge database rows; restore storage access and retry.
 - Outbox failure: fix email delivery and let the existing retry dispatcher continue. Do not email CVs manually.
 - Suspected CV exposure: disable application intake, preserve audit logs, revoke affected storage credentials, and follow the privacy incident process.
