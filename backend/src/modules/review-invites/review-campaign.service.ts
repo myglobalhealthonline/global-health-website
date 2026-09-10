@@ -37,7 +37,7 @@ export async function createReviewCampaignForAppointment(appointmentId: string, 
   const settings = await getReviewAutomationSettings();
   if (!settings.enabled || !settings.activatedAt) return null;
   const appt = await prisma.appointment.findUnique({ where: { id: appointmentId }, include: {
-    user: { select: { isActive: true, deletionScheduledAt: true } },
+    user: { select: { isActive: true, deletionScheduledAt: true, preferredLocale: true } },
     patientProfile: { select: { isMerged: true, anonymizedAt: true, deletionRequests: { where: { requestStatus: { not: "REJECTED" } }, take: 1, select: { id: true } } } },
   } });
   if (!appt || appt.status !== "COMPLETED" || !appt.consultationCompletedAt ||
@@ -72,7 +72,7 @@ export async function createReviewCampaignForAppointment(appointmentId: string, 
     return tx.reviewInvite.create({ data: {
       appointmentId, campaignVersion: 1, countryCode: appt.countryCode?.toUpperCase(), recipientKey,
       completedAt: appt.consultationCompletedAt, contactEmail: appt.email, customerName: appt.fullName,
-      localeCode: resolveUniversalReviewInviteRouting(appt).localeCode,
+      localeCode: resolveUniversalReviewInviteRouting({ ...appt, preferredLocale: appt.user?.preferredLocale }).localeCode,
       tokenHash: reviewTokenHash(randomBytes(32).toString("base64url")),
       expiresAt: new Date(appt.consultationCompletedAt!.getTime() + 60 * DAY),
       nextSendAt: new Date(appt.consultationCompletedAt!.getTime() + settings.delayHours * 3_600_000),
@@ -148,7 +148,7 @@ export async function scheduleReviewCampaigns(now = new Date()) {
 }
 
 export async function dispatchReviewDelivery(deliveryId: string) {
-  const delivery = await prisma.reviewDelivery.findUnique({ where: { id: deliveryId }, include: { invite: { include: { appointment: { include: { user: { select: { isActive: true, deletionScheduledAt: true } }, patientProfile: { select: { isMerged: true, anonymizedAt: true, deletionRequests: { where: { requestStatus: { not: "REJECTED" } }, take: 1, select: { id: true } } } } } } } } } });
+  const delivery = await prisma.reviewDelivery.findUnique({ where: { id: deliveryId }, include: { invite: { include: { appointment: { include: { user: { select: { isActive: true, deletionScheduledAt: true, preferredLocale: true } }, patientProfile: { select: { isMerged: true, anonymizedAt: true, deletionRequests: { where: { requestStatus: { not: "REJECTED" } }, take: 1, select: { id: true } } } } } } } } } });
   if (!delivery || ["SENT","FAILED","UNKNOWN","CANCELLED"].includes(delivery.status)) return;
   if (delivery.status === "SENDING") {
     // A timeout/crash may have delivered. Never reclaim this network attempt.

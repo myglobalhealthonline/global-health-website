@@ -111,9 +111,19 @@ describe("review destinations", () => {
   });
 
   it("routes every new appointment through the universal internal review hub", () => {
+    for (const [preferredLocale, notificationLocale, consultationLanguageCode, expected] of [
+      ["PT_br", "ES", "CS", "pt-br"],
+      [null, "ES", "CS", "es"],
+      [" ", null, "CS", "cs"],
+      [null, null, null, "en"],
+      ["DE", "ES", "CS", "en"],
+      ["en-IE", "ES", null, "en"],
+    ]) {
+      assert.equal(resolveUniversalReviewInviteRouting({ countryCode: "BR", preferredLocale, notificationLocale, consultationLanguageCode }).localeCode, expected);
+    }
     assert.deepEqual(
       resolveUniversalReviewInviteRouting({ countryCode: "BR", notificationLocale: null }),
-      { channel: "INTERNAL", scheduledFor: null, localeCode: "pt-br" },
+      { channel: "INTERNAL", scheduledFor: null, localeCode: "en" },
     );
     assert.deepEqual(
       resolveUniversalReviewInviteRouting({ countryCode: "CZ", notificationLocale: "EN" }),

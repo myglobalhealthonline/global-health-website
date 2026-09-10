@@ -756,7 +756,7 @@ export function buildReviewInviteEmail(opts: {
   const body = opts.reminder ? copy.reminder : copy.intro;
   const link = escapeHtml(opts.link);
   // Inline styles and table layout survive email clients that strip page CSS.
-  const button = `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:16px 0;"><tr><td bgcolor="#B0F122" style="border:1px solid #B0F122;border-radius:8px;text-align:center;"><a href="${link}" style="display:inline-block;padding:16px 24px;font-family:Arial,sans-serif;font-size:16px;line-height:22px;font-weight:700;color:#143529;text-decoration:none;border-radius:8px;">${escapeHtml(copy.cta)}</a></td></tr></table>`;
+  const button = `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:16px auto;"><tr><td bgcolor="#B0F122" style="border:1px solid #B0F122;border-radius:8px;text-align:center;"><a href="${link}" style="display:inline-block;padding:16px 24px;font-family:Arial,sans-serif;font-size:16px;line-height:22px;font-weight:700;color:#143529;text-decoration:none;border-radius:8px;">${escapeHtml(copy.cta)}</a></td></tr></table>`;
   return {
     subject: title + " — Global Health",
     text: [body, copy.cta + ": " + opts.link, copy.privacy, copy.alreadyReviewed + " / " + copy.optOut + ": " + opts.link].join("\n\n"),

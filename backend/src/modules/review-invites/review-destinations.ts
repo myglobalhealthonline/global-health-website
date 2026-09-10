@@ -112,12 +112,18 @@ export function defaultReviewLocaleForCountry(countryCode: string | null | undef
 export function resolveUniversalReviewInviteRouting(input: {
   countryCode: string | null | undefined;
   notificationLocale: string | null | undefined;
+  preferredLocale?: string | null;
+  consultationLanguageCode?: string | null;
 }): { channel: "INTERNAL"; scheduledFor: null; localeCode: string } {
+  const selected = [input.preferredLocale, input.notificationLocale, input.consultationLanguageCode]
+    .map(value => value?.trim().toLowerCase().replace(/_/g, "-"))
+    .find(Boolean) ?? "en";
+  const base = selected.split("-")[0];
+  const localeCode = selected === "pt-br" ? selected
+    : ["en", "pt", "es", "cs", "ro"].includes(base) ? base : "en";
   return {
     channel: "INTERNAL",
     scheduledFor: null,
-    localeCode:
-      input.notificationLocale?.trim().toLowerCase() ||
-      defaultReviewLocaleForCountry(input.countryCode),
+    localeCode,
   };
 }

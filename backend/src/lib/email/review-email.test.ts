@@ -11,6 +11,7 @@ test("every localized review email has one button and two secondary text links",
       assert.equal((html.match(/color:#52645B;text-decoration:underline/g) ?? []).length, 2);
       assert.equal((html.match(/token=synthetic&amp;lang=/g) ?? []).length, 3);
       assert.ok(html.includes('bgcolor="#B0F122"'));
+      assert.ok(html.includes('align="center" style="margin:16px auto;"'));
       assert.ok(text.includes(link));
     }
   }
