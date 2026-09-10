@@ -1427,7 +1427,7 @@ function MonthPicker({
             key={opt.offset}
             role="tab"
             aria-selected={isActive}
-            href={hrefFor(opt.offset > 0 ? String(opt.offset) : null)}
+            href={hrefFor(String(opt.offset))}
             className={
               isActive
                 ? "gh2-selectable-dark rounded-full px-4 py-2 text-xs font-bold text-[#0a1f1a]"

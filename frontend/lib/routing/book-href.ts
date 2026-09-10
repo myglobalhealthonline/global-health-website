@@ -59,7 +59,11 @@ export function buildBookHref({
   if (doctor) params.set("doctor", doctor);
   if (slot) params.set("slot", slot);
   if (at) params.set("at", at);
-  if (month && month !== "0") params.set("month", month);
+  // Unlike the other params, "0" is a meaningful explicit value here (the
+  // patient deliberately picked the current month from the month picker, as
+  // opposed to landing on the default view with no ?month= at all) — so only
+  // null/undefined is omitted, not "0".
+  if (month !== undefined && month !== null) params.set("month", month);
   const query = params.toString();
   return `/${country}/${lang}/book${query ? `?${query}` : ""}`;
 }
