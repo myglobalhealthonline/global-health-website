@@ -139,6 +139,10 @@ async function loadUpdateContext(input: AppointmentUpdateNotifyInput) {
     orderNumber: formatOrderDisplayId({ id: order.id, orderNumber: order.orderNumber }),
     totalLabel: formatOrderTotal(order.totalCents, order.currencyCode),
     changeReason: input.changeReason.trim(),
+    paymentDeadline:
+      order.status === "PENDING" && order.paymentDueAt
+        ? formatDeadline(order.paymentDueAt, primary.patientTimezone, lang)
+        : undefined,
   };
 
   // Doctor + admin read the same booking on the BOOKED MARKET's clock, not the

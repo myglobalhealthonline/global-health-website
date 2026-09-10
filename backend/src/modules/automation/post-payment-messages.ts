@@ -40,6 +40,10 @@ export type PostPaymentMessageContext = {
   totalLabel: string;
   /** Admin-entered reason when an appointment is updated after booking. */
   changeReason?: string;
+  /** Formatted payment deadline — set only when the order is still unpaid,
+   *  so an update to a rescheduled-but-unpaid booking restates the (possibly
+   *  recomputed) deadline instead of leaving the patient with the old one. */
+  paymentDeadline?: string;
   /** Patient-upload link minted for this booking — set only when a token was
    *  successfully minted (appointmentId + doctorId both resolved). */
   uploadLink?: string;
@@ -485,6 +489,19 @@ function reasonBlock(ctx: PostPaymentMessageContext, lang: Lang): string {
   });
 }
 
+function paymentDeadlineBlock(ctx: PostPaymentMessageContext, lang: Lang): string {
+  const deadline = ctx.paymentDeadline?.trim();
+  if (!deadline) return "";
+  const deadlineLabel = t(lang, {
+    en: "Payment deadline",
+    pt: "Prazo de pagamento",
+    ro: "Termen de plată",
+    cs: "Termín platby",
+    es: "Fecha límite de pago",
+  });
+  return `\n⚠️ ${deadlineLabel}: ${deadline}`;
+}
+
 /** Admin update — patient WhatsApp with new slot/doctor and reason. */
 export function patientWhatsAppAppointmentUpdated(
   ctx: PostPaymentMessageContext,
@@ -492,6 +509,7 @@ export function patientWhatsAppAppointmentUpdated(
 ): string {
   const reason = reasonBlock(ctx, lang);
   const reasonLine = reason ? `\n${reason}` : "";
+  const deadlineLine = paymentDeadlineBlock(ctx, lang);
   return t(lang, {
     en: `Hi ${ctx.patientName},
 Your appointment has been updated.
@@ -499,7 +517,7 @@ Appointment Details:
 📌 Service: ${ctx.serviceName}
 ${ctx.attendeeLine}
 📅 Date & Time: ${ctx.appointmentDateTime}
-${ctx.attendanceLine}${reasonLine}
+${ctx.attendanceLine}${reasonLine}${deadlineLine}
 Global Health Team`,
     pt: `Olá ${ctx.patientName},
 A sua consulta foi atualizada.
@@ -507,7 +525,7 @@ Detalhes da consulta:
 📌 Serviço: ${ctx.serviceName}
 ${ctx.attendeeLine}
 📅 Data e hora: ${ctx.appointmentDateTime}
-${ctx.attendanceLine}${reasonLine}
+${ctx.attendanceLine}${reasonLine}${deadlineLine}
 Equipa Global Health`,
     ro: `Bună ${ctx.patientName},
 Programarea dumneavoastră a fost actualizată.
@@ -515,7 +533,7 @@ Detalii consultație:
 📌 Serviciu: ${ctx.serviceName}
 ${ctx.attendeeLine}
 📅 Data și ora: ${ctx.appointmentDateTime}
-${ctx.attendanceLine}${reasonLine}
+${ctx.attendanceLine}${reasonLine}${deadlineLine}
 Echipa Global Health`,
     cs: `Dobrý den ${ctx.patientName},
 vaše konzultace byla aktualizována.
@@ -523,7 +541,7 @@ Detaily konzultace:
 📌 Služba: ${ctx.serviceName}
 ${ctx.attendeeLine}
 📅 Datum a čas: ${ctx.appointmentDateTime}
-${ctx.attendanceLine}${reasonLine}
+${ctx.attendanceLine}${reasonLine}${deadlineLine}
 Tým Global Health`,
     es: `Hola ${ctx.patientName},
 Su cita ha sido actualizada.
@@ -531,7 +549,7 @@ Detalles de la cita:
 📌 Servicio: ${ctx.serviceName}
 ${ctx.attendeeLine}
 📅 Fecha y hora: ${ctx.appointmentDateTime}
-${ctx.attendanceLine}${reasonLine}
+${ctx.attendanceLine}${reasonLine}${deadlineLine}
 Equipo Global Health`,
   });
 }
