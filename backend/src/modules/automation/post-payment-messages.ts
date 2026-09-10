@@ -44,6 +44,10 @@ export type PostPaymentMessageContext = {
    *  so an update to a rescheduled-but-unpaid booking restates the (possibly
    *  recomputed) deadline instead of leaving the patient with the old one. */
   paymentDeadline?: string;
+  /** Checkout link — set only when the order is still unpaid, alongside
+   *  `paymentDeadline`, so the patient doesn't have to dig up the original
+   *  booking message to find it again. */
+  paymentLink?: string;
   /** Patient-upload link minted for this booking — set only when a token was
    *  successfully minted (appointmentId + doctorId both resolved). */
   uploadLink?: string;
@@ -492,6 +496,13 @@ function reasonBlock(ctx: PostPaymentMessageContext, lang: Lang): string {
 function paymentDeadlineBlock(ctx: PostPaymentMessageContext, lang: Lang): string {
   const deadline = ctx.paymentDeadline?.trim();
   if (!deadline) return "";
+  const payLabel = t(lang, {
+    en: "Complete Payment",
+    pt: "Pagamento",
+    ro: "Plată",
+    cs: "Platba",
+    es: "Pago",
+  });
   const deadlineLabel = t(lang, {
     en: "Payment deadline",
     pt: "Prazo de pagamento",
@@ -499,7 +510,9 @@ function paymentDeadlineBlock(ctx: PostPaymentMessageContext, lang: Lang): strin
     cs: "Termín platby",
     es: "Fecha límite de pago",
   });
-  return `\n⚠️ ${deadlineLabel}: ${deadline}`;
+  const link = ctx.paymentLink?.trim();
+  const linkLine = link ? `\n💳 ${payLabel}: ${link}` : "";
+  return `${linkLine}\n⚠️ ${deadlineLabel}: ${deadline}`;
 }
 
 /** Admin update — patient WhatsApp with new slot/doctor and reason. */

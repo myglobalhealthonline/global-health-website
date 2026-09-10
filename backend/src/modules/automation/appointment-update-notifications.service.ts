@@ -16,6 +16,7 @@ import { createAutomationRun, finishAutomationRun } from "./automation-run.servi
 import {
   pendingAppointmentDateLabel,
 } from "./pre-payment-messages.js";
+import { resolveOrderPaymentUrl } from "../orders/order-payment-url.service.js";
 import { formatOrderTotal, resolvePatientFullName, splitPatientName } from "./pre-payment-email-template.js";
 import { sendAutomationEmail } from "./send-automation-notification.js";
 import {
@@ -142,6 +143,12 @@ async function loadUpdateContext(input: AppointmentUpdateNotifyInput) {
     paymentDeadline:
       order.status === "PENDING" && order.paymentDueAt
         ? formatDeadline(order.paymentDueAt, primary.patientTimezone, lang)
+        : undefined,
+    // Same link the pre-payment reminders send — reused if Stripe still has an
+    // open checkout session for this order, minted fresh otherwise.
+    paymentLink:
+      order.status === "PENDING"
+        ? (await resolveOrderPaymentUrl(order.id, null)) || undefined
         : undefined,
   };
 
