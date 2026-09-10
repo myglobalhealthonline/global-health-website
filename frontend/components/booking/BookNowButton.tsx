@@ -22,7 +22,6 @@ function actionStatus({
   bookability,
   unavailableLabel,
   returningLabel,
-  nextAvailableLabel,
 }: BookabilityActionProps): { disabled: boolean; label?: string } {
   if (!bookability) return { disabled: false };
   // UNKNOWN means bookability was never actually checked — cheap "marketing
@@ -46,8 +45,10 @@ function actionStatus({
     }
     return { disabled: true, label: returningLabel ?? "Appointments are not open yet" };
   }
-  // Still hint at the later date when it's known, without blocking the click.
-  return { disabled: false, label: bookability.state === "RETURNING" ? nextAvailableLabel : undefined };
+  // An enabled action keeps the familiar CTA copy verbatim — inventory detail
+  // (a "next available" date) rendered inside the button overflows and
+  // collides with the label on a normal-width card.
+  return { disabled: false };
 }
 
 /**
