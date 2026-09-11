@@ -385,6 +385,10 @@ export type AdminAppointmentListItem = {
   scheduledAt: string | null;
   doctorId: string | null;
   doctorName: string | null;
+  /** Legacy doctor-dashboard finalize workflow — drives the "Pending
+   *  Bookings" count, which counts unfinalized bookings, not appointment
+   *  status. See countPendingAppointmentsByCountry. */
+  finalized: boolean;
 };
 
 export type AdminAppointmentDetail = {
@@ -688,6 +692,7 @@ export async function listAppointments(options: ListAppointmentsOptions): Promis
         doctorId: true,
         doctor: { select: { fullName: true } },
         bookingSource: true,
+        finalized: true,
       },
       orderBy: { createdAt: "desc" },
       take: pageSize,
@@ -724,6 +729,7 @@ export async function listAppointments(options: ListAppointmentsOptions): Promis
       doctorName: row.doctor?.fullName ?? null,
       bookingSource: row.bookingSource as string,
       isFirstBooking: firstApptIdByEmail.get(row.email) === row.id,
+      finalized: row.finalized,
     }));
 
     return {
@@ -740,24 +746,25 @@ export async function listAppointments(options: ListAppointmentsOptions): Promis
   }
 }
 
-const NON_TERMINAL_APPOINTMENT_STATUSES: PrismaAppointmentStatus[] = [
-  PrismaAppointmentStatus.REQUEST_RECEIVED,
-  PrismaAppointmentStatus.UNDER_REVIEW,
-  PrismaAppointmentStatus.CONTACTED,
-];
-
 /**
  * Global per-country pending-appointment counts, via `groupBy` rather than a
  * paginated list — the admin dashboard's "Country health" table used to
  * derive this by fetching the 100 most-recently-created appointments and
  * filtering client-side, which silently dropped every pending appointment
  * older than the 100th most recent once total volume passed that cap.
+ *
+ * "Pending" here means `finalized = false` (the doctor hasn't closed out the
+ * booking yet) — deliberately NOT `status`, which tracks the separate
+ * request/review/contact lifecycle and can sit at REQUEST_RECEIVED etc. long
+ * after a doctor has already finalized their side of an old booking.
+ * CANCELLED bookings are excluded: nothing to finalize on those.
  */
 export async function countPendingAppointmentsByCountry(
   countryCodeFilter?: string[],
 ): Promise<Record<string, number>> {
   const where: Prisma.AppointmentWhereInput = {
-    status: { in: NON_TERMINAL_APPOINTMENT_STATUSES },
+    finalized: false,
+    status: { not: PrismaAppointmentStatus.CANCELLED },
     ...(countryCodeFilter ? { countryCode: { in: countryCodeFilter } } : {}),
   };
   try {

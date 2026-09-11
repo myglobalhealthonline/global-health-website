@@ -23,6 +23,9 @@ type AdminAppointmentsListPayload = {
     /** True when this is the earliest appointment for this email — drives
      *  the new-patient star badge on the dashboard activity feed. */
     isFirstBooking: boolean;
+    /** Legacy doctor-dashboard finalize workflow. Drives "Pending Bookings" —
+     *  see countPendingAppointmentsByCountry on the backend. */
+    finalized: boolean;
   }>;
   pagination: {
     page: number;
