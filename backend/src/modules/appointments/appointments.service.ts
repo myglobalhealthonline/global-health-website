@@ -740,6 +740,38 @@ export async function listAppointments(options: ListAppointmentsOptions): Promis
   }
 }
 
+const NON_TERMINAL_APPOINTMENT_STATUSES: PrismaAppointmentStatus[] = [
+  PrismaAppointmentStatus.REQUEST_RECEIVED,
+  PrismaAppointmentStatus.UNDER_REVIEW,
+  PrismaAppointmentStatus.CONTACTED,
+];
+
+/**
+ * Global per-country pending-appointment counts, via `groupBy` rather than a
+ * paginated list — the admin dashboard's "Country health" table used to
+ * derive this by fetching the 100 most-recently-created appointments and
+ * filtering client-side, which silently dropped every pending appointment
+ * older than the 100th most recent once total volume passed that cap.
+ */
+export async function countPendingAppointmentsByCountry(
+  countryCodeFilter?: string[],
+): Promise<Record<string, number>> {
+  const where: Prisma.AppointmentWhereInput = {
+    status: { in: NON_TERMINAL_APPOINTMENT_STATUSES },
+    ...(countryCodeFilter ? { countryCode: { in: countryCodeFilter } } : {}),
+  };
+  try {
+    const groups = await prisma.appointment.groupBy({
+      by: ["countryCode"],
+      where,
+      _count: { _all: true },
+    });
+    return Object.fromEntries(groups.map((g) => [g.countryCode, g._count._all]));
+  } catch (error) {
+    throw normalizeDbError(error, "Appointments are temporarily unavailable");
+  }
+}
+
 export async function getAppointmentById(id: string): Promise<AdminAppointmentDetail | null> {
   try {
     const row = await prisma.appointment.findUnique({
