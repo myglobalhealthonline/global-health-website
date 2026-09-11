@@ -5,12 +5,14 @@ import { AdminCard } from "@/components/portal-atoms";
 import { zonedInputToUtcInstant } from "@/lib/booking-pause-time";
 
 /**
- * Block (or unblock) every open slot across a day or date range in one shot —
- * the calendar's replacement for the old invisible "pause bookings" flag.
- * This creates real BLOCKED slot rows (materialising missing ones first), so
- * the result shows up on the grid immediately and is reversible per slot,
- * same as blocking one slot by hand. Shared by the doctor's own calendar and
- * the admin calendar (scoped to whichever doctor is selected there).
+ * Block (or unblock) every open slot for a specific day, a continuous date
+ * range, or a specific weekday repeated across a date range (e.g. "every
+ * Thursday from 11 Sep to 11 Dec") — the calendar's replacement for the old
+ * invisible "pause bookings" flag. This creates real BLOCKED slot rows
+ * (materialising missing ones first), so the result shows up on the grid
+ * immediately and is reversible per slot, same as blocking one slot by hand.
+ * Shared by the doctor's own calendar and the admin calendar (scoped to
+ * whichever doctor is selected there).
  */
 export type BlockSlotsRangeLabels = {
   title: string;
@@ -23,6 +25,7 @@ export type BlockSlotsRangeLabels = {
   until: string;
   fromTime: string;
   untilTime: string;
+  weekdays: string;
   reason: string;
   reasonPlaceholder: string;
   block: string;
@@ -31,12 +34,14 @@ export type BlockSlotsRangeLabels = {
   unblockBusy: string;
   errorDates: string;
   errorEndAfterStart: string;
+  errorNoWeekday: string;
+  errorRangeTooLong: string;
 };
 
 const DEFAULT_LABELS: BlockSlotsRangeLabels = {
   title: "Block slots",
   intro:
-    "Block every open slot on a specific day or a date range — patients and the booking flow stop seeing them, and the calendar shows them blocked. Existing appointments are not cancelled.",
+    "Block every open slot on a specific day, a date range, or one weekday repeated across a range (e.g. every Thursday from 11 Sep to 11 Dec). Patients and the booking flow stop seeing them, and the calendar shows them blocked. Existing appointments are not cancelled.",
   modeDay: "Specific day",
   modeRange: "Date range",
   wholeDay: "Whole day",
@@ -45,6 +50,7 @@ const DEFAULT_LABELS: BlockSlotsRangeLabels = {
   until: "Until",
   fromTime: "From time",
   untilTime: "Until time",
+  weekdays: "Repeat on",
   reason: "Reason",
   reasonPlaceholder: "Leave, training, clinic closed…",
   block: "Block slots",
@@ -53,7 +59,14 @@ const DEFAULT_LABELS: BlockSlotsRangeLabels = {
   unblockBusy: "Unblocking…",
   errorDates: "Pick at least a start date.",
   errorEndAfterStart: "End must be after start.",
+  errorNoWeekday: "Pick at least one weekday.",
+  errorRangeTooLong: "That range is too long — narrow it to under a year.",
 };
+
+// Sunday-first, matching Date#getUTCDay().
+const WEEKDAY_SHORT = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const ALL_WEEKDAYS = new Set([0, 1, 2, 3, 4, 5, 6]);
+const MAX_SPANS = 366;
 
 function ModeButton({
   active,
@@ -91,6 +104,11 @@ function addDaysToDateInput(date: string, days: number): string {
   return d.toISOString().slice(0, 10);
 }
 
+/** Calendar weekday of a "YYYY-MM-DD" date, independent of any clock time. */
+function weekdayOf(date: string): number {
+  return new Date(`${date}T00:00:00.000Z`).getUTCDay();
+}
+
 export function BlockSlotsRangeCard({
   timeZone,
   disabled = false,
@@ -107,7 +125,7 @@ export function BlockSlotsRangeCard({
   labels?: Partial<BlockSlotsRangeLabels>;
   onRun: (
     action: "BLOCK" | "UNBLOCK",
-    span: { fromUtc: string; toUtc: string },
+    spans: { fromUtc: string; toUtc: string }[],
     reason?: string,
   ) => void;
 }) {
@@ -118,39 +136,84 @@ export function BlockSlotsRangeCard({
   const [untilDate, setUntilDate] = useState("");
   const [fromTime, setFromTime] = useState("09:00");
   const [untilTime, setUntilTime] = useState("17:00");
+  // Every weekday selected == a plain continuous range (the common case);
+  // narrowing this set is what turns it into "every Thursday, 11 Sep–11 Dec".
+  const [weekdays, setWeekdays] = useState<Set<number>>(new Set(ALL_WEEKDAYS));
   const [reason, setReason] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  function computeSpan(): { fromUtc: string; toUtc: string } | null {
-    if (!fromDate) return null;
-    // Specific-day mode pins the end date to the start date — there is no
-    // separate "until" field to leave stale from a previous range pick.
-    const endDateRaw = mode === "day" ? fromDate : untilDate || fromDate;
+  function toggleWeekday(day: number) {
+    setWeekdays((prev) => {
+      const next = new Set(prev);
+      if (next.has(day)) next.delete(day);
+      else next.add(day);
+      return next;
+    });
+  }
+
+  function spanFor(dateFrom: string, dateTo: string): { fromUtc: string; toUtc: string } | null {
     if (wholeDay) {
-      const endDate = addDaysToDateInput(endDateRaw, 1);
-      const fromUtc = zonedInputToUtcInstant(`${fromDate}T00:00`, timeZone);
-      const toUtc = zonedInputToUtcInstant(`${endDate}T00:00`, timeZone);
+      const fromUtc = zonedInputToUtcInstant(`${dateFrom}T00:00`, timeZone);
+      const toUtc = zonedInputToUtcInstant(`${addDaysToDateInput(dateTo, 1)}T00:00`, timeZone);
       if (!fromUtc || !toUtc) return null;
       return { fromUtc, toUtc };
     }
-    const fromUtc = zonedInputToUtcInstant(`${fromDate}T${fromTime}`, timeZone);
-    const toUtc = zonedInputToUtcInstant(`${endDateRaw}T${untilTime}`, timeZone);
+    const fromUtc = zonedInputToUtcInstant(`${dateFrom}T${fromTime}`, timeZone);
+    const toUtc = zonedInputToUtcInstant(`${dateTo}T${untilTime}`, timeZone);
     if (!fromUtc || !toUtc) return null;
     return { fromUtc, toUtc };
   }
 
+  /** Returns an error string, or null with `spans` populated. */
+  function computeSpans(): { spans: { fromUtc: string; toUtc: string }[] } | { error: string } {
+    if (!fromDate) return { error: t.errorDates };
+
+    if (mode === "day") {
+      const span = spanFor(fromDate, fromDate);
+      if (!span) return { error: t.errorDates };
+      if (span.toUtc <= span.fromUtc) return { error: t.errorEndAfterStart };
+      return { spans: [span] };
+    }
+
+    const endDate = untilDate || fromDate;
+    if (endDate < fromDate) return { error: t.errorEndAfterStart };
+
+    // Unfiltered range: one span covers every day, exactly as before —
+    // cheaper than expanding a year into 365 identical-shaped spans.
+    if (weekdays.size === ALL_WEEKDAYS.size) {
+      const span = spanFor(fromDate, endDate);
+      if (!span) return { error: t.errorDates };
+      if (span.toUtc <= span.fromUtc) return { error: t.errorEndAfterStart };
+      return { spans: [span] };
+    }
+
+    if (weekdays.size === 0) return { error: t.errorNoWeekday };
+
+    const spans: { fromUtc: string; toUtc: string }[] = [];
+    let cursor = fromDate;
+    let guard = 0;
+    while (cursor <= endDate) {
+      guard += 1;
+      if (guard > MAX_SPANS) return { error: t.errorRangeTooLong };
+      if (weekdays.has(weekdayOf(cursor))) {
+        const span = spanFor(cursor, cursor);
+        if (!span) return { error: t.errorDates };
+        spans.push(span);
+      }
+      cursor = addDaysToDateInput(cursor, 1);
+    }
+    if (spans.length === 0) return { error: t.errorNoWeekday };
+    return { spans };
+  }
+
   function submit(action: "BLOCK" | "UNBLOCK") {
     setError(null);
-    const span = computeSpan();
-    if (!span) {
-      setError(t.errorDates);
+    const result = computeSpans();
+    if ("error" in result) {
+      setError(result.error);
       return;
     }
-    if (span.toUtc <= span.fromUtc) {
-      setError(t.errorEndAfterStart);
-      return;
-    }
-    onRun(action, span, action === "BLOCK" ? reason.trim() || undefined : undefined);
+    onRun(action, result.spans, action === "BLOCK" ? reason.trim() || undefined : undefined);
   }
 
   return (
@@ -196,6 +259,22 @@ export function BlockSlotsRangeCard({
               onChange={(e) => setUntilDate(e.target.value)}
             />
           </label>
+        ) : null}
+        {mode === "range" ? (
+          <div className="grid gap-1 text-sm font-semibold md:col-span-2">
+            {t.weekdays}
+            <div className="flex flex-wrap gap-1.5">
+              {WEEKDAY_SHORT.map((label, day) => (
+                <ModeButton
+                  key={day}
+                  active={weekdays.has(day)}
+                  disabled={disabled}
+                  label={label}
+                  onClick={() => toggleWeekday(day)}
+                />
+              ))}
+            </div>
+          </div>
         ) : null}
         {!wholeDay ? (
           <>
