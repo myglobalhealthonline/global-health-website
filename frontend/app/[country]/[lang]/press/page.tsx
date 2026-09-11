@@ -228,27 +228,38 @@ export default async function CountryPressPage({ params }: { params: Promise<Par
               <h2 className="mt-3 max-w-[20ch] text-[clamp(2rem,4vw+0.5rem,3.5rem)] font-extrabold leading-[1.02] tracking-[-0.03em] text-[var(--color-text-primary)]">
                 {t.releasesHeading}
               </h2>
-              <ul className="mt-8 grid gap-4">
+              {/* Editorial rows on the section ground — the same ruled-list
+                  anatomy as the fast-facts definition list, no card fill. */}
+              <ul className="mt-10 border-b border-[rgba(29,75,54,0.12)]">
                 {releases.map((release) => {
                   const copy = pressReleaseCopy(release.slug, lang as LocaleCode);
                   return (
-                    <li key={release.slug}>
+                    <li key={release.slug} className="border-t border-[rgba(29,75,54,0.12)]">
                       <Link
                         href={`${base}/press/${release.slug}`}
-                        className="group block rounded-2xl border border-[rgba(29,75,54,0.14)] bg-white/70 p-6 transition-colors hover:border-[var(--color-brand-primary)] md:p-8"
+                        className="group grid gap-3 py-8 sm:grid-cols-[13rem_1fr] sm:gap-6"
                       >
-                        <p className="text-[12px] font-bold uppercase tracking-[0.16em] text-[var(--color-text-muted)]">
-                          <time dateTime={release.published}>{formatPressMonth(release.published, lang)}</time>
-                        </p>
-                        <h3 className="mt-3 max-w-[60ch] text-[1.25rem] font-extrabold leading-snug tracking-[-0.015em] text-[var(--color-text-primary)]">
-                          {copy.title}
-                        </h3>
-                        <p className="mt-3 line-clamp-3 max-w-[72ch] text-[15px] leading-relaxed text-[var(--color-text-muted)]">
-                          {copy.standfirst}
-                        </p>
-                        <span className="mt-4 inline-flex items-center gap-2 text-[15px] font-semibold text-[var(--color-brand-primary)] underline-offset-4 group-hover:underline">
-                          {t.releaseReadMore}
-                          <ArrowUpRight className="size-4" strokeWidth={1.75} aria-hidden />
+                        <time
+                          dateTime={release.published}
+                          className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-primary)] sm:pt-2"
+                        >
+                          {formatPressMonth(release.published, lang)}
+                        </time>
+                        <span className="block">
+                          <span className="block max-w-[48ch] text-[clamp(1.25rem,1vw+1rem,1.6rem)] font-extrabold leading-[1.2] tracking-[-0.02em] text-[var(--color-text-primary)] transition-colors group-hover:text-[var(--color-brand-primary)]">
+                            {copy.title}
+                          </span>
+                          <span className="mt-3 line-clamp-2 block max-w-[68ch] text-[15px] leading-relaxed text-[var(--color-text-muted)]">
+                            {copy.standfirst}
+                          </span>
+                          <span className="mt-4 inline-flex items-center gap-2 text-[15px] font-semibold text-[var(--color-brand-primary)] underline decoration-transparent underline-offset-4 transition-colors group-hover:decoration-current">
+                            {t.releaseReadMore}
+                            <ArrowUpRight
+                              className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                              strokeWidth={1.75}
+                              aria-hidden
+                            />
+                          </span>
                         </span>
                       </Link>
                     </li>

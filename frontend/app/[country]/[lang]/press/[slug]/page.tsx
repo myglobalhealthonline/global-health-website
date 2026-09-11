@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Languages, Mail, Phone, Quote } from "lucide-react";
+import { ArrowLeft, Languages, Mail, Phone } from "lucide-react";
 import { getCountryByCode } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
@@ -95,15 +95,14 @@ function Block({ block }: { block: PressBlock }) {
       );
     case "quote":
       return (
-        <figure
-          className="!my-10 rounded-r-2xl bg-white/70 px-6 py-6"
-          style={{ borderLeft: "3px solid var(--color-brand-primary)" }}
-        >
-          <Quote className="size-6 text-[var(--color-brand-primary)]" strokeWidth={1.75} aria-hidden />
-          <blockquote className="mt-3 text-[1.1rem] font-medium leading-relaxed text-[var(--color-text-primary)]">
+        // Pull quote on the section ground: accent rail + type scale, no fill.
+        <figure className="!my-12 border-l-[3px] border-[var(--color-brand-primary)] pl-6 md:pl-8">
+          <blockquote className="text-[clamp(1.15rem,0.8vw+1rem,1.45rem)] font-semibold leading-[1.45] tracking-[-0.01em] text-[var(--color-text-primary)]">
             {block.text}
           </blockquote>
-          <figcaption className="mt-4 text-[14px] text-[var(--color-text-muted)]">— {block.cite}</figcaption>
+          <figcaption className="mt-4 text-[12px] font-bold uppercase tracking-[0.14em] text-[var(--color-brand-primary)]">
+            {block.cite}
+          </figcaption>
         </figure>
       );
   }
@@ -160,7 +159,7 @@ export default async function CountryPressReleasePage({ params }: { params: Prom
         <SectionSeam theme="light" />
         <article className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           {isTranslation ? (
-            <p className="mb-8 flex max-w-[68ch] flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border border-[rgba(29,75,54,0.15)] bg-white/60 px-4 py-3 text-[14px] text-[var(--color-text-muted)]">
+            <p className="mb-8 flex max-w-[68ch] flex-wrap items-center gap-x-2 gap-y-1 border-b border-[rgba(29,75,54,0.12)] pb-5 text-[14px] text-[var(--color-text-muted)]">
               <Languages className="size-4 shrink-0 text-[var(--color-brand-primary)]" strokeWidth={1.75} aria-hidden />
               {fillTemplate(t.releaseTranslationTemplate, {
                 language: languageNames[`lang_${release.originalLocale}`] ?? release.originalLocale,
