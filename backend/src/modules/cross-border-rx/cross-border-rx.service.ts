@@ -1300,27 +1300,48 @@ export type CrossBorderRxInboxItem = {
 
 /**
  * Inbox membership: still needs the doctor's attention (AWAITING_DOCTOR /
- * MORE_INFO), OR already accepted but not yet actually issued
- * (`finalisedAt` null — see `finaliseCrossBorderRxInTransaction`). Deciding
- * ACCEPT only records the doctor's decision; the prescription document isn't
- * generated and sent until later, so an accepted-but-unissued request must
- * stay visible or it silently falls off the doctor's radar between the two
- * steps. Excluding `finalisedAt: null` here is what lets it drop out again
- * once actually finalised.
+ * MORE_INFO), OR already accepted but not yet actually issued. "Issued" is
+ * read off `Appointment.finalized` — NOT `CrossBorderPrescriptionRequest.
+ * finalisedAt` — because that flag can also be set by the ordinary
+ * notes/files finalize flow (finalizeDoctorAppointment), bypassing the
+ * cross-border-specific finalize transaction entirely. A request whose
+ * appointment got finalized that way would otherwise sit in the inbox
+ * forever, `finalisedAt` still null, even though the doctor is done. There
+ * is no Prisma relation from request to appointment (soft `asyncAppointmentId`
+ * column by design — see the schema comment), so this is a manual two-step
+ * lookup rather than a `select` join.
  */
-const INBOX_WHERE = {
+const INBOX_STATUS_WHERE = {
   status: { in: ["AWAITING_DOCTOR", "MORE_INFO", "ACCEPTED"] as const },
-  finalisedAt: null,
 } satisfies Prisma.CrossBorderPrescriptionRequestWhereInput;
+
+/** Drops rows whose linked async appointment has already been finalized
+ *  (either flow — see INBOX_STATUS_WHERE doc comment above). A row with no
+ *  `asyncAppointmentId` yet (shouldn't happen from AWAITING_DOCTOR onward,
+ *  but fails open rather than closed) is kept. */
+async function excludeFinalizedAppointments<T extends { asyncAppointmentId: string | null }>(
+  rows: T[],
+): Promise<T[]> {
+  const appointmentIds = rows
+    .map((r) => r.asyncAppointmentId)
+    .filter((id): id is string => id !== null);
+  if (appointmentIds.length === 0) return rows;
+  const finalizedAppointments = await prisma.appointment.findMany({
+    where: { id: { in: appointmentIds }, finalized: true },
+    select: { id: true },
+  });
+  const finalizedIds = new Set(finalizedAppointments.map((a) => a.id));
+  return rows.filter((r) => !r.asyncAppointmentId || !finalizedIds.has(r.asyncAppointmentId));
+}
 
 export async function listCrossBorderRxInbox(
   doctorId: string,
 ): Promise<{ items: CrossBorderRxInboxItem[] }> {
   try {
-    const rows = await prisma.crossBorderPrescriptionRequest.findMany({
+    const candidates = await prisma.crossBorderPrescriptionRequest.findMany({
       where: {
         targetDoctorId: doctorId,
-        ...INBOX_WHERE,
+        ...INBOX_STATUS_WHERE,
       },
       orderBy: [{ createdAt: "desc" }],
       take: 100,
@@ -1341,6 +1362,7 @@ export async function listCrossBorderRxInbox(
         createdAt: true,
       },
     });
+    const rows = await excludeFinalizedAppointments(candidates);
 
     const sourceDoctorIds = Array.from(new Set(rows.map((r) => r.sourceDoctorId)));
     const doctors = sourceDoctorIds.length
@@ -1377,12 +1399,17 @@ export async function listCrossBorderRxInbox(
 }
 
 /** Lightweight count backing the doctor-portal nav badge — same membership
- *  as `listCrossBorderRxInbox`, no row payload. */
+ *  as `listCrossBorderRxInbox`, no full row payload (still needs the
+ *  candidates' `asyncAppointmentId` to apply the same finalized-appointment
+ *  exclusion). */
 export async function countCrossBorderRxInboxPending(doctorId: string): Promise<number> {
   try {
-    return await prisma.crossBorderPrescriptionRequest.count({
-      where: { targetDoctorId: doctorId, ...INBOX_WHERE },
+    const candidates = await prisma.crossBorderPrescriptionRequest.findMany({
+      where: { targetDoctorId: doctorId, ...INBOX_STATUS_WHERE },
+      select: { asyncAppointmentId: true },
     });
+    const rows = await excludeFinalizedAppointments(candidates);
+    return rows.length;
   } catch (error) {
     throw normalizeDbError(error, "Cross-border prescription inbox is unavailable");
   }
