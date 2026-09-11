@@ -576,8 +576,10 @@ export async function createManualBooking(
     // Validate the doctor is actually bookable for THIS country + service.
     // Enforced here (not just in the UI) so a manipulated payload can't
     // assign an unrelated / inactive / unapproved doctor. Mirrors the
-    // public consult flow's filter: active doctor + on the country roster
-    // + active 'active'-status ServiceDoctor row.
+    // public consult flow's filter: active (non-suspended) doctor + on the
+    // country roster (DoctorCountry.active is a website-visibility flag
+    // only and must NOT gate bookability) + active 'active'-status
+    // ServiceDoctor row.
     const doc = await prisma.doctor.findUnique({
       where: { id: input.doctorId },
       select: {
@@ -585,7 +587,7 @@ export async function createManualBooking(
         active: true,
         countryId: true,
         additionalCountries: {
-          where: { countryId: service.countryId, active: true },
+          where: { countryId: service.countryId },
           select: { id: true },
         },
         assignedServices: {

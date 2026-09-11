@@ -106,7 +106,7 @@ function CountryForm({
         <div className="gh-admin-doctor-toggle-row flex flex-wrap items-center gap-3 text-portal-compact">
           <label className="inline-flex items-center gap-2">
             <input name="active" type="checkbox" defaultChecked={market.active} />
-            Active
+            Active on website
           </label>
           <label className="inline-flex items-center gap-2">
             <input name="isVerified" type="checkbox" defaultChecked={market.isVerified} />
