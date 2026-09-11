@@ -143,7 +143,9 @@ async function loadServiceAggregatedAvailability(
         active: true,
         OR: [
           { country: { code, isActive: true } },
-          { additionalCountries: { some: { active: true, country: { code, isActive: true } } } },
+          // DoctorCountry.active is a website-visibility flag only and must
+          // not gate bookability — no `active` filter here.
+          { additionalCountries: { some: { country: { code, isActive: true } } } },
         ],
         assignedServices: {
           some: { serviceId: service.id, isActive: true, status: "active" },

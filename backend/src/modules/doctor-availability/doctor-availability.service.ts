@@ -1762,10 +1762,11 @@ export async function assertBookingClaimAllowed(
             active: true,
             OR: [
               { country: { code: countryCode, isActive: true } },
+              // DoctorCountry.active is a website-visibility flag only and
+              // must not gate bookability — no `active` filter here.
               {
                 additionalCountries: {
                   some: {
-                    active: true,
                     country: { code: countryCode, isActive: true },
                   },
                 },
