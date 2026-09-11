@@ -95,11 +95,11 @@ function Block({ block }: { block: PressBlock }) {
       );
     case "quote":
       return (
-        // Pull quote in forest glass (gh-glass-emerald: existing class, its
-        // fallbacks already live in both mobile blocks of globals.css). The
-        // accent rail is inline so it wins over the class's 1px border.
+        // Pull quote in deep forest (gh2-glass-forest: near-opaque, so the
+        // ivory ground can't wash it out to sage). The accent rail is inline
+        // so it wins over the class's own border.
         <figure
-          className="gh-glass-emerald !my-12 rounded-r-2xl px-6 py-7 md:px-10 md:py-9"
+          className="gh2-glass-forest !my-12 px-6 py-7 md:px-10 md:py-9"
           style={{ borderLeft: "3px solid var(--color-brand-accent)" }}
         >
           <blockquote className="text-[clamp(1.15rem,0.8vw+1rem,1.45rem)] font-semibold leading-[1.45] tracking-[-0.01em] text-white/92">

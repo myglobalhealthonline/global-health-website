@@ -228,16 +228,16 @@ export default async function CountryPressPage({ params }: { params: Promise<Par
               <h2 className="mt-3 max-w-[20ch] text-[clamp(2rem,4vw+0.5rem,3.5rem)] font-extrabold leading-[1.02] tracking-[-0.03em] text-[var(--color-text-primary)]">
                 {t.releasesHeading}
               </h2>
-              {/* Forest glass on the ivory ground — gh-glass-emerald is the
-                  same material as the hero trust cards and already carries
-                  its solid-forest fallbacks in both the `(pointer: coarse)`
-                  and `@supports not (backdrop-filter)` blocks of globals.css,
-                  so this adds no new glass class. */}
+              {/* Deep forest on the ivory ground — gh2-glass-forest is the
+                  near-opaque card material the trust cards use. The
+                  translucent gh-glass-emerald let the ivory bleed through and
+                  read washed-out sage; this one has no backdrop-filter, so no
+                  mobile fallback entry is needed either. */}
               <ul className="mt-10 grid gap-4">
                 {releases.map((release) => {
                   const copy = pressReleaseCopy(release.slug, lang as LocaleCode);
                   return (
-                    <li key={release.slug} className="gh-glass-emerald rounded-2xl">
+                    <li key={release.slug} className="gh2-glass-forest">
                       <Link
                         href={`${base}/press/${release.slug}`}
                         className="gh-focus-on-dark group grid gap-3 rounded-2xl p-6 sm:grid-cols-[11rem_1fr] sm:gap-6 md:p-10"
