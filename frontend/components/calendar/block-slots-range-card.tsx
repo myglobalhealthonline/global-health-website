@@ -15,7 +15,10 @@ import { zonedInputToUtcInstant } from "@/lib/booking-pause-time";
 export type BlockSlotsRangeLabels = {
   title: string;
   intro: string;
+  modeDay: string;
+  modeRange: string;
   wholeDay: string;
+  day: string;
   from: string;
   until: string;
   fromTime: string;
@@ -33,10 +36,13 @@ export type BlockSlotsRangeLabels = {
 const DEFAULT_LABELS: BlockSlotsRangeLabels = {
   title: "Block slots",
   intro:
-    "Block every open slot on a day or date range — patients and the booking flow stop seeing them, and the calendar shows them blocked. Existing appointments are not cancelled.",
-  wholeDay: "Whole day(s)",
+    "Block every open slot on a specific day or a date range — patients and the booking flow stop seeing them, and the calendar shows them blocked. Existing appointments are not cancelled.",
+  modeDay: "Specific day",
+  modeRange: "Date range",
+  wholeDay: "Whole day",
+  day: "Day",
   from: "From",
-  until: "Until (optional)",
+  until: "Until",
   fromTime: "From time",
   untilTime: "Until time",
   reason: "Reason",
@@ -48,6 +54,36 @@ const DEFAULT_LABELS: BlockSlotsRangeLabels = {
   errorDates: "Pick at least a start date.",
   errorEndAfterStart: "End must be after start.",
 };
+
+function ModeButton({
+  active,
+  disabled,
+  label,
+  onClick,
+}: {
+  active: boolean;
+  disabled: boolean;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      role="radio"
+      aria-checked={active}
+      disabled={disabled}
+      onClick={onClick}
+      className="rounded-full border px-3 py-1 text-sm font-semibold disabled:opacity-50"
+      style={{
+        borderColor: active ? "var(--color-brand-primary)" : "var(--color-border)",
+        background: active ? "var(--color-brand-primary)" : "transparent",
+        color: active ? "var(--color-brand-secondary)" : "var(--color-text-primary)",
+      }}
+    >
+      {label}
+    </button>
+  );
+}
 
 function addDaysToDateInput(date: string, days: number): string {
   const d = new Date(`${date}T00:00:00.000Z`);
@@ -76,6 +112,7 @@ export function BlockSlotsRangeCard({
   ) => void;
 }) {
   const t = { ...DEFAULT_LABELS, ...labels };
+  const [mode, setMode] = useState<"day" | "range">("day");
   const [wholeDay, setWholeDay] = useState(true);
   const [fromDate, setFromDate] = useState("");
   const [untilDate, setUntilDate] = useState("");
@@ -86,16 +123,18 @@ export function BlockSlotsRangeCard({
 
   function computeSpan(): { fromUtc: string; toUtc: string } | null {
     if (!fromDate) return null;
+    // Specific-day mode pins the end date to the start date — there is no
+    // separate "until" field to leave stale from a previous range pick.
+    const endDateRaw = mode === "day" ? fromDate : untilDate || fromDate;
     if (wholeDay) {
-      const endDate = addDaysToDateInput(untilDate || fromDate, 1);
+      const endDate = addDaysToDateInput(endDateRaw, 1);
       const fromUtc = zonedInputToUtcInstant(`${fromDate}T00:00`, timeZone);
       const toUtc = zonedInputToUtcInstant(`${endDate}T00:00`, timeZone);
       if (!fromUtc || !toUtc) return null;
       return { fromUtc, toUtc };
     }
-    const endDate = untilDate || fromDate;
     const fromUtc = zonedInputToUtcInstant(`${fromDate}T${fromTime}`, timeZone);
-    const toUtc = zonedInputToUtcInstant(`${endDate}T${untilTime}`, timeZone);
+    const toUtc = zonedInputToUtcInstant(`${endDateRaw}T${untilTime}`, timeZone);
     if (!fromUtc || !toUtc) return null;
     return { fromUtc, toUtc };
   }
@@ -121,9 +160,23 @@ export function BlockSlotsRangeCard({
       {disabled && disabledHint ? (
         <p className="mb-3 text-sm text-[var(--color-text-muted)]">{disabledHint}</p>
       ) : null}
+      <div role="radiogroup" className="mb-3 flex flex-wrap gap-1.5">
+        <ModeButton
+          active={mode === "day"}
+          disabled={disabled}
+          label={t.modeDay}
+          onClick={() => setMode("day")}
+        />
+        <ModeButton
+          active={mode === "range"}
+          disabled={disabled}
+          label={t.modeRange}
+          onClick={() => setMode("range")}
+        />
+      </div>
       <div className="grid gap-3 md:grid-cols-2">
         <label className="grid gap-1 text-sm font-semibold">
-          {t.from}
+          {mode === "day" ? t.day : t.from}
           <input
             className="gh-input"
             type="date"
@@ -132,16 +185,18 @@ export function BlockSlotsRangeCard({
             onChange={(e) => setFromDate(e.target.value)}
           />
         </label>
-        <label className="grid gap-1 text-sm font-semibold">
-          {t.until}
-          <input
-            className="gh-input"
-            type="date"
-            value={untilDate}
-            disabled={disabled}
-            onChange={(e) => setUntilDate(e.target.value)}
-          />
-        </label>
+        {mode === "range" ? (
+          <label className="grid gap-1 text-sm font-semibold">
+            {t.until}
+            <input
+              className="gh-input"
+              type="date"
+              value={untilDate}
+              disabled={disabled}
+              onChange={(e) => setUntilDate(e.target.value)}
+            />
+          </label>
+        ) : null}
         {!wholeDay ? (
           <>
             <label className="grid gap-1 text-sm font-semibold">
