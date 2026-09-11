@@ -163,6 +163,21 @@ export function useSlotManager(adapter: SlotManagerAdapter) {
 
   const clearSelection = useCallback(() => setSelected(new Set()), []);
 
+  /** Bulk over an explicit UTC span — the "block a day / date range" card. */
+  const bulkSpan = useCallback(
+    async (
+      action: BulkSlotAction,
+      span: { fromUtc: string; toUtc: string },
+      reason?: string,
+    ) => {
+      return run(
+        () => adapter.bulk({ action, spans: [span], reason }),
+        (data) => setNotice(adapter.describeBulk(action, data)),
+      );
+    },
+    [adapter, run],
+  );
+
   return {
     busy,
     error,
@@ -187,6 +202,7 @@ export function useSlotManager(adapter: SlotManagerAdapter) {
     create,
     bulkIds,
     bulkSelected,
+    bulkSpan,
   };
 }
 
