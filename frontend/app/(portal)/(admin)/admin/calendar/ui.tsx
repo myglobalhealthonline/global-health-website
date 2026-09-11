@@ -463,7 +463,7 @@ export function AdminCalendarUI({
         disabled={!bulkReady}
         disabledHint="Filter to one doctor above to block or unblock their slots."
         busy={slotBusy}
-        onRun={(action, span, reason) => void runBulk(action, { spans: [span] }, reason)}
+        onRun={(action, spans, reason) => void runBulk(action, { spans }, reason)}
       />
 
       {/* Block/unblock failures on the week grid have no drawer to land in —

@@ -548,7 +548,7 @@ export function DoctorAvailabilityUI({
         <BlockSlotsRangeCard
           timeZone={tz}
           busy={busy}
-          onRun={(action, span, reason) => void slotManager.bulkSpan(action, span, reason)}
+          onRun={(action, spans, reason) => void slotManager.bulkSpans(action, spans, reason)}
         />
       </div>
 
