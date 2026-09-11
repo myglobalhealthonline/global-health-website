@@ -228,31 +228,34 @@ export default async function CountryPressPage({ params }: { params: Promise<Par
               <h2 className="mt-3 max-w-[20ch] text-[clamp(2rem,4vw+0.5rem,3.5rem)] font-extrabold leading-[1.02] tracking-[-0.03em] text-[var(--color-text-primary)]">
                 {t.releasesHeading}
               </h2>
-              {/* Editorial rows on the section ground — the same ruled-list
-                  anatomy as the fast-facts definition list, no card fill. */}
-              <ul className="mt-10 border-b border-[rgba(29,75,54,0.12)]">
+              {/* Forest glass on the ivory ground — gh-glass-emerald is the
+                  same material as the hero trust cards and already carries
+                  its solid-forest fallbacks in both the `(pointer: coarse)`
+                  and `@supports not (backdrop-filter)` blocks of globals.css,
+                  so this adds no new glass class. */}
+              <ul className="mt-10 grid gap-4">
                 {releases.map((release) => {
                   const copy = pressReleaseCopy(release.slug, lang as LocaleCode);
                   return (
-                    <li key={release.slug} className="border-t border-[rgba(29,75,54,0.12)]">
+                    <li key={release.slug} className="gh-glass-emerald rounded-2xl">
                       <Link
                         href={`${base}/press/${release.slug}`}
-                        className="group grid gap-3 py-8 sm:grid-cols-[13rem_1fr] sm:gap-6"
+                        className="gh-focus-on-dark group grid gap-3 rounded-2xl p-6 sm:grid-cols-[11rem_1fr] sm:gap-6 md:p-10"
                       >
                         <time
                           dateTime={release.published}
-                          className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-primary)] sm:pt-2"
+                          className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-accent)] sm:pt-2"
                         >
                           {formatPressMonth(release.published, lang)}
                         </time>
                         <span className="block">
-                          <span className="block max-w-[48ch] text-[clamp(1.25rem,1vw+1rem,1.6rem)] font-extrabold leading-[1.2] tracking-[-0.02em] text-[var(--color-text-primary)] transition-colors group-hover:text-[var(--color-brand-primary)]">
+                          <span className="block max-w-[48ch] text-[clamp(1.25rem,1vw+1rem,1.6rem)] font-extrabold leading-[1.2] tracking-[-0.02em] text-white/92 transition-colors group-hover:text-[var(--color-brand-accent)]">
                             {copy.title}
                           </span>
-                          <span className="mt-3 line-clamp-2 block max-w-[68ch] text-[15px] leading-relaxed text-[var(--color-text-muted)]">
+                          <span className="mt-3 line-clamp-2 block max-w-[68ch] text-[15px] leading-relaxed text-white/70">
                             {copy.standfirst}
                           </span>
-                          <span className="mt-4 inline-flex items-center gap-2 text-[15px] font-semibold text-[var(--color-brand-primary)] underline decoration-transparent underline-offset-4 transition-colors group-hover:decoration-current">
+                          <span className="mt-4 inline-flex items-center gap-2 text-[15px] font-semibold text-[var(--color-brand-accent)] underline decoration-transparent underline-offset-4 transition-colors group-hover:decoration-current">
                             {t.releaseReadMore}
                             <ArrowUpRight
                               className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"

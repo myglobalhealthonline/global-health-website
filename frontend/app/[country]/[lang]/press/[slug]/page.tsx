@@ -95,12 +95,17 @@ function Block({ block }: { block: PressBlock }) {
       );
     case "quote":
       return (
-        // Pull quote on the section ground: accent rail + type scale, no fill.
-        <figure className="!my-12 border-l-[3px] border-[var(--color-brand-primary)] pl-6 md:pl-8">
-          <blockquote className="text-[clamp(1.15rem,0.8vw+1rem,1.45rem)] font-semibold leading-[1.45] tracking-[-0.01em] text-[var(--color-text-primary)]">
+        // Pull quote in forest glass (gh-glass-emerald: existing class, its
+        // fallbacks already live in both mobile blocks of globals.css). The
+        // accent rail is inline so it wins over the class's 1px border.
+        <figure
+          className="gh-glass-emerald !my-12 rounded-r-2xl px-6 py-7 md:px-10 md:py-9"
+          style={{ borderLeft: "3px solid var(--color-brand-accent)" }}
+        >
+          <blockquote className="text-[clamp(1.15rem,0.8vw+1rem,1.45rem)] font-semibold leading-[1.45] tracking-[-0.01em] text-white/92">
             {block.text}
           </blockquote>
-          <figcaption className="mt-4 text-[12px] font-bold uppercase tracking-[0.14em] text-[var(--color-brand-primary)]">
+          <figcaption className="mt-5 text-[12px] font-bold uppercase tracking-[0.14em] text-[var(--color-brand-accent)]">
             {block.cite}
           </figcaption>
         </figure>
