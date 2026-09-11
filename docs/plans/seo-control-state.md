@@ -8748,3 +8748,22 @@ No edit was made to any page, route, schema, sitemap, redirect or link.
 52.1/52.3 that contradict earlier recorded rationale (ramp expired, hub hand-off
 reversed, Czechia CTR advantage gone) are recorded here as evidence; the roadmap rows
 they affect are not rewritten in this pass.
+
+
+## 53. SEO-SPAIN-002 scheduled measurement - impressions resumed (2026-09-11)
+
+The September 11 daily-series gate in section 42.5 is complete. Authenticated GSC
+Web Search Analytics for the exact Spanish sick-leave article, August 29 through
+September 8, shows 123 impressions and zero clicks. Daily impressions resumed at
+2 on September 3, 1 on September 6, 17 on September 7 and 103 on September 8;
+all other days in the 11-day window are zero. The ongoing zero-impression condition
+is no longer observed; sustained recovery and commercial value remain unproven.
+[Full dated evidence](../../seo/spain/search-performance-check-2026-09-11.md).
+
+Keep the state-sick-leave commercial-fit hold. No rewrite or cluster expansion is
+justified. Next focused daily-series read: **2026-09-18**, using newly available
+GSC dates. This is an observation follow-up, not a country implementation batch.
+No URL Inspection was performed and no recrawl item closed. The global September
+24 inspection cadence and Spain/Romania/Brazil country-work priorities remain.
+Browser authentication worked; local API access was not tested. No external
+settings, content, indexation submissions or validation requests changed.
