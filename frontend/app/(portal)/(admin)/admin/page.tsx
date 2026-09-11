@@ -17,6 +17,7 @@ import {
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import { BookingSourceIcon } from "@/components/BookingSourceIcon";
 import {
+  fetchAdminAppointmentPendingCounts,
   fetchAdminAppointments,
   fetchAdminCountries,
   fetchAdminDoctors,
@@ -110,12 +111,13 @@ export default async function AdminDashboardPage() {
     // its own un-scoped, high-page fetches. Reusing the scoped stat-strip
     // fetches above (countryId-filtered, default pageSize 20) zeroed out every
     // non-active country and silently dropped rows past the 20th.
-    // ponytail: pageSize 250/100 covers current scale (6 countries, tens of
-    //   rows); move to a backend per-country COUNT endpoint if any one entity
-    //   exceeds the service-layer 100-row cap (appointments hard-cap at 100).
+    // ponytail: pageSize 250 covers current doctor/service scale (6 countries,
+    //   tens of rows); pending bookings use a dedicated groupBy-count endpoint
+    //   (not a capped list) since that cap was silently dropping backlog past
+    //   the most-recent 100 appointments — see countPendingAppointmentsByCountry.
     allDoctorsRes,
     allServicesRes,
-    allAppointmentsRes,
+    pendingCountsRes,
   ] = await Promise.all([
     fetchAdminDoctors(scopeQuery),
     fetchAdminServices(scopeQuery),
@@ -126,7 +128,7 @@ export default async function AdminDashboardPage() {
     ),
     fetchAdminDoctors({ pageSize: "250" }),
     fetchAdminServices({ pageSize: "250" }),
-    fetchAdminAppointments({ pageSize: "100" }),
+    fetchAdminAppointmentPendingCounts(),
   ]);
 
   const pendingApprovals = approvalsRes.ok ? approvalsRes.data.count : 0;
@@ -169,7 +171,7 @@ export default async function AdminDashboardPage() {
   // never the active-country scope (see the fetch block above).
   const allDoctors = allDoctorsRes.ok ? allDoctorsRes.data.items : [];
   const allServices = allServicesRes.ok ? allServicesRes.data.items : [];
-  const allAppointments = allAppointmentsRes.ok ? allAppointmentsRes.data.items : [];
+  const pendingCounts = pendingCountsRes.ok ? pendingCountsRes.data.counts : {};
   const allPages = allPageContentItems;
   const countryRows = countries
     .filter((c) => c.isActive)
@@ -184,11 +186,10 @@ export default async function AdminDashboardPage() {
       const pgs = allPages.filter(
         (p) => p.countryId === c.id && p.status === "PUBLISHED" && p.isActive,
       ).length;
-      const pending = allAppointments.filter(
-        (a) =>
-          a.country?.toLowerCase() === c.code.toLowerCase() &&
-          NON_TERMINAL_STATUSES.has(a.status),
-      ).length;
+      const pending =
+        Object.entries(pendingCounts).find(
+          ([code]) => code.toLowerCase() === c.code.toLowerCase(),
+        )?.[1] ?? 0;
       return { country: c, docs, svcs, pgs, pending };
     });
 

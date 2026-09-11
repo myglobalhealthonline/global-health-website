@@ -83,6 +83,11 @@ export async function fetchAdminAppointments(query?: Record<string, string | und
   return adminRequest<AdminAppointmentsListPayload>(path);
 }
 
+/** Global per-country pending counts, uncapped — see admin-appointments.route.ts. */
+export async function fetchAdminAppointmentPendingCounts() {
+  return adminRequest<{ counts: Record<string, number> }>("/api/admin/appointments/pending-counts");
+}
+
 export const fetchAdminAppointmentById = cache(async (id: string) => {
   return adminRequest<AdminAppointmentDetailPayload>(`/api/admin/appointments/${id}`);
 });

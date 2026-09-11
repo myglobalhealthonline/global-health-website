@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync, FastifyRequest } from "fastify";
 import {
+  countPendingAppointmentsByCountry,
   getAppointmentById,
   InvalidAppointmentStatusTransitionError,
   listAppointments,
@@ -142,6 +143,24 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         dateTo: query.data.dateTo,
       });
       return okResponse(data);
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Unexpected admin appointments error"));
+    }
+  });
+
+  // Global per-country pending counts for the dashboard's Country-health
+  // table — a groupBy count, not the capped/paginated list, so a country's
+  // pending backlog is never silently dropped once total volume passes the
+  // list endpoint's 100-row cap.
+  app.get("/api/admin/appointments/pending-counts", async (request, reply) => {
+    try {
+      const scopedFolders = await resolveAdminListCountryFolders(request);
+      const counts = await countPendingAppointmentsByCountry(scopedFolders ?? undefined);
+      return okResponse({ counts });
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));
