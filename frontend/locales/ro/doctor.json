@@ -148,6 +148,7 @@
     "tabUpcoming": "Viitoare",
     "tabCompleted": "Finalizate",
     "tabPending": "În așteptare",
+    "tabWaitingPayment": "În așteptarea plății",
     "legacyOpenWindow": "Include programările deschise în ultimele 30 de ore",
     "emptyFilteredTitle": "Nicio programare nu corespunde acestor filtre",
     "emptyFilteredDesc": "Încercați să extindeți intervalul de date sau să ștergeți filtrele de stare. Consultațiile nou alocate apar aici imediat ce sunt programate.",

@@ -355,7 +355,7 @@ export async function fetchDoctorAppointments(query?: Record<string, string | un
     pagination: { page: number; pageSize: number; total: number; totalPages: number };
     /** Queue-wide tile counts, legacy imports excluded. Present only when the
      *  caller passes `includeSummary=true`; unaffected by the list filters. */
-    summary?: { openConsults: number; notFinalized: number };
+    summary?: { openConsults: number; notFinalized: number; waitingPayment: number };
   }>(path);
 }
 

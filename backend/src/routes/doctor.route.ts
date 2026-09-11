@@ -220,10 +220,24 @@ const OPEN_CONSULT_WHERE: Prisma.AppointmentWhereInput = {
 };
 
 /** "Not finalized" — notes or documents pending. Cancelled rows never get
- *  finalized, so counting them would leave a floor the doctor can't clear. */
+ *  finalized, so counting them would leave a floor the doctor can't clear.
+ *  Also excludes anything still waiting on the patient's payment: a booking
+ *  that hasn't been paid for yet has no consultation for the doctor to act
+ *  on — that backlog belongs to the separate `view=waiting_payment` tab, not
+ *  here, or every not-yet-paid booking silently inflated this list. */
 const NOT_FINALIZED_WHERE: Prisma.AppointmentWhereInput = {
   finalized: false,
   status: { notIn: ["CANCELLED"] },
+  paymentStatus: "PAID",
+};
+
+/** "Waiting payment" — booked but the patient hasn't paid yet. Same
+ *  (status, paymentStatus) shape as the `view=waiting_payment` filter above,
+ *  kept as its own constant so the tile count and the list it links to can
+ *  never drift apart (same pattern as OPEN_CONSULT_WHERE / NOT_FINALIZED_WHERE). */
+const WAITING_PAYMENT_WHERE: Prisma.AppointmentWhereInput = {
+  status: { notIn: ["CANCELLED", "COMPLETED"] },
+  paymentStatus: { not: "PAID" },
 };
 
 /** Excludes rows imported from the legacy Mongo system. */
@@ -535,16 +549,20 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
         // list it links to would hide.
         ...(queueFloorWhere ? { AND: [queueFloorWhere] } : {}),
       };
-      const [total, upcomingCount, openConsults, notFinalizedCount] = await Promise.all([
-        prisma.appointment.count({ where }),
-        prisma.appointment.count({ where: upcomingWhere }),
-        includeSummary
-          ? prisma.appointment.count({ where: { ...summaryWhere, ...OPEN_CONSULT_WHERE } })
-          : 0,
-        includeSummary
-          ? prisma.appointment.count({ where: { ...summaryWhere, ...NOT_FINALIZED_WHERE } })
-          : 0,
-      ]);
+      const [total, upcomingCount, openConsults, notFinalizedCount, waitingPaymentCount] =
+        await Promise.all([
+          prisma.appointment.count({ where }),
+          prisma.appointment.count({ where: upcomingWhere }),
+          includeSummary
+            ? prisma.appointment.count({ where: { ...summaryWhere, ...OPEN_CONSULT_WHERE } })
+            : 0,
+          includeSummary
+            ? prisma.appointment.count({ where: { ...summaryWhere, ...NOT_FINALIZED_WHERE } })
+            : 0,
+          includeSummary
+            ? prisma.appointment.count({ where: { ...summaryWhere, ...WAITING_PAYMENT_WHERE } })
+            : 0,
+        ]);
 
       const skip = (page - 1) * pageSize;
       // Page window straddles the upcoming→past boundary: fill from the
@@ -607,7 +625,13 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
           totalPages: total === 0 ? 0 : Math.ceil(total / pageSize),
         },
         ...(includeSummary
-          ? { summary: { openConsults, notFinalized: notFinalizedCount } }
+          ? {
+              summary: {
+                openConsults,
+                notFinalized: notFinalizedCount,
+                waitingPayment: waitingPaymentCount,
+              },
+            }
           : {}),
       });
     } catch (error) {

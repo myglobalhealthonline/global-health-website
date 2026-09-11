@@ -148,6 +148,7 @@
     "tabUpcoming": "Upcoming",
     "tabCompleted": "Completed",
     "tabPending": "Pending",
+    "tabWaitingPayment": "Waiting payment",
     "legacyOpenWindow": "Include appointments open in the last 30 hours",
     "emptyFilteredTitle": "No appointments match these filters",
     "emptyFilteredDesc": "Try widening the date range or clearing status filters. New assigned consultations appear here as soon as they are scheduled.",

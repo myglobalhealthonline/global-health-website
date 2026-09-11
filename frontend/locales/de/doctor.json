@@ -148,6 +148,7 @@
     "tabUpcoming": "Anstehend",
     "tabCompleted": "Abgeschlossen",
     "tabPending": "Ausstehend",
+    "tabWaitingPayment": "Zahlung ausstehend",
     "legacyOpenWindow": "Termine der letzten 30 Stunden einbeziehen",
     "emptyFilteredTitle": "Keine Termine entsprechen diesen Filtern",
     "emptyFilteredDesc": "Erweitern Sie den Datumsbereich oder setzen Sie die Statusfilter zurück. Neu zugewiesene Konsultationen erscheinen hier, sobald sie geplant sind.",

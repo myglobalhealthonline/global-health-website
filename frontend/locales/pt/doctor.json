@@ -148,6 +148,7 @@
     "tabUpcoming": "Próximas",
     "tabCompleted": "Concluídas",
     "tabPending": "Pendentes",
+    "tabWaitingPayment": "Pendente de pagamento",
     "legacyOpenWindow": "Incluir consultas abertas nas últimas 30 horas",
     "emptyFilteredTitle": "Nenhuma consulta corresponde a estes filtros",
     "emptyFilteredDesc": "Experimente alargar o intervalo de datas ou limpar os filtros de estado. Novas consultas atribuídas aparecem aqui assim que forem agendadas.",

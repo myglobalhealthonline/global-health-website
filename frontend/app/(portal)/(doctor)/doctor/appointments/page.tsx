@@ -153,15 +153,22 @@ export default async function DoctorAppointmentsPage({
   const open = pick(sp, "open");
   const notFinalized = pick(sp, "notFinalized");
   // Top-level section shortcuts (design ask: doctor navigates by Upcoming /
-  // Completed / Pending rather than hunting through the filter panel).
-  // Reuse the existing `finalized` / `notFinalized` query filters rather than
-  // inventing a new one — "Completed" and "Pending" are exactly those, and
-  // "Upcoming" is the plain unfiltered queue (which already fronts upcoming
-  // rows and tucks past ones behind a collapsed section, see showGrouped
-  // below). Highlighting only, so a deep link like `?view=cancelled` still
-  // composes normally without a tab fighting it.
-  const activeSection: "upcoming" | "completed" | "pending" =
-    finalized === "true" ? "completed" : notFinalized === "true" ? "pending" : "upcoming";
+  // Completed / Pending / Waiting payment rather than hunting through the
+  // filter panel). Reuse the existing `finalized` / `notFinalized` / `view`
+  // query filters rather than inventing new ones — "Completed" and "Pending"
+  // are exactly those, "Waiting payment" is the existing four-status
+  // `view=waiting_payment`, and "Upcoming" is the plain unfiltered queue
+  // (which already fronts upcoming rows, see showGrouped below).
+  // Highlighting only, so a deep link like `?view=cancelled` still composes
+  // normally without a tab fighting it.
+  const activeSection: "upcoming" | "completed" | "pending" | "waitingPayment" =
+    finalized === "true"
+      ? "completed"
+      : notFinalized === "true"
+        ? "pending"
+        : view === "waiting_payment"
+          ? "waitingPayment"
+          : "upcoming";
   const page = Number(pick(sp, "page") ?? "1") || 1;
   const filterValues = [
     view,
@@ -247,6 +254,7 @@ export default async function DoctorAppointmentsPage({
   // `appointments`, which is only the current page and only the current filter.
   const openAppointments = result.ok ? (result.data.summary?.openConsults ?? 0) : 0;
   const unfinalized = result.ok ? (result.data.summary?.notFinalized ?? 0) : 0;
+  const waitingPayment = result.ok ? (result.data.summary?.waitingPayment ?? 0) : 0;
 
   return (
     <>
@@ -307,6 +315,18 @@ export default async function DoctorAppointmentsPage({
               <span className="gh-portal-tab__badge gh-portal-tab__badge--alert">
                 {unfinalized}
               </span>
+            ) : null}
+          </Link>
+          <Link
+            href="/doctor/appointments?view=waiting_payment"
+            role="tab"
+            aria-selected={activeSection === "waitingPayment"}
+            className="gh-portal-tab"
+            data-active={activeSection === "waitingPayment" || undefined}
+          >
+            {d.appointments.tabWaitingPayment}
+            {waitingPayment > 0 ? (
+              <span className="gh-portal-tab__badge">{waitingPayment}</span>
             ) : null}
           </Link>
         </div>
