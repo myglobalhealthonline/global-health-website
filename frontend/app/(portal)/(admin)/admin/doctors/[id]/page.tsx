@@ -683,19 +683,22 @@ export default async function AdminDoctorDetailPage({
           </AdminCard>
 
           <AdminCard>
-            <h3 className={cardTitleClass}>Visibility</h3>
+            <h3 className={cardTitleClass}>Suspend account</h3>
             <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
-              Deactivating hides this profile from the public doctors listing API.
+              Suspending blocks this doctor everywhere: login, slots, new bookings, and public
+              listing. To hide the profile from one country&rsquo;s public site without suspending
+              the account, use the &ldquo;Active on website&rdquo; toggle per country in Edit
+              instead.
             </p>
             {isActive ? (
             <form action={deactivateDoctorAction} className="gh-admin-doctor-danger-action">
                 <button type="submit" className="gh-btn gh-btn-danger w-full">
-                  Deactivate profile
+                  Suspend account
                 </button>
               </form>
             ) : (
               <p className="text-portal-compact text-[var(--color-text-muted)]">
-                This profile is inactive. Re-enable from Edit.
+                This account is suspended. Re-enable from Edit.
               </p>
             )}
           </AdminCard>

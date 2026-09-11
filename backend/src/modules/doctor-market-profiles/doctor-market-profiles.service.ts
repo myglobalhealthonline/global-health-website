@@ -128,10 +128,15 @@ async function ensurePrimaryMarketRow(
     select: { id: true, countryId: true },
   });
   if (!doctor) throw new DoctorMarketNotFoundError("Doctor profile not found");
+  // Only backfills the row if missing (legacy doctors created before this
+  // join table existed). Must NOT touch `active` on an existing row — that
+  // field is the admin-facing "active on website" toggle now, and forcing
+  // it to true on every read/write would make it impossible to hide a
+  // doctor's primary country from the public site.
   await tx.doctorCountry.upsert({
     where: { doctorId_countryId: { doctorId, countryId: doctor.countryId } },
     create: { doctorId, countryId: doctor.countryId, active: true },
-    update: { active: true },
+    update: {},
   });
 }
 
