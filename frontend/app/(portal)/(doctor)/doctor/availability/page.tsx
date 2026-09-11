@@ -13,7 +13,6 @@ import {
 import { DoctorAvailabilityUI } from "./_components/availability-ui";
 import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
-import { DoctorBookingPauseControl } from "./_components/doctor-booking-pause-control";
 
 export const dynamic = "force-dynamic";
 
@@ -119,11 +118,6 @@ export default async function DoctorAvailabilityPage({ searchParams }: PageProps
         }
         title={d.availability.title}
         description={d.availability.description}
-      />
-
-      <DoctorBookingPauseControl
-        initial={result.data.bookingPause}
-        timeZone={clinicTimezone}
       />
 
       <DoctorAvailabilityUI
