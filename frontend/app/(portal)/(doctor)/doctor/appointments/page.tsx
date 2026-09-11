@@ -221,11 +221,11 @@ export default async function DoctorAppointmentsPage({
   const canBookManually =
     bookingOptions.ok && bookingOptions.data.canCreateManualAppointments;
   const appointments = result.ok ? result.data.items : [];
-  // Backend returns two buckets (upcoming asc, then past/concluded desc) in one
-  // flat list. We further split upcoming rows by calendar day (Today /
-  // Tomorrow / Wed 23 Jul …) so proximity is visible at a glance, and tuck
-  // the past bucket behind a collapsed `<details>` — grouping only applies
-  // on the default unfiltered view where both buckets are present.
+  // The Upcoming tab shows only upcoming rows now — no more "Past &
+  // concluded" collapsible section there (Completed/Pending tabs cover that
+  // ground instead). We still split upcoming rows by calendar day (Today /
+  // Tomorrow / Wed 23 Jul …) so proximity is visible at a glance; grouping
+  // only applies on the Upcoming tab with no other filter stacked on top.
   // eslint-disable-next-line react-hooks/purity -- Server Component: evaluated once per request, no client re-render
   const nowMs = Date.now();
   const isUpcomingRow = (a: DoctorAppointment) =>
@@ -234,12 +234,15 @@ export default async function DoctorAppointmentsPage({
     (!a.scheduledAt ||
       new Date(a.scheduledAt).getTime() + LIVE_WINDOW_MS >= nowMs);
   const upcomingRows = appointments.filter(isUpcomingRow);
-  const pastRows = appointments.filter((a) => !isUpcomingRow(a));
-  const showGrouped =
-    !view && activeSection === "upcoming" && upcomingRows.length > 0 && pastRows.length > 0;
+  const isUpcomingTab = !view && activeSection === "upcoming";
+  // On the Upcoming tab, past/concluded rows the backend padded the page
+  // with (see the route's upcoming→past fill order) are dropped from view
+  // entirely rather than tucked behind a collapsed section.
+  const visibleRows = isUpcomingTab ? upcomingRows : appointments;
+  const showGrouped = isUpcomingTab && upcomingRows.length > 0;
   const blocks: Block[] = showGrouped
-    ? [...buildDayBlocks(upcomingRows, d), buildPastBlock(pastRows, d)]
-    : [{ key: "all", label: null, items: appointments }];
+    ? buildDayBlocks(upcomingRows, d)
+    : [{ key: "all", label: null, items: visibleRows }];
   // Queue-wide totals from the backend — deliberately not derived from
   // `appointments`, which is only the current page and only the current filter.
   const openAppointments = result.ok ? (result.data.summary?.openConsults ?? 0) : 0;
@@ -300,6 +303,11 @@ export default async function DoctorAppointmentsPage({
             data-active={activeSection === "pending" || undefined}
           >
             {d.appointments.tabPending}
+            {unfinalized > 0 ? (
+              <span className="gh-portal-tab__badge gh-portal-tab__badge--alert">
+                {unfinalized}
+              </span>
+            ) : null}
           </Link>
         </div>
       </div>
@@ -441,7 +449,7 @@ export default async function DoctorAppointmentsPage({
             {d.common.tryAgain}
           </Link>
         </div>
-      ) : appointments.length === 0 ? (
+      ) : visibleRows.length === 0 ? (
         hasActiveFilters ? (
           <AdminEmptyState
             className="gh-doctor-empty-state"
@@ -700,15 +708,6 @@ function buildDayBlocks(
       items: group.items,
     };
   });
-}
-
-function buildPastBlock(rows: DoctorAppointment[], d: ReturnType<typeof loadLocaleBundle>["doctor"]): Block {
-  return {
-    key: "past",
-    label: `${d.appointments.sectionPast} (${rows.length})`,
-    collapsible: true,
-    items: rows,
-  };
 }
 
 // Renders a block's header (plain or a collapsed `<details>` for the past
