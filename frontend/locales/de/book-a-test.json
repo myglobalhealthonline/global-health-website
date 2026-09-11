@@ -1,44 +1,63 @@
 {
   "hero": {
-    "eyebrow": "Book a Test",
-    "title": "Lab tests and scans, booked in minutes",
-    "subtitle": "Choose a test, pick a centre near you, and turn up at a time that suits."
+    "eyebrow": "Test buchen",
+    "title": "Labortests und Untersuchungen, in wenigen Minuten gebucht",
+    "subtitle": "Wählen Sie einen Test, ein Testzentrum in Ihrer Nähe und kommen Sie zu einer Zeit, die Ihnen passt.",
+    "cta": "Tests ansehen",
+    "trustCentresTitle": "Testzentren in Ihrer Nähe",
+    "trustCentresSubtitle": "Wählen Sie die passende Filiale",
+    "trustTimeTitle": "Wählen Sie Ihre Uhrzeit",
+    "trustTimeSubtitle": "Verfügbare Termine für die nächsten 14 Tage",
+    "trustCheckoutTitle": "Online bezahlen",
+    "trustCheckoutSubtitle": "Schließen Sie Ihre Buchung an der Kasse ab"
   },
   "catalogue": {
-    "empty": "No tests are available in this country yet. Please check back soon.",
-    "fromPrice": "From {price}",
-    "centreCount_one": "{count} centre",
-    "centreCount_other": "{count} centres",
-    "viewTest": "View test",
-    "bookNow": "Book this test"
+    "heading": "Wählen Sie Ihren Test",
+    "empty": "In diesem Land sind derzeit noch keine Tests verfügbar. Bitte schauen Sie bald wieder vorbei.",
+    "fromPrice": "Ab {price}",
+    "centreCount_one": "{count} Testzentrum",
+    "centreCount_other": "{count} Testzentren",
+    "viewTest": "Test ansehen",
+    "bookNow": "Diesen Test buchen"
   },
   "detail": {
-    "chooseCentre": "Choose a test centre",
-    "chooseCentreHint": "Prices and available times vary by centre.",
-    "chooseLocation": "Choose a location",
-    "preparation": "How to prepare",
-    "turnaround": "Results in {days} working days",
-    "turnaroundUnknown": "Turnaround confirmed by the centre",
-    "aboutThisTest": "About this test",
-    "selectCentre": "Select this centre"
+    "chooseCentre": "Wählen Sie ein Testzentrum",
+    "chooseCentreHint": "Preise und verfügbare Termine variieren je nach Testzentrum.",
+    "chooseLocation": "Wählen Sie eine Filiale",
+    "preparation": "So bereiten Sie sich vor",
+    "turnaround": "Ergebnisse in {days} Werktagen",
+    "turnaroundUnknown": "Bearbeitungszeit wird vom Testzentrum bestätigt",
+    "aboutThisTest": "Über diesen Test",
+    "selectCentre": "Dieses Testzentrum auswählen",
+    "backToTests": "Alle Tests",
+    "duration": "Etwa {minutes} Minuten"
   },
   "booking": {
-    "chooseTime": "Select a time",
-    "noSlots": "No available times at this centre in the next two weeks. Try another centre.",
-    "loadingSlots": "Loading available times...",
-    "slotTaken": "That time was just taken. Please pick another.",
-    "yourDetails": "Your details",
-    "fullName": "Full name",
-    "email": "Email",
-    "phone": "Phone",
-    "dateOfBirth": "Date of birth",
-    "notes": "Anything the centre should know (optional)",
-    "addToCart": "Continue to checkout",
-    "arriveEarly": "Please arrive 5-10 minutes before your appointment.",
-    "centreTime": "Times shown in the centre's local time."
+    "chooseTime": "Uhrzeit auswählen",
+    "noSlots": "In diesem Testzentrum sind in den nächsten zwei Wochen keine Termine verfügbar. Versuchen Sie es mit einem anderen Testzentrum.",
+    "loadingSlots": "Verfügbare Termine werden geladen...",
+    "slotTaken": "Dieser Termin wurde gerade vergeben. Bitte wählen Sie einen anderen.",
+    "yourDetails": "Ihre Angaben",
+    "fullName": "Vollständiger Name",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "dateOfBirth": "Geburtsdatum",
+    "notes": "Alles, was das Testzentrum wissen sollte (optional)",
+    "addToCart": "Weiter zur Kasse",
+    "arriveEarly": "Bitte kommen Sie 5-10 Minuten vor Ihrem Termin.",
+    "centreTime": "Die Zeiten werden in der Ortszeit des Testzentrums angezeigt.",
+    "stepTime": "Schritt 1 · Uhrzeit",
+    "stepDetails": "Schritt 2 · Ihre Angaben",
+    "summaryHeading": "Ihre Buchung",
+    "summaryTest": "Test",
+    "summaryLocation": "Filiale",
+    "summaryTime": "Uhrzeit",
+    "summaryPrice": "Preis",
+    "noTimeYet": "Noch nicht ausgewählt",
+    "changeLocation": "Filiale ändern"
   },
   "meta": {
-    "title": "Book a Test",
-    "description": "Book a lab test or scan at a test centre near you."
+    "title": "Test buchen",
+    "description": "Buchen Sie einen Labortest oder eine Untersuchung in einem Testzentrum in Ihrer Nähe."
   }
 }

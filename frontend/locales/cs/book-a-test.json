@@ -1,44 +1,63 @@
 {
   "hero": {
-    "eyebrow": "Objednat vysetreni",
-    "title": "Laboratorni testy a vysetreni behem par minut",
-    "subtitle": "Vyberte vysetreni, zvolte centrum ve svem okoli a prijdte v case, ktery vam vyhovuje."
+    "eyebrow": "Objednat vyšetření",
+    "title": "Laboratorní testy a vyšetření během pár minut",
+    "subtitle": "Vyberte vyšetření, zvolte centrum ve svém okolí a přijďte v čase, který vám vyhovuje.",
+    "cta": "Procházet vyšetření",
+    "trustCentresTitle": "Odběrová centra ve vašem okolí",
+    "trustCentresSubtitle": "Vyberte pobočku, která vám vyhovuje",
+    "trustTimeTitle": "Vyberte svůj čas",
+    "trustTimeSubtitle": "Dostupné časy na nejbližších 14 dní",
+    "trustCheckoutTitle": "Zaplaťte online",
+    "trustCheckoutSubtitle": "Dokončete objednávku při platbě"
   },
   "catalogue": {
-    "empty": "V teto zemi zatim nejsou dostupna zadna vysetreni. Zkuste to prosim pozdeji.",
+    "heading": "Vyberte si vyšetření",
+    "empty": "V této zemi zatím nejsou dostupná žádná vyšetření. Zkuste to prosím později.",
     "fromPrice": "Od {price}",
     "centreCount_one": "{count} centrum",
     "centreCount_other": "{count} center",
-    "viewTest": "Zobrazit vysetreni",
-    "bookNow": "Objednat toto vysetreni"
+    "viewTest": "Zobrazit vyšetření",
+    "bookNow": "Objednat toto vyšetření"
   },
   "detail": {
-    "chooseCentre": "Vyberte odberove centrum",
-    "chooseCentreHint": "Ceny a dostupne casy se u jednotlivych center lisi.",
-    "chooseLocation": "Vyberte pobocku",
-    "preparation": "Jak se pripravit",
-    "turnaround": "Vysledky do {days} pracovnich dnu",
-    "turnaroundUnknown": "Termin potvrdi centrum",
-    "aboutThisTest": "O tomto vysetreni",
-    "selectCentre": "Vybrat toto centrum"
+    "chooseCentre": "Vyberte odběrové centrum",
+    "chooseCentreHint": "Ceny a dostupné časy se u jednotlivých center liší.",
+    "chooseLocation": "Vyberte pobočku",
+    "preparation": "Jak se připravit",
+    "turnaround": "Výsledky do {days} pracovních dnů",
+    "turnaroundUnknown": "Termín potvrdí centrum",
+    "aboutThisTest": "O tomto vyšetření",
+    "selectCentre": "Vybrat toto centrum",
+    "backToTests": "Všechna vyšetření",
+    "duration": "Přibližně {minutes} minut"
   },
   "booking": {
-    "chooseTime": "Vyberte cas",
-    "noSlots": "V tomto centru nejsou v nasledujicich dvou tydnech volne casy. Zkuste jine centrum.",
-    "loadingSlots": "Nacitani volnych casu...",
-    "slotTaken": "Tento cas byl prave obsazen. Vyberte prosim jiny.",
-    "yourDetails": "Vase udaje",
-    "fullName": "Cele jmeno",
+    "chooseTime": "Vyberte čas",
+    "noSlots": "V tomto centru nejsou v následujících dvou týdnech volné časy. Zkuste jiné centrum.",
+    "loadingSlots": "Načítání volných časů...",
+    "slotTaken": "Tento čas byl právě obsazen. Vyberte prosím jiný.",
+    "yourDetails": "Vaše údaje",
+    "fullName": "Celé jméno",
     "email": "E-mail",
     "phone": "Telefon",
-    "dateOfBirth": "Datum narozeni",
-    "notes": "Co by melo centrum vedet (nepovinne)",
-    "addToCart": "Pokracovat k platbe",
-    "arriveEarly": "Dostavte se prosim 5-10 minut pred terminem.",
-    "centreTime": "Casy jsou v mistnim case centra."
+    "dateOfBirth": "Datum narození",
+    "notes": "Co by mělo centrum vědět (nepovinné)",
+    "addToCart": "Pokračovat k platbě",
+    "arriveEarly": "Dostavte se prosím 5-10 minut před termínem.",
+    "centreTime": "Časy jsou v místním čase centra.",
+    "stepTime": "Krok 1 · Čas",
+    "stepDetails": "Krok 2 · Vaše údaje",
+    "summaryHeading": "Vaše objednávka",
+    "summaryTest": "Vyšetření",
+    "summaryLocation": "Pobočka",
+    "summaryTime": "Čas",
+    "summaryPrice": "Cena",
+    "noTimeYet": "Zatím nevybráno",
+    "changeLocation": "Změnit pobočku"
   },
   "meta": {
-    "title": "Objednat vysetreni",
-    "description": "Objednejte si laboratorni test nebo vysetreni v centru ve svem okoli."
+    "title": "Objednat vyšetření",
+    "description": "Objednejte si laboratorní test nebo vyšetření v centru ve svém okolí."
   }
 }

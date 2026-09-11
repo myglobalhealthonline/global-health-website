@@ -2,9 +2,17 @@
   "hero": {
     "eyebrow": "Book a Test",
     "title": "Lab tests and scans, booked in minutes",
-    "subtitle": "Choose a test, pick a centre near you, and turn up at a time that suits."
+    "subtitle": "Choose a test, pick a centre near you, and turn up at a time that suits.",
+    "cta": "Browse tests",
+    "trustCentresTitle": "Test centres near you",
+    "trustCentresSubtitle": "Choose the branch that suits you",
+    "trustTimeTitle": "Choose your time",
+    "trustTimeSubtitle": "Available times for the next 14 days",
+    "trustCheckoutTitle": "Pay online",
+    "trustCheckoutSubtitle": "Complete your booking at checkout"
   },
   "catalogue": {
+    "heading": "Choose your test",
     "empty": "No tests are available in this country yet. Please check back soon.",
     "fromPrice": "From {price}",
     "centreCount_one": "{count} centre",
@@ -20,7 +28,9 @@
     "turnaround": "Results in {days} working days",
     "turnaroundUnknown": "Turnaround confirmed by the centre",
     "aboutThisTest": "About this test",
-    "selectCentre": "Select this centre"
+    "selectCentre": "Select this centre",
+    "backToTests": "All tests",
+    "duration": "About {minutes} minutes"
   },
   "booking": {
     "chooseTime": "Select a time",
@@ -35,7 +45,16 @@
     "notes": "Anything the centre should know (optional)",
     "addToCart": "Continue to checkout",
     "arriveEarly": "Please arrive 5-10 minutes before your appointment.",
-    "centreTime": "Times shown in the centre's local time."
+    "centreTime": "Times shown in the centre's local time.",
+    "stepTime": "Step 1 · Time",
+    "stepDetails": "Step 2 · Your details",
+    "summaryHeading": "Your booking",
+    "summaryTest": "Test",
+    "summaryLocation": "Location",
+    "summaryTime": "Time",
+    "summaryPrice": "Price",
+    "noTimeYet": "Not chosen yet",
+    "changeLocation": "Change location"
   },
   "meta": {
     "title": "Book a Test",

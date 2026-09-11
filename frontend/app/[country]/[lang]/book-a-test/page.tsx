@@ -1,20 +1,23 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { MapPin } from "lucide-react";
+import { CalendarDays, CreditCard, FlaskConical, MapPin } from "lucide-react";
 import { getCountryByCode } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { countryLangParams } from "@/lib/routing/static-params";
 import { isSupportedLocale } from "@/lib/content/get-page-content";
+import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { breadcrumbJsonLd, catalogueItemListJsonLd } from "@/lib/seo/structured-data";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { PageHero } from "@/components/sections/PageHero";
+import { ServiceCard } from "@/components/cards/ServiceCard";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { getCountryBookableTests } from "@/lib/content/get-country-tests";
 
@@ -44,9 +47,9 @@ export async function generateMetadata({
 /**
  * Public "Book a Test" catalogue for one market.
  *
- * Styled as a forest section on the dark public theme, matching the health-test
- * and consultation hubs — the earlier version used bare utility classes, which
- * rendered dark text on the dark ground and unstyled cards.
+ * Same anatomy as the other service hubs: dark PageHero, then the catalogue on
+ * a forest section in the shared dark-glass ServiceCard — never bare white
+ * cards, which no other public page uses.
  *
  * Lists only exams an admin marked bookable AND that an active centre in this
  * country performs; the backend applies that gate, so nothing here re-filters.
@@ -67,8 +70,27 @@ export default async function BookATestPage({
   if (!isCountryFeatureEnabled(overlay, "book-a-test")) notFound();
 
   const t = loadLocaleBundle(lang as LocaleCode).bookATest;
+  const countryName = getCommonLocale(lang as LocaleCode).countryNames?.[code] ?? config.name;
   const tests = await getCountryBookableTests(code, lang);
   const base = `/${slug}/${lang}`;
+
+  const trustCards = [
+    {
+      icon: <MapPin className="size-[18px]" strokeWidth={2} aria-hidden />,
+      title: t.hero.trustCentresTitle,
+      subtitle: t.hero.trustCentresSubtitle,
+    },
+    {
+      icon: <CalendarDays className="size-[18px]" strokeWidth={2} aria-hidden />,
+      title: t.hero.trustTimeTitle,
+      subtitle: t.hero.trustTimeSubtitle,
+    },
+    {
+      icon: <CreditCard className="size-[18px]" strokeWidth={2} aria-hidden />,
+      title: t.hero.trustCheckoutTitle,
+      subtitle: t.hero.trustCheckoutSubtitle,
+    },
+  ];
 
   return (
     <>
@@ -89,78 +111,63 @@ export default async function BookATestPage({
         />
       ) : null}
 
+      {/* DARK — hero */}
+      <PageHero
+        countryCode={config.code}
+        countryLabel={`${SITE_NAME} · ${countryName}`}
+        watermark={t.hero.eyebrow}
+        titleLead={t.hero.title}
+        titleAccent=""
+        lede={t.hero.subtitle}
+        ctaLabel={t.hero.cta}
+        ctaHref="#tests"
+        trustCards={trustCards}
+        heroImage={{ src: "/images/stock/tests.jpg", alt: t.hero.title, priority: true }}
+      />
+
+      {/* DARK — catalogue, forest glass cards */}
       <section
-        id="book-a-test"
+        id="tests"
         className="scroll-mt-24 relative overflow-hidden gh2-section-forest gh-medical-pattern gh-medical-pattern-dark"
         style={{ padding: "clamp(64px,8vw,120px) 0" }}
       >
         <SectionSeam theme="dark" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-          <p
-            className="text-[11px] font-bold uppercase tracking-[0.2em]"
-            style={{ color: "var(--color-brand-accent)" }}
-          >
+          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-accent)]">
             {t.hero.eyebrow}
           </p>
-          <h1
-            className="mt-3 font-extrabold tracking-[-0.03em] leading-[1.02]"
-            style={{
-              fontSize: "clamp(2rem, 4vw + 0.5rem, 3.5rem)",
-              color: "rgba(255,255,255,0.92)",
-            }}
-          >
-            {t.hero.title}
-          </h1>
-          <p
-            className="mt-4 max-w-[60ch]"
-            style={{ color: "rgba(255,255,255,0.65)" }}
-          >
-            {t.hero.subtitle}
-          </p>
+          <h2 className="mt-3 max-w-[20ch] text-[clamp(2rem,4vw+0.5rem,3.5rem)] font-extrabold leading-[1.02] tracking-[-0.03em] text-white/92">
+            {t.catalogue.heading}
+          </h2>
 
           {tests.length === 0 ? (
-            <p className="mt-10" style={{ color: "rgba(255,255,255,0.65)" }}>
-              {t.catalogue.empty}
-            </p>
+            <div className="gh2-status-card gh2-status-card-dark mt-12 max-w-2xl text-center">
+              <FlaskConical className="mx-auto size-6 text-[var(--color-brand-accent)]" strokeWidth={1.75} aria-hidden />
+              <p className="mt-3 text-white/75">{t.catalogue.empty}</p>
+            </div>
           ) : (
-            <ul className="mt-10 grid list-none gap-5 p-0 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-12 gh-card-grid">
               {tests.map((test) => (
-                <li
+                <ServiceCard
                   key={test.id}
-                  className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-white p-6 shadow-sm"
-                >
-                  <h2 className="m-0 text-lg font-extrabold text-[var(--color-text-primary)]">
-                    {test.name}
-                  </h2>
-                  {test.summary ? (
-                    <p className="m-0 text-sm text-[var(--color-text-muted)]">
-                      {test.summary}
-                    </p>
-                  ) : null}
-                  <p className="m-0 flex items-center gap-1.5 text-sm text-[var(--color-text-muted)]">
-                    <MapPin className="size-3.5 shrink-0" aria-hidden />
-                    {test.centreCount === 1
+                  dark
+                  href={`${base}/book-a-test/${test.slug}`}
+                  title={test.name}
+                  description={
+                    test.summary ??
+                    (test.centreCount === 1
                       ? t.catalogue.centreCount_one.replace("{count}", "1")
-                      : t.catalogue.centreCount_other.replace(
-                          "{count}",
-                          String(test.centreCount),
-                        )}
-                  </p>
-                  <p className="m-0 text-xl font-extrabold text-[var(--color-text-primary)]">
-                    {t.catalogue.fromPrice.replace(
-                      "{price}",
-                      formatPriceRounded(test.fromPriceCents, test.currencyCode),
-                    )}
-                  </p>
-                  <Link
-                    href={`${base}/book-a-test/${test.slug}`}
-                    className="gh-btn gh-btn-primary mt-auto w-full justify-center"
-                  >
-                    {t.catalogue.viewTest}
-                  </Link>
-                </li>
+                      : t.catalogue.centreCount_other.replace("{count}", String(test.centreCount)))
+                  }
+                  startingPrice={t.catalogue.fromPrice.replace(
+                    "{price}",
+                    formatPriceRounded(test.fromPriceCents, test.currencyCode),
+                  )}
+                  ctaLabel={t.catalogue.viewTest}
+                  imageSrc={test.imagePath ? resolveTrustedAssetUrl(test.imagePath) ?? null : null}
+                />
               ))}
-            </ul>
+            </div>
           )}
         </div>
       </section>

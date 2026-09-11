@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { getCountryByCode } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
@@ -47,7 +49,8 @@ export async function generateMetadata({
  *
  * The centre is validated here against the exam's published centre list, so a
  * hand-typed centre slug 404s rather than rendering a picker that could never
- * produce a bookable slot.
+ * produce a bookable slot. Layout mirrors the consultation booking flow on
+ * /book: ivory section, dark forest-glass step panel, summary alongside.
  */
 export default async function BookTestAtCentrePage({
   params,
@@ -82,30 +85,31 @@ export default async function BookTestAtCentrePage({
   // Falls back to UTC only when a market has no BookingSetting — the same
   // fallback the backend slot engine uses, so the two never disagree.
   const centreTz = overlay?.bookingTimezone ?? "UTC";
+  const base = `/${slug}/${lang}`;
+  const centreName = `${centre.name} — ${location.name}`;
 
   return (
-    <section
-      className="gh2-section-ivory"
-      style={{ padding: "clamp(40px,5vw,72px) 0" }}
-    >
-      <div className="mx-auto grid max-w-[var(--container-width)] gap-6 px-5 md:px-10">
-        <div>
-          <p
-            className="text-[11px] font-bold uppercase tracking-[0.2em]"
-            style={{ color: "var(--color-brand-primary)" }}
-          >
+    <section className="scroll-mt-24 gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel py-[clamp(40px,5vw,72px)]">
+      <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+        <Link
+          href={`${base}/book-a-test/${test.slug}#centres`}
+          className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-brand-primary)] underline decoration-transparent underline-offset-4 transition-colors hover:decoration-current"
+        >
+          <ArrowLeft className="size-4" strokeWidth={1.75} aria-hidden />
+          {t.booking.changeLocation}
+        </Link>
+
+        <header className="mt-6">
+          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
             {t.hero.eyebrow}
           </p>
-          <h1 className="mt-2 text-3xl font-extrabold tracking-[-0.02em] text-[var(--color-text-primary)]">
+          <h1 className="mt-2 max-w-[22ch] text-[clamp(2rem,4vw,3.2rem)] font-extrabold leading-[1.02] tracking-[-0.035em] text-[var(--color-text-primary)]">
             {test.name}
           </h1>
-          <p className="mt-2 text-[var(--color-text-muted)]">
-            {centre.name} — {location.name} ·{" "}
-            <span className="font-extrabold text-[var(--color-text-primary)]">
-              {formatPriceRounded(centre.patientPriceCents, centre.currencyCode)}
-            </span>
+          <p className="mt-3 max-w-[58ch] text-[length:var(--text-body)] leading-relaxed text-[var(--color-text-muted)]">
+            {centreName}
           </p>
-        </div>
+        </header>
 
         <BookTestForm
           countryCode={code}
@@ -114,10 +118,12 @@ export default async function BookTestAtCentrePage({
           testSlug={testSlug}
           centreSlug={centreSlug}
           locationSlug={locationSlug}
-          centreName={`${centre.name} — ${location.name}`}
+          testName={test.name}
+          centreName={centreName}
           centreAddress={
             [location.addressLine, location.city].filter(Boolean).join(", ") || null
           }
+          priceLabel={formatPriceRounded(centre.patientPriceCents, centre.currencyCode)}
           centreTz={centreTz}
           t={t}
           c={bundle.common.bookingForm}
