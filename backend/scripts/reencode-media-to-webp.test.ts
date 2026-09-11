@@ -9,7 +9,8 @@ it("skips optimized objects without opening streams and verifies conditional rep
   let gets = 0;
   let conflict = false;
   mock.module("../src/services/object-storage.js", { namedExports: {
-    headObject: async (key: string) => ({ contentType: key.endsWith(".webp") ? "image/webp" : "image/png" }),
+    headObject: async (key: string) => key.startsWith("media-original/") && !data.has(key) ? null : ({ contentType: key.endsWith(".webp") ? "image/webp" : "image/png" }),
+    deleteObject: async (key: string) => { data.delete(key); },
     getObject: async (key: string) => { gets++; return { Body: data.get(key), ContentType: "image/png", ETag: '"original"' }; },
     readObjectBodyToBuffer: async (body: Buffer) => body,
     putObject: async (key: string, body: Buffer, _type: string, ifMatch?: string) => {
@@ -38,7 +39,14 @@ it("skips optimized objects without opening streams and verifies conditional rep
     conflict = true;
     await assert.rejects(processKey("media/photo.png", true), /PreconditionFailed/);
     assert.deepEqual(data.get("media/photo.png"), original);
+    conflict = false;
+    process.argv.push("--remove-verified-backups");
+    await processKey("media/photo.png", true);
+    assert.equal(data.has(writes.at(-2)!.key), false);
+    assert.ok(data.get("media/photo.png")!.length < original.length);
   } finally {
+    const option = process.argv.indexOf("--remove-verified-backups");
+    if (option !== -1) process.argv.splice(option, 1);
     mock.restoreAll();
   }
 });

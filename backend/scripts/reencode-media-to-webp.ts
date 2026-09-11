@@ -31,18 +31,24 @@
  *   node --env-file=.env --import tsx scripts/reencode-media-to-webp.ts --apply
  *
  * Options: --prefix=media/  --limit=N  --concurrency=N
+ * --lossless-remaining=<previous manifest>: exclude that run's replacements
+ * and test remaining raster formats for smaller, pixel-identical WebP output.
+ * --remove-verified-backups: delete temporary originals after verifying writes,
+ * only when the operator has explicitly requested backup removal.
  *
  * Keep --concurrency at or below 4. Higher values ran sharp/libvips wide
  * enough to kill the process mid-list (silent exit, no summary printed) on
  * the 1.8 MB masters; the run is I/O-bound on S3 anyway.
  */
-import { convertToWebpIfEligible } from "../src/utils/image-webp.js";
+import { convertToWebpIfEligible, convertToLosslessWebpIfSmaller } from "../src/utils/image-webp.js";
+import { readFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import { pathToFileURL } from "node:url";
 import assert from "node:assert/strict";
 import sharp from "sharp";
 import {
   getObject,
+  deleteObject,
   headObject,
   isMediaStorageConfigured,
   listObjects,
@@ -51,7 +57,8 @@ import {
 } from "../src/services/object-storage.js";
 
 const BACKUP_PREFIX = "media-original/";
-const CONVERTIBLE = new Set(["image/jpeg", "image/png"]);
+const REMAINING_MANIFEST = process.argv.find((arg) => arg.startsWith("--lossless-remaining="))?.slice("--lossless-remaining=".length);
+const CONVERTIBLE = new Set(REMAINING_MANIFEST ? ["image/jpeg", "image/png", "image/webp", "image/avif", "image/gif", "image/tiff"] : ["image/jpeg", "image/png"]);
 
 function arg(name: string, fallback: string): string {
   const hit = process.argv.find((a) => a.startsWith(`--${name}=`));
@@ -76,7 +83,9 @@ export async function processKey(key: string, apply = APPLY): Promise<Result | n
   if (!CONVERTIBLE.has(contentType)) return null;
   if (!original) return { key, before: 0, after: 0, note: "unreadable body" };
 
-  const converted = await convertToWebpIfEligible(original, contentType);
+  const converted = REMAINING_MANIFEST
+    ? await convertToLosslessWebpIfSmaller(original)
+    : await convertToWebpIfEligible(original, contentType);
   if (!converted) return { key, before: original.length, after: original.length, note: "animation or no size saving — skipped" };
   if (converted.buffer.length >= original.length) {
     return { key, before: original.length, after: original.length, note: "webp not smaller — skipped" };
@@ -99,6 +108,10 @@ export async function processKey(key: string, apply = APPLY): Promise<Result | n
     const saved = await getObject(key);
     const savedBytes = await readObjectBodyToBuffer(saved.Body);
     assert.ok(savedBytes?.equals(converted.buffer), "Saved image verification failed");
+    if (process.argv.includes("--remove-verified-backups")) {
+      await deleteObject(backupKey);
+      assert.equal(await headObject(backupKey), null, "Backup deletion verification failed");
+    }
   }
   return { key, before: original.length, after: converted.buffer.length };
 }
@@ -106,8 +119,10 @@ export async function processKey(key: string, apply = APPLY): Promise<Result | n
 async function main() {
   if (!isMediaStorageConfigured()) throw new Error("Media storage is not configured");
 
+  const previous = REMAINING_MANIFEST ? JSON.parse(await readFile(REMAINING_MANIFEST, "utf8")) : null;
+  const excluded = new Set<string>(previous?.replacements.map((row: { key: string }) => row.key) ?? []);
   const objects = (await listObjects(PREFIX))
-    .filter((o) => !o.key.startsWith(BACKUP_PREFIX))
+    .filter((o) => !o.key.startsWith(BACKUP_PREFIX) && !excluded.has(o.key))
     .slice(0, LIMIT === Infinity ? undefined : LIMIT);
   console.log(`${APPLY ? "APPLY" : "DRY RUN"} — ${objects.length} object(s) under "${PREFIX}"\n`);
 

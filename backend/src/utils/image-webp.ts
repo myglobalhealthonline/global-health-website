@@ -39,3 +39,17 @@ export async function convertToWebpIfEligible(
 export function replaceExtension(filename: string, extension: string): string {
   return filename.replace(/\.[a-zA-Z0-9]+$/, `.${extension}`);
 }
+
+/** Existing compressed images must not accumulate another generation of lossy damage. */
+export async function convertToLosslessWebpIfSmaller(buffer: Buffer): Promise<ConvertedImage | null> {
+  const metadata = await sharp(buffer).metadata();
+  if ((metadata.pages ?? 1) > 1 || (metadata.format === "png" && buffer.includes(Buffer.from("acTL")))) return null;
+  if ((metadata.width ?? 0) > 16383 || (metadata.height ?? 0) > 16383) return null;
+  const candidate = await sharp(buffer).autoOrient().keepIccProfile().webp({ lossless: true, effort: 6 }).toBuffer();
+  if (candidate.length >= buffer.length) return null;
+  const decode = (input: Buffer) => sharp(input).autoOrient().toColourspace("srgb").ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const original = await decode(buffer);
+  const output = await decode(candidate);
+  if (original.info.width !== output.info.width || original.info.height !== output.info.height || !original.data.equals(output.data)) return null;
+  return { buffer: candidate, mimetype: "image/webp", extension: "webp" };
+}

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { it } from "node:test";
 import sharp from "sharp";
-import { convertToWebpIfEligible } from "./image-webp.js";
+import { convertToWebpIfEligible, convertToLosslessWebpIfSmaller } from "./image-webp.js";
 
 it("compresses public uploads without resizing, and skips larger outputs and other formats", async () => {
   const original = await sharp({ create: { width: 2560, height: 1440, channels: 3, background: "#385847" } }).png().toBuffer();
@@ -27,4 +27,13 @@ it("compresses public uploads without resizing, and skips larger outputs and oth
   assert.equal(orientation.orientation, undefined);
   const panorama = await sharp({ create: { width: 16384, height: 1, channels: 3, background: "red" } }).png().toBuffer();
   assert.equal(await convertToWebpIfEligible(panorama, "image/png"), null);
+});
+
+it("only replaces existing images when lossless WebP is smaller with identical pixels", async () => {
+  const source = await sharp({ create: { width: 256, height: 256, channels: 4, background: { r: 20, g: 100, b: 80, alpha: 0.5 } } }).png({ compressionLevel: 0 }).toBuffer();
+  const result = await convertToLosslessWebpIfSmaller(source);
+  assert.ok(result && result.buffer.length < source.length);
+  assert.deepEqual(await sharp(result.buffer).ensureAlpha().raw().toBuffer(), await sharp(source).ensureAlpha().raw().toBuffer());
+  const retry = await convertToLosslessWebpIfSmaller(result.buffer);
+  assert.equal(retry, null);
 });

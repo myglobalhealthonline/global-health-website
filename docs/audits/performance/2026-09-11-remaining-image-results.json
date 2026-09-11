@@ -1,0 +1,52 @@
+{
+  "completedAt": "2026-09-11T00:46:07.407Z",
+  "checked": 383,
+  "rasterCandidates": 382,
+  "changed": 8,
+  "savedBytes": 264,
+  "decodedPixelsPreserved": true,
+  "temporaryBackupsRemoved": true,
+  "failures": 0,
+  "replacements": [
+    {
+      "key": "media/00bf3f02-112b-475d-86c8-a8e3d947e31a-pixel.png",
+      "before": 67,
+      "after": 34
+    },
+    {
+      "key": "media/0876d0d4-f3a6-4e81-9e40-b5d2d8d57e3f-pixel.png",
+      "before": 67,
+      "after": 34
+    },
+    {
+      "key": "media/48cfe5cd-71f3-4246-a4c2-1d572cd31a8a-pixel.png",
+      "before": 67,
+      "after": 34
+    },
+    {
+      "key": "media/4d0617e5-3f9b-40b4-ba2d-ee928816d9bd-px.png",
+      "before": 67,
+      "after": 34
+    },
+    {
+      "key": "media/4da0f710-847c-4878-a28f-d62f2109fee7-pixel.png",
+      "before": 67,
+      "after": 34
+    },
+    {
+      "key": "media/6d5a3d79-77f1-4bee-97ef-324364a313a8-pixel.png",
+      "before": 67,
+      "after": 34
+    },
+    {
+      "key": "media/cb60cdd3-95fc-4cbd-9254-80ef112d7ff0-pixel.png",
+      "before": 67,
+      "after": 34
+    },
+    {
+      "key": "media/df40a92a-5522-4d81-98c7-f7f98c1bbfe4-pixel.png",
+      "before": 67,
+      "after": 34
+    }
+  ]
+}
