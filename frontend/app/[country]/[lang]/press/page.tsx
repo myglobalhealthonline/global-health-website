@@ -31,6 +31,11 @@ import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { EU_TRADE_MARK_URL } from "@/lib/brand/trademark";
 import { czechiaStaticPageSeo } from "@/lib/content/czechia-static-page-seo";
+import {
+  formatPressMonth,
+  listPressReleases,
+  pressReleaseCopy,
+} from "@/lib/content/press-releases";
 
 export const revalidate = 300;
 
@@ -115,6 +120,7 @@ export default async function CountryPressPage({ params }: { params: Promise<Par
 
   const base = `/${country}/${lang}`;
   const office = contact.office;
+  const releases = listPressReleases(resolved.code);
   const pressHref = `mailto:${contact.email}?subject=${encodeURIComponent(`Press — ${SITE_NAME} ${countryName}`)}`;
 
   // Verifiable facts only — registry data, regulator, markets, languages.
@@ -214,6 +220,43 @@ export default async function CountryPressPage({ params }: { params: Promise<Par
       <section className="gh-inline-clamp-section-pricing relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
         <SectionSeam theme="light" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          {releases.length > 0 ? (
+            <div className="mb-20">
+              <p className="gh-eyebrow text-[11px] font-bold uppercase tracking-[0.20em] text-[var(--color-brand-primary)]">
+                {t.releasesEyebrow}
+              </p>
+              <h2 className="mt-3 max-w-[20ch] text-[clamp(2rem,4vw+0.5rem,3.5rem)] font-extrabold leading-[1.02] tracking-[-0.03em] text-[var(--color-text-primary)]">
+                {t.releasesHeading}
+              </h2>
+              <ul className="mt-8 grid gap-4">
+                {releases.map((release) => {
+                  const copy = pressReleaseCopy(release.slug, lang as LocaleCode);
+                  return (
+                    <li key={release.slug}>
+                      <Link
+                        href={`${base}/press/${release.slug}`}
+                        className="group block rounded-2xl border border-[rgba(29,75,54,0.14)] bg-white/70 p-6 transition-colors hover:border-[var(--color-brand-primary)] md:p-8"
+                      >
+                        <p className="text-[12px] font-bold uppercase tracking-[0.16em] text-[var(--color-text-muted)]">
+                          <time dateTime={release.published}>{formatPressMonth(release.published, lang)}</time>
+                        </p>
+                        <h3 className="mt-3 max-w-[60ch] text-[1.25rem] font-extrabold leading-snug tracking-[-0.015em] text-[var(--color-text-primary)]">
+                          {copy.title}
+                        </h3>
+                        <p className="mt-3 line-clamp-3 max-w-[72ch] text-[15px] leading-relaxed text-[var(--color-text-muted)]">
+                          {copy.standfirst}
+                        </p>
+                        <span className="mt-4 inline-flex items-center gap-2 text-[15px] font-semibold text-[var(--color-brand-primary)] underline-offset-4 group-hover:underline">
+                          {t.releaseReadMore}
+                          <ArrowUpRight className="size-4" strokeWidth={1.75} aria-hidden />
+                        </span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ) : null}
           <p className="gh-eyebrow text-[11px] font-bold uppercase tracking-[0.20em] text-[var(--color-brand-primary)]">
             {t.boilerplateEyebrow}
           </p>

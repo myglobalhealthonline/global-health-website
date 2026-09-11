@@ -93,7 +93,17 @@
     "contactHeading": "Fale connosco",
     "contactBody": "Para entrevistas, comentários, dados ou verificação de factos, envie-nos um email e indique o seu meio de comunicação e prazo — damos prioridade a jornalistas com prazos apertados.",
     "ctaEmail": "Contacte a equipa de imprensa",
-    "ctaAbout": "Sobre nós"
+    "ctaAbout": "Sobre nós",
+    "releasesEyebrow": "Comunicados de imprensa",
+    "releasesHeading": "Anúncios",
+    "releaseReadMore": "Ler o comunicado",
+    "releaseEyebrow": "Comunicado de imprensa",
+    "releaseBackToPress": "Toda a informação de imprensa",
+    "releaseMediaContact": "Contacto de imprensa",
+    "releaseTranslationTemplate": "Esta é uma tradução. Idioma original do comunicado: {language}.",
+    "releaseReadOriginal": "Ler o original",
+    "releaseEmailLabel": "Email",
+    "releasePhoneLabel": "Telefone"
   },
   "medicalReview": {
     "breadcrumb": "Política de revisão médica",

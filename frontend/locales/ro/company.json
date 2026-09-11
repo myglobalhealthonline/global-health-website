@@ -93,7 +93,17 @@
     "contactHeading": "Vorbiți cu noi",
     "contactBody": "Pentru interviuri, comentarii, date sau verificarea faptelor, trimiteți-ne un e-mail și menționați publicația și termenul-limită — acordăm prioritate jurnaliștilor aflați aproape de termenul-limită.",
     "ctaEmail": "Trimiteți un e-mail echipei de presă",
-    "ctaAbout": "Despre noi"
+    "ctaAbout": "Despre noi",
+    "releasesEyebrow": "Comunicate de presă",
+    "releasesHeading": "Anunțuri",
+    "releaseReadMore": "Citiți comunicatul",
+    "releaseEyebrow": "Comunicat de presă",
+    "releaseBackToPress": "Toate informațiile de presă",
+    "releaseMediaContact": "Contact media",
+    "releaseTranslationTemplate": "Acesta este o traducere. Limba originală a comunicatului: {language}.",
+    "releaseReadOriginal": "Citiți originalul",
+    "releaseEmailLabel": "E-mail",
+    "releasePhoneLabel": "Telefon"
   },
   "medicalReview": {
     "breadcrumb": "Politica de revizuire medicală",

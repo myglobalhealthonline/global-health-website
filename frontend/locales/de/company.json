@@ -93,7 +93,17 @@
     "contactHeading": "Sprechen Sie mit uns",
     "contactBody": "Für Interviews, Stellungnahmen, Daten oder Faktenprüfungen senden Sie uns bitte eine E-Mail mit Angabe Ihres Mediums und Ihrer Frist — wir behandeln Journalisten mit knappen Fristen vorrangig.",
     "ctaEmail": "Schreiben Sie dem Presseteam",
-    "ctaAbout": "Über uns"
+    "ctaAbout": "Über uns",
+    "releasesEyebrow": "Pressemitteilungen",
+    "releasesHeading": "Ankündigungen",
+    "releaseReadMore": "Zur Pressemitteilung",
+    "releaseEyebrow": "Pressemitteilung",
+    "releaseBackToPress": "Alle Presseinformationen",
+    "releaseMediaContact": "Pressekontakt",
+    "releaseTranslationTemplate": "Dies ist eine Übersetzung. Originalsprache der Pressemitteilung: {language}.",
+    "releaseReadOriginal": "Original lesen",
+    "releaseEmailLabel": "E-Mail",
+    "releasePhoneLabel": "Telefon"
   },
   "medicalReview": {
     "breadcrumb": "Richtlinie zur medizinischen Prüfung",

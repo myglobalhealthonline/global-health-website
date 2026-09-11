@@ -12,6 +12,7 @@ import { getCountryHealthTests } from "@/lib/content/get-country-collections";
 import { fetchLandingSlugs } from "@/lib/api/site-content-api";
 import { listBlogPosts } from "@/lib/content/get-public-blog";
 import { listPublicJobs } from "@/lib/content/get-public-jobs";
+import { listPressReleases } from "@/lib/content/press-releases";
 import { hreflangRegion } from "@/lib/seo/hreflang";
 import { marketFaqLocales } from "@/lib/content/country-faq";
 import type { LocaleCode } from "@/lib/i18n/types";
@@ -554,6 +555,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Careers is dated by its newest live listing; Press remains code-resident.
     pushLocalized(country, "/careers", 0.3, dated(stamps.get(code)?.job));
     pushLocalized(country, "/press", 0.3);
+    // Press releases: code-resident and translated into every locale the
+    // market serves. Undated — the release carries only a month.
+    for (const release of listPressReleases(code)) {
+      pushLocalized(country, `/press/${release.slug}`, 0.4);
+    }
     // Country FAQ pages. Once a market has researched per-market copy, only the
     // locales that actually carry it are submitted — the others render a
     // fallback language and self-noindex (see lib/content/country-faq.ts), and

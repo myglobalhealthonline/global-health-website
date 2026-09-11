@@ -93,7 +93,17 @@
     "contactHeading": "Ozvěte se nám",
     "contactBody": "Pro rozhovory, vyjádření, data nebo ověření faktů nám napište e-mail a uveďte médium, pro které pracujete, a termín uzávěrky — novináře s blížící se uzávěrkou vyřizujeme přednostně.",
     "ctaEmail": "Napište tiskovému oddělení",
-    "ctaAbout": "O nás"
+    "ctaAbout": "O nás",
+    "releasesEyebrow": "Tiskové zprávy",
+    "releasesHeading": "Oznámení",
+    "releaseReadMore": "Přečíst tiskovou zprávu",
+    "releaseEyebrow": "Tisková zpráva",
+    "releaseBackToPress": "Všechny informace pro média",
+    "releaseMediaContact": "Kontakt pro média",
+    "releaseTranslationTemplate": "Toto je překlad. Původní jazyk tiskové zprávy: {language}.",
+    "releaseReadOriginal": "Přečíst originál",
+    "releaseEmailLabel": "E-mail",
+    "releasePhoneLabel": "Telefon"
   },
   "medicalReview": {
     "breadcrumb": "Zásady lékařské revize",

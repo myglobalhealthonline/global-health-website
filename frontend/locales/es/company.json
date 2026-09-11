@@ -93,7 +93,17 @@
     "contactHeading": "Hable con nosotros",
     "contactBody": "Para entrevistas, comentarios, datos o verificación de hechos, escríbanos por correo electrónico e indique su medio y plazo de entrega — damos prioridad a los periodistas con plazos ajustados.",
     "ctaEmail": "Escriba al equipo de prensa",
-    "ctaAbout": "Sobre nosotros"
+    "ctaAbout": "Sobre nosotros",
+    "releasesEyebrow": "Notas de prensa",
+    "releasesHeading": "Anuncios",
+    "releaseReadMore": "Leer la nota de prensa",
+    "releaseEyebrow": "Nota de prensa",
+    "releaseBackToPress": "Toda la información de prensa",
+    "releaseMediaContact": "Contacto de prensa",
+    "releaseTranslationTemplate": "Esta es una traducción. Idioma original de la nota de prensa: {language}.",
+    "releaseReadOriginal": "Leer el original",
+    "releaseEmailLabel": "Correo electrónico",
+    "releasePhoneLabel": "Teléfono"
   },
   "medicalReview": {
     "breadcrumb": "Política de revisión médica",

@@ -523,6 +523,35 @@ export function articleJsonLd(input: {
 }
 
 /**
+ * Schema.org `NewsArticle` for a press release. Authored and published by the
+ * organisation itself — no physician byline, so not `articleJsonLd`'s
+ * MedicalWebPage shape. `datePublished` may be month-precision (`YYYY-MM`,
+ * valid ISO 8601) when the release gives no day.
+ */
+export function pressReleaseJsonLd(input: {
+  title: string;
+  description: string;
+  url: string;
+  datePublished: string;
+  inLanguage: string;
+}) {
+  const url = input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`;
+  const org = { "@type": "MedicalOrganization", "@id": ORGANIZATION_ID, name: SITE_NAME, url: SITE_URL };
+  return {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: input.title,
+    description: input.description,
+    url,
+    mainEntityOfPage: url,
+    datePublished: input.datePublished,
+    inLanguage: input.inLanguage,
+    author: org,
+    publisher: org,
+  };
+}
+
+/**
  * Schema.org `MedicalProcedure` for a consultation page. Helps AI search
  * engines (Google AI Overviews, Perplexity) cite the page when a patient
  * asks about general/specialist consultations in a given country.

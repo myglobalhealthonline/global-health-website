@@ -93,7 +93,17 @@
     "contactHeading": "Talk to us",
     "contactBody": "For interviews, comments, data or fact-checking, email us and mention your outlet and deadline — we prioritise journalists on deadline.",
     "ctaEmail": "Email the press team",
-    "ctaAbout": "About us"
+    "ctaAbout": "About us",
+    "releasesEyebrow": "Press releases",
+    "releasesHeading": "Announcements",
+    "releaseReadMore": "Read the release",
+    "releaseEyebrow": "Press release",
+    "releaseBackToPress": "All press information",
+    "releaseMediaContact": "Media contact",
+    "releaseTranslationTemplate": "This is a translation. Original language of the release: {language}.",
+    "releaseReadOriginal": "Read the original",
+    "releaseEmailLabel": "Email",
+    "releasePhoneLabel": "Phone"
   },
   "medicalReview": {
     "breadcrumb": "Medical review policy",
