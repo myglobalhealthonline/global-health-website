@@ -1071,7 +1071,8 @@ const cartRoute: FastifyPluginAsync = async (app) => {
                     active: true,
                     OR: [
                       { countryId: svc.countryId },
-                      { additionalCountries: { some: { active: true, countryId: svc.countryId } } },
+                      // Visibility flag only — must not gate bookability.
+                      { additionalCountries: { some: { countryId: svc.countryId } } },
                     ],
                   },
                 },
@@ -1599,10 +1600,10 @@ const cartRoute: FastifyPluginAsync = async (app) => {
                     active: true,
                     OR: [
                       { country: { code: countryCode, isActive: true } },
+                      // Visibility flag only — must not gate bookability.
                       {
                         additionalCountries: {
                           some: {
-                            active: true,
                             country: { code: countryCode, isActive: true },
                           },
                         },

@@ -648,15 +648,15 @@ export async function listDoctorsByCountry(
         active: true,
         OR: [
           { country: { code: countryCode, isActive: true } },
-          {
-            additionalCountries: {
-              some: {
-                active: true,
-                country: { code: countryCode, isActive: true },
-              },
-            },
-          },
+          { additionalCountries: { some: { country: { code: countryCode, isActive: true } } } },
         ],
+        // The primary country's membership above doesn't go through
+        // DoctorCountry at all, so it can't see that row's `active` flag —
+        // exclude here instead. ensurePrimaryMarketRow guarantees a row
+        // exists once an admin has touched the country profile editor, but
+        // a doctor with no row yet (never opened) must stay visible, so we
+        // only exclude on an explicit active:false, never on a missing row.
+        NOT: { additionalCountries: { some: { active: false, country: { code: countryCode } } } },
       },
       orderBy: [{ fullName: "asc" }],
       take: PUBLIC_DOCTORS_LIST_CAP,
@@ -886,15 +886,12 @@ export async function getDoctorByCountryAndSlug(
         active: true,
         OR: [
           { country: { code: countryCode, isActive: true } },
-          {
-            additionalCountries: {
-              some: {
-                active: true,
-                country: { code: countryCode, isActive: true },
-              },
-            },
-          },
+          { additionalCountries: { some: { country: { code: countryCode, isActive: true } } } },
         ],
+        // See the matching comment in listDoctorsByCountry: the primary
+        // country's membership above can't see DoctorCountry.active, so we
+        // exclude on an explicit active:false here instead of requiring it.
+        NOT: { additionalCountries: { some: { active: false, country: { code: countryCode } } } },
       },
       select: {
         ...publicDoctorScalars,

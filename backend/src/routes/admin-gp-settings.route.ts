@@ -66,7 +66,7 @@ const adminGpSettingsRoute: FastifyPluginAsync = async (app) => {
                 active: true,
                 OR: [
                   { country: { code } },
-                  { additionalCountries: { some: { active: true, country: { code } } } },
+                  { additionalCountries: { some: { country: { code } } } },
                 ],
                 assignedServices: {
                   some: { serviceId: resolvedService.id, isActive: true, status: "active" },

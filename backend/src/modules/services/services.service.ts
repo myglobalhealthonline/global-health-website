@@ -577,15 +577,13 @@ export async function listServicesByCountry(
               active: true,
               OR: [
                 { country: { code: countryCode, isActive: true } },
-                {
-                  additionalCountries: {
-                    some: {
-                      active: true,
-                      country: { code: countryCode, isActive: true },
-                    },
-                  },
-                },
+                { additionalCountries: { some: { country: { code: countryCode, isActive: true } } } },
               ],
+              // Primary-country membership above can't see DoctorCountry.active
+              // (it's not the additionalCountries relation), so exclude here.
+              NOT: {
+                additionalCountries: { some: { active: false, country: { code: countryCode } } },
+              },
             },
           },
           orderBy: { sortOrder: "asc" },
