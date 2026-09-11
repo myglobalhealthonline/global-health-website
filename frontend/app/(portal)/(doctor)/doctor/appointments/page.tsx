@@ -152,6 +152,16 @@ export default async function DoctorAppointmentsPage({
   const finalized = pick(sp, "finalized");
   const open = pick(sp, "open");
   const notFinalized = pick(sp, "notFinalized");
+  // Top-level section shortcuts (design ask: doctor navigates by Upcoming /
+  // Completed / Pending rather than hunting through the filter panel).
+  // Reuse the existing `finalized` / `notFinalized` query filters rather than
+  // inventing a new one — "Completed" and "Pending" are exactly those, and
+  // "Upcoming" is the plain unfiltered queue (which already fronts upcoming
+  // rows and tucks past ones behind a collapsed section, see showGrouped
+  // below). Highlighting only, so a deep link like `?view=cancelled` still
+  // composes normally without a tab fighting it.
+  const activeSection: "upcoming" | "completed" | "pending" =
+    finalized === "true" ? "completed" : notFinalized === "true" ? "pending" : "upcoming";
   const page = Number(pick(sp, "page") ?? "1") || 1;
   const filterValues = [
     view,
@@ -225,7 +235,8 @@ export default async function DoctorAppointmentsPage({
       new Date(a.scheduledAt).getTime() + LIVE_WINDOW_MS >= nowMs);
   const upcomingRows = appointments.filter(isUpcomingRow);
   const pastRows = appointments.filter((a) => !isUpcomingRow(a));
-  const showGrouped = !view && upcomingRows.length > 0 && pastRows.length > 0;
+  const showGrouped =
+    !view && activeSection === "upcoming" && upcomingRows.length > 0 && pastRows.length > 0;
   const blocks: Block[] = showGrouped
     ? [...buildDayBlocks(upcomingRows, d), buildPastBlock(pastRows, d)]
     : [{ key: "all", label: null, items: appointments }];
@@ -257,6 +268,41 @@ export default async function DoctorAppointmentsPage({
           </span>
         }
       />
+
+      {/* Server-rendered tab strip (plain links, not the client PortalTabs
+          primitive) so a click is a normal GET that carries the right
+          filter — no second client-side fetch/mount cycle needed. */}
+      <div className="mb-4" role="tablist" aria-label={d.appointments.tabsAriaLabel}>
+        <div className="gh-portal-tabs">
+          <Link
+            href="/doctor/appointments"
+            role="tab"
+            aria-selected={activeSection === "upcoming"}
+            className="gh-portal-tab"
+            data-active={activeSection === "upcoming" || undefined}
+          >
+            {d.appointments.tabUpcoming}
+          </Link>
+          <Link
+            href="/doctor/appointments?finalized=true"
+            role="tab"
+            aria-selected={activeSection === "completed"}
+            className="gh-portal-tab"
+            data-active={activeSection === "completed" || undefined}
+          >
+            {d.appointments.tabCompleted}
+          </Link>
+          <Link
+            href="/doctor/appointments?notFinalized=true"
+            role="tab"
+            aria-selected={activeSection === "pending"}
+            className="gh-portal-tab"
+            data-active={activeSection === "pending" || undefined}
+          >
+            {d.appointments.tabPending}
+          </Link>
+        </div>
+      </div>
 
       {/* Only shown when the doctor has no real appointments — the tour
           walks a real one through the actual workspace tabs instead
