@@ -1064,6 +1064,7 @@
     "soapEmpty": "No consultation note was recorded on the source appointment.",
     "statusAwaiting": "Awaiting your review",
     "statusMoreInfo": "More information requested",
+    "statusAccepted": "Accepted — prescription pending",
     "openConsultation": "Open consultation",
     "accept": "Accept & prescribe",
     "requestInfo": "Request more info",

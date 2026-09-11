@@ -1870,6 +1870,7 @@
     "soapEmpty": "Zum ursprünglichen Termin wurde keine Konsultationsnotiz erfasst.",
     "statusAwaiting": "Awaiting your review",
     "statusMoreInfo": "More information requested",
+    "statusAccepted": "Accepted — prescription pending",
     "openConsultation": "Open consultation",
     "accept": "Accept & prescribe",
     "requestInfo": "Request more info",

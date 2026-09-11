@@ -1298,6 +1298,21 @@ export type CrossBorderRxInboxItem = {
   createdAt: string;
 };
 
+/**
+ * Inbox membership: still needs the doctor's attention (AWAITING_DOCTOR /
+ * MORE_INFO), OR already accepted but not yet actually issued
+ * (`finalisedAt` null — see `finaliseCrossBorderRxInTransaction`). Deciding
+ * ACCEPT only records the doctor's decision; the prescription document isn't
+ * generated and sent until later, so an accepted-but-unissued request must
+ * stay visible or it silently falls off the doctor's radar between the two
+ * steps. Excluding `finalisedAt: null` here is what lets it drop out again
+ * once actually finalised.
+ */
+const INBOX_WHERE = {
+  status: { in: ["AWAITING_DOCTOR", "MORE_INFO", "ACCEPTED"] as const },
+  finalisedAt: null,
+} satisfies Prisma.CrossBorderPrescriptionRequestWhereInput;
+
 export async function listCrossBorderRxInbox(
   doctorId: string,
 ): Promise<{ items: CrossBorderRxInboxItem[] }> {
@@ -1305,7 +1320,7 @@ export async function listCrossBorderRxInbox(
     const rows = await prisma.crossBorderPrescriptionRequest.findMany({
       where: {
         targetDoctorId: doctorId,
-        status: { in: ["AWAITING_DOCTOR", "MORE_INFO"] },
+        ...INBOX_WHERE,
       },
       orderBy: [{ createdAt: "desc" }],
       take: 100,
@@ -1356,6 +1371,18 @@ export async function listCrossBorderRxInbox(
         createdAt: r.createdAt.toISOString(),
       })),
     };
+  } catch (error) {
+    throw normalizeDbError(error, "Cross-border prescription inbox is unavailable");
+  }
+}
+
+/** Lightweight count backing the doctor-portal nav badge — same membership
+ *  as `listCrossBorderRxInbox`, no row payload. */
+export async function countCrossBorderRxInboxPending(doctorId: string): Promise<number> {
+  try {
+    return await prisma.crossBorderPrescriptionRequest.count({
+      where: { targetDoctorId: doctorId, ...INBOX_WHERE },
+    });
   } catch (error) {
     throw normalizeDbError(error, "Cross-border prescription inbox is unavailable");
   }

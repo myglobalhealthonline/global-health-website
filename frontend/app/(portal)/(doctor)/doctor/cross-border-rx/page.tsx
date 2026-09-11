@@ -1,5 +1,6 @@
+import Link from "next/link";
 import { Globe2 } from "lucide-react";
-import { fetchCrossBorderRxInbox } from "@/lib/api/doctor-api";
+import { fetchCrossBorderRxInbox, type CrossBorderRxInboxItem } from "@/lib/api/doctor-api";
 import { getPortalLocale } from "@/lib/i18n/get-portal-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { CrossBorderRxDecisionPanel } from "./_components/cross-border-rx-decision-panel";
@@ -39,9 +40,17 @@ export default async function CrossBorderRxInboxPage() {
         <div className="gh-card p-6 text-sm text-[var(--portal-muted)]">{copy.empty}</div>
       ) : (
         <ul className="grid gap-4">
-          {items.map((item) => (
-            <li key={item.id} className="gh-card p-4">
-              <div className="flex flex-wrap items-start justify-between gap-2">
+          {items.map((item) =>
+            item.status === "ACCEPTED" ? (
+              // Squeezed row: the doctor already decided (Accept & prescribe),
+              // so the full clinical detail + decision buttons no longer apply
+              // — this just keeps the request visible until the prescription
+              // document is actually generated and sent (finalisedAt set),
+              // rather than disappearing the moment Accept was clicked.
+              <li
+                key={item.id}
+                className="gh-card flex flex-wrap items-center justify-between gap-2 p-3"
+              >
                 <div>
                   <p className="text-portal-compact font-semibold text-[var(--portal-text)]">
                     {item.patientFullName}
@@ -52,82 +61,122 @@ export default async function CrossBorderRxInboxPage() {
                     </p>
                   ) : null}
                 </div>
-                <span
-                  className={`rounded-full px-2.5 py-0.5 text-portal-thead font-bold uppercase tracking-[0.08em] ${
-                    item.status === "MORE_INFO"
-                      ? "bg-amber-100 text-amber-800"
-                      : "bg-[var(--portal-primary)]/10 text-[var(--portal-primary)]"
-                  }`}
-                >
-                  {item.status === "MORE_INFO" ? copy.statusMoreInfo : copy.statusAwaiting}
-                </span>
-              </div>
-
-              {item.clinicalSummary && item.clinicalSummary.trim() ? (
-                <>
-                  <p className="mt-3 text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
-                    {copy.summaryHeading}
-                  </p>
-                  <p className="mt-1 whitespace-pre-wrap rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3 text-portal-compact text-[var(--portal-text)]">
-                    {item.clinicalSummary}
-                  </p>
-                </>
-              ) : null}
-
-              {(() => {
-                const rows: Array<[string, string | null]> =
-                  item.soap.noteFormat === "FREEFORM"
-                    ? [
-                        [copy.soapChiefComplaint, item.soap.chiefComplaint],
-                        [copy.soapNote, item.soap.note],
-                      ]
-                    : [
-                        [copy.soapChiefComplaint, item.soap.chiefComplaint],
-                        [copy.soapSubjective, item.soap.subjective],
-                        [copy.soapObjective, item.soap.objective],
-                        [copy.soapAssessment, item.soap.assessment],
-                        [copy.soapPlan, item.soap.plan],
-                      ];
-                const present = rows.filter(([, v]) => v && v.trim());
-                return (
-                  <div className="mt-3">
-                    <p className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
-                      {copy.soapHeading}
-                    </p>
-                    <p className="mt-0.5 text-portal-label text-[var(--portal-muted)]">
-                      {copy.soapConsentNote}
-                    </p>
-                    {present.length === 0 ? (
-                      <p className="mt-1 text-portal-label text-[var(--portal-muted)]">
-                        {copy.soapEmpty}
-                      </p>
-                    ) : (
-                      <dl className="mt-2 grid gap-2 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3">
-                        {present.map(([label, value]) => (
-                          <div key={label}>
-                            <dt className="text-portal-label font-semibold text-[var(--portal-muted)]">
-                              {label}
-                            </dt>
-                            <dd className="mt-0.5 whitespace-pre-wrap text-portal-compact text-[var(--portal-text)]">
-                              {value}
-                            </dd>
-                          </div>
-                        ))}
-                      </dl>
-                    )}
-                  </div>
-                );
-              })()}
-
-              <CrossBorderRxDecisionPanel
-                requestId={item.id}
-                asyncAppointmentId={item.asyncAppointmentId}
-                copy={copy}
-              />
-            </li>
-          ))}
+                <div className="flex items-center gap-2">
+                  <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-portal-thead font-bold uppercase tracking-[0.08em] text-emerald-800">
+                    {copy.statusAccepted}
+                  </span>
+                  {item.asyncAppointmentId ? (
+                    <Link
+                      href={`/doctor/appointments/${item.asyncAppointmentId}?tab=consultation`}
+                      className="gh-btn gh-btn-soft"
+                    >
+                      {copy.openConsultation}
+                    </Link>
+                  ) : null}
+                </div>
+              </li>
+            ) : (
+              <FullCrossBorderRxCard key={item.id} item={item} copy={copy} />
+            ),
+          )}
         </ul>
       )}
     </div>
+  );
+}
+
+function FullCrossBorderRxCard({
+  item,
+  copy,
+}: {
+  item: CrossBorderRxInboxItem;
+  copy: ReturnType<typeof loadLocaleBundle>["doctor"]["crossBorderRxInbox"];
+}) {
+  return (
+    <li className="gh-card p-4">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <p className="text-portal-compact font-semibold text-[var(--portal-text)]">
+            {item.patientFullName}
+          </p>
+          {item.sourceDoctorName ? (
+            <p className="text-portal-label text-[var(--portal-muted)]">
+              {copy.fromLabel}: {item.sourceDoctorName}
+            </p>
+          ) : null}
+        </div>
+        <span
+          className={`rounded-full px-2.5 py-0.5 text-portal-thead font-bold uppercase tracking-[0.08em] ${
+            item.status === "MORE_INFO"
+              ? "bg-amber-100 text-amber-800"
+              : "bg-[var(--portal-primary)]/10 text-[var(--portal-primary)]"
+          }`}
+        >
+          {item.status === "MORE_INFO" ? copy.statusMoreInfo : copy.statusAwaiting}
+        </span>
+      </div>
+
+      {item.clinicalSummary && item.clinicalSummary.trim() ? (
+        <>
+          <p className="mt-3 text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+            {copy.summaryHeading}
+          </p>
+          <p className="mt-1 whitespace-pre-wrap rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3 text-portal-compact text-[var(--portal-text)]">
+            {item.clinicalSummary}
+          </p>
+        </>
+      ) : null}
+
+      {(() => {
+        const rows: Array<[string, string | null]> =
+          item.soap.noteFormat === "FREEFORM"
+            ? [
+                [copy.soapChiefComplaint, item.soap.chiefComplaint],
+                [copy.soapNote, item.soap.note],
+              ]
+            : [
+                [copy.soapChiefComplaint, item.soap.chiefComplaint],
+                [copy.soapSubjective, item.soap.subjective],
+                [copy.soapObjective, item.soap.objective],
+                [copy.soapAssessment, item.soap.assessment],
+                [copy.soapPlan, item.soap.plan],
+              ];
+        const present = rows.filter(([, v]) => v && v.trim());
+        return (
+          <div className="mt-3">
+            <p className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+              {copy.soapHeading}
+            </p>
+            <p className="mt-0.5 text-portal-label text-[var(--portal-muted)]">
+              {copy.soapConsentNote}
+            </p>
+            {present.length === 0 ? (
+              <p className="mt-1 text-portal-label text-[var(--portal-muted)]">
+                {copy.soapEmpty}
+              </p>
+            ) : (
+              <dl className="mt-2 grid gap-2 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3">
+                {present.map(([label, value]) => (
+                  <div key={label}>
+                    <dt className="text-portal-label font-semibold text-[var(--portal-muted)]">
+                      {label}
+                    </dt>
+                    <dd className="mt-0.5 whitespace-pre-wrap text-portal-compact text-[var(--portal-text)]">
+                      {value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+          </div>
+        );
+      })()}
+
+      <CrossBorderRxDecisionPanel
+        requestId={item.id}
+        asyncAppointmentId={item.asyncAppointmentId}
+        copy={copy}
+      />
+    </li>
   );
 }

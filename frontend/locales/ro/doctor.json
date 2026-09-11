@@ -1870,6 +1870,7 @@
     "soapEmpty": "Nu a fost înregistrată nicio notă de consultație la programarea sursă.",
     "statusAwaiting": "Awaiting your review",
     "statusMoreInfo": "More information requested",
+    "statusAccepted": "Accepted — prescription pending",
     "openConsultation": "Open consultation",
     "accept": "Accept & prescribe",
     "requestInfo": "Request more info",

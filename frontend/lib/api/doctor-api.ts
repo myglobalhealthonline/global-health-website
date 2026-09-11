@@ -179,6 +179,16 @@ export async function fetchCrossBorderRxInbox() {
   return doctorRequest<{ items: CrossBorderRxInboxItem[] }>("/api/doctor/cross-border-rx");
 }
 
+/** Pending cross-border-rx count — drives the doctor-portal nav badge.
+ *  Same membership as the inbox (AWAITING_DOCTOR / MORE_INFO / accepted but
+ *  not yet issued). Returns 0 on any failure so a nav render never breaks. */
+export async function fetchDoctorCrossBorderRxPendingCount(): Promise<number> {
+  const result = await doctorRequest<{ pendingCount: number }>(
+    "/api/doctor/cross-border-rx/pending-count",
+  );
+  return result.ok && typeof result.data.pendingCount === "number" ? result.data.pendingCount : 0;
+}
+
 /* ── Admin-approved profile fields ────────────────────────────────── */
 
 /**

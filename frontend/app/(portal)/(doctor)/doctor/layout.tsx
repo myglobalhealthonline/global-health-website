@@ -29,6 +29,7 @@ import { getServerAuthUser } from "@/lib/api/server-auth";
 import {
   fetchDoctorAppointments,
   fetchDoctorComplianceStatus,
+  fetchDoctorCrossBorderRxPendingCount,
   fetchDoctorNotifications,
   fetchDoctorPermissions,
   fetchDoctorSupportUnread,
@@ -81,6 +82,7 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     notif,
     unreadMessages,
     unreadSupport,
+    crossBorderRxPending,
     compliance,
     locale,
     tourAppointments,
@@ -89,6 +91,7 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     fetchDoctorNotifications(false),
     fetchDoctorUnreadMessageCount(),
     fetchDoctorSupportUnread(),
+    fetchDoctorCrossBorderRxPendingCount(),
     fetchDoctorComplianceStatus(),
     getPortalLocale(),
     // Minimal page just to find one appointment id to walk the tour through
@@ -206,7 +209,12 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
         { href: "/doctor/patients", label: d.nav.patients, icon: <Users className="size-4" aria-hidden /> },
         { href: "/doctor/services", label: d.nav.myServices, icon: <Stethoscope className="size-4" aria-hidden /> },
         { href: "/doctor/forms", label: d.nav.forms, icon: <FileText className="size-4" aria-hidden /> },
-        { href: "/doctor/cross-border-rx", label: d.nav.crossBorderRx, icon: <Globe2 className="size-4" aria-hidden /> },
+        {
+          href: "/doctor/cross-border-rx",
+          label: d.nav.crossBorderRx,
+          icon: <Globe2 className="size-4" aria-hidden />,
+          badge: crossBorderRxPending,
+        },
       ],
     },
     {

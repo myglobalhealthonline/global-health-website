@@ -1870,6 +1870,7 @@
     "soapEmpty": "No se registró ninguna nota de consulta en la cita de origen.",
     "statusAwaiting": "Awaiting your review",
     "statusMoreInfo": "More information requested",
+    "statusAccepted": "Accepted — prescription pending",
     "openConsultation": "Open consultation",
     "accept": "Accept & prescribe",
     "requestInfo": "Request more info",

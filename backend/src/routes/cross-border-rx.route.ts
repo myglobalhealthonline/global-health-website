@@ -11,6 +11,7 @@ import {
   listCrossBorderRxTargets,
   createCrossBorderRxRequest,
   listCrossBorderRxInbox,
+  countCrossBorderRxInboxPending,
   decideCrossBorderRxRequest,
   getCrossBorderRxConsentView,
   submitCrossBorderRxConsent,
@@ -192,6 +193,23 @@ const crossBorderRxRoute: FastifyPluginAsync = async (app) => {
       }
       app.log.error(error);
       return reply.status(500).send(errorResponse("Could not load requests"));
+    }
+  });
+
+  // Lightweight count for the doctor-portal nav badge — same membership as
+  // the inbox above (AWAITING_DOCTOR / MORE_INFO / accepted-but-unissued).
+  app.get("/api/doctor/cross-border-rx/pending-count", async (request, reply) => {
+    const auth = await verifyDoctorAccess(request);
+    if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+    try {
+      const pendingCount = await countCrossBorderRxInboxPending(auth.doctorId);
+      return okResponse({ pendingCount });
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not load pending count"));
     }
   });
 
