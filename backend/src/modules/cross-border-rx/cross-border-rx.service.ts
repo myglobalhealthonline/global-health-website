@@ -1678,7 +1678,13 @@ export async function finaliseCrossBorderRxInTransaction(
   // between matches zero rows and aborts the whole transaction.
   const completed = await tx.appointment.updateMany({
     where: { id: asyncAppointmentId, status: appointment.status },
-    data: { status: "COMPLETED", consultationCompletedAt: new Date() },
+    // `finalized: true` alongside COMPLETED — without it this row never left
+    // the doctor queue's "Pending" (not-finalized) view even after the
+    // prescription document was generated and sent, because nothing else on
+    // this path ever flips `Appointment.finalized` (that flag is otherwise
+    // only set by the separate notes/files finalizeDoctorAppointment flow,
+    // which this consultation type never goes through).
+    data: { status: "COMPLETED", consultationCompletedAt: new Date(), finalized: true },
   });
   if (completed.count === 0) {
     // The status moved between the read and this write. Re-read it so the
