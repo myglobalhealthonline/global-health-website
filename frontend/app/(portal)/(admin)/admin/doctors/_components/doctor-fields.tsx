@@ -218,7 +218,7 @@ export function DoctorFields({
 
         <label className="gh-form-section__span-2 flex cursor-pointer items-center gap-2">
           <input type="checkbox" name="active" defaultChecked={initial?.active ?? true} className="h-4 w-4 rounded border-[var(--color-border)]" />
-          <span className="text-sm text-[var(--color-text-primary)]">Active (shown on public API when active)</span>
+          <span className="text-sm text-[var(--color-text-primary)]">Account active (unchecking suspends: blocks login, slots and bookings everywhere)</span>
         </label>
       </FormSection>
 

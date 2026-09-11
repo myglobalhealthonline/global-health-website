@@ -325,7 +325,6 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
               {
                 additionalCountries: {
                   some: {
-                    active: true,
                     country: { code: countryCode, isActive: true },
                   },
                 },

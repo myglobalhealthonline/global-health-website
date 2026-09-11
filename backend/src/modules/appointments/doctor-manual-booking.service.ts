@@ -65,13 +65,17 @@ export type DoctorBookingOptions = {
   clinics: DoctorBookingClinicDto[];
 };
 
-/** Countries the doctor is rostered in (primary + active additional). */
+/**
+ * Countries the doctor is rostered in (primary + additional). Not filtered by
+ * DoctorCountry.active — that flag is a website-visibility toggle only and
+ * must not affect bookability.
+ */
 async function getDoctorCountryIds(doctorId: string): Promise<string[]> {
   const doctor = await prisma.doctor.findUnique({
     where: { id: doctorId },
     select: {
       countryId: true,
-      additionalCountries: { where: { active: true }, select: { countryId: true } },
+      additionalCountries: { select: { countryId: true } },
     },
   });
   if (!doctor) return [];

@@ -361,11 +361,11 @@ export default async function AdminEditDoctorPage({
           </span>
         }
         title={doctor.fullName}
-        description="One doctor, multiple countries. Toggle active per-country to suspend in one place without hiding everywhere."
+        description="One doctor, multiple countries. The Suspend account toggle below blocks login and bookings everywhere; each country's Active on website toggle only controls public listing there — it never affects login or bookability."
         actions={
           <>
             <Pill tone={doctor.active ? "published" : "draft"}>
-              {doctor.active ? "Published" : "Draft"}
+              {doctor.active ? "Account active" : "Suspended"}
             </Pill>
             <Btn href={`/admin/doctors/${id}`} variant="ghost">
               Cancel
