@@ -45,12 +45,6 @@ import {
 
 export const dynamic = "force-dynamic";
 
-const NON_TERMINAL_STATUSES = new Set([
-  "REQUEST_RECEIVED",
-  "UNDER_REVIEW",
-  "CONTACTED",
-]);
-
 const EXPECTED_PAGE_KEYS_PER_COUNTRY = 6; // Home · GP hub · Specialist hub · Doctors · Prescriptions · Health tests
 
 function timeAgo(date: Date): string {
@@ -149,8 +143,10 @@ export default async function AdminDashboardPage() {
   const draftServices = consultationServices.filter((s) => !s.isActive).length;
 
   const appointments = appointmentsRes.ok ? appointmentsRes.data.items : [];
-  const pendingAppointments = appointments.filter((a) =>
-    NON_TERMINAL_STATUSES.has(a.status),
+  // "Pending" = not yet finalized by the doctor, not the request/review/contact
+  // status — matches the Country-health table's definition (finalized=false).
+  const pendingAppointments = appointments.filter(
+    (a) => !a.finalized && a.status !== "CANCELLED",
   ).length;
 
   // Only the CMS-managed page keys count here — HOME/DOCTORS_INDEX keep their
