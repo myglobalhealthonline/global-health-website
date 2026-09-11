@@ -35,6 +35,7 @@ import { TimezoneSelect } from "@/components/calendar/TimezoneSelect";
 import { ViewToggle, type CalendarView } from "@/components/calendar/view-toggle";
 import { AddAvailabilityDialog } from "@/components/calendar/add-availability-dialog";
 import { BlockSlotDialog } from "@/components/calendar/block-slot-dialog";
+import { BlockSlotsRangeCard } from "@/components/calendar/block-slots-range-card";
 import { RemoveSlotDialog } from "@/components/calendar/remove-slot-dialog";
 import { SelectionActionBar } from "@/components/calendar/selection-action-bar";
 import { describeAddResult } from "@/components/calendar/add-slot-dialog";
@@ -542,6 +543,14 @@ export function DoctorAvailabilityUI({
           {slotManager.notice}
         </div>
       ) : null}
+
+      <div className="mb-4">
+        <BlockSlotsRangeCard
+          timeZone={tz}
+          busy={busy}
+          onRun={(action, span, reason) => void slotManager.bulkSpan(action, span, reason)}
+        />
+      </div>
 
       <AdminSummaryStrip
         className="mb-4"

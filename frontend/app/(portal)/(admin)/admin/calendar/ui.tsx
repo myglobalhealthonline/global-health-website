@@ -28,6 +28,7 @@ import {
   describeAddResult,
 } from "@/components/calendar/add-slot-dialog";
 import { BlockSlotDialog } from "@/components/calendar/block-slot-dialog";
+import { BlockSlotsRangeCard } from "@/components/calendar/block-slots-range-card";
 import { RemoveSlotDialog } from "@/components/calendar/remove-slot-dialog";
 import { ADMIN_CALENDAR_DEFAULT_TZ, CURATED_TIME_ZONES } from "@/lib/timezones";
 import { SelectionActionBar } from "@/components/calendar/selection-action-bar";
@@ -456,6 +457,14 @@ export function AdminCalendarUI({
         <LegendDot tone="var(--portal-info)" label="Booked" />
         <LegendDot tone="var(--portal-danger)" label="Blocked" />
       </div>
+
+      <BlockSlotsRangeCard
+        timeZone={tz}
+        disabled={!bulkReady}
+        disabledHint="Filter to one doctor above to block or unblock their slots."
+        busy={slotBusy}
+        onRun={(action, span, reason) => void runBulk(action, { spans: [span] }, reason)}
+      />
 
       {/* Block/unblock failures on the week grid have no drawer to land in —
           and the dialog shows its own copy while it's open. */}
