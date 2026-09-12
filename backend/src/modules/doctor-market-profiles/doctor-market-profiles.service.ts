@@ -6,7 +6,7 @@ import {
   maskIban,
   normalizeIban,
 } from "../../utils/iban.js";
-import { sanitizeRichHtml } from "../../utils/sanitize-html.js";
+import { sanitizeDoctorBio } from "../../utils/sanitize-html.js";
 import { assertLocaleSupported } from "../shared/locale-support.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import type {
@@ -246,14 +246,14 @@ export async function updateAdminDoctorMarket(
               doctorCountryId: row.id,
               locale: entry.locale,
               title: entry.title ?? null,
-              bio: entry.bio == null ? null : sanitizeRichHtml(entry.bio),
+              bio: entry.bio == null ? null : sanitizeDoctorBio(entry.bio),
               seoTitle: entry.seoTitle ?? null,
               seoDescription: entry.seoDescription ?? null,
               seoKeywords: entry.seoKeywords,
             },
             update: {
               title: entry.title ?? null,
-              bio: entry.bio == null ? null : sanitizeRichHtml(entry.bio),
+              bio: entry.bio == null ? null : sanitizeDoctorBio(entry.bio),
               seoTitle: entry.seoTitle ?? null,
               seoDescription: entry.seoDescription ?? null,
               seoKeywords: entry.seoKeywords,
