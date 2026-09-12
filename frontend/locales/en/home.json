@@ -30,6 +30,7 @@
       "languageLabel": "Consultation language",
       "pickTime": "Pick a time",
       "today": "Today",
+      "nextAvailable": "Next available",
       "continue": "Continue",
       "minSuffix": "min",
       "reassure": "Choose your language and pick a time. We will assign the right GP."

@@ -7,7 +7,7 @@ import type {
   DoctorTranslationInput,
 } from "../../validations/admin-doctors.schema.js";
 import { normalizeDbError } from "../shared/db-errors.js";
-import { sanitizeRichHtml } from "../../utils/sanitize-html.js";
+import { sanitizeDoctorBio } from "../../utils/sanitize-html.js";
 import { doctorProfileImageKey } from "../../utils/doctor-image-key.js";
 import { resolveTranslation } from "../shared/resolve-translation.js";
 import { assertLocaleSupported } from "../shared/locale-support.js";
@@ -405,7 +405,7 @@ async function upsertDoctorTranslations(
   for (const entry of translations) {
     const data = {
       title: entry.title,
-      bio: entry.bio === null || entry.bio === undefined ? null : sanitizeRichHtml(entry.bio),
+      bio: entry.bio === null || entry.bio === undefined ? null : sanitizeDoctorBio(entry.bio),
       seoTitle: entry.seoTitle ?? null,
       seoDescription: entry.seoDescription ?? null,
     };
@@ -1321,7 +1321,7 @@ export async function createAdminDoctor(input: AdminDoctorCreateBody): Promise<A
           slug: input.slug,
           fullName: input.fullName,
           title: input.title,
-          bio: sanitizeRichHtml(input.bio),
+          bio: sanitizeDoctorBio(input.bio),
           // Phase 2: imcRegistration column is gone. The admin schema
           // still accepts the field for backward compat with old form
           // submissions (a stale frontend cache might POST it); we just
@@ -1490,7 +1490,7 @@ export async function updateAdminDoctor(
           ...(body.slug !== undefined && { slug: body.slug }),
           ...(body.fullName !== undefined && { fullName: body.fullName }),
           ...(body.title !== undefined && { title: body.title }),
-          ...(body.bio !== undefined && { bio: sanitizeRichHtml(body.bio) }),
+          ...(body.bio !== undefined && { bio: sanitizeDoctorBio(body.bio) }),
           // Phase 2: imcRegistration column dropped — silently ignore
           // any legacy frontend that still posts it. Real registrations
           // live on DoctorCountry rows now.
