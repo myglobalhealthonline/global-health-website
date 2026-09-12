@@ -1,6 +1,7 @@
 import { prisma } from "../../db/prisma.js";
 import { isCommissionCountry } from "../orders/commission.service.js";
 import { decryptPhi } from "../../lib/crypto/phi-crypto.js";
+import { resolveFiscalNumberForCountry } from "../patient-profile/patient-country-tax-ids.js";
 
 /**
  * The payload the printable invoice page renders — the document itself, its
@@ -178,7 +179,7 @@ export async function buildInvoiceDetailPayload(
   // PatientProfile — taxpayer ID printed on the document.
   const profile = await prisma.patientProfile.findUnique({
     where: { email: invoice.order.email.toLowerCase() },
-    select: { id: true, taxIdNumber: true },
+    select: { id: true, taxIdNumber: true, addressCountryCode: true },
   });
 
   // Consultation date from the appointment.
@@ -225,10 +226,19 @@ export async function buildInvoiceDetailPayload(
       doctorPayoutTotalCents: invoice.order.doctorPayoutTotalCents,
       paymentStatus: invoice.order.paymentStatus,
       paidAt: invoice.order.paidAt?.toISOString() ?? null,
-      // taxIdNumber is a PHI_ENCRYPTED_FIELDS column — reading it raw printed
-      // the "phi:v1:…" envelope onto the document where the tax number should
-      // be. decryptPhi passes plaintext/legacy values through unchanged.
-      taxIdNumber: safeDecrypt(profile?.taxIdNumber),
+      // The fiscal number for the country this invoice is issued in. A patient
+      // consulting in two markets holds one per market, and the shared chart
+      // column can only hold one of them. Falls back to that column (decrypted
+      // — reading it raw printed the "phi:v1:…" envelope where the tax number
+      // should be) so a single-country patient is unaffected.
+      taxIdNumber: await resolveFiscalNumberForCountry(
+        profile?.id ?? null,
+        invoice.countryCode,
+        {
+          value: safeDecrypt(profile?.taxIdNumber),
+          addressCountryCode: profile?.addressCountryCode ?? null,
+        },
+      ),
       consultationDate,
       items: invoice.order.items.map((i) => ({
         id: i.id,

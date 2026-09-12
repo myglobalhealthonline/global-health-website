@@ -4,6 +4,7 @@ import { PDF_TOKENS as T, PDF_SANS, PDF_SERIF, pdfLogoDataUrl, pdfEcgRule } from
 import { clinicAddressLines } from "../../lib/clinic-addresses.js";
 import { isCommissionCountry } from "../orders/commission.service.js";
 import { safeDecrypt } from "./invoice-detail.service.js";
+import { resolveFiscalNumberForCountry } from "../patient-profile/patient-country-tax-ids.js";
 
 // ── i18n labels ───────────────────────────────────────────────────────────────
 
@@ -684,8 +685,21 @@ export async function buildInvoicePdfData(
 
   const profile = await prisma.patientProfile.findUnique({
     where: { email: order.email.toLowerCase() },
-    select: { taxIdNumber: true },
+    select: { id: true, taxIdNumber: true, addressCountryCode: true },
   });
+  // An invoice is issued in a market, so it carries THAT market's fiscal number.
+  // A patient who consults in two countries holds one per country; the shared
+  // chart column can only hold one of them, and printing the other country's
+  // number under this invoice's label is a wrong fiscal document. Falls back to
+  // the column so a patient with a single number is unaffected.
+  const invoiceTaxId = await resolveFiscalNumberForCountry(
+    profile?.id ?? null,
+    order.countryCode,
+    {
+      value: safeDecrypt(profile?.taxIdNumber),
+      addressCountryCode: profile?.addressCountryCode ?? null,
+    },
+  );
 
   const consultItem = order.items.find(
     (i) =>
@@ -787,9 +801,8 @@ export async function buildInvoicePdfData(
         subtotalCents: commissionCents - order.shippingCents,
         shippingCents: order.shippingCents,
         paidAt: order.paidAt?.toISOString() ?? null,
-        // PHI-encrypted column — raw reads printed the phi:v1: envelope onto
-        // the emailed PDF. See safeDecrypt in invoice-detail.service.ts.
-        taxIdNumber: safeDecrypt(profile?.taxIdNumber),
+        // This invoice's own country first — see invoiceTaxId above.
+        taxIdNumber: invoiceTaxId,
         consultationDate,
         items: buildCommissionLines(order.items, commissionCents, order.shippingCents, L),
       },
@@ -814,8 +827,8 @@ export async function buildInvoicePdfData(
       subtotalCents: order.subtotalCents,
       shippingCents: order.shippingCents,
       paidAt: order.paidAt?.toISOString() ?? null,
-      // PHI-encrypted column — see safeDecrypt in invoice-detail.service.ts.
-      taxIdNumber: safeDecrypt(profile?.taxIdNumber),
+      // This invoice's own country first — see invoiceTaxId above.
+      taxIdNumber: invoiceTaxId,
       consultationDate,
       items: order.items.map((i) => ({
         name: i.name,
