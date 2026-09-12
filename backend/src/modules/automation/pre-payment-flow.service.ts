@@ -145,6 +145,48 @@ export function prePaymentLastReminderStage(flow: PrePaymentFlow): number {
   return prePaymentCancelStage(flow) - 1;
 }
 
+/**
+ * The reminder stage an unpaid order SHOULD sit at once its consultation has
+ * moved, or null when nothing needs changing.
+ *
+ * The ladder's thresholds are hours-before-consultation (72/48/24/12/6), so a
+ * move rewrites which rungs are still ahead of the patient. Without this the
+ * stage marker stayed where the OLD time had pushed it: an order moved from
+ * "in 2 hours" out to three weeks kept a spent ladder, and the cron's
+ * `nextStage >= cancelStage` guard then sent NOTHING before the new deadline.
+ *
+ * Only ever rewinds (mirroring `postPaymentStageAfterReschedule`). Moving a
+ * consultation earlier must not fast-forward the marker and silently swallow
+ * rungs the patient never received — the cron catches those up on its own
+ * next tick.
+ *
+ * Stage 1 is the floor, never 0: it is the initial checkout message sent when
+ * the flow started, not a reminder, and re-sending it is not this ladder's job.
+ */
+export function prePaymentStageAfterReschedule(input: {
+  flow: PrePaymentFlow;
+  currentStage: number;
+  consultStart: Date | null;
+  now: Date;
+}): number | null {
+  const { flow, currentStage, consultStart, now } = input;
+  if (!consultStart) return null;
+  // Web checkout's single nudge is clock-based off `paymentDueAt`, not hours
+  // before the consultation, so it has no hours ladder to rewind.
+  if (flow === PrePaymentFlow.WEB_CHECKOUT) return null;
+
+  const hoursLeft = hoursUntil(consultStart, now);
+  if (hoursLeft <= 0) return null;
+
+  const lastReminder = prePaymentLastReminderStage(flow);
+  let naturalStage = 1;
+  for (let stage = 2; stage <= lastReminder; stage++) {
+    const threshold = stageThresholdHours(flow, stage);
+    if (threshold != null && hoursLeft <= threshold) naturalStage = stage;
+  }
+  return naturalStage < currentStage ? naturalStage : null;
+}
+
 export function computePrePaymentPlan(input: {
   bookedAt: Date;
   consultationStartAt: Date | null;
@@ -1400,6 +1442,7 @@ export async function recomputePrePaymentDueAt(
       prePaymentFlow: true,
       paymentDueAt: true,
       createdAt: true,
+      prePaymentReminderStage: true,
     },
   });
   if (
@@ -1419,13 +1462,45 @@ export async function recomputePrePaymentDueAt(
     now,
   });
 
-  if (order.paymentDueAt && order.paymentDueAt.getTime() === due.getTime()) {
+  // The ladder's rungs are hours-before-consultation, so the marker has to
+  // follow the move too — not just the deadline. See
+  // `prePaymentStageAfterReschedule`.
+  const targetStage = prePaymentStageAfterReschedule({
+    flow: order.prePaymentFlow,
+    currentStage: order.prePaymentReminderStage,
+    consultStart: newConsultStart,
+    now,
+  });
+  const dueUnchanged =
+    order.paymentDueAt != null && order.paymentDueAt.getTime() === due.getTime();
+  if (dueUnchanged && targetStage === null) {
     return due;
   }
+
   await prisma.order.update({
     where: { id: orderId },
-    data: { paymentDueAt: due },
+    data: {
+      ...(dueUnchanged ? {} : { paymentDueAt: due }),
+      ...(targetStage !== null ? { prePaymentReminderStage: targetStage } : {}),
+    },
   });
+
+  if (targetStage !== null) {
+    await createAutomationRun({
+      automationKey: "pre_payment_reminders_rearmed",
+      orderId,
+      status: "SUCCESS",
+      summary: `Payment reminder ladder re-armed after reschedule (stage ${order.prePaymentReminderStage} -> ${targetStage})`,
+      metadata: {
+        previousStage: order.prePaymentReminderStage,
+        newStage: targetStage,
+        consultStart: newConsultStart.toISOString(),
+        paymentDueAt: due.toISOString(),
+      },
+      executedAt: new Date(),
+    }).catch(() => undefined);
+  }
+
   return due;
 }
 
