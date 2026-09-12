@@ -8,7 +8,11 @@ import type { CountryTaxIdEntry } from "@/lib/patient/country-tax-ids";
 
 type ProfileResponse = {
   nationalIdNumber: string | null;
-  taxIdNumber: string | null;
+  // `taxIdNumber` is deliberately absent. The fiscal number is per-country — a
+  // patient treated in Ireland and Brazil has a PPS and a CPF — and one input
+  // labelled "Tax ID" could only ever show one of them, under a label that did
+  // not say which country it belonged to. It is edited in the per-country
+  // section below instead, and this form never sends the column.
   passportNumber: string | null;
   utenteNumber: string | null;
   addressLine1: string | null;
@@ -118,7 +122,6 @@ const DEFAULT_I18N: MedicalI18n = {
 
 const EMPTY: ProfileResponse = {
   nationalIdNumber: null,
-  taxIdNumber: null,
   passportNumber: null,
   utenteNumber: null,
   addressLine1: null,
@@ -292,13 +295,6 @@ export function PatientProfileSection({
               hint={i18n.nationalIdHint}
               value={values.nationalIdNumber ?? ""}
               onChange={(v) => update("nationalIdNumber", v || null)}
-              maxLength={64}
-            />
-            <TextField
-              label={i18n.taxId}
-              hint={i18n.taxIdHint}
-              value={values.taxIdNumber ?? ""}
-              onChange={(v) => update("taxIdNumber", v || null)}
               maxLength={64}
             />
             <TextField

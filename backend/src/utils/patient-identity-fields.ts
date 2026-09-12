@@ -20,10 +20,20 @@
  * values can never disagree.
  */
 
-/** Render order in the patient-context card. */
+/**
+ * Render order in the patient-context card.
+ *
+ * `taxIdNumber` is deliberately NOT here. The fiscal number is the one
+ * identifier that is genuinely per-country — a patient treated in Ireland and
+ * Brazil has a PPS *and* a CPF — and a single row fed by the single chart
+ * column rendered whichever one happened to be stored under the local label:
+ * an Irish appointment showed "TAX ID  068.001.344-06", a Brazilian CPF. It
+ * lives in its own table now (PatientCountryTaxId) and the workspace edits it
+ * through the per-country rows, where every value is shown next to the country
+ * it belongs to.
+ */
 export const DOCTOR_IDENTITY_FIELDS = [
   "utenteNumber",
-  "taxIdNumber",
   "nationalIdNumber",
   "passportNumber",
   "preferredPharmacy",

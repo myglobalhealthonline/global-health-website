@@ -15,6 +15,7 @@ import { enqueueOrderPaidAutomations, enqueueMetaCapiPurchase } from "../outbox/
 import { encryptPhi } from "../../lib/crypto/phi-crypto.js";
 import { markRequisitionsReadyOnOrderPaid } from "../lab-orders/lab-requisitions.service.js";
 import { resolvePatientProfileIdForNewAppointment } from "../patient-profile/appointment-patient-link.js";
+import { recordPatientCountryTaxIdIfAbsent } from "../patient-profile/patient-country-tax-ids.js";
 
 export type PaymentLog = {
   info: (obj: unknown, msg?: string) => void;
@@ -356,10 +357,21 @@ async function backfillPatientProfile(
     aptPhone: string | null;
     aptDob: Date | null;
     patientProfileId: string | null;
+    /** The market this line was booked in — the country the identifier the
+     *  patient typed at booking belongs to. */
+    bookingCountryCode: string | null;
   },
 ): Promise<void> {
-  const { item, appointmentId, aptEmail, aptFullName, aptPhone, aptDob, patientProfileId } =
-    input;
+  const {
+    item,
+    appointmentId,
+    aptEmail,
+    aptFullName,
+    aptPhone,
+    aptDob,
+    patientProfileId,
+    bookingCountryCode,
+  } = input;
   if (
     aptEmail &&
     (item.patientNationalIdNumber ||
@@ -473,6 +485,19 @@ async function backfillPatientProfile(
         ...(item.insuranceCompanyId ? { insuranceDocumentStatus: "VERIFIED" as const } : {}),
       },
     });
+
+    // The identifier the booking form collected belongs to the market it was
+    // collected in — Brazil's form asks for a CPF, Portugal's for a NIF — so it
+    // is filed against THAT country, not just into the shared chart column.
+    // Without this the column alone was the whole record, and a Brazilian CPF
+    // stored there surfaced on an Irish appointment labelled "PPS". Never
+    // overwrites a row someone has curated.
+    await recordPatientCountryTaxIdIfAbsent(
+      upsertedProfile.id,
+      bookingCountryCode,
+      item.patientNationalIdNumber,
+      tx,
+    );
 
     // The upsert may have just MINTED the profile for a first-time patient,
     // in which case the link resolved above found nothing. Stamp it now —
@@ -785,6 +810,7 @@ async function fulfillPaidOrderFromCheckoutSession(
         aptPhone,
         aptDob,
         patientProfileId,
+        bookingCountryCode: order.countryCode,
       });
     }
 
@@ -989,6 +1015,7 @@ async function fulfillPaidOrderFromCheckoutSession(
         aptPhone,
         aptDob,
         patientProfileId,
+        bookingCountryCode: order.countryCode,
       });
     }
 
