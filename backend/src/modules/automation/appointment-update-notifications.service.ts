@@ -61,6 +61,13 @@ export type AppointmentUpdateNotifyInput = {
   previousDoctorId: string | null;
   newDoctorId: string | null;
   meetingUrl: string | null;
+  /**
+   * Suppress the patient's email + WhatsApp, keeping the doctor and admin
+   * channels. For callers that already send the patient their own branded
+   * message (the admin appointment form sends `sendAppointmentScheduledEmail`)
+   * and would otherwise deliver two contradictory notices for one change.
+   */
+  skipPatient?: boolean;
 };
 
 async function loadUpdateContext(input: AppointmentUpdateNotifyInput) {
@@ -448,7 +455,26 @@ export async function sendAppointmentUpdateNotifications(
   const { order, primary, lang, ctx, staffCtx, phoneHints } = loaded;
   const patientPhone = order.phone?.trim() || ctx.patientPhone;
 
-  if (order.email?.trim()) {
+  if (input.skipPatient) {
+    // Caller owns the patient's copy of this change — say so in the run log
+    // rather than silently leaving a gap where a send would normally appear.
+    await createAutomationRun({
+      automationKey: "appointment_update_patient_email",
+      orderId: order.id,
+      channel: "email",
+      status: "SKIPPED",
+      summary: "Patient email — appointment updated (sent by caller)",
+      executedAt: new Date(),
+    });
+    await createAutomationRun({
+      automationKey: "appointment_update_patient_whatsapp",
+      orderId: order.id,
+      channel: "whatsapp",
+      status: "SKIPPED",
+      summary: "Patient WhatsApp — appointment updated (sent by caller)",
+      executedAt: new Date(),
+    });
+  } else if (order.email?.trim()) {
     await sendPatientEmail(order.id, order.email.trim(), lang, ctx);
   } else {
     await createAutomationRun({
@@ -461,7 +487,9 @@ export async function sendAppointmentUpdateNotifications(
     });
   }
 
-  if (patientPhone) {
+  if (input.skipPatient) {
+    // Already logged as skipped alongside the patient email above.
+  } else if (patientPhone) {
     await sendWhatsApp(
       "appointment_update_patient_whatsapp",
       order.id,
