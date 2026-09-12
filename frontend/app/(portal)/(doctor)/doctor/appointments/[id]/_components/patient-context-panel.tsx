@@ -113,13 +113,13 @@ export function PatientContextPanel({
   const country = appointment.countryCode.toLowerCase();
   const isBrazil = country === "br";
   const isPortugal = country === "pt";
+  // `taxIdNumber` is not in this map, and the backend no longer offers it as an
+  // identity row: the fiscal number is per-country and lives in the section
+  // below. A single row fed by the single chart column showed whichever market's
+  // number happened to be stored — a Brazilian CPF read as "TAX ID" on an Irish
+  // appointment, and the same value went on to the document.
   const identityLabels: Partial<Record<PatientIdentityFieldKey, string>> = {
     utenteNumber: copy.utenteNumber,
-    taxIdNumber: isBrazil
-      ? copy.identityFields.cpf
-      : isPortugal
-        ? copy.identityFields.nif
-        : copy.identityFields.taxId,
     nationalIdNumber: isPortugal
       ? copy.identityFields.idCard
       : copy.identityFields.nationalId,
@@ -171,7 +171,6 @@ export function PatientContextPanel({
               labels={identityLabels}
               initial={{
                 utenteNumber: appointment.utenteNumber ?? null,
-                taxIdNumber: appointment.taxIdNumber ?? null,
                 nationalIdNumber: appointment.nationalIdNumber ?? null,
                 passportNumber: appointment.passportNumber ?? null,
                 // Falls back to the pharmacy captured on this booking when the

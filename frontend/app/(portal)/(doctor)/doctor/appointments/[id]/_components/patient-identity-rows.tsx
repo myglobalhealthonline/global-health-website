@@ -33,10 +33,13 @@ export type PatientIdentityFieldsCopy = {
 
 /** The PatientProfile columns this card writes. Keys match the PATCH body of
  *  /api/doctor/patients/:email/profile one-for-one, and the `identityFields`
- *  list the consultation endpoint returns. */
+ *  list the consultation endpoint returns.
+ *
+ *  `taxIdNumber` is not one of them: the fiscal number is per-country and is
+ *  edited through CountryFiscalNumbers, where each value is shown against the
+ *  country it belongs to. */
 export type PatientIdentityFieldKey =
   | "utenteNumber"
-  | "taxIdNumber"
   | "nationalIdNumber"
   | "passportNumber"
   | "preferredPharmacy";
@@ -45,7 +48,6 @@ type Values = Record<PatientIdentityFieldKey, string | null>;
 
 const MAX_LENGTHS: Record<PatientIdentityFieldKey, number> = {
   utenteNumber: 64,
-  taxIdNumber: 64,
   nationalIdNumber: 64,
   passportNumber: 64,
   preferredPharmacy: 200,

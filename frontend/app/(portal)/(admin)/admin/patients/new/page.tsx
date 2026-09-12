@@ -150,6 +150,9 @@ export default async function AdminCreatePatientPage({ searchParams }: PageProps
                 </label>
                 <label className="flex flex-col gap-1">
                   <span className="gh-field-label">Fiscal / tax number</span>
+                  {/* Filed against the country code entered below — a patient
+                      seen in two markets holds one fiscal number per market,
+                      and the rest are added on the patient record. */}
                   <input name="taxIdNumber" className="gh-input" placeholder="NIF / PPS / CPF" />
                 </label>
                 <label className="flex flex-col gap-1">

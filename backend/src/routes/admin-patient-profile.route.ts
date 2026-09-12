@@ -213,6 +213,20 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         profile = updated.profile;
       }
 
+      // The fiscal number on the create form belongs to the country entered
+      // beside it, so it is filed against that country too. Without this the
+      // number lived only in the shared chart column, and the moment the same
+      // patient was seen in a second market that column was the wrong country's
+      // number for one of them.
+      if (profile && parsed.data.taxIdNumber?.trim() && parsed.data.addressCountryCode?.trim()) {
+        await setPatientCountryTaxId(
+          profile.id,
+          parsed.data.addressCountryCode,
+          parsed.data.taxIdNumber,
+          { userId: resolveAdminSessionActor(request)?.userId ?? null },
+        ).catch((err) => app.log.error(err, "per-country fiscal number write failed"));
+      }
+
       const inviteToken = await issuePasswordResetToken(userId, {
         ttlMinutes: 7 * 24 * 60,
         isInvite: true,

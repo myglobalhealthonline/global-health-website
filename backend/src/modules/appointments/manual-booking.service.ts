@@ -35,6 +35,7 @@ import {
   applyPatientProfileUpdate,
   upsertPatientProfileByEmail,
 } from "../patient-profile/patient-profile.service.js";
+import { setPatientCountryTaxId } from "../patient-profile/patient-country-tax-ids.js";
 import {
   findPatientsMatchingIdentity,
   type PatientIdentityMatch,
@@ -1004,7 +1005,7 @@ export async function createManualBooking(
   // applyPatientProfileUpdate handles the country-aware fields
   // (nationalIdNumber / taxIdNumber / passportNumber / address) via
   // the same validation path the patient self-edit uses.
-  await applyPatientProfileUpdate(
+  const { profile: manualBookingProfile } = await applyPatientProfileUpdate(
     email,
     {
       ...(input.patient.nationalIdNumber !== undefined
@@ -1051,6 +1052,23 @@ export async function createManualBooking(
     },
     { fallbackFullName: fullName, fallbackPhone: input.patient.phone ?? null },
   );
+
+  // The fiscal number the admin typed was typed for THIS market — file it
+  // against that country as well as the shared chart column, so a patient who
+  // is also booked elsewhere keeps one number per country instead of whichever
+  // booking wrote the column last.
+  if (manualBookingProfile && input.patient.taxIdNumber?.trim()) {
+    await setPatientCountryTaxId(
+      manualBookingProfile.id,
+      input.countryCode,
+      input.patient.taxIdNumber.trim(),
+    ).catch((err) => {
+      input.request?.log.error(
+        { err, patientProfileId: manualBookingProfile.id },
+        "[manual-booking] per-country fiscal number write failed",
+      );
+    });
+  }
 
   const inviteToken = await issuePasswordResetToken(userId, {
     ttlMinutes: 7 * 24 * 60,

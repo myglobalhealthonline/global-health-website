@@ -87,7 +87,11 @@ export function PatientProfileEditor({
       surgeries: list("surgeries", "Surgeries"),
       usualMedication: list("usualMedication", "Usual medication"),
       nationalIdNumber: text("nationalIdNumber"),
-      taxIdNumber: text("taxIdNumber"),
+      // No `taxIdNumber`: the fiscal number is per-country (a patient treated
+      // in Ireland and Brazil has a PPS and a CPF) and is edited in the
+      // per-country section on the patient record, where each value is shown
+      // against the country it belongs to. One box labelled "Tax ID" could
+      // only ever hold one of them, unlabelled as to which.
       passportNumber: text("passportNumber"),
       utenteNumber: text("utenteNumber"),
       addressLine1: text("addressLine1"),
@@ -165,12 +169,6 @@ export function PatientProfileEditor({
               defaultValue={profile?.nationalIdNumber ?? ""}
               maxLength={64}
               hint="ID card / NIC / DNI / CC — label adapts to country in the patient UI."
-            />
-            <Field
-              label="Tax ID (NIF / PPS / CPF)"
-              name="taxIdNumber"
-              defaultValue={profile?.taxIdNumber ?? ""}
-              maxLength={64}
             />
             <Field
               label="Passport number"
