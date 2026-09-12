@@ -27,6 +27,7 @@
     "sameDay": {
       "eyebrow": "Need help?",
       "title": "Same-Day Consultation",
+      "titleNextAvailable": "Next Available Consultation",
       "languageLabel": "Consultation language",
       "pickTime": "Pick a time",
       "today": "Today",

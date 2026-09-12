@@ -44,6 +44,8 @@ type ServiceInfo = {
 export type SameDayBookingI18n = {
   eyebrow: string;
   title: string;
+  /** Title shown instead of `title` when only a later day has open times. */
+  titleNextAvailable: string;
   languageLabel: string;
   languagePlaceholder: string;
   pickTime: string;
@@ -62,6 +64,7 @@ export type SameDayBookingI18n = {
 const DEFAULT_I18N: SameDayBookingI18n = {
   eyebrow: "Need help?",
   title: "Same-Day Consultation",
+  titleNextAvailable: "Next Available Consultation",
   languageLabel: "Consultation language",
   languagePlaceholder: "Select your language…",
   pickTime: "Pick a time",
@@ -308,6 +311,8 @@ export function SameDayBooking({
 
   const hasTwoDaySlots = today.slots.length > 0 || tomorrow.slots.length > 0;
   const hasSlots = hasTwoDaySlots || next.slots.length > 0;
+  // "Same-Day" over Monday slots contradicts itself — retitle while falling back.
+  const title = !loading && hasSlots && !hasTwoDaySlots ? t.titleNextAvailable : t.title;
 
   const renderGroup = (heading: string, group: { label: string; slots: Slot[] }) => (
     <div key={heading}>
@@ -374,7 +379,7 @@ export function SameDayBooking({
         {t.eyebrow}
       </p>
       <h2 className="mt-2 text-[clamp(1.5rem,1rem+1.4vw,2rem)] font-extrabold leading-[1.05] tracking-[-0.02em] text-white">
-        {t.title}
+        {title}
       </h2>
 
       {/* Step 1 — language (custom dropdown — native select ignores CSS for open state) */}
@@ -490,7 +495,7 @@ export function SameDayBooking({
             </button>
             {service?.durationMinutes ? (
               <p className="mt-2 text-center text-[11px] text-white/45">
-                {t.title} · {service.durationMinutes} {t.minSuffix}
+                {title} · {service.durationMinutes} {t.minSuffix}
               </p>
             ) : null}
           </>
