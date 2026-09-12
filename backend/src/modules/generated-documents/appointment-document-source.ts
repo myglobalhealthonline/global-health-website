@@ -12,7 +12,7 @@ import {
 import { formatDateDdMmYyyy } from "./document-template-utils.js";
 import { labelsForPrefix } from "./docx-template-labels.js";
 import { resolvePatientProfileIdForAppointmentId } from "../patient-profile/appointment-patient-link.js";
-import { resolvePatientCountryTaxId } from "../patient-profile/patient-country-tax-ids.js";
+import { resolveFiscalNumberForCountry } from "../patient-profile/patient-country-tax-ids.js";
 import {
   labelPrefixForCountry,
   templatePrefixForCountry,
@@ -147,9 +147,13 @@ export async function resolveAppointmentDocumentSource(
   // only hold the home-country one, so it is the wrong source for the other
   // market's documents. Null when they never gave us one — the document then
   // prints no fiscal line, which is the intended blank.
-  const countryTaxIdNumber = await resolvePatientCountryTaxId(
+  const countryTaxIdNumber = await resolveFiscalNumberForCountry(
     documentPatientProfileId,
     appt.countryCode,
+    {
+      value: patientProfile?.taxIdNumber ?? null,
+      addressCountryCode: patientProfile?.addressCountryCode ?? null,
+    },
   );
 
   // Precedence lives in buildPatientIdLine: the per-country number first, then

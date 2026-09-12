@@ -20,7 +20,7 @@ import { mirrorPortugalInvoiceDocument } from "./pt-invoice-mirror.service.js";
 // paid-order path for the sake of a three-line try/catch.
 import { decryptPhi } from "../../lib/crypto/phi-crypto.js";
 import type { PaymentLog } from "../orders/complete-order-payment.service.js";
-import { resolvePatientCountryTaxId } from "../patient-profile/patient-country-tax-ids.js";
+import { resolveFiscalNumberForCountry } from "../patient-profile/patient-country-tax-ids.js";
 
 const noopLog: PaymentLog = {
   info: () => {},
@@ -136,6 +136,7 @@ export async function issuePortugalInvoiceExpress(
       select: {
         id: true,
         taxIdNumber: true,
+        addressCountryCode: true,
         addressLine1: true,
         addressCity: true,
         addressPostalCode: true,
@@ -146,7 +147,14 @@ export async function issuePortugalInvoiceExpress(
     // patient who also consults elsewhere the shared chart column may hold the
     // other country's number (a Brazilian CPF fails the 9-digit test and
     // silently invoices them as "consumidor final"), so the PT row wins.
-    const ptFiscalId = await resolvePatientCountryTaxId(profile?.id ?? null, "PT");
+    const ptFiscalId = await resolveFiscalNumberForCountry(
+      profile?.id ?? null,
+      "PT",
+      {
+        value: safeDecryptPhi(profile?.taxIdNumber),
+        addressCountryCode: profile?.addressCountryCode ?? null,
+      },
+    );
 
     const items: IeInvoiceItem[] = order.items.map((i) => ({
       name: i.name,
@@ -172,7 +180,11 @@ export async function issuePortugalInvoiceExpress(
         code: order.userId ?? order.email,
         // taxIdNumber is PHI-encrypted at rest — decrypt before validating, or
         // every patient with a NIF on file is invoiced as "consumidor final".
-        fiscal_id: resolveFiscalId(ptFiscalId ?? safeDecryptPhi(profile?.taxIdNumber)),
+        // `ptFiscalId` already folds in the legacy column where that is still
+        // allowed — re-adding it here would put another country's number back
+        // on a Portuguese invoice. resolveFiscalId still guards the 9-digit
+        // shape and falls back to "consumidor final".
+        fiscal_id: resolveFiscalId(ptFiscalId),
         address: order.shipLine1 ?? profile?.addressLine1 ?? "-",
         postal_code: order.shipPostalCode ?? profile?.addressPostalCode ?? "0000-000",
         city: order.shipCity ?? profile?.addressCity ?? "-",

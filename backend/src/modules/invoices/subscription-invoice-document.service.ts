@@ -1,6 +1,7 @@
 import { prisma } from "../../db/prisma.js";
 import { safeDecrypt, type InvoiceDetailPayload } from "./invoice-detail.service.js";
 import type { InvoicePdfData } from "./invoice-pdf.js";
+import { resolveFiscalNumberForCountry } from "../patient-profile/patient-country-tax-ids.js";
 
 /**
  * Renders a membership (subscription) charge as a Global Health document
@@ -99,7 +100,7 @@ export async function buildSubscriptionInvoiceDetail(
   const paid = (row.status ?? "").toLowerCase() === "paid";
   const profile = await prisma.patientProfile.findUnique({
     where: { email: row.subscription.user.email.toLowerCase() },
-    select: { id: true, taxIdNumber: true },
+    select: { id: true, taxIdNumber: true, addressCountryCode: true },
   });
 
   return {
@@ -130,8 +131,17 @@ export async function buildSubscriptionInvoiceDetail(
       doctorPayoutTotalCents: null,
       paymentStatus: paid ? "PAID" : "UNPAID",
       paidAt: paid ? (row.periodStart ?? row.createdAt).toISOString() : null,
-      // PHI-encrypted column — see safeDecrypt in invoice-detail.service.ts.
-      taxIdNumber: safeDecrypt(profile?.taxIdNumber),
+      // The subscription's own market first — a member who also consults in
+      // another country holds a fiscal number per country, and the shared chart
+      // column holds only one of them. See invoice-detail.service.ts.
+      taxIdNumber: await resolveFiscalNumberForCountry(
+        profile?.id ?? null,
+        row.subscription.countryCode,
+        {
+          value: safeDecrypt(profile?.taxIdNumber),
+          addressCountryCode: profile?.addressCountryCode ?? null,
+        },
+      ),
       consultationDate: null,
       items: [
         {

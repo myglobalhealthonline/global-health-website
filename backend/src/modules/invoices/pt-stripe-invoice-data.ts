@@ -1,6 +1,6 @@
 import { prisma } from "../../db/prisma.js";
 import { decryptPhi } from "../../lib/crypto/phi-crypto.js";
-import { resolvePatientCountryTaxId } from "../patient-profile/patient-country-tax-ids.js";
+import { resolveFiscalNumberForCountry } from "../patient-profile/patient-country-tax-ids.js";
 
 /**
  * Decrypt a PHI field, treating an undecryptable value as absent — a missing key
@@ -54,7 +54,7 @@ export async function buildPtStripeInvoiceData(
 
   const profile = await prisma.patientProfile.findUnique({
     where: { email: buyerEmail.toLowerCase() },
-    select: { id: true, taxIdNumber: true },
+    select: { id: true, taxIdNumber: true, addressCountryCode: true },
   });
   // The PT row first — for a patient who also consults in another market the
   // shared column may hold that country's number, and a Brazilian CPF printed
@@ -65,9 +65,14 @@ export async function buildPtStripeInvoiceData(
   // itself into the Stripe custom field — the same mistake resolveFiscalId's
   // doc comment records for InvoiceExpress.
   const nif =
-    (await resolvePatientCountryTaxId(profile?.id ?? null, "PT")) ??
-    safeDecryptPhi(profile?.taxIdNumber) ??
-    "";
+    (await resolveFiscalNumberForCountry(
+      profile?.id ?? null,
+      "PT",
+      {
+        value: safeDecryptPhi(profile?.taxIdNumber),
+        addressCountryCode: profile?.addressCountryCode ?? null,
+      },
+    )) ?? "";
 
   const customFields: Array<{ name: string; value: string }> = [];
   // Stripe caps custom-field name/value at 30 chars each.

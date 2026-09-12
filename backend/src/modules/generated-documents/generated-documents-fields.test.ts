@@ -33,57 +33,37 @@ describe("buildPatientIdLine", () => {
     assert.equal(buildPatientIdLine("PT", null), null);
   });
 
-  it("prefers tax ID and labels it NIF for PT", () => {
+  it("labels the country's fiscal number NIF for PT", () => {
     assert.equal(
-      buildPatientIdLine("PT", {
-        ...baseProfile,
-        taxIdNumber: "123456789",
-        addressCountryCode: "pt",
-      }),
+      buildPatientIdLine("PT", baseProfile, null, "123456789"),
       "NIF: 123456789",
     );
   });
 
   it("labels tax ID as CPF for BR", () => {
     assert.equal(
-      buildPatientIdLine("BR", {
-        ...baseProfile,
-        taxIdNumber: "111.222.333-44",
-        addressCountryCode: "br",
-      }),
+      buildPatientIdLine("BR", baseProfile, null, "111.222.333-44"),
       "CPF: 111.222.333-44",
     );
   });
 
   it("labels tax ID as PPS for IE", () => {
     assert.equal(
-      buildPatientIdLine("IE", {
-        ...baseProfile,
-        taxIdNumber: "1234567T",
-        addressCountryCode: "ie",
-      }),
+      buildPatientIdLine("IE", baseProfile, null, "1234567T"),
       "PPS: 1234567T",
     );
   });
 
   it("labels tax ID as DNI for ES", () => {
     assert.equal(
-      buildPatientIdLine("ES", {
-        ...baseProfile,
-        taxIdNumber: "12345678Z",
-        addressCountryCode: "es",
-      }),
+      buildPatientIdLine("ES", baseProfile, null, "12345678Z"),
       "DNI: 12345678Z",
     );
   });
 
   it("falls back to generic Tax ID label for unknown countries", () => {
     assert.equal(
-      buildPatientIdLine("XX", {
-        ...baseProfile,
-        taxIdNumber: "ANY-VALUE",
-        addressCountryCode: "xx",
-      }),
+      buildPatientIdLine("XX", baseProfile, null, "ANY-VALUE"),
       "Tax ID: ANY-VALUE",
     );
   });
@@ -164,24 +144,24 @@ describe("buildPatientIdLine", () => {
     );
   });
 
-  it("still uses the chart id when the profile country matches", () => {
+  it("never prints the legacy chart tax column, even on a country match", () => {
+    // Whether that column may stand in for a country is decided upstream by
+    // resolveFiscalNumberForCountry and arrives as the 4th argument. Reading it
+    // here too is what printed a Brazilian CPF as "PPS" for a patient whose
+    // ADDRESS was Irish — the address matched, the number did not.
     assert.equal(
       buildPatientIdLine("IE", {
         ...baseProfile,
-        taxIdNumber: "1234567T",
+        taxIdNumber: "068.001.344-06",
         addressCountryCode: "ie",
       }),
-      "PPS: 1234567T",
+      null,
     );
   });
 
   it("treats SP/ES and RM/RO as the same country", () => {
     assert.equal(
-      buildPatientIdLine("SP", {
-        ...baseProfile,
-        taxIdNumber: "12345678Z",
-        addressCountryCode: "es",
-      }),
+      buildPatientIdLine("SP", baseProfile, null, "12345678Z"),
       "DNI: 12345678Z",
     );
   });
@@ -257,11 +237,7 @@ describe("buildPatientIdLine", () => {
 
   it("country code is normalized to upper-case", () => {
     assert.equal(
-      buildPatientIdLine("pt", {
-        ...baseProfile,
-        taxIdNumber: "1",
-        addressCountryCode: "PT",
-      }),
+      buildPatientIdLine("pt", baseProfile, null, "1"),
       "NIF: 1",
     );
   });
