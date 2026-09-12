@@ -281,6 +281,76 @@ describe("appointment updated → UNPAID order still notifies both sides", () =>
   });
 });
 
+describe("doctor swap → the incoming doctor is told, the outgoing one too", () => {
+  /**
+   * A pure reassignment keeps the same time and the same link, so the admin
+   * form sends no schedule email for it. That used to mean the incoming
+   * doctor got nothing but an in-portal bell and the patient was never told
+   * their clinician had changed at all.
+   */
+  const swap = (over: Record<string, unknown> = {}) =>
+    svc.sendAppointmentUpdateNotifications({
+      orderId: ORDER_ID,
+      appointmentId: APPT_ID,
+      changeReason: "",
+      previousDoctorId: "doc-old",
+      newDoctorId: DOCTOR_ID,
+      meetingUrl: "https://meet.example/new",
+      ...over,
+    });
+
+  it("emails and WhatsApps the incoming doctor", async () => {
+    await swap();
+
+    assert.ok(
+      state.emails.some((e) => e.to === DOCTOR_EMAIL),
+      "incoming doctor emailed",
+    );
+    assert.ok(
+      state.whatsapps.some((w) => w.to === DOCTOR_PHONE),
+      "incoming doctor WhatsApped",
+    );
+    const keys = sentKeys();
+    assert.ok(keys.includes("appointment_update_doctor_email"));
+    assert.ok(keys.includes("appointment_update_doctor_whatsapp"));
+  });
+
+  it("sends the outgoing doctor the reassigned wording, on its own run keys", async () => {
+    await swap();
+
+    const keys = sentKeys();
+    assert.ok(
+      keys.includes("appointment_update_doctor_email_previous"),
+      "previous doctor emailed",
+    );
+    assert.ok(
+      keys.includes("appointment_update_doctor_whatsapp_previous"),
+      "previous doctor WhatsApped",
+    );
+  });
+
+  it("tells the PATIENT their clinician changed when no schedule email covers it", async () => {
+    // skipPatient is false on a doctor-only swap precisely because the admin
+    // form's branded schedule email does not fire for one.
+    await swap({ skipPatient: false });
+
+    assert.ok(
+      state.emails.some((e) => e.to === PATIENT_EMAIL),
+      "patient emailed about the change",
+    );
+    assert.ok(
+      state.whatsapps.some((w) => w.to === PATIENT_PHONE),
+      "patient WhatsApped about the change",
+    );
+  });
+
+  it("still re-arms nothing it should not — the admin alert fires once", async () => {
+    await swap();
+
+    assert.deepEqual(state.adminAlerts, [ORDER_ID]);
+  });
+});
+
 describe("admin appointment form → skipPatient keeps the doctor channels", () => {
   it("suppresses the duplicate patient copy but still tells the doctor", async () => {
     await svc.sendAppointmentUpdateNotifications({
