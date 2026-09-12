@@ -1,3 +1,4 @@
+import { reviewedRomaniaTransaction } from "../../content/romania-clinical-review.js";
 import { Prisma, type LocaleCode } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { encryptPhi, decryptPhi } from "../../lib/crypto/phi-crypto.js";
@@ -194,7 +195,7 @@ export async function updateAdminDoctorMarket(
 ) {
   try {
     await assertLocales(countryId, input.translations?.map((entry) => entry.locale) ?? []);
-    const updated = await prisma.$transaction(async (tx) => {
+    const updated = await reviewedRomaniaTransaction(prisma, async (tx) => {
       const [doctor, country] = await Promise.all([
         tx.doctor.findUnique({ where: { id: doctorId }, select: { id: true, countryId: true } }),
         tx.country.findUnique({ where: { id: countryId }, select: { id: true, defaultLocale: true } }),

@@ -1,0 +1,20 @@
+{
+  "group": "service:caderea-parului-online",
+  "approvalSha256": "82212ca0ae3ef546b2fc82131ba5ce4fe83098adf5a31b3fdf0804527c1d5fd8",
+  "reviewerDoctorId": "cmrc4axni00rn01p2n3r2bopf",
+  "approvalEvidence": "owner-reported clinician approval in this task",
+  "appliedAt": "2026-09-12T22:53:53.682Z",
+  "alreadyApplied": false,
+  "operations": 35,
+  "publicVerified": true,
+  "afterSha256": "736f6f64b5808c8511bc6d783ab363dc5b57eff333669e6df2a7106cef2a1b2e",
+  "publicVerifiedAt": "2026-09-12T22:53:55.812Z",
+  "verifiedUrls": [
+    "https://www.myglobalhealth.online/romania/cs/services/caderea-parului-online",
+    "https://www.myglobalhealth.online/romania/de/services/caderea-parului-online",
+    "https://www.myglobalhealth.online/romania/en/services/caderea-parului-online",
+    "https://www.myglobalhealth.online/romania/es/services/caderea-parului-online",
+    "https://www.myglobalhealth.online/romania/pt/services/caderea-parului-online",
+    "https://www.myglobalhealth.online/romania/ro/services/caderea-parului-online"
+  ]
+}

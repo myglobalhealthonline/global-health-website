@@ -1,3 +1,4 @@
+import { reviewedRomaniaTransaction } from "../../content/romania-clinical-review.js";
 import { Prisma, type LocaleCode } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
@@ -841,7 +842,7 @@ export async function reviewDoctorProfileChangeRequest(
   cache: DoctorProfileCacheInfo | null;
 } | null> {
   try {
-    const row = await prisma.$transaction(async (tx) => {
+    const row = await reviewedRomaniaTransaction(prisma, async (tx) => {
       const existing = await tx.doctorProfileChangeRequest.findFirst({
         where: { id: requestId, doctorId },
         select: {

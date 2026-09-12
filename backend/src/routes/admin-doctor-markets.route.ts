@@ -1,3 +1,4 @@
+import { RomaniaClinicalApprovalRequiredError } from "../content/romania-clinical-review.js";
 import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
@@ -86,6 +87,9 @@ const adminDoctorMarketsRoute: FastifyPluginAsync = async (app) => {
       }).catch(() => {});
       return okResponse({ market }, "Doctor market profile saved");
     } catch (error) {
+      if (error instanceof RomaniaClinicalApprovalRequiredError) {
+        return reply.status(409).send(errorResponse(error.message));
+      }
       if (error instanceof DoctorMarketNotFoundError) {
         return reply.status(404).send(errorResponse(error.message));
       }

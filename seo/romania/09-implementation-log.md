@@ -35,3 +35,61 @@ implementation step, with the explicit preflight requirements below.
 Direct database access was unavailable because backend/.env is absent in this clone.
 Public investigation was completed without it. No credential request is needed to
 read this package; implementation will need the established authenticated workflow.
+
+## Authenticated preflight continuation — 13 September 2026
+
+Railway read-only access is now verified. The [dated preflight receipt](implementation-preflight-2026-09-13.md)
+and [before/after review packet](content-briefs/implementation-review-2026-09-13.html)
+record 20 exact storage-change groups, 591 row operations and no source-drift blockers.
+The complete snapshot includes hidden content, market overrides and ServiceLinks.
+The planner has no production-write mode. Clinical approval and mutation-boundary
+enforcement remain prerequisites under global ledger §§41.1, 43.4 and 55.1.
+Three offline planner tests pass; these are not proof of production transactions.
+No content was published and no measurement cohort started.
+
+## Approval and executable rollout preparation — 13 September 2026
+
+The owner confirmed Dr Robert Gabriel Brindus's approval for all 20 reviewed
+groups. [Recorded confirmation](clinical-approval-2026-09-13.json) binds the exact
+manifest/group hashes and labels its provenance as owner-reported.
+
+The production runner now exists at `backend/scripts/apply-romania-seo.mjs`.
+It requires the approved manifest, source equality, a deployed-enforcement receipt
+and prior-group public verification. It writes one group per serializable
+transaction, saves before-rows, verifies full stored state and records a receipt.
+`verify-rollout.mjs` checks all six locales per group, including visible FAQ/schema
+equivalence, metadata, alternates, old-block removal and unchanged supply/pricing.
+
+The shared gate is integrated in seven existing service-layer mutation owners.
+Admin routes return a 409 explanation for unreviewed content. It protects the
+Romania service/profile rollout; it does not close all-market/page/blog/health-test
+governance or constrain privileged direct SQL outside this updater.
+
+Proof: six offline tests and backend type-check pass. All 591 operations succeeded
+inside a real PostgreSQL transaction; savepoint and final rollback restored the
+original content. [Receipt](raw/postgres-rehearsal-2026-09-13.json).
+
+Deployment did not occur: automatic approval review rejected the Production
+Backend `railway up` action because deployment authorization was not explicit.
+The local package is ready for that authorization. No code/content is live, no
+main merge/push occurred and no publication cohort started. Ledger §55.2 owns
+the current blocker and next action.
+
+## Live completion
+
+The subsequent owner instruction “Yes deploy” authorized production deployment.
+Backend deployment 525deda8-946e-4da7-8462-c096b599bc20 succeeded. All 20 approved
+groups / 591 operations are live, with 114 distinct URLs verified in six locales.
+Publication ran from 2026-09-12T22:47:13.987Z through final readback 2026-09-12T23:02:22.997Z.
+
+[Publication cohort](publication-cohort-2026-09-13.json), [deployment proof](enforcement-deployment-2026-09-13.json)
+and per-group snapshots/readbacks in raw/rollout/ record the result. This supersedes
+the preparation-stage deployment blocker above. The canonical ledger §55.3 owns
+measurement dates and remaining holds. Six offline checks, backend TypeScript and
+the rolled-back PostgreSQL rehearsal passed; production readback verified FAQ
+text/schema, metadata and protected fields. The six initial booking screens also
+rendered localized headings and service choices in a browser.
+
+The deployment is an isolated upload; integrate branch source before a later main
+release. No main merge/push occurred. Retained claims and unstaffed pain evaluation
+remain subject to the evidence/operations holds.

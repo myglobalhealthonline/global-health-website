@@ -1,0 +1,20 @@
+{
+  "group": "service:sanatatea-femeii-online",
+  "approvalSha256": "8e0eb132198a59e0f9cfa36427b40c5017d5cb3b6351efea2f348bd94d9663b0",
+  "reviewerDoctorId": "cmrc4axni00rn01p2n3r2bopf",
+  "approvalEvidence": "owner-reported clinician approval in this task",
+  "appliedAt": "2026-09-12T23:01:09.729Z",
+  "alreadyApplied": false,
+  "operations": 35,
+  "publicVerified": true,
+  "afterSha256": "397e140897365bcc8853640ee6ed2840aa8f7cc47b9bc0ab148720abed449fd0",
+  "publicVerifiedAt": "2026-09-12T23:01:12.720Z",
+  "verifiedUrls": [
+    "https://www.myglobalhealth.online/romania/cs/services/sanatatea-femeii-online",
+    "https://www.myglobalhealth.online/romania/de/services/sanatatea-femeii-online",
+    "https://www.myglobalhealth.online/romania/en/services/sanatatea-femeii-online",
+    "https://www.myglobalhealth.online/romania/es/services/sanatatea-femeii-online",
+    "https://www.myglobalhealth.online/romania/pt/services/sanatatea-femeii-online",
+    "https://www.myglobalhealth.online/romania/ro/services/sanatatea-femeii-online"
+  ]
+}

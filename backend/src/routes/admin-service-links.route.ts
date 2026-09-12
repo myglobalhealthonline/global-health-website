@@ -1,3 +1,4 @@
+import { RomaniaClinicalApprovalRequiredError } from "../content/romania-clinical-review.js";
 import type { FastifyPluginAsync } from "fastify";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
@@ -51,6 +52,9 @@ const adminServiceLinksRoute: FastifyPluginAsync = async (app) => {
       const links = await replaceServiceLinks(params.data.serviceId, body.data);
       return okResponse({ links }, "Service links saved");
     } catch (error) {
+      if (error instanceof RomaniaClinicalApprovalRequiredError) {
+        return reply.status(409).send(errorResponse(error.message));
+      }
       if (error instanceof ServiceNotFoundError) {
         return reply.status(404).send(errorResponse(error.message));
       }

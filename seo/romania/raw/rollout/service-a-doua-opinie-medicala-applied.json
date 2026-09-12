@@ -1,0 +1,20 @@
+{
+  "group": "service:a-doua-opinie-medicala",
+  "approvalSha256": "75f92b8df893ce6483207e58330419c14c35a18bb5ece0737ced17085f9abd93",
+  "reviewerDoctorId": "cmrc4axni00rn01p2n3r2bopf",
+  "approvalEvidence": "owner-reported clinician approval in this task",
+  "appliedAt": "2026-09-12T22:52:53.675Z",
+  "alreadyApplied": false,
+  "operations": 35,
+  "publicVerified": true,
+  "afterSha256": "eb0e371e0deb2799826aac8bc3e8e99208db323ec5b114e6547ca111cb66207f",
+  "publicVerifiedAt": "2026-09-12T22:52:55.947Z",
+  "verifiedUrls": [
+    "https://www.myglobalhealth.online/romania/cs/services/a-doua-opinie-medicala",
+    "https://www.myglobalhealth.online/romania/de/services/a-doua-opinie-medicala",
+    "https://www.myglobalhealth.online/romania/en/services/a-doua-opinie-medicala",
+    "https://www.myglobalhealth.online/romania/es/services/a-doua-opinie-medicala",
+    "https://www.myglobalhealth.online/romania/pt/services/a-doua-opinie-medicala",
+    "https://www.myglobalhealth.online/romania/ro/services/a-doua-opinie-medicala"
+  ]
+}

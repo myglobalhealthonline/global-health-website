@@ -1,3 +1,4 @@
+import { reviewedRomaniaTransaction } from "../../content/romania-clinical-review.js";
 import { LocaleCode, Prisma, ServiceKind } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import type {
@@ -1049,7 +1050,7 @@ export async function createAdminService(input: AdminServiceCreateBody): Promise
   await assertCountryExists(input.countryId);
 
   try {
-    const service = await prisma.$transaction(async (tx) => {
+    const service = await reviewedRomaniaTransaction(prisma, async (tx) => {
       const created = await tx.service.create({
         data: {
           countryId: input.countryId,
@@ -1146,7 +1147,7 @@ export async function updateAdminService(
   }
 
   try {
-    const service = await prisma.$transaction(async (tx) => {
+    const service = await reviewedRomaniaTransaction(prisma, async (tx) => {
       const updated = await tx.service.update({
         where: { id },
         data: {

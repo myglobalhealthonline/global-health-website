@@ -1,0 +1,20 @@
+{
+  "group": "obsolete-sick-note-offer",
+  "approvalSha256": "e65330768b5553c49c2c9a89353413ab589e20baf562880eddad22c08f519ad2",
+  "reviewerDoctorId": "cmrc4axni00rn01p2n3r2bopf",
+  "approvalEvidence": "owner-reported clinician approval in this task",
+  "appliedAt": "2026-09-12T23:01:58.401Z",
+  "alreadyApplied": false,
+  "operations": 2,
+  "publicVerified": true,
+  "afterSha256": "d7c018952e192cc841753a5166d8c70194774018db9e66612e865c8046be121d",
+  "publicVerifiedAt": "2026-09-12T23:02:22.997Z",
+  "verifiedUrls": [
+    "https://www.myglobalhealth.online/romania/cs/services/medic-online-romania",
+    "https://www.myglobalhealth.online/romania/de/services/medic-online-romania",
+    "https://www.myglobalhealth.online/romania/en/services/medic-online-romania",
+    "https://www.myglobalhealth.online/romania/es/services/medic-online-romania",
+    "https://www.myglobalhealth.online/romania/pt/services/medic-online-romania",
+    "https://www.myglobalhealth.online/romania/ro/services/medic-online-romania"
+  ]
+}

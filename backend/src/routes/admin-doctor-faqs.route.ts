@@ -1,3 +1,4 @@
+import { RomaniaClinicalApprovalRequiredError } from "../content/romania-clinical-review.js";
 import type { FastifyPluginAsync } from "fastify";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
@@ -64,6 +65,9 @@ const adminDoctorFaqsRoute: FastifyPluginAsync = async (app) => {
       }).catch(() => {});
       return okResponse({ faqs }, "Doctor FAQs saved");
     } catch (error) {
+      if (error instanceof RomaniaClinicalApprovalRequiredError) {
+        return reply.status(409).send(errorResponse(error.message));
+      }
       if (error instanceof DoctorFaqNotFoundError) {
         return reply.status(404).send(errorResponse(error.message));
       }

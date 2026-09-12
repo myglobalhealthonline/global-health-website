@@ -1,0 +1,92 @@
+{
+  "recordedAt": "2026-09-12T21:59:45Z",
+  "recordedLocalDate": "2026-09-13",
+  "reviewerName": "Dr Robert Gabriel Brindus",
+  "reviewerDoctorId": "cmrc4axni00rn01p2n3r2bopf",
+  "evidenceType": "owner-reported clinician approval in this task",
+  "userStatement": "Dr Robert Gabriel Brindus approval for all",
+  "scope": "All 20 exact groups in the presented implementation review packet. Does not approve held pain-service promotion or unverified specialty changes.",
+  "manifestSha256": "2eb8ebc81dcc492a9f3f18b121a519c09b5a91a15af4b2691e2acf1b6b4333e8",
+  "groups": [
+    {
+      "key": "doctor:dr-alexandra-palaga",
+      "approvedSha256": "8f416a774261540ab8d3cf277dd1f5cb8a9e4cdd4a57321e72a1d5bdb0cf08d2"
+    },
+    {
+      "key": "doctor:dr-andreea-lorena-bica",
+      "approvedSha256": "2e365ed9f905c5f409129cac636e1fec46f18ae6d7ae5472b5cb643ba0680f1d"
+    },
+    {
+      "key": "service:consultatie-neurologie",
+      "approvedSha256": "3a0a56a87a4451cf3085c35194512bca192577c29384c12543689e2170bc7375"
+    },
+    {
+      "key": "service:consultatie-pediatrie",
+      "approvedSha256": "30c0a855758322fd59b2519dcf14d2c411cbcdb0486e5d264e13db9cb3b68671"
+    },
+    {
+      "key": "doctor:dr-robert-gabriel-brindus",
+      "approvedSha256": "d4f8a7a908a223a16aecf20747978b43fe8c51349212425bc3b6675771574665"
+    },
+    {
+      "key": "service:a-doua-opinie-medicala",
+      "approvedSha256": "75f92b8df893ce6483207e58330419c14c35a18bb5ece0737ced17085f9abd93"
+    },
+    {
+      "key": "service:boli-cronice-online",
+      "approvedSha256": "d9f15a0fd9bd663d711a583068f90370d65c9c00c0a0292a5cae0693f6803666"
+    },
+    {
+      "key": "service:caderea-parului-online",
+      "approvedSha256": "82212ca0ae3ef546b2fc82131ba5ce4fe83098adf5a31b3fdf0804527c1d5fd8"
+    },
+    {
+      "key": "service:consultatie-dermatologica",
+      "approvedSha256": "22aa1acb222e20af428c30267a491dc02d32deecad65c9dbf8d2df2183ea3f18"
+    },
+    {
+      "key": "service:controlul-greutatii",
+      "approvedSha256": "0a9fefeaa6e96717f3c8e411aa1f96279b99d10d6638a18148f8d02c061d29ea"
+    },
+    {
+      "key": "service:dureri-musculo-scheletice",
+      "approvedSha256": "dade3484ec3af08d15d60b74936eb4aa33e6953c848e4a4b21fcf4b875d2f718"
+    },
+    {
+      "key": "service:medic-online-romania",
+      "approvedSha256": "28d94747969ed8ac5f0cfed0b9884cf349e699904499ab31c6ed40a82883c661"
+    },
+    {
+      "key": "service:medic-pediatru-online",
+      "approvedSha256": "02b475955ce9b443b6e3089207e2079f01e30a2742473da6239298bbb800ad32"
+    },
+    {
+      "key": "service:medicina-calatoriei",
+      "approvedSha256": "4920ce0cec40b1b5d5dc3d08953aa340ef6862f8edb3a2d5cb937edb28ad3f6a"
+    },
+    {
+      "key": "service:reinnoire-tratament",
+      "approvedSha256": "09b2cfa2070277ddfbd1d80fcff22f493cceefb857eb881092ae54c7c6a85a2d"
+    },
+    {
+      "key": "service:sanatate-mintala-online",
+      "approvedSha256": "a4760ac6269da90c8dc1da328d202a4c5137a09c913830646eb0912bf7aa19ed"
+    },
+    {
+      "key": "service:sanatatea-barbatului-online",
+      "approvedSha256": "f0e2f833dc65975e845b6fa5e19b915ee8e4507f92adb7aed8611071c5eb65f0"
+    },
+    {
+      "key": "service:sanatatea-femeii-online",
+      "approvedSha256": "8e0eb132198a59e0f9cfa36427b40c5017d5cb3b6351efea2f348bd94d9663b0"
+    },
+    {
+      "key": "service:trimiteri-si-investigatii",
+      "approvedSha256": "100be2a65da30c952c5bbe25a9700615ffaefd3269109edc5c19daf4143890a8"
+    },
+    {
+      "key": "obsolete-sick-note-offer",
+      "approvedSha256": "e65330768b5553c49c2c9a89353413ab589e20baf562880eddad22c08f519ad2"
+    }
+  ]
+}

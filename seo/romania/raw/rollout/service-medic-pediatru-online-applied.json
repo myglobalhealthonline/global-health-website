@@ -1,0 +1,20 @@
+{
+  "group": "service:medic-pediatru-online",
+  "approvalSha256": "02b475955ce9b443b6e3089207e2079f01e30a2742473da6239298bbb800ad32",
+  "reviewerDoctorId": "cmrc4axni00rn01p2n3r2bopf",
+  "approvalEvidence": "owner-reported clinician approval in this task",
+  "appliedAt": "2026-09-12T22:57:30.827Z",
+  "alreadyApplied": false,
+  "operations": 35,
+  "publicVerified": true,
+  "afterSha256": "0bb22a47e8d524fc78afe83460f2a1ca09c3e71cf3f40d23a5d760e0149f3f02",
+  "publicVerifiedAt": "2026-09-12T22:57:54.873Z",
+  "verifiedUrls": [
+    "https://www.myglobalhealth.online/romania/cs/services/medic-pediatru-online",
+    "https://www.myglobalhealth.online/romania/de/services/medic-pediatru-online",
+    "https://www.myglobalhealth.online/romania/en/services/medic-pediatru-online",
+    "https://www.myglobalhealth.online/romania/es/services/medic-pediatru-online",
+    "https://www.myglobalhealth.online/romania/pt/services/medic-pediatru-online",
+    "https://www.myglobalhealth.online/romania/ro/services/medic-pediatru-online"
+  ]
+}

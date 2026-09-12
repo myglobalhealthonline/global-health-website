@@ -18,13 +18,13 @@ export function parse(html, url) {
   const links = tags(doc, 'link');
   const main = tags(doc, 'main')[0] ?? doc;
   const schemas = tags(doc, 'script').filter(n => n.attribs.type === 'application/ld+json').flatMap(n => {try{return [JSON.parse(DomUtils.textContent(n))]}catch{return []}});
-  const types = new Set(); let schemaFaqCount = 0;
-  function visit(v) { if (!v || typeof v !== 'object') return; if (v['@type']) for (const t of [v['@type']].flat()) types.add(t); if(v['@type']==='FAQPage') schemaFaqCount += (v.mainEntity??[]).length; for(const x of Object.values(v)) if(typeof x==='object') Array.isArray(x)?x.forEach(visit):visit(x); }
+  const types = new Set(); let schemaFaqCount = 0; const schemaFaqs = [];
+  function visit(v) { if (!v || typeof v !== 'object') return; if (v['@type']) for (const t of [v['@type']].flat()) types.add(t); if(v['@type']==='FAQPage') { schemaFaqCount += (v.mainEntity??[]).length; schemaFaqs.push(...(v.mainEntity??[]).map(q=>({question:q.name,answer:q.acceptedAnswer?.text}))); } for(const x of Object.values(v)) if(typeof x==='object') Array.isArray(x)?x.forEach(visit):visit(x); }
   schemas.forEach(visit);
   const faqs = tags(main, 'details').map(n => ({question: text(tags(n,'summary')[0]??{children:[]}),answer:tags(n,'p').map(text).join(' ')})).filter(f=>f.question);
   const body = parseDocument(DomUtils.getOuterHTML(main));
   for(const n of all(body,n=>['script','style','nav','footer','svg'].includes(n.name))) DomUtils.removeElement(n);
-  return {url,locale:new URL(url).pathname.split('/')[2],title:tags(doc,'title').map(text).join(''),description:meta('description'),h1:tags(main,'h1').map(text),h2:tags(main,'h2').map(text),robots:meta('robots'),canonical:links.find(n=>n.attribs.rel==='canonical')?.attribs.href??'',hreflang:links.filter(n=>n.attribs.hreflang).map(n=>({lang:n.attribs.hreflang,url:n.attribs.href})),schemaTypes:[...types],schemaFaqCount,faqs,body:text(body),links:tags(main,'a').map(n=>({text:text(n),href:n.attribs.href??''})),sha256:createHash('sha256').update(html).digest('hex')};
+  return {url,locale:new URL(url).pathname.split('/')[2],title:tags(doc,'title').map(text).join(''),description:meta('description'),h1:tags(main,'h1').map(text),h2:tags(main,'h2').map(text),robots:meta('robots'),canonical:links.find(n=>n.attribs.rel==='canonical')?.attribs.href??'',hreflang:links.filter(n=>n.attribs.hreflang).map(n=>({lang:n.attribs.hreflang,url:n.attribs.href})),schemaTypes:[...types],schemaFaqCount,schemaFaqs,faqs,body:text(body),links:tags(main,'a').map(n=>({text:text(n),href:n.attribs.href??''})),sha256:createHash('sha256').update(html).digest('hex')};
 }
 async function get(url){const r=await fetch(url,{signal:AbortSignal.timeout(45000)});return {html:await r.text(),status:r.status,finalUrl:r.url,checkedAt:new Date().toISOString()};}
 async function run(){

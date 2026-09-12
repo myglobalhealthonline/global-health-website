@@ -1,0 +1,20 @@
+{
+  "group": "service:sanatate-mintala-online",
+  "approvalSha256": "a4760ac6269da90c8dc1da328d202a4c5137a09c913830646eb0912bf7aa19ed",
+  "reviewerDoctorId": "cmrc4axni00rn01p2n3r2bopf",
+  "approvalEvidence": "owner-reported clinician approval in this task",
+  "appliedAt": "2026-09-12T22:59:46.801Z",
+  "alreadyApplied": false,
+  "operations": 35,
+  "publicVerified": true,
+  "afterSha256": "c218ad69533c89441275bc6e481e1b4cfa87f7a39bdaaa77c89a62f2f6fc7d82",
+  "publicVerifiedAt": "2026-09-12T23:00:10.924Z",
+  "verifiedUrls": [
+    "https://www.myglobalhealth.online/romania/cs/services/sanatate-mintala-online",
+    "https://www.myglobalhealth.online/romania/de/services/sanatate-mintala-online",
+    "https://www.myglobalhealth.online/romania/en/services/sanatate-mintala-online",
+    "https://www.myglobalhealth.online/romania/es/services/sanatate-mintala-online",
+    "https://www.myglobalhealth.online/romania/pt/services/sanatate-mintala-online",
+    "https://www.myglobalhealth.online/romania/ro/services/sanatate-mintala-online"
+  ]
+}

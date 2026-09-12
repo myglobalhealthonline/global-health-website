@@ -1,3 +1,4 @@
+import { reviewedRomaniaTransaction } from "../content/romania-clinical-review.js";
 import type { LocaleCode, Prisma } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 import { normalizeDbError } from "../modules/shared/db-errors.js";
@@ -187,7 +188,7 @@ export async function createServiceFaq(
     // Count + sortOrder + create all run inside one transaction so two
     // concurrent creates for the same service can't both read the same
     // count/max and land on a duplicate sortOrder or both slip past the cap.
-    const faq = await prisma.$transaction(async (tx) => {
+    const faq = await reviewedRomaniaTransaction(prisma, async (tx) => {
       const count = await tx.serviceFaq.count({ where: { serviceId } });
       if (count >= MAX_FAQS_PER_SERVICE) throw new ServiceFaqMaxLimitError();
 
@@ -252,7 +253,7 @@ export async function updateServiceFaq(
       await assertFaqLocalesSupported(faq.service.countryId, translations);
     }
 
-    const updated = await prisma.$transaction(async (tx) => {
+    const updated = await reviewedRomaniaTransaction(prisma, async (tx) => {
       await tx.serviceFaq.update({
         where: { id: faqId },
         data: rest,
@@ -281,7 +282,7 @@ export async function deleteServiceFaq(faqId: string) {
     });
     if (!faq) throw new ServiceFaqNotFoundError();
 
-    await prisma.serviceFaq.delete({ where: { id: faqId } });
+    await reviewedRomaniaTransaction(prisma, tx => tx.serviceFaq.delete({ where: { id: faqId } }));
     return true;
   } catch (error) {
     if (error instanceof ServiceFaqNotFoundError) throw error;
@@ -304,14 +305,14 @@ export async function reorderServiceFaqs(serviceId: string, orderedIds: string[]
       }
     }
 
-    await prisma.$transaction(
-      orderedIds.map((id, index) =>
-        prisma.serviceFaq.update({
+    await reviewedRomaniaTransaction(prisma, async tx => {
+      for (const [index, id] of orderedIds.entries()) {
+        await tx.serviceFaq.update({
           where: { id },
           data: { sortOrder: index },
-        }),
-      ),
-    );
+        });
+      }
+    });
     return await listServiceFaqs(serviceId);
   } catch (error) {
     if (error instanceof ServiceFaqNotFoundError) throw error;

@@ -1,0 +1,20 @@
+{
+  "group": "service:consultatie-dermatologica",
+  "approvalSha256": "22aa1acb222e20af428c30267a491dc02d32deecad65c9dbf8d2df2183ea3f18",
+  "reviewerDoctorId": "cmrc4axni00rn01p2n3r2bopf",
+  "approvalEvidence": "owner-reported clinician approval in this task",
+  "appliedAt": "2026-09-12T22:54:23.373Z",
+  "alreadyApplied": false,
+  "operations": 35,
+  "publicVerified": true,
+  "afterSha256": "744fbd54a5eab0b92dd5b44f02282bbe0beb104da96d2ee7dc8e016e73f56e12",
+  "publicVerifiedAt": "2026-09-12T22:54:25.734Z",
+  "verifiedUrls": [
+    "https://www.myglobalhealth.online/romania/cs/services/consultatie-dermatologica",
+    "https://www.myglobalhealth.online/romania/de/services/consultatie-dermatologica",
+    "https://www.myglobalhealth.online/romania/en/services/consultatie-dermatologica",
+    "https://www.myglobalhealth.online/romania/es/services/consultatie-dermatologica",
+    "https://www.myglobalhealth.online/romania/pt/services/consultatie-dermatologica",
+    "https://www.myglobalhealth.online/romania/ro/services/consultatie-dermatologica"
+  ]
+}

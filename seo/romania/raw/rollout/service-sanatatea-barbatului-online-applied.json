@@ -1,0 +1,20 @@
+{
+  "group": "service:sanatatea-barbatului-online",
+  "approvalSha256": "f0e2f833dc65975e845b6fa5e19b915ee8e4507f92adb7aed8611071c5eb65f0",
+  "reviewerDoctorId": "cmrc4axni00rn01p2n3r2bopf",
+  "approvalEvidence": "owner-reported clinician approval in this task",
+  "appliedAt": "2026-09-12T23:00:39.687Z",
+  "alreadyApplied": false,
+  "operations": 35,
+  "publicVerified": true,
+  "afterSha256": "c8e97d3cf5b55f2f7397401bc37e2304005502378ac523264cb0a02cb7722f25",
+  "publicVerifiedAt": "2026-09-12T23:00:41.913Z",
+  "verifiedUrls": [
+    "https://www.myglobalhealth.online/romania/cs/services/sanatatea-barbatului-online",
+    "https://www.myglobalhealth.online/romania/de/services/sanatatea-barbatului-online",
+    "https://www.myglobalhealth.online/romania/en/services/sanatatea-barbatului-online",
+    "https://www.myglobalhealth.online/romania/es/services/sanatatea-barbatului-online",
+    "https://www.myglobalhealth.online/romania/pt/services/sanatatea-barbatului-online",
+    "https://www.myglobalhealth.online/romania/ro/services/sanatatea-barbatului-online"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "checkedAt": "2026-09-12T22:51:20Z",
+  "method": "Codex browser, rendered DOM and accessibility state",
+  "scope": "Read-only initial booking step; no appointment or patient details submitted",
+  "pages": [
+    {"locale":"ro","h1":"Programează-ți consultația","serviceSelectionVisible":true},
+    {"locale":"en","h1":"Book your consultation","serviceSelectionVisible":true},
+    {"locale":"cs","h1":"Objednejte si konzultaci","serviceSelectionVisible":true},
+    {"locale":"de","h1":"Buchen Sie Ihre Beratung","serviceSelectionVisible":true},
+    {"locale":"es","h1":"Reserva tu consulta","serviceSelectionVisible":true},
+    {"locale":"pt","h1":"Marque a sua consulta","serviceSelectionVisible":true}
+  ],
+  "urlPattern": "https://www.myglobalhealth.online/romania/{locale}/book",
+  "finding": "All six initial booking pages render a localized H1 and service choices after hydration. No missing-H1 defect reproduced. Spanish transient duplicate during navigation resolved on direct readback. This is not checkout or payment verification."
+}

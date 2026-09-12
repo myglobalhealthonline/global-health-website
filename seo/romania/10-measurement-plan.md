@@ -1,7 +1,7 @@
 # Romania measurement design
 
 Dated 13 September 2026. This records the measurement method; dates and operational
-actions remain in the global ledger. There is no deployment date yet.
+actions remain in the global ledger. Actual publication was September 12 UTC/Pacific; cohort dates and gates are recorded in global ledger §55.3.
 
 Baseline: final GSC pages, 13 August–9 September versus 16 July–12 August, filtered
 to `/romania/`, with all searcher countries. Preserve a separate Romanian-language

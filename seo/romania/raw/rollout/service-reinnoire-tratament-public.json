@@ -1,0 +1,374 @@
+[
+  {
+    "url": "https://www.myglobalhealth.online/romania/cs/services/reinnoire-tratament",
+    "checkedAt": "2026-09-12T22:59:18.855Z",
+    "status": 200,
+    "title": "Posouzení pokračování léčby | Rumunsko · Global Health",
+    "description": "Posouzení pokračování léčby. Konzultace v rumunštině a angličtině. Před rezervací si ověřte lékaře a dostupné termíny.",
+    "h1": [
+      "Posouzení pokračování léčby"
+    ],
+    "canonical": "https://www.myglobalhealth.online/romania/cs/services/reinnoire-tratament",
+    "hreflang": [
+      {
+        "lang": "ro-RO",
+        "url": "https://www.myglobalhealth.online/romania/ro/services/reinnoire-tratament"
+      },
+      {
+        "lang": "en-RO",
+        "url": "https://www.myglobalhealth.online/romania/en/services/reinnoire-tratament"
+      },
+      {
+        "lang": "pt-RO",
+        "url": "https://www.myglobalhealth.online/romania/pt/services/reinnoire-tratament"
+      },
+      {
+        "lang": "es-RO",
+        "url": "https://www.myglobalhealth.online/romania/es/services/reinnoire-tratament"
+      },
+      {
+        "lang": "cs-RO",
+        "url": "https://www.myglobalhealth.online/romania/cs/services/reinnoire-tratament"
+      },
+      {
+        "lang": "de-RO",
+        "url": "https://www.myglobalhealth.online/romania/de/services/reinnoire-tratament"
+      },
+      {
+        "lang": "x-default",
+        "url": "https://www.myglobalhealth.online/romania/ro/services/reinnoire-tratament"
+      }
+    ],
+    "robots": "index, follow",
+    "faqs": [
+      {
+        "question": "Je vystavení receptu po konzultaci zaručeno?",
+        "answer": "Ne. Lékař nejprve zhodnotí diagnózu, současnou léčbu, její účinky a případné nežádoucí účinky. Připravte název a dávku léku, předchozí recepty a související výsledky. Může být nutné další vyšetření."
+      },
+      {
+        "question": "V jakém jazyce probíhá konzultace?",
+        "answer": "Lékaři dostupní pro tuto službu konzultují v rumunštině a angličtině. Při rezervaci si ověřte jazyk a volný termín. Česká verze stránky neznamená, že lékař mluví česky."
+      },
+      {
+        "question": "Co si mám připravit?",
+        "answer": "Poznamenejte si příznaky, kdy začaly a jaké léky užíváte a jakou léčbu podstupujete. Pokud máte související výsledky vyšetření nebo lékařské zprávy, mějte je po ruce."
+      },
+      {
+        "question": "Co když potřebuji osobní vyšetření?",
+        "answer": "Pokud videohovor a zdravotní dokumentace nestačí, lékař může doporučit osobní vyšetření. Online konzultace nenahrazuje neodkladnou péči. V případě zdravotní nouze volejte 112. Nečekejte na online termín."
+      }
+    ],
+    "schemaFaqCount": 4,
+    "protectedApiFieldsVerified": true
+  },
+  {
+    "url": "https://www.myglobalhealth.online/romania/de/services/reinnoire-tratament",
+    "checkedAt": "2026-09-12T22:59:18.864Z",
+    "status": 200,
+    "title": "Überprüfung einer laufenden Behandlung | Rumänien",
+    "description": "Überprüfung einer laufenden Behandlung. Beratung auf Rumänisch und Englisch. Prüfen Sie Arzt und verfügbare Termine vor der Buchung.",
+    "h1": [
+      "Überprüfung einer laufenden Behandlung"
+    ],
+    "canonical": "https://www.myglobalhealth.online/romania/de/services/reinnoire-tratament",
+    "hreflang": [
+      {
+        "lang": "ro-RO",
+        "url": "https://www.myglobalhealth.online/romania/ro/services/reinnoire-tratament"
+      },
+      {
+        "lang": "en-RO",
+        "url": "https://www.myglobalhealth.online/romania/en/services/reinnoire-tratament"
+      },
+      {
+        "lang": "pt-RO",
+        "url": "https://www.myglobalhealth.online/romania/pt/services/reinnoire-tratament"
+      },
+      {
+        "lang": "es-RO",
+        "url": "https://www.myglobalhealth.online/romania/es/services/reinnoire-tratament"
+      },
+      {
+        "lang": "cs-RO",
+        "url": "https://www.myglobalhealth.online/romania/cs/services/reinnoire-tratament"
+      },
+      {
+        "lang": "de-RO",
+        "url": "https://www.myglobalhealth.online/romania/de/services/reinnoire-tratament"
+      },
+      {
+        "lang": "x-default",
+        "url": "https://www.myglobalhealth.online/romania/ro/services/reinnoire-tratament"
+      }
+    ],
+    "robots": "index, follow",
+    "faqs": [
+      {
+        "question": "Ist ein Rezept nach dem Termin garantiert?",
+        "answer": "Nein. Der Arzt prüft zunächst Diagnose, laufende Behandlung, Wirkung und mögliche Nebenwirkungen. Halten Sie Medikamentenname, Dosis, frühere Rezepte und relevante Befunde bereit. Weitere Abklärung kann nötig sein."
+      },
+      {
+        "question": "In welcher Sprache findet der Termin statt?",
+        "answer": "Die für diese Leistung verfügbaren Ärzte beraten auf Rumänisch und Englisch. Prüfen Sie bei der Buchung die Sprache und den freien Termin. Eine deutsche Seite bedeutet nicht, dass der Arzt Deutsch spricht."
+      },
+      {
+        "question": "Was sollte ich bereithalten?",
+        "answer": "Notieren Sie Ihre Beschwerden, seit wann sie bestehen und welche Behandlungen Sie erhalten. Halten Sie vorhandene Befunde und Arztbriefe bereit, die damit zusammenhängen."
+      },
+      {
+        "question": "Was passiert, wenn eine körperliche Untersuchung nötig ist?",
+        "answer": "Wenn das Videogespräch und die Unterlagen nicht ausreichen, kann der Arzt eine Untersuchung vor Ort empfehlen. Eine Onlineberatung ersetzt keine Notfallversorgung. Rufen Sie bei einem medizinischen Notfall 112 an. Warten Sie nicht auf einen Onlinetermin."
+      }
+    ],
+    "schemaFaqCount": 4,
+    "protectedApiFieldsVerified": true
+  },
+  {
+    "url": "https://www.myglobalhealth.online/romania/en/services/reinnoire-tratament",
+    "checkedAt": "2026-09-12T22:59:18.883Z",
+    "status": 200,
+    "title": "Treatment renewal review | Romania · Global Health",
+    "description": "Treatment renewal review. Consultations in Romanian and English. Check the doctor and available times before booking.",
+    "h1": [
+      "Treatment renewal review"
+    ],
+    "canonical": "https://www.myglobalhealth.online/romania/en/services/reinnoire-tratament",
+    "hreflang": [
+      {
+        "lang": "ro-RO",
+        "url": "https://www.myglobalhealth.online/romania/ro/services/reinnoire-tratament"
+      },
+      {
+        "lang": "en-RO",
+        "url": "https://www.myglobalhealth.online/romania/en/services/reinnoire-tratament"
+      },
+      {
+        "lang": "pt-RO",
+        "url": "https://www.myglobalhealth.online/romania/pt/services/reinnoire-tratament"
+      },
+      {
+        "lang": "es-RO",
+        "url": "https://www.myglobalhealth.online/romania/es/services/reinnoire-tratament"
+      },
+      {
+        "lang": "cs-RO",
+        "url": "https://www.myglobalhealth.online/romania/cs/services/reinnoire-tratament"
+      },
+      {
+        "lang": "de-RO",
+        "url": "https://www.myglobalhealth.online/romania/de/services/reinnoire-tratament"
+      },
+      {
+        "lang": "x-default",
+        "url": "https://www.myglobalhealth.online/romania/ro/services/reinnoire-tratament"
+      }
+    ],
+    "robots": "index, follow",
+    "faqs": [
+      {
+        "question": "Is a prescription guaranteed after the appointment?",
+        "answer": "No. The doctor reviews the diagnosis, current treatment, its effects and any side effects before deciding. Have the medicine name and dose, previous prescriptions and relevant results ready. Further assessment may be needed."
+      },
+      {
+        "question": "Which languages can I use during the appointment?",
+        "answer": "The doctors available for this service consult in Romanian and English. Check the language and available time when booking; the language of this page does not change the languages the doctor speaks."
+      },
+      {
+        "question": "What should I have ready?",
+        "answer": "Note your symptoms, when they started and any treatment you take. Keep relevant test results and medical letters nearby if you have them."
+      },
+      {
+        "question": "What if I need a physical examination?",
+        "answer": "The doctor may recommend an in-person assessment if the video discussion and records are not enough. An online consultation does not replace emergency care. For a medical emergency, call 112. Do not wait for an online appointment."
+      }
+    ],
+    "schemaFaqCount": 4,
+    "protectedApiFieldsVerified": true
+  },
+  {
+    "url": "https://www.myglobalhealth.online/romania/es/services/reinnoire-tratament",
+    "checkedAt": "2026-09-12T22:59:18.846Z",
+    "status": 200,
+    "title": "Revisión para renovar un tratamiento | Rumanía",
+    "description": "Revisión para renovar un tratamiento. Consultas en rumano e inglés. Consulte el médico y los horarios disponibles antes de reservar.",
+    "h1": [
+      "Revisión para renovar un tratamiento"
+    ],
+    "canonical": "https://www.myglobalhealth.online/romania/es/services/reinnoire-tratament",
+    "hreflang": [
+      {
+        "lang": "ro-RO",
+        "url": "https://www.myglobalhealth.online/romania/ro/services/reinnoire-tratament"
+      },
+      {
+        "lang": "en-RO",
+        "url": "https://www.myglobalhealth.online/romania/en/services/reinnoire-tratament"
+      },
+      {
+        "lang": "pt-RO",
+        "url": "https://www.myglobalhealth.online/romania/pt/services/reinnoire-tratament"
+      },
+      {
+        "lang": "es-RO",
+        "url": "https://www.myglobalhealth.online/romania/es/services/reinnoire-tratament"
+      },
+      {
+        "lang": "cs-RO",
+        "url": "https://www.myglobalhealth.online/romania/cs/services/reinnoire-tratament"
+      },
+      {
+        "lang": "de-RO",
+        "url": "https://www.myglobalhealth.online/romania/de/services/reinnoire-tratament"
+      },
+      {
+        "lang": "x-default",
+        "url": "https://www.myglobalhealth.online/romania/ro/services/reinnoire-tratament"
+      }
+    ],
+    "robots": "index, follow",
+    "faqs": [
+      {
+        "question": "¿Se garantiza una receta tras la consulta?",
+        "answer": "No. El médico revisa el diagnóstico, el tratamiento, sus efectos y posibles reacciones adversas antes de decidir. Prepare el nombre y la dosis del medicamento, recetas anteriores y resultados relevantes. Puede necesitar otra valoración."
+      },
+      {
+        "question": "¿En qué idioma será la consulta?",
+        "answer": "Los médicos disponibles para este servicio atienden en rumano e inglés. Compruebe el idioma y la hora disponible al reservar. Que la página esté en español no significa que el médico hable español."
+      },
+      {
+        "question": "¿Qué debo preparar?",
+        "answer": "Anote sus síntomas, cuándo empezaron y los tratamientos que sigue. Tenga a mano los resultados y los informes médicos relacionados, si los tiene."
+      },
+      {
+        "question": "¿Y si necesito una exploración presencial?",
+        "answer": "El médico puede recomendar una valoración presencial si la videollamada y los informes no son suficientes. La consulta online no sustituye la atención de urgencias. En una emergencia médica, llame al 112. No espere a una cita online."
+      }
+    ],
+    "schemaFaqCount": 4,
+    "protectedApiFieldsVerified": true
+  },
+  {
+    "url": "https://www.myglobalhealth.online/romania/pt/services/reinnoire-tratament",
+    "checkedAt": "2026-09-12T22:59:18.812Z",
+    "status": 200,
+    "title": "Avaliação para renovar o tratamento | Roménia",
+    "description": "Avaliação para renovar o tratamento. Consultas em romeno e inglês. Consulte o médico e os horários disponíveis antes de marcar.",
+    "h1": [
+      "Avaliação para renovar o tratamento"
+    ],
+    "canonical": "https://www.myglobalhealth.online/romania/pt/services/reinnoire-tratament",
+    "hreflang": [
+      {
+        "lang": "ro-RO",
+        "url": "https://www.myglobalhealth.online/romania/ro/services/reinnoire-tratament"
+      },
+      {
+        "lang": "en-RO",
+        "url": "https://www.myglobalhealth.online/romania/en/services/reinnoire-tratament"
+      },
+      {
+        "lang": "pt-RO",
+        "url": "https://www.myglobalhealth.online/romania/pt/services/reinnoire-tratament"
+      },
+      {
+        "lang": "es-RO",
+        "url": "https://www.myglobalhealth.online/romania/es/services/reinnoire-tratament"
+      },
+      {
+        "lang": "cs-RO",
+        "url": "https://www.myglobalhealth.online/romania/cs/services/reinnoire-tratament"
+      },
+      {
+        "lang": "de-RO",
+        "url": "https://www.myglobalhealth.online/romania/de/services/reinnoire-tratament"
+      },
+      {
+        "lang": "x-default",
+        "url": "https://www.myglobalhealth.online/romania/ro/services/reinnoire-tratament"
+      }
+    ],
+    "robots": "index, follow",
+    "faqs": [
+      {
+        "question": "A receita está garantida após a consulta?",
+        "answer": "Não. O médico revê o diagnóstico, o tratamento atual, os efeitos e possíveis reações adversas antes de decidir. Prepare o nome e a dose do medicamento, receitas anteriores e resultados relevantes. Pode ser necessária outra avaliação."
+      },
+      {
+        "question": "Em que língua decorre a consulta?",
+        "answer": "Os médicos disponíveis para este serviço dão consultas em romeno e inglês. Confirme a língua e o horário disponível ao marcar. A página em português não significa que o médico fale português."
+      },
+      {
+        "question": "O que devo preparar?",
+        "answer": "Anote os sintomas, quando começaram e os tratamentos que faz. Tenha consigo os resultados de exames e relatórios médicos relacionados, caso existam."
+      },
+      {
+        "question": "E se precisar de uma avaliação presencial?",
+        "answer": "O médico pode recomendar uma avaliação presencial se a videochamada e os documentos não forem suficientes. A consulta online não substitui os cuidados de urgência. Numa emergência médica, ligue 112. Não espere por uma consulta online."
+      }
+    ],
+    "schemaFaqCount": 4,
+    "protectedApiFieldsVerified": true
+  },
+  {
+    "url": "https://www.myglobalhealth.online/romania/ro/services/reinnoire-tratament",
+    "checkedAt": "2026-09-12T22:59:18.833Z",
+    "status": 200,
+    "title": "Evaluare pentru reînnoirea tratamentului | România",
+    "description": "Evaluare pentru reînnoirea tratamentului. Consultații în română și engleză. Verificați medicul și orele disponibile înainte de rezervare.",
+    "h1": [
+      "Evaluare pentru reînnoirea tratamentului"
+    ],
+    "canonical": "https://www.myglobalhealth.online/romania/ro/services/reinnoire-tratament",
+    "hreflang": [
+      {
+        "lang": "ro-RO",
+        "url": "https://www.myglobalhealth.online/romania/ro/services/reinnoire-tratament"
+      },
+      {
+        "lang": "en-RO",
+        "url": "https://www.myglobalhealth.online/romania/en/services/reinnoire-tratament"
+      },
+      {
+        "lang": "pt-RO",
+        "url": "https://www.myglobalhealth.online/romania/pt/services/reinnoire-tratament"
+      },
+      {
+        "lang": "es-RO",
+        "url": "https://www.myglobalhealth.online/romania/es/services/reinnoire-tratament"
+      },
+      {
+        "lang": "cs-RO",
+        "url": "https://www.myglobalhealth.online/romania/cs/services/reinnoire-tratament"
+      },
+      {
+        "lang": "de-RO",
+        "url": "https://www.myglobalhealth.online/romania/de/services/reinnoire-tratament"
+      },
+      {
+        "lang": "x-default",
+        "url": "https://www.myglobalhealth.online/romania/ro/services/reinnoire-tratament"
+      }
+    ],
+    "robots": "index, follow",
+    "faqs": [
+      {
+        "question": "Rețeta este garantată după consultație?",
+        "answer": "Nu. Medicul revizuiește diagnosticul, tratamentul actual, efectele și eventualele reacții adverse înainte de a decide. Pregătiți denumirea și doza medicamentului, rețetele anterioare și analizele relevante. Poate fi necesară o evaluare suplimentară."
+      },
+      {
+        "question": "În ce limbă pot discuta cu medicul?",
+        "answer": "Medicii disponibili pentru acest serviciu consultă în română și engleză. Verificați limba și ora disponibile la rezervare; limba în care citiți pagina nu schimbă limbile vorbite de medic."
+      },
+      {
+        "question": "Ce să pregătesc pentru consultație?",
+        "answer": "Notați simptomele, când au început și tratamentele pe care le urmați. Aveți la îndemână rezultatele și scrisorile medicale relevante, dacă există."
+      },
+      {
+        "question": "Ce se întâmplă dacă am nevoie de un consult fizic?",
+        "answer": "Medicul vă poate recomanda evaluare în persoană dacă discuția video și documentele nu sunt suficiente. Consultația online nu înlocuiește îngrijirea de urgență. Într-o urgență medicală, sunați la 112. Nu așteptați o programare online."
+      }
+    ],
+    "schemaFaqCount": 4,
+    "protectedApiFieldsVerified": true
+  }
+]
