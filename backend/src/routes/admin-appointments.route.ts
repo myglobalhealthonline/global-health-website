@@ -718,14 +718,23 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         });
       }
 
-      // Notify the ASSIGNED DOCTOR (portal + email + WhatsApp) that their
-      // consultation moved. This endpoint deliberately skips the full
-      // `applyRescheduleSideEffects` — it takes the meeting link from the
+      // Notify the people attending (doctor by email + WhatsApp, admin alert)
+      // that the consultation changed. This endpoint deliberately skips the
+      // full `applyRescheduleSideEffects` — it takes the meeting link from the
       // admin and sends its own patient email, so regenerating Meet or
       // re-emailing the patient here would contradict both — but the doctor
       // still has to be told, and previously nobody was: an admin reschedule
       // left the doctor sitting on the OLD time with no message at all.
-      if (shouldEmail && (slotChanged || isDoctorChange)) {
+      //
+      // Deliberately NOT gated on `shouldEmail`: that flag tracks whether the
+      // PATIENT's branded schedule email is going out, and it ignores a doctor
+      // swap entirely. Gating on it meant a pure reassignment (same time, same
+      // link) told the incoming doctor nothing but an in-portal bell, and told
+      // the patient nothing at all that their clinician had changed.
+      const participantsShouldKnow =
+        Boolean(appointment.scheduledAt) &&
+        (slotChanged || urlChanged || locationChanged || isDoctorChange);
+      if (participantsShouldKnow) {
         const notifyOrderId =
           orderIdForAppointment ??
           (
@@ -743,8 +752,11 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
             previousDoctorId: beforeDoctorId,
             newDoctorId: appointment.doctorId ?? null,
             meetingUrl: appointment.meetingUrl ?? null,
-            // The branded schedule email above is the patient's copy.
-            skipPatient: true,
+            // Suppress the patient copy ONLY when the branded schedule email
+            // above is already carrying this same change to them. On a
+            // doctor-only swap that email does not fire, so this is the one
+            // thing that tells the patient their clinician changed.
+            skipPatient: shouldEmail,
           }).catch((notifyErr) => {
             app.log.warn(
               { err: notifyErr },
