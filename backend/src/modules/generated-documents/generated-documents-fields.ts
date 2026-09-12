@@ -79,9 +79,12 @@ export function buildPatientIdLine(
   // An unknown country is not evidence of a local number.
   const chartCountryMatches = Boolean(profileCountry) && alias(profileCountry!) === alias(upper);
   if (chartCountryMatches) {
-    if (profile.taxIdNumber) {
-      return `${taxLabel}: ${profile.taxIdNumber}`;
-    }
+    // NOTE: `profile.taxIdNumber` is deliberately NOT consulted here. Deciding
+    // whether that legacy column may stand in for a country's fiscal number is
+    // `resolveFiscalNumberForCountry`'s job, and callers pass the result in as
+    // `countryTaxIdNumber` above. Reading it here as well re-opened the bug: a
+    // patient living in Ireland whose column held a Brazilian CPF matched the
+    // country check on their ADDRESS and printed "PPS: 068.001.344-06".
     if (profile.nationalIdNumber) {
       const nationalLabel =
         {

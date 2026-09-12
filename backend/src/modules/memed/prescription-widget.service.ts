@@ -1,6 +1,6 @@
 import { prisma } from "../../db/prisma.js";
 import { decryptPhi } from "../../lib/crypto/phi-crypto.js";
-import { resolvePatientCountryTaxId } from "../patient-profile/patient-country-tax-ids.js";
+import { resolveFiscalNumberForCountry } from "../patient-profile/patient-country-tax-ids.js";
 import {
   isMemedPrescriptionConfigured,
   MemedPrescriptionNotConfiguredError,
@@ -204,24 +204,28 @@ async function resolvePatientForMemed(appointmentId: string): Promise<MemedPatie
 
   // The fiscal number the patient holds for the country this prescription is
   // issued in — a patient treated in both PT and BR has a NIF and a CPF, and
-  // only the CPF belongs in Memed. Falls through to the appointment's own
-  // cross-border capture, then to the chart's single tax column.
-  const countryTaxId = await resolvePatientCountryTaxId(profile?.id ?? null, appt.countryCode);
+  // only the CPF belongs in Memed.
+  //
+  // The legacy chart column is offered as the fallback ONLY when the patient's
+  // address country matches this one, and `resolveFiscalNumberForCountry` then
+  // drops even that if they have per-country rows: an address match alone is
+  // not evidence about the NUMBER, which is how a Brazilian CPF ended up
+  // labelled as an Irish PPS.
+  const chartIdIsLocal =
+    profile?.addressCountryCode?.trim().toLowerCase() === appt.countryCode.trim().toLowerCase();
+  const countryTaxId = await resolveFiscalNumberForCountry(
+    profile?.id ?? null,
+    appt.countryCode,
+    {
+      value: decryptPhi(profile?.taxIdNumber ?? null),
+      addressCountryCode: profile?.addressCountryCode ?? null,
+    },
+  );
 
   // `patientHealthIdNumber` is the id captured for THIS issuing country
   // (cross-border Rx asks for it at payment) — same precedence as
-  // buildPatientIdLine. Otherwise fall back to the chart's CPF.
-  // The chart column is the last resort and only when it can be PROVEN to hold
-  // this country's number: an unknown or foreign address country means the
-  // value there could be any market's identifier, and "CPF: <a Portuguese NIF>"
-  // is a wrong prescription, not a partly-filled one. Same rule as
   // buildPatientIdLine.
-  const chartIdIsLocal =
-    profile?.addressCountryCode?.trim().toLowerCase() === appt.countryCode.trim().toLowerCase();
-  const cpfRaw =
-    countryTaxId ??
-    decryptPhi(appt.patientHealthIdNumber) ??
-    (chartIdIsLocal ? decryptPhi(profile?.taxIdNumber ?? null) : null);
+  const cpfRaw = countryTaxId ?? decryptPhi(appt.patientHealthIdNumber);
   const passportRaw = cpfRaw ? null : decryptPhi(profile?.passportNumber ?? null);
   const dob = appt.dateOfBirth ?? profile?.dateOfBirth ?? null;
 

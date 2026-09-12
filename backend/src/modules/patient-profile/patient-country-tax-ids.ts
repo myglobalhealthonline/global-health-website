@@ -30,7 +30,38 @@ type Db = PrismaClient | Prisma.TransactionClient;
  * fold `generated-documents-fields.ts` applies before comparing countries. They
  * must not become separate rows from the markets they alias.
  */
-const COUNTRY_ALIASES: Record<string, string> = { SP: "ES", RM: "RO" };
+const COUNTRY_ALIASES: Record<string, string> = {
+  SP: "ES",
+  RM: "RO",
+  // `PatientProfile.addressCountryCode` is free text, and the live data holds
+  // full names and misspellings — PORTUGAL, IRLANDA, IR, PO. They are folded
+  // here so "does this patient's address country match the document's" gets the
+  // same answer for "PORTUGAL" as for "PT", rather than silently failing and
+  // dropping a fiscal number the patient does have.
+  PORTUGAL: "PT",
+  PO: "PT",
+  POR: "PT",
+  PRT: "PT",
+  IRELAND: "IE",
+  IRLANDA: "IE",
+  IRLANDE: "IE",
+  IR: "IE",
+  EIRE: "IE",
+  IRL: "IE",
+  BRAZIL: "BR",
+  BRASIL: "BR",
+  BRA: "BR",
+  SPAIN: "ES",
+  ESPANA: "ES",
+  "ESPAÑA": "ES",
+  ESP: "ES",
+  CZECHIA: "CZ",
+  "CZECH REPUBLIC": "CZ",
+  CESKO: "CZ",
+  CZE: "CZ",
+  ROMANIA: "RO",
+  ROU: "RO",
+};
 
 /** Uppercase + alias-folded ISO-2. Returns null for anything unusable. */
 export function normalizeTaxIdCountryCode(code: string | null | undefined): string | null {
@@ -156,6 +187,57 @@ export async function setPatientCountryTaxId(
     update: { taxIdNumber: encrypted, updatedByDoctorId, updatedByUserId },
   });
   return listPatientCountryTaxIds(patientProfileId, db);
+}
+
+/**
+ * The fiscal number to print for `countryCode`, including the legacy fallback.
+ *
+ * This is the ONLY place allowed to decide whether the old single
+ * `PatientProfile.taxIdNumber` column may stand in for a country's number, and
+ * the rule is deliberately sharp:
+ *
+ *   - a row for this country            → use it
+ *   - no row, but the patient HAS rows  → null, print nothing
+ *   - no rows at all                    → fall back to the column
+ *
+ * The middle case is the one that matters. A patient living in Ireland whose
+ * chart column holds a Brazilian CPF passes any address-based check — their
+ * address country IS Ireland — so the column printed the CPF under the label
+ * "PPS". Once a patient has per-country rows those rows are the whole truth
+ * about their fiscal numbers, and a country absent from them means we do not
+ * have one: the document prints a blank fiscal line, which is correct.
+ *
+ * The last case keeps patients whose legacy value could not be attributed to
+ * any country (the backfill leaves those alone) rendering exactly as before.
+ */
+export async function resolveFiscalNumberForCountry(
+  patientProfileId: string | null | undefined,
+  countryCode: string | null | undefined,
+  /**
+   * The legacy chart column, DECRYPTED, together with the profile's address
+   * country. Both are required: the column carries no country of its own, so
+   * the only (weak) evidence it belongs here is that the patient's address
+   * country is this country. That check lives inside this function rather than
+   * at each call site — every caller forgetting it is how the same mislabelling
+   * comes back, and it already did once.
+   */
+  legacy: { value: string | null | undefined; addressCountryCode: string | null | undefined } | null,
+  db: Db = prisma,
+): Promise<string | null> {
+  const wanted = normalizeTaxIdCountryCode(countryCode);
+  const legacyValue = legacy?.value?.trim() || null;
+  const legacyCountry = normalizeTaxIdCountryCode(legacy?.addressCountryCode);
+  const legacyUsable = legacyValue && wanted && legacyCountry === wanted ? legacyValue : null;
+
+  if (!patientProfileId) return legacyUsable;
+  const own = await resolvePatientCountryTaxId(patientProfileId, countryCode, db);
+  if (own) return own;
+  const anyRow = await db.patientCountryTaxId.findFirst({
+    where: { patientProfileId },
+    select: { id: true },
+  });
+  if (anyRow) return null;
+  return legacyUsable;
 }
 
 /**
