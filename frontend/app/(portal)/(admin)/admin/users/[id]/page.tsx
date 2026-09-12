@@ -98,6 +98,12 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
     patientProfileResult && patientProfileResult.ok
       ? patientProfileResult.data.profile
       : null;
+  // Per-country fiscal numbers ride alongside the profile — they are their own
+  // table, one row per market the patient is treated in, not a profile column.
+  const patientCountryTaxIds =
+    patientProfileResult && patientProfileResult.ok
+      ? (patientProfileResult.data.countryTaxIds ?? [])
+      : [];
 
   // Gates the email editor. The backend rejects the change for anyone but
   // ADMIN/SUPER_ADMIN on its own; this only keeps a control the operator
@@ -489,6 +495,7 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
               userId={user.id}
               email={user.email}
               profile={patientProfile}
+              countryTaxIds={patientCountryTaxIds}
             />
           ) : null}
         </div>
