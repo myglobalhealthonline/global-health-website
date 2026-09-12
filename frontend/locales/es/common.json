@@ -128,7 +128,7 @@
     "primaryBooking": "Reservar Online"
   },
   "bookingAvailability": {
-    "notAcceptingOnlineBookings": "No acepta reservas online",
+    "notAcceptingOnlineBookings": "No hay horarios disponibles",
     "returningOn": "Las reservas vuelven a abrir el {date}",
     "nextAvailable": "Próxima disponibilidad: {date}"
   },

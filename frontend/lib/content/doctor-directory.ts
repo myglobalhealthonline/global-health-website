@@ -172,19 +172,14 @@ export function buildDoctorDirectoryView(
     return langOk && typeOk;
   });
 
-  // Doctors with no reachable slot (UNAVAILABLE) don't get shown on the
-  // public directory at all — only doctors who are bookable now or
-  // returning with a known future date make the grid/spotlight.
-  const bookableDoctors = filteredDoctors.filter((d) => d.bookability.state !== "UNAVAILABLE");
-
   // Admin-chosen featured doctor → the spotlight card at the top. Pulled
   // out of the grid below so it isn't shown twice. Only spotlighted when
   // it's part of the current (filtered) view; otherwise the grid just
   // shows the matches.
-  const featured = bookableDoctors.find((d) => d.isFeatured) ?? null;
+  const featured = filteredDoctors.find((d) => d.isFeatured) ?? null;
   const gridDoctors = (featured
-    ? bookableDoctors.filter((d) => d.id !== featured.id)
-    : bookableDoctors)
+    ? filteredDoctors.filter((d) => d.id !== featured.id)
+    : filteredDoctors)
     .map((doctor, position) => ({ doctor, position }))
     .sort((a, b) => {
       const rank = (state: CountryDoctorCard["bookability"]["state"]) =>
@@ -274,7 +269,7 @@ export function buildDoctorDirectoryView(
   }
 
   const hasActive = filterLangs.length > 0 || filterTypes.length > 0;
-  const bookingDoctor = bookableDoctors
+  const bookingDoctor = filteredDoctors
     .map((doctor, position) => ({ doctor, position }))
     .sort((a, b) => {
       const rank = (state: CountryDoctorCard["bookability"]["state"]) =>
@@ -340,7 +335,7 @@ export function buildDoctorDirectoryView(
     i18n,
     doctorCards,
     spotlight,
-    totalDoctorCount: bookableDoctors.length,
+    totalDoctorCount: filteredDoctors.length,
     filterGroups,
     hasActive,
     clearHref: `/${countrySlug}/${lang}/doctors`,
