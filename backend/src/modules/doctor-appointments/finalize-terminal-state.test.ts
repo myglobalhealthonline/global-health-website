@@ -139,11 +139,26 @@ describe("finalizeDoctorAppointment — terminal status enforcement (WF-2)", () 
     assert.deepEqual(state.brazilEmailCalls, []);
   });
 
-  it("rejects an already-COMPLETED appointment (terminal, both directions)", async () => {
+  it("finalizes a COMPLETED-but-unfinalized appointment (status set from the dropdown first)", async () => {
+    // The doctor's own page writes status COMPLETED ("Concluded") with no
+    // transition matrix in front of it. Treating that as terminal left the
+    // consultation permanently unfinalizable: no completion timestamp, no
+    // payout row, no review invite. Nothing WF-2 guards against escalates
+    // here — the row is already COMPLETED.
     state.appointment = liveAppointment({ status: "COMPLETED" });
+    const updated = await svc.finalizeDoctorAppointment(DOCTOR_ID, APPT_ID, FLAGS);
+    await flush();
+    assert.equal(updated?.finalized, true);
+    assert.ok(updated?.consultationCompletedAt instanceof Date);
+    assert.equal(allWrites().length, 1);
+    assert.deepEqual(state.reviewInviteCalls, [APPT_ID]);
+  });
+
+  it("rejects an unrecognized stored status rather than finalizing blind", async () => {
+    state.appointment = liveAppointment({ status: "NOT_A_STATUS" });
     await assert.rejects(
       () => svc.finalizeDoctorAppointment(DOCTOR_ID, APPT_ID, FLAGS),
-      (err: Error) => /transition/i.test(err.message),
+      /Unrecognized appointment status/,
     );
     await flush();
     assert.deepEqual(allWrites(), []);

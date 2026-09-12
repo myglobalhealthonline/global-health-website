@@ -3,9 +3,8 @@ import { createReviewInviteForAppointment } from "../review-invites/review-invit
 import { sendBrazilFinalizationEmail } from "../../lib/email/templates.js";
 import {
   InvalidAppointmentStatusTransitionError,
-  assertValidStatusTransition,
+  assertKnownAppointmentStatus,
 } from "../appointments/appointment-status-transitions.js";
-import type { AppointmentStatus } from "../../validations/admin-appointments.schema.js";
 
 export async function finalizeDoctorAppointment(
   doctorId: string,
@@ -34,13 +33,24 @@ export async function finalizeDoctorAppointment(
   // The status was read and then ignored: a CANCELLED consultation could be
   // flipped to COMPLETED, which counts toward payout, fires a review invite
   // and an email, and — because `doctorHasTreatmentRelationship` excludes
-  // only CANCELLED — hands the doctor PHI access back. Same "is this still
-  // live" probe the patient cancel/reschedule paths use: terminal statuses
-  // have no outgoing transitions, so probing against CANCELLED answers it
-  // without inventing a second matrix. Deliberately a liveness check only —
-  // it does not enforce ordered progression through CONTACTED, because every
-  // appointment is created REQUEST_RECEIVED and nothing auto-sets CONTACTED.
-  assertValidStatusTransition(appt.status as AppointmentStatus, "CANCELLED");
+  // only CANCELLED — hands the doctor PHI access back. So CANCELLED is the
+  // one status that blocks finalisation, and an unrecognised stored status
+  // still surfaces rather than being finalised blind.
+  //
+  // COMPLETED is explicitly NOT blocked while `finalized` is false. The
+  // status dropdown on the doctor's own consultation page writes COMPLETED
+  // ("Concluded") directly, with no transition matrix in front of it, so a
+  // doctor who sets the status before pressing Finalize used to land in a
+  // dead end: the row said COMPLETED, terminal, and every finalize attempt
+  // 409'd forever — no `consultationCompletedAt`, no payout row, no review
+  // invite, no Brazil email. Finalising a row that is already COMPLETED adds
+  // none of the escalations WF-2 guards against; it only completes the work
+  // the doctor already declared done. `finalized` above remains the
+  // idempotency gate, so a genuine second finalize still 409s.
+  assertKnownAppointmentStatus(appt.status);
+  if (appt.status === "CANCELLED") {
+    throw new InvalidAppointmentStatusTransitionError(appt.status, "COMPLETED");
+  }
 
   const now = new Date();
   // Compare-and-swap on the status we just validated. A cancellation landing
