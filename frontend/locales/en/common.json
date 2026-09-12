@@ -128,7 +128,7 @@
     "primaryBooking": "Book Online"
   },
   "bookingAvailability": {
-    "notAcceptingOnlineBookings": "Not accepting online bookings",
+    "notAcceptingOnlineBookings": "No slots available",
     "returningOn": "Appointments reopen {date}",
     "nextAvailable": "Next available {date}"
   },

@@ -128,7 +128,7 @@
     "primaryBooking": "Marcar Online"
   },
   "bookingAvailability": {
-    "notAcceptingOnlineBookings": "Não aceita marcações online",
+    "notAcceptingOnlineBookings": "Sem vagas disponíveis",
     "returningOn": "As marcações reabrem em {date}",
     "nextAvailable": "Próxima disponibilidade: {date}"
   },

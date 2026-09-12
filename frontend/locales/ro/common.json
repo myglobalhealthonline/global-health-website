@@ -128,7 +128,7 @@
     "primaryBooking": "Programează online"
   },
   "bookingAvailability": {
-    "notAcceptingOnlineBookings": "Nu acceptă programări online",
+    "notAcceptingOnlineBookings": "Nu sunt locuri disponibile",
     "returningOn": "Programările se redeschid pe {date}",
     "nextAvailable": "Următoarea disponibilitate: {date}"
   },

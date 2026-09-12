@@ -128,7 +128,7 @@
     "primaryBooking": "Rezervovat online"
   },
   "bookingAvailability": {
-    "notAcceptingOnlineBookings": "Nepřijímá online rezervace",
+    "notAcceptingOnlineBookings": "Žádné volné termíny",
     "returningOn": "Rezervace budou znovu otevřeny {date}",
     "nextAvailable": "Nejbližší termín: {date}"
   },
