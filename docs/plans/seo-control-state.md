@@ -9019,3 +9019,23 @@ gate does not close global §43.4 or protect privileged SQL outside the updater.
 Next release action: integrate the tested branch source before any later main
 deployment, which could otherwise replace the isolated Railway upload. No main
 merge or push was performed.
+
+### 55.4 Owner approval of retained editorial dispositions
+
+The owner instructed: “All editorial review has been approved, just apply.”
+The 191 remaining editorial rows contain retention recommendations and no
+unpublished replacement drafts. Their matrix status now reads “retained; owner
+editorial approval recorded.” The [approval receipt](../../seo/romania/editorial-retention-approval-2026-09-13.json)
+identifies each URL, recorded source fingerprint and retention reason.
+
+This closes the pending editorial decision on those existing recommendations.
+It makes no production content change and does not represent a new independent
+clinical or legal certification. The 114 previously published pages remain applied
+and verified. There is no additional prepared editorial batch awaiting publication.
+The earlier description of 191 pages as a remaining implementation phase overstated
+the package: those rows proposed retention, not replacement copy.
+
+The six unstaffed pain-service variants and Brindus specialty evidence remain held.
+Main integration and the measurement dates in §55.3 remain open. A future rewrite,
+including retained em-dash-heavy prose, would require new field-level copy; this
+approval record does not claim that such a rewrite has been performed.

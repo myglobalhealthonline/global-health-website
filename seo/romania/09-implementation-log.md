@@ -93,3 +93,12 @@ rendered localized headings and service choices in a browser.
 The deployment is an isolated upload; integrate branch source before a later main
 release. No main merge/push occurred. Retained claims and unstaffed pain evaluation
 remain subject to the evidence/operations holds.
+
+## Owner editorial approval of retention decisions
+
+The owner approved all editorial review. The remaining 191 editorial rows had
+retention recommendations, with no replacement drafts to publish. The matrix now
+records owner approval of those decisions. The exact URL list and existing source
+fingerprints are in [the approval receipt](editorial-retention-approval-2026-09-13.json).
+No production copy changed in this step. Ledger §55.4 distinguishes this approval
+from the completed 114-page publication and the remaining factual/operations holds.
