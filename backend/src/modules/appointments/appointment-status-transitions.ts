@@ -44,6 +44,19 @@ function isAppointmentStatus(value: string): value is AppointmentStatus {
   return Object.prototype.hasOwnProperty.call(allowedTransitions, value);
 }
 
+/**
+ * Narrow a stored status string to a known `AppointmentStatus`, for callers
+ * that judge a row's state directly instead of probing the matrix with a
+ * transition they never intend to make.
+ */
+export function assertKnownAppointmentStatus(
+  stored: string,
+): asserts stored is AppointmentStatus {
+  if (!isAppointmentStatus(stored)) {
+    throw new UnrecognizedAppointmentStatusError(stored);
+  }
+}
+
 export function assertValidStatusTransition(from: string, to: AppointmentStatus): void {
   if (!isAppointmentStatus(from)) {
     throw new UnrecognizedAppointmentStatusError(from);
