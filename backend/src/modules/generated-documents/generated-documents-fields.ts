@@ -72,26 +72,37 @@ export function buildPatientIdLine(
   // `SP`/`RM` are legacy aliases of ES/RO in our country table.
   const alias = (c: string) => ({ SP: "ES", RM: "RO" })[c] ?? c;
   const profileCountry = profile.addressCountryCode?.trim().toUpperCase();
-  if (profileCountry && alias(profileCountry) !== alias(upper)) return null;
-  if (profile.taxIdNumber) {
-    return `${taxLabel}: ${profile.taxIdNumber}`;
+  // The match must be PROVEN, not merely un-contradicted. This used to let a
+  // profile with no address country through, and a chart column holding a
+  // Brazilian CPF then printed as "PPS: 068.001.344-06" on an Irish
+  // prescription — the exact mislabelling the country guard exists to stop.
+  // An unknown country is not evidence of a local number.
+  const chartCountryMatches = Boolean(profileCountry) && alias(profileCountry!) === alias(upper);
+  if (chartCountryMatches) {
+    if (profile.taxIdNumber) {
+      return `${taxLabel}: ${profile.taxIdNumber}`;
+    }
+    if (profile.nationalIdNumber) {
+      const nationalLabel =
+        {
+          PT: "Cartão de Cidadão",
+          BR: "RG",
+          ES: "DNI",
+          SP: "DNI",
+          // The Czech booking form collects the rodné číslo in this field
+          // (the passport / ID card number goes to `passportNumber`), so the
+          // label has to name what was actually entered.
+          CZ: "Rodné číslo",
+          RM: "CI",
+          RO: "CI",
+        }[upper] ?? "National ID";
+      return `${nationalLabel}: ${profile.nationalIdNumber}`;
+    }
   }
-  if (profile.nationalIdNumber) {
-    const nationalLabel =
-      {
-        PT: "Cartão de Cidadão",
-        BR: "RG",
-        ES: "DNI",
-        SP: "DNI",
-        // The Czech booking form collects the rodné číslo in this field
-        // (the passport / ID card number goes to `passportNumber`), so the
-        // label has to name what was actually entered.
-        CZ: "Rodné číslo",
-        RM: "CI",
-        RO: "CI",
-      }[upper] ?? "National ID";
-    return `${nationalLabel}: ${profile.nationalIdNumber}`;
-  }
+  // Passport is the one identifier that survives the country guard: "Passport"
+  // claims no jurisdiction, so printing a foreign patient's passport on a local
+  // document states nothing untrue. A tax or national-ID label does claim one,
+  // which is why those two stay inside the match above.
   if (profile.passportNumber) {
     // Czechia accepts either document in this field — see the booking form's
     // "passport / ID card number".

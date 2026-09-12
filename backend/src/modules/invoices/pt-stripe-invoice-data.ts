@@ -1,4 +1,20 @@
 import { prisma } from "../../db/prisma.js";
+import { decryptPhi } from "../../lib/crypto/phi-crypto.js";
+import { resolvePatientCountryTaxId } from "../patient-profile/patient-country-tax-ids.js";
+
+/**
+ * Decrypt a PHI field, treating an undecryptable value as absent — a missing key
+ * or corrupt envelope must not abort checkout. Mirrors the helper in
+ * pt-invoicexpress.service.ts; kept local so this module stays importable from
+ * the checkout path without pulling the issuance service in.
+ */
+function safeDecryptPhi(value: string | null | undefined): string | null {
+  try {
+    return decryptPhi(value ?? null);
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Structural shape of Stripe's `invoice_creation` Checkout param (the subset we
@@ -38,9 +54,20 @@ export async function buildPtStripeInvoiceData(
 
   const profile = await prisma.patientProfile.findUnique({
     where: { email: buyerEmail.toLowerCase() },
-    select: { taxIdNumber: true },
+    select: { id: true, taxIdNumber: true },
   });
-  const nif = profile?.taxIdNumber?.trim() || "";
+  // The PT row first — for a patient who also consults in another market the
+  // shared column may hold that country's number, and a Brazilian CPF printed
+  // as "NIF" on a Portuguese invoice is a legally wrong document.
+  //
+  // Then DECRYPTED, not raw: `taxIdNumber` is PHI-encrypted at rest, so the
+  // column value is a `phi:v1:` envelope. Passing it through put the ciphertext
+  // itself into the Stripe custom field — the same mistake resolveFiscalId's
+  // doc comment records for InvoiceExpress.
+  const nif =
+    (await resolvePatientCountryTaxId(profile?.id ?? null, "PT")) ??
+    safeDecryptPhi(profile?.taxIdNumber) ??
+    "";
 
   const customFields: Array<{ name: string; value: string }> = [];
   // Stripe caps custom-field name/value at 30 chars each.

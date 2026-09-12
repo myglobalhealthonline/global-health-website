@@ -193,6 +193,7 @@ async function resolvePatientForMemed(appointmentId: string): Promise<MemedPatie
       id: true,
       taxIdNumber: true,
       passportNumber: true,
+      addressCountryCode: true,
       dateOfBirth: true,
       addressLine1: true,
       addressLine2: true,
@@ -210,10 +211,17 @@ async function resolvePatientForMemed(appointmentId: string): Promise<MemedPatie
   // `patientHealthIdNumber` is the id captured for THIS issuing country
   // (cross-border Rx asks for it at payment) — same precedence as
   // buildPatientIdLine. Otherwise fall back to the chart's CPF.
+  // The chart column is the last resort and only when it can be PROVEN to hold
+  // this country's number: an unknown or foreign address country means the
+  // value there could be any market's identifier, and "CPF: <a Portuguese NIF>"
+  // is a wrong prescription, not a partly-filled one. Same rule as
+  // buildPatientIdLine.
+  const chartIdIsLocal =
+    profile?.addressCountryCode?.trim().toLowerCase() === appt.countryCode.trim().toLowerCase();
   const cpfRaw =
     countryTaxId ??
     decryptPhi(appt.patientHealthIdNumber) ??
-    decryptPhi(profile?.taxIdNumber ?? null);
+    (chartIdIsLocal ? decryptPhi(profile?.taxIdNumber ?? null) : null);
   const passportRaw = cpfRaw ? null : decryptPhi(profile?.passportNumber ?? null);
   const dob = appt.dateOfBirth ?? profile?.dateOfBirth ?? null;
 

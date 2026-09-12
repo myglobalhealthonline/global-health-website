@@ -14,10 +14,15 @@ import {
  */
 
 describe("buildPatientIdLine", () => {
+  // Every case states the profile's country explicitly. The chart IDs are only
+  // usable on a document when that country MATCHES the issuing one, so a
+  // fixture that left it null would be asserting the behaviour of a patient we
+  // cannot place — which is exactly the case that must print nothing.
   const baseProfile = {
     nationalIdNumber: null as string | null,
     taxIdNumber: null as string | null,
     passportNumber: null as string | null,
+    addressCountryCode: null as string | null,
   };
 
   it("returns null when no IDs are stored", () => {
@@ -30,35 +35,55 @@ describe("buildPatientIdLine", () => {
 
   it("prefers tax ID and labels it NIF for PT", () => {
     assert.equal(
-      buildPatientIdLine("PT", { ...baseProfile, taxIdNumber: "123456789" }),
+      buildPatientIdLine("PT", {
+        ...baseProfile,
+        taxIdNumber: "123456789",
+        addressCountryCode: "pt",
+      }),
       "NIF: 123456789",
     );
   });
 
   it("labels tax ID as CPF for BR", () => {
     assert.equal(
-      buildPatientIdLine("BR", { ...baseProfile, taxIdNumber: "111.222.333-44" }),
+      buildPatientIdLine("BR", {
+        ...baseProfile,
+        taxIdNumber: "111.222.333-44",
+        addressCountryCode: "br",
+      }),
       "CPF: 111.222.333-44",
     );
   });
 
   it("labels tax ID as PPS for IE", () => {
     assert.equal(
-      buildPatientIdLine("IE", { ...baseProfile, taxIdNumber: "1234567T" }),
+      buildPatientIdLine("IE", {
+        ...baseProfile,
+        taxIdNumber: "1234567T",
+        addressCountryCode: "ie",
+      }),
       "PPS: 1234567T",
     );
   });
 
   it("labels tax ID as DNI for ES", () => {
     assert.equal(
-      buildPatientIdLine("ES", { ...baseProfile, taxIdNumber: "12345678Z" }),
+      buildPatientIdLine("ES", {
+        ...baseProfile,
+        taxIdNumber: "12345678Z",
+        addressCountryCode: "es",
+      }),
       "DNI: 12345678Z",
     );
   });
 
   it("falls back to generic Tax ID label for unknown countries", () => {
     assert.equal(
-      buildPatientIdLine("XX", { ...baseProfile, taxIdNumber: "ANY-VALUE" }),
+      buildPatientIdLine("XX", {
+        ...baseProfile,
+        taxIdNumber: "ANY-VALUE",
+        addressCountryCode: "xx",
+      }),
       "Tax ID: ANY-VALUE",
     );
   });
@@ -68,6 +93,7 @@ describe("buildPatientIdLine", () => {
       buildPatientIdLine("PT", {
         ...baseProfile,
         nationalIdNumber: "CC-9999",
+        addressCountryCode: "pt",
       }),
       "Cartão de Cidadão: CC-9999",
     );
@@ -78,6 +104,7 @@ describe("buildPatientIdLine", () => {
       buildPatientIdLine("BR", {
         ...baseProfile,
         nationalIdNumber: "12.345.678-9",
+        addressCountryCode: "br",
       }),
       "RG: 12.345.678-9",
     );
@@ -98,6 +125,7 @@ describe("buildPatientIdLine", () => {
       buildPatientIdLine("CZ", {
         ...baseProfile,
         nationalIdNumber: "760506/1234",
+        addressCountryCode: "cz",
       }),
       "Rodné číslo: 760506/1234",
     );
@@ -158,6 +186,26 @@ describe("buildPatientIdLine", () => {
     );
   });
 
+  it("never labels a chart id whose country is unknown", () => {
+    // The regression this guards: a Brazilian CPF sitting in the chart column
+    // of a profile with no address country printed as "PPS: 068.001.344-06" on
+    // an Irish prescription. An unknown country is not evidence of a local
+    // number, so nothing is printed.
+    assert.equal(
+      buildPatientIdLine("IE", { ...baseProfile, taxIdNumber: "068.001.344-06" }),
+      null,
+    );
+  });
+
+  it("still prints a passport when the country cannot be matched", () => {
+    // "Passport" claims no jurisdiction, so it survives the guard that stops
+    // tax and national-ID labels.
+    assert.equal(
+      buildPatientIdLine("IE", { ...baseProfile, passportNumber: "EU99887766" }),
+      "Passport: EU99887766",
+    );
+  });
+
   it("prefers the country's own fiscal number over the chart id", () => {
     // The patient is treated in IE and PT and holds a number for each. The
     // Irish document must carry the PPS, not the NIF the chart column holds.
@@ -209,7 +257,11 @@ describe("buildPatientIdLine", () => {
 
   it("country code is normalized to upper-case", () => {
     assert.equal(
-      buildPatientIdLine("pt", { ...baseProfile, taxIdNumber: "1" }),
+      buildPatientIdLine("pt", {
+        ...baseProfile,
+        taxIdNumber: "1",
+        addressCountryCode: "PT",
+      }),
       "NIF: 1",
     );
   });
