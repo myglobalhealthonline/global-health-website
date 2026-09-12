@@ -14,6 +14,7 @@ import {
 import { AdminCard, PageHeader, Pill } from "../../_components/atoms";
 import { formatAppDateTime } from "@/lib/format-datetime";
 import { bookingTimezoneForCountry } from "@/lib/booking-timezone";
+import { CountryFiscalNumbers } from "@/components/patient/CountryFiscalNumbers";
 
 export const dynamic = "force-dynamic";
 
@@ -131,6 +132,7 @@ export default async function AdminPatientDetailPage({ params, searchParams }: P
   }
 
   const profile = profileRes.data.profile;
+  const countryTaxIds = profileRes.data.countryTaxIds ?? [];
   const nationalities = nationalityRes.ok ? nationalityRes.data.nationalityDocuments : [];
   const consents = consentsRes.ok ? consentsRes.data.consents : [];
   const accessLogs = accessLogRes.ok ? accessLogRes.data.logs : [];
@@ -180,6 +182,19 @@ export default async function AdminPatientDetailPage({ params, searchParams }: P
             ) : null}
           </div>
         </div>
+      </Section>
+
+      {/* ── Fiscal numbers ────────────────────────────────────────────── */}
+      {/* One per country the patient is treated in. A patient consulting in
+          both Portugal and Ireland holds a NIF and a PPS, and each country's
+          documents carry its own — which the single `taxIdNumber` column above
+          cannot express. Editable here and in the doctor's appointment rail;
+          both write the same rows. */}
+      <Section icon={<Globe className="size-4" />} title="Fiscal numbers by country">
+        <CountryFiscalNumbers
+          endpointBase={`/api/admin/patients/${encodeURIComponent(profile.email)}/country-tax-ids`}
+          initial={countryTaxIds}
+        />
       </Section>
 
       {/* ── Verification ──────────────────────────────────────────────── */}

@@ -240,6 +240,25 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
       cancel: d.appointmentDetail.ptFieldCancel,
       saveFailed: d.appointmentDetail.ptFieldSaveFailed,
     },
+    // Per-country fiscal numbers. A patient treated in two markets has one per
+    // market, and the document generated from this workspace must carry the one
+    // valid in THIS appointment's country — so the card names that row instead
+    // of showing an ambiguous single "Tax ID".
+    countryFiscal: {
+      title: d.appointmentDetail.fiscalByCountryTitle,
+      empty: d.appointmentDetail.fiscalEmpty,
+      usedForThisDocument: d.appointmentDetail.fiscalUsedHere,
+      missingForThisDocument: d.appointmentDetail.fiscalMissingHere,
+      addAnother: d.appointmentDetail.fiscalAddCountry,
+      country: d.appointmentDetail.fiscalCountry,
+      number: d.appointmentDetail.fiscalNumber,
+      add: d.appointmentDetail.ptFieldAdd,
+      edit: d.appointmentDetail.ptFieldEdit,
+      save: d.appointmentDetail.ptFieldSave,
+      cancel: d.appointmentDetail.ptFieldCancel,
+      remove: d.appointmentDetail.fiscalClearHint,
+      saveFailed: d.appointmentDetail.ptFieldSaveFailed,
+    },
   };
   // Calm mode — DESIGN.md §6.3/strategy Doctor plan: while a consultation
   // is actively in progress (scheduled time has passed, not yet wrapped

@@ -549,6 +549,14 @@ export type AppointmentDetailDto = {
    *  set today; still decided server-side (see patient-identity-fields.ts) so
    *  the rows can never offer more than was actually disclosed. */
   identityFields?: string[] | null;
+  /** One fiscal number per country the patient is treated in — the set
+   *  `taxIdNumber` above cannot hold. The row matching `documentCountryCode` is
+   *  what this appointment's documents will carry. */
+  countryTaxIds?: { countryCode: string; taxIdNumber: string; updatedAt?: string }[] | null;
+  /** Normalized country this appointment issues documents for. Sent rather than
+   *  derived from `countryCode` client-side so the row the portal highlights and
+   *  the row the PDF prints are resolved by the same rule. */
+  documentCountryCode?: string | null;
   /** Cross-jurisdiction prescription only: the referring doctor's consultation
    *  record, as the patient consented to disclose it. Null on every ordinary
    *  appointment, and for any viewer who is not the prescribing doctor. */

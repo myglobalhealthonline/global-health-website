@@ -158,6 +158,51 @@ describe("buildPatientIdLine", () => {
     );
   });
 
+  it("prefers the country's own fiscal number over the chart id", () => {
+    // The patient is treated in IE and PT and holds a number for each. The
+    // Irish document must carry the PPS, not the NIF the chart column holds.
+    assert.equal(
+      buildPatientIdLine(
+        "IE",
+        { ...baseProfile, taxIdNumber: "123456789", addressCountryCode: "pt" },
+        null,
+        "1234567T",
+      ),
+      "PPS: 1234567T",
+    );
+  });
+
+  it("the country's fiscal number outranks a cross-border capture", () => {
+    // The capture is a snapshot from one checkout; the per-country row is the
+    // number a doctor or admin maintains, so a correction there has to win.
+    assert.equal(
+      buildPatientIdLine("IE", baseProfile, "0000000X", "1234567T"),
+      "PPS: 1234567T",
+    );
+  });
+
+  it("falls back to the capture when that country has no fiscal number", () => {
+    assert.equal(
+      buildPatientIdLine("IE", baseProfile, "1234567T", null),
+      "PPS: 1234567T",
+    );
+  });
+
+  it("prints nothing for a country the patient has no number for", () => {
+    // Two markets, a number for neither this one nor a matching chart country:
+    // a blank fiscal line is the intended outcome, not a fallback to a foreign
+    // number under a local label.
+    assert.equal(
+      buildPatientIdLine(
+        "IE",
+        { ...baseProfile, taxIdNumber: "123456789", addressCountryCode: "pt" },
+        null,
+        null,
+      ),
+      null,
+    );
+  });
+
   it("uses the health id even when no profile exists", () => {
     assert.equal(buildPatientIdLine("IE", null, "1234567T"), "PPS: 1234567T");
   });

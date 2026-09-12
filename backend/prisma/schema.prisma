@@ -2758,6 +2758,11 @@ model PatientProfile {
   stripeCustomerId          String?                      @unique
   /// Relations to new patient-linked tables.
   nationalityDocuments      PatientNationalityDocument[]
+  /// Per-country fiscal/tax identifiers (NIF in PT, PPS in IE, CPF in BR...).
+  /// `taxIdNumber` above stays the patient's HOME-country number; a patient
+  /// treated in two markets carries one row here per market, and that is what
+  /// the documents issued in each market print. See PatientCountryTaxId.
+  countryTaxIds             PatientCountryTaxId[]
   medicalDocuments          MedicalDocument[]
   consents                  PatientConsent[]
   birthdayOffers            BirthdayOffer[]
@@ -2820,6 +2825,40 @@ model PatientProfile {
   @@index([fullName], map: "PatientProfile_fullName_trgm_idx")
   @@index([phone], map: "PatientProfile_phone_trgm_idx")
   @@index([globalHealthNumber], map: "PatientProfile_globalHealthNumber_trgm_idx")
+}
+
+/// One fiscal / tax identifier per country, per patient.
+///
+/// A patient who consults in two markets has two of these numbers — an Irish
+/// PPS and a Portuguese NIF, a Portuguese NIF and a Brazilian CPF — and the
+/// document issued in each market must carry the one that is valid THERE.
+/// `PatientProfile.taxIdNumber` is a single column and cannot express that; it
+/// stays as the home-country value and as the fallback for patients with only
+/// one. Rows here win for their own country.
+///
+/// `countryCode` is stored normalized (uppercase, legacy aliases folded: SP→ES,
+/// RM→RO) so `PT` and `pt` can never become two rows for the same market.
+/// `taxIdNumber` is AES-256-GCM encrypted with the same `phi:v1:` envelope as
+/// the PatientProfile government-ID columns (src/lib/crypto/phi-crypto.ts).
+model PatientCountryTaxId {
+  id               String         @id @default(cuid())
+  patientProfileId String
+  patient          PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  /// Normalized ISO-2, uppercase.
+  countryCode      String
+  /// PHI-encrypted. Never null — deleting the row is how a number is cleared,
+  /// so an empty row can never be mistaken for "we hold one but it is blank".
+  taxIdNumber      String
+  /// Who last wrote it. Exactly one is set (or neither, for system writes such
+  /// as the cross-border payment step). Plain columns, not relations — same
+  /// shape as PatientProfile.idVerificationReviewedBy.
+  updatedByDoctorId String?
+  updatedByUserId   String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@unique([patientProfileId, countryCode])
+  @@index([patientProfileId])
 }
 
 model GeneratedDocument {
