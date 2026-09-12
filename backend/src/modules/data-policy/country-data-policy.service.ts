@@ -443,6 +443,12 @@ export async function anonymizePatient(params: {
         userId: profile.userId,
       });
 
+      // Per-country fiscal numbers are identity, not clinical record — they go
+      // with `taxIdNumber` below. Deleted rather than nulled because the table
+      // stores one row per country and an empty row would still say "this
+      // patient was treated in this market".
+      await tx.patientCountryTaxId.deleteMany({ where: { patientProfileId: profile.id } });
+
       // ── PatientProfile: ERASE identity, RETAIN clinical ──────────────────
       await tx.patientProfile.update({
         where: { id: profile.id },

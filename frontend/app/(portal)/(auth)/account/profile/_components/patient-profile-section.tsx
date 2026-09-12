@@ -3,6 +3,8 @@
 import { useEffect, useState, useTransition } from "react";
 import { HeartPulse, Save } from "lucide-react";
 import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
+import { CountryFiscalNumbers } from "@/components/patient/CountryFiscalNumbers";
+import type { CountryTaxIdEntry } from "@/lib/patient/country-tax-ids";
 
 type ProfileResponse = {
   nationalIdNumber: string | null;
@@ -60,6 +62,20 @@ type MedicalI18n = {
   familyHistory: string;
   usualMedication: string;
   listHint: string;
+  // Per-country fiscal numbers. Optional so an older/partial copy bundle still
+  // renders the section in English rather than blanking its labels.
+  fiscalByCountryTitle?: string;
+  fiscalByCountryHint?: string;
+  fiscalEmpty?: string;
+  fiscalAddCountry?: string;
+  fiscalCountry?: string;
+  fiscalNumber?: string;
+  fiscalAdd?: string;
+  fiscalEdit?: string;
+  fiscalSave?: string;
+  fiscalCancel?: string;
+  fiscalClearHint?: string;
+  fiscalSaveFailed?: string;
 };
 
 const DEFAULT_I18N: MedicalI18n = {
@@ -143,6 +159,19 @@ export function PatientProfileSection({
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(
     null,
   );
+  // Separate table, separate endpoint — and separate from this form's
+  // save/dirty cycle: each fiscal number is written the moment it is confirmed,
+  // so a half-typed one can never ride along with an unrelated profile save.
+  const [countryTaxIds, setCountryTaxIds] = useState<CountryTaxIdEntry[] | null>(null);
+
+  useEffect(() => {
+    fetch("/api/account/profile/country-tax-ids", { credentials: "include" })
+      .then((r) => r.json())
+      .then((json: { ok?: boolean; data?: { countryTaxIds?: CountryTaxIdEntry[] } }) => {
+        setCountryTaxIds(json.ok ? (json.data?.countryTaxIds ?? []) : []);
+      })
+      .catch(() => setCountryTaxIds([]));
+  }, []);
 
   useEffect(() => {
     fetch("/api/account/profile", { credentials: "include" })
@@ -446,6 +475,39 @@ export function PatientProfileSection({
           </div>
         </form>
       )}
+
+      {/* Outside the form on purpose: each fiscal number saves on its own
+          endpoint the moment it is confirmed, and nesting these controls in the
+          profile form would tie them to an unrelated submit. */}
+      {countryTaxIds ? (
+        <div className="gh-patient-form-card gh-card mt-4 p-6">
+          <p className="text-sm text-[var(--portal-muted)]">
+            {i18n.fiscalByCountryHint ??
+              "A number for each country you are treated in. Documents issued in a country carry that country's number."}
+          </p>
+          <CountryFiscalNumbers
+            endpointBase="/api/account/profile/country-tax-ids"
+            initial={countryTaxIds}
+            copy={{
+              title: i18n.fiscalByCountryTitle ?? "Fiscal numbers by country",
+              empty: i18n.fiscalEmpty ?? "No fiscal number added yet.",
+              // The patient's own profile is not tied to one document, so
+              // neither string can appear here — no country is highlighted.
+              usedForThisDocument: "",
+              missingForThisDocument: "",
+              addAnother: i18n.fiscalAddCountry ?? "Add a country",
+              country: i18n.fiscalCountry ?? "Country",
+              number: i18n.fiscalNumber ?? "Fiscal number",
+              add: i18n.fiscalAdd ?? "Add",
+              edit: i18n.fiscalEdit ?? "Edit",
+              save: i18n.fiscalSave ?? "Save",
+              cancel: i18n.fiscalCancel ?? "Cancel",
+              remove: i18n.fiscalClearHint ?? "Clear the field to remove it.",
+              saveFailed: i18n.fiscalSaveFailed ?? "Could not save. Try again.",
+            }}
+          />
+        </div>
+      ) : null}
     </section>
   );
 }

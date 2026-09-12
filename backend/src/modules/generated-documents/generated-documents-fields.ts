@@ -31,16 +31,22 @@ export function patientTaxIdLabel(countryCode: string): string {
  * the most-relevant value lands on the document. Returns null when no
  * IDs are stored.
  *
- * `healthIdNumber` is the identifier captured FOR the issuing country
- * (cross-border Rx asks the patient for it at the payment step). When it
- * is present it always wins — it is the only value guaranteed to belong
- * to `countryCode`.
+ * Precedence, strongest first:
  *
- * Without it, the chart IDs are only used when they plausibly belong to
- * the issuing country: a profile whose address country differs from the
- * document country prints NO id line at all. Printing a Brazilian CPF
- * under the label "PPS" on an Irish prescription is worse than printing
- * nothing.
+ * 1. `countryTaxIdNumber` — the PatientCountryTaxId row for exactly this
+ *    country. A patient treated in two markets holds one fiscal number per
+ *    market; this is the curated, editable one for the market this document is
+ *    issued in, so it outranks every snapshot.
+ * 2. `healthIdNumber` — the identifier captured FOR the issuing country at a
+ *    single moment (cross-border Rx asks the patient for it at the payment
+ *    step). Still guaranteed to belong to `countryCode`, just not maintained.
+ * 3. The chart IDs, and only when they plausibly belong to the issuing
+ *    country: a profile whose address country differs from the document
+ *    country prints NO id line at all. Printing a Brazilian CPF under the
+ *    label "PPS" on an Irish prescription is worse than printing nothing.
+ *
+ * A patient with no number for the target country prints no fiscal line. That
+ * blank is the intended outcome, not a gap to paper over.
  */
 export function buildPatientIdLine(
   countryCode: string,
@@ -51,9 +57,13 @@ export function buildPatientIdLine(
     addressCountryCode?: string | null;
   } | null,
   healthIdNumber?: string | null,
+  countryTaxIdNumber?: string | null,
 ): string | null {
   const upper = countryCode.toUpperCase();
   const taxLabel = patientTaxIdLabel(upper);
+  if (countryTaxIdNumber && countryTaxIdNumber.trim()) {
+    return `${taxLabel}: ${countryTaxIdNumber.trim()}`;
+  }
   if (healthIdNumber && healthIdNumber.trim()) {
     return `${taxLabel}: ${healthIdNumber.trim()}`;
   }

@@ -18,6 +18,10 @@ import {
 import { decryptPhi } from "../lib/crypto/phi-crypto.js";
 import { getDisclosedCrossBorderRecord } from "../modules/cross-border-rx/cross-border-rx-disclosure.service.js";
 import { doctorVisibleIdentityFields } from "../utils/patient-identity-fields.js";
+import {
+  listPatientCountryTaxIds,
+  normalizeTaxIdCountryCode,
+} from "../modules/patient-profile/patient-country-tax-ids.js";
 
 /**
  * Clinical consultation endpoints, doctor-only.
@@ -263,13 +267,26 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
         let passportNumber = decryptOrNull(patientProfile?.passportNumber ?? null);
         const preferredPharmacy = patientProfile?.preferredPharmacy ?? null;
 
+        // Per-country fiscal numbers. A patient seen in two markets has one per
+        // market, and the document generated here prints the one belonging to
+        // THIS appointment's country — so the workspace shows the whole set and
+        // highlights the relevant row rather than a single ambiguous "Tax ID".
+        // Same disclosure as the government IDs above: gated + logged below.
+        let countryTaxIds = patientProfile
+          ? await listPatientCountryTaxIds(patientProfile.id)
+          : [];
+
         // An identity number is a separate disclosure from the consult note,
         // so it gets its own SENSITIVE_PROFILE entry in MedicalAccessLog —
         // matching /api/doctor/patients/:email/profile. Logged only when a
         // value is actually returned, so an empty card leaves no false trail.
         if (
           patientProfile &&
-          (utenteNumber || taxIdNumber || nationalIdNumber || passportNumber)
+          (utenteNumber ||
+            taxIdNumber ||
+            nationalIdNumber ||
+            passportNumber ||
+            countryTaxIds.length > 0)
         ) {
           try {
             await guardMedicalRead(
@@ -290,6 +307,7 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
               taxIdNumber = null;
               nationalIdNumber = null;
               passportNumber = null;
+              countryTaxIds = [];
             } else {
               throw guardError;
             }
@@ -320,6 +338,11 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
             nationalIdNumber,
             passportNumber,
             preferredPharmacy,
+            // Every fiscal number on file, plus which country this appointment
+            // issues documents for — so the portal can name the row that will
+            // actually be printed instead of making the doctor work it out.
+            countryTaxIds,
+            documentCountryCode: normalizeTaxIdCountryCode(appt.countryCode),
             // The portal renders exactly these as editable rows. Sent rather
             // than re-derived client-side so what is disclosed and what is
             // offered for editing cannot drift apart.

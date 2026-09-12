@@ -12,6 +12,7 @@ import {
 import { formatDateDdMmYyyy } from "./document-template-utils.js";
 import { labelsForPrefix } from "./docx-template-labels.js";
 import { resolvePatientProfileIdForAppointmentId } from "../patient-profile/appointment-patient-link.js";
+import { resolvePatientCountryTaxId } from "../patient-profile/patient-country-tax-ids.js";
 import {
   labelPrefixForCountry,
   templatePrefixForCountry,
@@ -141,12 +142,24 @@ export async function resolveAppointmentDocumentSource(
   // (passthrough on legacy plaintext / when encryption is off).
   const patientProfile = patientProfileRaw ? decryptPhiFields(patientProfileRaw) : null;
 
-  // Cross-border Rx captures an id valid in the issuing country; it wins over
-  // the chart id, which belongs to the patient's home country.
+  // The fiscal number the patient holds for THIS document's country. A patient
+  // consulting in two markets has one per market; the single chart column can
+  // only hold the home-country one, so it is the wrong source for the other
+  // market's documents. Null when they never gave us one — the document then
+  // prints no fiscal line, which is the intended blank.
+  const countryTaxIdNumber = await resolvePatientCountryTaxId(
+    documentPatientProfileId,
+    appt.countryCode,
+  );
+
+  // Precedence lives in buildPatientIdLine: the per-country number first, then
+  // the cross-border capture snapshotted on the appointment, then the chart id
+  // (only when its country matches).
   const patientIdLine = buildPatientIdLine(
     appt.countryCode,
     patientProfile,
     decryptPhi(appt.patientHealthIdNumber),
+    countryTaxIdNumber,
   );
   const address = buildAddressBlock(appt, patientProfile);
   const birthDate = formatDateDdMmYyyy(

@@ -20,6 +20,11 @@ import {
 } from "../services/patient-nationality.service.js";
 import { encryptPhi, decryptPhi } from "../lib/crypto/phi-crypto.js";
 import {
+  InvalidTaxIdCountryError,
+  listPatientCountryTaxIds,
+  setPatientCountryTaxId,
+} from "../modules/patient-profile/patient-country-tax-ids.js";
+import {
   getVerificationSummary,
   submitVerificationCycle,
   reopenVerificationCycleForEditing,
@@ -83,6 +88,11 @@ const patientPatchSchema = z
   })
   .strict()
   .refine((d) => Object.keys(d).length > 0, { message: "Provide at least one field" });
+
+/** Null / empty clears that country's row. */
+const countryTaxIdBodySchema = z.object({
+  taxIdNumber: z.string().trim().max(64).nullable(),
+});
 
 const insurancePatchSchema = z
   .object({
@@ -235,6 +245,77 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
       return reply.status(500).send(errorResponse("Could not update profile"));
     }
   });
+
+  // ─── Per-country fiscal numbers ───────────────────────────────────────────
+  //
+  // A patient consulting in more than one country holds one fiscal number per
+  // country (an Irish PPS and a Portuguese NIF, a Portuguese NIF and a Brazilian
+  // CPF). Their own data, so they can maintain it themselves; the number they
+  // enter for a country is what documents issued in that country will carry.
+
+  app.get("/api/account/profile/country-tax-ids", async (request, reply) => {
+    const profile = await requirePatient(request);
+    if (!profile) return reply.status(403).send(errorResponse("Patient access required"));
+    try {
+      const countryTaxIds = await listPatientCountryTaxIds(profile.id);
+
+      const denied = await denyIfMedicalAccessBlocked(request, reply, {
+        patientProfileId: profile.id,
+        resourceType: "SENSITIVE_PROFILE",
+        accessAction: "VIEWED",
+      });
+      if (denied) return denied;
+
+      return okResponse({ countryTaxIds });
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not load fiscal numbers"));
+    }
+  });
+
+  app.put<{ Params: { countryCode: string } }>(
+    "/api/account/profile/country-tax-ids/:countryCode",
+    async (request, reply) => {
+      const profile = await requirePatient(request);
+      if (!profile) return reply.status(403).send(errorResponse("Patient access required"));
+
+      const body = countryTaxIdBodySchema.safeParse(request.body ?? {});
+      if (!body.success) {
+        return reply.status(400).send(errorResponse("Invalid fiscal number", body.error.flatten()));
+      }
+
+      // Authorize BEFORE the write — a denial after it would report 403 on a
+      // value already stored, the same ordering the uploads below correct.
+      const denied = await denyIfMedicalAccessBlocked(request, reply, {
+        patientProfileId: profile.id,
+        resourceType: "SENSITIVE_PROFILE",
+        accessAction: "UPDATED",
+      });
+      if (denied) return denied;
+
+      try {
+        const countryTaxIds = await setPatientCountryTaxId(
+          profile.id,
+          request.params.countryCode,
+          body.data.taxIdNumber,
+          { userId: request.authUser!.sub },
+        );
+        return okResponse({ countryTaxIds });
+      } catch (error) {
+        if (error instanceof InvalidTaxIdCountryError) {
+          return reply.status(400).send(errorResponse(error.message));
+        }
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not save fiscal number"));
+      }
+    },
+  );
 
   // ─── Insurance ───────────────────────────────────────────────────────────
 

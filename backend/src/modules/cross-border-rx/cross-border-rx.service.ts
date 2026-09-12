@@ -37,6 +37,10 @@ import {
 } from "./cross-border-rx-disclosure.service.js";
 import type { PaymentLog } from "../orders/complete-order-payment.service.js";
 import { resolvePatientProfileIdForNewAppointment } from "../patient-profile/appointment-patient-link.js";
+import {
+  recordPatientCountryTaxIdIfAbsent,
+  resolvePatientCountryTaxId,
+} from "../patient-profile/patient-country-tax-ids.js";
 
 /**
  * Patient consent token: the raw token lives ONLY in the emailed consent link;
@@ -791,6 +795,7 @@ export async function getCrossBorderRxConsentView(
     prisma.patientProfile.findUnique({
       where: { email: request.patientEmail.toLowerCase() },
       select: {
+        id: true,
         phone: true,
         addressLine1: true,
         addressLine2: true,
@@ -803,6 +808,14 @@ export async function getCrossBorderRxConsentView(
       },
     }),
   ]);
+
+  // The fiscal number already on file FOR the target country — a patient who
+  // has consulted there before should not have to re-type it, and unlike the
+  // chart's single tax column it is guaranteed to belong to that market.
+  const targetCountryTaxId = await resolvePatientCountryTaxId(
+    profile?.id ?? null,
+    request.targetCountryCode,
+  );
   const pick = <T>(...vals: (T | null | undefined)[]): T | null =>
     vals.find((v) => v !== null && v !== undefined && v !== "") ?? null;
 
@@ -830,6 +843,7 @@ export async function getCrossBorderRxConsentView(
       pharmacyName: pick(request.pharmacyName, profile?.preferredPharmacy),
       healthIdNumber: pick(
         decryptPhi(request.patientHealthIdNumber),
+        targetCountryTaxId,
         chartIdIsLocal ? decryptPhi(profile?.taxIdNumber ?? null) : null,
       ),
       passportNumber: pick(
@@ -1079,6 +1093,16 @@ export async function onCrossBorderRxFeePaid(
     },
     select: { id: true },
   });
+
+  // Keep the number the patient just gave us for the target country, so the
+  // next document issued there — and the doctor/admin/patient portals — show it
+  // without anyone re-typing it. Never overwrites an existing curated row, and
+  // never fails fulfilment.
+  await recordPatientCountryTaxIdIfAbsent(
+    patientProfileId,
+    request.targetCountryCode,
+    decryptPhi(request.patientHealthIdNumber),
+  );
 
   // Dual-write into the relational join table + legacy array (same pattern as
   // complete-order-payment.service.ts) — without this the admin/patient order
