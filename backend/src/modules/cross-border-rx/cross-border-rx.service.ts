@@ -1098,8 +1098,23 @@ export async function onCrossBorderRxFeePaid(
   // next document issued there — and the doctor/admin/patient portals — show it
   // without anyone re-typing it. Never overwrites an existing curated row, and
   // never fails fulfilment.
+  //
+  // `patientProfileId` can be null for a booking whose patient could not be
+  // resolved from the source appointment; fall back to the address the request
+  // recorded, or the number is silently lost and the patient is asked for it
+  // again on their next request.
+  let fiscalProfileId = patientProfileId;
+  if (!fiscalProfileId) {
+    fiscalProfileId =
+      (
+        await prisma.patientProfile.findFirst({
+          where: { email: { equals: request.patientEmail, mode: "insensitive" } },
+          select: { id: true },
+        })
+      )?.id ?? null;
+  }
   await recordPatientCountryTaxIdIfAbsent(
-    patientProfileId,
+    fiscalProfileId,
     request.targetCountryCode,
     decryptPhi(request.patientHealthIdNumber),
   );
