@@ -36,6 +36,8 @@ import {
   verifyManageMembershipsAccess,
 } from "../utils/manage-memberships-auth.js";
 import { notifyDoctor } from "../modules/notifications/notify.service.js";
+import { resolveCountryTimeZone } from "../modules/countries/country-timezone.service.js";
+import { sendAppointmentUpdateNotifications } from "../modules/automation/appointment-update-notifications.service.js";
 import { recomputePrePaymentDueAt } from "../modules/automation/pre-payment-flow.service.js";
 import { rearmPostPaymentRemindersForReschedule } from "../modules/automation/post-payment-flow.service.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
@@ -673,6 +675,8 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
           consultationMode: true,
           clinicId: true,
           locationAddress: true,
+          countryCode: true,
+          patientTimezone: true,
           clinic: { select: { name: true, city: true } },
           doctor: { select: { fullName: true } },
         },
@@ -692,6 +696,12 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         Boolean(appointment.scheduledAt && hasLink) &&
         (slotChanged || urlChanged || locationChanged);
       if (shouldEmail) {
+        // The patient's own zone (captured at booking) wins; a manual/legacy
+        // row without one falls back to the clinic zone of the country being
+        // booked in. Without this the mail rendered every time in raw UTC.
+        const patientTimeZone =
+          afterRow?.patientTimezone?.trim() ||
+          (await resolveCountryTimeZone(afterRow?.countryCode ?? null));
         sendAppointmentScheduledEmail({
           to: appointment.email,
           fullName: appointment.fullName,
@@ -702,9 +712,46 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
           doctorName: afterRow?.doctor
             ? formatDoctorForPatientNotification(afterRow.doctor.fullName)
             : null,
+          timeZone: patientTimeZone,
         }).catch((emailErr) => {
           app.log.warn({ err: emailErr }, "Failed to send schedule email — continuing");
         });
+      }
+
+      // Notify the ASSIGNED DOCTOR (portal + email + WhatsApp) that their
+      // consultation moved. This endpoint deliberately skips the full
+      // `applyRescheduleSideEffects` — it takes the meeting link from the
+      // admin and sends its own patient email, so regenerating Meet or
+      // re-emailing the patient here would contradict both — but the doctor
+      // still has to be told, and previously nobody was: an admin reschedule
+      // left the doctor sitting on the OLD time with no message at all.
+      if (shouldEmail && (slotChanged || isDoctorChange)) {
+        const notifyOrderId =
+          orderIdForAppointment ??
+          (
+            await prisma.orderItem.findFirst({
+              where: { appointmentId: params.data.id },
+              select: { orderId: true },
+            })
+          )?.orderId ??
+          null;
+        if (notifyOrderId) {
+          await sendAppointmentUpdateNotifications({
+            orderId: notifyOrderId,
+            appointmentId: params.data.id,
+            changeReason: "",
+            previousDoctorId: beforeDoctorId,
+            newDoctorId: appointment.doctorId ?? null,
+            meetingUrl: appointment.meetingUrl ?? null,
+            // The branded schedule email above is the patient's copy.
+            skipPatient: true,
+          }).catch((notifyErr) => {
+            app.log.warn(
+              { err: notifyErr },
+              "Failed to send appointment-update notifications — continuing",
+            );
+          });
+        }
       }
 
       // Fire APPOINTMENT_ASSIGNED to the doctor when the doctorId
