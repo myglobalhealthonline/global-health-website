@@ -7,6 +7,8 @@ import {
 } from "@/lib/admin/admin-api";
 import { AdminCard } from "../../_components/atoms";
 import { PatientAlertsCard } from "@/components/patient-alerts";
+import { CountryFiscalNumbers } from "@/components/patient/CountryFiscalNumbers";
+import type { CountryTaxIdEntry } from "@/lib/patient/country-tax-ids";
 
 /**
  * Admin-side editor for the PatientProfile row. Rendered on the user
@@ -21,10 +23,13 @@ export function PatientProfileEditor({
   userId,
   email,
   profile,
+  countryTaxIds = [],
 }: {
   userId: string;
   email: string;
   profile: AdminPatientProfileDto | null;
+  /** One fiscal number per country the patient is treated in. */
+  countryTaxIds?: CountryTaxIdEntry[];
 }) {
   async function saveProfile(formData: FormData) {
     "use server";
@@ -182,6 +187,20 @@ export function PatientProfileEditor({
               defaultValue={profile?.utenteNumber ?? ""}
               maxLength={64}
               hint="Portuguese SNS healthcare number."
+            />
+          </div>
+          {/* The fiscal number lives here rather than as a single box in the
+              grid above: it is per-country (a patient treated in Ireland and
+              Brazil has a PPS and a CPF), and one field labelled "Tax ID" could
+              only ever hold one of them without saying which country it was
+              for. It sits inside the form markup but takes no part in its
+              submit: every control is type="button" and each row saves on its
+              own endpoint the moment it is confirmed, so a half-typed number is
+              never swept into a profile save. */}
+          <div className="mt-4">
+            <CountryFiscalNumbers
+              endpointBase={`/api/admin/patients/${encodeURIComponent(email)}/country-tax-ids`}
+              initial={countryTaxIds}
             />
           </div>
         </section>
