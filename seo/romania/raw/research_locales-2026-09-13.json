@@ -1,0 +1,33 @@
+{
+  "results": [
+    {
+      "seed": "online doctor Romania",
+      "ok": false,
+      "error": "Language 'en' is not available for this location. Available: ro."
+    },
+    {
+      "seed": "Online Arzt Rumänien",
+      "ok": false,
+      "error": "Language 'de' is not available for this location. Available: ro."
+    },
+    {
+      "seed": "médico online Romênia",
+      "ok": false,
+      "error": "Language 'pt' is not available for this location. Available: ro."
+    },
+    {
+      "seed": "médico online Rumanía",
+      "ok": false,
+      "error": "Language 'es' is not available for this location. Available: ro."
+    },
+    {
+      "seed": "lékař online Rumunsko",
+      "ok": false,
+      "error": "Language 'cs' is not available for this location. Available: ro."
+    }
+  ],
+  "meta": {
+    "projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b",
+    "url": "https://app.openseo.so/p/7804f362-5891-417e-9c3a-d9e8d4d7dc6b/keywords"
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:13.484Z",
+  "endpoint": "/api/services/consultatie-dermatologica?countryCode=ro&locale=PT",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee4p90009fsju5xgwdoao",
+      "kind": "GENERAL",
+      "slug": "consultatie-dermatologica",
+      "name": "Consulta dermatológica de primeira intenção — avaliação online",
+      "summary": "Tem erupções, eczema, acne, comichão ou outro problema de pele? Os nossos médicos autorizados pela CMR avaliam os sintomas por consulta de vídeo e recomendam o tratamento ou os próximos passos adequados.",
+      "seoTitle": "Consulta online para problemas de pele | Roménia",
+      "seoDescription": "Avaliação para erupções, eczema, acne, comichão ou outros problemas de pele. Os nossos médicos autorizados pela CMR avaliam os sintomas por consulta de vídeo e recomendam o tratamento ou os próximos passos adequados.",
+      "seoKeywords": [
+        "skin consultation online Romania",
+        "English doctor skin condition Romania",
+        "eczema doctor online Romania",
+        "acne consultation English Bucharest",
+        "rash doctor online Romania expat"
+      ],
+      "heroTitle": "Consulta dermatológica de primeira intenção — avaliação online",
+      "heroDescription": "Avaliação para erupções cutâneas, eczema, acne, comichão ou outros problemas de pele. Os nossos médicos autorizados pela CMR avaliam os sintomas por videoconsulta e recomendam-lhe o tratamento ou os próximos passos adequados.",
+      "detailBody": "<p>A consulta é adequada para muitos problemas cutâneos frequentes, incluindo acne, dermatite, eczema, urticária, infeções menores da pele, irritações ou alterações que necessitam de uma avaliação inicial rápida.</p><p>O médico discute o historial dos sintomas, os fatores desencadeantes, os tratamentos tentados até agora e, se possível, analisa as imagens enviadas ou o aspeto da pele durante a videochamada. Em função do caso, receberá recomendações de cuidados, tratamento sintomático, exames ou encaminhamento para um dermatologista.</p><p>Se estiverem presentes sinais de alerta, lesões suspeitas, agravamento rápido ou a necessidade de um exame físico presencial, será encaminhado para avaliação presencial sem demora.</p>",
+      "ctaLabel": "Agende a consulta",
+      "sortOrder": 70,
+      "durationMinutes": 15,
+      "basePriceCents": 11500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:53.900Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8k8s0s00050wjuk7vugroe",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee4p90009fsju5xgwdoao",
+          "path": "/api/media/media/6ab17226-d628-43a2-89c0-2cd95a1865e8-consulta-ie-dermatologic-de-prim-inten-ie-evaluare-online.webp",
+          "altText": "Consultație dermatologică de primă intenție — evaluare online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "PT",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

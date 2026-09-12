@@ -1,0 +1,80 @@
+{
+  "checkedAt": "2026-09-12T20:20:12.143Z",
+  "endpoint": "/api/services/medic-online-romania?countryCode=ro&locale=ES",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee1ko0000fsjuh80zxo7q",
+      "kind": "GENERAL",
+      "slug": "medic-online-romania",
+      "name": "Médico en línea — sin registro, sin sala de espera, el mismo día",
+      "summary": "Médico inscrito en el CMR disponible en línea, sin lista de espera y sin estar registrado con el médico de familia. Videoconsulta en rumano o inglés. Reserve hoy.",
+      "seoTitle": "Médico online sin registro | Consulta en el mismo día | Global Health",
+      "seoDescription": "Médico registrado en el CMR disponible en línea, sin lista de espera y sin estar registrado en el médico de familia. Videoconsulta en rumano o inglés. Reserve hoy.",
+      "seoKeywords": [
+        "medic online fără înregistrare",
+        "consultație medicală online România",
+        "medic online în afara Bucureștiului",
+        "doctor online România",
+        "consultație online fără medic de familie"
+      ],
+      "heroTitle": "Médico online — sin registro, sin sala de espera, el mismo día",
+      "heroDescription": null,
+      "detailBody": "<p>¿Necesita ver a un médico hoy, pero no está inscrito en la lista de un médico de familia? ¿O vive en una zona donde es difícil acceder de forma conveniente a un médico de familia? Nuestros médicos, registrados en el Colegio de Médicos de Rumanía (CMR), realizan consultas clínicas completas por videoconferencia segura, sin necesidad de ser un paciente registrado previamente, sin sala de espera y con cita el mismo día.</p><h2>Una realidad del sistema sanitario de Rumanía</h2><p>El acceso a la atención médica primaria en Rumanía es desigual. En las grandes ciudades — Bucarest, Cluj-Napoca, Timișoara, Iași — existen opciones privadas relativamente accesibles. Pero fuera de ellas, o en el caso de personas que no están inscritas en la lista de un médico de familia, obtener una consulta médica a tiempo puede ser difícil.</p><p>Global Health existe precisamente para cubrir este vacío. Nuestros médicos, registrados en el CMR, ofrecen consultas médicas por videoconferencia — en rumano, inglés— el mismo día, desde cualquier rincón de Rumanía, sin registro previo.</p><p>¿Ya tiene médico de familia? Nuestro servicio funciona de manera complementaria — para problemas agudos, una segunda opinión médica o situaciones en las que necesita hablar con un médico hoy, no en la siguiente cita disponible.</p><h2>Qué tratamos</h2><p>Nuestros médicos evalúan y manejan una amplia gama de afecciones agudas y no urgentes:</p><ul><li>Respiratorias y ORL</li><li>Resfriado, gripe, sinusitis y bronquitis</li><li>Síntomas de COVID-19 y problemas post-COVID</li><li>Dolor de garganta, amigdalitis e infecciones de oído</li><li>Infecciones pulmonares y tos persistente</li><li>Crisis leves de asma</li><li>Infecciones</li><li>Infecciones urinarias — evaluación y prescripción de antibiótico cuando esté clínicamente indicado</li><li>Infecciones de la piel</li><li>Infecciones respiratorias que requieren evaluación antibiótica</li><li>Infecciones gastrointestinales</li><li>Síntomas generales</li><li>Fiebre en adultos</li><li>Dolores de cabeza y migraña</li><li>Náuseas, vómitos, diarrea y dolor abdominal</li><li>Fatiga y malestar general</li><li>Piel y ojos</li><li>Erupciones cutáneas, eccemas y reacciones alérgicas leves</li><li>Conjuntivitis e irritaciones oculares leves</li><li>Aparato locomotor</li><li>Dolor de espalda, cuello y muscular</li><li>Traumatismos leves del aparato locomotor</li><li>Otros</li><li>Preocupaciones relacionadas con los medicamentos actuales o el tratamiento en curso</li><li>Documentos médicos — certificados médicos, cartas de derivación</li><li>Consejos de medicina del viajero</li><li>Segunda opinión médica</li></ul><h2>Qué incluye la consulta</h2><p>Evaluación clínica completaEl médico realiza una anamnesis completa de sus síntomas, su historial médico relevante y los medicamentos actuales, y lleva a cabo una evaluación clínica estructurada por videoconferencia, con el mismo estándar que una consulta presencial.</p><p>Explicación claraNuestro médico se tomará el tiempo para explicarle qué está ocurriendo, qué debe hacer a continuación y cuándo debe buscar atención adicional. La implicación del paciente en la decisión médica no es un lujo — es nuestro estándar de atención.</p><p>Receta electrónica — donde esté clínicamente indicadoCuando esté clínicamente indicado, el médico emite una receta electrónica validada en el Sistema Informático de Prescripción Electrónica (SIPE). La presenta en cualquier farmacia de Rumanía.</p><p>Prescripción de antibiótico — donde esté clínicamente indicadoA partir de 2024, todos los antibióticos en Rumanía requieren receta médica. El médico evalúa sus síntomas y prescribe el antibiótico adecuado cuando esté clínicamente justificado — incluso para infecciones urinarias, infecciones respiratorias e infecciones cutáneas — con respeto a los principios de stewardship antibiótico.</p><p>Cartas de derivación y documentación médicaCuando se necesiten derivaciones a un especialista, análisis de sangre, pruebas de imagen u otra documentación clínica, el médico las emite el mismo día.</p><p>Baja médicaSi usted está empleado en Rumanía y la baja médica está clínicamente indicada, el médico puede emitir la documentación correspondiente. La decisión de emitir la baja médica es siempre una decisión clínica tomada por el médico tras una evaluación completa.</p><h2>Por qué Global Health</h2><p>Sin registro previoNo necesita ser un paciente registrado. Reserve, consulte, obtenga un resultado clínico claro — sin burocracia, sin esperar a ser aceptado en una lista.</p><p>Médicos registrados en el CMRTodas las consultas son realizadas por médicos registrados en el Colegio de Médicos de Rumanía, conforme a las normas rumanas de telemedicina en virtud de la Ley n.º 95/2006 y del HG n.º 1133/2022.</p><p>Cita el mismo díaDisponibilidad el mismo día, siete días a la semana, incluidas tardes y fines de semana.</p><p>Accesible desde toda RumaníaNo necesita estar en Bucarest. Esté donde esté en Rumanía — solo necesita una conexión estable a internet y un dispositivo con cámara.</p><p>Tres idiomasRumano, inglés — según la disponibilidad del médico.</p><p>Receta electrónica y baja médicaNuestros médicos pueden emitir recetas electrónicas a través de SIPE y certificado de baja médica — igual que cualquier médico de familia registrado en Rumanía.</p><h2>Preguntas frecuentes</h2><p>¿Necesito tener seguro de salud rumano para utilizar este servicio?No. Este es un servicio privado, pagado directamente por consulta — no se requiere seguro público de salud rumano, ni registro, ni membresía. Algunos seguros privados cubren las consultas de telemedicina — consulte con su aseguradora.</p><p>¿Puede el médico recetar antibióticos?Sí — donde esté clínicamente indicado tras la evaluación completa de sus síntomas. A partir de 2024, todos los antibióticos en Rumanía requieren receta médica. El médico evalúa su presentación y prescribe el antibiótico adecuado cuando la evidencia clínica lo respalda, con respeto a los principios de stewardship antibiótico.</p><p>¿Puede el médico emitir una receta electrónica?Sí. Nuestros médicos están registrados en el CMR y en el Sistema Informático de Prescripción Electrónica (SIPE). Las recetas electrónicas se emiten directamente — las presenta en cualquier farmacia de Rumanía.</p><p>¿Necesito estar en Bucarest para utilizar este servicio?No. El servicio está disponible desde cualquier localidad de Rumanía — solo necesita una conexión estable a internet y un dispositivo con cámara.</p><p>¿Qué tan rápido puedo obtener una cita?Hay citas disponibles el mismo día. Reserve en línea y la cita se confirma de inmediato.</p><p>¿Qué idiomas están disponibles?Rumano, inglés— según la disponibilidad del médico.</p><p>¿Puedo obtener baja médica a través de este servicio?Sí. Si usted está empleado en Rumanía y la baja médica está clínicamente indicada, el médico puede emitir la documentación correspondiente. La decisión es siempre clínica, tomada tras una evaluación completa.</p><p>¿Es el servicio adecuado para niños?Para afecciones pediátricas agudas, el servicio puede ofrecer una evaluación inicial y orientación. Para presentaciones pediátricas complejas o continuadas, el médico recomendará derivación para una evaluación presencial.</p><p>¿Qué ocurre si mi afección requiere atención presencial?Si el médico determina que su afección requiere evaluación presencial o atención de urgencia, se le informará de inmediato y se le derivará al servicio correspondiente. Su seguridad es siempre la prioridad clínica.</p>",
+      "ctaLabel": null,
+      "sortOrder": 10,
+      "durationMinutes": 15,
+      "basePriceCents": 11500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:47.167Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jsape001pakju9d8azet9",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee1ko0000fsjuh80zxo7q",
+          "path": "/api/media/media/e7e4ceb8-872b-4aa9-b481-f1819dfaf76c-817d74bf-c5ba-4f1b-8de2-6980a8239c3c-1.webp",
+          "altText": "Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "detailBody"
+      ],
+      "resolvedLocale": "ES",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

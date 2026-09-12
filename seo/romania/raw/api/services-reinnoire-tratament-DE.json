@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:08.492Z",
+  "endpoint": "/api/services/reinnoire-tratament?countryCode=ro&locale=DE",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee2r00004fsjubgjloy9a",
+      "kind": "GENERAL",
+      "slug": "reinnoire-tratament",
+      "name": "Verlängerung der Behandlung — klinische Bewertung und Online-Verschreibung",
+      "summary": "Sind Sie bereits auf einer stabilen Behandlung? Unsere zugelassenen CMR-Ärzte überprüfen Ihr aktuelles Schema, prüfen die Sicherheit der Fortführung und stellen ein elektronisches Rezept aus, wenn dies klinisch angemessen ist.",
+      "seoTitle": "Online-Behandlungsverlängerung | Rumänien | elektronisches Rezept",
+      "seoDescription": "Erneuerung der stabilen Behandlung mit klinischer Bewertung. Unsere von der CMR autorisierten Ärzte überprüfen das aktuelle Behandlungsschema, prüfen die Sicherheit der Fortsetzung und stellen bei klinischer Eignung ein elektronisches Rezept aus.",
+      "seoKeywords": [
+        "treatment renewal online Romania",
+        "repeat prescription Romania English",
+        "online doctor medication renewal Romania",
+        "treatment review English Bucharest",
+        "prescription renewal Romania expat"
+      ],
+      "heroTitle": "Verlängerung der Behandlung — klinische Bewertung und Online-Verschreibung",
+      "heroDescription": "Erneuerung einer stabilen Behandlung mit klinischer Bewertung. Unsere von CMR autorisierten Ärzte überprüfen das aktuelle Behandlungsschema, prüfen die Sicherheit der Fortführung und stellen eine elektronische Verschreibung aus, wenn dies klinisch angemessen ist.",
+      "detailBody": "<p>Dieser Service ist für Patienten mit stabilen Erkrankungen bestimmt, die vor der Fortsetzung der Behandlung eine korrekte medizinische Überprüfung benötigen. Es handelt sich nicht um ein einfaches automatisches Rezept: Der Arzt analysiert die Diagnose, das Ansprechen auf die Behandlung, Nebenwirkungen und mögliche Veränderungen seit der letzten Beurteilung.</p><p>Wenn die Behandlung weiterhin geeignet ist, kann über das rumänische System ein elektronisches Rezept gemäß der geltenden Gesetzgebung ausgestellt werden. Falls zusätzliche Untersuchungen, Dosisanpassungen oder eine fachärztliche Beurteilung erforderlich sind, erhalten Sie klare Erklärungen und die empfohlenen nächsten Schritte.</p><p>Der Service eignet sich für stabile chronische Behandlungen, auch in Situationen, in denen Sie keinen einfachen Zugang zu Ihrem Hausarzt haben, in einer anderen Stadt leben, Expat sind oder in Rumänien ein in einem anderen Land begonnenes Therapieschema fortsetzen.</p>",
+      "ctaLabel": "Termin vereinbaren",
+      "sortOrder": 30,
+      "durationMinutes": 15,
+      "basePriceCents": 6500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:03:00.607Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jsd7u001rakjucqnifyij",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee2r00004fsjubgjloy9a",
+          "path": "/api/media/media/0a6ac8f8-e4ae-42b7-815e-9179981bc3e9-b08d3080-cbb7-49c8-8010-3853b7740a5e-5.webp",
+          "altText": "Reînnoirea tratamentului — evaluare clinică și prescripție online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "DE",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

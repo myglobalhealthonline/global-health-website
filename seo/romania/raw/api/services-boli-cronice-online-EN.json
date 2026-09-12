@@ -1,0 +1,123 @@
+{
+  "checkedAt": "2026-09-12T20:20:09.504Z",
+  "endpoint": "/api/services/boli-cronice-online?countryCode=ro&locale=EN",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee6nb000efsjuk0bbcp7f",
+      "kind": "GENERAL",
+      "slug": "boli-cronice-online",
+      "name": "Chronic Disease Management — Ongoing GP-Level Care Online",
+      "summary": "Managing hypertension, diabetes, thyroid, or another long-term condition? Our CMR-registered doctors provide ongoing GP-level chronic disease management by video call. Available anywhere in Romania.",
+      "seoTitle": "Chronic Disease Management Online | Romania | CMR Doctor | Same Day",
+      "seoDescription": "Ongoing management for hypertension, diabetes, thyroid conditions, and other long-term conditions. Our CMR-registered doctors provide ongoing GP-level chronic disease management by video call. Available anywhere in Romania.",
+      "seoKeywords": [
+        "chronic disease management online Romania",
+        "hypertension doctor online Romania",
+        "diabetes management online Romania",
+        "thyroid doctor online Romania",
+        "long term condition GP online Romania"
+      ],
+      "heroTitle": "Chronic Disease Management — Ongoing GP-Level Care Online",
+      "heroDescription": "Management for hypertension, diabetes, thyroid disease or other long-term conditions. Our CMR-licensed doctors provide ongoing medical monitoring, adjustment of the treatment plan and coordination of investigations via video consultation.",
+      "detailBody": "<p>Managing a long-term condition — hypertension, diabetes, thyroid disease, asthma, or any other chronic condition — requires more than an annual review and a prescription renewal. It requires a doctor who understands your case, monitors your progress, adjusts your management when things change, and helps you navigate the broader healthcare system when specialist input is needed.</p><p>In Romania, continuity of chronic disease management is one of the most significant gaps in both the public and private healthcare systems. Short consultation times, fragmented care between specialists, and limited primary care access outside major cities all contribute to chronic conditions that are inadequately monitored and managed.</p><p>Our doctors, registered with the Romanian College of Physicians (CMR), provide ongoing GP-level chronic disease management by secure video call — the clinical continuity that should be the foundation of your long-term care. Same day, from anywhere in Romania, in English, Romanian.</p><h2>Chronic Disease Management vs Treatment Renewal — Understanding the Difference</h2><p>Global Health offers two separate services for patients with long-term conditions:</p><p>Treatment Renewal is a single-consultation service for stable, established conditions — your condition has not changed, your treatment is working, and you need your prescription renewed. One consultation, clear outcome.</p><p>Chronic Disease Management is ongoing GP-level care — a doctor who knows your case over time, monitors your condition, adjusts management when needed, coordinates investigations and specialist referrals, and provides the continuity that makes long-term condition management genuinely effective rather than reactive.</p><p>If you are stable and just need a prescription renewed — Treatment Renewal is the right service. If you want a doctor involved in managing your condition over time — Chronic Disease Management is appropriate.</p><h2>Who This Service Is For</h2><p>This service is appropriate for adults with:</p><ul><li>A diagnosed chronic condition who want ongoing GP-level management</li><li>A long-term condition that is not well controlled and needs active clinical review</li></ul><p>Multiple co-existing conditions — for example diabetes with hypertension and dyslipidaemia — that require coordinated management</p><p>A chronic condition recently diagnosed in Romania that they want structured and managed with continuity</p><p>A long-term condition managed in another country that they are continuing now that they are living in Romania</p><p>A need for ongoing investigation monitoring — regular blood tests, HbA1c monitoring, thyroid function tracking — coordinated through a GP who knows their case</p><p>A chronic condition where lifestyle optimisation alongside medication management would improve outcomes</p><p>Anyone in Romania — Romanian nationals, expats, international residents — who wants structured, ongoing chronic disease management without waiting weeks for a clinic appointment</p><h2>Why Continuity Matters</h2><p>Chronic disease changes. Blood pressure that was controlled can rise. HbA1c that was stable can drift. A medication that worked can become less effective over time. A new symptom can indicate a complication or a need to reconsider the management plan.</p><p>A doctor who does not know your case sees only the current consultation. A doctor who monitors you over time sees the pattern — and can identify changes before they become problems. This is the difference between reactive and proactive chronic disease management.</p><p>The Romanian healthcare system — both public and private — tends towards reactive management of chronic conditions. Public system consultations are short, specialists manage their specific organ system without coordinating with the broader picture, and primary care follow-up between specialist appointments is often absent. The result is that patients with multiple chronic conditions frequently fall through the gaps between providers.</p><p>This service provides the coordinating GP layer that is often missing — a doctor who sees the whole patient, not just the current presenting complaint.</p><h2>Conditions Commonly Managed</h2><ul><li>Cardiovascular</li></ul><p>Hypertension — ongoing blood pressure monitoring, medication review, lifestyle optimisation, and cardiovascular risk management</p><ul><li>Dyslipidaemia — cholesterol management, lipid monitoring, and cardiovascular risk assessment</li></ul><p>Stable heart failure — community-managed at GP level, with cardiology referral coordination where needed</p><p>Stable atrial fibrillation — GP-level management, anticoagulation management, and cardiology liaison where needed</p><ul><li>Post-cardiac event management — ongoing GP-level care following heart attack or cardiac procedure</li><li>Metabolic</li></ul><p>Type 2 diabetes — HbA1c monitoring, medication review, lifestyle support, complication screening coordination, and specialist referral where needed</p><ul><li>Pre-diabetes — structured lifestyle intervention and metabolic monitoring</li></ul><p>Thyroid disease — hypothyroidism and hyperthyroidism management, TSH monitoring, medication adjustment</p><ul><li>Metabolic syndrome — integrated management of metabolic risk factors</li><li>Obesity as a chronic condition — metabolic management alongside weight management support</li><li>Respiratory</li></ul><p>Asthma — inhaler review, symptom control assessment, action plan development, and specialist referral where needed</p><ul><li>COPD — ongoing management, exacerbation prevention, and pulmonology coordination where needed</li><li>Musculoskeletal and inflammatory</li><li>Osteoarthritis — ongoing pain management, functional assessment, and referral coordination</li><li>Stable inflammatory arthritis — GP-level management with rheumatology coordination where needed</li><li>Gout — uric acid monitoring and ongoing management</li><li>Osteoporosis — fracture risk assessment and ongoing management</li><li>Mental health — long-term management at GP level</li><li>Depression and anxiety — ongoing management of stable conditions at GP level</li><li>ADHD — ongoing support for patients with established diagnosis at GP level</li><li>Sleep disorders — ongoing assessment and management</li><li>Gastrointestinal</li><li>GORD and peptic ulcer disease — ongoing management and monitoring</li><li>Irritable bowel syndrome — ongoing management and lifestyle support</li><li>Stable inflammatory bowel disease — GP-level management with gastroenterology coordination</li><li>Other</li><li>Chronic kidney disease — GP-level monitoring with nephrology coordination</li><li>Anaemia — ongoing management and monitoring of the underlying cause</li><li>Chronic skin conditions — psoriasis, eczema at GP level</li><li>Autoimmune conditions — stable, community-managed presentations at GP level</li></ul><h2>What Ongoing Management Includes</h2><p>Regular clinical reviewsYour doctor conducts structured clinical reviews at appropriate intervals for your condition — assessing symptom control, treatment response, side effects, any new developments, and overall wellbeing. The frequency is determined by your condition and clinical need.</p><p>Monitoring coordinationYour doctor issues investigation requests for regular monitoring — blood tests, HbA1c, thyroid function, lipid panels, renal function, and other condition-specific investigations — and reviews results with you in a follow-up consultation.</p><p>Medication managementYour doctor reviews your medication at each clinical review — assessing efficacy, tolerability, and whether adjustment is needed based on current clinical findings and monitoring results.</p><p>Lifestyle and self-management supportEvidence-based advice on diet, physical activity, weight management, smoking cessation, and alcohol moderation — tailored to your specific condition and how lifestyle factors interact with your clinical management.</p><p>Specialist liaison and referralWhen specialist input is needed — cardiology, endocrinology, pulmonology, rheumatology, gastroenterology, or other specialties — your doctor coordinates the referral, provides a comprehensive referral letter, and maintains the clinical relationship as your GP during and after specialist involvement.</p><p>Electronic prescription — where clinically appropriateWhen clinically indicated at each review, your doctor issues an electronic prescription through the Romanian Electronic Prescription System (SIPE). You present it at any pharmacy of your choice in Romania.</p><p>Note: Special-regime prescriptions covering certain controlled and high-risk medications cannot be transmitted electronically under Romanian law. Your doctor advises if this applies to your situation.</p><p>Clinical continuityBecause your doctor knows your case over time, clinical decisions are made in the context of your full history — not just the presenting complaint in a single consultation.</p><h2>Chronic Disease Management and the Romanian Healthcare System</h2><p>Romania's public system provides chronic disease management through registered family doctors — but only for patients who are registered and in areas where family doctors are available. Approximately one in three Romanian villages has no GP — making public system chronic disease management inaccessible for a significant portion of the population.</p><p>In the private sector, chronic disease management is available but fragmented. Specialist appointments are accessible without referral, but coordination between specialists — and between specialists and a GP — is inconsistent. Patients with multiple conditions frequently manage their own coordination between providers, without a doctor who holds the full picture.</p><p>Global Health provides this coordinating layer. Your CMR-registered doctor monitors your condition over time, coordinates your investigations and specialist referrals, adjusts your management when needed, and maintains the clinical continuity that makes chronic disease management genuinely effective.</p><p>If you are eligible for the Romanian public health system and have a registered family doctor, this service works alongside — not instead of — your existing care. Some patients use Global Health for structured chronic disease management while maintaining their public system registration for access to reimbursed medications and public specialist referrals.</p><h2>Frequently Asked Questions</h2><p>How is this different from a one-off treatment renewal consultation?Treatment Renewal is a single consultation for a stable condition — renewing a prescription that is working well. Chronic Disease Management is ongoing care — a doctor who knows your case over time, monitors your condition, adjusts management when needed, and is involved in your long-term health.</p><p>How often will I need to consult?It depends on your condition and how well controlled it is. For stable, well-controlled conditions a quarterly or six-monthly review is typically appropriate. For less well-controlled or more complex conditions, more frequent review is needed. Your doctor advises on the appropriate review schedule at your first consultation.</p><p>Can the doctor access my Romanian medical records?No. Global Health doctors do not have access to the Romanian public health system's electronic records. Please bring any relevant medical documentation — previous blood test results, specialist letters, imaging reports, and a list of your current medications — to your first consultation. Your doctor builds their clinical picture from the information you provide and from ongoing monitoring coordinated through Global Health.</p><p>What if I need a specialist?When specialist input is needed, your doctor issues a formal referral letter and advises on accessing the appropriate specialist privately in Romania. Private specialist access is generally straightforward in major Romanian cities — Global Health coordinates this as part of ongoing chronic disease management.</p><p>Can I use this service if I have a Romanian family doctor?Yes. Some patients use Global Health for chronic disease management alongside their Romanian family doctor registration — particularly for structured monitoring, coordination between multiple specialists, or management of conditions where they want a doctor who has time to discuss their case in depth.</p><p>What happens if I need emergency care for my chronic condition?Emergency management of chronic conditions — hypertensive crisis, diabetic emergency, acute cardiac event — requires immediate emergency care. Call 112 or go to the nearest emergency department immediately. Ongoing management through Global Health is for non-emergency chronic disease care.</p><p>Do I need Romanian health insurance?No. This is a private-pay service. Prescriptions issued through this service are dispensed at full private cost regardless of insurance status. Reimbursed dispensing under Romanian health insurance applies only to prescriptions issued by doctors contracted with the public system.</p><p>Can I use this service from anywhere in Romania?Yes. This service is available from anywhere in Romania — including areas with limited local primary care access — all you need is a stable internet connection and a device with a camera.</p>",
+      "ctaLabel": "Schedule the consultation",
+      "sortOrder": 110,
+      "durationMinutes": 15,
+      "basePriceCents": 16000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:37.056Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js46h001kakjui0rkkcbp",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee6nb000efsjuk0bbcp7f",
+          "path": "/api/media/media/56f4b07e-190a-40b4-9960-4ad3273aaaa3-7dc82b47-ee4d-48b6-af96-2a935505c0f8-8.webp",
+          "altText": "Managementul bolilor cronice — îngrijire medicală continuă online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "EN",
+      "links": [
+        {
+          "id": "cmr8enj9m003204jujs2enttv",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "Parkinson's, MS, Epilepsy Follow-up?",
+          "body": "For parkinson's, ms, epilepsy follow-up, our Neurology Consultation — Specialist Assessment Online provides dedicated care — see neurology consultation.",
+          "ctaLabel": "Neurology Consultation — Specialist Assessment Online",
+          "targetSlug": "consultatie-neurologie",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8ene2t002u04ju5ftxwr6j",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "Related care",
+          "body": "Need treatment renewal? Our Treatment Renewal — Online Clinical Review and Prescription in Romania covers this as a dedicated consultation.",
+          "ctaLabel": "Treatment Renewal — Online Clinical Review and Prescription in Romania",
+          "targetSlug": "reinnoire-tratament",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8enfdj002w04ju8q9hy8mt",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "Related care",
+          "body": "Need blood tests and specialist referral? Our Referral Letters & Investigations — Clinical Documentation Online covers this as a dedicated consultation.",
+          "ctaLabel": "Referral Letters & Investigations — Clinical Documentation Online",
+          "targetSlug": "trimiteri-si-investigatii",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8engo9002y04juk901odc8",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "Obesity As Chronic Condition?",
+          "body": "For obesity as chronic condition, our Weight Management — Medical Assessment and Personalised Plan provides dedicated care — see weight management.",
+          "ctaLabel": "Weight Management — Medical Assessment and Personalised Plan",
+          "targetSlug": "controlul-greutatii",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

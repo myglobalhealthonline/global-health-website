@@ -1,0 +1,328 @@
+{
+  "competitors": [
+    {
+      "se_type": "google",
+      "domain": "www.medic.chat",
+      "avg_position": 1,
+      "median_position": 1,
+      "rating": 99,
+      "etv": 118.56,
+      "keywords_count": 1,
+      "visibility": 1,
+      "relevant_serp_items": 1,
+      "keywords_positions": {
+        "medic online": [
+          1
+        ]
+      }
+    },
+    {
+      "se_type": "google",
+      "domain": "www.reginamaria.ro",
+      "avg_position": 2,
+      "median_position": 2,
+      "rating": 98,
+      "etv": 63.18,
+      "keywords_count": 1,
+      "visibility": 0.9,
+      "relevant_serp_items": 1,
+      "keywords_positions": {
+        "medic online": [
+          2
+        ]
+      }
+    },
+    {
+      "se_type": "google",
+      "domain": "www.medlife.ro",
+      "avg_position": 3,
+      "median_position": 3,
+      "rating": 97,
+      "etv": 37.946999999999996,
+      "keywords_count": 1,
+      "visibility": 0.8,
+      "relevant_serp_items": 1,
+      "keywords_positions": {
+        "medic online": [
+          3
+        ]
+      }
+    },
+    {
+      "se_type": "google",
+      "domain": "medicentrum.ro",
+      "avg_position": 4,
+      "median_position": 4,
+      "rating": 96,
+      "etv": 25.701,
+      "keywords_count": 1,
+      "visibility": 0.7,
+      "relevant_serp_items": 1,
+      "keywords_positions": {
+        "medic online": [
+          4
+        ]
+      }
+    },
+    {
+      "se_type": "google",
+      "domain": "deamedicine.ro",
+      "avg_position": 5,
+      "median_position": 5,
+      "rating": 95,
+      "etv": 18.291,
+      "keywords_count": 1,
+      "visibility": 0.6,
+      "relevant_serp_items": 1,
+      "keywords_positions": {
+        "medic online": [
+          5
+        ]
+      }
+    },
+    {
+      "se_type": "google",
+      "domain": "dr-online.net",
+      "avg_position": 6,
+      "median_position": 6,
+      "rating": 94,
+      "etv": 13.181999999999999,
+      "keywords_count": 1,
+      "visibility": 0.5,
+      "relevant_serp_items": 1,
+      "keywords_positions": {
+        "medic online": [
+          6
+        ]
+      }
+    },
+    {
+      "se_type": "google",
+      "domain": "ringdoc.ro",
+      "avg_position": 7,
+      "median_position": 7,
+      "rating": 93,
+      "etv": 9.984,
+      "keywords_count": 1,
+      "visibility": 0.4,
+      "relevant_serp_items": 1,
+      "keywords_positions": {
+        "medic online": [
+          7
+        ]
+      }
+    },
+    {
+      "se_type": "google",
+      "domain": "www.docbook.ro",
+      "avg_position": 8,
+      "median_position": 8,
+      "rating": 92,
+      "etv": 7.683,
+      "keywords_count": 1,
+      "visibility": 0.3,
+      "relevant_serp_items": 1,
+      "keywords_positions": {
+        "medic online": [
+          8
+        ]
+      }
+    },
+    {
+      "se_type": "google",
+      "domain": "www.groupama.ro",
+      "avg_position": 9,
+      "median_position": 9,
+      "rating": 91,
+      "etv": 5.85,
+      "keywords_count": 1,
+      "visibility": 0.2,
+      "relevant_serp_items": 1,
+      "keywords_positions": {
+        "medic online": [
+          9
+        ]
+      }
+    },
+    {
+      "se_type": "google",
+      "domain": "doctorchat.ro",
+      "avg_position": 10,
+      "median_position": 10,
+      "rating": 90,
+      "etv": 4.407,
+      "keywords_count": 1,
+      "visibility": 0.1,
+      "relevant_serp_items": 1,
+      "keywords_positions": {
+        "medic online": [
+          10
+        ]
+      }
+    },
+    {
+      "se_type": "google",
+      "domain": "www.clickmed.ro",
+      "avg_position": 12,
+      "median_position": 12,
+      "rating": 88,
+      "etv": 2.925,
+      "keywords_count": 1,
+      "visibility": 0.05,
+      "relevant_serp_items": 1,
+      "keywords_positions": {
+        "medic online": [
+          12
+        ]
+      }
+    },
+    {
+      "se_type": "google",
+      "domain": "www.telios.ro",
+      "avg_position": 14,
+      "median_position": 14,
+      "rating": 86,
+      "etv": 2.184,
+      "keywords_count": 1,
+      "visibility": 0.05,
+      "relevant_serp_items": 1,
+      "keywords_positions": {
+        "medic online": [
+          14
+        ]
+      }
+    },
+    {
+      "se_type": "google",
+      "domain": "www.facebook.com",
+      "avg_position": 15,
+      "median_position": 15,
+      "rating": 85,
+      "etv": 1.989,
+      "keywords_count": 1,
+      "visibility": 0.05,
+      "relevant_serp_items": 1,
+      "keywords_positions": {
+        "medic online": [
+          15
+        ]
+      }
+    },
+    {
+      "se_type": "google",
+      "domain": "doconline.md",
+      "avg_position": 16,
+      "median_position": 16,
+      "rating": 84,
+      "etv": 1.677,
+      "keywords_count": 1,
+      "visibility": 0.05,
+      "relevant_serp_items": 1,
+      "keywords_positions": {
+        "medic online": [
+          16
+        ]
+      }
+    },
+    {
+      "se_type": "google",
+      "domain": "medic-line.ro",
+      "avg_position": 17,
+      "median_position": 17,
+      "rating": 83,
+      "etv": 1.677,
+      "keywords_count": 1,
+      "visibility": 0.05,
+      "relevant_serp_items": 1,
+      "keywords_positions": {
+        "medic online": [
+          17
+        ]
+      }
+    },
+    {
+      "se_type": "google",
+      "domain": "eteledoc.ro",
+      "avg_position": 18,
+      "median_position": 18,
+      "rating": 82,
+      "etv": 1.287,
+      "keywords_count": 1,
+      "visibility": 0.05,
+      "relevant_serp_items": 1,
+      "keywords_positions": {
+        "medic online": [
+          18
+        ]
+      }
+    },
+    {
+      "se_type": "google",
+      "domain": "play.google.com",
+      "avg_position": 19,
+      "median_position": 19,
+      "rating": 81,
+      "etv": 1.0530000000000002,
+      "keywords_count": 1,
+      "visibility": 0.05,
+      "relevant_serp_items": 1,
+      "keywords_positions": {
+        "medic online": [
+          19
+        ]
+      }
+    },
+    {
+      "se_type": "google",
+      "domain": "www.dokteronline.com",
+      "avg_position": 20,
+      "median_position": 20,
+      "rating": 80,
+      "etv": 0.9359999999999999,
+      "keywords_count": 1,
+      "visibility": 0.05,
+      "relevant_serp_items": 1,
+      "keywords_positions": {
+        "medic online": [
+          20
+        ]
+      }
+    },
+    {
+      "se_type": "google",
+      "domain": "www.instagram.com",
+      "avg_position": 21,
+      "median_position": 21,
+      "rating": 79,
+      "etv": 0.897,
+      "keywords_count": 1,
+      "visibility": 0,
+      "relevant_serp_items": 1,
+      "keywords_positions": {
+        "medic online": [
+          21
+        ]
+      }
+    },
+    {
+      "se_type": "google",
+      "domain": "www.mobidoctor.eu",
+      "avg_position": 22,
+      "median_position": 22,
+      "rating": 78,
+      "etv": 0.8580000000000001,
+      "keywords_count": 1,
+      "visibility": 0,
+      "relevant_serp_items": 1,
+      "keywords_positions": {
+        "medic online": [
+          22
+        ]
+      }
+    }
+  ],
+  "meta": {
+    "projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b",
+    "url": "https://app.openseo.so/p/7804f362-5891-417e-9c3a-d9e8d4d7dc6b/domain"
+  }
+}

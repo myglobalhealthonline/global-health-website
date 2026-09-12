@@ -1,0 +1,590 @@
+[
+  {
+    "url": "https://www.myglobalhealth.online/romania/cs/doctors/dr-alexandra-palaga",
+    "slug": "dr-alexandra-palaga",
+    "locale": "cs",
+    "sourceFingerprint": "b0da9ce3f650e51789f926c69fa778497213804fdd7715b35948e08f508525d6",
+    "source": "raw/api/doctors-dr-alexandra-palaga-CS.json",
+    "before": {
+      "seoTitle": "Dr Alexandra Paga - Pediatr | Global Health"
+    },
+    "after": {
+      "seoTitle": "Dr Alexandra Palaga - Pediatr | Global Health"
+    },
+    "faqPatches": [
+      {
+        "id": "cmrnykcaq00g8bsjuudzk86f8",
+        "before": {
+          "question": "Jak si rezervuji konzultaci s Dr. Palaga?",
+          "answer": "Vyberte si dostupný časový slot na této stránce pro přímou rezervaci s Dr. Palaga. Platba je zpracována bezpečně při rezervaci — konzultace je potvrzena po provedení platby. Okamžitě obdržíte pozvánku do kalendáře. Konzultace probíhají prostřednictvím zabezpečeného video hovoru v rumunštině nebo angličtině. Prosíme rodiče, aby měli dítě přítomné při konzultaci, pokud je to možné."
+        },
+        "after": {
+          "question": "Jak si rezervuji konzultaci s Dr. Palaga?",
+          "answer": "Vyberte si volný termín u Dr Alexandra Palaga. Konzultace probíhají v rumunštině nebo angličtině. Jazyk a čas si ověřte při rezervaci. Dostupnost se může změnit; termín na tentýž den nelze slíbit."
+        }
+      },
+      {
+        "id": "cmrnykcap00g5bsju4vnybn81",
+        "before": {
+          "question": "Jaké pediatrické stavy hodnotí Dr. Palaga online?",
+          "answer": "Dr. Palaga poskytuje online pediatrické konzultace pro: celkové zdraví dítěte (od narození do 18 let), pediatrické urgentní případy a hodnocení akutních symptomů, pediatrickou gastroenterologii (trávicí problémy, chronický průjem, bolesti břicha), celiakii (hodnocení, vyšetření, dietní management), pediatrickou výživu (vybíravé stravování, podvýživa, metabolické poruchy), zdraví novorozenců a kojenců, pediatrické infekční nemoci, hodnocení růstu a vývoje a druhý názor na pediatrické diagnózy nebo léčby."
+        },
+        "after": {
+          "question": "Kdy může pomoci názor pediatra?",
+          "answer": "Můžete probrat přetrvávající či opakované příznaky, průběh po léčbě a otázky k vývoji dítěte. Pediatr projde anamnézu a dostupné zprávy a vysvětlí, zda je potřeba vyšetření nebo osobní prohlídka. Pokud videohovor a zdravotní dokumentace nestačí, lékař může doporučit osobní vyšetření. Online konzultace nenahrazuje neodkladnou péči. V případě zdravotní nouze volejte 112. Nečekejte na online termín."
+        }
+      }
+    ],
+    "status": "local draft; not applied",
+    "scope": "DoctorFaq rows are shared across countries. Recheck all country associations and preserve untouched FAQs before applying; use a country overlay if wording becomes Romania-specific.",
+    "held": "Do not standardize Brindus specialty or expand credentials; registry homepage is not independent verification of detailed biography claims."
+  },
+  {
+    "url": "https://www.myglobalhealth.online/romania/cs/doctors/dr-andreea-lorena-bica",
+    "slug": "dr-andreea-lorena-bica",
+    "locale": "cs",
+    "sourceFingerprint": "e4fafecee1079536908a599465cd0ba83bf74e9739234d2bdf1f5853e179dac5",
+    "source": "raw/api/doctors-dr-andreea-lorena-bica-CS.json",
+    "before": {
+      "seoTitle": "Dr Andreea Lorena Bica - Neurolog | Global Health"
+    },
+    "after": {
+      "seoTitle": "Dr Andreea Lorena Bica - Neurolog | Global Health"
+    },
+    "faqPatches": [
+      {
+        "id": "cmrnyrdbn00k8bsjuc6mpn3jm",
+        "before": {
+          "question": "Jak si rezervuji konzultaci s Dr. Bica?",
+          "answer": "Vyberte si dostupný časový slot na této stránce pro přímou rezervaci s Dr. Bica. Platba je zpracována bezpečně při rezervaci — konzultace je potvrzena po provedení platby. Okamžitě obdržíte pozvánku do kalendáře. Konzultace probíhají prostřednictvím zabezpečeného videohovoru v rumunštině nebo angličtině. Prosím, zašlete jakékoli lékařské zprávy, výsledky MRI nebo EEG před konzultací pro přesnější hodnocení. Pokud zažíváte neurologickou pohotovost — náhlou a silnou bolest hlavy, akutní slabost nebo poruchy řeči — okamžitě volejte 112."
+        },
+        "after": {
+          "question": "Jak si rezervuji konzultaci s Dr. Bica?",
+          "answer": "Vyberte si volný termín u Dr Andreea Lorena Bica. Konzultace probíhají v rumunštině nebo angličtině. Jazyk a čas si ověřte při rezervaci. Dostupnost se může změnit; termín na tentýž den nelze slíbit."
+        }
+      }
+    ],
+    "status": "local draft; not applied",
+    "scope": "DoctorFaq rows are shared across countries. Recheck all country associations and preserve untouched FAQs before applying; use a country overlay if wording becomes Romania-specific.",
+    "held": "Do not standardize Brindus specialty or expand credentials; registry homepage is not independent verification of detailed biography claims."
+  },
+  {
+    "url": "https://www.myglobalhealth.online/romania/cs/doctors/dr-robert-gabriel-brindus",
+    "slug": "dr-robert-gabriel-brindus",
+    "locale": "cs",
+    "sourceFingerprint": "b947cca065fb561c3eed662996be45e5f79970a89d8ef849a143cf7134e7a2ef",
+    "source": "raw/api/doctors-dr-robert-gabriel-brindus-CS.json",
+    "before": {
+      "seoTitle": "Dr Robert Gabriel Brindus - Anesteziolog | Global Health"
+    },
+    "after": {
+      "seoTitle": "Dr Robert Gabriel Brindus - Anesteziolog | Global Health"
+    },
+    "faqPatches": [
+      {
+        "id": "cmrny98ia00aebsju3m6imsz0",
+        "before": {
+          "question": "Jak si rezervuji konzultaci s Dr. Brînduș?",
+          "answer": "Vyberte si dostupný časový slot na této stránce pro přímou rezervaci s Dr. Brînduș. Platba je zabezpečena při rezervaci — konzultace je potvrzena po provedení platby. Okamžitě obdržíte pozvánku do kalendáře. Konzultace probíhají prostřednictvím zabezpečeného videohovoru v rumunštině, angličtině nebo španělštině. Stejné denní rezervace jsou obvykle k dispozici."
+        },
+        "after": {
+          "question": "Jak si rezervuji konzultaci s Dr. Brînduș?",
+          "answer": "Vyberte si volný termín u Dr Robert Gabriel Brindus. Konzultace probíhají v rumunštině nebo angličtině. Jazyk a čas si ověřte při rezervaci. Dostupnost se může změnit; termín na tentýž den nelze slíbit."
+        }
+      }
+    ],
+    "status": "local draft; not applied",
+    "scope": "DoctorFaq rows are shared across countries. Recheck all country associations and preserve untouched FAQs before applying; use a country overlay if wording becomes Romania-specific.",
+    "held": "Do not standardize Brindus specialty or expand credentials; registry homepage is not independent verification of detailed biography claims."
+  },
+  {
+    "url": "https://www.myglobalhealth.online/romania/de/doctors/dr-alexandra-palaga",
+    "slug": "dr-alexandra-palaga",
+    "locale": "de",
+    "sourceFingerprint": "4cc9fad4bff336c87a7284e0d0c361c8b0ff79f9ee96135e0cce1fd02a3d2a97",
+    "source": "raw/api/doctors-dr-alexandra-palaga-DE.json",
+    "before": {
+      "seoTitle": "Dr. Alexandra Paga - Kinderärztin | Global Health"
+    },
+    "after": {
+      "seoTitle": "Dr. Alexandra Palaga - Kinderärztin | Global Health"
+    },
+    "faqPatches": [
+      {
+        "id": "cmrnyklod00gebsjuk5rv06ge",
+        "before": {
+          "question": "Wie buche ich eine Beratung mit Dr. Palaga?",
+          "answer": "Wählen Sie einen verfügbaren Slot auf dieser Seite, um direkt mit Dr. Palaga zu buchen. Die Zahlung wird sicher bei der Buchung verarbeitet — die Beratung wird nach Zahlungseingang bestätigt. Sie erhalten sofort eine Einladung in den Kalender. Die Beratungen finden über einen sicheren Videoanruf in Rumänisch oder Englisch statt. Wir bitten die Eltern, das Kind bei der Beratung anwesend zu haben, wo immer dies möglich ist."
+        },
+        "after": {
+          "question": "Wie buche ich eine Beratung mit Dr. Palaga?",
+          "answer": "Wählen Sie einen verfügbaren Termin bei Dr Alexandra Palaga. Die Beratung erfolgt auf Rumänisch oder Englisch. Prüfen Sie Sprache und Uhrzeit bei der Buchung. Die Verfügbarkeit kann sich ändern; ein Termin am selben Tag lässt sich nicht zusagen."
+        }
+      },
+      {
+        "id": "cmrnyklod00gbbsjultifj9qg",
+        "before": {
+          "question": "Welche pädiatrischen Erkrankungen bewertet Dr. Palaga online?",
+          "answer": "Dr. Palaga bietet Online-Pädiatrieberatungen für: die allgemeine Gesundheit des Kindes (von der Geburt bis 18 Jahre), pädiatrische Notfälle und die Bewertung akuter Symptome, pädiatrische Gastroenterologie (Verdauungsprobleme, chronischer Durchfall, Bauchschmerzen), Zöliakie (Bewertung, Untersuchungen, diätetisches Management), pädiatrische Ernährung (selektive Ernährung, Mangelernährung, Stoffwechselstörungen), die Gesundheit von Neugeborenen und Säuglingen, pädiatrische Infektionskrankheiten, die Bewertung von Wachstum und Entwicklung sowie eine zweite Meinung zu pädiatrischen Diagnosen oder Behandlungen."
+        },
+        "after": {
+          "question": "Wann kann eine kinderärztliche Einschätzung helfen?",
+          "answer": "Sie können anhaltende oder wiederkehrende Beschwerden, den Verlauf nach einer Behandlung und Fragen zur Entwicklung Ihres Kindes besprechen. Der Kinderarzt prüft die Vorgeschichte und Unterlagen und erklärt den weiteren Untersuchungsbedarf. Wenn das Videogespräch und die Unterlagen nicht ausreichen, kann der Arzt eine Untersuchung vor Ort empfehlen. Eine Onlineberatung ersetzt keine Notfallversorgung. Rufen Sie bei einem medizinischen Notfall 112 an. Warten Sie nicht auf einen Onlinetermin."
+        }
+      }
+    ],
+    "status": "local draft; not applied",
+    "scope": "DoctorFaq rows are shared across countries. Recheck all country associations and preserve untouched FAQs before applying; use a country overlay if wording becomes Romania-specific.",
+    "held": "Do not standardize Brindus specialty or expand credentials; registry homepage is not independent verification of detailed biography claims."
+  },
+  {
+    "url": "https://www.myglobalhealth.online/romania/de/doctors/dr-andreea-lorena-bica",
+    "slug": "dr-andreea-lorena-bica",
+    "locale": "de",
+    "sourceFingerprint": "14eb67f5c93a0a6309af7d39b463b7f148c8e617f9419aed823b980a66f52614",
+    "source": "raw/api/doctors-dr-andreea-lorena-bica-DE.json",
+    "before": {
+      "seoTitle": "Dr. Andreea Lorena Bica - Neurologin | Global Health"
+    },
+    "after": {
+      "seoTitle": "Dr. Andreea Lorena Bica - Neurologin | Global Health"
+    },
+    "faqPatches": [
+      {
+        "id": "cmrnyrr3w00kebsjueyqq77b1",
+        "before": {
+          "question": "Wie buche ich eine Konsultation mit Dr. Bica?",
+          "answer": "Wählen Sie einen verfügbaren Termin auf dieser Seite, um direkt bei Dr. Bica zu buchen. Die Zahlung wird sicher bei der Buchung verarbeitet — die Konsultation wird nach der Zahlung bestätigt. Sie erhalten sofort eine Einladung in Ihren Kalender. Die Konsultationen finden über einen sicheren Videoanruf auf Rumänisch oder Englisch statt. Bitte senden Sie alle medizinischen Schreiben, MRT- oder EEG-Ergebnisse vor der Konsultation zur genaueren Bewertung. Wenn Sie eine neurologische Notlage erleben — plötzliche und starke Kopfschmerzen, akute Schwäche oder Sprachstörungen — rufen Sie sofort 112 an."
+        },
+        "after": {
+          "question": "Wie buche ich eine Konsultation mit Dr. Bica?",
+          "answer": "Wählen Sie einen verfügbaren Termin bei Dr Andreea Lorena Bica. Die Beratung erfolgt auf Rumänisch oder Englisch. Prüfen Sie Sprache und Uhrzeit bei der Buchung. Die Verfügbarkeit kann sich ändern; ein Termin am selben Tag lässt sich nicht zusagen."
+        }
+      }
+    ],
+    "status": "local draft; not applied",
+    "scope": "DoctorFaq rows are shared across countries. Recheck all country associations and preserve untouched FAQs before applying; use a country overlay if wording becomes Romania-specific.",
+    "held": "Do not standardize Brindus specialty or expand credentials; registry homepage is not independent verification of detailed biography claims."
+  },
+  {
+    "url": "https://www.myglobalhealth.online/romania/de/doctors/dr-robert-gabriel-brindus",
+    "slug": "dr-robert-gabriel-brindus",
+    "locale": "de",
+    "sourceFingerprint": "53d5566f6f858bf6ed64171f8b90e44f0713919cfdfc2fb4e0a0a9018a3e53bf",
+    "source": "raw/api/doctors-dr-robert-gabriel-brindus-DE.json",
+    "before": {
+      "seoTitle": "Dr Robert Gabriel Brindus - Anästhesist | Global Health"
+    },
+    "after": {
+      "seoTitle": "Dr Robert Gabriel Brindus - Anästhesist | Global Health"
+    },
+    "faqPatches": [
+      {
+        "id": "cmrny9jzv00akbsjuz8l2nijj",
+        "before": {
+          "question": "Wie buche ich eine Konsultation mit Dr. Brînduș?",
+          "answer": "Wählen Sie einen verfügbaren Slot auf dieser Seite, um direkt mit Dr. Brînduș zu buchen. Die Zahlung wird sicher bei der Buchung verarbeitet — die Konsultation wird nach der Zahlung bestätigt. Sie erhalten sofort eine Einladung in Ihren Kalender. Die Konsultationen finden über einen sicheren Videoanruf auf Rumänisch, Englisch oder Spanisch statt. Termine am selben Tag sind in der Regel verfügbar."
+        },
+        "after": {
+          "question": "Wie buche ich eine Konsultation mit Dr. Brînduș?",
+          "answer": "Wählen Sie einen verfügbaren Termin bei Dr Robert Gabriel Brindus. Die Beratung erfolgt auf Rumänisch oder Englisch. Prüfen Sie Sprache und Uhrzeit bei der Buchung. Die Verfügbarkeit kann sich ändern; ein Termin am selben Tag lässt sich nicht zusagen."
+        }
+      }
+    ],
+    "status": "local draft; not applied",
+    "scope": "DoctorFaq rows are shared across countries. Recheck all country associations and preserve untouched FAQs before applying; use a country overlay if wording becomes Romania-specific.",
+    "held": "Do not standardize Brindus specialty or expand credentials; registry homepage is not independent verification of detailed biography claims."
+  },
+  {
+    "url": "https://www.myglobalhealth.online/romania/en/doctors/dr-alexandra-palaga",
+    "slug": "dr-alexandra-palaga",
+    "locale": "en",
+    "sourceFingerprint": "7da9b107032bc14483a62d2413ea5a912615241f13b4d146a00652604869500c",
+    "source": "raw/api/doctors-dr-alexandra-palaga-EN.json",
+    "before": {
+      "seoTitle": "Dr Alexandra Paga - Pediatrician | Global Health"
+    },
+    "after": {
+      "seoTitle": "Dr Alexandra Palaga - Pediatrician | Global Health"
+    },
+    "faqPatches": [
+      {
+        "id": "cmrnyjers00fqbsjulm5612j1",
+        "before": {
+          "question": "How do I book a consultation with Dr. Palaga?",
+          "answer": "Select an available slot on this page to book directly with Dr. Palaga. Payment is securely processed at the time of booking — the consultation is confirmed after payment is made. You will immediately receive a calendar invitation. Consultations are conducted via secure video call in Romanian or English. We ask parents to have the child present for the consultation where possible."
+        },
+        "after": {
+          "question": "How do I book a consultation with Dr. Palaga?",
+          "answer": "Choose an available appointment with Dr Alexandra Palaga. Consultations are in Romanian or English. Check the language and time when booking. Availability can change; a same-day appointment cannot be promised."
+        }
+      },
+      {
+        "id": "cmrnyjers00fnbsjuu8bbejnp",
+        "before": {
+          "question": "What pediatric conditions does Dr. Palaga evaluate online?",
+          "answer": "Dr. Palaga offers online pediatric consultations for: general child health (from birth to 18 years), pediatric emergencies and evaluation of acute symptoms, pediatric gastroenterology (digestive issues, chronic diarrhea, abdominal pain), celiac disease (evaluation, investigations, dietary management), pediatric nutrition (selective eating, malnutrition, metabolic disorders), newborn and infant health, pediatric infectious diseases, growth and development assessment, and a second opinion on pediatric diagnoses or treatments."
+        },
+        "after": {
+          "question": "When might a pediatrician’s opinion help?",
+          "answer": "You can discuss persistent or recurring symptoms, progress after treatment and questions about your child’s development. The pediatrician reviews the history and available records, then explains whether tests or a physical examination are needed. The doctor may recommend an in-person assessment if the video discussion and records are not enough. An online consultation does not replace emergency care. For a medical emergency, call 112. Do not wait for an online appointment."
+        }
+      }
+    ],
+    "status": "local draft; not applied",
+    "scope": "DoctorFaq rows are shared across countries. Recheck all country associations and preserve untouched FAQs before applying; use a country overlay if wording becomes Romania-specific.",
+    "held": "Do not standardize Brindus specialty or expand credentials; registry homepage is not independent verification of detailed biography claims."
+  },
+  {
+    "url": "https://www.myglobalhealth.online/romania/en/doctors/dr-andreea-lorena-bica",
+    "slug": "dr-andreea-lorena-bica",
+    "locale": "en",
+    "sourceFingerprint": "9be4730dfb64416579692cfcebf97d63493bb75ae9949b6394d4d6c4b8d2b1e3",
+    "source": "raw/api/doctors-dr-andreea-lorena-bica-EN.json",
+    "before": {
+      "seoTitle": "Dr Andreea Lorena Bica - Neurologist | Global Health"
+    },
+    "after": {
+      "seoTitle": "Dr Andreea Lorena Bica - Neurologist | Global Health"
+    },
+    "faqPatches": [
+      {
+        "id": "cmrnyqbbs00jqbsjupqkd4y8v",
+        "before": {
+          "question": "How do I book a consultation with Dr. Bica?",
+          "answer": "Select an available slot on this page to book directly with Dr. Bica. Payment is securely processed at the time of booking — the consultation is confirmed after payment is made. You will immediately receive a calendar invitation. Consultations are conducted via secure video call in Romanian or English. Please send any medical letters, MRI results, or EEGs before the consultation for a more accurate assessment. If you experience a neurological emergency — sudden and severe headache, acute weakness, or speech disturbances — call 112 immediately."
+        },
+        "after": {
+          "question": "How do I book a consultation with Dr. Bica?",
+          "answer": "Choose an available appointment with Dr Andreea Lorena Bica. Consultations are in Romanian or English. Check the language and time when booking. Availability can change; a same-day appointment cannot be promised."
+        }
+      }
+    ],
+    "status": "local draft; not applied",
+    "scope": "DoctorFaq rows are shared across countries. Recheck all country associations and preserve untouched FAQs before applying; use a country overlay if wording becomes Romania-specific.",
+    "held": "Do not standardize Brindus specialty or expand credentials; registry homepage is not independent verification of detailed biography claims."
+  },
+  {
+    "url": "https://www.myglobalhealth.online/romania/en/doctors/dr-robert-gabriel-brindus",
+    "slug": "dr-robert-gabriel-brindus",
+    "locale": "en",
+    "sourceFingerprint": "d1d5d041611d08e4988570f62391d6741dd7b17723217a7ce5ddf4d3de492701",
+    "source": "raw/api/doctors-dr-robert-gabriel-brindus-EN.json",
+    "before": {
+      "seoTitle": "Dr Robert Gabriel Brindus - Anesthesiologist | Global Health"
+    },
+    "after": {
+      "seoTitle": "Dr Robert Gabriel Brindus - Anesthesiologist | Global Health"
+    },
+    "faqPatches": [
+      {
+        "id": "cmrny86dy009wbsju929oew3s",
+        "before": {
+          "question": "How do I book a consultation with Dr. Brînduș?",
+          "answer": "Select an available slot on this page to book directly with Dr. Brînduș. Payment is securely processed at the time of booking — the consultation is confirmed after payment is made. You will immediately receive a calendar invitation. Consultations take place via secure video call in Romanian, English, or Spanish. Same-day appointments are usually available."
+        },
+        "after": {
+          "question": "How do I book a consultation with Dr. Brînduș?",
+          "answer": "Choose an available appointment with Dr Robert Gabriel Brindus. Consultations are in Romanian or English. Check the language and time when booking. Availability can change; a same-day appointment cannot be promised."
+        }
+      }
+    ],
+    "status": "local draft; not applied",
+    "scope": "DoctorFaq rows are shared across countries. Recheck all country associations and preserve untouched FAQs before applying; use a country overlay if wording becomes Romania-specific.",
+    "held": "Do not standardize Brindus specialty or expand credentials; registry homepage is not independent verification of detailed biography claims."
+  },
+  {
+    "url": "https://www.myglobalhealth.online/romania/es/doctors/dr-alexandra-palaga",
+    "slug": "dr-alexandra-palaga",
+    "locale": "es",
+    "sourceFingerprint": "7024103bae01cc9f9e1326e51480661837530ad74d842aecf2d9af101bc71765",
+    "source": "raw/api/doctors-dr-alexandra-palaga-ES.json",
+    "before": {
+      "seoTitle": "Dr Alexandra Paga - Pediatra | Global Health"
+    },
+    "after": {
+      "seoTitle": "Dr Alexandra Palaga - Pediatra | Global Health"
+    },
+    "faqPatches": [
+      {
+        "id": "cmrnyjzuv00g2bsjuxqd0ais0",
+        "before": {
+          "question": "¿Cómo reservo una consulta con la Dra. Palaga?",
+          "answer": "Seleccione un horario disponible en esta página para reservar directamente con la Dra. Palaga. El pago se procesa de forma segura al reservar — la consulta se confirma tras la realización del pago. Recibirá inmediatamente una invitación en el calendario. Las consultas se llevan a cabo a través de videollamada segura en rumano o inglés. Pedimos a los padres que tengan al niño presente en la consulta siempre que sea posible."
+        },
+        "after": {
+          "question": "¿Cómo reservo una consulta con la Dra. Palaga?",
+          "answer": "Elija una cita disponible con Dr Alexandra Palaga. Las consultas son en rumano o inglés. Compruebe el idioma y la hora al reservar. La disponibilidad puede cambiar; no se garantiza una cita para el mismo día."
+        }
+      },
+      {
+        "id": "cmrnyjzuv00fzbsju40owanaw",
+        "before": {
+          "question": "¿Qué afecciones pediátricas evalúa la Dra. Palaga en línea?",
+          "answer": "La Dra. Palaga ofrece consultas pediátricas en línea para: salud general del niño (desde el nacimiento hasta los 18 años), urgencias pediátricas y evaluación de síntomas agudos, gastroenterología pediátrica (problemas digestivos, diarrea crónica, dolores abdominales), enfermedad celíaca (evaluación, investigaciones, manejo dietético), nutrición pediátrica (alimentación selectiva, desnutrición, trastornos metabólicos), salud del recién nacido y lactante, enfermedades infecciosas pediátricas, evaluación del crecimiento y desarrollo y segunda opinión sobre diagnósticos o tratamientos pediátricos."
+        },
+        "after": {
+          "question": "¿Cuándo puede ayudar la opinión de un pediatra?",
+          "answer": "Puede consultar síntomas persistentes o repetidos, la evolución tras un tratamiento y dudas sobre el desarrollo de su hijo. El pediatra revisa los antecedentes y los informes y explica si necesita pruebas o exploración física. El médico puede recomendar una valoración presencial si la videollamada y los informes no son suficientes. La consulta online no sustituye la atención de urgencias. En una emergencia médica, llame al 112. No espere a una cita online."
+        }
+      }
+    ],
+    "status": "local draft; not applied",
+    "scope": "DoctorFaq rows are shared across countries. Recheck all country associations and preserve untouched FAQs before applying; use a country overlay if wording becomes Romania-specific.",
+    "held": "Do not standardize Brindus specialty or expand credentials; registry homepage is not independent verification of detailed biography claims."
+  },
+  {
+    "url": "https://www.myglobalhealth.online/romania/es/doctors/dr-andreea-lorena-bica",
+    "slug": "dr-andreea-lorena-bica",
+    "locale": "es",
+    "sourceFingerprint": "57c105a11d90204b512190f068ac77e22ceec8c9c9ef3cf460419b0763d12e86",
+    "source": "raw/api/doctors-dr-andreea-lorena-bica-ES.json",
+    "before": {
+      "seoTitle": "Dr Andreea Lorena Bica - Neuróloga | Global Health"
+    },
+    "after": {
+      "seoTitle": "Dr Andreea Lorena Bica - Neuróloga | Global Health"
+    },
+    "faqPatches": [
+      {
+        "id": "cmrnyqyvw00k2bsju1axomr12",
+        "before": {
+          "question": "¿Cómo reservo una consulta con la Dra. Bica?",
+          "answer": "Seleccione un horario disponible en esta página para reservar directamente con la Dra. Bica. El pago se procesa de forma segura al reservar; la consulta se confirma tras realizar el pago. Recibirá inmediatamente una invitación en el calendario. Las consultas se realizan a través de videollamada segura en rumano o inglés. Por favor, envíe cualquier carta médica, resultados de RMN o EEG antes de la consulta para una evaluación más precisa. Si experimenta una emergencia neurológica —cefalea súbita y severa, debilidad aguda o trastornos del habla— llame inmediatamente al 112."
+        },
+        "after": {
+          "question": "¿Cómo reservo una consulta con la Dra. Bica?",
+          "answer": "Elija una cita disponible con Dr Andreea Lorena Bica. Las consultas son en rumano o inglés. Compruebe el idioma y la hora al reservar. La disponibilidad puede cambiar; no se garantiza una cita para el mismo día."
+        }
+      }
+    ],
+    "status": "local draft; not applied",
+    "scope": "DoctorFaq rows are shared across countries. Recheck all country associations and preserve untouched FAQs before applying; use a country overlay if wording becomes Romania-specific.",
+    "held": "Do not standardize Brindus specialty or expand credentials; registry homepage is not independent verification of detailed biography claims."
+  },
+  {
+    "url": "https://www.myglobalhealth.online/romania/es/doctors/dr-robert-gabriel-brindus",
+    "slug": "dr-robert-gabriel-brindus",
+    "locale": "es",
+    "sourceFingerprint": "f2f7d54922f1f4a46987a867d849d5c309c1ef208312d44941dcfb4c31690e1b",
+    "source": "raw/api/doctors-dr-robert-gabriel-brindus-ES.json",
+    "before": {
+      "seoTitle": "Dr Robert Gabriel Brindus - Anestesista | Global Health"
+    },
+    "after": {
+      "seoTitle": "Dr Robert Gabriel Brindus - Anestesista | Global Health"
+    },
+    "faqPatches": [
+      {
+        "id": "cmrny8sbq00a8bsjuaz1uqbgs",
+        "before": {
+          "question": "¿Cómo reservo una consulta con el Dr. Brînduș?",
+          "answer": "Seleccione un horario disponible en esta página para reservar directamente con el Dr. Brînduș. El pago se procesa de forma segura al reservar — la consulta se confirma tras la realización del pago. Recibirá inmediatamente una invitación en el calendario. Las consultas se llevan a cabo a través de videollamada segura en rumano, inglés o español. Las citas el mismo día suelen estar disponibles."
+        },
+        "after": {
+          "question": "¿Cómo reservo una consulta con el Dr. Brînduș?",
+          "answer": "Elija una cita disponible con Dr Robert Gabriel Brindus. Las consultas son en rumano o inglés. Compruebe el idioma y la hora al reservar. La disponibilidad puede cambiar; no se garantiza una cita para el mismo día."
+        }
+      }
+    ],
+    "status": "local draft; not applied",
+    "scope": "DoctorFaq rows are shared across countries. Recheck all country associations and preserve untouched FAQs before applying; use a country overlay if wording becomes Romania-specific.",
+    "held": "Do not standardize Brindus specialty or expand credentials; registry homepage is not independent verification of detailed biography claims."
+  },
+  {
+    "url": "https://www.myglobalhealth.online/romania/pt/doctors/dr-alexandra-palaga",
+    "slug": "dr-alexandra-palaga",
+    "locale": "pt",
+    "sourceFingerprint": "f95decfb9db4ebec85147ff1b6c08f2a79b1bddbd01454c17420512a1aaf9e85",
+    "source": "raw/api/doctors-dr-alexandra-palaga-PT.json",
+    "before": {
+      "seoTitle": "Dr Alexandra Paga - Pediatra | Global Health"
+    },
+    "after": {
+      "seoTitle": "Dr Alexandra Palaga - Pediatra | Global Health"
+    },
+    "faqPatches": [
+      {
+        "id": "cmrnyjpvo00fwbsjub3l3p2ki",
+        "before": {
+          "question": "Como posso marcar uma consulta com a Dr. Palaga?",
+          "answer": "Selecione um horário disponível nesta página para marcar diretamente com a Dr. Palaga. O pagamento é processado de forma segura no momento da marcação — a consulta é confirmada após a realização do pagamento. Receberá imediatamente um convite no calendário. As consultas realizam-se por videochamada segura em romeno ou inglês. Pedimos aos pais que tenham a criança presente na consulta sempre que possível."
+        },
+        "after": {
+          "question": "Como posso marcar uma consulta com a Dr. Palaga?",
+          "answer": "Escolha um horário disponível com Dr Alexandra Palaga. As consultas são em romeno ou inglês. Confirme a língua e a hora ao marcar. A disponibilidade pode mudar; não se pode garantir uma consulta no próprio dia."
+        }
+      },
+      {
+        "id": "cmrnyjpvo00ftbsjujc5pwxrt",
+        "before": {
+          "question": "Quais as condições pediátricas que a Dr. Palaga avalia online?",
+          "answer": "A Dr. Palaga oferece consultas pediátricas online para: saúde geral da criança (desde o nascimento até aos 18 anos), urgências pediátricas e avaliação de sintomas agudos, gastroenterologia pediátrica (problemas digestivos, diarreia crónica, dores abdominais), doença celíaca (avaliação, investigações, gestão dietética), nutrição pediátrica (alimentação seletiva, desnutrição, distúrbios metabólicos), saúde do recém-nascido e do lactente, doenças infecciosas pediátricas, avaliação do crescimento e desenvolvimento e uma segunda opinião sobre diagnósticos ou tratamentos pediátricos."
+        },
+        "after": {
+          "question": "Quando pode ajudar a opinião de um pediatra?",
+          "answer": "Pode abordar sintomas persistentes ou recorrentes, a evolução após tratamento e dúvidas sobre o desenvolvimento da criança. O pediatra revê o historial e os documentos e explica se são necessários exames ou avaliação presencial. O médico pode recomendar uma avaliação presencial se a videochamada e os documentos não forem suficientes. A consulta online não substitui os cuidados de urgência. Numa emergência médica, ligue 112. Não espere por uma consulta online."
+        }
+      }
+    ],
+    "status": "local draft; not applied",
+    "scope": "DoctorFaq rows are shared across countries. Recheck all country associations and preserve untouched FAQs before applying; use a country overlay if wording becomes Romania-specific.",
+    "held": "Do not standardize Brindus specialty or expand credentials; registry homepage is not independent verification of detailed biography claims."
+  },
+  {
+    "url": "https://www.myglobalhealth.online/romania/pt/doctors/dr-andreea-lorena-bica",
+    "slug": "dr-andreea-lorena-bica",
+    "locale": "pt",
+    "sourceFingerprint": "736ee5c6cae1a638bc5807cb493b711af992cebd251ee1e026125455d10e676e",
+    "source": "raw/api/doctors-dr-andreea-lorena-bica-PT.json",
+    "before": {
+      "seoTitle": "Dr Andreea Lorena Bica - Neurologista | Global Health"
+    },
+    "after": {
+      "seoTitle": "Dr Andreea Lorena Bica - Neurologista | Global Health"
+    },
+    "faqPatches": [
+      {
+        "id": "cmrnyqlte00jwbsjuoir809ai",
+        "before": {
+          "question": "Como posso reservar uma consulta com a Dr. Bica?",
+          "answer": "Selecione um horário disponível nesta página para reservar diretamente com a Dr. Bica. O pagamento é processado de forma segura no momento da reserva — a consulta é confirmada após a realização do pagamento. Receberá imediatamente um convite no calendário. As consultas realizam-se por videochamada segura em romeno ou inglês. Por favor, envie quaisquer cartas médicas, resultados de RMN ou EEG antes da consulta para uma avaliação mais precisa. Se estiver a experienciar uma emergência neurológica — dor de cabeça súbita e severa, fraqueza aguda ou distúrbios da fala — ligue imediatamente para o 112."
+        },
+        "after": {
+          "question": "Como posso reservar uma consulta com a Dr. Bica?",
+          "answer": "Escolha um horário disponível com Dr Andreea Lorena Bica. As consultas são em romeno ou inglês. Confirme a língua e a hora ao marcar. A disponibilidade pode mudar; não se pode garantir uma consulta no próprio dia."
+        }
+      }
+    ],
+    "status": "local draft; not applied",
+    "scope": "DoctorFaq rows are shared across countries. Recheck all country associations and preserve untouched FAQs before applying; use a country overlay if wording becomes Romania-specific.",
+    "held": "Do not standardize Brindus specialty or expand credentials; registry homepage is not independent verification of detailed biography claims."
+  },
+  {
+    "url": "https://www.myglobalhealth.online/romania/pt/doctors/dr-robert-gabriel-brindus",
+    "slug": "dr-robert-gabriel-brindus",
+    "locale": "pt",
+    "sourceFingerprint": "15b88c30bddf3f6e49c157b0cb195c803c8ca55838961cb10b73404f9a71cb72",
+    "source": "raw/api/doctors-dr-robert-gabriel-brindus-PT.json",
+    "before": {
+      "seoTitle": "Dr Robert Gabriel Brindus - Anestesista | Global Health"
+    },
+    "after": {
+      "seoTitle": "Dr Robert Gabriel Brindus - Anestesista | Global Health"
+    },
+    "faqPatches": [
+      {
+        "id": "cmrny8hlb00a2bsjugtjb78o6",
+        "before": {
+          "question": "Como posso marcar uma consulta com o Dr. Brînduș?",
+          "answer": "Selecione um horário disponível nesta página para reservar diretamente com o Dr. Brînduș. O pagamento é processado de forma segura no momento da reserva — a consulta é confirmada após a realização do pagamento. Receberá imediatamente um convite no calendário. As consultas realizam-se por videochamada segura em romeno, inglês ou espanhol. As marcações para o mesmo dia estão geralmente disponíveis."
+        },
+        "after": {
+          "question": "Como posso marcar uma consulta com o Dr. Brînduș?",
+          "answer": "Escolha um horário disponível com Dr Robert Gabriel Brindus. As consultas são em romeno ou inglês. Confirme a língua e a hora ao marcar. A disponibilidade pode mudar; não se pode garantir uma consulta no próprio dia."
+        }
+      }
+    ],
+    "status": "local draft; not applied",
+    "scope": "DoctorFaq rows are shared across countries. Recheck all country associations and preserve untouched FAQs before applying; use a country overlay if wording becomes Romania-specific.",
+    "held": "Do not standardize Brindus specialty or expand credentials; registry homepage is not independent verification of detailed biography claims."
+  },
+  {
+    "url": "https://www.myglobalhealth.online/romania/ro/doctors/dr-alexandra-palaga",
+    "slug": "dr-alexandra-palaga",
+    "locale": "ro",
+    "sourceFingerprint": "808f3b97923a480c27fdb34dd1ef239671b1f4afe8543d10c59ef5aec4730dd0",
+    "source": "raw/api/doctors-dr-alexandra-palaga-RO.json",
+    "before": {
+      "seoTitle": "Dr. Alexandra Palaga — Pediatru Specialist | CMR 159625 | Global Health România"
+    },
+    "after": {
+      "seoTitle": "Dr. Alexandra Palaga — Pediatru Specialist | CMR 159625 | Global Health România"
+    },
+    "faqPatches": [
+      {
+        "id": "cmrmjnall000j60juspxz8frm",
+        "before": {
+          "question": "Cum rezerv o consultație cu Dr. Palaga?",
+          "answer": "Selectați un slot disponibil pe această pagină pentru a rezerva direct cu Dr. Palaga. Plata se procesează securizat la rezervare — consultația este confirmată după efectuarea plății. Veți primi imediat o invitație în calendar. Consultațiile se desfășoară prin apel video securizat în română sau engleză. Rugăm părinții să aibă copilul prezent la consultație acolo unde este posibil."
+        },
+        "after": {
+          "question": "Cum rezerv o consultație cu Dr. Palaga?",
+          "answer": "Alegeți un interval disponibil pentru Dr Alexandra Palaga. Consultațiile sunt în română sau engleză. Verificați limba și ora la rezervare. Disponibilitatea se poate schimba; nu putem promite o programare în aceeași zi."
+        }
+      },
+      {
+        "id": "cmrmjnall000g60juoiyqrtyh",
+        "before": {
+          "question": "Ce afecțiuni pediatrice evaluează Dr. Palaga online?",
+          "answer": "Dr. Palaga oferă consultații pediatrice online pentru: sănătatea generală a copilului (de la naștere până la 18 ani), urgențe pediatrice și evaluarea simptomelor acute, gastroenterologie pediatrică (probleme digestive, diaree cronică, dureri abdominale), boală celiacă (evaluare, investigații, management dietetic), nutriție pediatrică (alimentație selectivă, malnutriție, tulburări metabolice), sănătatea nou-născutului și sugarului, boli infecțioase pediatrice, evaluarea creșterii și dezvoltării și a doua opinie privind diagnostice sau tratamente pediatrice."
+        },
+        "after": {
+          "question": "Când poate fi utilă opinia unui pediatru?",
+          "answer": "Puteți discuta simptome persistente sau recurente, evoluția după un tratament și întrebări despre dezvoltarea copilului. Pediatrul revizuiește istoricul și documentele disponibile și explică dacă este nevoie de investigații sau examinare fizică. Medicul vă poate recomanda evaluare în persoană dacă discuția video și documentele nu sunt suficiente. Consultația online nu înlocuiește îngrijirea de urgență. Într-o urgență medicală, sunați la 112. Nu așteptați o programare online."
+        }
+      }
+    ],
+    "status": "local draft; not applied",
+    "scope": "DoctorFaq rows are shared across countries. Recheck all country associations and preserve untouched FAQs before applying; use a country overlay if wording becomes Romania-specific.",
+    "held": "Do not standardize Brindus specialty or expand credentials; registry homepage is not independent verification of detailed biography claims."
+  },
+  {
+    "url": "https://www.myglobalhealth.online/romania/ro/doctors/dr-andreea-lorena-bica",
+    "slug": "dr-andreea-lorena-bica",
+    "locale": "ro",
+    "sourceFingerprint": "0e695d6e42d1c17faffb226731c32a0e32d280c29be1d9f32d7b3f53daf0fbf5",
+    "source": "raw/api/doctors-dr-andreea-lorena-bica-RO.json",
+    "before": {
+      "seoTitle": "Dr. Andreea-Lorena Bica — Neurolog | CMR 147502 | Global Health România"
+    },
+    "after": {
+      "seoTitle": "Dr. Andreea-Lorena Bica — Neurolog | CMR 147502 | Global Health România"
+    },
+    "faqPatches": [
+      {
+        "id": "cmrmjn8pn000c60juru0ijt00",
+        "before": {
+          "question": "Cum rezerv o consultație cu Dr. Bica?",
+          "answer": "Selectați un slot disponibil pe această pagină pentru a rezerva direct cu Dr. Bica. Plata se procesează securizat la rezervare — consultația este confirmată după efectuarea plății. Veți primi imediat o invitație în calendar. Consultațiile se desfășoară prin apel video securizat în română sau engleză. Vă rugăm să transmiteți orice scrisori medicale, rezultate RMN sau EEG înainte de consultație pentru o evaluare mai precisă. Dacă experimentați o urgență neurologică — cefalee bruscă și severă, slăbiciune acută sau tulburări de vorbire — sunați imediat la 112."
+        },
+        "after": {
+          "question": "Cum rezerv o consultație cu Dr. Bica?",
+          "answer": "Alegeți un interval disponibil pentru Dr Andreea Lorena Bica. Consultațiile sunt în română sau engleză. Verificați limba și ora la rezervare. Disponibilitatea se poate schimba; nu putem promite o programare în aceeași zi."
+        }
+      }
+    ],
+    "status": "local draft; not applied",
+    "scope": "DoctorFaq rows are shared across countries. Recheck all country associations and preserve untouched FAQs before applying; use a country overlay if wording becomes Romania-specific.",
+    "held": "Do not standardize Brindus specialty or expand credentials; registry homepage is not independent verification of detailed biography claims."
+  },
+  {
+    "url": "https://www.myglobalhealth.online/romania/ro/doctors/dr-robert-gabriel-brindus",
+    "slug": "dr-robert-gabriel-brindus",
+    "locale": "ro",
+    "sourceFingerprint": "5a0ebd3e101b2d519121dd860a150c55e741f8c913e5e55d17a0e2277056ed00",
+    "source": "raw/api/doctors-dr-robert-gabriel-brindus-RO.json",
+    "before": {
+      "seoTitle": "Dr. Robert Brînduș — Medic de Familie | CMR 152462 | Global Health România"
+    },
+    "after": {
+      "seoTitle": "Dr. Robert Brînduș — Medic de Familie | CMR 152462 | Global Health România"
+    },
+    "faqPatches": [
+      {
+        "id": "cmrmjn6mh000460ju6wia3ucd",
+        "before": {
+          "question": "Cum rezerv o consultație cu Dr. Brînduș?",
+          "answer": "Selectați un slot disponibil pe această pagină pentru a rezerva direct cu Dr. Brînduș. Plata se procesează securizat la rezervare — consultația este confirmată după efectuarea plății. Veți primi imediat o invitație în calendar. Consultațiile se desfășoară prin apel video securizat în română, engleză sau spaniolă. Programările în aceeași zi sunt de obicei disponibile."
+        },
+        "after": {
+          "question": "Cum rezerv o consultație cu Dr. Brînduș?",
+          "answer": "Alegeți un interval disponibil pentru Dr Robert Gabriel Brindus. Consultațiile sunt în română sau engleză. Verificați limba și ora la rezervare. Disponibilitatea se poate schimba; nu putem promite o programare în aceeași zi."
+        }
+      }
+    ],
+    "status": "local draft; not applied",
+    "scope": "DoctorFaq rows are shared across countries. Recheck all country associations and preserve untouched FAQs before applying; use a country overlay if wording becomes Romania-specific.",
+    "held": "Do not standardize Brindus specialty or expand credentials; registry homepage is not independent verification of detailed biography claims."
+  }
+]

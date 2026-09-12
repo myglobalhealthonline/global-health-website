@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:06.025Z",
+  "endpoint": "/api/services/dureri-musculo-scheletice?countryCode=ro&locale=CS",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee5va000cfsju0urkl4di",
+      "kind": "GENERAL",
+      "slug": "dureri-musculo-scheletice",
+      "name": "Vyhodnocení muskuloskeletální bolesti — online, ve stejný den",
+      "summary": "Máte bolesti zad, bolesti kloubů, ischias nebo svalové zranění? Naši licencovaní lékaři CMR posuzují příznaky, varovné signály a možnosti léčby prostřednictvím videokonzultace.",
+      "seoTitle": "Online konzultace bolesti pohybového aparátu | Rumunsko",
+      "seoDescription": "Vyšetření při bolestech zad, bolestech kloubů, ischias nebo svalových poraněních. Naši lékaři s licencí CMR posoudí příznaky, varovné příznaky a možnosti léčby prostřednictvím videokonzultace.",
+      "seoKeywords": [
+        "musculoskeletal assessment online Romania",
+        "back pain doctor online Romania",
+        "joint pain consultation online Romania",
+        "sciatica doctor online Romania",
+        "physiotherapy referral Romania online"
+      ],
+      "heroTitle": "Vyhodnocení muskuloskeletální bolesti — online, ještě tentýž den",
+      "heroDescription": "Vyšetření při bolestech zad, bolestech kloubů, ischiasu nebo svalových poraněních. Naši licencovaní lékaři CMR posuzují příznaky, varovné příznaky a možnosti léčby prostřednictvím videokonzultace.",
+      "detailBody": "<p>Tato služba je užitečná při bolestech zad, krku, ramene, kolene, kyčle, kloubů nebo svalů, stejně jako při ztuhlosti, drobných podvrtnutích, přetížení nebo bolesti, která omezuje každodenní činnosti.</p><p>Lékař analyzuje způsob vzniku bolesti, lokalizaci, závažnost, dopad na pohyblivost a případné varovné příznaky, jako je slabost, postupující necitlivost, významná traumata nebo systémové příznaky. V závislosti na případu doporučí úvodní léčbu, ochranná opatření, vyšetření a odeslání do ortopedie, neurologie nebo fyzioterapie.</p><p>Vyšetření je vhodné i pro pacienty, kteří chtějí pochopit, zda lze zdánlivě banální bolest zvládnout doma, nebo zda vyžaduje rychlejší fyzické vyšetření.</p>",
+      "ctaLabel": "Naplánujte konzultaci",
+      "sortOrder": 90,
+      "durationMinutes": 15,
+      "basePriceCents": 11500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:43.786Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js87i001oakjuwkvut5p4",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee5va000cfsju0urkl4di",
+          "path": "/api/media/media/52ab5f4d-0186-44a5-aa2e-d62da25b2eee-ccdc09d1-45fb-4d7b-8801-a28707d3fb27-4.webp",
+          "altText": "Evaluarea durerii musculo-scheletale — online, în aceeași zi"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "CS",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

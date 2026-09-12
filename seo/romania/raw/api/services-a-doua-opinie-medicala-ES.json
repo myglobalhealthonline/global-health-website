@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:11.314Z",
+  "endpoint": "/api/services/a-doua-opinie-medicala?countryCode=ro&locale=ES",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee69c000dfsju48a77n99",
+      "kind": "GENERAL",
+      "slug": "a-doua-opinie-medicala",
+      "name": "Segunda opinión médica — evaluación clínica independiente",
+      "summary": "¿Desea verificar un diagnóstico, un plan de tratamiento o una recomendación médica importante? Nuestros médicos autorizados por el CMR ofrecen una segunda opinión clara, estructurada e independiente mediante consulta por video.",
+      "seoTitle": "Segunda opinión médica en línea | Rumanía | evaluación independiente",
+      "seoDescription": "Una segunda opinión médica para el diagnóstico, el plan de tratamiento o una recomendación médica importante. Nuestros médicos autorizados por el CMR ofrecen una segunda opinión clara, estructurada e independiente mediante consulta por video.",
+      "seoKeywords": [
+        "second medical opinion Romania",
+        "second opinion doctor online Romania",
+        "independent medical opinion Romania",
+        "second opinion diagnosis Romania",
+        "al doilea aviz medical online"
+      ],
+      "heroTitle": "Segunda opinión médica — evaluación clínica independiente",
+      "heroDescription": "Una segunda opinión médica para diagnóstico, plan de tratamiento o una recomendación médica importante. Nuestros médicos autorizados CMR ofrecen una segunda opinión clara, estructurada e independiente mediante consulta por video.",
+      "detailBody": "<p>Una segunda opinión es útil cuando ha recibido un diagnóstico nuevo, un tratamiento complejo o la recomendación de una intervención y desea comprender mejor las opciones disponibles. La consulta se basa en el análisis de los síntomas, del historial y de los documentos médicos que usted aporta.</p><p>El médico le explica en términos claros qué está bien respaldado por los datos existentes, qué puntos siguen sin estar claros y si son necesarias investigaciones adicionales, seguimiento o derivación a otro especialista. El objetivo no es contradecir automáticamente a otro clínico, sino ofrecerle una evaluación rigurosa y útil para tomar una decisión informada.</p><p>El servicio es adecuado para preguntas sobre diagnósticos crónicos o agudos, tratamientos farmacológicos, resultados de imagen o análisis, recomendaciones quirúrgicas y planes terapéuticos con un impacto importante en su salud.</p>",
+      "ctaLabel": "Programa la consulta",
+      "sortOrder": 50,
+      "durationMinutes": 15,
+      "basePriceCents": 11500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:52.222Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js4yi001lakjuctun11mg",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee69c000dfsju48a77n99",
+          "path": "/api/media/media/37ca81f1-cad2-4868-bc85-afb3f83c3a65-bdc950d1-c547-4347-bb50-5c64e4522dd2-9.webp",
+          "altText": "A doua opinie medicală — evaluare clinică independentă"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "ES",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

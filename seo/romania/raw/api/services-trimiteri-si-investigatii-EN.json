@@ -1,0 +1,123 @@
+{
+  "checkedAt": "2026-09-12T20:20:10.874Z",
+  "endpoint": "/api/services/trimiteri-si-investigatii?countryCode=ro&locale=EN",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee71b000ffsju3t9my2rm",
+      "kind": "GENERAL",
+      "slug": "trimiteri-si-investigatii",
+      "name": "Referral Letters & Investigations — Clinical Documentation Online",
+      "summary": "Need a referral letter for a specialist, blood tests, or imaging in Romania? Our CMR-registered doctors issue clinical documentation after full assessment. Same-day appointments available anywhere in Romania.",
+      "seoTitle": "Referral Letters & Investigations Online | Romania | CMR Doctor",
+      "seoDescription": "Referral letters, blood tests, and imaging requests for Romania. Our CMR-registered doctors issue clinical documentation after full assessment. Same-day appointments available anywhere in Romania.",
+      "seoKeywords": [
+        "referral letter Romania online doctor",
+        "specialist referral Romania online",
+        "blood test request Romania online",
+        "investigation request online Romania",
+        "private referral Romania doctor"
+      ],
+      "heroTitle": "Referral Letters & Investigations — Clinical Documentation Online",
+      "heroDescription": "Medical letters, recommendations for tests, and referrals to specialists. Our licensed CMR doctors can assess the situation and issue the relevant clinical documentation when indicated.",
+      "detailBody": "<p>Need to see a specialist but do not have a referral letter? Need blood tests or imaging ordered by a doctor? Received results from a Romanian specialist that you want reviewed and explained clearly before deciding how to proceed?</p><p>Our doctors, registered with the Romanian College of Physicians (CMR), issue clinical referral letters, blood test requests, and imaging requests following a full clinical assessment — giving you the documentation you need to access private specialist care and diagnostic investigations in Romania. Same day, from anywhere in the country, in English, Romanian.</p><h2>How Specialist Access Works in Romania</h2><p>Romania has a dual-track referral system — one for the public system and one for private care.</p><p>Public system specialist access requires a referral from a registered family doctor (medic de familie) contracted with CNAS. Without this referral, public system specialist appointments are not reimbursed. Global Health cannot provide public system referrals — this requires a registered family doctor contracted with the Romanian public health insurance system.</p><p>Private specialist access is available directly in most cases — you can book a private specialist appointment without a referral letter. However arriving at a specialist appointment without clinical context significantly reduces the quality of that first consultation. A specialist who receives a clear referral letter — describing your symptoms, relevant history, current medications, and the specific clinical question — conducts a more focused and efficient assessment.</p><p>This service covers:</p><ul><li>Private referral letters — for private specialist consultations of your choice</li><li>Blood test requests — for private laboratory testing at collection points across Romania</li><li>Imaging requests — for private X-ray, ultrasound, MRI, or CT</li><li>Clinical summary letters — documenting your assessment and findings for continuity of care</li></ul><p>Results review — blood test results, imaging reports, or specialist letters reviewed and explained clearly</p><p>This service does not cover:</p><ul><li>Public system specialist referrals — these require a family doctor contracted with CNAS</li><li>Emergency referrals — call 112 or go to the nearest emergency department immediately</li></ul><h2>Who This Service Is For</h2><p>This consultation is appropriate for:</p><p>Anyone who wants to see a private specialist in Romania and needs a clinical referral letter to accompany the appointment</p><ul><li>Patients who need blood tests or imaging ordered by a doctor before booking privately</li></ul><p>Patients who have received results — from blood tests, imaging, or specialist consultations — that they want reviewed and explained clearly</p><p>Patients with a specific clinical concern they want formally assessed and documented before pursuing specialist care</p><p>Patients who want a clinical summary letter — for insurance purposes, for a new doctor, or for continuity of care</p><p>Patients who received a clinical letter or results in Romanian they want reviewed and contextualised</p><p>Anyone in Romania without a registered family doctor who needs clinical documentation to access private specialist care</p><h2>Why a Referral Letter Adds Value</h2><p>Direct access to private specialists in Romania is available in most cases without a referral letter. But a specialist who sees you without clinical context must start from scratch — and consultation time is spent gathering information that could have been communicated in writing in advance.</p><p>A referral letter issued after clinical assessment contains everything the specialist needs before you walk in — your symptoms, their duration and severity, your current medications, relevant investigations already completed, and the specific clinical question you are asking the specialist to address. The specialist can immediately focus on the clinical problem rather than taking a basic history.</p><p>The difference in the quality of that first specialist appointment — between arriving with a comprehensive referral letter versus arriving cold — is significant.</p><h2>Referral Letters — What They Include</h2><p>A referral letter issued by a Global Health doctor following clinical assessment includes:</p><ul><li>Patient details and relevant medical history</li></ul><p>Description of the presenting concern — symptoms, duration, severity, and relevant clinical findings from the video consultation</p><ul><li>Current medications and relevant investigations already completed</li><li>Specific clinical question for the specialist — what you are asking them to assess or advise on</li><li>Degree of urgency — routine, soon, or urgent — based on clinical assessment</li></ul><p>The letter is issued in the language appropriate for the specialist — Romanian for Romanian-speaking specialists, English where needed. Discuss your preference with your doctor during the consultation.</p><h2>Blood Tests — What Can Be Requested</h2><p>Following clinical assessment, your doctor can issue blood test requests for a wide range of investigations, including:</p><ul><li>Metabolic and cardiovascular</li><li>Full blood count (FBC / hemoleucograma)</li><li>Fasting glucose and HbA1c</li><li>Lipid panel — total cholesterol, LDL, HDL, triglycerides</li><li>Renal function — creatinine, eGFR, urea, electrolytes</li><li>Liver function tests</li><li>Thyroid function — TSH, free T4, free T3</li><li>Uric acid</li><li>Ferritin, iron studies, and B12/folate</li><li>Hormonal and reproductive</li><li>Testosterone panel — total and free testosterone, LH, FSH, SHBG</li><li>Female hormonal panel — oestradiol, FSH, LH, progesterone, AMH</li><li>Thyroid antibodies — anti-TPO, anti-thyroglobulin</li><li>Cortisol</li><li>Prolactin</li><li>DHEA-S</li><li>Inflammatory and autoimmune</li><li>CRP and ESR (VSH)</li><li>Rheumatoid factor and anti-CCP</li><li>ANA and ANCA panels</li><li>Complement levels</li><li>Infectious disease</li><li>HIV, hepatitis B, hepatitis C serology</li><li>STI panels</li><li>Post-vaccination immunity checks — hepatitis B, MMR</li><li>Other</li><li>Vitamin D</li><li>Coeliac screen — anti-tTG IgA</li><li>PSA — prostate specific antigen</li><li>HCG — pregnancy test</li><li>Allergy panels — specific IgE</li></ul><p>Blood test requests are issued following clinical assessment — your doctor advises on which tests are clinically indicated for your specific presentation.</p><h2>Accessing Private Blood Tests in Romania</h2><p>Private blood test collection points are widely available across Romania — in Bucharest and in major regional cities including Cluj-Napoca, Timișoara, Iași, Brașov, and Constanța. Private laboratory networks operate throughout the country with collection points in most towns.</p><p>After your consultation, your doctor issues the investigation request and advises on where to go for collection based on your location. You book the collection appointment directly — no Romanian public health insurance is required for private blood tests. Results are typically available within 24 to 72 hours depending on the tests requested, though some specialist panels may take longer.</p><h2>Imaging Requests</h2><p>Where X-ray, ultrasound, MRI, or CT is clinically indicated following assessment, your doctor issues a formal imaging request. Private radiology is widely accessible in Romania — major cities and most regional centres have private radiology facilities that accept direct booking with a doctor's request letter.</p><p>Your doctor advises on the most appropriate imaging modality for your specific clinical question and the urgency of the investigation.</p><h2>Results Review</h2><p>Received blood test results, imaging reports, or specialist letters that you want reviewed and explained clearly? Your doctor reviews your results in full during a follow-up consultation — explaining the clinical findings, what they mean for your health, what the next steps are, and whether further investigation or specialist input is needed.</p><p>This is particularly useful for patients who have received results or clinical letters in Romanian and want them explained clearly — whether they are Romanian nationals who want more time to discuss results than a standard clinic appointment allows, or international residents who need the clinical content explained in English.</p><h2>Frequently Asked Questions</h2><p>Can I get a referral letter without a full clinical consultation?No. Referral letters are issued following a full clinical assessment. Your doctor needs to assess your symptoms and history to write a clinically meaningful referral letter. A referral letter without clinical assessment would not add value to your specialist appointment.</p><p>Can this service provide public system specialist referrals?No. Public system specialist referrals in Romania require a family doctor contracted with CNAS. Global Health provides private referral letters for private specialist access.</p><p>Does the referral letter need to be in Romanian?For Romanian-speaking specialists, yes — the referral letter is issued in Romanian. For international specialists or English-speaking providers, the letter can be issued in English. Your doctor issues it in the appropriate language based on who you are seeing — discuss this during the consultation.</p><p>How quickly can I get blood test results?Turnaround times vary by test — most standard blood tests are available within 24 to 72 hours from private collection points in Romania. Some specialist panels take longer. Your doctor advises on expected turnaround when issuing the request.</p><p>Can I use this service if I have Romanian public health insurance?Yes — but this service covers private referrals and private investigation requests. Your Romanian public health insurance covers reimbursed specialist referrals only when issued by a family doctor contracted with CNAS. Private blood tests and private specialist appointments booked through this service are at full private cost regardless of insurance status.</p><p>What if my results show something serious?If your results review reveals findings requiring urgent attention, your doctor advises immediately on the appropriate next steps — including whether emergency care is needed. If emergency care is needed, call 112 or go to the nearest emergency department immediately.</p><p>Can I use this service without a registered family doctor?Yes. This service is available to anyone in Romania — no prior registration, no family doctor required, no health insurance needed.</p><p>Can I use this service from anywhere in Romania?Yes. This service is available from anywhere in Romania — all you need is a stable internet connection and a device with a camera.</p>",
+      "ctaLabel": "Schedule the consultation",
+      "sortOrder": 150,
+      "durationMinutes": 20,
+      "basePriceCents": 16000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:50.543Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js1pu001jakjuc36whnoh",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee71b000ffsju3t9my2rm",
+          "path": "/api/media/media/98c460da-4161-4880-8b9f-6f66993c5144-7d46f6d9-5b91-4ee6-a2df-42b673052afe-3.webp",
+          "altText": "Scrisori medicale, trimiteri și investigații — coordonare online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "EN",
+      "links": [
+        {
+          "id": "cmr8enpqx003c04juazanlrwb",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "Pain Specialist Referral?",
+          "body": "For pain specialist referral, our Specialist Pain Assessment — Anaesthesiologist Online provides dedicated care — see specialist pain assessment.",
+          "ctaLabel": "Specialist Pain Assessment — Anaesthesiologist Online",
+          "targetSlug": "evaluare-durere",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8enr1k003e04juymcdvbc4",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "Neurology Referral?",
+          "body": "For neurology referral, our Neurology Consultation — Specialist Assessment Online provides dedicated care — see neurology consultation.",
+          "ctaLabel": "Neurology Consultation — Specialist Assessment Online",
+          "targetSlug": "consultatie-neurologie",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8enluw003604jul5sp00eu",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "Clinical Assessment Required First?",
+          "body": "For clinical assessment required first, our Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi provides dedicated care — see general medical consultation.",
+          "ctaLabel": "Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi",
+          "targetSlug": "medic-online-romania",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8enn5m003804jubem50uv0",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "Ongoing Monitoring?",
+          "body": "For ongoing monitoring, our Chronic Disease Management — Ongoing GP-Level Care Online provides dedicated care — see chronic disease management.",
+          "ctaLabel": "Chronic Disease Management — Ongoing GP-Level Care Online",
+          "targetSlug": "boli-cronice-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

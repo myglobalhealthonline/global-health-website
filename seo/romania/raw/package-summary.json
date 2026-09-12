@@ -1,0 +1,59 @@
+{
+  "sitemapPages": 317,
+  "linkedExtras": 10,
+  "reachablePages": 326,
+  "locales": {
+    "cs": 52,
+    "de": 52,
+    "en": 55,
+    "es": 52,
+    "pt": 52,
+    "ro": 54
+  },
+  "serviceVariants": 102,
+  "embeddedServiceVariants": 22,
+  "embeddedQuestions": 187,
+  "trueFaqGaps": 80,
+  "serviceDrafts": 96,
+  "doctorDrafts": 18,
+  "newNativeQuestions": 384,
+  "doctorFaqPatches": 24,
+  "keywordRows": 613,
+  "excludedRows": 729,
+  "current": {
+    "tools": {
+      "clicks": 51,
+      "impressions": 4406
+    },
+    "articles": {
+      "clicks": 17,
+      "impressions": 1392
+    },
+    "other": {
+      "clicks": 18,
+      "impressions": 1862
+    },
+    "services": {
+      "clicks": 7,
+      "impressions": 332
+    }
+  },
+  "previous": {
+    "other": {
+      "clicks": 12,
+      "impressions": 530
+    },
+    "services": {
+      "clicks": 4,
+      "impressions": 416
+    },
+    "tools": {
+      "clicks": 1,
+      "impressions": 820
+    },
+    "articles": {
+      "clicks": 0,
+      "impressions": 19
+    }
+  }
+}

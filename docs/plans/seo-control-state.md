@@ -8767,3 +8767,84 @@ No URL Inspection was performed and no recrawl item closed. The global September
 24 inspection cadence and Spain/Romania/Brazil country-work priorities remain.
 Browser authentication worked; local API access was not tested. No external
 settings, content, indexation submissions or validation requests changed.
+
+## 54. Romania all-locale SEO planning (2026-09-13)
+
+Owner scope confirmed in this task: every Romania public page across all six
+locales, including both service and doctor FAQs; prioritize services with available
+doctors and accurately reflect their consultation languages. Use OpenSEO research
+and deslop review. Current instruction is to prepare the plan. No production batch
+has been applied or approved by this planning entry.
+
+[Dated scope, evidence and execution brief](../../seo/romania/planning-brief-2026-09-13.md)
+follows the Ireland/Portugal/Czechia country artifacts and page-level completion
+matrix, with explicit locale and doctor-language fields. Country evidence stays
+under `seo/romania/`; this ledger retains operational ownership.
+
+Fresh OpenSEO GSC read: final query/page rows, `/romania/` all locales and all
+searcher countries, 2026-08-12 through 2026-09-09, 701 rows, no further page.
+Visible-query sums are tools 31 clicks/2,824 impressions, blogs 1/358, services
+0/12 and other pages 1/562. These are not full page totals and do not establish
+zero doctor visibility or conversion performance. Four current Romanian service
+responses returned 200 without FAQPage schema or HTML summary elements; confirm
+source records and locale fallbacks before selecting a content repair.
+
+Four Romania/ro live SERP samples plus keyword metrics are saved with the brief.
+General-care competitors include Medic Chat, Regina Maria and MedLife; specialist
+results supply candidates for a focused competitor-page review. Missing specialist
+volume remains unavailable. Research balance delta: 28 credits, with no tracker,
+keyword-save or project creation. No content, route, schema or database writes.
+
+**Next action:** complete the current URL/locale inventory and doctor-service-
+language/bookability matrix, then obtain full page totals and matched GSC periods,
+expand service-fit keywords and review competitor pages. Prepare exact page/FAQ
+drafts after ownership is established. Production execution remains a later step;
+record any actual review gates and source fingerprints against the concrete batch.
+No old indexation watch item was closed or rescheduled; retain the September 24
+global inspection cadence. Set batch-specific 30/60/90-day measurements when a
+publication date exists, not from this planning date.
+
+## 55. Romania research and exact draft package completed (2026-09-13)
+
+The owner authorized completing the Romania plans across all public pages and six
+locales. The resulting [country package](../../seo/romania/README.md) follows the
+established numbered country artifacts. This entry completes preparation, not a
+production rollout; no database, product content, routes or external settings changed.
+
+Public evidence covers 317 sitemap URLs and ten linked destinations: 326 reachable
+pages and one English sick-note 404. All sitemap URLs return 200 with self-canonicals
+and metadata. The 327-row matrix records exact drafts, retention decisions and holds.
+It does not certify or rewrite every retained clinical/legal body.
+
+The full FAQ reconciliation supersedes section 54's native-only sample: 102 service
+variants have no native FAQ rows, but 22 contain 187 embedded questions. There are
+80 true visible gaps. All 18 doctor variants already have six native FAQs each.
+Local drafts cover 96 staffed service variants with 384 proposed FAQs, plus 18 doctor
+variants with 24 FAQ corrections and five Palaga title typo fixes. Embedded blocks
+must be replaced atomically with native FAQs; do not append duplicates.
+
+Current public roster: three bookable doctors, Romanian/English consultation only.
+Pediatrics and neurology are staffed specialist services; Brindus serves 14 GENERAL
+services. Six evaluare-durere variants have no assigned doctor and remain held.
+Brindus specialty disagreement and unsupported biography claims require authoritative
+evidence. Page locale is not consultation language. No named clinical approval exists.
+
+Matched final GSC page windows: 2026-08-13–09-09 versus 2026-07-16–08-12, all Romania
+routes/searcher countries, complete pagination. Current 93 clicks/7,992 impressions
+versus 17/1,785; service subset 7/332 versus 4/416. Tool/article growth is not booking
+growth. The 613-row keyword master separates GSC, provider metrics and editorial
+labels. Non-Romanian Labs volumes are unavailable; live SERPs supply limited evidence.
+Research-stage balance delta: 488 credits (11,537 to 11,049), separate from section
+54's 28. [Source log](../../seo/romania/raw/source-log-2026-09-13.md).
+
+**Next implementation sequence:** authenticated read-only storage reconciliation and
+dry-run against exact source fingerprints; staffed pediatrics/neurology and profile
+corrections first, then GENERAL services and the obsolete English sick-note link.
+Reuse guarded updater patterns, preserve hidden translations, check shared DoctorFaq
+country scope, satisfy applicable claim-review gates and capture rollback/write/public
+readback receipts. This clone lacks backend/.env; production storage was not accessed.
+Booking client-shell behavior remains a browser check, not an established defect.
+
+Keep the September 24 global inspection cadence and all unrelated market holds.
+Register cohort-specific 30/60/90-day checks when publication actually occurs. No
+automated follow-up, indexation submission or outreach was created by this package.

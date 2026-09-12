@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:08.087Z",
+  "endpoint": "/api/services/dureri-musculo-scheletice?countryCode=ro&locale=DE",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee5va000cfsju0urkl4di",
+      "kind": "GENERAL",
+      "slug": "dureri-musculo-scheletice",
+      "name": "Beurteilung von muskuloskelettalen Schmerzen — online, am selben Tag",
+      "summary": "Haben Sie Rückenschmerzen, Gelenkschmerzen, Ischias oder eine Muskelverletzung? Unsere zugelassenen CMR-Ärzte bewerten Symptome, Warnzeichen und Behandlungsoptionen per Videosprechstunde.",
+      "seoTitle": "Online-Beratung bei muskuloskelettalen Schmerzen | Rumänien",
+      "seoDescription": "Bewertung bei Rückenschmerzen, Gelenkschmerzen, Ischias oder Muskelverletzungen. Unsere von der CMR zugelassenen Ärzte beurteilen die Symptome, Warnzeichen und Behandlungsoptionen per Video-Sprechstunde.",
+      "seoKeywords": [
+        "musculoskeletal assessment online Romania",
+        "back pain doctor online Romania",
+        "joint pain consultation online Romania",
+        "sciatica doctor online Romania",
+        "physiotherapy referral Romania online"
+      ],
+      "heroTitle": "Beurteilung von muskuloskelettalen Schmerzen — online, am selben Tag",
+      "heroDescription": "Beurteilung bei Rückenschmerzen, Gelenkschmerzen, Ischias oder Muskelverletzungen. Unsere autorisierten CMR-Ärzte bewerten Symptome, Warnzeichen und Behandlungsoptionen per Video-Sprechstunde.",
+      "detailBody": "<p>Dieser Service ist hilfreich bei Rücken-, Nacken-, Schulter-, Knie-, Hüft-, Gelenk- oder Muskelschmerzen sowie bei Steifheit, leichten Verstauchungen, Überlastung oder Schmerzen, die alltägliche Aktivitäten einschränken.</p><p>Der Arzt analysiert die Art des Auftretens der Schmerzen, die Lokalisation, die Stärke, die Auswirkung auf die Mobilität und mögliche Warnzeichen wie Schwäche, fortschreitende Taubheit, größere Traumata oder systemische Symptome. Je nach Fall empfiehlt er eine initiale Behandlung, Schutzmaßnahmen, Untersuchungen und eine Überweisung an die Orthopädie, Neurologie oder Physiotherapie.</p><p>Die Konsultation ist auch für Patienten geeignet, die verstehen möchten, ob ein scheinbar banaler Schmerz zu Hause behandelt werden kann oder eine schnellere körperliche Untersuchung erfordert.</p>",
+      "ctaLabel": "Vereinbaren Sie die Konsultation",
+      "sortOrder": 90,
+      "durationMinutes": 15,
+      "basePriceCents": 11500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:43.786Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js87i001oakjuwkvut5p4",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee5va000cfsju0urkl4di",
+          "path": "/api/media/media/52ab5f4d-0186-44a5-aa2e-d62da25b2eee-ccdc09d1-45fb-4d7b-8801-a28707d3fb27-4.webp",
+          "altText": "Evaluarea durerii musculo-scheletale — online, în aceeași zi"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "DE",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

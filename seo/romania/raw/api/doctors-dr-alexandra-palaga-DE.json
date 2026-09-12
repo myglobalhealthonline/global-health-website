@@ -1,0 +1,230 @@
+{
+  "checkedAt": "2026-09-12T20:20:06.883Z",
+  "endpoint": "/api/countries/ro/doctors/dr-alexandra-palaga?locale=DE",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "doctor": {
+      "id": "cmrc4gtzl00s901p2yh3ukaox",
+      "slug": "dr-alexandra-palaga",
+      "fullName": "Dr Alexandra Palaga",
+      "title": "Pädiater",
+      "bio": "<p>Dr. Alexandra Palaga</p><p>Fachärztin für Pädiatrie</p><p>Dr. Alexandra Palaga ist eine engagierte Fachärztin für Pädiatrie mit einem tiefen Engagement für die Förderung der Kindergesundheit durch klinische Exzellenz und akademische Forschung. Sie verfügt über umfangreiche Erfahrung als klinische Mitarbeiterin bei Medlife und bietet Familien weltweit über Medic Chat fachkundige Beratung.Klinische Expertise und Erfahrung</p><p>Aufbauend auf einer strengen Ausbildung an einigen der renommiertesten Institutionen Rumäniens verfügt Dr. Alexandra Palaga über umfassende Erfahrung in:</p><p>Pädiatrische Notfälle: erworben während der Facharztausbildung am Klinischen Notfallkrankenhaus für Kinder „Sf. Ioan” in Galați und am Klinischen Notfallkrankenhaus „Sf. Ioan” in Bukarest.</p><p>Spezialisierte Betreuung: klinische Tätigkeit und Notfallaufnahmen, wodurch sie ein vertieftes Verständnis akuter pädiatrischer Erkrankungen erlangte.</p><p>Multidisziplinärer Ansatz: zu Beginn ihrer Karriere sammelte sie auch Erfahrung in der Geburtshilfe und Gynäkologie am Universitätskrankenhaus für Notfälle Elias und trug so zu einer ganzheitlichen Perspektive auf die Gesundheit von Mutter und Kind bei.</p><p>Forschung und Spezialisierungen</p><p>Dr. Alexandra Palaga ist in der pädiatrischen Forschung anerkannt, insbesondere im Bereich der Gastroenterologie und Ernährung. Zu ihren Beiträgen gehören:</p><p>Expertin für Zöliakie: sie war als Forschungsmitarbeiterin und Analystin im Zentrum für das Management der Zöliakie am Nationalen Institut für die Gesundheit von Mutter und Kind „Alessandrescu-Rusescu” tätig.</p><p>Internationaler Beitrag: häufige Sprecherin und Referentin auf internationalen Foren, darunter ESPGHAN (Europäische Gesellschaft für Pädiatrische Gastroenterologie, Hepatologie und Ernährung) und die Europäische Akademie der Pädiatrischen Gesellschaften.</p><p>Veröffentlichte Forscherin: ihre Arbeiten über die Auswirkungen ernährungsbezogener Strategien und glutenfreier Diäten auf die Lebensqualität von Kindern wurden in renommierten Fachzeitschriften wie <em>Frontiers in Pediatrics</em> veröffentlicht.</p><p>Ausbildung und berufliche Zugehörigkeiten</p><p>Ärztin mit Diplom: Universität für Medizin und Pharmazie „Carol Davila”, Bukarest.</p><p>Facharztanerkennung: von dem Gesundheitsministerium Rumäniens zertifizierte Fachärztin für Pädiatrie.</p><p>Mitgliedschaften: Trainee-Mitglied von ESPGHAN und aktives Mitglied des Ärztekollegiums Rumäniens.</p><p>Fortbildung: Dr. Palaga verfügt über fortgeschrittene Zertifizierungen in pädiatrischer Ernährung, Erkennung pädiatrischer Mangelernährung und erblichen Stoffwechselstörungen.</p><p>Dr. Palaga verbindet klinische Kompetenz mit einem empathischen und wissenschaftlich fundierten Ansatz, um jedem kleinen Patienten die höchsten Standards der Versorgung zu gewährleisten.</p>",
+      "seoTitle": "Dr. Alexandra Paga - Kinderärztin | Global Health",
+      "seoDescription": "Dr. Alexandra Palaga, Fachärztin für Pädiatrie, Expertin für Gastroenterologie und Zöliakie. Online-Beratungen für Kinder.",
+      "lastReviewedAt": null,
+      "medicalRegistrationUrl": "https://www.cmr.ro/",
+      "qualifications": [],
+      "instagramUrl": null,
+      "facebookUrl": null,
+      "linkedinUrl": null,
+      "languages": [
+        "Romanian",
+        "English"
+      ],
+      "active": true,
+      "updatedAt": "2026-08-08T20:22:48.354Z",
+      "resolvedLocale": "DE",
+      "readyToIndex": true,
+      "nonPhysician": false,
+      "imcRegistration": "159625",
+      "registrationChamber": "Colegiul Medicilor din România",
+      "registrationDivision": null,
+      "registrationVerified": true,
+      "credentials": [
+        {
+          "label": "Medic specialist pediatru",
+          "bodyName": "Ministerul Sănătății din România",
+          "bodyUrl": null,
+          "countryCode": "ro"
+        },
+        {
+          "label": "Membră trainee ESPGHAN",
+          "bodyName": "European Society for Paediatric Gastroenterology, Hepatology and Nutrition",
+          "bodyUrl": null,
+          "countryCode": "ro"
+        }
+      ],
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cms11n09x06l601qu8tg00r38",
+          "kind": "IMAGE",
+          "key": "doctor-cmrc4gtzl00s901p2yh3ukaox-profile",
+          "path": "/api/media/media/50fffead-4221-4a95-8e05-f4b7004b8ab5-dr-alexandra-palaga.webp",
+          "altText": "Dr Alexandra Palaga, Pediatru at Global Health Romania",
+          "title": "Dr Alexandra Palaga",
+          "caption": "Dr Alexandra Palaga — Pediatru, Global Health Romania",
+          "description": "Dr Alexandra Palaga is a Pediatru registered in Romania. Book an online consultation with Global Health.",
+          "focalX": 50,
+          "focalY": 26,
+          "zoom": 1
+        }
+      ],
+      "additionalCountries": [
+        {
+          "id": "cmrc4gu0j00sa01p278i9syzn",
+          "countryId": "cmqz0xa4g003z01lu872glji1",
+          "active": true,
+          "country": {
+            "id": "cmqz0xa4g003z01lu872glji1",
+            "code": "ro",
+            "name": "Romania",
+            "defaultLocale": "RO"
+          },
+          "chamberEntity": "Colegiul Medicilor din România",
+          "registrationNumber": "159625",
+          "registrationUrl": null,
+          "division": null,
+          "isVerified": true,
+          "translations": [
+            {
+              "locale": "RO",
+              "title": "Pediatru",
+              "bio": "<h3>Dr. Alexandra Palaga, Medic Specialist Pediatru</h3><p>Dr. Alexandra Palaga este medic specialist pediatru cu formare la Universitatea de Medicină și Farmacie „Carol Davila\" din București, cea mai prestigioasă facultate de medicină din România, și cu experiență clinică și de cercetare la nivel național și internațional.</p><p>A efectuat rezidențiatul în Pediatrie la Spitalul Clinic de Urgență pentru Copii „Sf. Ioan\" din Galați și la Spitalul Clinic de Urgență „Sf. Ioan\" din București, unde a dobândit experiență solidă în urgențele pediatrice, de la crize acute la gestionarea afecțiunilor complexe care necesită spitalizare. La începutul carierei a acumulat experiență și în Obstetrică-Ginecologie la Spitalul Universitar de Urgență Elias, ceea ce îi oferă o perspectivă holistică asupra sănătății mamei și copilului de la naștere.</p><p>Colaborează clinic cu Medlife și a oferit consultanță de specialitate familiilor la nivel internațional prin platforma Medic Chat.</p><p>Ceea ce o face distinctă este profunzimea expertizei sale în gastroenterologie pediatrică și nutriție. A activat ca investigator de cercetare la Centrul de Management al Bolii Celiace din cadrul Institutului Național pentru Sănătatea Mamei și Copilului „Alessandrescu-Rusescu\", centrul de referință național pentru această condiție. Lucrările sale privind impactul strategiilor nutriționale și al dietelor fără gluten asupra calității vieții copiilor au fost publicate în Frontiers in Pediatrics, una dintre revistele de specialitate recunoscute internațional. Este membră trainee ESPGHAN, Societatea Europeană de Gastroenterologie Pediatrică, Hepatologie și Nutriție, și a prezentat cercetări la conferințe internaționale ESPGHAN și la Academia Europeană a Societăților de Pediatrie.</p><p>Pentru părinții cu copii care au probleme digestive, dificultăți de alimentație, creștere insuficientă sau suspiciune de boală celiacă, această combinație de practică clinică și cercetare activă în gastroenterologie pediatrică este rar întâlnită într-o singură consultație online.</p><h3>Ce oferă online</h3><ul><li><strong>Consultații pediatrice generale:</strong> evaluarea sănătății copilului de la naștere până la 18 ani</li><li><strong>Urgențe pediatrice:</strong> evaluarea simptomelor acute și ghidaj privind următorii pași</li><li><strong>Gastroenterologie pediatrică:</strong> probleme digestive, diaree cronică, dureri abdominale, constipație</li><li><strong>Boală celiacă:</strong> evaluare, interpretarea investigațiilor, dietă și management pe termen lung</li><li><strong>Nutriție pediatrică:</strong> alimentație selectivă, malnutriție, tulburări metabolice ereditare, diete specifice</li><li><strong>Sănătatea nou-născutului și sugarului:</strong> icter, colici, dificultăți de alimentație, creștere</li><li><strong>Boli infecțioase pediatrice:</strong> febră, infecții respiratorii, infecții frecvente recidivante</li><li><strong>Evaluarea creșterii și dezvoltării:</strong> greutate, înălțime, dezvoltare neuromotorie</li><li><strong>A doua opinie:</strong> privind diagnostice pediatrice, rezultate investigații, planuri de tratament</li><li><strong>Întrebări ale părinților:</strong> orice nelămurire legată de sănătatea, alimentația sau dezvoltarea copilului</li></ul><p><strong>Abordarea sa:</strong> Dr. Palaga îmbină rigoarea clinică cu o abordare empatică, știind că, pentru un părinte, o consultație despre sănătatea copilului este rareori o simplă conversație medicală. Ea explică clar, ascultă cu atenție și oferă fiecărui copil și familiei sale un plan personalizat, bazat pe dovezi și adaptat vârstei și nevoilor specifice.</p><h3>Calificări</h3><ul><li><strong>Medic specialist pediatru:</strong> certificat de Ministerul Sănătății din România</li><li><strong>Absolventă:</strong> Universitatea de Medicină și Farmacie „Carol Davila\", București</li><li><strong>Rezidențiat Pediatrie:</strong> Spitalul Clinic de Urgență pentru Copii „Sf. Ioan\", Galați</li><li><strong>Rezidențiat Pediatrie:</strong> Spitalul Clinic de Urgență „Sf. Ioan\", București</li><li><strong>Colaborator clinic:</strong> Medlife</li><li><strong>Investigator cercetare:</strong> Centrul de Management al Bolii Celiace, INSMCA „Alessandrescu-Rusescu\"</li><li><strong>Membră trainee:</strong> ESPGHAN (Societatea Europeană de Gastroenterologie Pediatrică, Hepatologie și Nutriție)</li><li>Publicată în Frontiers in Pediatrics</li><li><strong>Speaker internațional:</strong> ESPGHAN Congress, Academia Europeană a Societăților de Pediatrie</li><li><strong>Certificări avansate:</strong> nutriție pediatrică, detectarea malnutriției, tulburări metabolice ereditare</li><li>Înregistrată la Colegiul Medicilor din România (CMR nr. 159625)</li></ul>",
+              "seoTitle": "Dr. Alexandra Palaga — Pediatru Specialist | CMR 159625 | Global Health România",
+              "seoDescription": "Rezervați o consultație video cu Dr. Alexandra Palaga — pediatru specialist înregistrat la CMR (nr. 159625). UMF Carol Davila · Urgențe pediatrice · Gastroenterologie și nutriție · Boală celiacă · ESPGHAN. Programare în aceeași zi.",
+              "seoKeywords": [
+                "pediatru"
+              ]
+            },
+            {
+              "locale": "DE",
+              "title": "Pädiater",
+              "bio": "<p>Dr. Alexandra Palaga</p><p>Fachärztin für Pädiatrie</p><p>Dr. Alexandra Palaga ist eine engagierte Fachärztin für Pädiatrie mit einem tiefen Engagement für die Förderung der Kindergesundheit durch klinische Exzellenz und akademische Forschung. Sie verfügt über umfangreiche Erfahrung als klinische Mitarbeiterin bei Medlife und bietet Familien weltweit über Medic Chat fachkundige Beratung.Klinische Expertise und Erfahrung</p><p>Aufbauend auf einer strengen Ausbildung an einigen der renommiertesten Institutionen Rumäniens verfügt Dr. Alexandra Palaga über umfassende Erfahrung in:</p><p>Pädiatrische Notfälle: erworben während der Facharztausbildung am Klinischen Notfallkrankenhaus für Kinder „Sf. Ioan” in Galați und am Klinischen Notfallkrankenhaus „Sf. Ioan” in Bukarest.</p><p>Spezialisierte Betreuung: klinische Tätigkeit und Notfallaufnahmen, wodurch sie ein vertieftes Verständnis akuter pädiatrischer Erkrankungen erlangte.</p><p>Multidisziplinärer Ansatz: zu Beginn ihrer Karriere sammelte sie auch Erfahrung in der Geburtshilfe und Gynäkologie am Universitätskrankenhaus für Notfälle Elias und trug so zu einer ganzheitlichen Perspektive auf die Gesundheit von Mutter und Kind bei.</p><p>Forschung und Spezialisierungen</p><p>Dr. Alexandra Palaga ist in der pädiatrischen Forschung anerkannt, insbesondere im Bereich der Gastroenterologie und Ernährung. Zu ihren Beiträgen gehören:</p><p>Expertin für Zöliakie: sie war als Forschungsmitarbeiterin und Analystin im Zentrum für das Management der Zöliakie am Nationalen Institut für die Gesundheit von Mutter und Kind „Alessandrescu-Rusescu” tätig.</p><p>Internationaler Beitrag: häufige Sprecherin und Referentin auf internationalen Foren, darunter ESPGHAN (Europäische Gesellschaft für Pädiatrische Gastroenterologie, Hepatologie und Ernährung) und die Europäische Akademie der Pädiatrischen Gesellschaften.</p><p>Veröffentlichte Forscherin: ihre Arbeiten über die Auswirkungen ernährungsbezogener Strategien und glutenfreier Diäten auf die Lebensqualität von Kindern wurden in renommierten Fachzeitschriften wie <em>Frontiers in Pediatrics</em> veröffentlicht.</p><p>Ausbildung und berufliche Zugehörigkeiten</p><p>Ärztin mit Diplom: Universität für Medizin und Pharmazie „Carol Davila”, Bukarest.</p><p>Facharztanerkennung: von dem Gesundheitsministerium Rumäniens zertifizierte Fachärztin für Pädiatrie.</p><p>Mitgliedschaften: Trainee-Mitglied von ESPGHAN und aktives Mitglied des Ärztekollegiums Rumäniens.</p><p>Fortbildung: Dr. Palaga verfügt über fortgeschrittene Zertifizierungen in pädiatrischer Ernährung, Erkennung pädiatrischer Mangelernährung und erblichen Stoffwechselstörungen.</p><p>Dr. Palaga verbindet klinische Kompetenz mit einem empathischen und wissenschaftlich fundierten Ansatz, um jedem kleinen Patienten die höchsten Standards der Versorgung zu gewährleisten.</p>",
+              "seoTitle": "Dr. Alexandra Paga - Kinderärztin | Global Health",
+              "seoDescription": "Dr. Alexandra Palaga, Fachärztin für Pädiatrie, Expertin für Gastroenterologie und Zöliakie. Online-Beratungen für Kinder.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "PT",
+              "title": "Pediatra",
+              "bio": "<p>Dr. Alexandra Palaga</p><p>Especialista em Pediatria</p><p>A Dra. Alexandra Palaga é uma médica especialista em pediatria dedicada, com um compromisso profundo com a promoção da saúde infantil por meio da excelência clínica e da pesquisa acadêmica. Tem vasta experiência como colaboradora clínica com a Medlife e oferece orientação especializada a famílias de todo o mundo através do Medic Chat.Experiência clínica e profissional</p><p>Com uma carreira construída sobre uma formação rigorosa em algumas das instituições mais prestigiadas da Roménia, a Dra. Alexandra Palaga tem vasta experiência em:</p><p>Urgências pediátricas: adquirida durante a residência no Spitalul Clinic de Urgență pentru Copii „Sf. Ioan” em Galați e no Spitalul Clinic de Urgență „Sf. Ioan” em Bucareste.</p><p>Gestão especializada: atividade clínica e internamentos de urgência, proporcionando-lhe uma compreensão aprofundada das afeções pediátricas agudas.</p><p>Abordagem multidisciplinar: no início da carreira adquiriu experiência também em Obstetrícia-Ginecologia no Spitalul Universitar de Urgență Elias, contribuindo para uma perspetiva holística da saúde materno-infantil.</p><p>Investigação e especializações</p><p>A Dra. Alexandra Palaga é reconhecida na investigação pediátrica, especialmente na área da gastroenterologia e da nutrição. As suas contribuições incluem:</p><p>Especialista em doença celíaca: atuou como investigadora de pesquisa e analista no Centro de Gestão da Doença Celíaca do Institutul Național pentru Sănătatea Mamei și Copilului „Alessandrescu-Rusescu”.</p><p>Contribuidora internacional: oradora e apresentadora frequente em fóruns internacionais, incluindo a ESPGHAN (Sociedade Europeia de Gastroenterologia Pediátrica, Hepatologia e Nutrição) e a Academia Europeia das Sociedades de Pediatria.</p><p>Investigadora publicada: os seus trabalhos sobre o impacto das estratégias nutricionais e das dietas sem glúten na qualidade de vida das crianças foram publicados em revistas de prestígio como <em>Frontiers in Pediatrics</em>.</p><p>Educação e afiliações profissionais</p><p>Diploma de médica: Universitatea de Medicină și Farmacie „Carol Davila”, Bucareste.</p><p>Certificação de especialista: Médica especialista em pediatria certificada pelo Ministério da Saúde da Roménia.</p><p>Afiliações: membro trainee da ESPGHAN e membro ativo do Colegiului Medicilor din România.</p><p>Educação contínua: A Dra. Palaga possui certificações avançadas em nutrição pediátrica, deteção de malnutrição pediátrica e perturbações metabólicas hereditárias.</p><p>A Dra. Palaga alia competências clínicas a uma abordagem empática e baseada em evidência científica, para assegurar a cada pequeno paciente os mais elevados padrões de cuidados.</p>",
+              "seoTitle": "Dr Alexandra Paga - Pediatra | Global Health",
+              "seoDescription": "Dr. Alexandra Palaga, médica especialista em pediatria, especialista em gastroenterologia e doença celíaca. Consultas online para crianças.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "ES",
+              "title": "Pediatra",
+              "bio": "<p>Dr. Alexandra Palaga</p><p>Especialista en Pediatría</p><p>La Dra. Alexandra Palaga es una médica especialista en pediatría dedicada, con un profundo compromiso con la promoción de la salud infantil mediante la excelencia clínica y la investigación académica. Cuenta con una amplia experiencia como colaboradora clínica con Medlife y ofrece orientación especializada a familias de todo el mundo a través de Medic Chat.Experiencia clínica y trayectoria</p><p>Con una carrera construida sobre una formación rigurosa en algunas de las instituciones más prestigiosas de Rumanía, la Dra. Alexandra Palaga tiene amplia experiencia en:</p><p>Urgencias pediátricas: adquirida durante la residencia en el Hospital Clínico de Urgencias para Niños „Sf. Ioan” de Galați y en el Hospital Clínico de Urgencias „Sf. Ioan” de Bucarest.</p><p>Manejo especializado: actividad clínica e ingresos de urgencia, lo que le proporciona una comprensión profunda de las afecciones pediátricas agudas.</p><p>Enfoque multidisciplinario: al inicio de su carrera también adquirió experiencia en Obstetricia-Ginecología en el Hospital Universitario de Urgencias Elias, contribuyendo a una perspectiva holística sobre la salud de la madre y el niño.</p><p>Investigación y especializaciones</p><p>La Dra. Alexandra Palaga es reconocida en la investigación pediátrica, especialmente en el ámbito de la gastroenterología y la nutrición. Sus contribuciones incluyen:</p><p>Experta en enfermedad celíaca: ha trabajado como investigadora y analista en el Centro de Manejo de la Enfermedad Celíaca del Instituto Nacional de Salud de la Madre y el Niño „Alessandrescu-Rusescu”.</p><p>Contribuidora internacional: ponente y presentadora frecuente en foros internacionales, incluidos ESPGHAN (Sociedad Europea de Gastroenterología Pediátrica, Hepatología y Nutrición) y la Academia Europea de las Sociedades de Pediatría.</p><p>Investigadora publicada: sus trabajos sobre el impacto de las estrategias nutricionales y de las dietas sin gluten en la calidad de vida de los niños han sido publicados en revistas de prestigio como <em>Frontiers in Pediatrics</em>.</p><p>Educación y afiliaciones profesionales</p><p>Título de médica: Universidad de Medicina y Farmacia „Carol Davila”, Bucarest.</p><p>Certificación de especialista: Médica especialista en pediatría certificada por el Ministerio de Sanidad de Rumanía.</p><p>Afiliaciones: miembro trainee de ESPGHAN y miembro activo del Colegio de Médicos de Rumanía.</p><p>Formación continua: La Dra. Palaga posee certificaciones avanzadas en nutrición pediátrica, detección de la desnutrición pediátrica y trastornos metabólicos hereditarios.</p><p>La Dra. Palaga combina competencias clínicas con un enfoque empático y basado en la evidencia científica, para garantizar a cada pequeño paciente los más altos estándares de atención.</p>",
+              "seoTitle": "Dr Alexandra Paga - Pediatra | Global Health",
+              "seoDescription": "Dra. Alexandra Palaga, médica especialista en pediatría, experta en gastroenterología y enfermedad celíaca. Consultas en línea para niños.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "CS",
+              "title": "Pediatr",
+              "bio": "<p>Dr. Alexandra Palaga</p><p>Specialistka pediatrie</p><p>Dr. Alexandra Palaga je oddaná lékařka-specialistka v pediatrii s hlubokým závazkem podporovat zdraví dětí prostřednictvím klinické excelence a akademického výzkumu. Má rozsáhlé zkušenosti jako klinická spolupracovnice společnosti Medlife a prostřednictvím Medic Chat poskytuje odborné poradenství rodinám po celém světě.Klinické odborné znalosti a zkušenosti</p><p>Kariéra založená na důkladné přípravě v některých z nejprestižnějších institucí v Rumunsku dává Dr. Alexandře Palaze rozsáhlé zkušenosti v oblasti:</p><p>Pediatrické urgentní stavy: získané během specializační přípravy ve Fakultní dětské nemocnici „Sf. Ioan“ v Galați a ve Fakultní urgentní nemocnici „Sf. Ioan“ v Bukurešti.</p><p>Specializované řízení: klinická činnost a urgentní hospitalizace, díky nimž má hluboké porozumění akutním pediatrickým onemocněním.</p><p>Multidisciplinární přístup: na začátku své kariéry získala zkušenosti také v oboru porodnictví a gynekologie ve Fakultní urgentní nemocnici Elias, což přispělo k holistickému pohledu na zdraví matky a dítěte.</p><p>Výzkum a specializace</p><p>Dr. Alexandra Palaga je uznávána v pediatrickém výzkumu, zejména v oblasti gastroenterologie a výživy. Mezi její přínosy patří:</p><p>Odbornice na celiakii: působila jako výzkumná pracovnice a analytička v Centru pro management celiakie při Národním institutu pro zdraví matky a dítěte „Alessandrescu-Rusescu“.</p><p>Mezinárodní přispěvatelka: častá řečnice a prezentující na mezinárodních fórech, včetně ESPGHAN (Evropská společnost pro dětskou gastroenterologii, hepatologii a výživu) a Evropské akademie pediatrických společností.</p><p>Publikovaná výzkumnice: její práce o dopadu nutričních strategií a bezlepkových diet na kvalitu života dětí byly publikovány v prestižních časopisech, jako je <em>Frontiers in Pediatrics</em>.</p><p>Vzdělání a profesní členství</p><p>Lékařský diplom: Univerzita lékařství a farmacie „Carol Davila“, Bukurešť.</p><p>Odborná certifikace: Lékařka specialistka v pediatrii certifikovaná Ministerstvem zdravotnictví Rumunska.</p><p>Členství: trainee členka ESPGHAN a aktivní členka Rumunské lékařské komory.</p><p>Další vzdělávání: Dr. Palaga má pokročilé certifikace v pediatrické výživě, detekci pediatrické malnutrice a dědičných metabolických poruchách.</p><p>Dr. Palaga spojuje klinické dovednosti s empatickým přístupem založeným na vědeckých důkazech, aby zajistila každému malému pacientovi nejvyšší standardy péče.</p>",
+              "seoTitle": "Dr Alexandra Paga - Pediatr | Global Health",
+              "seoDescription": "Dr. Alexandra Palaga, lékařka specialistka v pediatrii, odbornice na gastroenterologii a celiakii. Online konzultace pro děti.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "EN",
+              "title": "Pediatrician",
+              "bio": "<p>Dr. Alexandra Palaga</p><p>Pediatric Specialist</p><p>Dr. Alexandra Palaga is a dedicated pediatric specialist physician, with a deep commitment to promoting children’s health through clinical excellence and academic research. She has extensive experience as a clinical collaborator with Medlife and provides specialist guidance to families worldwide through Medic Chat.Clinical expertise and experience</p><p>With a career built on rigorous training in some of the most prestigious institutions in Romania, Dr. Alexandra Palaga has extensive experience in:</p><p>Pediatric emergencies: gained during residency at the “Sf. Ioan” Pediatric Emergency Clinical Hospital in Galați and the “Sf. Ioan” Emergency Clinical Hospital in Bucharest.</p><p>Specialized management: clinical activity and emergency admissions, giving her a thorough understanding of acute pediatric conditions.</p><p>Multidisciplinary approach: at the beginning of her career she also gained experience in Obstetrics-Gynecology at Elias University Emergency Hospital, contributing to a holistic perspective on mother and child health.</p><p>Research and specializations</p><p>Dr. Alexandra Palaga is recognized in pediatric research, especially in the field of gastroenterology and nutrition. Her contributions include:</p><p>Expert in celiac disease: she worked as a research investigator and analyst within the Celiac Disease Management Center at the “Alessandrescu-Rusescu” National Institute for Mother and Child Health.</p><p>International contributor: frequent speaker and presenter at international forums, including ESPGHAN (European Society for Paediatric Gastroenterology, Hepatology and Nutrition) and the European Academy of Paediatrics Societies.</p><p>Published researcher: her work on the impact of nutritional strategies and gluten-free diets on children’s quality of life has been published in prestigious journals such as <em>Frontiers in Pediatrics</em>.</p><p>Education and professional affiliations</p><p>Medical degree: “Carol Davila” University of Medicine and Pharmacy, Bucharest.</p><p>Specialist certification: Pediatric specialist physician certified by the Ministry of Health of Romania.</p><p>Affiliations: ESPGHAN trainee member and active member of the Romanian College of Physicians.</p><p>Continuing education: Dr. Palaga holds advanced certifications in pediatric nutrition, detection of pediatric malnutrition, and hereditary metabolic disorders.</p><p>Dr. Palaga combines clinical skills with an empathetic, science-based approach to ensure each young patient the highest standards of care.</p>",
+              "seoTitle": "Dr Alexandra Paga - Pediatrician | Global Health",
+              "seoDescription": "Dr. Alexandra Palaga, pediatric specialist physician, expert in gastroenterology and celiac disease. Online consultations for children.",
+              "seoKeywords": []
+            }
+          ],
+          "divisionTranslations": []
+        }
+      ],
+      "assignedServices": [
+        {
+          "serviceId": "cmr8ee8lf000jfsju7gwzzohg",
+          "service": {
+            "id": "cmr8ee8lf000jfsju7gwzzohg",
+            "slug": "consultatie-pediatrie",
+            "name": "Medic pediatru specialist — evaluare pediatrică complexă online",
+            "kind": "SPECIALIST",
+            "summary": "Aveți nevoie de o opinie pediatrică de specialitate sau de o evaluare mai detaliată pentru o problemă de sănătate a copilului? Pediatrul nostru autorizat CMR oferă consultații video pentru cazuri care necesită analiză clinică aprofundată.",
+            "durationMinutes": 15,
+            "basePriceCents": 18500,
+            "currencyCode": "RON"
+          }
+        }
+      ],
+      "seoKeywords": [],
+      "resolvedMarketLocale": "DE",
+      "specialties": [],
+      "faqs": [
+        {
+          "id": "cmrnyklod00gabsjuqoh6b9by",
+          "locale": "DE",
+          "question": "Ist Dr. Palaga beim Kolleg der Ärzte in Rumänien registriert?",
+          "answer": "Ja. Dr. Alexandra Palaga ist beim Kolleg der Ärzte in Rumänien (CMR) unter der Nummer 159625 registriert. Sie können diese Registrierung auf der Website cmr.ro überprüfen. Dr. Palaga ist Fachärztin für Pädiatrie, zertifiziert vom Ministerium für Gesundheit in Rumänien, Absolventin der UMF Carol Davila und Trainee-Mitglied der ESPGHAN.",
+          "category": null,
+          "sortOrder": 0,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyklod00gbbsjultifj9qg",
+          "locale": "DE",
+          "question": "Welche pädiatrischen Erkrankungen bewertet Dr. Palaga online?",
+          "answer": "Dr. Palaga bietet Online-Pädiatrieberatungen für: die allgemeine Gesundheit des Kindes (von der Geburt bis 18 Jahre), pädiatrische Notfälle und die Bewertung akuter Symptome, pädiatrische Gastroenterologie (Verdauungsprobleme, chronischer Durchfall, Bauchschmerzen), Zöliakie (Bewertung, Untersuchungen, diätetisches Management), pädiatrische Ernährung (selektive Ernährung, Mangelernährung, Stoffwechselstörungen), die Gesundheit von Neugeborenen und Säuglingen, pädiatrische Infektionskrankheiten, die Bewertung von Wachstum und Entwicklung sowie eine zweite Meinung zu pädiatrischen Diagnosen oder Behandlungen.",
+          "category": null,
+          "sortOrder": 1,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyklod00gcbsjujmrgq7vv",
+          "locale": "DE",
+          "question": "Hat Dr. Palaga spezielle Expertise in Zöliakie und pädiatrischer Gastroenterologie?",
+          "answer": "Ja. Dr. Palaga war als Forschungsinvestigator am Zentrum für das Management der Zöliakie im Nationalen Institut für Gesundheit von Mutter und Kind „Alessandrescu-Rusescu\" tätig — dem nationalen Referenzzentrum für diese Erkrankung. Ihre Arbeiten zu Ernährungsstrategien und glutenfreier Ernährung bei Kindern wurden in Frontiers in Pediatrics veröffentlicht. Sie ist Trainee-Mitglied der ESPGHAN und hat Forschungsergebnisse auf internationalen ESPGHAN-Konferenzen präsentiert. Für Familien mit Kindern, bei denen der Verdacht auf Zöliakie, Nahrungsmittelunverträglichkeit oder chronische Verdauungsprobleme besteht, ist diese Expertise in einer Online-Beratung selten verfügbar.",
+          "category": null,
+          "sortOrder": 2,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyklod00gdbsju8xriaswl",
+          "locale": "DE",
+          "question": "Kann ich eine pädiatrische Beratung ohne Überweisung vom Hausarzt buchen?",
+          "answer": "Ja. Über Global Health Rumänien können Sie direkt einen Termin mit Dr. Palaga ohne Überweisung vom Hausarzt oder aktuellen Kinderarzt buchen. Wenn Sie frühere medizinische Schreiben, Untersuchungsergebnisse oder Untersuchungen des Kindes haben, senden Sie diese bitte vor der Beratung zu — sie sind nicht obligatorisch für die Buchung, helfen jedoch bei einer genaueren Bewertung.",
+          "category": null,
+          "sortOrder": 3,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyklod00gebsjuk5rv06ge",
+          "locale": "DE",
+          "question": "Wie buche ich eine Beratung mit Dr. Palaga?",
+          "answer": "Wählen Sie einen verfügbaren Slot auf dieser Seite, um direkt mit Dr. Palaga zu buchen. Die Zahlung wird sicher bei der Buchung verarbeitet — die Beratung wird nach Zahlungseingang bestätigt. Sie erhalten sofort eine Einladung in den Kalender. Die Beratungen finden über einen sicheren Videoanruf in Rumänisch oder Englisch statt. Wir bitten die Eltern, das Kind bei der Beratung anwesend zu haben, wo immer dies möglich ist.",
+          "category": null,
+          "sortOrder": 4,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyklod00gfbsjuzbhhyxuh",
+          "locale": "DE",
+          "question": "Was sind die Qualifikationen und Forschungserfahrungen von Dr. Palaga?",
+          "answer": "Dr. Alexandra Palaga ist Absolventin der UMF Carol Davila in Bukarest und hat ihre Facharztausbildung in Pädiatrie am Klinischen Notfallkrankenhaus für Kinder „Sf. Ioan\" in Galați und am Klinischen Notfallkrankenhaus „Sf. Ioan\" in Bukarest absolviert. Sie war als Forschungsinvestigator am INSMCA „Alessandrescu-Rusescu\" tätig und hat in Frontiers in Pediatrics veröffentlicht. Sie ist Trainee-Mitglied der ESPGHAN und Referentin auf internationalen Kongressen der ESPGHAN und der Europäischen Akademie der Gesellschaften für Pädiatrie. Sie ist beim CMR (Nr. 159625) registriert.",
+          "category": null,
+          "sortOrder": 5,
+          "isActive": true
+        }
+      ],
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:47:00.000Z"
+      },
+      "bookabilityByServiceId": {
+        "cmr8ee8lf000jfsju7gwzzohg": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:47:00.000Z"
+        }
+      }
+    }
+  }
+}

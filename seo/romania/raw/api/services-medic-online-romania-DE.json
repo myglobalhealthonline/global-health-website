@@ -1,0 +1,80 @@
+{
+  "checkedAt": "2026-09-12T20:20:08.203Z",
+  "endpoint": "/api/services/medic-online-romania?countryCode=ro&locale=DE",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee1ko0000fsjuh80zxo7q",
+      "kind": "GENERAL",
+      "slug": "medic-online-romania",
+      "name": "Online-Arzt — ohne Registrierung, ohne Wartezimmer, am selben Tag",
+      "summary": "Bei der CMR registrierter Arzt online verfügbar, ohne Warteliste und ohne Eintragung beim Hausarzt. Videoberatung auf Rumänisch oder Englisch. Buchen Sie noch heute.",
+      "seoTitle": "Arzt online ohne Registrierung | Konsultation am selben Tag | Global Health",
+      "seoDescription": "Registrierter Arzt bei der CMR online verfügbar, ohne Warteliste und ohne beim Hausarzt registriert zu sein. Videokonsultation auf Rumänisch oder Englisch. Buchen Sie noch heute.",
+      "seoKeywords": [
+        "medic online fără înregistrare",
+        "consultație medicală online România",
+        "medic online în afara Bucureștiului",
+        "doctor online România",
+        "consultație online fără medic de familie"
+      ],
+      "heroTitle": "Online-Arzt — ohne Registrierung, ohne Wartezimmer, noch am selben Tag",
+      "heroDescription": null,
+      "detailBody": "<p>Brauchen Sie heute einen Arzt, sind aber nicht auf der Liste eines Hausarztes eingetragen? Oder leben Sie in einer Gegend, in der der Zugang zu einem geeigneten Hausarzt schwierig ist? Unsere beim Rumänischen Ärztekolleg (CMR) registrierten Ärzte führen vollständige klinische Konsultationen per gesicherter Videokonferenz durch — ohne dass Sie zuvor als Patient registriert sein müssen, ohne Wartezimmer, mit Termin am selben Tag.</p><h2>Eine Realität des Gesundheitssystems in Rumänien</h2><p>Der Zugang zur primären medizinischen Versorgung in Rumänien ist uneinheitlich. In den großen Städten — Bukarest, Cluj-Napoca, Timișoara, Iași — gibt es relativ erschwingliche private Optionen. Aber außerhalb davon oder für Personen, die nicht auf der Liste eines Hausarztes eingetragen sind, kann es schwierig sein, rechtzeitig eine ärztliche Konsultation zu erhalten.</p><p>Global Health existiert genau, um diese Lücke zu schließen. Unsere beim CMR registrierten Ärzte bieten medizinische Konsultationen per Videokonferenz an — auf Rumänisch, Englisch — am selben Tag, von jedem Ort in Rumänien aus, ohne vorherige Registrierung.</p><p>Haben Sie bereits einen Hausarzt? Unser Dienst funktioniert ergänzend — für akute Probleme, eine zweite ärztliche Meinung oder Situationen, in denen Sie heute mit einem Arzt sprechen müssen und nicht erst beim nächsten verfügbaren Termin.</p><h2>Was wir behandeln</h2><p>Unsere Ärzte beurteilen und behandeln eine breite Palette akuter und nicht dringender Erkrankungen:</p><ul><li>Atemwege und HNO</li><li>Erkältung, Grippe, Sinusitis und Bronchitis</li><li>COVID-19-Symptome und Post-COVID-Probleme</li><li>Halsschmerzen, Mandelentzündung und Ohrinfektionen</li><li>Lungeninfektionen und anhaltender Husten</li><li>Leichte Asthmaanfälle</li><li>Infektionen</li><li>Harnwegsinfektionen — Beurteilung und Antibiotikaverschreibung, wenn klinisch indiziert</li><li>Hautinfektionen</li><li>Atemwegsinfektionen, die eine antibiotische Beurteilung erfordern</li><li>Magen-Darm-Infektionen</li><li>Allgemeine Symptome</li><li>Fieber bei Erwachsenen</li><li>Kopfschmerzen und Migräne</li><li>Übelkeit, Erbrechen, Durchfall und Bauchschmerzen</li><li>Müdigkeit und allgemeines Krankheitsgefühl</li><li>Haut und Augen</li><li>Hautausschläge, Ekzeme und leichte allergische Reaktionen</li><li>Bindehautentzündung und leichte Augenreizungen</li><li>Bewegungsapparat</li><li>Rücken-, Nacken- und Muskelschmerzen</li><li>Leichte Verletzungen des Bewegungsapparats</li><li>Sonstiges</li><li>Bedenken hinsichtlich aktueller Medikamente oder laufender Behandlung</li><li>Medizinische Dokumente — ärztliche Bescheinigungen, Überweisungsschreiben</li><li>Reisemedizinische Beratung</li><li>Zweite ärztliche Meinung</li></ul><h2>Was die Konsultation umfasst</h2><p>Vollständige klinische BeurteilungDer Arzt erhebt eine vollständige Anamnese Ihrer Symptome, Ihrer relevanten Krankengeschichte und Ihrer aktuellen Medikamente — und führt per Videokonferenz eine strukturierte klinische Beurteilung durch, auf demselben Standard wie eine persönliche Konsultation.</p><p>Klare ErklärungUnser Arzt nimmt sich Zeit, Ihnen zu erklären, was vor sich geht, was Sie als Nächstes tun sollten und wann Sie weitere medizinische Hilfe in Anspruch nehmen sollten. Die Einbeziehung des Patienten in die medizinische Entscheidung ist kein Luxus — sie ist unser Versorgungsstandard.</p><p>Elektronische Verschreibung — wo klinisch indiziertWenn klinisch angezeigt, stellt der Arzt ein elektronisches Rezept aus, das im System Informatic de Prescripție Electronică (SIPE) validiert wird. Sie legen es in jeder Apotheke in Rumänien vor.</p><p>Antibiotikaverschreibung — wo klinisch indiziertSeit 2024 sind alle Antibiotika in Rumänien verschreibungspflichtig. Der Arzt beurteilt Ihre Symptome und verschreibt das geeignete Antibiotikum, wo dies klinisch gerechtfertigt ist — einschließlich bei Harnwegsinfektionen, Atemwegsinfektionen und Hautinfektionen — unter Beachtung der Grundsätze des Antibiotic Stewardship.</p><p>Überweisungsschreiben und medizinische DokumentationWenn Überweisungen zu Fachärzten, Blutuntersuchungen, bildgebende Verfahren oder andere klinische Dokumentation erforderlich sind, stellt der Arzt diese noch am selben Tag aus.</p><p>KrankschreibungWenn Sie in Rumänien beschäftigt sind und eine Krankschreibung klinisch indiziert ist, kann der Arzt die entsprechenden Unterlagen ausstellen. Die Entscheidung über die Ausstellung einer Krankschreibung ist immer eine klinische Entscheidung des Arztes nach vollständiger Beurteilung.</p><h2>Warum Global Health</h2><p>Keine vorherige RegistrierungSie müssen kein registrierter Patient sein. Buchen Sie, lassen Sie sich untersuchen, erhalten Sie ein klares klinisches Ergebnis — ohne Bürokratie, ohne auf die Aufnahme auf eine Liste warten zu müssen.</p><p>Bei CMR registrierte ÄrzteAlle Konsultationen werden von Ärzten durchgeführt, die beim Colegiul Medicilor din România registriert sind, gemäß den rumänischen Telemedizinstandards nach dem Gesetz Nr. 95/2006 und der Regierungsentscheidung Nr. 1133/2022.</p><p>Termin am selben TagVerfügbarkeit am selben Tag, sieben Tage pro Woche, einschließlich Abende und Wochenenden.</p><p>Von überall in Rumänien zugänglichSie müssen nicht in Bukarest sein. Sie können überall in Rumänien wohnen — Sie benötigen nur eine stabile Internetverbindung und ein Gerät mit Kamera.</p><p>Drei SprachenRumänisch, Englisch — je nach Verfügbarkeit des Arztes.</p><p>Elektronisches Rezept und KrankschreibungUnsere Ärzte können elektronische Rezepte über SIPE und Krankschreibungen ausstellen — genau wie jeder in Rumänien registrierte Hausarzt.</p><h2>Häufig gestellte Fragen</h2><p>Muss ich eine rumänische Krankenversicherung haben, um diesen Dienst zu nutzen?Nein. Dies ist ein privater Dienst, der direkt pro Konsultation bezahlt wird — keine rumänische gesetzliche Krankenversicherung, keine Registrierung, keine Mitgliedschaft erforderlich. Einige private Versicherungen decken telemedizinische Konsultationen ab — erkundigen Sie sich bei Ihrem Versicherer.</p><p>Kann der Arzt Antibiotika verschreiben?Ja — wo dies nach einer vollständigen Beurteilung Ihrer Symptome klinisch indiziert ist. Seit 2024 sind alle Antibiotika in Rumänien verschreibungspflichtig. Der Arzt beurteilt Ihre Vorstellung und verschreibt das geeignete Antibiotikum, wo die klinische Evidenz dies unterstützt, unter Beachtung der Grundsätze des Antibiotic Stewardship.</p><p>Kann der Arzt ein elektronisches Rezept ausstellen?Ja. Unsere Ärzte sind beim CMR und im System Informatic de Prescripție Electronică (SIPE) registriert. Elektronische Rezepte werden direkt ausgestellt — Sie legen sie in jeder Apotheke in Rumänien vor.</p><p>Muss ich in Bukarest sein, um diesen Dienst zu nutzen?Nein. Der Dienst ist von jedem Ort in Rumänien aus verfügbar — Sie benötigen nur eine stabile Internetverbindung und ein Gerät mit Kamera.</p><p>Wie schnell kann ich einen Termin erhalten?Termine am selben Tag sind verfügbar. Buchen Sie online und der Termin wird sofort bestätigt.</p><p>Welche Sprachen sind verfügbar?Rumänisch, Englisch — je nach Verfügbarkeit des Arztes.</p><p>Kann ich über diesen Dienst eine Krankschreibung erhalten?Ja. Wenn Sie in Rumänien beschäftigt sind und eine Krankschreibung klinisch indiziert ist, kann der Arzt die entsprechenden Unterlagen ausstellen. Die Entscheidung ist immer klinisch und wird nach vollständiger Beurteilung getroffen.</p><p>Ist der Dienst für Kinder geeignet?Bei akuten pädiatrischen Erkrankungen kann der Dienst eine erste Beurteilung und Orientierung bieten. Bei komplexen oder anhaltenden pädiatrischen Vorstellungen wird der Arzt eine Überweisung zur persönlichen Untersuchung empfehlen.</p><p>Was passiert, wenn mein Zustand eine persönliche Behandlung erfordert?Wenn der Arzt feststellt, dass Ihr Zustand eine persönliche Untersuchung oder eine Notfallbehandlung erfordert, werden Sie umgehend informiert und an die entsprechende Versorgung weitergeleitet. Ihre Sicherheit hat immer oberste klinische Priorität.</p>",
+      "ctaLabel": null,
+      "sortOrder": 10,
+      "durationMinutes": 15,
+      "basePriceCents": 11500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:47.167Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jsape001pakju9d8azet9",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee1ko0000fsjuh80zxo7q",
+          "path": "/api/media/media/e7e4ceb8-872b-4aa9-b481-f1819dfaf76c-817d74bf-c5ba-4f1b-8de2-6980a8239c3c-1.webp",
+          "altText": "Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "detailBody"
+      ],
+      "resolvedLocale": "DE",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

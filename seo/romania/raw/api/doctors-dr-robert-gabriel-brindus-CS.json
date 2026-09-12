@@ -1,0 +1,464 @@
+{
+  "checkedAt": "2026-09-12T20:20:05.212Z",
+  "endpoint": "/api/countries/ro/doctors/dr-robert-gabriel-brindus?locale=CS",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "doctor": {
+      "id": "cmrc4axni00rn01p2n3r2bopf",
+      "slug": "dr-robert-gabriel-brindus",
+      "fullName": "Dr Robert Gabriel Brindus",
+      "title": "anesteziolog",
+      "bio": "<h3>Dr. Robert Brînduș, lékař specialista v anesteziologii a intenzivní medicíně</h3><p>Dr. Robert Brînduș je lékař specialista v anesteziologii a intenzivní medicíně s rozsáhlými klinickými zkušenostmi získanými jak v Rumunsku, tak v Irsku. V současnosti pracuje v nemocnici úrovně IV (nejvyšší) v Bukurešti a byl vyškolen a pracoval v terciárních nemocnicích s vysokým objemem činnosti po celé Evropě.</p><p>Dr. Brînduș absolvoval Lékařskou fakultu na Univerzitě medicíny a farmacie v Craiově a svou rezidenturu v anesteziologii a intenzivní medicíně absolvoval v renomované Klinické nemocnici pro naléhavé případy „Floreasca“ v Bukurešti. Jeho příprava zahrnovala komplexní zkušenosti v chirurgii, léčbě bolesti a intenzivní medicíně.</p><p>Následně pokračoval ve svém profesním rozvoji v Irsku, kde pracoval jako registrarský lékař v anesteziologii a intenzivní medicíně v Univerzitní nemocnici Tallaght a později v Univerzitní nemocnici Mater Misericordiae v Dublinu, kde se podílel na směnách na jednotkách intenzivní péče v komplexních a multidisciplinárních klinických prostředích.</p><p>Dr. Brînduș drží Evropský diplom v anesteziologii a intenzivní medicíně (EDAIC), část I. Mluví plynně rumunsky a anglicky a má praktické znalosti španělštiny. Dr. Brînduș je známý svými silnými etickými hodnotami, analytickým myšlením a pacientsky zaměřeným přístupem. Jeho klinické zájmy zahrnují všeobecnou medicínu, léčbu bolesti a perioperační medicínu</p>",
+      "seoTitle": "Dr Robert Gabriel Brindus - Anesteziolog | Global Health",
+      "seoDescription": "Dr. Robert Brînduș, lékař specialista v oboru anesteziologie a intenzivní medicíny, zkušenosti v Rumunsku a Irsku. Online konzultace v oblasti léčby bolesti a perioperační medicíny.",
+      "lastReviewedAt": null,
+      "medicalRegistrationUrl": "https://www.cmr.ro/",
+      "qualifications": [],
+      "instagramUrl": null,
+      "facebookUrl": null,
+      "linkedinUrl": null,
+      "languages": [
+        "Romanian",
+        "English"
+      ],
+      "active": true,
+      "updatedAt": "2026-08-08T20:22:47.818Z",
+      "resolvedLocale": "CS",
+      "readyToIndex": true,
+      "nonPhysician": false,
+      "imcRegistration": "152462",
+      "registrationChamber": "Colegiul Medicilor din România",
+      "registrationDivision": null,
+      "registrationVerified": true,
+      "credentials": [
+        {
+          "label": "EDAIC Partea I",
+          "bodyName": "European Board of Anaesthesiology",
+          "bodyUrl": null,
+          "countryCode": "ro"
+        },
+        {
+          "label": "Medic specialist — Anestezie și Terapie Intensivă",
+          "bodyName": "Colegiul Medicilor din România",
+          "bodyUrl": null,
+          "countryCode": "ro"
+        }
+      ],
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cms11qe2h0002lkjuo6mmhs4b",
+          "kind": "IMAGE",
+          "key": "doctor-cmrc4axni00rn01p2n3r2bopf-profile",
+          "path": "/api/media/media/8cdf70cb-d784-4cc2-99fd-cacc36f5c57b-dr-robert-gabriel-brindus.webp",
+          "altText": "Dr Robert Gabriel Brindus, Medic de Familie at Global Health Romania",
+          "title": "Dr Robert Gabriel Brindus",
+          "caption": "Dr Robert Gabriel Brindus — Medic de Familie, Global Health Romania",
+          "description": "Dr Robert Gabriel Brindus is a Medic de Familie registered in Romania. Book an online consultation with Global Health.",
+          "focalX": 50,
+          "focalY": 24,
+          "zoom": 1
+        }
+      ],
+      "additionalCountries": [
+        {
+          "id": "cmrc4axod00ro01p25pi8przi",
+          "countryId": "cmqz0xa4g003z01lu872glji1",
+          "active": true,
+          "country": {
+            "id": "cmqz0xa4g003z01lu872glji1",
+            "code": "ro",
+            "name": "Romania",
+            "defaultLocale": "RO"
+          },
+          "chamberEntity": "Colegiul Medicilor din România",
+          "registrationNumber": "152462",
+          "registrationUrl": null,
+          "division": null,
+          "isVerified": true,
+          "translations": [
+            {
+              "locale": "DE",
+              "title": "Anästhesist",
+              "bio": "<h3>Dr. Robert Brînduș, Facharzt für Anästhesie und Intensivtherapie</h3><p>Dr. Robert Brînduș ist Facharzt für Anästhesie und Intensivtherapie mit umfassender klinischer Erfahrung, die er sowohl in Rumänien als auch in Irland erworben hat. Derzeit praktiziert er in einem Krankenhaus der Stufe IV (höchste) in Bukarest und wurde in tertiären Krankenhäusern mit hohem Arbeitsaufkommen in ganz Europa ausgebildet und hat dort gearbeitet.</p><p>Dr. Brînduș absolvierte die Medizinische Fakultät der Universität für Medizin und Pharmazie in Craiova und absolvierte seine Facharztausbildung in Anästhesie und Intensivtherapie am renommierten Klinischen Notfallkrankenhaus „Florească“ in Bukarest. Seine Ausbildung umfasste umfassende Erfahrung in den Bereichen Chirurgie, Schmerzmedizin und Intensivmedizin.</p><p>Anschließend setzte er seine berufliche Entwicklung in Irland fort, wo er als Registrar-Arzt für Anästhesie und Intensivtherapie am Tallaght University Hospital und später am Mater Misericordiae University Hospital in Dublin tätig war und an Diensten in Intensivstationen in komplexen und multidisziplinären klinischen Umgebungen teilnahm.</p><p>Dr. Brînduș verfügt über das European Diploma in Anaesthesiology and Intensive Care (EDAIC), Teil I. Er spricht fließend Rumänisch und Englisch und hat praktische Kenntnisse in Spanisch. Dr. Brînduș ist bekannt für seine starken ethischen Werte, sein analytisches Denken und seinen patientenzentrierten Ansatz. Zu seinen klinischen Interessen zählen Allgemeinmedizin, Schmerzmedizin und perioperative Medizin</p>",
+              "seoTitle": "Dr Robert Gabriel Brindus - Anästhesist | Global Health",
+              "seoDescription": "Dr. Robert Brînduș, Facharzt für Anästhesie und Intensivtherapie, Erfahrung in Rumänien und Irland. Online-Beratungen in der Schmerzmedizin und perioperativen Medizin.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "PT",
+              "title": "Anestesiologista",
+              "bio": "<h3>Dr. Robert Brînduș, médico especialista em anestesia e terapia intensiva</h3><p>Dr. Robert Brînduș é médico especialista em Anestesia e Terapia Intensiva, com vasta experiência clínica adquirida tanto na Romênia quanto na Irlanda. Atualmente, trabalha num hospital de nível IV (máximo) em Bucareste e foi treinado e trabalhou em hospitais terciários de alto volume em toda a Europa.</p><p>Dr. Brînduș formou-se na Faculdade de Medicina da Universidade de Medicina e Farmácia de Craiova e realizou a sua residência em Anestesia e Terapia Intensiva no renomado Hospital Clínico de Urgência „Florească” em Bucareste. A sua formação incluiu uma experiência abrangente em cirurgia, medicina da dor e medicina de cuidados intensivos.</p><p>Posteriormente, continuou o seu desenvolvimento profissional na Irlanda, onde trabalhou como médico registrador em Anestesia e Terapia Intensiva no Hospital Universitário Tallaght, e mais tarde no Hospital Universitário Mater Misericordiae em Dublin, participando em turnos em unidades de terapia intensiva em contextos clínicos complexos e multidisciplinares.</p><p>Dr. Brînduș possui o Diploma Europeu em Anestesia e Terapia Intensiva (EDAIC), Parte I. Fala fluentemente romeno e inglês, com conhecimentos práticos de espanhol, Dr. Brînduș é conhecido pelos seus fortes valores éticos, pensamento analítico e abordagem centrada no paciente. Os seus interesses clínicos incluem medicina geral, medicina da dor e medicina perioperatória</p>",
+              "seoTitle": "Dr Robert Gabriel Brindus - Anestesista | Global Health",
+              "seoDescription": "Dr. Robert Brînduș, médico especialista em ATI, experiência na Roménia e na Irlanda. Consultas online em medicina da dor e perioperatória.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "RO",
+              "title": "Medic de Familie",
+              "bio": "<h3>Dr. Robert Brînduș, Medic de Familie</h3><p>Dr. Robert Brînduș este medic cu formare specializată în Anestezie și Terapie Intensivă, care activează ca medic de familie pe platforma Global Health România. Experiența sa în unele dintre cele mai solicitante medii clinice din România și Irlanda îi conferă o profunzime diagnostică rar întâlnită în medicina primară online.</p><p>A absolvit Facultatea de Medicină a Universității de Medicină și Farmacie din Craiova și a efectuat rezidențiatul în ATI la Spitalul Clinic de Urgență Floreasca din București, unul dintre cele mai active spitale de urgență din România. Și-a continuat formarea în Irlanda ca medic registrator ATI la Spitalul Universitar Tallaght și la Spitalul Universitar Mater Misericordiae din Dublin. În prezent practică la un spital de nivel IV din București, cel mai înalt nivel de complexitate din sistemul românesc.</p><p>Pregătirea în terapie intensivă nu înseamnă că Dr. Brînduș tratează doar urgențe. Înseamnă că știe exact când ceva este urgent și când nu, una dintre cele mai valoroase abilități într-o consultație online, unde evaluarea precisă a situației clinice este esențială. Deține Diploma Europeană în Anestezie și Terapie Intensivă (EDAIC), Partea I.</p><h3>Ce tratează</h3><ul><li><strong>Afecțiuni acute:</strong> infecții respiratorii, febră, gripă, dureri în gât, infecții ale urechii</li><li>Infecții urinare și simptome urinare</li><li><strong>Managementul bolilor cronice:</strong> hipertensiune, diabet, astm, reflux, colesterol ridicat, hipotiroidism</li><li><strong>Probleme dermatologice:</strong> erupții cutanate, eczemă, acnee, reacții alergice cutanate</li><li><strong>Sănătatea bărbaților și femeilor:</strong> anticoncepție, probleme hormonale, sănătate sexuală</li><li><strong>Sănătate mintală:</strong> anxietate, depresie, management al stresului și trimitere la specialist</li><li><strong>Îngrijire preventivă:</strong> evaluări de sănătate, consiliere privind stilul de viață, recomandări de screening</li><li><strong>Managementul durerii:</strong> evaluarea și managementul durerii cronice și postoperatorii</li><li><strong>Sfaturi perioperatorii:</strong> pregătire pre-operatorie, întrebări despre anestezie, recuperare post-operatorie</li><li>Reînnoirea prescripțiilor și revizuirea medicației</li><li>Adeverințe medicale și scrisori medicale</li><li>Trimiteri pentru investigații, analize de laborator sau consultații de specialitate</li></ul><p><strong>Abordarea sa:</strong> Fiecare consultație cu Dr. Brînduș este personalizată, bazată pe dovezi și condusă la același standard clinic pe care l-ați aștepta de la o consultație față în față. Este cunoscut pentru valorile etice solide, gândirea analitică și comunicarea clară, calități pe care anii petrecuți în terapie intensivă le formează mai bine decât oricare alt mediu clinic.</p><h3>Calificări</h3><ul><li><strong>EDAIC Partea I:</strong> European Board of Anaesthesiology</li><li><strong>Medic specialist:</strong> Anestezie și Terapie Intensivă</li><li><strong>Rezidențiat ATI:</strong> Spitalul Clinic de Urgență Floreasca, București</li><li><strong>Medic registrator ATI:</strong> Spitalul Universitar Tallaght, Irlanda</li><li><strong>Medic registrator ATI:</strong> Spitalul Universitar Mater Misericordiae, Dublin</li><li><strong>Absolvent:</strong> Facultatea de Medicină, UMF Craiova</li><li>Înregistrat la Colegiul Medicilor din România (CMR nr. 152462)</li></ul>",
+              "seoTitle": "Dr. Robert Brînduș — Medic de Familie | CMR 152462 | Global Health România",
+              "seoDescription": "Rezervați o consultație video cu Dr. Robert Brînduș — medic de familie înregistrat la CMR (nr. 152462). Formare specializată ATI · Spitalul Floreasca București · Tallaght University Hospital · EDAIC. Programare în aceeași zi.",
+              "seoKeywords": [
+                "anestezist"
+              ]
+            },
+            {
+              "locale": "CS",
+              "title": "anesteziolog",
+              "bio": "<h3>Dr. Robert Brînduș, lékař specialista v anesteziologii a intenzivní medicíně</h3><p>Dr. Robert Brînduș je lékař specialista v anesteziologii a intenzivní medicíně s rozsáhlými klinickými zkušenostmi získanými jak v Rumunsku, tak v Irsku. V současnosti pracuje v nemocnici úrovně IV (nejvyšší) v Bukurešti a byl vyškolen a pracoval v terciárních nemocnicích s vysokým objemem činnosti po celé Evropě.</p><p>Dr. Brînduș absolvoval Lékařskou fakultu na Univerzitě medicíny a farmacie v Craiově a svou rezidenturu v anesteziologii a intenzivní medicíně absolvoval v renomované Klinické nemocnici pro naléhavé případy „Floreasca“ v Bukurešti. Jeho příprava zahrnovala komplexní zkušenosti v chirurgii, léčbě bolesti a intenzivní medicíně.</p><p>Následně pokračoval ve svém profesním rozvoji v Irsku, kde pracoval jako registrarský lékař v anesteziologii a intenzivní medicíně v Univerzitní nemocnici Tallaght a později v Univerzitní nemocnici Mater Misericordiae v Dublinu, kde se podílel na směnách na jednotkách intenzivní péče v komplexních a multidisciplinárních klinických prostředích.</p><p>Dr. Brînduș drží Evropský diplom v anesteziologii a intenzivní medicíně (EDAIC), část I. Mluví plynně rumunsky a anglicky a má praktické znalosti španělštiny. Dr. Brînduș je známý svými silnými etickými hodnotami, analytickým myšlením a pacientsky zaměřeným přístupem. Jeho klinické zájmy zahrnují všeobecnou medicínu, léčbu bolesti a perioperační medicínu</p>",
+              "seoTitle": "Dr Robert Gabriel Brindus - Anesteziolog | Global Health",
+              "seoDescription": "Dr. Robert Brînduș, lékař specialista v oboru anesteziologie a intenzivní medicíny, zkušenosti v Rumunsku a Irsku. Online konzultace v oblasti léčby bolesti a perioperační medicíny.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "ES",
+              "title": "Anestesista",
+              "bio": "<h3>Dr. Robert Brînduș, médico especialista en anestesia y terapia intensiva</h3><p>Dr. Robert Brînduș es médico especialista en Anestesia y Terapia Intensiva con una amplia experiencia clínica adquirida tanto en Rumanía como en Irlanda. Actualmente, ejerce en un hospital de nivel IV (máximo) en Bucarest y ha sido formado y ha trabajado en hospitales terciarios de gran volumen de actividad en toda Europa.</p><p>Dr. Brînduș se graduó en la Facultad de Medicina de la Universidad de Medicina y Farmacia de Craiova y realizó su residencia en Anestesia y Terapia Intensiva en el renombrado Hospital Clínico de Urgencias „Florească” de Bucarest. Su formación incluyó una experiencia integral en cirugía, medicina del dolor y medicina de cuidados intensivos.</p><p>Posteriormente, continuó su desarrollo profesional en Irlanda, donde trabajó como médico registrador en Anestesia y Terapia Intensiva en el Hospital Universitario Tallaght, y más tarde en el Hospital Universitario Mater Misericordiae de Dublín, participando en guardias en unidades de cuidados intensivos en entornos clínicos complejos y multidisciplinarios.</p><p>Dr. Brînduș posee el Diploma Europeo en Anestesia y Terapia Intensiva (EDAIC), Parte I. Habla con fluidez rumano e inglés, con conocimientos prácticos de español. Dr. Brînduș es conocido por sus sólidos valores éticos, su pensamiento analítico y su enfoque centrado en el paciente. Sus intereses clínicos incluyen medicina general, medicina del dolor y medicina perioperatoria</p>",
+              "seoTitle": "Dr Robert Gabriel Brindus - Anestesista | Global Health",
+              "seoDescription": "Dr. Robert Brînduș, médico especialista en ATI, con experiencia en Rumanía e Irlanda. Consultas online en medicina del dolor y perioperatoria.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "EN",
+              "title": "Anesthetist",
+              "bio": "<h3>Dr. Robert Brînduș, specialist physician in anesthesiology and intensive care</h3><p>Dr. Robert Brînduș is a specialist physician in Anesthesiology and Intensive Care with extensive clinical experience gained both in Romania and Ireland. He currently practices at a level IV (maximum) hospital in Bucharest and has been trained and has worked in high-volume tertiary hospitals across Europe.</p><p>Dr. Brînduș graduated from the Faculty of Medicine at the University of Medicine and Pharmacy in Craiova and completed his residency in Anesthesiology and Intensive Care at the renowned „Florească” Clinical Emergency Hospital in Bucharest. His training included comprehensive experience in surgery, pain medicine, and intensive care medicine.</p><p>He subsequently continued his professional development in Ireland, where he worked as a registrars physician in Anesthesiology and Intensive Care at Tallaght University Hospital, and later at Mater Misericordiae University Hospital in Dublin, taking part in intensive care shifts in complex and multidisciplinary clinical settings.</p><p>Dr. Brînduș holds the European Diploma in Anesthesiology and Intensive Care (EDAIC), Part I. Fluent in Romanian and English, with practical knowledge of Spanish, Dr. Brînduș is known for his strong ethical values, analytical thinking, and patient-centered approach. His clinical interests include general medicine, pain medicine, and perioperative medicine</p>",
+              "seoTitle": "Dr Robert Gabriel Brindus - Anesthesiologist | Global Health",
+              "seoDescription": "Dr. Robert Brînduș, specialist physician in anesthesiology and intensive care, experience in Romania and Ireland. Online consultations in pain medicine and perioperative care.",
+              "seoKeywords": []
+            }
+          ],
+          "divisionTranslations": []
+        }
+      ],
+      "assignedServices": [
+        {
+          "serviceId": "cmr8ee5ha000bfsju94p8e37o",
+          "service": {
+            "id": "cmr8ee5ha000bfsju94p8e37o",
+            "slug": "caderea-parului-online",
+            "name": "Consultație pentru căderea părului — online, în aceeași zi",
+            "kind": "GENERAL",
+            "summary": "Observați subțierea părului sau cădere accentuată? Medicii noștri autorizați CMR evaluează cauzele posibile, recomandă investigațiile necesare și stabilesc un plan de management bazat pe date clinice.",
+            "durationMinutes": 15,
+            "basePriceCents": 11500,
+            "currencyCode": "RON"
+          }
+        },
+        {
+          "serviceId": "cmr8ee4ba0008fsju6xyj8lnh",
+          "service": {
+            "id": "cmr8ee4ba0008fsju6xyj8lnh",
+            "slug": "sanatate-mintala-online",
+            "name": "Evaluare de sănătate mintală — consultație online confidențială",
+            "kind": "GENERAL",
+            "summary": "Vă confruntați cu anxietate, depresie, burnout, insomnie sau altă dificultate emoțională? Medicii noștri autorizați CMR oferă evaluare confidențială, recomandări și coordonarea pașilor următori prin consultație video.",
+            "durationMinutes": 20,
+            "basePriceCents": 15000,
+            "currencyCode": "RON"
+          }
+        },
+        {
+          "serviceId": "cmr8ee69c000dfsju48a77n99",
+          "service": {
+            "id": "cmr8ee69c000dfsju48a77n99",
+            "slug": "a-doua-opinie-medicala",
+            "name": "A doua opinie medicală — evaluare clinică independentă",
+            "kind": "GENERAL",
+            "summary": "Doriți să verificați un diagnostic, un plan de tratament sau o recomandare medicală importantă? Medicii noștri autorizați CMR oferă o a doua opinie clară, structurată și independentă prin consultație video.",
+            "durationMinutes": 15,
+            "basePriceCents": 11500,
+            "currencyCode": "RON"
+          }
+        },
+        {
+          "serviceId": "cmr8ee53a000afsjukz2fq2rv",
+          "service": {
+            "id": "cmr8ee53a000afsjukz2fq2rv",
+            "slug": "medicina-calatoriei",
+            "name": "Consultație de medicină de călătorie — evaluare medicală înainte de plecare",
+            "kind": "GENERAL",
+            "summary": "Călătoriți din România într-o zonă cu risc de malarie sau într-o destinație cu cerințe speciale de vaccinare? Medicii noștri autorizați CMR evaluează riscurile, oferă recomandări personalizate și prescriu profilaxie antimalarică atunci când este indicat clinic.",
+            "durationMinutes": 15,
+            "basePriceCents": 16000,
+            "currencyCode": "RON"
+          }
+        },
+        {
+          "serviceId": "cmr8ee4p90009fsju5xgwdoao",
+          "service": {
+            "id": "cmr8ee4p90009fsju5xgwdoao",
+            "slug": "consultatie-dermatologica",
+            "name": "Consultație dermatologică de primă intenție — evaluare online",
+            "kind": "GENERAL",
+            "summary": "Aveți erupții, eczemă, acnee, mâncărime sau altă problemă a pielii? Medicii noștri autorizați CMR evaluează simptomele prin consultație video și vă recomandă tratamentul sau următorii pași potriviți.",
+            "durationMinutes": 15,
+            "basePriceCents": 11500,
+            "currencyCode": "RON"
+          }
+        },
+        {
+          "serviceId": "cmr8ee5va000cfsju0urkl4di",
+          "service": {
+            "id": "cmr8ee5va000cfsju0urkl4di",
+            "slug": "dureri-musculo-scheletice",
+            "name": "Evaluarea durerii musculo-scheletale — online, în aceeași zi",
+            "kind": "GENERAL",
+            "summary": "Aveți dureri de spate, dureri articulare, sciatică sau o accidentare musculară? Medicii noștri autorizați CMR evaluează simptomele, semnele de alarmă și opțiunile de tratament prin consultație video.",
+            "durationMinutes": 15,
+            "basePriceCents": 11500,
+            "currencyCode": "RON"
+          }
+        },
+        {
+          "serviceId": "cmr8ee6nb000efsjuk0bbcp7f",
+          "service": {
+            "id": "cmr8ee6nb000efsjuk0bbcp7f",
+            "slug": "boli-cronice-online",
+            "name": "Managementul bolilor cronice — îngrijire medicală continuă online",
+            "kind": "GENERAL",
+            "summary": "Aveți hipertensiune, diabet, boală tiroidiană sau altă afecțiune de durată? Medicii noștri autorizați CMR oferă monitorizare medicală continuă, ajustarea planului terapeutic și coordonarea investigațiilor prin consultație video.",
+            "durationMinutes": 15,
+            "basePriceCents": 16000,
+            "currencyCode": "RON"
+          }
+        },
+        {
+          "serviceId": "cmr8ee7fb000gfsjuxxgacs5y",
+          "service": {
+            "id": "cmr8ee7fb000gfsjuxxgacs5y",
+            "slug": "medic-pediatru-online",
+            "name": "Consultație pediatrică de medicină generală — online, în aceeași zi",
+            "kind": "GENERAL",
+            "summary": "Copilul dumneavoastră este bolnav sau aveți nevoie de sfat medical rapid? Medicii noștri autorizați CMR evaluează simptomele copilului prin consultație video securizată și vă oferă recomandări clare pentru pașii următori.",
+            "durationMinutes": 15,
+            "basePriceCents": 18500,
+            "currencyCode": "RON"
+          }
+        },
+        {
+          "serviceId": "cmr8ee2r00004fsjubgjloy9a",
+          "service": {
+            "id": "cmr8ee2r00004fsjubgjloy9a",
+            "slug": "reinnoire-tratament",
+            "name": "Reînnoirea tratamentului — evaluare clinică și prescripție online",
+            "kind": "GENERAL",
+            "summary": "Urmați deja un tratament stabil? Medicii noștri autorizați CMR revizuiesc schema actuală, verifică siguranța continuării și emit prescripție electronică atunci când acest lucru este adecvat clinic.",
+            "durationMinutes": 15,
+            "basePriceCents": 6500,
+            "currencyCode": "RON"
+          }
+        },
+        {
+          "serviceId": "cmr8ee3j30006fsju24727btu",
+          "service": {
+            "id": "cmr8ee3j30006fsju24727btu",
+            "slug": "sanatatea-barbatului-online",
+            "name": "Sănătatea bărbatului — evaluare confidențială online",
+            "kind": "GENERAL",
+            "summary": "Aveți întrebări legate de disfuncție erectilă, testosteron, libido, fertilitate sau sănătate generală? Medicii noștri autorizați CMR oferă evaluare confidențială și recomandări medicale clare prin consultație video.",
+            "durationMinutes": 20,
+            "basePriceCents": 15000,
+            "currencyCode": "RON"
+          }
+        },
+        {
+          "serviceId": "cmr8ee1ko0000fsjuh80zxo7q",
+          "service": {
+            "id": "cmr8ee1ko0000fsjuh80zxo7q",
+            "slug": "medic-online-romania",
+            "name": "Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi",
+            "kind": "GENERAL",
+            "summary": "Medic înregistrat la CMR disponibil online, fără listă de așteptare și fără a fi înregistrat la medicul de familie. Videoconsultație în română sau engleză. Rezervați astăzi.",
+            "durationMinutes": 15,
+            "basePriceCents": 11500,
+            "currencyCode": "RON"
+          }
+        },
+        {
+          "serviceId": "cmr8ee3510005fsjunqgfmxn2",
+          "service": {
+            "id": "cmr8ee3510005fsjunqgfmxn2",
+            "slug": "controlul-greutatii",
+            "name": "Managementul greutății — evaluare medicală și plan personalizat",
+            "kind": "GENERAL",
+            "summary": "Vă este dificil să slăbiți în ciuda schimbărilor de stil de viață? Medicii noștri autorizați CMR evaluează factorii medicali, metabolici și comportamentali care influențează greutatea și stabilesc un plan realist de management.",
+            "durationMinutes": 15,
+            "basePriceCents": 15000,
+            "currencyCode": "RON"
+          }
+        },
+        {
+          "serviceId": "cmr8ee71b000ffsju3t9my2rm",
+          "service": {
+            "id": "cmr8ee71b000ffsju3t9my2rm",
+            "slug": "trimiteri-si-investigatii",
+            "name": "Scrisori medicale, trimiteri și investigații — coordonare online",
+            "kind": "GENERAL",
+            "summary": "Aveți nevoie de o scrisoare medicală, recomandare pentru analize sau orientare către un specialist? Medicii noștri autorizați CMR pot evalua situația și emite documentația clinică relevantă atunci când este indicată.",
+            "durationMinutes": 20,
+            "basePriceCents": 16000,
+            "currencyCode": "RON"
+          }
+        },
+        {
+          "serviceId": "cmr8ee3x70007fsju2pfu3ygw",
+          "service": {
+            "id": "cmr8ee3x70007fsju2pfu3ygw",
+            "slug": "sanatatea-femeii-online",
+            "name": "Sănătatea femeii — evaluare online confidențială",
+            "kind": "GENERAL",
+            "summary": "Aveți întrebări legate de contracepție, sindrom premenstrual, menopauză, sănătate hormonală sau alte simptome ginecologice frecvente? Medicii noștri autorizați CMR oferă evaluare confidențială și recomandări medicale clare prin consultație video.",
+            "durationMinutes": 20,
+            "basePriceCents": 16000,
+            "currencyCode": "RON"
+          }
+        }
+      ],
+      "seoKeywords": [],
+      "resolvedMarketLocale": "CS",
+      "specialties": [],
+      "faqs": [
+        {
+          "id": "cmrny98ia00aabsju0y0lod46",
+          "locale": "CS",
+          "question": "Je Dr. Brînduș registrován u České lékařské komory?",
+          "answer": "Ano. Dr. Robert Gabriel Brînduș je registrován u České lékařské komory (ČLK) pod číslem 152462. Tuto registraci můžete zkontrolovat na webu cmr.ro. Dr. Brînduș pracuje jako praktický lékař na platformě Global Health Rumunsko a přináší specializované vzdělání v anestezii a intenzivní péči — s praxí v nemocnici Spitalul Clinic de Urgență Floreasca v Bukurešti, Spitalul Universitar Tallaght a Mater Misericordiae Dublin.",
+          "category": null,
+          "sortOrder": 0,
+          "isActive": true
+        },
+        {
+          "id": "cmrny98ia00abbsjuh4bn5vir",
+          "locale": "CS",
+          "question": "Co Dr. Brînduș léčí?",
+          "answer": "Dr. Brînduș poskytuje konzultace v oblasti praktického lékařství, pokrývající akutní onemocnění (respirační infekce, horečka, chřipka, bolest v krku, močové infekce), management chronických onemocnění (hypertenze, diabetes, astma, reflux, cholesterol, hypotyreóza), dermatologické problémy, zdraví mužů a žen, duševní zdraví (úzkost, deprese, stres), preventivní péči, management bolesti, perioperační poradenství, obnovení receptů, lékařské potvrzení a doporučení.",
+          "category": null,
+          "sortOrder": 1,
+          "isActive": true
+        },
+        {
+          "id": "cmrny98ia00acbsjur33h593z",
+          "locale": "CS",
+          "question": "Jaké výhody přináší vzdělání v oblasti anestezie a intenzivní péče praktickému lékaři online?",
+          "answer": "Vzdělání v anestezii a intenzivní péči znamená, že Dr. Brînduș zvládal některé z nejkomplexnějších a nejurgentnějších lékařských situací — na operačních sálech, jednotkách intenzivní péče a pohotovostech. To mu poskytuje schopnost rychle posoudit závažnost symptomu, identifikovat varovné signály a přesně vědět, kdy může být situace řešena online a kdy vyžaduje okamžitou pohotovostní péči. Pro lékaře, který konzultuje online, je tato klinická jasnost nesmírně cenná.",
+          "category": null,
+          "sortOrder": 2,
+          "isActive": true
+        },
+        {
+          "id": "cmrny98ia00adbsjux7hdmmkw",
+          "locale": "CS",
+          "question": "Může Dr. Brînduș poskytnout rady ohledně plánovaného chirurgického zákroku nebo pooperačního zotavení?",
+          "answer": "Ano. Jeho vzdělání v oblasti anestezie a perioperační medicíny mu umožňuje odpovědět na otázky týkající se předoperační přípravy, vysvětlit aspekty anestezie, posoudit rizika a poskytnout pokyny ohledně pooperačního zotavení. Pokud máte naplánovaný zákrok a chcete předběžnou konzultaci nebo druhý názor, Dr. Brînduș může poskytnout informované hodnocení.",
+          "category": null,
+          "sortOrder": 3,
+          "isActive": true
+        },
+        {
+          "id": "cmrny98ia00aebsju3m6imsz0",
+          "locale": "CS",
+          "question": "Jak si rezervuji konzultaci s Dr. Brînduș?",
+          "answer": "Vyberte si dostupný časový slot na této stránce pro přímou rezervaci s Dr. Brînduș. Platba je zabezpečena při rezervaci — konzultace je potvrzena po provedení platby. Okamžitě obdržíte pozvánku do kalendáře. Konzultace probíhají prostřednictvím zabezpečeného videohovoru v rumunštině, angličtině nebo španělštině. Stejné denní rezervace jsou obvykle k dispozici.",
+          "category": null,
+          "sortOrder": 4,
+          "isActive": true
+        },
+        {
+          "id": "cmrny98ia00afbsjukfwi7p9x",
+          "locale": "CS",
+          "question": "Jaké jsou kvalifikace Dr. Brînduș?",
+          "answer": "Dr. Robert Brînduș je absolventem Lékařské fakulty UMF Craiova. Absolvoval rezidenční program v oblasti anestezie a intenzivní péče v nemocnici Spitalul Clinic de Urgență Floreasca v Bukurešti a pokračoval ve vzdělání jako registrátor v oblasti anestezie a intenzivní péče v nemocnici Spitalul Universitar Tallaght a nemocnici Spitalul Universitar Mater Misericordiae v Dublinu, Irsko. Drží Evropský diplom v anestezii a intenzivní péči (EDAIC), část I. Je registrován u České lékařské komory (ČLK č. 152462).",
+          "category": null,
+          "sortOrder": 5,
+          "isActive": true
+        }
+      ],
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      },
+      "bookabilityByServiceId": {
+        "cmr8ee5ha000bfsju94p8e37o": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+        },
+        "cmr8ee4ba0008fsju6xyj8lnh": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+        },
+        "cmr8ee69c000dfsju48a77n99": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+        },
+        "cmr8ee53a000afsjukz2fq2rv": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+        },
+        "cmr8ee4p90009fsju5xgwdoao": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+        },
+        "cmr8ee5va000cfsju0urkl4di": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+        },
+        "cmr8ee6nb000efsjuk0bbcp7f": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+        },
+        "cmr8ee7fb000gfsjuxxgacs5y": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+        },
+        "cmr8ee2r00004fsjubgjloy9a": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+        },
+        "cmr8ee3j30006fsju24727btu": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+        },
+        "cmr8ee1ko0000fsjuh80zxo7q": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+        },
+        "cmr8ee3510005fsjunqgfmxn2": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+        },
+        "cmr8ee71b000ffsju3t9my2rm": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+        },
+        "cmr8ee3x70007fsju2pfu3ygw": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+        }
+      }
+    }
+  }
+}

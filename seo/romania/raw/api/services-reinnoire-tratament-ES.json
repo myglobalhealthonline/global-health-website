@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:12.432Z",
+  "endpoint": "/api/services/reinnoire-tratament?countryCode=ro&locale=ES",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee2r00004fsjubgjloy9a",
+      "kind": "GENERAL",
+      "slug": "reinnoire-tratament",
+      "name": "Renovación del tratamiento — evaluación clínica y prescripción en línea",
+      "summary": "¿Está ya siguiendo un tratamiento estable? Nuestros médicos autorizados por el CMR revisan el esquema actual, verifican la seguridad de su continuación y emiten una receta electrónica cuando esto es clínicamente adecuado.",
+      "seoTitle": "Renovación de tratamiento online | Rumanía | receta electrónica",
+      "seoDescription": "Renovación del tratamiento estable, con evaluación clínica. Nuestros médicos autorizados por el CMR revisan el esquema actual, verifican la seguridad de la continuidad y emiten una prescripción electrónica cuando esto es clínicamente adecuado.",
+      "seoKeywords": [
+        "treatment renewal online Romania",
+        "repeat prescription Romania English",
+        "online doctor medication renewal Romania",
+        "treatment review English Bucharest",
+        "prescription renewal Romania expat"
+      ],
+      "heroTitle": "Renovación del tratamiento — evaluación clínica y prescripción en línea",
+      "heroDescription": "Renovación del tratamiento estable, con evaluación clínica. Nuestros médicos autorizados por el CMR revisan el esquema actual, verifican la seguridad de la continuación y emiten una prescripción electrónica cuando esto es clínicamente adecuado.",
+      "detailBody": "<p>Este servicio está destinado a pacientes con afecciones estables, que necesitan una revisión médica correcta antes de continuar el tratamiento. No es una simple receta automática: el médico analiza el diagnóstico, la respuesta al tratamiento, las reacciones adversas y los posibles cambios surgidos desde la última evaluación.</p><p>Si el tratamiento sigue siendo adecuado, se puede emitir una prescripción electrónica a través del sistema rumano, de conformidad con la legislación aplicable. Si son necesarios análisis adicionales, cambios de dosis o una evaluación por especialista, recibirá explicaciones claras y los siguientes pasos recomendados.</p><p>El servicio es adecuado para tratamientos crónicos estables, incluso en situaciones en las que no tiene fácil acceso al médico de familia, vive en otra ciudad, es expatriado o continúa en Rumanía un esquema terapéutico iniciado en otro país.</p>",
+      "ctaLabel": "Programa la consulta",
+      "sortOrder": 30,
+      "durationMinutes": 15,
+      "basePriceCents": 6500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:03:00.607Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jsd7u001rakjucqnifyij",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee2r00004fsjubgjloy9a",
+          "path": "/api/media/media/0a6ac8f8-e4ae-42b7-815e-9179981bc3e9-b08d3080-cbb7-49c8-8010-3853b7740a5e-5.webp",
+          "altText": "Reînnoirea tratamentului — evaluare clinică și prescripție online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "ES",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

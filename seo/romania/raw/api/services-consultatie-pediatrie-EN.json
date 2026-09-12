@@ -1,0 +1,123 @@
+{
+  "checkedAt": "2026-09-12T20:20:09.733Z",
+  "endpoint": "/api/services/consultatie-pediatrie?countryCode=ro&locale=EN",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee8lf000jfsju7gwzzohg",
+      "kind": "SPECIALIST",
+      "slug": "consultatie-pediatrie",
+      "name": "Specialist Paediatrician — Expert Child Health Assessment Online",
+      "summary": "Complex child health concern or paediatric second opinion? Our CMR-registered specialist paediatrician conducts expert assessments by video call. Same-day appointments available anywhere in Romania.",
+      "seoTitle": "Specialist Paediatrician Online | Romania | Complex Child Health",
+      "seoDescription": "Specialist paediatric second opinions for complex child health concerns. Our CMR-registered specialist paediatrician conducts expert assessments by video call. Same-day appointments available anywhere in Romania.",
+      "seoKeywords": [
+        "specialist paediatrician online Romania",
+        "paediatric specialist online Romania",
+        "children's specialist doctor online Romania",
+        "paediatric second opinion Romania",
+        "complex child health online Romania"
+      ],
+      "heroTitle": "Specialist Paediatrician — Expert Child Health Assessment Online",
+      "heroDescription": "Specialist pediatric opinion and detailed evaluation for the child's health problems. Our CMR-authorized pediatrician offers video consultations for cases requiring in-depth clinical analysis.",
+      "detailBody": "<p>Some child health concerns go beyond what a GP-level paediatric consultation can fully address. A complex chronic condition, a diagnosis that needs specialist review, an investigation result that requires paediatric specialist interpretation, or a developmental or behavioural concern that needs structured specialist assessment — these require the depth of clinical analysis that a specialist paediatrician provides.</p><p>Our specialist paediatrician, registered with the Romanian College of Physicians (CMR) and the specialist Paediatric College, offers expert paediatric assessments by secure video call — for children and adolescents from birth to 18 years. Same day, from anywhere in Romania, in English, Romanian. A parent or guardian must be present throughout all consultations for children under 16.</p><h2>The Difference Between GP-Level and Specialist Paediatric Care</h2><p>Global Health offers two levels of paediatric care:</p><p>GP-level paediatric consultation — appropriate for acute and non-urgent common childhood presentations: fever, ear infections, rashes, gastroenteritis, mild asthma, and similar conditions. Managed at primary care level by a general doctor with paediatric experience.</p><p>Specialist paediatric consultation — appropriate for complex, chronic, or diagnostically uncertain presentations requiring the depth of clinical analysis, specialist knowledge, and diagnostic framework that a specialist paediatrician provides. This includes conditions that have not responded to standard management, diagnoses that need specialist review, investigation results requiring specialist interpretation, and complex multi-system presentations.</p><p>If you are unsure which is appropriate, a GP-level paediatric consultation is a good starting point — your doctor will refer to specialist paediatric assessment if indicated.</p><h2>Who This Service Is For</h2><p>This specialist consultation is appropriate for:</p><ul><li>Children with a complex or chronic condition requiring specialist paediatric review</li><li>Parents whose child has received a diagnosis they want reviewed by an independent specialist</li><li>Children with conditions that have not responded as expected to standard management</li></ul><p>Parents who need investigation results — blood tests, imaging, specialist reports — explained and contextualised by a specialist paediatrician</p><p>Children with developmental concerns — including developmental delay, language delay, or suspected neurodevelopmental conditions — requiring specialist assessment</p><ul><li>Adolescents with complex health concerns requiring specialist paediatric input</li><li>Children with multiple co-existing conditions requiring coordinated specialist management</li></ul><p>Families in rural areas or smaller cities where specialist paediatric access requires significant travel to Bucharest or a major university hospital</p><p>Parents who want a second opinion on a recommended paediatric intervention — surgery, a new medication, or a significant management change</p><h2>Conditions Commonly Assessed</h2><ul><li>Chronic and complex conditions</li><li>Asthma — complex or treatment-resistant, specialist review and management optimisation</li><li>Diabetes — Type 1 and Type 2 paediatric diabetes management review</li><li>Inflammatory bowel disease — specialist paediatric assessment and management review</li><li>Coeliac disease — diagnosis support, management, and monitoring</li><li>Food allergy and anaphylaxis — specialist assessment and management planning</li><li>Chronic kidney disease — specialist monitoring and management</li><li>Thyroid disorders in children — assessment and management</li><li>Chronic fatigue and post-viral syndromes in children — assessment and management planning</li><li>Recurrent infections — assessment of immune function and referral where indicated</li><li>Growth and development</li><li>Growth concerns — short stature, growth failure, or unexplained growth pattern changes</li><li>Puberty concerns — precocious or delayed puberty assessment</li><li>Weight concerns — paediatric obesity and metabolic health assessment</li><li>Failure to thrive — specialist assessment and investigation planning</li><li>Neurodevelopmental</li><li>Developmental delay — global or specific, specialist assessment and referral pathway</li><li>Language and communication delay — assessment and referral for formal evaluation</li></ul><p>Suspected autism spectrum disorder — initial specialist assessment and referral for formal diagnosis</p><ul><li>Suspected ADHD — specialist assessment and referral pathway</li><li>Learning difficulties — assessment and referral for educational psychology where indicated</li><li>Behavioural concerns — specialist assessment distinguishing medical from psychological contributors</li><li>Gastrointestinal</li><li>Chronic abdominal pain — specialist assessment of functional and organic causes</li><li>Constipation — complex or treatment-resistant, specialist assessment</li><li>Gastro-oesophageal reflux — assessment and management in infants and children</li><li>Feeding difficulties — specialist assessment in infants and toddlers</li><li>Recurrent vomiting — assessment and investigation planning</li><li>Cardiovascular</li><li>Heart murmur — assessment and referral for paediatric cardiology where indicated</li><li>Palpitations in children and adolescents — assessment and investigation planning</li><li>Syncope — assessment of cardiac and non-cardiac causes</li><li>Respiratory</li><li>Recurrent wheeze — specialist assessment and management</li><li>Chronic cough — specialist assessment and investigation planning</li><li>Recurrent respiratory infections — assessment and immune workup planning</li><li>Haematological</li><li>Anaemia in children — specialist assessment of causes and management</li><li>Recurrent bruising or bleeding — assessment and haematology referral where indicated</li><li>Endocrine</li><li>Diabetes management review</li><li>Thyroid disorders</li><li>Puberty concerns</li><li>Adrenal concerns — specialist assessment and investigation planning</li><li>Adolescent health</li><li>Complex adolescent health concerns requiring specialist paediatric input</li><li>Menstrual disorders in adolescents — specialist assessment</li><li>Eating disorders — initial specialist assessment and referral for specialist treatment</li><li>Chronic pain in adolescents — specialist assessment and management planning</li><li>Second opinions</li><li>Independent specialist review of any paediatric diagnosis or treatment plan</li><li>Review of recommended paediatric surgery or major intervention</li><li>Review of complex investigation results requiring specialist interpretation</li></ul><h2>What Your Consultation Includes</h2><p>Comprehensive specialist paediatric assessmentYour specialist paediatrician takes a detailed history — presenting concern, symptom onset and progression, relevant birth history, developmental history, family history, immunisation status, current medications, previous investigations and their results, school performance where relevant, and psychosocial context. For younger children, the consultation is conducted with the parent providing the history, with direct observation of the child on video where clinically relevant.</p><p>Specialist interpretation of investigation resultsIf your child has had blood tests, imaging, specialist reports, or other investigations, bring these to the consultation. Your specialist paediatrician reviews all documentation in full and explains the findings clearly — what they mean for the diagnosis, what the implications are for management, and what further investigation is needed.</p><p>Specialist management planBased on the assessment, your specialist paediatrician develops a structured, evidence-based management plan — including further investigation requests, referral for in-person specialist assessment or procedures, medication recommendations at the specialist's professional discretion, and coordination with other specialists where needed.</p><p>Electronic prescription — where clinically appropriateWhen clinically indicated, your specialist paediatrician issues an electronic prescription through SIPE. You present it at any pharmacy of your choice in Romania.</p><p>Note: Special-regime prescriptions covering certain medications cannot be transmitted electronically under Romanian law. Your specialist advises if this applies to your child's situation.</p><p>Specialist clinical documentationWhere clinically appropriate, your specialist paediatrician issues a written specialist assessment — documenting the clinical findings, diagnosis or differential diagnoses, and management recommendations — which can be shared with your child's GP, other specialists, school, or used for insurance or administrative purposes.</p><p>Referral and investigation coordinationWhen in-person specialist assessment, subspecialty referral, or multidisciplinary input is needed, your specialist paediatrician coordinates the appropriate pathway on the same day — including referral to paediatric subspecialties where indicated.</p><h2>Specialist Paediatric Access in Romania — The Gap</h2><p>Romania's specialist paediatric services are heavily concentrated in Bucharest and a small number of university hospitals — Cluj-Napoca, Timișoara, Iași, and Craiova. Paediatric subspecialties — paediatric neurology, paediatric cardiology, paediatric endocrinology, paediatric gastroenterology — are almost exclusively available in Bucharest's dedicated children's hospitals.</p><p>For families outside these centres, accessing specialist paediatric assessment involves significant travel — often hundreds of kilometres — with weeks or months of waiting time even after the journey. The impact on families of children with complex or chronic conditions is significant.</p><p>Video specialist paediatric consultation closes a meaningful part of this gap — providing specialist-level paediatric assessment same day, from anywhere in Romania, without travel. When in-person specialist assessment is genuinely needed, your specialist coordinates the referral and provides the clinical documentation to make that appointment as productive as possible.</p><h2>Important Information Before You Book</h2><p>A parent or guardian must be present throughout all consultations for children under 16, in accordance with Legea nr. 272/2004</p><ul><li>For adolescents aged 16 and over, the specialist assesses capacity to consent individually</li></ul><p>Fever in infants under 3 months is a medical emergency — go to the nearest emergency department immediately, do not book a video consultation</p><p>Rapidly deteriorating children — if your child is worsening significantly, go to the emergency department immediately rather than waiting for a consultation</p><p>Mandatory reporting — our specialist paediatrician is bound by Legea nr. 272/2004. Where a consultation raises child protection concerns, the specialist is legally and professionally obliged to act accordingly, which may involve DGASPC</p><p>Formal neurodevelopmental diagnosis — formal diagnosis of autism spectrum disorder, ADHD, and learning difficulties requires in-person multidisciplinary assessment. This service provides specialist paediatric assessment and referral pathway planning, not formal diagnosis</p><h2>Frequently Asked Questions</h2><p>What is the difference between this and the GP paediatric consultation?The GP paediatric consultation covers acute and common childhood presentations at primary care level — fever, infections, rashes, and similar. This specialist paediatric consultation is conducted by a specialist paediatrician and is appropriate for complex, chronic, diagnostically uncertain, or multi-system presentations that require specialist clinical depth. If you are unsure which is right for your child, a GP paediatric consultation is a reasonable starting point.</p><p>My child has been diagnosed with something I do not fully understand — can the specialist help?Yes. Specialist review and explanation of a paediatric diagnosis is one of the most common uses of this service. Bring all clinical documentation — diagnosis letters, investigation results, specialist reports — and your specialist reviews everything in full and explains the diagnosis, its implications, and the management plan clearly.</p><p>Can the specialist assess my child for autism or ADHD?The specialist paediatrician conducts a clinical assessment of your child's developmental history and current presentation and advises on whether formal assessment for autism spectrum disorder or ADHD is indicated. Formal diagnosis of these conditions in Romania requires in-person multidisciplinary assessment — your specialist provides the clinical assessment, referral pathway, and supporting documentation to facilitate this.</p><p>My child is on long-term medication for a chronic condition — can the specialist review this?Yes. Treatment review for established paediatric chronic conditions — diabetes, asthma, inflammatory bowel disease, thyroid disorders, and others — is a core part of this service.</p><p>Can the specialist provide a second opinion on recommended surgery or a major intervention?Yes. Second opinions on recommended paediatric surgical or significant medical interventions are a well-established use of this service. Bring all relevant clinical documentation and your specialist reviews the clinical justification, discusses the evidence, and advises on what questions to ask your treating team.</p><p>My child has had blood tests or an MRI — can the specialist review the results?Yes. Specialist interpretation of investigation results is central to this service. Bring all reports to the consultation — your specialist reviews and explains the findings clearly and advises on next steps.</p><p>Is this service available for premature babies or newborns with complex needs?For complex neonatal presentations, in-person neonatal specialist assessment is typically more appropriate. For follow-up consultations after hospital discharge for previously premature infants or newborns with known complex conditions, your specialist advises on what can be appropriately assessed remotely.</p><p>Do I need Romanian health insurance?No. This is a private-pay specialist service with no health insurance requirement.</p><p>Can I use this service from anywhere in Romania?Yes. This service is specifically designed to address the specialist paediatric access gap outside major cities. All you need is a stable internet connection and a device with a camera.</p>",
+      "ctaLabel": "Schedule the consultation",
+      "sortOrder": 0,
+      "durationMinutes": 15,
+      "basePriceCents": 18500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:55.579Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jsir5001vakju5gqu1bt0",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee8lf000jfsju7gwzzohg",
+          "path": "/api/media/media/795ad1ab-4a87-4878-8f52-1400ca0bf455-8a391c28-541a-49cd-97ff-fff34ba65c6d-8.webp",
+          "altText": "Medic pediatru specialist — evaluare pediatrică complexă online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "EN",
+      "links": [
+        {
+          "id": "cmr8eoamw004804jua31ccvdq",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "Related care",
+          "body": "Need GP paediatric consultation? Our Children's GP Consultation — Online, Same Day covers this as a dedicated consultation.",
+          "ctaLabel": "Children's GP Consultation — Online, Same Day",
+          "targetSlug": "medic-pediatru-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8eobxl004a04jukn1dsf9e",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "Adolescent Mental Health?",
+          "body": "For adolescent mental health, our Mental Health Assessment — Online, in English provides dedicated care — see mental health assessment.",
+          "ctaLabel": "Mental Health Assessment — Online, in English",
+          "targetSlug": "sanatate-mintala-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8eod89004c04juw5gh8evo",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "Paediatric Second Opinion?",
+          "body": "For paediatric second opinion, our Second Medical Opinion — Independent Clinical Assessment provides dedicated care — see second opinion.",
+          "ctaLabel": "Second Medical Opinion — Independent Clinical Assessment",
+          "targetSlug": "a-doua-opinie-medicala",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8eoeix004e04ju7b9su0cg",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "Related care",
+          "body": "Need investigation results review? Our Referral Letters & Investigations — Clinical Documentation Online covers this as a dedicated consultation.",
+          "ctaLabel": "Referral Letters & Investigations — Clinical Documentation Online",
+          "targetSlug": "trimiteri-si-investigatii",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrc4gtzl00s901p2yh3ukaox"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:47:00.000Z"
+      }
+    }
+  }
+}

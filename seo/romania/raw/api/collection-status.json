@@ -1,0 +1,530 @@
+[
+  {
+    "name": "services-RO",
+    "ok": true
+  },
+  {
+    "name": "doctors-EN",
+    "ok": true
+  },
+  {
+    "name": "doctors-RO",
+    "ok": true
+  },
+  {
+    "name": "doctors-CS",
+    "ok": true
+  },
+  {
+    "name": "services-CS",
+    "ok": true
+  },
+  {
+    "name": "services-EN",
+    "ok": true
+  },
+  {
+    "name": "doctors-DE",
+    "ok": true
+  },
+  {
+    "name": "services-DE",
+    "ok": true
+  },
+  {
+    "name": "doctors-ES",
+    "ok": true
+  },
+  {
+    "name": "services-ES",
+    "ok": true
+  },
+  {
+    "name": "services-PT",
+    "ok": true
+  },
+  {
+    "name": "doctors-PT",
+    "ok": true
+  },
+  {
+    "name": "doctors-dr-alexandra-palaga-CS",
+    "ok": true
+  },
+  {
+    "name": "doctors-dr-andreea-lorena-bica-CS",
+    "ok": true
+  },
+  {
+    "name": "doctors-dr-robert-gabriel-brindus-CS",
+    "ok": true
+  },
+  {
+    "name": "services-a-doua-opinie-medicala-CS",
+    "ok": true
+  },
+  {
+    "name": "services-boli-cronice-online-CS",
+    "ok": true
+  },
+  {
+    "name": "services-caderea-parului-online-CS",
+    "ok": true
+  },
+  {
+    "name": "services-consultatie-dermatologica-CS",
+    "ok": true
+  },
+  {
+    "name": "services-consultatie-neurologie-CS",
+    "ok": true
+  },
+  {
+    "name": "services-consultatie-pediatrie-CS",
+    "ok": true
+  },
+  {
+    "name": "services-controlul-greutatii-CS",
+    "ok": true
+  },
+  {
+    "name": "services-dureri-musculo-scheletice-CS",
+    "ok": true
+  },
+  {
+    "name": "services-evaluare-durere-CS",
+    "ok": true
+  },
+  {
+    "name": "services-medic-online-romania-CS",
+    "ok": true
+  },
+  {
+    "name": "services-medic-pediatru-online-CS",
+    "ok": true
+  },
+  {
+    "name": "services-medicina-calatoriei-CS",
+    "ok": true
+  },
+  {
+    "name": "services-sanatatea-barbatului-online-CS",
+    "ok": true
+  },
+  {
+    "name": "services-sanatate-mintala-online-CS",
+    "ok": true
+  },
+  {
+    "name": "services-reinnoire-tratament-CS",
+    "ok": true
+  },
+  {
+    "name": "services-trimiteri-si-investigatii-CS",
+    "ok": true
+  },
+  {
+    "name": "services-sanatatea-femeii-online-CS",
+    "ok": true
+  },
+  {
+    "name": "doctors-dr-alexandra-palaga-DE",
+    "ok": true
+  },
+  {
+    "name": "doctors-dr-andreea-lorena-bica-DE",
+    "ok": true
+  },
+  {
+    "name": "doctors-dr-robert-gabriel-brindus-DE",
+    "ok": true
+  },
+  {
+    "name": "services-a-doua-opinie-medicala-DE",
+    "ok": true
+  },
+  {
+    "name": "services-boli-cronice-online-DE",
+    "ok": true
+  },
+  {
+    "name": "services-caderea-parului-online-DE",
+    "ok": true
+  },
+  {
+    "name": "services-consultatie-dermatologica-DE",
+    "ok": true
+  },
+  {
+    "name": "services-consultatie-neurologie-DE",
+    "ok": true
+  },
+  {
+    "name": "services-consultatie-pediatrie-DE",
+    "ok": true
+  },
+  {
+    "name": "services-controlul-greutatii-DE",
+    "ok": true
+  },
+  {
+    "name": "services-evaluare-durere-DE",
+    "ok": true
+  },
+  {
+    "name": "services-dureri-musculo-scheletice-DE",
+    "ok": true
+  },
+  {
+    "name": "services-medic-online-romania-DE",
+    "ok": true
+  },
+  {
+    "name": "services-medic-pediatru-online-DE",
+    "ok": true
+  },
+  {
+    "name": "services-medicina-calatoriei-DE",
+    "ok": true
+  },
+  {
+    "name": "services-reinnoire-tratament-DE",
+    "ok": true
+  },
+  {
+    "name": "services-sanatate-mintala-online-DE",
+    "ok": true
+  },
+  {
+    "name": "services-sanatatea-barbatului-online-DE",
+    "ok": true
+  },
+  {
+    "name": "services-sanatatea-femeii-online-DE",
+    "ok": true
+  },
+  {
+    "name": "services-trimiteri-si-investigatii-DE",
+    "ok": true
+  },
+  {
+    "name": "doctors-dr-alexandra-palaga-EN",
+    "ok": true
+  },
+  {
+    "name": "doctors-dr-andreea-lorena-bica-EN",
+    "ok": true
+  },
+  {
+    "name": "doctors-dr-robert-gabriel-brindus-EN",
+    "ok": true
+  },
+  {
+    "name": "services-a-doua-opinie-medicala-EN",
+    "ok": true
+  },
+  {
+    "name": "services-caderea-parului-online-EN",
+    "ok": true
+  },
+  {
+    "name": "services-consultatie-dermatologica-EN",
+    "ok": true
+  },
+  {
+    "name": "services-boli-cronice-online-EN",
+    "ok": true
+  },
+  {
+    "name": "services-consultatie-pediatrie-EN",
+    "ok": true
+  },
+  {
+    "name": "services-controlul-greutatii-EN",
+    "ok": true
+  },
+  {
+    "name": "services-consultatie-neurologie-EN",
+    "ok": true
+  },
+  {
+    "name": "services-dureri-musculo-scheletice-EN",
+    "ok": true
+  },
+  {
+    "name": "services-evaluare-durere-EN",
+    "ok": true
+  },
+  {
+    "name": "services-medic-pediatru-online-EN",
+    "ok": true
+  },
+  {
+    "name": "services-medic-online-romania-EN",
+    "ok": true
+  },
+  {
+    "name": "services-medicina-calatoriei-EN",
+    "ok": true
+  },
+  {
+    "name": "services-reinnoire-tratament-EN",
+    "ok": true
+  },
+  {
+    "name": "services-sanatate-mintala-online-EN",
+    "ok": true
+  },
+  {
+    "name": "services-sanatatea-barbatului-online-EN",
+    "ok": true
+  },
+  {
+    "name": "services-sanatatea-femeii-online-EN",
+    "ok": true
+  },
+  {
+    "name": "services-trimiteri-si-investigatii-EN",
+    "ok": true
+  },
+  {
+    "name": "doctors-dr-alexandra-palaga-ES",
+    "ok": true
+  },
+  {
+    "name": "doctors-dr-andreea-lorena-bica-ES",
+    "ok": true
+  },
+  {
+    "name": "doctors-dr-robert-gabriel-brindus-ES",
+    "ok": true
+  },
+  {
+    "name": "services-a-doua-opinie-medicala-ES",
+    "ok": true
+  },
+  {
+    "name": "services-boli-cronice-online-ES",
+    "ok": true
+  },
+  {
+    "name": "services-caderea-parului-online-ES",
+    "ok": true
+  },
+  {
+    "name": "services-consultatie-dermatologica-ES",
+    "ok": true
+  },
+  {
+    "name": "services-consultatie-neurologie-ES",
+    "ok": true
+  },
+  {
+    "name": "services-consultatie-pediatrie-ES",
+    "ok": true
+  },
+  {
+    "name": "services-controlul-greutatii-ES",
+    "ok": true
+  },
+  {
+    "name": "services-dureri-musculo-scheletice-ES",
+    "ok": true
+  },
+  {
+    "name": "services-evaluare-durere-ES",
+    "ok": true
+  },
+  {
+    "name": "services-medic-online-romania-ES",
+    "ok": true
+  },
+  {
+    "name": "services-medic-pediatru-online-ES",
+    "ok": true
+  },
+  {
+    "name": "services-medicina-calatoriei-ES",
+    "ok": true
+  },
+  {
+    "name": "services-reinnoire-tratament-ES",
+    "ok": true
+  },
+  {
+    "name": "services-sanatate-mintala-online-ES",
+    "ok": true
+  },
+  {
+    "name": "services-sanatatea-barbatului-online-ES",
+    "ok": true
+  },
+  {
+    "name": "services-sanatatea-femeii-online-ES",
+    "ok": true
+  },
+  {
+    "name": "doctors-dr-alexandra-palaga-PT",
+    "ok": true
+  },
+  {
+    "name": "services-trimiteri-si-investigatii-ES",
+    "ok": true
+  },
+  {
+    "name": "doctors-dr-andreea-lorena-bica-PT",
+    "ok": true
+  },
+  {
+    "name": "doctors-dr-robert-gabriel-brindus-PT",
+    "ok": true
+  },
+  {
+    "name": "services-a-doua-opinie-medicala-PT",
+    "ok": true
+  },
+  {
+    "name": "services-boli-cronice-online-PT",
+    "ok": true
+  },
+  {
+    "name": "services-caderea-parului-online-PT",
+    "ok": true
+  },
+  {
+    "name": "services-consultatie-dermatologica-PT",
+    "ok": true
+  },
+  {
+    "name": "services-consultatie-neurologie-PT",
+    "ok": true
+  },
+  {
+    "name": "services-consultatie-pediatrie-PT",
+    "ok": true
+  },
+  {
+    "name": "services-dureri-musculo-scheletice-PT",
+    "ok": true
+  },
+  {
+    "name": "services-evaluare-durere-PT",
+    "ok": true
+  },
+  {
+    "name": "services-medic-online-romania-PT",
+    "ok": true
+  },
+  {
+    "name": "services-controlul-greutatii-PT",
+    "ok": true
+  },
+  {
+    "name": "services-medic-pediatru-online-PT",
+    "ok": true
+  },
+  {
+    "name": "services-reinnoire-tratament-PT",
+    "ok": true
+  },
+  {
+    "name": "services-medicina-calatoriei-PT",
+    "ok": true
+  },
+  {
+    "name": "services-sanatate-mintala-online-PT",
+    "ok": true
+  },
+  {
+    "name": "services-sanatatea-barbatului-online-PT",
+    "ok": true
+  },
+  {
+    "name": "services-sanatatea-femeii-online-PT",
+    "ok": true
+  },
+  {
+    "name": "services-trimiteri-si-investigatii-PT",
+    "ok": true
+  },
+  {
+    "name": "doctors-dr-alexandra-palaga-RO",
+    "ok": true
+  },
+  {
+    "name": "doctors-dr-andreea-lorena-bica-RO",
+    "ok": true
+  },
+  {
+    "name": "doctors-dr-robert-gabriel-brindus-RO",
+    "ok": true
+  },
+  {
+    "name": "services-a-doua-opinie-medicala-RO",
+    "ok": true
+  },
+  {
+    "name": "services-boli-cronice-online-RO",
+    "ok": true
+  },
+  {
+    "name": "services-caderea-parului-online-RO",
+    "ok": true
+  },
+  {
+    "name": "services-consultatie-dermatologica-RO",
+    "ok": true
+  },
+  {
+    "name": "services-consultatie-neurologie-RO",
+    "ok": true
+  },
+  {
+    "name": "services-consultatie-pediatrie-RO",
+    "ok": true
+  },
+  {
+    "name": "services-controlul-greutatii-RO",
+    "ok": true
+  },
+  {
+    "name": "services-dureri-musculo-scheletice-RO",
+    "ok": true
+  },
+  {
+    "name": "services-evaluare-durere-RO",
+    "ok": true
+  },
+  {
+    "name": "services-medic-online-romania-RO",
+    "ok": true
+  },
+  {
+    "name": "services-medic-pediatru-online-RO",
+    "ok": true
+  },
+  {
+    "name": "services-medicina-calatoriei-RO",
+    "ok": true
+  },
+  {
+    "name": "services-reinnoire-tratament-RO",
+    "ok": true
+  },
+  {
+    "name": "services-sanatate-mintala-online-RO",
+    "ok": true
+  },
+  {
+    "name": "services-sanatatea-barbatului-online-RO",
+    "ok": true
+  },
+  {
+    "name": "services-sanatatea-femeii-online-RO",
+    "ok": true
+  },
+  {
+    "name": "services-trimiteri-si-investigatii-RO",
+    "ok": true
+  }
+]

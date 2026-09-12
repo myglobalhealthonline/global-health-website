@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:06.577Z",
+  "endpoint": "/api/services/sanatatea-barbatului-online?countryCode=ro&locale=CS",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee3j30006fsju24727btu",
+      "kind": "GENERAL",
+      "slug": "sanatatea-barbatului-online",
+      "name": "Zdraví mužů — důvěrné online vyhodnocení",
+      "summary": "Máte otázky týkající se erektilní dysfunkce, testosteronu, libida, plodnosti nebo celkového zdraví? Naši lékaři s licencí CMR poskytují důvěrné zhodnocení a jasná lékařská doporučení prostřednictvím videokonzultace.",
+      "seoTitle": "Online konzultace o zdraví mužů | Rumunsko | důvěrné",
+      "seoDescription": "Důvěrné konzultace pro erektilní dysfunkci, testosteron, libido, plodnost nebo celkové zdraví. Naši lékaři s licencí CMR poskytují důvěrné vyhodnocení a jasná lékařská doporučení prostřednictvím videokonzultace.",
+      "seoKeywords": [
+        "men's health online Romania",
+        "erectile dysfunction doctor online Romania",
+        "testosterone assessment Bucharest English",
+        "men's health consultation English Romania",
+        "ED doctor online Romania expat"
+      ],
+      "heroTitle": "Zdraví mužů — důvěrné online posouzení",
+      "heroDescription": "Důvěrné konzultace pro erektilní dysfunkci, testosteron, libido, plodnost nebo celkové zdraví. Naši licencovaní lékaři CMR poskytují důvěrné vyšetření a jasná lékařská doporučení prostřednictvím videokonzultace.",
+      "detailBody": "<p>Služba je vhodná pro časté problémy mužského zdraví, včetně močových příznaků, erektilní dysfunkce, sníženého libida, přetrvávající únavy, hormonálních obtíží, sexuálního zdraví a otázek souvisejících s plodností.</p><p>Lékař zhodnotí anamnézu příznaků, kardiovaskulární a metabolické rizikové faktory, současně užívané léky, životní styl a případné již získané zdravotní výsledky. Obdržíte doporučení ohledně vyšetření, možností léčby a okamžiku, kdy je nutné urologické nebo endokrinologické vyšetření.</p><p>Konzultace je důvěrná a je užitečná zejména pro pacienty, kteří odkládají návštěvu lékaře kvůli nepohodlí při projednávání těchto problémů v tradiční fyzické ordinaci.</p>",
+      "ctaLabel": "Naplánujte konzultaci",
+      "sortOrder": 130,
+      "durationMinutes": 20,
+      "basePriceCents": 15000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:40.429Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jsga2001takjuposo4ofv",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee3j30006fsju24727btu",
+          "path": "/api/media/media/3eb29e4e-4322-499a-84ee-310fdcf2576b-54a1a470-c8e0-4f8f-a04a-df45aea30361-12.webp",
+          "altText": "Sănătatea bărbatului — evaluare confidențială online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "CS",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:13.685Z",
+  "endpoint": "/api/services/consultatie-pediatrie?countryCode=ro&locale=PT",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee8lf000jfsju7gwzzohg",
+      "kind": "SPECIALIST",
+      "slug": "consultatie-pediatrie",
+      "name": "Médico pediatra especialista — avaliação pediátrica complexa online",
+      "summary": "Precisa de uma opinião pediátrica especializada ou de uma avaliação mais detalhada para um problema de saúde da criança? O nosso pediatra autorizado pelo CMR oferece consultas em vídeo para casos que necessitam de análise clínica aprofundada.",
+      "seoTitle": "Pediatra especialista online | Roménia | avaliação complexa",
+      "seoDescription": "Opinião pediátrica especializada e avaliação detalhada para os problemas de saúde da criança. O nosso pediatra autorizado pela CMR oferece consultas por vídeo para casos que requerem análise clínica aprofundada.",
+      "seoKeywords": [
+        "specialist paediatrician online Romania",
+        "paediatric specialist online Romania",
+        "children's specialist doctor online Romania",
+        "paediatric second opinion Romania",
+        "complex child health online Romania"
+      ],
+      "heroTitle": "Médico pediatra especialista — avaliação pediátrica complexa online",
+      "heroDescription": "Opinião pediátrica especializada e avaliação detalhada para os problemas de saúde da criança. O nosso pediatra autorizado pela CMR oferece consultas em vídeo para casos que exigem uma análise clínica aprofundada.",
+      "detailBody": "<p>Este serviço é adequado para sintomas persistentes, problemas recorrentes, situações em que o tratamento inicial não ajudou ou para famílias que desejam uma opinião pediátrica especializada antes dos próximos passos.</p><p>O pediatra revê o historial clínico, a evolução dos sintomas, os exames já realizados e as preocupações específicas da família. Receberá recomendações claras sobre monitorização, exames adicionais, tratamento e as situações em que é necessária uma consulta física urgente.</p><p>A consulta pode ser útil para infeções recorrentes, perturbações digestivas, problemas respiratórios, recuperação lenta após doença, dúvidas sobre o desenvolvimento da criança ou a necessidade de coordenação com outros especialistas.</p>",
+      "ctaLabel": "Agende a consulta",
+      "sortOrder": 0,
+      "durationMinutes": 15,
+      "basePriceCents": 18500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:55.579Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jsir5001vakju5gqu1bt0",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee8lf000jfsju7gwzzohg",
+          "path": "/api/media/media/795ad1ab-4a87-4878-8f52-1400ca0bf455-8a391c28-541a-49cd-97ff-fff34ba65c6d-8.webp",
+          "altText": "Medic pediatru specialist — evaluare pediatrică complexă online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "PT",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4gtzl00s901p2yh3ukaox"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:47:00.000Z"
+      }
+    }
+  }
+}

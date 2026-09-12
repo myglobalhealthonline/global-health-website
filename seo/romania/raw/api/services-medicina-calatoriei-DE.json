@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:08.354Z",
+  "endpoint": "/api/services/medicina-calatoriei?countryCode=ro&locale=DE",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee53a000afsjukz2fq2rv",
+      "kind": "GENERAL",
+      "slug": "medicina-calatoriei",
+      "name": "Reisemedizinische Beratung — medizinische Beurteilung vor der Abreise",
+      "summary": "Reisen Sie von Rumänien in ein Gebiet mit Malariarisiko oder zu einem Reiseziel mit besonderen Impfvorschriften? Unsere zugelassenen CMR-Ärzte bewerten die Risiken, geben personalisierte Empfehlungen und verschreiben eine antimalarische Prophylaxe, wenn sie klinisch angezeigt ist.",
+      "seoTitle": "Online-Reisemedizin-Beratung | Rumänien | antimalarische Prophylaxe",
+      "seoDescription": "Medizinische Reiseberatung für Gebiete mit Malariarisiko oder Reiseziele mit besonderen Impfanforderungen. Unsere zugelassenen CMR-Ärzte bewerten die Risiken, geben personalisierte Empfehlungen und verschreiben bei klinischer Indikation eine Malariaprophylaxe.",
+      "seoKeywords": [
+        "travel health consultation Romania",
+        "malaria prophylaxis online Romania",
+        "travel medicine English Bucharest",
+        "pre-travel consultation Romania expat",
+        "travel vaccination advice English Romania"
+      ],
+      "heroTitle": "Reisemedizinische Beratung — medizinische Bewertung vor der Abreise",
+      "heroDescription": "Reisemedizinische Beurteilung für Gebiete mit Malariarisiko oder Reiseziele mit besonderen Impfanforderungen. Unsere zugelassenen CMR-Ärzte bewerten die Risiken, geben individuelle Empfehlungen und verschreiben eine antimalarische Prophylaxe, wenn dies klinisch indiziert ist.",
+      "detailBody": "<p>Die reisemedizinische Konsultation ist geeignet, wenn Sie in ein Reiseziel mit höherem Infektionsrisiko reisen, Empfehlungen zu Impfungen benötigen oder verstehen müssen, wie sich Ihre Reise auf bestehende Erkrankungen und Behandlungen auswirkt.</p><p>Der Arzt analysiert die Reiseroute, die Reisedauer, die Art der Unterkunft, die geplanten Aktivitäten und Ihre medizinische Vorgeschichte. Falls erforderlich, stellt er ein elektronisches Rezept für eine Malariaprophylaxe aus und erklärt Ihnen die passenden Präventionsmaßnahmen für das gewählte Reiseziel.</p><p>Die Konsultation umfasst auch eine praktische Orientierung zu den empfohlenen Impfungen, den medizinischen Reisedokumenten und dem Vorgehen, falls nach der Rückkehr Symptome auftreten. Wenn eine Impfung gegen Gelbfieber oder andere nur in autorisierten Zentren verabreichte Impfungen erforderlich ist, erhalten Sie klare Hinweise zu den nächsten Schritten.</p>",
+      "ctaLabel": "Termin vereinbaren",
+      "sortOrder": 60,
+      "durationMinutes": 15,
+      "basePriceCents": 16000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:58.930Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jryh9001hakju1d9ezdnl",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee53a000afsjukz2fq2rv",
+          "path": "/api/media/media/6a7b4e71-0d80-4f1a-9542-cb21e20de4aa-0b587e9d-f155-4666-87ae-4a7d6b438e1d-5.webp",
+          "altText": "Consultație de medicină de călătorie — evaluare medicală înainte de plecare"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "DE",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "checkedAt": "2026-09-12T20:20:10.569Z",
+  "endpoint": "/api/services/reinnoire-tratament?countryCode=ro&locale=EN",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee2r00004fsjubgjloy9a",
+      "kind": "GENERAL",
+      "slug": "reinnoire-tratament",
+      "name": "Treatment Renewal — Online Clinical Review and Prescription in Romania",
+      "summary": "Already on a stable medication? Our CMR-registered doctors review your treatment by secure video call and issue electronic prescriptions where clinically appropriate. Available anywhere in Romania, same day.",
+      "seoTitle": "Online treatment renewal | Romania | electronic prescription",
+      "seoDescription": "Renewal reviews for stable, ongoing medication. Our CMR-registered doctors review your treatment by secure video call and issue electronic prescriptions where clinically appropriate. Available anywhere in Romania, same day.",
+      "seoKeywords": [
+        "treatment renewal online Romania",
+        "repeat prescription Romania English",
+        "online doctor medication renewal Romania",
+        "treatment review English Bucharest",
+        "prescription renewal Romania expat"
+      ],
+      "heroTitle": "Treatment Renewal — Online Clinical Review and Prescription in Romania",
+      "heroDescription": "Renewal of stable treatment, with clinical evaluation. Our CMR-authorized doctors review the current regimen, check the safety of continuation, and issue an electronic prescription when this is clinically appropriate.",
+      "detailBody": "<p>Already managing a stable, established condition and need your treatment reviewed and prescription renewed? Our doctors, registered with the Romanian College of Physicians (CMR), conduct a full clinical review of your current treatment by secure video call — and issue an electronic prescription through the Romanian Electronic Prescription System (SIPE) where clinically appropriate.</p><p>No waiting room. No need to travel to a clinic for a condition that has not changed. Same-day appointments available in English.</p><h2>What This Service Is — And What It Is Not</h2><p>This is a clinical treatment review — not an automatic prescription refill. Our doctors conduct a genuine assessment of your current treatment, your condition, any side effects, and any changes to your health since your last review. On the basis of that assessment, they advise on whether your treatment remains appropriate and issue an electronic prescription where clinically indicated.</p><p>This service is appropriate when your condition is stable and your treatment is established. If your symptoms have changed significantly, worsened, or you have new concerns since your last review, a General Medical Consultation is more appropriate.</p><h2>Who This Service Is For</h2><p>This service is appropriate for adults who:</p><p>Are on a stable, established medication and cannot easily access prescription renewal through a registered family doctor</p><p>Do not have a registered Romanian family doctor and cannot easily access prescription renewal through the public system</p><p>Have been managing a long-term condition in another country and are now living in Romania — needing to continue treatment while they establish local healthcare</p><ul><li>Need to renew a prescription quickly without waiting for a clinic appointment</li></ul><p> Prefer the convenience of a video consultation over an in-person visit for a stable, established condition</p><ul><li>Have had their condition reviewed recently and simply need continuation of a working treatment</li></ul><h2>What Your Consultation Includes</h2><p>Full clinical review of your current treatmentYour doctor reviews the condition being treated, your current medication, dosage and duration, symptom control and treatment response, any side effects or safety concerns, and any relevant changes to your medical history since your last review.</p><p>Safety assessmentReview of potential interactions, contraindications, and any changes to your health that may affect the appropriateness of continuing your current treatment.</p><p>Electronic prescription — where clinically appropriateWhen your doctor determines that your treatment remains clinically appropriate, an electronic prescription is issued through the Romanian Electronic Prescription System (SIPE). You present this at any pharmacy of your choice in Romania. For foreign citizens without a Romanian CNP, your passport number is used — no Romanian health insurance required for a private prescription.</p><p>Note: Special-regime prescriptions — covering certain controlled and high-risk medications — cannot be transmitted electronically under Romanian law. Your doctor advises if this applies to your medication.</p><p>Referral or further investigation — where neededIf your review indicates that further assessment, blood tests, or specialist input is needed before treatment can be continued, your doctor advises clearly and coordinates the appropriate next steps on the same day.</p><h2>Conditions Commonly Reviewed</h2><p>This service is appropriate for stable, established conditions including:</p><ul><li>Cardiovascular and metabolic</li><li>Hypertension — blood pressure management and medication review</li><li>Diabetes — ongoing glycaemic management and medication review</li><li>High cholesterol and lipid management</li><li>Thyroid conditions — hypothyroidism and hyperthyroidism monitoring and medication review</li><li>Respiratory</li><li>Asthma — inhaler review and management continuation</li><li>COPD — ongoing management review</li><li>Mental health</li><li>Anxiety and depression — medication review at GP level, subject to clinical assessment</li><li>Mood stabilisation — ongoing management where appropriate at GP level</li><li>Other</li><li>Acid reflux and gastrointestinal conditions — long-term management</li><li>Contraception — review and continuation, subject to clinical assessment</li><li>Dermatological conditions — long-term topical or systemic treatments</li><li>Hormonal conditions — ongoing management</li><li>Chronic pain — review of established management at GP level</li></ul><h2>Prescriptions in Romania — What You Need to Know</h2><p>Romania uses an electronic prescription system (SIPE — Sistemul Informatic de Prescripție Electronică). When your doctor issues a prescription through SIPE, you receive it electronically and present it at any pharmacy in Romania.</p><p>For patients without Romanian public health insurance, prescriptions are dispensed at full private cost. For patients with Romanian public health insurance (asigurare de sănătate), reimbursed medications are dispensed with the applicable co-payment — though reimbursement applies only to prescriptions issued by doctors contracted with the public system. Private prescriptions issued through Global Health are dispensed at full private cost regardless of insurance status.</p><p>For foreign citizens without a Romanian CNP, your passport number is used on the prescription — this is fully accepted at Romanian pharmacies for private prescriptions.</p><h2>Treatment Renewal Without a Registered Family Doctor</h2><p>For anyone in Romania without a registered family doctor — whether a Romanian national between registrations, a recent mover to a new city, an expat, or an international resident — renewing a stable medication requires navigating a system that assumes you already have a doctor. Finding a clinic that accepts new patients, booking a full appointment for a condition that has not changed, and doing this in a language you may not speak well — these are real barriers for a significant number of people in Romania.</p><p>Our service removes this friction. A CMR-registered doctor reviews your treatment by video call and issues an electronic prescription where clinically appropriate — same day, from anywhere in Romania, in English or Romanian.</p><h2>Important Information Before You Book</h2><p>The decision to continue, adjust, or change any treatment is a clinical decision made solely by the doctor after full assessment — it cannot be confirmed or guaranteed in advance</p><p>Special-regime prescriptions covering certain controlled and high-risk medications cannot be transmitted electronically under Romanian law — your doctor advises if this applies to your situation</p><ul><li>Our doctors do not routinely prescribe controlled substances through video consultations</li></ul><p>If your symptoms have changed significantly since your last review, a General Medical Consultation is more appropriate</p><p>Bring any relevant blood test results, specialist letters, or clinical documentation to your consultation — your doctor reviews these in full</p><h2>Frequently Asked Questions</h2><p>Is my prescription automatically renewed after the consultation?No. Treatment renewal requires a clinical review. Your doctor assesses your current condition, treatment response, and any changes since your last review before deciding whether continuation is clinically appropriate.</p><p>Can the doctor renew any medication?Most stable, established medications at GP level can be reviewed and renewed through this service. Special-regime prescriptions covering certain controlled and high-risk medications cannot be transmitted electronically under Romanian law. Our doctors do not routinely prescribe controlled substances through video consultations. Your doctor advises clearly if your medication falls into these categories.</p><p>How do I receive my prescription?When clinically indicated, your doctor issues an electronic prescription through SIPE. You receive it electronically and present it at any pharmacy of your choice in Romania.</p><p>Do I need Romanian health insurance for the prescription?No — for private prescriptions issued through this service. The prescription is dispensed at full private cost. Reimbursed dispensing under Romanian health insurance applies only to prescriptions issued by doctors contracted with the public system.</p><p>What if I am a foreign national without a Romanian CNP?Your passport number is used on the prescription in place of the CNP — this is the standard procedure for foreign citizens in Romania and is fully accepted at Romanian pharmacies for private prescriptions.</p><p>Do I need to bring anything to the consultation?Bring any relevant blood test results, specialist letters, or clinical documentation. If you have a letter or summary from your previous doctor or specialist — including from your home country — this is particularly helpful. Your doctor reviews it in full.</p><p>What if my condition has changed since my last review?If your symptoms have changed significantly, a General Medical Consultation is more appropriate. Your doctor will advise during the consultation if a more detailed assessment is needed.</p><p>Can I use this service if I do not have a Romanian family doctor?Yes. This service is specifically designed for patients — including expats and international residents — who do not have a registered Romanian family doctor but need to continue a stable, established treatment.</p>",
+      "ctaLabel": "Schedule the consultation",
+      "sortOrder": 30,
+      "durationMinutes": 15,
+      "basePriceCents": 6500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:03:00.607Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jsd7u001rakjucqnifyij",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee2r00004fsjubgjloy9a",
+          "path": "/api/media/media/0a6ac8f8-e4ae-42b7-815e-9179981bc3e9-b08d3080-cbb7-49c8-8010-3853b7740a5e-5.webp",
+          "altText": "Reînnoirea tratamentului — evaluare clinică și prescripție online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "EN",
+      "links": [
+        {
+          "id": "cmr8elu9f000g04juy10tz4xm",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "If Condition Has Changed?",
+          "body": "For if condition has changed, our Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi provides dedicated care — see general medical consultation.",
+          "ctaLabel": "Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi",
+          "targetSlug": "medic-online-romania",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8elvk3000i04juxs1fzzg0",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "Related care",
+          "body": "Need ongoing chronic disease management? Our Chronic Disease Management — Ongoing GP-Level Care Online covers this as a dedicated consultation.",
+          "ctaLabel": "Chronic Disease Management — Ongoing GP-Level Care Online",
+          "targetSlug": "boli-cronice-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8elwvh000k04ju0zhc55sz",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "Related care",
+          "body": "Need blood tests or specialist referral? Our Referral Letters & Investigations — Clinical Documentation Online covers this as a dedicated consultation.",
+          "ctaLabel": "Referral Letters & Investigations — Clinical Documentation Online",
+          "targetSlug": "trimiteri-si-investigatii",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8ely65000m04juda9g6ydj",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "If Unsure About Current Treatment?",
+          "body": "For if unsure about current treatment, our Second Medical Opinion — Independent Clinical Assessment provides dedicated care — see second opinion.",
+          "ctaLabel": "Second Medical Opinion — Independent Clinical Assessment",
+          "targetSlug": "a-doua-opinie-medicala",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

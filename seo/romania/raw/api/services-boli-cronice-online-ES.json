@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:11.400Z",
+  "endpoint": "/api/services/boli-cronice-online?countryCode=ro&locale=ES",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee6nb000efsjuk0bbcp7f",
+      "kind": "GENERAL",
+      "slug": "boli-cronice-online",
+      "name": "Gestión de enfermedades crónicas — atención médica continua en línea",
+      "summary": "¿Tiene hipertensión, diabetes, enfermedad tiroidea u otra afección de larga duración? Nuestros médicos autorizados CMR ofrecen seguimiento médico continuo, ajuste del plan terapéutico y coordinación de las investigaciones mediante consulta por video.",
+      "seoTitle": "Gestión de enfermedades crónicas en línea | Rumanía | medic CMR",
+      "seoDescription": "Manejo de la hipertensión, diabetes, enfermedad tiroidea u otras afecciones de larga duración. Nuestros médicos autorizados CMR ofrecen monitorización médica continua, ajuste del plan terapéutico y coordinación de las investigaciones mediante consulta por video.",
+      "seoKeywords": [
+        "chronic disease management online Romania",
+        "hypertension doctor online Romania",
+        "diabetes management online Romania",
+        "thyroid doctor online Romania",
+        "long term condition GP online Romania"
+      ],
+      "heroTitle": "Manejo de las enfermedades crónicas — atención médica continua en línea",
+      "heroDescription": "Manejo de hipertensión, diabetes, enfermedad tiroidea u otras afecciones de larga duración. Nuestros médicos autorizados CMR ofrecen seguimiento médico continuo, ajuste del plan terapéutico y coordinación de las investigaciones mediante consulta por video.",
+      "detailBody": "<p>Este servicio está destinado a pacientes que necesitan una monitorización constante de una afección crónica, no solo una renovación ocasional de la receta. Las consultas hacen seguimiento de la evolución de los síntomas, los resultados de las pruebas, la tolerancia al tratamiento y los objetivos clínicos a largo plazo.</p><p>El médico puede coordinar análisis periódicos, ajustar el tratamiento cuando su estado cambie y redactar cartas médicas o derivaciones cuando sea necesaria la intervención de un especialista. Este enfoque es especialmente útil para pacientes con varios diagnósticos o con difícil acceso a una atención primaria continua.</p><p>El servicio es adecuado para afecciones como hipertensión, diabetes, dislipidemia, asma, enfermedades tiroideas, dolor crónico u otros problemas de salud que requieran supervisión regular y un plan de manejo claro.</p>",
+      "ctaLabel": "Programa la consulta",
+      "sortOrder": 110,
+      "durationMinutes": 15,
+      "basePriceCents": 16000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:37.056Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js46h001kakjui0rkkcbp",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee6nb000efsjuk0bbcp7f",
+          "path": "/api/media/media/56f4b07e-190a-40b4-9960-4ad3273aaaa3-7dc82b47-ee4d-48b6-af96-2a935505c0f8-8.webp",
+          "altText": "Managementul bolilor cronice — îngrijire medicală continuă online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "ES",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

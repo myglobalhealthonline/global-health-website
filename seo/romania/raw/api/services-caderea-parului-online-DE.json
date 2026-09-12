@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:07.429Z",
+  "endpoint": "/api/services/caderea-parului-online?countryCode=ro&locale=DE",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee5ha000bfsju94p8e37o",
+      "kind": "GENERAL",
+      "slug": "caderea-parului-online",
+      "name": "Beratung bei Haarausfall — online, am selben Tag",
+      "summary": "Bemerken Sie dünner werdendes Haar oder verstärkten Haarausfall? Unsere zugelassenen CMR-Ärzte beurteilen die möglichen Ursachen, empfehlen die erforderlichen Untersuchungen und legen einen auf klinischen Daten basierenden Behandlungsplan fest.",
+      "seoTitle": "Online-Beratung bei Haarausfall | Rumänien",
+      "seoDescription": "Bewertung bei Ausdünnung oder starkem Haarausfall. Unsere autorisierten CMR-Ärzte bewerten mögliche Ursachen, empfehlen die notwendigen Untersuchungen und erstellen einen auf klinischen Daten basierenden Managementplan.",
+      "seoKeywords": [
+        "hair loss consultation Romania",
+        "hair loss doctor English Romania",
+        "alopecia online consultation Romania",
+        "finasteride prescription Romania English",
+        "hair thinning doctor Bucharest expat"
+      ],
+      "heroTitle": "Beratung bei Haarausfall — online, noch am selben Tag",
+      "heroDescription": "Beurteilung bei Ausdünnung oder ausgeprägtem Haarausfall. Unsere zugelassenen CMR-Ärzte bewerten die möglichen Ursachen, empfehlen die erforderlichen Untersuchungen und legen auf Grundlage klinischer Daten einen Managementplan fest.",
+      "detailBody": "<p>Haarausfall kann hormonelle, genetische, ernährungsbedingte oder entzündliche Ursachen haben oder mit Stress, einer kürzlich aufgetretenen Erkrankung oder Medikamenten zusammenhängen. Eine frühzeitige medizinische Beurteilung ist wichtig, um reversible Faktoren zu identifizieren und zu entscheiden, ob eine Behandlung erforderlich ist.</p><p>Die Konsultation umfasst ein ausführliches Gespräch über Beginn und Muster des Haarausfalls, die Familienanamnese, begleitende Symptome, bestehende Erkrankungen und die bereits ausprobierten Behandlungen. Falls erforderlich, empfiehlt der Arzt Untersuchungen auf Eisenmangel, Schilddrüsenerkrankungen, hormonelle Ungleichgewichte oder andere medizinische Ursachen.</p><p>Je nach Fall erhalten Sie Empfehlungen zur Pflege der Kopfhaut, zu möglichen Behandlungen, zu Änderungen des Lebensstils und dazu, wann eine fachärztliche dermatologische Abklärung erforderlich ist.</p>",
+      "ctaLabel": "Termin vereinbaren",
+      "sortOrder": 80,
+      "durationMinutes": 15,
+      "basePriceCents": 11500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:38.752Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js6il001nakju2h70qzni",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee5ha000bfsju94p8e37o",
+          "path": "/api/media/media/4d9cf4d8-8a14-475e-b373-4a404428e7d8-9aa0e324-b3f6-4c79-8e8e-4de84aae85e6-1.webp",
+          "altText": "Consultație pentru căderea părului — online, în aceeași zi"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "DE",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

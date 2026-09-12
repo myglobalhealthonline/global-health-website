@@ -1,0 +1,80 @@
+{
+  "checkedAt": "2026-09-12T20:20:12.023Z",
+  "endpoint": "/api/services/evaluare-durere?countryCode=ro&locale=ES",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee7tb000hfsju7tvvjjj1",
+      "kind": "SPECIALIST",
+      "slug": "evaluare-durere",
+      "name": "Evaluación especializada del dolor — consulta online",
+      "summary": "¿El dolor crónico o el dolor intenso le afecta la vida cotidiana? Nuestro especialista autorizado CMR ofrece una evaluación clínica orientada al control del dolor, opciones terapéuticas y la coordinación de las investigaciones necesarias.",
+      "seoTitle": "Evaluación especializada del dolor en línea | Rumanía",
+      "seoDescription": "Evaluación especializada para el dolor crónico o intenso. Nuestro especialista autorizado por el CMR ofrece una evaluación clínica orientada al control del dolor, las opciones terapéuticas y la coordinación de las investigaciones necesarias.",
+      "seoKeywords": [
+        "specialist pain assessment online Romania",
+        "chronic pain specialist online Romania",
+        "anaesthesiologist online Romania",
+        "pain assessment online Romania",
+        "pain management plan Romania online"
+      ],
+      "heroTitle": "Evaluación especializada del dolor — consulta online",
+      "heroDescription": "Evaluación especializada para el dolor crónico o intenso. Nuestro especialista autorizado por el CMR ofrece una evaluación clínica orientada al control del dolor, opciones terapéuticas y la coordinación de las investigaciones necesarias.",
+      "detailBody": "<p>Este servicio está destinado a pacientes con dolor persistente, dolor difícil de controlar o síntomas que requieren un enfoque más especializado que una consulta general. Pueden evaluarse dolores musculoesqueléticos, neuropáticos, posoperatorios, oncológicos o síndromes dolorosos complejos.</p><p>El médico revisa el historial del dolor, los tratamientos probados, los efectos adversos, el impacto sobre el sueño y el funcionamiento, y las exploraciones existentes. Recibirá recomendaciones sobre los siguientes pasos, opciones de tratamiento, seguimiento y derivación a las especialidades relevantes cuando sea necesario.</p><p>La consulta también es útil para aclarar un plan de manejo del dolor ya iniciado, especialmente cuando el tratamiento actual no ofrece el control esperado.</p>",
+      "ctaLabel": "Programa la consulta",
+      "sortOrder": 0,
+      "durationMinutes": 20,
+      "basePriceCents": 23000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:57.253Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jskfn001wakju57erkch6",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee7tb000hfsju7tvvjjj1",
+          "path": "/api/media/media/6d1966ed-d6d7-4262-bed5-fdb6fe9a6b9a-8ce20700-b12e-4416-8aa0-46e95e8d1dff-3.webp",
+          "altText": "Evaluare specializată a durerii — consultație online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "ES",
+      "links": [],
+      "assignedDoctorIds": [],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "UNAVAILABLE",
+        "reasonCode": "NO_APPROVED_DOCTOR",
+        "nextAvailableAt": null
+      }
+    }
+  }
+}

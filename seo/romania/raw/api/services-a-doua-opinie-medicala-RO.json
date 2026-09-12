@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:15.235Z",
+  "endpoint": "/api/services/a-doua-opinie-medicala?countryCode=ro&locale=RO",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee69c000dfsju48a77n99",
+      "kind": "GENERAL",
+      "slug": "a-doua-opinie-medicala",
+      "name": "A doua opinie medicală — evaluare clinică independentă",
+      "summary": "Doriți să verificați un diagnostic, un plan de tratament sau o recomandare medicală importantă? Medicii noștri autorizați CMR oferă o a doua opinie clară, structurată și independentă prin consultație video.",
+      "seoTitle": "A doua opinie medicală online | România | evaluare independentă",
+      "seoDescription": "A doua opinie medicală pentru diagnostic, plan de tratament sau o recomandare medicală importantă. Medicii noștri autorizați CMR oferă o a doua opinie clară, structurată și independentă prin consultație video.",
+      "seoKeywords": [
+        "second medical opinion Romania",
+        "second opinion doctor online Romania",
+        "independent medical opinion Romania",
+        "second opinion diagnosis Romania",
+        "al doilea aviz medical online"
+      ],
+      "heroTitle": "A doua opinie medicală — evaluare clinică independentă",
+      "heroDescription": "A doua opinie medicală pentru diagnostic, plan de tratament sau o recomandare medicală importantă. Medicii noștri autorizați CMR oferă o a doua opinie clară, structurată și independentă prin consultație video.",
+      "detailBody": "<p>O a doua opinie este utilă atunci când ați primit un diagnostic nou, un tratament complex sau recomandarea unei intervenții și vreți să înțelegeți mai bine opțiunile disponibile. Consultația se bazează pe analiza simptomelor, istoricului și documentelor medicale pe care le aduceți.</p><p>Medicul vă explică în termeni clari ce este bine susținut de datele existente, ce puncte rămân neclare și dacă sunt necesare investigații suplimentare, monitorizare sau trimitere către alt specialist. Scopul nu este să contrazică automat un alt clinician, ci să vă ofere o evaluare riguroasă și utilă pentru luarea unei decizii informate.</p><p>Serviciul este adecvat pentru întrebări privind diagnostice cronice sau acute, tratamente medicamentoase, rezultate de imagistică sau analize, recomandări chirurgicale și planuri terapeutice cu impact major asupra sănătății dumneavoastră.</p>",
+      "ctaLabel": "Programează consultația",
+      "sortOrder": 50,
+      "durationMinutes": 15,
+      "basePriceCents": 11500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:52.222Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js4yi001lakjuctun11mg",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee69c000dfsju48a77n99",
+          "path": "/api/media/media/37ca81f1-cad2-4868-bc85-afb3f83c3a65-bdc950d1-c547-4347-bb50-5c64e4522dd2-9.webp",
+          "altText": "A doua opinie medicală — evaluare clinică independentă"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "RO",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

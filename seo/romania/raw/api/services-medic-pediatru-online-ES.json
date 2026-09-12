@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:12.227Z",
+  "endpoint": "/api/services/medic-pediatru-online?countryCode=ro&locale=ES",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee7fb000gfsjuxxgacs5y",
+      "kind": "GENERAL",
+      "slug": "medic-pediatru-online",
+      "name": "Consulta pediátrica de medicina general — en línea, el mismo día",
+      "summary": "¿Su hijo está enfermo o necesita consejo médico rápido? Nuestros médicos autorizados CMR evalúan los síntomas del niño mediante una consulta por video segura y le ofrecen recomendaciones claras sobre los pasos siguientes.",
+      "seoTitle": "Consulta pediátrica online | Rumanía | medic CMR",
+      "seoDescription": "Consultas pediátricas rápidas y consejo médico para niños. Nuestros médicos autorizados por el CMR evalúan los síntomas del niño mediante una consulta de video segura y le ofrecen recomendaciones claras para los siguientes pasos.",
+      "seoKeywords": [
+        "paediatric GP online Romania",
+        "children's doctor online Romania",
+        "paediatric consultation online Romania",
+        "online doctor child Romania",
+        "English paediatrician online Romania"
+      ],
+      "heroTitle": "Consulta pediátrica de medicina general — en línea, el mismo día",
+      "heroDescription": "Consultas pediátricas rápidas y consejo médico para niños. Nuestros médicos autorizados por el CMR evalúan los síntomas del niño mediante una consulta en vídeo segura y le ofrecen recomendaciones claras sobre los pasos siguientes.",
+      "detailBody": "<p>La consulta pediátrica de medicina general es adecuada para problemas frecuentes como fiebre, tos, dolor de garganta, erupciones cutáneas, síntomas digestivos, infecciones menores o preguntas relacionadas con la evolución de una enfermedad ya conocida.</p><p>El médico revisa los síntomas, el historial relevante, la medicación actual y las señales de alarma. Recibirá recomendaciones sobre el tratamiento en casa, indicaciones sobre la monitorización y, si es necesario, orientación para pruebas adicionales o una evaluación física urgente.</p><p>El servicio también es útil para las familias que desean una segunda opinión rápida, explicaciones sobre resultados médicos o asesoramiento sobre el momento adecuado para acudir a urgencias, al pediatra o al médico de familia.</p>",
+      "ctaLabel": "Programa la consulta",
+      "sortOrder": 40,
+      "durationMinutes": 15,
+      "basePriceCents": 18500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:48.866Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js5qj001makju0g2lhz5c",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee7fb000gfsjuxxgacs5y",
+          "path": "/api/media/media/0b172017-a1c5-4589-adb6-c371c7367581-0852ef25-d932-41fe-ae97-baad84b5612c-3.webp",
+          "altText": "Consultație pediatrică de medicină generală — online, în aceeași zi"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "ES",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

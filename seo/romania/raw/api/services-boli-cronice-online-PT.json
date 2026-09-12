@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:13.302Z",
+  "endpoint": "/api/services/boli-cronice-online?countryCode=ro&locale=PT",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee6nb000efsjuk0bbcp7f",
+      "kind": "GENERAL",
+      "slug": "boli-cronice-online",
+      "name": "Gestão de doenças crónicas — cuidados médicos contínuos online",
+      "summary": "Tem hipertensão, diabetes, doença da tiroide ou outra condição de longa duração? Os nossos médicos autorizados CMR oferecem monitorização médica contínua, ajuste do plano terapêutico e coordenação dos exames por videoconsulta.",
+      "seoTitle": "Gestão das doenças crónicas online | Roménia | médico CMR",
+      "seoDescription": "Gestão da hipertensão, diabetes, doença da tiroide ou outras condições de longa duração. Os nossos médicos autorizados pela CMR oferecem monitorização médica contínua, ajuste do plano terapêutico e coordenação dos exames através de consulta por vídeo.",
+      "seoKeywords": [
+        "chronic disease management online Romania",
+        "hypertension doctor online Romania",
+        "diabetes management online Romania",
+        "thyroid doctor online Romania",
+        "long term condition GP online Romania"
+      ],
+      "heroTitle": "Gestão de doenças crônicas — cuidados médicos contínuos online",
+      "heroDescription": "Gestão da hipertensão, diabetes, doença da tiroide ou outras condições de longa duração. Os nossos médicos autorizados CMR oferecem monitorização médica contínua, ajuste do plano terapêutico e coordenação dos exames por consulta de vídeo.",
+      "detailBody": "<p>Este serviço destina-se a pacientes que necessitam de monitorização consistente para uma condição crónica, e não apenas de uma renovação ocasional da receita. As consultas acompanham a evolução dos sintomas, os resultados dos exames, a tolerância ao tratamento e os objetivos clínicos a longo prazo.</p><p>O médico pode coordenar análises periódicas, ajustar o tratamento quando o seu estado se altera e redigir cartas médicas ou encaminhamentos quando for necessária a intervenção de um especialista. A abordagem é especialmente útil para pacientes com vários diagnósticos ou com acesso difícil a cuidados primários contínuos.</p><p>O serviço é adequado para condições como hipertensão, diabetes, dislipidemia, asma, doenças da tiroide, dor crónica ou outros problemas de saúde que exijam supervisão regular e um plano de gestão claro.</p>",
+      "ctaLabel": "Agende a consulta",
+      "sortOrder": 110,
+      "durationMinutes": 15,
+      "basePriceCents": 16000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:37.056Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js46h001kakjui0rkkcbp",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee6nb000efsjuk0bbcp7f",
+          "path": "/api/media/media/56f4b07e-190a-40b4-9960-4ad3273aaaa3-7dc82b47-ee4d-48b6-af96-2a935505c0f8-8.webp",
+          "altText": "Managementul bolilor cronice — îngrijire medicală continuă online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "PT",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

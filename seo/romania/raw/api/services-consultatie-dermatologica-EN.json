@@ -1,0 +1,123 @@
+{
+  "checkedAt": "2026-09-12T20:20:09.453Z",
+  "endpoint": "/api/services/consultatie-dermatologica?countryCode=ro&locale=EN",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee4p90009fsju5xgwdoao",
+      "kind": "GENERAL",
+      "slug": "consultatie-dermatologica",
+      "name": "Skin Consultation — Online Assessment in English",
+      "summary": "Rash, eczema, acne, or skin concern? Our CMR-registered doctors assess skin conditions by secure video call in English. Same-day appointments available anywhere in Romania.",
+      "seoTitle": "Skin Consultation Online | Romania | English Doctor | Same Day",
+      "seoDescription": "Assessment for rash, eczema, acne, and other skin concerns. Our CMR-registered doctors assess skin conditions by secure video call in English. Same-day appointments available anywhere in Romania.",
+      "seoKeywords": [
+        "skin consultation online Romania",
+        "English doctor skin condition Romania",
+        "eczema doctor online Romania",
+        "acne consultation English Bucharest",
+        "rash doctor online Romania expat"
+      ],
+      "heroTitle": "Skin Consultation — Online Assessment in English",
+      "heroDescription": "Evaluation for rashes, eczema, acne, itching, or other skin problems. Our licensed CMR doctors assess symptoms through video consultation and recommend the appropriate treatment or next steps.",
+      "detailBody": "<p>Skin conditions are among the most visible and most undertreated medical concerns. Whether it is a rash that appeared this morning, an eczema flare that has been building for weeks, acne that is affecting your confidence, or a lesion you have been meaning to have checked — most skin concerns can be assessed clinically by video call by an experienced doctor.</p><p>Accessing a dermatologist in Romania takes time — even in major cities, private dermatology waiting times are typically several weeks for non-urgent conditions. For common skin conditions, GP-level assessment covers the majority of clinical need without requiring specialist dermatology input. Our doctors, registered with the Romanian College of Physicians (CMR), offer comprehensive skin assessments by secure video call — identifying your condition, advising on evidence-based management, and coordinating dermatology referral where needed. Same day, from anywhere in Romania.</p><h2>Who This Service Is For</h2><p>This consultation is appropriate for adults and children presenting with:</p><ul><li>A new rash, skin change, or lesion that needs clinical assessment</li><li>An existing skin condition that is flaring or not responding to current treatment</li><li>Acne — from mild to moderate presentations requiring structured medical management</li><li>Eczema or atopic dermatitis — flare assessment and ongoing management</li><li>Psoriasis — assessment and management at GP level</li><li>A mole or skin lesion that has changed or is causing concern</li><li>Allergic skin reactions — urticaria, contact dermatitis, or drug reactions</li><li>Scalp conditions — seborrhoeic dermatitis, scalp psoriasis, or fungal conditions</li><li>Skin infections — bacterial, viral, or fungal</li><li>Chronic skin conditions requiring ongoing GP-level management</li><li>Patients who need a dermatology referral letter</li></ul><h2>Conditions Commonly Assessed</h2><ul><li>Inflammatory conditions</li><li>Eczema and atopic dermatitis — flare management, trigger identification, ongoing care</li><li>Psoriasis — plaque, guttate, and scalp presentations at GP level</li><li>Seborrhoeic dermatitis — scalp and facial presentation</li><li>Rosacea — assessment and management</li><li>Perioral dermatitis</li><li>Acne</li><li>Mild to moderate acne — comedonal, inflammatory, and mixed</li><li>Acne in teenagers and adults</li><li>Hormonal acne in women — assessed alongside hormonal assessment where indicated</li><li>Post-acne pigmentation and scarring assessment</li><li>Acne management review — patients already on treatment who need clinical review</li></ul><p>Note: Isotretinoin for severe acne requires dermatologist assessment and supervision in Romania and cannot be initiated through this service. Your doctor advises on dermatology referral if your presentation warrants isotretinoin consideration.</p><ul><li>Allergic and reactive conditions</li><li>Urticaria — acute and chronic hives</li><li>Allergic contact dermatitis — assessment and allergen avoidance advice</li><li>Drug reactions affecting the skin</li><li>Angioedema — assessment and management at GP level</li><li>Food allergy-related skin presentations</li><li>Infections</li><li>Impetigo — bacterial skin infection</li><li>Cellulitis — assessment and management with escalation where indicated</li><li>Folliculitis</li><li>Fungal skin infections — tinea corporis, tinea pedis, tinea versicolor</li><li>Molluscum contagiosum</li><li>Warts and verrucae</li><li>Herpes simplex — cold sores and cutaneous herpes</li><li>Shingles — assessment and management</li><li>Pigmentation and lesions</li><li>Moles and skin lesions that have changed in size, shape, colour, or texture</li><li>Post-inflammatory hyperpigmentation</li><li>Melasma — assessment and management</li><li>Vitiligo — assessment and referral where indicated</li><li>Scalp conditions</li><li>Seborrhoeic dermatitis of the scalp</li><li>Scalp psoriasis</li><li>Scalp folliculitis</li><li>Tinea capitis — fungal scalp infection</li><li>Paediatric skin conditions</li><li>Eczema in infants and children</li><li>Nappy rash and infant skin concerns</li><li>Childhood viral rashes — assessment and guidance for parents</li><li>Impetigo and skin infections in children</li><li>Molluscum contagiosum in children</li></ul><h2>What Your Consultation Includes</h2><p>Visual clinical assessment Skin conditions are uniquely suited to video consultation — your doctor can observe the lesion, rash, or skin change directly during the call and conduct a structured clinical assessment. Good lighting and a clear camera view significantly improve the quality of assessment — your doctor guides you on positioning during the call.</p><p>Comprehensive history Your doctor reviews the onset, progression, distribution, associated symptoms, triggers, previous treatments, relevant medical history, medications, and family history of skin conditions.</p><p>Diagnosis and management plan Based on the assessment, your doctor advises on the most likely diagnosis, the appropriate management approach, and what to expect from treatment — including how to monitor your condition and when to seek further review.</p><p>Electronic prescription — where clinically appropriate When clinically indicated, your doctor issues an electronic prescription through the Romanian Electronic Prescription System (SIPE). You present it at any pharmacy of your choice in Romania.</p><p>Note: Special-regime prescriptions covering certain medications cannot be transmitted electronically under Romanian law. Your doctor advises if this applies to your situation.</p><p>Investigation requests where indicated Where blood tests — including allergy panels or inflammatory markers — are clinically indicated, your doctor issues the request on the same day.</p><p>Dermatology referral where needed Where specialist dermatology assessment is required — including suspicious lesions, severe or treatment-resistant conditions, or conditions requiring biopsy or patch testing — your doctor issues a formal referral letter and advises on urgency.</p><h2>Skin Lesions — When to Act Promptly</h2><p>Any change in a mole or skin lesion warrants clinical assessment. The ABCDE criteria are the standard clinical guide:</p><ul><li>A — Asymmetry — one half does not match the other</li><li>B — Border — irregular, ragged, or blurred edges</li><li>C — Colour — variation in colour within the lesion</li><li>D — Diameter — larger than 6mm</li><li>E — Evolution — any change in size, shape, colour, or any new symptom</li></ul><p>If your lesion meets any of these criteria, book an assessment promptly. Your doctor assesses visually and advises on whether urgent in-person dermatology assessment is needed.</p><p>Skin cancer diagnosis requires in-person dermoscopy and biopsy where indicated. Video consultation allows clinical assessment and urgent referral — it does not replace in-person specialist assessment for suspicious lesions.</p><h2>Preparing for Your Skin Consultation</h2><p>Getting the most from a video-based skin assessment requires a little preparation:</p><p>Good lighting — natural daylight or a lamp directed at the affected area gives your doctor the clearest view</p><p>Close-up photos — take clear photos of the affected area before your consultation — these can be shared during the call and help your doctor assess changes over time</p><ul><li>Multiple angles — show the lesion or rash from multiple angles during the call</li></ul><p>Note the history — when it started, how it has changed, what makes it better or worse, and what you have already tried</p><h2>Skin Conditions and Romania — What to Expect</h2><p>Dermatology in Romania is well-developed in the private sector — particularly in Bucharest, Cluj-Napoca, and Timișoara. However, English-speaking dermatologists are limited even in major cities, and waiting times at private dermatology clinics are typically several weeks for non-urgent conditions.</p><p>For common skin conditions — eczema, acne, rashes, and infections — GP-level assessment covers the majority of clinical need. Our service provides this assessment same day, from anywhere in Romania, in English, Romanian. When specialist dermatology input is genuinely needed, your doctor issues a formal referral letter on the same day.</p><h2>Frequently Asked Questions</h2><p>Can a skin condition really be assessed by video call? Yes — for the vast majority of presentations. Dermatology is one of the medical specialties most suited to visual assessment and a video consultation allows your doctor to observe the condition directly. Where a condition cannot be adequately assessed remotely — suspicious lesions requiring dermoscopy, conditions requiring biopsy or patch testing — your doctor advises clearly and coordinates in-person referral.</p><p>Can I get acne treatment through this service? Yes — for mild to moderate acne. Your doctor conducts a full assessment and advises on the most appropriate management approach. Isotretinoin requires dermatologist assessment and supervision in Romania and cannot be initiated through this service. If your acne warrants isotretinoin consideration, your doctor advises on dermatology referral.</p><p>I have a mole that has changed — how urgent is this? Changed moles warrant prompt clinical assessment. Book a consultation and show your doctor the lesion during the video call. Your doctor assesses using standard clinical criteria and advises on whether urgent in-person dermatology assessment is needed.</p><p>Can I use this service for my child's eczema? Yes. Eczema in infants and children is one of the most common paediatric skin presentations and is a core part of this service.</p><p>Can I get a dermatology referral through this service? Yes. Where specialist dermatology input is clinically indicated, your doctor issues a formal referral letter on the same day — addressed to a dermatologist or clinic of your choice.</p><p>What if my rash is spreading rapidly or I feel unwell alongside it? A rapidly spreading rash accompanied by fever, difficulty breathing, facial swelling, or feeling seriously unwell is a medical emergency. Call 112 or go to your nearest emergency department immediately — do not book a video consultation.</p><p>Do I need Romanian health insurance? No. This is a private-pay service. Prescriptions issued through this service are dispensed at full private cost regardless of insurance status.</p><p>I am not in Bucharest — can I still use this service? Yes. This service is available from anywhere in Romania. All you need is a stable internet connection and a device with a camera.</p>",
+      "ctaLabel": "Schedule the consultation",
+      "sortOrder": 70,
+      "durationMinutes": 15,
+      "basePriceCents": 11500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:53.900Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8k8s0s00050wjuk7vugroe",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee4p90009fsju5xgwdoao",
+          "path": "/api/media/media/6ab17226-d628-43a2-89c0-2cd95a1865e8-consulta-ie-dermatologic-de-prim-inten-ie-evaluare-online.webp",
+          "altText": "Consultație dermatologică de primă intenție — evaluare online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "EN",
+      "links": [
+        {
+          "id": "cmr8emlj4001m04juwlu0wm9b",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "Non-skin Concerns During Same Visit?",
+          "body": "For non-skin concerns during same visit, our Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi provides dedicated care — see general medical consultation.",
+          "ctaLabel": "Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi",
+          "targetSlug": "medic-online-romania",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8emmu9001o04jul0h6na4u",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "Hormonal Acne in Women?",
+          "body": "For hormonal acne in women, our Women's Health — Confidential Online Assessment in English provides dedicated care — see women's health.",
+          "ctaLabel": "Women's Health — Confidential Online Assessment in English",
+          "targetSlug": "sanatatea-femeii-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8emo4w001q04jutbpm2j1o",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "Scalp Conditions and Hair Loss?",
+          "body": "For scalp conditions and hair loss, our Hair Loss Consultation — Online, Same Day provides dedicated care — see hair loss consultation.",
+          "ctaLabel": "Hair Loss Consultation — Online, Same Day",
+          "targetSlug": "caderea-parului-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8empg2001s04ju9xqueu5n",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "Related care",
+          "body": "Need dermatology referral? Our Referral Letters & Investigations — Clinical Documentation Online covers this as a dedicated consultation.",
+          "ctaLabel": "Referral Letters & Investigations — Clinical Documentation Online",
+          "targetSlug": "trimiteri-si-investigatii",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

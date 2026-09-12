@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:06.855Z",
+  "endpoint": "/api/services/trimiteri-si-investigatii?countryCode=ro&locale=CS",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee71b000ffsju3t9my2rm",
+      "kind": "GENERAL",
+      "slug": "trimiteri-si-investigatii",
+      "name": "Lékařské zprávy, doporučení a vyšetření — online koordinace",
+      "summary": "Potřebujete lékařskou zprávu, doporučení na vyšetření nebo doporučení ke specialistovi? Naši lékaři s licencí CMR mohou posoudit situaci a vystavit příslušnou klinickou dokumentaci, je-li to indikováno.",
+      "seoTitle": "Lékařské zprávy a vyšetření online | Rumunsko | lékař CMR",
+      "seoDescription": "Lékařské zprávy, doporučení na vyšetření a odeslání ke specialistům. Naši lékaři s autorizací CMR mohou posoudit situaci a vystavit příslušnou klinickou dokumentaci, je-li to indikováno.",
+      "seoKeywords": [
+        "referral letter Romania online doctor",
+        "specialist referral Romania online",
+        "blood test request Romania online",
+        "investigation request online Romania",
+        "private referral Romania doctor"
+      ],
+      "heroTitle": "Lékařské zprávy, doporučení a vyšetření — online koordinace",
+      "heroDescription": "Lékařské zprávy, doporučení na vyšetření a odeslání ke specialistům. Naši autorizovaní lékaři CMR mohou vyhodnotit situaci a vystavit příslušnou klinickou dokumentaci, je-li to indikováno.",
+      "detailBody": "<p>Tato služba je užitečná tehdy, když máte příznaky nebo zdravotní anamnézu, které vyžadují objasnění pomocí vyšetření, zobrazovacích metod nebo odborné konzultace, ale přesně nevíte, jaký je správný postup.</p><p>Lékař zhodnotí zdravotní problém, stávající dokumentaci a cíl konzultace, poté doporučí vhodná vyšetření nebo vypracuje jasný lékařský dopis pro příslušného specialistu či službu. Pokud jsou potřeba pouze vysvětlení k již provedenému souboru vyšetření, obdržíte interpretaci a praktické doporučení.</p><p>Služba může být užitečná také pro pacienty, kteří potřebují koordinaci mezi více poskytovateli, nebo pro ty, kteří chtějí přijít ke specialistovi s dobře strukturovanou klinickou dokumentací.</p>",
+      "ctaLabel": "Naplánujte konzultaci",
+      "sortOrder": 150,
+      "durationMinutes": 20,
+      "basePriceCents": 16000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:50.543Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js1pu001jakjuc36whnoh",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee71b000ffsju3t9my2rm",
+          "path": "/api/media/media/98c460da-4161-4880-8b9f-6f66993c5144-7d46f6d9-5b91-4ee6-a2df-42b673052afe-3.webp",
+          "altText": "Scrisori medicale, trimiteri și investigații — coordonare online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "CS",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

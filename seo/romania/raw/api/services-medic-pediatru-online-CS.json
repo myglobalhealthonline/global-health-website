@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:06.294Z",
+  "endpoint": "/api/services/medic-pediatru-online?countryCode=ro&locale=CS",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee7fb000gfsjuxxgacs5y",
+      "kind": "GENERAL",
+      "slug": "medic-pediatru-online",
+      "name": "Pediatrická konzultace všeobecného lékařství — online, tentýž den",
+      "summary": "Je vaše dítě nemocné nebo potřebujete rychlou lékařskou radu? Naši lékaři s oprávněním CMR posoudí příznaky dítěte prostřednictvím zabezpečené videokonzultace a poskytnou vám jasná doporučení pro další kroky.",
+      "seoTitle": "Online pediatrická konzultace | Rumunsko | lékař CMR",
+      "seoDescription": "Rychlé pediatrické konzultace a lékařská rada pro děti. Naši lékaři s licencí CMR posoudí příznaky dítěte prostřednictvím zabezpečené videokonzultace a poskytnou vám jasná doporučení pro další kroky.",
+      "seoKeywords": [
+        "paediatric GP online Romania",
+        "children's doctor online Romania",
+        "paediatric consultation online Romania",
+        "online doctor child Romania",
+        "English paediatrician online Romania"
+      ],
+      "heroTitle": "Pediatrická konzultace všeobecného lékařství — online, tentýž den",
+      "heroDescription": "Rychlé pediatrické konzultace a lékařské poradenství pro děti. Naši licencovaní lékaři CMR posoudí příznaky dítěte prostřednictvím zabezpečené videokonzultace a poskytnou vám jasná doporučení pro další kroky.",
+      "detailBody": "<p>Obecná pediatrická konzultace je vhodná pro časté obtíže, jako jsou horečka, kašel, bolest v krku, kožní vyrážky, zažívací příznaky, drobné infekce nebo dotazy týkající se průběhu již známého onemocnění.</p><p>Lékař zkontroluje příznaky, relevantní anamnézu, současně užívané léky a varovné příznaky. Obdržíte doporučení ohledně domácí léčby, pokyny k monitorování a v případě potřeby doporučení k dalším vyšetřením nebo k urgentnímu fyzickému vyšetření.</p><p>Služba je užitečná i pro rodiny, které chtějí rychlé druhé stanovisko, vysvětlení k lékařským výsledkům nebo poradenství, kdy je vhodné jít na pohotovost, k pediatrovi či k praktickému lékaři.</p>",
+      "ctaLabel": "Naplánujte konzultaci",
+      "sortOrder": 40,
+      "durationMinutes": 15,
+      "basePriceCents": 18500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:48.866Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js5qj001makju0g2lhz5c",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee7fb000gfsjuxxgacs5y",
+          "path": "/api/media/media/0b172017-a1c5-4589-adb6-c371c7367581-0852ef25-d932-41fe-ae97-baad84b5612c-3.webp",
+          "altText": "Consultație pediatrică de medicină generală — online, în aceeași zi"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "CS",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

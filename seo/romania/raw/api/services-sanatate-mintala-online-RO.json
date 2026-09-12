@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:16.347Z",
+  "endpoint": "/api/services/sanatate-mintala-online?countryCode=ro&locale=RO",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee4ba0008fsju6xyj8lnh",
+      "kind": "GENERAL",
+      "slug": "sanatate-mintala-online",
+      "name": "Evaluare de sănătate mintală — consultație online confidențială",
+      "summary": "Vă confruntați cu anxietate, depresie, burnout, insomnie sau altă dificultate emoțională? Medicii noștri autorizați CMR oferă evaluare confidențială, recomandări și coordonarea pașilor următori prin consultație video.",
+      "seoTitle": "Consultație de sănătate mintală online | România | confidențial",
+      "seoDescription": "Evaluare confidențială pentru anxietate, depresie, burnout, insomnie sau alte dificultăți emoționale. Medicii noștri autorizați CMR oferă evaluare confidențială, recomandări și coordonarea pașilor următori prin consultație video.",
+      "seoKeywords": [
+        "mental health online Romania",
+        "anxiety doctor online Romania English",
+        "depression consultation English Bucharest",
+        "burnout doctor online Romania",
+        "mental health GP online Romania expat"
+      ],
+      "heroTitle": "Evaluare de sănătate mintală — consultație online confidențială",
+      "heroDescription": "Evaluare confidențială pentru anxietate, depresie, burnout, insomnie sau alte dificultăți emoționale. Medicii noștri autorizați CMR oferă evaluare confidențială, recomandări și coordonarea pașilor următori prin consultație video.",
+      "detailBody": "<p>Consultația este potrivită pentru simptome precum anxietate, stres intens, dispoziție depresivă, atacuri de panică, epuizare, tulburări de somn sau dificultăți de funcționare care afectează viața de zi cu zi.</p><p>Medicul discută istoricul simptomelor, factorii declanșatori, tratamentele anterioare, impactul asupra muncii și relațiilor și eventualele semne de risc care necesită intervenție rapidă. În funcție de caz, veți primi recomandări de management inițial, scrisori medicale, trimitere către psihiatru sau psiholog și, unde este adecvat clinic, plan pentru monitorizare continuă.</p><p>Serviciul oferă un spațiu clar și confidențial pentru a înțelege ce vi se întâmplă și care este nivelul de ajutor de care aveți nevoie în continuare.</p>",
+      "ctaLabel": "Programează consultația",
+      "sortOrder": 100,
+      "durationMinutes": 20,
+      "basePriceCents": 15000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:42.108Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js05y001iakju9hywq5cw",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee4ba0008fsju6xyj8lnh",
+          "path": "/api/media/media/e240ef2a-0048-4a27-8b29-eaeee3d22e58-ff3e0b2e-b46a-4b32-9218-31a8cc87b0c1-3.webp",
+          "altText": "Evaluare de sănătate mintală — consultație online confidențială"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "RO",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

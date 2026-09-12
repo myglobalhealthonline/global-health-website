@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:08.772Z",
+  "endpoint": "/api/services/sanatatea-femeii-online?countryCode=ro&locale=DE",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee3x70007fsju2pfu3ygw",
+      "kind": "GENERAL",
+      "slug": "sanatatea-femeii-online",
+      "name": "Frauengesundheit — vertrauliche Online-Bewertung",
+      "summary": "Haben Sie Fragen zu Verhütung, prämenstruellem Syndrom, Menopause, hormoneller Gesundheit oder anderen häufigen gynäkologischen Beschwerden? Unsere vom CMR autorisierten Ärzte bieten eine vertrauliche Beurteilung und klare medizinische Empfehlungen per Videosprechstunde.",
+      "seoTitle": "Online-Frauengesundheitsberatung | Rumänien | vertraulich",
+      "seoDescription": "Vertrauliche Beratungen zu Verhütung, prämenstruellem Syndrom, Menopause, hormoneller Gesundheit und anderen häufigen gynäkologischen Symptomen. Unsere von der CMR autorisierten Ärzte bieten eine vertrauliche Beurteilung und klare medizinische Empfehlungen per Videoberatung.",
+      "seoKeywords": [
+        "women's health online Romania",
+        "English doctor women's health Bucharest",
+        "contraception online Romania",
+        "menopause consultation English Romania",
+        "PCOS doctor online Romania expat"
+      ],
+      "heroTitle": "Frauengesundheit — vertrauliche Online-Bewertung",
+      "heroDescription": "Vertrauliche Beratungen zu Verhütung, prämenstruellem Syndrom, Wechseljahren, hormoneller Gesundheit und anderen häufigen gynäkologischen Beschwerden. Unsere zugelassenen CMR-Ärzte bieten per Video-Sprechstunde eine vertrauliche Beurteilung und klare medizinische Empfehlungen.",
+      "detailBody": "<p>Die Konsultation eignet sich für Beschwerden wie unregelmäßige oder schmerzhafte Zyklen, Symptome der Perimenopause und Menopause, den Verdacht auf ein hormonelles Ungleichgewicht, Fragen zur Kontrazeption, wiederkehrende Harnwegsinfektionen oder andere häufige Anliegen im Zusammenhang mit der Frauengesundheit.</p><p>Der Arzt bespricht die Symptome im Zusammenhang mit der menstruellen, reproduktiven, metabolischen und allgemeinen Vorgeschichte und empfiehlt dann die Untersuchungen, das therapeutische Vorgehen oder bei Bedarf die Überweisung an einen Gynäkologen. Wenn Sie bereits Befunde oder Arztbriefe haben, können diese während der Konsultation überprüft werden.</p><p>Der Service ist auch für Frauen nützlich, die vor der Entscheidung, ob eine persönliche gynäkologische Untersuchung erforderlich ist, eine klare medizinische Einschätzung wünschen, sowie für Expats oder Patientinnen mit erschwertem Zugang zu fortlaufender Versorgung.</p>",
+      "ctaLabel": "Konsultation vereinbaren",
+      "sortOrder": 140,
+      "durationMinutes": 20,
+      "basePriceCents": 16000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:03:03.963Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jrxp8001gakjupdim1ccg",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee3x70007fsju2pfu3ygw",
+          "path": "/api/media/media/b65d7e63-2548-4c9e-9564-471a6a64e6c6-31480589-8bde-459d-a8f9-3b9507b618bd-4.webp",
+          "altText": "Sănătatea femeii — evaluare online confidențială"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "DE",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

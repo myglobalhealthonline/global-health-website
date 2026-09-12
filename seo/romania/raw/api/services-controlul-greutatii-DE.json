@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:07.782Z",
+  "endpoint": "/api/services/controlul-greutatii?countryCode=ro&locale=DE",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee3510005fsjunqgfmxn2",
+      "kind": "GENERAL",
+      "slug": "controlul-greutatii",
+      "name": "Gewichtsmanagement — medizinische Bewertung und personalisierter Plan",
+      "summary": "Haben Sie Schwierigkeiten abzunehmen, trotz Änderungen Ihres Lebensstils? Unsere zugelassenen CMR-Ärzte bewerten medizinische, metabolische und verhaltensbezogene Faktoren, die das Gewicht beeinflussen, und erstellen einen realistischen Behandlungsplan.",
+      "seoTitle": "Online-Gewichtsmanagement | Rumänien | medizinische Beurteilung",
+      "seoDescription": "Medizinisches Gewichtsmanagement, über Ernährung und Lebensstil hinaus. Unsere von der CMR zugelassenen Ärzte bewerten die medizinischen, metabolischen und verhaltensbezogenen Faktoren, die das Gewicht beeinflussen, und erstellen einen realistischen Managementplan.",
+      "seoKeywords": [
+        "weight management online Romania",
+        "online doctor weight loss Romania",
+        "obesity consultation Bucharest English",
+        "metabolic health online Romania",
+        "weight loss doctor Romania expat"
+      ],
+      "heroTitle": "Gewichtsmanagement — medizinische Bewertung und individueller Plan",
+      "heroDescription": "Medizinisches Gewichtsmanagement, jenseits von Ernährung und Lebensstil. Unsere autorisierten CMR-Ärzte bewerten die medizinischen, metabolischen und verhaltensbezogenen Faktoren, die das Gewicht beeinflussen, und erstellen einen realistischen Managementplan.",
+      "detailBody": "<p>Die Gewichtskontrolle hängt nicht nur vom Willen ab. Hormonelle Störungen, das metabolische Syndrom, Insulinresistenz, unzureichender Schlaf, Medikamente oder Ernährungsgewohnheiten können erheblich zur Gewichtszunahme und zur Schwierigkeit beim Abnehmen beitragen.</p><p>Die Konsultation umfasst die Beurteilung der Gewichtsverlaufsgeschichte, früherer Diäten, des Aktivitätsniveaus, des Schlafs, hormoneller Symptome und der verfügbaren medizinischen Befunde. Der Arzt kann Untersuchungen, Änderungen des Lebensstils, Überwachung oder die Weiterleitung an relevante Fachrichtungen empfehlen, wenn medizinische Ursachen vorliegen, die abgeklärt werden müssen.</p><p>Ziel ist es, dass Sie einen personalisierten, realistischen und sicheren Plan erhalten, der auf Ihrem klinischen Kontext basiert und nicht nur allgemeine Empfehlungen, die die tatsächliche Ursache des Problems nicht berücksichtigen.</p>",
+      "ctaLabel": "Termin vereinbaren",
+      "sortOrder": 120,
+      "durationMinutes": 15,
+      "basePriceCents": 15000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:03:02.284Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jsdzv001sakju8jltsy8i",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee3510005fsjunqgfmxn2",
+          "path": "/api/media/media/5bb9786f-3a23-44cb-ac81-2df8115fd74a-59954e92-eced-4821-8e0f-1f9d02346174-13.webp",
+          "altText": "Managementul greutății — evaluare medicală și plan personalizat"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "DE",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

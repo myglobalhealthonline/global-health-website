@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:05.477Z",
+  "endpoint": "/api/services/a-doua-opinie-medicala?countryCode=ro&locale=CS",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee69c000dfsju48a77n99",
+      "kind": "GENERAL",
+      "slug": "a-doua-opinie-medicala",
+      "name": "Druhý lékařský názor — nezávislé klinické zhodnocení",
+      "summary": "Chcete ověřit diagnózu, léčebný plán nebo důležité lékařské doporučení? Naši lékaři s licencí CMR poskytují jasný, strukturovaný a nezávislý druhý názor prostřednictvím videokonzultace.",
+      "seoTitle": "Druhý lékařský názor online | Rumunsko | nezávislé posouzení",
+      "seoDescription": "Druhé lékařské stanovisko pro diagnózu, léčebný plán nebo důležité lékařské doporučení. Naši licencovaní lékaři CMR poskytují jasné, strukturované a nezávislé druhé stanovisko prostřednictvím videokonzultace.",
+      "seoKeywords": [
+        "second medical opinion Romania",
+        "second opinion doctor online Romania",
+        "independent medical opinion Romania",
+        "second opinion diagnosis Romania",
+        "al doilea aviz medical online"
+      ],
+      "heroTitle": "Druhý lékařský názor — nezávislé klinické posouzení",
+      "heroDescription": "Druhý lékařský názor pro diagnostiku, léčebný plán nebo důležité lékařské doporučení. Naši lékaři autorizovaní CMR poskytují jasný, strukturovaný a nezávislý druhý názor prostřednictvím videokonzultace.",
+      "detailBody": "<p>Druhé stanovisko je užitečné, když jste obdrželi novou diagnózu, komplexní léčbu nebo doporučení k zákroku a chcete lépe porozumět dostupným možnostem. Konzultace se opírá o analýzu příznaků, anamnézy a lékařských dokumentů, které přinesete.</p><p>Lékař vám jasně vysvětlí, co je dobře podložené stávajícími daty, které body zůstávají nejasné a zda jsou nutná další vyšetření, sledování nebo odeslání k jinému specialistovi. Cílem není automaticky zpochybňovat jiného lékaře, ale poskytnout vám důkladné a užitečné hodnocení pro informované rozhodování.</p><p>Služba je vhodná pro otázky týkající se chronických nebo akutních diagnóz, medikamentózní léčby, výsledků zobrazovacích vyšetření nebo analýz, chirurgických doporučení a terapeutických plánů s výrazným dopadem na vaše zdraví.</p>",
+      "ctaLabel": "Naplánujte si konzultaci",
+      "sortOrder": 50,
+      "durationMinutes": 15,
+      "basePriceCents": 11500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:52.222Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js4yi001lakjuctun11mg",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee69c000dfsju48a77n99",
+          "path": "/api/media/media/37ca81f1-cad2-4868-bc85-afb3f83c3a65-bdc950d1-c547-4347-bb50-5c64e4522dd2-9.webp",
+          "altText": "A doua opinie medicală — evaluare clinică independentă"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "CS",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

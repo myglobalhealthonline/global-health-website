@@ -1,0 +1,226 @@
+{
+  "checkedAt": "2026-09-12T20:20:14.979Z",
+  "endpoint": "/api/countries/ro/doctors/dr-andreea-lorena-bica?locale=RO",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "doctor": {
+      "id": "cmrc4j7oc00se01p2gf7y9ldw",
+      "slug": "dr-andreea-lorena-bica",
+      "fullName": "Dr Andreea Lorena Bica",
+      "title": "Neurolog",
+      "bio": "<h3>Dr. Andreea-Lorena Bica, Medic Specialist Neurolog</h3><p>Dr. Andreea-Lorena Bica este medic specialist în Neurologie cu o formare clinică riguroasă la unele dintre cele mai importante centre medicale din România, o neurologă care aduce în fiecare consultație online același nivel de atenție și precizie pe care l-a dobândit în ani de lucru cu cazuri neurologice complexe.</p><p>A absolvit Facultatea de Medicină a Universității de Medicină și Farmacie din Craiova și a efectuat un rezidențiat complet în Neurologie la Spitalul Universitar de Urgență Elias din București, unul dintre spitalele universitare de referință din România. Formarea sa a acoperit un spectru larg: neurologie intensivă, investigații funcționale neurologice, neuroimagistică, neuroradiologie, psihiatrie, neurologie pediatrică și neurochirurgie. Această expunere multidisciplinară îi permite să evalueze prezentările neurologice cu o perspectivă cuprinzătoare, nu dintr-un singur unghi de specialitate.</p><p>Dr. Bica participă activ la dezvoltarea profesională continuă, contribuind ca și co-autor la prezentări de cercetare la Congresul Societății Române de Neurologie și la Congresul Academiei Europene de Neurologie (EAN), organisme internaționale care stabilesc standardele de practică în neurologie.</p><p>Neurologia poate fi intimidantă pentru pacienți. Un simptom nou, o furnicătură persistentă, un episod de slăbiciune, dureri de cap frecvente, probleme de memorie, poate genera neliniște fără ca pacientul să știe dacă este ceva urgent sau nu. Dr. Bica crede că o consultație neurologică bună începe cu ascultarea atentă, explică clar ce se știe și ce nu, și oferă pacientului un plan concret, nu doar o trimitere.</p><h3>Ce oferă online</h3><ul><li><strong>Consultații neurologice generale:</strong> evaluarea și managementul simptomelor neurologice noi sau existente</li><li><strong>AVC și boli cerebrovasculare:</strong> evaluare secundară, prevenție, interpretarea investigațiilor</li><li><strong>Epilepsie:</strong> evaluare, ajustarea tratamentului, consiliere privind managementul crizelor</li><li><strong>Boli neurodegenerative:</strong> Parkinson, demență, scleroză multiplă, înțelegerea diagnosticului și a evoluției</li><li><strong>Dureri de cap și migrenă:</strong> evaluare, diagnostic diferențial, plan de tratament</li><li><strong>Neuropatii periferice:</strong> amorțeală, furnicături, slăbiciune, evaluare și ghidaj</li><li><strong>Tulburări de mișcare:</strong> tremur, probleme de mers, coordonare</li><li><strong>Interfața neurologie-psihiatrie:</strong> simptome la granița dintre afecțiunile neurologice și psihiatrice</li><li><strong>A doua opinie:</strong> privind diagnostice neurologice, rezultate RMN/CT, planuri de tratament</li><li><strong>Interpretarea investigațiilor:</strong> explicarea rezultatelor RMN cerebral, EEG și alte investigații neurologice</li></ul><p><strong>Abordarea sa:</strong> Dr. Bica este recunoscută pentru abordarea sa minuțioasă, profesionalism și dedicare față de îmbunătățirea stării pacienților. Ea consideră că o bună comunicare cu pacientul și familia acestuia este parte integrantă din îngrijirea neurologică, nu un adaos. Fiecare pacient primește o evaluare individualizată și un plan de tratament adaptat situației sale specifice.</p><h3>Calificări</h3><ul><li><strong>Medic specialist:</strong> Neurologie</li><li><strong>Rezidențiat în Neurologie:</strong> Spitalul Universitar de Urgență Elias, București</li><li><strong>Absolventă:</strong> Facultatea de Medicină, UMF Craiova</li><li><strong>Co-autor:</strong> Congresul Societății Române de Neurologie</li><li><strong>Co-autor:</strong> Congresul Academiei Europene de Neurologie (EAN)</li><li>Înregistrată la Colegiul Medicilor din România (CMR nr. 147502)</li></ul>",
+      "seoTitle": "Dr. Andreea-Lorena Bica — Neurolog | CMR 147502 | Global Health România",
+      "seoDescription": "Rezervați o consultație video cu Dr. Andreea-Lorena Bica — neurolog specialist înregistrat la CMR (nr. 147502). UMF Craiova · Spitalul Elias București · AVC, epilepsie, boli neurodegenerative. Programare în aceeași zi.",
+      "lastReviewedAt": null,
+      "medicalRegistrationUrl": "https://www.cmr.ro/",
+      "qualifications": [],
+      "instagramUrl": null,
+      "facebookUrl": null,
+      "linkedinUrl": null,
+      "languages": [
+        "Romanian",
+        "English"
+      ],
+      "active": true,
+      "updatedAt": "2026-08-08T20:22:48.880Z",
+      "resolvedLocale": "RO",
+      "readyToIndex": true,
+      "nonPhysician": false,
+      "imcRegistration": "147502",
+      "registrationChamber": "Colegiul Medicilor din România",
+      "registrationDivision": null,
+      "registrationVerified": true,
+      "credentials": [
+        {
+          "label": "Medic specialist — Neurologie",
+          "bodyName": "Colegiul Medicilor din România",
+          "bodyUrl": null,
+          "countryCode": "ro"
+        }
+      ],
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cms11qbzv0001lkju34eecuec",
+          "kind": "IMAGE",
+          "key": "doctor-cmrc4j7oc00se01p2gf7y9ldw-profile",
+          "path": "/api/media/media/a8142bfb-1adf-41e7-9e9a-58c0f1b271cc-dr-andreea-lorena-bica.webp",
+          "altText": "Dr Andreea Lorena Bica, Neurolog at Global Health Romania",
+          "title": "Dr Andreea Lorena Bica",
+          "caption": "Dr Andreea Lorena Bica — Neurolog, Global Health Romania",
+          "description": "Dr Andreea Lorena Bica is a Neurolog registered in Romania. Book an online consultation with Global Health.",
+          "focalX": 50,
+          "focalY": 29,
+          "zoom": 1
+        }
+      ],
+      "additionalCountries": [
+        {
+          "id": "cmrc4j7p600sf01p219d9yu1e",
+          "countryId": "cmqz0xa4g003z01lu872glji1",
+          "active": true,
+          "country": {
+            "id": "cmqz0xa4g003z01lu872glji1",
+            "code": "ro",
+            "name": "Romania",
+            "defaultLocale": "RO"
+          },
+          "chamberEntity": "Colegiul Medicilor din România",
+          "registrationNumber": "147502",
+          "registrationUrl": null,
+          "division": null,
+          "isVerified": true,
+          "translations": [
+            {
+              "locale": "ES",
+              "title": "Neurólogo",
+              "bio": "<p><strong>Dr. Andreea-Lorena Bica</strong></p><p><strong>Médico especialista en Neurología</strong></p><p>La Dra. Andreea-Lorena Bica es una médica especialista en neurología dedicada, con amplia formación clínica y experiencia práctica en una amplia gama de afecciones neurológicas. Se graduó en la Universidad de Medicina y Farmacia de Craiova, seguida de un programa completo de residencia en neurología en varios hospitales de prestigio de Rumanía, incluido el Hospital Universitario de Urgencias Elias de Bucarest.</p><p>Durante la residencia, la Dra. Andreea-Lorena Bica acumuló una amplia experiencia en cuidados intensivos neurológicos, investigaciones neurológicas funcionales, neuroimagen, neurorradiología, psiquiatría, neurología pediátrica y neurocirugía. Colaboró estrechamente con equipos multidisciplinarios para el diagnóstico y manejo de afecciones neurológicas complejas, incluyendo accidente cerebrovascular agudo, epilepsia, enfermedades neurodegenerativas y otras afecciones del sistema nervioso central y periférico.</p><p>La Dra. Andreea-Lorena Bica participa activamente en el desarrollo profesional continuo y ha asistido a numerosas conferencias nacionales e internacionales, incluido el Congreso de la Sociedad Rumana de Neurología y el Congreso de la Academia Europea de Neurología, donde contribuyó como coautora a presentaciones científicas de investigación. Sus intereses clínicos incluyen el manejo del accidente cerebrovascular, la epilepsia, las afecciones neurovasculares y la interrelación entre los trastornos neurológicos y psiquiátricos.</p><p>Está dedicada a brindar una atención centrada en el paciente, haciendo hincapié en un diagnóstico preciso, planes de tratamiento individualizados y una comunicación clara con los pacientes y sus familias. La Dra. Andreea-Lorena Bica es reconocida por su enfoque atento, su profesionalismo y su dedicación a mejorar los resultados de los pacientes.</p>",
+              "seoTitle": "Dr Andreea Lorena Bica - Neuróloga | Global Health",
+              "seoDescription": "Dr. Andreea-Lorena Bica, médico especialista neurólogo con experiencia en ACV, epilepsia y enfermedades neurodegenerativas. Programa una consulta online.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "EN",
+              "title": "Neurologist",
+              "bio": "<p><strong>Dr. Andreea-Lorena Bica</strong></p><p><strong>Specialist Neurologist Physician</strong></p><p>Dr. Andreea-Lorena Bica is a dedicated specialist neurologist physician, with extensive clinical training and practical experience in a wide range of neurological conditions. She graduated from the University of Medicine and Pharmacy in Craiova, followed by a complete neurology residency program at prestigious hospitals in Romania, including Elias University Emergency Hospital in Bucharest.</p><p>During her residency, Dr. Andreea-Lorena Bica gained in-depth experience in neurological intensive care, functional neurological investigations, neuroimaging, neuroradiology, psychiatry, pediatric neurology, and neurosurgery. She worked closely with multidisciplinary teams for the diagnosis and management of complex neurological conditions, including acute stroke, epilepsy, neurodegenerative diseases, and other disorders of the central and peripheral nervous system.</p><p>Dr. Andreea-Lorena Bica is actively involved in continuous professional development and has participated in numerous national and international conferences, including the Congress of the Romanian Society of Neurology and the Congress of the European Academy of Neurology, where she contributed as co-author to scientific research presentations. Her clinical interests include stroke management, epilepsy, neurovascular conditions, and the interface between neurological and psychiatric disorders.</p><p>She is dedicated to providing patient-centered care, emphasizing accurate diagnosis, individualized treatment plans, and clear communication with patients and their families. Dr. Andreea-Lorena Bica is recognized for her careful approach, professionalism, and dedication to improving patient outcomes.</p>",
+              "seoTitle": "Dr Andreea Lorena Bica - Neurologist | Global Health",
+              "seoDescription": "Dr. Andreea-Lorena Bica, specialist neurologist with experience in stroke, epilepsy and neurodegenerative diseases. Schedule an online consultation.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "RO",
+              "title": "Neurolog",
+              "bio": "<h3>Dr. Andreea-Lorena Bica, Medic Specialist Neurolog</h3><p>Dr. Andreea-Lorena Bica este medic specialist în Neurologie cu o formare clinică riguroasă la unele dintre cele mai importante centre medicale din România, o neurologă care aduce în fiecare consultație online același nivel de atenție și precizie pe care l-a dobândit în ani de lucru cu cazuri neurologice complexe.</p><p>A absolvit Facultatea de Medicină a Universității de Medicină și Farmacie din Craiova și a efectuat un rezidențiat complet în Neurologie la Spitalul Universitar de Urgență Elias din București, unul dintre spitalele universitare de referință din România. Formarea sa a acoperit un spectru larg: neurologie intensivă, investigații funcționale neurologice, neuroimagistică, neuroradiologie, psihiatrie, neurologie pediatrică și neurochirurgie. Această expunere multidisciplinară îi permite să evalueze prezentările neurologice cu o perspectivă cuprinzătoare, nu dintr-un singur unghi de specialitate.</p><p>Dr. Bica participă activ la dezvoltarea profesională continuă, contribuind ca și co-autor la prezentări de cercetare la Congresul Societății Române de Neurologie și la Congresul Academiei Europene de Neurologie (EAN), organisme internaționale care stabilesc standardele de practică în neurologie.</p><p>Neurologia poate fi intimidantă pentru pacienți. Un simptom nou, o furnicătură persistentă, un episod de slăbiciune, dureri de cap frecvente, probleme de memorie, poate genera neliniște fără ca pacientul să știe dacă este ceva urgent sau nu. Dr. Bica crede că o consultație neurologică bună începe cu ascultarea atentă, explică clar ce se știe și ce nu, și oferă pacientului un plan concret, nu doar o trimitere.</p><h3>Ce oferă online</h3><ul><li><strong>Consultații neurologice generale:</strong> evaluarea și managementul simptomelor neurologice noi sau existente</li><li><strong>AVC și boli cerebrovasculare:</strong> evaluare secundară, prevenție, interpretarea investigațiilor</li><li><strong>Epilepsie:</strong> evaluare, ajustarea tratamentului, consiliere privind managementul crizelor</li><li><strong>Boli neurodegenerative:</strong> Parkinson, demență, scleroză multiplă, înțelegerea diagnosticului și a evoluției</li><li><strong>Dureri de cap și migrenă:</strong> evaluare, diagnostic diferențial, plan de tratament</li><li><strong>Neuropatii periferice:</strong> amorțeală, furnicături, slăbiciune, evaluare și ghidaj</li><li><strong>Tulburări de mișcare:</strong> tremur, probleme de mers, coordonare</li><li><strong>Interfața neurologie-psihiatrie:</strong> simptome la granița dintre afecțiunile neurologice și psihiatrice</li><li><strong>A doua opinie:</strong> privind diagnostice neurologice, rezultate RMN/CT, planuri de tratament</li><li><strong>Interpretarea investigațiilor:</strong> explicarea rezultatelor RMN cerebral, EEG și alte investigații neurologice</li></ul><p><strong>Abordarea sa:</strong> Dr. Bica este recunoscută pentru abordarea sa minuțioasă, profesionalism și dedicare față de îmbunătățirea stării pacienților. Ea consideră că o bună comunicare cu pacientul și familia acestuia este parte integrantă din îngrijirea neurologică, nu un adaos. Fiecare pacient primește o evaluare individualizată și un plan de tratament adaptat situației sale specifice.</p><h3>Calificări</h3><ul><li><strong>Medic specialist:</strong> Neurologie</li><li><strong>Rezidențiat în Neurologie:</strong> Spitalul Universitar de Urgență Elias, București</li><li><strong>Absolventă:</strong> Facultatea de Medicină, UMF Craiova</li><li><strong>Co-autor:</strong> Congresul Societății Române de Neurologie</li><li><strong>Co-autor:</strong> Congresul Academiei Europene de Neurologie (EAN)</li><li>Înregistrată la Colegiul Medicilor din România (CMR nr. 147502)</li></ul>",
+              "seoTitle": "Dr. Andreea-Lorena Bica — Neurolog | CMR 147502 | Global Health România",
+              "seoDescription": "Rezervați o consultație video cu Dr. Andreea-Lorena Bica — neurolog specialist înregistrat la CMR (nr. 147502). UMF Craiova · Spitalul Elias București · AVC, epilepsie, boli neurodegenerative. Programare în aceeași zi.",
+              "seoKeywords": [
+                "Neurolog"
+              ]
+            },
+            {
+              "locale": "PT",
+              "title": "Neurologista",
+              "bio": "<p><strong>Dr. Andreea-Lorena Bica</strong></p><p><strong>Médica Especialista em Neurologia</strong></p><p>A Dr. Andreea-Lorena Bica é uma médica especialista em neurologia dedicada, com formação clínica alargada e experiência prática numa vasta gama de doenças neurológicas. Concluiu a Universidade de Medicina e Farmácia de Craiova, seguida de um programa completo de internato em neurologia em hospitais de prestígio na Roménia, incluindo o Spitalul Universitar de Urgență Elias de Bucareste.</p><p>Durante o internato, a Dr. Andreea-Lorena Bica adquiriu experiência aprofundada em cuidados intensivos neurológicos, exames neurológicos funcionais, neuroimagem, neurorradiologia, psiquiatria, neurologia pediátrica e neurocirurgia. Colaborou de perto com equipas multidisciplinares para o diagnóstico e o tratamento de doenças neurológicas complexas, incluindo acidente vascular cerebral agudo, epilepsia, doenças neurodegenerativas e outras doenças do sistema nervoso central e periférico.</p><p>A Dr. Andreea-Lorena Bica está ativamente envolvida no desenvolvimento profissional contínuo e participou em numerosas conferências nacionais e internacionais, incluindo o Congresso da Sociedade Romena de Neurologia e o Congresso da Academia Europeia de Neurologia, onde contribuiu como coautora para apresentações científicas de investigação. Os seus interesses clínicos incluem o tratamento do acidente vascular cerebral, a epilepsia, as doenças neurovasculares e a interface entre perturbações neurológicas e psiquiátricas.</p><p>Está dedicada a prestar cuidados centrados no paciente, com ênfase no diagnóstico preciso, em planos de tratamento individualizados e numa comunicação clara com os pacientes e as suas famílias. A Dr. Andreea-Lorena Bica é reconhecida pela sua abordagem atenta, pelo profissionalismo e pela dedicação à melhoria dos resultados dos pacientes.</p>",
+              "seoTitle": "Dr Andreea Lorena Bica - Neurologista | Global Health",
+              "seoDescription": "Dr. Andreea-Lorena Bica, médica especialista neurologista com experiência em AVC, epilepsia e doenças neurodegenerativas. Agende uma consulta online.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "CS",
+              "title": "Neurolog",
+              "bio": "<p><strong>Dr. Andreea-Lorena Bica</strong></p><p><strong>Lékařka specialistka neurolog</strong></p><p>Dr. Andreea-Lorena Bica je oddaná lékařka specialistka neurolog, s rozsáhlým klinickým vzděláním a praktickými zkušenostmi v široké škále neurologických onemocnění. Absolvovala Univerzitu medicíny a farmacie v Craiově, po níž následoval kompletní rezidenční program v neurologii v rámci prestižních nemocnic v Rumunsku, včetně Universitní pohotovostní nemocnice Elias v Bukurešti.</p><p>Během rezidenční přípravy získala Dr. Andreea-Lorena Bica hluboké zkušenosti v neurologické intenzivní péči, funkčních neurologických vyšetřeních, neurozobrazování, neuroradiologii, psychiatrii, dětské neurologii a neurochirurgii. Úzce spolupracovala s multidisciplinárními týmy při diagnostice a managementu složitých neurologických onemocnění, včetně akutní cévní mozkové příhody, epilepsie, neurodegenerativních onemocnění a dalších onemocnění centrálního a periferního nervového systému.</p><p>Dr. Andreea-Lorena Bica se aktivně podílí na dalším profesním rozvoji a zúčastnila se řady národních i mezinárodních konferencí, včetně Kongresu Rumunské neurologické společnosti a Kongresu Evropské neurologické akademie, kde přispěla jako spoluautorka k vědeckým výzkumným prezentacím. Její klinické zájmy zahrnují léčbu cévní mozkové příhody, epilepsii, neurovaskulární onemocnění a rozhraní mezi neurologickými a psychiatrickými poruchami.</p><p>Je oddaná poskytování péče zaměřené na pacienta, s důrazem na přesnou diagnózu, individuálně přizpůsobené léčebné plány a jasnou komunikaci s pacienty a jejich rodinami. Dr. Andreea-Lorena Bica je uznávána pro svůj pečlivý přístup, profesionalitu a odhodlání zlepšovat výsledky pacientů.</p>",
+              "seoTitle": "Dr Andreea Lorena Bica - Neurolog | Global Health",
+              "seoDescription": "Dr. Andreea-Lorena Bica, specialista neurolog s praxí v cévní mozkové příhodě, epilepsii a neurodegenerativních onemocněních. Domluvte si online konzultaci.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "DE",
+              "title": "Neurologe",
+              "bio": "<p><strong>Dr. Andreea-Lorena Bica</strong></p><p><strong>Fachärztin für Neurologie</strong></p><p>Dr. Andreea-Lorena Bica ist eine engagierte Fachärztin für Neurologie mit umfassender klinischer Ausbildung und praktischer Erfahrung in einem breiten Spektrum neurologischer Erkrankungen. Sie absolvierte die Universität für Medizin und Pharmazie in Craiova, gefolgt von einem vollständigen Facharztausbildungsprogramm in Neurologie in angesehenen Krankenhäusern in Rumänien, darunter das Universitäts-Notfallkrankenhaus Elias in Bukarest.</p><p>Während der Facharztausbildung sammelte Dr. Andreea-Lorena Bica fundierte Erfahrungen in der neurologischen Intensivtherapie, funktionellen neurologischen Untersuchungen, Neuroimaging, Neuroradiologie, Psychiatrie, pädiatrischer Neurologie und Neurochirurgie. Sie arbeitete eng mit multidisziplinären Teams zusammen, um komplexe neurologische Erkrankungen zu diagnostizieren und zu behandeln, darunter akuter Schlaganfall, Epilepsie, neurodegenerative Erkrankungen sowie andere Erkrankungen des zentralen und peripheren Nervensystems.</p><p>Dr. Andreea-Lorena Bica engagiert sich aktiv in der kontinuierlichen beruflichen Weiterentwicklung und nahm an zahlreichen nationalen und internationalen Konferenzen teil, darunter der Kongress der Rumänischen Gesellschaft für Neurologie und der Kongress der Europäischen Akademie für Neurologie, wo sie als Koautorin zu wissenschaftlichen Forschungsvorträgen beitrug. Zu ihren klinischen Interessen gehören das Schlaganfallmanagement, Epilepsie, neurovaskuläre Erkrankungen und die Schnittstelle zwischen neurologischen und psychiatrischen Störungen.</p><p>Sie ist der Bereitstellung einer patientenzentrierten Versorgung verpflichtet, mit Schwerpunkt auf präziser Diagnose, individuell angepassten Behandlungsplänen und klarer Kommunikation mit den Patienten und ihren Familien. Dr. Andreea-Lorena Bica ist für ihren sorgfältigen Ansatz, ihre Professionalität und ihr Engagement zur Verbesserung der Patientenergebnisse bekannt.</p>",
+              "seoTitle": "Dr. Andreea Lorena Bica - Neurologin | Global Health",
+              "seoDescription": "Dr. Andreea-Lorena Bica, Fachärztin für Neurologie mit Erfahrung in Schlaganfall, Epilepsie und neurodegenerativen Erkrankungen. Vereinbaren Sie einen Online-Termin.",
+              "seoKeywords": []
+            }
+          ],
+          "divisionTranslations": []
+        }
+      ],
+      "assignedServices": [
+        {
+          "serviceId": "cmr8ee87d000ifsjuydqk0htg",
+          "service": {
+            "id": "cmr8ee87d000ifsjuydqk0htg",
+            "slug": "consultatie-neurologie",
+            "name": "Consultație de neurologie — evaluare de specialitate online",
+            "kind": "SPECIALIST",
+            "summary": "Aveți migrene, dureri de cap persistente, amorțeli, neuropatie sau altă problemă neurologică? Specialistul nostru autorizat CMR oferă evaluare inițială, recomandări și plan de investigații prin consultație video.",
+            "durationMinutes": 20,
+            "basePriceCents": 22000,
+            "currencyCode": "RON"
+          }
+        }
+      ],
+      "seoKeywords": [
+        "Neurolog"
+      ],
+      "resolvedMarketLocale": "RO",
+      "specialties": [],
+      "faqs": [
+        {
+          "id": "cmrmjn8pm000860ju7uyhc9le",
+          "locale": "RO",
+          "question": "Este Dr. Bica înregistrată la Colegiul Medicilor din România?",
+          "answer": "Da. Dr. Andreea-Lorena Bica este înregistrată la Colegiul Medicilor din România (CMR) cu numărul 147502. Puteți verifica această înregistrare pe site-ul cmr.ro. Dr. Bica este medic specialist în Neurologie, cu formare la Spitalul Universitar de Urgență Elias din București și a contribuit ca și co-autor la prezentări la Congresul Academiei Europene de Neurologie (EAN).",
+          "category": null,
+          "sortOrder": 0,
+          "isActive": true
+        },
+        {
+          "id": "cmrmjn8pn000960ju9kz1m11y",
+          "locale": "RO",
+          "question": "Ce afecțiuni neurologice evaluează Dr. Bica online?",
+          "answer": "Dr. Bica oferă consultații neurologice online pentru: AVC și boli cerebrovasculare (evaluare secundară, prevenție, interpretarea investigațiilor), epilepsie (evaluare și ajustarea tratamentului), boli neurodegenerative (Parkinson, demență, scleroză multiplă), dureri de cap și migrenă, neuropatii periferice (amorțeală, furnicături, slăbiciune), tulburări de mișcare, interfața neurologie-psihiatrie, a doua opinie privind diagnostice sau rezultate RMN/CT și interpretarea investigațiilor neurologice.",
+          "category": null,
+          "sortOrder": 1,
+          "isActive": true
+        },
+        {
+          "id": "cmrmjn8pn000a60juzukx32y4",
+          "locale": "RO",
+          "question": "Am nevoie de trimitere de la medicul de familie pentru a consulta un neurolog online?",
+          "answer": "Nu. Prin Global Health România puteți rezerva direct o consultație cu Dr. Bica fără trimitere de la medicul de familie. Dacă aveți scrisori medicale anterioare, rezultate RMN, EEG sau alte investigații, vă rugăm să le transmiteți înainte de consultație — acestea nu sunt obligatorii pentru rezervare, dar ajută la o evaluare mai precisă.",
+          "category": null,
+          "sortOrder": 2,
+          "isActive": true
+        },
+        {
+          "id": "cmrmjn8pn000b60jugxp713r8",
+          "locale": "RO",
+          "question": "Poate Dr. Bica explica rezultatele unui RMN cerebral sau alte investigații neurologice?",
+          "answer": "Da. Dr. Bica are formare specializată în neuroimagistică și neuroradiologie și poate interpreta și explica rezultatele RMN cerebral și spinal, CT, EEG și alte investigații neurologice ca parte a consultației online. Dacă transmiteți raportul radiologic sau scrisoarea medicală înainte de programare, Dr. Bica va putea oferi o evaluare mai detaliată.",
+          "category": null,
+          "sortOrder": 3,
+          "isActive": true
+        },
+        {
+          "id": "cmrmjn8pn000c60juru0ijt00",
+          "locale": "RO",
+          "question": "Cum rezerv o consultație cu Dr. Bica?",
+          "answer": "Selectați un slot disponibil pe această pagină pentru a rezerva direct cu Dr. Bica. Plata se procesează securizat la rezervare — consultația este confirmată după efectuarea plății. Veți primi imediat o invitație în calendar. Consultațiile se desfășoară prin apel video securizat în română sau engleză. Vă rugăm să transmiteți orice scrisori medicale, rezultate RMN sau EEG înainte de consultație pentru o evaluare mai precisă. Dacă experimentați o urgență neurologică — cefalee bruscă și severă, slăbiciune acută sau tulburări de vorbire — sunați imediat la 112.",
+          "category": null,
+          "sortOrder": 4,
+          "isActive": true
+        },
+        {
+          "id": "cmrmjn8pn000d60jupuvprqqa",
+          "locale": "RO",
+          "question": "Care sunt calificările Dr. Bica?",
+          "answer": "Dr. Andreea-Lorena Bica este absolventă a Facultății de Medicină a Universității de Medicină și Farmacie din Craiova și și-a efectuat rezidențiatul în Neurologie la Spitalul Universitar de Urgență Elias din București. A participat ca și co-autor la prezentări de cercetare la Congresul Societății Române de Neurologie și la Congresul Academiei Europene de Neurologie (EAN). Este înregistrată la Colegiul Medicilor din România (CMR nr. 147502).",
+          "category": null,
+          "sortOrder": 5,
+          "isActive": true
+        }
+      ],
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:50:00.000Z"
+      },
+      "bookabilityByServiceId": {
+        "cmr8ee87d000ifsjuydqk0htg": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:50:00.000Z"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:14.407Z",
+  "endpoint": "/api/services/reinnoire-tratament?countryCode=ro&locale=PT",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee2r00004fsjubgjloy9a",
+      "kind": "GENERAL",
+      "slug": "reinnoire-tratament",
+      "name": "Renovação do tratamento — avaliação clínica e prescrição online",
+      "summary": "Já segue um tratamento estável? Os nossos médicos autorizados pela CMR revêm o esquema atual, verificam a segurança da continuação e emitem uma prescrição eletrónica quando isso é clinicamente adequado.",
+      "seoTitle": "Renovação de tratamento online | Roménia | prescrição eletrónica",
+      "seoDescription": "Renovação do tratamento estável, com avaliação clínica. Os nossos médicos autorizados CMR revêm o esquema atual, verificam a segurança da continuação e emitem prescrição eletrónica quando isso é clinicamente adequado.",
+      "seoKeywords": [
+        "treatment renewal online Romania",
+        "repeat prescription Romania English",
+        "online doctor medication renewal Romania",
+        "treatment review English Bucharest",
+        "prescription renewal Romania expat"
+      ],
+      "heroTitle": "Renovação do tratamento — avaliação clínica e prescrição online",
+      "heroDescription": "Renovação do tratamento estável, com avaliação clínica. Os nossos médicos autorizados pela CMR revêm o regime atual, verificam a segurança da continuação e emitem receita eletrónica quando isso for clinicamente adequado.",
+      "detailBody": "<p>Este serviço é dedicado a pacientes com condições estáveis, que precisam de uma revisão médica adequada antes da continuação do tratamento. Não se trata de uma simples receita automática: o médico analisa o diagnóstico, a resposta ao tratamento, as reações adversas e eventuais alterações ocorridas desde a última avaliação.</p><p>Se o tratamento continuar a ser adequado, pode ser emitida uma prescrição eletrónica através do sistema romeno, em conformidade com a legislação aplicável. Se forem necessários exames adicionais, alterações de dose ou avaliação especializada, receberá explicações claras e os próximos passos recomendados.</p><p>O serviço é adequado para tratamentos crónicos estáveis, inclusive em situações em que não tem acesso fácil ao médico de família, vive noutra cidade, é expatriado ou continua na Roménia um esquema terapêutico iniciado noutro país.</p>",
+      "ctaLabel": "Marque a consulta",
+      "sortOrder": 30,
+      "durationMinutes": 15,
+      "basePriceCents": 6500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:03:00.607Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jsd7u001rakjucqnifyij",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee2r00004fsjubgjloy9a",
+          "path": "/api/media/media/0a6ac8f8-e4ae-42b7-815e-9179981bc3e9-b08d3080-cbb7-49c8-8010-3853b7740a5e-5.webp",
+          "altText": "Reînnoirea tratamentului — evaluare clinică și prescripție online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "PT",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

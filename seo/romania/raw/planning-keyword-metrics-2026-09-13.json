@@ -1,0 +1,44 @@
+{
+  "keywords": [
+    {
+      "keyword": "medic online",
+      "search_volume": 390,
+      "keyword_difficulty": 31,
+      "main_intent": "informational",
+      "cpc": 1.58,
+      "competition": 0.62,
+      "competition_level": "MEDIUM"
+    },
+    {
+      "keyword": "a doua opinie medicala",
+      "search_volume": 90,
+      "keyword_difficulty": 0,
+      "main_intent": "informational",
+      "cpc": 1.7,
+      "competition": 0.65,
+      "competition_level": "MEDIUM"
+    },
+    {
+      "keyword": "neurolog online",
+      "search_volume": null,
+      "keyword_difficulty": 40,
+      "main_intent": "navigational",
+      "cpc": null,
+      "competition": null,
+      "competition_level": null
+    },
+    {
+      "keyword": "pediatru online",
+      "search_volume": null,
+      "keyword_difficulty": 0,
+      "main_intent": "informational",
+      "cpc": null,
+      "competition": null,
+      "competition_level": null
+    }
+  ],
+  "meta": {
+    "projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b",
+    "url": "https://app.openseo.so/p/7804f362-5891-417e-9c3a-d9e8d4d7dc6b/keywords"
+  }
+}

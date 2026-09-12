@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:07.212Z",
+  "endpoint": "/api/services/a-doua-opinie-medicala?countryCode=ro&locale=DE",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee69c000dfsju48a77n99",
+      "kind": "GENERAL",
+      "slug": "a-doua-opinie-medicala",
+      "name": "Zweite medizinische Meinung — unabhängige klinische Bewertung",
+      "summary": "Möchten Sie eine Diagnose, einen Behandlungsplan oder eine wichtige medizinische Empfehlung überprüfen? Unsere von der CMR zugelassenen Ärzte bieten eine klare, strukturierte und unabhängige Zweitmeinung per Video-Sprechstunde an.",
+      "seoTitle": "Zweite medizinische Meinung online | Rumänien | unabhängige Bewertung",
+      "seoDescription": "Eine zweite medizinische Meinung für die Diagnose, den Behandlungsplan oder eine wichtige medizinische Empfehlung. Unsere von der CMR autorisierten Ärzte bieten per Videokonsultation eine klare, strukturierte und unabhängige zweite Meinung an.",
+      "seoKeywords": [
+        "second medical opinion Romania",
+        "second opinion doctor online Romania",
+        "independent medical opinion Romania",
+        "second opinion diagnosis Romania",
+        "al doilea aviz medical online"
+      ],
+      "heroTitle": "Zweite ärztliche Meinung — unabhängige klinische Bewertung",
+      "heroDescription": "Die medizinische Zweitmeinung für eine Diagnose, einen Behandlungsplan oder eine wichtige medizinische Empfehlung. Unsere von der CMR zugelassenen Ärzte bieten per Videosprechstunde eine klare, strukturierte und unabhängige Zweitmeinung.",
+      "detailBody": "<p>Eine Zweitmeinung ist hilfreich, wenn Sie eine neue Diagnose, eine komplexe Behandlung oder die Empfehlung eines Eingriffs erhalten haben und die verfügbaren Optionen besser verstehen möchten. Die Beratung stützt sich auf die Analyse der Symptome, der Krankengeschichte und der medizinischen Unterlagen, die Sie mitbringen.</p><p>Der Arzt erklärt Ihnen in klaren Worten, was durch die vorhandenen Daten gut belegt ist, welche Punkte unklar bleiben und ob weitere Untersuchungen, Überwachung oder eine Überweisung an einen anderen Spezialisten erforderlich sind. Ziel ist es nicht, automatisch einen anderen Kliniker zu widersprechen, sondern Ihnen eine gründliche und nützliche Einschätzung für eine informierte Entscheidung zu bieten.</p><p>Der Service eignet sich für Fragen zu chronischen oder akuten Diagnosen, medikamentösen Behandlungen, Ergebnissen von bildgebenden Verfahren oder Analysen, chirurgischen Empfehlungen und Therapieplänen mit erheblichem Einfluss auf Ihre Gesundheit.</p>",
+      "ctaLabel": "Termin vereinbaren",
+      "sortOrder": 50,
+      "durationMinutes": 15,
+      "basePriceCents": 11500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:52.222Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js4yi001lakjuctun11mg",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee69c000dfsju48a77n99",
+          "path": "/api/media/media/37ca81f1-cad2-4868-bc85-afb3f83c3a65-bdc950d1-c547-4347-bb50-5c64e4522dd2-9.webp",
+          "altText": "A doua opinie medicală — evaluare clinică independentă"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "DE",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "checkedAt": "2026-09-12T20:20:10.075Z",
+  "endpoint": "/api/services/evaluare-durere?countryCode=ro&locale=EN",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee7tb000hfsju7tvvjjj1",
+      "kind": "SPECIALIST",
+      "slug": "evaluare-durere",
+      "name": "Specialist Pain Assessment — Anaesthesiologist Online",
+      "summary": "Chronic or acute pain affecting your quality of life? Our CMR-registered anaesthesiologist conducts specialist pain assessments by video call and develops personalised management plans. Same-day appointments available anywhere in Romania.",
+      "seoTitle": "Specialist Pain Assessment Online | Romania | Anaesthesiologist",
+      "seoDescription": "Specialist assessment for chronic or severe pain. Our CMR-registered anaesthesiologist conducts specialist pain assessments by video call and develops personalised management plans. Same-day appointments available anywhere in Romania.",
+      "seoKeywords": [
+        "specialist pain assessment online Romania",
+        "chronic pain specialist online Romania",
+        "anaesthesiologist online Romania",
+        "pain assessment online Romania",
+        "pain management plan Romania online"
+      ],
+      "heroTitle": "Specialist Pain Assessment — Anaesthesiologist Online",
+      "heroDescription": "Specialist evaluation for chronic or severe pain. Our licensed CMR specialist provides a clinical assessment focused on pain control, therapeutic options, and coordination of the necessary investigations.",
+      "detailBody": "<p>Pain — whether acute or chronic — that is not adequately assessed and managed reduces quality of life, affects function, and frequently signals underlying conditions that require structured clinical attention.</p><p>Our anaesthesiologist, registered with the Romanian College of Physicians (CMR) and specialised in pain medicine, conducts specialist pain assessments by secure video call — reviewing your pain in full clinical detail, identifying its underlying mechanisms, assessing the adequacy of your current management, and developing a personalised, evidence-based plan. Same day, from anywhere in Romania, in English, Romanian.</p><h2>Why a Specialist Pain Assessment Is Different</h2><p>Pain is one of the most clinically complex presentations in medicine. The same symptom — back pain, for example — can arise from muscular, disc, nerve, inflammatory, metabolic, or psychological mechanisms. Each requires a fundamentally different approach. A management plan that does not correctly identify the mechanism is unlikely to be effective.</p><p>An anaesthesiologist specialising in pain medicine brings a specific clinical framework to pain assessment — one that distinguishes between pain types, identifies the neurological and physiological mechanisms involved, and constructs a management plan that addresses the actual source of the pain rather than the symptom alone.</p><p>This is the level of clinical analysis that a specialist pain assessment provides — and it is not routinely available through standard GP-level care or general orthopaedic assessment.</p><h2>Who This Service Is For</h2><p>This consultation is appropriate for adults with:</p><p>Chronic pain — pain lasting more than three months — that has not been adequately assessed or is not responding to current management</p><ul><li>Acute pain that is severe, limiting function, or not improving as expected</li></ul><p>Complex pain presentations involving multiple sites, multiple mechanisms, or multiple contributing conditions</p><ul><li>Neuropathic pain — burning, shooting, or electric pain — with or without a known diagnosis</li><li>Post-surgical or post-procedural pain that has persisted beyond the expected recovery period</li></ul><p>Pain related to cancer or serious underlying disease — assessment and management support at specialist level</p><ul><li>A current pain management plan that is not working well and needs independent specialist review</li></ul><p>A need for specialist clinical documentation — for insurance purposes, for multidisciplinary team referral, or for second opinion on a recommended intervention</p><p>Anyone who wants specialist-level clinical input on their pain before deciding whether to proceed with a recommended procedure or surgical intervention</p><h2>Pain Types Commonly Assessed</h2><ul><li>Musculoskeletal and spinal pain</li><li>Chronic low back pain — mechanical, discogenic, facet-related, or mixed</li><li>Neck pain and cervical radiculopathy</li><li>Sciatica and lumbar radiculopathy</li><li>Widespread musculoskeletal pain — including fibromyalgia assessment</li><li>Joint pain — including inflammatory and degenerative presentations</li><li>Post-traumatic musculoskeletal pain</li><li>Neuropathic pain</li><li>Peripheral neuropathy — diabetic, post-infectious, idiopathic</li><li>Post-herpetic neuralgia — pain following shingles</li><li>Complex regional pain syndrome (CRPS) — assessment and management planning</li><li>Trigeminal neuralgia — assessment and referral coordination</li><li>Chemotherapy-induced peripheral neuropathy</li><li>Phantom limb pain — assessment and management planning</li><li>Headache and facial pain</li><li>Chronic daily headache — assessment and differentiation</li><li>Cervicogenic headache — pain originating from the cervical spine</li><li>Facial pain syndromes — assessment and referral where indicated</li><li>Visceral and abdominal pain</li><li>Chronic abdominal pain — assessment of central and peripheral mechanisms</li><li>Pelvic pain — assessment and referral coordination</li><li>Post-procedural and post-surgical pain</li><li>Persistent pain following surgery — assessment of mechanisms and management options</li><li>Post-mastectomy pain syndrome</li><li>Post-thoracotomy pain syndrome</li><li>Scar pain and adhesion-related pain</li><li>Cancer-related pain</li><li>Pain assessment and management planning for patients with cancer-related pain</li><li>Coordination with oncology and palliative care teams where indicated</li><li>Central sensitisation and complex presentations</li><li>Centralised pain syndromes — fibromyalgia, widespread pain</li><li>Pain associated with fatigue syndromes</li></ul><p>Psychological and psychosocial contributors to chronic pain — assessment and referral for psychological pain management where indicated</p><h2>What Your Consultation Includes</h2><p>Comprehensive specialist pain assessmentYour anaesthesiologist takes a complete pain history — pain location, character, intensity, radiation, onset, duration, temporal pattern, aggravating and relieving factors, previous investigations, previous treatments and their outcomes, current medications, functional impact, sleep quality, mood, and psychosocial contributors. This is a specialist-level assessment, not a brief clinical screen.</p><p>Pain mechanism identificationYour specialist identifies the dominant pain mechanisms operating in your case — nociceptive, neuropathic, central sensitisation, or mixed — and explains clearly how these mechanisms contribute to your experience of pain. Understanding the mechanism is the foundation of an effective management plan.</p><p>Personalised management planBased on the assessment, your specialist develops a structured, evidence-based management plan — which may include:</p><p>Non-pharmacological approaches — physiotherapy, graded exercise, cognitive behavioural approaches to pain, mindfulness-based pain reduction</p><ul><li>Non-opioid pharmacological recommendations at the specialist's professional discretion</li></ul><p>Referral for interventional pain procedures where clinically indicated — nerve blocks, epidural steroid injections, radiofrequency ablation, spinal cord stimulation</p><p>Coordination with other specialists — neurology, rheumatology, orthopaedics, oncology, psychology, physiotherapy</p><ul><li>Review and optimisation of your current medication regimen where appropriate</li></ul><p>Review of existing pain management planIf you are already under a pain specialist or receiving treatment and want an independent review of your current plan, your specialist reviews the clinical documentation in full and provides an independent assessment of whether the current approach is appropriate and what alternatives exist.</p><p>Clinical documentationWhere clinically appropriate, your specialist issues a written clinical pain assessment — documenting the assessment findings, identified mechanisms, and management recommendations — which can be shared with your treating team, physiotherapist, or other healthcare providers.</p><p>Referral coordinationWhen interventional procedures, imaging, specialist input, or multidisciplinary pain clinic referral is indicated, your specialist coordinates the appropriate next steps on the same day.</p><h2>What This Service Does Not Include</h2><p>Opioid prescriptions cannot be issued electronicallyUnder Romanian law, prescriptions for opioid medications and certain controlled substances (preparate stupefiante și psihotrope) require a paper prescription in original — which cannot be transmitted electronically or issued via a telemedicine consultation. If your pain management requires opioid medication, your specialist advises on the appropriate pathway for obtaining this documentation through in-person assessment.</p><p>Interventional procedures cannot be performed remotelyNerve blocks, epidural steroid injections, radiofrequency ablation, and other interventional pain procedures require in-person attendance. This service assesses your suitability for these procedures and coordinates referral where indicated — it does not perform them.</p><p>This is not an emergency pain serviceFor sudden, severe, or rapidly worsening pain — particularly following trauma, or accompanied by neurological symptoms, chest pain, or systemic illness — seek emergency care immediately. Call 112 or go to the nearest emergency department.</p><h2>Specialist Pain Care in Romania — The Access Gap</h2><p>Specialist pain medicine in Romania is concentrated in a small number of multidisciplinary pain clinics and hospital pain departments — predominantly in Bucharest, Cluj-Napoca, and a small number of other major cities. Waiting times for specialist pain assessment can extend to several months even in the private sector.</p><p>For patients with chronic pain outside major cities, or for patients who want specialist-level clinical input before committing to an interventional procedure, accessing a pain specialist in Romania is a genuine practical challenge.</p><p>This service provides specialist-level pain assessment by video call — same day, from anywhere in Romania — with referral and procedure coordination where in-person assessment or intervention is indicated.</p><h2>Frequently Asked Questions</h2><p>What makes this different from a GP musculoskeletal assessment?The GP musculoskeletal assessment available through Global Health covers acute and non-urgent musculoskeletal presentations at primary care level. This specialist pain assessment is conducted by an anaesthesiologist with specialist training in pain medicine — providing a deeper clinical analysis of pain mechanisms, assessment of complex and treatment-resistant presentations, evaluation of suitability for interventional procedures, and development of a specialist-level management plan. If you are unsure which is appropriate for your presentation, a GP assessment is a good starting point and your doctor will refer to the specialist pain service if indicated.</p><p>Can the specialist prescribe opioid pain medication?No. Under Romanian law, opioid medications and certain controlled substances require a paper prescription in original — which cannot be issued via a telemedicine consultation. If opioid medication is clinically appropriate for your pain management, your specialist advises on the appropriate in-person pathway for obtaining this. Non-opioid medications can be assessed and recommended at the specialist's professional discretion following full assessment.</p><p>Can the specialist arrange interventional pain procedures?Your specialist assesses your suitability for interventional procedures — including nerve blocks, epidural steroid injections, radiofrequency ablation, and spinal cord stimulation — and coordinates referral to the appropriate interventional pain centre where indicated. The procedures themselves require in-person attendance.</p><p>I am already seeing a pain specialist — can I get a second opinion?Yes. Independent review of an existing pain management plan is one of the most common uses of this service. Your specialist reviews your clinical documentation in full and provides an honest, evidence-based assessment of your current management — including whether alternatives exist that have not been considered.</p><p>What documentation should I bring?Bring all relevant clinical documentation — imaging reports (MRI, CT, X-ray), blood test results, previous specialist letters, current medication list, and any previous pain assessment or management plan documents. The more complete the documentation, the more useful the specialist assessment.</p><p>How is neuropathic pain different from musculoskeletal pain?Neuropathic pain arises from damage or dysfunction of the nervous system — it typically presents as burning, shooting, electric, or stabbing pain, often with sensory abnormalities such as allodynia (pain from stimuli that would not normally cause pain). Musculoskeletal pain arises from damage or dysfunction of muscles, joints, and connective tissues. The distinction matters clinically because the two types respond to different treatments — a management plan effective for musculoskeletal pain is unlikely to work for neuropathic pain, and vice versa. Your specialist identifies the dominant mechanism in your case and constructs the management plan accordingly.</p><p>Do I need Romanian health insurance?No. This is a private-pay specialist service with no health insurance requirement.</p><p>Can I use this service from anywhere in Romania?Yes. This service is available from anywhere in Romania — all you need is a stable internet connection and a device with a camera.</p>",
+      "ctaLabel": "Schedule the consultation",
+      "sortOrder": 0,
+      "durationMinutes": 20,
+      "basePriceCents": 23000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:57.253Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jskfn001wakju57erkch6",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee7tb000hfsju7tvvjjj1",
+          "path": "/api/media/media/6d1966ed-d6d7-4262-bed5-fdb6fe9a6b9a-8ce20700-b12e-4416-8aa0-46e95e8d1dff-3.webp",
+          "altText": "Evaluare specializată a durerii — consultație online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "EN",
+      "links": [
+        {
+          "id": "cmr8enxjy003o04jurs5oydg0",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "GP Vs Specialist?",
+          "body": "For gp vs specialist, our Musculoskeletal & Pain Assessment — Online, Same Day provides dedicated care — see GP musculoskeletal assessment.",
+          "ctaLabel": "Musculoskeletal & Pain Assessment — Online, Same Day",
+          "targetSlug": "dureri-musculo-scheletice",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8eo06i003s04ju0thlwjbx",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "Cancer Pain, Chronic Conditions?",
+          "body": "For cancer pain, chronic conditions, our Chronic Disease Management — Ongoing GP-Level Care Online provides dedicated care — see chronic disease management.",
+          "ctaLabel": "Chronic Disease Management — Ongoing GP-Level Care Online",
+          "targetSlug": "boli-cronice-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8eo1h9003u04juyjwi4ujn",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "Related care",
+          "body": "Need investigation requests and referral? Our Referral Letters & Investigations — Clinical Documentation Online covers this as a dedicated consultation.",
+          "ctaLabel": "Referral Letters & Investigations — Clinical Documentation Online",
+          "targetSlug": "trimiteri-si-investigatii",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8eo2tg003w04ju4mctt5d1",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "Review of Existing Pain Plan?",
+          "body": "For review of existing pain plan, our Second Medical Opinion — Independent Clinical Assessment provides dedicated care — see second opinion.",
+          "ctaLabel": "Second Medical Opinion — Independent Clinical Assessment",
+          "targetSlug": "a-doua-opinie-medicala",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "UNAVAILABLE",
+        "reasonCode": "NO_APPROVED_DOCTOR",
+        "nextAvailableAt": null
+      }
+    }
+  }
+}

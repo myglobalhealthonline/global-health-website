@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:11.454Z",
+  "endpoint": "/api/services/caderea-parului-online?countryCode=ro&locale=ES",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee5ha000bfsju94p8e37o",
+      "kind": "GENERAL",
+      "slug": "caderea-parului-online",
+      "name": "Consulta para la caída del cabello — en línea, el mismo día",
+      "summary": "¿Observa adelgazamiento del cabello o una caída acentuada? Nuestros médicos autorizados CMR evalúan las posibles causas, recomiendan las investigaciones necesarias y establecen un plan de manejo basado en datos clínicos.",
+      "seoTitle": "Consulta para la caída del cabello online | Rumanía",
+      "seoDescription": "Evaluación para el adelgazamiento o la caída acentuada del cabello. Nuestros médicos autorizados por el CMR evalúan las posibles causas, recomiendan las investigaciones necesarias y establecen un plan de manejo basado en datos clínicos.",
+      "seoKeywords": [
+        "hair loss consultation Romania",
+        "hair loss doctor English Romania",
+        "alopecia online consultation Romania",
+        "finasteride prescription Romania English",
+        "hair thinning doctor Bucharest expat"
+      ],
+      "heroTitle": "Consulta para la caída del cabello — online, el mismo día",
+      "heroDescription": "Evaluación para el adelgazamiento o la caída acentuada del cabello. Nuestros médicos autorizados por CMR evalúan las posibles causas, recomiendan las investigaciones necesarias y establecen un plan de manejo basado en datos clínicos.",
+      "detailBody": "<p>La caída del cabello puede tener causas hormonales, genéticas, nutricionales, inflamatorias o puede estar relacionada con el estrés, una enfermedad reciente o la medicación. Una evaluación médica temprana es importante para identificar los factores reversibles y para decidir si es necesario tratamiento.</p><p>La consulta incluye una conversación detallada sobre el inicio y el patrón de la caída del cabello, los antecedentes familiares, los síntomas asociados, las afecciones existentes y los tratamientos probados. Si es necesario, el médico recomienda análisis para detectar déficit de hierro, trastornos tiroideos, desequilibrios hormonales u otras causas médicas.</p><p>Según el caso, recibirá recomendaciones sobre el cuidado del cuero cabelludo, posibles tratamientos, cambios en el estilo de vida y el momento en que es necesaria una evaluación dermatológica especializada.</p>",
+      "ctaLabel": "Programa la consulta",
+      "sortOrder": 80,
+      "durationMinutes": 15,
+      "basePriceCents": 11500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:38.752Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js6il001nakju2h70qzni",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee5ha000bfsju94p8e37o",
+          "path": "/api/media/media/4d9cf4d8-8a14-475e-b373-4a404428e7d8-9aa0e324-b3f6-4c79-8e8e-4de84aae85e6-1.webp",
+          "altText": "Consultație pentru căderea părului — online, în aceeași zi"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "ES",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

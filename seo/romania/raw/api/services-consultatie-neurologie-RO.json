@@ -1,0 +1,83 @@
+{
+  "checkedAt": "2026-09-12T20:20:15.549Z",
+  "endpoint": "/api/services/consultatie-neurologie?countryCode=ro&locale=RO",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee87d000ifsjuydqk0htg",
+      "kind": "SPECIALIST",
+      "slug": "consultatie-neurologie",
+      "name": "Consultație de neurologie — evaluare de specialitate online",
+      "summary": "Aveți migrene, dureri de cap persistente, amorțeli, neuropatie sau altă problemă neurologică? Specialistul nostru autorizat CMR oferă evaluare inițială, recomandări și plan de investigații prin consultație video.",
+      "seoTitle": "Consultație neurologie online | România | specialist CMR",
+      "seoDescription": "Evaluare de specialitate pentru migrene, dureri de cap persistente, amorțeli, neuropatie sau alte probleme neurologice. Specialistul nostru autorizat CMR oferă evaluare inițială, recomandări și plan de investigații prin consultație video.",
+      "seoKeywords": [
+        "neurology consultation online Romania",
+        "neurologist online Romania",
+        "migraine specialist online Romania",
+        "headache neurologist online Romania",
+        "neuropathy assessment online Romania",
+        "neurology second opinion Romania"
+      ],
+      "heroTitle": "Consultație de neurologie — evaluare de specialitate online",
+      "heroDescription": "Evaluare de specialitate pentru migrene, dureri de cap persistente, amorțeli, neuropatie sau alte probleme neurologice. Specialistul nostru autorizat CMR oferă evaluare inițială, recomandări și plan de investigații prin consultație video.",
+      "detailBody": "<p>Consultația neurologică online este utilă pentru simptome precum cefalee recurentă, migrenă, amețeli, tulburări de sensibilitate, furnicături, dureri neuropate, tremor sau alte manifestări care necesită clarificare de specialitate.</p><p>Medicul neurolog revizuiește istoricul, debutul și evoluția simptomelor, rezultatele existente și tratamentele anterioare. Veți primi recomandări privind conduita imediată, investigațiile necesare și momentul în care este esențială o evaluare fizică urgentă sau prezentarea la spital.</p><p>Serviciul este potrivit și pentru interpretarea unor rezultate deja obținute, monitorizarea unor afecțiuni neurologice stabile și orientarea către îngrijirea potrivită atunci când nu este clar care este următorul pas.</p>",
+      "ctaLabel": "Programează consultația",
+      "sortOrder": 0,
+      "durationMinutes": 20,
+      "basePriceCents": 22000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:45.465Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jshz4001uakju0eh9c4xv",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee87d000ifsjuydqk0htg",
+          "path": "/api/media/media/8b300e8b-981a-4e39-b597-0a744cd63d2e-895b9c67-2d6d-4493-b671-42f49affecdb-3.webp",
+          "altText": "Consultație de neurologie — evaluare de specialitate online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "RO",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4j7oc00se01p2gf7y9ldw"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:50:00.000Z"
+      }
+    }
+  }
+}

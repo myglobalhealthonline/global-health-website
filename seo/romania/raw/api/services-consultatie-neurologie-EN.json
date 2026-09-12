@@ -1,0 +1,124 @@
+{
+  "checkedAt": "2026-09-12T20:20:09.951Z",
+  "endpoint": "/api/services/consultatie-neurologie?countryCode=ro&locale=EN",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee87d000ifsjuydqk0htg",
+      "kind": "SPECIALIST",
+      "slug": "consultatie-neurologie",
+      "name": "Neurology Consultation — Specialist Assessment Online",
+      "summary": "Headache, migraine, neuropathy, or neurological concern? Our CMR-registered neurologist offers specialist assessments and treatment reviews by video call. Same-day appointments available anywhere in Romania.",
+      "seoTitle": "Neurology Consultation Online | Romania | Specialist Assessment",
+      "seoDescription": "Specialist assessment for headaches, migraine, neuropathy, and other neurological concerns. Our CMR-registered neurologist offers specialist assessments and treatment reviews by video call. Same-day appointments available anywhere in Romania.",
+      "seoKeywords": [
+        "neurology consultation online Romania",
+        "neurologist online Romania",
+        "migraine specialist online Romania",
+        "headache neurologist online Romania",
+        "neuropathy assessment online Romania",
+        "neurology second opinion Romania"
+      ],
+      "heroTitle": "Neurology Consultation — Specialist Assessment Online",
+      "heroDescription": "Specialist evaluation for migraines, persistent headaches, numbness, neuropathy, or other neurological problems. Our CMR-authorized specialist provides an initial assessment, recommendations, and an investigation plan via video consultation.",
+      "detailBody": "<p>Neurological symptoms — persistent headache, migraine, numbness, tingling, dizziness, memory concerns, or a diagnosis that needs specialist review — often require specialist clinical input that is not available through standard primary care.</p><p>Our neurologist, registered with the Romanian College of Physicians (CMR) and specialised in neurology, offers specialist neurological assessments and treatment reviews by secure video call. Whether you need a first specialist opinion on a neurological symptom, a review of an existing diagnosis and treatment plan, a second opinion on recommended management, or results from investigations explained clearly — we are here, same day, from anywhere in Romania, in English, Romanian.</p><h2>What a Neurologist Can Assess Online</h2><p>Neurology is one of the medical specialties most suited to video consultation for a significant range of presentations. The clinical history — what you experience, how symptoms developed, their pattern over time — is the most powerful diagnostic tool in neurology, and a full history can be taken by video call.</p><p>Well-suited to video consultation:</p><ul><li>Headache and migraine — characterisation, diagnosis, and management review</li><li>Follow-up consultations for established neurological conditions — treatment review and adjustment</li><li>Results review — MRI, CT, EEG, and EMG interpretation and explanation</li><li>Second opinions on neurological diagnoses and management plans</li><li>Cognitive concerns — initial screening and assessment</li><li>Neuropathy assessment — history, characterisation, and investigation planning</li><li>Sleep disorder assessment — initial evaluation and referral where indicated</li><li>Review of neurological symptoms with a systemic or metabolic cause</li></ul><p>Requiring in-person assessment:</p><p>Conditions requiring full physical neurological examination — reflex testing, coordination assessment, cranial nerve examination requiring physical presence</p><ul><li>First episode of seizure — requires emergency assessment and in-person investigation</li></ul><p>Acute neurological presentations — weakness, speech difficulty, vision loss — require emergency care</p><ul><li>Procedures — lumbar puncture, nerve conduction studies, EMG — require in-person attendance</li></ul><p>If you are unsure whether your presentation is appropriate for a video consultation, book and your neurologist will advise clearly at the outset. Patient safety is always the clinical priority — if in-person assessment is needed, you will be told immediately.</p><h2>Who This Service Is For</h2><p>This consultation is appropriate for adults with:</p><p>Persistent or complex headache — including suspected migraine, tension-type headache, or headache that has not responded to standard management</p><ul><li>A neurological diagnosis who want specialist review of their current treatment plan</li><li>Results from brain MRI, CT, EEG, or EMG that they want reviewed and explained by a neurologist</li><li>Numbness, tingling, or weakness that needs specialist neurological assessment</li><li>Dizziness and balance problems — assessment and investigation planning</li></ul><p>Cognitive concerns — memory, concentration, or word-finding difficulties — initial specialist assessment</p><ul><li>A neurological diagnosis received in Romania that they want reviewed and explained clearly</li><li>A need for a second opinion on a recommended neurological intervention or management change</li><li>Established neurological condition follow-up — treatment review, medication adjustment, monitoring</li><li>Patients in rural areas or smaller cities where specialist neurology access is limited</li></ul><h2>Conditions Commonly Assessed</h2><ul><li>Headache and migraine</li><li>Migraine — with and without aura, chronic migraine, treatment-resistant migraine</li><li>Tension-type headache — episodic and chronic</li><li>Cervicogenic headache — headache originating from the cervical spine</li><li>Cluster headache — assessment and management review</li><li>Medication overuse headache — assessment and management planning</li><li>Post-traumatic headache</li><li>New or changed headache patterns requiring specialist assessment</li><li>Peripheral nervous system</li><li>Peripheral neuropathy — diabetic, post-infectious, idiopathic, toxic</li><li>Carpal tunnel syndrome and other entrapment neuropathies — clinical assessment</li><li>Radiculopathy — cervical and lumbar nerve root compression</li><li>Facial nerve palsy — assessment and management</li><li>Guillain-Barré syndrome follow-up — monitoring and management review</li><li>Central nervous system — follow-up and review</li><li>Multiple sclerosis — treatment review and follow-up for established patients</li><li>Parkinson's disease — treatment review and symptom management</li><li>Epilepsy — follow-up, treatment review, and medication adjustment for established patients</li><li>Post-stroke follow-up — recovery monitoring and management review</li><li>Tremor — assessment, characterisation, and management planning</li><li>Cognitive and behavioural</li></ul><p>Memory concerns and cognitive difficulties — initial specialist assessment and investigation planning</p><ul><li>Dementia — initial assessment, investigation planning, and family guidance</li><li>ADHD — neurological assessment where indicated</li><li>Post-COVID cognitive symptoms — assessment and management</li><li>Sleep disorders</li><li>Insomnia with neurological contributors — assessment</li><li>Restless legs syndrome — assessment and management</li><li>Excessive daytime sleepiness — assessment and referral for sleep study where indicated</li><li>REM sleep behaviour disorder — assessment</li><li>Other</li><li>Dizziness and vertigo — neurological assessment and investigation planning</li><li>Tinnitus with neurological contributors — assessment and referral</li><li>Visual symptoms with neurological basis — assessment and referral</li><li>Functional neurological symptoms — assessment and management planning</li></ul><h2>What Your Consultation Includes</h2><p>Specialist neurological assessmentYour neurologist takes a comprehensive history — symptom onset, character, progression, pattern, triggers, associated symptoms, previous investigations and their results, current medications and their effects, and relevant medical history. A limited neurological examination is conducted where possible by video — including observation of speech, facial symmetry, tremor, gait, and other assessable parameters.</p><p>Investigation results reviewIf you have MRI, CT, EEG, or EMG results and want them reviewed and explained by a neurologist, bring these to your consultation. Your neurologist reviews the reports and imaging in full and explains the findings clearly — what they show, what they mean for your diagnosis, and what the implications are for management.</p><p>Treatment review and adjustmentFor patients with an established neurological diagnosis, your neurologist reviews your current treatment — assessing efficacy, tolerability, side effects, and whether adjustment or an alternative approach is warranted.</p><p>Clinical management planBased on the assessment, your neurologist advises on the most appropriate next steps — which may include further investigation requests, referral for in-person specialist assessment or procedures, medication recommendations at the specialist's professional discretion, or structured monitoring and follow-up.</p><p>Electronic prescription — where clinically appropriateWhen clinically indicated, your neurologist issues an electronic prescription through SIPE. You present it at any pharmacy of your choice in Romania.</p><p>Note: Special-regime prescriptions covering certain neurological medications cannot be transmitted electronically under Romanian law. Your neurologist advises if this applies to your situation.</p><p>Specialist clinical documentationWhere clinically appropriate, your neurologist issues a written specialist assessment — documenting the clinical findings, diagnosis or differential diagnoses, and management recommendations — which can be shared with your GP, other specialists, or used for insurance purposes.</p><p>Referral coordinationWhen in-person neurological assessment, specialist investigation, or multidisciplinary input is needed, your neurologist coordinates the referral on the same day.</p><h2>Neurology in Romania — The Access Gap</h2><p>Specialist neurology waiting times in Romania are among the longest of any specialty — particularly in the public system, where waiting times for a neurology outpatient appointment can extend to several months. In the private sector, neurology is better resourced but concentrated in Bucharest and a small number of major cities.</p><p>For patients outside Bucharest and Cluj-Napoca particularly, accessing a specialist neurologist involves significant travel — and for patients with conditions that affect mobility or driving, this is a genuine practical barrier.</p><p>Video neurology consultation — for appropriate presentations — closes this gap. A specialist neurological assessment, same day, from anywhere in Romania, without travel.</p><h2>Neurological Emergencies — When Not to Use This Service</h2><p>Neurology includes some of the most time-critical medical emergencies. The following presentations require immediate emergency care — not a video consultation:</p><p>Call 112 immediately if you experience:</p><ul><li>Sudden severe headache — the worst headache of your life, of sudden onset</li><li>Sudden weakness, numbness, or paralysis on one side of the body or face</li><li>Sudden difficulty speaking, understanding speech, or swallowing</li><li>Sudden loss of vision</li><li>Sudden severe dizziness, loss of balance, or inability to coordinate movement</li><li>First seizure — or a seizure longer than 5 minutes</li></ul><p>For these presentations, every minute matters. Do not book an online consultation — call 112 immediately.</p><h2>Frequently Asked Questions</h2><p>Can a neurological condition really be assessed by video call?Yes — for the majority of appropriate presentations. The clinical history is the dominant diagnostic tool in neurology, and a full history can be taken by video call. A limited neurological examination is possible by video — assessing speech, facial symmetry, visible tremor, gait where the patient can demonstrate, and other observable parameters. Where physical examination findings that cannot be assessed remotely are needed — full reflex testing, coordination manoeuvres, sensory testing — your neurologist advises on appropriate in-person assessment.</p><p>I have MRI results I do not understand — can the neurologist review them?Yes. Bring your MRI, CT, or other investigation reports to the consultation. Your neurologist reviews the reports in full and explains the findings clearly — what they show, what they mean for your diagnosis, and what the implications are for your management. This is one of the most common uses of neurological video consultation.</p><p>Can the neurologist review my epilepsy medication?Yes — for established epilepsy patients who are under neurological care and want a review of their current medication. This is appropriate for follow-up and adjustment in stable patients. Acute seizure management and first seizure assessment require emergency in-person assessment.</p><p>What is the difference between a GP mental health assessment and a neurological cognitive assessment?A GP mental health assessment screens for common mental health conditions — anxiety, depression — at primary care level. A specialist neurological cognitive assessment specifically examines cognitive function — memory, attention, language, executive function — using validated neurological tools, and is appropriate when there is concern about a neurological cause of cognitive symptoms, such as early dementia, post-stroke cognitive changes, or post-COVID cognitive syndrome.</p><p>Can the neurologist prescribe migraine medication?Yes — where clinically indicated following full assessment. Your neurologist advises on the most appropriate evidence-based approach for your specific migraine pattern. Some medications used in migraine management fall under special-regime prescription in Romania and cannot be transmitted electronically — your neurologist advises if this applies to your situation.</p><p>Is this service available for follow-up consultations for Multiple Sclerosis or Parkinson's disease?Yes. Follow-up consultations for established patients with Multiple Sclerosis, Parkinson's disease, and other chronic neurological conditions are a core part of this service — particularly for treatment review, symptom monitoring, and medication adjustment in stable patients.</p><p>Do I need Romanian health insurance?No. This is a private-pay specialist service with no health insurance requirement.</p><p>Can I use this service from anywhere in Romania?Yes. This service is specifically designed to address the neurology access gap outside major cities. All you need is a stable internet connection and a device with a camera.</p>",
+      "ctaLabel": "Schedule the consultation",
+      "sortOrder": 0,
+      "durationMinutes": 20,
+      "basePriceCents": 22000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:45.465Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jshz4001uakju0eh9c4xv",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee87d000ifsjuydqk0htg",
+          "path": "/api/media/media/8b300e8b-981a-4e39-b597-0a744cd63d2e-895b9c67-2d6d-4493-b671-42f49affecdb-3.webp",
+          "altText": "Consultație de neurologie — evaluare de specialitate online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "EN",
+      "links": [
+        {
+          "id": "cmr8eo5g7004004juop42mjxn",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "Cognitive Concerns, ADHD Screening?",
+          "body": "For cognitive concerns, adhd screening, our Mental Health Assessment — Online, in English provides dedicated care — see mental health assessment.",
+          "ctaLabel": "Mental Health Assessment — Online, in English",
+          "targetSlug": "sanatate-mintala-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8eo6qw004204juk74b7nmu",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "MS, Parkinson's, Epilepsy Follow-up?",
+          "body": "For ms, parkinson's, epilepsy follow-up, our Chronic Disease Management — Ongoing GP-Level Care Online provides dedicated care — see chronic disease management.",
+          "ctaLabel": "Chronic Disease Management — Ongoing GP-Level Care Online",
+          "targetSlug": "boli-cronice-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8eo81l004404jufpm2qsmr",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "Neurological Second Opinion?",
+          "body": "For neurological second opinion, our Second Medical Opinion — Independent Clinical Assessment provides dedicated care — see second opinion.",
+          "ctaLabel": "Second Medical Opinion — Independent Clinical Assessment",
+          "targetSlug": "a-doua-opinie-medicala",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8eo9c9004604jusgi2116w",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "Related care",
+          "body": "Need MRI results review and referral? Our Referral Letters & Investigations — Clinical Documentation Online covers this as a dedicated consultation.",
+          "ctaLabel": "Referral Letters & Investigations — Clinical Documentation Online",
+          "targetSlug": "trimiteri-si-investigatii",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrc4j7oc00se01p2gf7y9ldw"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:50:00.000Z"
+      }
+    }
+  }
+}
