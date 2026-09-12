@@ -14,6 +14,7 @@ const ALLOWED: Record<string, Set<string>> = {
     "nationality",
     "nationality/1/download",
     "nationality/2/download",
+    "country-tax-ids",
   ]),
   PATCH: new Set(["insurance"]),
   POST: new Set([
@@ -36,7 +37,13 @@ async function proxy(request: NextRequest, segments: string[]) {
 
   const key = segments.join("/");
   const allowed = ALLOWED[request.method];
-  if (!allowed?.has(key)) {
+  // The per-country fiscal-number endpoint carries the country in its path, so
+  // it cannot be a literal in the allowlist. The pattern is deliberately tight
+  // (2-8 letters, one segment) — this list is what keeps the proxy from being a
+  // general tunnel to the backend.
+  const isCountryTaxIdWrite =
+    request.method === "PUT" && /^country-tax-ids\/[A-Za-z]{2,8}$/.test(key);
+  if (!allowed?.has(key) && !isCountryTaxIdWrite) {
     return NextResponse.json({ ok: false, message: "Not found" }, { status: 404 });
   }
 

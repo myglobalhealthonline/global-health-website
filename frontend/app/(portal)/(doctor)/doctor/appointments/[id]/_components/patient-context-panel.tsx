@@ -9,6 +9,11 @@ import {
   type PatientIdentityFieldsCopy,
 } from "./patient-identity-rows";
 import { IdentityVerificationCard } from "./identity-verification-card";
+import {
+  CountryFiscalNumbers,
+  type CountryFiscalNumbersCopy,
+} from "@/components/patient/CountryFiscalNumbers";
+import type { CountryTaxIdEntry } from "@/lib/patient/country-tax-ids";
 
 export type PatientContextCopy = {
   patient: string;
@@ -25,6 +30,7 @@ export type PatientContextCopy = {
   openPatientChart: string;
   editHealthDataHint: string;
   identityFields: PatientIdentityFieldsCopy;
+  countryFiscal: CountryFiscalNumbersCopy;
 };
 
 /**
@@ -86,6 +92,10 @@ export function PatientContextPanel({
     pharmacy?: string | null;
     consultationLanguageCode?: string | null;
     identityFields?: string[] | null;
+    /** One fiscal number per country the patient is treated in. */
+    countryTaxIds?: CountryTaxIdEntry[] | null;
+    /** Normalized country this appointment's documents are issued for. */
+    documentCountryCode?: string | null;
     createdAt: string;
     notes?: string | null;
   };
@@ -187,6 +197,17 @@ export function PatientContextPanel({
             value={new Date(appointment.createdAt).toLocaleString()}
           />
         </dl>
+        {/* The fiscal number is the one identity field that is genuinely
+            per-country: a patient consulting in both PT and IE has a NIF and a
+            PPS, and the prescription written here must carry the one valid in
+            this appointment's country. The doctor can add or correct any of
+            them in place — the same rows the patient and admin portals show. */}
+        <CountryFiscalNumbers
+          endpointBase={`/api/doctor/patients/${encodeURIComponent(appointment.email)}/country-tax-ids`}
+          initial={appointment.countryTaxIds ?? []}
+          highlightCountry={appointment.documentCountryCode ?? appointment.countryCode}
+          copy={copy.countryFiscal}
+        />
         {/* Every market: identity verification decides whether a
             prescription may claim the patient was checked. */}
         <IdentityVerificationCard email={appointment.email} />

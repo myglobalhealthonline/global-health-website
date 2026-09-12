@@ -1,5 +1,6 @@
 import { prisma } from "../../db/prisma.js";
 import { decryptPhi } from "../../lib/crypto/phi-crypto.js";
+import { resolvePatientCountryTaxId } from "../patient-profile/patient-country-tax-ids.js";
 import {
   isMemedPrescriptionConfigured,
   MemedPrescriptionNotConfiguredError,
@@ -177,6 +178,7 @@ async function resolvePatientForMemed(appointmentId: string): Promise<MemedPatie
       fullName: true,
       email: true,
       dateOfBirth: true,
+      countryCode: true,
       patientHealthIdNumber: true,
       addressLine1: true,
       addressLine2: true,
@@ -188,6 +190,7 @@ async function resolvePatientForMemed(appointmentId: string): Promise<MemedPatie
   const profile = await prisma.patientProfile.findUnique({
     where: { email: appt.email.toLowerCase() },
     select: {
+      id: true,
       taxIdNumber: true,
       passportNumber: true,
       dateOfBirth: true,
@@ -198,10 +201,19 @@ async function resolvePatientForMemed(appointmentId: string): Promise<MemedPatie
     },
   });
 
+  // The fiscal number the patient holds for the country this prescription is
+  // issued in — a patient treated in both PT and BR has a NIF and a CPF, and
+  // only the CPF belongs in Memed. Falls through to the appointment's own
+  // cross-border capture, then to the chart's single tax column.
+  const countryTaxId = await resolvePatientCountryTaxId(profile?.id ?? null, appt.countryCode);
+
   // `patientHealthIdNumber` is the id captured for THIS issuing country
-  // (cross-border Rx asks for it at payment) — it wins when present, same
-  // rule as buildPatientIdLine. Otherwise fall back to the chart's CPF.
-  const cpfRaw = decryptPhi(appt.patientHealthIdNumber) ?? decryptPhi(profile?.taxIdNumber ?? null);
+  // (cross-border Rx asks for it at payment) — same precedence as
+  // buildPatientIdLine. Otherwise fall back to the chart's CPF.
+  const cpfRaw =
+    countryTaxId ??
+    decryptPhi(appt.patientHealthIdNumber) ??
+    decryptPhi(profile?.taxIdNumber ?? null);
   const passportRaw = cpfRaw ? null : decryptPhi(profile?.passportNumber ?? null);
   const dob = appt.dateOfBirth ?? profile?.dateOfBirth ?? null;
 

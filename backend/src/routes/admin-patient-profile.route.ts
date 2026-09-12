@@ -41,9 +41,19 @@ import { getObject, streamToNodeReadable } from "../services/object-storage.js";
 import { VerificationStatus } from "@prisma/client";
 import { guardMedicalRead, MedicalAccessDeniedError, medicalAccessDeniedResponse } from "../utils/guard-medical-read.js";
 import { resolveAdminListCountryFolders } from "../utils/order-country-scope.js";
+import {
+  InvalidTaxIdCountryError,
+  listPatientCountryTaxIds,
+  setPatientCountryTaxId,
+} from "../modules/patient-profile/patient-country-tax-ids.js";
 
 const stringField = (max: number) =>
   z.string().trim().max(max).nullable().optional();
+
+/** Null / empty clears the country's row — see the doctor route's twin. */
+const adminCountryTaxIdBodySchema = z.object({
+  taxIdNumber: z.string().trim().max(64).nullable(),
+});
 
 /** `:type` path segment → PatientAlertType. */
 const adminAlertTypeParam = z
@@ -289,6 +299,11 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         }
         return okResponse({
           profile: serializeProfile(profile, { includeAlerts: true }),
+          // Per-country fiscal numbers — one row per market the patient is
+          // treated in. Served alongside the profile (not inside it) because
+          // they are a separate table, not a profile column; the single
+          // `taxIdNumber` column stays the home-country value.
+          countryTaxIds: await listPatientCountryTaxIds(profile.id),
         });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
@@ -296,6 +311,67 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(error);
         return reply.status(500).send(errorResponse("Could not load profile"));
+      }
+    },
+  );
+
+  /**
+   * Set (or clear, with a null/empty value) the fiscal number the patient holds
+   * for one country. Admin counterpart of the doctor endpoint — the two write
+   * the same rows, so a number a doctor adds mid-consult shows up here and vice
+   * versa.
+   */
+  app.put<{ Params: { email: string; countryCode: string } }>(
+    "/api/admin/patients/:email/country-tax-ids/:countryCode",
+    async (request, reply) => {
+      let email: string;
+      try {
+        email = decodeURIComponent(request.params.email).trim().toLowerCase();
+      } catch {
+        return reply.status(400).send(errorResponse("Invalid email param"));
+      }
+      const body = adminCountryTaxIdBodySchema.safeParse(request.body ?? {});
+      if (!body.success) {
+        return reply.status(400).send(errorResponse("Invalid fiscal number", body.error.flatten()));
+      }
+      try {
+        const profileId = await resolvePatientProfileIdByPatientEmail(email);
+        if (!profileId) {
+          return reply.status(404).send(errorResponse("Patient profile not found"));
+        }
+        const actor = resolveAdminSessionActor(request);
+        try {
+          await guardMedicalRead(
+            request,
+            { userId: actor?.userId ?? "", role: actor?.role ?? "ADMIN" },
+            {
+              patientProfileId: profileId,
+              resourceType: "SENSITIVE_PROFILE",
+              accessAction: "UPDATED",
+            },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(medicalAccessDeniedResponse(guardError));
+          }
+          throw guardError;
+        }
+        const countryTaxIds = await setPatientCountryTaxId(
+          profileId,
+          request.params.countryCode,
+          body.data.taxIdNumber,
+          { userId: actor?.userId ?? null },
+        );
+        return okResponse({ countryTaxIds });
+      } catch (error) {
+        if (error instanceof InvalidTaxIdCountryError) {
+          return reply.status(400).send(errorResponse(error.message));
+        }
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not save fiscal number"));
       }
     },
   );

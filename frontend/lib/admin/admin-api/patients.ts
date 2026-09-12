@@ -119,9 +119,14 @@ export type AdminPatientPaymentItem = {
 };
 
 export const fetchAdminPatientProfile = cache(async (email: string) => {
-  return adminRequest<{ profile: AdminPatientProfileDto | null }>(
-    `/api/admin/patients/${encodeURIComponent(email)}/profile`,
-  );
+  // `countryTaxIds` rides alongside the profile rather than inside it: the
+  // per-country fiscal numbers are their own table (one row per market the
+  // patient is treated in), not a profile column. The profile's single
+  // `taxIdNumber` stays the home-country value.
+  return adminRequest<{
+    profile: AdminPatientProfileDto | null;
+    countryTaxIds?: { countryCode: string; taxIdNumber: string; updatedAt?: string }[];
+  }>(`/api/admin/patients/${encodeURIComponent(email)}/profile`);
 });
 
 export async function patchAdminPatientProfile(

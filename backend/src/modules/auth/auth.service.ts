@@ -551,6 +551,11 @@ async function purgeOneAccount(userId: string): Promise<void> {
 
   await prisma.$transaction(async (tx) => {
     if (patientProfile) {
+      // Per-country fiscal numbers are identity — same scrub as `taxIdNumber`
+      // below, but deleted rather than nulled since each row is one country.
+      await tx.patientCountryTaxId.deleteMany({
+        where: { patientProfileId: patientProfile.id },
+      });
       // Same field set as the admin-triggered anonymizePatient() — PII
       // scrubbed, GHN + clinical relations (MedicalDocument, consents,
       // access logs) preserved.
