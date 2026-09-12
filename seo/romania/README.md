@@ -17,9 +17,15 @@ planning checkpoint, superseded by the full public-source reconciliation below.
 
 ## Completed research and draft package — 13 September 2026
 
+The approved rollout is complete in commit `a560643b`: 20 groups covering 114 pages
+are live and publicly verified. See the [implementation log](09-implementation-log.md)
+and [publication cohort](publication-cohort-2026-09-13.json). Global ledger §55.3 owns
+the remaining dependencies and measurement dates. The [original handoff](implementation-handoff-2026-09-13.md)
+records the preparation scope from research commit `39656572`.
+
 The numbered artifacts follow the Ireland/Portugal/Czechia country contract. Their
 structure aligns; research depth and implementation status are country-specific.
-Romania has local drafts, not the production rollout receipts held by those markets.
+Romania now has production rollback snapshots and public readback receipts in `raw/rollout/`.
 
 | Evidence | File |
 | --- | --- |
