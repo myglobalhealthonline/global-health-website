@@ -1,0 +1,186 @@
+{
+  "endpoint": "/api/services/consulta-piel-online?countryCode=es&locale=ES",
+  "checkedAt": "2026-09-13T22:38:48.270Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q4co001yngjucbez1gc0",
+      "kind": "GENERAL",
+      "slug": "consulta-piel-online",
+      "name": "Consulta de Piel",
+      "summary": null,
+      "seoTitle": "Consulta de Piel Online España | Médico de Cabecera | Mismo Día",
+      "seoDescription": "Sarpullido, eccema, acné u otra preocupación de piel. Nuestros médicos de cabecera colegiados evalúan afecciones cutáneas por videollamada segura. Evaluación clínica el mismo día en España.",
+      "seoKeywords": [
+        "consulta de piel online España",
+        "médico piel online España",
+        "eccema médico online España",
+        "acné evaluación online España",
+        "sarpullido médico online España"
+      ],
+      "heroTitle": "Consulta de Piel — Evaluación Clínica con Médico de Cabecera Online",
+      "heroDescription": "Una erupción nueva, un brote de eccema, acné que afecta tu confianza, o una lesión cutánea que llevas tiempo queriendo revisar. La mayoría de las preocupaciones de piel pueden evaluarse clínicamente por videollamada por un médico de cabecera con experiencia — sin necesidad de esperar semanas para una cita en dermatología. Nuestros médicos de cabecera, colegiados conforme a los requisitos de la Organización Médica Colegial (OMC), ofrecen evaluaciones de piel completas por videollamada segura — identificando tu afección, asesorando sobre gestión basada en evidencia, y derivando a nuestro servicio de dermatología especializada donde se necesite valoración más profunda. El mismo día, desde cualquier punto de España, en español, inglés o portugués.",
+      "detailBody": "<h2>Consulta de piel con médico de cabecera vs. consulta dermatológica especialista</h2><p>Global Health ofrece dos niveles de atención para afecciones cutáneas:</p><ul><li>Consulta de piel con médico de cabecera — apropiada para la mayoría de presentaciones cutáneas agudas y no urgentes. Eccema, acné leve a moderado, erupciones, infecciones cutáneas, lunares de vigilancia rutinaria, y afecciones cutáneas crónicas gestionadas a nivel de medicina general. Es el punto de entrada correcto para la mayoría de preocupaciones de piel.</li><li>Consulta dermatológica especialista — realizada por dermatólogos colegiados de Global Health. Apropiada para afecciones complejas, resistentes al tratamiento, o que requieren valoración especializada — incluyendo acné grave con consideración de isotretinoína, lesiones sospechosas que requieren dermatoscopia de alta resolución, psoriasis compleja, y afecciones que requieren biopsia coordinada.</li></ul><p>¿No estás seguro de cuál es el nivel apropiado para tu preocupación? Empieza con la consulta de medicina general — si tu presentación requiere valoración dermatológica especializada, tu médico de cabecera te deriva directamente a nuestro servicio de dermatología dentro de la misma plataforma.</p><h2>Para quién es este servicio</h2><p>Esta consulta es apropiada para adultos y niños que presentan:</p><ul><li>Una erupción, cambio cutáneo o lesión nueva que necesita evaluación clínica</li><li>Una afección cutánea existente que está en brote o no responde al tratamiento actual</li><li>Acné leve a moderado — comedonal, inflamatorio o mixto</li><li>Eccema o dermatitis atópica — evaluación de brote y gestión continuada</li><li>Psoriasis — presentaciones no complejas a nivel de medicina general</li><li>Un lunar o lesión cutánea de vigilancia rutinaria</li><li>Reacciones alérgicas cutáneas — urticaria, dermatitis de contacto o reacciones medicamentosas</li><li>Afecciones del cuero cabelludo — dermatitis seborreica, psoriasis del cuero cabelludo o afecciones fúngicas</li><li>Infecciones cutáneas — bacterianas, virales o fúngicas</li><li>Afecciones cutáneas crónicas gestionadas a nivel de medicina general</li><li>Pacientes que necesitan una carta de derivación a dermatología</li></ul><h2>Condiciones habitualmente evaluadas</h2><p><strong>Condiciones inflamatorias</strong></p><ul><li>Eccema y dermatitis atópica — gestión de brotes, identificación de desencadenantes, atención continuada</li><li>Psoriasis — presentaciones no complejas a nivel de medicina general</li><li>Dermatitis seborreica — presentación en cuero cabelludo y facial</li><li>Rosácea — evaluación y gestión a nivel de medicina general</li><li>Dermatitis perioral</li></ul><p><strong>Acné</strong></p><ul><li>Acné leve a moderado — comedonal, inflamatorio y mixto</li><li>Acné en adolescentes y adultos</li><li>Acné hormonal en mujeres — evaluado junto con evaluación hormonal donde esté indicado</li><li>Evaluación de pigmentación postacné y cicatrices</li><li>Revisión de gestión del acné — pacientes ya en tratamiento que necesitan revisión clínica</li></ul><p>El acné grave que pueda requerir isotretinoína necesita valoración por nuestro servicio de dermatología especialista — tu médico de cabecera te deriva directamente si tu presentación lo justifica.</p><p><strong>Condiciones alérgicas y reactivas</strong></p><ul><li>Urticaria — habones agudos y crónicos</li><li>Dermatitis alérgica de contacto — evaluación y asesoramiento sobre evitación de alérgenos</li><li>Reacciones medicamentosas que afectan a la piel</li><li>Angioedema — evaluación y gestión a nivel de medicina general</li><li>Presentaciones cutáneas de alergia alimentaria</li></ul><p><strong>Infecciones</strong></p><ul><li>Impétigo — infección cutánea bacteriana</li><li>Celulitis — evaluación y gestión con escalada donde esté indicado</li><li>Foliculitis</li><li>Infecciones cutáneas fúngicas — tiña corporal, tiña pedis, tiña versicolor</li><li>Molusco contagioso</li><li>Verrugas y verrugas plantares</li><li>Herpes simple — herpes labial y herpes cutáneo</li><li>Herpes zóster — evaluación y gestión</li></ul><p><strong>Pigmentación y lesiones — vigilancia rutinaria</strong></p><ul><li>Lunares de vigilancia rutinaria — evaluación clínica y derivación a dermatología especialista donde esté indicado</li><li>Hiperpigmentación postinflamatoria</li><li>Melasma — evaluación y gestión</li><li>Vitíligo — evaluación y derivación donde esté indicado</li></ul><p>Las lesiones sospechosas que requieren dermatoscopia o biopsia se derivan a nuestro servicio de dermatología especialista.</p><p><strong>Afecciones del cuero cabelludo</strong></p><ul><li>Dermatitis seborreica del cuero cabelludo</li><li>Psoriasis del cuero cabelludo — presentaciones no complejas</li><li>Foliculitis del cuero cabelludo</li><li>Tiña capitis — infección fúngica del cuero cabelludo</li></ul><p><strong>Afecciones cutáneas pediátricas</strong></p><ul><li>Eccema en lactantes y niños</li><li>Dermatitis del pañal y preocupaciones cutáneas en lactantes</li><li>Erupciones virales infantiles — evaluación y orientación para padres</li><li>Impétigo e infecciones cutáneas en niños</li><li>Molusco contagioso en niños</li></ul><h2>Qué incluye la consulta</h2><p><strong>Evaluación visual clínica</strong></p><p>Las afecciones cutáneas son especialmente adecuadas para la videoconsulta — tu médico de cabecera puede observar la lesión, erupción o cambio cutáneo directamente durante la llamada. Una buena iluminación y una vista clara de la cámara mejoran significativamente la calidad de la evaluación — tu médico te guía sobre el posicionamiento durante la llamada.</p><p><strong>Historia clínica completa</strong></p><p>El médico revisa el inicio, progresión, distribución, síntomas asociados, desencadenantes, tratamientos previos, historial médico relevante, medicación y antecedentes familiares de afecciones cutáneas.</p><p><strong>Diagnóstico y plan de gestión</strong></p><p>Basándose en la evaluación, el médico asesora sobre el diagnóstico más probable, el enfoque de gestión apropiado, y qué esperar del tratamiento — incluyendo cómo monitorizar tu afección y cuándo buscar revisión adicional.</p><p><strong>Documentación clínica — a criterio del médico</strong></p><p>Cuando esté clínicamente indicado, el médico emite la documentación clínica correspondiente válida en cualquier farmacia española.</p><p>Nota: Los estupefacientes y determinadas sustancias controladas requieren documentación especial que no puede emitirse electrónicamente. Tu médico de cabecera te informará si esto aplica.</p><p><strong>Solicitud de análisis donde esté indicado</strong></p><p>Donde los análisis de sangre — incluyendo paneles de alergia o marcadores inflamatorios — estén clínicamente indicados, el médico los solicita el mismo día.</p><p><strong>Derivación interna a dermatología especialista — donde sea necesario</strong></p><p>Donde se requiera evaluación dermatológica especializada — incluyendo lesiones sospechosas, acné grave, afecciones complejas o resistentes al tratamiento — tu médico de cabecera te deriva directamente a nuestro servicio de dermatología especialista dentro de la misma plataforma, el mismo día.</p><h2>Lunares y lesiones cutáneas — cuándo actuar con prontitud</h2><p>Cualquier cambio en un lunar o lesión cutánea justifica evaluación clínica. Los criterios ABCDE son la guía clínica estándar:</p><ul><li>A — Asimetría — una mitad no coincide con la otra</li><li>B — Borde — bordes irregulares, dentados o difusos</li><li>C — Color — variación de color dentro de la lesión</li><li>D — Diámetro — mayor de 6mm</li><li>E — Evolución — cualquier cambio de tamaño, forma, color, o cualquier síntoma nuevo</li></ul><p>Si tu lesión cumple alguno de estos criterios, reserva una evaluación con prontitud. Tu médico de cabecera evalúa visualmente y, donde esté indicado, te deriva directamente a nuestro servicio de dermatología especialista para valoración con dermatoscopia.</p><h2>Preparación para tu consulta de piel</h2><ul><li>Buena iluminación — la luz natural o una lámpara dirigida a la zona afectada da a tu médico la vista más clara</li><li>Fotos claras — toma fotos claras de la zona afectada antes de tu consulta</li><li>Múltiples ángulos — muestra la lesión o erupción desde múltiples ángulos durante la llamada</li><li>Nota el historial — cuándo empezó, cómo ha cambiado, qué lo mejora o empeora, y qué has probado ya</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 60,
+      "durationMinutes": 15,
+      "basePriceCents": 4500,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.260Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0sqto0003y8juhyfqxza5",
+          "kind": "IMAGE",
+          "key": "media/c998d4b2-6480-4390-8ced-8be785780cbe-es-consulta-piel-online.png",
+          "path": "/api/media/media/c998d4b2-6480-4390-8ced-8be785780cbe-es-consulta-piel-online.png",
+          "altText": "Consulta de Piel"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q4lj001zngjugidf8kbv",
+          "question": "¿Puede evaluarse realmente una afección de piel por videollamada?",
+          "answer": "Sí — para la gran mayoría de presentaciones. La dermatología es una de las especialidades médicas más adecuadas para la evaluación visual y una videoconsulta permite a tu médico de cabecera observar la afección directamente. Donde una afección no pueda evaluarse adecuadamente a nivel de medicina general, tu médico te deriva a nuestro servicio de dermatología especialista dentro de la misma plataforma.",
+          "sortOrder": 0,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7q4lk0020ngjugwu3qtqj",
+          "question": "¿Cuál es la diferencia entre esta consulta y la consulta dermatológica especialista?",
+          "answer": "Esta consulta es realizada por médicos de cabecera colegiados y cubre la mayoría de afecciones cutáneas agudas y no urgentes. La consulta dermatológica especialista es realizada por dermatólogos colegiados de Global Health y es apropiada para afecciones complejas, resistentes al tratamiento, o que requieren dermatoscopia de alta resolución, consideración de isotretinoína, o biopsia coordinada. Si no estás seguro de cuál es el nivel apropiado, empieza aquí — tu médico de cabecera te deriva si es necesario.",
+          "sortOrder": 1,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7q4lk0021ngju4zwoosxt",
+          "question": "¿Puedo obtener tratamiento para el acné a través de este servicio?",
+          "answer": "Sí — para acné leve a moderado. Tu médico de cabecera realiza una evaluación completa y asesora sobre el enfoque de gestión más apropiado. Si tu presentación justifica la consideración de isotretinoína, tu médico de cabecera te deriva directamente a nuestro servicio de dermatología especialista dentro de la misma plataforma.",
+          "sortOrder": 2,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7q4lk0022ngju7zgv3b29",
+          "question": "Tengo un lunar que ha cambiado — ¿qué urgencia tiene?",
+          "answer": "Los lunares que han cambiado justifican evaluación clínica con prontitud. Reserva una consulta y muestra a tu médico de cabecera la lesión durante la videollamada. Tu médico evalúa usando los criterios ABCDE estándar y, donde esté indicado, te deriva a dermatología especialista para valoración con dermatoscopia.",
+          "sortOrder": 3,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7q4lk0023ngjucugczvml",
+          "question": "¿Puedo usar este servicio para el eccema de mi hijo?",
+          "answer": "Sí. El eccema en lactantes y niños es una de las presentaciones cutáneas pediátricas más comunes y es una parte central de este servicio.",
+          "sortOrder": 4,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7q4lk0024ngjuhgu5x5xj",
+          "question": "¿Puedo obtener una derivación a dermatología a través de este servicio?",
+          "answer": "Sí — tanto una derivación interna a nuestro servicio de dermatología especialista de Global Health, como una carta de derivación externa a un dermatólogo de tu elección donde esté clínicamente indicado.",
+          "sortOrder": 5,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7q4lk0025ngjus49u17km",
+          "question": "Mi erupción se está extendiendo rápidamente y me encuentro mal — ¿qué debo hacer?",
+          "answer": "Una erupción que se extiende rápidamente acompañada de fiebre, dificultad para respirar, hinchazón facial o malestar general grave es una emergencia médica. Llama al 112 o ve a tu servicio de urgencias más cercano inmediatamente — no reserves una videoconsulta.",
+          "sortOrder": 6,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7q4lk0026ngjulsplncl8",
+          "question": "¿Puedo usar este servicio para una reacción al sol?",
+          "answer": "Sí. Las quemaduras solares y las reacciones cutáneas relacionadas con el sol son especialmente frecuentes en turistas y visitantes en España. Tu médico de cabecera evalúa la gravedad y asesora sobre la gestión apropiada.",
+          "sortOrder": 7,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7q4lk0027ngjupk9a2h5e",
+          "question": "¿Necesito seguro médico español?",
+          "answer": "No. Es un servicio privado de pago directo. La documentación clínica emitida a través de este servicio se dispensa al precio privado completo con independencia del estado de aseguramiento.",
+          "sortOrder": 8,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7q4lk0028ngju1535g3s4",
+          "question": "¿Puedo usar este servicio desde cualquier punto de España?",
+          "answer": "Sí — incluyendo Islas Baleares, Islas Canarias, Ceuta y Melilla. Solo necesitas conexión estable a internet y un dispositivo con cámara.",
+          "sortOrder": 9,
+          "resolvedLocale": "ES"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "ES",
+      "links": [
+        {
+          "id": "cmre7t757003ug8jumzqyo3lw",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Acné grave o lesiones sospechosas?",
+          "body": "Si tu situación está relacionada con acné grave o lesiones sospechosas, nuestra Dermatología Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Dermatología Especialista",
+          "targetSlug": "dermatologia-especialista-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7t7xa003wg8jutn1n899o",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con caída del cabello y afecciones del cuero cabelludo?",
+          "body": "Para caída del cabello y afecciones del cuero cabelludo, consulta nuestra página de Caída del Cabello — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Caída del Cabello",
+          "targetSlug": "caida-cabello-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7t8pc003yg8jui51rri1w",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre consulta médica general con médico de cabecera?",
+          "body": "Nuestra Consulta Médica General está pensada específicamente para consulta médica general con médico de cabecera.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+      }
+    }
+  }
+}

@@ -1,0 +1,192 @@
+{
+  "endpoint": "/api/services/psiquiatra-online?countryCode=es&locale=ES",
+  "checkedAt": "2026-09-13T22:38:49.512Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qeyz0050ngjund1jqnhp",
+      "kind": "SPECIALIST",
+      "slug": "psiquiatra-online",
+      "name": "Psiquiatría Especialista",
+      "summary": null,
+      "seoTitle": "Psiquiatra Online España | Consulta Psiquiátrica Especialista | Mismo Día",
+      "seoDescription": "Trastorno mental complejo, TDAH, trastorno bipolar u otra preocupación psiquiátrica. Nuestros psiquiatras colegiados ofrecen evaluaciones especialistas por videollamada segura. El mismo día en España.",
+      "seoKeywords": [
+        "psiquiatra online España",
+        "consulta psiquiátrica online España",
+        "psiquiatra privado online España",
+        "TDAH psiquiatra online España",
+        "trastorno bipolar psiquiatra online España"
+      ],
+      "heroTitle": "Psiquiatría Especialista — Evaluación Psiquiátrica Online",
+      "heroDescription": "Algunos trastornos mentales requieren la profundidad de evaluación, el rigor diagnóstico y el alcance terapéutico que solo puede proporcionar un psiquiatra especialista. La depresión resistente al tratamiento, el trastorno bipolar, el TDAH en adultos, los trastornos de ansiedad complejos, o cualquier condición que no ha respondido a la gestión a nivel de medicina general — estas presentaciones requieren psiquiatría especialista. Nuestros psiquiatras, médicos especialistas en psiquiatría con formación MIR, colegiados conforme a los requisitos de la Organización Médica Colegial (OMC), ofrecen evaluaciones psiquiátricas especialistas por videollamada segura. El mismo día, desde cualquier punto de España, en español, inglés o portugués.",
+      "detailBody": "<h2>Evaluación de salud mental GP vs. consulta psiquiátrica especialista</h2><p>Global Health ofrece dos niveles de atención para la salud mental.</p><p>Evaluación de salud mental con médico de cabecera — apropiada para el cribado inicial de ansiedad, depresión leve a moderada, estrés y burnout. El médico de cabecera realiza una evaluación estructurada, proporciona recomendaciones clínicas a nivel de medicina general, y deriva a psiquiatría donde esté indicado. Es el punto de entrada correcto para la mayoría de primeras preocupaciones de salud mental.</p><p>Consulta psiquiátrica especialista — realizada por psiquiatras especialistas de Global Health. Apropiada para:</p><ul><li>Diagnóstico formal de trastornos mentales complejos</li><li>Condiciones que no han respondido a tratamiento a nivel de medicina general</li><li>Trastorno bipolar — evaluación, diagnóstico y plan de tratamiento especializado</li><li>TDAH en adultos — evaluación diagnóstica formal y tratamiento</li><li>Depresión resistente al tratamiento</li><li>Trastornos de ansiedad complejos o refractarios</li><li>Trastornos de la conducta alimentaria — evaluación y coordinación del plan de tratamiento</li><li>Evaluación psiquiátrica para informes clínicos, laborales o médico-legales</li><li>Segunda opinión psiquiátrica especializada</li></ul><p>¿No estás seguro de qué nivel de apoyo necesitas? Empieza con la evaluación de salud mental con médico de cabecera — si tu presentación requiere valoración psiquiátrica especializada, el médico de cabecera te deriva directamente a este servicio dentro de la misma plataforma.</p><h2>Para quién es este servicio</h2><p>Esta consulta psiquiátrica especialista es apropiada para adultos con:</p><ul><li>Depresión moderada a grave — especialmente depresión resistente al tratamiento o con características atípicas</li><li>Trastorno bipolar — evaluación diagnóstica, revisión del plan de tratamiento, o segunda opinión</li><li>Trastornos de ansiedad complejos — trastorno de pánico, TOC, fobia social grave, TEPT</li><li>TDAH en adultos — evaluación diagnóstica formal, inicio o revisión de tratamiento</li><li>Trastornos del espectro de la personalidad — evaluación y orientación sobre el plan de atención</li><li>Trastornos de la conducta alimentaria — evaluación psiquiátrica y coordinación del plan de tratamiento</li><li>Insomnio crónico grave — cuando la causa es psiquiátrica o el tratamiento ha fracasado a nivel de medicina general</li><li>Condiciones de salud mental que no han respondido a tratamiento a nivel de medicina general</li><li>Evaluación psiquiátrica para informes laborales, de incapacidad o médico-legales</li><li>Segunda opinión psiquiátrica — sobre un diagnóstico, plan de tratamiento, o medicación recibida de otro psiquiatra</li><li>Residentes internacionales y expats que necesitan atención psiquiátrica especialista en inglés o portugués</li></ul><h2>Qué es este servicio — y qué no es</h2><p>Esta consulta psiquiátrica especialista es apropiada para:</p><ul><li>Diagnóstico psiquiátrico formal de trastornos complejos</li><li>Evaluación y plan de tratamiento farmacológico psiquiátrico especializado — a criterio del especialista</li><li>Terapia psicofarmacológica y seguimiento psiquiátrico continuado</li><li>Evaluación para informes clínicos, laborales o médico-legales</li><li>Segunda opinión psiquiátrica especializada</li><li>Coordinación con psicología clínica, trabajo social y otros servicios donde esté indicado</li></ul><p>Este servicio no es apropiado para:</p><ul><li>Intervención en crisis — si estás en crisis, usa los recursos al inicio de esta página</li><li>Internamiento psiquiátrico — el internamiento involuntario está regulado por el artículo 763 de la Ley de Enjuiciamiento Civil y requiere autorización judicial. No puede iniciarse ni coordinarse a través de este servicio</li><li>Evaluación de psicosis activa grave — donde la seguridad del paciente requiere valoración presencial urgente</li><li>Terapia psicológica o psicoterapia — este es un servicio de evaluación y tratamiento psiquiátrico médico, no de psicoterapia</li></ul><p>¿No estás seguro de si necesitas psiquiatría o psicología? La psiquiatría es una especialidad médica — el psiquiatra evalúa, diagnostica y puede prescribir tratamiento farmacológico. El psicólogo clínico proporciona psicoterapia. Para muchas condiciones, ambas trabajan conjuntamente. Tu psiquiatra te asesora sobre el nivel de apoyo más apropiado para tu situación.</p><h2>Condiciones habitualmente evaluadas</h2><p><strong>Trastornos del estado de ánimo</strong></p><ul><li>Depresión mayor — incluyendo depresión resistente al tratamiento, depresión melancólica y depresión atípica</li><li>Depresión bipolar — diagnóstico diferencial y plan de tratamiento especializado</li><li>Trastorno bipolar tipo I y tipo II — evaluación diagnóstica, estabilización y seguimiento</li><li>Trastorno ciclotímico</li><li>Trastorno distímico / trastorno depresivo persistente</li></ul><p><strong>Trastornos de ansiedad</strong></p><ul><li>Trastorno de pánico — con y sin agorafobia</li><li>Trastorno obsesivo-compulsivo (TOC)</li><li>Trastorno de ansiedad social — presentaciones graves o refractarias</li><li>Trastorno de estrés postraumático (TEPT)</li><li>Trastorno de ansiedad generalizada resistente al tratamiento</li><li>Fobia específica con impacto funcional significativo</li></ul><p><strong>TDAH en adultos</strong></p><ul><li>Evaluación diagnóstica formal de TDAH en adultos</li><li>TDAH con comorbilidades — ansiedad, depresión, trastornos del sueño</li><li>Inicio, ajuste y revisión de tratamiento farmacológico para TDAH</li><li>TDAH no diagnosticado en la infancia — evaluación en adultos</li></ul><p><strong>Trastornos del espectro de la personalidad</strong></p><ul><li>Evaluación diagnóstica de trastornos de la personalidad</li><li>Trastorno límite de la personalidad — evaluación y orientación sobre el plan de atención</li><li>Trastorno de personalidad narcisista, evitativa, dependiente y otros</li></ul><p><strong>Trastornos de la conducta alimentaria</strong></p><ul><li>Anorexia nerviosa — evaluación psiquiátrica y coordinación del plan de tratamiento</li><li>Bulimia nerviosa — evaluación y plan de tratamiento</li><li>Trastorno por atracón — evaluación y gestión</li></ul><p>Nota: los trastornos de la conducta alimentaria graves que requieren intervención nutricional médica urgente o ingreso hospitalario requieren evaluación presencial. Tu psiquiatra evalúa la gravedad y asesora sobre el nivel de atención apropiado.</p><p><strong>Trastornos psicóticos — evaluación limitada</strong></p><ul><li>Evaluación de síntomas psicóticos leves o en remisión estable</li><li>Segunda opinión sobre diagnóstico de esquizofrenia u otros trastornos psicóticos en pacientes estables</li><li>Revisión de medicación antipsicótica en pacientes estables con psicosis conocida</li></ul><p>Los episodios psicóticos agudos requieren evaluación presencial urgente. Este servicio no es apropiado para la evaluación de psicosis activa grave — llama al 112 o ve a urgencias inmediatamente.</p><p><strong>Insomnio y trastornos del sueño</strong></p><ul><li>Insomnio crónico grave — evaluación psiquiátrica y plan de tratamiento</li><li>Trastornos del sueño con base psiquiátrica significativa</li></ul><p><strong>Evaluaciones psiquiátricas para informes</strong></p><ul><li>Informes psiquiátricos para incapacidad laboral temporal o permanente</li><li>Informes para procesos médico-legales — a criterio del especialista</li><li>Evaluaciones para informes de salud mental para trámites administrativos</li></ul><h2>Qué incluye la consulta</h2><p><strong>Evaluación psiquiátrica especializada completa</strong></p><p>Tu psiquiatra realiza una evaluación psiquiátrica estructurada y completa — cubriendo tu historia psiquiátrica detallada, episodios previos, tratamientos anteriores y su respuesta, historia familiar de trastornos mentales, situación vital actual, funcionamiento laboral y social, consumo de sustancias, y estado mental en el momento de la consulta.</p><p><strong>Diagnóstico psiquiátrico formal</strong></p><p>Donde la evaluación lo permite, tu psiquiatra establece un diagnóstico psiquiátrico formal basado en los criterios diagnósticos internacionales vigentes — DSM-5-TR o CIE-11 — explicado claramente y con el razonamiento clínico que lo sustenta.</p><p><strong>Plan de tratamiento especializado</strong></p><p>Basándose en la evaluación y el diagnóstico, tu psiquiatra diseña un plan de tratamiento especializado — que puede incluir recomendaciones de psicoterapia y orientación sobre el enfoque más adecuado para tu condición, opciones de tratamiento farmacológico psiquiátrico a criterio del especialista, coordinación con psicología clínica u otros servicios donde esté indicado, y seguimiento psiquiátrico estructurado.</p><p><strong>Documentación clínica especializada — a criterio del especialista</strong></p><p>Cuando esté clínicamente indicado, tu psiquiatra emite la documentación clínica correspondiente.</p><p>Nota sobre benzodiacepinas y medicamentos de control especial: las benzodiacepinas y determinados medicamentos psiquiátricos son medicamentos de control especial en España y tienen requisitos de prescripción específicos. Tu psiquiatra te informa durante la consulta sobre las opciones disponibles y cualquier limitación aplicable.</p><p><strong>Evaluación de seguridad</strong></p><p>Cada consulta psiquiátrica incluye evaluación de seguridad estructurada — realizada con sensibilidad y como componente estándar de la atención especializada.</p><p><strong>Seguimiento psiquiátrico continuado</strong></p><p>El tratamiento psiquiátrico es un proceso a largo plazo. Las consultas de seguimiento especializado están disponibles para monitorizar la respuesta al tratamiento, ajustar la medicación donde sea necesario, y proporcionar la continuidad clínica que requiere la atención psiquiátrica de calidad.</p><h2>Acceso a psiquiatría en España — la realidad</h2><p>La psiquiatría pública en España está significativamente bajo presión — los tiempos de espera para primera consulta con psiquiatra del SNS son de meses en la mayoría de las comunidades autónomas. La psiquiatría privada presencial en España es cara y está concentrada en grandes ciudades.</p><p>Para residentes internacionales que necesitan psiquiatría especialista en inglés o portugués, las opciones son prácticamente inexistentes fuera de Madrid y Barcelona, y aun en estas ciudades la disponibilidad es muy limitada.</p><p>Este servicio proporciona acceso a psiquiatría especialista por videollamada — el mismo día — desde cualquier punto de España. Para los pacientes que más necesitan apoyo psiquiátrico, eliminar la barrera del acceso importa.</p><h2>Confidencialidad en psiquiatría</h2><p>Todo lo discutido durante tu consulta psiquiátrica es confidencial y está protegido bajo la legislación española y europea de protección de datos — incluyendo el RGPD (UE 2016/679) implementado mediante la Ley Orgánica 3/2018 (LOPDGDD) y la Ley 41/2002 de autonomía del paciente.</p><p>Los datos de salud mental tienen protección reforzada como categoría especial de datos bajo el RGPD.</p><p>Existen dos circunstancias en las que la confidencialidad puede necesitar ser ponderada cuidadosamente — cuando existe un riesgo grave e inmediato para tu vida o seguridad, o cuando existe un riesgo grave para la seguridad de otra persona. Tu psiquiatra discute la confidencialidad contigo al inicio de la consulta.</p>",
+      "ctaLabel": null,
+      "sortOrder": 0,
+      "durationMinutes": 45,
+      "basePriceCents": 15000,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-10T13:44:57.609Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k8qg0008asju8iv3qlkd",
+          "kind": "IMAGE",
+          "key": "media/291b711c-e779-4efe-8821-39d0c6963c76-es-psiquiatra-online.png",
+          "path": "/api/media/media/291b711c-e779-4efe-8821-39d0c6963c76-es-psiquiatra-online.png",
+          "altText": "Psiquiatría Especialista"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qf7o0051ngjuy3olgbsv",
+          "question": "¿Cuál es la diferencia entre ver a un psiquiatra y ver a un psicólogo?",
+          "answer": "El psiquiatra es un médico especialista con formación MIR en psiquiatría — puede diagnosticar trastornos mentales formalmente, prescribir medicación psiquiátrica, y coordinar el plan de atención completo. El psicólogo clínico proporciona psicoterapia — intervención psicológica estructurada. Para muchas condiciones, el enfoque más efectivo combina ambos. Tu psiquiatra te asesora sobre el nivel de apoyo más apropiado y puede orientarte sobre el tipo de psicoterapia más adecuado para tu condición.",
+          "sortOrder": 0,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qf7o0052ngjuayg1k455",
+          "question": "¿Cuál es la diferencia entre esta consulta y la evaluación de salud mental con médico de cabecera?",
+          "answer": "La evaluación de salud mental con médico de cabecera es apropiada para el cribado inicial de ansiedad, depresión leve a moderada y estrés — con derivación a psiquiatría donde esté indicado. Esta consulta especialista es realizada por un psiquiatra y proporciona diagnóstico psiquiátrico formal, evaluación de trastornos complejos como trastorno bipolar o TDAH, y acceso a toda la gama de opciones de tratamiento farmacológico psiquiátrico.",
+          "sortOrder": 1,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qf7o0053ngjuuzsapmj4",
+          "question": "¿Puede el psiquiatra prescribir medicación psiquiátrica a través de este servicio?",
+          "answer": "Sí — incluyendo antidepresivos, estabilizadores del estado de ánimo, medicación para TDAH, y otras opciones de tratamiento farmacológico psiquiátrico donde esté clínicamente indicado. Las benzodiacepinas y determinados medicamentos de control especial tienen requisitos específicos en España — tu psiquiatra te informa sobre las opciones disponibles y cualquier limitación aplicable. Ninguna medicación específica puede confirmarse antes de la evaluación.",
+          "sortOrder": 2,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qf7o0054ngjuw946d1r1",
+          "question": "¿Puede el psiquiatra diagnosticar TDAH en adultos?",
+          "answer": "Sí. La evaluación diagnóstica formal de TDAH en adultos es una parte central de este servicio. El diagnóstico requiere una evaluación estructurada completa — no puede realizarse en una única sesión breve. Tu psiquiatra te informa sobre el proceso diagnóstico apropiado para tu presentación.",
+          "sortOrder": 3,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qf7o0055ngjuzorzdu8i",
+          "question": "¿Puede el psiquiatra diagnosticar trastorno bipolar?",
+          "answer": "Sí. El diagnóstico diferencial entre depresión unipolar y trastorno bipolar, y entre los diferentes tipos de trastorno bipolar, requiere evaluación psiquiátrica especializada. Es uno de los diagnósticos más frecuentemente perdidos o retrasados en la atención primaria — la evaluación psiquiátrica especializada es especialmente valiosa aquí.",
+          "sortOrder": 4,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qf7o0056ngjueq3bc24z",
+          "question": "¿Puedo obtener una segunda opinión psiquiátrica a través de este servicio?",
+          "answer": "Sí. La segunda opinión psiquiátrica especializada es uno de los usos frecuentes de este servicio — especialmente sobre diagnósticos, planes de tratamiento, o medicación recibida de otro psiquiatra.",
+          "sortOrder": 5,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qf7o0057ngjusq77dowx",
+          "question": "¿Puede el psiquiatra ordenar mi ingreso hospitalario psiquiátrico?",
+          "answer": "El internamiento voluntario puede coordinarse con los servicios apropiados. El internamiento involuntario está regulado por el artículo 763 de la Ley de Enjuiciamiento Civil y requiere autorización judicial — no puede iniciarse a través de este servicio. Si tu situación requiere ingreso urgente, llama al 112 o ve al servicio de urgencias más cercano inmediatamente.",
+          "sortOrder": 6,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qf7o0058ngju66en4j87",
+          "question": "¿Qué pasa si estoy en crisis durante o después de la consulta?",
+          "answer": "Si estás en crisis, usa los recursos al inicio de esta página — Teléfono contra el Suicidio 024 o 112 en caso de peligro inmediato. Este servicio no es un servicio de intervención en crisis.",
+          "sortOrder": 7,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qf7o0059ngju35dl4zgv",
+          "question": "¿Necesito seguro médico español?",
+          "answer": "No. Es un servicio privado de pago directo. La documentación clínica emitida se dispensa al precio privado completo con independencia del estado de aseguramiento.",
+          "sortOrder": 8,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qf7o005angjuc0glva22",
+          "question": "¿Puedo usar este servicio desde cualquier punto de España?",
+          "answer": "Sí — incluyendo Islas Baleares, Islas Canarias, Ceuta y Melilla. Solo necesitas conexión estable a internet y un dispositivo con cámara.",
+          "sortOrder": 9,
+          "resolvedLocale": "ES"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "ES",
+      "links": [
+        {
+          "id": "cmre7swzn003ag8ju8hqg2zvg",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con evaluación inicial de salud mental?",
+          "body": "Para evaluación inicial de salud mental, consulta nuestra página de Salud Mental — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Salud Mental",
+          "targetSlug": "salud-mental-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7syjw003eg8jur0yeen3q",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Segunda opinión psiquiátrica independiente?",
+          "body": "Si tu situación está relacionada con segunda opinión psiquiátrica independiente, nuestra Segunda Opinión Médica te ofrece la evaluación adecuada.",
+          "ctaLabel": "Segunda Opinión Médica",
+          "targetSlug": "segunda-opinion-medica",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7szc1003gg8juhtfo6veb",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con evaluación inicial con médico de cabecera?",
+          "body": "Para evaluación inicial con médico de cabecera, consulta nuestra página de Consulta Médica General — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7sw7i0038g8ju6nyy0htm",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Psicoterapia y apoyo psicológico?",
+          "body": "Si tu situación está relacionada con psicoterapia y apoyo psicológico, nuestra Psicología Clínica te ofrece la evaluación adecuada.",
+          "ctaLabel": "Psicología Clínica",
+          "targetSlug": "psicologo-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpvch9001i01ruy7pmzmdk"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:29:00.000Z"
+      }
+    }
+  }
+}

@@ -7,7 +7,10 @@ const one=(rows,fn,message)=>{const found=rows.filter(fn);assert.equal(found.len
 export function prepareSpain(snapshot,drafts,links,sourceFor){
  const s=snapshot.data;assert.equal(s.country.code,'es');assert.equal(s.country.defaultLocale,'ES');
  const groups=[],blockers=[];let state=structuredClone(s);
- for(const key of [...new Set(drafts.map(d=>d.key)),...links.map(l=>l.key)]){
+ // Manifest order: each service followed by its assigned doctors' profiles, remaining profiles, then link removals.
+ const draftKeys=[...new Set(drafts.map(d=>d.key))],ordered=[];
+ for(const key of draftKeys.filter(k=>k.startsWith('service:')&&!drafts.some(d=>d.key===k&&d.hold))){const svc=s.services.find(x=>`service:${x.slug}`===key);ordered.push(key,...s.assignments.filter(a=>a.serviceId===svc?.id&&a.isActive).map(a=>`doctor:${s.doctors.find(d=>d.id===a.doctorId)?.slug}`));}
+ for(const key of [...new Set([...ordered.filter(k=>draftKeys.includes(k)),...draftKeys,...links.map(l=>l.key)])]){
   try{
    const batch=drafts.filter(d=>d.key===key),link=links.find(l=>l.key===key),changes=[];
    assert(!batch.some(d=>d.hold),batch.find(d=>d.hold)?.hold);
@@ -25,14 +28,16 @@ export function prepareSpain(snapshot,drafts,links,sourceFor){
      const assignments=state.assignments.filter(a=>a.serviceId===base.id&&a.isActive&&a.status==='active');assert(assignments.length,'No active service assignment');
      assert.deepEqual(assignments.map(a=>a.doctorId).sort(),[...source.assignedDoctorIds].sort(),'Assignment drift');
      const row=one(state.serviceTranslations,r=>r.serviceId===base.id&&r.locale===locale,'Missing service translation');
-     for(const [k,v] of Object.entries(d.before))assert.equal(row[k],v,`Stored translation drift ${key}/${locale}/${k}`);
+     // A null translation field renders the base (ES) value; the public "before" is that fallback.
+     for(const [k,v] of Object.entries(d.before))assert.equal(row[k]??base[k],v,`Stored translation drift ${key}/${locale}/${k}`);
      update('serviceTranslations',row,d.after);
      if(locale==='ES'){for(const [k,v]of Object.entries(d.before))assert.equal(base[k],v,'Base copy drift');update('services',base,d.after);}
      for(const patch of d.faqPatches){
       const faq=one(state.serviceFaqs,f=>f.id===patch.id&&f.serviceId===base.id,'Missing native FAQ');
-      const translation=one(state.serviceFaqTranslations,t=>t.serviceFaqId===faq.id&&t.locale===locale,'Missing FAQ translation; reconcile fallback explicitly');
-      for(const [k,v]of Object.entries(patch.before))assert.equal(translation[k],v,'FAQ translation drift');
-      update('serviceFaqTranslations',translation,patch.after);
+      // The default locale lives on the base FAQ row; only other locales need a translation row.
+      const translations=state.serviceFaqTranslations.filter(t=>t.serviceFaqId===faq.id&&t.locale===locale);
+      assert(translations.length||locale===state.country.defaultLocale,'Missing FAQ translation; reconcile fallback explicitly');
+      for(const translation of translations){for(const [k,v]of Object.entries(patch.before))assert.equal(translation[k],v,'FAQ translation drift');update('serviceFaqTranslations',translation,patch.after);}
       if(locale==='ES'){for(const [k,v]of Object.entries(patch.before))assert.equal(faq[k],v,'Base FAQ drift');update('serviceFaqs',faq,patch.after);}
      }
      if(d.addedFaqs.length){
@@ -42,7 +47,8 @@ export function prepareSpain(snapshot,drafts,links,sourceFor){
       for(const [i,faq]of d.addedFaqs.entries()){
        const id=`spain-seo-${hash([base.id,i]).slice(0,24)}`;
        if(locale==='ES')insert('serviceFaqs',{id,serviceId:base.id,...faq,sortOrder:i,isVisible:true});
-       insert('serviceFaqTranslations',{id:`${id}-${locale}`,serviceFaqId:id,locale,...faq});
+       // Stored corpus keeps ES only on the base row; an ES translation row would shadow later base edits.
+       if(locale!==state.country.defaultLocale)insert('serviceFaqTranslations',{id:`${id}-${locale}`,serviceFaqId:id,locale,...faq});
       }
      }
      stateKey=`service:${base.id}`;

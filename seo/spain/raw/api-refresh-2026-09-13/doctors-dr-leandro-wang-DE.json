@@ -1,0 +1,249 @@
+{
+  "endpoint": "/api/countries/es/doctors/dr-leandro-wang?locale=DE",
+  "checkedAt": "2026-09-13T22:38:06.990Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "doctor": {
+      "id": "cmrdpx4ah001r01rupv1od828",
+      "slug": "dr-leandro-wang",
+      "fullName": "Dr. Leandro Wang",
+      "title": "Arzt für Allgemeinmedizin",
+      "bio": "<p>Dr. Leandro Wang</p><p>Facharzt für Phlebologie, Gefäßgesundheit und ästhetische Medizin.</p><p>Dr. Leandro Wang ist ein Arzt mit umfassender Erfahrung und mehr als zwei Jahrzehnten internationaler klinischer Praxis, spezialisiert auf Phlebologie (Venenerkrankungen), Gefäßdiagnostik, ästhetische Medizin und Allgemeinmedizin. Er ist Facharzt des Ilustre Colegio Médico de Valencia und Mitglied des Spanischen Kapitels der Phlebologie, mit fundierter Erfahrung in der Beurteilung und Behandlung von venösen und Kreislauferkrankungen.</p><p>Dr. Wang verfügt über eine fortgeschrittene postgraduale Ausbildung in Ästhetischer Medizin und Haarmedizin, zusätzlich zu Spezialisierungen in peripherem vaskulärem Doppler-Ultraschall, Phlebologie und Lymphologie, Wundheilung und minimalinvasiver Chirurgie (Laparoskopie und Thorakoskopie). Seine umfangreiche technische Ausbildung ermöglicht ihm eine präzise Gefäßbeurteilung, eine evidenzbasierte Behandlungsplanung und eine umfassende Patientenversorgung.</p><p>Derzeit praktiziert er in Spanien als Phlebologe, Allgemeinmediziner und Facharzt für Haarmedizin, tätig in Kliniken in Valencia und Girona, wo er Behandlungen von Venenerkrankungen, Kreislaufuntersuchungen, Haarwiederherstellungsbehandlungen und allgemeine medizinische Versorgung anbietet. Zuvor arbeitete er als Notarzt in Italien und bekleidete leitende medizinische Positionen in Krankenhäusern und militärischen medizinischen Einheiten in Argentinien, einschließlich Führungspositionen in Notfall- und chirurgischen Abteilungen.</p><p>Dr. Wang ist bekannt für seine personalisierte Patientenbetreuung, seine klinische Präzision und seine ausgeprägte Fähigkeit, Probleme in der Notfall- und ambulanten Versorgung zu lösen. Er legt Wert auf eine reibungslose Kommunikation, Teamarbeit und eine einfühlsame medizinische Praxis. Seine Muttersprache ist Spanisch.</p><p>Bei Global Health bietet Dr. Wang Beratungen mit Schwerpunkt auf Gefäßgesundheit, Venenerkrankungen, Kreislaufstörungen, Beratung in ästhetischer Medizin und allgemeine medizinische Beurteilung, sowohl in der Klinik als auch über sichere Online-Konsultationen.</p>",
+      "seoTitle": "Dr Leandro Wang - Ästhetische/Haarmedizin | Global Health",
+      "seoDescription": "Dr. Leandro Wang, zugelassener Arzt, Facharzt für Phlebologie, Gefäßgesundheit und ästhetische Medizin. Mehr als 20 Jahre internationale Erfahrung. Persönliche Sprechstunde in Valencia/Girona und online bei Global Health.",
+      "lastReviewedAt": null,
+      "medicalRegistrationUrl": "https://www.cgcom.es/servicios/consulta-publica-de-colegiados",
+      "qualifications": [
+        "Médico colegiado — Ilustre Colegio Médico de Valencia",
+        "Miembro — Capítulo Español de Flebología",
+        "Certificación en Ultrasonido Doppler Vascular Periférico",
+        "Certificación en Flebología y Linfología",
+        "Certificación en Cicatrización de Heridas",
+        "Certificación en Cirugía Mínimamente Invasiva (laparoscopia y toracoscopia)",
+        "Formación de posgrado en Medicina Estética y Medicina Capilar",
+        "Experiencia en urgencias y unidades médicas militares — Argentina",
+        "Médico de urgencias — Italia",
+        "Clínicas de Valencia y Girona, España",
+        "Registrado en CGCOM (nº 464628929)"
+      ],
+      "instagramUrl": null,
+      "facebookUrl": null,
+      "linkedinUrl": null,
+      "languages": [
+        "Spanish"
+      ],
+      "active": true,
+      "updatedAt": "2026-08-20T06:22:44.349Z",
+      "resolvedLocale": "DE",
+      "readyToIndex": true,
+      "nonPhysician": false,
+      "imcRegistration": "464628929",
+      "registrationChamber": "CGCOM",
+      "registrationDivision": null,
+      "registrationVerified": true,
+      "credentials": [],
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmrf4l9c2025601qriipydndf",
+          "kind": "IMAGE",
+          "key": "doctor-cmrdpx4ah001r01rupv1od828-profile",
+          "path": "/api/media/media/1d8fdbdd-7059-4067-b97d-fb47ecce4cd2-dr-leandro-wang.webp",
+          "altText": "Dr. Leandro Wang",
+          "title": "Dr. Leandro Wang",
+          "caption": "Dr. Leandro Wang — General Medicine Doctor, Global Health Spain",
+          "description": "Dr. Leandro Wang — General Medicine Doctor at Global Health Spain. Book an online video consultation.",
+          "focalX": 53,
+          "focalY": 25,
+          "zoom": 1
+        }
+      ],
+      "additionalCountries": [
+        {
+          "id": "cmrdpx4ar001s01ruqbckcmck",
+          "countryId": "cmqy9rw9w00x001qkq31jktqq",
+          "active": true,
+          "country": {
+            "id": "cmqy9rw9w00x001qkq31jktqq",
+            "code": "es",
+            "name": "Spain",
+            "defaultLocale": "ES"
+          },
+          "chamberEntity": "CGCOM",
+          "registrationNumber": "464628929",
+          "registrationUrl": null,
+          "division": null,
+          "isVerified": true,
+          "translations": [
+            {
+              "locale": "RO",
+              "title": "Medic medicină generală",
+              "bio": "<p>Dr. Leandro Wang</p><p>Medic autorizat în flebologie, sănătate vasculară și medicină estetică.</p><p>Dr. Leandro Wang este un medic cu experiență vastă și peste două decenii de practică clinică internațională, specializat în flebologie (boli venoase), diagnostic vascular, medicină estetică și medicină generală. Este medic autorizat al Ilustre Colegio Médico de Valencia și membru al Capítulo Español de Flebología, cu o experiență solidă în evaluarea și tratamentul bolilor venoase și circulatorii.</p><p>Dr. Wang are formare avansată postuniversitară în Medicina Estetică și Medicina Capilară, precum și certificări specializate în Ultrasonografie Doppler Vasculară Periferică, Flebologie și Limfologie, Vindecarea Plăgilor și Chirurgie Minim Invazivă (laparoscopie și toracoscopie). Pregătirea sa tehnică amplă îi permite să ofere o evaluare vasculară precisă, o planificare a tratamentului bazată pe dovezi și o îngrijire integrală a pacientului.</p><p>În prezent profesează în Spania ca flebolog, medic generalist și specialist în medicină capilară, lucrând în clinici din Valencia și Girona, unde oferă tratament pentru boli venoase, evaluări circulatorii, tratamente de restaurare capilară și îngrijire medicală generală. Anterior, a lucrat ca medic de urgență în Italia și a ocupat funcții medicale de conducere în spitale și unități medicale militare din Argentina, inclusiv poziții de conducere în servicii de urgență și chirurgie.</p><p>Dr. Wang este recunoscut pentru îngrijirea personalizată acordată pacientului, precizia sa clinică și capacitatea sa solidă de a rezolva probleme în urgențe și consultații ambulatorii. El acordă prioritate comunicării fluide, muncii în echipă și practicii medicale pline de compasiune. Limba sa maternă este spaniola.</p><p>La Global Health, Dr. Wang oferă consultații axate pe sănătatea vasculară, bolile venoase, afecțiunile circulatorii, orientarea în medicina estetică și evaluarea medicală generală, atât în clinică, cât și prin consultații online securizate.</p>",
+              "seoTitle": "Dr Leandro Wang - Medicină estetică/capilară | Global Health",
+              "seoDescription": "Dr. Leandro Wang, medic specialist atestat, specialist în flebologie, sănătate vasculară și medicină estetică. Peste 20 de ani de experiență internațională. Consultație în persoană în Valencia/Girona și online la Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "DE",
+              "title": "Arzt für Allgemeinmedizin",
+              "bio": "<p>Dr. Leandro Wang</p><p>Facharzt für Phlebologie, Gefäßgesundheit und ästhetische Medizin.</p><p>Dr. Leandro Wang ist ein Arzt mit umfassender Erfahrung und mehr als zwei Jahrzehnten internationaler klinischer Praxis, spezialisiert auf Phlebologie (Venenerkrankungen), Gefäßdiagnostik, ästhetische Medizin und Allgemeinmedizin. Er ist Facharzt des Ilustre Colegio Médico de Valencia und Mitglied des Spanischen Kapitels der Phlebologie, mit fundierter Erfahrung in der Beurteilung und Behandlung von venösen und Kreislauferkrankungen.</p><p>Dr. Wang verfügt über eine fortgeschrittene postgraduale Ausbildung in Ästhetischer Medizin und Haarmedizin, zusätzlich zu Spezialisierungen in peripherem vaskulärem Doppler-Ultraschall, Phlebologie und Lymphologie, Wundheilung und minimalinvasiver Chirurgie (Laparoskopie und Thorakoskopie). Seine umfangreiche technische Ausbildung ermöglicht ihm eine präzise Gefäßbeurteilung, eine evidenzbasierte Behandlungsplanung und eine umfassende Patientenversorgung.</p><p>Derzeit praktiziert er in Spanien als Phlebologe, Allgemeinmediziner und Facharzt für Haarmedizin, tätig in Kliniken in Valencia und Girona, wo er Behandlungen von Venenerkrankungen, Kreislaufuntersuchungen, Haarwiederherstellungsbehandlungen und allgemeine medizinische Versorgung anbietet. Zuvor arbeitete er als Notarzt in Italien und bekleidete leitende medizinische Positionen in Krankenhäusern und militärischen medizinischen Einheiten in Argentinien, einschließlich Führungspositionen in Notfall- und chirurgischen Abteilungen.</p><p>Dr. Wang ist bekannt für seine personalisierte Patientenbetreuung, seine klinische Präzision und seine ausgeprägte Fähigkeit, Probleme in der Notfall- und ambulanten Versorgung zu lösen. Er legt Wert auf eine reibungslose Kommunikation, Teamarbeit und eine einfühlsame medizinische Praxis. Seine Muttersprache ist Spanisch.</p><p>Bei Global Health bietet Dr. Wang Beratungen mit Schwerpunkt auf Gefäßgesundheit, Venenerkrankungen, Kreislaufstörungen, Beratung in ästhetischer Medizin und allgemeine medizinische Beurteilung, sowohl in der Klinik als auch über sichere Online-Konsultationen.</p>",
+              "seoTitle": "Dr Leandro Wang - Ästhetische/Haarmedizin | Global Health",
+              "seoDescription": "Dr. Leandro Wang, zugelassener Arzt, Facharzt für Phlebologie, Gefäßgesundheit und ästhetische Medizin. Mehr als 20 Jahre internationale Erfahrung. Persönliche Sprechstunde in Valencia/Girona und online bei Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "PT",
+              "title": "Médico Medicina Geral",
+              "bio": "<p>Dr. Leandro Wang</p><p>Médico inscrito em flebologia, saúde vascular e medicina estética.</p><p>O Dr. Leandro Wang é um médico com ampla experiência e mais de duas décadas de prática clínica internacional, especializado em flebologia (doenças venosas), diagnóstico vascular, medicina estética e medicina geral. É médico inscrito no Ilustre Colegio Médico de Valencia e membro do Capítulo Español de Flebología, com sólida experiência na avaliação e no tratamento de doenças venosas e circulatórias.</p><p>O Dr. Wang conta com formação avançada de pós-graduação em Medicina Estética e Medicina Capilar, além de certificações especializadas em Ultrassom Doppler Vascular Periférico, Flebologia e Linfologia, Cicatrização de Feridas e Cirurgia Minimamente Invasiva (laparoscopia e toracoscopia). Sua ampla formação técnica permite oferecer uma avaliação vascular precisa, um planejamento do tratamento baseado em evidências e um atendimento integral ao paciente.</p><p>Atualmente exerce na Espanha como flebologista, médico generalista e especialista em medicina capilar, trabalhando em clínicas de Valência e Girona, onde oferece tratamento de doenças venosas, avaliações circulatórias, tratamentos de restauração capilar e atendimento médico geral. Anteriormente, trabalhou como médico de urgências na Itália e ocupou altos cargos médicos em hospitais e unidades médicas militares na Argentina, incluindo funções de liderança em serviços de urgências e cirurgia.</p><p>O Dr. Wang é reconhecido pelo seu atendimento personalizado ao paciente, sua precisão clínica e sua sólida capacidade de resolver problemas em urgências e consultas externas. Prioriza a comunicação fluida, o trabalho em equipe e a prática médica compassiva. Seu idioma nativo é o espanhol.</p><p>Na Global Health, o Dr. Wang oferece consultas centradas em a saúde vascular, doenças venosas, condições circulatórias, orientação em medicina estética e avaliação médica geral, tanto na clínica como por meio de consultas online seguras.</p>",
+              "seoTitle": "Dr Leandro Wang - Medicina Estética/Capilar | Global Health",
+              "seoDescription": "Dr. Leandro Wang, médico inscrito na ordem especialista em flebologia, saúde vascular e medicina estética. Mais de 20 anos de experiência internacional. Consulta presencial em Valência/Girona e online na Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "CS",
+              "title": "Lékař všeobecné medicíny",
+              "bio": "<p>Dr. Leandro Wang</p><p>Lékař s registrací v oborech flebologie, cévní zdraví a estetická medicína.</p><p>Dr. Leandro Wang je lékař s rozsáhlými zkušenostmi a více než dvěma desetiletími mezinárodní klinické praxe, specializující se na flebologii (žilní onemocnění), cévní diagnostiku, estetickou medicínu a všeobecné lékařství. Je registrovaným lékařem Ilustrovaného lékařského kolegia ve Valencii a členem Španělské kapitoly flebologie, se solidními zkušenostmi v hodnocení a léčbě žilních a oběhových onemocnění.</p><p>Dr. Wang má pokročilé postgraduální vzdělání v estetické medicíně a trichologii, kromě specializovaných certifikací v periferním cévním Dopplerovském ultrazvuku, flebologii a lymfologii, hojení ran a minimálně invazivní chirurgii (laparoskopie a torakoskopie). Jeho rozsáhlé technické vzdělání mu umožňuje poskytovat přesné cévní vyšetření, na důkazech založené plánování léčby a komplexní péči o pacienta.</p><p>V současnosti působí ve Španělsku jako flebolog, praktický lékař a specialista na trichologii, pracuje v klinikách ve Valencii a Gironě, kde poskytuje léčbu žilních onemocnění, oběhová vyšetření, ošetření obnovy vlasů a všeobecnou lékařskou péči. Dříve pracoval jako lékař urgentní medicíny v Itálii a zastával vysoké lékařské funkce v nemocnicích a vojenských zdravotnických jednotkách v Argentině, včetně vedoucích pozic v urgentních službách a chirurgii.</p><p>Dr. Wang je uznáván pro svou individualizovanou péči o pacienta, klinickou přesnost a silnou schopnost řešit problémy na urgentním příjmu a v ambulanci. Upřednostňuje plynulou komunikaci, týmovou práci a soucitnou lékařskou praxi. Jeho mateřským jazykem je španělština.</p><p>Ve Global Health Dr. Wang nabízí konzultace zaměřené na cévní zdraví, žilní onemocnění, oběhové obtíže, poradenství v estetické medicíně a všeobecné lékařské vyšetření, jak na klinice, tak prostřednictvím bezpečných online konzultací.</p>",
+              "seoTitle": "Dr Leandro Wang - Estetická medicína/vlasová | Global Health",
+              "seoDescription": "Dr. Leandro Wang, registrovaný lékař specialista na flebologii, cévní zdraví a estetickou medicínu. Více než 20 let mezinárodních zkušeností. Osobní konzultace ve Valencii/Gironě a online v Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "ES",
+              "title": "Médico General — Flebología y Salud Vascular",
+              "bio": "<p>El Dr. Leandro Wang es médico con más de dos décadas de práctica clínica internacional en flebología, diagnóstico vascular, medicina capilar y medicina general, un clínico con una combinación de especialización vascular y amplitud de formación en medicina general que le permite ofrecer tanto evaluaciones específicas de enfermedades venosas como atención médica integral.</p><p>Está colegiado en el Ilustre Colegio Médico de Valencia y es miembro del Capítulo Español de Flebología, el organismo de referencia en España para la especialidad de enfermedades venosas. Cuenta con certificaciones especializadas en Ultrasonido Doppler Vascular Periférico, Flebología y Linfología, Cicatrización de Heridas y Cirugía Mínimamente Invasiva. Su formación de posgrado incluye un Máster en Medicina Estética y especialización en Medicina Capilar.</p><p>Su trayectoria internacional es amplia: comenzó su carrera en Argentina, donde ocupó cargos de liderazgo en servicios de urgencias y unidades médicas militares, entornos de alta exigencia clínica que forjan el tipo de capacidad resolutiva que resulta valiosa en cualquier consulta. Posteriormente trabajó como médico de urgencias en Italia antes de establecerse en España, donde actualmente ejerce en clínicas de Valencia y Girona.</p><p>El Dr. Wang ofrece a través de Global Health consultas online para orientación, evaluación y planificación en el ámbito de la salud vascular, enfermedades venosas y medicina general, complementando su práctica presencial en clínica.</p><h3>Qué ofrece online</h3><ul><li><strong>Evaluación de salud vascular:</strong> orientación sobre síntomas venosos y circulatorios: varices, hinchazón de piernas, pesadez, calambres, cambios cutáneos en las extremidades</li><li><strong>Enfermedades venosas:</strong> evaluación clínica, interpretación de informes Doppler previos y orientación sobre opciones de tratamiento (escleroterapia, láser endovascular, cirugía mínimamente invasiva)</li><li><strong>Linfología:</strong> evaluación de linfedema y orientación sobre manejo</li><li><strong>Cicatrización de heridas:</strong> evaluación y orientación sobre heridas crónicas o de difícil cicatrización</li><li><strong>Medicina capilar:</strong> evaluación de pérdida de cabello, alopecia, orientación sobre tratamientos de restauración capilar</li><li><strong>Consulta estética online:</strong> evaluación y planificación previa a procedimientos estéticos (los procedimientos se realizan de forma presencial)</li><li><strong>Medicina general:</strong> enfermedades agudas, gestión de enfermedades crónicas (hipertensión, diabetes, dislipemia), salud preventiva</li><li><strong>Segunda opinión:</strong> sobre diagnósticos vasculares, informes Doppler o planes de tratamiento</li><li><strong>Orientación para pacientes antes de procedimientos vasculares:</strong> preparación y dudas previas a intervenciones programadas</li></ul><p>Nota importante: El diagnóstico definitivo de enfermedades venosas requiere exploración física y ecografía Doppler en persona. La consulta online con el Dr. Wang es una evaluación orientativa de alta calidad, especialmente útil para pacientes que quieren entender sus síntomas, preparar una visita presencial o valorar si necesitan un procedimiento vascular.</p><h3>Su enfoque</h3><p>El Dr. Wang combina la precisión técnica de un especialista en diagnóstico vascular con la amplitud clínica de un médico con veinte años de experiencia en urgencias, cirugía y medicina general en tres países. Es reconocido por su atención personalizada, su comunicación clara y su capacidad para resolver problemas tanto en situaciones de urgencia como en consulta externa. Prioriza que el paciente entienda su situación clínica y sus opciones antes de tomar cualquier decisión.</p><p>Idiomas: Español</p>",
+              "seoTitle": "Dr. Leandro Wang — Flebología y Medicina General | CGCOM 464628929 | Global Health España",
+              "seoDescription": "Reserve una videoconsulta con Dr. Leandro Wang — médico colegiado en flebología y salud vascular (CGCOM nº 464628929). Más de 20 años experiencia internacional · Doppler vascular · Medicina capilar · Medicina general · Valencia y Girona. Cita el mismo día.",
+              "seoKeywords": [
+                "Medicina estética",
+                "Medicina capilar",
+                "flebologia",
+                "Salud vascular"
+              ]
+            },
+            {
+              "locale": "EN",
+              "title": "General Medicine Doctor",
+              "bio": "<p>Dr. Leandro Wang</p><p>Licensed physician in phlebology, vascular health, and aesthetic medicine.</p><p>Dr. Leandro Wang is a physician with extensive experience and more than two decades of international clinical practice, specializing in phlebology (venous diseases), vascular diagnosis, aesthetic medicine, and general medicine. He is a licensed physician of the Ilustre Colegio Médico de Valencia and a member of the Spanish Chapter of Phlebology, with solid experience in the evaluation and treatment of venous and circulatory diseases.</p><p>Dr. Wang has advanced postgraduate training in Aesthetic Medicine and Hair Medicine, in addition to specialized certifications in Peripheral Vascular Doppler Ultrasound, Phlebology and Lymphology, Wound Healing and Minimally Invasive Surgery (laparoscopy and thoracoscopy). His extensive technical training allows him to offer precise vascular assessment, evidence-based treatment planning, and comprehensive patient care.</p><p>He currently practices in Spain as a phlebologist, general physician, and hair medicine specialist, working in clinics in Valencia and Girona, where he provides treatment for venous diseases, circulatory evaluations, hair restoration treatments, and general medical care. Previously, he worked as a emergency physician in Italy and held senior medical positions in hospitals and military medical units in Argentina, including leadership roles in emergency and surgery services.</p><p>Dr. Wang is recognized for his personalized patient care, clinical precision, and strong ability to resolve problems in emergencies and outpatient consultations. He prioritizes clear communication, teamwork, and compassionate medical practice. His native language is Spanish.</p><p>At Global Health, Dr. Wang offers consultations focused on vascular health, venous diseases, circulatory conditions, aesthetic medicine guidance, and general medical evaluation, both in the clinic and through secure online consultations.</p>",
+              "seoTitle": "Dr Leandro Wang - Aesthetic/Capillary Medicine | Global Health",
+              "seoDescription": "Dr. Leandro Wang, licensed physician specialized in phlebology, vascular health and aesthetic medicine. More than 20 years of international experience. In-person consultation in Valencia/Girona and online at Global Health.",
+              "seoKeywords": []
+            }
+          ],
+          "divisionTranslations": []
+        }
+      ],
+      "assignedServices": [
+        {
+          "serviceId": "cmrf0phum00qa01qr0xkpwhhf",
+          "service": {
+            "id": "cmrf0phum00qa01qr0xkpwhhf",
+            "slug": "consulta-flebologia-y-linfologia",
+            "name": "Flebología y Linfología Especialista",
+            "kind": "SPECIALIST",
+            "summary": "Consulta especialista en enfermedad venosa y linfática por videollamada: varices, insuficiencia venosa crónica, síndrome postrombótico, linfedema y lipedema, con indicación de compresión y plan de tratamiento.",
+            "durationMinutes": 30,
+            "basePriceCents": 15000,
+            "currencyCode": null
+          }
+        },
+        {
+          "serviceId": "cmrf0qzdm00qd01qrfcfnsjmx",
+          "service": {
+            "id": "cmrf0qzdm00qd01qrfcfnsjmx",
+            "slug": "consulta-diagnotico-vascular",
+            "name": "Diagnóstico Vascular Especialista",
+            "kind": "SPECIALIST",
+            "summary": "Revisión especializada de pruebas vasculares por videollamada: eco-Doppler, índice tobillo-brazo, angio-TC y angio-RM interpretados, con plan escrito y solicitud de los estudios que falten.",
+            "durationMinutes": 30,
+            "basePriceCents": 17000,
+            "currencyCode": null
+          }
+        }
+      ],
+      "seoKeywords": [],
+      "resolvedMarketLocale": "DE",
+      "specialties": [],
+      "faqs": [
+        {
+          "id": "cmrnyx0ou00msbsjurvhht15v",
+          "locale": "DE",
+          "question": "Ist Dr. Wang im Consejo General de Colegios Oficiales de Médicos registriert?",
+          "answer": "Ja. Dr. Leandro Wang ist im CGCOM mit der Nummer 464628929 registriert und ist ein zugelassener Arzt des Ilustre Colegio Médico de Valencia. Sie können diese Registrierung auf cgcom.es überprüfen. Dr. Wang ist außerdem Mitglied des Capítulo Español de Flebología und verfügt über mehr als zwei Jahrzehnte internationale klinische Erfahrung in der Phlebologie, vaskulären Gesundheit und Allgemeinmedizin.",
+          "category": null,
+          "sortOrder": 0,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyx0ou00mtbsju0w9qxg4h",
+          "locale": "DE",
+          "question": "Welche vaskulären und medizinischen Konsultationen bietet Dr. Wang online an?",
+          "answer": "Dr. Wang bietet online an: Bewertung von venösen und zirkulatorischen Symptomen (Krampfadern, Schwellungen, Schweregefühl in den Beinen, Krämpfe), Beratung zu Optionen der vaskulären Behandlung, Interpretation vorheriger Doppler-Berichte, Bewertung von Lymphödemen, Beratung zur Heilung chronischer Wunden, Bewertung von Haarausfall und Alopezie, ästhetische Online-Konsultation, Allgemeinmedizin (akute Erkrankungen, chronische Erkrankungen, präventive Gesundheit) und Zweitmeinung zu vaskulären Diagnosen. Die Verfahren (Doppler, Sklerotherapie, Chirurgie) erfordern einen persönlichen Besuch.",
+          "category": null,
+          "sortOrder": 1,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyx0ou00mubsjule2n3u44",
+          "locale": "DE",
+          "question": "Was ist Phlebologie und wann sollte ich einen Phlebologen konsultieren?",
+          "answer": "Die Phlebologie ist die medizinische Fachrichtung, die sich mit der Diagnose und Behandlung von Erkrankungen des venösen Systems befasst — insbesondere Krampfadern, chronische venöse Insuffizienz, tiefe Venenthrombose, Lymphödeme und venöse Geschwüre. Sie sollten in Erwägung ziehen, einen Phlebologen zu konsultieren, wenn Sie am Ende des Tages geschwollene oder schwere Beine haben, häufig nächtliche Krämpfe, sichtbare oder störende Krampfadern, Veränderungen in der Hautfarbe oder -struktur an den Beinen bemerken oder wenn Sie eine Vorgeschichte von Venenthrombosen haben. Eine Online-Konsultation mit Dr. Wang ist eine effiziente Möglichkeit, zu bewerten, ob Ihre Symptome eine dringende persönliche Untersuchung erfordern, warten können oder mit konservativen Maßnahmen behandelbar sind.",
+          "category": null,
+          "sortOrder": 2,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyx0ou00mvbsjukk431jj7",
+          "locale": "DE",
+          "question": "Kann Dr. Wang einen vorherigen vaskulären Doppler-Bericht interpretieren?",
+          "answer": "Ja. Dr. Wang verfügt über eine spezifische Zertifizierung in Peripherem Vaskulärem Doppler-Ultraschall und kann vorherige Doppler-Berichte im Rahmen der Online-Konsultation überprüfen und interpretieren. Wenn Sie den Bericht vor dem Termin teilen, kann Dr. Wang die Befunde erklären, sie klinisch kontextualisieren und Ihnen über die nächsten Schritte informieren — einschließlich, ob Sie einen neuen Doppler benötigen oder mit den verfügbaren Informationen eine Behandlung beginnen können.",
+          "category": null,
+          "sortOrder": 3,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyx0ou00mwbsjupile5rlo",
+          "locale": "DE",
+          "question": "Wie buche ich einen Termin bei Dr. Wang?",
+          "answer": "Wählen Sie einen verfügbaren Termin auf dieser Seite, um direkt bei Dr. Wang zu buchen. Die Zahlung wird sicher beim Buchen verarbeitet — die Konsultation ist bestätigt, sobald die Zahlung abgeschlossen ist. Sie erhalten sofort eine Einladung zum Kalender. Die Konsultationen erfolgen über einen sicheren Videoanruf auf Spanisch. Wenn Sie vorherige Doppler-Berichte, Fotos Ihrer Beine oder relevante medizinische Berichte haben, empfehlen wir, diese vor der Konsultation zu teilen. Termine am selben Tag sind in der Regel verfügbar.",
+          "category": null,
+          "sortOrder": 4,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyx0ou00mxbsjuz6qsudo2",
+          "locale": "DE",
+          "question": "Was sind die Qualifikationen von Dr. Wang?",
+          "answer": "Dr. Leandro Wang ist ein zugelassener Arzt des Ilustre Colegio Médico de Valencia und Mitglied des Capítulo Español de Flebología. Er verfügt über Zertifikate in Peripherem Vaskulärem Doppler-Ultraschall, Phlebologie und Lymphologie, Wundheilung und minimalinvasiver Chirurgie sowie eine Weiterbildung in Ästhetischer Medizin und Haarmedizin. Seine Laufbahn umfasst mehr als zwanzig Jahre internationale klinische Erfahrung in Argentinien (Notfälle und militärische medizinische Einheiten), Italien (Notfälle) und Spanien (Valencia und Girona). Er ist im CGCOM registriert (Nr. 464628929).",
+          "category": null,
+          "sortOrder": 5,
+          "isActive": true
+        }
+      ],
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:44:00.000Z"
+      },
+      "bookabilityByServiceId": {
+        "cmrf0phum00qa01qr0xkpwhhf": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:44:00.000Z"
+        },
+        "cmrf0qzdm00qd01qrfcfnsjmx": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:44:00.000Z"
+        }
+      }
+    }
+  }
+}

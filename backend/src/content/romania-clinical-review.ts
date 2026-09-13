@@ -44,9 +44,9 @@ export class RomaniaClinicalApprovalRequiredError extends Error {
 }
 
 type SpainApproval = { stateSha256: string; reviewerDoctorId: string; reviewedAt: string; evidence: string };
-// Intentionally empty: no Spain clinician consent or review-age policy has been supplied.
-// Add only owner-confirmed policy and exact reviewed state hashes from the Spain packet.
-export const SPAIN_REVIEW_POLICY: { maxAgeDays: number | null } = { maxAgeDays: null };
+// Review-age policy chosen by the owner on 2026-09-14 (ledger §56.4). Approved states stay
+// empty until the named reviewer approves exact state hashes from the Spain manifest.
+export const SPAIN_REVIEW_POLICY: { maxAgeDays: number | null } = { maxAgeDays: 365 };
 export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {};
 export const BRAZIL_REVIEW_POLICY: { maxAgeDays: number | null } = { maxAgeDays: null };
 export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {};

@@ -9252,6 +9252,102 @@ inspection. Register exact published cohorts and 30/60/90 measurement dates only
 when content is actually published. Future localization and content opportunities
 are conditional on verified care scope and subsequent measured demand.
 
+### 56.4 Authenticated preparation and owner decisions, 14 September 2026
+
+**Still nothing published.** No clinical approval, production dry-run, enforcement
+deployment or content write exists. This pass supersedes §56.3's "zero executable
+groups" state only.
+
+**Storage.** The owner explicitly confirmed the read-only export in chat. It ran once
+through `backend/.env` in one REPEATABLE READ READ ONLY transaction. Snapshot SHA-256:
+`ecd8cb77bbe5ec90bc7e2acc75adc3b3b741e228bcc838dfe5c9a2e42293fc61`. It stays local
+(gitignored) and contains no secret pattern. Rows: 37 services (13 inactive), 210
+service translations, 193 FAQs, 965 FAQ translations, 89 assignments, 14 doctors,
+14 doctor-country rows, 110 links. Every doctor base and market is Spain; no
+cross-country assignment exists. Irene Galve Moros is inactive with an unverified
+COP entry; she is outside every draft.
+
+**Reconciled storage assumptions.**
+- Non-ES translation rows of the four vascular/aesthetic services store null in every
+  display field and render the ES record. §56.2's "Spanish bodies stored in non-ES
+  records" is corrected. The previous drafts would have written the Spanish body into
+  those rows; the generator no longer does so.
+- No ServiceFaqTranslation row exists for ES. ES FAQ copy lives on the base row, so the
+  planner patches only the base row for the default locale. New FAQs no longer create
+  ES translation rows, which would shadow later base edits. A missing non-default
+  translation still blocks. Drift, ownership and approval checks are unchanged.
+
+**Refresh.** All 140 public draft sources were re-fetched read-only into a new dated
+folder: no drift in drafted fields, FAQs, assignments, languages, price or duration.
+Fidel Mesa and cardiology remain without an open appointment.
+
+**Localization.** The aesthetic and vascular services now carry localized title,
+description, H1 and body drafts in EN/DE/CS/PT/RO, made from the corrected ES source
+with identical HTML structure. An independent review found no clinical defect; its
+meaning and naturalness corrections were applied. The unconditional same-day promise
+was removed from those descriptions and one aesthetic body sentence in every locale.
+Flebología and diagnóstico vascular remain held with the Spanish fallback. This is
+AI drafting plus review, not native-speaker or clinical approval.
+
+**Manifest.** Status `storage prepared; no approval or publication`, SHA-256
+`7b9fc80bd32198f1345b47cad08f92c9a958949dfcc510197e524fb3734452e6`. It has 22
+candidate groups and 144 operations. Order: aesthetic service, Ocampo profile;
+vascular service, Szilágyi; dermatology specialist, Del Valle; psychiatry, Cornejo;
+paediatrics, Irale; then profiles Olivas, Villarte, Wang, Brito, Tahir; then seven
+obsolete-link deactivations. Twelve groups are blocked: Luz's profile and six
+services assigned to her, Tomás, both Wang specialist services, and Fidel's profile
+and cardiology. A column audit found only allowed copy fields. No price, duration,
+slug, publication, assignment, credential or booking field changes. Draft counts are
+unchanged: 140 candidates, 96 FAQ patches, 11 base/66 locale FAQ additions, matrix
+199/96/139.
+
+**Rehearsal.** An isolated embedded PostgreSQL 18.4 received the current Prisma schema
+and the snapshot. Receipt: [postgres-rehearsal](../../seo/spain/raw/postgres-rehearsal-2026-09-13.json).
+Every group was applied with readback in one transaction, then a savepoint failure and
+full rollback. Every group was then committed through the runner's dry-run, repeat
+detection passed, and a protected price drift was refused. Exact inverse operations
+restored the snapshot. Only seven unprojected Country columns needed synthetic filler.
+Not covered: the approval gate against real rows, `updatedAt` restoration and
+production schema drift.
+
+**Owner decisions (14 September).**
+- Reviewer nominee: Dra. María Fernanda Ocampo Mora, doctor ID
+  `cmrdpted5001901ru0wk0ncnd`, CGCOM 291409735. The 13 September registry record reads
+  Médico General, ALTA con ejercicio privado.
+- The owner accepted her as sole reviewer for all 22 groups. That includes her own
+  profile and aesthetic service, and specialist dermatology, psychiatry, vascular and
+  psychologist content. The self-review and scope concern is recorded, not resolved.
+- Review validity: 365 days. The owner first chose "never expire", then chose 365 days
+  after the loss of staleness enforcement was explained. `SPAIN_REVIEW_POLICY` is
+  set locally. `APPROVED_SPAIN_STATES` stays empty; nomination is not approval.
+
+**Security.** Tracked competitor capture `seo/spain/raw/external-pages-2026-09-13.json`
+contained saludonnet.com's public Google browser key; it was pushed with 16ca77f3. It
+is redacted going forward at the owner's direction. Git history was not rewritten.
+
+**Deployment state.** The recorded enforcement deployment
+`525deda8-946e-4da7-8462-c096b599bc20` (base 39656572) predates the Spain and Brazil
+gate code, so Spain enforcement is not deployed.
+
+**Holds unchanged:** Luz status, Tomás record, Wang specialist evidence, Silvina's
+General label, Fidel availability, Spanish dermatology queries landing on EN, and the
+sick-leave commercial-fit restriction.
+
+**Proof:** 12 focused tests pass. Backend `tsc --noEmit` passes via direct Node with
+an 8 GB heap. The rehearsal receipt is above.
+
+**Next:**
+1. Dra. Ocampo reviews the exact packet and approves the manifest hash and group
+   hashes, or requests changes. Changes regenerate every dependent hash.
+2. Record `clinical-approval.json` and matching `APPROVED_SPAIN_STATES`.
+3. Obtain production authorization to deploy enforcement, and record a real
+   deployment ID.
+4. Run groups sequentially with production dry-run, apply, public/browser
+   verification and a ledger update after each.
+
+The September 18 Spain read and September 24 global inspection are unchanged. No
+cohort or 30/60/90 date is registered.
+
 ## 57. Brazil evidence and guarded preparation — 13 September 2026
 
 Research and local preparation complete for the first staffed service/profile batch;

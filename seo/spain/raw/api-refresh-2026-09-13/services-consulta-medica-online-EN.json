@@ -1,0 +1,183 @@
+{
+  "endpoint": "/api/services/consulta-medica-online?countryCode=es&locale=EN",
+  "checkedAt": "2026-09-13T22:38:40.036Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7pwwv0000ngjuwvmiacw9",
+      "kind": "GENERAL",
+      "slug": "consulta-medica-online",
+      "name": "General Medical Consultation",
+      "summary": null,
+      "seoTitle": "Online Doctor Spain | English GP | Same-Day Appointment",
+      "seoDescription": "Need a doctor in Spain today — in English? Our OMC-registered doctors offer full GP consultations by secure video call with full clinical documentation issued same day. No registration required.",
+      "seoKeywords": [
+        "médico online España",
+        "consulta médica online España",
+        "médico online sin espera",
+        "médico online sin médico de cabecera",
+        "videoconsulta médica privada España"
+      ],
+      "heroTitle": "English Doctor in Spain — Online, Same Day",
+      "heroDescription": "Ill in Spain and need to see a doctor in English today? Our doctors, registered with the Spanish Medical Council (OMC — Organización Médica Colegial), offer full GP consultations by secure video call — in English, without a waiting room, without a prior registration requirement, with full clinical documentation issued the same day. Whether you are an expat living in Spain, a digital nomad working remotely, a tourist who has fallen ill, or an international resident who needs medical care in your own language today — we are here, same day, from anywhere in Spain.",
+      "detailBody": "<h2>Healthcare in Spain for International Residents — The Access Gap</h2><p>Spain has one of the strongest healthcare systems in Europe — but access for international residents and visitors involves several practical barriers.</p><p>Public system access requires registration, a NIE number, and either social security contributions, EU residency status, or enrolment under the Convenio Especial. Getting a GP assigned through the public system takes time and documentation — and until you are registered, you have no routine access to the public system for non-emergency care.</p><p>Private clinics in Madrid, Barcelona, Valencia, and Málaga often have English-speaking doctors — but this is not guaranteed everywhere, appointments often require waiting days or weeks, and the cost of private in-person consultations typically ranges from €80 to €150.</p><p>English-language telemedicine closes this gap — for the time between arriving and being fully registered, for acute issues that cannot wait for a clinic appointment, and for the significant proportion of international residents who prefer to consult in English regardless of their registration status.</p><p>Our OMC-registered doctors consult in English by secure video call — same day, from anywhere in Spain — with full clinical documentation issued the same day.</p><h2>What We Can Help With</h2><p>Our doctors assess and manage a wide range of acute and non-urgent medical concerns, including:</p><p><strong>Respiratory and ENT</strong></p><ul><li>Cold, flu, sinusitis, and bronchitis</li><li>COVID-19 symptoms and post-COVID concerns</li><li>Sore throat, tonsillitis, and ear infections</li><li>Chest infections and persistent cough</li><li>Mild asthma flares</li></ul><p><strong>Infections</strong></p><ul><li>Urinary tract infections — assessment and treatment where clinically indicated</li><li>Skin infections</li><li>Respiratory infections requiring clinical assessment</li><li>Gastrointestinal infections</li></ul><p><strong>General and systemic</strong></p><ul><li>Fever in adults</li><li>Headaches and migraine</li><li>Nausea, vomiting, diarrhoea, and abdominal pain</li><li>Fatigue and general malaise</li></ul><p><strong>Skin and eyes</strong></p><ul><li>Rashes, sunburn reactions, eczema flares, and mild allergic reactions</li><li>Conjunctivitis and mild eye irritation</li></ul><p><strong>Musculoskeletal</strong></p><ul><li>Back pain, neck pain, and muscle strains</li><li>Minor musculoskeletal injuries</li></ul><p><strong>Other</strong></p><ul><li>Concerns about current medication or ongoing treatment</li><li>Medication continuation — if you have run out of medication from your home country, your doctor assesses your treatment and issues appropriate clinical documentation where clinically indicated</li><li>Medical letters and documentation — sick notes, referral letters</li><li>Travel health advice</li><li>Second opinions on diagnoses or treatment plans received in Spain</li></ul><h2>What Your Consultation Includes</h2><p><strong>Full GP assessment</strong></p><p>Your doctor takes a complete history of your symptoms, relevant medical background, and current medications — and conducts a structured clinical assessment by video, to the same standard as an in-person consultation.</p><p><strong>Clear explanation in English</strong></p><p>You leave your consultation knowing exactly what is happening, what to do next, and when to seek further care. No rushed appointment, no language barrier.</p><p><strong>Clinical documentation — at the doctor's professional discretion</strong></p><p>Your doctor issues appropriate clinical documentation following full assessment. This may include a private electronic prescription in accordance with Real Decreto 1718/2010, validated by the OMC and connected through Nodofarma to Spain's 22,000 pharmacies — where clinically indicated. You present your ID at any pharmacy of your choice anywhere in Spain.</p><p>A private prescription in Spain is valid for 10 days from the date of issue for the first dispensation. You pay the full retail price of the medication — drug prices in Spain are government-regulated and generally very affordable.</p><p><strong>Antibiotics — assessment and treatment where clinically indicated</strong></p><p>All antibiotics in Spain require a doctor's prescription by law. Your doctor assesses your symptoms and prescribes the appropriate treatment where the clinical evidence supports it — including for urinary tract infections, respiratory infections, and skin infections — in accordance with antibiotic stewardship guidelines.</p><p><strong>Medication continuation from another country</strong></p><p>Ran out of medication you take regularly from your home country? Non-Spanish prescriptions are not reliably accepted at Spanish pharmacies. Your doctor reviews your current treatment and — where clinically appropriate — issues the equivalent Spanish clinical documentation. Bring your original packaging, the generic name of your medication, and any documentation you have.</p><p><strong>Referral letters and medical documentation</strong></p><p>When specialist referral, blood tests, imaging, or other clinical documentation is needed, your doctor issues this the same day.</p><h2>How Medication Works in Spain</h2><p>Spain operates one of the most advanced private electronic prescription systems in Europe. Our doctors issue private electronic prescriptions validated by the OMC, connected through Nodofarma to all Spanish pharmacies.</p><p>Private prescription — issued by our doctors following clinical assessment. You pay 100% of the medication cost at the pharmacy. Drug prices in Spain are government-regulated and generally low — a standard course of antibiotics typically costs between €5 and €15.</p><p>Public prescription (receta del SNS) — issued by doctors contracted with the public system. Eligible patients pay a reduced contribution based on income. Global Health doctors issue private clinical documentation — not public system prescriptions.</p><p>For foreign citizens, your passport is sufficient identification at Spanish pharmacies. No NIE, no SIP card, no Spanish health insurance required.</p><p>Non-EU prescriptions from your home country — including UK and US prescriptions — are generally not accepted directly at Spanish pharmacies. The fastest and most reliable way to continue medication you take at home is to consult one of our doctors.</p><h2>Who This Service Is For</h2><ul><li>Expats and international residents in Spain without a registered Spanish GP</li><li>Tourists and short-stay visitors who need same-day medical advice</li><li>Digital nomads working remotely from Spain</li><li>EU citizens in Spain on EHIC who need private care faster than the public system allows</li><li>Residents who have run out of medication from their home country</li><li>International residents who prefer to consult in English rather than Spanish</li><li>Anyone in Spain who needs to see a doctor today without travelling to a clinic</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 10,
+      "durationMinutes": 15,
+      "basePriceCents": 3900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.257Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0su150005y8junba6y1ib",
+          "kind": "IMAGE",
+          "key": "media/4fdae944-3701-4d28-8553-fe11a3b12d7f-es-consulta-medica-online.png",
+          "path": "/api/media/media/4fdae944-3701-4d28-8553-fe11a3b12d7f-es-consulta-medica-online.png",
+          "altText": "Consulta Médica General"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7px5i0001ngju89f94ekh",
+          "question": "Do I need a health card or SIP to use this service?",
+          "answer": "No. This is a private direct-pay service. No health card, SIP, or Spanish medical insurance of any kind is required.",
+          "sortOrder": 0,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7px5i0002ngjuege8nh97",
+          "question": "Can the doctor treat infections that require antibiotics?",
+          "answer": "Yes — where clinically indicated after a complete evaluation of your symptoms. In Spain, it is mandatory to have a medical prescription to obtain antibiotics at a pharmacy. Your doctor evaluates your presentation and prescribes the appropriate treatment where the clinical evidence justifies it.",
+          "sortOrder": 1,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7px5i0003ngju6svm8wyj",
+          "question": "Is the clinical documentation valid throughout Spain?",
+          "answer": "Yes. The clinical documentation issued by our doctors — including private electronic prescriptions where indicated — is approved by the OMC and connected to Nodofarma, valid at any of the more than 22,000 pharmacies in the national territory.",
+          "sortOrder": 2,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7px5i0004ngjugfol80qo",
+          "question": "Can I obtain medical leave through this service?",
+          "answer": "Global Health doctors can issue a private medical certificate that certifies temporary incapacity. To access sick leave for temporary incapacity (IT) in the public system with financial benefits from Social Security, you need a primary care doctor in the SNS.",
+          "sortOrder": 3,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7px5i0005ngjuvcwamxc8",
+          "question": "Can I renew a prescription from another European country?",
+          "answer": "Our doctor evaluates your current treatment and, if clinically appropriate, issues the equivalent Spanish medical documentation. Bring your current documentation to the consultation.",
+          "sortOrder": 4,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7px5i0006ngju1jevcbps",
+          "question": "How long does it take for the medical records to arrive?",
+          "answer": "When it is clinically indicated, the documentation is issued on the same day as the consultation, usually within minutes.",
+          "sortOrder": 5,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7px5i0007ngjuuxisglns",
+          "question": "Can I use this service from anywhere in Spain?",
+          "answer": "Yes — including the Balearic Islands, the Canary Islands, Ceuta and Melilla. You only need a stable internet connection and a device with a camera.",
+          "sortOrder": 6,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7px5i0008ngjuadsntmup",
+          "question": "What languages is it available in?",
+          "answer": "Spanish, English and Portuguese — depending on the doctor’s availability.",
+          "sortOrder": 7,
+          "resolvedLocale": "EN"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "EN",
+      "links": [
+        {
+          "id": "cmre7rgl80000g8jufspbvv3k",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Justificante médico o certificado de baja?",
+          "body": "Si tu situación está relacionada con justificante médico o certificado de baja, nuestra Justificante Médico te ofrece la evaluación adecuada.",
+          "ctaLabel": "Justificante Médico",
+          "targetSlug": "justificante-medico-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7rhdh0002g8jutbik3ps8",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con renovación de tu tratamiento habitual?",
+          "body": "Para renovación de tu tratamiento habitual, consulta nuestra página de Renovación de Tratamiento — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Renovación de Tratamiento",
+          "targetSlug": "renovacion-tratamiento-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7ri5n0004g8jub91rpgd5",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre control de peso con apoyo médico?",
+          "body": "Nuestra Control de Peso está pensada específicamente para control de peso con apoyo médico.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7rixq0006g8ju1e53bfuz",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Salud masculina y función sexual?",
+          "body": "Si tu situación está relacionada con salud masculina y función sexual, nuestra Salud Masculina te ofrece la evaluación adecuada.",
+          "ctaLabel": "Salud Masculina",
+          "targetSlug": "salud-masculina-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdpz5n3001z01rukg2lecs5",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+      }
+    }
+  }
+}

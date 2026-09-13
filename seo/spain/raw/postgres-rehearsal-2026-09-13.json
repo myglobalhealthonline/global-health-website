@@ -1,0 +1,27 @@
+{
+  "checkedAt": "2026-09-13T23:19:38.796Z",
+  "database": "isolated local PostgreSQL (embedded); production not touched",
+  "postgres": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35226, 64-bit",
+  "manifestSha256": "7b9fc80bd32198f1345b47cad08f92c9a958949dfcc510197e524fb3734452e6",
+  "snapshotSha256": "ecd8cb77bbe5ec90bc7e2acc75adc3b3b741e228bcc838dfe5c9a2e42293fc61",
+  "groups": 22,
+  "operations": 144,
+  "snapshotReadbackIdentical": true,
+  "transactionalReadbackPerGroup": true,
+  "savepointFailureVerified": true,
+  "fullRollbackVerified": true,
+  "runnerDryRunAndRepeatDetectionPerGroup": true,
+  "protectedDriftRefused": true,
+  "exactInverseRestoredSnapshot": true,
+  "syntheticFillerColumns": [
+    "Country.currencyId",
+    "Country.generalConsultationPath",
+    "Country.legacyHomePath",
+    "Country.name",
+    "Country.specialistConsultationPath",
+    "Country.teamPath",
+    "Country.updatedAt"
+  ],
+  "notCovered": "Clinical approval gate (synthetic tests only); updatedAt is not restored by inverse; production schema drift beyond prisma/schema.prisma.",
+  "published": false
+}

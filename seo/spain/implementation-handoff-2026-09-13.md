@@ -1,8 +1,16 @@
 # Spain implementation handoff — 13 September 2026
 
-Nothing from this package is live. Research and exact local candidates exist;
-clinical approval, authenticated row reconciliation, PostgreSQL rehearsal and
-production publication do not. Canonical status is ledger §56.
+Nothing from this package is live. Canonical status is ledger §56.
+
+**14 September update (ledger §56.4) supersedes the "pending" statements below:**
+the owner-confirmed read-only snapshot ran; the manifest is built from it (22 groups,
+12 held, SHA-256 `7b9fc80b…52e6`); the isolated PostgreSQL rehearsal passed via
+`backend/scripts/rehearse-spain-seo.mjs` (local-host guard; launcher starts embedded
+PostgreSQL and runs `prisma db push`). Reviewer nominee is Dra. María Fernanda Ocampo
+Mora (`cmrdpted5001901ru0wk0ncnd`); `SPAIN_REVIEW_POLICY.maxAgeDays` is 365. Still
+missing: exact clinical approval, production authorization, enforcement deployment,
+production dry-run and every content write. `node seo/spain/refresh-sources.mjs`
+re-fetches draft sources into a new dated folder before rollout.
 
 ## Reuse and proof
 

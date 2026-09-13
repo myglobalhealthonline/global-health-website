@@ -1,0 +1,75 @@
+{
+  "endpoint": "/api/services/consulta-flebologia-y-linfologia?countryCode=es&locale=PT",
+  "checkedAt": "2026-09-13T22:38:54.344Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmrf0phum00qa01qr0xkpwhhf",
+      "kind": "SPECIALIST",
+      "slug": "consulta-flebologia-y-linfologia",
+      "name": "Consulta Online Flebologia e Linfologia",
+      "summary": "Consulta especialista en enfermedad venosa y linfática por videollamada: varices, insuficiencia venosa crónica, síndrome postrombótico, linfedema y lipedema, con indicación de compresión y plan de tratamiento.",
+      "seoTitle": "Flebología y Linfología Online España | Varices y Linfedema",
+      "seoDescription": "Consulta especialista online en varices, insuficiencia venosa, linfedema y lipedema en España. Revisión de pruebas, compresión indicada y plan de tratamiento. Cita el mismo día.",
+      "seoKeywords": [
+        "flebología online España",
+        "linfedema consulta online España",
+        "varices especialista online España",
+        "lipedema diagnóstico online España",
+        "insuficiencia venosa crónica consulta online"
+      ],
+      "heroTitle": "Flebología y Linfología Especialista — Consulta Online",
+      "heroDescription": "Varices que progresan, una pierna que se hincha y no desde ayer, linfedema tras una cirugía oncológica, lipedema mal diagnosticado durante años o una úlcera venosa que no termina de cerrar: la patología venosa y linfática necesita un plan, no una opinión suelta. Esta consulta especialista en flebología y linfología evalúa tu caso por videollamada, revisa tus pruebas, indica la compresión adecuada y planifica el tratamiento — escleroterapia, ablación o terapia descongestiva — coordinando la derivación presencial cuando toca. Desde cualquier punto de España, en español, inglés o portugués.",
+      "detailBody": "<h2>Para quién es este servicio</h2><p>Esta consulta especialista en flebología y linfología es apropiada para adultos con:</p><ul><li>Varices sintomáticas o en progresión, con o sin eco-Doppler previo</li><li>Insuficiencia venosa crónica ya diagnosticada que necesita plan de tratamiento</li><li>Arañas vasculares y telangiectasias, para valorar si procede escleroterapia y en qué orden</li><li>Cambios cutáneos de origen venoso: dermatitis ocre, lipodermatoesclerosis o eccema del tobillo</li><li>Úlcera venosa en cicatrización que necesita revisión del plan de compresión</li><li>Síndrome postrombótico tras una trombosis venosa profunda</li><li>Linfedema primario o secundario — tras cirugía oncológica, vaciamiento ganglionar o radioterapia</li><li>Sospecha de lipedema, frecuentemente confundido con obesidad o con linfedema durante años</li><li>Hinchazón crónica de una o ambas piernas de causa no aclarada</li><li>Celulitis de repetición sobre una extremidad con linfedema, para revisar la estrategia preventiva</li><li>Una segunda opinión sobre una indicación de cirugía de varices o de procedimiento endovenoso</li><li>Residentes internacionales y expatriados que necesitan flebología especializada en inglés o portugués</li></ul><h2>Qué es este servicio — y qué no es</h2><p>Esta consulta cubre:</p><ul><li>Evaluación especializada de patología venosa y linfática</li><li>Estadificación de la enfermedad venosa crónica y del linfedema, y explicación de lo que implica</li><li>Diagnóstico diferencial entre linfedema, lipedema, edema venoso y edema sistémico</li><li>Revisión e interpretación de eco-Doppler y de otros estudios previos</li><li>Indicación de terapia compresiva: tipo de prenda, clase de compresión, medida y pauta de uso</li><li>Planificación del tratamiento — escleroterapia, ablación endovenosa con láser o radiofrecuencia, cirugía, terapia descongestiva compleja</li><li>Solicitud de pruebas cuando faltan para decidir</li><li>Coordinación de la derivación presencial para el procedimiento indicado</li></ul><p>Este servicio no cubre:</p><ul><li>La realización del procedimiento. La escleroterapia, la ablación endovenosa y la cirugía de varices son presenciales: esta consulta los indica y los planifica, no los ejecuta</li><li>El drenaje linfático manual y la terapia descongestiva, que realiza un fisioterapeuta con formación específica; la consulta la indica y la coordina</li><li>Urgencias. La sospecha de trombosis venosa profunda aguda — dolor e hinchazón brusca de una pierna, con calor o enrojecimiento — obliga a una valoración el mismo día, y si se acompaña de dolor torácico o dificultad respiratoria hay que llamar al 112</li><li>Celulitis aguda con fiebre, que necesita antibioterapia y valoración presencial sin demora</li><li>Sangrado activo de una variz, que exige compresión, elevación y atención urgente</li></ul><h2>Condiciones habitualmente evaluadas</h2><ul><li>Varices tronculares y reflujo de safena interna o externa</li><li>Telangiectasias y venas reticulares</li><li>Insuficiencia venosa crónica en sus distintos estadios clínicos</li><li>Síndrome postrombótico y obstrucción venosa residual</li><li>Úlcera venosa activa o cicatrizada</li><li>Linfedema primario y secundario</li><li>Lipedema y su diagnóstico diferencial</li><li>Flebitis superficial en fase de seguimiento</li><li>Edema del embarazo y patología venosa gestacional</li><li>Varices recidivadas tras cirugía o tras procedimiento endovenoso previo</li></ul><h2>Qué incluye la consulta</h2><p><strong>Historia clínica especializada</strong></p><p>Evolución, patrón de la hinchazón, respuesta a la elevación, antecedentes de trombosis, embarazos, cirugía oncológica o radioterapia previas, episodios de celulitis, medicación y tratamientos venosos anteriores.</p><p><strong>Exploración guiada por videollamada</strong></p><p>El médico te guía para mostrar ambas piernas: distribución de las varices, extensión del edema, afectación del dorso del pie y de los dedos, estado de la piel y simetría. Puedes enviar fotografías y medidas perimétricas antes de la cita.</p><p><strong>Revisión de pruebas y solicitud de las que falten</strong></p><p>Se interpretan el eco-Doppler y los estudios previos, y se solicitan las pruebas necesarias — eco-Doppler venoso, analítica u otras — para completar el diagnóstico.</p><p><strong>Compresión correctamente indicada</strong></p><p>La compresión mal elegida es el motivo más frecuente de abandono del tratamiento. Se indica la prenda concreta, la clase de compresión, la longitud y la pauta de uso, con las contraindicaciones revisadas — la enfermedad arterial periférica entre ellas.</p><p><strong>Plan de tratamiento escrito</strong></p><p>Recibes un plan con la secuencia del tratamiento, qué procedimiento está indicado y con qué objetivo, qué resultado es esperable y qué seguimiento necesitas después.</p><p><strong>Derivación coordinada</strong></p><p>Cuando corresponde escleroterapia, ablación endovenosa, cirugía o terapia descongestiva presencial, la derivación se coordina con el informe especializado completo.</p><h2>Linfedema y lipedema — por qué el diagnóstico llega tarde</h2><p>El linfedema secundario a tratamiento oncológico suele detectarse tarde, cuando el tejido ya se ha fibrosado y la terapia descongestiva rinde menos. La detección precoz y una compresión bien indicada cambian el curso de la enfermedad.</p><p>El lipedema tiene un retraso diagnóstico aún mayor: durante años se atribuye a obesidad, con la carga añadida de responsabilizar a la paciente de un cuadro que no depende de la dieta. Distinguirlo del linfedema y del edema venoso —por su distribución simétrica, el respeto del pie y el dolor a la presión— es el primer paso para tratarlo correctamente.</p><h2>Flebología en España — el problema del acceso</h2><p>La atención venosa en España se concentra en las consultas privadas de las grandes ciudades, y la linfología especializada es aún más escasa. Las pacientes con linfedema o lipedema recorren varios profesionales antes de recibir un diagnóstico correcto, y muchos pacientes con varices solo son evaluados cuando la piel ya ha cambiado.</p><p>Esta consulta acerca esa evaluación especializada a cualquier punto de España, con revisión de pruebas, compresión bien indicada y un plan de tratamiento escrito, coordinando la parte presencial únicamente cuando es imprescindible.</p>",
+      "ctaLabel": null,
+      "sortOrder": 0,
+      "durationMinutes": 30,
+      "basePriceCents": 15000,
+      "currencyCode": null,
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-08-19T10:10:26.940Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0svoh0006y8juiulxh5l4",
+          "kind": "IMAGE",
+          "key": "media/32a904d9-a027-4c62-9d0b-26ad94e356e0-es-consulta-flebologia-y-linfologia.png",
+          "path": "/api/media/media/32a904d9-a027-4c62-9d0b-26ad94e356e0-es-consulta-flebologia-y-linfologia.png",
+          "altText": "Consulta Online Flebologia y Linfologia"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name"
+      ],
+      "resolvedLocale": "PT",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrdpx4ah001r01rupv1od828"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:44:00.000Z"
+      }
+    }
+  }
+}

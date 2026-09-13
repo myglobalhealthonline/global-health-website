@@ -8,15 +8,20 @@ questions. Profile booking answers use stored consultation languages and retain
 existing emergency passages where present.
 
 Review includes naturalness in each locale and equivalence of service-specific
-Spanish answers to the broader translated preparation/procedure answers. Localized
-hero text and FAQs do not complete translation of the long Spanish clinical bodies
-stored in other locales. No reviewed claim, reviewer name or review date is invented.
+Spanish answers to the broader translated preparation/procedure answers. No reviewed
+claim, reviewer name or review date is invented.
+
+Non-ES records of the four vascular/aesthetic services store no copy and render the
+Spanish record. `body-localization.json` supplies localized title, description, H1
+and body for the aesthetic and vascular services in EN/DE/CS/PT/RO. The two
+Wang-assigned services stay held and keep the Spanish fallback. Localized copy was
+drafted and independently reviewed, not native-speaker or clinically approved.
 
 `clinical-review-register.csv` one directory above binds each current payload hash.
 The generator preserves actual review records and refuses changed approved payloads.
-The storage manifest is explicitly pending: zero executable groups, not a dry-run
-success. After storage reconciliation, approval must bind the final full row manifest
-and resulting service/doctor states, including retained and hidden rows.
+`storage-mutation-manifest.json` is now built from the authenticated snapshot: 22
+candidate groups, 12 held groups. Approval must bind its SHA-256 (ledger §56.4) and
+each group hash. It is not a production dry-run.
 
 Applicable rule: [ledger §43.5](../../../docs/plans/seo-control-state.md#435-spains-remaining-dependencies-none-of-which-are-code)
 requires “A named Spain-registered clinician reviewer, with a doctor id” and

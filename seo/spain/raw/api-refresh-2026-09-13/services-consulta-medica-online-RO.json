@@ -1,0 +1,183 @@
+{
+  "endpoint": "/api/services/consulta-medica-online?countryCode=es&locale=RO",
+  "checkedAt": "2026-09-13T22:39:03.050Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7pwwv0000ngjuwvmiacw9",
+      "kind": "GENERAL",
+      "slug": "consulta-medica-online",
+      "name": "Consulta medicală generală",
+      "summary": null,
+      "seoTitle": "Medic Online Spania | Fără listă de așteptare | Consultație în aceeași zi",
+      "seoDescription": "Ai nevoie să consulți un medic astăzi? Medici înscriși în colegiul profesional din Spania oferă consultații prin videoconferință securizată. Fără înregistrare prealabilă, fără sală de așteptare. Documentație clinică emisă în aceeași zi în toată Spania.",
+      "seoKeywords": [
+        "médico online España",
+        "consulta médica online España",
+        "médico online sin espera",
+        "médico online sin médico de cabecera",
+        "videoconsulta médica privada España"
+      ],
+      "heroTitle": "Medic online — Consultație medicală privată în aceeași zi",
+      "heroDescription": "Ai nevoie să vezi un medic astăzi, dar nu ai medic de familie alocat, nu poți aștepta săptămâni pentru o programare sau pur și simplu ai nevoie de o consultație medicală rapidă și de calitate, fără să te deplasezi? Medicii noștri, înscriși în colegiul medical din Spania conform cerințelor Organizației Medicale Colegiale (OMC), oferă consultații medicale private complete prin videoconferință securizată. Fără înregistrare prealabilă, fără sală de așteptare, cu documentație clinică completă emisă în aceeași zi din orice punct al țării.",
+      "detailBody": "<h2>Realitatea accesului la servicii de sănătate în Spania</h2><p>Sistemul de sănătate spaniol este unul dintre cele mai bune din Europa — însă accesul prezintă fricțiuni reale pentru o parte importantă a populației.</p><p>Dacă ești lucrător pe cont propriu fără medic de familie alocat în prezent, dacă ți-ai schimbat recent comunitatea autonomă, dacă aștepți de săptămâni o programare la CAP, dacă ai nevoie de îngrijire astăzi și sistemul public nu ți-o poate oferi, sau dacă preferi o consultație privată fără așteptările obișnuite — acest serviciu există pentru tine.</p><p>Medicii noștri înscriși în colegiul profesional efectuează consultații medicale private complete prin apel video, cu aceeași valoare clinică și juridică precum o consultație față în față. Documentația clinică pe care o emit — inclusiv rețetă privată electronică acolo unde este indicată clinic — este conectată la Nodofarma și este valabilă în peste 22.000 de farmacii de pe teritoriul național.</p><p>Ai deja medic de familie în sistemul public? Acest serviciu funcționează ca un complement — pentru când ai nevoie de îngrijire astăzi și CAP-ul tău nu are o programare disponibilă, sau pentru o a doua opinie înainte de a lua o decizie medicală importantă.</p><h2>Cu ce te putem ajuta</h2><p>Medicii noștri evaluează și gestionează o gamă largă de probleme de sănătate acute și neurgente:</p><p><strong>Respirator și ORL</strong></p><ul><li>Răceală, gripă, sinuzită și bronșită</li><li>Simptome de COVID-19 și probleme post-COVID</li><li>Durere în gât, amigdalită și infecții ale urechii</li><li>Infecții pulmonare și tuse persistentă</li><li>Crize ușoare de astm</li></ul><p><strong>Infecții</strong></p><ul><li>Infecții urinare — evaluare și tratament acolo unde este indicat clinic</li><li>Infecții cutanate</li><li>Infecții respiratorii care necesită evaluare</li><li>Infecții gastrointestinale</li></ul><p><strong>General și sistemic</strong></p><ul><li>Febră la adulți</li><li>Cefalee și migrenă</li><li>Greață, vărsături, diaree și durere abdominală</li><li>Oboseală și stare generală de rău</li></ul><p><strong>Piele și ochi</strong></p><ul><li>Eruptii cutanate, eczemă și reacții alergice ușoare</li><li>Conjunctivită și iritație oculară ușoară</li></ul><p><strong>Musculoscheletic</strong></p><ul><li>Durere de spate, cervicală și musculară</li><li>Leziuni musculoscheletice minore</li></ul><p><strong>Altele</strong></p><ul><li>Întrebări despre medicația actuală sau tratamentul în curs</li><li>Documentație medicală — adeverințe, trimiteri</li><li>Sfat medical de călătorie</li><li>A doua opinie asupra diagnosticelor sau planurilor de tratament</li></ul><h2>Ce include consultația ta</h2><p><strong>Evaluare clinică completă</strong></p><p>Medicul colectează un istoric clinic complet al simptomelor tale, antecedentelor medicale relevante și medicației actuale — și efectuează o evaluare clinică structurată prin apel video, la același standard ca o consultație față în față.</p><p><strong>Explicație clară</strong></p><p>Pleci din consultație știind exact ce se întâmplă, ce trebuie să faci și când să cauți îngrijire suplimentară. Fără grabă, fără bariere lingvistice.</p><p><strong>Documentație clinică — la aprecierea medicului</strong></p><p>Medicul emite documentația clinică adecvată situației tale după o evaluare completă. Aceasta poate include rețetă privată electronică conform Real Decreto 1718/2010, omologată de OMC și conectată prin Nodofarma la peste 22.000 de farmacii de pe teritoriul național — acolo unde este indicat clinic. Prezintă-ți DNI-ul la orice farmacie aleasă de tine.</p><p>Rețeta privată are o valabilitate generală de 10 zile calendaristice pentru prima eliberare. În tratamentele cronice, medicul poate programa eliberări succesive în funcție de durata tratamentului.</p><p><strong>Antibiotice — evaluare și tratament acolo unde este indicat</strong></p><p>În Spania, toate antibioticele necesită prescripție medicală. Medicul tău evaluează simptomele și prescrie tratamentul adecvat acolo unde dovezile clinice justifică acest lucru — inclusiv pentru infecții urinare, infecții respiratorii și infecții cutanate — urmând principiile utilizării responsabile a antibioticelor.</p><p><strong>Trimiteri și documentație medicală</strong></p><p>Când este necesară trimitere la specialist, analize, investigații imagistice sau altă documentație clinică, medicul o emite în aceeași zi.</p><p><strong>Adeverință medicală</strong></p><p>Dacă ai nevoie să justifici o absență de la locul de muncă, medicul poate emite certificatul medical corespunzător acolo unde este indicat clinic, după o evaluare completă.</p><h2>Rețetă privată electronică — cum funcționează în Spania</h2><p>Rețeta medicală privată electronică în Spania este reglementată de Real Decreto 1718/2010 și este valabilă pe întreg teritoriul național. Medicii noștri emit rețete private electronice omologate de OMC, conectate la Nodofarma.</p><p>Cu o rețetă privată plătești 100% din prețul medicamentului — prețurile medicamentelor în Spania sunt reglementate și, în general, foarte accesibile. Medicația este disponibilă în orice farmacie spaniolă, prezentând DNI-ul.</p><p>Rețeta privată electronică nu este același lucru cu rețeta de la Seguridad Social. Cu rețetă SNS ai putea avea o contribuție redusă în funcție de situația ta. Dacă ai medic de familie în sistemul public și ai nevoie de medicație finanțată, consultă-te mai întâi cu CAP-ul tău.</p><h2>Cine utilizează acest serviciu</h2><ul><li>Lucrători pe cont propriu și angajați fără medic de familie alocat în prezent</li><li>Persoane care și-au schimbat comunitatea autonomă și încă nu au CAP alocat</li><li>Rezidenți care nu pot aștepta săptămâni pentru o programare în sistemul public</li><li>Expați și rezidenți internaționali care preferă să consulte în engleză sau portugheză</li><li>Turiști și nomazi digitali care au nevoie de îngrijire medicală punctuală fără asigurare spaniolă</li><li>Persoane cu asigurare medicală privată care doresc o a doua opinie rapidă</li><li>Oricine are nevoie de un medic astăzi, fără să se deplaseze</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 10,
+      "durationMinutes": 15,
+      "basePriceCents": 3900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.257Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0su150005y8junba6y1ib",
+          "kind": "IMAGE",
+          "key": "media/4fdae944-3701-4d28-8553-fe11a3b12d7f-es-consulta-medica-online.png",
+          "path": "/api/media/media/4fdae944-3701-4d28-8553-fe11a3b12d7f-es-consulta-medica-online.png",
+          "altText": "Consulta Médica General"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7px5i0001ngju89f94ekh",
+          "question": "Am nevoie de card de sănătate sau de SIP pentru a utiliza acest serviciu?",
+          "answer": "Nu. Acesta este un serviciu privat cu plată directă. Nu este necesar niciun card de sănătate, SIP sau asigurare medicală spaniolă de niciun fel.",
+          "sortOrder": 0,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7px5i0002ngjuege8nh97",
+          "question": "Poate medicul să trateze infecții care necesită antibiotice?",
+          "answer": "Da — acolo unde este indicat din punct de vedere clinic după evaluarea completă a simptomelor tale. În Spania este obligatoriu să ai prescripție medicală pentru a obține antibiotice din farmacie. Medicul tău evaluează manifestările tale și prescrie tratamentul adecvat acolo unde dovezile clinice îl justifică.",
+          "sortOrder": 1,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7px5i0003ngju6svm8wyj",
+          "question": "Documentația clinică este valabilă în toată Spania?",
+          "answer": "Da. Documentația clinică emisă de medicii noștri — inclusiv rețetele private electronice, acolo unde este indicat — este omologată de OMC și conectată la Nodofarma, valabilă în oricare dintre cele peste 22.000 de farmacii de pe teritoriul național.",
+          "sortOrder": 2,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7px5i0004ngjugfol80qo",
+          "question": "Pot obține concediul medical prin acest serviciu?",
+          "answer": "Medicii de la Global Health pot emite un certificat medical privat care să ateste incapacitatea temporară. Pentru a accesa concediul medical pentru incapacitate temporară (IT) din sistemul public, cu prestație economică de la Securitatea Socială, ai nevoie de medic de familie în SNS.",
+          "sortOrder": 3,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7px5i0005ngjuvcwamxc8",
+          "question": "Pot reînnoi o rețetă dintr-o altă țară europeană?",
+          "answer": "Medicul nostru evaluează tratamentul tău actual și, dacă îl consideră adecvat din punct de vedere clinic, emite documentația clinică spaniolă echivalentă. Adu documentația ta actuală la consultație.",
+          "sortOrder": 4,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7px5i0006ngju1jevcbps",
+          "question": "Cât durează până ajunge documentația clinică?",
+          "answer": "Când este indicată clinic, documentația este emisă în aceeași zi a consultației, de obicei în câteva minute.",
+          "sortOrder": 5,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7px5i0007ngjuuxisglns",
+          "question": "Pot folosi acest serviciu din orice punct al Spaniei?",
+          "answer": "Da — inclusiv Insulele Baleare, Insulele Canare, Ceuta și Melilla. Ai nevoie doar de o conexiune stabilă la internet și de un dispozitiv cu cameră.",
+          "sortOrder": 6,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7px5i0008ngjuadsntmup",
+          "question": "În ce limbi este disponibil?",
+          "answer": "Spaniolă, engleză și portugheză — în funcție de disponibilitatea medicului.",
+          "sortOrder": 7,
+          "resolvedLocale": "RO"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "RO",
+      "links": [
+        {
+          "id": "cmre7rgl80000g8jufspbvv3k",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Justificante médico o certificado de baja?",
+          "body": "Si tu situación está relacionada con justificante médico o certificado de baja, nuestra Justificante Médico te ofrece la evaluación adecuada.",
+          "ctaLabel": "Justificante Médico",
+          "targetSlug": "justificante-medico-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7rhdh0002g8jutbik3ps8",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con renovación de tu tratamiento habitual?",
+          "body": "Para renovación de tu tratamiento habitual, consulta nuestra página de Renovación de Tratamiento — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Renovación de Tratamiento",
+          "targetSlug": "renovacion-tratamiento-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7ri5n0004g8jub91rpgd5",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre control de peso con apoyo médico?",
+          "body": "Nuestra Control de Peso está pensada específicamente para control de peso con apoyo médico.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7rixq0006g8ju1e53bfuz",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Salud masculina y función sexual?",
+          "body": "Si tu situación está relacionada con salud masculina y función sexual, nuestra Salud Masculina te ofrece la evaluación adecuada.",
+          "ctaLabel": "Salud Masculina",
+          "targetSlug": "salud-masculina-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdpz5n3001z01rukg2lecs5",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+      }
+    }
+  }
+}

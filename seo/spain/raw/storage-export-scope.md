@@ -9,5 +9,10 @@ Source: backend/src/content/romania-clinical-review.ts readCountryClinicalConten
 The first automatic review rejected the broader snapshot. This narrower projection removes internal payout/configuration columns and makes the explicitly authorized content scope reviewable. It does not authorize a production write.
 
 The second review also rejected the narrowed read-only snapshot because it could
-not verify authorization. Neither attempt executed. Explicit owner confirmation
-was requested and has not been received. Do not retry or bypass that block.
+not verify authorization. Neither attempt executed.
+
+14 September 2026: the owner explicitly confirmed this read-only snapshot in chat
+("Yes, run read-only export"). It ran once via `node --env-file=backend/.env
+backend/scripts/spain-seo-storage.mjs seo/spain/raw/storage-preflight-2026-09-13.json`
+and exclusively created the file. A secret-pattern scan of the output found no
+matches. The snapshot stays local under an ignore rule. No write was authorized.

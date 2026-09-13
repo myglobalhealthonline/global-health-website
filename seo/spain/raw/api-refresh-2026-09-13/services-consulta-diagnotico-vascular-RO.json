@@ -1,0 +1,75 @@
+{
+  "endpoint": "/api/services/consulta-diagnotico-vascular?countryCode=es&locale=RO",
+  "checkedAt": "2026-09-13T22:39:02.129Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmrf0qzdm00qd01qrfcfnsjmx",
+      "kind": "SPECIALIST",
+      "slug": "consulta-diagnotico-vascular",
+      "name": "Consultație diagnostic vascular",
+      "summary": "Revisión especializada de pruebas vasculares por videollamada: eco-Doppler, índice tobillo-brazo, angio-TC y angio-RM interpretados, con plan escrito y solicitud de los estudios que falten.",
+      "seoTitle": "Diagnóstico Vascular Online España | Revisión de Eco-Doppler",
+      "seoDescription": "Revisión especializada de tu eco-Doppler, índice tobillo-brazo o angio-TC por videollamada en España. Interpretación, plan y solicitud de pruebas el mismo día.",
+      "seoKeywords": [
+        "diagnóstico vascular online España",
+        "interpretación eco-Doppler online",
+        "revisión pruebas vasculares España",
+        "segunda opinión vascular online España",
+        "índice tobillo-brazo consulta online"
+      ],
+      "heroTitle": "Diagnóstico Vascular Especialista — Revisión de Pruebas Online",
+      "heroDescription": "Un eco-Doppler cuyo informe nadie te ha explicado, un angio-TC con hallazgos que no entiendes, un índice tobillo-brazo alterado o una trombosis previa cuyo seguimiento se quedó a medias: son situaciones que necesitan la lectura de un médico con práctica en patología vascular. Esta consulta de diagnóstico vascular es una revisión especializada de tus pruebas por videollamada, con interpretación, plan y solicitud de los estudios que falten. Desde cualquier punto de España, en español, inglés o portugués.",
+      "detailBody": "<h2>Para quién es este servicio</h2><p>Esta consulta de diagnóstico vascular especialista es apropiada para adultos con:</p><ul><li>Un eco-Doppler venoso o arterial cuyo informe no te ha explicado nadie con detalle</li><li>Un angio-TC o una angio-RM con hallazgos vasculares que necesitan interpretación</li><li>Un índice tobillo-brazo alterado o dudoso</li><li>Diagnóstico de insuficiencia venosa crónica y necesidad de saber en qué estadio está y qué implica</li><li>Antecedente de trombosis venosa profunda o embolia pulmonar, con dudas sobre el seguimiento, la duración de la anticoagulación o el riesgo de recurrencia</li><li>Enfermedad arterial periférica conocida — claudicación intermitente estable — que requiere revisión especializada</li><li>Aneurisma de aorta abdominal en programa de seguimiento, con informes que revisar</li><li>Sospecha de síndrome postrombótico tras una trombosis previa</li><li>Fenómeno de Raynaud, acrocianosis u otras alteraciones vasomotoras que necesitan orientación diagnóstica</li><li>Una segunda opinión sobre un diagnóstico vascular o sobre una indicación quirúrgica ya recibida</li><li>Residentes internacionales y expatriados que necesitan interpretación vascular especializada en inglés o portugués</li></ul><h2>Qué es este servicio — y qué no es</h2><p>Esta consulta cubre:</p><ul><li>Interpretación especializada de pruebas vasculares ya realizadas</li><li>Correlación entre el informe de la prueba y tus síntomas — que es donde la mayoría de los informes se quedan cortos</li><li>Estadificación de la enfermedad venosa crónica y explicación de lo que implica cada estadio</li><li>Solicitud de los estudios que falten para completar el diagnóstico</li><li>Plan de tratamiento y de seguimiento por escrito</li><li>Segunda opinión sobre un diagnóstico o una indicación de procedimiento</li><li>Coordinación de derivación a cirugía vascular o a flebología intervencionista cuando está indicada</li></ul><p>Este servicio no cubre:</p><ul><li>La realización de las pruebas. El eco-Doppler, el índice tobillo-brazo y las pruebas de imagen son presenciales: esta consulta las interpreta y las solicita, no las ejecuta</li><li>Urgencias vasculares. La sospecha de trombosis venosa profunda aguda, la isquemia arterial aguda y el dolor abdominal o lumbar intenso en un paciente con aneurisma conocido son urgencias: acude a urgencias o llama al 112</li><li>Procedimientos e intervención — escleroterapia, ablación endovenosa, angioplastia o cirugía — que requieren valoración presencial</li><li>Ajuste urgente de anticoagulación ante sangrado activo, que es una urgencia hospitalaria</li></ul><h2>Revisión de pruebas vasculares — cómo funciona</h2><p>Sube tus informes y tus imágenes antes de la cita: eco-Doppler venoso o arterial, índice tobillo-brazo, angio-TC, angio-RM, analíticas con estudio de trombofilia o dímero D, e informes de ingresos previos. El médico los revisa antes de la videollamada.</p><p>Durante la consulta se explica, en lenguaje claro, qué dice cada prueba: dónde hay reflujo y de qué duración, qué segmentos venosos están afectados, si existe obstrucción residual tras una trombosis, qué grado de estenosis arterial se documenta y qué significa el índice tobillo-brazo obtenido.</p><p>Al terminar sabes tres cosas: qué tienes, qué falta por estudiar y qué se hace a continuación.</p><h2>Condiciones habitualmente evaluadas</h2><ul><li>Insuficiencia venosa crónica y reflujo safeno</li><li>Síndrome postrombótico</li><li>Trombosis venosa superficial y profunda en fase de seguimiento</li><li>Enfermedad arterial periférica y claudicación intermitente estable</li><li>Aneurisma de aorta abdominal en vigilancia</li><li>Estenosis carotídea documentada en seguimiento</li><li>Fenómeno de Raynaud y alteraciones vasomotoras</li><li>Edema de miembros inferiores de origen no aclarado</li><li>Malformaciones venosas y varices atípicas</li></ul><h2>Qué incluye la consulta</h2><p><strong>Revisión documental previa</strong></p><p>Los informes y las imágenes que aportas se revisan antes de la videollamada, de modo que el tiempo de consulta se dedica a explicar y decidir, no a leer.</p><p><strong>Interpretación especializada</strong></p><p>Cada hallazgo se traduce a consecuencias prácticas: qué explica tus síntomas, qué es un hallazgo incidental sin relevancia y qué exige seguimiento.</p><p><strong>Solicitud de pruebas complementarias</strong></p><p>Cuando falta un estudio para cerrar el diagnóstico, la solicitud se emite el mismo día para realizarla en un centro privado de tu zona.</p><p><strong>Plan escrito</strong></p><p>Recibes un informe con el diagnóstico, el tratamiento indicado, la pauta de compresión cuando corresponde, los objetivos de control de factores de riesgo y el calendario de seguimiento.</p><p><strong>Segunda opinión</strong></p><p>Si ya tienes una indicación quirúrgica o de procedimiento, se revisa la documentación disponible y se te explica en qué se sustenta, qué alternativas existen y qué preguntas conviene plantear.</p><p><strong>Derivación coordinada</strong></p><p>Cuando corresponde tratamiento intervencionista o valoración presencial, la derivación se coordina con el informe especializado completo.</p><h2>Diagnóstico vascular en España — el problema del acceso</h2><p>El eco-Doppler es una prueba accesible en España; la interpretación clínica que la acompaña, mucho menos. Es habitual salir del centro de imagen con un informe técnico y quedarse semanas esperando a que alguien lo relacione con los síntomas y decida qué hacer.</p><p>Esa espera importa. En la enfermedad venosa determina el momento en que se inicia la compresión o se trata el reflujo; en la enfermedad arterial periférica, el momento en que se empieza a controlar el riesgo cardiovascular, que es lo que realmente marca el pronóstico.</p><p>Esta consulta acorta ese intervalo: revisión especializada de tus pruebas con plan escrito, sin esperas y desde cualquier punto de España.</p>",
+      "ctaLabel": null,
+      "sortOrder": 0,
+      "durationMinutes": 30,
+      "basePriceCents": 17000,
+      "currencyCode": null,
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-08-19T10:10:25.450Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0sshg0004y8jug7rjknzv",
+          "kind": "IMAGE",
+          "key": "media/05bd009f-1f0f-474b-b02e-debc1b4f705b-es-consulta-diagnotico-vascular.png",
+          "path": "/api/media/media/05bd009f-1f0f-474b-b02e-debc1b4f705b-es-consulta-diagnotico-vascular.png",
+          "altText": "Consulta Diagnostico vascular"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name"
+      ],
+      "resolvedLocale": "RO",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrdpx4ah001r01rupv1od828"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:44:00.000Z"
+      }
+    }
+  }
+}

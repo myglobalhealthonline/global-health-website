@@ -1,0 +1,190 @@
+{
+  "endpoint": "/api/services/segunda-opinion-medica?countryCode=es&locale=RO",
+  "checkedAt": "2026-09-13T22:39:05.701Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q5fw002angjuebao1obt",
+      "kind": "GENERAL",
+      "slug": "segunda-opinion-medica",
+      "name": "A doua opinie medicală",
+      "summary": null,
+      "seoTitle": "A doua opinie medicală online Spania | Evaluare independentă | În aceeași zi",
+      "seoDescription": "Nu ești sigur de un diagnostic sau de un plan de tratament? Medicii noștri înscriși în Colegiul Medicilor oferă a doua opinie medicală independentă prin videoconferință securizată. În aceeași zi în Spania.",
+      "seoKeywords": [
+        "segunda opinión médica online España",
+        "segunda opinión médico online España",
+        "evaluación independiente médica España",
+        "segunda opinión diagnóstico España",
+        "second opinion doctor Spain English"
+      ],
+      "heroTitle": "A doua opinie medicală — Evaluare clinică independentă online",
+      "heroDescription": "Ai primit un diagnostic sau o recomandare de tratament față de care ai dubii? Vrei o perspectivă clinică independentă înainte de a te supune unei intervenții chirurgicale, de a începe o medicație nouă sau de a accepta o schimbare semnificativă a tratamentului tău? Ai primit documentație clinică în spaniolă pe care vrei să ți-o explice clar? Medicii noștri, înregistrați conform cerințelor Organizației Medicale Colegiale (OMC), oferă a doua opinii medicale independente prin apel video securizat — revizuind diagnosticul, documentația clinică și planul de tratament, și oferindu-ți o evaluare clinică onestă și bazată pe dovezi. Fără programare. Fără legătură cu furnizorul tău actual. O evaluare independentă clară. În aceeași zi, din orice punct din Spania, în spaniolă, engleză sau portugheză.",
+      "detailBody": "<h2>Când are sens o a doua opinie</h2><p>Căutarea unei a doua opinii este recomandată din punct de vedere clinic — iar orice medic bun îți va spune același lucru. Nu trebuie să fii în conflict cu medicul tău actual pentru a beneficia de o perspectivă independentă. O a doua opinie este valoroasă ori de câte ori o decizie de sănătate are consecințe semnificative și vrei siguranța că ai auzit mai mult de o voce clinică.</p><p><strong>Motive frecvente pentru a solicita o a doua opinie:</strong></p><ul><li>Ai primit un diagnostic care nu pare să corespundă simptomelor tale sau înțelegerii tale despre starea ta de sănătate</li><li>Ți s-a recomandat o intervenție semnificativă — o operație, un medicament nou, o schimbare importantă în stilul de viață — și vrei o evaluare independentă înainte de a merge mai departe</li><li>Ai primit sfaturi contradictorii de la doi medici diferiți și ai nevoie de ajutor pentru a naviga această discrepanță</li><li>Simptomele tale nu s-au îmbunătățit în ciuda respectării unui plan de tratament și vrei o perspectivă clinică proaspătă</li><li>Ai primit documentație clinică în spaniolă pe care vrei să fie revizuită și explicată clar</li><li>Gestionezi o afecțiune complexă sau pe termen lung și vrei să te asiguri că tratamentul tău actual rămâne adecvat</li><li>Vrei să înțelegi opțiunile tale înainte de a te angaja într-un curs de tratament recomandat</li></ul><h2>Pentru cine este acest serviciu</h2><p>Acest consult este potrivit pentru:</p><ul><li>Oricine a primit un diagnostic sau o recomandare de tratament pe care dorește să o revizuiască independent</li><li>Pacienții care se confruntă cu o decizie privind o operație, un medicament nou semnificativ sau o schimbare importantă în managementul tratamentului</li><li>Pacienții care au primit sfaturi clinice contradictorii și au nevoie de ajutor pentru a le naviga</li><li>Pacienții a căror afecțiune nu s-a îmbunătățit așa cum era de așteptat și care doresc o perspectivă clinică proaspătă</li><li>Pacienții care au primit documentație clinică în spaniolă și vor să fie revizuită și explicată clar</li><li>Pacienții care gestionează o afecțiune cronică complexă și doresc o revizuire independentă periodică</li><li>Expații și rezidenții internaționali care doresc o evaluare clinică independentă în engleză sau portugheză fără a naviga un nou sistem de specialiști</li></ul><h2>Ce include consultația</h2><p><strong>Revizuire completă a documentației tale clinice</strong></p><p>Adu toată documentația relevantă la consultație — scrisori de diagnostic, rapoarte de la specialiști, rezultate ale investigațiilor imagistice, rezultate ale analizelor, planuri de tratament și rapoarte de externare. Medicul tău revizuiește totul în întregime înainte de a oferi o evaluare independentă.</p><p><strong>Evaluare clinică independentă</strong></p><p>Medicul tău evaluează prezentarea ta, diagnosticul pe care l-ai primit, raționamentul clinic din spatele acestuia, planul de tratament propus și dacă abordări alternative sau investigații suplimentare ar fi adecvate pe baza dovezilor clinice actuale.</p><p><strong>Explicație clară a opțiunilor tale</strong></p><p>Medicul tău explică diagnosticul tău și opțiunile de tratament într-un limbaj clar — ce implică planul propus, care sunt alternativele, ce arată dovezile și ce întrebări ar trebui să adresezi echipei tale tratante. Pleci din consultație cu o imagine mai clară despre unde te afli și care sunt opțiunile tale.</p><p><strong>Scrisoare de sinteză clinică — acolo unde este indicat din punct de vedere clinic</strong></p><p>Unde este adecvat din punct de vedere clinic, medicul tău emite un rezumat scris al celei de-a doua opinii — documentând evaluarea independentă, raționamentul clinic și orice recomandare — pe care îl poți împărtăși cu echipa ta tratantă sau îl poți folosi în scopuri de asigurare.</p><p><strong>Coordonarea trimiterii mai departe, unde este indicat</strong></p><p>Dacă a doua opinie indică faptul că este nevoie de o evaluare specializată suplimentară, de investigații suplimentare sau de o abordare clinică diferită, medicul tău coordonează în aceeași zi pașii următori corespunzători.</p><h2>A doua opinie în Spania — de ce contează</h2><p>Sistemul sanitar spaniol — atât public, cât și privat — are puncte forte bine stabilite. Dar accesul la o a doua opinie independentă are propriile provocări practice.</p><p>În sistemul public, timpii de așteptare pentru a vedea un specialist sunt lungi — iar obținerea unei a doua opinii implică reluarea procesului de trimitere de la început. În sectorul privat, calitatea este în general ridicată, dar accesibilitatea este concentrată în marile orașe.</p><p>Pentru rezidenții internaționali care primesc documentație clinică în spaniolă, există o barieră suplimentară — înțelegerea completă a unui diagnostic sau a unui plan de tratament într-o limbă pe care nu o stăpânești pe deplin este cu adevărat dificilă, iar luarea unor decizii medicale importante fără o înțelegere completă reprezintă un risc real.</p><p>Acest serviciu oferă un nivel suplimentar de analiză clinică independentă — nu ca o critică adusă medicului inițial, ci ca parte a luării unei decizii informate.</p><h2>Ce poate și ce nu poate face o a doua opinie</h2><p><strong>O a doua opinie poate:</strong></p><ul><li>Să confirme că diagnosticul și planul de tratament pe care le-ai primit sunt adecvate și bazate pe dovezi</li><li>Să identifice diagnostice sau abordări terapeutice alternative care nu au fost luate în considerare</li><li>Să clarifice documentația clinică ce nu a fost explicată complet</li><li>Să te ajute să formulezi întrebările potrivite pentru echipa ta tratantă</li><li>Să ofere documentație clinică independentă în scopuri de asigurare sau medico-legale</li><li>Să recomande investigații suplimentare sau evaluare specializată acolo unde este indicat din punct de vedere clinic</li></ul><p><strong>O a doua opinie nu poate:</strong></p><ul><li>Să anuleze sau să înlocuiască judecata clinică a echipei tale tratante</li><li>Să diagnosticheze afecțiuni care necesită examen fizic în persoană, biopsie sau investigații invazive</li><li>Să ofere o opinie definitivă fără documentație clinică adecvată</li><li>Să emită o opinie definitivă atunci când tabloul clinic este complex și necesită evaluare specializată în persoană</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 190,
+      "durationMinutes": 20,
+      "basePriceCents": 4900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.267Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru15rpe0003bsjukvu58p7u",
+          "kind": "IMAGE",
+          "key": "media/ef45af40-860e-401e-bc44-e88a501e47c4-es-segunda-opinion-medica.png",
+          "path": "/api/media/media/ef45af40-860e-401e-bc44-e88a501e47c4-es-segunda-opinion-medica.png",
+          "altText": "Segunda Opinión Médica"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q5o4002bngjuha3nvten",
+          "question": "A căuta o a doua opinie înseamnă că îmi pun la îndoială medicul?",
+          "answer": "Nu. A solicita o a doua opinie este o parte normală și recomandată a unei bune luări a deciziilor medicale — în special pentru diagnostice sau recomandări de tratament semnificative. Majoritatea medicilor se așteaptă și îi respectă pe pacienții care solicită o evaluare independentă a principalelor decizii clinice.",
+          "sortOrder": 0,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q5o4002cngjuadtjb1ha",
+          "question": "Ce documentație trebuie să aduc?",
+          "answer": "Aduceți tot ceea ce este relevant — scrisori de diagnostic, rapoarte ale specialiștilor, rezultate ale investigațiilor imagistice, rezultate ale analizelor, planuri de tratament, rapoarte de externare și orice altă documentație clinică legată de preocuparea respectivă. Cu cât documentația este mai completă, cu atât va fi mai utilă evaluarea independentă.",
+          "sortOrder": 1,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q5o4002dngju7ws82tsc",
+          "question": "Poate medicul să revizuiască documentația în spaniolă?",
+          "answer": "Da. Medicul dumneavoastră examinează documentația clinică în spaniolă și explică în mod clar constatările în engleză, spaniolă sau portugheză — în funcție de preferința dumneavoastră.",
+          "sortOrder": 2,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q5o4002engjuhz1j3rqn",
+          "question": "Va contacta medicul pentru a doua opinie medicul meu curent?",
+          "answer": "Nu — cu excepția cazului în care o solicitați în mod specific. A doua opinie vă este furnizată direct dumneavoastră. Dacă doriți ca rezultatele să fie împărtășite cu echipa dumneavoastră de tratament, medicul dumneavoastră poate emite un rezumat clinic scris în acest scop.",
+          "sortOrder": 3,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q5o4002fngjun7asux0q",
+          "question": "Ce se întâmplă dacă a doua opinie contrazice diagnosticul meu actual?",
+          "answer": "Medicul tău explică raționamentul clinic în mod clar și onest. Dacă evaluarea independentă sugerează că diagnosticul sau planul de tratament inițial ar putea să nu fie cel mai potrivit, ești sfătuit cu privire la ce întrebări să adresezi echipei tale de tratament și ce pași suplimentari — investigații suplimentare, evaluare de specialitate — ar putea fi justificați.",
+          "sortOrder": 4,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q5o4002gngju2wli45ke",
+          "question": "Pot obține o a doua opinie cu privire la o recomandare chirurgicală?",
+          "answer": "Da. Opiniile secundare cu privire la recomandările chirurgicale sunt una dintre cele mai frecvente și mai valoroase utilizări ale acestui serviciu. Medicul dumneavoastră revizuiește justificarea clinică a intervenției chirurgicale recomandate, discută dovezile și oferă sfaturi cu privire la faptul dacă recomandarea pare adecvată și ce întrebări să îi adresați chirurgului dumneavoastră.",
+          "sortOrder": 5,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q5o4002hngjuxook11oe",
+          "question": "Pot obține o a doua opinie despre un diagnostic de sănătate mintală?",
+          "answer": "Da — pentru afecțiuni de sănătate mintală la nivel de medicină generală. Pentru diagnostice psihiatrice complexe, medicul tău te consiliază cu privire la nivelul adecvat de evaluare independentă specializată.",
+          "sortOrder": 6,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q5o4002ingju92saqikq",
+          "question": "Am nevoie de asigurare medicală spaniolă?",
+          "answer": "Nu. Este un serviciu privat cu plată directă, fără cerința unei asigurări medicale.",
+          "sortOrder": 7,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q5o4002jngju6wnchato",
+          "question": "Pot folosi acest serviciu din orice punct al Spaniei?",
+          "answer": "Da — inclusiv Insulele Baleare, Insulele Canare, Ceuta și Melilla. Ai nevoie doar de o conexiune stabilă la internet și de un dispozitiv cu cameră.",
+          "sortOrder": 8,
+          "resolvedLocale": "RO"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "RO",
+      "links": [
+        {
+          "id": "cmre7u0rr005kg8ju0bt4gje9",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con segunda opinión cardiológica especializada?",
+          "body": "Para segunda opinión cardiológica especializada, consulta nuestra página de Cardiología Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Cardiología Especialista",
+          "targetSlug": "cardiologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7u1jt005mg8jutxyy9pz0",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre segunda opinión neurológica especializada?",
+          "body": "Nuestra Neurología Especialista está pensada específicamente para segunda opinión neurológica especializada.",
+          "ctaLabel": "Neurología Especialista",
+          "targetSlug": "neurologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7u2bx005og8judxbqm7fp",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Segunda opinión dermatológica especializada?",
+          "body": "Si tu situación está relacionada con segunda opinión dermatológica especializada, nuestra Dermatología Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Dermatología Especialista",
+          "targetSlug": "dermatologia-especialista-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7u33z005qg8ju6je8gh1u",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con segunda opinión psiquiátrica especializada?",
+          "body": "Para segunda opinión psiquiátrica especializada, consulta nuestra página de Psiquiatría Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Psiquiatría Especialista",
+          "targetSlug": "psiquiatra-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdpz5n3001z01rukg2lecs5",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+      }
+    }
+  }
+}

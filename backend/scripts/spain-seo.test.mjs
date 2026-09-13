@@ -31,8 +31,14 @@ function clientFor(initial,failAt=Infinity){let state=structuredClone(initial),b
 test('Spain planner preserves hidden/unrelated data, exact locales and hashes; refuses drift and missing translation',()=>{
  const f=fixture();f.data.doctorFaqs.push({id:'hidden',doctorId:'doc',locale:'DE',answer:'Retain',question:'Q',isActive:false});
  const m=prepareSpain({data:f.data},f.drafts,[],d=>f.sources[d.locale]);assert.equal(m.blockers.length,0);assert.equal(m.groups.length,1);
- const after=rehearse(f.data,m.groups[0]);assert.deepEqual(after.doctorFaqs,f.data.doctorFaqs);assert.equal(after.services[0].basePriceCents,3900);assert.equal(after.serviceFaqs.length,1);assert.equal(after.serviceFaqTranslations.length,2);assert.deepEqual(rehearse(after,m.groups[0]),after);
+ const after=rehearse(f.data,m.groups[0]);assert.deepEqual(after.doctorFaqs,f.data.doctorFaqs);assert.equal(after.services[0].basePriceCents,3900);assert.equal(after.serviceFaqs.length,1);assert.deepEqual(after.serviceFaqTranslations.map(t=>t.locale),['EN']);assert.deepEqual(rehearse(after,m.groups[0]),after);
  for(const change of [x=>x.serviceTranslations.pop(),x=>x.serviceTranslations[0].seoTitle='Drift',x=>x.serviceFaqs.push({id:'hidden',serviceId:'svc',isVisible:false})]){const data=structuredClone(f.data);change(data);assert.equal(prepareSpain({data},f.drafts,[],d=>f.sources[d.locale]).groups.length,0);}
+ // Null translation field falls back to the base value; default-locale FAQ patches target the base row only.
+ const fallback=structuredClone(f.data);fallback.serviceTranslations[1].seoTitle=null;fallback.serviceFaqs.push({id:'faq',serviceId:'svc',question:'Q',answer:'Old',isVisible:true});fallback.serviceFaqTranslations.push({id:'faq-EN',serviceFaqId:'faq',locale:'EN',question:'Q',answer:'Old'});
+ const patched=structuredClone(f.drafts).map(d=>({...d,addedFaqs:[],faqPatches:[{id:'faq',before:{answer:'Old'},after:{answer:`New ${d.locale}`}}]}));
+ const fm=prepareSpain({data:fallback},patched,[],d=>f.sources[d.locale]);assert.equal(fm.blockers.length,0,JSON.stringify(fm.blockers));
+ const fa=rehearse(fallback,fm.groups[0]);assert.equal(fa.serviceTranslations[1].seoTitle,'New');assert.equal(fa.serviceFaqs[0].answer,'New es');assert.equal(fa.serviceFaqTranslations[0].answer,'New en');assert.equal(fa.serviceFaqTranslations.length,1);
+ const noEn=structuredClone(fallback);noEn.serviceFaqTranslations=[];assert.match(prepareSpain({data:noEn},patched,[],d=>f.sources[d.locale]).blockers[0].reason,/Missing FAQ translation/);
  const changed=structuredClone(f.drafts);changed[0].after.seoTitle='Other';assert.notEqual(prepareSpain({data:f.data},changed,[],d=>f.sources[d.locale]).groups[0].approvalSha256,m.groups[0].approvalSha256);
 });
 test('Spain gate refuses absent, future and expired reviews; validates reviewer; allows operational-only changes',()=>{
@@ -41,7 +47,7 @@ test('Spain gate refuses absent, future and expired reviews; validates reviewer;
  try{SPAIN_REVIEW_POLICY.maxAgeDays=30;APPROVED_SPAIN_STATES[key]=[{stateSha256:romanianContentStates(after)[key],reviewerDoctorId:'doc',reviewedAt:'2026-09-12',evidence:'Synthetic test only'}];assert.doesNotThrow(()=>assertSpainClinicalChanges(f.data,after,now));
  APPROVED_SPAIN_STATES[key][0].reviewedAt='2026-09-14';assert.throws(()=>assertSpainClinicalChanges(f.data,after,now));APPROVED_SPAIN_STATES[key][0].reviewedAt='2026-07-01';assert.throws(()=>assertSpainClinicalChanges(f.data,after,now));
  APPROVED_SPAIN_STATES[key][0].reviewedAt='2026-09-12';after.doctorCountries[0].active=false;assert.throws(()=>assertSpainClinicalChanges(f.data,after,now));
- }finally{SPAIN_REVIEW_POLICY.maxAgeDays=null;delete APPROVED_SPAIN_STATES[key];}
+ }finally{SPAIN_REVIEW_POLICY.maxAgeDays=365;delete APPROVED_SPAIN_STATES[key];}
  const operational=structuredClone(f.data);operational.services[0].basePriceCents=1;assert.doesNotThrow(()=>assertSpainClinicalChanges(f.data,operational));
 });
 test('runner dry-run, approved writes, repeat, drift refusal and rollback after injected failure',async()=>{
@@ -54,7 +60,7 @@ test('runner dry-run, approved writes, repeat, drift refusal and rollback after 
  await executeSpainGroup(client,f.data,g,{apply:true});const writes=client.writes;assert((await executeSpainGroup(client,f.data,g,{apply:true})).alreadyApplied);assert.equal(client.writes,writes);
  const bad=structuredClone(f.data);bad.services[0].basePriceCents=123;const drift=clientFor(bad);await assert.rejects(executeSpainGroup(drift,f.data,g,{apply:true}),/Storage drift/);assert.equal(drift.writes,0);
  const failure=clientFor(f.data,2);await assert.rejects(executeSpainGroup(failure,f.data,g,{apply:true}),/Injected SQL failure/);assert.deepEqual(failure.state,f.data);
- }finally{SPAIN_REVIEW_POLICY.maxAgeDays=null;delete APPROVED_SPAIN_STATES[g.stateKey];}
+ }finally{SPAIN_REVIEW_POLICY.maxAgeDays=365;delete APPROVED_SPAIN_STATES[g.stateKey];}
 });
 test('verified receipt survives safe repeat; conflicting receipt is refused',()=>{
  const previous={approvalSha256:'a',afterSha256:'b',publicVerified:true,checkedAt:'publication'};

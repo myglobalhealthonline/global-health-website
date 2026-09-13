@@ -1,0 +1,186 @@
+{
+  "endpoint": "/api/services/consulta-piel-online?countryCode=es&locale=DE",
+  "checkedAt": "2026-09-13T22:38:10.943Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q4co001yngjucbez1gc0",
+      "kind": "GENERAL",
+      "slug": "consulta-piel-online",
+      "name": "Hautsprechstunde",
+      "summary": null,
+      "seoTitle": "Online-Hautberatung Spanien | Hausarzt | Am selben Tag",
+      "seoDescription": "Ausschlag, Ekzem, Akne oder ein anderes Hautproblem. Unsere zugelassenen Hausärzte bewerten Hauterkrankungen per sicherer Videotelefonie. Klinische Beurteilung noch am selben Tag in Spanien.",
+      "seoKeywords": [
+        "consulta de piel online España",
+        "médico piel online España",
+        "eccema médico online España",
+        "acné evaluación online España",
+        "sarpullido médico online España"
+      ],
+      "heroTitle": "Hautberatung — Klinische Bewertung mit Hausarzt Online",
+      "heroDescription": "Ein neuer Ausschlag, ein Ekzemschub, Akne, die Ihr Selbstvertrauen beeinträchtigt, oder eine Hautveränderung, die Sie schon seit Längerem abklären lassen möchten. Die meisten Hautbeschwerden können klinisch per Videokonsultation von einem erfahrenen Hausarzt beurteilt werden — ohne wochenlang auf einen Termin in der Dermatologie warten zu müssen. Unsere Hausärzte, die gemäß den Anforderungen der Organización Médica Colegial (OMC) approbiert sind, bieten umfassende Hautbeurteilungen per sicherer Videokonsultation an — sie identifizieren Ihre Erkrankung, beraten Sie zu evidenzbasierter Behandlung und verweisen Sie bei Bedarf an unseren spezialisierten dermatologischen Service, wenn eine eingehendere Beurteilung erforderlich ist. Am selben Tag, von überall in Spanien, auf Spanisch, Englisch oder Portugiesisch.",
+      "detailBody": "<h2>Hautsprechstunde mit Hausarzt vs. spezialisierte dermatologische Sprechstunde</h2><p>Global Health bietet zwei Versorgungsstufen für Hauterkrankungen an:</p><ul><li>Hautsprechstunde mit Hausarzt — geeignet für die meisten akuten und nicht dringlichen Hauterscheinungen. Ekzem, leichtes bis mittelschweres Akne, Ausschläge, Hautinfektionen, Muttermale zur routinemäßigen Beobachtung und chronische Hauterkrankungen, die auf allgemeinmedizinischer Ebene behandelt werden. Dies ist der richtige Zugang für die meisten Hautanliegen.</li><li>Spezialisierte dermatologische Sprechstunde — durchgeführt von bei Global Health zugelassenen Dermatologen. Geeignet für komplexe, therapieresistente oder fachärztlich abklärungsbedürftige Erkrankungen — einschließlich schwerer Akne mit Erwägung von Isotretinoin, verdächtiger Läsionen, die eine hochauflösende Dermatoskopie erfordern, komplexer Psoriasis und Erkrankungen, die eine koordinierte Biopsie erfordern.</li></ul><p>Sie sind nicht sicher, welche Versorgungsstufe für Ihr Anliegen geeignet ist? Beginnen Sie mit der allgemeinmedizinischen Sprechstunde — wenn Ihre Vorstellung eine fachärztliche dermatologische Beurteilung erfordert, überweist Ihr Hausarzt Sie direkt innerhalb derselben Plattform an unseren Dermatologie-Service.</p><h2>Für wen dieser Service gedacht ist</h2><p>Diese Sprechstunde ist geeignet für Erwachsene und Kinder mit:</p><ul><li>einem Ausschlag, einer Hautveränderung oder einer neuen Läsion, die klinisch beurteilt werden muss</li><li>einer bestehenden Hauterkrankung, die aufflammt oder auf die aktuelle Behandlung nicht anspricht</li><li>leichtem bis mittelschwerem Akne — komedonal, inflammatorisch oder gemischt</li><li>Ekzem oder atopischer Dermatitis — Beurteilung eines Schubs und fortlaufende Behandlung</li><li>Psoriasis — nicht komplexe Vorstellungen auf allgemeinmedizinischer Ebene</li><li>einem Muttermal oder einer Hautläsion zur routinemäßigen Beobachtung</li><li>allergischen Hautreaktionen — Urtikaria, Kontaktdermatitis oder Arzneimittelreaktionen</li><li>Erkrankungen der Kopfhaut — seborrhoische Dermatitis, Kopfhautpsoriasis oder Pilzerkrankungen</li><li>Hautinfektionen — bakteriell, viral oder pilzbedingt</li><li>chronischen Hauterkrankungen, die auf allgemeinmedizinischer Ebene behandelt werden</li><li>Patienten, die ein Überweisungsschreiben an die Dermatologie benötigen</li></ul><h2>Typischerweise beurteilte Erkrankungen</h2><p><strong>Entzündliche Erkrankungen</strong></p><ul><li>Ekzem und atopische Dermatitis — Schubmanagement, Identifikation von Auslösern, fortlaufende Betreuung</li><li>Psoriasis — nicht komplexe Vorstellungen auf allgemeinmedizinischer Ebene</li><li>Seborrhoische Dermatitis — Kopfhaut- und Gesichtsmanifestation</li><li>Rosazea — Beurteilung und Behandlung auf allgemeinmedizinischer Ebene</li><li>Periorale Dermatitis</li></ul><p><strong>Akne</strong></p><ul><li>Leichte bis mittelschwere Akne — komedonal, inflammatorisch und gemischt</li><li>Akne bei Jugendlichen und Erwachsenen</li><li>Hormonelle Akne bei Frauen — bei Bedarf zusammen mit einer Hormonabklärung beurteilt</li><li>Beurteilung von postakneischer Pigmentierung und Narben</li><li>Überprüfung des Akne-Managements — bereits behandelte Patienten, die eine klinische Kontrolle benötigen</li></ul><p>Schwere Akne, die möglicherweise Isotretinoin erfordert, braucht eine Beurteilung durch unseren spezialisierten Dermatologie-Service — Ihr Hausarzt überweist Sie direkt, wenn Ihre Vorstellung dies rechtfertigt.</p><p><strong>Allergische und reaktive Erkrankungen</strong></p><ul><li>Urtikaria — akute und chronische Quaddeln</li><li>Allergische Kontaktdermatitis — Beurteilung und Beratung zur Allergenvermeidung</li><li>Arzneimittelreaktionen mit Hautbeteiligung</li><li>Angioödem — Beurteilung und Behandlung auf allgemeinmedizinischer Ebene</li><li>Hautmanifestationen einer Nahrungsmittelallergie</li></ul><p><strong>Infektionen</strong></p><ul><li>Impetigo — bakterielle Hautinfektion</li><li>Zellulitis — Beurteilung und Behandlung mit Eskalation, wo angezeigt</li><li>Follikulitis</li><li>Pilzinfektionen der Haut — Tinea corporis, Tinea pedis, Tinea versicolor</li><li>Molluscum contagiosum</li><li>Warzen und Plantarwarzen</li><li>Herpes simplex — Lippenherpes und kutaner Herpes</li><li>Herpes zoster — Beurteilung und Behandlung</li></ul><p><strong>Pigmentierung und Läsionen — routinemäßige Beobachtung</strong></p><ul><li>Muttermale zur routinemäßigen Beobachtung — klinische Beurteilung und Überweisung an die spezialisierte Dermatologie, wo angezeigt</li><li>Postinflammatorische Hyperpigmentierung</li><li>Melasma — Beurteilung und Behandlung</li><li>Vitiligo — Beurteilung und Überweisung, wo angezeigt</li></ul><p>Verdächtige Läsionen, die eine Dermatoskopie oder Biopsie erfordern, werden an unseren spezialisierten Dermatologie-Service überwiesen.</p><p><strong>Erkrankungen der Kopfhaut</strong></p><ul><li>Seborrhoische Dermatitis der Kopfhaut</li><li>Kopfhautpsoriasis — nicht komplexe Vorstellungen</li><li>Kopfhautfolikulitis</li><li>Tinea capitis — Pilzinfektion der Kopfhaut</li></ul><p><strong>Pädiatrische Hauterkrankungen</strong></p><ul><li>Ekzem bei Säuglingen und Kindern</li><li>Windeldermatitis und Hautprobleme bei Säuglingen</li><li>Virale Ausschläge im Kindesalter — Beurteilung und Beratung für Eltern</li><li>Impetigo und Hautinfektionen bei Kindern</li><li>Molluscum contagiosum bei Kindern</li></ul><h2>Was die Sprechstunde umfasst</h2><p><strong>Klinische visuelle Beurteilung</strong></p><p>Hauterkrankungen eignen sich besonders gut für die Videosprechstunde — Ihr Hausarzt kann die Läsion, den Ausschlag oder die Hautveränderung während des Gesprächs direkt sehen. Gute Beleuchtung und eine klare Kamerasicht verbessern die Beurteilungsqualität erheblich — Ihr Arzt leitet Sie während des Gesprächs zur Positionierung an.</p><p><strong>Ausführliche Anamnese</strong></p><p>Der Arzt prüft Beginn, Verlauf, Ausbreitung, begleitende Symptome, Auslöser, frühere Behandlungen, relevante Krankengeschichte, Medikation und familiäre Vorbelastung mit Hauterkrankungen.</p><p><strong>Diagnose und Behandlungsplan</strong></p><p>Auf Basis der Beurteilung berät der Arzt über die wahrscheinlichste Diagnose, den geeigneten Behandlungsansatz und darüber, was von der Behandlung zu erwarten ist — einschließlich, wie Sie Ihre Erkrankung überwachen und wann Sie eine weitere Kontrolle suchen sollten.</p><p><strong>Klinische Dokumentation — nach ärztlichem Ermessen</strong></p><p>Wenn klinisch angezeigt, stellt der Arzt die entsprechende klinische Dokumentation aus, die in jeder spanischen Apotheke gültig ist.</p><p>Hinweis: Betäubungsmittel und bestimmte kontrollierte Substanzen erfordern eine spezielle Dokumentation, die nicht elektronisch ausgestellt werden kann. Ihr Hausarzt wird Sie informieren, falls dies zutrifft.</p><p><strong>Anforderung von Untersuchungen, wo angezeigt</strong></p><p>Wenn Blutuntersuchungen — einschließlich Allergie- oder Entzündungsmarker-Panels — klinisch angezeigt sind, fordert der Arzt diese noch am selben Tag an.</p><p><strong>Interne Überweisung an die spezialisierte Dermatologie — falls erforderlich</strong></p><p>Wenn eine fachärztliche dermatologische Beurteilung erforderlich ist — einschließlich verdächtiger Läsionen, schwerer Akne, komplexer oder therapieresistenter Erkrankungen — überweist Ihr Hausarzt Sie noch am selben Tag direkt innerhalb derselben Plattform an unseren spezialisierten Dermatologie-Service.</p><h2>Muttermale und Hautläsionen — wann rasch handeln</h2><p>Jede Veränderung an einem Muttermal oder einer Hautläsion rechtfertigt eine klinische Beurteilung. Die ABCDE-Kriterien sind der klinische Standard:</p><ul><li>A — Asymmetrie — eine Hälfte passt nicht zur anderen</li><li>B — Begrenzung — unregelmäßige, gezackte oder unscharfe Ränder</li><li>C — Color/Coloration — Farbvariation innerhalb der Läsion</li><li>D — Durchmesser — größer als 6mm</li><li>E — Evolution — jede Veränderung von Größe, Form, Farbe oder jedes neue Symptom</li></ul><p>Wenn Ihre Läsion eines dieser Kriterien erfüllt, buchen Sie bitte zeitnah eine Beurteilung. Ihr Hausarzt beurteilt sie visuell und überweist Sie, wo angezeigt, direkt an unseren spezialisierten Dermatologie-Service zur Beurteilung mit Dermatoskopie.</p><h2>Vorbereitung auf Ihre Hautsprechstunde</h2><ul><li>Gute Beleuchtung — natürliches Licht oder eine Lampe, die auf den betroffenen Bereich gerichtet ist, gibt Ihrem Arzt die klarste Sicht</li><li>Klare Fotos — machen Sie vor Ihrer Sprechstunde klare Fotos des betroffenen Bereichs</li><li>Mehrere Blickwinkel — zeigen Sie die Läsion oder den Ausschlag während des Gesprächs aus mehreren Blickwinkeln</li><li>Notieren Sie den Verlauf — wann es begonnen hat, wie es sich verändert hat, was es bessert oder verschlechtert, und was Sie bereits ausprobiert haben</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 60,
+      "durationMinutes": 15,
+      "basePriceCents": 4500,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.260Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0sqto0003y8juhyfqxza5",
+          "kind": "IMAGE",
+          "key": "media/c998d4b2-6480-4390-8ced-8be785780cbe-es-consulta-piel-online.png",
+          "path": "/api/media/media/c998d4b2-6480-4390-8ced-8be785780cbe-es-consulta-piel-online.png",
+          "altText": "Consulta de Piel"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q4lj001zngjugidf8kbv",
+          "question": "Kann eine Hauterkrankung per Videoanruf wirklich beurteilt werden?",
+          "answer": "Ja — für die große Mehrheit der Fälle. Die Dermatologie ist eine der am besten geeigneten medizinischen Fachrichtungen für die visuelle Beurteilung, und eine Videosprechstunde ermöglicht es deinem Hausarzt, den Zustand direkt zu beurteilen. Wenn eine Erkrankung auf der Ebene der Allgemeinmedizin nicht ausreichend beurteilt werden kann, überweist dich dein Arzt an unseren spezialisierten dermatologischen Dienst innerhalb derselben Plattform.",
+          "sortOrder": 0,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q4lk0020ngjugwu3qtqj",
+          "question": "Was ist der Unterschied zwischen dieser Konsultation und der fachärztlichen dermatologischen Konsultation?",
+          "answer": "Diese Sprechstunde wird von approbierten Hausärzten durchgeführt und deckt die meisten akuten und nicht dringlichen Hauterkrankungen ab. Die fachärztliche dermatologische Sprechstunde wird von approbierten Dermatologen von Global Health durchgeführt und ist geeignet für komplexe, therapieresistente Erkrankungen oder solche, die hochauflösende Dermatoskopie, die Erwägung von Isotretinoin oder eine koordinierte Biopsie erfordern. Wenn du dir nicht sicher bist, welche Ebene angemessen ist, beginne hier — dein Hausarzt überweist dich bei Bedarf.",
+          "sortOrder": 1,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q4lk0021ngju4zwoosxt",
+          "question": "Kann ich über diesen Dienst eine Aknebehandlung erhalten?",
+          "answer": "Ja — bei leichtem bis mittelschwerem Akne. Dein Hausarzt führt eine vollständige Beurteilung durch und berät über den am besten geeigneten Behandlungsansatz. Wenn dein Befund die Erwägung von Isotretinoin rechtfertigt, überweist dich dein Hausarzt direkt an unseren spezialisierten dermatologischen Dienst innerhalb derselben Plattform.",
+          "sortOrder": 2,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q4lk0022ngju7zgv3b29",
+          "question": "Ich habe einen Leberfleck, der sich verändert hat — wie dringend ist das?",
+          "answer": "Veränderte Muttermale rechtfertigen eine zeitnahe klinische Beurteilung. Vereinbare einen Termin und zeige deinem Hausarzt die Läsion während des Videoanrufs. Dein Arzt beurteilt sie anhand der standardmäßigen ABCDE-Kriterien und überweist dich, falls angezeigt, zur fachärztlichen Dermatologie zur Beurteilung mittels Dermatoskopie.",
+          "sortOrder": 3,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q4lk0023ngjucugczvml",
+          "question": "Kann ich diesen Service für das Ekzem meines Sohnes verwenden?",
+          "answer": "Ja. Das Ekzem bei Säuglingen und Kindern ist eine der häufigsten pädiatrischen Hauterscheinungen und ein zentraler Bestandteil dieses Dienstes.",
+          "sortOrder": 4,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q4lk0024ngjuhgu5x5xj",
+          "question": "Kann ich über diesen Dienst eine Überweisung zur Dermatologie erhalten?",
+          "answer": "Ja — sowohl eine interne Überweisung an unsere Fachdermatologie von Global Health als auch ein externes Überweisungsschreiben an einen Dermatologen Ihrer Wahl, sofern dies klinisch angezeigt ist.",
+          "sortOrder": 5,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q4lk0025ngjus49u17km",
+          "question": "Mein Ausschlag breitet sich schnell aus und mir geht es schlecht — was soll ich tun?",
+          "answer": "Ein sich schnell ausbreitender Ausschlag, begleitet von Fieber, Atembeschwerden, Gesichtsschwellung oder starkem allgemeinen Unwohlsein, ist ein medizinischer Notfall. Rufe sofort die 112 an oder gehe in die nächstgelegene Notaufnahme — buche keine Videosprechstunde.",
+          "sortOrder": 6,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q4lk0026ngjulsplncl8",
+          "question": "Kann ich diesen Service für eine Sonnenreaktion verwenden?",
+          "answer": "Ja. Sonnenbrände und sonnenbedingte Hautreaktionen sind besonders häufig bei Touristen und Besuchern in Spanien. Ihr Hausarzt beurteilt die Schwere und berät über das geeignete Vorgehen.",
+          "sortOrder": 7,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q4lk0027ngjupk9a2h5e",
+          "question": "Brauche ich eine spanische Krankenversicherung?",
+          "answer": "Nein. Es handelt sich um eine private Dienstleistung mit Direktzahlung. Die über diesen Dienst ausgestellte klinische Dokumentation wird unabhängig vom Versicherungsstatus zum vollen Privatpreis berechnet.",
+          "sortOrder": 8,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q4lk0028ngju1535g3s4",
+          "question": "Kann ich diesen Service von jedem Ort in Spanien aus nutzen?",
+          "answer": "Ja — einschließlich der Balearen, der Kanarischen Inseln, Ceuta und Melilla. Du brauchst nur eine stabile Internetverbindung und ein Gerät mit Kamera.",
+          "sortOrder": 9,
+          "resolvedLocale": "DE"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "DE",
+      "links": [
+        {
+          "id": "cmre7t757003ug8jumzqyo3lw",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Acné grave o lesiones sospechosas?",
+          "body": "Si tu situación está relacionada con acné grave o lesiones sospechosas, nuestra Dermatología Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Dermatología Especialista",
+          "targetSlug": "dermatologia-especialista-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7t7xa003wg8jutn1n899o",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con caída del cabello y afecciones del cuero cabelludo?",
+          "body": "Para caída del cabello y afecciones del cuero cabelludo, consulta nuestra página de Caída del Cabello — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Caída del Cabello",
+          "targetSlug": "caida-cabello-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7t8pc003yg8jui51rri1w",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre consulta médica general con médico de cabecera?",
+          "body": "Nuestra Consulta Médica General está pensada específicamente para consulta médica general con médico de cabecera.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+      }
+    }
+  }
+}

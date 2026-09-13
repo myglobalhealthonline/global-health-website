@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/pediatria-online?countryCode=es&locale=EN",
+  "checkedAt": "2026-09-13T22:38:41.783Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qbti0042ngjumicur4m2",
+      "kind": "GENERAL",
+      "slug": "pediatria-online",
+      "name": "Paediatric GP",
+      "summary": null,
+      "seoTitle": "Paediatric GP Online Spain | Children's Doctor | Same Day",
+      "seoDescription": "Child unwell in Spain? Our OMC-registered GPs assess children's health concerns by secure video call. No waiting room, same-day appointments available anywhere in Spain, in English.",
+      "seoKeywords": [
+        "pediatría online España",
+        "médico niños online España",
+        "consulta pediátrica online España",
+        "médico infantil online España",
+        "fiebre niño médico online España"
+      ],
+      "heroTitle": "Paediatric GP Consultation — Children's Doctor Online, Same Day in Spain",
+      "heroDescription": "Your child is unwell and the next available paediatric appointment is tomorrow. Or it is Saturday evening and the clinic is closed. Or you want to assess your child's symptoms before deciding whether to go to the emergency department — where waiting times can be very long. Or you are an international family in Spain and prefer to consult in English or Portuguese. Our GPs, registered with the Spanish Medical Council (OMC — Organización Médica Colegial), offer children's GP consultations by secure video call — assessing your child's symptoms, advising on management, and coordinating referral or further investigation where clinically indicated. Same day, from anywhere in Spain, in English, Spanish, or Portuguese. A parent or guardian must be present throughout all consultations for children under 16.",
+      "detailBody": "<h2>Paediatric Healthcare in Spain — How This Service Fits</h2><p>Spain has a well-structured primary paediatric care system — every child has the right to an assigned paediatric GP in the public system until the age of 14-16 years depending on the region. This is a strength of the Spanish healthcare system.</p><p>However, there are situations where this service is genuinely useful:</p><ul><li>Your child is unwell today and the assigned paediatrician has no appointment available until tomorrow or later</li><li>It is outside clinic hours — evening, weekend, or public holiday</li><li>You want to assess your child's symptoms before deciding whether to go to the emergency department — where waiting times can be several hours</li><li>You are an international family without a currently assigned Spanish paediatrician, or who prefers consultation in English or Portuguese</li><li>You want a clear explanation of what your child's Spanish paediatrician has told you about your child's health</li></ul><p>Already have an assigned paediatrician in the public system? This service works as a complement — for when you need care today and there is no available appointment, or when you want a second perspective before deciding whether to go to the emergency department.</p><h2>Who This Service Is For</h2><p>This consultation is appropriate for:</p><ul><li>Infants, children, and adolescents up to 18 years with acute or non-urgent health concerns</li><li>Families without a currently assigned Spanish paediatrician</li><li>Families with an assigned paediatrician who need clinical advice today, outside clinic hours</li><li>Parents who need a child's symptoms assessed before deciding whether to go to the emergency department</li><li>Parents who have received advice or documentation from a Spanish paediatrician and want it reviewed and explained clearly</li><li>Adolescents aged 16 and over who want to discuss a health concern directly with a doctor</li><li>International and expat families who prefer the consultation in English or Portuguese</li></ul><p>This service is for acute and non-urgent GP-level paediatric concerns. For paediatric emergencies, call 112 or go to the nearest emergency department immediately. Fever in infants under 3 months requires emergency assessment — do not book a video consultation.</p><h2>Conditions Commonly Assessed</h2><p><strong>Respiratory and ENT</strong></p><ul><li>Common cold, cough, and upper respiratory tract infections</li><li>Ear infections — otitis media and otitis externa</li><li>Sore throat and tonsillitis</li><li>Croup — assessment and guidance</li><li>Wheezing and mild asthma concerns</li><li>Sinusitis in older children</li></ul><p><strong>Fever and general illness</strong></p><ul><li>Fever in children over 3 months — assessment, advice on management, and guidance on when to seek further care</li><li>Viral illnesses — roseola, hand foot and mouth, chickenpox</li><li>Gastroenteritis — vomiting and diarrhoea, dehydration assessment</li><li>Urinary tract infections in children</li><li>Fatigue and general malaise</li></ul><p><strong>Skin</strong></p><ul><li>Rashes — assessment and guidance for parents</li><li>Eczema in infants and children — flare management and ongoing advice</li><li>Impetigo and skin infections in children</li><li>Molluscum contagiosum</li><li>Nappy rash and infant skin concerns</li><li>Allergic skin reactions</li></ul><p><strong>Growth, development, and behaviour</strong></p><ul><li>Parental concerns about developmental milestones — with referral for formal assessment where indicated</li><li>Sleep difficulties in infants and young children</li><li>Feeding concerns in infants</li><li>Behavioural concerns in school-age children — with referral where indicated</li><li>Adolescent health concerns — acne, menstrual health, mental wellbeing, weight concerns</li></ul><p><strong>Chronic condition management</strong></p><ul><li>Asthma management in children — review and ongoing guidance</li><li>Eczema — ongoing management and flare review</li><li>Allergies — assessment and management guidance</li><li>Chronic abdominal pain in children — assessment and referral where indicated</li></ul><p><strong>Other</strong></p><ul><li>Medical documentation — school absence letters, referral letters</li><li>Review of results or clinical letters from Spanish paediatricians — explained clearly</li><li>Pre-travel health advice for children</li><li>Vaccination schedule queries — clarification and guidance</li></ul><h2>What Your Consultation Includes</h2><p><strong>Full paediatric clinical assessment</strong></p><p>Your GP takes a complete history of your child's symptoms — onset, duration, severity, associated symptoms, feeding and hydration status, relevant medical history, current medications, vaccination status, and family history where relevant. For younger children, the consultation is conducted with the parent describing symptoms and showing the child on video where clinically relevant.</p><p><strong>Safety assessment</strong></p><p>Every paediatric consultation includes assessment of whether the child's presentation requires emergency or urgent in-person care. Your GP advises clearly and immediately if this is the case.</p><p><strong>Clear parental guidance</strong></p><p>You leave the consultation knowing what is most likely happening with your child, what to do at home, what symptoms to watch for, what would prompt you to seek further care, and when to expect improvement. Parental confidence and knowledge is a clinical outcome in itself.</p><p><strong>Clinical documentation — at the doctor's professional discretion</strong></p><p>When clinically indicated, your GP issues appropriate clinical documentation valid at any pharmacy in Spain.</p><p>Note: Controlled substances cannot be issued electronically under Spanish law. Your GP advises if this applies to your child's situation.</p><p><strong>Antibiotics — where clinically indicated</strong></p><p>All antibiotics in Spain require a doctor's prescription by law. Your GP assesses your child's presentation and prescribes the appropriate antibiotic where the clinical evidence supports it — including for ear infections, throat infections, urinary tract infections, and skin infections — in accordance with antibiotic stewardship guidelines.</p><p><strong>Referral and documentation</strong></p><p>When referral to a Spanish paediatrician, specialist, or emergency department is needed, your GP issues the relevant documentation the same day.</p><h2>When to Go to the Emergency Department — A Clear Guide for Parents</h2><p>One of the most common and most stressful decisions parents face is whether a child's condition warrants emergency care or whether careful monitoring at home is appropriate. This consultation helps you make that decision with clinical support — but some presentations require emergency care without waiting for a video consultation:</p><p>Go to the emergency department immediately if your child has:</p><ul><li>Fever in an infant under 3 months — always an emergency</li><li>Difficulty breathing — any rapid, laboured, or noisy breathing</li><li>A rash that does not fade when pressed with a glass — possible meningitis, call 112</li><li>First seizure, or a seizure lasting more than 5 minutes</li><li>Loss of consciousness or unresponsiveness</li><li>Severe allergic reaction — swelling of lips, tongue, or throat</li><li>A child who is deteriorating rapidly</li></ul><p>Paediatric emergency departments in Spain:</p><ul><li>Hospital La Paz — Madrid (paediatric emergencies 24h)</li><li>Hospital Vall d'Hebron — Barcelona (paediatric emergencies 24h)</li><li>Hospital La Fe — Valencia (paediatric emergencies 24h)</li><li>Hospital Virgen del Rocío — Sevilla (paediatric emergencies 24h)</li><li>Outside major cities: your local reference hospital has a paediatric emergency service</li></ul><p>When in doubt, always go to the emergency department. It is always better to be seen and reassured than to wait at home with a deteriorating child.</p><h2>Important Information Before You Book</h2><ul><li>A parent or guardian must be present throughout all consultations for children under 16, in accordance with Organic Law 1/1996 on the Legal Protection of Minors and Law 41/2002 on patient autonomy</li><li>For adolescents aged 16 and over, the GP assesses capacity to consent individually in accordance with Spanish medical and legal standards — the concept of the \"mature minor\" (menor maduro)</li><li>Fever in infants under 3 months is a medical emergency requiring immediate in-person assessment — do not book a video consultation for this presentation</li><li>Rapidly deteriorating children — if your child is worsening significantly while you are trying to book, go to the emergency department immediately</li><li>Mandatory reporting — our clinical professionals are bound by the mandatory child protection reporting obligations under Organic Law 1/1996. Where a consultation raises child protection concerns, the professional is legally and professionally obliged to act accordingly, which may involve the regional Child Protection Services. This obligation takes precedence over confidentiality</li><li>The decision to issue any documentation is always a clinical decision made by the GP after full assessment</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 40,
+      "durationMinutes": 15,
+      "basePriceCents": 3900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.259Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0skg90000y8jurlo2mrg2",
+          "kind": "IMAGE",
+          "key": "media/fbb2f7c0-6549-481e-8ff9-6b6cce4cacc9-es-pediatria-online.png",
+          "path": "/api/media/media/fbb2f7c0-6549-481e-8ff9-6b6cce4cacc9-es-pediatria-online.png",
+          "altText": "Atención Primária Pediatria"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qc1v0043ngjubabydlvr",
+          "question": "Can a child’s illness really be assessed by video call?",
+          "answer": "Yes — for the vast majority of non-urgent presentations. A detailed parental history of the symptoms combined with visual observation of the child during the call allows an experienced doctor to make a clinical assessment of most common childhood illnesses. Where the presentation requires an in-person physical examination — for example, to assess breathing sounds, examine the ear, or palpate the abdomen — your doctor will clearly advise you and coordinate the appropriate referral.",
+          "sortOrder": 0,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qc1v0044ngju09x6ekdn",
+          "question": "My child has a fever — can I use this service?",
+          "answer": "Yes — for children older than 3 months. Your doctor evaluates the severity, the likely cause, and the appropriate management. For infants under 3 months, fever is a medical emergency — go to the nearest emergency department immediately without booking a video consultation.",
+          "sortOrder": 1,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qc1v0045ngjufo98znha",
+          "question": "Can the doctor prescribe antibiotics for my child?",
+          "answer": "Yes — where clinically indicated after a complete evaluation. In Spain, all antibiotics require a medical prescription. Your doctor evaluates your child's presentation and prescribes the appropriate antibiotic where clinical evidence justifies it.",
+          "sortOrder": 2,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qc1v0046ngju7w1xvobk",
+          "question": "Do I need to have an assigned pediatrician to use this service?",
+          "answer": "No. This service is available to all families in Spain — no prior registration, no assigned pediatrician required, no health insurance necessary.",
+          "sortOrder": 3,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qc1v0047ngjuou9kxn45",
+          "question": "My child has received a letter or diagnosis from a Spanish pediatrician that I do not understand — can you help me?",
+          "answer": "Yes. Bring the letter or results to the appointment and your doctor will review and explain the findings and clinical recommendations clearly in the language you prefer.",
+          "sortOrder": 4,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qc1v0048ngju1rdxl81f",
+          "question": "Is this service suitable for adolescents?",
+          "answer": "Yes. Adolescents’ health concerns — including acne, menstrual health, mental well-being and weight — are part of this service. For adolescents aged 16 or older, the doctor assesses whether the young person can consent independently. For those under 16, a parent or guardian must be present throughout the consultation.",
+          "sortOrder": 5,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qc1v0049ngjupx17vlal",
+          "question": "What happens if my child needs to go to the emergency room?",
+          "answer": "If your doctor determines that your child needs urgent or in-person urgent care, you will be informed immediately and clearly — including what to say when you arrive at the emergency department and which hospital is most appropriate for your location in Spain. Your doctor may issue a brief clinical summary if this would be useful.",
+          "sortOrder": 6,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qc1v004angju8vzke26a",
+          "question": "Can I obtain a school absence note through this service?",
+          "answer": "Yes. School absence certificates may be issued at the clinician’s discretion after evaluation — certifying that the child was evaluated and is not fit to attend school, without specifying clinical details.",
+          "sortOrder": 7,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qc1w004bngjuc93zuy74",
+          "question": "Do I need Spanish health insurance?",
+          "answer": "No. It is a private direct-pay service. The clinical documentation issued through this service is provided at the full private price regardless of insurance status.",
+          "sortOrder": 8,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qc1w004cngjuscslov4h",
+          "question": "Can I use this service from anywhere in Spain?",
+          "answer": "Yes — including the Balearic Islands, the Canary Islands, Ceuta and Melilla. You only need a stable internet connection and a device with a camera.",
+          "sortOrder": 9,
+          "resolvedLocale": "EN"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "EN",
+      "links": [
+        {
+          "id": "cmre7ts6t0052g8ju6asq61tw",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Enfermedad crónica pediátrica o condición compleja?",
+          "body": "Si tu situación está relacionada con enfermedad crónica pediátrica o condición compleja, nuestra Pediatría Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Pediatría Especialista",
+          "targetSlug": "pediatra-especialista-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tsyv0054g8jug81ewfa0",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con salud mental en adolescentes?",
+          "body": "Para salud mental en adolescentes, consulta nuestra página de Psiquiatría Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Psiquiatría Especialista",
+          "targetSlug": "psiquiatra-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7ttqy0056g8jufdh5x48f",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre consulta médica general con médico de cabecera?",
+          "body": "Nuestra Consulta Médica General está pensada específicamente para consulta médica general con médico de cabecera.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpu7ro001e01ruc1ycm5n5"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:25:00.000Z"
+      }
+    }
+  }
+}

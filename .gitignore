@@ -133,3 +133,7 @@ loadtest/config/seed-passwords.json
 /seo/brazil/raw/
 /seo/brazil/content-briefs/storage-mutation-manifest.json
 /seo/brazil/content-briefs/rollback-plan.json
+
+# Spain authenticated storage snapshots and rollout before-rows stay local.
+/seo/spain/raw/storage-preflight-*.json
+/seo/spain/raw/rollout/

@@ -19,10 +19,23 @@ measurement cohort. Operational status belongs to ledger §56.
   Backend direct per-package TypeScript passes with an 8 GB Node heap. The pnpm
   wrapper failed locally; no dependency purge or global tool change was attempted.
 
-The real PostgreSQL rehearsal and production read-only dry-run remain unperformed.
-Automatic approval review rejected both snapshot attempts, including the narrowed
-content-only projection, because it could not verify authorization. Neither export
-executed. The owner was asked for explicit confirmation; no answer is recorded.
+Automatic approval review rejected both snapshot attempts on 13 September; neither
+executed. That preparation was committed as 16ca77f3.
 
-No staging, commit, merge or push has been performed by this Spain preparation.
-Unrelated concurrent work is preserved. See the handoff for commands and rollback.
+14 September 2026: authenticated preparation, still nothing published.
+
+- The owner confirmed the read-only snapshot; it ran once and stays local.
+- Storage reconciliation corrected two planner assumptions. Null non-ES translation
+  fields render the ES value. ES service FAQs live only on base rows. The earlier
+  drafts would have copied the Spanish body into EN/DE/CS/PT/RO rows; that is fixed.
+- Refreshed all 140 public draft sources read-only: no drift.
+- Drafted localized title, description, H1 and body for the aesthetic and vascular
+  services in five locales; independent review found no clinical defect and its
+  meaning/naturalness corrections were applied.
+- Manifest: 22 candidate groups, 144 operations, 12 held groups. None approved.
+- Isolated embedded PostgreSQL rehearsal passed, including rollback and exact inverse.
+- Owner decisions: reviewer nominee Dra. María Fernanda Ocampo Mora; 365-day review
+  validity, now set in SPAIN_REVIEW_POLICY. No approved state exists.
+
+The production dry-run, enforcement deployment and every content write remain
+unperformed. Details and hashes: ledger §56.4.

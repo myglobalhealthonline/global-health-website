@@ -1,0 +1,229 @@
+{
+  "endpoint": "/api/countries/es/doctors/dr-fabiana-cornejo?locale=DE",
+  "checkedAt": "2026-09-13T22:38:06.001Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "doctor": {
+      "id": "cmrdpvch9001i01ruy7pmzmdk",
+      "slug": "dr-fabiana-cornejo",
+      "fullName": "Dra. Mónica Fabiana Cornejo Román",
+      "title": "Psychiater",
+      "bio": "<p>Dr. Mónica Fabiana Cornejo Román</p><p>Konsiliarpsychiaterin | Spezialistin für Neuropsychopharmakologie</p><p>Dr. Mónica Fabiana Cornejo Román ist eine Konsiliarpsychiaterin mit umfassender Erfahrung und breiter klinischer Praxis in stationären und ambulanten psychiatrischen Diensten in Spanien und Argentinien. Sie hat einen Abschluss in Medizin von der Universidad Nacional de Tucumán und absolvierte ihre vollständige Facharztausbildung in Psychiatrie im Hospital Borda mit Unterstützung der Universidad Maimónides. Ihre medizinische Qualifikation ist in Spanien anerkannt.</p><p>Kürzlich hat sie ihre ergänzende spezialisierte Weiterbildung im Hospital del Mar. Parc de Salut Mar (Barcelona) im Rahmen des Anerkennungsverfahrens ihrer psychiatrischen Fachrichtung in Spanien abgeschlossen, mit Rotation in akuter und subakuter Psychiatrie, psychiatrischer Notfallversorgung, stationärer Behandlung, Konsiliar- und Liaisonpsychiatrie, komplexer Psychopharmakologie und interdisziplinärer Teamarbeit.</p><p>Dr. Cornejo hat als Konsiliarpsychiaterin in mehreren führenden Einrichtungen in Barcelona gearbeitet, darunter die Fundación Vidal y Barraquer, das Hospital Universitari Sagrat Cor, das Centro de Salud Mental de Badalona (BSA) und das Hospital Mare de Déu de la Mercè, und bot ambulante Versorgung, Konsiliar- und Liaisonpsychiatrie, psychiatrische Notfallversorgung, Suizidrisikomanagement, stationäre Behandlung und Überweisungen an spezialisierte Programme wie therapieresistente Depression, ADHS und Autismus-Spektrum-Störungen an.</p><p>Zuvor war sie mehr als sechs Jahre in Argentinien tätig bei OSDE, Hospital Santojanni, Medicus SA und Centro Larrea de Salud Mental, einschließlich hochfrequentierter psychiatrischer Notdienste und komplexer stationärer Versorgung. Ihre klinische Erfahrung umfasst fortgeschrittene Psychopharmakologie, affektive und Angststörungen, psychotische Störungen, Abhängigkeitserkrankungen, Konsiliar- und Liaisonpsychiatrie, Suizidrisikomanagement, chronische Schmerzen und medizinisch-rechtliche Gutachten.</p><p>Sie verfügt über postgraduale Abschlüsse, darunter einen Master in Klinischer Neuropsychopharmakologie, eine Universitäre Spezialisierung in Rechtsmedizin und eine Spezialisierung in Schmerzbewertung und -behandlung. Sie hat an klinischen Forschungsprojekten in Zusammenarbeit mit dem CIBERSAM des Hospital Sant Pau mitgewirkt und im Bereich der Bioethik und Psychiatrie veröffentlicht.</p><p>Dr. Cornejo ist ordentliches Mitglied der American Psychiatric Association und beherrscht Spanisch mit soliden Lesekenntnissen in Englisch. Sie ist bekannt für ihr strukturiertes klinisches Denken, ihren mitfühlenden, patientenzentrierten Ansatz und ihre enge interdisziplinäre Zusammenarbeit.</p><p>Bei Global Health bietet Dr. Cornejo psychiatrische Online-Konsultationen, mit evidenzbasierter Beurteilung, personalisierter Behandlungsplanung und kontinuierlicher Nachsorge zur Unterstützung der psychischen Gesundheit und des allgemeinen Wohlbefindens.</p>",
+      "seoTitle": "Dr Fabiana Cornejo - Psychiaterin | Global Health",
+      "seoDescription": "Dr. Mónica Cornejo Román, konsultierende Fachärztin für Neuropsychopharmakologie. Umfassende Erfahrung in Spanien und Argentinien in Psychopharmakologie, affektiven Störungen und Notfallpsychiatrie. Online-Sprechstunde bei Global Health.",
+      "lastReviewedAt": null,
+      "medicalRegistrationUrl": "https://www.cgcom.es/servicios/consulta-publica-de-colegiados",
+      "qualifications": [
+        "Psiquiatra Consultora — España (homologación en proceso de finalización)",
+        "Máster en Neuropsicofarmacología Clínica",
+        "Especialización Universitaria en Medicina Legal",
+        "Especialización en Evaluación y Tratamiento del Dolor",
+        "Formación complementaria — Hospital del Mar – Parc de Salut Mar, Barcelona",
+        "Psiquiatra consultora — Fundación Vidal y Barraquer, Hospital Sagrat Cor, BSA Badalona, Hospital Mare de Déu de la Mercè",
+        "Experiencia previa Argentina: Hospital Santojanni, OSDE, Medicus SA, Centro Larrea de Salud Mental",
+        "Colaboración en investigación — CIBERSAM, Hospital Sant Pau",
+        "Publicaciones en bioética y psiquiatría",
+        "Miembro titular — Asociación Americana de Psiquiatría (APA)",
+        "Licenciada en Medicina — Universidad Nacional de Tucumán",
+        "Registrada en CGCOM (nº 64182)"
+      ],
+      "instagramUrl": null,
+      "facebookUrl": null,
+      "linkedinUrl": null,
+      "languages": [
+        "Spanish"
+      ],
+      "active": true,
+      "updatedAt": "2026-08-20T06:22:01.048Z",
+      "resolvedLocale": "DE",
+      "readyToIndex": true,
+      "nonPhysician": false,
+      "imcRegistration": "64182",
+      "registrationChamber": "CGCOM",
+      "registrationDivision": null,
+      "registrationVerified": true,
+      "credentials": [],
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmrf4imt9024q01qrbua4y5q7",
+          "kind": "IMAGE",
+          "key": "doctor-cmrdpvch9001i01ruy7pmzmdk-profile",
+          "path": "/api/media/media/881a2aa3-06df-435f-b429-ee1977f6d0cf-6e02deef-61fd-407a-b0b1-d2ed83b13bb9-1_all_7931.webp",
+          "altText": "Dra. Mónica Fabiana Cornejo Román",
+          "title": null,
+          "caption": "Dra. Mónica Fabiana Cornejo Román — Psychiatrist, Global Health Spain",
+          "description": "Dra. Mónica Fabiana Cornejo Román — Psychiatrist at Global Health Spain. Book an online video consultation.",
+          "focalX": 55,
+          "focalY": 21,
+          "zoom": 1
+        }
+      ],
+      "additionalCountries": [
+        {
+          "id": "cmrdpvchj001j01ruqi4waxcd",
+          "countryId": "cmqy9rw9w00x001qkq31jktqq",
+          "active": true,
+          "country": {
+            "id": "cmqy9rw9w00x001qkq31jktqq",
+            "code": "es",
+            "name": "Spain",
+            "defaultLocale": "ES"
+          },
+          "chamberEntity": "CGCOM",
+          "registrationNumber": "64182",
+          "registrationUrl": null,
+          "division": null,
+          "isVerified": true,
+          "translations": [
+            {
+              "locale": "EN",
+              "title": "Psychiatrist",
+              "bio": "<p>Dr. Mónica Fabiana Cornejo Román</p><p>Consultant Psychiatrist | Specialist in Neuropsychopharmacology</p><p>Dr. Mónica Fabiana Cornejo Román is a consultant psychiatrist with extensive experience and broad clinical practice in inpatient and outpatient mental health services in Spain and Argentina. She holds a degree in Medicine from the Universidad Nacional de Tucumán and completed her full psychiatry training at Hospital Borda, with support from Universidad Maimónides. Her medical qualification is recognized in Spain.</p><p>She recently completed her specialized supplementary training at Hospital del Mar. Parc de Salut Mar (Barcelona) as part of the recognition process for her psychiatric specialty in Spain, with rotations in acute and subacute psychiatry, psychiatric emergency care, inpatient care, liaison psychiatry, complex psychopharmacology, and multidisciplinary teamwork.</p><p>Dr. Cornejo has worked as a consultant psychiatrist in several leading institutions in Barcelona, including Fundación Vidal y Barraquer, Hospital Universitari Sagrat Cor, Centro de Salud Mental de Badalona (BSA) and Hospital Mare de Déu de la Mercè, providing outpatient care, liaison psychiatry, emergency psychiatry, suicide risk management, inpatient treatment, and referrals to specialized programs such as treatment-resistant depression, ADHD, and autism spectrum disorders.</p><p>Previously, she practiced for more than six years in Argentina with OSDE, Hospital Santojanni, Medicus SA and Centro Larrea de Salud Mental, including high-volume emergency psychiatry shifts and complex inpatient care. Her clinical experience covers advanced psychopharmacology, mood and anxiety disorders, psychotic disorders, addictions, liaison psychiatry, suicide risk management, chronic pain, and medico-legal reports.</p><p>She holds postgraduate qualifications, including a Master’s Degree in Clinical Neuropsychopharmacology, a University Specialization in Legal Medicine and a specialization in Pain Assessment and Treatment. She has participated in clinical research projects in collaboration with CIBERSAM at Hospital Sant Pau and has published in the fields of bioethics and psychiatry.</p><p>Dr. Cornejo is a full member of the American Psychiatric Association and is fluent in Spanish with strong reading proficiency in English. She is recognized for her structured clinical reasoning, compassionate and patient-centered approach, and strong interdisciplinary collaboration.</p><p>At Global Health, Dr. Cornejo offers online psychiatric consultations, providing evidence-based assessment, personalized treatment planning, and ongoing follow-up to support mental health and overall well-being.</p>",
+              "seoTitle": "Dr Fabiana Cornejo - Psychiatrist | Global Health",
+              "seoDescription": "Dr. Mónica Cornejo Román, consulting psychiatrist specializing in Neuropsychopharmacology. Extensive experience in Spain and Argentina in psychopharmacology, mood disorders and emergency psychiatry. Online consultation at Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "PT",
+              "title": "Psiquiatra",
+              "bio": "<p>Dra. Mónica Fabiana Cornejo Román</p><p>Psiquiatra Consultora | Especialista em Neuropsicofarmacologia</p><p>A Dra. Mónica Fabiana Cornejo Román é uma psiquiatra consultora com ampla experiência e vasta prática clínica em serviços de saúde mental hospitalares e ambulatórios em Espanha e Argentina. É licenciada em Medicina pela Universidade Nacional de Tucumán e completou a sua formação completa em psiquiatria no Hospital Borda, com o apoio da Universidade Maimónides. A sua habilitação médica está homologada em Espanha.</p><p>Recentemente concluiu a sua formação complementar especializada no Hospital del Mar. Parc de Salut Mar (Barcelona) no âmbito do processo de homologação da sua especialidade psiquiátrica em Espanha, com rotações em psiquiatria aguda e subaguda, urgências psiquiátricas, cuidados hospitalares, interconsulta, psicofarmacologia complexa e trabalho em equipa multidisciplinar.</p><p>A Dra. Cornejo trabalhou como psiquiatra consultora em várias instituições de referência em Barcelona, entre elas a Fundación Vidal y Barraquer, o Hospital Universitari Sagrat Cor, o Centro de Saúde Mental de Badalona (BSA) e o Hospital Mare de Déu de la Mercè, prestando cuidados ambulatórios, psiquiatria de ligação, psiquiatria de emergência, gestão do risco de suicídio, tratamento hospitalar e encaminhamentos para programas especializados como depressão resistente ao tratamento, TDAH e perturbações do espetro do autismo.</p><p>Anteriormente, exerceu durante mais de seis anos na Argentina com OSDE, Hospital Santojanni, Medicus SA e Centro Larrea de Salud Mental, incluindo turnos de psiquiatria de urgência de elevado volume e cuidados hospitalares complexos. A sua experiência clínica abrange psicofarmacologia avançada, perturbações do humor e de ansiedade, perturbações psicóticas, adições, psiquiatria de ligação, gestão do risco de suicídio, dor crónica e relatórios médico-legais.</p><p>Possui títulos de pós-graduação, entre eles um Mestrado em Neuropsicofarmacologia Clínica, uma Especialização Universitária em Medicina Legal e uma especialização em Avaliação e Tratamento da Dor. Participou em projetos de investigação clínica em colaboração com o CIBERSAM do Hospital Sant Pau e publicou na área da bioética e da psiquiatria.</p><p>A Dra. Cornejo é membro titular da Associação Americana de Psiquiatria e domina o espanhol com sólida competência de leitura em inglês. É reconhecida pelo seu raciocínio clínico estruturado, pela sua abordagem compassiva e centrada no paciente e pela sua sólida colaboração interdisciplinar.</p><p>Na Global Health, a Dra. Cornejo oferece consultas psiquiátricas online, proporcionando avaliação baseada em evidência, planeamento de tratamento personalizado e acompanhamento contínuo para apoiar a saúde mental e o bem-estar geral.</p>",
+              "seoTitle": "Dr Fabiana Cornejo - Psiquiatra | Global Health",
+              "seoDescription": "Dra. Mónica Cornejo Román, psiquiatra consultora especialista em Neuropsicofarmacologia. Ampla experiência na Espanha e Argentina em psicofarmacologia, transtornos do humor e psiquiatria de urgência. Consulta online na Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "CS",
+              "title": "Psychiatr",
+              "bio": "<p>Dra. Mónica Fabiana Cornejo Román</p><p>Konziliární psychiatr | Specialista na neuropsychofarmakologii</p><p>Dra. Mónica Fabiana Cornejo Román je konziliární psychiatrička s rozsáhlými zkušenostmi a bohatou klinickou praxí v hospitalizačních i ambulantních službách duševního zdraví ve Španělsku a Argentině. Je absolventkou medicíny na Universidad Nacional de Tucumán a své kompletní vzdělání v psychiatrii dokončila v Hospital Borda za podpory Universidad Maimónides. Její lékařská kvalifikace je ve Španělsku uznána.</p><p>Nedávno dokončila své specializované doplňkové vzdělání v Hospital del Mar. Parc de Salut Mar (Barcelona) v rámci procesu uznání své psychiatrické specializace ve Španělsku, s rotacemi v akutní a subakutní psychiatrii, psychiatrické pohotovosti, nemocniční péči, interconsulta, komplexní psychofarmakologii a multidisciplinární týmové práci.</p><p>Dr. Cornejo pracovala jako konziliární psychiatrička v několika předních institucích v Barceloně, mezi nimiž jsou Fundación Vidal y Barraquer, Hospital Universitari Sagrat Cor, Centro de Salud Mental de Badalona (BSA) a Hospital Mare de Déu de la Mercè, kde poskytovala ambulantní péči, konziliární psychiatrii, psychiatrickou péči v urgentních případech, řízení rizika sebevraždy, hospitalizační léčbu a doporučení do specializovaných programů, jako jsou deprese rezistentní na léčbu, TDAH a poruchy autistického spektra.</p><p>Dříve pracovala více než šest let v Argentině s OSDE, Hospital Santojanni, Medicus SA a Centro Larrea de Salud Mental, včetně pohotovostních služeb psychiatrie s vysokým objemem pacientů a komplexní nemocniční péče. Její klinické zkušenosti zahrnují pokročilou psychofarmakologii, poruchy nálady a úzkostné poruchy, psychotické poruchy, závislosti, konziliární psychiatrii, řízení rizika sebevraždy, chronickou bolest a lékařsko-právní posudky.</p><p>Má postgraduální tituly, mezi nimi Magisterský titul v klinické neuropsychofarmakologii, Univerzitní specializaci v lékařském právu a specializaci v hodnocení a léčbě bolesti. Účastnila se klinických výzkumných projektů ve spolupráci s CIBERSAM del Hospital Sant Pau a publikovala v oblasti bioetiky a psychiatrie.</p><p>Dra. Cornejo je řádnou členkou Americké psychiatrické asociace a ovládá španělštinu se silnou čtenářskou znalostí angličtiny. Je uznávána pro své strukturované klinické uvažování, svůj soucitný a na pacienta zaměřený přístup a svou pevnou interdisciplinární spolupráci.</p><p>V Global Health poskytuje Dr. Cornejo online psychiatrické konzultace, přičemž nabízí na důkazech založené hodnocení, personalizované plánování léčby a průběžné sledování na podporu duševního zdraví a celkové pohody.</p>",
+              "seoTitle": "Dr Fabiana Cornejo - psychiatrička | Global Health",
+              "seoDescription": "Dra. Mónica Cornejo Román, konzultační psychiatrička, specialistka na neuropsychofarmakologii. Rozsáhlé zkušenosti ve Španělsku a Argentině v psychofarmakologii, poruchách nálady a urgentní psychiatrii. Online konzultace v Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "ES",
+              "title": "Psiquiatra Consultora — Neuropsicofarmacología",
+              "bio": "<p>La Dra. Mónica Fabiana Cornejo Román es psiquiatra consultora con más de doce años de experiencia clínica en servicios de salud mental hospitalarios y ambulatorios en España y Argentina, una de las psiquiatras con mayor profundidad de formación disponibles a través de consulta online en España.</p><p>Se licenció en Medicina por la Universidad Nacional de Tucumán y completó su formación especializada en psiquiatría en el Hospital Borda con el apoyo de la Universidad Maimónides, uno de los centros de referencia históricos en formación psiquiátrica de Argentina. Con su titulación homologada en España, amplió su formación en el Hospital del Mar. Parc de Salut Mar de Barcelona, con rotaciones en psiquiatría aguda y subaguda, urgencias psiquiátricas, psicofarmacología compleja e interconsulta.</p><p>Su trayectoria clínica en España incluye trabajo como psiquiatra consultora en la Fundación Vidal y Barraquer, el Hospital Universitari Sagrat Cor, el Centro de Salud Mental de Badalona (BSA) y el Hospital Mare de Déu de la Mercè, cubriendo atención ambulatoria, psiquiatría de enlace, urgencias psiquiátricas, gestión del riesgo de suicidio, tratamiento hospitalario y derivación a programas especializados en depresión resistente, TDAH y trastornos del espectro autista.</p><p>Anteriormente ejerció durante más de seis años en Argentina con OSDE, Hospital Santojanni, Medicus SA y el Centro Larrea de Salud Mental, incluyendo guardias de psiquiatría de urgencias de alto volumen y atención hospitalaria compleja.</p><p>La Dra. Cornejo es titular de un Máster en Neuropsicofarmacología Clínica, una Especialización en Medicina Legal y una especialización en Evaluación y Tratamiento del Dolor. Ha colaborado en proyectos de investigación clínica con el CIBERSAM del Hospital Sant Pau y ha publicado en el ámbito de la bioética y la psiquiatría. Es miembro titular de la Asociación Americana de Psiquiatría (APA).</p><p>La psiquiatría es una especialidad donde el rigor farmacológico y la escucha empática son igualmente esenciales. La Dra. Cornejo es reconocida por ambas: un razonamiento clínico estructurado que permite evaluar situaciones complejas con precisión, y un enfoque compasivo y centrado en el paciente que hace posible que personas con dificultades graves de salud mental se sientan comprendidas y acompañadas.</p><h3>Qué ofrece online</h3><ul><li><strong>Evaluación psiquiátrica inicial:</strong> diagnóstico y evaluación de trastornos del estado de ánimo, ansiedad, psicosis y otras condiciones psiquiátricas</li><li><strong>Trastornos del estado de ánimo:</strong> depresión, depresión resistente al tratamiento, trastorno bipolar</li><li><strong>Trastornos de ansiedad:</strong> ansiedad generalizada, trastorno de pánico, TOC, TEPT</li><li><strong>Trastornos psicóticos:</strong> evaluación, diagnóstico y manejo farmacológico</li><li><strong>TDAH en adultos:</strong> evaluación, diagnóstico y planificación terapéutica</li><li><strong>Trastornos del espectro autista:</strong> evaluación y orientación</li><li><strong>Adicciones:</strong> evaluación y derivación a programas especializados</li><li><strong>Neuropsicofarmacología:</strong> revisión, optimización y manejo complejo de medicación psiquiátrica</li><li><strong>Gestión del riesgo de suicidio:</strong> evaluación clínica y planificación de seguridad</li><li><strong>Dolor crónico con componente psiquiátrico:</strong> evaluación y abordaje integrado</li><li><strong>Segunda opinión psiquiátrica:</strong> sobre diagnósticos, planes de tratamiento o medicación</li><li><strong>Informes médico-legales:</strong> elaboración de informes psiquiátricos para fines legales o administrativos</li><li>Seguimiento de tratamientos psiquiátricos en curso</li></ul><h3>Su enfoque</h3><p>La Dra. Cornejo practica una psiquiatría basada en la evidencia, estructurada y compasiva. Su doble especialización en neuropsicofarmacología y medicina legal le permite abordar los casos más complejos, desde pacientes con medicación psiquiátrica de difícil manejo hasta situaciones que requieren informe médico-legal, con la misma solidez clínica que aplica en la evaluación empática de la persona que tiene delante.</p><p>Nota importante: Si está experimentando una crisis psiquiátrica o pensamientos de autolesión, contacte con los servicios de emergencias llamando al 112 o diríjase a urgencias, no espere a una cita online.</p><p>Idiomas: Español</p>",
+              "seoTitle": "Dra. Fabiana Cornejo — Psiquiatra | CGCOM 64182 | Global Health España",
+              "seoDescription": "Reserve una videoconsulta con Dra. Fabiana Cornejo — psiquiatra consultora registrada en CGCOM (nº 64182). Máster Neuropsicofarmacología · Hospital del Mar Barcelona · Miembro APA · Evaluación y tratamiento psiquiátrico online. Cita el mismo día.",
+              "seoKeywords": [
+                "Psiquiatra"
+              ]
+            },
+            {
+              "locale": "RO",
+              "title": "psihiatru",
+              "bio": "<p>Dr. Mónica Fabiana Cornejo Román</p><p>Medic psihiatru consultant | Specialist în Neuropsihofarmacologie</p><p>Dr. Mónica Fabiana Cornejo Román este un psihiatru consultant cu experiență vastă și practică clinică extinsă în servicii de sănătate mintală spitalicești și ambulatorii în Spania și Argentina. Este licențiată în Medicină de la Universidad Nacional de Tucumán și și-a finalizat pregătirea completă în psihiatrie la Hospital Borda, cu sprijinul Universidad Maimónides. Titlul său medical este omologat în Spania.</p><p>Recent a finalizat formarea sa complementară specializată la Hospital del Mar. Parc de Salut Mar (Barcelona) în cadrul procesului de omologare a specialității sale psihiatrice în Spania, cu rotații în psihiatrie acută și subacută, urgențe psihiatrice, îngrijire spitalicească, interconsultație, psihofarmacologie complexă și lucru în echipă multidisciplinară.</p><p>Dr. Cornejo a lucrat ca psihiatru consultant în mai multe instituții de referință din Barcelona, printre care Fundación Vidal y Barraquer, Hospital Universitari Sagrat Cor, Centrul de Sănătate Mintală Badalona (BSA) și Hospital Mare de Déu de la Mercè, oferind îngrijire ambulatorie, psihiatrie de legătură, psihiatrie de urgență, gestionarea riscului de suicid, tratament spitalicesc și trimiteri către programe specializate precum depresia rezistentă la tratament, ADHD și tulburările din spectrul autist.</p><p>Anterior, a profesat timp de peste șase ani în Argentina la OSDE, Hospital Santojanni, Medicus SA și Centro Larrea de Salud Mental, inclusiv ture de psihiatrie de urgență cu volum mare și îngrijire spitalicească complexă. Experiența sa clinică acoperă psihofarmacologie avansată, tulburări de dispoziție și anxietate, tulburări psihotice, adicții, psihiatrie de legătură, gestionarea riscului de suicid, durere cronică și rapoarte medico-legale.</p><p>Deține titluri postuniversitare, printre care un Master în Neuropsihofarmacologie Clinică, o Specializare Universitară în Medicină Legală și o specializare în Evaluarea și Tratamentul Durerii. A participat la proiecte de cercetare clinică în colaborare cu CIBERSAM de la Hospital Sant Pau și a publicat în domeniul bioeticii și psihiatriei.</p><p>Dr. Cornejo este membru titular al Asociației Americane de Psihiatrie și stăpânește limba spaniolă, având o competență solidă de lectură în limba engleză. Este recunoscută pentru raționamentul său clinic structurat, abordarea sa empatică și centrată pe pacient și colaborarea sa interdisciplinară solidă.</p><p>În Global Health, Dr. Cornejo oferă consultații psihiatrice online, oferind evaluare bazată pe dovezi, planificare personalizată a tratamentului și monitorizare continuă pentru a sprijini sănătatea mintală și bunăstarea generală.</p>",
+              "seoTitle": "Dr Fabiana Cornejo - Psihiatru | Global Health",
+              "seoDescription": "Dra. Mónica Cornejo Román, psihiatru consultant, specialistă în Neuropsihofarmacologie. Experiență vastă în Spania și Argentina în psihofarmacologie, tulburări de dispoziție și psihiatrie de urgență. Consultație online la Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "DE",
+              "title": "Psychiater",
+              "bio": "<p>Dr. Mónica Fabiana Cornejo Román</p><p>Konsiliarpsychiaterin | Spezialistin für Neuropsychopharmakologie</p><p>Dr. Mónica Fabiana Cornejo Román ist eine Konsiliarpsychiaterin mit umfassender Erfahrung und breiter klinischer Praxis in stationären und ambulanten psychiatrischen Diensten in Spanien und Argentinien. Sie hat einen Abschluss in Medizin von der Universidad Nacional de Tucumán und absolvierte ihre vollständige Facharztausbildung in Psychiatrie im Hospital Borda mit Unterstützung der Universidad Maimónides. Ihre medizinische Qualifikation ist in Spanien anerkannt.</p><p>Kürzlich hat sie ihre ergänzende spezialisierte Weiterbildung im Hospital del Mar. Parc de Salut Mar (Barcelona) im Rahmen des Anerkennungsverfahrens ihrer psychiatrischen Fachrichtung in Spanien abgeschlossen, mit Rotation in akuter und subakuter Psychiatrie, psychiatrischer Notfallversorgung, stationärer Behandlung, Konsiliar- und Liaisonpsychiatrie, komplexer Psychopharmakologie und interdisziplinärer Teamarbeit.</p><p>Dr. Cornejo hat als Konsiliarpsychiaterin in mehreren führenden Einrichtungen in Barcelona gearbeitet, darunter die Fundación Vidal y Barraquer, das Hospital Universitari Sagrat Cor, das Centro de Salud Mental de Badalona (BSA) und das Hospital Mare de Déu de la Mercè, und bot ambulante Versorgung, Konsiliar- und Liaisonpsychiatrie, psychiatrische Notfallversorgung, Suizidrisikomanagement, stationäre Behandlung und Überweisungen an spezialisierte Programme wie therapieresistente Depression, ADHS und Autismus-Spektrum-Störungen an.</p><p>Zuvor war sie mehr als sechs Jahre in Argentinien tätig bei OSDE, Hospital Santojanni, Medicus SA und Centro Larrea de Salud Mental, einschließlich hochfrequentierter psychiatrischer Notdienste und komplexer stationärer Versorgung. Ihre klinische Erfahrung umfasst fortgeschrittene Psychopharmakologie, affektive und Angststörungen, psychotische Störungen, Abhängigkeitserkrankungen, Konsiliar- und Liaisonpsychiatrie, Suizidrisikomanagement, chronische Schmerzen und medizinisch-rechtliche Gutachten.</p><p>Sie verfügt über postgraduale Abschlüsse, darunter einen Master in Klinischer Neuropsychopharmakologie, eine Universitäre Spezialisierung in Rechtsmedizin und eine Spezialisierung in Schmerzbewertung und -behandlung. Sie hat an klinischen Forschungsprojekten in Zusammenarbeit mit dem CIBERSAM des Hospital Sant Pau mitgewirkt und im Bereich der Bioethik und Psychiatrie veröffentlicht.</p><p>Dr. Cornejo ist ordentliches Mitglied der American Psychiatric Association und beherrscht Spanisch mit soliden Lesekenntnissen in Englisch. Sie ist bekannt für ihr strukturiertes klinisches Denken, ihren mitfühlenden, patientenzentrierten Ansatz und ihre enge interdisziplinäre Zusammenarbeit.</p><p>Bei Global Health bietet Dr. Cornejo psychiatrische Online-Konsultationen, mit evidenzbasierter Beurteilung, personalisierter Behandlungsplanung und kontinuierlicher Nachsorge zur Unterstützung der psychischen Gesundheit und des allgemeinen Wohlbefindens.</p>",
+              "seoTitle": "Dr Fabiana Cornejo - Psychiaterin | Global Health",
+              "seoDescription": "Dr. Mónica Cornejo Román, konsultierende Fachärztin für Neuropsychopharmakologie. Umfassende Erfahrung in Spanien und Argentinien in Psychopharmakologie, affektiven Störungen und Notfallpsychiatrie. Online-Sprechstunde bei Global Health.",
+              "seoKeywords": []
+            }
+          ],
+          "divisionTranslations": []
+        }
+      ],
+      "assignedServices": [
+        {
+          "serviceId": "cmre7qeyz0050ngjund1jqnhp",
+          "service": {
+            "id": "cmre7qeyz0050ngjund1jqnhp",
+            "slug": "psiquiatra-online",
+            "name": "Psiquiatría Especialista",
+            "kind": "SPECIALIST",
+            "summary": null,
+            "durationMinutes": 45,
+            "basePriceCents": 15000,
+            "currencyCode": "EUR"
+          }
+        }
+      ],
+      "seoKeywords": [],
+      "resolvedMarketLocale": "DE",
+      "specialties": [],
+      "faqs": [
+        {
+          "id": "cmrny1yk4006sbsjuc713ccyb",
+          "locale": "DE",
+          "question": "Ist Dr. Cornejo im Consejo General de Colegios Oficiales de Médicos registriert?",
+          "answer": "Ja. Dr. Mónica Fabiana Cornejo Román ist im CGCOM unter der Nummer 64182 registriert. Sie können diese Registrierung auf cgcom.es überprüfen. Dr. Cornejo ist beratende Psychiaterin mit Ausbildung im Hospital Borda (Argentinien), im Hospital del Mar in Barcelona und Erfahrung als Beraterin in der Fundación Vidal y Barraquer, im Hospital Sagrat Cor und im Centro de Salud Mental de Badalona.",
+          "category": null,
+          "sortOrder": 0,
+          "isActive": true
+        },
+        {
+          "id": "cmrny1yk4006tbsjufnhcfara",
+          "locale": "DE",
+          "question": "Welche psychiatrischen Erkrankungen behandelt Dr. Cornejo online?",
+          "answer": "Dr. Cornejo bietet Online-Psychiatrieberatungen für: Stimmungsstörungen (Depression, therapieresistente Depression, bipolare Störung), Angststörungen (generalisierte Angst, Panikstörung, Zwangsstörung, PTBS), psychotische Störungen, ADHS bei Erwachsenen, Autismus-Spektrum-Störungen, Abhängigkeiten, Neuropsychopharmakologie (Überprüfung und Optimierung komplexer psychiatrischer Medikation), Suizidrisikomanagement, chronische Schmerzen mit psychiatrischer Komponente, psychiatrische Zweitmeinung und medizinisch-rechtliche Gutachten an.",
+          "category": null,
+          "sortOrder": 1,
+          "isActive": true
+        },
+        {
+          "id": "cmrny1yk4006ubsju3o9xk8jl",
+          "locale": "DE",
+          "question": "Was ist Neuropsychopharmakologie und warum ist sie relevant?",
+          "answer": "Neuropsychopharmakologie ist die Spezialisierung, die untersucht, wie Medikamente das zentrale Nervensystem beeinflussen und wie deren klinische Anwendung bei der Behandlung psychiatrischer Erkrankungen optimiert werden kann. Dr. Cornejo hat einen Master in Klinischer Neuropsychopharmakologie — das bedeutet, dass sie komplexe psychiatrische Medikation bewerten und verwalten kann: Patienten mit mehreren Medikamenten, atypischen Reaktionen, therapieresistenter Depression oder Fällen, in denen die aktuelle Medikation nicht wirksam ist. Für Patienten, die seit Jahren behandelt werden, ohne zufriedenstellende Ergebnisse zu erzielen, kann diese Spezialisierung einen echten Unterschied machen.",
+          "category": null,
+          "sortOrder": 2,
+          "isActive": true
+        },
+        {
+          "id": "cmrny1yk4006vbsju7xy5olm1",
+          "locale": "DE",
+          "question": "Kann Dr. Cornejo medizinisch-rechtliche Gutachten erstellen?",
+          "answer": "Ja. Dr. Cornejo hat eine Universitätsausbildung in Medizinrecht und Erfahrung in der Erstellung psychiatrischer Gutachten für rechtliche oder administrative Zwecke. Wenn Sie ein psychiatrisches Gutachten für ein rechtliches Verfahren, eine Invaliditätsleistung, einen Scheidungsprozess oder einen anderen administrativen Zweck benötigen, können Sie dieses Anliegen während der Online-Beratung besprechen.",
+          "category": null,
+          "sortOrder": 3,
+          "isActive": true
+        },
+        {
+          "id": "cmrny1yk4006wbsju7h7cv865",
+          "locale": "DE",
+          "question": "Wie reserviere ich einen Termin bei Dr. Cornejo?",
+          "answer": "Wählen Sie einen verfügbaren Termin auf dieser Seite, um direkt bei Dr. Cornejo zu reservieren. Die Zahlung wird sicher bei der Buchung verarbeitet — die Beratung ist bestätigt, sobald die Zahlung abgeschlossen ist. Sie erhalten sofort eine Einladung zum Kalender. Die Beratungen erfolgen per sicherem Videoanruf auf Spanisch. Wenn Sie eine psychiatrische Krise oder Selbstverletzungs Gedanken haben, rufen Sie bitte 112 an oder gehen Sie sofort in die Notaufnahme — warten Sie nicht auf einen Termin.",
+          "category": null,
+          "sortOrder": 4,
+          "isActive": true
+        },
+        {
+          "id": "cmrny1yk4006xbsjuoa0lyc3u",
+          "locale": "DE",
+          "question": "Was sind die Qualifikationen von Dr. Cornejo?",
+          "answer": "Dr. Mónica Fabiana Cornejo Román hat ihr Medizinstudium an der Universidad Nacional de Tucumán abgeschlossen und ihre Facharztausbildung in Psychiatrie im Hospital Borda mit Unterstützung der Universidad Maimónides absolviert. Sie hat ihre Ausbildung im Hospital del Mar – Parc de Salut Mar in Barcelona erweitert. Sie hat einen Master in Klinischer Neuropsychopharmakologie, eine Spezialisierung in Medizinrecht und eine Spezialisierung in Schmerz. Sie hat als Beraterin in der Fundación Vidal y Barraquer, im Hospital Sagrat Cor und im BSA Badalona gearbeitet. Sie ist ordentliches Mitglied der American Psychiatric Association und hat mit dem CIBERSAM des Hospital Sant Pau zusammengearbeitet. Registriert im CGCOM (Nr. 64182).",
+          "category": null,
+          "sortOrder": 5,
+          "isActive": true
+        }
+      ],
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:29:00.000Z"
+      },
+      "bookabilityByServiceId": {
+        "cmre7qeyz0050ngjund1jqnhp": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:29:00.000Z"
+        }
+      }
+    }
+  }
+}

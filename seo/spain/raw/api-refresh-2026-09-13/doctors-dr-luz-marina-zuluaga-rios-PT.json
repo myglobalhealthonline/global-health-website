@@ -1,0 +1,481 @@
+{
+  "endpoint": "/api/countries/es/doctors/dr-luz-marina-zuluaga-rios?locale=PT",
+  "checkedAt": "2026-09-13T22:38:52.272Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "doctor": {
+      "id": "cmrdpwar1001n01ruwhfioqs6",
+      "slug": "dr-luz-marina-zuluaga-rios",
+      "fullName": "Dra. Luz Marina Zuluaga Ríos",
+      "title": "Médico Medicina Geral",
+      "bio": "<p>Dra. Luz Marina Zuluaga Ríos</p><p>Especialista em Doença Vascular Periférica, Cirurgia do Pé Diabético e Reabilitação Cardiopulmonar</p><p>A Dra. Luz Marina Zuluaga Ríos é médica e cirurgiã com uma sólida formação acadêmica e ampla experiência clínica em Angiologia e Doença Vascular Periférica, Cirurgia do Pé Diabético e Reabilitação Cardiopulmonar. Conta com mais de seis anos de experiência profissional no manejo de pacientes com doenças cardiovasculares, pulmonares, metabólicas e crônicas complexas.</p><p>É bolsista em Cirurgia do Pé Diabético na Universidade Complutense de Madrid, centro de referência internacional neste campo, e especialista em Angiologia e Doença Vascular Periférica no Hospital Italiano de Buenos Aires, instituição terciária de alta complexidade. Também conta com formação avançada em Ecografia Vascular Clínica e Reabilitação Cardíaca e Pulmonar, incluindo experiência em unidades de cuidados intensivos.</p><p>Sua prática clínica se concentra no tratamento de feridas complexas, no salvamento de extremidades, no manejo de pacientes críticos e na reabilitação cardiovascular e respiratória integral, assim como no atendimento a longo prazo de pacientes com doenças crônicas e descompensações agudas. Além disso, conta com experiência acadêmica como docente universitária a nível de graduação e pós-graduação, e participa ativamente de projetos de pesquisa científica e publicações internacionais.</p><p>A Dra. Luz Marina participa regularmente de congressos médicos e programas de educação continuada, mantendo uma prática baseada na evidência científica, na inovação clínica e na segurança do paciente. É reconhecida por suas sólidas habilidades de comunicação, sua capacidade de trabalhar em equipes multiculturais e sua abordagem compassiva e centrada no paciente.</p><p>Na Global Health, faz parte da equipe médica que oferece consultas especializadas online, proporcionando uma avaliação clínica precisa, orientação de tratamento personalizada e acompanhamento contínuo, com forte foco em melhorar a qualidade de vida e prevenir complicações.</p>",
+      "seoTitle": "Dr Luz Marina Zuluaga Rios - Medicina Geral | Global Health",
+      "seoDescription": "Dra. Luz Marina Zuluaga Ríos, especialista em Doença Vascular Periférica, Pé Diabético e Reabilitação Cardiopulmonar. Ampla experiência clínica internacional. Consulta online na Global Health.",
+      "lastReviewedAt": null,
+      "medicalRegistrationUrl": "https://www.cgcom.es/servicios/consulta-publica-de-colegiados",
+      "qualifications": [
+        "Becaria en Cirugía del Pie Diabético — Universidad Complutense de Madrid (UCM)",
+        "Especialista en Angiología y Enfermedad Vascular Periférica — Hospital Italiano de Buenos Aires",
+        "Formación avanzada en Ecografía Vascular Clínica",
+        "Formación avanzada en Rehabilitación Cardíaca y Pulmonar",
+        "Experiencia en Unidades de Cuidados Intensivos",
+        "Docente universitaria — pregrado y posgrado",
+        "Investigadora — publicaciones internacionales",
+        "6+ años experiencia clínica en enfermedades cardiovasculares, pulmonares, metabólicas y crónicas complejas",
+        "Registrada en CGCOM (nº 202009507)"
+      ],
+      "instagramUrl": null,
+      "facebookUrl": null,
+      "linkedinUrl": null,
+      "languages": [
+        "Spanish"
+      ],
+      "active": true,
+      "updatedAt": "2026-08-20T06:21:49.901Z",
+      "resolvedLocale": "PT",
+      "readyToIndex": true,
+      "nonPhysician": false,
+      "imcRegistration": "202009507",
+      "registrationChamber": "CGCOM",
+      "registrationDivision": null,
+      "registrationVerified": true,
+      "credentials": [],
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmrf4ltgn025a01qr1u42wab4",
+          "kind": "IMAGE",
+          "key": "doctor-cmrdpwar1001n01ruwhfioqs6-profile",
+          "path": "/api/media/media/7705e1b2-d861-4863-98dc-601b42fd2438-6e02deef-61fd-407a-b0b1-d2ed83b13bb9-1_all_7932.webp",
+          "altText": "Dra. Luz Marina Zuluaga Ríos",
+          "title": null,
+          "caption": "Dra. Luz Marina Zuluaga Ríos — General Medicine Doctor, Global Health Spain",
+          "description": "Dra. Luz Marina Zuluaga Ríos — General Medicine Doctor at Global Health Spain. Book an online video consultation.",
+          "focalX": 58,
+          "focalY": 27,
+          "zoom": 1
+        }
+      ],
+      "additionalCountries": [
+        {
+          "id": "cmrdpwar9001o01ru83sfune2",
+          "countryId": "cmqy9rw9w00x001qkq31jktqq",
+          "active": true,
+          "country": {
+            "id": "cmqy9rw9w00x001qkq31jktqq",
+            "code": "es",
+            "name": "Spain",
+            "defaultLocale": "ES"
+          },
+          "chamberEntity": "CGCOM",
+          "registrationNumber": "202009507",
+          "registrationUrl": null,
+          "division": null,
+          "isVerified": true,
+          "translations": [
+            {
+              "locale": "CS",
+              "title": "Lékař všeobecné medicíny",
+              "bio": "<p>MUDr. Luz Marina Zuluaga Ríos</p><p>Specialistka na periferní cévní onemocnění, chirurgii diabetické nohy a kardiopulmonální rehabilitaci</p><p>Dra. Luz Marina Zuluaga Ríos je lékařka a chirurgička s pevnou akademickou průpravou a rozsáhlými klinickými zkušenostmi v oblasti angiologie a periferního cévního onemocnění, chirurgie diabetické nohy a kardiopulmonální rehabilitace. Má více než šest let odborné praxe v péči o pacienty s kardiovaskulárními, plicními, metabolickými a chronickými komplexními onemocněními.</p><p>Je stážistkou v chirurgii diabetické nohy na Universidad Complutense de Madrid, mezinárodně referenčním pracovišti v této oblasti, a specialistkou v angiologii a periferním cévním onemocnění v Hospital Italiano de Buenos Aires, vysoce komplexní terciární instituci. Má také pokročilé vzdělání v klinické cévní ultrasonografii a srdeční a plicní rehabilitaci, včetně zkušeností na jednotkách intenzivní péče.</p><p>Její klinická praxe se zaměřuje na léčbu komplikovaných ran, záchranu končetin, péči o kriticky nemocné pacienty a komplexní kardiovaskulární a respirační rehabilitaci, stejně jako na dlouhodobou péči o pacienty s chronickými onemocněními a akutními dekompenzacemi. Kromě toho má akademické zkušenosti jako vysokoškolská učitelka v pregraduálním i postgraduálním studiu, a aktivně se podílí na projektech vědeckého výzkumu a mezinárodních publikacích.</p><p>Dra. Luz Marina se pravidelně účastní lékařských kongresů a programů celoživotního vzdělávání, přičemž udržuje praxi založenou na vědeckých důkazech, klinických inovacích a bezpečnosti pacienta. Je uznávána pro své vynikající komunikační dovednosti, schopnost pracovat v multikulturních týmech a svůj soucitný a na pacienta zaměřený přístup.</p><p>V Global Health je součástí lékařského týmu, který poskytuje specializované online konzultace, a nabízí přesné klinické vyšetření, personalizované doporučení léčby a průběžné sledování, s výrazným zaměřením na zlepšení kvality života a prevenci komplikací.</p>",
+              "seoTitle": "Dr Luz Marina Zuluaga Rios - Všeobecné lékařství | Global Health",
+              "seoDescription": "Dra. Luz Marina Zuluaga Ríos, specialistka na periferní cévní onemocnění, diabetickou nohu a kardiopulmonální rehabilitaci. Široké mezinárodní klinické zkušenosti. Online konzultace v Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "DE",
+              "title": "Arzt für Allgemeinmedizin",
+              "bio": "<p>Dra. Luz Marina Zuluaga Ríos</p><p>Fachärztin für periphere Gefäßerkrankungen, diabetische Fußchirurgie und kardiopulmonale Rehabilitation</p><p>Dr. Luz Marina Zuluaga Ríos ist Ärztin und Chirurgin mit einer soliden akademischen Ausbildung und umfangreicher klinischer Erfahrung in Angiologie und peripheren Gefäßerkrankungen, diabetischer Fußchirurgie und kardiopulmonaler Rehabilitation. Sie verfügt über mehr als sechs Jahre berufliche Erfahrung in der Behandlung von Patienten mit kardiovaskulären, pulmonalen, metabolischen und komplexen chronischen Erkrankungen.</p><p>Sie ist Stipendiatin in diabetischer Fußchirurgie an der Universidad Complutense de Madrid, einem internationalen Referenzzentrum auf diesem Gebiet, und Fachärztin für Angiologie und periphere Gefäßerkrankungen am Hospital Italiano de Buenos Aires, einer tertiären Einrichtung mit hoher Komplexität. Außerdem verfügt sie über eine fortgeschrittene Ausbildung in klinischer Gefäßultraschalluntersuchung und kardialer und pulmonaler Rehabilitation, einschließlich Erfahrung auf Intensivstationen.</p><p>Ihre klinische Tätigkeit konzentriert sich auf die Behandlung komplexer Wunden, Extremitätenerhaltung, die Versorgung kritisch kranker Patienten und die umfassende kardiovaskuläre und respiratorische Rehabilitation sowie auf die Langzeitbetreuung von Patienten mit chronischen Erkrankungen und akuten Dekompensationen. Darüber hinaus verfügt sie über akademische Erfahrung als Universitätsdozentin auf Bachelor- und Masterebene, und sie beteiligt sich aktiv an wissenschaftlichen Forschungsprojekten und internationalen Veröffentlichungen.</p><p>Dra. Luz Marina nimmt regelmäßig an medizinischen Kongressen und Fortbildungsprogrammen teil und pflegt eine auf wissenschaftlicher Evidenz, klinischer Innovation und Patientensicherheit basierende Praxis. Sie ist bekannt für ihre ausgeprägten Kommunikationsfähigkeiten, ihre Fähigkeit, in multikulturellen Teams zu arbeiten, und ihren einfühlsamen, patientenzentrierten Ansatz.</p><p>Bei Global Health ist sie Teil des medizinischen Teams, das spezialisierte Online-Konsultationen anbietet, mit einer präzisen klinischen Beurteilung, personalisierter Behandlungsberatung und kontinuierlicher Nachsorge, mit starkem Fokus auf die Verbesserung der Lebensqualität und die Vorbeugung von Komplikationen.</p>",
+              "seoTitle": "Dr Luz Marina Zuluaga Rios - Allgemeinmedizin | Global Health",
+              "seoDescription": "Dr. Luz Marina Zuluaga Ríos, Spezialistin für periphere Gefäßerkrankungen, diabetischen Fuß und kardiopulmonale Rehabilitation. Umfangreiche internationale klinische Erfahrung. Online-Sprechstunde bei Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "ES",
+              "title": "Médica General — Enfermedad Vascular Periférica y Rehabilitación Cardiopulmonar",
+              "bio": "<p>La Dra. Luz Marina Zuluaga Ríos es médica y cirujana con más de seis años de experiencia clínica especializada en Angiología y Enfermedad Vascular Periférica, Cirugía del Pie Diabético y Rehabilitación Cardiopulmonar, una combinación de especialidades que refleja su capacidad para acompañar al paciente con enfermedades crónicas complejas desde la evaluación vascular hasta la recuperación funcional.</p><p>Es becaria en Cirugía del Pie Diabético en la Universidad Complutense de Madrid, centro de referencia internacional en esta especialidad, y especialista en Angiología y Enfermedad Vascular Periférica en el Hospital Italiano de Buenos Aires, una de las instituciones terciarias de mayor complejidad y prestigio de América Latina. Cuenta además con formación avanzada en Ecografía Vascular Clínica y Rehabilitación Cardíaca y Pulmonar, incluyendo experiencia en unidades de cuidados intensivos.</p><p>Su práctica clínica se centra en el tratamiento de heridas complejas, el salvamento de extremidades, el manejo de pacientes críticos y la rehabilitación cardiovascular y respiratoria integral. Es docente universitaria a nivel de pregrado y posgrado, participa activamente en proyectos de investigación y publicaciones internacionales, y asiste regularmente a congresos de educación médica continua.</p><p>La Dra. Luz Marina es especialmente valiosa para pacientes diabéticos con complicaciones vasculares o en riesgo de pie diabético, una de las principales causas de amputación en España, y para pacientes en proceso de rehabilitación cardiopulmonar que necesitan orientación clínica precisa y seguimiento continuo.</p><h3>Qué ofrece online</h3><ul><li><strong>Evaluación de enfermedad vascular periférica:</strong> orientación sobre síntomas de insuficiencia vascular periférica, dolor en reposo, claudicación intermitente, cambios en extremidades</li><li><strong>Pie diabético:</strong> evaluación de riesgo, orientación sobre cuidado preventivo del pie en pacientes diabéticos, interpretación de informes y segunda opinión sobre tratamiento</li><li><strong>Heridas complejas:</strong> evaluación online de heridas crónicas o de difícil cicatrización, orientación sobre manejo y derivación</li><li><strong>Rehabilitación cardiopulmonar:</strong> orientación sobre programas de rehabilitación cardíaca y pulmonar, seguimiento de pacientes post-infarto, post-cirugía cardíaca o con EPOC/insuficiencia cardíaca</li><li><strong>Angiología:</strong> evaluación de síntomas venosos y arteriales, orientación sobre opciones diagnósticas y terapéuticas</li><li><strong>Ecografía vascular:</strong> interpretación de informes de ecografía vascular clínica previos</li><li><strong>Enfermedades crónicas y metabólicas:</strong> diabetes, hipertensión, dislipemia, EPOC, insuficiencia cardíaca, evaluación y orientación sobre manejo a largo plazo</li><li><strong>Segunda opinión:</strong> sobre diagnósticos vasculares, planes de tratamiento o indicaciones quirúrgicas</li><li><strong>Medicina general:</strong> enfermedades agudas, salud preventiva y evaluación general</li></ul><p>Nota importante: Los procedimientos quirúrgicos, la exploración física vascular y la ecografía Doppler in situ requieren visita presencial. La consulta online con la Dra. Luz Marina ofrece una evaluación clínica de alta calidad para orientación, planificación, segunda opinión y seguimiento, con especial valor para pacientes con enfermedades crónicas que necesitan continuidad asistencial.</p><h3>Su enfoque</h3><p>La Dra. Luz Marina es reconocida por sus sólidas habilidades de comunicación, su capacidad para trabajar en equipos multiculturales y su enfoque compasivo y centrado en el paciente. Su doble perfil, clínica activa e investigadora universitaria, le permite ofrecer una atención fundamentada en la evidencia más reciente y adaptada a la situación individual de cada paciente.</p><p>Idiomas: Español</p>",
+              "seoTitle": "Dra. Luz Marina Zuluaga — Vascular y Rehabilitación Cardiopulmonar | CGCOM 202009507 | Global Health España",
+              "seoDescription": "Reserve una videoconsulta con Dra. Luz Marina Zuluaga — especialista en enfermedad vascular periférica y pie diabético (CGCOM nº 202009507). Becaria UCM · Hospital Italiano Buenos Aires · Rehabilitación cardiopulmonar · Heridas complejas. Cita el mismo día.",
+              "seoKeywords": [
+                "Medicina General",
+                "pé diabetico",
+                "enfermedad vascular periferica",
+                "rehabilitation cardiopulmonar"
+              ]
+            },
+            {
+              "locale": "PT",
+              "title": "Médico Medicina Geral",
+              "bio": "<p>Dra. Luz Marina Zuluaga Ríos</p><p>Especialista em Doença Vascular Periférica, Cirurgia do Pé Diabético e Reabilitação Cardiopulmonar</p><p>A Dra. Luz Marina Zuluaga Ríos é médica e cirurgiã com uma sólida formação acadêmica e ampla experiência clínica em Angiologia e Doença Vascular Periférica, Cirurgia do Pé Diabético e Reabilitação Cardiopulmonar. Conta com mais de seis anos de experiência profissional no manejo de pacientes com doenças cardiovasculares, pulmonares, metabólicas e crônicas complexas.</p><p>É bolsista em Cirurgia do Pé Diabético na Universidade Complutense de Madrid, centro de referência internacional neste campo, e especialista em Angiologia e Doença Vascular Periférica no Hospital Italiano de Buenos Aires, instituição terciária de alta complexidade. Também conta com formação avançada em Ecografia Vascular Clínica e Reabilitação Cardíaca e Pulmonar, incluindo experiência em unidades de cuidados intensivos.</p><p>Sua prática clínica se concentra no tratamento de feridas complexas, no salvamento de extremidades, no manejo de pacientes críticos e na reabilitação cardiovascular e respiratória integral, assim como no atendimento a longo prazo de pacientes com doenças crônicas e descompensações agudas. Além disso, conta com experiência acadêmica como docente universitária a nível de graduação e pós-graduação, e participa ativamente de projetos de pesquisa científica e publicações internacionais.</p><p>A Dra. Luz Marina participa regularmente de congressos médicos e programas de educação continuada, mantendo uma prática baseada na evidência científica, na inovação clínica e na segurança do paciente. É reconhecida por suas sólidas habilidades de comunicação, sua capacidade de trabalhar em equipes multiculturais e sua abordagem compassiva e centrada no paciente.</p><p>Na Global Health, faz parte da equipe médica que oferece consultas especializadas online, proporcionando uma avaliação clínica precisa, orientação de tratamento personalizada e acompanhamento contínuo, com forte foco em melhorar a qualidade de vida e prevenir complicações.</p>",
+              "seoTitle": "Dr Luz Marina Zuluaga Rios - Medicina Geral | Global Health",
+              "seoDescription": "Dra. Luz Marina Zuluaga Ríos, especialista em Doença Vascular Periférica, Pé Diabético e Reabilitação Cardiopulmonar. Ampla experiência clínica internacional. Consulta online na Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "EN",
+              "title": "General Medicine Doctor",
+              "bio": "<p>Dr. Luz Marina Zuluaga Ríos</p><p>Specialist in Peripheral Vascular Disease, Diabetic Foot Surgery, and Cardiopulmonary Rehabilitation</p><p>Dr. Luz Marina Zuluaga Ríos is a physician and surgeon with a strong academic background and extensive clinical experience in Angiology and Peripheral Vascular Disease, Diabetic Foot Surgery, and Cardiopulmonary Rehabilitation. She has more than six years of professional experience in the management of patients with cardiovascular, pulmonary, metabolic, and complex chronic diseases.</p><p>She is a fellow in Diabetic Foot Surgery at the Complutense University of Madrid, an international reference center in this field, and a specialist in Angiology and Peripheral Vascular Disease at Hospital Italiano de Buenos Aires, a highly complex tertiary institution. She also has advanced training in Clinical Vascular Ultrasound and Cardiac and Pulmonary Rehabilitation, including experience in intensive care units.</p><p>Her clinical practice focuses on the treatment of complex wounds, limb salvage, the management of critically ill patients and comprehensive cardiovascular and respiratory rehabilitation, as well as the long-term care of patients with chronic diseases and acute decompensations. In addition, she has academic experience as a university professor at undergraduate and graduate levels, and she actively participates in scientific research projects and international publications.</p><p>Dr. Luz Marina regularly attends medical congresses and continuing education programs, maintaining a practice based on scientific evidence, clinical innovation, and patient safety. She is recognized for her strong communication skills, her ability to work in multicultural teams, and her compassionate, patient-centered approach.</p><p>At Global Health, she is part of the medical team that provides specialized online consultations, offering accurate clinical evaluation, personalized treatment guidance, and ongoing follow-up, with a strong focus on improving quality of life and preventing complications.</p>",
+              "seoTitle": "Dr Luz Marina Zuluaga Rios - General Medicine | Global Health",
+              "seoDescription": "Dr. Luz Marina Zuluaga Ríos, specialist in Peripheral Vascular Disease, Diabetic Foot, and Cardiopulmonary Rehabilitation. Extensive international clinical experience. Online consultation at Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "RO",
+              "title": "Medic medicină generală",
+              "bio": "<p>Dra. Luz Marina Zuluaga Ríos</p><p>Specialistă în Boală Vasculară Periferică, Chirurgia Piciorului Diabetic și Reabilitare Cardiopulmonară</p><p>Dna. Luz Marina Zuluaga Ríos este medic și chirurg, cu o pregătire academică solidă și o experiență clinică vastă în Angiologie și Boală Vasculară Periferică, Chirurgia Piciorului Diabetic și Reabilitare Cardiopulmonară. Are peste șase ani de experiență profesională în îngrijirea pacienților cu afecțiuni cardiovasculare, pulmonare, metabolice și cronice complexe.</p><p>Este bursieră în Chirurgia Piciorului Diabetic la Universitatea Complutense din Madrid, centru de referință internațional în acest domeniu, și specialistă în Angiologie și Boală Vasculară Periferică la Spitalul Italian din Buenos Aires, instituție terțiară de înaltă complexitate. De asemenea, are formare avansată în Ecografie Vasculară Clinică și Reabilitare Cardiacă și Pulmonară, inclusiv experiență în unități de terapie intensivă.</p><p>Practica sa clinică se concentrează pe tratamentul rănilor complexe, salvarea membrelor, managementul pacienților critici și reabilitarea cardiovasculară și respiratorie integrată, precum și pe îngrijirea pe termen lung a pacienților cu boli cronice și decompensări acute. În plus, are experiență academică ca cadru didactic universitar la nivel de licență și masterat, și participă activ la proiecte de cercetare științifică și publicații internaționale.</p><p>Dna. Luz Marina participă regulat la congrese medicale și programe de educație continuă, menținând o practică bazată pe dovezi științifice, inovație clinică și siguranța pacientului. Este recunoscută pentru abilitățile sale solide de comunicare, capacitatea de a lucra în echipe multiculturale și abordarea sa empatică și centrată pe pacient.</p><p>La Global Health, face parte din echipa medicală care oferă consultații specializate online, oferind o evaluare clinică precisă, orientare personalizată a tratamentului și monitorizare continuă, cu un accent puternic pe îmbunătățirea calității vieții și prevenirea complicațiilor.</p>",
+              "seoTitle": "Dr Luz Marina Zuluaga Rios - Medicină generală | Global Health",
+              "seoDescription": "Dra. Luz Marina Zuluaga Ríos, specialistă în boala vasculară periferică, picior diabetic și reabilitare cardiopulmonară. Amplă experiență clinică internațională. Consultație online la Global Health.",
+              "seoKeywords": []
+            }
+          ],
+          "divisionTranslations": []
+        }
+      ],
+      "assignedServices": [
+        {
+          "serviceId": "cmre7q7k0002vngju6v73lt8h",
+          "service": {
+            "id": "cmre7q7k0002vngju6v73lt8h",
+            "slug": "medicina-viaje-online",
+            "name": "Medicina de Viaje",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 4900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7pz0n000kngjuib862zxl",
+          "service": {
+            "id": "cmre7pz0n000kngjuib862zxl",
+            "slug": "renovacion-tratamiento-online",
+            "name": "Renovación de Tratamiento",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 2900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q3a5001ongjur495me3b",
+          "service": {
+            "id": "cmre7q3a5001ongjur495me3b",
+            "slug": "salud-mental-online",
+            "name": "Salud Mental",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 5900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q8mg0037ngjuso41eynq",
+          "service": {
+            "id": "cmre7q8mg0037ngjuso41eynq",
+            "slug": "musculoesqueletico-online",
+            "name": "Musculoesquelético",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7qas1003sngjus0w2obwn",
+          "service": {
+            "id": "cmre7qas1003sngjus0w2obwn",
+            "slug": "derivaciones-pruebas-online",
+            "name": "Derivaciones y Pruebas",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q1550013ngjujfvwl58k",
+          "service": {
+            "id": "cmre7q1550013ngjujfvwl58k",
+            "slug": "salud-masculina-online",
+            "name": "Salud Masculina",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 4900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q6hn002lngju3chey2ai",
+          "service": {
+            "id": "cmre7q6hn002lngju3chey2ai",
+            "slug": "caida-cabello-online",
+            "name": "Caída del Cabello",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q4co001yngjucbez1gc0",
+          "service": {
+            "id": "cmre7q4co001yngjucbez1gc0",
+            "slug": "consulta-piel-online",
+            "name": "Consulta de Piel",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 4500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q27m001dngju2395w6dl",
+          "service": {
+            "id": "cmre7q27m001dngju2395w6dl",
+            "slug": "salud-femenina-online",
+            "name": "Salud Femenina",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 4900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7qcvw004engju2es5log3",
+          "service": {
+            "id": "cmre7qcvw004engju2es5log3",
+            "slug": "dejar-de-fumar-online",
+            "name": "Dejar de Fumar",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7pxza000angjubr3s2h65",
+          "service": {
+            "id": "cmre7pxza000angjubr3s2h65",
+            "slug": "justificante-medico-online",
+            "name": "Justificante Médico",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q9p1003ingjuum9voxoc",
+          "service": {
+            "id": "cmre7q9p1003ingjuum9voxoc",
+            "slug": "enfermedades-cronicas-online",
+            "name": "Enfermedades Crónicas",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 4500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q5fw002angjuebao1obt",
+          "service": {
+            "id": "cmre7q5fw002angjuebao1obt",
+            "slug": "segunda-opinion-medica",
+            "name": "Segunda Opinión Médica",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 4900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q038000ungjuxs5rkyxy",
+          "service": {
+            "id": "cmre7q038000ungjuxs5rkyxy",
+            "slug": "control-peso-online",
+            "name": "Control de Peso",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 4500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7pwwv0000ngjuwvmiacw9",
+          "service": {
+            "id": "cmre7pwwv0000ngjuwvmiacw9",
+            "slug": "consulta-medica-online",
+            "name": "Consulta Médica General",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3900,
+            "currencyCode": "EUR"
+          }
+        }
+      ],
+      "seoKeywords": [],
+      "resolvedMarketLocale": "PT",
+      "specialties": [],
+      "faqs": [
+        {
+          "id": "cmrnz6kas00rybsjun22gdiwl",
+          "locale": "PT",
+          "question": "A Dra. Zuluaga está registada no Consejo General de Colegios Oficiales de Médicos?",
+          "answer": "Sim. A Dra. Luz Marina Zuluaga Ríos está registada no Consejo General de Colegios Oficiales de Médicos com o número 202009507. Pode verificar este registo em cgcom.es. A Dra. Zuluaga é bolseira em Cirurgia do Pé Diabético na Universidade Complutense de Madrid e especialista em Angiologia e Doença Vascular Periférica no Hospital Italiano de Buenos Aires.",
+          "category": null,
+          "sortOrder": 0,
+          "isActive": true
+        },
+        {
+          "id": "cmrnz6kas00rzbsjux2uki5bk",
+          "locale": "PT",
+          "question": "Que consultas vasculares e de reabilitação oferece a Dra. Zuluaga online?",
+          "answer": "A Dra. Zuluaga oferece: avaliação de doença vascular periférica (claudicação, dor em repouso, alterações nas extremidades), avaliação de risco de pé diabético e orientação preventiva, feridas complexas e crónicas, reabilitação cardiopulmonar (orientação e seguimento pós-infarto, pós-cirurgia cardíaca, DPOC, insuficiência cardíaca), angiologia, interpretação de relatórios de ecografia vascular, doenças crónicas e metabólicas (diabetes, hipertensão, dislipidemia, DPOC), segunda opinião vascular e medicina geral.",
+          "category": null,
+          "sortOrder": 1,
+          "isActive": true
+        },
+        {
+          "id": "cmrnz6kas00s0bsjuth1u5tm3",
+          "locale": "PT",
+          "question": "O que é o pé diabético e por que é importante a avaliação precoce?",
+          "answer": "O pé diabético é uma complicação grave da diabetes mellitus que resulta da combinação de neuropatia periférica, insuficiência vascular e maior suscetibilidade a infeções — e é uma das principais causas de amputação não traumática em Espanha. A avaliação precoce do risco de pé diabético pode prevenir úlceras, infeções graves e amputações. A Dra. Zuluaga é bolseira em Cirurgia do Pé Diabético na Universidade Complutense de Madrid — um dos centros de referência internacionais nesta patologia. Para pacientes diabéticos com qualquer sintoma nos pés — formigueiro, perda de sensibilidade, alterações na pele ou feridas que não cicatrizam — uma avaliação online é um primeiro passo valioso para estratificar o risco.",
+          "category": null,
+          "sortOrder": 2,
+          "isActive": true
+        },
+        {
+          "id": "cmrnz6kas00s1bsjuiwlpqdjc",
+          "locale": "PT",
+          "question": "A Dra. Zuluaga pode orientar sobre reabilitação cardíaca e pulmonar?",
+          "answer": "Sim. A Dra. Zuluaga possui formação avançada em Reabilitação Cardíaca e Pulmonar, incluindo experiência em unidades de cuidados intensivos. Pode orientar online pacientes em processo de reabilitação após um infarto, uma cirurgia cardíaca ou com diagnóstico de DPOC ou insuficiência cardíaca — incluindo orientações de atividade física progressiva, manejo de sintomas, seguimento de parâmetros e coordenação com a equipa de reabilitação presencial.",
+          "category": null,
+          "sortOrder": 3,
+          "isActive": true
+        },
+        {
+          "id": "cmrnz6kas00s2bsju5nkeiqk8",
+          "locale": "PT",
+          "question": "Como posso reservar uma consulta com a Dra. Zuluaga?",
+          "answer": "Selecione um horário disponível nesta página para reservar diretamente com a Dra. Zuluaga. O pagamento é processado de forma segura ao reservar — a consulta fica confirmada uma vez completado o pagamento. Receberá imediatamente um convite para o calendário. As consultas realizam-se por videoconferência segura em espanhol. Se tiver relatórios de ecografia vascular, análises recentes ou relatórios médicos anteriores, recomendamos que os partilhe antes da consulta para uma avaliação mais precisa. As consultas no mesmo dia costumam estar disponíveis.",
+          "category": null,
+          "sortOrder": 4,
+          "isActive": true
+        },
+        {
+          "id": "cmrnz6kas00s3bsjunj7dqif6",
+          "locale": "PT",
+          "question": "Quais são as qualificações da Dra. Zuluaga?",
+          "answer": "A Dra. Luz Marina Zuluaga Ríos é médica e cirurgiã com mais de seis anos de experiência clínica. É bolseira em Cirurgia do Pé Diabético na Universidade Complutense de Madrid e especialista em Angiologia e Doença Vascular Periférica no Hospital Italiano de Buenos Aires. Possui formação avançada em Ecografia Vascular Clínica e Reabilitação Cardíaca e Pulmonar, experiência em UCI, e exerce como docente universitária e investigadora com publicações internacionais. Está registada no CGCOM (nº 202009507).",
+          "category": null,
+          "sortOrder": 5,
+          "isActive": true
+        }
+      ],
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+      },
+      "bookabilityByServiceId": {
+        "cmre7q7k0002vngju6v73lt8h": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+        },
+        "cmre7pz0n000kngjuib862zxl": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+        },
+        "cmre7q3a5001ongjur495me3b": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+        },
+        "cmre7q8mg0037ngjuso41eynq": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+        },
+        "cmre7qas1003sngjus0w2obwn": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+        },
+        "cmre7q1550013ngjujfvwl58k": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+        },
+        "cmre7q6hn002lngju3chey2ai": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+        },
+        "cmre7q4co001yngjucbez1gc0": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+        },
+        "cmre7q27m001dngju2395w6dl": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+        },
+        "cmre7qcvw004engju2es5log3": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+        },
+        "cmre7pxza000angjubr3s2h65": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+        },
+        "cmre7q9p1003ingjuum9voxoc": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+        },
+        "cmre7q5fw002angjuebao1obt": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+        },
+        "cmre7q038000ungjuxs5rkyxy": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+        },
+        "cmre7pwwv0000ngjuwvmiacw9": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,152 @@
+{
+  "endpoint": "/api/services/justificante-medico-online?countryCode=es&locale=DE",
+  "checkedAt": "2026-09-13T22:38:11.887Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7pxza000angjubr3s2h65",
+      "kind": "GENERAL",
+      "slug": "justificante-medico-online",
+      "name": "Ärztliche Bescheinigung",
+      "summary": null,
+      "seoTitle": "Online-Ärztliches Attest Spanien | Privates ärztliches Attest | Am selben Tag",
+      "seoDescription": "Benötigen Sie ein ärztliches Attest oder eine Arbeitsunfähigkeitsbescheinigung? Unsere approbierten Ärzte beurteilen Ihre Symptome per Videoanruf und stellen klinische Unterlagen aus, wo dies medizinisch gerechtfertigt ist. Noch am selben Tag.",
+      "seoKeywords": [
+        "justificante médico online España",
+        "certificado médico privado online España",
+        "justificante laboral médico online",
+        "certificado incapacidad laboral privado",
+        "baja médica privada online España"
+      ],
+      "heroTitle": "Online-ärztliche Bescheinigung — Privates klinisches Attest am selben Tag",
+      "heroDescription": "Du bist krank und kannst nicht arbeiten. Du benötigst ein ärztliches Dokument, das dies bestätigt — heute, ohne dich zu bewegen, ohne in einem Wartezimmer zu warten, wenn es dir ohnehin schon schlecht geht. Unsere Ärztinnen und Ärzte, die gemäß den Anforderungen der Organización Médica Colegial (OMC) zugelassen sind, beurteilen deine Symptome per sicherer Videokonsultation und stellen ein privates ärztliches Attest aus, wenn die klinische Situation dies rechtfertigt. Am selben Tag, von jedem Ort in Spanien aus, auf Spanisch, Englisch oder Portugiesisch.",
+      "detailBody": "<h2>Privates ärztliches Attest vs. Krankschreibung des öffentlichen Systems — was ist was</h2><p>Den Unterschied zu verstehen vermeidet Frustrationen und hilft dir, genau zu wissen, was du über diesen Service erhalten kannst.</p><p><strong>Krankschreibung wegen vorübergehender Arbeitsunfähigkeit (IT) des öffentlichen Systems</strong></p><p>Die offizielle Krankschreibung des öffentlichen Systems wird vom Hausarzt oder vom Notarzt des SNS ausgestellt. Sie wird elektronisch an die Sozialversicherung und an den Arbeitgeber übermittelt. Der Arbeitnehmer kann ab dem vierten Tag der Krankschreibung Anspruch auf eine finanzielle Leistung der INSS haben — die ersten drei Tage in Standardarbeitsverträgen zu Lasten des Unternehmens.</p><p>Global Health stellt keine Krankschreibungen des SNS aus. Diese erfordern einen Arzt, der mit dem öffentlichen System vertraglich verbunden ist.</p><p><strong>Privates ärztliches Attest</strong></p><p>Das private ärztliche Attest ist ein klinisches Dokument, das von einem zugelassenen Arzt ausgestellt wird und bescheinigt, dass der Patient untersucht wurde und am Tag der Konsultation eine gesundheitliche Situation aufweist, die mit der Arbeitstätigkeit unvereinbar ist. Dieses Attest:</p><ul><li>Wird ausschließlich nach klinischem Ermessen des Arztes nach vollständiger Untersuchung ausgestellt</li><li>Ist als Nachweis gegenüber dem Arbeitgeber für Arbeitsabwesenheiten gültig</li><li>Ist besonders nützlich für Selbständige und Freiberufler</li><li>Dient als klinische Begleitdokumentation, wenn du später deinen Hausarzt aufsuchst, um die IT des öffentlichen Systems zu beantragen</li><li>Wird von den meisten Arbeitgebern als Begründung für Abwesenheiten akzeptiert, insbesondere in den ersten Tagen</li></ul><p>Bist du selbständig oder freiberuflich tätig? Wenn du Beiträge für allgemeine Risiken zahlst, hast du Anspruch auf eine Leistung wegen IT — jedoch verwaltet über deine zuständige Krankenkasse/Mutualität. Das private ärztliche Attest kann dir als erste Dokumentation dienen. Kläre deine individuelle Situation zu Beginn der Konsultation mit deinem Arzt.</p><h2>Wann dieser Service nützlich ist</h2><p><strong>Für Arbeitnehmer</strong></p><p>Du bist in den ersten Tagen krank und brauchst ein ärztliches Dokument, um deine Abwesenheit gegenüber deinem Unternehmen zu rechtfertigen. Viele Arbeitgeber akzeptieren private ärztliche Atteste für kurzzeitige Abwesenheiten — insbesondere, wenn du noch keinen Termin bei deinem Hausarzt des SNS bekommen konntest. Dein Arzt kann außerdem beurteilen, ob deine Situation es erfordert, dass du eine offizielle Krankschreibung über das öffentliche System beantragst.</p><p><strong>Für Selbständige</strong></p><p>Als Selbständiger hast du nicht im gleichen Sinn wie ein Arbeitnehmer einen zugewiesenen Hausarzt, und die Verwaltung der IT ist anders. Ein privates ärztliches Attest dokumentiert deine gesundheitliche Situation klinisch für die Unterlagen, die du aufbewahren musst, und kann als Nachweis gegenüber Kunden oder Mitarbeitenden dienen.</p><p><strong>Für Arbeitnehmer mit Krankenkasse/Mutualität</strong></p><p>Wenn dein Unternehmen eine mit der Sozialversicherung zusammenarbeitende Krankenkasse/Mutualität hat, kann das private ärztliche Attest als vorläufige Dokumentation dienen, während du die Krankschreibung über die Krankenkasse/Mutualität beantragst.</p><p><strong>Für alle, die schnell klinische Dokumentation benötigen</strong></p><p>Wenn du deinen Gesundheitszustand heute klinisch dokumentieren musst — für irgendeinen beruflichen, akademischen oder administrativen Zweck — und nicht auf einen Termin im öffentlichen System warten kannst, bietet dieser Service eine vollständige klinische Untersuchung und eine Bescheinigung, wenn dies medizinisch gerechtfertigt ist.</p><h2>Was die Konsultation beinhaltet</h2><p><strong>Vollständige klinische Untersuchung</strong></p><p>Der Arzt erhebt eine vollständige Krankengeschichte deiner Symptome — Beginn, Dauer, Intensität, begleitende Symptome, relevante Vorerkrankungen, aktuelle Medikation und Art deiner Arbeitstätigkeit. Die Beurteilung ist klinisch und strukturiert — keine Formalität.</p><p><strong>Beurteilung der Arbeitsunfähigkeit</strong></p><p>Der Arzt beurteilt, ob die klinische Situation mit der Arbeitstätigkeit vereinbar oder unvereinbar ist, welche Art von Dokumentation für deinen Fall klinisch angemessen ist und ob es empfehlenswert ist, das öffentliche System aufzusuchen, um eine formelle IT zu beantragen.</p><p><strong>Privates ärztliches Attest — nach klinischem Ermessen des Arztes</strong></p><p>Wenn der Arzt feststellt, dass deine klinische Situation die Ausstellung eines ärztlichen Attests über vorübergehende Arbeitsunfähigkeit rechtfertigt, stellt er es noch am selben Tag der Konsultation aus. Das Attest dokumentiert das Datum der Untersuchung, die Symptome, die klinische Beurteilung und die Unvereinbarkeit mit der Arbeitstätigkeit — ohne eine Diagnose anzugeben, wenn der Patient dies nicht wünscht.</p><p><strong>Zusätzliche klinische Dokumentation — nach Ermessen des Arztes</strong></p><p>Wenn deine Erkrankung eine Behandlung erfordert — einschließlich der Behandlung von Infektionen, wo dies klinisch angezeigt ist — stellt der Arzt die entsprechende klinische Dokumentation noch am selben Tag aus.</p><p><strong>Hinweise zum öffentlichen Weg</strong></p><p>Wenn deine klinische Situation darauf hindeutet, dass du eine formelle IT über das öffentliche System oder deine Krankenkasse/Mutualität beantragen musst, wird der Arzt dich klar über die nächsten Schritte informieren.</p><h2>Was dieser Service nicht leisten kann</h2><p>Transparenz ist Teil der klinischen Qualität. Es gibt Dinge, die dieser Service nicht bereitstellen kann:</p><ul><li>Wir stellen keine Krankschreibungen des SNS aus — diese erfordern einen mit dem öffentlichen System vertraglich verbundenen Arzt</li><li>Wir stellen keine Dokumente ohne klinische Untersuchung aus — das ärztliche Attest wird ausschließlich nach Ermessen des Arztes nach vollständiger Beurteilung der Symptome ausgestellt</li><li>Wir stellen keine rückwirkenden Atteste aus — unsere Ärzte können einen Krankheitszeitraum, den sie nicht zum betreffenden Zeitpunkt beurteilt haben, klinisch nicht bescheinigen. Wenn du seit Tagen krank bist, ohne einen Arzt konsultiert zu haben, erwähne dies zu Beginn der Konsultation — der Arzt wird dich darüber informieren, was angemessen ist</li><li>Wir garantieren nicht die Ausstellung des Attests — die Entscheidung ist ausschließlich klinisch und basiert auf der ärztlichen Beurteilung</li></ul><h2>Wichtige Informationen vor der Buchung</h2><ul><li>Die Entscheidung über die Ausstellung eines ärztlichen Attests ist immer eine klinische Entscheidung des Arztes nach vollständiger Beurteilung — sie kann im Voraus nicht bestätigt oder garantiert werden</li><li>Rückwirkende Atteste werden nicht routinemäßig ausgestellt — wenn du seit Tagen krank bist, ohne einen Arzt konsultiert zu haben, erwähne dies zu Beginn der Konsultation</li><li>Wenn deine klinische Situation die Beantragung einer formellen IT des öffentlichen Systems erfordert, wird der Arzt dich anleiten, wie du vorgehen sollst</li><li>Halte Informationen zu deiner Vertragsart oder beruflichen Situation bereit — das hilft dem Arzt, dich zur für deinen Fall am besten geeigneten Dokumentation zu beraten</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 20,
+      "durationMinutes": 15,
+      "basePriceCents": 3500,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.258Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k1xj0004asju4irm8wql",
+          "kind": "IMAGE",
+          "key": "media/777fd6c2-3350-4635-805b-7f2a97e4d03b-es-justificante-medico-online.png",
+          "path": "/api/media/media/777fd6c2-3350-4635-805b-7f2a97e4d03b-es-justificante-medico-online.png",
+          "altText": "Justificante Médico"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7py7l000bngjuh4k0yxty",
+          "question": "Hat das private ärztliche Attest rechtliche Gültigkeit?",
+          "answer": "Ja. Ein privates ärztliches Attest, das von einem approbierten Arzt ausgestellt wurde, hat volle rechtliche Gültigkeit als klinisches Dokument. Die meisten Arbeitgeber akzeptieren es, um Fehlzeiten von der Arbeit zu rechtfertigen, insbesondere bei kurzer Dauer. Für die Geldleistung bei Arbeitsunfähigkeit (IT) der Sozialversicherung ist der offizielle Krankmeldeschein des SNS oder der Berufsgenossenschaft erforderlich.",
+          "sortOrder": 0,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7py7l000cngjuz5lrqajb",
+          "question": "Kann ich diesen Dienst nutzen, wenn ich selbstständig bin?",
+          "answer": "Ja. Selbstständige haben keinen Zugang zum gleichen Krankheitsausfallverfahren wie Arbeitnehmer. Das private ärztliche Attest dokumentiert klinisch Ihren Gesundheitszustand. Wenn Sie Beiträge für allgemeine Risiken zahlen, erkundigen Sie sich bei Ihrer kooperierenden Mutua, wie Sie die Arbeitsunfähigkeit (IT) handhaben können — der Arzt kann Sie beraten.",
+          "sortOrder": 1,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7py7l000dngjum1ra5ggc",
+          "question": "Gibt das Zertifikat die Diagnose an?",
+          "answer": "Das Zertifikat dokumentiert die klinische Untersuchung und die Beurteilung der vorübergehenden Arbeitsunfähigkeit. Wenn du möchtest, dass die genaue Diagnose nicht aufgeführt wird — aus Gründen der Privatsphäre — sprich das zu Beginn des Termins mit dem Arzt an.",
+          "sortOrder": 2,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7py7l000engjuvjco7xgn",
+          "question": "Kann ich ein rückwirkendes Zertifikat erhalten?",
+          "answer": "Nicht routinemäßig. Unsere Ärzte können einen Krankheitszeitraum, den sie damals nicht beurteilt haben, klinisch nicht bescheinigen. Wenn du seit Tagen krank bist, erwähne das zu Beginn der Konsultation.",
+          "sortOrder": 3,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7py7l000fngju21c0z9ru",
+          "question": "Muss mein Unternehmen das private ärztliche Attest akzeptieren?",
+          "answer": "Die rechtliche Verpflichtung hängt vom Tarifvertrag und der internen Richtlinie jedes Unternehmens ab. Im Allgemeinen akzeptiert die Mehrheit der Arbeitgeber private ärztliche Bescheinigungen für kurzzeitige Abwesenheiten.",
+          "sortOrder": 4,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7py7l000gngjudzsuritr",
+          "question": "Kann ich reservieren, wenn ich seit mehreren Tagen krank bin?",
+          "answer": "Ja — aber erwähne gleich zu Beginn des Termins, seit wie vielen Tagen du Symptome hast. Der Arzt beurteilt deine aktuelle klinische Situation und berät dich hinsichtlich der für deinen Fall am besten geeigneten Unterlagen.",
+          "sortOrder": 5,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7py7l000hngju4bk1dhmr",
+          "question": "Kann ich diesen Dienst von jedem Ort in Spanien aus nutzen?",
+          "answer": "Ja — einschließlich der Balearischen Inseln, der Kanarischen Inseln, Ceuta und Melilla. Du benötigst nur eine stabile Internetverbindung und ein Gerät mit Kamera.",
+          "sortOrder": 6,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7py7l000ingjulnv8ul2q",
+          "question": "In welchen Sprachen ist es verfügbar?",
+          "answer": "Spanisch, Englisch und Portugiesisch — je nach Verfügbarkeit des Arztes.",
+          "sortOrder": 7,
+          "resolvedLocale": "DE"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "DE",
+      "links": [
+        {
+          "id": "cmre7u8km0060g8juez35zzdi",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Consulta médica general con médico de cabecera?",
+          "body": "Si tu situación está relacionada con consulta médica general con médico de cabecera, nuestra Consulta Médica General te ofrece la evaluación adecuada.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+      }
+    }
+  }
+}

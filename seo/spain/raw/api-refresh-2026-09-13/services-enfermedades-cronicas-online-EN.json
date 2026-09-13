@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/enfermedades-cronicas-online?countryCode=es&locale=EN",
+  "checkedAt": "2026-09-13T22:38:41.477Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q9p1003ingjuum9voxoc",
+      "kind": "GENERAL",
+      "slug": "enfermedades-cronicas-online",
+      "name": "Chronic Disease Management",
+      "summary": null,
+      "seoTitle": "Chronic Disease Management Online Spain | GP Follow-up | Same Day",
+      "seoDescription": "Managing hypertension, diabetes, thyroid, or another long-term condition in Spain? Our OMC-registered GPs provide ongoing clinical follow-up by video call. Same-day appointments available anywhere in Spain.",
+      "seoKeywords": [
+        "enfermedades crónicas online España",
+        "hipertensión médico online España",
+        "diabetes seguimiento online España",
+        "tiroides médico online España",
+        "enfermedad crónica médico de cabecera online España"
+      ],
+      "heroTitle": "Chronic Disease Management — Ongoing GP Follow-up Online in Spain",
+      "heroDescription": "Managing a long-term condition — hypertension, diabetes, thyroid disease, asthma, or any other chronic condition — requires more than an annual review and a treatment continuation. It requires a GP who understands your case, monitors your progress, adjusts your management when things change, and helps you navigate the broader healthcare system when specialist input is needed. Our GPs, registered with the Spanish Medical Council (OMC — Organización Médica Colegial), provide ongoing chronic disease management by secure video call — the clinical continuity that should be the foundation of your long-term care. Same day, from anywhere in Spain, in English, Spanish, or Portuguese.",
+      "detailBody": "<h2>Chronic Disease Management vs. Treatment Renewal — Understanding the Difference</h2><p>Global Health offers two separate services for patients with long-term conditions:</p><p>Treatment Renewal is a single-consultation service for stable, established conditions — your condition has not changed, your treatment is working, and you need to continue. One consultation, clear outcome.</p><p>Chronic Disease Management is ongoing GP-level care — a doctor who knows your case over time, monitors your condition, adjusts management when needed, coordinates investigations and specialist referrals, and provides the continuity that makes chronic disease management genuinely effective rather than reactive.</p><p>If you are stable and just need to continue your treatment — Treatment Renewal is the right service. If you want a GP involved in managing your condition over time — Chronic Disease Management is appropriate.</p><h2>Who This Service Is For</h2><p>This service is appropriate for adults with:</p><ul><li>A diagnosed chronic condition who want ongoing GP-level management</li><li>A long-term condition that is not well controlled and needs active clinical review</li><li>Multiple co-existing conditions — for example diabetes with hypertension and dyslipidaemia — that require coordinated management</li><li>A long-term condition managed in another country that they want to continue managing now that they are living in Spain</li><li>A need for ongoing investigation monitoring — regular blood tests, HbA1c monitoring, thyroid function tracking — coordinated through a GP who knows their case</li><li>A chronic condition where lifestyle optimisation alongside management would improve outcomes</li><li>International residents or expats in Spain who want chronic disease follow-up in English or Portuguese without navigating the Spanish system</li></ul><h2>Why Continuity Matters</h2><p>Chronic disease changes. Blood pressure that was controlled can rise. HbA1c that was stable can drift. A medication that worked can become less effective over time. A new symptom can indicate a complication or a need to reconsider the management plan.</p><p>A GP who does not know your case sees only the current consultation. A GP who monitors you over time sees the pattern — and can identify changes before they become problems. This is the difference between reactive and proactive chronic disease management.</p><p>In Spain, chronic disease management in the public system depends on having an assigned GP — something many international residents and self-employed workers do not have. In the private sector, management tends to be fragmented between specialists without a GP coordinating the complete picture. The result is that patients with multiple chronic conditions frequently fall through the gaps between providers.</p><p>This service provides the coordinating GP layer that is often missing — a doctor who sees the whole patient, not just the current presenting complaint.</p><h2>Conditions Commonly Managed</h2><p><strong>Cardiovascular</strong></p><ul><li>Hypertension — ongoing blood pressure monitoring, medication review, lifestyle optimisation, and cardiovascular risk management</li><li>Dyslipidaemia — cholesterol management, lipid monitoring, and cardiovascular risk assessment</li><li>Stable heart failure — community-managed at GP level, with cardiology referral coordination where needed</li><li>Stable atrial fibrillation — GP-level management, anticoagulation management, and cardiology liaison where needed</li><li>Post-cardiac event management — ongoing GP-level care following heart attack or cardiac procedure</li></ul><p><strong>Metabolic</strong></p><ul><li>Type 2 diabetes — HbA1c monitoring, medication review, lifestyle support, complication screening coordination, and specialist referral where needed</li><li>Pre-diabetes — structured lifestyle intervention and metabolic monitoring</li><li>Thyroid disease — hypothyroidism and hyperthyroidism management, TSH monitoring, medication adjustment</li><li>Metabolic syndrome — integrated management of metabolic risk factors</li><li>Obesity as a chronic condition — metabolic management alongside weight management support</li></ul><p><strong>Respiratory</strong></p><ul><li>Asthma — inhaler review, symptom control assessment, action plan development, and specialist referral where needed</li><li>COPD — ongoing management, exacerbation prevention, and pulmonology coordination where needed</li></ul><p><strong>Musculoskeletal and inflammatory</strong></p><ul><li>Osteoarthritis — ongoing management, functional assessment, and referral coordination</li><li>Stable inflammatory arthritis — GP-level management with rheumatology coordination where needed</li><li>Gout — uric acid monitoring and ongoing management</li><li>Osteoporosis — fracture risk assessment and ongoing management</li></ul><p><strong>Mental health — long-term management at GP level</strong></p><ul><li>Depression and anxiety — ongoing management of stable conditions at GP level</li><li>ADHD — ongoing support for patients with established diagnosis at GP level</li><li>Sleep disorders — ongoing assessment and management</li></ul><p><strong>Gastrointestinal</strong></p><ul><li>GORD and peptic ulcer disease — ongoing management and monitoring</li><li>Irritable bowel syndrome — ongoing management and lifestyle support</li><li>Stable inflammatory bowel disease — GP-level management with gastroenterology coordination</li></ul><p><strong>Other</strong></p><ul><li>Chronic kidney disease — GP-level monitoring with nephrology coordination</li><li>Anaemia — ongoing management and monitoring of the underlying cause</li><li>Chronic skin conditions — psoriasis, eczema at GP level</li><li>Autoimmune conditions — stable, community-managed presentations at GP level</li></ul><h2>What Ongoing Management Includes</h2><p><strong>Regular clinical reviews</strong></p><p>Your GP conducts structured clinical reviews at appropriate intervals for your condition — assessing symptom control, treatment response, side effects, any new developments, and overall wellbeing. The frequency is determined by your condition and clinical need.</p><p><strong>Monitoring coordination</strong></p><p>Your GP issues investigation requests for regular monitoring — blood tests, HbA1c, thyroid function, lipid panels, renal function, and other condition-specific investigations — and reviews results with you in a follow-up consultation.</p><p><strong>Medication management</strong></p><p>Your GP reviews your medication at each clinical review — assessing efficacy, tolerability, and whether adjustment is needed based on current clinical findings and monitoring results.</p><p><strong>Lifestyle and self-management support</strong></p><p>Evidence-based advice on diet, physical activity, weight management, smoking cessation, and alcohol moderation — tailored to your specific condition.</p><p><strong>Specialist liaison and referral</strong></p><p>When specialist input is needed — cardiology, endocrinology, pulmonology, rheumatology, gastroenterology, or other specialties — your GP coordinates the referral, provides a comprehensive referral letter, and maintains the clinical relationship as your GP during and after specialist involvement.</p><p><strong>Clinical documentation — at the doctor's professional discretion</strong></p><p>When clinically indicated at each review, your GP issues appropriate clinical documentation valid at any pharmacy in Spain.</p><p>Note: Controlled substances and certain narcotics cannot be issued electronically under Spanish law. Your GP advises if this applies to your situation.</p><p><strong>Clinical continuity</strong></p><p>Because your GP knows your case over time, clinical decisions are made in the context of your full history — not just the presenting complaint in a single consultation.</p><h2>Chronic Disease Management Without a Registered Spanish GP</h2><p>Spain's public system provides chronic disease management through registered GPs — but only for patients who are registered. For international residents who have not yet registered, self-employed workers without an assigned GP, or those who prefer to manage their care in English or Portuguese, access to structured chronic disease management is a genuine gap.</p><p>Global Health provides this care in English, Spanish, and Portuguese. Your consultations are documented, your monitoring is coordinated, and your management is structured — giving you the clinical continuity that chronic disease management requires, in a language you can fully understand and engage with.</p><p>If you have a GP in the Spanish public system, this service works as a complement — not a substitute. Some patients use Global Health for chronic disease follow-up in English or Portuguese while maintaining their public system registration for access to subsidised medication and SNS specialist referrals.</p>",
+      "ctaLabel": null,
+      "sortOrder": 130,
+      "durationMinutes": 20,
+      "basePriceCents": 4500,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.265Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k03k0003asjuhdggeok6",
+          "kind": "IMAGE",
+          "key": "media/a1cea8fc-3744-4057-88bf-50ec7787455c-es-enfermedades-cronicas-online.png",
+          "path": "/api/media/media/a1cea8fc-3744-4057-88bf-50ec7787455c-es-enfermedades-cronicas-online.png",
+          "altText": "Enfermedades Crónicas"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q9y8003jngju19ywqer8",
+          "question": "How is this different from a treatment renewal?",
+          "answer": "Treatment Renewal is a one-off consultation for a stable condition — renewing a treatment that is working well. Chronic Disease follow-up is ongoing care — a doctor who knows your case over time, monitors your condition, adjusts management when necessary, and is involved in your long-term health.",
+          "sortOrder": 0,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q9y9003kngjufbvlcqes",
+          "question": "How often will I need to have a consultation?",
+          "answer": "It depends on your condition and how well controlled it is. For stable and well-controlled conditions, a quarterly or semiannual review is generally appropriate. For less well-controlled or more complex conditions, more frequent review is needed. Your doctor will advise you on the appropriate review schedule at the first consultation.",
+          "sortOrder": 1,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q9y9003lngjunfhyg0p2",
+          "question": "Can the doctor access my Spanish medical history?",
+          "answer": "No. The doctors at Global Health do not have access to the electronic medical record system of the Spanish public health system. Please bring any relevant medical documentation — previous blood test results, specialist letters, imaging reports, and a list of your current medication — to your first appointment.",
+          "sortOrder": 2,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q9y9003mngju1ewqjbvw",
+          "question": "What happens if I need a specialist?",
+          "answer": "When specialized evaluation is needed, your doctor issues a formal referral letter and advises you on access to the appropriate specialist in Spain. Access to private specialists is generally straightforward in Spain’s major cities — Global Health coordinates this as part of ongoing follow-up.",
+          "sortOrder": 3,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q9y9003nngju8medvh22",
+          "question": "Can I use this service if I have a primary care doctor in Spain?",
+          "answer": "Yes. Some patients use Global Health for follow-up consultations for chronic diseases in English or Portuguese alongside their Spanish GP record — especially for conditions where they want to discuss management in detail in a language they fully understand.",
+          "sortOrder": 4,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q9y9003ongju4afhm07p",
+          "question": "What happens if I need emergency care for my chronic illness?",
+          "answer": "The management of chronic disease emergencies — hypertensive crisis, diabetic emergency, acute cardiac event — requires immediate emergency care. Call 112 or go to the nearest emergency department immediately. Ongoing follow-up through Global Health is for non-urgent chronic disease care.",
+          "sortOrder": 5,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q9y9003pngjud60s6yca",
+          "question": "Do I need Spanish health insurance?",
+          "answer": "No. It is a private direct-pay service. The clinical documentation issued through this service is dispensed at the full private price regardless of insurance status.",
+          "sortOrder": 6,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q9y9003qngjufrh3v5qn",
+          "question": "Can I use this service from anywhere in Spain?",
+          "answer": "Yes — including the Balearic Islands, the Canary Islands, Ceuta and Melilla. You only need a stable internet connection and a device with a camera.",
+          "sortOrder": 7,
+          "resolvedLocale": "EN"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "EN",
+      "links": [
+        {
+          "id": "cmre7si5j002eg8jurnfmgprs",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre evaluación cardiológica especializada?",
+          "body": "Nuestra Cardiología Especialista está pensada específicamente para evaluación cardiológica especializada.",
+          "ctaLabel": "Cardiología Especialista",
+          "targetSlug": "cardiologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7skhw002kg8judewg26hr",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre evaluación neurológica especializada?",
+          "body": "Nuestra Neurología Especialista está pensada específicamente para evaluación neurológica especializada.",
+          "ctaLabel": "Neurología Especialista",
+          "targetSlug": "neurologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7sglb002ag8jup3a4q0tq",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Control de peso en diabetes e hipotiroidismo?",
+          "body": "Si tu situación está relacionada con control de peso en diabetes e hipotiroidismo, nuestra Control de Peso te ofrece la evaluación adecuada.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7shde002cg8jufeul55oo",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con analíticas de control y monitorización?",
+          "body": "Para analíticas de control y monitorización, consulta nuestra página de Derivaciones y Pruebas — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Derivaciones y Pruebas",
+          "targetSlug": "derivaciones-pruebas-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+      }
+    }
+  }
+}

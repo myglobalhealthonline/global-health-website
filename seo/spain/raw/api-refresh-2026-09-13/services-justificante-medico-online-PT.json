@@ -1,0 +1,152 @@
+{
+  "endpoint": "/api/services/justificante-medico-online?countryCode=es&locale=PT",
+  "checkedAt": "2026-09-13T22:38:56.094Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7pxza000angjubr3s2h65",
+      "kind": "GENERAL",
+      "slug": "justificante-medico-online",
+      "name": "Atestado Médico",
+      "summary": null,
+      "seoTitle": "Atestado Médico Online Espanha | Certificado Médico Privado | Mesmo Dia",
+      "seoDescription": "Precisa de um atestado médico ou certificado de incapacidade laboral? Os nossos médicos inscritos na ordem avaliam os seus sintomas por videochamada e emitem documentação clínica quando esteja clinicamente justificado. No mesmo dia.",
+      "seoKeywords": [
+        "justificante médico online España",
+        "certificado médico privado online España",
+        "justificante laboral médico online",
+        "certificado incapacidad laboral privado",
+        "baja médica privada online España"
+      ],
+      "heroTitle": "Atestado Médico Online — Certificado Clínico Privado no Mesmo Dia",
+      "heroDescription": "Estás doente e não podes trabalhar. Precisas de um documento médico que o comprove — hoje, sem te deslocares, sem esperar numa sala de espera quando já te sentes mal. Os nossos médicos, inscritos de acordo com os requisitos da Organização Médica Colegial (OMC), avaliam os teus sintomas por videochamada segura e emitem um certificado médico privado quando a situação clínica o justifica. No mesmo dia, a partir de qualquer ponto de Espanha, em espanhol, inglês ou português.",
+      "detailBody": "<h2>Atestado médico privado vs. baixa do sistema público — o que é cada coisa</h2><p>Entender a diferença evita frustrações e permite saber exatamente o que podes obter através deste serviço.</p><p><strong>Parte de baixa por Incapacidade Temporária (IT) do sistema público</strong></p><p>O parte de baixa oficial do sistema público é emitido pelo médico de família ou pelo médico de urgência do SNS. É comunicado eletronicamente à Segurança Social e ao empregador. O trabalhador pode ter direito a prestação económica do INSS a partir do quarto dia de baixa — com os três primeiros a cargo da empresa em contratos laborais standard.</p><p>Global Health não emite partes de baixa do SNS. Estes requerem um médico contratado com o sistema público.</p><p><strong>Atestado médico privado</strong></p><p>O atestado médico privado é um documento clínico emitido por um médico inscrito na ordem que comprova que o paciente foi avaliado e apresenta uma situação de saúde incompatível com a atividade laboral na data da consulta. Este atestado:</p><ul><li>É emitido exclusivamente por critério clínico do médico após avaliação completa</li><li>É válido como justificação perante o empregador para ausências laborais</li><li>É especialmente útil para autónomos e trabalhadores por conta própria</li><li>Serve como documentação clínica de suporte se depois fores ao teu médico de família para tramitar a IT do sistema público</li><li>É aceite pela maioria dos empregadores para justificar ausências, especialmente nos primeiros dias</li></ul><p>És autónomo ou trabalhador por conta própria? Se descontas para contingências comuns, tens direito a prestação por IT — mas gerida através da tua mútuo colaboradora. O atestado médico privado pode servir-te como documentação inicial. Consulta a tua situação específica com o teu médico no início da consulta.</p><h2>Quando este serviço é útil</h2><p><strong>Para trabalhadores por conta de outrem</strong></p><p>Estás doente nos primeiros dias e precisas de um documento médico para justificar a tua ausência perante a tua empresa. Muitos empregadores aceitam atestados médicos privados para ausências de curta duração — especialmente quando ainda não conseguiste marcação com o teu médico de família do SNS. O teu médico pode ainda avaliar se a tua situação requer que procures uma parte de baixa oficial através do sistema público.</p><p><strong>Para autónomos</strong></p><p>Como autónomo não tens médico de família atribuído no mesmo sentido que um trabalhador por conta de outrem, e a gestão da IT é diferente. Um atestado médico privado documenta clinicamente a tua situação de saúde para os registos que necessites manter e pode servir de suporte perante clientes ou colaboradores.</p><p><strong>Para trabalhadores com mútuo</strong></p><p>Se a tua empresa tem mútuo colaboradora com a Segurança Social, o atestado médico privado pode servir como documentação prévia enquanto geres a baixa através da mútuo.</p><p><strong>Para quem precisa de documentação clínica rápida</strong></p><p>Se precisas de documentar clinicamente o teu estado de saúde hoje — para qualquer fim laboral, académico ou administrativo — e não podes esperar por marcação no sistema público, este serviço oferece avaliação clínica completa e certificação quando está clinicamente justificado.</p><h2>O que inclui a consulta</h2><p><strong>Avaliação clínica completa</strong></p><p>O médico recolhe uma história clínica completa dos teus sintomas — início, duração, intensidade, sintomas associados, antecedentes relevantes, medicação atual e natureza da tua atividade laboral. A avaliação é clínica e estruturada — não um mero procedimento administrativo.</p><p><strong>Avaliação da incapacidade laboral</strong></p><p>O médico avalia se a situação clínica é compatível ou incompatível com a atividade laboral, que tipo de documentação é clinicamente apropriada para o teu caso, e se é recomendável que recorras ao sistema público para tramitar uma IT formal.</p><p><strong>Atestado médico privado — por critério clínico do médico</strong></p><p>Se o médico determinar que a tua situação clínica justifica a emissão de um atestado médico de incapacidade temporária para o trabalho, emite-o no mesmo dia da consulta. O atestado documenta a data da avaliação, os sintomas, a avaliação clínica e a incompatibilidade com a atividade laboral — sem especificar diagnóstico se o paciente não o desejar.</p><p><strong>Documentação clínica adicional — por critério do médico</strong></p><p>Se a tua doença requer tratamento — incluindo gestão de infeções quando clinicamente indicado — o médico emite a documentação clínica correspondente no mesmo dia.</p><p><strong>Orientação sobre a via pública</strong></p><p>Se a tua situação clínica sugerir que precisas de tramitar uma IT formal através do sistema público ou da tua mútuo, o médico orienta-te claramente sobre os passos a seguir.</p><h2>O que este serviço não pode fazer</h2><p>A transparência faz parte da qualidade clínica. Há coisas que este serviço não pode fornecer:</p><ul><li>Não emitimos partes de baixa do SNS — estes requerem médico contratado com o sistema público</li><li>Não emitimos documentação sem avaliação clínica — o atestado médico é emitido exclusivamente por critério do médico após avaliação completa dos sintomas</li><li>Não emitimos atestados retroativos — os nossos médicos não podem certificar clinicamente um período de doença que não avaliaram no momento. Se estás doente há dias sem consultar, menciona-o no início da consulta — o médico orienta-te sobre o que é apropriado</li><li>Não garantimos a emissão do atestado — a decisão é exclusivamente clínica, baseada na avaliação médica</li></ul><h2>Informação importante antes de reservar</h2><ul><li>A decisão de emitir um atestado médico é sempre uma decisão clínica do médico após avaliação completa — não pode ser confirmada nem garantida antecipadamente</li><li>Os atestados retroativos não são emitidos de forma rotineira — se estás doente há dias sem ter consultado nenhum médico, menciona-o no início da consulta</li><li>Se a tua situação clínica requer tramitar uma IT formal do sistema público, o médico orienta-te sobre como fazê-lo</li><li>Tens de ter preparada informação sobre o teu tipo de contrato ou situação laboral — ajuda o médico a orientar-te sobre a documentação mais adequada para o teu caso</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 20,
+      "durationMinutes": 15,
+      "basePriceCents": 3500,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.258Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k1xj0004asju4irm8wql",
+          "kind": "IMAGE",
+          "key": "media/777fd6c2-3350-4635-805b-7f2a97e4d03b-es-justificante-medico-online.png",
+          "path": "/api/media/media/777fd6c2-3350-4635-805b-7f2a97e4d03b-es-justificante-medico-online.png",
+          "altText": "Justificante Médico"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7py7l000bngjuh4k0yxty",
+          "question": "O certificado médico privado tem validade legal?",
+          "answer": "Sim. Um certificado médico privado emitido por um médico inscrito na ordem profissional tem plena validade legal como documento clínico. A maioria dos empregadores o aceita para justificar ausências ao trabalho, especialmente de curta duração. Para a prestação económica por IT da Segurança Social, é necessário o parte de baixa oficial do SNS ou da mutua.",
+          "sortOrder": 0,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7py7l000cngjuz5lrqajb",
+          "question": "Posso usar este serviço se eu for autônomo?",
+          "answer": "Sim. Os trabalhadores independentes não têm acesso ao mesmo circuito de IT que os trabalhadores por conta de outrem. O atestado médico privado documenta clinicamente a sua situação de saúde. Se contribui por contingências comuns, consulte a sua mutua colaboradora sobre como gerir a IT — o médico pode orientá-lo.",
+          "sortOrder": 1,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7py7l000dngjum1ra5ggc",
+          "question": "O certificado especifica o diagnóstico?",
+          "answer": "O certificado documenta a avaliação clínica e a avaliação de incapacidade temporária para o trabalho. Se preferir que não conste o diagnóstico específico — por motivos de privacidade — comente isso com o médico no início da consulta.",
+          "sortOrder": 2,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7py7l000engjuvjco7xgn",
+          "question": "Posso obter um certificado retroativo?",
+          "answer": "Não de forma rotineira. Nossos médicos não podem certificar clinicamente um período de doença que não avaliaram na altura. Se você está doente há dias, mencione isso no início da consulta.",
+          "sortOrder": 3,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7py7l000fngju21c0z9ru",
+          "question": "A minha empresa tem de aceitar o atestado médico privado?",
+          "answer": "A obrigação legal depende da convenção coletiva e da política interna de cada empresa. Em geral, a maioria dos empregadores aceita atestados médicos particulares para ausências de curta duração.",
+          "sortOrder": 4,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7py7l000gngjudzsuritr",
+          "question": "Posso reservar se estiver doente há vários dias?",
+          "answer": "Sim — mas menciona desde o início da consulta há quantos dias estás com sintomas. O médico avalia a tua situação clínica atual e orienta-te sobre a documentação mais adequada para o teu caso.",
+          "sortOrder": 5,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7py7l000hngju4bk1dhmr",
+          "question": "Posso usar este serviço a partir de qualquer ponto de Espanha?",
+          "answer": "Sim — incluindo as Ilhas Baleares, Ilhas Canárias, Ceuta e Melilha. Só precisas de uma ligação estável à internet e de um dispositivo com câmara.",
+          "sortOrder": 6,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7py7l000ingjulnv8ul2q",
+          "question": "Em quais idiomas está disponível?",
+          "answer": "Espanhol, inglês e português — conforme disponibilidade do médico.",
+          "sortOrder": 7,
+          "resolvedLocale": "PT"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "PT",
+      "links": [
+        {
+          "id": "cmre7u8km0060g8juez35zzdi",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Consulta médica general con médico de cabecera?",
+          "body": "Si tu situación está relacionada con consulta médica general con médico de cabecera, nuestra Consulta Médica General te ofrece la evaluación adecuada.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+      }
+    }
+  }
+}

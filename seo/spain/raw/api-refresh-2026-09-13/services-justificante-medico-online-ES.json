@@ -1,0 +1,152 @@
+{
+  "endpoint": "/api/services/justificante-medico-online?countryCode=es&locale=ES",
+  "checkedAt": "2026-09-13T22:38:49.199Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7pxza000angjubr3s2h65",
+      "kind": "GENERAL",
+      "slug": "justificante-medico-online",
+      "name": "Justificante Médico",
+      "summary": null,
+      "seoTitle": "Justificante Médico Online España | Certificado Médico Privado | Mismo Día",
+      "seoDescription": "¿Necesitas un justificante médico o certificado de incapacidad laboral? Nuestros médicos colegiados evalúan tus síntomas por videollamada y emiten documentación clínica donde esté médicamente justificado. El mismo día.",
+      "seoKeywords": [
+        "justificante médico online España",
+        "certificado médico privado online España",
+        "justificante laboral médico online",
+        "certificado incapacidad laboral privado",
+        "baja médica privada online España"
+      ],
+      "heroTitle": "Justificante Médico Online — Certificado Clínico Privado el Mismo Día",
+      "heroDescription": "Estás enfermo y no puedes trabajar. Necesitas un documento médico que lo acredite — hoy, sin desplazarte, sin esperar en una sala de espera cuando ya te encuentras mal. Nuestros médicos, colegiados conforme a los requisitos de la Organización Médica Colegial (OMC), evalúan tus síntomas por videollamada segura y emiten un certificado médico privado donde la situación clínica lo justifica. El mismo día, desde cualquier punto de España, en español, inglés o portugués.",
+      "detailBody": "<h2>Certificado médico privado vs. baja del sistema público — qué es cada cosa</h2><p>Entender la diferencia evita frustraciones y te permite saber exactamente qué puedes obtener a través de este servicio.</p><p><strong>Parte de baja por Incapacidad Temporal (IT) del sistema público</strong></p><p>El parte de baja oficial del sistema público es emitido por el médico de cabecera o el médico de urgencias del SNS. Se comunica electrónicamente a la Seguridad Social y al empleador. El trabajador puede tener derecho a prestación económica de la INSS a partir del cuarto día de baja — con los tres primeros a cargo de la empresa en contratos laborales estándar.</p><p>Global Health no emite partes de baja del SNS. Estos requieren un médico contratado con el sistema público.</p><p><strong>Certificado médico privado</strong></p><p>El certificado médico privado es un documento clínico emitido por un médico colegiado que acredita que el paciente ha sido evaluado y presenta una situación de salud incompatible con la actividad laboral en la fecha de la consulta. Este certificado:</p><ul><li>Es emitido exclusivamente a criterio clínico del médico tras evaluación completa</li><li>Es válido como justificante ante el empleador para ausencias laborales</li><li>Es especialmente útil para autónomos y trabajadores por cuenta propia</li><li>Sirve como documentación clínica de respaldo si después acudes a tu médico de cabecera para tramitar la IT del sistema público</li><li>Es aceptado por la mayoría de empleadores para justificar ausencias, especialmente los primeros días</li></ul><p>¿Eres autónomo o trabajador por cuenta propia? Si cotizas por contingencias comunes, tienes derecho a prestación por IT — pero gestionada a través de tu mutua colaboradora. El certificado médico privado puede servirte como documentación inicial. Consulta tu situación específica con tu médico al inicio de la consulta.</p><h2>Cuándo es útil este servicio</h2><p><strong>Para trabajadores por cuenta ajena</strong></p><p>Estás enfermo los primeros días y necesitas un documento médico para justificar tu ausencia ante tu empresa. Muchos empleadores aceptan certificados médicos privados para ausencias de corta duración — especialmente cuando aún no has podido conseguir cita con tu médico de cabecera del SNS. Tu médico puede valorar además si tu situación requiere que busques un parte de baja oficial a través del sistema público.</p><p><strong>Para autónomos</strong></p><p>Como autónomo no tienes médico de cabecera asignado en el mismo sentido que un trabajador por cuenta ajena, y la gestión de la IT es diferente. Un certificado médico privado documenta clínicamente tu situación de salud para los registros que necesites mantener y puede servir de respaldo ante clientes o colaboradores.</p><p><strong>Para trabajadores con mutua</strong></p><p>Si tu empresa tiene mutua colaboradora con la Seguridad Social, el certificado médico privado puede servir como documentación previa mientras gestionas la baja a través de la mutua.</p><p><strong>Para quienes necesitan documentación clínica rápida</strong></p><p>Si necesitas documentar clínicamente tu estado de salud hoy — para cualquier fin laboral, académico o administrativo — y no puedes esperar cita en el sistema público, este servicio ofrece evaluación clínica completa y certificación donde está médicamente justificado.</p><h2>Qué incluye la consulta</h2><p><strong>Evaluación clínica completa</strong></p><p>El médico recoge una historia clínica completa de tus síntomas — inicio, duración, intensidad, síntomas asociados, antecedentes relevantes, medicación actual y naturaleza de tu actividad laboral. La evaluación es clínica y estructurada — no un trámite.</p><p><strong>Valoración de la incapacidad laboral</strong></p><p>El médico valora si la situación clínica es compatible o incompatible con la actividad laboral, qué tipo de documentación es clínicamente apropiada para tu caso, y si es recomendable que acudas al sistema público para tramitar una IT formal.</p><p><strong>Certificado médico privado — a criterio clínico del médico</strong></p><p>Si el médico determina que tu situación clínica justifica la emisión de un certificado médico de incapacidad temporal para el trabajo, lo emite el mismo día de la consulta. El certificado documenta la fecha de evaluación, los síntomas, la valoración clínica y la incompatibilidad con la actividad laboral — sin especificar diagnóstico si el paciente no lo desea.</p><p><strong>Documentación clínica adicional — a criterio del médico</strong></p><p>Si tu enfermedad requiere tratamiento — incluyendo gestión de infecciones donde esté clínicamente indicado — el médico emite la documentación clínica correspondiente el mismo día.</p><p><strong>Orientación sobre la vía pública</strong></p><p>Si tu situación clínica sugiere que necesitas tramitar una IT formal a través del sistema público o tu mutua, el médico te orienta claramente sobre los pasos a seguir.</p><h2>Lo que este servicio no puede hacer</h2><p>La transparencia es parte de la calidad clínica. Hay cosas que este servicio no puede proporcionar:</p><ul><li>No emitimos partes de baja del SNS — estos requieren médico contratado con el sistema público</li><li>No emitimos documentación sin evaluación clínica — el certificado médico se emite exclusivamente a criterio del médico tras evaluación completa de los síntomas</li><li>No emitimos certificados retroactivos — nuestros médicos no pueden certificar clínicamente un período de enfermedad que no evaluaron en su momento. Si llevas días enfermo sin consultar, mencíonalo al inicio de la consulta — el médico te orientará sobre qué es apropiado</li><li>No garantizamos la emisión del certificado — la decisión es exclusivamente clínica, basada en la evaluación médica</li></ul><h2>Información importante antes de reservar</h2><ul><li>La decisión de emitir un certificado médico es siempre una decisión clínica del médico tras evaluación completa — no puede confirmarse ni garantizarse de antemano</li><li>Los certificados retroactivos no se emiten de forma rutinaria — si llevas días enfermo sin haber consultado a ningún médico, mencíonalo al inicio de la consulta</li><li>Si tu situación clínica requiere tramitar una IT formal del sistema público, el médico te orientará sobre cómo hacerlo</li><li>Ten preparada información sobre tu tipo de contrato o situación laboral — ayuda al médico a orientarte sobre la documentación más adecuada para tu caso</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 20,
+      "durationMinutes": 15,
+      "basePriceCents": 3500,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.258Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k1xj0004asju4irm8wql",
+          "kind": "IMAGE",
+          "key": "media/777fd6c2-3350-4635-805b-7f2a97e4d03b-es-justificante-medico-online.png",
+          "path": "/api/media/media/777fd6c2-3350-4635-805b-7f2a97e4d03b-es-justificante-medico-online.png",
+          "altText": "Justificante Médico"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7py7l000bngjuh4k0yxty",
+          "question": "¿El certificado médico privado tiene validez legal?",
+          "answer": "Sí. Un certificado médico privado emitido por un médico colegiado tiene plena validez legal como documento clínico. La mayoría de empleadores lo aceptan para justificar ausencias laborales, especialmente de corta duración. Para la prestación económica por IT de la Seguridad Social es necesario el parte de baja oficial del SNS o la mutua.",
+          "sortOrder": 0,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7py7l000cngjuz5lrqajb",
+          "question": "¿Puedo usar este servicio si soy autónomo?",
+          "answer": "Sí. Los autónomos no tienen acceso al mismo circuito de IT que los trabajadores por cuenta ajena. El certificado médico privado documenta clínicamente tu situación de salud. Si cotizas por contingencias comunes, consulta con tu mutua colaboradora sobre cómo gestionar la IT — el médico puede orientarte.",
+          "sortOrder": 1,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7py7l000dngjum1ra5ggc",
+          "question": "¿El certificado especifica el diagnóstico?",
+          "answer": "El certificado documenta la evaluación clínica y la valoración de incapacidad temporal para el trabajo. Si prefieres que no figure el diagnóstico específico — por motivos de privacidad — coméntalo con el médico al inicio de la consulta.",
+          "sortOrder": 2,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7py7l000engjuvjco7xgn",
+          "question": "¿Puedo obtener un certificado retroactivo?",
+          "answer": "No de forma rutinaria. Nuestros médicos no pueden certificar clínicamente un período de enfermedad que no evaluaron en su momento. Si llevas días enfermo, mencíonalo al inicio de la consulta.",
+          "sortOrder": 3,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7py7l000fngju21c0z9ru",
+          "question": "¿Mi empresa tiene que aceptar el certificado médico privado?",
+          "answer": "La obligación legal depende del convenio colectivo y de la política interna de cada empresa. En general, la mayoría de empleadores aceptan certificados médicos privados para ausencias de corta duración.",
+          "sortOrder": 4,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7py7l000gngjudzsuritr",
+          "question": "¿Puedo reservar si llevo varios días enfermo?",
+          "answer": "Sí — pero menciona desde el inicio de la consulta cuántos días llevas con síntomas. El médico evalúa tu situación clínica actual y te orienta sobre la documentación más apropiada para tu caso.",
+          "sortOrder": 5,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7py7l000hngju4bk1dhmr",
+          "question": "¿Puedo usar este servicio desde cualquier punto de España?",
+          "answer": "Sí — incluyendo Islas Baleares, Islas Canarias, Ceuta y Melilla. Solo necesitas conexión estable a internet y un dispositivo con cámara.",
+          "sortOrder": 6,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7py7l000ingjulnv8ul2q",
+          "question": "¿En qué idiomas está disponible?",
+          "answer": "Español, inglés y portugués — según disponibilidad del médico.",
+          "sortOrder": 7,
+          "resolvedLocale": "ES"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "ES",
+      "links": [
+        {
+          "id": "cmre7u8km0060g8juez35zzdi",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Consulta médica general con médico de cabecera?",
+          "body": "Si tu situación está relacionada con consulta médica general con médico de cabecera, nuestra Consulta Médica General te ofrece la evaluación adecuada.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+      }
+    }
+  }
+}

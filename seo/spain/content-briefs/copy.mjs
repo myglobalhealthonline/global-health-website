@@ -79,6 +79,18 @@ export const dermAnswers = {
  'Dacă este necesară o biopsie, dermatologul va explica nevoia unei evaluări în persoană. Biopsia nu se poate realiza prin apel video, iar data depinde de centrul care o efectuează.'
  ]
 };
+// Service-specific answers replacing newFaqCopy entries by index (after the per-service filter).
+const csFemaleLanguages='Před rezervací zkontrolujte profil přidělené lékařky, cenu a dostupné termíny. Jazyky konzultace: ';
+export const faqOverrides = {
+ 'consulta-online-medicina-estetica':{
+  en:{1:'Note what concerns you and the result you hope for. Have your medication list, medical history, previous aesthetic treatments and any reports or quotes you want to discuss to hand.'},
+  de:{1:'Notieren Sie, was Sie stört und welches Ergebnis Sie sich wünschen. Halten Sie Ihre Medikamentenliste, Vorerkrankungen, frühere ästhetische Behandlungen sowie Befunde oder Kostenvoranschläge bereit, die Sie besprechen möchten.'},
+  cs:{1:'Poznamenejte si, co vás trápí a jaký výsledek očekáváte. Připravte si seznam užívaných léků, údaje o předchozích onemocněních a estetických ošetřeních a zprávy či cenové nabídky, které chcete probrat.',2:csFemaleLanguages},
+  pt:{1:'Anote o que o preocupa e que resultado espera. Tenha à mão a lista de medicamentos, os seus antecedentes, os tratamentos estéticos anteriores e os relatórios ou orçamentos que queira comentar.'},
+  ro:{1:'Notați ce vă preocupă și ce rezultat așteptați. Pregătiți lista medicamentelor, antecedentele medicale, tratamentele estetice anterioare și orice document medical sau ofertă de preț pe care doriți să le discutați.'}
+ },
+ 'consulta-salud-vascular-circulatoria':{cs:{1:csFemaleLanguages}}
+};
 export const newFaqCopy = {
  en:[['Does the video consultation include tests or procedures?','No. This is a medical video consultation. Tests that require equipment, physical examinations and procedures take place in person.'],['What should I prepare?','Have your previous reports and a list of your current medicines ready. Note when your symptoms started, any previous treatment and the questions you want to discuss.'],['Which consultation languages are available?','Check the assigned clinician’s profile, the price and available times before booking. Consultation languages: ']],
  cs:[['Zahrnuje videokonzultace vyšetření nebo zákroky?','Ne. Jde o lékařskou konzultaci přes video. Vyšetření vyžadující přístroje, fyzické vyšetření a zákroky probíhají osobně.'],['Co si mám připravit?','Připravte si předchozí zprávy a seznam užívaných léků. Poznamenejte si začátek obtíží, dosavadní léčbu a otázky, které chcete probrat.'],['V jakých jazycích probíhá konzultace?','Před rezervací zkontrolujte profil přiděleného lékaře, cenu a dostupné termíny. Jazyky konzultace: ']],

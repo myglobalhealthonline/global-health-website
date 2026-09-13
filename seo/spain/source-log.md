@@ -24,6 +24,10 @@ No project, tracker, saved keyword or outreach was created.
 | Retrieved sources | raw/external-pages-2026-09-13.json | Competitors, BOE and COPAO; Comunidad Madrid source returned 404 |
 | Public pages | raw/sitemap-2026-09-13.xml; raw/html/; raw/public-inventory-2026-09-13.json | 434 observed URLs; 422 live, 12 broken links |
 | APIs | raw/api/ | 246 responses, including locale service/profile lists and details |
+| Authenticated storage (14 Sept, owner-confirmed read-only) | raw/storage-preflight-2026-09-13.json (local, gitignored) | One REPEATABLE READ READ ONLY transaction; SHA-256 ecd8cb77…3fc61; no patient/appointment/account/banking tables |
+| API refresh (14 Sept) | raw/api-refresh-2026-09-13/; raw/source-refresh-2026-09-13.json | 140 draft sources re-fetched (UTC-dated folder); zero drift; Fidel Mesa/cardiology still not bookable |
+| PostgreSQL rehearsal (14 Sept) | raw/postgres-rehearsal-2026-09-13.json | Embedded local PostgreSQL 18.4 with current Prisma schema; production not touched |
+| Body localization (14 Sept) | content-briefs/body-localization.json | EN/DE/CS/PT/RO drafts of two ES bodies; AI-drafted then independently reviewed; not native-speaker or clinical approval |
 
 Primary administrative source: [BOE RD 625/2014](https://www.boe.es/buscar/act.php?id=BOE-A-2014-7684),
 article 2. It establishes the statutory sick-leave route; it does not certify every

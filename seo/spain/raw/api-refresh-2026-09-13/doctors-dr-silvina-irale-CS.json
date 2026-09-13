@@ -1,0 +1,225 @@
+{
+  "endpoint": "/api/countries/es/doctors/dr-silvina-irale?locale=CS",
+  "checkedAt": "2026-09-13T22:38:01.562Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "doctor": {
+      "id": "cmrdpu7ro001e01ruc1ycm5n5",
+      "slug": "dr-silvina-irale",
+      "fullName": "Dra. María Silvina Irale Tunkiewicz",
+      "title": "Lékař všeobecného lékařství",
+      "bio": "<p>Dra. María Silvina Irale Tunkiewicz, MD</p><p>Specialistka v pediatrii | estetická a anti-aging medicína</p><p>Dra. María Silvina Irale Tunkiewicz je lékařka s rozsáhlými zkušenostmi v primární pediatrické péči, s více než 20 lety klinické praxe v primární pediatrické péči a urgentní medicíně. Vystudovala medicínu na Národní univerzitě v Rosario, Argentina, a absolvovala rezidenturu v pediatrii v Sanatorio de Niños de Rosario, kde v roce 2000 získala titul specialistky v pediatrii. Její lékařský titul byl v roce 2025 uznán ve Španělsku.</p><p>Během své kariéry pracovala Dra. Silvina Irale rozsáhle v pediatrických urgentních službách, nemocniční péči a ambulantní primární pediatrické péči, kde poskytovala komplexní zdravotní péči kojencům, dětem a dospívajícím. Více než dvě desetiletí pracovala v Sanatorio de Niños, kde zajišťovala kontinuální pediatrickou péči, řešila akutní stavy a působila jako klinická pediatrická konzultantka. Pracovala také jako lékařka pediatrické urgentní medicíny v Urgencias SA, což posílilo její zkušenosti v akutní pediatrické péči a rychlém klinickém rozhodování.</p><p>Kromě své pediatrické specializace má Dra. Silvina Irale magisterský titul v estetické a anti-aging medicíně z Universidad Complutense de Madrid (2024). Tato dvojí specializace jí umožňuje spojovat lékařskou přesnost, bezpečnost a péči zaměřenou na pacienta v estetické medicíně, vždy vedenou přísnými klinickými standardy.</p><p><a href=\"http://dr.si/\"><u>Dra.</u></a> Silvina Irale je uznávána pro svůj empatický přístup, pevný klinický úsudek a závazek ke kvalitní medicíně založené na důkazech. Věnuje se podpoře rodin a pacientů prostřednictvím individuální péče, strategií preventivní zdravotní péče a dlouhodobé pohody.</p>",
+      "seoTitle": "Dr Silvina Irale - Pediatrická primární péče | Global Health",
+      "seoDescription": "Dra. María Silvina Irale Tunkiewicz, specialistka v pediatrii s více než 20 lety zkušeností. Magistra v estetické a anti-aging medicíně. Online konzultace v Global Health.",
+      "lastReviewedAt": null,
+      "medicalRegistrationUrl": "https://www.cgcom.es/servicios/consulta-publica-de-colegiados",
+      "qualifications": [
+        "Especialista en Pediatría — Sanatorio de Niños de Rosario (especialidad obtenida 2000)",
+        "Máster en Medicina Estética y Antienvejecimiento — Universidad Complutense de Madrid (UCM, 2024)",
+        "Médica de urgencias pediátricas — Urgencias SA, Argentina",
+        "20+ años práctica clínica pediátrica — Sanatorio de Niños de Rosario",
+        "Consultora clínica pediátrica",
+        "Licenciada en Medicina — Universidad Nacional de Rosario, Argentina",
+        "Homologación título médico en España (2025)",
+        "Registrada en CGCOM (nº 282889392)"
+      ],
+      "instagramUrl": null,
+      "facebookUrl": null,
+      "linkedinUrl": null,
+      "languages": [
+        "Spanish"
+      ],
+      "active": true,
+      "updatedAt": "2026-08-20T06:21:58.242Z",
+      "resolvedLocale": "CS",
+      "readyToIndex": true,
+      "nonPhysician": false,
+      "imcRegistration": "282889392",
+      "registrationChamber": "CGCOM",
+      "registrationDivision": null,
+      "registrationVerified": true,
+      "credentials": [],
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmrf4nd6l025m01qrnehhy3eo",
+          "kind": "IMAGE",
+          "key": "doctor-cmrdpu7ro001e01ruc1ycm5n5-profile",
+          "path": "/api/media/media/d2a739b0-1153-45f8-83f5-a184f99a8392-6e02deef-61fd-407a-b0b1-d2ed83b13bb9-1_all_7930.webp",
+          "altText": "Dra. María Silvina Irale Tunkiewicz",
+          "title": null,
+          "caption": "Dra. María Silvina Irale Tunkiewicz — General Medicine Physician, Global Health Spain",
+          "description": "Dra. María Silvina Irale Tunkiewicz — General Medicine Physician at Global Health Spain. Book an online video consultation.",
+          "focalX": 56,
+          "focalY": 25,
+          "zoom": 1
+        }
+      ],
+      "additionalCountries": [
+        {
+          "id": "cmrdpu7rw001f01rufzl5qyxi",
+          "countryId": "cmqy9rw9w00x001qkq31jktqq",
+          "active": true,
+          "country": {
+            "id": "cmqy9rw9w00x001qkq31jktqq",
+            "code": "es",
+            "name": "Spain",
+            "defaultLocale": "ES"
+          },
+          "chamberEntity": "CGCOM",
+          "registrationNumber": "282889392",
+          "registrationUrl": null,
+          "division": null,
+          "isVerified": true,
+          "translations": [
+            {
+              "locale": "ES",
+              "title": "Médica — Pediatría y Medicina Estética",
+              "bio": "<p>La Dra. María Silvina Irale Tunkiewicz es médica especialista en Pediatría con más de veinte años de práctica clínica en atención primaria pediátrica y urgencias pediátricas, una de las pediatras con mayor experiencia acumulada disponibles a través de consulta online en España.</p><p>Se graduó en Medicina por la Universidad Nacional de Rosario y completó su residencia en Pediatría en el Sanatorio de Niños de Rosario, donde obtuvo la especialidad en el año 2000 y continuó ejerciendo durante más de dos décadas, proporcionando atención pediátrica continua, gestionando urgencias y actuando como consultora clínica. Trabajó además como médica de urgencias pediátricas en Urgencias SA, donde desarrolló la capacidad de toma de decisiones clínicas rápidas en situaciones agudas pediátricas. Su título médico fue homologado en España en 2025.</p><p>En 2024 completó un Máster en Medicina Estética y Antienvejecimiento por la Universidad Complutense de Madrid, ampliando su práctica hacia la medicina estética con la misma rigorosidad clínica que ha definido su trayectoria pediátrica.</p><p>Para los padres, la experiencia de veinte años de la Dra. Irale significa algo concreto: ha visto prácticamente todo en pediatría. La fiebre que genera pánico a las 2 de la mañana, el sarpullido que no se sabe cómo clasificar, el desarrollo que parece ir más despacio de lo esperado. Sabe qué necesita atención inmediata y qué puede esperar, y sabe cómo explicárselo a los padres con claridad y sin alarmar innecesariamente.</p><h3>Qué ofrece online</h3><ul><li><strong>Pediatría general:</strong> evaluación de síntomas en lactantes, niños y adolescentes (fiebre, infecciones respiratorias, gastrointestinales, erupciones cutáneas, otitis, faringitis)</li><li><strong>Urgencias pediátricas:</strong> evaluación de síntomas agudos y orientación sobre urgencia real, manejo en casa o necesidad de acudir a urgencias</li><li><strong>Desarrollo infantil:</strong> consultas sobre crecimiento, desarrollo psicomotor, alimentación y sueño</li><li><strong>Salud del adolescente:</strong> seguimiento, salud mental del adolescente, nutrición, acné y preocupaciones propias de la adolescencia</li><li><strong>Vacunación:</strong> orientación sobre calendarios vacunales, dudas sobre vacunas y gestión de efectos secundarios</li><li><strong>Atención preventiva pediátrica:</strong> revisiones del niño sano, cribados y consejo sobre estilo de vida familiar</li><li><strong>Consulta estética online:</strong> evaluación y planificación de tratamientos estéticos (antienvejecimiento, procedimientos faciales, rejuvenecimiento cutáneo); los procedimientos se realizan presencialmente</li><li><strong>Medicina general:</strong> enfermedades agudas y crónicas en adultos, salud preventiva</li></ul><p>Nota importante: Los procedimientos estéticos requieren cita presencial. La consulta estética online es la evaluación médica y la fase de planificación que debe preceder a cualquier procedimiento.</p><h3>Su enfoque</h3><p>La Dra. Irale es reconocida por su enfoque compasivo, su sólido criterio clínico y su capacidad para comunicar información médica compleja de forma clara y tranquilizadora, una habilidad especialmente valiosa en pediatría, donde quien necesita entender el diagnóstico y el plan es frecuentemente el padre o la madre, no el paciente. Su compromiso con la medicina basada en la evidencia y la atención personalizada define cada consulta.</p><p>Idiomas: Español</p>",
+              "seoTitle": "Dra. Silvina Irale — Pediatría y Medicina Estética | CGCOM 282889392 | Global Health España",
+              "seoDescription": "Reserve una videoconsulta con Dra. Silvina Irale — médica especialista en pediatría registrada en CGCOM (nº 282889392). 20+ años experiencia pediátrica · Sanatorio de Niños Rosario · Máster Medicina Estética UCM · Español. Cita el mismo día.",
+              "seoKeywords": [
+                "Atención primária pediatrica"
+              ]
+            },
+            {
+              "locale": "CS",
+              "title": "Lékař všeobecného lékařství",
+              "bio": "<p>Dra. María Silvina Irale Tunkiewicz, MD</p><p>Specialistka v pediatrii | estetická a anti-aging medicína</p><p>Dra. María Silvina Irale Tunkiewicz je lékařka s rozsáhlými zkušenostmi v primární pediatrické péči, s více než 20 lety klinické praxe v primární pediatrické péči a urgentní medicíně. Vystudovala medicínu na Národní univerzitě v Rosario, Argentina, a absolvovala rezidenturu v pediatrii v Sanatorio de Niños de Rosario, kde v roce 2000 získala titul specialistky v pediatrii. Její lékařský titul byl v roce 2025 uznán ve Španělsku.</p><p>Během své kariéry pracovala Dra. Silvina Irale rozsáhle v pediatrických urgentních službách, nemocniční péči a ambulantní primární pediatrické péči, kde poskytovala komplexní zdravotní péči kojencům, dětem a dospívajícím. Více než dvě desetiletí pracovala v Sanatorio de Niños, kde zajišťovala kontinuální pediatrickou péči, řešila akutní stavy a působila jako klinická pediatrická konzultantka. Pracovala také jako lékařka pediatrické urgentní medicíny v Urgencias SA, což posílilo její zkušenosti v akutní pediatrické péči a rychlém klinickém rozhodování.</p><p>Kromě své pediatrické specializace má Dra. Silvina Irale magisterský titul v estetické a anti-aging medicíně z Universidad Complutense de Madrid (2024). Tato dvojí specializace jí umožňuje spojovat lékařskou přesnost, bezpečnost a péči zaměřenou na pacienta v estetické medicíně, vždy vedenou přísnými klinickými standardy.</p><p><a href=\"http://dr.si/\"><u>Dra.</u></a> Silvina Irale je uznávána pro svůj empatický přístup, pevný klinický úsudek a závazek ke kvalitní medicíně založené na důkazech. Věnuje se podpoře rodin a pacientů prostřednictvím individuální péče, strategií preventivní zdravotní péče a dlouhodobé pohody.</p>",
+              "seoTitle": "Dr Silvina Irale - Pediatrická primární péče | Global Health",
+              "seoDescription": "Dra. María Silvina Irale Tunkiewicz, specialistka v pediatrii s více než 20 lety zkušeností. Magistra v estetické a anti-aging medicíně. Online konzultace v Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "EN",
+              "title": "General Medicine Doctor",
+              "bio": "<p>Dr. María Silvina Irale Tunkiewicz, MD</p><p>Specialist in Pediatrics | Aesthetic and Anti-Aging Medicine</p><p>Dr. María Silvina Irale Tunkiewicz is a physician with extensive experience in Pediatric Primary Care, with more than 20 years of clinical practice in pediatric primary care and emergency medicine. She graduated as a physician from the Universidad Nacional de Rosario, Argentina, and completed her residency in Pediatrics at the Sanatorio de Niños de Rosario, where she obtained her specialist degree in Pediatrics in 2000. Her medical degree was recognized in Spain in 2025.</p><p>Throughout her career, Dr. Silvina Irale has worked extensively in pediatric emergency services, hospital care, and outpatient pediatric primary care, providing comprehensive medical care to infants, children, and adolescents. She worked for more than two decades at the Sanatorio de Niños, providing continuous pediatric care, managing emergencies, and serving as a pediatric clinical consultant. She also worked as a pediatric emergency physician at Urgencias SA, which strengthened her experience in acute pediatric care and rapid clinical decision-making.</p><p>In addition to her pediatric specialization, Dr. Silvina Irale holds a Master's in Aesthetic and Anti-Aging Medicine from the Universidad Complutense de Madrid (2024). This dual specialization allows her to combine medical precision, safety, and patient-centered care in aesthetic medicine, always guided by rigorous clinical standards.</p><p><a href=\"http://dr.si/\"><u>Dr.</u></a> Silvina Irale is recognized for her compassionate approach, sound clinical judgment, and commitment to high-quality, evidence-based medicine. She is dedicated to supporting families and patients through personalized care, preventive health strategies, and long-term well-being.</p>",
+              "seoTitle": "Dr Silvina Irale - Pediatric Primary Care | Global Health",
+              "seoDescription": "Dr. María Silvina Irale Tunkiewicz, specialist in Pediatrics with more than 20 years of experience. Master's in Aesthetic and Anti-aging Medicine. Online consultation at Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "DE",
+              "title": "Arzt Allgemeinmedizin",
+              "bio": "<p>Dr. María Silvina Irale Tunkiewicz, MD</p><p>Fachärztin für Pädiatrie | Ästhetische und Anti-Aging-Medizin</p><p>Dr. María Silvina Irale Tunkiewicz ist eine Ärztin mit umfassender Erfahrung in der pädiatrischen Primärversorgung, mit mehr als 20 Jahren klinischer Praxis in der pädiatrischen Primärversorgung und Notfallmedizin. Sie schloss ihr Medizinstudium an der Universidad Nacional de Rosario, Argentinien ab und absolvierte ihre Facharztausbildung in Pädiatrie am Sanatorio de Niños de Rosario, wo sie im Jahr 2000 ihren Facharzttitel in Pädiatrie erwarb. Ihr Medizintitel wurde in Spanien im Jahr 2025 anerkannt.</p><p>Im Laufe ihrer Karriere hat Dr. Silvina Irale umfassend in pädiatrischen Notdiensten, stationärer Versorgung und ambulanter pädiatrischer Primärversorgung gearbeitet und Säuglinge, Kinder und Jugendliche umfassend medizinisch betreut. Sie arbeitete mehr als zwei Jahrzehnte im Sanatorio de Niños, wo sie kontinuierliche pädiatrische Versorgung leistete, Notfälle betreute und als klinische pädiatrische Beraterin tätig war. Außerdem arbeitete sie als Ärztin für pädiatrische Notfälle bei Urgencias SA, was ihre Erfahrung in der akuten pädiatrischen Versorgung und schnellen klinischen Entscheidungsfindung stärkte.</p><p>Zusätzlich zu ihrer pädiatrischen Spezialisierung verfügt Dr. Silvina Irale über einen Master in Ästhetischer und Anti-Aging-Medizin der Universidad Complutense de Madrid (2024). Diese Doppelqualifikation ermöglicht es ihr, medizinische Präzision, Sicherheit und patientenzentrierte Betreuung in der ästhetischen Medizin zu verbinden, stets geleitet von strengen klinischen Standards.</p><p><a href=\"http://dr.si/\"><u>Dr.</u></a> Silvina Irale ist bekannt für ihren einfühlsamen Ansatz, ihr fundiertes klinisches Urteilsvermögen und ihr Engagement für hochwertige, evidenzbasierte Medizin. Sie setzt sich dafür ein, Familien und Patienten durch persönliche Betreuung, präventive Gesundheitsstrategien und langfristiges Wohlbefinden zu unterstützen.</p>",
+              "seoTitle": "Dr Silvina Irale - Pädiatrische Primärversorgung | Global Health",
+              "seoDescription": "Dr. María Silvina Irale Tunkiewicz, Fachärztin für Pädiatrie mit mehr als 20 Jahren Erfahrung. Master in Ästhetischer und Anti-Aging-Medizin. Online-Sprechstunde bei Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "PT",
+              "title": "Médico Medicina Geral",
+              "bio": "<p>Dra. María Silvina Irale Tunkiewicz, MD</p><p>Especialista em Pediatria | Medicina Estética e Antienvelhecimento</p><p>A Dra. María Silvina Irale Tunkiewicz é uma médica com ampla experiência em Atenção Primária Pediátrica, com mais de 20 anos de prática clínica em atenção primária pediátrica e medicina de urgência. Formou-se como médica na Universidade Nacional de Rosário, Argentina, e concluiu sua residência em Pediatria no Sanatorio de Niños de Rosario, onde obteve seu título de especialista em Pediatria no ano 2000. Seu diploma de médica foi reconhecido na Espanha em 2025.</p><p>Ao longo de sua carreira, a Dra. Silvina Irale trabalhou extensamente em serviços de urgência pediátrica, atenção hospitalar e atenção primária pediátrica ambulatorial, prestando atendimento médico integral a lactentes, crianças e adolescentes. Trabalhou por mais de duas décadas no Sanatorio de Niños, prestando atendimento pediátrico contínuo, gerenciando urgências e atuando como consultora clínica pediátrica. Também trabalhou como médica de urgências pediátricas na Urgencias SA, o que fortaleceu sua experiência em atendimento pediátrico agudo e tomada de decisões clínicas rápidas.</p><p>Além de sua especialização pediátrica, a Dra. Silvina Irale possui um Mestrado em Medicina Estética e Antienvelhecimento pela Universidade Complutense de Madrid (2024). Essa dupla especialização lhe permite combinar precisão médica, segurança e atenção centrada no paciente em medicina estética, sempre guiada por rigorosos padrões clínicos.</p><p><a href=\"http://dr.si/\"><u>A Dra.</u></a> Silvina Irale é reconhecida por sua abordagem compassiva, seu sólido critério clínico e seu compromisso com a medicina de alta qualidade baseada em evidências. Ela se dedica a apoiar famílias e pacientes por meio de atendimento personalizado, estratégias de saúde preventiva e bem-estar a longo prazo.</p>",
+              "seoTitle": "Dr Silvina Irale - Atenção Primária Pediátrica | Global Health",
+              "seoDescription": "Dra. María Silvina Irale Tunkiewicz, especialista em Pediatria com mais de 20 anos de experiência. Mestrado em Medicina Estética e Antienvelhecimento. Consulta online em Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "RO",
+              "title": "Medic medicină generală",
+              "bio": "<p>Dra. María Silvina Irale Tunkiewicz, MD</p><p>Specialistă în Pediatrie | Medicină Estetică și Anti-îmbătrânire</p><p>Dra. María Silvina Irale Tunkiewicz este o medic cu vastă experiență în Asistență Primară Pediatrică, cu peste 20 de ani de practică clinică în asistență primară pediatrică și medicină de urgență. A absolvit medicina la Universidad Nacional de Rosario, Argentina, și și-a finalizat rezidențiatul în Pediatrie la Sanatorio de Niños de Rosario, unde și-a obținut titlul de specialistă în Pediatrie în anul 2000. Titlul său de medic a fost recunoscut în Spania în 2025.</p><p>De-a lungul carierei sale, Dra. Silvina Irale a lucrat extensiv în servicii de urgențe pediatrice, îngrijire spitalicească și asistență primară pediatrică ambulatorie, oferind îngrijire medicală integrală sugarilor, copiilor și adolescenților. A lucrat timp de mai bine de două decenii la Sanatorio de Niños, oferind îngrijire pediatrică continuă, gestionând urgențe și acționând ca medic consultant clinic pediatric. A lucrat, de asemenea, ca medic de urgențe pediatrice la Urgencias SA, ceea ce i-a consolidat experiența în îngrijirea pediatrică acută și în luarea rapidă a deciziilor clinice.</p><p>Pe lângă specializarea sa pediatrică, Dra. Silvina Irale are un Master în Medicină Estetică și Anti-îmbătrânire de la Universidad Complutense de Madrid (2024). Această dublă specializare îi permite să combine precizia medicală, siguranța și îngrijirea centrată pe pacient în medicina estetică, ghidată întotdeauna de standarde clinice riguroase.</p><p><a href=\"http://dr.si/\"><u>Dra.</u></a> Silvina Irale este recunoscută pentru abordarea sa empatică, judecata clinică solidă și angajamentul său față de medicina de înaltă calitate bazată pe dovezi. Se dedică sprijinirii familiilor și pacienților prin îngrijire personalizată, strategii de sănătate preventivă și bunăstare pe termen lung.</p>",
+              "seoTitle": "Dr Silvina Irale - Îngrijire primară pediatrică | Global Health",
+              "seoDescription": "Dra. María Silvina Irale Tunkiewicz, specialistă în Pediatrie cu peste 20 de ani de experiență. Master în Medicină Estetică și Anti-îmbătrânire. Consultație online la Global Health.",
+              "seoKeywords": []
+            }
+          ],
+          "divisionTranslations": []
+        }
+      ],
+      "assignedServices": [
+        {
+          "serviceId": "cmre7qbti0042ngjumicur4m2",
+          "service": {
+            "id": "cmre7qbti0042ngjumicur4m2",
+            "slug": "pediatria-online",
+            "name": "Atención Primária Pediatria",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3900,
+            "currencyCode": "EUR"
+          }
+        }
+      ],
+      "seoKeywords": [],
+      "resolvedMarketLocale": "CS",
+      "specialties": [],
+      "faqs": [
+        {
+          "id": "cmrnzhizf00xybsjukpityzrc",
+          "locale": "CS",
+          "question": "Je doktorka Irale registrována v Generálním poradním výboru oficiálních lékařských škol?",
+          "answer": "Ano. Doktorka María Silvina Irale Tunkiewicz je registrována v CGCOM pod číslem 282889392. Tento registr můžete ověřit na cgcom.es. Doktorka Irale je specialistka na pediatrii s více než dvaceti lety klinické praxe v Sanatoriu dětí v Rosariu a pediatrických pohotovostech, s jejím lékařským titulem uznaným ve Španělsku v roce 2025.",
+          "category": null,
+          "sortOrder": 0,
+          "isActive": true
+        },
+        {
+          "id": "cmrnzhizg00xzbsjug5r6qh6t",
+          "locale": "CS",
+          "question": "Jaké pediatrické konzultace nabízí doktorka Irale online?",
+          "answer": "Doktorka Irale nabízí online pediatrické konzultace pro: hodnocení symptomů u kojenců, dětí a dospívajících (horečka, respirační a gastrointestinální infekce, vyrážky, záněty středního ucha, faryngitida), pediatrické pohotovosti (akutní hodnocení a poradenství ohledně domácí péče vs. návštěva pohotovosti), vývoj dětí (růst, psychomotorika, výživa, spánek), zdraví dospívajících, očkování, preventivní pediatrickou péči (prohlídky zdravého dítěte) a estetické online konzultace pro dospělé.",
+          "category": null,
+          "sortOrder": 1,
+          "isActive": true
+        },
+        {
+          "id": "cmrnzhizg00y0bsjufb0bh6uv",
+          "locale": "CS",
+          "question": "Jaké výhody přináší 20 let pediatrické zkušenosti k online konzultaci?",
+          "answer": "Dvě desetiletí v klinické pediatrii a pediatrických pohotovostech vytvářejí typ znalostí, které nelze získat z knih: rozpoznávání vzorců — vědět, kdy si dítě s horečkou 39° může poradit doma a kdy potřebuje okamžitou pozornost, kdy je vyrážka banální a kdy je to varovný signál, kdy je vývoj v normálních mezích a kdy si zaslouží hodnocení. Doktorka Irale viděla prakticky vše v pediatrii. Pro rodiče, kteří hledají spolehlivé a uklidňující poradenství, je tato nahromaděná zkušenost nejcennějším aktivem online konzultace.",
+          "category": null,
+          "sortOrder": 2,
+          "isActive": true
+        },
+        {
+          "id": "cmrnzhizg00y1bsjufmohfbjn",
+          "locale": "CS",
+          "question": "Může doktorka Irale také nabídnout estetickou online konzultaci?",
+          "answer": "Ano. Doktorka Irale dokončila magisterský program v estetické medicíně a anti-agingu na Complutense University of Madrid (2024) a nabízí estetické online konzultace pro dospělé, kteří zvažují ošetření pro omlazení obličeje nebo anti-aging. Online konzultace zahrnuje lékařské hodnocení, analýzu stavu pleti, identifikaci kontraindikací a vypracování individuálního léčebného plánu. Estetické zákroky se provádějí osobně.",
+          "category": null,
+          "sortOrder": 3,
+          "isActive": true
+        },
+        {
+          "id": "cmrnzhizg00y2bsjuok51zdyd",
+          "locale": "CS",
+          "question": "Jak si rezervuji konzultaci s doktorkou Irale?",
+          "answer": "Vyberte si dostupný čas na této stránce pro přímou rezervaci s doktorkou Irale. Platba se zpracovává bezpečně při rezervaci — konzultace je potvrzena po dokončení platby. Okamžitě obdržíte pozvánku do kalendáře. Konzultace probíhají prostřednictvím bezpečného videohovoru ve španělštině. Pro pediatrické konzultace doporučujeme mít dítě k dispozici během konzultace, pokud je to možné. Stejné denní schůzky jsou obvykle k dispozici.",
+          "category": null,
+          "sortOrder": 4,
+          "isActive": true
+        },
+        {
+          "id": "cmrnzhizg00y3bsjulxu7mdyh",
+          "locale": "CS",
+          "question": "Jaké jsou kvalifikace doktorky Irale?",
+          "answer": "Doktorka María Silvina Irale Tunkiewicz je absolventkou medicíny na Národní univerzitě v Rosariu a specialistkou na pediatrii (Sanatorium dětí v Rosariu, 2000). Více než dvacet let pracovala v pediatrické nemocniční péči, pohotovostech a ambulantních konzultacích, včetně Sanatoria dětí v Rosariu a Urgencias SA. V roce 2024 dokončila magisterský program v estetické medicíně a anti-agingu na Complutense University of Madrid. Její lékařský titul byl uznán ve Španělsku v roce 2025. Je registrována v CGCOM (č. 282889392).",
+          "category": null,
+          "sortOrder": 5,
+          "isActive": true
+        }
+      ],
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:25:00.000Z"
+      },
+      "bookabilityByServiceId": {
+        "cmre7qbti0042ngjumicur4m2": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:25:00.000Z"
+        }
+      }
+    }
+  }
+}

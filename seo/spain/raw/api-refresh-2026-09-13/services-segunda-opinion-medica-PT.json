@@ -1,0 +1,190 @@
+{
+  "endpoint": "/api/services/segunda-opinion-medica?countryCode=es&locale=PT",
+  "checkedAt": "2026-09-13T22:38:56.687Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q5fw002angjuebao1obt",
+      "kind": "GENERAL",
+      "slug": "segunda-opinion-medica",
+      "name": "Segunda Opinião Médica",
+      "summary": null,
+      "seoTitle": "Segunda Opinião Médica Online Espanha | Avaliação Independente | Mesmo Dia",
+      "seoDescription": "Não tem a certeza de um diagnóstico ou plano de tratamento? Os nossos médicos credenciados oferecem segundas opiniões médicas independentes por videochamada segura. No mesmo dia em Espanha.",
+      "seoKeywords": [
+        "segunda opinión médica online España",
+        "segunda opinión médico online España",
+        "evaluación independiente médica España",
+        "segunda opinión diagnóstico España",
+        "second opinion doctor Spain English"
+      ],
+      "heroTitle": "Segunda Opinião Médica — Avaliação Clínica Independente Online",
+      "heroDescription": "Recebeu um diagnóstico ou recomendação de tratamento sobre o qual tem dúvidas? Quer uma perspetiva clínica independente antes de se submeter a uma intervenção cirúrgica, iniciar uma medicação nova, ou aceitar uma alteração significativa no seu tratamento? Recebeu documentação clínica em espanhol que quer que lhe expliquem de forma clara? Os nossos médicos, inscritos em conformidade com os requisitos da Organización Médica Colegial (OMC), oferecem segundas opiniões médicas independentes por videoconferência segura — revendo o seu diagnóstico, documentação clínica e plano de tratamento, e dando-lhe uma avaliação clínica honesta e baseada em evidência. Sem marcação. Sem vinculação ao seu prestador atual. Uma avaliação independente clara. No mesmo dia, a partir de qualquer ponto de Espanha, em espanhol, inglês ou português.",
+      "detailBody": "<h2>Quando faz sentido uma segunda opinião</h2><p>Procurar uma segunda opinião é clinicamente recomendado — e qualquer bom médico dir-lhe-á o mesmo. Não precisa de estar em conflito com o seu médico atual para beneficiar de uma perspetiva independente. Uma segunda opinião é valiosa sempre que uma decisão de saúde tenha consequências significativas e queira a segurança de ter ouvido mais de uma voz clínica.</p><p><strong>Razões frequentes para procurar uma segunda opinião:</strong></p><ul><li>Recebeu um diagnóstico que não parece consistente com os seus sintomas ou com a sua compreensão da sua saúde</li><li>Foi recomendada uma intervenção significativa — cirurgia, um novo medicamento, uma mudança importante no estilo de vida — e quer uma avaliação independente antes de avançar</li><li>Recebeu aconselhamento contraditório de dois médicos diferentes e precisa de ajuda para navegar a discrepância</li><li>Os seus sintomas não melhoraram apesar de seguir um plano de tratamento e quer uma perspetiva clínica nova</li><li>Recebeu documentação clínica em espanhol que quer que seja revista e explicada claramente</li><li>Está a gerir uma condição complexa ou de longa duração e quer garantir que a sua gestão atual continua a ser apropriada</li><li>Quer compreender as suas opções antes de se comprometer com um curso de tratamento recomendado</li></ul><h2>Para quem é este serviço</h2><p>Esta consulta é apropriada para:</p><ul><li>Qualquer pessoa que tenha recebido um diagnóstico ou recomendação de tratamento que queira rever de forma independente</li><li>Doentes que se deparam com uma decisão sobre cirurgia, um novo medicamento significativo, ou uma mudança importante na gestão</li><li>Doentes que receberam aconselhamento clínico contraditório e precisam de ajuda para o navegar</li><li>Doentes cuja condição não melhorou como esperado e querem uma perspetiva clínica nova</li><li>Doentes que receberam documentação clínica em espanhol e querem que seja revista e explicada claramente</li><li>Doentes que gerem uma condição crónica complexa e querem revisão independente periódica</li><li>Expats e residentes internacionais que querem uma avaliação clínica independente em inglês ou português sem navegar um novo sistema de especialistas</li></ul><h2>O que inclui a consulta</h2><p><strong>Revisão completa da sua documentação clínica</strong></p><p>Traga toda a documentação relevante para a sua consulta — cartas de diagnóstico, relatórios de especialistas, resultados de exames de imagem, resultados de análises, planos de tratamento e relatórios de alta. O seu médico revê tudo na sua totalidade antes de oferecer uma avaliação independente.</p><p><strong>Avaliação clínica independente</strong></p><p>O seu médico avalia a sua apresentação, o diagnóstico que recebeu, o raciocínio clínico por detrás dele, o plano de tratamento proposto, e se abordagens alternativas ou investigação adicional seriam apropriadas com base na evidência clínica atual.</p><p><strong>Explicação clara das suas opções</strong></p><p>O seu médico explica o seu diagnóstico e as opções de tratamento em linguagem clara — o que implica o plano proposto, quais são as alternativas, o que diz a evidência, e que perguntas deve fazer à sua equipa tratante. Sai da consulta com uma imagem mais clara de onde está e quais são as suas opções.</p><p><strong>Carta de resumo clínico — quando clinicamente indicado</strong></p><p>Quando for clinicamente apropriado, o seu médico emite um resumo escrito da segunda opinião — documentando a avaliação independente, o raciocínio clínico e quaisquer recomendações — que pode partilhar com a sua equipa tratante ou usar para fins de seguro.</p><p><strong>Coordenação de encaminhamento quando indicado</strong></p><p>Se a segunda opinião indicar que é necessária avaliação especializada adicional, investigação adicional, ou uma abordagem clínica diferente, o seu médico coordena os próximos passos apropriados no mesmo dia.</p><h2>Segunda opinião em Espanha — por que importa</h2><p>O sistema de saúde espanhol — tanto público como privado — tem forças bem estabelecidas. Mas o acesso a uma segunda opinião independente tem os seus próprios desafios práticos.</p><p>No sistema público, os tempos de espera para ver um especialista são longos — e obter uma segunda opinião implica recomeçar o processo de encaminhamento. No setor privado, a qualidade é geralmente alta mas a acessibilidade está concentrada nas grandes cidades.</p><p>Para residentes internacionais que recebem documentação clínica em espanhol, há uma barreira adicional — compreender totalmente um diagnóstico ou plano de tratamento numa língua que não domina plenamente é genuinamente difícil, e tomar decisões médicas importantes sem compreensão completa é um risco real.</p><p>Este serviço proporciona uma camada adicional de escrutínio clínico independente — não como crítica ao médico original, mas como parte de uma tomada de decisão informada.</p><h2>O que uma segunda opinião pode e não pode fazer</h2><p><strong>Uma segunda opinião pode:</strong></p><ul><li>Confirmar que o diagnóstico e o plano de tratamento que recebeu são apropriados e estão baseados em evidência</li><li>Identificar diagnósticos ou abordagens de tratamento alternativas que não foram considerados</li><li>Clarificar documentação clínica que não foi totalmente explicada</li><li>Ajudá-lo a formular as perguntas certas para fazer à sua equipa tratante</li><li>Fornecer documentação clínica independente para fins de seguro ou médico-legais</li><li>Recomendar investigação adicional ou avaliação especializada quando clinicamente indicado</li></ul><p><strong>Uma segunda opinião não pode:</strong></p><ul><li>Anular ou substituir o juízo clínico da sua equipa tratante</li><li>Diagnosticar condições que exijam exame físico presencial, biópsia ou investigação invasiva</li><li>Fornecer uma opinião definitiva sem documentação clínica adequada</li><li>Emitir uma opinião definitiva quando o quadro clínico é complexo e requer avaliação especializada presencial</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 190,
+      "durationMinutes": 20,
+      "basePriceCents": 4900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.267Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru15rpe0003bsjukvu58p7u",
+          "kind": "IMAGE",
+          "key": "media/ef45af40-860e-401e-bc44-e88a501e47c4-es-segunda-opinion-medica.png",
+          "path": "/api/media/media/ef45af40-860e-401e-bc44-e88a501e47c4-es-segunda-opinion-medica.png",
+          "altText": "Segunda Opinión Médica"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q5o4002bngjuha3nvten",
+          "question": "Buscar uma segunda opinião significa que estou questionando meu médico?",
+          "answer": "Não. Buscar uma segunda opinião é uma parte normal e recomendada de uma boa tomada de decisões médicas — especialmente para diagnósticos ou recomendações de tratamento significativas. A maioria dos médicos espera e respeita os pacientes que buscam revisão independente das principais decisões clínicas.",
+          "sortOrder": 0,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q5o4002cngjuadtjb1ha",
+          "question": "Que documentação devo trazer?",
+          "answer": "Traga tudo o que seja relevante — cartas de diagnóstico, relatórios de especialistas, resultados de exames de imagem, resultados de análises, planos de tratamento, relatórios de alta e qualquer outra documentação clínica relacionada com a preocupação. Quanto mais completa for a documentação, mais útil será a avaliação independente.",
+          "sortOrder": 1,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q5o4002dngju7ws82tsc",
+          "question": "O médico pode revisar documentação em espanhol?",
+          "answer": "Sim. O seu médico analisa documentação clínica em espanhol e explica os achados claramente em inglês, espanhol ou português — conforme a sua preferência.",
+          "sortOrder": 2,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q5o4002engjuhz1j3rqn",
+          "question": "O médico da segunda opinião contactará com o meu médico atual?",
+          "answer": "Não — a menos que o solicites especificamente. A segunda opinião é fornecida diretamente a você. Se quiser que os achados sejam compartilhados com sua equipe tratante, seu médico pode emitir um resumo clínico escrito para esse fim.",
+          "sortOrder": 3,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q5o4002fngjun7asux0q",
+          "question": "O que acontece se a segunda opinião contradiz o meu diagnóstico atual?",
+          "answer": "O teu médico explica o raciocínio clínico de forma clara e honesta. Se a avaliação independente sugerir que o diagnóstico ou plano de tratamento original pode não ser o mais apropriado, aconselha-se-te sobre que perguntas colocar à tua equipa assistente e que passos adicionais — investigação adicional, avaliação especializada — podem estar justificados.",
+          "sortOrder": 4,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q5o4002gngju2wli45ke",
+          "question": "Posso obter uma segunda opinião sobre uma recomendação cirúrgica?",
+          "answer": "Sim. As segundas opiniões sobre recomendações cirúrgicas são um dos usos mais comuns e mais valiosos deste serviço. O seu médico revisa a justificativa clínica da cirurgia recomendada, discute as evidências e aconselha sobre se a recomendação parece apropriada e que perguntas fazer ao seu cirurgião.",
+          "sortOrder": 5,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q5o4002hngjuxook11oe",
+          "question": "Posso obter uma segunda opinião sobre um diagnóstico de saúde mental?",
+          "answer": "Sim — para condições de saúde mental ao nível da medicina geral. Para diagnósticos psiquiátricos complexos, o seu médico aconselha sobre o nível apropriado de revisão independente especializada.",
+          "sortOrder": 6,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q5o4002ingju92saqikq",
+          "question": "Preciso de seguro médico espanhol?",
+          "answer": "Não. É um serviço privado de pagamento direto sem requisito de seguro médico.",
+          "sortOrder": 7,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q5o4002jngju6wnchato",
+          "question": "Posso usar este serviço de qualquer ponto de Espanha?",
+          "answer": "Sim — incluindo as Ilhas Baleares, as Ilhas Canárias, Ceuta e Melilha. Só precisas de uma ligação estável à internet e de um dispositivo com câmara.",
+          "sortOrder": 8,
+          "resolvedLocale": "PT"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "PT",
+      "links": [
+        {
+          "id": "cmre7u0rr005kg8ju0bt4gje9",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con segunda opinión cardiológica especializada?",
+          "body": "Para segunda opinión cardiológica especializada, consulta nuestra página de Cardiología Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Cardiología Especialista",
+          "targetSlug": "cardiologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7u1jt005mg8jutxyy9pz0",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre segunda opinión neurológica especializada?",
+          "body": "Nuestra Neurología Especialista está pensada específicamente para segunda opinión neurológica especializada.",
+          "ctaLabel": "Neurología Especialista",
+          "targetSlug": "neurologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7u2bx005og8judxbqm7fp",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Segunda opinión dermatológica especializada?",
+          "body": "Si tu situación está relacionada con segunda opinión dermatológica especializada, nuestra Dermatología Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Dermatología Especialista",
+          "targetSlug": "dermatologia-especialista-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7u33z005qg8ju6je8gh1u",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con segunda opinión psiquiátrica especializada?",
+          "body": "Para segunda opinión psiquiátrica especializada, consulta nuestra página de Psiquiatría Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Psiquiatría Especialista",
+          "targetSlug": "psiquiatra-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdpz5n3001z01rukg2lecs5",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+      }
+    }
+  }
+}

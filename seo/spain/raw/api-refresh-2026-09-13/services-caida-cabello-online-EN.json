@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/caida-cabello-online?countryCode=es&locale=EN",
+  "checkedAt": "2026-09-13T22:38:38.395Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q6hn002lngju3chey2ai",
+      "kind": "GENERAL",
+      "slug": "caida-cabello-online",
+      "name": "Hair Loss Consultation",
+      "summary": null,
+      "seoTitle": "Hair Loss Consultation Online Spain | Medical Assessment | Same Day",
+      "seoDescription": "Losing hair or noticing thinning in Spain? Our OMC-registered GPs assess the medical cause of hair loss and advise on evidence-based management. Video consultation, same-day appointments anywhere in Spain.",
+      "seoKeywords": [
+        "caída del cabello online España",
+        "médico caída cabello online España",
+        "alopecia consulta online España",
+        "pérdida cabello médico online España",
+        "caída cabello hormonal consulta España"
+      ],
+      "heroTitle": "Hair Loss Consultation — Medical Assessment Online, Same Day in Spain",
+      "heroDescription": "Hair loss is one of the most common medical concerns — and one of the most commonly dismissed. Most people who notice significant thinning or shedding never speak to a doctor about it, either because they assume nothing can be done, or because they do not know where to start. Both assumptions are wrong. In the vast majority of cases, hair loss has an identifiable medical cause — and the earlier it is assessed, the better the outcome. Hair follicles that have been inactive for a prolonged period are significantly harder to recover than follicles that are thinning but still active. Our GPs, registered with the Spanish Medical Council (OMC — Organización Médica Colegial), offer comprehensive hair loss assessments by secure video call — identifying the underlying cause, advising on evidence-based management, and issuing appropriate clinical documentation where clinically indicated. Same day, from anywhere in Spain, in English, Spanish, or Portuguese.",
+      "detailBody": "<h2>Why Early Assessment Makes a Difference</h2><p>Hair loss almost always follows a progressive pattern — particularly androgenetic alopecia in both men and women. The clinical argument for early assessment is straightforward: the earlier the cause is identified and appropriate management initiated, the better the outcome. Waiting until hair loss is advanced significantly reduces the treatment options available.</p><p>If you have noticed changes in your hair density, hairline, or shedding pattern — even if you are not sure whether it is significant enough to see a doctor about — book a consultation. Your doctor tells you honestly whether intervention is warranted and what the options are.</p><h2>Who This Service Is For</h2><p>This consultation is appropriate for adults experiencing:</p><ul><li>Gradual thinning of hair on the scalp — in men or women</li><li>Receding hairline or temporal thinning</li><li>Thinning at the crown or top of the scalp</li><li>Sudden or patchy hair loss</li><li>Diffuse shedding — more hair in the shower, on the pillow, or in the brush</li><li>Hair loss following a significant life event — illness, surgery, childbirth, or intense stress</li><li>Hair loss associated with other symptoms — fatigue, weight changes, skin or nail changes — that may indicate an underlying condition</li><li>Scalp health concerns — dandruff, seborrhoea, or inflammation affecting hair growth</li><li>Hair loss that has not responded to over-the-counter treatments</li></ul><h2>Conditions Commonly Assessed</h2><p><strong>Male hair loss</strong></p><ul><li>Androgenetic alopecia — the most common cause of hair loss in men, assessed and managed at GP level including discussion of evidence-based treatment options</li><li>Alopecia areata — patchy, autoimmune-basis hair loss</li><li>Telogen effluvium — diffuse shedding following illness, stress, or nutritional deficiency</li><li>Seborrhoeic dermatitis and scalp inflammation contributing to hair loss</li><li>Medication-related hair loss — assessment and management</li></ul><p><strong>Female hair loss</strong></p><ul><li>Female pattern androgenetic alopecia</li><li>Telogen effluvium — particularly post-partum, following significant illness, or after major stress</li><li>Alopecia areata</li><li>Hair loss related to hormonal changes — PCOS, thyroid dysfunction, menopause, or post-partum hormonal changes</li><li>Hair loss related to nutritional deficiency — iron, ferritin, vitamin D, B12, and zinc</li><li>Traction alopecia — related to hairstyling practices</li><li>Medication-related hair loss</li></ul><p><strong>Both</strong></p><ul><li>Tinea capitis — fungal scalp infection causing hair loss, requiring treatment</li><li>Scarring alopecia — requires urgent dermatology referral</li><li>Hair loss as a symptom of systemic conditions — thyroid disease, autoimmune conditions, anaemia</li></ul><h2>What Your Consultation Includes</h2><p><strong>Full hair loss assessment</strong></p><p>Your GP takes a detailed history of your hair loss — onset, pattern, rate of progression, family history, associated symptoms, current medications, nutritional status, recent life events, and general health — building a complete picture as the basis for identifying the cause.</p><p><strong>Identification of underlying cause</strong></p><p>Hair loss is frequently a symptom of something systemic — not just an aesthetic concern. Your GP assesses hormonal, nutritional, autoimmune, and medication-related contributors that may be causing or accelerating your hair loss.</p><p><strong>Evidence-based management plan</strong></p><p>Based on the assessment, your GP advises on the most appropriate approach for your specific type of hair loss — which may include nutritional optimisation, topical treatments, clinical recommendations at the doctor's professional discretion, and referral where indicated.</p><p><strong>Investigation requests where indicated</strong></p><p>Where blood tests are clinically indicated — thyroid function, ferritin, iron studies, hormonal panel, vitamin levels — your GP issues the request the same day.</p><p><strong>Clinical documentation — at the doctor's professional discretion</strong></p><p>When clinically indicated, your GP issues appropriate clinical documentation valid at any pharmacy in Spain.</p><p>Note: Controlled substances cannot be issued electronically under Spanish law. Your doctor advises if this applies to your situation.</p><p><strong>Dermatology referral where needed</strong></p><p>Certain hair loss conditions — including scarring alopecia, complex alopecia areata, and presentations requiring scalp biopsy — require specialist dermatology assessment. Your GP advises clearly if this is your case and coordinates referral.</p><h2>Why Hair Loss Is Dismissed Too Often</h2><p>Hair loss is frequently met with \"it is normal\" or \"it is just stress\" — sometimes correctly, but too often without proper investigation. A GP who genuinely assesses hair loss does not start with a generic answer. They start with a complete history, assess the hormonal and nutritional picture, and identify the specific cause before proposing an approach tailored to that cause.</p><p>The difference between \"it is probably stress\" without investigation and \"your ferritin is low and this is causing telogen effluvium, which is treatable\" with a blood test is not a small one. It is the difference between a dismissed concern and an identified, manageable condition.</p>",
+      "ctaLabel": null,
+      "sortOrder": 50,
+      "durationMinutes": 15,
+      "basePriceCents": 3900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.260Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0snn30001y8juccnmrdh3",
+          "kind": "IMAGE",
+          "key": "media/cc536d25-52be-4488-bf47-6eed76532325-es-caida-cabello-online.png",
+          "path": "/api/media/media/cc536d25-52be-4488-bf47-6eed76532325-es-caida-cabello-online.png",
+          "altText": "Caída del Cabello"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q6q3002mngjucety7quw",
+          "question": "Can hair loss really be assessed by video call?",
+          "answer": "Yes — for the vast majority of presentations. A detailed medical history is the most powerful diagnostic tool in the evaluation of hair loss, and a complete history can be taken by video call. Your doctor also asks you to show the affected areas during the call. Where physical examination findings or scalp biopsy are needed, your doctor advises you on appropriate referral.",
+          "sortOrder": 0,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q6q3002nngjuow6770lg",
+          "question": "Do I need blood tests before my appointment?",
+          "answer": "No. Your doctor evaluates during the consultation whether the tests are indicated and requests the lab work the same day if so. Bring any recent results you have — your doctor reviews them in full.",
+          "sortOrder": 1,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q6q4002ongjumy8fcfar",
+          "question": "Can hair loss be reversed?",
+          "answer": "It depends on the type and how long it has been progressing. Androgenic alopecia responds better to treatment started early, when the follicles are thinning rather than already lost. Telogen effluvium is generally self-limited and resolves once the underlying cause is treated. Hair loss related to nutritional deficiency responds well to correcting the deficiency. Scarring alopecia requires urgent specialist evaluation because it can cause permanent loss if not treated.",
+          "sortOrder": 2,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q6q4002pngjuvw1odamc",
+          "question": "Is this service suitable for women with hair loss?",
+          "answer": "Yes. Female hair loss is a central part of this service. The clinical picture in women is often more complex than male androgenetic alopecia— involving hormonal, nutritional, and autoimmune factors — and benefits significantly from a structured clinical evaluation.",
+          "sortOrder": 3,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q6q4002qngjuvgd7xe94",
+          "question": "What if my hair loss is related to a medication I am taking?",
+          "answer": "Hair loss related to medications is evaluated as part of this consultation. Your doctor reviews your current medication, identifies whether any may be contributing to your hair loss, and advises on appropriate management.",
+          "sortOrder": 4,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q6q4002rngjumwzt0505",
+          "question": "Can I get a referral to dermatology through this service?",
+          "answer": "Yes. Where specialist dermatological assessment is clinically indicated, your primary care physician issues a referral letter the same day.",
+          "sortOrder": 5,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q6q4002sngjua2jqmcbs",
+          "question": "Do I need Spanish health insurance?",
+          "answer": "No. It is a private direct-payment service. The clinical documentation issued through this service is provided at the full private price regardless of insurance status.",
+          "sortOrder": 6,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q6q4002tngjuuvnkmgcy",
+          "question": "Can I use this service from anywhere in Spain?",
+          "answer": "Yes — including the Balearic Islands, the Canary Islands, Ceuta and Melilla. You only need a stable internet connection and a device with a camera.",
+          "sortOrder": 7,
+          "resolvedLocale": "EN"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "EN",
+      "links": [
+        {
+          "id": "cmre7se910026g8jugr501ov4",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con alopecia cicatricial — derivación dermatológica especialista?",
+          "body": "Para alopecia cicatricial — derivación dermatológica especialista, consulta nuestra página de Dermatología Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Dermatología Especialista",
+          "targetSlug": "dermatologia-especialista-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7sb4n001yg8ju943cs0l1",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Evaluación hormonal y metabólica completa?",
+          "body": "Si tu situación está relacionada con evaluación hormonal y metabólica completa, nuestra Salud Femenina te ofrece la evaluación adecuada.",
+          "ctaLabel": "Salud Femenina",
+          "targetSlug": "salud-femenina-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7sbwq0020g8jua8ahleyv",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con caída del cabello y déficit de testosterona?",
+          "body": "Para caída del cabello y déficit de testosterona, consulta nuestra página de Salud Masculina — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Salud Masculina",
+          "targetSlug": "salud-masculina-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7scot0022g8jurstwbmq4",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre analíticas de ferritina, tiroides y perfil hormonal?",
+          "body": "Nuestra Derivaciones y Pruebas está pensada específicamente para analíticas de ferritina, tiroides y perfil hormonal.",
+          "ctaLabel": "Derivaciones y Pruebas",
+          "targetSlug": "derivaciones-pruebas-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+      }
+    }
+  }
+}

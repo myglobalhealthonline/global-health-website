@@ -1,0 +1,478 @@
+{
+  "endpoint": "/api/countries/es/doctors/dr-eduardo-olivas?locale=PT",
+  "checkedAt": "2026-09-13T22:38:50.432Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "doctor": {
+      "id": "cmrdpxpi0001v01ruqavjiq79",
+      "slug": "dr-eduardo-olivas",
+      "fullName": "Dr. Eduardo Daniel Rodríguez Olivas",
+      "title": "Médico Medicina Geral",
+      "bio": "<p>Dr. Eduardo Daniel Rodríguez Olivas</p><p>Médico geral</p><p>O Dr. Eduardo Rodríguez Olivas é médico e cirurgião com uma destacada trajetória internacional e uma formação multidisciplinar que abrange desde a Atenção Primária até a Medicina Estética. Registrado para exercer na Espanha e membro do Colégio Oficial de Médicos das Ilhas Baleares (COMIB), o Dr. Olivas traz para a Saúde Global uma abordagem integral e empática da atenção médica.</p><p>Graduou-se como Médico Cirurgião pela Universidad Autónoma de Guadalajara e aprofundou sua carreira com estudos avançados, incluindo um Mestrado em Medicina Interna e Urgências Psiquiátricas, assim como um Mestrado em Medicina Estética e Tratamentos Faciais. Essa combinação de conhecimentos permite-lhe abordar a saúde de seus pacientes a partir de uma perspectiva tanto funcional quanto de bem-estar geral.</p><p>Ao longo de sua carreira, adquiriu ampla experiência clínica em diversos contextos, desde serviços de urgências domiciliares até a atenção médica pública e privada. Conta com ampla experiência em telemedicina, colaborando com plataformas digitais internacionais para oferecer diagnóstico e acompanhamento remotos a pacientes nacionais e internacionais, incluindo atenção médica especializada para viajantes.</p><p>O Dr. Eduardo Olivas destaca-se por sua abordagem crítica e responsável, sua forte capacidade de resolver problemas em situações de crise e uma relação próxima e profissional médico-paciente.</p>",
+      "seoTitle": "Dr Eduardo Olivas - Medicina Geral | Global Health",
+      "seoDescription": "Dr. Eduardo Rodríguez Olivas, médico geral inscrito na Espanha (COMIB). Especialista em Cuidados Primários, Medicina Interna e Medicina Estética. Ampla experiência em telemedicina. Consulta online na Global Health.",
+      "lastReviewedAt": null,
+      "medicalRegistrationUrl": "https://www.cgcom.es/servicios/consulta-publica-de-colegiados",
+      "qualifications": [
+        "Médico Cirujano — Universidad Autónoma de Guadalajara (México)",
+        "Máster en Medicina Interna y Urgencias Psiquiátricas",
+        "Máster en Medicina Estética y Tratamientos Faciales",
+        "Miembro — Colegio Oficial de Médicos de las Islas Baleares (COMIB)",
+        "Experiencia en telemedicina internacional — plataformas digitales nacionales e internacionales",
+        "Experiencia en medicina del viajero",
+        "Experiencia en urgencias domiciliarias",
+        "Registrado en CGCOM (nº 070713200)"
+      ],
+      "instagramUrl": null,
+      "facebookUrl": null,
+      "linkedinUrl": null,
+      "languages": [
+        "Spanish",
+        "English"
+      ],
+      "active": true,
+      "updatedAt": "2026-08-20T06:22:14.798Z",
+      "resolvedLocale": "PT",
+      "readyToIndex": true,
+      "nonPhysician": false,
+      "imcRegistration": "070713200",
+      "registrationChamber": "CGCOM",
+      "registrationDivision": null,
+      "registrationVerified": true,
+      "credentials": [],
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmrf4hrzy024i01qr5bx1b0vx",
+          "kind": "IMAGE",
+          "key": "doctor-cmrdpxpi0001v01ruqavjiq79-profile",
+          "path": "/api/media/media/5d551f84-d9ec-412c-980e-6bec27dcaff4-dr-eduardo-daniel-rodr-guez-olivas.webp",
+          "altText": "Dr. Eduardo Daniel Rodríguez Olivas",
+          "title": "Dr. Eduardo Daniel Rodríguez Olivas",
+          "caption": "Dr. Eduardo Daniel Rodríguez Olivas — General Medicine Physician, Global Health Spain",
+          "description": "Dr. Eduardo Daniel Rodríguez Olivas — General Medicine Physician at Global Health Spain. Book an online video consultation.",
+          "focalX": 52,
+          "focalY": 24,
+          "zoom": 1
+        }
+      ],
+      "additionalCountries": [
+        {
+          "id": "cmrdpxpi8001w01rut32qxxno",
+          "countryId": "cmqy9rw9w00x001qkq31jktqq",
+          "active": true,
+          "country": {
+            "id": "cmqy9rw9w00x001qkq31jktqq",
+            "code": "es",
+            "name": "Spain",
+            "defaultLocale": "ES"
+          },
+          "chamberEntity": "CGCOM",
+          "registrationNumber": "070713200",
+          "registrationUrl": null,
+          "division": null,
+          "isVerified": true,
+          "translations": [
+            {
+              "locale": "EN",
+              "title": "General Medicine Physician",
+              "bio": "<p>Dr. Eduardo Daniel Rodríguez Olivas</p><p>General Practitioner</p><p>Dr. Eduardo Rodríguez Olivas is a physician and surgeon with a distinguished international track record and multidisciplinary training that ranges from Primary Care to Aesthetic Medicine. Licensed to practice in Spain and a member of the Official College of Physicians of the Balearic Islands (COMIB), Dr. Olivas brings a comprehensive and empathetic approach to medical care to Global Health.</p><p>He graduated as a Physician Surgeon from the Universidad Autónoma de Guadalajara and has advanced his career with postgraduate studies, including a Master's Degree in Internal Medicine and Psychiatric Emergencies, as well as a Master's Degree in Aesthetic Medicine and Facial Treatments. This combination of knowledge allows him to address his patients' health from both a functional and overall wellness perspective.</p><p>Throughout his career, he has acquired extensive clinical experience in diverse settings, from home emergency services to public and private medical care. He has extensive experience in telemedicine, collaborating with international digital platforms to provide remote diagnosis and follow-up for national and international patients, including specialized medical care for travelers.</p><p>Dr. Eduardo Olivas stands out for his critical and responsible approach, his strong ability to solve problems in crisis situations, and a close and professional doctor-patient relationship.</p>",
+              "seoTitle": "Dr Eduardo Olivas - General Medicine | Global Health",
+              "seoDescription": "Dr. Eduardo Rodríguez Olivas, licensed general practitioner in Spain (COMIB). Specialist in Primary Care, Internal Medicine and Aesthetic Medicine. Extensive experience in telemedicine. Online consultation at Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "ES",
+              "title": "Médico General",
+              "bio": "<p>El Dr. Eduardo Daniel Rodríguez Olivas es médico y cirujano con una formación multidisciplinar excepcional y amplia experiencia en telemedicina internacional, uno de los pocos médicos generales disponibles a través de consulta online que combina especialización en urgencias psiquiátricas, medicina estética y atención al viajero en un solo perfil clínico.</p><p>Se graduó como Médico Cirujano por la Universidad Autónoma de Guadalajara y ha completado dos maestrías de especialización: una en Medicina Interna y Urgencias Psiquiátricas, que le proporciona herramientas clínicas para evaluar situaciones de crisis de salud mental y emergencias médicas, y otra en Medicina Estética y Tratamientos Faciales. Está colegiado para ejercer en España y es miembro del Colegio Oficial de Médicos de las Islas Baleares (COMIB).</p><p>A lo largo de su carrera ha trabajado en servicios de urgencias domiciliarias, atención médica pública y privada, y plataformas internacionales de telemedicina, donde ha ofrecido diagnóstico y seguimiento remoto a pacientes nacionales e internacionales. Su experiencia específica en medicina del viajero le permite atender con precisión las necesidades de pacientes en movimiento, desde consultas pre-viaje hasta evaluaciones durante la estancia en el extranjero.</p><p>El Dr. Olivas es conocido por su enfoque crítico y resolutivo en situaciones de crisis, su capacidad para construir una relación médico-paciente cercana y su compromiso con una atención empática y responsable.</p><h3>Qué trata</h3><ul><li><strong>Medicina general:</strong> enfermedades agudas, infecciones respiratorias, fiebre, gripe, dolor de garganta, infecciones de oído</li><li>Infecciones urinarias y salud sexual</li><li><strong>Gestión de enfermedades crónicas:</strong> hipertensión, diabetes, dislipemia, hipotiroidismo, asma, EPOC</li><li><strong>Salud mental:</strong> ansiedad, depresión, gestión del estrés, urgencias psiquiátricas y derivación a especialista</li><li><strong>Medicina del viajero:</strong> consulta pre-viaje, vacunaciones, enfermedades tropicales, atención durante el viaje</li><li><strong>Salud de la mujer y del hombre:</strong> anticoncepción, preocupaciones hormonales, salud sexual</li><li><strong>Consulta estética online:</strong> evaluación y planificación de tratamientos faciales y procedimientos estéticos (los procedimientos se realizan de forma presencial)</li><li><strong>Atención preventiva:</strong> revisiones de salud, consejo sobre estilo de vida, cribados</li><li>Renovación de recetas y revisión de medicación</li><li>Bajas médicas e informes médicos</li><li>Derivaciones para analíticas, pruebas de imagen o consultas especializadas</li></ul><h3>Su enfoque</h3><p>El Dr. Olivas combina la solidez clínica de un médico formado en múltiples especialidades con la agilidad de un profesional con experiencia real en telemedicina internacional. Su formación en urgencias psiquiátricas le proporciona una capacidad de evaluación en situaciones de crisis que pocos médicos generales online pueden ofrecer. Es conocido por su relación cercana con los pacientes y su capacidad para resolver problemas con rapidez y responsabilidad.</p><p>Idiomas: Español · Inglés</p>",
+              "seoTitle": "Dr. Eduardo Olivas — Médico General | CGCOM 070713200 | Global Health España",
+              "seoDescription": "Reserve una videoconsulta con Dr. Eduardo Olivas — médico general registrado en CGCOM (nº 070713200). Máster Medicina Interna y Urgencias Psiquiátricas · Medicina Estética · Telemedicina · Medicina del viajero · Español e inglés. Cita el mismo día.",
+              "seoKeywords": [
+                "Medicina General"
+              ]
+            },
+            {
+              "locale": "PT",
+              "title": "Médico Medicina Geral",
+              "bio": "<p>Dr. Eduardo Daniel Rodríguez Olivas</p><p>Médico geral</p><p>O Dr. Eduardo Rodríguez Olivas é médico e cirurgião com uma destacada trajetória internacional e uma formação multidisciplinar que abrange desde a Atenção Primária até a Medicina Estética. Registrado para exercer na Espanha e membro do Colégio Oficial de Médicos das Ilhas Baleares (COMIB), o Dr. Olivas traz para a Saúde Global uma abordagem integral e empática da atenção médica.</p><p>Graduou-se como Médico Cirurgião pela Universidad Autónoma de Guadalajara e aprofundou sua carreira com estudos avançados, incluindo um Mestrado em Medicina Interna e Urgências Psiquiátricas, assim como um Mestrado em Medicina Estética e Tratamentos Faciais. Essa combinação de conhecimentos permite-lhe abordar a saúde de seus pacientes a partir de uma perspectiva tanto funcional quanto de bem-estar geral.</p><p>Ao longo de sua carreira, adquiriu ampla experiência clínica em diversos contextos, desde serviços de urgências domiciliares até a atenção médica pública e privada. Conta com ampla experiência em telemedicina, colaborando com plataformas digitais internacionais para oferecer diagnóstico e acompanhamento remotos a pacientes nacionais e internacionais, incluindo atenção médica especializada para viajantes.</p><p>O Dr. Eduardo Olivas destaca-se por sua abordagem crítica e responsável, sua forte capacidade de resolver problemas em situações de crise e uma relação próxima e profissional médico-paciente.</p>",
+              "seoTitle": "Dr Eduardo Olivas - Medicina Geral | Global Health",
+              "seoDescription": "Dr. Eduardo Rodríguez Olivas, médico geral inscrito na Espanha (COMIB). Especialista em Cuidados Primários, Medicina Interna e Medicina Estética. Ampla experiência em telemedicina. Consulta online na Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "RO",
+              "title": "Medic de medicină generală",
+              "bio": "<p>Dr. Eduardo Daniel Rodríguez Olivas</p><p>Medic general</p><p>Dr. Eduardo Rodríguez Olivas este medic și chirurg cu o remarcabilă carieră internațională și o pregătire multidisciplinară care acoperă de la Asistența Primară până la Medicina Estetică. Înscris pentru a profesa în Spania și membru al Colegiului Oficial al Medicilor din Insulele Baleare (COMIB), dr. Olivas aduce în Sănătatea Globală o abordare integrată și empatică a asistenței medicale.</p><p>S-a absolvit ca Medic Chirurg la Universidad Autónoma de Guadalajara și și-a aprofundat cariera prin studii avansate, inclusiv un Master în Medicină Internă și Urgențe Psihiatrice, precum și un Master în Medicină Estetică și Tratamente Faciale. Această combinație de cunoștințe îi permite să abordeze sănătatea pacienților săi dintr-o perspectivă atât funcțională, cât și de bunăstare generală.</p><p>De-a lungul carierei sale, a acumulat o vastă experiență clinică în diverse medii, de la servicii de urgență la domiciliu până la asistența medicală publică și privată. Are o vastă experiență în telemedicină, colaborând cu platforme digitale internaționale pentru a oferi diagnostic și monitorizare la distanță pacienților naționali și internaționali, inclusiv asistență medicală specializată pentru călători.</p><p>Dr. Eduardo Olivas se remarcă prin abordarea sa critică și responsabilă, prin capacitatea sa puternică de a rezolva probleme în situații de criză și printr-o relație apropiată și profesională medic-pacient.</p>",
+              "seoTitle": "Dr Eduardo Olivas - Medicină generală | Global Health",
+              "seoDescription": "Dr. Eduardo Rodríguez Olivas, medic general înregistrat în Spania (COMIB). Specialist în Asistență Primară, Medicină Internă și Medicină Estetică. Experiență vastă în telemedicină. Consultație online la Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "CS",
+              "title": "Lékař všeobecné medicíny",
+              "bio": "<p>Dr. Eduardo Daniel Rodríguez Olivas</p><p>Všeobecný lékař</p><p>Dr. Eduardo Rodríguez Olivas je lékař a chirurg s výraznou mezinárodní praxí a multidisciplinárním vzděláním, které sahá od primární péče až po estetickou medicínu. Jako lékař oprávněný působit ve Španělsku a člen Oficiálního kolegia lékařů Baleárských ostrovů (COMIB) přináší Dr. Olivas do Global Health komplexní a empatický přístup k lékařské péči.</p><p>Absolvoval jako lékař a chirurg na Universidad Autónoma de Guadalajara a svou kariéru dále prohloubil pokročilým studiem, včetně magisterského studia v oboru vnitřního lékařství a psychiatrických urgentních stavů, jakož i magisterského studia v oboru estetické medicíny a ošetření obličeje. Tato kombinace znalostí mu umožňuje přistupovat ke zdraví svých pacientů jak z funkčního hlediska, tak z hlediska celkové pohody.</p><p>Během své kariéry získal rozsáhlé klinické zkušenosti v různých prostředích, od služeb domácí urgentní péče až po veřejnou a soukromou zdravotní péči. Má také rozsáhlé zkušenosti s telemedicínou a spolupracuje s mezinárodními digitálními platformami na poskytování vzdálené diagnostiky a následné péče národním i mezinárodním pacientům, včetně specializované zdravotní péče pro cestovatele.</p><p>Dr. Eduardo Olivas se vyznačuje kritickým a odpovědným přístupem, silnou schopností řešit problémy v krizových situacích a blízkým a profesionálním vztahem mezi lékařem a pacientem.</p>",
+              "seoTitle": "Dr Eduardo Olivas - Všeobecné lékařství | Global Health",
+              "seoDescription": "Dr. Eduardo Rodríguez Olivas, všeobecný lékař registrovaný ve Španělsku (COMIB). Specialista na primární péči, interní medicínu a estetickou medicínu. Rozsáhlé zkušenosti s telemedicínou. Online konzultace v Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "DE",
+              "title": "Arzt Allgemeinmedizin",
+              "bio": "<p>Dr. Eduardo Daniel Rodríguez Olivas</p><p>Allgemeinmediziner</p><p>Dr. Eduardo Rodríguez Olivas ist Arzt und Chirurg mit einer herausragenden internationalen Laufbahn und einer multidisziplinären Ausbildung, die von der Primärversorgung bis zur ästhetischen Medizin reicht. Zugelassen zur Berufsausübung in Spanien und Mitglied der offiziellen Ärztekammer der Balearen (COMIB), bringt Dr. Olivas in die Global Health einen ganzheitlichen und einfühlsamen Ansatz in die medizinische Versorgung ein.</p><p>Er schloss sein Studium als Arzt und Chirurg an der Universidad Autónoma de Guadalajara ab und hat seine Laufbahn mit weiterführenden Studien vertieft, darunter ein Master in Innerer Medizin und psychiatrischen Notfällen sowie ein Master in Ästhetischer Medizin und Gesichtbehandlungen. Diese Kombination von Kenntnissen ermöglicht es ihm, die Gesundheit seiner Patienten sowohl aus einer funktionalen Perspektive als auch unter dem Aspekt des allgemeinen Wohlbefindens zu betrachten.</p><p>Im Laufe seiner Karriere hat er umfangreiche klinische Erfahrung in verschiedenen Bereichen gesammelt, von häuslichen Notdiensten bis hin zur öffentlichen und privaten medizinischen Versorgung. Er verfügt über umfassende Erfahrung in der Telemedizin und arbeitet mit internationalen digitalen Plattformen zusammen, um nationalen und internationalen Patienten eine Ferndiagnose und -nachsorge zu bieten, einschließlich spezialisierter medizinischer Versorgung für Reisende.</p><p>Dr. Eduardo Olivas zeichnet sich durch seinen kritischen und verantwortungsvollen Ansatz, seine ausgeprägte Fähigkeit zur Problemlösung in Krisensituationen und eine enge und professionelle Arzt-Patienten-Beziehung aus.</p>",
+              "seoTitle": "Dr Eduardo Olivas - Allgemeinmedizin | Global Health",
+              "seoDescription": "Dr. Eduardo Rodríguez Olivas, in Spanien zugelassener Allgemeinmediziner (COMIB). Spezialist für Primärversorgung, Innere Medizin und Ästhetische Medizin. Umfangreiche Erfahrung in der Telemedizin. Online-Sprechstunde bei Global Health.",
+              "seoKeywords": []
+            }
+          ],
+          "divisionTranslations": []
+        }
+      ],
+      "assignedServices": [
+        {
+          "serviceId": "cmre7q9p1003ingjuum9voxoc",
+          "service": {
+            "id": "cmre7q9p1003ingjuum9voxoc",
+            "slug": "enfermedades-cronicas-online",
+            "name": "Enfermedades Crónicas",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 4500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q4co001yngjucbez1gc0",
+          "service": {
+            "id": "cmre7q4co001yngjucbez1gc0",
+            "slug": "consulta-piel-online",
+            "name": "Consulta de Piel",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 4500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q27m001dngju2395w6dl",
+          "service": {
+            "id": "cmre7q27m001dngju2395w6dl",
+            "slug": "salud-femenina-online",
+            "name": "Salud Femenina",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 4900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q8mg0037ngjuso41eynq",
+          "service": {
+            "id": "cmre7q8mg0037ngjuso41eynq",
+            "slug": "musculoesqueletico-online",
+            "name": "Musculoesquelético",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q038000ungjuxs5rkyxy",
+          "service": {
+            "id": "cmre7q038000ungjuxs5rkyxy",
+            "slug": "control-peso-online",
+            "name": "Control de Peso",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 4500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7qas1003sngjus0w2obwn",
+          "service": {
+            "id": "cmre7qas1003sngjus0w2obwn",
+            "slug": "derivaciones-pruebas-online",
+            "name": "Derivaciones y Pruebas",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7pwwv0000ngjuwvmiacw9",
+          "service": {
+            "id": "cmre7pwwv0000ngjuwvmiacw9",
+            "slug": "consulta-medica-online",
+            "name": "Consulta Médica General",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q1550013ngjujfvwl58k",
+          "service": {
+            "id": "cmre7q1550013ngjujfvwl58k",
+            "slug": "salud-masculina-online",
+            "name": "Salud Masculina",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 4900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q3a5001ongjur495me3b",
+          "service": {
+            "id": "cmre7q3a5001ongjur495me3b",
+            "slug": "salud-mental-online",
+            "name": "Salud Mental",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 5900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q5fw002angjuebao1obt",
+          "service": {
+            "id": "cmre7q5fw002angjuebao1obt",
+            "slug": "segunda-opinion-medica",
+            "name": "Segunda Opinión Médica",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 4900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7qcvw004engju2es5log3",
+          "service": {
+            "id": "cmre7qcvw004engju2es5log3",
+            "slug": "dejar-de-fumar-online",
+            "name": "Dejar de Fumar",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q7k0002vngju6v73lt8h",
+          "service": {
+            "id": "cmre7q7k0002vngju6v73lt8h",
+            "slug": "medicina-viaje-online",
+            "name": "Medicina de Viaje",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 4900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7pz0n000kngjuib862zxl",
+          "service": {
+            "id": "cmre7pz0n000kngjuib862zxl",
+            "slug": "renovacion-tratamiento-online",
+            "name": "Renovación de Tratamiento",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 2900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7pxza000angjubr3s2h65",
+          "service": {
+            "id": "cmre7pxza000angjubr3s2h65",
+            "slug": "justificante-medico-online",
+            "name": "Justificante Médico",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q6hn002lngju3chey2ai",
+          "service": {
+            "id": "cmre7q6hn002lngju3chey2ai",
+            "slug": "caida-cabello-online",
+            "name": "Caída del Cabello",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3900,
+            "currencyCode": "EUR"
+          }
+        }
+      ],
+      "seoKeywords": [],
+      "resolvedMarketLocale": "PT",
+      "specialties": [],
+      "faqs": [
+        {
+          "id": "cmrnxqgfg000gbsjufc7oj7ke",
+          "locale": "PT",
+          "question": "O Dr. Olivas está registado no Consejo General de Colegios Oficiales de Médicos?",
+          "answer": "Sim. O Dr. Eduardo Daniel Rodríguez Olivas está registado no sistema de verificação do CGCOM com o número 070713200. Pode verificar este registo em cgcom.es. O Dr. Olivas é ainda membro do Colégio Oficial de Médicos das Ilhas Baleares (COMIB) e tem ampla experiência em telemedicina internacional.",
+          "category": null,
+          "sortOrder": 0,
+          "isActive": true
+        },
+        {
+          "id": "cmrnxqgfg000hbsjur2gqx332",
+          "locale": "PT",
+          "question": "O que trata o Dr. Olivas?",
+          "answer": "O Dr. Olivas oferece consultas de medicina geral cobrindo doenças agudas (infeções respiratórias, febre, gripe, infeções urinárias), gestão de doenças crónicas (hipertensão, diabetes, dislipidemia, hipotiroidismo, asma, DPOC), saúde mental (ansiedade, depressão, urgências psiquiátricas), medicina do viajante, saúde da mulher e do homem, consulta estética online, atenção preventiva, renovação de receitas, baixas médicas e relatórios médicos.",
+          "category": null,
+          "sortOrder": 1,
+          "isActive": true
+        },
+        {
+          "id": "cmrnxqgfg000ibsju9mdlch49",
+          "locale": "PT",
+          "question": "O que é a especialização em urgências psiquiátricas e por que é relevante para uma consulta de medicina geral online?",
+          "answer": "O Dr. Olivas completou uma Mestrado em Medicina Interna e Urgências Psiquiátricas — uma combinação que lhe permite avaliar situações de crise de saúde mental com uma profundidade clínica que a maioria dos médicos gerais não possui. Numa consulta online, onde a avaliação de sintomas de ansiedade grave, episódios depressivos agudos ou crises de pânico requer capacidade de decisão rápida e segura, esta formação é especialmente valiosa. O Dr. Olivas pode avaliar se uma situação de saúde mental pode ser gerida de forma ambulatorial, requer encaminhamento urgente ou necessita de atenção presencial imediata.",
+          "category": null,
+          "sortOrder": 2,
+          "isActive": true
+        },
+        {
+          "id": "cmrnxqgfg000jbsju0py0trt2",
+          "locale": "PT",
+          "question": "O Dr. Olivas tem experiência em medicina do viajante?",
+          "answer": "Sim. O Dr. Olivas tem experiência específica em medicina do viajante, incluindo consultas pré-viagem (vacinações, profilaxia antipalúdica, conselhos para destinos específicos), atenção durante a viagem e avaliação de doenças adquiridas no estrangeiro ao regresso. Colaborou com plataformas internacionais de telemedicina oferecendo atenção médica especializada para viajantes, o que lhe proporciona experiência prática com pacientes de múltiplos países e contextos culturais.",
+          "category": null,
+          "sortOrder": 3,
+          "isActive": true
+        },
+        {
+          "id": "cmrnxqgfg000kbsjugeddbjx2",
+          "locale": "PT",
+          "question": "Como faço para reservar uma consulta com o Dr. Olivas?",
+          "answer": "Selecione um horário disponível nesta página para reservar diretamente com o Dr. Olivas. O pagamento é processado de forma segura ao reservar — a consulta fica confirmada uma vez completado o pagamento. Receberá imediatamente um convite para o calendário. As consultas realizam-se por videoconferência segura em espanhol ou inglês. As consultas no mesmo dia costumam estar disponíveis.",
+          "category": null,
+          "sortOrder": 4,
+          "isActive": true
+        },
+        {
+          "id": "cmrnxqgfg000lbsjubmswgag0",
+          "locale": "PT",
+          "question": "Quais são as qualificações do Dr. Olivas?",
+          "answer": "O Dr. Eduardo Rodríguez Olivas é Médico Cirurgião graduado pela Universidade Autónoma de Guadalajara. Completou uma Mestrado em Medicina Interna e Urgências Psiquiátricas e uma Mestrado em Medicina Estética e Tratamentos Faciais. É membro do Colégio Oficial de Médicos das Ilhas Baleares (COMIB) e tem ampla experiência em telemedicina internacional, urgências domiciliárias e medicina do viajante. Está registado no CGCOM (nº 070713200).",
+          "category": null,
+          "sortOrder": 5,
+          "isActive": true
+        }
+      ],
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T07:30:00.000Z"
+      },
+      "bookabilityByServiceId": {
+        "cmre7q9p1003ingjuum9voxoc": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T07:30:00.000Z"
+        },
+        "cmre7q4co001yngjucbez1gc0": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T07:30:00.000Z"
+        },
+        "cmre7q27m001dngju2395w6dl": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T07:30:00.000Z"
+        },
+        "cmre7q8mg0037ngjuso41eynq": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T07:30:00.000Z"
+        },
+        "cmre7q038000ungjuxs5rkyxy": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T07:30:00.000Z"
+        },
+        "cmre7qas1003sngjus0w2obwn": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T07:30:00.000Z"
+        },
+        "cmre7pwwv0000ngjuwvmiacw9": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T07:30:00.000Z"
+        },
+        "cmre7q1550013ngjujfvwl58k": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T07:30:00.000Z"
+        },
+        "cmre7q3a5001ongjur495me3b": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T07:30:00.000Z"
+        },
+        "cmre7q5fw002angjuebao1obt": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T07:30:00.000Z"
+        },
+        "cmre7qcvw004engju2es5log3": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T07:30:00.000Z"
+        },
+        "cmre7q7k0002vngju6v73lt8h": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T07:30:00.000Z"
+        },
+        "cmre7pz0n000kngjuib862zxl": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T07:30:00.000Z"
+        },
+        "cmre7pxza000angjubr3s2h65": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T07:30:00.000Z"
+        },
+        "cmre7q6hn002lngju3chey2ai": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T07:30:00.000Z"
+        }
+      }
+    }
+  }
+}

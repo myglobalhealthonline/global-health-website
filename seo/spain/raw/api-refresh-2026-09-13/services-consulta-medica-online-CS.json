@@ -1,0 +1,183 @@
+{
+  "endpoint": "/api/services/consulta-medica-online?countryCode=es&locale=CS",
+  "checkedAt": "2026-09-13T22:38:03.500Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7pwwv0000ngjuwvmiacw9",
+      "kind": "GENERAL",
+      "slug": "consulta-medica-online",
+      "name": "Všeobecná lékařská konzultace",
+      "summary": null,
+      "seoTitle": "Online lékař ve Španělsku | Bez čekací doby | Konzultace tentýž den",
+      "seoDescription": "Potřebujete dnes navštívit lékaře? Lékaři s platnou licencí ve Španělsku nabízejí konzultace prostřednictvím bezpečného videohovoru. Bez předchozí registrace, bez čekárny. Klinická dokumentace vystavená tentýž den po celé Španělsku.",
+      "seoKeywords": [
+        "médico online España",
+        "consulta médica online España",
+        "médico online sin espera",
+        "médico online sin médico de cabecera",
+        "videoconsulta médica privada España"
+      ],
+      "heroTitle": "Online lékař — Soukromá lékařská konzultace tentýž den",
+      "heroDescription": "Potřebujete dnes navštívit lékaře, ale nemáte přiřazeného praktického lékaře, nemůžete čekat týdny na termín, nebo jednoduše potřebujete rychlou a kvalitní lékařskou konzultaci bez cestování? Naši lékaři, registrovaní ve Španělsku v souladu s požadavky Organizace lékařské komory (OMC), nabízejí kompletní soukromé lékařské konzultace prostřednictvím zabezpečeného videohovoru. Bez předchozí registrace, bez čekárny, s kompletní zdravotnickou dokumentací vystavenou tentýž den odkudkoli v zemi.",
+      "detailBody": "<h2>Realita přístupu ke zdravotní péči ve Španělsku</h2><p>Španělský zdravotnický systém je jedním z nejlepších v Evropě — přístup k němu však pro významnou část obyvatelstva naráží na skutečné překážky.</p><p>Jste-li OSVČ bez aktuálně přiděleného praktického lékaře, pokud jste nedávno změnili autonomní oblast, pokud už týdny čekáte na termín v CAP, pokud potřebujete ošetření ještě dnes a veřejný systém vám ho nemůže poskytnout, nebo pokud dáváte přednost soukromé konzultaci bez obvyklého čekání — tato služba existuje pro vás.</p><p>Naši registrovaní lékaři poskytují kompletní soukromé lékařské konzultace prostřednictvím videohovoru se stejnou klinickou a právní platností jako osobní konzultace. Klinická dokumentace, kterou vystavují — včetně soukromého elektronického receptu, pokud je klinicky indikovaný — je propojena s Nodofarma a je platná ve více než 22.000 lékárnách na území státu.</p><p>Máte už praktického lékaře ve veřejném systému? Tato služba funguje jako doplněk — pro situace, kdy potřebujete ošetření ještě dnes a váš CAP nemá volný termín, nebo pro druhý názor před přijetím důležitého zdravotnického rozhodnutí.</p><h2>S čím vám můžeme pomoci</h2><p>Naši lékaři posuzují a řeší širokou škálu akutních a neurgentních zdravotních potíží:</p><p><strong>Dýchací cesty a ORL</strong></p><ul><li>Nachlazení, chřipka, sinusitida a bronchitida</li><li>Příznaky COVID-19 a post-COVID potíže</li><li>Bolest v krku, angína a ušní infekce</li><li>Plicní infekce a přetrvávající kašel</li><li>Mírné astmatické potíže</li></ul><p><strong>Infekce</strong></p><ul><li>Infekce močových cest — vyšetření a léčba, pokud je to klinicky indikované</li><li>Kutánní infekce</li><li>Infekce dýchacích cest vyžadující vyšetření</li><li>Gastrointestinální infekce</li></ul><p><strong>Obecné a systémové</strong></p><ul><li>Horečka u dospělých</li><li>Bolesti hlavy a migréna</li><li>Nevolnost, zvracení, průjem a bolest břicha</li><li>Únava a celková nevolnost</li></ul><p><strong>Kůže a oči</strong></p><ul><li>Vyrážky, ekzém a mírné alergické reakce</li><li>Konjunktivitida a mírné podráždění očí</li></ul><p><strong>Pohybový aparát</strong></p><ul><li>Bolest zad, krční páteře a svalů</li><li>Drobnější poranění pohybového aparátu</li></ul><p><strong>Jiné</strong></p><ul><li>Dotazy ohledně aktuální medikace nebo probíhající léčby</li><li>Zdravotnická dokumentace — potvrzení, doporučení</li><li>Lékařské cestovní poradenství</li><li>Druhý názor k diagnózám nebo léčebným plánům</li></ul><h2>Co zahrnuje vaše konzultace</h2><p><strong>Kompletní klinické vyšetření</strong></p><p>Lékař získá kompletní anamnézu vašich příznaků, relevantní zdravotní historii a aktuální medikaci — a provede strukturované klinické posouzení prostřednictvím videohovoru, se stejným standardem jako při osobní konzultaci.</p><p><strong>Srozumitelné vysvětlení</strong></p><p>Z konzultace odcházíte s přesnou znalostí toho, co se děje, co máte dělat a kdy vyhledat další péči. Bez spěchu, bez jazykových bariér.</p><p><strong>Klinická dokumentace — dle uvážení lékaře</strong></p><p>Lékař vystaví vhodnou klinickou dokumentaci pro vaši situaci po kompletním vyšetření. To může zahrnovat soukromý elektronický recept v souladu s Real Decreto 1718/2010, schválený OMC a propojený přes Nodofarma s více než 22.000 lékárnami na území státu — pokud je to klinicky indikované. Předložte svůj DNI v jakékoli lékárně podle vlastního výběru.</p><p>Soukromý recept má obecnou platnost 10 kalendářních dnů pro první vydání. U chronické léčby může lékař naplánovat následná vydání podle délky léčby.</p><p><strong>Antibiotika — vyšetření a léčba, pokud jsou indikované</strong></p><p>Ve Španělsku vyžadují všechna antibiotika lékařský předpis. Váš lékař vyhodnotí vaše příznaky a předepíše odpovídající léčbu tam, kde to klinický důkaz odůvodňuje — včetně infekcí močových cest, infekcí dýchacích cest a kožních infekcí — v souladu se zásadami odpovědného užívání antibiotik.</p><p><strong>Doporučení a zdravotnická dokumentace</strong></p><p>Je-li potřeba doporučení ke specialistovi, laboratorní testy, zobrazovací vyšetření nebo jiná klinická dokumentace, lékař ji vystaví ještě tentýž den.</p><p><strong>Lékařské potvrzení</strong></p><p>Pokud potřebujete doložit pracovní absenci, lékař může po kompletním vyšetření vystavit odpovídající lékařské potvrzení, pokud je to klinicky indikované.</p><h2>Soukromý elektronický recept — jak funguje ve Španělsku</h2><p>Soukromý elektronický lékařský recept ve Španělsku je regulován Real Decreto 1718/2010 a je platný na celém území státu. Naši lékaři vystavují soukromé elektronické recepty schválené OMC, propojené s Nodofarma.</p><p>Se soukromým receptem hradíte 100% ceny léku — ceny léků ve Španělsku jsou regulované a obecně velmi dostupné. Léky jsou k dispozici v jakékoli španělské lékárně po předložení vašeho DNI.</p><p>Soukromý elektronický recept není totéž co recept od Seguridad Social. S receptem SNS můžete mít podle své situace nižší spoluúčast. Pokud máte praktického lékaře ve veřejném systému a potřebujete hrazené léky, nejprve se obraťte na svůj CAP.</p><h2>Kdo tuto službu využívá</h2><ul><li>OSVČ a pracovníci bez aktuálně přiděleného praktického lékaře</li><li>Lidé, kteří změnili autonomní oblast a ještě nemají přidělený CAP</li><li>Rezidenti, kteří nemohou týdny čekat na termín ve veřejném systému</li><li>Expati a mezinárodní rezidenti, kteří dávají přednost konzultaci v angličtině nebo portugalštině</li><li>Turisté a digitální nomádi, kteří potřebují jednorázovou lékařskou péči bez španělského pojištění</li><li>Lidé se soukromým zdravotním pojištěním, kteří chtějí rychlý druhý názor</li><li>Kdokoli, kdo dnes potřebuje lékaře a nechce nikam cestovat</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 10,
+      "durationMinutes": 15,
+      "basePriceCents": 3900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.257Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0su150005y8junba6y1ib",
+          "kind": "IMAGE",
+          "key": "media/4fdae944-3701-4d28-8553-fe11a3b12d7f-es-consulta-medica-online.png",
+          "path": "/api/media/media/4fdae944-3701-4d28-8553-fe11a3b12d7f-es-consulta-medica-online.png",
+          "altText": "Consulta Médica General"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7px5i0001ngju89f94ekh",
+          "question": "Potřebuji zdravotní kartu nebo SIP k použití této služby?",
+          "answer": "Ne. Jedná se o soukromou službu s přímou platbou. Není vyžadována žádná zdravotní karta, SIP ani žádné španělské zdravotní pojištění.",
+          "sortOrder": 0,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7px5i0002ngjuege8nh97",
+          "question": "Může lékař léčit infekce, které vyžadují antibiotika?",
+          "answer": "Ano — tam, kde je to klinicky indikováno po kompletním zhodnocení vašich příznaků. Ve Španělsku je povinné mít lékařský předpis k získání antibiotik v lékárně. Váš lékař zhodnotí váš stav a předepíše vhodnou léčbu tam, kde to odůvodňuje klinický důkaz.",
+          "sortOrder": 1,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7px5i0003ngju6svm8wyj",
+          "question": "Je klinická dokumentace platná v celém Španělsku?",
+          "answer": "Ano. Klinická dokumentace vystavená našimi lékaři — včetně elektronických soukromých receptů, kde je to uvedeno — je homologována OMC a propojena s Nodofarma, platná v kterékoli z více než 22.000 lékáren na území státu.",
+          "sortOrder": 2,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7px5i0004ngjugfol80qo",
+          "question": "Mohu prostřednictvím této služby získat pracovní neschopenku?",
+          "answer": "Lékaři Global Health mohou vystavit soukromé lékařské potvrzení prokazující dočasnou pracovní neschopnost. Pro získání neschopenky z důvodu dočasné pracovní neschopnosti (IT) ve veřejném systému s finanční dávkou sociálního zabezpečení potřebujete praktického lékaře v SNS.",
+          "sortOrder": 3,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7px5i0005ngjuvcwamxc8",
+          "question": "Mohu si obnovit recept z jiné evropské země?",
+          "answer": "Náš lékař zhodnotí vaši současnou léčbu a pokud to bude považovat za klinicky vhodné, vystaví odpovídající španělskou klinickou dokumentaci. Vezměte si svou současnou dokumentaci na konzultaci.",
+          "sortOrder": 4,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7px5i0006ngju1jevcbps",
+          "question": "Jak dlouho trvá, než dorazí klinická dokumentace?",
+          "answer": "Je-li to klinicky indikováno, dokumentace se vystavuje ve stejný den konzultace, obvykle během několika minut.",
+          "sortOrder": 5,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7px5i0007ngjuuxisglns",
+          "question": "Mohu tuto službu používat z jakéhokoli místa ve Španělsku?",
+          "answer": "Ano — včetně Baleárských ostrovů, Kanárských ostrovů, Ceuty a Melilly. Stačí jen stabilní připojení k internetu a zařízení s kamerou.",
+          "sortOrder": 6,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7px5i0008ngjuadsntmup",
+          "question": "V jakých jazycích je k dispozici?",
+          "answer": "Španělština, angličtina a portugalština — podle dostupnosti lékaře.",
+          "sortOrder": 7,
+          "resolvedLocale": "CS"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "CS",
+      "links": [
+        {
+          "id": "cmre7rgl80000g8jufspbvv3k",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Justificante médico o certificado de baja?",
+          "body": "Si tu situación está relacionada con justificante médico o certificado de baja, nuestra Justificante Médico te ofrece la evaluación adecuada.",
+          "ctaLabel": "Justificante Médico",
+          "targetSlug": "justificante-medico-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7rhdh0002g8jutbik3ps8",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con renovación de tu tratamiento habitual?",
+          "body": "Para renovación de tu tratamiento habitual, consulta nuestra página de Renovación de Tratamiento — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Renovación de Tratamiento",
+          "targetSlug": "renovacion-tratamiento-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7ri5n0004g8jub91rpgd5",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre control de peso con apoyo médico?",
+          "body": "Nuestra Control de Peso está pensada específicamente para control de peso con apoyo médico.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7rixq0006g8ju1e53bfuz",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Salud masculina y función sexual?",
+          "body": "Si tu situación está relacionada con salud masculina y función sexual, nuestra Salud Masculina te ofrece la evaluación adecuada.",
+          "ctaLabel": "Salud Masculina",
+          "targetSlug": "salud-masculina-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdpz5n3001z01rukg2lecs5",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+      }
+    }
+  }
+}

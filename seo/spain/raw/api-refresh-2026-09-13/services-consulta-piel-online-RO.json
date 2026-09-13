@@ -1,0 +1,186 @@
+{
+  "endpoint": "/api/services/consulta-piel-online?countryCode=es&locale=RO",
+  "checkedAt": "2026-09-13T22:39:03.726Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q4co001yngjucbez1gc0",
+      "kind": "GENERAL",
+      "slug": "consulta-piel-online",
+      "name": "Consultație dermatologică",
+      "summary": null,
+      "seoTitle": "Consulta dermatologică Online Spania | Medic de familie | În aceeași zi",
+      "seoDescription": "Erupție cutanată, eczemă, acnee sau altă problemă de piele. Medicii noștri de familie autorizați evaluează afecțiuni cutanate prin videoconferință securizată. Evaluare clinică în aceeași zi în Spania.",
+      "seoKeywords": [
+        "consulta de piel online España",
+        "médico piel online España",
+        "eccema médico online España",
+        "acné evaluación online España",
+        "sarpullido médico online España"
+      ],
+      "heroTitle": "Consultație de piele — Evaluare clinică cu medic de familie online",
+      "heroDescription": "O erupție nouă, o exacerbare a eczemei, acnee care îți afectează încrederea sau o leziune cutanată pe care vrei de ceva vreme să o verifici. Majoritatea problemelor de piele pot fi evaluate clinic prin apel video de către un medic de familie cu experiență — fără a fi nevoie să aștepți săptămâni pentru o programare la dermatologie. Medicii noștri de familie, înregistrați conform cerințelor Organizației Medicale Colegiale (OMC), oferă evaluări complete ale pielii prin videoconferință securizată — identificând afecțiunea ta, oferind sfaturi privind gestionarea bazată pe dovezi și îndrumând către serviciul nostru de dermatologie specializată acolo unde este necesară o evaluare mai aprofundată. În aceeași zi, din orice punct al Spaniei, în spaniolă, engleză sau portugheză.",
+      "detailBody": "<h2>Consulta de piele cu medicul de familie vs. consulta dermatologică de specialitate</h2><p>Global Health oferă două niveluri de îngrijire pentru afecțiunile cutanate:</p><ul><li>Consultație de piele cu medicul de familie — potrivită pentru majoritatea prezentărilor cutanate acute și non-urgente. Eczemă, acnee ușoară până la moderată, erupții cutanate, infecții cutanate, alunițe aflate în supraveghere de rutină și afecțiuni cutanate cronice gestionate la nivelul medicinei generale. Este punctul corect de intrare pentru majoritatea problemelor de piele.</li><li>Consultație dermatologică de specialitate — efectuată de dermatologi acreditați ai Global Health. Potrivită pentru afecțiuni complexe, rezistente la tratament sau care necesită evaluare de specialitate — inclusiv acnee severă cu luarea în considerare a isotretinoinei, leziuni suspecte care necesită dermatoscopie de înaltă rezoluție, psoriazis complex și afecțiuni care necesită biopsie coordonată.</li></ul><p>Nu ești sigur ce nivel este potrivit pentru problema ta? Începe cu consultația de medicină generală — dacă prezentarea ta necesită evaluare dermatologică de specialitate, medicul de familie te va trimite direct către serviciul nostru de dermatologie din aceeași platformă.</p><h2>Pentru cine este acest serviciu</h2><p>Această consultație este potrivită pentru adulți și copii care prezintă:</p><ul><li>O erupție, o modificare cutanată sau o leziune nouă care necesită evaluare clinică</li><li>O afecțiune cutanată existentă care este în puseu sau nu răspunde la tratamentul actual</li><li>Acnee ușoară până la moderată — comedoniană, inflamatorie sau mixtă</li><li>Eczemă sau dermatită atopică — evaluarea puseului și management continuu</li><li>Psoriazis — prezentări necomplexe la nivelul medicinei generale</li><li>O aluniță sau o leziune cutanată aflată în supraveghere de rutină</li><li>Reacții alergice cutanate — urticarie, dermatită de contact sau reacții medicamentoase</li><li>Afecțiuni ale scalpului — dermatită seboreică, psoriazis al scalpului sau afecțiuni fungice</li><li>Infecții cutanate — bacteriene, virale sau fungice</li><li>Afecțiuni cutanate cronice gestionate la nivelul medicinei generale</li><li>Pacienți care au nevoie de o scrisoare de trimitere către dermatologie</li></ul><h2>Afecțiuni evaluate în mod obișnuit</h2><p><strong>Afecțiuni inflamatorii</strong></p><ul><li>Eczemă și dermatită atopică — gestionarea puseelor, identificarea factorilor declanșatori, îngrijire continuă</li><li>Psoriazis — prezentări necomplexe la nivelul medicinei generale</li><li>Dermatită seboreică — prezentare la nivelul scalpului și feței</li><li>Rozacee — evaluare și gestionare la nivelul medicinei generale</li><li>Dermatită periorală</li></ul><p><strong>Acnee</strong></p><ul><li>Acnee ușoară până la moderată — comedoniană, inflamatorie și mixtă</li><li>Acnee la adolescenți și adulți</li><li>Acnee hormonală la femei — evaluată împreună cu evaluarea hormonală, unde este indicat</li><li>Evaluarea pigmentării post-acneice și a cicatricilor</li><li>Revizuirea managementului acneei — pacienți deja în tratament care au nevoie de o reevaluare clinică</li></ul><p>Acneea severă care poate necesita isotretinoină necesită evaluare de către serviciul nostru de dermatologie de specialitate — medicul de familie te va trimite direct dacă prezentarea ta justifică acest lucru.</p><p><strong>Afecțiuni alergice și reactive</strong></p><ul><li>Urticarie — papule urticariene acute și cronice</li><li>Dermatită alergică de contact — evaluare și consiliere privind evitarea alergenilor</li><li>Reacții medicamentoase care afectează pielea</li><li>Angioedem — evaluare și gestionare la nivelul medicinei generale</li><li>Prezentări cutanate ale alergiei alimentare</li></ul><p><strong>Infecții</strong></p><ul><li>Impetigo — infecție cutanată bacteriană</li><li>Celulită — evaluare și gestionare cu escaladare unde este indicat</li><li>Foliculită</li><li>Infecții cutanate fungice — tinea corporis, tinea pedis, tinea versicolor</li><li>Molluscum contagiosum</li><li>Negi și negi plantari</li><li>Herpes simplex — herpes labial și herpes cutanat</li><li>Herpes zoster — evaluare și gestionare</li></ul><p><strong>Pigmentare și leziuni — supraveghere de rutină</strong></p><ul><li>Alunițe aflate în supraveghere de rutină — evaluare clinică și trimitere către dermatologie de specialitate, unde este indicat</li><li>Hiperpigmentare postinflamatorie</li><li>Melasmă — evaluare și gestionare</li><li>Vitiligo — evaluare și trimitere, unde este indicat</li></ul><p>Leziunile suspecte care necesită dermatoscopie sau biopsie sunt trimise către serviciul nostru de dermatologie de specialitate.</p><p><strong>Afecțiuni ale scalpului</strong></p><ul><li>Dermatită seboreică a scalpului</li><li>Psoriazis al scalpului — prezentări necomplexe</li><li>Foliculită a scalpului</li><li>Tinea capitis — infecție fungică a scalpului</li></ul><p><strong>Afecțiuni cutanate pediatrice</strong></p><ul><li>Eczemă la sugari și copii</li><li>Dermatită de scutec și preocupări cutanate la sugari</li><li>Erupții cutanate virale la copii — evaluare și orientare pentru părinți</li><li>Impetigo și infecții cutanate la copii</li><li>Molluscum contagiosum la copii</li></ul><h2>Ce include consultația</h2><p><strong>Evaluare vizuală clinică</strong></p><p>Afecțiunile cutanate sunt deosebit de potrivite pentru videoconsultație — medicul de familie poate observa leziunea, erupția sau modificarea cutanată direct în timpul apelului. O iluminare bună și o imagine clară de la cameră îmbunătățesc semnificativ calitatea evaluării — medicul te ghidează privind poziționarea în timpul apelului.</p><p><strong>Istoric medical complet</strong></p><p>Medicul analizează debutul, progresia, distribuția, simptomele asociate, factorii declanșatori, tratamentele anterioare, istoricul medical relevant, medicația și antecedentele familiale de afecțiuni cutanate.</p><p><strong>Diagnostic și plan de management</strong></p><p>Pe baza evaluării, medicul oferă sfaturi privind diagnosticul cel mai probabil, abordarea adecvată de management și la ce să te aștepți de la tratament — inclusiv cum să îți monitorizezi afecțiunea și când să soliciți o reevaluare suplimentară.</p><p><strong>Documentație clinică — la latitudinea medicului</strong></p><p>Când este indicat clinic, medicul eliberează documentația clinică corespunzătoare, valabilă în orice farmacie spaniolă.</p><p>Notă: Stupefiantele și anumite substanțe controlate necesită documentație specială care nu poate fi emisă electronic. Medicul de familie te va informa dacă acest lucru se aplică.</p><p><strong>Solicitare de analize unde este indicat</strong></p><p>Atunci când analizele de sânge — inclusiv panelurile alergice sau markerii inflamatori — sunt indicate clinic, medicul le solicită în aceeași zi.</p><p><strong>Trimitere internă către dermatologie de specialitate — unde este necesar</strong></p><p>Atunci când este necesară evaluare dermatologică de specialitate — inclusiv leziuni suspecte, acnee severă, afecțiuni complexe sau rezistente la tratament — medicul de familie te va trimite direct către serviciul nostru de dermatologie de specialitate din aceeași platformă, în aceeași zi.</p><h2>Alunițe și leziuni cutanate — când să acționezi prompt</h2><p>Orice modificare a unei alunițe sau a unei leziuni cutanate justifică o evaluare clinică. Criteriile ABCDE sunt ghidul clinic standard:</p><ul><li>A — Asimetrie — o jumătate nu corespunde celeilalte</li><li>B — Bordură — margini neregulate, zimțate sau difuze</li><li>C — Culoare — variație de culoare în cadrul leziunii</li><li>D — Diametru — mai mare de 6mm</li><li>E — Evoluție — orice modificare de dimensiune, formă, culoare sau orice simptom nou</li></ul><p>Dacă leziunea ta îndeplinește oricare dintre aceste criterii, programează o evaluare cât mai curând. Medicul de familie o evaluează vizual și, unde este indicat, te trimite direct către serviciul nostru de dermatologie de specialitate pentru evaluare cu dermatoscopie.</p><h2>Pregătirea pentru consultația ta de piele</h2><ul><li>Iluminare bună — lumina naturală sau o lampă îndreptată spre zona afectată îi oferă medicului cea mai clară vizualizare</li><li>Fotografii clare — fă fotografii clare ale zonei afectate înainte de consultație</li><li>Mai multe unghiuri — arată leziunea sau erupția din mai multe unghiuri în timpul apelului</li><li>Notează istoricul — când a început, cum s-a schimbat, ce o ameliorează sau o agravează și ce ai încercat deja</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 60,
+      "durationMinutes": 15,
+      "basePriceCents": 4500,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.260Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0sqto0003y8juhyfqxza5",
+          "kind": "IMAGE",
+          "key": "media/c998d4b2-6480-4390-8ced-8be785780cbe-es-consulta-piel-online.png",
+          "path": "/api/media/media/c998d4b2-6480-4390-8ced-8be785780cbe-es-consulta-piel-online.png",
+          "altText": "Consulta de Piel"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q4lj001zngjugidf8kbv",
+          "question": "Poate fi evaluată cu adevărat o afecțiune a pielii prin apel video?",
+          "answer": "Da — pentru marea majoritate a prezentărilor. Dermatologia este una dintre specialitățile medicale cele mai potrivite pentru evaluarea vizuală, iar o videoconsultă îi permite medicului tău de familie să observe direct afecțiunea. Atunci când o afecțiune nu poate fi evaluată adecvat la nivel de medicină generală, medicul tău te trimite către serviciul nostru de dermatologie de specialitate din cadrul aceleiași platforme.",
+          "sortOrder": 0,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q4lk0020ngjugwu3qtqj",
+          "question": "Care este diferența dintre această consultație și consultația dermatologică de specialitate?",
+          "answer": "Această consultație este efectuată de medici de familie autorizați și acoperă majoritatea afecțiunilor cutanate acute și neurgente. Consultația dermatologică de specialitate este efectuată de dermatologi autorizați de Global Health și este potrivită pentru afecțiuni complexe, rezistente la tratament sau care necesită dermatoscopie de înaltă rezoluție, luarea în considerare a isotretinoinei sau biopsie coordonată. Dacă nu ești sigur care este nivelul adecvat, începe aici — medicul tău de familie te va îndruma, dacă este necesar.",
+          "sortOrder": 1,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q4lk0021ngju4zwoosxt",
+          "question": "Pot obține tratament pentru acnee prin acest serviciu?",
+          "answer": "Da — pentru acnee ușoară până la moderată. Medicul tău de familie efectuează o evaluare completă și oferă sfaturi cu privire la cea mai adecvată abordare de gestionare. Dacă prezentarea ta justifică luarea în considerare a izotretinoinei, medicul tău de familie te trimite direct la serviciul nostru de dermatologie specializată din cadrul aceleiași platforme.",
+          "sortOrder": 2,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q4lk0022ngju7zgv3b29",
+          "question": "Am o aluniță care s-a schimbat — cât de urgent este?",
+          "answer": "Alunițele care s-au schimbat justifică evaluare clinică de urgență. Programează o consultație și arată-i medicului de familie leziunea în timpul videoconferinței. Medicul tău evaluează folosind criteriile standard ABCDE și, unde este indicat, te trimite la dermatologie de specialitate pentru evaluare cu dermatoscopie.",
+          "sortOrder": 3,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q4lk0023ngjucugczvml",
+          "question": "Pot folosi acest serviciu pentru eczema fiului meu?",
+          "answer": "Da. Eczema la sugari și copii este una dintre cele mai frecvente manifestări cutanate pediatrice și reprezintă o parte centrală a acestui serviciu.",
+          "sortOrder": 4,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q4lk0024ngjuhgu5x5xj",
+          "question": "Pot obține o trimitere la dermatologie prin acest serviciu?",
+          "answer": "Da — atât o trimitere internă către serviciul nostru de dermatologie de specialitate Global Health, cât și o scrisoare de trimitere externă către un dermatolog la alegerea ta, atunci când este indicat din punct de vedere clinic.",
+          "sortOrder": 5,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q4lk0025ngjus49u17km",
+          "question": "Erupția mea se extinde rapid și mă simt rău — ce ar trebui să fac?",
+          "answer": "O erupție care se extinde rapid, însoțită de febră, dificultăți de respirație, umflare facială sau stare generală gravă de rău este o urgență medicală. Sună la 112 sau mergi imediat la cel mai apropiat serviciu de urgențe — nu programa o videoconsultă.",
+          "sortOrder": 6,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q4lk0026ngjulsplncl8",
+          "question": "Pot folosi acest serviciu pentru o reacție la soare?",
+          "answer": "Da. Arsurile solare și reacțiile cutanate legate de soare sunt deosebit de frecvente la turiști și vizitatori în Spania. Medicul dumneavoastră de familie evaluează gravitatea și oferă sfaturi privind gestionarea adecvată.",
+          "sortOrder": 7,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q4lk0027ngjupk9a2h5e",
+          "question": "Am nevoie de asigurare medicală spaniolă?",
+          "answer": "Nu. Este un serviciu privat cu plată directă. Documentația clinică emisă prin acest serviciu este furnizată la prețul privat integral, indiferent de statutul de asigurare.",
+          "sortOrder": 8,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q4lk0028ngju1535g3s4",
+          "question": "Pot folosi acest serviciu din orice punct al Spaniei?",
+          "answer": "Da — inclusiv Insulele Baleare, Insulele Canare, Ceuta și Melilla. Ai nevoie doar de o conexiune stabilă la internet și de un dispozitiv cu cameră.",
+          "sortOrder": 9,
+          "resolvedLocale": "RO"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "RO",
+      "links": [
+        {
+          "id": "cmre7t757003ug8jumzqyo3lw",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Acné grave o lesiones sospechosas?",
+          "body": "Si tu situación está relacionada con acné grave o lesiones sospechosas, nuestra Dermatología Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Dermatología Especialista",
+          "targetSlug": "dermatologia-especialista-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7t7xa003wg8jutn1n899o",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con caída del cabello y afecciones del cuero cabelludo?",
+          "body": "Para caída del cabello y afecciones del cuero cabelludo, consulta nuestra página de Caída del Cabello — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Caída del Cabello",
+          "targetSlug": "caida-cabello-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7t8pc003yg8jui51rri1w",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre consulta médica general con médico de cabecera?",
+          "body": "Nuestra Consulta Médica General está pensada específicamente para consulta médica general con médico de cabecera.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T06:18:00.000Z"
+      }
+    }
+  }
+}

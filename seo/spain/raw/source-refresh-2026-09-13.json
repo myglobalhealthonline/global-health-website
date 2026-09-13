@@ -1,0 +1,982 @@
+[
+  {
+    "source": "raw/api/doctors-dr-alfredo-del-valle-CS.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T08:14:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-eduardo-olivas-CS.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:30:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-eszter-szilagyi-CS.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:07:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-fabiana-cornejo-CS.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:29:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-fidel-mesa-prado-CS.json",
+    "status": 200,
+    "bookability": "UNAVAILABLE",
+    "nextAvailableAt": null,
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-javier-villarte-betancor-CS.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-19T12:57:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-leandro-wang-CS.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:44:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-luz-marina-zuluaga-rios-CS.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-maria-fernanda-ocampo-mora-CS.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:21:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-romulo-brito-CS.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:47:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-silvina-irale-CS.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:25:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-syed-tahir-CS.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:51:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-tomas-ruiz-palacios-CS.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:59:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-diagnotico-vascular-CS.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:44:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-flebologia-y-linfologia-CS.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:44:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-medica-online-CS.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-online-medicina-estetica-CS.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:21:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-salud-vascular-circulatoria-CS.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:07:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-dermatologia-especialista-online-CS.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T08:14:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-alfredo-del-valle-DE.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T08:14:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-eduardo-olivas-DE.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:30:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-eszter-szilagyi-DE.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:07:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-fabiana-cornejo-DE.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:29:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-fidel-mesa-prado-DE.json",
+    "status": 200,
+    "bookability": "UNAVAILABLE",
+    "nextAvailableAt": null,
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-javier-villarte-betancor-DE.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-19T12:57:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-leandro-wang-DE.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:44:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-luz-marina-zuluaga-rios-DE.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-maria-fernanda-ocampo-mora-DE.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:21:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-romulo-brito-DE.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:47:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-silvina-irale-DE.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:25:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-syed-tahir-DE.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:51:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-tomas-ruiz-palacios-DE.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:59:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-cardiologo-online-DE.json",
+    "status": 200,
+    "bookability": "UNAVAILABLE",
+    "nextAvailableAt": null,
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-diagnotico-vascular-DE.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:44:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-flebologia-y-linfologia-DE.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:44:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-medica-online-DE.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-online-medicina-estetica-DE.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:21:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-piel-online-DE.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-salud-vascular-circulatoria-DE.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:07:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-dermatologia-especialista-online-DE.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T08:14:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-justificante-medico-online-DE.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-psiquiatra-online-DE.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:29:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-segunda-opinion-medica-DE.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-alfredo-del-valle-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T08:14:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-eduardo-olivas-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:30:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-eszter-szilagyi-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:07:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-fabiana-cornejo-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:29:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-fidel-mesa-prado-EN.json",
+    "status": 200,
+    "bookability": "UNAVAILABLE",
+    "nextAvailableAt": null,
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-javier-villarte-betancor-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-19T12:57:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-leandro-wang-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:44:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-luz-marina-zuluaga-rios-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-maria-fernanda-ocampo-mora-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:21:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-romulo-brito-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:47:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-silvina-irale-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:25:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-syed-tahir-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:51:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-tomas-ruiz-palacios-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:59:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-caida-cabello-online-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-cardiologo-online-EN.json",
+    "status": 200,
+    "bookability": "UNAVAILABLE",
+    "nextAvailableAt": null,
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-diagnotico-vascular-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:44:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-flebologia-y-linfologia-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:44:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-medica-online-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-online-medicina-estetica-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:21:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-piel-online-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-salud-vascular-circulatoria-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:07:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-dermatologia-especialista-online-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T08:14:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-enfermedades-cronicas-online-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-pediatria-online-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:25:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-psiquiatra-online-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:29:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-segunda-opinion-medica-EN.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-alfredo-del-valle-ES.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T08:14:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-eduardo-olivas-ES.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:30:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-eszter-szilagyi-ES.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:07:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-fabiana-cornejo-ES.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:29:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-fidel-mesa-prado-ES.json",
+    "status": 200,
+    "bookability": "UNAVAILABLE",
+    "nextAvailableAt": null,
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-javier-villarte-betancor-ES.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-19T12:57:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-leandro-wang-ES.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:44:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-luz-marina-zuluaga-rios-ES.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-maria-fernanda-ocampo-mora-ES.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:21:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-romulo-brito-ES.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:47:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-silvina-irale-ES.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:25:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-syed-tahir-ES.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:51:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-tomas-ruiz-palacios-ES.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:59:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-cardiologo-online-ES.json",
+    "status": 200,
+    "bookability": "UNAVAILABLE",
+    "nextAvailableAt": null,
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-diagnotico-vascular-ES.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:44:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-flebologia-y-linfologia-ES.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:44:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-medica-online-ES.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-online-medicina-estetica-ES.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:21:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-piel-online-ES.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-salud-vascular-circulatoria-ES.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:07:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-dermatologia-especialista-online-ES.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T08:14:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-justificante-medico-online-ES.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-psiquiatra-online-ES.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:29:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-segunda-opinion-medica-ES.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-alfredo-del-valle-PT.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T08:14:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-eduardo-olivas-PT.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:30:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-eszter-szilagyi-PT.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:07:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-fabiana-cornejo-PT.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:29:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-fidel-mesa-prado-PT.json",
+    "status": 200,
+    "bookability": "UNAVAILABLE",
+    "nextAvailableAt": null,
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-javier-villarte-betancor-PT.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-19T12:57:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-leandro-wang-PT.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:44:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-luz-marina-zuluaga-rios-PT.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-maria-fernanda-ocampo-mora-PT.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:21:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-romulo-brito-PT.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:47:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-silvina-irale-PT.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:25:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-syed-tahir-PT.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:51:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-tomas-ruiz-palacios-PT.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:59:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-diagnotico-vascular-PT.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:44:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-flebologia-y-linfologia-PT.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:44:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-medica-online-PT.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-online-medicina-estetica-PT.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:21:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-piel-online-PT.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-salud-vascular-circulatoria-PT.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:07:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-dermatologia-especialista-online-PT.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T08:14:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-justificante-medico-online-PT.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-psiquiatra-online-PT.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:29:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-segunda-opinion-medica-PT.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-alfredo-del-valle-RO.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T08:14:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-eduardo-olivas-RO.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:30:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-eszter-szilagyi-RO.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:07:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-fabiana-cornejo-RO.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:29:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-fidel-mesa-prado-RO.json",
+    "status": 200,
+    "bookability": "UNAVAILABLE",
+    "nextAvailableAt": null,
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-javier-villarte-betancor-RO.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-19T12:57:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-leandro-wang-RO.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:44:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-luz-marina-zuluaga-rios-RO.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-maria-fernanda-ocampo-mora-RO.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:21:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-romulo-brito-RO.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:47:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-silvina-irale-RO.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:25:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-syed-tahir-RO.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:51:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/doctors-dr-tomas-ruiz-palacios-RO.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:59:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-cardiologo-online-RO.json",
+    "status": 200,
+    "bookability": "UNAVAILABLE",
+    "nextAvailableAt": null,
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-diagnotico-vascular-RO.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:44:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-flebologia-y-linfologia-RO.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:44:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-medica-online-RO.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-online-medicina-estetica-RO.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:21:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-piel-online-RO.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-consulta-salud-vascular-circulatoria-RO.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T07:07:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-dermatologia-especialista-online-RO.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T08:14:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-justificante-medico-online-RO.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-psiquiatra-online-RO.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T12:29:00.000Z",
+    "drift": []
+  },
+  {
+    "source": "raw/api/services-segunda-opinion-medica-RO.json",
+    "status": 200,
+    "bookability": "BOOKABLE",
+    "nextAvailableAt": "2026-09-14T06:18:00.000Z",
+    "drift": []
+  }
+]
