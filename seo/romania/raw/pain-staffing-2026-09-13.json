@@ -1,0 +1,104 @@
+[
+  {
+    "locale": "RO",
+    "serviceId": "cmr8ee7tb000hfsju7tvvjjj1",
+    "slug": "evaluare-durere",
+    "assignedDoctorIds": [
+      "cmrc4axni00rn01p2n3r2bopf"
+    ],
+    "bookability": {
+      "state": "BOOKABLE",
+      "reasonCode": null,
+      "nextAvailableAt": "2026-09-14T12:54:00Z"
+    },
+    "durationMinutes": 20,
+    "basePriceCents": 23000,
+    "currencyCode": "RON",
+    "checkedAt": "2026-09-13T01:16:45.6801711Z"
+  },
+  {
+    "locale": "EN",
+    "serviceId": "cmr8ee7tb000hfsju7tvvjjj1",
+    "slug": "evaluare-durere",
+    "assignedDoctorIds": [
+      "cmrc4axni00rn01p2n3r2bopf"
+    ],
+    "bookability": {
+      "state": "BOOKABLE",
+      "reasonCode": null,
+      "nextAvailableAt": "2026-09-14T12:54:00Z"
+    },
+    "durationMinutes": 20,
+    "basePriceCents": 23000,
+    "currencyCode": "RON",
+    "checkedAt": "2026-09-13T01:16:46.2639707Z"
+  },
+  {
+    "locale": "CS",
+    "serviceId": "cmr8ee7tb000hfsju7tvvjjj1",
+    "slug": "evaluare-durere",
+    "assignedDoctorIds": [
+      "cmrc4axni00rn01p2n3r2bopf"
+    ],
+    "bookability": {
+      "state": "BOOKABLE",
+      "reasonCode": null,
+      "nextAvailableAt": "2026-09-14T12:54:00Z"
+    },
+    "durationMinutes": 20,
+    "basePriceCents": 23000,
+    "currencyCode": "RON",
+    "checkedAt": "2026-09-13T01:16:46.8843616Z"
+  },
+  {
+    "locale": "DE",
+    "serviceId": "cmr8ee7tb000hfsju7tvvjjj1",
+    "slug": "evaluare-durere",
+    "assignedDoctorIds": [
+      "cmrc4axni00rn01p2n3r2bopf"
+    ],
+    "bookability": {
+      "state": "BOOKABLE",
+      "reasonCode": null,
+      "nextAvailableAt": "2026-09-14T12:54:00Z"
+    },
+    "durationMinutes": 20,
+    "basePriceCents": 23000,
+    "currencyCode": "RON",
+    "checkedAt": "2026-09-13T01:16:47.3571468Z"
+  },
+  {
+    "locale": "ES",
+    "serviceId": "cmr8ee7tb000hfsju7tvvjjj1",
+    "slug": "evaluare-durere",
+    "assignedDoctorIds": [
+      "cmrc4axni00rn01p2n3r2bopf"
+    ],
+    "bookability": {
+      "state": "BOOKABLE",
+      "reasonCode": null,
+      "nextAvailableAt": "2026-09-14T12:54:00Z"
+    },
+    "durationMinutes": 20,
+    "basePriceCents": 23000,
+    "currencyCode": "RON",
+    "checkedAt": "2026-09-13T01:16:47.8298451Z"
+  },
+  {
+    "locale": "PT",
+    "serviceId": "cmr8ee7tb000hfsju7tvvjjj1",
+    "slug": "evaluare-durere",
+    "assignedDoctorIds": [
+      "cmrc4axni00rn01p2n3r2bopf"
+    ],
+    "bookability": {
+      "state": "BOOKABLE",
+      "reasonCode": null,
+      "nextAvailableAt": "2026-09-14T12:54:00Z"
+    },
+    "durationMinutes": 20,
+    "basePriceCents": 23000,
+    "currencyCode": "RON",
+    "checkedAt": "2026-09-13T01:16:48.2998631Z"
+  }
+]

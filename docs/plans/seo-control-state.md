@@ -9099,3 +9099,21 @@ September 24 global inspection. No ranking gain is claimed from deployment check
 Remaining work: integrate this branch before the next main deployment; resolve
 the unstaffed pain-service disposition and authoritative Brindus specialty evidence;
 measure search outcomes. No further prepared editorial batch awaits approval or publication.
+
+### 55.6 Pain service staffed by owner instruction, 13 September 2026
+
+The super admin explicitly selected Dr Robert Gabriel Brindus for evaluare-durere
+("yes assign him"). The authenticated admin Services form saved the assignment as
+active/admin-assigned; assigned services increased from 15 to 16 (including the
+pre-existing inactive sick-note service). No payout, price, schedule or credential
+field was changed. The standard assignment action invalidated backend bookability.
+
+Fresh public API checks in all six locales confirm Brindus is assigned and the
+service is BOOKABLE, with the next available slot on September 14 at 12:54 UTC.
+The refreshed English service page displays an enabled "Schedule the consultation"
+button. Evidence: seo/romania/raw/pain-staffing-2026-09-13.json.
+
+This closes the unstaffed-service disposition. The previous unstaffed inventory is
+historical. Specialty evidence and held editorial copy are separate and remain
+unresolved; assignment does not establish new credentials. No patient booking was
+created. The assignment can be reversed using Disable on the same admin service row.
