@@ -1,0 +1,908 @@
+{
+  "authorizedBy": "Super admin, in this task",
+  "instruction": "Then do what you recommend for us we implement that",
+  "scope": "Restore meaningful locale-specific service names; preserve titles, H1s, descriptions, URLs and clinical scope",
+  "sourceSha256": "ba0ee57772c7b6753e753e547c746de2d6ea805ecef39fe5d4529e891a8ece08",
+  "changes": [
+    {
+      "table": "services",
+      "id": "cmr8ee1ko0000fsjuh80zxo7q",
+      "field": "name",
+      "before": "Consultație medicală online",
+      "after": "Medic online în România",
+      "locale": "RO",
+      "slug": "medic-online-romania"
+    },
+    {
+      "table": "services",
+      "id": "cmr8ee2r00004fsjubgjloy9a",
+      "field": "name",
+      "before": "Evaluare pentru reînnoirea tratamentului",
+      "after": "Evaluare pentru reînnoirea prescripției online",
+      "locale": "RO",
+      "slug": "reinnoire-tratament"
+    },
+    {
+      "table": "services",
+      "id": "cmr8ee3510005fsjunqgfmxn2",
+      "field": "name",
+      "before": "Consultație pentru controlul greutății",
+      "after": "Consultație pentru controlul greutății online",
+      "locale": "RO",
+      "slug": "controlul-greutatii"
+    },
+    {
+      "table": "services",
+      "id": "cmr8ee3j30006fsju24727btu",
+      "field": "name",
+      "before": "Consultație pentru sănătatea bărbatului",
+      "after": "Consultație pentru sănătatea bărbatului online",
+      "locale": "RO",
+      "slug": "sanatatea-barbatului-online"
+    },
+    {
+      "table": "services",
+      "id": "cmr8ee3x70007fsju2pfu3ygw",
+      "field": "name",
+      "before": "Consultație pentru sănătatea femeii",
+      "after": "Consultație pentru sănătatea femeii online",
+      "locale": "RO",
+      "slug": "sanatatea-femeii-online"
+    },
+    {
+      "table": "services",
+      "id": "cmr8ee4ba0008fsju6xyj8lnh",
+      "field": "name",
+      "before": "Evaluare generală a sănătății mintale",
+      "after": "Evaluare generală a sănătății mintale online",
+      "locale": "RO",
+      "slug": "sanatate-mintala-online"
+    },
+    {
+      "table": "services",
+      "id": "cmr8ee4p90009fsju5xgwdoao",
+      "field": "name",
+      "before": "Evaluare inițială a problemelor de piele",
+      "after": "Evaluare inițială a problemelor de piele online",
+      "locale": "RO",
+      "slug": "consultatie-dermatologica"
+    },
+    {
+      "table": "services",
+      "id": "cmr8ee53a000afsjukz2fq2rv",
+      "field": "name",
+      "before": "Consultație de medicină de călătorie",
+      "after": "Consultație de medicină de călătorie online",
+      "locale": "RO",
+      "slug": "medicina-calatoriei"
+    },
+    {
+      "table": "services",
+      "id": "cmr8ee5ha000bfsju94p8e37o",
+      "field": "name",
+      "before": "Evaluare pentru căderea părului",
+      "after": "Evaluare pentru căderea părului online",
+      "locale": "RO",
+      "slug": "caderea-parului-online"
+    },
+    {
+      "table": "services",
+      "id": "cmr8ee5va000cfsju0urkl4di",
+      "field": "name",
+      "before": "Evaluarea durerilor musculare și articulare",
+      "after": "Evaluarea durerii musculo-scheletale online",
+      "locale": "RO",
+      "slug": "dureri-musculo-scheletice"
+    },
+    {
+      "table": "services",
+      "id": "cmr8ee69c000dfsju48a77n99",
+      "field": "name",
+      "before": "A doua opinie medicală",
+      "after": "A doua opinie medicală online",
+      "locale": "RO",
+      "slug": "a-doua-opinie-medicala"
+    },
+    {
+      "table": "services",
+      "id": "cmr8ee6nb000efsjuk0bbcp7f",
+      "field": "name",
+      "before": "Monitorizarea bolilor cronice",
+      "after": "Monitorizarea bolilor cronice online",
+      "locale": "RO",
+      "slug": "boli-cronice-online"
+    },
+    {
+      "table": "services",
+      "id": "cmr8ee71b000ffsju3t9my2rm",
+      "field": "name",
+      "before": "Orientare pentru investigații și trimiteri",
+      "after": "Orientare pentru investigații și trimiteri online",
+      "locale": "RO",
+      "slug": "trimiteri-si-investigatii"
+    },
+    {
+      "table": "services",
+      "id": "cmr8ee7fb000gfsjuxxgacs5y",
+      "field": "name",
+      "before": "Consultație generală pentru copii",
+      "after": "Consultație generală pentru copii online",
+      "locale": "RO",
+      "slug": "medic-pediatru-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmr8ee1rt0001fsjujdrxy7h0",
+      "field": "name",
+      "before": "Online medical consultation",
+      "after": "English-speaking doctor online in Romania",
+      "locale": "EN",
+      "slug": "medic-online-romania"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmr9d1fv60000vcjumglnahke",
+      "field": "name",
+      "before": "Online neurology consultation",
+      "after": "Specialist neurology consultation online",
+      "locale": "EN",
+      "slug": "consultatie-neurologie"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmr9d1gu70001vcjudg7zy83b",
+      "field": "name",
+      "before": "Second medical opinion",
+      "after": "Independent second medical opinion online",
+      "locale": "EN",
+      "slug": "a-doua-opinie-medicala"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmr9d1hrv0002vcjudt8x3fxu",
+      "field": "name",
+      "before": "Chronic condition review",
+      "after": "Chronic disease management consultation online",
+      "locale": "EN",
+      "slug": "boli-cronice-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmr9d1iqv0003vcjuioj401i0",
+      "field": "name",
+      "before": "Tests and referral advice",
+      "after": "Medical letters, referrals and investigation advice online",
+      "locale": "EN",
+      "slug": "trimiteri-si-investigatii"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmr9d1jn00004vcjuo3auwezw",
+      "field": "name",
+      "before": "General mental health assessment",
+      "after": "General mental health assessment online in English",
+      "locale": "EN",
+      "slug": "sanatate-mintala-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmr9d1kil0005vcju88srqwff",
+      "field": "name",
+      "before": "Initial skin assessment",
+      "after": "Initial skin assessment online in English",
+      "locale": "EN",
+      "slug": "consultatie-dermatologica"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmr9d1ld00006vcju45tthci8",
+      "field": "name",
+      "before": "Pre-travel medical consultation",
+      "after": "Travel medicine consultation online",
+      "locale": "EN",
+      "slug": "medicina-calatoriei"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmr9d1m9e0007vcjuj41pbo9j",
+      "field": "name",
+      "before": "General medical consultation for children",
+      "after": "Online general medical consultation for children",
+      "locale": "EN",
+      "slug": "medic-pediatru-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmr9d1n4u0008vcjudh8s9z45",
+      "field": "name",
+      "before": "Hair loss assessment",
+      "after": "Hair loss consultation online",
+      "locale": "EN",
+      "slug": "caderea-parului-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmr9d1o0a0009vcjue0do2bpf",
+      "field": "name",
+      "before": "Muscle and joint pain assessment",
+      "after": "Musculoskeletal pain assessment online",
+      "locale": "EN",
+      "slug": "dureri-musculo-scheletice"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmr9d1owb000avcju4hsjz7x1",
+      "field": "name",
+      "before": "Treatment renewal review",
+      "after": "Online prescription renewal assessment in Romania",
+      "locale": "EN",
+      "slug": "reinnoire-tratament"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmr9d1ptm000bvcjudmszsd6g",
+      "field": "name",
+      "before": "Medical weight management review",
+      "after": "Medical weight management consultation online",
+      "locale": "EN",
+      "slug": "controlul-greutatii"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmr9d1qoi000cvcjuevb0bv4t",
+      "field": "name",
+      "before": "Men’s health consultation",
+      "after": "Men’s health consultation online in English",
+      "locale": "EN",
+      "slug": "sanatatea-barbatului-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmr9d1rmr000dvcju3yvpofjr",
+      "field": "name",
+      "before": "Women’s health consultation",
+      "after": "Women’s health consultation online in English",
+      "locale": "EN",
+      "slug": "sanatatea-femeii-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmr9d1sj6000evcju58kzcz6p",
+      "field": "name",
+      "before": "Online pediatrician consultation",
+      "after": "Specialist paediatrician consultation online",
+      "locale": "EN",
+      "slug": "consultatie-pediatrie"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrc3pzqu00qo01p2qmes1jqk",
+      "field": "name",
+      "before": "A doua opinie medicală",
+      "after": "A doua opinie medicală online",
+      "locale": "RO",
+      "slug": "a-doua-opinie-medicala"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrc3sl1y00qq01p2j0oafydq",
+      "field": "name",
+      "before": "Consultație de medicină de călătorie",
+      "after": "Consultație de medicină de călătorie online",
+      "locale": "RO",
+      "slug": "medicina-calatoriei"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrc3tswj00qs01p2h5csakcw",
+      "field": "name",
+      "before": "Evaluare inițială a problemelor de piele",
+      "after": "Evaluare inițială a problemelor de piele online",
+      "locale": "RO",
+      "slug": "consultatie-dermatologica"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrc3vysh00qu01p27fhilsd1",
+      "field": "name",
+      "before": "Consultație generală pentru copii",
+      "after": "Consultație generală pentru copii online",
+      "locale": "RO",
+      "slug": "medic-pediatru-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrc3wpxx00qw01p2cf7zt2kv",
+      "field": "name",
+      "before": "Evaluare pentru căderea părului",
+      "after": "Evaluare pentru căderea părului online",
+      "locale": "RO",
+      "slug": "caderea-parului-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrc3x7oc00qy01p2zbzuewk4",
+      "field": "name",
+      "before": "Evaluarea durerilor musculare și articulare",
+      "after": "Evaluarea durerii musculo-scheletale online",
+      "locale": "RO",
+      "slug": "dureri-musculo-scheletice"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrc3xsaa00r001p2f3botyhe",
+      "field": "name",
+      "before": "Evaluare generală a sănătății mintale",
+      "after": "Evaluare generală a sănătății mintale online",
+      "locale": "RO",
+      "slug": "sanatate-mintala-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrc3y9fq00r201p2p0oewjjp",
+      "field": "name",
+      "before": "Monitorizarea bolilor cronice",
+      "after": "Monitorizarea bolilor cronice online",
+      "locale": "RO",
+      "slug": "boli-cronice-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrc3yo8900r401p20ddmxa99",
+      "field": "name",
+      "before": "Consultație pentru controlul greutății",
+      "after": "Consultație pentru controlul greutății online",
+      "locale": "RO",
+      "slug": "controlul-greutatii"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrc3z6r100r601p22m1hclkf",
+      "field": "name",
+      "before": "Consultație medicală online",
+      "after": "Medic online în România",
+      "locale": "RO",
+      "slug": "medic-online-romania"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrc40cd200r801p2o491vk6t",
+      "field": "name",
+      "before": "Evaluare pentru reînnoirea tratamentului",
+      "after": "Evaluare pentru reînnoirea prescripției online",
+      "locale": "RO",
+      "slug": "reinnoire-tratament"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrc40uzl00ra01p281vur2cq",
+      "field": "name",
+      "before": "Consultație pentru sănătatea bărbatului",
+      "after": "Consultație pentru sănătatea bărbatului online",
+      "locale": "RO",
+      "slug": "sanatatea-barbatului-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrc41c9t00rc01p2sonwwcu9",
+      "field": "name",
+      "before": "Consultație pentru sănătatea femeii",
+      "after": "Consultație pentru sănătatea femeii online",
+      "locale": "RO",
+      "slug": "sanatatea-femeii-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrc41v8u00re01p21b9xb38d",
+      "field": "name",
+      "before": "Orientare pentru investigații și trimiteri",
+      "after": "Orientare pentru investigații și trimiteri online",
+      "locale": "RO",
+      "slug": "trimiteri-si-investigatii"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhligs001oywju69k2q70e",
+      "field": "name",
+      "before": "Acompanhamento de doenças crónicas",
+      "after": "Acompanhamento de doenças crónicas online",
+      "locale": "PT",
+      "slug": "boli-cronice-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhlj92001pywjuetzdo6rs",
+      "field": "name",
+      "before": "Seguimiento de enfermedades crónicas",
+      "after": "Seguimiento de enfermedades crónicas online",
+      "locale": "ES",
+      "slug": "boli-cronice-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhlk1b001qywjurn95jrvr",
+      "field": "name",
+      "before": "Kontrola chronických onemocnění",
+      "after": "Kontrola chronických onemocnění online",
+      "locale": "CS",
+      "slug": "boli-cronice-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhlkto001rywju16q2z2zx",
+      "field": "name",
+      "before": "Beratung bei chronischen Erkrankungen",
+      "after": "Beratung bei chronischen Erkrankungen online",
+      "locale": "DE",
+      "slug": "boli-cronice-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhovej005uywjub1kuw2qr",
+      "field": "name",
+      "before": "Avaliação da queda de cabelo",
+      "after": "Avaliação da queda de cabelo online",
+      "locale": "PT",
+      "slug": "caderea-parului-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhow70005vywju4fcuhfgk",
+      "field": "name",
+      "before": "Valoración de la caída del cabello",
+      "after": "Valoración de la caída del cabello online",
+      "locale": "ES",
+      "slug": "caderea-parului-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhowz8005wywju49i5dnwx",
+      "field": "name",
+      "before": "Posouzení vypadávání vlasů",
+      "after": "Posouzení vypadávání vlasů online",
+      "locale": "CS",
+      "slug": "caderea-parului-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhoxrf005xywjuobzghkr6",
+      "field": "name",
+      "before": "Beratung bei Haarausfall",
+      "after": "Beratung bei Haarausfall online",
+      "locale": "DE",
+      "slug": "caderea-parului-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhqct5007pywjuvx69tsza",
+      "field": "name",
+      "before": "Consulta de saúde do homem",
+      "after": "Consulta de saúde do homem online",
+      "locale": "PT",
+      "slug": "sanatatea-barbatului-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhqdlg007qywjudsl37n5s",
+      "field": "name",
+      "before": "Consulta de salud del hombre",
+      "after": "Consulta de salud del hombre online",
+      "locale": "ES",
+      "slug": "sanatatea-barbatului-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhqedn007rywjuqv29n7ij",
+      "field": "name",
+      "before": "Konzultace mužského zdraví",
+      "after": "Konzultace mužského zdraví online",
+      "locale": "CS",
+      "slug": "sanatatea-barbatului-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhqf60007sywjuoa12lkw7",
+      "field": "name",
+      "before": "Beratung zur Männergesundheit",
+      "after": "Beratung zur Männergesundheit online",
+      "locale": "DE",
+      "slug": "sanatatea-barbatului-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhqgqf007tywjumkx80jks",
+      "field": "name",
+      "before": "Avaliação geral de saúde mental",
+      "after": "Avaliação geral de saúde mental online",
+      "locale": "PT",
+      "slug": "sanatate-mintala-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhqhiq007uywjua2ud714o",
+      "field": "name",
+      "before": "Valoración general de salud mental",
+      "after": "Valoración general de salud mental online",
+      "locale": "ES",
+      "slug": "sanatate-mintala-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhqib0007vywjulc7kmbw3",
+      "field": "name",
+      "before": "Všeobecné posouzení duševního zdraví",
+      "after": "Všeobecné posouzení duševního zdraví online",
+      "locale": "CS",
+      "slug": "sanatate-mintala-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhqj37007wywju0kir82ra",
+      "field": "name",
+      "before": "Allgemeine Beratung zur psychischen Gesundheit",
+      "after": "Allgemeine Beratung zur psychischen Gesundheit online",
+      "locale": "DE",
+      "slug": "sanatate-mintala-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhqpjo0083ywjujsoyo8qk",
+      "field": "name",
+      "before": "Avaliação de dores musculares e articulares",
+      "after": "Avaliação da dor musculoesquelética online",
+      "locale": "PT",
+      "slug": "dureri-musculo-scheletice"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhqqbx0084ywjuhhjn681n",
+      "field": "name",
+      "before": "Valoración del dolor muscular y articular",
+      "after": "Valoración del dolor musculoesquelético online",
+      "locale": "ES",
+      "slug": "dureri-musculo-scheletice"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhqr440085ywjux0zimr05",
+      "field": "name",
+      "before": "Posouzení bolesti svalů a kloubů",
+      "after": "Online posouzení muskuloskeletální bolesti",
+      "locale": "CS",
+      "slug": "dureri-musculo-scheletice"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhqrwd0086ywjuzla8n6nv",
+      "field": "name",
+      "before": "Beratung bei Muskel- und Gelenkschmerzen",
+      "after": "Onlineberatung bei muskuloskelettalen Schmerzen",
+      "locale": "DE",
+      "slug": "dureri-musculo-scheletice"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhr55j008kywjuha0z3e0q",
+      "field": "name",
+      "before": "Consulta médica online",
+      "after": "Médico online na Roménia",
+      "locale": "PT",
+      "slug": "medic-online-romania"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhr5yq008lywjua8polbaa",
+      "field": "name",
+      "before": "Consulta médica online",
+      "after": "Médico online en Rumanía",
+      "locale": "ES",
+      "slug": "medic-online-romania"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhr6rw008mywju1t748alu",
+      "field": "name",
+      "before": "Online lékařská konzultace",
+      "after": "Online lékař v Rumunsku",
+      "locale": "CS",
+      "slug": "medic-online-romania"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhr7l5008nywju5vj0ffx7",
+      "field": "name",
+      "before": "Ärztliche Onlineberatung",
+      "after": "Online-Arzt in Rumänien",
+      "locale": "DE",
+      "slug": "medic-online-romania"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhr96j008oywjuxwwqqrz4",
+      "field": "name",
+      "before": "Consulta de medicina geral para crianças",
+      "after": "Consulta de medicina geral para crianças online",
+      "locale": "PT",
+      "slug": "medic-pediatru-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhr9yr008pywjuh9o74mpj",
+      "field": "name",
+      "before": "Consulta de medicina general para niños",
+      "after": "Consulta de medicina general para niños online",
+      "locale": "ES",
+      "slug": "medic-pediatru-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhraqx008qywjupnn36mst",
+      "field": "name",
+      "before": "Všeobecná konzultace pro děti",
+      "after": "Všeobecná konzultace pro děti online",
+      "locale": "CS",
+      "slug": "medic-pediatru-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhrbj7008rywjub3i4xwpe",
+      "field": "name",
+      "before": "Allgemeinmedizinische Beratung für Kinder",
+      "after": "Allgemeinmedizinische Beratung für Kinder online",
+      "locale": "DE",
+      "slug": "medic-pediatru-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhs12p009jywjuwfm5lpu1",
+      "field": "name",
+      "before": "Orientação sobre exames e referenciação",
+      "after": "Orientação sobre exames e referenciação online",
+      "locale": "PT",
+      "slug": "trimiteri-si-investigatii"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhs1w3009kywjuuq2653re",
+      "field": "name",
+      "before": "Orientación sobre pruebas y derivaciones",
+      "after": "Orientación sobre pruebas y derivaciones online",
+      "locale": "ES",
+      "slug": "trimiteri-si-investigatii"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhs2p3009lywjuhbkyb227",
+      "field": "name",
+      "before": "Doporučení k vyšetřením a odborné péči",
+      "after": "Doporučení k vyšetřením a odborné péči online",
+      "locale": "CS",
+      "slug": "trimiteri-si-investigatii"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhs3i4009mywjudm4m4qjn",
+      "field": "name",
+      "before": "Beratung zu Untersuchungen und Überweisungen",
+      "after": "Beratung zu Untersuchungen und Überweisungen online",
+      "locale": "DE",
+      "slug": "trimiteri-si-investigatii"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfht4uw00amywjutk8qqjzd",
+      "field": "name",
+      "before": "Segunda opinião médica",
+      "after": "Segunda opinião médica online",
+      "locale": "PT",
+      "slug": "a-doua-opinie-medicala"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfht5ob00anywju0sxhclp3",
+      "field": "name",
+      "before": "Segunda opinión médica",
+      "after": "Segunda opinión médica online",
+      "locale": "ES",
+      "slug": "a-doua-opinie-medicala"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfht6hq00aoywjuo6h6vf61",
+      "field": "name",
+      "before": "Druhý lékařský názor",
+      "after": "Druhý lékařský názor online",
+      "locale": "CS",
+      "slug": "a-doua-opinie-medicala"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfht7b900apywjuqzrjv0lk",
+      "field": "name",
+      "before": "Zweite ärztliche Meinung",
+      "after": "Zweite ärztliche Meinung online",
+      "locale": "DE",
+      "slug": "a-doua-opinie-medicala"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhtjg000b0ywjuhuxvi8la",
+      "field": "name",
+      "before": "Avaliação inicial de problemas de pele",
+      "after": "Avaliação inicial de problemas de pele online",
+      "locale": "PT",
+      "slug": "consultatie-dermatologica"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhtk9h00b1ywju0056mu7r",
+      "field": "name",
+      "before": "Valoración inicial de problemas de piel",
+      "after": "Valoración inicial de problemas de piel online",
+      "locale": "ES",
+      "slug": "consultatie-dermatologica"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhtl2v00b2ywjua19sl4wx",
+      "field": "name",
+      "before": "Prvotní posouzení kožních potíží",
+      "after": "Prvotní posouzení kožních potíží online",
+      "locale": "CS",
+      "slug": "consultatie-dermatologica"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhtlwc00b3ywjuf96ts6l6",
+      "field": "name",
+      "before": "Erste Einschätzung von Hautproblemen",
+      "after": "Erste Einschätzung von Hautproblemen online",
+      "locale": "DE",
+      "slug": "consultatie-dermatologica"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhty9f00beywju17s02uy4",
+      "field": "name",
+      "before": "Consulta médica antes de viajar",
+      "after": "Consulta de medicina de viagem online",
+      "locale": "PT",
+      "slug": "medicina-calatoriei"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhtz2s00bfywjuojbr0h35",
+      "field": "name",
+      "before": "Consulta médica antes de viajar",
+      "after": "Consulta de medicina del viajero online",
+      "locale": "ES",
+      "slug": "medicina-calatoriei"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhtzw300bgywjuwiilpril",
+      "field": "name",
+      "before": "Lékařská konzultace před cestou",
+      "after": "Online konzultace cestovní medicíny",
+      "locale": "CS",
+      "slug": "medicina-calatoriei"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhu0pd00bhywju7b4i10n4",
+      "field": "name",
+      "before": "Reisemedizinische Beratung",
+      "after": "Reisemedizinische Onlineberatung",
+      "locale": "DE",
+      "slug": "medicina-calatoriei"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhu2g300biywjuotqcjf75",
+      "field": "name",
+      "before": "Avaliação para renovar o tratamento",
+      "after": "Avaliação para renovação de receita online",
+      "locale": "PT",
+      "slug": "reinnoire-tratament"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhu39m00bjywjuma2nutdo",
+      "field": "name",
+      "before": "Revisión para renovar un tratamiento",
+      "after": "Valoración para renovar una receta online",
+      "locale": "ES",
+      "slug": "reinnoire-tratament"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhu42w00bkywjuzkhq4dk6",
+      "field": "name",
+      "before": "Posouzení pokračování léčby",
+      "after": "Online konzultace k obnovení receptu",
+      "locale": "CS",
+      "slug": "reinnoire-tratament"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhu4w700blywju0skava8m",
+      "field": "name",
+      "before": "Überprüfung einer laufenden Behandlung",
+      "after": "Onlineberatung zur Rezeptverlängerung",
+      "locale": "DE",
+      "slug": "reinnoire-tratament"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhuamn00brywjuusnctf86",
+      "field": "name",
+      "before": "Consulta médica sobre o peso",
+      "after": "Consulta médica sobre o peso online",
+      "locale": "PT",
+      "slug": "controlul-greutatii"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhubfz00bsywjuvb2zmkev",
+      "field": "name",
+      "before": "Consulta médica sobre el peso",
+      "after": "Consulta médica sobre el peso online",
+      "locale": "ES",
+      "slug": "controlul-greutatii"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhuc9a00btywju85twxleu",
+      "field": "name",
+      "before": "Lékařská konzultace ke kontrole hmotnosti",
+      "after": "Lékařská konzultace ke kontrole hmotnosti online",
+      "locale": "CS",
+      "slug": "controlul-greutatii"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhud2o00buywju52fcommy",
+      "field": "name",
+      "before": "Ärztliche Beratung zum Gewicht",
+      "after": "Ärztliche Beratung zum Gewicht online",
+      "locale": "DE",
+      "slug": "controlul-greutatii"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhuetb00bvywjulq3ibb5m",
+      "field": "name",
+      "before": "Consulta de saúde da mulher",
+      "after": "Consulta de saúde da mulher online",
+      "locale": "PT",
+      "slug": "sanatatea-femeii-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhufmo00bwywju212pf51y",
+      "field": "name",
+      "before": "Consulta de salud de la mujer",
+      "after": "Consulta de salud de la mujer online",
+      "locale": "ES",
+      "slug": "sanatatea-femeii-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhugg000bxywjuzt48xmlv",
+      "field": "name",
+      "before": "Konzultace ženského zdraví",
+      "after": "Konzultace ženského zdraví online",
+      "locale": "CS",
+      "slug": "sanatatea-femeii-online"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhuh9b00byywjuyjkit0x8",
+      "field": "name",
+      "before": "Beratung zur Frauengesundheit",
+      "after": "Beratung zur Frauengesundheit online",
+      "locale": "DE",
+      "slug": "sanatatea-femeii-online"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "ok": true,
+  "siteUrl": "sc-domain:myglobalhealth.online",
+  "startDate": "2026-08-13",
+  "endDate": "2026-09-09",
+  "dimensions": [
+    "query",
+    "page"
+  ],
+  "rowCount": 1,
+  "rows": [
+    {
+      "keys": [
+        "pediatric gastroenterology specialist online second opinion specialist opinion",
+        "https://www.myglobalhealth.online/romania/en/services/consultatie-pediatrie"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 23
+    }
+  ],
+  "hasMore": false,
+  "meta": {
+    "projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b",
+    "url": "https://app.openseo.so/p/7804f362-5891-417e-9c3a-d9e8d4d7dc6b/settings/integrations"
+  }
+}

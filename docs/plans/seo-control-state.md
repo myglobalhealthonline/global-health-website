@@ -9117,3 +9117,37 @@ This closes the unstaffed-service disposition. The previous unstaffed inventory 
 historical. Specialty evidence and held editorial copy are separate and remain
 unresolved; assignment does not establish new credentials. No patient booking was
 created. The assignment can be reversed using Disable on the same admin service row.
+
+### 55.7 Locale-specific service names restored, 13 September 2026
+
+The owner approved correcting the generic service names introduced by the editorial
+cleanup. Published 100 name fields across 16 services in six locales: 86 translated
+names and 14 default Romanian names. Ten already suitable translated names and
+two default names required no change. The English general service now reads
+"English-speaking doctor online in Romania"; other locales retain their own
+wording. Relevant online-care, prescription-assessment, travel-medicine and pain
+terms are restored without same-day promises in the revised names.
+
+The guarded transaction changed names only. Titles, H1s, meta descriptions,
+URLs, clinical bodies/FAQs, prices, staffing and booking rules are unchanged.
+No new consultation languages were claimed. This does not remove the separately
+held pain-service copy or establish Brindus specialty credentials.
+
+Evidence: content-briefs/service-name-restoration-2026-09-13.json and
+raw/service-name-{rehearsal,applied,backend-deployment,public}-2026-09-13.json
+in seo/romania. All 86 changed locale names passed public API checks. All six
+booking pages were inspected in the browser after client rendering: 17 service
+cards per locale, with all revised names present. The initial HTML-only check
+could not see those client-rendered cards; browser inspection resolved that
+instrument limitation. Canonical, robots and hreflang controls passed.
+
+Backend deployment 043dc8c0-c5b5-4d3b-a88d-1bb4159ad380 succeeded. Five existing
+guard/updater tests, backend TypeScript (8 GB heap after the default heap ran out)
+and the real database rollback rehearsal passed. The local full source snapshot
+is gitignored; public receipts contain only the scoped changes and proof.
+
+This corrects targeting specificity; it is not evidence of a ranking increase or
+recovery. The pre-change English general-service baseline remains 2 clicks / 53
+impressions over August 13–September 9. The focused visible-query export was sparse
+and does not establish which terms drove those page totals. Keep the September 13
+editorial measurement cohort and September 24 inspection cadence.
