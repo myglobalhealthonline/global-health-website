@@ -9338,3 +9338,77 @@ The owner reports: “Reviews were done by Dr tiago and Dr. Renato Sarmento, so 
 ### 57.5 Outgoing history cleanup
 
 GitHub flagged a Mapbox secret in captured third-party HTML. Removed the Brazil raw capture directory and authenticated manifest/rollback copies from outgoing Git history; retained them locally under explicit ignore rules. Drafts, review confirmation, implementation and evidence summaries remain tracked. The original local Brazil commit IDs are superseded by the cleaned commit. Local approval hashes remain unchanged. Evidence integration checks explicitly skip when the ignored package is absent; production preparation still requires that package.
+
+## 58. Internal-linking proposal — 13 September 2026
+
+Read-only OpenSEO/GSC/GA4 analysis and focused public verification completed at the
+owner's request. [Report and exact link map](../audits/seo/internal-linking-2026-09-13/README.md).
+GSC final 14 August–10 September: 1,516 page rows, fully paginated. GA4 organic
+10–12 September: 128 landing-page sessions, 12 begin_booking events and one
+booking_confirmed event; zero recorded purchase transactions. The short period
+since the September 9 collection repair cannot establish conversion winners.
+
+60 public fetches / 59 distinct requested URLs verified current links. Confirmed
+404 destinations: Czech diabetes consultation CTA, Brazil diabetes body CTA,
+Portugal hypertension-service link, and Ireland lab hub (twice). Portugal's
+family-medicine/cardiology aliases resolve to working canonical services. Spain's
+anxiety article has a mental-health-labelled CTA pointing to medical justification.
+These are focused findings, not a renewed full-site audit or global defect count.
+
+Proposed only: seven new links, four repairs, one retarget and one contextual
+placement improvement, with 13 verified 200/indexable/self-canonical destinations.
+Many service/article/tool reciprocal links already exist. No production edits,
+publication, clinical approval, commit or deployment performed by this analysis.
+
+Next proposed batch: resolve broken/misleading navigation first, including lab-hub
+intent/availability; then Romanian calories, Spanish blood pressure and Portuguese
+hypertension additions. Preserve country clinical/supply holds and existing
+measurement gates. Register the exact publication cohort if implemented and measure
+matched GSC/GA4 outcomes 28 and 56 days afterward. No ranking uplift is promised.
+
+Implementation handover prepared at the owner's request:
+[agent handover](../audits/seo/internal-linking-2026-09-13/IMPLEMENTATION-HANDOVER.md).
+It covers all 13 proposal rows across 11 source pages, the separate Irish lab-hub
+diagnosis, content ownership, batch order, guarded writes/rollback and per-row
+acceptance evidence. Preparation only; no implementation or publication occurred.
+
+### 58.1 Implementation status — 13 September 2026 (local only, nothing live)
+
+Base revision `82a40b02` on `Dev-hassaan`, uncommitted. Evidence:
+[implementation folder](../audits/seo/internal-linking-2026-09-13/implementation/CONTENT-REVIEW.md).
+
+- Stored content, rows 1, 2, 3, 4, 5, 8, 9, 13 plus the Portugal dead
+  `hypertension-consultation` offer removal: six records (`BlogPost.body` ×5,
+  `SeoLandingPageTranslation.bodyHtml` PT ×1) in a guarded manifest, reviewed hash
+  `2a8f969d9ef2f9fdfbc882fbbc27be6e3d62f41745836dc568e1cb455397b5c1`, runner
+  `backend/scripts/patch-internal-links.mjs`. Read-only production dry-run on
+  13 September: all six `ready`, no drift. Private inverse values in the ignored
+  `backups/internal-linking-2026-09-13/manifest-v2.json`. **Applied to production
+  2026-09-13 19:25 UTC on owner instruction** (dry-run `ready` ×6 immediately before,
+  apply `apply` ×6; private receipts beside the manifest). Live fetch 19:35 UTC:
+  all six sources 200, each new anchor served once in page content, all dead or
+  mislabelled hrefs absent (including `hypertension-consultation`); all eight
+  destinations 200, self-canonical, indexable. The second Portugal
+  `blood-pressure-chart` anchor is the pre-existing site-footer tools menu.
+  [Live proof](../audits/seo/internal-linking-2026-09-13/implementation/live-proof-db-apply.json).
+  Cohort start for rows 1–5, 8, 9, 13: 13 September 2026; measure 11 October
+  and 8 November.
+- Code, rows 6, 7, 10, 11, 12: `HomePageExtras.resourceLink` (ro:ro, br:pt, cz:cs only)
+  and `ToolCopy.readingLink` (pt:pt and es:es blood-pressure chart only). Local preview
+  200, anchor, keyboard focus and no overflow at 1440 and 390 px. Row 10 must deploy
+  only after the Portugal guide write removes the dead offer.
+- Checks: `tsc --noEmit` exit 0; `patch-internal-links.test.mjs` 2/2;
+  `internal-link-resources.test.tsx` 2/2. `check-locale-keys` fails on pre-existing
+  `countryHero.sameDay.*` keys untouched by this batch.
+- Row 5: `salud-mental-online` returned 2,423 slots over 14 days; no ledger hold found.
+- Ireland lab hub: `/ireland/en/lab-tests` 404 is the country `health-tests` feature
+  toggle being off (`tests/page.tsx` calls `notFound()`), not a routing defect;
+  Romania's hub returns 200. Fourteen Irish catalogue items remain active. Missing
+  fact: whether operations intends Irish lab ordering to be available. The blog link
+  and legacy Wix redirects into the hub stay unchanged until that answer.
+
+Code rows 6, 7, 10, 11, 12 restyled 14 September as the site's outline pill link
+with arrow icon; still local and uncommitted. Next: owner approves commit/deploy, then
+live fetch of those five sources and targets, then register their own 28/56-day
+cohort here. Rollback of the database rows: `patch-internal-links.mjs rollback` with
+the same manifest and hash; it refuses if content changed after this apply.

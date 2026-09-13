@@ -289,6 +289,7 @@ export type ToolCopy = {
    * line names BMI, which would be wrong copy on any other tool.
    */
   suggestionsIntro?: string;
+  readingLink?: { href: string; label: string };
   widget: Record<string, string>;
   sections: ToolSectionCopy[];
   faq: Array<{ question: string; answer: string }>;

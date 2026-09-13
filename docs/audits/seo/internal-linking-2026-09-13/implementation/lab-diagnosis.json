@@ -1,0 +1,97 @@
+{
+  "checkedAtUtc": "2026-09-13T18:15:00.4546424Z",
+  "countriesUrl": "https://api.myglobalhealth.online/api/countries",
+  "catalogueUrl": "https://api.myglobalhealth.online/api/countries/ie/health-tests?locale=EN",
+  "ireland": [
+    {
+      "code": "ie",
+      "enabledFeatures": [
+        "country-home",
+        "country-content",
+        "pages",
+        "footer",
+        "services",
+        "general-consultations",
+        "specialist-consultations",
+        "online-prescriptions",
+        "appointments",
+        "subscriptions"
+      ]
+    }
+  ],
+  "catalogueOk": true,
+  "catalogueCount": 14,
+  "catalogue": [
+    {
+      "slug": "general-health-test",
+      "title": "General Health Test",
+      "isActive": true
+    },
+    {
+      "slug": "heart-health-cholesterol-test",
+      "title": "Heart Health (Cholesterol) Test",
+      "isActive": true
+    },
+    {
+      "slug": "female-hormone-test",
+      "title": "Female Hormone Test",
+      "isActive": true
+    },
+    {
+      "slug": "male-hormone-test",
+      "title": "Male Hormone Test",
+      "isActive": true
+    },
+    {
+      "slug": "psa-prostate-test",
+      "title": "PSA (Prostate) Test",
+      "isActive": true
+    },
+    {
+      "slug": "amh-fertility-test",
+      "title": "AMH (Ovarian Reserve) Test",
+      "isActive": true
+    },
+    {
+      "slug": "vitamin-d-test",
+      "title": "Vitamin D Test",
+      "isActive": true
+    },
+    {
+      "slug": "vitamin-b12-test",
+      "title": "Vitamin B12 Test",
+      "isActive": true
+    },
+    {
+      "slug": "gut-microbiome-test",
+      "title": "Gut Microbiome Test",
+      "isActive": true
+    },
+    {
+      "slug": "nutrition-lifestyle-dna-test",
+      "title": "Nutrition & Lifestyle DNA Test",
+      "isActive": true
+    },
+    {
+      "slug": "genetic-haemochromatosis-test",
+      "title": "Genetic Haemochromatosis Test",
+      "isActive": true
+    },
+    {
+      "slug": "genetic-coeliac-disease-test",
+      "title": "Genetic Coeliac Disease Test",
+      "isActive": true
+    },
+    {
+      "slug": "genetic-lactose-intolerance-test",
+      "title": "Genetic Lactose Intolerance Test",
+      "isActive": true
+    },
+    {
+      "slug": "fracture-risk-assessment-test",
+      "title": "Osentia Fracture Risk Assessment",
+      "isActive": true
+    }
+  ],
+  "conclusion": "Ireland health-tests feature disabled while 14 active catalogue items remain. Intent and fulfilment availability unresolved; do not bypass flag."
+}
