@@ -27,7 +27,11 @@ import {
   orderHasConsultationItem,
   orderNeedsAutoMeetLink,
 } from "../modules/admin-orders/generate-order-meet-link.service.js";
-import { startPrePaymentFlow } from "../modules/automation/pre-payment-flow.service.js";
+import {
+  startPrePaymentFlow,
+  sendPrePaymentCancelledNotifications,
+} from "../modules/automation/pre-payment-flow.service.js";
+import { voidOrderCheckoutPaymentById } from "../modules/orders/void-checkout-payment.service.js";
 import { completeOrderPaymentFromCheckoutSession } from "../modules/orders/complete-order-payment.service.js";
 import { resolveCoupon } from "../modules/coupons/coupon-eligibility.js";
 import { couponCutPerUnit } from "../modules/coupons/coupon-distribution.js";
@@ -433,6 +437,7 @@ const adminPatchSchema = z
     trackingNumber: z.string().trim().max(200).nullable().optional(),
     trackingCarrier: z.string().trim().max(120).nullable().optional(),
     trackingUrl: z.string().trim().url().max(500).nullable().optional().or(z.literal("")),
+    cancellationReason: z.string().trim().max(500).nullable().optional(),
   })
   .refine(
     (v) =>
@@ -2547,6 +2552,9 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             ...(body.data.trackingNumber !== undefined ? { trackingNumber: body.data.trackingNumber || null } : {}),
             ...(body.data.trackingCarrier !== undefined ? { trackingCarrier: body.data.trackingCarrier || null } : {}),
             ...(body.data.trackingUrl !== undefined ? { trackingUrl: body.data.trackingUrl || null } : {}),
+            ...(body.data.status === OrderStatus.CANCELLED
+              ? { cancellationReason: body.data.cancellationReason?.trim() || null }
+              : {}),
           },
         });
 
@@ -2575,19 +2583,24 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           await cancelOrderAppointments(order.id).catch((err) => {
             request.log.error({ err, orderId: order.id }, "Cancel order appointments failed");
           });
-          // Kill the payment link: expire the open Stripe checkout session so an
-          // already-copied link stops working for an unpaid cancelled order.
-          if (
-            order.stripeSessionId &&
-            order.paymentStatus !== PaymentStatus.PAID &&
-            isStripeConfigured(order.countryCode)
-          ) {
-            try {
-              await getStripeClient(order.countryCode).checkout.sessions.expire(order.stripeSessionId);
-            } catch (err) {
-              request.log.warn({ err, orderId: order.id }, "Expire checkout session on cancel failed");
-            }
+          // Kill the payment link: same voider the unpaid-order sweep uses —
+          // expires the Checkout session if still open, and also cancels the
+          // underlying PaymentIntent (needed to actually kill a live Multibanco
+          // reference at SIBS; a bare session-expire can't once the voucher has
+          // printed). No-ops harmlessly if the order was never invoiced via Stripe.
+          if (order.paymentStatus !== PaymentStatus.PAID) {
+            await voidOrderCheckoutPaymentById(order.id, request.log);
           }
+          // Same notifications (patient + doctor, email + WhatsApp) and credit
+          // note as the automatic unpaid-order cancel, carrying the admin's
+          // reason instead of the fixed non-payment copy.
+          await sendPrePaymentCancelledNotifications(
+            order.id,
+            "admin_manual_cancelled",
+            body.data.cancellationReason,
+          ).catch((err) => {
+            request.log.error({ err, orderId: order.id }, "Send cancellation notifications failed");
+          });
         }
         return okResponse({
           id: order.id,
