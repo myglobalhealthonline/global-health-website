@@ -388,15 +388,24 @@ export function reminderMessage(
   ctx: PrePaymentMessageContext,
   lang: Lang,
   kind: "mid" | "final" | "cancelled",
+  reason?: string | null,
 ): { subject: string; text: string; whatsapp: string } {
   if (kind === "cancelled") {
-    const text = t(lang, {
-      en: `Hi ${ctx.patientName}, your reservation for ${ctx.serviceName} on ${ctx.appointmentDate} has been cancelled because payment was not received before ${ctx.deadline}.`,
-      pt: `Olá ${ctx.patientName}, a reserva para ${ctx.serviceName} foi cancelada por falta de pagamento.`,
-      ro: `Rezervarea pentru ${ctx.serviceName} a fost anulată.`,
-      cs: `Rezervace ${ctx.serviceName} byla zrušena.`,
-      es: `Su reserva de ${ctx.serviceName} fue cancelada.`,
-    });
+    const text = reason
+      ? t(lang, {
+          en: `Hi ${ctx.patientName}, your reservation for ${ctx.serviceName} on ${ctx.appointmentDate} has been cancelled. Reason: ${reason}`,
+          pt: `Olá ${ctx.patientName}, a reserva para ${ctx.serviceName} foi cancelada. Motivo: ${reason}`,
+          ro: `Rezervarea pentru ${ctx.serviceName} a fost anulată. Motiv: ${reason}`,
+          cs: `Rezervace ${ctx.serviceName} byla zrušena. Důvod: ${reason}`,
+          es: `Su reserva de ${ctx.serviceName} fue cancelada. Motivo: ${reason}`,
+        })
+      : t(lang, {
+          en: `Hi ${ctx.patientName}, your reservation for ${ctx.serviceName} on ${ctx.appointmentDate} has been cancelled because payment was not received before ${ctx.deadline}.`,
+          pt: `Olá ${ctx.patientName}, a reserva para ${ctx.serviceName} foi cancelada por falta de pagamento.`,
+          ro: `Rezervarea pentru ${ctx.serviceName} a fost anulată.`,
+          cs: `Rezervace ${ctx.serviceName} byla zrušena.`,
+          es: `Su reserva de ${ctx.serviceName} fue cancelada.`,
+        });
     return {
       subject: t(lang, {
         en: `Order #${ctx.orderNumber} - Reservation cancelled`,
@@ -504,47 +513,75 @@ Equipo Global Health`,
   };
 }
 
-export function doctorWhatsAppCancelled(ctx: PrePaymentMessageContext, lang: Lang): string {
+export function doctorWhatsAppCancelled(
+  ctx: PrePaymentMessageContext,
+  lang: Lang,
+  reason?: string | null,
+): string {
+  const reasonLine = reason
+    ? t(lang, {
+        en: `Reason: ${reason}\n`,
+        pt: `Motivo: ${reason}\n`,
+        ro: `Motiv: ${reason}\n`,
+        cs: `Důvod: ${reason}\n`,
+        es: `Motivo: ${reason}\n`,
+      })
+    : "";
+  const causeLine = reason
+    ? t(lang, {
+        en: "The reservation for the following consultation has been cancelled.",
+        pt: "A reserva da seguinte consulta foi cancelada.",
+        ro: "Rezervarea pentru consultația de mai jos a fost anulată.",
+        cs: "Rezervace následující konzultace byla zrušena.",
+        es: "La reserva de la siguiente consulta ha sido cancelada.",
+      })
+    : t(lang, {
+        en: "The reservation for the following consultation has been cancelled due to non-payment.",
+        pt: "A reserva da seguinte consulta foi cancelada por falta de pagamento.",
+        ro: "Rezervarea pentru consultația de mai jos a fost anulată din cauza neplății.",
+        cs: "Rezervace následující konzultace byla zrušena z důvodu neuhrazení platby.",
+        es: "La reserva de la siguiente consulta ha sido cancelada por falta de pago.",
+      });
   return t(lang, {
     en: `Hello ${ctx.doctorName},
-The reservation for the following consultation has been cancelled due to non-payment.
+${causeLine}
 Patient: ${ctx.patientName}
 Service: ${ctx.serviceName}
 Date & time: ${ctx.appointmentDate}
 Order: #${ctx.orderNumber}
-The time slot has been released.
+${reasonLine}The time slot has been released.
 Global Health Team`,
     pt: `Olá ${ctx.doctorName},
-A reserva da seguinte consulta foi cancelada por falta de pagamento.
+${causeLine}
 Paciente: ${ctx.patientName}
 Serviço: ${ctx.serviceName}
 Data e hora: ${ctx.appointmentDate}
 Pedido: #${ctx.orderNumber}
-O horário foi libertado.
+${reasonLine}O horário foi libertado.
 Equipa Global Health`,
     ro: `Bună ziua ${ctx.doctorName},
-Rezervarea pentru consultația de mai jos a fost anulată din cauza neplății.
+${causeLine}
 Pacient: ${ctx.patientName}
 Serviciu: ${ctx.serviceName}
 Data și ora: ${ctx.appointmentDate}
 Comandă: #${ctx.orderNumber}
-Intervalul orar a fost eliberat.
+${reasonLine}Intervalul orar a fost eliberat.
 Echipa Global Health`,
     cs: `Dobrý den ${ctx.doctorName},
-Rezervace následující konzultace byla zrušena z důvodu neuhrazení platby.
+${causeLine}
 Pacient: ${ctx.patientName}
 Služba: ${ctx.serviceName}
 Datum a čas: ${ctx.appointmentDate}
 Objednávka: #${ctx.orderNumber}
-Časový slot byl uvolněn.
+${reasonLine}Časový slot byl uvolněn.
 Tým Global Health`,
     es: `Hola ${ctx.doctorName},
-La reserva de la siguiente consulta ha sido cancelada por falta de pago.
+${causeLine}
 Paciente: ${ctx.patientName}
 Servicio: ${ctx.serviceName}
 Fecha y hora: ${ctx.appointmentDate}
 Pedido: #${ctx.orderNumber}
-El horario ha sido liberado.
+${reasonLine}El horario ha sido liberado.
 Equipo Global Health`,
   });
 }

@@ -13,23 +13,28 @@ export function AdminOrderActions({ orderId, status, canRefund = false }: Props)
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [confirmCancel, setConfirmCancel] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
   const [confirmRefund, setConfirmRefund] = useState(false);
 
   function patchStatus(next: "FULFILLED" | "CANCELLED") {
     if (next === "CANCELLED") {
+      setCancelReason("");
       setConfirmCancel(true);
       return;
     }
     runPatch(next);
   }
 
-  function runPatch(next: "FULFILLED" | "CANCELLED") {
+  function runPatch(next: "FULFILLED" | "CANCELLED", cancellationReason?: string) {
     setError(null);
     startTransition(async () => {
       const res = await fetch(`/api/admin/orders/${orderId}`, {
         method: "PATCH",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ status: next }),
+        body: JSON.stringify({
+          status: next,
+          ...(cancellationReason !== undefined ? { cancellationReason } : {}),
+        }),
       });
       const json = await res.json().catch(() => ({}));
       if (!res.ok || !json?.ok) {
@@ -42,7 +47,7 @@ export function AdminOrderActions({ orderId, status, canRefund = false }: Props)
 
   function confirmCancelOrder() {
     setConfirmCancel(false);
-    runPatch("CANCELLED");
+    runPatch("CANCELLED", cancelReason.trim());
   }
 
   function runRefund() {
@@ -119,9 +124,23 @@ export function AdminOrderActions({ orderId, status, canRefund = false }: Props)
           </>
         }
       >
-        <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
-          Cancel this order? HELD slots will be released to OPEN. This cannot be undone here — issue a refund separately if already paid.
-        </p>
+        <div className="flex flex-col gap-3">
+          <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
+            Cancel this order? HELD slots will be released, any pending payment link is voided, and a credit note plus cancellation email/WhatsApp go out to the patient and doctor. This cannot be undone here — issue a refund separately if already paid.
+          </p>
+          <label className="flex flex-col gap-1 text-sm" style={{ color: "var(--portal-text-2)" }}>
+            Reason for cancellation (included in the notification)
+            <textarea
+              value={cancelReason}
+              onChange={(e) => setCancelReason(e.target.value)}
+              rows={3}
+              maxLength={500}
+              placeholder="e.g. Doctor unavailable, patient requested reschedule…"
+              className="rounded-md border px-2 py-1.5 text-sm"
+              style={{ borderColor: "var(--portal-line, var(--color-border))", background: "var(--portal-surface)" }}
+            />
+          </label>
+        </div>
       </PortalDialog>
 
       <PortalDialog

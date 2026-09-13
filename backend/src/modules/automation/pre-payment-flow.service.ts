@@ -839,6 +839,7 @@ async function resolveCancellationCreditNote(
 export async function sendPrePaymentCancelledNotifications(
   orderId: string,
   stageKeyOverride?: string,
+  reason?: string | null,
 ): Promise<void> {
   const loaded = await loadOrderContext(orderId, null);
   if (!loaded) return;
@@ -851,7 +852,7 @@ export async function sendPrePaymentCancelledNotifications(
   // patient must be told their reservation is gone either way.
   const creditNote = await resolveCancellationCreditNote(orderId).catch(() => null);
 
-  const msg = reminderMessage(ctx, lang, "cancelled");
+  const msg = reminderMessage(ctx, lang, "cancelled", reason);
   await sendWhatsApp(stageKey, orderId, order.phone, msg.whatsapp, "Patient WhatsApp — reservation cancelled", lang, phoneHints, primary.patientWhatsappConsent);
   await sendPatientEmail(
     stageKey,
@@ -877,7 +878,7 @@ export async function sendPrePaymentCancelledNotifications(
         `${cancelKey}_whatsapp`,
         orderId,
         doctorContact.whatsappNumber,
-        doctorWhatsAppCancelled(staffCtx, lang),
+        doctorWhatsAppCancelled(staffCtx, lang, reason),
         "Doctor WhatsApp — reservation cancelled",
         lang,
         doctorContact.whatsappHints,
@@ -893,7 +894,7 @@ export async function sendPrePaymentCancelledNotifications(
         status: "RUNNING",
       });
       try {
-        const body = doctorWhatsAppCancelled(staffCtx, lang);
+        const body = doctorWhatsAppCancelled(staffCtx, lang, reason);
         await sendAutomationEmail(
           {
             to: doctorContact.loginEmail,

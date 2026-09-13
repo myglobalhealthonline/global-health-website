@@ -3526,6 +3526,12 @@ model Order {
   /// Also the re-send audit: the column carries the LAST send, and every
   /// individual attempt is an AutomationRun row.
   trackingNotifiedAt            DateTime?
+  /// Free-text reason an admin gave when manually cancelling this order
+  /// (Cancel button). Null on every order cancelled by the unpaid-order sweep
+  /// or any other automated path — those carry their own fixed reason baked
+  /// into the notification copy instead. Echoed into the patient + doctor
+  /// cancellation notifications.
+  cancellationReason            String?
   createdAt                     DateTime              @default(now())
   updatedAt                     DateTime              @updatedAt
 
