@@ -9408,7 +9408,9 @@ Base revision `82a40b02` on `Dev-hassaan`, uncommitted. Evidence:
   and legacy Wix redirects into the hub stay unchanged until that answer.
 
 Code rows 6, 7, 10, 11, 12 restyled 14 September as the site's outline pill link
-with arrow icon; still local and uncommitted. Next: owner approves commit/deploy, then
-live fetch of those five sources and targets, then register their own 28/56-day
-cohort here. Rollback of the database rows: `patch-internal-links.mjs rollback` with
+with arrow icon. Commit `033d7ee9` pushed to `Dev-hassaan` and present on `origin/main`.
+**Live check 14 September:** all five sources 200 and serve the new pill anchor once
+(the second Romania/Brazil/Czech homepage match is the pre-existing footer tools
+menu); all five destinations 200, self-canonical, indexable. Cohort start for rows
+6, 7, 10, 11, 12: 14 September 2026; measure 12 October and 9 November. Rollback of the database rows: `patch-internal-links.mjs rollback` with
 the same manifest and hash; it refuses if content changed after this apply.
