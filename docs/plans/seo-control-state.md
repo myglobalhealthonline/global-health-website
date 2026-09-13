@@ -9348,6 +9348,57 @@ an 8 GB heap. The rehearsal receipt is above.
 The September 18 Spain read and September 24 global inspection are unchanged. No
 cohort or 30/60/90 date is registered.
 
+### 56.5 Owner attestations and regenerated manifest, 14 September 2026
+
+**Still nothing published.** This section supersedes §56.4's manifest hash, group
+count and holds.
+
+The owner stated that Luz, Tomás and Wang are registered. Each hold was then clarified
+separately.
+
+- **Tomás Ruiz Palacios.** The owner attests he is registered. The hold is lifted on
+  that attestation. The fact register still records that no named official record
+  was independently verified.
+- **Leandro Wang.** The owner attests that specialist qualification evidence exists
+  for the phlebology/lymphology and vascular-diagnostics services. The hold is lifted.
+  No qualification source has been supplied yet; obtain it for the fact register.
+  CGCOM still lists Médico General.
+- **Luz Marina Zuluaga Ríos.** The owner stated she is now practising. The public
+  CGCOM register was rechecked in the browser on 14 September: No. 202009507,
+  Gipuzkoa, Médico General, "Médico de ALTA sin ejercicio". It is unchanged, so the
+  attestation conflicts with the register. Her profile and six services stay held
+  pending a registry update or documented explanation. Evidence:
+  [registry recheck](../../seo/spain/raw/registry-recheck-2026-09-14.json).
+
+**Localization.** Wang's two services received title, description, H1 and body drafts
+in EN/DE/CS/PT/RO, each self-reviewed against ES with an identical HTML tag sequence.
+The unconditional same-day promise was removed from the ES and localized descriptions
+of both services ("Cita el mismo día"; same-day test request in the diagnostics
+description). Clinical same-day DVT guidance, 112 instructions and conditional
+same-day test requests in the bodies are retained. This is not native-speaker or
+clinical approval.
+
+**Manifest.** Status `storage prepared; no approval or publication`, SHA-256
+`8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65`. It has 25
+candidate groups and 200 operations. The added groups are the vascular-diagnostics
+service, the phlebology/lymphology service and Tomás's profile; Wang's profile now
+follows his service. Nine groups are blocked: Luz's profile and six services, Fidel's
+profile and cardiology. The matrix now reads 240 retained, 137 change, 57 hold.
+
+**Rehearsal.** The isolated embedded PostgreSQL rehearsal passed again for this
+manifest: readback per group, savepoint failure, full rollback, runner repeat
+detection, protected drift refusal and exact inverse restore. Receipt:
+[postgres-rehearsal-2026-09-13-8846503c](../../seo/spain/raw/postgres-rehearsal-2026-09-13-8846503c.json)
+(UTC date). The §56.4 receipt remains as evidence for the superseded manifest.
+
+**Proof:** 12 focused tests pass; backend `tsc --noEmit` passes.
+
+**Next (unchanged order):**
+1. Dra. Ocampo approves manifest `8846503c…` and its group hashes.
+2. Record `clinical-approval.json` and matching `APPROVED_SPAIN_STATES`.
+3. The owner authorizes the enforcement deployment and production writes.
+4. Run groups sequentially, verifying each publicly.
+
 ## 57. Brazil evidence and guarded preparation — 13 September 2026
 
 Research and local preparation complete for the first staffed service/profile batch;

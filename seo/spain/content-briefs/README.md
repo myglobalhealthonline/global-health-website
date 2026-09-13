@@ -13,14 +13,13 @@ claim, reviewer name or review date is invented.
 
 Non-ES records of the four vascular/aesthetic services store no copy and render the
 Spanish record. `body-localization.json` supplies localized title, description, H1
-and body for the aesthetic and vascular services in EN/DE/CS/PT/RO. The two
-Wang-assigned services stay held and keep the Spanish fallback. Localized copy was
-drafted and independently reviewed, not native-speaker or clinically approved.
+and body for all four of those services in EN/DE/CS/PT/RO. Localized copy was
+drafted and reviewed, not native-speaker or clinically approved.
 
 `clinical-review-register.csv` one directory above binds each current payload hash.
 The generator preserves actual review records and refuses changed approved payloads.
-`storage-mutation-manifest.json` is now built from the authenticated snapshot: 22
-candidate groups, 12 held groups. Approval must bind its SHA-256 (ledger §56.4) and
+`storage-mutation-manifest.json` is now built from the authenticated snapshot: 25
+candidate groups, 9 held groups. Approval must bind its SHA-256 (ledger §56.5) and
 each group hash. It is not a production dry-run.
 
 Applicable rule: [ledger §43.5](../../../docs/plans/seo-control-state.md#435-spains-remaining-dependencies-none-of-which-are-code)

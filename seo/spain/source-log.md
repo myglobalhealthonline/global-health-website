@@ -27,6 +27,7 @@ No project, tracker, saved keyword or outreach was created.
 | Authenticated storage (14 Sept, owner-confirmed read-only) | raw/storage-preflight-2026-09-13.json (local, gitignored) | One REPEATABLE READ READ ONLY transaction; SHA-256 ecd8cb77…3fc61; no patient/appointment/account/banking tables |
 | API refresh (14 Sept) | raw/api-refresh-2026-09-13/; raw/source-refresh-2026-09-13.json | 140 draft sources re-fetched (UTC-dated folder); zero drift; Fidel Mesa/cardiology still not bookable |
 | PostgreSQL rehearsal (14 Sept) | raw/postgres-rehearsal-2026-09-13.json | Embedded local PostgreSQL 18.4 with current Prisma schema; production not touched |
+| CGCOM recheck (14 Sept) | raw/registry-recheck-2026-09-14.json | Luz still ALTA sin ejercicio; Tomás and Wang holds lifted on owner attestation, not registry verification |
 | Body localization (14 Sept) | content-briefs/body-localization.json | EN/DE/CS/PT/RO drafts of two ES bodies; AI-drafted then independently reviewed; not native-speaker or clinical approval |
 
 Primary administrative source: [BOE RD 625/2014](https://www.boe.es/buscar/act.php?id=BOE-A-2014-7684),

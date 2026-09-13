@@ -39,3 +39,8 @@ executed. That preparation was committed as 16ca77f3.
 
 The production dry-run, enforcement deployment and every content write remain
 unperformed. Details and hashes: ledger §56.4.
+
+Later on 14 September, owner attestations lifted the Tomás and Wang holds. A CGCOM
+recheck still showed Luz as ALTA sin ejercicio, so her hold remains. Wang's two
+services were localized into five languages. The regenerated manifest has 25 groups
+and 9 held groups, and its isolated rehearsal passed again. Ledger §56.5.

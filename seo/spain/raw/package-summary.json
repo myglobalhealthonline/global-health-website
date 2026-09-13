@@ -30,9 +30,9 @@
   "embeddedFaqs": 0,
   "faqMismatches": 0,
   "dispositions": {
-    "retain with evidence": 199,
-    "change": 96,
-    "hold": 139
+    "retain with evidence": 240,
+    "change": 137,
+    "hold": 57
   },
   "segments": {
     "current": {

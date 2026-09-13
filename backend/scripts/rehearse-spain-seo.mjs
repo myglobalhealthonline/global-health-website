@@ -76,6 +76,6 @@ try{
  same(await readSpain(client),snapshot,'Inverse did not restore snapshot');
  const {rows:[{version}]}=await client.query('SELECT version()');
  const receipt={checkedAt:new Date().toISOString(),database:'isolated local PostgreSQL (embedded); production not touched',postgres:version,manifestSha256:hash(manifest),snapshotSha256:manifest.snapshotSha256,groups:manifest.groups.length,operations:manifest.groups.reduce((n,g)=>n+g.changes.length,0),snapshotReadbackIdentical:true,transactionalReadbackPerGroup:true,savepointFailureVerified:true,fullRollbackVerified:true,runnerDryRunAndRepeatDetectionPerGroup:true,protectedDriftRefused:true,exactInverseRestoredSnapshot:true,syntheticFillerColumns:[...filled].sort(),notCovered:'Clinical approval gate (synthetic tests only); updatedAt is not restored by inverse; production schema drift beyond prisma/schema.prisma.',published:false};
- fs.writeFileSync(`${root}/raw/postgres-rehearsal-${receipt.checkedAt.slice(0,10)}.json`,JSON.stringify(receipt,null,2)+'\n',{flag:'wx'});
+ fs.writeFileSync(`${root}/raw/postgres-rehearsal-${receipt.checkedAt.slice(0,10)}-${receipt.manifestSha256.slice(0,8)}.json`,JSON.stringify(receipt,null,2)+'\n',{flag:'wx'});
  console.log(JSON.stringify({groups:receipt.groups,operations:receipt.operations,filled:receipt.syntheticFillerColumns.length}));
 }finally{await client.query('ROLLBACK').catch(()=>{});await client.end();}

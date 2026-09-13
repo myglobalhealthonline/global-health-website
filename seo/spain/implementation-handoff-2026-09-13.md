@@ -2,6 +2,9 @@
 
 Nothing from this package is live. Canonical status is ledger §56.
 
+**Latest: ledger §56.5** — manifest `8846503c…`, 25 groups, 9 held (Luz, Fidel);
+Tomás/Wang holds lifted by owner attestation.
+
 **14 September update (ledger §56.4) supersedes the "pending" statements below:**
 the owner-confirmed read-only snapshot ran; the manifest is built from it (22 groups,
 12 held, SHA-256 `7b9fc80b…52e6`); the isolated PostgreSQL rehearsal passed via
