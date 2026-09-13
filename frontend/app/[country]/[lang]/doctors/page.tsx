@@ -81,7 +81,7 @@ export async function generateMetadata({
     `Doctors and specialists registered to practise in ${config.name}. Browse profiles by specialty and language.`;
   const irelandSeo = doctorDirectorySeo(code, lang);
   const localized = overrideDoctorsBundle(
-    loadLocaleBundle(lang as LocaleCode).common.doctors,
+    loadLocaleBundle(lang as LocaleCode, country).common.doctors,
     code,
     lang,
   );
@@ -141,7 +141,7 @@ export default async function CountryLangDoctorsPage({
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
 
-  const { common } = loadLocaleBundle(lang as LocaleCode);
+  const { common } = loadLocaleBundle(lang as LocaleCode, code);
 
   const [doctors, { record: rawPage, disabled: pageDisabled }, countryTrust, generalServices, specialistServices, consultationCountResult] = await Promise.all([
     getCountryDoctors(code, lang),

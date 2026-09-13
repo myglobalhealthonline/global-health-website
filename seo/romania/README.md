@@ -78,3 +78,8 @@ applicable clinical review, publication and rendered readback are implementation
 Read [`seo/README.md`](../README.md) for the artifact naming and update contract.
 Create standalone Romania audit, keyword, competitor or content files only when a
 new focused research pass produces evidence to put in them.
+
+Additional authorized editorial publication (13 September UTC): see ledger §55.5,
+[publication manifest](content-briefs/editorial-publication-manifest-2026-09-13.json)
+and [final live proof](raw/editorial-rollout/final-public-summary.json).
+The earlier retention-only record is historical; scoped rewrites are now live.

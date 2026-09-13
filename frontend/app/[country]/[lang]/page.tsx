@@ -90,7 +90,7 @@ export async function generateMetadata({
 
   const { record: page } = await getPageContent(code, "HOME", lang as PublicLocale);
   const extras = homePageExtras(code, lang);
-  const { common: metaCommon } = loadLocaleBundle(lang as LocaleCode);
+  const { common: metaCommon } = loadLocaleBundle(lang as LocaleCode, country);
   const preferIrelandExtras = code === "ie";
   const path = `/${country}/${lang}`;
   // `config.name` is the country's English display name (DB `Country.name`),
@@ -207,7 +207,7 @@ export default async function CountryLangHomePage({
   if (!isSupportedLocale(lang)) notFound();
   // Layer per-country/-locale copy over the shared i18n bundle (see
   // country-home-copy.ts). Non-overridden markets keep the generic copy.
-  const bundle = loadLocaleBundle(lang as LocaleCode);
+  const bundle = loadLocaleBundle(lang as LocaleCode, code);
   const cc = bundle.common;
   const extras = homePageExtras(code, lang);
   const preferIrelandExtras = code === "ie";

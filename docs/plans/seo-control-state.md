@@ -9039,3 +9039,63 @@ The six unstaffed pain-service variants and Brindus specialty evidence remain he
 Main integration and the measurement dates in §55.3 remain open. A future rewrite,
 including retained em-dash-heavy prose, would require new field-level copy; this
 approval record does not claim that such a rewrite has been performed.
+
+### 55.5 Authorized retained-copy rewrite and publication
+
+The super admin reported verbal approval from Dr. Thiago and Dr. Robert, then
+explicitly authorized rewriting and publishing the retained Romania copy. This
+supersedes retention-only closure in §55.4 for the new exact editorial manifest.
+The authorization record states its provenance; no direct clinician signature or
+independent verification of every retained clinical claim is asserted.
+
+The final database manifest contains 520 field edits: 414 service/profile/link
+fields, 81 supporting-page/article fields and 25 legal content fields. Service
+card names reuse already published approved headings. HOME copy removes unsupported
+same-day and preferred-language guarantees. Legal changes preserve all words,
+figures, tags, links and quoted email subject lines. Held specialty/credential
+claims and the unstaffed pain service are unchanged.
+
+Frontend changes provide static Romania-only tool and supporting-page overrides
+across six locales. Other markets, calculations, privacy consent, booking flow and
+legal obligations are preserved. Current proof: 58 frontend tests, five backend
+guard/updater tests, both package type-checks and a real PostgreSQL rehearsal of
+the final manifest with full rollback pass. All three database batches are now committed and publicly verified.
+
+Evidence: editorial-publication-authorization-2026-09-13.json,
+content-briefs/editorial-publication-manifest-2026-09-13.json and
+raw/editorial-rollout/rehearsal.json in seo/romania. Fresh final GSC refresh has
+166 Romania page rows for August 13–September 9; live preflight covers 326 URLs,
+including the nine intentionally noindexed legal variants.
+
+- Romania editorial batch clinical: published and verified on 114 URLs (2026-09-13T00:30:05.948Z). Evidence: seo/romania/raw/editorial-rollout/clinical-applied.json.
+
+- Romania editorial batch pages-articles: published and verified on 60 URLs (2026-09-13T00:35:57.726Z). Evidence: seo/romania/raw/editorial-rollout/pages-articles-applied.json.
+
+- Romania editorial batch legal: published and verified on 25 URLs (2026-09-13T00:37:34.559Z). Evidence: seo/romania/raw/editorial-rollout/legal-applied.json.
+
+Final publication proof (2026-09-13 UTC): backend deployment
+23a4a388-bf54-4510-83e3-add5588da419 and frontend deployment
+cd602f3e-0e3a-4d6c-8c87-6cdc462aaa84 succeeded and passed health checks.
+Clinical readback verified 114 URLs / 997 revised fragments; supporting pages and
+articles verified 60 URLs / 647 fragments; legal verified 25 URLs / 720 fragments.
+Five doctors-index translations have storage-only whyChooseItems edits because
+showWhyChoose is false. Their public controls passed; no section was enabled.
+
+The final 326-URL readback passed status, canonical, robots and hreflang checks;
+281 pages changed visible text. Visible em dashes fell from 4,498 to 239. All 48
+tool pages changed and contain no visible em dashes. Remaining punctuation includes
+held pain-service/credential copy, exact quoted legal email subjects, image text
+and shared notices. This is scoped editorial completion, not certification of
+all retained claims or a claim that every inventory page was rewritten.
+Deployed source hashes match the workspace. Evidence: raw/editorial-public-after-2026-09-13.json
+and raw/editorial-rollout/final-public-summary.json in seo/romania.
+
+Register this additional editorial cohort at September 13 UTC, separately from
+the September 12 original rollout. Compare September 14–October 11 (28 complete
+days) with August 17–September 13 when final GSC data is available; review again
+at 60 and 90 days. Preserve the August 13–September 9 research baseline and the
+September 24 global inspection. No ranking gain is claimed from deployment checks.
+
+Remaining work: integrate this branch before the next main deployment; resolve
+the unstaffed pain-service disposition and authoritative Brindus specialty evidence;
+measure search outcomes. No further prepared editorial batch awaits approval or publication.

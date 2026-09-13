@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const code = countryCodeFromSlug(country);
   const config = code ? await getPublicCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
-  const { subscription, common } = loadLocaleBundle(lang as LocaleCode);
+  const { subscription, common } = loadLocaleBundle(lang as LocaleCode, country);
   const countryName = common.countryNames?.[code] ?? config.name;
   const irelandSeo = code === "ie" ? irelandStaticPageSeo("PRICING", lang as LocaleCode) : null;
   const czechiaSeo = czechiaStaticPageSeo(code, lang, "pricing");
@@ -87,7 +87,7 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
   const planResult = await getCountryPlansResult(code, lang);
   const plans = planResult.plans;
   const hasPlans = plans.length > 0;
-  const { subscription, common: c } = loadLocaleBundle(lang as LocaleCode);
+  const { subscription, common: c } = loadLocaleBundle(lang as LocaleCode, code);
   const countryName = c.countryNames?.[code] ?? config.name;
   const t = subscription.pricing;
   const hiw = subscription.howItWorks;

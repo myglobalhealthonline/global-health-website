@@ -1,0 +1,385 @@
+{
+  "en": {
+    "company": {
+      "press": {
+        "titleTemplate": "Press & Media | Global Health {country}",
+        "contactBody": "For interviews, comments, data or fact-checking, email us with your outlet and deadline. We prioritise journalists working to a deadline.",
+        "introTemplate": "Journalists covering Global Health in {country} can find information here about the service, its operator and how to verify our work."
+      },
+      "medicalReview": {
+        "titleTemplate": "Medical Review Policy | Global Health {country}",
+        "s3Std4Body": "Articles explain how a process generally works. They do not diagnose your condition or guarantee an outcome. Your individual circumstances require a consultation.",
+        "s1Body1": "We draft articles using verified primary sources, including government guidance, national health authority publications and the social security or insurance documents that apply in the relevant country. Editorial tools may assist with drafting, but do not replace source checks and clinical review.",
+        "s3Std5BodyTemplate": "When an article describes warning signs that need urgent care, it includes the local emergency number, {emergency}.",
+        "s1Body2Template": "Articles carry the Global Health Medical Team byline because the team shares drafting, research and editing. A physician registered with {regulator} approves each article. Their name and registration number appear on it.",
+        "introTemplate": "Every clinical article we publish for {country} is drafted from primary sources and checked against them. A named physician registered with {regulator} signs it off before publication. We review it again when the underlying rules change.",
+        "s2BylineFormatNote": "Each reviewer name and registration number identifies a doctor on the public register for this market.",
+        "s3Std2Body": "Claims about entitlements, certification rules and legal processes link directly to the government department, health authority or regulator responsible for them.",
+        "descriptionTemplate": "How Global Health writes and reviews health articles for {country}, including sources, physician sign-off and updates.",
+        "s2Intro": "A registered physician reviews the full article before publication and checks its claims against the sources. Their name and registration number appear on the article so you can verify their registration.",
+        "s3Std3BodyTemplate": "An article about sick leave in {country} is written and reviewed specifically for {country}, because rules vary between countries."
+      },
+      "careers": {
+        "rolesBody": "We do not list vacancies on this page. Registered doctors, clinical support professionals and engineers can send a CV and a short introduction. We read every application and reply to candidates we can take further.",
+        "introTemplate": "Global Health connects patients in {country} with registered doctors online. Our clinicians, clinical operations staff and engineers work across our markets. We welcome applications from people who want to join the team.",
+        "pillarOpsBody": "Help patients with bookings, documents and follow-up before and after their consultation, in the languages used in our markets.",
+        "whyBodyTemplate": "Our small team supports patients in {country} and across our markets. You could consult with patients, help them with bookings or develop the platform.",
+        "pillarDoctorsBody": "Consult online as a registered doctor. You set your availability; we handle bookings, payments and consultation technology."
+      }
+    },
+    "legal": {
+      "summaryNotice": {
+        "text": "This page is a plain-language summary. It is not the governing legal document. That document is maintained for each country, together with the applicable data controller and the current version."
+      },
+      "privacy": {
+        "s1_p": "Global Health provides online medical consultations across several European countries. The legal entity acting as data controller depends on the country you book in. See our country pages for local details.",
+        "s2_i3": "Payment data: Stripe charge IDs, amounts, and timestamps. We never see card numbers. Stripe holds those directly.",
+        "s4_i1_pre": "Request a copy of everything we hold. Sign in and go to ",
+        "s3_p": "Strictly-necessary cookies: gh_auth keeps you signed in, gh_locale and gh-last-country remember your language and country, and gh-consent records the choice you make below. Only with your consent do we also load Google Analytics (_ga, _ga_…: usage statistics, set by Google Ireland Ltd), Microsoft Clarity (_clck, _clsk: usage statistics and session replay, set by Microsoft Ireland Operations Ltd), the Meta Pixel (advertising measurement, set by Meta) and Doctify review widgets (patient reviews, set by doctify.com). Each places its own cookies. Refuse them and none is ever loaded. Withdrawing consent stops both analytics tools and deletes their cookies from this site; cookies Microsoft sets on its own clarity.ms and bing.com domains are outside our reach, which is why we never authorise Clarity's advertising storage.",
+        "s6_p": "We use Railway (hosting), Stripe (payments), and SendGrid (transactional email). Each is GDPR-compliant and bound by Data Processing Agreements. Subject to your cookie choice, we also use Google (Google Analytics, usage statistics), Microsoft (Clarity, usage statistics and session replay), Meta (advertising measurement) and Doctify (patient reviews). Neither analytics tool runs on booking, cart, checkout, upload, verification or signed-in portal pages, and page addresses are stripped of identifying values before they are sent.",
+        "s4_i2": "Delete your account on the same page. Booking history is preserved for regulatory reasons but stripped of identifying details."
+      },
+      "terms": {
+        "s5_p": "Prices are shown before payment and are charged securely through Stripe. We never see your card number. Availability of appointments depends on clinician calendars and is not guaranteed. Cancellation and refund arrangements depend on the country and clinic you book with; where a consultation has not taken place, contact us and we will help resolve it fairly.",
+        "s6_p_pre": "Keep your login details confidential. You are responsible for activity under your account. Tell us promptly if you believe your account has been used without your permission. How we handle your data is described in our ",
+        "s9_p": "We may update these terms from time to time; the date above shows the latest version. The legal entity providing the service and the governing law depend on the country you book in. See the relevant country pages for local details."
+      }
+    },
+    "subscription": {
+      "legal": {
+        "renewal_p": "Your membership renews automatically each month. The renewal date is your subscription anniversary. We do not store your card details. They are held securely by our payment provider.",
+        "credits_p": "Consultation credits are granted each paid month and do not roll over. Unused credits expire at the end of the month. Wellness credits are earned on eligible plans, never expire, are redeemable only for eligible home health test kits, and are non-cash and non-transferable. Selected perks unlock after the stated number of paid months."
+      },
+      "howItWorks": {
+        "title": "Choose a health plan",
+        "lede": "Compare the available plans and their included services.",
+        "steps": [
+          {
+            "title": "Choose your plan",
+            "body": "Select the health plan that fits your lifestyle and needs: Essential, Comprehensive, or Premium Wellness."
+          },
+          {
+            "title": "Create your account",
+            "body": "Create an account and start your secure monthly membership."
+          },
+          {
+            "title": "Book a consultation",
+            "body": "Choose an available appointment time and book your online consultation from your device."
+          },
+          {
+            "title": "No additional booking fees",
+            "body": "Your monthly plan covers the booking fee for consultations included in the plan."
+          },
+          {
+            "title": "Meet your doctor online",
+            "body": "Meet your doctor by secure video from home, work or while travelling."
+          }
+        ]
+      }
+    },
+    "common": {
+      "homeMeta": {
+        "descriptionTemplate": "Consult a registered doctor online in {country}, in Romanian or English. Check the doctor and available appointment times before booking."
+      },
+      "doctors": {
+        "onboardingBodyTemplate": "Our {country} medical team is being verified. Check back soon or book with our cross-border specialists."
+      },
+      "testsPage": {
+        "hero": {
+          "feature2Subtitle": "Take your sample at home without a clinic visit."
+        }
+      }
+    }
+  },
+  "ro": {
+    "company": {
+      "press": {
+        "titleTemplate": "Presă și media | Global Health {country}",
+        "contactBody": "Pentru interviuri, comentarii, date sau verificarea faptelor, trimiteți-ne un e-mail și menționați publicația și termenul-limită. Acordăm prioritate jurnaliștilor aflați aproape de termenul-limită.",
+        "introTemplate": "Informații pentru jurnaliștii care scriu despre Global Health în {country}: cine suntem, cine operează serviciul și cum puteți verifica ceea ce facem."
+      },
+      "medicalReview": {
+        "titleTemplate": "Politica de Revizuire Medicală | Global Health {country}",
+        "s3Std4Body": "Articolele explică cum funcționează în general o procedură. Nu pun diagnostice și nu garantează un anumit rezultat în cazul dumneavoastră. Pentru asta este nevoie de o consultație.",
+        "s1Body1": "Articolele pornesc de la o formă preliminară construită din surse primare verificate: ghiduri guvernamentale, publicații ale autorităților naționale de sănătate și documentația casei de asigurări sau a sistemului de securitate socială aplicabilă țării despre care se scrie. La redactare pot interveni instrumente editoriale, dar niciun articol nu se publică doar pe baza unui instrument.",
+        "s3Std5BodyTemplate": "Când un articol menționează semne de alarmă care impun îngrijire urgentă, indică numărul de urgență valabil pe această piață, {emergency}.",
+        "s1Body2Template": "Articolele poartă o singură semnătură editorială (Global Health Medical Team) pentru că redactarea, documentarea și editarea sunt muncă de echipă, nu a unei singure persoane. Răspunderea clinică, în schimb, nu este anonimă: un medic înscris la {regulator} avizează articolul, iar numele și numărul său de înregistrare sunt cele care apar pe articol.",
+        "introTemplate": "Fiecare articol clinic pe care îl publicăm pentru {country} este redactat pornind de la surse primare, verificat în raport cu acestea și avizat de un medic identificat, înscris la {regulator}, înainte de a ajunge la dumneavoastră și revizuit din nou ori de câte ori se schimbă regulile pe care se bazează.",
+        "s2BylineFormatNote": "Numele și numărul de înregistrare ale recenzentului afișate în articolele noastre aparțin unui medic înscris în registrul public al acestei piețe, niciodată unui exemplu fictiv.",
+        "s3Std2Body": "Afirmațiile despre drepturi, reguli de eliberare a documentelor sau proceduri legale trimit direct la ministerul, autoritatea de sănătate sau organismul de reglementare care le stabilește, nu la rezumatul unui rezumat."
+      },
+      "careers": {
+        "rolesBody": "Nu publicăm posturile vacante pe această pagină. Dacă sunteți medic înregistrat, profesionist în suport clinic sau inginer și doriți să lucrați cu noi, trimiteți-ne CV-ul dumneavoastră și câteva rânduri despre dumneavoastră. Citim fiecare candidatură și răspundem celor pe care le putem duce mai departe.",
+        "introTemplate": "Global Health conectează online pacienții din {country} cu medici înregistrați. În spatele fiecărei consultații se află o echipă de clinicieni, personal de operațiuni clinice și ingineri care lucrează pe piețele noastre și ne bucurăm mereu să auzim de la persoane care doresc să li se alăture.",
+        "pillarOpsBody": "Ajutați pacienții cu programările, documentele și îngrijirea ulterioară, înainte și după consultație, în limbile folosite pe piețele noastre."
+      }
+    },
+    "legal": {
+      "summaryNotice": {
+        "text": "Această pagină este un rezumat în limbaj simplu. Nu este documentul juridic obligatoriu. Acel document este menținut pentru fiecare țară, împreună cu operatorul de date aplicabil și versiunea curentă."
+      },
+      "privacy": {
+        "s1_p": "Global Health oferă consultații medicale online în mai multe țări europene. Entitatea juridică care acționează ca operator de date depinde de țara în care efectuați rezervarea. Consultați paginile noastre de țară pentru detalii locale.",
+        "s2_i3": "Date de plată: ID-uri de plată Stripe, sume și marcaje de timp. Nu vedem niciodată numerele de card. Stripe le stochează direct.",
+        "s4_i1_pre": "Solicita o copie a tot ceea ce deținem. Autentificați-vă și accesați ",
+        "s3_p": "Cookie-uri strict necesare: gh_auth vă menține autentificat, gh_locale și gh-last-country rețin limba și țara dumneavoastră, iar gh-consent înregistrează alegerea pe care o faceți mai jos. Doar cu acordul dumneavoastră încărcăm și Google Analytics (_ga, _ga_…: statistici de utilizare, setate de Google Ireland Ltd), Microsoft Clarity (_clck, _clsk: statistici de utilizare și înregistrarea sesiunii, setate de Microsoft Ireland Operations Ltd), Meta Pixel (măsurarea publicității, setat de Meta) și widget-urile de recenzii Doctify (recenzii ale pacienților, setate de doctify.com). Fiecare plasează propriile cookie-uri. Dacă le refuzați, niciunul nu este încărcat. Retragerea acordului oprește ambele instrumente de analiză și le șterge cookie-urile de pe acest site; cookie-urile setate de Microsoft pe propriile domenii clarity.ms și bing.com sunt în afara controlului nostru, motiv pentru care nu autorizăm niciodată stocarea publicitară a Clarity.",
+        "s6_p": "Folosim Railway (găzduire), Stripe (plăți) și SendGrid (e-mail tranzacțional). Fiecare respectă GDPR și este legat prin Acorduri de Prelucrare a Datelor. În funcție de alegerea dumneavoastră privind cookie-urile, folosim și Google (Google Analytics, statistici de utilizare), Microsoft (Clarity, statistici de utilizare și înregistrarea sesiunii), Meta (măsurarea publicității) și Doctify (recenzii ale pacienților). Niciunul dintre instrumentele de analiză nu rulează pe paginile de programare, coș, plată, încărcare de fișiere, verificare sau în portalul autentificat, iar adresele paginilor sunt curățate de valori de identificare înainte de a fi trimise.",
+        "s4_i2": "Ștergeți contul de pe aceeași pagină. Istoricul rezervărilor este păstrat din motive de reglementare, dar fără detalii de identificare."
+      },
+      "terms": {
+        "s5_p": "Prețurile sunt afișate înainte de plată și sunt percepute în siguranță prin Stripe. Nu vedem niciodată numărul cardului. Disponibilitatea programărilor depinde de agendele medicilor și nu este garantată. Condițiile de anulare și rambursare depind de țara și clinica cu care efectuați rezervarea; dacă o consultație nu a avut loc, contactați-ne și vă vom ajuta să rezolvați în mod echitabil.",
+        "s6_p_pre": "Păstrați confidențiale datele de autentificare. Sunteți responsabil pentru activitatea din contul dumneavoastră. Informați-ne prompt dacă credeți că contul a fost utilizat fără permisiunea dumneavoastră. Modul în care gestionăm datele dumneavoastră este descris în ",
+        "s9_p": "Putem actualiza acești termeni din când în când; data de mai sus indică cea mai recentă versiune. Entitatea juridică care furnizează serviciul și legea aplicabilă depind de țara în care efectuați rezervarea. Consultați paginile relevante ale țărilor pentru detalii locale."
+      }
+    },
+    "subscription": {
+      "legal": {
+        "renewal_p": "Abonamentul dumneavoastră se reînnoiește automat în fiecare lună. Data reînnoirii este aniversarea abonamentului dumneavoastră. Nu stocăm datele cardului dumneavoastră. Acestea sunt păstrate în siguranță de furnizorul nostru de plăți.",
+        "credits_p": "Creditele de consultație sunt acordate în fiecare lună plătită și nu se reportează. Creditele neutilizate expiră la sfârșitul lunii. Creditele de wellness sunt câștigate la planurile eligibile, nu expiră niciodată, pot fi valorificate doar pentru kituri eligibile de teste de sănătate la domiciliu și nu sunt convertibile în numerar și nu sunt transferabile. Avantajele selectate se deblochează după numărul indicat de luni plătite."
+      },
+      "howItWorks": {
+        "title": "Alegeți un plan de sănătate",
+        "lede": "Comparați planurile disponibile și serviciile incluse."
+      }
+    },
+    "common": {
+      "homeMeta": {
+        "descriptionTemplate": "Consultați un medic înregistrat online în {country}, în română sau engleză. Verificați medicul și orele disponibile înainte de programare."
+      },
+      "doctors": {
+        "onboardingBodyTemplate": "Echipa noastră medicală din {country} este în curs de verificare. Reveniți curând sau rezervați cu specialiștii noștri transfrontalieri."
+      }
+    }
+  },
+  "cs": {
+    "company": {
+      "press": {
+        "titleTemplate": "Pro média | Global Health {country}",
+        "contactBody": "Pro rozhovory, vyjádření, data nebo ověření faktů nám napište e-mail a uveďte médium, pro které pracujete, a termín uzávěrky. Novináře s blížící se uzávěrkou vyřizujeme přednostně.",
+        "introTemplate": "Informace pro novináře, kteří píší o Global Health v {country}: kdo jsme, kdo službu provozuje a jak si ověřit, co děláme."
+      },
+      "medicalReview": {
+        "titleTemplate": "Zásady lékařské revize | Global Health {country}",
+        "s3Std4Body": "Články vysvětlují, jak proces obecně funguje. Nestanovují diagnózu a nezaručují konkrétní výsledek ve vašem případě. To vyžaduje skutečnou konzultaci.",
+        "s1Body1": "Články vznikají jako koncept sestavený z ověřených primárních zdrojů: vládních pokynů, publikací národních zdravotnických úřadů a dokumentace sociálního zabezpečení nebo zdravotních pojišťoven, která platí pro zemi, o níž se článek píše. Při psaní mohou pomáhat redakční nástroje, ale žádný článek nevychází jen na základě nástroje.",
+        "s3Std5BodyTemplate": "Pokud článek zmiňuje varovné příznaky vyžadující neodkladnou péči, uvádí číslo tísňové linky platné pro tento trh, {emergency}.",
+        "s1Body2Template": "Články nesou jednotné redakční autorství (Global Health Medical Team), protože psaní, dohledávání zdrojů a redakce jsou týmová práce, nikoli dílo jednoho člověka. Klinická odpovědnost ovšem anonymní není: článek schvaluje lékař registrovaný u {regulator} a je to jeho jméno a číslo registrace, které jsou u článku uvedeny.",
+        "introTemplate": "Každý klinický článek, který publikujeme pro {country}, vzniká z primárních zdrojů, je s nimi porovnán a schválen konkrétním lékařem registrovaným u {regulator}, než se dostane k vám a je znovu revidován vždy, když se změní pravidla, z nichž vychází.",
+        "s2BylineFormatNote": "Jméno a číslo registrace recenzenta uvedené u našich článků patří lékaři zapsanému ve veřejném seznamu pro tento trh, nikdy nejde o smyšlený příklad.",
+        "s3Std2Body": "Tvrzení o nárocích, pravidlech pro vystavování dokladů nebo právních postupech odkazují přímo na úřad, zdravotnickou autoritu nebo regulátora, který je stanoví, nikoli na shrnutí shrnutí."
+      },
+      "careers": {
+        "rolesBody": "Volná místa na této stránce neuvádíme. Pokud jste registrovaný lékař, odborník na klinickou podporu nebo inženýr a chcete s námi spolupracovat, pošlete nám svůj životopis a pár řádků o sobě. Čteme každou přihlášku a odpovídáme těm, se kterými chceme jít dál.",
+        "introTemplate": "Global Health online propojuje pacienty v {country} s registrovanými lékaři. Za každou konzultací stojí tým klinických pracovníků, zaměstnanců klinického provozu a inženýrů působících na našich trzích a vždy nás potěší, když se ozve někdo, kdo se k nim chce přidat.",
+        "pillarOpsBody": "Pomáhejte pacientům s rezervacemi, dokumenty a následnou péčí před konzultací i po ní, v jazycích používaných na našich trzích."
+      }
+    },
+    "legal": {
+      "summaryNotice": {
+        "text": "Tato stránka je souhrn v jednoduchém jazyce. Není závazným právním dokumentem. Ten je veden pro každou zemi zvlášť, spolu s příslušným správcem údajů a aktuální verzí."
+      },
+      "privacy": {
+        "s1_p": "Společnost Global Health poskytuje online lékařské konzultace v několika evropských zemích. Právní subjekt vystupující jako správce údajů závisí na zemi, ve které provádíte rezervaci. Podrobnosti naleznete na stránkách jednotlivých zemí.",
+        "s2_i3": "Platební údaje: ID poplatků Stripe, částky a časová razítka. Čísla karet nikdy nevidíme. Ta ukládá přímo Stripe.",
+        "s4_i1_pre": "Požádat o kopii všeho, co o vás uchováváme. Přihlaste se a přejděte na ",
+        "s3_p": "Nezbytně nutné cookies: gh_auth vás udržuje přihlášené, gh_locale a gh-last-country si pamatují váš jazyk a zemi a gh-consent zaznamenává volbu, kterou níže učiníte. Pouze s vaším souhlasem načítáme také Google Analytics (_ga, _ga_…: statistiky používání, nastavuje Google Ireland Ltd), Microsoft Clarity (_clck, _clsk: statistiky používání a záznam relace, nastavuje Microsoft Ireland Operations Ltd), Meta Pixel (měření reklamy, nastavuje Meta) a widgety hodnocení Doctify (hodnocení pacientů, nastavuje doctify.com). Každý ukládá vlastní cookies. Pokud je odmítnete, nenačte se ani jedno. Odvolání souhlasu zastaví oba analytické nástroje a smaže jejich cookies na tomto webu; cookies, které Microsoft nastavuje na vlastních doménách clarity.ms a bing.com, jsou mimo náš dosah. Proto nikdy neautorizujeme reklamní úložiště Clarity.",
+        "s6_p": "Využíváme Railway (hosting), Stripe (platby) a SendGrid (transakční e-mail). Každý z nich splňuje požadavky GDPR a je vázán smlouvami o zpracování údajů. V závislosti na vaší volbě cookies využíváme také Google (Google Analytics, statistiky používání), Microsoft (Clarity, statistiky používání a záznam relace), Meta (měření reklamy) a Doctify (hodnocení pacientů). Ani jeden z analytických nástrojů neběží na stránkách rezervace, košíku, platby, nahrávání souborů, ověření ani v přihlášeném portálu a adresy stránek jsou před odesláním zbaveny identifikujících hodnot.",
+        "s4_i2": "Svůj účet můžete smazat na stejné stránce. Historie rezervací je uchována z regulačních důvodů, ale bez identifikačních údajů."
+      },
+      "terms": {
+        "s5_p": "Ceny jsou zobrazeny před platbou a jsou bezpečně účtovány prostřednictvím Stripe. Číslo vaší karty nikdy nevidíme. Dostupnost termínů závisí na kalendářích lékařů a není zaručena. Podmínky zrušení a vrácení peněz závisí na zemi a klinice, u které provádíte rezervaci; pokud konzultace neproběhla, kontaktujte nás a pomůžeme situaci vyřešit spravedlivě.",
+        "s6_p_pre": "Udržujte přihlašovací údaje v tajnosti. Odpovídáte za aktivitu ve svém účtu. Neprodleně nás informujte, pokud se domníváte, že byl váš účet použit bez vašeho souhlasu. Způsob zpracování vašich údajů je popsán v našich ",
+        "s9_p": "Tyto podmínky můžeme čas od času aktualizovat; výše uvedené datum uvádí nejnovější verzi. Právní subjekt poskytující službu a rozhodné právo závisí na zemi, ve které provádíte rezervaci. Podrobnosti naleznete na příslušných stránkách zemí."
+      }
+    },
+    "subscription": {
+      "legal": {
+        "renewal_p": "Vaše členství se automaticky obnovuje každý měsíc. Datum obnovení je výročí vašeho předplatného. Údaje o vaší kartě neukládáme. Jsou bezpečně uchovávány naším poskytovatelem plateb.",
+        "credits_p": "Kredity na konzultace jsou udělovány každý zaplacený měsíc a nepřevádějí se. Nevyužité kredity vyprší na konci měsíce. Wellness kredity se získávají u nárokových plánů, nikdy nevyprší, jsou uplatnitelné pouze za nárokové domácí sady zdravotních testů a nejsou peněžní ani převoditelné. Vybrané výhody se odemknou po stanoveném počtu zaplacených měsíců."
+      },
+      "howItWorks": {
+        "title": "Vyberte si zdravotní plán",
+        "lede": "Porovnejte dostupné plány a zahrnuté služby."
+      }
+    },
+    "common": {
+      "homeMeta": {
+        "descriptionTemplate": "Online konzultace s registrovaným lékařem v {country}, v rumunštině nebo angličtině. Před rezervací si ověřte lékaře a volné termíny."
+      },
+      "doctors": {
+        "onboardingBodyTemplate": "Náš lékařský tým v {country} je ověřován. Zkuste to brzy znovu nebo si zarezervujte u našich přeshraničních specialistů."
+      }
+    }
+  },
+  "de": {
+    "company": {
+      "press": {
+        "titleTemplate": "Presse & Medien | Global Health {country}",
+        "contactBody": "Für Interviews, Stellungnahmen, Daten oder Faktenprüfungen senden Sie uns bitte eine E-Mail mit Angabe Ihres Mediums und Ihrer Frist. Wir behandeln Journalisten mit knappen Fristen vorrangig.",
+        "introTemplate": "Informationen für Journalisten, die über Global Health in {country} berichten: wer wir sind, wer den Dienst betreibt und wie Sie überprüfen können, was wir tun."
+      },
+      "medicalReview": {
+        "titleTemplate": "Richtlinie zur medizinischen Prüfung | Global Health {country}",
+        "s3Std4Body": "Artikel erklären, wie ein Verfahren im Allgemeinen abläuft. Sie stellen keine Diagnose und garantieren kein bestimmtes Ergebnis in Ihrem Fall. Dafür braucht es eine tatsächliche Konsultation.",
+        "s1Body1": "Artikel beginnen als Entwurf aus geprüften Primärquellen: behördlichen Leitlinien, Veröffentlichungen nationaler Gesundheitsbehörden sowie Unterlagen der Sozialversicherung oder der Krankenkassen, die für das jeweilige Land gelten. Beim Verfassen können redaktionelle Werkzeuge zum Einsatz kommen, doch kein Artikel wird allein auf Grundlage eines Werkzeugs veröffentlicht.",
+        "s3Std5BodyTemplate": "Nennt ein Artikel Warnzeichen, die dringende Versorgung erfordern, gibt er die für diesen Markt geltende Notrufnummer an, {emergency}.",
+        "s1Body2Template": "Artikel tragen eine einheitliche redaktionelle Signatur (das Global Health Medical Team), weil Verfassen, Quellenrecherche und Redaktion Teamarbeit sind und nicht das Werk einer einzelnen Person. Die klinische Verantwortung ist dabei nicht anonym: Eine bei {regulator} registrierte Ärztin oder ein registrierter Arzt gibt den Artikel frei, und deren Name samt Registrierungsnummer steht am Artikel.",
+        "introTemplate": "Jeder klinische Artikel, den wir für {country} veröffentlichen, entsteht aus Primärquellen, wird an diesen überprüft und von einer namentlich genannten, bei {regulator} registrierten Ärztin oder einem registrierten Arzt freigegeben, bevor er Sie erreicht und erneut geprüft, sobald sich die zugrunde liegenden Regeln ändern.",
+        "s2BylineFormatNote": "Name und Registrierungsnummer der prüfenden Person in unseren Artikeln gehören einer Ärztin oder einem Arzt aus dem öffentlichen Register dieses Marktes, niemals einem erfundenen Beispiel.",
+        "s3Std2Body": "Aussagen zu Ansprüchen, Bescheinigungsregeln oder rechtlichen Verfahren verweisen unmittelbar auf das Ministerium, die Gesundheitsbehörde oder die Aufsicht, die sie festlegt, nicht auf die Zusammenfassung einer Zusammenfassung."
+      },
+      "careers": {
+        "rolesBody": "Wir listen auf dieser Seite keine offenen Stellen auf. Wenn Sie zugelassener Arzt, Fachkraft im klinischen Support oder Ingenieur sind und mit uns arbeiten möchten, senden Sie uns Ihren Lebenslauf und ein paar Zeilen über sich. Wir lesen jede Bewerbung und antworten denjenigen, mit denen wir das Gespräch fortsetzen können.",
+        "introTemplate": "Global Health verbindet Patienten in {country} online mit zugelassenen Ärzten. Hinter jeder Konsultation steht ein Team aus Ärzten, Mitarbeitenden im klinischen Betrieb und Ingenieuren, die in unseren Märkten tätig sind und wir freuen uns immer, von Menschen zu hören, die sich uns anschließen möchten.",
+        "pillarOpsBody": "Unterstützen Sie Patienten vor und nach der Konsultation bei Buchungen, Dokumenten und Nachsorge in den Sprachen unserer Märkte.",
+        "whyBodyTemplate": "Wir halten das Team klein und die Standards hoch. Ob Sie Patienten beraten, sie rund um eine Buchung unterstützen oder die Plattform selbst entwickeln, Ihre Arbeit wirkt sich direkt auf Patienten in {country} und in jedem Markt aus, in dem wir tätig sind."
+      }
+    },
+    "legal": {
+      "summaryNotice": {
+        "text": "Diese Seite ist eine Zusammenfassung in einfacher Sprache. Sie ist nicht das rechtsverbindliche Dokument. Dieses wird für jedes Land geführt, zusammen mit dem jeweils zuständigen Datenverantwortlichen und der aktuellen Version."
+      },
+      "privacy": {
+        "s1_p": "Global Health bietet Online-Arztkonsultationen in mehreren europäischen Ländern an. Die juristische Person, die als Datenverantwortlicher handelt, hängt von dem Land ab, in dem Sie buchen. Weitere Einzelheiten finden Sie auf unseren Länderseiten.",
+        "s2_i3": "Zahlungsdaten: Stripe-Belastungs-IDs, Beträge und Zeitstempel. Wir sehen niemals Kartennummern. Stripe speichert diese direkt.",
+        "s4_i1_pre": "Eine Kopie aller gespeicherten Daten anfordern. Melden Sie sich an und gehen Sie zu ",
+        "s3_p": "Unbedingt erforderliche Cookies: gh_auth hält Sie angemeldet, gh_locale und gh-last-country merken sich Ihre Sprache und Ihr Land, und gh-consent hält die Entscheidung fest, die Sie unten treffen. Nur mit Ihrer Einwilligung laden wir zusätzlich Google Analytics (_ga, _ga_…: Nutzungsstatistiken, gesetzt von Google Ireland Ltd), Microsoft Clarity (_clck, _clsk: Nutzungsstatistiken und Sitzungsaufzeichnung, gesetzt von Microsoft Ireland Operations Ltd), das Meta Pixel (Werbemessung, gesetzt von Meta) und die Doctify-Bewertungs-Widgets (Patientenbewertungen, gesetzt von doctify.com). Jedes setzt eigene Cookies. Lehnen Sie ab, wird keines davon geladen. Ein Widerruf stoppt beide Analysewerkzeuge und löscht ihre Cookies auf dieser Website; Cookies, die Microsoft auf seinen eigenen Domains clarity.ms und bing.com setzt, liegen außerhalb unserer Reichweite. Deshalb autorisieren wir die Werbespeicherung von Clarity nie.",
+        "s6_p": "Wir verwenden Railway (Hosting), Stripe (Zahlungen) und SendGrid (transaktionale E-Mails). Jeder ist DSGVO-konform und durch Auftragsverarbeitungsverträge gebunden. Abhängig von Ihrer Cookie-Entscheidung nutzen wir außerdem Google (Google Analytics, Nutzungsstatistiken), Microsoft (Clarity, Nutzungsstatistiken und Sitzungsaufzeichnung), Meta (Werbemessung) und Doctify (Patientenbewertungen). Keines der beiden Analysewerkzeuge läuft auf Buchungs-, Warenkorb-, Kassen-, Upload-, Verifizierungs- oder angemeldeten Portalseiten, und Seitenadressen werden vor dem Versand um identifizierende Werte bereinigt.",
+        "s4_i2": "Sie können Ihr Konto auf derselben Seite löschen. Der Buchungsverlauf wird aus regulatorischen Gründen aufbewahrt, jedoch ohne identifizierende Angaben."
+      },
+      "terms": {
+        "s5_p": "Die Preise werden vor der Zahlung angezeigt und sicher über Stripe abgerechnet. Wir sehen Ihre Kartennummer niemals. Die Verfügbarkeit von Terminen hängt von den Arztkalendern ab und ist nicht garantiert. Stornierungen und Rückerstattungsregelungen richten sich nach dem Land und der Klinik, bei der Sie buchen; wenn eine Konsultation nicht stattgefunden hat, kontaktieren Sie uns und wir helfen, es fair zu lösen.",
+        "s6_p_pre": "Halten Sie Ihre Zugangsdaten vertraulich. Sie sind für die Aktivitäten in Ihrem Konto verantwortlich. Teilen Sie uns umgehend mit, wenn Sie glauben, dass Ihr Konto ohne Ihre Genehmigung genutzt wurde. Wie wir Ihre Daten verarbeiten, wird in unserem ",
+        "s9_p": "Wir können diese Bedingungen von Zeit zu Zeit aktualisieren; das obige Datum zeigt die neueste Version. Die juristische Person, die den Service erbringt, und das anwendbare Recht hängen von dem Land ab, in dem Sie buchen. Weitere Einzelheiten finden Sie auf den entsprechenden Länderseiten."
+      }
+    },
+    "subscription": {
+      "legal": {
+        "renewal_p": "Ihre Mitgliedschaft verlängert sich automatisch jeden Monat. Das Verlängerungsdatum ist Ihr Abonnement-Jahrestag. Wir speichern Ihre Kartendaten nicht. Sie werden sicher von unserem Zahlungsdienstleister aufbewahrt.",
+        "credits_p": "Beratungsguthaben werden in jedem bezahlten Monat gewährt und werden nicht übertragen. Nicht genutzte Guthaben verfallen am Ende des Monats. Wellness-Guthaben werden bei berechtigten Tarifen verdient, verfallen nie, können nur für berechtigte Gesundheitstests für zu Hause eingelöst werden und sind nicht in bar auszahlbar und nicht übertragbar. Ausgewählte Vorteile werden nach der angegebenen Anzahl bezahlter Monate freigeschaltet."
+      },
+      "howItWorks": {
+        "title": "Wählen Sie einen Gesundheitsplan",
+        "lede": "Vergleichen Sie die verfügbaren Tarife und enthaltenen Leistungen."
+      }
+    },
+    "common": {
+      "homeMeta": {
+        "descriptionTemplate": "Online-Konsultation mit einem registrierten Arzt in {country}, auf Rumänisch oder Englisch. Prüfen Sie Arzt und freie Termine vor der Buchung."
+      },
+      "doctors": {
+        "onboardingBodyTemplate": "Unser Ärzteteam in {country} wird gerade überprüft. Bald wieder vorbeischauen oder bei unseren grenzüberschreitenden Spezialisten buchen."
+      }
+    }
+  },
+  "es": {
+    "company": {
+      "press": {
+        "titleTemplate": "Prensa y medios | Global Health {country}",
+        "contactBody": "Para entrevistas, comentarios, datos o verificación de hechos, escríbanos por correo electrónico e indique su medio y plazo de entrega. Damos prioridad a los periodistas con plazos ajustados.",
+        "introTemplate": "Información para periodistas que escriben sobre Global Health en {country}: quiénes somos, quién opera el servicio y cómo verificar lo que hacemos."
+      },
+      "medicalReview": {
+        "titleTemplate": "Política de Revisión Médica | Global Health {country}",
+        "s1Body2Template": "Los artículos llevan una única firma editorial (el Global Health Medical Team) porque redactar, documentar y editar es un trabajo de equipo y no de una sola persona. La responsabilidad clínica, en cambio, no es anónima: un médico colegiado en {regulator} valida el artículo, y son su nombre y su número de colegiado los que aparecen en él.",
+        "introTemplate": "Todos los artículos clínicos que publicamos para {country} se redactan a partir de fuentes primarias, se contrastan con ellas y los firma un médico identificado, colegiado en {regulator}, antes de llegar a usted y se vuelven a revisar cada vez que cambian las normas en las que se basan."
+      },
+      "careers": {
+        "rolesBody": "No publicamos vacantes en esta página. Si es un médico colegiado, un profesional de apoyo clínico o un ingeniero y quiere trabajar con nosotros, envíe su CV y unas líneas sobre usted. Leemos todas las candidaturas y respondemos a las que podemos llevar adelante.",
+        "pillarOpsBody": "Ayude a los pacientes con las citas, los documentos y el seguimiento antes y después de la consulta, en los idiomas de nuestros mercados."
+      }
+    },
+    "legal": {
+      "summaryNotice": {
+        "text": "Esta página es un resumen en lenguaje sencillo. No es el documento legal vinculante. Ese documento se mantiene por país, junto con el responsable del tratamiento de datos aplicable y la versión actual."
+      },
+      "privacy": {
+        "s1_p": "Global Health ofrece consultas médicas online en varios países europeos. La entidad jurídica que actúa como responsable del tratamiento de datos depende del país en el que realice su reserva. Consulte nuestras páginas de país para más detalles.",
+        "s2_i3": "Datos de pago: IDs de cargo de Stripe, importes y marcas de tiempo. Nunca vemos los números de tarjeta. Stripe los guarda directamente.",
+        "s4_i1_pre": "Solicitar una copia de todo lo que guardamos. Inicie sesión y vaya a ",
+        "s3_p": "Cookies estrictamente necesarias: gh_auth le mantiene conectado, gh_locale y gh-last-country recuerdan su idioma y país, y gh-consent registra la elección que haga a continuación. Solo con su consentimiento cargamos además Google Analytics (_ga, _ga_…: estadísticas de uso, instaladas por Google Ireland Ltd), Microsoft Clarity (_clck, _clsk: estadísticas de uso y grabación de sesión, instaladas por Microsoft Ireland Operations Ltd), el Meta Pixel (medición de publicidad, instalado por Meta) y los widgets de reseñas de Doctify (reseñas de pacientes, instalados por doctify.com). Cada uno coloca sus propias cookies. Si los rechaza, no se carga ninguno. Retirar el consentimiento detiene ambas herramientas de analítica y elimina sus cookies en este sitio; las cookies que Microsoft instala en sus propios dominios clarity.ms y bing.com quedan fuera de nuestro alcance, y por eso nunca autorizamos el almacenamiento publicitario de Clarity.",
+        "s6_p": "Usamos Railway (alojamiento), Stripe (pagos) y SendGrid (correo transaccional). Cada uno cumple el RGPD y está vinculado por Acuerdos de Tratamiento de Datos. Sujeto a su elección de cookies, también usamos Google (Google Analytics, estadísticas de uso), Microsoft (Clarity, estadísticas de uso y grabación de sesión), Meta (medición de publicidad) y Doctify (reseñas de pacientes). Ninguna de las dos herramientas de analítica se ejecuta en páginas de reserva, carrito, pago, carga de archivos, verificación ni en el portal privado, y las direcciones de página se depuran de valores identificativos antes de enviarse.",
+        "s4_i2": "Elimine su cuenta en la misma página. El historial de reservas se conserva por razones regulatorias, pero se eliminan los datos identificativos."
+      },
+      "terms": {
+        "s5_p": "Los precios se muestran antes del pago y se cobran de forma segura a través de Stripe. Nunca vemos su número de tarjeta. La disponibilidad de citas depende de las agendas de los médicos y no está garantizada. Las condiciones de cancelación y reembolso dependen del país y la clínica en los que realice la reserva; si una consulta no se ha llevado a cabo, contáctenos y le ayudaremos a resolverlo de forma justa.",
+        "s6_p_pre": "Mantenga sus datos de acceso confidenciales. Usted es responsable de la actividad en su cuenta. Notifíquenos de inmediato si cree que su cuenta ha sido utilizada sin su permiso. Cómo gestionamos sus datos se describe en nuestro ",
+        "s9_p": "Podemos actualizar estos términos de vez en cuando; la fecha anterior muestra la versión más reciente. La entidad jurídica que presta el servicio y la ley aplicable dependen del país en el que realice la reserva. Consulte las páginas de país relevantes para más detalles."
+      }
+    },
+    "subscription": {
+      "howItWorks": {
+        "title": "Elija un plan de salud",
+        "lede": "Compare los planes disponibles y los servicios incluidos."
+      }
+    },
+    "common": {
+      "homeMeta": {
+        "descriptionTemplate": "Consulte a un médico colegiado en línea en {country}, en rumano o inglés. Revise el médico y los horarios disponibles antes de reservar."
+      },
+      "doctors": {
+        "onboardingBodyTemplate": "Nuestro equipo médico en {country} está siendo verificado. Vuelve pronto o reserva con nuestros especialistas transfronterizos."
+      }
+    }
+  },
+  "pt": {
+    "company": {
+      "press": {
+        "titleTemplate": "Imprensa e Media | Global Health {country}",
+        "contactBody": "Para entrevistas, comentários, dados ou verificação de factos, envie-nos um email e indique o seu meio de comunicação e prazo. Damos prioridade a jornalistas com prazos apertados.",
+        "introTemplate": "Informação para jornalistas que escrevem sobre a Global Health em {country}: quem somos, quem opera o serviço e como verificar o que fazemos."
+      },
+      "medicalReview": {
+        "titleTemplate": "Política de Revisão Médica | Global Health {country}",
+        "s3Std4Body": "Os artigos explicam como um processo funciona em geral. Não diagnosticam nem garantem um resultado específico no seu caso. Isso exige uma consulta.",
+        "s1Body1": "Os artigos começam por um rascunho construído a partir de fontes primárias verificadas: orientações governamentais, publicações das autoridades nacionais de saúde e a documentação da segurança social ou das seguradoras aplicável ao país sobre o qual o artigo é escrito. A redação pode recorrer a ferramentas editoriais, mas nenhum artigo é publicado apenas com base numa ferramenta.",
+        "s3Std5BodyTemplate": "Sempre que um artigo refere sinais de alarme que exigem cuidados urgentes, indica o número de emergência aplicável neste mercado, {emergency}.",
+        "s1Body2Template": "Os artigos são assinados por uma única autoria editorial (a Global Health Medical Team) porque a redação, a pesquisa de fontes e a edição são um trabalho de equipa e não de uma só pessoa. A responsabilidade clínica, essa, não é anónima: um médico registado junto da {regulator} aprova o artigo, e é o nome e o número de registo desse médico que aparecem nele.",
+        "introTemplate": "Todos os artigos clínicos que publicamos para {country} são redigidos a partir de fontes primárias, verificados face a essas fontes e aprovados por um médico identificado, registado junto da {regulator}, antes de chegarem até si e revistos novamente sempre que as regras subjacentes mudam.",
+        "s2BylineFormatNote": "O nome e o número de registo do revisor apresentados nos nossos artigos pertencem a um médico inscrito no registo público deste mercado, nunca são um exemplo fictício.",
+        "s3Std2Body": "As afirmações sobre direitos, regras de certificação ou processos legais remetem diretamente para o organismo público, autoridade de saúde ou regulador que os define, nunca para o resumo de um resumo."
+      },
+      "careers": {
+        "rolesBody": "Não listamos vagas nesta página. Se é um médico registado, um profissional de apoio clínico ou um engenheiro e quer trabalhar connosco, envie o seu CV e algumas linhas sobre si. Lemos todas as candidaturas e respondemos às que podemos avançar.",
+        "introTemplate": "A Global Health liga pacientes em {country} a médicos registados online. Por detrás de cada consulta está uma equipa de clínicos, colaboradores de operações clínicas e engenheiros que trabalham nos nossos mercados e temos sempre todo o gosto em ouvir quem quer juntar-se a eles.",
+        "pillarOpsBody": "Ajude os pacientes com marcações, documentos e acompanhamento antes e depois da consulta, nos idiomas dos nossos mercados."
+      }
+    },
+    "legal": {
+      "summaryNotice": {
+        "text": "Esta página é um resumo em linguagem simples. Não é o documento legal vinculativo. Esse documento é mantido por país, juntamente com o responsável pelo tratamento de dados aplicável e a versão atual."
+      },
+      "privacy": {
+        "s1_p": "A Global Health presta consultas médicas online em vários países europeus. A entidade jurídica que actua como responsável pelo tratamento de dados depende do país em que faz a reserva. Consulte as nossas páginas de país para detalhes locais.",
+        "s2_i3": "Dados de pagamento: IDs de cobrança Stripe, montantes e registos de data/hora. Nunca vemos os números de cartão. O Stripe guarda-os diretamente.",
+        "s4_i1_pre": "Solicitar uma cópia de tudo o que guardamos. Inicie sessão e vá a ",
+        "s3_p": "Cookies estritamente necessários: o gh_auth mantém a sua sessão iniciada, o gh_locale e o gh-last-country memorizam o seu idioma e país, e o gh-consent regista a escolha que fizer abaixo. Apenas com o seu consentimento carregamos também o Google Analytics (_ga, _ga_…: estatísticas de utilização, definidos pela Google Ireland Ltd), o Microsoft Clarity (_clck, _clsk: estatísticas de utilização e gravação de sessão, definidos pela Microsoft Ireland Operations Ltd), o Meta Pixel (medição de publicidade, definido pela Meta) e os widgets de avaliações do Doctify (avaliações de doentes, definidos por doctify.com). Cada um coloca os seus próprios cookies. Se os recusar, nenhum deles é carregado. Retirar o consentimento interrompe ambas as ferramentas de análise e elimina os seus cookies neste site; os cookies que a Microsoft define nos seus próprios domínios clarity.ms e bing.com estão fora do nosso alcance, razão pela qual nunca autorizamos o armazenamento publicitário do Clarity.",
+        "s6_p": "Utilizamos Railway (alojamento), Stripe (pagamentos) e SendGrid (e-mail transacional). Cada um está em conformidade com o RGPD e vinculado por Acordos de Processamento de Dados. Sujeito à sua escolha de cookies, utilizamos também a Google (Google Analytics, estatísticas de utilização), a Microsoft (Clarity, estatísticas de utilização e gravação de sessão), a Meta (medição de publicidade) e o Doctify (avaliações de doentes). Nenhuma das ferramentas de análise é executada nas páginas de marcação, carrinho, pagamento, carregamento de ficheiros, verificação ou no portal autenticado, e os endereços das páginas são limpos de valores identificativos antes de serem enviados.",
+        "s4_i2": "Elimine a sua conta na mesma página. O histórico de reservas é preservado por razões regulatórias, mas sem dados de identificação."
+      },
+      "terms": {
+        "s5_p": "Os preços são mostrados antes do pagamento e são cobrados de forma segura através do Stripe. Nunca vemos o número do seu cartão. A disponibilidade de consultas depende das agendas dos clínicos e não é garantida. As condições de cancelamento e reembolso dependem do país e da clínica em que faz a reserva; se uma consulta não tiver sido realizada, contacte-nos e ajudaremos a resolver de forma justa.",
+        "s6_p_pre": "Mantenha as suas credenciais de acesso confidenciais. É responsável pela atividade na sua conta. Informe-nos imediatamente se acreditar que a sua conta foi utilizada sem a sua autorização. Como tratamos os seus dados está descrito no nosso ",
+        "s9_p": "Podemos atualizar estes termos periodicamente; a data acima indica a versão mais recente. A entidade jurídica que presta o serviço e a lei aplicável dependem do país em que faz a reserva. Consulte as páginas de país relevantes para detalhes locais."
+      }
+    },
+    "subscription": {
+      "legal": {
+        "renewal_p": "A sua adesão renova-se automaticamente todos os meses. A data de renovação é a data de aniversário da sua subscrição. Não guardamos os dados do seu cartão. São mantidos em segurança pelo nosso fornecedor de pagamentos.",
+        "credits_p": "Os créditos de consulta são atribuídos em cada mês pago e não transitam. Os créditos não utilizados expiram no fim do mês. Os créditos de bem-estar são ganhos nos planos elegíveis, nunca expiram, só podem ser resgatados em kits de testes de saúde ao domicílio elegíveis e não têm valor monetário nem são transferíveis. As vantagens selecionadas são desbloqueadas após o número indicado de meses pagos."
+      },
+      "howItWorks": {
+        "title": "Escolha um plano de saúde",
+        "lede": "Compare os planos disponíveis e os serviços incluídos."
+      }
+    },
+    "common": {
+      "homeMeta": {
+        "descriptionTemplate": "Consulte um médico registado online em {country}, em romeno ou inglês. Verifique o médico e os horários disponíveis antes de marcar."
+      },
+      "doctors": {
+        "onboardingBodyTemplate": "A nossa equipa médica em {country} está a ser verificada. Volte em breve ou marque com os nossos especialistas transfronteiriços."
+      }
+    }
+  }
+}

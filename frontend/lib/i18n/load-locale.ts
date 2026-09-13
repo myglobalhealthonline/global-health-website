@@ -1,6 +1,7 @@
 import type { LocaleCode } from "@/lib/i18n/types";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import { deepMergeLocale } from "@/lib/i18n/deep-merge-locale";
+import romaniaEditorialCopy from "@/lib/i18n/romania-editorial-copy.json";
 
 import enHome from "@/locales/en/home.json";
 import ptHome from "@/locales/pt/home.json";
@@ -152,12 +153,17 @@ function buildLocaleBundle(locale: LocaleCode) {
 
 // Module-level cache: each locale's merged bundle is computed once, not per
 // request/render (missing keys in a non-en JSON fall back to English).
-const bundleCache = new Map<LocaleCode, ReturnType<typeof buildLocaleBundle>>();
+const bundleCache = new Map<string, ReturnType<typeof buildLocaleBundle>>();
 
-export function loadLocaleBundle(locale: LocaleCode) {
-  const cached = bundleCache.get(locale);
+export function loadLocaleBundle(locale: LocaleCode, country?: string) {
+  const isRomania = country === "ro" || country === "romania";
+  const cacheKey = isRomania ? `${locale}:ro` : locale;
+  const cached = bundleCache.get(cacheKey);
   if (cached) return cached;
-  const bundle = buildLocaleBundle(locale);
-  bundleCache.set(locale, bundle);
+  const shared = buildLocaleBundle(locale);
+  const bundle = isRomania
+    ? deepMergeLocale<Record<string, unknown>>(shared, romaniaEditorialCopy[locale]) as typeof shared
+    : shared;
+  bundleCache.set(cacheKey, bundle);
   return bundle;
 }

@@ -72,7 +72,7 @@ async function resolve(country: string, lang: string) {
   const contact = getCountryContact(code);
   const about = getCountryAbout(code);
   if (!config || !contact || !about) return null;
-  const t = loadLocaleBundle(lang as LocaleCode).about.country as unknown as AboutCopyTemplates;
+  const t = loadLocaleBundle(lang as LocaleCode, country).about.country as unknown as AboutCopyTemplates;
   // Market name in the page's own language ("Brasil", "Česko"), not the
   // English seed name. Schema keeps the English name — it names the entity.
   const countryName = getCommonLocale(lang as LocaleCode).countryNames?.[code] ?? config.name;
@@ -133,7 +133,7 @@ export default async function CountryAboutPage({ params }: { params: Promise<Par
   const base = `/${country}/${lang}`;
   const bookHref = buildBookHref({ country, lang });
   const heroAlt = t.heroImageAlt.replace("{country}", countryName);
-  const { about: aboutBundle } = loadLocaleBundle(lang as LocaleCode);
+  const { about: aboutBundle } = loadLocaleBundle(lang as LocaleCode, country);
 
   // Market facts, in the visitor's language. Registry/regulator strings are
   // proper nouns and stay as published — translating a register's name would

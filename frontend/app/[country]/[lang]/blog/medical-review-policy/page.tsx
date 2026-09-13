@@ -44,7 +44,7 @@ async function resolve(country: string, lang: string) {
   const config = (await getPublicCountryByCode(code)) ?? getCountryByCode(code);
   const contact = getCountryContact(code);
   if (!config || !contact) return null;
-  const bundle = loadLocaleBundle(lang as LocaleCode);
+  const bundle = loadLocaleBundle(lang as LocaleCode, country);
   const t = bundle.company.medicalReview;
   const countryName = getCommonLocale(lang as LocaleCode).countryNames?.[code] ?? config.name;
   const vars = {

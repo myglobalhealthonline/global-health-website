@@ -43,7 +43,7 @@ export async function generateMetadata({
   if (!code || !config || !legalType || !isSupportedLocale(lang)) {
     return { title: SITE_NAME };
   }
-  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const { common: c } = loadLocaleBundle(lang as LocaleCode, country);
   // `config.name` is English-only. Use the locale's own country name, as the
   // /legal index and every sibling template do, so a Portuguese page does not
   // read "Brazil". Falls back to config.name when a bundle lacks the code.
@@ -121,7 +121,7 @@ export default async function CountryLegalDocumentPage({
 
   if (!result && disclaimerParagraphs.length === 0) notFound();
 
-  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const { common: c } = loadLocaleBundle(lang as LocaleCode, code);
   const t = c.legalDocPage;
 
   // Render-time sanitization is the security boundary: admin-authored HTML

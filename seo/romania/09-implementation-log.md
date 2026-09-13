@@ -102,3 +102,16 @@ records owner approval of those decisions. The exact URL list and existing sourc
 fingerprints are in [the approval receipt](editorial-retention-approval-2026-09-13.json).
 No production copy changed in this step. Ledger §55.4 distinguishes this approval
 from the completed 114-page publication and the remaining factual/operations holds.
+
+## Additional retained-copy rewrite published, 13 September UTC
+
+All 520 exact database field edits are committed and publicly verified. Romania-only
+frontend copy is deployed. The final readback checked 326 URLs with no status,
+canonical, robots or hreflang regressions; 281 show changed visible text. All 48
+tool pages have no visible em dashes. Total visible em dashes fell 4,498 to 239;
+held service/credential copy, quoted subjects and shared notices remain.
+
+Five disabled doctors-index sections received stored edits without being enabled.
+The completion matrix records observed changes, not blanket rewrites. See canonical
+ledger §55.5, the editorial publication manifest, deployment receipts and
+raw/editorial-rollout/final-public-summary.json. Source hashes match deployment.

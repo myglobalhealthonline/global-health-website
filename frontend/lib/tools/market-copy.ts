@@ -1,3 +1,4 @@
+import romaniaEditorialToolCopy from "@/lib/tools/romania-editorial-tool-copy.json";
 import type { CountryCode } from "@/data/countries";
 import { deepMergeLocale } from "@/lib/i18n/deep-merge-locale";
 import czechiaApprovedToolSeo from "@/lib/tools/czechia-approved-tool-seo.json";
@@ -133,24 +134,24 @@ const BMI_MARKET_FAQ: MarketFaq = {
       {
         question: "Medicii din România folosesc IMC?",
         answer:
-          "Da. IMC este măsura de screening de primă linie în practica medicală din România, ca peste tot — este citit împreună cu circumferința taliei, tensiunea arterială și analizele de sânge, nu izolat. Un IMC crescut este ceea ce declanșează o evaluare mai amănunțită; nu este un diagnostic în sine.",
+          "Da. Medicii din România folosesc IMC ca măsură de screening de primă linie, împreună cu circumferința taliei, tensiunea arterială și analizele de sânge. Un IMC crescut necesită o evaluare mai amănunțită; nu este un diagnostic în sine.",
       },
       {
         question: "Unde îmi pot măsura IMC-ul în România?",
         answer:
-          "Orice consultație medicală include măsurarea înălțimii și a greutății, iar majoritatea farmaciilor le măsoară și ele. Îl poți calcula însă și aici, în câteva secunde, și poți duce valoarea la o consultație — medicii noștri înregistrați o pot evalua împreună cu tensiunea arterială, colesterolul și glicemia.",
+          "Orice consultație medicală include măsurarea înălțimii și a greutății, iar majoritatea farmaciilor le măsoară și ele. Îl poți calcula însă și aici, în câteva secunde, și poți duce valoarea la o consultație. Medicii noștri înregistrați o pot evalua împreună cu tensiunea arterială, colesterolul și glicemia.",
       },
     ],
     en: [
       {
         question: "Do doctors in Romania use BMI?",
         answer:
-          "Yes. BMI is the first-line screening measure in Romanian practice, as it is internationally — read alongside waist circumference, blood pressure and blood tests rather than on its own. A raised BMI prompts further assessment; it is not a diagnosis by itself.",
+          "Yes. Doctors in Romania use BMI as a first-line screening measure alongside waist circumference, blood pressure and blood tests. A raised BMI prompts further assessment; it is not a diagnosis by itself.",
       },
       {
         question: "Where can I get my BMI checked in Romania?",
         answer:
-          "Any medical appointment includes height and weight, and most pharmacies will measure them too. You can also work it out here and bring the number to a consultation — our registered doctors can review it alongside your blood pressure, cholesterol and blood glucose.",
+          "Any medical appointment includes height and weight, and most pharmacies will measure them too. You can also work it out here and bring the number to a consultation. Our registered doctors can review it alongside your blood pressure, cholesterol and blood glucose.",
       },
     ],
   },
@@ -286,7 +287,7 @@ const CALORIE_MARKET_FAQ: MarketFaq = {
       {
         question: "Câte calorii pe zi sunt recomandate în România?",
         answer:
-          "Valoarea de pe etichetele alimentare din România este referința europeană: 2.000 kcal pe zi pentru un adult obișnuit. Ghidurile de alimentație sănătoasă folosesc cifre de acest ordin, însă sunt medii pe populație — necesarul tău depinde de înălțime, greutate, vârstă și mișcare, adică exact ce estimează calculatorul de mai sus.",
+          "Valoarea de pe etichetele alimentare din România este referința europeană: 2.000 kcal pe zi pentru un adult obișnuit. Ghidurile de alimentație sănătoasă folosesc cifre de acest ordin, însă sunt medii pe populație. Necesarul tău depinde de înălțime, greutate, vârstă și mișcare, adică exact ce estimează calculatorul de mai sus.",
       },
       {
         question: "Poate un medic să îmi verifice ținta calorică?",
@@ -298,7 +299,7 @@ const CALORIE_MARKET_FAQ: MarketFaq = {
       {
         question: "How many calories a day are recommended in Romania?",
         answer:
-          "Romanian food labels carry the EU reference intake of 2,000 kcal a day for an average adult, and national healthy-eating guidance uses figures of that order. They are population averages — your own needs depend on height, weight, age and activity, which is what the calculator above estimates.",
+          "Romanian food labels carry the EU reference intake of 2,000 kcal a day for an average adult, and national healthy-eating guidance uses figures of that order. They are population averages. Your own needs depend on height, weight, age and activity, which is what the calculator above estimates.",
       },
       {
         question: "Can a doctor in Romania review my calorie target?",
@@ -438,19 +439,19 @@ const BP_MARKET_FAQ: MarketFaq = {
       {
         question: "Ce înseamnă tensiune mare în România?",
         answer:
-          "Practica medicală din România urmează pragurile europene: 140/90 mmHg sau peste, măsurate în cabinet, ori 135/85 sau peste pe un tensiometru de acasă validat. O singură valoare mare nu este un diagnostic — medicul de familie cere de obicei o săptămână de măsurători acasă sau o monitorizare Holter de 24 de ore înainte de a trata ceva.",
+          "Practica medicală din România urmează pragurile europene: 140/90 mmHg sau peste, măsurate în cabinet, ori 135/85 sau peste pe un tensiometru de acasă validat. O singură valoare mare nu este un diagnostic. Medicul de familie cere de obicei o săptămână de măsurători acasă sau o monitorizare Holter de 24 de ore înainte de a trata ceva.",
       },
       {
         question: "Unde îmi pot măsura tensiunea în România?",
         answer:
-          "Orice consultație include măsurarea tensiunii, iar majoritatea farmaciilor o măsoară și ele. Dacă ai deja tensiometru acasă, măsoară o săptămână dimineața și seara și du valorile la o consultație — medicii noștri înregistrați pot analiza toată seria prin video, împreună cu colesterolul și glicemia.",
+          "Orice consultație include măsurarea tensiunii, iar majoritatea farmaciilor o măsoară și ele. Dacă ai deja tensiometru acasă, măsoară o săptămână dimineața și seara și du valorile la o consultație. Medicii noștri înregistrați pot analiza toată seria prin video, împreună cu colesterolul și glicemia.",
       },
     ],
     en: [
       {
         question: "What counts as high blood pressure in Romania?",
         answer:
-          "Romanian practice follows the European thresholds: 140/90 mmHg or above in a clinic, or 135/85 or above on a validated home monitor. A single raised reading is not a diagnosis — a doctor will normally ask for a week of home readings, or 24-hour monitoring, first.",
+          "Romanian practice follows the European thresholds: 140/90 mmHg or above in a clinic, or 135/85 or above on a validated home monitor. A single raised reading is not a diagnosis, a doctor will normally ask for a week of home readings, or 24-hour monitoring, first.",
       },
       {
         question: "Where can I get my blood pressure checked in Romania?",
@@ -597,7 +598,7 @@ const DUE_DATE_MARKET_FAQ: MarketFaq = {
       {
         question: "Când se face ecografia de datare în România?",
         answer:
-          "Ecografia de prim trimestru se face de obicei între săptămânile 11 și 14, iar cea de morfologie fetală în jurul săptămânii 20. Până atunci ai estimarea de mai sus — iar medicii noștri înregistrați pot discuta prin video primele simptome sau medicamentele pe care le iei deja.",
+          "Ecografia de prim trimestru se face de obicei între săptămânile 11 și 14, iar cea de morfologie fetală în jurul săptămânii 20. Până atunci ai estimarea de mai sus. Iar medicii noștri înregistrați pot discuta prin video primele simptome sau medicamentele pe care le iei deja.",
       },
     ],
     en: [
@@ -609,7 +610,7 @@ const DUE_DATE_MARKET_FAQ: MarketFaq = {
       {
         question: "When is the dating scan done in Romania?",
         answer:
-          "The first-trimester scan is usually done between about 11 and 14 weeks, with the fetal anomaly scan around week 20. Until then the estimate above is what you have — and our registered doctors can discuss early symptoms or medicines you already take by video.",
+          "The first-trimester scan is usually done between about 11 and 14 weeks, with the fetal anomaly scan around week 20. Until then the estimate above is what you have, and our registered doctors can discuss early symptoms or medicines you already take by video.",
       },
     ],
   },
@@ -899,19 +900,19 @@ const ADHD_MARKET_FAQ: MarketFaq = {
       {
         question: "Cum se face evaluarea pentru ADHD la adulți în România?",
         answer:
-          "Diagnosticul îl pune un medic psihiatru sau un psiholog clinician. Drumul obișnuit începe la medicul de familie: îți ia istoricul, exclude ce seamănă cu ADHD-ul — tiroidă, somn, anxietate, depresie — și îți dă trimitere mai departe.",
+          "Diagnosticul îl pune un medic psihiatru sau un psiholog clinician. Drumul obișnuit începe la medicul de familie: îți ia istoricul, exclude ce seamănă cu ADHD-ul (tiroidă, somn, anxietate, depresie) și îți dă trimitere mai departe.",
       },
       {
         question: "Pot primi medicație pentru ADHD pe baza unui test online?",
         answer:
-          "Nu, iar dacă cineva îți oferă asta, ferește-te. Medicamentele pentru ADHD se eliberează sub regim special și se încep doar după o evaluare completă și un diagnostic pus de specialist. Medicii noștri înregistrați pot discuta rezultatul screeningului, pot exclude afecțiunile care îl imită și te pot îndruma — un diagnostic prin video, nu.",
+          "Nu. Medicamentele pentru ADHD se eliberează sub regim special și se încep doar după o evaluare completă și un diagnostic pus de specialist. Medicii noștri înregistrați pot discuta rezultatul screeningului, pot exclude afecțiunile care îl imită și te pot îndruma către evaluare. Nu pot pune diagnosticul de ADHD prin video.",
       },
     ],
     en: [
       {
         question: "How is adult ADHD assessed in Romania?",
         answer:
-          "The diagnosis is made by a psychiatrist or a clinical psychologist. The usual route starts with your family doctor, who takes the history, rules out what resembles ADHD — thyroid, sleep, anxiety, depression — and gives you the referral onwards.",
+          "The diagnosis is made by a psychiatrist or a clinical psychologist. The usual route starts with your family doctor, who takes the history, rules out what resembles ADHD (thyroid, sleep, anxiety, depression) and gives you the referral onwards.",
       },
       {
         question: "Can an online test get me ADHD medication in Romania?",
@@ -1046,7 +1047,7 @@ const OSTEOPOROSIS_MARKET_FAQ: MarketFaq = {
       {
         question: "Se fac densitometrii osoase în sistemul public din România?",
         answer:
-          "Da. Densitometria osoasă (DXA) este disponibilă pe bază de trimitere medicală în sistemul asigurărilor de sănătate, iar în multe clinici și fără trimitere, contra cost. România urmează o abordare bazată pe factori de risc similară celei din acest instrument — factorii de risc decid cine este evaluat, nu doar vârsta sau o singură investigație.",
+          "Da. Densitometria osoasă (DXA) este disponibilă pe bază de trimitere medicală în sistemul asigurărilor de sănătate, iar în multe clinici și fără trimitere, contra cost. România urmează o abordare bazată pe factori de risc similară celei din acest instrument. Factorii de risc decid cine este evaluat, nu doar vârsta sau o singură investigație.",
       },
       {
         question: "Unde mă pot evalua pentru osteoporoză în România?",
@@ -1058,7 +1059,7 @@ const OSTEOPOROSIS_MARKET_FAQ: MarketFaq = {
       {
         question: "Do doctors in Romania offer DXA bone density scans?",
         answer:
-          "Yes. DXA scanning is available on referral within the public health insurance system, and privately without one in many clinics. Romania follows a similar risk-factor-led approach to this checker — risk factors decide who is assessed, not age or a scan alone.",
+          "Yes. DXA scanning is available on referral within the public health insurance system, and privately without one in many clinics. Romania follows a similar risk-factor-led approach to this checker. Risk factors decide who is assessed, not age or a scan alone.",
       },
       {
         question: "Where can I get assessed for osteoporosis in Romania?",
@@ -2532,6 +2533,7 @@ type MarketCopyOverride = {
  * how a market gets its own voice without changing a shared locale.
  */
 const MARKET_COPY: Partial<Record<CountryCode, Record<string, MarketCopyOverride>>> = {
+  ro: romaniaEditorialToolCopy,
   pt: {
     pt: {
       tools: portugalApprovedToolSeo,

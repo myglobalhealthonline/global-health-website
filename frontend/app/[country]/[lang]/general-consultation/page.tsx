@@ -76,7 +76,7 @@ export async function generateMetadata({
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
 
   const { record: page } = await getPageContent(code, "GENERAL_CONSULTATION", lang as PublicLocale);
-  const gpMeta = loadLocaleBundle(lang as LocaleCode).common.gpPage;
+  const gpMeta = loadLocaleBundle(lang as LocaleCode, country).common.gpPage;
   const title = page?.seoTitle ?? `${gpMeta.heroTitle} · ${config.name}`;
   const description = page?.seoDescription ??
     gpMeta.heroSubtitle.replace("{country}", config.name);
@@ -125,7 +125,7 @@ export default async function CountryLangGeneralConsultationPage({
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
 
-  const { common: c, home, services: servicesLocale } = loadLocaleBundle(lang as LocaleCode);
+  const { common: c, home, services: servicesLocale } = loadLocaleBundle(lang as LocaleCode, code);
   const gp = c.gpPage;
 
   // Honor the per-country `general-consultations` toggle from /admin/country-features.
