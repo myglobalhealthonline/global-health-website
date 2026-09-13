@@ -1,0 +1,179 @@
+{
+  "endpoint": "/api/services/musculoesqueletico-online?countryCode=es&locale=CS",
+  "checkedAt": "2026-09-13T02:29:52.049Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q8mg0037ngjuso41eynq",
+      "kind": "GENERAL",
+      "slug": "musculoesqueletico-online",
+      "name": "Muskuloskeletální",
+      "summary": null,
+      "seoTitle": "Muskuloskeletální bolest Online Španělsko | Klinické vyšetření | Praktický lékař",
+      "seoDescription": "Bolest zad, kloubů, ischias nebo svalové poranění. Naši registrovaní praktičtí lékaři posuzují muskuloskeletální potíže prostřednictvím zabezpečeného videohovoru. Klinické vyšetření tentýž den ve Španělsku.",
+      "seoKeywords": [
+        "dolor musculoesquelético online España",
+        "dolor espalda médico online España",
+        "ciática consulta online España",
+        "dolor articular médico online España",
+        "lesión muscular evaluación online España"
+      ],
+      "heroTitle": "Muskuloskeletální bolest — Online klinické vyhodnocení tentýž den",
+      "heroDescription": "Bolesti zad, bolesti kloubů, ischias, svalová poranění a chronické muskuloskeletální obtíže patří mezi nejčastější důvody, proč lidé vyhledávají zdravotní péči — a zároveň mezi nejhůře řešené v rámci současného modelu primární péče. Čekat týdny na ortopedickou nebo traumatologickou konzultaci kvůli stavu, který vyžaduje vyšetření ještě dnes, je strukturální problém jak ve veřejném, tak v soukromém zdravotnictví ve Španělsku. Naši praktičtí lékaři, registrovaní v souladu s požadavky Organizace lékařských komor (OMC), provádějí úplná muskuloskeletální vyšetření prostřednictvím zabezpečeného videohovoru — identifikují základní příčinu, hodnotí funkční dopad, poskytují poradenství ohledně péče založené na důkazech a koordinují doporučení a další vyšetření tam, kde je to klinicky indikováno. Tentýž den, odkudkoli ve Španělsku, ve španělštině, angličtině nebo portugalštině.",
+      "detailBody": "<h2>Pro koho je tato služba určena</h2><p>Tato konzultace je vhodná pro dospělé s:</p><ul><li>Akutním muskuloskeletálním poraněním nebo náhle vzniklou bolestí, která vyžaduje klinické vyšetření</li><li>Chronickou nebo přetrvávající bolestí, která nebyla dostatečně vyšetřena nebo léčena</li><li>Známým muskuloskeletálním onemocněním, které se zhoršilo a vyžaduje včasnou kontrolu</li><li>Bolestí po poranění, zákroku nebo období imobilizace</li><li>Muskuloskeletálními příznaky souvisejícími s chronickým onemocněním — diabetem, kardiovaskulárním onemocněním nebo zánětlivými onemocněními — které komplikují léčbu</li><li>Potřebou odeslání na fyzioterapii, žádostí o zobrazovací vyšetření nebo odeslání ke specialistovi koordinovanou prostřednictvím klinického vyšetření</li><li>Kýmkoli, komu bylo řečeno „je to normální“ nebo „odpočívejte“, aniž by dostal strukturované klinické vysvětlení toho, co se děje a co dělat</li></ul><p>Pokud pociťujete náhlou a silnou bolest, bolest na hrudi, bolest po významném traumatu nebo jakýkoli příznak, který vás vážně znepokojuje — jděte okamžitě na nejbližší urgentní příjem nebo volejte 112.</p><h2>Obvykle posuzované stavy</h2><p><strong>Páteř a neurologické</strong></p><ul><li>Akutní a chronická bolest bederní páteře</li><li>Bolest krční páteře a poruchy krční páteře</li><li>Ischias a lumbální radikulopatie</li><li>Herniace disku a související příznaky útlaku nervu</li><li>Bolest hrudní páteře</li></ul><p><strong>Kloubní stavy</strong></p><ul><li>Bolest kolene — včetně artrózy, poranění vazů a patelofemorálního syndromu</li><li>Bolest kyčle — včetně artrózy, burzitidy a přenesené bolesti</li><li>Bolest ramene — včetně poranění rotátorové manžety, subakromiálního syndromu a adhezivní kapsulitidy</li><li>Bolest zápěstí a ruky — včetně syndromu karpálního tunelu a tendinopatie</li><li>Bolest kotníku a nohy — včetně plantární fasciitidy a Achillovy tendinopatie</li><li>Bolest lokte — včetně laterální a mediální epikondylitidy</li></ul><p><strong>Svaly a měkké tkáně</strong></p><ul><li>Svalové natažení a trhliny</li><li>Poranění měkkých tkání</li><li>Tendinitida a tendinopatie</li><li>Burzitida</li><li>Sportovní poranění a muskuloskeletální stavy související s aktivitou</li></ul><p><strong>Chronické a systémové stavy</strong></p><ul><li>Artróza — posouzení, léčba a koordinace odeslání</li><li>Zánětlivá artritida — posouzení a odeslání na revmatologii, pokud je to indikováno</li><li>Fibromyalgie — posouzení a integrovaná léčba</li><li>Neuropatická bolest — posouzení a léčebný postup</li><li>Syndromy chronické bolesti — strukturované posouzení a koordinace péče</li><li>Bolest po poranění nebo po operaci — kontrola a plán léčby</li></ul><p><strong>Související s prací a životním stylem</strong></p><ul><li>Muskuloskeletální stavy související s prací — zranění z opakovaného namáhání, posturální bolest</li><li>Ergonomické posouzení a poradenství</li><li>Posouzení sportovních a cvičením souvisejících poranění</li></ul><h2>Co konzultace zahrnuje</h2><p><strong>Kompletní klinické vyšetření</strong></p><p>Váš praktický lékař odebere podrobnou anamnézu vaší bolesti — začátek, lokalizaci, charakter, intenzitu, vyzařování, zhoršující a zmírňující faktory, dopad na funkci a systematický screening varovných příznaků. Veškeré výsledky zobrazovacích vyšetření, zprávy z vyšetření nebo stávající klinické dopisy jsou plně zkontrolovány.</p><p><strong>Screening varovných příznaků</strong></p><p>Muskuloskeletální vyšetření vždy zahrnuje systematický screening varovných příznaků — ukazatelů, že bolest může mít závažnou podkladovou příčinu vyžadující urgentní vyšetření nebo odeslání. Váš lékař je hodnotí jako standardní součást každé konzultace.</p><p><strong>Individuální plán léčby</strong></p><p>Na základě vyšetření vás lékař informuje o nejvhodnějším postupu — který může zahrnovat odeslání na fyzioterapii a strukturovanou rehabilitaci, žádosti o zobrazovací vyšetření tam, kde je to klinicky indikováno, odeslání ke specialistovi, pokud je to nutné, ergonomické a životní styl poradenství a klinická doporučení podle uvážení lékaře.</p><p><strong>Klinická dokumentace — podle uvážení lékaře</strong></p><p>Je-li to klinicky indikováno, váš praktický lékař vystaví příslušnou klinickou dokumentaci platnou v jakékoli španělské lékárně.</p><p>Poznámka: Narkotika a některé kontrolované látky vyžadují zvláštní dokumentaci, kterou nelze vystavit elektronicky. Naši praktičtí lékaři běžně neřeší kontrolované látky prostřednictvím videokonzultace.</p><p><strong>Koordinace odeslání a vyšetření</strong></p><p>Pokud je fyzioterapie, zobrazovací vyšetření nebo odborné posouzení klinicky indikováno, váš lékař vystaví příslušnou dokumentaci ještě tentýž den — abyste z konzultace odcházeli s jasnou klinickou cestou, ne jen s doporučením, abyste si poradili sami.</p><h2>Varovné příznaky — kdy vyhledat urgentní péči</h2><p>Muskuloskeletální bolest je téměř vždy nezhoubná — ale některé projevy vyžadují urgentní péči, která nemůže čekat na videokonzultaci.</p><p>Vyhledejte okamžitě urgentní péči, pokud je vaše bolest doprovázena:</p><ul><li>Jakoukoli změnou funkce močového měchýře nebo střev související s bolestí zad — inkontinencí nebo retencí — to může ukazovat na syndrom cauda equina, chirurgickou emergenci</li><li>Významným traumatem — pádem z výšky, dopravní nehodou nebo významným nárazem</li><li>Náhlou silnou bolestí na hrudi — která může ukazovat na srdeční nebo aortální příčinu místo muskuloskeletální</li><li>Nevysvětlitelným úbytkem hmotnosti spojeným s novou nebo se zhoršující bolestí</li><li>Horečkou spojenou s otokem a bolestí kloubu — může ukazovat na septickou artritidu</li><li>Rychle progredujícími neurologickými příznaky — slabostí, necitlivostí nebo ztrátou koordinace</li></ul><p>Pokud máte pochybnosti, vždy vyhledejte urgentní péči.</p><h2>Proč časné klinické vyšetření dělá rozdíl</h2><p>Většina muskuloskeletálních stavů je samovolně odeznívající — zlepší se s dostatečným odpočinkem, úpravou aktivity a strukturovanou rehabilitací. Bez klinického vyšetření však pacienti často podléčí — vracejí se k aktivitě příliš brzy a způsobují další zranění — nebo přeléčí — zbytečně omezují aktivitu a prodlužují zotavení.</p><p>Časné klinické vyšetření identifikuje, co se skutečně děje, vyloučí závažnou podkladovou patologii a poskytne strukturovaný, na důkazech založený plán léčby, který umožňuje plné funkční zotavení rychleji a bezpečněji než čekání, až se situace vyřeší sama.</p><h2>Přístup k fyzioterapii ve Španělsku</h2><p>Soukromá fyzioterapie ve Španělsku je široce dostupná — ale většina fyzioterapeutů vyžaduje před zahájením léčby doporučující dopis nebo lékařskou zprávu. Ve veřejném systému přístup k fyzioterapii vyžaduje doporučení od praktického lékaře SNS — s čekacími dobami, které mohou být významné.</p><p>Naši praktičtí lékaři vystavují doporučující dopisy na fyzioterapii ještě tentýž den konzultace — adresované fyzioterapeutovi nebo klinice podle vašeho výběru — což vám umožňuje přístup k soukromé fyzioterapeutické léčbě bez prodlení.</p><h2>Co je syndrom cauda equina</h2><p>Syndrom cauda equina je vzácná, ale závažná páteřní emergency způsobená kompresí nervových kořenů v dolní části páteře. Projevuje se jako bolest zad spojená se změnou funkce močového měchýře nebo střev — včetně inkontinence nebo potíží s močením — a vyžaduje urgentní chirurgické vyšetření.</p><p>Na této stránce je uváděn výrazně, protože může být zpočátku zaměněn za běžnou bolest zad. Pokud máte bolest zad spojenou s jakoukoli změnou funkce močového měchýře nebo střev, jděte okamžitě na nejbližší urgentní příjem — nečekejte na videokonzultaci, nečekejte, zda to samo odezní.</p>",
+      "ctaLabel": null,
+      "sortOrder": 150,
+      "durationMinutes": 15,
+      "basePriceCents": 3900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.265Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k5c40006asjuzxb8rhxd",
+          "kind": "IMAGE",
+          "key": "media/a456ec48-dfd5-4b3b-89df-e485c1cbf6ad-es-musculoesqueletico-online.png",
+          "path": "/api/media/media/a456ec48-dfd5-4b3b-89df-e485c1cbf6ad-es-musculoesqueletico-online.png",
+          "altText": "Musculoesquelético"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q8v90038ngjuyknfupgl",
+          "question": "Lze skutečně posoudit muskuloskeletální stav prostřednictvím videohovoru?",
+          "answer": "Ano — pro velkou většinu případů. Anamnéza je v muskuloskeletální medicíně nejsilnějším diagnostickým nástrojem a kompletní anamnézu lze odebrat prostřednictvím videohovoru. Váš lékař během hovoru také sleduje váš pohyb, držení těla a funkční schopnosti. Tam, kde jsou zapotřebí nálezy z fyzikálního vyšetření, které nelze posoudit na dálku, vás lékař poučí o vhodném osobním vyšetření.",
+          "sortOrder": 0,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q8v90039ngjuwmg0lcsl",
+          "question": "Co když potřebuji magnetickou rezonanci nebo rentgen?",
+          "answer": "Pokud jsou zobrazovací vyšetření klinicky indikována na základě vyšetření, váš lékař vystaví žádanku na zobrazovací vyšetření ještě tentýž den. Můžete si zobrazovací vyšetření objednat v soukromém radiologickém centru podle svého výběru ve Španělsku — soukromá radiologie je široce dostupná ve velkých městech i v mnoha regionálních centrech.",
+          "sortOrder": 1,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q8v9003angjua3r79ope",
+          "question": "Mohu získat doporučení na fyzioterapii prostřednictvím této služby?",
+          "answer": "Ano. Doporučující dopisy k fyzioterapii se vystavují, pokud jsou z klinického hlediska indikované — adresované fyzioterapeutovi nebo klinice podle vašeho výběru. Váš lékař vám může poradit, na co se u fyzioterapeuta zaměřit pro váš konkrétní stav.",
+          "sortOrder": 2,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q8v9003bngjujc0kf3z3",
+          "question": "Co je syndrom cauda equina a proč je zmiňován?",
+          "answer": "Syndrom cauda equina je vzácná, ale závažná spinální urgence, která se projevuje bolestí zad spojenou se změnou funkce močového měchýře nebo střev. Pokud máte bolest zad s jakoukoli změnou funkce močového měchýře nebo střev, okamžitě jděte na nejbližší pohotovost.",
+          "sortOrder": 3,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q8v9003cngjulewdbnyn",
+          "question": "Je tato služba vhodná pro sportovní zranění?",
+          "answer": "Ano. Sportovní a cvičením související muskuloskeletální poranění jsou ústřední součástí této služby — včetně akutních poranění, stavů z přetížení a posouzení návratu ke სპორტu po úrazu.",
+          "sortOrder": 4,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q8v9003dngjufkbfwhgs",
+          "question": "Už mám výsledky zobrazovacích vyšetření — může je lékař zkontrolovat?",
+          "answer": "Ano. Vezměte si na svou konzultaci veškeré existující výsledky zobrazovacích vyšetření, zprávy nebo klinické dopisy. Váš lékař je zkontroluje v plném rozsahu a začlení zjištění do plánu péče.",
+          "sortOrder": 5,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q8v9003engjuzon0r8no",
+          "question": "Musím mít před rezervací hotová zobrazovací vyšetření?",
+          "answer": "Ne. Váš lékař posoudí, zda jsou zobrazovací vyšetření klinicky indikována, a v příslušném případě je objedná. Pokud už máte snímky, přineste výsledky — váš lékař je zkontroluje v plném rozsahu.",
+          "sortOrder": 6,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q8v9003fngju9p7aqivd",
+          "question": "Mohu tuto službu používat bez praktického lékaře ve Španělsku?",
+          "answer": "Ano. Tato služba je k dispozici pro kohokoli ve Španělsku — bez předchozí registrace, bez nutnosti praktického lékaře, bez nutnosti zdravotního pojištění.",
+          "sortOrder": 7,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q8v9003gngjuxb5zma44",
+          "question": "Potřebuji španělské zdravotní pojištění?",
+          "answer": "Ne. Je to soukromá služba s přímou platbou. Klinická dokumentace a doporučení vystavené prostřednictvím této služby jsou přijímány v soukromém režimu bez ohledu na pojistný status.",
+          "sortOrder": 8,
+          "resolvedLocale": "CS"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "CS",
+      "links": [
+        {
+          "id": "cmre7tkdz004mg8juc9wpct8q",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con dolor radicular y evaluación neurológica?",
+          "body": "Para dolor radicular y evaluación neurológica, consulta nuestra página de Neurología Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Neurología Especialista",
+          "targetSlug": "neurologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tjlx004kg8juvjqr1eq0",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Dolor crónico y enfermedades crónicas?",
+          "body": "Si tu situación está relacionada con dolor crónico y enfermedades crónicas, nuestra Enfermedades Crónicas te ofrece la evaluación adecuada.",
+          "ctaLabel": "Enfermedades Crónicas",
+          "targetSlug": "enfermedades-cronicas-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tl61004og8juhbx6srep",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre consulta médica general con médico de cabecera?",
+          "body": "Nuestra Consulta Médica General está pensada específicamente para consulta médica general con médico de cabecera.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

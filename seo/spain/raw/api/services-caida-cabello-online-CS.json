@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/caida-cabello-online?countryCode=es&locale=CS",
+  "checkedAt": "2026-09-13T02:29:51.026Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q6hn002lngju3chey2ai",
+      "kind": "GENERAL",
+      "slug": "caida-cabello-online",
+      "name": "Vypadávání vlasů",
+      "summary": null,
+      "seoTitle": "Vypadávání vlasů Online Španělsko | Lékařské vyšetření | Praktický lékař",
+      "seoDescription": "Vypadávání vlasů nebo řídnutí vlasů? Naši registrovaní praktičtí lékaři posoudí zdravotní příčinu vašeho vypadávání vlasů a poradí ohledně léčby založené na důkazech. Ve stejný den ve Španělsku.",
+      "seoKeywords": [
+        "caída del cabello online España",
+        "médico caída cabello online España",
+        "alopecia consulta online España",
+        "pérdida cabello médico online España",
+        "caída cabello hormonal consulta España"
+      ],
+      "heroTitle": "Vypadávání vlasů — Online lékařské posouzení tentýž den",
+      "heroDescription": "Vypadávání vlasů je jedním z nejčastějších zdravotních problémů — a jedním z nejčastěji přehlížených. Většina lidí, kteří zaznamenají výrazné vypadávání nebo řídnutí vlasů, se kvůli tomu nikdy neobrátí na lékaře, ať už proto, že se domnívají, že s tím nelze nic dělat, nebo protože nevědí, kde začít. Obě domněnky jsou nesprávné. V naprosté většině případů má vypadávání vlasů identifikovatelnou zdravotní příčinu — a čím dříve je vyšetřeno, tím lepší je výsledek. Vlasové folikuly, které byly po delší dobu neaktivní, se výrazně hůře obnovují než folikuly, které řídnou, ale jsou stále aktivní. Naši praktičtí lékaři, registrovaní v souladu s požadavky Organización Médica Colegial (OMC), poskytují komplexní lékařská vyšetření vypadávání vlasů prostřednictvím bezpečné videokonzultace — určují základní příčinu, doporučují péči založenou na důkazech a v případech, kdy je to z klinického hlediska indikováno, vystavují odpovídající zdravotnickou dokumentaci. Tentýž den, odkudkoli ve Španělsku, ve španělštině, angličtině nebo portugalštině.",
+      "detailBody": "<h2>Proč časné vyšetření dělá rozdíl</h2><p>Vypadávání vlasů se téměř vždy řídí postupujícím vzorcem — zejména androgenní alopecie u mužů i žen. Klinický důvod pro časné vyšetření je jednoduchý: čím dříve se zjistí příčina a zahájí vhodná léčba, tím lepší je výsledek. Čekání až do pokročilého stádia vypadávání vlasů výrazně snižuje dostupné možnosti léčby.</p><p>Pokud jste si všimli změn v hustotě vlasů, vlasové linii nebo ve vzorci vypadávání — i když si nejste jisti, zda je to dostatečně významné na to, abyste navštívili lékaře — objednejte se na konzultaci. Váš lékař vám upřímně řekne, zda je zásah odůvodněný, a jaké jsou možnosti.</p><h2>Pro koho je tato služba určena</h2><p>Tato konzultace je vhodná pro dospělé, kteří mají:</p><ul><li>Postupné řídnutí vlasů na pokožce hlavy — u mužů nebo žen</li><li>Ústup vlasové linie nebo řídnutí ve spáncích</li><li>Řídnutí na temeni nebo v horní části pokožky hlavy</li><li>Náhlé nebo ložiskové vypadávání vlasů</li><li>Difuzní vypadávání — více vlasů ve sprše, na polštáři nebo na kartáči</li><li>Vypadávání vlasů po významné životní události — nemoci, operaci, porodu nebo silném stresu</li><li>Vypadávání vlasů spojené s dalšími příznaky — únavou, změnami hmotnosti, změnami kůže nebo nehtů — které mohou ukazovat na základní onemocnění</li><li>Stavy pokožky hlavy — lupy, seboroická dermatitida nebo zánět ovlivňující růst vlasů</li><li>Vypadávání vlasů, které nereagovalo na volně prodejné přípravky</li></ul><h2>Stavy, které se běžně vyšetřují</h2><p><strong>Vypadávání vlasů u mužů</strong></p><ul><li>Androgenní alopecie — nejčastější příčina vypadávání vlasů u mužů, vyšetřovaná a řešená na úrovni praktického lékařství včetně probrání možností léčby založených na důkazech</li><li>Alopecia areata — ložiskové vypadávání vlasů na autoimunitním podkladě</li><li>Telogenní effluvium — difuzní vypadávání po nemoci, stresu nebo nutričním deficitu</li><li>Seboroická dermatitida a zánět pokožky hlavy přispívající k vypadávání vlasů</li><li>Vypadávání vlasů související s léky — vyšetření a řešení</li></ul><p><strong>Vypadávání vlasů u žen</strong></p><ul><li>Ženská androgenní alopecie</li><li>Telogenní effluvium — zejména po porodu, po významné nemoci nebo po velkém stresu</li><li>Alopecia areata</li><li>Vypadávání vlasů související s hormonálními změnami — PCOS, porucha funkce štítné žlázy, menopauza nebo poporodní hormonální změny</li><li>Vypadávání vlasů související s nutričním deficitem — železo, ferritin, vitamin D, B12 a zinek</li><li>Trační alopecie — související s účesy</li><li>Vypadávání vlasů související s léky</li></ul><p><strong>Obojí</strong></p><ul><li>Tinea capitis — plísňová infekce pokožky hlavy způsobující vypadávání vlasů, která vyžaduje léčbu</li><li>Cicatrická alopecie — vyžaduje urgentní odeslání na dermatologii</li><li>Vypadávání vlasů jako příznak systémových onemocnění — onemocnění štítné žlázy, autoimunitní onemocnění, anémie</li></ul><h2>Co konzultace zahrnuje</h2><p><strong>Komplexní posouzení vypadávání vlasů</strong></p><p>Váš praktický lékař podrobně zhodnotí anamnézu vašeho vypadávání vlasů — začátek, vzorec, rychlost progrese, rodinnou anamnézu, doprovodné příznaky, současnou medikaci, nutriční stav, nedávné životní události a celkové zdraví — a vytvoří úplný obraz jako základ pro určení příčiny.</p><p><strong>Určení základní příčiny</strong></p><p>Vypadávání vlasů je často příznakem něčeho systémového — ne pouze kosmetickým problémem. Váš praktický lékař zhodnotí hormonální, nutriční, autoimunitní a medikamentózní faktory, které mohou způsobovat nebo urychlovat vaše vypadávání vlasů.</p><p><strong>Plán péče založený na důkazech</strong></p><p>Na základě vyšetření vám lékař doporučí nejvhodnější postup pro váš konkrétní typ vypadávání vlasů — který může zahrnovat úpravu výživy, lokální léčbu, klinická doporučení podle uvážení lékaře a odeslání tam, kde je to indikováno.</p><p><strong>Požádání o vyšetření tam, kde je to indikováno</strong></p><p>Kde jsou krevní testy klinicky indikované — funkce štítné žlázy, ferritin, vyšetření železa, hormonální panel, hladiny vitaminů — váš lékař je objedná ještě tentýž den.</p><p><strong>Klinická dokumentace — podle uvážení lékaře</strong></p><p>Pokud je to klinicky indikované, váš lékař vystaví příslušnou klinickou dokumentaci platnou v kterékoli španělské lékárně.</p><p>Poznámka: Omamné látky a určité kontrolované substance vyžadují zvláštní dokumentaci, kterou nelze vystavit elektronicky. Váš lékař vás informuje, pokud se to na vás vztahuje.</p><p><strong>Odeslání na dermatologii, pokud je to potřeba</strong></p><p>Některé stavy vypadávání vlasů — včetně cicatrické alopecie, složité alopecia areata a projevů vyžadujících biopsii pokožky hlavy — vyžadují specializované dermatologické vyšetření. Váš praktický lékař vám jasně sdělí, zda je to váš případ, a zajistí odeslání.</p><h2>Proč se vypadávání vlasů příliš často bagatelizuje</h2><p>Vypadávání vlasů se často setkává s odpovědí „to je normální“ nebo „je to jen stres“ — někdy správně, ale příliš často bez odpovídajícího vyšetření. Lékař, který skutečně hodnotí vypadávání vlasů, nezačíná obecnou odpovědí. Začíná úplnou anamnézou, vyhodnotí hormonální a nutriční stav a určí konkrétní příčinu, než navrhne postup přizpůsobený této příčině.</p><p>Rozdíl mezi „je to pravděpodobně stresem“ bez vyšetření a „máte nízký ferritin a to způsobuje telogenní effluvium, které je léčitelné“ potvrzené krevním testem není malý. Je to rozdíl mezi opominutým problémem a identifikovaným a zvládnutelným stavem.</p>",
+      "ctaLabel": null,
+      "sortOrder": 50,
+      "durationMinutes": 15,
+      "basePriceCents": 3900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.260Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0snn30001y8juccnmrdh3",
+          "kind": "IMAGE",
+          "key": "media/cc536d25-52be-4488-bf47-6eed76532325-es-caida-cabello-online.png",
+          "path": "/api/media/media/cc536d25-52be-4488-bf47-6eed76532325-es-caida-cabello-online.png",
+          "altText": "Caída del Cabello"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q6q3002mngjucety7quw",
+          "question": "Lze skutečně posoudit vypadávání vlasů přes videohovor?",
+          "answer": "Ano — pro velkou většinu prezentací. Podrobná anamnéza je nejsilnější diagnostický nástroj při hodnocení vypadávání vlasů a úplnou anamnézu lze odebrat prostřednictvím videohovoru. Váš lékař vás také požádá, abyste během hovoru ukázal(a) postižená místa. Tam, kde jsou zapotřebí nálezy fyzikálního vyšetření nebo biopsie vlasové pokožky, vás lékař poradí ohledně vhodného odeslání.",
+          "sortOrder": 0,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q6q3002nngjuow6770lg",
+          "question": "Potřebuji krevní testy před svou konzultací?",
+          "answer": "Ne. Váš lékař během konzultace posoudí, zda jsou vyšetření indikována, a pokud ano, objedná laboratorní vyšetření ještě tentýž den. Přineste jakékoli nedávné výsledky, které máte — váš lékař je zkontroluje v plném rozsahu.",
+          "sortOrder": 1,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q6q4002ongjumy8fcfar",
+          "question": "Lze zvrátit vypadávání vlasů?",
+          "answer": "Závisí to na typu a na tom, jak dlouho už postupuje. Androgenní alopecie reaguje nejlépe na léčbu zahájenou včas, když folikuly řídnou, nikoli když jsou již ztracené. Telogenní efluvium je obvykle samovolně omezené a upraví se, jakmile se léčí základní příčina. Vypadávání vlasů související s nutričním deficitem dobře reaguje na nápravu deficitu. Jizvící alopecie vyžaduje urgentní specializované vyšetření, protože může způsobit trvalou ztrátu, pokud se neléčí.",
+          "sortOrder": 2,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q6q4002pngjuvw1odamc",
+          "question": "Je tato služba vhodná pro ženy trpící vypadáváním vlasů?",
+          "answer": "Ano. Vypadávání vlasů u žen je ústřední součástí této služby. Klinický obraz u žen je často složitější než mužská androgenetická alopecie — zahrnuje hormonální, nutriční a autoimunitní faktory — a významně prospívá ze strukturovaného klinického vyšetření.",
+          "sortOrder": 3,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q6q4002qngjuvgd7xe94",
+          "question": "Co když moje vypadávání vlasů souvisí s lékem, který užívám?",
+          "answer": "V rámci této konzultace se hodnotí vypadávání vlasů související s léky. Váš lékař zkontroluje vaši aktuální medikaci, určí, zda některý lék přispívá k vašemu vypadávání vlasů, a poradí s vhodným postupem.",
+          "sortOrder": 4,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q6q4002rngjumwzt0505",
+          "question": "Mohu prostřednictvím této služby získat žádanku na dermatologii?",
+          "answer": "Ano. Pokud je specializované dermatologické vyšetření klinicky indikováno, tvůj praktický lékař vystaví doporučující dopis tentýž den.",
+          "sortOrder": 5,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q6q4002sngjua2jqmcbs",
+          "question": "Potřebuji španělské zdravotní pojištění?",
+          "answer": "Ne. Je to soukromá služba s přímou platbou. Klinická dokumentace vydaná prostřednictvím této služby je účtována za plnou soukromou cenu bez ohledu na stav pojištění.",
+          "sortOrder": 6,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q6q4002tngjuuvnkmgcy",
+          "question": "Mohu tuto službu používat odkudkoli ve Španělsku?",
+          "answer": "Ano — včetně Baleárských ostrovů, Kanárských ostrovů, Ceuty a Melilly. Potřebujete jen stabilní připojení k internetu a zařízení s kamerou.",
+          "sortOrder": 7,
+          "resolvedLocale": "CS"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "CS",
+      "links": [
+        {
+          "id": "cmre7se910026g8jugr501ov4",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con alopecia cicatricial — derivación dermatológica especialista?",
+          "body": "Para alopecia cicatricial — derivación dermatológica especialista, consulta nuestra página de Dermatología Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Dermatología Especialista",
+          "targetSlug": "dermatologia-especialista-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7sb4n001yg8ju943cs0l1",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Evaluación hormonal y metabólica completa?",
+          "body": "Si tu situación está relacionada con evaluación hormonal y metabólica completa, nuestra Salud Femenina te ofrece la evaluación adecuada.",
+          "ctaLabel": "Salud Femenina",
+          "targetSlug": "salud-femenina-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7sbwq0020g8jua8ahleyv",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con caída del cabello y déficit de testosterona?",
+          "body": "Para caída del cabello y déficit de testosterona, consulta nuestra página de Salud Masculina — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Salud Masculina",
+          "targetSlug": "salud-masculina-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7scot0022g8jurstwbmq4",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre analíticas de ferritina, tiroides y perfil hormonal?",
+          "body": "Nuestra Derivaciones y Pruebas está pensada específicamente para analíticas de ferritina, tiroides y perfil hormonal.",
+          "ctaLabel": "Derivaciones y Pruebas",
+          "targetSlug": "derivaciones-pruebas-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

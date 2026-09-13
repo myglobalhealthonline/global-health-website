@@ -1,0 +1,183 @@
+{
+  "endpoint": "/api/services/psicologo-online?countryCode=es&locale=PT",
+  "checkedAt": "2026-09-13T02:30:05.176Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qg1l005cngjub14ciym5",
+      "kind": "SPECIALIST",
+      "slug": "psicologo-online",
+      "name": "Psicologia Clínica",
+      "summary": null,
+      "seoTitle": "Psicólogo Online Espanha | Psicoterapia | Psicólogo Credenciado",
+      "seoDescription": "Ansiedade, depressão, trauma ou outra preocupação psicológica. Os nossos psicólogos clínicos colegiados oferecem psicoterapia e avaliação psicológica por videochamada segura. No mesmo dia em Espanha.",
+      "seoKeywords": [
+        "psicólogo online España",
+        "psicoterapia online España",
+        "psicólogo clínico online España",
+        "terapia psicológica online España",
+        "psicólogo online España inglés"
+      ],
+      "heroTitle": "Psicologia Clínica — Psicoterapia Online com Psicólogo Credenciado",
+      "heroDescription": "A psicoterapia é um dos tratamentos com maior evidência científica para a maioria das perturbações de ansiedade, a depressão, o trauma e muitas outras dificuldades psicológicas — frequentemente mais eficaz a longo prazo do que o tratamento farmacológico isolado, e com resultados que se mantêm depois de o tratamento terminar. Os nossos psicólogos clínicos, inscritos no respetivo Colégio Oficial de Psicólogos, oferecem psicoterapia e avaliação psicológica por videochamada segura — em espanhol, inglês ou português. Sem lista de espera de meses. Sem deslocação a uma consulta quando já te sentes mal. Um psicólogo inscrito, disponível no mesmo dia, a partir de qualquer ponto de Espanha.",
+      "detailBody": "<h2>O que é este serviço — e o que não é</h2><p>Este serviço de psicologia clínica inclui:</p><ul><li>Psicoterapia individual — intervenção psicológica estruturada e baseada em evidência</li><li>Avaliação psicológica — avaliação formal de dificuldades psicológicas e elaboração de relatório quando indicado</li><li>Trabalho colaborativo com o psiquiatra da Global Health quando a abordagem combinada de psicoterapia e farmacologia é apropriada</li><li>Orientação psicológica para familiares de pessoas com dificuldades psicológicas — quando indicado</li><li>Psicoterapia em inglês ou português para residentes internacionais e expats</li></ul><p>Este serviço não inclui:</p><ul><li>Prescrição de medicação — os psicólogos clínicos não prescrevem em Espanha. Se precisar de avaliação farmacológica, o nosso serviço de psiquiatria especialista é apropriado</li><li>Intervenção em crise — se estiver em crise, utilize os recursos no início desta página</li><li>Psicoterapia de casal ou família — este serviço é de psicologia individual</li><li>Avaliações psicológicas forenses ou periciais — consulte a disponibilidade diretamente</li></ul><p>Não tem a certeza se precisa de psicologia ou psiquiatria? A distinção prática é simples: se quer falar em profundidade sobre o que está a acontecer e aprender ferramentas psicológicas para o gerir, a psicologia é o ponto de partida adequado. Se acha que a medicação pode fazer parte da solução, ou se já está a tomar medicação psiquiátrica e quer que alguém a acompanhe, a psiquiatria é mais apropriada. Para muitas pessoas, ambas a trabalhar em conjunto é a abordagem mais eficaz.</p><h2>Para quem é este serviço</h2><p>Esta consulta de psicologia clínica é apropriada para adultos com:</p><ul><li>Ansiedade — perturbação de ansiedade generalizada, ansiedade social, ataques de pânico, ansiedade com a saúde</li><li>Depressão — humor em baixo, perda de interesse, depressão ligeira a moderada</li><li>Stress e burnout — stress laboral, exaustão emocional, dificuldades de conciliação</li><li>Trauma e TEPT — experiências traumáticas passadas ou recentes que continuam a afetar o funcionamento diário</li><li>Luto — perda de um ente querido, perda de uma relação ou de um papel de vida significativo</li><li>Dificuldades relacionais — padrões relacionais que geram sofrimento ou conflito</li><li>Baixa autoestima e autocrítica — padrões de pensamento negativos sobre si próprio</li><li>TOC — perturbação obsessivo-compulsiva, pensamentos intrusivos, compulsões</li><li>Fobias — medos específicos com impacto no funcionamento diário</li><li>Dificuldades de adaptação — mudança de país, mudança de trabalho, rutura de relação, mudanças de vida significativas</li><li>Stress do expat — adaptação cultural, isolamento, identidade, separação familiar</li><li>TDAH em adultos — apoio psicológico e estratégias de gestão para adultos com diagnóstico estabelecido</li><li>Perturbações do sono com base psicológica significativa</li><li>Preocupações relacionadas com a alimentação e a imagem corporal — apresentações não graves</li><li>Qualquer pessoa que queira apoio psicológico estruturado para melhorar o seu bem-estar e funcionamento</li></ul><h2>Abordagens terapêuticas</h2><p>A psicoterapia não é uma conversa genérica — é uma intervenção psicológica estruturada e baseada em evidência. As abordagens terapêuticas que os nossos psicólogos clínicos utilizam incluem:</p><p><strong>Terapia Cognitivo-Comportamental (TCC)</strong></p><p>A abordagem com maior evidência científica para a maioria das perturbações de ansiedade e da depressão. Trabalha a relação entre pensamentos, emoções e comportamentos — identificando padrões de pensamento que geram sofrimento e desenvolvendo estratégias mais adaptativas.</p><p><strong>Terapia de Aceitação e Compromisso (ACT)</strong></p><p>Uma abordagem de terceira geração que trabalha a flexibilidade psicológica — aprender a relacionar-se de forma diferente com pensamentos e emoções difíceis e agir de acordo com os valores pessoais mesmo na presença de sofrimento.</p><p><strong>EMDR — Dessensibilização e Reprocessamento por Movimentos Oculares</strong></p><p>O tratamento com maior evidência para o trauma e o TEPT. Ajuda o cérebro a processar memórias traumáticas que ficaram bloqueadas, reduzindo o seu impacto emocional.</p><p><strong>Terapia Dialética Comportamental (DBT)</strong></p><p>Especialmente útil para dificuldades na regulação emocional, perturbação borderline da personalidade e comportamentos autodestrutivos. Trabalha competências de mindfulness, tolerância ao mal-estar, regulação emocional e eficácia interpessoal.</p><p><strong>Psicoterapia psicodinâmica breve</strong></p><p>Útil quando as dificuldades atuais têm raízes em experiências passadas e padrões relacionais. Trabalha o significado dos sintomas e a compreensão mais profunda dos padrões que se repetem.</p><p><strong>Mindfulness e técnicas baseadas na atenção plena</strong></p><p>Integradas em várias abordagens terapêuticas, especialmente úteis para o stress, a ansiedade e o burnout.</p><p>A abordagem terapêutica mais adequada para si depende da sua apresentação, dos seus objetivos e das suas preferências. O seu psicólogo discute isto consigo na primeira consulta e adapta a abordagem à sua situação específica.</p><h2>O que inclui a primeira consulta</h2><p><strong>Avaliação psicológica inicial</strong></p><p>A primeira consulta é uma avaliação — o seu psicólogo escuta em profundidade a sua situação, compreende o impacto no seu funcionamento diário, explora a sua história pessoal relevante e estabelece consigo os objetivos do trabalho terapêutico.</p><p><strong>Formulação clínica</strong></p><p>No final da primeira consulta, o seu psicólogo fornece uma primeira formulação — uma compreensão clínica do que está a acontecer, que fatores estão a contribuir e como o trabalho terapêutico pode ajudar.</p><p><strong>Plano terapêutico</strong></p><p>O seu psicólogo propõe um plano terapêutico — incluindo a abordagem mais apropriada para a sua situação, a frequência recomendada das sessões e os objetivos terapêuticos a trabalhar.</p><p><strong>Coordenação com psiquiatria quando indicado</strong></p><p>Quando a abordagem combinada de psicoterapia e farmacologia é apropriada, o seu psicólogo coordena com o nosso serviço de psiquiatria especialista na mesma plataforma — para que não tenha de começar do zero com cada profissional.</p><h2>Como funciona a psicoterapia online</h2><p>A psicoterapia por videochamada tem evidência científica sólida e comparável à terapia presencial para a maioria das situações. A aliança terapêutica — a relação entre o paciente e o psicólogo, que é um dos fatores mais importantes no resultado da terapia — desenvolve-se de forma igualmente eficaz no formato online.</p><p>Vantagens práticas da psicoterapia online:</p><ul><li>Sem deslocações — consulta a partir do espaço onde se sente mais confortável</li><li>Sem sala de espera — maior privacidade</li><li>Mais fácil manter a regularidade — as sessões não se perdem por conflitos de agenda ou deslocações</li><li>Acesso a partir de qualquer ponto de Espanha — sem limitação geográfica</li><li>Especialmente útil para expats e residentes internacionais — sem limitação por idioma ou localização</li></ul><p><strong>Para uma sessão eficaz por videochamada</strong></p><ul><li>Procure um espaço privado onde ninguém o possa ouvir</li><li>Certifique-se de que tem ligação estável à internet</li><li>Use auscultadores se possível — melhora a privacidade e a qualidade do som</li><li>Reserve o tempo completo da sessão — sem interrupções</li></ul><h2>Psicologia em Espanha — o problema do acesso</h2><p>A psicologia clínica no sistema público espanhol está significativamente subdotada. Na maioria das comunidades autónomas, o número de psicólogos no SNS é muito inferior à média europeia — aproximadamente 6 psicólogos por 100.000 habitantes face a uma média europeia de 18. Os tempos de espera para aceder à psicologia clínica do SNS são de meses — quando existe acesso.</p><p>A psicologia privada presencial em Espanha é cara nas grandes cidades e limitada fora delas. Para residentes internacionais que precisam de psicoterapia em inglês, as opções reduzem-se drasticamente.</p><p>Este serviço proporciona acesso a psicologia clínica por videochamada — no próprio dia para a primeira consulta — a partir de qualquer ponto de Espanha, em inglês, espanhol ou português.</p><h2>Confidencialidade</h2><p>Tudo o que for discutido durante as suas sessões de psicologia é estritamente confidencial e está protegido pela legislação espanhola e europeia de proteção de dados — incluindo o RGPD (UE 2016/679) implementado através da Lei Orgânica 3/2018 (LOPDGDD), a Lei 41/2002 de autonomia do paciente, e o Código Deontológico do Psicólogo.</p><p>Os dados de saúde mental têm proteção reforçada como categoria especial de dados ao abrigo do RGPD.</p><p>Existem duas circunstâncias em que a confidencialidade pode precisar de ser ponderada cuidadosamente — quando existe um risco grave e imediato para a sua vida ou segurança, ou quando existe um risco grave para a segurança de outra pessoa. O seu psicólogo discute a confidencialidade consigo no início da primeira sessão.</p>",
+      "ctaLabel": null,
+      "sortOrder": 0,
+      "durationMinutes": 45,
+      "basePriceCents": 12000,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-10T13:44:16.346Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k71c0007asju4s2f9w06",
+          "kind": "IMAGE",
+          "key": "media/42116c7a-ea09-4fa9-862d-3013403a99e4-es-psicologo-online.png",
+          "path": "/api/media/media/42116c7a-ea09-4fa9-862d-3013403a99e4-es-psicologo-online.png",
+          "altText": "Psicología Clínica"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qg9s005dngju48x8vyqt",
+          "question": "Qual é a diferença entre um psicólogo e um psiquiatra?",
+          "answer": "O psicólogo clínico fornece psicoterapia e intervenção psicológica — não prescreve medicação. O psiquiatra é um médico especialista que pode diagnosticar transtornos mentais formalmente e prescrever medicação psiquiátrica. Para muitas pessoas, trabalhar com ambos conjuntamente é a abordagem mais eficaz. Se precisa de avaliação farmacológica ou gestão de medicação psiquiátrica, o nosso serviço de psiquiatria especialista é o adequado.",
+          "sortOrder": 0,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qg9s005engjul414u7z5",
+          "question": "Quantas sessões precisarei?",
+          "answer": "Depende da sua apresentação e dos seus objetivos. Alguns problemas são abordados eficazmente em 8-12 sessões com abordagens como a TCC. Outros — trabalho sobre trauma complexo, padrões de personalidade ou condições mais enraizadas — requerem um trabalho mais prolongado. O seu psicólogo propõe-lhe um plano inicial na primeira consulta e revê-o consigo regularmente.",
+          "sortOrder": 1,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qg9s005fngju6sllmeyn",
+          "question": "Com que frequência são as sessões?",
+          "answer": "Geralmente uma vez por semana no início do trabalho terapêutico, passando para de duas em duas semanas ou mensalmente em fases mais avançadas. O seu psicólogo adapta a frequência à sua situação e progresso.",
+          "sortOrder": 2,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qg9s005gngju9c7dizf8",
+          "question": "A psicoterapia online está coberta pelos seguros de saúde privados espanhóis?",
+          "answer": "Depende da tua apólice. Alguns seguros privados cobrem consultas de psicologia online — consulta a tua seguradora e solicita a fatura que emitimos após cada sessão para reclamação.",
+          "sortOrder": 3,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qg9s005hngjuk0tffjjx",
+          "question": "A terapia online funciona da mesma forma que a presencial?",
+          "answer": "A evidência científica indica que a psicoterapia por videochamada tem resultados comparáveis à terapia presencial para a maioria das apresentações. A aliança terapêutica — um dos fatores mais preditivos do resultado — desenvolve-se igualmente de forma online.",
+          "sortOrder": 4,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qg9s005ingju93db0uvm",
+          "question": "O que acontece se eu precisar de medicação além da psicoterapia?",
+          "answer": "O seu psicólogo orientará você claramente se considerar que a avaliação psiquiátrica pode ser benéfica para a sua situação. Nosso serviço de psiquiatria especialista está disponível dentro da mesma plataforma — e os dois profissionais podem trabalhar de forma coordenada para o seu atendimento.",
+          "sortOrder": 5,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qg9s005jngjut5ig7nxe",
+          "question": "Posso mudar de psicólogo se não me sentir confortável?",
+          "answer": "Sim. A compatibilidade entre o paciente e o psicólogo é importante para o resultado terapêutico. Se, após as primeiras sessões, não se sentir confortável, pode solicitar trabalhar com outro psicólogo da equipa.",
+          "sortOrder": 6,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qg9s005kngjuwom229vm",
+          "question": "Este serviço é adequado se eu estiver em crise?",
+          "answer": "Não. Se estiver em crise ou tiver pensamentos de suicídio ou de automutilação, use os recursos no início desta página — Teléfono contra o Suicídio 024 ou 112 em caso de perigo imediato. Este serviço não é um serviço de intervenção em crise.",
+          "sortOrder": 7,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qg9s005lngju1y5n8wjq",
+          "question": "Preciso de seguro de saúde espanhol?",
+          "answer": "Não. É um serviço privado de pagamento direto. Não é necessário seguro médico espanhol.",
+          "sortOrder": 8,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qg9s005mngjuvr6d1swv",
+          "question": "Posso usar este serviço de qualquer ponto da Espanha?",
+          "answer": "Sim — incluindo as Ilhas Baleares, Ilhas Canárias, Ceuta e Melilla. Só precisas de uma ligação estável à internet e de um dispositivo com câmara.",
+          "sortOrder": 9,
+          "resolvedLocale": "PT"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "PT",
+      "links": [
+        {
+          "id": "cmre7t2gg003mg8juwnxu4x2i",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre evaluación inicial con médico de cabecera?",
+          "body": "Nuestra Consulta Médica General está pensada específicamente para evaluación inicial con médico de cabecera.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7t0wa003ig8juiex84q7n",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Evaluación psiquiátrica si se necesita medicación?",
+          "body": "Si tu situación está relacionada con evaluación psiquiátrica si se necesita medicación, nuestra Psiquiatría Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Psiquiatría Especialista",
+          "targetSlug": "psiquiatra-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7t1od003kg8jujyc8vdtm",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con apoyo psicológico para adolescentes?",
+          "body": "Para apoyo psicológico para adolescentes, consulta nuestra página de Pediatría Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Pediatría Especialista",
+          "targetSlug": "pediatra-especialista-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdq0tv2002701rupeh3nkyd",
+        "cmrdq1nhe002b01ru2xmq0iab"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:59:00.000Z"
+      }
+    }
+  }
+}

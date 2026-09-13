@@ -1,0 +1,151 @@
+{
+  "endpoint": "/api/services/renovacion-tratamiento-online?countryCode=es&locale=PT",
+  "checkedAt": "2026-09-13T02:30:05.025Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7pz0n000kngjuib862zxl",
+      "kind": "GENERAL",
+      "slug": "renovacion-tratamiento-online",
+      "name": "Renovação de Tratamento",
+      "summary": null,
+      "seoTitle": "Renovação de Tratamento Online Espanha | Revisão Clínica | Médico Inscrito",
+      "seoDescription": "Tratamento estável que necessita de renovação em Espanha? Os nossos médicos inscritos na Ordem analisam a sua situação clínica por videochamada e emitem documentação quando indicado. Sem registo prévio. No mesmo dia.",
+      "seoKeywords": [
+        "renovación tratamiento online España",
+        "continuar tratamiento online España",
+        "revisión clínica tratamiento España",
+        "continuar medicación extranjero España"
+      ],
+      "heroTitle": "Renovação de Tratamento — Revisão Clínica Online com Médico Credenciado",
+      "heroDescription": "Tem um tratamento estável e estabelecido — e precisa renová-lo. Seja porque atualmente não tem médico de família atribuído, porque não pode esperar semanas por uma consulta ou porque chega de outro país com documentação clínica que as farmácias espanholas não podem processar diretamente. Os nossos médicos, inscritos em conformidade com os requisitos da Organización Médica Colegial (OMC), realizam uma revisão clínica completa do seu tratamento atual por videochamada segura — e emitem a documentação clínica correspondente quando indicado. No mesmo dia, a partir de qualquer ponto de Espanha, em espanhol, inglês ou português.",
+      "detailBody": "<h2>O que este serviço é — e o que não é</h2><p>Esta é uma revisão clínica do tratamento — não uma renovação automática. Os nossos médicos realizam uma avaliação genuína do seu tratamento atual, do seu estado clínico, de possíveis efeitos secundários e de quaisquer alterações na sua saúde desde a última revisão. Com base nessa avaliação, aconselham se o seu tratamento continua a ser adequado e emitem a documentação clínica correspondente quando indicado.</p><p>Este serviço é apropriado quando a sua condição é estável e o seu tratamento está estabelecido. Se os seus sintomas mudaram significativamente ou pioraram, uma consulta médica geral é mais adequada.</p><h2>Para quem é este serviço</h2><p>Este serviço é apropriado para adultos que:</p><ul><li>Têm um tratamento estável e estabelecido que precisam de continuar em Espanha</li><li>Não têm médico de família atribuído atualmente e não conseguem aceder através do sistema público</li><li>Chegaram a Espanha vindos de outro país da UE com documentação clínica que as farmácias espanholas não conseguem processar diretamente</li><li>Mudaram recentemente de comunidade autónoma e ainda não têm médico de família atribuído</li><li>Têm uma condição crónica gerida noutro país e querem continuar o tratamento enquanto se estabelecem em Espanha</li><li>Querem uma revisão clínica em inglês ou português sem terem de navegar num sistema em castelhano</li></ul><h2>O caso mais comum — medicação estrangeira em Espanha</h2><p>Este é um dos usos mais frequentes deste serviço para residentes internacionais e turistas. A documentação clínica emitida noutros países — incluindo Reino Unido, Irlanda, Alemanha, Países Baixos, França, ou qualquer outro estado-membro da UE — é teoricamente reconhecível em Espanha ao abrigo da Diretiva 2011/24/UE sobre assistência sanitária transfronteiriça.</p><p>Na prática, as farmácias espanholas frequentemente têm dificuldades em processar documentação clínica estrangeira por várias razões:</p><ul><li>O nome comercial do medicamento pode ser diferente em Espanha</li><li>O formato não coincide com o sistema de verificação espanhol</li><li>A farmácia não pode verificar a inscrição no colégio profissional do médico prescritor estrangeiro</li><li>O medicamento pode não estar comercializado com esse nome em Espanha</li></ul><p>A solução mais prática é consultar o nosso médico, que avalia o seu tratamento atual e emite a documentação clínica espanhola equivalente quando indicado — usando o nome genérico espanhol do medicamento (DCI — Denominação Comum Internacional) e ligada à Nodofarma para a sua dispensa em qualquer farmácia do território nacional.</p><p>Leve para a consulta: a embalagem original da sua medicação, o nome genérico, a sua documentação clínica se a tiver, e qualquer relatório médico relevante. Quanto mais informação fornecer, melhor o médico poderá avaliar o seu tratamento.</p><h2>O que inclui a consulta</h2><p><strong>Revisão clínica completa do tratamento atual</strong></p><p>O médico revê a condição que está a ser tratada, a sua medicação atual, dose e duração, controlo dos sintomas e resposta ao tratamento, possíveis efeitos secundários e quaisquer alterações relevantes no seu historial médico desde a sua última revisão.</p><p><strong>Avaliação de segurança</strong></p><p>Revisão de possíveis interações, contraindicações e quaisquer alterações na sua saúde que possam afetar a adequação de continuar o seu tratamento atual.</p><p><strong>Documentação clínica — a critério do médico</strong></p><p>Quando o médico determina que o seu tratamento continua a ser clinicamente apropriado, emite a documentação clínica correspondente conforme o Real Decreto 1718/2010, homologada pela OMC e ligada através da Nodofarma às mais de 22.000 farmácias do território nacional — quando clinicamente indicado.</p><p>Com documentação clínica privada paga 100% do preço do medicamento — os preços em Espanha são regulados e são geralmente muito acessíveis. A validade geral é de 10 dias naturais para a primeira dispensa. Em tratamentos prolongados, o médico pode programar dispensas sucessivas.</p><p>Nota: Os estupefacientes e determinadas substâncias controladas requerem documentação especial que não pode ser emitida eletronicamente através deste serviço. O seu médico informará se este for o seu caso.</p><p><strong>Referência ou investigação adicional — quando indicado</strong></p><p>Se a revisão indicar que é necessária avaliação adicional, análises ou avaliação especializada antes de poder continuar o tratamento, o seu médico aconselha-o claramente e coordena os passos seguintes no mesmo dia.</p><h2>Condições habitualmente revistas</h2><p>Este serviço é apropriado para condições estáveis e estabelecidas, incluindo:</p><p><strong>Cardiovascular e metabólico</strong></p><ul><li>Hipertensão arterial — revisão do tratamento anti-hipertensor</li><li>Diabetes — revisão do controlo glicémico e tratamento</li><li>Dislipidemia — revisão de estatinas e controlo lipídico</li><li>Patologia tiroideia — hipotiroidismo e hipertiroidismo, revisão do tratamento</li></ul><p><strong>Respiratório</strong></p><ul><li>Asma — revisão de inaladores e esquema de tratamento</li><li>DPOC — revisão do tratamento de manutenção</li></ul><p><strong>Saúde mental — ao nível da medicina geral</strong></p><ul><li>Ansiedade e depressão estáveis — revisão do tratamento ao nível de médico geral, sujeita a avaliação clínica</li><li>Insónia crónica — revisão do tratamento estabelecido</li></ul><p><strong>Outros</strong></p><ul><li>Refluxo gastroesofágico e patologia gastrointestinal — tratamento de longa duração</li><li>Anticoncecionais hormonais — revisão e continuação, sujeita a avaliação clínica</li><li>Patologia dermatológica — tratamentos tópicos ou sistémicos de longa duração</li><li>Patologia hormonal — gestão continuada</li><li>Dor crónica — revisão do tratamento estabelecido ao nível de médico geral</li></ul><h2>Medicação privada vs. sistema público — diferença prática</h2><p>Com documentação clínica privada emitida pelos nossos médicos:</p><ul><li>Paga 100% do preço do medicamento na farmácia</li><li>Os preços em Espanha são regulados e são geralmente baixos</li><li>Válida em qualquer farmácia do território nacional</li><li>Não é necessário cartão de saúde nem seguro médico espanhol</li></ul><p>Com receita do SNS (sistema público):</p><ul><li>Existe comparticipação reduzida segundo rendimento, idade e situação laboral</li><li>Requer médico de família no sistema público</li><li>Só acessível se estiver registado no sistema público espanhol</li></ul><p>Se tem médico de família no sistema público e precisa de medicação comparticipada, consulte primeiro o seu CAP. O nosso serviço é especialmente útil quando não tem acesso ao sistema público, quando não pode esperar pela consulta, ou quando a sua documentação clínica provém de outro país.</p><h2>Informação importante antes de reservar</h2><ul><li>A decisão de continuar, ajustar ou modificar qualquer tratamento é uma decisão clínica tomada exclusivamente pelo médico após avaliação completa — não pode ser confirmada nem garantida antecipadamente</li><li>Os estupefacientes e determinadas substâncias controladas não podem ser emitidos eletronicamente — o seu médico informará se a sua medicação se enquadra nesta categoria</li><li>Os nossos médicos não gerem rotineiramente substâncias controladas através de videoconsulta</li><li>Se os seus sintomas mudaram significativamente desde a sua última revisão, uma consulta médica geral é mais apropriada</li><li>Leve para a consulta quaisquer resultados de análises, relatórios de especialistas ou documentação clínica relevante</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 30,
+      "durationMinutes": 15,
+      "basePriceCents": 2900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.259Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0kaao0009asjuv22mk4e7",
+          "kind": "IMAGE",
+          "key": "media/cf933591-e467-4cbf-9f49-d1e45f16636e-es-renovacion-tratamiento-online.png",
+          "path": "/api/media/media/cf933591-e467-4cbf-9f49-d1e45f16636e-es-renovacion-tratamiento-online.png",
+          "altText": "Renovación de Tratamiento"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7pz9a000lngjunpbz0j1w",
+          "question": "A renovação é automática após a consulta?",
+          "answer": "Não. A renovação do tratamento requer uma revisão clínica. O médico avalia o seu estado atual, a resposta ao tratamento e quaisquer alterações desde a sua última revisão antes de determinar se a continuidade é clinicamente apropriada.",
+          "sortOrder": 0,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7pz9a000mngjuvi2405jt",
+          "question": "Posso continuar qualquer medicação?",
+          "answer": "A maioria dos tratamentos estáveis e estabelecidos ao nível de médico de clínica geral pode ser revista e continuada através deste serviço. Os estupefacientes e determinadas substâncias controladas requerem documentação especial que não pode ser emitida eletronicamente. Os nossos médicos não gerem rotineiramente substâncias controladas através de videoconsulta. O teu médico informar-te-á claramente se o teu tratamento se enquadra nestas categorias.",
+          "sortOrder": 1,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7pz9a000nngjuqwpbiiz8",
+          "question": "Como recebo a documentação clínica?",
+          "answer": "Quando estiver clinicamente indicado, o seu médico emite a documentação através do sistema homologado pela OMC. Você a recebe eletronicamente e a apresenta em qualquer farmácia de sua escolha na Espanha junto com o seu DNI ou passaporte.",
+          "sortOrder": 2,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7pz9a000ongju863tsyvf",
+          "question": "Preciso de seguro médico espanhol?",
+          "answer": "Não. A documentação clínica privada é fornecida ao preço privado integral. Não é necessário seguro de saúde espanhol nem cartão de saúde.",
+          "sortOrder": 3,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7pz9a000pngjulyklv21w",
+          "question": "Tenho documentação clínica de outro país — o que preciso trazer para a consulta?",
+          "answer": "O nome genérico da sua medicação (DCI — Denominação Comum Internacional), a embalagem original se a tiver, a sua documentação clínica estrangeira se a tiver, e qualquer relatório médico relevante.",
+          "sortOrder": 4,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7pz9a000qngjuja4gz4z7",
+          "question": "O que acontece se a minha condição mudou desde a minha última revisão?",
+          "answer": "Se os teus sintomas mudaram significativamente, uma consulta médica geral é mais apropriada. O teu médico informará durante a consulta se é necessária uma avaliação mais detalhada.",
+          "sortOrder": 5,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7pz9a000rngjujw9kwv5n",
+          "question": "Posso usar este serviço sem médico de família em Espanha?",
+          "answer": "Sim. Este serviço foi especificamente concebido para pacientes — incluindo expats e residentes internacionais — que não têm médico de família atribuído em Espanha, mas precisam de continuar um tratamento estável e estabelecido.",
+          "sortOrder": 6,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7pz9a000sngjumw9ufl99",
+          "question": "Posso usar este serviço a partir de qualquer ponto de Espanha?",
+          "answer": "Sim — incluindo Ilhas Baleares, Ilhas Canárias, Ceuta e Melilla. Só precisa de uma ligação estável à internet e de um dispositivo com câmara.",
+          "sortOrder": 7,
+          "resolvedLocale": "PT"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "PT",
+      "links": [
+        {
+          "id": "cmre7ua4s0062g8jujrrpbtrs",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Consulta médica general con médico de cabecera?",
+          "body": "Si tu situación está relacionada con consulta médica general con médico de cabecera, nuestra Consulta Médica General te ofrece la evaluación adecuada.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

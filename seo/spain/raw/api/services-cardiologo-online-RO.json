@@ -1,0 +1,185 @@
+{
+  "endpoint": "/api/services/cardiologo-online?countryCode=es&locale=RO",
+  "checkedAt": "2026-09-13T02:30:06.588Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qh33005ongju25lilrfq",
+      "kind": "SPECIALIST",
+      "slug": "cardiologo-online",
+      "name": "Specialist în cardiologie",
+      "summary": null,
+      "seoTitle": "Cardiolog Online Spania | Consultație cardiologică de specialitate | În aceeași zi",
+      "seoDescription": "Palpitații, revizuirea ECG, hipertensiune arterială sau altă îngrijorare cardiologică. Cardiologii noștri specialiști oferă evaluări prin apel video cu revizuirea analizelor. În aceeași zi în Spania.",
+      "seoKeywords": [
+        "cardiólogo online España",
+        "consulta cardiológica online España",
+        "revisión ECG online España",
+        "palpitaciones cardiólogo online España",
+        "segunda opinión cardiológica España"
+      ],
+      "heroTitle": "Cardiologie Specialistă — Consultație cardiologică online",
+      "heroDescription": "Îngrijorările cardiologice — palpitații pe care nu știi cum să le interpretezi, un ECG cu rezultate care nu ți-au fost explicate clar, hipertensiune arterială care nu este bine controlată sau o afecțiune cardiacă deja stabilită care necesită o evaluare de specialitate — necesită profunzimea analizei pe care o oferă un cardiolog specialist. Cardiologii noștri, medici specialiști cu formare MIR în cardiologie, înscriși în colegiu conform cerințelor Organizației Medicale Colegiale (OMC), oferă consultații cardiologice de specialitate prin videoconferință securizată, cu revizuirea investigațiilor — ECG, ecocardiogramă, Holter și alte investigații cardiologice interpretate de un specialist în aceeași zi. Din orice punct al Spaniei, în spaniolă, engleză sau portugheză.",
+      "detailBody": "<h2>Pentru cine este acest serviciu</h2><p>Acest consult cardiologic de specialitate este potrivit pentru adulți cu:</p><ul><li>Palpitații — evaluarea palpitațiilor neurgente, a neregularității percepute a ritmului cardiac sau a extrasistolelor</li><li>Un ECG cu constatări care nu au fost explicate clar — revizuire și interpretare de specialitate</li><li>Un raport de ecocardiogramă, Holter sau test de efort care necesită explicații de specialitate</li><li>Hipertensiune arterială rezistentă sau care nu este bine controlată cu medicația actuală</li><li>Fibrilație atrială cunoscută și stabilă — revizuire și gestionare continuă</li><li>Insuficiență cardiacă stabilă — revizuire de specialitate și optimizarea tratamentului</li><li>Dislipidemie cu risc cardiovascular crescut — evaluarea și gestionarea riscului cardiologic</li><li>Dispnee de efort neurgentă — evaluarea cauzei cardiologice</li><li>Sincope sau presincopă — evaluare cardiologică în prezentări neurgente</li><li>A doua opinie cardiologică de specialitate — despre un diagnostic, un plan de tratament sau rezultatul unei analize</li><li>Revizuirea medicației cardiologice — evaluarea eficacității, tolerabilității și ajustarea</li><li>Evaluarea riscului cardiovascular — în special la pacienții cu multipli factori de risc</li><li>Rezidenți internaționali și expați care au nevoie de cardiologie de specialitate în engleză sau portugheză</li></ul><h2>Ce este acest serviciu — și ce nu este</h2><p>Acest consult cardiologic de specialitate acoperă:</p><ul><li>Evaluare cardiologică de specialitate pentru prezentări neurgente</li><li>Revizuirea și interpretarea ECG, ecocardiogramei, Holterului și altor teste cardiologice</li><li>Gestionarea continuă a afecțiunilor cardiovasculare stabile</li><li>Evaluarea riscului cardiovascular și plan de reducere a riscului</li><li>Solicitarea de teste cardiologice acolo unde sunt indicate clinic</li><li>A doua opinie cardiologică de specialitate</li><li>Coordonarea trimiterii în persoană acolo unde este indicat</li></ul><p>Acest serviciu nu acoperă:</p><ul><li>Urgențe cardiologice — durere toracică acută, sincopă cu pierderea conștienței, dificultăți respiratorii severe, palpitații cu compromitere hemodinamică. Pentru orice simptom cardiac acut, sună imediat la 112</li><li>Cardiologie intervențională — cateterisme, implantare de pacemaker sau defibrilatoare, ablație, chirurgie cardiacă. Aceste proceduri necesită evaluare în persoană în spital</li><li>Efectuarea de teste — cardiologul poate interpreta teste deja efectuate și poate solicita altele noi, dar nu poate efectua direct ECG, ecocardiogramă sau test de efort. Acestea necesită prezență fizică</li></ul><p>Nu ești sigur dacă simptomul tău este urgent? În caz de dubiu, sună întotdeauna la 112 sau mergi la urgențe. Este întotdeauna mai bine să fii evaluat și să nu fie grav, decât să aștepți.</p><h2>Revizuirea testelor cardiologice — cum funcționează</h2><p>Una dintre cele mai valoroase capacități ale acestui serviciu este revizuirea și interpretarea de specialitate a testelor cardiologice de către un cardiolog — în aceeași zi, fără a fi nevoie să aștepți săptămâni pentru o consultație în persoană.</p><p><strong>ECG (Electrocardiogramă)</strong></p><p>Trimite PDF-ul sau imaginea ECG-ului tău înainte de consultație. Cardiologul tău îl interpretează în întregime — identificând ritmul, axul, intervalele și orice constatare de tulburare de ritm, de conducere sau de ischemie — și îți explică rezultatele cu claritate.</p><p><strong>Ecocardiogramă</strong></p><p>Trimite raportul ecocardiogramei tale. Cardiologul tău verifică fracția de ejecție, funcția valvulară, dimensiunea camerelor și orice constatare cu relevanță clinică — și îți explică ce înseamnă pentru sănătatea ta și care sunt pașii potriviți.</p><p><strong>Holter de 24 de ore</strong></p><p>Trimite raportul Holterului tău. Cardiologul tău verifică ritmul în perioada de monitorizare, identifică aritmii sau extrasistole și evaluează dacă rezultatele sunt semnificative clinic.</p><p><strong>Test de efort</strong></p><p>Trimite raportul testului de efort. Cardiologul tău interpretează capacitatea funcțională, răspunsul hemodinamic la efort și orice constatare de ischemie indusă.</p><p><strong>Analize de sânge cu markeri cardiologici</strong></p><p>Dacă ai analize recente cu troponine, BNP, NT-proBNP sau profil lipidic, cardiologul tău le revizuiește în contextul clinic complet.</p><p>Pentru a trimite testele tale: încarcă documentele prin platformă înainte de consultație sau trimite-le prin canalul indicat de echipă la rezervare. Cardiologul tău le revizuiește înainte de apel, astfel încât consultația să fie axată pe analiză și plan.</p><h2>Afecțiuni evaluate frecvent</h2><p><strong>Tulburări de ritm cardiac</strong></p><ul><li>Fibrilație atrială — evaluare, gestionare și revizuirea anticoagulării în prezentări stabile</li><li>Flutter atrial — evaluare și gestionare</li><li>Extrasistole — evaluarea semnificației clinice și a necesității de intervenție</li><li>Tahicardii supraventriculare — evaluare și gestionare în prezentări neurgente</li><li>Bradicardie — evaluarea ritmului lent și a semnificației sale clinice</li><li>Sindromul Wolf-Parkinson-White — revizuire și coordonare unde este indicat</li></ul><p><strong>Boală coronariană</strong></p><ul><li>Cardiopatie ischemică cunoscută și stabilă — revizuire de specialitate și optimizarea tratamentului</li><li>Angină stabilă — evaluare și gestionare</li><li>Post-infarct — urmărire cardiologică de specialitate în fază stabilă</li><li>Evaluarea riscului coronarian — la pacienți cu mai mulți factori de risc</li></ul><p><strong>Insuficiență cardiacă</strong></p><ul><li>Insuficiență cardiacă stabilă — revizuire de specialitate și optimizarea tratamentului</li><li>Revizuirea funcției sistolice și diastolice — interpretarea ecocardiogramei</li><li>Gestionarea congestiei — ajustarea diureticelor și monitorizare</li></ul><p><strong>Valvulopatii</strong></p><ul><li>Valvulopatie mitrală, aortică, tricuspidiană — revizuirea de specialitate a ecocardiogramei și urmărire</li><li>Evaluarea severității valvulare — pe baza raportului ecocardiogramei</li><li>Urmărire post-intervenție valvulară în fază stabilă</li></ul><p><strong>Hipertensiune arterială</strong></p><ul><li>Hipertensiune rezistentă sau slab controlată — evaluare cardiologică de specialitate</li><li>Hipertensiune cu afectare de organ — evaluarea impactului cardiologic</li><li>Revizuirea riscului cardiovascular global în hipertensiune</li></ul><p><strong>Cardiomiopatii</strong></p><ul><li>Cardiomiopatie hipertrofică — revizuire și urmărire în fază stabilă</li><li>Cardiomiopatie dilatativă — revizuire și optimizarea tratamentului</li><li>Cardiomiopatie aritmogenă — evaluare și coordonare</li></ul><p><strong>Evaluarea riscului cardiovascular</strong></p><ul><li>Evaluarea riscului cardiovascular global — scor SCORE2, factori de risc modificabili</li><li>Dislipidemie cu risc cardiovascular crescut — evaluare și plan de gestionare</li><li>Sindrom metabolic — evaluarea impactului cardiologic</li><li>Evaluare cardiovasculară pre-sport — la adulții care doresc să înceapă activitate fizică intensă</li></ul><h2>Ce include consultația</h2><p><strong>Evaluare cardiologică de specialitate completă</strong></p><p>Cardiologul tău revizuiește istoricul tău cardiologic detaliat — simptome, episoade anterioare, antecedente familiale de boală cardiovasculară, factori de risc, medicația cardiologică actuală și testele anterioare disponibile.</p><p><strong>Interpretare de specialitate a testelor</strong></p><p>Cardiologul tău revizuiește și interpretează orice test cardiologic pe care l-ai trimis — ECG, ecocardiogramă, Holter, test de efort, analize cu markeri cardiologici — oferind o explicație clară a rezultatelor și a semnificației lor clinice.</p><p><strong>Plan de gestionare cardiologică de specialitate</strong></p><p>Pe baza evaluării și a interpretării testelor, cardiologul tău elaborează un plan de gestionare de specialitate — care poate include ajustarea medicației cardiologice la latitudinea specialistului, solicitarea de teste suplimentare acolo unde este indicat și recomandări privind stilul de viață și factorii de risc.</p><p><strong>Documentație clinică de specialitate — la latitudinea specialistului</strong></p><p>Când este indicat clinic, cardiologul tău emite documentația clinică corespunzătoare, valabilă în orice farmacie spaniolă, precum și rapoarte de specialitate pentru continuitatea îngrijirii.</p><p><strong>Solicitare de teste cardiologice</strong></p><p>Acolo unde sunt indicate clinic teste suplimentare — ECG, Holter, ecocardiogramă, analize cu markeri cardiologici, test de efort — cardiologul tău emite solicitarea în aceeași zi. Testele cardiologice private sunt disponibile în clinici de cardiologie și spitale private din toată Spania.</p><p><strong>Coordonarea trimiterii în persoană — unde este indicat</strong></p><p>Acolo unde evaluarea în persoană, efectuarea de teste care nu pot fi realizate la distanță sau intervenția cardiologică sunt indicate clinic, cardiologul tău coordonează trimiterea cu documentația completă de specialitate în aceeași zi.</p><p><strong>A doua opinie cardiologică</strong></p><p>Dacă ai primit un diagnostic cardiologic, rezultatul unui test sau un plan de tratament de la un alt cardiolog și dorești o evaluare independentă de specialitate, cardiologul tău revizuiește toată documentația disponibilă.</p><p><strong>Urmărire cardiologică continuă</strong></p><p>Consultațiile de urmărire de specialitate sunt disponibile pentru monitorizarea afecțiunilor cronice, revizuirea răspunsului la tratament și interpretarea testelor de control.</p><h2>Cardiologia în Spania — problema accesului</h2><p>Cardiologia privată în Spania este bine dezvoltată în Madrid, Barcelona și alte orașe mari. Totuși, timpii de așteptare pentru o primă consultație la un cardiolog privat sunt, în general, de două până la patru săptămâni pentru prezentări neurgente.</p><p>Pentru interpretarea unui test cardiologic — un ECG cu rezultate incerte, un Holter pe care medicul de familie nu l-a putut explica complet, o ecocardiogramă cu rezultate pe care nu le înțelegi — așteptarea săptămâni întregi pentru ca un specialist să îți explice rezultatele este inutil de stresantă.</p><p>Pentru rezidenții internaționali care au nevoie de cardiologie de specialitate în engleză sau portugheză, opțiunile sunt practic inexistente în afara Madridului și Barcelonei.</p><p>Serviciul nostru oferă evaluare cardiologică de specialitate cu interpretarea testelor în aceeași zi — din orice punct al Spaniei.</p>",
+      "ctaLabel": null,
+      "sortOrder": 0,
+      "durationMinutes": 15,
+      "basePriceCents": 7900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-10T13:43:02.311Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0sp640002y8jug1jk47o6",
+          "kind": "IMAGE",
+          "key": "media/7410c221-0047-4e40-a26e-443d1dfd0c49-es-cardiologo-online.png",
+          "path": "/api/media/media/7410c221-0047-4e40-a26e-443d1dfd0c49-es-cardiologo-online.png",
+          "altText": "Cardiología Especialista"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qhbj005pngjuxr12j3ik",
+          "question": "Poate cardiologul să-mi interpreteze ECG-ul prin apel video?",
+          "answer": "Da — trimițând PDF-ul sau imaginea ECG-ului înainte de consultație. Cardiologul tău îl interpretează în întregime înainte de apel și îți explică rezultatele în detaliu în timpul consultației. Aceasta este o practică consacrată în telecardiologie.",
+          "sortOrder": 0,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qhbj005qngjuv99p8i0k",
+          "question": "Am simptome de palpitații — este acest lucru urgent?",
+          "answer": "Palpitațiile cu amețeală, pierderea conștienței sau durere în piept sunt urgente — sunați imediat la 112. Palpitațiile fără simptome asociate grave, mai ales dacă sunt episodice și nu se agravează, sunt adecvate pentru evaluare cardiologică neurgentă prin acest serviciu.",
+          "sortOrder": 1,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qhbj005rngjujnsjkvdw",
+          "question": "Ce analize trebuie să aduc la consultație?",
+          "answer": "Tot ce ai relevant — ECG, raportul de ecocardiogramă, raportul Holter, raportul probei de efort, analize recente, scrisori de la cardiologi anteriori, lista medicației tale cardiologice actuale. Cu cât oferă mai multe informații cardiologul tău, cu atât evaluarea va fi mai completă.",
+          "sortOrder": 2,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qhbj005sngjuhrmcv3ex",
+          "question": "Poate cardiologul să îmi ajusteze medicația?",
+          "answer": "Da — inclusiv medicație antihipertensivă, antiaritmică, anticoagulantă, diuretică și alte medicații cardiologice, acolo unde este indicat clinic, la aprecierea specialistului după o evaluare completă.",
+          "sortOrder": 3,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qhbj005tngjuqkib7c17",
+          "question": "Poate cardiologul să solicite o ecocardiogramă sau un Holter?",
+          "answer": "Da. Atunci când aceste investigații sunt indicate clinic, cardiologul dumneavoastră emite trimiterea în aceeași zi. Ecocardiografia și Holterul private sunt disponibile în clinici de cardiologie și spitale private din toată Spania — în multe orașe, cu disponibilitate în câteva zile.",
+          "sortOrder": 4,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qhbj005ungju5xm4kwnd",
+          "question": "Pot obține o a doua opinie cardiologică?",
+          "answer": "Da. A doua opinie cardiologică specializată este una dintre utilizările frecvente ale acestui serviciu — în special pentru diagnostice incerte, rezultate ale investigațiilor care nu au fost explicate bine sau înainte de a vă angaja în intervenții cardiologice semnificative.",
+          "sortOrder": 5,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qhbj005vngjuhoy9l0pw",
+          "question": "Este acest serviciu adecvat pentru evaluarea cardiovasculară înainte de sport?",
+          "answer": "Da — pentru adulții care doresc să înceapă activitate fizică intensă sau au preocupări cardiologice legate de sport. Recunoașterea medicală sportivă oficială pentru licențe federative necesită examinare fizică în persoană — dar evaluarea cardiologică prealabilă sportului la nivel de medicină specializată poate fi realizată cu revizuirea analizelor prin telemedicină.",
+          "sortOrder": 6,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qhbj005wngju615ng5bz",
+          "question": "Am nevoie de asigurare medicală spaniolă?",
+          "answer": "Nu. Este un serviciu privat cu plată directă. Documentația clinică emisă se eliberează la prețul privat integral, indiferent de statutul de asigurare.",
+          "sortOrder": 7,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qhbj005xngjubqki07de",
+          "question": "Pot folosi acest serviciu din orice punct al Spaniei?",
+          "answer": "Da — inclusiv Insulele Baleare, Insulele Canare, Ceuta și Melilla. Ai nevoie doar de o conexiune stabilă la internet, de un dispozitiv cu cameră și de posibilitatea de a trimite digital investigațiile tale cardiologice înainte de consultație.",
+          "sortOrder": 8,
+          "resolvedLocale": "RO"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "RO",
+      "links": [
+        {
+          "id": "cmre7te5n0048g8juho9yeyhr",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Seguimiento de enfermedades cardiovasculares crónicas?",
+          "body": "Si tu situación está relacionada con seguimiento de enfermedades cardiovasculares crónicas, nuestra Enfermedades Crónicas te ofrece la evaluación adecuada.",
+          "ctaLabel": "Enfermedades Crónicas",
+          "targetSlug": "enfermedades-cronicas-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7texp004ag8jutzpe2duq",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con control de peso y riesgo cardiovascular?",
+          "body": "Para control de peso y riesgo cardiovascular, consulta nuestra página de Control de Peso — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tfpq004cg8juxdaop10s",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre dejar de fumar — prioridad en enfermedad cardiovascular?",
+          "body": "Nuestra Dejar de Fumar está pensada específicamente para dejar de fumar — prioridad en enfermedad cardiovascular.",
+          "ctaLabel": "Dejar de Fumar",
+          "targetSlug": "dejar-de-fumar-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tghs004eg8ju8onr6bhv",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Solicitar ECG, analíticas o pruebas cardiológicas?",
+          "body": "Si tu situación está relacionada con solicitar ECG, analíticas o pruebas cardiológicas, nuestra Derivaciones y Pruebas te ofrece la evaluación adecuada.",
+          "ctaLabel": "Derivaciones y Pruebas",
+          "targetSlug": "derivaciones-pruebas-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpqvkc000z01rui7z5it57"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "UNAVAILABLE",
+        "reasonCode": "NO_OPEN_SLOT",
+        "nextAvailableAt": null
+      }
+    }
+  }
+}

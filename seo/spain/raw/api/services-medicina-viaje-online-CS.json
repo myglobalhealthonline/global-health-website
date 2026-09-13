@@ -1,0 +1,176 @@
+{
+  "endpoint": "/api/services/medicina-viaje-online?countryCode=es&locale=CS",
+  "checkedAt": "2026-09-13T02:29:51.991Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q7k0002vngju6v73lt8h",
+      "kind": "GENERAL",
+      "slug": "medicina-viaje-online",
+      "name": "Cestovní medicína",
+      "summary": null,
+      "seoTitle": "Cestovní medicína online Španělsko | Profylaxe malárie | Praktický lékař",
+      "seoDescription": "Cestujete do oblasti s výskytem malárie nebo do rizikové destinace? Naši registrovaní praktičtí lékaři posoudí váš cestovní zdravotní stav a zajistí potřebnou zdravotní dokumentaci. Ve stejný den ve Španělsku.",
+      "seoKeywords": [
+        "medicina de viaje online España",
+        "profilaxis malaria online España",
+        "médico viaje online España",
+        "vacunas viaje consulta España",
+        "travel health doctor Spain English"
+      ],
+      "heroTitle": "Cestovní medicína — Online klinické vyšetření před odjezdem",
+      "heroDescription": "Cestujete do oblasti s malárií, do destinace s požadavky na očkování proti žluté zimnici, nebo do regionu s významným rizikem infekčního onemocnění? Očkovací centrum vám vakcíny aplikuje. Ale jsou dvě věci, které nemůže dělat: předepsat antimalarickou profylaxi — což vyžaduje lékaře — a poradit vám, jak řídit vaše konkrétní zdravotní potíže, léky a itinerář v kontextu vaší cesty. Naši praktičtí lékaři, registrovaní v souladu s požadavky Organización Médica Colegial (OMC), nabízejí cestovní lékařské konzultace prostřednictvím zabezpečené videohovoru — poskytují klinické posouzení, dokumentaci pro antimalarickou profylaxi a na míru připravené lékařské plánování, které očkovací centrum nemůže nabídnout. Tentýž den, odkudkoli ve Španělsku, ve španělštině, angličtině nebo portugalštině.",
+      "detailBody": "<h2>Co nabízí cestovní lékařská konzultace, co očkovací centrum nemůže</h2><p>Očkovací centra podávají očkování — ale neprovádějí strukturovaná lékařská vyšetření, nemohou předepisovat antimalarickou profylaxi a neposkytují poradenství ohledně zvládání chronických onemocnění během cestování.</p><p><strong>Vaše cestovní lékařská konzultace s registrovaným praktickým lékařem zahrnuje:</strong></p><ul><li>Antimalarická profylaxe — přímo zhodnocena a zdokumentována, s klinickou dokumentací vydanou tentýž den. Antimalarikum v očkovacím centru získat nemůžete.</li><li>Personalizované posouzení rizik — založené na vaší konkrétní destinaci, itineráři, typu ubytování, plánovaných aktivitách a zdravotním profilu — ne na obecném kontrolním seznamu</li><li>Plánování očkování — poradenství, jaká očkování potřebujete, která už možná máte, a vhodný harmonogram vzhledem k datu odjezdu — abyste přišli do očkovacího centra přesně věděli, o co požádat</li><li>Řízení chronických onemocnění během cestování — pokud máte diabetes, hypertenzi, astma nebo užíváte pravidelnou medikaci, lékař vám poradí, jak je zvládat na cestách, při změně časového pásma, s ohledem na nadmořskou výšku a kdy vyhledat péči v zahraničí</li><li>Cestovní lékařská dokumentace — lékařské dopisy k medikaci, zdravotnickým pomůckám nebo požadavkům cestovního pojištění</li><li>Postcestovní vyšetření — pokud se po návratu s příznaky z rizikovější destinace, lékař je posoudí v kontextu vaší cestovní anamnézy</li></ul><p>Po vaší konzultaci vám lékař poradí, kam v Španělsku jít na podání očkování — včetně autorizovaných center pro očkování proti žluté zimnici.</p><h2>Jedinečný pohled na Španělsko — cílová i výchozí země</h2><p>Španělsko je v kontextu cestovní medicíny jedinečné, protože je současně významnou zemí původu mezinárodních cestujících i jednou z nejnavštěvovanějších turistických destinací na světě.</p><p><strong>Pokud cestujete ze Španělska:</strong></p><p>Tato služba poskytuje kompletní cestovní lékařské posouzení před vaším odjezdem — antimalarickou profylaxi, plánování očkování, řízení chronických onemocnění během cestování.</p><p><strong>Pokud jste přijeli do Španělska a onemocněli jste:</strong></p><p>Cestovatelská onemocnění — gastroenteritida, respirační infekce, kožní reakce, horečka po návratu z cesty — jsou častými projevy u turistů a návštěvníků. Váš praktický lékař posoudí vaše příznaky v kontextu vaší cestovní anamnézy s odesláním k vyšetření v oblasti tropické medicíny, je-li to indikováno.</p><p><strong>Pokud jste v Španělsku jen na přestupu a potřebujete pokračovat v antimalarické profylaxi:</strong></p><p>Pokud jste zahájili antimalarický režim před příjezdem do Španělska a potřebujete v medikaci pokračovat, lékař posoudí vaši situaci a vystaví příslušnou klinickou dokumentaci, je-li to klinicky indikováno.</p><h2>Co konzultace zahrnuje</h2><p><strong>Posouzení destinace a itineráře</strong></p><p>Váš lékař zhodnotí vaši destinaci, délku pobytu, itinerář, typ ubytování a plánované aktivity — včetně toho, zda budete v městských nebo venkovských oblastech, ubytováni v hotelu nebo pod stanem, provozovat dobrodružné aktivity nebo navštěvovat zdravotnická zařízení.</p><p><strong>Posouzení rizika malárie a dokumentace k profylaxi</strong></p><p>U destinací s rizikem malárie lékař posoudí nejvhodnější profylaktický režim na základě vaší destinace, itineráře, délky pobytu a individuálního zdravotního profilu — včetně možných kontraindikací. Klinická dokumentace k vhodnému antimalariku je vystavena, je-li to klinicky indikováno.</p><p><strong>Plánování očkování</strong></p><p>Na základě vaší destinace a zdravotního profilu lékař poradí, která očkování jsou doporučená nebo vyžadovaná, která už můžete mít dostatečnou imunitu a jaký je vhodný harmonogram vzhledem k datu odjezdu.</p><p><strong>Řízení chronických onemocnění během cestování</strong></p><p>Lékař poradí, jak zvládat onemocnění jako diabetes, hypertenze, astma nebo duševní onemocnění během cestování — včetně množství léků, časových pásem, výškových podmínek a kdy vyhledat lékařskou péči v zahraničí.</p><p><strong>Cestovní lékařská dokumentace</strong></p><p>Je-li to klinicky indikováno, lékař vystaví souhrnný cestovní zdravotní dopis — užitečný pro pacienty převážející léky, zdravotnické pomůcky nebo vyžadující zdravotní dokumentaci pro cestovní pojištění či hraniční kontrolu.</p><p><strong>Postcestovní vyšetření</strong></p><p>Vrátili jste se z rizikovější destinace s příznaky? Váš lékař zhodnotí horečku, gastrointestinální příznaky, kožní obtíže nebo jiné potíže v kontextu vaší cestovní anamnézy — s odesláním ke specializovanému vyšetření v oblasti tropické medicíny, je-li to indikováno.</p><h2>Poznámka k žluté zimnici</h2><p>Očkování proti žluté zimnici a Mezinárodní očkovací průkaz — vyžadovaný pro vstup do některých zemí — musí být podáno a vystaveno osobně v autorizovaném očkovacím centru. Toto nelze zajistit prostřednictvím telemedicínské konzultace.</p><p>V Španělsku je očkování proti žluté zimnici dostupné v mezinárodních zdravotních centrech autorizovaných odbory veřejného zdraví autonomních komunit — v Madridu, Barceloně a dalších hlavních městech. Váš lékař vám poradí, které destinace vyžadují potvrzení o očkování proti žluté zimnici, a po konzultaci vás nasměruje do příslušného autorizovaného centra.</p><h2>Destinace běžně posuzované</h2><p><strong>Subsaharská Afrika</strong></p><p>Oblasti s vysokým rizikem malárie, požadavky na očkování proti žluté zimnici, břišní tyfus, hepatitida A, zvážení očkování proti vzteklině při cestách do venkovských oblastí, meningokokové očkování pro specifické regiony.</p><p><strong>Jihovýchodní Asie</strong></p><p>Riziko malárie ve venkovských oblastech, japonská encefalitida při delších pobytech na venkově, břišní tyfus, hepatitida A, zvážení vztekliny, povědomí o horečce dengue.</p><p><strong>Jižní Asie — Indie, Nepál, Pákistán, Bangladéš</strong></p><p>Břišní tyfus, hepatitida A, posouzení malárie podle regionu, plánování pobytu ve vyšší nadmořské výšce pro Nepál, zvážení vztekliny.</p><p><strong>Latinská Amerika a Karibik</strong></p><p>Požadavky na očkování proti žluté zimnici pro některé země, malárie podle regionu, břišní tyfus, hepatitida A, povědomí o horečce dengue.</p><p><strong>Blízký východ a Severní Afrika</strong></p><p>Meningokokové požadavky pro poutníky na hadždž a umru, břišní tyfus, hepatitida A, doporučení specifické pro destinaci.</p><p><strong>Východní Evropa a Střední Asie</strong></p><p>Klíšťová encefalitida v zalesněných oblastech, hepatitida A, doporučení specifické pro destinaci.</p><p><strong>Severní Amerika, západní Evropa, Austrálie a Nový Zéland</strong></p><p>Nízké infekční riziko — konzultace se zaměřuje na řízení chronických onemocnění, lékařskou dokumentaci pro cestovní pojištění a kontrolu rutinního očkování.</p><h2>Kdo by si měl tuto konzultaci rezervovat</h2><p><strong>Před cestou:</strong></p><ul><li>Kdokoli cestující do destinace s rizikem malárie — to je nejčastější a nejdůležitější důvod k návštěvě lékaře před cestou</li><li>Pacienti s chronickými onemocněními — diabetes, hypertenze, astma, duševní onemocnění — kteří potřebují lékařské poradenství ohledně zvládání svého zdraví v zahraničí</li><li>Pacienti převážející léky nebo zdravotnické pomůcky, kteří potřebují dokumentaci pro celní úřady nebo pojištění</li><li>Rodiny cestující s dětmi do rizikovějších destinací</li><li>Obchodní cestující s častými mezinárodními cestami</li></ul><p><strong>Po cestě:</strong></p><ul><li>Cestující, kteří se po návratu z rizikovější destinace vracejí s horečkou, gastrointestinálními příznaky, kožními obtížemi nebo jinými potížemi</li><li>Kdokoli, kdo během cesty onemocněl a chce po návratu klinické vyšetření</li></ul><h2>S jakým předstihem si mám rezervovat</h2><p>Plánování cestovního zdraví by ideálně mělo začít čtyři až šest týdnů před odjezdem pro většinu destinací — aby byl dostatek času na podání očkování a dokončení očkovacích schémat, která vyžadují více dávek.</p><p>Pro cestující na poslední chvíli si rezervujte co nejdříve a lékař vám poradí, co je v dostupném čase možné a co upřednostnit.</p>",
+      "ctaLabel": null,
+      "sortOrder": 140,
+      "durationMinutes": 15,
+      "basePriceCents": 4900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.265Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k3mk0005asjupoleeuhh",
+          "kind": "IMAGE",
+          "key": "media/cb6f35b4-6801-4c7c-8e7e-74d66076db21-es-medicina-viaje-online.png",
+          "path": "/api/media/media/cb6f35b4-6801-4c7c-8e7e-74d66076db21-es-medicina-viaje-online.png",
+          "altText": "Medicina de Viaje"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q7sp002wngjuf8xwqlst",
+          "question": "Potřebuji antimalarika — mohu to vyřídit prostřednictvím této služby?",
+          "answer": "Ano. Posouzení antimalarické profylaxe je jedním z hlavních důvodů pro využití této služby. Váš praktický lékař vyhodnotí nejvhodnější antimalarikum pro vaši destinaci, itinerář a zdravotní profil — a vystaví klinickou dokumentaci přímo. Tu předložíte v jakékoli lékárně podle vlastního výběru ve Španělsku.",
+          "sortOrder": 0,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q7sp002xngjudq0h1xte",
+          "question": "Mohu prostřednictvím této služby získat certifikát o očkování proti žluté zimnici?",
+          "answer": "Ne. Očkování proti žluté zimnici a Mezinárodní očkovací průkaz musí být podány a vydány osobně v autorizovaném očkovacím centru. Tvůj lékař ti poradí, které destinace vyžadují toto osvědčení, a po konzultaci tě nasměruje do příslušného autorizovaného centra ve Španělsku.",
+          "sortOrder": 1,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q7sp002yngju4wna6or0",
+          "question": "Mohou být vakcíny podány během návštěvy?",
+          "answer": "Ne. Toto je služba klinického vyhodnocení a plánování. Podání vakcín vyžaduje osobní návštěvu očkovacího centra. Váš lékař vám poradí, jaké vakcíny potřebujete a kam jít — abyste do očkovacího centra přišli s jasným plánem.",
+          "sortOrder": 2,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q7sp002zngjuwfq5zxpf",
+          "question": "Co si musím přinést na svou návštěvu?",
+          "answer": "Váš cestovní itinerář, podrobnosti o cílové destinaci, plánované aktivity, datum odjezdu a veškeré existující záznamy o očkování. Pokud máte očkovací průkaz z předchozích cest, přineste jej — váš lékař jej zkontroluje v celém rozsahu.",
+          "sortOrder": 3,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q7sp0030ngju7smx2bs8",
+          "question": "Jak dlouho dopředu bych měl(a) rezervovat?",
+          "answer": "Ideálně čtyři až šest týdnů před odjezdem. Při cestách na poslední chvíli si rezervujte co nejdříve — váš lékař vám poradí, co je možné.",
+          "sortOrder": 4,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q7sp0031ngju7wbaugco",
+          "question": "Mohu tento servis použít, pokud jsem po cestování onemocněl?",
+          "answer": "Ano. Postcestovní vyšetření je k dispozici. Pokud se vracíte z destinace s vyšším rizikem a máte příznaky — zejména horečku — objednejte se co nejdříve. Některá tropická onemocnění vyžadují včasnou diagnózu a léčbu.",
+          "sortOrder": 5,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q7sp0032ngjuvz2duxb3",
+          "question": "Je tato služba vhodná pro rodiny s dětmi?",
+          "answer": "Ano. Plánování zdravotní péče na cestách pro rodiny s dětmi je ústřední součástí této služby.",
+          "sortOrder": 6,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q7sp0033ngjuxsh1kzjw",
+          "question": "Může lékař vystavit potvrzení k lékům, které s sebou mám?",
+          "answer": "Ano. Váš lékař vystaví souhrnný zdravotní cestovní dopis dokumentující vaši medikaci, zdravotní stavy a lékařské přístroje — užitečný pro celní úřady, pohraniční zdravotnické orgány a požadavky leteckých společností.",
+          "sortOrder": 7,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q7sp0034ngju6kmo6of8",
+          "question": "Mám cukrovku — je pro mě tato služba relevantní?",
+          "answer": "Ano, zejména. Zvládání diabetu během cesty — skladování inzulinu, úprava časového pásma pro dávkování, dietní úvahy a kdy vyhledat péči v zahraničí — vyžaduje specifické lékařské poradenství, které očkovací centrum nemůže poskytnout.",
+          "sortOrder": 8,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q7sp0035ngju75nv52ww",
+          "question": "Potřebuji španělské zdravotní pojištění?",
+          "answer": "Ne. Jedná se o soukromou službu s přímou úhradou. Klinická dokumentace vydaná prostřednictvím této služby se poskytuje za plnou soukromou cenu bez ohledu na stav pojištění.",
+          "sortOrder": 9,
+          "resolvedLocale": "CS"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "CS",
+      "links": [
+        {
+          "id": "cmre7u68c005wg8juuxx04847",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Gestión de enfermedades crónicas durante el viaje?",
+          "body": "Si tu situación está relacionada con gestión de enfermedades crónicas durante el viaje, nuestra Enfermedades Crónicas te ofrece la evaluación adecuada.",
+          "ctaLabel": "Enfermedades Crónicas",
+          "targetSlug": "enfermedades-cronicas-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7u70f005yg8jufqnc34hd",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con fiebre u otros síntomas al regreso?",
+          "body": "Para fiebre u otros síntomas al regreso, consulta nuestra página de Consulta Médica General — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

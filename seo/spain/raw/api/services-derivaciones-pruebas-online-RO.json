@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/derivaciones-pruebas-online?countryCode=es&locale=RO",
+  "checkedAt": "2026-09-13T02:30:07.313Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qas1003sngjus0w2obwn",
+      "kind": "GENERAL",
+      "slug": "derivaciones-pruebas-online",
+      "name": "Trimiteri și teste",
+      "summary": null,
+      "seoTitle": "Trimiteri și teste online Spania | Analize | Medic de familie",
+      "seoDescription": "Ai nevoie de o scrisoare de trimitere către un specialist, analize sau investigații imagistice în Spania? Medicii noștri de familie înscriși în colegiul medicilor emit documentație clinică după o evaluare completă. În aceeași zi în Spania.",
+      "seoKeywords": [
+        "derivaciones médicas online España",
+        "carta derivación especialista online España",
+        "analíticas privadas online España",
+        "pruebas imagen solicitud online España",
+        "derivación médico cabecera online España"
+      ],
+      "heroTitle": "Trimiteri și analize — Documentație clinică online în aceeași zi",
+      "heroDescription": "Ai nevoie de o scrisoare de trimitere către un specialist privat în Spania? Ai nevoie ca un medic să solicite analize sau investigații imagistice înainte de a le putea programa? Ai primit rezultate de la un specialist spaniol pe care dorești să le revizuiască și să ți le explice clar înainte de a decide cum să procedezi? Medicii noștri de familie, membri ai colegiului profesional conform cerințelor Organizației Medicale Colegiale (OMC), emit scrisori de trimitere clinice, cereri de analize și cereri de investigații imagistice după o evaluare clinică completă — oferindu-ți documentația de care ai nevoie pentru a accesa îngrijire specializată privată și investigații diagnostice în Spania. În aceeași zi, din orice punct al țării, în spaniolă, engleză sau portugheză.",
+      "detailBody": "<h2>Cum funcționează accesul la specialiști în Spania</h2><p>Spania are un sistem dual de trimitere — unul pentru sistemul public și unul pentru asistența privată.</p><p>Accesul la specialiști în sistemul public necesită trimitere de la medicul de familie (médico de familia) contractat cu SNS. Fără această trimitere, programările la specialiști din sistemul public nu sunt acoperite. Global Health nu poate furniza trimiteri din sistemul public — acest lucru necesită un medic de familie contractat cu sistemul public de sănătate spaniol.</p><p>Accesul la specialiști privați este disponibil direct în majoritatea cazurilor — poți programa o consultație la un specialist privat fără scrisoare de trimitere. Totuși, prezentarea la o consultație cu un specialist fără context clinic reduce semnificativ calitatea acelei prime consultații. Un specialist care primește o scrisoare de trimitere clară — care descrie simptomele tale, istoricul relevant, medicația curentă și întrebarea clinică specifică — efectuează o evaluare mai concentrată și mai eficientă.</p><p>Acest serviciu acoperă:</p><ul><li>Scrisori private de trimitere — pentru consultații la specialiști privați la alegerea ta</li><li>Solicitări de analize — pentru teste de laborator private în centre de recoltare din toată Spania</li><li>Solicitări de investigații imagistice — pentru radiografie, ecografie, rezonanță magnetică sau TAC private</li><li>Scrisori de rezumat clinic — care documentează evaluarea și constatările tale pentru continuitatea îngrijirii</li><li>Revizuirea rezultatelor — rezultate de analize, rapoarte imagistice sau scrisori de la specialiști revizuite și explicate clar</li></ul><p>Acest serviciu nu acoperă:</p><ul><li>Trimiteri din sistemul public al SNS — acestea necesită medic de familie contractat cu SNS</li><li>Trimiteri de urgență — sună la 112 sau mergi imediat la cel mai apropiat serviciu de urgență</li></ul><h2>Pentru cine este acest serviciu</h2><p>Această consultație este potrivită pentru:</p><ul><li>Oricine dorește să vadă un specialist privat în Spania și are nevoie de o scrisoare de trimitere clinică pentru a însoți consultația</li><li>Pacienții care au nevoie de analize sau investigații imagistice solicitate de un medic înainte de a le rezerva în mod privat</li><li>Pacienții care au primit rezultate — de analize, investigații imagistice sau consultații cu specialiști — pe care doresc să fie revizuite și explicate clar</li><li>Pacienții cu o preocupare clinică specifică ce doresc să fie evaluată și documentată formal înainte de a căuta îngrijire de specialitate</li><li>Pacienții care au nevoie de o scrisoare de rezumat clinic — în scopuri de asigurare, pentru un medic nou sau pentru continuitatea îngrijirii</li><li>Pacienții care au primit documentație clinică în spaniolă pe care doresc să fie revizuită și pusă în context</li><li>Oricine din Spania fără medic de familie desemnat care are nevoie de documentație clinică pentru a accesa îngrijire specializată privată</li></ul><h2>De ce o scrisoare de trimitere adaugă valoare</h2><p>Accesul direct la specialiști privați în Spania este disponibil în majoritatea cazurilor fără scrisoare de trimitere. Dar un specialist care te vede fără context trebuie să pornească de la zero — iar timpul consultației este folosit pentru a aduna informații care ar fi putut fi transmise în scris, dinainte.</p><p>O scrisoare de trimitere emisă după evaluare clinică conține tot ce trebuie să știe specialistul înainte să intri în cabinetul său — simptomele, durata, severitatea, medicația curentă, investigațiile deja efectuate și întrebarea clinică specifică pe care soliciți să o abordeze. Specialistul poate trece direct la problema clinică.</p><p>Diferența în calitatea primei consultații la specialist — între a ajunge cu o scrisoare de trimitere completă și a ajunge fără context — este semnificativă.</p><h2>Scrisori de trimitere — ce includ</h2><p>O scrisoare de trimitere emisă de un medic de familie Global Health după evaluare clinică include:</p><ul><li>Datele pacientului și istoricul medical relevant</li><li>Descrierea problemei prezentate — simptome, durată, severitate și constatări clinice relevante din videoconsultație</li><li>Medicația curentă și investigațiile relevante deja finalizate</li><li>Întrebarea clinică specifică pentru specialist — ce soliciți să evalueze sau să recomande</li><li>Gradul de urgență — de rutină, curând sau urgent — pe baza evaluării clinice</li></ul><p>Scrisoarea este emisă în spaniolă pentru specialiștii vorbitori de spaniolă. Dacă ai nevoie de o versiune în engleză pentru un medic anglofon, discută acest lucru cu medicul tău în timpul consultației.</p><h2>Analize — ce poate fi solicitat</h2><p>După evaluarea clinică, medicul tău de familie poate emite solicitări de analize pentru o gamă largă de investigații, inclusiv:</p><p><strong>Metabolic și cardiovascular</strong></p><ul><li>Hemoleucogramă completă</li><li>Glucoză à jeun și HbA1c</li><li>Profil lipidic — colesterol total, LDL, HDL, trigliceride</li><li>Funcție renală — creatinină, eGFR, uree, electroliți</li><li>Funcție hepatică</li><li>Funcție tiroidiană — TSH, FT4, FT3</li><li>Acid uric</li><li>Feritină, studii ale fierului și B12/folat</li></ul><p><strong>Hormonal și reproductiv</strong></p><ul><li>Profil de testosteron — testosteron total și liber, LH, FSH, SHBG</li><li>Profil hormonal feminin — estradiol, FSH, LH, progesteron, AMH</li><li>Anticorpi tiroidieni — anti-TPO, anti-tiroglobulină</li><li>Cortizol</li><li>Prolactină</li><li>DHEA-S</li></ul><p><strong>Inflamator și autoimun</strong></p><ul><li>CRP și VSH</li><li>Factor reumatoid și anti-CCP</li><li>Profiluri ANA și ANCA</li><li>Niveluri ale complementului</li></ul><p><strong>Boli infecțioase</strong></p><ul><li>Serologie HIV, hepatită B, hepatită C</li><li>Profiluri ITS</li><li>Verificări ale imunității post-vaccinare</li></ul><p><strong>Altele</strong></p><ul><li>Vitamina D</li><li>Screening pentru boala celiacă — anti-tTG IgA</li><li>PSA — antigen specific prostatic</li><li>hCG — test de sarcină</li><li>Profiluri de alergie — IgE specific</li></ul><p>Solicitările de analize sunt emise după evaluare clinică — medicul tău te sfătuiește ce teste sunt indicate din punct de vedere clinic pentru prezentarea ta specifică.</p><h2>Acces la analize private în Spania</h2><p>Centrele private de recoltare pentru analize sunt disponibile pe scară largă în toată Spania — în Madrid, Barcelona și în toate orașele importante și capitalele de provincie. Rețelele private de laboratoare operează pe întreg teritoriul, cu centre de recoltare în majoritatea localităților.</p><p>După consultația ta, medicul emite solicitarea de analize și te sfătuiește unde să mergi pentru recoltare, în funcție de locația ta. Îți programezi direct consultația pentru recoltare — nu este necesară asigurare medicală spaniolă pentru analize private. Rezultatele sunt, în general, disponibile în 24 până la 72 de ore, în funcție de testele solicitate, deși unele profiluri specializate pot dura mai mult.</p><h2>Solicitări de investigații imagistice</h2><p>Dacă radiografia, ecografia, rezonanța magnetică sau TAC sunt indicate din punct de vedere clinic după evaluare, medicul tău emite o solicitare formală de imagistică. Radiologia privată este disponibilă pe scară largă în Spania — majoritatea spitalelor private și centrelor de radiologie acceptă programare directă cu solicitarea unui medic.</p><p>Medicul tău te sfătuiește cu privire la cea mai potrivită modalitate imagistică pentru întrebarea ta clinică specifică și la urgența investigației.</p><h2>Revizuirea rezultatelor</h2><p>Ai primit rezultate de analize, rapoarte imagistice sau scrisori de la specialiști pe care dorești să fie revizuite și explicate clar? Medicul tău le revizuiește în întregime în cadrul unei consultații de urmărire — explicând constatările clinice, ce înseamnă ele pentru sănătatea ta, care sunt pașii următori și dacă este necesară o investigație suplimentară sau o evaluare de specialitate.</p><p>Acest lucru este deosebit de util pentru pacienții care au primit rezultate sau scrisori clinice în spaniolă și doresc să fie explicate clar — fie că este vorba despre rezidenți spanioli care doresc mai mult timp pentru a discuta rezultatele decât permite o consultație standard, fie despre rezidenți internaționali care au nevoie ca conținutul clinic să fie explicat în engleză sau portugheză.</p>",
+      "ctaLabel": null,
+      "sortOrder": 120,
+      "durationMinutes": 15,
+      "basePriceCents": 3500,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.264Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0jvsd0001asjuwczqne2v",
+          "kind": "IMAGE",
+          "key": "media/ca5aeb3b-c263-4ee0-8662-b763c407f9cc-es-derivaciones-pruebas-online.png",
+          "path": "/api/media/media/ca5aeb3b-c263-4ee0-8662-b763c407f9cc-es-derivaciones-pruebas-online.png",
+          "altText": "Derivaciones y Pruebas"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qb0g003tngjuzcplymij",
+          "question": "Pot obține o scrisoare de trimitere fără o evaluare clinică completă?",
+          "answer": "Nu. Scrisorile de trimitere se emit după o evaluare clinică completă. Medicul tău trebuie să îți evalueze simptomele și istoricul pentru a redacta o scrisoare de trimitere cu semnificație clinică. O scrisoare de trimitere fără evaluare clinică nu ar adăuga valoare consultației tale cu specialistul.",
+          "sortOrder": 0,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qb0g003ungjuz3gp78qy",
+          "question": "Poate acest serviciu să ofere trimiteri din sistemul public al SNS?",
+          "answer": "Nu. Trimiterile din sistemul public din Spania necesită medic de familie contractat cu SNS. Global Health oferă scrisori de trimitere private pentru acces la specialiști privați.",
+          "sortOrder": 1,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qb0g003vngjuix3g83vt",
+          "question": "Scrisoarea de trimitere trebuie să fie în spaniolă?",
+          "answer": "Pentru specialiștii vorbitori de spaniolă, da — scrisoarea de trimitere se emite în spaniolă. Pentru furnizorii vorbitori de engleză sau specialiștii internaționali, poate fi emisă în engleză. Medicul tău o emite în limba potrivită, în funcție de persoana pe care urmează să o vezi — discută despre asta în timpul consultației.",
+          "sortOrder": 2,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qb0g003wngju5rvz2cky",
+          "question": "Cât durează până ajung rezultatele analizelor?",
+          "answer": "Timpurile de răspuns variază în funcție de analiză — majoritatea analizelor standard sunt disponibile în 24 până la 72 de ore de la centrele private de recoltare din Spania. Unele panouri specializate durează mai mult. Medicul tău te consiliază cu privire la timpul de răspuns așteptat la emiterea solicitării.",
+          "sortOrder": 3,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qb0g003xngju2n8wfdnu",
+          "question": "Pot folosi acest serviciu dacă am asigurare medicală privată spaniolă?",
+          "answer": "Da — dar acest serviciu acoperă trimiteri private și solicitări private de investigații. Asigurarea ta medicală privată poate acoperi consultațiile la specialiști și analizele, în funcție de polița ta specifică — verifică la asigurătorul tău. Analizele și consultațiile la specialiști rezervate prin acest serviciu sunt facturate la prețul privat integral, indiferent de asigurarea ta.",
+          "sortOrder": 4,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qb0g003yngjugl2iwso9",
+          "question": "Ce se întâmplă dacă rezultatele mele arată ceva grav?",
+          "answer": "Dacă revizuirea rezultatelor tale relevă constatări care necesită atenție urgentă, medicul tău te consiliază imediat cu privire la pașii următori adecvați — inclusiv dacă este nevoie de îngrijiri de urgență. Dacă este nevoie de îngrijiri de urgență, sună la 112 sau mergi imediat la cel mai apropiat serviciu de urgențe.",
+          "sortOrder": 5,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qb0g003zngjuhaukyflq",
+          "question": "Pot folosi acest serviciu fără medic de familie în Spania?",
+          "answer": "Da. Acest serviciu este disponibil pentru orice persoană din Spania — fără înregistrare prealabilă, fără a fi necesar medic de familie, fără a fi necesară asigurare medicală.",
+          "sortOrder": 6,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qb0g0040ngju96ofwc1j",
+          "question": "Pot folosi acest serviciu din orice punct al Spaniei?",
+          "answer": "Da — inclusiv Insulele Baleare, Insulele Canare, Ceuta și Melilla. Ai nevoie doar de o conexiune stabilă la internet și de un dispozitiv cu cameră.",
+          "sortOrder": 7,
+          "resolvedLocale": "RO"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "RO",
+      "links": [
+        {
+          "id": "cmre7snma002qg8jult0p90xg",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con analíticas cardiológicas y metabólicas?",
+          "body": "Para analíticas cardiológicas y metabólicas, consulta nuestra página de Cardiología Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Cardiología Especialista",
+          "targetSlug": "cardiologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7soee002sg8ju1hnpt499",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre solicitar RMN cerebral o electromiograma?",
+          "body": "Nuestra Neurología Especialista está pensada específicamente para solicitar RMN cerebral o electromiograma.",
+          "ctaLabel": "Neurología Especialista",
+          "targetSlug": "neurologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7smu6002og8ju8lndhczu",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Analíticas hormonales y metabólicas?",
+          "body": "Si tu situación está relacionada con analíticas hormonales y metabólicas, nuestra Control de Peso te ofrece la evaluación adecuada.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7sp6h002ug8jum26oow57",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Segunda opinión sobre resultados recibidos?",
+          "body": "Si tu situación está relacionada con segunda opinión sobre resultados recibidos, nuestra Segunda Opinión Médica te ofrece la evaluación adecuada.",
+          "ctaLabel": "Segunda Opinión Médica",
+          "targetSlug": "segunda-opinion-medica",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

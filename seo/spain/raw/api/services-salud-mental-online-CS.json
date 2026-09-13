@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/salud-mental-online?countryCode=es&locale=CS",
+  "checkedAt": "2026-09-13T02:29:52.651Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q3a5001ongjur495me3b",
+      "kind": "GENERAL",
+      "slug": "salud-mental-online",
+      "name": "Duševní zdraví",
+      "summary": null,
+      "seoTitle": "Online duševní zdraví Španělsko | Klinické hodnocení | Registrovaný lékař",
+      "seoDescription": "Úzkost, deprese, vyhoření nebo jiné obavy o duševní zdraví. Naši registrovaní lékaři nabízejí důvěrná klinická vyšetření prostřednictvím zabezpečeného videohovoru. Ještě tentýž den ve Španělsku.",
+      "seoKeywords": [
+        "salud mental online España",
+        "ansiedad médico online España",
+        "depresión evaluación online España",
+        "burnout médico online España",
+        "salud mental expats España"
+      ],
+      "heroTitle": "Duševní zdraví — důvěrné klinické online hodnocení",
+      "heroDescription": "Duševní potíže — úzkost, deprese, vyhoření, potíže s adaptací v nové zemi nebo přetrvávající vzorce myšlení a chování, které ovlivňují kvalitu vašeho života — nejlépe reagují na strukturovanou klinickou podporu založenou na důkazech od kvalifikovaného odborníka. Naši lékaři, zapsaní v souladu s požadavky Organizace lékařských kolegií (OMC), nabízejí klinická vyšetření duševního zdraví prostřednictvím zabezpečeného videohovoru — bez čekárny, bez jazykových bariér, ještě tentýž den, odkudkoli ve Španělsku, ve španělštině, angličtině nebo portugalštině.",
+      "detailBody": "<h2>Co je tato služba — a co není</h2><p>Porozumění tomu, jaká úroveň podpory v oblasti duševního zdraví je pro vás vhodná, vám pomáhá získat nejvhodnější péči.</p><p><strong>Toto klinické vyšetření duševního zdraví na úrovni všeobecného lékařství je vhodné pro:</strong></p><ul><li>Počáteční posouzení úzkosti, nízké nálady, deprese a stresu</li><li>Screening běžných stavů duševního zdraví s využitím ověřených klinických nástrojů</li><li>Posouzení toho, jak příznaky duševního zdraví ovlivňují fyzické zdraví</li><li>Klinická doporučení a plánování péče dle uvážení lékaře</li><li>Odeslání k psychologii, psychiatrii nebo jiné specializované podpoře, je-li indikováno</li><li>Orientace v dostupných službách duševního zdraví ve Španělsku</li><li>Revize aktuálního zvládání duševního zdraví a průběžná podpora</li><li>ADHD — počáteční screening a cesta k odeslání, je-li indikováno</li></ul><p><strong>Tato služba není vhodná pro:</strong></p><ul><li>Krizovou intervenci — pokud jste v krizi, použijte zdroje na začátku této stránky</li><li>Psychiatrické vyšetření — pokud potřebujete psychiatra, váš lékař zajistí odeslání</li><li>Psychoterapii nebo poradenství — toto je lékařské vyšetření, nikoli terapeutické sezení</li><li>Vyšetření psychózy, těžké bipolární poruchy nebo komplexních psychiatrických stavů</li><li>Nedobrovolné psychiatrické vyšetření nebo léčbu</li></ul><p>Nejste si jisti, jakou úroveň podpory potřebujete? Začněte tímto vyšetřením. Váš lékař posoudí váš stav a poradí nejvhodnější další kroky.</p><h2>Stavy, které se obvykle hodnotí</h2><p><strong>Úzkost a stres</strong></p><ul><li>Generalizovaná úzkostná porucha</li><li>Sociální úzkost a úzkost z výkonu</li><li>Úzkost o zdraví</li><li>Panikové ataky a panická porucha</li><li>Pracovní stres a vyhoření</li><li>Potíže s adaptací — nová země, nová práce, změny ve vztazích</li><li>Stres specifický pro expaty — kulturní adaptace, izolace, obavy o identitu, odloučení od rodiny</li></ul><p><strong>Nálada</strong></p><ul><li>Nízká nálada a deprese</li><li>Trvalý smutek a ztráta zájmu</li><li>Emoční vyčerpání a anhedonie</li><li>Poporodní změny nálady — nízká nálada a úzkost po porodu</li><li>Sezónní afektivní porucha</li><li>Truchlení a ztráta</li></ul><p><strong>Spánek a chování</strong></p><ul><li>Insomnie a poruchy spánku s psychologickými přispívajícími faktory</li><li>Únava s psychologickými přispívajícími faktory</li><li>Změny chuti k jídlu a stravovacích vzorců související s náladou</li><li>Potíže s koncentrací a kognitivní potíže související s úzkostí nebo depresí</li></ul><p><strong>Trauma a životní události</strong></p><ul><li>Počáteční posouzení příznaků souvisejících s traumatem — s odesláním k specializované psychologické podpoře, je-li indikováno</li><li>Adaptace na významné životní události — ztráta, rozchod, ztráta zaměstnání</li><li>Stres expatů a relokace — kulturní adaptace, izolace, obavy o identitu</li></ul><p><strong>Průběžné vedení péče o duševní zdraví</strong></p><ul><li>Revize existujících stavů duševního zdraví spravovaných na úrovni všeobecného lékařství</li><li>Posouzení duševního zdraví v kontextu zvládání chronických onemocnění</li><li>ADHD — počáteční screening a odeslání k formálnímu vyšetření, je-li indikováno</li></ul><h2>Co konzultace zahrnuje</h2><p><strong>Důvěrné klinické vyšetření</strong></p><p>Lékař provede strukturované a komplexní vyšetření duševního zdraví — zahrnující vaše aktuální příznaky, náladu, spánek, energii, chuť k jídlu, koncentraci, vztahy, pracovní nebo studijní tlaky, anamnézu a jakoukoli předchozí podporu duševního zdraví. Rozhovor je vedený, důvěrný a bez posuzování.</p><p><strong>Ověřené screeningové nástroje</strong></p><p>Kde je to vhodné, lékař používá ověřené klinické screeningové nástroje — včetně PHQ-9 pro depresi a GAD-7 pro úzkost — čímž zajišťuje strukturované a na důkazech založené posouzení.</p><p><strong>Posouzení bezpečnosti</strong></p><p>Každá konzultace v oblasti duševního zdraví zahrnuje strukturované posouzení bezpečnosti — prováděné citlivě jako standardní součást klinické péče.</p><p><strong>Personalizovaný plán péče</strong></p><p>Na základě vyšetření lékař poradí nejvhodnější další kroky — které mohou zahrnovat doporučení týkající se pohody a životního stylu, odeslání k psychologii nebo psychoterapii, orientaci v dostupných službách ve Španělsku, psychiatrické odeslání, je-li indikováno, nebo klinická doporučení dle uvážení lékaře.</p><p><strong>Orientace v systému</strong></p><p>Orientace v systému duševního zdraví ve Španělsku jako mezinárodní rezident je skutečně obtížná. Váš lékař poskytne jasné informace o tom, jaké služby jsou dostupné v angličtině, jak k nim přistupovat a co lze od španělského systému duševního zdraví očekávat.</p><p><strong>Klinická dokumentace — dle uvážení lékaře</strong></p><p>Je-li to klinicky indikováno na úrovni všeobecného lékařství, lékař vystaví příslušnou klinickou dokumentaci.</p><p>Poznámka: Omamné látky a určité psychiatrické látky vyžadují zvláštní dokumentaci, kterou nelze vystavit elektronicky. Váš lékař vám sdělí, zda se to týká vaší situace.</p><h2>Duševní zdraví pro expaty ve Španělsku</h2><p>Potíže v oblasti duševního zdraví jsou neúměrně časté mezi expaty a mezinárodními rezidenty — poháněné izolací, kulturní adaptací, jazykovými bariérami, odloučením od rodiny a kumulovaným stresem z budování života v nové zemi.</p><p>Přístup k podpoře duševního zdraví ve Španělsku jako mezinárodní rezident má další výzvy. Psychologové a psychiatři hovořící anglicky existují v Madridu a Barceloně — ale dostupnost je omezená, čekací doby mohou být dlouhé a náklady na soukromou péči o duševní zdraví ve Španělsku jsou významné. Pro expaty mimo velká města jsou možnosti ještě omezenější.</p><p>Naše služba poskytuje dostupný první krok — strukturované a důvěrné klinické vyšetření duševního zdraví ve stejný den odkudkoli ze Španělska — s jasným vedením ohledně dalších kroků a toho, jak získat specializovanou podporu tam, kde je potřeba.</p><h2>Důvěrnost</h2><p>Vše, o čem se během vaší konzultace v oblasti duševního zdraví hovoří, je důvěrné a chráněné podle španělských a evropských právních předpisů o ochraně údajů — včetně GDPR (EU 2016/679) provedeného prostřednictvím Ley Orgánica 3/2018 (LOPDGDD) a Ley 41/2002 o autonomii pacienta.</p><p>Existují dvě okolnosti, kdy je třeba důvěrnost pečlivě zvážit — pokud existuje vážné a bezprostřední riziko pro váš život nebo bezpečí, nebo pokud existuje vážné riziko pro bezpečnost jiné osoby. Váš lékař s vámi důvěrnost probere na začátku konzultace.</p>",
+      "ctaLabel": null,
+      "sortOrder": 180,
+      "durationMinutes": 20,
+      "basePriceCents": 5900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.267Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru15qck0002bsjuhioqk3lk",
+          "kind": "IMAGE",
+          "key": "media/cebaf4cb-fdb3-4acb-a6cd-876c804340d2-es-salud-mental-online.png",
+          "path": "/api/media/media/cebaf4cb-fdb3-4acb-a6cd-876c804340d2-es-salud-mental-online.png",
+          "altText": "Salud Mental"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q3iq001pngjuutfce816",
+          "question": "Je to poradenská služba nebo terapie?",
+          "answer": "Ne. Jedná se o klinické hodnocení duševního zdraví na úrovni všeobecného lékařství. Naši lékaři posuzují váš současný stav duševního zdraví, poskytují klinická doporučení a doporučí vás na odpovídající úroveň podpory — včetně poradenství, psychoterapie nebo psychiatrie, kde je to indikováno. Poradenské ani psychoterapeutické sezení nejsou prostřednictvím této služby poskytovány.",
+          "sortOrder": 0,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q3iq001qngju5f0v81l4",
+          "question": "Co když potřebuji navštívit psychiatra?",
+          "answer": "Pokud vaše vyšetření naznačuje, že je potřeba psychiatrické vyšetření, váš lékař jasně poradí a zajistí doporučení do příslušné specializované služby — včetně psychiatrických služeb v angličtině ve Španělsku, kde jsou k dispozici.",
+          "sortOrder": 1,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q3iq001rngjuerollzss",
+          "question": "Bude můj zaměstnavatel nebo někdo jiný informován?",
+          "answer": "Ne. Vaše konzultace je zcela důvěrná a je chráněna podle španělské a evropské legislativy o ochraně osobních údajů. Informace nejsou sdíleny bez vašeho výslovného souhlasu, s výjimkou velmi omezených okolností popsaných v předchozí části o důvěrnosti.",
+          "sortOrder": 2,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q3iq001sngjurmbqz9et",
+          "question": "Mohu používat tuto službu, i když už navštěvuji terapeuta?",
+          "answer": "Ano. Klinické vyšetření duševního zdraví na úrovni všeobecného lékařství může doplnit pokračující psychologickou nebo terapeutickou podporu — zejména tam, kde jsou zapotřebí klinická doporučení, posouzení fyzického zdraví nebo koordinace péče.",
+          "sortOrder": 3,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q3iq001tngju30mze1fo",
+          "question": "Je tato služba vhodná pro dospívající?",
+          "answer": "Konzultace v oblasti duševního zdraví pro pacienty mladší 16 let vyžadují přítomnost a souhlas rodičů nebo zákonných zástupců. U dospívajících ve věku 16 let a více lékař individuálně posoudí způsobilost k udělení souhlasu.",
+          "sortOrder": 4,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q3iq001ungju0ssuoej9",
+          "question": "Co se stane, když budu v krizi během konzultace nebo po ní?",
+          "answer": "Pokud jste v krizi, použijte zdroje na začátku této stránky — Telefon proti sebevraždám 024 nebo 112 v případě bezprostředního nebezpečí. Tato služba není krizová intervenční služba.",
+          "sortOrder": 5,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q3iq001vngjuiskebii5",
+          "question": "Mohu prostřednictvím této služby prodiskutovat obavy ohledně ADHD?",
+          "answer": "Ano. Počáteční screening ADHD na úrovni praktického lékařství je v rámci této služby k dispozici. Formální diagnóza ADHD vyžaduje specializované vyšetření — váš lékař poradí o vhodné cestě k odeslání, pokud screening ukáže, že je to opodstatněné.",
+          "sortOrder": 6,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q3iq001wngju98s9iyvg",
+          "question": "Mohu tuto službu používat odkudkoli ve Španělsku?",
+          "answer": "Ano — včetně Baleárských ostrovů, Kanárských ostrovů, Ceuty a Melilly. Stačí stabilní připojení k internetu a zařízení s kamerou.",
+          "sortOrder": 7,
+          "resolvedLocale": "CS"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "CS",
+      "links": [
+        {
+          "id": "cmre7sriv002yg8ju9eokrc9p",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Evaluación psiquiátrica especializada?",
+          "body": "Si tu situación está relacionada con evaluación psiquiátrica especializada, nuestra Psiquiatría Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Psiquiatría Especialista",
+          "targetSlug": "psiquiatra-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7ssaz0030g8ju13nnilyh",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con apoyo psicológico y psicoterapia?",
+          "body": "Para apoyo psicológico y psicoterapia, consulta nuestra página de Psicología Clínica — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Psicología Clínica",
+          "targetSlug": "psicologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7stv60034g8juje70ar9l",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Síntomas neurológicos que pueden tener base psicológica?",
+          "body": "Si tu situación está relacionada con síntomas neurológicos que pueden tener base psicológica, nuestra Neurología Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Neurología Especialista",
+          "targetSlug": "neurologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7st330032g8judl7699cv",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre apoyo para dejar de fumar?",
+          "body": "Nuestra Dejar de Fumar está pensada específicamente para apoyo para dejar de fumar.",
+          "ctaLabel": "Dejar de Fumar",
+          "targetSlug": "dejar-de-fumar-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

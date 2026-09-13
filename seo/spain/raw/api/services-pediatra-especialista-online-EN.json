@@ -1,0 +1,7 @@
+{
+  "endpoint": "/api/services/pediatra-especialista-online?countryCode=es&locale=EN",
+  "checkedAt": "2026-09-13T02:29:58.034Z",
+  "status": 404,
+  "ok": false,
+  "message": "Service not found"
+}

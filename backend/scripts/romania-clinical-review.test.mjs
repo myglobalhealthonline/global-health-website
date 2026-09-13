@@ -43,7 +43,7 @@ test('transaction wrapper validates post-write content and propagates failure be
   const tableKeys = { Country:'country',Service:'services',ServiceTranslation:'serviceTranslations',ServiceFaq:'serviceFaqs',ServiceFaqTranslation:'serviceFaqTranslations',ServiceDoctor:'assignments',Doctor:'doctors',DoctorCountry:'doctorCountries',DoctorTranslation:'doctorTranslations',DoctorMarketTranslation:'doctorMarketTranslations',DoctorFaq:'doctorFaqs',CountryLocale:'countryLocales',ServiceLink:'serviceLinks',ServiceLinkTranslation:'serviceLinkTranslations' };
   const client = { $transaction: async (work,options) => {
     assert.equal(options.isolationLevel,'Serializable');
-    const tx = { country:{findUnique:async()=>({id:before.country.id})}, $queryRawUnsafe:async sql => {
+    const tx = { country:{findUnique:async({where})=>where.code === 'ro' ? {id:before.country.id} : null}, $queryRawUnsafe:async sql => {
       const table = sql.match(/FROM "(\w+)"/)[1];
       return structuredClone(table === 'Country' ? [staged.country] : staged[tableKeys[table]]);
     }};

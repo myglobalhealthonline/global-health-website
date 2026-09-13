@@ -27,6 +27,11 @@ export function verifyApproval(manifest, approval, key) {
   return group;
 }
 export async function mutateGroup(client, group) {
+  return mutateRows(client, group, tables, updateFields, insertFields);
+}
+
+// Country runners supply fixed, reviewed table/column allowlists; values remain parameters.
+export async function mutateRows(client, group, tables, updateFields, insertFields) {
   for (const op of group.changes) {
     const table = tables[op.table];
     assert(table, 'Unapproved table');

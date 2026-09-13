@@ -1,0 +1,7 @@
+{
+  "endpoint": "/api/services/neurologo-online?countryCode=es&locale=CS",
+  "checkedAt": "2026-09-13T02:29:52.119Z",
+  "status": 404,
+  "ok": false,
+  "message": "Service not found"
+}

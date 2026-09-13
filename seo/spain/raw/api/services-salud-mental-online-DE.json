@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/salud-mental-online?countryCode=es&locale=DE",
+  "checkedAt": "2026-09-13T02:29:55.534Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q3a5001ongjur495me3b",
+      "kind": "GENERAL",
+      "slug": "salud-mental-online",
+      "name": "Psychische Gesundheit",
+      "summary": null,
+      "seoTitle": "Online-Psychische Gesundheit Spanien | Klinische Bewertung | approbierter Arzt",
+      "seoDescription": "Angst, Depressionen, Burnout oder andere Anliegen der psychischen Gesundheit. Unsere approbierten Ärzte bieten vertrauliche klinische Bewertungen per sicherer Videotelefonie an. Noch am selben Tag in Spanien.",
+      "seoKeywords": [
+        "salud mental online España",
+        "ansiedad médico online España",
+        "depresión evaluación online España",
+        "burnout médico online España",
+        "salud mental expats España"
+      ],
+      "heroTitle": "Psychische Gesundheit — Vertrauliche klinische Online-Bewertung",
+      "heroDescription": "Psychische Gesundheitsprobleme — Angst, Depression, Burnout, Schwierigkeiten bei der Anpassung an ein neues Land oder anhaltende Denk- und Verhaltensmuster, die Ihre Lebensqualität beeinträchtigen — sprechen am besten auf eine strukturierte, evidenzbasierte klinische Unterstützung durch eine qualifizierte Fachkraft an. Unsere Ärzte, die gemäß den Anforderungen der Organización Médica Colegial (OMC) zugelassen sind, bieten klinische psychische Gesundheitsbewertungen per sicherem Videoanruf an — ohne Wartezimmer, ohne Sprachbarrieren, noch am selben Tag, von überall in Spanien aus, auf Spanisch, Englisch oder Portugiesisch.",
+      "detailBody": "<h2>Was dieser Service ist — und was nicht</h2><p>Zu verstehen, welches Maß an Unterstützung für die psychische Gesundheit für dich angemessen ist, hilft dir, die passendste Versorgung zu erhalten.</p><p><strong>Diese klinische psychische Gesundheitsbeurteilung auf Allgemeinmedizin-Niveau ist geeignet für:</strong></p><ul><li>Ersteinschätzung von Angst, gedrückter Stimmung, Depression und Stress</li><li>Screening häufiger psychischer Gesundheitsstörungen unter Verwendung validierter klinischer Instrumente</li><li>Beurteilung, wie psychische Symptome mit der körperlichen Gesundheit zusammenwirken</li><li>Klinische Empfehlungen und Behandlungsplanung nach ärztlichem Ermessen</li><li>Überweisung an Psychologie, Psychiatrie oder andere spezialisierte Unterstützung, wo angezeigt</li><li>Orientierung zu verfügbaren psychischen Gesundheitsdiensten in Spanien</li><li>Überprüfung des aktuellen Managements der psychischen Gesundheit und fortlaufende Unterstützung</li><li>ADHS — initiales Screening und Überweisungsweg, wo angezeigt</li></ul><p><strong>Dieser Service ist nicht geeignet für:</strong></p><ul><li>Krisenintervention — wenn du in einer Krise bist, nutze die Ressourcen am Anfang dieser Seite</li><li>Psychiatrische Beurteilung — wenn du einen Psychiater benötigst, koordiniert dein Arzt die Überweisung</li><li>Psychotherapie oder Beratung — dies ist eine medizinische Untersuchung, keine Therapiesitzung</li><li>Beurteilung von Psychosen, schwerer bipolarer Störung oder komplexen psychiatrischen Erkrankungen</li><li>Unfreiwillige psychiatrische Beurteilung oder Behandlung</li></ul><p>Du bist dir nicht sicher, welches Maß an Unterstützung du benötigst? Beginne mit dieser Beurteilung. Dein Arzt beurteilt deine Vorstellung und berät dich zu den am besten geeigneten nächsten Schritten.</p><h2>Häufig beurteilte Erkrankungen</h2><p><strong>Angst und Stress</strong></p><ul><li>Generalisierte Angststörung</li><li>Soziale Angst und Leistungsangst</li><li>Gesundheitsangst</li><li>Panikattacken und Panikstörung</li><li>Arbeitsstress und Burnout</li><li>Anpassungsschwierigkeiten — neues Land, neuer Job, Veränderungen in Beziehungen</li><li>Expat-spezifischer Stress — kulturelle Anpassung, Isolation, Identitätsfragen, Trennung von der Familie</li></ul><p><strong>Stimmung</strong></p><ul><li>Gedrückte Stimmung und Depression</li><li>Anhaltende Traurigkeit und Interessenverlust</li><li>Emotionale Erschöpfung und Anhedonie</li><li>Postpartale Stimmungsschwankungen — gedrückte Stimmung und Angst nach der Geburt</li><li>Saisonale affektive Störung</li><li>Trauer und Verlust</li></ul><p><strong>Schlaf und Verhalten</strong></p><ul><li>Insomnie und Schlafstörungen mit psychischen beitragenden Faktoren</li><li>Müdigkeit mit psychischen beitragenden Faktoren</li><li>Appetitveränderungen und stimmungsbezogene Essmuster</li><li>Konzentrations- und kognitive Schwierigkeiten im Zusammenhang mit Angst oder Depression</li></ul><p><strong>Trauma und Lebensereignisse</strong></p><ul><li>Ersteinschätzung traumaassoziierter Symptome — mit Überweisung an spezialisierte psychologische Unterstützung, wo angezeigt</li><li>Anpassung an bedeutende Lebensereignisse — Verlust, Trennung, Arbeitsplatzverlust</li><li>Expat- und Umzugsstress — kulturelle Anpassung, Isolation, Identitätsfragen</li></ul><p><strong>Fortlaufendes Management der psychischen Gesundheit</strong></p><ul><li>Überprüfung bestehender, auf Allgemeinmedizin-Niveau behandelter psychischer Gesundheitsstörungen</li><li>Beurteilung der psychischen Gesundheit im Kontext des Managements chronischer Erkrankungen</li><li>ADHS — initiales Screening und Überweisung zur formalen Beurteilung, wo angezeigt</li></ul><h2>Was die Konsultation umfasst</h2><p><strong>Vertrauliche klinische Beurteilung</strong></p><p>Der Arzt führt eine strukturierte und umfassende Beurteilung der psychischen Gesundheit durch — dabei werden deine aktuellen Symptome, Stimmung, Schlaf, Energie, Appetit, Konzentration, Beziehungen, berufliche oder akademische Belastungen, die medizinische Vorgeschichte und jegliche frühere Unterstützung im Bereich psychische Gesundheit erfasst. Das Gespräch ist geführt, vertraulich und wertfrei.</p><p><strong>Validierte Screening-Instrumente</strong></p><p>Wo angemessen, verwendet der Arzt validierte klinische Screening-Instrumente — einschließlich PHQ-9 für Depression und GAD-7 für Angst — um eine strukturierte und evidenzbasierte Beurteilung sicherzustellen.</p><p><strong>Sicherheitsbeurteilung</strong></p><p>Jede Konsultation zur psychischen Gesundheit umfasst eine strukturierte Sicherheitsbeurteilung — sensibel durchgeführt als Standardbestandteil der klinischen Versorgung.</p><p><strong>Personalisierter Behandlungsplan</strong></p><p>Auf Grundlage der Beurteilung berät der Arzt zu den am besten geeigneten nächsten Schritten — dazu können Empfehlungen zu Wohlbefinden und Lebensstil, Überweisung an Psychologie oder Psychotherapie, Orientierung zu in Spanien verfügbaren Diensten, psychiatrische Überweisung, wo angezeigt, oder klinische Empfehlungen nach ärztlichem Ermessen gehören.</p><p><strong>Orientierung zum System</strong></p><p>Das Gesundheitssystem für psychische Gesundheit in Spanien als internationaler Bewohner zu navigieren, ist wirklich schwierig. Dein Arzt gibt klare Orientierung dazu, welche Dienste auf Englisch verfügbar sind, wie du auf sie zugreifen kannst und was dich im spanischen System der psychischen Gesundheit erwartet.</p><p><strong>Klinische Dokumentation — nach ärztlichem Ermessen</strong></p><p>Wenn dies auf allgemeinmedizinischem Niveau klinisch angezeigt ist, stellt der Arzt die entsprechende klinische Dokumentation aus.</p><p>Hinweis: Betäubungsmittel und bestimmte psychiatrische Substanzen erfordern besondere Dokumentation, die nicht elektronisch ausgestellt werden kann. Dein Arzt wird dich informieren, falls dies auf deine Situation zutrifft.</p><h2>Psychische Gesundheit für Expats in Spanien</h2><p>Probleme der psychischen Gesundheit sind unter Expats und internationalen Bewohnern unverhältnismäßig häufig — angetrieben durch Isolation, kulturelle Anpassung, Sprachbarrieren, Trennung von der Familie und den kumulativen Stress, in einem neuen Land ein Leben aufzubauen.</p><p>Der Zugang zu Unterstützung für die psychische Gesundheit in Spanien als internationaler Bewohner bringt zusätzliche Herausforderungen mit sich. Englischsprachige Psychologen und Psychiater gibt es in Madrid und Barcelona — aber die Verfügbarkeit ist begrenzt, die Wartezeiten können lang sein, und die Kosten privater psychischer Gesundheitsversorgung in Spanien sind erheblich. Für Expats außerhalb der Großstädte verringern sich die Möglichkeiten noch weiter.</p><p>Unser Service bietet einen zugänglichen ersten Schritt — eine strukturierte und vertrauliche klinische Beurteilung der psychischen Gesundheit am selben Tag von überall in Spanien aus — mit klarer Orientierung zu den nächsten Schritten und dazu, wie bei Bedarf spezialisierte Unterstützung erreicht werden kann.</p><h2>Vertraulichkeit</h2><p>Alles, was während deiner Konsultation zur psychischen Gesundheit besprochen wird, ist vertraulich und durch die spanische und europäische Datenschutzgesetzgebung geschützt — einschließlich der DSGVO (EU 2016/679), umgesetzt durch das Organgesetz 3/2018 (LOPDGDD) und das Gesetz 41/2002 über die Selbstbestimmung des Patienten.</p><p>Es gibt zwei Umstände, unter denen die Vertraulichkeit sorgfältig berücksichtigt werden muss — wenn ein ernstes und unmittelbares Risiko für dein Leben oder deine Sicherheit besteht oder wenn ein ernstes Risiko für die Sicherheit einer anderen Person besteht. Dein Arzt bespricht die Vertraulichkeit mit dir zu Beginn der Konsultation.</p>",
+      "ctaLabel": null,
+      "sortOrder": 180,
+      "durationMinutes": 20,
+      "basePriceCents": 5900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.267Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru15qck0002bsjuhioqk3lk",
+          "kind": "IMAGE",
+          "key": "media/cebaf4cb-fdb3-4acb-a6cd-876c804340d2-es-salud-mental-online.png",
+          "path": "/api/media/media/cebaf4cb-fdb3-4acb-a6cd-876c804340d2-es-salud-mental-online.png",
+          "altText": "Salud Mental"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q3iq001pngjuutfce816",
+          "question": "Ist dies eine Beratungs- oder Therapieleistung?",
+          "answer": "Nein. Dies ist eine klinische psychische Gesundheitsbewertung auf allgemeinmedizinischem Niveau. Unsere Ärzte beurteilen Ihre aktuelle psychische Gesundheit, geben klinische Empfehlungen und überweisen Sie an das angemessene Unterstützungsniveau — einschließlich Beratung, Psychotherapie oder Psychiatrie, wo angezeigt. Beratungs- oder Psychotherapiesitzungen werden über diesen Dienst nicht bereitgestellt.",
+          "sortOrder": 0,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q3iq001qngju5f0v81l4",
+          "question": "Was passiert, wenn ich einen Psychiater aufsuchen muss?",
+          "answer": "Wenn deine Beurteilung darauf hinweist, dass eine psychiatrische Abklärung erforderlich ist, berät dein Arzt dich klar und koordiniert die Überweisung an den geeigneten Fachdienst — einschließlich psychiatrischer Dienste auf Englisch in Spanien, sofern verfügbar.",
+          "sortOrder": 1,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q3iq001rngjuerollzss",
+          "question": "Wird mein Arbeitgeber oder jemand anderes informiert?",
+          "answer": "Nein. Ihre Anfrage ist vollständig vertraulich und durch die spanische und europäische Datenschutzgesetzgebung geschützt. Die Informationen werden ohne Ihre ausdrückliche Zustimmung nicht weitergegeben, außer unter den sehr begrenzten Umständen, die im vorherigen Abschnitt zur Vertraulichkeit beschrieben sind.",
+          "sortOrder": 2,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q3iq001sngjurmbqz9et",
+          "question": "Kann ich diesen Dienst nutzen, wenn ich bereits einen Therapeuten sehe?",
+          "answer": "Ja. Eine klinische Beurteilung der psychischen Gesundheit auf der Ebene der Allgemeinmedizin kann die fortlaufende psychologische oder therapeutische Unterstützung ergänzen — insbesondere dort, wo klinische Empfehlungen, die Beurteilung der körperlichen Gesundheit oder die Koordination der Versorgung erforderlich sind.",
+          "sortOrder": 3,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q3iq001tngju30mze1fo",
+          "question": "Ist dieser Dienst für Jugendliche geeignet?",
+          "answer": "Psychische Gesundheitsberatungen für Patienten unter 16 Jahren erfordern die Anwesenheit und die Zustimmung der Eltern oder Erziehungsberechtigten. Bei Jugendlichen ab 16 Jahren beurteilt der Arzt die Fähigkeit zur individuellen Einwilligung.",
+          "sortOrder": 4,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q3iq001ungju0ssuoej9",
+          "question": "Was passiert, wenn ich während oder nach der Beratung in einer Krise bin?",
+          "answer": "Wenn du in einer Krise bist, nutze die Ressourcen am Anfang dieser Seite — Telefon gegen Suizid 024 oder 112 bei unmittelbarer Gefahr. Dieser Dienst ist kein Kriseninterventionsdienst.",
+          "sortOrder": 5,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q3iq001vngjuiskebii5",
+          "question": "Kann ich Bedenken bezüglich ADHS über diesen Dienst besprechen?",
+          "answer": "Ja. Das erste Screening auf ADHS auf allgemeinmedizinischer Ebene ist über diesen Service verfügbar. Die formale Diagnose von ADHS erfordert eine fachärztliche Beurteilung — Ihr Arzt berät Sie über den geeigneten Überweisungsweg, wenn das Screening darauf hinweist, dass dies gerechtfertigt ist.",
+          "sortOrder": 6,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q3iq001wngju98s9iyvg",
+          "question": "Kann ich diesen Dienst von jedem Ort in Spanien aus nutzen?",
+          "answer": "Ja — einschließlich der Balearen, der Kanarischen Inseln, Ceuta und Melilla. Du benötigst nur eine stabile Internetverbindung und ein Gerät mit Kamera.",
+          "sortOrder": 7,
+          "resolvedLocale": "DE"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "DE",
+      "links": [
+        {
+          "id": "cmre7sriv002yg8ju9eokrc9p",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Evaluación psiquiátrica especializada?",
+          "body": "Si tu situación está relacionada con evaluación psiquiátrica especializada, nuestra Psiquiatría Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Psiquiatría Especialista",
+          "targetSlug": "psiquiatra-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7ssaz0030g8ju13nnilyh",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con apoyo psicológico y psicoterapia?",
+          "body": "Para apoyo psicológico y psicoterapia, consulta nuestra página de Psicología Clínica — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Psicología Clínica",
+          "targetSlug": "psicologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7stv60034g8juje70ar9l",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Síntomas neurológicos que pueden tener base psicológica?",
+          "body": "Si tu situación está relacionada con síntomas neurológicos que pueden tener base psicológica, nuestra Neurología Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Neurología Especialista",
+          "targetSlug": "neurologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7st330032g8judl7699cv",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre apoyo para dejar de fumar?",
+          "body": "Nuestra Dejar de Fumar está pensada específicamente para apoyo para dejar de fumar.",
+          "ctaLabel": "Dejar de Fumar",
+          "targetSlug": "dejar-de-fumar-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

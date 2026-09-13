@@ -1,0 +1,231 @@
+{
+  "endpoint": "/api/countries/es/doctors/dr-fidel-mesa-prado?locale=EN",
+  "checkedAt": "2026-09-13T02:29:56.165Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "doctor": {
+      "id": "cmrdpqvkc000z01rui7z5it57",
+      "slug": "dr-fidel-mesa-prado",
+      "fullName": "Dr. Fidel Ernesto Mesa Prado",
+      "title": "Cardiologist",
+      "bio": "<p>Dr. Fidel Ernesto Mesa Prado</p><p>Specialist in Cardiology</p><p>Dr. Fidel Ernesto Mesa Prado is a highly qualified cardiologist with extensive experience in clinical cardiology, cardiac imaging, and advanced life support. He currently works as a Facultative Area Specialist (FEA) in Cardiology at the Hospital Universitario Costa del Sol in Marbella and as a Specialist in Cardiology at Hospiten Estepona.</p><p>With a distinctive medical career that began with a Nursing Diploma before obtaining his Medical Degree from the University of Málaga, Dr. Mesa Prado brings a comprehensive perspective to patient care. He completed his residency in Cardiology at the Hospital Costa del Sol, obtaining the highest possible grade of \"Excellent\".</p><p>His clinical experience is supported by an impressive range of advanced certifications, including:</p><ul><li>Master's Degree in Clinical Cardiology from the Spanish Society of Cardiology.</li><li>Master's Degree in Cardiac Imaging from the Catholic University of Murcia.</li><li>Master's Degree in Cardiac Magnetic Resonance Diagnosis.</li><li>University Expert in the treatment of Heart Failure, Coronary Disease, and Thromboembolic Disease.</li></ul><p>Areas of Specialization</p><p>Dr. Mesa Prado is proficient in both non-invasive and invasive cardiac procedures, including:</p><ul><li><strong>Advanced Imaging:</strong> Transthoracic and transesophageal echocardiography, and cardiac magnetic resonance.</li><li><strong>Acute Cardiac Care:</strong> Management of acute coronary syndrome, heart failure, and complex arrhythmias.</li><li><strong>Technical Procedures:</strong> Implantation of temporary pacemakers, intra-aortic balloon pump (IABP), and management of ventricular assist systems.</li><li><strong>Research:</strong> He actively participates in clinical research on anticoagulation, heart failure, and new lipid-lowering therapies (iPCSK9).</li></ul><p>Dr. Mesa Prado is recognized for his leadership within the medical community, having served as a representative and coordinator of resident training in emergency care and advanced life support.</p>",
+      "seoTitle": "Dr Fidel Mesa Prado - Cardiologist | Global Health",
+      "seoDescription": "Dr. Fidel Mesa Prado, specialist in Cardiology at Hospital Costa del Sol and Hospiten Estepona. Expert in cardiac imaging, acute coronary syndrome and advanced technical procedures. Online consultation at Global Health.",
+      "lastReviewedAt": null,
+      "medicalRegistrationUrl": "https://www.cgcom.es/servicios/consulta-publica-de-colegiados",
+      "qualifications": [
+        "FEA Cardiología — Hospital Universitario Costa del Sol, Marbella",
+        "Especialista en Cardiología — Hospiten Estepona",
+        "Máster en Cardiología Clínica — Sociedad Española de Cardiología (SEC)",
+        "Máster en Imagen Cardíaca — Universidad Católica de Murcia (UCAM)",
+        "Máster en Diagnóstico por Resonancia Magnética Cardíaca",
+        "Experto Universitario — Insuficiencia Cardíaca, Enfermedad Coronaria, Enfermedad Tromboembólica",
+        "PhD candidato — en curso",
+        "Residencia Cardiología — Hospital Costa del Sol (calificación: Sobresaliente)",
+        "Diploma en Enfermería (formación previa a Medicina)",
+        "Licenciado en Medicina — Universidad de Málaga (Calificación: Notable)",
+        "Representante y coordinador de formación de residentes — urgencias y soporte vital avanzado",
+        "Investigación activa: anticoagulación, insuficiencia cardíaca, inhibidores PCSK9",
+        "Registrado en CGCOM (nº 292911355)"
+      ],
+      "instagramUrl": null,
+      "facebookUrl": null,
+      "linkedinUrl": null,
+      "languages": [
+        "Spanish",
+        "English"
+      ],
+      "active": true,
+      "updatedAt": "2026-08-20T06:22:32.658Z",
+      "resolvedLocale": "EN",
+      "readyToIndex": true,
+      "nonPhysician": false,
+      "imcRegistration": "292911355",
+      "registrationChamber": "CGCOM",
+      "registrationDivision": null,
+      "registrationVerified": true,
+      "credentials": [],
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmrf4j4lz024u01qrj97eglus",
+          "kind": "IMAGE",
+          "key": "doctor-cmrdpqvkc000z01rui7z5it57-profile",
+          "path": "/api/media/media/3abc9b45-1d45-47ee-beda-94019c34949d-dr-fidel-ernesto-mesa-prado.webp",
+          "altText": "Dr. Fidel Ernesto Mesa Prado",
+          "title": "Dr. Fidel Ernesto Mesa Prado",
+          "caption": "Dr. Fidel Ernesto Mesa Prado — Cardiologist, Global Health Spain",
+          "description": "Dr. Fidel Ernesto Mesa Prado — Cardiologist at Global Health Spain. Book an online video consultation.",
+          "focalX": 57,
+          "focalY": 25,
+          "zoom": 1
+        }
+      ],
+      "additionalCountries": [
+        {
+          "id": "cmrdpqvkl001001rugauf34t2",
+          "countryId": "cmqy9rw9w00x001qkq31jktqq",
+          "active": true,
+          "country": {
+            "id": "cmqy9rw9w00x001qkq31jktqq",
+            "code": "es",
+            "name": "Spain",
+            "defaultLocale": "ES"
+          },
+          "chamberEntity": "CGCOM",
+          "registrationNumber": "292911355",
+          "registrationUrl": null,
+          "division": null,
+          "isVerified": true,
+          "translations": [
+            {
+              "locale": "CS",
+              "title": "Kardiolog",
+              "bio": "<p>Dr. Fidel Ernesto Mesa Prado</p><p>Specialista v kardiologii</p><p>Dr. Fidel Ernesto Mesa Prado je vysoce kvalifikovaný kardiolog s rozsáhlými zkušenostmi v klinické kardiologii, srdečním zobrazování a rozšířené podpoře života. V současnosti působí jako Facultativo Especialista de Área (FEA) v kardiologii v Hospital Universitario Costa del Sol de Marbella a jako Specialista v kardiologii v Hospiten Estepona.</p><p>S jedinečnou lékařskou kariérou, která začala získáním diplomu v oboru ošetřovatelství před dosažením titulu v oboru medicíny na Universidad de Málaga, přináší Dr. Mesa Prado komplexní pohled na péči o pacienta. Specializační přípravu v kardiologii absolvoval v Hospital Costa del Sol, kde získal nejvyšší možné hodnocení „Excelente“.</p><p>Jeho klinické zkušenosti jsou podloženy působivou škálou pokročilých certifikací, mezi které patří:</p><ul><li>Master v klinické kardiologii od Sociedad Española de Cardiología.</li><li>Master v srdečním zobrazování od Universidad Católica de Murcia.</li><li>Master v diagnostice pomocí srdeční magnetické rezonance.</li><li>Univerzitní expert na léčbu srdečního selhání, koronárního onemocnění a tromboembolického onemocnění.</li></ul><p>Oblasti specializace</p><p>Dr. Mesa Prado ovládá jak neinvazivní, tak invazivní srdeční výkony, mezi něž patří:</p><ul><li><strong>Pokročilé zobrazování:</strong> transthorakální a transesofageální echokardiografie a srdeční magnetická rezonance.</li><li><strong>Akutní kardiologická péče:</strong> léčba akutního koronárního syndromu, srdečního selhání a komplexních arytmií.</li><li><strong>Technické postupy:</strong> implantace dočasných kardiostimulátorů, intraaortální balónkové kontrapulzace (BIAC) a vedení systémů podpory komor.</li><li><strong>Výzkum:</strong> aktivně se podílí na klinickém výzkumu antikoagulace, srdečního selhání a nových hypolipidemických terapií (iPCSK9).</li></ul><p>Dr. Mesa Prado je uznáván pro své vedení v rámci lékařské komunity; působil jako zástupce a koordinátor vzdělávání rezidentů v urgentní medicíně a rozšířené podpoře života.</p>",
+              "seoTitle": "Dr Fidel Mesa Prado - Kardiolog | Global Health",
+              "seoDescription": "Dr. Fidel Mesa Prado, specialista v kardiologii v Hospital Costa del Sol a Hospiten Estepona. Odborník na srdeční zobrazování, akutní koronární syndrom a pokročilé technické zákroky. Online konzultace v Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "ES",
+              "title": "Médico Especialista — Cardiología",
+              "bio": "<p>El Dr. Fidel Ernesto Mesa Prado es cardiólogo especialista con una trayectoria clínica y académica excepcional, uno de los pocos cardiólogos disponibles a través de consulta online en España con tres másteres de especialización en cardiología clínica, imagen cardíaca y resonancia magnética cardíaca.</p><p>Su formación médica tiene un punto de partida inusual y valioso: antes de licenciarse en Medicina por la Universidad de Málaga, obtuvo un Diploma en Enfermería, una base clínica que le proporciona una comprensión de la atención al paciente desde múltiples perspectivas y una empatía que marca la diferencia en la relación médico-paciente. Completó su residencia en Cardiología en el Hospital Costa del Sol con la calificación máxima de \"Sobresaliente\".</p><p>Actualmente ejerce como Facultativo Especialista de Área (FEA) en Cardiología en el Hospital Universitario Costa del Sol de Marbella y como especialista en Cardiología en Hospiten Estepona, dos de los principales centros hospitalarios de referencia en la Costa del Sol. Es además PhD candidato, con investigación activa en anticoagulación, insuficiencia cardíaca y nuevas terapias hipolipemiantes (inhibidores PCSK9).</p><p>Sus tres másteres reflejan una especialización en profundidad en la vertiente diagnóstica de la cardiología: Máster en Cardiología Clínica por la Sociedad Española de Cardiología (SEC), Máster en Imagen Cardíaca por la Universidad Católica de Murcia (UCAM) y Máster en Diagnóstico por Resonancia Magnética Cardíaca, lo que le convierte en uno de los especialistas con mayor capacidad diagnóstica por imagen cardíaca accesibles a través de consulta online.</p><h3>Qué ofrece online</h3><ul><li><strong>Evaluación cardiológica:</strong> valoración de síntomas cardiovasculares, factores de riesgo y orientación clínica</li><li><strong>Interpretación de imagen cardíaca:</strong> ecocardiografía transtorácica y transesofágica, resonancia magnética cardíaca, informes de imagen</li><li><strong>Segunda opinión cardiológica:</strong> sobre diagnósticos, informes de ecocardiograma, resonancia cardíaca o planes de tratamiento</li><li><strong>Insuficiencia cardíaca:</strong> evaluación, manejo, seguimiento y orientación farmacológica</li><li><strong>Síndrome coronario agudo:</strong> evaluación de episodios previos, prevención secundaria y seguimiento</li><li><strong>Arritmias complejas:</strong> evaluación clínica, interpretación de ECG y Holter, orientación sobre ritmo cardíaco</li><li><strong>Enfermedad coronaria y tromboembolismo:</strong> prevención, anticoagulación y seguimiento</li><li><strong>Nuevas terapias hipolipemiantes:</strong> asesoría sobre inhibidores PCSK9 y manejo del colesterol de difícil control</li><li><strong>Consultas pre y post-procedimiento:</strong> orientación sobre procedimientos cardíacos programados o recuperación</li><li><strong>Valoración de riesgo cardiovascular:</strong> evaluación preventiva y plan personalizado de reducción de riesgo</li><li><strong>Segunda opinión sobre medicación cardiológica:</strong> revisión de tratamientos, interacciones y optimización farmacológica</li><li>Informe médico y derivaciones</li></ul><p>Nota importante: El Dr. Mesa Prado no puede realizar procedimientos invasivos a través de videollamada. Si está experimentando una emergencia cardíaca, dolor torácico agudo, dificultad grave para respirar, pérdida de consciencia o arritmia severa, llame inmediatamente al 112.</p><h3>Su enfoque</h3><p>El Dr. Mesa Prado es reconocido por su liderazgo clínico, habiendo sido representante y coordinador de la formación de residentes en urgencias y soporte vital avanzado, y por una capacidad diagnóstica respaldada por tres másteres en la vertiente de imagen cardíaca. Su formación previa en enfermería le proporciona una perspectiva integral y empática que complementa su rigor científico como investigador activo.</p><p>Idiomas: Español · Inglés</p>",
+              "seoTitle": "Dr. Fidel Mesa Prado — Cardiólogo | CGCOM 292911355 | Global Health España",
+              "seoDescription": "Reserve una videoconsulta con Dr. Fidel Mesa Prado — cardiólogo especialista registrado en CGCOM (nº 292911355). Hospital Costa del Sol Marbella · 3 Másteres en Cardiología · Ecocardiografía · Resonancia Cardíaca · Español e inglés. Cita el mismo día.",
+              "seoKeywords": [
+                "Cardiologo"
+              ]
+            },
+            {
+              "locale": "EN",
+              "title": "Cardiologist",
+              "bio": "<p>Dr. Fidel Ernesto Mesa Prado</p><p>Specialist in Cardiology</p><p>Dr. Fidel Ernesto Mesa Prado is a highly qualified cardiologist with extensive experience in clinical cardiology, cardiac imaging, and advanced life support. He currently works as a Facultative Area Specialist (FEA) in Cardiology at the Hospital Universitario Costa del Sol in Marbella and as a Specialist in Cardiology at Hospiten Estepona.</p><p>With a distinctive medical career that began with a Nursing Diploma before obtaining his Medical Degree from the University of Málaga, Dr. Mesa Prado brings a comprehensive perspective to patient care. He completed his residency in Cardiology at the Hospital Costa del Sol, obtaining the highest possible grade of \"Excellent\".</p><p>His clinical experience is supported by an impressive range of advanced certifications, including:</p><ul><li>Master's Degree in Clinical Cardiology from the Spanish Society of Cardiology.</li><li>Master's Degree in Cardiac Imaging from the Catholic University of Murcia.</li><li>Master's Degree in Cardiac Magnetic Resonance Diagnosis.</li><li>University Expert in the treatment of Heart Failure, Coronary Disease, and Thromboembolic Disease.</li></ul><p>Areas of Specialization</p><p>Dr. Mesa Prado is proficient in both non-invasive and invasive cardiac procedures, including:</p><ul><li><strong>Advanced Imaging:</strong> Transthoracic and transesophageal echocardiography, and cardiac magnetic resonance.</li><li><strong>Acute Cardiac Care:</strong> Management of acute coronary syndrome, heart failure, and complex arrhythmias.</li><li><strong>Technical Procedures:</strong> Implantation of temporary pacemakers, intra-aortic balloon pump (IABP), and management of ventricular assist systems.</li><li><strong>Research:</strong> He actively participates in clinical research on anticoagulation, heart failure, and new lipid-lowering therapies (iPCSK9).</li></ul><p>Dr. Mesa Prado is recognized for his leadership within the medical community, having served as a representative and coordinator of resident training in emergency care and advanced life support.</p>",
+              "seoTitle": "Dr Fidel Mesa Prado - Cardiologist | Global Health",
+              "seoDescription": "Dr. Fidel Mesa Prado, specialist in Cardiology at Hospital Costa del Sol and Hospiten Estepona. Expert in cardiac imaging, acute coronary syndrome and advanced technical procedures. Online consultation at Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "PT",
+              "title": "Cardiologista",
+              "bio": "<p>Dr. Fidel Ernesto Mesa Prado</p><p>Especialista em Cardiologia</p><p>O Dr. Fidel Ernesto Mesa Prado é um cardiologista altamente qualificado, com ampla experiência em cardiologia clínica, imagem cardíaca e suporte vital avançado. Atualmente exerce funções como Facultativo Especialista de Área (FEA) em Cardiologia no Hospital Universitario Costa del Sol de Marbella e como Especialista em Cardiologia no Hospiten Estepona.</p><p>Com uma trajetória médica singular que começou com uma Diplomatura em Enfermagem antes de obter a sua Licenciatura em Medicina pela Universidad de Málaga, o Dr. Mesa Prado traz uma perspetiva integral no cuidado ao paciente. Concluiu a sua residência em Cardiologia no Hospital Costa del Sol, obtendo a classificação mais elevada possível de \"Excelente\".</p><p>A sua experiência clínica é sustentada por uma impressionante variedade de certificações avançadas, entre as quais se incluem:</p><ul><li>Mestrado em Cardiologia Clínica pela Sociedad Española de Cardiología.</li><li>Mestrado em Imagem Cardíaca pela Universidad Católica de Murcia.</li><li>Mestrado em Diagnóstico por Ressonância Magnética Cardíaca.</li><li>Especialista Universitário no tratamento da Insuficiência Cardíaca, da Doença Coronária e da Doença Tromboembólica.</li></ul><p>Áreas de Especialização</p><p>O Dr. Mesa Prado domina tanto os procedimentos cardíacos não invasivos como os invasivos, entre eles:</p><ul><li><strong>Imagem Avançada:</strong> Ecocardiografia transtorácica e transesofágica, e ressonância magnética cardíaca.</li><li><strong>Cuidados Cardíacos Agudos:</strong> Abordagem da síndrome coronária aguda, da insuficiência cardíaca e das arritmias complexas.</li><li><strong>Procedimentos Técnicos:</strong> Implantação de pacemakers temporários, balão de contrapulsação intra-aórtico (BIAC) e gestão de sistemas de assistência ventricular.</li><li><strong>Investigação:</strong> Participa ativamente em investigação clínica sobre anticoagulação, insuficiência cardíaca e novas terapêuticas hipolipemiantes (iPCSK9).</li></ul><p>O Dr. Mesa Prado é reconhecido pela sua liderança dentro da comunidade médica, tendo exercido funções como representante e coordenador da formação de residentes em urgências e suporte vital avançado.</p>",
+              "seoTitle": "Dr Fidel Mesa Prado - Cardiologista | Global Health",
+              "seoDescription": "Dr. Fidel Mesa Prado, especialista em Cardiologia no Hospital Costa del Sol e Hospiten Estepona. Especialista em imagem cardíaca, síndrome coronário agudo e procedimentos técnicos avançados. Consulta online na Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "RO",
+              "title": "Cardiolog",
+              "bio": "<p>Dr. Fidel Ernesto Mesa Prado</p><p>Specialist în Cardiologie</p><p>Dr. Fidel Ernesto Mesa Prado este un cardiolog foarte calificat, cu o vastă experiență în cardiologia clinică, imagistică cardiacă și suport vital avansat. În prezent își desfășoară activitatea ca Medic Specialist de Arie (FEA) în Cardiologie la Hospital Universitario Costa del Sol din Marbella și ca Specialist în Cardiologie la Hospiten Estepona.</p><p>Cu o parcurs medical aparte, care a început cu o Diplomă în Asistență Medicală înainte de a obține Licența în Medicină la Universitatea din Málaga, Dr. Mesa Prado aduce o perspectivă integrată în îngrijirea pacientului. Și-a încheiat rezidențiatul în Cardiologie la Hospital Costa del Sol, obținând cea mai înaltă calificare posibilă, „Excelent”.</p><p>Experiența sa clinică este susținută de o impresionantă varietate de certificări avansate, printre care se numără:</p><ul><li>Master în Cardiologie Clinică de la Sociedad Española de Cardiología.</li><li>Master în Imagistică Cardiacă de la Universidad Católica de Murcia.</li><li>Master în Diagnostic prin Rezonanță Magnetică Cardiacă.</li><li>Expert Universitar în tratamentul Insuficienței Cardiace, al Bolii Coronariene și al Bolii Tromboembolice.</li></ul><p>Domenii de specializare</p><p>Dr. Mesa Prado stăpânește atât procedurile cardiace non-invazive, cât și pe cele invazive, printre care:</p><ul><li><strong>Imagistică avansată:</strong> Ecocardiografie transtoracică și transesofagiană, precum și rezonanță magnetică cardiacă.</li><li><strong>Îngrijire cardiacă acută:</strong> Managementul sindromului coronarian acut, al insuficienței cardiace și al aritmiilor complexe.</li><li><strong>Proceduri tehnice:</strong> Implantarea de stimulatoare temporare, balon de contrapulsare intraaortică (BIAC) și managementul sistemelor de asistență ventriculară.</li><li><strong>Cercetare:</strong> Participă activ la cercetarea clinică privind anticoagularea, insuficiența cardiacă și noile terapii hipolipemiante (iPCSK9).</li></ul><p>Dr. Mesa Prado este recunoscut pentru leadershipul său în cadrul comunității medicale, având rolul de reprezentant și coordonator al formării rezidenților în urgențe și suport vital avansat.</p>",
+              "seoTitle": "Dr Fidel Mesa Prado - Cardiolog | Global Health",
+              "seoDescription": "Dr. Fidel Mesa Prado, specialist în Cardiologie la Hospital Costa del Sol și Hospiten Estepona. Expert în imagistică cardiacă, sindrom coronarian acut și proceduri tehnice avansate. Consultație online la Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "DE",
+              "title": "Kardiologe",
+              "bio": "<p>Dr. Fidel Ernesto Mesa Prado</p><p>Facharzt für Kardiologie</p><p>Dr. Fidel Ernesto Mesa Prado ist ein hochqualifizierter Kardiologe mit umfassender Erfahrung in klinischer Kardiologie, kardialer Bildgebung und erweiterter Lebenserhaltung. Derzeit ist er als Facharzt für den Bereich Kardiologie (FEA) am Hospital Universitario Costa del Sol in Marbella tätig sowie als Facharzt für Kardiologie bei Hospiten Estepona.</p><p>Mit einem bemerkenswerten medizinischen Werdegang, der mit einer Diplomierung in Krankenpflege begann, bevor er an der Universidad de Málaga sein Medizinstudium abschloss, bringt Dr. Mesa Prado eine ganzheitliche Perspektive in die Patientenversorgung ein. Seine Facharztausbildung in Kardiologie absolvierte er am Hospital Costa del Sol und erhielt die höchstmögliche Bewertung „Excelente“.</p><p>Seine klinische Erfahrung wird durch eine beeindruckende Reihe fortgeschrittener Qualifikationen untermauert, darunter:</p><ul><li>Master in Klinischer Kardiologie der Spanischen Gesellschaft für Kardiologie.</li><li>Master in Kardialer Bildgebung der Katholischen Universität Murcia.</li><li>Master in Diagnostik mittels kardialer Magnetresonanztomographie.</li><li>Universitäter Experte in der Behandlung von Herzinsuffizienz, koronarer Herzkrankheit und thromboembolischer Erkrankung.</li></ul><p>Spezialisierungsbereiche</p><p>Dr. Mesa Prado beherrscht sowohl nicht-invasive als auch invasive kardiale Verfahren, darunter:</p><ul><li><strong>Fortgeschrittene Bildgebung:</strong> Transthorakale und transösophageale Echokardiographie sowie kardiale Magnetresonanztomographie.</li><li><strong>Akute kardiologische Versorgung:</strong> Management des akuten Koronarsyndroms, der Herzinsuffizienz und komplexer Arrhythmien.</li><li><strong>Technische Verfahren:</strong> Implantation temporärer Herzschrittmacher, intraaortale Ballongegenpulsation (BIAC) und Management von ventrikulären Unterstützungssystemen.</li><li><strong>Forschung:</strong> Er beteiligt sich aktiv an klinischer Forschung zu Antikoagulation, Herzinsuffizienz und neuen lipidsenkenden Therapien (iPCSK9).</li></ul><p>Dr. Mesa Prado ist für seine Führungsrolle innerhalb der medizinischen Gemeinschaft anerkannt und war als Vertreter sowie als Koordinator der Weiterbildung von Assistenzärzten in der Notfallmedizin und erweiterten Lebenserhaltung tätig.</p>",
+              "seoTitle": "Dr Fidel Mesa Prado - Kardiologe | Global Health",
+              "seoDescription": "Dr. Fidel Mesa Prado, Facharzt für Kardiologie im Hospital Costa del Sol und Hospiten Estepona. Experte für Herzbildgebung, akutes Koronarsyndrom und fortgeschrittene technische Verfahren. Online-Sprechstunde bei Global Health.",
+              "seoKeywords": []
+            }
+          ],
+          "divisionTranslations": []
+        }
+      ],
+      "assignedServices": [
+        {
+          "serviceId": "cmre7qh33005ongju25lilrfq",
+          "service": {
+            "id": "cmre7qh33005ongju25lilrfq",
+            "slug": "cardiologo-online",
+            "name": "Cardiología Especialista",
+            "kind": "SPECIALIST",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 7900,
+            "currencyCode": "EUR"
+          }
+        }
+      ],
+      "seoKeywords": [],
+      "resolvedMarketLocale": "EN",
+      "specialties": [],
+      "faqs": [
+        {
+          "id": "cmrny6ej6008ybsjuj4t4kntb",
+          "locale": "EN",
+          "question": "Is Dr. Mesa Prado registered with the Consejo General de Colegios Oficiales de Médicos?",
+          "answer": "Yes. Dr. Fidel Ernesto Mesa Prado is registered with the CGCOM under number 292911355. You can verify this registration at cgcom.es. Dr. Mesa Prado is a FEA in Cardiology at the Hospital Universitario Costa del Sol in Marbella and a specialist in Cardiology at Hospiten Estepona, with three master's degrees in specialization and a residency graded as Outstanding.",
+          "category": null,
+          "sortOrder": 0,
+          "isActive": true
+        },
+        {
+          "id": "cmrny6ej6008zbsju9uay7dri",
+          "locale": "EN",
+          "question": "What cardiological consultations does Dr. Mesa Prado offer online?",
+          "answer": "Dr. Mesa Prado offers cardiological evaluation (cardiovascular symptoms, risk factors), interpretation of cardiac imaging (echocardiography, cardiac magnetic resonance), second opinion on diagnoses or treatment plans, heart failure (evaluation and follow-up), acute coronary syndrome (secondary prevention and follow-up), complex arrhythmias (ECG, Holter), anticoagulation and thromboembolism, new hypolipidemic therapies (PCSK9 inhibitors), pre and post-procedure consultations, cardiovascular risk assessment, and medical reports. It does not include invasive procedures.",
+          "category": null,
+          "sortOrder": 1,
+          "isActive": true
+        },
+        {
+          "id": "cmrny6ej60090bsjubkiflk69",
+          "locale": "EN",
+          "question": "Can Dr. Mesa Prado interpret my echocardiogram or cardiac magnetic resonance?",
+          "answer": "Yes. Dr. Mesa Prado has specific qualifications in cardiac imaging — a Master's in Cardiac Imaging from UCAM and a Master's in Cardiac Magnetic Resonance Diagnosis — which allows him to interpret and explain the results of transthoracic and transesophageal echocardiography, cardiac MRIs, and other cardiac imaging reports as part of the online consultation. If you share the radiological report or the echocardiogram report before the appointment, Dr. Mesa Prado will be able to provide a more detailed and personalized assessment.",
+          "category": null,
+          "sortOrder": 2,
+          "isActive": true
+        },
+        {
+          "id": "cmrny6ej60091bsju06t47rjx",
+          "locale": "EN",
+          "question": "What are PCSK9 inhibitors and when might they be relevant?",
+          "answer": "PCSK9 inhibitors (iPCSK9) are a class of new hypolipidemic therapies indicated for patients with difficult-to-control LDL cholesterol who do not respond sufficiently to conventional statins, including patients with familial hypercholesterolemia or very high cardiovascular risk. Dr. Mesa Prado actively researches this field. If you have elevated cholesterol that is difficult to manage or are taking statins with insufficient results, you can discuss these options in an online consultation.",
+          "category": null,
+          "sortOrder": 3,
+          "isActive": true
+        },
+        {
+          "id": "cmrny6ej60092bsjun4gv4q6k",
+          "locale": "EN",
+          "question": "How do I book an appointment with Dr. Mesa Prado?",
+          "answer": "Select an available time on this page to book directly with Dr. Mesa Prado. Payment is processed securely at the time of booking — the appointment is confirmed once payment is completed. You will immediately receive a calendar invitation. Consultations are conducted via secure video call in Spanish or English. If you share previous reports of echocardiograms, cardiac resonance, or lab analyses before the consultation, Dr. Mesa Prado will be able to prepare a more specific assessment. If you are experiencing a cardiac emergency, call 112 immediately.",
+          "category": null,
+          "sortOrder": 4,
+          "isActive": true
+        },
+        {
+          "id": "cmrny6ej60093bsjujhxha5qm",
+          "locale": "EN",
+          "question": "What are Dr. Mesa Prado's qualifications?",
+          "answer": "Dr. Fidel Mesa Prado holds a degree in Medicine from the University of Málaga, with prior training in Nursing. He completed his residency in Cardiology at the Hospital Costa del Sol with an Outstanding grade. He holds three master's degrees: Clinical Cardiology (SEC), Cardiac Imaging (UCAM), and Diagnostic Cardiac Magnetic Resonance. He is a University Expert in Heart Failure, Coronary Disease, and Thromboembolic Disease, and is a PhD candidate with active research in anticoagulation, heart failure, and PCSK9 inhibitors. He works as a FEA in Cardiology at the Hospital Universitario Costa del Sol in Marbella. Registered with CGCOM (nº 292911355).",
+          "category": null,
+          "sortOrder": 5,
+          "isActive": true
+        }
+      ],
+      "bookability": {
+        "state": "UNAVAILABLE",
+        "reasonCode": "NO_OPEN_SLOT",
+        "nextAvailableAt": null
+      },
+      "bookabilityByServiceId": {
+        "cmre7qh33005ongju25lilrfq": {
+          "state": "UNAVAILABLE",
+          "reasonCode": "NO_OPEN_SLOT",
+          "nextAvailableAt": null
+        }
+      }
+    }
+  }
+}

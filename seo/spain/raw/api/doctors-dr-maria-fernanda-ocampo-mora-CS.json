@@ -1,0 +1,494 @@
+{
+  "endpoint": "/api/countries/es/doctors/dr-maria-fernanda-ocampo-mora?locale=CS",
+  "checkedAt": "2026-09-13T02:29:50.657Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "doctor": {
+      "id": "cmrdpted5001901ru0wk0ncnd",
+      "slug": "dr-maria-fernanda-ocampo-mora",
+      "fullName": "Dra. María Fernanda Ocampo Mora",
+      "title": "Lékař všeobecného lékařství",
+      "bio": "<p>Dra. María Fernanda Ocampo Mora, MD</p><p>Urgentní medicína | Estetická medicína | Všeobecné a rodinné lékařství</p><p>Dra. María Fernanda Ocampo Mora je vysoce kvalifikovaná lékařka s rozsáhlými zkušenostmi v urgentní medicíně, všeobecném a rodinném lékařství a estetické medicíně. Promovala jako lékařka na Universidad Libre de Cali a vybudovala si pevnou klinickou praxi v nemocničním prostředí, na urgentních příjmech, jednotkách intenzivní péče i v soukromé praxi.</p><p>Dra. Ocampo pracovala ve vysoce specializovaných nemocnicích ve Španělsku, jako jsou Hospital Quirón Málaga a Hospital Quirón Marbella, kde poskytovala akutní lékařskou péči, rychlou diagnostiku a multidisciplinární péči pacientům v kritických stavech. Kromě toho má rozsáhlé mezinárodní zkušenosti v Kolumbii, kde několik let pracovala na jednotkách intenzivní péče (JIP) a urgentních odděleních, kde pečovala o kriticky nemocné pacienty a složité medicínské případy.</p><p>Současně se svou praxí v urgentní medicíně a nemocnicích získala Dra. Ocampo rozsáhlé zkušenosti v estetické medicíně, kterou nyní vykonává v soukromých klinikách, jako jsou Clínica IOX Marbella a Clínica Vasari. Má magisterský titul v estetické medicíně a magisterský titul v obličejových ošetřeních, s certifikovaným evropským akademickým vzděláním. Její estetická praxe se zaměřuje na minimálně invazivní zákroky, obličejová a tělová ošetření, bezpečnost pacientů a personalizované léčebné protokoly v souladu s nejvyššími lékařskými standardy.</p><p>Dra. Ocampo spojuje klinickou přesnost s pevným preventivním a holistickým přístupem k péči o pacienta. Je odbornicí na urgentní diagnostiku, preventivní medicínu, principy veřejného zdraví a pokročilé estetické techniky, přičemž vždy upřednostňuje bezpečnost pacienta, etiku a trvalý profesní rozvoj.</p><p>Dra. Ocampo, známá svou profesionalitou, empatií a klinickým úsudkem, se zavazuje poskytovat vysoce kvalitní lékařskou péči, která podporuje zdraví a pohodu. Nabízí konzultace ve španělštině.</p>",
+      "seoTitle": "Dr Maria Fernanda Ocampo Mora - Všeobecné lékařství | Global Health",
+      "seoDescription": "Dra. María Fernanda Ocampo Mora, specialistka v urgentní medicíně, všeobecném lékařství a estetické medicíně. Má rozsáhlé zkušenosti ve Španělsku a Kolumbii. Online konzultace v Global Health.",
+      "lastReviewedAt": null,
+      "medicalRegistrationUrl": "https://www.cgcom.es/servicios/consulta-publica-de-colegiados",
+      "qualifications": [
+        "Médica — Universidad Libre de Cali, Colombia",
+        "Máster en Medicina Estética — formación académica europea certificada",
+        "Máster en Tratamientos Faciales — formación académica europea certificada",
+        "Urgencias hospitalarias — Hospital Quirón Málaga y Hospital Quirón Marbella, España",
+        "UCI y Urgencias — Colombia (varios años)",
+        "Médica estética — Clínica IOX Marbella y Clínica Vasari",
+        "Registrada en CGCOM (nº 291409735)"
+      ],
+      "instagramUrl": null,
+      "facebookUrl": null,
+      "linkedinUrl": null,
+      "languages": [
+        "Spanish"
+      ],
+      "active": true,
+      "updatedAt": "2026-08-20T06:21:55.449Z",
+      "resolvedLocale": "CS",
+      "readyToIndex": true,
+      "nonPhysician": false,
+      "imcRegistration": "291409735",
+      "registrationChamber": "CGCOM",
+      "registrationDivision": null,
+      "registrationVerified": true,
+      "credentials": [],
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmrf4mb91025e01qrt03qgqev",
+          "kind": "IMAGE",
+          "key": "doctor-cmrdpted5001901ru0wk0ncnd-profile",
+          "path": "/api/media/media/doctors/cmrdpted5001901ru0wk0ncnd/57176c1a-5619-45ac-afd5-461e0d270042-WhatsApp-Image-2026-09-03-at-18.38.37.webp",
+          "altText": "Dra. María Fernanda Ocampo Mora",
+          "title": "Dra. María Fernanda Ocampo Mora",
+          "caption": "Dra. María Fernanda Ocampo Mora — General Medicine Physician, Global Health Spain",
+          "description": "Dra. María Fernanda Ocampo Mora — General Medicine Physician at Global Health Spain. Book an online video consultation.",
+          "focalX": 50,
+          "focalY": 50,
+          "zoom": 1
+        }
+      ],
+      "additionalCountries": [
+        {
+          "id": "cmrdptedd001a01ruat8ljglw",
+          "countryId": "cmqy9rw9w00x001qkq31jktqq",
+          "active": true,
+          "country": {
+            "id": "cmqy9rw9w00x001qkq31jktqq",
+            "code": "es",
+            "name": "Spain",
+            "defaultLocale": "ES"
+          },
+          "chamberEntity": "CGCOM",
+          "registrationNumber": "291409735",
+          "registrationUrl": null,
+          "division": null,
+          "isVerified": true,
+          "translations": [
+            {
+              "locale": "DE",
+              "title": "Arzt für Allgemeinmedizin",
+              "bio": "<p>Dra. María Fernanda Ocampo Mora, MD</p><p>Notfallmedizin | Ästhetische Medizin | Allgemein- und Familienmedizin</p><p>Dra. María Fernanda Ocampo Mora ist eine hochqualifizierte Ärztin mit umfangreicher Erfahrung in Notfallmedizin, Allgemein- und Familienmedizin sowie Ästhetischer Medizin. Sie schloss ihr Medizinstudium an der Universidad Libre de Cali ab und hat eine solide klinische Laufbahn in Krankenhaus-, Notfall-, Intensiv- und privaten Einrichtungen aufgebaut.</p><p>Dra. Ocampo hat in hochkomplexen Krankenhäusern in Spanien gearbeitet, wie dem Hospital Quirón Málaga und dem Hospital Quirón Marbella, und dort dringliche medizinische Versorgung, schnelle Diagnostik und multidisziplinäre Betreuung von Patientinnen und Patienten in kritischen Situationen geleistet. Darüber hinaus verfügt sie über umfangreiche internationale Erfahrung in Kolumbien, wo sie mehrere Jahre in Intensivstationen (UCI) und Notfalldiensten tätig war und kritisch kranke Patientinnen und Patienten sowie komplexe medizinische Fälle betreute.</p><p>Parallel zu ihrer Tätigkeit in der Notfall- und Krankenhausmedizin hat Dra. Ocampo umfangreiche Erfahrung in der Ästhetischen Medizin gesammelt und ist derzeit in privaten Kliniken wie der Clínica IOX Marbella und Clínica Vasari tätig. Sie verfügt über einen Master in Ästhetischer Medizin und einen Master in Gesichtsbehandlungen, mit zertifizierter europäischer akademischer Ausbildung. Ihre ästhetische Praxis konzentriert sich auf minimalinvasive Verfahren, Gesichts- und Körperbehandlungen, Patientensicherheit und personalisierte Behandlungsprotokolle, die den höchsten medizinischen Standards entsprechen.</p><p>Dra. Ocampo verbindet klinische Präzision mit einem soliden präventiven und ganzheitlichen Ansatz in der Patientenversorgung. Sie ist Expertin für Notfalldiagnostik, Präventivmedizin, Grundsätze der öffentlichen Gesundheit und fortgeschrittene ästhetische Techniken und legt dabei stets Wert auf Patientensicherheit, Ethik und kontinuierliche berufliche Entwicklung.</p><p>Bekannt für ihre Professionalität, Empathie und ihr klinisches Urteilsvermögen, verpflichtet sich Dra. Ocampo, eine hochwertige medizinische Versorgung zu bieten, die Gesundheit und Wohlbefinden fördert. Sie bietet Beratungen auf Spanisch an.</p>",
+              "seoTitle": "Dr Maria Fernanda Ocampo Mora - Allgemeinmedizin | Global Health",
+              "seoDescription": "Dr. María Fernanda Ocampo Mora, Spezialistin für Notfallmedizin, Allgemeinmedizin und Ästhetische Medizin. Umfangreiche Erfahrung in Spanien und Kolumbien. Online-Sprechstunde bei Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "PT",
+              "title": "Médico Medicina Geral",
+              "bio": "<p>Dra. María Fernanda Ocampo Mora, MD</p><p>Medicina de Urgência | Medicina Estética | Medicina Geral e Familiar</p><p>A Dra. María Fernanda Ocampo Mora é uma médica altamente qualificada com ampla experiência em medicina de urgência, medicina geral e familiar, e medicina estética. Formou-se como médica na Universidade Libre de Cali e desenvolveu uma sólida trajetória clínica em ambientes hospitalares, de urgência, de cuidados intensivos e privados.</p><p>A Dra. Ocampo trabalhou em hospitais de alta complexidade na Espanha, como o Hospital Quirón Málaga e o Hospital Quirón Marbella, prestando atendimento médico de urgência, diagnóstico rápido e atendimento multidisciplinar a pacientes em situações críticas. Além disso, possui uma sólida experiência internacional na Colômbia, onde trabalhou durante vários anos em unidades de cuidados intensivos (UCI) e serviços de urgência, atendendo pacientes críticos e casos médicos complexos.</p><p>Paralelamente à sua prática em urgência e hospitais, a Dra. Ocampo desenvolveu ampla experiência em Medicina Estética, exercendo atualmente em clínicas privadas como Clínica IOX Marbella y Clínica Vasari. Possui um Mestrado em Medicina Estética e um Mestrado em Tratamentos Faciais, com formação acadêmica europeia certificada. A sua prática estética centra-se em procedimentos minimamente invasivos, tratamentos faciais e corporais, na segurança do paciente e em protocolos de tratamento personalizados, alinhados com os mais altos padrões médicos.</p><p>A Dra. Ocampo combina a precisão clínica com uma sólida abordagem preventiva e holística no cuidado ao paciente. É especialista em diagnóstico de emergência, medicina preventiva, princípios de saúde pública e técnicas estéticas avançadas, priorizando sempre a segurança do paciente, a ética e o desenvolvimento profissional contínuo.</p><p>Conhecida pelo seu profissionalismo, empatia e critério clínico, a Dra. Ocampo compromete-se a prestar cuidados médicos de alta qualidade que promovem a saúde e o bem-estar. Oferece consultas em espanhol.</p>",
+              "seoTitle": "Dr Maria Fernanda Ocampo Mora - Medicina Geral | Global Health",
+              "seoDescription": "Dra. María Fernanda Ocampo Mora, especialista em Medicina de Urgências, Medicina Geral e Medicina Estética. Ampla experiência na Espanha e na Colômbia. Consulta online na Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "ES",
+              "title": "Médica General — Urgencias y Medicina Estética",
+              "bio": "<p>La Dra. María Fernanda Ocampo Mora es médica con amplia experiencia en medicina de urgencias, medicina general y familiar, y medicina estética, una clínica que combina la solidez de quien ha trabajado en hospitales de alta complejidad con la sensibilidad estética y la precisión de quien ha formado a nivel de maestría en medicina estética avanzada.</p><p>Se graduó como médica en la Universidad Libre de Cali y ha desarrollado su carrera en entornos hospitalarios de alto nivel en España y Colombia. En España ha trabajado en el Hospital Quirón Málaga y el Hospital Quirón Marbella, dos de los centros hospitalarios privados de mayor prestigio del país, proporcionando atención médica urgente, diagnóstico rápido y atención multidisciplinar en situaciones críticas. En Colombia acumuló años de experiencia en unidades de cuidados intensivos (UCI) y servicios de urgencias, atendiendo pacientes críticos y casos médicos complejos.</p><p>Paralelamente a su práctica hospitalaria, la Dra. Ocampo ha desarrollado una trayectoria sólida en medicina estética, con un Máster en Medicina Estética y un Máster en Tratamientos Faciales con formación académica europea certificada. Actualmente ejerce en Clínica IOX Marbella y Clínica Vasari, donde combina procedimientos mínimamente invasivos, tratamientos faciales y corporales y protocolos de tratamiento personalizados con los más altos estándares de seguridad médica.</p><p>Su formación en urgencias y UCI le proporciona un criterio clínico de alta fiabilidad, la capacidad de evaluar rápidamente si un síntoma es banal o requiere atención inmediata, que es especialmente valiosa en una consulta online donde la toma de decisiones en tiempo real marca la diferencia.</p><h3>Qué ofrece online</h3><ul><li><strong>Medicina general:</strong> enfermedades agudas (infecciones respiratorias, fiebre, gripe, infecciones urinarias), gestión de enfermedades crónicas (hipertensión, diabetes, dislipemia, hipotiroidismo)</li><li><strong>Urgencias y evaluación de síntomas agudos:</strong> evaluación de síntomas que generan duda sobre su urgencia, orientación sobre si requieren atención presencial inmediata</li><li><strong>Salud de la mujer:</strong> anticoncepción, problemas hormonales, salud reproductiva, ginecología preventiva</li><li><strong>Salud preventiva:</strong> revisiones de salud, consejo sobre estilo de vida, cribados, medicina preventiva</li><li><strong>Consulta estética online:</strong> evaluación y planificación personalizada para tratamientos faciales (toxina botulínica, rellenos dérmicos, tratamientos corporales); los procedimientos se realizan de forma presencial</li><li>Revisión de medicación y renovación de recetas</li><li>Bajas médicas e informes médicos</li><li>Derivaciones a especialistas</li></ul><p>Nota importante: Los procedimientos estéticos (toxina botulínica, rellenos, tratamientos corporales) requieren cita presencial en clínica. La consulta estética online con la Dra. Ocampo es la evaluación médica y la fase de planificación personalizada que debe preceder a cualquier procedimiento.</p><h3>Su enfoque</h3><p>La Dra. Ocampo combina la precisión clínica de una médica formada en urgencias y UCI con un enfoque preventivo, holístico y empático. Prioriza la seguridad del paciente, la ética profesional y el desarrollo continuo, y cree que la atención médica de calidad no es incompatible con ser cercana y accesible. Es conocida por su profesionalismo, su empatía y su criterio clínico.</p><p>Idiomas: Español</p>",
+              "seoTitle": "Dra. María Fernanda Ocampo — Urgencias y Medicina Estética | CGCOM 291409735 | Global Health España",
+              "seoDescription": "Reserve una videoconsulta con Dra. María Fernanda Ocampo — médica registrada en CGCOM (nº 291409735). Hospital Quirón Málaga y Marbella · UCI · Máster Medicina Estética · Clínica IOX Marbella · Medicina general. Cita el mismo día.",
+              "seoKeywords": [
+                "Medicina general"
+              ]
+            },
+            {
+              "locale": "CS",
+              "title": "Lékař všeobecného lékařství",
+              "bio": "<p>Dra. María Fernanda Ocampo Mora, MD</p><p>Urgentní medicína | Estetická medicína | Všeobecné a rodinné lékařství</p><p>Dra. María Fernanda Ocampo Mora je vysoce kvalifikovaná lékařka s rozsáhlými zkušenostmi v urgentní medicíně, všeobecném a rodinném lékařství a estetické medicíně. Promovala jako lékařka na Universidad Libre de Cali a vybudovala si pevnou klinickou praxi v nemocničním prostředí, na urgentních příjmech, jednotkách intenzivní péče i v soukromé praxi.</p><p>Dra. Ocampo pracovala ve vysoce specializovaných nemocnicích ve Španělsku, jako jsou Hospital Quirón Málaga a Hospital Quirón Marbella, kde poskytovala akutní lékařskou péči, rychlou diagnostiku a multidisciplinární péči pacientům v kritických stavech. Kromě toho má rozsáhlé mezinárodní zkušenosti v Kolumbii, kde několik let pracovala na jednotkách intenzivní péče (JIP) a urgentních odděleních, kde pečovala o kriticky nemocné pacienty a složité medicínské případy.</p><p>Současně se svou praxí v urgentní medicíně a nemocnicích získala Dra. Ocampo rozsáhlé zkušenosti v estetické medicíně, kterou nyní vykonává v soukromých klinikách, jako jsou Clínica IOX Marbella a Clínica Vasari. Má magisterský titul v estetické medicíně a magisterský titul v obličejových ošetřeních, s certifikovaným evropským akademickým vzděláním. Její estetická praxe se zaměřuje na minimálně invazivní zákroky, obličejová a tělová ošetření, bezpečnost pacientů a personalizované léčebné protokoly v souladu s nejvyššími lékařskými standardy.</p><p>Dra. Ocampo spojuje klinickou přesnost s pevným preventivním a holistickým přístupem k péči o pacienta. Je odbornicí na urgentní diagnostiku, preventivní medicínu, principy veřejného zdraví a pokročilé estetické techniky, přičemž vždy upřednostňuje bezpečnost pacienta, etiku a trvalý profesní rozvoj.</p><p>Dra. Ocampo, známá svou profesionalitou, empatií a klinickým úsudkem, se zavazuje poskytovat vysoce kvalitní lékařskou péči, která podporuje zdraví a pohodu. Nabízí konzultace ve španělštině.</p>",
+              "seoTitle": "Dr Maria Fernanda Ocampo Mora - Všeobecné lékařství | Global Health",
+              "seoDescription": "Dra. María Fernanda Ocampo Mora, specialistka v urgentní medicíně, všeobecném lékařství a estetické medicíně. Má rozsáhlé zkušenosti ve Španělsku a Kolumbii. Online konzultace v Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "RO",
+              "title": "Medic Medicină Generală",
+              "bio": "<p>Dra. María Fernanda Ocampo Mora, MD</p><p>Medicină de urgență | Medicină estetică | Medicină generală și de familie</p><p>Dra. María Fernanda Ocampo Mora este o medică foarte calificată, cu experiență vastă în medicină de urgență, medicină generală și de familie și medicină estetică. A absolvit ca medic la Universidad Libre de Cali și a dezvoltat o carieră clinică solidă în medii spitalicești, de urgență, de terapie intensivă și private.</p><p>Dra. Ocampo a lucrat în spitale de înaltă complexitate din Spania, precum Hospital Quirón Málaga și Hospital Quirón Marbella, oferind îngrijire medicală de urgență, diagnostic rapid și îngrijire multidisciplinară pacienților în situații critice. În plus, aduce o experiență internațională solidă în Columbia, unde a lucrat timp de mai mulți ani în unități de terapie intensivă (UCI) și servicii de urgență, îngrijind pacienți critici și cazuri medicale complexe.</p><p>În paralel cu activitatea sa în urgențe și spitale, Dra. Ocampo a dezvoltat o experiență vastă în Medicină Estetică, activând în prezent în clinici private precum Clínica IOX Marbella și Clínica Vasari. Deține un Master în Medicină Estetică și un Master în Tratamente Faciale, cu formare academică europeană certificată. Practica sa estetică se concentrează pe proceduri minim invazive, tratamente faciale și corporale, siguranța pacientului și protocoale de tratament personalizate, aliniate la cele mai înalte standarde medicale.</p><p>Dra. Ocampo combină precizia clinică cu o abordare preventivă și holistică solidă în îngrijirea pacientului. Este expertă în diagnostic de urgență, medicină preventivă, principii de sănătate publică și tehnici estetice avansate, prioritizând întotdeauna siguranța pacientului, etica și dezvoltarea profesională continuă.</p><p>Cunoscută pentru profesionalismul, empatia și discernământul său clinic, Dra. Ocampo se angajează să ofere îngrijire medicală de înaltă calitate care promovează sănătatea și bunăstarea. Oferă consultații în spaniolă.</p>",
+              "seoTitle": "Dr Maria Fernanda Ocampo Mora - Medicină generală | Global Health",
+              "seoDescription": "Dr. María Fernanda Ocampo Mora, specialistă în Medicină de Urgență, Medicină Generală și Medicină Estetică. Experiență vastă în Spania și Columbia. Consultație online la Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "EN",
+              "title": "General Medicine Physician",
+              "bio": "<p>Dr. María Fernanda Ocampo Mora, MD</p><p>Emergency Medicine | Aesthetic Medicine | General and Family Medicine</p><p>Dr. María Fernanda Ocampo Mora is a highly qualified physician with extensive experience in emergency medicine, general and family medicine, and aesthetic medicine. She graduated as a physician from Universidad Libre de Cali and has developed a strong clinical track record in hospital, emergency, intensive care, and private settings.</p><p>Dr. Ocampo has worked in high-complexity hospitals in Spain, such as Hospital Quirón Málaga and Hospital Quirón Marbella, providing emergency medical care, rapid diagnosis, and multidisciplinary care to patients in critical situations. In addition, she brings strong international experience in Colombia, where she worked for several years in intensive care units (ICU) and emergency services, treating critically ill patients and complex medical cases.</p><p>Alongside her practice in emergency care and hospitals, Dr. Ocampo has developed extensive experience in Aesthetic Medicine, currently practicing in private clinics such as Clínica IOX Marbella and Clínica Vasari. She holds a Master’s in Aesthetic Medicine and a Master’s in Facial Treatments, with certified European academic training. Her aesthetic practice focuses on minimally invasive procedures, facial and body treatments, patient safety, and personalized treatment protocols, aligned with the highest medical standards.</p><p>Dr. Ocampo combines clinical precision with a strong preventive and holistic approach to patient care. She is an expert in emergency diagnosis, preventive medicine, public health principles, and advanced aesthetic techniques, always prioritizing patient safety, ethics, and continuous professional development.</p><p>Known for her professionalism, empathy, and clinical judgment, Dr. Ocampo is committed to providing high-quality medical care that promotes health and well-being. She offers consultations in Spanish.</p>",
+              "seoTitle": "Dr Maria Fernanda Ocampo Mora - General Medicine | Global Health",
+              "seoDescription": "Dr. María Fernanda Ocampo Mora, specialist in Emergency Medicine, General Medicine and Aesthetic Medicine. Extensive experience in Spain and Colombia. Online consultation at Global Health.",
+              "seoKeywords": []
+            }
+          ],
+          "divisionTranslations": []
+        }
+      ],
+      "assignedServices": [
+        {
+          "serviceId": "cmrezwush00pq01qrtoq51csl",
+          "service": {
+            "id": "cmrezwush00pq01qrtoq51csl",
+            "slug": "consulta-online-medicina-estetica",
+            "name": "Medicina Estética Online",
+            "kind": "GENERAL",
+            "summary": "Valoración médica independiente en medicina estética por videollamada: indicación, expectativas realistas, riesgos y plan de tratamiento, sin la presión comercial del centro que vende el procedimiento.",
+            "durationMinutes": 30,
+            "basePriceCents": 7500,
+            "currencyCode": null
+          }
+        },
+        {
+          "serviceId": "cmre7q3a5001ongjur495me3b",
+          "service": {
+            "id": "cmre7q3a5001ongjur495me3b",
+            "slug": "salud-mental-online",
+            "name": "Salud Mental",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 5900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q7k0002vngju6v73lt8h",
+          "service": {
+            "id": "cmre7q7k0002vngju6v73lt8h",
+            "slug": "medicina-viaje-online",
+            "name": "Medicina de Viaje",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 4900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7pz0n000kngjuib862zxl",
+          "service": {
+            "id": "cmre7pz0n000kngjuib862zxl",
+            "slug": "renovacion-tratamiento-online",
+            "name": "Renovación de Tratamiento",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 2900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q8mg0037ngjuso41eynq",
+          "service": {
+            "id": "cmre7q8mg0037ngjuso41eynq",
+            "slug": "musculoesqueletico-online",
+            "name": "Musculoesquelético",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7qas1003sngjus0w2obwn",
+          "service": {
+            "id": "cmre7qas1003sngjus0w2obwn",
+            "slug": "derivaciones-pruebas-online",
+            "name": "Derivaciones y Pruebas",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q4co001yngjucbez1gc0",
+          "service": {
+            "id": "cmre7q4co001yngjucbez1gc0",
+            "slug": "consulta-piel-online",
+            "name": "Consulta de Piel",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 4500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7pxza000angjubr3s2h65",
+          "service": {
+            "id": "cmre7pxza000angjubr3s2h65",
+            "slug": "justificante-medico-online",
+            "name": "Justificante Médico",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q27m001dngju2395w6dl",
+          "service": {
+            "id": "cmre7q27m001dngju2395w6dl",
+            "slug": "salud-femenina-online",
+            "name": "Salud Femenina",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 4900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q1550013ngjujfvwl58k",
+          "service": {
+            "id": "cmre7q1550013ngjujfvwl58k",
+            "slug": "salud-masculina-online",
+            "name": "Salud Masculina",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 4900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q9p1003ingjuum9voxoc",
+          "service": {
+            "id": "cmre7q9p1003ingjuum9voxoc",
+            "slug": "enfermedades-cronicas-online",
+            "name": "Enfermedades Crónicas",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 4500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7qcvw004engju2es5log3",
+          "service": {
+            "id": "cmre7qcvw004engju2es5log3",
+            "slug": "dejar-de-fumar-online",
+            "name": "Dejar de Fumar",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q6hn002lngju3chey2ai",
+          "service": {
+            "id": "cmre7q6hn002lngju3chey2ai",
+            "slug": "caida-cabello-online",
+            "name": "Caída del Cabello",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7pwwv0000ngjuwvmiacw9",
+          "service": {
+            "id": "cmre7pwwv0000ngjuwvmiacw9",
+            "slug": "consulta-medica-online",
+            "name": "Consulta Médica General",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q5fw002angjuebao1obt",
+          "service": {
+            "id": "cmre7q5fw002angjuebao1obt",
+            "slug": "segunda-opinion-medica",
+            "name": "Segunda Opinión Médica",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 4900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q038000ungjuxs5rkyxy",
+          "service": {
+            "id": "cmre7q038000ungjuxs5rkyxy",
+            "slug": "control-peso-online",
+            "name": "Control de Peso",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 4500,
+            "currencyCode": "EUR"
+          }
+        }
+      ],
+      "seoKeywords": [],
+      "resolvedMarketLocale": "CS",
+      "specialties": [],
+      "faqs": [
+        {
+          "id": "cmrnyc19d00bsbsjufmbreye8",
+          "locale": "CS",
+          "question": "Je doktorka Ocampo registrována v Generálním poradním výboru oficiálních lékařských škol?",
+          "answer": "Ano. Doktorka María Fernanda Ocampo Mora je registrována v CGCOM s číslem 291409735. Tento záznam můžete ověřit na cgcom.es. Doktorka Ocampo pracovala v nemocnici Quirón Málaga a nemocnici Quirón Marbella a v současnosti působí v klinice IOX Marbella a klinice Vasari.",
+          "category": null,
+          "sortOrder": 0,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyc19d00btbsjuv5v3y49u",
+          "locale": "CS",
+          "question": "Na co se doktorka Ocampo zaměřuje v online konzultacích?",
+          "answer": "Doktorka Ocampo nabízí online konzultace v oblasti všeobecného lékařství (akutní a chronická onemocnění, preventivní zdraví), hodnocení akutních symptomů a poradenství v naléhavých případech, zdraví žen (antikoncepce, hormonální problémy, preventivní gynekologie), online estetické konzultace (plánování obličejových a tělových ošetření — procedury se provádějí osobně), revizi medikace a obnovu receptů, pracovní neschopnosti a zprávy a doporučení specialistům.",
+          "category": null,
+          "sortOrder": 1,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyc19d00bubsjutudkppay",
+          "locale": "CS",
+          "question": "Jak přispívá zkušenost v urgentní medicíně a JIP k online konzultaci v oblasti všeobecného lékařství?",
+          "answer": "Vzdělání v urgentní medicíně a JIP rozvíjí specifickou schopnost: rychle posoudit závažnost symptomu a rozhodnout se s rozvahou, zda vyžaduje okamžitou pozornost, může počkat nebo může být řešeno ambulantně. V online konzultaci — kde není fyzické vyšetření — je tato schopnost přesného klinického triáže obzvlášť cenná. Doktorka Ocampo pracovala v nemocnicích urgentní medicíny vysoké složitosti ve Španělsku (nemocnice Quirón Málaga a Marbella) a na JIP v Kolumbii, což jí poskytuje úroveň klinické důvěry, kterou jen málo online všeobecných lékařů může nabídnout.",
+          "category": null,
+          "sortOrder": 2,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyc19d00bvbsjufrzrd0eg",
+          "locale": "CS",
+          "question": "Co je online estetická konzultace s doktorkou Ocampo?",
+          "answer": "Online estetická konzultace je strukturované lékařské hodnocení prostřednictvím videohovoru pro pacienty, kteří zvažují ošetření botulotoxinem, dermálními výplněmi nebo jinými estetickými procedurami obličeje nebo těla. Během konzultace provede doktorka Ocampo analýzu obličeje a pleti, zkontroluje vaši lékařskou historii, aby identifikovala kontraindikace, prodiskutuje vaše cíle a vypracuje personalizovaný plán léčby. Estetické procedury samotné vyžadují osobní schůzku v klinice.",
+          "category": null,
+          "sortOrder": 3,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyc19d00bwbsju9de1tf40",
+          "locale": "CS",
+          "question": "Jak si rezervuji konzultaci s doktorkou Ocampo?",
+          "answer": "Vyberte si dostupný čas na této stránce pro přímou rezervaci s doktorkou Ocampo. Platba je zpracována bezpečně při rezervaci — konzultace je potvrzena po dokončení platby. Okamžitě obdržíte pozvánku do kalendáře. Konzultace se uskutečňují prostřednictvím bezpečného videohovoru ve španělštině. Schůzky ve stejný den jsou obvykle k dispozici.",
+          "category": null,
+          "sortOrder": 4,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyc19d00bxbsju0k6oiq8s",
+          "locale": "CS",
+          "question": "Jaké jsou kvalifikace doktorky Ocampo?",
+          "answer": "Doktorka María Fernanda Ocampo Mora je lékařka na Univerzitě Libre de Cali. Má magisterský titul v oboru estetické medicíny a magisterský titul v oboru obličejových ošetření s certifikovaným evropským akademickým vzděláním. Pracovala v urgentní medicíně v nemocnici Quirón Málaga a nemocnici Quirón Marbella a na JIP a urgentní medicíně v Kolumbii. V současnosti působí v klinice IOX Marbella a klinice Vasari. Je registrována v CGCOM (č. 291409735).",
+          "category": null,
+          "sortOrder": 5,
+          "isActive": true
+        }
+      ],
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:23:00.000Z"
+      },
+      "bookabilityByServiceId": {
+        "cmrezwush00pq01qrtoq51csl": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:23:00.000Z"
+        },
+        "cmre7q3a5001ongjur495me3b": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:23:00.000Z"
+        },
+        "cmre7q7k0002vngju6v73lt8h": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:23:00.000Z"
+        },
+        "cmre7pz0n000kngjuib862zxl": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:23:00.000Z"
+        },
+        "cmre7q8mg0037ngjuso41eynq": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:23:00.000Z"
+        },
+        "cmre7qas1003sngjus0w2obwn": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:23:00.000Z"
+        },
+        "cmre7q4co001yngjucbez1gc0": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:23:00.000Z"
+        },
+        "cmre7pxza000angjubr3s2h65": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:23:00.000Z"
+        },
+        "cmre7q27m001dngju2395w6dl": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:23:00.000Z"
+        },
+        "cmre7q1550013ngjujfvwl58k": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:23:00.000Z"
+        },
+        "cmre7q9p1003ingjuum9voxoc": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:23:00.000Z"
+        },
+        "cmre7qcvw004engju2es5log3": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:23:00.000Z"
+        },
+        "cmre7q6hn002lngju3chey2ai": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:23:00.000Z"
+        },
+        "cmre7pwwv0000ngjuwvmiacw9": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:23:00.000Z"
+        },
+        "cmre7q5fw002angjuebao1obt": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:23:00.000Z"
+        },
+        "cmre7q038000ungjuxs5rkyxy": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:23:00.000Z"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/caida-cabello-online?countryCode=es&locale=RO",
+  "checkedAt": "2026-09-13T02:30:06.590Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q6hn002lngju3chey2ai",
+      "kind": "GENERAL",
+      "slug": "caida-cabello-online",
+      "name": "Căderea părului",
+      "summary": null,
+      "seoTitle": "Pierderea Părului Online Spania | Evaluare Medicală | Medic de Familie",
+      "seoDescription": "Pierderea părului sau subțierea părului? Medicii noștri de familie înregistrați evaluează cauza medicală a căderii părului și oferă sfaturi privind tratamentul bazat pe dovezi. În aceeași zi în Spania.",
+      "seoKeywords": [
+        "caída del cabello online España",
+        "médico caída cabello online España",
+        "alopecia consulta online España",
+        "pérdida cabello médico online España",
+        "caída cabello hormonal consulta España"
+      ],
+      "heroTitle": "Căderea părului — Evaluare medicală online în aceeași zi",
+      "heroDescription": "Căderea părului este una dintre cele mai frecvente preocupări medicale — și una dintre cele mai des ignorate. Majoritatea persoanelor care observă o pierdere semnificativă sau subțierea părului nu consultă niciodată un medic în legătură cu aceasta, fie pentru că presupun că nu se poate face nimic, fie pentru că nu știu de unde să înceapă. Ambele presupuneri sunt greșite. În marea majoritate a cazurilor, căderea părului are o cauză medicală identificabilă — iar cu cât este evaluată mai devreme, cu atât rezultatul este mai bun. Foliculii piloși care au fost inactivi pentru o perioadă îndelungată sunt semnificativ mai greu de recuperat decât foliculii care se subțiază, dar sunt încă activi. Medicii noștri de familie, înscriși conform cerințelor Organización Médica Colegial (OMC), oferă evaluări medicale complete pentru căderea părului prin videocall securizat — identificând cauza subiacentă, oferind consiliere privind managementul bazat pe dovezi și emitând documentația clinică aferentă acolo unde este indicat din punct de vedere clinic. În aceeași zi, din orice punct al Spaniei, în spaniolă, engleză sau portugheză.",
+      "detailBody": "<h2>De ce evaluarea timpurie face diferența</h2><p>Căderea părului urmează aproape întotdeauna un tipar progresiv — în special alopecia androgenică la bărbați și femei. Argumentul clinic pentru evaluarea timpurie este simplu: cu cât cauza este identificată mai devreme și se inițiază tratamentul adecvat, cu atât rezultatul este mai bun. Așteptarea până când căderea părului este avansată reduce semnificativ opțiunile de tratament disponibile.</p><p>Dacă ai observat modificări ale densității părului tău, ale liniei părului sau ale tiparului de cădere — chiar dacă nu ești sigur dacă este suficient de semnificativ pentru a merge la medic — programează o consultație. Medicul tău îți va spune sincer dacă intervenția este justificată și care sunt opțiunile.</p><h2>Pentru cine este acest serviciu</h2><p>Această consultație este potrivită pentru adulții care prezintă:</p><ul><li>Subțierea treptată a părului de pe scalp — la bărbați sau femei</li><li>Retragerea liniei părului sau subțiere temporală</li><li>Subțierea la creștet sau în partea superioară a scalpului</li><li>Cădere bruscă a părului sau în plăci</li><li>Cădere difuză — mai mult păr în duș, pe pernă sau în perie</li><li>Căderea părului după un eveniment major de viață — boală, intervenție chirurgicală, naștere sau stres intens</li><li>Căderea părului asociată cu alte simptome — oboseală, modificări de greutate, modificări ale pielii sau unghiilor — care pot indica o afecțiune subiacentă</li><li>Afecțiuni ale scalpului — mătreață, seboree sau inflamație care afectează creșterea părului</li><li>Căderea părului care nu a răspuns la tratamentele fără prescripție medicală</li></ul><h2>Afecțiuni evaluate în mod obișnuit</h2><p><strong>Căderea părului la bărbați</strong></p><ul><li>Alopecia androgenică — cea mai frecventă cauză de cădere a părului la bărbați, evaluată și gestionată la nivel de medicină generală, inclusiv discuția despre opțiunile de tratament bazate pe dovezi</li><li>Alopecia areata — căderea părului în plăci cu bază autoimună</li><li>Efluviul telogen — cădere difuză după boală, stres sau deficit nutrițional</li><li>Dermatita seboreică și inflamația scalpului care contribuie la căderea părului</li><li>Căderea părului legată de medicamente — evaluare și gestionare</li></ul><p><strong>Căderea părului la femei</strong></p><ul><li>Alopecia androgenică feminină</li><li>Efluviul telogen — în special postpartum, după o boală semnificativă sau după stres important</li><li>Alopecia areata</li><li>Căderea părului legată de modificări hormonale — SOP, disfuncție tiroidiană, menopauză sau modificări hormonale postpartum</li><li>Căderea părului legată de deficit nutrițional — fier, feritină, vitamina D, B12 și zinc</li><li>Alopecia de tracțiune — legată de practicile de coafare</li><li>Căderea părului legată de medicamente</li></ul><p><strong>Ambele</strong></p><ul><li>Tiña capitis — infecție fungică a scalpului care provoacă căderea părului, care necesită tratament</li><li>Alopecie cicatricială — necesită trimitere urgentă la dermatologie</li><li>Căderea părului ca simptom al afecțiunilor sistemice — boală tiroidiană, afecțiuni autoimune, anemie</li></ul><h2>Ce include consultația</h2><p><strong>Evaluare completă a căderii părului</strong></p><p>Medicul tău de familie revizuiește istoricul căderii părului în detaliu — debut, tipar, viteză de progresie, antecedente familiale, simptome asociate, medicația actuală, status nutrițional, evenimente recente din viață și starea generală de sănătate — construind un tablou complet ca bază pentru identificarea cauzei.</p><p><strong>Identificarea cauzei subiacente</strong></p><p>Căderea părului este frecvent un simptom al ceva sistemic — nu doar o preocupare estetică. Medicul tău de familie evaluează factorii hormonali, nutriționali, autoimuni și legați de medicamente care pot cauza sau accelera căderea părului.</p><p><strong>Plan de gestionare bazat pe dovezi</strong></p><p>Pe baza evaluării, medicul tău recomandă abordarea cea mai potrivită pentru tipul tău specific de cădere a părului — care poate include optimizare nutrițională, tratamente topice, recomandări clinice la latitudinea medicului și trimitere acolo unde este indicat.</p><p><strong>Solicitarea analizelor unde este indicat</strong></p><p>Atunci când analizele de sânge sunt indicate clinic — funcție tiroidiană, feritină, studii ale fierului, panel hormonal, niveluri de vitamine — medicul tău le solicită în aceeași zi.</p><p><strong>Documentație clinică — la latitudinea medicului</strong></p><p>Atunci când este indicat clinic, medicul tău emite documentația clinică corespunzătoare, valabilă în orice farmacie spaniolă.</p><p>Notă: stupefiantele și anumite substanțe controlate necesită documentație specială care nu poate fi emisă electronic. Medicul tău îți va spune dacă acest lucru se aplică.</p><p><strong>Trimitere la dermatologie atunci când este necesar</strong></p><p>Anumite afecțiuni de cădere a părului — inclusiv alopecia cicatricială, alopecia areata complexă și prezentările care necesită biopsie a scalpului — necesită evaluare dermatologică specializată. Medicul tău de familie îți va spune clar dacă acesta este cazul tău și va coordona trimiterea.</p><h2>De ce căderea părului este respinsă prea des</h2><p>Căderea părului se întâlnește frecvent cu „este normal” sau „este doar stres” — uneori corect, dar prea des fără investigațiile adecvate. Un medic care evaluează cu adevărat căderea părului nu începe cu un răspuns generic. Începe cu un istoric complet, evaluează tabloul hormonal și nutrițional și identifică cauza specifică înainte de a propune o abordare adaptată acelei cauze.</p><p>Diferența dintre „este probabil stres” fără investigații și „feritina ta este scăzută și aceasta cauzează efluviu telogen, care este tratabil” cu o analiză de sânge nu este mică. Este diferența dintre o preocupare respinsă și o afecțiune identificată și gestionabilă.</p>",
+      "ctaLabel": null,
+      "sortOrder": 50,
+      "durationMinutes": 15,
+      "basePriceCents": 3900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.260Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0snn30001y8juccnmrdh3",
+          "kind": "IMAGE",
+          "key": "media/cc536d25-52be-4488-bf47-6eed76532325-es-caida-cabello-online.png",
+          "path": "/api/media/media/cc536d25-52be-4488-bf47-6eed76532325-es-caida-cabello-online.png",
+          "altText": "Caída del Cabello"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q6q3002mngjucety7quw",
+          "question": "Poate fi evaluată într-adevăr căderea părului prin apel video?",
+          "answer": "Da — pentru marea majoritate a prezentărilor. Un istoric medical detaliat este cea mai puternică unealtă de diagnostic în evaluarea căderii părului, iar un istoric complet poate fi obținut prin apel video. Medicul tău îți va cere, de asemenea, să arăți zonele afectate în timpul apelului. Acolo unde sunt necesare constatări ale examenului fizic sau biopsie a scalpului, medicul tău îți va oferi sfaturi privind trimiterea adecvată.",
+          "sortOrder": 0,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q6q3002nngjuow6770lg",
+          "question": "Am nevoie de analize de sânge înainte de consultația mea?",
+          "answer": "Nu. Medicul tău evaluează în timpul consultației dacă analizele sunt indicate și solicită analizele în aceeași zi, dacă este cazul. Aduce orice rezultat recent pe care îl ai — medicul tău le revizuiește în întregime.",
+          "sortOrder": 1,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q6q4002ongjumy8fcfar",
+          "question": "Poate fi inversată căderea părului?",
+          "answer": "Depinde de tip și de cât timp evoluează. Alopecia androgenetică răspunde mai bine la tratamentul început devreme, când foliculii se subțiază în loc să fie deja pierduți. Efluviul telogen este în general autolimitat și se rezolvă odată ce cauza subiacentă este tratată. Căderea părului asociată cu deficiență nutrițională răspunde bine la corectarea deficienței. Alopecia cicatricială necesită evaluare specializată urgentă, deoarece poate provoca pierdere permanentă dacă nu este tratată.",
+          "sortOrder": 2,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q6q4002pngjuvw1odamc",
+          "question": "Este acest serviciu potrivit pentru femeile cu căderea părului?",
+          "answer": "Da. Căderea părului la femei este o componentă centrală a acestui serviciu. Tabloul clinic la femei este frecvent mai complex decât alopecia androgenică masculină — implicând factori hormonali, nutriționali și autoimuni — și beneficiază semnificativ de o evaluare clinică structurată.",
+          "sortOrder": 3,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q6q4002qngjuvgd7xe94",
+          "question": "Ce se întâmplă dacă căderea mea de păr este legată de un medicament pe care îl iau?",
+          "answer": "Căderea părului legată de medicamente este evaluată ca parte a acestei consultații. Medicul tău îți revizuiește medicația actuală, identifică dacă vreuna contribuie la căderea părului și oferă sfaturi privind gestionarea adecvată.",
+          "sortOrder": 4,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q6q4002rngjumwzt0505",
+          "question": "Pot obține o trimitere la dermatologie prin acest serviciu?",
+          "answer": "Da. Unde evaluarea dermatologică de specialitate este indicată clinic, medicul tău de familie emite o scrisoare de trimitere în aceeași zi.",
+          "sortOrder": 5,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q6q4002sngjua2jqmcbs",
+          "question": "Am nevoie de asigurare medicală spaniolă?",
+          "answer": "Nu. Este un serviciu privat cu plată directă. Documentația clinică emisă prin acest serviciu este furnizată la tariful privat integral, indiferent de statutul de asigurare.",
+          "sortOrder": 6,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q6q4002tngjuuvnkmgcy",
+          "question": "Pot folosi acest serviciu din orice punct al Spaniei?",
+          "answer": "Da — inclusiv Insulele Baleare, Insulele Canare, Ceuta și Melilla. Ai nevoie doar de o conexiune stabilă la internet și de un dispozitiv cu cameră.",
+          "sortOrder": 7,
+          "resolvedLocale": "RO"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "RO",
+      "links": [
+        {
+          "id": "cmre7se910026g8jugr501ov4",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con alopecia cicatricial — derivación dermatológica especialista?",
+          "body": "Para alopecia cicatricial — derivación dermatológica especialista, consulta nuestra página de Dermatología Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Dermatología Especialista",
+          "targetSlug": "dermatologia-especialista-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7sb4n001yg8ju943cs0l1",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Evaluación hormonal y metabólica completa?",
+          "body": "Si tu situación está relacionada con evaluación hormonal y metabólica completa, nuestra Salud Femenina te ofrece la evaluación adecuada.",
+          "ctaLabel": "Salud Femenina",
+          "targetSlug": "salud-femenina-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7sbwq0020g8jua8ahleyv",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con caída del cabello y déficit de testosterona?",
+          "body": "Para caída del cabello y déficit de testosterona, consulta nuestra página de Salud Masculina — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Salud Masculina",
+          "targetSlug": "salud-masculina-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7scot0022g8jurstwbmq4",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre analíticas de ferritina, tiroides y perfil hormonal?",
+          "body": "Nuestra Derivaciones y Pruebas está pensada específicamente para analíticas de ferritina, tiroides y perfil hormonal.",
+          "ctaLabel": "Derivaciones y Pruebas",
+          "targetSlug": "derivaciones-pruebas-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "endpoint": "/api/services/consulta-medica-online?countryCode=es&locale=DE",
+  "checkedAt": "2026-09-13T02:29:54.167Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7pwwv0000ngjuwvmiacw9",
+      "kind": "GENERAL",
+      "slug": "consulta-medica-online",
+      "name": "Allgemeine ärztliche Konsultation",
+      "summary": null,
+      "seoTitle": "Online-Arzt Spanien | Ohne Wartezeit | Konsultation am selben Tag",
+      "seoDescription": "Brauchst du heute einen Arzt zu sehen? In Spanien zugelassene Ärzte bieten Konsultationen per sicherer Videotelefonie an. Ohne vorherige Registrierung, ohne Wartezimmer. Klinische Dokumentation wird noch am selben Tag in ganz Spanien ausgestellt.",
+      "seoKeywords": [
+        "médico online España",
+        "consulta médica online España",
+        "médico online sin espera",
+        "médico online sin médico de cabecera",
+        "videoconsulta médica privada España"
+      ],
+      "heroTitle": "Online-Arzt — Private ärztliche Beratung am selben Tag",
+      "heroDescription": "Benötigen Sie heute einen Arzt zu sehen, haben aber keinen zugewiesenen Hausarzt, können Sie nicht wochenlang auf einen Termin warten, oder benötigen Sie einfach eine schnelle und qualitativ hochwertige ärztliche Beratung, ohne sich fortzubewegen? Unsere Ärzte, in Spanien gemäß den Anforderungen der Organización Médica Colegial (OMC) zugelassen, bieten vollständige private ärztliche Konsultationen per sicherem Videoanruf an. Ohne vorherige Registrierung, ohne Wartezimmer, mit vollständiger klinischer Dokumentation, die noch am selben Tag von jedem Ort des Landes aus ausgestellt wird.",
+      "detailBody": "<h2>Die Realität des Zugangs zur Gesundheitsversorgung in Spanien</h2><p>Das spanische Gesundheitssystem gehört zu den besten Europas — doch für einen erheblichen Teil der Bevölkerung gibt es beim Zugang reale Hürden.</p><p>Wenn du selbstständig bist und derzeit keinem Hausarzt zugewiesen bist, wenn du kürzlich in eine andere Autonome Gemeinschaft gezogen bist, wenn du seit Wochen auf einen Termin im CAP wartest, wenn du heute ärztliche Versorgung brauchst und das öffentliche System sie dir nicht bieten kann, oder wenn du eine private Sprechstunde ohne die üblichen Wartezeiten bevorzugst — dann ist dieser Service für dich da.</p><p>Unsere zugelassenen Ärztinnen und Ärzte führen vollständige private ärztliche Konsultationen per Videoanruf durch, mit derselben klinischen und rechtlichen Gültigkeit wie eine persönliche Sprechstunde. Die von ihnen ausgestellte klinische Dokumentation — einschließlich privater elektronischer Verschreibungen, wo dies klinisch angezeigt ist — ist mit Nodofarma verbunden und in den mehr als 22.000 Apotheken des gesamten Staatsgebiets gültig.</p><p>Hast du bereits einen Hausarzt im öffentlichen System? Dieser Service funktioniert als Ergänzung — für Zeiten, in denen du heute ärztliche Hilfe brauchst und dein CAP keinen Termin verfügbar hat, oder für eine Zweitmeinung, bevor du eine wichtige medizinische Entscheidung triffst.</p><h2>Wobei wir dir helfen können</h2><p>Unsere Ärztinnen und Ärzte beurteilen und behandeln ein breites Spektrum akuter und nicht dringlicher Gesundheitsprobleme:</p><p><strong>Atemwege und HNO</strong></p><ul><li>Erkältung, Grippe, Sinusitis und Bronchitis</li><li>COVID-19-Symptome und Post-COVID-Probleme</li><li>Halsschmerzen, Mandelentzündung und Ohrinfektionen</li><li>Lungeninfektionen und anhaltender Husten</li><li>Leichte Asthmaanfälle</li></ul><p><strong>Infektionen</strong></p><ul><li>Harnwegsinfektionen — Beurteilung und Behandlung, wo dies klinisch angezeigt ist</li><li>Hautinfektionen</li><li>Atemwegsinfektionen, die eine Beurteilung erfordern</li><li>Gastrointestinale Infektionen</li></ul><p><strong>Allgemein und systemisch</strong></p><ul><li>Fieber bei Erwachsenen</li><li>Kopfschmerzen und Migräne</li><li>Übelkeit, Erbrechen, Durchfall und Bauchschmerzen</li><li>Müdigkeit und allgemeines Unwohlsein</li></ul><p><strong>Haut und Augen</strong></p><ul><li>Ausschläge, Ekzeme und leichte allergische Reaktionen</li><li>Bindehautentzündung und leichte Augenreizung</li></ul><p><strong>Bewegungsapparat</strong></p><ul><li>Rücken-, Nacken- und Muskelschmerzen</li><li>Leichte Muskel- und Skelettverletzungen</li></ul><p><strong>Sonstiges</strong></p><ul><li>Fragen zu aktueller Medikation oder laufender Behandlung</li><li>Ärztliche Dokumentation — Bescheinigungen, Überweisungen</li><li>Medizinische Reiseberatung</li><li>Zweitmeinung zu Diagnosen oder Behandlungsplänen</li></ul><h2>Was deine Konsultation beinhaltet</h2><p><strong>Umfassende klinische Beurteilung</strong></p><p>Der Arzt oder die Ärztin erhebt eine vollständige Krankengeschichte deiner Symptome, relevanter Vorerkrankungen und deiner aktuellen Medikation — und führt per Videoanruf eine strukturierte klinische Beurteilung durch, mit demselben Standard wie bei einer persönlichen Sprechstunde.</p><p><strong>Klare Erklärung</strong></p><p>Du verlässt die Konsultation mit dem genauen Wissen, was vor sich geht, was du tun solltest und wann du zusätzliche medizinische Hilfe suchen solltest. Ohne Eile, ohne Sprachbarrieren.</p><p><strong>Klinische Dokumentation — nach Ermessen des Arztes</strong></p><p>Der Arzt oder die Ärztin stellt nach vollständiger Beurteilung die für deine Situation geeignete klinische Dokumentation aus. Dazu kann eine private elektronische Verschreibung gemäß dem Real Decreto 1718/2010 gehören, von der OMC homologiert und über Nodofarma mit den mehr als 22.000 Apotheken des gesamten Staatsgebiets verbunden — wo dies klinisch angezeigt ist. Zeige in jeder Apotheke deiner Wahl deinen DNI vor.</p><p>Das private Rezept ist für die erste Abgabe in der Regel 10 Kalendertage gültig. Bei chronischen Behandlungen kann der Arzt oder die Ärztin Folgeabgaben entsprechend der Behandlungsdauer planen.</p><p><strong>Antibiotika — Beurteilung und Behandlung, wo angezeigt</strong></p><p>In Spanien erfordern alle Antibiotika ein ärztliches Rezept. Dein Arzt oder deine Ärztin beurteilt deine Symptome und verschreibt die geeignete Behandlung, wo die klinische Evidenz dies rechtfertigt — einschließlich Harnwegsinfektionen, Atemwegsinfektionen und Hautinfektionen — unter Beachtung der Grundsätze eines verantwortungsvollen Antibiotikaeinsatzes.</p><p><strong>Überweisungen und ärztliche Dokumentation</strong></p><p>Wenn eine Überweisung an eine Fachärztin oder einen Facharzt, Laboruntersuchungen, bildgebende Verfahren oder andere klinische Dokumentation erforderlich ist, stellt der Arzt oder die Ärztin diese noch am selben Tag aus.</p><p><strong>Ärztliche Bescheinigung</strong></p><p>Wenn du eine arbeitsbedingte Abwesenheit belegen musst, kann der Arzt oder die Ärztin die entsprechende ärztliche Bescheinigung ausstellen, wo dies klinisch angezeigt ist, nach vollständiger Beurteilung.</p><h2>Private elektronische Verschreibung — wie es in Spanien funktioniert</h2><p>Die private elektronische ärztliche Verschreibung in Spanien ist durch das Real Decreto 1718/2010 geregelt und im gesamten Staatsgebiet gültig. Unsere Ärztinnen und Ärzte stellen private elektronische Rezepte aus, die von der OMC homologiert und mit Nodofarma verbunden sind.</p><p>Mit einem privaten Rezept zahlst du 100% des Medikamentenpreises — die Medikamentenpreise in Spanien sind reguliert und in der Regel sehr erschwinglich. Die Medikamente sind in jeder spanischen Apotheke gegen Vorlage deines DNI erhältlich.</p><p>Die private elektronische Verschreibung ist nicht dasselbe wie das Rezept der Seguridad Social. Mit einem Rezept des SNS könntest du je nach Situation einen reduzierten Eigenanteil haben. Wenn du im öffentlichen System einen Hausarzt hast und erstattungsfähige Medikamente benötigst, frage zuerst in deinem CAP nach.</p><h2>Wer diesen Service nutzt</h2><ul><li>Selbstständige und Arbeitnehmer ohne derzeit zugewiesenen Hausarzt</li><li>Personen, die die Autonome Gemeinschaft gewechselt haben und noch keinem CAP zugewiesen sind</li><li>Bewohner, die nicht Wochen auf einen Termin im öffentlichen System warten können</li><li>Expats und internationale Bewohner, die lieber auf Englisch oder Portugiesisch konsultieren</li><li>Touristen und digitale Nomaden, die punktuelle medizinische Versorgung ohne spanische Versicherung benötigen</li><li>Personen mit privater Krankenversicherung, die eine schnelle Zweitmeinung wünschen</li><li>Alle, die heute einen Arzt brauchen, ohne sich zu bewegen</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 10,
+      "durationMinutes": 15,
+      "basePriceCents": 3900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.257Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0su150005y8junba6y1ib",
+          "kind": "IMAGE",
+          "key": "media/4fdae944-3701-4d28-8553-fe11a3b12d7f-es-consulta-medica-online.png",
+          "path": "/api/media/media/4fdae944-3701-4d28-8553-fe11a3b12d7f-es-consulta-medica-online.png",
+          "altText": "Consulta Médica General"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7px5i0001ngju89f94ekh",
+          "question": "Brauche ich eine Gesundheitskarte oder SIP, um diesen Dienst zu nutzen?",
+          "answer": "Nein. Dies ist ein privater Direktzahlungsdienst. Es ist keine Gesundheitskarte, keine SIP und keine spanische Krankenversicherung jeglicher Art erforderlich.",
+          "sortOrder": 0,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7px5i0002ngjuege8nh97",
+          "question": "Kann der Arzt Infektionen behandeln, die Antibiotika erfordern?",
+          "answer": "Ja — dort, wo es nach vollständiger Beurteilung deiner Symptome klinisch angezeigt ist. In Spanien ist es obligatorisch, eine ärztliche Verschreibung zu haben, um Antibiotika in der Apotheke zu erhalten. Dein Arzt beurteilt deine Beschwerden und verschreibt die geeignete Behandlung, wo die klinische Evidenz dies rechtfertigt.",
+          "sortOrder": 1,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7px5i0003ngju6svm8wyj",
+          "question": "Ist die klinische Dokumentation in ganz Spanien gültig?",
+          "answer": "Ja. Die von unseren Ärzten ausgestellte klinische Dokumentation — einschließlich privater elektronischer Rezepte, wo angegeben — ist von der OMC anerkannt und mit Nodofarma verbunden und in jeder der mehr als 22.000 Apotheken des Staatsgebiets gültig.",
+          "sortOrder": 2,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7px5i0004ngjugfol80qo",
+          "question": "Kann ich über diesen Service eine Krankschreibung erhalten?",
+          "answer": "Die Ärzte von Global Health können ein privates ärztliches Attest ausstellen, das die vorübergehende Arbeitsunfähigkeit bestätigt. Um die Krankschreibung wegen vorübergehender Arbeitsunfähigkeit (IT) im öffentlichen System mit Geldleistung der Seguridad Social zu erhalten, benötigen Sie einen Hausarzt im SNS.",
+          "sortOrder": 3,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7px5i0005ngjuvcwamxc8",
+          "question": "Kann ich ein Rezept aus einem anderen europäischen Land erneuern?",
+          "answer": "Unser Arzt bewertet Ihre aktuelle Behandlung und stellt, wenn er sie klinisch für angemessen hält, die entsprechende spanische klinische Dokumentation aus. Bringen Sie Ihre aktuellen Unterlagen zum Termin mit.",
+          "sortOrder": 4,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7px5i0006ngju1jevcbps",
+          "question": "Wie lange dauert es, bis die klinische Dokumentation eintrifft?",
+          "answer": "Wenn es klinisch indiziert ist, wird die Dokumentation noch am selben Tag des Termins ausgestellt, in der Regel innerhalb weniger Minuten.",
+          "sortOrder": 5,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7px5i0007ngjuuxisglns",
+          "question": "Kann ich diesen Dienst von jedem Ort in Spanien aus nutzen?",
+          "answer": "Ja — einschließlich der Balearen, der Kanarischen Inseln, Ceuta und Melilla. Du benötigst nur eine stabile Internetverbindung und ein Gerät mit Kamera.",
+          "sortOrder": 6,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7px5i0008ngjuadsntmup",
+          "question": "In welchen Sprachen ist es verfügbar?",
+          "answer": "Spanisch, Englisch und Portugiesisch — je nach Verfügbarkeit des Arztes.",
+          "sortOrder": 7,
+          "resolvedLocale": "DE"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "DE",
+      "links": [
+        {
+          "id": "cmre7rgl80000g8jufspbvv3k",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Justificante médico o certificado de baja?",
+          "body": "Si tu situación está relacionada con justificante médico o certificado de baja, nuestra Justificante Médico te ofrece la evaluación adecuada.",
+          "ctaLabel": "Justificante Médico",
+          "targetSlug": "justificante-medico-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7rhdh0002g8jutbik3ps8",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con renovación de tu tratamiento habitual?",
+          "body": "Para renovación de tu tratamiento habitual, consulta nuestra página de Renovación de Tratamiento — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Renovación de Tratamiento",
+          "targetSlug": "renovacion-tratamiento-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7ri5n0004g8jub91rpgd5",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre control de peso con apoyo médico?",
+          "body": "Nuestra Control de Peso está pensada específicamente para control de peso con apoyo médico.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7rixq0006g8ju1e53bfuz",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Salud masculina y función sexual?",
+          "body": "Si tu situación está relacionada con salud masculina y función sexual, nuestra Salud Masculina te ofrece la evaluación adecuada.",
+          "ctaLabel": "Salud Masculina",
+          "targetSlug": "salud-masculina-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdpz5n3001z01rukg2lecs5",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

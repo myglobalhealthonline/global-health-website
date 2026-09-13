@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/pediatria-online?countryCode=es&locale=CS",
+  "checkedAt": "2026-09-13T02:29:52.272Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qbti0042ngjumicur4m2",
+      "kind": "GENERAL",
+      "slug": "pediatria-online",
+      "name": "Primární péče Pediatrie",
+      "summary": null,
+      "seoTitle": "Online pediatrie Španělsko | Dětská konzultace | Obvodní lékař",
+      "seoDescription": "Je vaše dítě nemocné a nemůžete čekat na termín? Naši registrovaní praktičtí lékaři posuzují zdraví dětí prostřednictvím bezpečného videohovoru. Bez čekárny, ještě tentýž den ve Španělsku.",
+      "seoKeywords": [
+        "pediatría online España",
+        "médico niños online España",
+        "consulta pediátrica online España",
+        "médico infantil online España",
+        "fiebre niño médico online España"
+      ],
+      "heroTitle": "Online pediatrie — dětská konzultace s praktickým lékařem tentýž den",
+      "heroDescription": "Vaše dítě je nemocné a k pediatrovi není volný termín dříve než zítra. Nebo je sobotní večer a ordinace je zavřená. Nebo potřebujete zhodnotit příznaky svého dítěte, než se rozhodnete, zda jet na pohotovost. Nebo jste zahraniční rodina ve Španělsku a raději se poradíte anglicky nebo portugalsky. Naši praktičtí lékaři, registrovaní podle požadavků Organizace lékařské komory (OMC), poskytují dětské lékařské konzultace prostřednictvím bezpečného videohovoru — při kterém hodnotí příznaky vašeho dítěte, radí ohledně dalšího postupu a koordinují odeslání nebo další vyšetření, kde je to klinicky indikováno. Ve stejný den, odkudkoli ve Španělsku, ve španělštině, angličtině nebo portugalštině. Po celou dobu všech konzultací u dětí mladších 16 let musí být přítomen rodič nebo zákonný zástupce.",
+      "detailBody": "<h2>Realita španělského pediatrického systému</h2><p>Ve Španělsku je pediatrická primární péče dobře strukturovaná — každé dítě má v rámci veřejného systému právo na přiděleného praktického pediatra až do 14–16 let podle autonomního společenství. To je silná stránka španělského zdravotnického systému.</p><p>Existují však situace, kdy je tato služba skutečně užitečná:</p><ul><li>Vaše dítě je dnes nemocné a přidělený pediatr nemá volný termín až do zítřka nebo pozítří</li><li>Je mimo ordinační dobu — večer, o víkendu nebo o svátku</li><li>Chcete vyhodnotit příznaky svého dítěte, než se rozhodnete, zda jít na pohotovost — kde mohou být čekací doby velmi dlouhé</li><li>Jste mezinárodní nebo expat rodina bez aktuálně přiděleného pediatra, nebo dáváte přednost konzultaci v angličtině nebo portugalštině</li><li>Chcete, aby vám bylo jasně vysvětleno, co vám španělský pediatr řekl o zdraví vašeho dítěte</li></ul><p>Máte již v rámci veřejného systému přiděleného pediatra? Tato služba funguje jako doplněk — pro chvíle, kdy potřebujete péči dnes a není k dispozici termín, nebo když chcete druhý názor, než se rozhodnete, zda jít na pohotovost.</p><h2>Pro koho je tato služba určena</h2><p>Tato konzultace je vhodná pro:</p><ul><li>Kojence, děti a dospívající do 18 let s akutními nebo neurgentními zdravotními obtížemi</li><li>Rodiny, které v současnosti nemají přiděleného pediatra primární péče</li><li>Rodiny s přiděleným pediatrem, které dnes mimo ordinační dobu potřebují klinickou radu</li><li>Rodiče, kteří potřebují vyhodnotit příznaky svého dítěte, než se rozhodnou, zda jít na pohotovost</li><li>Rodiče, kteří obdrželi radu nebo dokumentaci od španělského pediatra a chtějí, aby jim byla jasně vysvětlena</li><li>Dospívající od 16 let, kteří chtějí prodiskutovat zdravotní problém přímo s lékařem</li><li>Mezinárodní nebo expat rodiny, které dávají přednost konzultaci v angličtině nebo portugalštině</li></ul><p>Tato služba je určena pro akutní a neurgentní pediatrické obtíže na úrovni všeobecné medicíny. V případě dětských urgentních stavů volejte 112 nebo ihned jděte na nejbližší pohotovost. Horečka u kojenců mladších než 3 měsíce vyžaduje vyšetření na pohotovosti — nerezervujte video konzultaci.</p><h2>Stavy, které jsou obvykle hodnoceny</h2><p><strong>Respirační a ORL</strong></p><ul><li>Nachlazení, kašel a infekce horních cest dýchacích</li><li>Infekce ucha — otitis media a otitis externa</li><li>Bolest v krku a angína</li><li>Krup — vyšetření a doporučení</li><li>Chrůpky a mírné astmatické potíže</li><li>Sinusitida u starších dětí</li></ul><p><strong>Horečka a celkové onemocnění</strong></p><ul><li>Horečka u dětí starších než 3 měsíce — vyšetření, doporučení k postupu a informace, kdy vyhledat další péči</li><li>Virová onemocnění — šestá nemoc, syndrom ruka-noha-ústa, plané neštovice</li><li>Gastroenteritida — zvracení a průjem, posouzení dehydratace</li><li>Infekce močových cest u dětí</li><li>Únava a celková nevolnost</li></ul><p><strong>Kůže</strong></p><ul><li>Vyrážky — vyšetření a doporučení pro rodiče</li><li>Ekzém u kojenců a dětí — zvládání vzplanutí a pokračující doporučení</li><li>Impetigo a kožní infekce u dětí</li><li>Moluska</li><li>Plenková dermatitida a kožní potíže u kojenců</li><li>Alergické kožní reakce</li></ul><p><strong>Růst, vývoj a chování</strong></p><ul><li>Obavy rodičů o vývojové milníky — s odesláním k formálnímu vyšetření, je-li to indikováno</li><li>Potíže se spánkem u kojenců a malých dětí</li><li>Potíže s krmením u kojenců</li><li>Behaviorální potíže u dětí školního věku — s odesláním, je-li to indikováno</li><li>Zdravotní potíže u dospívajících — akné, menstruační zdraví, duševní pohoda, obavy o hmotnost</li></ul><p><strong>Řízení chronických stavů</strong></p><ul><li>Astma u dětí — kontrola a průběžné poradenství</li><li>Ekzém — průběžné zvládání a kontrola vzplanutí</li><li>Alergie — vyšetření a doporučení k postupu</li><li>Chronická bolest břicha u dětí — vyšetření a odeslání, je-li to indikováno</li></ul><p><strong>Další</strong></p><ul><li>Lékařská dokumentace — potvrzení o absenci ve škole, doporučující dopisy</li><li>Kontrola výsledků nebo klinických dopisů od španělských pediatrů — jasně vysvětleno</li><li>Lékařské cestovní rady pro děti</li><li>Konzultace ohledně očkovacího kalendáře — objasnění a doporučení</li></ul><h2>Co konzultace zahrnuje</h2><p><strong>Komplexní pediatrické klinické zhodnocení</strong></p><p>Váš praktický lékař odebere kompletní anamnézu příznaků vašeho dítěte — začátek, trvání, závažnost, doprovodné příznaky, příjem potravy a hydrataci, relevantní osobní anamnézu, aktuální medikaci, očkovací stav a rodinnou anamnézu, je-li relevantní. U menších dětí se konzultace vede s rodičem popisujícím příznaky a s ukázáním dítěte na videu, je-li to klinicky relevantní.</p><p><strong>Posouzení bezpečnosti</strong></p><p>Každá pediatrická konzultace zahrnuje posouzení, zda stav dítěte vyžaduje pohotovostní nebo urgentní osobní vyšetření. Váš lékař vám jasně a neprodleně sdělí, pokud je tomu tak.</p><p><strong>Jasné rodičovské vedení</strong></p><p>Odcházíte z konzultace s tím, co je nejpravděpodobnější příčinou stavu vašeho dítěte, co dělat doma, jaké příznaky sledovat, co by vás mělo vést k vyhledání další péče a kdy očekávat zlepšení. Jistota a informovanost rodičů jsou samy o sobě klinickým výsledkem.</p><p><strong>Klinická dokumentace — dle uvážení lékaře</strong></p><p>Je-li to klinicky indikováno, váš praktický lékař vystaví příslušnou klinickou dokumentaci platnou v kterékoli španělské lékárně.</p><p>Poznámka: Narkotika a některé kontrolované látky vyžadují zvláštní dokumentaci, kterou nelze vystavit elektronicky. Váš lékař vás informuje, zda se to vztahuje na situaci vašeho dítěte.</p><p><strong>Antibiotika — tam, kde jsou klinicky indikována</strong></p><p>Ve Španělsku vyžadují všechna antibiotika lékařský předpis. Váš lékař vyhodnotí stav vašeho dítěte a předepíše vhodné antibiotikum tam, kde to klinické důkazy odůvodňují — včetně infekcí ucha, infekcí v krku, infekcí močových cest a kožních infekcí — v souladu se zásadami odpovědného používání antibiotik.</p><p><strong>Odeslání a dokumentace</strong></p><p>Je-li indikováno odeslání ke španělskému pediatrovi, specialistovi nebo na pohotovost, váš lékař vystaví příslušnou dokumentaci tentýž den.</p><h2>Kdy jít na pohotovost — jasné pokyny pro rodiče</h2><p>Jedním z nejčastějších a nejnáročnějších rozhodnutí, která rodiče činí, je, zda stav jejich dítěte vyžaduje pohotovostní péči, nebo zda postačí pečlivé sledování doma. Tato konzultace vám pomůže toto rozhodnutí učinit s klinickou podporou — některé stavy však vyžadují pohotovostní péči bez čekání na video konzultaci:</p><p>Jděte ihned na pohotovost, pokud vaše dítě má:</p><ul><li>Horečku u kojence mladšího než 3 měsíce — vždy jde o urgentní stav</li><li>Dýchací potíže — jakékoli rychlé, namáhavé nebo hlučné dýchání</li><li>Vyrážku, která při stlačení sklenicí nezmizí — možné meningitida, volejte 112</li><li>První záchvat, nebo záchvat trvající déle než 5 minut</li><li>Ztrátu vědomí nebo nereagování</li><li>Těžkou alergickou reakci — otok rtů, jazyka nebo krku</li><li>Dítě, které se rychle zhoršuje</li></ul><p>Dětské pohotovosti ve Španělsku:</p><ul><li>Hospital La Paz — Madrid (dětská pohotovost 24h)</li><li>Hospital Vall d'Hebron — Barcelona (dětská pohotovost 24h)</li><li>Hospital La Fe — Valencia (dětská pohotovost 24h)</li><li>Hospital Virgen del Rocío — Sevilla (dětská pohotovost 24h)</li><li>Mimo velká města: referenční nemocnice ve vaší oblasti má dětskou pohotovost</li></ul><p>V případě pochybností vždy jděte na pohotovost. Je vždy lepší být vyšetřen a zjistit, že nejde o nic vážného, než čekat doma s dítětem, které se zhoršuje.</p><h2>Důležité informace před rezervací</h2><ul><li>Po celou dobu konzultace musí být u osob mladších 16 let přítomen rodič, matka, otec nebo zákonný zástupce, v souladu se zákonem Ley Orgánica 1/1996 de Protección Jurídica del Menor a zákonem Ley 41/2002 de autonomía del paciente</li><li>U dospívajících ve věku 16 let a více lékař posuzuje způsobilost k samostatnému souhlasu podle španělských předpisů — koncept „menor maduro“</li><li>Horečka u kojenců mladších než 3 měsíce je lékařská urgence vyžadující okamžité osobní vyšetření — pro tento stav nerezervujte video konzultaci</li><li>Děti, které se rychle zhoršují — pokud se stav vašeho dítěte při pokusu o rezervaci výrazně zhoršuje, jděte okamžitě na pohotovost místo čekání na konzultaci</li><li>Oznamovací povinnost — naši klinici jsou vázáni povinností oznamovat situace možného zanedbání nebo týrání dítěte podle zákona Ley Orgánica 1/1996. Tato povinnost má přednost před důvěrností</li><li>Rozhodnutí o vystavení jakékoli dokumentace — potvrzení, odeslání — je vždy klinickým rozhodnutím lékaře po úplném vyšetření</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 40,
+      "durationMinutes": 15,
+      "basePriceCents": 3900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.259Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0skg90000y8jurlo2mrg2",
+          "kind": "IMAGE",
+          "key": "media/fbb2f7c0-6549-481e-8ff9-6b6cce4cacc9-es-pediatria-online.png",
+          "path": "/api/media/media/fbb2f7c0-6549-481e-8ff9-6b6cce4cacc9-es-pediatria-online.png",
+          "altText": "Atención Primária Pediatria"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qc1v0043ngjubabydlvr",
+          "question": "Lze skutečně posoudit nemoc dítěte prostřednictvím videohovoru?",
+          "answer": "Ano — u naprosté většiny neurgentních případů. Podrobná rodičovská anamnéza příznaků v kombinaci s vizuálním pozorováním dítěte během hovoru umožňuje zkušenému lékaři provést klinické zhodnocení většiny běžných dětských onemocnění. Kde si prezentace vyžaduje osobní fyzikální vyšetření — například k posouzení dechových zvuků, vyšetření ucha nebo palpační vyšetření břicha — váš lékař vám to jasně doporučí a zajistí příslušné odeslání.",
+          "sortOrder": 0,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qc1v0044ngju09x6ekdn",
+          "question": "Moje dítě má horečku — mohu použít tuto službu?",
+          "answer": "Ano — pro děti starší než 3 měsíce. Váš lékař posoudí závažnost, pravděpodobnou příčinu a vhodný postup. U kojenců mladších než 3 měsíce je horečka lékařskou naléhavou situací — jděte okamžitě na nejbližší pohotovost bez rezervace videokonzultace.",
+          "sortOrder": 1,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qc1v0045ngjufo98znha",
+          "question": "Může lékař předepsat antibiotika pro mého syna?",
+          "answer": "Ano — tam, kde je to klinicky indikováno po kompletním vyšetření. Ve Španělsku všechny antibiotika vyžadují lékařský předpis. Váš lékař zhodnotí projev vašeho dítěte a předepíše vhodné antibiotikum tam, kde to klinické důkazy odůvodňují.",
+          "sortOrder": 2,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qc1v0046ngju7w1xvobk",
+          "question": "Potřebuji mít přiděleného pediatra, abych mohl(a) používat tuto službu?",
+          "answer": "Ne. Tato služba je dostupná pro všechny rodiny ve Španělsku — bez předchozí registrace, bez nutnosti přiděleného pediatra, bez nutnosti zdravotního pojištění.",
+          "sortOrder": 3,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qc1v0047ngjuou9kxn45",
+          "question": "Moje dítě dostalo dopis nebo diagnózu od španělského pediatra, kterému nerozumím — můžete mi pomoci?",
+          "answer": "Ano. Přineste dopis nebo výsledky na konzultaci a váš lékař zkontroluje a jasně vysvětlí nálezy a klinická doporučení v jazyce, který si přejete.",
+          "sortOrder": 4,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qc1v0048ngju1rdxl81f",
+          "question": "Je tato služba vhodná pro dospívající?",
+          "answer": "Ano. Zdravotní obavy dospívajících — včetně akné, menstruačního zdraví, duševní pohody a hmotnosti — jsou součástí této služby. U dospívajících ve věku 16 let a starších lékař posoudí, zda může mladý člověk udělit souhlas samostatně. U osob mladších 16 let musí být po celou dobu konzultace přítomen rodič nebo zákonný zástupce.",
+          "sortOrder": 5,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qc1v0049ngjupx17vlal",
+          "question": "Co se stane, pokud bude moje dítě potřebovat jít na pohotovost?",
+          "answer": "Pokud váš lékař určí, že vaše dítě potřebuje urgentní nebo bezodkladnou osobní péči, bude vám to okamžitě a jasně sděleno — včetně toho, co říct při příjezdu na pohotovost a která nemocnice je vzhledem k vaší poloze ve Španělsku nejvhodnější. Váš lékař může vystavit stručné klinické shrnutí, pokud by to bylo užitečné.",
+          "sortOrder": 6,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qc1v004angju8vzke26a",
+          "question": "Mohu prostřednictvím této služby získat omluvenku do školy?",
+          "answer": "Ano. Omluvenky za školní absenci mohou být vystaveny podle klinického uvážení lékaře po vyšetření — potvrzující, že dítě bylo vyšetřeno a není schopno docházet do školy, aniž by se uváděly klinické podrobnosti.",
+          "sortOrder": 7,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qc1w004bngjuc93zuy74",
+          "question": "Potřebuji španělské zdravotní pojištění?",
+          "answer": "Ne. Je to soukromá služba s přímou úhradou. Klinická dokumentace vystavená prostřednictvím této služby se poskytuje za plnou soukromou cenu bez ohledu na stav pojištění.",
+          "sortOrder": 8,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qc1w004cngjuscslov4h",
+          "question": "Mohu používat tuto službu odkudkoli ve Španělsku?",
+          "answer": "Ano — včetně Baleárských ostrovů, Kanárských ostrovů, Ceuty a Melilly. Stačí stabilní připojení k internetu a zařízení s kamerou.",
+          "sortOrder": 9,
+          "resolvedLocale": "CS"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "CS",
+      "links": [
+        {
+          "id": "cmre7ts6t0052g8ju6asq61tw",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Enfermedad crónica pediátrica o condición compleja?",
+          "body": "Si tu situación está relacionada con enfermedad crónica pediátrica o condición compleja, nuestra Pediatría Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Pediatría Especialista",
+          "targetSlug": "pediatra-especialista-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tsyv0054g8jug81ewfa0",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con salud mental en adolescentes?",
+          "body": "Para salud mental en adolescentes, consulta nuestra página de Psiquiatría Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Psiquiatría Especialista",
+          "targetSlug": "psiquiatra-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7ttqy0056g8jufdh5x48f",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre consulta médica general con médico de cabecera?",
+          "body": "Nuestra Consulta Médica General está pensada específicamente para consulta médica general con médico de cabecera.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpu7ro001e01ruc1ycm5n5"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T12:26:00.000Z"
+      }
+    }
+  }
+}

@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/salud-mental-online?countryCode=es&locale=RO",
+  "checkedAt": "2026-09-13T02:30:08.302Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q3a5001ongjur495me3b",
+      "kind": "GENERAL",
+      "slug": "salud-mental-online",
+      "name": "Sănătate mintală",
+      "summary": null,
+      "seoTitle": "Sănătate Mintală Online Spania | Evaluare Clinică | Medic autorizat",
+      "seoDescription": "Anxietate, depresie, burnout sau alte preocupări de sănătate mintală. Medicii noștri acreditați oferă evaluări clinice confidențiale prin apel video securizat. În aceeași zi în Spania.",
+      "seoKeywords": [
+        "salud mental online España",
+        "ansiedad médico online España",
+        "depresión evaluación online España",
+        "burnout médico online España",
+        "salud mental expats España"
+      ],
+      "heroTitle": "Sănătate mintală — Evaluare clinică confidențială online",
+      "heroDescription": "Dificultățile de sănătate mintală — anxietate, depresie, burnout, dificultatea de adaptare la o nouă țară sau tipare persistente de gândire și comportament care îți afectează calitatea vieții — răspund cel mai bine la sprijinul clinic structurat și bazat pe dovezi al unui profesionist calificat. Medicii noștri, înscriși în colegiu conform cerințelor Organizației Medicale Colegiale (OMC), oferă evaluări clinice de sănătate mintală prin videoconferință securizată — fără sală de așteptare, fără bariere lingvistice, în aceeași zi, din orice punct al Spaniei, în spaniolă, engleză sau portugheză.",
+      "detailBody": "<h2>Ce este acest serviciu — și ce nu este</h2><p>Să înțelegi ce nivel de sprijin pentru sănătate mintală este potrivit pentru tine te ajută să accesezi îngrijirea cea mai adecvată.</p><p><strong>Această evaluare clinică de sănătate mintală la nivel de medicină generală este potrivită pentru:</strong></p><ul><li>Evaluare inițială a anxietății, dispoziției scăzute, depresiei și stresului</li><li>Screening pentru afecțiuni comune de sănătate mintală folosind instrumente clinice validate</li><li>Evaluarea modului în care simptomele de sănătate mintală interacționează cu sănătatea fizică</li><li>Recomandări clinice și planificarea îngrijirii la discreția medicului</li><li>Trimitere la psihologie, psihiatrie sau alt sprijin specializat, unde este indicat</li><li>Orientare privind serviciile de sănătate mintală disponibile în Spania</li><li>Revizuirea gestionării actuale a sănătății mintale și sprijin continuu</li><li>TDAH — screening inițial și cale de trimitere, unde este indicat</li></ul><p><strong>Acest serviciu nu este potrivit pentru:</strong></p><ul><li>Intervenție în criză — dacă ești în criză, folosește resursele de la începutul acestei pagini</li><li>Evaluare psihiatrică — dacă ai nevoie de un psihiatru, medicul tău coordonează trimiterea</li><li>Psihoterapie sau consiliere — aceasta este o evaluare medicală, nu o ședință de terapie</li><li>Evaluarea psihozei, a tulburării bipolare severe sau a afecțiunilor psihiatrice complexe</li><li>Evaluare sau tratament psihiatric involuntar</li></ul><p>Nu ești sigur ce nivel de sprijin ai nevoie? Începe cu această evaluare. Medicul tău evaluează prezentarea ta și oferă recomandări cu privire la pașii următori cei mai adecvați.</p><h2>Afecțiuni evaluate în mod obișnuit</h2><p><strong>Anxietate și stres</strong></p><ul><li>Tulburare de anxietate generalizată</li><li>Anxietate socială și anxietate de performanță</li><li>Anxietate legată de sănătate</li><li>Atauri de panică și tulburare de panică</li><li>Stres profesional și burnout</li><li>Dificultăți de adaptare — țară nouă, loc de muncă nou, schimbări în relații</li><li>Stres specific expaților — adaptare culturală, izolare, preocupări legate de identitate, separare de familie</li></ul><p><strong>Dispoziție</strong></p><ul><li>Dispoziție scăzută și depresie</li><li>Tristețe persistentă și pierderea interesului</li><li>Epuizare emoțională și anhedonie</li><li>Schimbări ale dispoziției postpartum — dispoziție scăzută și anxietate după naștere</li><li>Tulburare afectivă sezonieră</li><li>Doliul și pierderea</li></ul><p><strong>Somn și comportament</strong></p><ul><li>Insomnie și tulburări de somn cu factori contributivi psihologici</li><li>Oboseală cu factori contributivi psihologici</li><li>Schimbări ale apetitului și tiparelor alimentare legate de dispoziție</li><li>Dificultăți de concentrare și cognitive legate de anxietate sau depresie</li></ul><p><strong>Traumă și evenimente de viață</strong></p><ul><li>Evaluare inițială a simptomelor legate de traumă — cu trimitere la sprijin psihologic specializat, unde este indicat</li><li>Adaptarea la evenimente de viață semnificative — pierdere, ruptură de cuplu, pierderea locului de muncă</li><li>Stresul expaților și relocarea — adaptare culturală, izolare, preocupări legate de identitate</li></ul><p><strong>Gestionare continuă a sănătății mintale</strong></p><ul><li>Revizuirea afecțiunilor existente de sănătate mintală gestionate la nivel de medicină generală</li><li>Evaluarea sănătății mintale în contextul gestionării bolilor cronice</li><li>TDAH — screening inițial și trimitere pentru evaluare formală, unde este indicat</li></ul><h2>Ce include consultația</h2><p><strong>Evaluare clinică confidențială</strong></p><p>Medicul realizează o evaluare de sănătate mintală structurată și completă — acoperind simptomele tale actuale, dispoziția, somnul, energia, apetitul, concentrarea, relațiile, presiunile de la muncă sau academice, istoricul medical și orice sprijin anterior pentru sănătatea mintală. Conversația este ghidată, confidențială și fără judecată.</p><p><strong>Instrumente de screening validate</strong></p><p>Unde este adecvat, medicul folosește instrumente clinice de screening validate — inclusiv PHQ-9 pentru depresie și GAD-7 pentru anxietate — asigurând o evaluare structurată și bazată pe dovezi.</p><p><strong>Evaluare de siguranță</strong></p><p>Fiecare consultație de sănătate mintală include o evaluare structurată a siguranței — realizată cu sensibilitate, ca parte standard a îngrijirii clinice.</p><p><strong>Plan de îngrijire personalizat</strong></p><p>Pe baza evaluării, medicul oferă recomandări privind pașii următori cei mai adecvați — care pot include recomandări privind starea de bine și stilul de viață, trimitere la psihologie sau psihoterapie, orientare privind serviciile disponibile în Spania, trimitere la psihiatrie unde este indicat sau recomandări clinice la discreția medicului.</p><p><strong>Orientare privind sistemul</strong></p><p>Parcurgerea sistemului de sănătate mintală din Spania ca rezident internațional este într-adevăr dificilă. Medicul tău oferă orientare clară despre ce servicii sunt disponibile în limba engleză, cum să accesezi aceste servicii și la ce să te aștepți de la sistemul de sănătate mintală spaniol.</p><p><strong>Documentație clinică — la discreția medicului</strong></p><p>Atunci când este indicat clinic la nivel de medicină generală, medicul emite documentația clinică corespunzătoare.</p><p>Notă: Stupefiantele și anumite substanțe psihiatrice necesită documentație specială care nu poate fi emisă electronic. Medicul tău te va informa dacă acest lucru se aplică situației tale.</p><h2>Sănătate mintală pentru expați în Spania</h2><p>Dificultățile de sănătate mintală sunt disproporționat de frecvente în rândul expaților și rezidenților internaționali — determinate de izolare, adaptare culturală, bariere lingvistice, separare de familie și stresul cumulativ al construirii unei vieți într-o țară nouă.</p><p>Accesarea sprijinului pentru sănătate mintală în Spania ca rezident internațional vine cu provocări suplimentare. Psihologii și psihiatrii vorbitori de engleză există în Madrid și Barcelona — dar disponibilitatea este limitată, timpii de așteptare pot fi lungi, iar costul îngrijirii private de sănătate mintală în Spania este semnificativ. Pentru expații din afara marilor orașe, opțiunile se reduc și mai mult.</p><p>Serviciul nostru oferă un prim pas accesibil — o evaluare clinică de sănătate mintală structurată și confidențială, în aceeași zi, din orice punct al Spaniei — cu orientare clară privind pașii următori și modul de accesare a sprijinului specializat, unde este necesar.</p><h2>Confidențialitate</h2><p>Tot ceea ce este discutat în timpul consultației tale de sănătate mintală este confidențial și este protejat de legislația spaniolă și europeană privind protecția datelor — inclusiv RGPD (UE 2016/679) implementat prin Legea organică 3/2018 (LOPDGDD) și Legea 41/2002 privind autonomia pacientului.</p><p>Există două circumstanțe în care confidențialitatea poate necesita să fie luată în considerare cu atenție — atunci când există un risc grav și imediat pentru viața sau siguranța ta, sau atunci când există un risc grav pentru siguranța altei persoane. Medicul tău discută confidențialitatea cu tine la începutul consultației.</p>",
+      "ctaLabel": null,
+      "sortOrder": 180,
+      "durationMinutes": 20,
+      "basePriceCents": 5900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.267Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru15qck0002bsjuhioqk3lk",
+          "kind": "IMAGE",
+          "key": "media/cebaf4cb-fdb3-4acb-a6cd-876c804340d2-es-salud-mental-online.png",
+          "path": "/api/media/media/cebaf4cb-fdb3-4acb-a6cd-876c804340d2-es-salud-mental-online.png",
+          "altText": "Salud Mental"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q3iq001pngjuutfce816",
+          "question": "Este acesta un serviciu de consiliere sau terapie?",
+          "answer": "Nu. Aceasta este o evaluare clinică de sănătate mintală la nivel de medicină generală. Medicii noștri îți evaluează sănătatea mintală actuală, oferă recomandări clinice și te îndrumă către nivelul adecvat de suport — inclusiv consiliere, psihoterapie sau psihiatrie, unde este indicat. Ședințele de consiliere sau psihoterapie nu sunt furnizate prin acest serviciu.",
+          "sortOrder": 0,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q3iq001qngju5f0v81l4",
+          "question": "Ce se întâmplă dacă trebuie să văd un psihiatru?",
+          "answer": "Dacă evaluarea ta indică faptul că este necesară o evaluare psihiatrică, medicul tău oferă consiliere clară și coordonează trimiterea către serviciul specializat adecvat — inclusiv servicii psihiatrice în limba engleză în Spania, acolo unde sunt disponibile.",
+          "sortOrder": 1,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q3iq001rngjuerollzss",
+          "question": "Va fi informat angajatorul meu sau altcineva?",
+          "answer": "Nu. Consulta ta este complet confidențială și este protejată în temeiul legislației spaniole și europene privind protecția datelor. Informațiile nu sunt partajate fără consimțământul tău explicit, cu excepția circumstanțelor foarte limitate descrise în secțiunea anterioară despre confidențialitate.",
+          "sortOrder": 2,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q3iq001sngjurmbqz9et",
+          "question": "Pot folosi acest serviciu dacă deja merg la un terapeut?",
+          "answer": "Da. O evaluare clinică a sănătății mintale la nivel de medicină generală poate completa sprijinul psihologic sau terapeutic continuu — în special acolo unde sunt necesare recomandări clinice, evaluarea sănătății fizice sau coordonarea îngrijirii.",
+          "sortOrder": 3,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q3iq001tngju30mze1fo",
+          "question": "Este acest serviciu potrivit pentru adolescenți?",
+          "answer": "Consultațiile de sănătate mintală pentru pacienții sub 16 ani necesită prezența și consimțământul părinților sau tutorilor. Pentru adolescenții de 16 ani sau mai mult, medicul evaluează capacitatea de a consimți individual.",
+          "sortOrder": 4,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q3iq001ungju0ssuoej9",
+          "question": "Ce se întâmplă dacă sunt în criză în timpul sau după consultație?",
+          "answer": "Dacă ești în criză, folosește resursele de la începutul acestei pagini — Telefonul pentru prevenirea suicidului 024 sau 112 în caz de pericol imediat. Acest serviciu nu este un serviciu de intervenție în criză.",
+          "sortOrder": 5,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q3iq001vngjuiskebii5",
+          "question": "Pot discuta îngrijorări legate de ADHD prin intermediul acestui serviciu?",
+          "answer": "Da. Screeningul inițial pentru TDAH la nivel de medicină generală este disponibil prin acest serviciu. Diagnosticul formal de TDAH necesită evaluare de specialitate — medicul tău oferă consiliere cu privire la traseul adecvat de trimitere dacă screeningul indică faptul că acest lucru este justificat.",
+          "sortOrder": 6,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q3iq001wngju98s9iyvg",
+          "question": "Pot folosi acest serviciu din orice punct din Spania?",
+          "answer": "Da — inclusiv Insulele Baleare, Insulele Canare, Ceuta și Melilla. Ai nevoie doar de o conexiune stabilă la internet și de un dispozitiv cu cameră.",
+          "sortOrder": 7,
+          "resolvedLocale": "RO"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "RO",
+      "links": [
+        {
+          "id": "cmre7sriv002yg8ju9eokrc9p",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Evaluación psiquiátrica especializada?",
+          "body": "Si tu situación está relacionada con evaluación psiquiátrica especializada, nuestra Psiquiatría Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Psiquiatría Especialista",
+          "targetSlug": "psiquiatra-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7ssaz0030g8ju13nnilyh",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con apoyo psicológico y psicoterapia?",
+          "body": "Para apoyo psicológico y psicoterapia, consulta nuestra página de Psicología Clínica — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Psicología Clínica",
+          "targetSlug": "psicologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7stv60034g8juje70ar9l",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Síntomas neurológicos que pueden tener base psicológica?",
+          "body": "Si tu situación está relacionada con síntomas neurológicos que pueden tener base psicológica, nuestra Neurología Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Neurología Especialista",
+          "targetSlug": "neurologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7st330032g8judl7699cv",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre apoyo para dejar de fumar?",
+          "body": "Nuestra Dejar de Fumar está pensada específicamente para apoyo para dejar de fumar.",
+          "ctaLabel": "Dejar de Fumar",
+          "targetSlug": "dejar-de-fumar-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

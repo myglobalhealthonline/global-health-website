@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/salud-masculina-online?countryCode=es&locale=PT",
+  "checkedAt": "2026-09-13T02:30:05.295Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q1550013ngjujfvwl58k",
+      "kind": "GENERAL",
+      "slug": "salud-masculina-online",
+      "name": "Saúde Masculina",
+      "summary": null,
+      "seoTitle": "Saúde Masculina Online Espanha | Avaliação Confidencial | Médico Inscrito na Ordem",
+      "seoDescription": "Disfunção erétil, testosterona baixa, libido ou outras preocupações de saúde masculina. Os nossos médicos credenciados oferecem avaliações confidenciais por videochamada segura. No mesmo dia em Espanha.",
+      "seoKeywords": [
+        "salud masculina online España",
+        "disfunción eréctil médico online España",
+        "testosterona baja consulta online España",
+        "libido médico online España",
+        "salud sexual masculina online España"
+      ],
+      "heroTitle": "Saúde Masculina — Avaliação Confidencial Online",
+      "heroDescription": "As preocupações de saúde masculina — disfunção erétil, testosterona baixa, libido reduzida, desempenho sexual — estão entre os problemas médicos mais comuns e mais silenciados entre os homens. A maioria dos homens que experimenta estes sintomas nunca fala com um médico sobre eles. Deveriam fazê-lo. Porque, na imensa maioria dos casos, estas são condições médicas com causas médicas — e soluções médicas. Os nossos médicos, registados de acordo com os requisitos da Organização Médica Colegial (OMC), oferecem avaliações confidenciais de saúde masculina por videochamada segura. Sem sala de espera, sem o desconforto de uma consulta presencial para uma preocupação sensível. Uma avaliação clínica completa e um plano claro, no mesmo dia, a partir de qualquer ponto de Espanha, em espanhol, inglês ou português.",
+      "detailBody": "<h2>Para quem é este serviço</h2><p>Esta consulta é apropriada para homens adultos com:</p><ul><li>Disfunção erétil — de novo início ou que piora</li><li>Libido reduzida ou perda de interesse na atividade sexual</li><li>Ejaculação precoce ou retardada</li><li>Ansiedade de desempenho com impacto clínico</li><li>Sintomas de défice de testosterona — fadiga, alterações de humor, perda de massa muscular, aumento de peso</li><li>Desequilíbrio hormonal que afeta a energia, o estado de espírito, o peso ou a função sexual</li><li>Disfunção sexual relacionada com diabetes, doença cardiovascular ou medicação</li><li>Preocupações gerais de saúde masculina — risco cardiovascular, saúde metabólica, queda de cabelo de base hormonal</li><li>Necessidade de solicitação de análises — painel de testosterona, avaliação de risco cardiovascular, perfil metabólico</li></ul><h2>Porque é que a disfunção erétil merece avaliação clínica</h2><p>A disfunção erétil não é simplesmente um incómodo do estilo de vida. É um dos sinais de alerta precoce mais fiáveis de doença cardiovascular subjacente — frequentemente presente anos antes de um evento cardíaco. Também está fortemente associada a diabetes, hipertensão, défice de testosterona e efeitos secundários de medicamentos.</p><p>Um homem que trata a disfunção erétil como um incómodo embaraçoso em vez de um sinal clínico está a perder uma oportunidade importante de intervenção precoce em condições que, sem tratamento, acarretam consequências graves para a saúde a longo prazo.</p><p>A história clínica é a ferramenta diagnóstica mais poderosa em saúde masculina — e uma história completa pode ser feita por videochamada. Os nossos médicos avaliam o quadro clínico completo, não apenas o sintoma apresentado.</p><h2>O que inclui a consulta</h2><p><strong>Avaliação clínica completa</strong></p><p>O médico revê os teus sintomas em detalhe, o historial médico, a medicação atual, os fatores de risco cardiovascular, os indicadores hormonais, os contributos psicológicos e os fatores do estilo de vida — construindo um quadro clínico completo do que está a causar os teus sintomas.</p><p><strong>Identificação de causas subjacentes</strong></p><p>Os sintomas de saúde masculina raramente existem de forma isolada. A disfunção erétil, por exemplo, é frequentemente um marcador precoce de doença cardiovascular, diabetes ou défice de testosterona. O médico avalia o quadro clínico completo — não apenas o motivo da consulta apresentado.</p><p><strong>Plano de gestão clínica</strong></p><p>Com base na avaliação, o médico aconselha sobre os passos seguintes mais adequados — que podem incluir otimização metabólica e do estilo de vida, pedidos de análises para avaliação sanguínea ou hormonal, recomendações clínicas a critério do médico, ou referenciação para urologia ou endocrinologia quando indicado.</p><p><strong>Documentação clínica — a critério do médico</strong></p><p>Quando clinicamente indicado, o médico emite a documentação clínica correspondente válida em qualquer farmácia espanhola.</p><p>Nota: Os estupefacientes e determinadas substâncias controladas requerem documentação especial que não pode ser emitida eletronicamente. O teu médico informar-te-á se isto se aplicar à tua situação.</p><p><strong>Coordenação de referenciação e análises</strong></p><p>Quando a referenciação para especialista ou as análises sanguíneas estiverem clinicamente indicadas, o médico emite a documentação relevante no mesmo dia.</p><h2>Condições habitualmente avaliadas</h2><p><strong>Saúde sexual e função</strong></p><ul><li>Disfunção erétil — avaliação de fatores médicos, vasculares, hormonais e psicológicos</li><li>Ejaculação precoce e retardada</li><li>Libido reduzida e perda de interesse na atividade sexual</li><li>Ansiedade de desempenho com impacto clínico</li><li>Disfunção sexual relacionada com diabetes, doença cardiovascular ou medicação</li></ul><p><strong>Hormonal e metabólico</strong></p><ul><li>Défice de testosterona — sintomas, avaliação e via de gestão</li><li>Desequilíbrio hormonal que afeta a energia, o estado de espírito, o peso e a função sexual</li><li>Síndrome metabólica e o seu impacto na saúde masculina</li><li>Alteração hormonal relacionada com o peso</li></ul><p><strong>Saúde masculina geral</strong></p><ul><li>Avaliação de risco cardiovascular em homens</li><li>Fadiga, baixa energia e alterações de humor com causa hormonal ou metabólica</li><li>Queda de cabelo de base hormonal</li><li>Preocupações com a saúde prostática e referenciação quando indicado</li><li>Avaliações gerais de saúde e cuidados preventivos para homens</li></ul><h2>Confidencialidade</h2><p>Tudo o que é discutido durante a tua consulta é confidencial e está protegido ao abrigo da legislação espanhola e europeia de proteção de dados — incluindo o RGPD (UE 2016/679) implementado pela Lei Orgânica 3/2018 (LOPDGDD) e a Lei 41/2002 de autonomia do doente.</p><p>A tua consulta é realizada por videochamada encriptada. Ninguém no teu local de trabalho, em tua casa ou no teu círculo social precisa de saber que marcaste uma consulta. A informação não é partilhada sem o teu consentimento explícito, exceto nas circunstâncias limitadas exigidas por lei.</p><h2>Porque é que os homens não falam — e porque existe este serviço</h2><p>Os problemas de saúde masculina são sistematicamente subnotificados — não porque os homens não os sintam, mas porque a combinação de estigma, pressão de tempo e barreiras de acesso torna difícil procurar ajuda.</p><p>Uma videoconsulta confidencial com um médico inscrito na ordem elimina várias destas barreiras em simultâneo: sem sala de espera, sem necessidade de te explicares a um(a) rececionista, sem deslocação a uma clínica, e — para quem o preferir — a opção de consultar em inglês, espanhol ou português.</p>",
+      "ctaLabel": null,
+      "sortOrder": 170,
+      "durationMinutes": 20,
+      "basePriceCents": 4900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.266Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru15p110001bsjuuclm1hlf",
+          "kind": "IMAGE",
+          "key": "media/e47a050b-a499-472c-bb10-8eeccbe628cb-es-salud-masculina-online.png",
+          "path": "/api/media/media/e47a050b-a499-472c-bb10-8eeccbe628cb-es-salud-masculina-online.png",
+          "altText": "Salud Masculina"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q1dj0014ngju15o6qjum",
+          "question": "Este é um serviço de prescrição?",
+          "answer": "Não. Este é um serviço de avaliação clínica. Nossos médicos realizam uma avaliação clínica completa e aconselham sobre o manejo apropriado com base nos achados clínicos. Qualquer documentação clínica — quando indicado — é emitida a critério do médico após avaliação completa.",
+          "sortOrder": 0,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q1dj0015ngjutu74xf6s",
+          "question": "A disfunção erétil pode realmente ser avaliada por videochamada?",
+          "answer": "Sim — para a grande maioria das apresentações. A história clínica é a ferramenta diagnóstica mais poderosa em saúde masculina e uma história completa pode ser feita por videochamada. O médico também avalia fatores do estilo de vida, risco cardiovascular, indicadores hormonais e contribuintes psicológicos durante a chamada. Quando sejam necessários achados de exame físico que não possam ser avaliados remotamente, o médico orienta sobre a avaliação presencial apropriada.",
+          "sortOrder": 1,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q1dj0016ngjuyh20e528",
+          "question": "Que análises de sangue poderiam ser necessárias?",
+          "answer": "Dependendo da sua apresentação, o médico pode solicitar um painel de testosterona, avaliação de risco cardiovascular, glicose em jejum, HbA1c, função tireoidiana e perfil metabólico. As solicitações de análises podem ser coordenadas na mesma consulta.",
+          "sortOrder": 2,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q1dj0017ngjuwm28vgyu",
+          "question": "Este serviço é adequado para homens jovens?",
+          "answer": "Sim. A disfunção erétil e outras preocupações de saúde masculina podem surgir em homens a partir dos vinte anos — frequentemente com causas psicológicas ou relacionadas ao estilo de vida em idades mais jovens. Este serviço é apropriado para homens adultos de todas as idades.",
+          "sortOrder": 3,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q1dj0018ngju47ue2g8b",
+          "question": "O que acontece se a minha condição exigir avaliação especializada?",
+          "answer": "Se a sua avaliação indicar que é necessária uma avaliação especializada — urologia, endocrinologia ou cardiologia — o médico orienta você de forma clara e coordena o encaminhamento no mesmo dia.",
+          "sortOrder": 4,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q1dj0019ngjuevwd2tcr",
+          "question": "Posso usar este serviço sem médico de família em Espanha?",
+          "answer": "Sim. Este serviço está disponível para todos os homens em Espanha — incluindo expats e residentes internacionais sem médico de família registado em Espanha.",
+          "sortOrder": 5,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q1dj001angju8pw5m9n6",
+          "question": "Preciso de seguro de saúde espanhol?",
+          "answer": "Não. É um serviço privado de pagamento direto. A documentação clínica emitida através deste serviço é disponibilizada ao preço privado integral, independentemente do estado do seguro.",
+          "sortOrder": 6,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q1dj001bngjus7bashou",
+          "question": "Posso usar este serviço de qualquer ponto de Espanha?",
+          "answer": "Sim — incluindo Ilhas Baleares, Ilhas Canárias, Ceuta e Melilla. Só precisas de uma ligação estável à internet e de um dispositivo com câmara.",
+          "sortOrder": 7,
+          "resolvedLocale": "PT"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "PT",
+      "links": [
+        {
+          "id": "cmre7s6g3001og8ju5f4eibm6",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Control de peso y déficit de testosterona?",
+          "body": "Si tu situación está relacionada con control de peso y déficit de testosterona, nuestra Control de Peso te ofrece la evaluación adecuada.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7s787001qg8jux0evjymo",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con caída del cabello de base hormonal en hombres?",
+          "body": "Para caída del cabello de base hormonal en hombres, consulta nuestra página de Caída del Cabello — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Caída del Cabello",
+          "targetSlug": "caida-cabello-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7s809001sg8juukxxi0ye",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre solicitar panel de testosterona y perfil metabólico?",
+          "body": "Nuestra Derivaciones y Pruebas está pensada específicamente para solicitar panel de testosterona y perfil metabólico.",
+          "ctaLabel": "Derivaciones y Pruebas",
+          "targetSlug": "derivaciones-pruebas-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7s8sc001ug8juqtct7q6a",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Salud mental en hombres?",
+          "body": "Si tu situación está relacionada con salud mental en hombres, nuestra Salud Mental te ofrece la evaluación adecuada.",
+          "ctaLabel": "Salud Mental",
+          "targetSlug": "salud-mental-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

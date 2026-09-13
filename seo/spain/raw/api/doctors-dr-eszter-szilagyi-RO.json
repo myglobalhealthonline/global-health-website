@@ -1,0 +1,282 @@
+{
+  "endpoint": "/api/countries/es/doctors/dr-eszter-szilagyi?locale=RO",
+  "checkedAt": "2026-09-13T02:30:05.788Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "doctor": {
+      "id": "cmrdpz5n3001z01rukg2lecs5",
+      "slug": "dr-eszter-szilagyi",
+      "fullName": "Dra. Eszter Szilágyi",
+      "title": "Chirurg cardiovascular",
+      "bio": "<p>Dra. Eszter Szilágyi</p><p>Specialistă în Chirurgie Cardiovasculară</p><p>Colegiul Medicilor din Málaga cu numărul de înregistrare 29/2912849</p><p>Dra. Eszter Szilágyi este medic specialistă în Chirurgie Cardiovasculară, cu o vastă experiență în spitale de referință din Spania și Germania și o pregătire solidă în chirurgie cardiacă, urgențe și gestionarea integrală a pacienților cu boli cardiovasculare. Experiența sa în medii spitalicești internaționale îi permite să ofere o îngrijire medicală riguroasă, sigură și de înaltă calitate, în conformitate cu standardele europene.</p><p>S-a format la Universitatea Semmelweis din Budapesta și a obținut recunoașterea oficială a specialității sale de către Ministerul Sănătății din Spania în 2022. Și-a dezvoltat cea mai mare parte a carierei în prestigioase centre germane de chirurgie cardiovasculară, printre care Spitalul Central al Forțelor Armate Germane din Coblența și Helios Klinikum Siegburg. Heart Center, unde a participat activ la proceduri chirurgicale cardiovasculare complexe și la îngrijirea perioperatorie a pacienților cu boli cardiace.</p><p>În prezent lucrează ca chirurg cardiovascular la Spitalul Vithas Xanit Internacional și, de asemenea, efectuează proceduri chirurgicale dermatologice la Policlínica San Juan din Alhaurín de la Torre. În plus, are o vastă experiență în servicii de urgență și vizite la domiciliu, lucrând timp de mai mulți ani ca medic de gardă în sistemul de urgențe medicale din Saxonia Inferioară (Germania).</p><p>Dra. Szilágyi este recunoscută pentru abordarea sa profesională, meticuloasă și centrată pe pacient, cu o atenție deosebită acordată siguranței, comunicării clare și luării deciziilor clinice bazate pe dovezi. Vorbește germană și maghiară ca limbi materne și stăpânește engleza și spaniola, ceea ce îi permite să trateze pacienți internaționali cu încredere și empatie.</p>",
+      "seoTitle": "Dr Eszter Szilagyi - Chirurg cardiovascular | Global Health",
+      "seoDescription": "Dr. Eszter Szilágyi, specialistă în Chirurgie Cardiovasculară, înscrisă în colegiul profesional din Málaga. Formată în Germania și Spania, cu experiență vastă în chirurgie cardiacă și urgențe. Asistență multilingvă la Global Health.",
+      "lastReviewedAt": null,
+      "medicalRegistrationUrl": "https://www.cgcom.es/servicios/consulta-publica-de-colegiados",
+      "qualifications": [
+        "Médica especialista en Cirugía Cardiovascular — reconocimiento oficial Ministerio de Sanidad España (2022)",
+        "Formación médica — Universidad Semmelweis, Budapest, Hungría",
+        "Cirugía cardiovascular — Hospital Central de las Fuerzas Armadas Alemanas (Bundeswehr Zentralkrankenhaus), Coblenza",
+        "Cirugía cardiovascular — Helios Klinikum Siegburg – Heart Center, Alemania",
+        "Cirujana cardiovascular — Hospital Vithas Xanit Internacional, España",
+        "Procedimientos quirúrgicos dermatológicos — Policlínica San Juan de Alhaurín de la Torre",
+        "Médica de guardia — sistema de urgencias médicas de Baja Sajonia, Alemania",
+        "Registrada en CGCOM (nº 292912849) · Colegio de Médicos de Málaga (29/2912849)"
+      ],
+      "instagramUrl": null,
+      "facebookUrl": null,
+      "linkedinUrl": null,
+      "languages": [
+        "Spanish",
+        "English",
+        "Hungarian",
+        "German"
+      ],
+      "active": true,
+      "updatedAt": "2026-08-20T06:21:35.358Z",
+      "resolvedLocale": "RO",
+      "readyToIndex": true,
+      "nonPhysician": false,
+      "imcRegistration": "292912849",
+      "registrationChamber": "CGCOM",
+      "registrationDivision": null,
+      "registrationVerified": true,
+      "credentials": [],
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmrf4i8n0024m01qr9w6z5ph8",
+          "kind": "IMAGE",
+          "key": "doctor-cmrdpz5n3001z01rukg2lecs5-profile",
+          "path": "/api/media/media/5ef1f4e6-5cab-4c12-8890-cb2e7af2363c-dra-eszter-szil-gyi.webp",
+          "altText": "Dra. Eszter Szilágyi",
+          "title": "Dra. Eszter Szilágyi",
+          "caption": "Dra. Eszter Szilágyi — Cardiovascular Surgeon, Global Health Spain",
+          "description": "Dra. Eszter Szilágyi — Cardiovascular Surgeon at Global Health Spain. Book an online video consultation.",
+          "focalX": 52,
+          "focalY": 27,
+          "zoom": 1
+        }
+      ],
+      "additionalCountries": [
+        {
+          "id": "cmrdpz5nd002001ruvpoonhmm",
+          "countryId": "cmqy9rw9w00x001qkq31jktqq",
+          "active": true,
+          "country": {
+            "id": "cmqy9rw9w00x001qkq31jktqq",
+            "code": "es",
+            "name": "Spain",
+            "defaultLocale": "ES"
+          },
+          "chamberEntity": "CGCOM",
+          "registrationNumber": "292912849",
+          "registrationUrl": null,
+          "division": null,
+          "isVerified": true,
+          "translations": [
+            {
+              "locale": "ES",
+              "title": "Médica Especialista — Cirugía Cardiovascular",
+              "bio": "<p>La Dra. Eszter Szilágyi es médica especialista en Cirugía Cardiovascular con formación en la Universidad Semmelweis de Budapest, una de las facultades de medicina más reconocidas de Europa Central, y más de una década de experiencia clínica en hospitales de referencia cardiovascular en Alemania y España.</p><p>Ha trabajado en centros especializados de primer nivel en Alemania: el Hospital Central de las Fuerzas Armadas Alemanas (Bundeswehr Zentralkrankenhaus) en Coblenza y el Helios Klinikum Siegburg. Heart Center, donde participó activamente en procedimientos quirúrgicos cardiovasculares complejos y en la atención perioperatoria de pacientes cardíacos. En paralelo, acumuló amplia experiencia en urgencias y atención médica de guardia en el sistema de emergencias de Baja Sajonia (Alemania).</p><p>Obtuvo el reconocimiento oficial de su especialidad por el Ministerio de Sanidad español en 2022 y actualmente ejerce como cirujana cardiovascular en el Hospital Vithas Xanit Internacional en España, donde continúa su práctica quirúrgica y clínica cardiovascular.</p><p>La Dra. Szilágyi habla alemán y húngaro como lenguas maternas, y domina el inglés y el español con fluidez, lo que la convierte en una de las pocas especialistas cardiovasculares disponibles a través de consulta online que puede atender pacientes en cuatro idiomas, incluyendo a pacientes centroeuropeos y húngaros que residen o viajan a España.</p><p>A través de Global Health, la Dra. Szilágyi ofrece consultas online de evaluación cardiovascular y medicina general, aprovechando tanto su profunda formación especializada como su amplia experiencia en urgencias y atención médica integral.</p><h3>Qué ofrece online</h3><ul><li><strong>Evaluación cardiovascular:</strong> valoración de síntomas cardíacos, interpretación de ECG, ecocardiogramas e informes cardiológicos</li><li><strong>Segunda opinión cardiovascular:</strong> sobre diagnósticos, resultados de pruebas o planes de tratamiento quirúrgico</li><li><strong>Consultas pre y post-operatorias:</strong> preparación para cirugía cardíaca, recuperación y seguimiento post-quirúrgico</li><li><strong>Medicina general:</strong> enfermedades agudas, infecciones, gestión de enfermedades crónicas (hipertensión, diabetes, colesterol)</li><li><strong>Urgencias y evaluación de síntomas agudos:</strong> evaluación de dolor torácico, palpitaciones, disnea y otros síntomas cardiovasculares que requieren orientación clínica inmediata</li><li><strong>Salud preventiva:</strong> evaluación del riesgo cardiovascular, consejo sobre estilo de vida, cribados</li><li>Informe médico y derivaciones a especialistas</li><li><strong>Atención médica para pacientes internacionales y centroeuropeos:</strong> especialmente húngaros y germano-hablantes en España</li></ul><p>Nota importante: La Dra. Szilágyi no puede realizar procedimientos quirúrgicos a través de videollamada. Las consultas online cubren evaluación clínica, segunda opinión, orientación pre/post-quirúrgica y medicina general. Si está experimentando una emergencia cardíaca, dolor torácico agudo, dificultad para respirar o pérdida de consciencia, llame inmediatamente al 112.</p><h3>Su enfoque</h3><p>La Dra. Szilágyi es reconocida por su rigor profesional, su meticulosidad clínica y su enfoque centrado en el paciente. Su experiencia en entornos quirúrgicos de alta exigencia y en sistemas de urgencias europeos la ha dotado de una capacidad de evaluación clínica precisa y de una toma de decisiones segura bajo presión, cualidades especialmente valiosas en una consulta online donde la evaluación de síntomas cardiovasculares requiere criterio clínico sólido.</p><p>Idiomas: Español · Inglés · Alemán · Húngaro</p>",
+              "seoTitle": "Dra. Eszter Szilágyi — Cirugía Cardiovascular | CGCOM 292912849 | Global Health España",
+              "seoDescription": "Reserve una videoconsulta con Dra. Eszter Szilágyi — especialista en Cirugía Cardiovascular registrada en CGCOM (nº 292912849). Universidad Semmelweis · Hospital Vithas Xanit · Helios Heart Center · Español, inglés, alemán y húngaro. Cita el mismo día.",
+              "seoKeywords": [
+                "Cirujana cardiovascular"
+              ]
+            },
+            {
+              "locale": "CS",
+              "title": "Kardiovaskulární chirurgyně",
+              "bio": "<p>MUDr. Eszter Szilágyi</p><p>Specialistka v kardiovaskulární chirurgii</p><p>Lékařská komora Málagy s evidenčním číslem 29/2912849</p><p>Dra. Eszter Szilágyi je lékařka specialistka v kardiovaskulární chirurgii s rozsáhlými zkušenostmi v referenčních nemocnicích ve Španělsku a Německu a se silným vzděláním v oblasti kardiochirurgie, urgentní medicíny a komplexní péče o pacienty s kardiovaskulárními onemocněními. Její zkušenosti v mezinárodním nemocničním prostředí jí umožňují poskytovat důslednou, bezpečnou a vysoce kvalitní lékařskou péči v souladu s evropskými standardy.</p><p>Vzdělání získala na Semmelweisově univerzitě v Budapešti a v roce 2022 obdržela oficiální uznání své specializace španělským ministerstvem zdravotnictví. Většinu své kariéry rozvíjela v prestižních německých centrech kardiovaskulární chirurgie, mimo jiné ve Ústřední nemocnici německých ozbrojených sil v Koblenzi a v Helios Klinikum Siegburg. Heart Center, kde se aktivně podílela na komplexních kardiovaskulárních chirurgických výkonech a perioperační péči o pacienty se srdečními onemocněními.</p><p>V současnosti pracuje jako kardiovaskulární chirurgyně v nemocnici Vithas Xanit Internacional a také provádí dermatologické chirurgické zákroky v Poliklinice San Juan de Alhaurín de la Torre. Kromě toho má rozsáhlé zkušenosti v urgentní péči a při návštěvách v domácnosti, neboť několik let pracovala jako lékařka ve službě v systému urgentní lékařské péče v Dolním Sasku (Německo).</p><p>Dra. Szilágyi je uznávána pro svůj profesionální, pečlivý a na pacienta zaměřený přístup, se zvláštním důrazem na bezpečnost, jasnou komunikaci a klinické rozhodování založené na důkazech. Němčinu a maďarštinu ovládá jako mateřské jazyky a anglicky i španělsky hovoří plynně, což jí umožňuje s jistotou a empatií pečovat o mezinárodní pacienty.</p>",
+              "seoTitle": "Dr Eszter Szilagyi - Kardiovaskulární chirurgyně | Global Health",
+              "seoDescription": "Dr. Eszter Szilágyi, specialistka v kardiovaskulární chirurgii registrovaná v Málaze. Vzdělaná v Německu a Španělsku, s rozsáhlými zkušenostmi v srdeční chirurgii a urgentní medicíně. Vícejazyčná péče v Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "DE",
+              "title": "Kardiovaskuläre Chirurgin",
+              "bio": "<p>Dra. Eszter Szilágyi</p><p>Fachärztin für Herz- und Gefäßchirurgie</p><p>Ärztekammer Málaga mit Registrierungsnummer 29/2912849</p><p>Dr. Eszter Szilágyi ist Fachärztin für Herz- und Gefäßchirurgie mit umfassender Erfahrung in führenden Krankenhäusern in Spanien und Deutschland sowie einer fundierten Ausbildung in Herzchirurgie, Notfallmedizin und der ganzheitlichen Betreuung von Patienten mit Herz-Kreislauf-Erkrankungen. Ihre Erfahrung in internationalen Krankenhausumgebungen ermöglicht es ihr, eine sorgfältige, sichere und hochwertige medizinische Versorgung gemäß europäischen Standards zu gewährleisten.</p><p>Sie wurde an der Semmelweis-Universität in Budapest ausgebildet und erhielt 2022 die offizielle Anerkennung ihres Fachgebiets durch das spanische Gesundheitsministerium. Den Großteil ihrer Laufbahn verbrachte sie in renommierten deutschen Zentren für Herz- und Gefäßchirurgie, darunter das Bundeswehrzentralkrankenhaus Koblenz und das Helios Klinikum Siegburg. Heart Center, wo sie aktiv an komplexen kardiovaskulären chirurgischen Eingriffen und an der perioperativen Betreuung von Patienten mit Herzerkrankungen beteiligt war.</p><p>Derzeit arbeitet sie als Herz- und Gefäßchirurgin im Vithas Xanit Internacional Krankenhaus und führt außerdem dermatologische chirurgische Eingriffe in der Poliklinik San Juan de Alhaurín de la Torre durch. Darüber hinaus verfügt sie über umfangreiche Erfahrung im Notfalldienst und bei Hausbesuchen und arbeitete mehrere Jahre als diensthabende Ärztin im niedersächsischen Rettungsdienstsystem (Deutschland).</p><p>Dr. Szilágyi ist bekannt für ihren professionellen, akribischen und patientenorientierten Ansatz mit besonderem Augenmerk auf Sicherheit, klare Kommunikation und evidenzbasierte klinische Entscheidungsfindung. Sie spricht Deutsch und Ungarisch als Muttersprache und beherrscht Englisch und Spanisch, was es ihr ermöglicht, internationale Patienten mit Vertrauen und Empathie zu betreuen.</p>",
+              "seoTitle": "Dr Eszter Szilagyi - Kardiovaskuläre Chirurgin | Global Health",
+              "seoDescription": "Dr. Eszter Szilágyi, Fachärztin für Herz- und Gefäßchirurgie, in Málaga zugelassen. Ausgebildet in Deutschland und Spanien, mit umfassender Erfahrung in Herzchirurgie und Notfällen. Mehrsprachige Betreuung bei Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "EN",
+              "title": "Cardiovascular Surgeon",
+              "bio": "<p>Dr. Eszter Szilágyi</p><p>Specialist in Cardiovascular Surgery</p><p>Málaga Medical Association with registration number 29/2912849</p><p>Dr. Eszter Szilágyi is a specialist physician in Cardiovascular Surgery with extensive experience in leading hospitals in Spain and Germany, and a solid background in cardiac surgery, emergency care, and the comprehensive management of patients with cardiovascular diseases. Her experience in international hospital settings enables her to provide rigorous, safe, and high-quality medical care in accordance with European standards.</p><p>She trained at Semmelweis University in Budapest and obtained official recognition of her specialty from the Spanish Ministry of Health in 2022. She has developed most of her career in prestigious German cardiovascular surgery centers, including the Central Hospital of the German Armed Forces in Coblenz and the Helios Klinikum Siegburg. Heart Center, where she actively participated in complex cardiovascular surgical procedures and in the perioperative care of patients with heart disease.</p><p>She currently works as a cardiovascular surgeon at Vithas Xanit Internacional Hospital and also performs dermatological surgical procedures at the San Juan Polyclinic in Alhaurín de la Torre. In addition, she has extensive experience in emergency services and home visits, having worked for several years as an on-call physician in the emergency medical system of Lower Saxony (Germany).</p><p>Dr. Szilágyi is recognized for her professional, meticulous, and patient-centered approach, with special attention to safety, clear communication, and evidence-based clinical decision-making. She speaks German and Hungarian as native languages and is fluent in English and Spanish, which allows her to care for international patients with confidence and empathy.</p>",
+              "seoTitle": "Dr Eszter Szilagyi - Cardiovascular Surgeon | Global Health",
+              "seoDescription": "Dr. Eszter Szilágyi, board-certified specialist in Cardiovascular Surgery in Málaga. Trained in Germany and Spain, with extensive experience in cardiac surgery and emergency care. Multilingual care at Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "PT",
+              "title": "Cirurgiã Cardiovascular",
+              "bio": "<p>Dra. Eszter Szilágyi</p><p>Especialista em Cirurgia Cardiovascular</p><p>Ordem dos Médicos de Málaga com número de registo 29/2912849</p><p>A Dra. Eszter Szilágyi é médica especialista em Cirurgia Cardiovascular, com ampla experiência em hospitais de referência em Espanha e na Alemanha, e uma sólida formação em cirurgia cardíaca, urgências e no manejo integral de pacientes com doenças cardiovasculares. A sua experiência em contextos hospitalares internacionais permite-lhe prestar cuidados médicos rigorosos, seguros e de elevada qualidade, em conformidade com os padrões europeus.</p><p>Formou-se na Universidade Semmelweis de Budapeste e obteve o reconhecimento oficial da sua especialidade pelo Ministério da Saúde espanhol em 2022. Desenvolveu a maior parte da sua carreira em prestigiados centros alemães de cirurgia cardiovascular, entre eles o Hospital Central das Forças Armadas Alemãs em Coblença e o Helios Klinikum Siegburg. Heart Center, onde participou ativamente em procedimentos cirúrgicos cardiovasculares complexos e no cuidado perioperatório de pacientes com doenças cardíacas.</p><p>Atualmente trabalha como cirurgiã cardiovascular no Hospital Vithas Xanit Internacional e também realiza procedimentos cirúrgicos dermatológicos na Policlínica San Juan de Alhaurín de la Torre. Além disso, conta com ampla experiência em serviços de urgências e visitas domiciliárias, tendo trabalhado durante vários anos como médica de serviço no sistema de urgências médicas da Baixa Saxónia (Alemanha).</p><p>A Dra. Szilágyi é reconhecida pela sua abordagem profissional, meticulosa e centrada no paciente, com especial atenção à segurança, à comunicação clara e à tomada de decisões clínicas baseada na evidência. Fala alemão e húngaro como línguas maternas e domina o inglês e o espanhol, o que lhe permite atender pacientes internacionais com confiança e empatia.</p>",
+              "seoTitle": "Dr Eszter Szilagyi - Cirurgiã Cardiovascular | Global Health",
+              "seoDescription": "Dra. Eszter Szilágyi, especialista em Cirurgia Cardiovascular inscrita em Málaga. Formada na Alemanha e Espanha, com ampla experiência em cirurgia cardíaca e urgências. Atendimento multilingue na Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "RO",
+              "title": "Chirurg cardiovascular",
+              "bio": "<p>Dra. Eszter Szilágyi</p><p>Specialistă în Chirurgie Cardiovasculară</p><p>Colegiul Medicilor din Málaga cu numărul de înregistrare 29/2912849</p><p>Dra. Eszter Szilágyi este medic specialistă în Chirurgie Cardiovasculară, cu o vastă experiență în spitale de referință din Spania și Germania și o pregătire solidă în chirurgie cardiacă, urgențe și gestionarea integrală a pacienților cu boli cardiovasculare. Experiența sa în medii spitalicești internaționale îi permite să ofere o îngrijire medicală riguroasă, sigură și de înaltă calitate, în conformitate cu standardele europene.</p><p>S-a format la Universitatea Semmelweis din Budapesta și a obținut recunoașterea oficială a specialității sale de către Ministerul Sănătății din Spania în 2022. Și-a dezvoltat cea mai mare parte a carierei în prestigioase centre germane de chirurgie cardiovasculară, printre care Spitalul Central al Forțelor Armate Germane din Coblența și Helios Klinikum Siegburg. Heart Center, unde a participat activ la proceduri chirurgicale cardiovasculare complexe și la îngrijirea perioperatorie a pacienților cu boli cardiace.</p><p>În prezent lucrează ca chirurg cardiovascular la Spitalul Vithas Xanit Internacional și, de asemenea, efectuează proceduri chirurgicale dermatologice la Policlínica San Juan din Alhaurín de la Torre. În plus, are o vastă experiență în servicii de urgență și vizite la domiciliu, lucrând timp de mai mulți ani ca medic de gardă în sistemul de urgențe medicale din Saxonia Inferioară (Germania).</p><p>Dra. Szilágyi este recunoscută pentru abordarea sa profesională, meticuloasă și centrată pe pacient, cu o atenție deosebită acordată siguranței, comunicării clare și luării deciziilor clinice bazate pe dovezi. Vorbește germană și maghiară ca limbi materne și stăpânește engleza și spaniola, ceea ce îi permite să trateze pacienți internaționali cu încredere și empatie.</p>",
+              "seoTitle": "Dr Eszter Szilagyi - Chirurg cardiovascular | Global Health",
+              "seoDescription": "Dr. Eszter Szilágyi, specialistă în Chirurgie Cardiovasculară, înscrisă în colegiul profesional din Málaga. Formată în Germania și Spania, cu experiență vastă în chirurgie cardiacă și urgențe. Asistență multilingvă la Global Health.",
+              "seoKeywords": []
+            }
+          ],
+          "divisionTranslations": []
+        }
+      ],
+      "assignedServices": [
+        {
+          "serviceId": "cmrezuq7000pn01qrkiyrthxw",
+          "service": {
+            "id": "cmrezuq7000pn01qrkiyrthxw",
+            "slug": "consulta-salud-vascular-circulatoria",
+            "name": "Salud Vascular y Circulatoria Online",
+            "kind": "GENERAL",
+            "summary": "Valoración médica por videollamada de síntomas venosos y circulatorios: piernas pesadas, varices, hinchazón y calambres, con revisión de pruebas, solicitud de eco-Doppler cuando procede y plan escrito.",
+            "durationMinutes": 20,
+            "basePriceCents": 7500,
+            "currencyCode": null
+          }
+        },
+        {
+          "serviceId": "cmre7pwwv0000ngjuwvmiacw9",
+          "service": {
+            "id": "cmre7pwwv0000ngjuwvmiacw9",
+            "slug": "consulta-medica-online",
+            "name": "Consulta Médica General",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q038000ungjuxs5rkyxy",
+          "service": {
+            "id": "cmre7q038000ungjuxs5rkyxy",
+            "slug": "control-peso-online",
+            "name": "Control de Peso",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 4500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q5fw002angjuebao1obt",
+          "service": {
+            "id": "cmre7q5fw002angjuebao1obt",
+            "slug": "segunda-opinion-medica",
+            "name": "Segunda Opinión Médica",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 4900,
+            "currencyCode": "EUR"
+          }
+        }
+      ],
+      "seoKeywords": [],
+      "resolvedMarketLocale": "RO",
+      "specialties": [],
+      "faqs": [
+        {
+          "id": "cmrny06fc005sbsjub8eqhmxt",
+          "locale": "RO",
+          "question": "Este înregistrată doamna Dr. Szilágyi la Consiliul General al Colegiilor Oficiale de Medici?",
+          "answer": "Da. Doamna Dr. Eszter Szilágyi este înregistrată la CGCOM cu numărul 292912849 și la Colegiul Medicilor din Málaga cu numărul 29/2912849. Puteți verifica această înregistrare pe cgcom.es. Doamna Dr. Szilágyi a obținut recunoașterea oficială a specialității sale în Chirurgie Cardiovasculară de la Ministerul Sănătății din Spania în 2022 și în prezent activează la Spitalul Vithas Xanit Internațional.",
+          "category": null,
+          "sortOrder": 0,
+          "isActive": true
+        },
+        {
+          "id": "cmrny06fc005tbsjuf8zcqmlf",
+          "locale": "RO",
+          "question": "Ce consultații cardiovasculare oferă doamna Dr. Szilágyi online?",
+          "answer": "Doamna Dr. Szilágyi oferă evaluare cardiovasculară (evaluarea simptomelor, interpretarea ECG-ului și ecocardiogramelor), a doua opinie asupra diagnosticelor sau planurilor de tratament chirurgical, consultații pre și post-operatorii (pregătirea și urmărirea intervenției chirurgicale cardiace), evaluarea simptomelor acute cardiovasculare (durere toracică, palpitații, dispnee), evaluarea riscului cardiovascular și rapoarte medicale. Consultațiile online nu includ proceduri chirurgicale.",
+          "category": null,
+          "sortOrder": 1,
+          "isActive": true
+        },
+        {
+          "id": "cmrny06fc005ubsju3u6wjgpw",
+          "locale": "RO",
+          "question": "Ce face ca doamna Dr. Szilágyi să fie unică printre specialiștii cardiovasculare disponibili online?",
+          "answer": "Doamna Dr. Szilágyi combină trei elemente rare într-un singur profil online: formare specializată în chirurgie cardiovasculară în centre de referință europene (Universitatea Semmelweis, Helios Heart Center, Spitalul Vithas Xanit Internațional); capacitate cuatrilingvă reală în spaniolă, engleză, germană și maghiară — ceea ce o face accesibilă pacienților din Europa Centrală în Spania; și o experiență vastă în urgențe medicale în sistemul de urgențe german, care îi oferă un criteriu clinic de înaltă fiabilitate în evaluarea simptomelor acute cardiovasculare.",
+          "category": null,
+          "sortOrder": 2,
+          "isActive": true
+        },
+        {
+          "id": "cmrny06fc005vbsjujxxxz6qi",
+          "locale": "RO",
+          "question": "Poate doamna Dr. Szilágyi să consulte pacienți maghiari sau vorbitori de germană în Spania?",
+          "answer": "Da. Doamna Dr. Szilágyi vorbește germană și maghiară ca limbi materne. Pentru pacienții maghiari, austrieci, elvețieni sau germani care locuiesc sau se află în vizită în Spania și au nevoie de asistență medicală specializată în limba lor maternă — fie că este vorba de evaluare cardiovasculară, medicină generală sau o a doua opinie — doamna Dr. Szilágyi oferă o accesibilitate clinică excepțională și practic fără egal în contextul telemedicinei spaniole.",
+          "category": null,
+          "sortOrder": 3,
+          "isActive": true
+        },
+        {
+          "id": "cmrny06fc005wbsju401rtjf7",
+          "locale": "RO",
+          "question": "Cum pot rezerva o consultație cu doamna Dr. Szilágyi?",
+          "answer": "Selectați un interval orar disponibil pe această pagină pentru a rezerva direct cu doamna Dr. Szilágyi. Plata este procesată în siguranță la rezervare — consultația este confirmată odată ce plata este finalizată. Veți primi imediat o invitație în calendar. Consultațiile se desfășoară prin videoconferință sigură în spaniolă, engleză, germană sau maghiară. Dacă experimentați o urgență cardiacă — durere toracică acută, dificultăți de respirație sau pierdere a conștienței — sunați imediat la 112.",
+          "category": null,
+          "sortOrder": 4,
+          "isActive": true
+        },
+        {
+          "id": "cmrny06fc005xbsju3z6ay7tf",
+          "locale": "RO",
+          "question": "Care sunt calificările doamnei Dr. Szilágyi?",
+          "answer": "Doamna Dr. Eszter Szilágyi s-a format la Universitatea Semmelweis din Budapesta și a obținut recunoașterea oficială a specialității sale în Chirurgie Cardiovasculară de la Ministerul Sănătății din Spania în 2022. A lucrat la Bundeswehr Zentralkrankenhaus din Coblența și la Helios Klinikum Siegburg – Heart Center în Germania, și în prezent activează la Spitalul Vithas Xanit Internațional în Spania. Are experiență suplimentară în urgențe medicale în sistemul de urgențe din Saxonia Inferioară. Este înregistrată la CGCOM (nr. 292912849) și la Colegiul Medicilor din Málaga.",
+          "category": null,
+          "sortOrder": 5,
+          "isActive": true
+        }
+      ],
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T12:08:00.000Z"
+      },
+      "bookabilityByServiceId": {
+        "cmrezuq7000pn01qrkiyrthxw": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T12:08:00.000Z"
+        },
+        "cmre7pwwv0000ngjuwvmiacw9": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T12:08:00.000Z"
+        },
+        "cmre7q038000ungjuxs5rkyxy": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T12:08:00.000Z"
+        },
+        "cmre7q5fw002angjuebao1obt": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T12:08:00.000Z"
+        }
+      }
+    }
+  }
+}

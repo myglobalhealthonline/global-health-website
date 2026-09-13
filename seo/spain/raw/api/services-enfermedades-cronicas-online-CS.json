@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/enfermedades-cronicas-online?countryCode=es&locale=CS",
+  "checkedAt": "2026-09-13T02:29:51.858Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q9p1003ingjuum9voxoc",
+      "kind": "GENERAL",
+      "slug": "enfermedades-cronicas-online",
+      "name": "Chronická onemocnění",
+      "summary": null,
+      "seoTitle": "Chronická onemocnění online Španělsko | Lékařský dohled | Praktický lékař",
+      "seoDescription": "Hypertenze, cukrovka, štítná žláza nebo jiné chronické onemocnění? Naši registrovaní praktičtí lékaři nabízejí průběžné klinické sledování prostřednictvím bezpečného videohovoru. Ve stejný den ve Španělsku.",
+      "seoKeywords": [
+        "enfermedades crónicas online España",
+        "hipertensión médico online España",
+        "diabetes seguimiento online España",
+        "tiroides médico online España",
+        "enfermedad crónica médico de cabecera online España"
+      ],
+      "heroTitle": "Chronická onemocnění — průběžné lékařské sledování online",
+      "heroDescription": "Správa chronického onemocnění — hypertenze, diabetes, štítná žláza, astma nebo jakýkoli jiný dlouhodobý stav — vyžaduje víc než jen každoroční kontrolu a obnovení léčby. Vyžaduje lékaře, který zná váš případ, sleduje váš vývoj, upravuje vaši péči, když se něco změní, a pomůže vám orientovat se v širším zdravotnickém systému, když je potřeba specializované posouzení. Naši praktičtí lékaři, registrovaní v souladu s požadavky Organizace lékařských komor (OMC), poskytují průběžné klinické sledování chronických onemocnění prostřednictvím bezpečného videohovoru — klinickou kontinuitu, která by měla být základem vaší dlouhodobé péče. Ve stejný den, odkudkoli ve Španělsku, ve španělštině, angličtině nebo portugalštině.",
+      "detailBody": "<h2>Průběžné sledování vs. obnova léčby — rozdíl</h2><p>Global Health nabízí dvě samostatné služby pro pacienty s dlouhodobými onemocněními:</p><p>Obnova léčby je služba jednorázové konzultace pro stabilní a ustálené stavy — váš stav se nezměnil, léčba funguje a potřebujete v ní pokračovat. Jedna konzultace, jasný výsledek.</p><p>Průběžné sledování chronických onemocnění je kontinuální péče na úrovni všeobecného lékařství — lékař, který váš případ zná v průběhu času, sleduje váš stav, podle potřeby upravuje léčbu, koordinuje vyšetření a doporučení ke specialistům a poskytuje kontinuitu, díky níž je management chronických onemocnění skutečně účinný, a nikoli reaktivní.</p><p>Pokud jste stabilní a potřebujete pouze pokračovat v léčbě — Obnova léčby je vhodná služba. Pokud chcete lékaře zapojeného do vedení vašeho stavu v průběhu času — Průběžné sledování chronických onemocnění je vhodné.</p><h2>Pro koho je tato služba určena</h2><p>Tato služba je vhodná pro dospělé s:</p><ul><li>Diagnostikovaným chronickým onemocněním, které chtějí dlouhodobě a kontinuálně řídit na úrovni všeobecného lékařství</li><li>Dlouhodobým onemocněním, které není dobře kontrolováno a vyžaduje aktivní klinickou revizi</li><li>Více souběžnými onemocněními — například diabetem s hypertenzí a dyslipidémií — které vyžadují koordinované řízení</li><li>Chronickým onemocněním, které potřebují dále řídit ve Španělsku po příchodu z jiné země</li><li>Potřebou průběžného monitorování prostřednictvím vyšetření — pravidelné krevní testy, HbA1c, funkce štítné žlázy — koordinovaných prostřednictvím lékaře, který jejich případ zná</li><li>Chronickým onemocněním, u něhož by optimalizace životního stylu spolu s vedením medikace zlepšila výsledky</li><li>Mezinárodními rezidenty nebo expaty ve Španělsku, kteří chtějí sledování chronických onemocnění v angličtině nebo portugalštině bez nutnosti orientovat se v systému ve španělštině</li></ul><h2>Proč na kontinuitě záleží</h2><p>Chronická onemocnění se mění. Krevní tlak, který byl pod kontrolou, může stoupnout. HbA1c, která byla stabilní, může kolísat. Léčba, která fungovala, může přestat být optimální. Nový příznak může ukazovat na komplikaci nebo na potřebu přehodnotit léčbu.</p><p>Lékař, který váš případ nezná, vidí pouze aktuální konzultaci. Lékař, který vás sleduje v průběhu času, vidí vzorec — a může rozpoznat změny dříve, než se stanou problémem. To je rozdíl mezi reaktivní a proaktivní péčí u chronických onemocnění.</p><p>Ve Španělsku se management chronických onemocnění ve veřejném systému opírá o přiděleného praktického lékaře — což mnozí mezinárodní rezidenti a osoby samostatně výdělečně činné nemají. V soukromém sektoru je řízení často roztříštěné mezi specialisty bez lékaře, který by koordinoval celý obraz. Výsledkem je, že pacienti s více chronickými onemocněními často propadávají mezerami mezi poskytovateli péče.</p><p>Tato služba poskytuje koordinační vrstvu všeobecného lékařství, která často chybí — lékaře, který vidí celého pacienta, ne jen aktuální konzultaci.</p><h2>Stavy, které jsou běžně řízeny</h2><p><strong>Kardiovaskulární</strong></p><ul><li>Arteriální hypertenze — průběžné sledování krevního tlaku, revize medikace, optimalizace životního stylu a řízení kardiovaskulárního rizika</li><li>Dyslipidémie — management cholesterolu, sledování lipidů a hodnocení kardiovaskulárního rizika</li><li>Stabilní srdeční selhání — řízené na úrovni všeobecného lékařství s koordinací doporučení ke kardiologii, kde je to potřeba</li><li>Stabilní fibrilace síní — řízená na úrovni všeobecného lékařství, management antikoagulace a spojení s kardiologií, kde je to potřeba</li><li>Management po srdeční příhodě — průběžná péče na úrovni všeobecného lékařství po infarktu nebo srdečním výkonu</li></ul><p><strong>Metabolické</strong></p><ul><li>Diabetes mellitus 2. typu — sledování HbA1c, revize medikace, podpora životního stylu, koordinace screeningu diabetických komplikací a doporučení ke specialistovi, kde je to potřeba</li><li>Prediabetes — strukturovaná intervence životního stylu a metabolické monitorování</li><li>Onemocnění štítné žlázy — management hypotyreózy a hypertyreózy, sledování TSH, úprava medikace</li><li>Metabolický syndrom — integrovaný management metabolických rizikových faktorů</li><li>Obezita jako chronické onemocnění — metabolický management spolu s podporou snižování hmotnosti</li></ul><p><strong>Respirační</strong></p><ul><li>Astma — kontrola inhalátorů, posouzení kontroly příznaků, vytvoření akčního plánu a doporučení ke specialistovi, kde je to potřeba</li><li>COPD — průběžný management, prevence exacerbací a koordinace s pneumologií, kde je to potřeba</li></ul><p><strong>Muskuloskeletální a zánětlivé</strong></p><ul><li>Osteoartróza — průběžný management bolesti, funkční hodnocení a koordinace doporučení</li><li>Stabilní zánětlivá artritida — management na úrovni všeobecného lékařství s koordinací revmatologie, kde je to potřeba</li><li>Dna — sledování kyseliny močové a průběžný management</li><li>Osteoporóza — hodnocení rizika zlomenin a průběžný management</li></ul><p><strong>Duševní zdraví — dlouhodobý management na úrovni všeobecného lékařství</strong></p><ul><li>Deprese a úzkost — průběžný management stabilních stavů na úrovni všeobecného lékařství</li><li>ADHD — průběžná podpora pacientů se stanovenou diagnózou na úrovni všeobecného lékařství</li><li>Poruchy spánku — vyšetření a průběžný management</li></ul><p><strong>Gastrointestinální</strong></p><ul><li>GERD a peptický vřed — průběžný management a monitorování</li><li>Syndrom dráždivého tračníku — průběžný management a podpora životního stylu</li><li>Stabilní zánětlivé onemocnění střev — management na úrovni všeobecného lékařství s koordinací gastroenterologie</li></ul><p><strong>Ostatní</strong></p><ul><li>Chronické onemocnění ledvin — monitorování na úrovni všeobecného lékařství s koordinací nefrologie</li><li>Anémie — průběžný management a sledování základní příčiny</li><li>Chronická kožní onemocnění — psoriáza, ekzém na úrovni všeobecného lékařství</li><li>Autoimunitní onemocnění — stabilní projevy řízené na úrovni všeobecného lékařství</li></ul><h2>Co zahrnuje průběžné sledování</h2><p><strong>Pravidelné klinické kontroly</strong></p><p>Váš praktický lékař provádí strukturované klinické kontroly v intervalech vhodných pro váš stav — hodnotí kontrolu příznaků, odpověď na léčbu, nežádoucí účinky, jakýkoli nový vývoj a celkovou pohodu. Frekvenci určuje váš stav a klinická potřeba.</p><p><strong>Koordinace monitorování</strong></p><p>Váš lékař vystavuje žádanky na vyšetření pro pravidelné monitorování — krevní testy, HbA1c, funkci štítné žlázy, lipidové profily, funkci ledvin a další vyšetření specifická pro daný stav — a výsledky s vámi probírá při kontrolní konzultaci.</p><p><strong>Management medikace</strong></p><p>Váš lékař při každé klinické kontrole přezkoumává vaši medikaci — hodnotí účinnost, snášenlivost a to, zda je třeba úprava na základě aktuálních klinických zjištění a výsledků monitorování.</p><p><strong>Podpora životního stylu a sebemanagementu</strong></p><p>Doporučení založená na důkazech ohledně stravy, fyzické aktivity, kontroly hmotnosti, odvykání kouření a omezení alkoholu — přizpůsobená vašemu konkrétnímu stavu a tomu, jak faktory životního stylu ovlivňují váš klinický management.</p><p><strong>Propojení se specialisty a doporučení</strong></p><p>Je-li potřeba specializované posouzení — kardiologie, endokrinologie, pneumologie, revmatologie, gastroenterologie nebo jiné specializace — váš lékař koordinuje doporučení, poskytne kompletní doporučující dopis a udržuje klinický vztah jako váš praktický lékař během zapojení specialisty i po něm.</p><p><strong>Klinická dokumentace — dle uvážení lékaře</strong></p><p>Pokud je to při každé kontrole klinicky indikováno, váš lékař vystaví příslušnou klinickou dokumentaci platnou v jakékoli španělské lékárně.</p><p>Poznámka: Omamné látky a některé kontrolované substance vyžadují zvláštní dokumentaci, kterou nelze vystavit elektronicky. Váš lékař vás bude informovat, pokud se to týká vaší situace.</p><p><strong>Klinická kontinuita</strong></p><p>Protože váš lékař váš případ zná v průběhu času, klinická rozhodnutí se činí v kontextu vaší úplné anamnézy — nikoli pouze důvodu návštěvy při jediné konzultaci.</p><h2>Management chronických onemocnění ve Španělsku bez přiděleného praktického lékaře</h2><p>Španělský veřejný systém poskytuje management chronických onemocnění prostřednictvím registrovaných praktických lékařů — ale pouze pro pacienty, kteří jsou registrováni a v oblastech, kde jsou praktičtí lékaři k dispozici. Pro mezinárodní rezidenty, kteří ještě nejsou registrováni, osoby samostatně výdělečně činné bez přiděleného praktického lékaře nebo osoby, které preferují řídit svou péči v angličtině či portugalštině, je přístup ke strukturovanému průběžnému sledování chronických onemocnění skutečnou mezerou.</p><p>Global Health poskytuje tuto péči ve španělštině, angličtině a portugalštině. Vaše konzultace jsou dokumentované, vaše monitorování je koordinované a vaše péče je strukturovaná — což vám dává klinickou kontinuitu, kterou management chronických onemocnění vyžaduje, v jazyce, kterému můžete rozumět a na jehož základě se můžete plně zapojit.</p><p>Pokud máte praktického lékaře ve španělském veřejném systému, tato služba funguje jako doplněk — nikoli jako náhrada. Někteří pacienti používají Global Health pro specifické sledování chronických onemocnění v angličtině nebo portugalštině, zatímco si ponechávají registraci ve veřejném systému pro přístup k dotovaným lékům a doporučením na specialisty SNS.</p>",
+      "ctaLabel": null,
+      "sortOrder": 130,
+      "durationMinutes": 20,
+      "basePriceCents": 4500,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.265Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k03k0003asjuhdggeok6",
+          "kind": "IMAGE",
+          "key": "media/a1cea8fc-3744-4057-88bf-50ec7787455c-es-enfermedades-cronicas-online.png",
+          "path": "/api/media/media/a1cea8fc-3744-4057-88bf-50ec7787455c-es-enfermedades-cronicas-online.png",
+          "altText": "Enfermedades Crónicas"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q9y8003jngju19ywqer8",
+          "question": "Jak se to liší od obnovení léčby?",
+          "answer": "Obnovení léčby je jednorázová konzultace pro stabilní stav — obnovení léčby, která dobře funguje. Sledování chronických onemocnění je průběžná péče — lékař, který zná váš případ v průběhu času, sleduje váš stav, upravuje léčbu, když je to nutné, a je zapojen do vašeho dlouhodobého zdraví.",
+          "sortOrder": 0,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q9y9003kngjufbvlcqes",
+          "question": "Jak často budu muset docházet na kontrolu?",
+          "answer": "Záleží na vašem stavu a na tom, jak dobře je kontrolován. U stabilních a dobře kontrolovaných stavů je obvykle vhodná čtvrtletní nebo pololetní kontrola. U méně dobře kontrolovaných nebo složitějších stavů je potřeba častější kontrola. Váš lékař vám při první konzultaci poradí s vhodným harmonogramem kontrol.",
+          "sortOrder": 1,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q9y9003lngjunfhyg0p2",
+          "question": "Může lékař přistupovat k mé španělské zdravotní dokumentaci?",
+          "answer": "Ne. Lékaři Global Health nemají přístup k systému elektronické zdravotní dokumentace španělského veřejného systému. Prosím, přineste na svou první konzultaci veškerou relevantní zdravotnickou dokumentaci — předchozí výsledky laboratorních testů, zprávy specialistů, zobrazovací nálezy a seznam své aktuální medikace.",
+          "sortOrder": 2,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q9y9003mngju1ewqjbvw",
+          "question": "Co když potřebuji specialistu?",
+          "answer": "Pokud je potřeba specializované vyšetření, váš lékař vystaví formální doporučující dopis a poradí vám, jak se obrátit na příslušného specialistu ve Španělsku. Přístup k soukromým specialistům je obecně ve velkých španělských městech snadný — Global Health to koordinuje jako součást průběžného sledování.",
+          "sortOrder": 3,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q9y9003nngju8medvh22",
+          "question": "Mohu tento službu používat, pokud mám praktického lékaře ve Španělsku?",
+          "answer": "Ano. Někteří pacienti používají Global Health pro kontrolní konzultace u chronických onemocnění v angličtině nebo portugalštině spolu se svou registrací u španělského praktického lékaře — zejména u stavů, u nichž chtějí podrobně prodiskutovat léčbu v jazyce, kterému plně rozumějí.",
+          "sortOrder": 4,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q9y9003ongju4afhm07p",
+          "question": "Co se stane, pokud budu potřebovat urgentní péči kvůli svému chronickému onemocnění?",
+          "answer": "Řízení naléhavých stavů chronických onemocnění — hypertenzní krize, diabetická urgence, akutní srdeční příhoda — vyžaduje okamžitou pohotovostní péči. Zavolejte 112 nebo ihned jděte na nejbližší oddělení urgentního příjmu. Průběžné sledování prostřednictvím Global Health je určeno pro neakutní péči u chronických onemocnění.",
+          "sortOrder": 5,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q9y9003pngjud60s6yca",
+          "question": "Potřebuji španělské zdravotní pojištění?",
+          "answer": "Ne. Je to soukromá služba s přímou platbou. Klinická dokumentace vystavená prostřednictvím této služby se poskytuje za plnou soukromou cenu bez ohledu na stav pojištění.",
+          "sortOrder": 6,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q9y9003qngjufrh3v5qn",
+          "question": "Mohu tuto službu používat z jakéhokoli místa ve Španělsku?",
+          "answer": "Ano — včetně Baleárských ostrovů, Kanárských ostrovů, Ceuty a Melilly. Stačí stabilní připojení k internetu a zařízení s kamerou.",
+          "sortOrder": 7,
+          "resolvedLocale": "CS"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "CS",
+      "links": [
+        {
+          "id": "cmre7si5j002eg8jurnfmgprs",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre evaluación cardiológica especializada?",
+          "body": "Nuestra Cardiología Especialista está pensada específicamente para evaluación cardiológica especializada.",
+          "ctaLabel": "Cardiología Especialista",
+          "targetSlug": "cardiologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7skhw002kg8judewg26hr",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre evaluación neurológica especializada?",
+          "body": "Nuestra Neurología Especialista está pensada específicamente para evaluación neurológica especializada.",
+          "ctaLabel": "Neurología Especialista",
+          "targetSlug": "neurologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7sglb002ag8jup3a4q0tq",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Control de peso en diabetes e hipotiroidismo?",
+          "body": "Si tu situación está relacionada con control de peso en diabetes e hipotiroidismo, nuestra Control de Peso te ofrece la evaluación adecuada.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7shde002cg8jufeul55oo",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con analíticas de control y monitorización?",
+          "body": "Para analíticas de control y monitorización, consulta nuestra página de Derivaciones y Pruebas — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Derivaciones y Pruebas",
+          "targetSlug": "derivaciones-pruebas-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

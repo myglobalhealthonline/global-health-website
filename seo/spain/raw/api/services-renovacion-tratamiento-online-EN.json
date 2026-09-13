@@ -1,0 +1,151 @@
+{
+  "endpoint": "/api/services/renovacion-tratamiento-online?countryCode=es&locale=EN",
+  "checkedAt": "2026-09-13T02:29:58.302Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7pz0n000kngjuib862zxl",
+      "kind": "GENERAL",
+      "slug": "renovacion-tratamiento-online",
+      "name": "Treatment Renewal",
+      "summary": null,
+      "seoTitle": "Treatment Renewal Online Spain | Clinical Review | English Doctor",
+      "seoDescription": "Need to continue a stable treatment in Spain? Our OMC-registered doctors conduct a full clinical review by video call and issue appropriate documentation where indicated. Same day, no registration required.",
+      "seoKeywords": [
+        "renovación tratamiento online España",
+        "continuar tratamiento online España",
+        "revisión clínica tratamiento España",
+        "continuar medicación extranjero España"
+      ],
+      "heroTitle": "Treatment Renewal in Spain — Clinical Review with OMC-Registered Doctor",
+      "heroDescription": "On a stable, established treatment and need to continue it in Spain? Whether you do not have a registered Spanish GP, cannot wait for a public system appointment, or have arrived from another country with clinical documentation that Spanish pharmacies cannot process directly — our doctors, registered with the Spanish Medical Council (OMC), conduct a full clinical review of your current treatment and issue appropriate clinical documentation where indicated. Same day, from anywhere in Spain, in English, Spanish, or Portuguese.",
+      "detailBody": "<h2>What This Service Is — And What It Is Not</h2><p>This is a clinical treatment review — not an automatic renewal. Our doctors conduct a genuine assessment of your current treatment, your clinical status, any side effects, and any changes to your health since your last review. On the basis of that assessment, they advise on whether your treatment remains appropriate and issue appropriate clinical documentation where indicated.</p><p>This service is appropriate when your condition is stable and your treatment is established. If your symptoms have changed significantly or worsened, a General Medical Consultation is more appropriate.</p><h2>Who This Service Is For</h2><p>This service is appropriate for adults who:</p><ul><li>Are on a stable, established treatment and need to continue it in Spain</li><li>Do not have a registered Spanish GP and cannot access continuation through the public system</li><li>Have arrived in Spain from another EU or non-EU country with clinical documentation that Spanish pharmacies are not processing directly</li><li>Have recently moved between Spanish regions and do not yet have a GP assigned</li><li>Have a long-term condition managed in another country and want to continue treatment while establishing care in Spain</li><li>Want a clinical review in English without navigating a Spanish-language clinic</li></ul><h2>Foreign Clinical Documentation in Spain — The Practical Problem</h2><p>This is the most common use of this service for international residents and visitors. Clinical documentation issued in other countries — including the UK, Ireland, Germany, the Netherlands, or any other EU member state — is theoretically recognisable in Spain under EU Directive 2011/24/EU on cross-border healthcare.</p><p>In practice, Spanish pharmacies frequently have difficulty processing foreign clinical documentation because:</p><ul><li>The brand name of the medication may be different in Spain</li><li>The documentation format does not match the Spanish verification system</li><li>The pharmacy cannot verify the prescribing doctor's registration</li><li>The medication may not be marketed under the same name in Spain</li></ul><p>The most practical solution is to consult one of our doctors, who reviews your current treatment and issues equivalent Spanish clinical documentation where indicated — using the Spanish generic name (INN — International Non-proprietary Name) of the medication, connected through Nodofarma for dispensing at any pharmacy in Spain.</p><p>Bring to your consultation: your original medication packaging, the generic name, your foreign clinical documentation if you have it, and any relevant medical reports. The more information you provide, the better your doctor can assess your treatment.</p><h2>What Your Consultation Includes</h2><p><strong>Full clinical review of your current treatment</strong></p><p>Your doctor reviews the condition being treated, your current treatment, dosage and duration, symptom control and response, any side effects or safety concerns, and any relevant changes to your medical history since your last review.</p><p><strong>Safety assessment</strong></p><p>Review of potential interactions, contraindications, and any changes to your health that may affect the appropriateness of continuing your current treatment.</p><p><strong>Clinical documentation — at the doctor's professional discretion</strong></p><p>When your doctor determines that your treatment remains clinically appropriate, they issue the corresponding clinical documentation in accordance with Real Decreto 1718/2010, validated by the OMC and connected through Nodofarma to Spain's 22,000 pharmacies — where clinically indicated.</p><p>With private clinical documentation you pay 100% of the medication cost — drug prices in Spain are government-regulated and generally very affordable. Documentation is valid for 10 days from the date of issue for the first dispensation. For chronic treatments, your doctor can programme successive dispensations.</p><p>Note: Controlled substances and certain narcotics require special documentation that cannot be issued electronically through this service. Your doctor will advise if this applies to your treatment.</p><p><strong>Referral or further investigation — where needed</strong></p><p>If your review indicates that further assessment, blood tests, or specialist input is needed before treatment can be continued, your doctor advises clearly and coordinates appropriate next steps the same day.</p><h2>Conditions Commonly Reviewed</h2><p>This service is appropriate for stable, established conditions including:</p><p><strong>Cardiovascular and metabolic</strong></p><ul><li>Hypertension — antihypertensive treatment review</li><li>Diabetes — glycaemic management and treatment review</li><li>Dyslipidaemia — statin and lipid management review</li><li>Thyroid conditions — hypothyroidism and hyperthyroidism treatment review</li></ul><p><strong>Respiratory</strong></p><ul><li>Asthma — inhaler and treatment plan review</li><li>COPD — maintenance treatment review</li></ul><p><strong>Mental health — at GP level</strong></p><ul><li>Stable anxiety and depression — treatment review at GP level, subject to clinical assessment</li><li>Chronic insomnia — established treatment review</li></ul><p><strong>Other</strong></p><ul><li>Gastro-oesophageal reflux and gastrointestinal conditions — long-term management</li><li>Hormonal contraception — review and continuation, subject to clinical assessment</li><li>Dermatological conditions — long-term topical or systemic treatments</li><li>Hormonal conditions — ongoing management</li><li>Chronic pain — established management review at GP level</li></ul><h2>Medication access in Spain — what international residents need to know</h2><p>With private clinical documentation issued by our doctors:</p><ul><li>You pay 100% of the medication cost at the pharmacy</li><li>Drug prices in Spain are government-regulated and generally low</li><li>Valid at any pharmacy in Spain</li><li>No Spanish health card or health insurance required</li></ul><p>With a public system prescription:</p><ul><li>Eligible patients pay a reduced contribution based on income and situation</li><li>Requires a GP contracted with the Spanish public system</li><li>Only accessible if you are registered in the Spanish public health system</li></ul><p>If you have a GP in the Spanish public system and need subsidised medication, consult your CAP first. Our service is especially useful when you do not have access to the public system, cannot wait for an appointment, or your documentation comes from another country.</p><h2>Important Information Before You Book</h2><ul><li>The decision to continue, adjust, or change any treatment is a clinical decision made solely by the doctor after full assessment — it cannot be confirmed or guaranteed in advance</li><li>Controlled substances and certain narcotics cannot be issued electronically — your doctor advises if your treatment falls into this category</li><li>Our doctors do not routinely manage controlled substances through video consultations</li><li>If your symptoms have changed significantly since your last review, a General Medical Consultation is more appropriate</li><li>Bring any relevant blood test results, specialist letters, or clinical documentation to your consultation</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 30,
+      "durationMinutes": 15,
+      "basePriceCents": 2900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.259Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0kaao0009asjuv22mk4e7",
+          "kind": "IMAGE",
+          "key": "media/cf933591-e467-4cbf-9f49-d1e45f16636e-es-renovacion-tratamiento-online.png",
+          "path": "/api/media/media/cf933591-e467-4cbf-9f49-d1e45f16636e-es-renovacion-tratamiento-online.png",
+          "altText": "Renovación de Tratamiento"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7pz9a000lngjunpbz0j1w",
+          "question": "Is the renewal automatic after the consultation?",
+          "answer": "No. Renewal of treatment requires a clinical review. The doctor evaluates your current condition, response to treatment, and any changes since your last review before determining whether continuation is clinically appropriate.",
+          "sortOrder": 0,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7pz9a000mngjuvi2405jt",
+          "question": "Can I continue any medication?",
+          "answer": "Most stable and established treatments managed by a general practitioner can be reviewed and continued through this service. Narcotics and certain controlled substances require special documentation that cannot be issued electronically. Our doctors do not routinely manage controlled substances through video consultation. Your doctor will clearly inform you if your treatment falls into these categories.",
+          "sortOrder": 1,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7pz9a000nngjuqwpbiiz8",
+          "question": "How do I receive the clinical documentation?",
+          "answer": "When it is clinically indicated, your doctor issues the documentation through the system approved by the OMC. You receive it electronically and present it at any pharmacy of your choice in Spain together with your ID card or passport.",
+          "sortOrder": 2,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7pz9a000ongju863tsyvf",
+          "question": "Do I need Spanish health insurance?",
+          "answer": "No. Private medical documentation is provided at the full private price. Spanish health insurance or a health card is not required.",
+          "sortOrder": 3,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7pz9a000pngjulyklv21w",
+          "question": "I have medical records from another country — what do I need to bring to the appointment?",
+          "answer": "The generic name of your medication (INN — International Nonproprietary Name), the original packaging if you have it, your foreign clinical documentation if you have it, and any relevant medical report.",
+          "sortOrder": 4,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7pz9a000qngjuja4gz4z7",
+          "question": "What happens if my condition has changed since my last review?",
+          "answer": "If your symptoms have changed significantly, a general medical consultation is more appropriate. Your doctor will inform you during the consultation if a more detailed evaluation is necessary.",
+          "sortOrder": 5,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7pz9a000rngjujw9kwv5n",
+          "question": "Can I use this service without a primary care doctor in Spain?",
+          "answer": "Yes. This service is specifically designed for patients — including expats and international residents — who do not have an assigned primary care physician in Spain but need to continue a stable and established treatment.",
+          "sortOrder": 6,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7pz9a000sngjumw9ufl99",
+          "question": "Can I use this service from anywhere in Spain?",
+          "answer": "Yes — including the Balearic Islands, the Canary Islands, Ceuta and Melilla. You only need a stable internet connection and a device with a camera.",
+          "sortOrder": 7,
+          "resolvedLocale": "EN"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "EN",
+      "links": [
+        {
+          "id": "cmre7ua4s0062g8jujrrpbtrs",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Consulta médica general con médico de cabecera?",
+          "body": "Si tu situación está relacionada con consulta médica general con médico de cabecera, nuestra Consulta Médica General te ofrece la evaluación adecuada.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

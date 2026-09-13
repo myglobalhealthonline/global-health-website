@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/enfermedades-cronicas-online?countryCode=es&locale=PT",
+  "checkedAt": "2026-09-13T02:30:04.365Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q9p1003ingjuum9voxoc",
+      "kind": "GENERAL",
+      "slug": "enfermedades-cronicas-online",
+      "name": "Doenças Crônicas",
+      "summary": null,
+      "seoTitle": "Doenças Crónicas Online Espanha | Acompanhamento Médico | Médico de Família",
+      "seoDescription": "Hipertensão, diabetes, tiroide ou outra doença crónica? Os nossos médicos de família inscritos na ordem oferecem acompanhamento clínico continuado por videochamada segura. No mesmo dia em Espanha.",
+      "seoKeywords": [
+        "enfermedades crónicas online España",
+        "hipertensión médico online España",
+        "diabetes seguimiento online España",
+        "tiroides médico online España",
+        "enfermedad crónica médico de cabecera online España"
+      ],
+      "heroTitle": "Doenças Crônicas — Acompanhamento Médico Contínuo Online",
+      "heroDescription": "Gerir uma doença crónica — hipertensão, diabetes, tiroide, asma, ou qualquer outra condição de longa duração — requer mais do que uma revisão anual e uma renovação do tratamento. Requer um médico que conheça o seu caso, monitorize a sua evolução, ajuste a sua gestão quando algo muda, e o ajude a navegar o sistema de saúde mais amplo quando é necessária uma avaliação especializada. Os nossos médicos de família, inscritos de acordo com os requisitos da Organização Médica Colegial (OMC), oferecem seguimento clínico contínuo de doenças crónicas por videochamada segura — a continuidade clínica que deveria ser a base dos seus cuidados a longo prazo. No próprio dia, a partir de qualquer ponto de Espanha, em espanhol, inglês ou português.",
+      "detailBody": "<h2>Seguimento continuado vs. renovação de tratamento — a diferença</h2><p>A Global Health oferece dois serviços separados para doentes com condições de longa duração:</p><p>Renovação de tratamento é um serviço de consulta única para condições estáveis e estabelecidas — a tua condição não mudou, o teu tratamento está a funcionar, e precisas de continuar. Uma consulta, resultado claro.</p><p>Seguimento de doenças crónicas é cuidados continuados ao nível da medicina geral — um médico que conhece o teu caso ao longo do tempo, monitoriza a tua condição, ajusta a gestão quando necessário, coordena exames e encaminhamentos para especialistas, e proporciona a continuidade que torna a gestão de doenças crónicas genuinamente eficaz em vez de reativa.</p><p>Se estás estável e só precisas de continuar o teu tratamento — a Renovação de Tratamento é o serviço adequado. Se queres um médico envolvido na gestão da tua condição ao longo do tempo — o seguimento de Doenças Crónicas é apropriado.</p><h2>Para quem é este serviço</h2><p>Este serviço é apropriado para adultos com:</p><ul><li>Uma condição crónica diagnosticada que querem gerir com continuidade ao nível de medicina geral</li><li>Uma condição de longa duração que não está bem controlada e precisa de revisão clínica ativa</li><li>Múltiplas condições coexistentes — por exemplo diabetes com hipertensão e dislipidemia — que requerem gestão coordenada</li><li>Uma condição crónica que precisam de continuar a gerir em Espanha após chegarem de outro país</li><li>Necessidade de monitorização continuada através de exames — análises regulares, HbA1c, função tiroideia — coordenados através de um médico que conhece o seu caso</li><li>Uma condição crónica onde a otimização do estilo de vida juntamente com a gestão da medicação melhoraria os resultados</li><li>Residentes internacionais ou expats em Espanha que querem seguimento de doenças crónicas em inglês ou português sem terem de navegar o sistema em castelhano</li></ul><h2>Porque é que a continuidade importa</h2><p>As doenças crónicas mudam. A pressão arterial que estava controlada pode subir. A HbA1c que estava estável pode fluctuar. Uma medicação que funcionava pode deixar de ser ótima. Um novo sintoma pode indicar uma complicação ou a necessidade de reconsiderar o tratamento.</p><p>Um médico que não conhece o teu caso só vê a consulta atual. Um médico que te monitoriza ao longo do tempo vê o padrão — e pode identificar alterações antes de se tornarem problemas. Esta é a diferença entre os cuidados reativos e os cuidados proativos das doenças crónicas.</p><p>Em Espanha, a gestão de doenças crónicas no sistema público depende de ter médico de família atribuído — algo de que muitos residentes internacionais e trabalhadores independentes não dispõem. No setor privado, a gestão é frequentemente fragmentada entre especialistas sem um médico que coordene o quadro completo. O resultado é que os doentes com múltiplas condições crónicas frequentemente ficam pelos intervalos entre prestadores.</p><p>Este serviço proporciona a camada coordenadora de medicina geral que frequentemente falta — um médico que vê o doente na sua totalidade, não apenas a consulta atual.</p><h2>Condições habitualmente geridas</h2><p><strong>Cardiovascular</strong></p><ul><li>Hipertensão arterial — monitorização continuada da pressão arterial, revisão da medicação, otimização do estilo de vida e gestão do risco cardiovascular</li><li>Dislipidemia — gestão do colesterol, monitorização dos lípidos e avaliação do risco cardiovascular</li><li>Insuficiência cardíaca estável — gerida ao nível de medicina geral, com coordenação de encaminhamento para cardiologia quando necessário</li><li>Fibrilhação auricular estável — gestão ao nível de medicina geral, gestão da anticoagulação e articulação com cardiologia quando necessário</li><li>Gestão pós-evento cardíaco — cuidados continuados ao nível de medicina geral após enfarte ou procedimento cardíaco</li></ul><p><strong>Metabólico</strong></p><ul><li>Diabetes tipo 2 — monitorização de HbA1c, revisão da medicação, apoio ao estilo de vida, coordenação do rastreio de complicações da diabetes, e encaminhamento para especialista quando necessário</li><li>Pré-diabetes — intervenção estruturada no estilo de vida e monitorização metabólica</li><li>Patologia tiroideia — gestão de hipotiroidismo e hipertiroidismo, monitorização de TSH, ajuste da medicação</li><li>Síndrome metabólica — gestão integrada de fatores de risco metabólico</li><li>Obesidade como condição crónica — gestão metabólica juntamente com apoio ao controlo de peso</li></ul><p><strong>Respiratório</strong></p><ul><li>Asma — revisão de inaladores, avaliação do controlo dos sintomas, desenvolvimento do plano de ação e encaminhamento para especialista quando necessário</li><li>DPOC — gestão continuada, prevenção de exacerbações e coordenação com pneumologia quando necessário</li></ul><p><strong>Músculo-esquelético e inflamatório</strong></p><ul><li>Artrose — gestão continuada da dor, avaliação funcional e coordenação de encaminhamento</li><li>Artrite inflamatória estável — gestão ao nível de medicina geral com coordenação de reumatologia quando necessário</li><li>Gota — monitorização do ácido úrico e gestão continuada</li><li>Osteoporose — avaliação do risco de fratura e gestão continuada</li></ul><p><strong>Saúde mental — gestão a longo prazo ao nível de medicina geral</strong></p><ul><li>Depressão e ansiedade — gestão continuada de condições estáveis ao nível de medicina geral</li><li>TDAH — apoio continuado para doentes com diagnóstico estabelecido ao nível de medicina geral</li><li>Perturbações do sono — avaliação e gestão continuada</li></ul><p><strong>Gastrointestinal</strong></p><ul><li>ERGE e úlcera péptica — gestão continuada e monitorização</li><li>Síndrome do intestino irritável — gestão continuada e apoio ao estilo de vida</li><li>Doença inflamatória intestinal estável — gestão ao nível de medicina geral com coordenação de gastroenterologia</li></ul><p><strong>Outros</strong></p><ul><li>Doença renal crónica — monitorização ao nível de medicina geral com coordenação de nefrologia</li><li>Anemia — gestão continuada e monitorização da causa subjacente</li><li>Afeções cutâneas crónicas — psoríase, eczema ao nível de medicina geral</li><li>Condições autoimunes — apresentações estáveis geridas ao nível de medicina geral</li></ul><h2>O que inclui o seguimento continuado</h2><p><strong>Revisões clínicas regulares</strong></p><p>O teu médico de família realiza revisões clínicas estruturadas em intervalos adequados à tua condição — avaliando o controlo dos sintomas, a resposta ao tratamento, efeitos secundários, quaisquer novos desenvolvimentos e o bem-estar geral. A frequência é determinada pela tua condição e necessidade clínica.</p><p><strong>Coordenação da monitorização</strong></p><p>O teu médico emite pedidos de exames para monitorização regular — análises, HbA1c, função tiroideia, perfis lipídicos, função renal e outros exames específicos da condição — e revê os resultados contigo numa consulta de seguimento.</p><p><strong>Gestão da medicação</strong></p><p>O teu médico revê a tua medicação em cada revisão clínica — avaliando eficácia, tolerabilidade e se é necessário ajuste com base nos achados clínicos atuais e nos resultados da monitorização.</p><p><strong>Apoio ao estilo de vida e autogestão</strong></p><p>Conselhos baseados em evidência sobre dieta, atividade física, controlo de peso, cessação tabágica e moderação do álcool — adaptados à tua condição específica e à forma como os fatores do estilo de vida interagem com a tua gestão clínica.</p><p><strong>Articulação com especialistas e encaminhamento</strong></p><p>Quando é necessária avaliação especializada — cardiologia, endocrinologia, pneumologia, reumatologia, gastroenterologia ou outras especialidades — o teu médico coordena o encaminhamento, fornece uma carta de encaminhamento completa e mantém a relação clínica como o teu médico de família durante e após o envolvimento do especialista.</p><p><strong>Documentação clínica — a critério do médico</strong></p><p>Quando clinicamente indicado em cada revisão, o teu médico emite a documentação clínica correspondente válida em qualquer farmácia espanhola.</p><p>Nota: Os estupefacientes e determinadas substâncias controladas requerem documentação especial que não pode ser emitida eletronicamente. O teu médico informará se isto se aplicar à tua situação.</p><p><strong>Continuidade clínica</strong></p><p>Como o teu médico conhece o teu caso ao longo do tempo, as decisões clínicas são tomadas no contexto do teu historial completo — não apenas o motivo da consulta numa única consulta.</p><h2>Gestão de doenças crónicas em Espanha sem médico de família atribuído</h2><p>O sistema público espanhol fornece gestão de doenças crónicas através de médicos de família registados — mas apenas para doentes que estão registados e em áreas onde os médicos de família estão disponíveis. Para residentes internacionais que ainda não estão registados, trabalhadores independentes sem médico de família atribuído, ou pessoas que preferem gerir os seus cuidados em inglês ou português, o acesso a seguimento estruturado de doenças crónicas é uma lacuna real.</p><p>A Global Health fornece estes cuidados em espanhol, inglês e português. As tuas consultas ficam documentadas, a tua monitorização é coordenada, e a tua gestão é estruturada — dando-te a continuidade clínica que a gestão de doenças crónicas requer, no idioma em que a podes compreender e participar plenamente.</p><p>Se tens médico de família no sistema público espanhol, este serviço funciona como complemento — não como substituto. Alguns doentes usam a Global Health para seguimento específico de doenças crónicas em inglês ou português enquanto mantêm o seu registo no sistema público para acesso a medicação comparticipada e encaminhamentos para especialistas do SNS.</p>",
+      "ctaLabel": null,
+      "sortOrder": 130,
+      "durationMinutes": 20,
+      "basePriceCents": 4500,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.265Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k03k0003asjuhdggeok6",
+          "kind": "IMAGE",
+          "key": "media/a1cea8fc-3744-4057-88bf-50ec7787455c-es-enfermedades-cronicas-online.png",
+          "path": "/api/media/media/a1cea8fc-3744-4057-88bf-50ec7787455c-es-enfermedades-cronicas-online.png",
+          "altText": "Enfermedades Crónicas"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q9y8003jngju19ywqer8",
+          "question": "Em que isso difere de uma renovação de tratamento?",
+          "answer": "A Renovação de Tratamento é uma consulta única para uma condição estável — renovar um tratamento que está funcionando bem. O acompanhamento de Doenças Crônicas é cuidado contínuo — um médico que conhece o seu caso ao longo do tempo, monitora a sua condição, ajusta o manejo quando necessário e está envolvido na sua saúde a longo prazo.",
+          "sortOrder": 0,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q9y9003kngjufbvlcqes",
+          "question": "Com que frequência precisarei de consultar?",
+          "answer": "Depende da tua condição e de quão bem controlada ela está. Para condições estáveis e bem controladas, uma revisão trimestral ou semestral é geralmente apropriada. Para condições menos bem controladas ou mais complexas, é necessária uma revisão mais frequente. O teu médico aconselha-te sobre o calendário de revisão apropriado na primeira consulta.",
+          "sortOrder": 1,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q9y9003lngjunfhyg0p2",
+          "question": "O médico pode aceder ao meu historial médico espanhol?",
+          "answer": "Não. Os médicos da Global Health não têm acesso ao sistema de história clínica eletrónica do sistema público espanhol. Por favor, traz qualquer documentação médica relevante — resultados de análises anteriores, cartas de especialistas, relatórios de imagem e uma lista da tua medicação atual — à tua primeira consulta.",
+          "sortOrder": 2,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q9y9003mngju1ewqjbvw",
+          "question": "O que acontece se eu precisar de um especialista?",
+          "answer": "Quando é necessária avaliação especializada, o seu médico emite uma carta de referencia formal e aconselha-o sobre o acesso ao especialista apropriado em Espanha. O acesso a especialistas privados é geralmente simples nas principais cidades espanholas — Global Health coordena isso como parte do acompanhamento contínuo.",
+          "sortOrder": 3,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q9y9003nngju8medvh22",
+          "question": "Posso usar este serviço se tiver médico de família em Espanha?",
+          "answer": "Sim. Alguns pacientes usam a Global Health para consultas de acompanhamento de doenças crônicas em inglês ou português junto com o seu registro de médico de família espanhol — especialmente para condições em que desejam discutir o tratamento em detalhes em um idioma que compreendem plenamente.",
+          "sortOrder": 4,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q9y9003ongju4afhm07p",
+          "question": "O que acontece se eu precisar de atendimento de urgência devido à minha doença crônica?",
+          "answer": "O manejo de urgências de doenças crônicas — crise hipertensiva, emergência diabética, evento cardíaco agudo — requer atenção de urgência imediata. Ligue para o 112 ou vá ao serviço de urgências mais próximo imediatamente. O acompanhamento contínuo por meio da Global Health é para atendimento de doenças crônicas não urgente.",
+          "sortOrder": 5,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q9y9003pngjud60s6yca",
+          "question": "Preciso de seguro médico espanhol?",
+          "answer": "Não. É um serviço privado de pagamento direto. A documentação clínica emitida através deste serviço é fornecida ao preço privado integral, independentemente do estado de seguro.",
+          "sortOrder": 6,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q9y9003qngjufrh3v5qn",
+          "question": "Posso utilizar este serviço a partir de qualquer ponto de Espanha?",
+          "answer": "Sim — incluindo as Ilhas Baleares, Ilhas Canárias, Ceuta e Melilha. Só precisas de uma conexão estável à internet e de um dispositivo com câmera.",
+          "sortOrder": 7,
+          "resolvedLocale": "PT"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "PT",
+      "links": [
+        {
+          "id": "cmre7si5j002eg8jurnfmgprs",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre evaluación cardiológica especializada?",
+          "body": "Nuestra Cardiología Especialista está pensada específicamente para evaluación cardiológica especializada.",
+          "ctaLabel": "Cardiología Especialista",
+          "targetSlug": "cardiologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7skhw002kg8judewg26hr",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre evaluación neurológica especializada?",
+          "body": "Nuestra Neurología Especialista está pensada específicamente para evaluación neurológica especializada.",
+          "ctaLabel": "Neurología Especialista",
+          "targetSlug": "neurologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7sglb002ag8jup3a4q0tq",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Control de peso en diabetes e hipotiroidismo?",
+          "body": "Si tu situación está relacionada con control de peso en diabetes e hipotiroidismo, nuestra Control de Peso te ofrece la evaluación adecuada.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7shde002cg8jufeul55oo",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con analíticas de control y monitorización?",
+          "body": "Para analíticas de control y monitorización, consulta nuestra página de Derivaciones y Pruebas — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Derivaciones y Pruebas",
+          "targetSlug": "derivaciones-pruebas-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

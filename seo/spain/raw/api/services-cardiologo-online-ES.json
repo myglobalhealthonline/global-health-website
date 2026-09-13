@@ -1,0 +1,185 @@
+{
+  "endpoint": "/api/services/cardiologo-online?countryCode=es&locale=ES",
+  "checkedAt": "2026-09-13T02:29:59.775Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qh33005ongju25lilrfq",
+      "kind": "SPECIALIST",
+      "slug": "cardiologo-online",
+      "name": "Cardiología Especialista",
+      "summary": null,
+      "seoTitle": "Cardiólogo Online España | Consulta Cardiológica Especialista | Mismo Día",
+      "seoDescription": "Palpitaciones, revisión de ECG, hipertensión u otra preocupación cardiológica. Nuestros cardiólogos especialistas ofrecen evaluaciones por videollamada con revisión de pruebas. El mismo día en España.",
+      "seoKeywords": [
+        "cardiólogo online España",
+        "consulta cardiológica online España",
+        "revisión ECG online España",
+        "palpitaciones cardiólogo online España",
+        "segunda opinión cardiológica España"
+      ],
+      "heroTitle": "Cardiología Especialista — Consulta Cardiológica Online",
+      "heroDescription": "Las preocupaciones cardiológicas — palpitaciones que no sabes cómo interpretar, un ECG con hallazgos que nadie te ha explicado bien, hipertensión que no está bien controlada, o una condición cardíaca establecida que necesita revisión especializada — requieren la profundidad de análisis que proporciona un cardiólogo especialista. Nuestros cardiólogos, médicos especialistas con formación MIR en cardiología, colegiados conforme a los requisitos de la Organización Médica Colegial (OMC), ofrecen consultas cardiológicas especialistas por videollamada segura con revisión de pruebas — ECG, ecocardiograma, Holter y otras investigaciones cardiológicas interpretadas por un especialista el mismo día. Desde cualquier punto de España, en español, inglés o portugués.",
+      "detailBody": "<h2>Para quién es este servicio</h2><p>Esta consulta cardiológica especialista es apropiada para adultos con:</p><ul><li>Palpitaciones — evaluación de palpitaciones no urgentes, irregularidad del ritmo cardíaco percibida, o extrasístoles</li><li>Un ECG con hallazgos que no han sido explicados claramente — revisión e interpretación especializada</li><li>Un informe de ecocardiograma, Holter o prueba de esfuerzo que necesita explicación especializada</li><li>Hipertensión arterial resistente o que no está bien controlada con la medicación actual</li><li>Fibrilación auricular conocida y estable — revisión y gestión continuada</li><li>Insuficiencia cardíaca estable — revisión especializada y optimización del tratamiento</li><li>Dislipemia con riesgo cardiovascular elevado — evaluación y gestión del riesgo cardiológico</li><li>Disnea de esfuerzo no urgente — evaluación de la causa cardiológica</li><li>Síncope o presíncope — evaluación cardiológica en presentaciones no urgentes</li><li>Segunda opinión cardiológica especializada — sobre un diagnóstico, plan de tratamiento, o resultado de prueba</li><li>Revisión de medicación cardiológica — evaluación de efectividad, tolerabilidad y ajuste</li><li>Evaluación del riesgo cardiovascular — especialmente en pacientes con múltiples factores de riesgo</li><li>Residentes internacionales y expats que necesitan cardiología especialista en inglés o portugués</li></ul><h2>Qué es este servicio — y qué no es</h2><p>Esta consulta cardiológica especialista cubre:</p><ul><li>Evaluación cardiológica especializada de presentaciones no urgentes</li><li>Revisión e interpretación de ECG, ecocardiograma, Holter y otras pruebas cardiológicas</li><li>Gestión continuada de condiciones cardiovasculares estables</li><li>Evaluación del riesgo cardiovascular y plan de reducción de riesgo</li><li>Solicitud de pruebas cardiológicas donde estén clínicamente indicadas</li><li>Segunda opinión cardiológica especializada</li><li>Coordinación de derivación presencial donde esté indicado</li></ul><p>Este servicio no cubre:</p><ul><li>Urgencias cardiológicas — dolor torácico agudo, síncope con pérdida de consciencia, dificultad respiratoria grave, palpitaciones con compromiso hemodinámico. Para cualquier síntoma cardíaco agudo, llama al 112 inmediatamente</li><li>Cardiología de intervención — cateterismos, implantación de marcapasos o desfibriladores, ablación, cirugía cardíaca. Estos procedimientos requieren valoración presencial hospitalaria</li><li>Realización de pruebas — el cardiólogo puede interpretar pruebas ya realizadas y solicitar nuevas, pero no puede realizar ECG, ecocardiograma, ni prueba de esfuerzo directamente. Estas requieren presencialidad</li></ul><p>¿No estás seguro de si tu síntoma es urgente? Ante la duda, llama siempre al 112 o ve a urgencias. Es siempre mejor ser evaluado y que no sea grave, que esperar.</p><h2>Revisión de pruebas cardiológicas — cómo funciona</h2><p>Una de las capacidades más valiosas de este servicio es la revisión e interpretación especializada de pruebas cardiológicas por un cardiólogo — el mismo día, sin necesidad de esperar semanas para una consulta presencial.</p><p><strong>ECG (Electrocardiograma)</strong></p><p>Envía el PDF o imagen de tu ECG antes de la consulta. Tu cardiólogo lo interpreta en su totalidad — identificando el ritmo, el eje, los intervalos, y cualquier hallazgo de alteración del ritmo, conducción o isquemia — y te explica los hallazgos con claridad.</p><p><strong>Ecocardiograma</strong></p><p>Envía el informe de tu ecocardiograma. Tu cardiólogo revisa la fracción de eyección, la función valvular, el tamaño de las cavidades, y cualquier hallazgo de relevancia clínica — y te explica qué significa para tu salud y qué pasos son apropiados.</p><p><strong>Holter de 24 horas</strong></p><p>Envía el informe de tu Holter. Tu cardiólogo revisa el ritmo durante el periodo de monitorización, identifica arritmias o extrasístoles, y evalúa si los hallazgos son clínicamente significativos.</p><p><strong>Prueba de esfuerzo</strong></p><p>Envía el informe de tu prueba de esfuerzo. Tu cardiólogo interpreta la capacidad funcional, la respuesta hemodinámica al esfuerzo, y cualquier hallazgo de isquemia inducida.</p><p><strong>Análisis de sangre con marcadores cardiológicos</strong></p><p>Si tienes analíticas recientes con troponinas, BNP, NT-proBNP, o lipidograma, tu cardiólogo los revisa en el contexto clínico completo.</p><p>Para enviar tus pruebas: sube los documentos a través de la plataforma antes de la consulta, o envíalos por el canal que te indique el equipo al reservar. Tu cardiólogo los revisa antes de la llamada para que la consulta esté centrada en el análisis y el plan.</p><h2>Condiciones habitualmente evaluadas</h2><p><strong>Trastornos del ritmo cardíaco</strong></p><ul><li>Fibrilación auricular — evaluación, gestión y revisión de anticoagulación en presentaciones estables</li><li>Flutter auricular — evaluación y gestión</li><li>Extrasístoles — evaluación de significado clínico y necesidad de intervención</li><li>Taquicardias supraventriculares — evaluación y gestión en presentaciones no urgentes</li><li>Bradicardia — evaluación del ritmo lento y su significado clínico</li><li>Síndrome de Wolf-Parkinson-White — revisión y coordinación donde esté indicado</li></ul><p><strong>Enfermedad coronaria</strong></p><ul><li>Cardiopatía isquémica conocida y estable — revisión especializada y optimización del tratamiento</li><li>Angina estable — evaluación y gestión</li><li>Post-infarto — seguimiento cardiológico especializado en fase estable</li><li>Evaluación del riesgo coronario — en pacientes con factores de riesgo múltiples</li></ul><p><strong>Insuficiencia cardíaca</strong></p><ul><li>Insuficiencia cardíaca estable — revisión especializada y optimización del tratamiento</li><li>Revisión de función sistólica y diastólica — interpretación de ecocardiograma</li><li>Gestión de la congestión — ajuste diurético y seguimiento</li></ul><p><strong>Valvulopatías</strong></p><ul><li>Valvulopatía mitral, aórtica, tricúspide — revisión especializada del ecocardiograma y seguimiento</li><li>Evaluación de la severidad valvular — en base a informe de ecocardiograma</li><li>Seguimiento post-intervención valvular en fase estable</li></ul><p><strong>Hipertensión arterial</strong></p><ul><li>Hipertensión resistente o mal controlada — evaluación cardiológica especializada</li><li>Hipertensión con daño orgánico — evaluación del impacto cardiológico</li><li>Revisión del riesgo cardiovascular global en hipertensión</li></ul><p><strong>Miocardiopatías</strong></p><ul><li>Miocardiopatía hipertrófica — revisión y seguimiento en fase estable</li><li>Miocardiopatía dilatada — revisión y optimización del tratamiento</li><li>Miocardiopatía arritmogénica — evaluación y coordinación</li></ul><p><strong>Evaluación del riesgo cardiovascular</strong></p><ul><li>Evaluación del riesgo cardiovascular global — escala SCORE2, factores de riesgo modificables</li><li>Dislipemia con riesgo cardiovascular elevado — evaluación y plan de gestión</li><li>Síndrome metabólico — evaluación del impacto cardiológico</li><li>Evaluación cardiovascular pre-deporte — en adultos que quieren iniciar actividad física intensa</li></ul><h2>Qué incluye la consulta</h2><p><strong>Evaluación cardiológica especializada completa</strong></p><p>Tu cardiólogo revisa tu historia cardiológica detallada — síntomas, episodios previos, antecedentes familiares de enfermedad cardiovascular, factores de riesgo, medicación cardiológica actual, y pruebas previas disponibles.</p><p><strong>Interpretación especializada de pruebas</strong></p><p>Tu cardiólogo revisa e interpreta cualquier prueba cardiológica que hayas enviado — ECG, ecocardiograma, Holter, prueba de esfuerzo, analíticas con marcadores cardiológicos — proporcionando una explicación clara de los hallazgos y su significado clínico.</p><p><strong>Plan de gestión cardiológica especializado</strong></p><p>Basándose en la evaluación y la interpretación de pruebas, tu cardiólogo diseña un plan de gestión especializado — que puede incluir ajuste de medicación cardiológica a criterio del especialista, solicitud de pruebas adicionales donde esté indicado, y recomendaciones sobre estilo de vida y factores de riesgo.</p><p><strong>Documentación clínica especializada — a criterio del especialista</strong></p><p>Cuando esté clínicamente indicado, tu cardiólogo emite la documentación clínica correspondiente válida en cualquier farmacia española, así como informes especializados para continuidad de la atención.</p><p><strong>Solicitud de pruebas cardiológicas</strong></p><p>Donde pruebas adicionales estén clínicamente indicadas — ECG, Holter, ecocardiograma, analíticas con marcadores cardiológicos, prueba de esfuerzo — tu cardiólogo emite la solicitud el mismo día. Las pruebas cardiológicas privadas están disponibles en clínicas de cardiología y hospitales privados en toda España.</p><p><strong>Coordinación de derivación presencial — donde esté indicado</strong></p><p>Donde la evaluación presencial, la realización de pruebas que no pueden hacerse de forma remota, o la intervención cardiológica estén clínicamente indicadas, tu cardiólogo coordina la derivación con la documentación especializada completa el mismo día.</p><p><strong>Segunda opinión cardiológica</strong></p><p>Si has recibido un diagnóstico cardiológico, un resultado de prueba, o un plan de tratamiento de otro cardiólogo y quieres una evaluación especializada independiente, tu cardiólogo revisa toda la documentación disponible.</p><p><strong>Seguimiento cardiológico continuado</strong></p><p>Las consultas de seguimiento especializado están disponibles para monitorización de condiciones crónicas, revisión de respuesta al tratamiento, e interpretación de pruebas de control.</p><h2>Cardiología en España — el problema del acceso</h2><p>La cardiología privada en España está bien desarrollada en Madrid, Barcelona y otras grandes ciudades. Sin embargo los tiempos de espera para una primera consulta con cardiólogo privado son generalmente de dos a cuatro semanas para presentaciones no urgentes.</p><p>Para la interpretación de una prueba cardiológica — un ECG con hallazgos inciertos, un Holter que el médico de cabecera no ha podido explicar completamente, un ecocardiograma con resultados que no entiendes — esperar semanas para que un especialista te explique los hallazgos es innecesariamente angustiante.</p><p>Para residentes internacionales que necesitan cardiología especialista en inglés o portugués, las opciones son prácticamente inexistentes fuera de Madrid y Barcelona.</p><p>Nuestro servicio proporciona evaluación cardiológica especializada con interpretación de pruebas el mismo día — desde cualquier punto de España.</p>",
+      "ctaLabel": null,
+      "sortOrder": 0,
+      "durationMinutes": 15,
+      "basePriceCents": 7900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-10T13:43:02.311Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0sp640002y8jug1jk47o6",
+          "kind": "IMAGE",
+          "key": "media/7410c221-0047-4e40-a26e-443d1dfd0c49-es-cardiologo-online.png",
+          "path": "/api/media/media/7410c221-0047-4e40-a26e-443d1dfd0c49-es-cardiologo-online.png",
+          "altText": "Cardiología Especialista"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qhbj005pngjuxr12j3ik",
+          "question": "¿Puede el cardiólogo interpretar mi ECG por videollamada?",
+          "answer": "Sí — enviando el PDF o imagen del ECG antes de la consulta. Tu cardiólogo lo interpreta en su totalidad antes de la llamada y te explica los hallazgos con detalle durante la consulta. Esta es una práctica establecida en telecardiología.",
+          "sortOrder": 0,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qhbj005qngjuv99p8i0k",
+          "question": "¿Tengo síntomas de palpitaciones — ¿es esto urgente?",
+          "answer": "Las palpitaciones con mareo, pérdida de consciencia o dolor en el pecho son urgentes — llama al 112 inmediatamente. Las palpitaciones sin síntomas asociados graves, especialmente si son episódicas y no están empeorando, son apropiadas para evaluación cardiológica no urgente a través de este servicio.",
+          "sortOrder": 1,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qhbj005rngjujnsjkvdw",
+          "question": "¿Qué pruebas debo traer a la consulta?",
+          "answer": "Todo lo que tengas relevante — ECG, informe de ecocardiograma, informe de Holter, informe de prueba de esfuerzo, analíticas recientes, cartas de cardiólogos anteriores, lista de tu medicación cardiológica actual. Cuanta más información aporte tu cardiólogo, más completa será la evaluación.",
+          "sortOrder": 2,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qhbj005sngjuhrmcv3ex",
+          "question": "¿El cardiólogo puede ajustar mi medicación?",
+          "answer": "Sí — incluyendo medicación antihipertensiva, antiarrítmica, anticoagulante, diurética, y otras medicaciones cardiológicas donde esté clínicamente indicado, a criterio del especialista tras evaluación completa.",
+          "sortOrder": 3,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qhbj005tngjuqkib7c17",
+          "question": "¿Puede el cardiólogo solicitar un ecocardiograma o Holter?",
+          "answer": "Sí. Donde estas pruebas estén clínicamente indicadas, tu cardiólogo emite la solicitud el mismo día. La ecocardiografía y el Holter privados están disponibles en clínicas de cardiología y hospitales privados en toda España — en muchas ciudades con disponibilidad en pocos días.",
+          "sortOrder": 4,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qhbj005ungju5xm4kwnd",
+          "question": "¿Puedo obtener una segunda opinión cardiológica?",
+          "answer": "Sí. La segunda opinión cardiológica especializada es uno de los usos frecuentes de este servicio — especialmente sobre diagnósticos inciertos, hallazgos de pruebas que no han sido bien explicados, o antes de comprometerse con intervenciones cardiológicas significativas.",
+          "sortOrder": 5,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qhbj005vngjuhoy9l0pw",
+          "question": "¿Es este servicio adecuado para evaluación cardiovascular pre-deporte?",
+          "answer": "Sí — para adultos que quieren iniciar actividad física intensa o tienen preocupaciones cardiológicas relacionadas con el deporte. El reconocimiento médico deportivo oficial para licencias federativas requiere exploración física presencial — pero la evaluación cardiológica previa al deporte a nivel de medicina especializada puede realizarse con revisión de pruebas por telemedicina.",
+          "sortOrder": 6,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qhbj005wngju615ng5bz",
+          "question": "¿Necesito seguro médico español?",
+          "answer": "No. Es un servicio privado de pago directo. La documentación clínica emitida se dispensa al precio privado completo con independencia del estado de aseguramiento.",
+          "sortOrder": 7,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qhbj005xngjubqki07de",
+          "question": "¿Puedo usar este servicio desde cualquier punto de España?",
+          "answer": "Sí — incluyendo Islas Baleares, Islas Canarias, Ceuta y Melilla. Solo necesitas conexión estable a internet, un dispositivo con cámara, y capacidad de enviar tus pruebas cardiológicas digitalmente antes de la consulta.",
+          "sortOrder": 8,
+          "resolvedLocale": "ES"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "ES",
+      "links": [
+        {
+          "id": "cmre7te5n0048g8juho9yeyhr",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Seguimiento de enfermedades cardiovasculares crónicas?",
+          "body": "Si tu situación está relacionada con seguimiento de enfermedades cardiovasculares crónicas, nuestra Enfermedades Crónicas te ofrece la evaluación adecuada.",
+          "ctaLabel": "Enfermedades Crónicas",
+          "targetSlug": "enfermedades-cronicas-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7texp004ag8jutzpe2duq",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con control de peso y riesgo cardiovascular?",
+          "body": "Para control de peso y riesgo cardiovascular, consulta nuestra página de Control de Peso — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tfpq004cg8juxdaop10s",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre dejar de fumar — prioridad en enfermedad cardiovascular?",
+          "body": "Nuestra Dejar de Fumar está pensada específicamente para dejar de fumar — prioridad en enfermedad cardiovascular.",
+          "ctaLabel": "Dejar de Fumar",
+          "targetSlug": "dejar-de-fumar-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tghs004eg8ju8onr6bhv",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Solicitar ECG, analíticas o pruebas cardiológicas?",
+          "body": "Si tu situación está relacionada con solicitar ECG, analíticas o pruebas cardiológicas, nuestra Derivaciones y Pruebas te ofrece la evaluación adecuada.",
+          "ctaLabel": "Derivaciones y Pruebas",
+          "targetSlug": "derivaciones-pruebas-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpqvkc000z01rui7z5it57"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "UNAVAILABLE",
+        "reasonCode": "NO_OPEN_SLOT",
+        "nextAvailableAt": null
+      }
+    }
+  }
+}

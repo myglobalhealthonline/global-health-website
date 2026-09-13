@@ -9117,3 +9117,103 @@ This closes the unstaffed-service disposition. The previous unstaffed inventory 
 historical. Specialty evidence and held editorial copy are separate and remain
 unresolved; assignment does not establish new credentials. No patient booking was
 created. The assignment can be reversed using Disable on the same admin service row.
+
+## 56. Spain evidence and guarded preparation, 13 September 2026
+
+**No new Spain content is live from this work.** No clinical approval, production
+snapshot, real PostgreSQL rehearsal, deployment or mutation receipt is recorded.
+The local package and tested implementation preparation are supporting deliverables,
+not publication. [Handoff](../../seo/spain/implementation-handoff-2026-09-13.md),
+[readable exact packet](../../seo/spain/content-briefs/review-packet.html) and
+[source log](../../seo/spain/source-log.md) contain the reproducible detail.
+
+### 56.1 Current evidence and dispositions
+
+The focused inventory covers 392 sitemap URLs plus 42 observed linked URLs:
+422 HTTP 200 and 12 HTTP 404. It includes 24 actual services and 13 doctor profiles
+in six locales, plus every discovered hub, article, tool, booking, institutional
+and legal URL. Only ES/EN general FAQ routes were discovered; no symmetry invented.
+All 422 live URLs are self-canonical; 30 legal translations retain noindex.
+
+Matched final GSC windows are July 16–August 12 and August 13–September 9. Complete
+page exports contain 257/258 rows; the separate current query/page export has 1,479
+rows. Current services: 13 clicks/1,681 impressions versus 29/1,441; profiles:
+61/720 versus 25/409. Articles and tools are reported separately. Spain-resident
+cut: 34/3,977 versus 13/2,058. Legacy URLs remain separate. No booking or ranking
+conclusion is drawn from these small samples or successful technical checks.
+
+OpenSEO used explicit Spain 2724/es, with bounded Spain SERPs in the other supported
+page languages. Observed account credit decrease: 134 (11,049 to 10,915). Shared
+account activity cannot be excluded from that delta. No projects, trackers, saved
+keywords or outreach were created. Missing/null keyword metrics remain unavailable.
+
+The matrix now records 199 retained, 96 proposed-change and 139 held URL rows.
+Holds include all affected services assigned to Luz, rather than merely her profile.
+Retention is an evidence-based no-change disposition, not new clinical/legal
+certification. There are 140 exact page candidates in 27 service/profile groups,
+including held candidates, plus seven link groups. Candidates contain 96 FAQ
+patches and 11 new base questions/66 locale variants. None has been clinically
+approved. Of 1,518 existing native FAQ locale answers, all match HTML/schema after
+whitespace normalization; zero actual embedded FAQ questions were observed.
+
+### 56.2 Refreshed holds and owner dependencies
+
+- The former four vascular/aesthetic gates are superseded: all four pages are live,
+  indexable and assigned. Their long Spanish bodies are also stored in non-ES locale
+  records. Localized hero/FAQ drafts do not complete clinical body translation.
+- CGCOM lists Leandro Wang as Médico General. Qualification evidence is required
+  for the vascular diagnostic/flebology specialist claims; availability is not proof.
+- CGCOM lists Luz Marina Zuluaga Ríos as ALTA sin ejercicio while the site offers
+  bookings. Operations clarification is required for her and affected service
+  promotion. No assignment, credential or publication state was changed.
+- Tomás Ruiz Palacios's stored registration remains independently unverified after
+  bounded searches; obtain a named authoritative record. This is not a negative
+  credential finding. Silvina's General label must not become specialist paediatrics.
+- Fidel Mesa's cardiology registration was found, but there is no open appointment.
+  Twelve other doctors and 23 services are bookable at collection; recheck at rollout.
+- Spanish dermatology queries still land on EN. Preserve the intent/locale hold.
+  State sick-leave commercial-fit hold remains; BOE RD 625/2014 article 2 establishes
+  the statutory public-service/mutua route. No cluster expansion is authorized here.
+- Twelve nonexistent specialty URLs are advertised by seven ServiceLink rows on
+  42 source pages. Exact reversible deactivation drafts exist; no unrelated redirect.
+
+§43.5's authentic-register absence is superseded by the new fact/review registers;
+their existence does not close their unresolved entries. A named Spain-registered
+reviewer with doctor ID and a review-age policy are still required. Owner nomination
+is not approval of an exact payload; no approval was inferred from the task request.
+
+### 56.3 Implementation proof and next action
+
+The existing Romania CMS transaction owner has been extended locally to validate
+Spain service/profile/FAQ/link states, with empty approved states and unset policy.
+The runner reuses existing mutation/rehearsal helpers, requires matching exact
+receipt/server approval, refuses source drift/shared doctors, preserves protected
+fields, rolls back failed transactions and preserves verified receipts on repeats.
+The public verifier checks all affected locale copy, FAQs/schema, canonical,
+alternates, robots and obsolete offers. Browser evidence remains a separate step.
+This does not close global §43.4 or govern page/blog/tool writers and privileged SQL.
+
+Proof: 12 focused tests pass (Spain plus Romania regression); backend per-package
+TypeScript passes via direct Node with an 8 GB heap after pnpm-wrapper/default-heap
+failures; `git diff --check` passes. No frontend source changes. PostgreSQL schema
+rehearsal and real production dry-run are pending authenticated storage.
+
+Automatic approval review rejected both read-only production snapshot attempts,
+including the narrowed content-only projection, because it could not verify
+authorization. Neither attempt executed. Explicit owner confirmation was requested;
+do not bypass this block or request credentials. The current storage manifest has
+zero executable groups and status `awaiting authenticated storage; public drafts
+only`; its JSON-content SHA-256 is
+`3227b27d5d9870e4e6e6aef09faa068d1546fe4a6014eeec387b20d1d4cf066d`.
+
+Next: obtain snapshot confirmation and reviewer/policy facts; reconcile hidden rows
+and cross-market ownership, rehearse the final storage manifest, obtain exact
+clinical approval and then any required production authorization. Deploy verified
+enforcement before eligible content batches. Record commit/deployment IDs and
+mutation, rollback and public/browser receipts per group before continuing.
+No Spain commit, deployment or publication identifier exists for this preparation.
+
+Preserve September 18's Spain evidence read (§53) and September 24's global
+inspection. Register exact published cohorts and 30/60/90 measurement dates only
+when content is actually published. Future localization and content opportunities
+are conditional on verified care scope and subsequent measured demand.

@@ -43,6 +43,30 @@ export class RomaniaClinicalApprovalRequiredError extends Error {
   }
 }
 
+type SpainApproval = { stateSha256: string; reviewerDoctorId: string; reviewedAt: string; evidence: string };
+// Intentionally empty: no Spain clinician consent or review-age policy has been supplied.
+// Add only owner-confirmed policy and exact reviewed state hashes from the Spain packet.
+export const SPAIN_REVIEW_POLICY: { maxAgeDays: number | null } = { maxAgeDays: null };
+export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {};
+export function assertSpainClinicalChanges(before: Snapshot, after: Snapshot, now = Date.now()): void {
+  const previous = romanianContentStates(before), next = romanianContentStates(after);
+  for (const key of new Set([...Object.keys(previous), ...Object.keys(next)])) {
+    if (previous[key] === next[key]) continue;
+    const age = SPAIN_REVIEW_POLICY.maxAgeDays;
+    const valid = Number.isFinite(age) && age !== null && age > 0 && next[key] && APPROVED_SPAIN_STATES[key]?.some(a => {
+      const date = Date.parse(a.reviewedAt);
+      return a.stateSha256 === next[key] && a.evidence.trim() && Number.isFinite(date) && date <= now && now - date <= age * 86400000
+        && after.doctors.some(d => d.id === a.reviewerDoctorId && d.active)
+        && after.doctorCountries.some(c => c.doctorId === a.reviewerDoctorId && c.countryId === after.country.id && c.active && c.isVerified);
+    });
+    if (!valid) {
+      const error = new RomaniaClinicalApprovalRequiredError(key);
+      error.message = `Spain clinical content requires approval of this exact revision and a current review policy (${key}).`;
+      throw error;
+    }
+  }
+}
+
 // Owner-reported Dr Robert Gabriel Brindus approval, 2026-09-13.
 // Evidence: seo/romania/clinical-approval-2026-09-13.json. Values below are derived
 // from the reviewed 20-group manifest, including retained fields and hidden rows.
@@ -147,26 +171,34 @@ export function reviewedRomaniaTransaction<T>(
   options: { maxWait?: number; timeout?: number } = {},
 ): Promise<T> {
   return client.$transaction(async tx => {
-    if (!await tx.country.findUnique({ where: { code: 'ro' }, select: { id: true } })) return work(tx);
-    // ponytail: full Romania catalogue on low-volume CMS writes; scope by entity if admin throughput grows.
+    // ponytail: full reviewed-country catalogues on low-volume CMS writes; scope by entity if admin throughput grows.
     const query: Query = (sql, values) => tx.$queryRawUnsafe<Row[]>(sql, ...values);
-    const before = await readRomaniaContent(query);
+    const before = await tx.country.findUnique({ where: { code: 'ro' }, select: { id: true } }) ? await readRomaniaContent(query) : null;
+    const spain = await tx.country.findUnique({ where: { code: 'es' }, select: { id: true } }) ? await readCountryClinicalContent(query, 'es', 'spain') : null;
     const result = await work(tx);
-    assertRomaniaClinicalChanges(before, await readRomaniaContent(query));
+    if (before) assertRomaniaClinicalChanges(before, await readRomaniaContent(query));
+    if (spain) assertSpainClinicalChanges(spain, await readCountryClinicalContent(query, 'es', 'spain'));
     return result;
   }, { maxWait: 10000, timeout: 30000, ...options, isolationLevel: 'Serializable' });
 }
 
 export async function readRomaniaContent(query: Query) {
+  return readCountryClinicalContent(query, 'ro', 'romania');
+}
+
+/** Shared content-only snapshot, including every market of associated doctors. */
+export async function readCountryClinicalContent(query: Query, code: string, slug: string) {
   const rows = (sql: string, values: unknown[] = []) => query(sql, values);
-  const [country] = await rows('SELECT id, code, slug, "defaultLocale", "isActive" FROM "Country" WHERE code = $1', ['ro']);
-  if (!country || country.slug !== 'romania') throw new Error('Romania country mismatch');
-  const services = await rows('SELECT * FROM "Service" WHERE "countryId" = $1 ORDER BY id', [country.id]);
+  const [country] = await rows('SELECT id, code, slug, "defaultLocale", "isActive" FROM "Country" WHERE code = $1', [code]);
+  if (!country || country.slug !== slug) throw new Error('Clinical snapshot country mismatch');
+  const serviceProjection = code === 'es' ? 'id, "countryId", kind, slug, name, summary, "seoTitle", "seoDescription", "seoKeywords", "heroTitle", "heroDescription", "detailBody", "ctaLabel", "sortOrder", "durationMinutes", "basePriceCents", "currencyCode", "isActive", visibility, "bookingPausedFrom", "bookingPausedUntil", "lastReviewedAt", "updatedAt"' : '*';
+  const services = await rows(`SELECT ${serviceProjection} FROM "Service" WHERE "countryId" = $1 ORDER BY id`, [country.id]);
   const ids = services.map(s => s.id);
   const serviceTranslations = await rows('SELECT * FROM "ServiceTranslation" WHERE "serviceId" = ANY($1::text[]) ORDER BY id', [ids]);
   const serviceFaqs = await rows('SELECT * FROM "ServiceFaq" WHERE "serviceId" = ANY($1::text[]) ORDER BY id', [ids]);
   const serviceFaqTranslations = await rows('SELECT * FROM "ServiceFaqTranslation" WHERE "serviceFaqId" = ANY($1::text[]) ORDER BY id', [serviceFaqs.map(f => f.id)]);
-  const assignments = await rows('SELECT * FROM "ServiceDoctor" WHERE "serviceId" = ANY($1::text[]) ORDER BY id', [ids]);
+  const assignmentProjection = code === 'es' ? 'id, "serviceId", "doctorId", "isActive", "sortOrder", "selectedBy", status, "createdAt", "updatedAt"' : '*';
+  const assignments = await rows(`SELECT ${assignmentProjection} FROM "ServiceDoctor" WHERE "serviceId" = ANY($1::text[]) ORDER BY id`, [ids]);
   const doctors = await rows(`SELECT id, "countryId", slug, "fullName", title, bio, "seoTitle", "seoDescription", languages, qualifications,
     active, "lastReviewedAt", "bookingPausedFrom", "bookingPausedUntil", "updatedAt" FROM "Doctor"
     WHERE "countryId" = $1 OR id IN (SELECT "doctorId" FROM "DoctorCountry" WHERE "countryId" = $1)
@@ -178,7 +210,7 @@ export async function readRomaniaContent(query: Query) {
   const doctorMarketTranslations = await rows('SELECT * FROM "DoctorMarketTranslation" WHERE "doctorCountryId" = ANY($1::text[]) ORDER BY id', [doctorCountries.map(d => d.id)]);
   const doctorFaqs = await rows('SELECT * FROM "DoctorFaq" WHERE "doctorId" = ANY($1::text[]) ORDER BY id', [doctorIds]);
   const countryLocales = await rows('SELECT * FROM "CountryLocale" WHERE "countryId" = $1 ORDER BY id', [country.id]);
-  const allDoctorAssignments = await rows('SELECT * FROM "ServiceDoctor" WHERE "doctorId" = ANY($1::text[]) ORDER BY id', [doctorIds]);
+  const allDoctorAssignments = await rows(`SELECT ${assignmentProjection} FROM "ServiceDoctor" WHERE "doctorId" = ANY($1::text[]) ORDER BY id`, [doctorIds]);
   const serviceLinks = await rows('SELECT * FROM "ServiceLink" WHERE "sourceServiceId" = ANY($1::text[]) ORDER BY id', [ids]);
   const serviceLinkTranslations = await rows('SELECT * FROM "ServiceLinkTranslation" WHERE "serviceLinkId" = ANY($1::text[]) ORDER BY id', [serviceLinks.map(l => l.id)]);
   return { country, countryLocales, services, serviceTranslations, serviceFaqs, serviceFaqTranslations, assignments, doctors, doctorCountries, doctorTranslations, doctorMarketTranslations, doctorFaqs, allDoctorAssignments, serviceLinks, serviceLinkTranslations };

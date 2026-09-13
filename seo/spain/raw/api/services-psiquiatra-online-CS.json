@@ -1,0 +1,192 @@
+{
+  "endpoint": "/api/services/psiquiatra-online?countryCode=es&locale=CS",
+  "checkedAt": "2026-09-13T02:29:52.375Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qeyz0050ngjund1jqnhp",
+      "kind": "SPECIALIST",
+      "slug": "psiquiatra-online",
+      "name": "Specialista psychiatrie",
+      "summary": null,
+      "seoTitle": "Online psychiatr Španělsko | Specializovaná psychiatrická konzultace | Tentýž den",
+      "seoDescription": "Komplexní duševní porucha, ADHD, bipolární porucha nebo jiný psychiatrický problém. Naši atestovaní psychiatři nabízejí odborná vyšetření prostřednictvím zabezpečeného videohovoru. Ve stejný den ve Španělsku.",
+      "seoKeywords": [
+        "psiquiatra online España",
+        "consulta psiquiátrica online España",
+        "psiquiatra privado online España",
+        "TDAH psiquiatra online España",
+        "trastorno bipolar psiquiatra online España"
+      ],
+      "heroTitle": "Odborná psychiatrie — Online psychiatrické vyšetření",
+      "heroDescription": "Některé duševní poruchy vyžadují hloubku vyšetření, diagnostickou přísnost a terapeutický rozsah, které může poskytnout pouze specializovaný psychiatr. Deprese rezistentní na léčbu, bipolární porucha, ADHD u dospělých, komplexní úzkostné poruchy nebo jakýkoli stav, který nereagoval na léčbu na úrovni všeobecné medicíny — tyto projevy vyžadují specializovanou psychiatrii. Naši psychiatři, lékaři specialisté v psychiatrii s odbornou přípravou MIR, zapsaní do komory podle požadavků Organizace lékařské komory (OMC), nabízejí specializovaná psychiatrická vyšetření prostřednictvím zabezpečeného videohovoru. Tentýž den, odkudkoli ze Španělska, ve španělštině, angličtině nebo portugalštině.",
+      "detailBody": "<h2>Posouzení duševního zdraví u praktického lékaře vs. konzultace se specialistou v psychiatrii</h2><p>Global Health nabízí dvě úrovně péče o duševní zdraví.</p><p>Posouzení duševního zdraví u praktického lékaře — vhodné pro úvodní screening úzkosti, mírné až středně těžké deprese, stresu a burnout. Praktický lékař provede strukturované vyšetření, poskytne klinická doporučení na úrovni všeobecného lékařství a v případě indikace vás odešle do psychiatrie. Je to správný vstupní bod pro většinu prvních obtíží v oblasti duševního zdraví.</p><p>Konzultace se specialistou v psychiatrii — prováděná specialisty-psychiatry Global Health. Vhodná pro:</p><ul><li>Formální diagnostiku komplexních duševních poruch</li><li>Stavy, které nereagovaly na léčbu na úrovni všeobecného lékařství</li><li>Bipolární porucha — vyšetření, diagnostika a specializovaný léčebný plán</li><li>ADHD u dospělých — formální diagnostické vyšetření a léčba</li><li>Deprese rezistentní na léčbu</li><li>Komplexní nebo refrakterní úzkostné poruchy</li><li>Poruchy příjmu potravy — vyšetření a koordinace léčebného plánu</li><li>Psychiatrické posouzení pro klinické, pracovní nebo lékařskoprávní zprávy</li><li>Specializovaný psychiatrický druhý názor</li></ul><p>Nejste si jisti, jakou úroveň podpory potřebujete? Začněte posouzením duševního zdraví u praktického lékaře — pokud váš stav vyžaduje specializované psychiatrické posouzení, praktický lékař vás přímo odešle na tuto službu ve stejné platformě.</p><h2>Pro koho je tato služba určena</h2><p>Tato specializovaná psychiatrická konzultace je vhodná pro dospělé s:</p><ul><li>Středně těžkou až těžkou depresí — zejména depresí rezistentní na léčbu nebo s atypickými rysy</li><li>Bipolární poruchou — diagnostické vyšetření, revize léčebného plánu nebo druhý názor</li><li>Komplexními úzkostnými poruchami — panická porucha, OCD, těžká sociální fobie, PTSD</li><li>ADHD v dospělosti — formální diagnostické vyšetření, zahájení nebo revize léčby</li><li>Poruchami osobnostního spektra — vyšetření a doporučení ohledně plánu péče</li><li>Poruchami příjmu potravy — psychiatrické vyšetření a koordinace léčebného plánu</li><li>Těžkou chronickou nespavostí — pokud je příčina psychiatrická nebo léčba na úrovni všeobecného lékařství selhala</li><li>Stavy duševního zdraví, které nereagovaly na léčbu na úrovni všeobecného lékařství</li><li>Psychiatrickým posouzením pro pracovní, invalidní nebo lékařskoprávní zprávy</li><li>Psychiatrickým druhým názorem — na diagnózu, léčebný plán nebo medikaci předepsanou jiným psychiatrem</li><li>Mezinárodními rezidenty a expaty, kteří potřebují specializovanou psychiatrickou péči v angličtině nebo portugalštině</li></ul><h2>Co je tato služba — a co není</h2><p>Tato specializovaná psychiatrická konzultace je vhodná pro:</p><ul><li>Formální psychiatrickou diagnostiku komplexních poruch</li><li>Vyšetření a plán specializované psychiatrické farmakologické léčby — dle uvážení specialisty</li><li>Psychofarmakoterapii a průběžné psychiatrické sledování</li><li>Posouzení pro klinické, pracovní nebo lékařskoprávní zprávy</li><li>Specializovaný psychiatrický druhý názor</li><li>Koordinaci s klinickou psychologií, sociální prací a dalšími službami, kde je to indikováno</li></ul><p>Tato služba není vhodná pro:</p><ul><li>Krizovou intervenci — pokud jste v krizi, použijte zdroje na začátku této stránky</li><li>Psychiatrickou hospitalizaci — nedobrovolná hospitalizace je upravena článkem 763 Občanského soudního řádu a vyžaduje soudní schválení. Nelze ji zahájit ani koordinovat prostřednictvím této služby</li><li>Posouzení závažné aktivní psychózy — kde bezpečnost pacienta vyžaduje urgentní osobní vyšetření</li><li>Psychologickou terapii nebo psychoterapii — toto je služba lékařského psychiatrického vyšetření a léčby, nikoli psychoterapie</li></ul><p>Nejste si jisti, zda potřebujete psychiatrii nebo psychologii? Psychiatrie je lékařský obor — psychiatr vyšetřuje, diagnostikuje a může předepisovat farmakologickou léčbu. Klinický psycholog poskytuje psychoterapii. U mnoha stavů obě profese spolupracují. Váš psychiatr vám poradí o nejvhodnější úrovni podpory pro vaši situaci.</p><h2>Stavy, které jsou běžně vyšetřovány</h2><p><strong>Poruchy nálady</strong></p><ul><li>Velká deprese — včetně deprese rezistentní na léčbu, melancholické deprese a atypické deprese</li><li>Bipolární deprese — diferenciální diagnostika a specializovaný léčebný plán</li><li>Bipolární porucha typu I a typu II — diagnostické vyšetření, stabilizace a sledování</li><li>Cyklotymická porucha</li><li>Dytymická porucha / perzistující depresivní porucha</li></ul><p><strong>Úzkostné poruchy</strong></p><ul><li>Panická porucha — s agorafobií i bez ní</li><li>Obsedantně-kompulzivní porucha (OCD)</li><li>Sociální úzkostná porucha — závažné nebo refrakterní projevy</li><li>Posttraumatická stresová porucha (PTSD)</li><li>Generalizovaná úzkostná porucha rezistentní na léčbu</li><li>Specifická fobie se významným funkčním dopadem</li></ul><p><strong>ADHD u dospělých</strong></p><ul><li>Formální diagnostické vyšetření ADHD u dospělých</li><li>ADHD s komorbiditami — úzkost, deprese, poruchy spánku</li><li>Zahájení, úprava a revize farmakologické léčby ADHD</li><li>Nediagnostikované ADHD v dětství — vyšetření v dospělosti</li></ul><p><strong>Poruchy osobnostního spektra</strong></p><ul><li>Diagnostické vyšetření poruch osobnosti</li><li>Hraniční porucha osobnosti — vyšetření a doporučení ohledně plánu péče</li><li>Narcistická, vyhýbavá, závislá porucha osobnosti a další</li></ul><p><strong>Poruchy příjmu potravy</strong></p><ul><li>Anorexia nervosa — psychiatrické vyšetření a koordinace léčebného plánu</li><li>Bulimie nervosa — vyšetření a léčebný plán</li><li>Záchvatovité přejídání — vyšetření a management</li></ul><p>Poznámka: závažné poruchy příjmu potravy, které vyžadují urgentní lékařskou nutriční intervenci nebo hospitalizaci, vyžadují osobní vyšetření. Váš psychiatr posoudí závažnost a poradí ohledně vhodné úrovně péče.</p><p><strong>Psychotické poruchy — omezené posouzení</strong></p><ul><li>Posouzení mírných nebo stabilně v remisi psychotických příznaků</li><li>Druhý názor na diagnózu schizofrenie nebo jiných psychotických poruch u stabilních pacientů</li><li>Revize antipsychotické medikace u stabilních pacientů se známou psychózou</li></ul><p>Akutní psychotické epizody vyžadují urgentní osobní vyšetření. Tato služba není vhodná pro posouzení závažné aktivní psychózy — volejte 112 nebo ihned jeďte na pohotovost.</p><p><strong>Nespavost a poruchy spánku</strong></p><ul><li>Chronická těžká nespavost — psychiatrické vyšetření a léčebný plán</li><li>Poruchy spánku se значnou psychiatrickou podkladem</li></ul><p><strong>Psychiatrická vyšetření pro zprávy</strong></p><ul><li>Psychiatrické zprávy pro dočasnou nebo trvalou pracovní neschopnost</li><li>Zprávy pro lékařskoprávní řízení — dle uvážení specialisty</li><li>Vyšetření pro zprávy o duševním zdraví pro administrativní úkony</li></ul><h2>Co konzultace zahrnuje</h2><p><strong>Kompletní specializované psychiatrické vyšetření</strong></p><p>Váš psychiatr provede strukturované a komplexní psychiatrické vyšetření — zahrnující podrobnou psychiatrickou anamnézu, předchozí epizody, dřívější léčbu a odpověď na ni, rodinnou anamnézu duševních poruch, současnou životní situaci, pracovní a sociální fungování, užívání návykových látek a psychický stav v době konzultace.</p><p><strong>Formální psychiatrická diagnóza</strong></p><p>Pokud to vyšetření umožní, váš psychiatr stanoví formální psychiatrickou diagnózu na základě platných mezinárodních diagnostických kritérií — DSM-5-TR nebo MKN-11 — jasně vysvětlenou i s klinickým odůvodněním.</p><p><strong>Specializovaný léčebný plán</strong></p><p>Na základě vyšetření a diagnózy váš psychiatr sestaví specializovaný léčebný plán — který může zahrnovat doporučení psychoterapie a vedení k nejvhodnějšímu přístupu pro váš stav, možnosti psychiatrické farmakologické léčby dle uvážení specialisty, koordinaci s klinickou psychologií či dalšími službami, kde je to indikováno, a strukturované psychiatrické sledování.</p><p><strong>Specializovaná klinická dokumentace — dle uvážení specialisty</strong></p><p>Je-li to klinicky indikováno, váš psychiatr vystaví příslušnou klinickou dokumentaci.</p><p>Poznámka k benzodiazepinům a lékům podléhajícím zvláštnímu režimu: benzodiazepiny a některé psychiatrické léky jsou ve Španělsku léky podléhajícími zvláštnímu režimu a mají specifické požadavky na předpis. Váš psychiatr vás během konzultace informuje o dostupných možnostech a jakýchkoli platných omezeních.</p><p><strong>Posouzení bezpečnosti</strong></p><p>Každá psychiatrická konzultace zahrnuje strukturované posouzení bezpečnosti — prováděné citlivě a jako standardní součást specializované péče.</p><p><strong>Průběžné psychiatrické sledování</strong></p><p>Psychiatrická léčba je dlouhodobý proces. Specializované kontrolní konzultace jsou k dispozici pro sledování odpovědi na léčbu, úpravu medikace, kde je to nutné, a zajištění klinické kontinuity, kterou vyžaduje kvalitní psychiatrická péče.</p><h2>Přístup k psychiatrii ve Španělsku — realita</h2><p>Veřejná psychiatrie ve Španělsku je pod značným tlakem — čekací doby na první konzultaci s psychiatrem v rámci SNS jsou ve většině autonomních oblastí v řádu měsíců. Soukromá osobní psychiatrická péče ve Španělsku je drahá a soustředěná ve velkých městech.</p><p>Pro mezinárodní rezidenty, kteří potřebují specializovanou psychiatrii v angličtině nebo portugalštině, jsou možnosti mimo Madrid a Barcelonu prakticky neexistující, a i v těchto městech je dostupnost velmi omezená.</p><p>Tato služba poskytuje přístup ke specializované psychiatrii prostřednictvím videohovoru — tentýž den — odkudkoli ze Španělska. Pro pacienty, kteří podporu v psychiatrii potřebují nejvíce, je odstranění bariéry přístupu důležité.</p><h2>Důvěrnost v psychiatrii</h2><p>Vše, co je během vaší psychiatrické konzultace diskutováno, je důvěrné a je chráněno podle španělské a evropské legislativy o ochraně údajů — včetně GDPR (EU 2016/679) implementovaného prostřednictvím Orgánického zákona 3/2018 (LOPDGDD) a zákona 41/2002 o autonomii pacienta.</p><p>Údaje o duševním zdraví mají podle GDPR posílenou ochranu jako zvláštní kategorie údajů.</p><p>Existují dvě okolnosti, kdy může být nutné důvěrnost pečlivě zvážit — když existuje vážné a bezprostřední riziko pro váš život nebo bezpečnost, nebo když existuje vážné riziko pro bezpečnost jiné osoby. Váš psychiatr s vámi důvěrnost probere na začátku konzultace.</p>",
+      "ctaLabel": null,
+      "sortOrder": 0,
+      "durationMinutes": 45,
+      "basePriceCents": 15000,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-10T13:44:57.609Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k8qg0008asju8iv3qlkd",
+          "kind": "IMAGE",
+          "key": "media/291b711c-e779-4efe-8821-39d0c6963c76-es-psiquiatra-online.png",
+          "path": "/api/media/media/291b711c-e779-4efe-8821-39d0c6963c76-es-psiquiatra-online.png",
+          "altText": "Psiquiatría Especialista"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qf7o0051ngjuy3olgbsv",
+          "question": "Jaký je rozdíl mezi návštěvou psychiatra a návštěvou psychologa?",
+          "answer": "Psychiatr je lékařský specialista s přípravou MIR v psychiatrii — může formálně diagnostikovat duševní poruchy, předepisovat psychiatrickou medikaci a koordinovat celý plán péče. Klinický psycholog poskytuje psychoterapii — strukturovanou psychologickou intervenci. U mnoha stavů je nejúčinnější přístup, který kombinuje obojí. Tvůj psychiatr ti poradí s úrovní podpory, která je nejvhodnější, a může tě nasměrovat na typ psychoterapie, který je pro tvůj stav nejvhodnější.",
+          "sortOrder": 0,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qf7o0052ngjuayg1k455",
+          "question": "Jaký je rozdíl mezi touto konzultací a vyšetřením duševního zdraví u praktického lékaře?",
+          "answer": "Vyšetření duševního zdraví u praktického lékaře je vhodné pro úvodní screening úzkosti, mírné až středně těžké deprese a stresu — s odesláním na psychiatrii, kde je to indikováno. Tuto odbornou konzultaci provádí psychiatr a poskytuje formální psychiatrickou diagnózu, posouzení komplexních poruch, jako je bipolární porucha nebo TDAH, a přístup k celé škále možností psychiatrické farmakologické léčby.",
+          "sortOrder": 1,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qf7o0053ngjuuzsapmj4",
+          "question": "Může psychiatr předepisovat psychiatrické léky prostřednictvím této služby?",
+          "answer": "Ano — včetně antidepresiv, stabilizátorů nálady, medikace na ADHD a dalších možností psychiatrické farmakologické léčby, kde je to klinicky indikováno. Benzodiazepiny a určité zvlášť kontrolované léky mají ve Španělsku specifické požadavky — váš psychiatr vás informuje o dostupných možnostech a o všech platných omezeních. Žádná konkrétní medikace nemůže být potvrzena před vyšetřením.",
+          "sortOrder": 2,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qf7o0054ngjuw946d1r1",
+          "question": "Může psychiatr diagnostikovat ADHD u dospělých?",
+          "answer": "Ano. Formální diagnostické vyšetření ADHD u dospělých je ústřední součástí této služby. Diagnóza vyžaduje úplné strukturované vyšetření — nelze ji stanovit během jediné krátké návštěvy. Váš psychiatr vás informuje o vhodném diagnostickém postupu pro vaši prezentaci.",
+          "sortOrder": 3,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qf7o0055ngjuzorzdu8i",
+          "question": "Může psychiatr diagnostikovat bipolární poruchu?",
+          "answer": "Ano. Diferenciální diagnostika mezi unipolární depresí a bipolární poruchou a mezi různými typy bipolární poruchy vyžaduje specializované psychiatrické vyšetření. Je to jedna z diagnóz, které se v primární péči nejčastěji přehlížejí nebo opožďují — specializované psychiatrické vyšetření je zde obzvláště cenné.",
+          "sortOrder": 4,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qf7o0056ngjueq3bc24z",
+          "question": "Mohu prostřednictvím této služby získat druhý psychiatrický názor?",
+          "answer": "Ano. Specializovaný psychiatrický druhý názor je jedním z častých využití této služby — zejména pokud jde o diagnózy, léčebné plány nebo medikaci předepsanou jiným psychiatrem.",
+          "sortOrder": 5,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qf7o0057ngjusq77dowx",
+          "question": "Může psychiatr nařídit mou psychiatrickou hospitalizaci?",
+          "answer": "Dobrovolná hospitalizace může být koordinována s příslušnými službami. Nedobrovolná hospitalizace je upravena článkem 763 občanského soudního řádu a vyžaduje soudní povolení — nelze ji zahájit prostřednictvím této služby. Pokud si vaše situace vyžaduje urgentní přijetí, zavolejte ihned na 112 nebo jděte na nejbližší pohotovost.",
+          "sortOrder": 6,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qf7o0058ngju66en4j87",
+          "question": "Co se stane, když budu v krizi během konzultace nebo po ní?",
+          "answer": "Pokud jsi v krizi, použij zdroje na začátku této stránky — Linka proti sebevraždě 024 nebo 112 v případě bezprostředního nebezpečí. Tato služba není službou krizové intervence.",
+          "sortOrder": 7,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qf7o0059ngju35dl4zgv",
+          "question": "Potřebuji španělské zdravotní pojištění?",
+          "answer": "Ne. Je to soukromá služba hrazená přímo. Vydaná klinická dokumentace je poskytována za plnou soukromou cenu bez ohledu na stav pojištění.",
+          "sortOrder": 8,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qf7o005angjuc0glva22",
+          "question": "Mohu tuto službu používat odkudkoli ve Španělsku?",
+          "answer": "Ano — včetně Baleárských ostrovů, Kanárských ostrovů, Ceuty a Melilly. Stačí stabilní připojení k internetu a zařízení s kamerou.",
+          "sortOrder": 9,
+          "resolvedLocale": "CS"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "CS",
+      "links": [
+        {
+          "id": "cmre7swzn003ag8ju8hqg2zvg",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con evaluación inicial de salud mental?",
+          "body": "Para evaluación inicial de salud mental, consulta nuestra página de Salud Mental — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Salud Mental",
+          "targetSlug": "salud-mental-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7syjw003eg8jur0yeen3q",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Segunda opinión psiquiátrica independiente?",
+          "body": "Si tu situación está relacionada con segunda opinión psiquiátrica independiente, nuestra Segunda Opinión Médica te ofrece la evaluación adecuada.",
+          "ctaLabel": "Segunda Opinión Médica",
+          "targetSlug": "segunda-opinion-medica",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7szc1003gg8juhtfo6veb",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con evaluación inicial con médico de cabecera?",
+          "body": "Para evaluación inicial con médico de cabecera, consulta nuestra página de Consulta Médica General — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7sw7i0038g8ju6nyy0htm",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Psicoterapia y apoyo psicológico?",
+          "body": "Si tu situación está relacionada con psicoterapia y apoyo psicológico, nuestra Psicología Clínica te ofrece la evaluación adecuada.",
+          "ctaLabel": "Psicología Clínica",
+          "targetSlug": "psicologo-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpvch9001i01ruy7pmzmdk"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:29:00.000Z"
+      }
+    }
+  }
+}

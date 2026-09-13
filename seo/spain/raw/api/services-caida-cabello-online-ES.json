@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/caida-cabello-online?countryCode=es&locale=ES",
+  "checkedAt": "2026-09-13T02:29:59.736Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q6hn002lngju3chey2ai",
+      "kind": "GENERAL",
+      "slug": "caida-cabello-online",
+      "name": "Caída del Cabello",
+      "summary": null,
+      "seoTitle": "Caída del Cabello Online España | Evaluación Médica | Médico de Cabecera",
+      "seoDescription": "¿Pérdida de cabello o adelgazamiento capilar? Nuestros médicos de cabecera colegiados evalúan la causa médica de tu caída del cabello y asesoran sobre tratamiento basado en evidencia. El mismo día en España.",
+      "seoKeywords": [
+        "caída del cabello online España",
+        "médico caída cabello online España",
+        "alopecia consulta online España",
+        "pérdida cabello médico online España",
+        "caída cabello hormonal consulta España"
+      ],
+      "heroTitle": "Caída del Cabello — Evaluación Médica Online el Mismo Día",
+      "heroDescription": "La caída del cabello es una de las preocupaciones médicas más comunes — y una de las más frecuentemente ignoradas. La mayoría de las personas que notan una pérdida significativa o adelgazamiento capilar nunca consultan a un médico sobre ello, ya sea porque asumen que no se puede hacer nada, o porque no saben por dónde empezar. Ambas suposiciones son incorrectas. En la gran mayoría de los casos, la caída del cabello tiene una causa médica identificable — y cuanto antes se evalúa, mejor es el resultado. Los folículos pilosos que han estado inactivos durante un período prolongado son significativamente más difíciles de recuperar que los folículos que están adelgazando pero todavía activos. Nuestros médicos de cabecera, colegiados conforme a los requisitos de la Organización Médica Colegial (OMC), ofrecen evaluaciones médicas completas de caída del cabello por videollamada segura — identificando la causa subyacente, asesorando sobre gestión basada en evidencia, y emitiendo la documentación clínica correspondiente donde esté clínicamente indicado. El mismo día, desde cualquier punto de España, en español, inglés o portugués.",
+      "detailBody": "<h2>Por qué la evaluación temprana marca la diferencia</h2><p>La caída del cabello sigue casi siempre un patrón progresivo — especialmente la alopecia androgénica en hombres y mujeres. El argumento clínico para la evaluación temprana es sencillo: cuanto antes se identifica la causa y se inicia el tratamiento apropiado, mejor es el resultado. Esperar hasta que la caída del cabello sea avanzada reduce significativamente las opciones de tratamiento disponibles.</p><p>Si has notado cambios en la densidad de tu cabello, en tu línea capilar o en el patrón de caída — aunque no estés seguro de si es lo suficientemente significativo como para ver a un médico — reserva una consulta. Tu médico te dirá honestamente si la intervención está justificada y cuáles son las opciones.</p><h2>Para quién es este servicio</h2><p>Esta consulta es apropiada para adultos que experimentan:</p><ul><li>Adelgazamiento gradual del cabello en el cuero cabelludo — en hombres o mujeres</li><li>Retroceso de la línea del cabello o adelgazamiento temporal</li><li>Adelgazamiento en la coronilla o en la parte superior del cuero cabelludo</li><li>Caída de cabello repentina o por parches</li><li>Caída difusa — más cabello en la ducha, en la almohada o en el cepillo</li><li>Caída del cabello tras un evento vital significativo — enfermedad, cirugía, parto o estrés intenso</li><li>Caída del cabello asociada a otros síntomas — fatiga, cambios de peso, cambios en la piel o las uñas — que pueden indicar una afección subyacente</li><li>Afecciones del cuero cabelludo — caspa, seborrea o inflamación que afecta al crecimiento del cabello</li><li>Caída del cabello que no ha respondido a tratamientos sin receta</li></ul><h2>Condiciones habitualmente evaluadas</h2><p><strong>Caída del cabello en hombres</strong></p><ul><li>Alopecia androgénica — la causa más común de caída del cabello en hombres, evaluada y gestionada a nivel de medicina general incluyendo discusión de opciones de tratamiento basadas en evidencia</li><li>Alopecia areata — caída del cabello por parches de base autoinmune</li><li>Efluvio telógeno — caída difusa tras enfermedad, estrés o deficiencia nutricional</li><li>Dermatitis seborreica e inflamación del cuero cabelludo que contribuyen a la caída del cabello</li><li>Caída del cabello relacionada con medicamentos — evaluación y gestión</li></ul><p><strong>Caída del cabello en mujeres</strong></p><ul><li>Alopecia androgénica femenina</li><li>Efluvio telógeno — especialmente posparto, tras enfermedad significativa, o tras estrés importante</li><li>Alopecia areata</li><li>Caída del cabello relacionada con cambios hormonales — SOP, disfunción tiroidea, menopausia o cambios hormonales posparto</li><li>Caída del cabello relacionada con deficiencia nutricional — hierro, ferritina, vitamina D, B12 y zinc</li><li>Alopecia de tracción — relacionada con prácticas de peinado</li><li>Caída del cabello relacionada con medicamentos</li></ul><p><strong>Ambos</strong></p><ul><li>Tiña capitis — infección fúngica del cuero cabelludo que causa caída del cabello, que requiere tratamiento</li><li>Alopecia cicatricial — requiere derivación urgente a dermatología</li><li>Caída del cabello como síntoma de afecciones sistémicas — enfermedad tiroidea, afecciones autoinmunes, anemia</li></ul><h2>Qué incluye la consulta</h2><p><strong>Evaluación completa de la caída del cabello</strong></p><p>Tu médico de cabecera revisa el historial de tu caída del cabello en detalle — inicio, patrón, velocidad de progresión, antecedentes familiares, síntomas asociados, medicación actual, estado nutricional, eventos vitales recientes y salud general — construyendo un cuadro completo como base para identificar la causa.</p><p><strong>Identificación de la causa subyacente</strong></p><p>La caída del cabello es frecuentemente un síntoma de algo sistémico — no solo una preocupación estética. Tu médico de cabecera evalúa los contribuyentes hormonales, nutricionales, autoinmunes y relacionados con medicamentos que pueden estar causando o acelerando tu caída del cabello.</p><p><strong>Plan de gestión basado en evidencia</strong></p><p>Basándose en la evaluación, tu médico asesora sobre el enfoque más apropiado para tu tipo específico de caída del cabello — que puede incluir optimización nutricional, tratamientos tópicos, recomendaciones clínicas a criterio del médico, y derivación donde esté indicado.</p><p><strong>Solicitud de análisis donde esté indicado</strong></p><p>Donde los análisis de sangre estén clínicamente indicados — función tiroidea, ferritina, estudios de hierro, panel hormonal, niveles de vitaminas — tu médico los solicita el mismo día.</p><p><strong>Documentación clínica — a criterio del médico</strong></p><p>Cuando esté clínicamente indicado, tu médico emite la documentación clínica correspondiente válida en cualquier farmacia española.</p><p>Nota: Los estupefacientes y determinadas sustancias controladas requieren documentación especial que no puede emitirse electrónicamente. Tu médico te informará si esto aplica.</p><p><strong>Derivación a dermatología donde sea necesario</strong></p><p>Determinadas afecciones de caída del cabello — incluyendo alopecia cicatricial, alopecia areata compleja, y presentaciones que requieren biopsia del cuero cabelludo — requieren evaluación dermatológica especializada. Tu médico de cabecera te asesora claramente si este es tu caso y coordina la derivación.</p><h2>Por qué la caída del cabello se descarta con demasiada frecuencia</h2><p>La caída del cabello se encuentra frecuentemente con \"es normal\" o \"es solo estrés\" — a veces correctamente, pero demasiado a menudo sin la investigación adecuada. Un médico que evalúa genuinamente la caída del cabello no empieza con una respuesta genérica. Empieza con una historia completa, evalúa el cuadro hormonal y nutricional, e identifica la causa específica antes de proponer un enfoque adaptado a esa causa.</p><p>La diferencia entre \"es probablemente estrés\" sin investigación y \"tu ferritina está baja y esto está causando efluvio telógeno, que es tratable\" con un análisis de sangre no es pequeña. Es la diferencia entre una preocupación descartada y una condición identificada y manejable.</p>",
+      "ctaLabel": null,
+      "sortOrder": 50,
+      "durationMinutes": 15,
+      "basePriceCents": 3900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.260Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0snn30001y8juccnmrdh3",
+          "kind": "IMAGE",
+          "key": "media/cc536d25-52be-4488-bf47-6eed76532325-es-caida-cabello-online.png",
+          "path": "/api/media/media/cc536d25-52be-4488-bf47-6eed76532325-es-caida-cabello-online.png",
+          "altText": "Caída del Cabello"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q6q3002mngjucety7quw",
+          "question": "¿Puede evaluarse realmente la caída del cabello por videollamada?",
+          "answer": "Sí — para la gran mayoría de presentaciones. Una historia clínica detallada es la herramienta diagnóstica más poderosa en la evaluación de la caída del cabello y una historia completa puede tomarse por videollamada. Tu médico también te pide que muestres las zonas afectadas durante la llamada. Donde se necesiten hallazgos de exploración física o biopsia del cuero cabelludo, tu médico te asesora sobre derivación apropiada.",
+          "sortOrder": 0,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7q6q3002nngjuow6770lg",
+          "question": "¿Necesito análisis de sangre antes de mi consulta?",
+          "answer": "No. Tu médico evalúa durante la consulta si los análisis están indicados y solicita la analítica el mismo día si es así. Trae cualquier resultado reciente que tengas — tu médico los revisa en su totalidad.",
+          "sortOrder": 1,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7q6q4002ongjumy8fcfar",
+          "question": "¿Puede revertirse la caída del cabello?",
+          "answer": "Depende del tipo y de cuánto tiempo lleva progresando. La alopecia androgénica responde mejor al tratamiento iniciado temprano, cuando los folículos están adelgazando en lugar de ya perdidos. El efluvio telógeno es generalmente autolimitado y se resuelve una vez que se trata la causa subyacente. La caída del cabello relacionada con deficiencia nutricional responde bien a la corrección de la deficiencia. La alopecia cicatricial requiere valoración especializada urgente ya que puede causar pérdida permanente si no se trata.",
+          "sortOrder": 2,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7q6q4002pngjuvw1odamc",
+          "question": "¿Es este servicio adecuado para mujeres con caída del cabello?",
+          "answer": "Sí. La caída del cabello femenina es una parte central de este servicio. El cuadro clínico en mujeres es frecuentemente más complejo que la alopecia androgénica masculina — involucrando factores hormonales, nutricionales y autoinmunes — y se beneficia significativamente de una evaluación clínica estructurada.",
+          "sortOrder": 3,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7q6q4002qngjuvgd7xe94",
+          "question": "¿Qué pasa si mi caída del cabello está relacionada con una medicación que estoy tomando?",
+          "answer": "La caída del cabello relacionada con medicamentos se evalúa como parte de esta consulta. Tu médico revisa tu medicación actual, identifica si alguna está contribuyendo a tu caída del cabello, y asesora sobre la gestión apropiada.",
+          "sortOrder": 4,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7q6q4002rngjumwzt0505",
+          "question": "¿Puedo obtener una derivación a dermatología a través de este servicio?",
+          "answer": "Sí. Donde la valoración dermatológica especializada esté clínicamente indicada, tu médico de cabecera emite una carta de derivación el mismo día.",
+          "sortOrder": 5,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7q6q4002sngjua2jqmcbs",
+          "question": "¿Necesito seguro médico español?",
+          "answer": "No. Es un servicio privado de pago directo. La documentación clínica emitida a través de este servicio se dispensa al precio privado completo con independencia del estado de aseguramiento.",
+          "sortOrder": 6,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7q6q4002tngjuuvnkmgcy",
+          "question": "¿Puedo usar este servicio desde cualquier punto de España?",
+          "answer": "Sí — incluyendo Islas Baleares, Islas Canarias, Ceuta y Melilla. Solo necesitas conexión estable a internet y un dispositivo con cámara.",
+          "sortOrder": 7,
+          "resolvedLocale": "ES"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "ES",
+      "links": [
+        {
+          "id": "cmre7se910026g8jugr501ov4",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con alopecia cicatricial — derivación dermatológica especialista?",
+          "body": "Para alopecia cicatricial — derivación dermatológica especialista, consulta nuestra página de Dermatología Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Dermatología Especialista",
+          "targetSlug": "dermatologia-especialista-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7sb4n001yg8ju943cs0l1",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Evaluación hormonal y metabólica completa?",
+          "body": "Si tu situación está relacionada con evaluación hormonal y metabólica completa, nuestra Salud Femenina te ofrece la evaluación adecuada.",
+          "ctaLabel": "Salud Femenina",
+          "targetSlug": "salud-femenina-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7sbwq0020g8jua8ahleyv",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con caída del cabello y déficit de testosterona?",
+          "body": "Para caída del cabello y déficit de testosterona, consulta nuestra página de Salud Masculina — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Salud Masculina",
+          "targetSlug": "salud-masculina-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7scot0022g8jurstwbmq4",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre analíticas de ferritina, tiroides y perfil hormonal?",
+          "body": "Nuestra Derivaciones y Pruebas está pensada específicamente para analíticas de ferritina, tiroides y perfil hormonal.",
+          "ctaLabel": "Derivaciones y Pruebas",
+          "targetSlug": "derivaciones-pruebas-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

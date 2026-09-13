@@ -1,0 +1,149 @@
+[
+  {
+    "key": "link:cmre7soee002sg8ju1hnpt499",
+    "id": "cmre7soee002sg8ju1hnpt499",
+    "sourceServiceId": "cmre7qas1003sngjus0w2obwn",
+    "targetSlug": "neurologo-online",
+    "urls": [
+      "https://www.myglobalhealth.online/spain/cs/services/derivaciones-pruebas-online",
+      "https://www.myglobalhealth.online/spain/de/services/derivaciones-pruebas-online",
+      "https://www.myglobalhealth.online/spain/en/services/derivaciones-pruebas-online",
+      "https://www.myglobalhealth.online/spain/es/services/derivaciones-pruebas-online",
+      "https://www.myglobalhealth.online/spain/pt/services/derivaciones-pruebas-online",
+      "https://www.myglobalhealth.online/spain/ro/services/derivaciones-pruebas-online"
+    ],
+    "before": {
+      "isActive": true
+    },
+    "after": {
+      "isActive": false
+    },
+    "reason": "Observed linked destination returns 404 in all six locales. Remove unavailable-service callout, retain stored rows for rollback; no redirect."
+  },
+  {
+    "key": "link:cmre7skhw002kg8judewg26hr",
+    "id": "cmre7skhw002kg8judewg26hr",
+    "sourceServiceId": "cmre7q9p1003ingjuum9voxoc",
+    "targetSlug": "neurologo-online",
+    "urls": [
+      "https://www.myglobalhealth.online/spain/cs/services/enfermedades-cronicas-online",
+      "https://www.myglobalhealth.online/spain/de/services/enfermedades-cronicas-online",
+      "https://www.myglobalhealth.online/spain/en/services/enfermedades-cronicas-online",
+      "https://www.myglobalhealth.online/spain/es/services/enfermedades-cronicas-online",
+      "https://www.myglobalhealth.online/spain/pt/services/enfermedades-cronicas-online",
+      "https://www.myglobalhealth.online/spain/ro/services/enfermedades-cronicas-online"
+    ],
+    "before": {
+      "isActive": true
+    },
+    "after": {
+      "isActive": false
+    },
+    "reason": "Observed linked destination returns 404 in all six locales. Remove unavailable-service callout, retain stored rows for rollback; no redirect."
+  },
+  {
+    "key": "link:cmre7tkdz004mg8juc9wpct8q",
+    "id": "cmre7tkdz004mg8juc9wpct8q",
+    "sourceServiceId": "cmre7q8mg0037ngjuso41eynq",
+    "targetSlug": "neurologo-online",
+    "urls": [
+      "https://www.myglobalhealth.online/spain/cs/services/musculoesqueletico-online",
+      "https://www.myglobalhealth.online/spain/de/services/musculoesqueletico-online",
+      "https://www.myglobalhealth.online/spain/en/services/musculoesqueletico-online",
+      "https://www.myglobalhealth.online/spain/es/services/musculoesqueletico-online",
+      "https://www.myglobalhealth.online/spain/pt/services/musculoesqueletico-online",
+      "https://www.myglobalhealth.online/spain/ro/services/musculoesqueletico-online"
+    ],
+    "before": {
+      "isActive": true
+    },
+    "after": {
+      "isActive": false
+    },
+    "reason": "Observed linked destination returns 404 in all six locales. Remove unavailable-service callout, retain stored rows for rollback; no redirect."
+  },
+  {
+    "key": "link:cmre7ts6t0052g8ju6asq61tw",
+    "id": "cmre7ts6t0052g8ju6asq61tw",
+    "sourceServiceId": "cmre7qbti0042ngjumicur4m2",
+    "targetSlug": "pediatra-especialista-online",
+    "urls": [
+      "https://www.myglobalhealth.online/spain/cs/services/pediatria-online",
+      "https://www.myglobalhealth.online/spain/de/services/pediatria-online",
+      "https://www.myglobalhealth.online/spain/en/services/pediatria-online",
+      "https://www.myglobalhealth.online/spain/es/services/pediatria-online",
+      "https://www.myglobalhealth.online/spain/pt/services/pediatria-online",
+      "https://www.myglobalhealth.online/spain/ro/services/pediatria-online"
+    ],
+    "before": {
+      "isActive": true
+    },
+    "after": {
+      "isActive": false
+    },
+    "reason": "Observed linked destination returns 404 in all six locales. Remove unavailable-service callout, retain stored rows for rollback; no redirect."
+  },
+  {
+    "key": "link:cmre7t1od003kg8jujyc8vdtm",
+    "id": "cmre7t1od003kg8jujyc8vdtm",
+    "sourceServiceId": "cmre7qg1l005cngjub14ciym5",
+    "targetSlug": "pediatra-especialista-online",
+    "urls": [
+      "https://www.myglobalhealth.online/spain/cs/services/psicologo-online",
+      "https://www.myglobalhealth.online/spain/de/services/psicologo-online",
+      "https://www.myglobalhealth.online/spain/en/services/psicologo-online",
+      "https://www.myglobalhealth.online/spain/es/services/psicologo-online",
+      "https://www.myglobalhealth.online/spain/pt/services/psicologo-online",
+      "https://www.myglobalhealth.online/spain/ro/services/psicologo-online"
+    ],
+    "before": {
+      "isActive": true
+    },
+    "after": {
+      "isActive": false
+    },
+    "reason": "Observed linked destination returns 404 in all six locales. Remove unavailable-service callout, retain stored rows for rollback; no redirect."
+  },
+  {
+    "key": "link:cmre7stv60034g8juje70ar9l",
+    "id": "cmre7stv60034g8juje70ar9l",
+    "sourceServiceId": "cmre7q3a5001ongjur495me3b",
+    "targetSlug": "neurologo-online",
+    "urls": [
+      "https://www.myglobalhealth.online/spain/cs/services/salud-mental-online",
+      "https://www.myglobalhealth.online/spain/de/services/salud-mental-online",
+      "https://www.myglobalhealth.online/spain/en/services/salud-mental-online",
+      "https://www.myglobalhealth.online/spain/es/services/salud-mental-online",
+      "https://www.myglobalhealth.online/spain/pt/services/salud-mental-online",
+      "https://www.myglobalhealth.online/spain/ro/services/salud-mental-online"
+    ],
+    "before": {
+      "isActive": true
+    },
+    "after": {
+      "isActive": false
+    },
+    "reason": "Observed linked destination returns 404 in all six locales. Remove unavailable-service callout, retain stored rows for rollback; no redirect."
+  },
+  {
+    "key": "link:cmre7u1jt005mg8jutxyy9pz0",
+    "id": "cmre7u1jt005mg8jutxyy9pz0",
+    "sourceServiceId": "cmre7q5fw002angjuebao1obt",
+    "targetSlug": "neurologo-online",
+    "urls": [
+      "https://www.myglobalhealth.online/spain/cs/services/segunda-opinion-medica",
+      "https://www.myglobalhealth.online/spain/de/services/segunda-opinion-medica",
+      "https://www.myglobalhealth.online/spain/en/services/segunda-opinion-medica",
+      "https://www.myglobalhealth.online/spain/es/services/segunda-opinion-medica",
+      "https://www.myglobalhealth.online/spain/pt/services/segunda-opinion-medica",
+      "https://www.myglobalhealth.online/spain/ro/services/segunda-opinion-medica"
+    ],
+    "before": {
+      "isActive": true
+    },
+    "after": {
+      "isActive": false
+    },
+    "reason": "Observed linked destination returns 404 in all six locales. Remove unavailable-service callout, retain stored rows for rollback; no redirect."
+  }
+]

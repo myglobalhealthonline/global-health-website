@@ -1,0 +1,175 @@
+{
+  "pages": 434,
+  "sitemap": 392,
+  "types": {
+    "home": 6,
+    "about": 6,
+    "blog": 6,
+    "article": 42,
+    "book": 6,
+    "careers": 6,
+    "contact": 6,
+    "doctors": 6,
+    "doctor": 78,
+    "gp-consultation-online": 6,
+    "legal": 42,
+    "press": 6,
+    "pricing": 6,
+    "see-a-specialist": 6,
+    "service": 156,
+    "tool": 48,
+    "faq": 2
+  },
+  "drafts": 140,
+  "groups": 27,
+  "addedBaseFaqs": 11,
+  "addedFaqLocaleVariants": 66,
+  "faqPatches": 96,
+  "linkGroups": 7,
+  "nativeFaqs": 1518,
+  "embeddedFaqs": 0,
+  "faqMismatches": 0,
+  "dispositions": {
+    "retain with evidence": 199,
+    "change": 96,
+    "hold": 139
+  },
+  "segments": {
+    "current": {
+      "doctor": {
+        "clicks": 61,
+        "impressions": 720
+      },
+      "home": {
+        "clicks": 24,
+        "impressions": 3040
+      },
+      "article": {
+        "clicks": 18,
+        "impressions": 2203
+      },
+      "tool": {
+        "clicks": 17,
+        "impressions": 2941
+      },
+      "service": {
+        "clicks": 13,
+        "impressions": 1681
+      },
+      "contact": {
+        "clicks": 2,
+        "impressions": 94
+      },
+      "gp-consultation-online": {
+        "clicks": 3,
+        "impressions": 63
+      },
+      "see-a-specialist": {
+        "clicks": 1,
+        "impressions": 35
+      },
+      "careers": {
+        "clicks": 2,
+        "impressions": 14
+      },
+      "legacy_or_uninventoried": {
+        "clicks": 0,
+        "impressions": 176
+      },
+      "blog": {
+        "clicks": 0,
+        "impressions": 4
+      },
+      "book": {
+        "clicks": 0,
+        "impressions": 18
+      },
+      "doctors": {
+        "clicks": 0,
+        "impressions": 51
+      },
+      "pricing": {
+        "clicks": 0,
+        "impressions": 5
+      },
+      "about": {
+        "clicks": 0,
+        "impressions": 6
+      },
+      "legal": {
+        "clicks": 0,
+        "impressions": 45
+      },
+      "faq": {
+        "clicks": 0,
+        "impressions": 9
+      },
+      "press": {
+        "clicks": 0,
+        "impressions": 2
+      }
+    },
+    "previous": {
+      "service": {
+        "clicks": 29,
+        "impressions": 1441
+      },
+      "doctor": {
+        "clicks": 25,
+        "impressions": 409
+      },
+      "home": {
+        "clicks": 16,
+        "impressions": 1426
+      },
+      "see-a-specialist": {
+        "clicks": 2,
+        "impressions": 79
+      },
+      "legacy_or_uninventoried": {
+        "clicks": 2,
+        "impressions": 86
+      },
+      "doctors": {
+        "clicks": 1,
+        "impressions": 28
+      },
+      "tool": {
+        "clicks": 4,
+        "impressions": 1271
+      },
+      "legal": {
+        "clicks": 1,
+        "impressions": 90
+      },
+      "book": {
+        "clicks": 0,
+        "impressions": 18
+      },
+      "contact": {
+        "clicks": 0,
+        "impressions": 62
+      },
+      "gp-consultation-online": {
+        "clicks": 0,
+        "impressions": 157
+      },
+      "pricing": {
+        "clicks": 0,
+        "impressions": 5
+      },
+      "about": {
+        "clicks": 0,
+        "impressions": 55
+      },
+      "blog": {
+        "clicks": 0,
+        "impressions": 3
+      },
+      "article": {
+        "clicks": 0,
+        "impressions": 7
+      }
+    }
+  }
+}

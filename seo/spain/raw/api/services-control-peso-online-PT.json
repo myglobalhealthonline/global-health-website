@@ -1,0 +1,176 @@
+{
+  "endpoint": "/api/services/control-peso-online?countryCode=es&locale=PT",
+  "checkedAt": "2026-09-13T02:30:04.092Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q038000ungjuxs5rkyxy",
+      "kind": "GENERAL",
+      "slug": "control-peso-online",
+      "name": "Controle de Peso",
+      "summary": null,
+      "seoTitle": "Controlo de Peso Online Espanha | Avaliação Médica | Médico Inscrito",
+      "seoDescription": "Dificuldades para perder peso apesar da dieta e exercício? Os nossos médicos colegiados avaliam os fatores médicos e metabólicos por detrás do seu peso por videochamada. Avaliação clínica no mesmo dia em Espanha.",
+      "seoKeywords": [
+        "control de peso online España",
+        "médico obesidad online España",
+        "consulta pérdida de peso médica España",
+        "evaluación metabólica online España",
+        "médico adelgazar online España"
+      ],
+      "heroTitle": "Controle de Peso — Avaliação Médica e Plano Personalizado Online",
+      "heroDescription": "Há muito tempo que estás a tentar perder peso com dieta e exercício sem resultados sustentáveis? Para a maioria das pessoas que não conseguem controlar o seu peso, existem fatores médicos, hormonais e metabólicos subjacentes que nenhum plano dietético genérico aborda — porque requerem avaliação clínica, não apenas restrição calórica. Os nossos médicos, inscritos de acordo com os requisitos da Organização Médica Colegial (OMC), oferecem avaliações médicas de controlo de peso por videochamada segura — identificando os fatores clínicos que contribuem para o teu peso, desenvolvendo um plano de gestão personalizado e fornecendo a supervisão médica que torna possível uma mudança sustentável. No mesmo dia, a partir de qualquer ponto de Espanha, em espanhol, inglês ou português. Isto não é um programa de dieta. É cuidados médicos, prestados por médicos, para uma condição médica.",
+      "detailBody": "<h2>Para quem este serviço é indicado</h2><p>Esta consulta é adequada para adultos que:</p><ul><li>Têm dificuldade em perder peso apesar de mudanças na dieta e no estilo de vida</li><li>Têm um IMC de 25 ou superior e procuram apoio médico estruturado</li><li>Têm condições relacionadas com o peso — incluindo pré-diabetes, resistência à insulina, hipertensão ou SOP — que contribuem para o seu peso ou o complicam</li><li>Querem perceber se podem ser candidatos a abordagens médicas de controlo do peso após avaliação clínica</li><li>Já tentaram abordagens dietéticas e de exercício sem resultados sustentáveis</li><li>Querem acompanhamento médico contínuo da sua saúde metabólica em conjunto com o controlo do peso</li><li>São expats ou residentes internacionais em Espanha que querem apoio de controlo do peso em inglês ou português</li></ul><h2>Porque é que a supervisão médica faz a diferença</h2><p>A maioria das tentativas de controlo do peso falha não por falta de esforço, mas porque não abordam o quadro clínico subjacente. O desequilíbrio hormonal, a resistência à insulina, os efeitos secundários de medicamentos, os distúrbios do sono e a disfunção metabólica contribuem para o aumento de peso de formas que a dieta e o exercício por si só não conseguem resolver.</p><p>Em concreto:</p><ul><li>A resistência à insulina faz com que o corpo armazene gordura independentemente do défice calórico</li><li>O hipotiroidismo abranda o metabolismo — muitas vezes de forma significativa — independentemente da dieta</li><li>O SOP altera o equilíbrio hormonal e torna a perda de peso genuinamente mais difícil</li><li>A desregulação do cortisol afeta a forma como o corpo distribui a gordura</li><li>Os efeitos secundários de medicamentos — antidepressivos, antipsicóticos, corticoides, betabloqueadores — podem causar um aumento de peso significativo como efeito farmacológico direto</li></ul><p>Uma dieta que ignore estes fatores irá falhar — não por falta de esforço, mas porque está a resolver o problema errado. A avaliação médica identifica as causas específicas e propõe um plano que trabalha com a sua biologia.</p><h2>O que a consulta inclui</h2><p><strong>Avaliação médica completa</strong></p><p>O médico revê o seu historial médico, medicação atual, fatores de risco metabólico, perfil hormonal, padrões alimentares, atividade física, qualidade do sono, níveis de stress e tentativas anteriores de controlo do peso — construindo um quadro clínico completo dos fatores que contribuem para o seu peso.</p><p><strong>Identificação de causas subjacentes</strong></p><p>O médico avalia os contribuintes hormonais — incluindo disfunção tiroideia, resistência à insulina, SOP e desregulação do cortisol — fatores metabólicos, aumento de peso relacionado com medicamentos e elementos do estilo de vida que interagem com a sua biologia.</p><p><strong>Plano de controlo do peso personalizado</strong></p><p>Com base na avaliação, o médico desenvolve um plano estruturado e baseado em evidência adaptado ao seu IMC, estado de saúde, estilo de vida e objetivos a longo prazo — incluindo estratégia nutricional, abordagem comportamental, otimização da saúde metabólica e recomendações clínicas a critério do médico.</p><p><strong>Avaliação para abordagens médicas de controlo do peso</strong></p><p>Para doentes que cumpram os critérios clínicos, o médico avalia a adequação de abordagens médicas de controlo do peso baseadas em evidência como parte de uma avaliação clínica completa. A adequação é determinada por critérios clínicos — IMC, comorbilidades relacionadas com o peso, historial de tratamentos anteriores, contraindicações e estado de saúde geral — e não pela preferência do doente.</p><p>Nenhuma abordagem médica específica pode ser confirmada ou iniciada antes de uma revisão clínica completa. As decisões clínicas são exclusivamente do médico após avaliação individual completa.</p><p><strong>Pedido de análises quando indicado</strong></p><p>Quando as análises de sangue estiverem clinicamente indicadas — função tiroideia, glicose em jejum, HbA1c, perfil hormonal, painel lipídico — o médico solicita-as no mesmo dia.</p><p><strong>Documentação clínica — a critério do médico</strong></p><p>Quando clinicamente indicado, o médico emite a documentação clínica correspondente válida em qualquer farmácia espanhola.</p><p><strong>Acompanhamento continuado</strong></p><p>O controlo do peso é um processo clínico a longo prazo. As consultas de seguimento estão disponíveis para monitorizar o progresso, rever a resposta ao plano e ajustá-lo.</p><h2>Condições habitualmente avaliadas</h2><p><strong>Metabólicas</strong></p><ul><li>Excesso de peso e obesidade — IMC 25 e superior</li><li>Resistência à insulina e pré-diabetes</li><li>Diabetes tipo 2 — controlo do peso como parte do tratamento metabólico</li><li>Síndrome metabólica</li><li>Colesterol elevado e triglicéridos</li></ul><p><strong>Hormonais</strong></p><ul><li>Síndrome do ovário poliquístico (SOP)</li><li>Hipotiroidismo associado a aumento de peso</li><li>Desregulação do cortisol e aumento de peso relacionado com o stress</li><li>Alterações metabólicas associadas à menopausa</li></ul><p><strong>Cardiovasculares</strong></p><ul><li>Hipertensão associada ao excesso de peso</li><li>Redução do risco cardiovascular através do controlo do peso</li></ul><p><strong>Outros</strong></p><ul><li>Doença hepática gordurosa não alcoólica</li><li>Apneia obstrutiva do sono</li><li>Dor articular relacionada com o excesso de peso</li><li>Preocupações de fertilidade relacionadas com o peso e o estado hormonal</li></ul><h2>Controlo do peso em Espanha — contexto do mercado</h2><p>Segundo dados do Ministério da Saúde, mais de 53% da população adulta espanhola tem excesso de peso ou obesidade. Apesar disso, o acesso a cuidados médicos estruturados de controlo do peso no sistema público é limitado, com tempos de espera longos para endocrinologia e nutrição clínica.</p><p>No setor privado, os serviços de controlo do peso estão disponíveis, mas concentrados em grandes cidades e com custos elevados. Para residentes fora de Madrid, Barcelona, Valência ou Sevilha, ou para residentes internacionais que preferem cuidados em inglês ou português, o acesso a avaliação médica de controlo do peso é genuinamente limitado.</p><p>O nosso serviço proporciona avaliação médica completa de controlo do peso por videochamada — no mesmo dia, a partir de qualquer ponto de Espanha — com referenciação e coordenação quando for necessária avaliação presencial especializada.</p>",
+      "ctaLabel": null,
+      "sortOrder": 100,
+      "durationMinutes": 15,
+      "basePriceCents": 4500,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.263Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0t0q30009y8ju276szwsb",
+          "kind": "IMAGE",
+          "key": "media/432ee906-4985-4c72-b84b-137af1dd639f-es-control-peso-online.png",
+          "path": "/api/media/media/432ee906-4985-4c72-b84b-137af1dd639f-es-control-peso-online.png",
+          "altText": "Control de Peso"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q0bs000vngjudwpi6at6",
+          "question": "Isto é um programa de dieta ou um serviço médico?",
+          "answer": "É um serviço médico. Nossos médicos realizam uma avaliação clínica completa dos fatores médicos, hormonais e metabólicos que contribuem para o seu peso e desenvolvem um plano de gestão personalizado com base nos achados clínicos. Não é um plano dietético, um programa de substituição de refeições nem um serviço de treino físico.",
+          "sortOrder": 0,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q0bs000wngju74c003jy",
+          "question": "Posso acessar abordagens médicas de controle de peso por meio deste serviço?",
+          "answer": "As abordagens médicas de controle de peso podem ser apropriadas após avaliação clínica completa. A adequação é determinada por critérios clínicos — incluindo IMC, condições relacionadas ao peso, contraindicações e estado geral de saúde — e a decisão é tomada exclusivamente pelo médico após avaliação completa. Nenhuma abordagem específica pode ser confirmada nem iniciada antes da consulta.",
+          "sortOrder": 1,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q0bs000xngjukmv072u8",
+          "question": "Que análises de sangue poderiam ser necessárias?",
+          "answer": "Dependendo da sua apresentação clínica, o médico pode solicitar função tireoidiana, glicose em jejum, HbA1c, perfil hormonal e painel lipídico como parte da avaliação. As solicitações de análises podem ser coordenadas na mesma consulta.",
+          "sortOrder": 2,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q0bs000yngjufneft7mk",
+          "question": "Quantas consultas precisarei?",
+          "answer": "Depende do seu quadro clínico individual. Uma consulta inicial estabelece a sua linha de base e plano de gestão. As consultas de seguimento monitorizam o progresso e ajustam o plano. O seu médico aconselha-o sobre o calendário de revisão adequado.",
+          "sortOrder": 3,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q0bs000zngjur97y4fne",
+          "question": "Preciso de seguro de saúde espanhol?",
+          "answer": "Não. É um serviço privado de pagamento direto. A documentação clínica emitida através deste serviço é dispensada ao preço privado completo independentemente do estado de seguro.",
+          "sortOrder": 4,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q0bs0010ngjuuyulo82h",
+          "question": "Este serviço é adequado para adolescentes?",
+          "answer": "As avaliações de controle de peso são principalmente para adultos. Para preocupações com o peso em adolescentes, o médico orienta sobre o encaminhamento apropriado.",
+          "sortOrder": 5,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q0bs0011ngju027kdzlc",
+          "question": "Posso utilizar este serviço a partir de qualquer ponto de Espanha?",
+          "answer": "Sim — incluindo Ilhas Baleares, Ilhas Canárias, Ceuta e Melilla. Só precisa de uma ligação estável à internet e de um dispositivo com câmera.",
+          "sortOrder": 6,
+          "resolvedLocale": "PT"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "PT",
+      "links": [
+        {
+          "id": "cmre7rx2m0014g8ju027humsq",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre riesgo cardiovascular y síndrome metabólico?",
+          "body": "Nuestra Cardiología Especialista está pensada específicamente para riesgo cardiovascular y síndrome metabólico.",
+          "ctaLabel": "Cardiología Especialista",
+          "targetSlug": "cardiologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7rt62000ug8juculvj6yw",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Desequilibrio hormonal que afecta al peso?",
+          "body": "Si tu situación está relacionada con desequilibrio hormonal que afecta al peso, nuestra Salud Femenina te ofrece la evaluación adecuada.",
+          "ctaLabel": "Salud Femenina",
+          "targetSlug": "salud-femenina-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7rty7000wg8juypb9b6v2",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con déficit de testosterona y aumento de peso?",
+          "body": "Para déficit de testosterona y aumento de peso, consulta nuestra página de Salud Masculina — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Salud Masculina",
+          "targetSlug": "salud-masculina-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7ruqb000yg8juizews9yt",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre caída del cabello de base hormonal o metabólica?",
+          "body": "Nuestra Caída del Cabello está pensada específicamente para caída del cabello de base hormonal o metabólica.",
+          "ctaLabel": "Caída del Cabello",
+          "targetSlug": "caida-cabello-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdpz5n3001z01rukg2lecs5",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

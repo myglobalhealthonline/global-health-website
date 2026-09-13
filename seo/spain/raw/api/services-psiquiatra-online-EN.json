@@ -1,0 +1,192 @@
+{
+  "endpoint": "/api/services/psiquiatra-online?countryCode=es&locale=EN",
+  "checkedAt": "2026-09-13T02:29:58.240Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qeyz0050ngjund1jqnhp",
+      "kind": "SPECIALIST",
+      "slug": "psiquiatra-online",
+      "name": "Specialist Psychiatry",
+      "summary": null,
+      "seoTitle": "Psychiatrist Online Spain | Specialist Psychiatric Assessment | Same Day",
+      "seoDescription": "Complex mental health condition, ADHD, bipolar disorder, or psychiatric concern in Spain? Our specialist psychiatrists offer expert assessments by secure video call. Same-day appointments available in English.",
+      "seoKeywords": [
+        "psiquiatra online España",
+        "consulta psiquiátrica online España",
+        "psiquiatra privado online España",
+        "TDAH psiquiatra online España",
+        "trastorno bipolar psiquiatra online España"
+      ],
+      "heroTitle": "Specialist Psychiatry — Online Psychiatric Assessment in Spain",
+      "heroDescription": "Some mental health conditions require the depth of assessment, diagnostic rigour, and therapeutic range that only a specialist psychiatrist can provide. Treatment-resistant depression, bipolar disorder, adult ADHD, complex anxiety disorders, or any condition that has not responded to GP-level management — these presentations require specialist psychiatry. Our psychiatrists, specialist doctors with MIR psychiatric training, registered with the Spanish Medical Council (OMC — Organización Médica Colegial) and their specialist college, offer specialist psychiatric assessments by secure video call. Same day, from anywhere in Spain, in English, Spanish, or Portuguese.",
+      "detailBody": "<h2>GP Mental Health Assessment vs. Specialist Psychiatric Consultation</h2><p>Global Health offers two levels of mental health care.</p><p>GP mental health assessment — appropriate for initial screening of anxiety, mild to moderate depression, stress, and burnout. The GP conducts a structured assessment, provides clinical recommendations at GP level, and refers to psychiatry where indicated. The right starting point for most initial mental health concerns.</p><p>Specialist psychiatric consultation — conducted by Global Health's specialist psychiatrists. Appropriate for:</p><ul><li>Formal diagnosis of complex mental health disorders</li><li>Conditions that have not responded to GP-level treatment</li><li>Bipolar disorder — assessment, diagnosis, and specialist treatment plan</li><li>Adult ADHD — formal diagnostic assessment and treatment</li><li>Treatment-resistant depression</li><li>Complex or refractory anxiety disorders</li><li>Eating disorders — psychiatric assessment and treatment plan coordination</li><li>Psychiatric assessment for clinical, occupational, or medico-legal reports</li><li>Specialist psychiatric second opinion</li></ul><p>Not sure which level of support is right for you? Start with the GP mental health assessment — if your presentation requires specialist psychiatric input, your GP refers you directly to this service within the same platform.</p><h2>Who This Service Is For</h2><p>This specialist psychiatric consultation is appropriate for adults with:</p><ul><li>Moderate to severe depression — particularly treatment-resistant, melancholic, or atypical depression</li><li>Bipolar disorder — diagnostic assessment, treatment plan review, or second opinion</li><li>Complex anxiety disorders — panic disorder, OCD, severe social anxiety, PTSD</li><li>Adult ADHD — formal diagnostic assessment, treatment initiation, or review</li><li>Personality spectrum disorders — assessment and care plan guidance</li><li>Eating disorders — psychiatric assessment and treatment plan coordination</li><li>Severe chronic insomnia — when the cause is psychiatric or treatment has failed at GP level</li><li>Mental health conditions that have not responded to GP-level treatment</li><li>Psychiatric assessment for occupational, disability, or medico-legal reports</li><li>Specialist psychiatric second opinion — on a diagnosis, treatment plan, or medication received from another psychiatrist</li><li>International residents and expats who need specialist psychiatric care in English or Portuguese</li></ul><h2>What This Service Is — And What It Is Not</h2><p>This specialist psychiatric consultation is appropriate for:</p><ul><li>Formal psychiatric diagnosis of complex disorders</li><li>Specialist psychiatric pharmacological treatment assessment and planning — at the specialist's discretion</li><li>Psychopharmacological therapy and ongoing psychiatric follow-up</li><li>Assessment for clinical, occupational, or medico-legal reports</li><li>Specialist psychiatric second opinion</li><li>Coordination with clinical psychology, social work, and other services where indicated</li></ul><p>This service is not appropriate for:</p><ul><li>Crisis intervention — if you are in crisis, use the resources at the top of this page</li><li>Psychiatric admission — involuntary admission is regulated by Article 763 of the Spanish Civil Procedure Act and requires judicial authorisation. It cannot be initiated or coordinated through this service</li><li>Assessment of acute severe psychosis — where patient safety requires urgent in-person assessment</li><li>Psychotherapy or psychological therapy — this is a medical psychiatric assessment and treatment service, not a psychotherapy service</li></ul><p>Not sure whether you need psychiatry or psychology? Psychiatry is a medical specialty — the psychiatrist assesses, diagnoses, and can prescribe psychiatric medication. The clinical psychologist provides psychotherapy. For many conditions, both work together. Your psychiatrist advises on the most appropriate level of support and can guide you on the type of psychotherapy best suited to your condition.</p><h2>Conditions Commonly Assessed</h2><p><strong>Mood disorders</strong></p><ul><li>Major depressive disorder — including treatment-resistant, melancholic, and atypical depression</li><li>Bipolar depression — differential diagnosis and specialist treatment plan</li><li>Bipolar disorder type I and type II — diagnostic assessment, stabilisation, and follow-up</li><li>Cyclothymic disorder</li><li>Dysthymia / persistent depressive disorder</li></ul><p><strong>Anxiety disorders</strong></p><ul><li>Panic disorder — with and without agoraphobia</li><li>Obsessive-compulsive disorder (OCD)</li><li>Social anxiety disorder — severe or refractory presentations</li><li>Post-traumatic stress disorder (PTSD)</li><li>Treatment-resistant generalised anxiety disorder</li><li>Specific phobia with significant functional impact</li></ul><p><strong>Adult ADHD</strong></p><ul><li>Formal diagnostic assessment of ADHD in adults</li><li>ADHD with comorbidities — anxiety, depression, sleep disorders</li><li>Initiation, adjustment, and review of ADHD pharmacological treatment</li><li>Previously undiagnosed childhood ADHD — adult assessment</li></ul><p><strong>Personality spectrum disorders</strong></p><ul><li>Formal diagnostic assessment of personality disorders</li><li>Borderline personality disorder — assessment and care plan guidance</li><li>Narcissistic, avoidant, dependent, and other personality disorders</li></ul><p><strong>Eating disorders</strong></p><ul><li>Anorexia nervosa — psychiatric assessment and treatment plan coordination</li><li>Bulimia nervosa — assessment and treatment plan</li><li>Binge eating disorder — assessment and management</li></ul><p>Note: severe eating disorders requiring urgent medical nutritional intervention or inpatient admission require in-person assessment. Your psychiatrist assesses severity and advises on the appropriate level of care.</p><p><strong>Psychotic disorders — limited assessment</strong></p><ul><li>Assessment of mild or stably remitted psychotic symptoms</li><li>Second opinion on diagnosis of schizophrenia or other psychotic disorders in stable patients</li><li>Antipsychotic medication review in stable patients with known psychosis</li></ul><p>Acute psychotic episodes require urgent in-person assessment. This service is not appropriate for the assessment of acute severe psychosis — call 112 or go to the emergency department immediately.</p><p><strong>Sleep disorders</strong></p><ul><li>Severe chronic insomnia — psychiatric assessment and treatment plan</li><li>Sleep disorders with significant psychiatric basis</li></ul><p><strong>Psychiatric assessments for reports</strong></p><ul><li>Psychiatric reports for temporary or permanent occupational disability</li><li>Reports for medico-legal processes — at the specialist's discretion</li><li>Mental health assessments for administrative purposes</li></ul><h2>What Your Consultation Includes</h2><p><strong>Complete specialist psychiatric assessment</strong></p><p>Your psychiatrist conducts a structured and comprehensive psychiatric assessment — covering your detailed psychiatric history, previous episodes, previous treatments and their response, family history of mental health conditions, current life situation, occupational and social functioning, substance use, and mental state at the time of the consultation.</p><p><strong>Formal psychiatric diagnosis</strong></p><p>Where the assessment allows, your psychiatrist establishes a formal psychiatric diagnosis based on current international diagnostic criteria — DSM-5-TR or ICD-11 — clearly explained with the clinical reasoning behind it.</p><p><strong>Specialist treatment plan</strong></p><p>Based on the assessment and diagnosis, your psychiatrist designs a specialist treatment plan — which may include psychotherapy recommendations and guidance on the most appropriate approach for your condition, psychiatric pharmacological treatment options at the specialist's discretion, coordination with clinical psychology or other services where indicated, and structured psychiatric follow-up.</p><p><strong>Specialist clinical documentation — at the specialist's discretion</strong></p><p>When clinically indicated, your psychiatrist issues appropriate clinical documentation.</p><p>Note on benzodiazepines and controlled psychiatric medications: benzodiazepines and certain psychiatric medications are controlled substances in Spain with specific prescribing requirements. Your psychiatrist advises during the consultation on the options available and any applicable limitations.</p><p><strong>Safety assessment</strong></p><p>Every psychiatric consultation includes a structured safety assessment — conducted with sensitivity as a standard component of specialist care.</p><p><strong>Ongoing psychiatric follow-up</strong></p><p>Psychiatric treatment is a long-term process. Specialist follow-up consultations are available to monitor treatment response, adjust medication where needed, and provide the clinical continuity that quality psychiatric care requires.</p><h2>Accessing Psychiatry in Spain — The Reality</h2><p>Public psychiatry in Spain is under significant pressure — waiting times for a first SNS psychiatrist appointment are measured in months in most autonomous communities. Private in-person psychiatry in Spain is expensive and concentrated in major cities.</p><p>For international residents who need specialist psychiatry in English or Portuguese, options are practically non-existent outside Madrid and Barcelona — and even there, availability is very limited.</p><p>This service provides access to specialist psychiatry by video call — same day — from anywhere in Spain. For patients who most need psychiatric support, removing the access barrier matters.</p><h2>Confidentiality in Psychiatric Care</h2><p>Everything discussed during your psychiatric consultation is confidential and protected under Spanish and European data protection law — including Regulation (EU) 2016/679 (GDPR) implemented through Organic Law 3/2018 (LOPDGDD) and Law 41/2002 on patient autonomy.</p><p>Mental health data has reinforced protection as a special category of data under the GDPR.</p><p>There are two circumstances in which confidentiality may need to be carefully considered — when there is serious and immediate risk to your life or safety, or when there is serious risk to the safety of another person. Your psychiatrist discusses confidentiality with you at the outset of the consultation.</p>",
+      "ctaLabel": null,
+      "sortOrder": 0,
+      "durationMinutes": 45,
+      "basePriceCents": 15000,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-10T13:44:57.609Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k8qg0008asju8iv3qlkd",
+          "kind": "IMAGE",
+          "key": "media/291b711c-e779-4efe-8821-39d0c6963c76-es-psiquiatra-online.png",
+          "path": "/api/media/media/291b711c-e779-4efe-8821-39d0c6963c76-es-psiquiatra-online.png",
+          "altText": "Psiquiatría Especialista"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qf7o0051ngjuy3olgbsv",
+          "question": "What is the difference between seeing a psychiatrist and seeing a psychologist?",
+          "answer": "The psychiatrist is a medical specialist with MIR training in psychiatry — they can formally diagnose mental disorders, prescribe psychiatric medication, and coordinate the complete care plan. The clinical psychologist provides psychotherapy — structured psychological intervention. For many conditions, the most effective approach combines both. Your psychiatrist advises you on the most appropriate level of support and can guide you on the most suitable type of psychotherapy for your condition.",
+          "sortOrder": 0,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qf7o0052ngjuayg1k455",
+          "question": "What is the difference between this consultation and the mental health assessment with a primary care physician?",
+          "answer": "Mental health evaluation with a general practitioner is appropriate for the initial screening of anxiety, mild to moderate depression, and stress — with referral to psychiatry where indicated. This specialist consultation is conducted by a psychiatrist and provides formal psychiatric diagnosis, evaluation of complex disorders such as bipolar disorder or ADHD, and access to the full range of psychiatric pharmacological treatment options.",
+          "sortOrder": 1,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qf7o0053ngjuuzsapmj4",
+          "question": "Can the psychiatrist prescribe psychiatric medication through this service?",
+          "answer": "Yes — including antidepressants, mood stabilizers, ADHD medication, and other psychiatric pharmacological treatment options where clinically indicated. Benzodiazepines and certain controlled medications have specific requirements in Spain — your psychiatrist will inform you about the available options and any applicable limitations. No specific medication can be confirmed before the evaluation.",
+          "sortOrder": 2,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qf7o0054ngjuw946d1r1",
+          "question": "Can the psychiatrist diagnose ADHD in adults?",
+          "answer": "Yes. The formal diagnostic evaluation of ADHD in adults is a central part of this service. Diagnosis requires a complete structured assessment — it cannot be made in a single brief session. Your psychiatrist informs you about the appropriate diagnostic process for your presentation.",
+          "sortOrder": 3,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qf7o0055ngjuzorzdu8i",
+          "question": "Can the psychiatrist diagnose bipolar disorder?",
+          "answer": "Yes. The differential diagnosis between unipolar depression and bipolar disorder, and between the different types of bipolar disorder, requires specialized psychiatric evaluation. It is one of the diagnoses most frequently missed or delayed in primary care — specialized psychiatric evaluation is especially valuable here.",
+          "sortOrder": 4,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qf7o0056ngjueq3bc24z",
+          "question": "Can I obtain a psychiatric second opinion through this service?",
+          "answer": "Yes. The specialized psychiatric second opinion is one of the frequent uses of this service — especially regarding diagnoses, treatment plans, or medication received from another psychiatrist.",
+          "sortOrder": 5,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qf7o0057ngjusq77dowx",
+          "question": "Can the psychiatrist order my psychiatric hospital admission?",
+          "answer": "Voluntary admission can be coordinated with the appropriate services. Involuntary admission is regulated by Article 763 of the Civil Procedure Act and requires judicial authorization — it cannot be initiated through this service. If your situation requires urgent admission, call 112 or go to the nearest emergency department immediately.",
+          "sortOrder": 6,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qf7o0058ngju66en4j87",
+          "question": "What happens if I am in crisis during or after the consultation?",
+          "answer": "If you are in crisis, use the resources at the top of this page — Suicide Helpline 024 or 112 in case of immediate danger. This service is not a crisis intervention service.",
+          "sortOrder": 7,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qf7o0059ngju35dl4zgv",
+          "question": "Do I need Spanish health insurance?",
+          "answer": "No. It is a private direct-pay service. The clinical documentation issued is provided at the full private price regardless of insurance status.",
+          "sortOrder": 8,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qf7o005angjuc0glva22",
+          "question": "Can I use this service from anywhere in Spain?",
+          "answer": "Yes — including the Balearic Islands, the Canary Islands, Ceuta and Melilla. You only need a stable internet connection and a device with a camera.",
+          "sortOrder": 9,
+          "resolvedLocale": "EN"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "EN",
+      "links": [
+        {
+          "id": "cmre7swzn003ag8ju8hqg2zvg",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con evaluación inicial de salud mental?",
+          "body": "Para evaluación inicial de salud mental, consulta nuestra página de Salud Mental — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Salud Mental",
+          "targetSlug": "salud-mental-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7syjw003eg8jur0yeen3q",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Segunda opinión psiquiátrica independiente?",
+          "body": "Si tu situación está relacionada con segunda opinión psiquiátrica independiente, nuestra Segunda Opinión Médica te ofrece la evaluación adecuada.",
+          "ctaLabel": "Segunda Opinión Médica",
+          "targetSlug": "segunda-opinion-medica",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7szc1003gg8juhtfo6veb",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con evaluación inicial con médico de cabecera?",
+          "body": "Para evaluación inicial con médico de cabecera, consulta nuestra página de Consulta Médica General — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7sw7i0038g8ju6nyy0htm",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Psicoterapia y apoyo psicológico?",
+          "body": "Si tu situación está relacionada con psicoterapia y apoyo psicológico, nuestra Psicología Clínica te ofrece la evaluación adecuada.",
+          "ctaLabel": "Psicología Clínica",
+          "targetSlug": "psicologo-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpvch9001i01ruy7pmzmdk"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:29:00.000Z"
+      }
+    }
+  }
+}

@@ -1,0 +1,185 @@
+{
+  "endpoint": "/api/services/cardiologo-online?countryCode=es&locale=CS",
+  "checkedAt": "2026-09-13T02:29:51.066Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qh33005ongju25lilrfq",
+      "kind": "SPECIALIST",
+      "slug": "cardiologo-online",
+      "name": "Specialista kardiologie",
+      "summary": null,
+      "seoTitle": "Online kardiolog Španělsko | Specializovaná kardiologická konzultace | Tentýž den",
+      "seoDescription": "Palpitace, kontrola EKG, hypertenze nebo jiný kardiologický problém. Naši specialisté na kardiologii nabízejí vyšetření prostřednictvím videohovoru s revizí výsledků. Tentýž den ve Španělsku.",
+      "seoKeywords": [
+        "cardiólogo online España",
+        "consulta cardiológica online España",
+        "revisión ECG online España",
+        "palpitaciones cardiólogo online España",
+        "segunda opinión cardiológica España"
+      ],
+      "heroTitle": "Specializovaná kardiologie — online kardiologická konzultace",
+      "heroDescription": "Kardiologické potíže — palpitace, které neumíte správně interpretovat, EKG s nálezy, které vám nikdo pořádně nevysvětlil, špatně kontrolovaná hypertenze nebo již stanovené srdeční onemocnění, které vyžaduje specializované posouzení — vyžadují hloubku analýzy, kterou poskytuje specialista kardiolog. Naši kardiologové, lékaři specialisté s přípravou MIR v kardiologii, zapsaní v souladu s požadavky Organizace lékařských komor (OMC), nabízejí specializované kardiologické konzultace prostřednictvím bezpečného videohovoru s přezkumem vyšetření — EKG, echokardiogramu, Holteru a dalších kardiologických vyšetření interpretovaných specialistou tentýž den. Odkudkoli ze Španělska, ve španělštině, angličtině nebo portugalštině.",
+      "detailBody": "<h2>Pro koho je tato služba</h2><p>Tato specializovaná kardiologická konzultace je vhodná pro dospělé s:</p><ul><li>Palpitace — vyšetření neurgentních palpitací, vnímané nepravidelnosti srdečního rytmu nebo extrasystol</li><li>EKG s nálezy, které nebyly jasně vysvětleny — odborná revize a interpretace</li><li>Zpráva z echokardiogramu, Holteru nebo zátěžového testu, která potřebuje odborné vysvětlení</li><li>Rezistentní arteriální hypertenze nebo hypertenze, která není dobře kontrolována současnou medikací</li><li>Známá a stabilní fibrilace síní — revize a průběžná péče</li><li>Stabilní srdeční selhání — odborná revize a optimalizace léčby</li><li>Dyslipidémie s vysokým kardiovaskulárním rizikem — vyšetření a řízení kardiologického rizika</li><li>Neurgentní námahová dušnost — vyšetření kardiologické příčiny</li><li>Synkopa nebo presynkopa — kardiologické vyšetření u neurgentních prezentací</li><li>Specializovaný kardiologický druhý názor — na diagnózu, léčebný plán nebo výsledek vyšetření</li><li>Revize kardiologické medikace — vyhodnocení účinnosti, snášenlivosti a úprava</li><li>Vyhodnocení kardiovaskulárního rizika — zejména u pacientů s více rizikovými faktory</li><li>Mezinárodní rezidenti a expati, kteří potřebují specializovanou kardiologii v angličtině nebo portugalštině</li></ul><h2>Co tato služba je — a co není</h2><p>Tato specializovaná kardiologická konzultace zahrnuje:</p><ul><li>Specializované kardiologické vyšetření neurgentních stavů</li><li>Revizi a interpretaci EKG, echokardiogramu, Holteru a dalších kardiologických vyšetření</li><li>Průběžnou péči o stabilní kardiovaskulární onemocnění</li><li>Vyhodnocení kardiovaskulárního rizika a plán snížení rizika</li><li>Požadavek na kardiologická vyšetření tam, kde jsou klinicky indikována</li><li>Specializovaný kardiologický druhý názor</li><li>Koordinaci osobního odeslání tam, kde je to indikováno</li></ul><p>Tato služba nezahrnuje:</p><ul><li>Kardiologické urgentní stavy — akutní bolest na hrudi, synkopu se ztrátou vědomí, těžkou dušnost, palpitace s hemodynamickým postižením. Při jakémkoli akutním srdečním příznaku okamžitě volejte 112</li><li>Intervenční kardiologii — katetrizace, implantace kardiostimulátorů nebo defibrilátorů, ablace, srdeční chirurgie. Tyto zákroky vyžadují osobní nemocniční vyšetření</li><li>Provedení vyšetření — kardiolog může interpretovat již provedená vyšetření a požádat o nová, ale nemůže přímo provést EKG, echokardiogram ani zátěžový test. Ta vyžadují osobní účast</li></ul><p>Nejste si jisti, zda je váš příznak urgentní? Při pochybnostech vždy volejte 112 nebo jděte na pohotovost. Vždy je lepší být vyšetřen a zjistit, že nejde o nic závažného, než čekat.</p><h2>Revize kardiologických vyšetření — jak to funguje</h2><p>Jednou z nejcennějších schopností této služby je odborná revize a interpretace kardiologických vyšetření kardiologem — ve stejný den, bez nutnosti čekat týdny na osobní konzultaci.</p><p><strong>EKG (Elektrokardiogram)</strong></p><p>Pošlete PDF nebo obrázek vašeho EKG před konzultací. Váš kardiolog jej kompletně interpretuje — identifikuje rytmus, osu, intervaly a jakékoli nálezy poruchy rytmu, vedení nebo ischemie — a jasně vám nálezy vysvětlí.</p><p><strong>Echokardiogram</strong></p><p>Pošlete zprávu z vašeho echokardiogramu. Váš kardiolog zkontroluje ejekční frakci, funkci chlopní, velikost srdečních oddílů a jakékoli klinicky významné nálezy — a vysvětlí vám, co to znamená pro vaše zdraví a jaké kroky jsou vhodné.</p><p><strong>24hodinový Holter</strong></p><p>Pošlete zprávu z vašeho Holteru. Váš kardiolog zkontroluje rytmus během monitorovaného období, identifikuje arytmie nebo extrasystoly a posoudí, zda jsou nálezy klinicky významné.</p><p><strong>Zátěžový test</strong></p><p>Pošlete zprávu z vašeho zátěžového testu. Váš kardiolog interpretuje funkční kapacitu, hemodynamickou odpověď na zátěž a jakékoli nálezy vyvolané ischemie.</p><p><strong>Krevní testy s kardiologickými markery</strong></p><p>Pokud máte nedávné laboratorní výsledky s troponiny, BNP, NT-proBNP nebo lipidovým profilem, váš kardiolog je zkontroluje v rámci celého klinického kontextu.</p><p>Pro zaslání vašich vyšetření: nahrajte dokumenty prostřednictvím platformy před konzultací, nebo je odešlete kanálem, který vám tým určí při rezervaci. Váš kardiolog je zkontroluje před hovorem, aby byla konzultace zaměřena na analýzu a plán.</p><h2>Stavy, které se běžně vyhodnocují</h2><p><strong>Poruchy srdečního rytmu</strong></p><ul><li>Fibrilace síní — vyšetření, péče a revize antikoagulace u stabilních stavů</li><li>Flutter síní — vyšetření a péče</li><li>Extrasystoly — vyhodnocení klinického významu a potřeby zásahu</li><li>Supraventrikulární tachykardie — vyšetření a péče u neurgentních prezentací</li><li>Bradykardie — vyšetření pomalého rytmu a jeho klinického významu</li><li>Wolf-Parkinson-White syndrom — revize a koordinace tam, kde je to indikováno</li></ul><p><strong>Koronární onemocnění</strong></p><ul><li>Známá a stabilní ischemická choroba srdeční — odborná revize a optimalizace léčby</li><li>Stabilní angina pectoris — vyšetření a péče</li><li>Po infarktu myokardu — specializované kardiologické sledování ve stabilní fázi</li><li>Vyhodnocení koronárního rizika — u pacientů s více rizikovými faktory</li></ul><p><strong>Srdeční selhání</strong></p><ul><li>Stabilní srdeční selhání — odborná revize a optimalizace léčby</li><li>Revize systolické a diastolické funkce — interpretace echokardiogramu</li><li>Řízení kongesce — úprava diuretik a sledování</li></ul><p><strong>Chlopenní vady</strong></p><ul><li>Mitrální, aortální, trikuspidální vady — odborná revize echokardiogramu a sledování</li><li>Vyhodnocení závažnosti chlopenní vady — na základě zprávy z echokardiogramu</li><li>Po-intervenční sledování chlopenních vad ve stabilní fázi</li></ul><p><strong>Arteriální hypertenze</strong></p><ul><li>Rezistentní nebo špatně kontrolovaná hypertenze — specializované kardiologické vyšetření</li><li>Hypertenze s orgánovým poškozením — vyhodnocení kardiologického dopadu</li><li>Revize celkového kardiovaskulárního rizika u hypertenze</li></ul><p><strong>Kardiomyopatie</strong></p><ul><li>Hypertrofická kardiomyopatie — revize a sledování ve stabilní fázi</li><li>Dilatační kardiomyopatie — revize a optimalizace léčby</li><li>Arytmogenní kardiomyopatie — vyšetření a koordinace</li></ul><p><strong>Vyhodnocení kardiovaskulárního rizika</strong></p><ul><li>Vyhodnocení celkového kardiovaskulárního rizika — skóre SCORE2, modifikovatelné rizikové faktory</li><li>Dyslipidémie s vysokým kardiovaskulárním rizikem — vyšetření a plán péče</li><li>Metabolický syndrom — vyhodnocení kardiologického dopadu</li><li>Předsportovní kardiovaskulární vyšetření — u dospělých, kteří chtějí zahájit intenzivní fyzickou aktivitu</li></ul><h2>Co konzultace zahrnuje</h2><p><strong>Kompletní specializované kardiologické vyšetření</strong></p><p>Váš kardiolog zkontroluje vaši podrobnou kardiologickou anamnézu — příznaky, předchozí epizody, rodinnou anamnézu kardiovaskulárního onemocnění, rizikové faktory, aktuální kardiologickou medikaci a dostupná předchozí vyšetření.</p><p><strong>Specializovaná interpretace vyšetření</strong></p><p>Váš kardiolog zkontroluje a interpretuje jakékoli kardiologické vyšetření, které jste zaslali — EKG, echokardiogram, Holter, zátěžový test, laboratorní výsledky s kardiologickými markery — a poskytne jasné vysvětlení nálezů a jejich klinického významu.</p><p><strong>Specializovaný plán kardiologické péče</strong></p><p>Na základě vyšetření a interpretace výsledků váš kardiolog sestaví specializovaný plán péče — který může zahrnovat úpravu kardiologické medikace dle uvážení specialisty, požadavek na další vyšetření tam, kde je to indikováno, a doporučení týkající se životního stylu a rizikových faktorů.</p><p><strong>Specializovaná klinická dokumentace — dle uvážení specialisty</strong></p><p>Je-li to klinicky indikováno, váš kardiolog vystaví příslušnou klinickou dokumentaci platnou v jakékoli španělské lékárně, stejně jako specializované zprávy pro kontinuitu péče.</p><p><strong>Požadavek na kardiologická vyšetření</strong></p><p>Jsou-li další vyšetření klinicky indikována — EKG, Holter, echokardiogram, laboratorní výsledky s kardiologickými markery, zátěžový test — váš kardiolog vystaví žádanku ještě týž den. Soukromá kardiologická vyšetření jsou dostupná v kardiologických klinikách a soukromých nemocnicích po celé Španělsku.</p><p><strong>Koordinace osobního odeslání — tam, kde je to indikováno</strong></p><p>Jsou-li klinicky indikována osobní vyšetření, provedení testů, které nelze uskutečnit na dálku, nebo kardiologický zákrok, váš kardiolog zajistí odeslání s kompletní specializovanou dokumentací ještě týž den.</p><p><strong>Specializovaný kardiologický druhý názor</strong></p><p>Pokud jste od jiného kardiologa obdrželi kardiologickou diagnózu, výsledek vyšetření nebo léčebný plán a chcete nezávislé odborné posouzení, váš kardiolog zkontroluje veškerou dostupnou dokumentaci.</p><p><strong>Průběžné kardiologické sledování</strong></p><p>Kontrolní specializované konzultace jsou k dispozici pro sledování chronických stavů, kontrolu odpovědi na léčbu a interpretaci kontrolních vyšetření.</p><h2>Kardiologie ve Španělsku — problém s dostupností</h2><p>Soukromá kardiologie ve Španělsku je dobře rozvinutá v Madridu, Barceloně a dalších velkých městech. Čekací doby na první konzultaci se soukromým kardiologem jsou však obecně dva až čtyři týdny u neurgentních stavů.</p><p>Při interpretaci kardiologického vyšetření — EKG s nejasnými nálezy, Holter, který praktický lékař nedokázal úplně vysvětlit, echokardiogram s výsledky, kterým nerozumíte — je čekání týdny na to, až vám specialista nálezy vysvětlí, zbytečně úzkostné.</p><p>Pro mezinárodní rezidenty, kteří potřebují specializovanou kardiologii v angličtině nebo portugalštině, jsou možnosti mimo Madrid a Barcelonu prakticky neexistující.</p><p>Naše služba poskytuje specializované kardiologické vyšetření s interpretací výsledků ve stejný den — odkudkoli ve Španělsku.</p>",
+      "ctaLabel": null,
+      "sortOrder": 0,
+      "durationMinutes": 15,
+      "basePriceCents": 7900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-10T13:43:02.311Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0sp640002y8jug1jk47o6",
+          "kind": "IMAGE",
+          "key": "media/7410c221-0047-4e40-a26e-443d1dfd0c49-es-cardiologo-online.png",
+          "path": "/api/media/media/7410c221-0047-4e40-a26e-443d1dfd0c49-es-cardiologo-online.png",
+          "altText": "Cardiología Especialista"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qhbj005pngjuxr12j3ik",
+          "question": "Může kardiolog interpretovat mé EKG prostřednictvím videohovoru?",
+          "answer": "Ano — pošlete PDF nebo obrázek EKG před konzultací. Váš kardiolog jej před hovorem kompletně interpretuje a nálezy vám během konzultace podrobně vysvětlí. Jde o zavedenou praxi v telekardiologii.",
+          "sortOrder": 0,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qhbj005qngjuv99p8i0k",
+          "question": "Mám příznaky palpitací — je to naléhavé?",
+          "answer": "Palpitace doprovázené závratí, ztrátou vědomí nebo bolestí na hrudi jsou naléhavé — okamžitě volejte 112. Palpitace bez závažných doprovodných příznaků, zejména pokud jsou epizodické a nezhoršují se, jsou vhodné k neurgentnímu kardiologickému vyšetření prostřednictvím této služby.",
+          "sortOrder": 1,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qhbj005rngjujnsjkvdw",
+          "question": "Jaké výsledky vyšetření si mám přinést na konzultaci?",
+          "answer": "Vše, co máte relevantní — EKG, zprávu z echokardiogramu, zprávu z Holterova monitorování, zprávu ze zátěžového testu, nedávné laboratorní výsledky, dopisy od předchozích kardiologů, seznam vaší současné kardiologické medikace. Čím více informací váš kardiolog poskytne, tím úplnější bude vyšetření.",
+          "sortOrder": 2,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qhbj005sngjuhrmcv3ex",
+          "question": "Může kardiolog upravit mou medikaci?",
+          "answer": "Ano — včetně antihypertenzní medikace, antiarytmické, antikoagulační, diuretická, a dalších kardiologických léků, kde je to klinicky indikováno, podle uvážení specialisty po úplném vyšetření.",
+          "sortOrder": 3,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qhbj005tngjuqkib7c17",
+          "question": "Může kardiolog požádat o echokardiogram nebo Holter?",
+          "answer": "Ano. Tam, kde jsou tato vyšetření klinicky indikována, váš kardiolog vystaví žádanku ještě tentýž den. Soukromá echokardiografie a Holter jsou k dispozici na kardiologických klinikách a soukromých nemocnicích po celé Španělsku — v mnoha městech s dostupností během několika dnů.",
+          "sortOrder": 4,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qhbj005ungju5xm4kwnd",
+          "question": "Mohu získat druhé kardiologické stanovisko?",
+          "answer": "Ano. Druhý specializovaný kardiologický názor je jedním z častých využití této služby — zejména u nejasných diagnóz, nálezů z vyšetření, které nebyly dobře vysvětleny, nebo před závazkem k významným kardiologickým zákrokům.",
+          "sortOrder": 5,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qhbj005vngjuhoy9l0pw",
+          "question": "Je tato služba vhodná pro kardiovaskulární vyšetření před sportem?",
+          "answer": "Ano — pro dospělé, kteří chtějí začít s intenzivní fyzickou aktivitou nebo mají kardiologické obavy související se sportem. Oficiální sportovní lékařská prohlídka pro federativní licence vyžaduje osobní fyzikální vyšetření — ale předsportovní kardiologické vyšetření na úrovni specializované medicíny lze provést s posouzením výsledků vyšetření prostřednictvím telemedicíny.",
+          "sortOrder": 6,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qhbj005wngju615ng5bz",
+          "question": "Potřebuji španělské zdravotní pojištění?",
+          "answer": "Ne. Jedná se o soukromou službu s přímou úhradou. Vydaná klinická dokumentace se poskytuje za plnou soukromou cenu bez ohledu na stav pojištění.",
+          "sortOrder": 7,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qhbj005xngjubqki07de",
+          "question": "Mohu tuto službu používat z jakéhokoli místa ve Španělsku?",
+          "answer": "Ano — včetně Baleárských ostrovů, Kanárských ostrovů, Ceuty a Melilly. Stačí stabilní připojení k internetu, zařízení s kamerou a možnost zaslat vaše kardiologické výsledky digitálně před konzultací.",
+          "sortOrder": 8,
+          "resolvedLocale": "CS"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "CS",
+      "links": [
+        {
+          "id": "cmre7te5n0048g8juho9yeyhr",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Seguimiento de enfermedades cardiovasculares crónicas?",
+          "body": "Si tu situación está relacionada con seguimiento de enfermedades cardiovasculares crónicas, nuestra Enfermedades Crónicas te ofrece la evaluación adecuada.",
+          "ctaLabel": "Enfermedades Crónicas",
+          "targetSlug": "enfermedades-cronicas-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7texp004ag8jutzpe2duq",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con control de peso y riesgo cardiovascular?",
+          "body": "Para control de peso y riesgo cardiovascular, consulta nuestra página de Control de Peso — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tfpq004cg8juxdaop10s",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre dejar de fumar — prioridad en enfermedad cardiovascular?",
+          "body": "Nuestra Dejar de Fumar está pensada específicamente para dejar de fumar — prioridad en enfermedad cardiovascular.",
+          "ctaLabel": "Dejar de Fumar",
+          "targetSlug": "dejar-de-fumar-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tghs004eg8ju8onr6bhv",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Solicitar ECG, analíticas o pruebas cardiológicas?",
+          "body": "Si tu situación está relacionada con solicitar ECG, analíticas o pruebas cardiológicas, nuestra Derivaciones y Pruebas te ofrece la evaluación adecuada.",
+          "ctaLabel": "Derivaciones y Pruebas",
+          "targetSlug": "derivaciones-pruebas-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpqvkc000z01rui7z5it57"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "UNAVAILABLE",
+        "reasonCode": "NO_OPEN_SLOT",
+        "nextAvailableAt": null
+      }
+    }
+  }
+}

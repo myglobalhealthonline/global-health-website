@@ -1,0 +1,176 @@
+{
+  "endpoint": "/api/services/control-peso-online?countryCode=es&locale=CS",
+  "checkedAt": "2026-09-13T02:29:51.572Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q038000ungjuxs5rkyxy",
+      "kind": "GENERAL",
+      "slug": "control-peso-online",
+      "name": "Kontrola hmotnosti",
+      "summary": null,
+      "seoTitle": "Online kontrola hmotnosti Španělsko | Lékařské posouzení | Registrovaný lékař",
+      "seoDescription": "Máte potíže s hubnutím navzdory dietě a cvičení? Naši registrovaní lékaři posoudí lékařské a metabolické faktory stojící za vaší hmotností prostřednictvím videohovoru. Klinické vyšetření tentýž den ve Španělsku.",
+      "seoKeywords": [
+        "control de peso online España",
+        "médico obesidad online España",
+        "consulta pérdida de peso médica España",
+        "evaluación metabólica online España",
+        "médico adelgazar online España"
+      ],
+      "heroTitle": "Kontrola hmotnosti — Lékařské vyšetření a personalizovaný plán online",
+      "heroDescription": "Snažíte se už nějakou dobu zhubnout pomocí diety a cvičení bez udržitelných výsledků? U většiny lidí, kterým se nedaří kontrolovat svou hmotnost, existují skryté medicínské, hormonální a metabolické faktory, které žádný obecný dietní plán neřeší — protože vyžadují klinické vyšetření, nejen omezení kalorií. Naši lékaři, registrovaní v souladu s požadavky Organizace lékařské komory (OMC), nabízejí lékařská vyšetření kontroly hmotnosti prostřednictvím zabezpečeného videohovoru — identifikují klinické faktory, které přispívají k vaší hmotnosti, vypracují personalizovaný plán řízení a poskytují lékařský dohled, který umožňuje udržitelnou změnu. Tentýž den, odkudkoli ve Španělsku, ve španělštině, angličtině nebo portugalštině. Toto není dietní program. Je to lékařská péče, poskytovaná lékaři, pro zdravotní stav.",
+      "detailBody": "<h2>Pro koho je tato služba</h2><p>Tato konzultace je vhodná pro dospělé, kteří:</p><ul><li>Mají potíže hubnout navzdory změnám ve stravě a životním stylu</li><li>Mají BMI 25 nebo vyšší a hledají strukturovanou lékařskou podporu</li><li>Mají stavy související s hmotností — včetně prediabetu, inzulinové rezistence, hypertenze nebo PCOS — které k jejich hmotnosti přispívají nebo ji komplikují</li><li>Chtějí zjistit, zda mohou být kandidáty na lékařské přístupy ke kontrole hmotnosti po klinickém vyšetření</li><li>Zkoušeli dietní a pohybové přístupy bez trvalých výsledků</li><li>Chějí průběžné lékařské sledování svého metabolického zdraví spolu s kontrolou hmotnosti</li><li>Jsou expati nebo mezinárodní rezidenti ve Španělsku, kteří chtějí podporu při kontrole hmotnosti v angličtině nebo portugalštině</li></ul><h2>Proč lékařský dohled dělá rozdíl</h2><p>Většina pokusů o kontrolu hmotnosti selhává ne kvůli nedostatku snahy, ale proto, že neřeší základní klinický obraz. Hormonální nerovnováha, inzulinová rezistence, nežádoucí účinky léků, poruchy spánku a metabolická dysfunkce přispívají k nárůstu hmotnosti způsoby, které sama dieta a cvičení nemohou vyřešit.</p><p>Konkrétně:</p><ul><li>Inzulinová rezistence způsobuje, že tělo ukládá tuk nezávisle na kalorickém deficitu</li><li>Hypotyreóza zpomaluje metabolismus — často výrazně — bez ohledu na dietu</li><li>PCOS narušuje hormonální rovnováhu a činí hubnutí skutečně obtížnějším</li><li>Dysregulace kortizolu ovlivňuje, jak tělo rozděluje tuk</li><li>Nežádoucí účinky léků — antidepresiv, antipsychotik, kortikosteroidů, betablokátorů — mohou jako přímý farmakologický efekt způsobit významný nárůst hmotnosti</li></ul><p>Strava, která tyto faktory ignoruje, selže — ne kvůli nedostatku snahy, ale protože řeší nesprávný problém. Lékařské vyšetření identifikuje konkrétní příčiny a navrhne plán, který pracuje s vaší biologií.</p><h2>Co konzultace zahrnuje</h2><p><strong>Kompletní lékařské vyšetření</strong></p><p>Lékař zhodnotí vaši anamnézu, současné užívané léky, metabolické rizikové faktory, hormonální profil, stravovací návyky, fyzickou aktivitu, kvalitu spánku, úroveň stresu a předchozí pokusy o kontrolu hmotnosti — a vytvoří tak úplný klinický obraz faktorů, které přispívají k vaší hmotnosti.</p><p><strong>Identifikace základních příčin</strong></p><p>Lékař posoudí hormonální přispívající faktory — včetně poruchy funkce štítné žlázy, inzulinové rezistence, PCOS a dysregulace kortizolu — metabolické faktory, nárůst hmotnosti související s léky a prvky životního stylu, které interagují s vaší biologií.</p><p><strong>Personalizovaný plán kontroly hmotnosti</strong></p><p>Na základě vyšetření lékař vypracuje strukturovaný, na důkazech založený plán přizpůsobený vašemu BMI, zdravotnímu stavu, životnímu stylu a dlouhodobým cílům — včetně výživové strategie, behaviorálního přístupu, optimalizace metabolického zdraví a klinických doporučení podle uvážení lékaře.</p><p><strong>Posouzení vhodnosti lékařských přístupů ke kontrole hmotnosti</strong></p><p>U pacientů, kteří splňují klinická kritéria, lékař posoudí vhodnost na důkazech založených lékařských přístupů ke kontrole hmotnosti jako součást kompletního klinického vyšetření. Vhodnost se určuje podle klinických kritérií — BMI, komorbidity související s hmotností, anamnéza předchozích léčebných postupů, kontraindikace a celkový zdravotní stav — nikoli podle přání pacienta.</p><p>Žádný konkrétní lékařský přístup nelze potvrdit ani zahájit před kompletní klinickou revizí. Klinická rozhodnutí jsou výhradně v kompetenci lékaře po úplném individuálním vyšetření.</p><p><strong>Žádost o vyšetření, pokud je indikováno</strong></p><p>Pokud jsou krevní testy klinicky indikované — funkce štítné žlázy, glukóza nalačno, HbA1c, hormonální profil, lipidový panel — lékař je objedná tentýž den.</p><p><strong>Klinická dokumentace — podle uvážení lékaře</strong></p><p>Je-li to klinicky indikováno, lékař vystaví odpovídající klinickou dokumentaci platnou v kterékoli španělské lékárně.</p><p><strong>Průběžné sledování</strong></p><p>Kontrola hmotnosti je dlouhodobý klinický proces. Následné konzultace jsou k dispozici pro sledování pokroku, posouzení odpovědi na plán a jeho úpravu.</p><h2>Stavy běžně posuzované</h2><p><strong>Metabolické</strong></p><ul><li>Nadváha a obezita — BMI 25 a vyšší</li><li>Inzulinová rezistence a prediabetes</li><li>Diabetes 2. typu — kontrola hmotnosti jako součást metabolické léčby</li><li>Metabolický syndrom</li><li>Vysoký cholesterol a triglyceridy</li></ul><p><strong>Hormonální</strong></p><ul><li>Syndrom polycystických ovarií (PCOS)</li><li>Hypotyreóza spojená s nárůstem hmotnosti</li><li>Dysregulace kortizolu a nárůst hmotnosti související se stresem</li><li>Metabolické změny spojené s menopauzou</li></ul><p><strong>Kardiovaskulární</strong></p><ul><li>Hypertenze spojená s nadměrnou hmotností</li><li>Snížení kardiovaskulárního rizika prostřednictvím kontroly hmotnosti</li></ul><p><strong>Další</strong></p><ul><li>Nekonvenční nealkoholické ztučnění jater</li><li>Obstrukční spánková apnoe</li><li>Bolest kloubů související s nadměrnou hmotností</li><li>Obavy o plodnost související s hmotností a hormonálním stavem</li></ul><h2>Kontrola hmotnosti ve Španělsku — kontext trhu</h2><p>Podle údajů Ministerstva zdravotnictví má více než 53 % dospělé španělské populace nadváhu nebo obezitu. Přesto je přístup ke strukturované lékařské péči o kontrolu hmotnosti ve veřejném systému omezený, s dlouhými čekacími dobami na endokrinologii a klinickou výživu.</p><p>V soukromém sektoru jsou služby kontroly hmotnosti dostupné, ale soustředěné ve velkých městech a s vysokými náklady. Pro obyvatele mimo Madrid, Barcelonu, Valencii nebo Sevillu, nebo pro mezinárodní rezidenty, kteří preferují péči v angličtině nebo portugalštině, je přístup k lékařskému posouzení kontroly hmotnosti skutečně omezený.</p><p>Náš servis poskytuje kompletní lékařské posouzení kontroly hmotnosti prostřednictvím videohovoru — tentýž den, odkudkoli ve Španělsku — s doporučením a koordinací, když je potřeba specializované osobní vyšetření.</p>",
+      "ctaLabel": null,
+      "sortOrder": 100,
+      "durationMinutes": 15,
+      "basePriceCents": 4500,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.263Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0t0q30009y8ju276szwsb",
+          "kind": "IMAGE",
+          "key": "media/432ee906-4985-4c72-b84b-137af1dd639f-es-control-peso-online.png",
+          "path": "/api/media/media/432ee906-4985-4c72-b84b-137af1dd639f-es-control-peso-online.png",
+          "altText": "Control de Peso"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q0bs000vngjudwpi6at6",
+          "question": "Je to dietní program nebo lékařská služba?",
+          "answer": "Je to lékařská služba. Naši lékaři provádějí kompletní klinické vyšetření lékařských, hormonálních a metabolických faktorů, které přispívají k vaší hmotnosti, a vytvářejí personalizovaný plán řízení na základě klinických nálezů. Nejde o dietní plán, program náhrady jídel ani službu fyzického tréninku.",
+          "sortOrder": 0,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q0bs000wngju74c003jy",
+          "question": "Mohu prostřednictvím této služby získat přístup k lékařským přístupům ke kontrole hmotnosti?",
+          "answer": "Lékařské přístupy k regulaci hmotnosti mohou být po úplném klinickém vyšetření vhodné. Vhodnost se určuje na základě klinických kritérií — včetně BMI, stavů souvisejících s hmotností, kontraindikací a celkového zdravotního stavu — a rozhodnutí činí výhradně lékař po úplném vyšetření. Žádný konkrétní přístup nelze před konzultací potvrdit ani zahájit.",
+          "sortOrder": 1,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q0bs000xngjukmv072u8",
+          "question": "Jaké krevní testy by mohly být potřebné?",
+          "answer": "V závislosti na vašem klinickém obrazu může lékař jako součást vyšetření požádat o vyšetření funkce štítné žlázy, glykémie nalačno, HbA1c, hormonálního profilu a lipidového panelu. Žádosti o laboratorní vyšetření lze koordinovat při stejné konzultaci.",
+          "sortOrder": 2,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q0bs000yngjufneft7mk",
+          "question": "Kolik konzultací budu potřebovat?",
+          "answer": "Záleží na vašem individuálním klinickém stavu. Úvodní konzultace stanoví váš výchozí stav a plán řízení. Následné konzultace sledují pokrok a upravují plán. Váš lékař vám poradí ohledně vhodného harmonogramu kontrol.",
+          "sortOrder": 3,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q0bs000zngjur97y4fne",
+          "question": "Potřebuji španělské zdravotní pojištění?",
+          "answer": "Ne. Jedná se o soukromou službu přímé úhrady. Klinická dokumentace vydaná prostřednictvím této služby se poskytuje za plnou soukromou cenu bez ohledu na pojistný status.",
+          "sortOrder": 4,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q0bs0010ngjuuyulo82h",
+          "question": "Je tato služba vhodná pro dospívající?",
+          "answer": "Vyšetření kontroly hmotnosti jsou primárně určena pro dospělé. U obav ohledně hmotnosti u dospívajících lékař poradí ohledně vhodného doporučení k odeslání.",
+          "sortOrder": 5,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q0bs0011ngju027kdzlc",
+          "question": "Mohu tuto službu používat z jakéhokoli místa ve Španělsku?",
+          "answer": "Ano — včetně Baleárských ostrovů, Kanárských ostrovů, Ceuty a Melilly. Potřebujete jen stabilní připojení k internetu a zařízení s kamerou.",
+          "sortOrder": 6,
+          "resolvedLocale": "CS"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "CS",
+      "links": [
+        {
+          "id": "cmre7rx2m0014g8ju027humsq",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre riesgo cardiovascular y síndrome metabólico?",
+          "body": "Nuestra Cardiología Especialista está pensada específicamente para riesgo cardiovascular y síndrome metabólico.",
+          "ctaLabel": "Cardiología Especialista",
+          "targetSlug": "cardiologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7rt62000ug8juculvj6yw",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Desequilibrio hormonal que afecta al peso?",
+          "body": "Si tu situación está relacionada con desequilibrio hormonal que afecta al peso, nuestra Salud Femenina te ofrece la evaluación adecuada.",
+          "ctaLabel": "Salud Femenina",
+          "targetSlug": "salud-femenina-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7rty7000wg8juypb9b6v2",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con déficit de testosterona y aumento de peso?",
+          "body": "Para déficit de testosterona y aumento de peso, consulta nuestra página de Salud Masculina — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Salud Masculina",
+          "targetSlug": "salud-masculina-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7ruqb000yg8juizews9yt",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre caída del cabello de base hormonal o metabólica?",
+          "body": "Nuestra Caída del Cabello está pensada específicamente para caída del cabello de base hormonal o metabólica.",
+          "ctaLabel": "Caída del Cabello",
+          "targetSlug": "caida-cabello-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdpz5n3001z01rukg2lecs5",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

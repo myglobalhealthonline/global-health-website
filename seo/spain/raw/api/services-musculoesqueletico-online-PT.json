@@ -1,0 +1,179 @@
+{
+  "endpoint": "/api/services/musculoesqueletico-online?countryCode=es&locale=PT",
+  "checkedAt": "2026-09-13T02:30:04.541Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q8mg0037ngjuso41eynq",
+      "kind": "GENERAL",
+      "slug": "musculoesqueletico-online",
+      "name": "Musculoesquelético",
+      "summary": null,
+      "seoTitle": "Dor Musculoesquelética Online Espanha | Avaliação Clínica | Médico de Família",
+      "seoDescription": "Dor nas costas, nas articulações, ciática ou lesão muscular. Os nossos médicos de clínica geral registados avaliam condições musculoesqueléticas por videochamada segura. Avaliação clínica no mesmo dia em Espanha.",
+      "seoKeywords": [
+        "dolor musculoesquelético online España",
+        "dolor espalda médico online España",
+        "ciática consulta online España",
+        "dolor articular médico online España",
+        "lesión muscular evaluación online España"
+      ],
+      "heroTitle": "Dor Musculoesquelética — Avaliação Clínica Online no Mesmo Dia",
+      "heroDescription": "A dor nas costas, a dor articular, a ciática, as lesões musculares e as condições musculoesqueléticas crónicas estão entre os motivos mais comuns pelos quais as pessoas procuram cuidados médicos — e entre os pior atendidos pelo modelo atual de cuidados primários. Esperar semanas por uma consulta de traumatologia ou ortopedia para uma condição que precisa de avaliação hoje é um problema estrutural tanto na saúde pública como privada em Espanha. Os nossos médicos de família, inscritos de acordo com os requisitos da Organización Médica Colegial (OMC), realizam avaliações musculoesqueléticas completas por videochamada segura — identificando a causa subjacente, avaliando o impacto funcional, aconselhando sobre gestão baseada em evidência e coordenando encaminhamento e investigação quando clinicamente indicado. No mesmo dia, a partir de qualquer ponto de Espanha, em espanhol, inglês ou português.",
+      "detailBody": "<h2>Para quem é este serviço</h2><p>Esta consulta é adequada para adultos com:</p><ul><li>Uma lesão musculoesquelética aguda ou dor de início súbito que requer avaliação clínica</li><li>Dor crónica ou persistente que não foi adequadamente avaliada ou tratada</li><li>Uma condição musculoesquelética conhecida que está em agravamento e requer revisão atempada</li><li>Dor após uma lesão, procedimento ou período de imobilização</li><li>Sintomas musculoesqueléticos associados a uma condição crónica — diabetes, doença cardiovascular ou condições inflamatórias — que complicam a gestão</li><li>Necessidade de encaminhamento para fisioterapia, pedidos de exames de imagem ou encaminhamento para especialista coordenados através de uma avaliação clínica</li><li>Qualquer pessoa a quem tenham dito \"é normal\" ou \"descanse\" sem receber uma explicação clínica estruturada do que está a acontecer e do que fazer</li></ul><p>Se tiveres dor súbita e intensa, dor no peito, dor após um traumatismo significativo, ou qualquer sintoma que te preocupe seriamente — vai ao serviço de urgências mais próximo ou liga para o 112 imediatamente.</p><h2>Condições habitualmente avaliadas</h2><p><strong>Coluna vertebral e neurológico</strong></p><ul><li>Dor lombar aguda e crónica</li><li>Dor cervical e alterações da coluna cervical</li><li>Ciatica e radiculopatia lombar</li><li>Hérnia discal e sintomas associados de compressão nervosa</li><li>Dor da coluna dorsal</li></ul><p><strong>Condições articulares</strong></p><ul><li>Dor no joelho — incluindo artrose, lesões ligamentares e síndrome patelofemoral</li><li>Dor na anca — incluindo artrose, bursite e dor referida</li><li>Dor no ombro — incluindo lesão da coifa dos rotadores, síndrome subacromial e capsulite adesiva</li><li>Dor no punho e na mão — incluindo síndrome do túnel cárpico e tendinopatia</li><li>Dor no tornozelo e no pé — incluindo fascite plantar e tendinopatia de Aquiles</li><li>Dor no cotovelo — incluindo epicondilite lateral e medial</li></ul><p><strong>Músculo e tecido mole</strong></p><ul><li>Distensões e roturas musculares</li><li>Lesões de tecido mole</li><li>Tendinite e tendinopatia</li><li>Bursite</li><li>Lesões desportivas e condições musculoesqueléticas relacionadas com a atividade</li></ul><p><strong>Condições crónicas e sistémicas</strong></p><ul><li>Artrose — avaliação, gestão e coordenação de encaminhamento</li><li>Artrite inflamatória — avaliação e encaminhamento para reumatologia quando indicado</li><li>Fibromialgia — avaliação e gestão integrada</li><li>Dor neuropática — avaliação e via de gestão</li><li>Síndromes de dor crónica — avaliação estruturada e coordenação dos cuidados</li><li>Dor pós-lesão ou pós-cirúrgica — revisão e plano de gestão</li></ul><p><strong>Relacionado com o trabalho e o estilo de vida</strong></p><ul><li>Condições musculoesqueléticas relacionadas com o trabalho — lesões por esforço repetitivo, dor postural</li><li>Avaliação e aconselhamento ergonómico</li><li>Avaliação de lesões desportivas e relacionadas com o exercício</li></ul><h2>O que inclui a consulta</h2><p><strong>Avaliação clínica completa</strong></p><p>O teu médico de família faz uma história detalhada da tua dor — início, localização, carácter, intensidade, irradiação, fatores agravantes e aliviantes, impacto funcional e rastreio sistemático de sinais de alerta. Quaisquer resultados de exames de imagem, relatórios de investigação ou cartas clínicas existentes são revistos na totalidade.</p><p><strong>Rastreio de sinais de alerta</strong></p><p>A avaliação musculoesquelética inclui sempre rastreio sistemático de sinais de alerta — indicadores de que a dor pode ter uma causa subjacente grave que requer investigação urgente ou encaminhamento. O teu médico avalia isto como parte padrão de cada consulta.</p><p><strong>Plano de gestão personalizado</strong></p><p>Com base na avaliação, o teu médico aconselha sobre a abordagem mais apropriada — que pode incluir encaminhamento para fisioterapia e reabilitação estruturada, pedidos de exames de imagem quando clinicamente indicado, encaminhamento para especialista quando necessário, aconselhamento ergonómico e de estilo de vida, e recomendações clínicas à discrição do médico.</p><p><strong>Documentação clínica — à discrição do médico</strong></p><p>Quando clinicamente indicado, o teu médico de família emite a documentação clínica correspondente válida em qualquer farmácia espanhola.</p><p>Nota: Os estupefacientes e determinadas substâncias controladas requerem documentação especial que não pode ser emitida eletronicamente. Os nossos médicos de família não gerem rotineiramente substâncias controladas através de videoconsulta.</p><p><strong>Coordenação de encaminhamento e investigação</strong></p><p>Quando o encaminhamento para fisioterapia, exames de imagem ou avaliação especializada estiver clinicamente indicado, o teu médico emite a documentação relevante no próprio dia — para que saias da consulta com uma via clínica clara, e não apenas com uma recomendação para te desenrascares sozinho.</p><h2>Sinais de alerta — quando procurar cuidados de urgência</h2><p>A dor musculoesquelética é quase sempre benigna — mas algumas apresentações requerem cuidados urgentes que não podem esperar por uma videoconsulta.</p><p>Procura cuidados de urgência imediatamente se a tua dor estiver acompanhada de:</p><ul><li>Qualquer alteração na função vesical ou intestinal associada à dor nas costas — incontinência ou retenção — isto pode indicar síndrome da cauda equina, uma emergência cirúrgica</li><li>Traumatismo significativo — queda de altura, acidente de viação ou impacto significativo</li><li>Dor súbita grave no peito — que pode indicar causa cardíaca ou aórtica em vez de musculoesquelética</li><li>Perda de peso inexplicada associada a dor nova ou agravada</li><li>Febre associada a inchaço e dor articular — pode indicar artrite séptica</li><li>Sintomas neurológicos progressivos rapidamente — fraqueza, dormência ou perda de coordenação</li></ul><p>Em caso de dúvida, procura sempre cuidados de urgência.</p><h2>Porque é que a avaliação clínica precoce faz a diferença</h2><p>A maioria das condições musculoesqueléticas é autolimitada — resolve-se com repouso adequado, modificação da atividade e reabilitação estruturada. Mas sem avaliação clínica, os pacientes frequentemente fazem menos do que deviam — regressando à atividade demasiado cedo e causando lesão adicional — ou fazem demasiado — restringindo a atividade desnecessariamente e prolongando a recuperação.</p><p>A avaliação clínica precoce identifica o que está realmente a acontecer, exclui patologia subjacente grave e fornece um plano de gestão estruturado e baseado na evidência que permite uma recuperação funcional completa de forma mais rápida e segura do que esperar que a situação se resolva sozinha.</p><h2>Acesso a fisioterapia em Espanha</h2><p>A fisioterapia privada em Espanha está amplamente disponível — mas a maioria dos fisioterapeutas requer uma carta de encaminhamento ou relatório médico para iniciar o tratamento. No sistema público, o acesso à fisioterapia requer encaminhamento do médico de família do SNS — com tempos de espera que podem ser significativos.</p><p>Os nossos médicos de família emitem cartas de encaminhamento para fisioterapia no mesmo dia da consulta — dirigidas ao fisioterapeuta ou clínica da tua escolha — permitindo-te aceder a tratamento de fisioterapia privada sem demora.</p><h2>O que é a síndrome da cauda equina</h2><p>A síndrome da cauda equina é uma emergência espinal rara mas grave causada pela compressão das raízes nervosas na base da coluna. Apresenta-se como dor nas costas associada a alteração na função vesical ou intestinal — incluindo incontinência ou dificuldade em urinar — e requer avaliação cirúrgica de urgência.</p><p>É referida de forma proeminente nesta página porque pode ser confundida inicialmente com dor lombar comum. Se tens dor nas costas associada a qualquer alteração na função vesical ou intestinal, vai ao serviço de urgências mais próximo imediatamente — não esperes por uma videoconsulta, não esperes para ver se se resolve.</p>",
+      "ctaLabel": null,
+      "sortOrder": 150,
+      "durationMinutes": 15,
+      "basePriceCents": 3900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.265Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k5c40006asjuzxb8rhxd",
+          "kind": "IMAGE",
+          "key": "media/a456ec48-dfd5-4b3b-89df-e485c1cbf6ad-es-musculoesqueletico-online.png",
+          "path": "/api/media/media/a456ec48-dfd5-4b3b-89df-e485c1cbf6ad-es-musculoesqueletico-online.png",
+          "altText": "Musculoesquelético"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q8v90038ngjuyknfupgl",
+          "question": "Uma condição musculoesquelética pode realmente ser avaliada por videochamada?",
+          "answer": "Sim — para a grande maioria das apresentações. O historial clínico é a ferramenta diagnóstica mais poderosa em medicina musculoesquelética e uma história completa pode ser colhida por videochamada. O teu médico também observa o teu movimento, postura e capacidade funcional durante a chamada. Onde sejam necessários achados de exame físico que não possam ser avaliados de forma remota, o teu médico orienta-te sobre a avaliação presencial adequada.",
+          "sortOrder": 0,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q8v90039ngjuwmg0lcsl",
+          "question": "O que acontece se eu precisar de uma ressonância magnética ou radiografia?",
+          "answer": "Se os exames de imagem estiverem clinicamente indicados com base na avaliação, o seu médico emite um pedido de imagem no mesmo dia. Pode agendar a imagem num centro de radiologia privado à sua escolha em Espanha — a radiologia privada está amplamente disponível nas principais cidades e em muitos centros regionais.",
+          "sortOrder": 1,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q8v9003angjua3r79ope",
+          "question": "Posso obter um encaminhamento para fisioterapia através deste serviço?",
+          "answer": "Sim. As cartas de encaminhamento para fisioterapia são emitidas quando estão clinicamente indicadas — dirigidas ao fisioterapeuta ou clínica da sua escolha. O seu médico pode aconselhá-lo sobre o que procurar num fisioterapeuta para a sua condição específica.",
+          "sortOrder": 2,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q8v9003bngjujc0kf3z3",
+          "question": "O que é a síndrome da cauda equina e por que ela é mencionada?",
+          "answer": "A síndrome da cauda equina é uma emergência espinhal rara, mas grave, que se apresenta como dor nas costas associada a alteração na função vesical ou intestinal. Se você tem dor nas costas com qualquer alteração na função vesical ou intestinal, vá ao serviço de urgências mais próximo imediatamente.",
+          "sortOrder": 3,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q8v9003cngjulewdbnyn",
+          "question": "Este serviço é adequado para lesões esportivas?",
+          "answer": "Sim. As lesões musculoesqueléticas desportivas e relacionadas com o exercício são uma parte central deste serviço — incluindo lesões agudas, condições por uso excessivo e avaliação de retorno ao desporto após lesão.",
+          "sortOrder": 4,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q8v9003dngjufkbfwhgs",
+          "question": "Já tenho resultados de exames de imagem — o médico pode revisá-los?",
+          "answer": "Sim. Traga quaisquer resultados de exames de imagem, relatórios ou cartas clínicas existentes para a sua consulta. O seu médico analisa-os na íntegra e incorpora os achados no plano de tratamento.",
+          "sortOrder": 5,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q8v9003engjuzon0r8no",
+          "question": "Preciso ter feito exames de imagem antes de marcar?",
+          "answer": "Não. O seu médico avalia se os exames de imagem estão clinicamente indicados e os solicita onde for apropriado. Se já tiver exames de imagem, traga os resultados — o seu médico os analisa na íntegra.",
+          "sortOrder": 6,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q8v9003fngju9p7aqivd",
+          "question": "Posso usar este serviço sem médico de família em Espanha?",
+          "answer": "Sim. Este serviço está disponível para qualquer pessoa na Espanha — sem registo prévio, sem médico de família necessário, sem seguro de saúde necessário.",
+          "sortOrder": 7,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q8v9003gngjuxb5zma44",
+          "question": "Preciso de seguro de saúde espanhol?",
+          "answer": "Não. É um serviço privado de pagamento direto. A documentação clínica e os encaminhamentos emitidos através deste serviço são aceitos em base privada independentemente do estado de seguro.",
+          "sortOrder": 8,
+          "resolvedLocale": "PT"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "PT",
+      "links": [
+        {
+          "id": "cmre7tkdz004mg8juc9wpct8q",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con dolor radicular y evaluación neurológica?",
+          "body": "Para dolor radicular y evaluación neurológica, consulta nuestra página de Neurología Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Neurología Especialista",
+          "targetSlug": "neurologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tjlx004kg8juvjqr1eq0",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Dolor crónico y enfermedades crónicas?",
+          "body": "Si tu situación está relacionada con dolor crónico y enfermedades crónicas, nuestra Enfermedades Crónicas te ofrece la evaluación adecuada.",
+          "ctaLabel": "Enfermedades Crónicas",
+          "targetSlug": "enfermedades-cronicas-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tl61004og8juhbx6srep",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre consulta médica general con médico de cabecera?",
+          "body": "Nuestra Consulta Médica General está pensada específicamente para consulta médica general con médico de cabecera.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

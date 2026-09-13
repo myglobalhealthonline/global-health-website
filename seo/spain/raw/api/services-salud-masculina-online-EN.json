@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/salud-masculina-online?countryCode=es&locale=EN",
+  "checkedAt": "2026-09-13T02:29:58.364Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q1550013ngjujfvwl58k",
+      "kind": "GENERAL",
+      "slug": "salud-masculina-online",
+      "name": "Men's Health",
+      "summary": null,
+      "seoTitle": "Men's Health Online Spain | Confidential Assessment | English Doctor",
+      "seoDescription": "Erectile dysfunction, testosterone, libido, or men's health concern in Spain? Our OMC-registered doctors offer confidential clinical assessments by secure video call. Same-day appointments available.",
+      "seoKeywords": [
+        "salud masculina online España",
+        "disfunción eréctil médico online España",
+        "testosterona baja consulta online España",
+        "libido médico online España",
+        "salud sexual masculina online España"
+      ],
+      "heroTitle": "Men's Health — Confidential Clinical Assessment in Spain",
+      "heroDescription": "Men's health concerns — erectile dysfunction, low testosterone, reduced libido, and sexual performance — are among the most common and most under-reported medical issues among men. Most men who experience these symptoms never speak to a doctor about them. They should. Because in the vast majority of cases, these are medical conditions with medical causes — and medical solutions. Our doctors, registered with the Spanish Medical Council (OMC — Organización Médica Colegial), offer confidential men's health assessments by secure video call in English. No waiting room, no discomfort of an in-person consultation for a sensitive concern. A full clinical assessment and a clear plan, same day, from anywhere in Spain.",
+      "detailBody": "<h2>Who This Service Is For</h2><p>This consultation is appropriate for adult men with:</p><ul><li>Erectile dysfunction — new onset or worsening</li><li>Reduced libido or loss of interest in sexual activity</li><li>Premature or delayed ejaculation</li><li>Performance anxiety with clinical impact</li><li>Symptoms of testosterone deficiency — fatigue, mood changes, reduced muscle mass, weight gain</li><li>Hormonal imbalance affecting energy, mood, weight, or sexual function</li><li>Sexual dysfunction related to diabetes, cardiovascular disease, or medication</li><li>General men's health concerns — cardiovascular risk, metabolic health, hair loss with hormonal basis</li><li>A need for investigation requests — testosterone panel, cardiovascular risk assessment, metabolic profile</li></ul><h2>Why Erectile Dysfunction Deserves Clinical Assessment</h2><p>Erectile dysfunction is not simply a lifestyle inconvenience. It is one of the most reliable early warning signs of underlying cardiovascular disease — often presenting years before a cardiac event. It is also strongly associated with diabetes, hypertension, testosterone deficiency, and medication side effects.</p><p>A man who treats erectile dysfunction as an embarrassing inconvenience rather than a clinical signal is missing an important opportunity for early intervention on conditions that, left unaddressed, carry serious long-term health consequences.</p><p>The clinical history is the most powerful diagnostic tool in men's health — and a full history can be taken by video call. Our doctors assess the complete clinical picture, not just the presenting symptom.</p><h2>What Your Consultation Includes</h2><p><strong>Full clinical assessment</strong></p><p>Your doctor reviews your symptoms in detail, medical history, current medications, cardiovascular risk factors, hormonal indicators, psychological contributors, and lifestyle factors — building a complete clinical picture of what is causing your symptoms.</p><p><strong>Identification of underlying causes</strong></p><p>Men's health symptoms rarely exist in isolation. Erectile dysfunction is frequently an early marker of cardiovascular disease, diabetes, or testosterone deficiency. Your doctor assesses the complete clinical picture — not just the presenting complaint.</p><p><strong>Clinical management plan</strong></p><p>Based on the assessment, your doctor advises on the most appropriate next steps — which may include lifestyle and metabolic optimisation, investigation requests, clinical recommendations at the doctor's professional discretion, or referral to urology or endocrinology where indicated.</p><p><strong>Clinical documentation — at the doctor's professional discretion</strong></p><p>When clinically indicated, your doctor issues appropriate clinical documentation valid at any pharmacy in Spain.</p><p>Note: Controlled substances cannot be issued electronically under Spanish law. Your doctor advises if this applies to your situation.</p><p><strong>Referral and investigation coordination</strong></p><p>When specialist referral or blood tests are clinically indicated, your doctor issues the relevant documentation the same day.</p><h2>Conditions Commonly Assessed</h2><p><strong>Sexual health and function</strong></p><ul><li>Erectile dysfunction — assessment of medical, vascular, hormonal, and psychological factors</li><li>Premature and delayed ejaculation</li><li>Reduced libido and loss of interest in sexual activity</li><li>Performance anxiety with clinical impact</li><li>Sexual dysfunction related to diabetes, cardiovascular disease, or medication</li></ul><p><strong>Hormonal and metabolic</strong></p><ul><li>Testosterone deficiency — symptoms, assessment, and management pathway</li><li>Hormonal imbalance affecting energy, mood, weight, and sexual function</li><li>Metabolic syndrome and its impact on men's health</li><li>Weight-related hormonal disruption</li></ul><p><strong>General men's health</strong></p><ul><li>Cardiovascular risk assessment in men</li><li>Fatigue, low energy, and mood changes with hormonal or metabolic cause</li><li>Hair loss with hormonal basis</li><li>Prostate health concerns and referral where indicated</li><li>General health assessments and preventive care for men</li></ul><h2>Confidentiality</h2><p>Everything discussed during your consultation is confidential and protected under Spanish and European data protection law — including Regulation (EU) 2016/679 (GDPR) implemented through Organic Law 3/2018 (LOPDGDD) and Law 41/2002 on patient autonomy.</p><p>Your consultation is conducted by encrypted video call. Nobody at your workplace, in your household, or in your social circle needs to know you booked an appointment. Information is not shared without your explicit consent, except in the limited circumstances required by law.</p>",
+      "ctaLabel": null,
+      "sortOrder": 170,
+      "durationMinutes": 20,
+      "basePriceCents": 4900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.266Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru15p110001bsjuuclm1hlf",
+          "kind": "IMAGE",
+          "key": "media/e47a050b-a499-472c-bb10-8eeccbe628cb-es-salud-masculina-online.png",
+          "path": "/api/media/media/e47a050b-a499-472c-bb10-8eeccbe628cb-es-salud-masculina-online.png",
+          "altText": "Salud Masculina"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q1dj0014ngju15o6qjum",
+          "question": "Is this a prescription service?",
+          "answer": "No. This is a clinical evaluation service. Our doctors perform a complete clinical evaluation and advise on appropriate management based on the clinical findings. Any clinical documentation — where indicated — is issued at the physician's discretion after a complete evaluation.",
+          "sortOrder": 0,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q1dj0015ngjutu74xf6s",
+          "question": "Can erectile dysfunction really be evaluated by video call?",
+          "answer": "Yes — for the vast majority of presentations. The medical history is the most powerful diagnostic tool in men’s health, and a complete history can be taken by video call. The doctor also assesses lifestyle factors, cardiovascular risk, hormonal indicators, and psychological contributors during the call. Where physical examination findings are needed that cannot be assessed remotely, the doctor advises on the appropriate in-person evaluation.",
+          "sortOrder": 1,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q1dj0016ngjuyh20e528",
+          "question": "What blood tests might be needed?",
+          "answer": "Depending on your presentation, the doctor may request a testosterone panel, cardiovascular risk assessment, fasting glucose, HbA1c, thyroid function, and metabolic profile. Lab requests can be coordinated during the same visit.",
+          "sortOrder": 2,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q1dj0017ngjuwm28vgyu",
+          "question": "Is this service suitable for young men?",
+          "answer": "Yes. Erectile dysfunction and other men’s health concerns can arise in men starting in their twenties — often with psychological or lifestyle-related causes at younger ages. This service is appropriate for adult men of all ages.",
+          "sortOrder": 3,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q1dj0018ngju47ue2g8b",
+          "question": "What happens if my condition requires specialized evaluation?",
+          "answer": "If your evaluation indicates that specialized assessment is needed — urology, endocrinology, or cardiology — the doctor clearly advises you and coordinates the referral the same day.",
+          "sortOrder": 4,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q1dj0019ngjuevwd2tcr",
+          "question": "Can I use this service without a primary care physician in Spain?",
+          "answer": "Yes. This service is available to all men in Spain — including expats and international residents without a registered primary care doctor in Spain.",
+          "sortOrder": 5,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q1dj001angju8pw5m9n6",
+          "question": "Do I need Spanish health insurance?",
+          "answer": "No. It is a private direct-pay service. Clinical documentation issued through this service is provided at the full private price regardless of insurance status.",
+          "sortOrder": 6,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q1dj001bngjus7bashou",
+          "question": "Can I use this service from anywhere in Spain?",
+          "answer": "Yes — including the Balearic Islands, the Canary Islands, Ceuta and Melilla. You only need a stable internet connection and a device with a camera.",
+          "sortOrder": 7,
+          "resolvedLocale": "EN"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "EN",
+      "links": [
+        {
+          "id": "cmre7s6g3001og8ju5f4eibm6",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Control de peso y déficit de testosterona?",
+          "body": "Si tu situación está relacionada con control de peso y déficit de testosterona, nuestra Control de Peso te ofrece la evaluación adecuada.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7s787001qg8jux0evjymo",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con caída del cabello de base hormonal en hombres?",
+          "body": "Para caída del cabello de base hormonal en hombres, consulta nuestra página de Caída del Cabello — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Caída del Cabello",
+          "targetSlug": "caida-cabello-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7s809001sg8juukxxi0ye",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre solicitar panel de testosterona y perfil metabólico?",
+          "body": "Nuestra Derivaciones y Pruebas está pensada específicamente para solicitar panel de testosterona y perfil metabólico.",
+          "ctaLabel": "Derivaciones y Pruebas",
+          "targetSlug": "derivaciones-pruebas-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7s8sc001ug8juqtct7q6a",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Salud mental en hombres?",
+          "body": "Si tu situación está relacionada con salud mental en hombres, nuestra Salud Mental te ofrece la evaluación adecuada.",
+          "ctaLabel": "Salud Mental",
+          "targetSlug": "salud-mental-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}
