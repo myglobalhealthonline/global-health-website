@@ -1,0 +1,80 @@
+[
+  {
+    "url": "https://www.myglobalhealth.online/brazil/pt",
+    "before": {
+      "seoTitle": "Médico Online Brasil | Clínicos e Especialistas Registados",
+      "seoDescription": "Consulte hoje um médico registrado por videochamada — clínica geral, atestados médicos, encaminhamentos para especialistas. Mesmo dia no Brasil."
+    },
+    "after": {
+      "seoTitle": "Médico online no Brasil | Consulta por vídeo",
+      "seoDescription": "Consulta por vídeo com médico de família no Brasil. Atendimento em português, inglês ou espanhol. Confira horários, serviços e preços."
+    },
+    "sourceFingerprint": "34482b7809916400f0e08c81b1ff20cc6a2a3c701f8a4a4df7f38fda35b8d857",
+    "hold": "Winning HOME storage row/source reconciliation and clinical review required; outside current writer",
+    "payloadSha256": "363178ead453286e69d21a115d9a974643b6a6e71d6cb48ef6fc1dec78665d20"
+  },
+  {
+    "url": "https://www.myglobalhealth.online/brazil/pt/book",
+    "before": {
+      "linkLabel": "Need a same-day GP instead?"
+    },
+    "after": {
+      "linkLabel": "Ver consulta com médico de família"
+    },
+    "source": "frontend/app/[country]/[lang]/book/page.tsx",
+    "hold": "Separate localized frontend candidate; not implemented or deployed",
+    "payloadSha256": "018b729568d144e7db17174b826cd1d3cf8d0c028ec0b56d2dc687cbc0528fd1"
+  },
+  {
+    "url": "https://www.myglobalhealth.online/brazil/en",
+    "before": {
+      "seoTitle": "Online Doctor Brazil | Registered GPs & Specialists",
+      "seoDescription": "See a registered doctor online today — GP consultations, medical certificates, specialist referrals. Same-day video appointments in Brazil."
+    },
+    "after": {
+      "seoTitle": "Online doctor in Brazil | Video consultations",
+      "seoDescription": "Video consultations with a family doctor in Brazil, in Portuguese, English or Spanish. Check appointments, services and prices."
+    },
+    "sourceFingerprint": "fe06bc47251bf85d1bbbe6a3403aa0670c9095a2dc602e50e46806be204d18bd",
+    "hold": "Winning HOME storage row/source reconciliation and clinical review required; outside current writer",
+    "payloadSha256": "1e2d09e9673d1a1c11c2a13db508cdd7cc0b51765526a6ff91b0b77ca892ce6e"
+  },
+  {
+    "url": "https://www.myglobalhealth.online/brazil/en/book",
+    "before": {
+      "linkLabel": "Need a same-day GP instead?"
+    },
+    "after": {
+      "linkLabel": "View family doctor consultations"
+    },
+    "source": "frontend/app/[country]/[lang]/book/page.tsx",
+    "hold": "Separate localized frontend candidate; not implemented or deployed",
+    "payloadSha256": "2aafd86ecfe33d90c3b7d3b232b08b764f9570dd1fdc3fbd7384524c899a400f"
+  },
+  {
+    "url": "https://www.myglobalhealth.online/brazil/es",
+    "before": {
+      "seoTitle": "Médico Online Brasil | Médicos y Especialistas Colegiados",
+      "seoDescription": "Consulte hoy con un médico colegiado por videollamada — consultas de medicina general, certificados médicos, derivaciones a especialistas. Citas el mismo día en Brasil."
+    },
+    "after": {
+      "seoTitle": "Médico online en Brasil | Consulta por vídeo",
+      "seoDescription": "Consulta por vídeo con un médico de familia en Brasil, en portugués, inglés o español. Revisa horarios, servicios y precios."
+    },
+    "sourceFingerprint": "6f182de99b38df6411a4cfb36fea0b31bb44b77dca2af02e00045987da55765f",
+    "hold": "Winning HOME storage row/source reconciliation and clinical review required; outside current writer",
+    "payloadSha256": "7262c214dc74e6706e880e879333ff16eb1d22ed440711fe44113a9d906bd898"
+  },
+  {
+    "url": "https://www.myglobalhealth.online/brazil/es/book",
+    "before": {
+      "linkLabel": "Need a same-day GP instead?"
+    },
+    "after": {
+      "linkLabel": "Ver consultas con médico de familia"
+    },
+    "source": "frontend/app/[country]/[lang]/book/page.tsx",
+    "hold": "Separate localized frontend candidate; not implemented or deployed",
+    "payloadSha256": "3eb1fff49ff5be63b33f84b7e735fb36ee07008b9200ed254faae3c6e25330c6"
+  }
+]

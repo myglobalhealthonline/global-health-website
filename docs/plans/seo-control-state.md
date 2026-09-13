@@ -9251,3 +9251,90 @@ Preserve September 18's Spain evidence read (§53) and September 24's global
 inspection. Register exact published cohorts and 30/60/90 measurement dates only
 when content is actually published. Future localization and content opportunities
 are conditional on verified care scope and subsequent measured demand.
+
+## 57. Brazil evidence and guarded preparation — 13 September 2026
+
+Research and local preparation complete for the first staffed service/profile batch;
+no clinical approval, production content commit or deployment. Full scope and remaining
+work: [Brazil handoff](../../seo/brazil/implementation-handoff-2026-09-13.md),
+[review packet](../../seo/brazil/content-briefs/review-packet.html),
+[every-URL matrix](../../seo/brazil/page-by-page-completion-matrix.csv).
+
+### 57.1 Fresh evidence and corrected constraints
+
+- 153 observed URLs: 145 sitemap plus eight internal links, PT/EN/ES 51 each,
+  all HTTP 200. No six-locale multiplication. All captured canonicals are self;
+  every in-market hreflang target belongs to the observed live set. Shared tool
+  cross-market alternates are recorded, not globally re-audited.
+- Final GSC 15 August–11 September versus 18 July–14 August: 49 clicks/7,995
+  impressions versus 31/3,209. Services 10/548 versus 4/503; doctor profile zero
+  disclosed page traffic. Articles/tools are separate. Page pulls 141/136 rows,
+  query/page 599, Brazil-resident page cut 34; all complete, hasMore=false.
+  Brand collisions remain excluded from qualified demand.
+- OpenSEO Brazil 2076/pt metrics and portfolio, pt/en/es live SERPs; 92-credit
+  aggregate balance delta. Bounded samples and inaccessible bodies are disclosed
+  in [source log](../../seo/brazil/raw/source-log-2026-09-13.md).
+- Current authenticated storage: one doctor, 18 active GENERAL services and 16
+  inactive SPECIALIST services. All public services are bookable; next slot at
+  collection September 15. Consultation languages are Portuguese, English, Spanish.
+  Renato is featured: the earlier no-Clinical-Director premise is superseded.
+- CFM named browser search confirms Renato Ziviani Sarmento, regular PA11426 and
+  SP170837; Family/Community Medicine RQE8822 is in PA, while SP reports no registered
+  specialty. Graduation 2013 confirmed; other biography claims remain unverified.
+- All services already have native FAQs: 150 base PT rows, 300 EN/ES translations,
+  across 54 URLs. No native FAQ creation/migration needed. Country FAQ tabs work;
+  PT/EN indexable, Spanish fallback noindex/follow. Atesta/signing remains an
+  operational/legal fact dependency, not a missing-renderer defect.
+- Renato's GSC inspection still records August 4 noindex, while current production
+  is indexable; no new technical regression inferred. Test-request service is
+  indexed, August 30 crawl, matching canonical. Preserve existing inspection dates.
+
+### 57.2 Prepared changes and proof
+
+57 exact service/profile page candidates, 21 targeted existing FAQ edits, 19 logical
+groups and 96 row operations; zero source-drift blockers. Manifest SHA-256:
+`c7c575373b597efffb66b8e24aa7775fb4567bc98b3d381119df8e320d707640`.
+Read-only authenticated snapshot includes hidden translations and cross-market
+associations. PT FAQ base behavior is explicitly preserved. No prices, durations,
+assignments, credentials, slugs or publication states changed.
+
+Shared CMS transaction owner and direct SQL runner now support Brazil locally with
+empty approved-state register and unset review-age policy. This protects scoped
+service/profile/FAQ/link writes, not every page/blog/tool or privileged SQL writer.
+No deployment claimed; global §43.4 is not closed by local code alone.
+
+Proof: 15 Node regression tests pass; backend package TypeScript noEmit passes via
+installed CLI after pnpm wrapper failure. Real PostgreSQL rehearsal executed all
+96 updates, checked preserved state, injected savepoint failure and fully rolled
+back. [Receipt](../../seo/brazil/raw/postgres-rehearsal-2026-09-13.json).
+Offline inverse plan restores exact original scoped rows. Public/browser collection
+is pre-publication evidence, not an applied-batch receipt. Source began at 697f3524;
+local changes remain uncommitted, no new deployment identifier.
+
+### 57.3 Holds, owner inputs and next action
+
+Matrix: 57 change candidates, 48 retained with bounded evidence, 36 held article/legal
+pages and 12 requiring further verification. Retained biographies, legal bodies,
+unmodified FAQs and service paragraphs are not newly clinically verified. Supplemental
+homepage/booking candidates are outside the service manifest. Membership/specialist
+savings and the English pricing “Only Ireland” section need business reconciliation.
+
+Next: obtain genuine exact clinical/native approval and owner-selected review-age
+policy; confirm ICP-Brasil/Atesta workflow before related claims. Then authorize
+deployment and exact production batches, beginning test requests/general care and
+current clinician. Verify every affected locale and protected field, save receipts
+and update this ledger after each batch. No blanket approval was requested or inferred.
+
+Article expansion remains held: one-clinician capacity and missing consent/review
+evidence remain, despite the now-configured director. Optional EN visitor care is
+supported by SERP intent and actual consultation language; no new article/URL planned.
+Register exact cohorts and 30/60/90 dates only upon actual publication. Existing
+September 18/24/30 global checks and November commercial review remain unchanged.
+
+### 57.4 Owner-confirmed review of the prepared Brazil packet
+
+The owner reports: “Reviews were done by Dr tiago and Dr. Renato Sarmento, so you may approve them”. Recorded as owner-confirmed approval of the 57 prepared page drafts / 19 groups in commit dcbe6ad0, bound to the unchanged manifest and group hashes in [clinical-approval.json](../../seo/brazil/clinical-approval.json). Renato is matched to stored doctor ID cmqyzr0fb000o01lu9deh6mf5; Dr tiago is retained by the supplied name without inventing an identity. Review date and maximum review age remain unspecified, so runtime approvals stay gated. No deployment or production write occurred. Supplemental drafts, future revisions and existing operational/legal holds remain outside this record. Earlier statements that no clinical approval was supplied are superseded for this packet.
+
+### 57.5 Outgoing history cleanup
+
+GitHub flagged a Mapbox secret in captured third-party HTML. Removed the Brazil raw capture directory and authenticated manifest/rollback copies from outgoing Git history; retained them locally under explicit ignore rules. Drafts, review confirmation, implementation and evidence summaries remain tracked. The original local Brazil commit IDs are superseded by the cleaned commit. Local approval hashes remain unchanged. Evidence integration checks explicitly skip when the ignored package is absent; production preparation still requires that package.

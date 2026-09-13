@@ -1,0 +1,1586 @@
+[
+  {
+    "key": "service:solicitacao-exames-online",
+    "url": "https://www.myglobalhealth.online/brazil/en/services/solicitacao-exames-online",
+    "id": "cmrf53wsr003bmwjuz15y0o32",
+    "slug": "solicitacao-exames-online",
+    "locale": "en",
+    "source": "raw/api/services-solicitacao-exames-online-EN.json",
+    "sourceFingerprint": "71d9dd4c07f4a6efe97058983f8533208f14a907bc68fbf5d33540980413d8d9",
+    "before": {
+      "seoTitle": "Online Test Request Brazil | Same Day",
+      "heroTitle": "Online Test Request — by Video Call, Same Day",
+      "seoDescription": "Request blood tests, imaging and other laboratory tests via video call with a general practitioner. Test order valid at laboratories throughout Brazil. Doctors with active CRM. Same day.",
+      "heroDescription": "You need a full check-up but do not have a primary doctor. You want to repeat routine tests but your next appointment with the specialist is in two months. You received a recommendation to have tests done but do not know where to start. Or you simply want to monitor your health proactively without depending on a waiting list. In Brazil, any laboratory or imaging test in the private sector can be requested by a doctor with an active CRM — and with a teleconsultation, you can get this request on the same day, from anywhere in Brazil, without needing to leave home to go to the office just to pick up a paper. Global Health connects you with general practitioners with an active CRM to request tests by video call — with a complete clinical evaluation to ensure that the requested tests are the most appropriate for your profile and situation."
+    },
+    "after": {
+      "seoTitle": "Online Test Request Brazil",
+      "heroTitle": "Online Test Request — by Video Call",
+      "seoDescription": "Discuss whether you need tests with a doctor by video. Any test request depends on the clinical assessment. Check times and price.",
+      "heroDescription": "Discuss whether you need tests with a doctor by video. Any test request depends on the clinical assessment. Check times and price."
+    },
+    "faqPatches": [
+      {
+        "id": "cmrf53x0x003cmwju7y5ws9mk",
+        "before": {
+          "question": "Is the test order issued by teleconsultation accepted at laboratories?",
+          "answer": "Yes. A test order issued by a physician with an active CRM and ICP-Brasil digital signature is valid at private laboratories and imaging clinics throughout Brazil, in accordance with CFM Resolution 2,299/2021 and Law 14,510/2022."
+        },
+        "after": {
+          "question": "Is the test order issued by teleconsultation accepted at laboratories?",
+          "answer": "The doctor assesses whether tests are needed. Before booking a test, confirm the request requirements and costs with the laboratory or clinic."
+        }
+      },
+      {
+        "id": "cmrf53x0x003hmwjur9bs008r",
+        "before": {
+          "question": "Can I schedule a follow-up appointment to interpret the results?",
+          "answer": "Yes. After receiving the results, you can schedule a follow-up appointment with the same doctor or with another general practitioner on the platform for interpretation of the findings and guidance on the next steps."
+        },
+        "after": {
+          "question": "Can I schedule a follow-up appointment to interpret the results?",
+          "answer": "You can check the schedule for another consultation to discuss results. The Brazil catalogue currently lists Dr. Renato Sarmento. Check the price before booking."
+        }
+      }
+    ],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "c4002b5a940c31dad1d96cd6ce8bc1ce646666278dd971e7d3c2502add933967"
+  },
+  {
+    "key": "service:solicitacao-exames-online",
+    "url": "https://www.myglobalhealth.online/brazil/es/services/solicitacao-exames-online",
+    "id": "cmrf53wsr003bmwjuz15y0o32",
+    "slug": "solicitacao-exames-online",
+    "locale": "es",
+    "source": "raw/api/services-solicitacao-exames-online-ES.json",
+    "sourceFingerprint": "8581244368ca6f38f6d152efcdc89d78e9c5f9907408a61b3d3792169de9c0d6",
+    "before": {
+      "seoTitle": "Solicitud de Exámenes Online Brasil | Pedido de Exámenes | Mismo Día",
+      "heroTitle": "Solicitud de Exámenes en Línea — Pedido de Exámenes por Videollamada, Mismo Día",
+      "seoDescription": "Solicita análisis de sangre, pruebas de imagen y otros exámenes de laboratorio por videollamada con médico general. Solicitud de exámenes válida en laboratorios de todo Brasil. Médicos con CRM activo. El mismo día.",
+      "heroDescription": "¿Necesita un chequeo completo pero no tiene médico de referencia. Quiere repetir análisis de rutina pero la próxima consulta con el especialista es dentro de dos meses. Recibió una recomendación para hacerse exámenes pero no sabe por dónde empezar. O simplemente quiere monitorear su salud de forma proactiva sin depender de una lista de espera. En Brasil, cualquier examen de laboratorio o de imagen privado puede ser solicitado por un médico con CRM activo — y con la teleconsulta, usted puede obtener esa solicitud el mismo día, desde cualquier lugar de Brasil, sin necesidad de salir de casa para ir al consultorio solo a buscar un papel. Global Health lo conecta con médicos clínicos generales con CRM activo para la solicitud de exámenes por videollamada — con evaluación clínica completa para garantizar que los exámenes solicitados sean los más adecuados para su perfil y situación."
+    },
+    "after": {
+      "seoTitle": "Solicitud de Exámenes Online Brasil | Pedido de Exámenes",
+      "heroTitle": "Solicitud de Exámenes en Línea — Pedido de Exámenes por Videollamada",
+      "seoDescription": "Consulta por vídeo si necesitas pruebas médicas. La solicitud depende de la valoración clínica. Revisa los horarios y el precio.",
+      "heroDescription": "Consulta por vídeo si necesitas pruebas médicas. La solicitud depende de la valoración clínica. Revisa los horarios y el precio."
+    },
+    "faqPatches": [
+      {
+        "id": "cmrf53x0x003cmwju7y5ws9mk",
+        "before": {
+          "question": "¿La solicitud de exámenes emitida por teleconsulta es aceptada en los laboratorios?",
+          "answer": "Sí. La solicitud de exámenes emitida por médico con CRM activo y firma digital ICP-Brasil es válida en laboratorios y clínicas de imagen particulares en todo Brasil, conforme a la Resolución CFM 2.299/2021 y la Ley 14.510/2022."
+        },
+        "after": {
+          "question": "¿La solicitud de exámenes emitida por teleconsulta es aceptada en los laboratorios?",
+          "answer": "El médico valora si necesitas pruebas. Antes de reservarlas, confirma los requisitos de la solicitud y los costes con el laboratorio o la clínica."
+        }
+      },
+      {
+        "id": "cmrf53x0x003hmwjur9bs008r",
+        "before": {
+          "question": "¿Puedo agendar una consulta de seguimiento para interpretar los resultados?",
+          "answer": "Sí. Después de recibir los resultados, puede programar una consulta de seguimiento con el mismo médico o con otro médico general de la plataforma para la interpretación de los hallazgos y la orientación sobre los próximos pasos."
+        },
+        "after": {
+          "question": "¿Puedo agendar una consulta de seguimiento para interpretar los resultados?",
+          "answer": "Puedes consultar la agenda para otra consulta sobre tus resultados. El catálogo de Brasil muestra actualmente al Dr. Renato Sarmento. Revisa el precio antes de reservar."
+        }
+      }
+    ],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "0c73190e6714b414ce0dcbf388980284553a2afffaaec1e231a53f4bbcde1b1f"
+  },
+  {
+    "key": "service:solicitacao-exames-online",
+    "url": "https://www.myglobalhealth.online/brazil/pt/services/solicitacao-exames-online",
+    "id": "cmrf53wsr003bmwjuz15y0o32",
+    "slug": "solicitacao-exames-online",
+    "locale": "pt",
+    "source": "raw/api/services-solicitacao-exames-online-PT.json",
+    "sourceFingerprint": "33bc4b3f177f412b68b8f61b6f0be3e6fed8600aa5b8e869b575fce605d43bd8",
+    "before": {
+      "seoTitle": "Solicitação de Exames Online Brasil | Pedido de Exames | Mesmo Dia",
+      "heroTitle": "Solicitação de Exames Online — Pedido de Exames por Videochamada, Mesmo Dia",
+      "seoDescription": "Solicite exames de sangue, imagem e outros exames laboratoriais por videochamada com clínico geral. Pedido de exames válido em laboratórios de todo o Brasil. Médicos com CRM ativo. Mesmo dia.",
+      "heroDescription": "Você precisa de um check-up completo mas não tem médico de referência. Quer repetir exames de rotina mas a próxima consulta com o especialista é daqui a dois meses. Recebeu uma recomendação de fazer exames mas não sabe por onde começar. Ou simplesmente quer monitorar sua saúde de forma proativa sem depender de fila de espera. No Brasil, qualquer exame laboratorial ou de imagem particular pode ser solicitado por médico com CRM ativo — e com a teleconsulta, você consegue esse pedido no mesmo dia, de qualquer lugar do Brasil, sem precisar sair de casa para ir ao consultório só para buscar um papel. A Global Health conecta você com clínicos gerais com CRM ativo para solicitação de exames por videochamada — com avaliação clínica completa para garantir que os exames solicitados são os mais adequados para o seu perfil e situação."
+    },
+    "after": {
+      "seoTitle": "Solicitação de Exames Online Brasil | Pedido de Exames",
+      "heroTitle": "Solicitação de Exames Online — Pedido de Exames por Videochamada",
+      "seoDescription": "Converse com um médico por vídeo sobre a necessidade de exames. A solicitação depende da avaliação clínica. Confira horários e preço.",
+      "heroDescription": "Converse com um médico por vídeo sobre a necessidade de exames. A solicitação depende da avaliação clínica. Confira horários e preço."
+    },
+    "faqPatches": [
+      {
+        "id": "cmrf53x0x003cmwju7y5ws9mk",
+        "before": {
+          "question": "O pedido de exames emitido por teleconsulta é aceito nos laboratórios?",
+          "answer": "Sim. O pedido de exames emitido por médico com CRM ativo e assinatura digital ICP-Brasil é válido em laboratórios e clínicas de imagem particulares em todo o Brasil, conforme a Resolução CFM 2.299/2021 e a Lei 14.510/2022."
+        },
+        "after": {
+          "question": "O pedido de exames emitido por teleconsulta é aceito nos laboratórios?",
+          "answer": "O médico avalia se os exames são necessários. Antes de agendar a coleta ou o exame, confirme com o laboratório ou a clínica os requisitos do pedido e os custos."
+        }
+      },
+      {
+        "id": "cmrf53x0x003hmwjur9bs008r",
+        "before": {
+          "question": "Posso agendar consulta de retorno para interpretar os resultados?",
+          "answer": "Sim. Após receber os resultados, você pode agendar uma consulta de retorno com o mesmo médico ou com outro clínico geral da plataforma para interpretação dos achados e orientação sobre os próximos passos."
+        },
+        "after": {
+          "question": "Posso agendar consulta de retorno para interpretar os resultados?",
+          "answer": "Você pode verificar a agenda para uma nova consulta e conversar sobre os resultados. No momento, o catálogo do Brasil lista o Dr. Renato Sarmento. Confira o preço antes de agendar."
+        }
+      }
+    ],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "053f1fda3db0b9a13d0823c85e9f1c9844b5f306ebd9468edc0e5921bdadb55f"
+  },
+  {
+    "key": "service:consulta-clinica-online",
+    "url": "https://www.myglobalhealth.online/brazil/en/services/consulta-clinica-online",
+    "id": "cmrf53m7j0000mwjud779ur6k",
+    "slug": "consulta-clinica-online",
+    "locale": "en",
+    "source": "raw/api/services-consulta-clinica-online-EN.json",
+    "sourceFingerprint": "9b4258e7009fa2a0ee6bc17cd627283caed4160bf9ceeecdc0ae4e77f5d61cae",
+    "before": {
+      "seoTitle": "Online Medical Consultation Brazil | General Practitioner | Same Day",
+      "heroTitle": "Online Medical Consultation — General Practitioner by Video Call, Same Day",
+      "seoDescription": "Consultation with a general practitioner by video call, valid medical certificate and test request. No waiting line. Doctors with active CRM, available throughout Brazil. Same-day scheduling.",
+      "heroDescription": "Scheduling an appointment with a private doctor in Brazil usually means days of waiting — sometimes weeks. Through the public health system, even more so. For those who need to speak with a doctor today, teleconsultation has completely changed this scenario. Global Health connects you with general practitioners with an active CRM, available by secure video call on the same day — from anywhere in Brazil, in Portuguese or English. Medical certificate with legal validity, test orders, treatment renewal, and electronic prescriptions where clinically indicated, all in a single consultation. No waiting line. No leaving home. No waiting weeks for an appointment."
+    },
+    "after": {
+      "seoTitle": "Online Medical Consultation Brazil | General Practitioner",
+      "heroTitle": "Online Medical Consultation — General Practitioner by Video Call",
+      "seoDescription": "Discuss symptoms and general health with a doctor by video. Check appointment times and the price before booking.",
+      "heroDescription": "Check available appointments before booking. Video consultations are available in Portuguese, English or Spanish."
+    },
+    "faqPatches": [
+      {
+        "id": "cmrf53mg60002mwjutdfj57z9",
+        "before": {
+          "question": "Is the medical certificate issued via telemedicine accepted at work?",
+          "answer": "Yes. The medical certificate issued by telemedicine is legally valid and must be accepted by employers in accordance with art. 473 of the CLT. Refusal constitutes a labor violation, as confirmed by the TRT-SP in 2024."
+        },
+        "after": {
+          "question": "Is the medical certificate issued via telemedicine accepted at work?",
+          "answer": "A consultation does not guarantee a medical certificate or its acceptance. The doctor assesses whether a document is appropriate. Check the requirements with its recipient."
+        }
+      }
+    ],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "95e3df6ee6117f14343a356241fccd8cb8ba55fe0ca34c8bfe2f58d196ce5dac"
+  },
+  {
+    "key": "service:consulta-clinica-online",
+    "url": "https://www.myglobalhealth.online/brazil/es/services/consulta-clinica-online",
+    "id": "cmrf53m7j0000mwjud779ur6k",
+    "slug": "consulta-clinica-online",
+    "locale": "es",
+    "source": "raw/api/services-consulta-clinica-online-ES.json",
+    "sourceFingerprint": "b81210f66387f48b1a092a83c34e590ac0655937ff2c828f15802df7a4ca5fae",
+    "before": {
+      "seoTitle": "Consulta Médica Online Brasil | Médico General | Mismo Día",
+      "heroTitle": "Consulta Médica Online — Clínico General por Videollamada, Mismo Día",
+      "seoDescription": "Consulta con médico general por videollamada, certificado médico válido y solicitud de exámenes. Sin lista de espera. Médicos con CRM activo, atendiendo en todo Brasil. Programación en el mismo día.",
+      "heroDescription": "Pedir una cita con un médico privado en Brasil suele significar días de espera —cuando no semanas—. Por el SUS, aún más. Para quienes necesitan hablar con un médico hoy, la teleconsulta cambió por completo ese escenario. Global Health te conecta con médicos generales con CRM activo, disponibles por videollamada segura el mismo día —desde cualquier lugar de Brasil, en portugués o inglés. Certificado médico con validez legal, solicitud de exámenes, renovación del tratamiento y receta electrónica cuando esté clínicamente indicado, todo en una sola consulta. Sin fila de espera. Sin salir de casa. Sin esperar semanas por un turno."
+    },
+    "after": {
+      "seoTitle": "Consulta Médica Online Brasil | Médico General",
+      "heroTitle": "Consulta Médica Online — Clínico General por Videollamada",
+      "seoDescription": "Habla por vídeo con un médico general sobre síntomas y cuidados de salud. Consulta los horarios y el precio antes de reservar.",
+      "heroDescription": "Consulta los horarios disponibles antes de reservar. La consulta es por vídeo, en portugués, inglés o español."
+    },
+    "faqPatches": [
+      {
+        "id": "cmrf53mg60002mwjutdfj57z9",
+        "before": {
+          "question": "¿El certificado emitido por telemedicina es aceptado en el trabajo?",
+          "answer": "Sí. El certificado médico emitido por telemedicina es legalmente válido y debe ser aceptado por los empleadores conforme al art. 473 de la CLT. La negativa constituye una infracción laboral, según lo confirmado por el TRT-SP en 2024."
+        },
+        "after": {
+          "question": "¿El certificado emitido por telemedicina es aceptado en el trabajo?",
+          "answer": "La consulta no garantiza la emisión de un certificado ni su aceptación. El médico valora si corresponde emitirlo. Consulta los requisitos con el destinatario."
+        }
+      }
+    ],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "9f2ed18afc24c5397d9e9df1967e3866d9f7afef4ef30d1301f218fd79ba5ff2"
+  },
+  {
+    "key": "service:consulta-clinica-online",
+    "url": "https://www.myglobalhealth.online/brazil/pt/services/consulta-clinica-online",
+    "id": "cmrf53m7j0000mwjud779ur6k",
+    "slug": "consulta-clinica-online",
+    "locale": "pt",
+    "source": "raw/api/services-consulta-clinica-online-PT.json",
+    "sourceFingerprint": "26f2ab0aa094aee86e46d69df46cf860ad685a7cc329bfc182e0e93648e8ea8d",
+    "before": {
+      "seoTitle": "Consulta Médica Online Brasil | Clínico Geral | Mesmo Dia",
+      "heroTitle": "Consulta Médica Online — Clínico Geral por Videochamada, Mesmo Dia",
+      "seoDescription": "Consulta com clínico geral por videochamada, atestado médico válido e pedido de exames. Sem fila de espera. Médicos com CRM ativo, atendendo em todo o Brasil. Agendamento no mesmo dia.",
+      "heroDescription": "Marcar consulta com um médico particular no Brasil costuma significar dias de espera — quando não semanas. Pelo SUS, mais ainda. Para quem precisa falar com um médico hoje, a teleconsulta mudou completamente esse cenário. A Global Health conecta você com clínicos gerais com CRM ativo, disponíveis por videochamada segura no mesmo dia — de qualquer lugar do Brasil, em português ou inglês. Atestado médico com validade legal, pedido de exames, renovação de tratamento e receituário eletrônico onde clinicamente indicado, tudo em uma única consulta. Sem fila de espera. Sem sair de casa. Sem esperar semanas por um horário."
+    },
+    "after": {
+      "seoTitle": "Consulta Médica Online Brasil | Clínico Geral",
+      "heroTitle": "Consulta Médica Online — Clínico Geral por Videochamada",
+      "seoDescription": "Converse com um clínico geral por vídeo sobre sintomas e cuidados de saúde. Consulte os horários e o preço antes de agendar.",
+      "heroDescription": "Confira os horários disponíveis antes de agendar. A consulta é por vídeo, em português, inglês ou espanhol."
+    },
+    "faqPatches": [
+      {
+        "id": "cmrf53mg60002mwjutdfj57z9",
+        "before": {
+          "question": "O atestado emitido por telemedicina é aceito no trabalho?",
+          "answer": "Sim. O atestado médico emitido por telemedicina é legalmente válido e deve ser aceito pelos empregadores conforme o art. 473 da CLT. A recusa constitui infração trabalhista, conforme confirmado pelo TRT-SP em 2024."
+        },
+        "after": {
+          "question": "O atestado emitido por telemedicina é aceito no trabalho?",
+          "answer": "A consulta não garante a emissão de um atestado nem sua aceitação. O médico avalia a necessidade do documento. Confirme com o destinatário os requisitos aplicáveis ao seu caso."
+        }
+      }
+    ],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "f5fbd9063d92d101e635b3d4fec0bfce2bdf1a74553abb9a1afc6f3da70fe86e"
+  },
+  {
+    "key": "service:renovacao-receita-online",
+    "url": "https://www.myglobalhealth.online/brazil/en/services/renovacao-receita-online",
+    "id": "cmrf53nux000jmwjuzhearx4t",
+    "slug": "renovacao-receita-online",
+    "locale": "en",
+    "source": "raw/api/services-renovacao-receita-online-EN.json",
+    "sourceFingerprint": "95ba0bde725f604c92dc7b5796e9f8885bc90e4b9605ac654e80e29f768ae2c1",
+    "before": {
+      "seoTitle": "Online Prescription Renewal Brazil | General Practitioner | Same Day",
+      "seoDescription": "Renew your medical prescription by video call with a general practitioner. Electronic prescription valid at pharmacies throughout Brazil. No waiting line. Doctors with active CRM. Same-day scheduling."
+    },
+    "after": {
+      "seoTitle": "Online Prescription Renewal Brazil | General Practitioner",
+      "seoDescription": "Prescription Renewal: video consultation with a family doctor. Check appointments, price and care limitations before booking."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "b3331c872eb8661a742d1b6949324124e66c2556a4f39ed02ddeeff7b356e4a7"
+  },
+  {
+    "key": "service:renovacao-receita-online",
+    "url": "https://www.myglobalhealth.online/brazil/es/services/renovacao-receita-online",
+    "id": "cmrf53nux000jmwjuzhearx4t",
+    "slug": "renovacao-receita-online",
+    "locale": "es",
+    "source": "raw/api/services-renovacao-receita-online-ES.json",
+    "sourceFingerprint": "d8f4c6dd88aa6961faf263eaaf7d8529afb8d03f11b2d157e765002fddc38b2c",
+    "before": {
+      "seoTitle": "Renovación de Receta en Línea Brasil | Médico General | Mismo Día",
+      "seoDescription": "Renueve su receta médica por videollamada con médico general. Receta electrónica válida en farmacias de todo Brasil. Sin fila de espera. Médicos con CRM activo. Cita el mismo día."
+    },
+    "after": {
+      "seoTitle": "Renovación de Receta en Línea Brasil | Médico General",
+      "seoDescription": "Renovación de receta: consulta por vídeo con un médico de familia. Revisa la agenda, el precio y los límites de la atención antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "4febf1db04684b77e944d796c25e07845a02a51235e31c2e1f6d631759557e01"
+  },
+  {
+    "key": "service:renovacao-receita-online",
+    "url": "https://www.myglobalhealth.online/brazil/pt/services/renovacao-receita-online",
+    "id": "cmrf53nux000jmwjuzhearx4t",
+    "slug": "renovacao-receita-online",
+    "locale": "pt",
+    "source": "raw/api/services-renovacao-receita-online-PT.json",
+    "sourceFingerprint": "51bee62ac69f707f10f6e2aa12d0c5243fb61644c3b97d6f128545b6cb161e30",
+    "before": {
+      "seoTitle": "Renovação de Receita Online Brasil | Clínico Geral | Mesmo Dia",
+      "seoDescription": "Renove sua receita médica por videochamada com clínico geral. Receituário eletrônico válido em farmácias de todo o Brasil. Sem fila de espera. Médicos com CRM ativo. Agendamento no mesmo dia."
+    },
+    "after": {
+      "seoTitle": "Renovação de Receita Online Brasil | Clínico Geral",
+      "seoDescription": "Renovação de Receita: consulta por vídeo com médico de família. Confira a agenda, o preço e os limites do atendimento antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "2fe8735de238e37cc8b54c9f48ccfecd81c116fdd3753e89c64b8ce6b94d270e"
+  },
+  {
+    "key": "service:atestado-medico-online",
+    "url": "https://www.myglobalhealth.online/brazil/en/services/atestado-medico-online",
+    "id": "cmrf53n1n000amwjufjd0mt0z",
+    "slug": "atestado-medico-online",
+    "locale": "en",
+    "source": "raw/api/services-atestado-medico-online-EN.json",
+    "sourceFingerprint": "2553d6f8ceb3bca2d1e9e73a45f87bc6737c0812d330a8398013a262b5895f0f",
+    "before": {
+      "seoTitle": "Online Medical Certificate Brazil | Valid for Work and School | Same Day",
+      "heroTitle": "Online Medical Certificate — Valid for Work and School, Same Day",
+      "seoDescription": "Medical certificate with legal validity issued by a general practitioner via teleconsultation. Accepted at work and at school according to CLT art. 473. Doctors with active CRM. Same day, from anywhere in Brazil.",
+      "heroDescription": "You are sick, you are not able to work, and you still need to leave home to get a medical certificate. That is the reality for millions of Brazilians — and it makes no sense at all. Global Health solves that. Speak with a general practitioner by video call today, receive your digital medical certificate with legal validity throughout Brazil, and send it directly to HR or to school. Without leaving home. No waiting in line. On the same day."
+    },
+    "after": {
+      "seoTitle": "Medical certificate assessment | Global Health Brazil",
+      "heroTitle": "Medical certificate: video assessment",
+      "seoDescription": "Book a medical assessment by video. A medical certificate depends on the assessment; booking does not guarantee a document or its acceptance.",
+      "heroDescription": "Book a medical assessment by video. A medical certificate depends on the assessment; booking does not guarantee a document or its acceptance."
+    },
+    "faqPatches": [
+      {
+        "id": "cmrf53n9l000bmwjuyl2gb98u",
+        "before": {
+          "question": "Is the medical certificate issued via telemedicine accepted by HR?",
+          "answer": "Yes. The medical certificate issued by telemedicine has legal validity guaranteed by CFM Resolution 2,314/2022 and Law 14,510/2022. Employers are required to accept valid certificates under art. 473 of the CLT. Refusal constitutes a labor violation, according to a 2024 decision by the TRT-SP."
+        },
+        "after": {
+          "question": "Is the medical certificate issued via telemedicine accepted by HR?",
+          "answer": "A consultation does not guarantee a medical certificate or its acceptance. The doctor assesses whether a document is appropriate. Check the requirements with its recipient."
+        }
+      },
+      {
+        "id": "cmrf53n9l000emwjuq14tfg9j",
+        "before": {
+          "question": "How long does it take to receive the certificate?",
+          "answer": "The certificate is issued digitally during or shortly after the appointment — you receive the document on the same day."
+        },
+        "after": {
+          "question": "How long does it take to receive the certificate?",
+          "answer": "Issuance depends on the medical assessment. If a document is appropriate, confirm how and when it will be provided with the doctor. This page does not guarantee a deadline."
+        }
+      },
+      {
+        "id": "cmrf53n9l000gmwjuvr9vc0j2",
+        "before": {
+          "question": "What if the employer refuses my medical certificate?",
+          "answer": "Refusing a valid medical certificate constitutes a labor violation. You can file a complaint with the Ministry of Labor and Employment or seek labor legal advice. The TRT-SP already convicted companies for this reason in 2024."
+        },
+        "after": {
+          "question": "What if the employer refuses my medical certificate?",
+          "answer": "Ask the recipient to explain the refusal and its requirements. Seek legal advice about your circumstances if needed. The consultation does not guarantee employer acceptance."
+        }
+      }
+    ],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "e3ab7f039915a6d68b1817a39f63b516b933bac008019c7898b207709a997875"
+  },
+  {
+    "key": "service:atestado-medico-online",
+    "url": "https://www.myglobalhealth.online/brazil/es/services/atestado-medico-online",
+    "id": "cmrf53n1n000amwjufjd0mt0z",
+    "slug": "atestado-medico-online",
+    "locale": "es",
+    "source": "raw/api/services-atestado-medico-online-ES.json",
+    "sourceFingerprint": "44a563b0c5d7ce2b7a02f070a4fa42325cc07f4f23fdcf07cce729edd96593b0",
+    "before": {
+      "seoTitle": "Certificado Médico en Línea Brasil | Válido para Trabajo y Escuela | Mismo Día",
+      "heroTitle": "Certificado Médico Online — Válido para Trabajo y Escuela, el Mismo Día",
+      "seoDescription": "Certificado médico con validez legal emitido por médico general vía teleconsulta. Aceptado en el trabajo y en la escuela conforme a la CLT art. 473. Médicos con CRM activo. El mismo día, desde cualquier lugar de Brasil.",
+      "heroDescription": "Estás enfermo, no tienes condiciones de trabajar y además aún necesitas salir de casa para conseguir un certificado médico. Esa es la realidad de millones de brasileños — y no tiene el menor sentido. Global Health resuelve esto. Habla con un médico general por videollamada hoy, recibe tu certificado médico digital con validez legal en todo Brasil y envíalo directamente a RR. HH. o a la escuela. Sin salir de casa. Sin fila de espera. El mismo día."
+    },
+    "after": {
+      "seoTitle": "Valoración para certificado médico | Global Health Brasil",
+      "heroTitle": "Certificado médico: valoración por vídeo",
+      "seoDescription": "Reserva una valoración médica por vídeo. La emisión de un certificado depende de la valoración; no se garantiza el documento ni su aceptación.",
+      "heroDescription": "Reserva una valoración médica por vídeo. La emisión de un certificado depende de la valoración; no se garantiza el documento ni su aceptación."
+    },
+    "faqPatches": [
+      {
+        "id": "cmrf53n9l000bmwjuyl2gb98u",
+        "before": {
+          "question": "¿El certificado emitido por telemedicina es aceptado por RR. HH.?",
+          "answer": "Sí. El certificado médico emitido por telemedicina tiene validez legal según la ley brasileña (Resolución CFM 2.314/2022 y Ley 14.510/2022). Los empleadores están obligados a aceptar certificados válidos conforme al art. 473 de la CLT. La negativa constituye una infracción laboral, conforme a la decisión del TRT-SP en 2024."
+        },
+        "after": {
+          "question": "¿El certificado emitido por telemedicina es aceptado por RR. HH.?",
+          "answer": "La consulta no garantiza la emisión de un certificado ni su aceptación. El médico valora si corresponde emitirlo. Consulta los requisitos con el destinatario."
+        }
+      },
+      {
+        "id": "cmrf53n9l000emwjuq14tfg9j",
+        "before": {
+          "question": "¿Cuánto tiempo tarda en recibir el certificado?",
+          "answer": "El certificado se emite digitalmente durante o momento de la consulta o poco después de ella — usted recibe el documento el mismo día."
+        },
+        "after": {
+          "question": "¿Cuánto tiempo tarda en recibir el certificado?",
+          "answer": "La emisión depende de la valoración médica. Si corresponde, confirma con el médico cómo y cuándo recibirás el documento. Esta página no garantiza un plazo."
+        }
+      },
+      {
+        "id": "cmrf53n9l000gmwjuvr9vc0j2",
+        "before": {
+          "question": "¿Y si el empleador rechaza mi certificado médico?",
+          "answer": "La negativa de aceptar un certificado médico válido constituye una infracción laboral. Usted puede presentar una denuncia ante el Ministerio de Trabajo y Empleo o buscar orientación jurídica laboral. El TRT-SP ya condenó a empresas por este motivo en 2024."
+        },
+        "after": {
+          "question": "¿Y si el empleador rechaza mi certificado médico?",
+          "answer": "Pide al destinatario que explique el rechazo y sus requisitos. Si lo necesitas, busca asesoramiento jurídico sobre tu caso. La consulta no garantiza la aceptación del empleador."
+        }
+      }
+    ],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "ec02e5ef7e3c3dfd29f2a823ed458e13a7ca3eb8b33d628ee0d8b792fad94a22"
+  },
+  {
+    "key": "service:atestado-medico-online",
+    "url": "https://www.myglobalhealth.online/brazil/pt/services/atestado-medico-online",
+    "id": "cmrf53n1n000amwjufjd0mt0z",
+    "slug": "atestado-medico-online",
+    "locale": "pt",
+    "source": "raw/api/services-atestado-medico-online-PT.json",
+    "sourceFingerprint": "f81f8fcc2abff58e51e614a850456908d22c42b1de7b42035079917553d155c5",
+    "before": {
+      "seoTitle": "Atestado Médico Online Brasil | Válido para Trabalho e Escola | Mesmo Dia",
+      "heroTitle": "Atestado Médico Online — Válido para Trabalho e Escola, Mesmo Dia",
+      "seoDescription": "Atestado médico com validade legal emitido por clínico geral via teleconsulta. Aceito no trabalho e na escola conforme CLT art. 473. Médicos com CRM ativo. Mesmo dia, de qualquer lugar do Brasil.",
+      "heroDescription": "Você está doente, não tem condições de trabalhar, e ainda precisa sair de casa para conseguir um atestado. Essa é a realidade de milhões de brasileiros — e não faz o menor sentido. A Global Health resolve isso. Fale com um clínico geral por videochamada hoje, receba seu atestado médico digital com validade legal em todo o Brasil, e encaminhe direto para o RH ou para a escola. Sem sair de casa. Sem fila de espera. No mesmo dia."
+    },
+    "after": {
+      "seoTitle": "Atestado médico: avaliação online | Global Health Brasil",
+      "heroTitle": "Atestado médico: avaliação por vídeo",
+      "seoDescription": "Agende uma avaliação médica por vídeo. A emissão de atestado depende da avaliação clínica; a consulta não garante um documento ou sua aceitação.",
+      "heroDescription": "Agende uma avaliação médica por vídeo. A emissão de atestado depende da avaliação clínica; a consulta não garante um documento ou sua aceitação."
+    },
+    "faqPatches": [
+      {
+        "id": "cmrf53n9l000bmwjuyl2gb98u",
+        "before": {
+          "question": "O atestado emitido por telemedicina é aceito pelo RH?",
+          "answer": "Sim. O atestado médico emitido por telemedicina tem validade legal garantida pela Resolução CFM 2.314/2022 e pela Lei 14.510/2022. Empregadores são obrigados a aceitar atestados válidos conforme o art. 473 da CLT. A recusa constitui infração trabalhista, conforme decisão do TRT-SP em 2024."
+        },
+        "after": {
+          "question": "O atestado emitido por telemedicina é aceito pelo RH?",
+          "answer": "A consulta não garante a emissão de um atestado nem sua aceitação. O médico avalia a necessidade do documento. Confirme com o destinatário os requisitos aplicáveis ao seu caso."
+        }
+      },
+      {
+        "id": "cmrf53n9l000emwjuq14tfg9j",
+        "before": {
+          "question": "Quanto tempo demora para receber o atestado?",
+          "answer": "O atestado é emitido digitalmente durante ou logo após a consulta — você recebe o documento no mesmo dia."
+        },
+        "after": {
+          "question": "Quanto tempo demora para receber o atestado?",
+          "answer": "A emissão depende da avaliação médica. Se houver indicação, confirme com o médico como e quando o documento será disponibilizado. Não há prazo garantido nesta página."
+        }
+      },
+      {
+        "id": "cmrf53n9l000gmwjuvr9vc0j2",
+        "before": {
+          "question": "E se o empregador recusar o meu atestado?",
+          "answer": "A recusa de atestado médico válido constitui infração trabalhista. Você pode registrar uma reclamação no Ministério do Trabalho e Emprego ou buscar orientação jurídica trabalhista. O TRT-SP já condenou empresas por esse motivo em 2024."
+        },
+        "after": {
+          "question": "E se o empregador recusar o meu atestado?",
+          "answer": "Peça ao destinatário que explique o motivo da recusa e os requisitos exigidos. Se precisar, procure orientação jurídica sobre o seu caso. A consulta não garante aceitação pelo empregador."
+        }
+      }
+    ],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "c1e50dedf2803483f41e30e928a20e92722504f249cf6b85dc2976d5bbaf8069"
+  },
+  {
+    "key": "doctor:dr-renato-sarmento",
+    "url": "https://www.myglobalhealth.online/brazil/en/doctors/dr-renato-sarmento",
+    "id": "cmqyzr0fb000o01lu9deh6mf5",
+    "slug": "dr-renato-sarmento",
+    "locale": "en",
+    "source": "raw/api/doctors-dr-renato-sarmento-EN.json",
+    "sourceFingerprint": "b8827b043102c52fcee67cba93ef8d778f9e82f9848baefe510a719c7ae16cb1",
+    "before": {
+      "seoDescription": "Dr. Renato Sarmento — Family and Community Medicine in Brazil. Book an online video consultation with Global Health."
+    },
+    "after": {
+      "seoDescription": "Book a video consultation with Dr. Renato Sarmento in Portuguese, English or Spanish. Check available appointments before booking."
+    },
+    "faqPatches": [
+      {
+        "id": "cmrny5qwy008qbsjupbn6vgxj",
+        "before": {
+          "question": "How to schedule an appointment with Dr. Renato?",
+          "answer": "Select an available time on this page to schedule directly with Dr. Renato. Payment is securely processed at the time of scheduling — the consultation is confirmed after payment is completed. You will immediately receive a calendar invitation. Consultations are conducted via secure video call in Portuguese, English, or Spanish. Same-day consultations are usually available."
+        },
+        "after": {
+          "question": "How to schedule an appointment with Dr. Renato?",
+          "answer": "Check available appointments before booking. Video consultations are available in Portuguese, English or Spanish."
+        }
+      }
+    ],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "90b63a1de8e1bb691f54491d36064ea623a6a768f1e8bbd1112e9fbb183f8ef3"
+  },
+  {
+    "key": "doctor:dr-renato-sarmento",
+    "url": "https://www.myglobalhealth.online/brazil/es/doctors/dr-renato-sarmento",
+    "id": "cmqyzr0fb000o01lu9deh6mf5",
+    "slug": "dr-renato-sarmento",
+    "locale": "es",
+    "source": "raw/api/doctors-dr-renato-sarmento-ES.json",
+    "sourceFingerprint": "99c67942f0cc3d17b3f5ccfa87eb0b7c4b4d1ca906dae909882f0e9690a6394a",
+    "before": {
+      "seoDescription": "Dr. Renato Sarmento — Medicina de Familia y Comunidad en Brasil. Reserve una videoconsulta en línea con Global Health."
+    },
+    "after": {
+      "seoDescription": "Reserva una consulta por vídeo con el Dr. Renato Sarmento en portugués, inglés o español. Consulta los horarios disponibles."
+    },
+    "faqPatches": [
+      {
+        "id": "cmrny64fj008wbsjufn7h9j3k",
+        "before": {
+          "question": "¿Cómo agendar una consulta con el Dr. Renato?",
+          "answer": "Seleccione un horario disponible en esta página para agendar directamente con el Dr. Renato. El pago se procesa de forma segura en el momento de la programación — la consulta se confirma tras la finalización del pago. Recibirá inmediatamente una invitación en el calendario. Las consultas se realizan por videollamada segura en portugués, inglés o español. Consultas el mismo día generalmente están disponibles."
+        },
+        "after": {
+          "question": "¿Cómo agendar una consulta con el Dr. Renato?",
+          "answer": "Consulta los horarios disponibles antes de reservar. La consulta es por vídeo, en portugués, inglés o español."
+        }
+      }
+    ],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "3f959139044977267caf425f703bd0c7016d1224dc03764325435cdfb4e750a3"
+  },
+  {
+    "key": "doctor:dr-renato-sarmento",
+    "url": "https://www.myglobalhealth.online/brazil/pt/doctors/dr-renato-sarmento",
+    "id": "cmqyzr0fb000o01lu9deh6mf5",
+    "slug": "dr-renato-sarmento",
+    "locale": "pt",
+    "source": "raw/api/doctors-dr-renato-sarmento-PT.json",
+    "sourceFingerprint": "f8ecb9dad8c3860828b7bcb20c0065dfb498914b3205d2919a105f013f8ec22d",
+    "before": {
+      "seoDescription": "Agende uma videoconsulta com Dr. Renato Sarmento — médico de família registrado no CRM-SP (nº 170.837). Cuidados Paliativos · Telemedicina · Mestrado UPSA · Residência Casa de Saúde Santa Marcelina. Consulta no mesmo dia."
+    },
+    "after": {
+      "seoDescription": "Agende uma consulta por vídeo com o Dr. Renato Sarmento. Atendimento em português, inglês ou espanhol. Confira os horários disponíveis."
+    },
+    "faqPatches": [
+      {
+        "id": "cmrmj60xs0004n4jun19fh1r0",
+        "before": {
+          "question": "Como agendar uma consulta com o Dr. Renato?",
+          "answer": "Selecione um horário disponível nesta página para agendar diretamente com o Dr. Renato. O pagamento é processado com segurança no momento do agendamento — a consulta é confirmada após a conclusão do pagamento. Você receberá imediatamente um convite no calendário. As consultas são realizadas por videochamada segura em português, inglês ou espanhol. Consultas no mesmo dia geralmente estão disponíveis."
+        },
+        "after": {
+          "question": "Como agendar uma consulta com o Dr. Renato?",
+          "answer": "Confira os horários disponíveis antes de agendar. A consulta é por vídeo, em português, inglês ou espanhol."
+        }
+      }
+    ],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "938d3d98242e9a0f3f5630b8f8a4b0ae99ae0cac2da00a5f954eaba26780ac86"
+  },
+  {
+    "key": "service:consulta-pele-online",
+    "url": "https://www.myglobalhealth.online/brazil/en/services/consulta-pele-online",
+    "id": "cmrf53rx9001tmwjuheylxq9n",
+    "slug": "consulta-pele-online",
+    "locale": "en",
+    "source": "raw/api/services-consulta-pele-online-EN.json",
+    "sourceFingerprint": "dfd946d656fed58f5da7a37a6dec4297c4860647e1b109e84c2f83b8d32f732f",
+    "before": {
+      "seoTitle": "Online Skin Consultation Brazil | General Practitioner | Same Day",
+      "seoDescription": "Skin consultation with a general practitioner by video call. Acne, eczema, spots, infections, and much more. Doctors with active CRM. Same day, from anywhere in Brazil."
+    },
+    "after": {
+      "seoTitle": "Online Skin Consultation Brazil | General Practitioner",
+      "seoDescription": "Skin Consultation: video consultation with a family doctor. Check appointments, price and care limitations before booking."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "62199cf7a9715a6537e53fe99857570504c4107d4cd284b0aba3f5369185b2f1"
+  },
+  {
+    "key": "service:consulta-pele-online",
+    "url": "https://www.myglobalhealth.online/brazil/es/services/consulta-pele-online",
+    "id": "cmrf53rx9001tmwjuheylxq9n",
+    "slug": "consulta-pele-online",
+    "locale": "es",
+    "source": "raw/api/services-consulta-pele-online-ES.json",
+    "sourceFingerprint": "b91af53a41edafaa89474fda7381e1c43a023d9f6e9f4efc66345a5c41ede93a",
+    "before": {
+      "seoTitle": "Consulta de Piel Online Brasil | Médico General | Mismo Día",
+      "seoDescription": "Consulta de piel con médico general por videollamada. Acné, eccema, manchas, infecciones y mucho más. Médicos con registro médico activo. El mismo día, desde cualquier lugar de Brasil."
+    },
+    "after": {
+      "seoTitle": "Consulta de Piel Online Brasil | Médico General",
+      "seoDescription": "Consulta de piel: consulta por vídeo con un médico de familia. Revisa la agenda, el precio y los límites de la atención antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "78677c3d4d30199661874a2ed64e9cb93208ee9a86e2d14db04ae54ae2f6285b"
+  },
+  {
+    "key": "service:consulta-pele-online",
+    "url": "https://www.myglobalhealth.online/brazil/pt/services/consulta-pele-online",
+    "id": "cmrf53rx9001tmwjuheylxq9n",
+    "slug": "consulta-pele-online",
+    "locale": "pt",
+    "source": "raw/api/services-consulta-pele-online-PT.json",
+    "sourceFingerprint": "964be9c3eb5650558caf06997c686ad9cc811699fe1f101e71c88253807db1d1",
+    "before": {
+      "seoTitle": "Consulta de Pele Online Brasil | Clínico Geral | Mesmo Dia",
+      "seoDescription": "Consulta de pele com clínico geral por videochamada. Acne, eczema, manchas, infecções e muito mais. Médicos com CRM ativo. Mesmo dia, de qualquer lugar do Brasil."
+    },
+    "after": {
+      "seoTitle": "Consulta de Pele Online Brasil | Clínico Geral",
+      "seoDescription": "Consulta de Pele: consulta por vídeo com médico de família. Confira a agenda, o preço e os limites do atendimento antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "624034b56b138c57b83ac7ad1549c5868b2fc3d5b9252bb562a641ab6e513199"
+  },
+  {
+    "key": "service:controle-peso-online",
+    "url": "https://www.myglobalhealth.online/brazil/en/services/controle-peso-online",
+    "id": "cmrf53xm1003kmwjuwuaixgfg",
+    "slug": "controle-peso-online",
+    "locale": "en",
+    "source": "raw/api/services-controle-peso-online-EN.json",
+    "sourceFingerprint": "73c80e3f3a58106403ece94e752651ee0fba02647e668a00e47619786677f6ac",
+    "before": {
+      "seoTitle": "Online Weight Management Brazil | Medical Evaluation | Same Day",
+      "seoDescription": "Weight control consultation with a general practitioner by video call. Medical evaluation, test requests and personalized guidance. Doctors with active CRM. Same day, from anywhere in Brazil."
+    },
+    "after": {
+      "seoTitle": "Online Weight Management Brazil | Medical Evaluation",
+      "seoDescription": "Weight Control: video consultation with a family doctor. Check appointments, price and care limitations before booking."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "889606e8806170913d84ad030dc5d2e1d9e3acdc2360ddf74736309b8e6e7764"
+  },
+  {
+    "key": "service:controle-peso-online",
+    "url": "https://www.myglobalhealth.online/brazil/es/services/controle-peso-online",
+    "id": "cmrf53xm1003kmwjuwuaixgfg",
+    "slug": "controle-peso-online",
+    "locale": "es",
+    "source": "raw/api/services-controle-peso-online-ES.json",
+    "sourceFingerprint": "bf447afe5a561ead74760f743e899872ef670f2bc3da08446269b32560d01462",
+    "before": {
+      "seoTitle": "Control de Peso Online Brasil | Evaluación Médica | Mismo Día",
+      "seoDescription": "Consulta de control de peso con médico general por videollamada. Evaluación médica, solicitud de exámenes y orientación personalizada. Médicos con CRM activo. El mismo día, desde cualquier lugar de Brasil."
+    },
+    "after": {
+      "seoTitle": "Control de Peso Online Brasil | Evaluación Médica",
+      "seoDescription": "Control de Peso: consulta por vídeo con un médico de familia. Revisa la agenda, el precio y los límites de la atención antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "c046eca72211b09789c6f31887c2b68f9337333c98715fc93b3f5a0a6b6a8d21"
+  },
+  {
+    "key": "service:controle-peso-online",
+    "url": "https://www.myglobalhealth.online/brazil/pt/services/controle-peso-online",
+    "id": "cmrf53xm1003kmwjuwuaixgfg",
+    "slug": "controle-peso-online",
+    "locale": "pt",
+    "source": "raw/api/services-controle-peso-online-PT.json",
+    "sourceFingerprint": "7e6ddc378510a7657d58b8058043263141cdee9b6b955894da8a1b80be3f577a",
+    "before": {
+      "seoTitle": "Controle de Peso Online Brasil | Avaliação Médica | Mesmo Dia",
+      "seoDescription": "Consulta de controle de peso com clínico geral por videochamada. Avaliação médica, pedido de exames e orientação personalizada. Médicos com CRM ativo. Mesmo dia, de qualquer lugar do Brasil."
+    },
+    "after": {
+      "seoTitle": "Controle de Peso Online Brasil | Avaliação Médica",
+      "seoDescription": "Controle de Peso: consulta por vídeo com médico de família. Confira a agenda, o preço e os limites do atendimento antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "7a6b59d24bf75e264ee30518658e885dfa9b7107b8b88772e61f849daec3cff5"
+  },
+  {
+    "key": "service:doencas-cronicas-online",
+    "url": "https://www.myglobalhealth.online/brazil/en/services/doencas-cronicas-online",
+    "id": "cmrf53uch002jmwjuj0cs6n1f",
+    "slug": "doencas-cronicas-online",
+    "locale": "en",
+    "source": "raw/api/services-doencas-cronicas-online-EN.json",
+    "sourceFingerprint": "69daf928ee72ff58fedcffcf295c5f6aa34226413bbce2c3131ffd2fc4fb362e",
+    "before": {
+      "seoTitle": "Chronic Diseases Online Brazil | Medical Follow-up | Same Day",
+      "seoDescription": "Follow-up of chronic conditions with a general practitioner by video call. Hypertension, diabetes, hypothyroidism, and much more. Doctors with active CRM. Same day, from anywhere in Brazil."
+    },
+    "after": {
+      "seoTitle": "Chronic Diseases Online Brazil | Medical Follow-up",
+      "seoDescription": "Chronic Diseases: video consultation with a family doctor. Check appointments, price and care limitations before booking."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "6f007b16bb1ee0779be83493c39e5b71d793c2d8402231fbe9291ce41737e071"
+  },
+  {
+    "key": "service:doencas-cronicas-online",
+    "url": "https://www.myglobalhealth.online/brazil/es/services/doencas-cronicas-online",
+    "id": "cmrf53uch002jmwjuj0cs6n1f",
+    "slug": "doencas-cronicas-online",
+    "locale": "es",
+    "source": "raw/api/services-doencas-cronicas-online-ES.json",
+    "sourceFingerprint": "dd2474d3e455c01c0a280b3574368aeb1f6b63dcd91247450b2735ad3145eca8",
+    "before": {
+      "seoTitle": "Enfermedades Crónicas Online Brasil | Seguimiento Médico | Mismo Día",
+      "seoDescription": "Seguimiento de enfermedades crónicas con médico general por videollamada. Hipertensión, diabetes, hipotiroidismo y mucho más. Médicos con registro médico activo. El mismo día, desde cualquier lugar de Brasil."
+    },
+    "after": {
+      "seoTitle": "Enfermedades Crónicas Online Brasil | Seguimiento Médico",
+      "seoDescription": "Enfermedades Crónicas: consulta por vídeo con un médico de familia. Revisa la agenda, el precio y los límites de la atención antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "afc649bb3606ab5ae6a6c24521ef76ad2b1484a6a6e4793ef77dd041070b5516"
+  },
+  {
+    "key": "service:doencas-cronicas-online",
+    "url": "https://www.myglobalhealth.online/brazil/pt/services/doencas-cronicas-online",
+    "id": "cmrf53uch002jmwjuj0cs6n1f",
+    "slug": "doencas-cronicas-online",
+    "locale": "pt",
+    "source": "raw/api/services-doencas-cronicas-online-PT.json",
+    "sourceFingerprint": "08d4ffd815a75fa306a97d86c81002b34fce35a7c848aa4d0d5e96ccc21bb0fc",
+    "before": {
+      "seoTitle": "Doenças Crônicas Online Brasil | Acompanhamento Médico | Mesmo Dia",
+      "seoDescription": "Acompanhamento de doenças crônicas com clínico geral por videochamada. Hipertensão, diabetes, hipotireoidismo e muito mais. Médicos com CRM ativo. Mesmo dia, de qualquer lugar do Brasil."
+    },
+    "after": {
+      "seoTitle": "Doenças Crônicas Online Brasil | Acompanhamento Médico",
+      "seoDescription": "Doenças Crônicas: consulta por vídeo com médico de família. Confira a agenda, o preço e os limites do atendimento antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "aa9fc3d61313db2bce11e79e46757ce233e0725ee87f508d181f098a00847f5b"
+  },
+  {
+    "key": "service:musculoesqueletico-online",
+    "url": "https://www.myglobalhealth.online/brazil/en/services/musculoesqueletico-online",
+    "id": "cmrf53vzd0032mwjuyq6qq26r",
+    "slug": "musculoesqueletico-online",
+    "locale": "en",
+    "source": "raw/api/services-musculoesqueletico-online-EN.json",
+    "sourceFingerprint": "b10af9e42722d592527f67162f32f6de8471a2ed8813cf1464972b88ebc6d125",
+    "before": {
+      "seoTitle": "Muscle and Joint Pain Online Brazil | General Practitioner | Same Day",
+      "seoDescription": "Consultation for back pain, joint pain, muscle injuries and other musculoskeletal complaints by video call. Doctors with active CRM. Same day, from anywhere in Brazil."
+    },
+    "after": {
+      "seoTitle": "Muscle and Joint Pain Online Brazil | General Practitioner",
+      "seoDescription": "Musculoskeletal: video consultation with a family doctor. Check appointments, price and care limitations before booking."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "28edb22afeb43cdaf194a3581f388aa2b3db5c7337f40a7ddc552e97bef8b664"
+  },
+  {
+    "key": "service:musculoesqueletico-online",
+    "url": "https://www.myglobalhealth.online/brazil/es/services/musculoesqueletico-online",
+    "id": "cmrf53vzd0032mwjuyq6qq26r",
+    "slug": "musculoesqueletico-online",
+    "locale": "es",
+    "source": "raw/api/services-musculoesqueletico-online-ES.json",
+    "sourceFingerprint": "94a6f14bf14b0423650dc56fba2bd4a9f512338f0e4ad75f72dbe8a91503ed47",
+    "before": {
+      "seoTitle": "Dolor Muscular y Articular Online Brasil | Médico General | Mismo Día",
+      "seoDescription": "Consulta por videollamada para dolor de espalda, articulaciones, lesiones musculares y otras quejas musculoesqueléticas. Médicos con CRM activo. El mismo día, desde cualquier lugar de Brasil."
+    },
+    "after": {
+      "seoTitle": "Dolor Muscular y Articular Online Brasil | Médico General",
+      "seoDescription": "Musculoesquelético: consulta por vídeo con un médico de familia. Revisa la agenda, el precio y los límites de la atención antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "5909b9841e8b85e6dc9421fa702a6a77aebb6bcef497a9ed33af7ba0475a65f8"
+  },
+  {
+    "key": "service:musculoesqueletico-online",
+    "url": "https://www.myglobalhealth.online/brazil/pt/services/musculoesqueletico-online",
+    "id": "cmrf53vzd0032mwjuyq6qq26r",
+    "slug": "musculoesqueletico-online",
+    "locale": "pt",
+    "source": "raw/api/services-musculoesqueletico-online-PT.json",
+    "sourceFingerprint": "00e2c8285adef1275ab10f979b424cf83d01921db9e5571aa67fec44799c0c65",
+    "before": {
+      "seoTitle": "Dor Muscular e Articular Online Brasil | Clínico Geral | Mesmo Dia",
+      "seoDescription": "Consulta para dor nas costas, articulações, lesões musculares e outras queixas musculoesqueléticas por videochamada. Médicos com CRM ativo. Mesmo dia, de qualquer lugar do Brasil."
+    },
+    "after": {
+      "seoTitle": "Dor Muscular e Articular Online Brasil | Clínico Geral",
+      "seoDescription": "Musculoesquelético: consulta por vídeo com médico de família. Confira a agenda, o preço e os limites do atendimento antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "caa7d4e39e8f9de83b4b107d7ee962256c9caa83143abc5a0e7e6d05ae01e716"
+  },
+  {
+    "key": "service:parar-de-fumar-online",
+    "url": "https://www.myglobalhealth.online/brazil/en/services/parar-de-fumar-online",
+    "id": "cmrf53yfs003tmwju9a9kb6n6",
+    "slug": "parar-de-fumar-online",
+    "locale": "en",
+    "source": "raw/api/services-parar-de-fumar-online-EN.json",
+    "sourceFingerprint": "e5a04c2fbea80b76b5670758f0badf84c62c5ad0f940e01a8436dd9be99c7268",
+    "before": {
+      "seoTitle": "Quit Smoking Online Brazil | Medical Support | Same Day",
+      "seoDescription": "Consultation to quit smoking with a general practitioner by video call. Assessment of dependence, personalized plan, and guidance on treatment. Doctors with active CRM. Same day, from anywhere in Brazil."
+    },
+    "after": {
+      "seoTitle": "Quit Smoking Online Brazil | Medical Support",
+      "seoDescription": "Quit Smoking: video consultation with a family doctor. Check appointments, price and care limitations before booking."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "7a6df6f2a58465bd71b9691705e67d818e979ce844a48938b3ee7a3fcfe260e4"
+  },
+  {
+    "key": "service:parar-de-fumar-online",
+    "url": "https://www.myglobalhealth.online/brazil/es/services/parar-de-fumar-online",
+    "id": "cmrf53yfs003tmwju9a9kb6n6",
+    "slug": "parar-de-fumar-online",
+    "locale": "es",
+    "source": "raw/api/services-parar-de-fumar-online-ES.json",
+    "sourceFingerprint": "926614eb4dd27c36139e847e601607908c3b9cdeaddcd4a1c7aee0ee4f289d65",
+    "before": {
+      "seoTitle": "Dejar de Fumar Online Brasil | Apoyo Médico | Mismo Día",
+      "seoDescription": "Consulta para dejar de fumar con médico general por videollamada. Evaluación de la dependencia, plan personalizado y orientación sobre el tratamiento. Médicos con CRM activo. El mismo día, desde cualquier lugar de Brasil."
+    },
+    "after": {
+      "seoTitle": "Dejar de Fumar Online Brasil | Apoyo Médico",
+      "seoDescription": "Dejar de fumar: consulta por vídeo con un médico de familia. Revisa la agenda, el precio y los límites de la atención antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "5d6868881dcafcecbc736d81ec015c9c9a75de92757042f1789e1f38630b9bbb"
+  },
+  {
+    "key": "service:parar-de-fumar-online",
+    "url": "https://www.myglobalhealth.online/brazil/pt/services/parar-de-fumar-online",
+    "id": "cmrf53yfs003tmwju9a9kb6n6",
+    "slug": "parar-de-fumar-online",
+    "locale": "pt",
+    "source": "raw/api/services-parar-de-fumar-online-PT.json",
+    "sourceFingerprint": "005dfbc303e0c07ff183d2d9162557cd176d0570e19f9b7eb5b2082375d48f52",
+    "before": {
+      "seoTitle": "Parar de Fumar Online Brasil | Apoio Médico | Mesmo Dia",
+      "seoDescription": "Consulta para parar de fumar com clínico geral por videochamada. Avaliação da dependência, plano personalizado e orientação sobre tratamento. Médicos com CRM ativo. Mesmo dia, de qualquer lugar do Brasil."
+    },
+    "after": {
+      "seoTitle": "Parar de Fumar Online Brasil | Apoio Médico",
+      "seoDescription": "Parar de Fumar: consulta por vídeo com médico de família. Confira a agenda, o preço e os limites do atendimento antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "c380a0e6b0a32cee6489e5669f57686b10ee03a20a9eb92e7f176d5cf790fdaf"
+  },
+  {
+    "key": "service:pediatria-online",
+    "url": "https://www.myglobalhealth.online/brazil/en/services/pediatria-online",
+    "id": "cmrf53tja002amwju4a3yubyx",
+    "slug": "pediatria-online",
+    "locale": "en",
+    "source": "raw/api/services-pediatria-online-EN.json",
+    "sourceFingerprint": "42ac53189617a253bc552b2008bfaac7d8135cb4414770c6ade36ff775b0c3f7",
+    "before": {
+      "seoTitle": "Online Pediatrics Brazil | Pediatric Consultation | Same Day",
+      "heroTitle": "Online Pediatrics — Pediatric Consultation by Video Call, Same Day",
+      "seoDescription": "Pediatric consultation with a general practitioner by video call. Fever, infections, questions about development and much more. Doctors with active CRM. Same day, from anywhere in Brazil."
+    },
+    "after": {
+      "seoTitle": "Child health: family doctor online | Brazil",
+      "heroTitle": "Child and adolescent health with a family doctor",
+      "seoDescription": "Video care for children and adolescents with a family doctor. Check times and price. This is not a specialist pediatric appointment."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "ae173230f6d32482213923b5bf30bd7592c5624e746909b69b7e670e3dee60b5"
+  },
+  {
+    "key": "service:pediatria-online",
+    "url": "https://www.myglobalhealth.online/brazil/es/services/pediatria-online",
+    "id": "cmrf53tja002amwju4a3yubyx",
+    "slug": "pediatria-online",
+    "locale": "es",
+    "source": "raw/api/services-pediatria-online-ES.json",
+    "sourceFingerprint": "daa00fd857bf9ccd10804dcfb915a25fc4de7d114eca76760a836280f9948592",
+    "before": {
+      "seoTitle": "Pediatría Online Brasil | Consulta Pediátrica | Mismo Día",
+      "heroTitle": "Pediatría Online — Consulta Pediátrica por Videollamada, Mismo Día",
+      "seoDescription": "Consulta pediátrica con médico general por videollamada. Fiebre, infecciones, dudas sobre el desarrollo y mucho más. Médicos con CRM activo. El mismo día, desde cualquier lugar de Brasil."
+    },
+    "after": {
+      "seoTitle": "Salud infantil: médico de familia online | Brasil",
+      "heroTitle": "Salud infantil y adolescente con un médico de familia",
+      "seoDescription": "Consulta por vídeo para niños y adolescentes con un médico de familia. Revisa horarios y precio. No es una consulta con un pediatra especialista."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "180d59b5e42579328d3ee3b4ac5b671c8170b1a8b976d33f34582237747da05a"
+  },
+  {
+    "key": "service:pediatria-online",
+    "url": "https://www.myglobalhealth.online/brazil/pt/services/pediatria-online",
+    "id": "cmrf53tja002amwju4a3yubyx",
+    "slug": "pediatria-online",
+    "locale": "pt",
+    "source": "raw/api/services-pediatria-online-PT.json",
+    "sourceFingerprint": "a8177834601a2350a85169ee610b07f376bcb8661689b8e49f16ece0d2d933ae",
+    "before": {
+      "seoTitle": "Pediatria Online Brasil | Consulta Pediátrica | Mesmo Dia",
+      "heroTitle": "Pediatria Online — Consulta Pediátrica por Videochamada, Mesmo Dia",
+      "seoDescription": "Consulta pediátrica com clínico geral por videochamada. Febre, infecções, dúvidas sobre desenvolvimento e muito mais. Médicos com CRM ativo. Mesmo dia, de qualquer lugar do Brasil."
+    },
+    "after": {
+      "seoTitle": "Saúde da criança: médico de família online | Brasil",
+      "heroTitle": "Saúde da criança e adolescente com médico de família",
+      "seoDescription": "Consulta por vídeo para crianças e adolescentes com médico de família. Confira horários e preço. Não é uma consulta com pediatra especialista."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "b6c1e4a46257c599f1f9e6125102efdcaf33a8556c888a020f656946c0952176"
+  },
+  {
+    "key": "service:queda-cabelo-online",
+    "url": "https://www.myglobalhealth.online/brazil/en/services/queda-cabelo-online",
+    "id": "cmrf53v60002tmwjukdoh6mvz",
+    "slug": "queda-cabelo-online",
+    "locale": "en",
+    "source": "raw/api/services-queda-cabelo-online-EN.json",
+    "sourceFingerprint": "65015b46b0fb2b71733b151771f7351a33069aca6f51ab93c49511966179c152",
+    "before": {
+      "seoTitle": "Hair Loss Online Brazil | Medical Evaluation | Same Day",
+      "seoDescription": "Hair loss consultation with a general practitioner by video call. Evaluation of causes, ordering tests and guidance on treatment. Physicians with active CRM. Same day, from anywhere in Brazil."
+    },
+    "after": {
+      "seoTitle": "Hair Loss Online Brazil | Medical Evaluation",
+      "seoDescription": "Hair Loss: video consultation with a family doctor. Check appointments, price and care limitations before booking."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "d3684e8ce9b0ff192f529d7605c11165a1c6c8ed8a090b076d6a882e43ee6181"
+  },
+  {
+    "key": "service:queda-cabelo-online",
+    "url": "https://www.myglobalhealth.online/brazil/es/services/queda-cabelo-online",
+    "id": "cmrf53v60002tmwjukdoh6mvz",
+    "slug": "queda-cabelo-online",
+    "locale": "es",
+    "source": "raw/api/services-queda-cabelo-online-ES.json",
+    "sourceFingerprint": "e16ffd8c7a9d4fd9e76cf9a3b6c4553ae9f729f2c7c5a71f7ba0fda17511ece2",
+    "before": {
+      "seoTitle": "Caída de Cabello Online Brasil | Evaluación Médica | Mismo Día",
+      "seoDescription": "Consulta para caída de cabello con médico general por videollamada. Evaluación de causas, solicitud de exámenes y orientación sobre tratamiento. Médicos con CRM activo. El mismo día, desde cualquier lugar de Brasil."
+    },
+    "after": {
+      "seoTitle": "Caída de Cabello Online Brasil | Evaluación Médica",
+      "seoDescription": "Caída del cabello: consulta por vídeo con un médico de familia. Revisa la agenda, el precio y los límites de la atención antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "67bb41db0fd8480c217db7dd52120352d05e8c41ccdbf417bc26f9b4e6c1f698"
+  },
+  {
+    "key": "service:queda-cabelo-online",
+    "url": "https://www.myglobalhealth.online/brazil/pt/services/queda-cabelo-online",
+    "id": "cmrf53v60002tmwjukdoh6mvz",
+    "slug": "queda-cabelo-online",
+    "locale": "pt",
+    "source": "raw/api/services-queda-cabelo-online-PT.json",
+    "sourceFingerprint": "3a36f7a8ec610e34d6106a24c507bc6ce7d11617497f50d927902c9c31d81e92",
+    "before": {
+      "seoTitle": "Queda de Cabelo Online Brasil | Avaliação Médica | Mesmo Dia",
+      "seoDescription": "Consulta para queda de cabelo com clínico geral por videochamada. Avaliação de causas, pedido de exames e orientação sobre tratamento. Médicos com CRM ativo. Mesmo dia, de qualquer lugar do Brasil."
+    },
+    "after": {
+      "seoTitle": "Queda de Cabelo Online Brasil | Avaliação Médica",
+      "seoDescription": "Queda de Cabelo: consulta por vídeo com médico de família. Confira a agenda, o preço e os limites do atendimento antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "3a78060869a96a1db65c1c00b59fb0c286d5680ba89287040a882f9f354a2615"
+  },
+  {
+    "key": "service:saude-da-mulher-online",
+    "url": "https://www.myglobalhealth.online/brazil/en/services/saude-da-mulher-online",
+    "id": "cmrf53phb0012mwjugm5jp41p",
+    "slug": "saude-da-mulher-online",
+    "locale": "en",
+    "source": "raw/api/services-saude-da-mulher-online-EN.json",
+    "sourceFingerprint": "48f81e01af8390772038c3b8baedc28aac45376adf279137833d711f9b48a088",
+    "before": {
+      "seoTitle": "Women's Health Online Brazil | General Practitioner | Same Day",
+      "seoDescription": "Women's health consultation by video call with a general practitioner. Hormonal health, contraception, reproductive health and much more. Doctors with active CRM. Same day, from anywhere in Brazil."
+    },
+    "after": {
+      "seoTitle": "Women's Health Online Brazil | General Practitioner",
+      "seoDescription": "Women's Health: video consultation with a family doctor. Check appointments, price and care limitations before booking."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "5dca0a7a1086ee380b61bb80814e4a5cb9da17a167868cf70bce5177e99f5c80"
+  },
+  {
+    "key": "service:saude-da-mulher-online",
+    "url": "https://www.myglobalhealth.online/brazil/es/services/saude-da-mulher-online",
+    "id": "cmrf53phb0012mwjugm5jp41p",
+    "slug": "saude-da-mulher-online",
+    "locale": "es",
+    "source": "raw/api/services-saude-da-mulher-online-ES.json",
+    "sourceFingerprint": "727b6d9459958abc59fb74dbe8db2f8b454122e5f85f533678bdd10ec871d4b7",
+    "before": {
+      "seoTitle": "Salud de la Mujer Online Brasil | Clínico General | Mismo Día",
+      "seoDescription": "Consulta de salud femenina por videollamada con médico general. Salud hormonal, anticoncepción, salud reproductiva y mucho más. Médicos con CRM activo. El mismo día, desde cualquier lugar de Brasil."
+    },
+    "after": {
+      "seoTitle": "Salud de la Mujer Online Brasil | Clínico General",
+      "seoDescription": "Salud de la Mujer: consulta por vídeo con un médico de familia. Revisa la agenda, el precio y los límites de la atención antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "51d047b0fd31238496d6c049c047c88418ad9b9a8bf0fc967a0ac6a8bf2f21bb"
+  },
+  {
+    "key": "service:saude-da-mulher-online",
+    "url": "https://www.myglobalhealth.online/brazil/pt/services/saude-da-mulher-online",
+    "id": "cmrf53phb0012mwjugm5jp41p",
+    "slug": "saude-da-mulher-online",
+    "locale": "pt",
+    "source": "raw/api/services-saude-da-mulher-online-PT.json",
+    "sourceFingerprint": "2fbb78f4801c0f5341d8e57addf51c8d8ba111a1b9c1fa1281257d3573d5f9ac",
+    "before": {
+      "seoTitle": "Saúde da Mulher Online Brasil | Clínico Geral | Mesmo Dia",
+      "seoDescription": "Consulta de saúde feminina por videochamada com clínico geral. Saúde hormonal, anticoncepção, saúde reprodutiva e muito mais. Médicos com CRM ativo. Mesmo dia, de qualquer lugar do Brasil."
+    },
+    "after": {
+      "seoTitle": "Saúde da Mulher Online Brasil | Clínico Geral",
+      "seoDescription": "Saúde da Mulher: consulta por vídeo com médico de família. Confira a agenda, o preço e os limites do atendimento antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "8d1efe3ee7ce6cdc7a6f6dcd9a122ba598e278948162cc63423bd6f911871da7"
+  },
+  {
+    "key": "service:saude-do-homem-online",
+    "url": "https://www.myglobalhealth.online/brazil/en/services/saude-do-homem-online",
+    "id": "cmrf53qak001bmwju7ufg2pb5",
+    "slug": "saude-do-homem-online",
+    "locale": "en",
+    "source": "raw/api/services-saude-do-homem-online-EN.json",
+    "sourceFingerprint": "6b353602054a88309d2a7a3d8b3076af87a55a347a8c1d097e9fa1f3fe1b397d",
+    "before": {
+      "seoTitle": "Men's Health Online Brazil | General Practitioner | Same Day",
+      "seoDescription": "Men’s health consultation by video call with a general practitioner. Sexual health, hair loss, check-up and much more. Doctors with active CRM. Same day, from anywhere in Brazil."
+    },
+    "after": {
+      "seoTitle": "Men's Health Online Brazil | General Practitioner",
+      "seoDescription": "Men's Health: video consultation with a family doctor. Check appointments, price and care limitations before booking."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "c0d5fcd443ee52c6fb371890787038fa179d42a90dba965ce6915b37badfe182"
+  },
+  {
+    "key": "service:saude-do-homem-online",
+    "url": "https://www.myglobalhealth.online/brazil/es/services/saude-do-homem-online",
+    "id": "cmrf53qak001bmwju7ufg2pb5",
+    "slug": "saude-do-homem-online",
+    "locale": "es",
+    "source": "raw/api/services-saude-do-homem-online-ES.json",
+    "sourceFingerprint": "8a9987f6fe4048f9582f116565519f30ae8911e14986b95645e7879c393abc65",
+    "before": {
+      "seoTitle": "Salud del Hombre en Línea Brasil | Médico General | Mismo Día",
+      "seoDescription": "Consulta de salud masculina por videollamada con médico general. Salud sexual, caída de cabello, chequeo y mucho más. Médicos con CRM activo. El mismo día, desde cualquier lugar de Brasil."
+    },
+    "after": {
+      "seoTitle": "Salud del Hombre en Línea Brasil | Médico General",
+      "seoDescription": "Salud del Hombre: consulta por vídeo con un médico de familia. Revisa la agenda, el precio y los límites de la atención antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "e133f09041c21831b7031b510f9e2df22be00597cc980f68e0138c1b93ad625b"
+  },
+  {
+    "key": "service:saude-do-homem-online",
+    "url": "https://www.myglobalhealth.online/brazil/pt/services/saude-do-homem-online",
+    "id": "cmrf53qak001bmwju7ufg2pb5",
+    "slug": "saude-do-homem-online",
+    "locale": "pt",
+    "source": "raw/api/services-saude-do-homem-online-PT.json",
+    "sourceFingerprint": "09b1859c2d829112c7109f3f8cbdc4cd7222c3b502a367ebc96b35940b0fbf6a",
+    "before": {
+      "seoTitle": "Saúde do Homem Online Brasil | Clínico Geral | Mesmo Dia",
+      "seoDescription": "Consulta de saúde masculina por videochamada com clínico geral. Saúde sexual, queda de cabelo, check-up e muito mais. Médicos com CRM ativo. Mesmo dia, de qualquer lugar do Brasil."
+    },
+    "after": {
+      "seoTitle": "Saúde do Homem Online Brasil | Clínico Geral",
+      "seoDescription": "Saúde do Homem: consulta por vídeo com médico de família. Confira a agenda, o preço e os limites do atendimento antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "2fde7f89281555b0a511130ed4e8131a055165651e7b033cc692ddb3c5a29057"
+  },
+  {
+    "key": "service:saude-idoso-online",
+    "url": "https://www.myglobalhealth.online/brazil/en/services/saude-idoso-online",
+    "id": "cmrf53z930043mwjumjntd7c9",
+    "slug": "saude-idoso-online",
+    "locale": "en",
+    "source": "raw/api/services-saude-idoso-online-EN.json",
+    "sourceFingerprint": "4067be0ac1ff939a61a8fdedb9d2249fca8985d9b9f72c8b79ce4c061a19e287",
+    "before": {
+      "seoTitle": "Senior Health Online Brazil | General Practitioner | Same Day",
+      "seoDescription": "Elderly health consultation with a general practitioner by video call. Medication review, cognitive assessment, fall prevention and much more. Doctors with an active CRM. Same day, from anywhere in Brazil."
+    },
+    "after": {
+      "seoTitle": "Senior Health Online Brazil | General Practitioner",
+      "seoDescription": "Elderly Health: video consultation with a family doctor. Check appointments, price and care limitations before booking."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "a751e6c8e52a574143fd8d0d5442fd9f12bd5757765f9fdd8d8964d3f7ef9f0b"
+  },
+  {
+    "key": "service:saude-idoso-online",
+    "url": "https://www.myglobalhealth.online/brazil/es/services/saude-idoso-online",
+    "id": "cmrf53z930043mwjumjntd7c9",
+    "slug": "saude-idoso-online",
+    "locale": "es",
+    "source": "raw/api/services-saude-idoso-online-ES.json",
+    "sourceFingerprint": "1214f112dbae6fdfdde200c3f5d206c9cb41f81700ac793854f35a9aa30cc493",
+    "before": {
+      "seoTitle": "Salud del Adulto Mayor Online Brasil | Médico General | Mismo Día",
+      "seoDescription": "Consulta de salud del adulto mayor con médico general por videollamada. Revisión de medicamentos, evaluación cognitiva, prevención de caídas y mucho más. Médicos con CRM activo. El mismo día, desde cualquier lugar de Brasil."
+    },
+    "after": {
+      "seoTitle": "Salud del Adulto Mayor Online Brasil | Médico General",
+      "seoDescription": "Salud del adulto mayor: consulta por vídeo con un médico de familia. Revisa la agenda, el precio y los límites de la atención antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "2bb03b28d54f3bfd2005ed5b930685eb2d37bd7ccb91f56e13ee2a94fc15296e"
+  },
+  {
+    "key": "service:saude-idoso-online",
+    "url": "https://www.myglobalhealth.online/brazil/pt/services/saude-idoso-online",
+    "id": "cmrf53z930043mwjumjntd7c9",
+    "slug": "saude-idoso-online",
+    "locale": "pt",
+    "source": "raw/api/services-saude-idoso-online-PT.json",
+    "sourceFingerprint": "ef6bb846a51a20752f354d5617f96377c2d24cd8eb407a3a7c33ee22a5436b0b",
+    "before": {
+      "seoTitle": "Saúde do Idoso Online Brasil | Clínico Geral | Mesmo Dia",
+      "seoDescription": "Consulta de saúde do idoso com clínico geral por videochamada. Revisão de medicamentos, avaliação cognitiva, prevenção de quedas e muito mais. Médicos com CRM ativo. Mesmo dia, de qualquer lugar do Brasil."
+    },
+    "after": {
+      "seoTitle": "Saúde do Idoso Online Brasil | Clínico Geral",
+      "seoDescription": "Saúde do Idoso: consulta por vídeo com médico de família. Confira a agenda, o preço e os limites do atendimento antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "9362e3b4610b858de89a4d49334427e477802ab82f4b6474b0ae708f8e24915c"
+  },
+  {
+    "key": "service:saude-mental-online",
+    "url": "https://www.myglobalhealth.online/brazil/en/services/saude-mental-online",
+    "id": "cmrf53onw000smwjugx2rt50j",
+    "slug": "saude-mental-online",
+    "locale": "en",
+    "source": "raw/api/services-saude-mental-online-EN.json",
+    "sourceFingerprint": "d51cf052c45a3121a80572b311527be7cb5b02fef72e01769ccc3fc6ac647af9",
+    "before": {
+      "seoDescription": "Talk to a general practitioner about anxiety, depression, stress, or burnout by video call. Assessment, guidance, and referral when necessary. Doctors with active CRM. Same day, throughout Brazil."
+    },
+    "after": {
+      "seoDescription": "Mental Health: video consultation with a family doctor. Check appointments, price and care limitations before booking."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "e2aa714662263e0fd81a7bbdef83712a984a6eb51f2dae540908656b97e3f842"
+  },
+  {
+    "key": "service:saude-mental-online",
+    "url": "https://www.myglobalhealth.online/brazil/es/services/saude-mental-online",
+    "id": "cmrf53onw000smwjugx2rt50j",
+    "slug": "saude-mental-online",
+    "locale": "es",
+    "source": "raw/api/services-saude-mental-online-ES.json",
+    "sourceFingerprint": "4fac08c55d2dd9f0dc80684e0b6b1bc1718db7ef4b66f715e007533b21cb69d6",
+    "before": {
+      "seoDescription": "Habla con un médico general sobre ansiedad, depresión, estrés o burnout por videollamada. Evaluación, orientación y derivación cuando sea necesario. Médicos con CRM activo. El mismo día, en todo Brasil."
+    },
+    "after": {
+      "seoDescription": "Salud Mental: consulta por vídeo con un médico de familia. Revisa la agenda, el precio y los límites de la atención antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "79cf446b4849c3f09cdcf3f1f194670f7e798d30e7888fc10f4fbb226fa2ffed"
+  },
+  {
+    "key": "service:saude-mental-online",
+    "url": "https://www.myglobalhealth.online/brazil/pt/services/saude-mental-online",
+    "id": "cmrf53onw000smwjugx2rt50j",
+    "slug": "saude-mental-online",
+    "locale": "pt",
+    "source": "raw/api/services-saude-mental-online-PT.json",
+    "sourceFingerprint": "9871f963e18231808423eb512d88cb6927276fd94bf1e9bc511d7937d5cc2a76",
+    "before": {
+      "seoDescription": "Converse com um clínico geral sobre ansiedade, depressão, estresse ou burnout por videochamada. Avaliação, orientação e encaminhamento quando necessário. Médicos com CRM ativo. Mesmo dia, em todo o Brasil."
+    },
+    "after": {
+      "seoDescription": "Saúde Mental: consulta por vídeo com médico de família. Confira a agenda, o preço e os limites do atendimento antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "3e220c641830b451002d8466ee7471f1f11c5d1b320e2a95a38eb957df28637f"
+  },
+  {
+    "key": "service:saude-sexual-ist-online",
+    "url": "https://www.myglobalhealth.online/brazil/en/services/saude-sexual-ist-online",
+    "id": "cmrf54032004dmwjuodh62mcc",
+    "slug": "saude-sexual-ist-online",
+    "locale": "en",
+    "source": "raw/api/services-saude-sexual-ist-online-EN.json",
+    "sourceFingerprint": "34f0da50b2bdbc53f5cfe36a2e9cc770db31fa2ba004044c3ad458e6953e84ae",
+    "before": {
+      "seoTitle": "Sexual Health and STIs Online Brazil | General Practitioner | Same Day",
+      "seoDescription": "Sexual health consultation and STI screening with a general practitioner by video call. Syphilis, HIV, hepatitis, PrEP, and much more. Doctors with an active medical license. Same day, from anywhere in Brazil."
+    },
+    "after": {
+      "seoTitle": "Sexual Health and STIs Online Brazil | General Practitioner",
+      "seoDescription": "Sexual Health and STIs: video consultation with a family doctor. Check appointments, price and care limitations before booking."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "8b116253db785be788711467a5c19a7285bf7944359920fa1797062acd8360b4"
+  },
+  {
+    "key": "service:saude-sexual-ist-online",
+    "url": "https://www.myglobalhealth.online/brazil/es/services/saude-sexual-ist-online",
+    "id": "cmrf54032004dmwjuodh62mcc",
+    "slug": "saude-sexual-ist-online",
+    "locale": "es",
+    "source": "raw/api/services-saude-sexual-ist-online-ES.json",
+    "sourceFingerprint": "638e12563044c24478c5ae44625bd809ce8bb9b396810fcbbbf9de2e3fdd9587",
+    "before": {
+      "seoTitle": "Salud Sexual e ITS Online Brasil | Médico General | Mismo Día",
+      "seoDescription": "Consulta de salud sexual y detección de ITS con médico general por videollamada. Sífilis, VIH, hepatitis, PrEP y mucho más. Médicos con CRM activo. El mismo día, desde cualquier lugar de Brasil."
+    },
+    "after": {
+      "seoTitle": "Salud Sexual e ITS Online Brasil | Médico General",
+      "seoDescription": "Salud sexual e ITS: consulta por vídeo con un médico de familia. Revisa la agenda, el precio y los límites de la atención antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "5d7b663ab057989ad438c4cee1f412e58071e15a22b70bd972ba45aaa827ae2e"
+  },
+  {
+    "key": "service:saude-sexual-ist-online",
+    "url": "https://www.myglobalhealth.online/brazil/pt/services/saude-sexual-ist-online",
+    "id": "cmrf54032004dmwjuodh62mcc",
+    "slug": "saude-sexual-ist-online",
+    "locale": "pt",
+    "source": "raw/api/services-saude-sexual-ist-online-PT.json",
+    "sourceFingerprint": "a3a7ef546f977456c92d050c5472f8dfbbddabb754d9bbb1dad7834cd21decb6",
+    "before": {
+      "seoTitle": "Saúde Sexual e IST Online Brasil | Clínico Geral | Mesmo Dia",
+      "seoDescription": "Consulta de saúde sexual e rastreamento de IST com clínico geral por videochamada. Sífilis, HIV, hepatites, PrEP e muito mais. Médicos com CRM ativo. Mesmo dia, de qualquer lugar do Brasil."
+    },
+    "after": {
+      "seoTitle": "Saúde Sexual e IST Online Brasil | Clínico Geral",
+      "seoDescription": "Saúde Sexual e IST: consulta por vídeo com médico de família. Confira a agenda, o preço e os limites do atendimento antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "a6ef627b6c7378686d4dda04a04b8f6991413d6c05fce5a0de1fca518c6f6c15"
+  },
+  {
+    "key": "service:saude-viagem-online",
+    "url": "https://www.myglobalhealth.online/brazil/en/services/saude-viagem-online",
+    "id": "cmrf53r40001kmwjug6ly0nla",
+    "slug": "saude-viagem-online",
+    "locale": "en",
+    "source": "raw/api/services-saude-viagem-online-EN.json",
+    "sourceFingerprint": "69186de408ee651517e24bed877da43c895d785956b8f872ec17929fb505e7d0",
+    "before": {
+      "seoTitle": "Online Travel Health Brazil | Medical Consultation Before Traveling | Same Day",
+      "seoDescription": "Travel health consultation with a general practitioner by video call. Guidance on vaccines, malaria prophylaxis, dengue, and much more. Doctors with an active medical license. Same day, from anywhere in Brazil."
+    },
+    "after": {
+      "seoTitle": "Online Travel Health Brazil | Medical Consultation Before Traveling",
+      "seoDescription": "Travel Health: video consultation with a family doctor. Check appointments, price and care limitations before booking."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "a71f536f70a837fec758a32fcf6af85b4ca14336189b3137254648dea41be39b"
+  },
+  {
+    "key": "service:saude-viagem-online",
+    "url": "https://www.myglobalhealth.online/brazil/es/services/saude-viagem-online",
+    "id": "cmrf53r40001kmwjug6ly0nla",
+    "slug": "saude-viagem-online",
+    "locale": "es",
+    "source": "raw/api/services-saude-viagem-online-ES.json",
+    "sourceFingerprint": "ea7c710e6d9c382b3a5c80057532c4529a83029d4e5047985fba312e355f5dd3",
+    "before": {
+      "seoTitle": "Salud de Viaje Online Brasil | Consulta Médica Antes de Viajar | Mismo Día",
+      "seoDescription": "Consulta de salud de viaje con médico general por videollamada. Orientación sobre vacunas, profilaxis de malaria, dengue y mucho más. Médicos con CRM activo. El mismo día, desde cualquier lugar de Brasil."
+    },
+    "after": {
+      "seoTitle": "Salud de Viaje Online Brasil | Consulta Médica Antes de Viajar",
+      "seoDescription": "Salud de Viaje: consulta por vídeo con un médico de familia. Revisa la agenda, el precio y los límites de la atención antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "51827af4185d0de565b3455a6407f4de311405b7d0aea93275d165282f8f02e5"
+  },
+  {
+    "key": "service:saude-viagem-online",
+    "url": "https://www.myglobalhealth.online/brazil/pt/services/saude-viagem-online",
+    "id": "cmrf53r40001kmwjug6ly0nla",
+    "slug": "saude-viagem-online",
+    "locale": "pt",
+    "source": "raw/api/services-saude-viagem-online-PT.json",
+    "sourceFingerprint": "a55f916890ca302347f0b0a3f720f0ab2fc20fa1e4e65e81ac266c54e5155451",
+    "before": {
+      "seoTitle": "Saúde de Viagem Online Brasil | Consulta Médica Antes de Viajar | Mesmo Dia",
+      "seoDescription": "Consulta de saúde de viagem com clínico geral por videochamada. Orientação sobre vacinas, profilaxia de malária, dengue e muito mais. Médicos com CRM ativo. Mesmo dia, de qualquer lugar do Brasil."
+    },
+    "after": {
+      "seoTitle": "Saúde de Viagem Online Brasil | Consulta Médica Antes de Viajar",
+      "seoDescription": "Saúde de Viagem: consulta por vídeo com médico de família. Confira a agenda, o preço e os limites do atendimento antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "709a1e51da2351f6d59b3bfdf3c030782991f7437e4186627f1b2aa2170c800b"
+  },
+  {
+    "key": "service:segunda-opiniao-medica",
+    "url": "https://www.myglobalhealth.online/brazil/en/services/segunda-opiniao-medica",
+    "id": "cmrf53sq40021mwjuiu3pf1z7",
+    "slug": "segunda-opiniao-medica",
+    "locale": "en",
+    "source": "raw/api/services-segunda-opiniao-medica-EN.json",
+    "sourceFingerprint": "99f03e58fd05b2b60057f6013f34b48ee33076689c3b8cb74ac5d770949ce0ff",
+    "before": {
+      "seoTitle": "Online Medical Second Opinion Brazil | General Practitioner | Same Day",
+      "seoDescription": "Get an independent medical second opinion by video call. Review diagnoses, test results, and treatment plans with a general practitioner with an active medical registration. Same day, from anywhere in Brazil."
+    },
+    "after": {
+      "seoTitle": "Online Medical Second Opinion Brazil | General Practitioner",
+      "seoDescription": "Second Medical Opinion: video consultation with a family doctor. Check appointments, price and care limitations before booking."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "eeb510a975c0687c53140a1ab6084ebd631dfbe0e2056043d85f06de059b7aab"
+  },
+  {
+    "key": "service:segunda-opiniao-medica",
+    "url": "https://www.myglobalhealth.online/brazil/es/services/segunda-opiniao-medica",
+    "id": "cmrf53sq40021mwjuiu3pf1z7",
+    "slug": "segunda-opiniao-medica",
+    "locale": "es",
+    "source": "raw/api/services-segunda-opiniao-medica-ES.json",
+    "sourceFingerprint": "7ee645511f6923900e1140f5a6c2cf8a85cbce013737c7d7dcecc9625baa0fdb",
+    "before": {
+      "seoTitle": "Segunda Opinión Médica Online Brasil | Clínico General | Mismo Día",
+      "seoDescription": "Obtenga una segunda opinión médica independiente por videollamada. Revise diagnósticos, resultados de exámenes y planes de tratamiento con un médico general con CRM activo. El mismo día, desde cualquier lugar de Brasil."
+    },
+    "after": {
+      "seoTitle": "Segunda Opinión Médica Online Brasil | Clínico General",
+      "seoDescription": "Segunda Opinión Médica: consulta por vídeo con un médico de familia. Revisa la agenda, el precio y los límites de la atención antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "3b88a4cdf4f01e46286e9f8346355b11bcac2565988979980ec156febdc80ff5"
+  },
+  {
+    "key": "service:segunda-opiniao-medica",
+    "url": "https://www.myglobalhealth.online/brazil/pt/services/segunda-opiniao-medica",
+    "id": "cmrf53sq40021mwjuiu3pf1z7",
+    "slug": "segunda-opiniao-medica",
+    "locale": "pt",
+    "source": "raw/api/services-segunda-opiniao-medica-PT.json",
+    "sourceFingerprint": "cbd46223a2e672db7314fb409124d6ac0606c5617db32054b02cd8406f481a7d",
+    "before": {
+      "seoTitle": "Segunda Opinião Médica Online Brasil | Clínico Geral | Mesmo Dia",
+      "seoDescription": "Obtenha uma segunda opinião médica independente por videochamada. Revise diagnósticos, resultados de exames e planos de tratamento com um clínico geral com CRM ativo. Mesmo dia, de qualquer lugar do Brasil."
+    },
+    "after": {
+      "seoTitle": "Segunda Opinião Médica Online Brasil | Clínico Geral",
+      "seoDescription": "Segunda Opinião Médica: consulta por vídeo com médico de família. Confira a agenda, o preço e os limites do atendimento antes de reservar."
+    },
+    "faqPatches": [],
+    "addedFaqs": [],
+    "hold": "",
+    "status": "unapproved local candidate",
+    "retained": "Other FAQ answers and body/biography retained as existing copy; not newly clinically verified",
+    "payloadSha256": "2d02e45930324e1cf3853736360998abd8e4e094f3c3fe22d8fe1e25890ef04a"
+  }
+]

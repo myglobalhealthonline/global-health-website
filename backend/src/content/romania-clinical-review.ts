@@ -48,12 +48,16 @@ type SpainApproval = { stateSha256: string; reviewerDoctorId: string; reviewedAt
 // Add only owner-confirmed policy and exact reviewed state hashes from the Spain packet.
 export const SPAIN_REVIEW_POLICY: { maxAgeDays: number | null } = { maxAgeDays: null };
 export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {};
-export function assertSpainClinicalChanges(before: Snapshot, after: Snapshot, now = Date.now()): void {
+export const BRAZIL_REVIEW_POLICY: { maxAgeDays: number | null } = { maxAgeDays: null };
+export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {};
+export const assertSpainClinicalChanges = (before: Snapshot, after: Snapshot, now = Date.now()) => assertReviewedChanges(before, after, 'Spain', SPAIN_REVIEW_POLICY, APPROVED_SPAIN_STATES, now);
+export const assertBrazilClinicalChanges = (before: Snapshot, after: Snapshot, now = Date.now()) => assertReviewedChanges(before, after, 'Brazil', BRAZIL_REVIEW_POLICY, APPROVED_BRAZIL_STATES, now);
+function assertReviewedChanges(before: Snapshot, after: Snapshot, market: string, policy: { maxAgeDays: number | null }, approvals: Record<string, SpainApproval[]>, now: number): void {
   const previous = romanianContentStates(before), next = romanianContentStates(after);
   for (const key of new Set([...Object.keys(previous), ...Object.keys(next)])) {
     if (previous[key] === next[key]) continue;
-    const age = SPAIN_REVIEW_POLICY.maxAgeDays;
-    const valid = Number.isFinite(age) && age !== null && age > 0 && next[key] && APPROVED_SPAIN_STATES[key]?.some(a => {
+    const age = policy.maxAgeDays;
+    const valid = Number.isFinite(age) && age !== null && age > 0 && next[key] && approvals[key]?.some(a => {
       const date = Date.parse(a.reviewedAt);
       return a.stateSha256 === next[key] && a.evidence.trim() && Number.isFinite(date) && date <= now && now - date <= age * 86400000
         && after.doctors.some(d => d.id === a.reviewerDoctorId && d.active)
@@ -61,7 +65,7 @@ export function assertSpainClinicalChanges(before: Snapshot, after: Snapshot, no
     });
     if (!valid) {
       const error = new RomaniaClinicalApprovalRequiredError(key);
-      error.message = `Spain clinical content requires approval of this exact revision and a current review policy (${key}).`;
+      error.message = `${market} clinical content requires approval of this exact revision and a current review policy (${key}).`;
       throw error;
     }
   }
@@ -191,9 +195,11 @@ export function reviewedRomaniaTransaction<T>(
     const query: Query = (sql, values) => tx.$queryRawUnsafe<Row[]>(sql, ...values);
     const before = await tx.country.findUnique({ where: { code: 'ro' }, select: { id: true } }) ? await readRomaniaContent(query) : null;
     const spain = await tx.country.findUnique({ where: { code: 'es' }, select: { id: true } }) ? await readCountryClinicalContent(query, 'es', 'spain') : null;
+    const brazil = await tx.country.findUnique({ where: { code: 'br' }, select: { id: true } }) ? await readCountryClinicalContent(query, 'br', 'brazil') : null;
     const result = await work(tx);
     if (before) assertRomaniaClinicalChanges(before, await readRomaniaContent(query));
     if (spain) assertSpainClinicalChanges(spain, await readCountryClinicalContent(query, 'es', 'spain'));
+    if (brazil) assertBrazilClinicalChanges(brazil, await readCountryClinicalContent(query, 'br', 'brazil'));
     return result;
   }, { maxWait: 10000, timeout: 30000, ...options, isolationLevel: 'Serializable' });
 }
@@ -207,13 +213,13 @@ export async function readCountryClinicalContent(query: Query, code: string, slu
   const rows = (sql: string, values: unknown[] = []) => query(sql, values);
   const [country] = await rows('SELECT id, code, slug, "defaultLocale", "isActive" FROM "Country" WHERE code = $1', [code]);
   if (!country || country.slug !== slug) throw new Error('Clinical snapshot country mismatch');
-  const serviceProjection = code === 'es' ? 'id, "countryId", kind, slug, name, summary, "seoTitle", "seoDescription", "seoKeywords", "heroTitle", "heroDescription", "detailBody", "ctaLabel", "sortOrder", "durationMinutes", "basePriceCents", "currencyCode", "isActive", visibility, "bookingPausedFrom", "bookingPausedUntil", "lastReviewedAt", "updatedAt"' : '*';
+  const serviceProjection = ['es', 'br'].includes(code) ? 'id, "countryId", kind, slug, name, summary, "seoTitle", "seoDescription", "seoKeywords", "heroTitle", "heroDescription", "detailBody", "ctaLabel", "sortOrder", "durationMinutes", "basePriceCents", "currencyCode", "isActive", visibility, "bookingPausedFrom", "bookingPausedUntil", "lastReviewedAt", "updatedAt"' : '*';
   const services = await rows(`SELECT ${serviceProjection} FROM "Service" WHERE "countryId" = $1 ORDER BY id`, [country.id]);
   const ids = services.map(s => s.id);
   const serviceTranslations = await rows('SELECT * FROM "ServiceTranslation" WHERE "serviceId" = ANY($1::text[]) ORDER BY id', [ids]);
   const serviceFaqs = await rows('SELECT * FROM "ServiceFaq" WHERE "serviceId" = ANY($1::text[]) ORDER BY id', [ids]);
   const serviceFaqTranslations = await rows('SELECT * FROM "ServiceFaqTranslation" WHERE "serviceFaqId" = ANY($1::text[]) ORDER BY id', [serviceFaqs.map(f => f.id)]);
-  const assignmentProjection = code === 'es' ? 'id, "serviceId", "doctorId", "isActive", "sortOrder", "selectedBy", status, "createdAt", "updatedAt"' : '*';
+  const assignmentProjection = ['es', 'br'].includes(code) ? 'id, "serviceId", "doctorId", "isActive", "sortOrder", "selectedBy", status, "createdAt", "updatedAt"' : '*';
   const assignments = await rows(`SELECT ${assignmentProjection} FROM "ServiceDoctor" WHERE "serviceId" = ANY($1::text[]) ORDER BY id`, [ids]);
   const doctors = await rows(`SELECT id, "countryId", slug, "fullName", title, bio, "seoTitle", "seoDescription", languages, qualifications,
     active, "lastReviewedAt", "bookingPausedFrom", "bookingPausedUntil", "updatedAt" FROM "Doctor"

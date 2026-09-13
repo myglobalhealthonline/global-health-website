@@ -128,3 +128,8 @@ loadtest/config/secrets.json
 loadtest/config/cookies.json
 loadtest/results/
 loadtest/config/seed-passwords.json
+
+# Brazil SEO raw captures and authenticated rollout artifacts stay local.
+/seo/brazil/raw/
+/seo/brazil/content-briefs/storage-mutation-manifest.json
+/seo/brazil/content-briefs/rollback-plan.json
