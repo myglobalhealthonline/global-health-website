@@ -1,0 +1,519 @@
+[
+  {
+    "url": "https://www.myglobalhealth.online/portugal/pt/services/hypertension-consultation",
+    "locale": "pt",
+    "title": "Page not found · Global Health",
+    "description": "Online medical consultations with licensed clinicians across Ireland, Czechia, Portugal, Spain, and Romania.",
+    "h1": [],
+    "h2": [],
+    "robots": "noindex",
+    "canonical": "https://www.myglobalhealth.online",
+    "hreflang": [],
+    "schemaTypes": [],
+    "schemaFaqCount": 0,
+    "schemaFaqs": [],
+    "faqs": [],
+    "body": "Page not found · Global Health",
+    "links": [],
+    "sha256": "ed57e688271556be499286967843248ba958f2a29e3b7724a4c4237bc8161567",
+    "status": 404,
+    "finalUrl": "https://www.myglobalhealth.online/portugal/pt/services/hypertension-consultation",
+    "xRobotsTag": null,
+    "checkedAt": "2026-09-13T17:45:51.067Z"
+  },
+  {
+    "url": "https://www.myglobalhealth.online/cs/czech-republic/diabetologick%C3%A1-konzultace",
+    "locale": "czech-republic",
+    "title": "Page not found",
+    "description": "",
+    "h1": [
+      "Stránka nenalezena"
+    ],
+    "h2": [],
+    "robots": "noindex",
+    "canonical": "",
+    "hreflang": [],
+    "schemaTypes": [
+      "MedicalOrganization",
+      "ImageObject",
+      "Country",
+      "ContactPoint",
+      "PostalAddress",
+      "PropertyValue",
+      "WebSite"
+    ],
+    "schemaFaqCount": 0,
+    "schemaFaqs": [],
+    "faqs": [],
+    "body": "Chyba 404Monitor stránkyHTTP 404Stránka nenalezenaStránka, kterou hledáte, neexistuje nebo byla přesunuta.Zpět na hlavní stránkuRezervovat online",
+    "links": [
+      {
+        "text": "O nás",
+        "href": "/ireland/en/about"
+      },
+      {
+        "text": "Blog",
+        "href": "/ireland/en/blog"
+      },
+      {
+        "text": "FAQ",
+        "href": "/ireland/en/faq"
+      },
+      {
+        "text": "Kontakt",
+        "href": "/contact"
+      },
+      {
+        "text": "Zpět na hlavní stránku",
+        "href": "/"
+      },
+      {
+        "text": "Rezervovat online",
+        "href": "/ireland/en/book"
+      }
+    ],
+    "sha256": "a01ba0fc3efcf1b55d0366a9bfb184aa92b2fa4d5e5e7a81d2439adbb0919ee8",
+    "status": 404,
+    "finalUrl": "https://www.myglobalhealth.online/cs/czech-republic/diabetologick%C3%A1-konzultace",
+    "xRobotsTag": null,
+    "checkedAt": "2026-09-13T17:45:51.077Z"
+  },
+  {
+    "url": "https://www.myglobalhealth.online/br/clinica-geral",
+    "locale": "clinica-geral",
+    "title": "Page not found · Global Health",
+    "description": "Online medical consultations with licensed clinicians across Ireland, Czechia, Portugal, Spain, and Romania.",
+    "h1": [],
+    "h2": [],
+    "robots": "noindex",
+    "canonical": "https://www.myglobalhealth.online",
+    "hreflang": [],
+    "schemaTypes": [],
+    "schemaFaqCount": 0,
+    "schemaFaqs": [],
+    "faqs": [],
+    "body": "Page not found · Global Health",
+    "links": [],
+    "sha256": "b4901b7922fb8c813139c159b71cb645de314804faf6a9bc941ac5ba86e2d00d",
+    "status": 404,
+    "finalUrl": "https://www.myglobalhealth.online/br/clinica-geral",
+    "xRobotsTag": null,
+    "checkedAt": "2026-09-13T17:45:51.345Z"
+  },
+  {
+    "url": "https://www.myglobalhealth.online/portugal/pt/services/cardiology-consultation",
+    "locale": "pt",
+    "title": "Cardiologista Online | Consulta de Cardiologia",
+    "description": "Consulta com cardiologista registado na Ordem dos Médicos para risco cardiovascular, doença cardíaca ou segunda opinião, por videochamada segura.",
+    "h1": [
+      "Consulta de Cardiologia"
+    ],
+    "h2": [
+      "O Que a Cardiologia à Distância Cobre — E O Que Exige Avaliação Presencial",
+      "Situações Habitualmente Avaliadas e Geridas",
+      "O Que Inclui a Sua Consulta",
+      "Quando Consultar um Cardiologista vs o Seu Médico de Clínica Geral",
+      "Porquê Escolher os Nossos Cuidados",
+      "Especialistas em Portugal",
+      "Perguntas Frequentes",
+      "Temas de saúde relacionados",
+      "Também disponível em",
+      "Marcar Consulta de Cardiologia em Portugal"
+    ],
+    "robots": "index, follow",
+    "canonical": "https://www.myglobalhealth.online/portugal/pt/services/consulta-cardiologia",
+    "hreflang": [
+      {
+        "lang": "pt-PT",
+        "url": "https://www.myglobalhealth.online/portugal/pt/services/consulta-cardiologia"
+      },
+      {
+        "lang": "en-PT",
+        "url": "https://www.myglobalhealth.online/portugal/en/services/consulta-cardiologia"
+      },
+      {
+        "lang": "es-PT",
+        "url": "https://www.myglobalhealth.online/portugal/es/services/consulta-cardiologia"
+      },
+      {
+        "lang": "cs-PT",
+        "url": "https://www.myglobalhealth.online/portugal/cs/services/consulta-cardiologia"
+      },
+      {
+        "lang": "ro-PT",
+        "url": "https://www.myglobalhealth.online/portugal/ro/services/consulta-cardiologia"
+      },
+      {
+        "lang": "de-PT",
+        "url": "https://www.myglobalhealth.online/portugal/de/services/consulta-cardiologia"
+      },
+      {
+        "lang": "x-default",
+        "url": "https://www.myglobalhealth.online/portugal/pt/services/consulta-cardiologia"
+      }
+    ],
+    "schemaTypes": [
+      "MedicalOrganization",
+      "ImageObject",
+      "Country",
+      "ContactPoint",
+      "PostalAddress",
+      "PropertyValue",
+      "WebSite",
+      "FAQPage",
+      "Question",
+      "Answer",
+      "BreadcrumbList",
+      "ListItem",
+      "MedicalWebPage",
+      "Person",
+      "EducationalOccupationalCredential",
+      "Organization",
+      "MedicalProcedure",
+      "ReserveAction",
+      "Service",
+      "Offer",
+      "QuantitativeValue"
+    ],
+    "schemaFaqCount": 8,
+    "schemaFaqs": [
+      {
+        "question": "Isto é uma consulta de cardiologia completa ou uma consulta de Clínica Geral sobre o coração?",
+        "answer": "Esta é uma consulta especializada de cardiologia completa, realizada por um cardiologista registado no Colégio de Cardiologia da Ordem dos Médicos. Não é uma consulta de Clínica Geral. A profundidade clínica, capacidade de revisão de exames, e complexidade de gestão estão ao nível de especialista."
+      },
+      {
+        "question": "Um cardiologista consegue avaliar-me adequadamente sem exame físico?",
+        "answer": "Para a maioria da avaliação cardiovascular, revisão de gestão, e consultas de segunda opinião — sim. Um historial clínico completo, revisão de exames existentes, e estratificação de risco podem ser conduzidos ao nível especializado por videochamada. Quando são necessários achados de exame físico — sons cardíacos, sopros, sinais periféricos — o seu cardiologista aconselha sobre avaliação presencial e coordena o percurso adequado."
+      },
+      {
+        "question": "O meu ECG ou ecocardiograma já realizado pode ser revisto durante a consulta?",
+        "answer": "Sim. Leve consigo quaisquer resultados de exames, relatórios ou cartas clínicas relevantes para a consulta. O cardiologista analisá-los-á na íntegra e dará uma interpretação especializada — muitas vezes a parte mais valiosa da consulta para doentes que já realizaram exames, mas nunca os discutiram com um cardiologista."
+      },
+      {
+        "question": "E se precisar de uma prova de esforço ou ecocardiograma?",
+        "answer": "Se forem clinicamente indicados exames adicionais, o seu cardiologista coordena-os através do nosso serviço de Referenciação e Exames Complementares. Sai da consulta com um percurso de exames claro e a documentação de referenciação adequada."
+      },
+      {
+        "question": "Posso usar este serviço para uma segunda opinião sobre um diagnóstico cardíaco?",
+        "answer": "Sim. As consultas de segunda opinião são uma componente central deste serviço. Quer queira uma revisão independente de um diagnóstico, plano de gestão, ou resultado de exame — incluindo opiniões recebidas de outro cardiologista ou noutro país — o seu cardiologista realiza uma revisão completa e fornece uma avaliação clara, honesta, e baseada em evidência."
+      },
+      {
+        "question": "Este serviço é adequado para doentes com pacemaker ou CDI?",
+        "answer": "Sim — para consultas de revisão e gestão. A verificação e programação do dispositivo exige presença numa consulta de dispositivos. O seu cardiologista aconselha sobre o percurso de seguimento adequado para preocupações relacionadas com o dispositivo."
+      },
+      {
+        "question": "Posso usar este serviço se tiver tido um enfarte ou procedimento cardíaco?",
+        "answer": "Sim — para revisão de gestão pós-evento, planeamento de prevenção secundária, e gestão cardiovascular contínua. Se teve um evento cardíaco recente e tem sintomas agudos ou preocupantes, dirija-se ao serviço de urgência mais próximo em vez de marcar uma consulta à distância."
+      },
+      {
+        "question": "E se a minha situação se revelar uma emergência durante a consulta?",
+        "answer": "Se o seu cardiologista determinar que a sua apresentação exige avaliação de emergência, é encaminhado imediatamente para o serviço de urgência mais próximo. A segurança do doente é sempre a prioridade clínica."
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Isto é uma consulta de cardiologia completa ou uma consulta de Clínica Geral sobre o coração?",
+        "answer": "Esta é uma consulta especializada de cardiologia completa, realizada por um cardiologista registado no Colégio de Cardiologia da Ordem dos Médicos. Não é uma consulta de Clínica Geral. A profundidade clínica, capacidade de revisão de exames, e complexidade de gestão estão ao nível de especialista."
+      },
+      {
+        "question": "Um cardiologista consegue avaliar-me adequadamente sem exame físico?",
+        "answer": "Para a maioria da avaliação cardiovascular, revisão de gestão, e consultas de segunda opinião — sim. Um historial clínico completo, revisão de exames existentes, e estratificação de risco podem ser conduzidos ao nível especializado por videochamada. Quando são necessários achados de exame físico — sons cardíacos, sopros, sinais periféricos — o seu cardiologista aconselha sobre avaliação presencial e coordena o percurso adequado."
+      },
+      {
+        "question": "O meu ECG ou ecocardiograma já realizado pode ser revisto durante a consulta?",
+        "answer": "Sim. Leve consigo quaisquer resultados de exames, relatórios ou cartas clínicas relevantes para a consulta. O cardiologista analisá-los-á na íntegra e dará uma interpretação especializada — muitas vezes a parte mais valiosa da consulta para doentes que já realizaram exames, mas nunca os discutiram com um cardiologista."
+      },
+      {
+        "question": "E se precisar de uma prova de esforço ou ecocardiograma?",
+        "answer": "Se forem clinicamente indicados exames adicionais, o seu cardiologista coordena-os através do nosso serviço de Referenciação e Exames Complementares. Sai da consulta com um percurso de exames claro e a documentação de referenciação adequada."
+      },
+      {
+        "question": "Posso usar este serviço para uma segunda opinião sobre um diagnóstico cardíaco?",
+        "answer": "Sim. As consultas de segunda opinião são uma componente central deste serviço. Quer queira uma revisão independente de um diagnóstico, plano de gestão, ou resultado de exame — incluindo opiniões recebidas de outro cardiologista ou noutro país — o seu cardiologista realiza uma revisão completa e fornece uma avaliação clara, honesta, e baseada em evidência."
+      },
+      {
+        "question": "Este serviço é adequado para doentes com pacemaker ou CDI?",
+        "answer": "Sim — para consultas de revisão e gestão. A verificação e programação do dispositivo exige presença numa consulta de dispositivos. O seu cardiologista aconselha sobre o percurso de seguimento adequado para preocupações relacionadas com o dispositivo."
+      },
+      {
+        "question": "Posso usar este serviço se tiver tido um enfarte ou procedimento cardíaco?",
+        "answer": "Sim — para revisão de gestão pós-evento, planeamento de prevenção secundária, e gestão cardiovascular contínua. Se teve um evento cardíaco recente e tem sintomas agudos ou preocupantes, dirija-se ao serviço de urgência mais próximo em vez de marcar uma consulta à distância."
+      },
+      {
+        "question": "E se a minha situação se revelar uma emergência durante a consulta?",
+        "answer": "Se o seu cardiologista determinar que a sua apresentação exige avaliação de emergência, é encaminhado imediatamente para o serviço de urgência mais próximo. A segurança do doente é sempre a prioridade clínica."
+      }
+    ],
+    "body": "++Todas as consultas de especialidadeCuidados especializadosConsulta de CardiologiaPreocupações com a saúde do coração — um sintoma novo que o tem preocupado, uma condição cardiovascular existente que precisa de revisão especializada, ou um perfil de risco que quer avaliado antes que se torne um problema — merecem atenção clínica especializada, não uma lista de espera. Os nossos cardiologistas estão registados no Colégio de Cardiologia da Ordem dos Médicos — o nível mais elevado de qualificação cardiovascular especializada em Portugal — e oferecem avaliações cardiovasculares completas por videochamada segura. Esta não é uma consulta de Clínica Geral que aborda temas de saúde cardiovascular. É cuidado especializado de cardiologia prestado à distância, para a proporção significativa de avaliação, gestão, e revisão cardiovascular que não exige exame presencial.Médicos registados · PortugalConsulta por vídeo seguraConfidencial e em conformidade com o GDPRRevisado clinicamente por Dr Tiago Miguel Figueira· OM | 77986Marcar online€79por consultaConsulta de 15 minutosMédico registado em PortugalConfirmação imediata por emailResumo da consulta incluídoMarcar este serviçoPagamento seguro · pagamentos processados pela StripeSobre este serviçoO Que a Cardiologia à Distância Cobre — E O Que Exige Avaliação PresencialPerceber o âmbito de uma consulta de cardiologia à distância garante que recebe o nível certo de cuidados para a sua situação específica.O que esta consulta especializada cobre:Historial cardiovascular completo e avaliação de fatores de riscoRevisão de resultados de exames existentes — ECG, ecocardiograma, Holter, prova de esforço, análises ao sangueEstratificação de risco cardiovascular e planeamento preventivoRevisão de gestão para condições cardiovasculares estabelecidasAvaliação de sintomas — historial de dor torácica, palpitações, falta de ar, síncope — no contexto do seu quadro clínico completoInterpretação de exames pedidos pelo seu médico de Clínica Geral ou outro especialistaSegunda opinião sobre diagnóstico ou plano de gestão cardiovascularCoordenação de exames adicionais e referenciações especializadas, quando indicadoRevisão de medicação e recomendações de gestão ao critério profissional do especialistaAvaliação cardiovascular pré-operatória para procedimentos eletivosOrientação de estilo de vida e prevenção secundáriaO que exige avaliação presencial:Auscultação cardíaca — sons cardíacos, sopros, sons adicionaisAvaliação de edema periférico, pressão venosa jugular, e outros sinais clínicosRegisto presencial de ECG — embora a revisão à distância de ECGs existentes seja totalmente possívelEcocardiograma, prova de esforço, e outras investigações cardíacas — o seu cardiologista coordena estas quando necessárioApresentações agudas ou de emergência — dirija-se sempre ao serviço de urgênciaO seu cardiologista aconselha claramente durante a consulta se a sua situação exige avaliação presencial, e coordena o percurso adequado.Situações Habitualmente Avaliadas e GeridasDoença Coronária e Dor TorácicaAngina estável — avaliação, gestão, e prevenção secundáriaDor torácica atípica — avaliação clínica e coordenação de examesRevisão de gestão pós-síndrome coronário agudo — após enfarte ou angina instávelEstratificação de risco em doentes com historial de dor torácicaArritmia e PalpitaçõesFibrilhação auricular — avaliação, revisão de gestão de ritmo e frequência, estratificação de risco de AVCTaquicardia supraventricular — avaliação e gestãoPalpitações — avaliação clínica e coordenação de HolterBradicardia e bloqueio cardíaco — avaliação e revisão de gestãoSeguimento pós-ablaçãoInsuficiência CardíacaRevisão de gestão de insuficiência cardíaca estávelAvaliação de falta de ar e capacidade funcionalRevisão de otimização de medicaçãoMonitorização do estado de volume e trajetória de sintomasHipertensãoHipertensão complexa ou resistente que exige avaliação especializadaHipertensão no contexto de outras condições cardiovascularesRevisão de gestão da tensão arterial e otimização de medicaçãoAvaliação de efeitos em órgãos-alvo da hipertensãoDoença ValvularEstenose e insuficiência aórtica — revisão de gestão e planeamento de vigilânciaDoença da válvula mitral — avaliação e seguimentoRevisão pós-cirúrgica de válvulasCardiologia PreventivaAvaliação de risco cardiovascular — ferramentas de risco SCORE2 e específicas portuguesasPrevenção primária — gestão de lípidos, intervenção de estilo de vida, discussão sobre aspirinaPrevenção secundária — otimização pós-evento cardíacoHistorial familiar de doença cardiovascular prematura — avaliação de risco e planeamento de rastreioHistorial familiar com necessidade de rastreio — avaliação de risco e planeamentoCardiologia desportiva — avaliação cardiovascular para atletas e doentes ativosDistúrbios LipídicosHipercolesterolemia — avaliação e gestãoHipercolesterolemia familiar — avaliação e gestão especializadaGestão de lípidos no contexto de doença cardiovascular ou diabetesOutrasSíncope — avaliação e coordenação de examesDoença vascular periférica — avaliação e coordenação de referenciaçãoAchados cardíacos em exames complementares — achados incidentais em ECG ou ecocardiograma que exigem interpretação especializadaSegunda opinião em cardiologia — revisão independente de diagnóstico, plano de gestão, ou resultados de examesO Que Inclui a Sua ConsultaAvaliação Cardiovascular CompletaO seu cardiologista realiza uma revisão clínica detalhada — cobrindo os seus sintomas cardiovasculares, historial médico, historial familiar, fatores de risco, medicação atual, fatores de estilo de vida, e quaisquer resultados de exames existentes. Esta avaliação estruturada é a base de todas as recomendações clínicas.Revisão de Exames ExistentesSe tiver ECGs, relatórios de ecocardiograma, resultados de Holter, relatórios de prova de esforço, ou resultados de análises existentes, o seu cardiologista revê-os na íntegra durante a consulta — fornecendo interpretação especializada e contexto clínico.Estratificação de RiscoO seu cardiologista avalia o seu perfil de risco cardiovascular global utilizando ferramentas de risco validadas e aconselha sobre a estratégia de prevenção e gestão adequada ao seu nível de risco individual.Coordenação de ExamesQuando são clinicamente indicados exames adicionais — ECG, ecocardiograma, Holter, prova de esforço, ressonância cardíaca, ou análises ao sangue — o seu cardiologista coordena estes através do nosso serviço de Referenciação e Exames Complementares, garantindo acesso eficiente aos exames certos.Plano de Gestão EspecializadoCom base na avaliação, o seu cardiologista fornece um plano de gestão completo — incluindo revisão e recomendações de medicação ao critério profissional do especialista, orientação de estilo de vida, estratégias de prevenção secundária, e um percurso de seguimento claro.Segunda OpiniãoPara doentes que procuram uma perspetiva especializada independente sobre um diagnóstico ou plano de gestão cardiovascular — incluindo os recebidos de outro cardiologista ou noutro país — o seu cardiologista realiza uma revisão completa e fornece uma avaliação independente, clara, e baseada em evidência.Quando Consultar um Cardiologista vs o Seu Médico de Clínica GeralMuitas preocupações cardiovasculares são adequadamente geridas ao nível de Clínica Geral ou Medicina Geral e Familiar — e o seu médico de família é o ponto de contacto correto para a maioria das apresentações. Uma consulta especializada de cardiologia acrescenta valor clínico quando:O seu médico identificou achados cardiovasculares que exigem interpretação ou gestão especializadaA sua condição cardiovascular não respondeu adequadamente à gestão ao nível de Clínica GeralTem doença cardiovascular complexa e multissistémica que exige supervisão especializadaPrecisa de coordenação de exames especializados — ecocardiograma, Holter, prova de esforçoQuer uma segunda opinião independente sobre um diagnóstico ou plano de gestão cardiovascularO seu perfil de risco cardiovascular é complexo e exige estratificação de risco especializadaSe ainda não teve uma avaliação do seu médico relativamente à sua preocupação cardiovascular, a nossa Consulta de Medicina Geral e Familiar é o ponto de partida adequado. O seu médico avalia a sua condição e aconselha sobre se é necessário apoio de cardiologia especializada.Porquê Escolher os Nossos CuidadosCardiologistas registados na Ordem dos MédicosOs nossos cardiologistas estão registados no Colégio de Cardiologia da Ordem dos Médicos — o nível mais elevado de qualificação cardiovascular especializada em Portugal. Está a falar com um cardiologista, não com um médico de Clínica Geral com interesse em cardiologia.Revisão especializada de examesECGs existentes, relatórios de ecocardiograma, resultados de Holter, e achados de prova de esforço são revistos por um cardiologista — fornecendo a interpretação especializada que estes exames exigem.Consultas no mesmo dia e com antecedênciaAs preocupações cardiovasculares raramente seguem um horário conveniente. Consultas no mesmo dia e com antecedência disponíveis sete dias por semana, incluindo noites e fins de semana.Experiência em segunda opiniãoOs nossos cardiologistas fornecem regularmente segundas opiniões independentes sobre diagnósticos e planos de gestão cardiovascular — incluindo os recebidos de outros especialistas ou noutros países. Este serviço é particularmente valioso para a comunidade internacional e expatriada de Portugal.Coordenação de exames incluídaQuando são necessários exames adicionais, o seu cardiologista coordena-os através do nosso serviço de Referenciação e Exames Complementares — para que saia da consulta com um percurso claro de exames, e não apenas com uma recomendação para os marcar por conta própria.MultilingueConsultas disponíveis em português, inglês, espanhol, checo e romeno.Comece aquiAinda não teve avaliação do seu médico?Se ainda não teve uma avaliação do seu médico relativamente à sua preocupação cardiovascular, a nossa Consulta de Medicina Geral e Familiar é o ponto de partida adequado. O seu médico avalia a sua condição e aconselha sobre se é necessário apoio de cardiologia especializada.Consulta de Medicina Geral e FamiliarEspecialistas em PortugalEspecialistas registados nos conselhos médicos nacionais.Ver perfil de Dra. Ana Leal NetoPORTUGALCardiologistaDra. Ana Leal NetoRegistoOM | 60410IdiomasEnglish, Portuguese, FrenchEscolher horárioVer perfilQuestionsPerguntas FrequentesIsto é uma consulta de cardiologia completa ou uma consulta de Clínica Geral sobre o coração?Esta é uma consulta especializada de cardiologia completa, realizada por um cardiologista registado no Colégio de Cardiologia da Ordem dos Médicos. Não é uma consulta de Clínica Geral. A profundidade clínica, capacidade de revisão de exames, e complexidade de gestão estão ao nível de especialista.Um cardiologista consegue avaliar-me adequadamente sem exame físico?Para a maioria da avaliação cardiovascular, revisão de gestão, e consultas de segunda opinião — sim. Um historial clínico completo, revisão de exames existentes, e estratificação de risco podem ser conduzidos ao nível especializado por videochamada. Quando são necessários achados de exame físico — sons cardíacos, sopros, sinais periféricos — o seu cardiologista aconselha sobre avaliação presencial e coordena o percurso adequado.O meu ECG ou ecocardiograma já realizado pode ser revisto durante a consulta?Sim. Leve consigo quaisquer resultados de exames, relatórios ou cartas clínicas relevantes para a consulta. O cardiologista analisá-los-á na íntegra e dará uma interpretação especializada — muitas vezes a parte mais valiosa da consulta para doentes que já realizaram exames, mas nunca os discutiram com um cardiologista.E se precisar de uma prova de esforço ou ecocardiograma?Se forem clinicamente indicados exames adicionais, o seu cardiologista coordena-os através do nosso serviço de Referenciação e Exames Complementares. Sai da consulta com um percurso de exames claro e a documentação de referenciação adequada.Posso usar este serviço para uma segunda opinião sobre um diagnóstico cardíaco?Sim. As consultas de segunda opinião são uma componente central deste serviço. Quer queira uma revisão independente de um diagnóstico, plano de gestão, ou resultado de exame — incluindo opiniões recebidas de outro cardiologista ou noutro país — o seu cardiologista realiza uma revisão completa e fornece uma avaliação clara, honesta, e baseada em evidência.Este serviço é adequado para doentes com pacemaker ou CDI?Sim — para consultas de revisão e gestão. A verificação e programação do dispositivo exige presença numa consulta de dispositivos. O seu cardiologista aconselha sobre o percurso de seguimento adequado para preocupações relacionadas com o dispositivo.Posso usar este serviço se tiver tido um enfarte ou procedimento cardíaco?Sim — para revisão de gestão pós-evento, planeamento de prevenção secundária, e gestão cardiovascular contínua. Se teve um evento cardíaco recente e tem sintomas agudos ou preocupantes, dirija-se ao serviço de urgência mais próximo em vez de marcar uma consulta à distância.E se a minha situação se revelar uma emergência durante a consulta?Se o seu cardiologista determinar que a sua apresentação exige avaliação de emergência, é encaminhado imediatamente para o serviço de urgência mais próximo. A segurança do doente é sempre a prioridade clínica.Temas de saúde relacionadosCompreendendo a hipercolesterolemiaTabela de tensão arterialMedical disclaimer. A informação nesta página é geral e não substitui aconselhamento, diagnóstico ou tratamento médico profissional. Marque uma consulta para discutir a sua situação com um médico registado para exercer em Portugal.Prontos quando estiverMarcar Consulta de Cardiologia em PortugalA partir de €79 · Disponibilidade em tempo real. Escolha um médico e uma hora que lhe convenha.Marcar este serviço",
+    "links": [
+      {
+        "text": "Todas as consultas de especialidade",
+        "href": "/portugal/pt/see-a-specialist"
+      },
+      {
+        "text": "Dr Tiago Miguel Figueira",
+        "href": "/portugal/pt/doctors/dr-tiago-miguel-figueira"
+      },
+      {
+        "text": "Consulta de Medicina Geral e Familiar",
+        "href": "/portugal/pt/services/medicina-geral-e-familiar"
+      },
+      {
+        "text": "Ver perfil de Dra. Ana Leal Neto",
+        "href": "/portugal/pt/doctors/dr-ana-leal-neto"
+      },
+      {
+        "text": "OM | 60410",
+        "href": "https://ordemdosmedicos.pt/area-medica/medicos-registados-na-om"
+      },
+      {
+        "text": "Ver perfil",
+        "href": "/portugal/pt/doctors/dr-ana-leal-neto"
+      },
+      {
+        "text": "Compreendendo a hipercolesterolemia",
+        "href": "/portugal/pt/blog/compreendendo-a-hipercolesterolemia"
+      },
+      {
+        "text": "Tabela de tensão arterial",
+        "href": "/portugal/pt/tools/blood-pressure-chart"
+      },
+      {
+        "text": "Inglês",
+        "href": "/portugal/en/services/consulta-cardiologia"
+      },
+      {
+        "text": "Espanhol",
+        "href": "/portugal/es/services/consulta-cardiologia"
+      },
+      {
+        "text": "Checo",
+        "href": "/portugal/cs/services/consulta-cardiologia"
+      },
+      {
+        "text": "Romeno",
+        "href": "/portugal/ro/services/consulta-cardiologia"
+      },
+      {
+        "text": "Alemão",
+        "href": "/portugal/de/services/consulta-cardiologia"
+      }
+    ],
+    "sha256": "e7937e530297d6c6b4f3e048345cec44a80ac903847743d1b622a862b0a2b117",
+    "status": 200,
+    "finalUrl": "https://www.myglobalhealth.online/portugal/pt/services/consulta-cardiologia",
+    "xRobotsTag": null,
+    "checkedAt": "2026-09-13T17:45:51.441Z"
+  },
+  {
+    "url": "https://www.myglobalhealth.online/portugal/pt/services/family-and-general-medicine",
+    "locale": "pt",
+    "title": "Médico de Família Online | Medicina Geral e Familiar",
+    "description": "Consulta com especialista em Medicina Geral e Familiar, por videochamada segura, para doença crónica, cuidados continuados e medicina preventiva.",
+    "h1": [
+      "Consulta de Medicina Geral e Familiar"
+    ],
+    "h2": [
+      "O Que Torna Esta Consulta Diferente",
+      "O Que Inclui a Sua Consulta",
+      "Condições Habitualmente Geridas",
+      "A Quem Se Destina Este Serviço",
+      "Acompanhamento Pediátrico e Geriátrico",
+      "Sem Médico de Família Atribuído? Sabemos Como Isso É",
+      "Porquê Escolher os Nossos Cuidados",
+      "Médicos em Portugal",
+      "Perguntas Frequentes",
+      "Temas de saúde relacionados",
+      "Também disponível em",
+      "Marcar Consulta de Medicina Geral e Familiar em Portugal"
+    ],
+    "robots": "index, follow",
+    "canonical": "https://www.myglobalhealth.online/portugal/pt/services/medicina-geral-e-familiar",
+    "hreflang": [
+      {
+        "lang": "pt-PT",
+        "url": "https://www.myglobalhealth.online/portugal/pt/services/medicina-geral-e-familiar"
+      },
+      {
+        "lang": "en-PT",
+        "url": "https://www.myglobalhealth.online/portugal/en/services/medicina-geral-e-familiar"
+      },
+      {
+        "lang": "es-PT",
+        "url": "https://www.myglobalhealth.online/portugal/es/services/medicina-geral-e-familiar"
+      },
+      {
+        "lang": "cs-PT",
+        "url": "https://www.myglobalhealth.online/portugal/cs/services/medicina-geral-e-familiar"
+      },
+      {
+        "lang": "ro-PT",
+        "url": "https://www.myglobalhealth.online/portugal/ro/services/medicina-geral-e-familiar"
+      },
+      {
+        "lang": "de-PT",
+        "url": "https://www.myglobalhealth.online/portugal/de/services/medicina-geral-e-familiar"
+      },
+      {
+        "lang": "x-default",
+        "url": "https://www.myglobalhealth.online/portugal/pt/services/medicina-geral-e-familiar"
+      }
+    ],
+    "schemaTypes": [
+      "MedicalOrganization",
+      "ImageObject",
+      "Country",
+      "ContactPoint",
+      "PostalAddress",
+      "PropertyValue",
+      "WebSite",
+      "FAQPage",
+      "Question",
+      "Answer",
+      "BreadcrumbList",
+      "ListItem",
+      "MedicalWebPage",
+      "Person",
+      "EducationalOccupationalCredential",
+      "Organization",
+      "MedicalProcedure",
+      "ReserveAction",
+      "Service",
+      "Offer",
+      "QuantitativeValue"
+    ],
+    "schemaFaqCount": 5,
+    "schemaFaqs": [
+      {
+        "question": "Qual a diferença entre esta consulta e a Consulta de Clínica Geral?",
+        "answer": "A Consulta de Clínica Geral destina-se a situações agudas ou pontuais — um sintoma novo, uma doença súbita ou uma questão simples. A Consulta de Medicina Geral e Familiar destina-se a doentes que precisam de cuidados contínuos e coordenados para condições crónicas ou complexas, prestados por um médico com formação especializada em MGF e mais tempo de consulta."
+      },
+      {
+        "question": "Preciso de ter médico de família atribuído em Portugal para usar este serviço?",
+        "answer": "Não. Este serviço foi desenhado especificamente para doentes — incluindo expatriados e residentes internacionais — que não têm médico de família atribuído em Portugal e precisam de acesso a cuidados primários contínuos."
+      },
+      {
+        "question": "Crianças podem ser atendidas através deste serviço?",
+        "answer": "Sim, no contexto de acompanhamento geral de saúde familiar e gestão de condições crónicas. Para situações agudas pediátricas, recomendamos a nossa Consulta de Pediatria, com médico especialista dedicado."
+      },
+      {
+        "question": "Como é mantida a continuidade de cuidados através de uma plataforma digital?",
+        "answer": "O seu historial clínico, notas de consulta e plano de cuidados são mantidos de forma segura na nossa plataforma. Sempre que possível, atribuímos doentes recorrentes ao mesmo médico, para construir familiaridade clínica ao longo do tempo."
+      },
+      {
+        "question": "Este serviço substitui o meu médico de família do SNS?",
+        "answer": "Não necessariamente — pode complementá-lo. Para doentes sem médico de família atribuído, este serviço proporciona uma alternativa de cuidados continuados. Para doentes já inscritos no SNS, este serviço pode complementar o acompanhamento, especialmente em situações de maior disponibilidade ou continuidade."
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Qual a diferença entre esta consulta e a Consulta de Clínica Geral?",
+        "answer": "A Consulta de Clínica Geral destina-se a situações agudas ou pontuais — um sintoma novo, uma doença súbita ou uma questão simples. A Consulta de Medicina Geral e Familiar destina-se a doentes que precisam de cuidados contínuos e coordenados para condições crónicas ou complexas, prestados por um médico com formação especializada em MGF e mais tempo de consulta."
+      },
+      {
+        "question": "Preciso de ter médico de família atribuído em Portugal para usar este serviço?",
+        "answer": "Não. Este serviço foi desenhado especificamente para doentes — incluindo expatriados e residentes internacionais — que não têm médico de família atribuído em Portugal e precisam de acesso a cuidados primários contínuos."
+      },
+      {
+        "question": "Crianças podem ser atendidas através deste serviço?",
+        "answer": "Sim, no contexto de acompanhamento geral de saúde familiar e gestão de condições crónicas. Para situações agudas pediátricas, recomendamos a nossa Consulta de Pediatria, com médico especialista dedicado."
+      },
+      {
+        "question": "Como é mantida a continuidade de cuidados através de uma plataforma digital?",
+        "answer": "O seu historial clínico, notas de consulta e plano de cuidados são mantidos de forma segura na nossa plataforma. Sempre que possível, atribuímos doentes recorrentes ao mesmo médico, para construir familiaridade clínica ao longo do tempo."
+      },
+      {
+        "question": "Este serviço substitui o meu médico de família do SNS?",
+        "answer": "Não necessariamente — pode complementá-lo. Para doentes sem médico de família atribuído, este serviço proporciona uma alternativa de cuidados continuados. Para doentes já inscritos no SNS, este serviço pode complementar o acompanhamento, especialmente em situações de maior disponibilidade ou continuidade."
+      }
+    ],
+    "body": "++Todas as consultasConsulta onlineConsulta de Medicina Geral e FamiliarCuidados continuados, além de uma avaliação pontual. Os nossos médicos especialistas em Medicina Geral e Familiar concluíram o internato de especialidade reconhecido pela Ordem dos Médicos — o nível mais elevado de formação em cuidados de saúde primários disponível em Portugal — e estão capacitados para prestar o tipo de cuidado contínuo e personalizado que as condições crónicas e complexas exigem.Médicos registados · PortugalConsulta por vídeo seguraConfidencial e em conformidade com o GDPRRevisado clinicamente por Dr Tiago Miguel Figueira· OM | 77986Marcar online€49por consultaConsulta de 20 minutosMédico registado em PortugalConfirmação imediata por emailResumo da consulta incluídoMarcar este serviçoPagamento seguro · pagamentos processados pela StripeSobre este serviçoO Que Torna Esta Consulta DiferenteEsta não é uma consulta pontual para um sintoma isolado. Uma consulta de Medicina Geral e Familiar destina-se a doentes que precisam de:Gestão contínua de uma ou mais doenças crónicasUm médico que reveja o historial clínico completo e construa um plano de cuidados a longo prazoContinuidade — o mesmo padrão clínico em cada consulta, não um médico diferente de cada vezMais tempo — para abordar devidamente situações complexas ou multissistémicasSe a sua preocupação for aguda — um sintoma novo, uma doença súbita, ou uma questão pontual — a nossa Consulta de Clínica Geral é mais adequada e mais económica. Este serviço destina-se a doentes que precisam de um médico de referência, não apenas de uma consulta.O Que Inclui a Sua ConsultaAvaliação Clínica AbrangenteO seu médico irá rever o historial clínico completo, condições atuais, medicação, e estado de saúde geral — construindo um quadro clínico completo, e não apenas a queixa que motivou a marcação.Gestão de Doença CrónicaAcompanhamento estruturado e gestão de condições de longo prazo, incluindo monitorização, ajuste do tratamento quando clinicamente apropriado, e coordenação dos cuidados contínuos.Plano de Saúde PersonalizadoO seu médico irá desenvolver ou atualizar um plano de cuidados adaptado ao seu perfil de saúde individual, estilo de vida e objetivos a longo prazo — incluindo cuidados preventivos, rastreios recomendados e referenciações para especialista, quando indicado.Coordenação de CuidadosSempre que sejam necessários exames complementares ou apoio de especialista, o seu médico coordena as referenciações, interpreta os resultados em contexto, e assegura continuidade ao longo do percurso de cuidados.Documentação ClínicaAtestados médicos, cartas de referenciação e outra documentação clínica, emitidos ao critério profissional do médico, quando clinicamente apropriado.Condições Habitualmente GeridasEste serviço é particularmente adequado para:Hipertensão e gestão do risco cardiovascularDiabetes tipo 1 e tipo 2 — monitorização, gestão e prevenção de complicaçõesAsma e doenças respiratórias crónicasDoenças da tiroide — hipotiroidismo, hipertiroidismo, monitorização contínuaColesterol elevado e síndrome metabólicoCondições músculo-esqueléticas crónicas — artrite, dor lombar crónica, doença articularDoenças digestivas — síndrome do intestino irritável, refluxo, doença inflamatória intestinalSaúde mental — ansiedade, depressão e gestão do stress, em acompanhamento contínuoCondições dermatológicas crónicas — eczema, psoríase, acne em tratamento continuadoSaúde da mulher — condições hormonais, revisão de contraceção, alterações menstruaisSaúde do homem — questões hormonais, gestão contínua de doença crónicaCuidados preventivos — avaliações de saúde, aconselhamento de estilo de vida, referenciação para rastreiosDoentes com múltiplas condições que requerem gestão coordenada e holísticaAcompanhamento de saúde de idosos com múltiplas patologiasA Quem Se Destina Este ServiçoEsta consulta é indicada se:Está a gerir uma ou mais doenças crónicas e precisa de cuidados estruturados e contínuosRecebeu recentemente um diagnóstico e quer uma avaliação completa e um plano de cuidadosÉ expatriado ou residente internacional sem médico de família atribuído em PortugalQuer continuidade — um médico que conheça o seu historial completo, não apenas o problema do diaTem necessidades de saúde complexas ou multissistémicas que exigem mais do que uma consulta padrãoA Consulta de Clínica Geral é mais adequada se:Tem uma doença aguda ou súbitaPrecisa de uma avaliação pontual, atestado médico ou referenciação isoladaTem uma questão simples e bem definidaAcompanhamento Pediátrico e GeriátricoOs médicos especialistas em Medicina Geral e Familiar têm formação para acompanhar doentes de todas as idades — desde a infância até à terceira idade — no contexto da gestão contínua de saúde familiar.Para crianças: acompanhamento de saúde geral, vigilância de desenvolvimento, e gestão de condições crónicas pediátricas no contexto dos cuidados de saúde familiar. Para situações agudas pediátricas — febre, infeções comuns, sintomas súbitos — recomendamos a nossa Consulta de Pediatria, com médico especialista dedicado à idade pediátrica.Para idosos: gestão de múltiplas patologias, polimedicação, e cuidados continuados adaptados às necessidades específicas da terceira idade — um dos pilares centrais da Medicina Geral e Familiar.Sem Médico de Família Atribuído? Sabemos Como Isso ÉMuitos residentes em Portugal — particularmente expatriados, estudantes internacionais e novos residentes — não têm médico de família atribuído pelo SNS, e enfrentam listas de espera significativas para conseguir uma inscrição.O nosso serviço de Medicina Geral e Familiar foi desenhado especificamente para colmatar esta lacuna — proporcionando o tipo de relação de cuidados continuados que teria com um médico de família atribuído, sem depender da disponibilidade do sistema público.Porquê Escolher os Nossos CuidadosEspecialistas em Medicina Geral e FamiliarOs nossos médicos concluíram o internato de especialidade em Medicina Geral e Familiar, reconhecido pela Ordem dos Médicos — o nível mais elevado de qualificação em cuidados de saúde primários disponível em Portugal.Consultas de 20 minutosMais tempo significa cuidados mais completos. Condições crónicas e complexas não podem ser geridas adequadamente em 15 minutos — esta consulta foi estruturada para dar ao seu médico o tempo que a sua saúde merece.Continuidade de cuidadosProcuramos atribuir-lhe um médico que vá conhecendo o seu historial ao longo do tempo — e não um conjunto rotativo de médicos que leem as suas notas pela primeira vez no início de cada chamada.Foco na comunidade internacionalMuitos dos nossos doentes são expatriados ou residentes internacionais sem médico de família atribuído em Portugal. Proporcionamos o tipo de relação de cuidados primários contínuos que teriam no seu país de origem — no seu idioma, com a flexibilidade que precisam.Total confidencialidade e segurançaTodas as consultas são realizadas por videochamada encriptada, em total conformidade com as normas portuguesas de proteção de dados e telemedicina.Cuidados especializadosCondição cardiovascular a exigir especialista?Para condições cardiovasculares que exijam avaliação especializada — incluindo hipertensão complexa, arritmia, ou doença cardíaca — a nossa Consulta de Cardiologia proporciona cuidados ao nível especializado.Consulta de CardiologiaCuidados especializadosSaúde mental a exigir gestão especializada?Quando a sua condição crónica tem uma dimensão significativa de saúde mental que exija gestão psiquiátrica especializada, a nossa Consulta de Psiquiatria proporciona avaliação e cuidados ao nível especializado.Consulta de PsiquiatriaCuidados especializadosPrecisa de gestão dietética estruturada?Para gestão dietética estruturada e especializada da sua condição crónica — incluindo nutrição em diabetes, dieta cardiovascular, ou gestão metabólica relacionada com o peso — a nossa Consulta de Nutrição proporciona apoio nutricional dedicado.Consulta de NutriçãoCuidados especializadosCriança com condição crónica complexa?Para condições pediátricas crónicas, complexas, ou multissistémicas que exijam avaliação especializada continuada, a nossa Consulta de Pediatria Especialista proporciona cuidados ao nível especializado.Consulta de Pediatria EspecialistaMédicos em PortugalClínicos gerais licenciados disponíveis para consultas online. Cada perfil lista qualificações, idiomas e registo.Ver perfil de Dr Joao de Oliveira e SilvaPORTUGALMédico de Clínica Geral e Medicina FamiliarDr Joao de Oliveira e SilvaRegistoOM | 68445IdiomasPortuguese, EnglishEscolher horárioVer perfilVer perfil de Dr Rui Diogo RodriguesPORTUGALMédico de Clínica Geral e Medicina FamiliarDr Rui Diogo RodriguesRegistoOM | 74473IdiomasPortuguese, EnglishEscolher horárioVer perfilVer perfil de Dr Vitor Hugo de Matos PaisPORTUGALMédico de Medicina Geral e FamiliarDr Vitor Hugo de Matos PaisRegistoOM | 64505IdiomasPortuguese, EnglishEscolher horárioVer perfilQuestionsPerguntas FrequentesQual a diferença entre esta consulta e a Consulta de Clínica Geral?A Consulta de Clínica Geral destina-se a situações agudas ou pontuais — um sintoma novo, uma doença súbita ou uma questão simples. A Consulta de Medicina Geral e Familiar destina-se a doentes que precisam de cuidados contínuos e coordenados para condições crónicas ou complexas, prestados por um médico com formação especializada em MGF e mais tempo de consulta.Preciso de ter médico de família atribuído em Portugal para usar este serviço?Não. Este serviço foi desenhado especificamente para doentes — incluindo expatriados e residentes internacionais — que não têm médico de família atribuído em Portugal e precisam de acesso a cuidados primários contínuos.Crianças podem ser atendidas através deste serviço?Sim, no contexto de acompanhamento geral de saúde familiar e gestão de condições crónicas. Para situações agudas pediátricas, recomendamos a nossa Consulta de Pediatria, com médico especialista dedicado.Como é mantida a continuidade de cuidados através de uma plataforma digital?O seu historial clínico, notas de consulta e plano de cuidados são mantidos de forma segura na nossa plataforma. Sempre que possível, atribuímos doentes recorrentes ao mesmo médico, para construir familiaridade clínica ao longo do tempo.Este serviço substitui o meu médico de família do SNS?Não necessariamente — pode complementá-lo. Para doentes sem médico de família atribuído, este serviço proporciona uma alternativa de cuidados continuados. Para doentes já inscritos no SNS, este serviço pode complementar o acompanhamento, especialmente em situações de maior disponibilidade ou continuidade.Temas de saúde relacionadosDiabetes — Acompanhamento Médico Online em PortugalHipertensão (Tensão Arterial Alta) — Acompanhamento Online em PortugalDiabetes a Doença silenciosaMedical disclaimer. A informação nesta página é geral e não substitui aconselhamento, diagnóstico ou tratamento médico profissional. Marque uma consulta para discutir a sua situação com um médico registado para exercer em Portugal.Prontos quando estiverMarcar Consulta de Medicina Geral e Familiar em PortugalA partir de €49 · Disponibilidade em tempo real. Escolha um médico e uma hora que lhe convenha.Marcar este serviço",
+    "links": [
+      {
+        "text": "Todas as consultas",
+        "href": "/portugal/pt/gp-consultation-online"
+      },
+      {
+        "text": "Dr Tiago Miguel Figueira",
+        "href": "/portugal/pt/doctors/dr-tiago-miguel-figueira"
+      },
+      {
+        "text": "Consulta de Cardiologia",
+        "href": "/portugal/pt/services/consulta-cardiologia"
+      },
+      {
+        "text": "Consulta de Psiquiatria",
+        "href": "/portugal/pt/services/consulta-de-psiquiatria"
+      },
+      {
+        "text": "Consulta de Nutrição",
+        "href": "/portugal/pt/services/consulta-de-nutricao"
+      },
+      {
+        "text": "Consulta de Pediatria Especialista",
+        "href": "/portugal/pt/services/consulta-de-pediatria"
+      },
+      {
+        "text": "Ver perfil de Dr Joao de Oliveira e Silva",
+        "href": "/portugal/pt/doctors/dr-joao-de-oliveira-e-silva"
+      },
+      {
+        "text": "Ver perfil",
+        "href": "/portugal/pt/doctors/dr-joao-de-oliveira-e-silva"
+      },
+      {
+        "text": "Ver perfil de Dr Rui Diogo Rodrigues",
+        "href": "/portugal/pt/doctors/dr-rui-diogo-rodrigues"
+      },
+      {
+        "text": "Ver perfil",
+        "href": "/portugal/pt/doctors/dr-rui-diogo-rodrigues"
+      },
+      {
+        "text": "Ver perfil de Dr Vitor Hugo de Matos Pais",
+        "href": "/portugal/pt/doctors/dr-vitor-hugo-de-matos-pais"
+      },
+      {
+        "text": "Ver perfil",
+        "href": "/portugal/pt/doctors/dr-vitor-hugo-de-matos-pais"
+      },
+      {
+        "text": "Diabetes — Acompanhamento Médico Online em Portugal",
+        "href": "/portugal/pt/health/diabetes"
+      },
+      {
+        "text": "Hipertensão (Tensão Arterial Alta) — Acompanhamento Online em Portugal",
+        "href": "/portugal/pt/health/hipertensao"
+      },
+      {
+        "text": "Diabetes a Doença silenciosa",
+        "href": "/portugal/pt/blog/diabetes-a-doenca-silenciosa"
+      },
+      {
+        "text": "Inglês",
+        "href": "/portugal/en/services/medicina-geral-e-familiar"
+      },
+      {
+        "text": "Espanhol",
+        "href": "/portugal/es/services/medicina-geral-e-familiar"
+      },
+      {
+        "text": "Checo",
+        "href": "/portugal/cs/services/medicina-geral-e-familiar"
+      },
+      {
+        "text": "Romeno",
+        "href": "/portugal/ro/services/medicina-geral-e-familiar"
+      },
+      {
+        "text": "Alemão",
+        "href": "/portugal/de/services/medicina-geral-e-familiar"
+      }
+    ],
+    "sha256": "34ba9eef4d77ee80e8538bfc4c98e5764ee0287f502481cec128a44cd6b0d7a2",
+    "status": 200,
+    "finalUrl": "https://www.myglobalhealth.online/portugal/pt/services/medicina-geral-e-familiar",
+    "xRobotsTag": null,
+    "checkedAt": "2026-09-13T17:45:51.647Z"
+  }
+]

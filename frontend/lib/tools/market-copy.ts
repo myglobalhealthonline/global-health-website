@@ -2536,7 +2536,22 @@ const MARKET_COPY: Partial<Record<CountryCode, Record<string, MarketCopyOverride
   ro: romaniaEditorialToolCopy,
   pt: {
     pt: {
-      tools: portugalApprovedToolSeo,
+      tools: {
+        ...portugalApprovedToolSeo,
+        "blood-pressure-chart": {
+          ...portugalApprovedToolSeo["blood-pressure-chart"],
+          readingLink: { href: "/portugal/pt/health/hipertensao", label: "Acompanhamento da hipertensão" },
+        },
+      },
+    },
+  },
+  es: {
+    es: {
+      tools: {
+        "blood-pressure-chart": {
+          readingLink: { href: "/spain/es/blog/tension-arterial-normal-tabla-edad-sexo", label: "Qué significan los valores de tensión arterial" },
+        },
+      },
     },
   },
   cz: {

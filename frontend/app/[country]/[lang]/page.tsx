@@ -1,5 +1,6 @@
 import { tracePublicRead } from "@/lib/content/trace-public-read";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { HomeHero, type LiveDoctorItem } from "@/components/sections/HomeHero";
@@ -60,7 +61,7 @@ import { localeDisplayName } from "@/lib/i18n/locale-display";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { SITE_NAME } from "@/lib/constants";
-import { Stethoscope, ShieldCheck, Activity, Languages } from "lucide-react";
+import { Stethoscope, ShieldCheck, Activity, Languages, ArrowUpRight } from "lucide-react";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 import { getBookabilityActionProps } from "@/lib/content/bookability-presentation";
 import type { BookabilitySummary } from "@/lib/content/get-country-collections";
@@ -643,6 +644,19 @@ export default async function CountryLangHomePage({
       <LazyHydrate>
         <ServiceCatalog services={serviceCatalogItems} i18n={tServices.catalog} />
       </LazyHydrate>
+      {extras?.resourceLink ? (
+        <div className="gh2-section-forest gh-medical-pattern gh-medical-pattern-dark relative -mt-10 flex justify-center px-5 pb-14 md:-mt-16 md:px-10">
+          <Link
+            href={extras.resourceLink.href}
+            // Inline radius: the global :focus-visible rule would square the pill.
+            style={{ borderRadius: 9999 }}
+            className="gh-focus-on-dark inline-flex min-h-11 items-center gap-1.5 rounded-full border border-white/25 bg-white/[0.06] px-5 text-[14px] font-bold text-white/90 transition-[background-color,color] duration-200 hover:bg-white hover:text-[var(--color-brand-primary)]"
+          >
+            {extras.resourceLink.label}
+            <ArrowUpRight className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
+          </Link>
+        </div>
+      ) : null}
       <StatsBand items={statsItems} theme="light" i18n={t.statsBand} />
       <DoctifyReviewsSection
         theme="ivory"

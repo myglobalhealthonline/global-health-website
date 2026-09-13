@@ -7,7 +7,20 @@ This page routes Brazil-specific work and indexes legacy country evidence that
 remains embedded in the global ledger to preserve existing references. It does not
 duplicate current status, deadlines or next actions.
 
-## Evidence map
+## 13 September 2026 evidence and preparation
+
+Start with [handoff](implementation-handoff-2026-09-13.md),
+[exact before/after packet](content-briefs/review-packet.html),
+[every-URL matrix](page-by-page-completion-matrix.csv) and
+[source log](raw/source-log-2026-09-13.md). The numbered 01–11 files contain
+dated supporting evidence. Canonical operational status is ledger §57.
+
+The package covers 153 observed PT/EN/ES URLs, authenticated storage and 57
+local service/profile candidates. No clinical approval or production publication.
+See [implementation receipt](09-implementation-log.md) and the
+[PostgreSQL rollback proof](raw/postgres-rehearsal-2026-09-13.json).
+
+## Legacy evidence map
 
 | Area | Legacy embedded evidence |
 | --- | --- |

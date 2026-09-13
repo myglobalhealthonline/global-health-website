@@ -1,0 +1,135 @@
+{
+ "checkedAt": "2026-09-13T19:35:04.909Z",
+ "sources": [
+  {
+   "rows": "1",
+   "src": "/czechia/cs/blog/diabetes-ticha-nemoc",
+   "status": 200,
+   "anchors": [
+    {
+     "path": "/czechia/cs/services/chronicka-onemocneni",
+     "count": 1
+    }
+   ],
+   "stale": []
+  },
+  {
+   "rows": "2",
+   "src": "/brazil/pt/blog/diabetes-doenca-silenciosa",
+   "status": 200,
+   "anchors": [
+    {
+     "path": "/brazil/pt/services/doencas-cronicas-online",
+     "count": 1
+    }
+   ],
+   "stale": []
+  },
+  {
+   "rows": "5",
+   "src": "/spain/es/blog/baja-laboral-por-ansiedad-como-funciona",
+   "status": 200,
+   "anchors": [
+    {
+     "path": "/spain/es/services/salud-mental-online",
+     "count": 1
+    }
+   ],
+   "stale": []
+  },
+  {
+   "rows": "8",
+   "src": "/spain/es/blog/como-bajar-la-tension-que-funciona-segun-la-evidencia",
+   "status": 200,
+   "anchors": [
+    {
+     "path": "/spain/es/tools/blood-pressure-chart",
+     "count": 1
+    }
+   ],
+   "stale": []
+  },
+  {
+   "rows": "13",
+   "src": "/ireland/en/blog/illness-benefit-ireland-how-to-claim",
+   "status": 200,
+   "anchors": [
+    {
+     "path": "/ireland/en/blog/illness-benefit-payment-ireland-rate-tax-timing",
+     "count": 1
+    }
+   ],
+   "stale": []
+  },
+  {
+   "rows": "3,4,9",
+   "src": "/portugal/pt/health/hipertensao",
+   "status": 200,
+   "anchors": [
+    {
+     "path": "/portugal/pt/services/consulta-cardiologia",
+     "count": 1
+    },
+    {
+     "path": "/portugal/pt/services/medicina-geral-e-familiar",
+     "count": 1
+    },
+    {
+     "path": "/portugal/pt/tools/blood-pressure-chart",
+     "count": 2
+    }
+   ],
+   "stale": []
+  }
+ ],
+ "targets": [
+  {
+   "path": "/czechia/cs/services/chronicka-onemocneni",
+   "status": 200,
+   "canonical": true,
+   "noindex": false
+  },
+  {
+   "path": "/brazil/pt/services/doencas-cronicas-online",
+   "status": 200,
+   "canonical": true,
+   "noindex": false
+  },
+  {
+   "path": "/spain/es/services/salud-mental-online",
+   "status": 200,
+   "canonical": true,
+   "noindex": false
+  },
+  {
+   "path": "/spain/es/tools/blood-pressure-chart",
+   "status": 200,
+   "canonical": true,
+   "noindex": false
+  },
+  {
+   "path": "/ireland/en/blog/illness-benefit-payment-ireland-rate-tax-timing",
+   "status": 200,
+   "canonical": true,
+   "noindex": false
+  },
+  {
+   "path": "/portugal/pt/services/consulta-cardiologia",
+   "status": 200,
+   "canonical": true,
+   "noindex": false
+  },
+  {
+   "path": "/portugal/pt/services/medicina-geral-e-familiar",
+   "status": 200,
+   "canonical": true,
+   "noindex": false
+  },
+  {
+   "path": "/portugal/pt/tools/blood-pressure-chart",
+   "status": 200,
+   "canonical": true,
+   "noindex": false
+  }
+ ]
+}

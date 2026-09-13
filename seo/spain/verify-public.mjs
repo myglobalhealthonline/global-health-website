@@ -26,7 +26,7 @@ export function verifyPage(before,after,draft,links=[]){
  return {url:after.url,status:'passed',sha256:after.sha256};
 }
 if(process.argv[1]?.endsWith('verify-public.mjs')){
- const root='seo/spain',read=p=>JSON.parse(fs.readFileSync(`${root}/${p}`));
+ const root=process.argv.includes('--brazil')?'seo/brazil':'seo/spain',read=p=>JSON.parse(fs.readFileSync(`${root}/${p}`));
  const key=process.argv.find(a=>a.startsWith('--group='))?.slice(8),manifest=read('content-briefs/storage-mutation-manifest.json');
  const group=manifest.groups.find(g=>g.key===key);assert(group,'Prepared storage group required');
  const stem=key.replaceAll(':','-'),receipt=read(`raw/rollout/${stem}-applied.json`);

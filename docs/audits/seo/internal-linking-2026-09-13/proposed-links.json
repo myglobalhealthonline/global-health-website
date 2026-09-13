@@ -1,0 +1,119 @@
+[
+  {
+    "priority": "P0",
+    "market": "Czechia",
+    "action": "repair",
+    "source": "https://www.myglobalhealth.online/czechia/cs/blog/diabetes-ticha-nemoc",
+    "destination": "https://www.myglobalhealth.online/czechia/cs/services/chronicka-onemocneni",
+    "anchor": "Konzultace chronického onemocnění",
+    "placement": "Replace the broken legacy diabetes-consultation CTA in the follow-up section. Describe general chronic-disease review, not a diabetologist appointment."
+  },
+  {
+    "priority": "P0",
+    "market": "Brazil",
+    "action": "repair",
+    "source": "https://www.myglobalhealth.online/brazil/pt/blog/diabetes-doenca-silenciosa",
+    "destination": "https://www.myglobalhealth.online/brazil/pt/services/doencas-cronicas-online",
+    "anchor": "Acompanhamento de doenças crônicas",
+    "placement": "Replace the broken /br/clinica-geral body CTA; a separate bottom CTA already reaches this correct service."
+  },
+  {
+    "priority": "P0",
+    "market": "Portugal",
+    "action": "repair",
+    "source": "https://www.myglobalhealth.online/portugal/pt/health/hipertensao",
+    "destination": "https://www.myglobalhealth.online/portugal/pt/services/consulta-cardiologia",
+    "anchor": "Consulta de Cardiologia",
+    "placement": "Use the canonical URL for the existing cardiology link; remove the separate 404 hypertension-consultation offer unless an equivalent staffed service is confirmed."
+  },
+  {
+    "priority": "P0",
+    "market": "Portugal",
+    "action": "repair",
+    "source": "https://www.myglobalhealth.online/portugal/pt/health/hipertensao",
+    "destination": "https://www.myglobalhealth.online/portugal/pt/services/medicina-geral-e-familiar",
+    "anchor": "Consulta de Medicina Geral e Familiar",
+    "placement": "Replace the existing family-and-general-medicine redirect URL with its observed final canonical destination."
+  },
+  {
+    "priority": "P1",
+    "market": "Spain",
+    "action": "retarget",
+    "source": "https://www.myglobalhealth.online/spain/es/blog/baja-laboral-por-ansiedad-como-funciona",
+    "destination": "https://www.myglobalhealth.online/spain/es/services/salud-mental-online",
+    "anchor": "Consulta de salud mental",
+    "placement": "Retarget only the existing mental-health-labelled CTA, currently pointing to justificante-medico-online. Keep document links accurate and preserve the public/mutua sick-leave explanation. Confirm appointment supply and applicable Spain review holds before publication."
+  },
+  {
+    "priority": "P1",
+    "market": "Romania",
+    "action": "add",
+    "source": "https://www.myglobalhealth.online/romania/ro",
+    "destination": "https://www.myglobalhealth.online/romania/ro/tools/calorie-calculator",
+    "anchor": "Calculator de calorii",
+    "placement": "Add one useful-tools resource link near weight-management information; retain the existing service CTA."
+  },
+  {
+    "priority": "P1",
+    "market": "Spain",
+    "action": "add",
+    "source": "https://www.myglobalhealth.online/spain/es/tools/blood-pressure-chart",
+    "destination": "https://www.myglobalhealth.online/spain/es/blog/tension-arterial-normal-tabla-edad-sexo",
+    "anchor": "Qué significan los valores de tensión arterial",
+    "placement": "Add beneath the explanation of results. The article already links back to the tool."
+  },
+  {
+    "priority": "P1",
+    "market": "Spain",
+    "action": "add",
+    "source": "https://www.myglobalhealth.online/spain/es/blog/como-bajar-la-tension-que-funciona-segun-la-evidencia",
+    "destination": "https://www.myglobalhealth.online/spain/es/tools/blood-pressure-chart",
+    "anchor": "Consultar la tabla de tensión arterial",
+    "placement": "Add in the measurement/interpretation section; keep emergency instructions prominent."
+  },
+  {
+    "priority": "P1",
+    "market": "Portugal",
+    "action": "add",
+    "source": "https://www.myglobalhealth.online/portugal/pt/health/hipertensao",
+    "destination": "https://www.myglobalhealth.online/portugal/pt/tools/blood-pressure-chart",
+    "anchor": "Tabela de tensão arterial",
+    "placement": "Add beside the paragraph about understanding readings. Repair the broken service link on this page first."
+  },
+  {
+    "priority": "P2",
+    "market": "Portugal",
+    "action": "add",
+    "source": "https://www.myglobalhealth.online/portugal/pt/tools/blood-pressure-chart",
+    "destination": "https://www.myglobalhealth.online/portugal/pt/health/hipertensao",
+    "anchor": "Acompanhamento da hipertensão",
+    "placement": "Add a reading-resource link alongside the existing care choices after repairing the guide's dead service link."
+  },
+  {
+    "priority": "P2",
+    "market": "Brazil",
+    "action": "add",
+    "source": "https://www.myglobalhealth.online/brazil/pt",
+    "destination": "https://www.myglobalhealth.online/brazil/pt/tools/calorie-calculator",
+    "anchor": "Calculadora de calorias",
+    "placement": "Add a useful-tools resource beside weight-management information. Keep the care link; do not market calculations as personalised medical advice."
+  },
+  {
+    "priority": "P2",
+    "market": "Czechia",
+    "action": "add",
+    "source": "https://www.myglobalhealth.online/czechia/cs",
+    "destination": "https://www.myglobalhealth.online/czechia/cs/tools/blood-pressure-chart",
+    "anchor": "Tabulka krevního tlaku",
+    "placement": "Add a useful-tools resource beside chronic-care information, without another sitewide footer list."
+  },
+  {
+    "priority": "P2",
+    "market": "Ireland",
+    "action": "reposition",
+    "source": "https://www.myglobalhealth.online/ireland/en/blog/illness-benefit-ireland-how-to-claim",
+    "destination": "https://www.myglobalhealth.online/ireland/en/blog/illness-benefit-payment-ireland-rate-tax-timing",
+    "anchor": "Illness Benefit payment rates and timing",
+    "placement": "This link already exists in related articles. Place one descriptive link where the claim guide discusses payments; do not describe this as a missing link or add repeated CTAs."
+  }
+]

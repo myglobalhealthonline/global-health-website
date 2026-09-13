@@ -1,0 +1,115 @@
+{
+  "checkedAt": "2026-09-13T18:18:37.324Z",
+  "checks": [
+    {
+      "row": 6,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "status": 200,
+      "anchor": "Calculator de calorii",
+      "keyboardFocus": true,
+      "noOverflow": true
+    },
+    {
+      "row": 7,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "status": 200,
+      "anchor": "Qué significan los valores de tensión arterial",
+      "keyboardFocus": true,
+      "noOverflow": true
+    },
+    {
+      "row": 10,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "status": 200,
+      "anchor": "Acompanhamento da hipertensão",
+      "keyboardFocus": true,
+      "noOverflow": true
+    },
+    {
+      "row": 11,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "status": 200,
+      "anchor": "Calculadora de calorias",
+      "keyboardFocus": true,
+      "noOverflow": true
+    },
+    {
+      "row": 12,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "status": 200,
+      "anchor": "Tabulka krevního tlaku",
+      "keyboardFocus": true,
+      "noOverflow": true
+    },
+    {
+      "row": 6,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "status": 200,
+      "anchor": "Calculator de calorii",
+      "keyboardFocus": true,
+      "noOverflow": true
+    },
+    {
+      "row": 7,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "status": 200,
+      "anchor": "Qué significan los valores de tensión arterial",
+      "keyboardFocus": true,
+      "noOverflow": true
+    },
+    {
+      "row": 10,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "status": 200,
+      "anchor": "Acompanhamento da hipertensão",
+      "keyboardFocus": true,
+      "noOverflow": true
+    },
+    {
+      "row": 11,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "status": 200,
+      "anchor": "Calculadora de calorias",
+      "keyboardFocus": true,
+      "noOverflow": true
+    },
+    {
+      "row": 12,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "status": 200,
+      "anchor": "Tabulka krevního tlaku",
+      "keyboardFocus": true,
+      "noOverflow": true
+    }
+  ]
+}

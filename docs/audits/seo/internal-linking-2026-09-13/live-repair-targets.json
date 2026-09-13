@@ -1,0 +1,416 @@
+[
+  {
+    "url": "https://www.myglobalhealth.online/brazil/pt/services/doencas-cronicas-online",
+    "locale": "pt",
+    "title": "Doenças Crônicas Online Brasil | Acompanhamento Médico | Mesmo Dia",
+    "description": "Acompanhamento de doenças crônicas com clínico geral por videochamada. Hipertensão, diabetes, hipotireoidismo e muito mais. Médicos com CRM ativo. Mesmo dia, de qualquer lugar do Brasil.",
+    "h1": [
+      "Doenças Crônicas Online — Acompanhamento Médico por Videochamada"
+    ],
+    "h2": [
+      "Para quem é esse serviço",
+      "O que está incluído na consulta",
+      "Hipertensão arterial — a doença crônica mais comum do Brasil",
+      "Diabetes tipo 2 — acompanhamento e controle",
+      "Hipotireoidismo — revisão e ajuste de levotiroxina",
+      "Doenças crônicas no Brasil — o problema do acompanhamento",
+      "Acompanhamento de doenças crônicas para estrangeiros e expats no Brasil",
+      "Médicos em Brasil",
+      "Perguntas Frequentes",
+      "Temas de saúde relacionados",
+      "Também disponível em",
+      "Marcar Doenças Crônicas em Brazil"
+    ],
+    "robots": "index, follow",
+    "canonical": "https://www.myglobalhealth.online/brazil/pt/services/doencas-cronicas-online",
+    "hreflang": [
+      {
+        "lang": "pt-BR",
+        "url": "https://www.myglobalhealth.online/brazil/pt/services/doencas-cronicas-online"
+      },
+      {
+        "lang": "en-BR",
+        "url": "https://www.myglobalhealth.online/brazil/en/services/doencas-cronicas-online"
+      },
+      {
+        "lang": "es-BR",
+        "url": "https://www.myglobalhealth.online/brazil/es/services/doencas-cronicas-online"
+      },
+      {
+        "lang": "x-default",
+        "url": "https://www.myglobalhealth.online/brazil/pt/services/doencas-cronicas-online"
+      }
+    ],
+    "schemaTypes": [
+      "MedicalOrganization",
+      "ImageObject",
+      "Country",
+      "ContactPoint",
+      "PostalAddress",
+      "PropertyValue",
+      "WebSite",
+      "FAQPage",
+      "Question",
+      "Answer",
+      "BreadcrumbList",
+      "ListItem",
+      "MedicalWebPage",
+      "Person",
+      "EducationalOccupationalCredential",
+      "Organization",
+      "MedicalProcedure",
+      "ReserveAction",
+      "Service",
+      "Offer",
+      "QuantitativeValue"
+    ],
+    "schemaFaqCount": 9,
+    "schemaFaqs": [
+      {
+        "question": "Com que frequência devo fazer consulta de acompanhamento para doença crônica?",
+        "answer": "Depende da condição e do nível de controle. Para hipertensão bem controlada, geralmente a cada 3 a 6 meses. Para diabetes, a cada 3 meses idealmente. Para hipotireoidismo estável, a cada 6 meses. O médico orienta sobre a frequência adequada para o seu caso."
+      },
+      {
+        "question": "Preciso levar os exames para a consulta?",
+        "answer": "Sim — envie os exames mais recentes antes da consulta. Ter os exames disponíveis permite que o médico faça uma avaliação muito mais completa e tome decisões de ajuste de medicação baseadas em evidência."
+      },
+      {
+        "question": "O médico pode ajustar minha medicação por teleconsulta?",
+        "answer": "Sim — quando clinicamente indicado após avaliação completa e revisão dos exames, a critério exclusivo do médico. O receituário eletrônico atualizado é emitido no mesmo dia."
+      },
+      {
+        "question": "Tenho diabetes e hipertensão — posso acompanhar as duas condições na mesma consulta?",
+        "answer": "Sim. O clínico geral é o profissional mais indicado para o acompanhamento conjunto de múltiplas condições crônicas — avaliando as interações entre as condições e as medicações de forma integrada."
+      },
+      {
+        "question": "Posso usar esse serviço se minha doença crônica foi diagnosticada fora do Brasil?",
+        "answer": "Sim. O médico avalia a condição, revisa a medicação atual, identifica os equivalentes disponíveis no mercado brasileiro, e estabelece um plano de acompanhamento adequado para o sistema de saúde brasileiro."
+      },
+      {
+        "question": "Minha doença crônica está descompensada — posso usar a teleconsulta?",
+        "answer": "Se você está com sintomas novos ou piora significativa do quadro — pressão muito elevada com cefaleia intensa, glicemia muito alta com mal-estar, falta de ar — procure atendimento presencial urgente ou ligue ao SAMU (192). A teleconsulta é para condições estáveis e bem controladas."
+      },
+      {
+        "question": "O médico pode solicitar todos os exames de controle que preciso?",
+        "answer": "Sim. O médico solicita os exames de controle indicados para a sua condição — pedido de exames emitido no mesmo dia para realização em laboratórios particulares de sua escolha em todo o Brasil."
+      },
+      {
+        "question": "Posso usar esse serviço de qualquer estado do Brasil?",
+        "answer": "Sim. A Lei 14.510/2022 garante validade nacional para os atos praticados por telemedicina. Você pode agendar de qualquer estado brasileiro."
+      },
+      {
+        "question": "Preciso de plano de saúde?",
+        "answer": "Não. É um serviço particular de pagamento direto."
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Com que frequência devo fazer consulta de acompanhamento para doença crônica?",
+        "answer": "Depende da condição e do nível de controle. Para hipertensão bem controlada, geralmente a cada 3 a 6 meses. Para diabetes, a cada 3 meses idealmente. Para hipotireoidismo estável, a cada 6 meses. O médico orienta sobre a frequência adequada para o seu caso."
+      },
+      {
+        "question": "Preciso levar os exames para a consulta?",
+        "answer": "Sim — envie os exames mais recentes antes da consulta. Ter os exames disponíveis permite que o médico faça uma avaliação muito mais completa e tome decisões de ajuste de medicação baseadas em evidência."
+      },
+      {
+        "question": "O médico pode ajustar minha medicação por teleconsulta?",
+        "answer": "Sim — quando clinicamente indicado após avaliação completa e revisão dos exames, a critério exclusivo do médico. O receituário eletrônico atualizado é emitido no mesmo dia."
+      },
+      {
+        "question": "Tenho diabetes e hipertensão — posso acompanhar as duas condições na mesma consulta?",
+        "answer": "Sim. O clínico geral é o profissional mais indicado para o acompanhamento conjunto de múltiplas condições crônicas — avaliando as interações entre as condições e as medicações de forma integrada."
+      },
+      {
+        "question": "Posso usar esse serviço se minha doença crônica foi diagnosticada fora do Brasil?",
+        "answer": "Sim. O médico avalia a condição, revisa a medicação atual, identifica os equivalentes disponíveis no mercado brasileiro, e estabelece um plano de acompanhamento adequado para o sistema de saúde brasileiro."
+      },
+      {
+        "question": "Minha doença crônica está descompensada — posso usar a teleconsulta?",
+        "answer": "Se você está com sintomas novos ou piora significativa do quadro — pressão muito elevada com cefaleia intensa, glicemia muito alta com mal-estar, falta de ar — procure atendimento presencial urgente ou ligue ao SAMU (192). A teleconsulta é para condições estáveis e bem controladas."
+      },
+      {
+        "question": "O médico pode solicitar todos os exames de controle que preciso?",
+        "answer": "Sim. O médico solicita os exames de controle indicados para a sua condição — pedido de exames emitido no mesmo dia para realização em laboratórios particulares de sua escolha em todo o Brasil."
+      },
+      {
+        "question": "Posso usar esse serviço de qualquer estado do Brasil?",
+        "answer": "Sim. A Lei 14.510/2022 garante validade nacional para os atos praticados por telemedicina. Você pode agendar de qualquer estado brasileiro."
+      },
+      {
+        "question": "Preciso de plano de saúde?",
+        "answer": "Não. É um serviço particular de pagamento direto."
+      }
+    ],
+    "body": "++Todas as consultasConsulta onlineDoenças Crônicas Online — Acompanhamento Médico por VideochamadaViver com uma doença crônica significa consultas regulares, exames de controle periódicos, ajuste de medicação e acompanhamento contínuo. No Brasil, esse acompanhamento é um dos maiores desafios do sistema de saúde — pelo SUS as consultas de retorno são escassas e demoradas, e pelo sistema privado o custo acumula rápido. A teleconsulta mudou esse cenário. Acompanhamento de hipertensão, diabetes, hipotireoidismo, dislipidemia e outras condições crônicas estáveis pode ser feito com a mesma qualidade clínica por videochamada — com revisão de exames, ajuste de medicação e pedido de exames de controle, tudo numa única consulta. A Global Health conecta você com clínicos gerais com CRM ativo para acompanhamento de doenças crônicas por videochamada — mesmo dia, de qualquer lugar do Brasil, em português ou inglês.Médicos registados · BrazilConsulta por vídeo seguraConfidencial e em conformidade com o GDPRRevisado clinicamente por Dr. Renato Sarmento· CRM | 170837Marcar onlineR$299por consultaConsulta de 30 minutosMédico registado em BrazilConfirmação imediata por emailResumo da consulta incluídoMarcar este serviçoPagamento seguro · pagamentos processados pela StripeSobre este serviçoPara quem é esse serviçoEsta consulta de acompanhamento de doenças crônicas é indicada para adultos com condições estáveis e bem controladas, incluindo:Hipertensão arterial — revisão, ajuste de medicação e pedido de exames de controleDiabetes tipo 2 — acompanhamento do controle glicêmico, revisão de medicação e pedido de hemoglobina glicada e outros examesHipotireoidismo — revisão e ajuste de levotiroxina com base em exames de TSH e T4 livreDislipidemia — acompanhamento do perfil lipídico e ajuste de estatina quando indicadoRefluxo gastroesofágico crônico — acompanhamento e renovação de tratamentoAsma estável — revisão do plano de tratamento e ajuste de medicação inalatóriaDPOC estável — acompanhamento e revisão do plano de tratamentoAnsiedade e depressão em tratamento estável — acompanhamento e renovação de medicação quando indicadoEnxaqueca crônica — revisão do plano de tratamento preventivoArtrite e condições reumatológicas estáveis — acompanhamento e renovação de tratamentoOutras condições crônicas estáveis que requerem acompanhamento clínico regularEste serviço é indicado para condições crônicas estáveis e bem controladas. Se você está com sintomas novos, piora do quadro ou suspeita de descompensação, agende uma consulta clínica geral para avaliação completa.O que está incluído na consultaRevisão do controle da doençaO médico revisa o estado atual do controle da condição crônica — incluindo sintomas recentes, tolerabilidade da medicação atual, adesão ao tratamento, e impacto no funcionamento diário.Revisão de exames de controleEnvie os exames mais recentes antes da consulta — hemoglobina glicada, glicemia de jejum, perfil lipídico, TSH, T4 livre, função renal, hemograma, e outros relevantes para a sua condição. O médico revisa os resultados no contexto clínico completo e explica o que os valores significam para o controle da doença.Ajuste de medicação — a critério médicoOnde clinicamente indicado após avaliação completa, o médico ajusta as doses ou a medicação e emite receituário eletrônico atualizado com assinatura digital ICP-Brasil, válido em farmácias em todo o Brasil.Pedido de exames de controleO médico solicita os exames de controle indicados para a próxima consulta — com base na condição, na medicação atual, e nos resultados anteriores.Orientação sobre estilo de vidaAlimentação, atividade física, controle de peso, tabagismo e consumo de álcool têm impacto direto no controle de praticamente todas as doenças crônicas. O médico orienta sobre modificações de estilo de vida com base no perfil individual.Encaminhamento para especialista — quando indicadoQuando a condição requer avaliação especializada — cardiologista, endocrinologista, pneumologista, reumatologista — o médico encaminha com a documentação clínica completa.Hipertensão arterial — a doença crônica mais comum do BrasilA hipertensão arterial afeta aproximadamente 36% dos adultos brasileiros — mais de 60 milhões de pessoas. É o principal fator de risco para infarto, AVC e insuficiência renal no Brasil, e a maioria dos hipertensos não tem o controle adequado da pressão arterial.O acompanhamento regular da hipertensão por teleconsulta inclui:Revisão dos valores de pressão arterial medidos em casa — o médico orienta sobre como medir corretamente e com que frequênciaAvaliação de sintomas — cefaleia, tontura, palpitações, visão turvaRevisão e ajuste de anti-hipertensivos — dose, combinação de medicamentos, tolerabilidade e efeitos colateraisPedido de exames de controle — função renal, eletrólitos, eletrocardiograma quando indicadoAvaliação de risco cardiovascular global — para orientar metas de controle pressóricoOrientação sobre alimentação com restrição de sódio, atividade física e controle de pesoPressão arterial muito elevada com cefaleia intensa, visão turva, dor no peito ou dificuldade respiratória é urgência hipertensiva — ligue ao SAMU (192) imediatamente.Diabetes tipo 2 — acompanhamento e controleO Brasil tem a quarta maior população de diabéticos do mundo — aproximadamente 16 milhões de pessoas. O controle inadequado do diabetes é a principal causa de cegueira adquirida, amputação não traumática e diálise no Brasil.O acompanhamento do diabetes por teleconsulta inclui:Revisão do controle glicêmico — hemoglobina glicada, glicemia de jejum e pós-prandial, glicemia capilar em casaRevisão e ajuste de medicação antidiabética — metformina, gliflozinas, análogos do GLP-1, sulfonilureias e outrosAvaliação de complicações — pés, visão, rins — com encaminhamento para especialista quando indicadoPedido de exames de controle — hemoglobina glicada, função renal, microalbuminúria, lipidogramaOrientação sobre alimentação, atividade física e monitoramento da glicemia em casaHipotireoidismo — revisão e ajuste de levotiroxinaO hipotireoidismo afeta aproximadamente 10% dos adultos brasileiros — com maior prevalência em mulheres. O ajuste da dose de levotiroxina é um dos procedimentos de acompanhamento mais simples e que mais se beneficia da teleconsulta — requer apenas revisão dos exames de TSH e T4 livre e ajuste da dose quando necessário.O acompanhamento do hipotireoidismo por teleconsulta inclui:Revisão dos sintomas — cansaço, ganho de peso, queda de cabelo, constipação, intolerância ao frioRevisão dos exames de TSH e T4 livre — com ajuste da dose de levotiroxina quando indicadoOrientação sobre o horário correto de tomar a levotiroxina e interações com alimentos e outros medicamentosPedido de exames de controle — TSH e T4 livreDoenças crônicas no Brasil — o problema do acompanhamentoNo Brasil, o acompanhamento de doenças crônicas enfrenta desafios específicos que tornam a teleconsulta especialmente valiosa:Pelo SUSAs consultas de retorno para doenças crônicas no SUS são escassas — em muitos municípios o intervalo entre consultas é de seis meses ou mais, o que é inadequado para condições que requerem acompanhamento mais frequente. O acesso a especialistas pelo SUS tem listas de espera de meses a anos.Pelos planos de saúdeMuitos planos de saúde cobrem consultas de retorno mas com burocracia significativa — autorização prévia, lista de médicos credenciados, agendamento demorado. A teleconsulta particular pode ser mais ágil e acessível do que o sistema de saúde suplementar para consultas de rotina de doenças crônicas.Para expats e estrangeirosPara estrangeiros vivendo no Brasil com condições crônicas diagnosticadas em outro país — diabetes controlado com medicamentos com nomes diferentes, hipertensão tratada com anti-hipertensivos não disponíveis no Brasil — a consulta de acompanhamento inclui a adaptação do tratamento para os medicamentos disponíveis no mercado brasileiro e o sistema de saúde local.Acompanhamento de doenças crônicas para estrangeiros e expats no BrasilPara estrangeiros e expats vivendo no Brasil com condições crônicas, os desafios são específicos:Medicamentos com nomes diferentes — a mesma molécula pode ter nomes comerciais completamente diferentes no Brasil. O médico identifica o equivalente disponível no mercado brasileiro para cada medicaçãoMedicamentos sem registro na ANVISA — alguns medicamentos comuns em outros países não têm registro na ANVISA e não estão disponíveis no Brasil. O médico orienta sobre as alternativas disponíveisValores de referência laboratorial diferentes — os valores de referência para glicemia, colesterol, TSH e outros exames podem variar entre países. O médico interpreta os resultados com base nos critérios brasileiros e internacionaisAtendimento em inglês — para estrangeiros que preferem discutir o acompanhamento das condições crônicas no próprio idioma, o atendimento está disponível em inglês e espanholCuidados relacionadosControle de peso em diabetes e hipotireoidismo?Se a sua situação está relacionada a controle de peso em diabetes e hipotireoidismo, nossa Controle de Peso oferece a avaliação adequada.Controle de PesoCuidados relacionadosPrecisa de ajuda com solicitar exames de controle?Para solicitar exames de controle, consulte nossa página de Solicitação de Exames — avaliação clínica específica para o seu caso.Solicitação de ExamesCuidados relacionadosSua consulta é sobre parar de fumar — impacto na saúde cardiovascular?Nossa Parar de Fumar foi pensada especificamente para parar de fumar — impacto na saúde cardiovascular.Parar de FumarCuidados relacionadosDor articular crónica e artrite?Se a sua situação está relacionada a dor articular crónica e artrite, nossa Musculoesquelético oferece a avaliação adequada.MusculoesqueléticoMédicos em BrasilClínicos gerais licenciados disponíveis para consultas online. Cada perfil lista qualificações, idiomas e registo.Ver perfil de Dr. Renato SarmentoBRAZILMédico de Família e ComunidadeDr. Renato SarmentoRegistoCRM | 170837IdiomasPortuguese, English, SpanishEscolher horárioVer perfilQuestionsPerguntas FrequentesCom que frequência devo fazer consulta de acompanhamento para doença crônica?Depende da condição e do nível de controle. Para hipertensão bem controlada, geralmente a cada 3 a 6 meses. Para diabetes, a cada 3 meses idealmente. Para hipotireoidismo estável, a cada 6 meses. O médico orienta sobre a frequência adequada para o seu caso.Preciso levar os exames para a consulta?Sim — envie os exames mais recentes antes da consulta. Ter os exames disponíveis permite que o médico faça uma avaliação muito mais completa e tome decisões de ajuste de medicação baseadas em evidência.O médico pode ajustar minha medicação por teleconsulta?Sim — quando clinicamente indicado após avaliação completa e revisão dos exames, a critério exclusivo do médico. O receituário eletrônico atualizado é emitido no mesmo dia.Tenho diabetes e hipertensão — posso acompanhar as duas condições na mesma consulta?Sim. O clínico geral é o profissional mais indicado para o acompanhamento conjunto de múltiplas condições crônicas — avaliando as interações entre as condições e as medicações de forma integrada.Posso usar esse serviço se minha doença crônica foi diagnosticada fora do Brasil?Sim. O médico avalia a condição, revisa a medicação atual, identifica os equivalentes disponíveis no mercado brasileiro, e estabelece um plano de acompanhamento adequado para o sistema de saúde brasileiro.Minha doença crônica está descompensada — posso usar a teleconsulta?Se você está com sintomas novos ou piora significativa do quadro — pressão muito elevada com cefaleia intensa, glicemia muito alta com mal-estar, falta de ar — procure atendimento presencial urgente ou ligue ao SAMU (192). A teleconsulta é para condições estáveis e bem controladas.O médico pode solicitar todos os exames de controle que preciso?Sim. O médico solicita os exames de controle indicados para a sua condição — pedido de exames emitido no mesmo dia para realização em laboratórios particulares de sua escolha em todo o Brasil.Posso usar esse serviço de qualquer estado do Brasil?Sim. A Lei 14.510/2022 garante validade nacional para os atos praticados por telemedicina. Você pode agendar de qualquer estado brasileiro.Preciso de plano de saúde?Não. É um serviço particular de pagamento direto.Temas de saúde relacionadosDiabetes a Doença SilenciosaTabela de pressão arterialMedical disclaimer. A informação nesta página é geral e não substitui aconselhamento, diagnóstico ou tratamento médico profissional. Marque uma consulta para discutir a sua situação com um médico registado para exercer em Brazil.Prontos quando estiverMarcar Doenças Crônicas em BrazilA partir de R$299 · Disponibilidade em tempo real. Escolha um médico e uma hora que lhe convenha.Marcar este serviço",
+    "links": [
+      {
+        "text": "Todas as consultas",
+        "href": "/brazil/pt/gp-consultation-online"
+      },
+      {
+        "text": "Dr. Renato Sarmento",
+        "href": "/brazil/pt/doctors/dr-renato-sarmento"
+      },
+      {
+        "text": "Controle de Peso",
+        "href": "/brazil/pt/services/controle-peso-online"
+      },
+      {
+        "text": "Solicitação de Exames",
+        "href": "/brazil/pt/services/solicitacao-exames-online"
+      },
+      {
+        "text": "Parar de Fumar",
+        "href": "/brazil/pt/services/parar-de-fumar-online"
+      },
+      {
+        "text": "Musculoesquelético",
+        "href": "/brazil/pt/services/musculoesqueletico-online"
+      },
+      {
+        "text": "Ver perfil de Dr. Renato Sarmento",
+        "href": "/brazil/pt/doctors/dr-renato-sarmento"
+      },
+      {
+        "text": "CRM | 170837",
+        "href": "https://portal.cfm.org.br/busca-medicos"
+      },
+      {
+        "text": "Ver perfil",
+        "href": "/brazil/pt/doctors/dr-renato-sarmento"
+      },
+      {
+        "text": "Diabetes a Doença Silenciosa",
+        "href": "/brazil/pt/blog/diabetes-doenca-silenciosa"
+      },
+      {
+        "text": "Tabela de pressão arterial",
+        "href": "/brazil/pt/tools/blood-pressure-chart"
+      },
+      {
+        "text": "Inglês",
+        "href": "/brazil/en/services/doencas-cronicas-online"
+      },
+      {
+        "text": "Espanhol",
+        "href": "/brazil/es/services/doencas-cronicas-online"
+      }
+    ],
+    "sha256": "9a9d1dd413b2b8b539968e2c21523ea6d006e7a27411639504000bb2bf259fe9",
+    "status": 200,
+    "finalUrl": "https://www.myglobalhealth.online/brazil/pt/services/doencas-cronicas-online",
+    "xRobotsTag": null,
+    "checkedAt": "2026-09-13T17:46:25.237Z"
+  },
+  {
+    "url": "https://www.myglobalhealth.online/portugal/pt/services/medicina-geral-e-familiar",
+    "locale": "pt",
+    "title": "Médico de Família Online | Medicina Geral e Familiar",
+    "description": "Consulta com especialista em Medicina Geral e Familiar, por videochamada segura, para doença crónica, cuidados continuados e medicina preventiva.",
+    "h1": [
+      "Consulta de Medicina Geral e Familiar"
+    ],
+    "h2": [
+      "O Que Torna Esta Consulta Diferente",
+      "O Que Inclui a Sua Consulta",
+      "Condições Habitualmente Geridas",
+      "A Quem Se Destina Este Serviço",
+      "Acompanhamento Pediátrico e Geriátrico",
+      "Sem Médico de Família Atribuído? Sabemos Como Isso É",
+      "Porquê Escolher os Nossos Cuidados",
+      "Médicos em Portugal",
+      "Perguntas Frequentes",
+      "Temas de saúde relacionados",
+      "Também disponível em",
+      "Marcar Consulta de Medicina Geral e Familiar em Portugal"
+    ],
+    "robots": "index, follow",
+    "canonical": "https://www.myglobalhealth.online/portugal/pt/services/medicina-geral-e-familiar",
+    "hreflang": [
+      {
+        "lang": "pt-PT",
+        "url": "https://www.myglobalhealth.online/portugal/pt/services/medicina-geral-e-familiar"
+      },
+      {
+        "lang": "en-PT",
+        "url": "https://www.myglobalhealth.online/portugal/en/services/medicina-geral-e-familiar"
+      },
+      {
+        "lang": "es-PT",
+        "url": "https://www.myglobalhealth.online/portugal/es/services/medicina-geral-e-familiar"
+      },
+      {
+        "lang": "cs-PT",
+        "url": "https://www.myglobalhealth.online/portugal/cs/services/medicina-geral-e-familiar"
+      },
+      {
+        "lang": "ro-PT",
+        "url": "https://www.myglobalhealth.online/portugal/ro/services/medicina-geral-e-familiar"
+      },
+      {
+        "lang": "de-PT",
+        "url": "https://www.myglobalhealth.online/portugal/de/services/medicina-geral-e-familiar"
+      },
+      {
+        "lang": "x-default",
+        "url": "https://www.myglobalhealth.online/portugal/pt/services/medicina-geral-e-familiar"
+      }
+    ],
+    "schemaTypes": [
+      "MedicalOrganization",
+      "ImageObject",
+      "Country",
+      "ContactPoint",
+      "PostalAddress",
+      "PropertyValue",
+      "WebSite",
+      "FAQPage",
+      "Question",
+      "Answer",
+      "BreadcrumbList",
+      "ListItem",
+      "MedicalWebPage",
+      "Person",
+      "EducationalOccupationalCredential",
+      "Organization",
+      "MedicalProcedure",
+      "ReserveAction",
+      "Service",
+      "Offer",
+      "QuantitativeValue"
+    ],
+    "schemaFaqCount": 5,
+    "schemaFaqs": [
+      {
+        "question": "Qual a diferença entre esta consulta e a Consulta de Clínica Geral?",
+        "answer": "A Consulta de Clínica Geral destina-se a situações agudas ou pontuais — um sintoma novo, uma doença súbita ou uma questão simples. A Consulta de Medicina Geral e Familiar destina-se a doentes que precisam de cuidados contínuos e coordenados para condições crónicas ou complexas, prestados por um médico com formação especializada em MGF e mais tempo de consulta."
+      },
+      {
+        "question": "Preciso de ter médico de família atribuído em Portugal para usar este serviço?",
+        "answer": "Não. Este serviço foi desenhado especificamente para doentes — incluindo expatriados e residentes internacionais — que não têm médico de família atribuído em Portugal e precisam de acesso a cuidados primários contínuos."
+      },
+      {
+        "question": "Crianças podem ser atendidas através deste serviço?",
+        "answer": "Sim, no contexto de acompanhamento geral de saúde familiar e gestão de condições crónicas. Para situações agudas pediátricas, recomendamos a nossa Consulta de Pediatria, com médico especialista dedicado."
+      },
+      {
+        "question": "Como é mantida a continuidade de cuidados através de uma plataforma digital?",
+        "answer": "O seu historial clínico, notas de consulta e plano de cuidados são mantidos de forma segura na nossa plataforma. Sempre que possível, atribuímos doentes recorrentes ao mesmo médico, para construir familiaridade clínica ao longo do tempo."
+      },
+      {
+        "question": "Este serviço substitui o meu médico de família do SNS?",
+        "answer": "Não necessariamente — pode complementá-lo. Para doentes sem médico de família atribuído, este serviço proporciona uma alternativa de cuidados continuados. Para doentes já inscritos no SNS, este serviço pode complementar o acompanhamento, especialmente em situações de maior disponibilidade ou continuidade."
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Qual a diferença entre esta consulta e a Consulta de Clínica Geral?",
+        "answer": "A Consulta de Clínica Geral destina-se a situações agudas ou pontuais — um sintoma novo, uma doença súbita ou uma questão simples. A Consulta de Medicina Geral e Familiar destina-se a doentes que precisam de cuidados contínuos e coordenados para condições crónicas ou complexas, prestados por um médico com formação especializada em MGF e mais tempo de consulta."
+      },
+      {
+        "question": "Preciso de ter médico de família atribuído em Portugal para usar este serviço?",
+        "answer": "Não. Este serviço foi desenhado especificamente para doentes — incluindo expatriados e residentes internacionais — que não têm médico de família atribuído em Portugal e precisam de acesso a cuidados primários contínuos."
+      },
+      {
+        "question": "Crianças podem ser atendidas através deste serviço?",
+        "answer": "Sim, no contexto de acompanhamento geral de saúde familiar e gestão de condições crónicas. Para situações agudas pediátricas, recomendamos a nossa Consulta de Pediatria, com médico especialista dedicado."
+      },
+      {
+        "question": "Como é mantida a continuidade de cuidados através de uma plataforma digital?",
+        "answer": "O seu historial clínico, notas de consulta e plano de cuidados são mantidos de forma segura na nossa plataforma. Sempre que possível, atribuímos doentes recorrentes ao mesmo médico, para construir familiaridade clínica ao longo do tempo."
+      },
+      {
+        "question": "Este serviço substitui o meu médico de família do SNS?",
+        "answer": "Não necessariamente — pode complementá-lo. Para doentes sem médico de família atribuído, este serviço proporciona uma alternativa de cuidados continuados. Para doentes já inscritos no SNS, este serviço pode complementar o acompanhamento, especialmente em situações de maior disponibilidade ou continuidade."
+      }
+    ],
+    "body": "++Todas as consultasConsulta onlineConsulta de Medicina Geral e FamiliarCuidados continuados, além de uma avaliação pontual. Os nossos médicos especialistas em Medicina Geral e Familiar concluíram o internato de especialidade reconhecido pela Ordem dos Médicos — o nível mais elevado de formação em cuidados de saúde primários disponível em Portugal — e estão capacitados para prestar o tipo de cuidado contínuo e personalizado que as condições crónicas e complexas exigem.Médicos registados · PortugalConsulta por vídeo seguraConfidencial e em conformidade com o GDPRRevisado clinicamente por Dr Tiago Miguel Figueira· OM | 77986Marcar online€49por consultaConsulta de 20 minutosMédico registado em PortugalConfirmação imediata por emailResumo da consulta incluídoMarcar este serviçoPagamento seguro · pagamentos processados pela StripeSobre este serviçoO Que Torna Esta Consulta DiferenteEsta não é uma consulta pontual para um sintoma isolado. Uma consulta de Medicina Geral e Familiar destina-se a doentes que precisam de:Gestão contínua de uma ou mais doenças crónicasUm médico que reveja o historial clínico completo e construa um plano de cuidados a longo prazoContinuidade — o mesmo padrão clínico em cada consulta, não um médico diferente de cada vezMais tempo — para abordar devidamente situações complexas ou multissistémicasSe a sua preocupação for aguda — um sintoma novo, uma doença súbita, ou uma questão pontual — a nossa Consulta de Clínica Geral é mais adequada e mais económica. Este serviço destina-se a doentes que precisam de um médico de referência, não apenas de uma consulta.O Que Inclui a Sua ConsultaAvaliação Clínica AbrangenteO seu médico irá rever o historial clínico completo, condições atuais, medicação, e estado de saúde geral — construindo um quadro clínico completo, e não apenas a queixa que motivou a marcação.Gestão de Doença CrónicaAcompanhamento estruturado e gestão de condições de longo prazo, incluindo monitorização, ajuste do tratamento quando clinicamente apropriado, e coordenação dos cuidados contínuos.Plano de Saúde PersonalizadoO seu médico irá desenvolver ou atualizar um plano de cuidados adaptado ao seu perfil de saúde individual, estilo de vida e objetivos a longo prazo — incluindo cuidados preventivos, rastreios recomendados e referenciações para especialista, quando indicado.Coordenação de CuidadosSempre que sejam necessários exames complementares ou apoio de especialista, o seu médico coordena as referenciações, interpreta os resultados em contexto, e assegura continuidade ao longo do percurso de cuidados.Documentação ClínicaAtestados médicos, cartas de referenciação e outra documentação clínica, emitidos ao critério profissional do médico, quando clinicamente apropriado.Condições Habitualmente GeridasEste serviço é particularmente adequado para:Hipertensão e gestão do risco cardiovascularDiabetes tipo 1 e tipo 2 — monitorização, gestão e prevenção de complicaçõesAsma e doenças respiratórias crónicasDoenças da tiroide — hipotiroidismo, hipertiroidismo, monitorização contínuaColesterol elevado e síndrome metabólicoCondições músculo-esqueléticas crónicas — artrite, dor lombar crónica, doença articularDoenças digestivas — síndrome do intestino irritável, refluxo, doença inflamatória intestinalSaúde mental — ansiedade, depressão e gestão do stress, em acompanhamento contínuoCondições dermatológicas crónicas — eczema, psoríase, acne em tratamento continuadoSaúde da mulher — condições hormonais, revisão de contraceção, alterações menstruaisSaúde do homem — questões hormonais, gestão contínua de doença crónicaCuidados preventivos — avaliações de saúde, aconselhamento de estilo de vida, referenciação para rastreiosDoentes com múltiplas condições que requerem gestão coordenada e holísticaAcompanhamento de saúde de idosos com múltiplas patologiasA Quem Se Destina Este ServiçoEsta consulta é indicada se:Está a gerir uma ou mais doenças crónicas e precisa de cuidados estruturados e contínuosRecebeu recentemente um diagnóstico e quer uma avaliação completa e um plano de cuidadosÉ expatriado ou residente internacional sem médico de família atribuído em PortugalQuer continuidade — um médico que conheça o seu historial completo, não apenas o problema do diaTem necessidades de saúde complexas ou multissistémicas que exigem mais do que uma consulta padrãoA Consulta de Clínica Geral é mais adequada se:Tem uma doença aguda ou súbitaPrecisa de uma avaliação pontual, atestado médico ou referenciação isoladaTem uma questão simples e bem definidaAcompanhamento Pediátrico e GeriátricoOs médicos especialistas em Medicina Geral e Familiar têm formação para acompanhar doentes de todas as idades — desde a infância até à terceira idade — no contexto da gestão contínua de saúde familiar.Para crianças: acompanhamento de saúde geral, vigilância de desenvolvimento, e gestão de condições crónicas pediátricas no contexto dos cuidados de saúde familiar. Para situações agudas pediátricas — febre, infeções comuns, sintomas súbitos — recomendamos a nossa Consulta de Pediatria, com médico especialista dedicado à idade pediátrica.Para idosos: gestão de múltiplas patologias, polimedicação, e cuidados continuados adaptados às necessidades específicas da terceira idade — um dos pilares centrais da Medicina Geral e Familiar.Sem Médico de Família Atribuído? Sabemos Como Isso ÉMuitos residentes em Portugal — particularmente expatriados, estudantes internacionais e novos residentes — não têm médico de família atribuído pelo SNS, e enfrentam listas de espera significativas para conseguir uma inscrição.O nosso serviço de Medicina Geral e Familiar foi desenhado especificamente para colmatar esta lacuna — proporcionando o tipo de relação de cuidados continuados que teria com um médico de família atribuído, sem depender da disponibilidade do sistema público.Porquê Escolher os Nossos CuidadosEspecialistas em Medicina Geral e FamiliarOs nossos médicos concluíram o internato de especialidade em Medicina Geral e Familiar, reconhecido pela Ordem dos Médicos — o nível mais elevado de qualificação em cuidados de saúde primários disponível em Portugal.Consultas de 20 minutosMais tempo significa cuidados mais completos. Condições crónicas e complexas não podem ser geridas adequadamente em 15 minutos — esta consulta foi estruturada para dar ao seu médico o tempo que a sua saúde merece.Continuidade de cuidadosProcuramos atribuir-lhe um médico que vá conhecendo o seu historial ao longo do tempo — e não um conjunto rotativo de médicos que leem as suas notas pela primeira vez no início de cada chamada.Foco na comunidade internacionalMuitos dos nossos doentes são expatriados ou residentes internacionais sem médico de família atribuído em Portugal. Proporcionamos o tipo de relação de cuidados primários contínuos que teriam no seu país de origem — no seu idioma, com a flexibilidade que precisam.Total confidencialidade e segurançaTodas as consultas são realizadas por videochamada encriptada, em total conformidade com as normas portuguesas de proteção de dados e telemedicina.Cuidados especializadosCondição cardiovascular a exigir especialista?Para condições cardiovasculares que exijam avaliação especializada — incluindo hipertensão complexa, arritmia, ou doença cardíaca — a nossa Consulta de Cardiologia proporciona cuidados ao nível especializado.Consulta de CardiologiaCuidados especializadosSaúde mental a exigir gestão especializada?Quando a sua condição crónica tem uma dimensão significativa de saúde mental que exija gestão psiquiátrica especializada, a nossa Consulta de Psiquiatria proporciona avaliação e cuidados ao nível especializado.Consulta de PsiquiatriaCuidados especializadosPrecisa de gestão dietética estruturada?Para gestão dietética estruturada e especializada da sua condição crónica — incluindo nutrição em diabetes, dieta cardiovascular, ou gestão metabólica relacionada com o peso — a nossa Consulta de Nutrição proporciona apoio nutricional dedicado.Consulta de NutriçãoCuidados especializadosCriança com condição crónica complexa?Para condições pediátricas crónicas, complexas, ou multissistémicas que exijam avaliação especializada continuada, a nossa Consulta de Pediatria Especialista proporciona cuidados ao nível especializado.Consulta de Pediatria EspecialistaMédicos em PortugalClínicos gerais licenciados disponíveis para consultas online. Cada perfil lista qualificações, idiomas e registo.Ver perfil de Dr Joao de Oliveira e SilvaPORTUGALMédico de Clínica Geral e Medicina FamiliarDr Joao de Oliveira e SilvaRegistoOM | 68445IdiomasPortuguese, EnglishEscolher horárioVer perfilVer perfil de Dr Rui Diogo RodriguesPORTUGALMédico de Clínica Geral e Medicina FamiliarDr Rui Diogo RodriguesRegistoOM | 74473IdiomasPortuguese, EnglishEscolher horárioVer perfilVer perfil de Dr Vitor Hugo de Matos PaisPORTUGALMédico de Medicina Geral e FamiliarDr Vitor Hugo de Matos PaisRegistoOM | 64505IdiomasPortuguese, EnglishEscolher horárioVer perfilQuestionsPerguntas FrequentesQual a diferença entre esta consulta e a Consulta de Clínica Geral?A Consulta de Clínica Geral destina-se a situações agudas ou pontuais — um sintoma novo, uma doença súbita ou uma questão simples. A Consulta de Medicina Geral e Familiar destina-se a doentes que precisam de cuidados contínuos e coordenados para condições crónicas ou complexas, prestados por um médico com formação especializada em MGF e mais tempo de consulta.Preciso de ter médico de família atribuído em Portugal para usar este serviço?Não. Este serviço foi desenhado especificamente para doentes — incluindo expatriados e residentes internacionais — que não têm médico de família atribuído em Portugal e precisam de acesso a cuidados primários contínuos.Crianças podem ser atendidas através deste serviço?Sim, no contexto de acompanhamento geral de saúde familiar e gestão de condições crónicas. Para situações agudas pediátricas, recomendamos a nossa Consulta de Pediatria, com médico especialista dedicado.Como é mantida a continuidade de cuidados através de uma plataforma digital?O seu historial clínico, notas de consulta e plano de cuidados são mantidos de forma segura na nossa plataforma. Sempre que possível, atribuímos doentes recorrentes ao mesmo médico, para construir familiaridade clínica ao longo do tempo.Este serviço substitui o meu médico de família do SNS?Não necessariamente — pode complementá-lo. Para doentes sem médico de família atribuído, este serviço proporciona uma alternativa de cuidados continuados. Para doentes já inscritos no SNS, este serviço pode complementar o acompanhamento, especialmente em situações de maior disponibilidade ou continuidade.Temas de saúde relacionadosDiabetes — Acompanhamento Médico Online em PortugalHipertensão (Tensão Arterial Alta) — Acompanhamento Online em PortugalDiabetes a Doença silenciosaMedical disclaimer. A informação nesta página é geral e não substitui aconselhamento, diagnóstico ou tratamento médico profissional. Marque uma consulta para discutir a sua situação com um médico registado para exercer em Portugal.Prontos quando estiverMarcar Consulta de Medicina Geral e Familiar em PortugalA partir de €49 · Disponibilidade em tempo real. Escolha um médico e uma hora que lhe convenha.Marcar este serviço",
+    "links": [
+      {
+        "text": "Todas as consultas",
+        "href": "/portugal/pt/gp-consultation-online"
+      },
+      {
+        "text": "Dr Tiago Miguel Figueira",
+        "href": "/portugal/pt/doctors/dr-tiago-miguel-figueira"
+      },
+      {
+        "text": "Consulta de Cardiologia",
+        "href": "/portugal/pt/services/consulta-cardiologia"
+      },
+      {
+        "text": "Consulta de Psiquiatria",
+        "href": "/portugal/pt/services/consulta-de-psiquiatria"
+      },
+      {
+        "text": "Consulta de Nutrição",
+        "href": "/portugal/pt/services/consulta-de-nutricao"
+      },
+      {
+        "text": "Consulta de Pediatria Especialista",
+        "href": "/portugal/pt/services/consulta-de-pediatria"
+      },
+      {
+        "text": "Ver perfil de Dr Joao de Oliveira e Silva",
+        "href": "/portugal/pt/doctors/dr-joao-de-oliveira-e-silva"
+      },
+      {
+        "text": "Ver perfil",
+        "href": "/portugal/pt/doctors/dr-joao-de-oliveira-e-silva"
+      },
+      {
+        "text": "Ver perfil de Dr Rui Diogo Rodrigues",
+        "href": "/portugal/pt/doctors/dr-rui-diogo-rodrigues"
+      },
+      {
+        "text": "Ver perfil",
+        "href": "/portugal/pt/doctors/dr-rui-diogo-rodrigues"
+      },
+      {
+        "text": "Ver perfil de Dr Vitor Hugo de Matos Pais",
+        "href": "/portugal/pt/doctors/dr-vitor-hugo-de-matos-pais"
+      },
+      {
+        "text": "Ver perfil",
+        "href": "/portugal/pt/doctors/dr-vitor-hugo-de-matos-pais"
+      },
+      {
+        "text": "Diabetes — Acompanhamento Médico Online em Portugal",
+        "href": "/portugal/pt/health/diabetes"
+      },
+      {
+        "text": "Hipertensão (Tensão Arterial Alta) — Acompanhamento Online em Portugal",
+        "href": "/portugal/pt/health/hipertensao"
+      },
+      {
+        "text": "Diabetes a Doença silenciosa",
+        "href": "/portugal/pt/blog/diabetes-a-doenca-silenciosa"
+      },
+      {
+        "text": "Inglês",
+        "href": "/portugal/en/services/medicina-geral-e-familiar"
+      },
+      {
+        "text": "Espanhol",
+        "href": "/portugal/es/services/medicina-geral-e-familiar"
+      },
+      {
+        "text": "Checo",
+        "href": "/portugal/cs/services/medicina-geral-e-familiar"
+      },
+      {
+        "text": "Romeno",
+        "href": "/portugal/ro/services/medicina-geral-e-familiar"
+      },
+      {
+        "text": "Alemão",
+        "href": "/portugal/de/services/medicina-geral-e-familiar"
+      }
+    ],
+    "sha256": "a3413148a913cb4c097e7030b94caee56a982ea7d368f22a6bb2a89b88ee5d15",
+    "status": 200,
+    "finalUrl": "https://www.myglobalhealth.online/portugal/pt/services/medicina-geral-e-familiar",
+    "xRobotsTag": null,
+    "checkedAt": "2026-09-13T17:46:25.253Z"
+  }
+]

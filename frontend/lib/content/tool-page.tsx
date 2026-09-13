@@ -301,12 +301,14 @@ function ToolTableBlock({
 
 function ToolSectionBlock({
   section,
+  readingLink,
   id,
   theme,
   rowTones,
   index,
 }: {
   section: ToolSectionCopy;
+  readingLink?: ToolCopy["readingLink"];
   id: string;
   theme: "ivory" | "forest";
   rowTones?: ToneKey[];
@@ -355,6 +357,24 @@ function ToolSectionBlock({
               {paragraph}
             </p>
           ))}
+
+          {readingLink ? (
+            <p className="mt-6">
+              <Link
+                href={readingLink.href}
+                // Inline radius: the global :focus-visible rule would square the pill.
+                style={{ borderRadius: 9999 }}
+                className={`inline-flex min-h-11 items-center gap-1.5 rounded-full border px-4 text-[14px] font-bold transition-[background-color,color] duration-200 ${
+                  dark
+                    ? "gh-focus-on-dark border-white/25 bg-white/[0.06] text-white/90 hover:bg-white hover:text-[var(--color-brand-primary)]"
+                    : "border-[var(--color-brand-primary)]/25 bg-white/60 text-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-brand-primary)]"
+                }`}
+              >
+                {readingLink.label}
+                <ArrowUpRight className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
+              </Link>
+            </p>
+          ) : null}
 
           {section.bullets.length > 0 ? (
             <ul className="mt-6 grid gap-3">
@@ -721,6 +741,7 @@ export function ToolPage({
             theme={sectionMeta.theme}
             rowTones={sectionMeta.rowTones}
             section={section}
+            readingLink={index === 0 ? copy.readingLink : undefined}
             index={index}
           />
         );

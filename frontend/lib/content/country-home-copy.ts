@@ -41,6 +41,7 @@ export type HomePageExtras = {
   heroPriceBadge?: string;
   /** Services section H2. */
   servicesHeadline?: string;
+  resourceLink?: { href: string; label: string };
 };
 
 function key(code: CountryCode, locale: string): string {
@@ -182,11 +183,17 @@ export const EXTRAS: Record<string, HomePageExtras> = {
   "ro:es": { heroTitle: "Atención médica online en Rumanía" },
   "ro:pt": { heroTitle: "Cuidados médicos online na Roménia" },
   "ro:cs": { heroTitle: "Online lékařská péče v Rumunsku" },
-  "ro:ro": { heroTitle: "Îngrijire medicală online în România" },
+  "ro:ro": {
+    heroTitle: "Îngrijire medicală online în România",
+    resourceLink: { href: "/romania/ro/tools/calorie-calculator", label: "Calculator de calorii" },
+  },
   "ro:de": { heroTitle: "Online-medizinische Versorgung in Rumänien" },
   "br:en": { heroTitle: "Online medical care in Brazil" },
   "br:es": { heroTitle: "Atención médica online en Brasil" },
-  "br:pt": { heroTitle: "Cuidados médicos online no Brasil" },
+  "br:pt": {
+    heroTitle: "Cuidados médicos online no Brasil",
+    resourceLink: { href: "/brazil/pt/tools/calorie-calculator", label: "Calculadora de calorias" },
+  },
   "br:cs": { heroTitle: "Online lékařská péče v Brazílii" },
   "br:ro": { heroTitle: "Îngrijire medicală online în Brazilia" },
   "br:de": { heroTitle: "Online-medizinische Versorgung in Brasilien" },
@@ -197,7 +204,10 @@ export const EXTRAS: Record<string, HomePageExtras> = {
   // anytime") i18n tagline instead of a market-specific title, the one
   // country without the distinctive pattern every sibling market has.
   "cz:en": { heroTitle: "Online medical care in Czechia" },
-  "cz:cs": { heroTitle: "Online lékařská péče v Česku" },
+  "cz:cs": {
+    heroTitle: "Online lékařská péče v Česku",
+    resourceLink: { href: "/czechia/cs/tools/blood-pressure-chart", label: "Tabulka krevního tlaku" },
+  },
   "cz:pt": { heroTitle: "Cuidados médicos online na Chéquia" },
   "cz:es": { heroTitle: "Atención médica online en Chequia" },
   "cz:ro": { heroTitle: "Îngrijire medicală online în Cehia" },

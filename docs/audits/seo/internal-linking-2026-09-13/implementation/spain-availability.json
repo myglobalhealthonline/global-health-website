@@ -1,0 +1,15 @@
+{
+  "checkedAt": "2026-09-13T18:16:01.286Z",
+  "url": "https://api.myglobalhealth.online/api/services/es/salud-mental-online/aggregated-availability?days=14",
+  "status": 200,
+  "ok": true,
+  "found": true,
+  "slotCount": 2423,
+  "firstSlot": {
+    "startAt": "2026-09-13T18:18:00.000Z",
+    "endAt": "2026-09-13T18:38:00.000Z",
+    "priceCents": 5900,
+    "pricingType": "STANDARD",
+    "currencyCode": "EUR"
+  }
+}
