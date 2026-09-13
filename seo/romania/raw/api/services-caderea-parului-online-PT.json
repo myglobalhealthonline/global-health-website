@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:13.414Z",
+  "endpoint": "/api/services/caderea-parului-online?countryCode=ro&locale=PT",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee5ha000bfsju94p8e37o",
+      "kind": "GENERAL",
+      "slug": "caderea-parului-online",
+      "name": "Consultação para queda de cabelo — online, no mesmo dia",
+      "summary": "Observa a rarefação do cabelo ou queda acentuada? Os nossos médicos autorizados pela CMR avaliam as possíveis causas, recomendam os exames necessários e estabelecem um plano de gestão baseado em dados clínicos.",
+      "seoTitle": "Consulta para queda de cabelo online | Roménia",
+      "seoDescription": "Avaliação para afinamento ou queda acentuada do cabelo. Os nossos médicos autorizados pela CMR avaliam as possíveis causas, recomendam os exames necessários e estabelecem um plano de gestão baseado em dados clínicos.",
+      "seoKeywords": [
+        "hair loss consultation Romania",
+        "hair loss doctor English Romania",
+        "alopecia online consultation Romania",
+        "finasteride prescription Romania English",
+        "hair thinning doctor Bucharest expat"
+      ],
+      "heroTitle": "Consulta para queda de cabelo — online, no mesmo dia",
+      "heroDescription": "Avaliação para o afinamento ou a queda acentuada do cabelo. Os nossos médicos autorizados pelo CMR avaliam as possíveis causas, recomendam os exames necessários e estabelecem um plano de gestão baseado em dados clínicos.",
+      "detailBody": "<p>A queda de cabelo pode ter causas hormonais, genéticas, nutricionais, inflamatórias ou pode estar relacionada com stress, doença recente ou medicação. Uma avaliação médica precoce é importante para identificar os fatores reversíveis e para decidir se é necessário tratamento.</p><p>A consulta inclui uma discussão detalhada sobre o início e o padrão da queda de cabelo, o histórico familiar, sintomas associados, condições existentes e os tratamentos já tentados. Se necessário, o médico recomenda análises para défice de ferro, alterações da tiroide, desequilíbrios hormonais ou outras causas médicas.</p><p>Dependendo do caso, receberá recomendações sobre os cuidados com o couro cabeludo, possíveis tratamentos, alterações no estilo de vida e o momento em que é necessária uma avaliação dermatológica especializada.</p>",
+      "ctaLabel": "Agende a consulta",
+      "sortOrder": 80,
+      "durationMinutes": 15,
+      "basePriceCents": 11500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:38.752Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js6il001nakju2h70qzni",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee5ha000bfsju94p8e37o",
+          "path": "/api/media/media/4d9cf4d8-8a14-475e-b373-4a404428e7d8-9aa0e324-b3f6-4c79-8e8e-4de84aae85e6-1.webp",
+          "altText": "Consultație pentru căderea părului — online, în aceeași zi"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "PT",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

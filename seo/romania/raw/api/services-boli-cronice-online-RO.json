@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:15.258Z",
+  "endpoint": "/api/services/boli-cronice-online?countryCode=ro&locale=RO",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee6nb000efsjuk0bbcp7f",
+      "kind": "GENERAL",
+      "slug": "boli-cronice-online",
+      "name": "Managementul bolilor cronice — îngrijire medicală continuă online",
+      "summary": "Aveți hipertensiune, diabet, boală tiroidiană sau altă afecțiune de durată? Medicii noștri autorizați CMR oferă monitorizare medicală continuă, ajustarea planului terapeutic și coordonarea investigațiilor prin consultație video.",
+      "seoTitle": "Managementul bolilor cronice online | România | medic CMR",
+      "seoDescription": "Management pentru hipertensiune, diabet, boală tiroidiană sau alte afecțiuni de durată. Medicii noștri autorizați CMR oferă monitorizare medicală continuă, ajustarea planului terapeutic și coordonarea investigațiilor prin consultație video.",
+      "seoKeywords": [
+        "chronic disease management online Romania",
+        "hypertension doctor online Romania",
+        "diabetes management online Romania",
+        "thyroid doctor online Romania",
+        "long term condition GP online Romania"
+      ],
+      "heroTitle": "Managementul bolilor cronice — îngrijire medicală continuă online",
+      "heroDescription": "Management pentru hipertensiune, diabet, boală tiroidiană sau alte afecțiuni de durată. Medicii noștri autorizați CMR oferă monitorizare medicală continuă, ajustarea planului terapeutic și coordonarea investigațiilor prin consultație video.",
+      "detailBody": "<p>Acest serviciu este destinat pacienților care au nevoie de monitorizare consecventă pentru o afecțiune cronică, nu doar de o reînnoire ocazională a rețetei. Consultațiile urmăresc evoluția simptomelor, rezultatele analizelor, toleranța la tratament și obiectivele clinice pe termen lung.</p><p>Medicul poate coordona analize periodice, ajusta tratamentul atunci când starea dumneavoastră se schimbă și redacta scrisori medicale sau trimiteri atunci când este nevoie de implicarea unui specialist. Abordarea este utilă mai ales pentru pacienții cu mai multe diagnostice sau cu acces dificil la îngrijire primară continuă.</p><p>Serviciul este potrivit pentru afecțiuni precum hipertensiune, diabet, dislipidemie, astm, boli tiroidiene, durere cronică sau alte probleme de sănătate care necesită supraveghere regulată și un plan de management clar.</p>",
+      "ctaLabel": "Programează consultația",
+      "sortOrder": 110,
+      "durationMinutes": 15,
+      "basePriceCents": 16000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:37.056Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js46h001kakjui0rkkcbp",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee6nb000efsjuk0bbcp7f",
+          "path": "/api/media/media/56f4b07e-190a-40b4-9960-4ad3273aaaa3-7dc82b47-ee4d-48b6-af96-2a935505c0f8-8.webp",
+          "altText": "Managementul bolilor cronice — îngrijire medicală continuă online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "RO",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:14.537Z",
+  "endpoint": "/api/services/sanatate-mintala-online?countryCode=ro&locale=PT",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee4ba0008fsju6xyj8lnh",
+      "kind": "GENERAL",
+      "slug": "sanatate-mintala-online",
+      "name": "Avaliação de saúde mental — consultação online confidencial",
+      "summary": "Está a lidar com ansiedade, depressão, burnout, insónia ou outra dificuldade emocional? Os nossos médicos autorizados pela CMR oferecem avaliação confidencial, recomendações e coordenação dos passos seguintes através de consulta por vídeo.",
+      "seoTitle": "Consulta de saúde mental online | Roménia | confidencial",
+      "seoDescription": "Avaliação confidencial para ansiedade, depressão, burnout, insónia ou outras dificuldades emocionais. Os nossos médicos autorizados pela CMR oferecem avaliação confidencial, recomendações e coordenação dos próximos passos através de consulta por vídeo.",
+      "seoKeywords": [
+        "mental health online Romania",
+        "anxiety doctor online Romania English",
+        "depression consultation English Bucharest",
+        "burnout doctor online Romania",
+        "mental health GP online Romania expat"
+      ],
+      "heroTitle": "Avaliação de saúde mental — consultação online confidencial",
+      "heroDescription": "Avaliação confidencial para ansiedade, depressão, burnout, insónia ou outras dificuldades emocionais. Os nossos médicos autorizados CMR oferecem avaliação confidencial, recomendações e coordenação dos próximos passos por videoconferência.",
+      "detailBody": "<p>A consulta é adequada para sintomas como ansiedade, stress intenso, humor depressivo, ataques de pânico, exaustão, perturbações do sono ou dificuldades de funcionamento que afetam a vida quotidiana.</p><p>O médico discute o histórico dos sintomas, os fatores desencadeantes, os tratamentos anteriores, o impacto no trabalho e nas relações e eventuais sinais de risco que exijam intervenção rápida. Em função do caso, receberá recomendações de gestão inicial, cartas médicas, encaminhamento para psiquiatra ou psicólogo e, quando clinicamente apropriado, um plano para monitorização contínua.</p><p>O serviço oferece um espaço claro e confidencial para compreender o que lhe está a acontecer e qual é o nível de ajuda de que necessita a seguir.</p>",
+      "ctaLabel": "Marque a consulta",
+      "sortOrder": 100,
+      "durationMinutes": 20,
+      "basePriceCents": 15000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:42.108Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js05y001iakju9hywq5cw",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee4ba0008fsju6xyj8lnh",
+          "path": "/api/media/media/e240ef2a-0048-4a27-8b29-eaeee3d22e58-ff3e0b2e-b46a-4b32-9218-31a8cc87b0c1-3.webp",
+          "altText": "Evaluare de sănătate mintală — consultație online confidențială"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "PT",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:12.289Z",
+  "endpoint": "/api/services/medicina-calatoriei?countryCode=ro&locale=ES",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee53a000afsjukz2fq2rv",
+      "kind": "GENERAL",
+      "slug": "medicina-calatoriei",
+      "name": "Consulta de medicina del viajero — evaluación médica antes de la salida",
+      "summary": "¿Viaja desde Rumanía a una zona con riesgo de malaria o a un destino con requisitos especiales de vacunación? Nuestros médicos autorizados por el CMR evalúan los riesgos, ofrecen recomendaciones personalizadas y prescriben profilaxis antimalárica cuando está clínicamente indicado.",
+      "seoTitle": "Consulta de medicina del viajero online | Rumanía | profilaxis antipalúdica",
+      "seoDescription": "Evaluación médica de viaje para zonas con riesgo de malaria o destinos con requisitos especiales de vacunación. Nuestros médicos autorizados CMR evalúan los riesgos, ofrecen recomendaciones personalizadas y prescriben profilaxis antimalárica cuando está clínicamente indicada.",
+      "seoKeywords": [
+        "travel health consultation Romania",
+        "malaria prophylaxis online Romania",
+        "travel medicine English Bucharest",
+        "pre-travel consultation Romania expat",
+        "travel vaccination advice English Romania"
+      ],
+      "heroTitle": "Consulta de medicina del viajero — evaluación médica antes de la salida",
+      "heroDescription": "Evaluación médica de viaje para zonas con riesgo de malaria o destinos con requisitos especiales de vacunación. Nuestros médicos autorizados CMR evalúan los riesgos, ofrecen recomendaciones personalizadas y prescriben profilaxis antipalúdica cuando esté clínicamente indicada.",
+      "detailBody": "<p>La consulta de medicina del viajero es adecuada si va a viajar a un destino con mayor riesgo infeccioso, necesita recomendaciones relacionadas con las vacunas o debe entender cómo su viaje influye en las afecciones y tratamientos existentes.</p><p>El médico analiza el itinerario, la duración del viaje, el tipo de alojamiento, las actividades planificadas y su historial médico. Si es necesario, emite una receta electrónica para la profilaxis antipalúdica y le explica las medidas de prevención adecuadas para el destino elegido.</p><p>La consulta también incluye orientación práctica sobre las vacunas recomendadas, la documentación médica de viaje y la conducta a seguir si aparecen síntomas después del regreso. Si se necesita vacunación contra la fiebre amarilla u otras vacunas administradas solo en centros autorizados, recibirá indicaciones claras sobre los pasos siguientes.</p>",
+      "ctaLabel": "Programa la consulta",
+      "sortOrder": 60,
+      "durationMinutes": 15,
+      "basePriceCents": 16000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:58.930Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jryh9001hakju1d9ezdnl",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee53a000afsjukz2fq2rv",
+          "path": "/api/media/media/6a7b4e71-0d80-4f1a-9542-cb21e20de4aa-0b587e9d-f155-4666-87ae-4a7d6b438e1d-5.webp",
+          "altText": "Consultație de medicină de călătorie — evaluare medicală înainte de plecare"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "ES",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

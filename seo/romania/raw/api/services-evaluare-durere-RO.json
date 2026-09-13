@@ -1,0 +1,80 @@
+{
+  "checkedAt": "2026-09-12T20:20:15.942Z",
+  "endpoint": "/api/services/evaluare-durere?countryCode=ro&locale=RO",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee7tb000hfsju7tvvjjj1",
+      "kind": "SPECIALIST",
+      "slug": "evaluare-durere",
+      "name": "Evaluare specializată a durerii — consultație online",
+      "summary": "Durerea cronică sau durerea severă vă afectează viața de zi cu zi? Specialistul nostru autorizat CMR oferă evaluare clinică orientată pe controlul durerii, opțiuni terapeutice și coordonarea investigațiilor necesare.",
+      "seoTitle": "Evaluare specializată a durerii online | România",
+      "seoDescription": "Evaluare de specialitate pentru durerea cronică sau severă. Specialistul nostru autorizat CMR oferă evaluare clinică orientată pe controlul durerii, opțiuni terapeutice și coordonarea investigațiilor necesare.",
+      "seoKeywords": [
+        "specialist pain assessment online Romania",
+        "chronic pain specialist online Romania",
+        "anaesthesiologist online Romania",
+        "pain assessment online Romania",
+        "pain management plan Romania online"
+      ],
+      "heroTitle": "Evaluare specializată a durerii — consultație online",
+      "heroDescription": "Evaluare de specialitate pentru durerea cronică sau severă. Specialistul nostru autorizat CMR oferă evaluare clinică orientată pe controlul durerii, opțiuni terapeutice și coordonarea investigațiilor necesare.",
+      "detailBody": "<p>Acest serviciu este destinat pacienților cu durere persistentă, durere dificil de controlat sau simptome care necesită o abordare mai specializată decât o consultație generală. Pot fi evaluate dureri musculo-scheletale, neuropate, postoperatorii, oncologice sau sindroame dureroase complexe.</p><p>Medicul revizuiește istoricul durerii, tratamentele încercate, efectele adverse, impactul asupra somnului și funcționării și investigațiile existente. Veți primi recomandări privind următorii pași, opțiuni de tratament, monitorizare și trimitere către specialitățile relevante atunci când este necesar.</p><p>Consultația este utilă și pentru clarificarea unui plan de management al durerii deja început, mai ales când tratamentul actual nu oferă controlul așteptat.</p>",
+      "ctaLabel": "Programează consultația",
+      "sortOrder": 0,
+      "durationMinutes": 20,
+      "basePriceCents": 23000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:57.253Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jskfn001wakju57erkch6",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee7tb000hfsju7tvvjjj1",
+          "path": "/api/media/media/6d1966ed-d6d7-4262-bed5-fdb6fe9a6b9a-8ce20700-b12e-4416-8aa0-46e95e8d1dff-3.webp",
+          "altText": "Evaluare specializată a durerii — consultație online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "RO",
+      "links": [],
+      "assignedDoctorIds": [],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "UNAVAILABLE",
+        "reasonCode": "NO_APPROVED_DOCTOR",
+        "nextAvailableAt": null
+      }
+    }
+  }
+}

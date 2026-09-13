@@ -1,0 +1,186 @@
+{
+  "endpoint": "/api/services/consulta-piel-online?countryCode=es&locale=CS",
+  "checkedAt": "2026-09-13T02:29:51.399Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q4co001yngjucbez1gc0",
+      "kind": "GENERAL",
+      "slug": "consulta-piel-online",
+      "name": "Dermatologická konzultace",
+      "summary": null,
+      "seoTitle": "Online kožní konzultace Španělsko | Praktický lékař | Tentýž den",
+      "seoDescription": "Vyrážka, ekzém, akné nebo jiný kožní problém. Naši registrovaní praktičtí lékaři posuzují kožní potíže prostřednictvím zabezpečeného videohovoru. Klinické vyšetření ještě tentýž den ve Španělsku.",
+      "seoKeywords": [
+        "consulta de piel online España",
+        "médico piel online España",
+        "eccema médico online España",
+        "acné evaluación online España",
+        "sarpullido médico online España"
+      ],
+      "heroTitle": "Konzultace pro pleť — klinické vyšetření s online praktickým lékařem",
+      "heroDescription": "Nová vyrážka, vzplanutí ekzému, akné, které ovlivňuje vaše sebevědomí, nebo kožní léze, kterou už delší dobu chcete nechat zkontrolovat. Většinu kožních obtíží lze klinicky posoudit prostřednictvím videohovoru praktickým lékařem se zkušenostmi — bez nutnosti čekat týdny na dermatologickou konzultaci. Naši praktičtí lékaři, registrovaní podle požadavků Organizace lékařských komor (OMC), poskytují kompletní vyšetření kůže prostřednictvím zabezpečeného videohovoru — identifikují váš stav, poradí s péčí založenou na důkazech a v případě potřeby vás odešlou do naší specializované dermatologické služby, kde je nutné podrobnější zhodnocení. Tentýž den, odkudkoli ve Španělsku, ve španělštině, angličtině nebo portugalštině.",
+      "detailBody": "<h2>Kožní konzultace s praktickým lékařem vs. odborná dermatologická konzultace</h2><p>Global Health nabízí dvě úrovně péče o kožní obtíže:</p><ul><li>Kožní konzultace s praktickým lékařem — vhodná pro většinu akutních a neurgentních kožních projevů. Ekzém, mírné až středně těžké akné, vyrážky, kožní infekce, mateřská znaménka k rutinnímu sledování a chronické kožní obtíže řešené na úrovni všeobecného lékařství. Je to správný vstupní bod pro většinu kožních potíží.</li><li>Odborná dermatologická konzultace — prováděná atestovanými dermatology Global Health. Vhodná pro složité obtíže, obtíže nereagující na léčbu nebo obtíže vyžadující specializované posouzení — včetně těžkého akné s úvahou o isotretinoinu, podezřelých lézí vyžadujících dermatoskopii ve vysokém rozlišení, složité psoriázy a obtíží vyžadujících koordinovanou biopsii.</li></ul><p>Nejste si jisti, která úroveň je pro váš problém vhodná? Začněte konzultací všeobecného lékařství — pokud váš projev vyžaduje specializované dermatologické posouzení, váš praktický lékař vás přímo odešle do naší dermatologické služby v rámci stejné platformy.</p><h2>Pro koho je tato služba určena</h2><p>Tato konzultace je vhodná pro dospělé i děti, které mají:</p><ul><li>Vyrážku, změnu na kůži nebo novou lézi, která vyžaduje klinické posouzení</li><li>Existující kožní onemocnění, které se zhoršilo nebo nereaguje na současnou léčbu</li><li>Mírné až středně těžké akné — komedonální, zánětlivé nebo smíšené</li><li>Ekzém nebo atopickou dermatitidu — posouzení vzplanutí a průběžné vedení</li><li>Psoriázu — nekomplikované projevy na úrovni všeobecného lékařství</li><li>Mateřské znaménko nebo kožní lézi k rutinnímu sledování</li><li>Kožní alergické reakce — kopřivku, kontaktní dermatitidu nebo lékové reakce</li><li>Onemocnění vlasové pokožky — seboroickou dermatitidu, psoriázu vlasové pokožky nebo plísňová onemocnění</li><li>Kožní infekce — bakteriální, virové nebo plísňové</li><li>Chronická kožní onemocnění řešená na úrovni všeobecného lékařství</li><li>Pacienty, kteří potřebují doporučující dopis na dermatologii</li></ul><h2>Stavy, které se běžně posuzují</h2><p><strong>Zánětlivé stavy</strong></p><ul><li>Ekzém a atopická dermatitida — zvládání vzplanutí, identifikace spouštěčů, průběžná péče</li><li>Psoriáza — nekomplikované projevy na úrovni všeobecného lékařství</li><li>Seboroická dermatitida — projevy na vlasové pokožce a v obličeji</li><li>Rosacea — posouzení a vedení na úrovni všeobecného lékařství</li><li>Periorální dermatitida</li></ul><p><strong>Akné</strong></p><ul><li>Mírné až středně těžké akné — komedonální, zánětlivé a smíšené</li><li>Akné u dospívajících a dospělých</li><li>Hormonální akné u žen — posuzované spolu s hormonálním vyšetřením, kde je to indikováno</li><li>Posouzení postakné pigmentace a jizev</li><li>Kontrola vedení léčby akné — pacienti již léčení, kteří potřebují klinickou kontrolu</li></ul><p>Těžké akné, které může vyžadovat isotretinoin, vyžaduje posouzení naším odborným dermatologickým oddělením — váš praktický lékař vás přímo odešle, pokud to váš projev odůvodňuje.</p><p><strong>Alergické a reaktivní stavy</strong></p><ul><li>Kopřivka — akutní i chronické pupeny</li><li>Kontaktní alergická dermatitida — posouzení a poradenství ohledně vyhýbání se alergenům</li><li>Lékové reakce postihující kůži</li><li>Angioedém — posouzení a vedení na úrovni všeobecného lékařství</li><li>Kožní projevy potravinové alergie</li></ul><p><strong>Infekce</strong></p><ul><li>Impetigo — bakteriální kožní infekce</li><li>Celulitida — posouzení a vedení s eskalací, kde je to indikováno</li><li>Folikulitida</li><li>Plísňové kožní infekce — tinea corporis, tinea pedis, tinea versicolor</li><li>Molluscum contagiosum</li><li>Bradavice a plantární bradavice</li><li>Herpes simplex — opary a kožní herpes</li><li>Herpes zoster — posouzení a vedení</li></ul><p><strong>Pigmentace a léze — rutinní sledování</strong></p><ul><li>Mateřská znaménka k rutinnímu sledování — klinické posouzení a odeslání na odbornou dermatologii, kde je to indikováno</li><li>Postinflamační hyperpigmentace</li><li>Melasma — posouzení a vedení</li><li>Vitiligo — posouzení a odeslání, kde je to indikováno</li></ul><p>Podezřelé léze vyžadující dermatoskopii nebo biopsii jsou odesílány do naší odborné dermatologické služby.</p><p><strong>Onemocnění vlasové pokožky</strong></p><ul><li>Seboroická dermatitida vlasové pokožky</li><li>Psoriáza vlasové pokožky — nekomplikované projevy</li><li>Folikulitida vlasové pokožky</li><li>Tinea capitis — plísňová infekce vlasové pokožky</li></ul><p><strong>Dětská kožní onemocnění</strong></p><ul><li>Ekzém u kojenců a dětí</li><li>Plenková dermatitida a kožní potíže u kojenců</li><li>Dětské virové vyrážky — posouzení a vedení pro rodiče</li><li>Impetigo a kožní infekce u dětí</li><li>Molluscum contagiosum u dětí</li></ul><h2>Co konzultace zahrnuje</h2><p><strong>Klinické vizuální posouzení</strong></p><p>Kožní obtíže jsou obzvláště vhodné pro video konzultaci — váš praktický lékař může lézi, vyrážku nebo kožní změnu přímo pozorovat během hovoru. Dobré osvětlení a jasný obraz z kamery výrazně zlepšují kvalitu posouzení — váš lékař vás během hovoru navede, jak se umístit.</p><p><strong>Kompletní anamnéza</strong></p><p>Lékař posoudí začátek, průběh, rozložení, související příznaky, spouštěče, předchozí léčbu, relevantní osobní anamnézu, užívané léky a rodinnou anamnézu kožních onemocnění.</p><p><strong>Diagnóza a plán vedení</strong></p><p>Na základě vyšetření lékař poradí nejpravděpodobnější diagnózu, vhodný postup vedení a co očekávat od léčby — včetně toho, jak sledovat váš stav a kdy vyhledat další kontrolu.</p><p><strong>Klinická dokumentace — dle uvážení lékaře</strong></p><p>Je-li to klinicky indikováno, lékař vystaví příslušnou klinickou dokumentaci platnou v jakékoli španělské lékárně.</p><p>Poznámka: Omamné látky a některé kontrolované látky vyžadují zvláštní dokumentaci, kterou nelze vystavit elektronicky. Váš praktický lékař vás bude informovat, pokud se to na vás vztahuje.</p><p><strong>Vyžádání vyšetření, kde je to indikováno</strong></p><p>Kde jsou krevní testy — včetně alergologických panelů nebo zánětlivých markerů — klinicky indikované, lékař je tentýž den požádá.</p><p><strong>Interní odeslání na odbornou dermatologii — kde je to potřeba</strong></p><p>Pokud je potřeba specializované dermatologické posouzení — včetně podezřelých lézí, těžkého akné, složitých nebo na léčbu nereagujících obtíží — váš praktický lékař vás tentýž den přímo odešle do naší odborné dermatologické služby v rámci stejné platformy.</p><h2>Mateřská znaménka a kožní léze — kdy jednat rychle</h2><p>Jakákoli změna na mateřském znaménku nebo kožní lézi odůvodňuje klinické posouzení. Kritéria ABCDE jsou standardním klinickým vodítkem:</p><ul><li>A — Asymetrie — jedna polovina neodpovídá druhé</li><li>B — Okraj — nepravidelné, zoubkované nebo neostré okraje</li><li>C — Barva — různorodost barev v rámci léze</li><li>D — Průměr — větší než 6mm</li><li>E — Vývoj — jakákoli změna velikosti, tvaru, barvy nebo jakýkoli nový příznak</li></ul><p>Pokud vaše léze splňuje některé z těchto kritérií, objednejte si vyšetření co nejdříve. Váš praktický lékař ji vizuálně posoudí a, je-li to indikováno, vás přímo odešle do naší odborné dermatologické služby k posouzení dermatoskopií.</p><h2>Příprava na vaši kožní konzultaci</h2><ul><li>Dobré osvětlení — přirozené světlo nebo lampa namířená na postižené místo poskytne lékaři nejjasnější pohled</li><li>Jasné fotografie — před konzultací si pořiďte jasné fotografie postižené oblasti</li><li>Více úhlů — během hovoru ukažte lézi nebo vyrážku z více úhlů</li><li>Připravte si historii — kdy začala, jak se změnila, co ji zlepšuje nebo zhoršuje a co jste už vyzkoušeli</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 60,
+      "durationMinutes": 15,
+      "basePriceCents": 4500,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.260Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0sqto0003y8juhyfqxza5",
+          "kind": "IMAGE",
+          "key": "media/c998d4b2-6480-4390-8ced-8be785780cbe-es-consulta-piel-online.png",
+          "path": "/api/media/media/c998d4b2-6480-4390-8ced-8be785780cbe-es-consulta-piel-online.png",
+          "altText": "Consulta de Piel"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q4lj001zngjugidf8kbv",
+          "question": "Lze skutečně posoudit kožní onemocnění prostřednictvím videohovoru?",
+          "answer": "Ano — pro velkou většinu případů. Dermatologie je jednou z lékařských specializací nejvhodnějších pro vizuální vyšetření a videokonzultace umožňuje vašemu praktickému lékaři přímo si prohlédnout postižené místo. Pokud nelze stav na úrovni všeobecné medicíny dostatečně vyhodnotit, váš lékař vás předá do naší specializované dermatologické služby v rámci stejné platformy.",
+          "sortOrder": 0,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q4lk0020ngjugwu3qtqj",
+          "question": "Jaký je rozdíl mezi touto konzultací a specializovanou dermatologickou konzultací?",
+          "answer": "Tato konzultace je prováděna kvalifikovanými praktickými lékaři a pokrývá většinu akutních a neurgentních kožních onemocnění. Specializovaná dermatologická konzultace je prováděna kvalifikovanými dermatology společnosti Global Health a je vhodná pro složité stavy, stavy odolné vůči léčbě nebo stavy, které vyžadují dermatoskopii ve vysokém rozlišení, zvážení isotretinoinu nebo koordinovanou biopsii. Pokud si nejste jisti, která úroveň je vhodná, začněte zde — váš praktický lékař vás v případě potřeby odešle.",
+          "sortOrder": 1,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q4lk0021ngju4zwoosxt",
+          "question": "Mohu získat léčbu akné prostřednictvím této služby?",
+          "answer": "Ano — pro mírné až středně těžké akné. Váš praktický lékař provede komplexní vyšetření a poradí o nejvhodnějším přístupu k léčbě. Pokud váš stav odůvodňuje zvážení isotretinoinu, váš praktický lékař vás přímo předá do naší specializované dermatologické služby v rámci stejné platformy.",
+          "sortOrder": 2,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q4lk0022ngju7zgv3b29",
+          "question": "Mám znaménko, které se změnilo — jak naléhavé to je?",
+          "answer": "Mateřská znaménka, která se změnila, vyžadují bezodkladné klinické vyšetření. Rezervujte si konzultaci a během videohovoru ukažte svému praktickému lékaři lézi. Váš lékař ji vyhodnotí pomocí standardních kritérií ABCDE a, je-li to indikováno, vás odešle ke specializované dermatologii k posouzení pomocí dermatoskopie.",
+          "sortOrder": 3,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q4lk0023ngjucugczvml",
+          "question": "Mohu tuto službu použít na ekzém mého syna?",
+          "answer": "Ano. Ekzém u kojenců a dětí je jedním z nejčastějších kožních pediatrických projevů a je ústřední součástí této služby.",
+          "sortOrder": 4,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q4lk0024ngjuhgu5x5xj",
+          "question": "Mohu prostřednictvím této služby získat doporučení k dermatologii?",
+          "answer": "Ano — jak interní doporučení na naši specializovanou dermatologickou službu Global Health, tak externí doporučující dopis dermatologovi podle vašeho výběru, pokud je to klinicky indikováno.",
+          "sortOrder": 5,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q4lk0025ngjus49u17km",
+          "question": "Moje vyrážka se rychle šíří a necítím se dobře — co mám dělat?",
+          "answer": "Rychle se šířící vyrážka doprovázená horečkou, dušností, otokem obličeje nebo silnou celkovou nevolností je lékařská pohotovost. Zavolejte 112 nebo ihned jděte na nejbližší pohotovostní oddělení — nerezervujte si videokonzultaci.",
+          "sortOrder": 6,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q4lk0026ngjulsplncl8",
+          "question": "Mohu tuto službu použít na reakci na slunce?",
+          "answer": "Ano. Spáleniny od slunce a kožní reakce související se sluncem jsou zvláště časté u turistů a návštěvníků ve Španělsku. Váš praktický lékař posoudí závažnost a poradí ohledně vhodného postupu.",
+          "sortOrder": 7,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q4lk0027ngjupk9a2h5e",
+          "question": "Potřebuji španělské zdravotní pojištění?",
+          "answer": "Ne. Jedná se o soukromou službu s přímou úhradou. Klinická dokumentace vystavená prostřednictvím této služby se poskytuje za plnou soukromou cenu bez ohledu na stav pojištění.",
+          "sortOrder": 8,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q4lk0028ngju1535g3s4",
+          "question": "Mohu tuto službu používat z jakéhokoli místa ve Španělsku?",
+          "answer": "Ano — včetně Baleárských ostrovů, Kanárských ostrovů, Ceuty a Melilly. Potřebujete jen stabilní připojení k internetu a zařízení s kamerou.",
+          "sortOrder": 9,
+          "resolvedLocale": "CS"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "CS",
+      "links": [
+        {
+          "id": "cmre7t757003ug8jumzqyo3lw",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Acné grave o lesiones sospechosas?",
+          "body": "Si tu situación está relacionada con acné grave o lesiones sospechosas, nuestra Dermatología Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Dermatología Especialista",
+          "targetSlug": "dermatologia-especialista-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7t7xa003wg8jutn1n899o",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con caída del cabello y afecciones del cuero cabelludo?",
+          "body": "Para caída del cabello y afecciones del cuero cabelludo, consulta nuestra página de Caída del Cabello — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Caída del Cabello",
+          "targetSlug": "caida-cabello-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7t8pc003yg8jui51rri1w",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre consulta médica general con médico de cabecera?",
+          "body": "Nuestra Consulta Médica General está pensada específicamente para consulta médica general con médico de cabecera.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

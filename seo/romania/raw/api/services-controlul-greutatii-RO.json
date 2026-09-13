@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:15.782Z",
+  "endpoint": "/api/services/controlul-greutatii?countryCode=ro&locale=RO",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee3510005fsjunqgfmxn2",
+      "kind": "GENERAL",
+      "slug": "controlul-greutatii",
+      "name": "Managementul greutății — evaluare medicală și plan personalizat",
+      "summary": "Vă este dificil să slăbiți în ciuda schimbărilor de stil de viață? Medicii noștri autorizați CMR evaluează factorii medicali, metabolici și comportamentali care influențează greutatea și stabilesc un plan realist de management.",
+      "seoTitle": "Managementul greutății online | România | evaluare medicală",
+      "seoDescription": "Management medical al greutății, dincolo de dietă și stil de viață. Medicii noștri autorizați CMR evaluează factorii medicali, metabolici și comportamentali care influențează greutatea și stabilesc un plan realist de management.",
+      "seoKeywords": [
+        "weight management online Romania",
+        "online doctor weight loss Romania",
+        "obesity consultation Bucharest English",
+        "metabolic health online Romania",
+        "weight loss doctor Romania expat"
+      ],
+      "heroTitle": "Managementul greutății — evaluare medicală și plan personalizat",
+      "heroDescription": "Management medical al greutății, dincolo de dietă și stil de viață. Medicii noștri autorizați CMR evaluează factorii medicali, metabolici și comportamentali care influențează greutatea și stabilesc un plan realist de management.",
+      "detailBody": "<p>Controlul greutății nu ține doar de voință. Tulburările hormonale, sindromul metabolic, rezistența la insulină, somnul deficitar, medicația sau obiceiurile alimentare pot contribui semnificativ la creșterea în greutate și la dificultatea de a slăbi.</p><p>Consultația include evaluarea istoricului ponderal, dietelor anterioare, nivelului de activitate, somnului, simptomelor hormonale și rezultatelor medicale disponibile. Medicul poate recomanda analize, modificări de stil de viață, monitorizare sau orientare către specialități relevante atunci când există cauze medicale care trebuie investigate.</p><p>Scopul este să primiți un plan personalizat, realist și sigur, bazat pe contextul dumneavoastră clinic, nu doar recomandări generale care nu țin cont de cauza reală a problemei.</p>",
+      "ctaLabel": "Programează consultația",
+      "sortOrder": 120,
+      "durationMinutes": 15,
+      "basePriceCents": 15000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:03:02.284Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jsdzv001sakju8jltsy8i",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee3510005fsjunqgfmxn2",
+          "path": "/api/media/media/5bb9786f-3a23-44cb-ac81-2df8115fd74a-59954e92-eced-4821-8e0f-1f9d02346174-13.webp",
+          "altText": "Managementul greutății — evaluare medicală și plan personalizat"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "RO",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

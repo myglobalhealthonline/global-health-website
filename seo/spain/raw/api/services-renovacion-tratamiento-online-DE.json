@@ -1,0 +1,151 @@
+{
+  "endpoint": "/api/services/renovacion-tratamiento-online?countryCode=es&locale=DE",
+  "checkedAt": "2026-09-13T02:29:55.412Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7pz0n000kngjuib862zxl",
+      "kind": "GENERAL",
+      "slug": "renovacion-tratamiento-online",
+      "name": "Verlängerung der Behandlung",
+      "summary": null,
+      "seoTitle": "Online-Behandlungsverlängerung Spanien | Klinische Überprüfung | Zugelassener Arzt",
+      "seoDescription": "Stabile Behandlung, die in Spanien erneuert werden muss? Unsere zugelassenen Ärzte prüfen Ihre klinische Situation per Videokonferenz und stellen bei Bedarf die entsprechende Dokumentation aus. Keine vorherige Registrierung. Am selben Tag.",
+      "seoKeywords": [
+        "renovación tratamiento online España",
+        "continuar tratamiento online España",
+        "revisión clínica tratamiento España",
+        "continuar medicación extranjero España"
+      ],
+      "heroTitle": "Behandlungsverlängerung — Online-Klinische Prüfung mit approbiertem Arzt",
+      "heroDescription": "Du hast eine stabile und etablierte Behandlung — und musst sie erneuern. Sei es, weil dir derzeit kein Hausarzt zugewiesen ist, weil du nicht wochenlang auf einen Termin warten kannst, oder weil du aus einem anderen Land mit medizinischen Unterlagen anreist, die spanische Apotheken nicht direkt verarbeiten können. Unsere Ärzte, die gemäß den Anforderungen der Organización Médica Colegial (OMC) zugelassen sind, führen eine vollständige klinische Überprüfung deiner aktuellen Behandlung per sicherer Videokonsultation durch — und stellen, wo dies angezeigt ist, die entsprechende medizinische Dokumentation aus. Noch am selben Tag, von überall in Spanien aus, auf Spanisch, Englisch oder Portugiesisch.",
+      "detailBody": "<h2>Was dieser Service ist — und was nicht</h2><p>Dies ist eine klinische Überprüfung der Behandlung — keine automatische Verlängerung. Unsere Ärzte führen eine echte Beurteilung deiner aktuellen Behandlung, deines klinischen Zustands, möglicher Nebenwirkungen und aller Veränderungen deiner Gesundheit seit der letzten Überprüfung durch. Auf Grundlage dieser Beurteilung beraten sie, ob deine Behandlung weiterhin angemessen ist, und stellen gegebenenfalls die entsprechende klinische Dokumentation aus.</p><p>Dieser Service ist geeignet, wenn dein Zustand stabil ist und deine Behandlung etabliert ist. Wenn sich deine Symptome wesentlich verändert oder verschlechtert haben, ist eine allgemeine ärztliche Konsultation geeigneter.</p><h2>Für wen dieser Service geeignet ist</h2><p>Dieser Service ist geeignet für Erwachsene, die:</p><ul><li>Eine stabile und etablierte Behandlung haben, die sie in Spanien fortsetzen müssen</li><li>Derzeit keinem Hausarzt zugewiesen sind und keinen Zugang über das öffentliche System haben</li><li>Aus einem anderen EU-Land nach Spanien gekommen sind und klinische Dokumentation haben, die spanische Apotheken nicht direkt verarbeiten können</li><li>Vor Kurzem die autonome Gemeinschaft gewechselt haben und noch keinem Hausarzt zugewiesen sind</li><li>Eine chronische Erkrankung haben, die in einem anderen Land betreut wurde, und die Behandlung fortsetzen möchten, während sie sich in Spanien niederlassen</li><li>Eine klinische Überprüfung auf Englisch oder Portugiesisch wünschen, ohne sich durch ein System auf Kastilisch navigieren zu müssen</li></ul><h2>Der häufigste Fall — ausländische Medikamente in Spanien</h2><p>Dies ist einer der häufigsten Anwendungsfälle dieses Services für internationale Bewohner und Touristen. Die in anderen Ländern ausgestellte klinische Dokumentation — einschließlich Vereinigtes Königreich, Irland, Deutschland, die Niederlande, Frankreich oder jedes andere EU-Mitgliedsland — ist in Spanien theoretisch unter der Richtlinie 2011/24/EU über die grenzüberschreitende Gesundheitsversorgung anerkennbar.</p><p>In der Praxis haben spanische Apotheken häufig Schwierigkeiten, ausländische klinische Dokumentation aus mehreren Gründen zu verarbeiten:</p><ul><li>Der Handelsname des Medikaments kann in Spanien anders sein</li><li>Das Format stimmt nicht mit dem spanischen Verifizierungssystem überein</li><li>Die Apotheke kann die Approbation des ausländischen verschreibenden Arztes nicht überprüfen</li><li>Das Medikament wird unter diesem Namen in Spanien möglicherweise nicht vermarktet</li></ul><p>Die praktischste Lösung ist, sich mit unserem Arzt zu beraten, der deine aktuelle Behandlung beurteilt und gegebenenfalls die entsprechende spanische klinische Dokumentation ausstellt — unter Verwendung des spanischen generischen Namens des Medikaments (DCI — Denominación Común Internacional) und angebunden an Nodofarma zur Abgabe in jeder Apotheke im gesamten Staatsgebiet.</p><p>Bringe zum Termin mit: die Originalverpackung deiner Medikamente, den generischen Namen, deine klinische Dokumentation, falls vorhanden, und alle relevanten ärztlichen Berichte. Je mehr Informationen der Arzt hat, desto besser kann er deine Behandlung beurteilen.</p><h2>Was die Konsultation beinhaltet</h2><p><strong>Umfassende klinische Überprüfung der aktuellen Behandlung</strong></p><p>Der Arzt überprüft die behandelte Erkrankung, deine aktuelle Medikation, Dosierung und Dauer, Symptomkontrolle und Ansprechen auf die Behandlung, mögliche Nebenwirkungen und alle relevanten Änderungen in deiner medizinischen Vorgeschichte seit deiner letzten Überprüfung.</p><p><strong>Sicherheitsbewertung</strong></p><p>Überprüfung möglicher Wechselwirkungen, Kontraindikationen und aller Veränderungen in deiner Gesundheit, die die Eignung der Fortsetzung deiner aktuellen Behandlung beeinflussen könnten.</p><p><strong>Klinische Dokumentation — nach ärztlichem Ermessen</strong></p><p>Wenn der Arzt feststellt, dass deine Behandlung weiterhin klinisch angemessen ist, stellt er die entsprechende klinische Dokumentation gemäß dem Königlichen Dekret 1718/2010 aus, von der OMC anerkannt und über Nodofarma mit den mehr als 22.000 Apotheken im gesamten Staatsgebiet verbunden — sofern klinisch angezeigt.</p><p>Mit privater klinischer Dokumentation zahlst du 100% des Medikamentenpreises — die Preise in Spanien sind reguliert und im Allgemeinen sehr erschwinglich. Die allgemeine Gültigkeit beträgt 10 Kalendertage für die erste Abgabe. Bei längeren Behandlungen kann der Arzt weitere Abgaben planen.</p><p>Hinweis: Betäubungsmittel und bestimmte kontrollierte Substanzen erfordern besondere Dokumentation, die über diesen Service nicht elektronisch ausgestellt werden kann. Dein Arzt wird dich informieren, wenn dies auf deinen Fall zutrifft.</p><p><strong>Überweisung oder weitere Abklärung — sofern angezeigt</strong></p><p>Wenn die Überprüfung ergibt, dass vor der Fortsetzung der Behandlung weitere Abklärung, Laboruntersuchungen oder fachärztliche Beurteilung erforderlich sind, berät dich dein Arzt klar und koordiniert die nächsten Schritte noch am selben Tag.</p><h2>Häufig überprüfte Erkrankungen</h2><p>Dieser Service ist geeignet für stabile und etablierte Erkrankungen, einschließlich:</p><p><strong>Kardiovaskulär und metabolisch</strong></p><ul><li>Arterielle Hypertonie — Überprüfung der antihypertensiven Behandlung</li><li>Diabetes — Überprüfung der Blutzuckerkontrolle und Behandlung</li><li>Dyslipidämie — Überprüfung von Statinen und Lipidkontrolle</li><li>Schilddrüsenerkrankungen — Hypothyreose und Hyperthyreose, Überprüfung der Behandlung</li></ul><p><strong>Respiratorisch</strong></p><ul><li>Asthma — Überprüfung von Inhalatoren und Behandlungsschema</li><li>COPD — Überprüfung der Erhaltungstherapie</li></ul><p><strong>Psychische Gesundheit — auf allgemeinmedizinischem Niveau</strong></p><ul><li>Stabile Angstzustände und Depressionen — Überprüfung der Behandlung auf Hausarztniveau, vorbehaltlich klinischer Beurteilung</li><li>Chronische Schlaflosigkeit — Überprüfung der etablierten Behandlung</li></ul><p><strong>Sonstiges</strong></p><ul><li>Gastroösophagealer Reflux und gastrointestinale Erkrankungen — Langzeitbehandlung</li><li>Hormonelle Verhütungsmittel — Überprüfung und Fortsetzung, vorbehaltlich klinischer Beurteilung</li><li>Dermatologische Erkrankungen — topische oder systemische Langzeitbehandlungen</li><li>Hormonelle Erkrankungen — fortlaufende Betreuung</li><li>Chronische Schmerzen — Überprüfung der etablierten Behandlung auf Hausarztniveau</li></ul><h2>Private Medikamente vs. öffentliches System — praktischer Unterschied</h2><p>Mit privater klinischer Dokumentation, ausgestellt von unseren Ärzten:</p><ul><li>Du zahlst 100% des Medikamentenpreises in der Apotheke</li><li>Die Preise in Spanien sind reguliert und im Allgemeinen niedrig</li><li>Gültig in jeder Apotheke im gesamten Staatsgebiet</li><li>Keine Gesundheitskarte oder spanische Krankenversicherung erforderlich</li></ul><p>Mit einem Rezept des SNS (öffentliches System):</p><ul><li>Es gibt eine reduzierte Zuzahlung je nach Einkommen, Alter und Beschäftigungssituation</li><li>Erfordert einen Hausarzt im öffentlichen System</li><li>Nur zugänglich, wenn du im spanischen öffentlichen System registriert bist</li></ul><p>Wenn du im öffentlichen System einen Hausarzt hast und erstattungsfähige Medikamente benötigst, wende dich zuerst an dein CAP. Unser Service ist besonders nützlich, wenn du keinen Zugang zum öffentlichen System hast, nicht auf den Termin warten kannst oder deine klinische Dokumentation aus einem anderen Land stammt.</p><h2>Wichtige Informationen vor der Buchung</h2><ul><li>Die Entscheidung, eine Behandlung fortzusetzen, anzupassen oder zu ändern, ist eine klinische Entscheidung, die ausschließlich vom Arzt nach vollständiger Beurteilung getroffen wird — sie kann im Voraus nicht bestätigt oder garantiert werden</li><li>Betäubungsmittel und bestimmte kontrollierte Substanzen können nicht elektronisch ausgestellt werden — dein Arzt wird dich informieren, wenn deine Medikation in diese Kategorie fällt</li><li>Unsere Ärzte betreuen kontrollierte Substanzen nicht routinemäßig per Videokonsultation</li><li>Wenn sich deine Symptome seit deiner letzten Überprüfung wesentlich verändert haben, ist eine allgemeine ärztliche Konsultation geeigneter</li><li>Bringe zu dem Termin alle Laborergebnisse, Facharztberichte oder relevante klinische Dokumentation mit</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 30,
+      "durationMinutes": 15,
+      "basePriceCents": 2900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.259Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0kaao0009asjuv22mk4e7",
+          "kind": "IMAGE",
+          "key": "media/cf933591-e467-4cbf-9f49-d1e45f16636e-es-renovacion-tratamiento-online.png",
+          "path": "/api/media/media/cf933591-e467-4cbf-9f49-d1e45f16636e-es-renovacion-tratamiento-online.png",
+          "altText": "Renovación de Tratamiento"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7pz9a000lngjunpbz0j1w",
+          "question": "Ist die Verlängerung nach der Konsultation automatisch?",
+          "answer": "Nein. Die Verlängerung der Behandlung erfordert eine klinische Überprüfung. Der Arzt bewertet deinen aktuellen Zustand, das Ansprechen auf die Behandlung und alle Veränderungen seit deiner letzten Kontrolle, bevor er feststellt, ob die Fortsetzung klinisch angemessen ist.",
+          "sortOrder": 0,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7pz9a000mngjuvi2405jt",
+          "question": "Kann ich irgendeine Medikation fortsetzen?",
+          "answer": "Die meisten stabilen und etablierten Behandlungen auf Hausarztniveau können über diesen Service überprüft und fortgeführt werden. Betäubungsmittel und bestimmte kontrollierte Substanzen erfordern spezielle Unterlagen, die nicht elektronisch ausgestellt werden können. Unsere Ärzte verordnen kontrollierte Substanzen routinemäßig nicht per Video-Sprechstunde. Dein Arzt wird dir klar mitteilen, wenn deine Behandlung in diese Kategorien fällt.",
+          "sortOrder": 1,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7pz9a000nngjuqwpbiiz8",
+          "question": "Wie erhalte ich die klinische Dokumentation?",
+          "answer": "Wenn dies klinisch angezeigt ist, erstellt Ihr Arzt die Dokumentation über das von der OMC zugelassene System. Sie erhalten sie elektronisch und legen sie in jeder Apotheke Ihrer Wahl in Spanien zusammen mit Ihrem DNI oder Reisepass vor.",
+          "sortOrder": 2,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7pz9a000ongju863tsyvf",
+          "question": "Brauche ich eine spanische Krankenversicherung?",
+          "answer": "Nein. Die private klinische Dokumentation wird zum vollen Privatpreis ausgestellt. Eine spanische Krankenversicherung oder Gesundheitskarte ist nicht erforderlich.",
+          "sortOrder": 3,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7pz9a000pngjulyklv21w",
+          "question": "Ich habe klinische Unterlagen aus einem anderen Land — was muss ich zur Sprechstunde mitbringen?",
+          "answer": "Der generische Name deines Medikaments (DCI — Internationale Freiname), die Originalverpackung, falls du sie hast, deine ausländische klinische Dokumentation, falls du sie hast, und alle relevanten ärztlichen Berichte.",
+          "sortOrder": 4,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7pz9a000qngjuja4gz4z7",
+          "question": "Was passiert, wenn sich mein Zustand seit meiner letzten Untersuchung geändert hat?",
+          "answer": "Wenn sich deine Symptome deutlich verändert haben, ist eine allgemeine ärztliche Konsultation angemessener. Dein Arzt wird dich während der Konsultation darüber informieren, ob eine detailliertere Untersuchung erforderlich ist.",
+          "sortOrder": 5,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7pz9a000rngjujw9kwv5n",
+          "question": "Kann ich diesen Dienst in Spanien ohne Hausarzt nutzen?",
+          "answer": "Ja. Dieser Service ist speziell für Patienten konzipiert — einschließlich Expats und internationaler Einwohner — die in Spanien keinem Hausarzt zugewiesen sind, aber eine stabile und etablierte Behandlung fortsetzen müssen.",
+          "sortOrder": 6,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7pz9a000sngjumw9ufl99",
+          "question": "Kann ich diesen Dienst von jedem Ort in Spanien aus nutzen?",
+          "answer": "Ja — einschließlich der Balearischen Inseln, der Kanarischen Inseln, Ceuta und Melilla. Du brauchst nur eine stabile Internetverbindung und ein Gerät mit Kamera.",
+          "sortOrder": 7,
+          "resolvedLocale": "DE"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "DE",
+      "links": [
+        {
+          "id": "cmre7ua4s0062g8jujrrpbtrs",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Consulta médica general con médico de cabecera?",
+          "body": "Si tu situación está relacionada con consulta médica general con médico de cabecera, nuestra Consulta Médica General te ofrece la evaluación adecuada.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

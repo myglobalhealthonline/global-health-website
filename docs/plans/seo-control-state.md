@@ -8767,3 +8767,487 @@ No URL Inspection was performed and no recrawl item closed. The global September
 24 inspection cadence and Spain/Romania/Brazil country-work priorities remain.
 Browser authentication worked; local API access was not tested. No external
 settings, content, indexation submissions or validation requests changed.
+
+## 54. Romania all-locale SEO planning (2026-09-13)
+
+Owner scope confirmed in this task: every Romania public page across all six
+locales, including both service and doctor FAQs; prioritize services with available
+doctors and accurately reflect their consultation languages. Use OpenSEO research
+and deslop review. Current instruction is to prepare the plan. No production batch
+has been applied or approved by this planning entry.
+
+[Dated scope, evidence and execution brief](../../seo/romania/planning-brief-2026-09-13.md)
+follows the Ireland/Portugal/Czechia country artifacts and page-level completion
+matrix, with explicit locale and doctor-language fields. Country evidence stays
+under `seo/romania/`; this ledger retains operational ownership.
+
+Fresh OpenSEO GSC read: final query/page rows, `/romania/` all locales and all
+searcher countries, 2026-08-12 through 2026-09-09, 701 rows, no further page.
+Visible-query sums are tools 31 clicks/2,824 impressions, blogs 1/358, services
+0/12 and other pages 1/562. These are not full page totals and do not establish
+zero doctor visibility or conversion performance. Four current Romanian service
+responses returned 200 without FAQPage schema or HTML summary elements; confirm
+source records and locale fallbacks before selecting a content repair.
+
+Four Romania/ro live SERP samples plus keyword metrics are saved with the brief.
+General-care competitors include Medic Chat, Regina Maria and MedLife; specialist
+results supply candidates for a focused competitor-page review. Missing specialist
+volume remains unavailable. Research balance delta: 28 credits, with no tracker,
+keyword-save or project creation. No content, route, schema or database writes.
+
+**Next action:** complete the current URL/locale inventory and doctor-service-
+language/bookability matrix, then obtain full page totals and matched GSC periods,
+expand service-fit keywords and review competitor pages. Prepare exact page/FAQ
+drafts after ownership is established. Production execution remains a later step;
+record any actual review gates and source fingerprints against the concrete batch.
+No old indexation watch item was closed or rescheduled; retain the September 24
+global inspection cadence. Set batch-specific 30/60/90-day measurements when a
+publication date exists, not from this planning date.
+
+## 55. Romania research and exact draft package completed (2026-09-13)
+
+The owner authorized completing the Romania plans across all public pages and six
+locales. The resulting [country package](../../seo/romania/README.md) follows the
+established numbered country artifacts. This entry completes preparation, not a
+production rollout; no database, product content, routes or external settings changed.
+
+Public evidence covers 317 sitemap URLs and ten linked destinations: 326 reachable
+pages and one English sick-note 404. All sitemap URLs return 200 with self-canonicals
+and metadata. The 327-row matrix records exact drafts, retention decisions and holds.
+It does not certify or rewrite every retained clinical/legal body.
+
+The full FAQ reconciliation supersedes section 54's native-only sample: 102 service
+variants have no native FAQ rows, but 22 contain 187 embedded questions. There are
+80 true visible gaps. All 18 doctor variants already have six native FAQs each.
+Local drafts cover 96 staffed service variants with 384 proposed FAQs, plus 18 doctor
+variants with 24 FAQ corrections and five Palaga title typo fixes. Embedded blocks
+must be replaced atomically with native FAQs; do not append duplicates.
+
+Current public roster: three bookable doctors, Romanian/English consultation only.
+Pediatrics and neurology are staffed specialist services; Brindus serves 14 GENERAL
+services. Six evaluare-durere variants have no assigned doctor and remain held.
+Brindus specialty disagreement and unsupported biography claims require authoritative
+evidence. Page locale is not consultation language. No named clinical approval exists.
+
+Matched final GSC page windows: 2026-08-13–09-09 versus 2026-07-16–08-12, all Romania
+routes/searcher countries, complete pagination. Current 93 clicks/7,992 impressions
+versus 17/1,785; service subset 7/332 versus 4/416. Tool/article growth is not booking
+growth. The 613-row keyword master separates GSC, provider metrics and editorial
+labels. Non-Romanian Labs volumes are unavailable; live SERPs supply limited evidence.
+Research-stage balance delta: 488 credits (11,537 to 11,049), separate from section
+54's 28. [Source log](../../seo/romania/raw/source-log-2026-09-13.md).
+
+**Next implementation sequence:** authenticated read-only storage reconciliation and
+dry-run against exact source fingerprints; staffed pediatrics/neurology and profile
+corrections first, then GENERAL services and the obsolete English sick-note link.
+Reuse guarded updater patterns, preserve hidden translations, check shared DoctorFaq
+country scope, satisfy applicable claim-review gates and capture rollback/write/public
+readback receipts. This clone lacks backend/.env; production storage was not accessed.
+Booking client-shell behavior remains a browser check, not an established defect.
+
+Keep the September 24 global inspection cadence and all unrelated market holds.
+Register cohort-specific 30/60/90-day checks when publication actually occurs. No
+automated follow-up, indexation submission or outreach was created by this package.
+
+### 55.1 Romania authenticated preflight and exact storage manifest (2026-09-13)
+
+Continued from verified research commit `39656572`. Railway Production access works
+through the established CLI without restoring backend/.env. A read-only transaction
+exported relevant content, hidden rows, locale overrides and all doctor-country
+associations. No production write, deployment or publication occurred.
+
+[Preflight evidence and remaining work](../../seo/romania/implementation-preflight-2026-09-13.md)
+and [before/after review](../../seo/romania/content-briefs/implementation-review-2026-09-13.html).
+The manifest contains 20 groups / 591 row operations with zero current source-drift
+blockers. All 114 refreshed public source fingerprints match the prepared drafts.
+The refreshed final GSC window, August 13–September 9, has 166 page rows with no
+further pagination: 93 clicks/7,992 impressions; services 7/332. No paid research.
+
+Storage establishes two ownership corrections: the five Palaga title typos resolve
+from DoctorMarketTranslation, and the obsolete sick-note destination comes from
+ServiceLink, separately from the retained English body offer. The exact plan
+deactivates that link and removes the two body offers after the general-service
+migration. Existing contextual architecture links already cover the planned paths.
+All current doctor associations remain Romania-only.
+
+Publication remains held under §41.1's named Romanian clinician approval requirement
+and §43.4's content mutation-boundary enforcement requirement. No named approval
+exists. The new tool is a read-only planner, not a production updater; it does not
+close the enforcement gate. That work spans existing service, FAQ, doctor,
+market-profile and profile-change mutation owners, identified in the receipt.
+
+The original doctor review hash omitted FAQ patches. New implementation payload
+hashes cover complete groups, including those corrections; approval fields remain
+blank. The 114 prepared URL rows record authenticated preflight complete and both
+publication holds. The separate obsolete-offer hash is in the manifest. Do not
+rebuild historical package outputs over the maintained register/matrix columns.
+
+The unstaffed evaluare-durere still has active incoming ServiceLink/hub promotion;
+its operational disposition remains open. No routing or publication flag changed.
+Brindus specialty evidence and booking browser verification remain open.
+
+**Next action:** obtain a real Romanian clinician's review against the exact payload
+hashes, implement/test shared mutation-boundary enforcement, finish the guarded
+transaction runner, then refresh storage before applying the specialist cohort.
+GENERAL/Brindus and obsolete-offer correction follow receipt and public readback.
+Three offline planner tests and the parser check pass; these do not prove database
+transaction atomicity. Preserve September 24 inspection and defer 30/60/90-day
+cohort dates until actual publication.
+
+### 55.2 Romania clinician approval and rollout (2026-09-13)
+
+The owner stated “Dr Robert Gabriel Brindus approval for all” in this task after
+the exact 20-group review packet was presented. The [approval record](../../seo/romania/clinical-approval-2026-09-13.json)
+binds that owner-reported confirmation to the manifest and all group hashes.
+The register records the supplied clinician and confirmation date; this is not
+a fabricated direct signature or independent credential certification.
+
+Shared transaction enforcement now covers the Romanian service/profile copy, FAQs,
+market-profile changes and service-link owners, with unchanged content and unrelated
+operational edits allowed. Other markets, direct privileged SQL and separate global
+page/blog/health-test enforcement remain outside this scoped gate; §43.4 is not
+globally closed. The guarded batch runner invokes the same exact-state check.
+Publication dates and per-group status follow verified receipts below.
+
+**Current rollout status:** clinical approval is recorded; implementation is local
+and tested, not deployed. Six offline tests pass, backend TypeScript passes after
+regenerating the stale local Prisma client, and a real PostgreSQL rehearsal verified
+all 591 operations plus savepoint/full rollback. [Rehearsal receipt](../../seo/romania/raw/postgres-rehearsal-2026-09-13.json).
+No content operation was committed and no public measurement cohort has started.
+
+Automatic approval review rejected the proposed Production Backend deployment:
+it would introduce persistent service-impacting enforcement without explicit
+deployment authorization. The rejected action was `railway up` to the existing
+Backend service, using an isolated archive of production commit `39656572` plus
+only the 13 changed/new source files. The current rollback deployment remains
+`e75ace3c-ab31-4fe3-9cd6-0c20c5333999`. No retry or workaround was attempted.
+
+**Next action:** explicit owner authorization to deploy the tested backend approval
+checks. They reject unreviewed Romanian clinical-content revisions in admin while
+allowing unchanged copy and operational/contact edits. After a healthy deployment,
+record its ID in `seo/romania/enforcement-deployment-2026-09-13.json`, then apply
+the already approved groups and verify each publicly before the next. The updater
+will not apply without that deployment receipt. September 24 inspection stays unchanged.
+
+The owner subsequently authorized deployment (“Yes deploy”). Backend deployment
+`525deda8-946e-4da7-8462-c096b599bc20` succeeded; production `/ready` returned 200.
+This supersedes the deployment blocker above. The isolated package contains research
+commit `39656572` plus the 13 tested backend source changes. Approved content rollout
+now proceeds one group at a time, with public verification before each next group.
+
+- Romania rollout `doctor:dr-alexandra-palaga`: applied and publicly verified across 6 locales (2026-09-12T22:48:47.702Z). Receipt: `seo/romania/raw/rollout/doctor-dr-alexandra-palaga-applied.json`.
+
+- Romania rollout `doctor:dr-andreea-lorena-bica`: applied and publicly verified across 6 locales (2026-09-12T22:49:59.328Z). Receipt: `seo/romania/raw/rollout/doctor-dr-andreea-lorena-bica-applied.json`.
+
+- Romania rollout `service:consultatie-neurologie`: applied and publicly verified across 6 locales (2026-09-12T22:50:51.211Z). Receipt: `seo/romania/raw/rollout/service-consultatie-neurologie-applied.json`.
+
+- Romania rollout `service:consultatie-pediatrie`: applied and publicly verified across 6 locales (2026-09-12T22:51:42.756Z). Receipt: `seo/romania/raw/rollout/service-consultatie-pediatrie-applied.json`.
+
+- Romania rollout `doctor:dr-robert-gabriel-brindus`: applied and publicly verified across 6 locales (2026-09-12T22:52:25.010Z). Receipt: `seo/romania/raw/rollout/doctor-dr-robert-gabriel-brindus-applied.json`.
+
+- Romania rollout `service:a-doua-opinie-medicala`: applied and publicly verified across 6 locales (2026-09-12T22:52:55.951Z). Receipt: `seo/romania/raw/rollout/service-a-doua-opinie-medicala-applied.json`.
+
+- Romania rollout `service:boli-cronice-online`: applied and publicly verified across 6 locales (2026-09-12T22:53:25.435Z). Receipt: `seo/romania/raw/rollout/service-boli-cronice-online-applied.json`.
+
+- Romania rollout `service:caderea-parului-online`: applied and publicly verified across 6 locales (2026-09-12T22:53:55.816Z). Receipt: `seo/romania/raw/rollout/service-caderea-parului-online-applied.json`.
+
+- Romania rollout `service:consultatie-dermatologica`: applied and publicly verified across 6 locales (2026-09-12T22:54:25.739Z). Receipt: `seo/romania/raw/rollout/service-consultatie-dermatologica-applied.json`.
+
+- Romania rollout `service:controlul-greutatii`: applied and publicly verified across 6 locales (2026-09-12T22:55:16.819Z). Receipt: `seo/romania/raw/rollout/service-controlul-greutatii-applied.json`.
+
+- Romania rollout `service:dureri-musculo-scheletice`: applied and publicly verified across 6 locales (2026-09-12T22:56:09.168Z). Receipt: `seo/romania/raw/rollout/service-dureri-musculo-scheletice-applied.json`.
+
+- Romania rollout `service:medic-online-romania`: applied and publicly verified across 6 locales (2026-09-12T22:57:01.320Z). Receipt: `seo/romania/raw/rollout/service-medic-online-romania-applied.json`.
+
+- Romania rollout `service:medic-pediatru-online`: applied and publicly verified across 6 locales (2026-09-12T22:57:54.876Z). Receipt: `seo/romania/raw/rollout/service-medic-pediatru-online-applied.json`.
+
+- Romania rollout `service:medicina-calatoriei`: applied and publicly verified across 6 locales (2026-09-12T22:58:48.171Z). Receipt: `seo/romania/raw/rollout/service-medicina-calatoriei-applied.json`.
+
+- Romania rollout `service:reinnoire-tratament`: applied and publicly verified across 6 locales (2026-09-12T22:59:18.890Z). Receipt: `seo/romania/raw/rollout/service-reinnoire-tratament-applied.json`.
+
+- Romania rollout `service:sanatate-mintala-online`: applied and publicly verified across 6 locales (2026-09-12T23:00:10.928Z). Receipt: `seo/romania/raw/rollout/service-sanatate-mintala-online-applied.json`.
+
+- Romania rollout `service:sanatatea-barbatului-online`: applied and publicly verified across 6 locales (2026-09-12T23:00:41.918Z). Receipt: `seo/romania/raw/rollout/service-sanatatea-barbatului-online-applied.json`.
+
+- Romania rollout `service:sanatatea-femeii-online`: applied and publicly verified across 6 locales (2026-09-12T23:01:12.726Z). Receipt: `seo/romania/raw/rollout/service-sanatatea-femeii-online-applied.json`.
+
+- Romania rollout `service:trimiteri-si-investigatii`: applied and publicly verified across 6 locales (2026-09-12T23:01:42.532Z). Receipt: `seo/romania/raw/rollout/service-trimiteri-si-investigatii-applied.json`.
+
+- Romania rollout `obsolete-sick-note-offer`: applied and publicly verified across 6 locales (2026-09-12T23:02:23.002Z). Receipt: `seo/romania/raw/rollout/obsolete-sick-note-offer-applied.json`.
+
+### 55.3 Romania live completion and measurement cohort
+
+All 20 approved groups / 591 row operations are committed in Production and
+publicly verified. First publication: 2026-09-12T22:47:13.987Z; final readback:
+2026-09-12T23:02:22.997Z. Both UTC and Pacific publication dates are September 12,
+2026; September 13 filenames reflect the task's local date.
+
+The cohort covers 96 staffed service variants and 18 doctor variants across
+ro/en/cs/de/es/pt. Services now resolve four native FAQs each (64 parent rows,
+384 translations), with recorded terminal embedded FAQ blocks removed atomically.
+Doctor changes comprise 24 FAQ patches and five Palaga title corrections. The
+separate obsolete English sick-note body offer and ServiceLink were removed from
+public display; the link row is retained inactive for rollback.
+
+[Publication cohort](../../seo/romania/publication-cohort-2026-09-13.json) lists the
+114 URLs and gates. Each group has before-rows, a committed receipt and six-locale
+public evidence in seo/romania/raw/rollout/. All checked metadata, visible/schema
+FAQ text, canonicals, alternates, robots, prices, durations and assignments passed.
+The verifier executes the existing frontend title-compaction rule; initial stale
+cache responses passed on bounded readback. Backend readiness returned 200 after
+deployment; all 13 deployed source hashes match the tested workspace.
+
+The completion matrix records 114 applied/verified URLs, six browser-verified
+initial booking pages, the removed obsolete incoming offer, nine retained noindex
+legal pages and remaining retained/held rows. The browser reproduced no missing
+booking H1 after hydration; no appointment, patient details or payment was submitted.
+Retained bodies and credentials are not independently re-certified.
+
+Measurement gates: October 12 (30 days), November 11 (60), December 11 (90).
+Use complete final GSC data; first full 28-day post-publication window is September
+13–October 10, Pacific dates. If reporting is incomplete at a gate, wait for final
+data rather than treating partial days as results. Preserve the refreshed baseline
+August 13–September 9 (services 7 clicks / 332 impressions) and segment services/
+profiles from tools/articles. September 24 global inspection remains unchanged.
+No recurring automation, outreach or Indexing API submission was created.
+
+Remaining dependencies: operations disposition and an approved clinician for
+evaluare-durere; authoritative evidence for Brindus specialty/credential conflicts.
+No promotion or routing change was made for the held service. The scoped backend
+gate does not close global §43.4 or protect privileged SQL outside the updater.
+
+Next release action: integrate the tested branch source before any later main
+deployment, which could otherwise replace the isolated Railway upload. No main
+merge or push was performed.
+
+### 55.4 Owner approval of retained editorial dispositions
+
+The owner instructed: “All editorial review has been approved, just apply.”
+The 191 remaining editorial rows contain retention recommendations and no
+unpublished replacement drafts. Their matrix status now reads “retained; owner
+editorial approval recorded.” The [approval receipt](../../seo/romania/editorial-retention-approval-2026-09-13.json)
+identifies each URL, recorded source fingerprint and retention reason.
+
+This closes the pending editorial decision on those existing recommendations.
+It makes no production content change and does not represent a new independent
+clinical or legal certification. The 114 previously published pages remain applied
+and verified. There is no additional prepared editorial batch awaiting publication.
+The earlier description of 191 pages as a remaining implementation phase overstated
+the package: those rows proposed retention, not replacement copy.
+
+The six unstaffed pain-service variants and Brindus specialty evidence remain held.
+Main integration and the measurement dates in §55.3 remain open. A future rewrite,
+including retained em-dash-heavy prose, would require new field-level copy; this
+approval record does not claim that such a rewrite has been performed.
+
+### 55.5 Authorized retained-copy rewrite and publication
+
+The super admin reported verbal approval from Dr. Thiago and Dr. Robert, then
+explicitly authorized rewriting and publishing the retained Romania copy. This
+supersedes retention-only closure in §55.4 for the new exact editorial manifest.
+The authorization record states its provenance; no direct clinician signature or
+independent verification of every retained clinical claim is asserted.
+
+The final database manifest contains 520 field edits: 414 service/profile/link
+fields, 81 supporting-page/article fields and 25 legal content fields. Service
+card names reuse already published approved headings. HOME copy removes unsupported
+same-day and preferred-language guarantees. Legal changes preserve all words,
+figures, tags, links and quoted email subject lines. Held specialty/credential
+claims and the unstaffed pain service are unchanged.
+
+Frontend changes provide static Romania-only tool and supporting-page overrides
+across six locales. Other markets, calculations, privacy consent, booking flow and
+legal obligations are preserved. Current proof: 58 frontend tests, five backend
+guard/updater tests, both package type-checks and a real PostgreSQL rehearsal of
+the final manifest with full rollback pass. All three database batches are now committed and publicly verified.
+
+Evidence: editorial-publication-authorization-2026-09-13.json,
+content-briefs/editorial-publication-manifest-2026-09-13.json and
+raw/editorial-rollout/rehearsal.json in seo/romania. Fresh final GSC refresh has
+166 Romania page rows for August 13–September 9; live preflight covers 326 URLs,
+including the nine intentionally noindexed legal variants.
+
+- Romania editorial batch clinical: published and verified on 114 URLs (2026-09-13T00:30:05.948Z). Evidence: seo/romania/raw/editorial-rollout/clinical-applied.json.
+
+- Romania editorial batch pages-articles: published and verified on 60 URLs (2026-09-13T00:35:57.726Z). Evidence: seo/romania/raw/editorial-rollout/pages-articles-applied.json.
+
+- Romania editorial batch legal: published and verified on 25 URLs (2026-09-13T00:37:34.559Z). Evidence: seo/romania/raw/editorial-rollout/legal-applied.json.
+
+Final publication proof (2026-09-13 UTC): backend deployment
+23a4a388-bf54-4510-83e3-add5588da419 and frontend deployment
+cd602f3e-0e3a-4d6c-8c87-6cdc462aaa84 succeeded and passed health checks.
+Clinical readback verified 114 URLs / 997 revised fragments; supporting pages and
+articles verified 60 URLs / 647 fragments; legal verified 25 URLs / 720 fragments.
+Five doctors-index translations have storage-only whyChooseItems edits because
+showWhyChoose is false. Their public controls passed; no section was enabled.
+
+The final 326-URL readback passed status, canonical, robots and hreflang checks;
+281 pages changed visible text. Visible em dashes fell from 4,498 to 239. All 48
+tool pages changed and contain no visible em dashes. Remaining punctuation includes
+held pain-service/credential copy, exact quoted legal email subjects, image text
+and shared notices. This is scoped editorial completion, not certification of
+all retained claims or a claim that every inventory page was rewritten.
+Deployed source hashes match the workspace. Evidence: raw/editorial-public-after-2026-09-13.json
+and raw/editorial-rollout/final-public-summary.json in seo/romania.
+
+Register this additional editorial cohort at September 13 UTC, separately from
+the September 12 original rollout. Compare September 14–October 11 (28 complete
+days) with August 17–September 13 when final GSC data is available; review again
+at 60 and 90 days. Preserve the August 13–September 9 research baseline and the
+September 24 global inspection. No ranking gain is claimed from deployment checks.
+
+Remaining work: integrate this branch before the next main deployment; resolve
+the unstaffed pain-service disposition and authoritative Brindus specialty evidence;
+measure search outcomes. No further prepared editorial batch awaits approval or publication.
+
+### 55.6 Pain service staffed by owner instruction, 13 September 2026
+
+The super admin explicitly selected Dr Robert Gabriel Brindus for evaluare-durere
+("yes assign him"). The authenticated admin Services form saved the assignment as
+active/admin-assigned; assigned services increased from 15 to 16 (including the
+pre-existing inactive sick-note service). No payout, price, schedule or credential
+field was changed. The standard assignment action invalidated backend bookability.
+
+Fresh public API checks in all six locales confirm Brindus is assigned and the
+service is BOOKABLE, with the next available slot on September 14 at 12:54 UTC.
+The refreshed English service page displays an enabled "Schedule the consultation"
+button. Evidence: seo/romania/raw/pain-staffing-2026-09-13.json.
+
+This closes the unstaffed-service disposition. The previous unstaffed inventory is
+historical. Specialty evidence and held editorial copy are separate and remain
+unresolved; assignment does not establish new credentials. No patient booking was
+created. The assignment can be reversed using Disable on the same admin service row.
+
+### 55.7 Locale-specific service names restored, 13 September 2026
+
+The owner approved correcting the generic service names introduced by the editorial
+cleanup. Published 100 name fields across 16 services in six locales: 86 translated
+names and 14 default Romanian names. Ten already suitable translated names and
+two default names required no change. The English general service now reads
+"English-speaking doctor online in Romania"; other locales retain their own
+wording. Relevant online-care, prescription-assessment, travel-medicine and pain
+terms are restored without same-day promises in the revised names.
+
+The guarded transaction changed names only. Titles, H1s, meta descriptions,
+URLs, clinical bodies/FAQs, prices, staffing and booking rules are unchanged.
+No new consultation languages were claimed. This does not remove the separately
+held pain-service copy or establish Brindus specialty credentials.
+
+Evidence: content-briefs/service-name-restoration-2026-09-13.json and
+raw/service-name-{rehearsal,applied,backend-deployment,public}-2026-09-13.json
+in seo/romania. All 86 changed locale names passed public API checks. All six
+booking pages were inspected in the browser after client rendering: 17 service
+cards per locale, with all revised names present. The initial HTML-only check
+could not see those client-rendered cards; browser inspection resolved that
+instrument limitation. Canonical, robots and hreflang controls passed.
+
+Backend deployment 043dc8c0-c5b5-4d3b-a88d-1bb4159ad380 succeeded. Five existing
+guard/updater tests, backend TypeScript (8 GB heap after the default heap ran out)
+and the real database rollback rehearsal passed. The local full source snapshot
+is gitignored; public receipts contain only the scoped changes and proof.
+
+This corrects targeting specificity; it is not evidence of a ranking increase or
+recovery. The pre-change English general-service baseline remains 2 clicks / 53
+impressions over August 13–September 9. The focused visible-query export was sparse
+and does not establish which terms drove those page totals. Keep the September 13
+editorial measurement cohort and September 24 inspection cadence.
+
+## 56. Spain evidence and guarded preparation, 13 September 2026
+
+**No new Spain content is live from this work.** No clinical approval, production
+snapshot, real PostgreSQL rehearsal, deployment or mutation receipt is recorded.
+The local package and tested implementation preparation are supporting deliverables,
+not publication. [Handoff](../../seo/spain/implementation-handoff-2026-09-13.md),
+[readable exact packet](../../seo/spain/content-briefs/review-packet.html) and
+[source log](../../seo/spain/source-log.md) contain the reproducible detail.
+
+### 56.1 Current evidence and dispositions
+
+The focused inventory covers 392 sitemap URLs plus 42 observed linked URLs:
+422 HTTP 200 and 12 HTTP 404. It includes 24 actual services and 13 doctor profiles
+in six locales, plus every discovered hub, article, tool, booking, institutional
+and legal URL. Only ES/EN general FAQ routes were discovered; no symmetry invented.
+All 422 live URLs are self-canonical; 30 legal translations retain noindex.
+
+Matched final GSC windows are July 16–August 12 and August 13–September 9. Complete
+page exports contain 257/258 rows; the separate current query/page export has 1,479
+rows. Current services: 13 clicks/1,681 impressions versus 29/1,441; profiles:
+61/720 versus 25/409. Articles and tools are reported separately. Spain-resident
+cut: 34/3,977 versus 13/2,058. Legacy URLs remain separate. No booking or ranking
+conclusion is drawn from these small samples or successful technical checks.
+
+OpenSEO used explicit Spain 2724/es, with bounded Spain SERPs in the other supported
+page languages. Observed account credit decrease: 134 (11,049 to 10,915). Shared
+account activity cannot be excluded from that delta. No projects, trackers, saved
+keywords or outreach were created. Missing/null keyword metrics remain unavailable.
+
+The matrix now records 199 retained, 96 proposed-change and 139 held URL rows.
+Holds include all affected services assigned to Luz, rather than merely her profile.
+Retention is an evidence-based no-change disposition, not new clinical/legal
+certification. There are 140 exact page candidates in 27 service/profile groups,
+including held candidates, plus seven link groups. Candidates contain 96 FAQ
+patches and 11 new base questions/66 locale variants. None has been clinically
+approved. Of 1,518 existing native FAQ locale answers, all match HTML/schema after
+whitespace normalization; zero actual embedded FAQ questions were observed.
+
+### 56.2 Refreshed holds and owner dependencies
+
+- The former four vascular/aesthetic gates are superseded: all four pages are live,
+  indexable and assigned. Their long Spanish bodies are also stored in non-ES locale
+  records. Localized hero/FAQ drafts do not complete clinical body translation.
+- CGCOM lists Leandro Wang as Médico General. Qualification evidence is required
+  for the vascular diagnostic/flebology specialist claims; availability is not proof.
+- CGCOM lists Luz Marina Zuluaga Ríos as ALTA sin ejercicio while the site offers
+  bookings. Operations clarification is required for her and affected service
+  promotion. No assignment, credential or publication state was changed.
+- Tomás Ruiz Palacios's stored registration remains independently unverified after
+  bounded searches; obtain a named authoritative record. This is not a negative
+  credential finding. Silvina's General label must not become specialist paediatrics.
+- Fidel Mesa's cardiology registration was found, but there is no open appointment.
+  Twelve other doctors and 23 services are bookable at collection; recheck at rollout.
+- Spanish dermatology queries still land on EN. Preserve the intent/locale hold.
+  State sick-leave commercial-fit hold remains; BOE RD 625/2014 article 2 establishes
+  the statutory public-service/mutua route. No cluster expansion is authorized here.
+- Twelve nonexistent specialty URLs are advertised by seven ServiceLink rows on
+  42 source pages. Exact reversible deactivation drafts exist; no unrelated redirect.
+
+§43.5's authentic-register absence is superseded by the new fact/review registers;
+their existence does not close their unresolved entries. A named Spain-registered
+reviewer with doctor ID and a review-age policy are still required. Owner nomination
+is not approval of an exact payload; no approval was inferred from the task request.
+
+### 56.3 Implementation proof and next action
+
+The existing Romania CMS transaction owner has been extended locally to validate
+Spain service/profile/FAQ/link states, with empty approved states and unset policy.
+The runner reuses existing mutation/rehearsal helpers, requires matching exact
+receipt/server approval, refuses source drift/shared doctors, preserves protected
+fields, rolls back failed transactions and preserves verified receipts on repeats.
+The public verifier checks all affected locale copy, FAQs/schema, canonical,
+alternates, robots and obsolete offers. Browser evidence remains a separate step.
+This does not close global §43.4 or govern page/blog/tool writers and privileged SQL.
+
+Proof: 12 focused tests pass (Spain plus Romania regression); backend per-package
+TypeScript passes via direct Node with an 8 GB heap after pnpm-wrapper/default-heap
+failures; `git diff --check` passes. No frontend source changes. PostgreSQL schema
+rehearsal and real production dry-run are pending authenticated storage.
+
+Automatic approval review rejected both read-only production snapshot attempts,
+including the narrowed content-only projection, because it could not verify
+authorization. Neither attempt executed. Explicit owner confirmation was requested;
+do not bypass this block or request credentials. The current storage manifest has
+zero executable groups and status `awaiting authenticated storage; public drafts
+only`; its JSON-content SHA-256 is
+`3227b27d5d9870e4e6e6aef09faa068d1546fe4a6014eeec387b20d1d4cf066d`.
+
+Next: obtain snapshot confirmation and reviewer/policy facts; reconcile hidden rows
+and cross-market ownership, rehearse the final storage manifest, obtain exact
+clinical approval and then any required production authorization. Deploy verified
+enforcement before eligible content batches. Record commit/deployment IDs and
+mutation, rollback and public/browser receipts per group before continuing.
+Spain preparation is committed as 16ca77f3. No deployment or publication identifier exists.
+
+Preserve September 18's Spain evidence read (§53) and September 24's global
+inspection. Register exact published cohorts and 30/60/90 measurement dates only
+when content is actually published. Future localization and content opportunities
+are conditional on verified care scope and subsequent measured demand.

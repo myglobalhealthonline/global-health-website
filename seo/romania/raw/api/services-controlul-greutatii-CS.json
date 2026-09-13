@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:06.010Z",
+  "endpoint": "/api/services/controlul-greutatii?countryCode=ro&locale=CS",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee3510005fsjunqgfmxn2",
+      "kind": "GENERAL",
+      "slug": "controlul-greutatii",
+      "name": "Řízení hmotnosti — lékařské zhodnocení a personalizovaný plán",
+      "summary": "Máte potíže s hubnutím navzdory změnám životního stylu? Naši licencovaní lékaři CMR hodnotí zdravotní, metabolické a behaviorální faktory ovlivňující hmotnost a stanovují realistický plán managementu.",
+      "seoTitle": "Online management hmotnosti | Rumunsko | lékařské vyšetření",
+      "seoDescription": "Lékařské řízení hmotnosti, nad rámec diety a životního stylu. Naši licencovaní lékaři CMR hodnotí zdravotní, metabolické a behaviorální faktory, které ovlivňují hmotnost, a stanovují realistický plán řízení.",
+      "seoKeywords": [
+        "weight management online Romania",
+        "online doctor weight loss Romania",
+        "obesity consultation Bucharest English",
+        "metabolic health online Romania",
+        "weight loss doctor Romania expat"
+      ],
+      "heroTitle": "Řízení hmotnosti — lékařské vyšetření a individuální plán",
+      "heroDescription": "Lékařské řízení hmotnosti, nad rámec diety a životního stylu. Naši autorizovaní lékaři CMR vyhodnocují lékařské, metabolické a behaviorální faktory, které ovlivňují hmotnost, a stanovují realistický plán řízení.",
+      "detailBody": "<p>Kontrola hmotnosti nespočívá jen v vůli. Hormonální poruchy, metabolický syndrom, inzulinová rezistence, nedostatečný spánek, medikace nebo stravovací návyky mohou významně přispívat k nárůstu hmotnosti a k obtížím při hubnutí.</p><p>Vyšetření zahrnuje zhodnocení hmotnostní anamnézy, předchozích diet, úrovně aktivity, spánku, hormonálních příznaků a dostupných zdravotních výsledků. Lékař může doporučit vyšetření, změny životního stylu, sledování nebo odeslání do příslušných specializací, pokud existují zdravotní příčiny, které je třeba prověřit.</p><p>Cílem je, abyste obdrželi personalizovaný, realistický a bezpečný plán, založený na vašem klinickém kontextu, nikoli jen obecná doporučení, která neberou v úvahu skutečnou příčinu problému.</p>",
+      "ctaLabel": "Naplánovat konzultaci",
+      "sortOrder": 120,
+      "durationMinutes": 15,
+      "basePriceCents": 15000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:03:02.284Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jsdzv001sakju8jltsy8i",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee3510005fsjunqgfmxn2",
+          "path": "/api/media/media/5bb9786f-3a23-44cb-ac81-2df8115fd74a-59954e92-eced-4821-8e0f-1f9d02346174-13.webp",
+          "altText": "Managementul greutății — evaluare medicală și plan personalizat"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "CS",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

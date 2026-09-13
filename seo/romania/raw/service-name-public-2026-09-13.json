@@ -1,0 +1,50 @@
+[
+  {
+    "locale": "RO",
+    "url": "https://www.myglobalhealth.online/romania/ro/book",
+    "apiNamesVerified": 14,
+    "bookingSeoControlsVerified": true,
+    "checkedAt": "2026-09-13T02:55:15.934Z",
+    "bookingTextVerification": "Verified separately in browser after client rendering"
+  },
+  {
+    "locale": "EN",
+    "url": "https://www.myglobalhealth.online/romania/en/book",
+    "apiNamesVerified": 16,
+    "bookingSeoControlsVerified": true,
+    "checkedAt": "2026-09-13T02:55:21.195Z",
+    "bookingTextVerification": "Verified separately in browser after client rendering"
+  },
+  {
+    "locale": "PT",
+    "url": "https://www.myglobalhealth.online/romania/pt/book",
+    "apiNamesVerified": 14,
+    "bookingSeoControlsVerified": true,
+    "checkedAt": "2026-09-13T02:55:25.464Z",
+    "bookingTextVerification": "Verified separately in browser after client rendering"
+  },
+  {
+    "locale": "ES",
+    "url": "https://www.myglobalhealth.online/romania/es/book",
+    "apiNamesVerified": 14,
+    "bookingSeoControlsVerified": true,
+    "checkedAt": "2026-09-13T02:55:30.218Z",
+    "bookingTextVerification": "Verified separately in browser after client rendering"
+  },
+  {
+    "locale": "CS",
+    "url": "https://www.myglobalhealth.online/romania/cs/book",
+    "apiNamesVerified": 14,
+    "bookingSeoControlsVerified": true,
+    "checkedAt": "2026-09-13T02:55:34.567Z",
+    "bookingTextVerification": "Verified separately in browser after client rendering"
+  },
+  {
+    "locale": "DE",
+    "url": "https://www.myglobalhealth.online/romania/de/book",
+    "apiNamesVerified": 14,
+    "bookingSeoControlsVerified": true,
+    "checkedAt": "2026-09-13T02:55:38.8Z",
+    "bookingTextVerification": "Verified separately in browser after client rendering"
+  }
+]

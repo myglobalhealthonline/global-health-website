@@ -1,0 +1,179 @@
+{
+  "endpoint": "/api/services/dejar-de-fumar-online?countryCode=es&locale=PT",
+  "checkedAt": "2026-09-13T02:30:04.195Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qcvw004engju2es5log3",
+      "kind": "GENERAL",
+      "slug": "dejar-de-fumar-online",
+      "name": "Deixar de Fumar",
+      "summary": null,
+      "seoTitle": "Parar de Fumar Online Espanha | Apoio Médico | Médico de Família",
+      "seoDescription": "Quer deixar de fumar com apoio médico? Os nossos médicos de família credenciados avaliam a sua dependência do tabaco e elaboram um plano personalizado por videoconferência. No mesmo dia em Espanha.",
+      "seoKeywords": [
+        "dejar de fumar online España",
+        "apoyo médico dejar de fumar España",
+        "deshabituación tabáquica online España",
+        "médico tabaco online España",
+        "dejar fumar médico cabecera online"
+      ],
+      "heroTitle": "Deixar de Fumar — Avaliação Médica e Plano Personalizado Online",
+      "heroDescription": "Deixar de fumar é uma das decisões mais importantes que pode tomar para a sua saúde — e também uma das mais difíceis. A dependência do tabaco não é apenas física: é também psicológica e comportamental. A maioria das pessoas que tenta deixar de fumar sem apoio médico recai nas primeiras semanas. O apoio médico estruturado muda isto. Um médico que avalia o seu nível de dependência, desenha um plano adaptado ao seu perfil específico e o acompanha durante o processo multiplica significativamente as suas hipóteses de sucesso. Os nossos médicos de família, registados de acordo com os requisitos da Organização Médica Colegial (OMC), oferecem avaliações de cessação tabágica por videochamada segura — avaliando a sua dependência, desenhando um plano personalizado e emitindo a documentação clínica correspondente quando clinicamente indicado. No mesmo dia, a partir de qualquer ponto de Espanha, em espanhol, inglês ou português.",
+      "detailBody": "<h2>Por que o apoio médico faz a diferença</h2><p>A dependência do tabaco ativa os mesmos circuitos de recompensa no cérebro que outras dependências. Tentar interrompê-la apenas com força de vontade ignora a base biológica da dependência — e por isso falha na maioria dos casos.</p><p>O apoio médico estruturado atua em vários níveis simultaneamente:</p><ul><li>Avaliação do nível de dependência — nem todos os fumadores têm o mesmo perfil de dependência. O tipo de intervenção mais adequado depende de quantos cigarros fumas, quando fumas o primeiro do dia, como respondeste a tentativas anteriores e que outras condições de saúde tens</li><li>Plano farmacológico adaptado — quando clinicamente indicado, o teu médico de família pode avaliar opções de tratamento farmacológico de apoio, a critério do médico após avaliação completa do perfil clínico</li><li>Apoio comportamental — identificar os desencadeantes que levam a fumar e desenvolver estratégias alternativas faz parte do plano</li><li>Acompanhamento — o acompanhamento regular durante o processo de cessação tabágica melhora significativamente as taxas de sucesso</li></ul><h2>Para quem é este serviço</h2><p>Esta consulta é apropriada para adultos que:</p><ul><li>Fumam atualmente e querem deixar de o fazer com apoio médico estruturado</li><li>Já tentaram deixar de fumar antes sem sucesso e querem explorar abordagens com maior evidência científica</li><li>Querem entender que opções de apoio farmacológico existem e se são candidatos a elas, após avaliação clínica completa</li><li>Têm condições de saúde — doença cardiovascular, diabetes, DPOC, gravidez planeada — em que deixar de fumar é uma prioridade clínica urgente</li><li>Querem apoio para deixar de fumar em inglês ou português sem barreiras linguísticas</li></ul><h2>O que inclui a consulta</h2><p><strong>Avaliação do nível de dependência</strong></p><p>O teu médico de família avalia o teu perfil de dependência do tabaco — incluindo quantos cigarros fumas por dia, quando fumas o primeiro do dia, como te sentes quando não podes fumar e como respondeste a tentativas anteriores de deixar de fumar. Esta avaliação estrutura o plano de apoio mais adequado ao teu perfil específico.</p><p><strong>Avaliação da motivação</strong></p><p>A motivação é um fator clínico relevante na cessação tabágica. O teu médico explora as tuas razões para querer deixar de fumar, as barreiras que antecipas e como estruturar o plano para maximizar as tuas hipóteses de sucesso.</p><p><strong>Plano de cessação personalizado</strong></p><p>Com base na avaliação, o teu médico desenha um plano estruturado — que pode incluir estratégias comportamentais para gerir os desencadeantes e a síndrome de abstinência, apoio nutricional básico para gerir o possível aumento de peso ao deixar de fumar, e recomendações de atividade física como ferramenta de apoio.</p><p><strong>Avaliação de opções de apoio farmacológico — a critério do médico</strong></p><p>Quando clinicamente indicado após avaliação completa do perfil clínico, o teu médico de família pode avaliar opções de tratamento farmacológico de apoio à cessação tabágica. Nenhuma opção farmacológica pode ser confirmada nem prescrita antes da avaliação clínica.</p><p>Nota: Desde junho de 2024, o Ministério da Saúde financia determinados medicamentos para tratamentos de apoio à cessação tabágica para doentes que cumpram critérios clínicos específicos — incluindo fumadores com elevada dependência classificada pelo teste de Fagerström. O teu médico informa-te durante a consulta se poderás cumprir os critérios de financiamento e que passos seguir para aceder a ele através do sistema público.</p><p><strong>Documentação clínica — a critério do médico</strong></p><p>Quando clinicamente indicado, o teu médico emite a documentação clínica correspondente válida em qualquer farmácia espanhola.</p><p><strong>Acompanhamento</strong></p><p>Deixar de fumar é um processo — não um evento único. As consultas de acompanhamento estão disponíveis para monitorizar o progresso, gerir os momentos de maior risco de recaída e ajustar o plano se necessário.</p><h2>Deixar de fumar e a tua saúde — por que agora</h2><p>Os benefícios de deixar de fumar começam nas primeiras horas e acumulam-se ao longo de anos:</p><ul><li>20 minutos — a pressão arterial e a frequência cardíaca normalizam-se</li><li>12 horas — o monóxido de carbono no sangue volta a níveis normais</li><li>2 semanas a 3 meses — melhora a circulação e a função pulmonar</li><li>1 ano — o risco de doença coronária reduz-se para metade</li><li>5 anos — o risco de AVC iguala-se ao de um não fumador</li><li>10 anos — o risco de cancro do pulmão reduz-se para metade</li></ul><p>Para fumadores com condições cardiovasculares, diabetes, DPOC ou que estejam a planear uma gravidez, deixar de fumar é uma das intervenções clínicas com maior impacto nos resultados de saúde a longo prazo — frequentemente maior do que qualquer medicação.</p><h2>Cessação tabágica em Espanha — contexto</h2><p>Espanha tem uma das taxas de tabagismo mais altas da Europa Ocidental. Aproximadamente 22-23% da população adulta espanhola fuma diariamente, com prevalência maior entre homens e em determinados grupos etários.</p><p>O acesso a programas estruturados de cessação tabágica no sistema público é variável conforme a comunidade autónoma — em algumas há programas bem estabelecidos, noutras o acesso é mais limitado. Para residentes internacionais que preferem apoio em inglês ou português, as opções são praticamente inexistentes fora das grandes cidades.</p><p>O nosso serviço proporciona avaliação médica estruturada de cessação tabágica — no próprio dia, a partir de qualquer ponto de Espanha — com acompanhamento disponível durante todo o processo.</p>",
+      "ctaLabel": null,
+      "sortOrder": 110,
+      "durationMinutes": 15,
+      "basePriceCents": 3900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.264Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0jt5u0000asju50bs9n2e",
+          "kind": "IMAGE",
+          "key": "media/c05de5c7-21b7-4fb9-a7d9-e8c947d87cb8-es-dejar-de-fumar-online.png",
+          "path": "/api/media/media/c05de5c7-21b7-4fb9-a7d9-e8c947d87cb8-es-dejar-de-fumar-online.png",
+          "altText": "Dejar de Fumar"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qd3s004fngjul7t32gfw",
+          "question": "Um médico de família pode ajudar-me a deixar de fumar?",
+          "answer": "Sim. A cessação tabágica é uma parte integrante dos cuidados de saúde primários. O seu médico de família avalia o seu nível de dependência, elabora um plano personalizado e — quando clinicamente indicado após avaliação completa — pode ponderar opções de apoio farmacológico. O apoio médico estruturado multiplica significativamente as probabilidades de êxito em relação à tentativa sem apoio.",
+          "sortOrder": 0,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qd3s004gngju7lsyvqhh",
+          "question": "Que opções de apoio farmacológico existem para deixar de fumar?",
+          "answer": "Existem diversas opções de tratamento farmacológico de apoio à cessação tabágica — incluindo terapia de substituição com nicotina, bupropiona, citisina e vareniclina — com diferentes perfis de eficácia, tolerabilidade e contraindicações. A opção mais adequada para si depende do seu perfil clínico completo. Nenhuma pode ser confirmada nem recomendada antes da avaliação médica.",
+          "sortOrder": 1,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qd3s004hngju3qocwgkc",
+          "question": "Estes tratamentos são financiados pela Segurança Social?",
+          "answer": "Desde junho de 2024, determinados medicamentos para a desabituação tabágica estão financiados pelo Ministério da Saúde para pacientes que cumpram critérios clínicos específicos — incluindo fumadores com elevada dependência. O financiamento através do sistema público requer prescrição por um médico do SNS. O seu médico da Global Health informa-o durante a consulta se poderá cumprir os critérios e quais os passos a seguir.",
+          "sortOrder": 2,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qd3s004ingjuf5foaafu",
+          "question": "Quantas consultas vou precisar?",
+          "answer": "Um plano estruturado de cessação tabágica geralmente inclui uma consulta inicial de avaliação e plano, e consultas de acompanhamento durante o processo — habitualmente às 2 semanas, ao mês e aos 3 meses. O teu médico define o calendário de acompanhamento adequado para o teu caso.",
+          "sortOrder": 3,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qd3s004jngju6k14l6k4",
+          "question": "O que acontece se eu já tentei parar de fumar antes e tive uma recaída?",
+          "answer": "A recaída é uma parte habitual do processo de desabituação — não indica fracasso, mas sim que o plano precisa de ser ajustado. Tentativas anteriores sem sucesso são informação clínica relevante que o seu médico utiliza para conceber uma abordagem mais eficaz. Quanto mais tentativas anteriores, mais importante é o apoio médico estruturado.",
+          "sortOrder": 4,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qd3s004kngjucp1qdwy7",
+          "question": "Posso usar este serviço se tiver condições de saúde como diabetes ou doença cardiovascular?",
+          "answer": "Sim — e para estes pacientes parar de fumar é especialmente prioritário. O seu médico avalia o seu perfil clínico completo ao conceber o plano, incluindo possíveis interações com a sua medicação atual e as considerações específicas da sua condição de saúde.",
+          "sortOrder": 5,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qd3s004lngjuqz0jlmbm",
+          "question": "Este serviço é adequado durante a gravidez ou a amamentação?",
+          "answer": "Se estiver grávida ou a amamentar e quiser deixar de fumar, consulte o seu médico no início da consulta. As opções de apoio disponíveis durante a gravidez são diferentes — o seu médico aconselha-o sobre a abordagem mais segura para a sua situação.",
+          "sortOrder": 6,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qd3s004mngjuazoie48k",
+          "question": "Preciso de seguro médico espanhol?",
+          "answer": "Não. É um serviço privado de pagamento direto. A documentação clínica emitida através deste serviço é faturada pelo preço privado total, independentemente do estado do seguro.",
+          "sortOrder": 7,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qd3s004nngju9fu0ezjk",
+          "question": "Posso usar este serviço de qualquer ponto de Espanha?",
+          "answer": "Sim — incluindo Ilhas Baleares, Ilhas Canárias, Ceuta e Melilha. Só precisas de uma ligação estável à internet e de um dispositivo com câmara.",
+          "sortOrder": 8,
+          "resolvedLocale": "PT"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "PT",
+      "links": [
+        {
+          "id": "cmre7t5kz003sg8ju2wbop6ng",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre evaluación cardiovascular para fumadores?",
+          "body": "Nuestra Cardiología Especialista está pensada específicamente para evaluación cardiovascular para fumadores.",
+          "ctaLabel": "Cardiología Especialista",
+          "targetSlug": "cardiologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7t40r003og8ju6nk2dtlb",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Apoyo de salud mental durante el proceso?",
+          "body": "Si tu situación está relacionada con apoyo de salud mental durante el proceso, nuestra Salud Mental te ofrece la evaluación adecuada.",
+          "ctaLabel": "Salud Mental",
+          "targetSlug": "salud-mental-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7t4sv003qg8juqi2i65cw",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con evaluación del impacto del tabaco en la salud?",
+          "body": "Para evaluación del impacto del tabaco en la salud, consulta nuestra página de Consulta Médica General — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

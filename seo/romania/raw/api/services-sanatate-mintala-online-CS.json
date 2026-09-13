@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:06.577Z",
+  "endpoint": "/api/services/sanatate-mintala-online?countryCode=ro&locale=CS",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee4ba0008fsju6xyj8lnh",
+      "kind": "GENERAL",
+      "slug": "sanatate-mintala-online",
+      "name": "Posouzení duševního zdraví — důvěrná online konzultace",
+      "summary": "Potýkáte se s úzkostí, depresí, vyhořením, nespavostí nebo jinými emočními obtížemi? Naši licencovaní lékaři CMR nabízejí důvěrné posouzení, doporučení a koordinaci dalších kroků prostřednictvím videokonzultace.",
+      "seoTitle": "Online konzultace duševního zdraví | Rumunsko | důvěrné",
+      "seoDescription": "Důvěrné posouzení úzkosti, deprese, vyhoření, nespavosti nebo jiných emočních obtíží. Naši lékaři s licencí CMR poskytují důvěrné posouzení, doporučení a koordinaci dalších kroků prostřednictvím videokonzultace.",
+      "seoKeywords": [
+        "mental health online Romania",
+        "anxiety doctor online Romania English",
+        "depression consultation English Bucharest",
+        "burnout doctor online Romania",
+        "mental health GP online Romania expat"
+      ],
+      "heroTitle": "Posouzení duševního zdraví — důvěrná online konzultace",
+      "heroDescription": "Důvěrné vyhodnocení úzkosti, deprese, vyhoření, nespavosti nebo jiných emočních obtíží. Naši lékaři s licencí CMR poskytují důvěrné vyhodnocení, doporučení a koordinaci dalších kroků prostřednictvím videokonzultace.",
+      "detailBody": "<p>Konzultace je vhodná pro symptomy, jako jsou úzkost, silný stres, depresivní nálada, panické ataky, vyčerpání, poruchy spánku nebo obtíže s fungováním, které ovlivňují každodenní život.</p><p>Lékař probere anamnézu příznaků, spouštěče, předchozí léčbu, dopad na práci a vztahy a případné varovné příznaky, které vyžadují rychlý zásah. V závislosti na případu obdržíte doporučení pro úvodní management, lékařské zprávy, doporučení k psychiatrovi nebo psychologovi a tam, kde je to klinicky vhodné, plán pro průběžné sledování.</p><p>Služba nabízí jasný a důvěrný prostor k tomu, abyste porozuměli tomu, co se s vámi děje, a jakou míru další pomoci potřebujete.</p>",
+      "ctaLabel": "Naplánovat konzultaci",
+      "sortOrder": 100,
+      "durationMinutes": 20,
+      "basePriceCents": 15000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:42.108Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js05y001iakju9hywq5cw",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee4ba0008fsju6xyj8lnh",
+          "path": "/api/media/media/e240ef2a-0048-4a27-8b29-eaeee3d22e58-ff3e0b2e-b46a-4b32-9218-31a8cc87b0c1-3.webp",
+          "altText": "Evaluare de sănătate mintală — consultație online confidențială"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "CS",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

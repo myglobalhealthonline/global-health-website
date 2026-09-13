@@ -1,0 +1,25 @@
+{
+  "recordedAt": "2026-09-13T00:20:45.521Z",
+  "ownerInstruction": "Yes do that",
+  "scope": "Rewrite and publish retained Romania content, including em-dash cleanup",
+  "reportedVerbalApprovals": [
+    "Dr. Thiago",
+    "Dr. Robert"
+  ],
+  "provenance": "Super admin reported verbal clinician approval and authorized drafting/publication in this task. This is not a claim that either clinician directly reviewed each final sentence.",
+  "manifestSha256": "6cecf3e00ece3f636ef677b2a4eff1dc9170601198291d84c5b1e870eea7f5cd",
+  "groups": [
+    {
+      "key": "clinical",
+      "sha256": "a0dbedb9fae17abd12fb539d309cc9169f0c2043092c818db011bbf322afb53c"
+    },
+    {
+      "key": "pages-articles",
+      "sha256": "927273a0236a6de67222fa386d7922a57f516c31edf34c98347d95bafc391ee9"
+    },
+    {
+      "key": "legal",
+      "sha256": "3a78a7564706bb662e54a341fdb6940b216f89e067ca19c2cded892f9ed3b6fd"
+    }
+  ]
+}

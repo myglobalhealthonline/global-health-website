@@ -49,7 +49,7 @@ async function resolve(country: string, lang: string) {
   const about = getCountryAbout(code);
   if (!config || !contact || !about) return null;
   const locale = lang as LocaleCode;
-  const bundle = loadLocaleBundle(locale);
+  const bundle = loadLocaleBundle(locale, country);
   const aboutT = bundle.about.country as unknown as AboutCopyTemplates;
   // Market name in the page's own language ("Brasil", "Česko"), matching the
   // country /about page.

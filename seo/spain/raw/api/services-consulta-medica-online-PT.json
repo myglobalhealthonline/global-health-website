@@ -1,0 +1,183 @@
+{
+  "endpoint": "/api/services/consulta-medica-online?countryCode=es&locale=PT",
+  "checkedAt": "2026-09-13T02:30:03.826Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7pwwv0000ngjuwvmiacw9",
+      "kind": "GENERAL",
+      "slug": "consulta-medica-online",
+      "name": "Consulta Médica Geral",
+      "summary": null,
+      "seoTitle": "Médico Online Espanha | Sem Lista de Espera | Consulta no Mesmo Dia",
+      "seoDescription": "Precisa de consultar um médico hoje? Médicos inscritos em Espanha oferecem consultas por videochamada segura. Sem registo prévio, sem sala de espera. Documentação clínica emitida no próprio dia em toda a Espanha.",
+      "seoKeywords": [
+        "médico online España",
+        "consulta médica online España",
+        "médico online sin espera",
+        "médico online sin médico de cabecera",
+        "videoconsulta médica privada España"
+      ],
+      "heroTitle": "Médico Online — Consulta Médica Privada no Mesmo Dia",
+      "heroDescription": "Precisa de ver um médico hoje, mas não tem médico de família atribuído, não pode esperar semanas por uma consulta ou simplesmente precisa de uma consulta médica rápida e de qualidade sem se deslocar? Os nossos médicos, inscritos na ordem profissional em Espanha de acordo com os requisitos da Organización Médica Colegial (OMC), oferecem consultas médicas privadas completas por videochamada segura. Sem registo prévio, sem sala de espera, com documentação clínica completa emitida no mesmo dia a partir de qualquer ponto do país.",
+      "detailBody": "<h2>A realidade do acesso à saúde em Espanha</h2><p>O sistema de saúde espanhol é um dos melhores da Europa — mas o acesso apresenta fricções reais para uma parte importante da população.</p><p>Se és trabalhador independente sem médico de família atualmente atribuído, se mudaste recentemente de comunidade autónoma, se estás há semanas à espera de consulta no CAP, se precisas de atendimento hoje e o sistema público não to pode dar, ou se preferes uma consulta privada sem as esperas habituais — este serviço existe para ti.</p><p>Os nossos médicos inscritos na ordem realizam consultas médicas privadas completas por videochamada, com a mesma validade clínica e legal que uma consulta presencial. A documentação clínica que emitem — incluindo receita privada eletrónica quando esteja clinicamente indicado — está ligada à Nodofarma e é válida nas mais de 22.000 farmácias do território nacional.</p><p>Já tens médico de família no sistema público? Este serviço funciona como complemento — para quando precisas de atendimento hoje e o teu CAP não tem consulta disponível, ou para uma segunda opinião antes de tomares uma decisão médica importante.</p><h2>Em que podemos ajudar-te</h2><p>Os nossos médicos avaliam e gerem uma ampla gama de problemas de saúde agudos e não urgentes:</p><p><strong>Respiratório e ORL</strong></p><ul><li>Constipação, gripe, sinusite e bronquite</li><li>Sintomas de COVID-19 e problemas pós-COVID</li><li>Dor de garganta, amigdalite e infeções de ouvido</li><li>Infeções pulmonares e tosse persistente</li><li>Crises ligeiras de asma</li></ul><p><strong>Infeções</strong></p><ul><li>Infeções urinárias — avaliação e tratamento quando esteja clinicamente indicado</li><li>Infeções cutâneas</li><li>Infeções respiratórias que requerem avaliação</li><li>Infeções gastrointestinais</li></ul><p><strong>Geral e sistémico</strong></p><ul><li>Febre em adultos</li><li>Dores de cabeça e enxaqueca</li><li>Náuseas, vómitos, diarreia e dor abdominal</li><li>Fadiga e mal-estar geral</li></ul><p><strong>Pele e olhos</strong></p><ul><li>Erupções, eczema e reações alérgicas ligeiras</li><li>Conjuntivite e irritação ocular ligeira</li></ul><p><strong>Musculoesquelético</strong></p><ul><li>Dor de costas, cervical e muscular</li><li>Lesões musculoesqueléticas menores</li></ul><p><strong>Outros</strong></p><ul><li>Dúvidas sobre medicação atual ou tratamento em curso</li><li>Documentação médica — justificativos, encaminhamentos</li><li>Conselho médico de viagem</li><li>Segunda opinião sobre diagnósticos ou planos de tratamento</li></ul><h2>O que inclui a tua consulta</h2><p><strong>Avaliação clínica completa</strong></p><p>O médico recolhe uma história clínica completa dos teus sintomas, antecedentes médicos relevantes e medicação atual — e realiza uma avaliação clínica estruturada por videochamada, com o mesmo padrão de uma consulta presencial.</p><p><strong>Explicação clara</strong></p><p>Sais da consulta a saber exatamente o que está a acontecer, o que deves fazer e quando procurar atendimento adicional. Sem pressa, sem barreiras linguísticas.</p><p><strong>Documentação clínica — a critério do médico</strong></p><p>O médico emite a documentação clínica apropriada para a tua situação após avaliação completa. Isto pode incluir receita privada eletrónica conforme o Real Decreto 1718/2010, homologada pela OMC e ligada através da Nodofarma às mais de 22.000 farmácias do território nacional — quando esteja clinicamente indicado. Apresenta o teu DNI em qualquer farmácia à tua escolha.</p><p>A receita privada tem uma validade geral de 10 dias naturais para a primeira dispensa. Em tratamentos crónicos, o médico pode programar dispensas sucessivas consoante a duração do tratamento.</p><p><strong>Antibióticos — avaliação e tratamento quando indicado</strong></p><p>Em Espanha, todos os antibióticos requerem prescrição médica. O teu médico avalia os teus sintomas e prescreve o tratamento adequado quando a evidência clínica o justifica — incluindo infeções urinárias, infeções respiratórias e infeções cutâneas — seguindo os princípios de uso responsável de antibióticos.</p><p><strong>Encaminhamentos e documentação médica</strong></p><p>Quando é necessário encaminhamento para especialista, análises, exames de imagem ou outra documentação clínica, o médico emite-a no mesmo dia.</p><p><strong>Justificativo médico</strong></p><p>Se precisares de justificar uma ausência laboral, o médico pode emitir o certificado médico correspondente quando esteja clinicamente indicado, após avaliação completa.</p><h2>Receita privada eletrónica — como funciona em Espanha</h2><p>A receita médica privada eletrónica em Espanha está regulada pelo Real Decreto 1718/2010 e é válida em todo o território nacional. Os nossos médicos emitem receitas privadas eletrónicas homologadas pela OMC, ligadas à Nodofarma.</p><p>Com uma receita privada pagas 100% do preço do medicamento — os preços dos medicamentos em Espanha estão regulados e são geralmente muito acessíveis. A medicação está disponível em qualquer farmácia espanhola apresentando o teu DNI.</p><p>A receita privada eletrónica não é a mesma que a receita da Segurança Social. Com receita do SNS poderás ter comparticipação reduzida consoante a tua situação. Se tens médico de família no sistema público e precisas de medicação comparticipada, consulta primeiro o teu CAP.</p><h2>Quem utiliza este serviço</h2><ul><li>Trabalhadores independentes e trabalhadores sem médico de família atualmente atribuído</li><li>Pessoas que mudaram de comunidade autónoma e ainda não têm CAP atribuído</li><li>Residentes que não podem esperar semanas por uma consulta no sistema público</li><li>Expats e residentes internacionais que preferem consultar em inglês ou português</li><li>Turistas e nómadas digitais que precisam de atendimento médico pontual sem seguro espanhol</li><li>Pessoas com seguro médico privado que querem uma segunda opinião rápida</li><li>Qualquer pessoa que precise de um médico hoje sem se deslocar</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 10,
+      "durationMinutes": 15,
+      "basePriceCents": 3900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.257Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0su150005y8junba6y1ib",
+          "kind": "IMAGE",
+          "key": "media/4fdae944-3701-4d28-8553-fe11a3b12d7f-es-consulta-medica-online.png",
+          "path": "/api/media/media/4fdae944-3701-4d28-8553-fe11a3b12d7f-es-consulta-medica-online.png",
+          "altText": "Consulta Médica General"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7px5i0001ngju89f94ekh",
+          "question": "Preciso de cartão de saúde ou SIP para usar este serviço?",
+          "answer": "Não. Este é um serviço privado de pagamento direto. Não é necessário cartão de saúde, SIP, nem seguro médico espanhol de nenhum tipo.",
+          "sortOrder": 0,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7px5i0002ngjuege8nh97",
+          "question": "O médico pode tratar infecções que requerem antibióticos?",
+          "answer": "Sim — onde estiver clinicamente indicado após avaliação completa dos seus sintomas. Em Espanha é obrigatório dispor de prescrição médica para obter antibióticos na farmácia. O seu médico avalia a sua apresentação e prescreve o tratamento adequado onde a evidência clínica o justifica.",
+          "sortOrder": 1,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7px5i0003ngju6svm8wyj",
+          "question": "A documentação clínica é válida em toda a Espanha?",
+          "answer": "Sim. A documentação clínica emitida pelos nossos médicos — incluindo receitas privadas eletrónicas onde esteja indicado — está homologada pela OMC e conectada à Nodofarma, válida em qualquer uma das mais de 22.000 farmácias do território nacional.",
+          "sortOrder": 2,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7px5i0004ngjugfol80qo",
+          "question": "Posso obter a baixa médica através deste serviço?",
+          "answer": "Os médicos da Global Health podem emitir um atestado médico privado que comprove a incapacidade temporária. Para aceder à baixa por incapacidade temporária (IT) do sistema público com prestação económica da Segurança Social, precisa de médico de família no SNS.",
+          "sortOrder": 3,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7px5i0005ngjuvcwamxc8",
+          "question": "Posso renovar uma receita de outro país europeu?",
+          "answer": "Nosso médico avalia o seu tratamento atual e, se o considerar clinicamente apropriado, emite a documentação clínica espanhola equivalente. Leve a sua documentação atual para a consulta.",
+          "sortOrder": 4,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7px5i0006ngju1jevcbps",
+          "question": "Quanto tempo demora a chegar a documentação clínica?",
+          "answer": "Quando está clinicamente indicada, a documentação é emitida no mesmo dia da consulta, geralmente em minutos.",
+          "sortOrder": 5,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7px5i0007ngjuuxisglns",
+          "question": "Posso usar este serviço a partir de qualquer ponto de Espanha?",
+          "answer": "Sim — incluindo as Ilhas Baleares, Ilhas Canárias, Ceuta e Melilha. Só precisas de uma ligação estável à internet e de um dispositivo com câmara.",
+          "sortOrder": 6,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7px5i0008ngjuadsntmup",
+          "question": "Em que idiomas está disponível?",
+          "answer": "Espanhol, inglês e português — conforme a disponibilidade do médico.",
+          "sortOrder": 7,
+          "resolvedLocale": "PT"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "PT",
+      "links": [
+        {
+          "id": "cmre7rgl80000g8jufspbvv3k",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Justificante médico o certificado de baja?",
+          "body": "Si tu situación está relacionada con justificante médico o certificado de baja, nuestra Justificante Médico te ofrece la evaluación adecuada.",
+          "ctaLabel": "Justificante Médico",
+          "targetSlug": "justificante-medico-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7rhdh0002g8jutbik3ps8",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con renovación de tu tratamiento habitual?",
+          "body": "Para renovación de tu tratamiento habitual, consulta nuestra página de Renovación de Tratamiento — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Renovación de Tratamiento",
+          "targetSlug": "renovacion-tratamiento-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7ri5n0004g8jub91rpgd5",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre control de peso con apoyo médico?",
+          "body": "Nuestra Control de Peso está pensada específicamente para control de peso con apoyo médico.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7rixq0006g8ju1e53bfuz",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Salud masculina y función sexual?",
+          "body": "Si tu situación está relacionada con salud masculina y función sexual, nuestra Salud Masculina te ofrece la evaluación adecuada.",
+          "ctaLabel": "Salud Masculina",
+          "targetSlug": "salud-masculina-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdpz5n3001z01rukg2lecs5",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

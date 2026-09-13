@@ -1,0 +1,121 @@
+{
+  "checkedAt": "2026-09-12T20:20:10.311Z",
+  "endpoint": "/api/services/medic-online-romania?countryCode=ro&locale=EN",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee1ko0000fsjuh80zxo7q",
+      "kind": "GENERAL",
+      "slug": "medic-online-romania",
+      "name": "See an English-Speaking Doctor Today — Online, From Anywhere in Romania",
+      "summary": "Registered doctor with the CMR available online, with no waiting list and without being registered with the family doctor. Video consultation in Romanian or English. Book today.",
+      "seoTitle": "English Doctor Online | Romania | Same-Day Appointment",
+      "seoDescription": "See an English-speaking doctor registered to practise in Romania today. No registration required, no waiting room. Video consultation from anywhere in Romania. Book now.",
+      "seoKeywords": [
+        "medic online fără înregistrare",
+        "consultație medicală online România",
+        "medic online în afara Bucureștiului",
+        "doctor online România",
+        "consultație online fără medic de familie"
+      ],
+      "heroTitle": "See an English-Speaking Doctor Today — Online, From Anywhere in Romania",
+      "heroDescription": null,
+      "detailBody": "<p>Need to see a doctor today — in English, without a Romanian GP registration? Our doctors, registered with the Romanian College of Physicians (CMR), offer full clinical assessments by secure video call. No waiting rooms, no language barrier, no need to already be registered with a Romanian family doctor.</p><p>Whether you are an expat, international student, business traveller, digital nomad, or anyone in Romania who needs to speak to a doctor today — we are here, same day, from anywhere in the country.</p><h2>Why Expats Choose This Service</h2><p>Finding English-speaking primary care in Romania is genuinely difficult outside a handful of private clinics concentrated in Bucharest, Cluj-Napoca, and Timișoara. Most require prior registration, operate only during weekday clinic hours, and charge premium rates for walk-in appointments. For anyone outside the major cities, or anyone who needs to see a doctor outside clinic hours, access is even more limited.</p><p>Global Health offers something different. No membership, no registration requirement, no geographic restriction. Our doctors are registered with the Romanian College of Physicians (CMR) and offer clinical consultations in Romanian — and in other languages including english— by secure video call, same day, seven days a week, from anywhere in Romania.</p><p>Already registered with a Romanian family doctor (medic de familie)? This service works alongside your existing care — for acute issues, second opinions, or situations where you need to speak to a doctor today rather than waiting for your next available appointment.</p><h2>What We Can Help With</h2><p>Our doctors assess and manage a wide range of acute and non-urgent medical concerns, including:</p><ul><li>Respiratory &amp; ENT</li><li>Cold, flu, sinusitis, and bronchitis</li><li>COVID-19 symptoms and post-COVID concerns</li><li>Sore throat, tonsillitis, and ear infections</li><li>Chest infections and persistent cough</li><li>Mild asthma flares</li><li>Infections</li><li>Urinary tract infections — assessment and antibiotic prescription where clinically indicated</li><li>Skin infections</li><li>Respiratory infections requiring antibiotic assessment</li><li>Gastrointestinal infections</li><li>General &amp; Systemic</li><li>Fever in adults</li><li>Headaches and migraine</li><li>Nausea, vomiting, diarrhoea, and abdominal pain</li><li>Fatigue and general malaise</li><li>Skin &amp; Eyes</li><li>Rashes, eczema flares, and mild allergic reactions</li><li>Conjunctivitis and mild eye irritation</li><li>Musculoskeletal</li><li>Back pain, neck pain, and muscle strains</li><li>Minor musculoskeletal injuries</li><li>Other</li><li>Concerns about current medication or ongoing treatment</li><li>Medical letters and documentation — sick notes, referral letters</li><li>Travel health advice</li><li>Second opinions on diagnoses or treatment plans</li></ul><h2>What Your Consultation Includes</h2><p>Full clinical assessmentYour doctor takes a complete history of your symptoms, relevant medical background, and current medications — and conducts a structured clinical assessment by video, to the same standard as an in-person consultation.</p><p>Clear explanation in plain EnglishYou leave your consultation knowing exactly what is happening, what to do next, and when to seek further care. Our doctors take time to answer your questions — no rushed appointment, no language barrier.</p><p>Electronic prescription — where clinically appropriateWhen clinically indicated, your doctor issues an electronic prescription validated in the Romanian Electronic Prescription System (SIPE). You present this at any pharmacy of your choice in Romania. For foreign citizens without a Romanian CNP, your passport number is used — no Romanian health insurance required.</p><p>Antibiotic prescription — where clinically indicatedSince 2024, all antibiotics in Romania require a doctor's prescription. Your doctor assesses your symptoms and prescribes the appropriate antibiotic where clinically justified — including for urinary tract infections, respiratory infections, and skin infections.</p><p>Referral letters and medical documentationWhen specialist referral, blood tests, imaging, or other clinical documentation is needed, your doctor issues this on the same day.</p><p>Sick notesIf you are employed in Romania and require a sick leave certificate (concediu medical), your doctor can issue the appropriate documentation where clinically indicated. The decision to issue sick leave is always a clinical decision made by the doctor after full assessment.</p><h2>A Note on Healthcare in Romania for Expats</h2><p>Romania's public health system is structurally sound but access as a foreigner involves several practical challenges:</p><p>Registration: Access to the Romanian public health system requires registration with a family doctor (medic de familie) and enrolment with a health insurance fund. This takes time and requires documentation.</p><p>Language: While many private clinic doctors in Bucharest speak English, English-speaking primary care is rare outside the capital — and conducting a meaningful medical consultation in a language you do not speak well is genuinely difficult.</p><p>Geography: English-language private clinics are concentrated in Bucharest, Cluj-Napoca, and Timișoara. For expats and international residents elsewhere in Romania, access is significantly more difficult.</p><p>Global Health removes all three barriers. CMR-registered doctors, consulting in English, available from anywhere in Romania, same day, without prior registration.</p><h2>Who This Service Is For</h2><ul><li>Expats and foreigners living in Romania without a registered Romanian family doctor</li><li>International students at Romanian universities</li><li>Digital nomads and remote workers based in Romania</li><li>Business travellers in Romania</li><li>Tourists and short-stay visitors needing same-day medical advice</li><li>Long-term residents who need to see a doctor today rather than waiting for a clinic appointment</li><li>Anyone who prefers to consult in English rather than Romanian</li></ul><h2>Frequently Asked Questions</h2><p>Do I need Romanian health insurance to use this service?No. This is a private-pay service. You pay directly per consultation — no Romanian public health insurance required, no membership. Some international health insurance policies reimburse private telemedicine consultations — check with your insurer.</p><p>Can the doctor prescribe antibiotics?Yes — where clinically indicated following full assessment of your symptoms. Since 2024, all antibiotics in Romania require a doctor's prescription. Your doctor assesses your presentation and prescribes the appropriate antibiotic where the clinical evidence supports it, in accordance with antibiotic stewardship guidelines.</p><p>Can the doctor issue an electronic prescription?Yes. Our doctors are registered with the CMR and in the Romanian Electronic Prescription System (SIPE). Electronic prescriptions are issued directly — you present them at any pharmacy in Romania. For foreign citizens, your passport number is used — no Romanian CNP required.</p><p>Do I need to be in Bucharest to use this service?No. This service is available from anywhere in Romania — all you need is a stable internet connection and a device with a camera.</p><p>How quickly can I get an appointment?Same-day appointments are available. Book online and your appointment is confirmed immediately.</p><p>What languages are available?English, Romanian— subject to doctor availability.</p><p>Can I get a sick note through this service?Yes. If you are employed in Romania and sick leave is clinically indicated, your doctor can issue the appropriate documentation. The decision to issue sick leave is always made by the doctor after full clinical assessment.</p><p>Is this service suitable for children?For acute paediatric concerns, this service can provide initial assessment and guidance. For complex or ongoing paediatric presentations, your doctor will advise on appropriate in-person referral.</p><p>What if my condition needs in-person care?If your doctor determines that your condition requires in-person assessment or emergency care, you will be advised immediately and directed to the appropriate service. Your safety is always the clinical priority.</p>",
+      "ctaLabel": null,
+      "sortOrder": 10,
+      "durationMinutes": 15,
+      "basePriceCents": 11500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:47.167Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jsape001pakju9d8azet9",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee1ko0000fsjuh80zxo7q",
+          "path": "/api/media/media/e7e4ceb8-872b-4aa9-b481-f1819dfaf76c-817d74bf-c5ba-4f1b-8de2-6980a8239c3c-1.webp",
+          "altText": "Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "detailBody"
+      ],
+      "resolvedLocale": "EN",
+      "links": [
+        {
+          "id": "cmr8elnrf000604jurqc7kbb2",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "Complex Pain Mention?",
+          "body": "For complex pain mention, our Specialist Pain Assessment — Anaesthesiologist Online provides dedicated care — see specialist pain assessment.",
+          "ctaLabel": "Specialist Pain Assessment — Anaesthesiologist Online",
+          "targetSlug": "evaluare-durere",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8eljv4000004ju8rgmntcr",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "Other Section?",
+          "body": "For other section, our Concediu medical online — fără deplasare la cabinet provides dedicated care — see sick note in Romania.",
+          "ctaLabel": "Concediu medical online — fără deplasare la cabinet",
+          "targetSlug": "sick-note-romania",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8ell5w000204jug59wxnpk",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "Other Section?",
+          "body": "For other section, our Treatment Renewal — Online Clinical Review and Prescription in Romania provides dedicated care — see treatment renewal.",
+          "ctaLabel": "Treatment Renewal — Online Clinical Review and Prescription in Romania",
+          "targetSlug": "reinnoire-tratament",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8elmgl000404juxyfb6e1e",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "Other Section?",
+          "body": "For other section, our Mental Health Assessment — Online, in English provides dedicated care — see mental health assessment.",
+          "ctaLabel": "Mental Health Assessment — Online, in English",
+          "targetSlug": "sanatate-mintala-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

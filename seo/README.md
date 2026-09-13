@@ -65,7 +65,7 @@ requires a push. Uncommitted local recovery changes are not yet a remote backup.
 | Czechia | `/czechia/cs` | [Czechia](czechia/README.md) | Global ledger §§10–17, 27.16–27.21 and 36 |
 | Portugal | `/portugal/pt` | [Portugal](portugal/README.md) | Global ledger §§19, 27.22, 35 and 37 |
 | Spain | `/spain/es` | [Spain](spain/README.md) | Global ledger §19 |
-| Romania | `/romania/ro` | [Romania](romania/README.md) | Global ledger §§20–21 |
+| Romania | `/romania/ro` | [Romania](romania/README.md) | Global ledger §§20–21, 54–55; all-locale research and local drafts |
 | Brazil | `/brazil/pt` | [Brazil](brazil/README.md) | Global ledger §20 |
 
 Searcher country, page market and page language are different dimensions. Store

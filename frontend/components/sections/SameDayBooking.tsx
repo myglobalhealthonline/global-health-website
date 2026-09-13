@@ -44,11 +44,14 @@ type ServiceInfo = {
 export type SameDayBookingI18n = {
   eyebrow: string;
   title: string;
+  /** Title shown instead of `title` when only a later day has open times. */
+  titleNextAvailable: string;
   languageLabel: string;
   languagePlaceholder: string;
   pickTime: string;
   today: string;
   tomorrow: string;
+  nextAvailable: string;
   pickLanguageFirst: string;
   loading: string;
   noSlots: string;
@@ -61,11 +64,13 @@ export type SameDayBookingI18n = {
 const DEFAULT_I18N: SameDayBookingI18n = {
   eyebrow: "Need help?",
   title: "Same-Day Consultation",
+  titleNextAvailable: "Next Available Consultation",
   languageLabel: "Consultation language",
   languagePlaceholder: "Select your language…",
   pickTime: "Pick a time",
   today: "Today",
   tomorrow: "Tomorrow",
+  nextAvailable: "Next available",
   pickLanguageFirst: "Choose a language to see available times.",
   loading: "Finding open times…",
   noSlots: "No times today or tomorrow for this language. Try another language.",
@@ -217,7 +222,7 @@ export function SameDayBooking({
     setLoading(true);
     try {
       const res = await fetch(
-        `/api/public/gp-availability?country=${encodeURIComponent(countryCode)}&language=${encodeURIComponent(code)}&days=2&clinicDays=1`,
+        `/api/public/gp-availability?country=${encodeURIComponent(countryCode)}&language=${encodeURIComponent(code)}&days=14&clinicDays=1`,
         { cache: "no-store", signal: controller.signal },
       );
       const json = (await res.json()) as {
@@ -276,27 +281,38 @@ export function SameDayBooking({
 
   useEffect(() => () => availabilityRequestRef.current.controller?.abort(), []);
 
-  // Same-day flow only ever offers TODAY + TOMORROW (clinic-local). Bucket the
-  // returned slots into those two days and drop anything later.
-  const { today, tomorrow } = useMemo(() => {
+  // Same-day flow offers TODAY + TOMORROW (clinic-local). When both are empty
+  // (weekend, holiday) fall back to the first later day that has open times so
+  // the panel never dead-ends on "no times" while the doctor works on Monday.
+  const { today, tomorrow, next } = useMemo(() => {
     const now = new Date();
     const [todayDayKey, tomorrowDayKey] = clinicTodayTomorrowKeys(now, clinicTz);
     const todayKey = formatAppDate(now.toISOString(), clinicTz);
     const tomorrowKey = formatAppDate(`${tomorrowDayKey}T12:00:00Z`, clinicTz);
     const todaySlots: Slot[] = [];
     const tomorrowSlots: Slot[] = [];
+    const nextSlots: Slot[] = [];
+    let nextDayKey: string | null = null;
     for (const s of slots) {
       const key = dayKeyInTz(new Date(s.startAt), clinicTz);
       if (key === todayDayKey) todaySlots.push(s);
       else if (key === tomorrowDayKey) tomorrowSlots.push(s);
+      else if (key > tomorrowDayKey && (nextDayKey === null || key === nextDayKey)) {
+        nextDayKey = key;
+        nextSlots.push(s);
+      }
     }
     return {
       today: { label: todayKey, slots: todaySlots },
       tomorrow: { label: tomorrowKey, slots: tomorrowSlots },
+      next: { label: nextSlots[0] ? formatAppDate(nextSlots[0].startAt, clinicTz) : "", slots: nextSlots },
     };
   }, [slots, clinicTz]);
 
   const hasTwoDaySlots = today.slots.length > 0 || tomorrow.slots.length > 0;
+  const hasSlots = hasTwoDaySlots || next.slots.length > 0;
+  // "Same-Day" over Monday slots contradicts itself — retitle while falling back.
+  const title = !loading && hasSlots && !hasTwoDaySlots ? t.titleNextAvailable : t.title;
 
   const renderGroup = (heading: string, group: { label: string; slots: Slot[] }) => (
     <div key={heading}>
@@ -363,7 +379,7 @@ export function SameDayBooking({
         {t.eyebrow}
       </p>
       <h2 className="mt-2 text-[clamp(1.5rem,1rem+1.4vw,2rem)] font-extrabold leading-[1.05] tracking-[-0.02em] text-white">
-        {t.title}
+        {title}
       </h2>
 
       {/* Step 1 — language (custom dropdown — native select ignores CSS for open state) */}
@@ -446,7 +462,7 @@ export function SameDayBooking({
               Retry
             </button>
           </div>
-        ) : !hasTwoDaySlots ? (
+        ) : !hasSlots ? (
           <p className="py-5 text-center text-[13px] text-white/55">
             {getSameDayEmptyMessage(bookability, t)}
           </p>
@@ -459,10 +475,11 @@ export function SameDayBooking({
               <p className="text-[11px] text-white/45">{tzLabel}</p>
             </div>
 
-            {/* Today + Tomorrow only — no date picker. */}
+            {/* Today + Tomorrow, else the next open day — no date picker. */}
             <div className={`mt-3 flex max-h-[240px] flex-col gap-4 overflow-y-auto pr-1.5 ${LIME_SCROLLBAR}`}>
               {today.slots.length > 0 ? renderGroup(t.today, today) : null}
               {tomorrow.slots.length > 0 ? renderGroup(t.tomorrow, tomorrow) : null}
+              {!hasTwoDaySlots ? renderGroup(t.nextAvailable, next) : null}
             </div>
 
             {/* Step 3 — continue */}
@@ -478,7 +495,7 @@ export function SameDayBooking({
             </button>
             {service?.durationMinutes ? (
               <p className="mt-2 text-center text-[11px] text-white/45">
-                {t.title} · {service.durationMinutes} {t.minSuffix}
+                {title} · {service.durationMinutes} {t.minSuffix}
               </p>
             ) : null}
           </>

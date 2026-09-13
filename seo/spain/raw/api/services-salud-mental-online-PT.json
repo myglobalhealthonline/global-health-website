@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/salud-mental-online?countryCode=es&locale=PT",
+  "checkedAt": "2026-09-13T02:30:05.327Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q3a5001ongjur495me3b",
+      "kind": "GENERAL",
+      "slug": "salud-mental-online",
+      "name": "Saúde Mental",
+      "summary": null,
+      "seoTitle": "Saúde Mental Online Espanha | Avaliação Clínica | Médico Inscrito na Ordem",
+      "seoDescription": "Ansiedade, depressão, burnout ou outras preocupações de saúde mental. Os nossos médicos inscritos oferecem avaliações clínicas confidenciais por videochamada segura. No mesmo dia em Espanha.",
+      "seoKeywords": [
+        "salud mental online España",
+        "ansiedad médico online España",
+        "depresión evaluación online España",
+        "burnout médico online España",
+        "salud mental expats España"
+      ],
+      "heroTitle": "Saúde Mental — Avaliação Clínica Confidencial Online",
+      "heroDescription": "As dificuldades de saúde mental — ansiedade, depressão, burnout, dificuldade de adaptação a um novo país, ou padrões persistentes de pensamento e comportamento que afetam a sua qualidade de vida — respondem melhor ao apoio clínico estruturado e baseado em evidência de um profissional qualificado. Os nossos médicos, inscritos conforme os requisitos da Organización Médica Colegial (OMC), oferecem avaliações clínicas de saúde mental por videochamada segura — sem sala de espera, sem barreiras linguísticas, no mesmo dia, a partir de qualquer ponto de Espanha, em espanhol, inglês ou português.",
+      "detailBody": "<h2>O que é este serviço — e o que não é</h2><p>Compreender que nível de apoio de saúde mental é o adequado para si ajuda-o a aceder aos cuidados mais apropriados.</p><p><strong>Esta avaliação clínica de saúde mental ao nível da medicina geral é apropriada para:</strong></p><ul><li>Avaliação inicial de ansiedade, humor em baixo, depressão e stress</li><li>Rastreio de condições comuns de saúde mental usando ferramentas clínicas validadas</li><li>Avaliação de como os sintomas de saúde mental interagem com a saúde física</li><li>Recomendações clínicas e planeamento dos cuidados a critério do médico</li><li>Encaminhamento para psicologia, psiquiatria ou outro apoio especializado quando indicado</li><li>Orientação sobre serviços de saúde mental disponíveis em Espanha</li><li>Revisão da gestão atual de saúde mental e apoio continuado</li><li>TDAH — rastreio inicial e via de encaminhamento quando indicado</li></ul><p><strong>Este serviço não é apropriado para:</strong></p><ul><li>Intervenção em crise — se estiver em crise, use os recursos no início desta página</li><li>Avaliação psiquiátrica — se precisar de um psiquiatra, o seu médico coordena o encaminhamento</li><li>Psicoterapia ou aconselhamento — esta é uma avaliação médica, não uma sessão de terapia</li><li>Avaliação de psicose, perturbação bipolar grave ou condições psiquiátricas complexas</li><li>Avaliação ou tratamento psiquiátrico involuntário</li></ul><p>Não tem a certeza de que nível de apoio necessita? Comece com esta avaliação. O seu médico avalia a sua apresentação e aconselha sobre os passos seguintes mais apropriados.</p><h2>Condições habitualmente avaliadas</h2><p><strong>Ansiedade e stress</strong></p><ul><li>Perturbação de ansiedade generalizada</li><li>Ansiedade social e ansiedade de desempenho</li><li>Ansiedade relacionada com a saúde</li><li>Ataques de pânico e perturbação de pânico</li><li>Stress laboral e burnout</li><li>Dificuldades de adaptação — novo país, novo trabalho, mudanças relacionais</li><li>Stress específico de expats — adaptação cultural, isolamento, preocupações de identidade, separação familiar</li></ul><p><strong>Humor</strong></p><ul><li>Humor em baixo e depressão</li><li>Tristeza persistente e perda de interesse</li><li>Exaustão emocional e anedonia</li><li>Alterações do humor pós-parto — humor em baixo e ansiedade após o parto</li><li>Perturbação afetiva sazonal</li><li>Luto e perda</li></ul><p><strong>Sono e comportamento</strong></p><ul><li>Insónia e perturbações do sono com contributos psicológicos</li><li>Fadiga com contributos psicológicos</li><li>Alterações do apetite e padrões alimentares relacionados com o humor</li><li>Dificuldades de concentração e cognitivas relacionadas com ansiedade ou depressão</li></ul><p><strong>Trauma e eventos de vida</strong></p><ul><li>Avaliação inicial de sintomas relacionados com trauma — com encaminhamento para apoio psicológico especializado quando indicado</li><li>Adaptação a eventos de vida significativos — perda, rutura de relação, perda de emprego</li><li>Stress do expat e relocalização — adaptação cultural, isolamento, preocupações de identidade</li></ul><p><strong>Gestão continuada de saúde mental</strong></p><ul><li>Revisão de condições de saúde mental existentes geridas ao nível da medicina geral</li><li>Avaliação de saúde mental no contexto da gestão de doenças crónicas</li><li>TDAH — rastreio inicial e encaminhamento para avaliação formal quando indicado</li></ul><h2>O que inclui a consulta</h2><p><strong>Avaliação clínica confidencial</strong></p><p>O médico realiza uma avaliação de saúde mental estruturada e completa — cobrindo os seus sintomas atuais, humor, sono, energia, apetite, concentração, relações, pressões laborais ou académicas, historial médico e qualquer apoio de saúde mental anterior. A conversa é orientada, confidencial e sem julgamentos.</p><p><strong>Ferramentas de rastreio validadas</strong></p><p>Quando apropriado, o médico utiliza ferramentas de rastreio clínico validadas — incluindo PHQ-9 para depressão e GAD-7 para ansiedade — garantindo uma avaliação estruturada e baseada na evidência.</p><p><strong>Avaliação de segurança</strong></p><p>Cada consulta de saúde mental inclui uma avaliação de segurança estruturada — realizada com sensibilidade como componente padrão dos cuidados clínicos.</p><p><strong>Plano de cuidados personalizado</strong></p><p>Com base na avaliação, o médico aconselha sobre os passos seguintes mais apropriados — que podem incluir recomendações de bem-estar e estilo de vida, encaminhamento para psicologia ou psicoterapia, orientação sobre serviços disponíveis em Espanha, encaminhamento psiquiátrico quando indicado, ou recomendações clínicas a critério do médico.</p><p><strong>Orientação sobre o sistema</strong></p><p>Navegar o sistema de saúde mental em Espanha como residente internacional é genuinamente difícil. O seu médico fornece orientação clara sobre que serviços estão disponíveis em inglês, como aceder-lhes, e o que esperar do sistema de saúde mental espanhol.</p><p><strong>Documentação clínica — a critério do médico</strong></p><p>Quando clinicamente indicado ao nível da medicina geral, o médico emite a documentação clínica correspondente.</p><p>Nota: Os estupefacientes e determinadas substâncias psiquiátricas requerem documentação especial que não pode ser emitida eletronicamente. O seu médico informá-lo-á se isto se aplicar à sua situação.</p><h2>Saúde mental para expats em Espanha</h2><p>As dificuldades de saúde mental são desproporcionalmente comuns entre expats e residentes internacionais — impulsionadas pelo isolamento, pela adaptação cultural, pelas barreiras linguísticas, pela separação familiar e pelo stress acumulado de construir uma vida num novo país.</p><p>Aceder a apoio de saúde mental em Espanha como residente internacional tem desafios adicionais. Existem psicólogos e psiquiatras que falam inglês em Madrid e Barcelona — mas a disponibilidade é limitada, os tempos de espera podem ser longos, e o custo dos cuidados de saúde mental privados em Espanha é significativo. Para expats fora das grandes cidades, as opções reduzem-se ainda mais.</p><p>O nosso serviço proporciona um primeiro passo acessível — uma avaliação clínica de saúde mental estruturada e confidencial, no mesmo dia, a partir de qualquer ponto de Espanha — com orientação clara sobre os passos seguintes e como aceder a apoio especializado quando necessário.</p><h2>Confidencialidade</h2><p>Tudo o que for discutido durante a sua consulta de saúde mental é confidencial e está protegido ao abrigo da legislação espanhola e europeia de proteção de dados — incluindo o RGPD (UE 2016/679) implementado através da Lei Orgânica 3/2018 (LOPDGDD) e da Lei 41/2002 de autonomia do paciente.</p><p>Existem duas circunstâncias em que a confidencialidade pode necessitar de ser cuidadosamente considerada — quando existe um risco grave e iminente para a sua vida ou segurança, ou quando existe um risco grave para a segurança de outra pessoa. O seu médico discute a confidencialidade consigo no início da consulta.</p>",
+      "ctaLabel": null,
+      "sortOrder": 180,
+      "durationMinutes": 20,
+      "basePriceCents": 5900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.267Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru15qck0002bsjuhioqk3lk",
+          "kind": "IMAGE",
+          "key": "media/cebaf4cb-fdb3-4acb-a6cd-876c804340d2-es-salud-mental-online.png",
+          "path": "/api/media/media/cebaf4cb-fdb3-4acb-a6cd-876c804340d2-es-salud-mental-online.png",
+          "altText": "Salud Mental"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q3iq001pngjuutfce816",
+          "question": "Este é um serviço de aconselhamento ou terapia?",
+          "answer": "Não. Esta é uma avaliação clínica de saúde mental ao nível da medicina geral. Nossos médicos avaliam sua saúde mental atual, fornecem recomendações clínicas e encaminham você para o nível de apoio apropriado — incluindo aconselhamento, psicoterapia ou psiquiatria quando indicado. As sessões de aconselhamento ou psicoterapia não são fornecidas por meio deste serviço.",
+          "sortOrder": 0,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q3iq001qngju5f0v81l4",
+          "question": "O que acontece se eu precisar ver um psiquiatra?",
+          "answer": "Se a sua avaliação indicar que é necessária uma avaliação psiquiátrica, o seu médico aconselha claramente e coordena o encaminhamento para o serviço especializado adequado — incluindo serviços psiquiátricos em inglês na Espanha onde estiverem disponíveis.",
+          "sortOrder": 1,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q3iq001rngjuerollzss",
+          "question": "O meu empregador ou alguém mais será informado?",
+          "answer": "Não. A sua consulta é completamente confidencial e está protegida pela legislação espanhola e europeia de proteção de dados. A informação não é partilhada sem o seu consentimento explícito, exceto nas circunstâncias muito limitadas descritas na seção de confidencialidade anterior.",
+          "sortOrder": 2,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q3iq001sngjurmbqz9et",
+          "question": "Posso usar este serviço se eu já estiver vendo um terapeuta?",
+          "answer": "Sim. Uma avaliação clínica de saúde mental ao nível da medicina geral pode complementar o apoio psicológico ou terapêutico contínuo — particularmente quando são necessárias recomendações clínicas, avaliação da saúde física ou coordenação dos cuidados.",
+          "sortOrder": 3,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q3iq001tngju30mze1fo",
+          "question": "Este serviço é adequado para adolescentes?",
+          "answer": "As consultas de saúde mental para pacientes com menos de 16 anos requerem a presença e o consentimento dos pais ou tutores. Para adolescentes com 16 anos ou mais, o médico avalia a capacidade de consentimento individualmente.",
+          "sortOrder": 4,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q3iq001ungju0ssuoej9",
+          "question": "O que acontece se eu estiver em crise durante ou depois da consulta?",
+          "answer": "Se você estiver em crise, use os recursos no início desta página — Telefone contra o Suicídio 024 ou 112 em caso de perigo imediato. Este serviço não é um serviço de intervenção em crise.",
+          "sortOrder": 5,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q3iq001vngjuiskebii5",
+          "question": "Posso discutir preocupações sobre TDAH através deste serviço?",
+          "answer": "Sim. O rastreio inicial de TDAH ao nível da medicina geral está disponível através deste serviço. O diagnóstico formal de TDAH requer avaliação especializada — o seu médico aconselha sobre a via de referenciação apropriada se o rastreio indicar que isso se justifica.",
+          "sortOrder": 6,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q3iq001wngju98s9iyvg",
+          "question": "Posso utilizar este serviço a partir de qualquer ponto de Espanha?",
+          "answer": "Sim — incluindo as Ilhas Baleares, Ilhas Canárias, Ceuta e Melilla. Só precisa de uma ligação estável à internet e de um dispositivo com câmara.",
+          "sortOrder": 7,
+          "resolvedLocale": "PT"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "PT",
+      "links": [
+        {
+          "id": "cmre7sriv002yg8ju9eokrc9p",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Evaluación psiquiátrica especializada?",
+          "body": "Si tu situación está relacionada con evaluación psiquiátrica especializada, nuestra Psiquiatría Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Psiquiatría Especialista",
+          "targetSlug": "psiquiatra-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7ssaz0030g8ju13nnilyh",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con apoyo psicológico y psicoterapia?",
+          "body": "Para apoyo psicológico y psicoterapia, consulta nuestra página de Psicología Clínica — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Psicología Clínica",
+          "targetSlug": "psicologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7stv60034g8juje70ar9l",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Síntomas neurológicos que pueden tener base psicológica?",
+          "body": "Si tu situación está relacionada con síntomas neurológicos que pueden tener base psicológica, nuestra Neurología Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Neurología Especialista",
+          "targetSlug": "neurologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7st330032g8judl7699cv",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre apoyo para dejar de fumar?",
+          "body": "Nuestra Dejar de Fumar está pensada específicamente para apoyo para dejar de fumar.",
+          "ctaLabel": "Dejar de Fumar",
+          "targetSlug": "dejar-de-fumar-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

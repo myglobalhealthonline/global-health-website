@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:07.406Z",
+  "endpoint": "/api/services/boli-cronice-online?countryCode=ro&locale=DE",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee6nb000efsjuk0bbcp7f",
+      "kind": "GENERAL",
+      "slug": "boli-cronice-online",
+      "name": "Management chronischer Krankheiten — kontinuierliche medizinische Online-Betreuung",
+      "summary": "Haben Sie Bluthochdruck, Diabetes, eine Schilddrüsenerkrankung oder eine andere chronische Erkrankung? Unsere vom CMR zugelassenen Ärzte bieten eine kontinuierliche medizinische Überwachung, die Anpassung des Therapieplans und die Koordinierung der Untersuchungen per Videosprechstunde an.",
+      "seoTitle": "Online-Management chronischer Krankheiten | Rumänien | medic CMR",
+      "seoDescription": "Management für Bluthochdruck, Diabetes, Schilddrüsenerkrankungen oder andere langfristige Erkrankungen. Unsere beim CMR zugelassenen Ärzte bieten eine kontinuierliche medizinische Überwachung, Anpassung des Behandlungsplans und Koordination der Untersuchungen per Videokonsultation.",
+      "seoKeywords": [
+        "chronic disease management online Romania",
+        "hypertension doctor online Romania",
+        "diabetes management online Romania",
+        "thyroid doctor online Romania",
+        "long term condition GP online Romania"
+      ],
+      "heroTitle": "Management chronischer Krankheiten — kontinuierliche medizinische Betreuung online",
+      "heroDescription": "Management für Hypertonie, Diabetes, Schilddrüsenerkrankungen oder andere chronische Erkrankungen. Unsere CMR-autorisierten Ärzte bieten eine kontinuierliche medizinische Überwachung, Anpassung des Therapieplans und Koordination der Untersuchungen per Videokonsultation.",
+      "detailBody": "<p>Dieser Service richtet sich an Patienten, die eine konsequente Überwachung wegen einer chronischen Erkrankung benötigen und nicht nur eine gelegentliche Verlängerung des Rezepts. Die Konsultationen verfolgen den Verlauf der Symptome, die Ergebnisse der Untersuchungen, die Verträglichkeit der Behandlung und die langfristigen klinischen Ziele.</p><p>Der Arzt kann regelmäßige Untersuchungen koordinieren, die Behandlung anpassen, wenn sich Ihr Zustand verändert, und bei Bedarf medizinische Schreiben oder Überweisungen verfassen, wenn die Einbindung eines Spezialisten erforderlich ist. Der Ansatz ist besonders nützlich für Patienten mit mehreren Diagnosen oder mit erschwertem Zugang zu einer kontinuierlichen primären Versorgung.</p><p>Der Service eignet sich für Erkrankungen wie Bluthochdruck, Diabetes, Dyslipidämie, Asthma, Schilddrüsenerkrankungen, chronische Schmerzen oder andere Gesundheitsprobleme, die eine regelmäßige Überwachung und einen klaren Behandlungsplan erfordern.</p>",
+      "ctaLabel": "Konsultation vereinbaren",
+      "sortOrder": 110,
+      "durationMinutes": 15,
+      "basePriceCents": 16000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:37.056Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js46h001kakjui0rkkcbp",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee6nb000efsjuk0bbcp7f",
+          "path": "/api/media/media/56f4b07e-190a-40b4-9960-4ad3273aaaa3-7dc82b47-ee4d-48b6-af96-2a935505c0f8-8.webp",
+          "altText": "Managementul bolilor cronice — îngrijire medicală continuă online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "DE",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

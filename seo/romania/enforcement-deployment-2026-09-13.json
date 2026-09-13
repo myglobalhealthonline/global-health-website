@@ -1,0 +1,29 @@
+{
+  "deploymentId": "525deda8-946e-4da7-8462-c096b599bc20",
+  "status": "SUCCESS",
+  "baseCommit": "396565724ff82d51939f9b18397a3f09e4495183",
+  "rollbackDeploymentId": "e75ace3c-ab31-4fe3-9cd6-0c20c5333999",
+  "checkedAt": "2026-09-12T22:46:19.849Z",
+  "readiness": {
+    "url": "https://api.myglobalhealth.online/ready",
+    "status": 200,
+    "body": "{\"ok\":true,\"message\":\"Backend is ready.\",\"database\":{\"connected\":true}}"
+  },
+  "authorization": "Owner: Yes deploy",
+  "source": "Isolated backend archive plus 13 tested source files",
+  "sourceSha256": {
+    "backend/src/content/romania-clinical-review.ts": "727d663dc4e630268405a1e041934e23160a6744cfa4a6bffb0fb82eba1562bc",
+    "backend/src/modules/services/services.service.ts": "547d77e7e44b25cf843920840d54c9776d20f55ef04096ce378897f29ab8cf90",
+    "backend/src/services/service-faq.service.ts": "2a1336f6cf6a0c864ed5a4626f45128aaefcb1581045c571c2b77c16d2501999",
+    "backend/src/modules/doctors/doctors.service.ts": "cd9146c71a3c9e7288b9aa41ea98c22adf38f45656fab779e3fd8f1fadc4c9e7",
+    "backend/src/modules/doctor-faqs/doctor-faqs.service.ts": "29bb1bc350b8832773f00d65bbe3cf5bef895208753db42d2a4b09671746359d",
+    "backend/src/modules/doctor-market-profiles/doctor-market-profiles.service.ts": "5c56da7d767249442198bdfa7ce3f3c9bac58e6d0b9abf3f14d4cb61cb839a5e",
+    "backend/src/modules/doctor-profile-change-requests/doctor-profile-change-requests.service.ts": "048c0d8d367e3ba580f79e3003f4d5f9b252020517abbd881ea006a6c64af995",
+    "backend/src/modules/service-links/service-links.service.ts": "f209d50d659ebf625053d8f98474165f01e5d7524b5e16936a38fd021d2a5da1",
+    "backend/src/routes/admin-services.route.ts": "53e3bc5ec28d318cd695cefeb3b3a3aa51e05c5ba1708170173311fd3a516afc",
+    "backend/src/routes/admin-doctors.route.ts": "b0a1d31c6efd7b7dc3cd2f0e768c3aa5346da356d952da941cc6f1f503b9791a",
+    "backend/src/routes/admin-doctor-faqs.route.ts": "d3ad03291d2829c25ed63fdd5c1c33f69f72123c7871d2108e03e540f7911529",
+    "backend/src/routes/admin-doctor-markets.route.ts": "f5dd35c19810350675657793854e1346ed640701387577a441d57864aabe6fce",
+    "backend/src/routes/admin-service-links.route.ts": "17a6def3a794b5a3e5bb18203dd324709d4370b74d9a56d918e969d96d6f6bc5"
+  }
+}

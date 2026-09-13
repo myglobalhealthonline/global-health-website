@@ -1,0 +1,83 @@
+{
+  "checkedAt": "2026-09-12T20:20:05.761Z",
+  "endpoint": "/api/services/consultatie-neurologie?countryCode=ro&locale=CS",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee87d000ifsjuydqk0htg",
+      "kind": "SPECIALIST",
+      "slug": "consultatie-neurologie",
+      "name": "Neurologická konzultace — online odborné vyšetření",
+      "summary": "Máte migrény, přetrvávající bolesti hlavy, znecitlivění, neuropatii nebo jiný neurologický problém? Náš autorizovaný specialista CMR poskytuje úvodní vyšetření, doporučení a plán vyšetření prostřednictvím videokonzultace.",
+      "seoTitle": "Online neurologická konzultace | Rumunsko | specialista CMR",
+      "seoDescription": "Odborné vyšetření při migrénách, přetrvávajících bolestech hlavy, necitlivosti, neuropatii nebo jiných neurologických potížích. Náš autorizovaný specialista CMR poskytuje úvodní vyšetření, doporučení a plán vyšetření prostřednictvím videokonzultace.",
+      "seoKeywords": [
+        "neurology consultation online Romania",
+        "neurologist online Romania",
+        "migraine specialist online Romania",
+        "headache neurologist online Romania",
+        "neuropathy assessment online Romania",
+        "neurology second opinion Romania"
+      ],
+      "heroTitle": "Neurologická konzultace — online odborné vyšetření",
+      "heroDescription": "Specializované vyšetření migrén, přetrvávajících bolestí hlavy, necitlivosti, neuropatie nebo jiných neurologických problémů. Náš licencovaný specialista CMR poskytuje úvodní vyšetření, doporučení a plán vyšetření prostřednictvím videokonzultace.",
+      "detailBody": "<p>Online neurologická konzultace je užitečná při příznacích, jako jsou opakované bolesti hlavy, migréna, závratě, poruchy citlivosti, mravenčení, neuropatické bolesti, třes nebo jiné projevy, které vyžadují odborné objasnění.</p><p>Neurolog zhodnotí anamnézu, nástup a průběh příznaků, dostupné výsledky a předchozí léčbu. Obdržíte doporučení ohledně okamžitého postupu, potřebných vyšetření a okamžiku, kdy je nezbytné urgentní fyzické vyšetření nebo návštěva nemocnice.</p><p>Služba je vhodná také pro interpretaci již získaných výsledků, sledování stabilních neurologických onemocnění a nasměrování k vhodné péči v případech, kdy není jasné, jaký má být další krok.</p>",
+      "ctaLabel": "Naplánujte konzultaci",
+      "sortOrder": 0,
+      "durationMinutes": 20,
+      "basePriceCents": 22000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:45.465Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jshz4001uakju0eh9c4xv",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee87d000ifsjuydqk0htg",
+          "path": "/api/media/media/8b300e8b-981a-4e39-b597-0a744cd63d2e-895b9c67-2d6d-4493-b671-42f49affecdb-3.webp",
+          "altText": "Consultație de neurologie — evaluare de specialitate online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "CS",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4j7oc00se01p2gf7y9ldw"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:50:00.000Z"
+      }
+    }
+  }
+}

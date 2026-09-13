@@ -1,0 +1,176 @@
+{
+  "endpoint": "/api/services/medicina-viaje-online?countryCode=es&locale=DE",
+  "checkedAt": "2026-09-13T02:29:54.884Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q7k0002vngju6v73lt8h",
+      "kind": "GENERAL",
+      "slug": "medicina-viaje-online",
+      "name": "Reisemedizin",
+      "summary": null,
+      "seoTitle": "Online-Reisemedizin Spanien | Malariaprophylaxe | Hausarzt",
+      "seoDescription": "Reisen Sie in ein Malariagebiet oder ein Risikogebiet? Unsere approbierten Hausärzte beurteilen Ihre Reisegesundheit und kümmern sich um die erforderliche klinische Dokumentation. Noch am selben Tag in Spanien.",
+      "seoKeywords": [
+        "medicina de viaje online España",
+        "profilaxis malaria online España",
+        "médico viaje online España",
+        "vacunas viaje consulta España",
+        "travel health doctor Spain English"
+      ],
+      "heroTitle": "Reisemedizin — Online-Klinische Beurteilung vor der Abreise",
+      "heroDescription": "Reist du in ein Malariagebiet, an ein Reiseziel mit Gelbfieberanforderungen oder in eine Region mit einem erheblichen Risiko für Infektionskrankheiten? Ein Impfzentrum wird deine Impfungen verabreichen. Aber es gibt zwei Dinge, die es nicht tun kann: eine antimalarische Prophylaxe verschreiben — dafür ist ein Arzt erforderlich — und dich dazu beraten, wie du deine spezifischen Gesundheitszustände, Medikamente und deine Reiseroute im Kontext deiner Reise handhaben solltest. Unsere Hausärzte, die gemäß den Anforderungen der Organización Médica Colegial (OMC) zugelassen sind, bieten medizinische Reiseberatungen per sicherer Videokonferenz an — mit klinischer Beurteilung, der Dokumentation für antimalarische Prophylaxe und einer personalisierten medizinischen Planung, die ein Impfzentrum nicht anbieten kann. Am selben Tag, von überall in Spanien aus, auf Spanisch, Englisch oder Portugiesisch.",
+      "detailBody": "<h2>Was eine reisemedizinische Sprechstunde bietet, was ein Impfzentrum nicht kann</h2><p>Impfzentren verabreichen Impfungen — führen jedoch keine strukturierten medizinischen Beurteilungen durch, können keine Malariaprophylaxe verordnen und beraten nicht zur Behandlung chronischer Erkrankungen während der Reise.</p><p><strong>Ihre reisemedizinische Sprechstunde mit einem approbierten Hausarzt umfasst:</strong></p><ul><li>Malariaprophylaxe — direkt beurteilt und dokumentiert, mit noch am selben Tag ausgestellter klinischer Dokumentation. In einem Impfzentrum können Sie kein Antimalariamittel erhalten.</li><li>Personalisierte Risikobewertung — basierend auf Ihrem konkreten Reiseziel, Reiseverlauf, Unterkunftsart, geplanten Aktivitäten und Ihrem Gesundheitsprofil — nicht auf einer allgemeinen Checkliste</li><li>Impfplanung — Beratung dazu, welche Impfungen Sie benötigen, welche Sie möglicherweise bereits haben und welcher Zeitplan angesichts Ihres Abreisedatums sinnvoll ist — damit Sie im Impfzentrum genau wissen, was Sie verlangen sollen</li><li>Behandlung chronischer Erkrankungen während der Reise — wenn Sie Diabetes, Bluthochdruck, Asthma haben oder regelmäßig Medikamente einnehmen, berät Sie Ihr Arzt zur Handhabung auf Reisen, zur Anpassung an Zeitzonen, zu Höhenaspekten und dazu, wann im Ausland medizinische Hilfe gesucht werden sollte</li><li>Reisemedizinische Dokumentation — ärztliche Bescheinigungen für Medikamente, medizinische Geräte oder Anforderungen der Reiseversicherung</li><li>Nach der Reise erfolgende Beurteilung — wenn Sie mit Symptomen aus einem Reiseziel mit höherem Risiko zurückkehren, beurteilt Ihr Arzt diese im Zusammenhang mit Ihrer Reiseanamnese</li></ul><p>Nach Ihrer Sprechstunde berät Sie Ihr Arzt, wo in Spanien Impfungen verabreicht werden können — einschließlich zugelassener Zentren für die Gelbfieberimpfung.</p><h2>Ein einzigartiger Aspekt Spaniens — Reiseziel und Herkunftsland</h2><p>Spanien ist im Kontext der Reisemedizin einzigartig, weil es zugleich ein großes Herkunftsland internationaler Reisender und eines der meistbesuchten Reiseziele der Welt ist.</p><p><strong>Wenn Sie aus Spanien reisen:</strong></p><p>Dieser Service bietet vor Ihrer Abreise eine vollständige reisemedizinische Beurteilung — Malariaprophylaxe, Impfplanung, Behandlung chronischer Erkrankungen während der Reise.</p><p><strong>Wenn Sie nach Spanien gekommen sind und erkrankt sind:</strong></p><p>Reiseassoziierte Erkrankungen — Gastroenteritis, Atemwegsinfektionen, Hautreaktionen, Fieber nach der Reise — sind häufige Vorstellungsgründe bei Touristen und Besuchern. Ihr Hausarzt beurteilt Ihre Symptome im Kontext Ihrer Reiseanamnese, mit Überweisung zur tropenmedizinischen Abklärung, sofern angezeigt.</p><p><strong>Wenn Sie sich in Spanien auf der Durchreise befinden und eine Malariaprophylaxe fortsetzen müssen:</strong></p><p>Wenn Sie vor Ihrer Ankunft in Spanien eine Malariaprophylaxe begonnen haben und die Medikation fortsetzen müssen, beurteilt Ihr Arzt Ihre Situation und stellt die entsprechende klinische Dokumentation aus, sofern dies medizinisch angezeigt ist.</p><h2>Was die Sprechstunde umfasst</h2><p><strong>Beurteilung von Reiseziel und Reiseverlauf</strong></p><p>Ihr Arzt prüft Ihr Reiseziel, die Dauer, den Reiseverlauf, die Unterkunftsart und die geplanten Aktivitäten — einschließlich der Frage, ob Sie sich in städtischen oder ländlichen Gebieten aufhalten, in Hotels übernachten oder campen, Abenteueraktivitäten durchführen oder Gesundheitseinrichtungen aufsuchen werden.</p><p><strong>Beurteilung des Malariarisikos und Dokumentation für die Prophylaxe</strong></p><p>Für Reiseziele mit Malariarisiko beurteilt Ihr Arzt das am besten geeignete Prophylaxeregime auf Grundlage von Reiseziel, Reiseverlauf, Dauer und Ihrem individuellen Gesundheitsprofil — einschließlich möglicher Kontraindikationen. Die klinische Dokumentation für das geeignete Antimalariamittel wird ausgestellt, sofern dies medizinisch angezeigt ist.</p><p><strong>Impfplanung</strong></p><p>Auf Grundlage Ihres Reiseziels und Gesundheitsprofils berät Ihr Arzt, welche Impfungen empfohlen oder erforderlich sind, welche Sie möglicherweise bereits ausreichend geschützt haben und welcher Zeitplan angesichts Ihres Abreisedatums sinnvoll ist.</p><p><strong>Behandlung chronischer Erkrankungen während der Reise</strong></p><p>Ihr Arzt berät zur Behandlung von Erkrankungen wie Diabetes, Bluthochdruck, Asthma oder psychischen Erkrankungen während der Reise — einschließlich Medikamentenmengen, Zeitzonen, Höhenaspekten und wann im Ausland medizinische Hilfe gesucht werden sollte.</p><p><strong>Reisemedizinische Dokumentation</strong></p><p>Sofern medizinisch angezeigt, stellt Ihr Arzt ein reisemedizinisches Gesundheitszusammenfassungsschreiben aus — nützlich für Patientinnen und Patienten, die Medikamente oder medizinische Geräte mitführen oder Gesundheitsdokumentation für Reiseversicherungen oder Grenzkontrollen benötigen.</p><p><strong>Nach der Reise erfolgende Beurteilung</strong></p><p>Sind Sie von einem Reiseziel mit höherem Risiko mit Symptomen zurückgekehrt? Ihr Arzt beurteilt Fieber, gastrointestinale Beschwerden, Hauterkrankungen oder andere Probleme im Kontext Ihrer Reiseanamnese — mit Überweisung zur spezialisierten tropenmedizinischen Abklärung, sofern angezeigt.</p><h2>Hinweis zum Gelbfieber</h2><p>Die Gelbfieberimpfung und der Internationale Impfausweis — der für die Einreise in bestimmte Länder erforderlich ist — müssen persönlich in einem zugelassenen Impfzentrum verabreicht und ausgestellt werden. Dies kann nicht über eine telemedizinische Sprechstunde erfolgen.</p><p>In Spanien ist die Gelbfieberimpfung in von den Gesundheitsdirektionen der autonomen Gemeinschaften zugelassenen internationalen Gesundheitszentren verfügbar — in Madrid, Barcelona und anderen großen Städten. Ihr Arzt berät Sie, welche Reiseziele eine Gelbfieberbescheinigung erfordern, und verweist Sie nach Ihrer Sprechstunde an das geeignete zugelassene Zentrum.</p><h2>Häufig beurteilte Reiseziele</h2><p><strong>Subsahara-Afrika</strong></p><p>Hochrisikogebiete für Malaria, Gelbfieberanforderungen, Typhus, Hepatitis A, Überlegung einer Tollwutimpfung bei Reisen in ländliche Gebiete, Meningokokkenimpfung für bestimmte Regionen.</p><p><strong>Südostasien</strong></p><p>Malariarisiko in ländlichen Gebieten, Japanische Enzephalitis bei längeren ländlichen Aufenthalten, Typhus, Hepatitis A, Überlegung einer Tollwutimpfung, Aufklärung über Dengue.</p><p><strong>Südasien — Indien, Nepal, Pakistan, Bangladesch</strong></p><p>Typhus, Hepatitis A, regionale Malariabewertung, Höhenplanung für Nepal, Überlegung einer Tollwutimpfung.</p><p><strong>Lateinamerika und Karibik</strong></p><p>Gelbfieberanforderungen für bestimmte Länder, regionale Malaria, Typhus, Hepatitis A, Aufklärung über Dengue.</p><p><strong>Naher Osten und Nordafrika</strong></p><p>Meningokokkenanforderungen für Hajj- und Umra-Pilger, Typhus, Hepatitis A, zielreisespezifische Beratung.</p><p><strong>Osteuropa und Zentralasien</strong></p><p>FSME in Waldgebieten, Hepatitis A, zielreisespezifische Beratung.</p><p><strong>Nordamerika, Westeuropa, Australien und Neuseeland</strong></p><p>Geringes Infektionsrisiko — die Sprechstunde konzentriert sich auf die Behandlung chronischer Erkrankungen, medizinische Dokumentation für die Reiseversicherung und die Überprüfung der Standardimpfungen.</p><h2>Wer diese Sprechstunde buchen sollte</h2><p><strong>Vor der Reise:</strong></p><ul><li>Alle, die in ein Reiseziel mit Malariarisiko reisen — dies ist der häufigste und wichtigste Grund, vor der Reise einen Arzt aufzusuchen</li><li>Patientinnen und Patienten mit chronischen Erkrankungen — Diabetes, Bluthochdruck, Asthma, psychische Erkrankungen — die medizinische Beratung zur Behandlung ihrer Gesundheit im Ausland benötigen</li><li>Patientinnen und Patienten, die Medikamente oder medizinische Geräte mitführen und dafür Unterlagen für den Zoll oder die Versicherung benötigen</li><li>Familien, die mit Kindern in Reiseziele mit höherem Risiko reisen</li><li>Geschäftsreisende mit häufigen internationalen Reisen</li></ul><p><strong>Nach der Reise:</strong></p><ul><li>Reisende, die nach einer Reise in ein Reiseziel mit höherem Risiko mit Fieber, gastrointestinalen Beschwerden, Hauterkrankungen oder anderen Problemen zurückkehren</li><li>Alle, die während der Reise erkrankt sind und bei der Rückkehr eine klinische Beurteilung wünschen</li></ul><h2>Wie lange im Voraus sollte ich buchen</h2><p>Die reisemedizinische Planung sollte idealerweise vier bis sechs Wochen vor der Abreise für die meisten Reiseziele beginnen — damit ausreichend Zeit für Impfungen und den Abschluss von Impfplänen bleibt, die mehrere Dosen erfordern.</p><p>Für Last-Minute-Reisende buchen Sie so früh wie möglich, und Ihr Arzt berät Sie, was innerhalb der verfügbaren Zeit möglich ist und was priorisiert werden sollte.</p>",
+      "ctaLabel": null,
+      "sortOrder": 140,
+      "durationMinutes": 15,
+      "basePriceCents": 4900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.265Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k3mk0005asjupoleeuhh",
+          "kind": "IMAGE",
+          "key": "media/cb6f35b4-6801-4c7c-8e7e-74d66076db21-es-medicina-viaje-online.png",
+          "path": "/api/media/media/cb6f35b4-6801-4c7c-8e7e-74d66076db21-es-medicina-viaje-online.png",
+          "altText": "Medicina de Viaje"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q7sp002wngjuf8xwqlst",
+          "question": "Ich brauche Malariamittel — kann ich das über diesen Dienst erledigen?",
+          "answer": "Ja. Die Bewertung der Malariaprophylaxe ist einer der Hauptgründe für die Nutzung dieses Dienstes. Ihr Hausarzt beurteilt das am besten geeignete Antimalariamittel für Ihr Reiseziel, Ihre Reiseroute und Ihr Gesundheitsprofil — und stellt die klinische Dokumentation direkt aus. Sie legen diese in jeder Apotheke Ihrer Wahl in Spanien vor.",
+          "sortOrder": 0,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q7sp002xngjudq0h1xte",
+          "question": "Kann ich das Gelbfieber-Zertifikat über diesen Dienst erhalten?",
+          "answer": "Nein. Die Gelbfieberimpfung und das Internationale Zertifikat über Impfungen müssen persönlich in einem autorisierten Impfzentrum verabreicht und ausgestellt werden. Ihr Arzt berät Sie darüber, welche Reiseziele diese Bescheinigung erfordern, und verweist Sie nach Ihrer Konsultation an das entsprechende autorisierte Zentrum in Spanien.",
+          "sortOrder": 1,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q7sp002yngju4wna6or0",
+          "question": "Können Impfungen während des Termins verabreicht werden?",
+          "answer": "Nein. Dies ist ein Dienst zur klinischen Bewertung und Planung. Die Verabreichung von Impfstoffen erfordert einen persönlichen Besuch in einem Impfzentrum. Ihr Arzt berät Sie, welche Impfungen Sie benötigen und wohin Sie gehen müssen — damit Sie mit einem klaren Plan im Impfzentrum ankommen.",
+          "sortOrder": 2,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q7sp002zngjuwfq5zxpf",
+          "question": "Was muss ich zu meinem Termin mitbringen?",
+          "answer": "Ihre Reiseplanung, Reisedetails zum Zielort, geplante Aktivitäten, das Abreisedatum und alle vorhandenen Impfaufzeichnungen. Wenn Sie einen Impfausweis von früheren Reisen haben, bringen Sie ihn mit — Ihr Arzt wird ihn vollständig durchsehen.",
+          "sortOrder": 3,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q7sp0030ngju7smx2bs8",
+          "question": "Wie lange im Voraus sollte ich buchen?",
+          "answer": "Idealerweise vier bis sechs Wochen vor der Abreise. Bei Last-Minute-Reisen buche so früh wie möglich — dein Arzt berät dich darüber, was machbar ist.",
+          "sortOrder": 4,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q7sp0031ngju7wbaugco",
+          "question": "Kann ich diesen Service nutzen, wenn ich nach einer Reise krank geworden bin?",
+          "answer": "Ja. Die Nachreiseuntersuchung ist verfügbar. Wenn Sie aus einem Reiseziel mit höherem Risiko mit Symptomen zurückkehren — insbesondere Fieber — vereinbaren Sie bitte umgehend einen Termin. Bestimmte Tropenkrankheiten erfordern eine frühzeitige Diagnose und Behandlung.",
+          "sortOrder": 5,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q7sp0032ngjuvz2duxb3",
+          "question": "Ist dieser Service für Familien mit Kindern geeignet?",
+          "answer": "Ja. Die Reisegesundheitsplanung für Familien mit Kindern ist ein zentraler Bestandteil dieses Dienstes.",
+          "sortOrder": 6,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q7sp0033ngjuxsh1kzjw",
+          "question": "Kann der Arzt ein Schreiben für die Medikamente ausstellen, die ich einnehme?",
+          "answer": "Ja. Ihr Arzt stellt einen Reisegesundheits-Zusammenfassungsbrief aus, der Ihre Medikation, Erkrankungen und medizinischen Geräte dokumentiert — nützlich für den Zoll, die Gesundheitsbehörden an den Grenzen und die Anforderungen der Fluggesellschaften.",
+          "sortOrder": 7,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q7sp0034ngju6kmo6of8",
+          "question": "Ich habe Diabetes — ist dieser Dienst für mich relevant?",
+          "answer": "Ja, besonders. Die Diabetes während der Reise zu managen — Insulinlagerung, Anpassung der Zeitzone für die Dosierung, ernährungsbezogene Überlegungen und wann im Ausland medizinische Hilfe gesucht werden sollte — erfordert spezifischen medizinischen Rat, den ein Impfzentrum nicht bieten kann.",
+          "sortOrder": 8,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q7sp0035ngju75nv52ww",
+          "question": "Brauche ich eine spanische Krankenversicherung?",
+          "answer": "Nein. Es handelt sich um eine private Selbstzahlerleistung. Die über diesen Dienst ausgestellte klinische Dokumentation wird unabhängig vom Versicherungsstatus zum vollständigen Privatpreis berechnet.",
+          "sortOrder": 9,
+          "resolvedLocale": "DE"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "DE",
+      "links": [
+        {
+          "id": "cmre7u68c005wg8juuxx04847",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Gestión de enfermedades crónicas durante el viaje?",
+          "body": "Si tu situación está relacionada con gestión de enfermedades crónicas durante el viaje, nuestra Enfermedades Crónicas te ofrece la evaluación adecuada.",
+          "ctaLabel": "Enfermedades Crónicas",
+          "targetSlug": "enfermedades-cronicas-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7u70f005yg8jufqnc34hd",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con fiebre u otros síntomas al regreso?",
+          "body": "Para fiebre u otros síntomas al regreso, consulta nuestra página de Consulta Médica General — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

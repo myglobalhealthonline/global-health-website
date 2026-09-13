@@ -51,6 +51,22 @@ describe("sanitizeDoctorBioHtml", () => {
   });
 });
 
+describe("pasted text-fragment URLs", () => {
+  const junk =
+    "https://www.myglobalhealth.online/ro/romania-doctors/dr-x#:~:text=TO%C8%9AI%20DOCTORII,Powered%20by%20ElevenAgents";
+
+  it("removes the URL and the heading it leaves empty", () => {
+    expect(sanitizeDoctorBioHtml(`<p>Bio text</p><h3>${junk}</h3>`)).toBe(
+      "<p>Bio text</p>",
+    );
+  });
+
+  it("removes the URL from plain-text bios and plain-text previews", () => {
+    expect(sanitizeDoctorBioHtml(`Bio text ${junk}`)).toBe("<p>Bio text</p>");
+    expect(toDoctorBioPlainText(`<p>Bio text</p><h3>${junk}</h3>`)).toBe("Bio text");
+  });
+});
+
 describe("toDoctorBioPlainText", () => {
   it("strips all tags and collapses whitespace", () => {
     expect(

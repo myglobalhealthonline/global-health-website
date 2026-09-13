@@ -54,7 +54,7 @@ export async function generateMetadata({
   const code = countryCodeFromSlug(country);
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
-  const { common } = loadLocaleBundle(lang as LocaleCode);
+  const { common } = loadLocaleBundle(lang as LocaleCode, country);
   const t = common.legalPage;
   // `config.name` is English-only. Use the locale's own country name, as every
   // sibling template does, so a Spanish page does not read "Spain".
@@ -225,7 +225,7 @@ export default async function CountryLegalIndexPage({
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
 
-  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const { common: c } = loadLocaleBundle(lang as LocaleCode, code);
   const t = c.legalPage;
   const czechiaSeo = czechiaStaticPageSeo(code, lang, "legal");
   const typeLabels = legalTypeLabels(t);

@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:15.815Z",
+  "endpoint": "/api/services/dureri-musculo-scheletice?countryCode=ro&locale=RO",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee5va000cfsju0urkl4di",
+      "kind": "GENERAL",
+      "slug": "dureri-musculo-scheletice",
+      "name": "Evaluarea durerii musculo-scheletale — online, în aceeași zi",
+      "summary": "Aveți dureri de spate, dureri articulare, sciatică sau o accidentare musculară? Medicii noștri autorizați CMR evaluează simptomele, semnele de alarmă și opțiunile de tratament prin consultație video.",
+      "seoTitle": "Consultație dureri musculo-scheletale online | România",
+      "seoDescription": "Evaluare pentru dureri de spate, dureri articulare, sciatică sau accidentări musculare. Medicii noștri autorizați CMR evaluează simptomele, semnele de alarmă și opțiunile de tratament prin consultație video.",
+      "seoKeywords": [
+        "musculoskeletal assessment online Romania",
+        "back pain doctor online Romania",
+        "joint pain consultation online Romania",
+        "sciatica doctor online Romania",
+        "physiotherapy referral Romania online"
+      ],
+      "heroTitle": "Evaluarea durerii musculo-scheletale — online, în aceeași zi",
+      "heroDescription": "Evaluare pentru dureri de spate, dureri articulare, sciatică sau accidentări musculare. Medicii noștri autorizați CMR evaluează simptomele, semnele de alarmă și opțiunile de tratament prin consultație video.",
+      "detailBody": "<p>Acest serviciu este util pentru dureri de spate, gât, umăr, genunchi, șold, articulații sau mușchi, precum și pentru rigiditate, entorse minore, suprasolicitare ori durere care limitează activitățile zilnice.</p><p>Medicul analizează modul de apariție a durerii, localizarea, severitatea, impactul asupra mobilității și eventualele semne de alarmă, cum ar fi slăbiciunea, amorțeala progresivă, traumatismele importante sau simptomele sistemice. În funcție de caz, recomandă tratament inițial, măsuri de protecție, investigații și trimitere către ortopedie, neurologie sau fizioterapie.</p><p>Consultația este potrivită și pentru pacienții care vor să înțeleagă dacă o durere aparent banală poate fi gestionată acasă sau necesită evaluare fizică mai rapidă.</p>",
+      "ctaLabel": "Programează consultația",
+      "sortOrder": 90,
+      "durationMinutes": 15,
+      "basePriceCents": 11500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:43.786Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js87i001oakjuwkvut5p4",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee5va000cfsju0urkl4di",
+          "path": "/api/media/media/52ab5f4d-0186-44a5-aa2e-d62da25b2eee-ccdc09d1-45fb-4d7b-8801-a28707d3fb27-4.webp",
+          "altText": "Evaluarea durerii musculo-scheletale — online, în aceeași zi"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "RO",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

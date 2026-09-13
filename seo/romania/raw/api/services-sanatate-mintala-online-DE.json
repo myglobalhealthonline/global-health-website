@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:08.529Z",
+  "endpoint": "/api/services/sanatate-mintala-online?countryCode=ro&locale=DE",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee4ba0008fsju6xyj8lnh",
+      "kind": "GENERAL",
+      "slug": "sanatate-mintala-online",
+      "name": "Beurteilung der psychischen Gesundheit — vertrauliche Online-Beratung",
+      "summary": "Leiden Sie unter Angst, Depression, Burnout, Schlaflosigkeit oder einer anderen emotionalen Schwierigkeit? Unsere zugelassenen CMR-Ärzte bieten eine vertrauliche Beurteilung, Empfehlungen und die Koordination der nächsten Schritte per Videoberatung.",
+      "seoTitle": "Online-Konsultation für psychische Gesundheit | Rumänien | vertraulich",
+      "seoDescription": "Vertrauliche Beurteilung bei Angst, Depression, Burnout, Schlaflosigkeit oder anderen emotionalen Schwierigkeiten. Unsere zugelassenen CMR-Ärzte bieten eine vertrauliche Beurteilung, Empfehlungen und die Koordination der nächsten Schritte per Video-Konsultation.",
+      "seoKeywords": [
+        "mental health online Romania",
+        "anxiety doctor online Romania English",
+        "depression consultation English Bucharest",
+        "burnout doctor online Romania",
+        "mental health GP online Romania expat"
+      ],
+      "heroTitle": "Psychische Gesundheitsbewertung — vertrauliche Online-Konsultation",
+      "heroDescription": "Vertrauliche Beurteilung für Angst, Depression, Burnout, Schlaflosigkeit oder andere emotionale Schwierigkeiten. Unsere von der CMR zugelassenen Ärzte bieten eine vertrauliche Beurteilung, Empfehlungen und die Koordination der nächsten Schritte per Videoberatung.",
+      "detailBody": "<p>Die Konsultation ist geeignet bei Symptomen wie Angst, starkem Stress, depressiver Stimmung, Panikattacken, Erschöpfung, Schlafstörungen oder Funktionsschwierigkeiten, die das tägliche Leben beeinträchtigen.</p><p>Der Arzt bespricht die Vorgeschichte der Symptome, auslösende Faktoren, frühere Behandlungen, die Auswirkungen auf Arbeit und Beziehungen sowie mögliche Warnzeichen, die ein rasches Eingreifen erfordern. Je nach Fall erhalten Sie Empfehlungen für die erste Behandlung/Betreuung, ärztliche Bescheinigungen, eine Überweisung an einen Psychiater oder Psychologen und, sofern klinisch angemessen, einen Plan für die fortlaufende Überwachung.</p><p>Der Service bietet einen klaren und vertraulichen Rahmen, um zu verstehen, was mit Ihnen geschieht und welches Maß an weiterer Hilfe Sie benötigen.</p>",
+      "ctaLabel": "Termin vereinbaren",
+      "sortOrder": 100,
+      "durationMinutes": 20,
+      "basePriceCents": 15000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:42.108Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js05y001iakju9hywq5cw",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee4ba0008fsju6xyj8lnh",
+          "path": "/api/media/media/e240ef2a-0048-4a27-8b29-eaeee3d22e58-ff3e0b2e-b46a-4b32-9218-31a8cc87b0c1-3.webp",
+          "altText": "Evaluare de sănătate mintală — consultație online confidențială"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "DE",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "checkedAt": "2026-09-13T00:22:44.874Z",
+  "manifestSha256": "6cecf3e00ece3f636ef677b2a4eff1dc9170601198291d84c5b1e870eea7f5cd",
+  "groups": [
+    "clinical",
+    "pages-articles",
+    "legal"
+  ],
+  "fields": 520,
+  "rolledBack": true
+}

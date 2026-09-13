@@ -1,0 +1,185 @@
+{
+  "endpoint": "/api/services/cardiologo-online?countryCode=es&locale=EN",
+  "checkedAt": "2026-09-13T02:29:56.938Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qh33005ongju25lilrfq",
+      "kind": "SPECIALIST",
+      "slug": "cardiologo-online",
+      "name": "Specialist Cardiology",
+      "summary": null,
+      "seoTitle": "Cardiologist Online Spain | Specialist Cardiac Assessment | Same Day",
+      "seoDescription": "Palpitations, ECG review, hypertension, or cardiac concern in Spain? Our specialist cardiologists offer expert assessments by video call with test review. Same-day appointments anywhere in Spain.",
+      "seoKeywords": [
+        "cardiólogo online España",
+        "consulta cardiológica online España",
+        "revisión ECG online España",
+        "palpitaciones cardiólogo online España",
+        "segunda opinión cardiológica España"
+      ],
+      "heroTitle": "Specialist Cardiology — Online Cardiac Assessment in Spain",
+      "heroDescription": "Cardiac concerns — palpitations you do not know how to interpret, an ECG with findings nobody has explained clearly, hypertension that is not well controlled, or an established heart condition requiring specialist review — need the depth of analysis that a specialist cardiologist provides. Our cardiologists, specialist doctors with MIR cardiology training, registered with the Spanish Medical Council (OMC — Organización Médica Colegial) and their specialist college, offer specialist cardiology consultations by secure video call with test review — ECG, echocardiogram, Holter, and other cardiological investigations interpreted by a specialist the same day. From anywhere in Spain, in English, Spanish, or Portuguese.",
+      "detailBody": "<h2>Who This Service Is For</h2><p>This specialist cardiology consultation is appropriate for adults with:</p><ul><li>Palpitations — assessment of non-urgent palpitations, perceived heart rhythm irregularity, or ectopic beats</li><li>An ECG with findings that have not been clearly explained — specialist review and interpretation</li><li>An echocardiogram, Holter, or stress test report needing specialist explanation</li><li>Hypertension that is resistant or not well controlled with current medication</li><li>Known and stable atrial fibrillation — specialist review and ongoing management</li><li>Stable heart failure — specialist review and treatment optimisation</li><li>Dyslipidaemia with elevated cardiovascular risk — cardiological risk assessment and management</li><li>Non-urgent exertional breathlessness — cardiological cause assessment</li><li>Non-urgent syncope or pre-syncope — cardiological assessment</li><li>Specialist cardiology second opinion — on a diagnosis, treatment plan, or test result</li><li>Review of cardiological medication — efficacy, tolerability, and adjustment</li><li>Cardiovascular risk assessment — particularly in patients with multiple risk factors</li><li>International residents and expats who need specialist cardiology in English or Portuguese</li></ul><h2>What This Service Is — And What It Is Not</h2><p>This specialist cardiology consultation covers:</p><ul><li>Specialist cardiological assessment of non-urgent presentations</li><li>Review and interpretation of ECG, echocardiogram, Holter, and other cardiological tests</li><li>Ongoing management of stable cardiovascular conditions</li><li>Cardiovascular risk assessment and risk reduction planning</li><li>Requests for cardiological investigations where clinically indicated</li><li>Specialist cardiological second opinion</li><li>Coordination of in-person referral where indicated</li></ul><p>This service does not cover:</p><ul><li>Cardiac emergencies — acute chest pain, syncope with loss of consciousness, severe difficulty breathing, palpitations with haemodynamic compromise. For any acute cardiac symptom, call 112 immediately</li><li>Interventional cardiology — catheterisation, pacemaker or defibrillator implantation, ablation, cardiac surgery. These procedures require in-person hospital assessment</li><li>Performing tests — the cardiologist can interpret tests already performed and request new ones, but cannot perform ECG, echocardiogram, or stress testing directly. These require in-person attendance</li></ul><p>Not sure whether your symptom is urgent? When in doubt, always call 112 or go to the emergency department. It is always better to be assessed and reassured than to wait.</p><h2>Cardiological Test Review — How It Works</h2><p>One of the most valuable capabilities of this service is specialist review and interpretation of cardiological tests by a cardiologist — the same day, without waiting weeks for an in-person specialist appointment.</p><p><strong>ECG (Electrocardiogram)</strong></p><p>Send the PDF or image of your ECG before the consultation. Your cardiologist interprets it in full — identifying the rhythm, axis, intervals, and any findings of rhythm disturbance, conduction abnormality, or ischaemia — and explains the findings clearly.</p><p><strong>Echocardiogram</strong></p><p>Send your echocardiogram report. Your cardiologist reviews the ejection fraction, valvular function, cavity dimensions, and any clinically relevant findings — and explains what they mean for your health and what steps are appropriate.</p><p><strong>24-hour Holter</strong></p><p>Send your Holter report. Your cardiologist reviews the rhythm over the monitoring period, identifies arrhythmias or ectopic beats, and assesses whether the findings are clinically significant.</p><p><strong>Stress test</strong></p><p>Send your stress test report. Your cardiologist interprets the functional capacity, haemodynamic response to exercise, and any findings of induced ischaemia.</p><p><strong>Blood tests with cardiological markers</strong></p><p>If you have recent blood tests with troponins, BNP, NT-proBNP, or a lipid panel, your cardiologist reviews them in the complete clinical context.</p><p>To send your tests: upload documents through the platform before the consultation, or send them through the channel the team indicates when you book. Your cardiologist reviews them before the call so the consultation is focused on analysis and planning.</p><h2>Conditions Commonly Assessed</h2><p><strong>Heart rhythm disorders</strong></p><ul><li>Atrial fibrillation — assessment, management, and anticoagulation review in stable presentations</li><li>Atrial flutter — assessment and management</li><li>Ectopic beats — assessment of clinical significance and need for intervention</li><li>Supraventricular tachycardias — assessment and management in non-urgent presentations</li><li>Bradycardia — assessment of slow rhythm and its clinical significance</li><li>Wolff-Parkinson-White syndrome — review and coordination where indicated</li></ul><p><strong>Coronary disease</strong></p><ul><li>Known and stable ischaemic heart disease — specialist review and treatment optimisation</li><li>Stable angina — assessment and management</li><li>Post-myocardial infarction — specialist cardiological follow-up in stable phase</li><li>Coronary risk assessment — in patients with multiple risk factors</li></ul><p><strong>Heart failure</strong></p><ul><li>Stable heart failure — specialist review and treatment optimisation</li><li>Review of systolic and diastolic function — echocardiogram interpretation</li><li>Congestion management — diuretic adjustment and monitoring</li></ul><p><strong>Valvular disease</strong></p><ul><li>Mitral, aortic, tricuspid valvular disease — specialist echocardiogram review and follow-up</li><li>Assessment of valvular severity — based on echocardiogram report</li><li>Post-valvular intervention follow-up in stable phase</li></ul><p><strong>Hypertension</strong></p><ul><li>Resistant or poorly controlled hypertension — specialist cardiological assessment</li><li>Hypertension with organ damage — cardiological impact assessment</li><li>Global cardiovascular risk review in hypertension</li></ul><p><strong>Cardiomyopathies</strong></p><ul><li>Hypertrophic cardiomyopathy — review and follow-up in stable phase</li><li>Dilated cardiomyopathy — review and treatment optimisation</li><li>Arrhythmogenic cardiomyopathy — assessment and coordination</li></ul><p><strong>Cardiovascular risk assessment</strong></p><ul><li>Global cardiovascular risk assessment — SCORE2 scale, modifiable risk factors</li><li>Dyslipidaemia with elevated cardiovascular risk — assessment and management plan</li><li>Metabolic syndrome — cardiological impact assessment</li><li>Pre-exercise cardiovascular assessment — for adults wanting to start intense physical activity</li></ul><h2>What Your Consultation Includes</h2><p><strong>Complete specialist cardiological assessment</strong></p><p>Your cardiologist reviews your detailed cardiac history — symptoms, previous episodes, family history of cardiovascular disease, risk factors, current cardiological medication, and available previous investigations.</p><p><strong>Specialist test interpretation</strong></p><p>Your cardiologist reviews and interprets any cardiological tests you have sent — ECG, echocardiogram, Holter, stress test, blood tests with cardiological markers — providing a clear explanation of the findings and their clinical significance.</p><p><strong>Specialist cardiological management plan</strong></p><p>Based on the assessment and test interpretation, your cardiologist designs a specialist management plan — which may include cardiological medication adjustment at the specialist's discretion, requests for additional investigations where indicated, and lifestyle and risk factor recommendations.</p><p><strong>Specialist clinical documentation — at the specialist's discretion</strong></p><p>When clinically indicated, your cardiologist issues appropriate clinical documentation valid at any pharmacy in Spain, as well as specialist reports for continuity of care.</p><p><strong>Cardiological investigation requests</strong></p><p>Where additional investigations are clinically indicated — ECG, Holter, echocardiogram, blood tests with cardiological markers, stress test — your cardiologist issues the request the same day. Private cardiological testing is available at cardiology clinics and private hospitals throughout Spain.</p><p><strong>In-person referral coordination — where indicated</strong></p><p>Where in-person assessment, tests that cannot be performed remotely, or cardiological intervention are clinically indicated, your cardiologist coordinates the referral with complete specialist documentation the same day.</p><p><strong>Cardiological second opinion</strong></p><p>If you have received a cardiological diagnosis, test result, or treatment plan from another cardiologist and want an independent specialist assessment, your cardiologist reviews all available documentation.</p><p><strong>Ongoing cardiological follow-up</strong></p><p>Specialist follow-up consultations are available for chronic condition monitoring, treatment response review, and interpretation of follow-up investigations.</p><h2>Cardiology in Spain — The Access Problem</h2><p>Private cardiology in Spain is well-resourced in Madrid, Barcelona, and other major cities. However, waiting times for a first private cardiologist appointment are generally two to four weeks for non-urgent presentations.</p><p>For interpretation of a cardiological test — an ECG with uncertain findings, a Holter that the GP has not been able to fully explain, an echocardiogram with results you do not understand — waiting weeks for a specialist to explain the findings is unnecessarily distressing.</p><p>For international residents who need specialist cardiology in English or Portuguese, options are practically non-existent outside Madrid and Barcelona.</p><p>Our service provides specialist cardiological assessment with test interpretation the same day — from anywhere in Spain.</p>",
+      "ctaLabel": null,
+      "sortOrder": 0,
+      "durationMinutes": 15,
+      "basePriceCents": 7900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-10T13:43:02.311Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0sp640002y8jug1jk47o6",
+          "kind": "IMAGE",
+          "key": "media/7410c221-0047-4e40-a26e-443d1dfd0c49-es-cardiologo-online.png",
+          "path": "/api/media/media/7410c221-0047-4e40-a26e-443d1dfd0c49-es-cardiologo-online.png",
+          "altText": "Cardiología Especialista"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qhbj005pngjuxr12j3ik",
+          "question": "Can the cardiologist interpret my ECG by video call?",
+          "answer": "Yes — by sending the PDF or image of the ECG before the consultation. Your cardiologist interprets it in full before the call and explains the findings in detail during the consultation. This is an established practice in telecardiology.",
+          "sortOrder": 0,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qhbj005qngjuv99p8i0k",
+          "question": "I have symptoms of palpitations — is this urgent?",
+          "answer": "Palpitations with dizziness, loss of consciousness, or chest pain are urgent — call 112 immediately. Palpitations without associated severe symptoms, especially if they are episodic and not worsening, are appropriate for non-urgent cardiology assessment through this service.",
+          "sortOrder": 1,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qhbj005rngjujnsjkvdw",
+          "question": "What tests should I bring to the consultation?",
+          "answer": "Everything you have relevant — ECG, echocardiogram report, Holter report, stress test report, recent lab results, letters from previous cardiologists, list of your current cardiac medications. The more information your cardiologist provides, the more complete the evaluation will be.",
+          "sortOrder": 2,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qhbj005sngjuhrmcv3ex",
+          "question": "Can the cardiologist adjust my medication?",
+          "answer": "Yes — including antihypertensive, antiarrhythmic, anticoagulant, diuretic medication, and other cardiac medications where clinically indicated, at the specialist’s discretion after a complete evaluation.",
+          "sortOrder": 3,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qhbj005tngjuqkib7c17",
+          "question": "Can the cardiologist request an echocardiogram or Holter monitor?",
+          "answer": "Yes. Where these tests are clinically indicated, your cardiologist issues the request on the same day. Private echocardiography and Holter monitoring are available in cardiology clinics and private hospitals throughout Spain — in many cities with availability within a few days.",
+          "sortOrder": 4,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qhbj005ungju5xm4kwnd",
+          "question": "Can I get a second cardiological opinion?",
+          "answer": "Yes. A specialized cardiology second opinion is one of the common uses of this service — especially regarding uncertain diagnoses, test findings that have not been well explained, or before committing to significant cardiology interventions.",
+          "sortOrder": 5,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qhbj005vngjuhoy9l0pw",
+          "question": "Is this service suitable for pre-sport cardiovascular evaluation?",
+          "answer": "Yes — for adults who want to start intense physical activity or have sports-related cardiology concerns. The official sports medical examination for federation licenses requires an in-person physical examination — but the pre-sport cardiology evaluation at the specialist medicine level can be carried out with review of tests by telemedicine.",
+          "sortOrder": 6,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qhbj005wngju615ng5bz",
+          "question": "Do I need Spanish health insurance?",
+          "answer": "No. It is a private direct-pay service. The clinical documentation issued is provided at the full private price regardless of insurance status.",
+          "sortOrder": 7,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qhbj005xngjubqki07de",
+          "question": "Can I use this service from anywhere in Spain?",
+          "answer": "Yes — including the Balearic Islands, the Canary Islands, Ceuta, and Melilla. You only need a stable internet connection, a device with a camera, and the ability to send your cardiology tests digitally before the consultation.",
+          "sortOrder": 8,
+          "resolvedLocale": "EN"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "EN",
+      "links": [
+        {
+          "id": "cmre7te5n0048g8juho9yeyhr",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Seguimiento de enfermedades cardiovasculares crónicas?",
+          "body": "Si tu situación está relacionada con seguimiento de enfermedades cardiovasculares crónicas, nuestra Enfermedades Crónicas te ofrece la evaluación adecuada.",
+          "ctaLabel": "Enfermedades Crónicas",
+          "targetSlug": "enfermedades-cronicas-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7texp004ag8jutzpe2duq",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con control de peso y riesgo cardiovascular?",
+          "body": "Para control de peso y riesgo cardiovascular, consulta nuestra página de Control de Peso — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tfpq004cg8juxdaop10s",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre dejar de fumar — prioridad en enfermedad cardiovascular?",
+          "body": "Nuestra Dejar de Fumar está pensada específicamente para dejar de fumar — prioridad en enfermedad cardiovascular.",
+          "ctaLabel": "Dejar de Fumar",
+          "targetSlug": "dejar-de-fumar-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tghs004eg8ju8onr6bhv",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Solicitar ECG, analíticas o pruebas cardiológicas?",
+          "body": "Si tu situación está relacionada con solicitar ECG, analíticas o pruebas cardiológicas, nuestra Derivaciones y Pruebas te ofrece la evaluación adecuada.",
+          "ctaLabel": "Derivaciones y Pruebas",
+          "targetSlug": "derivaciones-pruebas-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpqvkc000z01rui7z5it57"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "UNAVAILABLE",
+        "reasonCode": "NO_OPEN_SLOT",
+        "nextAvailableAt": null
+      }
+    }
+  }
+}

@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/derivaciones-pruebas-online?countryCode=es&locale=CS",
+  "checkedAt": "2026-09-13T02:29:51.696Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qas1003sngjus0w2obwn",
+      "kind": "GENERAL",
+      "slug": "derivaciones-pruebas-online",
+      "name": "Žádanky a vyšetření",
+      "summary": null,
+      "seoTitle": "Online doporučení a vyšetření Španělsko | Laboratorní testy | Praktický lékař",
+      "seoDescription": "Potřebujete doporučení ke specialistovi, laboratorní testy nebo zobrazovací vyšetření ve Španělsku? Naši registrovaní praktičtí lékaři vystavují klinickou dokumentaci po kompletním vyšetření. Tentýž den ve Španělsku.",
+      "seoKeywords": [
+        "derivaciones médicas online España",
+        "carta derivación especialista online España",
+        "analíticas privadas online España",
+        "pruebas imagen solicitud online España",
+        "derivación médico cabecera online España"
+      ],
+      "heroTitle": "Doporučení a vyšetření — online klinická dokumentace tentýž den",
+      "heroDescription": "Potřebujete doporučující dopis k soukromému specialistovi ve Španělsku? Potřebujete, aby lékař požádal o laboratorní vyšetření nebo zobrazovací vyšetření, než si je budete moci rezervovat? Obdrželi jste výsledky od španělského specialisty, které si přejete, aby byly zkontrolovány a jasně vysvětleny, než se rozhodnete, jak postupovat? Naši praktičtí lékaři, registrovaní v souladu s požadavky Organización Médica Colegial (OMC), vystavují klinické doporučující dopisy, žádanky na laboratorní vyšetření a žádanky na zobrazovací vyšetření po důkladném klinickém vyšetření — a poskytují vám dokumentaci, kterou potřebujete k přístupu k soukromé specializované péči a diagnostickým vyšetřením ve Španělsku. Tentýž den, odkudkoli v zemi, ve španělštině, angličtině nebo portugalštině.",
+      "detailBody": "<h2>Jak funguje přístup ke specialistům ve Španělsku</h2><p>Španělsko má dvojí systém doporučení — jeden pro veřejný systém a druhý pro soukromou péči.</p><p>Přístup ke specialistům ve veřejném systému vyžaduje doporučení od praktického lékaře (médico de familia) smluvně vázaného na SNS. Bez tohoto doporučení nejsou návštěvy specialistů ve veřejném systému hrazeny. Global Health nemůže poskytovat doporučení do veřejného systému — to vyžaduje praktického lékaře smluvně vázaného na španělský veřejný zdravotní systém.</p><p>Přístup k soukromým specialistům je ve většině případů dostupný přímo — můžete si objednat termín u soukromého specialisty bez doporučujícího dopisu. Nicméně přicházet na návštěvu specialisty bez klinického kontextu výrazně snižuje kvalitu této první konzultace. Specialista, který obdrží jasný doporučující dopis — popisující vaše příznaky, relevantní anamnézu, aktuální medikaci a konkrétní klinickou otázku — provede cílenější a efektivnější vyšetření.</p><p>Tato služba zahrnuje:</p><ul><li>Soukromé doporučující dopisy — pro konzultace se soukromými specialisty dle vašeho výběru</li><li>Žádosti o laboratorní vyšetření — pro soukromé laboratorní testy v odběrových centrech po celém Španělsku</li><li>Žádosti o zobrazovací vyšetření — pro soukromé rentgeny, ultrazvuky, magnetickou rezonanci nebo CT</li><li>Souhrnné klinické dopisy — dokumentující vaše vyšetření a nálezy pro kontinuitu péče</li><li>Revize výsledků — laboratorní výsledky, obrazové zprávy nebo dopisy specialistů přezkoumané a srozumitelně vysvětlené</li></ul><p>Tato služba nezahrnuje:</p><ul><li>Doporučení do veřejného systému SNS — tato vyžadují praktického lékaře smluvně vázaného na SNS</li><li>Doporučení na pohotovost — volejte 112 nebo okamžitě jděte na nejbližší urgentní příjem</li></ul><h2>Pro koho je tato služba určena</h2><p>Tato konzultace je vhodná pro:</p><ul><li>Každého, kdo chce navštívit soukromého specialistu ve Španělsku a potřebuje klinický doporučující dopis, který bude konzultaci doprovázet</li><li>Pacienty, kteří potřebují laboratorní nebo zobrazovací vyšetření předepsaná lékařem před jejich soukromým objednáním</li><li>Pacienty, kteří obdrželi výsledky — laboratorních testů, zobrazovacích vyšetření nebo konzultací se specialisty — a chtějí je přezkoumat a srozumitelně vysvětlit</li><li>Pacienty s konkrétním klinickým problémem, který chtějí před vyhledáním specializované péče formálně posoudit a zdokumentovat</li><li>Pacienty, kteří potřebují souhrnný klinický dopis — pro účely pojištění, pro nového lékaře nebo pro kontinuitu péče</li><li>Pacienty, kteří obdrželi klinickou dokumentaci ve španělštině a chtějí ji přezkoumat a zasadit do kontextu</li><li>Každého ve Španělsku bez přiděleného praktického lékaře, kdo potřebuje klinickou dokumentaci pro přístup k soukromé specializované péči</li></ul><h2>Proč doporučující dopis přidává hodnotu</h2><p>Přímý přístup k soukromým specialistům ve Španělsku je ve většině případů dostupný bez doporučujícího dopisu. Ale specialista, který vás vidí bez kontextu, musí začít od nuly — a čas konzultace se věnuje shromažďování informací, které mohly být předem předány písemně.</p><p>Doporučující dopis vystavený po klinickém vyšetření obsahuje vše, co specialista potřebuje vědět předtím, než vstoupíte do jeho ordinace — příznaky, trvání, závažnost, aktuální medikaci, již provedená vyšetření a konkrétní klinickou otázku, kterou žádáte řešit. Specialista může přejít přímo k klinickému problému.</p><p>Rozdíl v kvalitě této první návštěvy u specialisty — mezi příchodem s kompletním doporučujícím dopisem a příchodem bez kontextu — je významný.</p><h2>Doporučující dopisy — co obsahují</h2><p>Doporučující dopis vystavený praktickým lékařem Global Health po klinickém vyšetření obsahuje:</p><ul><li>Údaje o pacientovi a relevantní lékařskou anamnézu</li><li>Popis aktuálního problému — příznaky, trvání, závažnost a relevantní klinické nálezy z videokonzultace</li><li>Aktuální medikaci a relevantní již dokončená vyšetření</li><li>Konkrétní klinickou otázku pro specialistu — co žádáte, aby posoudil nebo doporučil</li><li>Stupeň naléhavosti — rutinní, brzy nebo urgentní — na základě klinického posouzení</li></ul><p>Dopis je vystaven ve španělštině pro španělsky mluvící specialisty. Pokud potřebujete anglickou verzi pro anglicky mluvícího lékaře, uveďte to svému lékaři během konzultace.</p><h2>Laboratorní vyšetření — co lze objednat</h2><p>Po klinickém vyšetření může váš praktický lékař vystavit žádosti o laboratorní vyšetření pro širokou škálu testů, včetně:</p><p><strong>Metabolické a kardiovaskulární</strong></p><ul><li>Kompletní krevní obraz</li><li>Glukóza nalačno a HbA1c</li><li>Lipidový panel — celkový cholesterol, LDL, HDL, triglyceridy</li><li>Funkce ledvin — kreatinin, eGFR, močovina, elektrolyty</li><li>Funkce jater</li><li>Funkce štítné žlázy — TSH, volné T4, volné T3</li><li>Kyselina močová</li><li>Feritin, vyšetření železa a B12/folát</li></ul><p><strong>Hormonální a reprodukční</strong></p><ul><li>Testosteronový panel — celkový a volný testosteron, LH, FSH, SHBG</li><li>Ženský hormonální panel — estradiol, FSH, LH, progesteron, AMH</li><li>Protilátky proti štítné žláze — anti-TPO, anti-thyreoglobulin</li><li>Kortizol</li><li>Prolaktin</li><li>DHEA-S</li></ul><p><strong>Zánětlivé a autoimunitní</strong></p><ul><li>CRP a FW</li><li>Revmatoidní faktor a anti-CCP</li><li>Panely ANA a ANCA</li><li>Hladiny komplementu</li></ul><p><strong>Infekční onemocnění</strong></p><ul><li>Serologie HIV, hepatitida B, hepatitida C</li><li>Panely STI</li><li>Kontroly imunity po očkování</li></ul><p><strong>Ostatní</strong></p><ul><li>Vitamin D</li><li>Screening celiakie — anti-tTG IgA</li><li>PSA — prostatický specifický antigen</li><li>hCG — těhotenský test</li><li>Panely alergie — specifické IgE</li></ul><p>Žádosti o laboratorní vyšetření jsou vystaveny po klinickém vyšetření — váš lékař vám poradí, která vyšetření jsou pro vaši konkrétní prezentaci klinicky indikována.</p><h2>Přístup k soukromým laboratorním vyšetřením ve Španělsku</h2><p>Soukromá odběrová centra pro laboratorní vyšetření jsou široce dostupná po celém Španělsku — v Madridu, Barceloně a ve všech hlavních městech a krajských městech. Soukromé laboratorní sítě působí po celé zemi s odběrovými centry ve většině lokalit.</p><p>Po vaší konzultaci vám lékař vystaví žádost o vyšetření a poradí vám, kam jít na odběr na základě vaší polohy. Termín odběru si rezervujete přímo — pro soukromá laboratorní vyšetření není vyžadováno španělské zdravotní pojištění. Výsledky jsou obvykle dostupné za 24 až 72 hodin v závislosti na požadovaných testech, i když některé specializované panely mohou trvat déle.</p><h2>Žádosti o zobrazovací vyšetření</h2><p>Kde jsou po vyšetření klinicky indikovány rentgen, ultrazvuk, magnetická rezonance nebo CT, váš lékař vystaví formální žádost o zobrazovací vyšetření. Soukromá radiologie je ve Španělsku široce dostupná — většina soukromých nemocnic a radiologických center přijímá přímé objednání s žádankou od lékaře.</p><p>Váš lékař vám poradí, která zobrazovací metoda je pro vaši konkrétní klinickou otázku a naléhavost vyšetření nejvhodnější.</p><h2>Revize výsledků</h2><p>Obdrželi jste výsledky laboratorních testů, zprávy z zobrazovacích vyšetření nebo dopisy specialistů, které chcete přezkoumat a srozumitelně vysvětlit? Váš lékař je během následné konzultace kompletně přezkoumá — vysvětlí klinické nálezy, co znamenají pro vaše zdraví, jaké jsou další kroky a zda je potřeba další vyšetření nebo specializované posouzení.</p><p>To je obzvláště užitečné pro pacienty, kteří obdrželi výsledky nebo klinické dopisy ve španělštině a chtějí, aby byly jasně vysvětleny — ať už jde o španělské obyvatele, kteří chtějí více času na prodiskutování výsledků, než umožňuje standardní konzultace, nebo o zahraniční obyvatele, kteří potřebují klinický obsah vysvětlit v angličtině nebo portugalštině.</p>",
+      "ctaLabel": null,
+      "sortOrder": 120,
+      "durationMinutes": 15,
+      "basePriceCents": 3500,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.264Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0jvsd0001asjuwczqne2v",
+          "kind": "IMAGE",
+          "key": "media/ca5aeb3b-c263-4ee0-8662-b763c407f9cc-es-derivaciones-pruebas-online.png",
+          "path": "/api/media/media/ca5aeb3b-c263-4ee0-8662-b763c407f9cc-es-derivaciones-pruebas-online.png",
+          "altText": "Derivaciones y Pruebas"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qb0g003tngjuzcplymij",
+          "question": "Mohu získat doporučující dopis bez úplného klinického vyšetření?",
+          "answer": "Ne. Dopisy s doporučením se vydávají po úplném klinickém vyšetření. Váš lékař potřebuje vyhodnotit vaše příznaky a anamnézu, aby mohl napsat klinicky smysluplný doporučující dopis. Dopis s doporučením bez klinického vyšetření by vaší návštěvě specialisty nepřidal hodnotu.",
+          "sortOrder": 0,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qb0g003ungjuz3gp78qy",
+          "question": "Může tato služba poskytovat doporučení z veřejného systému SNS?",
+          "answer": "Ne. Doporučení z veřejného systému ve Španělsku vyžadují praktického lékaře smluvního s SNS. Global Health poskytuje soukromé doporučující dopisy pro přístup k soukromým specialistům.",
+          "sortOrder": 1,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qb0g003vngjuix3g83vt",
+          "question": "Musí být doporučující dopis ve španělštině?",
+          "answer": "Pro španělsky mluvící specialisty ano — doporučující dopis se vystavuje ve španělštině. Pro anglicky mluvící poskytovatele nebo mezinárodní specialisty může být vystaven v angličtině. Váš lékař jej vystaví v příslušném jazyce podle toho, koho budete navštěvovat — proberte to během konzultace.",
+          "sortOrder": 2,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qb0g003wngju5rvz2cky",
+          "question": "Jak dlouho trvá, než dorazí výsledky rozborů?",
+          "answer": "Doba odezvy se liší podle testu — většina standardních laboratorních vyšetření je k dispozici do 24 až 72 hodin z privátních odběrových center ve Španělsku. Některé specializované panely trvají déle. Váš lékař vás při vystavení žádanky informuje o očekávané době odezvy.",
+          "sortOrder": 3,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qb0g003xngju2n8wfdnu",
+          "question": "Mohu tento službu používat, pokud mám španělské soukromé zdravotní pojištění?",
+          "answer": "Ano — ale tato služba pokrývá soukromá doporučení a soukromé žádosti o vyšetření. Vaše soukromé zdravotní pojištění může krýt návštěvy specialistů a laboratorní testy v závislosti na vaší konkrétní pojistné smlouvě — obraťte se na svou pojišťovnu. Laboratorní testy a návštěvy specialistů rezervované prostřednictvím této služby jsou účtovány v plné soukromé ceně bez ohledu na vaše pojištění.",
+          "sortOrder": 4,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qb0g003yngjugl2iwso9",
+          "question": "Co když mé výsledky ukážou něco vážného?",
+          "answer": "Pokud kontrola vašich výsledků odhalí nálezy, které vyžadují urgentní pozornost, váš lékař vám okamžitě poradí ohledně příslušných dalších kroků — včetně toho, zda je zapotřebí neodkladná péče. Pokud je zapotřebí neodkladná péče, zavolejte na 112 nebo ihned jděte na nejbližší pohotovost.",
+          "sortOrder": 5,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qb0g003zngjuhaukyflq",
+          "question": "Mohu tento službu používat i bez praktického lékaře ve Španělsku?",
+          "answer": "Ano. Tato služba je k dispozici pro kohokoli ve Španělsku — bez předchozí registrace, bez nutnosti mít praktického lékaře, bez nutnosti zdravotního pojištění.",
+          "sortOrder": 6,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qb0g0040ngju96ofwc1j",
+          "question": "Mohu tuto službu používat odkudkoli ve Španělsku?",
+          "answer": "Ano — včetně Baleárských ostrovů, Kanárských ostrovů, Ceuty a Melilly. Stačí stabilní připojení k internetu a zařízení s kamerou.",
+          "sortOrder": 7,
+          "resolvedLocale": "CS"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "CS",
+      "links": [
+        {
+          "id": "cmre7snma002qg8jult0p90xg",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con analíticas cardiológicas y metabólicas?",
+          "body": "Para analíticas cardiológicas y metabólicas, consulta nuestra página de Cardiología Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Cardiología Especialista",
+          "targetSlug": "cardiologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7soee002sg8ju1hnpt499",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre solicitar RMN cerebral o electromiograma?",
+          "body": "Nuestra Neurología Especialista está pensada específicamente para solicitar RMN cerebral o electromiograma.",
+          "ctaLabel": "Neurología Especialista",
+          "targetSlug": "neurologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7smu6002og8ju8lndhczu",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Analíticas hormonales y metabólicas?",
+          "body": "Si tu situación está relacionada con analíticas hormonales y metabólicas, nuestra Control de Peso te ofrece la evaluación adecuada.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7sp6h002ug8jum26oow57",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Segunda opinión sobre resultados recibidos?",
+          "body": "Si tu situación está relacionada con segunda opinión sobre resultados recibidos, nuestra Segunda Opinión Médica te ofrece la evaluación adecuada.",
+          "ctaLabel": "Segunda Opinión Médica",
+          "targetSlug": "segunda-opinion-medica",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

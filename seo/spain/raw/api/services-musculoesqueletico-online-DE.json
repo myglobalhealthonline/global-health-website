@@ -1,0 +1,179 @@
+{
+  "endpoint": "/api/services/musculoesqueletico-online?countryCode=es&locale=DE",
+  "checkedAt": "2026-09-13T02:29:54.930Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q8mg0037ngjuso41eynq",
+      "kind": "GENERAL",
+      "slug": "musculoesqueletico-online",
+      "name": "Muskuloskelettal",
+      "summary": null,
+      "seoTitle": "Muskuloskelettale Schmerzen Online Spanien | Klinische Beurteilung | Hausarzt",
+      "seoDescription": "Rückenschmerzen, Gelenkschmerzen, Ischias oder Muskelverletzungen. Unsere zugelassenen Hausärzte beurteilen muskuloskelettale Beschwerden per sicherem Videoanruf. Klinische Beurteilung noch am selben Tag in Spanien.",
+      "seoKeywords": [
+        "dolor musculoesquelético online España",
+        "dolor espalda médico online España",
+        "ciática consulta online España",
+        "dolor articular médico online España",
+        "lesión muscular evaluación online España"
+      ],
+      "heroTitle": "Muskuloskelettaler Schmerz — Klinische Online-Bewertung am selben Tag",
+      "heroDescription": "Rückenschmerzen, Gelenkschmerzen, Ischias, Muskelverletzungen und chronische muskuloskelettale Erkrankungen gehören zu den häufigsten Gründen, warum Menschen medizinische Hilfe suchen — und zu den am schlechtesten durch das derzeitige Modell der primären Versorgung versorgten. Wochenlang auf einen Termin in der Traumatologie oder Orthopädie zu warten bei einer Erkrankung, die heute einer Beurteilung bedarf, ist sowohl im öffentlichen als auch im privaten Gesundheitswesen in Spanien ein strukturelles Problem. Unsere Hausärzte, die gemäß den Anforderungen der Organización Médica Colegial (OMC) zugelassen sind, führen über eine sichere Videokonsultation umfassende muskuloskelettale Beurteilungen durch — sie identifizieren die zugrunde liegende Ursache, bewerten die funktionellen Auswirkungen, beraten über evidenzbasierte Behandlung und koordinieren bei klinischer Indikation Überweisung und weitere Untersuchungen. Am selben Tag, von überall in Spanien aus, auf Spanisch, Englisch oder Portugiesisch.",
+      "detailBody": "<h2>Für wen dieser Service gedacht ist</h2><p>Diese Konsultation ist geeignet für Erwachsene mit:</p><ul><li>einer akuten muskuloskelettalen Verletzung oder plötzlich einsetzendem Schmerz, der eine klinische Beurteilung erfordert</li><li>chronischen oder anhaltenden Schmerzen, die nicht ausreichend abgeklärt oder behandelt wurden</li><li>einer bekannten muskuloskelettalen Erkrankung, die sich verschlimmert hat und eine zeitnahe Überprüfung erfordert</li><li>Schmerzen nach einer Verletzung, einem Eingriff oder einer Phase der Immobilisierung</li><li>muskuloskelettalen Symptomen im Zusammenhang mit einer chronischen Erkrankung — Diabetes, Herz-Kreislauf-Erkrankung oder entzündlichen Erkrankungen — die die Behandlung erschweren</li><li>dem Bedarf an einer Überweisung zur Physiotherapie, Anträgen auf bildgebende Untersuchungen oder einer koordinierten fachärztlichen Überweisung im Rahmen einer klinischen Beurteilung</li><li>allen, denen gesagt wurde „das ist normal“ oder „ruhen Sie sich aus“, ohne eine strukturierte klinische Erklärung dafür zu erhalten, was vor sich geht und was zu tun ist</li></ul><p>Wenn Sie plötzlich starke Schmerzen, Brustschmerzen, Schmerzen nach einem erheblichen Trauma oder irgendwelche Symptome haben, die Sie ernsthaft beunruhigen — gehen Sie bitte sofort in die nächstgelegene Notaufnahme oder rufen Sie 112 an.</p><h2>Häufig beurteilte Erkrankungen</h2><p><strong>Wirbelsäule und neurologisch</strong></p><ul><li>Akute und chronische Schmerzen im unteren Rücken</li><li>Nackenschmerzen und Erkrankungen der Halswirbelsäule</li><li>Ischialgie und lumbale Radikulopathie</li><li>Bandscheibenvorfall und damit verbundene Symptome einer Nervenkompression</li><li>Schmerzen der Brustwirbelsäule</li></ul><p><strong>Gelenkerkrankungen</strong></p><ul><li>Knieschmerzen — einschließlich Arthrose, Bandverletzungen und patellofemorales Syndrom</li><li>Hüftschmerzen — einschließlich Arthrose, Bursitis und ausstrahlende Schmerzen</li><li>Schulterschmerzen — einschließlich Verletzung der Rotatorenmanschette, subakromiales Syndrom und adhäsive Kapsulitis</li><li>Handgelenks- und Handschmerzen — einschließlich Karpaltunnelsyndrom und Tendinopathie</li><li>Sprunggelenks- und Fußschmerzen — einschließlich Plantarfasziitis und Achillessehnen-Tendinopathie</li><li>Ellenbogenschmerzen — einschließlich lateraler und medialer Epicondylitis</li></ul><p><strong>Muskeln und Weichteile</strong></p><ul><li>Muskelzerrungen und -risse</li><li>Weichteilverletzungen</li><li>Tendinitis und Tendinopathie</li><li>Bursitis</li><li>Sportverletzungen und aktivitätsbezogene muskuloskelettale Erkrankungen</li></ul><p><strong>Chronische und systemische Erkrankungen</strong></p><ul><li>Arthrose — Beurteilung, Behandlung und Koordination der Überweisung</li><li>Entzündliche Arthritis — Beurteilung und Überweisung an die Rheumatologie, wenn angezeigt</li><li>Fibromyalgie — Beurteilung und integrierte Behandlung</li><li>Neuropathische Schmerzen — Beurteilung und Behandlungsweg</li><li>Chronische Schmerzsyndrome — strukturierte Beurteilung und Koordination der Versorgung</li><li>Schmerzen nach Verletzung oder nach Operation — Überprüfung und Behandlungsplan</li></ul><p><strong>Arbeits- und lebensstilbezogen</strong></p><ul><li>Arbeitsbezogene muskuloskelettale Erkrankungen — Überlastungsbeschwerden, Haltungsbeschwerden</li><li>Ergonomische Beurteilung und Beratung</li><li>Beurteilung von Sport- und bewegungsbedingten Verletzungen</li></ul><h2>Was die Konsultation umfasst</h2><p><strong>Umfassende klinische Beurteilung</strong></p><p>Ihr Hausarzt erhebt eine ausführliche Anamnese Ihrer Schmerzen — Beginn, Lokalisation, Art, Stärke, Ausstrahlung, verstärkende und lindernde Faktoren, funktionelle Auswirkungen und systematisches Screening auf Warnzeichen. Vorhandene Bildgebungsbefunde, Untersuchungsberichte oder klinische Schreiben werden vollständig geprüft.</p><p><strong>Screening auf Warnzeichen</strong></p><p>Die muskuloskelettale Beurteilung umfasst immer ein systematisches Screening auf Warnzeichen — Hinweise darauf, dass die Schmerzen eine ernste zugrunde liegende Ursache haben könnten, die eine dringende Abklärung oder Überweisung erfordert. Ihr Arzt beurteilt diese als Standardbestandteil jeder Konsultation.</p><p><strong>Personalisierter Behandlungsplan</strong></p><p>Auf Grundlage der Beurteilung berät Ihr Arzt über den am besten geeigneten Ansatz — dies kann eine Überweisung zur Physiotherapie und strukturierten Rehabilitation, Anträge auf bildgebende Untersuchungen, sofern klinisch angezeigt, fachärztliche Überweisung, ergonomische und lebensstilbezogene Beratung sowie klinische Empfehlungen nach Ermessen des Arztes umfassen.</p><p><strong>Klinische Dokumentation — nach Ermessen des Arztes</strong></p><p>Wenn klinisch angezeigt, stellt Ihr Hausarzt die entsprechende klinische Dokumentation aus, die in jeder spanischen Apotheke gültig ist.</p><p>Hinweis: Betäubungsmittel und bestimmte kontrollierte Substanzen erfordern besondere Dokumentation, die nicht elektronisch ausgestellt werden kann. Unsere Hausärzte verordnen kontrollierte Substanzen routinemäßig nicht per Videokonsultation.</p><p><strong>Koordination von Überweisung und Diagnostik</strong></p><p>Wenn eine Überweisung zur Physiotherapie, bildgebende Untersuchungen oder eine fachärztliche Beurteilung klinisch angezeigt sind, stellt Ihr Arzt die entsprechenden Unterlagen noch am selben Tag aus — damit Sie die Konsultation mit einem klaren Behandlungsweg verlassen und nicht nur mit der Empfehlung, sich irgendwie selbst zu helfen.</p><h2>Warnzeichen — wann Sie eine Notfallbehandlung suchen sollten</h2><p>Muskuloskelettale Schmerzen sind fast immer gutartig — aber einige Verläufe erfordern eine dringende Behandlung, die nicht bis zu einer Videokonsultation warten kann.</p><p>Suchen Sie sofort eine Notfallbehandlung auf, wenn Ihre Schmerzen begleitet werden von:</p><ul><li>jeglichen Veränderungen der Blasen- oder Darmfunktion im Zusammenhang mit Rückenschmerzen — Inkontinenz oder Harnverhalt — dies kann auf ein Cauda-equina-Syndrom hinweisen, einen chirurgischen Notfall</li><li>erheblichem Trauma — Sturz aus der Höhe, Verkehrsunfall oder erheblichem Aufprall</li><li>plötzlich starken Brustschmerzen — die eher auf eine kardiale oder aortale als auf eine muskuloskelettale Ursache hinweisen können</li><li>ungewolltem Gewichtsverlust in Verbindung mit neuen oder sich verschlimmernden Schmerzen</li><li>Fieber in Verbindung mit Gelenkschwellung und Gelenkschmerzen — dies kann auf eine septische Arthritis hinweisen</li><li>sich rasch verschlechternden neurologischen Symptomen — Schwäche, Taubheitsgefühl oder Koordinationsverlust</li></ul><p>Im Zweifelsfall suchen Sie immer eine Notfallbehandlung auf.</p><h2>Warum eine frühe klinische Beurteilung den Unterschied macht</h2><p>Die meisten muskuloskelettalen Erkrankungen sind selbstlimitierend — sie klingen mit ausreichender Ruhe, Aktivitätsanpassung und strukturierter Rehabilitation ab. Ohne klinische Beurteilung behandeln sich Patienten jedoch häufig unzureichend — indem sie zu früh wieder aktiv werden und zusätzliche Verletzungen verursachen — oder überbehandeln sich — indem sie die Aktivität unnötig einschränken und die Genesung verlängern.</p><p>Eine frühe klinische Beurteilung zeigt, was tatsächlich vor sich geht, schließt eine schwerwiegende zugrunde liegende Pathologie aus und bietet einen strukturierten, evidenzbasierten Behandlungsplan, der eine vollständige funktionelle Genesung schneller und sicherer ermöglicht, als darauf zu warten, dass sich die Situation von selbst löst.</p><h2>Zugang zur Physiotherapie in Spanien</h2><p>Private Physiotherapie ist in Spanien weithin verfügbar — die meisten Physiotherapeuten benötigen jedoch ein Überweisungsschreiben oder einen ärztlichen Bericht, um mit der Behandlung zu beginnen. Im öffentlichen System erfordert der Zugang zur Physiotherapie eine Überweisung durch den Hausarzt des staatlichen Gesundheitssystems — mit möglicherweise erheblichen Wartezeiten.</p><p>Unsere Hausärzte stellen am Tag der Konsultation Überweisungsschreiben zur Physiotherapie aus — adressiert an den Physiotherapeuten oder die Klinik Ihrer Wahl — sodass Sie ohne Verzögerung Zugang zu privater Physiotherapie erhalten.</p><h2>Was das Cauda-equina-Syndrom ist</h2><p>Das Cauda-equina-Syndrom ist ein seltenes, aber schwerwiegendes Wirbelsäulen-Notfallbild, das durch die Kompression der Nervenwurzeln an der Basis der Wirbelsäule verursacht wird. Es zeigt sich als Rückenschmerzen in Verbindung mit Veränderungen der Blasen- oder Darmfunktion — einschließlich Inkontinenz oder Schwierigkeiten beim Wasserlassen — und erfordert eine dringende chirurgische Beurteilung.</p><p>Es wird auf dieser Seite besonders hervorgehoben, weil es anfangs mit gewöhnlichen Rückenschmerzen verwechselt werden kann. Wenn Sie Rückenschmerzen in Verbindung mit irgendeiner Veränderung der Blasen- oder Darmfunktion haben, gehen Sie sofort in die nächstgelegene Notaufnahme — warten Sie nicht auf eine Videokonsultation, warten Sie nicht ab, ob es sich bessert.</p>",
+      "ctaLabel": null,
+      "sortOrder": 150,
+      "durationMinutes": 15,
+      "basePriceCents": 3900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.265Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k5c40006asjuzxb8rhxd",
+          "kind": "IMAGE",
+          "key": "media/a456ec48-dfd5-4b3b-89df-e485c1cbf6ad-es-musculoesqueletico-online.png",
+          "path": "/api/media/media/a456ec48-dfd5-4b3b-89df-e485c1cbf6ad-es-musculoesqueletico-online.png",
+          "altText": "Musculoesquelético"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q8v90038ngjuyknfupgl",
+          "question": "Kann eine muskuloskelettale Erkrankung per Videokonferenz wirklich beurteilt werden?",
+          "answer": "Ja — für die große Mehrheit der Vorstellungen. Die Anamnese ist das stärkste diagnostische Instrument in der muskuloskelettalen Medizin, und eine vollständige Anamnese kann per Videogespräch erhoben werden. Ihr Arzt beobachtet während des Gesprächs auch Ihre Bewegung, Haltung und Funktionsfähigkeit. Wenn Befunde der körperlichen Untersuchung erforderlich sind, die nicht aus der Ferne beurteilt werden können, berät Sie Ihr Arzt hinsichtlich einer geeigneten Untersuchung vor Ort.",
+          "sortOrder": 0,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q8v90039ngjuwmg0lcsl",
+          "question": "Was passiert, wenn ich eine MRT oder Röntgenaufnahme benötige?",
+          "answer": "Wenn bildgebende Untersuchungen auf Grundlage der Beurteilung klinisch indiziert sind, stellt dein Arzt noch am selben Tag eine Bildgebungsanforderung aus. Du kannst die Bildgebung in einem privaten Radiologiezentrum deiner Wahl in Spanien buchen — private Radiologie ist in den wichtigsten Städten und in vielen regionalen Zentren weit verbreitet.",
+          "sortOrder": 1,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q8v9003angjua3r79ope",
+          "question": "Kann ich über diesen Dienst eine Überweisung zur Physiotherapie erhalten?",
+          "answer": "Ja. Überweisungen zur Physiotherapie werden ausgestellt, wenn sie klinisch angezeigt sind — an den Physiotherapeuten oder die Klinik deiner Wahl gerichtet. Dein Arzt kann dich dazu beraten, worauf du bei einem Physiotherapeuten für deine spezifische Erkrankung achten solltest.",
+          "sortOrder": 2,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q8v9003bngjujc0kf3z3",
+          "question": "Was ist das Cauda-equina-Syndrom und warum wird es erwähnt?",
+          "answer": "Das Cauda-equina-Syndrom ist ein seltenes, aber schwerwiegendes spinales Notfallbild, das sich als Rückenschmerzen in Verbindung mit einer Veränderung der Blasen- oder Darmfunktion äußert. Wenn du Rückenschmerzen mit jeglicher Veränderung der Blasen- oder Darmfunktion hast, begib dich sofort in die nächstgelegene Notaufnahme.",
+          "sortOrder": 3,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q8v9003cngjulewdbnyn",
+          "question": "Ist dieser Dienst für Sportverletzungen geeignet?",
+          "answer": "Ja. Sport- und bewegungsbedingte muskuloskelettale Verletzungen sind ein zentraler Bestandteil dieses Dienstes — einschließlich akuter Verletzungen, Überlastungserkrankungen und der Beurteilung der Rückkehr zum Sport nach einer Verletzung.",
+          "sortOrder": 4,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q8v9003dngjufkbfwhgs",
+          "question": "Ich habe bereits Ergebnisse von Bildgebungstests — kann der Arzt sie überprüfen?",
+          "answer": "Ja. Bringen Sie alle vorhandenen Bildgebungsbefunde, Berichte oder klinischen Briefe zu Ihrem Termin mit. Ihr Arzt prüft sie vollständig und bezieht die Befunde in den Behandlungsplan ein.",
+          "sortOrder": 5,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q8v9003engjuzon0r8no",
+          "question": "Muss ich vor der Buchung bereits bildgebende Untersuchungen gehabt haben?",
+          "answer": "Nein. Ihr Arzt beurteilt, ob bildgebende Untersuchungen klinisch indiziert sind, und veranlasst sie, wo es angemessen ist. Wenn Sie bereits Bilder haben, bringen Sie die Ergebnisse mit — Ihr Arzt prüft sie vollständig.",
+          "sortOrder": 6,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q8v9003fngju9p7aqivd",
+          "question": "Kann ich diesen Dienst in Spanien ohne Hausarzt nutzen?",
+          "answer": "Ja. Dieser Service ist für jede Person in Spanien verfügbar — ohne vorherige Registrierung, ohne erforderlichen Hausarzt und ohne notwendige Krankenversicherung.",
+          "sortOrder": 7,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q8v9003gngjuxb5zma44",
+          "question": "Brauche ich eine spanische Krankenversicherung?",
+          "answer": "Nein. Es handelt sich um einen privaten Selbstzahlerdienst. Die über diesen Dienst ausgestellten klinischen Unterlagen und Überweisungen werden auf privater Basis unabhängig vom Versicherungsstatus akzeptiert.",
+          "sortOrder": 8,
+          "resolvedLocale": "DE"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "DE",
+      "links": [
+        {
+          "id": "cmre7tkdz004mg8juc9wpct8q",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con dolor radicular y evaluación neurológica?",
+          "body": "Para dolor radicular y evaluación neurológica, consulta nuestra página de Neurología Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Neurología Especialista",
+          "targetSlug": "neurologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tjlx004kg8juvjqr1eq0",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Dolor crónico y enfermedades crónicas?",
+          "body": "Si tu situación está relacionada con dolor crónico y enfermedades crónicas, nuestra Enfermedades Crónicas te ofrece la evaluación adecuada.",
+          "ctaLabel": "Enfermedades Crónicas",
+          "targetSlug": "enfermedades-cronicas-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tl61004og8juhbx6srep",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre consulta médica general con médico de cabecera?",
+          "body": "Nuestra Consulta Médica General está pensada específicamente para consulta médica general con médico de cabecera.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:11.735Z",
+  "endpoint": "/api/services/consultatie-pediatrie?countryCode=ro&locale=ES",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee8lf000jfsju7gwzzohg",
+      "kind": "SPECIALIST",
+      "slug": "consultatie-pediatrie",
+      "name": "Médico pediatra especialista — evaluación pediátrica compleja en línea",
+      "summary": "¿Necesita una opinión pediátrica especializada o una evaluación más detallada para un problema de salud del niño? Nuestro pediatra autorizado por el CMR ofrece consultas por video para casos que requieren un análisis clínico en profundidad.",
+      "seoTitle": "Pediatra especialista en línea | Rumanía | evaluación integral",
+      "seoDescription": "Opinión pediátrica especializada y evaluación detallada para los problemas de salud del niño. Nuestro pediatra autorizado por CMR ofrece consultas en video para casos que requieren un análisis clínico en profundidad.",
+      "seoKeywords": [
+        "specialist paediatrician online Romania",
+        "paediatric specialist online Romania",
+        "children's specialist doctor online Romania",
+        "paediatric second opinion Romania",
+        "complex child health online Romania"
+      ],
+      "heroTitle": "Médico pediatra especialista — evaluación pediátrica integral en línea",
+      "heroDescription": "Opinión pediátrica especializada y evaluación detallada para los problemas de salud del niño. Nuestro pediatra autorizado por el CMR ofrece consultas por video para casos que requieren un análisis clínico en profundidad.",
+      "detailBody": "<p>Este servicio es adecuado para síntomas persistentes, problemas recurrentes, situaciones en las que el tratamiento inicial no ha ayudado o para familias que desean una opinión pediátrica especializada antes de los siguientes pasos.</p><p>El pediatra revisa el historial médico, la evolución de los síntomas, los análisis ya realizados y las preocupaciones específicas de la familia. Recibirá recomendaciones claras sobre el seguimiento, las pruebas adicionales, el tratamiento y las situaciones en las que es necesario un consultorio físico de urgencia.</p><p>La consulta puede ser útil para infecciones recurrentes, trastornos digestivos, problemas respiratorios, retraso en la recuperación después de una enfermedad, preguntas sobre el desarrollo del niño o la necesidad de coordinación con otros especialistas.</p>",
+      "ctaLabel": "Programa la consulta",
+      "sortOrder": 0,
+      "durationMinutes": 15,
+      "basePriceCents": 18500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:55.579Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jsir5001vakju5gqu1bt0",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee8lf000jfsju7gwzzohg",
+          "path": "/api/media/media/795ad1ab-4a87-4878-8f52-1400ca0bf455-8a391c28-541a-49cd-97ff-fff34ba65c6d-8.webp",
+          "altText": "Medic pediatru specialist — evaluare pediatrică complexă online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "ES",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4gtzl00s901p2yh3ukaox"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:47:00.000Z"
+      }
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "status": "awaiting authenticated storage; public drafts only",
+  "country": "es",
+  "draftsSha256": "236a850866c614e7f3ce1a89c0e108e415b66d7ff110dede5c68c71a89e5a8d5",
+  "groups": [],
+  "proposedGroups": [
+    "doctor:dr-alfredo-del-valle",
+    "doctor:dr-eduardo-olivas",
+    "doctor:dr-eszter-szilagyi",
+    "doctor:dr-fabiana-cornejo",
+    "doctor:dr-fidel-mesa-prado",
+    "doctor:dr-javier-villarte-betancor",
+    "doctor:dr-leandro-wang",
+    "doctor:dr-luz-marina-zuluaga-rios",
+    "doctor:dr-maria-fernanda-ocampo-mora",
+    "doctor:dr-romulo-brito",
+    "doctor:dr-silvina-irale",
+    "doctor:dr-syed-tahir",
+    "doctor:dr-tomas-ruiz-palacios",
+    "service:consulta-diagnotico-vascular",
+    "service:consulta-flebologia-y-linfologia",
+    "service:consulta-medica-online",
+    "service:consulta-online-medicina-estetica",
+    "service:consulta-salud-vascular-circulatoria",
+    "service:dermatologia-especialista-online",
+    "service:cardiologo-online",
+    "service:consulta-piel-online",
+    "service:justificante-medico-online",
+    "service:psiquiatra-online",
+    "service:segunda-opinion-medica",
+    "service:caida-cabello-online",
+    "service:enfermedades-cronicas-online",
+    "service:pediatria-online",
+    "link:cmre7soee002sg8ju1hnpt499",
+    "link:cmre7skhw002kg8judewg26hr",
+    "link:cmre7tkdz004mg8juc9wpct8q",
+    "link:cmre7ts6t0052g8ju6asq61tw",
+    "link:cmre7t1od003kg8jujyc8vdtm",
+    "link:cmre7stv60034g8juje70ar9l",
+    "link:cmre7u1jt005mg8jutxyy9pz0"
+  ],
+  "blockers": [
+    {
+      "key": "storage",
+      "reason": "Automatic approval review rejected content snapshot; explicit user confirmation pending."
+    }
+  ]
+}

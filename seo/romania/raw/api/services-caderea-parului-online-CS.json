@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:05.504Z",
+  "endpoint": "/api/services/caderea-parului-online?countryCode=ro&locale=CS",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee5ha000bfsju94p8e37o",
+      "kind": "GENERAL",
+      "slug": "caderea-parului-online",
+      "name": "Konzultace pro vypadávání vlasů — online, ještě tentýž den",
+      "summary": "Všimli jste si řídnutí vlasů nebo výrazného vypadávání? Naši lékaři s licencí CMR posoudí možné příčiny, doporučí nezbytná vyšetření a stanoví plán péče založený na klinických údajích.",
+      "seoTitle": "Online konzultace pro vypadávání vlasů | Rumunsko",
+      "seoDescription": "Evaluace při řídnutí nebo výrazném vypadávání vlasů. Naši licencovaní lékaři CMR vyhodnotí možné příčiny, doporučí potřebná vyšetření a stanoví plán péče založený na klinických údajích.",
+      "seoKeywords": [
+        "hair loss consultation Romania",
+        "hair loss doctor English Romania",
+        "alopecia online consultation Romania",
+        "finasteride prescription Romania English",
+        "hair thinning doctor Bucharest expat"
+      ],
+      "heroTitle": "Konzultace pro vypadávání vlasů — online, tentýž den",
+      "heroDescription": "Vyhodnocení pro řídnutí nebo výrazné vypadávání vlasů. Naši autorizovaní lékaři CMR vyhodnotí možné příčiny, doporučí potřebná vyšetření a stanoví plán léčby na základě klinických dat.",
+      "detailBody": "<p>Vypadávání vlasů může mít hormonální, genetické, nutriční, zánětlivé příčiny nebo může souviset se stresem, nedávným onemocněním či medikací. Včasné lékařské vyšetření je důležité pro identifikaci vratných faktorů a pro rozhodnutí, zda je potřeba léčba.</p><p>Konzultace zahrnuje podrobný rozhovor o začátku a průběhu vypadávání vlasů, rodinné anamnéze, souvisejících příznacích, existujících onemocněních a vyzkoušené léčbě. Pokud je to potřeba, lékař doporučí vyšetření na nedostatek železa, poruchy štítné žlázy, hormonální nerovnováhy nebo jiné zdravotní příčiny.</p><p>V závislosti na případu obdržíte doporučení týkající se péče o pokožku hlavy, možných léčebných postupů, změn životního stylu a okamžiku, kdy je nutné specializované dermatologické vyšetření.</p>",
+      "ctaLabel": "Naplánovat konzultaci",
+      "sortOrder": 80,
+      "durationMinutes": 15,
+      "basePriceCents": 11500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:38.752Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js6il001nakju2h70qzni",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee5ha000bfsju94p8e37o",
+          "path": "/api/media/media/4d9cf4d8-8a14-475e-b373-4a404428e7d8-9aa0e324-b3f6-4c79-8e8e-4de84aae85e6-1.webp",
+          "altText": "Consultație pentru căderea părului — online, în aceeași zi"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "CS",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

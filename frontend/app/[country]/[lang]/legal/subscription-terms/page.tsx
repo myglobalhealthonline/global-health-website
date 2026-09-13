@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const code = countryCodeFromSlug(country);
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
-  const { subscription } = loadLocaleBundle(lang as LocaleCode);
+  const { subscription } = loadLocaleBundle(lang as LocaleCode, country);
   const title = `${subscription.legal.title} · ${config.name}`;
   return buildPublicMetadata({
     path: `/${country}/${lang}/legal/subscription-terms`,
@@ -49,7 +49,7 @@ export default async function SubscriptionTermsPage({ params }: { params: Promis
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
 
-  const { subscription } = loadLocaleBundle(lang as LocaleCode);
+  const { subscription } = loadLocaleBundle(lang as LocaleCode, code);
   const t = subscription.legal;
 
   // Country-aware tax paragraph (§40 / D21) — generic wording keyed to the

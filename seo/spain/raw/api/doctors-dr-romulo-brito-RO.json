@@ -1,0 +1,478 @@
+{
+  "endpoint": "/api/countries/es/doctors/dr-romulo-brito?locale=RO",
+  "checkedAt": "2026-09-13T02:30:06.308Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "doctor": {
+      "id": "cmrdpsayj001401ruyb4x1ze3",
+      "slug": "dr-romulo-brito",
+      "fullName": "Dr. Rómulo Andrés Brito González",
+      "title": "Medic de medicină generală",
+      "bio": "<p>Dr. Rómulo Andrés Brito González</p><p>Specialist în Medicină de Urgență și Situații de Urgență</p><p>Dr. Rómulo Andrés Brito González este un chirurg foarte calificat, specializat în Medicină de Urgență și Situații de Urgență, cu peste un deceniu de experiență internațională în Venezuela, Ecuador, Chile și Spania. În prezent este medic specialist de gardă la Urgențe la Hospital Can Misses din Ibiza, unde contribuie și la pregătirea clinică a rezidenților de medicină de familie.</p><p>De-a lungul carierei sale, Dr. Brito a dezvoltat o vastă experiență în gestionarea pacienților critici în serviciile de urgențe și Unități de Terapie Intensivă (UTI). Experiența sa clinică acoperă o gamă largă de patologii, inclusiv urgențe medico-chirurgicale, îngrijire pediatrică și afecțiuni obstetrico-ginecologice.</p><p>Dr. Brito este dedicat formării medicale continue, având un master în Medicină de Urgență și Situații de Urgență și certificări specializate în patologie vitală de urgență și urgențe traumatologice. În plus, se află în avangarda tehnologiei medicale moderne, după ce a finalizat un curs universitar în IA generativă și urmând în prezent un master în Aplicații ale Inteligenței Artificiale în Sănătate.</p><p>Recunoscut pentru leadershipul său și comunicarea eficientă, Dr. Brito se remarcă în coordonarea echipelor multidisciplinare pentru a oferi îngrijire de înaltă calitate în medii cu presiune ridicată.</p>",
+      "seoTitle": "Dr Romulo Brito - Medicină Generală | Global Health",
+      "seoDescription": "Dr. Rómulo Brito González, specialist în Medicină de urgență și urgențe, cu peste 10 ani de experiență internațională. Medic specialist la Spitalul Can Misses, Ibiza. Consultație online la Global Health.",
+      "lastReviewedAt": null,
+      "medicalRegistrationUrl": "https://www.cgcom.es/servicios/consulta-publica-de-colegiados",
+      "qualifications": [
+        "Médico Adjunto de Urgencias — Hospital Can Misses, Ibiza, España",
+        "Maestría en Medicina de Urgencias y Emergencias",
+        "Maestría en Aplicaciones de IA en Salud — en curso",
+        "Certificación en Patología Vital Urgente y Emergencias Traumatológicas",
+        "Curso universitario en IA Generativa",
+        "Formador de residentes de medicina familiar — Hospital Can Misses",
+        "Experiencia en UCI y urgencias — Venezuela, Ecuador, Chile, España",
+        "Cirujano cualificado con experiencia pediátrica y obstétrico-ginecológica",
+        "Registrado en CGCOM (nº 070711359)"
+      ],
+      "instagramUrl": null,
+      "facebookUrl": null,
+      "linkedinUrl": null,
+      "languages": [
+        "Spanish"
+      ],
+      "active": true,
+      "updatedAt": "2026-08-20T06:23:44.149Z",
+      "resolvedLocale": "RO",
+      "readyToIndex": true,
+      "nonPhysician": false,
+      "imcRegistration": "070711359",
+      "registrationChamber": "CGCOM",
+      "registrationDivision": null,
+      "registrationVerified": true,
+      "credentials": [],
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmrf4mt0s025i01qrcayletwm",
+          "kind": "IMAGE",
+          "key": "doctor-cmrdpsayj001401ruyb4x1ze3-profile",
+          "path": "/api/media/media/4372b718-7490-4e62-9d69-a700d5fd142a-dr-r-mulo-andr-s-brito-gonz-lez.webp",
+          "altText": "Dr. Rómulo Andrés Brito González",
+          "title": "Dr. Rómulo Andrés Brito González",
+          "caption": "Dr. Rómulo Andrés Brito González — General Medicine Doctor, Global Health Spain",
+          "description": "Dr. Rómulo Andrés Brito González — General Medicine Doctor at Global Health Spain. Book an online video consultation.",
+          "focalX": 53,
+          "focalY": 28,
+          "zoom": 1
+        }
+      ],
+      "additionalCountries": [
+        {
+          "id": "cmrdpsayp001501ruqqcvvhzu",
+          "countryId": "cmqy9rw9w00x001qkq31jktqq",
+          "active": true,
+          "country": {
+            "id": "cmqy9rw9w00x001qkq31jktqq",
+            "code": "es",
+            "name": "Spain",
+            "defaultLocale": "ES"
+          },
+          "chamberEntity": "CGCOM",
+          "registrationNumber": "070711359",
+          "registrationUrl": null,
+          "division": null,
+          "isVerified": true,
+          "translations": [
+            {
+              "locale": "EN",
+              "title": "General Medicine Physician",
+              "bio": "<p>Dr. Rómulo Andrés Brito González</p><p>Specialist in Emergency and Urgent Medicine</p><p>Dr. Rómulo Andrés Brito González is a highly qualified surgeon specializing in Emergency and Urgent Medicine, with more than a decade of international experience in Venezuela, Ecuador, Chile, and Spain. He is currently an Attending Emergency Physician at Hospital Can Misses in Ibiza, where he also contributes to the clinical training of family medicine residents.</p><p>Throughout his career, Dr. Brito has developed extensive experience in the management of critically ill patients in emergency services and Intensive Care Units (ICU). His clinical experience covers a wide range of conditions, including medical-surgical emergencies, pediatric care, and obstetric-gynecological conditions.</p><p>Dr. Brito is committed to ongoing medical training, with a Master’s Degree in Emergency and Urgent Medicine and specialized certifications in urgent vital pathology and trauma emergencies. In addition, he is at the forefront of modern healthcare technology, having completed a university course in Generative AI and currently pursuing a Master’s Degree in Applications of Artificial Intelligence in Health.</p><p>Recognized for his leadership and effective communication, Dr. Brito stands out in coordinating multidisciplinary teams to provide high-quality care in high-pressure environments.</p>",
+              "seoTitle": "Dr Romulo Brito - General Medicine | Global Health",
+              "seoDescription": "Dr. Rómulo Brito González, specialist in Emergency Medicine and Urgent Care with more than 10 years of international experience. Attending Physician at Hospital Can Misses, Ibiza. Online consultation at Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "PT",
+              "title": "Médico Medicina Geral",
+              "bio": "<p>Dr. Rómulo Andrés Brito González</p><p>Especialista em Medicina de Urgência e Emergência</p><p>O Dr. Rómulo Andrés Brito González é um cirurgião altamente qualificado especializado em Medicina de Urgência e Emergência, com mais de uma década de experiência internacional na Venezuela, Equador, Chile e Espanha. Atualmente é Médico Adjunto de Urgências do Hospital Can Misses de Ibiza, onde também contribui para a formação clínica dos residentes de medicina familiar.</p><p>Ao longo da sua carreira, o Dr. Brito desenvolveu uma ampla experiência no manejo de pacientes críticos em serviços de urgência e Unidades de Cuidados Intensivos (UCI). A sua experiência clínica abrange uma vasta gama de patologias, incluindo urgências médico-cirúrgicas, cuidados pediátricos e condições obstétrico-ginecológicas.</p><p>O Dr. Brito está comprometido com a formação médica contínua, com uma Mestrado em Medicina de Urgência e Emergência e certificações especializadas em patologia vital urgente e emergências traumatológicas. Além disso, está na vanguarda da tecnologia de saúde moderna, tendo concluído um curso universitário em IA Generativa e estando atualmente a frequentar uma Mestrado em Aplicações de Inteligência Artificial em Saúde.</p><p>Reconhecido pela sua liderança e comunicação eficaz, o Dr. Brito destaca-se na coordenação de equipas multidisciplinares para prestar cuidados de elevada qualidade em ambientes de alta pressão.</p>",
+              "seoTitle": "Dr Romulo Brito - Medicina Geral | Global Health",
+              "seoDescription": "Dr. Rómulo Brito González, especialista em Medicina de Urgências e Emergências com mais de 10 anos de experiência internacional. Médico Adjunto no Hospital Can Misses, Ibiza. Consulta online na Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "RO",
+              "title": "Medic de medicină generală",
+              "bio": "<p>Dr. Rómulo Andrés Brito González</p><p>Specialist în Medicină de Urgență și Situații de Urgență</p><p>Dr. Rómulo Andrés Brito González este un chirurg foarte calificat, specializat în Medicină de Urgență și Situații de Urgență, cu peste un deceniu de experiență internațională în Venezuela, Ecuador, Chile și Spania. În prezent este medic specialist de gardă la Urgențe la Hospital Can Misses din Ibiza, unde contribuie și la pregătirea clinică a rezidenților de medicină de familie.</p><p>De-a lungul carierei sale, Dr. Brito a dezvoltat o vastă experiență în gestionarea pacienților critici în serviciile de urgențe și Unități de Terapie Intensivă (UTI). Experiența sa clinică acoperă o gamă largă de patologii, inclusiv urgențe medico-chirurgicale, îngrijire pediatrică și afecțiuni obstetrico-ginecologice.</p><p>Dr. Brito este dedicat formării medicale continue, având un master în Medicină de Urgență și Situații de Urgență și certificări specializate în patologie vitală de urgență și urgențe traumatologice. În plus, se află în avangarda tehnologiei medicale moderne, după ce a finalizat un curs universitar în IA generativă și urmând în prezent un master în Aplicații ale Inteligenței Artificiale în Sănătate.</p><p>Recunoscut pentru leadershipul său și comunicarea eficientă, Dr. Brito se remarcă în coordonarea echipelor multidisciplinare pentru a oferi îngrijire de înaltă calitate în medii cu presiune ridicată.</p>",
+              "seoTitle": "Dr Romulo Brito - Medicină Generală | Global Health",
+              "seoDescription": "Dr. Rómulo Brito González, specialist în Medicină de urgență și urgențe, cu peste 10 ani de experiență internațională. Medic specialist la Spitalul Can Misses, Ibiza. Consultație online la Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "CS",
+              "title": "Lékař všeobecné medicíny",
+              "bio": "<p>Dr. Rómulo Andrés Brito González</p><p>Specialista v urgentní a pohotovostní medicíně</p><p>Dr. Rómulo Andrés Brito González je vysoce kvalifikovaný chirurg specializovaný na urgentní a pohotovostní medicínu, s více než desetiletou mezinárodní praxí ve Venezuele, Ekvádoru, Chile a Španělsku. V současnosti je lékařem urgentního příjmu v nemocnici Can Misses na Ibize, kde se také podílí na klinickém vzdělávání rezidentů rodinného lékařství.</p><p>Během své kariéry získal Dr. Brito rozsáhlé zkušenosti s péčí o kriticky nemocné pacienty na urgentních příjmech a ve jednotkách intenzivní péče (JIP). Jeho klinická zkušenost zahrnuje široké spektrum onemocnění, včetně lékařsko-chirurgických akutních stavů, pediatrické péče a porodnicko-gynekologických onemocnění.</p><p>Dr. Brito se věnuje dalšímu lékařskému vzdělávání, má magisterský titul v urgentní a pohotovostní medicíně a specializované certifikace v urgentní vitální patologii a traumatologických akutních stavech. Navíc je na špici moderních zdravotnických technologií, absolvoval univerzitní kurz v oblasti generativní AI a v současnosti studuje magisterský program v aplikacích umělé inteligence ve zdravotnictví.</p><p>Dr. Brito je uznáván pro své vůdčí schopnosti a efektivní komunikaci a vyniká při koordinaci multidisciplinárních týmů, aby poskytoval vysoce kvalitní péči ve vysoce stresových podmínkách.</p>",
+              "seoTitle": "Dr Romulo Brito - Všeobecné lékařství | Global Health",
+              "seoDescription": "Dr. Rómulo Brito González, specialista na urgentní medicínu s více než 10 lety mezinárodních zkušeností. Vedoucí lékař v nemocnici Can Misses, Ibiza. Online konzultace v Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "DE",
+              "title": "Arzt Allgemeinmedizin",
+              "bio": "<p>Dr. Rómulo Andrés Brito González</p><p>Facharzt für Notfall- und Akutmedizin</p><p>Dr. Rómulo Andrés Brito González ist ein Chirurg mit hoher Qualifikation, spezialisiert auf Notfall- und Akutmedizin, mit mehr als einem Jahrzehnt internationaler Erfahrung in Venezuela, Ecuador, Chile und Spanien. Derzeit ist er Oberarzt der Notaufnahme des Hospital Can Misses auf Ibiza, wo er auch zur klinischen Ausbildung der Assistenzärzte für Familienmedizin beiträgt.</p><p>Im Laufe seiner Karriere hat Dr. Brito umfassende Erfahrung in der Versorgung kritisch kranker Patientinnen und Patienten in Notaufnahmen und Intensivstationen (ICU). Seine klinische Erfahrung umfasst ein breites Spektrum an Pathologien, darunter medizinisch-chirurgische Notfälle, pädiatrische Versorgung sowie geburtshilflich-gynäkologische Erkrankungen.</p><p>Dr. Brito engagiert sich für die kontinuierliche medizinische Fortbildung und verfügt über einen Master in Notfall- und Akutmedizin sowie spezialisierte Zertifizierungen in akuter vitaler Pathologie und traumatischen Notfällen. Außerdem ist er auf dem neuesten Stand der modernen Gesundheitstechnologie, hat einen Universitätskurs in Generativer KI abgeschlossen und absolviert derzeit einen Master in Anwendungen Künstlicher Intelligenz im Gesundheitswesen.</p><p>Anerkannt für seine Führungsstärke und effektive Kommunikation, zeichnet sich Dr. Brito durch die Koordination multidisziplinärer Teams aus, um in Hochdruckumgebungen eine hochwertige Versorgung zu gewährleisten.</p>",
+              "seoTitle": "Dr Romulo Brito - Allgemeinmedizin | Global Health",
+              "seoDescription": "Dr. Rómulo Brito González, Facharzt für Notfall- und Akutmedizin mit mehr als 10 Jahren internationaler Erfahrung. Oberarzt im Hospital Can Misses, Ibiza. Online-Konsultation bei Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "ES",
+              "title": "Médico de Urgencias y Emergencias",
+              "bio": "<p>El Dr. Rómulo Andrés Brito González es especialista en Medicina de Urgencias y Emergencias con más de una década de experiencia clínica internacional en Venezuela, Ecuador, Chile y España, actualmente Médico Adjunto de Urgencias del Hospital Can Misses de Ibiza, donde además contribuye a la formación clínica de residentes de medicina familiar.</p><p>Su formación académica es sólida y actual: titula una Maestría en Medicina de Urgencias y Emergencias y certificaciones especializadas en patología vital urgente y emergencias traumatológicas. A esto se suma algo inusual en la medicina clínica convencional: ha completado un curso universitario en IA Generativa y está cursando una Maestría en Aplicaciones de Inteligencia Artificial en Salud, lo que le sitúa en la intersección entre la práctica médica de urgencias y el futuro tecnológico de la medicina.</p><p>Su experiencia clínica abarca el manejo de pacientes críticos en servicios de urgencias y Unidades de Cuidados Intensivos (UCI), incluyendo urgencias médico-quirúrgicas, atención pediátrica y situaciones obstétrico-ginecológicas, un espectro clínico amplio que pocos especialistas en urgencias pueden cubrir con igual profundidad. Ha liderado equipos multidisciplinares en entornos de alta presión, donde la toma de decisiones rápida, clara y segura es la norma.</p><p>Para un médico que trabaja en urgencias de un hospital isleño como Ibiza, que atiende una población muy diversa, multilingüe y con alto componente de pacientes internacionales en temporada alta, la capacidad de evaluación precisa de cualquier presentación clínica es parte del día a día.</p><h3>Qué ofrece online</h3><ul><li><strong>Evaluación de síntomas agudos:</strong> evaluación clínica de síntomas de aparición reciente y orientación sobre urgencia real vs. no urgencia</li><li><strong>Medicina general:</strong> enfermedades agudas (infecciones respiratorias, fiebre, gripe, infecciones urinarias), gestión de enfermedades crónicas (hipertensión, diabetes, asma, EPOC)</li><li><strong>Urgencias médico-quirúrgicas:</strong> orientación sobre síntomas que plantean duda entre urgencia médica, quirúrgica o no urgente</li><li><strong>Pediatría:</strong> evaluación de síntomas en niños y orientación a padres sobre urgencia real y manejo en casa</li><li><strong>Traumatología menor:</strong> orientación sobre lesiones musculoesqueléticas, torceduras, golpes y cuándo requieren imagen</li><li><strong>Situaciones obstétrico-ginecológicas:</strong> orientación sobre síntomas en el embarazo, dudas ginecológicas urgentes</li><li><strong>Evaluación de riesgo cardiopulmonar:</strong> dolor torácico atípico, palpitaciones, disnea de causa no clara</li><li><strong>Salud preventiva y medicina general:</strong> revisiones, estilo de vida, cribados, vacunación</li><li>Bajas médicas e informes médicos</li><li>Derivaciones urgentes y no urgentes</li></ul><h3>Su enfoque</h3><p>El Dr. Brito trae a la consulta online el tipo de pensamiento clínico que se forma en la urgencia real, rápido, estructurado y centrado en la pregunta clave: ¿qué tiene este paciente y qué necesita ahora? Su formación en IA en Salud añade una dimensión adicional: entiende cómo la tecnología está transformando la práctica médica y aplica este conocimiento al diseño de consultas más eficientes, claras y centradas en el paciente. Es reconocido por su liderazgo y su capacidad de comunicación efectiva.</p><p>Idiomas: Español</p>",
+              "seoTitle": "Dr. Rómulo Brito — Urgencias y Emergencias | CGCOM 070711359 | Global Health España",
+              "seoDescription": "Reserve una videoconsulta con Dr. Rómulo Brito — especialista en urgencias registrado en CGCOM (nº 070711359). Médico Adjunto Hospital Can Misses Ibiza · Máster Urgencias · IA en Salud · 10+ años experiencia internacional. Cita el mismo día.",
+              "seoKeywords": [
+                "Atención primaria"
+              ]
+            }
+          ],
+          "divisionTranslations": []
+        }
+      ],
+      "assignedServices": [
+        {
+          "serviceId": "cmre7q7k0002vngju6v73lt8h",
+          "service": {
+            "id": "cmre7q7k0002vngju6v73lt8h",
+            "slug": "medicina-viaje-online",
+            "name": "Medicina de Viaje",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 4900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7pz0n000kngjuib862zxl",
+          "service": {
+            "id": "cmre7pz0n000kngjuib862zxl",
+            "slug": "renovacion-tratamiento-online",
+            "name": "Renovación de Tratamiento",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 2900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q3a5001ongjur495me3b",
+          "service": {
+            "id": "cmre7q3a5001ongjur495me3b",
+            "slug": "salud-mental-online",
+            "name": "Salud Mental",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 5900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q8mg0037ngjuso41eynq",
+          "service": {
+            "id": "cmre7q8mg0037ngjuso41eynq",
+            "slug": "musculoesqueletico-online",
+            "name": "Musculoesquelético",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7qas1003sngjus0w2obwn",
+          "service": {
+            "id": "cmre7qas1003sngjus0w2obwn",
+            "slug": "derivaciones-pruebas-online",
+            "name": "Derivaciones y Pruebas",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q1550013ngjujfvwl58k",
+          "service": {
+            "id": "cmre7q1550013ngjujfvwl58k",
+            "slug": "salud-masculina-online",
+            "name": "Salud Masculina",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 4900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q6hn002lngju3chey2ai",
+          "service": {
+            "id": "cmre7q6hn002lngju3chey2ai",
+            "slug": "caida-cabello-online",
+            "name": "Caída del Cabello",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q4co001yngjucbez1gc0",
+          "service": {
+            "id": "cmre7q4co001yngjucbez1gc0",
+            "slug": "consulta-piel-online",
+            "name": "Consulta de Piel",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 4500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q27m001dngju2395w6dl",
+          "service": {
+            "id": "cmre7q27m001dngju2395w6dl",
+            "slug": "salud-femenina-online",
+            "name": "Salud Femenina",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 4900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7qcvw004engju2es5log3",
+          "service": {
+            "id": "cmre7qcvw004engju2es5log3",
+            "slug": "dejar-de-fumar-online",
+            "name": "Dejar de Fumar",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7pxza000angjubr3s2h65",
+          "service": {
+            "id": "cmre7pxza000angjubr3s2h65",
+            "slug": "justificante-medico-online",
+            "name": "Justificante Médico",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q9p1003ingjuum9voxoc",
+          "service": {
+            "id": "cmre7q9p1003ingjuum9voxoc",
+            "slug": "enfermedades-cronicas-online",
+            "name": "Enfermedades Crónicas",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 4500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q5fw002angjuebao1obt",
+          "service": {
+            "id": "cmre7q5fw002angjuebao1obt",
+            "slug": "segunda-opinion-medica",
+            "name": "Segunda Opinión Médica",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 4900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q038000ungjuxs5rkyxy",
+          "service": {
+            "id": "cmre7q038000ungjuxs5rkyxy",
+            "slug": "control-peso-online",
+            "name": "Control de Peso",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 4500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7pwwv0000ngjuwvmiacw9",
+          "service": {
+            "id": "cmre7pwwv0000ngjuwvmiacw9",
+            "slug": "consulta-medica-online",
+            "name": "Consulta Médica General",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3900,
+            "currencyCode": "EUR"
+          }
+        }
+      ],
+      "seoKeywords": [],
+      "resolvedMarketLocale": "RO",
+      "specialties": [],
+      "faqs": [
+        {
+          "id": "cmrny3j29007gbsju0gsx5uyc",
+          "locale": "RO",
+          "question": "Este înregistrat Dr. Brito la Consiliul General al Colegiilor Oficiale de Medici?",
+          "answer": "Da. Dr. Rómulo Andrés Brito González este înregistrat la CGCOM cu numărul 070711359. Puteți verifica această înregistrare pe cgcom.es. Dr. Brito este în prezent Medic Adjunct de Urgențe la Spitalul Can Misses din Ibiza și are peste zece ani de experiență clinică internațională în urgențe și UCI în Venezuela, Ecuador, Chile și Spania.",
+          "category": null,
+          "sortOrder": 0,
+          "isActive": true
+        },
+        {
+          "id": "cmrny3j29007hbsjuii1zq8t2",
+          "locale": "RO",
+          "question": "Ce oferă Dr. Brito în consultația online?",
+          "answer": "Dr. Brito oferă: evaluarea simptomelor acute și orientare cu privire la urgența reală, medicină generală (boli acute și cronice), orientare în urgențe medico-chirurgicale, pediatrie (evaluarea simptomelor la copii), traumatologie minoră (entorse, lovituri, leziuni musculo-scheletice), situații obstetrico-ginecologice, evaluarea riscului cardiopulmonar (durere toracică atipică, palpitații, dispnee), sănătate preventivă, concedii medicale și rapoarte și trimiteri.",
+          "category": null,
+          "sortOrder": 1,
+          "isActive": true
+        },
+        {
+          "id": "cmrny3j29007ibsjukeuehsqw",
+          "locale": "RO",
+          "question": "Ce aduce specializarea în urgențe unei consultații de medicină generală online?",
+          "answer": "Specializarea în urgențe dezvoltă o capacitate care este direct aplicabilă telemedicinei: trierea clinică precisă — abilitatea de a asculta un simptom, de a pune întrebările corecte și de a determina cu criteriu dacă necesită atenție fizică imediată, poate aștepta sau poate fi gestionat de la distanță. Dr. Brito a dezvoltat această capacitate timp de peste un deceniu în servicii de urgențe în patru țări și în prezent ca Medic Adjunct la Spitalul Can Misses din Ibiza. Într-o consultație online, unde nu există examinare fizică, această abilitate este cea mai valoroasă pe care o poate avea un medic.",
+          "category": null,
+          "sortOrder": 2,
+          "isActive": true
+        },
+        {
+          "id": "cmrny3j29007jbsjul5790n77",
+          "locale": "RO",
+          "question": "Ce este formarea în IA în Sănătate și de ce este relevantă pentru pacient?",
+          "answer": "Dr. Brito urmează un Master în Aplicații de Inteligență Artificială în Sănătate — o specializare academică în modul în care IA poate îmbunătăți diagnosticul, gestionarea clinică și îngrijirea pacientului. Pentru pacient, aceasta se traduce printr-un medic care înțelege instrumentele tehnologice care transformă medicina și le poate aplica pentru a îmbunătăți eficiența, precizia și personalizarea consultației. Este de asemenea un medic care evaluează critic aceste instrumente — știe ce pot face și ce nu, ceea ce este la fel de important.",
+          "category": null,
+          "sortOrder": 3,
+          "isActive": true
+        },
+        {
+          "id": "cmrny3j29007kbsjunea4rv03",
+          "locale": "RO",
+          "question": "Cum rezerv o consultație cu Dr. Brito?",
+          "answer": "Selectați un interval orar disponibil pe această pagină pentru a rezerva direct cu Dr. Brito. Plata este procesată în siguranță la rezervare — consultația este confirmată odată ce plata este finalizată. Veți primi imediat o invitație în calendar. Consultațiile se desfășoară prin videoconferință sigură în limba spaniolă. Dacă experimentați o urgență medicală — durere toracică acută, dificultăți de respirație, pierdere a conștiinței — sunați imediat la 112.",
+          "category": null,
+          "sortOrder": 4,
+          "isActive": true
+        },
+        {
+          "id": "cmrny3j29007lbsjutcw32s2w",
+          "locale": "RO",
+          "question": "Care sunt calificările Dr. Brito?",
+          "answer": "Dr. Rómulo Brito González este Medic Adjunct de Urgențe la Spitalul Can Misses din Ibiza și formator pentru rezidenții de medicină de familie. Deține un Master în Medicină de Urgență și Urgențe și certificări în Patologia Vitală Urgentă și Urgențe Traumatologice. Urmează un Master în Aplicații de IA în Sănătate. Are peste zece ani de experiență clinică în urgențe și UCI în Venezuela, Ecuador, Chile și Spania. Este înregistrat la CGCOM (nr. 070711359).",
+          "category": null,
+          "sortOrder": 5,
+          "isActive": true
+        }
+      ],
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:48:00.000Z"
+      },
+      "bookabilityByServiceId": {
+        "cmre7q7k0002vngju6v73lt8h": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:48:00.000Z"
+        },
+        "cmre7pz0n000kngjuib862zxl": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:48:00.000Z"
+        },
+        "cmre7q3a5001ongjur495me3b": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:48:00.000Z"
+        },
+        "cmre7q8mg0037ngjuso41eynq": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:48:00.000Z"
+        },
+        "cmre7qas1003sngjus0w2obwn": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:48:00.000Z"
+        },
+        "cmre7q1550013ngjujfvwl58k": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:48:00.000Z"
+        },
+        "cmre7q6hn002lngju3chey2ai": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:48:00.000Z"
+        },
+        "cmre7q4co001yngjucbez1gc0": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:48:00.000Z"
+        },
+        "cmre7q27m001dngju2395w6dl": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:48:00.000Z"
+        },
+        "cmre7qcvw004engju2es5log3": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:48:00.000Z"
+        },
+        "cmre7pxza000angjubr3s2h65": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:48:00.000Z"
+        },
+        "cmre7q9p1003ingjuum9voxoc": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:48:00.000Z"
+        },
+        "cmre7q5fw002angjuebao1obt": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:48:00.000Z"
+        },
+        "cmre7q038000ungjuxs5rkyxy": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:48:00.000Z"
+        },
+        "cmre7pwwv0000ngjuwvmiacw9": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-13T06:48:00.000Z"
+        }
+      }
+    }
+  }
+}

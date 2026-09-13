@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:05.481Z",
+  "endpoint": "/api/services/boli-cronice-online?countryCode=ro&locale=CS",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee6nb000efsjuk0bbcp7f",
+      "kind": "GENERAL",
+      "slug": "boli-cronice-online",
+      "name": "Management chronických onemocnění — nepřetržitá online lékařská péče",
+      "summary": "Máte hypertenzii, cukrovku, onemocnění štítné žlázy nebo jiné dlouhodobé onemocnění? Naši autorizovaní lékaři CMR nabízejí průběžné lékařské sledování, úpravu léčebného plánu a koordinaci vyšetření prostřednictvím video konzultace.",
+      "seoTitle": "Management chronických onemocnění online | Rumunsko | medic CMR",
+      "seoDescription": "Management hypertenze, diabetu, onemocnění štítné žlázy nebo jiných dlouhodobých onemocnění. Naši lékaři s licencí CMR poskytují průběžné lékařské sledování, úpravu léčebného plánu a koordinaci vyšetření prostřednictvím videokonzultace.",
+      "seoKeywords": [
+        "chronic disease management online Romania",
+        "hypertension doctor online Romania",
+        "diabetes management online Romania",
+        "thyroid doctor online Romania",
+        "long term condition GP online Romania"
+      ],
+      "heroTitle": "Management chronických onemocnění — online průběžná lékařská péče",
+      "heroDescription": "Management pro hypertenzi, diabetes, onemocnění štítné žlázy nebo jiné dlouhodobé potíže. Naši lékaři s licencí CMR poskytují průběžné lékařské sledování, úpravu léčebného plánu a koordinaci vyšetření prostřednictvím videokonzultace.",
+      "detailBody": "<p>Tato služba je určena pacientům, kteří potřebují soustavné sledování chronického onemocnění, nikoli jen občasné obnovení receptu. Konzultace sledují vývoj příznaků, výsledky vyšetření, snášenlivost léčby a dlouhodobé klinické cíle.</p><p>Lékař může koordinovat pravidelná vyšetření, upravit léčbu, když se váš stav změní, a podle potřeby sepsat lékařské zprávy nebo doporučení k zapojení specialisty. Tento přístup je užitečný zejména pro pacienty s více diagnózami nebo s obtížným přístupem k průběžné primární péči.</p><p>Služba je vhodná pro onemocnění, jako je hypertenze, diabetes, dyslipidémie, astma, onemocnění štítné žlázy, chronická bolest nebo jiné zdravotní problémy, které vyžadují pravidelný dohled a jasný plán péče.</p>",
+      "ctaLabel": "Naplánujte si konzultaci",
+      "sortOrder": 110,
+      "durationMinutes": 15,
+      "basePriceCents": 16000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:37.056Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js46h001kakjui0rkkcbp",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee6nb000efsjuk0bbcp7f",
+          "path": "/api/media/media/56f4b07e-190a-40b4-9960-4ad3273aaaa3-7dc82b47-ee4d-48b6-af96-2a935505c0f8-8.webp",
+          "altText": "Managementul bolilor cronice — îngrijire medicală continuă online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "CS",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

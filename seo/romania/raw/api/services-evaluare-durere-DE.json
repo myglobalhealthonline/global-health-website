@@ -1,0 +1,80 @@
+{
+  "checkedAt": "2026-09-12T20:20:07.974Z",
+  "endpoint": "/api/services/evaluare-durere?countryCode=ro&locale=DE",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee7tb000hfsju7tvvjjj1",
+      "kind": "SPECIALIST",
+      "slug": "evaluare-durere",
+      "name": "Spezialisierte Schmerzevaluation — Online-Beratung",
+      "summary": "Beeinträchtigen chronische Schmerzen oder starke Schmerzen Ihren Alltag? Unser zugelassener CMR-Spezialist bietet eine klinische Beurteilung mit Schwerpunkt auf der Schmerzbehandlung, therapeutische Optionen und die Koordination der erforderlichen Untersuchungen an.",
+      "seoTitle": "Online-Spezialbewertung von Schmerzen | Rumänien",
+      "seoDescription": "Fachärztliche Beurteilung bei chronischen oder starken Schmerzen. Unser vom CMR zugelassener Spezialist bietet eine klinische Beurteilung mit Fokus auf Schmerzkontrolle, therapeutische Optionen und die Koordination der erforderlichen Untersuchungen.",
+      "seoKeywords": [
+        "specialist pain assessment online Romania",
+        "chronic pain specialist online Romania",
+        "anaesthesiologist online Romania",
+        "pain assessment online Romania",
+        "pain management plan Romania online"
+      ],
+      "heroTitle": "Spezialisierte Schmerzeinschätzung — Online-Beratung",
+      "heroDescription": "Fachärztliche Bewertung bei chronischen oder starken Schmerzen. Unser autorisierter CMR-Spezialist bietet eine klinische Beurteilung mit Fokus auf Schmerztherapie, therapeutische Optionen und die Koordination der erforderlichen Untersuchungen.",
+      "detailBody": "<p>Dieser Service ist für Patienten mit anhaltenden Schmerzen, schwer zu kontrollierenden Schmerzen oder Symptomen bestimmt, die einen stärker spezialisierten Ansatz als eine allgemeine Konsultation erfordern. Es können muskuloskelettale, neuropathische, postoperative, onkologische Schmerzen oder komplexe Schmerzsyndrome beurteilt werden.</p><p>Der Arzt überprüft die Schmerzanamnese, die bereits ausprobierten Behandlungen, Nebenwirkungen, die Auswirkungen auf Schlaf und Funktionsfähigkeit sowie die vorhandenen Untersuchungen. Sie erhalten Empfehlungen zu den nächsten Schritten, Behandlungsoptionen, zur Überwachung und, falls erforderlich, zur Überweisung an die relevanten Fachrichtungen.</p><p>Die Konsultation ist auch nützlich, um einen bereits begonnenen Schmerzmanagementplan zu klären, insbesondere wenn die aktuelle Behandlung nicht die erwartete Kontrolle bietet.</p>",
+      "ctaLabel": "Konsultation vereinbaren",
+      "sortOrder": 0,
+      "durationMinutes": 20,
+      "basePriceCents": 23000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:57.253Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jskfn001wakju57erkch6",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee7tb000hfsju7tvvjjj1",
+          "path": "/api/media/media/6d1966ed-d6d7-4262-bed5-fdb6fe9a6b9a-8ce20700-b12e-4416-8aa0-46e95e8d1dff-3.webp",
+          "altText": "Evaluare specializată a durerii — consultație online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "DE",
+      "links": [],
+      "assignedDoctorIds": [],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "UNAVAILABLE",
+        "reasonCode": "NO_APPROVED_DOCTOR",
+        "nextAvailableAt": null
+      }
+    }
+  }
+}

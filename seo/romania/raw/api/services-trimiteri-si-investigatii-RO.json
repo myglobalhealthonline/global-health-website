@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:16.617Z",
+  "endpoint": "/api/services/trimiteri-si-investigatii?countryCode=ro&locale=RO",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee71b000ffsju3t9my2rm",
+      "kind": "GENERAL",
+      "slug": "trimiteri-si-investigatii",
+      "name": "Scrisori medicale, trimiteri și investigații — coordonare online",
+      "summary": "Aveți nevoie de o scrisoare medicală, recomandare pentru analize sau orientare către un specialist? Medicii noștri autorizați CMR pot evalua situația și emite documentația clinică relevantă atunci când este indicată.",
+      "seoTitle": "Scrisori medicale și investigații online | România | medic CMR",
+      "seoDescription": "Scrisori medicale, recomandări pentru analize și orientare către specialiști. Medicii noștri autorizați CMR pot evalua situația și emite documentația clinică relevantă atunci când este indicată.",
+      "seoKeywords": [
+        "referral letter Romania online doctor",
+        "specialist referral Romania online",
+        "blood test request Romania online",
+        "investigation request online Romania",
+        "private referral Romania doctor"
+      ],
+      "heroTitle": "Scrisori medicale, trimiteri și investigații — coordonare online",
+      "heroDescription": "Scrisori medicale, recomandări pentru analize și orientare către specialiști. Medicii noștri autorizați CMR pot evalua situația și emite documentația clinică relevantă atunci când este indicată.",
+      "detailBody": "<p>Acest serviciu este util atunci când aveți simptome sau un istoric medical care necesită clarificare prin analize, imagistică sau consult de specialitate, dar nu știți exact care este ruta corectă.</p><p>Medicul revizuiește problema de sănătate, documentele existente și obiectivul consultației, apoi recomandă investigațiile potrivite sau redactează o scrisoare medicală clară pentru specialistul ori serviciul relevant. Dacă sunt necesare doar explicații privind un set de analize deja efectuate, veți primi interpretare și orientare practică.</p><p>Serviciul poate fi util și pentru pacienții care au nevoie de coordonare între mai mulți furnizori sau pentru cei care doresc să se prezinte la specialist cu documentație clinică bine structurată.</p>",
+      "ctaLabel": "Programează consultația",
+      "sortOrder": 150,
+      "durationMinutes": 20,
+      "basePriceCents": 16000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:50.543Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js1pu001jakjuc36whnoh",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee71b000ffsju3t9my2rm",
+          "path": "/api/media/media/98c460da-4161-4880-8b9f-6f66993c5144-7d46f6d9-5b91-4ee6-a2df-42b673052afe-3.webp",
+          "altText": "Scrisori medicale, trimiteri și investigații — coordonare online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "RO",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

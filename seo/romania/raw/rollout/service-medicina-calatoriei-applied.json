@@ -1,0 +1,20 @@
+{
+  "group": "service:medicina-calatoriei",
+  "approvalSha256": "4920ce0cec40b1b5d5dc3d08953aa340ef6862f8edb3a2d5cb937edb28ad3f6a",
+  "reviewerDoctorId": "cmrc4axni00rn01p2n3r2bopf",
+  "approvalEvidence": "owner-reported clinician approval in this task",
+  "appliedAt": "2026-09-12T22:58:23.970Z",
+  "alreadyApplied": false,
+  "operations": 35,
+  "publicVerified": true,
+  "afterSha256": "07b952538d6643b0de859f19671093686d26a589f5d19e619ff0b625a47e5ef5",
+  "publicVerifiedAt": "2026-09-12T22:58:48.167Z",
+  "verifiedUrls": [
+    "https://www.myglobalhealth.online/romania/cs/services/medicina-calatoriei",
+    "https://www.myglobalhealth.online/romania/de/services/medicina-calatoriei",
+    "https://www.myglobalhealth.online/romania/en/services/medicina-calatoriei",
+    "https://www.myglobalhealth.online/romania/es/services/medicina-calatoriei",
+    "https://www.myglobalhealth.online/romania/pt/services/medicina-calatoriei",
+    "https://www.myglobalhealth.online/romania/ro/services/medicina-calatoriei"
+  ]
+}

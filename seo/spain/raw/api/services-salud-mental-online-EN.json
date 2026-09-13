@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/salud-mental-online?countryCode=es&locale=EN",
+  "checkedAt": "2026-09-13T02:29:58.521Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q3a5001ongjur495me3b",
+      "kind": "GENERAL",
+      "slug": "salud-mental-online",
+      "name": "Mental Health",
+      "summary": null,
+      "seoTitle": "Mental Health Online Spain | Clinical Assessment | English Doctor",
+      "seoDescription": "Anxiety, depression, burnout, or mental health concern in Spain? Our OMC-registered doctors offer confidential GP-level mental health assessments by secure video call. Same-day appointments available.",
+      "seoKeywords": [
+        "salud mental online España",
+        "ansiedad médico online España",
+        "depresión evaluación online España",
+        "burnout médico online España",
+        "salud mental expats España"
+      ],
+      "heroTitle": "Mental Health Assessment — Online, Confidential, in Spain",
+      "heroDescription": "Mental health difficulties — anxiety, depression, burnout, adjustment to a new country, or persistent patterns of thought and behaviour that are affecting your quality of life — respond best to structured, evidence-based clinical support from a qualified professional. For expats and international residents in Spain, the barrier to mental health support is frequently linguistic. Finding a psychologist or psychiatrist who works at a level of English that allows genuine clinical depth is genuinely difficult — particularly outside Madrid and Barcelona. Our doctors, registered with the Spanish Medical Council (OMC), offer confidential GP-level mental health assessments by secure video call in English — same day, from anywhere in Spain.",
+      "detailBody": "<h2>What This Service Is — And What It Is Not</h2><p>Understanding which level of mental health support is right for you helps ensure you access the most appropriate care.</p><p><strong>This GP-level mental health assessment is appropriate for:</strong></p><ul><li>Initial assessment of anxiety, low mood, depression, and stress</li><li>Screening for common mental health conditions using validated clinical tools</li><li>Assessment of how mental health symptoms interact with physical health</li><li>Clinical recommendations and care planning at the doctor's professional discretion</li><li>Referral for psychology, psychiatry, or other specialist support where indicated</li><li>Guidance on mental health services available in Spain in English</li><li>Review of existing mental health management and ongoing support</li><li>ADHD — initial screening and referral pathway where indicated</li></ul><p><strong>This service is not appropriate for:</strong></p><ul><li>Crisis intervention — if you are in crisis, use the resources at the top of this page</li><li>Psychiatric assessment — if you need a psychiatrist, your doctor coordinates referral</li><li>Psychotherapy or counselling — this is a medical assessment, not a therapy session</li><li>Assessment of psychosis, severe bipolar disorder, or complex psychiatric conditions</li><li>Involuntary psychiatric assessment or treatment</li></ul><p>Not sure which level of support is right for you? Start with this assessment. Your doctor assesses your presentation and advises on the most appropriate next steps.</p><h2>Conditions Commonly Assessed</h2><p><strong>Anxiety and stress</strong></p><ul><li>Generalised anxiety disorder</li><li>Social anxiety and performance anxiety</li><li>Health anxiety</li><li>Panic attacks and panic disorder</li><li>Work-related stress and burnout</li><li>Adjustment difficulties — new country, new job, relationship changes</li><li>Expat-specific stress — cultural adjustment, isolation, identity concerns, family separation</li></ul><p><strong>Mood</strong></p><ul><li>Low mood and depression</li><li>Persistent sadness and loss of interest</li><li>Emotional exhaustion and anhedonia</li><li>Postnatal mood changes — low mood and anxiety after childbirth</li><li>Seasonal affective disorder</li><li>Grief and bereavement</li></ul><p><strong>Sleep and behaviour</strong></p><ul><li>Insomnia and sleep disturbance with psychological contributors</li><li>Fatigue with psychological contributors</li><li>Appetite changes and eating patterns related to mood</li><li>Concentration and cognitive difficulties related to anxiety or depression</li></ul><p><strong>Trauma and life events</strong></p><ul><li>Initial assessment of trauma-related symptoms — with referral to specialist psychological support where indicated</li><li>Adjustment to significant life events — bereavement, relationship breakdown, job loss</li><li>Expat stress and relocation — cultural adjustment, isolation, identity concerns</li></ul><p><strong>Ongoing mental health management</strong></p><ul><li>Review of existing mental health conditions managed at GP level</li><li>Mental health assessment in the context of chronic disease management</li><li>ADHD — initial screening and referral for formal assessment where indicated</li></ul><h2>What Your Consultation Includes</h2><p><strong>Confidential clinical assessment</strong></p><p>Your doctor conducts a structured and comprehensive mental health assessment — covering your current symptoms, mood, sleep, energy, appetite, concentration, relationships, work or academic pressures, medical history, and any previous mental health support. The conversation is guided, confidential, and non-judgmental.</p><p><strong>Validated screening tools</strong></p><p>Where appropriate, your doctor uses validated clinical screening tools — including PHQ-9 for depression and GAD-7 for anxiety — ensuring a structured, evidence-based assessment.</p><p><strong>Safety assessment</strong></p><p>Every mental health consultation includes a structured safety assessment — conducted with sensitivity as a standard component of clinical care.</p><p><strong>Personalised care plan</strong></p><p>Based on the assessment, your doctor advises on the most appropriate next steps — which may include wellbeing and lifestyle recommendations, referral for psychology or psychotherapy, guidance on community and specialist services available in Spain in English, psychiatric referral where indicated, or clinical recommendations at the doctor's professional discretion.</p><p><strong>Navigation support</strong></p><p>Navigating the mental health system in Spain as an international resident is genuinely difficult. Your doctor provides clear guidance on what services are available in English, how to access them, and what to expect.</p><p><strong>Clinical documentation — at the doctor's professional discretion</strong></p><p>When clinically indicated at GP level, your doctor issues appropriate clinical documentation.</p><p>Note: Controlled substances and certain psychiatric medications require special documentation that cannot be issued electronically under Spanish law. Your doctor advises if this applies to your situation.</p><h2>Mental Health Support for Expats in Spain</h2><p>Mental health difficulties are disproportionately common among expats and international residents — driven by isolation, cultural adjustment, language barriers, family separation, and the cumulative stress of building a life in a new country.</p><p>Accessing mental health support in Spain as an international resident brings additional challenges. English-speaking psychologists and psychiatrists exist in Madrid and Barcelona — but availability is limited, waiting times can be long, and the cost of private mental health care in Spain is significant. For expats outside major cities, the options narrow further.</p><p>Our service provides an accessible first step — a structured, confidential GP-level mental health assessment, same day, from anywhere in Spain — with clear guidance on next steps and how to access specialist support where needed.</p><h2>Confidentiality</h2><p>Everything discussed during your mental health consultation is confidential and protected under Spanish and European data protection law — including Regulation (EU) 2016/679 (GDPR) implemented through Organic Law 3/2018 (LOPDGDD) and Law 41/2002 on patient autonomy.</p><p>There are two circumstances in which confidentiality may need to be carefully considered — when there is serious and immediate risk to your life or safety, or when there is serious risk to the safety of another person. Your doctor discusses confidentiality with you at the outset of the consultation.</p>",
+      "ctaLabel": null,
+      "sortOrder": 180,
+      "durationMinutes": 20,
+      "basePriceCents": 5900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.267Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru15qck0002bsjuhioqk3lk",
+          "kind": "IMAGE",
+          "key": "media/cebaf4cb-fdb3-4acb-a6cd-876c804340d2-es-salud-mental-online.png",
+          "path": "/api/media/media/cebaf4cb-fdb3-4acb-a6cd-876c804340d2-es-salud-mental-online.png",
+          "altText": "Salud Mental"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q3iq001pngjuutfce816",
+          "question": "Is this a counseling or therapy service?",
+          "answer": "No. This is a primary care-level clinical mental health evaluation. Our doctors assess your current mental health, provide clinical recommendations, and refer you to the appropriate level of support — including counseling, psychotherapy, or psychiatry where indicated. Counseling or psychotherapy sessions are not provided through this service.",
+          "sortOrder": 0,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q3iq001qngju5f0v81l4",
+          "question": "What if I need to see a psychiatrist?",
+          "answer": "If your evaluation indicates that psychiatric assessment is needed, your doctor clearly advises and coordinates the referral to the appropriate specialized service — including English-language psychiatric services in Spain where available.",
+          "sortOrder": 1,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q3iq001rngjuerollzss",
+          "question": "Will my employer or someone else be informed?",
+          "answer": "No. Your consultation is completely confidential and is protected under Spanish and European data protection legislation. The information is not shared without your explicit consent, except in the very limited circumstances described in the confidentiality section above.",
+          "sortOrder": 2,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q3iq001sngjurmbqz9et",
+          "question": "Can I use this service if I am already seeing a therapist?",
+          "answer": "Yes. A general-practice-level mental health clinical assessment can complement ongoing psychological or therapeutic support — particularly where clinical recommendations, physical health assessment, or coordination of care are needed.",
+          "sortOrder": 3,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q3iq001tngju30mze1fo",
+          "question": "Is this service suitable for teenagers?",
+          "answer": "Mental health consultations for patients under 16 years of age require the presence and consent of the parents or guardians. For adolescents 16 years of age or older, the doctor evaluates the capacity to consent individually.",
+          "sortOrder": 4,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q3iq001ungju0ssuoej9",
+          "question": "What happens if I am in crisis during or after the appointment?",
+          "answer": "If you are in crisis, use the resources at the beginning of this page — Suicide Hotline 024 or 112 in case of immediate danger. This service is not a crisis intervention service.",
+          "sortOrder": 5,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q3iq001vngjuiskebii5",
+          "question": "Can I discuss ADHD concerns through this service?",
+          "answer": "Yes. Initial ADHD screening at the general medicine level is available through this service. A formal ADHD diagnosis requires specialist evaluation — your doctor advises on the appropriate referral pathway if the screening indicates that this is justified.",
+          "sortOrder": 6,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q3iq001wngju98s9iyvg",
+          "question": "Can I use this service from anywhere in Spain?",
+          "answer": "Yes — including the Balearic Islands, the Canary Islands, Ceuta, and Melilla. You only need a stable internet connection and a device with a camera.",
+          "sortOrder": 7,
+          "resolvedLocale": "EN"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "EN",
+      "links": [
+        {
+          "id": "cmre7sriv002yg8ju9eokrc9p",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Evaluación psiquiátrica especializada?",
+          "body": "Si tu situación está relacionada con evaluación psiquiátrica especializada, nuestra Psiquiatría Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Psiquiatría Especialista",
+          "targetSlug": "psiquiatra-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7ssaz0030g8ju13nnilyh",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con apoyo psicológico y psicoterapia?",
+          "body": "Para apoyo psicológico y psicoterapia, consulta nuestra página de Psicología Clínica — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Psicología Clínica",
+          "targetSlug": "psicologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7stv60034g8juje70ar9l",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Síntomas neurológicos que pueden tener base psicológica?",
+          "body": "Si tu situación está relacionada con síntomas neurológicos que pueden tener base psicológica, nuestra Neurología Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Neurología Especialista",
+          "targetSlug": "neurologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7st330032g8judl7699cv",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre apoyo para dejar de fumar?",
+          "body": "Nuestra Dejar de Fumar está pensada específicamente para apoyo para dejar de fumar.",
+          "ctaLabel": "Dejar de Fumar",
+          "targetSlug": "dejar-de-fumar-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

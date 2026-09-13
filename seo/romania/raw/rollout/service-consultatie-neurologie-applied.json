@@ -1,0 +1,20 @@
+{
+  "group": "service:consultatie-neurologie",
+  "approvalSha256": "3a0a56a87a4451cf3085c35194512bca192577c29384c12543689e2170bc7375",
+  "reviewerDoctorId": "cmrc4axni00rn01p2n3r2bopf",
+  "approvalEvidence": "owner-reported clinician approval in this task",
+  "appliedAt": "2026-09-12T22:50:27.257Z",
+  "alreadyApplied": false,
+  "operations": 35,
+  "publicVerified": true,
+  "afterSha256": "dd9d04bfe533d9b4075ba9abc6a81038d93d9ad45d6831d883512aa259037467",
+  "publicVerifiedAt": "2026-09-12T22:50:51.208Z",
+  "verifiedUrls": [
+    "https://www.myglobalhealth.online/romania/cs/services/consultatie-neurologie",
+    "https://www.myglobalhealth.online/romania/de/services/consultatie-neurologie",
+    "https://www.myglobalhealth.online/romania/en/services/consultatie-neurologie",
+    "https://www.myglobalhealth.online/romania/es/services/consultatie-neurologie",
+    "https://www.myglobalhealth.online/romania/pt/services/consultatie-neurologie",
+    "https://www.myglobalhealth.online/romania/ro/services/consultatie-neurologie"
+  ]
+}

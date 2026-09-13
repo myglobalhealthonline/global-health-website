@@ -1,0 +1,20 @@
+{
+  "group": "service:boli-cronice-online",
+  "approvalSha256": "d9f15a0fd9bd663d711a583068f90370d65c9c00c0a0292a5cae0693f6803666",
+  "reviewerDoctorId": "cmrc4axni00rn01p2n3r2bopf",
+  "approvalEvidence": "owner-reported clinician approval in this task",
+  "appliedAt": "2026-09-12T22:53:23.225Z",
+  "alreadyApplied": false,
+  "operations": 35,
+  "publicVerified": true,
+  "afterSha256": "52d5d035d66c2c53b52d6782c28361db8f7d786e2749acc8c1e900f9234f664b",
+  "publicVerifiedAt": "2026-09-12T22:53:25.431Z",
+  "verifiedUrls": [
+    "https://www.myglobalhealth.online/romania/cs/services/boli-cronice-online",
+    "https://www.myglobalhealth.online/romania/de/services/boli-cronice-online",
+    "https://www.myglobalhealth.online/romania/en/services/boli-cronice-online",
+    "https://www.myglobalhealth.online/romania/es/services/boli-cronice-online",
+    "https://www.myglobalhealth.online/romania/pt/services/boli-cronice-online",
+    "https://www.myglobalhealth.online/romania/ro/services/boli-cronice-online"
+  ]
+}

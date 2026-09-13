@@ -1,0 +1,75 @@
+{
+  "endpoint": "/api/services/consulta-salud-vascular-circulatoria?countryCode=es&locale=RO",
+  "checkedAt": "2026-09-13T02:30:07.145Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmrezuq7000pn01qrkiyrthxw",
+      "kind": "GENERAL",
+      "slug": "consulta-salud-vascular-circulatoria",
+      "name": "Consultație Sănătate Vasculară / Circulatorie",
+      "summary": "Valoración médica por videollamada de síntomas venosos y circulatorios: piernas pesadas, varices, hinchazón y calambres, con revisión de pruebas, solicitud de eco-Doppler cuando procede y plan escrito.",
+      "seoTitle": "Salud Vascular y Circulatoria Online España | Consulta Médica",
+      "seoDescription": "Piernas pesadas, varices, hinchazón o calambres. Valoración médica online de tu salud venosa y circulatoria en España: revisión de pruebas, solicitud de eco-Doppler y plan. Cita el mismo día.",
+      "seoKeywords": [
+        "salud vascular online España",
+        "consulta circulatoria online España",
+        "piernas pesadas médico online",
+        "varices consulta online España",
+        "mala circulación piernas consulta online"
+      ],
+      "heroTitle": "Salud Vascular y Circulatoria Online — Consulta Médica",
+      "heroDescription": "Piernas pesadas al final del día, varices que van a más, hinchazón vespertina, calambres nocturnos o antecedentes familiares de enfermedad venosa: son motivos frecuentes de consulta que rara vez se evalúan con calma. Esta consulta de salud vascular y circulatoria online es una valoración médica por videollamada de tus síntomas y de tus factores de riesgo, con revisión de las pruebas que ya tengas, solicitud de eco-Doppler cuando esté indicado y un plan escrito. Desde cualquier punto de España, en español, inglés o portugués.",
+      "detailBody": "<h2>Para quién es este servicio</h2><p>Esta consulta de salud vascular y circulatoria es apropiada para adultos con:</p><ul><li>Sensación de piernas pesadas o cansadas, sobre todo al final del día o tras muchas horas de pie</li><li>Varices visibles, arañas vasculares o venas reticulares que aumentan con el tiempo</li><li>Hinchazón de tobillos vespertina, que mejora al elevar las piernas</li><li>Calambres nocturnos, picor o inquietud en las piernas de perfil venoso</li><li>Cambios de coloración en la piel de la pierna: manchas ocres, endurecimiento o eccema en el tobillo</li><li>Antecedentes familiares de enfermedad venosa y dudas sobre qué prevención tiene sentido</li><li>Antecedente personal de trombosis venosa y dudas sobre el seguimiento actual</li><li>Factores de riesgo cardiovascular — tabaquismo, diabetes, hipertensión, dislipemia, obesidad, sedentarismo — y ninguna evaluación vascular hecha</li><li>Dolor en la pantorrilla al caminar que cede con el reposo, para orientar el estudio arterial</li><li>Trabajo de riesgo venoso (bipedestación prolongada, sedestación continuada, viajes largos frecuentes) y necesidad de un plan preventivo</li><li>Residentes internacionales y expatriados que necesitan atención vascular en inglés o portugués</li></ul><h2>Qué es este servicio — y qué no es</h2><p>Esta consulta cubre:</p><ul><li>Evaluación clínica de síntomas venosos y circulatorios no urgentes</li><li>Revisión e interpretación de pruebas que ya tengas: eco-Doppler, índice tobillo-brazo, analíticas</li><li>Valoración del riesgo cardiovascular global y plan para reducirlo</li><li>Solicitud de eco-Doppler venoso o arterial y de analítica cuando estén clínicamente indicados</li><li>Indicación de terapia compresiva: tipo de media, clase de compresión y cómo usarla</li><li>Medidas conservadoras con evidencia — ejercicio, control de peso, elevación, higiene postural</li><li>Derivación coordinada a flebología, angiología o cirugía vascular cuando corresponde</li></ul><p>Este servicio no cubre:</p><ul><li>Urgencias vasculares. El dolor e hinchazón brusca de una sola pierna, con calor y enrojecimiento, obliga a descartar una trombosis venosa profunda el mismo día; si se acompaña de dolor torácico o dificultad para respirar, llama al 112 inmediatamente</li><li>Isquemia arterial aguda — pierna fría, pálida, dolorosa y sin pulso — que es una urgencia hospitalaria inmediata</li><li>La realización de la ecografía. El eco-Doppler es presencial: la consulta lo solicita e interpreta el informe, no lo ejecuta</li><li>Procedimientos venosos. La escleroterapia, la ablación endovenosa y la cirugía de varices requieren valoración y ejecución presencial</li><li>Úlceras infectadas o de evolución tórpida, que necesitan cura y valoración presencial</li></ul><h2>Qué incluye la consulta</h2><p><strong>Historia clínica vascular dirigida</strong></p><p>Tiempo de evolución, patrón horario de los síntomas, antecedentes personales y familiares de trombosis o varices, embarazos, medicación —anticonceptivos y terapia hormonal incluidos—, actividad laboral y factores de riesgo cardiovascular.</p><p><strong>Exploración guiada por videollamada</strong></p><p>La médica te guía para mostrar la pierna afectada: distribución de las varices, edema, cambios cutáneos y simetría entre ambas piernas. Puedes enviar fotografías antes de la cita.</p><p><strong>Revisión de pruebas previas</strong></p><p>Si ya tienes un eco-Doppler, un índice tobillo-brazo o una analítica, se revisan e interpretan en la consulta y se te explica qué significan en tu caso concreto.</p><p><strong>Solicitud de pruebas</strong></p><p>Cuando el estudio está indicado, la solicitud de eco-Doppler venoso o arterial y de analítica se emite el mismo día para realizarla en un centro de tu zona.</p><p><strong>Plan escrito y terapia compresiva</strong></p><p>Recibes un plan por escrito con las medidas conservadoras indicadas y, cuando procede, la prescripción de compresión graduada con la clase adecuada, explicando cómo y cuándo usarla.</p><p><strong>Derivación coordinada</strong></p><p>Si la evaluación apunta a una enfermedad venosa avanzada o a patología arterial, la médica coordina la derivación al especialista con el informe completo, sin que tengas que empezar de cero.</p><h2>Cuándo conviene no esperar</h2><p>Acude a urgencias o llama al 112 si aparece:</p><ul><li>Dolor e hinchazón brusca de una sola pierna, con calor o enrojecimiento</li><li>Dolor torácico o dificultad respiratoria de aparición súbita</li><li>Pierna fría, pálida y dolorosa, con pérdida de sensibilidad o de fuerza</li><li>Sangrado de una variz que no cede con compresión y elevación</li><li>Úlcera con fiebre, supuración o celulitis alrededor</li></ul><h2>Salud vascular en España — el problema del acceso</h2><p>Los síntomas venosos son extraordinariamente frecuentes y sistemáticamente minimizados. La mayoría de los pacientes conviven años con piernas pesadas y varices progresivas sin que nadie evalúe el reflujo venoso ni indique una compresión correcta, hasta que aparecen cambios cutáneos o una úlcera que ya es difícil de revertir.</p><p>La enfermedad venosa crónica es progresiva, y las medidas que la frenan — compresión bien indicada, ejercicio, control del peso y tratamiento del reflujo cuando corresponde — son más eficaces cuanto antes se aplican.</p><p>Esta consulta permite hacer esa evaluación sin esperas y desde cualquier punto de España, con solicitud de pruebas el mismo día cuando están indicadas.</p>",
+      "ctaLabel": null,
+      "sortOrder": 90,
+      "durationMinutes": 20,
+      "basePriceCents": 7500,
+      "currencyCode": null,
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-08-19T10:10:23.952Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0sz2b0008y8juhsn9t2ku",
+          "kind": "IMAGE",
+          "key": "media/e28f5db8-0152-4727-a89d-5447faedfab0-es-consulta-salud-vascular-circulatoria.png",
+          "path": "/api/media/media/e28f5db8-0152-4727-a89d-5447faedfab0-es-consulta-salud-vascular-circulatoria.png",
+          "altText": "Consulta Salud Vascular / Circulatoria"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name"
+      ],
+      "resolvedLocale": "RO",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrdpz5n3001z01rukg2lecs5"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T12:08:00.000Z"
+      }
+    }
+  }
+}

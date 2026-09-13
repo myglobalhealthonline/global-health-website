@@ -1,0 +1,80 @@
+{
+  "checkedAt": "2026-09-12T20:20:14.135Z",
+  "endpoint": "/api/services/medic-online-romania?countryCode=ro&locale=PT",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee1ko0000fsjuh80zxo7q",
+      "kind": "GENERAL",
+      "slug": "medic-online-romania",
+      "name": "Médico online — sem registo, sem sala de espera, no mesmo dia",
+      "summary": "Médico registado na CMR disponível online, sem lista de espera e sem estar registado no médico de família. Videoconsulta em romeno ou inglês. Marque hoje.",
+      "seoTitle": "Médico online sem registo | Consulta no mesmo dia | Global Health",
+      "seoDescription": "Médico registado na CMR disponível online, sem lista de انتظار e sem estar registado no médico de família. Videoconsulta em romeno ou inglês. Reserve hoje.",
+      "seoKeywords": [
+        "medic online fără înregistrare",
+        "consultație medicală online România",
+        "medic online în afara Bucureștiului",
+        "doctor online România",
+        "consultație online fără medic de familie"
+      ],
+      "heroTitle": "Médico online — sem registo, sem sala de espera, no mesmo dia",
+      "heroDescription": null,
+      "detailBody": "<p>Você precisa de um médico hoje, mas não está inscrito na lista de um médico de família? Ou vive numa área em que o acesso conveniente a um médico de família é difícil? Os nossos médicos, registados na Ordem dos Médicos da Roménia (CMR), realizam consultas clínicas completas por videoconferência segura — sem necessidade de ser previamente um paciente registado, sem sala de espera, com marcação no próprio dia.</p><h2>Uma realidade do sistema de saúde na Roménia</h2><p>O acesso aos cuidados de saúde primários na Roménia é desigual. Nas grandes cidades — Bucareste, Cluj-Napoca, Timișoara, Iași — existem opções privadas relativamente acessíveis. Mas fora destas, ou no caso de pessoas que não estão inscritas na lista de um médico de família, obter uma consulta médica em tempo útil pode ser difícil.</p><p>A Global Health existe precisamente para preencher essa lacuna. Os nossos médicos, registados na CMR, oferecem consultas médicas por videoconferência — em romeno, inglês— no mesmo dia, de qualquer ponto da Roménia, sem registo prévio.</p><p>Já tem médico de família? O nosso serviço funciona de forma complementar — para problemas agudos, uma segunda opinião médica ou situações em que precisa de falar com um médico hoje, e não na próxima marcação disponível.</p><h2>O que tratamos</h2><p>Os nossos médicos avaliam e tratam uma ampla gama de condições agudas e não urgentes:</p><ul><li>Respiratórias e ORL</li><li>Constipação, gripe, sinusite e bronquite</li><li>Sintomas de COVID-19 e problemas pós-COVID</li><li>Dor de garganta, amigdalite e infeções do ouvido</li><li>Infeções pulmonares e tosse persistente</li><li>Crises ligeiras de asma</li><li>Infeções</li><li>Infeções urinárias — avaliação e prescrição de antibiótico quando clinicamente indicado</li><li>Infeções da pele</li><li>Infeções respiratórias que necessitam de avaliação para antibiótico</li><li>Infeções gastrointestinais</li><li>Sintomas gerais</li><li>Febre em adultos</li><li>Dores de cabeça e enxaqueca</li><li>Náuseas, vómitos, diarreia e dores abdominais</li><li>Fadiga e mal-estar geral</li><li>Pele e olhos</li><li>Erupções cutâneas, eczemas e reações alérgicas ligeiras</li><li>Conjuntivite e irritações oculares ligeiras</li><li>Aparelho locomotor</li><li>Dores nas costas, no pescoço e musculares</li><li>Traumatismos ligeiros do aparelho locomotor</li><li>Outros</li><li>Preocupações relacionadas com os medicamentos atuais ou o tratamento em curso</li><li>Documentos médicos — atestados médicos, cartas de referenciação</li><li>Conselhos de medicina de viagem</li><li>Segunda opinião médica</li></ul><h2>O que inclui a consulta</h2><p>Avaliação clínica completaO médico recolhe uma anamnese completa dos seus sintomas, historial médico relevante e medicação atual — e realiza uma avaliação clínica estruturada por videoconferência, com o mesmo padrão de uma consulta presencial.</p><p>Explicação claraO nosso médico dedicará tempo para lhe explicar o que se passa, o que deve fazer a seguir e quando procurar cuidados adicionais. O envolvimento do doente na decisão clínica não é um luxo — é o nosso padrão de cuidados.</p><p>Receita eletrónica — quando clinicamente indicadoQuando clinicamente indicado, o médico emite uma receita eletrónica validada no Sistema Informático de Prescrição Eletrónica (SIPE). Apresenta-a em qualquer farmácia na Roménia.</p><p>Prescrição de antibiótico — quando clinicamente indicadoA partir de 2024, todos os antibióticos na Roménia exigem receita médica. O médico avalia os seus sintomas e prescreve o antibiótico adequado quando clinicamente justificado — incluindo para infeções urinárias, infeções respiratórias e infeções cutâneas — em conformidade com os princípios de stewardship antibiótica.</p><p>Cartas de referenciação e documentação médicaQuando são necessárias referenciações para especialista, análises de sangue, exames de imagiologia ou outra documentação clínica, o médico emite-as no próprio dia.</p><p>Baixa médicaSe estiver empregado na Roménia e a baixa médica estiver clinicamente indicada, o médico pode emitir a documentação correspondente. A decisão de emitir baixa médica é sempre uma decisão clínica tomada pelo médico após avaliação completa.</p><h2>Por que Global Health</h2><p>Sem registo prévioNão precisa de ser um paciente registado. Marque, consulte-se, receba um resultado clínico claro — sem burocracia, sem esperar para ser aceite numa lista.</p><p>Médicos registados na CMRTodas as consultas são realizadas por médicos registados na Ordem dos Médicos da Roménia, em conformidade com as normas romenas de telemedicina ao abrigo da Lei n.º 95/2006 e da HG n.º 1133/2022.</p><p>Marcação no mesmo diaDisponibilidade no mesmo dia, sete dias por semana, incluindo noites e fins de semana.</p><p>Acessível de toda a RoméniaNão precisa de estar em Bucareste. Esteja onde estiver na Roménia — só precisa de uma ligação estável à internet e de um dispositivo com câmara.</p><p>Três línguasRomeno, inglês — dependendo da disponibilidade do médico.</p><p>Receita eletrónica e baixa médicaOs nossos médicos podem emitir receitas eletrónicas através do SIPE e certificado de baixa médica — tal como qualquer médico de família registado na Roménia.</p><h2>Perguntas frequentes</h2><p>Preciso de ter seguro de saúde romeno para utilizar este serviço?Não. Este é um serviço privado, pago diretamente por consulta — não é necessário seguro público de saúde romeno, nenhum registo, nenhuma filiação. Alguns seguros privados cobrem consultas de telemedicina — verifique com a sua seguradora.</p><p>O médico pode prescrever antibióticos?Sim — quando clinicamente indicado após a avaliação completa dos seus sintomas. A partir de 2024, todos os antibióticos na Roménia exigem receita médica. O médico avalia a sua situação e prescreve o antibiótico adequado quando a evidência clínica o justificar, em conformidade com os princípios de stewardship antibiótica.</p><p>O médico pode emitir uma receita eletrónica?Sim. Os nossos médicos estão registados na CMR e no Sistema Informático de Prescrição Eletrónica (SIPE). As receitas eletrónicas são emitidas diretamente — apresenta-as em qualquer farmácia na Roménia.</p><p>Preciso de estar em Bucareste para utilizar este serviço?Não. O serviço está disponível a partir de qualquer localidade da Roménia — só precisa de uma ligação estável à internet e de um dispositivo com câmara.</p><p>Com que rapidez posso obter uma marcação?Estão disponíveis marcações no mesmo dia. Marque online e a marcação é confirmada imediatamente.</p><p>Que línguas estão disponíveis?Romeno, inglês— dependendo da disponibilidade do médico.</p><p>Posso obter baixa médica através deste serviço?Sim. Se estiver empregado na Roménia e a baixa médica estiver clinicamente indicada, o médico pode emitir a documentação correspondente. A decisão é sempre clínica, tomada após avaliação completa.</p><p>O serviço é adequado para crianças?Para condições pediátricas agudas, o serviço pode oferecer avaliação inicial e orientação. Para apresentações pediátricas complexas ou persistentes, o médico recomendará referenciação para avaliação presencial.</p><p>O que acontece se a minha condição exigir cuidados presenciais?Se o médico determinar que a sua condição exige avaliação presencial ou cuidados de urgência, será informado imediatamente e encaminhado para o serviço adequado. A sua segurança é sempre a prioridade clínica.</p>",
+      "ctaLabel": null,
+      "sortOrder": 10,
+      "durationMinutes": 15,
+      "basePriceCents": 11500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:47.167Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jsape001pakju9d8azet9",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee1ko0000fsjuh80zxo7q",
+          "path": "/api/media/media/e7e4ceb8-872b-4aa9-b481-f1819dfaf76c-817d74bf-c5ba-4f1b-8de2-6980a8239c3c-1.webp",
+          "altText": "Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "detailBody"
+      ],
+      "resolvedLocale": "PT",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

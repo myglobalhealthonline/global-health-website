@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:08.811Z",
+  "endpoint": "/api/services/trimiteri-si-investigatii?countryCode=ro&locale=DE",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee71b000ffsju3t9my2rm",
+      "kind": "GENERAL",
+      "slug": "trimiteri-si-investigatii",
+      "name": "Medizinische Briefe, Überweisungen und Untersuchungen — Online-Koordination",
+      "summary": "Benötigen Sie ein ärztliches Schreiben, eine Überweisung für Untersuchungen oder eine Weiterleitung an einen Facharzt? Unsere zugelassenen CMR-Ärzte können die Situation bewerten und die relevante klinische Dokumentation ausstellen, wenn dies angezeigt ist.",
+      "seoTitle": "Medizinische Schreiben und Untersuchungen online | Rumänien | medic CMR",
+      "seoDescription": "Ärztliche Schreiben, Empfehlungen für Untersuchungen und Überweisungen an Fachärzte. Unsere vom CMR autorisierten Ärzte können die Situation beurteilen und die relevante klinische Dokumentation ausstellen, wenn dies angezeigt ist.",
+      "seoKeywords": [
+        "referral letter Romania online doctor",
+        "specialist referral Romania online",
+        "blood test request Romania online",
+        "investigation request online Romania",
+        "private referral Romania doctor"
+      ],
+      "heroTitle": "Medizinische Briefe, Überweisungen und Untersuchungen — Online-Koordination",
+      "heroDescription": "Medizinische Briefe, Empfehlungen für Untersuchungen und Überweisungen an Fachärzte. Unsere vom CMR autorisierten Ärzte können die Situation bewerten und die relevante klinische Dokumentation ausstellen, wenn dies angezeigt ist.",
+      "detailBody": "<p>Dieser Dienst ist nützlich, wenn Sie Symptome oder eine Krankengeschichte haben, die durch Analysen, bildgebende Untersuchungen oder eine fachärztliche Konsultation geklärt werden muss, Sie aber nicht genau wissen, welcher der richtige Weg ist.</p><p>Der Arzt prüft das Gesundheitsproblem, die vorhandenen Unterlagen und das Ziel der Konsultation und empfiehlt dann die geeigneten Untersuchungen oder verfasst einen klaren medizinischen Brief für den betreffenden Facharzt oder die relevante Einrichtung. Wenn nur Erläuterungen zu einem bereits durchgeführten Untersuchungsset erforderlich sind, erhalten Sie eine Interpretation und praktische Orientierung.</p><p>Der Dienst kann auch für Patienten nützlich sein, die eine Koordination zwischen mehreren Leistungserbringern benötigen, oder für diejenigen, die sich mit gut strukturierter klinischer Dokumentation beim Facharzt vorstellen möchten.</p>",
+      "ctaLabel": "Termin vereinbaren",
+      "sortOrder": 150,
+      "durationMinutes": 20,
+      "basePriceCents": 16000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:50.543Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js1pu001jakjuc36whnoh",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee71b000ffsju3t9my2rm",
+          "path": "/api/media/media/98c460da-4161-4880-8b9f-6f66993c5144-7d46f6d9-5b91-4ee6-a2df-42b673052afe-3.webp",
+          "altText": "Scrisori medicale, trimiteri și investigații — coordonare online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "DE",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

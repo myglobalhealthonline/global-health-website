@@ -1,0 +1,482 @@
+{
+  "endpoint": "/api/countries/es/doctors/dr-syed-tahir?locale=EN",
+  "checkedAt": "2026-09-13T02:29:56.657Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "doctor": {
+      "id": "cmrdq2bu1002f01ru2g8317b6",
+      "slug": "dr-syed-tahir",
+      "fullName": "Dr. Syed Tahir",
+      "title": "General Medicine Doctor",
+      "bio": "<p>Dr. Syed Tahir - Professional Profile</p><p>Dr. Syed Tahir is a distinguished medical professional with extensive experience in general medicine, public health, epidemiology, and medical research. He currently works as a physician at Medcare Medical Care in Palma de Mallorca, Spain, specializing in general medical consultations, diagnosis of health problems, and consultations in both clinical and online settings. He also actively participates in providing medical advice and treatment in various non-clinical settings, such as hotels and water parks.</p><p>With a strong academic background, Dr. Tahir earned his Doctor of Medicine (MD) degree from the Latin American School of Medicine in Cuba and a Master’s in Epidemiology from Utrecht University, the Netherlands. In addition, he has refined his expertise with advanced courses in Global Health, Tropical and Disaster Medicine, and Infection Prevention and Control, among others.</p><p>Dr. Tahir’s professional career includes important roles in research and public health. As a doctoral student and medical researcher at Leiden University Medical Center (LUMC), he led cohort studies, interpreted laboratory results, and managed research networks. His work also included teaching and supervising medical students, as well as contributing to scientific publications on cardiovascular risk in people with HIV.</p><p>In addition to his research experience, Dr. Tahir has worked in various international healthcare settings, including public health initiatives with non-governmental organizations in Pakistan, where he led maternal and child health camps and coordinated immunization and vaccination programs. His professional career spans several continents, and he has gained experience in managing medical interventions in low- and middle-income countries.</p>",
+      "seoTitle": "Dr Syed Tahir - General Medicine | Global Health",
+      "seoDescription": "Dr. Syed Tahir, general physician specializing in public health and epidemiology. Trained in Cuba and the Netherlands, with international experience in medical research. Online consultation at Global Health.",
+      "lastReviewedAt": null,
+      "medicalRegistrationUrl": "https://www.cgcom.es/servicios/consulta-publica-de-colegiados",
+      "qualifications": [
+        "MD — Escuela Latinoamericana de Medicina (ELAM), Cuba",
+        "MSc en Epidemiología — Universidad de Utrecht, Países Bajos",
+        "Investigador médico (PhD) — Centro Médico Universitario de Leiden (LUMC), Países Bajos",
+        "Publicaciones científicas — riesgo cardiovascular en personas con VIH",
+        "Formación avanzada: Salud Global, Medicina Tropical y de Desastres, Prevención y Control de Infecciones",
+        "Médico — Medcare Medical Care, Palma de Mallorca, España",
+        "Experiencia en salud pública con ONGs — Pakistán (salud maternoinfantil, inmunización)",
+        "Registrado en CGCOM (nº 61323)"
+      ],
+      "instagramUrl": null,
+      "facebookUrl": null,
+      "linkedinUrl": null,
+      "languages": [
+        "Spanish",
+        "English",
+        "Hindi",
+        "Urdu",
+        "Dutch"
+      ],
+      "active": true,
+      "updatedAt": "2026-08-20T06:24:00.635Z",
+      "resolvedLocale": "EN",
+      "readyToIndex": true,
+      "nonPhysician": false,
+      "imcRegistration": "61323",
+      "registrationChamber": "CGCOM",
+      "registrationDivision": null,
+      "registrationVerified": true,
+      "credentials": [],
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmrf4nrjh025q01qr5trcwtgj",
+          "kind": "IMAGE",
+          "key": "doctor-cmrdq2bu1002f01ru2g8317b6-profile",
+          "path": "/api/media/media/f7f82200-5276-45c0-8139-b10dc6ace160-dr-syed-tahir.webp",
+          "altText": "Dr. Syed Tahir",
+          "title": "Dr. Syed Tahir",
+          "caption": "Dr. Syed Tahir — General Medicine Physician, Global Health Spain",
+          "description": "Dr. Syed Tahir — General Medicine Physician at Global Health Spain. Book an online video consultation.",
+          "focalX": 51,
+          "focalY": 28,
+          "zoom": 1
+        }
+      ],
+      "additionalCountries": [
+        {
+          "id": "cmrdq2bua002g01ruafun7hnc",
+          "countryId": "cmqy9rw9w00x001qkq31jktqq",
+          "active": true,
+          "country": {
+            "id": "cmqy9rw9w00x001qkq31jktqq",
+            "code": "es",
+            "name": "Spain",
+            "defaultLocale": "ES"
+          },
+          "chamberEntity": "CGCOM",
+          "registrationNumber": "61323",
+          "registrationUrl": null,
+          "division": null,
+          "isVerified": true,
+          "translations": [
+            {
+              "locale": "CS",
+              "title": "Lékař všeobecného lékařství",
+              "bio": "<p>Dr. Syed Tahir - Profesní profil</p><p>Dr. Syed Tahir je uznávaný zdravotnický odborník s rozsáhlými zkušenostmi v oblasti všeobecného lékařství, veřejného zdraví, epidemiologie a lékařského výzkumu. V současnosti pracuje jako lékař ve společnosti Medcare Medical Care v Palma de Mallorca ve Španělsku, se specializací na všeobecné lékařské konzultace, diagnostiku zdravotních problémů a konzultace jak v klinickém prostředí, tak online. Aktivně se také podílí na poskytování lékařského poradenství a léčby v různých neklinických prostředích, jako jsou hotely a aquaparky.</p><p>Díky pevnému akademickému zázemí získal Dr. Tahir titul Doctor of Medicine (MD) na Latinskoamerické škole medicíny na Kubě a magisterský titul v oboru epidemiologie na Univerzitě v Utrechtu v Nizozemsku. Kromě toho si své odborné znalosti dále zdokonalil prostřednictvím pokročilých kurzů mimo jiné v oblasti globálního zdraví, tropické a katastrofické medicíny a prevence a kontroly infekcí.</p><p>Profesní dráha Dr. Tahira zahrnuje významné role ve výzkumu a veřejném zdraví. Jako doktorand a lékařský výzkumník v Lékařském centru Univerzity v Leidenu (LUMC) vedl kohortové studie, interpretoval laboratorní výsledky a spravoval výzkumné sítě. Jeho práce zahrnovala také výuku a vedení studentů medicíny, stejně jako příspěvky do vědeckých publikací o kardiovaskulárním riziku u osob žijících s HIV.</p><p>Kromě svých zkušeností ve výzkumu pracoval Dr. Tahir v různých mezinárodních zdravotnických prostředích, včetně iniciativ veřejného zdraví s nevládními organizacemi v Pákistánu, kde vedl zdravotní tábory pro matky a děti a koordinoval imunizační a očkovací programy. Jeho profesní dráha zahrnuje několik kontinentů a získal zkušenosti s řízením lékařských intervencí v zemích s nízkými a středními příjmy.</p>",
+              "seoTitle": "Dr Syed Tahir - Všeobecné lékařství | Global Health",
+              "seoDescription": "Dr. Syed Tahir, praktický lékař, specialista na veřejné zdraví a epidemiologii. Vystudoval na Kubě a v Nizozemsku, s mezinárodními zkušenostmi v lékařském výzkumu. Online konzultace v Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "RO",
+              "title": "Medic de medicină generală",
+              "bio": "<p>Dr. Syed Tahir - Profil profesional</p><p>Dr. Syed Tahir este un profesionist medical distins, cu o vastă experiență în medicină generală, sănătate publică, epidemiologie și cercetare medicală. În prezent, lucrează ca medic la Medcare Medical Care din Palma de Mallorca, Spania, specializându-se în consultații medicale generale, diagnosticarea problemelor de sănătate și consultații atât în medii clinice, cât și online. De asemenea, participă activ la oferirea de consiliere și tratament medical în diverse contexte non-clinice, cum ar fi hoteluri și parcuri acvatice.</p><p>Cu o pregătire academică solidă, Dr. Tahir a obținut diploma de Medic (MD) la Școala Latino-Americană de Medicină din Cuba și un master în Epidemiologie la Universitatea Utrecht din Țările de Jos. În plus, și-a perfecționat experiența prin cursuri avansate în Sănătate Globală, Medicină Tropicală și de Dezastre, precum și Prevenirea și Controlul Infecțiilor, printre altele.</p><p>Parcursul profesional al Dr. Tahir include roluri importante în cercetare și sănătate publică. Ca doctorand și cercetător medical la Centrul Medical al Universității Leiden (LUMC), a condus studii de cohortă, a interpretat rezultate de laborator și a gestionat rețele de cercetare. Munca sa a inclus, de asemenea, predarea și îndrumarea studenților la medicină, precum și contribuții la publicații științifice privind riscul cardiovascular la persoanele cu HIV.</p><p>Pe lângă experiența sa în cercetare, Dr. Tahir a lucrat în diverse medii sanitare internaționale, inclusiv în inițiative de sănătate publică alături de organizații neguvernamentale din Pakistan, unde a coordonat tabere de sănătate maternă și infantilă și programe de imunizare și vaccinare. Parcursul său profesional se întinde pe mai multe continente și a dobândit experiență în gestionarea intervențiilor medicale în țări cu venituri mici și medii.</p>",
+              "seoTitle": "Dr Syed Tahir - Medicină generală | Global Health",
+              "seoDescription": "Dr. Syed Tahir, medic general specialist în sănătate publică și epidemiologie. Format în Cuba și Țările de Jos, cu experiență internațională în cercetare medicală. Consulta online la Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "EN",
+              "title": "General Medicine Doctor",
+              "bio": "<p>Dr. Syed Tahir - Professional Profile</p><p>Dr. Syed Tahir is a distinguished medical professional with extensive experience in general medicine, public health, epidemiology, and medical research. He currently works as a physician at Medcare Medical Care in Palma de Mallorca, Spain, specializing in general medical consultations, diagnosis of health problems, and consultations in both clinical and online settings. He also actively participates in providing medical advice and treatment in various non-clinical settings, such as hotels and water parks.</p><p>With a strong academic background, Dr. Tahir earned his Doctor of Medicine (MD) degree from the Latin American School of Medicine in Cuba and a Master’s in Epidemiology from Utrecht University, the Netherlands. In addition, he has refined his expertise with advanced courses in Global Health, Tropical and Disaster Medicine, and Infection Prevention and Control, among others.</p><p>Dr. Tahir’s professional career includes important roles in research and public health. As a doctoral student and medical researcher at Leiden University Medical Center (LUMC), he led cohort studies, interpreted laboratory results, and managed research networks. His work also included teaching and supervising medical students, as well as contributing to scientific publications on cardiovascular risk in people with HIV.</p><p>In addition to his research experience, Dr. Tahir has worked in various international healthcare settings, including public health initiatives with non-governmental organizations in Pakistan, where he led maternal and child health camps and coordinated immunization and vaccination programs. His professional career spans several continents, and he has gained experience in managing medical interventions in low- and middle-income countries.</p>",
+              "seoTitle": "Dr Syed Tahir - General Medicine | Global Health",
+              "seoDescription": "Dr. Syed Tahir, general physician specializing in public health and epidemiology. Trained in Cuba and the Netherlands, with international experience in medical research. Online consultation at Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "PT",
+              "title": "Médico Medicina Geral",
+              "bio": "<p>Dr. Syed Tahir - Perfil profissional</p><p>O Dr. Syed Tahir é um distinto profissional médico com ampla experiência em medicina geral, saúde pública, epidemiologia e investigação médica. Atualmente, trabalha como médico na Medcare Medical Care em Palma de Mallorca, Espanha, especializando-se em consultas médicas gerais, diagnóstico de problemas de saúde e consultas tanto em ambientes clínicos como online. Também participa ativamente na prestação de aconselhamento e tratamento médico em diversos contextos não clínicos, como hotéis e parques aquáticos.</p><p>Com uma sólida formação académica, o Dr. Tahir obteve o seu título de Médico (MD) na Escola Latino-Americana de Medicina de Cuba e um Mestrado em Epidemiologia na Universidade de Utrecht, Países Baixos. Além disso, aperfeiçoou a sua experiência com cursos avançados em Saúde Global, Medicina Tropical e de Desastres, e Prevenção e Controlo de Infeções, entre outros.</p><p>A trajetória profissional do Dr. Tahir inclui funções importantes em investigação e saúde pública. Como estudante de doutoramento e investigador médico no Centro Médico da Universidade de Leiden (LUMC), liderou estudos de coorte, interpretou resultados laboratoriais e geriu redes de investigação. O seu trabalho incluiu também o ensino e a supervisão de estudantes de medicina, bem como a contribuição para publicações científicas sobre o risco cardiovascular em pessoas com VIH.</p><p>Além da sua experiência em investigação, o Dr. Tahir trabalhou em diversos contextos de saúde internacionais, incluindo iniciativas de saúde pública com organizações não governamentais no Paquistão, onde liderou campanhas de saúde materno-infantil e coordenou programas de imunização e vacinação. A sua trajetória profissional abrange vários continentes e adquiriu experiência na gestão de intervenções médicas em países de baixo e médio rendimento.</p>",
+              "seoTitle": "Dr Syed Tahir - Medicina Geral | Global Health",
+              "seoDescription": "Dr. Syed Tahir, médico general especialista em saúde pública e epidemiologia. Formado em Cuba e nos Países Baixos, com experiência internacional em investigação médica. Consulta online na Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "DE",
+              "title": "Arzt Allgemeinmedizin",
+              "bio": "<p>Dr. Syed Tahir - Berufsprofil</p><p>Dr. Syed Tahir ist ein angesehener medizinischer Fachmann mit umfassender Erfahrung in Allgemeinmedizin, öffentlichem Gesundheitswesen, Epidemiologie und medizinischer Forschung. Derzeit arbeitet er als Arzt bei Medcare Medical Care in Palma de Mallorca, Spanien, und ist auf allgemeine medizinische Konsultationen, die Diagnose von Gesundheitsproblemen sowie Beratungen sowohl in klinischen als auch in Online-Umgebungen spezialisiert. Er ist zudem aktiv an der Bereitstellung medizinischer Beratung und Behandlung in verschiedenen nicht-klinischen Umgebungen beteiligt, wie etwa in Hotels und Wasserparks.</p><p>Mit einer soliden akademischen Ausbildung erwarb Dr. Tahir seinen Abschluss als Arzt (MD) an der Lateinamerikanischen Medizinschule in Kuba sowie einen Master in Epidemiologie an der Universität Utrecht, Niederlande. Darüber hinaus hat er seine Erfahrung durch fortgeschrittene Kurse in Global Health, Tropen- und Katastrophenmedizin sowie Infektionsprävention und -kontrolle und weitere vertieft.</p><p>Der berufliche Werdegang von Dr. Tahir umfasst wichtige Funktionen in Forschung und öffentlichem Gesundheitswesen. Als Doktorand und medizinischer Forscher am Universitätsklinikum Leiden (LUMC) leitete er Kohortenstudien, interpretierte Laborergebnisse und betreute Forschungsnetzwerke. Seine Arbeit umfasste auch Lehre und Betreuung von Medizinstudierenden sowie die Mitwirkung an wissenschaftlichen Veröffentlichungen über das kardiovaskuläre Risiko bei Menschen mit HIV.</p><p>Neben seiner Erfahrung in der Forschung hat Dr. Tahir in verschiedenen internationalen Gesundheitsumgebungen gearbeitet, darunter öffentliche Gesundheitsinitiativen mit Nichtregierungsorganisationen in Pakistan, wo er Mutter-Kind-Gesundheitscamps leitete und Immunisierungs- und Impfprogramme koordinierte. Sein beruflicher Werdegang erstreckt sich über mehrere Kontinente, und er hat Erfahrung in der Durchführung medizinischer Interventionen in Ländern mit niedrigem und mittlerem Einkommen gesammelt.</p>",
+              "seoTitle": "Dr Syed Tahir - Allgemeinmedizin | Global Health",
+              "seoDescription": "Dr. Syed Tahir, Allgemeinmediziner mit Spezialisierung auf öffentliche Gesundheit und Epidemiologie. Ausgebildet in Kuba und den Niederlanden, mit internationaler Erfahrung in der medizinischen Forschung. Online-Sprechstunde bei Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "ES",
+              "title": "Médico General — Epidemiología y Salud Global",
+              "bio": "<p>El Dr. Syed Tahir es médico con una formación académica y una trayectoria investigadora de primer nivel internacional, una combinación inusual de práctica clínica en medicina general, investigación epidemiológica en uno de los centros académicos más prestigiosos de Europa y experiencia en salud global en contextos muy diversos.</p><p>Obtuvo su título de Médico (MD) en la Escuela Latinoamericana de Medicina de Cuba y completó una Maestría en Epidemiología en la Universidad de Utrecht (Países Bajos). Posteriormente trabajó como estudiante de doctorado e investigador médico en el Centro Médico de la Universidad de Leiden (LUMC), uno de los principales centros académicos médicos de Europa, donde dirigió estudios de cohorte sobre riesgo cardiovascular en personas con VIH, interpretó resultados de laboratorio, gestionó redes de investigación internacionales, supervisó estudiantes de medicina y contribuyó a publicaciones científicas de referencia.</p><p>Actualmente ejerce como médico en Medcare Medical Care en Palma de Mallorca, donde ofrece consultas de medicina general tanto en entornos clínicos como online, y presta también atención médica en contextos no clínicos, hoteles y parques acuáticos, lo que le proporciona una experiencia única en la evaluación y manejo de incidentes médicos en entornos variados y con perfiles de pacientes muy diversos.</p><p>Su trayectoria internacional abarca Cuba, Países Bajos, Pakistán y España. En Pakistán dirigió campamentos de salud maternoinfantil y coordinó programas de inmunización con ONGs, experiencia que refuerza su perspectiva de salud pública y su comprensión de los determinantes sociales de la salud.</p><p>El Dr. Tahir consulta en cinco idiomas: español, inglés, hindi, urdu y neerlandés, lo que le convierte en uno de los médicos con mayor accesibilidad lingüística disponibles a través de consulta online en España, especialmente para pacientes de habla hindi o urdu y para la comunidad neerlandesa en España.</p><h3>Qué trata</h3><ul><li><strong>Medicina general:</strong> enfermedades agudas (infecciones respiratorias, fiebre, gripe, infecciones urinarias), gestión de enfermedades crónicas (hipertensión, diabetes, dislipemia, asma, EPOC)</li><li><strong>Salud cardiovascular:</strong> evaluación de riesgo, interpretación de resultados, orientación preventiva; con conocimiento profundo de la intersección entre riesgo cardiovascular y enfermedades crónicas como el VIH</li><li><strong>Epidemiología y enfermedades infecciosas:</strong> orientación sobre enfermedades infecciosas, brotes, EPI y enfermedades tropicales</li><li><strong>Medicina del viajero y salud tropical:</strong> consultas pre-viaje, enfermedades tropicales, profilaxis y consejos por destino</li><li><strong>Salud global y prevención:</strong> vacunación, cribados, medicina preventiva, salud maternoinfantil</li><li><strong>Salud pública:</strong> orientación sobre determinantes de salud, intervenciones preventivas y gestión de enfermedades crónicas en contexto poblacional</li><li><strong>VIH y enfermedades infecciosas crónicas:</strong> evaluación, seguimiento y orientación (con experiencia investigadora específica)</li><li><strong>Segunda opinión:</strong> sobre diagnósticos médicos, resultados de laboratorio o planes de tratamiento</li><li>Bajas médicas e informes médicos</li><li>Derivaciones a especialistas</li></ul><h3>Su enfoque</h3><p>El Dr. Tahir combina el pensamiento epidemiológico de un investigador de LUMC, que evalúa el riesgo a nivel de evidencia poblacional, con la práctica clínica directa de un médico que atiende a pacientes en entornos tan distintos como una consulta privada en Mallorca, un hotel o una iniciativa de salud pública en Pakistán. Este conjunto de experiencias le proporciona una perspectiva clínica inusualmente amplia y una comprensión profunda de los contextos en los que las personas realmente viven y enferman.</p><p>Idiomas: Español · Inglés · Hindi · Urdu · Neerlandés</p>",
+              "seoTitle": "Dr. Syed Tahir — Médico General | CGCOM 61323 | Global Health España",
+              "seoDescription": "Reserve una videoconsulta con Dr. Syed Tahir — médico registrado en CGCOM (nº 61323). Máster Epidemiología Utrecht · Investigador LUMC Leiden · Salud global · Medcare Palma de Mallorca · Español, inglés, hindi, urdu y neerlandés. Cita el mismo día.",
+              "seoKeywords": [
+                "Medicina General",
+                "Atención primaria"
+              ]
+            }
+          ],
+          "divisionTranslations": []
+        }
+      ],
+      "assignedServices": [
+        {
+          "serviceId": "cmre7q7k0002vngju6v73lt8h",
+          "service": {
+            "id": "cmre7q7k0002vngju6v73lt8h",
+            "slug": "medicina-viaje-online",
+            "name": "Medicina de Viaje",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 4900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7pz0n000kngjuib862zxl",
+          "service": {
+            "id": "cmre7pz0n000kngjuib862zxl",
+            "slug": "renovacion-tratamiento-online",
+            "name": "Renovación de Tratamiento",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 2900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q3a5001ongjur495me3b",
+          "service": {
+            "id": "cmre7q3a5001ongjur495me3b",
+            "slug": "salud-mental-online",
+            "name": "Salud Mental",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 5900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q8mg0037ngjuso41eynq",
+          "service": {
+            "id": "cmre7q8mg0037ngjuso41eynq",
+            "slug": "musculoesqueletico-online",
+            "name": "Musculoesquelético",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7qas1003sngjus0w2obwn",
+          "service": {
+            "id": "cmre7qas1003sngjus0w2obwn",
+            "slug": "derivaciones-pruebas-online",
+            "name": "Derivaciones y Pruebas",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q1550013ngjujfvwl58k",
+          "service": {
+            "id": "cmre7q1550013ngjujfvwl58k",
+            "slug": "salud-masculina-online",
+            "name": "Salud Masculina",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 4900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q6hn002lngju3chey2ai",
+          "service": {
+            "id": "cmre7q6hn002lngju3chey2ai",
+            "slug": "caida-cabello-online",
+            "name": "Caída del Cabello",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q4co001yngjucbez1gc0",
+          "service": {
+            "id": "cmre7q4co001yngjucbez1gc0",
+            "slug": "consulta-piel-online",
+            "name": "Consulta de Piel",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 4500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q27m001dngju2395w6dl",
+          "service": {
+            "id": "cmre7q27m001dngju2395w6dl",
+            "slug": "salud-femenina-online",
+            "name": "Salud Femenina",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 4900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7qcvw004engju2es5log3",
+          "service": {
+            "id": "cmre7qcvw004engju2es5log3",
+            "slug": "dejar-de-fumar-online",
+            "name": "Dejar de Fumar",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7pxza000angjubr3s2h65",
+          "service": {
+            "id": "cmre7pxza000angjubr3s2h65",
+            "slug": "justificante-medico-online",
+            "name": "Justificante Médico",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q9p1003ingjuum9voxoc",
+          "service": {
+            "id": "cmre7q9p1003ingjuum9voxoc",
+            "slug": "enfermedades-cronicas-online",
+            "name": "Enfermedades Crónicas",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 4500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q5fw002angjuebao1obt",
+          "service": {
+            "id": "cmre7q5fw002angjuebao1obt",
+            "slug": "segunda-opinion-medica",
+            "name": "Segunda Opinión Médica",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 20,
+            "basePriceCents": 4900,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7q038000ungjuxs5rkyxy",
+          "service": {
+            "id": "cmre7q038000ungjuxs5rkyxy",
+            "slug": "control-peso-online",
+            "name": "Control de Peso",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 4500,
+            "currencyCode": "EUR"
+          }
+        },
+        {
+          "serviceId": "cmre7pwwv0000ngjuwvmiacw9",
+          "service": {
+            "id": "cmre7pwwv0000ngjuwvmiacw9",
+            "slug": "consulta-medica-online",
+            "name": "Consulta Médica General",
+            "kind": "GENERAL",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 3900,
+            "currencyCode": "EUR"
+          }
+        }
+      ],
+      "seoKeywords": [],
+      "resolvedMarketLocale": "EN",
+      "specialties": [],
+      "faqs": [
+        {
+          "id": "cmrnyxc3800mybsjujdx6fk0b",
+          "locale": "EN",
+          "question": "Is Dr. Tahir registered with the Consejo General de Colegios Oficiales de Médicos?",
+          "answer": "Yes. Dr. Syed Tahir is registered with the CGCOM under registration number 61323. You can verify this registration at cgcom.es. Dr. Tahir is a physician with an MD from the Escuela Latinoamericana de Medicina de Cuba, an MSc in Epidemiology from the University of Utrecht, and research experience at the Leiden University Medical Center (LUMC). He currently practices at Medcare Medical Care in Palma de Mallorca.",
+          "category": null,
+          "sortOrder": 0,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyxc3800mzbsjupwsp3doo",
+          "locale": "EN",
+          "question": "What does Dr. Tahir treat in online consultations?",
+          "answer": "Dr. Tahir offers: general medicine (acute and chronic diseases), cardiovascular risk assessment, infectious diseases and epidemiology, travel medicine and tropical health (pre-travel consultations, tropical diseases, prophylaxis), global and preventive health (vaccination, screenings, maternal and child health), guidance on HIV and chronic infectious diseases, second opinions on diagnoses or laboratory results, medical leave and reports, and referrals to specialists.",
+          "category": null,
+          "sortOrder": 1,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyxc3800n0bsjuv7fpl168",
+          "locale": "EN",
+          "question": "What does training in epidemiology and clinical research contribute to online medical practice?",
+          "answer": "Epidemiology and clinical research develop a specific capability: to systematically and evidence-based assess risk — not only the individual risk of a patient but the risk in the context of what scientific evidence knows about their condition. Dr. Tahir led cohort studies on cardiovascular risk in people with HIV at the LUMC in Leiden — one of the leading academic centers in Europe. In clinical practice, this translates into a physician who interprets laboratory results and clinical signs with a level of analytical depth that goes beyond standard general medicine consultations.",
+          "category": null,
+          "sortOrder": 2,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyxc3800n1bsjuyb06yst7",
+          "locale": "EN",
+          "question": "Can Dr. Tahir provide guidance on travel medicine and tropical diseases?",
+          "answer": "Yes. Dr. Tahir has advanced training in Tropical Medicine and Disaster Health and Global Health. He can provide guidance on malaria prophylaxis, pre-travel vaccination, health risks by destination, prevention of tropical diseases, and evaluation of symptoms upon returning from a high-risk area. His experience in public health in Pakistan and his epidemiological training provide him with real context regarding diseases in low- and middle-income countries.",
+          "category": null,
+          "sortOrder": 3,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyxc3800n2bsjumkkr7hy1",
+          "locale": "EN",
+          "question": "How do I book a consultation with Dr. Tahir?",
+          "answer": "Select an available time slot on this page to book directly with Dr. Tahir. Payment is processed securely at the time of booking — the consultation is confirmed once payment is completed. You will immediately receive a calendar invitation. Consultations are conducted via secure video call in Spanish, English, Hindi, Urdu, or Dutch. Same-day appointments are usually available.",
+          "category": null,
+          "sortOrder": 4,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyxc3800n3bsju15tsl5i3",
+          "locale": "EN",
+          "question": "What are Dr. Tahir's qualifications?",
+          "answer": "Dr. Syed Tahir holds an MD from the Escuela Latinoamericana de Medicina de Cuba and an MSc in Epidemiology from the University of Utrecht. He worked as a medical researcher at the Leiden University Medical Center (LUMC), with publications on cardiovascular risk and HIV. He has advanced training in Global Health, Tropical Medicine, and Infection Prevention. He has worked with NGOs on maternal and child health programs in Pakistan. He currently practices at Medcare Medical Care in Palma de Mallorca. Registered with CGCOM (no. 61323). Consultations in Spanish, English, Hindi, Urdu, and Dutch.",
+          "category": null,
+          "sortOrder": 5,
+          "isActive": true
+        }
+      ],
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:51:00.000Z"
+      },
+      "bookabilityByServiceId": {
+        "cmre7q7k0002vngju6v73lt8h": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:51:00.000Z"
+        },
+        "cmre7pz0n000kngjuib862zxl": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:51:00.000Z"
+        },
+        "cmre7q3a5001ongjur495me3b": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:51:00.000Z"
+        },
+        "cmre7q8mg0037ngjuso41eynq": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:51:00.000Z"
+        },
+        "cmre7qas1003sngjus0w2obwn": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:51:00.000Z"
+        },
+        "cmre7q1550013ngjujfvwl58k": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:51:00.000Z"
+        },
+        "cmre7q6hn002lngju3chey2ai": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:51:00.000Z"
+        },
+        "cmre7q4co001yngjucbez1gc0": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:51:00.000Z"
+        },
+        "cmre7q27m001dngju2395w6dl": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:51:00.000Z"
+        },
+        "cmre7qcvw004engju2es5log3": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:51:00.000Z"
+        },
+        "cmre7pxza000angjubr3s2h65": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:51:00.000Z"
+        },
+        "cmre7q9p1003ingjuum9voxoc": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:51:00.000Z"
+        },
+        "cmre7q5fw002angjuebao1obt": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:51:00.000Z"
+        },
+        "cmre7q038000ungjuxs5rkyxy": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:51:00.000Z"
+        },
+        "cmre7pwwv0000ngjuwvmiacw9": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:51:00.000Z"
+        }
+      }
+    }
+  }
+}

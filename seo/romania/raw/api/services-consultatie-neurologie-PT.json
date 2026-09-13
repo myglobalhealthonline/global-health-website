@@ -1,0 +1,83 @@
+{
+  "checkedAt": "2026-09-12T20:20:13.574Z",
+  "endpoint": "/api/services/consultatie-neurologie?countryCode=ro&locale=PT",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee87d000ifsjuydqk0htg",
+      "kind": "SPECIALIST",
+      "slug": "consultatie-neurologie",
+      "name": "Consulta de neurologia — avaliação especializada online",
+      "summary": "Tem enxaquecas, dores de cabeça persistentes, dormência, neuropatia ou outro problema neurológico? O nosso especialista autorizado pela CMR oferece avaliação inicial, recomendações e um plano de investigação através de consulta por vídeo.",
+      "seoTitle": "Consulta de neurologia online | Roménia | especialista CMR",
+      "seoDescription": "Avaliação especializada para enxaquecas, dores de cabeça persistentes, dormência, neuropatia ou outros problemas neurológicos. O nosso especialista autorizado pela CMR oferece avaliação inicial, recomendações e plano de investigação por consulta em vídeo.",
+      "seoKeywords": [
+        "neurology consultation online Romania",
+        "neurologist online Romania",
+        "migraine specialist online Romania",
+        "headache neurologist online Romania",
+        "neuropathy assessment online Romania",
+        "neurology second opinion Romania"
+      ],
+      "heroTitle": "Consulta de neurologia — avaliação especializada online",
+      "heroDescription": "Avaliação especializada para enxaquecas, dores de cabeça persistentes, dormências, neuropatia ou outros problemas neurológicos. O nosso especialista autorizado pela CMR oferece avaliação inicial, recomendações e plano de investigações por consulta por vídeo.",
+      "detailBody": "<p>A consulta de neurologia online é útil para sintomas como cefaleia recorrente, enxaqueca, tonturas, perturbações da sensibilidade, formigueiros, dores neuropáticas, tremor ou outras manifestações que necessitem de esclarecimento especializado.</p><p>O médico neurologista revê o historial, o início e a evolução dos sintomas, os resultados existentes e os tratamentos anteriores. Receberá recomendações sobre a conduta imediata, os exames necessários e o momento em que é essencial uma avaliação física urgente ou a apresentação no hospital.</p><p>O serviço também é adequado para a interpretação de resultados já obtidos, a monitorização de algumas condições neurológicas estáveis e a orientação para os cuidados adequados quando não está claro qual é o próximo passo.</p>",
+      "ctaLabel": "Marque a consulta",
+      "sortOrder": 0,
+      "durationMinutes": 20,
+      "basePriceCents": 22000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:45.465Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jshz4001uakju0eh9c4xv",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee87d000ifsjuydqk0htg",
+          "path": "/api/media/media/8b300e8b-981a-4e39-b597-0a744cd63d2e-895b9c67-2d6d-4493-b671-42f49affecdb-3.webp",
+          "altText": "Consultație de neurologie — evaluare de specialitate online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "PT",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4j7oc00se01p2gf7y9ldw"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:50:00.000Z"
+      }
+    }
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:11.869Z",
+  "endpoint": "/api/services/controlul-greutatii?countryCode=ro&locale=ES",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee3510005fsjunqgfmxn2",
+      "kind": "GENERAL",
+      "slug": "controlul-greutatii",
+      "name": "Gestión del peso — evaluación médica y plan personalizado",
+      "summary": "¿Le resulta difícil adelgazar a pesar de los cambios en el estilo de vida? Nuestros médicos autorizados por CMR evalúan los factores médicos, metabólicos y conductuales que influyen en el peso y establecen un plan realista de manejo.",
+      "seoTitle": "Gestión del peso online | Rumanía | evaluación médica",
+      "seoDescription": "Manejo médico del peso, más allá de la dieta y el estilo de vida. Nuestros médicos autorizados por CMR evalúan los factores médicos, metabólicos y conductuales que influyen en el peso y establecen un plan realista de manejo.",
+      "seoKeywords": [
+        "weight management online Romania",
+        "online doctor weight loss Romania",
+        "obesity consultation Bucharest English",
+        "metabolic health online Romania",
+        "weight loss doctor Romania expat"
+      ],
+      "heroTitle": "Gestión del peso — evaluación médica y plan personalizado",
+      "heroDescription": "Manejo médico del peso, más allá de la dieta y el estilo de vida. Nuestros médicos autorizados CMR evalúan los factores médicos, metabólicos y conductuales que influyen en el peso y establecen un plan de manejo realista.",
+      "detailBody": "<p>El control del peso no depende solo de la voluntad. Los trastornos hormonales, el síndrome metabólico, la resistencia a la insulina, el sueño deficiente, la medicación o los hábitos alimentarios pueden contribuir significativamente al aumento de peso y a la dificultad para adelgazar.</p><p>La consulta incluye la evaluación del historial de peso, las dietas anteriores, el nivel de actividad, el sueño, los síntomas hormonales y los resultados médicos disponibles. El médico puede recomendar análisis, cambios en el estilo de vida, seguimiento o derivación a especialidades relevantes cuando existan causas médicas que deban investigarse.</p><p>El objetivo es que reciba un plan personalizado, realista y seguro, basado en su contexto clínico, no solo recomendaciones generales que no tengan en cuenta la causa real del problema.</p>",
+      "ctaLabel": "Programa la consulta",
+      "sortOrder": 120,
+      "durationMinutes": 15,
+      "basePriceCents": 15000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:03:02.284Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jsdzv001sakju8jltsy8i",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee3510005fsjunqgfmxn2",
+          "path": "/api/media/media/5bb9786f-3a23-44cb-ac81-2df8115fd74a-59954e92-eced-4821-8e0f-1f9d02346174-13.webp",
+          "altText": "Managementul greutății — evaluare medicală și plan personalizat"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "ES",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

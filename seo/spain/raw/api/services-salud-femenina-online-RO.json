@@ -1,0 +1,189 @@
+{
+  "endpoint": "/api/services/salud-femenina-online?countryCode=es&locale=RO",
+  "checkedAt": "2026-09-13T02:30:08.256Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q27m001dngju2395w6dl",
+      "kind": "GENERAL",
+      "slug": "salud-femenina-online",
+      "name": "Sănătatea femeilor",
+      "summary": null,
+      "seoTitle": "Sănătatea Femeilor Online Spania | Evaluare Confidențială | Medic Colegiat",
+      "seoDescription": "Contraceptive, sănătate hormonală, menopauză sau alte preocupări legate de sănătatea femeilor. Medicii noștri autorizați oferă evaluări confidențiale prin apel video securizat. În aceeași zi în Spania.",
+      "seoKeywords": [
+        "salud femenina online España",
+        "anticonceptivos online médico España",
+        "menopausia evaluación online España",
+        "SOP médico online España",
+        "salud hormonal femenina online España"
+      ],
+      "heroTitle": "Sănătatea Femeilor — Evaluare confidențială online",
+      "heroDescription": "Sănătatea femeilor cuprinde mult mai mult decât medicina reproductivă — include sănătatea hormonală, afecțiunile metabolice, bunăstarea mentală și modalitățile specifice în care afecțiunile frecvente se manifestă diferit la femei. Medicii noștri, membri ai colegiului profesional conform cerințelor Organizației Medicale Colegiale (OMC), oferă evaluări confidențiale ale sănătății femeilor prin videoconferință securizată. Fie că ai nevoie de sfaturi contraceptive, evaluare hormonală, sprijin în menopauză sau de o preocupare privind sănătatea femeilor abordată fără bariere — suntem aici, în aceeași zi, din orice punct al Spaniei, în spaniolă, engleză sau portugheză.",
+      "detailBody": "<h2>Pentru cine este acest serviciu</h2><p>Acest consult este adecvat pentru femeile care:</p><ul><li>Au nevoie de sfat contraceptiv, revizuire sau continuare</li><li>Au preocupări legate de sănătatea hormonală — SOP, patologie tiroidiană, perimenopauză sau menopauză</li><li>Experimentează simptome care pot avea o bază hormonală sau metabolică — oboseală, schimbări de dispoziție, creștere în greutate, modificări ale pielii, căderea părului</li><li>Au nevoie de evaluarea neregularităților menstruale, menstruațiilor abundente sau dureroase</li><li>Au preocupări legate de sănătatea sexuală — libido redus, uscăciune vaginală sau durere în timpul relațiilor</li><li>Sunt însărcinate sau își planifică o sarcină și au nevoie de sfat preconcepțional</li><li>Au nevoie de evaluarea și gestionarea infecțiilor urinare</li><li>Au primit rezultate de la un ginecolog sau medic din Spania pe care doresc să le revizuiască și să fie explicate mai detaliat</li><li>Sunt expați sau rezidenți internaționali care au nevoie de îngrijire a sănătății femeilor în engleză sau portugheză</li><li>Nu au medic de familie sau ginecolog înregistrat în prezent</li></ul><h2>Îngrijirea sănătății femeilor în Spania — acces și ce oferă acest serviciu</h2><p>În Spania, femeile pot accesa ginecologia direct în sectorul privat fără a fi nevoie de trimitere de la medicul de familie. În sistemul public, îngrijirea sănătății femeilor este gestionată prin medicul de familie și specialistul în ginecologie — cu timpi de așteptare care pot fi semnificativi pentru consultațiile care nu sunt urgente.</p><p>Pentru femeile fără medic de familie alocat, pentru rezidenții internaționali care preferă să consulte în engleză sau portugheză, sau pentru oricine are nevoie astăzi de îngrijire a sănătății femeilor fără a aștepta săptămâni, Global Health oferă evaluări ale sănătății femeilor la nivel de medicină generală — acoperind sănătatea hormonală, contracepția, menopauza și sănătatea generală a femeilor — completând, nu înlocuind, îngrijirea ginecologică de specialitate. Atunci când este necesară evaluarea ginecologică de specialitate, medicul coordonează trimiterea în aceeași zi.</p><h2>Ce include consultația</h2><p><strong>Evaluare clinică completă</strong></p><p>Medicul îți analizează simptomele în detaliu, istoricul menstrual și reproductiv, medicația actuală, indicatorii hormonali, istoricul medical relevant și factorii de stil de viață — construind un tablou clinic complet al problemei tale.</p><p><strong>Evaluare hormonală și metabolică</strong></p><p>Simptomele sănătății femeilor au frecvent rădăcini hormonale sau metabolice care nu sunt abordate în consultațiile acute standard. Medicul evaluează contributorii hormonali — funcția tiroidiană, rezistența la insulină, SOP și perimenopauza — acolo unde este relevant din punct de vedere clinic.</p><p><strong>Plan de gestionare clinică</strong></p><p>Pe baza evaluării, medicul oferă sfaturi privind pașii următori cei mai potriviți — care pot include recomandări privind stilul de viață și nutriția, recomandări clinice la discreția medicului, trimitere pentru analize sau evaluare de specialitate, sau gestionare continuă la nivel de medicină generală.</p><p><strong>Documentație clinică — la discreția medicului</strong></p><p>Atunci când este indicat clinic, medicul emite documentația clinică corespunzătoare, valabilă în orice farmacie spaniolă.</p><p>Notă: Stupefiantele și anumite substanțe controlate necesită documentație specială care nu poate fi emisă electronic. Medicul tău te va informa dacă acest lucru se aplică.</p><p><strong>Coordonarea trimiterii și a investigațiilor</strong></p><p>Atunci când este indicată trimiterea la ginecologie, analizele de sânge sau alte investigații, medicul emite documentația relevantă în aceeași zi.</p><h2>Afecțiuni evaluate în mod obișnuit</h2><p><strong>Contracepție și sănătate reproductivă</strong></p><ul><li>Evaluare și revizuire contraceptivă — pilula combinată, minipilula, plasturele, inelul, injectabilul și opțiuni non-hormonale</li><li>Efecte secundare legate de contracepție și gestionarea lor</li><li>Sfat preconcepțional și planificare</li><li>Preocupări legate de fertilitate — evaluare inițială și trimitere unde este indicat</li></ul><p><strong>Sănătate hormonală</strong></p><ul><li>Sindromul ovarelor polichistice (SOP) — evaluare, sprijin în gestionare și urmărire</li><li>Endometrioză — gestionarea simptomelor și coordonarea trimiterii</li><li>Sindrom premenstrual (SPM) și tulburare disforică premenstruală (TDPM)</li><li>Neregularități menstruale, menstruații abundente sau dureroase</li><li>Dezechilibru hormonal care afectează starea de spirit, greutatea, energia și pielea</li><li>Patologie tiroidiană — deosebit de relevantă pentru sănătatea hormonală feminină</li></ul><p><strong>Menopauză și perimenopauză</strong></p><ul><li>Evaluarea perimenopauzei și gestionarea simptomelor</li><li>Menopauză — bufeuri, tulburări de somn, schimbări de dispoziție, simptome cognitive</li><li>Terapia de substituție hormonală (TSH) — evaluare, inițiere și revizuire continuă la discreția medicului</li><li>Sănătatea postmenopauzală și bunăstarea pe termen lung</li></ul><p><strong>Sănătate sexuală</strong></p><ul><li>Libido redus și contributori hormonali</li><li>Uscăciune vaginală și disconfort — evaluare și gestionare</li><li>Durere în timpul relațiilor — evaluare clinică și trimitere unde este indicat</li></ul><p><strong>Sănătatea generală a femeilor</strong></p><ul><li>Infecții urinare și cistită recurentă</li><li>Preocupări legate de sănătatea sânilor și trimitere unde este indicat</li><li>Consultații privind citologia și coordonarea trimiterii</li><li>Modificări ale pielii și părului de bază hormonală — acnee, căderea părului, hirsutism</li><li>Sănătatea mintală la femei — anxietate, depresie și preocupări legate de dispoziția postpartum</li><li>Controlul greutății cu bază hormonală sau metabolică</li></ul><h2>Întreruperea sarcinii — notă importantă</h2><p>Întreruperea voluntară a sarcinii (IVE) în Spania este reglementată de Legea Organică 2/2010 privind sănătatea sexuală și reproductivă și întreruperea voluntară a sarcinii. IVE necesită îngrijire față în față într-un centru medical autorizat și nu poate fi gestionată printr-o consultație de telemedicină.</p><p>Dacă ai nevoie de informații despre serviciile disponibile în Spania sau despre cum să accesezi îngrijirea adecvată, medicul tău îți poate oferi îndrumare și informații de trimitere în timpul consultației.</p><h2>De ce sănătatea hormonală este adesea trecută cu vederea</h2><p>Multe simptome pe care femeile le atribuie stresului sau vârstei — oboseală, schimbări de dispoziție, creștere în greutate, modificări ale pielii și părului — au cauze hormonale sau metabolice specifice pe care consultațiile acute standard nu le investighează. SOP afectează aproximativ una din zece femei și este adesea nediagnosticat. Simptomele perimenopauzei sunt atribuite în mod obișnuit anxietății. Cauzele hormonale ale oboselii, greutății și dispoziției sunt sistematic subevaluate în asistența primară standard.</p><p>O evaluare axată în mod specific pe sănătatea femeilor — cu timp, cunoștințe hormonale și un medic care evaluează simptomele în contextul complet al sănătății femeilor — este mai eficientă din punct de vedere clinic decât o consultație medicală generică. Acesta este ceea ce oferă acest serviciu.</p>",
+      "ctaLabel": null,
+      "sortOrder": 160,
+      "durationMinutes": 20,
+      "basePriceCents": 4900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.266Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru15npj0000bsjudyjnw7kp",
+          "kind": "IMAGE",
+          "key": "media/a67645f8-0f09-4f9c-9836-5a796bf4c630-es-salud-femenina-online.png",
+          "path": "/api/media/media/a67645f8-0f09-4f9c-9836-5a796bf4c630-es-salud-femenina-online.png",
+          "altText": "Salud Femenina"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q2gg001engjuqf9auib2",
+          "question": "Pot accesa consiliere contraceptivă prin intermediul acestui serviciu?",
+          "answer": "Da. Evaluarea și revizuirea contraceptivă reprezintă o parte centrală a acestui serviciu. Medicul efectuează o evaluare clinică completă și oferă consiliere cu privire la opțiunile cele mai potrivite, pe baza istoricului tău medical și a nevoilor individuale. Recomandările clinice se fac la latitudinea medicului, după evaluare.",
+          "sortOrder": 0,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q2gg001fngju04o9ugqo",
+          "question": "Pot accesa THS prin intermediul acestui serviciu?",
+          "answer": "THS poate fi evaluată și inițiată la nivelul medicinei generale acolo unde este adecvat din punct de vedere clinic. Medicul efectuează o evaluare completă a simptomelor tale, a istoricului medical și a eligibilității înainte de a oferi consiliere privind orice tratament hormonal. Toate recomandările se fac la discreția medicului.",
+          "sortOrder": 1,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q2gg001gngjug41vvtdu",
+          "question": "Am nevoie de trimitere ginecologică pentru a utiliza acest serviciu?",
+          "answer": "Nu. Acest serviciu este disponibil direct — fără nevoie de trimitere. Dacă evaluarea ta indică faptul că este necesară o evaluare ginecologică de specialitate, medicul coordonează trimiterea în aceeași zi.",
+          "sortOrder": 2,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q2gg001hngjuudg6ono1",
+          "question": "Puteți analiza rezultatele pe care le-am primit de la un ginecolog spaniol?",
+          "answer": "Da. Dacă ai primit rezultate, scrisori sau un plan de tratament de la un ginecolog și vrei să fie revizuite și explicate mai detaliat, adu-le la consultație. Medicul le examinează în întregime și explică clar constatările și recomandările clinice.",
+          "sortOrder": 3,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q2gg001ingjudxztgdga",
+          "question": "Acest serviciu include întreruperea sarcinii?",
+          "answer": "Nu. IVE în Spania necesită îngrijire în persoană într-un centru medical autorizat, în conformitate cu Legea organică 2/2010, și nu poate fi gestionată printr-o consultație de telemedicină.",
+          "sortOrder": 4,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q2gg001jngjupaq38jl3",
+          "question": "Este acest serviciu potrivit pentru preocupări legate de sarcină?",
+          "answer": "Pentru consiliere preconcepțională generală și întrebări despre sarcina timpurie, da. Pentru îngrijire prenatală continuă, preocupări obstetricale sau orice lucru care necesită evaluare obstetricală în persoană, medicul oferă recomandări privind trimiterea adecvată.",
+          "sortOrder": 5,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q2gg001kngjuzfa854u8",
+          "question": "Pot folosi acest serviciu fără medic de familie sau ginecolog în Spania?",
+          "answer": "Da. Acest serviciu este conceput în mod special pentru femei — inclusiv expate și rezidente internaționale — care nu au în prezent un medic de familie sau un ginecolog înregistrat.",
+          "sortOrder": 6,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q2gg001lngjun2x5jvvx",
+          "question": "Am nevoie de asigurare medicală spaniolă?",
+          "answer": "Nu. Este un serviciu privat cu plată directă. Documentația clinică emisă prin intermediul acestui serviciu se furnizează la prețul privat integral, independent de statutul de asigurare.",
+          "sortOrder": 7,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q2gg001mngjum5jl48kf",
+          "question": "Pot folosi acest serviciu din orice punct al Spaniei?",
+          "answer": "Da — inclusiv Insulele Baleare, Insulele Canare, Ceuta și Melilla. Ai nevoie doar de o conexiune stabilă la internet și de un dispozitiv cu cameră.",
+          "sortOrder": 8,
+          "resolvedLocale": "RO"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "RO",
+      "links": [
+        {
+          "id": "cmre7s43s001kg8ju7lqty4vv",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre acné hormonal — evaluación dermatológica especialista?",
+          "body": "Nuestra Dermatología Especialista está pensada específicamente para acné hormonal — evaluación dermatológica especialista.",
+          "ctaLabel": "Dermatología Especialista",
+          "targetSlug": "dermatologia-especialista-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7s075001ag8jumyfi2au3",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Control de peso con base hormonal?",
+          "body": "Si tu situación está relacionada con control de peso con base hormonal, nuestra Control de Peso te ofrece la evaluación adecuada.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7s0z9001cg8jup1hrg8if",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con caída del cabello hormonal en mujeres?",
+          "body": "Para caída del cabello hormonal en mujeres, consulta nuestra página de Caída del Cabello — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Caída del Cabello",
+          "targetSlug": "caida-cabello-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7s1re001eg8ju06lljkog",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre seguimiento de patología tiroidea?",
+          "body": "Nuestra Enfermedades Crónicas está pensada específicamente para seguimiento de patología tiroidea.",
+          "ctaLabel": "Enfermedades Crónicas",
+          "targetSlug": "enfermedades-cronicas-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

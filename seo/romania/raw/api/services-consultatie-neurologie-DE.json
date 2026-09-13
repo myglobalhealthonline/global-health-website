@@ -1,0 +1,83 @@
+{
+  "checkedAt": "2026-09-12T20:20:07.680Z",
+  "endpoint": "/api/services/consultatie-neurologie?countryCode=ro&locale=DE",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee87d000ifsjuydqk0htg",
+      "kind": "SPECIALIST",
+      "slug": "consultatie-neurologie",
+      "name": "Neurologische Konsultation — Online-Fachbeurteilung",
+      "summary": "Haben Sie Migräne, anhaltende Kopfschmerzen, Taubheitsgefühle, Neuropathie oder ein anderes neurologisches Problem? Unser zugelassener CMR-Spezialist bietet eine erste Beurteilung, Empfehlungen und einen Untersuchungsplan per Video-Konsultation an.",
+      "seoTitle": "Online-Neurologie-Beratung | Rumänien | CMR-Spezialist",
+      "seoDescription": "Fachärztliche Beurteilung bei Migräne, anhaltenden Kopfschmerzen, Taubheitsgefühlen, Neuropathie oder anderen neurologischen Problemen. Unser zugelassener CMR-Spezialist bietet eine erste Beurteilung, Empfehlungen und einen Untersuchungsplan per Videoberatung.",
+      "seoKeywords": [
+        "neurology consultation online Romania",
+        "neurologist online Romania",
+        "migraine specialist online Romania",
+        "headache neurologist online Romania",
+        "neuropathy assessment online Romania",
+        "neurology second opinion Romania"
+      ],
+      "heroTitle": "Neurologische Beratung — fachärztliche Online-Einschätzung",
+      "heroDescription": "Fachärztliche Beurteilung bei Migräne, anhaltenden Kopfschmerzen, Taubheitsgefühlen, Neuropathie oder anderen neurologischen Problemen. Unser vom CMR autorisierter Facharzt bietet eine erste Einschätzung, Empfehlungen und einen Untersuchungsplan per Videosprechstunde.",
+      "detailBody": "<p>Die neurologische Online-Konsultation ist bei Symptomen wie wiederkehrenden Kopfschmerzen, Migräne, Schwindel, Sensibilitätsstörungen, Kribbeln, neuropathischen Schmerzen, Tremor oder anderen Erscheinungen, die eine fachärztliche Abklärung erfordern, sinnvoll.</p><p>Der Neurologe prüft die Krankengeschichte, den Beginn und Verlauf der Symptome, vorhandene Befunde und frühere Behandlungen. Sie erhalten Empfehlungen zum weiteren unmittelbaren Vorgehen, zu den erforderlichen Untersuchungen und dazu, wann eine dringende körperliche Untersuchung oder eine Vorstellung im Krankenhaus unerlässlich ist.</p><p>Der Dienst eignet sich auch zur Interpretation bereits vorliegender Ergebnisse, zur Überwachung stabiler neurologischer Erkrankungen und zur Orientierung hin zur geeigneten Versorgung, wenn nicht klar ist, welcher nächste Schritt der richtige ist.</p>",
+      "ctaLabel": "Beratung vereinbaren",
+      "sortOrder": 0,
+      "durationMinutes": 20,
+      "basePriceCents": 22000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:45.465Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jshz4001uakju0eh9c4xv",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee87d000ifsjuydqk0htg",
+          "path": "/api/media/media/8b300e8b-981a-4e39-b597-0a744cd63d2e-895b9c67-2d6d-4493-b671-42f49affecdb-3.webp",
+          "altText": "Consultație de neurologie — evaluare de specialitate online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "DE",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4j7oc00se01p2gf7y9ldw"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:50:00.000Z"
+      }
+    }
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:06.862Z",
+  "endpoint": "/api/services/sanatatea-femeii-online?countryCode=ro&locale=CS",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee3x70007fsju2pfu3ygw",
+      "kind": "GENERAL",
+      "slug": "sanatatea-femeii-online",
+      "name": "Zdraví žen — důvěrné online vyhodnocení",
+      "summary": "Máte otázky týkající se antikoncepce, premenstruačního syndromu, menopauzy, hormonálního zdraví nebo jiných běžných gynekologických příznaků? Naši licencovaní lékaři CMR poskytují důvěrné zhodnocení a jasná lékařská doporučení prostřednictvím video konzultace.",
+      "seoTitle": "Online konzultace ženského zdraví | Rumunsko | důvěrné",
+      "seoDescription": "Důvěrné konzultace ohledně antikoncepce, premenstruačního syndromu, menopauzy, hormonálního zdraví a dalších běžných gynekologických příznaků. Naši lékaři s oprávněním CMR poskytují důvěrné posouzení a jasná lékařská doporučení prostřednictvím video konzultace.",
+      "seoKeywords": [
+        "women's health online Romania",
+        "English doctor women's health Bucharest",
+        "contraception online Romania",
+        "menopause consultation English Romania",
+        "PCOS doctor online Romania expat"
+      ],
+      "heroTitle": "Zdraví žen — důvěrné online posouzení",
+      "heroDescription": "Důvěrné konzultace pro antikoncepci, premenstruační syndrom, menopauzu, hormonální zdraví a další běžné gynekologické obtíže. Naši lékaři s licencí CMR poskytují důvěrné vyšetření a jasná lékařská doporučení prostřednictvím videokonzultace.",
+      "detailBody": "<p>Vyšetření je vhodné při potížích, jako jsou nepravidelné nebo bolestivé cykly, příznaky perimenopauzy a menopauzy, podezření na hormonální nerovnováhu, otázky týkající se antikoncepce, opakované infekce močových cest nebo jiné časté potíže související se zdravím ženy.</p><p>Lékař probere příznaky v kontextu menstruační, reprodukční, metabolické a celkové anamnézy, poté doporučí vyšetření, léčebný postup nebo odeslání ke gynekologovi, je-li to nutné. Pokud již máte výsledky nebo lékařské zprávy, mohou být během vyšetření zkontrolovány.</p><p>Služba je užitečná také pro ženy, které chtějí jasné lékařské zhodnocení před rozhodnutím, zda je potřeba osobní gynekologické vyšetření, stejně jako pro expatky nebo pacientky s obtížným přístupem k průběžné péči.</p>",
+      "ctaLabel": "Naplánovat konzultaci",
+      "sortOrder": 140,
+      "durationMinutes": 20,
+      "basePriceCents": 16000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:03:03.963Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jrxp8001gakjupdim1ccg",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee3x70007fsju2pfu3ygw",
+          "path": "/api/media/media/b65d7e63-2548-4c9e-9564-471a6a64e6c6-31480589-8bde-459d-a8f9-3b9507b618bd-4.webp",
+          "altText": "Sănătatea femeii — evaluare online confidențială"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "CS",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

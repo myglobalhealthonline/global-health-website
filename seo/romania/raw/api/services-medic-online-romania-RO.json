@@ -1,0 +1,80 @@
+{
+  "checkedAt": "2026-09-12T20:20:16.056Z",
+  "endpoint": "/api/services/medic-online-romania?countryCode=ro&locale=RO",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee1ko0000fsjuh80zxo7q",
+      "kind": "GENERAL",
+      "slug": "medic-online-romania",
+      "name": "Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi",
+      "summary": "Medic înregistrat la CMR disponibil online, fără listă de așteptare și fără a fi înregistrat la medicul de familie. Videoconsultație în română sau engleză. Rezervați astăzi.",
+      "seoTitle": "Medic online fără înregistrare | Consultație în aceeași zi | Global Health",
+      "seoDescription": "Medic înregistrat la CMR disponibil online, fără listă de așteptare și fără a fi înregistrat la medicul de familie. Videoconsultație în română sau engleză. Rezervați astăzi.",
+      "seoKeywords": [
+        "medic online fără înregistrare",
+        "consultație medicală online România",
+        "medic online în afara Bucureștiului",
+        "doctor online România",
+        "consultație online fără medic de familie"
+      ],
+      "heroTitle": "Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi",
+      "heroDescription": null,
+      "detailBody": "<p>Aveți nevoie de un medic astăzi, dar nu sunteți înscris pe lista unui medic de familie? Sau locuiți într-o zonă în care accesul la un medic de familie convenabil este dificil? Medicii noștri, înregistrați la Colegiul Medicilor din România (CMR), realizează consultații clinice complete prin videoconferință securizată — fără a fi nevoie să fiți pacient înregistrat în prealabil, fără sală de așteptare, cu programare în aceeași zi.</p><h2>O realitate a sistemului medical din România</h2><p>Accesul la îngrijiri medicale primare în România este inegal. În marile orașe — București, Cluj-Napoca, Timișoara, Iași — există opțiuni private relativ accesibile. Dar în afara acestora, sau în cazul persoanelor care nu sunt înscrise pe lista unui medic de familie, obținerea unei consultații medicale în timp util poate fi dificilă.</p><p>Global Health există tocmai pentru a umple acest gol. Medicii noștri, înregistrați la CMR, oferă consultații medicale prin videoconferință — în română, engleză— în aceeași zi, din orice colț al României, fără înregistrare prealabilă.</p><p>Aveți deja medic de familie? Serviciul nostru funcționează complementar — pentru probleme acute, al doilea aviz medical sau situații în care aveți nevoie să vorbiți cu un medic astăzi, nu la următoarea programare disponibilă.</p><h2>Ce tratăm</h2><p>Medicii noștri evaluează și gestionează o gamă largă de afecțiuni acute și non-urgente:</p><ul><li>Respiratorii și ORL</li><li>Răceală, gripă, sinuzită și bronșită</li><li>Simptome COVID-19 și probleme post-COVID</li><li>Durere în gât, amigdalită și infecții ale urechii</li><li>Infecții pulmonare și tuse persistentă</li><li>Accese ușoare de astm</li><li>Infecții</li><li>Infecții urinare — evaluare și prescripție de antibiotic unde este clinic indicat</li><li>Infecții ale pielii</li><li>Infecții respiratorii care necesită evaluare antibiotic</li><li>Infecții gastrointestinale</li><li>Simptome generale</li><li>Febră la adulți</li><li>Dureri de cap și migrenă</li><li>Greață, vărsături, diaree și dureri abdominale</li><li>Oboseală și stare generală alterată</li><li>Piele și ochi</li><li>Erupții cutanate, eczeme și reacții alergice ușoare</li><li>Conjunctivită și iritații oculare ușoare</li><li>Aparat locomotor</li><li>Dureri de spate, gât și musculare</li><li>Traumatisme minore ale aparatului locomotor</li><li>Altele</li><li>Îngrijorări legate de medicamentele actuale sau tratamentul în curs</li><li>Documente medicale — adeverințe medicale, scrisori de trimitere</li><li>Sfaturi de medicină a călătoriei</li><li>Al doilea aviz medical</li></ul><h2>Ce include consultația</h2><p>Evaluare clinică completăMedicul preia o anamneza completă a simptomelor dumneavoastră, istoricul medical relevant și medicamentele actuale — și realizează o evaluare clinică structurată prin videoconferință, la același standard ca o consultație față în față.</p><p>Explicație clarăMedicul nostru va lua timp pentru a vă explica ce se întâmplă, ce trebuie să faceți în continuare și când să căutați îngrijiri suplimentare. Implicarea pacientului în decizia medicală nu este un lux — este standardul nostru de îngrijire.</p><p>Prescripție electronică — unde este clinic indicatCând este indicat clinic, medicul emite o prescripție electronică validată în Sistemul Informatic de Prescripție Electronică (SIPE). O prezentați la orice farmacie din România.</p><p>Prescripție de antibiotic — unde este clinic indicatÎncepând cu 2024, toate antibioticele din România necesită prescripție medicală. Medicul evaluează simptomele dumneavoastră și prescrie antibioticul adecvat unde este clinic justificat — inclusiv pentru infecții urinare, infecții respiratorii și infecții cutanate — cu respectarea principiilor de stewardship antibiotic.</p><p>Scrisori de trimitere și documentație medicalăCând sunt necesare trimiteri la specialist, analize de sânge, imagistică sau altă documentație clinică, medicul le emite în aceeași zi.</p><p>Concediu medicalDacă sunteți angajat în România și concediul medical este clinic indicat, medicul poate emite documentația corespunzătoare. Decizia de a emite concediu medical este întotdeauna o decizie clinică luată de medic după evaluare completă.</p><h2>De ce Global Health</h2><p>Fără înregistrare prealabilăNu trebuie să fiți pacient înregistrat. Rezervați, consultați-vă, primiți un rezultat clinic clar — fără birocrație, fără a aștepta să fiți acceptat pe o listă.</p><p>Medici înregistrați la CMRToate consultațiile sunt realizate de medici înregistrați la Colegiul Medicilor din România, conform standardelor românești de telemedicină în temeiul Legii nr. 95/2006 și HG nr. 1133/2022.</p><p>Programare în aceeași ziDisponibilitate în aceeași zi, șapte zile pe săptămână, inclusiv seri și weekenduri.</p><p>Accesibil din toată RomâniaNu trebuie să fiți în București. Stați oriunde în România — aveți nevoie doar de o conexiune stabilă la internet și un dispozitiv cu cameră.</p><p>Trei limbiRomână, engleză — în funcție de disponibilitatea medicului.</p><p>Prescripție electronică și concediu medicalMedicii noștri pot emite prescripții electronice prin SIPE și certificat de concediu medical — la fel ca orice medic de familie înregistrat în România.</p><h2>Întrebări frecvente</h2><p>Trebuie să am asigurare de sănătate românească pentru a utiliza acest serviciu?Nu. Acesta este un serviciu privat, plătit direct per consultație — nu este necesară asigurarea publică de sănătate românească, nicio înregistrare, nicio calitate de membru. Unele asigurări private acoperă consultațiile de telemedicină — verificați cu asigurătorul dumneavoastră.</p><p>Poate medicul prescrie antibiotice?Da — unde este clinic indicat în urma evaluării complete a simptomelor dumneavoastră. Începând cu 2024, toate antibioticele din România necesită prescripție medicală. Medicul evaluează prezentarea dumneavoastră și prescrie antibioticul adecvat unde evidența clinică susține acest lucru, cu respectarea principiilor de stewardship antibiotic.</p><p>Poate medicul emite o prescripție electronică?Da. Medicii noștri sunt înregistrați la CMR și în Sistemul Informatic de Prescripție Electronică (SIPE). Prescripțiile electronice sunt emise direct — le prezentați la orice farmacie din România.</p><p>Trebuie să fiu în București pentru a utiliza acest serviciu?Nu. Serviciul este disponibil din orice localitate din România — aveți nevoie doar de o conexiune stabilă la internet și un dispozitiv cu cameră.</p><p>Cât de repede pot obține o programare?Programările în aceeași zi sunt disponibile. Rezervați online și programarea este confirmată imediat.</p><p>Ce limbi sunt disponibile?Română, engleză— în funcție de disponibilitatea medicului.</p><p>Pot obține concediu medical prin acest serviciu?Da. Dacă sunteți angajat în România și concediul medical este clinic indicat, medicul poate emite documentația corespunzătoare. Decizia este întotdeauna clinică, luată după evaluare completă.</p><p>Este serviciul potrivit pentru copii?Pentru afecțiuni pediatrice acute, serviciul poate oferi evaluare inițială și orientare. Pentru prezentări pediatrice complexe sau continue, medicul va recomanda trimitere pentru evaluare față în față.</p><p>Ce se întâmplă dacă afecțiunea mea necesită îngrijiri față în față?Dacă medicul determină că afecțiunea dumneavoastră necesită evaluare față în față sau îngrijiri de urgență, veți fi informat imediat și direcționat către serviciul corespunzător. Siguranța dumneavoastră este întotdeauna prioritatea clinică.</p>",
+      "ctaLabel": null,
+      "sortOrder": 10,
+      "durationMinutes": 15,
+      "basePriceCents": 11500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:47.167Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jsape001pakju9d8azet9",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee1ko0000fsjuh80zxo7q",
+          "path": "/api/media/media/e7e4ceb8-872b-4aa9-b481-f1819dfaf76c-817d74bf-c5ba-4f1b-8de2-6980a8239c3c-1.webp",
+          "altText": "Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "detailBody"
+      ],
+      "resolvedLocale": "RO",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

@@ -1,0 +1,152 @@
+{
+  "endpoint": "/api/services/justificante-medico-online?countryCode=es&locale=RO",
+  "checkedAt": "2026-09-13T02:30:07.458Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7pxza000angjubr3s2h65",
+      "kind": "GENERAL",
+      "slug": "justificante-medico-online",
+      "name": "Adeverință medicală",
+      "summary": null,
+      "seoTitle": "Adeverință medicală online Spania | Certificat medical privat | În aceeași zi",
+      "seoDescription": "Ai nevoie de o adeverință medicală sau de un certificat de incapacitate de muncă? Medicii noștri autorizați îți evaluează simptomele prin apel video și emit documentație clinică acolo unde este justificată din punct de vedere medical. În aceeași zi.",
+      "seoKeywords": [
+        "justificante médico online España",
+        "certificado médico privado online España",
+        "justificante laboral médico online",
+        "certificado incapacidad laboral privado",
+        "baja médica privada online España"
+      ],
+      "heroTitle": "Adeverință medicală online — Certificat clinic privat în aceeași zi",
+      "heroDescription": "Ești bolnav și nu poți munci. Ai nevoie de un document medical care să ateste acest lucru — astăzi, fără să te deplasezi, fără să aștepți într-o sală de așteptare când deja te simți rău. Medicii noștri, înscriși în registrul profesional conform cerințelor Organizației Medicale Colegiale (OMC), îți evaluează simptomele prin apel video securizat și emit un certificat medical privat acolo unde situația clinică o justifică. În aceeași zi, din orice punct al Spaniei, în spaniolă, engleză sau portugheză.",
+      "detailBody": "<h2>Certificat medical privat vs. concediu medical din sistemul public — ce este fiecare</h2><p>Înțelegerea diferenței evită frustrările și îți permite să știi exact ce poți obține prin acest serviciu.</p><p><strong>Certificat de concediu medical pentru Incapacitate Temporară (IT) din sistemul public</strong></p><p>Certificatul oficial de concediu medical din sistemul public este emis de medicul de familie sau de medicul de urgență al SNS. Este transmis electronic către Seguridad Social și către angajator. Lucrătorul poate avea dreptul la indemnizație financiară de la INSS începând cu a patra zi de concediu medical — primele trei fiind suportate de companie în contractele de muncă standard.</p><p>Global Health nu emite certificate de concediu medical ale SNS. Acestea necesită un medic contractat cu sistemul public.</p><p><strong>Certificat medical privat</strong></p><p>Certificatul medical privat este un document clinic emis de un medic colegiat care atestă că pacientul a fost evaluat și prezintă o stare de sănătate incompatibilă cu activitatea profesională la data consultației. Acest certificat:</p><ul><li>Este emis exclusiv la criteriul clinic al medicului după evaluarea completă</li><li>Este valabil ca justificare în fața angajatorului pentru absențe de la locul de muncă</li><li>Este deosebit de util pentru autonomi și lucrători pe cont propriu</li><li>Servește ca documentație clinică de sprijin dacă ulterior mergi la medicul de familie pentru a solicita IT din sistemul public</li><li>Este acceptat de majoritatea angajatorilor pentru justificarea absențelor, în special în primele zile</li></ul><p>Ești autonom sau lucrător pe cont propriu? Dacă plătești contribuții pentru contingente comune, ai dreptul la indemnizație pentru IT — dar gestionată prin mutua ta colaboratoare. Certificatul medical privat îți poate servi drept documentație inițială. Consultă-ți situația specifică cu medicul la începutul consultației.</p><h2>Când este util acest serviciu</h2><p><strong>Pentru lucrători salariați</strong></p><p>Ești bolnav în primele zile și ai nevoie de un document medical pentru a-ți justifica absența în fața companiei tale. Mulți angajatori acceptă certificate medicale private pentru absențe de scurtă durată — în special atunci când încă nu ai putut obține o programare la medicul de familie al SNS. Medicul tău poate evalua, de asemenea, dacă situația ta necesită să soliciți un certificat oficial de concediu medical prin sistemul public.</p><p><strong>Pentru autonomi</strong></p><p>Ca autonom nu ai un medic de familie alocat în același sens ca un lucrător salariat, iar gestionarea IT este diferită. Un certificat medical privat documentează clinic starea ta de sănătate pentru evidențele pe care trebuie să le păstrezi și poate servi drept sprijin în fața clienților sau colaboratorilor.</p><p><strong>Pentru lucrători cu mutua</strong></p><p>Dacă firma ta are o mutua colaboratoare cu Seguridad Social, certificatul medical privat poate servi drept documentație prealabilă în timp ce gestionezi concediul medical prin mutua.</p><p><strong>Pentru cei care au nevoie de documentație clinică rapidă</strong></p><p>Dacă ai nevoie să îți documentezi clinic starea de sănătate astăzi — pentru orice scop profesional, academic sau administrativ — și nu poți aștepta o programare în sistemul public, acest serviciu oferă evaluare clinică completă și certificare acolo unde este justificat din punct de vedere medical.</p><h2>Ce include consultația</h2><p><strong>Evaluare clinică completă</strong></p><p>Medicul preia un istoric clinic complet al simptomelor tale — debut, durată, intensitate, simptome asociate, antecedente relevante, medicație actuală și natura activității tale profesionale. Evaluarea este clinică și structurată — nu o formalitate.</p><p><strong>Evaluarea incapacității de muncă</strong></p><p>Medicul evaluează dacă situația clinică este compatibilă sau incompatibilă cu activitatea profesională, ce tip de documentație este adecvată din punct de vedere clinic pentru cazul tău și dacă este recomandabil să mergi la sistemul public pentru a obține un IT formal.</p><p><strong>Certificat medical privat — la criteriul clinic al medicului</strong></p><p>Dacă medicul stabilește că situația ta clinică justifică emiterea unui certificat medical de incapacitate temporară pentru muncă, îl emite în aceeași zi a consultației. Certificatul documentează data evaluării, simptomele, evaluarea clinică și incompatibilitatea cu activitatea profesională — fără a specifica diagnosticul dacă pacientul nu dorește acest lucru.</p><p><strong>Documentație clinică suplimentară — la criteriul medicului</strong></p><p>Dacă boala ta necesită tratament — inclusiv gestionarea infecțiilor, acolo unde este indicat din punct de vedere clinic — medicul emite documentația clinică corespunzătoare în aceeași zi.</p><p><strong>Îndrumare privind calea publică</strong></p><p>Dacă situația ta clinică sugerează că trebuie să gestionezi un IT formal prin sistemul public sau prin mutua ta, medicul te îndrumă clar cu privire la pașii de urmat.</p><h2>Ce nu poate face acest serviciu</h2><p>Transparența face parte din calitatea clinică. Există lucruri pe care acest serviciu nu le poate oferi:</p><ul><li>Nu emitem certificate de concediu medical ale SNS — acestea necesită medic contractat cu sistemul public</li><li>Nu emitem documentație fără evaluare clinică — certificatul medical se emite exclusiv la criteriul medicului după evaluarea completă a simptomelor</li><li>Nu emitem certificate retroactive — medicii noștri nu pot certifica din punct de vedere clinic o perioadă de boală pe care nu au evaluat-o la momentul respectiv. Dacă ești bolnav de câteva zile fără să fi consultat un medic, menționează acest lucru la începutul consultației — medicul te va îndruma asupra a ceea ce este potrivit</li><li>Nu garantăm emiterea certificatului — decizia este exclusiv clinică, bazată pe evaluarea medicală</li></ul><h2>Informații importante înainte de rezervare</h2><ul><li>Decizia de a emite un certificat medical este întotdeauna o decizie clinică a medicului după evaluarea completă — nu poate fi confirmată sau garantată dinainte</li><li>Certificatele retroactive nu se emit în mod obișnuit — dacă ești bolnav de câteva zile fără să fi consultat niciun medic, menționează acest lucru la începutul consultației</li><li>Dacă situația ta clinică necesită gestionarea unui IT formal din sistemul public, medicul te va îndruma cum să procedezi</li><li>Pregătește informații despre tipul tău de contract sau situația profesională — ajută medicul să te orienteze asupra documentației celei mai potrivite pentru cazul tău</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 20,
+      "durationMinutes": 15,
+      "basePriceCents": 3500,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.258Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k1xj0004asju4irm8wql",
+          "kind": "IMAGE",
+          "key": "media/777fd6c2-3350-4635-805b-7f2a97e4d03b-es-justificante-medico-online.png",
+          "path": "/api/media/media/777fd6c2-3350-4635-805b-7f2a97e4d03b-es-justificante-medico-online.png",
+          "altText": "Justificante Médico"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7py7l000bngjuh4k0yxty",
+          "question": "Certificatul medical privat are valabilitate legală?",
+          "answer": "Da. Un certificat medical privat emis de un medic cu drept de practică are deplină valabilitate juridică ca document clinic. Majoritatea angajatorilor îl acceptă pentru a justifica absențele de la locul de muncă, în special pe cele de scurtă durată. Pentru indemnizația pentru IT a Securității Sociale este necesar certificatul oficial de concediu medical al SNS sau al mutualei.",
+          "sortOrder": 0,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7py7l000cngjuz5lrqajb",
+          "question": "Pot folosi acest serviciu dacă sunt autonom?",
+          "answer": "Da. Persoanele care desfășoară activități independente nu au acces la același circuit de IT ca angajații. Certificatul medical privat îți documentează clinic starea de sănătate. Dacă cotizezi pentru contingencias comunes, consultă-te cu mutua colaboratoare despre cum să gestionezi IT — medicul te poate orienta.",
+          "sortOrder": 1,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7py7l000dngjum1ra5ggc",
+          "question": "Certificatul specifică diagnosticul?",
+          "answer": "Certificatul documentează evaluarea clinică și aprecierea incapacității temporare de muncă. Dacă preferi să nu apară diagnosticul specific — din motive de confidențialitate — discută acest lucru cu medicul la începutul consultației.",
+          "sortOrder": 2,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7py7l000engjuvjco7xgn",
+          "question": "Pot obține un certificat retroactiv?",
+          "answer": "Nu în mod obișnuit. Medicii noștri nu pot certifica din punct de vedere clinic o perioadă de boală pe care nu au evaluat-o la momentul respectiv. Dacă ești bolnav de câteva zile, menționează acest lucru la începutul consultației.",
+          "sortOrder": 3,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7py7l000fngju21c0z9ru",
+          "question": "Compania mea trebuie să accepte certificatul medical privat?",
+          "answer": "Obligația legală depinde de contractul colectiv și de politica internă a fiecărei companii. În general, majoritatea angajatorilor acceptă certificate medicale private pentru absențe de scurtă durată.",
+          "sortOrder": 4,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7py7l000gngjudzsuritr",
+          "question": "Pot să rezerv dacă sunt bolnav de câteva zile?",
+          "answer": "Da — dar menționează de la începutul consultației de câte zile ai simptome. Medicul evaluează situația ta clinică actuală și te îndrumă cu privire la documentația cea mai potrivită pentru cazul tău.",
+          "sortOrder": 5,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7py7l000hngju4bk1dhmr",
+          "question": "Pot folosi acest serviciu din orice punct al Spaniei?",
+          "answer": "Da — inclusiv Insulele Baleare, Insulele Canare, Ceuta și Melilla. Ai nevoie doar de o conexiune stabilă la internet și de un dispozitiv cu cameră.",
+          "sortOrder": 6,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7py7l000ingjulnv8ul2q",
+          "question": "În ce limbi este disponibil?",
+          "answer": "Spaniolă, engleză și portugheză — în funcție de disponibilitatea medicului.",
+          "sortOrder": 7,
+          "resolvedLocale": "RO"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "RO",
+      "links": [
+        {
+          "id": "cmre7u8km0060g8juez35zzdi",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Consulta médica general con médico de cabecera?",
+          "body": "Si tu situación está relacionada con consulta médica general con médico de cabecera, nuestra Consulta Médica General te ofrece la evaluación adecuada.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

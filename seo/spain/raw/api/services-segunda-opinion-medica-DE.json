@@ -1,0 +1,190 @@
+{
+  "endpoint": "/api/services/segunda-opinion-medica?countryCode=es&locale=DE",
+  "checkedAt": "2026-09-13T02:29:55.692Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q5fw002angjuebao1obt",
+      "kind": "GENERAL",
+      "slug": "segunda-opinion-medica",
+      "name": "Zweite medizinische Meinung",
+      "summary": null,
+      "seoTitle": "Zweite medizinische Online-Meinung Spanien | Unabhängige Bewertung | Am selben Tag",
+      "seoDescription": "Sind Sie sich bei einer Diagnose oder einem Behandlungsplan unsicher? Unsere approbierten Ärzte bieten unabhängige ärztliche Zweitmeinungen per sicherem Videoanruf. Am selben Tag in Spanien.",
+      "seoKeywords": [
+        "segunda opinión médica online España",
+        "segunda opinión médico online España",
+        "evaluación independiente médica España",
+        "segunda opinión diagnóstico España",
+        "second opinion doctor Spain English"
+      ],
+      "heroTitle": "Zweite medizinische Meinung — Unabhängige klinische Online-Bewertung",
+      "heroDescription": "Haben Sie eine Diagnose oder eine Behandlungsempfehlung erhalten, an der Sie Zweifel haben? Möchten Sie eine unabhängige klinische Einschätzung, bevor Sie sich einem chirurgischen Eingriff unterziehen, eine neue Medikation beginnen oder eine wesentliche Änderung Ihrer Behandlung akzeptieren? Haben Sie klinische Unterlagen auf Spanisch erhalten, die Ihnen klar erklärt werden sollen? Unsere Ärztinnen und Ärzte, die gemäß den Anforderungen der Organización Médica Colegial (OMC) zugelassen sind, bieten unabhängige medizinische Zweitmeinungen per sicherer Videokonferenz an — sie prüfen Ihre Diagnose, klinische Unterlagen und Ihren Behandlungsplan und geben Ihnen eine ehrliche, evidenzbasierte klinische Einschätzung. Ohne Termin. Ohne Bindung an Ihren aktuellen Anbieter. Eine klare unabhängige Einschätzung. Am selben Tag, von überall in Spanien aus, auf Spanisch, Englisch oder Portugiesisch.",
+      "detailBody": "<h2>Wann eine Zweitmeinung sinnvoll ist</h2><p>Eine Zweitmeinung einzuholen wird klinisch empfohlen — und jeder gute Arzt wird Ihnen das Gleiche sagen. Sie müssen nicht im Konflikt mit Ihrem aktuellen Arzt stehen, um von einer unabhängigen Perspektive zu profitieren. Eine Zweitmeinung ist immer dann wertvoll, wenn eine Gesundheitsentscheidung erhebliche Folgen hat und Sie die Sicherheit möchten, mehr als eine klinische Einschätzung gehört zu haben.</p><p><strong>Häufige Gründe, eine Zweitmeinung einzuholen:</strong></p><ul><li>Sie haben eine Diagnose erhalten, die nicht mit Ihren Symptomen oder Ihrem Verständnis Ihrer Gesundheit übereinzustimmen scheint</li><li>Es wurde eine bedeutende Maßnahme empfohlen — Operation, ein neues Medikament, eine wesentliche Änderung des Lebensstils — und Sie möchten vor dem weiteren Vorgehen eine unabhängige Bewertung</li><li>Sie haben widersprüchliche Ratschläge von zwei verschiedenen Ärzten erhalten und benötigen Hilfe, um die Diskrepanz einzuordnen</li><li>Ihre Symptome haben sich trotz Befolgung eines Behandlungsplans nicht verbessert und Sie wünschen eine frische klinische Perspektive</li><li>Sie haben klinische Unterlagen auf Spanisch erhalten, die Sie prüfen und klar erklärt haben möchten</li><li>Sie gehen mit einer komplexen oder langfristigen Erkrankung um und möchten sicherstellen, dass Ihr aktuelles Management weiterhin angemessen ist</li><li>Sie möchten Ihre Optionen verstehen, bevor Sie sich auf einen empfohlenen Behandlungsverlauf festlegen</li></ul><h2>Für wen dieser Service geeignet ist</h2><p>Diese Konsultation ist geeignet für:</p><ul><li>Jede Person, die eine Diagnose oder Behandlungsempfehlung erhalten hat und diese unabhängig überprüfen lassen möchte</li><li>Patienten, die vor einer Entscheidung über eine Operation, ein erhebliches neues Medikament oder eine wesentliche Änderung des Managements stehen</li><li>Patienten, die widersprüchlichen klinischen Rat erhalten haben und Hilfe benötigen, dies einzuordnen</li><li>Patienten, deren Zustand sich nicht wie erwartet verbessert hat und die eine frische klinische Perspektive wünschen</li><li>Patienten, die klinische Unterlagen auf Spanisch erhalten haben und möchten, dass diese klar geprüft und erklärt werden</li><li>Patienten, die eine komplexe chronische Erkrankung managen und eine regelmäßige unabhängige Überprüfung wünschen</li><li>Expats und internationale Einwohner, die eine unabhängige klinische Beurteilung auf Englisch oder Portugiesisch wünschen, ohne ein neues Facharztsystem navigieren zu müssen</li></ul><h2>Was die Konsultation umfasst</h2><p><strong>Vollständige Prüfung Ihrer klinischen Unterlagen</strong></p><p>Bringen Sie alle relevanten Unterlagen zu Ihrer Konsultation mit — Diagnosebriefe, Facharztberichte, Ergebnisse bildgebender Untersuchungen, Laborergebnisse, Behandlungspläne und Entlassungsberichte. Ihr Arzt prüft alles in seiner Gesamtheit, bevor er eine unabhängige Bewertung abgibt.</p><p><strong>Unabhängige klinische Beurteilung</strong></p><p>Ihr Arzt beurteilt Ihre Vorstellung, die erhaltene Diagnose, die klinische Begründung dahinter, den vorgeschlagenen Behandlungsplan und ob alternative Ansätze oder weitere Untersuchungen auf Grundlage der aktuellen klinischen Evidenz angemessen wären.</p><p><strong>Klare Erklärung Ihrer Optionen</strong></p><p>Ihr Arzt erklärt Ihre Diagnose und die Behandlungsoptionen in klarer Sprache — was der vorgeschlagene Plan beinhaltet, welche Alternativen es gibt, was die Evidenz sagt und welche Fragen Sie Ihrem Behandlungsteam stellen sollten. Sie verlassen die Konsultation mit einem klareren Bild davon, wo Sie stehen und welche Optionen Sie haben.</p><p><strong>Zusammenfassendes klinisches Schreiben — sofern klinisch angezeigt</strong></p><p>Soweit klinisch angemessen, stellt Ihr Arzt eine schriftliche Zusammenfassung der Zweitmeinung aus — mit Dokumentation der unabhängigen Bewertung, der klinischen Begründung und etwaiger Empfehlungen — die Sie mit Ihrem Behandlungsteam teilen oder für Versicherungszwecke verwenden können.</p><p><strong>Überweisungskoordination, sofern angezeigt</strong></p><p>Wenn die Zweitmeinung zeigt, dass eine weitere fachärztliche Beurteilung, weitere Untersuchungen oder ein anderer klinischer Ansatz erforderlich sind, koordiniert Ihr Arzt noch am selben Tag die geeigneten nächsten Schritte.</p><h2>Zweitmeinung in Spanien — warum das wichtig ist</h2><p>Das spanische Gesundheitssystem — sowohl öffentlich als auch privat — verfügt über gut etablierte Stärken. Der Zugang zu einer unabhängigen Zweitmeinung bringt jedoch seine eigenen praktischen Herausforderungen mit sich.</p><p>Im öffentlichen System sind die Wartezeiten für einen Facharztbesuch lang — und eine Zweitmeinung zu erhalten bedeutet, den Überweisungsprozess erneut zu beginnen. Im privaten Sektor ist die Qualität im Allgemeinen hoch, aber die Zugänglichkeit konzentriert sich auf große Städte.</p><p>Für internationale Bewohner, die klinische Unterlagen auf Spanisch erhalten, gibt es eine zusätzliche Hürde — eine Diagnose oder einen Behandlungsplan in einer Sprache vollständig zu verstehen, die man nicht vollständig beherrscht, ist tatsächlich schwierig, und wichtige medizinische Entscheidungen ohne vollständiges Verständnis zu treffen, ist ein reales Risiko.</p><p>Dieser Service bietet eine zusätzliche Ebene unabhängiger klinischer Überprüfung — nicht als Kritik am ursprünglichen Arzt, sondern als Teil einer informierten Entscheidungsfindung.</p><h2>Was eine Zweitmeinung kann und was nicht</h2><p><strong>Eine Zweitmeinung kann:</strong></p><ul><li>Bestätigen, dass die Diagnose und der Behandlungsplan, den Sie erhalten haben, angemessen und evidenzbasiert sind</li><li>Alternative Diagnosen oder Behandlungsansätze identifizieren, die nicht berücksichtigt wurden</li><li>Klinische Unterlagen klären, die nicht vollständig erklärt wurden</li><li>Ihnen helfen, die richtigen Fragen zu formulieren, die Sie Ihrem Behandlungsteam stellen sollten</li><li>Unabhängige klinische Dokumentation für Versicherungs- oder medizinrechtliche Zwecke bereitstellen</li><li>Weitere Untersuchungen oder fachärztliche Beurteilungen empfehlen, wo dies klinisch angezeigt ist</li></ul><p><strong>Eine Zweitmeinung kann nicht:</strong></p><ul><li>Das klinische Urteil Ihres Behandlungsteams aufheben oder ersetzen</li><li>Erkrankungen diagnostizieren, die eine persönliche körperliche Untersuchung, eine Biopsie oder invasive Untersuchungen erfordern</li><li>Ohne angemessene klinische Unterlagen eine endgültige Meinung abgeben</li><li>Eine endgültige Meinung abgeben, wenn das klinische Bild komplex ist und eine persönliche fachärztliche Beurteilung erfordert</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 190,
+      "durationMinutes": 20,
+      "basePriceCents": 4900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.267Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru15rpe0003bsjukvu58p7u",
+          "kind": "IMAGE",
+          "key": "media/ef45af40-860e-401e-bc44-e88a501e47c4-es-segunda-opinion-medica.png",
+          "path": "/api/media/media/ef45af40-860e-401e-bc44-e88a501e47c4-es-segunda-opinion-medica.png",
+          "altText": "Segunda Opinión Médica"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q5o4002bngjuha3nvten",
+          "question": "Bedeutet es, eine zweite Meinung einzuholen, dass ich meinen Arzt infrage stelle?",
+          "answer": "Nein. Eine zweite Meinung einzuholen ist ein normaler und empfohlener Teil einer guten medizinischen Entscheidungsfindung — insbesondere bei wichtigen Diagnosen oder Behandlungsempfehlungen. Die meisten Ärzte erwarten und respektieren Patienten, die eine unabhängige Überprüfung wichtiger klinischer Entscheidungen einholen.",
+          "sortOrder": 0,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q5o4002cngjuadtjb1ha",
+          "question": "Welche Unterlagen soll ich mitbringen?",
+          "answer": "Bringen Sie alles mit, was relevant ist — Diagnosebriefe, Facharztberichte, Ergebnisse von bildgebenden Untersuchungen, Laborergebnisse, Behandlungspläne, Entlassungsberichte und jede andere klinische Dokumentation im Zusammenhang mit dem Anliegen. Je vollständiger die Unterlagen sind, desto hilfreicher ist die unabhängige Beurteilung.",
+          "sortOrder": 1,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q5o4002dngju7ws82tsc",
+          "question": "Kann der Arzt die Unterlagen auf Spanisch prüfen?",
+          "answer": "Ja. Dein Arzt prüft klinische Unterlagen auf Spanisch und erklärt die Befunde klar auf Englisch, Spanisch oder Portugiesisch — je nach deiner Präferenz.",
+          "sortOrder": 2,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q5o4002engjuhz1j3rqn",
+          "question": "Wird der Arzt für die Zweitmeinung meinen aktuellen Arzt kontaktieren?",
+          "answer": "Nein — es sei denn, du bittest ausdrücklich darum. Die Zweitmeinung wird dir direkt bereitgestellt. Wenn du möchtest, dass die Befunde mit deinem behandelnden Team geteilt werden, kann dein Arzt zu diesem Zweck eine schriftliche klinische Zusammenfassung ausstellen.",
+          "sortOrder": 3,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q5o4002fngjun7asux0q",
+          "question": "Was passiert, wenn die Zweitmeinung meiner aktuellen Diagnose widerspricht?",
+          "answer": "Ihr Arzt erklärt das klinische Denken klar und ehrlich. Wenn die unabhängige Bewertung darauf hindeutet, dass die ursprüngliche Diagnose oder der Behandlungsplan möglicherweise nicht der am besten geeignete ist, werden Sie darüber beraten, welche Fragen Sie Ihrem Behandlungsteam stellen sollten und welche zusätzlichen Schritte — weitere Untersuchungen, fachärztliche Beurteilung — gerechtfertigt sein könnten.",
+          "sortOrder": 4,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q5o4002gngju2wli45ke",
+          "question": "Kann ich eine Zweitmeinung zu einer Operationsempfehlung erhalten?",
+          "answer": "Ja. Zweitmeinungen zu chirurgischen Empfehlungen gehören zu den häufigsten und wertvollsten Anwendungsbereichen dieses Dienstes. Ihr Arzt prüft die klinische Begründung für die empfohlene Operation, bespricht die Evidenz und berät dazu, ob die Empfehlung angemessen erscheint und welche Fragen Sie Ihrem Chirurgen stellen sollten.",
+          "sortOrder": 5,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q5o4002hngjuxook11oe",
+          "question": "Kann ich eine zweite Meinung zu einer Diagnose im Bereich der psychischen Gesundheit erhalten?",
+          "answer": "Ja — für psychische Gesundheitszustände auf der Ebene der Allgemeinmedizin. Bei komplexen psychiatrischen Diagnosen berät Ihr Arzt über die angemessene Stufe der unabhängigen fachärztlichen Überprüfung.",
+          "sortOrder": 6,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q5o4002ingju92saqikq",
+          "question": "Brauche ich eine spanische Krankenversicherung?",
+          "answer": "Nein. Es handelt sich um eine private Selbstzahlerleistung ohne Erfordernis einer Krankenversicherung.",
+          "sortOrder": 7,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q5o4002jngju6wnchato",
+          "question": "Kann ich diesen Dienst von jedem Ort in Spanien aus nutzen?",
+          "answer": "Ja — einschließlich der Balearen, der Kanarischen Inseln, Ceuta und Melilla. Du brauchst nur eine stabile Internetverbindung und ein Gerät mit Kamera.",
+          "sortOrder": 8,
+          "resolvedLocale": "DE"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "DE",
+      "links": [
+        {
+          "id": "cmre7u0rr005kg8ju0bt4gje9",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con segunda opinión cardiológica especializada?",
+          "body": "Para segunda opinión cardiológica especializada, consulta nuestra página de Cardiología Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Cardiología Especialista",
+          "targetSlug": "cardiologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7u1jt005mg8jutxyy9pz0",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre segunda opinión neurológica especializada?",
+          "body": "Nuestra Neurología Especialista está pensada específicamente para segunda opinión neurológica especializada.",
+          "ctaLabel": "Neurología Especialista",
+          "targetSlug": "neurologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7u2bx005og8judxbqm7fp",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Segunda opinión dermatológica especializada?",
+          "body": "Si tu situación está relacionada con segunda opinión dermatológica especializada, nuestra Dermatología Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Dermatología Especialista",
+          "targetSlug": "dermatologia-especialista-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7u33z005qg8ju6je8gh1u",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con segunda opinión psiquiátrica especializada?",
+          "body": "Para segunda opinión psiquiátrica especializada, consulta nuestra página de Psiquiatría Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Psiquiatría Especialista",
+          "targetSlug": "psiquiatra-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdpz5n3001z01rukg2lecs5",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

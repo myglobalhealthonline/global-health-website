@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:12.497Z",
+  "endpoint": "/api/services/sanatate-mintala-online?countryCode=ro&locale=ES",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee4ba0008fsju6xyj8lnh",
+      "kind": "GENERAL",
+      "slug": "sanatate-mintala-online",
+      "name": "Evaluación de salud mental — consulta en línea confidencial",
+      "summary": "¿Se enfrenta a ansiedad, depresión, burnout, insomnio u otra dificultad emocional? Nuestros médicos autorizados por el CMR ofrecen evaluación confidencial, recomendaciones y coordinación de los siguientes pasos mediante consulta por video.",
+      "seoTitle": "Consulta de salud mental online | Rumanía | confidencial",
+      "seoDescription": "Evaluación confidencial para ansiedad, depresión, burnout, insomnio u otras dificultades emocionales. Nuestros médicos autorizados por el CMR ofrecen evaluación confidencial, recomendaciones y coordinación de los siguientes pasos mediante consulta por video.",
+      "seoKeywords": [
+        "mental health online Romania",
+        "anxiety doctor online Romania English",
+        "depression consultation English Bucharest",
+        "burnout doctor online Romania",
+        "mental health GP online Romania expat"
+      ],
+      "heroTitle": "Evaluación de salud mental — consulta en línea confidencial",
+      "heroDescription": "Evaluación confidencial para ansiedad, depresión, burnout, insomnio u otras dificultades emocionales. Nuestros médicos autorizados por el CMR ofrecen evaluación confidencial, recomendaciones y coordinación de los siguientes pasos mediante consulta por video.",
+      "detailBody": "<p>La consulta es adecuada para síntomas como ansiedad, estrés intenso, estado de ánimo depresivo, ataques de pánico, agotamiento, trastornos del sueño o dificultades de funcionamiento que afectan la vida cotidiana.</p><p>El médico conversa sobre el historial de los síntomas, los factores desencadenantes, los tratamientos previos, el impacto en el trabajo y las relaciones y los posibles signos de riesgo que requieren intervención rápida. Según el caso, recibirá recomendaciones de manejo inicial, informes médicos, derivación a un psiquiatra o psicólogo y, cuando sea clínicamente adecuado, un plan de seguimiento continuo.</p><p>El servicio ofrece un espacio claro y confidencial para entender qué le ocurre y cuál es el nivel de ayuda que necesita a continuación.</p>",
+      "ctaLabel": "Programa la consulta",
+      "sortOrder": 100,
+      "durationMinutes": 20,
+      "basePriceCents": 15000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:42.108Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js05y001iakju9hywq5cw",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee4ba0008fsju6xyj8lnh",
+          "path": "/api/media/media/e240ef2a-0048-4a27-8b29-eaeee3d22e58-ff3e0b2e-b46a-4b32-9218-31a8cc87b0c1-3.webp",
+          "altText": "Evaluare de sănătate mintală — consultație online confidențială"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "ES",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

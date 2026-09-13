@@ -1,0 +1,192 @@
+{
+  "endpoint": "/api/services/psiquiatra-online?countryCode=es&locale=RO",
+  "checkedAt": "2026-09-13T02:30:07.994Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qeyz0050ngjund1jqnhp",
+      "kind": "SPECIALIST",
+      "slug": "psiquiatra-online",
+      "name": "Specialist în psihiatrie",
+      "summary": null,
+      "seoTitle": "Psihiatru Online Spania | Consultație psihiatrică de specialitate | În aceeași zi",
+      "seoDescription": "Tulburare psihică complexă, TDAH, tulburare bipolară sau altă îngrijorare psihiatrică. Psihiatrii noștri autorizați oferă evaluări specializate prin apel video securizat. În aceeași zi în Spania.",
+      "seoKeywords": [
+        "psiquiatra online España",
+        "consulta psiquiátrica online España",
+        "psiquiatra privado online España",
+        "TDAH psiquiatra online España",
+        "trastorno bipolar psiquiatra online España"
+      ],
+      "heroTitle": "Psihiatrie de specialitate — Evaluare psihiatrică online",
+      "heroDescription": "Unele tulburări mentale necesită profunzimea evaluării, rigoarea diagnosticului și amploarea terapeutică pe care numai un psihiatru specialist le poate oferi. Depresia rezistentă la tratament, tulburarea bipolară, TDAH la adulți, tulburările de anxietate complexe sau orice afecțiune care nu a răspuns la managementul la nivel de medicină generală — aceste prezentări necesită psihiatrie de specialitate. Psihiatrii noștri, medici specialiști în psihiatrie cu formare MIR, membri ai colegiului conform cerințelor Organizației Medicale Colegiale (OMC), oferă evaluări psihiatrice de specialitate prin videoconferință securizată. În aceeași zi, din orice punct al Spaniei, în spaniolă, engleză sau portugheză.",
+      "detailBody": "<h2>Evaluare de sănătate mintală GP vs. consultație psihiatrică de specialitate</h2><p>Global Health oferă două niveluri de îngrijire pentru sănătatea mintală.</p><p>Evaluare de sănătate mintală cu medic de familie — potrivită pentru screeningul inițial al anxietății, depresiei ușoare până la moderate, stresului și burnout-ului. Medicul de familie efectuează o evaluare structurată, oferă recomandări clinice la nivel de medicină generală și trimite către psihiatrie atunci când este indicat. Este punctul corect de intrare pentru majoritatea primelor preocupări legate de sănătatea mintală.</p><p>Consultație psihiatrică de specialitate — efectuată de psihiatrii specialiști ai Global Health. Potrivită pentru:</p><ul><li>Diagnostic formal al tulburărilor mintale complexe</li><li>Afecțiuni care nu au răspuns la tratament la nivel de medicină generală</li><li>Tulburare bipolară — evaluare, diagnostic și plan de tratament specializat</li><li>TDAH la adulți — evaluare diagnostică formală și tratament</li><li>Depresie rezistentă la tratament</li><li>Tulburări de anxietate complexe sau refractare</li><li>Tulburări de comportament alimentar — evaluare și coordonarea planului de tratament</li><li>Evaluare psihiatrică pentru rapoarte clinice, de muncă sau medico-legale</li><li>A doua opinie psihiatrică de specialitate</li></ul><p>Nu ești sigur ce nivel de sprijin ai nevoie? Începe cu evaluarea de sănătate mintală cu medic de familie — dacă prezentarea ta necesită evaluare psihiatrică de specialitate, medicul de familie te va trimite direct la acest serviciu în cadrul aceleiași platforme.</p><h2>Pentru cine este acest serviciu</h2><p>Această consultație psihiatrică de specialitate este potrivită pentru adulți cu:</p><ul><li>Depresie moderată până la severă — în special depresie rezistentă la tratament sau cu caracteristici atipice</li><li>Tulburare bipolară — evaluare diagnostică, revizuirea planului de tratament sau a doua opinie</li><li>Tulburări de anxietate complexe — tulburare de panică, TOC, fobie socială severă, TEPT</li><li>TDAH la adulți — evaluare diagnostică formală, inițierea sau revizuirea tratamentului</li><li>Tulburări din spectrul personalității — evaluare și orientare privind planul de îngrijire</li><li>Tulburări de comportament alimentar — evaluare psihiatrică și coordonarea planului de tratament</li><li>Insomnie cronică severă — când cauza este psihiatrică sau tratamentul a eșuat la nivel de medicină generală</li><li>Afecțiuni de sănătate mintală care nu au răspuns la tratament la nivel de medicină generală</li><li>Evaluare psihiatrică pentru rapoarte de muncă, de handicap sau medico-legale</li><li>A doua opinie psihiatrică — privind un diagnostic, plan de tratament sau medicație primită de la alt psihiatru</li><li>Rezidenți internaționali și expați care au nevoie de îngrijire psihiatrică de specialitate în engleză sau portugheză</li></ul><h2>Ce este acest serviciu — și ce nu este</h2><p>Această consultație psihiatrică de specialitate este potrivită pentru:</p><ul><li>Diagnostic psihiatric formal al tulburărilor complexe</li><li>Evaluare și plan de tratament farmacologic psihiatric specializat — la aprecierea specialistului</li><li>Terapie psihofarmacologică și monitorizare psihiatrică continuă</li><li>Evaluare pentru rapoarte clinice, de muncă sau medico-legale</li><li>A doua opinie psihiatrică de specialitate</li><li>Coordonare cu psihologia clinică, asistența socială și alte servicii atunci când este indicat</li></ul><p>Acest serviciu nu este potrivit pentru:</p><ul><li>Intervenție în criză — dacă ești în criză, folosește resursele de la începutul acestei pagini</li><li>Internare psihiatrică — internarea involuntară este reglementată de articolul 763 din Legea de procedură civilă și necesită autorizare judiciară. Nu poate fi inițiată sau coordonată prin intermediul acestui serviciu</li><li>Evaluarea psihozei active severe — când siguranța pacientului necesită evaluare urgentă, față în față</li><li>Terapie psihologică sau psihoterapie — acesta este un serviciu de evaluare și tratament psihiatric medical, nu de psihoterapie</li></ul><p>Nu ești sigur dacă ai nevoie de psihiatrie sau psihologie? Psihiatria este o specialitate medicală — psihiatrul evaluează, diagnostichează și poate prescrie tratament medicamentos. Psihologul clinician oferă psihoterapie. Pentru multe afecțiuni, ambele lucrează împreună. Psihiatrul tău te consiliază cu privire la nivelul de sprijin cel mai potrivit pentru situația ta.</p><h2>Afecțiuni evaluate în mod obișnuit</h2><p><strong>Tulburări ale dispoziției</strong></p><ul><li>Depresie majoră — inclusiv depresie rezistentă la tratament, depresie melancolică și depresie atipică</li><li>Depresie bipolară — diagnostic diferențial și plan de tratament specializat</li><li>Tulburare bipolară tip I și tip II — evaluare diagnostică, stabilizare și monitorizare</li><li>Tulburare ciclotimică</li><li>Tulburare distimică / tulburare depresivă persistentă</li></ul><p><strong>Tulburări de anxietate</strong></p><ul><li>Tulburare de panică — cu și fără agorafobie</li><li>Tulburare obsesiv-compulsivă (TOC)</li><li>Tulburare de anxietate socială — prezentări severe sau refractare</li><li>Tulburare de stres posttraumatic (TEPT)</li><li>Tulburare de anxietate generalizată rezistentă la tratament</li><li>Fobie specifică cu impact funcțional semnificativ</li></ul><p><strong>TDAH la adulți</strong></p><ul><li>Evaluare diagnostică formală a TDAH la adulți</li><li>TDAH cu comorbidități — anxietate, depresie, tulburări de somn</li><li>Inițierea, ajustarea și revizuirea tratamentului farmacologic pentru TDAH</li><li>TDAH nediagnosticat în copilărie — evaluare la adulți</li></ul><p><strong>Tulburări din spectrul personalității</strong></p><ul><li>Evaluare diagnostică a tulburărilor de personalitate</li><li>Tulburare de personalitate borderline — evaluare și orientare privind planul de îngrijire</li><li>Tulburare de personalitate narcisică, evitantă, dependentă și altele</li></ul><p><strong>Tulburări de comportament alimentar</strong></p><ul><li>Anorexie nervoasă — evaluare psihiatrică și coordonarea planului de tratament</li><li>Bulimie nervoasă — evaluare și plan de tratament</li><li>Tulburare de mâncat compulsiv — evaluare și gestionare</li></ul><p>Notă: tulburările grave de comportament alimentar care necesită intervenție nutrițională medicală urgentă sau internare necesită evaluare față în față. Psihiatrul tău evaluează severitatea și recomandă nivelul adecvat de îngrijire.</p><p><strong>Tulburări psihotice — evaluare limitată</strong></p><ul><li>Evaluarea simptomelor psihotice ușoare sau aflate în remisiune stabilă</li><li>A doua opinie privind diagnosticul de schizofrenie sau alte tulburări psihotice la pacienți stabili</li><li>Revizuirea medicației antipsihotice la pacienți stabili cu psihoză cunoscută</li></ul><p>Episodurile psihotice acute necesită evaluare urgentă, față în față. Acest serviciu nu este potrivit pentru evaluarea psihozei active severe — sună la 112 sau mergi imediat la urgențe.</p><p><strong>Insomnie și tulburări de somn</strong></p><ul><li>Insomnie cronică severă — evaluare psihiatrică și plan de tratament</li><li>Tulburări de somn cu bază psihiatrică semnificativă</li></ul><p><strong>Evaluări psihiatrice pentru rapoarte</strong></p><ul><li>Rapoarte psihiatrice pentru incapacitate de muncă temporară sau permanentă</li><li>Rapoarte pentru procese medico-legale — la aprecierea specialistului</li><li>Evaluări pentru rapoarte de sănătate mintală pentru formalități administrative</li></ul><h2>Ce include consultația</h2><p><strong>Evaluare psihiatrică specializată completă</strong></p><p>Psihiatrul tău efectuează o evaluare psihiatrică structurată și completă — acoperind istoricul tău psihiatric detaliat, episoadele anterioare, tratamentele anterioare și răspunsul la acestea, istoricul familial de tulburări mintale, situația actuală de viață, funcționarea profesională și socială, consumul de substanțe și starea mentală la momentul consultației.</p><p><strong>Diagnostic psihiatric formal</strong></p><p>Atunci când evaluarea permite, psihiatrul tău stabilește un diagnostic psihiatric formal bazat pe criteriile de diagnostic internaționale în vigoare — DSM-5-TR sau CIM-11 — explicat clar și cu raționamentul clinic care îl susține.</p><p><strong>Plan de tratament specializat</strong></p><p>Pe baza evaluării și a diagnosticului, psihiatrul tău alcătuiește un plan de tratament specializat — care poate include recomandări de psihoterapie și orientare privind abordarea cea mai potrivită pentru afecțiunea ta, opțiuni de tratament farmacologic psihiatric la aprecierea specialistului, coordonare cu psihologia clinică sau alte servicii atunci când este indicat, și monitorizare psihiatrică structurată.</p><p><strong>Documentație clinică specializată — la aprecierea specialistului</strong></p><p>Când este indicat clinic, psihiatrul tău emite documentația clinică corespunzătoare.</p><p>Notă privind benzodiazepinele și medicamentele cu regim special: benzodiazepinele și anumite medicamente psihiatrice sunt medicamente cu regim special în Spania și au cerințe specifice de prescriere. Psihiatrul tău te informează în timpul consultației despre opțiunile disponibile și orice limitări aplicabile.</p><p><strong>Evaluarea siguranței</strong></p><p>Fiecare consultație psihiatrică include o evaluare structurată a siguranței — realizată cu sensibilitate și ca parte standard a îngrijirii de specialitate.</p><p><strong>Monitorizare psihiatrică continuă</strong></p><p>Tratamentul psihiatric este un proces pe termen lung. Consultațiile de urmărire de specialitate sunt disponibile pentru a monitoriza răspunsul la tratament, a ajusta medicația unde este necesar și a oferi continuitatea clinică pe care o necesită îngrijirea psihiatrică de calitate.</p><h2>Accesul la psihiatrie în Spania — realitatea</h2><p>Psihiatria publică din Spania este semnificativ suprasolicitată — timpii de așteptare pentru prima consultație cu psihiatrul din SNS sunt de luni în majoritatea comunităților autonome. Psihiatria privată față în față din Spania este costisitoare și concentrată în marile orașe.</p><p>Pentru rezidenții internaționali care au nevoie de psihiatrie de specialitate în engleză sau portugheză, opțiunile sunt practic inexistente în afara Madridului și Barcelonei, iar chiar și în aceste orașe disponibilitatea este foarte limitată.</p><p>Acest serviciu oferă acces la psihiatrie de specialitate prin apel video — în aceeași zi — din orice punct al Spaniei. Pentru pacienții care au cea mai mare nevoie de sprijin psihiatric, eliminarea barierei de acces contează.</p><h2>Confidențialitatea în psihiatrie</h2><p>Tot ceea ce se discută în timpul consultației tale psihiatrice este confidențial și este protejat în baza legislației spaniole și europene privind protecția datelor — inclusiv RGPD (UE 2016/679) implementat prin Legea organică 3/2018 (LOPDGDD) și Legea 41/2002 privind autonomia pacientului.</p><p>Datele de sănătate mintală beneficiază de protecție sporită ca categorie specială de date în temeiul RGPD.</p><p>Există două circumstanțe în care confidențialitatea poate necesita o cântărire atentă — atunci când există un risc grav și imediat pentru viața sau siguranța ta, sau când există un risc grav pentru siguranța altei persoane. Psihiatrul tău discută confidențialitatea cu tine la începutul consultației.</p>",
+      "ctaLabel": null,
+      "sortOrder": 0,
+      "durationMinutes": 45,
+      "basePriceCents": 15000,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-10T13:44:57.609Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k8qg0008asju8iv3qlkd",
+          "kind": "IMAGE",
+          "key": "media/291b711c-e779-4efe-8821-39d0c6963c76-es-psiquiatra-online.png",
+          "path": "/api/media/media/291b711c-e779-4efe-8821-39d0c6963c76-es-psiquiatra-online.png",
+          "altText": "Psiquiatría Especialista"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qf7o0051ngjuy3olgbsv",
+          "question": "Care este diferența între a vedea un psihiatru și a vedea un psiholog?",
+          "answer": "Psihiatrul este un medic specialist cu pregătire MIR în psihiatrie — poate diagnostica oficial tulburări mintale, poate prescrie medicație psihiatrică și poate coordona întregul plan de îngrijire. Psihologul clinician oferă psihoterapie — intervenție psihologică structurată. Pentru multe afecțiuni, abordarea cea mai eficientă le combină pe ambele. Psihiatrul tău te consiliază asupra nivelului de sprijin cel mai potrivit și îți poate indica tipul de psihoterapie cel mai adecvat pentru afecțiunea ta.",
+          "sortOrder": 0,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qf7o0052ngjuayg1k455",
+          "question": "Care este diferența dintre această consultație și evaluarea sănătății mintale cu medicul de familie?",
+          "answer": "Evaluarea sănătății mintale cu medicul de familie este adecvată pentru screeningul inițial al anxietății, depresiei ușoare până la moderate și stresului — cu trimitere la psihiatrie acolo unde este indicat. Această consultație de specialitate este realizată de un psihiatru și oferă diagnostic psihiatric formal, evaluarea tulburărilor complexe precum tulburarea bipolară sau TDAH, precum și acces la întreaga gamă de opțiuni de tratament farmacologic psihiatric.",
+          "sortOrder": 1,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qf7o0053ngjuuzsapmj4",
+          "question": "Poate psihiatrul să prescrie medicație psihiatrică prin intermediul acestui serviciu?",
+          "answer": "Da — inclusiv antidepresive, stabilizatori ai dispoziției, medicație pentru TDAH și alte opțiuni de tratament farmacologic psihiatric acolo unde este indicat clinic. Benzodiazepinele și anumite medicamente supuse unui regim special au cerințe specifice în Spania — psihiatrul tău te informează despre opțiunile disponibile și orice limitare aplicabilă. Niciun medicament specific nu poate fi confirmat înainte de evaluare.",
+          "sortOrder": 2,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qf7o0054ngjuw946d1r1",
+          "question": "Poate psihiatrul să diagnosticheze ADHD la adulți?",
+          "answer": "Da. Evaluarea diagnostică formală a ADHD la adulți este o parte centrală a acestui serviciu. Diagnosticul necesită o evaluare structurată completă — nu poate fi realizat într-o singură ședință scurtă. Psihiatrul tău te informează despre procesul diagnostic adecvat pentru prezentarea ta.",
+          "sortOrder": 3,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qf7o0055ngjuzorzdu8i",
+          "question": "Poate psihiatrul să diagnosticheze tulburarea bipolară?",
+          "answer": "Da. Diagnosticul diferențial între depresia unipolară și tulburarea bipolară, precum și între diferitele tipuri de tulburare bipolară, necesită o evaluare psihiatrică specializată. Este unul dintre diagnosticele cel mai frecvent omise sau întârziate în asistența primară — evaluarea psihiatrică specializată este deosebit de valoroasă aici.",
+          "sortOrder": 4,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qf7o0056ngjueq3bc24z",
+          "question": "Pot obține o a doua opinie psihiatrică prin acest serviciu?",
+          "answer": "Da. A doua opinie psihiatrică specializată este una dintre utilizările frecvente ale acestui serviciu — în special în ceea ce privește diagnosticele, planurile de tratament sau medicația primită de la un alt psihiatru.",
+          "sortOrder": 5,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qf7o0057ngjusq77dowx",
+          "question": "Poate psihiatrul să dispună internarea mea în spitalul de psihiatrie?",
+          "answer": "Internarea voluntară poate fi coordonată cu serviciile adecvate. Internarea involuntară este reglementată de articolul 763 din Legea de procedură civilă și necesită autorizare judecătorească — nu poate fi inițiată prin acest serviciu. Dacă situația ta necesită internare de urgență, sună imediat la 112 sau mergi la cel mai apropiat serviciu de urgență.",
+          "sortOrder": 6,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qf7o0058ngju66en4j87",
+          "question": "Ce se întâmplă dacă sunt în criză în timpul sau după consultație?",
+          "answer": "Dacă te afli în criză, folosește resursele de la începutul acestei pagini — Telefonul împotriva Suicidului 024 sau 112 în caz de pericol imediat. Acest serviciu nu este un serviciu de intervenție în criză.",
+          "sortOrder": 7,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qf7o0059ngju35dl4zgv",
+          "question": "Am nevoie de asigurare medicală spaniolă?",
+          "answer": "Nu. Este un serviciu privat cu plată directă. Documentația clinică emisă se furnizează la prețul privat integral, indiferent de statutul asigurării.",
+          "sortOrder": 8,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7qf7o005angjuc0glva22",
+          "question": "Pot folosi acest serviciu din orice punct al Spaniei?",
+          "answer": "Da — inclusiv Insulele Baleare, Insulele Canare, Ceuta și Melilla. Ai nevoie doar de o conexiune stabilă la internet și de un dispozitiv cu cameră.",
+          "sortOrder": 9,
+          "resolvedLocale": "RO"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "RO",
+      "links": [
+        {
+          "id": "cmre7swzn003ag8ju8hqg2zvg",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con evaluación inicial de salud mental?",
+          "body": "Para evaluación inicial de salud mental, consulta nuestra página de Salud Mental — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Salud Mental",
+          "targetSlug": "salud-mental-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7syjw003eg8jur0yeen3q",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Segunda opinión psiquiátrica independiente?",
+          "body": "Si tu situación está relacionada con segunda opinión psiquiátrica independiente, nuestra Segunda Opinión Médica te ofrece la evaluación adecuada.",
+          "ctaLabel": "Segunda Opinión Médica",
+          "targetSlug": "segunda-opinion-medica",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7szc1003gg8juhtfo6veb",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con evaluación inicial con médico de cabecera?",
+          "body": "Para evaluación inicial con médico de cabecera, consulta nuestra página de Consulta Médica General — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7sw7i0038g8ju6nyy0htm",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Psicoterapia y apoyo psicológico?",
+          "body": "Si tu situación está relacionada con psicoterapia y apoyo psicológico, nuestra Psicología Clínica te ofrece la evaluación adecuada.",
+          "ctaLabel": "Psicología Clínica",
+          "targetSlug": "psicologo-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpvch9001i01ruy7pmzmdk"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:29:00.000Z"
+      }
+    }
+  }
+}

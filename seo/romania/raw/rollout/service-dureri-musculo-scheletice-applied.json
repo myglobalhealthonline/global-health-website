@@ -1,0 +1,20 @@
+{
+  "group": "service:dureri-musculo-scheletice",
+  "approvalSha256": "dade3484ec3af08d15d60b74936eb4aa33e6953c848e4a4b21fcf4b875d2f718",
+  "reviewerDoctorId": "cmrc4axni00rn01p2n3r2bopf",
+  "approvalEvidence": "owner-reported clinician approval in this task",
+  "appliedAt": "2026-09-12T22:55:45.250Z",
+  "alreadyApplied": false,
+  "operations": 35,
+  "publicVerified": true,
+  "afterSha256": "e590a285f1ed6da5d14810d9f6255b258d4c5b57f424826ead63f75ec02edbae",
+  "publicVerifiedAt": "2026-09-12T22:56:09.164Z",
+  "verifiedUrls": [
+    "https://www.myglobalhealth.online/romania/cs/services/dureri-musculo-scheletice",
+    "https://www.myglobalhealth.online/romania/de/services/dureri-musculo-scheletice",
+    "https://www.myglobalhealth.online/romania/en/services/dureri-musculo-scheletice",
+    "https://www.myglobalhealth.online/romania/es/services/dureri-musculo-scheletice",
+    "https://www.myglobalhealth.online/romania/pt/services/dureri-musculo-scheletice",
+    "https://www.myglobalhealth.online/romania/ro/services/dureri-musculo-scheletice"
+  ]
+}

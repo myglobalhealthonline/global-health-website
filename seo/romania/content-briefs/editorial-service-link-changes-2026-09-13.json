@@ -1,0 +1,1514 @@
+[
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8ellf8000304juqwiub3et",
+    "field": "heading",
+    "before": "Other Section?",
+    "after": "Treatment renewal",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8ellf8000304juqwiub3et",
+    "field": "body",
+    "before": "For other section, our Treatment Renewal — Online Clinical Review and Prescription in Romania provides dedicated care — see treatment renewal.",
+    "after": "Review an established treatment with a doctor and discuss whether a prescription renewal is appropriate.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8ellf8000304juqwiub3et",
+    "field": "ctaLabel",
+    "before": "Treatment Renewal — Online Clinical Review and Prescription in Romania",
+    "after": "Treatment renewal",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8elmpx000504juaw17nmiv",
+    "field": "heading",
+    "before": "Other Section?",
+    "after": "Mental health assessment",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8elmpx000504juaw17nmiv",
+    "field": "body",
+    "before": "For other section, our Mental Health Assessment — Online, in English provides dedicated care — see mental health assessment.",
+    "after": "Read about a confidential online mental health assessment and the support available at GP level.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8elmpx000504juaw17nmiv",
+    "field": "ctaLabel",
+    "before": "Mental Health Assessment — Online, in English",
+    "after": "Mental health assessment",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8elpbh000904jur7isuuzx",
+    "field": "heading",
+    "before": "What If Condition Is More Serious?",
+    "after": "Questions about your diagnosis",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8elpbh000904jur7isuuzx",
+    "field": "body",
+    "before": "For what if condition is more serious, our Second Medical Opinion — Independent Clinical Assessment provides dedicated care — see second medical opinion.",
+    "after": "Discuss your diagnosis, treatment or investigation results with another doctor for an independent clinical opinion.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8elpbh000904jur7isuuzx",
+    "field": "ctaLabel",
+    "before": "Second Medical Opinion — Independent Clinical Assessment",
+    "after": "Second medical opinion",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eluir000h04ju5l4l1snr",
+    "field": "heading",
+    "before": "If Condition Has Changed?",
+    "after": "Has your condition changed?",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eluir000h04ju5l4l1snr",
+    "field": "body",
+    "before": "For if condition has changed, our Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi provides dedicated care — see general medical consultation.",
+    "after": "Read about a general medical consultation to discuss your symptoms and the appropriate next steps.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eluir000h04ju5l4l1snr",
+    "field": "ctaLabel",
+    "before": "Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi",
+    "after": "General medical consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8elvtf000j04jupahfjo28",
+    "field": "body",
+    "before": "Need ongoing chronic disease management? Our Chronic Disease Management — Ongoing GP-Level Care Online covers this as a dedicated consultation.",
+    "after": "Read about ongoing GP-level care for chronic conditions, including treatment review and monitoring.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8elvtf000j04jupahfjo28",
+    "field": "ctaLabel",
+    "before": "Chronic Disease Management — Ongoing GP-Level Care Online",
+    "after": "Chronic disease management",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8elx4t000l04juuwq4ynr5",
+    "field": "body",
+    "before": "Need blood tests or specialist referral? Our Referral Letters & Investigations — Clinical Documentation Online covers this as a dedicated consultation.",
+    "after": "Discuss investigation results, tests, referrals or medical documentation with a doctor. Requests and documents depend on clinical assessment.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8elx4t000l04juuwq4ynr5",
+    "field": "ctaLabel",
+    "before": "Referral Letters & Investigations — Clinical Documentation Online",
+    "after": "Referral letters and investigations",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8elyfh000n04julbj7pula",
+    "field": "heading",
+    "before": "If Unsure About Current Treatment?",
+    "after": "Unsure about your current treatment?",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8elyfh000n04julbj7pula",
+    "field": "body",
+    "before": "For if unsure about current treatment, our Second Medical Opinion — Independent Clinical Assessment provides dedicated care — see second opinion.",
+    "after": "Discuss your diagnosis, treatment or investigation results with another doctor for an independent clinical opinion.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8elyfh000n04julbj7pula",
+    "field": "ctaLabel",
+    "before": "Second Medical Opinion — Independent Clinical Assessment",
+    "after": "Second medical opinion",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8elzq7000p04jub5me8ie0",
+    "field": "heading",
+    "before": "Starting Point If Unsure?",
+    "after": "Unsure where to start?",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8elzq7000p04jub5me8ie0",
+    "field": "body",
+    "before": "For starting point if unsure, our Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi provides dedicated care — see general medical consultation.",
+    "after": "Read about a general medical consultation to discuss your symptoms and the appropriate next steps.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8elzq7000p04jub5me8ie0",
+    "field": "ctaLabel",
+    "before": "Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi",
+    "after": "General medical consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8em10z000r04juks7j9sy4",
+    "field": "heading",
+    "before": "Diabetes, Hypertension?",
+    "after": "Diabetes or hypertension",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8em10z000r04juks7j9sy4",
+    "field": "body",
+    "before": "For diabetes, hypertension, our Chronic Disease Management — Ongoing GP-Level Care Online provides dedicated care — see chronic disease management.",
+    "after": "Read about ongoing GP-level care for chronic conditions, including treatment review and monitoring.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8em10z000r04juks7j9sy4",
+    "field": "ctaLabel",
+    "before": "Chronic Disease Management — Ongoing GP-Level Care Online",
+    "after": "Chronic disease management",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8em2bp000t04jujadxxnzm",
+    "field": "heading",
+    "before": "Investigations?",
+    "after": "Tests and investigations",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8em2bp000t04jujadxxnzm",
+    "field": "body",
+    "before": "For investigations, our Referral Letters & Investigations — Clinical Documentation Online provides dedicated care — see blood tests.",
+    "after": "Discuss investigation results, tests, referrals or medical documentation with a doctor. Requests and documents depend on clinical assessment.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8em2bp000t04jujadxxnzm",
+    "field": "ctaLabel",
+    "before": "Referral Letters & Investigations — Clinical Documentation Online",
+    "after": "Referral letters and investigations",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8em3mf000v04jue67wetf8",
+    "field": "heading",
+    "before": "PCOS, Menopause, Hormonal Weight Gain?",
+    "after": "PCOS, menopause and hormonal weight changes",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8em3mf000v04jue67wetf8",
+    "field": "body",
+    "before": "For pcos, menopause, hormonal weight gain, our Women's Health — Confidential Online Assessment in English provides dedicated care — see women's health.",
+    "after": "Read about an online women's health assessment, including hormonal symptoms and related concerns.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8em3mf000v04jue67wetf8",
+    "field": "ctaLabel",
+    "before": "Women's Health — Confidential Online Assessment in English",
+    "after": "Women's health",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8em4x5000x04juw6e6bqzr",
+    "field": "heading",
+    "before": "If Broader Health Concerns?",
+    "after": "Other health concerns",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8em4x5000x04juw6e6bqzr",
+    "field": "body",
+    "before": "For if broader health concerns, our Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi provides dedicated care — see general medical consultation.",
+    "after": "Read about a general medical consultation to discuss your symptoms and the appropriate next steps.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8em4x5000x04juw6e6bqzr",
+    "field": "ctaLabel",
+    "before": "Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi",
+    "after": "General medical consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8em67s000z04juvij4tatb",
+    "field": "heading",
+    "before": "ED Related to Diabetes, Hypertension?",
+    "after": "Erectile dysfunction, diabetes and hypertension",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8em67s000z04juvij4tatb",
+    "field": "body",
+    "before": "For ed related to diabetes, hypertension, our Chronic Disease Management — Ongoing GP-Level Care Online provides dedicated care — see chronic disease management.",
+    "after": "Read about ongoing GP-level care for chronic conditions, including treatment review and monitoring.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8em67s000z04juvij4tatb",
+    "field": "ctaLabel",
+    "before": "Chronic Disease Management — Ongoing GP-Level Care Online",
+    "after": "Chronic disease management",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8em7ih001104ju1vgx8g0d",
+    "field": "body",
+    "before": "Need blood tests and specialist referral? Our Referral Letters & Investigations — Clinical Documentation Online covers this as a dedicated consultation.",
+    "after": "Discuss investigation results, tests, referrals or medical documentation with a doctor. Requests and documents depend on clinical assessment.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8em7ih001104ju1vgx8g0d",
+    "field": "ctaLabel",
+    "before": "Referral Letters & Investigations — Clinical Documentation Online",
+    "after": "Referral letters and investigations",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8em8t6001304juwx77rg7p",
+    "field": "heading",
+    "before": "Hormonal Hair Loss in Men?",
+    "after": "Hormonal hair loss in men",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8em8t6001304juwx77rg7p",
+    "field": "body",
+    "before": "For hormonal hair loss in men, our Hair Loss Consultation — Online, Same Day provides dedicated care — see hair loss consultation.",
+    "after": "Read about a medical assessment of hair loss, possible causes and treatment options.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8em8t6001304juwx77rg7p",
+    "field": "ctaLabel",
+    "before": "Hair Loss Consultation — Online, Same Day",
+    "after": "Hair loss consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8ema3x001504juihktc1s6",
+    "field": "heading",
+    "before": "If Broader Health Concerns?",
+    "after": "Other health concerns",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8ema3x001504juihktc1s6",
+    "field": "body",
+    "before": "For if broader health concerns, our Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi provides dedicated care — see general medical consultation.",
+    "after": "Read about a general medical consultation to discuss your symptoms and the appropriate next steps.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8ema3x001504juihktc1s6",
+    "field": "ctaLabel",
+    "before": "Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi",
+    "after": "General medical consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8embem001704juxzrbxzn8",
+    "field": "heading",
+    "before": "Hormonal Weight Gain, PCOS?",
+    "after": "Hormonal weight gain and PCOS",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8embem001704juxzrbxzn8",
+    "field": "body",
+    "before": "For hormonal weight gain, pcos, our Weight Management — Medical Assessment and Personalised Plan provides dedicated care — see weight management.",
+    "after": "Discuss factors affecting your weight and a management plan based on medical assessment.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8embem001704juxzrbxzn8",
+    "field": "ctaLabel",
+    "before": "Weight Management — Medical Assessment and Personalised Plan",
+    "after": "Weight management",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emcpa001904juk3d7397t",
+    "field": "heading",
+    "before": "Postnatal Mood, Anxiety?",
+    "after": "Postnatal mood changes and anxiety",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emcpa001904juk3d7397t",
+    "field": "body",
+    "before": "For postnatal mood, anxiety, our Mental Health Assessment — Online, in English provides dedicated care — see mental health assessment.",
+    "after": "Read about a confidential online mental health assessment and the support available at GP level.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emcpa001904juk3d7397t",
+    "field": "ctaLabel",
+    "before": "Mental Health Assessment — Online, in English",
+    "after": "Mental health assessment",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emdzz001b04ju1m3wcapa",
+    "field": "heading",
+    "before": "Hormonal Hair Loss in Women?",
+    "after": "Hormonal hair loss in women",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emdzz001b04ju1m3wcapa",
+    "field": "body",
+    "before": "For hormonal hair loss in women, our Hair Loss Consultation — Online, Same Day provides dedicated care — see hair loss consultation.",
+    "after": "Read about a medical assessment of hair loss, possible causes and treatment options.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emdzz001b04ju1m3wcapa",
+    "field": "ctaLabel",
+    "before": "Hair Loss Consultation — Online, Same Day",
+    "after": "Hair loss consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emfao001d04jurzppoyou",
+    "field": "body",
+    "before": "Need specialist referral? Our Referral Letters & Investigations — Clinical Documentation Online covers this as a dedicated consultation.",
+    "after": "Discuss investigation results, tests, referrals or medical documentation with a doctor. Requests and documents depend on clinical assessment.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emfao001d04jurzppoyou",
+    "field": "ctaLabel",
+    "before": "Referral Letters & Investigations — Clinical Documentation Online",
+    "after": "Referral letters and investigations",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emglc001f04juqqjoq27c",
+    "field": "heading",
+    "before": "Physical Health Contributors to Mood?",
+    "after": "Physical health and mood",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emglc001f04juqqjoq27c",
+    "field": "body",
+    "before": "For physical health contributors to mood, our Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi provides dedicated care — see general medical consultation.",
+    "after": "Read about a general medical consultation to discuss your symptoms and the appropriate next steps.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emglc001f04juqqjoq27c",
+    "field": "ctaLabel",
+    "before": "Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi",
+    "after": "General medical consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emhw0001h04jue7yz6d5p",
+    "field": "heading",
+    "before": "Mental Health in Chronic Disease?",
+    "after": "Mental health and chronic conditions",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emhw0001h04jue7yz6d5p",
+    "field": "body",
+    "before": "For mental health in chronic disease, our Chronic Disease Management — Ongoing GP-Level Care Online provides dedicated care — see chronic disease management.",
+    "after": "Read about ongoing GP-level care for chronic conditions, including treatment review and monitoring.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emhw0001h04jue7yz6d5p",
+    "field": "ctaLabel",
+    "before": "Chronic Disease Management — Ongoing GP-Level Care Online",
+    "after": "Chronic disease management",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emj75001j04jumlh5tmu1",
+    "field": "heading",
+    "before": "ADHD Neurological Assessment?",
+    "after": "Neurological assessment for ADHD concerns",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emj75001j04jumlh5tmu1",
+    "field": "body",
+    "before": "For adhd neurological assessment, our Neurology Consultation — Specialist Assessment Online provides dedicated care — see neurology consultation.",
+    "after": "Read about specialist neurological assessment, treatment review and advice on further investigations.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emj75001j04jumlh5tmu1",
+    "field": "ctaLabel",
+    "before": "Neurology Consultation — Specialist Assessment Online",
+    "after": "Neurology consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emkhs001l04ju817s5a57",
+    "field": "heading",
+    "before": "If Unsure About Current Diagnosis?",
+    "after": "Unsure about your diagnosis?",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emkhs001l04ju817s5a57",
+    "field": "body",
+    "before": "For if unsure about current diagnosis, our Second Medical Opinion — Independent Clinical Assessment provides dedicated care — see second opinion.",
+    "after": "Discuss your diagnosis, treatment or investigation results with another doctor for an independent clinical opinion.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emkhs001l04ju817s5a57",
+    "field": "ctaLabel",
+    "before": "Second Medical Opinion — Independent Clinical Assessment",
+    "after": "Second medical opinion",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emlsg001n04ju49kupj2a",
+    "field": "heading",
+    "before": "Non-skin Concerns During Same Visit?",
+    "after": "Other symptoms alongside skin concerns",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emlsg001n04ju49kupj2a",
+    "field": "body",
+    "before": "For non-skin concerns during same visit, our Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi provides dedicated care — see general medical consultation.",
+    "after": "Read about a general medical consultation to discuss your symptoms and the appropriate next steps.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emlsg001n04ju49kupj2a",
+    "field": "ctaLabel",
+    "before": "Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi",
+    "after": "General medical consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emn3l001p04ju4r1c3ztr",
+    "field": "heading",
+    "before": "Hormonal Acne in Women?",
+    "after": "Hormonal acne in women",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emn3l001p04ju4r1c3ztr",
+    "field": "body",
+    "before": "For hormonal acne in women, our Women's Health — Confidential Online Assessment in English provides dedicated care — see women's health.",
+    "after": "Read about an online women's health assessment, including hormonal symptoms and related concerns.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emn3l001p04ju4r1c3ztr",
+    "field": "ctaLabel",
+    "before": "Women's Health — Confidential Online Assessment in English",
+    "after": "Women's health",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emoer001r04juneyyprd8",
+    "field": "heading",
+    "before": "Scalp Conditions and Hair Loss?",
+    "after": "Scalp conditions and hair loss",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emoer001r04juneyyprd8",
+    "field": "body",
+    "before": "For scalp conditions and hair loss, our Hair Loss Consultation — Online, Same Day provides dedicated care — see hair loss consultation.",
+    "after": "Read about a medical assessment of hair loss, possible causes and treatment options.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emoer001r04juneyyprd8",
+    "field": "ctaLabel",
+    "before": "Hair Loss Consultation — Online, Same Day",
+    "after": "Hair loss consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emppe001t04juiy97u86q",
+    "field": "body",
+    "before": "Need dermatology referral? Our Referral Letters & Investigations — Clinical Documentation Online covers this as a dedicated consultation.",
+    "after": "Discuss investigation results, tests, referrals or medical documentation with a doctor. Requests and documents depend on clinical assessment.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emppe001t04juiy97u86q",
+    "field": "ctaLabel",
+    "before": "Referral Letters & Investigations — Clinical Documentation Online",
+    "after": "Referral letters and investigations",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emr02001v04ju7tfhhbew",
+    "field": "heading",
+    "before": "Post-travel Symptoms?",
+    "after": "Symptoms after travel",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emr02001v04ju7tfhhbew",
+    "field": "body",
+    "before": "For post-travel symptoms, our Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi provides dedicated care — see general medical consultation.",
+    "after": "Read about a general medical consultation to discuss your symptoms and the appropriate next steps.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emr02001v04ju7tfhhbew",
+    "field": "ctaLabel",
+    "before": "Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi",
+    "after": "General medical consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emsao001x04jurpevgvm4",
+    "field": "heading",
+    "before": "Chronic Conditions During Travel?",
+    "after": "Chronic conditions during travel",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emsao001x04jurpevgvm4",
+    "field": "body",
+    "before": "For chronic conditions during travel, our Chronic Disease Management — Ongoing GP-Level Care Online provides dedicated care — see chronic disease management.",
+    "after": "Read about ongoing GP-level care for chronic conditions, including treatment review and monitoring.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emsao001x04jurpevgvm4",
+    "field": "ctaLabel",
+    "before": "Chronic Disease Management — Ongoing GP-Level Care Online",
+    "after": "Chronic disease management",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emtlb001z04jut76zory5",
+    "field": "heading",
+    "before": "Travel Letters?",
+    "after": "Travel health letters",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emtlb001z04jut76zory5",
+    "field": "body",
+    "before": "For travel letters, our Referral Letters & Investigations — Clinical Documentation Online provides dedicated care — see medical documentation.",
+    "after": "Discuss investigation results, tests, referrals or medical documentation with a doctor. Requests and documents depend on clinical assessment.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emtlb001z04jut76zory5",
+    "field": "ctaLabel",
+    "before": "Referral Letters & Investigations — Clinical Documentation Online",
+    "after": "Referral letters and investigations",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emuvz002104juq4dw1c5a",
+    "field": "heading",
+    "before": "Tropical Skin Conditions?",
+    "after": "Skin concerns after tropical travel",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emuvz002104juq4dw1c5a",
+    "field": "body",
+    "before": "For tropical skin conditions, our Skin Consultation — Online Assessment in English provides dedicated care — see skin consultation.",
+    "after": "Read about online assessment of skin concerns and when a dermatology referral may be needed.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emuvz002104juq4dw1c5a",
+    "field": "ctaLabel",
+    "before": "Skin Consultation — Online Assessment in English",
+    "after": "Skin consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emw6o002304junnmotly3",
+    "field": "heading",
+    "before": "If Other Health Concerns?",
+    "after": "Other health concerns",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emw6o002304junnmotly3",
+    "field": "body",
+    "before": "For if other health concerns, our Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi provides dedicated care — see general medical consultation.",
+    "after": "Read about a general medical consultation to discuss your symptoms and the appropriate next steps.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emw6o002304junnmotly3",
+    "field": "ctaLabel",
+    "before": "Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi",
+    "after": "General medical consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emxhf002504ju3vm9nmdx",
+    "field": "heading",
+    "before": "PCOS, Thyroid, Menopause?",
+    "after": "PCOS, thyroid concerns and menopause",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emxhf002504ju3vm9nmdx",
+    "field": "body",
+    "before": "For pcos, thyroid, menopause, our Women's Health — Confidential Online Assessment in English provides dedicated care — see women's health consultation.",
+    "after": "Read about an online women's health assessment, including hormonal symptoms and related concerns.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emxhf002504ju3vm9nmdx",
+    "field": "ctaLabel",
+    "before": "Women's Health — Confidential Online Assessment in English",
+    "after": "Women's health",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emys4002704juhln292if",
+    "field": "heading",
+    "before": "Hormonal Hair Loss in Men?",
+    "after": "Hormonal hair loss in men",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emys4002704juhln292if",
+    "field": "body",
+    "before": "For hormonal hair loss in men, our Men's Health — Confidential Online Assessment in English provides dedicated care — see men's health consultation.",
+    "after": "Read about a confidential online assessment of men's health concerns.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8emys4002704juhln292if",
+    "field": "ctaLabel",
+    "before": "Men's Health — Confidential Online Assessment in English",
+    "after": "Men's health",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8en02w002904juwrkku2n7",
+    "field": "heading",
+    "before": "Ferritin, Thyroid?",
+    "after": "Ferritin and thyroid tests",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8en02w002904juwrkku2n7",
+    "field": "body",
+    "before": "For ferritin, thyroid, our Referral Letters & Investigations — Clinical Documentation Online provides dedicated care — see blood tests.",
+    "after": "Discuss investigation results, tests, referrals or medical documentation with a doctor. Requests and documents depend on clinical assessment.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8en02w002904juwrkku2n7",
+    "field": "ctaLabel",
+    "before": "Referral Letters & Investigations — Clinical Documentation Online",
+    "after": "Referral letters and investigations",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8en1dk002b04juw7iti8ng",
+    "field": "heading",
+    "before": "Scalp Conditions?",
+    "after": "Scalp conditions",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8en1dk002b04juw7iti8ng",
+    "field": "body",
+    "before": "For scalp conditions, our Skin Consultation — Online Assessment in English provides dedicated care — see skin consultation.",
+    "after": "Read about online assessment of skin concerns and when a dermatology referral may be needed.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8en1dk002b04juw7iti8ng",
+    "field": "ctaLabel",
+    "before": "Skin Consultation — Online Assessment in English",
+    "after": "Skin consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8en3yu002f04ju7sshubt8",
+    "field": "heading",
+    "before": "Osteoarthritis, Inflammatory Arthritis?",
+    "after": "Osteoarthritis and inflammatory arthritis",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8en3yu002f04ju7sshubt8",
+    "field": "body",
+    "before": "For osteoarthritis, inflammatory arthritis, our Chronic Disease Management — Ongoing GP-Level Care Online provides dedicated care — see chronic disease management.",
+    "after": "Read about ongoing GP-level care for chronic conditions, including treatment review and monitoring.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8en3yu002f04ju7sshubt8",
+    "field": "ctaLabel",
+    "before": "Chronic Disease Management — Ongoing GP-Level Care Online",
+    "after": "Chronic disease management",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8en59k002h04juvxd7yqxs",
+    "field": "body",
+    "before": "Need physiotherapy referral and imaging? Our Referral Letters & Investigations — Clinical Documentation Online covers this as a dedicated consultation.",
+    "after": "Discuss investigation results, tests, referrals or medical documentation with a doctor. Requests and documents depend on clinical assessment.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8en59k002h04juvxd7yqxs",
+    "field": "ctaLabel",
+    "before": "Referral Letters & Investigations — Clinical Documentation Online",
+    "after": "Referral letters and investigations",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8en6k7002j04judj7ycfco",
+    "field": "heading",
+    "before": "If Unsure Which Service Is Right?",
+    "after": "Unsure which service to choose?",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8en6k7002j04judj7ycfco",
+    "field": "body",
+    "before": "For if unsure which service is right, our Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi provides dedicated care — see general medical consultation.",
+    "after": "Read about a general medical consultation to discuss your symptoms and the appropriate next steps.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8en6k7002j04judj7ycfco",
+    "field": "ctaLabel",
+    "before": "Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi",
+    "after": "General medical consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8en7uu002l04jutay5m209",
+    "field": "heading",
+    "before": "Neurological Second Opinion?",
+    "after": "A second opinion on a neurological condition",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8en7uu002l04jutay5m209",
+    "field": "body",
+    "before": "For neurological second opinion, our Neurology Consultation — Specialist Assessment Online provides dedicated care — see neurology consultation.",
+    "after": "Read about specialist neurological assessment, treatment review and advice on further investigations.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8en7uu002l04jutay5m209",
+    "field": "ctaLabel",
+    "before": "Neurology Consultation — Specialist Assessment Online",
+    "after": "Neurology consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enag7002p04juufva56f2",
+    "field": "heading",
+    "before": "Paediatric Second Opinion?",
+    "after": "A second opinion on your child’s health",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enag7002p04juufva56f2",
+    "field": "body",
+    "before": "For paediatric second opinion, our Specialist Paediatrician — Expert Child Health Assessment Online provides dedicated care — see specialist paediatrician.",
+    "after": "Read about specialist assessment of persistent, complex or recurring child health concerns.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enag7002p04juufva56f2",
+    "field": "ctaLabel",
+    "before": "Specialist Paediatrician — Expert Child Health Assessment Online",
+    "after": "Specialist paediatric consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enbqu002r04jutu4vekji",
+    "field": "heading",
+    "before": "Chronic Condition Review?",
+    "after": "Review of a chronic condition",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enbqu002r04jutu4vekji",
+    "field": "body",
+    "before": "For chronic condition review, our Chronic Disease Management — Ongoing GP-Level Care Online provides dedicated care — see chronic disease management.",
+    "after": "Read about ongoing GP-level care for chronic conditions, including treatment review and monitoring.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enbqu002r04jutu4vekji",
+    "field": "ctaLabel",
+    "before": "Chronic Disease Management — Ongoing GP-Level Care Online",
+    "after": "Chronic disease management",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8end1h002t04jusq2i1k02",
+    "field": "body",
+    "before": "Need clinical documentation? Our Referral Letters & Investigations — Clinical Documentation Online covers this as a dedicated consultation.",
+    "after": "Discuss investigation results, tests, referrals or medical documentation with a doctor. Requests and documents depend on clinical assessment.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8end1h002t04jusq2i1k02",
+    "field": "ctaLabel",
+    "before": "Referral Letters & Investigations — Clinical Documentation Online",
+    "after": "Referral letters and investigations",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enec5002v04ju2y2t58dl",
+    "field": "body",
+    "before": "Need treatment renewal? Our Treatment Renewal — Online Clinical Review and Prescription in Romania covers this as a dedicated consultation.",
+    "after": "Review an established treatment with a doctor and discuss whether a prescription renewal is appropriate.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enec5002v04ju2y2t58dl",
+    "field": "ctaLabel",
+    "before": "Treatment Renewal — Online Clinical Review and Prescription in Romania",
+    "after": "Treatment renewal",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enfmw002x04ju0olo434x",
+    "field": "body",
+    "before": "Need blood tests and specialist referral? Our Referral Letters & Investigations — Clinical Documentation Online covers this as a dedicated consultation.",
+    "after": "Discuss investigation results, tests, referrals or medical documentation with a doctor. Requests and documents depend on clinical assessment.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enfmw002x04ju0olo434x",
+    "field": "ctaLabel",
+    "before": "Referral Letters & Investigations — Clinical Documentation Online",
+    "after": "Referral letters and investigations",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8engxl002z04ju0t8mkri2",
+    "field": "heading",
+    "before": "Obesity As Chronic Condition?",
+    "after": "Ongoing care for obesity",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8engxl002z04ju0t8mkri2",
+    "field": "body",
+    "before": "For obesity as chronic condition, our Weight Management — Medical Assessment and Personalised Plan provides dedicated care — see weight management.",
+    "after": "Discuss factors affecting your weight and a management plan based on medical assessment.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8engxl002z04ju0t8mkri2",
+    "field": "ctaLabel",
+    "before": "Weight Management — Medical Assessment and Personalised Plan",
+    "after": "Weight management",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eni8a003104jucm6bxy5j",
+    "field": "heading",
+    "before": "Depression, Anxiety At GP Level?",
+    "after": "GP-level care for depression and anxiety",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eni8a003104jucm6bxy5j",
+    "field": "body",
+    "before": "For depression, anxiety at gp level, our Mental Health Assessment — Online, in English provides dedicated care — see mental health assessment.",
+    "after": "Read about a confidential online mental health assessment and the support available at GP level.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eni8a003104jucm6bxy5j",
+    "field": "ctaLabel",
+    "before": "Mental Health Assessment — Online, in English",
+    "after": "Mental health assessment",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enjix003304judfpceytt",
+    "field": "heading",
+    "before": "Parkinson's, MS, Epilepsy Follow-up?",
+    "after": "Follow-up for Parkinson's disease, MS or epilepsy",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enjix003304judfpceytt",
+    "field": "body",
+    "before": "For parkinson's, ms, epilepsy follow-up, our Neurology Consultation — Specialist Assessment Online provides dedicated care — see neurology consultation.",
+    "after": "Read about specialist neurological assessment, treatment review and advice on further investigations.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enjix003304judfpceytt",
+    "field": "ctaLabel",
+    "before": "Neurology Consultation — Specialist Assessment Online",
+    "after": "Neurology consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enktl003504jukgbewzvx",
+    "field": "heading",
+    "before": "If Unsure About Current Management?",
+    "after": "Questions about your current management plan",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enktl003504jukgbewzvx",
+    "field": "body",
+    "before": "For if unsure about current management, our Second Medical Opinion — Independent Clinical Assessment provides dedicated care — see second opinion.",
+    "after": "Discuss your diagnosis, treatment or investigation results with another doctor for an independent clinical opinion.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enktl003504jukgbewzvx",
+    "field": "ctaLabel",
+    "before": "Second Medical Opinion — Independent Clinical Assessment",
+    "after": "Second medical opinion",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enm48003704julpi6m2f1",
+    "field": "heading",
+    "before": "Clinical Assessment Required First?",
+    "after": "Medical assessment before further investigations",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enm48003704julpi6m2f1",
+    "field": "body",
+    "before": "For clinical assessment required first, our Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi provides dedicated care — see general medical consultation.",
+    "after": "Read about a general medical consultation to discuss your symptoms and the appropriate next steps.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enm48003704julpi6m2f1",
+    "field": "ctaLabel",
+    "before": "Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi",
+    "after": "General medical consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8ennez003904jua9jyu3th",
+    "field": "heading",
+    "before": "Ongoing Monitoring?",
+    "after": "Ongoing monitoring",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8ennez003904jua9jyu3th",
+    "field": "body",
+    "before": "For ongoing monitoring, our Chronic Disease Management — Ongoing GP-Level Care Online provides dedicated care — see chronic disease management.",
+    "after": "Read about ongoing GP-level care for chronic conditions, including treatment review and monitoring.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8ennez003904jua9jyu3th",
+    "field": "ctaLabel",
+    "before": "Chronic Disease Management — Ongoing GP-Level Care Online",
+    "after": "Chronic disease management",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enopm003b04ju1g693ofs",
+    "field": "heading",
+    "before": "If Results Raise Concerns?",
+    "after": "Questions about your results",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enopm003b04ju1g693ofs",
+    "field": "body",
+    "before": "For if results raise concerns, our Second Medical Opinion — Independent Clinical Assessment provides dedicated care — see second opinion.",
+    "after": "Discuss your diagnosis, treatment or investigation results with another doctor for an independent clinical opinion.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enopm003b04ju1g693ofs",
+    "field": "ctaLabel",
+    "before": "Second Medical Opinion — Independent Clinical Assessment",
+    "after": "Second medical opinion",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enrav003f04juii7bqnrz",
+    "field": "heading",
+    "before": "Neurology Referral?",
+    "after": "Neurology assessment",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enrav003f04juii7bqnrz",
+    "field": "body",
+    "before": "For neurology referral, our Neurology Consultation — Specialist Assessment Online provides dedicated care — see neurology consultation.",
+    "after": "Read about specialist neurological assessment, treatment review and advice on further investigations.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enrav003f04juii7bqnrz",
+    "field": "ctaLabel",
+    "before": "Neurology Consultation — Specialist Assessment Online",
+    "after": "Neurology consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enslj003h04juhbgysvpe",
+    "field": "heading",
+    "before": "Complex Presentations?",
+    "after": "Complex child health concerns",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enslj003h04juhbgysvpe",
+    "field": "body",
+    "before": "For complex presentations, our Specialist Paediatrician — Expert Child Health Assessment Online provides dedicated care — see specialist paediatrician.",
+    "after": "Read about specialist assessment of persistent, complex or recurring child health concerns.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enslj003h04juhbgysvpe",
+    "field": "ctaLabel",
+    "before": "Specialist Paediatrician — Expert Child Health Assessment Online",
+    "after": "Specialist paediatric consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8entw6003j04jufkylc17f",
+    "field": "heading",
+    "before": "Eczema, Skin Infections in Children?",
+    "after": "Eczema and skin infections in children",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8entw6003j04jufkylc17f",
+    "field": "body",
+    "before": "For eczema, skin infections in children, our Skin Consultation — Online Assessment in English provides dedicated care — see skin consultation.",
+    "after": "Read about online assessment of skin concerns and when a dermatology referral may be needed.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8entw6003j04jufkylc17f",
+    "field": "ctaLabel",
+    "before": "Skin Consultation — Online Assessment in English",
+    "after": "Skin consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8env6t003l04judk0doh2n",
+    "field": "heading",
+    "before": "Adolescent Mental Health?",
+    "after": "Adolescent mental health",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8env6t003l04judk0doh2n",
+    "field": "body",
+    "before": "For adolescent mental health, our Mental Health Assessment — Online, in English provides dedicated care — see mental health assessment.",
+    "after": "Read about a confidential online mental health assessment and the support available at GP level.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8env6t003l04judk0doh2n",
+    "field": "ctaLabel",
+    "before": "Mental Health Assessment — Online, in English",
+    "after": "Mental health assessment",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enwhz003n04jupza10s3p",
+    "field": "heading",
+    "before": "Pre-travel Advice for Children?",
+    "after": "Travel health advice for children",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enwhz003n04jupza10s3p",
+    "field": "body",
+    "before": "For pre-travel advice for children, our Travel Health Consultation — Medical Assessment Before You Go provides dedicated care — see travel health.",
+    "after": "Discuss health concerns and medical planning before travel.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8enwhz003n04jupza10s3p",
+    "field": "ctaLabel",
+    "before": "Travel Health Consultation — Medical Assessment Before You Go",
+    "after": "Travel health consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eo5pj004104ju61b520za",
+    "field": "heading",
+    "before": "Cognitive Concerns, ADHD Screening?",
+    "after": "Cognitive concerns and ADHD screening",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eo5pj004104ju61b520za",
+    "field": "body",
+    "before": "For cognitive concerns, adhd screening, our Mental Health Assessment — Online, in English provides dedicated care — see mental health assessment.",
+    "after": "Read about a confidential online mental health assessment and the support available at GP level.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eo5pj004104ju61b520za",
+    "field": "ctaLabel",
+    "before": "Mental Health Assessment — Online, in English",
+    "after": "Mental health assessment",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eo708004304jujlb4ahs6",
+    "field": "heading",
+    "before": "MS, Parkinson's, Epilepsy Follow-up?",
+    "after": "Follow-up for MS, Parkinson's disease or epilepsy",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eo708004304jujlb4ahs6",
+    "field": "body",
+    "before": "For ms, parkinson's, epilepsy follow-up, our Chronic Disease Management — Ongoing GP-Level Care Online provides dedicated care — see chronic disease management.",
+    "after": "Read about ongoing GP-level care for chronic conditions, including treatment review and monitoring.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eo708004304jujlb4ahs6",
+    "field": "ctaLabel",
+    "before": "Chronic Disease Management — Ongoing GP-Level Care Online",
+    "after": "Chronic disease management",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eo8ax004504jupky4lin8",
+    "field": "heading",
+    "before": "Neurological Second Opinion?",
+    "after": "A second opinion on a neurological condition",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eo8ax004504jupky4lin8",
+    "field": "body",
+    "before": "For neurological second opinion, our Second Medical Opinion — Independent Clinical Assessment provides dedicated care — see second opinion.",
+    "after": "Discuss your diagnosis, treatment or investigation results with another doctor for an independent clinical opinion.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eo8ax004504jupky4lin8",
+    "field": "ctaLabel",
+    "before": "Second Medical Opinion — Independent Clinical Assessment",
+    "after": "Second medical opinion",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eo9ll004704jul81o67o2",
+    "field": "body",
+    "before": "Need MRI results review and referral? Our Referral Letters & Investigations — Clinical Documentation Online covers this as a dedicated consultation.",
+    "after": "Discuss investigation results, tests, referrals or medical documentation with a doctor. Requests and documents depend on clinical assessment.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eo9ll004704jul81o67o2",
+    "field": "ctaLabel",
+    "before": "Referral Letters & Investigations — Clinical Documentation Online",
+    "after": "Referral letters and investigations",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eoaw8004904jueadx1jn2",
+    "field": "body",
+    "before": "Need GP paediatric consultation? Our Children's GP Consultation — Online, Same Day covers this as a dedicated consultation.",
+    "after": "Read about GP-level assessment of common childhood symptoms and advice on next steps.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eoaw8004904jueadx1jn2",
+    "field": "ctaLabel",
+    "before": "Children's GP Consultation — Online, Same Day",
+    "after": "Children's GP consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eoc6w004b04jubt3b9uvm",
+    "field": "heading",
+    "before": "Adolescent Mental Health?",
+    "after": "Adolescent mental health",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eoc6w004b04jubt3b9uvm",
+    "field": "body",
+    "before": "For adolescent mental health, our Mental Health Assessment — Online, in English provides dedicated care — see mental health assessment.",
+    "after": "Read about a confidential online mental health assessment and the support available at GP level.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eoc6w004b04jubt3b9uvm",
+    "field": "ctaLabel",
+    "before": "Mental Health Assessment — Online, in English",
+    "after": "Mental health assessment",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eodhl004d04juvb58n4io",
+    "field": "heading",
+    "before": "Paediatric Second Opinion?",
+    "after": "A second opinion on your child’s health",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eodhl004d04juvb58n4io",
+    "field": "body",
+    "before": "For paediatric second opinion, our Second Medical Opinion — Independent Clinical Assessment provides dedicated care — see second opinion.",
+    "after": "Discuss your diagnosis, treatment or investigation results with another doctor for an independent clinical opinion.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eodhl004d04juvb58n4io",
+    "field": "ctaLabel",
+    "before": "Second Medical Opinion — Independent Clinical Assessment",
+    "after": "Second medical opinion",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eoes9004f04jud4qubk32",
+    "field": "body",
+    "before": "Need investigation results review? Our Referral Letters & Investigations — Clinical Documentation Online covers this as a dedicated consultation.",
+    "after": "Discuss investigation results, tests, referrals or medical documentation with a doctor. Requests and documents depend on clinical assessment.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eoes9004f04jud4qubk32",
+    "field": "ctaLabel",
+    "before": "Referral Letters & Investigations — Clinical Documentation Online",
+    "after": "Referral letters and investigations",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eog2x004h04ju0958zqyt",
+    "field": "heading",
+    "before": "Neurodevelopmental Referral Pathway?",
+    "after": "Neurodevelopmental assessment and referrals",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eog2x004h04ju0958zqyt",
+    "field": "body",
+    "before": "For neurodevelopmental referral pathway, our Neurology Consultation — Specialist Assessment Online provides dedicated care — see neurology consultation.",
+    "after": "Read about specialist neurological assessment, treatment review and advice on further investigations.",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  },
+  {
+    "table": "serviceLinkTranslations",
+    "id": "cmr8eog2x004h04ju0958zqyt",
+    "field": "ctaLabel",
+    "before": "Neurology Consultation — Specialist Assessment Online",
+    "after": "Neurology consultation",
+    "reason": "Replace malformed promotional link copy with a clear description of the existing destination; preserve target and clinical scope."
+  }
+]

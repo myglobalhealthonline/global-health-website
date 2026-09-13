@@ -1,0 +1,123 @@
+{
+  "checkedAt": "2026-09-12T20:20:10.288Z",
+  "endpoint": "/api/services/medic-pediatru-online?countryCode=ro&locale=EN",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee7fb000gfsjuxxgacs5y",
+      "kind": "GENERAL",
+      "slug": "medic-pediatru-online",
+      "name": "Children's GP Consultation — Online, Same Day",
+      "summary": "Child unwell? Our CMR-registered doctors assess children's health concerns by secure video call. No waiting room, same-day appointments available anywhere in Romania.",
+      "seoTitle": "Paediatric GP Online | Romania | Children's Doctor | Same Day",
+      "seoDescription": "Same-day paediatric consultations for children. Our CMR-registered doctors assess children's health concerns by secure video call. No waiting room, same-day appointments available anywhere in Romania.",
+      "seoKeywords": [
+        "paediatric GP online Romania",
+        "children's doctor online Romania",
+        "paediatric consultation online Romania",
+        "online doctor child Romania",
+        "English paediatrician online Romania"
+      ],
+      "heroTitle": "Children's GP Consultation — Online, Same Day",
+      "heroDescription": "Quick pediatric consultations and medical advice for children. Our licensed CMR doctors assess the child’s symptoms through a secure video consultation and provide clear recommendations for the next steps.",
+      "detailBody": "<p>Your child is unwell and your next paediatrician appointment is days away. Or you are outside a major city where paediatric access is limited. Or it is Saturday evening and the clinic is closed. Or you want to understand your child's symptoms before deciding whether to go to the emergency department.</p><p>Our doctors, registered with the Romanian College of Physicians (CMR), offer children's GP consultations by secure video call — assessing your child's symptoms, advising on management, and coordinating referral or further investigation where clinically indicated. Same day, from anywhere in Romania, in English, Romanian. A parent or guardian must be present throughout all consultations for children under 16.</p><h2>Who This Service Is For</h2><p>This consultation is appropriate for:</p><ul><li>Infants, children, and adolescents up to 18 years with acute or non-urgent health concerns</li><li>Parents without a registered paediatrician or family doctor for their child</li></ul><p>Families registered with a Romanian paediatrician who need clinical advice today, outside clinic hours</p><p>Parents who need a child's symptoms assessed before deciding whether to go to the emergency department</p><p>Parents who received advice or documentation from a Romanian paediatrician and want it reviewed and explained clearly</p><ul><li>Adolescents aged 16 and over who want to discuss a health concern directly with a doctor</li><li>Families in rural areas or smaller cities where paediatric access is limited</li></ul><p>This service is for acute and non-urgent GP-level paediatric concerns. For paediatric emergencies, call 112 or go to the nearest emergency department immediately. Fever in infants under 3 months requires emergency assessment — do not book a video consultation.</p><h2>Paediatric Healthcare in Romania — The Access Gap</h2><p>Romania has one of the lowest ratios of paediatricians to children in the EU. In the public system, paediatric waiting times are long and clinic availability is heavily concentrated in county capitals and major cities. In rural areas and smaller towns, access to a paediatrician is often practically impossible without significant travel.</p><p>In the private sector, paediatric care is better resourced in Bucharest and in some major regional cities — but English-speaking paediatricians are rare even in the private sector outside the capital.</p><p>The result is that parents across Romania — Romanian nationals and expats alike — frequently face the same problem: a child who is unwell today, no available paediatric appointment, and a choice between an often overcrowded emergency department or waiting and hoping.</p><p>This service addresses this gap directly. GP-level paediatric assessment by video call, same day, from anywhere in Romania — with clear guidance on whether in-person or emergency care is needed.</p><h2>Conditions Commonly Assessed</h2><ul><li>Respiratory and ENT</li><li>Common cold, cough, and upper respiratory tract infections</li><li>Ear infections — otitis media and otitis externa</li><li>Sore throat and tonsillitis</li><li>Croup — assessment and guidance</li><li>Wheezing and mild asthma concerns</li><li>Sinusitis in older children</li><li>Fever and general illness</li></ul><p>Fever in children over 3 months — assessment, advice on management, and guidance on when to seek further care</p><ul><li>Viral illnesses — roseola, hand foot and mouth, chickenpox</li><li>Gastroenteritis — vomiting and diarrhoea, dehydration assessment</li><li>Urinary tract infections in children</li><li>Fatigue and general malaise</li><li>Skin</li><li>Rashes — assessment and guidance for parents</li><li>Eczema in infants and children — flare management and ongoing advice</li><li>Impetigo and skin infections in children</li><li>Molluscum contagiosum</li><li>Nappy rash and infant skin concerns</li><li>Allergic skin reactions</li><li>Growth, development, and behaviour</li></ul><p>Parental concerns about developmental milestones — with referral for formal assessment where indicated</p><ul><li>Sleep difficulties in infants and young children</li><li>Feeding concerns in infants</li><li>Behavioural concerns in school-age children — with referral where indicated</li><li>Adolescent health concerns — acne, menstrual health, mental wellbeing, weight concerns</li><li>Chronic condition management</li><li>Asthma management in children — review and ongoing guidance</li><li>Eczema — ongoing management and flare review</li><li>Allergies — assessment and management guidance</li><li>Chronic abdominal pain in children — assessment and referral where indicated</li><li>Other</li><li>Medical documentation — school absence letters, fitness certificates, referral letters</li><li>Review of results or clinical letters from Romanian paediatricians — explained clearly</li><li>Pre-travel health advice for children</li><li>Vaccination schedule queries — clarification and guidance</li></ul><h2>What Your Consultation Includes</h2><p>Full paediatric clinical assessmentYour doctor takes a complete history of your child's symptoms — onset, duration, severity, associated symptoms, feeding and hydration status, relevant medical history, current medications, vaccination status, and family history where relevant. For younger children, the consultation is conducted with the parent describing symptoms and showing the child on video where relevant.</p><p>Safety assessmentEvery paediatric consultation includes assessment of whether the child's presentation requires emergency or urgent in-person care. Your doctor advises clearly and immediately if this is the case.</p><p>Clear parental guidanceYou leave the consultation knowing what is most likely happening with your child, what to do at home, what symptoms to watch for, what would prompt you to seek further care, and when to expect improvement. Parental confidence and knowledge is a clinical outcome in itself — a parent who understands what is happening with their child makes better decisions about when to seek further care.</p><p>Electronic prescription — where clinically appropriateWhen clinically indicated, your doctor issues an electronic prescription through the Romanian Electronic Prescription System (SIPE). You present it at any pharmacy of your choice in Romania.</p><p>Note: Special-regime prescriptions covering certain medications cannot be transmitted electronically under Romanian law. Your doctor advises if this applies to your child's situation.</p><p>Antibiotic prescription — where clinically indicatedSince 2024, all antibiotics in Romania require a doctor's prescription. For children with bacterial infections — ear infections, throat infections, urinary tract infections, and skin infections — your doctor assesses the presentation and prescribes the appropriate antibiotic where clinically justified.</p><p>Referral and documentationWhen referral to a Romanian paediatrician, specialist, or emergency department is needed, your doctor issues the relevant documentation on the same day — in English, Romanian as appropriate.</p><h2>When to Go to the Emergency Department — A Clear Guide for Parents</h2><p>One of the most common and most stressful decisions parents face is whether a child's condition warrants emergency care or whether careful monitoring at home is appropriate. This consultation helps you make that decision with clinical support — but some presentations require emergency care without waiting for a video consultation:</p><p>Go to the emergency department immediately if your child has:</p><ul><li>Fever in an infant under 3 months — this is always an emergency</li><li>Difficulty breathing — any rapid, laboured, or noisy breathing</li><li>A rash that does not fade when pressed with a glass — possible meningitis, call 112</li><li>First seizure, or a seizure lasting more than 5 minutes</li><li>Loss of consciousness or unresponsiveness</li><li>Severe allergic reaction — swelling of lips, tongue, or throat</li><li>A child who is deteriorating rapidly</li></ul><p>Paediatric emergency departments in Romania:</p><p>Spitalul Clinic de Urgență pentru Copii \"Grigore Alexandrescu\" — Bucharest, dedicated children's emergency hospital</p><ul><li>Spitalul Clinic de Urgență pentru Copii \"Marie Curie\" — Bucharest</li><li>Spitalul Clinic de Urgență pentru Copii \"Louis Țurcanu\" — Timișoara</li><li>Spitalul Clinic de Urgență pentru Copii — Cluj-Napoca</li></ul><p>Outside major cities: the nearest spital județean (county hospital) has a paediatric emergency department</p><p>When in doubt, always go to the emergency department. It is always better to be seen and reassured than to wait at home with a deteriorating child.</p><h2>Important Information Before You Book</h2><p>A parent or guardian must be present throughout all consultations for children under 16, in accordance with Legea nr. 272/2004 privind protecția și promovarea drepturilor copilului</p><p>For adolescents aged 16 and over, the doctor assesses capacity to consent individually in accordance with Romanian medical and legal standards</p><p>Fever in infants under 3 months is a medical emergency requiring immediate in-person assessment — do not book a video consultation for this presentation</p><p>Rapidly deteriorating children — if your child is getting significantly worse while you are trying to book, go to the emergency department immediately rather than waiting for a consultation</p><p>Mandatory reporting — our clinical professionals are bound by Legea nr. 272/2004. Where a consultation raises child protection concerns, the professional is legally and professionally obliged to act accordingly, which may involve DGASPC. This obligation takes precedence over confidentiality</p><p>The decision to issue any documentation — sick notes, prescriptions, referral letters — is always a clinical decision made by the doctor after full assessment</p><h2>Frequently Asked Questions</h2><p>Can a child's illness really be assessed by video call?Yes — for the vast majority of non-emergency presentations. A detailed parental history of symptoms combined with visual observation of the child during the call allows an experienced doctor to make a clinical assessment of most common childhood illnesses. Where the presentation requires in-person examination — for example, to assess breathing sounds, ear examination, or abdominal palpation — your doctor advises clearly and coordinates appropriate referral.</p><p>My child has a fever — can I use this service?Yes — for children over 3 months. Your doctor assesses the severity, likely cause, and appropriate management. For infants under 3 months, fever is a medical emergency — go to the nearest emergency department immediately without booking a video consultation.</p><p>Can the doctor prescribe antibiotics for my child?Yes — where clinically indicated following full assessment. Since 2024, all antibiotics in Romania require a doctor's prescription. Your doctor assesses your child's presentation and prescribes the appropriate antibiotic where the clinical evidence supports it.</p><p>Do I need to be registered with a Romanian paediatrician to use this service?No. This service is available to all families in Romania — no prior registration, no family doctor required, no health insurance needed.</p><p>My child received a letter or diagnosis from a Romanian paediatrician that I do not understand — can you help?Yes. Bring the letter or results to the consultation and your doctor reviews and explains the clinical findings and recommendations clearly.</p><p>Is this service available for teenagers?Yes. Adolescent health concerns — including acne, menstrual health, mental wellbeing, and weight — are part of this service. For adolescents aged 16 and over, the doctor assesses whether the young person can consent independently. For those under 16, a parent or guardian must be present throughout.</p><p>What if my child needs to go to the emergency department?If your doctor determines that your child needs emergency or urgent in-person care, you will be told immediately and clearly — including what to say when you arrive and which emergency department is most appropriate for your location in Romania. Your doctor can issue a brief clinical summary letter if this would be helpful.</p><p>Can I get a school absence letter through this service?Yes. School absence letters can be issued at the doctor's clinical discretion following assessment — confirming that the child was assessed and is unfit for school, without specifying clinical details.</p><p>Do I need Romanian health insurance?No. This is a private-pay service. Prescriptions issued through this service are dispensed at full private cost regardless of insurance status.</p><p>Can I use this service from anywhere in Romania?Yes. This service is specifically designed to address the paediatric access gap outside major cities. All you need is a stable internet connection and a device with a camera.</p>",
+      "ctaLabel": "Schedule the consultation",
+      "sortOrder": 40,
+      "durationMinutes": 15,
+      "basePriceCents": 18500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:48.866Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js5qj001makju0g2lhz5c",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee7fb000gfsjuxxgacs5y",
+          "path": "/api/media/media/0b172017-a1c5-4589-adb6-c371c7367581-0852ef25-d932-41fe-ae97-baad84b5612c-3.webp",
+          "altText": "Consultație pediatrică de medicină generală — online, în aceeași zi"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "EN",
+      "links": [
+        {
+          "id": "cmr8ensc7003g04ju26nu0cs2",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "Complex Presentations?",
+          "body": "For complex presentations, our Specialist Paediatrician — Expert Child Health Assessment Online provides dedicated care — see specialist paediatrician.",
+          "ctaLabel": "Specialist Paediatrician — Expert Child Health Assessment Online",
+          "targetSlug": "consultatie-pediatrie",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8entmu003i04juhz6va0jm",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "Eczema, Skin Infections in Children?",
+          "body": "For eczema, skin infections in children, our Skin Consultation — Online Assessment in English provides dedicated care — see skin consultation.",
+          "ctaLabel": "Skin Consultation — Online Assessment in English",
+          "targetSlug": "consultatie-dermatologica",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8enuxi003k04ju9viczc6o",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "Adolescent Mental Health?",
+          "body": "For adolescent mental health, our Mental Health Assessment — Online, in English provides dedicated care — see mental health assessment.",
+          "ctaLabel": "Mental Health Assessment — Online, in English",
+          "targetSlug": "sanatate-mintala-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmr8enw8n003m04ju0d52j3rp",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "Pre-travel Advice for Children?",
+          "body": "For pre-travel advice for children, our Travel Health Consultation — Medical Assessment Before You Go provides dedicated care — see travel health.",
+          "ctaLabel": "Travel Health Consultation — Medical Assessment Before You Go",
+          "targetSlug": "medicina-calatoriei",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

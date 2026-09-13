@@ -1,0 +1,189 @@
+{
+  "endpoint": "/api/services/salud-femenina-online?countryCode=es&locale=PT",
+  "checkedAt": "2026-09-13T02:30:05.177Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q27m001dngju2395w6dl",
+      "kind": "GENERAL",
+      "slug": "salud-femenina-online",
+      "name": "Saúde Feminina",
+      "summary": null,
+      "seoTitle": "Saúde Feminina Online Espanha | Avaliação Confidencial | Médico Inscrito",
+      "seoDescription": "Contraceptivos, saúde hormonal, menopausa ou outras preocupações de saúde feminina. Os nossos médicos credenciados oferecem avaliações confidenciais por videochamada segura. No mesmo dia em Espanha.",
+      "seoKeywords": [
+        "salud femenina online España",
+        "anticonceptivos online médico España",
+        "menopausia evaluación online España",
+        "SOP médico online España",
+        "salud hormonal femenina online España"
+      ],
+      "heroTitle": "Saúde Feminina — Avaliação Confidencial Online",
+      "heroDescription": "A saúde feminina abrange muito mais do que a medicina reprodutiva — inclui saúde hormonal, condições metabólicas, bem-estar mental e as formas específicas como as condições comuns se manifestam de maneira diferente nas mulheres. Os nossos médicos, inscritos de acordo com os requisitos da Organización Médica Colegial (OMC), oferecem avaliações confidenciais de saúde feminina por videochamada segura. Quer precise de aconselhamento contracetivo, avaliação hormonal, apoio na menopausa, ou de uma preocupação de saúde feminina tratada sem barreiras — estamos aqui, no mesmo dia, a partir de qualquer ponto de Espanha, em espanhol, inglês ou português.",
+      "detailBody": "<h2>Para quem é este serviço</h2><p>Esta consulta é apropriada para mulheres que:</p><ul><li>Precisam de aconselhamento contracetivo, revisão ou continuidade</li><li>Têm preocupações de saúde hormonal — SOP, patologia da tiroide, perimenopausa ou menopausa</li><li>Experimentam sintomas que podem ter base hormonal ou metabólica — fadiga, alterações de humor, aumento de peso, alterações na pele, queda de cabelo</li><li>Precisam de avaliação de irregularidades menstruais, menstruações abundantes ou dolorosas</li><li>Têm preocupações de saúde sexual — libido reduzida, secura vaginal ou dor durante as relações</li><li>Estão grávidas ou a planear uma gravidez e precisam de aconselhamento pré-concecional</li><li>Precisam de avaliação e gestão de infeções urinárias</li><li>Receberam resultados de um ginecologista ou médico em Espanha que querem que sejam revistos e explicados com mais detalhe</li><li>São expats ou residentes internacionais que precisam de cuidados de saúde feminina em inglês ou português</li><li>Não têm médico de família ou ginecologista registado atualmente</li></ul><h2>Cuidados de saúde feminina em Espanha — acesso e o que oferece este serviço</h2><p>Em Espanha, as mulheres podem aceder diretamente à ginecologia no setor privado sem necessidade de referenciação pelo médico de família. No sistema público, os cuidados de saúde feminina são geridos através do médico de família e do especialista em ginecologia — com tempos de espera que podem ser significativos para consultas não urgentes.</p><p>Para mulheres sem médico de família atribuído, para residentes internacionais que preferem consultar em inglês ou português, ou para qualquer pessoa que precise de cuidados de saúde feminina hoje sem esperar semanas, a Global Health fornece avaliações de saúde feminina ao nível da medicina geral — abrangendo saúde hormonal, contracetivos, menopausa e saúde feminina geral — complementando, não substituindo, os cuidados ginecológicos especializados. Quando é necessária avaliação ginecológica especializada, o médico coordena a referenciação no mesmo dia.</p><h2>O que inclui a consulta</h2><p><strong>Avaliação clínica completa</strong></p><p>O médico revê os seus sintomas em detalhe, historial menstrual e reprodutivo, medicação atual, indicadores hormonais, historial médico relevante e fatores do estilo de vida — construindo um quadro clínico completo da sua preocupação.</p><p><strong>Avaliação hormonal e metabólica</strong></p><p>Os sintomas de saúde feminina frequentemente têm raízes hormonais ou metabólicas que não são abordadas em consultas agudas padrão. O médico avalia os fatores hormonais — função da tiroide, resistência à insulina, SOP e perimenopausa — quando clinicamente relevante.</p><p><strong>Plano de gestão clínica</strong></p><p>Com base na avaliação, o médico aconselha sobre os passos seguintes mais adequados — que podem incluir recomendações de estilo de vida e nutricionais, recomendações clínicas a critério do médico, referenciação para análises ou avaliação especializada, ou gestão continuada ao nível da medicina geral.</p><p><strong>Documentação clínica — a critério do médico</strong></p><p>Quando clinicamente indicado, o médico emite a documentação clínica correspondente válida em qualquer farmácia espanhola.</p><p>Nota: Os estupefacientes e determinadas substâncias controladas requerem documentação especial que não pode ser emitida eletronicamente. O seu médico informá-lo-á se isso se aplicar.</p><p><strong>Coordenação de referenciação e investigação</strong></p><p>Quando a referenciação para ginecologia, análises de sangue ou outras investigações estiver indicada, o médico emite a documentação relevante no mesmo dia.</p><h2>Condições habitualmente avaliadas</h2><p><strong>Contraceção e saúde reprodutiva</strong></p><ul><li>Avaliação e revisão contracetiva — pílula combinada, minipílula, adesivo, anel, injetável e opções não hormonais</li><li>Efeitos secundários relacionados com a contraceção e a sua gestão</li><li>Aconselhamento pré-concecional e planeamento</li><li>Preocupações de fertilidade — avaliação inicial e referenciação quando indicado</li></ul><p><strong>Saúde hormonal</strong></p><ul><li>Síndrome dos ovários poliquísticos (SOP) — avaliação, apoio na gestão e acompanhamento</li><li>Endometriose — gestão de sintomas e coordenação de referenciação</li><li>Síndrome pré-menstrual (SPM) e transtorno disfórico pré-menstrual (TDPM)</li><li>Irregularidades menstruais, menstruações abundantes ou dolorosas</li><li>Desequilíbrio hormonal que afeta o humor, o peso, a energia e a pele</li><li>Patologia da tiroide — especialmente relevante para a saúde hormonal feminina</li></ul><p><strong>Menopausa e perimenopausa</strong></p><ul><li>Avaliação da perimenopausa e gestão de sintomas</li><li>Menopausa — afrontamentos, perturbações do sono, alterações de humor, sintomas cognitivos</li><li>Terapêutica hormonal de substituição (THS) — avaliação, início e revisão continuada a critério do médico</li><li>Saúde pós-menopáusica e bem-estar a longo prazo</li></ul><p><strong>Saúde sexual</strong></p><ul><li>Libido reduzida e fatores hormonais contribuintes</li><li>Secura vaginal e desconforto — avaliação e gestão</li><li>Dor durante as relações — avaliação clínica e referenciação quando indicado</li></ul><p><strong>Saúde feminina geral</strong></p><ul><li>Infeções urinárias e cistite recorrente</li><li>Preocupações de saúde mamária e referenciação quando indicado</li><li>Consultas sobre citologia e coordenação de referenciação</li><li>Alterações na pele e no cabelo de base hormonal — acne, queda de cabelo, hirsutismo</li><li>Saúde mental nas mulheres — ansiedade, depressão e preocupações de humor pós-parto</li><li>Controlo do peso com base hormonal ou metabólica</li></ul><h2>Interrupção da gravidez — nota importante</h2><p>A interrupção voluntária da gravidez (IVE) em Espanha é regulada pela Lei Orgânica 2/2010, de saúde sexual e reprodutiva e da interrupção voluntária da gravidez. A IVE requer cuidados presenciais num centro médico autorizado e não pode ser gerida através de uma consulta de telemedicina.</p><p>Se precisar de informação sobre os serviços disponíveis em Espanha ou sobre como aceder a cuidados apropriados, o seu médico pode fornecer orientação e informação de referenciação durante a consulta.</p><h2>Porque é que a saúde hormonal é frequentemente desvalorizada</h2><p>Muitos sintomas que as mulheres atribuem ao stress ou à idade — fadiga, alterações de humor, aumento de peso, alterações na pele e no cabelo — têm causas hormonais ou metabólicas específicas que as consultas agudas padrão não investigam. A SOP afeta aproximadamente uma em cada dez mulheres e é frequentemente não diagnosticada. Os sintomas da perimenopausa são rotineiramente atribuídos à ansiedade. As causas hormonais de fadiga, peso e humor são sistematicamente subavaliadas nos cuidados primários padrão.</p><p>Uma avaliação centrada especificamente na saúde feminina — com tempo, conhecimento hormonal e um médico que avalia os sintomas no contexto completo da saúde feminina — é clinicamente mais eficaz do que uma consulta médica genérica. Isto é o que este serviço oferece.</p>",
+      "ctaLabel": null,
+      "sortOrder": 160,
+      "durationMinutes": 20,
+      "basePriceCents": 4900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.266Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru15npj0000bsjudyjnw7kp",
+          "kind": "IMAGE",
+          "key": "media/a67645f8-0f09-4f9c-9836-5a796bf4c630-es-salud-femenina-online.png",
+          "path": "/api/media/media/a67645f8-0f09-4f9c-9836-5a796bf4c630-es-salud-femenina-online.png",
+          "altText": "Salud Femenina"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q2gg001engjuqf9auib2",
+          "question": "Posso aceder a aconselhamento contraceptivo através deste serviço?",
+          "answer": "Sim. A avaliação e revisão contraceptiva é uma parte central deste serviço. O médico realiza uma avaliação clínica completa e aconselha sobre as opções mais apropriadas com base no seu historial médico e necessidades individuais. As recomendações clínicas são feitas a critério do médico após avaliação.",
+          "sortOrder": 0,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q2gg001fngju04o9ugqo",
+          "question": "Posso aceder à THS através deste serviço?",
+          "answer": "A THS pode ser avaliada e iniciada no âmbito da medicina geral, sempre que seja clinicamente apropriado. O médico realiza uma avaliação completa dos seus sintomas, historial médico e adequação antes de aconselhar sobre qualquer gestão hormonal. Todas as recomendações são feitas a critério do médico.",
+          "sortOrder": 1,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q2gg001gngjug41vvtdu",
+          "question": "Preciso de encaminhamento ginecológico para usar este serviço?",
+          "answer": "Não. Este serviço está disponível diretamente — sem necessidade de encaminhamento. Se a sua avaliação indicar que é necessária uma avaliação ginecológica especializada, o médico coordena o encaminhamento no mesmo dia.",
+          "sortOrder": 2,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q2gg001hngjuudg6ono1",
+          "question": "Podem rever os resultados que recebi de um ginecologista espanhol?",
+          "answer": "Sim. Se você recebeu resultados, cartas ou um plano de tratamento de um ginecologista e quer que sejam revisados e explicados com mais detalhes, traga-os para a consulta. O médico os revisa na íntegra e explica os achados e as recomendações clínicas de forma clara.",
+          "sortOrder": 3,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q2gg001ingjudxztgdga",
+          "question": "Este serviço inclui a interrupção da gravidez?",
+          "answer": "Não. A IVE na Espanha requer atendimento presencial em um centro médico autorizado conforme a Lei Orgânica 2/2010 e não pode ser gerida por meio de uma consulta de telemedicina.",
+          "sortOrder": 4,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q2gg001jngjupaq38jl3",
+          "question": "Este serviço é adequado para preocupações relacionadas com a gravidez?",
+          "answer": "Para aconselhamento pré-concecional geral e perguntas sobre o início da gravidez, sim. Para cuidados pré-natais continuados, preocupações obstétricas ou qualquer coisa que exija avaliação obstétrica presencial, o médico orienta sobre o encaminhamento apropriado.",
+          "sortOrder": 5,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q2gg001kngjuzfa854u8",
+          "question": "Posso usar este serviço sem médico de família ou ginecologista em Espanha?",
+          "answer": "Sim. Este serviço foi especificamente concebido para mulheres — incluindo expats e residentes internacionais — que atualmente não têm médico de família ou ginecologista registado.",
+          "sortOrder": 6,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q2gg001lngjun2x5jvvx",
+          "question": "Preciso de seguro de saúde espanhol?",
+          "answer": "Não. É um serviço privado de pagamento direto. A documentação clínica emitida através deste serviço é disponibilizada ao preço privado integral, independentemente do estado do seguro.",
+          "sortOrder": 7,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q2gg001mngjum5jl48kf",
+          "question": "Posso usar este serviço de qualquer ponto de Espanha?",
+          "answer": "Sim — incluindo Ilhas Baleares, Ilhas Canárias, Ceuta e Melilha. Só precisa de uma conexão estável à internet e de um dispositivo com câmara.",
+          "sortOrder": 8,
+          "resolvedLocale": "PT"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "PT",
+      "links": [
+        {
+          "id": "cmre7s43s001kg8ju7lqty4vv",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre acné hormonal — evaluación dermatológica especialista?",
+          "body": "Nuestra Dermatología Especialista está pensada específicamente para acné hormonal — evaluación dermatológica especialista.",
+          "ctaLabel": "Dermatología Especialista",
+          "targetSlug": "dermatologia-especialista-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7s075001ag8jumyfi2au3",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Control de peso con base hormonal?",
+          "body": "Si tu situación está relacionada con control de peso con base hormonal, nuestra Control de Peso te ofrece la evaluación adecuada.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7s0z9001cg8jup1hrg8if",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con caída del cabello hormonal en mujeres?",
+          "body": "Para caída del cabello hormonal en mujeres, consulta nuestra página de Caída del Cabello — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Caída del Cabello",
+          "targetSlug": "caida-cabello-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7s1re001eg8ju06lljkog",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre seguimiento de patología tiroidea?",
+          "body": "Nuestra Enfermedades Crónicas está pensada específicamente para seguimiento de patología tiroidea.",
+          "ctaLabel": "Enfermedades Crónicas",
+          "targetSlug": "enfermedades-cronicas-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "deploymentId": "23a4a388-bf54-4510-83e3-add5588da419",
+  "status": "SUCCESS",
+  "checkedAt": "2026-09-13T00:27:13.830Z",
+  "readiness": {
+    "status": 200,
+    "body": {
+      "ok": true,
+      "message": "Backend is ready.",
+      "database": {
+        "connected": true
+      }
+    }
+  },
+  "rollbackDeploymentId": "2b9da1b0-0740-41c5-b4ca-d42785047654"
+}

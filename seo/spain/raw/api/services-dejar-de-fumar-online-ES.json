@@ -1,0 +1,179 @@
+{
+  "endpoint": "/api/services/dejar-de-fumar-online?countryCode=es&locale=ES",
+  "checkedAt": "2026-09-13T02:30:00.515Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qcvw004engju2es5log3",
+      "kind": "GENERAL",
+      "slug": "dejar-de-fumar-online",
+      "name": "Dejar de Fumar",
+      "summary": null,
+      "seoTitle": "Dejar de Fumar Online España | Apoyo Médico | Médico de Cabecera",
+      "seoDescription": "¿Quieres dejar de fumar con apoyo médico? Nuestros médicos de cabecera colegiados evalúan tu dependencia al tabaco y diseñan un plan personalizado por videollamada. El mismo día en España.",
+      "seoKeywords": [
+        "dejar de fumar online España",
+        "apoyo médico dejar de fumar España",
+        "deshabituación tabáquica online España",
+        "médico tabaco online España",
+        "dejar fumar médico cabecera online"
+      ],
+      "heroTitle": "Dejar de Fumar — Evaluación Médica y Plan Personalizado Online",
+      "heroDescription": "Dejar de fumar es una de las decisiones más importantes que puedes tomar para tu salud — y también una de las más difíciles. La dependencia al tabaco no es solo física: es también psicológica y conductual. La mayoría de las personas que intentan dejarlo sin apoyo médico recaen en las primeras semanas. El apoyo médico estructurado cambia esto. Un médico que evalúa tu nivel de dependencia, diseña un plan adaptado a tu perfil específico, y te acompaña durante el proceso multiplica significativamente tus posibilidades de éxito. Nuestros médicos de cabecera, colegiados conforme a los requisitos de la Organización Médica Colegial (OMC), ofrecen evaluaciones de deshabituación tabáquica por videollamada segura — evaluando tu dependencia, diseñando un plan personalizado, y emitiendo la documentación clínica correspondiente donde esté clínicamente indicado. El mismo día, desde cualquier punto de España, en español, inglés o portugués.",
+      "detailBody": "<h2>Por qué el apoyo médico marca la diferencia</h2><p>La dependencia al tabaco activa los mismos circuitos de recompensa en el cerebro que otras dependencias. Intentar interrumpirla solo con fuerza de voluntad ignora la base biológica de la adicción — y por eso fracasa en la mayoría de los casos.</p><p>El apoyo médico estructurado actúa en varios niveles simultáneamente:</p><ul><li>Evaluación del nivel de dependencia — no todos los fumadores tienen el mismo perfil de dependencia. El tipo de intervención más adecuada depende de cuántos cigarrillos fumas, cuándo fumas el primero del día, cómo has respondido a intentos anteriores, y qué otras condiciones de salud tienes</li><li>Plan farmacológico adaptado — donde esté clínicamente indicado, tu médico de cabecera puede valorar opciones de tratamiento farmacológico de apoyo, a criterio del médico tras evaluación completa del perfil clínico</li><li>Apoyo conductual — identificar los desencadenantes que llevan a fumar y desarrollar estrategias alternativas es parte del plan</li><li>Seguimiento — el seguimiento regular durante el proceso de deshabituación mejora significativamente las tasas de éxito</li></ul><h2>Para quién es este servicio</h2><p>Esta consulta es apropiada para adultos que:</p><ul><li>Fuman actualmente y quieren dejar de hacerlo con apoyo médico estructurado</li><li>Han intentado dejar de fumar antes sin éxito y quieren explorar enfoques con mayor evidencia científica</li><li>Quieren entender qué opciones de apoyo farmacológico existen y si son candidatos a ellas, tras evaluación clínica completa</li><li>Tienen condiciones de salud — enfermedad cardiovascular, diabetes, EPOC, embarazo planificado — donde dejar de fumar es una prioridad clínica urgente</li><li>Quieren apoyo para dejar de fumar en inglés o portugués sin barreras lingüísticas</li></ul><h2>Qué incluye la consulta</h2><p><strong>Evaluación del nivel de dependencia</strong></p><p>Tu médico de cabecera evalúa tu perfil de dependencia al tabaco — incluyendo cuántos cigarrillos fumas al día, cuándo fumas el primero del día, cómo te sientes cuando no puedes fumar, y cómo has respondido a intentos anteriores de dejarlo. Esta evaluación estructura el plan de apoyo más adecuado para tu perfil específico.</p><p><strong>Evaluación de la motivación</strong></p><p>La motivación es un factor clínico relevante en la deshabituación tabáquica. Tu médico explora tus razones para querer dejar de fumar, las barreras que anticipas, y cómo estructurar el plan para maximizar tus posibilidades de éxito.</p><p><strong>Plan de deshabituación personalizado</strong></p><p>Basándose en la evaluación, tu médico diseña un plan estructurado — que puede incluir estrategias conductuales para gestionar los desencadenantes y el síndrome de abstinencia, apoyo nutricional básico para gestionar el posible aumento de peso al dejar de fumar, y recomendaciones de actividad física como herramienta de apoyo.</p><p><strong>Valoración de opciones de apoyo farmacológico — a criterio del médico</strong></p><p>Donde esté clínicamente indicado tras evaluación completa del perfil clínico, tu médico de cabecera puede valorar opciones de tratamiento farmacológico de apoyo a la deshabituación tabáquica. Ninguna opción farmacológica puede confirmarse ni prescribirse antes de la evaluación clínica.</p><p>Nota: Desde junio de 2024, el Ministerio de Sanidad financia determinados medicamentos para tratamientos de apoyo a la deshabituación tabáquica para pacientes que cumplan criterios clínicos específicos — incluyendo fumadores con alta dependencia calificada por el test de Fagerström. Tu médico te informa durante la consulta si podrías cumplir los criterios de financiación y qué pasos seguir para acceder a ella a través del sistema público.</p><p><strong>Documentación clínica — a criterio del médico</strong></p><p>Cuando esté clínicamente indicado, tu médico emite la documentación clínica correspondiente válida en cualquier farmacia española.</p><p><strong>Seguimiento</strong></p><p>Dejar de fumar es un proceso — no un evento único. Las consultas de seguimiento están disponibles para monitorizar el progreso, gestionar los momentos de mayor riesgo de recaída, y ajustar el plan si es necesario.</p><h2>Dejar de fumar y tu salud — por qué ahora</h2><p>Los beneficios de dejar de fumar comienzan en las primeras horas y se acumulan durante años:</p><ul><li>20 minutos — la presión arterial y la frecuencia cardíaca se normalizan</li><li>12 horas — el monóxido de carbono en sangre vuelve a niveles normales</li><li>2 semanas a 3 meses — mejora la circulación y la función pulmonar</li><li>1 año — el riesgo de enfermedad coronaria se reduce a la mitad</li><li>5 años — el riesgo de ictus se equipara al de un no fumador</li><li>10 años — el riesgo de cáncer de pulmón se reduce a la mitad</li></ul><p>Para fumadores con condiciones cardiovasculares, diabetes, EPOC o que están planificando un embarazo, dejar de fumar es una de las intervenciones clínicas con mayor impacto en los resultados de salud a largo plazo — con frecuencia mayor que cualquier medicación.</p><h2>Deshabituación tabáquica en España — contexto</h2><p>España tiene una de las tasas de tabaquismo más altas de Europa Occidental. Aproximadamente el 22-23% de la población española adulta fuma diariamente, con prevalencia mayor entre hombres y en determinados grupos de edad.</p><p>El acceso a programas estructurados de deshabituación tabáquica en el sistema público es variable según la comunidad autónoma — en algunas hay programas bien establecidos, en otras el acceso es más limitado. Para residentes internacionales que prefieren el apoyo en inglés o portugués, las opciones son prácticamente inexistentes fuera de las grandes ciudades.</p><p>Nuestro servicio proporciona evaluación médica estructurada de deshabituación tabáquica — el mismo día, desde cualquier punto de España — con seguimiento disponible durante todo el proceso.</p>",
+      "ctaLabel": null,
+      "sortOrder": 110,
+      "durationMinutes": 15,
+      "basePriceCents": 3900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.264Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0jt5u0000asju50bs9n2e",
+          "kind": "IMAGE",
+          "key": "media/c05de5c7-21b7-4fb9-a7d9-e8c947d87cb8-es-dejar-de-fumar-online.png",
+          "path": "/api/media/media/c05de5c7-21b7-4fb9-a7d9-e8c947d87cb8-es-dejar-de-fumar-online.png",
+          "altText": "Dejar de Fumar"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qd3s004fngjul7t32gfw",
+          "question": "¿Puede un médico de cabecera ayudarme a dejar de fumar?",
+          "answer": "Sí. La deshabituación tabáquica es una parte integral de la atención primaria. Tu médico de cabecera evalúa tu nivel de dependencia, diseña un plan personalizado, y — donde esté clínicamente indicado tras evaluación completa — puede valorar opciones de apoyo farmacológico. El apoyo médico estructurado multiplica significativamente las posibilidades de éxito respecto al intento sin apoyo.",
+          "sortOrder": 0,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qd3s004gngju7lsyvqhh",
+          "question": "¿Qué opciones de apoyo farmacológico existen para dejar de fumar?",
+          "answer": "Existen diversas opciones de tratamiento farmacológico de apoyo a la deshabituación tabáquica — incluyendo terapia sustitutiva con nicotina, bupropión, citisina y vareniclina — con distintos perfiles de eficacia, tolerabilidad y contraindicaciones. La opción más adecuada para ti depende de tu perfil clínico completo. Ninguna puede confirmarse ni recomendarse antes de la evaluación médica.",
+          "sortOrder": 1,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qd3s004hngju3qocwgkc",
+          "question": "¿Están financiados estos tratamientos por la Seguridad Social?",
+          "answer": "Desde junio de 2024, determinados medicamentos para la deshabituación tabáquica están financiados por el Ministerio de Sanidad para pacientes que cumplan criterios clínicos específicos — incluyendo fumadores con alta dependencia. La financiación a través del sistema público requiere prescripción a través de un médico del SNS. Tu médico de Global Health te informa durante la consulta si podrías cumplir los criterios y qué pasos seguir.",
+          "sortOrder": 2,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qd3s004ingjuf5foaafu",
+          "question": "¿Cuántas consultas necesitaré?",
+          "answer": "Un plan estructurado de deshabituación tabáquica generalmente incluye una consulta inicial de evaluación y plan, y consultas de seguimiento durante el proceso — habitualmente a las 2 semanas, al mes y a los 3 meses. Tu médico diseña el calendario de seguimiento apropiado para tu caso.",
+          "sortOrder": 3,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qd3s004jngju6k14l6k4",
+          "question": "¿Qué pasa si he intentado dejar de fumar antes y he recaído?",
+          "answer": "La recaída es una parte habitual del proceso de deshabituación — no indica fracaso, sino que el plan necesita ajustarse. Intentos previos sin éxito son información clínica relevante que tu médico utiliza para diseñar un enfoque más efectivo. Cuantos más intentos anteriores, más importante es el apoyo médico estructurado.",
+          "sortOrder": 4,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qd3s004kngjucp1qdwy7",
+          "question": "¿Puedo usar este servicio si tengo condiciones de salud como diabetes o enfermedad cardiovascular?",
+          "answer": "Sí — y para estos pacientes dejar de fumar es especialmente prioritario. Tu médico evalúa tu perfil clínico completo al diseñar el plan, incluyendo posibles interacciones con tu medicación actual y las consideraciones específicas de tu condición de salud.",
+          "sortOrder": 5,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qd3s004lngjuqz0jlmbm",
+          "question": "¿Es este servicio adecuado durante el embarazo o la lactancia?",
+          "answer": "Si estás embarazada o en período de lactancia y quieres dejar de fumar, consulta con tu médico al inicio de la consulta. Las opciones de apoyo disponibles durante el embarazo son diferentes — tu médico te asesora sobre el enfoque más seguro para tu situación.",
+          "sortOrder": 6,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qd3s004mngjuazoie48k",
+          "question": "¿Necesito seguro médico español?",
+          "answer": "No. Es un servicio privado de pago directo. La documentación clínica emitida a través de este servicio se dispensa al precio privado completo con independencia del estado de aseguramiento.",
+          "sortOrder": 7,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qd3s004nngju9fu0ezjk",
+          "question": "¿Puedo usar este servicio desde cualquier punto de España?",
+          "answer": "Sí — incluyendo Islas Baleares, Islas Canarias, Ceuta y Melilla. Solo necesitas conexión estable a internet y un dispositivo con cámara.",
+          "sortOrder": 8,
+          "resolvedLocale": "ES"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "ES",
+      "links": [
+        {
+          "id": "cmre7t5kz003sg8ju2wbop6ng",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre evaluación cardiovascular para fumadores?",
+          "body": "Nuestra Cardiología Especialista está pensada específicamente para evaluación cardiovascular para fumadores.",
+          "ctaLabel": "Cardiología Especialista",
+          "targetSlug": "cardiologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7t40r003og8ju6nk2dtlb",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Apoyo de salud mental durante el proceso?",
+          "body": "Si tu situación está relacionada con apoyo de salud mental durante el proceso, nuestra Salud Mental te ofrece la evaluación adecuada.",
+          "ctaLabel": "Salud Mental",
+          "targetSlug": "salud-mental-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7t4sv003qg8juqi2i65cw",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con evaluación del impacto del tabaco en la salud?",
+          "body": "Para evaluación del impacto del tabaco en la salud, consulta nuestra página de Consulta Médica General — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

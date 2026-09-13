@@ -1,0 +1,185 @@
+{
+  "endpoint": "/api/services/dermatologia-especialista-online?countryCode=es&locale=PT",
+  "checkedAt": "2026-09-13T02:30:04.266Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qdwm004pngjuoofudwu5",
+      "kind": "SPECIALIST",
+      "slug": "dermatologia-especialista-online",
+      "name": "Dermatologia Especialista",
+      "summary": null,
+      "seoTitle": "Consulta Dermatológica Especialista Online Espanha | Dermatologista | Mesmo Dia",
+      "seoDescription": "Afeção cutânea complexa, acne grave ou lesão suspeita. Os nossos dermatologistas credenciados oferecem avaliações especializadas por videochamada com análise de imagem de alta resolução. No mesmo dia em Espanha.",
+      "seoKeywords": [
+        "consulta dermatológica especialista online España",
+        "dermatólogo online España",
+        "acné grave dermatólogo online España",
+        "lesión piel sospechosa dermatólogo online",
+        "psoriasis dermatólogo online España"
+      ],
+      "heroTitle": "Consulta Dermatológica Especialista — Avaliação Online com Dermatologista",
+      "heroDescription": "Algumas afeções cutâneas requerem mais do que uma consulta de medicina geral. A acne grave que pode requerer tratamento especializado, uma lesão suspeita que necessita de análise dermatoscópica detalhada, psoríase complexa resistente ao tratamento, ou uma afeção que não respondeu às abordagens habituais — estas apresentações requerem a profundidade de análise clínica que um dermatologista especialista fornece. Os nossos dermatologistas, inscritos de acordo com os requisitos da Organización Médica Colegial (OMC) e registados no seu colégio de especialidade, oferecem consultas dermatológicas especializadas por videochamada segura com análise de imagem de alta resolução. No mesmo dia, a partir de qualquer ponto de Espanha, em espanhol, inglês ou português.",
+      "detailBody": "<h2>Consulta de pele com médico de família vs. consulta dermatológica especializada</h2><p>A Global Health oferece dois níveis de cuidados para condições cutâneas.</p><p>Consulta de pele com médico de família — apropriada para a maioria das apresentações cutâneas agudas e não urgentes: eczema ligeiro a moderado, acne ligeiro a moderado, erupções, infeções cutâneas e pintas para vigilância de rotina. É o ponto de entrada correto para a maioria das preocupações de pele.</p><p>Consulta dermatológica especializada — realizada por dermatologistas credenciados da Global Health. Apropriada para:</p><ul><li>Acne grave ou acne que não responde aos tratamentos habituais — incluindo avaliação para tratamento especializado</li><li>Lesões suspeitas que requerem análise dermatoscópica de alta resolução</li><li>Psoríase complexa ou resistente ao tratamento</li><li>Condições cutâneas crónicas que não respondem à gestão ao nível da medicina geral</li><li>Segunda opinião dermatológica especializada</li><li>Biópsia cutânea coordenada — o dermatologista avalia e coordena o encaminhamento presencial quando indicado</li></ul><p>Não tens a certeza de qual é o nível apropriado? Começa com a consulta de pele com médico de família — se a tua apresentação requerer avaliação dermatológica especializada, o médico de família encaminha-te diretamente para este serviço dentro da mesma plataforma.</p><h2>Para quem é este serviço</h2><p>Esta consulta especializada é apropriada para adultos e adolescentes com:</p><ul><li>Acne grave — nódulos, quistos, acne conglobata, ou acne que causou cicatrizes significativas</li><li>Acne moderada a grave que não respondeu aos tratamentos habituais ao nível da medicina geral</li><li>Lesões cutâneas suspeitas — pintas que mudaram, lesões pigmentadas irregulares, ou qualquer lesão que gere preocupação clínica significativa</li><li>Psoríase complexa — psoríase em placas extensa, psoríase pustulosa, ou psoríase que não responde a tratamentos tópicos</li><li>Dermatite atópica grave ou refratária — eczema grave que não responde aos tratamentos padrão</li><li>Rosácea moderada a grave — com componente inflamatório significativo ou envolvimento ocular</li><li>Condições cutâneas autoimunes — lúpus cutâneo, dermatomiosite, penfigoide ou outras apresentações autoimunes</li><li>Infeções cutâneas complexas ou resistentes ao tratamento</li><li>Segunda opinião dermatológica especializada — sobre um diagnóstico ou plano de tratamento recebido de outro dermatologista</li><li>Doentes com encaminhamento do nosso serviço de médico de família que requerem avaliação dermatológica mais aprofundada</li></ul><h2>Análise de imagem de alta resolução — o que é e porque importa</h2><p>A teledermatologia de alta qualidade vai além de mostrar a pele numa videochamada. O nosso serviço inclui análise de imagem de alta resolução — o paciente envia fotografias clínicas detalhadas da lesão ou condição antes ou durante a consulta, que o dermatologista analisa com zoom e ferramentas de análise visual detalhada.</p><p>Isto permite ao dermatologista avaliar:</p><ul><li>A morfologia detalhada de lesões pigmentadas — estrutura interna, padrão vascular, distribuição do pigmento</li><li>A extensão e padrão de distribuição da condição cutânea</li><li>Alterações subtis em lesões monitorizadas ao longo do tempo</li><li>A resposta ao tratamento entre consultas de seguimento</li></ul><p><strong>Como preparar as tuas imagens</strong></p><ul><li>Fotografa a lesão com boa luz natural — direta, sem flash</li><li>Inclui uma foto de contexto que mostre a localização no corpo</li><li>Inclui uma foto de aproximação máxima possível com a tua câmara</li><li>Se a condição tiver mudado, inclui fotos comparativas de diferentes momentos, se as tiveres</li><li>O teu dermatologista orienta-te sobre o posicionamento específico durante a consulta</li></ul><h2>Condições habitualmente avaliadas</h2><p><strong>Acne</strong></p><ul><li>Acne grave — nódulos, quistos, acne conglobata</li><li>Acne moderada resistente aos tratamentos habituais</li><li>Acne com cicatrizes significativas — avaliação e plano de gestão</li><li>Acne hormonal complexa — avaliada com avaliação hormonal integrada quando indicado</li><li>Acne que pode requerer tratamento especializado — avaliação e seguimento a critério do especialista</li></ul><p><strong>Lesões suspeitas e oncologia cutânea</strong></p><ul><li>Pintas com critérios ABCDE preocupantes</li><li>Lesões pigmentadas de aparecimento recente ou com alterações</li><li>Queratose actínica — avaliação e gestão</li><li>Carcinoma basocelular — avaliação e coordenação de biópsia presencial quando indicado</li><li>Melanoma — avaliação de suspeita e encaminhamento urgente quando indicado</li></ul><p>Nota importante: o diagnóstico definitivo de cancro de pele requer dermatoscopia presencial e biópsia. A análise de imagem de alta resolução permite uma avaliação especializada de alta qualidade — e quando há suspeita clínica significativa, o dermatologista coordena o encaminhamento presencial urgente no mesmo dia.</p><p><strong>Psoríase</strong></p><ul><li>Psoríase em placas moderada a grave</li><li>Psoríase pustulosa — avaliação e gestão</li><li>Psoríase do couro cabeludo — apresentações complexas</li><li>Psoríase palmoplantar</li><li>Psoríase e artrite psoriática — avaliação e coordenação com reumatologia quando indicado</li><li>Psoríase resistente a tratamentos tópicos — avaliação para tratamentos sistémicos</li></ul><p><strong>Dermatite atópica grave</strong></p><ul><li>Eczema grave que não responde aos tratamentos padrão</li><li>Dermatite atópica com sobreinfeção recorrente</li><li>Avaliação para tratamentos biológicos — a critério do especialista</li></ul><p><strong>Condições inflamatórias complexas</strong></p><ul><li>Rosácea moderada a grave — com componente inflamatório significativo</li><li>Hidradenite supurativa — avaliação e plano de gestão</li><li>Líquen plano — avaliação e gestão</li><li>Vitiligo extenso — avaliação e opções de tratamento</li></ul><p><strong>Condições autoimunes cutâneas</strong></p><ul><li>Lúpus eritematoso cutâneo — avaliação e coordenação com reumatologia</li><li>Dermatomiosite — avaliação cutânea e coordenação especializada</li><li>Penfigoide e pênfigo — avaliação e coordenação hospitalar quando indicado</li></ul><p><strong>Infeções cutâneas complexas</strong></p><ul><li>Infeções fúngicas extensas ou resistentes ao tratamento</li><li>Herpes zóster complicado</li><li>Infeções bacterianas resistentes</li></ul><p><strong>Alopecia especializada</strong></p><ul><li>Alopecia areata extensiva ou resistente ao tratamento</li><li>Alopecia cicatricial — avaliação urgente e coordenação de biópsia</li><li>Alopecia androgenética que não responde aos tratamentos habituais — avaliação para opções de segunda linha</li></ul><h2>O que inclui a consulta especializada</h2><p><strong>Avaliação dermatológica especializada completa</strong></p><p>O teu dermatologista realiza uma avaliação especializada completa — incluindo história clínica detalhada, análise das imagens de alta resolução enviadas, avaliação de tratamentos prévios e da respetiva resposta, e avaliação do quadro clínico na sua totalidade.</p><p><strong>Análise dermatoscópica de imagem de alta resolução</strong></p><p>Para lesões pigmentadas e suspeitas, o teu dermatologista analisa as imagens de alta resolução com avaliação dermatoscópica detalhada — avaliando estrutura interna, padrão vascular e critérios de malignidade. Quando a suspeita clínica é significativa, coordena encaminhamento presencial urgente no mesmo dia.</p><p><strong>Diagnóstico e plano de tratamento especializado</strong></p><p>Com base na avaliação, o teu dermatologista estabelece o diagnóstico ou diagnósticos diferenciais mais prováveis e elabora um plano de tratamento especializado — incluindo tratamentos tópicos de segunda linha, tratamentos sistémicos quando indicados, e documentação para procedimentos presenciais quando necessários.</p><p><strong>Avaliação para tratamentos especializados — a critério do especialista</strong></p><p>Para condições como acne grave, psoríase moderada a grave, ou dermatite atópica grave, o teu dermatologista avalia a adequação para tratamentos especializados — incluindo opções sistémicas orais e biológicos quando clinicamente indicado. Nenhum tratamento específico pode ser confirmado antes da avaliação especializada completa.</p><p><strong>Documentação clínica especializada — a critério do especialista</strong></p><p>Quando clinicamente indicado, o teu dermatologista emite a documentação clínica correspondente válida em qualquer farmácia espanhola, assim como relatórios especializados para continuidade dos cuidados.</p><p>Nota: os estupefacientes e determinadas substâncias controladas requerem documentação especial que não pode ser emitida eletronicamente.</p><p><strong>Coordenação de biópsia e procedimentos presenciais</strong></p><p>Quando a biópsia cutânea, a dermatoscopia presencial, ou qualquer outro procedimento presencial estiverem indicados, o teu dermatologista coordena o encaminhamento para o centro apropriado no mesmo dia — com a documentação clínica completa que maximiza a qualidade dessa visita presencial.</p><p><strong>Segunda opinião dermatológica</strong></p><p>Se recebeste um diagnóstico dermatológico ou plano de tratamento de outro dermatologista e queres uma avaliação independente, o teu especialista revê toda a documentação disponível e fornece uma avaliação especializada independente.</p><p><strong>Seguimento especializado</strong></p><p>Para condições que requerem monitorização — seguimento de lesões suspeitas, resposta a tratamento sistémico, ou monitorização de efeitos secundários — as consultas de seguimento especializado estão disponíveis.</p><h2>Dermatologia especializada em Espanha — o problema do acesso</h2><p>A dermatologia privada especializada em Espanha está bem desenvolvida em Madrid, Barcelona e outras grandes cidades. No entanto, os tempos de espera para uma primeira consulta com dermatologista privado são geralmente de três a seis semanas para apresentações não urgentes — mesmo no setor privado.</p><p>Para lesões que geram preocupação mas não justificam urgências hospitalares, esperar semanas por uma primeira avaliação especializada é genuinamente angustiante. Para residentes internacionais que preferem a consulta em inglês ou português, as opções de dermatologia especializada são praticamente inexistentes fora de Madrid e Barcelona.</p><p>O nosso serviço fornece avaliação dermatológica especializada com análise de imagem de alta resolução no mesmo dia — a partir de qualquer ponto de Espanha.</p>",
+      "ctaLabel": null,
+      "sortOrder": 0,
+      "durationMinutes": 15,
+      "basePriceCents": 7000,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-10T13:43:34.772Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0jy4t0002asjuxj5qenyt",
+          "kind": "IMAGE",
+          "key": "media/7e18c20f-2388-48bc-9322-97fa2f0215f6-es-dermatologia-especialista-online.png",
+          "path": "/api/media/media/7e18c20f-2388-48bc-9322-97fa2f0215f6-es-dermatologia-especialista-online.png",
+          "altText": "Dermatología Especialista"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qe5a004qngju0goijovz",
+          "question": "Qual é a diferença entre esta consulta e a consulta de pele com o médico de família?",
+          "answer": "A consulta de pele com médico de família cobre a maioria das afeções cutâneas agudas e não urgentes a nível de medicina geral — eczema, acne ligeira a moderada, erupções, infeções. Esta consulta especialista é realizada por um dermatologista credenciado da Global Health e proporciona a profundidade de análise especializada que apresentações complexas requerem — acne grave, lesões suspeitas com análise dermatoscópica, psoríase complexa, afeções que não responderam aos tratamentos habituais. Se não tens a certeza de qual precisas, começa pela consulta de médico de família.",
+          "sortOrder": 0,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qe5a004rngjucl08rmjs",
+          "question": "Um dermatologista pode realmente avaliar uma lesão suspeita por videochamada?",
+          "answer": "Sim — com análise de imagem de alta resolução, um dermatologista pode realizar uma avaliação dermatoscópica detalhada de alta qualidade. Esta não substitui a dermatoscopia presencial com dermatoscópio de contacto para lesões com suspeita clínica elevada — onde o dermatologista coordena a derivação presencial urgente no mesmo dia. Mas, para a avaliação inicial de lesões preocupantes, a análise de imagem especializada proporciona uma avaliação clínica significativamente superior a uma consulta geral.",
+          "sortOrder": 1,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qe5a004sngjuzwvb4unu",
+          "question": "O dermatologista pode iniciar tratamento para acne grave?",
+          "answer": "Sim — incluindo avaliação para tratamentos especializados quando estiverem clinicamente indicados. Todos os tratamentos são decididos exclusivamente a critério do especialista após avaliação clínica completa. Nenhum tratamento específico pode ser confirmado antes da consulta.",
+          "sortOrder": 2,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qe5a004tngju9pyt6xq2",
+          "question": "Como funciona o acompanhamento para tratamentos que requerem monitorização?",
+          "answer": "Para tratamentos que requerem monitorização clínica — análises de controlo, avaliação de resposta, monitorização de efeitos secundários — o teu dermatologista coordena o calendário completo de seguimento. As análises de controlo podem ser solicitadas online, com os resultados revistos numa consulta de seguimento por videoconferência.",
+          "sortOrder": 3,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qe5a004ungjuyloudj91",
+          "question": "O dermatologista pode coordenar uma biópsia?",
+          "answer": "Sim. Onde a biópsia estiver clinicamente indicada, o seu dermatologista emite a documentação de encaminhamento presencial no mesmo dia — com um relatório clínico completo que maximiza a qualidade da avaliação presencial.",
+          "sortOrder": 4,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qe5a004vngjuig9rxhfb",
+          "question": "Tenho psoríase e os tratamentos tópicos não estão funcionando — este serviço pode ajudar-me?",
+          "answer": "Sim. A avaliação para tratamentos sistémicos na psoríase moderada a grave — incluindo tratamentos orais e biológicos quando indicados — é uma parte central deste serviço. O teu dermatologista avalia o teu historial de tratamentos prévios, a extensão e gravidade da tua psoríase, e as opções de linha seguinte disponíveis.",
+          "sortOrder": 5,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qe5a004wngjup376vh1n",
+          "question": "Posso obter uma segunda opinião dermatológica especializada?",
+          "answer": "Sim. A segunda opinião dermatológica especializada é um dos usos frequentes deste serviço — especialmente para diagnósticos incertos, condições que não respondem ao tratamento ou antes de se comprometer com tratamentos significativos.",
+          "sortOrder": 6,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qe5a004xngjupgg3zsae",
+          "question": "Preciso de seguro médico espanhol?",
+          "answer": "Não. É um serviço privado de pagamento direto. A documentação clínica emitida é fornecida ao preço privado total, independentemente do estado do seguro.",
+          "sortOrder": 7,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qe5a004yngjuysx5zo70",
+          "question": "Posso usar este serviço a partir de qualquer ponto de Espanha?",
+          "answer": "Sim — incluindo Ilhas Baleares, Ilhas Canárias, Ceuta e Melilha. Só precisa de uma ligação estável à internet e de um dispositivo com câmara, além da capacidade de enviar imagens de alta resolução antes da consulta.",
+          "sortOrder": 8,
+          "resolvedLocale": "PT"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "PT",
+      "links": [
+        {
+          "id": "cmre7ta9e0040g8ju2qpzlc46",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Consulta de piel con médico de cabecera para afecciones leves?",
+          "body": "Si tu situación está relacionada con consulta de piel con médico de cabecera para afecciones leves, nuestra Consulta de Piel te ofrece la evaluación adecuada.",
+          "ctaLabel": "Consulta de Piel",
+          "targetSlug": "consulta-piel-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tb1g0042g8ju0b7fq814",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con caída del cabello de base dermatológica?",
+          "body": "Para caída del cabello de base dermatológica, consulta nuestra página de Caída del Cabello — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Caída del Cabello",
+          "targetSlug": "caida-cabello-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tbth0044g8ju0jc7ptcc",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre segunda opinión dermatológica independiente?",
+          "body": "Nuestra Segunda Opinión Médica está pensada específicamente para segunda opinión dermatológica independiente.",
+          "ctaLabel": "Segunda Opinión Médica",
+          "targetSlug": "segunda-opinion-medica",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tclj0046g8juuadv3du3",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Evaluación inicial con médico de cabecera?",
+          "body": "Si tu situación está relacionada con evaluación inicial con médico de cabecera, nuestra Consulta Médica General te ofrece la evaluación adecuada.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdppjf5000u01ru1ayu78k0"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T08:14:00.000Z"
+      }
+    }
+  }
+}

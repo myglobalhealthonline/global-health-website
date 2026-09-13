@@ -1,0 +1,20 @@
+{
+  "group": "doctor:dr-andreea-lorena-bica",
+  "approvalSha256": "2e365ed9f905c5f409129cac636e1fec46f18ae6d7ae5472b5cb643ba0680f1d",
+  "reviewerDoctorId": "cmrc4axni00rn01p2n3r2bopf",
+  "approvalEvidence": "owner-reported clinician approval in this task",
+  "appliedAt": "2026-09-12T22:49:34.668Z",
+  "alreadyApplied": false,
+  "operations": 6,
+  "publicVerified": true,
+  "afterSha256": "728ab908fc4c7793544f6792c9ea5fb4980f3008d022d2103f406788a2bb1334",
+  "publicVerifiedAt": "2026-09-12T22:49:59.324Z",
+  "verifiedUrls": [
+    "https://www.myglobalhealth.online/romania/cs/doctors/dr-andreea-lorena-bica",
+    "https://www.myglobalhealth.online/romania/de/doctors/dr-andreea-lorena-bica",
+    "https://www.myglobalhealth.online/romania/en/doctors/dr-andreea-lorena-bica",
+    "https://www.myglobalhealth.online/romania/es/doctors/dr-andreea-lorena-bica",
+    "https://www.myglobalhealth.online/romania/pt/doctors/dr-andreea-lorena-bica",
+    "https://www.myglobalhealth.online/romania/ro/doctors/dr-andreea-lorena-bica"
+  ]
+}

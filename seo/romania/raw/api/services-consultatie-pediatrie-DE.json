@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:07.697Z",
+  "endpoint": "/api/services/consultatie-pediatrie?countryCode=ro&locale=DE",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee8lf000jfsju7gwzzohg",
+      "kind": "SPECIALIST",
+      "slug": "consultatie-pediatrie",
+      "name": "Facharzt für Kinderheilkunde — umfassende pädiatrische Online-Bewertung",
+      "summary": "Benötigen Sie eine fachärztliche pädiatrische Meinung oder eine detailliertere Beurteilung für ein Gesundheitsproblem Ihres Kindes? Unser beim CMR zugelassener Kinderarzt bietet Video-Konsultationen für Fälle an, die eine eingehende klinische Analyse erfordern.",
+      "seoTitle": "Facharzt für Pädiatrie online | Rumänien | umfassende Beurteilung",
+      "seoDescription": "Fachärztliche pädiatrische Meinung und detaillierte Bewertung bei Gesundheitsproblemen des Kindes. Unser vom CMR zugelassener Kinderarzt bietet Videoberatungen für Fälle an, die eine eingehende klinische Analyse erfordern.",
+      "seoKeywords": [
+        "specialist paediatrician online Romania",
+        "paediatric specialist online Romania",
+        "children's specialist doctor online Romania",
+        "paediatric second opinion Romania",
+        "complex child health online Romania"
+      ],
+      "heroTitle": "Facharzt für Kinderheilkunde — umfassende pädiatrische Online-Bewertung",
+      "heroDescription": "Fachärztliche pädiatrische Meinung und detaillierte Bewertung für die gesundheitlichen Probleme des Kindes. Unser vom CMR autorisierter Kinderarzt bietet Video-Konsultationen für Fälle an, die eine eingehende klinische Analyse erfordern.",
+      "detailBody": "<p>Dieser Service eignet sich für anhaltende Symptome, wiederkehrende Probleme, Situationen, in denen die erste Behandlung nicht geholfen hat, oder für Familien, die vor den nächsten Schritten eine fachärztliche pädiatrische Meinung wünschen.</p><p>Der Kinderarzt prüft die Krankengeschichte, den Verlauf der Symptome, die bereits durchgeführten Untersuchungen und die spezifischen Anliegen der Familie. Sie erhalten klare Empfehlungen zur Überwachung, zu weiteren Untersuchungen, zur Behandlung und zu Situationen, in denen eine dringende persönliche Untersuchung erforderlich ist.</p><p>Die Konsultation kann hilfreich sein bei wiederkehrenden Infektionen, Verdauungsstörungen, Atemproblemen, verzögerter Genesung nach einer Erkrankung, Fragen zur Entwicklung des Kindes oder zur Notwendigkeit der Koordination mit anderen Spezialisten.</p>",
+      "ctaLabel": "Konsultation vereinbaren",
+      "sortOrder": 0,
+      "durationMinutes": 15,
+      "basePriceCents": 18500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:55.579Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jsir5001vakju5gqu1bt0",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee8lf000jfsju7gwzzohg",
+          "path": "/api/media/media/795ad1ab-4a87-4878-8f52-1400ca0bf455-8a391c28-541a-49cd-97ff-fff34ba65c6d-8.webp",
+          "altText": "Medic pediatru specialist — evaluare pediatrică complexă online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "DE",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4gtzl00s901p2yh3ukaox"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:47:00.000Z"
+      }
+    }
+  }
+}

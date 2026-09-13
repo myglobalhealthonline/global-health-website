@@ -1,0 +1,20 @@
+{
+  "group": "doctor:dr-robert-gabriel-brindus",
+  "approvalSha256": "d4f8a7a908a223a16aecf20747978b43fe8c51349212425bc3b6675771574665",
+  "reviewerDoctorId": "cmrc4axni00rn01p2n3r2bopf",
+  "approvalEvidence": "owner-reported clinician approval in this task",
+  "appliedAt": "2026-09-12T22:52:00.747Z",
+  "alreadyApplied": false,
+  "operations": 6,
+  "publicVerified": true,
+  "afterSha256": "5557bf87544e7ccc3fa25ba36741903a0767cd6786dc96a54da825117ade56f4",
+  "publicVerifiedAt": "2026-09-12T22:52:25.006Z",
+  "verifiedUrls": [
+    "https://www.myglobalhealth.online/romania/cs/doctors/dr-robert-gabriel-brindus",
+    "https://www.myglobalhealth.online/romania/de/doctors/dr-robert-gabriel-brindus",
+    "https://www.myglobalhealth.online/romania/en/doctors/dr-robert-gabriel-brindus",
+    "https://www.myglobalhealth.online/romania/es/doctors/dr-robert-gabriel-brindus",
+    "https://www.myglobalhealth.online/romania/pt/doctors/dr-robert-gabriel-brindus",
+    "https://www.myglobalhealth.online/romania/ro/doctors/dr-robert-gabriel-brindus"
+  ]
+}

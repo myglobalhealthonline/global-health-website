@@ -1,0 +1,224 @@
+{
+  "endpoint": "/api/countries/es/doctors/dr-tomas-ruiz-palacios?locale=CS",
+  "checkedAt": "2026-09-13T02:29:50.941Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "doctor": {
+      "id": "cmrdq0tv2002701rupeh3nkyd",
+      "slug": "dr-tomas-ruiz-palacios",
+      "fullName": "Tomás Ruiz Palacios",
+      "title": "Psycholog",
+      "bio": "<p>Dr. Tomás Ruiz Palacios</p><p>Psycholog ve zdravotnictví</p><p>Tomás Ruiz Palacios je psycholog ve zdravotnictví se specializací na kognitivně-behaviorální terapii a systémovou relační terapii. Má více než tři roky klinické praxe při práci s dospělými španělsky a italsky mluvícími klienty.</p><p>Jeho profesní praxe se zaměřuje na psychologické vyšetření, klinickou diagnostiku a návrh a implementaci personalizovaných léčebných postupů přizpůsobených individuálním potřebám každého pacienta. Uplatňuje vstřícný terapeutický přístup založený na vědeckých důkazech a orientovaný na emoční pohodu a osobní rozvoj.</p><p>Je absolventem psychologie na Univerzitě v Murcii, magistrem v oboru mediace a systémová relační terapie na ITFB Bologna a magistrem v oboru psychologie ve zdravotnictví na Mezinárodní univerzitě ve Valencii.</p>",
+      "seoTitle": "Dr Tomas Ruiz Palacios - Psycholog | Global Health",
+      "seoDescription": "Tomás Ruiz Palacios, zdravotnický psycholog specializovaný na kognitivně-behaviorální a systemickou relační terapii. Péče ve španělštině a italštině. Online konzultace v Global Health.",
+      "lastReviewedAt": null,
+      "medicalRegistrationUrl": "https://www.cop.es/",
+      "qualifications": [
+        "Psicólogo General Sanitario — nº MUO5691",
+        "Máster en Psicología General Sanitaria — Universidad Internacional de Valencia",
+        "Máster en Mediación y Terapia Sistémica Relacional — ITFB, Bolonia, Italia",
+        "Licenciado en Psicología — Universidad de Murcia",
+        "3+ años experiencia clínica con adultos hispanohablantes e italianos"
+      ],
+      "instagramUrl": null,
+      "facebookUrl": null,
+      "linkedinUrl": null,
+      "languages": [
+        "Spanish",
+        "Italian"
+      ],
+      "active": true,
+      "updatedAt": "2026-08-20T06:25:12.961Z",
+      "resolvedLocale": "CS",
+      "readyToIndex": true,
+      "nonPhysician": false,
+      "imcRegistration": "MUO5691",
+      "registrationChamber": "COP",
+      "registrationDivision": null,
+      "registrationVerified": true,
+      "credentials": [],
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmrf4o80q025u01qrazn0g6y8",
+          "kind": "IMAGE",
+          "key": "doctor-cmrdq0tv2002701rupeh3nkyd-profile",
+          "path": "/api/media/media/doctors/cmrdq0tv2002701rupeh3nkyd/6bed63cf-baf3-4988-8437-a915d231d6a0-foto-perfil-profesional.webp",
+          "altText": "Tomás Ruiz Palacios",
+          "title": "Tomás Ruiz Palacios",
+          "caption": "Tomás Ruiz Palacios — Psychologist, Global Health Spain",
+          "description": "Tomás Ruiz Palacios — Psychologist at Global Health Spain. Book an online video consultation.",
+          "focalX": 62,
+          "focalY": 35,
+          "zoom": 1
+        }
+      ],
+      "additionalCountries": [
+        {
+          "id": "cmrdq0tv9002801rupzgiqjbm",
+          "countryId": "cmqy9rw9w00x001qkq31jktqq",
+          "active": true,
+          "country": {
+            "id": "cmqy9rw9w00x001qkq31jktqq",
+            "code": "es",
+            "name": "Spain",
+            "defaultLocale": "ES"
+          },
+          "chamberEntity": "COP",
+          "registrationNumber": "MUO5691",
+          "registrationUrl": null,
+          "division": null,
+          "isVerified": true,
+          "translations": [
+            {
+              "locale": "ES",
+              "title": "Psicólogo General Sanitario",
+              "bio": "<p>Tomás Ruiz Palacios es Psicólogo General Sanitario especializado en terapia cognitivo-conductual (TCC) y terapia sistémica relacional, dos enfoques complementarios que le permiten trabajar tanto con los patrones de pensamiento y conducta del individuo como con las dinámicas relacionales y familiares que los mantienen.</p><p>Es licenciado en Psicología por la Universidad de Murcia, titular de un Máster en Mediación y Terapia Sistémica Relacional por el ITFB de Bolonia, institución italiana de referencia en terapia sistémica, y de un Máster en Psicología General Sanitaria por la Universidad Internacional de Valencia. Cuenta con más de tres años de experiencia clínica trabajando con adultos en español e italiano.</p><p>La terapia sistémica relacional es una especialización que distingue a Tomás de la mayoría de psicólogos que trabajan exclusivamente con modelos cognitivo-conductuales. Este enfoque considera que el malestar psicológico no surge solo dentro del individuo sino también en las relaciones, de pareja, familiares, laborales, y que trabajar estas dinámicas es tan importante como trabajar los pensamientos y conductas. La combinación de TCC y terapia sistémica le permite adaptarse a lo que cada persona necesita en cada momento del proceso terapéutico.</p><p>Su práctica se basa en la evaluación psicológica rigurosa, el diagnóstico clínico preciso y el diseño de tratamientos personalizados, siempre guiados por la evidencia científica y orientados al bienestar emocional real y al desarrollo personal sostenido, no solo a la reducción del síntoma inmediato.</p><h3>Con qué ayuda</h3><ul><li><strong>Ansiedad:</strong> ansiedad generalizada, ansiedad social, ataques de pánico, fobias específicas, preocupación crónica</li><li><strong>Depresión y estado de ánimo:</strong> tristeza persistente, apatía, pérdida de motivación, baja autoestima</li><li><strong>Estrés y burnout:</strong> estrés laboral, agotamiento emocional, dificultad para desconectar</li><li><strong>Dificultades relacionales:</strong> conflictos de pareja, dinámicas familiares, comunicación y límites</li><li><strong>Duelo y pérdida:</strong> pérdida de un ser querido, duelos vitales o relacionales no resueltos</li><li><strong>Regulación emocional:</strong> dificultad para manejar emociones intensas, reactividad emocional</li><li><strong>Autoestima y desarrollo personal:</strong> inseguridad, autocrítica, patrones que se repiten</li><li><strong>Transiciones vitales:</strong> cambios de vida importantes, adaptación a nuevas circunstancias</li><li><strong>Habilidades sociales y asertividad:</strong> comunicación, límites, relaciones interpersonales</li></ul><h3>Enfoques terapéuticos</h3><ul><li><strong>Terapia Cognitivo-Conductual (TCC):</strong> identificación y modificación de pensamientos y conductas disfuncionales</li><li><strong>Terapia Sistémica Relacional:</strong> abordaje de dinámicas relacionales y familiares que mantienen el malestar</li><li><strong>Mediación:</strong> resolución de conflictos en contextos relacionales</li><li>Evaluación psicológica y diagnóstico clínico</li></ul><h3>Su enfoque</h3><p>Tomás trabaja con un estilo cercano, estructurado y orientado al cambio real. Cree que la terapia efectiva combina el rigor científico con una relación terapéutica genuina, y que el paciente debe sentirse comprendido, no juzgado, para que el trabajo terapéutico sea posible. Cada tratamiento está diseñado específicamente para la persona, no adaptado a un protocolo genérico.</p><p>Nota importante: Si está experimentando una crisis psicológica o pensamientos de autolesión, contacte con los servicios de emergencias llamando al 112 o con el Teléfono de la Esperanza (717 003 717), no espere a una cita.</p><p>Idiomas: Español · Italiano</p>",
+              "seoTitle": "Tomás Ruiz Palacios — Psicólogo General Sanitario | Nº MUO5691 | Global Health España",
+              "seoDescription": "Reserve una sesión con Tomás Ruiz Palacios — Psicólogo General Sanitario (nº MUO5691). TCC y terapia sistémica relacional · Universidad de Murcia · ITFB Bolonia · Adultos hispanohablantes e italianos · Español e italiano. Cita el mismo día.",
+              "seoKeywords": [
+                "Psicologo sanitario",
+                "terapia cognitivo-conductual"
+              ]
+            },
+            {
+              "locale": "EN",
+              "title": "Psychologist",
+              "bio": "<p>Dr. Tomás Ruiz Palacios</p><p>General Health Psychologist</p><p>Tomás Ruiz Palacios is a general health psychologist specialized in cognitive-behavioral therapy and relational systemic therapy. He has more than three years of clinical experience working with Spanish-speaking and Italian adults.</p><p>His professional practice focuses on psychological assessment, clinical diagnosis, and the design and implementation of personalized treatments adapted to the individual needs of each patient. He maintains a close therapeutic approach, based on scientific evidence and oriented toward emotional well-being and personal development.</p><p>He holds a degree in Psychology from the University of Murcia, a Master's degree in Mediation and Relational Systemic Therapy from ITFB Bologna, and a Master's degree in General Health Psychology from the International University of Valencia.</p>",
+              "seoTitle": "Dr Tomas Ruiz Palacios - Psychologist | Global Health",
+              "seoDescription": "Tomás Ruiz Palacios, General Health Psychologist specializing in cognitive-behavioral and relational systemic therapy. Care in Spanish and Italian. Online consultation at Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "PT",
+              "title": "Psicólogo",
+              "bio": "<p>Dr. Tomás Ruiz Palacios</p><p>Psicólogo Geral da Saúde</p><p>Tomás Ruiz Palacios é psicólogo geral da saúde especializado em terapia cognitivo-comportamental e terapia sistémica relacional. Conta com mais de três anos de experiência clínica a trabalhar com adultos hispanofalantes e italianos.</p><p>A sua prática profissional centra-se na avaliação psicológica, no diagnóstico clínico e na conceção e implementação de tratamentos personalizados adaptados às necessidades individuais de cada paciente. Mantém uma abordagem terapêutica próxima, baseada na evidência científica e orientada para o bem-estar emocional e o desenvolvimento pessoal.</p><p>É licenciado em Psicologia pela Universidade de Murcia, Mestre em Mediação e Terapia Sistémica Relacional pelo ITFB Bolonha e Mestre em Psicologia Geral da Saúde pela Universidade Internacional de Valência.</p>",
+              "seoTitle": "Dr Tomas Ruiz Palacios - Psicólogo | Global Health",
+              "seoDescription": "Tomás Ruiz Palacios, Psicólogo Geral de Saúde especializado em terapia cognitivo-comportamental e sistêmica relacional. Atendimento em espanhol e italiano. Consulta online na Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "CS",
+              "title": "Psycholog",
+              "bio": "<p>Dr. Tomás Ruiz Palacios</p><p>Psycholog ve zdravotnictví</p><p>Tomás Ruiz Palacios je psycholog ve zdravotnictví se specializací na kognitivně-behaviorální terapii a systémovou relační terapii. Má více než tři roky klinické praxe při práci s dospělými španělsky a italsky mluvícími klienty.</p><p>Jeho profesní praxe se zaměřuje na psychologické vyšetření, klinickou diagnostiku a návrh a implementaci personalizovaných léčebných postupů přizpůsobených individuálním potřebám každého pacienta. Uplatňuje vstřícný terapeutický přístup založený na vědeckých důkazech a orientovaný na emoční pohodu a osobní rozvoj.</p><p>Je absolventem psychologie na Univerzitě v Murcii, magistrem v oboru mediace a systémová relační terapie na ITFB Bologna a magistrem v oboru psychologie ve zdravotnictví na Mezinárodní univerzitě ve Valencii.</p>",
+              "seoTitle": "Dr Tomas Ruiz Palacios - Psycholog | Global Health",
+              "seoDescription": "Tomás Ruiz Palacios, zdravotnický psycholog specializovaný na kognitivně-behaviorální a systemickou relační terapii. Péče ve španělštině a italštině. Online konzultace v Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "RO",
+              "title": "Psiholog",
+              "bio": "<p>Dr. Tomás Ruiz Palacios</p><p>Psiholog general sanitar</p><p>Tomás Ruiz Palacios este psiholog general sanitar specializat în terapie cognitiv-comportamentală și terapie sistemică relațională. Are peste trei ani de experiență clinică în lucrul cu adulți vorbitori de spaniolă și italieni.</p><p>Practica sa profesională se concentrează pe evaluarea psihologică, diagnosticul clinic și conceperea și implementarea unor tratamente personalizate adaptate nevoilor individuale ale fiecărui pacient. Menține o abordare terapeutică apropiată, bazată pe dovezi științifice și orientată spre bunăstarea emoțională și dezvoltarea personală.</p><p>Este licențiat în Psihologie de la Universitatea din Murcia, master în Mediere și Terapie Sistemică Relațională de la ITFB Bologna și master în Psihologie Generală Sanitară de la Universitatea Internațională din Valencia.</p>",
+              "seoTitle": "Dr Tomas Ruiz Palacios - Psiholog | Global Health",
+              "seoDescription": "Tomás Ruiz Palacios, Psiholog General Sanitar specializat în terapie cognitiv-comportamentală și sistemică relațională. Consultații în spaniolă și italiană. Consulta online la Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "DE",
+              "title": "Psychologe",
+              "bio": "<p>Dr. Tomás Ruiz Palacios</p><p>Allgemeiner Gesundheitspsychologe</p><p>Tomás Ruiz Palacios ist ein Allgemeiner Gesundheitspsychologe mit Spezialisierung auf kognitive Verhaltenstherapie und systemische Beziehungstherapie. Er verfügt über mehr als drei Jahre klinische Erfahrung in der Arbeit mit spanisch- und italienischsprachigen Erwachsenen.</p><p>Seine berufliche Praxis konzentriert sich auf die psychologische Beurteilung, die klinische Diagnose sowie die Entwicklung und Umsetzung personalisierter Behandlungen, die an die individuellen Bedürfnisse jedes Patienten angepasst sind. Er verfolgt einen nahen therapeutischen Ansatz, der auf wissenschaftlichen Erkenntnissen basiert und auf emotionales Wohlbefinden sowie persönliche Entwicklung ausgerichtet ist.</p><p>Er hat einen Abschluss in Psychologie von der Universidad de Murcia, einen Master in Mediation und systemischer Beziehungstherapie vom ITFB Bologna sowie einen Master in Allgemeiner Gesundheitspsychologie von der Universidad Internacional de Valencia.</p>",
+              "seoTitle": "Dr Tomas Ruiz Palacios - Psychologe | Global Health",
+              "seoDescription": "Tomás Ruiz Palacios, Psychologe im Gesundheitswesen, spezialisiert auf kognitiv-verhaltenstherapeutische und systemisch-relationale Therapie. Betreuung auf Spanisch und Italienisch. Online-Sprechstunde bei Global Health.",
+              "seoKeywords": []
+            }
+          ],
+          "divisionTranslations": []
+        }
+      ],
+      "assignedServices": [
+        {
+          "serviceId": "cmre7qg1l005cngjub14ciym5",
+          "service": {
+            "id": "cmre7qg1l005cngjub14ciym5",
+            "slug": "psicologo-online",
+            "name": "Psicología Clínica",
+            "kind": "SPECIALIST",
+            "summary": null,
+            "durationMinutes": 45,
+            "basePriceCents": 12000,
+            "currencyCode": "EUR"
+          }
+        }
+      ],
+      "seoKeywords": [],
+      "resolvedMarketLocale": "CS",
+      "specialties": [],
+      "faqs": [
+        {
+          "id": "cmrnzj3xl00ysbsjuudcu4i15",
+          "locale": "CS",
+          "question": "Je Tomás Ruiz Palacios registrován jako Psycholog General Sanitario ve Španělsku?",
+          "answer": "Ano. Tomás Ruiz Palacios pracuje jako registrovaný Psycholog General Sanitario v COP s registračním číslem MUO5691. Tento registr můžete ověřit na cop.es — pro psychology ve Španělsku je registrace u příslušného Colegio Oficial de Psicólogos. Tomás má titul v oboru psychologie z Univerzity v Murcii, s magisterskými tituly v oboru Relacionální systémové terapie (ITFB Bologna) a v oboru Psychologie General Sanitaria (UIV).",
+          "category": null,
+          "sortOrder": 0,
+          "isActive": true
+        },
+        {
+          "id": "cmrnzj3xl00ytbsjuug9p42b1",
+          "locale": "CS",
+          "question": "S jakými situacemi může Tomás online pomoci?",
+          "answer": "Tomás nabízí online psychologickou podporu pro: úzkost (generalizovanou, sociální, panickou, fobie), depresi a nízkou náladu, stres a vyhoření, vztahové potíže (konflikty v páru, rodinné dynamiky, komunikaci), ztrátu a smutek, regulaci emocí, sebevědomí a osobní rozvoj, životní přechody a sociální dovednosti a asertivitu.",
+          "category": null,
+          "sortOrder": 1,
+          "isActive": true
+        },
+        {
+          "id": "cmrnzj3xl00yubsjudakinoej",
+          "locale": "CS",
+          "question": "Co je to relacionalní systémová terapie a čím se liší od KBT?",
+          "answer": "Kognitivně-behaviorální terapie (KBT) se zaměřuje na myšlenky, emoce a chování jednotlivce — identifikuje dysfunkční vzorce a vyvíjí adaptivnější alternativy. Relacionalní systémová terapie vychází z jiného pohledu: považuje, že psychologické nepohodlí nevzniká pouze uvnitř jednotlivce, ale také v jeho vztazích — partnerských, rodinných, sociálních, pracovních — a pracuje s těmito dynamikami přímo. Tomás kombinuje oba přístupy, což mu umožňuje přizpůsobit se tomu, co každá osoba potřebuje: někdy je individuální práce centrální, jindy je fokus na vztazích, které udržují nepohodlí, a často jsou potřebné obě dimenze.",
+          "category": null,
+          "sortOrder": 2,
+          "isActive": true
+        },
+        {
+          "id": "cmrnzj3xl00yvbsju13psutpu",
+          "locale": "CS",
+          "question": "Může Tomás obsluhovat pacienty v italštině?",
+          "answer": "Ano. Tomás absolvoval školení v Relacionální systémové terapii na ITFB v Boloni (Itálie) a nabízí sezení v italštině pro italské nebo italsky mluvící pacienty. Pro Italy žijící ve Španělsku, kteří hledají psychologickou podporu ve svém rodném jazyce — bez omezení komunikace složitých emocionálních stavů ve druhém jazyce — Tomás nabízí psychologickou dostupnost, která je ve Španělsku prostřednictvím telemedicíny zřídka dostupná.",
+          "category": null,
+          "sortOrder": 3,
+          "isActive": true
+        },
+        {
+          "id": "cmrnzj3xl00ywbsjuf8ztgn8g",
+          "locale": "CS",
+          "question": "Jak si rezervuji sezení s Tomášem?",
+          "answer": "Vyberte si dostupný čas na této stránce pro přímou rezervaci s Tomášem. Platba je zpracována bezpečně při rezervaci — sezení je potvrzeno po dokončení platby. Okamžitě obdržíte pozvánku do kalendáře. Sezení se konají prostřednictvím bezpečného a důvěrného videohovoru ve španělštině nebo italštině. Pokud prožíváte psychologickou krizi nebo myšlenky na sebepoškození, zavolejte na 112 nebo na Telefon naděje (717 003 717) — nečekejte na schůzku.",
+          "category": null,
+          "sortOrder": 4,
+          "isActive": true
+        },
+        {
+          "id": "cmrnzj3xl00yxbsjuoy9pegkm",
+          "locale": "CS",
+          "question": "Jaké jsou kvalifikace Tomáse Ruiz Palaciosa?",
+          "answer": "Tomás Ruiz Palacios má titul v oboru psychologie z Univerzity v Murcii, magisterský titul v oboru Mediace a Relacionální systémové terapie z ITFB v Boloni a magisterský titul v oboru Psychologie General Sanitaria z Mezinárodní univerzity ve Valencii. Má více než tři roky klinické zkušenosti s hispanofonními a italskými dospělými, specializuje se na KBT a relacionalní systémovou terapii.",
+          "category": null,
+          "sortOrder": 5,
+          "isActive": true
+        }
+      ],
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:59:00.000Z"
+      },
+      "bookabilityByServiceId": {
+        "cmre7qg1l005cngjub14ciym5": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T12:59:00.000Z"
+        }
+      }
+    }
+  }
+}

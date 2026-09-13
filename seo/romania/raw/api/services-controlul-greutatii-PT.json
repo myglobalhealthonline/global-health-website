@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:14.145Z",
+  "endpoint": "/api/services/controlul-greutatii?countryCode=ro&locale=PT",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee3510005fsjunqgfmxn2",
+      "kind": "GENERAL",
+      "slug": "controlul-greutatii",
+      "name": "Gestão do peso — avaliação médica e plano personalizado",
+      "summary": "Tem dificuldade em perder peso apesar das mudanças no estilo de vida? Os nossos médicos credenciados pela CMR avaliam os fatores médicos, metabólicos e comportamentais que influenciam o peso e estabelecem um plano realista de gestão.",
+      "seoTitle": "Gestão do peso online | Roménia | avaliação médica",
+      "seoDescription": "Gestão médica do peso, para além da dieta e do estilo de vida. Os nossos médicos autorizados pela CMR avaliam os fatores médicos, metabólicos e comportamentais que influenciam o peso e estabelecem um plano realista de gestão.",
+      "seoKeywords": [
+        "weight management online Romania",
+        "online doctor weight loss Romania",
+        "obesity consultation Bucharest English",
+        "metabolic health online Romania",
+        "weight loss doctor Romania expat"
+      ],
+      "heroTitle": "Gestão do peso — avaliação médica e plano personalizado",
+      "heroDescription": "Gestão médica do peso, para além da dieta e do estilo de vida. Os nossos médicos autorizados pela CMR avaliam os fatores médicos, metabólicos e comportamentais que influenciam o peso e estabelecem um plano realista de gestão.",
+      "detailBody": "<p>O controlo do peso não depende apenas da vontade. As perturbações hormonais, a síndrome metabólica, a resistência à insulina, o sono deficiente, a medicação ou os hábitos alimentares podem contribuir significativamente para o aumento de peso e para a dificuldade em emagrecer.</p><p>A consulta inclui a avaliação do historial de peso, das dietas anteriores, do nível de atividade, do sono, dos sintomas hormonais e dos resultados médicos disponíveis. O médico pode recomendar análises, alterações do estilo de vida, monitorização ou encaminhamento para especialidades relevantes quando existem causas médicas que precisam de ser investigadas.</p><p>O objetivo é que receba um plano personalizado, realista e seguro, baseado no seu contexto clínico, e não apenas recomendações gerais que não tenham em conta a verdadeira causa do problema.</p>",
+      "ctaLabel": "Agende a consulta",
+      "sortOrder": 120,
+      "durationMinutes": 15,
+      "basePriceCents": 15000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:03:02.284Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jsdzv001sakju8jltsy8i",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee3510005fsjunqgfmxn2",
+          "path": "/api/media/media/5bb9786f-3a23-44cb-ac81-2df8115fd74a-59954e92-eced-4821-8e0f-1f9d02346174-13.webp",
+          "altText": "Managementul greutății — evaluare medicală și plan personalizat"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "PT",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

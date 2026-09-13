@@ -1,0 +1,179 @@
+{
+  "endpoint": "/api/services/dejar-de-fumar-online?countryCode=es&locale=EN",
+  "checkedAt": "2026-09-13T02:29:57.459Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qcvw004engju2es5log3",
+      "kind": "GENERAL",
+      "slug": "dejar-de-fumar-online",
+      "name": "Smoking Cessation",
+      "summary": null,
+      "seoTitle": "Smoking Cessation Online Spain | Medical Support | English Doctor",
+      "seoDescription": "Want to stop smoking with medical support in Spain? Our OMC-registered GPs assess your tobacco dependence and create a personalised plan by video call. Same-day appointments available anywhere in Spain.",
+      "seoKeywords": [
+        "dejar de fumar online España",
+        "apoyo médico dejar de fumar España",
+        "deshabituación tabáquica online España",
+        "médico tabaco online España",
+        "dejar fumar médico cabecera online"
+      ],
+      "heroTitle": "Smoking Cessation — Medical Assessment and Personalised Plan in Spain",
+      "heroDescription": "Stopping smoking is one of the most important decisions you can make for your health — and one of the most difficult. Tobacco dependence is not just physical: it is also psychological and behavioural. Most people who try to stop without medical support relapse within weeks. Structured medical support changes this. A GP who assesses your level of dependence, designs a plan adapted to your specific profile, and accompanies you through the process significantly multiplies your chances of success. Our GPs, registered with the Spanish Medical Council (OMC — Organización Médica Colegial), offer smoking cessation assessments by secure video call — evaluating your dependence, designing a personalised plan, and issuing appropriate clinical documentation where clinically indicated. Same day, from anywhere in Spain, in English, Spanish, or Portuguese.",
+      "detailBody": "<h2>Why Medical Support Makes the Difference</h2><p>Tobacco dependence activates the same reward circuits in the brain as other dependencies. Trying to stop through willpower alone ignores the biological basis of addiction — and this is why it fails in most cases.</p><p>Structured medical support acts on several levels simultaneously:</p><ul><li>Dependence assessment — not all smokers have the same dependence profile. The most appropriate intervention depends on how many cigarettes you smoke, when you smoke your first of the day, how you have responded to previous attempts, and what other health conditions you have</li><li>Tailored pharmacological support — where clinically indicated, your GP can assess pharmacological support options, at the doctor's professional discretion following full clinical assessment</li><li>Behavioural support — identifying the triggers that lead to smoking and developing alternative strategies is part of the plan</li><li>Follow-up — regular follow-up during the cessation process significantly improves success rates</li></ul><h2>Who This Service Is For</h2><p>This consultation is appropriate for adults who:</p><ul><li>Currently smoke and want to stop with structured medical support</li><li>Have tried to stop before without success and want to explore approaches with stronger scientific evidence</li><li>Want to understand what pharmacological support options exist and whether they are candidates for them, following full clinical assessment</li><li>Have health conditions — cardiovascular disease, diabetes, COPD, planned pregnancy — where stopping smoking is an urgent clinical priority</li><li>Want smoking cessation support in English or Portuguese without language barriers</li></ul><h2>What Your Consultation Includes</h2><p><strong>Dependence assessment</strong></p><p>Your GP assesses your tobacco dependence profile — including how many cigarettes you smoke per day, when you smoke your first of the day, how you feel when you cannot smoke, and how you have responded to previous attempts to stop. This assessment structures the most appropriate support plan for your specific profile.</p><p><strong>Motivation assessment</strong></p><p>Motivation is a clinically relevant factor in smoking cessation. Your GP explores your reasons for wanting to stop, the barriers you anticipate, and how to structure the plan to maximise your chances of success.</p><p><strong>Personalised cessation plan</strong></p><p>Based on the assessment, your GP designs a structured plan — which may include behavioural strategies to manage triggers and withdrawal symptoms, basic nutritional support to manage potential weight gain when stopping, and physical activity recommendations as a support tool.</p><p><strong>Assessment of pharmacological support options — at the doctor's discretion</strong></p><p>Where clinically indicated following full clinical profile assessment, your GP can assess pharmacological support options for smoking cessation. No pharmacological option can be confirmed or issued before the clinical assessment.</p><p>Note: Since June 2024, the Spanish Ministry of Health funds certain medications for smoking cessation support for patients who meet specific clinical criteria — including smokers with high dependence as assessed by the Fagerström test. Your GP informs you during the consultation whether you may meet the funding criteria and what steps to follow to access it through the public system.</p><p><strong>Clinical documentation — at the doctor's professional discretion</strong></p><p>When clinically indicated, your GP issues appropriate clinical documentation valid at any pharmacy in Spain.</p><p><strong>Follow-up</strong></p><p>Stopping smoking is a process — not a single event. Follow-up consultations are available to monitor progress, manage the highest-risk moments for relapse, and adjust the plan if needed.</p><h2>Stopping Smoking and Your Health — Why Now</h2><p>The health benefits of stopping smoking begin within hours and accumulate over years:</p><ul><li>20 minutes — blood pressure and heart rate normalise</li><li>12 hours — carbon monoxide in the blood returns to normal levels</li><li>2 weeks to 3 months — circulation and lung function improve</li><li>1 year — the risk of coronary heart disease is halved</li><li>5 years — the risk of stroke equals that of a non-smoker</li><li>10 years — the risk of lung cancer is halved</li></ul><p>For smokers with cardiovascular conditions, diabetes, COPD, or who are planning a pregnancy, stopping smoking is one of the clinical interventions with the greatest impact on long-term health outcomes — frequently greater than any medication.</p><h2>Smoking Cessation in Spain — Context</h2><p>Spain has one of the highest smoking rates in Western Europe — approximately 22-23% of the adult population smokes daily. Access to structured smoking cessation programmes in the public system varies by autonomous community. For international residents who prefer support in English or Portuguese, structured options are practically non-existent outside major cities.</p><p>Our service provides structured medical smoking cessation assessment — same day, from anywhere in Spain — with follow-up available throughout the process.</p>",
+      "ctaLabel": null,
+      "sortOrder": 110,
+      "durationMinutes": 15,
+      "basePriceCents": 3900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.264Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0jt5u0000asju50bs9n2e",
+          "kind": "IMAGE",
+          "key": "media/c05de5c7-21b7-4fb9-a7d9-e8c947d87cb8-es-dejar-de-fumar-online.png",
+          "path": "/api/media/media/c05de5c7-21b7-4fb9-a7d9-e8c947d87cb8-es-dejar-de-fumar-online.png",
+          "altText": "Dejar de Fumar"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qd3s004fngjul7t32gfw",
+          "question": "Can my general practitioner help me quit smoking?",
+          "answer": "Yes. Smoking cessation is an integral part of primary care. Your primary care physician assesses your level of dependence, designs a personalized plan, and — where clinically indicated after a full evaluation — may consider pharmacological support options. Structured medical support significantly multiplies the chances of success compared with trying without support.",
+          "sortOrder": 0,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qd3s004gngju7lsyvqhh",
+          "question": "What pharmacological support options are available to quit smoking?",
+          "answer": "There are various options for pharmacological support treatment for smoking cessation — including nicotine replacement therapy, bupropion, cytisine, and varenicline — with different profiles of efficacy, tolerability, and contraindications. The most appropriate option for you depends on your complete clinical profile. None can be confirmed or recommended before medical evaluation.",
+          "sortOrder": 1,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qd3s004hngju3qocwgkc",
+          "question": "Are these treatments funded by Social Security?",
+          "answer": "Since June 2024, certain medications for smoking cessation are funded by the Ministry of Health for patients who meet specific clinical criteria — including smokers with high dependence. Funding through the public system requires a prescription from an SNS doctor. Your Global Health doctor will inform you during the consultation if you may meet the criteria and what steps to follow.",
+          "sortOrder": 2,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qd3s004ingjuf5foaafu",
+          "question": "How many consultations will I need?",
+          "answer": "A structured smoking cessation plan generally includes an initial assessment and planning appointment, and follow-up appointments during the process — usually at 2 weeks, 1 month, and 3 months. Your doctor designs the appropriate follow-up schedule for your case.",
+          "sortOrder": 3,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qd3s004jngju6k14l6k4",
+          "question": "What happens if I have tried to quit smoking before and relapsed?",
+          "answer": "Relapse is a normal part of the recovery process — it does not indicate failure, but rather that the plan needs to be adjusted. Previous unsuccessful attempts are clinically relevant information that your doctor uses to design a more effective approach. The more previous attempts there are, the more important structured medical support becomes.",
+          "sortOrder": 4,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qd3s004kngjucp1qdwy7",
+          "question": "Can I use this service if I have health conditions such as diabetes or cardiovascular disease?",
+          "answer": "Yes — and for these patients quitting smoking is especially a priority. Your doctor evaluates your complete clinical profile when designing the plan, including possible interactions with your current medication and the specific considerations of your health condition.",
+          "sortOrder": 5,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qd3s004lngjuqz0jlmbm",
+          "question": "Is this service suitable during pregnancy or breastfeeding?",
+          "answer": "If you are pregnant or breastfeeding and want to quit smoking, consult your doctor at the start of the appointment. The support options available during pregnancy are different — your doctor will advise you on the safest approach for your situation.",
+          "sortOrder": 6,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qd3s004mngjuazoie48k",
+          "question": "Do I need Spanish health insurance?",
+          "answer": "No. It is a private direct-payment service. The clinical documentation issued through this service is provided at the full private price regardless of insurance status.",
+          "sortOrder": 7,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qd3s004nngju9fu0ezjk",
+          "question": "Can I use this service from anywhere in Spain?",
+          "answer": "Yes — including the Balearic Islands, the Canary Islands, Ceuta and Melilla. You only need a stable internet connection and a device with a camera.",
+          "sortOrder": 8,
+          "resolvedLocale": "EN"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "EN",
+      "links": [
+        {
+          "id": "cmre7t5kz003sg8ju2wbop6ng",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre evaluación cardiovascular para fumadores?",
+          "body": "Nuestra Cardiología Especialista está pensada específicamente para evaluación cardiovascular para fumadores.",
+          "ctaLabel": "Cardiología Especialista",
+          "targetSlug": "cardiologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7t40r003og8ju6nk2dtlb",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Apoyo de salud mental durante el proceso?",
+          "body": "Si tu situación está relacionada con apoyo de salud mental durante el proceso, nuestra Salud Mental te ofrece la evaluación adecuada.",
+          "ctaLabel": "Salud Mental",
+          "targetSlug": "salud-mental-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7t4sv003qg8juqi2i65cw",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con evaluación del impacto del tabaco en la salud?",
+          "body": "Para evaluación del impacto del tabaco en la salud, consulta nuestra página de Consulta Médica General — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

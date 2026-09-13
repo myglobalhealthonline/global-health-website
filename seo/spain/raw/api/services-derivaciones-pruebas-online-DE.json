@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/derivaciones-pruebas-online?countryCode=es&locale=DE",
+  "checkedAt": "2026-09-13T02:29:54.611Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qas1003sngjus0w2obwn",
+      "kind": "GENERAL",
+      "slug": "derivaciones-pruebas-online",
+      "name": "Überweisungen und Untersuchungen",
+      "summary": null,
+      "seoTitle": "Überweisungen und Untersuchungen Online Spanien | Analysen | Hausarzt",
+      "seoDescription": "Benötigen Sie in Spanien eine Überweisung an einen Facharzt, Laboranalysen oder bildgebende Untersuchungen? Unsere zugelassenen Hausärzte stellen nach vollständiger Untersuchung klinische Unterlagen aus. Noch am selben Tag in Spanien.",
+      "seoKeywords": [
+        "derivaciones médicas online España",
+        "carta derivación especialista online España",
+        "analíticas privadas online España",
+        "pruebas imagen solicitud online España",
+        "derivación médico cabecera online España"
+      ],
+      "heroTitle": "Überweisungen und Tests — Klinische Dokumentation Online am selben Tag",
+      "heroDescription": "Benötigen Sie in Spanien ein Überweisungsschreiben an einen Facharzt in der Privatversorgung? Benötigen Sie, dass ein Arzt vor der Buchung Blutuntersuchungen oder bildgebende Untersuchungen anfordert? Haben Sie Befunde eines spanischen Facharztes erhalten, die Sie vor der Entscheidung über das weitere Vorgehen prüfen und klar erklärt haben möchten? Unsere Hausärzte, die gemäß den Anforderungen der Organización Médica Colegial (OMC) zugelassen sind, erstellen nach einer vollständigen klinischen Untersuchung klinische Überweisungsschreiben, Anfragen für Blutuntersuchungen und Anfragen für bildgebende Untersuchungen — und geben Ihnen die Unterlagen, die Sie benötigen, um in Spanien Zugang zu privater fachärztlicher Versorgung und diagnostischen Untersuchungen zu erhalten. Am selben Tag, von jedem Ort des Landes aus, auf Spanisch, Englisch oder Portugiesisch.",
+      "detailBody": "<h2>Wie der Zugang zu Fachärzten in Spanien funktioniert</h2><p>Spanien hat ein duales Überweisungssystem — eines für das öffentliche System und eines für die private Versorgung.</p><p>Der Zugang zu Fachärzten im öffentlichen System erfordert eine Überweisung vom Hausarzt (Médico de familia), der beim SNS angestellt ist. Ohne diese Überweisung sind Facharzttermine im öffentlichen System nicht abgedeckt. Global Health kann keine Überweisungen für das öffentliche System ausstellen — dafür ist ein Hausarzt erforderlich, der im spanischen öffentlichen Gesundheitssystem angestellt ist.</p><p>Der Zugang zu privaten Fachärzten ist in den meisten Fällen direkt möglich — du kannst einen Termin bei einem privaten Facharzt ohne Überweisungsschreiben buchen. Wenn man jedoch ohne klinischen Kontext zu einem Facharzttermin erscheint, mindert das die Qualität dieser ersten Konsultation erheblich. Ein Facharzt, der ein klares Überweisungsschreiben erhält — das deine Symptome, relevante Vorgeschichte, aktuelle Medikation und die konkrete klinische Fragestellung beschreibt — kann eine gezieltere und effizientere Beurteilung durchführen.</p><p>Dieser Service umfasst:</p><ul><li>Private Überweisungsschreiben — für Konsultationen bei privaten Fachärzten deiner Wahl</li><li>Anforderungen für Laboruntersuchungen — für private Labortests in Entnahmestellen in ganz Spanien</li><li>Anforderungen für bildgebende Untersuchungen — für private Röntgenaufnahmen, Ultraschall, MRT oder CT</li><li>Klinische Zusammenfassungsschreiben — zur Dokumentation deiner Beurteilung und Befunde für die Kontinuität der Versorgung</li><li>Befundprüfung — Laborergebnisse, Bildgebungsberichte oder Facharztbriefe werden geprüft und klar erläutert</li></ul><p>Dieser Service umfasst nicht:</p><ul><li>Überweisungen des öffentlichen SNS-Systems — hierfür ist ein beim SNS angestellter Hausarzt erforderlich</li><li>Überweisungen in Notfällen — rufe sofort die 112 an oder gehe zur nächstgelegenen Notaufnahme</li></ul><h2>Für wen dieser Service geeignet ist</h2><p>Diese Konsultation ist geeignet für:</p><ul><li>Alle, die in Spanien einen privaten Facharzt aufsuchen möchten und ein klinisches Überweisungsschreiben benötigen, das den Termin begleitet</li><li>Patienten, die Laboruntersuchungen oder Bildgebungen benötigen, die von einem Arzt angefordert werden sollen, bevor sie privat gebucht werden</li><li>Patienten, die Ergebnisse erhalten haben — aus Laboruntersuchungen, Bildgebung oder Facharztkonsultationen — und möchten, dass diese geprüft und klar erläutert werden</li><li>Patienten mit einem konkreten klinischen Anliegen, das vor der Suche nach fachärztlicher Versorgung formal beurteilt und dokumentiert werden soll</li><li>Patienten, die ein klinisches Zusammenfassungsschreiben benötigen — für Versicherungszwecke, für einen neuen Arzt oder zur Kontinuität der Versorgung</li><li>Patienten, die klinische Dokumente auf Spanisch erhalten haben und möchten, dass diese geprüft und in Kontext gesetzt werden</li><li>Alle in Spanien ohne zugewiesenen Hausarzt, die klinische Dokumentation benötigen, um Zugang zu privater fachärztlicher Versorgung zu erhalten</li></ul><h2>Warum ein Überweisungsschreiben Mehrwert schafft</h2><p>Der direkte Zugang zu privaten Fachärzten in Spanien ist in den meisten Fällen ohne Überweisungsschreiben möglich. Aber ein Facharzt, der dich ohne Kontext sieht, muss bei Null anfangen — und die Sprechzeit wird dafür verwendet, Informationen zu sammeln, die im Voraus schriftlich hätten übermittelt werden können.</p><p>Ein nach klinischer Beurteilung ausgestelltes Überweisungsschreiben enthält alles, was der Facharzt wissen muss, bevor du in die Sprechstunde kommst — Symptome, Dauer, Schweregrad, aktuelle Medikation, bereits durchgeführte Untersuchungen und die konkrete klinische Frage, um deren Beantwortung du bittest. Der Facharzt kann direkt zum klinischen Problem übergehen.</p><p>Der Unterschied in der Qualität des ersten Facharzttermins — zwischen dem Erscheinen mit einem vollständigen Überweisungsschreiben und dem Erscheinen ohne Kontext — ist erheblich.</p><h2>Überweisungsschreiben — was sie enthalten</h2><p>Ein von einem Hausarzt von Global Health nach klinischer Beurteilung ausgestelltes Überweisungsschreiben enthält:</p><ul><li>Patientendaten und relevante medizinische Vorgeschichte</li><li>Beschreibung des vorgebrachten Problems — Symptome, Dauer, Schweregrad und relevante klinische Befunde aus der Videosprechstunde</li><li>Aktuelle Medikation und relevante bereits abgeschlossene Untersuchungen</li><li>Konkrete klinische Frage an den Facharzt — was du von ihm beurteilen oder empfehlen lassen möchtest</li><li>Grad der Dringlichkeit — routinemäßig, bald oder dringend — basierend auf der klinischen Beurteilung</li></ul><p>Das Schreiben wird auf Spanisch für spanischsprachige Fachärzte ausgestellt. Wenn du eine englische Version für einen englischsprachigen Arzt benötigst, bespreche dies während der Konsultation mit deinem Arzt.</p><h2>Laboruntersuchungen — was angefordert werden kann</h2><p>Nach der klinischen Beurteilung kann dein Hausarzt Anträge für Laboruntersuchungen für ein breites Spektrum an Untersuchungen ausstellen, einschließlich:</p><p><strong>Stoffwechsel und kardiovaskulär</strong></p><ul><li>Großes Blutbild</li><li>Nüchternblutzucker und HbA1c</li><li>Lipidprofil — Gesamtcholesterin, LDL, HDL, Triglyceride</li><li>Nierenfunktion — Kreatinin, eGFR, Harnstoff, Elektrolyte</li><li>Leberfunktion</li><li>Schilddrüsenfunktion — TSH, freies T4, freies T3</li><li>Harnsäure</li><li>Ferritin, Eisenstatus und B12/Folat</li></ul><p><strong>Hormonell und reproduktiv</strong></p><ul><li>Testosteronprofil — Gesamt- und freies Testosteron, LH, FSH, SHBG</li><li>Weibliches Hormonprofil — Östradiol, FSH, LH, Progesteron, AMH</li><li>Schilddrüsenantikörper — Anti-TPO, Anti-Thyreoglobulin</li><li>Cortisol</li><li>Prolaktin</li><li>DHEA-S</li></ul><p><strong>Entzündlich und autoimmun</strong></p><ul><li>CRP und BSG</li><li>Rheumafaktor und Anti-CCP</li><li>ANA- und ANCA-Profile</li><li>Komplementwerte</li></ul><p><strong>Infektionskrankheiten</strong></p><ul><li>HIV-, Hepatitis-B- und Hepatitis-C-Serologie</li><li>STI-Profile</li><li>Kontrollen der Immunität nach Impfung</li></ul><p><strong>Sonstiges</strong></p><ul><li>Vitamin D</li><li>Zöliakie-Screening — Anti-tTG IgA</li><li>PSA — prostataspezifisches Antigen</li><li>hCG — Schwangerschaftstest</li><li>Allergieprofile — spezifisches IgE</li></ul><p>Die Anträge für Laboruntersuchungen werden nach klinischer Beurteilung ausgestellt — dein Arzt berät dich darüber, welche Tests für deine spezifische Vorstellung klinisch indiziert sind.</p><h2>Zugang zu privaten Laboruntersuchungen in Spanien</h2><p>Private Entnahmestellen für Laboruntersuchungen sind in ganz Spanien weit verbreitet — in Madrid, Barcelona und in allen größeren Städten und Provinzhauptstädten. Private Labornetze sind landesweit mit Entnahmestellen an den meisten Orten tätig.</p><p>Nach deiner Konsultation stellt dein Arzt den Laborauftrag aus und berät dich, wohin du für die Entnahme gehen sollst, basierend auf deinem Standort. Du buchst den Termin für die Entnahme direkt — eine spanische Krankenversicherung ist für private Laboruntersuchungen nicht erforderlich. Die Ergebnisse sind in der Regel innerhalb von 24 bis 72 Stunden verfügbar, abhängig von den angeforderten Tests, obwohl einige spezielle Profile länger dauern können.</p><h2>Anträge für bildgebende Untersuchungen</h2><p>Wenn Röntgen, Ultraschall, MRT oder CT nach der Beurteilung klinisch angezeigt sind, stellt dein Arzt einen formellen Bildgebungsauftrag aus. Private Radiologie ist in Spanien weit verbreitet — die meisten privaten Krankenhäuser und radiologischen Zentren akzeptieren Direktbuchungen mit dem Auftrag eines Arztes.</p><p>Dein Arzt berät dich über die für deine konkrete klinische Fragestellung am besten geeignete Bildgebungsmodalität und die Dringlichkeit der Untersuchung.</p><h2>Befundprüfung</h2><p>Hast du Laborergebnisse, Bildgebungsberichte oder Facharztbriefe erhalten, die du prüfen und klar erläutert haben möchtest? Dein Arzt überprüft sie im Rahmen einer Nachsorgekonsultation vollständig — und erklärt die klinischen Befunde, was sie für deine Gesundheit bedeuten, was die nächsten Schritte sind und ob weitere Untersuchungen oder eine fachärztliche Beurteilung erforderlich sind.</p><p>Dies ist besonders nützlich für Patienten, die Ergebnisse oder klinische Briefe auf Spanisch erhalten haben und möchten, dass diese klar erklärt werden — sei es für spanische Einwohner, die mehr Zeit für die Besprechung ihrer Ergebnisse wünschen, als eine Standardkonsultation erlaubt, oder für internationale Einwohner, die den klinischen Inhalt auf Englisch oder Portugiesisch erklärt bekommen müssen.</p>",
+      "ctaLabel": null,
+      "sortOrder": 120,
+      "durationMinutes": 15,
+      "basePriceCents": 3500,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.264Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0jvsd0001asjuwczqne2v",
+          "kind": "IMAGE",
+          "key": "media/ca5aeb3b-c263-4ee0-8662-b763c407f9cc-es-derivaciones-pruebas-online.png",
+          "path": "/api/media/media/ca5aeb3b-c263-4ee0-8662-b763c407f9cc-es-derivaciones-pruebas-online.png",
+          "altText": "Derivaciones y Pruebas"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qb0g003tngjuzcplymij",
+          "question": "Kann ich ein Überweisungsschreiben ohne vollständige klinische Untersuchung erhalten?",
+          "answer": "Nein. Überweisungsschreiben werden nach vollständiger klinischer Beurteilung ausgestellt. Ihr Arzt muss Ihre Symptome und Ihre Krankengeschichte beurteilen, um ein klinisch aussagekräftiges Überweisungsschreiben zu verfassen. Ein Überweisungsschreiben ohne klinische Beurteilung würde Ihrem Termin beim Facharzt keinen zusätzlichen Nutzen bringen.",
+          "sortOrder": 0,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7qb0g003ungjuz3gp78qy",
+          "question": "Kann dieser Dienst Überweisungen aus dem öffentlichen System des SNS bereitstellen?",
+          "answer": "Nein. Überweisungen über das öffentliche System in Spanien erfordern einen Hausarzt, der beim SNS angestellt ist. Global Health stellt private Überweisungsschreiben für den Zugang zu privaten Fachärzten bereit.",
+          "sortOrder": 1,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7qb0g003vngjuix3g83vt",
+          "question": "Muss der Überweisungsschein auf Spanisch sein?",
+          "answer": "Für spanischsprachige Fachärzte ja — der Überweisungsbrief wird auf Spanisch ausgestellt. Für englischsprachige Leistungserbringer oder internationale Spezialisten kann er auf Englisch ausgestellt werden. Dein Arzt stellt ihn in der passenden Sprache aus, je nachdem, wen du aufsuchst — sprich das während der Konsultation an.",
+          "sortOrder": 2,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7qb0g003wngju5rvz2cky",
+          "question": "Wie lange dauert es, bis die Ergebnisse der Laboranalysen eintreffen?",
+          "answer": "Die Bearbeitungszeiten variieren je nach Test — die meisten Standardanalysen sind innerhalb von 24 bis 72 Stunden von privaten Entnahmezentren in Spanien verfügbar. Einige spezialisierte Panels dauern länger. Ihr Arzt berät Sie bei der Ausstellung der Anforderung über die erwartete Bearbeitungszeit.",
+          "sortOrder": 3,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7qb0g003xngju2n8wfdnu",
+          "question": "Kann ich diesen Dienst nutzen, wenn ich eine private spanische Krankenversicherung habe?",
+          "answer": "Ja — aber dieser Dienst deckt private Überweisungen und private Untersuchungsanfragen ab. Deine private Krankenversicherung kann Facharzttermine und Laboranalysen je nach deiner spezifischen Police abdecken — erkundige dich bei deiner Versicherung. Laboranalysen und Facharzttermine, die über diesen Dienst gebucht werden, werden unabhängig von deiner Versicherung zum vollen Privatpreis abgerechnet.",
+          "sortOrder": 4,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7qb0g003yngjugl2iwso9",
+          "question": "Was passiert, wenn meine Ergebnisse etwas Ernstes zeigen?",
+          "answer": "Wenn die Überprüfung Ihrer Ergebnisse Befunde ergibt, die dringende Aufmerksamkeit erfordern, berät Sie Ihr Arzt unverzüglich über die geeigneten nächsten Schritte — einschließlich, ob eine Notfallversorgung erforderlich ist. Wenn eine Notfallversorgung erforderlich ist, rufen Sie sofort die 112 an oder gehen Sie zum nächstgelegenen Notdienst.",
+          "sortOrder": 5,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7qb0g003zngjuhaukyflq",
+          "question": "Kann ich diesen Dienst in Spanien ohne Hausarzt nutzen?",
+          "answer": "Ja. Dieser Service ist für jede Person in Spanien verfügbar — ohne vorherige Registrierung, ohne Hausarzt erforderlich, ohne Krankenversicherung erforderlich.",
+          "sortOrder": 6,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7qb0g0040ngju96ofwc1j",
+          "question": "Kann ich diesen Service von jedem Ort in Spanien aus nutzen?",
+          "answer": "Ja — einschließlich der Balearen, Kanarischen Inseln, Ceuta und Melilla. Du brauchst nur eine stabile Internetverbindung und ein Gerät mit Kamera.",
+          "sortOrder": 7,
+          "resolvedLocale": "DE"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "DE",
+      "links": [
+        {
+          "id": "cmre7snma002qg8jult0p90xg",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con analíticas cardiológicas y metabólicas?",
+          "body": "Para analíticas cardiológicas y metabólicas, consulta nuestra página de Cardiología Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Cardiología Especialista",
+          "targetSlug": "cardiologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7soee002sg8ju1hnpt499",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre solicitar RMN cerebral o electromiograma?",
+          "body": "Nuestra Neurología Especialista está pensada específicamente para solicitar RMN cerebral o electromiograma.",
+          "ctaLabel": "Neurología Especialista",
+          "targetSlug": "neurologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7smu6002og8ju8lndhczu",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Analíticas hormonales y metabólicas?",
+          "body": "Si tu situación está relacionada con analíticas hormonales y metabólicas, nuestra Control de Peso te ofrece la evaluación adecuada.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7sp6h002ug8jum26oow57",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Segunda opinión sobre resultados recibidos?",
+          "body": "Si tu situación está relacionada con segunda opinión sobre resultados recibidos, nuestra Segunda Opinión Médica te ofrece la evaluación adecuada.",
+          "ctaLabel": "Segunda Opinión Médica",
+          "targetSlug": "segunda-opinion-medica",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

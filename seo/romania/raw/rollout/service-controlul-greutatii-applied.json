@@ -1,0 +1,20 @@
+{
+  "group": "service:controlul-greutatii",
+  "approvalSha256": "0a9fefeaa6e96717f3c8e411aa1f96279b99d10d6638a18148f8d02c061d29ea",
+  "reviewerDoctorId": "cmrc4axni00rn01p2n3r2bopf",
+  "approvalEvidence": "owner-reported clinician approval in this task",
+  "appliedAt": "2026-09-12T22:54:52.689Z",
+  "alreadyApplied": false,
+  "operations": 35,
+  "publicVerified": true,
+  "afterSha256": "5dccd4fe43029f3627f154af510a137786d832f2472e6e44fa0a2739471ccdc0",
+  "publicVerifiedAt": "2026-09-12T22:55:16.816Z",
+  "verifiedUrls": [
+    "https://www.myglobalhealth.online/romania/cs/services/controlul-greutatii",
+    "https://www.myglobalhealth.online/romania/de/services/controlul-greutatii",
+    "https://www.myglobalhealth.online/romania/en/services/controlul-greutatii",
+    "https://www.myglobalhealth.online/romania/es/services/controlul-greutatii",
+    "https://www.myglobalhealth.online/romania/pt/services/controlul-greutatii",
+    "https://www.myglobalhealth.online/romania/ro/services/controlul-greutatii"
+  ]
+}

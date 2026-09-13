@@ -456,7 +456,7 @@ export const COUNTRY_CONTACT: Record<string, CountryContact> = {
         title: "Contact | Medic Online România | Global Health",
         description:
           "Contactați Global Health România: info@myglobalhealth.online. Consultații online prin apel video cu medici înregistrați. Asistență în română și engleză.",
-        h1: "Contact — Global Health România",
+        h1: "Contact Global Health România",
         intro:
           "Global Health funcționează în România exclusiv ca o clinică online: consultațiile au loc prin apel video securizat cu medici înregistrați. Nu avem cabinet fizic în România.",
         reachHeading: "Cum ajungeți la un medic",

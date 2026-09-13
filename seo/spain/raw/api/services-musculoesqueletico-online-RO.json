@@ -1,0 +1,179 @@
+{
+  "endpoint": "/api/services/musculoesqueletico-online?countryCode=es&locale=RO",
+  "checkedAt": "2026-09-13T02:30:07.712Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q8mg0037ngjuso41eynq",
+      "kind": "GENERAL",
+      "slug": "musculoesqueletico-online",
+      "name": "musculo-scheletic",
+      "summary": null,
+      "seoTitle": "Durere musculo-scheletică Online Spania | Evaluare clinică | Medic de familie",
+      "seoDescription": "Durere de spate, la nivelul articulațiilor, sciatică sau leziune musculară. Medicii noștri de familie înscriși în colegiu evaluează afecțiuni musculo-scheletice prin videoconferință securizată. Evaluare clinică în aceeași zi în Spania.",
+      "seoKeywords": [
+        "dolor musculoesquelético online España",
+        "dolor espalda médico online España",
+        "ciática consulta online España",
+        "dolor articular médico online España",
+        "lesión muscular evaluación online España"
+      ],
+      "heroTitle": "Durere musculo-scheletică — Evaluare clinică online în aceeași zi",
+      "heroDescription": "Durerea de spate, durerea articulară, sciatica, leziunile musculare și afecțiunile musculoscheletice cronice se numără printre cele mai frecvente motive pentru care oamenii solicită îngrijire medicală — și printre cele mai prost deservite de modelul actual de asistență primară. Așteptarea de săptămâni pentru o programare la traumatologie sau ortopedie pentru o afecțiune care necesită evaluare astăzi este o problemă structurală atât în sistemul public, cât și în cel privat din Spania. Medicii noștri de familie, înscriși în conformitate cu cerințele Organizației Medicale Colegiale (OMC), efectuează evaluări musculoscheletice complete prin videoconferință securizată — identificând cauza subiacentă, evaluând impactul funcțional, oferind consiliere privind managementul bazat pe dovezi și coordonând trimiterea și investigațiile acolo unde este indicat din punct de vedere clinic. În aceeași zi, din orice punct al Spaniei, în spaniolă, engleză sau portugheză.",
+      "detailBody": "<h2>Pentru cine este acest serviciu</h2><p>Această consultație este potrivită pentru adulți cu:</p><ul><li>O leziune musculo-scheletală acută sau durere cu debut brusc care necesită evaluare clinică</li><li>Durere cronică sau persistentă care nu a fost evaluată sau gestionată în mod adecvat</li><li>O afecțiune musculo-scheletală cunoscută care este în puseu și necesită revizuire la timp</li><li>Durere după o leziune, procedură sau perioadă de imobilizare</li><li>Simptome musculo-scheletale asociate cu o afecțiune cronică — diabet, boală cardiovasculară sau afecțiuni inflamatorii — care complică gestionarea</li><li>Necesitatea unei trimiteri la fizioterapie, solicitări de investigații imagistice sau trimitere la specialist, coordonate printr-o evaluare clinică</li><li>Oricine căruia i s-a spus „este normal” sau „odihniți-vă” fără a primi o explicație clinică structurată despre ce se întâmplă și ce trebuie făcut</li></ul><p>Dacă ai durere bruscă și intensă, durere în piept, durere după un traumatism semnificativ sau orice simptom care te îngrijorează serios — mergi la cel mai apropiat serviciu de urgență sau sună imediat la 112.</p><h2>Afecțiuni evaluate în mod obișnuit</h2><p><strong>Coloană vertebrală și neurologic</strong></p><ul><li>Durere lombară acută și cronică</li><li>Durere cervicală și tulburări ale coloanei cervicale</li><li>Sciatică și radiculopatie lombară</li><li>Hernie de disc și simptome asociate de compresie nervoasă</li><li>Durere de coloană toracică</li></ul><p><strong>Afecțiuni articulare</strong></p><ul><li>Durere de genunchi — inclusiv artroză, leziuni ligamentare și sindrom patelofemural</li><li>Durere de șold — inclusiv artroză, bursită și durere referită</li><li>Durere de umăr — inclusiv leziune de manșetă rotatorie, sindrom subacromial și capsulită aderentă</li><li>Durere de încheietură și de mână — inclusiv sindrom de tunel carpian și tendinopatie</li><li>Durere de gleznă și picior — inclusiv fasciită plantară și tendinopatia lui Ahile</li><li>Durere de cot — inclusiv epicondilită laterală și medială</li></ul><p><strong>Mușchi și țesut moale</strong></p><ul><li>Întinderi și rupturi musculare</li><li>Leziuni ale țesuturilor moi</li><li>Tendinită și tendinopatie</li><li>Bursită</li><li>Leziuni sportive și afecțiuni musculo-scheletale legate de activitate</li></ul><p><strong>Afecțiuni cronice și sistemice</strong></p><ul><li>Artroză — evaluare, gestionare și coordonarea trimiterii</li><li>Artrită inflamatorie — evaluare și trimitere la reumatologie, unde este indicat</li><li>Fibromialgie — evaluare și gestionare integrată</li><li>Durere neuropată — evaluare și traseu de gestionare</li><li>Sindroame dureroase cronice — evaluare structurată și coordonarea îngrijirii</li><li>Durere post-leziune sau postoperatorie — revizuire și plan de gestionare</li></ul><p><strong>Legate de muncă și stil de viață</strong></p><ul><li>Afecțiuni musculo-scheletale legate de muncă — leziuni prin suprasolicitare repetitivă, durere posturală</li><li>Evaluare și consiliere ergonomică</li><li>Evaluarea leziunilor sportive și legate de exerciții</li></ul><h2>Ce include consultația</h2><p><strong>Evaluare clinică completă</strong></p><p>Medicul tău de familie ia un istoric detaliat al durerii tale — debut, localizare, caracter, intensitate, iradiere, factori agravanți și amelioranți, impact funcțional și screening sistematic pentru semne de alarmă. Orice rezultat de investigație imagistică, raport de investigație sau scrisoare clinică existentă este revizuit în întregime.</p><p><strong>Screening pentru semne de alarmă</strong></p><p>Evaluarea musculo-scheletală include întotdeauna screening sistematic pentru semne de alarmă — indicatori că durerea poate avea o cauză subiacentă gravă care necesită investigații urgente sau trimitere. Medicul tău evaluează aceste aspecte ca parte standard a fiecărei consultații.</p><p><strong>Plan de gestionare personalizat</strong></p><p>Pe baza evaluării, medicul tău oferă sfaturi privind abordarea cea mai potrivită — care poate include trimitere la fizioterapie și reabilitare structurată, solicitări de investigații imagistice unde este indicat din punct de vedere clinic, trimitere la specialist unde este necesar, consiliere ergonomică și privind stilul de viață, precum și recomandări clinice la latitudinea medicului.</p><p><strong>Documentație clinică — la latitudinea medicului</strong></p><p>Atunci când este indicat clinic, medicul tău de familie emite documentația clinică corespunzătoare, valabilă în orice farmacie spaniolă.</p><p>Notă: stupefiantele și anumite substanțe controlate necesită documentație specială care nu poate fi emisă electronic. Medicii noștri de familie nu gestionează în mod obișnuit substanțe controlate prin consultație video.</p><p><strong>Coordonarea trimiterii și a investigațiilor</strong></p><p>Atunci când trimiterea la fizioterapie, investigații imagistice sau evaluare de specialitate sunt indicate clinic, medicul tău emite documentația relevantă în aceeași zi — astfel încât să pleci din consultație cu o cale clinică clară, nu doar cu o recomandare de a te descurca singur.</p><h2>Semne de alarmă — când să cauți îngrijire de urgență</h2><p>Durerea musculo-scheletală este aproape întotdeauna benignă — dar unele prezentări necesită îngrijire urgentă care nu poate aștepta o consultație video.</p><p>Caută imediat îngrijire de urgență dacă durerea ta este însoțită de:</p><ul><li>Orice modificare a funcției vezicii urinare sau intestinale asociată cu durerea de spate — incontinență sau retenție — aceasta poate indica sindromul caudei equine, o urgență chirurgicală</li><li>Traumatism semnificativ — cădere de la înălțime, accident rutier sau impact semnificativ</li><li>Durere toracică bruscă severă — care poate indica o cauză cardiacă sau aortică, nu musculo-scheletală</li><li>Pierdere inexplicabilă în greutate asociată cu durere nouă sau în agravare</li><li>Febră asociată cu umflare și durere articulară — poate indica artrită septică</li><li>Simptome neurologice progresive rapid — slăbiciune, amorțeală sau pierderea coordonării</li></ul><p>În caz de îndoială, caută întotdeauna îngrijire de urgență.</p><h2>De ce evaluarea clinică timpurie face diferența</h2><p>Majoritatea afecțiunilor musculo-scheletale sunt autolimitate — se rezolvă cu odihnă adecvată, modificarea activității și reabilitare structurată. Dar fără evaluare clinică, pacienții adesea tratează insuficient — revenind la activitate prea devreme și provocând leziuni suplimentare — sau tratează excesiv — restricționând inutil activitatea și prelungind recuperarea.</p><p>Evaluarea clinică timpurie identifică ceea ce se întâmplă cu adevărat, exclude o patologie subiacentă gravă și oferă un plan de gestionare structurat, bazat pe dovezi, care permite o recuperare funcțională completă mai rapid și mai sigur decât a aștepta ca situația să se rezolve de la sine.</p><h2>Acces la fizioterapie în Spania</h2><p>Fizioterapia privată în Spania este disponibilă pe scară largă — dar majoritatea fizioterapeuților solicită o scrisoare de trimitere sau un raport medical pentru a începe tratamentul. În sistemul public, accesul la fizioterapie necesită trimitere de la medicul de familie din SNS — cu timpi de așteptare care pot fi semnificativi.</p><p>Medicii noștri de familie emit scrisori de trimitere la fizioterapie în aceeași zi a consultației — adresate fizioterapeutului sau clinicii alese de tine — permițându-ți să accesezi tratament de fizioterapie privată fără întârziere.</p><h2>Ce este sindromul caudei equine</h2><p>Sindromul caudei equine este o urgență spinală rară, dar gravă, cauzată de compresia rădăcinilor nervoase la baza coloanei. Se prezintă ca durere de spate asociată cu modificarea funcției vezicii urinare sau intestinale — inclusiv incontinență sau dificultăți la urinare — și necesită evaluare chirurgicală de urgență.</p><p>Este menționat în mod proeminent pe această pagină deoarece poate fi confundat inițial cu durerea obișnuită de spate. Dacă ai durere de spate asociată cu orice modificare a funcției vezicii urinare sau intestinale, mergi imediat la cel mai apropiat serviciu de urgență — nu aștepta o consultație video, nu aștepta să vezi dacă se rezolvă.</p>",
+      "ctaLabel": null,
+      "sortOrder": 150,
+      "durationMinutes": 15,
+      "basePriceCents": 3900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.265Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k5c40006asjuzxb8rhxd",
+          "kind": "IMAGE",
+          "key": "media/a456ec48-dfd5-4b3b-89df-e485c1cbf6ad-es-musculoesqueletico-online.png",
+          "path": "/api/media/media/a456ec48-dfd5-4b3b-89df-e485c1cbf6ad-es-musculoesqueletico-online.png",
+          "altText": "Musculoesquelético"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q8v90038ngjuyknfupgl",
+          "question": "Poate fi evaluată cu adevărat o afecțiune musculo-scheletală prin videoconferință?",
+          "answer": "Da — pentru marea majoritate a prezentărilor. Istoricul medical este cea mai puternică unealtă de diagnostic în medicina musculo-scheletică, iar un istoric complet poate fi preluat prin apel video. Medicul tău observă, de asemenea, mișcarea, postura și capacitatea ta funcțională în timpul apelului. În cazul în care sunt necesare constatări ale examenului fizic care nu pot fi evaluate de la distanță, medicul tău te îndrumă cu privire la o evaluare în persoană adecvată.",
+          "sortOrder": 0,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q8v90039ngjuwmg0lcsl",
+          "question": "Ce se întâmplă dacă am nevoie de un RMN sau o radiografie?",
+          "answer": "Dacă investigațiile imagistice sunt indicate clinic pe baza evaluării, medicul tău emite aceeași zi o trimitere pentru imagistică. Poți programa investigația într-un centru privat de radiologie la alegerea ta în Spania — radiologia privată este disponibilă pe scară largă în orașele principale și în multe centre regionale.",
+          "sortOrder": 1,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q8v9003angjua3r79ope",
+          "question": "Pot obține o trimitere la fizioterapie prin acest serviciu?",
+          "answer": "Da. Scrisorile de trimitere către fizioterapie se emit atunci când sunt indicate din punct de vedere clinic — adresate fizioterapeutului sau clinicii la alegerea dumneavoastră. Medicul dumneavoastră vă poate sfătui cu privire la ce să căutați la un fizioterapeut pentru afecțiunea dumneavoastră specifică.",
+          "sortOrder": 2,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q8v9003bngjujc0kf3z3",
+          "question": "Ce este sindromul de cauda equina și de ce este menționat?",
+          "answer": "Sindromul de coadă de cal este o urgență spinală rară, dar gravă, care se manifestă ca durere de spate asociată cu o modificare a funcției vezicale sau intestinale. Dacă ai dureri de spate însoțite de orice modificare a funcției vezicale sau intestinale, mergi imediat la cel mai apropiat serviciu de urgență.",
+          "sortOrder": 3,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q8v9003cngjulewdbnyn",
+          "question": "Este acest serviciu adecvat pentru leziuni sportive?",
+          "answer": "Da. Leziunile musculo-scheletice sportive și legate de exerciții fizice sunt o parte centrală a acestui serviciu — inclusiv leziuni acute, afecțiuni prin suprasolicitare și evaluarea revenirii la sport după o leziune.",
+          "sortOrder": 4,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q8v9003dngjufkbfwhgs",
+          "question": "Am deja rezultatele testelor imagistice — poate medicul să le revizuiască?",
+          "answer": "Da. Aduceți la consulta orice rezultat de investigație imagistică, rapoarte sau scrisori clinice existente. Medicul dumneavoastră le examinează în întregime și încorporează constatările în planul de management.",
+          "sortOrder": 5,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q8v9003engjuzon0r8no",
+          "question": "Trebuie să fi avut investigații imagistice înainte de a rezerva?",
+          "answer": "Nu. Medicul dumneavoastră evaluează dacă investigațiile imagistice sunt indicate din punct de vedere clinic și le solicită acolo unde este cazul. Dacă aveți deja imagini, aduceți rezultatele — medicul dumneavoastră le analizează în întregime.",
+          "sortOrder": 6,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q8v9003fngju9p7aqivd",
+          "question": "Pot folosi acest serviciu fără medic de familie în Spania?",
+          "answer": "Da. Acest serviciu este disponibil pentru orice persoană din Spania — fără înregistrare prealabilă, fără a fi necesar medicul de familie, fără a fi necesară asigurare medicală.",
+          "sortOrder": 7,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q8v9003gngjuxb5zma44",
+          "question": "Am nevoie de asigurare medicală spaniolă?",
+          "answer": "Nu. Este un serviciu privat cu plată directă. Documentația clinică și trimiterile emise prin intermediul acestui serviciu sunt acceptate în regim privat, indiferent de statutul de asigurare.",
+          "sortOrder": 8,
+          "resolvedLocale": "RO"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "RO",
+      "links": [
+        {
+          "id": "cmre7tkdz004mg8juc9wpct8q",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con dolor radicular y evaluación neurológica?",
+          "body": "Para dolor radicular y evaluación neurológica, consulta nuestra página de Neurología Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Neurología Especialista",
+          "targetSlug": "neurologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tjlx004kg8juvjqr1eq0",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Dolor crónico y enfermedades crónicas?",
+          "body": "Si tu situación está relacionada con dolor crónico y enfermedades crónicas, nuestra Enfermedades Crónicas te ofrece la evaluación adecuada.",
+          "ctaLabel": "Enfermedades Crónicas",
+          "targetSlug": "enfermedades-cronicas-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tl61004og8juhbx6srep",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre consulta médica general con médico de cabecera?",
+          "body": "Nuestra Consulta Médica General está pensada específicamente para consulta médica general con médico de cabecera.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

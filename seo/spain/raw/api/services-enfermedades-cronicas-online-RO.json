@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/enfermedades-cronicas-online?countryCode=es&locale=RO",
+  "checkedAt": "2026-09-13T02:30:07.450Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q9p1003ingjuum9voxoc",
+      "kind": "GENERAL",
+      "slug": "enfermedades-cronicas-online",
+      "name": "Boli cronice",
+      "summary": null,
+      "seoTitle": "Boli Cronice Online Spania | Monitorizare Medicală | Medic de Familie",
+      "seoDescription": "Hipertensiune, diabet, tiroidă sau altă boală cronică? Medicii noștri de familie înregistrați oferă monitorizare clinică continuă prin apel video securizat. În aceeași zi în Spania.",
+      "seoKeywords": [
+        "enfermedades crónicas online España",
+        "hipertensión médico online España",
+        "diabetes seguimiento online España",
+        "tiroides médico online España",
+        "enfermedad crónica médico de cabecera online España"
+      ],
+      "heroTitle": "Boli cronice — monitorizare medicală continuă online",
+      "heroDescription": "Gestionarea unei boli cronice — hipertensiune, diabet, tiroidă, astm sau orice altă afecțiune pe termen lung — necesită mai mult decât un control anual și reînnoirea tratamentului. Necesită un medic care îți cunoaște cazul, îți monitorizează evoluția, îți ajustează îngrijirea atunci când ceva se schimbă și te ajută să navighezi sistemul sanitar mai amplu atunci când este necesară o evaluare specializată. Medicii noștri de familie, înregistrați conform cerințelor Organizației Medicale Colegiale (OMC), oferă monitorizare clinică continuă a bolilor cronice prin videoconferință securizată — continuitatea clinică ce ar trebui să stea la baza îngrijirii tale pe termen lung. În aceeași zi, din orice punct al Spaniei, în spaniolă, engleză sau portugheză.",
+      "detailBody": "<h2>Urmărire continuă vs. reînnoirea tratamentului — diferența</h2><p>Global Health oferă două servicii separate pentru pacienții cu afecțiuni de lungă durată:</p><p>Reînnoirea tratamentului este un serviciu de consultație unică pentru afecțiuni stabile și cunoscute — afecțiunea ta nu s-a schimbat, tratamentul tău funcționează și ai nevoie să continui. O consultație, un rezultat clar.</p><p>Urmărirea bolilor cronice este îngrijire continuă la nivel de medicină generală — un medic care îți cunoaște cazul de-a lungul timpului, îți monitorizează afecțiunea, ajustează managementul atunci când este necesar, coordonează investigațiile și trimiterile către specialiști și oferă continuitatea care face ca gestionarea bolilor cronice să fie cu adevărat eficientă, nu reactivă.</p><p>Dacă ești stabil și ai nevoie doar să îți continui tratamentul — Reînnoirea tratamentului este serviciul potrivit. Dacă vrei un medic implicat în gestionarea afecțiunii tale de-a lungul timpului — urmărirea Bolilor Cronice este adecvată.</p><h2>Pentru cine este acest serviciu</h2><p>Acest serviciu este potrivit pentru adulții cu:</p><ul><li>O afecțiune cronică diagnosticată pe care doresc să o gestioneze cu continuitate la nivel de medicină generală</li><li>O afecțiune de lungă durată care nu este bine controlată și necesită evaluare clinică activă</li><li>Mai multe afecțiuni coexistente — de exemplu diabet cu hipertensiune și dislipidemie — care necesită management coordonat</li><li>O afecțiune cronică pe care trebuie să o continue să o gestioneze în Spania după sosirea din altă țară</li><li>Necesitate de monitorizare continuă prin investigații — analize regulate, HbA1c, funcție tiroidiană — coordonate de un medic care le cunoaște cazul</li><li>O afecțiune cronică la care optimizarea stilului de viață împreună cu gestionarea medicației ar îmbunătăți rezultatele</li><li>Rezidenți internaționali sau expați în Spania care vor urmărirea bolilor cronice în engleză sau portugheză fără a fi nevoiți să navigheze sistemul în castiliană</li></ul><h2>De ce contează continuitatea</h2><p>Bolile cronice se schimbă. Tensiunea arterială care era controlată poate crește. HbA1c care era stabil poate fluctua. Un medicament care funcționa poate să nu mai fie optim. Un simptom nou poate indica o complicație sau necesitatea de a reconsidera tratamentul.</p><p>Un medic care nu îți cunoaște cazul vede doar consultația actuală. Un medic care te monitorizează de-a lungul timpului vede tiparul — și poate identifica modificările înainte ca acestea să devină probleme. Aceasta este diferența dintre îngrijirea reactivă și îngrijirea proactivă a bolilor cronice.</p><p>În Spania, gestionarea bolilor cronice în sistemul public depinde de a avea un medic de familie alocat — lucru pe care mulți rezidenți internaționali și freelanceri nu îl au. În sectorul privat, gestionarea este adesea fragmentată între specialiști, fără un medic care să coordoneze imaginea de ansamblu. Rezultatul este că pacienții cu mai multe afecțiuni cronice cad frecvent printre spațiile dintre furnizori.</p><p>Acest serviciu oferă stratul de coordonare de medicină generală care lipsește frecvent — un medic care vede pacientul în ansamblu, nu doar consultația actuală.</p><h2>Afecțiuni gestionate în mod obișnuit</h2><p><strong>Cardiovascular</strong></p><ul><li>Hipertensiune arterială — monitorizare continuă a tensiunii arteriale, revizuirea medicației, optimizarea stilului de viață și gestionarea riscului cardiovascular</li><li>Dislipidemie — gestionarea colesterolului, monitorizarea lipidelor și evaluarea riscului cardiovascular</li><li>Insuficiență cardiacă stabilă — gestionată la nivel de medicină generală, cu coordonarea trimiterii la cardiologie unde este necesar</li><li>Fibrilație atrială stabilă — gestionare la nivel de medicină generală, managementul anticoagulării și legătura cu cardiologia unde este necesar</li><li>Management post-eveniment cardiac — îngrijire continuă la nivel de medicină generală după infarct sau procedură cardiacă</li></ul><p><strong>Metabolic</strong></p><ul><li>Diabet de tip 2 — monitorizarea HbA1c, revizuirea medicației, sprijin pentru stilul de viață, coordonarea screeningului pentru complicațiile diabetului și trimitere la specialist unde este necesar</li><li>Prediabet — intervenție structurată asupra stilului de viață și monitorizare metabolică</li><li>Patologie tiroidiană — managementul hipotiroidismului și hipertiroidismului, monitorizarea TSH, ajustarea medicației</li><li>Sindrom metabolic — management integrat al factorilor de risc metabolic</li><li>Obezitate ca afecțiune cronică — management metabolic împreună cu sprijin pentru controlul greutății</li></ul><p><strong>Respirator</strong></p><ul><li>Astm — revizuirea inhalatoarelor, evaluarea controlului simptomelor, elaborarea planului de acțiune și trimitere la specialist unde este necesar</li><li>BPOC — gestionare continuă, prevenirea exacerbărilor și coordonare cu pneumologia unde este necesar</li></ul><p><strong>Musculo-scheletic și inflamator</strong></p><ul><li>Artroză — gestionarea continuă a durerii, evaluare funcțională și coordonarea trimiterii</li><li>Artrită inflamatorie stabilă — gestionare la nivel de medicină generală cu coordonare reumatologică unde este necesar</li><li>Gută — monitorizarea acidului uric și gestionare continuă</li><li>Osteoporoză — evaluarea riscului de fractură și gestionare continuă</li></ul><p><strong>Sănătate mintală — gestionare pe termen lung la nivel de medicină generală</strong></p><ul><li>Depresie și anxietate — gestionarea continuă a afecțiunilor stabile la nivel de medicină generală</li><li>TDAH — sprijin continuu pentru pacienții cu diagnostic stabilit la nivel de medicină generală</li><li>Tulburări de somn — evaluare și gestionare continuă</li></ul><p><strong>Gastrointestinal</strong></p><ul><li>ERGE și ulcer peptic — gestionare continuă și monitorizare</li><li>Sindrom de intestin iritabil — gestionare continuă și sprijin pentru stilul de viață</li><li>Boală inflamatorie intestinală stabilă — gestionare la nivel de medicină generală cu coordonare gastroenterologică</li></ul><p><strong>Altele</strong></p><ul><li>Boală renală cronică — monitorizare la nivel de medicină generală cu coordonare nefrologică</li><li>Anemie — gestionare continuă și monitorizarea cauzei de bază</li><li>Afectări cutanate cronice — psoriazis, eczemă la nivel de medicină generală</li><li>Afecțiuni autoimune — prezentări stabile gestionate la nivel de medicină generală</li></ul><h2>Ce include urmărirea continuă</h2><p><strong>Reevaluări clinice regulate</strong></p><p>Medicul tău de familie efectuează reevaluări clinice structurate la intervale potrivite pentru afecțiunea ta — evaluând controlul simptomelor, răspunsul la tratament, efectele secundare, orice evoluție nouă și starea generală de bine. Frecvența este determinată de afecțiunea și necesitatea ta clinică.</p><p><strong>Coordonarea monitorizării</strong></p><p>Medicul tău emite solicitări de investigații pentru monitorizare regulată — analize, HbA1c, funcție tiroidiană, profil lipidic, funcție renală și alte investigații specifice afecțiunii — și revizuiește rezultatele împreună cu tine într-o consultație de urmărire.</p><p><strong>Gestionarea medicației</strong></p><p>Medicul tău îți revizuiește medicația la fiecare reevaluare clinică — evaluând eficacitatea, tolerabilitatea și dacă este necesară ajustarea pe baza constatărilor clinice actuale și a rezultatelor monitorizării.</p><p><strong>Sprijin pentru stilul de viață și autogestionare</strong></p><p>Consiliere bazată pe dovezi privind dieta, activitatea fizică, controlul greutății, renunțarea la fumat și moderarea consumului de alcool — adaptată afecțiunii tale specifice și modului în care factorii de stil de viață interacționează cu managementul tău clinic.</p><p><strong>Legătura cu specialiștii și trimiterea</strong></p><p>Când este necesară o evaluare de specialitate — cardiologie, endocrinologie, pneumologie, reumatologie, gastroenterologie sau alte specialități — medicul tău coordonează trimiterea, furnizează o scrisoare de trimitere completă și menține relația clinică în calitate de medic de familie în timpul și după implicarea specialistului.</p><p><strong>Documentație clinică — la discreția medicului</strong></p><p>Atunci când este indicat clinic la fiecare reevaluare, medicul tău emite documentația clinică corespunzătoare valabilă în orice farmacie spaniolă.</p><p>Notă: Stupefiantele și anumite substanțe controlate necesită documentație specială care nu poate fi emisă electronic. Medicul tău te va informa dacă acest lucru se aplică situației tale.</p><p><strong>Continuitate clinică</strong></p><p>Deoarece medicul tău îți cunoaște cazul de-a lungul timpului, deciziile clinice se iau în contextul istoricului tău complet — nu doar al motivului consultației într-o singură vizită.</p><h2>Gestionarea bolilor cronice în Spania fără medic de familie alocat</h2><p>Sistemul public spaniol oferă gestionarea bolilor cronice prin medici de familie înregistrați — dar numai pentru pacienții care sunt înregistrați și în zonele unde medicii de familie sunt disponibili. Pentru rezidenții internaționali care nu sunt încă înregistrați, freelanceri fără medic de familie alocat sau persoane care preferă să își gestioneze îngrijirea în engleză sau portugheză, accesul la urmărire structurată a bolilor cronice reprezintă o lacună reală.</p><p>Global Health oferă această îngrijire în spaniolă, engleză și portugheză. Consultațiile tale sunt documentate, monitorizarea ta este coordonată și managementul tău este structurat — oferindu-ți continuitatea clinică necesară gestionării bolilor cronice, în limba în care poți să o înțelegi și să participi pe deplin.</p><p>Dacă ai medic de familie în sistemul public spaniol, acest serviciu funcționează ca un complement — nu ca un substitut. Unii pacienți folosesc Global Health pentru urmărire specifică a bolilor cronice în engleză sau portugheză, păstrându-și în același timp înregistrarea în sistemul public pentru acces la medicație subvenționată și trimiteri către specialiști din SNS.</p>",
+      "ctaLabel": null,
+      "sortOrder": 130,
+      "durationMinutes": 20,
+      "basePriceCents": 4500,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.265Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k03k0003asjuhdggeok6",
+          "kind": "IMAGE",
+          "key": "media/a1cea8fc-3744-4057-88bf-50ec7787455c-es-enfermedades-cronicas-online.png",
+          "path": "/api/media/media/a1cea8fc-3744-4057-88bf-50ec7787455c-es-enfermedades-cronicas-online.png",
+          "altText": "Enfermedades Crónicas"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q9y8003jngju19ywqer8",
+          "question": "Prin ce se diferențiază asta de o reînnoire a tratamentului?",
+          "answer": "Reînnoirea Tratamentului este o consultație unică pentru o afecțiune stabilă — reînnoirea unui tratament care funcționează bine. Urmărirea Bolilor Cronice este îngrijire continuă — un medic care îți cunoaște cazul de-a lungul timpului, îți monitorizează afecțiunea, ajustează gestionarea atunci când este necesar și este implicat în sănătatea ta pe termen lung.",
+          "sortOrder": 0,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q9y9003kngjufbvlcqes",
+          "question": "Cât de des va trebui să merg la consultație?",
+          "answer": "Depinde de starea ta și de cât de bine este controlată. Pentru afecțiuni stabile și bine controlate, o evaluare trimestrială sau semestrială este, în general, adecvată. Pentru afecțiuni mai puțin bine controlate sau mai complexe, este necesară o evaluare mai frecventă. Medicul tău îți va recomanda, la prima consultație, programul de evaluare adecvat.",
+          "sortOrder": 1,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q9y9003lngjunfhyg0p2",
+          "question": "Poate medicul să acceseze istoricul meu medical spaniol?",
+          "answer": "Nu. Medicii Global Health nu au acces la sistemul de istoric clinic electronic al sistemului public spaniol. Te rugăm să aduci la prima consultație orice documentație medicală relevantă — rezultate anterioare ale analizelor, scrisori de la specialiști, rapoarte imagistice și o listă cu medicația ta actuală.",
+          "sortOrder": 2,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q9y9003mngju1ewqjbvw",
+          "question": "Ce se întâmplă dacă am nevoie de un specialist?",
+          "answer": "Când este nevoie de o evaluare de specialitate, medicul tău emite o scrisoare formală de trimitere și te consiliază cu privire la accesul la specialistul potrivit în Spania. Accesul la specialiștii privați este, în general, facil în marile orașe spaniole — Global Health coordonează acest lucru ca parte a monitorizării continue.",
+          "sortOrder": 3,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q9y9003nngju8medvh22",
+          "question": "Pot folosi acest serviciu dacă am medic de familie în Spania?",
+          "answer": "Da. Unii pacienți folosesc Global Health pentru consultații de urmărire a bolilor cronice în engleză sau portugheză, împreună cu înregistrarea lor la medicul de familie spaniol — în special pentru afecțiuni în cazul cărora doresc să discute în detaliu gestionarea în limba pe care o înțeleg pe deplin.",
+          "sortOrder": 4,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q9y9003ongju4afhm07p",
+          "question": "Ce se întâmplă dacă am nevoie de îngrijiri de urgență pentru boala mea cronică?",
+          "answer": "Gestionarea urgențelor bolilor cronice — criză hipertensivă, urgență diabetică, eveniment cardiac acut — necesită îngrijiri de urgență imediate. Sună la 112 sau mergi imediat la cea mai apropiată unitate de urgențe. Monitorizarea continuă prin Global Health este pentru îngrijirea neurgentă a bolilor cronice.",
+          "sortOrder": 5,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q9y9003pngjud60s6yca",
+          "question": "Am nevoie de asigurare medicală spaniolă?",
+          "answer": "Nu. Este un serviciu privat cu plată directă. Documentația clinică emisă prin intermediul acestui serviciu se eliberează la prețul privat integral, indiferent de statutul de asigurare.",
+          "sortOrder": 6,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q9y9003qngjufrh3v5qn",
+          "question": "Pot folosi acest serviciu din orice punct al Spaniei?",
+          "answer": "Da — inclusiv Insulele Baleare, Insulele Canare, Ceuta și Melilla. Ai nevoie doar de o conexiune stabilă la internet și de un dispozitiv cu cameră.",
+          "sortOrder": 7,
+          "resolvedLocale": "RO"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "RO",
+      "links": [
+        {
+          "id": "cmre7si5j002eg8jurnfmgprs",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre evaluación cardiológica especializada?",
+          "body": "Nuestra Cardiología Especialista está pensada específicamente para evaluación cardiológica especializada.",
+          "ctaLabel": "Cardiología Especialista",
+          "targetSlug": "cardiologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7skhw002kg8judewg26hr",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre evaluación neurológica especializada?",
+          "body": "Nuestra Neurología Especialista está pensada específicamente para evaluación neurológica especializada.",
+          "ctaLabel": "Neurología Especialista",
+          "targetSlug": "neurologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7sglb002ag8jup3a4q0tq",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Control de peso en diabetes e hipotiroidismo?",
+          "body": "Si tu situación está relacionada con control de peso en diabetes e hipotiroidismo, nuestra Control de Peso te ofrece la evaluación adecuada.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7shde002cg8jufeul55oo",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con analíticas de control y monitorización?",
+          "body": "Para analíticas de control y monitorización, consulta nuestra página de Derivaciones y Pruebas — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Derivaciones y Pruebas",
+          "targetSlug": "derivaciones-pruebas-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

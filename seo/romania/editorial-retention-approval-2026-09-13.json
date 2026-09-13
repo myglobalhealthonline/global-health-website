@@ -1,0 +1,965 @@
+{
+  "recordedAtUtc": "2026-09-12T23:44:01.2921130Z",
+  "source": "Owner instruction in this task",
+  "instruction": "All editorial review has been approved, just apply.",
+  "scope": "Approval of existing retention recommendations for the 191 rows; no replacement copy exists in the draft package for these rows.",
+  "productionWrites": 0,
+  "independentClinicalOrLegalCertification": false,
+  "pages": [
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs",
+      "sourceFingerprint": "77b5bc10c06fa22854b9b5c2d48d87e12504aa2dd7b90a94d9841f576886a778",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/about",
+      "sourceFingerprint": "a7489b551942b9db62e9117b088755341114bc8b7016e1cef14d2d9376d7f9fc",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/blog",
+      "sourceFingerprint": "da7288e14a4f0898b07e040789dd0fb0c58105a6444a151da2a1b5a2abf9c949",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/blog/chronicke-nemoci-narodni-programy-rumunsko",
+      "sourceFingerprint": "7485e3c4f76d428ef4f573243d7a20d4eec11042316d849aec68e7304d188521",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/blog/diabetes-ticha-nemoc-4",
+      "sourceFingerprint": "4b6184281e4854902cdd8fe468311def8757602f412292c3b27e66c09dd4b83a",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/blog/jak-bezpecne-snizit-vysoky-tlak-rumunsko",
+      "sourceFingerprint": "70706d18540020a9337ddbb942855b0041e3f9187159cca9afb43e67d6454fc9",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/blog/lekarska-zprava-rumunsko",
+      "sourceFingerprint": "7b1e20aa784729d0e152bf50fdaee7ed34aebb24334f09e72ef103f39a2b27bc",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/blog/medical-review-policy",
+      "sourceFingerprint": "10fa882aa02f73696b66d00b0d813bc354dc6dd615562de358da4d2106854b5e",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/blog/nizky-krevni-tlak-proc-se-objevuje-co-delat-hned-a-kdy-uz-necekat",
+      "sourceFingerprint": "783daeae893b8b737c59bba1a6545be11b15120b2f38a7333a0e8530dbe87418",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/blog/normalni-krevni-tlak-podle-veku-uzitecny-pruvodce-bez-zavadejicich-tabulek",
+      "sourceFingerprint": "ed2f26713e4cfb4d2ef77dbd1a6c5c2bdd5742901eb255412aa0da45c9925f2b",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/careers",
+      "sourceFingerprint": "86f0ef7873d9ec6dbf51c1a947274d7d065803df1520a2e9b38fd089b1bb9ffc",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/contact",
+      "sourceFingerprint": "f0977cf09d7f4343eea6cbbc81d93f2ba6e74531d42dceb04eca22dd655a975e",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/doctors",
+      "sourceFingerprint": "8213c563e2f9a11ea99f349e13c0fab3a686259e9411ba418518834c11d13dfb",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/gp-consultation-online",
+      "sourceFingerprint": "7dc051be5157d46cbe7148b0748ae227b0445214a5a06a47a9ef537b9cd6cf4c",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/lab-tests",
+      "sourceFingerprint": "5398014c5e56ce004176fdfccb7021ccd2b0d10063e3ee2930c8dfc600dcd009",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/legal",
+      "sourceFingerprint": "30099c6b5dcd12f6a524f150e41835b0d83f32bc62bf29705101949eefc3f8a5",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/legal/complaints-procedure",
+      "sourceFingerprint": "669dc41c51011813c70a16465d305c940ef44e33902f7334d0b0a5804fd1cc65",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/legal/privacy-policy",
+      "sourceFingerprint": "0391a05ba6dd33159b9c846dd8d63b26dfe84afe004281a819f1a9e615822ff2",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/legal/refund-policy",
+      "sourceFingerprint": "bc270afc56243f1b43c1749c8f5dcb2423e4d222ff36b741b6c5bfa2e2f1ff9e",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/legal/terms-of-service",
+      "sourceFingerprint": "c006f96d4485417be3d0cd398e53c03b5bb2b7a289f1bc57a3742a13221e5834",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/press",
+      "sourceFingerprint": "a216deee67d8ebd683ba637a1e75a989ad573911721d9f00266f35f11b479d4d",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/pricing",
+      "sourceFingerprint": "cd0a129110083eeb931d5e8feb983af7246314ca56ea16fe25ef568d0b6c6f06",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/see-a-specialist",
+      "sourceFingerprint": "89a85b4423a9629902e36edd76a19be81159c32ac06d0fb244a55395df536946",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/tools/adhd-test",
+      "sourceFingerprint": "7f485971517962c33999765690433bd9d97a470be75ddd8bbc1e9e41e790d643",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/tools/blood-pressure-chart",
+      "sourceFingerprint": "0a8088086e6bbe1089545f06fe21f98324c5bcf88846a4de992f7265c3cbe8cf",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/tools/bmi-calculator",
+      "sourceFingerprint": "f0dc7e16b633a76541e079d72c2e01e4905ede604f9c687dc82be6507c39cb90",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/tools/calorie-calculator",
+      "sourceFingerprint": "4c2b2fca0c23305bac8906c0d8a4dbdbdb9c0bcfabe96b2d73731085d70ddf08",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/tools/due-date-calculator",
+      "sourceFingerprint": "4e2921833208a7c128df13ce74a412250da902c88efaac53a300be6adb0317d8",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/tools/osteoporosis-risk-checker",
+      "sourceFingerprint": "a13fa39d4d1f098ff7b0dd103715810c0d43dba9624f90718997f1d7797aa846",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/tools/ovulation-calculator",
+      "sourceFingerprint": "591de5dc501019f17b6dfd4a9f1a509dc529d3961a917b3845ad293704e3f0f8",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/cs/tools/sore-throat-checker",
+      "sourceFingerprint": "774195581fd1dd6f7e5a0d6c3abd127a3b2622d5bfb4444df3133fb051d55234",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de",
+      "sourceFingerprint": "c05736ca816686add70d029cb778efef073e019fd70198ca06cadd6fd6475450",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/about",
+      "sourceFingerprint": "cf0d471731d98cb45d194e781136b4c4406354155818927bdca4d501a4a2c7dd",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/blog",
+      "sourceFingerprint": "b44d40c15b6daeaf4131b87ba0fc5ea88f96d42847abc603711858218211c9f8",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/blog/arztbrief-rumaenien",
+      "sourceFingerprint": "228ddd65208d915bc23f575e771cbba054a22bbf3bfec21c1e3ee6f70ac31958",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/blog/blutdruck-sicher-senken-rumaenien",
+      "sourceFingerprint": "45b21020607b2cb353af58a32e0184fb1fb6e8859cae4aa54941d6c4c9cd0544",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/blog/chronische-krankheiten-nationale-programme-rumaenien",
+      "sourceFingerprint": "61666c4ff5a8559826d4045c32fd2be3ca2989d431c66e992414cc7cb0a7922a",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/blog/diabetes-die-stille-krankheit-5",
+      "sourceFingerprint": "12912b96fa5e1db74c3269afa22e741cc39d77495936094966452c45c100593b",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/blog/medical-review-policy",
+      "sourceFingerprint": "31d4bd772c7655e937626ca8ded5ee366846b0eed8cb6898a998c9f225e48579",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/blog/niedriger-blutdruck-warum-er-entsteht-was-sofort-zu-tun-ist-und-wann-man-nicht-m",
+      "sourceFingerprint": "04e93219ace52bd56e200284e32f7fc6ba138e7939d4baf32552e27625edc32c",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/blog/normaler-blutdruck-hilfreicher-leitfaden-nach-alter-ohne-irrefuhrende-tabellen",
+      "sourceFingerprint": "b5468ba1c67154a8a123db75421ae80e036cda6b542d8bdf933e014fd8bb47aa",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/careers",
+      "sourceFingerprint": "07294a8c5d0a08ab462cb5ba48c3bc087e3268cc4c4b2282881ea0a5c33a6977",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/contact",
+      "sourceFingerprint": "f010eb0c3249f425ebb0d4472961d5b37c0ddf9b30599e0354e168799f6da567",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/doctors",
+      "sourceFingerprint": "8268244f50981eac0de414b8e5e85f0d0385d209bec37c8cd050897282fff08d",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/gp-consultation-online",
+      "sourceFingerprint": "00389d66b55d5f42fa64730b7a90c57db7ad426a6bc0ba0c94ecd078d0ce441d",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/lab-tests",
+      "sourceFingerprint": "fbeb268b22dd85d17d262c0f060de2df688faec7e72cf4982eb51768ebcc1e86",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/legal",
+      "sourceFingerprint": "026d4fd4edd9e6944ab12f39b9d9ec1326b6990d0645af728b1468a597cb84dd",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/legal/complaints-procedure",
+      "sourceFingerprint": "f0d797970dee1803e3974cff26658359db98a3a8a692290e7970695769ddcb77",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/legal/privacy-policy",
+      "sourceFingerprint": "4525b98ff6cad10924a3c1b2bedc297904fc1325f090b4825fea89c815f37b1e",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/legal/refund-policy",
+      "sourceFingerprint": "59c23eecd9111817e869341a4cf08403586030e0d0026bbc1793fc057570e007",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/legal/terms-of-service",
+      "sourceFingerprint": "1da9b0590ad601c0af8d3521688e4758ec8b7194f3fddd477e587abe089e6a4f",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/press",
+      "sourceFingerprint": "a86545a42d14aba5032512ba7cd0ceeaf499220100272ce45a2887aed1db61b8",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/pricing",
+      "sourceFingerprint": "9fd5448683125d8146a4f123001ef41d2b31b0d5da44188845d370215eff307f",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/see-a-specialist",
+      "sourceFingerprint": "cf47e673c81058b98763b714e82a403022dff0beda97a004ba647a0f34192556",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/tools/adhd-test",
+      "sourceFingerprint": "4f09233943a75e015562c2170f43f30624003b4e8a16c8ac960d8562dbac522d",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/tools/blood-pressure-chart",
+      "sourceFingerprint": "cf19eaa36cb4e61075db80650632725db49f9f6b700f4c195af80ab498cf8afc",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/tools/bmi-calculator",
+      "sourceFingerprint": "4fab2e708b43542763ad6fece188ed8b7b6e9f0cf4d31709ac3a558b51850924",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/tools/calorie-calculator",
+      "sourceFingerprint": "013c4c0da0b8d1a80ba792284ccd7aed4aed88e677122883e820b42429b2a733",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/tools/due-date-calculator",
+      "sourceFingerprint": "fbf4f537b84484c8e645cb78a183609edeebe2beb42be4d2349d07636b6bf6d4",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/tools/osteoporosis-risk-checker",
+      "sourceFingerprint": "faa4291ebd11bb80eb6abc41ba39446f40386dabd50701b5eb04036bb638ec7f",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/tools/ovulation-calculator",
+      "sourceFingerprint": "4bd296a66cfee904ded953d9dcdadd0dfd1df676f9b8cf7af352f08a01124d87",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/de/tools/sore-throat-checker",
+      "sourceFingerprint": "3be67c0917ce2e89a4473404a070bfee0e595b17f96a2cf223e07ce7ffdd779b",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en",
+      "sourceFingerprint": "4207708d3055f2ee8a9e44d4e52961413de53bc62ca4008b6e63719023287c66",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/about",
+      "sourceFingerprint": "774bae1557e6431149872368fdabfcea30b78e476fdf136fe5a8882c62e7b6c2",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/blog",
+      "sourceFingerprint": "3f6d72a01f9cbd55b67370fb56afa45bd8a930d500faf6b189f340a517a04e82",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/blog/chronic-disease-national-health-programmes-romania",
+      "sourceFingerprint": "084c4f26d1965f4d8f7bad95f1d893ddbcbc2da4148d364d799742ad9281cfac",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/blog/diabetes-the-silent-disease-5",
+      "sourceFingerprint": "196c11e66576595ad1d9c053ca5ef71df54e0e461c1f6b162d271fb7471c0872",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/blog/how-to-lower-blood-pressure-quickly-and-safely",
+      "sourceFingerprint": "f6e56b015dc49d104472a008a3cbbaeee1540ad9195ac20c3277973f541d693c",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/blog/low-blood-pressure-why-it-happens-what-to-do-right-away-and-when-not-to-wait",
+      "sourceFingerprint": "05769f461fa8f113ce117d4c4bdec41e058942244cde3f32f48cae312d8bb2e8",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/blog/medical-letter-romania",
+      "sourceFingerprint": "e226b225e1152e2897cc5217267308ac2726bbe2b6c004f9fc1473185dfe5b77",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/blog/medical-review-policy",
+      "sourceFingerprint": "292903cfa39ea794b4250fa39a71ca09b1aec174bc37cae2af199f58d6856d43",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/blog/normal-blood-pressure-a-practical-guide-by-age-without-misleading-tables",
+      "sourceFingerprint": "15c0251e64eca9f2805b6d9ab8b05f07706d20e887f6544c700daf20ce460475",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/careers",
+      "sourceFingerprint": "5768ae2408dadcbb45013c94a07eedc5983d1ab858648f87bdc3d8bd13dfca8b",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/contact",
+      "sourceFingerprint": "e81e1f524591ae795887a7a67bdad5f9637f33b3735a655ab79ca0c3bced3bc4",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/doctors",
+      "sourceFingerprint": "d2e2144f3054504374b885c5962628ffcaab2387ccfffb6e46d563de68484df8",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/faq",
+      "sourceFingerprint": "59957308b9896eb482ccd5a18bc1cc7b1bc06fd219d9f41a3deff3bdf4782efe",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/gp-consultation-online",
+      "sourceFingerprint": "c4ade0ffd41c3b9d4d57cfabcb4474d3dc94f99de45c8d58656f8eaea577e8b5",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/lab-tests",
+      "sourceFingerprint": "ece53c3483c7d474ee3c58094719de71a8fc4b2e3411e694d371959a9eed8777",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/legal",
+      "sourceFingerprint": "fdc5dc7ac50fe5657a76f0b13979276eaa671e15106985b5e8fcadc929d702be",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/legal/complaints-procedure",
+      "sourceFingerprint": "2e2a92a21bc95d81bd5d2e1553d94e0652233a2bca4371f652c6a7b4af045dc6",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/legal/cookie-policy",
+      "sourceFingerprint": "0c165fea67cdf8d520ad2994380d7a07a09a22f88490f87f792604b9cf82ef42",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/legal/medical-disclaimer",
+      "sourceFingerprint": "4570676af5b33b1e00ea54cc6ff9543433e7fc6938a956ade09c5705446f11a9",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/legal/privacy-policy",
+      "sourceFingerprint": "bb18463a20d601cbec1b2637fbe5add5bf8b40674cf87d0befcb7708ab42a5b7",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/legal/refund-policy",
+      "sourceFingerprint": "e5cee8c2c4c0774af2c2997d361ad107d96a37e3f604f28afb18c43414ab4ca2",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/legal/terms-of-service",
+      "sourceFingerprint": "56a3ff75c0c8368e089abed47328d93e0522427aa14242ea28278bf8e2afec0b",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/press",
+      "sourceFingerprint": "845d96e51b8afe7aeef28225ee3d49d0b062ebcb255de8a428dc45aa78605f20",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/pricing",
+      "sourceFingerprint": "d7223ebb6e9efee147e8491d5a9b0a78f43fd57fcde64c36b69d9b68cbf0602b",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/see-a-specialist",
+      "sourceFingerprint": "d40f43aebd5e158990455f44bfe1090a2e86c6bfc4cb4b03d2ff5d5d4d35e7ed",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/tools/adhd-test",
+      "sourceFingerprint": "ed38018fbe6729c10196707c90f5ac01e64514988341bcae6f3f4bb2be60c1ae",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/tools/blood-pressure-chart",
+      "sourceFingerprint": "609bf8317ded94eb86446d7156c2c19c619047bce779026e51331a3d778e3d2b",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/tools/bmi-calculator",
+      "sourceFingerprint": "cda50d13a654e19461da698a2a94273c7c8bf80f47dd49d34b283b7246e3503b",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/tools/calorie-calculator",
+      "sourceFingerprint": "8ff51bfe04c681c3d056a2d897cb8c54d678917e107ed142e1e0430db51fdb59",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/tools/due-date-calculator",
+      "sourceFingerprint": "5272d452024b343e260bb447261e6411e7782e22963cf13638080b9e125550d9",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/tools/osteoporosis-risk-checker",
+      "sourceFingerprint": "0bb2403c9f15399640640731c794991f82ac22b0389e52124b068c9281c6ef60",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/tools/ovulation-calculator",
+      "sourceFingerprint": "157fd17d271c0d16f92499c18a5a5aaf5406842862e8f5039fcb09e319f2849c",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/en/tools/sore-throat-checker",
+      "sourceFingerprint": "998bcef45297ee1b2a58bae4e7012bd5d75141ced81ca93eaebed875f8ac0f89",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es",
+      "sourceFingerprint": "f1f270d9639076d1d465c372ece88c18318377d6f3ee36d685e1e4f144fcc93d",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/about",
+      "sourceFingerprint": "c09f8c9061596f39d80c20e1e14a834745d51f5434de41c98be4eabffd6e1be2",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/blog",
+      "sourceFingerprint": "fcdc16ef859eb589268ac811f12f368fdfd183e0356d364b55799c3ce901abd7",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/blog/carta-medica-rumania",
+      "sourceFingerprint": "24ac134d35fe9499f6b7bcf530a3dc46dae74451c47de8cc2ac364b1b62ee238",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/blog/como-bajar-tension-alta-seguridad-rumania",
+      "sourceFingerprint": "2a5cbfaa63425f17a4583eea62e7391b0fb83c6f48d00f247bff1ba0a97c46ad",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/blog/diabetes-la-enfermedad-silenciosa-4",
+      "sourceFingerprint": "60b6ddba99fd949e1ff06119775d324bdb189418d45338e2d142d49d781f522d",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/blog/enfermedades-cronicas-programas-nacionales-rumania",
+      "sourceFingerprint": "71d962c5dbbbdec6f6726ce3f25dc8f8120f56ae4a5e01a7e6634bdc260625a1",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/blog/medical-review-policy",
+      "sourceFingerprint": "a1fabb0f22cd59b54627a6f17ba963cde80860d767353b91f187fa7fbd8e835d",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/blog/presion-arterial-normal-guia-util-por-edad-sin-tablas-enganosas",
+      "sourceFingerprint": "7a838ac368d799139943662fce83d51e6d5a6ec5ec6085ae973ba2392ead4801",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/blog/tension-baja-por-que-aparece-que-hacer-en-el-momento-y-cuando-no-esperar-mas",
+      "sourceFingerprint": "9771b6625630078e93f6aa6de2ea2b007bd8d95958f210af281dfad4db77f4b7",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/careers",
+      "sourceFingerprint": "1bc16e9e443da1c14fe992d595b02f888788fc3daaa81e702ec8b383e84230f0",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/contact",
+      "sourceFingerprint": "61ae4eb24c9e71c14eb672c3171e9fc98f31c16cc7d557405b5ac5f38a5d81d9",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/doctors",
+      "sourceFingerprint": "decf1db79ca6281be40e2d4901b6d3413fc1eefb58bff6458ff6fbf4f00affbf",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/gp-consultation-online",
+      "sourceFingerprint": "43b8876e59fc0d0181ff7bca70f9773f83f792e3a50203199bd6ba716d781a08",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/lab-tests",
+      "sourceFingerprint": "26d008d5440134f1f773ab2098a6f02672471feadd6f00b05164bf56ec1dbb86",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/legal",
+      "sourceFingerprint": "464bdbee81cfd0f57c030e970e490d6f4b120f3cfcbc1a603d4484317ebe93d1",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/legal/complaints-procedure",
+      "sourceFingerprint": "2b97c869a0fb86bc30969d6ca54d95d3e795b6a2b77549c852ebe7149b0ec46b",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/legal/privacy-policy",
+      "sourceFingerprint": "eee38ecee5ada5fa726ef9276c3a5f3a295aabe83b984a4f4fac19d5ff932928",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/legal/refund-policy",
+      "sourceFingerprint": "d2ef9ab5a664b7681ad46452e2b1a05bd9794cb0b7f2308eecc68b909c899f8f",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/legal/terms-of-service",
+      "sourceFingerprint": "a038069fecf3519962357b03a7a7366362f7e80582b515dcd7e8b9edbef04afc",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/press",
+      "sourceFingerprint": "e02df0d7cc9e1b6b71d6c70b6894f6b7183c1a39f84aba7728a0dae994e9d2b6",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/pricing",
+      "sourceFingerprint": "906a828296efd6a19dc4e80bfaefd7ecd59875b05a9c5f19c0012b36f96790a8",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/see-a-specialist",
+      "sourceFingerprint": "96e8f5a5e76be5c8d8c2f66330ba456deb0beda53cf27a2500fe5fffa3b249b2",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/tools/adhd-test",
+      "sourceFingerprint": "da50b24328d3e9d4cced497108b188de0bb47d863382430aee37246e6cf2ad75",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/tools/blood-pressure-chart",
+      "sourceFingerprint": "2ef9eb1bfeee9b56a953c4805ba15a90d4a164c91167d97c0d49bedd29606067",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/tools/bmi-calculator",
+      "sourceFingerprint": "d652b642c3fea2a866765c54ed2706ac6d89af3f2934182bec082db0984c9459",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/tools/calorie-calculator",
+      "sourceFingerprint": "b50db05e4aa39d37f8a14c9bceddf6c7c306949282198d0270a645f2252fec13",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/tools/due-date-calculator",
+      "sourceFingerprint": "31d5a8a4a3cd34ef694585152894b13d36ad9f874e2988add32ba1d642375e85",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/tools/osteoporosis-risk-checker",
+      "sourceFingerprint": "e85a200082cba1c5e198ee4fa38084675af4f6b4955d5e37773acef17bcb4115",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/tools/ovulation-calculator",
+      "sourceFingerprint": "86507356bd001c7e30cb80a57b1aac2cbc3f56af8e4047397f2446708990758c",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/es/tools/sore-throat-checker",
+      "sourceFingerprint": "19d0c301de881b54d5185688f408a35ee662995505052e318cbda949f6037781",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt",
+      "sourceFingerprint": "994a5e40cd0c6ad72ac0f44457b02a33c5e5f36e5633a4ab5b6c38a0d7d5d673",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/about",
+      "sourceFingerprint": "678e9cb7ad2aa0abbf139b67e7d0392a23083e593ddefd4673c1b57162058175",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/blog",
+      "sourceFingerprint": "8ab4439c3327c07fedabf3c8551d5841359cb3b4be472af33fe464dc8c866677",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/blog/carta-medica-romenia",
+      "sourceFingerprint": "128c9297fedd87a368782348cbd564edcc4258a66455152dabf8154221e619dd",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/blog/como-baixar-tensao-alta-seguranca-romenia",
+      "sourceFingerprint": "a6c1d5abc6a44bb7f14d7b1b7d178731d0b63c5a37e1941855eb2679465487e5",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/blog/diabetes-a-doenca-silenciosa-4",
+      "sourceFingerprint": "a39d48c6675740c160467eb58ce623ea4d7400c88ea6ff04ab130e64d0a5482d",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/blog/doencas-cronicas-programas-nacionais-romenia",
+      "sourceFingerprint": "72ad7376886eaf4afa47a93d3b06d58834db225a4da64f52413af14262c9903b",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/blog/medical-review-policy",
+      "sourceFingerprint": "be11fe72808dd237886561051ace9ee15c2b03e5bb4059b57e425d92fed28a87",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/blog/tensao-arterial-normal-guia-util-por-idade-sem-tabelas-falsas",
+      "sourceFingerprint": "edd0e38657fb4929c0da282ab8f29d1052dfe667dd98cabd5576e5e06b9bd4c3",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/blog/tensao-baixa-porque-acontece-o-que-fazer-na-hora-e-quando-nao-esperar-mais",
+      "sourceFingerprint": "b44fe8ccb72984ce561f7a7e71e9f6033ad8065685eafa32878d147b2500d4f4",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/careers",
+      "sourceFingerprint": "e87240bd227b75c4c706e521feae0038fa76f15eab4efb70f7cf41a1f3ab471b",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/contact",
+      "sourceFingerprint": "dae9b89fb564cf93f0568f3ed7b10365844e7f984d84ea912fcfa6c81c0aef8f",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/doctors",
+      "sourceFingerprint": "c7f101703e6fa2bbd5a0a85ad0a0607b24ec45c6386120206043fa0bb2b959f1",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/gp-consultation-online",
+      "sourceFingerprint": "0f52993704f69ba53f7c39c4ffb538936d34fe2979ccf123ac0a45bac08d4c4b",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/lab-tests",
+      "sourceFingerprint": "beb96ba609048f0effdf1036ac9806a0911b726a42c662c0a501975d62fd344b",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/legal",
+      "sourceFingerprint": "9ac2f681b7e904032b68e0372e19de8c18251b4008d5d434c5a2e0d1b0f13dec",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/legal/complaints-procedure",
+      "sourceFingerprint": "561350e32df9355ba97f41d19add9d69cc623b449e2b2d0efb6c29c59ccca9f8",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/legal/privacy-policy",
+      "sourceFingerprint": "89fb3e1d21a733574f39115dd46d07409bf9a9a039ca2c775e92af9617ebc2b8",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/legal/refund-policy",
+      "sourceFingerprint": "6afb46a5ffd67e91b10e88f1cc642c93fdbfdfd883d42e76b4dbb3f7dea99d4a",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/legal/terms-of-service",
+      "sourceFingerprint": "95a5c8389e5ea09047712824ca077914d9ebb02b7de7ef5d1092c7e1063b3137",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/press",
+      "sourceFingerprint": "8695687d09f294882f76bfcccde700df063446252020b02fa9fc595ad1759092",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/pricing",
+      "sourceFingerprint": "a045d01db463a6113614d922d9d5c56c816023505bc7781fdf7ca812ec98043b",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/see-a-specialist",
+      "sourceFingerprint": "453a255d4a64f2b8206699b41818704fae4b7e1890829fef19b1e68fee8a7e1e",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/tools/adhd-test",
+      "sourceFingerprint": "9f2846b55d395cb0de2c79065b30abfe0d1c9eaf49c0130b0872918da6bc358e",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/tools/blood-pressure-chart",
+      "sourceFingerprint": "18046d23373b80fe112e50fd7e237fbcd4966f19d2da886ec8d98a5c550e7ff3",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/tools/bmi-calculator",
+      "sourceFingerprint": "fe0f5e04467c5e376432d9ea4d29a69a56ec07befdab58209a0fdbce4f643a36",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/tools/calorie-calculator",
+      "sourceFingerprint": "da174a0855682b0245c0d5444c5e687b4e914afa17227f4260659c8994a324b2",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/tools/due-date-calculator",
+      "sourceFingerprint": "4e7d622de0b2c276790997f4450d600d2af19b303c37e4455d3feac9c90358c3",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/tools/osteoporosis-risk-checker",
+      "sourceFingerprint": "5c849b56763e14c8499ddac7aec008968fd9ac65363493f6631041fcdae44e35",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/tools/ovulation-calculator",
+      "sourceFingerprint": "1d5954162942b9522e3ef8c4ab9793b01c64f4df7f95697a6f0c45501c290bba",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/pt/tools/sore-throat-checker",
+      "sourceFingerprint": "1d239458ca735de5e97cc21a2d0188bfcb469fec84382debb314aa0f87a8b542",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro",
+      "sourceFingerprint": "882c12b7a1202e8ce1bdd5ab865598fbd90d45f38850c01bff35690a5745e866",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/about",
+      "sourceFingerprint": "fc29f12b20aeb24e57bffc92c43bed5543daa74ec445a0dce420cf83109c70dc",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/blog",
+      "sourceFingerprint": "f7df7b4c0de60272ad33ff158985cc6466d4ebfa70e1d32fc42f0a73f463cfae",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/blog/boli-cronice-programe-nationale-de-sanatate",
+      "sourceFingerprint": "3542326fa8f01569aead6263d63471f0ae7a02ac1e2a49d978937f8985ab4a74",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/blog/ce-scade-tensiunea-arteriala-rapid-sigur",
+      "sourceFingerprint": "5cc921c75c2741c1e92f01b328c067c286004c3f8799ad0f5b857cfc9b047b60",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/blog/diabetul-boala-tacuta",
+      "sourceFingerprint": "808e463f37904139ca30bf83a00730262fc3edb351ec72cb1ff3e3bbf183ae87",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/blog/medical-review-policy",
+      "sourceFingerprint": "44588d8b2c739b47ffa61688e60d3995095864094f350f31f6159ab5a45a3a16",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/blog/scrisoare-medicala-cine-o-elibereaza",
+      "sourceFingerprint": "7f40c1c92f18909b2770ea78f1b4b385568fa26f1629dc8d2ca8acf5b2904db3",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/blog/tensiune-arteriala-normala-varsta-adulti",
+      "sourceFingerprint": "c07d2599571fbc2badd1af6f3db1dcc5b52e4c9dbf79828e2fefe228d6c9dc8c",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/blog/tensiune-mica-cauze-ce-sa-faci-cand-mergi-la-medic",
+      "sourceFingerprint": "8ec9963f6336f9f8e21a088d87b4241148fe90a96835513387a5b2ca21790651",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/careers",
+      "sourceFingerprint": "ded1c9b20d59e3f262c83ab2749cdd2cb5f4fb583793f7055a859ce3c4018c36",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/contact",
+      "sourceFingerprint": "bcb0bf7febccad8aab1d54c1d381d14cbeb3f3ab092ea0cea0522f3da2f42249",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/doctors",
+      "sourceFingerprint": "881fd3d996a94aa9a62f4b124df6e64d10dd0898eea6af90b2bdf842b38ed5c0",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/faq",
+      "sourceFingerprint": "cf09f0db12d7f898e84e7d80b1c1eeb7a5b94c09dd05fa2cf0942baf6141a1a9",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/gp-consultation-online",
+      "sourceFingerprint": "f60ed966dc8de050179869b20fe117a86baadf3c6116ea6ba92bb0743772d46a",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/lab-tests",
+      "sourceFingerprint": "a24e5bbf8c157cacae82fc710f575e4d214491a7716ff85e1ee35fa734526553",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/legal",
+      "sourceFingerprint": "30b42f4897759e87b9bbd75341326b14c9515f0484df3a249029ff699c23534d",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/legal/complaints-procedure",
+      "sourceFingerprint": "40f07d3458650bb73018bbfa6b5b29023f17f5eb34028d086d462e798ce32354",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/legal/medical-disclaimer",
+      "sourceFingerprint": "740f93453b39a7aa53ecc36a9b5e4b1ea9b9a475c92f4cbc8b641f07535f858b",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/legal/privacy-policy",
+      "sourceFingerprint": "dde937439175b44300dc9cab853b77878c914068cdb44348a559e86f0069dfd3",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/legal/refund-policy",
+      "sourceFingerprint": "283dec95bf5d72616b64cb1135fcbca04a6ce8fe49e1831bfbd056377aeeec00",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/legal/terms-of-service",
+      "sourceFingerprint": "240b16f0883d10c8781dbaf0f1915acfb6d835f710b54674ae000fba35fb4da7",
+      "disposition": "Preserve legal body and intentional noindex variants; translated headings and legal accuracy require separate field-level decisions."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/press",
+      "sourceFingerprint": "d25481e0055c5ee6e75f947aac32846665e202891762cd6220a4e6681fae5749",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/pricing",
+      "sourceFingerprint": "a8af42a5fccf16337174328a4b8c320aa59acdd57b4433c0cb7d9dcd4db5ad7d",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/see-a-specialist",
+      "sourceFingerprint": "f773e36276ba69b35f578e94ee7049f4d1e1f5424d6921337d78cca04d6de6e8",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/tools/adhd-test",
+      "sourceFingerprint": "a553328642e5568fcf517117cee81e74afcad1bae053d33b39b7bf76d0009053",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/tools/blood-pressure-chart",
+      "sourceFingerprint": "2989499f0b989f67b46cc47860da464a4813a5545697a7f94bd7a679be1f50ed",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/tools/bmi-calculator",
+      "sourceFingerprint": "56d45b42bda4045619c6896292fb6b6c866540f7745c2a77658deb6aa6e13d7e",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/tools/calorie-calculator",
+      "sourceFingerprint": "a7c7432f14c8bfcfc9dd05d084315da8fd7e740543981220c79c8c8a786d27da",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/tools/due-date-calculator",
+      "sourceFingerprint": "03636f9b3641d2d571b6ec616988a00eea89edd8e665d4deb41b6c3c0f482fde",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/tools/osteoporosis-risk-checker",
+      "sourceFingerprint": "4dd8042a88c6421a1b7e50ab14ff4e45e9557e8af50ffb4d95ec1c67546d4abc",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/tools/ovulation-calculator",
+      "sourceFingerprint": "63c1b456c637e7fd43946cf8eac7d740bde4adfc2d7dc9d64cb558205267d205",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    },
+    {
+      "url": "https://www.myglobalhealth.online/romania/ro/tools/sore-throat-checker",
+      "sourceFingerprint": "f614e7d45814c0e5a391e3f302ee3d085e939408455ac8340262e20877f42742",
+      "disposition": "No verified change needed from this bounded evidence; retain existing text. Clinical/legal claims are not independently re-certified."
+    }
+  ]
+}

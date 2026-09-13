@@ -205,7 +205,7 @@ export async function generateMetadata({
   const insuranceLine = buildLocalizedInsuranceLine(
     detail.insuranceOptions.map((o) => o.name),
     lang as LocaleCode,
-    loadLocaleBundle(lang as LocaleCode).common.serviceDetailPage.insuranceAvailability,
+    loadLocaleBundle(lang as LocaleCode, country).common.serviceDetailPage.insuranceAvailability,
   );
   const description = composeServiceMetaDescription(baseDescription, insuranceLine, code, lang);
   const metadata = buildPublicMetadata({
@@ -251,7 +251,7 @@ export default async function ServiceDetailPage({
   const detail = await getCountryServiceDetail(code, serviceSlug, lang);
   if (!detail) notFound();
 
-  const { common: c, home } = loadLocaleBundle(lang as LocaleCode);
+  const { common: c, home } = loadLocaleBundle(lang as LocaleCode, country);
   const t = c.serviceDetailPage;
   const serviceActionProps = getBookabilityActionProps(
     detail.bookability,

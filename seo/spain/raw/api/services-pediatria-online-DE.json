@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/pediatria-online?countryCode=es&locale=DE",
+  "checkedAt": "2026-09-13T02:29:55.155Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qbti0042ngjumicur4m2",
+      "kind": "GENERAL",
+      "slug": "pediatria-online",
+      "name": "Primäre Pädiatrie",
+      "summary": null,
+      "seoTitle": "Pädiatrie Online Spanien | Kinderberatung | Hausarzt",
+      "seoDescription": "Ist Ihr Kind krank und Sie können nicht auf einen Termin warten? Unsere approbierten Hausärzte beurteilen die Kindergesundheit per sicherer Videoanruf. Ohne Wartezimmer, noch am selben Tag in Spanien.",
+      "seoKeywords": [
+        "pediatría online España",
+        "médico niños online España",
+        "consulta pediátrica online España",
+        "médico infantil online España",
+        "fiebre niño médico online España"
+      ],
+      "heroTitle": "Online-Pädiatrie — Kinderkonsultation mit Hausarzt am selben Tag",
+      "heroDescription": "Dein Kind ist krank und der Kinderarzt hat erst morgen einen Termin frei. Oder es ist Samstagabend und die Praxis ist geschlossen. Oder du musst die Symptome deines Kindes einschätzen, bevor du entscheidest, ob du in die Notaufnahme gehen sollst. Oder du bist eine ausländische Familie in Spanien und ziehst es vor, auf Englisch oder Portugiesisch zu konsultieren. Unsere Hausärzte, die gemäß den Anforderungen der Organización Médica Colegial (OMC) zugelassen sind, bieten pädiatrische medizinische Konsultationen per sicherer Videokonferenz an — sie bewerten die Symptome deines Kindes, beraten zur Behandlung und koordinieren bei klinischer Indikation eine Überweisung oder weitere Abklärung. Am selben Tag, von jedem Ort in Spanien aus, auf Spanisch, Englisch oder Portugiesisch. Bei allen Konsultationen für Minderjährige unter 16 Jahren muss ein Elternteil oder ein gesetzlicher Vormund anwesend sein.",
+      "detailBody": "<h2>Eine Realität des spanischen pädiatrischen Systems</h2><p>In Spanien ist die pädiatrische Primärversorgung gut strukturiert — jedes Kind hat im öffentlichen System bis zum 14.-16. Lebensjahr je nach Autonomen Gemeinschaft Anspruch auf einen zugewiesenen Kinderarzt in der Primärversorgung. Dies ist eine Stärke des spanischen Gesundheitssystems.</p><p>Es gibt jedoch Situationen, in denen dieser Service wirklich nützlich ist:</p><ul><li>Ihr Kind ist heute krank und der zugewiesene Kinderarzt hat erst morgen oder übermorgen einen Termin frei</li><li>Es ist außerhalb der Sprechzeiten — abends, am Wochenende oder an einem Feiertag</li><li>Sie möchten die Symptome Ihres Kindes einschätzen, bevor Sie entscheiden, ob Sie in die Notaufnahme gehen — wo die Wartezeiten sehr lang sein können</li><li>Sie sind eine internationale Familie oder Expats und haben derzeit keinen zugewiesenen Kinderarzt oder bevorzugen die Konsultation auf Englisch oder Portugiesisch</li><li>Sie möchten klar erklärt bekommen, was der spanische Kinderarzt Ihnen über die Gesundheit Ihres Kindes gesagt hat</li></ul><p>Haben Sie bereits einen zugewiesenen Kinderarzt im öffentlichen System? Dieser Service funktioniert als Ergänzung — für Zeiten, in denen Sie heute Betreuung benötigen und kein Termin verfügbar ist, oder wenn Sie eine zweite Einschätzung wünschen, bevor Sie entscheiden, ob Sie in die Notaufnahme gehen.</p><h2>Für wen dieser Service gedacht ist</h2><p>Diese Sprechstunde ist geeignet für:</p><ul><li>Säuglinge, Kinder und Jugendliche bis 18 Jahre mit akuten oder nicht dringenden Gesundheitsproblemen</li><li>Familien ohne derzeit zugewiesenen Kinderarzt in der Primärversorgung</li><li>Familien mit zugewiesenem Kinderarzt, die heute außerhalb der Sprechzeiten klinischen Rat benötigen</li><li>Eltern, die die Symptome ihres Kindes einschätzen müssen, bevor sie entscheiden, ob sie in die Notaufnahme gehen</li><li>Eltern, die Rat oder Unterlagen von einem spanischen Kinderarzt erhalten haben und diese klar erklärt bekommen möchten</li><li>Jugendliche ab 16 Jahren, die ein Gesundheitsproblem direkt mit einem Arzt besprechen möchten</li><li>Internationale Familien oder Expats, die die Konsultation auf Englisch oder Portugiesisch bevorzugen</li></ul><p>Dieser Service ist für akute und nicht dringende pädiatrische Beschwerden auf allgemeinmedizinischem Niveau gedacht. Bei pädiatrischen Notfällen rufen Sie 112 an oder gehen Sie sofort in die nächstgelegene Notaufnahme. Fieber bei Säuglingen unter 3 Monaten erfordert eine notfallmäßige Abklärung — buchen Sie keine Videokonsultation.</p><h2>Häufig beurteilte Erkrankungen</h2><p><strong>Respiratorisch und HNO</strong></p><ul><li>Erkältung, Husten und Infektionen der oberen Atemwege</li><li>Ohreninfektionen — Otitis media und Otitis externa</li><li>Halsschmerzen und Mandelentzündung</li><li>Pseudokrupp — Beurteilung und Beratung</li><li>Giemen und leichte Asthmabeschwerden</li><li>Sinusitis bei älteren Kindern</li></ul><p><strong>Fieber und allgemeine Erkrankung</strong></p><ul><li>Fieber bei Kindern über 3 Monaten — Beurteilung, Beratung zum Vorgehen und Orientierung, wann weitere Versorgung gesucht werden sollte</li><li>Viruserkrankungen — Drei-Tage-Fieber, Hand-Fuß-Mund-Syndrom, Windpocken</li><li>Gastroenteritis — Erbrechen und Durchfall, Beurteilung von Dehydratation</li><li>Harnwegsinfektionen bei Kindern</li><li>Müdigkeit und allgemeines Unwohlsein</li></ul><p><strong>Haut</strong></p><ul><li>Ausschläge — Beurteilung und Orientierung für Eltern</li><li>Ekzem bei Säuglingen und Kindern — Behandlung von Schüben und fortlaufende Beratung</li><li>Impetigo und Hautinfektionen bei Kindern</li><li>Molluscum contagiosum</li><li>Windeldermatitis und Hautprobleme bei Säuglingen</li><li>Allergische Hautreaktionen</li></ul><p><strong>Wachstum, Entwicklung und Verhalten</strong></p><ul><li>Sorgen der Eltern bezüglich Entwicklungsschritten — mit Überweisung zur formellen Abklärung, wo angezeigt</li><li>Schlafprobleme bei Säuglingen und Kleinkindern</li><li>Fütterungsprobleme bei Säuglingen</li><li>Verhaltensauffälligkeiten bei Kindern im Schulalter — mit Überweisung, wo angezeigt</li><li>Gesundheitsprobleme bei Jugendlichen — Akne, Menstruationsgesundheit, psychisches Wohlbefinden, Gewichtsprobleme</li></ul><p><strong>Management chronischer Erkrankungen</strong></p><ul><li>Asthma bei Kindern — Verlaufskontrolle und fortlaufende Beratung</li><li>Ekzem — fortlaufende Behandlung und Kontrolle von Schüben</li><li>Allergien — Beurteilung und Beratung zum Vorgehen</li><li>Chronische Bauchschmerzen bei Kindern — Beurteilung und Überweisung, wo angezeigt</li></ul><p><strong>Sonstiges</strong></p><ul><li>Medizinische Dokumentation — Schulunfähigkeitsbescheinigungen, Überweisungsschreiben</li><li>Überprüfung von Befunden oder klinischen Briefen spanischer Kinderärzte — klar erklärt</li><li>Medizinische Reiseberatung für Kinder</li><li>Fragen zum Impfplan — Klärung und Orientierung</li></ul><h2>Was die Sprechstunde umfasst</h2><p><strong>Umfassende pädiatrische klinische Beurteilung</strong></p><p>Ihr Hausarzt erhebt eine vollständige Krankengeschichte der Symptome Ihres Kindes — Beginn, Dauer, Schweregrad, Begleitsymptome, Ernährungs- und Flüssigkeitsstatus, relevante Vorgeschichte, aktuelle Medikation, Impfstatus und Familienanamnese, wo relevant. Bei kleineren Kindern wird die Konsultation mit dem Elternteil durchgeführt, der die Symptome beschreibt und das Kind per Video zeigt, wo dies klinisch relevant ist.</p><p><strong>Sicherheitsbeurteilung</strong></p><p>Jede pädiatrische Sprechstunde umfasst die Beurteilung, ob die Vorstellung des Kindes eine Notfallversorgung oder eine dringende persönliche Untersuchung erfordert. Ihr Arzt teilt Ihnen klar und umgehend mit, wenn dies der Fall ist.</p><p><strong>Klare elterliche Orientierung</strong></p><p>Sie verlassen die Sprechstunde mit dem Wissen, was höchstwahrscheinlich mit Ihrem Kind los ist, was Sie zu Hause tun sollen, auf welche Symptome Sie achten sollten, was Sie dazu bringen würde, weitere Hilfe zu suchen, und wann mit einer Besserung zu rechnen ist. Sicherheit und Wissen der Eltern sind selbst ein klinisches Ergebnis.</p><p><strong>Klinische Dokumentation — nach Ermessen des Arztes</strong></p><p>Wenn klinisch angezeigt, stellt Ihr Hausarzt die entsprechende klinische Dokumentation aus, die in jeder spanischen Apotheke gültig ist.</p><p>Hinweis: Betäubungsmittel und bestimmte kontrollierte Substanzen erfordern eine besondere Dokumentation, die nicht elektronisch ausgestellt werden kann. Ihr Arzt wird Sie informieren, falls dies auf die Situation Ihres Kindes zutrifft.</p><p><strong>Antibiotika — wo klinisch angezeigt</strong></p><p>In Spanien erfordern alle Antibiotika ein ärztliches Rezept. Ihr Arzt beurteilt die Vorstellung Ihres Kindes und verschreibt das geeignete Antibiotikum, wo die klinische Evidenz dies rechtfertigt — einschließlich Ohreninfektionen, Racheninfektionen, Harnwegsinfektionen und Hautinfektionen — unter Beachtung der Grundsätze eines verantwortungsvollen Antibiotikaeinsatzes.</p><p><strong>Überweisung und Dokumentation</strong></p><p>Wenn die Überweisung zum spanischen Kinderarzt, Facharzt oder in die Notaufnahme angezeigt ist, stellt Ihr Arzt die entsprechenden Unterlagen noch am selben Tag aus.</p><h2>Wann in die Notaufnahme gehen — klare Anleitung für Eltern</h2><p>Eine der häufigsten und belastendsten Entscheidungen, die Eltern treffen, ist, ob der Zustand ihres Kindes eine Notfallversorgung erfordert oder ob vorsichtige Beobachtung zu Hause ausreicht. Diese Sprechstunde hilft Ihnen, diese Entscheidung mit klinischer Unterstützung zu treffen — aber einige Vorstellungen erfordern eine notfallmäßige Versorgung, ohne auf eine Videokonsultation zu warten:</p><p>Gehen Sie sofort in die Notaufnahme, wenn Ihr Kind:</p><ul><li>Fieber bei einem Säugling unter 3 Monaten hat — immer ein Notfall</li><li>Atemnot hat — jede schnelle, angestrengte oder laute Atmung</li><li>Einen Ausschlag hat, der beim Drücken mit einem Glas nicht verschwindet — mögliche Meningitis, rufen Sie 112 an</li><li>Zum ersten Mal einen Anfall hat oder einen Anfall von mehr als 5 Minuten</li><li>Bewusstlos ist oder nicht reagiert</li><li>Eine schwere allergische Reaktion hat — Schwellung von Lippen, Zunge oder Rachen</li><li>Ein Kind ist, dessen Zustand sich rasch verschlechtert</li></ul><p>Pädiatrische Notaufnahmen in Spanien:</p><ul><li>Hospital La Paz — Madrid (pädiatrische Notaufnahme 24h)</li><li>Hospital Vall d'Hebron — Barcelona (pädiatrische Notaufnahme 24h)</li><li>Hospital La Fe — Valencia (pädiatrische Notaufnahme 24h)</li><li>Hospital Virgen del Rocío — Sevilla (pädiatrische Notaufnahme 24h)</li><li>Außerhalb der großen Städte: Das Referenzkrankenhaus Ihres Gebiets verfügt über eine pädiatrische Notaufnahme</li></ul><p>Im Zweifelsfall gehen Sie immer in die Notaufnahme. Es ist immer besser, untersucht zu werden und dass es nicht ernst ist, als zu Hause mit einem sich verschlechternden Kind zu warten.</p><h2>Wichtige Informationen vor der Buchung</h2><ul><li>Ein Elternteil, eine Mutter, ein Vater oder ein gesetzlicher Vormund muss während aller Konsultationen für Minderjährige unter 16 Jahren anwesend sein, gemäß dem Organgesetz 1/1996 über den rechtlichen Schutz des Minderjährigen und dem Gesetz 41/2002 über die Patientenautonomie</li><li>Bei Jugendlichen ab 16 Jahren beurteilt der Arzt die Einwilligungsfähigkeit individuell gemäß den spanischen Vorschriften — das Konzept des \"reifen Minderjährigen\"</li><li>Fieber bei Säuglingen unter 3 Monaten ist ein medizinischer Notfall, der eine sofortige persönliche Untersuchung erfordert — buchen Sie für diese Vorstellung keine Videokonsultation</li><li>Kinder, die sich rasch verschlechtern — wenn sich der Zustand Ihres Kindes deutlich verschlechtert, während Sie versuchen zu buchen, gehen Sie sofort in die Notaufnahme, anstatt auf die Sprechstunde zu warten</li><li>Meldepflicht — unsere klinischen Fachkräfte unterliegen der Verpflichtung, mögliche Gefährdungs- oder Misshandlungssituationen eines Minderjährigen gemäß dem Organgesetz 1/1996 zu melden. Diese Verpflichtung geht der Vertraulichkeit vor</li><li>Die Entscheidung, irgendeine Dokumentation auszustellen — Bescheinigungen, Überweisungen — ist immer eine klinische Entscheidung des Arztes nach vollständiger Beurteilung</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 40,
+      "durationMinutes": 15,
+      "basePriceCents": 3900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.259Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0skg90000y8jurlo2mrg2",
+          "kind": "IMAGE",
+          "key": "media/fbb2f7c0-6549-481e-8ff9-6b6cce4cacc9-es-pediatria-online.png",
+          "path": "/api/media/media/fbb2f7c0-6549-481e-8ff9-6b6cce4cacc9-es-pediatria-online.png",
+          "altText": "Atención Primária Pediatria"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qc1v0043ngjubabydlvr",
+          "question": "Kann die Krankheit eines Kindes wirklich per Videoanruf beurteilt werden?",
+          "answer": "Ja — für die große Mehrheit der nicht dringenden Beschwerden. Eine ausführliche Anamnese der Symptome durch die Eltern, kombiniert mit der visuellen Beobachtung des Kindes während des Anrufs, ermöglicht es einem erfahrenen Arzt, eine klinische Einschätzung der meisten häufigen Kinderkrankheiten vorzunehmen. Wenn bei der Vorstellung eine körperliche Untersuchung vor Ort erforderlich ist — zum Beispiel zur Beurteilung der Atemgeräusche, zur Ohruntersuchung oder zur Abtastung des Bauchs — wird Ihr Arzt Sie klar beraten und die geeignete Überweisung veranlassen.",
+          "sortOrder": 0,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7qc1v0044ngju09x6ekdn",
+          "question": "Mein Kind hat Fieber — kann ich diesen Dienst nutzen?",
+          "answer": "Ja — für Kinder über 3 Monate. Ihr Arzt beurteilt die Schwere, die wahrscheinliche Ursache und das geeignete Vorgehen. Bei Säuglingen unter 3 Monaten ist Fieber ein medizinischer Notfall — gehen Sie sofort zur nächstgelegenen Notaufnahme, ohne eine Videosprechstunde zu buchen.",
+          "sortOrder": 1,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7qc1v0045ngjufo98znha",
+          "question": "Kann der Arzt meinem Kind Antibiotika verschreiben?",
+          "answer": "Ja — dort, wo es nach einer vollständigen Beurteilung klinisch angezeigt ist. In Spanien sind für alle Antibiotika ärztliche Rezepte erforderlich. Ihr Arzt beurteilt die Symptome Ihres Kindes und verschreibt das geeignete Antibiotikum, wenn dies durch die klinische Evidenz gerechtfertigt ist.",
+          "sortOrder": 2,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7qc1v0046ngju7w1xvobk",
+          "question": "Muss ich einen zugewiesenen Kinderarzt haben, um diesen Dienst zu nutzen?",
+          "answer": "Nein. Dieser Service steht allen Familien in Spanien zur Verfügung — ohne vorherige Registrierung, ohne zugewiesenen Kinderarzt erforderlich, ohne Krankenversicherung notwendig.",
+          "sortOrder": 3,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7qc1v0047ngjuou9kxn45",
+          "question": "Mein Sohn hat einen Brief oder eine Diagnose von einem spanischen Kinderarzt erhalten, die ich nicht verstehe — können Sie mir helfen?",
+          "answer": "Ja. Bringen Sie den Brief oder die Ergebnisse zum Termin mit, und Ihr Arzt prüft und erklärt die Befunde und klinischen Empfehlungen klar in der Sprache, die Sie bevorzugen.",
+          "sortOrder": 4,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7qc1v0048ngju1rdxl81f",
+          "question": "Ist dieser Service für Jugendliche geeignet?",
+          "answer": "Ja. Die gesundheitlichen Anliegen von Jugendlichen — einschließlich Akne, Menstruationsgesundheit, psychisches Wohlbefinden und Gewicht — sind Teil dieses Dienstes. Bei Jugendlichen ab 16 Jahren beurteilt der Arzt, ob der Jugendliche eigenständig einwilligen kann. Bei Minderjährigen unter 16 Jahren muss während der gesamten Konsultation ein Elternteil oder Erziehungsberechtigter anwesend sein.",
+          "sortOrder": 5,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7qc1v0049ngjupx17vlal",
+          "question": "Was passiert, wenn mein Kind in die Notaufnahme muss?",
+          "answer": "Wenn Ihr Arzt feststellt, dass Ihr Kind eine dringende Notfallversorgung oder eine dringende persönliche Untersuchung benötigt, werden Sie sofort und klar informiert — einschließlich dessen, was Sie bei Ihrer Ankunft in der Notaufnahme sagen sollen und welches Krankenhaus für Ihren Standort in Spanien am geeignetsten ist. Ihr Arzt kann eine kurze klinische Zusammenfassung ausstellen, wenn dies hilfreich wäre.",
+          "sortOrder": 6,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7qc1v004angju8vzke26a",
+          "question": "Kann ich über diesen Service eine Bescheinigung für das Schulfehlen erhalten?",
+          "answer": "Ja. Schulische Abwesenheitsbescheinigungen können nach klinischem Ermessen des Arztes nach der Untersuchung ausgestellt werden — wobei bescheinigt wird, dass das Kind untersucht wurde und nicht in der Lage ist, die Schule zu besuchen, ohne klinische Einzelheiten anzugeben.",
+          "sortOrder": 7,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7qc1w004bngjuc93zuy74",
+          "question": "Brauche ich eine spanische Krankenversicherung?",
+          "answer": "Nein. Es handelt sich um einen privaten Direktzahlerdienst. Die über diesen Dienst ausgestellte klinische Dokumentation wird unabhängig vom Versicherungsstatus zum vollen Privatpreis berechnet.",
+          "sortOrder": 8,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7qc1w004cngjuscslov4h",
+          "question": "Kann ich diesen Dienst von jedem Ort in Spanien aus nutzen?",
+          "answer": "Ja — einschließlich der Balearen, der Kanarischen Inseln, Ceuta und Melilla. Du brauchst nur eine stabile Internetverbindung und ein Gerät mit Kamera.",
+          "sortOrder": 9,
+          "resolvedLocale": "DE"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "DE",
+      "links": [
+        {
+          "id": "cmre7ts6t0052g8ju6asq61tw",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Enfermedad crónica pediátrica o condición compleja?",
+          "body": "Si tu situación está relacionada con enfermedad crónica pediátrica o condición compleja, nuestra Pediatría Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Pediatría Especialista",
+          "targetSlug": "pediatra-especialista-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tsyv0054g8jug81ewfa0",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con salud mental en adolescentes?",
+          "body": "Para salud mental en adolescentes, consulta nuestra página de Psiquiatría Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Psiquiatría Especialista",
+          "targetSlug": "psiquiatra-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7ttqy0056g8jufdh5x48f",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre consulta médica general con médico de cabecera?",
+          "body": "Nuestra Consulta Médica General está pensada específicamente para consulta médica general con médico de cabecera.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpu7ro001e01ruc1ycm5n5"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T12:26:00.000Z"
+      }
+    }
+  }
+}

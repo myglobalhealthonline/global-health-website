@@ -1,8 +1,9 @@
+import { reviewedRomaniaTransaction } from "../../content/romania-clinical-review.js";
 import { Prisma, type LocaleCode } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { assertLocaleSupported } from "../shared/locale-support.js";
-import { sanitizeRichHtml } from "../../utils/sanitize-html.js";
+import { sanitizeDoctorBio } from "../../utils/sanitize-html.js";
 import {
   doctorPendingProfileImageKey,
   doctorProfileImageKey,
@@ -239,7 +240,7 @@ function buildProposedValue(
           locale: entry.locale,
           // Sanitize at submit, not at approve: the admin must review exactly
           // the markup that will go live, and approval is then a pure copy.
-          bio: entry.bio == null || entry.bio.trim() === "" ? null : sanitizeRichHtml(entry.bio),
+          bio: entry.bio == null || entry.bio.trim() === "" ? null : sanitizeDoctorBio(entry.bio),
         })),
       };
     case "registration":
@@ -841,7 +842,7 @@ export async function reviewDoctorProfileChangeRequest(
   cache: DoctorProfileCacheInfo | null;
 } | null> {
   try {
-    const row = await prisma.$transaction(async (tx) => {
+    const row = await reviewedRomaniaTransaction(prisma, async (tx) => {
       const existing = await tx.doctorProfileChangeRequest.findFirst({
         where: { id: requestId, doctorId },
         select: {

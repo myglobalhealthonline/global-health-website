@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:08.620Z",
+  "endpoint": "/api/services/sanatatea-barbatului-online?countryCode=ro&locale=DE",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee3j30006fsju24727btu",
+      "kind": "GENERAL",
+      "slug": "sanatatea-barbatului-online",
+      "name": "Männergesundheit — vertrauliche Online-Bewertung",
+      "summary": "Haben Sie Fragen zu erektiler Dysfunktion, Testosteron, Libido, Fruchtbarkeit oder allgemeiner Gesundheit? Unsere zugelassenen CMR-Ärzte bieten eine vertrauliche Bewertung und klare medizinische Empfehlungen per Videosprechstunde.",
+      "seoTitle": "Online-Beratung für Männergesundheit | Rumänien | vertraulich",
+      "seoDescription": "Vertrauliche Beratungen bei erektiler Dysfunktion, Testosteron, Libido, Fruchtbarkeit oder allgemeiner Gesundheit. Unsere von der CMR zugelassenen Ärzte bieten eine vertrauliche Beurteilung und klare medizinische Empfehlungen per Videoberatung an.",
+      "seoKeywords": [
+        "men's health online Romania",
+        "erectile dysfunction doctor online Romania",
+        "testosterone assessment Bucharest English",
+        "men's health consultation English Romania",
+        "ED doctor online Romania expat"
+      ],
+      "heroTitle": "Männergesundheit — vertrauliche Online-Bewertung",
+      "heroDescription": "Vertrauliche Konsultationen bei Erektionsstörungen, Testosteron, Libido, Fruchtbarkeit oder allgemeiner Gesundheit. Unsere von der CMR autorisierten Ärzte bieten eine vertrauliche Beurteilung und klare medizinische Empfehlungen per Video-Sprechstunde.",
+      "detailBody": "<p>Der Service eignet sich für häufige männliche Gesundheitsprobleme, einschließlich Harnsymptome, erektile Dysfunktion, vermindertes Libido, anhaltende Müdigkeit, hormonelle Anliegen, sexuelle Gesundheit und Fragen zur Fruchtbarkeit.</p><p>Der Arzt überprüft die Symptomgeschichte, kardiovaskuläre und metabolische Risikofaktoren, die aktuelle Medikation, den Lebensstil und eventuell bereits vorliegende medizinische Ergebnisse. Sie erhalten Empfehlungen zu Untersuchungen, Behandlungsmöglichkeiten und dazu, wann eine urologische oder endokrinologische Beurteilung erforderlich ist.</p><p>Die Konsultation ist vertraulich und besonders nützlich für Patienten, die einen Arztbesuch aufschieben, weil es ihnen unangenehm ist, diese Probleme in einem traditionellen physischen Rahmen zu besprechen.</p>",
+      "ctaLabel": "Termin vereinbaren",
+      "sortOrder": 130,
+      "durationMinutes": 20,
+      "basePriceCents": 15000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:40.429Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jsga2001takjuposo4ofv",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee3j30006fsju24727btu",
+          "path": "/api/media/media/3eb29e4e-4322-499a-84ee-310fdcf2576b-54a1a470-c8e0-4f8f-a04a-df45aea30361-12.webp",
+          "altText": "Sănătatea bărbatului — evaluare confidențială online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "DE",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

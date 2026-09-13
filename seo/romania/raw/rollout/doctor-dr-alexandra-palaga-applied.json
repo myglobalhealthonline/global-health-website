@@ -1,0 +1,20 @@
+{
+  "group": "doctor:dr-alexandra-palaga",
+  "approvalSha256": "8f416a774261540ab8d3cf277dd1f5cb8a9e4cdd4a57321e72a1d5bdb0cf08d2",
+  "reviewerDoctorId": "cmrc4axni00rn01p2n3r2bopf",
+  "approvalEvidence": "owner-reported clinician approval in this task",
+  "appliedAt": "2026-09-12T22:47:13.987Z",
+  "alreadyApplied": false,
+  "operations": 17,
+  "publicVerified": true,
+  "afterSha256": "0b1b51cfc8ec023f9d97600c7513f5a9f12e773a6bf3ed48a6f8ae22c25090ee",
+  "publicVerifiedAt": "2026-09-12T22:48:47.699Z",
+  "verifiedUrls": [
+    "https://www.myglobalhealth.online/romania/cs/doctors/dr-alexandra-palaga",
+    "https://www.myglobalhealth.online/romania/de/doctors/dr-alexandra-palaga",
+    "https://www.myglobalhealth.online/romania/en/doctors/dr-alexandra-palaga",
+    "https://www.myglobalhealth.online/romania/es/doctors/dr-alexandra-palaga",
+    "https://www.myglobalhealth.online/romania/pt/doctors/dr-alexandra-palaga",
+    "https://www.myglobalhealth.online/romania/ro/doctors/dr-alexandra-palaga"
+  ]
+}

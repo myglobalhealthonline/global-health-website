@@ -1,0 +1,151 @@
+{
+  "endpoint": "/api/services/renovacion-tratamiento-online?countryCode=es&locale=RO",
+  "checkedAt": "2026-09-13T02:30:08.023Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7pz0n000kngjuib862zxl",
+      "kind": "GENERAL",
+      "slug": "renovacion-tratamiento-online",
+      "name": "Reînnoirea tratamentului",
+      "summary": null,
+      "seoTitle": "Reînnoire Tratament Online Spania | Revizuire Clinică | Medic Colegiat",
+      "seoDescription": "Tratament stabil care necesită reînnoire în Spania? Medicii noștri înregistrați îți analizează situația clinică prin videoconferință și emit documentația acolo unde este indicat. Fără înregistrare prealabilă. În aceeași zi.",
+      "seoKeywords": [
+        "renovación tratamiento online España",
+        "continuar tratamiento online España",
+        "revisión clínica tratamiento España",
+        "continuar medicación extranjero España"
+      ],
+      "heroTitle": "Reînnoirea tratamentului — Revizuire clinică online cu medic autorizat",
+      "heroDescription": "Ai un tratament stabil și stabilit — și trebuie să îl reînnoiești. Fie pentru că nu ai în prezent un medic de familie alocat, fie pentru că nu poți aștepta săptămâni pentru o programare, fie pentru că vii dintr-o altă țară cu documentație medicală pe care farmaciile spaniole nu o pot procesa direct. Medicii noștri, membri ai colegiului profesional conform cerințelor Organizației Medicale Colegiale (OMC), efectuează o evaluare clinică completă a tratamentului tău actual prin videoconferință securizată — și emit documentația medicală corespunzătoare acolo unde este indicat. În aceeași zi, din orice punct din Spania, în spaniolă, engleză sau portugheză.",
+      "detailBody": "<h2>Ce este acest serviciu — și ce nu este</h2><p>Aceasta este o revizuire clinică a tratamentului — nu o reînnoire automată. Medicii noștri efectuează o evaluare reală a tratamentului tău actual, a stării tale clinice, a posibilelor efecte adverse și a oricăror schimbări ale sănătății tale de la ultima revizuire. Pe baza acestei evaluări, ei recomandă dacă tratamentul tău rămâne adecvat și emit documentația clinică corespunzătoare, unde este indicat.</p><p>Acest serviciu este potrivit atunci când starea ta este stabilă și tratamentul este stabilit. Dacă simptomele tale s-au schimbat semnificativ sau s-au agravat, o consultație medicală generală este mai adecvată.</p><h2>Pentru cine este acest serviciu</h2><p>Acest serviciu este potrivit pentru adulții care:</p><ul><li>Au un tratament stabil și stabilit pe care trebuie să îl continue în Spania</li><li>Nu au în prezent un medic de familie desemnat și nu pot accesa sistemul public</li><li>Au sosit în Spania din altă țară a UE cu documentație clinică pe care farmaciile spaniole nu o pot procesa direct</li><li>S-au mutat recent într-o altă comunitate autonomă și încă nu au un medic de familie desemnat</li><li>Au o afecțiune cronică gestionată în altă țară și doresc să continue tratamentul în timp ce se stabilesc în Spania</li><li>Doresc o revizuire clinică în engleză sau portugheză fără a trebui să navigheze un sistem în castiliană</li></ul><h2>Cel mai frecvent caz — medicație străină în Spania</h2><p>Acesta este unul dintre cele mai frecvente utilizări ale acestui serviciu pentru rezidenți internaționali și turiști. Documentația clinică emisă în alte țări — inclusiv Regatul Unit, Irlanda, Germania, Țările de Jos, Franța sau orice alt stat membru al UE — este, teoretic, recunoscută în Spania în temeiul Directivei 2011/24/UE privind asistența medicală transfrontalieră.</p><p>În practică, farmaciile spaniole întâmpină frecvent dificultăți în procesarea documentației clinice străine din mai multe motive:</p><ul><li>Denumirea comercială a medicamentului poate fi diferită în Spania</li><li>Formatul nu corespunde sistemului de verificare spaniol</li><li>Farmacia nu poate verifica apartenența la colegiu a medicului prescriptor străin</li><li>Medicamentul poate să nu fie comercializat sub acea denumire în Spania</li></ul><p>Cea mai practică soluție este să consulți medicul nostru, care evaluează tratamentul tău actual și emite documentația clinică spaniolă echivalentă, unde este indicat — folosind denumirea generică spaniolă a medicamentului (DCI — Denominación Común Internacional) și conectată la Nodofarma pentru eliberare în orice farmacie de pe teritoriul național.</p><p>Adaugă la consultație: ambalajul original al medicamentului tău, denumirea generică, documentația clinică dacă o ai și orice raport medical relevant. Cu cât medicul oferă mai multe informații, cu atât îți poate evalua mai bine tratamentul.</p><h2>Ce include consultația</h2><p><strong>Revizuire clinică completă a tratamentului actual</strong></p><p>Medicul revizuiește afecțiunea care este tratată, medicația ta actuală, doza și durata, controlul simptomelor și răspunsul la tratament, posibilele efecte adverse și orice modificări relevante din istoricul tău medical de la ultima revizuire.</p><p><strong>Evaluare de siguranță</strong></p><p>Revizuirea posibilelor interacțiuni, contraindicații și a oricăror schimbări în sănătatea ta care ar putea afecta oportunitatea de a continua tratamentul actual.</p><p><strong>Documentație clinică — la criteriul medicului</strong></p><p>Atunci când medicul stabilește că tratamentul tău rămâne adecvat din punct de vedere clinic, emite documentația clinică corespunzătoare în conformitate cu Real Decreto 1718/2010, omologată de OMC și conectată prin Nodofarma la cele peste 22.000 de farmacii de pe teritoriul național — unde este indicat din punct de vedere clinic.</p><p>Cu documentație clinică privată plătești 100% din prețul medicamentului — prețurile în Spania sunt reglementate și sunt, în general, foarte accesibile. Valabilitatea generală este de 10 zile calendaristice pentru prima eliberare. În tratamentele de lungă durată, medicul poate programa eliberări succesive.</p><p>Notă: stupefiantele și anumite substanțe controlate necesită documentație specială care nu poate fi emisă electronic prin acest serviciu. Medicul tău te va informa dacă acesta este cazul tău.</p><p><strong>Trimitere sau investigații suplimentare — unde este indicat</strong></p><p>Dacă revizuirea indică faptul că este necesară o evaluare suplimentară, analize sau o evaluare de specialitate înainte de a putea continua tratamentul, medicul tău te consiliază clar și coordonează pașii următori în aceeași zi.</p><h2>Afecțiuni revizuite în mod obișnuit</h2><p>Acest serviciu este potrivit pentru afecțiuni stabile și stabilite, inclusiv:</p><p><strong>Cardiovascular și metabolic</strong></p><ul><li>Hipertensiune arterială — revizuirea tratamentului antihipertensiv</li><li>Diabet — revizuirea controlului glicemic și a tratamentului</li><li>Dislipidemie — revizuirea statinelor și a controlului lipidic</li><li>Patologie tiroidiană — hipotiroidism și hipertiroidism, revizuirea tratamentului</li></ul><p><strong>Respirator</strong></p><ul><li>Astm — revizuirea inhalatoarelor și a schemei de tratament</li><li>BPOC — revizuirea tratamentului de întreținere</li></ul><p><strong>Sănătate mintală — la nivel de medicină generală</strong></p><ul><li>Anxietate și depresie stabile — revizuirea tratamentului la nivel de medic generalist, sub rezerva evaluării clinice</li><li>Insomnie cronică — revizuirea tratamentului stabilit</li></ul><p><strong>Altele</strong></p><ul><li>Reflux gastroesofagian și patologie gastrointestinală — tratament de lungă durată</li><li>Contraceptive hormonale — revizuire și continuare, sub rezerva evaluării clinice</li><li>Patologie dermatologică — tratamente topice sau sistemice de lungă durată</li><li>Patologie hormonală — management continuu</li><li>Durere cronică — revizuirea tratamentului stabilit la nivel de medic generalist</li></ul><h2>Medicație privată vs. sistem public — diferență practică</h2><p>Cu documentație clinică privată emisă de medicii noștri:</p><ul><li>Plătești 100% din prețul medicamentului la farmacie</li><li>Prețurile în Spania sunt reglementate și sunt, în general, mici</li><li>Valabilă în orice farmacie de pe teritoriul național</li><li>Nu este necesar card de sănătate sau asigurare medicală spaniolă</li></ul><p>Cu rețetă din SNS (sistemul public):</p><ul><li>Există o contribuție redusă în funcție de venit, vârstă și situația profesională</li><li>Necesită medic de familie în sistemul public</li><li>Accesibil doar dacă ești înregistrat în sistemul public spaniol</li></ul><p>Dacă ai medic de familie în sistemul public și ai nevoie de medicație finanțată, consultă mai întâi CAP-ul tău. Serviciul nostru este util în special atunci când nu ai acces la sistemul public, când nu poți aștepta programarea sau când documentația ta clinică provine din altă țară.</p><h2>Informații importante înainte de rezervare</h2><ul><li>Decizia de a continua, ajusta sau modifica orice tratament este o decizie clinică luată exclusiv de medic după o evaluare completă — nu poate fi confirmată sau garantată în prealabil</li><li>Stupefiantele și anumite substanțe controlate nu pot fi emise electronic — medicul tău te va informa dacă medicația ta se încadrează în această categorie</li><li>Medicii noștri nu gestionează în mod obișnuit substanțe controlate prin videoconsultație</li><li>Dacă simptomele tale s-au schimbat semnificativ de la ultima revizuire, o consultație medicală generală este mai adecvată</li><li>Ia la consultație orice rezultate de analize, rapoarte de la specialiști sau documentație clinică relevantă</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 30,
+      "durationMinutes": 15,
+      "basePriceCents": 2900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.259Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0kaao0009asjuv22mk4e7",
+          "kind": "IMAGE",
+          "key": "media/cf933591-e467-4cbf-9f49-d1e45f16636e-es-renovacion-tratamiento-online.png",
+          "path": "/api/media/media/cf933591-e467-4cbf-9f49-d1e45f16636e-es-renovacion-tratamiento-online.png",
+          "altText": "Renovación de Tratamiento"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7pz9a000lngjunpbz0j1w",
+          "question": "Reînnoirea este automată după consultație?",
+          "answer": "Nu. Reînnoirea tratamentului necesită o evaluare clinică. Medicul evaluează starea ta actuală, răspunsul la tratament și orice modificări survenite de la ultima ta evaluare înainte de a stabili dacă continuarea este adecvată din punct de vedere clinic.",
+          "sortOrder": 0,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7pz9a000mngjuvi2405jt",
+          "question": "Pot continua orice medicație?",
+          "answer": "Majoritatea tratamentelor stabile și consacrate la nivel de medic de familie pot fi revizuite și continuate prin intermediul acestui serviciu. Stupefiantele și anumite substanțe controlate necesită documentație specială care nu poate fi emisă electronic. Medicii noștri nu gestionează în mod obișnuit substanțe controlate prin videoconsult. Medicul tău te va informa clar dacă tratamentul tău se încadrează în aceste categorii.",
+          "sortOrder": 1,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7pz9a000nngjuqwpbiiz8",
+          "question": "Cum primesc documentația clinică?",
+          "answer": "Când este indicată clinic, medicul tău emite documentația prin sistemul omologat de OMC. O primești electronic și o prezinți la orice farmacie la alegerea ta din Spania, împreună cu DNI-ul sau pașaportul tău.",
+          "sortOrder": 2,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7pz9a000ongju863tsyvf",
+          "question": "Am nevoie de asigurare medicală spaniolă?",
+          "answer": "Nu. Documentația clinică privată se eliberează la tariful privat integral. Nu este necesară o asigurare medicală spaniolă sau un card de sănătate.",
+          "sortOrder": 3,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7pz9a000pngjulyklv21w",
+          "question": "Am documentație clinică dintr-o altă țară — ce trebuie să aduc la consultație?",
+          "answer": "Denumirea generică a medicamentului tău (DCI — Denumire Comună Internațională), ambalajul original dacă îl ai, documentația ta medicală din străinătate dacă o ai și orice raport medical relevant.",
+          "sortOrder": 4,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7pz9a000qngjuja4gz4z7",
+          "question": "Ce se întâmplă dacă starea mea s-a schimbat de la ultima mea evaluare?",
+          "answer": "Dacă simptomele tale s-au schimbat semnificativ, o consultație medicală generală este mai potrivită. Medicul tău te va informa în timpul consultației dacă este necesară o evaluare mai detaliată.",
+          "sortOrder": 5,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7pz9a000rngjujw9kwv5n",
+          "question": "Pot folosi acest serviciu fără medic de familie în Spania?",
+          "answer": "Da. Acest serviciu este conceput în mod special pentru pacienți — inclusiv expați și rezidenți internaționali — care nu au un medic de familie desemnat în Spania, dar au nevoie să continue un tratament stabil și deja stabilit.",
+          "sortOrder": 6,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7pz9a000sngjumw9ufl99",
+          "question": "Pot folosi acest serviciu din orice punct al Spaniei?",
+          "answer": "Da — inclusiv Insulele Baleare, Insulele Canare, Ceuta și Melilla. Ai nevoie doar de o conexiune stabilă la internet și de un dispozitiv cu cameră.",
+          "sortOrder": 7,
+          "resolvedLocale": "RO"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "RO",
+      "links": [
+        {
+          "id": "cmre7ua4s0062g8jujrrpbtrs",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Consulta médica general con médico de cabecera?",
+          "body": "Si tu situación está relacionada con consulta médica general con médico de cabecera, nuestra Consulta Médica General te ofrece la evaluación adecuada.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

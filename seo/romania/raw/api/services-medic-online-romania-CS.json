@@ -1,0 +1,80 @@
+{
+  "checkedAt": "2026-09-12T20:20:06.291Z",
+  "endpoint": "/api/services/medic-online-romania?countryCode=ro&locale=CS",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee1ko0000fsjuh80zxo7q",
+      "kind": "GENERAL",
+      "slug": "medic-online-romania",
+      "name": "Online lékař — bez registrace, bez čekárny, ve stejný den",
+      "summary": "Registrovaný lékař u CMR dostupný online, bez čekací listiny a bez registrace u praktického lékaře. Videokonzultace v rumunštině nebo angličtině. Rezervujte si dnes.",
+      "seoTitle": "Lékař online bez registrace | Konzultace tentýž den | Global Health",
+      "seoDescription": "Lékař registrovaný u CMR dostupný online, bez čekací listiny a bez registrace u praktického lékaře. Videokonzultace v rumunštině nebo angličtině. Rezervujte si dnes.",
+      "seoKeywords": [
+        "medic online fără înregistrare",
+        "consultație medicală online România",
+        "medic online în afara Bucureștiului",
+        "doctor online România",
+        "consultație online fără medic de familie"
+      ],
+      "heroTitle": "Online lékař — bez registrace, bez čekárny, ještě tentýž den",
+      "heroDescription": null,
+      "detailBody": "<p>Potřebujete dnes lékaře, ale nejste zapsáni na seznamu praktického lékaře? Nebo bydlíte v oblasti, kde je přístup k praktickému lékaři na vhodném místě obtížný? Naši lékaři, registrovaní u Colegiul Medicilor din România (CMR), poskytují kompletní klinické konzultace prostřednictvím zabezpečené videokonference — bez nutnosti být předem registrovaným pacientem, bez čekárny, s termínem ještě tentýž den.</p><h2>Realita zdravotnického systému v Rumunsku</h2><p>Přístup k primární zdravotní péči v Rumunsku je nerovnoměrný. Ve velkých městech — București, Cluj-Napoca, Timișoara, Iași — existují relativně dostupné soukromé možnosti. Ale mimo ně, nebo u osob, které nejsou zapsány na seznamu praktického lékaře, může být získání lékařské konzultace včas obtížné.</p><p>Global Health existuje právě proto, aby tuto mezeru zaplnil. Naši lékaři, registrovaní u CMR, poskytují lékařské konzultace prostřednictvím videokonference — v rumunštině, angličtině— ještě tentýž den, odkudkoli z Rumunska, bez předchozí registrace.</p><p>Máte již praktického lékaře? Naše služba funguje doplňkově — pro akutní potíže, druhý lékařský názor nebo situace, kdy potřebujete mluvit s lékařem dnes, ne při další dostupné návštěvě.</p><h2>Co léčíme</h2><p>Naši lékaři posuzují a řeší širokou škálu akutních a neurgentních obtíží:</p><ul><li>Respirační a ORL</li><li>Nachlazení, chřipka, sinusitida a bronchitida</li><li>Příznaky COVID-19 a post-COVID obtíže</li><li>Bolest v krku, angína a ušní infekce</li><li>Plicní infekce a přetrvávající kašel</li><li>Mírné astmatické záchvaty</li><li>Infekce</li><li>Infekce močových cest — vyšetření a předpis antibiotika, kde je to klinicky indikováno</li><li>Kožní infekce</li><li>Respirační infekce vyžadující antibiotickou léčbu</li><li>Gastrointestinální infekce</li><li>Obecné příznaky</li><li>Horečka u dospělých</li><li>Bolesti hlavy a migréna</li><li>Nevolnost, zvracení, průjem a bolesti břicha</li><li>Únava a celková schvácenost</li><li>Kůže a oči</li><li>Vyrážky, ekzémy a mírné alergické reakce</li><li>Zánět spojivek a mírné podráždění očí</li><li>Pohybový aparát</li><li>Bolesti zad, šíje a svalů</li><li>Drobné úrazy pohybového aparátu</li><li>Ostatní</li><li>Obavy týkající se stávajících léků nebo probíhající léčby</li><li>Medicínské dokumenty — lékařská potvrzení, doporučující dopisy</li><li>Rady pro cestovní medicínu</li><li>Druhý lékařský názor</li></ul><h2>Co konzultace zahrnuje</h2><p>Kompletní klinické zhodnoceníLékař provede úplnou anamnézu vašich příznaků, relevantní zdravotní historii a aktuální léky — a provede strukturované klinické zhodnocení prostřednictvím videokonference, ve stejném standardu jako osobní konzultace.</p><p>Jasné vysvětleníNáš lékař si vyhradí čas, aby vám vysvětlil, co se děje, co máte dělat dál a kdy vyhledat další péči. Zapojení pacienta do lékařského rozhodování není luxus — je to náš standard péče.</p><p>Elektronický předpis — kde je klinicky indikovánoKdyž je to klinicky indikováno, lékař vystaví elektronický předpis ověřený v Sistemul Informatic de Prescripție Electronică (SIPE). Předložíte jej v jakékoli lékárně v Rumunsku.</p><p>Předpis antibiotika — kde je klinicky indikovánoOd roku 2024 vyžadují všechna antibiotika v Rumunsku lékařský předpis. Lékař vyhodnotí vaše příznaky a předepíše vhodné antibiotikum tam, kde je to klinicky odůvodněno — včetně infekcí močových cest, respiračních infekcí a kožních infekcí — při dodržení zásad antibiotického stewardshipu.</p><p>Doporučující dopisy a zdravotnická dokumentaceKdyž jsou potřeba doporučení ke specialistovi, krevní testy, zobrazovací vyšetření nebo jiná klinická dokumentace, lékař je vystaví ještě tentýž den.</p><p>Pracovní neschopnostPokud jste zaměstnáni v Rumunsku a pracovní neschopnost je klinicky indikována, lékař může vystavit příslušnou dokumentaci. Rozhodnutí o vystavení pracovní neschopnosti je vždy klinické rozhodnutí lékaře po úplném vyšetření.</p><h2>Proč Global Health</h2><p>Bez předchozí registraceNemusíte být registrovaným pacientem. Objednejte se, konzultujte, získejte jasný klinický výsledek — bez byrokracie, bez čekání na přijetí na seznam.</p><p>Lékaři registrovaní u CMRVšechny konzultace jsou prováděny lékaři registrovanými u Colegiul Medicilor din România, v souladu s rumunskými standardy telemedicíny podle zákona č. 95/2006 a HG č. 1133/2022.</p><p>Objednání tentýž denDostupnost tentýž den, sedm dní v týdnu, včetně večerů a víkendů.</p><p>Dostupné z celého RumunskaNemusíte být v București. Můžete být kdekoli v Rumunsku — potřebujete pouze stabilní internetové připojení a zařízení s kamerou.</p><p>Tři jazykyRumunština, angličtina — podle dostupnosti lékaře.</p><p>Elektronický předpis a pracovní neschopnostNaši lékaři mohou vystavit elektronické předpisy prostřednictvím SIPE a potvrzení o pracovní neschopnosti — stejně jako jakýkoli praktický lékař registrovaný v Rumunsku.</p><h2>Často kladené otázky</h2><p>Musím mít rumunské zdravotní pojištění, abych mohl/a využít tuto službu?Ne. Jedná se o soukromou službu, hrazenou přímo za konzultaci — není vyžadováno veřejné rumunské zdravotní pojištění, žádná registrace, žádné členství. Některá soukromá pojištění pokrývají telemedicínské konzultace — ověřte si to u své pojišťovny.</p><p>Může lékař předepsat antibiotika?Ano — kde je to klinicky indikováno po úplném zhodnocení vašich příznaků. Od roku 2024 vyžadují všechna antibiotika v Rumunsku lékařský předpis. Lékař posoudí váš stav a předepíše vhodné antibiotikum tam, kde klinické důkazy toto podporují, při dodržení zásad antibiotického stewardshipu.</p><p>Může lékař vystavit elektronický předpis?Ano. Naši lékaři jsou registrováni u CMR a v Sistemul Informatic de Prescripție Electronică (SIPE). Elektronické předpisy jsou vystavovány přímo — předložíte je v jakékoli lékárně v Rumunsku.</p><p>Musím být v București, abych mohl/a tuto službu využít?Ne. Služba je dostupná z jakéhokoli místa v Rumunsku — potřebujete pouze stabilní internetové připojení a zařízení s kamerou.</p><p>Jak rychle mohu získat termín?Termíny ještě tentýž den jsou k dispozici. Rezervujte online a termín je potvrzen okamžitě.</p><p>Jaké jazyky jsou dostupné?Rumunština, angličtina— podle dostupnosti lékaře.</p><p>Mohu touto službou získat pracovní neschopnost?Ano. Pokud jste zaměstnáni v Rumunsku a pracovní neschopnost je klinicky indikována, lékař může vystavit příslušnou dokumentaci. Rozhodnutí je vždy klinické, učiněné po úplném vyšetření.</p><p>Je služba vhodná pro děti?U akutních pediatrických onemocnění může služba nabídnout počáteční zhodnocení a doporučení. U složitých nebo přetrvávajících pediatrických stavů lékař doporučí odeslání k osobnímu vyšetření.</p><p>Co se stane, pokud můj stav vyžaduje osobní péči?Pokud lékař určí, že váš stav vyžaduje osobní vyšetření nebo urgentní péči, budete okamžitě informováni a směrováni do příslušné služby. Vaše bezpečnost je vždy klinickou prioritou.</p>",
+      "ctaLabel": null,
+      "sortOrder": 10,
+      "durationMinutes": 15,
+      "basePriceCents": 11500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:47.167Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jsape001pakju9d8azet9",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee1ko0000fsjuh80zxo7q",
+          "path": "/api/media/media/e7e4ceb8-872b-4aa9-b481-f1819dfaf76c-817d74bf-c5ba-4f1b-8de2-6980a8239c3c-1.webp",
+          "altText": "Medic online — fără înregistrare, fără sală de așteptare, în aceeași zi"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "detailBody"
+      ],
+      "resolvedLocale": "CS",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/enfermedades-cronicas-online?countryCode=es&locale=DE",
+  "checkedAt": "2026-09-13T02:29:54.717Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q9p1003ingjuum9voxoc",
+      "kind": "GENERAL",
+      "slug": "enfermedades-cronicas-online",
+      "name": "Chronische Erkrankungen",
+      "summary": null,
+      "seoTitle": "Chronische Krankheiten Online Spanien | Ärztliche Nachsorge | Hausarzt",
+      "seoDescription": "Bluthochdruck, Diabetes, Schilddrüse oder eine andere chronische Erkrankung? Unsere approbierten Hausärzte bieten eine fortlaufende klinische Betreuung per sicherer Videokonferenz an. Am selben Tag in Spanien.",
+      "seoKeywords": [
+        "enfermedades crónicas online España",
+        "hipertensión médico online España",
+        "diabetes seguimiento online España",
+        "tiroides médico online España",
+        "enfermedad crónica médico de cabecera online España"
+      ],
+      "heroTitle": "Chronische Erkrankungen — Kontinuierliche medizinische Online-Betreuung",
+      "heroDescription": "Eine chronische Erkrankung zu managen — Bluthochdruck, Diabetes, Schilddrüsenerkrankungen, Asthma oder jede andere langfristige Erkrankung — erfordert mehr als eine jährliche Kontrolle und eine Verlängerung der Behandlung. Es erfordert einen Arzt, der Ihren Fall kennt, Ihren Verlauf überwacht, Ihre Behandlung anpasst, wenn sich etwas ändert, und Ihnen hilft, sich im weiteren Gesundheitssystem zurechtzufinden, wenn eine fachärztliche Beurteilung erforderlich ist. Unsere Hausärzte, zugelassen gemäß den Anforderungen der Organización Médica Colegial (OMC), bieten eine kontinuierliche klinische Nachsorge chronischer Erkrankungen per sicherer Videokonferenz an — die klinische Kontinuität, die die Grundlage Ihrer langfristigen Versorgung bilden sollte. Am selben Tag, von jedem Ort in Spanien aus, auf Spanisch, Englisch oder Portugiesisch.",
+      "detailBody": "<h2>Kontinuierliche Betreuung vs. Rezeptverlängerung — der Unterschied</h2><p>Global Health bietet zwei getrennte Dienstleistungen für Patienten mit Langzeiterkrankungen an:</p><p>Rezeptverlängerung ist ein einmaliger Beratungsservice für stabile und etablierte Erkrankungen — Ihre Erkrankung hat sich nicht verändert, Ihre Behandlung wirkt, und Sie müssen sie fortsetzen. Eine Beratung, ein klares Ergebnis.</p><p>Chronische Krankheitsbetreuung ist fortlaufende Versorgung auf hausärztlicher Ebene — ein Arzt, der Ihren Fall über die Zeit kennt, Ihre Erkrankung überwacht, die Behandlung bei Bedarf anpasst, Untersuchungen und Überweisungen an Fachärzte koordiniert und die Kontinuität bietet, die die Behandlung chronischer Erkrankungen wirklich wirksam statt reaktiv macht.</p><p>Wenn Sie stabil sind und nur Ihre Behandlung fortsetzen müssen — dann ist die Rezeptverlängerung der passende Service. Wenn Sie einen Arzt möchten, der über die Zeit in die Betreuung Ihrer Erkrankung eingebunden ist — dann ist die Betreuung chronischer Erkrankungen angemessen.</p><h2>Für wen dieser Service gedacht ist</h2><p>Dieser Service ist für Erwachsene mit:</p><ul><li>einer diagnostizierten chronischen Erkrankung, die sie mit Kontinuität auf hausärztlicher Ebene betreuen möchten</li><li>einer Langzeiterkrankung, die nicht gut kontrolliert ist und eine aktive klinische Überprüfung benötigt</li><li>mehreren gleichzeitig bestehenden Erkrankungen — zum Beispiel Diabetes mit Hypertonie und Dyslipidämie — die eine koordinierte Betreuung erfordern</li><li>einer chronischen Erkrankung, die sie in Spanien nach der Ankunft aus einem anderen Land weiter betreuen müssen</li><li>Bedarf an fortlaufender Überwachung durch Untersuchungen — regelmäßige Blutuntersuchungen, HbA1c, Schilddrüsenfunktion — koordiniert durch einen Arzt, der ihren Fall kennt</li><li>einer chronischen Erkrankung, bei der die Optimierung des Lebensstils zusammen mit der Medikamentenbehandlung die Ergebnisse verbessern würde</li><li>internationalen Bewohnern oder Expats in Spanien, die eine Betreuung chronischer Erkrankungen auf Englisch oder Portugiesisch wünschen, ohne sich im spanischen System zurechtfinden zu müssen</li></ul><h2>Warum Kontinuität wichtig ist</h2><p>Chronische Erkrankungen verändern sich. Ein Blutdruck, der kontrolliert war, kann ansteigen. Ein HbA1c, das stabil war, kann schwanken. Ein Medikament, das wirksam war, kann nicht mehr optimal sein. Ein neues Symptom kann auf eine Komplikation oder die Notwendigkeit hinweisen, die Behandlung zu überdenken.</p><p>Ein Arzt, der Ihren Fall nicht kennt, sieht nur die aktuelle Konsultation. Ein Arzt, der Sie über die Zeit betreut, sieht das Muster — und kann Veränderungen erkennen, bevor sie zu Problemen werden. Das ist der Unterschied zwischen reaktiver und proaktiver Betreuung chronischer Erkrankungen.</p><p>In Spanien hängt die Behandlung chronischer Erkrankungen im öffentlichen System davon ab, einen zugewiesenen Hausarzt zu haben — etwas, das viele internationale Bewohner und Selbstständige nicht haben. Im privaten Sektor ist die Betreuung oft zwischen Fachärzten fragmentiert, ohne einen Arzt, der das Gesamtbild koordiniert. Das Ergebnis ist, dass Patienten mit mehreren chronischen Erkrankungen häufig zwischen den Versorgungslücken verloren gehen.</p><p>Dieser Service bietet die koordinierende hausärztliche Ebene, die häufig fehlt — ein Arzt, der den ganzen Patienten sieht, nicht nur die aktuelle Konsultation.</p><h2>Häufig betreute Erkrankungen</h2><p><strong>Kardiovaskulär</strong></p><ul><li>Arterielle Hypertonie — fortlaufende Blutdrucküberwachung, Medikationsüberprüfung, Optimierung des Lebensstils und Management des kardiovaskulären Risikos</li><li>Dyslipidämie — Cholesterinmanagement, Lipidüberwachung und Beurteilung des kardiovaskulären Risikos</li><li>Stabile Herzinsuffizienz — auf hausärztlicher Ebene betreut, mit Koordination der Überweisung an die Kardiologie, wo erforderlich</li><li>Stabiles Vorhofflimmern — auf hausärztlicher Ebene betreut, Antikoagulationsmanagement und Anbindung an die Kardiologie, wo erforderlich</li><li>Betreuung nach kardialem Ereignis — fortlaufende Versorgung auf hausärztlicher Ebene nach Myokardinfarkt oder kardialem Eingriff</li></ul><p><strong>Stoffwechsel</strong></p><ul><li>Diabetes Typ 2 — HbA1c-Überwachung, Medikationsüberprüfung, Unterstützung des Lebensstils, Koordination des Screenings auf Diabeteskomplikationen und Überweisung an Fachärzte, wo erforderlich</li><li>Prädiabetes — strukturierte Lebensstilintervention und metabolische Überwachung</li><li>Schilddrüsenerkrankungen — Behandlung von Hypothyreose und Hyperthyreose, Überwachung von TSH, Anpassung der Medikation</li><li>Metabolisches Syndrom — integriertes Management metabolischer Risikofaktoren</li><li>Adipositas als chronische Erkrankung — metabolisches Management zusammen mit Unterstützung beim Gewichtsmanagement</li></ul><p><strong>Respiratorisch</strong></p><ul><li>Asthma — Inhalatorüberprüfung, Beurteilung der Symptomkontrolle, Erstellung eines Aktionsplans und Überweisung an Fachärzte, wo erforderlich</li><li>COPD — fortlaufende Betreuung, Prävention von Exazerbationen und Koordination mit der Pneumologie, wo erforderlich</li></ul><p><strong>Muskuloskelettal und entzündlich</strong></p><ul><li>Arthrose — fortlaufendes Schmerzmanagement, funktionelle Beurteilung und Koordination von Überweisungen</li><li>Stabile entzündliche Arthritis — Betreuung auf hausärztlicher Ebene mit Koordination der Rheumatologie, wo erforderlich</li><li>Gicht — Harnsäureüberwachung und fortlaufende Betreuung</li><li>Osteoporose — Frakturrisikobeurteilung und fortlaufende Betreuung</li></ul><p><strong>Psychische Gesundheit — Langzeitmanagement auf hausärztlicher Ebene</strong></p><ul><li>Depression und Angststörung — fortlaufende Betreuung stabiler Erkrankungen auf hausärztlicher Ebene</li><li>ADHS — fortlaufende Unterstützung für Patienten mit gesicherter Diagnose auf hausärztlicher Ebene</li><li>Schlafstörungen — Beurteilung und fortlaufende Betreuung</li></ul><p><strong>Gastrointestinal</strong></p><ul><li>GERD und peptisches Ulkus — fortlaufende Betreuung und Überwachung</li><li>Reizdarmsyndrom — fortlaufende Betreuung und Unterstützung des Lebensstils</li><li>Stabile entzündliche Darmerkrankung — Betreuung auf hausärztlicher Ebene mit Koordination der Gastroenterologie</li></ul><p><strong>Sonstiges</strong></p><ul><li>Chronische Nierenerkrankung — Überwachung auf hausärztlicher Ebene mit Koordination der Nephrologie</li><li>Anämie — fortlaufende Betreuung und Überwachung der zugrunde liegenden Ursache</li><li>Chronische Hauterkrankungen — Psoriasis, Ekzem auf hausärztlicher Ebene</li><li>Autoimmunerkrankungen — stabile Verlaufsformen, betreut auf hausärztlicher Ebene</li></ul><h2>Was die kontinuierliche Betreuung umfasst</h2><p><strong>Regelmäßige klinische Kontrollen</strong></p><p>Ihr Hausarzt führt strukturierte klinische Kontrollen in für Ihre Erkrankung angemessenen Abständen durch — mit Beurteilung der Symptomkontrolle, des Ansprechens auf die Behandlung, von Nebenwirkungen, neuer Entwicklungen und des allgemeinen Wohlbefindens. Die Häufigkeit wird durch Ihre Erkrankung und den klinischen Bedarf bestimmt.</p><p><strong>Koordination der Überwachung</strong></p><p>Ihr Arzt veranlasst Untersuchungen zur regelmäßigen Überwachung — Blutuntersuchungen, HbA1c, Schilddrüsenfunktion, Lipidprofile, Nierenfunktion und andere krankheitsspezifische Untersuchungen — und bespricht die Ergebnisse mit Ihnen in einer Verlaufskonsultation.</p><p><strong>Medikamentenmanagement</strong></p><p>Ihr Arzt überprüft Ihre Medikation bei jeder klinischen Kontrolle — beurteilt Wirksamkeit, Verträglichkeit und ob eine Anpassung auf Grundlage der aktuellen klinischen Befunde und Überwachungsergebnisse erforderlich ist.</p><p><strong>Unterstützung von Lebensstil und Selbstmanagement</strong></p><p>Evidenzbasierte Beratung zu Ernährung, körperlicher Aktivität, Gewichtskontrolle, Rauchstopp und mäßigem Alkoholkonsum — angepasst an Ihre spezifische Erkrankung und daran, wie Lebensstilfaktoren mit Ihrer klinischen Betreuung zusammenwirken.</p><p><strong>Zusammenarbeit mit Fachärzten und Überweisung</strong></p><p>Wenn eine fachärztliche Beurteilung erforderlich ist — Kardiologie, Endokrinologie, Pneumologie, Rheumatologie, Gastroenterologie oder andere Fachrichtungen — koordiniert Ihr Arzt die Überweisung, stellt ein vollständiges Überweisungsschreiben aus und behält die klinische Beziehung als Ihr Hausarzt während und nach der Einbindung des Facharztes bei.</p><p><strong>Klinische Dokumentation — nach Ermessen des Arztes</strong></p><p>Wenn es klinisch bei jeder Kontrolle angezeigt ist, stellt Ihr Arzt die entsprechende klinische Dokumentation aus, die in jeder spanischen Apotheke gültig ist.</p><p>Hinweis: Betäubungsmittel und bestimmte kontrollierte Substanzen erfordern eine besondere Dokumentation, die nicht elektronisch ausgestellt werden kann. Ihr Arzt wird Sie informieren, wenn dies auf Ihre Situation zutrifft.</p><p><strong>Klinische Kontinuität</strong></p><p>Da Ihr Arzt Ihren Fall über die Zeit kennt, werden klinische Entscheidungen im Kontext Ihrer vollständigen Krankengeschichte getroffen — nicht nur anhand des aktuellen Konsultationsanlasses in einer einzelnen Sprechstunde.</p><h2>Betreuung chronischer Erkrankungen in Spanien ohne zugewiesenen Hausarzt</h2><p>Das spanische öffentliche System bietet die Betreuung chronischer Erkrankungen über registrierte Hausärzte an — jedoch nur für Patienten, die registriert sind und in Gebieten, in denen Hausärzte verfügbar sind. Für internationale Bewohner, die noch nicht registriert sind, Selbstständige ohne zugewiesenen Hausarzt oder Personen, die ihre Versorgung lieber auf Englisch oder Portugiesisch managen, ist der Zugang zu strukturierter Betreuung chronischer Erkrankungen eine echte Lücke.</p><p>Global Health bietet diese Versorgung auf Spanisch, Englisch und Portugiesisch an. Ihre Konsultationen werden dokumentiert, Ihre Überwachung wird koordiniert, und Ihre Betreuung ist strukturiert — so erhalten Sie die klinische Kontinuität, die das Management chronischer Erkrankungen erfordert, in der Sprache, die Sie verstehen und in der Sie vollständig teilnehmen können.</p><p>Wenn Sie einen Hausarzt im spanischen öffentlichen System haben, funktioniert dieser Service ergänzend — nicht als Ersatz. Einige Patienten nutzen Global Health für eine gezielte Betreuung chronischer Erkrankungen auf Englisch oder Portugiesisch, während sie ihre Registrierung im öffentlichen System für den Zugang zu subventionierten Medikamenten und Überweisungen zu Fachärzten des SNS beibehalten.</p>",
+      "ctaLabel": null,
+      "sortOrder": 130,
+      "durationMinutes": 20,
+      "basePriceCents": 4500,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.265Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k03k0003asjuhdggeok6",
+          "kind": "IMAGE",
+          "key": "media/a1cea8fc-3744-4057-88bf-50ec7787455c-es-enfermedades-cronicas-online.png",
+          "path": "/api/media/media/a1cea8fc-3744-4057-88bf-50ec7787455c-es-enfermedades-cronicas-online.png",
+          "altText": "Enfermedades Crónicas"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q9y8003jngju19ywqer8",
+          "question": "Worin unterscheidet sich dies von einer Behandlungsverlängerung?",
+          "answer": "Die Behandlungserneuerung ist ein einmaliger Termin für eine stabile Erkrankung — eine Behandlung erneuern, die gut funktioniert. Die Nachsorge bei chronischen Erkrankungen ist eine fortlaufende Betreuung — ein Arzt, der Ihren Fall im Laufe der Zeit kennt, Ihren Zustand überwacht, die Behandlung bei Bedarf anpasst und in Ihre langfristige Gesundheit eingebunden ist.",
+          "sortOrder": 0,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q9y9003kngjufbvlcqes",
+          "question": "Wie oft muss ich mich konsultieren?",
+          "answer": "Es hängt von deinem Zustand und davon ab, wie gut er kontrolliert ist. Bei stabilen und gut kontrollierten Erkrankungen ist in der Regel eine vierteljährliche oder halbjährliche Kontrolle angemessen. Bei weniger gut kontrollierten oder komplexeren Erkrankungen sind häufigere Kontrollen erforderlich. Dein Arzt berät dich beim ersten Termin über den geeigneten Kontrollplan.",
+          "sortOrder": 1,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q9y9003lngjunfhyg0p2",
+          "question": "Kann der Arzt auf meine spanische Krankenakte zugreifen?",
+          "answer": "Nein. Die Ärzte von Global Health haben keinen Zugriff auf das System der elektronischen Patientenakte des spanischen öffentlichen Gesundheitssystems. Bitte bringen Sie jegliche relevante medizinische Unterlagen mit – frühere Laborergebnisse, Facharztbriefe, Bildgebungsberichte und eine Liste Ihrer aktuellen Medikation – zu Ihrem ersten Termin.",
+          "sortOrder": 2,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q9y9003mngju1ewqjbvw",
+          "question": "Was passiert, wenn ich einen Facharzt brauche?",
+          "answer": "Wenn eine fachärztliche Beurteilung erforderlich ist, stellt Ihr Arzt ein formelles Überweisungsschreiben aus und berät Sie zum Zugang zum geeigneten Facharzt in Spanien. Der Zugang zu privaten Fachärzten ist in den wichtigsten spanischen Städten in der Regel unkompliziert — Global Health koordiniert dies als Teil der fortlaufenden Betreuung.",
+          "sortOrder": 3,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q9y9003nngju8medvh22",
+          "question": "Kann ich diesen Dienst nutzen, wenn ich einen Hausarzt in Spanien habe?",
+          "answer": "Ja. Einige Patienten nutzen Global Health für Nachsorgeuntersuchungen bei chronischen Erkrankungen auf Englisch oder Portugiesisch zusammen mit ihrer spanischen Hausarztanmeldung — insbesondere bei Erkrankungen, bei denen sie das Management im Detail in einer Sprache besprechen möchten, die sie vollständig verstehen.",
+          "sortOrder": 4,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q9y9003ongju4afhm07p",
+          "question": "Was passiert, wenn ich wegen meiner chronischen Erkrankung eine Notfallbehandlung benötige?",
+          "answer": "Die Behandlung von Notfällen bei chronischen Erkrankungen — hypertensive Krise, diabetischer Notfall, akutes kardiales Ereignis — erfordert sofortige notfallmedizinische Versorgung. Rufen Sie sofort die 112 an oder gehen Sie zur nächstgelegenen Notaufnahme. Die fortlaufende Betreuung über Global Health ist für die nicht dringende Versorgung chronischer Erkrankungen vorgesehen.",
+          "sortOrder": 5,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q9y9003pngjud60s6yca",
+          "question": "Brauche ich eine spanische Krankenversicherung?",
+          "answer": "Nein. Es handelt sich um eine private Leistung mit Direktzahlung. Die über diesen Service ausgestellte klinische Dokumentation wird unabhängig vom Versicherungsstatus zum vollständigen privaten Preis abgerechnet.",
+          "sortOrder": 6,
+          "resolvedLocale": "DE"
+        },
+        {
+          "id": "cmre7q9y9003qngjufrh3v5qn",
+          "question": "Kann ich diesen Dienst von jedem Ort in Spanien aus nutzen?",
+          "answer": "Ja — einschließlich der Balearen, der Kanarischen Inseln, Ceuta und Melilla. Du benötigst nur eine stabile Internetverbindung und ein Gerät mit Kamera.",
+          "sortOrder": 7,
+          "resolvedLocale": "DE"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "DE",
+      "links": [
+        {
+          "id": "cmre7si5j002eg8jurnfmgprs",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre evaluación cardiológica especializada?",
+          "body": "Nuestra Cardiología Especialista está pensada específicamente para evaluación cardiológica especializada.",
+          "ctaLabel": "Cardiología Especialista",
+          "targetSlug": "cardiologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7skhw002kg8judewg26hr",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre evaluación neurológica especializada?",
+          "body": "Nuestra Neurología Especialista está pensada específicamente para evaluación neurológica especializada.",
+          "ctaLabel": "Neurología Especialista",
+          "targetSlug": "neurologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7sglb002ag8jup3a4q0tq",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Control de peso en diabetes e hipotiroidismo?",
+          "body": "Si tu situación está relacionada con control de peso en diabetes e hipotiroidismo, nuestra Control de Peso te ofrece la evaluación adecuada.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7shde002cg8jufeul55oo",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con analíticas de control y monitorización?",
+          "body": "Para analíticas de control y monitorización, consulta nuestra página de Derivaciones y Pruebas — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Derivaciones y Pruebas",
+          "targetSlug": "derivaciones-pruebas-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

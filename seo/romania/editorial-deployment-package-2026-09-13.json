@@ -1,0 +1,29 @@
+{
+  "stagePath": "C:\\Users\\kingh\\AppData\\Local\\Temp\\romania-editorial-deploy-3d398003f0d541c9a296b9eb64cb5f69",
+  "baseCommit": "7f021d627afb3f5218f764aa490d7549d8953be8",
+  "sourceSha256": {
+    "frontend/lib/i18n/load-locale.ts": "85f171b8fff4d5786dc448e4842bafb0f73c4db0b91c55fc2c2a64decfec933c",
+    "frontend/app/[country]/[lang]/press/page.tsx": "211f247414d54efd0c881a007afe10f6b77b5ca8318736f297f7af60975e1cac",
+    "backend/src/content/romania-clinical-review.ts": "4b3cc19d2675315ef9bffbaf99b66ae1077667db13485ea8205df69173d4f7f4",
+    "frontend/lib/content/country-contact.ts": "b2ef8396a0ab747fe66a4d3af47af1733c36e0e1c24bb497e560888f6cc03edf",
+    "frontend/app/[country]/[lang]/blog/medical-review-policy/page.tsx": "c24e08b9ea3cb575b2f3d66b9c9aef91823b9b6948e633ae36acdc456469c3f3",
+    "frontend/app/[country]/[lang]/legal/[type]/page.tsx": "75d915b282a0ede537f5451f3447762c5b0fe40ed8cf7d914ecf870019873f4b",
+    "frontend/lib/tools/market-copy.ts": "a364ca26165e5f892633343665e69435918b4a5012f60fea0d02442c50cbca2f",
+    "frontend/lib/i18n/romania-editorial-copy.json": "1082728baaf81b734d2165129e6dd1689bae91f539b5098cf14bf95b53e75978",
+    "frontend/app/[country]/[lang]/legal/subscription-terms/page.tsx": "121886ca6e6c4deae57eba25264975461cd16983794507e842f7eca44a73ba91",
+    "frontend/lib/tools/romania-editorial-tool-copy.json": "9b525175f0482c6e6f0b4d74b5611370fb98a4909731c64a0a2a8aa7ae34dbf6",
+    "frontend/app/[country]/[lang]/specialist-consultation/page.tsx": "f1a2c1ce16e469a3a873bb90405d1a2a8ec2a41f19533ef9d9e6a3d8c9a5d64e",
+    "frontend/app/[country]/[lang]/page.tsx": "d6286545bcab4828f67c21bb4c7df669ab5b8c54d35c3d5afdb3456d09f524f3",
+    "frontend/app/[country]/[lang]/pricing/page.tsx": "2d7c70112962f162b9399dbe19105747d968eaab62c600f28ee7771584db3686",
+    "frontend/app/[country]/[lang]/about/page.tsx": "e4d39a8421d9de34c0801b33993c7b4cb9cbcea59c66e939f8d8c45ac364aad7",
+    "frontend/app/[country]/[lang]/doctors/page.tsx": "7bee79706ce6483b4e783aff456d215245707e7d5ce08213ef7a04d06e477ff5",
+    "frontend/app/[country]/[lang]/contact/page.tsx": "671cb73b6eb47613303b080a3b81f0419755e8a1a38f5cae32bfd37dd23a9e2a",
+    "frontend/app/[country]/[lang]/legal/page.tsx": "a52cdeacc02eb0a19d377e8a3dd92bc729287719ed35ea9f7d056d0f66234722",
+    "frontend/app/[country]/[lang]/careers/page.tsx": "9fbf86f155115f125da538bd4e32c4ed6452681b9e58f4f35456f5354e8df6d9",
+    "frontend/app/[country]/[lang]/faq/page.tsx": "0620d0868af601e0cd615fc43c9f7fa0ef3248bf1fc3dbe7d4dfad8c42c2345a",
+    "frontend/app/[country]/[lang]/general-consultation/page.tsx": "1352a0edd4375cc5cfbb5bcb48bcff880127a08c6b6ebac0acaa5be6877602c2",
+    "frontend/app/[country]/[lang]/services/[serviceSlug]/page.tsx": "cdd1938cc196b6d8d7d536efef3e6039937ae8bd581ebdbf5f0e281c3178bad1"
+  },
+  "backendRollback": "2b9da1b0-0740-41c5-b4ca-d42785047654",
+  "frontendRollback": "7b0f3707-527d-4f2a-a836-53aec6bfd41f"
+}

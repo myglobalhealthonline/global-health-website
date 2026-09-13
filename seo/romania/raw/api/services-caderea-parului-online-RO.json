@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:15.390Z",
+  "endpoint": "/api/services/caderea-parului-online?countryCode=ro&locale=RO",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee5ha000bfsju94p8e37o",
+      "kind": "GENERAL",
+      "slug": "caderea-parului-online",
+      "name": "Consultație pentru căderea părului — online, în aceeași zi",
+      "summary": "Observați subțierea părului sau cădere accentuată? Medicii noștri autorizați CMR evaluează cauzele posibile, recomandă investigațiile necesare și stabilesc un plan de management bazat pe date clinice.",
+      "seoTitle": "Consultație pentru căderea părului online | România",
+      "seoDescription": "Evaluare pentru subțierea sau căderea accentuată a părului. Medicii noștri autorizați CMR evaluează cauzele posibile, recomandă investigațiile necesare și stabilesc un plan de management bazat pe date clinice.",
+      "seoKeywords": [
+        "hair loss consultation Romania",
+        "hair loss doctor English Romania",
+        "alopecia online consultation Romania",
+        "finasteride prescription Romania English",
+        "hair thinning doctor Bucharest expat"
+      ],
+      "heroTitle": "Consultație pentru căderea părului — online, în aceeași zi",
+      "heroDescription": "Evaluare pentru subțierea sau căderea accentuată a părului. Medicii noștri autorizați CMR evaluează cauzele posibile, recomandă investigațiile necesare și stabilesc un plan de management bazat pe date clinice.",
+      "detailBody": "<p>Căderea părului poate avea cauze hormonale, genetice, nutriționale, inflamatorii sau poate fi legată de stres, boală recentă ori medicație. O evaluare medicală timpurie este importantă pentru a identifica factorii reversibili și pentru a decide dacă este nevoie de tratament.</p><p>Consultația include discuție detaliată despre debutul și tiparul căderii părului, istoricul familial, simptome asociate, afecțiuni existente și tratamentele încercate. Dacă este nevoie, medicul recomandă analize pentru deficit de fier, tulburări tiroidiene, dezechilibre hormonale sau alte cauze medicale.</p><p>În funcție de caz, veți primi recomandări privind îngrijirea scalpului, tratamente posibile, modificări de stil de viață și momentul în care este necesară evaluarea dermatologică de specialitate.</p>",
+      "ctaLabel": "Programează consultația",
+      "sortOrder": 80,
+      "durationMinutes": 15,
+      "basePriceCents": 11500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:38.752Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js6il001nakju2h70qzni",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee5ha000bfsju94p8e37o",
+          "path": "/api/media/media/4d9cf4d8-8a14-475e-b373-4a404428e7d8-9aa0e324-b3f6-4c79-8e8e-4de84aae85e6-1.webp",
+          "altText": "Consultație pentru căderea părului — online, în aceeași zi"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "RO",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

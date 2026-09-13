@@ -1,0 +1,185 @@
+{
+  "endpoint": "/api/services/dermatologia-especialista-online?countryCode=es&locale=CS",
+  "checkedAt": "2026-09-13T02:29:51.779Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qdwm004pngjuoofudwu5",
+      "kind": "SPECIALIST",
+      "slug": "dermatologia-especialista-online",
+      "name": "Specialista dermatologie",
+      "summary": null,
+      "seoTitle": "Online dermatologická konzultace ve Španělsku | Dermatolog | Stejný den",
+      "seoDescription": "Komplexní kožní onemocnění, těžké akné nebo podezřelá léze. Naši registrovaní dermatologové nabízejí odborná vyšetření prostřednictvím videohovoru s analýzou snímků ve vysokém rozlišení. Ve stejný den ve Španělsku.",
+      "seoKeywords": [
+        "consulta dermatológica especialista online España",
+        "dermatólogo online España",
+        "acné grave dermatólogo online España",
+        "lesión piel sospechosa dermatólogo online",
+        "psoriasis dermatólogo online España"
+      ],
+      "heroTitle": "Odborná dermatologická konzultace — Online vyšetření s dermatologem",
+      "heroDescription": "Některá kožní onemocnění vyžadují více než jen konzultaci praktického lékaře. Těžké akné, které může vyžadovat specializovanou léčbu, podezřelá léze vyžadující podrobné dermatoskopické vyšetření, komplexní psoriáza odolná vůči léčbě nebo stav, který nereagoval na běžné přístupy — tyto projevy vyžadují hloubku klinické analýzy, kterou poskytuje specialista dermatolog. Naši dermatologové, registrovaní v souladu s požadavky Organizace lékařské komory (OMC) a zapsaní ve své odborné komoře, nabízejí specializované dermatologické konzultace prostřednictvím zabezpečeného videohovoru s analýzou obrazů ve vysokém rozlišení. Téhož dne, odkudkoli ve Španělsku, ve španělštině, angličtině nebo portugalštině.",
+      "detailBody": "<h2>Kožní konzultace s praktickým lékařem vs. specializovaná dermatologická konzultace</h2><p>Global Health nabízí dvě úrovně péče pro kožní potíže.</p><p>Kožní konzultace s praktickým lékařem — vhodná pro většinu akutních a neurgentních kožních projevů: lehký až středně těžký ekzém, lehké až středně těžké akné, vyrážky, kožní infekce a rutinně sledovaná znaménka. Je to správný vstupní bod pro většinu kožních obtíží.</p><p>Specializovaná dermatologická konzultace — prováděná atestovanými dermatology Global Health. Vhodná pro:</p><ul><li>Těžké akné nebo akné nereagující na běžnou léčbu — včetně posouzení pro specializovanou léčbu</li><li>Podezřelé léze vyžadující dermatoskopické vyšetření ve vysokém rozlišení</li><li>Složitá nebo léčbě odolná psoriáza</li><li>Chronické kožní potíže, které nereagují na management na úrovni všeobecné medicíny</li><li>Specializovaný dermatologický druhý názor</li><li>Koordinovaná kožní biopsie — dermatolog vyhodnotí a koordinuje osobní doporučení, kde je to indikováno</li></ul><p>Nejste si jisti, která úroveň je vhodná? Začněte kožní konzultací s praktickým lékařem — pokud váš projev vyžaduje specializované dermatologické zhodnocení, praktický lékař vás přímo přesměruje na tuto službu ve stejné platformě.</p><h2>Pro koho je tato služba určena</h2><p>Tato specializovaná konzultace je vhodná pro dospělé a adolescenty s:</p><ul><li>Těžkým akné — noduly, cysty, acne conglobata nebo akné, které zanechalo významné jizvy</li><li>Středně těžkým až těžkým akné, které nereagovalo na běžnou léčbu na úrovni všeobecné medicíny</li><li>Podezřelými kožními lézemi — znaménky, která se změnila, nepravidelnými pigmentovanými lézemi nebo jakoukoli lézí vyvolávající významné klinické obavy</li><li>Složitou psoriázou — rozsáhlou ložiskovou psoriázou, pustulózní psoriázou nebo psoriázou nereagující na lokální léčbu</li><li>Těžkou nebo refrakterní atopickou dermatitidou — závažným ekzémem nereagujícím na standardní léčbu</li><li>Středně těžkou až těžkou růžovkou — s významnou zánětlivou složkou nebo očním postižením</li><li>Autoimunitními kožními onemocněními — kožní lupus, dermatomyozitida, pemfigoid nebo jiné autoimunitní projevy</li><li>Složitými nebo léčbě odolnými kožními infekcemi</li><li>Specializovaným dermatologickým druhým názorem — k diagnóze nebo léčebnému plánu obdrženému od jiného dermatologa</li><li>Pacienty s doporučením z naší služby praktického lékaře, kteří vyžadují podrobnější dermatologické zhodnocení</li></ul><h2>Analýza obrazu ve vysokém rozlišení — co to je a proč je důležitá</h2><p>Kvalitní teledermatologie jde dál než jen ukázat kůži při videohovoru. Naše služba zahrnuje analýzu obrazu ve vysokém rozlišení — pacient před konzultací nebo během ní zašle podrobné klinické fotografie léze nebo stavu, které dermatolog analyzuje pomocí zoomu a nástrojů pro detailní vizuální analýzu.</p><p>To umožňuje dermatologovi posoudit:</p><ul><li>Podrobnou morfologii pigmentovaných lézí — vnitřní strukturu, cévní vzorec, rozložení pigmentu</li><li>Rozsah a vzorec rozložení kožního stavu</li><li>Jemné změny u sledovaných lézí v průběhu času</li><li>Odezvu na léčbu mezi kontrolními konzultacemi</li></ul><p><strong>Jak připravit své snímky</strong></p><ul><li>Vyfotografujte lézi při dobrém přirozeném světle — přímém, bez blesku</li><li>Přidejte kontextovou fotografii, která ukazuje lokalizaci na těle</li><li>Přidejte co největší detailní snímek pomocí fotoaparátu</li><li>Pokud se stav změnil, přidejte srovnávací fotografie z různých období, pokud je máte</li><li>Váš dermatolog vás během konzultace provede konkrétním umístěním</li></ul><h2>Stavy, které jsou běžně vyhodnocovány</h2><p><strong>Akné</strong></p><ul><li>Těžké akné — noduly, cysty, acne conglobata</li><li>Středně těžké akné odolné vůči běžné léčbě</li><li>Akné s významnými jizvami — zhodnocení a plán péče</li><li>Složité hormonální akné — posouzeno s integrovaným hormonálním zhodnocením, kde je to indikováno</li><li>Akné, které může vyžadovat specializovanou léčbu — zhodnocení a sledování dle uvážení specialisty</li></ul><p><strong>Podezřelé léze a kožní onkologie</strong></p><ul><li>Znaménka s varovnými kritérii ABCDE</li><li>Nově vzniklé nebo se měnící pigmentované léze</li><li>Aktinická keratóza — zhodnocení a péče</li><li>Bazaliom — zhodnocení a koordinace osobní biopsie, kde je to indikováno</li><li>Melanom — zhodnocení podezření a urgentní doporučení, kde je to indikováno</li></ul><p>Důležitá poznámka: konečná diagnóza rakoviny kůže vyžaduje osobní dermatoskopii a biopsii. Analýza obrazu ve vysokém rozlišení umožňuje kvalitní specializované zhodnocení — a pokud existuje významné klinické podezření, dermatolog koordinuje urgentní osobní doporučení ještě tentýž den.</p><p><strong>Psoriáza</strong></p><ul><li>Středně těžká až těžká ložisková psoriáza</li><li>Pustulózní psoriáza — zhodnocení a péče</li><li>Psoriáza ve kštici — složité projevy</li><li>Palmoplantární psoriáza</li><li>Psoriáza a psoriatická artritida — zhodnocení a koordinace s revmatologií, kde je to indikováno</li><li>Psoriáza rezistentní na lokální léčbu — zhodnocení pro systémovou léčbu</li></ul><p><strong>Těžká atopická dermatitida</strong></p><ul><li>Závažný ekzém nereagující na standardní léčbu</li><li>Atopická dermatitida s recidivující superinfekcí</li><li>Zhodnocení pro biologickou léčbu — dle uvážení specialisty</li></ul><p><strong>Složité zánětlivé stavy</strong></p><ul><li>Středně těžká až těžká růžovka — s významnou zánětlivou složkou</li><li>Hidradenitis suppurativa — zhodnocení a plán péče</li><li>Lichen planus — zhodnocení a péče</li><li>Rozsáhlý vitiligo — zhodnocení a možnosti léčby</li></ul><p><strong>Kožní autoimunitní onemocnění</strong></p><ul><li>Kožní lupus erythematodes — zhodnocení a koordinace s revmatologií</li><li>Dermatomyozitida — kožní zhodnocení a specializovaná koordinace</li><li>Pemfigoid a pemfigus — zhodnocení a nemocniční koordinace, kde je to indikováno</li></ul><p><strong>Složité kožní infekce</strong></p><ul><li>Rozsáhlé nebo léčbě odolné plísňové infekce</li><li>Komplikovaný herpes zoster</li><li>Rezistentní bakteriální infekce</li></ul><p><strong>Specializovaná alopecie</strong></p><ul><li>Rozsáhlá nebo léčbě odolná alopecia areata</li><li>Jizvící alopecie — urgentní zhodnocení a koordinace biopsie</li><li>Androgenní alopecie nereagující na běžnou léčbu — zhodnocení možností druhé linie</li></ul><h2>Co specializovaná konzultace zahrnuje</h2><p><strong>Kompletní specializované dermatologické zhodnocení</strong></p><p>Váš dermatolog provede kompletní specializované zhodnocení — včetně podrobné anamnézy, analýzy zaslaných snímků ve vysokém rozlišení, zhodnocení předchozí léčby a její odpovědi a posouzení celkového klinického obrazu.</p><p><strong>Dermatoskopická analýza obrazu ve vysokém rozlišení</strong></p><p>U pigmentovaných a podezřelých lézí váš dermatolog analyzuje snímky ve vysokém rozlišení s podrobným dermatoskopickým hodnocením — posuzuje vnitřní strukturu, cévní vzorec a kritéria malignity. Pokud je klinické podezření významné, koordinuje urgentní osobní doporučení ještě tentýž den.</p><p><strong>Diagnóza a specializovaný léčebný plán</strong></p><p>Na základě zhodnocení váš dermatolog stanoví nejpravděpodobnější diagnózu nebo diferenciální diagnózy a navrhne specializovaný léčebný plán — včetně lokální léčby druhé linie, systémové léčby, kde je indikována, a dokumentace pro osobní zákroky, kde jsou potřebné.</p><p><strong>Zhodnocení pro specializovanou léčbu — dle uvážení specialisty</strong></p><p>U stavů jako těžké akné, středně těžká až těžká psoriáza nebo těžká atopická dermatitida váš dermatolog posoudí vhodnost specializované léčby — včetně perorálních systémových možností a biologické léčby, kde je to klinicky indikováno. Žádnou konkrétní léčbu nelze potvrdit před kompletním specializovaným zhodnocením.</p><p><strong>Specializovaná klinická dokumentace — dle uvážení specialisty</strong></p><p>Pokud je to klinicky indikováno, váš dermatolog vystaví příslušnou klinickou dokumentaci platnou v jakékoli španělské lékárně, stejně jako specializované zprávy pro kontinuitu péče.</p><p>Poznámka: omamné látky a určité kontrolované substance vyžadují zvláštní dokumentaci, kterou nelze vystavit elektronicky.</p><p><strong>Koordinace biopsie a osobních zákroků</strong></p><p>Kde je indikována kožní biopsie, osobní dermatoskopie nebo jakýkoli jiný osobní výkon, váš dermatolog koordinuje doporučení do vhodného centra ještě tentýž den — s kompletní klinickou dokumentací, která maximalizuje kvalitu této osobní návštěvy.</p><p><strong>Dermatologický druhý názor</strong></p><p>Pokud jste od jiného dermatologa obdrželi dermatologickou diagnózu nebo léčebný plán a chcete nezávislé zhodnocení, váš specialista zkontroluje veškerou dostupnou dokumentaci a poskytne nezávislé specializované zhodnocení.</p><p><strong>Specializované sledování</strong></p><p>Pro stavy vyžadující monitorování — sledování podezřelých lézí, odpovědi na systémovou léčbu nebo monitorování nežádoucích účinků — jsou k dispozici specializované kontrolní konzultace.</p><h2>Specializovaná dermatologie ve Španělsku — problém s dostupností</h2><p>Soukromá specializovaná dermatologie ve Španělsku je dobře rozvinutá v Madridu, Barceloně a dalších velkých městech. Čekací doby na první soukromou dermatologickou konzultaci jsou však obecně tři až šest týdnů u neurgentních projevů — a to i v soukromém sektoru.</p><p>U lézí, které vyvolávají obavy, ale neodůvodňují nemocniční urgentní péči, je čekání týdny na první specializované zhodnocení skutečně stresující. Pro zahraniční obyvatele, kteří preferují konzultaci v angličtině nebo portugalštině, jsou možnosti specializované dermatologie prakticky neexistující mimo Madrid a Barcelonu.</p><p>Naše služba poskytuje specializované dermatologické zhodnocení s analýzou obrazu ve vysokém rozlišení ještě tentýž den — odkudkoli ve Španělsku.</p>",
+      "ctaLabel": null,
+      "sortOrder": 0,
+      "durationMinutes": 15,
+      "basePriceCents": 7000,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-10T13:43:34.772Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0jy4t0002asjuxj5qenyt",
+          "kind": "IMAGE",
+          "key": "media/7e18c20f-2388-48bc-9322-97fa2f0215f6-es-dermatologia-especialista-online.png",
+          "path": "/api/media/media/7e18c20f-2388-48bc-9322-97fa2f0215f6-es-dermatologia-especialista-online.png",
+          "altText": "Dermatología Especialista"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qe5a004qngju0goijovz",
+          "question": "Jaký je rozdíl mezi touto konzultací a kožní konzultací u praktického lékaře?",
+          "answer": "Konzultace kožních obtíží u praktického lékaře pokrývá většinu akutních a neurgentních kožních onemocnění v rámci všeobecné medicíny — ekzém, mírné až středně těžké akné, vyrážky, infekce. Tuto odbornou konzultaci provádí registrovaný dermatolog společnosti Global Health a poskytuje hloubku specializovaného posouzení, kterou vyžadují složité případy — těžké akné, suspektní léze s dermatoskopickým vyšetřením, komplexní psoriáza, stavy, které nereagovaly na běžnou léčbu. Pokud si nejsi jistý, kterou potřebuješ, začni konzultací u praktického lékaře.",
+          "sortOrder": 0,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qe5a004rngjucl08rmjs",
+          "question": "Může dermatolog skutečně posoudit podezřelou lézi přes videohovor?",
+          "answer": "Ano — při analýze obrazů ve vysokém rozlišení může dermatolog provést detailní dermatoskopické hodnocení vysoké kvality. To nenahrazuje osobní dermatoskopii kontaktním dermatoskopem u lézí s vysokým klinickým podezřením — kdy dermatolog koordinuje urgentní osobní odeslání ještě tentýž den. Pro úvodní posouzení znepokojivých lézí však specializovaná analýza obrazů poskytuje klinické zhodnocení výrazně lepší než obecná konzultace.",
+          "sortOrder": 1,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qe5a004sngjuzwvb4unu",
+          "question": "Může dermatolog zahájit léčbu těžkého akné?",
+          "answer": "Ano — včetně posouzení pro specializované léčby tam, kde jsou klinicky indikovány. Všechny léčby jsou rozhodovány výhradně na základě uvážení specialisty po úplném klinickém vyšetření. Žádnou konkrétní léčbu nelze potvrdit před konzultací.",
+          "sortOrder": 2,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qe5a004tngju9pyt6xq2",
+          "question": "Jak probíhá sledování u léčby, která vyžaduje monitorování?",
+          "answer": "Pro léčby, které vyžadují klinické monitorování — kontrolní laboratorní vyšetření, hodnocení odpovědi, sledování nežádoucích účinků — váš dermatolog koordinuje celý plán následných kontrol. Kontrolní laboratorní vyšetření lze objednat online a výsledky jsou poté přezkoumány na kontrolní návštěvě formou videohovoru.",
+          "sortOrder": 3,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qe5a004ungjuyloudj91",
+          "question": "Může dermatolog zajistit biopsii?",
+          "answer": "Ano. Kde je biopsie klinicky indikována, váš dermatolog vystaví dokumentaci k osobnímu doporučení tentýž den — s kompletní klinickou zprávou, která maximalizuje kvalitu osobního vyšetření.",
+          "sortOrder": 4,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qe5a004vngjuig9rxhfb",
+          "question": "Mám psoriázu a lokální léčba mi nezabírá — může mi tato služba pomoci?",
+          "answer": "Ano. Posouzení pro systémovou léčbu středně těžké až těžké psoriázy — včetně perorální léčby a biologické léčby, pokud jsou indikovány — je stěžejní součástí této služby. Váš dermatolog zhodnotí vaši předchozí léčbu, rozsah a závažnost vaší psoriázy a dostupné možnosti další linie léčby.",
+          "sortOrder": 5,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qe5a004wngjup376vh1n",
+          "question": "Mohu získat specializovaný dermatologický druhý názor?",
+          "answer": "Ano. Druhý specializovaný dermatologický názor je jedním z častých využití této služby — zejména při nejasných diagnózách, stavech, které nereagují na léčbu, nebo před zahájením významné léčby.",
+          "sortOrder": 6,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qe5a004xngjupgg3zsae",
+          "question": "Potřebuji španělské zdravotní pojištění?",
+          "answer": "Ne. Jde o soukromou službu s přímou úhradou. Vydaná klinická dokumentace se poskytuje za plnou soukromou cenu bez ohledu na stav pojištění.",
+          "sortOrder": 7,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7qe5a004yngjuysx5zo70",
+          "question": "Mohu tuto službu používat odkudkoli ve Španělsku?",
+          "answer": "Ano — včetně Baleárských ostrovů, Kanárských ostrovů, Ceuty a Melilly. Stačí stabilní připojení k internetu a zařízení s kamerou, plus možnost odeslat snímky ve vysokém rozlišení před konzultací.",
+          "sortOrder": 8,
+          "resolvedLocale": "CS"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "CS",
+      "links": [
+        {
+          "id": "cmre7ta9e0040g8ju2qpzlc46",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Consulta de piel con médico de cabecera para afecciones leves?",
+          "body": "Si tu situación está relacionada con consulta de piel con médico de cabecera para afecciones leves, nuestra Consulta de Piel te ofrece la evaluación adecuada.",
+          "ctaLabel": "Consulta de Piel",
+          "targetSlug": "consulta-piel-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tb1g0042g8ju0b7fq814",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con caída del cabello de base dermatológica?",
+          "body": "Para caída del cabello de base dermatológica, consulta nuestra página de Caída del Cabello — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Caída del Cabello",
+          "targetSlug": "caida-cabello-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tbth0044g8ju0jc7ptcc",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre segunda opinión dermatológica independiente?",
+          "body": "Nuestra Segunda Opinión Médica está pensada específicamente para segunda opinión dermatológica independiente.",
+          "ctaLabel": "Segunda Opinión Médica",
+          "targetSlug": "segunda-opinion-medica",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tclj0046g8juuadv3du3",
+          "type": "ENTRY",
+          "anchorSlot": null,
+          "heading": "¿Evaluación inicial con médico de cabecera?",
+          "body": "Si tu situación está relacionada con evaluación inicial con médico de cabecera, nuestra Consulta Médica General te ofrece la evaluación adecuada.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdppjf5000u01ru1ayu78k0"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T08:14:00.000Z"
+      }
+    }
+  }
+}

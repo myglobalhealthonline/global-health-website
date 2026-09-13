@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:05.780Z",
+  "endpoint": "/api/services/consultatie-pediatrie?countryCode=ro&locale=CS",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee8lf000jfsju7gwzzohg",
+      "kind": "SPECIALIST",
+      "slug": "consultatie-pediatrie",
+      "name": "Specialista pediatr — online komplexní pediatrické vyšetření",
+      "summary": "Potřebujete odborný pediatrický názor nebo podrobnější vyšetření zdravotního problému vašeho dítěte? Náš pediatr s licencí CMR nabízí videokonzultace pro případy, které vyžadují důkladnou klinickou analýzu.",
+      "seoTitle": "Online specialista pediatrie | Rumunsko | komplexní vyšetření",
+      "seoDescription": "Specializovaný pediatrický posudek a podrobné vyšetření zdravotních problémů dítěte. Náš pediatr s oprávněním CMR poskytuje video konzultace pro případy, které vyžadují důkladnou klinickou analýzu.",
+      "seoKeywords": [
+        "specialist paediatrician online Romania",
+        "paediatric specialist online Romania",
+        "children's specialist doctor online Romania",
+        "paediatric second opinion Romania",
+        "complex child health online Romania"
+      ],
+      "heroTitle": "Specialista pediatrie — komplexní pediatrické vyšetření online",
+      "heroDescription": "Specializovaný pediatrický názor a podrobné posouzení zdravotních problémů dítěte. Náš pediatr s autorizací CMR nabízí videokonzultace pro případy, které vyžadují důkladnou klinickou analýzu.",
+      "detailBody": "<p>Tato služba je vhodná pro přetrvávající příznaky, opakující se potíže, situace, kdy počáteční léčba nepomohla, nebo pro rodiny, které chtějí odborný pediatrický názor před dalšími kroky.</p><p>Pediatr zkontroluje anamnézu, vývoj příznaků, již provedená vyšetření a konkrétní obavy rodiny. Obdržíte jasná doporučení týkající se sledování, dalších vyšetření, léčby a situací, kdy je nutné urgentní fyzické vyšetření.</p><p>Konzultace může být užitečná při opakovaných infekcích, trávicích potížích, dýchacích problémech, pomalém zotavování po nemoci, otázkách týkajících se vývoje dítěte nebo potřeby koordinace s dalšími specialisty.</p>",
+      "ctaLabel": "Naplánujte si konzultaci",
+      "sortOrder": 0,
+      "durationMinutes": 15,
+      "basePriceCents": 18500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:55.579Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jsir5001vakju5gqu1bt0",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee8lf000jfsju7gwzzohg",
+          "path": "/api/media/media/795ad1ab-4a87-4878-8f52-1400ca0bf455-8a391c28-541a-49cd-97ff-fff34ba65c6d-8.webp",
+          "altText": "Medic pediatru specialist — evaluare pediatrică complexă online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "CS",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4gtzl00s901p2yh3ukaox"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:47:00.000Z"
+      }
+    }
+  }
+}

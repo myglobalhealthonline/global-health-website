@@ -1,0 +1,20 @@
+{
+  "group": "service:consultatie-pediatrie",
+  "approvalSha256": "30c0a855758322fd59b2519dcf14d2c411cbcdb0486e5d264e13db9cb3b68671",
+  "reviewerDoctorId": "cmrc4axni00rn01p2n3r2bopf",
+  "approvalEvidence": "owner-reported clinician approval in this task",
+  "appliedAt": "2026-09-12T22:51:18.691Z",
+  "alreadyApplied": false,
+  "operations": 35,
+  "publicVerified": true,
+  "afterSha256": "b2537fb5d40c55f9918cea9c9f924f02bba62961ba722b45b33c9d44bede0589",
+  "publicVerifiedAt": "2026-09-12T22:51:42.752Z",
+  "verifiedUrls": [
+    "https://www.myglobalhealth.online/romania/cs/services/consultatie-pediatrie",
+    "https://www.myglobalhealth.online/romania/de/services/consultatie-pediatrie",
+    "https://www.myglobalhealth.online/romania/en/services/consultatie-pediatrie",
+    "https://www.myglobalhealth.online/romania/es/services/consultatie-pediatrie",
+    "https://www.myglobalhealth.online/romania/pt/services/consultatie-pediatrie",
+    "https://www.myglobalhealth.online/romania/ro/services/consultatie-pediatrie"
+  ]
+}

@@ -1,3 +1,4 @@
+import { RomaniaClinicalApprovalRequiredError } from "../content/romania-clinical-review.js";
 import bcrypt from "bcryptjs";
 import { randomBytes } from "node:crypto";
 import type { FastifyPluginAsync } from "fastify";
@@ -288,6 +289,9 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
       }).catch(() => {});
       return okResponse({ doctor }, "Doctor profile created");
     } catch (error) {
+      if (error instanceof RomaniaClinicalApprovalRequiredError) {
+        return reply.status(409).send(errorResponse(error.message));
+      }
       return handleDoctorWriteError(app, reply, error);
     }
   });
@@ -333,6 +337,9 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
       }).catch(() => {});
       return okResponse({ doctor, countryChange }, "Doctor profile updated");
     } catch (error) {
+      if (error instanceof RomaniaClinicalApprovalRequiredError) {
+        return reply.status(409).send(errorResponse(error.message));
+      }
       return handleDoctorWriteError(app, reply, error);
     }
   });
@@ -798,6 +805,9 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
             : "Change rejected",
         );
       } catch (error) {
+      if (error instanceof RomaniaClinicalApprovalRequiredError) {
+        return reply.status(409).send(errorResponse(error.message));
+      }
         if (error instanceof DoctorProfileChangeInvalidError) {
           return reply.status(400).send(errorResponse(error.message));
         }

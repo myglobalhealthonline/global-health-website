@@ -1,0 +1,8 @@
+{
+  "deploymentId": "cd602f3e-0e3a-4d6c-8c87-6cdc462aaa84",
+  "status": "SUCCESS",
+  "checkedAt": "2026-09-13T00:31:50.162Z",
+  "healthStatus": 200,
+  "rollbackDeploymentId": "7b0f3707-527d-4f2a-a836-53aec6bfd41f",
+  "supersedesTimedOutUpload": "e106fa64-cca0-489f-ae93-ab11771fd9ab"
+}

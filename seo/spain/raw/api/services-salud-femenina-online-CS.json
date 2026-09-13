@@ -1,0 +1,189 @@
+{
+  "endpoint": "/api/services/salud-femenina-online?countryCode=es&locale=CS",
+  "checkedAt": "2026-09-13T02:29:52.583Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q27m001dngju2395w6dl",
+      "kind": "GENERAL",
+      "slug": "salud-femenina-online",
+      "name": "Ženské zdraví",
+      "summary": null,
+      "seoTitle": "Ženské zdraví online Španělsko | Důvěrné vyhodnocení | Registrovaný lékař",
+      "seoDescription": "Antikoncepce, hormonální zdraví, menopauza nebo jiné obavy o ženské zdraví. Naši registrovaní lékaři nabízejí důvěrné konzultace prostřednictvím bezpečného videohovoru. Tentýž den ve Španělsku.",
+      "seoKeywords": [
+        "salud femenina online España",
+        "anticonceptivos online médico España",
+        "menopausia evaluación online España",
+        "SOP médico online España",
+        "salud hormonal femenina online España"
+      ],
+      "heroTitle": "Ženské zdraví — Důvěrné online vyhodnocení",
+      "heroDescription": "Ženské zdraví zahrnuje mnohem více než reprodukční medicínu — zahrnuje hormonální zdraví, metabolická onemocnění, duševní pohodu a specifické způsoby, jakými se běžná onemocnění u žen projevují odlišně. Naši lékaři, registrovaní v souladu s požadavky Organización Médica Colegial (OMC), poskytují důvěrná vyšetření ženského zdraví prostřednictvím zabezpečené videohovoru. Ať už potřebujete poradit ohledně antikoncepce, hormonální vyšetření, podporu v menopauze nebo řešení jiné obavy týkající se ženského zdraví bez překážek — jsme tu pro vás tentýž den, odkudkoli ze Španělska, ve španělštině, angličtině nebo portugalštině.",
+      "detailBody": "<h2>Pro koho je tato služba určena</h2><p>Tato konzultace je vhodná pro ženy, které:</p><ul><li>Potřebují antikoncepční poradenství, kontrolu nebo pokračování</li><li>Mají obavy o hormonální zdraví — PCOS, onemocnění štítné žlázy, perimenopauza nebo menopauza</li><li>Zažívají příznaky, které mohou mít hormonální nebo metabolický základ — únava, změny nálady, přibývání na váze, změny na kůži, vypadávání vlasů</li><li>Potřebují vyšetření nepravidelné menstruace, silné nebo bolestivé menstruace</li><li>Mají obavy o sexuální zdraví — snížené libido, vaginální suchost nebo bolest při pohlavním styku</li><li>Jsou těhotné nebo plánují těhotenství a potřebují prekonceptční poradenství</li><li>Potřebují vyšetření a řešení infekcí močových cest</li><li>Obdržely výsledky od gynekologa nebo lékaře ve Španělsku, které chtějí podrobněji zkontrolovat a vysvětlit</li><li>Jsou expati nebo mezinárodní rezidenti, kteří potřebují péči o ženské zdraví v angličtině nebo portugalštině</li><li>V současnosti nemají registrovaného praktického lékaře nebo gynekologa</li></ul><h2>Péče o ženské zdraví ve Španělsku — přístup a co tato služba nabízí</h2><p>Ve Španělsku mohou ženy přistupovat ke gynekologii přímo v soukromém sektoru bez potřeby doporučení od praktického lékaře. Ve veřejném systému je péče o ženské zdraví zajišťována prostřednictvím praktického lékaře a specialisty gynekologie — s čekacími dobami, které mohou být u neurgentních konzultací významné.</p><p>Pro ženy bez přiděleného praktického lékaře, pro mezinárodní rezidentky, které preferují konzultaci v angličtině nebo portugalštině, nebo pro kohokoli, kdo dnes potřebuje péči o ženské zdraví bez čekání týdny, Global Health poskytuje posouzení ženského zdraví na úrovni všeobecného lékařství — pokrývající hormonální zdraví, antikoncepci, menopauzu a obecné ženské zdraví — jako doplněk, nikoli náhradu specializované gynekologické péče. Když je potřeba specializované gynekologické posouzení, lékař zajistí doporučení ještě tentýž den.</p><h2>Co konzultace zahrnuje</h2><p><strong>Komplexní klinické posouzení</strong></p><p>Lékař podrobně zhodnotí vaše příznaky, menstruační a reprodukční anamnézu, aktuální medikaci, hormonální ukazatele, relevantní anamnézu a faktory životního stylu — a vytvoří úplný klinický obraz vašeho problému.</p><p><strong>Hormonální a metabolické posouzení</strong></p><p>Příznaky ženského zdraví mají často hormonální nebo metabolické příčiny, které se ve standardních akutních konzultacích neřeší. Lékař posoudí hormonální přispívající faktory — funkci štítné žlázy, inzulinovou rezistenci, PCOS a perimenopauzu — tam, kde je to klinicky relevantní.</p><p><strong>Plán klinického postupu</strong></p><p>Na základě posouzení lékař poradí nejvhodnější další kroky — které mohou zahrnovat doporučení ohledně životního stylu a výživy, klinická doporučení dle uvážení lékaře, odeslání na odběry nebo specializované vyšetření, nebo pokračující péči na úrovni všeobecného lékařství.</p><p><strong>Klinická dokumentace — dle uvážení lékaře</strong></p><p>Je-li to klinicky indikováno, lékař vystaví příslušnou klinickou dokumentaci platnou v jakékoli španělské lékárně.</p><p>Poznámka: Omamné látky a určité kontrolované substance vyžadují zvláštní dokumentaci, kterou nelze vystavit elektronicky. Váš lékař vás informuje, pokud se to na vás vztahuje.</p><p><strong>Koordinace doporučení a vyšetření</strong></p><p>Je-li indikováno gynekologické doporučení, krevní testy nebo další vyšetření, lékař vystaví příslušnou dokumentaci ještě tentýž den.</p><h2>Stavy, které se běžně posuzují</h2><p><strong>Antikoncepce a reprodukční zdraví</strong></p><ul><li>Posouzení a kontrola antikoncepce — kombinovaná pilulka, minipilulka, náplast, kroužek, injekční antikoncepce a nehormonální možnosti</li><li>Nežádoucí účinky související s antikoncepcí a jejich řešení</li><li>Prekonceptční poradenství a plánování</li><li>Obavy o plodnost — úvodní posouzení a doporučení tam, kde je to indikováno</li></ul><p><strong>Hormonální zdraví</strong></p><ul><li>Syndrom polycystických ovarií (PCOS) — vyšetření, podpora při řešení a sledování</li><li>Endometrióza — léčba příznaků a koordinace doporučení</li><li>Premenstruační syndrom (PMS) a premenstruační dysforická porucha (PMDD)</li><li>Nepravidelná menstruace, silná nebo bolestivá menstruace</li><li>Hormonální nerovnováha ovlivňující náladu, váhu, energii a pleť</li><li>Onemocnění štítné žlázy — zvláště relevantní pro hormonální zdraví žen</li></ul><p><strong>Menopauza a perimenopauza</strong></p><ul><li>Posouzení perimenopauzy a léčba příznaků</li><li>Menopauza — návaly horka, poruchy spánku, změny nálady, kognitivní příznaky</li><li>Hormonální substituční terapie (HST) — posouzení, zahájení a průběžná kontrola dle uvážení lékaře</li><li>Postmenopauzální zdraví a dlouhodobá pohoda</li></ul><p><strong>Sexuální zdraví</strong></p><ul><li>Snížené libido a hormonální přispívající faktory</li><li>Vaginální suchost a diskomfort — posouzení a léčba</li><li>Bolest při pohlavním styku — klinické posouzení a doporučení tam, kde je to indikováno</li></ul><p><strong>Obecné ženské zdraví</strong></p><ul><li>Infekce močových cest a opakující se cystitida</li><li>Obavy o zdraví prsou a doporučení tam, kde je to indikováno</li><li>Konzultace ohledně cytologie a koordinace doporučení</li><li>Hormonálně podmíněné změny kůže a vlasů — akné, vypadávání vlasů, hirsutismus</li><li>Duševní zdraví žen — úzkost, deprese a obavy o náladu po porodu</li><li>Regulace hmotnosti s hormonálním nebo metabolickým základem</li></ul><h2>Přerušení těhotenství — důležitá poznámka</h2><p>Dobrovolné přerušení těhotenství (IVE) ve Španělsku je upraveno Organickým zákonem 2/2010 o sexuálním a reprodukčním zdraví a dobrovolném přerušení těhotenství. IVE vyžaduje osobní péči v autorizovaném zdravotnickém zařízení a nelze ji řešit prostřednictvím telemedicínské konzultace.</p><p>Pokud potřebujete informace o službách dostupných ve Španělsku nebo o tom, jak získat odpovídající péči, váš lékař vám může během konzultace poskytnout poradenství a informace o doporučení.</p><h2>Proč se hormonální zdraví často přehlíží</h2><p>Mnoho příznaků, které ženy přisuzují stresu nebo věku — únava, změny nálady, přibývání na váze, změny na kůži a vlasech — má specifické hormonální nebo metabolické příčiny, které standardní akutní konzultace nevyšetřují. PCOS postihuje přibližně jednu z deseti žen a často není diagnostikován. Příznaky perimenopauzy jsou rutinně připisovány úzkosti. Hormonální příčiny únavy, hmotnosti a nálady jsou ve standardní primární péči systematicky podhodnocovány.</p><p>Posouzení zaměřené konkrétně na ženské zdraví — s časem, hormonálními znalostmi a lékařem, který hodnotí příznaky v celkovém kontextu ženského zdraví — je klinicky účinnější než obecná lékařská konzultace. To je to, co tato služba nabízí.</p>",
+      "ctaLabel": null,
+      "sortOrder": 160,
+      "durationMinutes": 20,
+      "basePriceCents": 4900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.266Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru15npj0000bsjudyjnw7kp",
+          "kind": "IMAGE",
+          "key": "media/a67645f8-0f09-4f9c-9836-5a796bf4c630-es-salud-femenina-online.png",
+          "path": "/api/media/media/a67645f8-0f09-4f9c-9836-5a796bf4c630-es-salud-femenina-online.png",
+          "altText": "Salud Femenina"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q2gg001engjuqf9auib2",
+          "question": "Mohu prostřednictvím této služby získat antikoncepční poradenství?",
+          "answer": "Ano. Hodnocení a revize antikoncepce jsou klíčovou součástí této služby. Lékař provede kompletní klinické vyšetření a poradí o nejvhodnějších možnostech na základě vaší zdravotní anamnézy a individuálních potřeb. Klinická doporučení jsou poskytována dle uvážení lékaře po vyšetření.",
+          "sortOrder": 0,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q2gg001fngju04o9ugqo",
+          "question": "Mohu získat THS prostřednictvím této služby?",
+          "answer": "THS může být posouzena a zahájena v rámci praktického lékařství tam, kde je to klinicky vhodné. Lékař provede komplexní vyhodnocení vašich příznaků, anamnézy a vhodnosti před tím, než poradí ohledně jakéhokoli hormonálního postupu. Veškerá doporučení jsou ponechána na uvážení lékaře.",
+          "sortOrder": 1,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q2gg001gngjug41vvtdu",
+          "question": "Potřebuji gynekologické doporučení, abych mohl/a používat tuto službu?",
+          "answer": "Ne. Tato služba je dostupná přímo — bez nutnosti doporučení. Pokud vaše vyšetření ukáže, že je potřeba specializované gynekologické vyšetření, lékař zajistí doporučení ještě tentýž den.",
+          "sortOrder": 2,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q2gg001hngjuudg6ono1",
+          "question": "Můžete zkontrolovat výsledky, které jsem dostal od španělského gynekologa?",
+          "answer": "Ano. Pokud jste obdrželi výsledky, dopisy nebo plán léčby od gynekologa a chcete, aby byly podrobněji zkontrolovány a vysvětleny, přineste je na konzultaci. Lékař je celkově zkontroluje a jasně vysvětlí nálezy a klinická doporučení.",
+          "sortOrder": 3,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q2gg001ingjudxztgdga",
+          "question": "Zahrnuje tato služba přerušení těhotenství?",
+          "answer": "Ne. IVE ve Španělsku vyžaduje osobní péči v autorizovaném zdravotnickém zařízení v souladu s Organickým zákonem 2/2010 a nelze ji vyřídit prostřednictvím telemedicínské konzultace.",
+          "sortOrder": 4,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q2gg001jngjupaq38jl3",
+          "question": "Je tato služba vhodná pro obavy související s těhotenstvím?",
+          "answer": "Pro obecné prekoncepční poradenství a otázky týkající se časného těhotenství ano. Pro pokračující prenatální péči, porodnické potíže nebo cokoli, co vyžaduje osobní porodnické vyšetření, lékař poradí s vhodným doporučením.",
+          "sortOrder": 5,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q2gg001kngjuzfa854u8",
+          "question": "Mohu tento službu používat bez praktického lékaře nebo gynekologa ve Španělsku?",
+          "answer": "Ano. Tato služba je speciálně navržena pro ženy — včetně expatek a mezinárodních rezidentek — které v současnosti nemají registrovaného praktického lékaře ani gynekologa.",
+          "sortOrder": 6,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q2gg001lngjun2x5jvvx",
+          "question": "Potřebuji španělské zdravotní pojištění?",
+          "answer": "Ne. Jedná se o soukromou službu s přímou úhradou. Klinická dokumentace vydaná prostřednictvím této služby je poskytována za plnou soukromou cenu bez ohledu na stav pojištění.",
+          "sortOrder": 7,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q2gg001mngjum5jl48kf",
+          "question": "Mohu tuto službu používat odkudkoli ve Španělsku?",
+          "answer": "Ano — včetně Baleárských ostrovů, Kanárských ostrovů, Ceuty a Melilly. Stačí stabilní připojení k internetu a zařízení s kamerou.",
+          "sortOrder": 8,
+          "resolvedLocale": "CS"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "CS",
+      "links": [
+        {
+          "id": "cmre7s43s001kg8ju7lqty4vv",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre acné hormonal — evaluación dermatológica especialista?",
+          "body": "Nuestra Dermatología Especialista está pensada específicamente para acné hormonal — evaluación dermatológica especialista.",
+          "ctaLabel": "Dermatología Especialista",
+          "targetSlug": "dermatologia-especialista-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7s075001ag8jumyfi2au3",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Control de peso con base hormonal?",
+          "body": "Si tu situación está relacionada con control de peso con base hormonal, nuestra Control de Peso te ofrece la evaluación adecuada.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7s0z9001cg8jup1hrg8if",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con caída del cabello hormonal en mujeres?",
+          "body": "Para caída del cabello hormonal en mujeres, consulta nuestra página de Caída del Cabello — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Caída del Cabello",
+          "targetSlug": "caida-cabello-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7s1re001eg8ju06lljkog",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre seguimiento de patología tiroidea?",
+          "body": "Nuestra Enfermedades Crónicas está pensada específicamente para seguimiento de patología tiroidea.",
+          "ctaLabel": "Enfermedades Crónicas",
+          "targetSlug": "enfermedades-cronicas-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

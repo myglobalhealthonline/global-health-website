@@ -212,6 +212,20 @@ export function sanitizeRichHtml(input: string | null | undefined): string | nul
   });
 }
 
+// Editors paste Chrome "copy link to highlight" URLs (…#:~:text=…) into
+// bios; they render as junk headings. Strip them and the tags left empty.
+const TEXT_FRAGMENT_URL = /\bhttps?:\/\/[^\s<>"]*#:~:text=[^\s<>"]*/gi;
+
+export function sanitizeDoctorBio(input: string | null | undefined): string | null {
+  const clean = sanitizeRichHtml(input);
+  if (clean == null) return null;
+  const stripped = clean
+    .replace(TEXT_FRAGMENT_URL, "")
+    .replace(/<(h[1-6]|p)\b[^>]*>(\s|&nbsp;)*<\/\1>/gi, "")
+    .trim();
+  return stripped === "" ? null : stripped;
+}
+
 const CAREER_ALLOWED_TAGS = ALLOWED_TAGS.filter((tag) => !["img", "figure", "figcaption"].includes(tag));
 
 /** Careers prose never embeds remote media; CVs use the separate private upload flow. */

@@ -1,0 +1,20 @@
+{
+  "group": "service:medic-online-romania",
+  "approvalSha256": "28d94747969ed8ac5f0cfed0b9884cf349e699904499ab31c6ed40a82883c661",
+  "reviewerDoctorId": "cmrc4axni00rn01p2n3r2bopf",
+  "approvalEvidence": "owner-reported clinician approval in this task",
+  "appliedAt": "2026-09-12T22:56:37.022Z",
+  "alreadyApplied": false,
+  "operations": 35,
+  "publicVerified": true,
+  "afterSha256": "3afc26a44056ecfbfb7d79e315b63d2932ba46f0861e6673fad35df0cb66074b",
+  "publicVerifiedAt": "2026-09-12T22:57:01.315Z",
+  "verifiedUrls": [
+    "https://www.myglobalhealth.online/romania/cs/services/medic-online-romania",
+    "https://www.myglobalhealth.online/romania/de/services/medic-online-romania",
+    "https://www.myglobalhealth.online/romania/en/services/medic-online-romania",
+    "https://www.myglobalhealth.online/romania/es/services/medic-online-romania",
+    "https://www.myglobalhealth.online/romania/pt/services/medic-online-romania",
+    "https://www.myglobalhealth.online/romania/ro/services/medic-online-romania"
+  ]
+}

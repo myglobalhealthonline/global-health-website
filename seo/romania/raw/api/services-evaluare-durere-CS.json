@@ -1,0 +1,80 @@
+{
+  "checkedAt": "2026-09-12T20:20:06.044Z",
+  "endpoint": "/api/services/evaluare-durere?countryCode=ro&locale=CS",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee7tb000hfsju7tvvjjj1",
+      "kind": "SPECIALIST",
+      "slug": "evaluare-durere",
+      "name": "Specializované vyšetření bolesti — online konzultace",
+      "summary": "Trápí vás chronická bolest nebo silná bolest v každodenním životě? Náš autorizovaný specialista CMR nabízí klinické vyšetření zaměřené na zvládání bolesti, terapeutické možnosti a koordinaci nezbytných vyšetření.",
+      "seoTitle": "Specializované posouzení bolesti online | Rumunsko",
+      "seoDescription": "Specializované vyšetření pro chronickou nebo silnou bolest. Náš licencovaný specialista CMR poskytuje klinické posouzení zaměřené na kontrolu bolesti, terapeutické možnosti a koordinaci potřebných vyšetření.",
+      "seoKeywords": [
+        "specialist pain assessment online Romania",
+        "chronic pain specialist online Romania",
+        "anaesthesiologist online Romania",
+        "pain assessment online Romania",
+        "pain management plan Romania online"
+      ],
+      "heroTitle": "Specializované posouzení bolesti — online konzultace",
+      "heroDescription": "Specializované vyšetření pro chronickou nebo silnou bolest. Náš licencovaný specialista CMR poskytuje klinické vyšetření zaměřené na zvládání bolesti, terapeutické možnosti a koordinaci potřebných vyšetření.",
+      "detailBody": "<p>Tato služba je určena pacientům s přetrvávající bolestí, bolestí obtížně kontrolovatelnou nebo se symptomy, které vyžadují specializovanější přístup než běžnou konzultaci. Mohou být vyhodnoceny muskuloskeletální, neuropatické, pooperační, onkologické bolesti nebo komplexní bolestivé syndromy.</p><p>Lékař zkontroluje anamnézu bolesti, vyzkoušené léčby, nežádoucí účinky, dopad na spánek a fungování a dostupná vyšetření. Obdržíte doporučení ohledně dalších kroků, možností léčby, sledování a odeslání ke relevantním specializacím, je-li to nutné.</p><p>Konzultace je užitečná také pro upřesnění již zahájeného plánu léčby bolesti, zejména když současná léčba neposkytuje očekávanou kontrolu.</p>",
+      "ctaLabel": "Naplánovat konzultaci",
+      "sortOrder": 0,
+      "durationMinutes": 20,
+      "basePriceCents": 23000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:57.253Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jskfn001wakju57erkch6",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee7tb000hfsju7tvvjjj1",
+          "path": "/api/media/media/6d1966ed-d6d7-4262-bed5-fdb6fe9a6b9a-8ce20700-b12e-4416-8aa0-46e95e8d1dff-3.webp",
+          "altText": "Evaluare specializată a durerii — consultație online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "CS",
+      "links": [],
+      "assignedDoctorIds": [],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "UNAVAILABLE",
+        "reasonCode": "NO_APPROVED_DOCTOR",
+        "nextAvailableAt": null
+      }
+    }
+  }
+}

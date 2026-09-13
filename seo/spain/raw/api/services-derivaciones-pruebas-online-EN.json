@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/derivaciones-pruebas-online?countryCode=es&locale=EN",
+  "checkedAt": "2026-09-13T02:29:57.493Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qas1003sngjus0w2obwn",
+      "kind": "GENERAL",
+      "slug": "derivaciones-pruebas-online",
+      "name": "Referrals & Investigations",
+      "summary": null,
+      "seoTitle": "Referrals & Investigations Online Spain | Blood Tests | English Doctor",
+      "seoDescription": "Need a specialist referral letter, blood tests, or imaging in Spain? Our OMC-registered GPs issue clinical documentation after full assessment. Same-day appointments available anywhere in Spain.",
+      "seoKeywords": [
+        "derivaciones médicas online España",
+        "carta derivación especialista online España",
+        "analíticas privadas online España",
+        "pruebas imagen solicitud online España",
+        "derivación médico cabecera online España"
+      ],
+      "heroTitle": "Referrals & Investigations — Clinical Documentation Online, Same Day",
+      "heroDescription": "Need a referral letter to see a private specialist in Spain? Need blood tests or imaging ordered by a doctor before you can book them privately? Received results from a Spanish specialist that you want reviewed and explained clearly before deciding how to proceed? Our GPs, registered with the Spanish Medical Council (OMC — Organización Médica Colegial), issue clinical referral letters, blood test requests, and imaging requests following a full clinical assessment — giving you the documentation you need to access private specialist care and diagnostic investigations in Spain. Same day, from anywhere in the country, in English, Spanish, or Portuguese.",
+      "detailBody": "<h2>How Specialist Access Works in Spain</h2><p>Spain has a dual-track referral system — one for the public system and one for private care.</p><p>Public system specialist access requires a referral from a GP (médico de familia) contracted with the SNS. Without this referral, public system specialist appointments are not covered. Global Health cannot provide public system referrals — this requires a GP contracted with the Spanish public health system.</p><p>Private specialist access is available directly in most cases — you can book a private specialist appointment without a referral letter. However, arriving at a specialist appointment without clinical context significantly reduces the quality of that first consultation. A specialist who receives a clear referral letter — describing your symptoms, relevant history, current medications, and the specific clinical question — conducts a more focused and efficient assessment.</p><p>This service covers:</p><ul><li>Private referral letters — for private specialist consultations of your choice</li><li>Blood test requests — for private laboratory testing at collection points across Spain</li><li>Imaging requests — for private X-ray, ultrasound, MRI, or CT</li><li>Clinical summary letters — documenting your assessment and findings for continuity of care</li><li>Results review — blood test results, imaging reports, or specialist letters reviewed and explained clearly</li></ul><p>This service does not cover:</p><ul><li>Public system SNS specialist referrals — these require a GP contracted with the SNS</li><li>Emergency referrals — call 112 or go to the nearest emergency department immediately</li></ul><h2>Who This Service Is For</h2><p>This consultation is appropriate for:</p><ul><li>Anyone who wants to see a private specialist in Spain and needs a clinical referral letter to accompany the appointment</li><li>Patients who need blood tests or imaging ordered by a doctor before booking privately</li><li>Patients who have received results — from blood tests, imaging, or specialist consultations — that they want reviewed and explained clearly</li><li>Patients with a specific clinical concern they want formally assessed and documented before pursuing specialist care</li><li>Patients who want a clinical summary letter — for insurance purposes, for a new doctor, or for continuity of care</li><li>Patients who received clinical documentation in Spanish they want reviewed and contextualised</li><li>Anyone in Spain without a registered GP who needs clinical documentation to access private specialist care</li></ul><h2>Why a Referral Letter Adds Value</h2><p>Direct access to private specialists in Spain is available in most cases without a referral letter. But a specialist who sees you without context must start from scratch — and consultation time is spent gathering information that could have been communicated in writing in advance.</p><p>A referral letter issued after clinical assessment contains everything the specialist needs before you walk in — symptoms, duration, severity, current medications, investigations already completed, and the specific clinical question you are asking the specialist to address. The specialist can immediately focus on the clinical problem.</p><p>The difference in the quality of that first specialist appointment — between arriving with a comprehensive referral letter versus arriving without context — is significant.</p><h2>Referral Letters — What They Include</h2><p>A referral letter issued by a Global Health GP following clinical assessment includes:</p><ul><li>Patient details and relevant medical history</li><li>Description of the presenting concern — symptoms, duration, severity, and relevant clinical findings from the video consultation</li><li>Current medications and relevant investigations already completed</li><li>Specific clinical question for the specialist — what you are asking them to assess or advise on</li><li>Degree of urgency — routine, soon, or urgent — based on clinical assessment</li></ul><p>The letter is issued in Spanish for Spanish-speaking specialists. If you need an English version for an English-speaking provider, discuss this with your doctor during the consultation.</p><h2>Blood Tests — What Can Be Requested</h2><p>Following clinical assessment, your GP can issue blood test requests for a wide range of investigations, including:</p><p><strong>Metabolic and cardiovascular</strong></p><ul><li>Full blood count (hemograma completo)</li><li>Fasting glucose and HbA1c</li><li>Lipid panel — total cholesterol, LDL, HDL, triglycerides</li><li>Renal function — creatinine, eGFR, urea, electrolytes</li><li>Liver function tests</li><li>Thyroid function — TSH, free T4, free T3</li><li>Uric acid</li><li>Ferritin, iron studies, and B12/folate</li></ul><p><strong>Hormonal and reproductive</strong></p><ul><li>Testosterone panel — total and free testosterone, LH, FSH, SHBG</li><li>Female hormonal panel — oestradiol, FSH, LH, progesterone, AMH</li><li>Thyroid antibodies — anti-TPO, anti-thyroglobulin</li><li>Cortisol</li><li>Prolactin</li><li>DHEA-S</li></ul><p><strong>Inflammatory and autoimmune</strong></p><ul><li>CRP and ESR (VSG)</li><li>Rheumatoid factor and anti-CCP</li><li>ANA and ANCA panels</li><li>Complement levels</li></ul><p><strong>Infectious disease</strong></p><ul><li>HIV, hepatitis B, hepatitis C serology</li><li>STI panels</li><li>Post-vaccination immunity checks</li></ul><p><strong>Other</strong></p><ul><li>Vitamin D</li><li>Coeliac screen — anti-tTG IgA</li><li>PSA — prostate specific antigen</li><li>HCG — pregnancy test</li><li>Allergy panels — specific IgE</li></ul><p>Blood test requests are issued following clinical assessment — your GP advises on which tests are clinically indicated for your specific presentation.</p><h2>Accessing Private Blood Tests in Spain</h2><p>Private blood test collection points are widely available across Spain — in Madrid, Barcelona, and in all major cities and provincial capitals. Private laboratory networks operate throughout the country with collection points in most towns.</p><p>After your consultation, your GP issues the investigation request and advises on where to go for collection based on your location. You book the collection appointment directly — no Spanish public health insurance is required for private blood tests. Results are typically available within 24 to 72 hours depending on the tests requested, though some specialist panels may take longer.</p><h2>Imaging Requests</h2><p>Where X-ray, ultrasound, MRI, or CT is clinically indicated following assessment, your GP issues a formal imaging request. Private radiology is widely accessible in Spain — major cities and most provincial centres have private radiology facilities that accept direct booking with a doctor's request.</p><p>Your GP advises on the most appropriate imaging modality for your specific clinical question and the urgency of the investigation.</p><h2>Results Review</h2><p>Received blood test results, imaging reports, or specialist letters that you want reviewed and explained clearly? Your GP reviews your results in full during a follow-up consultation — explaining the clinical findings, what they mean for your health, what the next steps are, and whether further investigation or specialist input is needed.</p><p>This is particularly useful for patients who have received results or clinical letters in Spanish and want them explained clearly — whether they are Spanish-speaking patients who want more time to discuss results than a standard clinic appointment allows, or international residents who need the clinical content explained in English or Portuguese.</p>",
+      "ctaLabel": null,
+      "sortOrder": 120,
+      "durationMinutes": 15,
+      "basePriceCents": 3500,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.264Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0jvsd0001asjuwczqne2v",
+          "kind": "IMAGE",
+          "key": "media/ca5aeb3b-c263-4ee0-8662-b763c407f9cc-es-derivaciones-pruebas-online.png",
+          "path": "/api/media/media/ca5aeb3b-c263-4ee0-8662-b763c407f9cc-es-derivaciones-pruebas-online.png",
+          "altText": "Derivaciones y Pruebas"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qb0g003tngjuzcplymij",
+          "question": "Can I obtain a referral letter without a full clinical evaluation?",
+          "answer": "No. Referral letters are issued after a complete clinical evaluation. Your doctor needs to assess your symptoms and medical history in order to write a clinically meaningful referral letter. A referral letter without a clinical evaluation would not add value to your specialist appointment.",
+          "sortOrder": 0,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qb0g003ungjuz3gp78qy",
+          "question": "Can this service provide referrals from the public SNS system?",
+          "answer": "No. Referrals in Spain’s public system require a primary care doctor contracted with the SNS. Global Health provides private referral letters for access to private specialists.",
+          "sortOrder": 1,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qb0g003vngjuix3g83vt",
+          "question": "Does the referral letter have to be in Spanish?",
+          "answer": "For Spanish-speaking specialists, yes — the referral letter is issued in Spanish. For English-speaking providers or international specialists, it can be issued in English. Your doctor issues it in the appropriate language based on whom you are going to see — mention it during the consultation.",
+          "sortOrder": 2,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qb0g003wngju5rvz2cky",
+          "question": "How long do the test results take to arrive?",
+          "answer": "Response times vary depending on the test — most standard analyses are available within 24 to 72 hours from private collection centers in Spain. Some specialized panels take longer. Your doctor advises you on the expected turnaround time when issuing the request.",
+          "sortOrder": 3,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qb0g003xngju2n8wfdnu",
+          "question": "Can I use this service if I have Spanish private health insurance?",
+          "answer": "Yes — but this service covers private referrals and private investigation requests. Your private medical insurance may cover specialist appointments and tests depending on your specific policy — check with your insurer. Tests and specialist appointments booked through this service are billed at the full private price regardless of your insurance.",
+          "sortOrder": 4,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qb0g003yngjugl2iwso9",
+          "question": "What happens if my results show something serious?",
+          "answer": "If the review of your results reveals findings that require urgent attention, your doctor will advise you immediately on the appropriate next steps — including whether emergency care is needed. If emergency care is needed, call 112 or go to the nearest emergency department immediately.",
+          "sortOrder": 5,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qb0g003zngjuhaukyflq",
+          "question": "Can I use this service without a primary care physician in Spain?",
+          "answer": "Yes. This service is available to anyone in Spain — no prior registration, no primary care doctor required, no health insurance needed.",
+          "sortOrder": 6,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7qb0g0040ngju96ofwc1j",
+          "question": "Can I use this service from anywhere in Spain?",
+          "answer": "Yes — including the Balearic Islands, the Canary Islands, Ceuta, and Melilla. You only need a stable internet connection and a device with a camera.",
+          "sortOrder": 7,
+          "resolvedLocale": "EN"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "EN",
+      "links": [
+        {
+          "id": "cmre7snma002qg8jult0p90xg",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con analíticas cardiológicas y metabólicas?",
+          "body": "Para analíticas cardiológicas y metabólicas, consulta nuestra página de Cardiología Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Cardiología Especialista",
+          "targetSlug": "cardiologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7soee002sg8ju1hnpt499",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre solicitar RMN cerebral o electromiograma?",
+          "body": "Nuestra Neurología Especialista está pensada específicamente para solicitar RMN cerebral o electromiograma.",
+          "ctaLabel": "Neurología Especialista",
+          "targetSlug": "neurologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7smu6002og8ju8lndhczu",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Analíticas hormonales y metabólicas?",
+          "body": "Si tu situación está relacionada con analíticas hormonales y metabólicas, nuestra Control de Peso te ofrece la evaluación adecuada.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7sp6h002ug8jum26oow57",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Segunda opinión sobre resultados recibidos?",
+          "body": "Si tu situación está relacionada con segunda opinión sobre resultados recibidos, nuestra Segunda Opinión Médica te ofrece la evaluación adecuada.",
+          "ctaLabel": "Segunda Opinión Médica",
+          "targetSlug": "segunda-opinion-medica",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

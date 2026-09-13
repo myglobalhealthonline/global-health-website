@@ -118,7 +118,7 @@ export default async function CountryLangSpecialistConsultationPage({
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
 
-  const { common: c, services: servicesLocale } = loadLocaleBundle(lang as LocaleCode);
+  const { common: c, services: servicesLocale } = loadLocaleBundle(lang as LocaleCode, code);
   const sp = c.specialistPage;
 
   // Honor the per-country `specialist-consultations` toggle from /admin/country-features.

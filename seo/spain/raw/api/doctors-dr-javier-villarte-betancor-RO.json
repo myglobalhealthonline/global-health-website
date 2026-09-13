@@ -1,0 +1,224 @@
+{
+  "endpoint": "/api/countries/es/doctors/dr-javier-villarte-betancor?locale=RO",
+  "checkedAt": "2026-09-13T02:30:06.032Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "doctor": {
+      "id": "cmrdq1nhe002b01ru2xmq0iab",
+      "slug": "dr-javier-villarte-betancor",
+      "fullName": "Javier Villarte Betancor",
+      "title": "Psiholog",
+      "bio": "<p>Javier Villarte Betancor</p><p>Profil profesional Psiholog de sănătate nr. A014346</p><p>Specializat în intervenție psihologică la adulți printr-o abordare transdiagnostică bazată pe procese. Practica sa clinică se bazează pe integrarea terapiilor bazate pe dovezi, precum Terapia Cognitiv-Comportamentală (TCC), Terapia de Acceptare și Angajament (ACT) și Terapia Dialectic-Comportamentală (TDC), adaptând fiecare intervenție la nevoile specifice ale fiecărei persoane.</p><p>Stilul său terapeutic se caracterizează prin faptul că este empatic, structurat și orientat către obiective, lucrând pentru a îmbunătăți funcționarea zilnică, echilibrul emoțional și bunăstarea generală a pacienților săi. Javier își concentrează munca pe a ajuta persoanele să dezvolte abilități eficiente pentru a face față anxietății, stării afective, reglării emoționale și altor probleme psihologice.</p><p>Are experiență clinică în centre specializate și clinici universitare, precum și în dezvoltarea de programe de intervenție pentru tulburarea de personalitate borderline (TLP). În plus, a participat la congrese internaționale și a primit formare avansată în domenii precum trauma, doliul, prevenirea suicidului și terapiile de generația a treia.</p>",
+      "seoTitle": "Dr Javier Villarte Betancor - Psiholog | Global Health",
+      "seoDescription": "Javier Villarte Betancor, psiholog de sănătate specializat în TCC, ACT și TDC. Expert în anxietate, reglarea emoțiilor și tulburarea de personalitate borderline. Consultație online la Global Health.",
+      "lastReviewedAt": null,
+      "medicalRegistrationUrl": "https://www.cop.es/",
+      "qualifications": [
+        "Psicólogo General Sanitario — nº A014346",
+        "Especialización en intervención psicológica con adultos — enfoque transdiagnóstico basado en procesos",
+        "Formación avanzada en TCC, ACT y TDC",
+        "Experiencia en desarrollo de programas de intervención para TLP",
+        "Formación avanzada en trauma, duelo y prevención del suicidio",
+        "Experiencia clínica en centros especializados y clínicas universitarias",
+        "Participación en congresos internacionales de psicología"
+      ],
+      "instagramUrl": null,
+      "facebookUrl": null,
+      "linkedinUrl": null,
+      "languages": [
+        "Spanish"
+      ],
+      "active": true,
+      "updatedAt": "2026-08-20T06:24:26.061Z",
+      "resolvedLocale": "RO",
+      "readyToIndex": true,
+      "nonPhysician": false,
+      "imcRegistration": "AO14346",
+      "registrationChamber": "COP",
+      "registrationDivision": null,
+      "registrationVerified": true,
+      "credentials": [],
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmrf4kpd7025201qrvtpjep0e",
+          "kind": "IMAGE",
+          "key": "doctor-cmrdq1nhe002b01ru2xmq0iab-profile",
+          "path": "/api/media/media/f4d6777b-660f-4933-a916-a235dcbe13a7-6e02deef-61fd-407a-b0b1-d2ed83b13bb9-1_all_7939.webp",
+          "altText": "Javier Villarte Betancor",
+          "title": null,
+          "caption": "Javier Villarte Betancor — Psychologist, Global Health Spain",
+          "description": "Javier Villarte Betancor — Psychologist at Global Health Spain. Book an online video consultation.",
+          "focalX": 51,
+          "focalY": 26,
+          "zoom": 1
+        }
+      ],
+      "additionalCountries": [
+        {
+          "id": "cmrdq1nhl002c01rupposbg16",
+          "countryId": "cmqy9rw9w00x001qkq31jktqq",
+          "active": true,
+          "country": {
+            "id": "cmqy9rw9w00x001qkq31jktqq",
+            "code": "es",
+            "name": "Spain",
+            "defaultLocale": "ES"
+          },
+          "chamberEntity": "COP",
+          "registrationNumber": "AO14346",
+          "registrationUrl": null,
+          "division": null,
+          "isVerified": true,
+          "translations": [
+            {
+              "locale": "ES",
+              "title": "Psicólogo General Sanitario",
+              "bio": "<p>Javier Villarte Betancor es Psicólogo General Sanitario especializado en intervención psicológica con adultos, un profesional con un enfoque terapéutico estructurado, basado en la evidencia y orientado a resultados concretos en el funcionamiento diario y el bienestar emocional.</p><p>Su práctica clínica se organiza en torno a un modelo transdiagnóstico basado en procesos, un enfoque contemporáneo que no parte del diagnóstico como punto central, sino de los mecanismos psicológicos específicos que mantienen el malestar: evitación experiencial, fusión cognitiva, inflexibilidad emocional, déficits en regulación. Este marco le permite integrar de forma fluida las terapias con mayor respaldo empírico: la Terapia Cognitivo-Conductual (TCC), la Terapia de Aceptación y Compromiso (ACT) y la Terapia Dialéctica Conductual (TDC), adaptando cada intervención a la persona concreta, no a un protocolo genérico.</p><p>Ha desarrollado su carrera clínica en centros especializados y clínicas universitarias, incluyendo el diseño y desarrollo de programas de intervención específicos para el Trastorno Límite de la Personalidad (TLP), uno de los cuadros más complejos en psicología clínica, que exige formación especializada y experiencia real. Ha participado en congresos internacionales y cuenta con formación avanzada en trauma, duelo, prevención del suicidio y terapias de tercera generación.</p><p>Para muchas personas, el mayor obstáculo para iniciar terapia es no saber si lo que sienten \"es suficiente\" para pedir ayuda. La respuesta de Javier es clara: si algo te está limitando, en tus relaciones, en tu trabajo, en tu bienestar diario, merece atención profesional. No hace falta estar en crisis para beneficiarse de la terapia.</p><h3>Con qué ayuda</h3><ul><li><strong>Ansiedad:</strong> ansiedad generalizada, ansiedad social, ataques de pánico, preocupación crónica</li><li><strong>Estado de ánimo:</strong> depresión, distimia, bajo estado de ánimo persistente</li><li><strong>Regulación emocional:</strong> dificultad para manejar emociones intensas, reactividad emocional, impulsividad</li><li><strong>Trastorno Límite de la Personalidad (TLP):</strong> evaluación, intervención estructurada y seguimiento</li><li><strong>Trauma y TEPT:</strong> procesamiento de experiencias traumáticas, estabilización emocional</li><li><strong>Duelo:</strong> pérdida de un ser querido, duelos complicados o no resueltos</li><li><strong>Prevención del suicidio y gestión del riesgo:</strong> evaluación y apoyo en situaciones de riesgo</li><li><strong>Habilidades de afrontamiento:</strong> desarrollo de estrategias efectivas para gestionar el malestar</li><li><strong>Funcionamiento diario:</strong> dificultades en el trabajo, las relaciones o la vida cotidiana</li><li><strong>Autoconocimiento y desarrollo personal:</strong> entenderse mejor, patrones que se repiten, toma de decisiones</li></ul><h3>Enfoques terapéuticos</h3><ul><li><strong>Terapia Cognitivo-Conductual (TCC):</strong> identificación y modificación de pensamientos y conductas disfuncionales</li><li><strong>Terapia de Aceptación y Compromiso (ACT):</strong> flexibilidad psicológica y acción guiada por valores</li><li><strong>Terapia Dialéctica Conductual (TDC):</strong> regulación emocional, tolerancia al malestar, habilidades interpersonales</li><li><strong>Enfoque transdiagnóstico basado en procesos:</strong> intervención centrada en los mecanismos que mantienen el malestar</li></ul><h3>Su enfoque</h3><p>Javier trabaja con un estilo empático, estructurado y orientado a objetivos. Cada sesión tiene una dirección clara y cada intervención se adapta a las necesidades reales de la persona, no a un protocolo estándar. Cree que la terapia efectiva combina el rigor científico con una relación terapéutica genuina, y que el paciente debe entender en todo momento qué estamos haciendo y por qué.</p><p>Nota importante: Si está experimentando una crisis psicológica o pensamientos de autolesión, contacte con los servicios de emergencias llamando al 112 o con el Teléfono de la Esperanza (717 003 717), no espere a una cita.</p><p>Idiomas: Español</p>",
+              "seoTitle": "Javier Villarte Betancor — Psicólogo General Sanitario | Nº A014346 | Global Health España",
+              "seoDescription": "Reserve una sesión con Javier Villarte Betancor — Psicólogo General Sanitario (nº A014346). TCC · ACT · TDC · Enfoque transdiagnóstico · Ansiedad, estado de ánimo, regulación emocional · Apoyo psicológico online en español. Cita el mismo día.",
+              "seoKeywords": [
+                "Psicologo"
+              ]
+            },
+            {
+              "locale": "EN",
+              "title": "Psychologist",
+              "bio": "<p>Javier Villarte Betancor</p><p>Professional Profile Health Psychologist no. A014346</p><p>Specialized in psychological intervention with adults through a process-based transdiagnostic approach. His clinical practice is based on the integration of evidence-based therapies, such as Cognitive-Behavioral Therapy (CBT), Acceptance and Commitment Therapy (ACT) and Dialectical Behavior Therapy (DBT), adapting each intervention to the specific needs of each person.</p><p>His therapeutic style is characterized by being empathetic, structured and goal-oriented, working to improve daily functioning, emotional balance and the overall well-being of his patients. Javier focuses his work on helping people develop effective skills to cope with anxiety, mood, emotional regulation and other psychological problems.</p><p>He has clinical experience in specialized centers and university clinics, as well as in the development of intervention programs for borderline personality disorder (BPD). In addition, he has participated in international congresses and has received advanced training in areas such as trauma, grief, suicide prevention and third-generation therapies.</p>",
+              "seoTitle": "Dr Javier Villarte Betancor - Psychologist | Global Health",
+              "seoDescription": "Javier Villarte Betancor, Health Psychologist specialized in CBT, ACT and DBT. Expert in anxiety, emotional regulation and borderline personality disorder. Online consultation at Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "PT",
+              "title": "Psicólogo",
+              "bio": "<p>Javier Villarte Betancor</p><p>Perfil Profissional Psicólogo/a da Saúde nº A014346</p><p>Especializado em intervenção psicológica com adultos através de uma abordagem transdiagnóstica baseada em processos. A sua prática clínica baseia-se na integração de terapias baseadas na evidência, como a Terapia Cognitivo-Comportamental (TCC), a Terapia de Aceitação e Compromisso (ACT) e a Terapia Dialética Comportamental (TDC), adaptando cada intervenção às necessidades específicas de cada pessoa.</p><p>O seu estilo terapêutico caracteriza-se por ser empático, estruturado e orientado para objetivos, trabalhando para melhorar o funcionamento diário, o equilíbrio emocional e o bem-estar geral dos seus pacientes. Javier centra o seu trabalho em ajudar as pessoas a desenvolver competências eficazes para lidar com a ansiedade, o estado de espírito, a regulação emocional e outros problemas psicológicos.</p><p>Conta com experiência clínica em centros especializados e clínicas universitárias, bem como no desenvolvimento de programas de intervenção para a perturbação de personalidade borderline (TLP). Além disso, participou em congressos internacionais e recebeu formação avançada em áreas como trauma, luto, prevenção do suicídio e terapias de terceira geração.</p>",
+              "seoTitle": "Dr Javier Villarte Betancor - Psicólogo | Global Health",
+              "seoDescription": "Javier Villarte Betancor, Psicólogo da Saúde especializado em TCC, ACT e TDC. Especialista em ansiedade, regulação emocional e transtorno limite da personalidade. Consulta online na Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "CS",
+              "title": "Psycholog",
+              "bio": "<p>Javier Villarte Betancor</p><p>Profesní profil zdravotní psycholog/psycholožka č. A014346</p><p>Specializuje se na psychologickou intervenci s dospělými prostřednictvím transdiagnostického přístupu založeného na procesech. Jeho klinická praxe vychází z integrace metod založených na důkazech, jako jsou kognitivně-behaviorální terapie (KBT), terapie přijetí a commitmentu (ACT) a dialektická behaviorální terapie (DBT), přičemž každá intervence je přizpůsobována specifickým potřebám každého člověka.</p><p>Jeho terapeutický styl se vyznačuje empatií, strukturou a orientací na cíle a pracuje na zlepšení každodenního fungování, emoční rovnováhy a celkové pohody svých pacientů. Javier se ve své práci zaměřuje na pomoc lidem rozvíjet účinné dovednosti pro zvládání úzkosti, nálady, emoční regulace a dalších psychologických problémů.</p><p>Má klinické zkušenosti ve specializovaných centrech a univerzitních klinikách, stejně jako s vývojem intervenčních programů pro hraniční poruchu osobnosti (HPO). Kromě toho se účastnil mezinárodních kongresů a absolvoval pokročilé vzdělávání v oblastech, jako je trauma, zármutek, prevence sebevražd a terapie třetí generace.</p>",
+              "seoTitle": "Dr Javier Villarte Betancor - Psycholog | Global Health",
+              "seoDescription": "Javier Villarte Betancor, zdravotní psycholog specializující se na KBT, ACT a TDC. Expert na úzkost, regulaci emocí a hraniční poruchu osobnosti. Online konzultace v Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "RO",
+              "title": "Psiholog",
+              "bio": "<p>Javier Villarte Betancor</p><p>Profil profesional Psiholog de sănătate nr. A014346</p><p>Specializat în intervenție psihologică la adulți printr-o abordare transdiagnostică bazată pe procese. Practica sa clinică se bazează pe integrarea terapiilor bazate pe dovezi, precum Terapia Cognitiv-Comportamentală (TCC), Terapia de Acceptare și Angajament (ACT) și Terapia Dialectic-Comportamentală (TDC), adaptând fiecare intervenție la nevoile specifice ale fiecărei persoane.</p><p>Stilul său terapeutic se caracterizează prin faptul că este empatic, structurat și orientat către obiective, lucrând pentru a îmbunătăți funcționarea zilnică, echilibrul emoțional și bunăstarea generală a pacienților săi. Javier își concentrează munca pe a ajuta persoanele să dezvolte abilități eficiente pentru a face față anxietății, stării afective, reglării emoționale și altor probleme psihologice.</p><p>Are experiență clinică în centre specializate și clinici universitare, precum și în dezvoltarea de programe de intervenție pentru tulburarea de personalitate borderline (TLP). În plus, a participat la congrese internaționale și a primit formare avansată în domenii precum trauma, doliul, prevenirea suicidului și terapiile de generația a treia.</p>",
+              "seoTitle": "Dr Javier Villarte Betancor - Psiholog | Global Health",
+              "seoDescription": "Javier Villarte Betancor, psiholog de sănătate specializat în TCC, ACT și TDC. Expert în anxietate, reglarea emoțiilor și tulburarea de personalitate borderline. Consultație online la Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "DE",
+              "title": "Psychologe",
+              "bio": "<p>Javier Villarte Betancor</p><p>Berufliches Profil Gesundheitspsychologe/in Nr. A014346</p><p>Spezialisiert auf psychologische Intervention bei Erwachsenen mit einem transdiagnostischen, prozessbasierten Ansatz. Seine klinische Praxis basiert auf der Integration evidenzbasierter Therapien wie der Kognitiven Verhaltenstherapie (KVT), der Akzeptanz- und Commitment-Therapie (ACT) und der Dialektisch-Behavioralen Therapie (DBT), wobei jede Intervention an die spezifischen Bedürfnisse jeder Person angepasst wird.</p><p>Sein therapeutischer Stil zeichnet sich durch Empathie, Struktur und Zielorientierung aus; er arbeitet daran, die Alltagsfunktion, das emotionale Gleichgewicht und das allgemeine Wohlbefinden seiner Patientinnen und Patienten zu verbessern. Javier konzentriert seine Arbeit darauf, Menschen dabei zu helfen, wirksame Fähigkeiten zu entwickeln, um mit Angst, Stimmung, Emotionsregulation und anderen psychischen Problemen umzugehen.</p><p>Er verfügt über klinische Erfahrung in spezialisierten Zentren und universitären Kliniken sowie in der Entwicklung von Interventionsprogrammen für die Borderline-Persönlichkeitsstörung (BPS). Darüber hinaus hat er an internationalen Kongressen teilgenommen und eine fortgeschrittene Ausbildung in Bereichen wie Trauma, Trauer, Suizidprävention und Therapien der dritten Generation erhalten.</p>",
+              "seoTitle": "Dr Javier Villarte Betancor - Psychologe | Global Health",
+              "seoDescription": "Javier Villarte Betancor, Gesundheitspsychologe, spezialisiert auf KVT, ACT und DBT. Experte für Angst, Emotionsregulation und die Borderline-Persönlichkeitsstörung. Online-Sprechstunde bei Global Health.",
+              "seoKeywords": []
+            }
+          ],
+          "divisionTranslations": []
+        }
+      ],
+      "assignedServices": [
+        {
+          "serviceId": "cmre7qg1l005cngjub14ciym5",
+          "service": {
+            "id": "cmre7qg1l005cngjub14ciym5",
+            "slug": "psicologo-online",
+            "name": "Psicología Clínica",
+            "kind": "SPECIALIST",
+            "summary": null,
+            "durationMinutes": 45,
+            "basePriceCents": 12000,
+            "currencyCode": "EUR"
+          }
+        }
+      ],
+      "seoKeywords": [],
+      "resolvedMarketLocale": "RO",
+      "specialties": [],
+      "faqs": [
+        {
+          "id": "cmrnyfjs400dmbsjuefhous1e",
+          "locale": "RO",
+          "question": "Este Javier Villarte Betancor înregistrat ca Psiholog General Sanitar în Spania?",
+          "answer": "Da. Javier Villarte Betancor activează ca Psiholog General Sanitar înregistrat la COP cu numărul de înregistrare A014346. Puteți verifica această înregistrare pe cop.es — pentru psihologi în Spania, înregistrarea se face la Colegiul Oficial de Psihologi corespunzător. Javier are formare specializată în TCC, ACT, TDC și experiență clinică în centre specializate și clinici universitare.",
+          "category": null,
+          "sortOrder": 0,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyfjs400dnbsjup517wiu0",
+          "locale": "RO",
+          "question": "Cu ce situații poate ajuta Javier online?",
+          "answer": "Javier oferă suport psihologic online pentru: anxietate (generalizată, socială, atacuri de panică, îngrijorare cronică), stare de spirit (depresie, distimie), reglare emoțională, Tulburare Limita de Personalitate (TLP), traumă și TEPT, doliu, prevenirea sinuciderii și gestionarea riscurilor, dezvoltarea abilităților de coping, dificultăți în funcționarea zilnică și autocunoaștere.",
+          "category": null,
+          "sortOrder": 1,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyfjs400dobsjutlljdzjm",
+          "locale": "RO",
+          "question": "Ce este abordarea transdiagnostică bazată pe procese?",
+          "answer": "Abordarea transdiagnostică bazată pe procese este un model contemporan de intervenție psihologică care nu pornește de la diagnostic ca ax central, ci de la mecanismele psihologice specifice care mențin disconfortul — cum ar fi evitarea experiențială, fuziunea cognitivă sau deficitele în reglarea emoțională. Această abordare permite integrarea flexibilă a terapiilor cu cel mai mare suport empiric (TCC, ACT, TDC) și adaptarea lor la persoana concretă, în loc să se urmeze un protocol standard pe diagnostic. În practică, înseamnă că Javier poate lucra eficient cu persoane cu diagnostice diferite, dar cu mecanisme de menținere similare, sau cu persoane care nu se încadrează într-un diagnostic clar, dar care experimentează disconfort real.",
+          "category": null,
+          "sortOrder": 2,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyfjs400dpbsju9npq3o87",
+          "locale": "RO",
+          "question": "Are Javier experiență specifică cu Tulburarea Limita de Personalitate?",
+          "answer": "Da. Javier a participat la proiectarea și dezvoltarea programelor de intervenție specifice pentru Tulburarea Limita de Personalitate (TLP) — unul dintre cele mai complexe tablouri în psihologia clinică. TLP necesită formare specializată în reglarea emoțională, toleranța la disconfort, gestionarea riscurilor și abilități relaționale, toate acestea fiind domenii în care Javier are experiență și formare avansată, inclusiv Terapia Dialectică Comportamentală (TDC) — tratamentul de primă linie pentru TLP.",
+          "category": null,
+          "sortOrder": 3,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyfjs400dqbsju1gi4r8jy",
+          "locale": "RO",
+          "question": "Cum rezerv o sesiune cu Javier?",
+          "answer": "Selectați un program disponibil pe această pagină pentru a rezerva direct cu Javier. Plata este procesată în siguranță la rezervare — sesiunea este confirmată odată ce plata este finalizată. Veți primi imediat o invitație în calendar. Sesiunile se desfășoară prin videoconferință sigură și confidențială în spaniolă. Dacă experimentați o criză psihologică sau gânduri de auto-vătămare, sunați la 112 sau la Telefonul Speranței (717 003 717) — nu așteptați o programare.",
+          "category": null,
+          "sortOrder": 4,
+          "isActive": true
+        },
+        {
+          "id": "cmrnyfjs400drbsjus3o1dphu",
+          "locale": "RO",
+          "question": "Care sunt calificările lui Javier Villarte Betancor?",
+          "answer": "Javier Villarte Betancor este Psiholog General Sanitar (nr. A014346) cu specializare în intervenția psihologică cu adulți printr-o abordare transdiagnostică. Are formare avansată în TCC, ACT și TDC, și experiență în dezvoltarea programelor de intervenție pentru Tulburarea Limita de Personalitate. A completat formare specifică în traumă, doliu și prevenirea sinuciderii, și a participat la congrese internaționale de psihologie. A dezvoltat practica sa clinică în centre specializate și clinici universitare.",
+          "category": null,
+          "sortOrder": 5,
+          "isActive": true
+        }
+      ],
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-19T12:57:00.000Z"
+      },
+      "bookabilityByServiceId": {
+        "cmre7qg1l005cngjub14ciym5": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-19T12:57:00.000Z"
+        }
+      }
+    }
+  }
+}

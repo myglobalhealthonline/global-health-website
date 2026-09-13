@@ -1,0 +1,19 @@
+{
+  "checkedDate": "2026-09-13",
+  "focusedTests": {
+    "command": "node --test backend/scripts/spain-seo.test.mjs backend/scripts/romania-clinical-review.test.mjs backend/scripts/prepare-romania-seo.test.mjs",
+    "passed": 12,
+    "failed": 0
+  },
+  "backendTypecheck": {
+    "command": "node --max-old-space-size=8192 node_modules/typescript/bin/tsc --noEmit",
+    "exitCode": 0,
+    "workingDirectory": "backend",
+    "limitation": "pnpm wrapper failed; default 2 GB heap exhausted memory"
+  },
+  "gitDiffCheck": "passed",
+  "productionSnapshot": "not executed; automatic approval rejection",
+  "postgresRehearsal": "not performed",
+  "publication": "none",
+  "manifestJsonContentSha256": "3227b27d5d9870e4e6e6aef09faa068d1546fe4a6014eeec387b20d1d4cf066d"
+}

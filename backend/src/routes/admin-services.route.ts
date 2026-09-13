@@ -1,3 +1,4 @@
+import { RomaniaClinicalApprovalRequiredError } from "../content/romania-clinical-review.js";
 import type { FastifyPluginAsync } from "fastify";
 import { recordAudit, recordEntityPurge } from "../modules/audit/audit.service.js";
 import { Prisma } from "@prisma/client";
@@ -312,6 +313,9 @@ const adminServicesRoute: FastifyPluginAsync = async (app) => {
       const service = await createAdminService(body.data);
       return okResponse({ service }, "Service created");
     } catch (error) {
+      if (error instanceof RomaniaClinicalApprovalRequiredError) {
+        return reply.status(409).send(errorResponse(error.message));
+      }
       return handleServiceWriteError(app, reply, error);
     }
   });
@@ -338,6 +342,9 @@ const adminServicesRoute: FastifyPluginAsync = async (app) => {
       }
       return okResponse({ service }, "Service updated");
     } catch (error) {
+      if (error instanceof RomaniaClinicalApprovalRequiredError) {
+        return reply.status(409).send(errorResponse(error.message));
+      }
       return handleServiceWriteError(app, reply, error);
     }
   });
@@ -408,6 +415,9 @@ const adminServicesRoute: FastifyPluginAsync = async (app) => {
       const faq = await createServiceFaq(params.data.id, body.data);
       return reply.status(201).send({ success: true, data: { faq } });
     } catch (error) {
+      if (error instanceof RomaniaClinicalApprovalRequiredError) {
+        return reply.status(409).send(errorResponse(error.message));
+      }
       if (error instanceof ServiceFaqServiceNotFoundError) {
         return reply.status(404).send(errorResponse(error.message));
       }
@@ -432,6 +442,9 @@ const adminServicesRoute: FastifyPluginAsync = async (app) => {
       const faq = await updateServiceFaq(params.data.faqId, body.data);
       return okResponse({ faq }, "FAQ updated");
     } catch (error) {
+      if (error instanceof RomaniaClinicalApprovalRequiredError) {
+        return reply.status(409).send(errorResponse(error.message));
+      }
       if (error instanceof ServiceFaqNotFoundError) {
         return reply.status(404).send(errorResponse(error.message));
       }
@@ -449,6 +462,9 @@ const adminServicesRoute: FastifyPluginAsync = async (app) => {
       await deleteServiceFaq(params.data.faqId);
       return okResponse({}, "FAQ deleted");
     } catch (error) {
+      if (error instanceof RomaniaClinicalApprovalRequiredError) {
+        return reply.status(409).send(errorResponse(error.message));
+      }
       if (error instanceof ServiceFaqNotFoundError) {
         return reply.status(404).send(errorResponse(error.message));
       }
@@ -504,6 +520,9 @@ const adminServicesRoute: FastifyPluginAsync = async (app) => {
       const faqs = await reorderServiceFaqs(params.data.id, body.data.orderedIds);
       return okResponse({ faqs }, "FAQs reordered");
     } catch (error) {
+      if (error instanceof RomaniaClinicalApprovalRequiredError) {
+        return reply.status(409).send(errorResponse(error.message));
+      }
       if (error instanceof ServiceFaqNotFoundError) {
         return reply.status(404).send(errorResponse(error.message));
       }

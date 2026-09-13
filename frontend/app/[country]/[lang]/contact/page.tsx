@@ -51,7 +51,7 @@ function resolve(country: string, lang: string) {
   if (!code || !config || !isSupportedLocale(lang)) return null;
   const contact = getCountryContact(code);
   if (!contact) return null;
-  const bundle = loadLocaleBundle(lang as LocaleCode).contact;
+  const bundle = loadLocaleBundle(lang as LocaleCode, country).contact;
   const t = bundle.country as unknown as ContactCopyTemplates & Record<string, string>;
   const countryName = getCommonLocale(lang as LocaleCode).countryNames?.[code] ?? config.name;
   const baseCopy = resolveContactCopy(contact, lang as LocaleCode, countryName, t);
@@ -143,7 +143,7 @@ export default async function CountryContactPage({ params }: { params: Promise<P
   const resolved = resolve(country, lang);
   if (!resolved) notFound();
   const { code, config, contact, copy, countryName, t } = resolved;
-  const common = loadLocaleBundle(lang as LocaleCode).common;
+  const common = loadLocaleBundle(lang as LocaleCode, country).common;
 
   const office = contact.office;
   const bookHref = buildBookHref({ country, lang });

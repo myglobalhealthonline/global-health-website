@@ -35,16 +35,25 @@ const ALLOWED_TAGS = [
 
 const ALLOWED_COLOR = /^(#[0-9a-fA-F]{3}|#[0-9a-fA-F]{6}|rgb\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*\))$/;
 
+// Editors pasted Chrome "copy link to highlight" URLs
+// (…#:~:text=…) into many bios; they render as raw junk headings.
+const TEXT_FRAGMENT_URL = /\bhttps?:\/\/[^\s<>"]*#:~:text=[^\s<>"]*/gi;
+
+function stripPastedFragmentUrls(raw: string): string {
+  return raw.replace(TEXT_FRAGMENT_URL, "");
+}
+
 function stripAllTags(raw: string): string {
   return raw.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 }
 
 export function toDoctorBioPlainText(raw: string): string {
-  return stripAllTags(raw);
+  return stripAllTags(stripPastedFragmentUrls(raw ?? ""));
 }
 
 export function sanitizeDoctorBioHtml(raw: string): string {
   if (raw == null) return "";
+  raw = stripPastedFragmentUrls(raw).trim();
   if (raw.length === 0) return "";
   // No tags at all → escape + wrap in <p> so the prose layout still
   // renders a paragraph (preserves the previous behavior).
@@ -69,5 +78,8 @@ export function sanitizeDoctorBioHtml(raw: string): string {
       },
     },
     disallowedTagsMode: "discard",
+    // Drop headings left empty (e.g. after URL removal). <p> untouched so
+    // intentional <p><br></p> spacing survives.
+    exclusiveFilter: (frame) => (frame.tag === "h2" || frame.tag === "h3") && !frame.text.trim(),
   });
 }

@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:16.603Z",
+  "endpoint": "/api/services/sanatatea-femeii-online?countryCode=ro&locale=RO",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee3x70007fsju2pfu3ygw",
+      "kind": "GENERAL",
+      "slug": "sanatatea-femeii-online",
+      "name": "Sănătatea femeii — evaluare online confidențială",
+      "summary": "Aveți întrebări legate de contracepție, sindrom premenstrual, menopauză, sănătate hormonală sau alte simptome ginecologice frecvente? Medicii noștri autorizați CMR oferă evaluare confidențială și recomandări medicale clare prin consultație video.",
+      "seoTitle": "Consultație sănătatea femeii online | România | confidențial",
+      "seoDescription": "Consultații confidențiale pentru contracepție, sindrom premenstrual, menopauză, sănătate hormonală și alte simptome ginecologice frecvente. Medicii noștri autorizați CMR oferă evaluare confidențială și recomandări medicale clare prin consultație video.",
+      "seoKeywords": [
+        "women's health online Romania",
+        "English doctor women's health Bucharest",
+        "contraception online Romania",
+        "menopause consultation English Romania",
+        "PCOS doctor online Romania expat"
+      ],
+      "heroTitle": "Sănătatea femeii — evaluare online confidențială",
+      "heroDescription": "Consultații confidențiale pentru contracepție, sindrom premenstrual, menopauză, sănătate hormonală și alte simptome ginecologice frecvente. Medicii noștri autorizați CMR oferă evaluare confidențială și recomandări medicale clare prin consultație video.",
+      "detailBody": "<p>Consultația este potrivită pentru probleme precum cicluri neregulate sau dureroase, simptome de perimenopauză și menopauză, suspiciune de dezechilibru hormonal, întrebări despre contracepție, infecții urinare recurente ori alte preocupări frecvente legate de sănătatea femeii.</p><p>Medicul discută simptomele în contextul istoricului menstrual, reproductiv, metabolic și general, apoi recomandă investigațiile, conduita terapeutică sau trimiterea către ginecolog atunci când este necesar. Dacă aveți deja rezultate sau scrisori medicale, acestea pot fi revizuite în timpul consultației.</p><p>Serviciul este util și pentru femeile care doresc o evaluare medicală clară înainte de a decide dacă este nevoie de consult ginecologic în persoană, precum și pentru expate sau paciente cu acces dificil la îngrijire continuă.</p>",
+      "ctaLabel": "Programează consultația",
+      "sortOrder": 140,
+      "durationMinutes": 20,
+      "basePriceCents": 16000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:03:03.963Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jrxp8001gakjupdim1ccg",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee3x70007fsju2pfu3ygw",
+          "path": "/api/media/media/b65d7e63-2548-4c9e-9564-471a6a64e6c6-31480589-8bde-459d-a8f9-3b9507b618bd-4.webp",
+          "altText": "Sănătatea femeii — evaluare online confidențială"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "RO",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

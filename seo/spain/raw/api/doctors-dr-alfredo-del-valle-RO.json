@@ -1,0 +1,225 @@
+{
+  "endpoint": "/api/countries/es/doctors/dr-alfredo-del-valle?locale=RO",
+  "checkedAt": "2026-09-13T02:30:05.605Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "doctor": {
+      "id": "cmrdppjf5000u01ru1ayu78k0",
+      "slug": "dr-alfredo-del-valle",
+      "fullName": "Dr. Alfredo del Valle Moreno Montañez",
+      "title": "Dermatolog",
+      "bio": "<p>Dr. Alfredo del Valle Moreno Montañez</p><p>Dermatolog</p><p>Dr. Alfredo del Valle Moreno Montañez este un dermatolog foarte bine calificat, cu dublă acreditare și o vastă experiență clinică internațională atât în dermatologia medicală, cât și în cea estetică.</p><p>Este licențiat în Medicină la Universitatea din Carabobo (Venezuela) și și-a finalizat pregătirea de specialitate în Dermatologie, după o rezidențiată anterioară în Medicină Internă. În 2026, Dr. Alfredo a obținut recunoașterea oficială a specialității sale în Dermatologie în Spania, consolidându-și și mai mult credențialele medicale europene.</p><p>Dr. Alfredo a lucrat într-o gamă largă de medii clinice, inclusiv servicii spitalicești de dermatologie, clinici private și servicii de teledermatologie, cu experiență atât în Spania, cât și în America Latină. Experiența sa clinică acoperă dermatologia generală, dermato-oncologia, bolile cutanate autoimune și inflamatorii, hidradenita supurativă și diagnostice dermatologice complexe.</p><p>Pe lângă dermatologia medicală, deține un Master în Medicină Estetică și formare avansată în tratamente injectabile, inclusiv fillere dermice și toxină botulinică, îmbinând medicina bazată pe dovezi cu un puternic simț estetic și o îngrijire centrată pe pacient.</p><p>Participă activ la cercetarea academică și a publicat articole evaluate de colegi în dermatologie, în special în domeniul tulburării dismorfice corporale și al psihodermatologiei.</p>",
+      "seoTitle": "Dr Alfredo del Valle - Dermatolog | Global Health",
+      "seoDescription": "Dr. Alfredo del Valle Moreno Montañez, dermatolog specialist în dermatologie medicală și estetică. Expert în dermato-oncologie, hidradenită supurativă și tratamente cu toxină botulinică. Consult online la Global Health.",
+      "lastReviewedAt": null,
+      "medicalRegistrationUrl": "https://www.cgcom.es/servicios/consulta-publica-de-colegiados",
+      "qualifications": [
+        "Médico especialista en Dermatología — reconocimiento oficial España (2026)",
+        "Máster en Medicina Estética",
+        "Residencia en Medicina Interna (previa a especialización en Dermatología)",
+        "Titulación médica — Universidad de Carabobo, Venezuela",
+        "Investigador publicado — psicodermatología y trastorno dismórfico corporal",
+        "Experiencia en teledermatología — España y Latinoamérica",
+        "Registrado en CGCOM (nº 282885136)"
+      ],
+      "instagramUrl": null,
+      "facebookUrl": null,
+      "linkedinUrl": null,
+      "languages": [
+        "Spanish",
+        "English"
+      ],
+      "active": true,
+      "updatedAt": "2026-08-20T06:21:47.127Z",
+      "resolvedLocale": "RO",
+      "readyToIndex": true,
+      "nonPhysician": false,
+      "imcRegistration": "282885136",
+      "registrationChamber": "CGCOM",
+      "registrationDivision": null,
+      "registrationVerified": true,
+      "credentials": [],
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmrf3tgcf024e01qrh68t920y",
+          "kind": "IMAGE",
+          "key": "doctor-cmrdppjf5000u01ru1ayu78k0-profile",
+          "path": "/api/media/media/20ba2d00-f265-41dc-a5e9-ee0120bb5fb5-dr-alfredo-del-valle-moreno-monta-ez.webp",
+          "altText": "Dr. Alfredo del Valle Moreno Montañez",
+          "title": "Dr. Alfredo del Valle Moreno Montañez",
+          "caption": "Dr. Alfredo del Valle Moreno Montañez — Dermatologist, Global Health Spain",
+          "description": "Dr. Alfredo del Valle Moreno Montañez — Dermatologist at Global Health Spain. Book an online video consultation.",
+          "focalX": 50,
+          "focalY": 26,
+          "zoom": 1
+        }
+      ],
+      "additionalCountries": [
+        {
+          "id": "cmrdppjfe000v01ruq08urmcz",
+          "countryId": "cmqy9rw9w00x001qkq31jktqq",
+          "active": true,
+          "country": {
+            "id": "cmqy9rw9w00x001qkq31jktqq",
+            "code": "es",
+            "name": "Spain",
+            "defaultLocale": "ES"
+          },
+          "chamberEntity": "CGCOM",
+          "registrationNumber": "282885136",
+          "registrationUrl": null,
+          "division": null,
+          "isVerified": true,
+          "translations": [
+            {
+              "locale": "ES",
+              "title": "Médico Especialista — Dermatología",
+              "bio": "<p>El Dr. Alfredo del Valle Moreno Montañez es médico especialista en Dermatología con doble acreditación internacional, titulación médica por la Universidad de Carabobo (Venezuela) y reconocimiento oficial de la especialidad en Dermatología en España en 2026, y amplia experiencia clínica en dermatología médica y estética en España y Latinoamérica.</p><p>Ha trabajado en servicios de dermatología hospitalaria, clínicas privadas y servicios de teledermatología, desarrollando una práctica clínica que combina el rigor diagnóstico de la dermatología médica con la sensibilidad estética de la medicina estética avanzada. Antes de especializarse en Dermatología, completó una residencia en Medicina Interna, formación que le proporciona una perspectiva clínica más amplia a la hora de evaluar afecciones dermatológicas con componentes sistémicos o autoinmunes.</p><p>El Dr. del Valle es activo en investigación académica y ha publicado artículos revisados por pares en el campo de la psicodermatología y el trastorno dismórfico corporal, una especialización inusual que refleja su comprensión de la dimensión psicológica de las enfermedades de la piel, especialmente relevante en dermatología estética.</p><p>La consulta online con el Dr. del Valle permite una evaluación dermatológica inicial de calidad, desde el análisis de lesiones cutáneas mediante imágenes hasta la planificación personalizada de tratamientos estéticos, sin necesidad de desplazarse a una clínica presencial como primer paso.</p><h3>Qué trata</h3><ul><li><strong>Dermatología general:</strong> evaluación de lesiones cutáneas, erupciones, eccema, psoriasis, acné, rosácea</li><li><strong>Dermato-oncología:</strong> evaluación de lunares sospechosos, lesiones pigmentadas, orientación sobre cáncer de piel</li><li><strong>Enfermedades autoinmunes e inflamatorias de la piel:</strong> lupus cutáneo, psoriasis, dermatitis atópica, urticaria</li><li><strong>Hidradenitis supurativa:</strong> diagnóstico, manejo y planificación terapéutica</li><li><strong>Psicodermatología:</strong> afecciones dermatológicas con componente psicológico, trastorno dismórfico corporal</li><li><strong>Consulta estética online:</strong> evaluación y planificación personalizada para tratamientos con rellenos dérmicos, toxina botulínica y rejuvenecimiento cutáneo (los procedimientos se realizan de forma presencial)</li><li><strong>Teledermatología:</strong> evaluación de imágenes dermatológicas enviadas por el paciente</li><li><strong>Segunda opinión:</strong> sobre diagnósticos dermatológicos, resultados de biopsias o planes de tratamiento</li><li>Seguimiento de tratamientos dermatológicos en curso</li></ul><h3>Su enfoque</h3><p>El Dr. del Valle combina la precisión diagnóstica de un dermatólogo formado en entornos hospitalarios con la comprensión profunda de la estética y la psicología del paciente que caracterizan su investigación en psicodermatología. Cada consulta es individualizada, basada en la evidencia y orientada a proporcionar al paciente un plan claro, no solo un diagnóstico.</p><p>Nota importante: Los procedimientos estéticos (rellenos dérmicos, toxina botulínica) requieren cita presencial. La consulta online con el Dr. del Valle es la evaluación médica y la fase de planificación personalizada que debe preceder a cualquier procedimiento estético.</p><p>Idiomas: Español · Inglés</p>",
+              "seoTitle": "Dr. Alfredo del Valle — Dermatólogo | CGCOM 282885136 | Global Health España",
+              "seoDescription": "Reserve una videoconsulta con Dr. Alfredo del Valle — dermatólogo especialista registrado en CGCOM (nº 282885136). Dermatología médica y estética · Teledermatología · España y Latinoamérica · Español e inglés. Cita el mismo día.",
+              "seoKeywords": [
+                "Dermatologo"
+              ]
+            },
+            {
+              "locale": "PT",
+              "title": "Dermatologista",
+              "bio": "<p>Dr. Alfredo del Valle Moreno Montañez</p><p>Dermatologista</p><p>O Dr. Alfredo del Valle Moreno Montañez é um dermatologista altamente qualificado, com dupla acreditação e uma vasta experiência clínica internacional tanto em dermatologia médica como estética.</p><p>É licenciado em Medicina pela Universidad de Carabobo (Venezuela) e concluiu a sua formação especializada em Dermatologia, após uma residência prévia em Medicina Interna. Em 2026, o Dr. Alfredo obteve o reconhecimento oficial da sua especialidade em Dermatologia em Espanha, reforçando ainda mais as suas credenciais médicas europeias.</p><p>O Dr. Alfredo trabalhou numa ampla variedade de contextos clínicos, incluindo serviços hospitalares de dermatologia, clínicas privadas e serviços de teledermatologia, com experiência tanto em Espanha como na América Latina. A sua experiência clínica abrange dermatologia geral, dermato-oncologia, doenças cutâneas autoimunes e inflamatórias, hidradenite supurativa e diagnósticos dermatológicos complexos.</p><p>Para além da dermatologia médica, possui um Mestrado em Medicina Estética e formação avançada em tratamentos injetáveis, incluindo preenchimentos dérmicos e toxina botulínica, combinando a medicina baseada na evidência com um forte sentido estético e uma atenção centrada no paciente.</p><p>Participa ativamente em investigação académica e publicou artigos revistos por pares em dermatologia, especialmente no âmbito da perturbação dismórfica corporal e da psicodermatologia.</p>",
+              "seoTitle": "Dr Alfredo del Valle - Dermatologista | Global Health",
+              "seoDescription": "Dr. Alfredo del Valle Moreno Montañez, dermatologista especialista em dermatologia médica e estética. Especialista em dermato-oncologia, hidradenite supurativa e tratamentos com toxina botulínica. Consulta online na Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "RO",
+              "title": "Dermatolog",
+              "bio": "<p>Dr. Alfredo del Valle Moreno Montañez</p><p>Dermatolog</p><p>Dr. Alfredo del Valle Moreno Montañez este un dermatolog foarte bine calificat, cu dublă acreditare și o vastă experiență clinică internațională atât în dermatologia medicală, cât și în cea estetică.</p><p>Este licențiat în Medicină la Universitatea din Carabobo (Venezuela) și și-a finalizat pregătirea de specialitate în Dermatologie, după o rezidențiată anterioară în Medicină Internă. În 2026, Dr. Alfredo a obținut recunoașterea oficială a specialității sale în Dermatologie în Spania, consolidându-și și mai mult credențialele medicale europene.</p><p>Dr. Alfredo a lucrat într-o gamă largă de medii clinice, inclusiv servicii spitalicești de dermatologie, clinici private și servicii de teledermatologie, cu experiență atât în Spania, cât și în America Latină. Experiența sa clinică acoperă dermatologia generală, dermato-oncologia, bolile cutanate autoimune și inflamatorii, hidradenita supurativă și diagnostice dermatologice complexe.</p><p>Pe lângă dermatologia medicală, deține un Master în Medicină Estetică și formare avansată în tratamente injectabile, inclusiv fillere dermice și toxină botulinică, îmbinând medicina bazată pe dovezi cu un puternic simț estetic și o îngrijire centrată pe pacient.</p><p>Participă activ la cercetarea academică și a publicat articole evaluate de colegi în dermatologie, în special în domeniul tulburării dismorfice corporale și al psihodermatologiei.</p>",
+              "seoTitle": "Dr Alfredo del Valle - Dermatolog | Global Health",
+              "seoDescription": "Dr. Alfredo del Valle Moreno Montañez, dermatolog specialist în dermatologie medicală și estetică. Expert în dermato-oncologie, hidradenită supurativă și tratamente cu toxină botulinică. Consult online la Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "EN",
+              "title": "Dermatologist",
+              "bio": "<p>Dr. Alfredo del Valle Moreno Montañez</p><p>Dermatologist</p><p>Dr. Alfredo del Valle Moreno Montañez is a highly qualified dermatologist, with dual accreditation and extensive international clinical experience in both medical and aesthetic dermatology.</p><p>He holds a medical degree from the University of Carabobo (Venezuela) and completed his specialized training in Dermatology, following a previous residency in Internal Medicine. In 2026, Dr. Alfredo obtained official recognition of his specialty in Dermatology in Spain, further strengthening his European medical credentials.</p><p>Dr. Alfredo has worked in a wide range of clinical settings, including hospital dermatology departments, private clinics, and teledermatology services, with experience in both Spain and Latin America. His clinical experience includes general dermatology, dermato-oncology, autoimmune and inflammatory skin diseases, hidradenitis suppurativa, and complex dermatological diagnoses.</p><p>In addition to medical dermatology, he holds a Master's degree in Aesthetic Medicine and advanced training in injectable treatments, including dermal fillers and botulinum toxin, combining evidence-based medicine with a strong aesthetic sense and patient-centered care.</p><p>He actively participates in academic research and has published peer-reviewed articles in dermatology, especially in the field of body dysmorphic disorder and psychodermatology.</p>",
+              "seoTitle": "Dr Alfredo del Valle - Dermatologist | Global Health",
+              "seoDescription": "Dr. Alfredo del Valle Moreno Montañez, dermatologist specializing in medical and aesthetic dermatology. Expert in dermato-oncology, hidradenitis suppurativa and botulinum toxin treatments. Online consultation at Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "CS",
+              "title": "Dermatolog",
+              "bio": "<p>Dr. Alfredo del Valle Moreno Montañez</p><p>Dermatolog</p><p>Dr. Alfredo del Valle Moreno Montañez je vysoce kvalifikovaný dermatolog s dvojí akreditací a rozsáhlými mezinárodními klinickými zkušenostmi v lékařské i estetické dermatologii.</p><p>Je absolventem medicíny na Universidad de Carabobo (Venezuela) a svou specializovanou přípravu v dermatologii dokončil po předchozí atestaci z interního lékařství. V roce 2026 získal Dr. Alfredo oficiální uznání své specializace v dermatologii ve Španělsku, čímž ještě více posílil své evropské lékařské kvalifikace.</p><p>Dr. Alfredo působil v široké škále klinických prostředí, včetně nemocničních dermatologických služeb, soukromých klinik a teledermatologických služeb, se zkušenostmi jak ve Španělsku, tak v Latinské Americe. Jeho klinická praxe zahrnuje všeobecnou dermatologii, dermatoonkologii, autoimunitní a zánětlivá kožní onemocnění, hidradenitis suppurativa a komplexní dermatologické diagnostiky.</p><p>Kromě lékařské dermatologie má také magisterský titul v estetické medicíně a pokročilé vzdělání v injekčních ošetřeních, včetně dermálních výplní a botulotoxinu, přičemž spojuje medicínu založenou na důkazech se silným estetickým cítěním a péčí zaměřenou na pacienta.</p><p>Aktivně se podílí na akademickém výzkumu a publikoval recenzované články v dermatologii, zejména v oblasti tělesné dysmorfické poruchy a psychodermatologie.</p>",
+              "seoTitle": "Dr Alfredo del Valle - Dermatolog | Global Health",
+              "seoDescription": "Dr. Alfredo del Valle Moreno Montañez, dermatolog specializovaný na lékařskou a estetickou dermatologii. Expert na dermatoonkologii, hidradenitidu supurativa a léčbu botulotoxinem. Online konzultace v Global Health.",
+              "seoKeywords": []
+            },
+            {
+              "locale": "DE",
+              "title": "Dermatologe",
+              "bio": "<p>Dr. Alfredo del Valle Moreno Montañez</p><p>Dermatologe</p><p>Dr. Alfredo del Valle Moreno Montañez ist ein hochqualifizierter Dermatologe mit doppelter Anerkennung und umfassender internationaler klinischer Erfahrung sowohl in der medizinischen als auch in der ästhetischen Dermatologie.</p><p>Er hat einen Abschluss in Medizin von der Universidad de Carabobo (Venezuela) und schloss seine Facharztausbildung in Dermatologie nach einer vorherigen Facharztausbildung in Innerer Medizin ab. Im Jahr 2026 erhielt Dr. Alfredo in Spanien die offizielle Anerkennung seiner Facharztqualifikation in Dermatologie, was seine europäischen medizinischen Qualifikationen weiter stärkte.</p><p>Dr. Alfredo hat in einer Vielzahl klinischer Umgebungen gearbeitet, darunter dermatologische Krankenhausabteilungen, Privatkliniken und Teledermatologie-Dienste, mit Erfahrung sowohl in Spanien als auch in Lateinamerika. Seine klinische Erfahrung umfasst allgemeine Dermatologie, Dermato-Onkologie, autoimmune und entzündliche Hauterkrankungen, Hidradenitis suppurativa und komplexe dermatologische Diagnosen.</p><p>Neben der medizinischen Dermatologie verfügt er über einen Master in Ästhetischer Medizin und eine fortgeschrittene Ausbildung in injizierbaren Behandlungen, einschließlich Dermal Fillern und Botulinumtoxin, und verbindet evidenzbasierte Medizin mit einem ausgeprägten ästhetischen Sinn und einer patientenzentrierten Betreuung.</p><p>Er ist aktiv in der akademischen Forschung tätig und hat peer-reviewte Artikel in der Dermatologie veröffentlicht, insbesondere im Bereich der Körperdysmorphen Störung und der Psychodermatologie.</p>",
+              "seoTitle": "Dr Alfredo del Valle - Dermatologe | Global Health",
+              "seoDescription": "Dr. Alfredo del Valle Moreno Montañez, Facharzt für Dermatologie mit Spezialisierung auf medizinische und ästhetische Dermatologie. Experte für Dermatoonkologie, Hidradenitis suppurativa und Behandlungen mit Botulinumtoxin. Online-Sprechstunde bei Global Health.",
+              "seoKeywords": []
+            }
+          ],
+          "divisionTranslations": []
+        }
+      ],
+      "assignedServices": [
+        {
+          "serviceId": "cmre7qdwm004pngjuoofudwu5",
+          "service": {
+            "id": "cmre7qdwm004pngjuoofudwu5",
+            "slug": "dermatologia-especialista-online",
+            "name": "Dermatología Especialista",
+            "kind": "SPECIALIST",
+            "summary": null,
+            "durationMinutes": 15,
+            "basePriceCents": 7000,
+            "currencyCode": "EUR"
+          }
+        }
+      ],
+      "seoKeywords": [],
+      "resolvedMarketLocale": "RO",
+      "specialties": [],
+      "faqs": [
+        {
+          "id": "cmrnz4lwo00qsbsjuk77b297h",
+          "locale": "RO",
+          "question": "Este Dr. del Valle înregistrat în Consiliul General al Colegiilor Oficiale de Medici?",
+          "answer": "Da. Dr. Alfredo del Valle Moreno Montañez este înregistrat în sistemul de verificare al CGCOM cu numărul 282885136. Puteți verifica această înregistrare pe cgcom.es. Dr. del Valle a obținut recunoașterea oficială a specialității sale în Dermatologie în Spania în 2026 și are experiență clinică în Spania și America Latină.",
+          "category": null,
+          "sortOrder": 0,
+          "isActive": true
+        },
+        {
+          "id": "cmrnz4lwp00qtbsjuzpl8qq08",
+          "locale": "RO",
+          "question": "Ce afecțiuni dermatologice evaluează Dr. del Valle online?",
+          "answer": "Dr. del Valle oferă consultații dermatologice online pentru: evaluarea leziunilor cutanate și erupțiilor, eczema, psoriazis, acnee și rozacee, dermato-oncologie (alunițe suspecte, leziuni pigmentate, orientare privind cancerul de piele), boli autoimune și inflamatorii ale pielii (lupus cutanat, dermatită atopică, urticarie), hidradenită supurativă, psihodermatologie, consultație estetică (planificarea tratamentelor cu umpluturi și toxină botulinică), teledermatologie prin imagini și a doua opinie privind diagnosticele dermatologice.",
+          "category": null,
+          "sortOrder": 1,
+          "isActive": true
+        },
+        {
+          "id": "cmrnz4lwp00qubsju79x7dxiw",
+          "locale": "RO",
+          "question": "Ce este o consultație estetică online cu Dr. del Valle?",
+          "answer": "Consultația estetică online cu Dr. del Valle este o evaluare medicală structurată prin videoconferință pentru pacienții care iau în considerare tratamente cu umpluturi dermice, toxină botulinică sau alte proceduri de rejuvenare a pielii. În timpul consultației, Dr. del Valle va efectua o analiză facială și cutanată, va revizui istoricul dumneavoastră medical pentru a identifica contraindicații, va discuta obiectivele dumneavoastră estetice și va elabora un plan de tratament personalizat. Procedurile estetice în sine necesită o programare față în față.",
+          "category": null,
+          "sortOrder": 2,
+          "isActive": true
+        },
+        {
+          "id": "cmrnz4lwp00qvbsjuea3syfbk",
+          "locale": "RO",
+          "question": "Ce este psihodermatologia și de ce este relevantă?",
+          "answer": "Psihodermatologia este ramura medicinei care studiază relația dintre bolile pielii și sănătatea mentală. Dr. del Valle a publicat cercetări revizuite de colegi specific în psihodermatologie și tulburarea dismorfică corporală — o specializare neobișnuită care îi permite să abordeze dimensiunile psihologice ale afecțiunilor precum acneea severă, psoriazisul, alopecia sau preocupările estetice care afectează semnificativ calitatea vieții pacientului. Pentru pacienții ale căror afecțiuni dermatologice au un impact psihologic important, această perspectivă integrată face o diferență reală.",
+          "category": null,
+          "sortOrder": 3,
+          "isActive": true
+        },
+        {
+          "id": "cmrnz4lwp00qwbsjulg5qofat",
+          "locale": "RO",
+          "question": "Cum rezerv o consultație cu Dr. del Valle?",
+          "answer": "Selectați un program disponibil pe această pagină pentru a rezerva direct cu Dr. del Valle. Plata este procesată în siguranță la rezervare — consultația este confirmată odată ce plata este finalizată. Veți primi imediat o invitație în calendar. Consultațiile se desfășoară prin videoconferință sigură în spaniolă sau engleză. Pentru afecțiuni ale pielii, vă recomandăm să împărtășiți fotografii de calitate ale zonei afectate înainte de consultație. Programările în aceeași zi sunt de obicei disponibile.",
+          "category": null,
+          "sortOrder": 4,
+          "isActive": true
+        },
+        {
+          "id": "cmrnz4lwp00qxbsjuwkq79r16",
+          "locale": "RO",
+          "question": "Care sunt calificările Dr. del Valle?",
+          "answer": "Dr. Alfredo del Valle Moreno Montañez este licențiat în Medicină de la Universitatea din Carabobo (Venezuela) și a obținut recunoașterea oficială a specialității sale în Dermatologie în Spania în 2026. A completat o rezidență anterioară în Medicină Internă și deține un Master în Medicină Estetică. A lucrat în servicii de dermatologie spitalicească, clinici private și teledermatologie în Spania și America Latină. Este cercetător publicat în psihodermatologie și tulburarea dismorfică corporală. Este înregistrat în CGCOM (nr. 282885136).",
+          "category": null,
+          "sortOrder": 5,
+          "isActive": true
+        }
+      ],
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T08:14:00.000Z"
+      },
+      "bookabilityByServiceId": {
+        "cmre7qdwm004pngjuoofudwu5": {
+          "state": "BOOKABLE",
+          "reasonCode": null,
+          "nextAvailableAt": "2026-09-14T08:14:00.000Z"
+        }
+      }
+    }
+  }
+}

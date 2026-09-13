@@ -1,0 +1,176 @@
+{
+  "endpoint": "/api/services/medicina-viaje-online?countryCode=es&locale=PT",
+  "checkedAt": "2026-09-13T02:30:04.491Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q7k0002vngju6v73lt8h",
+      "kind": "GENERAL",
+      "slug": "medicina-viaje-online",
+      "name": "Medicina de Viagem",
+      "summary": null,
+      "seoTitle": "Medicina de Viagem Online Espanha | Profilaxia da Malária | Médico de Família",
+      "seoDescription": "A viajar para uma zona de malária ou destino de risco? Os nossos médicos de clínica geral inscritos na ordem avaliam a sua saúde de viagem e tratam da documentação clínica necessária. No mesmo dia em Espanha.",
+      "seoKeywords": [
+        "medicina de viaje online España",
+        "profilaxis malaria online España",
+        "médico viaje online España",
+        "vacunas viaje consulta España",
+        "travel health doctor Spain English"
+      ],
+      "heroTitle": "Medicina de Viagem — Avaliação Clínica Online Antes de Partir",
+      "heroDescription": "Está a viajar para uma zona de malária, um destino com requisitos de febre amarela, ou uma região com risco significativo de doença infeciosa? Um centro de vacinação administrará as suas vacinas. Mas há duas coisas que não pode fazer: prescrever profilaxia antipalúdica — que requer um médico — e aconselhá-lo sobre como gerir as suas condições de saúde específicas, medicações e itinerário no contexto da sua viagem. Os nossos médicos de família, registados de acordo com os requisitos da Organização Médica Colegial (OMC), oferecem consultas médicas de viagem por videochamada segura — fornecendo a avaliação clínica, a documentação para profilaxia antipalúdica, e o planeamento médico personalizado que um centro de vacinação não pode oferecer. No mesmo dia, a partir de qualquer ponto de Espanha, em espanhol, inglês ou português.",
+      "detailBody": "<h2>O que oferece uma consulta médica de viagem que um centro de vacinação não pode oferecer</h2><p>Os centros de vacinação administram vacinas — mas não realizam avaliações médicas estruturadas, não podem prescrever profilaxia antimalárica e não aconselham sobre a gestão de condições crónicas durante a viagem.</p><p><strong>A sua consulta médica de viagem com um médico de família inscrito cobre:</strong></p><ul><li>Profilaxia antimalárica — avaliada e documentada diretamente, com documentação clínica emitida no mesmo dia. Não pode obter um antimalárico num centro de vacinação.</li><li>Avaliação de risco personalizada — baseada no seu destino específico, itinerário, tipo de alojamento, atividades planeadas e perfil de saúde — não numa lista de verificação genérica</li><li>Planeamento de vacinação — aconselhamento sobre de que vacinas necessita, quais já pode ter, e o calendário apropriado tendo em conta a sua data de partida — para que chegue ao centro de vacinação sabendo exatamente o que pedir</li><li>Gestão de condições crónicas durante a viagem — se tem diabetes, hipertensão, asma, ou toma medicação regular, o seu médico aconselha-o sobre a gestão durante a viagem, ajuste de fuso horário, considerações de altitude e quando procurar cuidados no estrangeiro</li><li>Documentação médica de viagem — cartas médicas para medicação, dispositivos médicos, ou requisitos do seguro de viagem</li><li>Avaliação pós-viagem — se regressar com sintomas de um destino de maior risco, o seu médico avalia-os no contexto do seu historial de viagem</li></ul><p>Após a sua consulta, o seu médico aconselha-o sobre onde ir para a administração de vacinas em Espanha — incluindo centros autorizados para a vacinação contra a febre amarela.</p><h2>Um ângulo único de Espanha — destino e origem</h2><p>Espanha é única no contexto da medicina de viagem porque é simultaneamente um grande país de origem de viajantes internacionais e um dos destinos turísticos mais visitados do mundo.</p><p><strong>Se viaja a partir de Espanha:</strong></p><p>Este serviço fornece avaliação médica de viagem completa antes da sua partida — profilaxia antimalárica, planeamento de vacinação, gestão de condições crónicas durante a viagem.</p><p><strong>Se chegou a Espanha e adoeceu:</strong></p><p>As doenças do viajante — gastroenterite, infeções respiratórias, reações cutâneas, febre pós-viagem — são apresentações frequentes em turistas e visitantes. O seu médico de família avalia os seus sintomas no contexto do seu historial de viagem, com encaminhamento para avaliação de medicina tropical quando indicado.</p><p><strong>Se está em trânsito em Espanha e precisa de continuar uma profilaxia antimalárica:</strong></p><p>Se iniciou um regime antimalárico antes de chegar a Espanha e precisa de continuar a medicação, o seu médico avalia a sua situação e emite a documentação clínica correspondente quando clinicamente indicado.</p><h2>O que inclui a consulta</h2><p><strong>Avaliação do destino e itinerário</strong></p><p>O seu médico revê o seu destino, duração, itinerário, tipo de alojamento e atividades planeadas — incluindo se estará em zonas urbanas ou rurais, alojado em hotéis ou a acampar, a realizar atividades de aventura, ou a visitar instalações de saúde.</p><p><strong>Avaliação do risco de malária e documentação para profilaxia</strong></p><p>Para destinos com risco de malária, o seu médico avalia o regime de profilaxia mais apropriado com base no seu destino, itinerário, duração e perfil de saúde individual — incluindo possíveis contraindicações. A documentação clínica para o antimalárico apropriado é emitida quando clinicamente indicado.</p><p><strong>Planeamento de vacinação</strong></p><p>Com base no seu destino e perfil de saúde, o seu médico aconselha sobre que vacinas são recomendadas ou exigidas, quais já podem conferir imunidade adequada, e o calendário apropriado tendo em conta a sua data de partida.</p><p><strong>Gestão de condições crónicas durante a viagem</strong></p><p>O seu médico aconselha sobre a gestão de condições como diabetes, hipertensão, asma ou condições de saúde mental durante a viagem — incluindo quantidades de medicação, fusos horários, considerações de altitude e quando procurar assistência médica no estrangeiro.</p><p><strong>Documentação médica de viagem</strong></p><p>Quando clinicamente indicado, o seu médico emite uma carta resumo de saúde para viagem — útil para pacientes que transportam medicação, dispositivos médicos, ou que necessitam de documentação de saúde para seguros de viagem ou controlo fronteiriço.</p><p><strong>Avaliação pós-viagem</strong></p><p>Regressou de um destino de maior risco com sintomas? O seu médico avalia febre, sintomas gastrointestinais, afeções cutâneas ou outras preocupações no contexto do seu historial de viagem — com encaminhamento para avaliação especializada em medicina tropical quando indicado.</p><h2>Nota sobre a febre amarela</h2><p>A vacinação contra a febre amarela e o Certificado Internacional de Vacinação — exigido para entrada em determinados países — deve ser administrada e emitida presencialmente num centro de vacinação autorizado. Isto não pode ser tratado através de uma consulta de telemedicina.</p><p>Em Espanha, a vacinação contra a febre amarela está disponível em centros de saúde internacional autorizados pelas Direções de Saúde Pública das comunidades autónomas — em Madrid, Barcelona, e noutras grandes cidades. O seu médico aconselha-o sobre que destinos exigem certificação de febre amarela e encaminha-o para o centro autorizado apropriado após a sua consulta.</p><h2>Destinos habitualmente avaliados</h2><p><strong>África Subsariana</strong></p><p>Zonas de alto risco de malária, requisitos de febre amarela, febre tifóide, hepatite A, consideração de raiva para viagem rural, vacinação meningocócica para regiões específicas.</p><p><strong>Sudeste Asiático</strong></p><p>Risco de malária em zonas rurais, encefalite japonesa para estadias rurais prolongadas, febre tifóide, hepatite A, consideração de raiva, sensibilização para dengue.</p><p><strong>Sul da Ásia — Índia, Nepal, Paquistão, Bangladesh</strong></p><p>Febre tifóide, hepatite A, avaliação de malária por região, planeamento de altitude para o Nepal, consideração de raiva.</p><p><strong>América Latina e Caraíbas</strong></p><p>Requisitos de febre amarela para determinados países, malária por região, febre tifóide, hepatite A, sensibilização para dengue.</p><p><strong>Oriente Médio e Norte de África</strong></p><p>Requisitos meningocócicos para peregrinos do Hajj e da Umra, febre tifóide, hepatite A, orientação específica por destino.</p><p><strong>Europa de Leste e Ásia Central</strong></p><p>Encefalite transmitida por carraças em zonas florestais, hepatite A, orientação específica por destino.</p><p><strong>América do Norte, Europa Ocidental, Austrália e Nova Zelândia</strong></p><p>Baixo risco infecioso — a consulta centra-se na gestão de condições crónicas, documentação médica para seguro de viagem e revisão da vacinação de rotina.</p><h2>Quem deve marcar esta consulta</h2><p><strong>Antes da viagem:</strong></p><ul><li>Qualquer pessoa que viaje para um destino com risco de malária — esta é a razão mais comum e importante para consultar um médico antes da viagem</li><li>Doentes com condições crónicas — diabetes, hipertensão, asma, condições de saúde mental — que necessitam de aconselhamento médico sobre a gestão da sua saúde no estrangeiro</li><li>Doentes que transportam medicação ou dispositivos médicos e que necessitam de documentação para alfândega ou seguros</li><li>Famílias que viajam com crianças para destinos de maior risco</li><li>Viajantes em negócios com viagens internacionais frequentes</li></ul><p><strong>Depois da viagem:</strong></p><ul><li>Viajantes que regressam com febre, sintomas gastrointestinais, afeções cutâneas ou outras preocupações após viagem a um destino de maior risco</li><li>Qualquer pessoa que tenha adoecido durante a viagem e queira avaliação clínica no regresso</li></ul><h2>Com quanta antecedência devo marcar</h2><p>O planeamento de saúde de viagem deve idealmente começar quatro a seis semanas antes da partida para a maioria dos destinos — para permitir tempo suficiente para a administração de vacinas e a conclusão de calendários de vacinação que requerem várias doses.</p><p>Para viajantes de última hora, marque assim que possível e o seu médico aconselha-o sobre o que é viável no tempo disponível e o que priorizar.</p>",
+      "ctaLabel": null,
+      "sortOrder": 140,
+      "durationMinutes": 15,
+      "basePriceCents": 4900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.265Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k3mk0005asjupoleeuhh",
+          "kind": "IMAGE",
+          "key": "media/cb6f35b4-6801-4c7c-8e7e-74d66076db21-es-medicina-viaje-online.png",
+          "path": "/api/media/media/cb6f35b4-6801-4c7c-8e7e-74d66076db21-es-medicina-viaje-online.png",
+          "altText": "Medicina de Viaje"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q7sp002wngjuf8xwqlst",
+          "question": "Preciso de antimaláricos — posso tratá-lo através deste serviço?",
+          "answer": "Sim. A avaliação de profilaxia antipalúdica é uma das principais razões para utilizar este serviço. O seu médico de família avalia o antipalúdico mais adequado para o seu destino, itinerário e perfil de saúde — e emite a documentação clínica diretamente. Você a apresenta em qualquer farmácia da sua escolha em Espanha.",
+          "sortOrder": 0,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q7sp002xngjudq0h1xte",
+          "question": "Posso obter o certificado de febre amarela através deste serviço?",
+          "answer": "Não. A vacinação contra a febre amarela e o Certificado Internacional de Vacinação devem ser administrados e emitidos presencialmente em um centro de vacinação autorizado. O seu médico informa sobre quais destinos exigem esta certificação e o encaminha ao centro autorizado apropriado na Espanha após a sua consulta.",
+          "sortOrder": 1,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q7sp002yngju4wna6or0",
+          "question": "Podem ser administradas vacinas durante a consulta?",
+          "answer": "Não. Este é um serviço de avaliação clínica e planejamento. A administração de vacinas requer uma visita presencial a um centro de vacinação. O seu médico orienta você sobre quais vacinas você precisa e onde ir — para que você chegue ao centro de vacinação com um plano claro.",
+          "sortOrder": 2,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q7sp002zngjuwfq5zxpf",
+          "question": "O que preciso levar para a minha consulta?",
+          "answer": "O seu itinerário de viagem, detalhes do destino, atividades planeadas, data de partida e qualquer registo de vacinação existente. Se tiver um boletim de vacinação de viagens anteriores, traga-o — o seu médico revê-o na íntegra.",
+          "sortOrder": 3,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q7sp0030ngju7smx2bs8",
+          "question": "Com quanta antecedência devo reservar?",
+          "answer": "Idealmente, quatro a seis semanas antes da partida. Para viagens de última hora, reserve o mais cedo possível — o seu médico aconselha-o sobre o que é viável.",
+          "sortOrder": 4,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q7sp0031ngju7wbaugco",
+          "question": "Posso usar este serviço se adoeci depois de viajar?",
+          "answer": "Sim. A avaliação pós-viagem está disponível. Se regressar de um destino de maior risco com sintomas — especialmente febre — marque consulta prontamente. Certas doenças tropicais requerem diagnóstico e tratamento precoces.",
+          "sortOrder": 5,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q7sp0032ngjuvz2duxb3",
+          "question": "Este serviço é adequado para famílias com crianças?",
+          "answer": "Sim. O planejamento de saúde de viagem para famílias com crianças é uma parte central deste serviço.",
+          "sortOrder": 6,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q7sp0033ngjuxsh1kzjw",
+          "question": "O médico pode emitir uma carta para a medicação que estou a tomar?",
+          "answer": "Sim. O seu médico emite uma carta resumo de saúde de viagem documentando a sua medicação, condições e dispositivos médicos — útil para alfândegas, autoridades sanitárias fronteiriças e requisitos das companhias aéreas.",
+          "sortOrder": 7,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q7sp0034ngju6kmo6of8",
+          "question": "Tenho diabetes — este serviço é relevante para mim?",
+          "answer": "Sim, especialmente. Gerir a diabetes durante a viagem — armazenamento de insulina, ajuste do fuso horário para a dosagem, considerações dietéticas e quando procurar atendimento no exterior — requer aconselhamento médico específico que um centro de vacinação não pode fornecer.",
+          "sortOrder": 8,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7q7sp0035ngju75nv52ww",
+          "question": "Preciso de seguro médico espanhol?",
+          "answer": "Não. É um serviço privado de pagamento direto. A documentação clínica emitida através deste serviço é dispensada ao preço privado integral independentemente do estado de seguro.",
+          "sortOrder": 9,
+          "resolvedLocale": "PT"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "PT",
+      "links": [
+        {
+          "id": "cmre7u68c005wg8juuxx04847",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Gestión de enfermedades crónicas durante el viaje?",
+          "body": "Si tu situación está relacionada con gestión de enfermedades crónicas durante el viaje, nuestra Enfermedades Crónicas te ofrece la evaluación adecuada.",
+          "ctaLabel": "Enfermedades Crónicas",
+          "targetSlug": "enfermedades-cronicas-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7u70f005yg8jufqnc34hd",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con fiebre u otros síntomas al regreso?",
+          "body": "Para fiebre u otros síntomas al regreso, consulta nuestra página de Consulta Médica General — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

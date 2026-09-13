@@ -1,3 +1,4 @@
+import { reviewedRomaniaTransaction } from "../../content/romania-clinical-review.js";
 import { Prisma, type LocaleCode } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { assertLocaleSupported } from "../shared/locale-support.js";
@@ -98,7 +99,7 @@ export async function replaceDoctorFaqs(doctorId: string, input: DoctorFaqsRepla
     const locales = Array.from(new Set(input.faqs.map((faq) => faq.locale)));
     await Promise.all(locales.map((locale) => assertLocaleSupported(doctor.countryId, locale)));
 
-    const saved = await prisma.$transaction(async (tx) => {
+    const saved = await reviewedRomaniaTransaction(prisma, async (tx) => {
       await tx.doctorFaq.deleteMany({ where: { doctorId } });
       if (input.faqs.length > 0) {
         await tx.doctorFaq.createMany({

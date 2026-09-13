@@ -39,7 +39,7 @@ async function resolve(country: string, lang: string) {
   const contact = getCountryContact(code);
   const about = getCountryAbout(code);
   if (!config || !contact || !about) return null;
-  const bundle = loadLocaleBundle(lang as LocaleCode);
+  const bundle = loadLocaleBundle(lang as LocaleCode, country);
   const t = bundle.company.careers;
   const aboutT = bundle.about.country as unknown as AboutCopyTemplates;
   const countryName = getCommonLocale(lang as LocaleCode).countryNames?.[code] ?? config.name;

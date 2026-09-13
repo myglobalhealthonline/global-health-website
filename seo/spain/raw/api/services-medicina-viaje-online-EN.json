@@ -1,0 +1,176 @@
+{
+  "endpoint": "/api/services/medicina-viaje-online?countryCode=es&locale=EN",
+  "checkedAt": "2026-09-13T02:29:57.766Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q7k0002vngju6v73lt8h",
+      "kind": "GENERAL",
+      "slug": "medicina-viaje-online",
+      "name": "Travel Health",
+      "summary": null,
+      "seoTitle": "Travel Health Online Spain | Malaria Prophylaxis | English Doctor",
+      "seoDescription": "Travelling from Spain to a malaria zone or higher-risk destination? Our OMC-registered GPs assess travel health risks and manage clinical documentation for malaria prophylaxis. Same-day appointments in English.",
+      "seoKeywords": [
+        "medicina de viaje online España",
+        "profilaxis malaria online España",
+        "médico viaje online España",
+        "vacunas viaje consulta España",
+        "travel health doctor Spain English"
+      ],
+      "heroTitle": "Travel Health Consultation — Medical Assessment Before You Go",
+      "heroDescription": "Travelling to a malaria zone, a destination with yellow fever requirements, or a region with significant infectious disease risk? A vaccination centre will administer your vaccines. But there are two things it cannot do: provide clinical documentation for malaria prophylaxis — which requires a doctor — and advise you on how to manage your specific health conditions, medications, and itinerary in the context of your trip. Our GPs, registered with the Spanish Medical Council (OMC — Organización Médica Colegial), offer pre-travel medical consultations by secure video call in English — providing the clinical assessment, malaria prophylaxis documentation, and personalised medical planning that a vaccination centre cannot. Same day, from anywhere in Spain.",
+      "detailBody": "<h2>What a Pre-Travel Medical Consultation Provides That a Vaccination Centre Cannot</h2><p>Travel vaccination centres administer vaccines — but they do not conduct structured medical assessments, cannot provide clinical documentation for malaria prophylaxis, and do not advise on managing chronic conditions during travel.</p><p><strong>Your pre-travel consultation covers:</strong></p><ul><li>Malaria prophylaxis — assessed and documented directly, with clinical documentation issued the same day. You cannot get this from a vaccination centre.</li><li>Personalised risk assessment — based on your specific destination, itinerary, accommodation type, planned activities, and health profile</li><li>Vaccination planning — advice on which vaccines are needed, which you may already be immune to, and the appropriate schedule given your departure date</li><li>Chronic condition management during travel — if you have diabetes, hypertension, asthma, or take regular medication, your GP advises on management during the trip, time zone adjustment, altitude considerations, and when to seek care abroad</li><li>Travel health documentation — medical letters for medication, medical devices, or travel insurance requirements</li><li>Post-travel assessment — if you return with symptoms from a higher-risk destination, your GP assesses in the context of your travel history</li></ul><p>After your consultation, your GP advises on where to go for vaccine administration in Spain — including authorised centres for yellow fever certification.</p><h2>Spain as Both Origin and Destination — A Unique Travel Health Context</h2><p>Spain is unique in the travel health context — simultaneously one of the largest sources of international travellers and one of the world's most visited tourist destinations.</p><p><strong>If you are travelling from Spain:</strong></p><p>This service provides comprehensive pre-travel medical assessment before your departure — malaria prophylaxis, vaccination planning, chronic condition management during travel.</p><p><strong>If you have arrived in Spain and become unwell:</strong></p><p>Traveller's illnesses — gastroenteritis, respiratory infections, skin reactions, post-travel fever — are common presentations among tourists and visitors. Your GP assesses your symptoms in the context of your travel history, with referral for specialist tropical medicine assessment where indicated.</p><p><strong>If you are passing through Spain and need to continue malaria prophylaxis:</strong></p><p>If you started an antimalarial regimen before arriving in Spain and need to continue the medication, your GP assesses your situation and issues appropriate clinical documentation where clinically indicated.</p><h2>What Your Consultation Includes</h2><p><strong>Destination and itinerary assessment</strong></p><p>Your GP reviews your destination, duration, itinerary, type of accommodation, and planned activities — including whether you will be in urban or rural areas, staying in hotels or camping, undertaking adventure activities, or visiting healthcare facilities.</p><p><strong>Malaria risk assessment and prophylaxis documentation</strong></p><p>For destinations with malaria risk, your GP assesses the most appropriate prophylaxis regimen based on your destination, itinerary, duration, and individual health profile — including any contraindications. Clinical documentation for the appropriate antimalarial is issued where clinically indicated.</p><p><strong>Vaccination planning</strong></p><p>Based on your destination and health profile, your GP advises on which vaccinations are recommended or required, which you may already have adequate immunity for, and the appropriate vaccination schedule given your departure date.</p><p><strong>Chronic condition management during travel</strong></p><p>Your GP advises on managing conditions such as diabetes, hypertension, asthma, or mental health conditions during travel — including medication quantities, time zones, altitude considerations, and when to seek medical care abroad.</p><p><strong>Travel health documentation</strong></p><p>Where clinically appropriate, your GP issues a travel health summary letter — useful for patients carrying medication, medical devices, or requiring health documentation for travel insurance or border control purposes.</p><p><strong>Post-travel assessment</strong></p><p>Returned from a higher-risk destination with symptoms? Your GP assesses fever, gastrointestinal symptoms, skin conditions, or other concerns in the context of your travel history — with referral for specialist tropical medicine assessment where indicated.</p><h2>A Note on Yellow Fever</h2><p>Yellow fever vaccination and the International Certificate of Vaccination — required for entry to certain countries — must be administered and issued in person at an authorised vaccination centre. This cannot be arranged through a telemedicine consultation.</p><p>In Spain, yellow fever vaccination is available at international health centres authorised by the regional Dirección de Salud Pública — in Madrid, Barcelona, and other major cities. Your GP advises on which destinations require yellow fever certification and directs you to the appropriate authorised centre after your consultation.</p><h2>Destinations Commonly Assessed</h2><p><strong>Sub-Saharan Africa</strong></p><p>High malaria risk zones, yellow fever requirements, typhoid, hepatitis A, rabies consideration for rural travel, meningococcal vaccination for specific regions.</p><p><strong>Southeast Asia</strong></p><p>Malaria risk in rural areas, Japanese encephalitis for extended rural stays, typhoid, hepatitis A, rabies consideration, dengue awareness.</p><p><strong>South Asia — India, Nepal, Pakistan, Bangladesh</strong></p><p>Typhoid, hepatitis A, malaria assessment by region, altitude planning for Nepal, rabies consideration.</p><p><strong>Latin America and Caribbean</strong></p><p>Yellow fever requirements for certain countries, malaria by region, typhoid, hepatitis A, dengue awareness.</p><p><strong>Middle East and North Africa</strong></p><p>Meningococcal requirements for Hajj and Umrah pilgrims, typhoid, hepatitis A, destination-specific guidance.</p><p><strong>Eastern Europe and Central Asia</strong></p><p>Tick-borne encephalitis in forested areas, hepatitis A, destination-specific guidance.</p><p><strong>North America, Western Europe, Australia, and New Zealand</strong></p><p>Low infectious risk — consultation focuses on chronic condition management, travel insurance health documentation, and routine vaccination review.</p><h2>Who Should Book This Consultation</h2><p><strong>Before travel:</strong></p><ul><li>Anyone travelling to a destination with malaria risk — the most common and most important reason to consult a GP before travel</li><li>Patients with chronic conditions who need medical advice on managing their health abroad</li><li>Patients carrying medication or medical devices who need documentation for customs or insurance</li><li>Families travelling with children to higher-risk destinations</li><li>Business travellers with frequent international travel</li></ul><p><strong>After travel:</strong></p><ul><li>Travellers returning with fever, gastrointestinal symptoms, skin conditions, or other concerns after travel to a higher-risk destination</li><li>Anyone who became unwell during travel and wants clinical assessment on return</li></ul><h2>How Far in Advance Should I Book</h2><p>Travel health planning should ideally begin four to six weeks before departure for most destinations — to allow sufficient time for vaccine administration and completion of vaccination schedules requiring multiple doses.</p><p>For last-minute travellers, book as soon as possible and your GP advises on what is achievable in the time available and what to prioritise.</p>",
+      "ctaLabel": null,
+      "sortOrder": 140,
+      "durationMinutes": 15,
+      "basePriceCents": 4900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.265Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k3mk0005asjupoleeuhh",
+          "kind": "IMAGE",
+          "key": "media/cb6f35b4-6801-4c7c-8e7e-74d66076db21-es-medicina-viaje-online.png",
+          "path": "/api/media/media/cb6f35b4-6801-4c7c-8e7e-74d66076db21-es-medicina-viaje-online.png",
+          "altText": "Medicina de Viaje"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q7sp002wngjuf8xwqlst",
+          "question": "I need antimalarials — can I manage it through this service?",
+          "answer": "Yes. The evaluation of antimalarial prophylaxis is one of the main reasons for using this service. Your primary care doctor evaluates the most appropriate antimalarial for your destination, itinerary, and health profile — and issues the clinical documentation directly. You present it at any pharmacy of your choice in Spain.",
+          "sortOrder": 0,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q7sp002xngjudq0h1xte",
+          "question": "Can I obtain the yellow fever certificate through this service?",
+          "answer": "No. Yellow fever vaccination and the International Certificate of Vaccination must be administered and issued in person at an authorized vaccination center. Your doctor advises you on which destinations require this certification and directs you to the appropriate authorized center in Spain after your consultation.",
+          "sortOrder": 1,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q7sp002yngju4wna6or0",
+          "question": "Can vaccines be administered during the consultation?",
+          "answer": "No. This is a clinical evaluation and planning service. Vaccine administration requires an in-person visit to a vaccination center. Your doctor advises you on which vaccines you need and where to go — so that you arrive at the vaccination center with a clear plan.",
+          "sortOrder": 2,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q7sp002zngjuwfq5zxpf",
+          "question": "What do I need to bring to my appointment?",
+          "answer": "Your travel itinerary, destination details, planned activities, departure date, and any existing vaccination records. If you have a vaccination card from previous trips, bring it — your doctor will review it in full.",
+          "sortOrder": 3,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q7sp0030ngju7smx2bs8",
+          "question": "How far in advance should I book?",
+          "answer": "Ideally four to six weeks before departure. For last-minute trips, book as soon as possible — your doctor will advise you on what is feasible.",
+          "sortOrder": 4,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q7sp0031ngju7wbaugco",
+          "question": "Can I use this service if I have become ill after traveling?",
+          "answer": "Yes. Post-travel evaluation is available. If you return from a higher-risk destination with symptoms — especially fever — book promptly. Certain tropical diseases require early diagnosis and treatment.",
+          "sortOrder": 5,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q7sp0032ngjuvz2duxb3",
+          "question": "Is this service suitable for families with children?",
+          "answer": "Yes. Travel health planning for families with children is a central part of this service.",
+          "sortOrder": 6,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q7sp0033ngjuxsh1kzjw",
+          "question": "Can the doctor issue a letter for the medication I am taking?",
+          "answer": "Yes. Your doctor issues a travel health summary letter documenting your medication, conditions, and medical devices — useful for customs, border health authorities, and airline requirements.",
+          "sortOrder": 7,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q7sp0034ngju6kmo6of8",
+          "question": "I have diabetes — is this service relevant to me?",
+          "answer": "Yes, especially. Managing diabetes during travel — insulin storage, time zone adjustment for dosing, dietary considerations, and when to seek care abroad — requires specific medical advice that a vaccination center cannot provide.",
+          "sortOrder": 8,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7q7sp0035ngju75nv52ww",
+          "question": "Do I need Spanish health insurance?",
+          "answer": "No. It is a private direct-pay service. The clinical documentation issued through this service is provided at the full private price regardless of insurance status.",
+          "sortOrder": 9,
+          "resolvedLocale": "EN"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "EN",
+      "links": [
+        {
+          "id": "cmre7u68c005wg8juuxx04847",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Gestión de enfermedades crónicas durante el viaje?",
+          "body": "Si tu situación está relacionada con gestión de enfermedades crónicas durante el viaje, nuestra Enfermedades Crónicas te ofrece la evaluación adecuada.",
+          "ctaLabel": "Enfermedades Crónicas",
+          "targetSlug": "enfermedades-cronicas-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7u70f005yg8jufqnc34hd",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con fiebre u otros síntomas al regreso?",
+          "body": "Para fiebre u otros síntomas al regreso, consulta nuestra página de Consulta Médica General — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

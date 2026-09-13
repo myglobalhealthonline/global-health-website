@@ -1,0 +1,20 @@
+{
+  "group": "service:trimiteri-si-investigatii",
+  "approvalSha256": "100be2a65da30c952c5bbe25a9700615ffaefd3269109edc5c19daf4143890a8",
+  "reviewerDoctorId": "cmrc4axni00rn01p2n3r2bopf",
+  "approvalEvidence": "owner-reported clinician approval in this task",
+  "appliedAt": "2026-09-12T23:01:40.420Z",
+  "alreadyApplied": false,
+  "operations": 35,
+  "publicVerified": true,
+  "afterSha256": "55a942f0aa28971cdfe85929229a79be2fb4278ff7143cd28cc288e030401ab3",
+  "publicVerifiedAt": "2026-09-12T23:01:42.529Z",
+  "verifiedUrls": [
+    "https://www.myglobalhealth.online/romania/cs/services/trimiteri-si-investigatii",
+    "https://www.myglobalhealth.online/romania/de/services/trimiteri-si-investigatii",
+    "https://www.myglobalhealth.online/romania/en/services/trimiteri-si-investigatii",
+    "https://www.myglobalhealth.online/romania/es/services/trimiteri-si-investigatii",
+    "https://www.myglobalhealth.online/romania/pt/services/trimiteri-si-investigatii",
+    "https://www.myglobalhealth.online/romania/ro/services/trimiteri-si-investigatii"
+  ]
+}

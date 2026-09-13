@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:08.249Z",
+  "endpoint": "/api/services/medic-pediatru-online?countryCode=ro&locale=DE",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee7fb000gfsjuxxgacs5y",
+      "kind": "GENERAL",
+      "slug": "medic-pediatru-online",
+      "name": "Allgemeine pädiatrische Beratung — online, am selben Tag",
+      "summary": "Ist Ihr Kind krank oder benötigen Sie schnell medizinischen Rat? Unsere autorisierten CMR-Ärzte bewerten die Symptome Ihres Kindes per sicherer Videoberatung und geben Ihnen klare Empfehlungen für die nächsten Schritte.",
+      "seoTitle": "Online-Kinderarztberatung | Rumänien | CMR-Arzt",
+      "seoDescription": "Schnelle kinderärztliche Konsultationen und medizinischer Rat für Kinder. Unsere von der CMR zugelassenen Ärzte beurteilen die Symptome des Kindes per gesicherter Videokonsultation und geben Ihnen klare Empfehlungen für die nächsten Schritte.",
+      "seoKeywords": [
+        "paediatric GP online Romania",
+        "children's doctor online Romania",
+        "paediatric consultation online Romania",
+        "online doctor child Romania",
+        "English paediatrician online Romania"
+      ],
+      "heroTitle": "Allgemeinmedizinische pädiatrische Konsultation — online, noch am selben Tag",
+      "heroDescription": "Schnelle kinderärztliche Beratungen und medizinische Beratung für Kinder. Unsere vom CMR autorisierten Ärzte beurteilen die Symptome des Kindes per sicherer Video-Konsultation und geben Ihnen klare Empfehlungen für die nächsten Schritte.",
+      "detailBody": "<p>Die allgemeinmedizinische Kinderkonsultation eignet sich für häufige Probleme wie Fieber, Husten, Halsschmerzen, Hautausschläge, Verdauungsbeschwerden, leichte Infektionen oder Fragen zum Verlauf einer bereits bekannten Erkrankung.</p><p>Der Arzt überprüft die Symptome, die relevante Vorgeschichte, die aktuelle Medikation und Warnzeichen. Sie erhalten Empfehlungen zur Behandlung zu Hause, Hinweise zur Überwachung und, falls erforderlich, eine Überweisung für weitere Untersuchungen oder eine dringende körperliche Untersuchung.</p><p>Der Service ist auch für Familien nützlich, die eine schnelle Zweitmeinung, Erklärungen zu medizinischen Ergebnissen oder Beratung dazu wünschen, wann der richtige Zeitpunkt ist, in die Notaufnahme, zum Kinderarzt oder zum Hausarzt zu gehen.</p>",
+      "ctaLabel": "Beratung vereinbaren",
+      "sortOrder": 40,
+      "durationMinutes": 15,
+      "basePriceCents": 18500,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:48.866Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8js5qj001makju0g2lhz5c",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee7fb000gfsjuxxgacs5y",
+          "path": "/api/media/media/0b172017-a1c5-4589-adb6-c371c7367581-0852ef25-d932-41fe-ae97-baad84b5612c-3.webp",
+          "altText": "Consultație pediatrică de medicină generală — online, în aceeași zi"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "DE",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

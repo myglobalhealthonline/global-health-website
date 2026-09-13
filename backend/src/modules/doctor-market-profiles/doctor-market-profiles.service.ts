@@ -1,3 +1,4 @@
+import { reviewedRomaniaTransaction } from "../../content/romania-clinical-review.js";
 import { Prisma, type LocaleCode } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { encryptPhi, decryptPhi } from "../../lib/crypto/phi-crypto.js";
@@ -6,7 +7,7 @@ import {
   maskIban,
   normalizeIban,
 } from "../../utils/iban.js";
-import { sanitizeRichHtml } from "../../utils/sanitize-html.js";
+import { sanitizeDoctorBio } from "../../utils/sanitize-html.js";
 import { assertLocaleSupported } from "../shared/locale-support.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import type {
@@ -194,7 +195,7 @@ export async function updateAdminDoctorMarket(
 ) {
   try {
     await assertLocales(countryId, input.translations?.map((entry) => entry.locale) ?? []);
-    const updated = await prisma.$transaction(async (tx) => {
+    const updated = await reviewedRomaniaTransaction(prisma, async (tx) => {
       const [doctor, country] = await Promise.all([
         tx.doctor.findUnique({ where: { id: doctorId }, select: { id: true, countryId: true } }),
         tx.country.findUnique({ where: { id: countryId }, select: { id: true, defaultLocale: true } }),
@@ -246,14 +247,14 @@ export async function updateAdminDoctorMarket(
               doctorCountryId: row.id,
               locale: entry.locale,
               title: entry.title ?? null,
-              bio: entry.bio == null ? null : sanitizeRichHtml(entry.bio),
+              bio: entry.bio == null ? null : sanitizeDoctorBio(entry.bio),
               seoTitle: entry.seoTitle ?? null,
               seoDescription: entry.seoDescription ?? null,
               seoKeywords: entry.seoKeywords,
             },
             update: {
               title: entry.title ?? null,
-              bio: entry.bio == null ? null : sanitizeRichHtml(entry.bio),
+              bio: entry.bio == null ? null : sanitizeDoctorBio(entry.bio),
               seoTitle: entry.seoTitle ?? null,
               seoDescription: entry.seoDescription ?? null,
               seoKeywords: entry.seoKeywords,

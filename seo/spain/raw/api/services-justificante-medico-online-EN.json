@@ -1,0 +1,152 @@
+{
+  "endpoint": "/api/services/justificante-medico-online?countryCode=es&locale=EN",
+  "checkedAt": "2026-09-13T02:29:57.770Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7pxza000angjubr3s2h65",
+      "kind": "GENERAL",
+      "slug": "justificante-medico-online",
+      "name": "Medical Certificate",
+      "summary": null,
+      "seoTitle": "Medical Certificate Online Spain | Sick Note | English Doctor",
+      "seoDescription": "Need a medical certificate or sick note in Spain today? Our OMC-registered doctors assess your symptoms by video call and issue private medical certificates where clinically justified. Same-day, in English.",
+      "seoKeywords": [
+        "justificante médico online España",
+        "certificado médico privado online España",
+        "justificante laboral médico online",
+        "certificado incapacidad laboral privado",
+        "baja médica privada online España"
+      ],
+      "heroTitle": "Medical Certificate in Spain — Online Assessment, Same Day",
+      "heroDescription": "Feeling too unwell to work while in Spain and need a medical certificate today? Our doctors, registered with the Spanish Medical Council (OMC — Organización Médica Colegial), assess your symptoms by secure video call and — where your clinical presentation justifies it — issue a private medical certificate the same day. No waiting room. No need to travel to a clinic when you are already unwell. Available anywhere in Spain, in English.",
+      "detailBody": "<h2>How Sick Leave Works in Spain — What Expats and Tourists Need to Know</h2><p>Spain's sick leave system has two distinct tracks. Understanding the difference helps you know what this service can and cannot provide.</p><p><strong>Public system sick leave (Incapacidad Temporal — IT)</strong></p><p>Official sick leave certification in Spain's public system is issued by a doctor contracted with the SNS. It is automatically communicated to Social Security and the employer. Workers may be entitled to economic benefit from INSS from day four of sick leave. Access requires registration with a public GP — which many expats and international residents do not have.</p><p>Global Health does not issue public system IT certificates. These require a doctor contracted with the Spanish public health system.</p><p><strong>Private medical certificate</strong></p><p>A private medical certificate issued by an OMC-registered doctor is a clinical document that certifies the patient was assessed and presents a health condition incompatible with work activity on the date of consultation. This certificate:</p><ul><li>Is issued exclusively at the doctor's clinical discretion following full assessment</li><li>Is accepted by most Spanish employers to justify short-term absences</li><li>Is particularly useful for self-employed workers and freelancers</li><li>Can serve as clinical documentation if you later pursue formal IT certification through the public system</li><li>Is legally valid as a clinical document issued by a registered physician</li></ul><h2>Who This Service Is For</h2><p><strong>Employees without a registered Spanish GP</strong></p><p>You are ill and need documentation for your employer today — but you are not registered with a public GP. Most employers accept private medical certificates for short-term absences, particularly when you have not yet been able to get a public system appointment.</p><p><strong>Expats and international residents</strong></p><p>You are registered in Spain but either have not yet been assigned a public GP or cannot get an appointment quickly enough. Your employer requires documentation and you need it today.</p><p><strong>Self-employed workers and freelancers</strong></p><p>As a self-employed worker in Spain, your sick leave pathway differs from employed workers. A private medical certificate documents your health situation and can support claims through your mutua colaboradora. Your doctor advises on the appropriate pathway for your specific situation.</p><p><strong>Tourists and short-stay visitors</strong></p><p>You have fallen ill during your visit to Spain and need clinical documentation — for your employer at home, your travel insurance, or other purposes. Our doctors assess your symptoms and issue a medical certificate where clinically justified.</p><h2>What Your Consultation Includes</h2><p><strong>Full clinical assessment</strong></p><p>Your doctor takes a complete history of your symptoms — onset, duration, severity, associated symptoms, relevant medical history, current medications, and the nature of your work activity. The assessment is clinical and structured — not an administrative formality.</p><p><strong>Assessment of incapacity for work</strong></p><p>Your doctor assesses whether your clinical presentation is compatible or incompatible with your work activity, what type of documentation is clinically appropriate for your situation, and whether you should pursue formal IT certification through the public system or your mutua.</p><p><strong>Private medical certificate — at the doctor's clinical discretion</strong></p><p>If your doctor determines that your clinical situation justifies issuing a certificate of temporary incapacity for work, this is issued the same day. The certificate documents the date of assessment, symptoms, clinical assessment, and incompatibility with work activity — without specifying diagnosis if you prefer this for privacy reasons.</p><p><strong>Additional clinical documentation — at the doctor's discretion</strong></p><p>If your illness requires treatment — including management of infections where clinically indicated — your doctor issues the appropriate clinical documentation the same day.</p><p><strong>Guidance on the public system pathway</strong></p><p>If your clinical situation suggests you need formal IT certification through the public system or your mutua, your doctor advises clearly on the steps to take.</p><h2>What This Service Cannot Do</h2><p>Transparency is part of clinical quality. Some things this service cannot provide:</p><ul><li>We do not issue public system IT certificates — these require a doctor contracted with the Spanish public health system</li><li>We do not issue documentation without clinical assessment — the medical certificate is issued exclusively at the doctor's discretion following full assessment of your symptoms</li><li>We do not issue retroactive certificates — our doctors cannot clinically certify a period of illness they did not assess at the time</li><li>We do not guarantee the certificate — the decision is exclusively clinical, based on the medical assessment</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 20,
+      "durationMinutes": 15,
+      "basePriceCents": 3500,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.258Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k1xj0004asju4irm8wql",
+          "kind": "IMAGE",
+          "key": "media/777fd6c2-3350-4635-805b-7f2a97e4d03b-es-justificante-medico-online.png",
+          "path": "/api/media/media/777fd6c2-3350-4635-805b-7f2a97e4d03b-es-justificante-medico-online.png",
+          "altText": "Justificante Médico"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7py7l000bngjuh4k0yxty",
+          "question": "Does a private medical certificate have legal validity?",
+          "answer": "Yes. A private medical certificate issued by a licensed physician has full legal validity as a clinical document. Most employers accept it to justify work absences, especially short-term ones. For the economic benefit for temporary disability from Social Security, the official sick note from the SNS or the mutual insurance company is required.",
+          "sortOrder": 0,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7py7l000cngjuz5lrqajb",
+          "question": "Can I use this service if I am self-employed?",
+          "answer": "Yes. Self-employed workers do not have access to the same sick leave process as salaried employees. The private medical certificate clinically documents your health condition. If you contribute for common contingencies, check with your collaborating mutual insurance provider on how to manage sick leave — the doctor can guide you.",
+          "sortOrder": 1,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7py7l000dngjum1ra5ggc",
+          "question": "Does the certificate specify the diagnosis?",
+          "answer": "The certificate documents the clinical evaluation and the assessment of temporary incapacity for work. If you prefer that the specific diagnosis not appear — for privacy reasons — mention it to the doctor at the start of the consultation.",
+          "sortOrder": 2,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7py7l000engjuvjco7xgn",
+          "question": "Can I obtain a retroactive certificate?",
+          "answer": "Not routinely. Our doctors cannot clinically certify a period of illness that they did not evaluate at the time. If you have been sick for days, mention it at the start of the consultation.",
+          "sortOrder": 3,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7py7l000fngju21c0z9ru",
+          "question": "Does my company have to accept the private medical certificate?",
+          "answer": "The legal obligation depends on the collective bargaining agreement and the internal policy of each company. In general, most employers accept private medical certificates for short-term absences.",
+          "sortOrder": 4,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7py7l000gngjudzsuritr",
+          "question": "Can I make a reservation if I have been sick for several days?",
+          "answer": "Yes — but mention from the start of the consultation how many days you have had symptoms. The doctor will assess your current clinical situation and advise you on the most appropriate documentation for your case.",
+          "sortOrder": 5,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7py7l000hngju4bk1dhmr",
+          "question": "Can I use this service from anywhere in Spain?",
+          "answer": "Yes — including the Balearic Islands, the Canary Islands, Ceuta and Melilla. You only need a stable internet connection and a device with a camera.",
+          "sortOrder": 6,
+          "resolvedLocale": "EN"
+        },
+        {
+          "id": "cmre7py7l000ingjulnv8ul2q",
+          "question": "What languages is it available in?",
+          "answer": "Spanish, English and Portuguese — depending on the doctor’s availability.",
+          "sortOrder": 7,
+          "resolvedLocale": "EN"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "EN",
+      "links": [
+        {
+          "id": "cmre7u8km0060g8juez35zzdi",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Consulta médica general con médico de cabecera?",
+          "body": "Si tu situación está relacionada con consulta médica general con médico de cabecera, nuestra Consulta Médica General te ofrece la evaluación adecuada.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

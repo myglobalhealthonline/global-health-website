@@ -1,0 +1,176 @@
+{
+  "endpoint": "/api/services/control-peso-online?countryCode=es&locale=RO",
+  "checkedAt": "2026-09-13T02:30:07.166Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q038000ungjuxs5rkyxy",
+      "kind": "GENERAL",
+      "slug": "control-peso-online",
+      "name": "Controlul greutății",
+      "summary": null,
+      "seoTitle": "Controlul Greutății Online Spania | Evaluare Medicală | Medic autorizat",
+      "seoDescription": "Ai dificultăți în a slăbi în ciuda dietei și exercițiilor fizice? Medicii noștri acreditați evaluează factorii medicali și metabolici din spatele greutății tale prin apel video. Evaluare clinică în aceeași zi în Spania.",
+      "seoKeywords": [
+        "control de peso online España",
+        "médico obesidad online España",
+        "consulta pérdida de peso médica España",
+        "evaluación metabólica online España",
+        "médico adelgazar online España"
+      ],
+      "heroTitle": "Controlul greutății — Evaluare medicală și plan personalizat online",
+      "heroDescription": "Încerci de ceva timp să slăbești prin dietă și exerciții fizice fără rezultate durabile? Pentru majoritatea persoanelor care nu reușesc să-și controleze greutatea, există factori medicali, hormonali și metabolici subiacenți pe care niciun plan dietetic generic nu îi abordează — deoarece necesită evaluare clinică, nu doar restricție calorică. Medicii noștri, înscriși în registru conform cerințelor Organizației Medicale Colegiale (OMC), oferă evaluări medicale pentru controlul greutății prin videoconferință securizată — identificând factorii clinici care contribuie la greutatea ta, elaborând un plan de gestionare personalizat și oferind supravegherea medicală care face posibilă o schimbare durabilă. În aceeași zi, din orice punct al Spaniei, în spaniolă, engleză sau portugheză. Acesta nu este un program de dietă. Este îngrijire medicală, oferită de medici, pentru o afecțiune medicală.",
+      "detailBody": "<h2>Pentru cine este acest serviciu</h2><p>Această consultație este potrivită pentru adulții care:</p><ul><li>Au dificultăți în a pierde în greutate în ciuda schimbărilor în dietă și stilul de viață</li><li>Au un IMC de 25 sau mai mare și caută sprijin medical structurat</li><li>Au afecțiuni legate de greutate — inclusiv prediabet, rezistență la insulină, hipertensiune arterială sau SOP — care contribuie la greutatea lor sau o complică</li><li>Vorb să înțeleagă dacă pot fi candidați pentru abordări medicale de control al greutății după o evaluare clinică</li><li>Au încercat abordări dietetice și de exerciții fizice fără rezultate durabile</li><li>Vorb monitorizare medicală continuă a sănătății lor metabolice împreună cu controlul greutății</li><li>Sunt expați sau rezidenți internaționali în Spania care doresc sprijin pentru controlul greutății în engleză sau portugheză</li></ul><h2>De ce supravegherea medicală face diferența</h2><p>Majoritatea încercărilor de control al greutății eșuează nu din lipsă de efort, ci pentru că nu abordează tabloul clinic subiacent. Dezechilibrul hormonal, rezistența la insulină, efectele secundare ale medicamentelor, tulburările de somn și disfuncția metabolică contribuie la creșterea în greutate în moduri pe care dieta și exercițiile fizice singure nu le pot rezolva.</p><p>În mod specific:</p><ul><li>Rezistența la insulină face ca organismul să stocheze grăsime independent de deficitul caloric</li><li>Hipotiroidismul încetinește metabolismul — adesea semnificativ — independent de dietă</li><li>SOP afectează echilibrul hormonal și face pierderea în greutate cu adevărat mai dificilă</li><li>Dereglarea cortizolului afectează modul în care organismul distribuie grăsimea</li><li>Efectele secundare ale medicamentelor — antidepresive, antipsihotice, corticosteroizi, beta-blocante — pot cauza o creștere semnificativă în greutate ca efect farmacologic direct</li></ul><p>O dietă care ignoră acești factori va eșua — nu din lipsă de efort, ci pentru că rezolvă problema greșită. Evaluarea medicală identifică cauzele specifice și propune un plan care lucrează cu biologia ta.</p><h2>Ce include consultația</h2><p><strong>Evaluare medicală completă</strong></p><p>Medicul îți analizează istoricul medical, medicația actuală, factorii de risc metabolic, profilul hormonal, tiparele alimentare, activitatea fizică, calitatea somnului, nivelurile de stres și încercările anterioare de control al greutății — construind o imagine clinică completă a factorilor care contribuie la greutatea ta.</p><p><strong>Identificarea cauzelor subiacente</strong></p><p>Medicul evaluează factorii hormonali — inclusiv disfuncția tiroidiană, rezistența la insulină, SOP și dereglarea cortizolului — factorii metabolici, creșterea în greutate legată de medicamente și elementele de stil de viață care interacționează cu biologia ta.</p><p><strong>Plan personalizat de control al greutății</strong></p><p>Pe baza evaluării, medicul elaborează un plan structurat și bazat pe dovezi, adaptat la IMC-ul tău, starea de sănătate, stilul de viață și obiectivele pe termen lung — inclusiv strategie nutrițională, abordare comportamentală, optimizarea sănătății metabolice și recomandări clinice la discreția medicului.</p><p><strong>Evaluare pentru abordări medicale de control al greutății</strong></p><p>Pentru pacienții care îndeplinesc criteriile clinice, medicul evaluează adecvarea abordărilor medicale de control al greutății bazate pe dovezi ca parte a unei evaluări clinice complete. Adecvarea este determinată de criterii clinice — IMC, comorbidități legate de greutate, istoricul tratamentelor anterioare, contraindicații și starea generală de sănătate — nu de preferința pacientului.</p><p>Nicio abordare medicală specifică nu poate fi confirmată sau inițiată înainte de o evaluare clinică completă. Deciziile clinice aparțin exclusiv medicului după evaluarea individuală completă.</p><p><strong>Solicitarea analizelor atunci când este indicat</strong></p><p>Atunci când analizele de sânge sunt indicate clinic — funcția tiroidiană, glicemia à jeun, HbA1c, profil hormonal, panel lipidic — medicul le solicită în aceeași zi.</p><p><strong>Documentație clinică — la discreția medicului</strong></p><p>Atunci când este indicat clinic, medicul emite documentația clinică corespunzătoare, valabilă în orice farmacie spaniolă.</p><p><strong>Monitorizare continuă</strong></p><p>Controlul greutății este un proces clinic pe termen lung. Consultațiile de urmărire sunt disponibile pentru a monitoriza progresul, a revizui răspunsul la plan și a-l ajusta.</p><h2>Afectiuni evaluate în mod obișnuit</h2><p><strong>Metabolice</strong></p><ul><li>Exces ponderal și obezitate — IMC 25 și peste</li><li>Rezistență la insulină și prediabet</li><li>Diabet zaharat de tip 2 — controlul greutății ca parte a managementului metabolic</li><li>Sindrom metabolic</li><li>Colesterol crescut și trigliceride</li></ul><p><strong>Hormonale</strong></p><ul><li>Sindromul ovarelor polichistice (SOP)</li><li>Hipotiroidism asociat cu creștere în greutate</li><li>Dereglarea cortizolului și creștere în greutate legată de stres</li><li>Schimbări metabolice asociate menopauzei</li></ul><p><strong>Cardiovasculare</strong></p><ul><li>Hipertensiune arterială asociată cu excesul de greutate</li><li>Reducerea riscului cardiovascular prin controlul greutății</li></ul><p><strong>Altele</strong></p><ul><li>Boala ficatului gras non-alcoolic</li><li>Apnee obstructivă în somn</li><li>Durere articulară legată de excesul de greutate</li><li>Preocupări legate de fertilitate asociate cu greutatea și statusul hormonal</li></ul><h2>Controlul greutății în Spania — contextul pieței</h2><p>Conform datelor Ministerului Sănătății, peste 53% din populația adultă spaniolă are exces ponderal sau obezitate. În ciuda acestui fapt, accesul la îngrijire medicală structurată pentru controlul greutății în sistemul public este limitat, cu timpi de așteptare lungi pentru endocrinologie și nutriție clinică.</p><p>În sectorul privat, serviciile de control al greutății sunt disponibile, dar concentrate în marile orașe și cu costuri ridicate. Pentru rezidenții din afara Madridului, Barcelonei, Valenciei sau Sevillei, sau pentru rezidenții internaționali care preferă îngrijire în engleză sau portugheză, accesul la evaluare medicală pentru controlul greutății este într-adevăr limitat.</p><p>Serviciul nostru oferă evaluare medicală completă pentru controlul greutății prin apel video — în aceeași zi, din orice punct al Spaniei — cu trimitere și coordonare atunci când este necesară o evaluare specializată în persoană.</p>",
+      "ctaLabel": null,
+      "sortOrder": 100,
+      "durationMinutes": 15,
+      "basePriceCents": 4500,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.263Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0t0q30009y8ju276szwsb",
+          "kind": "IMAGE",
+          "key": "media/432ee906-4985-4c72-b84b-137af1dd639f-es-control-peso-online.png",
+          "path": "/api/media/media/432ee906-4985-4c72-b84b-137af1dd639f-es-control-peso-online.png",
+          "altText": "Control de Peso"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q0bs000vngjudwpi6at6",
+          "question": "Este acesta un program de dietă sau un serviciu medical?",
+          "answer": "Este un serviciu medical. Medicii noștri efectuează o evaluare clinică completă a factorilor medicali, hormonali și metabolici care contribuie la greutatea ta și elaborează un plan de gestionare personalizat bazat pe constatările clinice. Nu este un plan dietetic, un program de înlocuire a meselor sau un serviciu de antrenament fizic.",
+          "sortOrder": 0,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q0bs000wngju74c003jy",
+          "question": "Pot accesa abordări medicale de control al greutății prin acest serviciu?",
+          "answer": "Abordările medicale de control al greutății pot fi adecvate după o evaluare clinică completă. Adecvarea se stabilește pe baza criteriilor clinice — inclusiv IMC, afecțiuni asociate greutății, contraindicații și starea generală de sănătate — iar decizia este luată exclusiv de medic după o evaluare completă. Nicio abordare specifică nu poate fi confirmată sau inițiată înainte de consultație.",
+          "sortOrder": 1,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q0bs000xngjukmv072u8",
+          "question": "Ce analize de sânge ar putea fi necesare?",
+          "answer": "În funcție de prezentarea ta clinică, medicul poate solicita funcția tiroidiană, glicemia à jeun, HbA1c, profilul hormonal și panelul lipidic ca parte a evaluării. Solicitările de analize pot fi coordonate în cadrul aceleiași consultații.",
+          "sortOrder": 2,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q0bs000yngjufneft7mk",
+          "question": "De câte consultații voi avea nevoie?",
+          "answer": "Depinde de tabloul tău clinic individual. O consultație inițială stabilește valoarea de referință și planul de gestionare. Consultațiile de urmărire monitorizează progresul și ajustează planul. Medicul tău îți oferă sfaturi cu privire la programul adecvat de reevaluare.",
+          "sortOrder": 3,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q0bs000zngjur97y4fne",
+          "question": "Am nevoie de asigurare medicală spaniolă?",
+          "answer": "Nu. Este un serviciu privat cu plată directă. Documentația clinică emisă prin acest serviciu se eliberează la tariful privat integral, indiferent de statutul de asigurare.",
+          "sortOrder": 4,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q0bs0010ngjuuyulo82h",
+          "question": "Este acest serviciu potrivit pentru adolescenți?",
+          "answer": "Evaluările de control al greutății sunt în principal pentru adulți. Pentru preocupările legate de greutate la adolescenți, medicul oferă consiliere privind trimiterea adecvată.",
+          "sortOrder": 5,
+          "resolvedLocale": "RO"
+        },
+        {
+          "id": "cmre7q0bs0011ngju027kdzlc",
+          "question": "Pot folosi acest serviciu din orice punct din Spania?",
+          "answer": "Da — inclusiv Insulele Baleare, Insulele Canare, Ceuta și Melilla. Ai nevoie doar de o conexiune stabilă la internet și de un dispozitiv cu cameră.",
+          "sortOrder": 6,
+          "resolvedLocale": "RO"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "RO",
+      "links": [
+        {
+          "id": "cmre7rx2m0014g8ju027humsq",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre riesgo cardiovascular y síndrome metabólico?",
+          "body": "Nuestra Cardiología Especialista está pensada específicamente para riesgo cardiovascular y síndrome metabólico.",
+          "ctaLabel": "Cardiología Especialista",
+          "targetSlug": "cardiologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7rt62000ug8juculvj6yw",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Desequilibrio hormonal que afecta al peso?",
+          "body": "Si tu situación está relacionada con desequilibrio hormonal que afecta al peso, nuestra Salud Femenina te ofrece la evaluación adecuada.",
+          "ctaLabel": "Salud Femenina",
+          "targetSlug": "salud-femenina-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7rty7000wg8juypb9b6v2",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con déficit de testosterona y aumento de peso?",
+          "body": "Para déficit de testosterona y aumento de peso, consulta nuestra página de Salud Masculina — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Salud Masculina",
+          "targetSlug": "salud-masculina-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7ruqb000yg8juizews9yt",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre caída del cabello de base hormonal o metabólica?",
+          "body": "Nuestra Caída del Cabello está pensada específicamente para caída del cabello de base hormonal o metabólica.",
+          "ctaLabel": "Caída del Cabello",
+          "targetSlug": "caida-cabello-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdpz5n3001z01rukg2lecs5",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

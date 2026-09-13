@@ -1,0 +1,152 @@
+{
+  "endpoint": "/api/services/justificante-medico-online?countryCode=es&locale=CS",
+  "checkedAt": "2026-09-13T02:29:51.920Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7pxza000angjubr3s2h65",
+      "kind": "GENERAL",
+      "slug": "justificante-medico-online",
+      "name": "Lékařské potvrzení",
+      "summary": null,
+      "seoTitle": "Lékařské potvrzení online Španělsko | Soukromé lékařské potvrzení | Týž den",
+      "seoDescription": "Potřebujete lékařské potvrzení nebo potvrzení o pracovní neschopnosti? Naši licencovaní lékaři vyhodnotí vaše příznaky prostřednictvím videohovoru a vystaví klinickou dokumentaci tam, kde je to z lékařského hlediska odůvodněné. Tentýž den.",
+      "seoKeywords": [
+        "justificante médico online España",
+        "certificado médico privado online España",
+        "justificante laboral médico online",
+        "certificado incapacidad laboral privado",
+        "baja médica privada online España"
+      ],
+      "heroTitle": "Online lékařské potvrzení — soukromý klinický certifikát tentýž den",
+      "heroDescription": "Jste nemocní a nemůžete pracovat. Potřebujete lékařský dokument, který to potvrdí — dnes, bez cestování, bez čekání v čekárně, když vám už je špatně. Naši lékaři, registrovaní v souladu s požadavky Organizace lékařské komory (OMC), posoudí vaše příznaky prostřednictvím bezpečné videohovoru a vydají soukromé lékařské potvrzení, kde to klinická situace odůvodňuje. Ve stejný den, odkudkoli ve Španělsku, ve španělštině, angličtině nebo portugalštině.",
+      "detailBody": "<h2>Soukromé lékařské potvrzení vs. neschopenka z veřejného systému — co je co</h2><p>Pochopení rozdílu předchází frustraci a umožňuje vám přesně vědět, co můžete prostřednictvím této služby získat.</p><p><strong>Potvrzení o pracovní neschopnosti (IT) z veřejného systému</strong></p><p>Oficiální potvrzení o pracovní neschopnosti z veřejného systému vystavuje praktický lékař nebo lékař pohotovosti SNS. Je elektronicky odesíláno Sociální pojišťovně a zaměstnavateli. Zaměstnanec může mít nárok na finanční dávku od INSS od čtvrtého dne pracovní neschopnosti — přičemž první tři dny hradí zaměstnavatel u standardních pracovních smluv.</p><p>Global Health nevystavuje potvrzení o pracovní neschopnosti SNS. Ta vyžadují lékaře smluvně zapojeného do veřejného systému.</p><p><strong>Soukromé lékařské potvrzení</strong></p><p>Soukromé lékařské potvrzení je klinický dokument vystavený registrovaným lékařem, který potvrzuje, že pacient byl vyšetřen a má zdravotní stav neslučitelný s pracovní činností v den konzultace. Toto potvrzení:</p><ul><li>Je vystaveno výhradně podle klinického úsudku lékaře po úplném vyšetření</li><li>Je platné jako doklad pro zaměstnavatele pro omluvu pracovní absence</li><li>Je zvláště užitečné pro osoby samostatně výdělečně činné a OSVČ</li><li>Slouží jako podpůrná klinická dokumentace, pokud později navštívíte svého praktického lékaře kvůli vyřízení IT z veřejného systému</li><li>Je přijímáno většinou zaměstnavatelů k omluvení absence, zejména v prvních dnech</li></ul><p>Jste osoba samostatně výdělečně činná nebo OSVČ? Pokud odvádíte pojistné na běžná rizika, máte nárok na dávku při IT — ale je spravována prostřednictvím vaší spolupracující vzájemné pojišťovny. Soukromé lékařské potvrzení vám může sloužit jako úvodní dokumentace. Poraďte se o své konkrétní situaci se svým lékařem na začátku konzultace.</p><h2>Kdy je tato služba užitečná</h2><p><strong>Pro zaměstnance v pracovním poměru</strong></p><p>Jste nemocní první dny a potřebujete lékařský dokument, který omluví vaši nepřítomnost u zaměstnavatele. Mnoho zaměstnavatelů přijímá soukromá lékařská potvrzení pro krátkodobé absence — zejména když jste si ještě nemohli zajistit termín u svého praktického lékaře SNS. Váš lékař může navíc posoudit, zda vaše situace vyžaduje, abyste si vyžádali oficiální potvrzení o pracovní neschopnosti prostřednictvím veřejného systému.</p><p><strong>Pro osoby samostatně výdělečně činné</strong></p><p>Jako osoba samostatně výdělečně činná nemáte přiřazeného praktického lékaře ve stejném smyslu jako zaměstnanec v pracovním poměru a správa IT je odlišná. Soukromé lékařské potvrzení klinicky dokumentuje váš zdravotní stav pro záznamy, které potřebujete vést, a může sloužit jako podpora vůči klientům nebo spolupracovníkům.</p><p><strong>Pro pracovníky s vzájemnou pojišťovnou</strong></p><p>Pokud má vaše společnost spolupracující vzájemnou pojišťovnu se Sociálním zabezpečením, soukromé lékařské potvrzení může sloužit jako předběžná dokumentace, zatímco vyřizujete pracovní neschopnost prostřednictvím vzájemné pojišťovny.</p><p><strong>Pro ty, kteří potřebují rychlou klinickou dokumentaci</strong></p><p>Pokud potřebujete dnes klinicky doložit svůj zdravotní stav — pro jakýkoli pracovní, akademický nebo administrativní účel — a nemůžete čekat na termín ve veřejném systému, tato služba nabízí úplné klinické vyšetření a potvrzení tam, kde je to z lékařského hlediska odůvodněné.</p><h2>Co konzultace zahrnuje</h2><p><strong>Kompletní klinické vyšetření</strong></p><p>Lékař odebere úplnou anamnézu vašich příznaků — začátek, trvání, intenzita, přidružené příznaky, relevantní anamnéza, aktuální medikace a povaha vaší pracovní činnosti. Vyšetření je klinické a strukturované — nikoli formální úkon.</p><p><strong>Posouzení pracovní neschopnosti</strong></p><p>Lékař posoudí, zda je klinický stav slučitelný nebo neslučitelný s pracovní činností, jaký typ dokumentace je pro váš případ z klinického hlediska vhodný, a zda je vhodné, abyste navštívili veřejný systém kvůli vyřízení formální IT.</p><p><strong>Soukromé lékařské potvrzení — podle klinického úsudku lékaře</strong></p><p>Pokud lékař určí, že váš klinický stav odůvodňuje vystavení lékařského potvrzení o dočasné pracovní neschopnosti, vystaví jej tentýž den konzultace. Potvrzení dokumentuje datum vyšetření, příznaky, klinické posouzení a neslučitelnost s pracovní činností — bez uvedení diagnózy, pokud si to pacient nepřeje.</p><p><strong>Dodatečná klinická dokumentace — podle úsudku lékaře</strong></p><p>Pokud vaše onemocnění vyžaduje léčbu — včetně řešení infekcí, kde je to klinicky indikováno — lékař vystaví příslušnou klinickou dokumentaci tentýž den.</p><p><strong>Nasměrování na veřejnou cestu</strong></p><p>Pokud váš klinický stav naznačuje, že potřebujete vyřídit formální IT prostřednictvím veřejného systému nebo své vzájemné pojišťovny, lékař vás jasně provede dalšími kroky.</p><h2>Co tato služba nemůže dělat</h2><p>Transparentnost je součástí klinické kvality. Jsou věci, které tato služba nemůže poskytnout:</p><ul><li>Nevystavujeme potvrzení o pracovní neschopnosti SNS — ta vyžadují lékaře smluvně zapojeného do veřejného systému</li><li>Nevystavujeme dokumentaci bez klinického vyšetření — lékařské potvrzení se vystavuje výhradně podle úsudku lékaře po úplném vyšetření příznaků</li><li>Nevystavujeme zpětně datovaná potvrzení — naši lékaři nemohou klinicky potvrdit období nemoci, které v dané době nevyšetřili. Pokud jste několik dní nemocní bez konzultace, uveďte to na začátku konzultace — lékař vám poradí, co je vhodné</li><li>Neposkytujeme záruku vystavení potvrzení — rozhodnutí je výhradně klinické a vychází z lékařského vyšetření</li></ul><h2>Důležité informace před rezervací</h2><ul><li>Rozhodnutí o vystavení lékařského potvrzení je vždy klinickým rozhodnutím lékaře po úplném vyšetření — nelze je předem potvrdit ani zaručit</li><li>Zpětně datovaná potvrzení se nevystavují rutinně — pokud jste několik dní nemocní a nevyhledali jste žádného lékaře, uveďte to na začátku konzultace</li><li>Pokud váš klinický stav vyžaduje vyřízení formální IT z veřejného systému, lékař vám poradí, jak postupovat</li><li>Připravte si informace o typu vaší smlouvy nebo pracovním postavení — pomůže to lékaři poradit vám s nejvhodnější dokumentací pro váš případ</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 20,
+      "durationMinutes": 15,
+      "basePriceCents": 3500,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.258Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0k1xj0004asju4irm8wql",
+          "kind": "IMAGE",
+          "key": "media/777fd6c2-3350-4635-805b-7f2a97e4d03b-es-justificante-medico-online.png",
+          "path": "/api/media/media/777fd6c2-3350-4635-805b-7f2a97e4d03b-es-justificante-medico-online.png",
+          "altText": "Justificante Médico"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7py7l000bngjuh4k0yxty",
+          "question": "Má soukromé lékařské potvrzení právní platnost?",
+          "answer": "Ano. Soukromé lékařské potvrzení vystavené lékařem s licencí má plnou právní platnost jako klinický dokument. Většina zaměstnavatelů jej akceptuje k omluvení pracovní nepřítomnosti, zejména krátkodobé. Pro peněžitou dávku při dočasné pracovní neschopnosti od Sociálního zabezpečení je nezbytné úřední potvrzení o pracovní neschopnosti od SNS nebo vzájemné pojišťovny.",
+          "sortOrder": 0,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7py7l000cngjuz5lrqajb",
+          "question": "Mohu tento službu používat, pokud jsem OSVČ?",
+          "answer": "Ano. Osoby samostatně výdělečně činné nemají přístup ke stejnému režimu pracovní neschopnosti jako zaměstnanci v pracovním poměru. Soukromé lékařské potvrzení klinicky dokládá váš zdravotní stav. Pokud platíte pojistné na běžná rizika, obraťte se na svou spolupracující vzájemnou pojišťovnu ohledně toho, jak postupovat při pracovní neschopnosti — lékař vám může poskytnout doporučení.",
+          "sortOrder": 1,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7py7l000dngjum1ra5ggc",
+          "question": "Uvádí certifikát diagnózu?",
+          "answer": "Certifikát dokumentuje klinické vyšetření a posouzení dočasné pracovní neschopnosti. Pokud si nepřejete, aby byla uvedena konkrétní diagnóza — z důvodu soukromí — sdělte to lékaři na začátku konzultace.",
+          "sortOrder": 2,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7py7l000engjuvjco7xgn",
+          "question": "Mohu získat zpětně vystavené potvrzení?",
+          "answer": "Ne rutinně. Naši lékaři nemohou klinicky potvrdit období nemoci, které tehdy nevyhodnotili. Pokud jsi nemocný už několik dní, uveď to na začátku konzultace.",
+          "sortOrder": 3,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7py7l000fngju21c0z9ru",
+          "question": "Musí moje firma akceptovat soukromé lékařské potvrzení?",
+          "answer": "Právní povinnost závisí na kolektivní smlouvě a interní politice každé společnosti. Obecně většina zaměstnavatelů přijímá soukromá lékařská potvrzení pro krátkodobé absence.",
+          "sortOrder": 4,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7py7l000gngjudzsuritr",
+          "question": "Mohu si rezervovat, když jsem už několik dní nemocný?",
+          "answer": "Ano — ale od začátku konzultace uveď, kolik dní už máš příznaky. Lékař zhodnotí tvůj aktuální klinický stav a poradí ti, jaká dokumentace je pro tvůj případ nejvhodnější.",
+          "sortOrder": 5,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7py7l000hngju4bk1dhmr",
+          "question": "Mohu tuto službu používat odkudkoli ve Španělsku?",
+          "answer": "Ano — včetně Baleárských ostrovů, Kanárských ostrovů, Ceuty a Melilly. Stačí stabilní připojení k internetu a zařízení s kamerou.",
+          "sortOrder": 6,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7py7l000ingjulnv8ul2q",
+          "question": "V jakých jazycích je k dispozici?",
+          "answer": "Španělština, angličtina a portugalština — podle dostupnosti lékaře.",
+          "sortOrder": 7,
+          "resolvedLocale": "CS"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "CS",
+      "links": [
+        {
+          "id": "cmre7u8km0060g8juez35zzdi",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Consulta médica general con médico de cabecera?",
+          "body": "Si tu situación está relacionada con consulta médica general con médico de cabecera, nuestra Consulta Médica General te ofrece la evaluación adecuada.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

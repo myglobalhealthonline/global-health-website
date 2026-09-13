@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/pediatria-online?countryCode=es&locale=PT",
+  "checkedAt": "2026-09-13T02:30:05.046Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qbti0042ngjumicur4m2",
+      "kind": "GENERAL",
+      "slug": "pediatria-online",
+      "name": "Atenção Primária Pediatria",
+      "summary": null,
+      "seoTitle": "Pediatria Online Espanha | Consulta Infantil | Médico de Família",
+      "seoDescription": "O seu filho está doente e não pode esperar por uma consulta? Os nossos médicos de família inscritos na ordem avaliam a saúde infantil por videochamada segura. Sem sala de espera, no próprio dia em Espanha.",
+      "seoKeywords": [
+        "pediatría online España",
+        "médico niños online España",
+        "consulta pediátrica online España",
+        "médico infantil online España",
+        "fiebre niño médico online España"
+      ],
+      "heroTitle": "Pediatria Online — Consulta Infantil com Médico de Família no Mesmo Dia",
+      "heroDescription": "O seu filho está doente e o pediatra não tem consulta até amanhã. Ou é sábado à noite e a clínica está fechada. Ou precisa de avaliar os sintomas do seu filho antes de decidir se deve ir às urgências. Ou é uma família estrangeira em Espanha e prefere consultar em inglês ou português. Os nossos médicos de clínica geral, inscritos de acordo com os requisitos da Organização Médica Colegial (OMC), oferecem consultas médicas pediátricas por videochamada segura — avaliando os sintomas do seu filho, aconselhando sobre a gestão, e coordenando o encaminhamento ou exames adicionais quando clinicamente indicado. No próprio dia, a partir de qualquer ponto de Espanha, em espanhol, inglês ou português. Deve estar presente um pai, mãe ou tutor legal durante todas as consultas para menores de 16 anos.",
+      "detailBody": "<h2>Uma realidade do sistema pediátrico espanhol</h2><p>Em Espanha, os cuidados primários pediátricos estão bem estruturados — cada criança tem direito a um pediatra de cuidados primários atribuído no sistema público até aos 14-16 anos, dependendo da comunidade autónoma. Esta é uma força do sistema de saúde espanhol.</p><p>No entanto, existem situações em que este serviço é genuinamente útil:</p><ul><li>O seu filho está doente hoje e o pediatra atribuído não tem consulta disponível até amanhã ou depois de amanhã</li><li>É fora do horário de consulta — tarde, fim de semana ou feriado</li><li>Quer avaliar os sintomas do seu filho antes de decidir se deve ir às urgências — onde os tempos de espera podem ser muito longos</li><li>É uma família internacional ou expat sem pediatra atribuído atualmente ou que prefere a consulta em inglês ou português</li><li>Quer que lhe expliquem claramente o que o pediatra espanhol lhe disse sobre a saúde do seu filho</li></ul><p>Já tem pediatra atribuído no sistema público? Este serviço funciona como complemento — para quando precisa de cuidados hoje e não há consulta disponível, ou quando quer uma segunda perspetiva antes de decidir se deve ir às urgências.</p><h2>Para quem é este serviço</h2><p>Esta consulta é apropriada para:</p><ul><li>Lactentes, crianças e adolescentes até aos 18 anos com preocupações de saúde agudas ou não urgentes</li><li>Famílias sem pediatra de cuidados primários atribuído atualmente</li><li>Famílias com pediatra atribuído que precisam de aconselhamento clínico hoje, fora do horário de consulta</li><li>Pais que precisam de avaliar os sintomas do seu filho antes de decidir se devem ir às urgências</li><li>Pais que receberam aconselhamento ou documentação de um pediatra espanhol e querem que seja explicado claramente</li><li>Adolescentes com 16 anos ou mais que querem discutir uma preocupação de saúde diretamente com um médico</li><li>Famílias internacionais ou expat que preferem a consulta em inglês ou português</li></ul><p>Este serviço destina-se a preocupações pediátricas agudas e não urgentes ao nível da medicina geral. Para urgências pediátricas, ligue para o 112 ou vá imediatamente ao serviço de urgências mais próximo. A febre em lactentes com menos de 3 meses requer avaliação de urgência — não marque uma videoconsulta.</p><h2>Condições habitualmente avaliadas</h2><p><strong>Respiratório e ORL</strong></p><ul><li>Constipação comum, tosse e infeções das vias respiratórias superiores</li><li>Infeções do ouvido — otite média e otite externa</li><li>Dor de garganta e amigdalite</li><li>Crupo — avaliação e orientação</li><li>Sibilos e preocupações ligeiras de asma</li><li>Sinusite em crianças mais velhas</li></ul><p><strong>Febre e doença geral</strong></p><ul><li>Febre em crianças com mais de 3 meses — avaliação, aconselhamento sobre gestão e orientação sobre quando procurar cuidados adicionais</li><li>Doenças virais — exantema súbito, síndrome mão-pé-boca, varicela</li><li>Gastroenterite — vómitos e diarreia, avaliação de desidratação</li><li>Infeções do trato urinário em crianças</li><li>Fadiga e mal-estar geral</li></ul><p><strong>Pele</strong></p><ul><li>Erupções cutâneas — avaliação e orientação para os pais</li><li>Eczema em lactentes e crianças — gestão de surtos e aconselhamento continuado</li><li>Impetigo e infeções cutâneas em crianças</li><li>Molusco contagioso</li><li>Dermatite das fraldas e preocupações cutâneas em lactentes</li><li>Reações cutâneas alérgicas</li></ul><p><strong>Crescimento, desenvolvimento e comportamento</strong></p><ul><li>Preocupações dos pais sobre marcos do desenvolvimento — com referenciação para avaliação formal quando indicado</li><li>Dificuldades de sono em lactentes e crianças pequenas</li><li>Preocupações alimentares em lactentes</li><li>Preocupações comportamentais em crianças em idade escolar — com referenciação quando indicado</li><li>Preocupações de saúde em adolescentes — acne, saúde menstrual, bem-estar mental, preocupações com o peso</li></ul><p><strong>Gestão de condições crónicas</strong></p><ul><li>Asma em crianças — revisão e aconselhamento continuado</li><li>Eczema — gestão continuada e revisão de surtos</li><li>Alergias — avaliação e aconselhamento sobre gestão</li><li>Dor abdominal crónica em crianças — avaliação e referenciação quando indicado</li></ul><p><strong>Outros</strong></p><ul><li>Documentação médica — justificativos de falta escolar, cartas de referenciação</li><li>Revisão de resultados ou cartas clínicas de pediatras espanhóis — explicados claramente</li><li>Aconselhamento médico de viagem para crianças</li><li>Consultas sobre calendário de vacinação — esclarecimentos e orientação</li></ul><h2>O que inclui a consulta</h2><p><strong>Avaliação clínica pediátrica completa</strong></p><p>O seu médico de família recolhe uma história clínica completa dos sintomas do seu filho — início, duração, gravidade, sintomas associados, estado de alimentação e hidratação, historial médico relevante, medicação atual, estado vacinal e historial familiar quando relevante. Em crianças mais pequenas, a consulta é realizada com o pai ou a mãe a descrever os sintomas e a mostrar a criança em vídeo quando clinicamente relevante.</p><p><strong>Avaliação de segurança</strong></p><p>Cada consulta pediátrica inclui avaliação de se a apresentação da criança requer cuidados de urgência ou avaliação presencial urgente. O seu médico informa-o de forma clara e imediata se for esse o caso.</p><p><strong>Orientação parental clara</strong></p><p>Sai da consulta sabendo o que é mais provável que esteja a acontecer com o seu filho, o que fazer em casa, que sintomas vigiar, o que o levaria a procurar cuidados adicionais e quando esperar melhoria. A confiança e o conhecimento parental são, em si mesmos, um resultado clínico.</p><p><strong>Documentação clínica — a critério do médico</strong></p><p>Quando clinicamente indicado, o seu médico de família emite a documentação clínica correspondente válida em qualquer farmácia espanhola.</p><p>Nota: Os estupefacientes e determinadas substâncias controladas requerem documentação especial que não pode ser emitida eletronicamente. O seu médico informá-lo-á se isso se aplicar à situação do seu filho.</p><p><strong>Antibióticos — quando clinicamente indicados</strong></p><p>Em Espanha, todos os antibióticos requerem prescrição médica. O seu médico avalia a apresentação do seu filho e prescreve o antibiótico adequado quando a evidência clínica o justifica — incluindo infeções do ouvido, infeções da garganta, infeções do trato urinário e infeções cutâneas — seguindo os princípios de uso responsável de antibióticos.</p><p><strong>Referenciação e documentação</strong></p><p>Quando estiver indicada a referenciação para o pediatra espanhol, especialista ou urgências, o seu médico emite a documentação relevante no próprio dia.</p><h2>Quando ir às urgências — guia claro para pais</h2><p>Uma das decisões mais frequentes e mais stressantes que os pais tomam é se a condição do seu filho requer cuidados de urgência ou se a vigilância cuidadosa em casa é suficiente. Esta consulta ajuda-o a tomar essa decisão com apoio clínico — mas algumas apresentações requerem cuidados de urgência sem esperar por uma videoconsulta:</p><p>Vá às urgências imediatamente se o seu filho tiver:</p><ul><li>Febre num lactente com menos de 3 meses — é sempre uma urgência</li><li>Dificuldade respiratória — qualquer respiração rápida, trabalhosa ou ruidosa</li><li>Uma erupção que não desaparece ao pressionar com um copo — possível meningite, ligue para o 112</li><li>Primeira convulsão, ou convulsão com mais de 5 minutos</li><li>Perda de consciência ou falta de resposta</li><li>Reação alérgica grave — inchaço dos lábios, língua ou garganta</li><li>Uma criança que se deteriora rapidamente</li></ul><p>Urgências pediátricas em Espanha:</p><ul><li>Hospital La Paz — Madrid (urgências pediátricas 24h)</li><li>Hospital Vall d'Hebron — Barcelona (urgências pediátricas 24h)</li><li>Hospital La Fe — Valencia (urgências pediátricas 24h)</li><li>Hospital Virgen del Rocío — Sevilla (urgências pediátricas 24h)</li><li>Fora das grandes cidades: o hospital de referência da sua área tem serviço de urgências pediátricas</li></ul><p>Em caso de dúvida, vá sempre às urgências. É sempre melhor ser visto e não ser grave, do que esperar em casa com uma criança que se está a deteriorar.</p><h2>Informação importante antes de reservar</h2><ul><li>Deve estar presente um pai, mãe ou tutor legal durante todas as consultas para menores de 16 anos, conforme a Lei Orgânica 1/1996 de Proteção Jurídica do Menor e a Lei 41/2002 de autonomia do paciente</li><li>Para adolescentes com 16 anos ou mais, o médico avalia a capacidade de consentir individualmente conforme a regulamentação espanhola — conceito de \"menor maduro\"</li><li>Febre em lactentes com menos de 3 meses é uma urgência médica que requer avaliação presencial imediata — não marque uma videoconsulta para esta apresentação</li><li>Crianças que se deterioram rapidamente — se o seu filho estiver a piorar significativamente enquanto tenta reservar, vá imediatamente às urgências em vez de esperar pela consulta</li><li>Obrigação de comunicação — os nossos profissionais clínicos estão sujeitos à obrigação de comunicar situações de possível negligência ou maus-tratos ao menor conforme a Lei Orgânica 1/1996. Esta obrigação prevalece sobre a confidencialidade</li><li>A decisão de emitir qualquer documentação — justificativos, referenciações — é sempre uma decisão clínica do médico após avaliação completa</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 40,
+      "durationMinutes": 15,
+      "basePriceCents": 3900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.259Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0skg90000y8jurlo2mrg2",
+          "kind": "IMAGE",
+          "key": "media/fbb2f7c0-6549-481e-8ff9-6b6cce4cacc9-es-pediatria-online.png",
+          "path": "/api/media/media/fbb2f7c0-6549-481e-8ff9-6b6cce4cacc9-es-pediatria-online.png",
+          "altText": "Atención Primária Pediatria"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qc1v0043ngjubabydlvr",
+          "question": "A doença de uma criança pode realmente ser avaliada por videochamada?",
+          "answer": "Sim — para a grande maioria das apresentações não urgentes. Uma história parental detalhada dos sintomas, combinada com a observação visual da criança durante a chamada, permite a um médico experiente realizar uma avaliação clínica da maioria das doenças infantis comuns. Quando a apresentação exigir exame físico presencial — por exemplo, para avaliar os sons respiratórios, exame do ouvido ou palpação abdominal — o seu médico orienta-o claramente e coordena o encaminhamento apropriado.",
+          "sortOrder": 0,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qc1v0044ngju09x6ekdn",
+          "question": "O meu filho tem febre — posso usar este serviço?",
+          "answer": "Sim — para crianças maiores de 3 meses. O seu médico avalia a gravidade, a causa provável e a gestão apropriada. Para lactentes menores de 3 meses, a febre é uma urgência médica — vá ao serviço de urgências mais próximo imediatamente sem marcar uma videoconsulta.",
+          "sortOrder": 1,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qc1v0045ngjufo98znha",
+          "question": "O médico pode prescrever antibióticos para o meu filho?",
+          "answer": "Sim — onde estiver clinicamente indicado após avaliação completa. Na Espanha, todos os antibióticos requerem prescrição médica. O seu médico avalia a apresentação do seu filho e prescreve o antibiótico adequado quando a evidência clínica o justifica.",
+          "sortOrder": 2,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qc1v0046ngju7w1xvobk",
+          "question": "Preciso ter um pediatra designado para usar este serviço?",
+          "answer": "Não. Este serviço está disponível para todas as famílias em Espanha — sem registo prévio, sem pediatra atribuído necessário, sem seguro de saúde necessário.",
+          "sortOrder": 3,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qc1v0047ngjuou9kxn45",
+          "question": "Meu filho recebeu uma carta ou diagnóstico de um pediatra espanhol que eu não entendo — podem me ajudar?",
+          "answer": "Sim. Traga a carta ou os resultados à consulta e o seu médico analisa e explica os achados e as recomendações clínicas claramente no idioma que preferir.",
+          "sortOrder": 4,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qc1v0048ngju1rdxl81f",
+          "question": "Este serviço é adequado para adolescentes?",
+          "answer": "Sim. As preocupações de saúde dos adolescentes — incluindo acne, saúde menstrual, bem-estar mental e peso — fazem parte deste serviço. Para adolescentes de 16 anos ou mais, o médico avalia se o jovem pode consentir de forma independente. Para os menores de 16 anos, deve estar presente um dos pais ou tutor durante toda a consulta.",
+          "sortOrder": 5,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qc1v0049ngjupx17vlal",
+          "question": "O que acontece se meu filho precisar ir ao pronto-socorro?",
+          "answer": "Se o seu médico determinar que o seu filho precisa de atendimento de urgência ou de atendimento presencial urgente, você será informado de forma imediata e clara — incluindo o que dizer quando chegar à urgência e qual hospital é mais apropriado para a sua localização na Espanha. O seu médico pode emitir um breve resumo clínico se isso for útil.",
+          "sortOrder": 6,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qc1v004angju8vzke26a",
+          "question": "Posso obter um comprovativo de ausência escolar através deste serviço?",
+          "answer": "Sim. Os comprovativos de ausência escolar podem ser emitidos a critério clínico do médico após avaliação — certificando que a criança foi avaliada e não está em condições de frequentar a escola, sem especificar detalhes clínicos.",
+          "sortOrder": 7,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qc1w004bngjuc93zuy74",
+          "question": "Preciso de seguro de saúde espanhol?",
+          "answer": "Não. É um serviço privado de pagamento direto. A documentação clínica emitida através deste serviço é fornecida ao preço privado completo, independentemente do estado de seguramento.",
+          "sortOrder": 8,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qc1w004cngjuscslov4h",
+          "question": "Posso usar este serviço a partir de qualquer ponto da Espanha?",
+          "answer": "Sim — incluindo as Ilhas Baleares, Ilhas Canárias, Ceuta e Melilha. Só precisas de uma ligação estável à internet e de um dispositivo com câmara.",
+          "sortOrder": 9,
+          "resolvedLocale": "PT"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "PT",
+      "links": [
+        {
+          "id": "cmre7ts6t0052g8ju6asq61tw",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Enfermedad crónica pediátrica o condición compleja?",
+          "body": "Si tu situación está relacionada con enfermedad crónica pediátrica o condición compleja, nuestra Pediatría Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Pediatría Especialista",
+          "targetSlug": "pediatra-especialista-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tsyv0054g8jug81ewfa0",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con salud mental en adolescentes?",
+          "body": "Para salud mental en adolescentes, consulta nuestra página de Psiquiatría Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Psiquiatría Especialista",
+          "targetSlug": "psiquiatra-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7ttqy0056g8jufdh5x48f",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre consulta médica general con médico de cabecera?",
+          "body": "Nuestra Consulta Médica General está pensada específicamente para consulta médica general con médico de cabecera.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpu7ro001e01ruc1ycm5n5"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T12:26:00.000Z"
+      }
+    }
+  }
+}

@@ -1,0 +1,190 @@
+{
+  "endpoint": "/api/services/segunda-opinion-medica?countryCode=es&locale=CS",
+  "checkedAt": "2026-09-13T02:29:52.700Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7q5fw002angjuebao1obt",
+      "kind": "GENERAL",
+      "slug": "segunda-opinion-medica",
+      "name": "Druhý lékařský názor",
+      "summary": null,
+      "seoTitle": "Druhé lékařské stanovisko online Španělsko | Nezávislé hodnocení | Tentýž den",
+      "seoDescription": "Nejste si jistí diagnózou nebo léčebným plánem? Naši registrovaní lékaři poskytují nezávislé druhé lékařské názory prostřednictvím zabezpečeného videohovoru. Ve stejný den ve Španělsku.",
+      "seoKeywords": [
+        "segunda opinión médica online España",
+        "segunda opinión médico online España",
+        "evaluación independiente médica España",
+        "segunda opinión diagnóstico España",
+        "second opinion doctor Spain English"
+      ],
+      "heroTitle": "Druhý lékařský názor — nezávislé klinické posouzení online",
+      "heroDescription": "Dostal(a) jsi diagnózu nebo doporučení léčby, o kterém pochybuješ? Chceš nezávislý klinický pohled před podstoupením chirurgického zákroku, zahájením nové medikace nebo přijetím významné změny ve své léčbě? Obdržel(a) jsi klinickou dokumentaci ve španělštině, kterou si chceš nechat srozumitelně vysvětlit? Naši lékaři, zapsaní v souladu s požadavky Organización Médica Colegial (OMC), nabízejí nezávislé lékařské druhé názory prostřednictvím bezpečného videohovoru — přezkoumáním tvé diagnózy, klinické dokumentace a léčebného plánu a poskytnutím upřímného, na důkazech založeného klinického posouzení. Bez čekání. Bez vazby na tvého současného poskytovatele. Jasné nezávislé posouzení. Tentýž den, odkudkoli ve Španělsku, ve španělštině, angličtině nebo portugalštině.",
+      "detailBody": "<h2>Kdy dává smysl získat druhý názor</h2><p>Vyhledání druhého názoru je klinicky doporučováno — a každý dobrý lékař vám řekne totéž. Nemusíte být v konfliktu se svým současným lékařem, abyste měli prospěch z nezávislé perspektivy. Druhý názor je cenný vždy, když má zdravotní rozhodnutí významné důsledky a chcete mít jistotu, že jste vyslechli více než jeden klinický názor.</p><p><strong>Časté důvody pro vyhledání druhého názoru:</strong></p><ul><li>Obdrželi jste diagnózu, která se nezdá být v souladu s vašimi příznaky nebo vaším chápáním vašeho zdraví</li><li>Byl doporučen významný zákrok — operace, nový lék, významná změna životního stylu — a chcete před dalším postupem nezávislé posouzení</li><li>Dostali jste od dvou různých lékařů protichůdné rady a potřebujete pomoc s orientací v tomto rozporu</li><li>Vaše příznaky se nezlepšily, přestože jste dodržovali léčebný plán, a chcete nový klinický pohled</li><li>Obdrželi jste klinickou dokumentaci ve španělštině, kterou chcete nechat zkontrolovat a srozumitelně vysvětlit</li><li>Řešíte složitý nebo dlouhodobý stav a chcete se ujistit, že váš současný postup je stále vhodný</li><li>Chcete porozumět svým možnostem, než se zavážete k doporučenému léčebnému postupu</li></ul><h2>Pro koho je tato služba určena</h2><p>Tato konzultace je vhodná pro:</p><ul><li>Každého, kdo obdržel diagnózu nebo doporučení léčby, které chce nezávisle přezkoumat</li><li>Pacienty, kteří stojí před rozhodnutím o operaci, významném novém léku nebo důležité změně v péči</li><li>Pacienty, kteří obdrželi protichůdné klinické rady a potřebují pomoc s jejich vyhodnocením</li><li>Pacienty, jejichž stav se nezlepšil podle očekávání a chtějí nový klinický pohled</li><li>Pacienty, kteří obdrželi klinickou dokumentaci ve španělštině a chtějí ji nechat zkontrolovat a srozumitelně vysvětlit</li><li>Pacienty se složitým chronickým onemocněním, kteří chtějí pravidelné nezávislé přezkoumání</li><li>Expaty a mezinárodní rezidenty, kteří chtějí nezávislé klinické posouzení v angličtině nebo portugalštině, aniž by museli procházet novým systémem specialistů</li></ul><h2>Co konzultace zahrnuje</h2><p><strong>Komplexní přezkoumání vaší klinické dokumentace</strong></p><p>Přineste si k konzultaci veškerou relevantní dokumentaci — diagnostické dopisy, zprávy specialistů, výsledky zobrazovacích vyšetření, výsledky laboratorních testů, léčebné plány a propouštěcí zprávy. Váš lékař vše před poskytnutím nezávislého posouzení kompletně přezkoumá.</p><p><strong>Nezávislé klinické posouzení</strong></p><p>Váš lékař zhodnotí vaši prezentaci, diagnózu, kterou jste obdrželi, klinické zdůvodnění, které za ní stojí, navržený léčebný plán a to, zda by na základě současných klinických důkazů byly vhodné alternativní přístupy nebo další vyšetření.</p><p><strong>Srozumitelné vysvětlení vašich možností</strong></p><p>Váš lékař vysvětlí vaši diagnózu a možnosti léčby srozumitelným jazykem — co navržený plán obnáší, jaké jsou alternativy, co říkají důkazy a na co byste se měli zeptat svého ošetřujícího týmu. Z konzultace odejdete s jasnějším obrazem toho, kde se nacházíte, a jaké máte možnosti.</p><p><strong>Souhrnný klinický dopis — kde je to klinicky indikováno</strong></p><p>Kde je to klinicky vhodné, váš lékař vystaví písemný souhrn druhého názoru — dokumentující nezávislé posouzení, klinické zdůvodnění a případná doporučení — který můžete sdílet se svým ošetřujícím týmem nebo použít pro pojistné účely.</p><p><strong>Koordinace doporučení, kde je to indikováno</strong></p><p>Pokud druhý názor ukáže, že je potřeba další specializované vyšetření, další šetření nebo odlišný klinický postup, váš lékař zajistí příslušné další kroky ještě tentýž den.</p><h2>Druhý názor ve Španělsku — proč na něm záleží</h2><p>Španělský zdravotnický systém — veřejný i soukromý — má dobře zavedené přednosti. Přístup k nezávislému druhému názoru má však i své praktické výzvy.</p><p>Ve veřejném systému jsou čekací doby na specialistu dlouhé — a získat druhý názor znamená začít znovu s procesem doporučení. V soukromém sektoru je kvalita obecně vysoká, ale dostupnost je soustředěna ve velkých městech.</p><p>Pro mezinárodní rezidenty, kteří dostávají klinickou dokumentaci ve španělštině, existuje další překážka — plně porozumět diagnóze nebo léčebnému plánu v jazyce, který neovládáte úplně, je opravdu obtížné a činit důležitá zdravotní rozhodnutí bez úplného porozumění je skutečné riziko.</p><p>Tato služba poskytuje další vrstvu nezávislé klinické kontroly — ne jako kritiku původního lékaře, ale jako součást informovaného rozhodování.</p><h2>Co druhý názor může a nemůže udělat</h2><p><strong>Druhý názor může:</strong></p><ul><li>Potvrdit, že diagnóza a léčebný plán, který jste obdrželi, jsou vhodné a založené na důkazech</li><li>Identifikovat alternativní diagnózy nebo léčebné přístupy, které nebyly zvažovány</li><li>Objasnit klinickou dokumentaci, která nebyla plně vysvětlena</li><li>Pomoci vám formulovat správné otázky, které položíte svému ošetřujícímu týmu</li><li>Poskytnout nezávislou klinickou dokumentaci pro pojistné nebo medicínsko-právní účely</li><li>Doporučit další vyšetření nebo specializované posouzení, kde je to klinicky indikováno</li></ul><p><strong>Druhý názor nemůže:</strong></p><ul><li>Zrušit nebo nahradit klinický úsudek vašeho ošetřujícího týmu</li><li>Diagnostikovat stavy, které vyžadují osobní fyzikální vyšetření, biopsii nebo invazivní vyšetření</li><li>Poskytnout konečný názor bez odpovídající klinické dokumentace</li><li>Vydat konečný názor tam, kde je klinický obraz složitý a vyžaduje osobní specializované vyšetření</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 190,
+      "durationMinutes": 20,
+      "basePriceCents": 4900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.267Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru15rpe0003bsjukvu58p7u",
+          "kind": "IMAGE",
+          "key": "media/ef45af40-860e-401e-bc44-e88a501e47c4-es-segunda-opinion-medica.png",
+          "path": "/api/media/media/ef45af40-860e-401e-bc44-e88a501e47c4-es-segunda-opinion-medica.png",
+          "altText": "Segunda Opinión Médica"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7q5o4002bngjuha3nvten",
+          "question": "Znamená vyhledání druhého názoru, že zpochybňuji svého lékaře?",
+          "answer": "Ne. Vyhledání druhého názoru je běžnou a doporučovanou součástí dobrého lékařského rozhodování — zejména u významných diagnóz nebo doporučení léčby. Většina lékařů očekává a respektuje pacienty, kteří vyhledají nezávislé přezkoumání zásadních klinických rozhodnutí.",
+          "sortOrder": 0,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q5o4002cngjuadtjb1ha",
+          "question": "Jakou dokumentaci mám přinést?",
+          "answer": "Přineste vše, co je relevantní — diagnostické zprávy, zprávy specialistů, výsledky zobrazovacích vyšetření, výsledky laboratorních testů, léčebné plány, propouštěcí zprávy a veškerou další související klinickou dokumentaci k danému problému. Čím úplnější dokumentace bude, tím užitečnější bude nezávislé posouzení.",
+          "sortOrder": 1,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q5o4002dngju7ws82tsc",
+          "question": "Může lékař zkontrolovat dokumentaci ve španělštině?",
+          "answer": "Ano. Váš lékař kontroluje klinickou dokumentaci ve španělštině a zjištění jasně vysvětluje v angličtině, španělštině nebo portugalštině — podle vaší preference.",
+          "sortOrder": 2,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q5o4002engjuhz1j3rqn",
+          "question": "Bude lékař druhého názoru kontaktovat mého současného lékaře?",
+          "answer": "Ne — ledaže byste si o to výslovně požádali. Druhý názor je poskytován přímo vám. Pokud chcete, aby byly závěry sdíleny s vaším ošetřujícím týmem, může váš lékař za tímto účelem vystavit písemné klinické shrnutí.",
+          "sortOrder": 3,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q5o4002fngjun7asux0q",
+          "question": "Co se stane, pokud druhý názor odporuje mé současné diagnóze?",
+          "answer": "Váš lékař vysvětluje klinické odůvodnění jasně a upřímně. Pokud nezávislé posouzení naznačuje, že původní diagnóza nebo plán léčby nemusí být nejvhodnější, bude vám doporučeno, jaké otázky položit svému ošetřujícímu týmu a jaké další kroky — další vyšetření, specializované posouzení — mohou být opodstatněné.",
+          "sortOrder": 4,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q5o4002gngju2wli45ke",
+          "question": "Mohu získat druhý názor na chirurgické doporučení?",
+          "answer": "Ano. Druhé názory na chirurgická doporučení jsou jedním z nejběžnějších a nejcennějších využití této služby. Váš lékař přezkoumá klinické zdůvodnění doporučeného chirurgického zákroku, probere důkazy a poradí, zda se doporučení zdá vhodné a na jaké otázky se zeptat svého chirurga.",
+          "sortOrder": 5,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q5o4002hngjuxook11oe",
+          "question": "Mohu získat druhý názor na diagnózu duševního zdraví?",
+          "answer": "Ano — pro stavy duševního zdraví na úrovni všeobecného lékařství. U složitých psychiatrických diagnóz vám váš lékař poradí o vhodné úrovni nezávislého specializovaného posouzení.",
+          "sortOrder": 6,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q5o4002ingju92saqikq",
+          "question": "Potřebuji španělské zdravotní pojištění?",
+          "answer": "Ne. Je to soukromá služba s přímou platbou bez požadavku na zdravotní pojištění.",
+          "sortOrder": 7,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7q5o4002jngju6wnchato",
+          "question": "Mohu tuto službu používat odkudkoli ve Španělsku?",
+          "answer": "Ano — včetně Baleárských ostrovů, Kanárských ostrovů, Ceuty a Melilly. Stačí ti stabilní připojení k internetu a zařízení s kamerou.",
+          "sortOrder": 8,
+          "resolvedLocale": "CS"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "CS",
+      "links": [
+        {
+          "id": "cmre7u0rr005kg8ju0bt4gje9",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con segunda opinión cardiológica especializada?",
+          "body": "Para segunda opinión cardiológica especializada, consulta nuestra página de Cardiología Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Cardiología Especialista",
+          "targetSlug": "cardiologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7u1jt005mg8jutxyy9pz0",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre segunda opinión neurológica especializada?",
+          "body": "Nuestra Neurología Especialista está pensada específicamente para segunda opinión neurológica especializada.",
+          "ctaLabel": "Neurología Especialista",
+          "targetSlug": "neurologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7u2bx005og8judxbqm7fp",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Segunda opinión dermatológica especializada?",
+          "body": "Si tu situación está relacionada con segunda opinión dermatológica especializada, nuestra Dermatología Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Dermatología Especialista",
+          "targetSlug": "dermatologia-especialista-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7u33z005qg8ju6je8gh1u",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con segunda opinión psiquiátrica especializada?",
+          "body": "Para segunda opinión psiquiátrica especializada, consulta nuestra página de Psiquiatría Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Psiquiatría Especialista",
+          "targetSlug": "psiquiatra-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdpz5n3001z01rukg2lecs5",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

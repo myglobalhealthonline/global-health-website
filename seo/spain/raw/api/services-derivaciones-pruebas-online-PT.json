@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/derivaciones-pruebas-online?countryCode=es&locale=PT",
+  "checkedAt": "2026-09-13T02:30:04.230Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qas1003sngjus0w2obwn",
+      "kind": "GENERAL",
+      "slug": "derivaciones-pruebas-online",
+      "name": "Encaminhamentos e Exames",
+      "summary": null,
+      "seoTitle": "Encaminhamentos e Exames Online Espanha | Análises | Médico de Família",
+      "seoDescription": "Precisa de uma carta de encaminhamento para especialista, análises ou exames de imagem em Espanha? Os nossos médicos de clínica geral inscritos na ordem emitem documentação clínica após avaliação completa. No mesmo dia em Espanha.",
+      "seoKeywords": [
+        "derivaciones médicas online España",
+        "carta derivación especialista online España",
+        "analíticas privadas online España",
+        "pruebas imagen solicitud online España",
+        "derivación médico cabecera online España"
+      ],
+      "heroTitle": "Encaminhamentos e Exames — Documentação Clínica Online no Mesmo Dia",
+      "heroDescription": "Precisa de uma carta de encaminhamento para um especialista privado em Espanha? Precisa que um médico solicite análises ou exames de imagem antes de poder marcá-los? Recebeu resultados de um especialista espanhol que quer que sejam revistos e explicados claramente antes de decidir como proceder? Os nossos médicos de família, inscritos de acordo com os requisitos da Organização Médica Colegial (OMC), emitem cartas de encaminhamento clínicas, pedidos de análises e pedidos de exames de imagem após uma avaliação clínica completa — dando-lhe a documentação de que precisa para aceder a cuidados especializados privados e a exames diagnósticos em Espanha. No mesmo dia, a partir de qualquer ponto do país, em espanhol, inglês ou português.",
+      "detailBody": "<h2>Como funciona o acesso a especialistas em Espanha</h2><p>Espanha tem um sistema de encaminhamento duplo — um para o sistema público e outro para a atenção privada.</p><p>O acesso a especialistas no sistema público requer encaminhamento do médico de família (médico de cabecera) contratado com o SNS. Sem este encaminhamento, as consultas com especialistas do sistema público não estão cobertas. A Global Health não pode fornecer encaminhamentos do sistema público — isto requer um médico de família contratado com o sistema público de saúde espanhol.</p><p>O acesso a especialistas privados está disponível diretamente na maioria dos casos — pode marcar uma consulta com um especialista privado sem carta de encaminhamento. No entanto, chegar a uma consulta com um especialista sem contexto clínico reduz significativamente a qualidade dessa primeira consulta. Um especialista que recebe uma carta de encaminhamento clara — descrevendo os seus sintomas, historial relevante, medicação atual e a questão clínica específica — realiza uma avaliação mais focada e eficiente.</p><p>Este serviço cobre:</p><ul><li>Cartas de encaminhamento privadas — para consultas com especialistas privados à sua escolha</li><li>Pedidos de análises — para testes laboratoriais privados em centros de colheita em toda a Espanha</li><li>Pedidos de exames de imagem — para radiografia, ecografia, ressonância magnética ou TAC privados</li><li>Cartas de resumo clínico — documentando a sua avaliação e achados para continuidade dos cuidados</li><li>Revisão de resultados — resultados de análises, relatórios de imagem ou cartas de especialistas revistos e explicados claramente</li></ul><p>Este serviço não cobre:</p><ul><li>Encaminhamentos do sistema público do SNS — estes requerem médico de família contratado com o SNS</li><li>Encaminhamentos de urgência — ligue para o 112 ou vá ao serviço de urgência mais próximo imediatamente</li></ul><h2>Para quem é este serviço</h2><p>Esta consulta é apropriada para:</p><ul><li>Qualquer pessoa que queira ver um especialista privado em Espanha e necessite de uma carta de encaminhamento clínico para acompanhar a consulta</li><li>Pacientes que precisam de análises ou exames de imagem solicitados por um médico antes de os marcar de forma privada</li><li>Pacientes que receberam resultados — de análises, exames de imagem ou consultas com especialistas — que querem que sejam revistos e explicados claramente</li><li>Pacientes com uma preocupação clínica específica que querem que seja avaliada e documentada formalmente antes de procurar cuidados especializados</li><li>Pacientes que precisam de uma carta de resumo clínico — para fins de seguros, para um novo médico, ou para continuidade dos cuidados</li><li>Pacientes que receberam documentação clínica em espanhol que querem que seja revista e contextualizada</li><li>Qualquer pessoa em Espanha sem médico de família atribuído que necessite de documentação clínica para aceder a cuidados especializados privados</li></ul><h2>Porque é que uma carta de encaminhamento acrescenta valor</h2><p>O acesso direto a especialistas privados em Espanha está disponível na maioria dos casos sem carta de encaminhamento. Mas um especialista que o veja sem contexto tem de começar do zero — e o tempo da consulta é gasto a reunir informação que poderia ter sido transmitida por escrito antecipadamente.</p><p>Uma carta de encaminhamento emitida após avaliação clínica contém tudo o que o especialista precisa de saber antes de entrar no consultório — sintomas, duração, gravidade, medicação atual, exames já realizados e a questão clínica específica que está a pedir que sejam abordadas. O especialista pode ir diretamente para o problema clínico.</p><p>A diferença na qualidade dessa primeira consulta com o especialista — entre chegar com uma carta de encaminhamento completa versus chegar sem contexto — é significativa.</p><h2>Cartas de encaminhamento — o que incluem</h2><p>Uma carta de encaminhamento emitida por um médico de família da Global Health após avaliação clínica inclui:</p><ul><li>Dados do paciente e historial médico relevante</li><li>Descrição da queixa apresentada — sintomas, duração, gravidade e achados clínicos relevantes da videoconsulta</li><li>Medicação atual e exames relevantes já concluídos</li><li>Pergunta clínica específica para o especialista — o que está a pedir que avalie ou aconselhe</li><li>Grau de urgência — rotineira, breve ou urgente — com base na avaliação clínica</li></ul><p>A carta é emitida em espanhol para especialistas hispanofalantes. Se precisar de uma versão em inglês para um médico anglófono, mencione-o ao seu médico durante a consulta.</p><h2>Análises — o que pode ser solicitado</h2><p>Após a avaliação clínica, o seu médico de família pode emitir pedidos de análises para uma ampla gama de investigações, incluindo:</p><p><strong>Metabólico e cardiovascular</strong></p><ul><li>Hemograma completo</li><li>Glicose em jejum e HbA1c</li><li>Painel lipídico — colesterol total, LDL, HDL, triglicéridos</li><li>Função renal — creatinina, FGe, ureia, eletrólitos</li><li>Função hepática</li><li>Função tiroideia — TSH, T4 livre, T3 livre</li><li>Ácido úrico</li><li>Ferritina, estudos do ferro e B12/folato</li></ul><p><strong>Hormonal e reprodutivo</strong></p><ul><li>Painel de testosterona — testosterona total e livre, LH, FSH, SHBG</li><li>Painel hormonal feminino — estradiol, FSH, LH, progesterona, AMH</li><li>Anticorpos tiroideus — anti-TPO, anti-tiroglobulina</li><li>Cortisol</li><li>Prolactina</li><li>DHEA-S</li></ul><p><strong>Inflamatório e autoimune</strong></p><ul><li>PCR e VSG</li><li>Fator reumatoide e anti-CCP</li><li>Painéis ANA e ANCA</li><li>Níveis de complemento</li></ul><p><strong>Doenças infeciosas</strong></p><ul><li>Serologia VIH, hepatite B, hepatite C</li><li>Painéis ITS</li><li>Verificações de imunidade pós-vacinação</li></ul><p><strong>Outros</strong></p><ul><li>Vitamina D</li><li>Rastreio da doença celíaca — anti-tTG IgA</li><li>PSA — antigénio prostático específico</li><li>hCG — teste de gravidez</li><li>Painéis de alergia — IgE específica</li></ul><p>Os pedidos de análises são emitidos após avaliação clínica — o seu médico aconselha-o sobre quais os testes clinicamente indicados para a sua apresentação específica.</p><h2>Acesso a análises privadas em Espanha</h2><p>Os centros de colheita privados para análises estão amplamente disponíveis em toda a Espanha — em Madrid, Barcelona e em todas as principais cidades e capitais de província. As redes de laboratório privado operam em todo o território com centros de colheita na maioria das localidades.</p><p>Após a sua consulta, o seu médico emite o pedido de análise e aconselha-o sobre onde ir para a colheita com base na sua localização. Marca a consulta de colheita diretamente — não é necessário seguro de saúde espanhol para análises privadas. Os resultados estão geralmente disponíveis em 24 a 72 horas dependendo dos testes solicitados, embora alguns painéis especializados possam demorar mais.</p><h2>Pedidos de exames de imagem</h2><p>Quando a radiografia, ecografia, ressonância magnética ou TAC estiverem clinicamente indicadas após a avaliação, o seu médico emite um pedido formal de imagem. A radiologia privada está amplamente disponível em Espanha — a maioria dos hospitais privados e centros de radiologia aceita marcação direta com o pedido de um médico.</p><p>O seu médico aconselha-o sobre a modalidade de imagem mais apropriada para a sua questão clínica específica e a urgência da investigação.</p><h2>Revisão de resultados</h2><p>Recebeu resultados de análises, relatórios de imagem ou cartas de especialistas que quer que sejam revistos e explicados claramente? O seu médico revê-os na íntegra durante uma consulta de seguimento — explicando os achados clínicos, o que significam para a sua saúde, quais são os próximos passos, e se é necessária investigação adicional ou avaliação especializada.</p><p>Isto é especialmente útil para pacientes que receberam resultados ou cartas clínicas em espanhol e querem que sejam explicados claramente — quer sejam residentes espanhóis que querem mais tempo para discutir os seus resultados do que o permitido por uma consulta padrão, quer sejam residentes internacionais que precisam que o conteúdo clínico seja explicado em inglês ou português.</p>",
+      "ctaLabel": null,
+      "sortOrder": 120,
+      "durationMinutes": 15,
+      "basePriceCents": 3500,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.264Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0jvsd0001asjuwczqne2v",
+          "kind": "IMAGE",
+          "key": "media/ca5aeb3b-c263-4ee0-8662-b763c407f9cc-es-derivaciones-pruebas-online.png",
+          "path": "/api/media/media/ca5aeb3b-c263-4ee0-8662-b763c407f9cc-es-derivaciones-pruebas-online.png",
+          "altText": "Derivaciones y Pruebas"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qb0g003tngjuzcplymij",
+          "question": "Posso obter uma carta de encaminhamento sem uma avaliação clínica completa?",
+          "answer": "Não. As cartas de encaminhamento são emitidas após avaliação clínica completa. O seu médico precisa avaliar os seus sintomas e histórico para escrever uma carta de encaminhamento clinicamente significativa. Uma carta de encaminhamento sem avaliação clínica não acrescentaria valor à sua consulta com o especialista.",
+          "sortOrder": 0,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qb0g003ungjuz3gp78qy",
+          "question": "Pode este serviço fornecer encaminhamentos do sistema público do SNS?",
+          "answer": "Não. Os encaminhamentos do sistema público em Espanha exigem médico de família contratado com o SNS. A Global Health fornece cartas de encaminhamento privadas para acesso a especialistas privados.",
+          "sortOrder": 1,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qb0g003vngjuix3g83vt",
+          "question": "A carta de encaminhamento tem de estar em espanhol?",
+          "answer": "Para especialistas de língua espanhola, sim — a carta de encaminhamento é emitida em espanhol. Para prestadores anglófonos ou especialistas internacionais, pode ser emitida em inglês. O seu médico emite-a no idioma apropriado com base em quem você vai consultar — comente isso durante a consulta.",
+          "sortOrder": 2,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qb0g003wngju5rvz2cky",
+          "question": "Quanto tempo demoram a chegar os resultados das análises?",
+          "answer": "Os tempos de resposta variam consoante o exame — a maioria das análises padrão está disponível em 24 a 72 horas a partir de centros de colheita privados em Espanha. Alguns painéis especializados demoram mais. O seu médico aconselha-o sobre o tempo de resposta esperado ao emitir o pedido.",
+          "sortOrder": 3,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qb0g003xngju2n8wfdnu",
+          "question": "Posso usar este serviço se tiver seguro de saúde privado espanhol?",
+          "answer": "Sim — mas este serviço cobre encaminhamentos privados e pedidos de investigação privados. O seu seguro de saúde privado pode cobrir as consultas com especialistas e análises dependendo da sua apólice específica — consulte a sua seguradora. As análises e consultas com especialistas reservadas através deste serviço são faturadas ao preço privado integral independentemente do seu seguro.",
+          "sortOrder": 4,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qb0g003yngjugl2iwso9",
+          "question": "O que acontece se os meus resultados mostrarem algo grave?",
+          "answer": "Se a revisão dos seus resultados revelar achados que requerem atenção urgente, o seu médico aconselha-o imediatamente sobre os próximos passos adequados — incluindo se é necessária atenção de urgência. Se for necessária atenção de urgência, ligue para o 112 ou vá ao serviço de urgências mais próximo imediatamente.",
+          "sortOrder": 5,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qb0g003zngjuhaukyflq",
+          "question": "Posso usar este serviço sem médico de família em Espanha?",
+          "answer": "Sim. Este serviço está disponível para qualquer pessoa na Espanha — sem registro prévio, sem médico de família exigido, sem seguro de saúde necessário.",
+          "sortOrder": 6,
+          "resolvedLocale": "PT"
+        },
+        {
+          "id": "cmre7qb0g0040ngju96ofwc1j",
+          "question": "Posso usar este serviço a partir de qualquer ponto de Espanha?",
+          "answer": "Sim — incluindo as Ilhas Baleares, as Ilhas Canárias, Ceuta e Melilha. Só precisas de uma ligação estável à internet e de um dispositivo com câmara.",
+          "sortOrder": 7,
+          "resolvedLocale": "PT"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "PT",
+      "links": [
+        {
+          "id": "cmre7snma002qg8jult0p90xg",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con analíticas cardiológicas y metabólicas?",
+          "body": "Para analíticas cardiológicas y metabólicas, consulta nuestra página de Cardiología Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Cardiología Especialista",
+          "targetSlug": "cardiologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7soee002sg8ju1hnpt499",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre solicitar RMN cerebral o electromiograma?",
+          "body": "Nuestra Neurología Especialista está pensada específicamente para solicitar RMN cerebral o electromiograma.",
+          "ctaLabel": "Neurología Especialista",
+          "targetSlug": "neurologo-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7smu6002og8ju8lndhczu",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Analíticas hormonales y metabólicas?",
+          "body": "Si tu situación está relacionada con analíticas hormonales y metabólicas, nuestra Control de Peso te ofrece la evaluación adecuada.",
+          "ctaLabel": "Control de Peso",
+          "targetSlug": "control-peso-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7sp6h002ug8jum26oow57",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Segunda opinión sobre resultados recibidos?",
+          "body": "Si tu situación está relacionada con segunda opinión sobre resultados recibidos, nuestra Segunda Opinión Médica te ofrece la evaluación adecuada.",
+          "ctaLabel": "Segunda Opinión Médica",
+          "targetSlug": "segunda-opinion-medica",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

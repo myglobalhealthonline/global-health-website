@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-12T20:20:14.686Z",
+  "endpoint": "/api/services/sanatatea-barbatului-online?countryCode=ro&locale=PT",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmr8ee3j30006fsju24727btu",
+      "kind": "GENERAL",
+      "slug": "sanatatea-barbatului-online",
+      "name": "Saúde do homem — avaliação confidencial online",
+      "summary": "Tem perguntas relacionadas com disfunção erétil, testosterona, libido, fertilidade ou saúde geral? Os nossos médicos autorizados pela CMR oferecem avaliação confidencial e recomendações médicas claras através de consulta por vídeo.",
+      "seoTitle": "Consulta de saúde do homem online | Roménia | confidencial",
+      "seoDescription": "Consultas confidenciais para disfunção erétil, testosterona, libido, fertilidade ou saúde geral. Os nossos médicos autorizados pela CMR oferecem avaliação confidencial e recomendações médicas claras através de consulta por vídeo.",
+      "seoKeywords": [
+        "men's health online Romania",
+        "erectile dysfunction doctor online Romania",
+        "testosterone assessment Bucharest English",
+        "men's health consultation English Romania",
+        "ED doctor online Romania expat"
+      ],
+      "heroTitle": "Saúde do homem — avaliação confidencial online",
+      "heroDescription": "Consultas confidenciais para disfunção erétil, testosterona, libido, fertilidade ou saúde geral. Os nossos médicos autorizados pela CMR oferecem avaliação confidencial e recomendações médicas claras por consulta em vídeo.",
+      "detailBody": "<p>O serviço é adequado para problemas frequentes de saúde masculina, incluindo sintomas urinários, disfunção erétil, diminuição da libido, fadiga persistente, preocupações hormonais, saúde sexual e questões relacionadas com a fertilidade.</p><p>O médico analisa o histórico dos sintomas, os fatores de risco cardiovasculares e metabólicos, a medicação atual, o estilo de vida e quaisquer resultados médicos já obtidos. Receberá recomendações sobre os exames, as opções de tratamento e o momento em que é necessária avaliação urológica ou endocrinológica.</p><p>A consulta é confidencial e útil sobretudo para os pacientes que adiam a ida ao médico devido ao desconforto de discutir estes problemas num contexto físico tradicional.</p>",
+      "ctaLabel": "Marque a consulta",
+      "sortOrder": 130,
+      "durationMinutes": 20,
+      "basePriceCents": 15000,
+      "currencyCode": "RON",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-19T05:02:40.429Z",
+      "country": {
+        "id": "cmqz0xa4g003z01lu872glji1",
+        "code": "ro",
+        "slug": "romania",
+        "name": "Romania",
+        "defaultLocale": "RO",
+        "teamPath": "/romania-team"
+      },
+      "assets": [
+        {
+          "id": "cmr8jsga2001takjuposo4ofv",
+          "kind": "IMAGE",
+          "key": "service-hero:cmr8ee3j30006fsju24727btu",
+          "path": "/api/media/media/3eb29e4e-4322-499a-84ee-310fdcf2576b-54a1a470-c8e0-4f8f-a04a-df45aea30361-12.webp",
+          "altText": "Sănătatea bărbatului — evaluare confidențială online"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody",
+        "ctaLabel"
+      ],
+      "resolvedLocale": "PT",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrc4axni00rn01p2n3r2bopf"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-14T12:54:00.000Z"
+      }
+    }
+  }
+}

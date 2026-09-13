@@ -1,0 +1,151 @@
+{
+  "endpoint": "/api/services/renovacion-tratamiento-online?countryCode=es&locale=CS",
+  "checkedAt": "2026-09-13T02:29:52.437Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7pz0n000kngjuib862zxl",
+      "kind": "GENERAL",
+      "slug": "renovacion-tratamiento-online",
+      "name": "Obnovení léčby",
+      "summary": null,
+      "seoTitle": "Obnovení léčby online Španělsko | Klinické posouzení | Registrovaný lékař",
+      "seoDescription": "Stabilní léčba, která potřebuje obnovení ve Španělsku? Naši registrovaní lékaři zhodnotí váš klinický stav prostřednictvím videohovoru a vystaví dokumentaci, kde je to indikováno. Bez předchozí registrace. Tentýž den.",
+      "seoKeywords": [
+        "renovación tratamiento online España",
+        "continuar tratamiento online España",
+        "revisión clínica tratamiento España",
+        "continuar medicación extranjero España"
+      ],
+      "heroTitle": "Obnovení léčby — Online klinické zhodnocení s registrovaným lékařem",
+      "heroDescription": "Máte stabilní a dlouhodobě zavedenou léčbu — a potřebujete její obnovení. Ať už proto, že v současnosti nemáte přiděleného praktického lékaře, protože nemůžete čekat týdny na termín, nebo protože přicházíte z jiné země s klinickou dokumentací, kterou španělské lékárny nemohou přímo zpracovat. Naši lékaři, registrovaní v souladu s požadavky Organizační lékařské komory (OMC), provedou kompletní klinické posouzení vaší současné léčby prostřednictvím zabezpečeného videohovoru — a vystaví příslušnou klinickou dokumentaci tam, kde je to indikováno. Tentýž den, odkudkoli ze Španělska, ve španělštině, angličtině nebo portugalštině.",
+      "detailBody": "<h2>Co je tato služba — a co není</h2><p>Toto je klinická revize léčby — ne automatické obnovení. Naši lékaři provádějí skutečné zhodnocení vaší aktuální léčby, vašeho klinického stavu, možných nežádoucích účinků a jakýchkoli změn ve vašem zdravotním stavu od poslední kontroly. Na základě tohoto zhodnocení poradí, zda je vaše léčba nadále vhodná, a vystaví odpovídající klinickou dokumentaci tam, kde je to indikováno.</p><p>Tato služba je vhodná, když je váš stav stabilní a vaše léčba je zavedená. Pokud se vaše příznaky výrazně změnily nebo se zhoršily, je vhodnější všeobecná lékařská konzultace.</p><h2>Pro koho je tato služba</h2><p>Tato služba je vhodná pro dospělé, kteří:</p><ul><li>Mají stabilní a zavedenou léčbu, kterou potřebují pokračovat v Španělsku</li><li>V současnosti nemají přiděleného praktického lékaře a nemohou se k němu dostat prostřednictvím veřejného systému</li><li>Přicestovali do Španělska z jiné země EU s klinickou dokumentací, kterou španělské lékárny nemohou přímo zpracovat</li><li>Nedávno změnili autonomní společenství a stále nemají přiděleného praktického lékaře</li><li>Mají chronický stav léčený v jiné zemi a chtějí pokračovat v léčbě, zatímco se usazují ve Španělsku</li><li>Chtějí klinickou revizi v angličtině nebo portugalštině, aniž by museli procházet systémem ve španělštině</li></ul><h2>Nejběžnější případ — zahraniční medikace ve Španělsku</h2><p>Toto je jedno z nejčastějších využití této služby pro mezinárodní rezidenty a turisty. Klinická dokumentace vystavená v jiných zemích — včetně Spojeného království, Irska, Německa, Nizozemska, Francie nebo jakéhokoli jiného členského státu EU — je teoreticky uznatelná ve Španělsku podle směrnice 2011/24/EU o přeshraniční zdravotní péči.</p><p>V praxi mají španělské lékárny často potíže zpracovat zahraniční klinickou dokumentaci z několika důvodů:</p><ul><li>Obchodní název léčiva může být ve Španělsku jiný</li><li>Formát neodpovídá španělskému ověřovacímu systému</li><li>Lékárna nemůže ověřit registraci zahraničního předepisujícího lékaře</li><li>Léčivo nemusí být ve Španělsku uvedeno na trh pod tímto názvem</li></ul><p>Nejpraktičtějším řešením je konzultace s naším lékařem, který zhodnotí vaši aktuální léčbu a vystaví odpovídající španělskou klinickou dokumentaci tam, kde je to indikováno — s použitím španělského generického názvu léčiva (DCI — Denominación Común Internacional) a napojenou na Nodofarma pro výdej v jakékoli lékárně na území státu.</p><p>Na konzultaci přineste: originální balení vaší medikace, generický název, svou klinickou dokumentaci, pokud ji máte, a jakékoli relevantní lékařské zprávy. Čím více informací lékaři poskytnete, tím lépe bude moci vaši léčbu posoudit.</p><h2>Co konzultace zahrnuje</h2><p><strong>Kompletní klinické zhodnocení aktuální léčby</strong></p><p>Lékař přezkoumá léčený stav, vaši současnou medikaci, dávkování a délku užívání, kontrolu příznaků a odpověď na léčbu, možné nežádoucí účinky a jakékoli relevantní změny ve vaší zdravotní anamnéze od poslední kontroly.</p><p><strong>Posouzení bezpečnosti</strong></p><p>Kontrola možných interakcí, kontraindikací a jakýchkoli změn ve vašem zdravotním stavu, které by mohly ovlivnit vhodnost pokračování ve vaší současné léčbě.</p><p><strong>Klinická dokumentace — podle uvážení lékaře</strong></p><p>Když lékař určí, že je vaše léčba i nadále klinicky vhodná, vystaví odpovídající klinickou dokumentaci v souladu s Real Decreto 1718/2010, schválenou OMC a propojenou prostřednictvím Nodofarma s více než 22.000 lékáren na území státu — tam, kde je to klinicky indikováno.</p><p>U soukromé klinické dokumentace hradíte 100% ceny léčiva — ceny ve Španělsku jsou regulované a obecně velmi dostupné. Obecná platnost je 10 kalendářních dnů pro první výdej. U dlouhodobé léčby může lékař naplánovat následné výdeje.</p><p>Poznámka: Omamné látky a určité kontrolované substance vyžadují zvláštní dokumentaci, kterou nelze prostřednictvím této služby vystavit elektronicky. Váš lékař vás informuje, pokud je to váš případ.</p><p><strong>Odeslání ke specialistovi nebo další vyšetření — tam, kde je to indikováno</strong></p><p>Pokud revize ukáže, že je před pokračováním léčby nutné další vyšetření, laboratorní testy nebo specializované posouzení, váš lékař vás jasně poradí a koordinuje další kroky ještě tentýž den.</p><h2>Stavy, které se obvykle revidují</h2><p>Tato služba je vhodná pro stabilní a zavedené stavy, včetně:</p><p><strong>Kardiovaskulární a metabolické</strong></p><ul><li>Arteriální hypertenze — kontrola antihypertenzní léčby</li><li>Diabetes — kontrola glykémie a léčby</li><li>Hyperlipidemie — kontrola statinů a lipidů</li><li>Onemocnění štítné žlázy — hypotyreóza a hypertyreóza, kontrola léčby</li></ul><p><strong>Respirační</strong></p><ul><li>Astma — kontrola inhalátorů a léčebného režimu</li><li>COPD — kontrola udržovací léčby</li></ul><p><strong>Duševní zdraví — na úrovni všeobecné medicíny</strong></p><ul><li>Stabilní úzkost a deprese — kontrola léčby na úrovni praktického lékaře, podmíněná klinickým zhodnocením</li><li>Chronická nespavost — kontrola zavedené léčby</li></ul><p><strong>Další</strong></p><ul><li>Gastroezofageální reflux a gastrointestinální onemocnění — dlouhodobá léčba</li><li>Hormonální antikoncepce — kontrola a pokračování, podmíněno klinickým zhodnocením</li><li>Dermatologické onemocnění — dlouhodobá topická nebo systémová léčba</li><li>Hormonální onemocnění — průběžná péče</li><li>Chronická bolest — kontrola zavedené léčby na úrovni praktického lékaře</li></ul><h2>Soukromá medikace vs. veřejný systém — praktický rozdíl</h2><p>S privátní klinickou dokumentací vystavenou našimi lékaři:</p><ul><li>Hradíte 100% ceny léčiva v lékárně</li><li>Ceny ve Španělsku jsou regulované a obecně nízké</li><li>Platí v jakékoli lékárně na území státu</li><li>Není vyžadována zdravotní karta ani španělské zdravotní pojištění</li></ul><p>S receptem SNS (veřejný systém):</p><ul><li>Existuje snížená spoluúčast podle příjmu, věku a pracovní situace</li><li>Vyžaduje praktického lékaře ve veřejném systému</li><li>Je přístupné pouze tehdy, pokud jste registrováni ve španělském veřejném systému</li></ul><p>Pokud máte praktického lékaře ve veřejném systému a potřebujete hrazenou medikaci, nejprve se obraťte na své CAP. Naše služba je zvláště užitečná, když nemáte přístup k veřejnému systému, když nemůžete čekat na termín, nebo když vaše klinická dokumentace pochází z jiné země.</p><h2>Důležité informace před rezervací</h2><ul><li>Rozhodnutí o pokračování, úpravě nebo změně jakékoli léčby je klinické rozhodnutí učiněné výhradně lékařem po úplném zhodnocení — nelze je předem potvrdit ani zaručit</li><li>Omamné látky a určité kontrolované substance nelze vystavit elektronicky — váš lékař vás informuje, pokud do této kategorie vaše medikace spadá</li><li>Naši lékaři rutinně neřeší kontrolované substance prostřednictvím videokonzultace</li><li>Pokud se vaše příznaky od poslední kontroly výrazně změnily, je vhodnější všeobecná lékařská konzultace</li><li>Na konzultaci přineste jakékoli výsledky laboratorních testů, zprávy specialistů nebo relevantní klinickou dokumentaci</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 30,
+      "durationMinutes": 15,
+      "basePriceCents": 2900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.259Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0kaao0009asjuv22mk4e7",
+          "kind": "IMAGE",
+          "key": "media/cf933591-e467-4cbf-9f49-d1e45f16636e-es-renovacion-tratamiento-online.png",
+          "path": "/api/media/media/cf933591-e467-4cbf-9f49-d1e45f16636e-es-renovacion-tratamiento-online.png",
+          "altText": "Renovación de Tratamiento"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7pz9a000lngjunpbz0j1w",
+          "question": "Je obnova po konzultaci automatická?",
+          "answer": "Ne. Obnovení léčby vyžaduje klinické vyšetření. Lékař zhodnotí váš aktuální stav, odpověď na léčbu a jakékoli změny od vaší poslední kontroly, než určí, zda je pokračování klinicky vhodné.",
+          "sortOrder": 0,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7pz9a000mngjuvi2405jt",
+          "question": "Mohu pokračovat v užívání jakýchkoli léků?",
+          "answer": "Většinu stabilních a zavedených léčebných postupů na úrovni praktického lékaře lze přezkoumat a pokračovat v nich prostřednictvím této služby. Omamné látky a určité kontrolované látky vyžadují zvláštní dokumentaci, kterou nelze vystavit elektronicky. Naši lékaři běžně neřeší kontrolované látky prostřednictvím videokonzultace. Váš lékař vám jasně sdělí, zda vaše léčba spadá do těchto kategorií.",
+          "sortOrder": 1,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7pz9a000nngjuqwpbiiz8",
+          "question": "Jak obdržím klinickou dokumentaci?",
+          "answer": "Když je to klinicky indikováno, váš lékař vystaví dokumentaci prostřednictvím systému schváleného OMC. Obdržíte ji elektronicky a předložíte ji v jakékoli lékárně podle svého výběru ve Španělsku spolu se svým DNI nebo pasaportem.",
+          "sortOrder": 2,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7pz9a000ongju863tsyvf",
+          "question": "Potřebuji španělské zdravotní pojištění?",
+          "answer": "Ne. Soukromá klinická dokumentace se poskytuje za plnou soukromou cenu. Nepožaduje se španělské zdravotní pojištění ani zdravotní průkaz.",
+          "sortOrder": 3,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7pz9a000pngjulyklv21w",
+          "question": "Mám zdravotní dokumentaci z jiné země — co si mám přinést na konzultaci?",
+          "answer": "Obecný název vašeho léku (DCI — Mezinárodní běžné označení), originální balení, pokud ho máte, vaši zahraniční zdravotnickou dokumentaci, pokud ji máte, a jakoukoli relevantní lékařskou zprávu.",
+          "sortOrder": 4,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7pz9a000qngjuja4gz4z7",
+          "question": "Co když se můj stav od mé poslední kontroly změnil?",
+          "answer": "Pokud se vaše příznaky výrazně změnily, je vhodnější obecná lékařská konzultace. Váš lékař vás během konzultace informuje, zda je nutné podrobnější vyšetření.",
+          "sortOrder": 5,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7pz9a000rngjujw9kwv5n",
+          "question": "Mohu tuto službu používat bez praktického lékaře ve Španělsku?",
+          "answer": "Ano. Tato služba je speciálně navržena pro pacienty — včetně expatů a mezinárodních rezidentů — kteří nemají v España přiděleného praktického lékaře, ale potřebují pokračovat v ustálené a zavedené léčbě.",
+          "sortOrder": 6,
+          "resolvedLocale": "CS"
+        },
+        {
+          "id": "cmre7pz9a000sngjumw9ufl99",
+          "question": "Mohu tuto službu používat odkudkoli ve Španělsku?",
+          "answer": "Ano — včetně Baleárských ostrovů, Kanárských ostrovů, Ceuty a Melilly. Stačí stabilní připojení k internetu a zařízení s kamerou.",
+          "sortOrder": 7,
+          "resolvedLocale": "CS"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "CS",
+      "links": [
+        {
+          "id": "cmre7ua4s0062g8jujrrpbtrs",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Consulta médica general con médico de cabecera?",
+          "body": "Si tu situación está relacionada con consulta médica general con médico de cabecera, nuestra Consulta Médica General te ofrece la evaluación adecuada.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpxpi0001v01ruqavjiq79",
+        "cmrdq2bu1002f01ru2g8317b6",
+        "cmrdpwar1001n01ruwhfioqs6",
+        "cmrdpted5001901ru0wk0ncnd",
+        "cmrdpsayj001401ruyb4x1ze3"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:19:00.000Z"
+      }
+    }
+  }
+}

@@ -1,0 +1,182 @@
+{
+  "endpoint": "/api/services/pediatria-online?countryCode=es&locale=ES",
+  "checkedAt": "2026-09-13T02:30:01.171Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmre7qbti0042ngjumicur4m2",
+      "kind": "GENERAL",
+      "slug": "pediatria-online",
+      "name": "Atención Primária Pediatria",
+      "summary": null,
+      "seoTitle": "Pediatría Online España | Consulta Infantil | Médico de Cabecera",
+      "seoDescription": "¿Tu hijo está enfermo y no puedes esperar cita? Nuestros médicos de cabecera colegiados evalúan la salud infantil por videollamada segura. Sin sala de espera, el mismo día en España.",
+      "seoKeywords": [
+        "pediatría online España",
+        "médico niños online España",
+        "consulta pediátrica online España",
+        "médico infantil online España",
+        "fiebre niño médico online España"
+      ],
+      "heroTitle": "Pediatría Online — Consulta Infantil con Médico de Cabecera el Mismo Día",
+      "heroDescription": "Tu hijo está enfermo y el pediatra no tiene cita hasta mañana. O es sábado por la noche y la consulta está cerrada. O necesitas evaluar los síntomas de tu hijo antes de decidir si ir a urgencias. O eres una familia extranjera en España y prefieres consultar en inglés o portugués. Nuestros médicos de cabecera, colegiados conforme a los requisitos de la Organización Médica Colegial (OMC), ofrecen consultas médicas infantiles por videollamada segura — evaluando los síntomas de tu hijo, asesorando sobre la gestión, y coordinando derivación o investigación adicional donde esté clínicamente indicado. El mismo día, desde cualquier punto de España, en español, inglés o portugués. Debe estar presente un padre, madre o tutor legal durante todas las consultas para menores de 16 años.",
+      "detailBody": "<h2>Una realidad del sistema pediátrico español</h2><p>En España, la atención primaria pediátrica está bien estructurada — cada niño tiene derecho a un pediatra de atención primaria asignado en el sistema público hasta los 14-16 años según la comunidad autónoma. Esta es una fortaleza del sistema sanitario español.</p><p>Sin embargo, existen situaciones en las que este servicio es genuinamente útil:</p><ul><li>Tu hijo está enfermo hoy y el pediatra asignado no tiene cita disponible hasta mañana o pasado</li><li>Es fuera del horario de consulta — tarde, fin de semana o festivo</li><li>Quieres evaluar los síntomas de tu hijo antes de decidir si ir a urgencias — donde los tiempos de espera pueden ser muy largos</li><li>Eres una familia internacional o expat sin pediatra asignado actualmente o que prefiere la consulta en inglés o portugués</li><li>Quieres que te expliquen claramente lo que el pediatra español te ha dicho sobre la salud de tu hijo</li></ul><p>¿Ya tienes pediatra asignado en el sistema público? Este servicio funciona como complemento — para cuando necesitas atención hoy y no hay cita disponible, o cuando quieres una segunda perspectiva antes de decidir si ir a urgencias.</p><h2>Para quién es este servicio</h2><p>Esta consulta es apropiada para:</p><ul><li>Lactantes, niños y adolescentes hasta 18 años con preocupaciones de salud agudas o no urgentes</li><li>Familias sin pediatra de atención primaria asignado actualmente</li><li>Familias con pediatra asignado que necesitan asesoramiento clínico hoy, fuera del horario de consulta</li><li>Padres que necesitan evaluar los síntomas de su hijo antes de decidir si ir a urgencias</li><li>Padres que han recibido asesoramiento o documentación de un pediatra español y quieren que se explique claramente</li><li>Adolescentes de 16 años o más que quieren discutir una preocupación de salud directamente con un médico</li><li>Familias internacionales o expats que prefieren la consulta en inglés o portugués</li></ul><p>Este servicio es para preocupaciones pediátricas agudas y no urgentes a nivel de medicina general. Para urgencias pediátricas, llama al 112 o ve al servicio de urgencias más cercano inmediatamente. La fiebre en lactantes menores de 3 meses requiere evaluación de urgencias — no reserves una videoconsulta.</p><h2>Condiciones habitualmente evaluadas</h2><p><strong>Respiratorio y ORL</strong></p><ul><li>Resfriado común, tos e infecciones de vías respiratorias superiores</li><li>Infecciones de oído — otitis media y otitis externa</li><li>Dolor de garganta y amigdalitis</li><li>Crup — evaluación y orientación</li><li>Sibilancias y preocupaciones leves de asma</li><li>Sinusitis en niños mayores</li></ul><p><strong>Fiebre y enfermedad general</strong></p><ul><li>Fiebre en niños mayores de 3 meses — evaluación, asesoramiento sobre gestión y orientación sobre cuándo buscar atención adicional</li><li>Enfermedades virales — exantema súbito, síndrome mano-pie-boca, varicela</li><li>Gastroenteritis — vómitos y diarrea, evaluación de deshidratación</li><li>Infecciones del tracto urinario en niños</li><li>Fatiga y malestar general</li></ul><p><strong>Piel</strong></p><ul><li>Erupciones — evaluación y orientación para padres</li><li>Eccema en lactantes y niños — gestión de brotes y asesoramiento continuado</li><li>Impétigo e infecciones cutáneas en niños</li><li>Molusco contagioso</li><li>Dermatitis del pañal y preocupaciones cutáneas en lactantes</li><li>Reacciones cutáneas alérgicas</li></ul><p><strong>Crecimiento, desarrollo y comportamiento</strong></p><ul><li>Preocupaciones de los padres sobre hitos del desarrollo — con derivación para evaluación formal donde esté indicado</li><li>Dificultades de sueño en lactantes y niños pequeños</li><li>Preocupaciones de alimentación en lactantes</li><li>Preocupaciones de comportamiento en niños en edad escolar — con derivación donde esté indicado</li><li>Preocupaciones de salud en adolescentes — acné, salud menstrual, bienestar mental, preocupaciones de peso</li></ul><p><strong>Gestión de condiciones crónicas</strong></p><ul><li>Asma en niños — revisión y asesoramiento continuado</li><li>Eccema — gestión continuada y revisión de brotes</li><li>Alergias — evaluación y asesoramiento sobre gestión</li><li>Dolor abdominal crónico en niños — evaluación y derivación donde esté indicado</li></ul><p><strong>Otros</strong></p><ul><li>Documentación médica — justificantes de ausencia escolar, cartas de derivación</li><li>Revisión de resultados o cartas clínicas de pediatras españoles — explicados claramente</li><li>Consejo médico de viaje para niños</li><li>Consultas sobre calendario de vacunación — aclaraciones y orientación</li></ul><h2>Qué incluye la consulta</h2><p><strong>Evaluación clínica pediátrica completa</strong></p><p>Tu médico de cabecera toma una historia clínica completa de los síntomas de tu hijo — inicio, duración, gravedad, síntomas asociados, estado de alimentación e hidratación, historial médico relevante, medicación actual, estado de vacunación e historial familiar donde sea relevante. Para niños más pequeños, la consulta se realiza con el padre o madre describiendo los síntomas y mostrando al niño en vídeo donde sea clínicamente relevante.</p><p><strong>Evaluación de seguridad</strong></p><p>Cada consulta pediátrica incluye evaluación de si la presentación del niño requiere atención de urgencias o presencial urgente. Tu médico te informa clara e inmediatamente si este es el caso.</p><p><strong>Orientación parental clara</strong></p><p>Sales de la consulta sabiendo qué es lo más probable que esté ocurriendo con tu hijo, qué hacer en casa, qué síntomas vigilar, qué te llevaría a buscar atención adicional, y cuándo esperar mejoría. La confianza y el conocimiento parental son un resultado clínico en sí mismos.</p><p><strong>Documentación clínica — a criterio del médico</strong></p><p>Cuando esté clínicamente indicado, tu médico de cabecera emite la documentación clínica correspondiente válida en cualquier farmacia española.</p><p>Nota: Los estupefacientes y determinadas sustancias controladas requieren documentación especial que no puede emitirse electrónicamente. Tu médico te informará si esto aplica a la situación de tu hijo.</p><p><strong>Antibióticos — donde esté clínicamente indicado</strong></p><p>En España, todos los antibióticos requieren prescripción médica. Tu médico evalúa la presentación de tu hijo y prescribe el antibiótico adecuado donde la evidencia clínica lo justifica — incluyendo infecciones de oído, infecciones de garganta, infecciones del tracto urinario e infecciones cutáneas — siguiendo los principios de uso responsable de antibióticos.</p><p><strong>Derivación y documentación</strong></p><p>Cuando esté indicada la derivación al pediatra español, especialista o urgencias, tu médico emite la documentación relevante el mismo día.</p><h2>Cuándo ir a urgencias — guía clara para padres</h2><p>Una de las decisiones más frecuentes y más estresantes que toman los padres es si la afección de su hijo requiere atención de urgencias o si la vigilancia cuidadosa en casa es suficiente. Esta consulta te ayuda a tomar esa decisión con apoyo clínico — pero algunas presentaciones requieren atención de urgencias sin esperar a una videoconsulta:</p><p>Ve a urgencias inmediatamente si tu hijo tiene:</p><ul><li>Fiebre en un lactante menor de 3 meses — siempre es una urgencia</li><li>Dificultad respiratoria — cualquier respiración rápida, laboriosa o ruidosa</li><li>Una erupción que no desaparece al presionar con un vaso — posible meningitis, llama al 112</li><li>Primera convulsión, o convulsión de más de 5 minutos</li><li>Pérdida de consciencia o falta de respuesta</li><li>Reacción alérgica grave — hinchazón de labios, lengua o garganta</li><li>Un niño que se deteriora rápidamente</li></ul><p>Urgencias pediátricas en España:</p><ul><li>Hospital La Paz — Madrid (urgencias pediátricas 24h)</li><li>Hospital Vall d'Hebron — Barcelona (urgencias pediátricas 24h)</li><li>Hospital La Fe — Valencia (urgencias pediátricas 24h)</li><li>Hospital Virgen del Rocío — Sevilla (urgencias pediátricas 24h)</li><li>Fuera de las grandes ciudades: el hospital de referencia de tu área tiene servicio de urgencias pediátricas</li></ul><p>Ante la duda, siempre ve a urgencias. Es siempre mejor ser visto y que no sea grave, que esperar en casa con un niño que se deteriora.</p><h2>Información importante antes de reservar</h2><ul><li>Debe estar presente un padre, madre o tutor legal durante todas las consultas para menores de 16 años, conforme a la Ley Orgánica 1/1996 de Protección Jurídica del Menor y la Ley 41/2002 de autonomía del paciente</li><li>Para adolescentes de 16 años o más, el médico evalúa la capacidad de consentir individualmente conforme a la normativa española — concepto de \"menor maduro\"</li><li>Fiebre en lactantes menores de 3 meses es una urgencia médica que requiere evaluación presencial inmediata — no reserves una videoconsulta para esta presentación</li><li>Niños que se deterioran rápidamente — si tu hijo está empeorando significativamente mientras intentas reservar, ve a urgencias inmediatamente en lugar de esperar a la consulta</li><li>Obligación de comunicación — nuestros profesionales clínicos están sujetos a la obligación de comunicar situaciones de posible desamparo o maltrato al menor conforme a la Ley Orgánica 1/1996. Esta obligación prevalece sobre la confidencialidad</li><li>La decisión de emitir cualquier documentación — justificantes, derivaciones — es siempre una decisión clínica del médico tras evaluación completa</li></ul>",
+      "ctaLabel": null,
+      "sortOrder": 40,
+      "durationMinutes": 15,
+      "basePriceCents": 3900,
+      "currencyCode": "EUR",
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-07-16T12:23:56.259Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0skg90000y8jurlo2mrg2",
+          "kind": "IMAGE",
+          "key": "media/fbb2f7c0-6549-481e-8ff9-6b6cce4cacc9-es-pediatria-online.png",
+          "path": "/api/media/media/fbb2f7c0-6549-481e-8ff9-6b6cce4cacc9-es-pediatria-online.png",
+          "altText": "Atención Primária Pediatria"
+        }
+      ],
+      "faqs": [
+        {
+          "id": "cmre7qc1v0043ngjubabydlvr",
+          "question": "¿Puede evaluarse realmente la enfermedad de un niño por videollamada?",
+          "answer": "Sí — para la gran mayoría de presentaciones no urgentes. Una historia parental detallada de los síntomas combinada con la observación visual del niño durante la llamada permite a un médico con experiencia realizar una evaluación clínica de la mayoría de las enfermedades infantiles comunes. Donde la presentación requiera exploración física presencial — por ejemplo, para evaluar los sonidos respiratorios, exploración del oído o palpación abdominal — tu médico te asesora claramente y coordina la derivación apropiada.",
+          "sortOrder": 0,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qc1v0044ngju09x6ekdn",
+          "question": "Mi hijo tiene fiebre — ¿puedo usar este servicio?",
+          "answer": "Sí — para niños mayores de 3 meses. Tu médico evalúa la gravedad, la causa probable y la gestión apropiada. Para lactantes menores de 3 meses, la fiebre es una urgencia médica — ve al servicio de urgencias más cercano inmediatamente sin reservar una videoconsulta.",
+          "sortOrder": 1,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qc1v0045ngjufo98znha",
+          "question": "¿Puede el médico prescribir antibióticos para mi hijo?",
+          "answer": "Sí — donde esté clínicamente indicado tras evaluación completa. En España todos los antibióticos requieren prescripción médica. Tu médico evalúa la presentación de tu hijo y prescribe el antibiótico adecuado donde la evidencia clínica lo justifica.",
+          "sortOrder": 2,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qc1v0046ngju7w1xvobk",
+          "question": "¿Necesito tener un pediatra asignado para usar este servicio?",
+          "answer": "No. Este servicio está disponible para todas las familias en España — sin registro previo, sin pediatra asignado requerido, sin seguro médico necesario.",
+          "sortOrder": 3,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qc1v0047ngjuou9kxn45",
+          "question": "Mi hijo ha recibido una carta o diagnóstico de un pediatra español que no entiendo — ¿pueden ayudarme?",
+          "answer": "Sí. Trae la carta o resultados a la consulta y tu médico revisa y explica los hallazgos y recomendaciones clínicas claramente en el idioma que prefieras.",
+          "sortOrder": 4,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qc1v0048ngju1rdxl81f",
+          "question": "¿Es este servicio adecuado para adolescentes?",
+          "answer": "Sí. Las preocupaciones de salud de los adolescentes — incluyendo acné, salud menstrual, bienestar mental y peso — son parte de este servicio. Para adolescentes de 16 años o más, el médico evalúa si el joven puede consentir de forma independiente. Para los menores de 16 años, debe estar presente un padre o tutor durante toda la consulta.",
+          "sortOrder": 5,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qc1v0049ngjupx17vlal",
+          "question": "¿Qué pasa si mi hijo necesita ir a urgencias?",
+          "answer": "Si tu médico determina que tu hijo necesita atención de urgencias o presencial urgente, se te informará inmediata y claramente — incluyendo qué decir cuando llegues a urgencias y qué hospital es más apropiado para tu localización en España. Tu médico puede emitir un resumen clínico breve si esto sería útil.",
+          "sortOrder": 6,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qc1v004angju8vzke26a",
+          "question": "¿Puedo obtener un justificante de ausencia escolar a través de este servicio?",
+          "answer": "Sí. Los justificantes de ausencia escolar pueden emitirse a criterio clínico del médico tras evaluación — acreditando que el niño fue evaluado y no está en condiciones de asistir al colegio, sin especificar detalles clínicos.",
+          "sortOrder": 7,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qc1w004bngjuc93zuy74",
+          "question": "¿Necesito seguro médico español?",
+          "answer": "No. Es un servicio privado de pago directo. La documentación clínica emitida a través de este servicio se dispensa al precio privado completo con independencia del estado de aseguramiento.",
+          "sortOrder": 8,
+          "resolvedLocale": "ES"
+        },
+        {
+          "id": "cmre7qc1w004cngjuscslov4h",
+          "question": "¿Puedo usar este servicio desde cualquier punto de España?",
+          "answer": "Sí — incluyendo Islas Baleares, Islas Canarias, Ceuta y Melilla. Solo necesitas conexión estable a internet y un dispositivo con cámara.",
+          "sortOrder": 9,
+          "resolvedLocale": "ES"
+        }
+      ],
+      "translatedFields": [
+        "name",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "ES",
+      "links": [
+        {
+          "id": "cmre7ts6t0052g8ju6asq61tw",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Enfermedad crónica pediátrica o condición compleja?",
+          "body": "Si tu situación está relacionada con enfermedad crónica pediátrica o condición compleja, nuestra Pediatría Especialista te ofrece la evaluación adecuada.",
+          "ctaLabel": "Pediatría Especialista",
+          "targetSlug": "pediatra-especialista-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7tsyv0054g8jug81ewfa0",
+          "type": "UPGRADE",
+          "anchorSlot": null,
+          "heading": "¿Necesitas ayuda con salud mental en adolescentes?",
+          "body": "Para salud mental en adolescentes, consulta nuestra página de Psiquiatría Especialista — evaluación clínica específica para tu caso.",
+          "ctaLabel": "Psiquiatría Especialista",
+          "targetSlug": "psiquiatra-online",
+          "targetHref": null
+        },
+        {
+          "id": "cmre7ttqy0056g8jufdh5x48f",
+          "type": "COMPLEMENTARY",
+          "anchorSlot": null,
+          "heading": "¿Tu consulta es sobre consulta médica general con médico de cabecera?",
+          "body": "Nuestra Consulta Médica General está pensada específicamente para consulta médica general con médico de cabecera.",
+          "ctaLabel": "Consulta Médica General",
+          "targetSlug": "consulta-medica-online",
+          "targetHref": null
+        }
+      ],
+      "assignedDoctorIds": [
+        "cmrdpu7ro001e01ruc1ycm5n5"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T12:26:00.000Z"
+      }
+    }
+  }
+}

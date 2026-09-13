@@ -1,3 +1,4 @@
+import { reviewedRomaniaTransaction } from "../../content/romania-clinical-review.js";
 import { Prisma, type LocaleCode, type ServiceLinkType } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
@@ -96,7 +97,7 @@ export async function replaceServiceLinks(serviceId: string, input: ServiceLinks
       }
     }
 
-    const saved = await prisma.$transaction(async (tx) => {
+    const saved = await reviewedRomaniaTransaction(prisma, async (tx) => {
       await tx.serviceLink.deleteMany({ where: { sourceServiceId: serviceId } });
       for (const link of input.links) {
         await tx.serviceLink.create({

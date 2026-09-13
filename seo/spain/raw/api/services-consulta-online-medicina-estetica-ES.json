@@ -1,0 +1,81 @@
+{
+  "endpoint": "/api/services/consulta-online-medicina-estetica?countryCode=es&locale=ES",
+  "checkedAt": "2026-09-13T02:30:00.183Z",
+  "status": 200,
+  "ok": true,
+  "data": {
+    "service": {
+      "id": "cmrezwush00pq01qrtoq51csl",
+      "kind": "GENERAL",
+      "slug": "consulta-online-medicina-estetica",
+      "name": "Medicina Estética Online",
+      "summary": "Valoración médica independiente en medicina estética por videollamada: indicación, expectativas realistas, riesgos y plan de tratamiento, sin la presión comercial del centro que vende el procedimiento.",
+      "seoTitle": "Medicina Estética Online España | Valoración Médica Independiente",
+      "seoDescription": "Consulta de medicina estética online con médica colegiada en España. Valoración independiente antes de tratarte: indicación, expectativas realistas, riesgos y plan escrito. Cita el mismo día.",
+      "seoKeywords": [
+        "medicina estética online España",
+        "consulta medicina estética online",
+        "segunda opinión medicina estética España",
+        "valoración estética médica online",
+        "médico estético online España"
+      ],
+      "heroTitle": "Medicina Estética Online — Valoración Médica Independiente",
+      "heroDescription": "Antes de decidirte por un tratamiento estético conviene que un médico valore tu caso sin tener el procedimiento que venderte. Esta consulta de medicina estética online es exactamente eso: una valoración independiente por videollamada sobre qué tratamientos están indicados para tu piel y tus objetivos, cuáles no lo están, qué resultado es realista, qué riesgos asume cada opción y qué comprobar en la clínica que finalmente te trate. Realizada por médicas colegiadas conforme a los requisitos de la Organización Médica Colegial (OMC) con práctica en medicina estética, desde cualquier punto de España, en español, inglés o portugués.",
+      "detailBody": "<h2>Para quién es este servicio</h2><p>Esta consulta de medicina estética online es apropiada para adultos que quieren:</p><ul><li>Una valoración médica antes de contratar un tratamiento — toxina botulínica, rellenos de ácido hialurónico, peelings químicos, láser, mesoterapia, hilos tensores o radiofrecuencia</li><li>Saber qué es realista en su caso y qué no lo es, antes de pagar por un procedimiento</li><li>Una segunda opinión independiente sobre un plan de tratamiento o un presupuesto propuesto por otro centro</li><li>Orientación sobre una preocupación cutánea con componente estético — arrugas, flacidez, manchas, poro dilatado, textura irregular, marcas de acné o rojeces</li><li>Un plan de cuidado domiciliario con activos de eficacia demostrada, antes de un procedimiento o en lugar de él</li><li>Revisión de la evolución tras un tratamiento estético reciente, cuando no hay signos de complicación urgente</li><li>Entender qué comprobar en una clínica estética: quién realiza el procedimiento, con qué producto y con qué consentimiento informado</li><li>Residentes internacionales y expatriados que prefieren una valoración en inglés o portugués</li></ul><h2>Qué es este servicio — y qué no es</h2><p>Esta consulta cubre:</p><ul><li>Valoración médica de la indicación: qué tratamiento corresponde a qué problema, y en qué orden</li><li>Expectativas realistas — qué cambio es alcanzable, en cuántas sesiones y cuánto dura</li><li>Riesgos, contraindicaciones e interacciones con tu historia clínica y tu medicación actual</li><li>Plan de cuidado de la piel con activos tópicos y fotoprotección</li><li>Segunda opinión sobre un plan o un presupuesto de otro centro</li><li>Revisión de evolución postratamiento no urgente</li><li>Derivación coordinada a dermatología o a valoración presencial cuando esté indicado</li></ul><p>Este servicio no cubre:</p><ul><li>La realización del procedimiento. Ninguna infiltración, láser o peeling puede hacerse por videollamada: la consulta planifica el tratamiento, no lo ejecuta</li><li>Complicaciones urgentes tras una infiltración. El dolor intenso y desproporcionado, la palidez o coloración violácea de la piel y la pérdida o borrosidad de visión tras un relleno son urgencias médicas: acude a urgencias o llama al 112 de inmediato</li><li>Signos de infección tras un procedimiento — fiebre, calor local, supuración o inflamación progresiva — que requieren valoración presencial el mismo día</li><li>Cirugía plástica. La valoración de un procedimiento quirúrgico corresponde a cirugía plástica presencial</li><li>Lesiones cutáneas sospechosas. Un lunar que cambia, sangra o pica necesita dermatoscopia presencial; la consulta te orienta y coordina la derivación</li></ul><h2>Preocupaciones habitualmente evaluadas</h2><ul><li>Arrugas dinámicas de expresión — entrecejo, frente y contorno ocular</li><li>Pérdida de volumen y flacidez facial leve o moderada</li><li>Hiperpigmentación: melasma, léntigos solares y manchas postinflamatorias</li><li>Secuelas de acné — marcas, cicatrices atróficas y textura irregular</li><li>Rojeces persistentes y rosácea con impacto estético</li><li>Ojeras y surco lagrimal</li><li>Piel apagada, poro dilatado y fotoenvejecimiento</li><li>Hiperhidrosis axilar o palmar</li><li>Resultados insatisfactorios o asimetrías tras un tratamiento previo</li></ul><h2>Qué incluye la consulta</h2><p><strong>Valoración por videollamada segura</strong></p><p>La consulta se realiza por videollamada cifrada. Puedes enviar antes de la cita fotografías con buena iluminación de la zona que te preocupa, además de informes o presupuestos de otros centros.</p><p><strong>Historia clínica y seguridad</strong></p><p>Se revisan antecedentes relevantes, medicación actual, alergias, tratamientos estéticos previos y objetivos. Buena parte de las contraindicaciones de la medicina estética — embarazo y lactancia, enfermedad autoinmune activa, anticoagulación, infección cutánea activa, herpes labial recurrente o tratamiento reciente con isotretinoína — solo aparecen en una historia clínica hecha con tiempo.</p><p><strong>Plan escrito</strong></p><p>Tras la consulta recibes un plan por escrito: qué tratamiento está indicado, en qué orden, qué alternativa menos invasiva existe, qué resultado es esperable y qué señales de alarma vigilar si finalmente te tratas.</p><p><strong>Prescripción cuando esté indicada</strong></p><p>La prescripción de tratamiento tópico o sistémico es una decisión clínica y se realiza únicamente cuando resulta apropiada tras la valoración.</p><p><strong>Derivación coordinada</strong></p><p>Cuando el caso corresponde a dermatología, a cirugía plástica o a una valoración presencial, la médica lo indica con claridad y coordina la derivación con el informe completo.</p><h2>Antes de tratarte: qué comprobar</h2><p>La medicina estética es un acto médico. Antes de cualquier procedimiento conviene verificar:</p><ul><li>Quién realiza el tratamiento y con qué titulación — la infiltración de toxina botulínica y de rellenos es un acto médico</li><li>Qué producto exacto se va a utilizar, con qué marcado CE y en qué cantidad</li><li>Que existe consentimiento informado por escrito, con riesgos y alternativas</li><li>Qué protocolo de complicaciones tiene el centro y quién responde fuera del horario de consulta</li><li>Qué incluye el precio: número de sesiones, revisión posterior y retoque</li></ul><h2>Medicina estética en España — el problema del acceso</h2><p>En España la primera valoración estética suele ofrecerse gratuitamente en el mismo centro que después vende el tratamiento. Esa valoración tiene valor, pero no es independiente: quien la realiza tiene un interés económico directo en el procedimiento que recomienda.</p><p>El resultado es previsible — tratamientos indicados a pacientes que no los necesitaban, expectativas mal ajustadas y presupuestos imposibles de comparar entre clínicas, porque cada una describe lo que hace con nombres comerciales distintos.</p><p>Esta consulta existe para cubrir ese hueco: una valoración médica que paga el paciente, sin ningún tratamiento que vender, disponible el mismo día desde cualquier punto de España y también en inglés o portugués.</p>",
+      "ctaLabel": null,
+      "sortOrder": 70,
+      "durationMinutes": 30,
+      "basePriceCents": 7500,
+      "currencyCode": null,
+      "shippingCents": 0,
+      "isActive": true,
+      "visibility": "PUBLIC",
+      "galleryImagePaths": [],
+      "lastReviewedAt": null,
+      "authorDisplayName": null,
+      "reviewerDisplayName": null,
+      "authorDoctorId": null,
+      "reviewerDoctorId": null,
+      "updatedAt": "2026-08-19T10:10:22.466Z",
+      "country": {
+        "id": "cmqy9rw9w00x001qkq31jktqq",
+        "code": "es",
+        "slug": "spain",
+        "name": "Spain",
+        "defaultLocale": "ES",
+        "teamPath": "/spain-team"
+      },
+      "assets": [
+        {
+          "id": "cmru0sx8l0007y8ju4hc984c7",
+          "kind": "IMAGE",
+          "key": "media/2bdca79b-b2cc-48db-9b6a-2680f2a800a1-es-consulta-online-medicina-estetica.png",
+          "path": "/api/media/media/2bdca79b-b2cc-48db-9b6a-2680f2a800a1-es-consulta-online-medicina-estetica.png",
+          "altText": "Consulta Online Medicina Estetica"
+        }
+      ],
+      "faqs": [],
+      "translatedFields": [
+        "name",
+        "summary",
+        "seoTitle",
+        "seoDescription",
+        "heroTitle",
+        "heroDescription",
+        "detailBody"
+      ],
+      "resolvedLocale": "ES",
+      "links": [],
+      "assignedDoctorIds": [
+        "cmrdpted5001901ru0wk0ncnd"
+      ],
+      "insuranceOptions": [],
+      "insuranceSeoLine": null,
+      "bookability": {
+        "state": "BOOKABLE",
+        "reasonCode": null,
+        "nextAvailableAt": "2026-09-13T06:23:00.000Z"
+      }
+    }
+  }
+}
