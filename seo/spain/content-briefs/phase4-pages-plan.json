@@ -1,0 +1,27 @@
+{
+  "source": "Sick-leave wording review 2026-09-14 §3 H1, D2 and L2; owner reported Dra. María Fernanda Ocampo Mora approved the draft copy; owner chose to include L2 without separate legal review.",
+  "entries": [
+    { "kind": "whoForItem", "id": "cmriu84mi00c101qnvvg735dh", "pageKey": "HOME", "locale": "ES", "from": "Certificados médicos y bajas laborales cuando sea clínicamente apropiado", "to": "Justificantes médicos privados cuando sea clínicamente apropiado" },
+    { "kind": "whoForItem", "id": "cmriu84mi00c401qn9s68dev8", "pageKey": "HOME", "locale": "EN", "from": "Medical certificates and sick notes when clinically appropriate", "to": "Private medical certificates when clinically appropriate" },
+    { "kind": "whoForItem", "id": "cmriu84mi00c501qn3ia5b9di", "pageKey": "HOME", "locale": "PT", "from": "Atestados médicos e baixas quando clinicamente apropriado", "to": "Atestados médicos privados quando clinicamente apropriado" },
+    { "kind": "whoForItem", "id": "cmriu84mi00c301qnwdrdt3fd", "pageKey": "HOME", "locale": "DE", "from": "Ärztliche Atteste und Krankschreibungen, sofern klinisch angemessen", "to": "Private ärztliche Atteste, sofern klinisch angemessen" },
+    { "kind": "whoForItem", "id": "cmriu84mi00c201qn5y5hsojd", "pageKey": "HOME", "locale": "CS", "from": "Lékařská potvrzení a neschopenky, je-li to klinicky vhodné", "to": "Soukromá lékařská potvrzení, je-li to klinicky vhodné" },
+    { "kind": "whoForItem", "id": "cmriu84mi00c601qnglk6xc8l", "pageKey": "HOME", "locale": "RO", "from": "Certificate medicale și concedii medicale atunci când este clinic adecvat", "to": "Adeverințe medicale private, atunci când este clinic adecvat" },
+    {
+      "kind": "faq", "id": "cmriue46o00d401qnz69mlmqg", "pageKey": "DOCTORS_INDEX", "locale": "ES",
+      "from": {
+        "question": "¿Pueden los médicos de Global Health España emitir informes médicos y bajas laborales?",
+        "answer": "Sí. Los médicos colegiados en España a través de Global Health pueden emitir informes médicos, certificados y cartas clínicas donde esté clínicamente indicado, a criterio profesional del médico tras la evaluación. Tras cada consulta recibirás por correo electrónico las notas clínicas del médico con sus conclusiones y recomendaciones."
+      },
+      "to": {
+        "question": "¿Pueden los médicos de Global Health España emitir informes y justificantes médicos?",
+        "answer": "Sí, cuando esté clínicamente indicado y a criterio profesional del médico tras la evaluación. No emiten partes de baja por incapacidad temporal, que corresponden al servicio público de salud o, en contingencias profesionales, a la mutua. Tras cada consulta recibirás por correo electrónico las notas clínicas del médico con sus conclusiones y recomendaciones."
+      }
+    },
+    {
+      "kind": "legal", "id": "cmre7r5ef0000xgjujrhun4ry",
+      "from": "<p>Los partes médicos emitidos a través de nuestra plataforma son aceptados por empleadores e instituciones educativas en todo el país. Cuando un empleador requiera un parte médico durante un periodo de baja, este podrá emitirse tras una evaluación clínica completa, a discreción del médico, en función de la naturaleza y el resultado de la consulta.</p><p>Tenga en cuenta que los partes de baja para su presentación ante la Seguridad Social (INSS) no están disponibles a través de nuestro servicio. Los pacientes que necesiten esta documentación para trámites de la Seguridad Social deben acudir a una consulta presencial con su médico de cabecera. Puede obtener más información a través de los servicios oficiales españoles en seg-social.es.</p>",
+      "to": "<p>Los justificantes médicos privados emitidos a través de nuestra plataforma documentan la valoración clínica realizada; su aceptación por empleadores o centros educativos depende de las normas de cada uno. Cuando esté clínicamente indicado, el médico podrá emitir un justificante tras una evaluación clínica completa, a su criterio.</p><p>Nuestro servicio no emite partes médicos de baja, confirmación ni alta por incapacidad temporal: conforme al Real Decreto 625/2014, los emite el médico del servicio público de salud o, en contingencias profesionales, la mutua o la empresa colaboradora. Para ese trámite, acuda a su centro de salud o a su mutua. Puede obtener más información a través de los servicios oficiales españoles en seg-social.es.</p>"
+    }
+  ]
+}

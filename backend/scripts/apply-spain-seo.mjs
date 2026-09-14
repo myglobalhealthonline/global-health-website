@@ -7,12 +7,13 @@ import {readBrazil} from './brazil-seo-storage.mjs';
 import {hash,rehearse} from './prepare-spain-seo.mjs';
 import {comparable,mutateRows} from './apply-romania-seo.mjs';
 import {assertSpainClinicalChanges,APPROVED_SPAIN_STATES,SPAIN_REVIEW_POLICY,assertBrazilClinicalChanges,APPROVED_BRAZIL_STATES,BRAZIL_REVIEW_POLICY} from '../src/content/romania-clinical-review.ts';
-export const tables={services:'Service',serviceTranslations:'ServiceTranslation',serviceFaqs:'ServiceFaq',serviceFaqTranslations:'ServiceFaqTranslation',doctorMarketTranslations:'DoctorMarketTranslation',doctorFaqs:'DoctorFaq',serviceLinks:'ServiceLink',doctors:'Doctor',doctorCountries:'DoctorCountry'};
+export const tables={services:'Service',serviceTranslations:'ServiceTranslation',serviceFaqs:'ServiceFaq',serviceFaqTranslations:'ServiceFaqTranslation',doctorMarketTranslations:'DoctorMarketTranslation',doctorFaqs:'DoctorFaq',serviceLinks:'ServiceLink',doctors:'Doctor',doctorCountries:'DoctorCountry',doctorTranslations:'DoctorTranslation',serviceLinkTranslations:'ServiceLinkTranslation'};
 export const withoutUpdatedAt=['DoctorCountry'];
 const copy=['seoTitle','seoDescription','heroTitle','heroDescription','detailBody'];
 // Doctor/DoctorCountry fields are writable only for the verified registration-typo correction group.
 // summary/name are written only by storage-based copy-patch groups (phase 3+).
-export const updates={services:[...copy,'summary','name'],serviceTranslations:[...copy,'summary','name'],serviceFaqs:['question','answer'],serviceFaqTranslations:['question','answer'],doctorMarketTranslations:['seoTitle','seoDescription'],doctorFaqs:['question','answer'],serviceLinks:['isActive'],doctors:['seoTitle','seoDescription','qualifications'],doctorCountries:['registrationNumber']};
+// bio, seoKeywords and link heading/body are written only by exact text-replacement groups (phase 4+).
+export const updates={services:[...copy,'summary','name','seoKeywords'],serviceTranslations:[...copy,'summary','name'],serviceFaqs:['question','answer'],serviceFaqTranslations:['question','answer'],doctorMarketTranslations:['seoTitle','seoDescription','bio'],doctorFaqs:['question','answer'],serviceLinks:['isActive'],doctors:['seoTitle','seoDescription','qualifications','bio'],doctorCountries:['registrationNumber'],doctorTranslations:['bio'],serviceLinkTranslations:['heading','body']};
 export const inserts={serviceFaqs:['id','serviceId','question','answer','sortOrder','isVisible'],serviceFaqTranslations:['id','serviceFaqId','locale','question','answer']};
 export function verifySpainApproval(manifest,approval,group,now=Date.now()){
  const policy=manifest.country==='br'?BRAZIL_REVIEW_POLICY:SPAIN_REVIEW_POLICY,states=manifest.country==='br'?APPROVED_BRAZIL_STATES:APPROVED_SPAIN_STATES;
@@ -63,8 +64,10 @@ if(process.argv[1]?.endsWith('apply-spain-seo.mjs')){
  if(apply){verifySpainApproval(manifest,read(`clinical-approval${suffix}.json`),group);assert.equal(arg('confirm'),group.approvalSha256,'Explicit production group confirmation required');assert(read(`enforcement-deployment${suffix}.json`).deploymentId,'Deployed mutation-boundary enforcement required');}
  if(phase===2){const phase1=read('content-briefs/storage-mutation-manifest.json');assert.equal(manifest.afterPhase1ManifestSha256,hash(phase1),'Phase 1 manifest changed');for(const g of phase1.groups)assert.equal(read(`raw/rollout/${g.key.replaceAll(':','-')}-applied.json`).publicVerified,true,'Phase 1 not fully verified');}
  let expected=read(phase>1?read(`content-briefs/phase${phase}-plan.json`).snapshot:'raw/storage-preflight-2026-09-13.json').data;assert.equal(hash(expected),manifest.snapshotSha256,'Snapshot changed');
+ // Owner-directed batch mode: every group is committed first and verified publicly afterwards.
+ const deferVerify=phase>1&&read(`content-briefs/phase${phase}-plan.json`).deferPublicVerification===true;
  for(const prior of manifest.groups.slice(0,manifest.groups.indexOf(group))){
-  const receipt=read(`${rolloutDir}/${prior.key.replaceAll(':','-')}-applied.json`);assert.equal(receipt.approvalSha256,prior.approvalSha256);assert.equal(receipt.publicVerified,true,'Previous group not publicly verified');expected=rehearse(expected,prior);
+  const receipt=read(`${rolloutDir}/${prior.key.replaceAll(':','-')}-applied.json`);assert.equal(receipt.approvalSha256,prior.approvalSha256);assert(receipt.publicVerified===true||(deferVerify&&receipt.dryRun===false),'Previous group not publicly verified');expected=rehearse(expected,prior);
  }
  const folder=`${root}/${rolloutDir}`,stem=group.key.replaceAll(':','-');fs.mkdirSync(folder,{recursive:true});
  const client=await connect();

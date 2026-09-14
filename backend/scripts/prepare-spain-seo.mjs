@@ -130,13 +130,53 @@ export function planCopyPatches(snapshot,patches){
  }
  return {status:'storage prepared; no approval or publication',country:s.country.code,snapshotSha256:hash(s),groups,blockers};
 }
+// Exact text replacements on stored copy rows, grouped by clinical state. Each string `from` must occur
+// exactly once in the current value; an array `from` must equal it. Rows resolve to their owning service/doctor.
+const replaceOwners={services:r=>`service:${r.id}`,serviceTranslations:r=>`service:${r.serviceId}`,serviceFaqs:r=>`service:${r.serviceId}`,
+ serviceFaqTranslations:(r,s)=>`service:${one(s.serviceFaqs,f=>f.id===r.serviceFaqId,'FAQ missing').serviceId}`,
+ serviceLinkTranslations:(r,s)=>`service:${one(s.serviceLinks,l=>l.id===r.serviceLinkId,'Link missing').sourceServiceId}`,
+ doctors:r=>`doctor:${r.id}`,doctorTranslations:r=>`doctor:${r.doctorId}`,doctorFaqs:r=>`doctor:${r.doctorId}`,
+ doctorMarketTranslations:(r,s)=>`doctor:${one(s.doctorCountries,m=>m.id===r.doctorCountryId,'Market missing').doctorId}`};
+export function planTextReplacements(snapshot,replacements){
+ const s=snapshot.data,groups=[],blockers=[],byState=new Map();let state=structuredClone(s);
+ for(const r of replacements){
+  const owner=replaceOwners[r.table];assert(owner,`Unsupported table ${r.table}`);
+  const stateKey=owner(one(s[r.table],x=>x.id===r.id,`Missing ${r.table}/${r.id}`),s);
+  byState.set(stateKey,[...(byState.get(stateKey)??[]),r]);
+ }
+ for(const [stateKey,reps] of byState){
+  const key=`text:${stateKey}`;
+  try{
+   const [kind,id]=stateKey.split(':');
+   if(kind==='service'){const svc=one(state.services,x=>x.id===id,'Service missing');assert.equal(svc.countryId,state.country.id,'Service belongs to another market');assert(svc.isActive&&svc.visibility==='PUBLIC','Service publication drift');}
+   else{
+    const doctor=one(state.doctors,x=>x.id===id,'Missing doctor');assert.equal(doctor.countryId,state.country.id,'Doctor base belongs to another market');
+    assert(state.doctorCountries.filter(m=>m.doctorId===id).every(m=>m.countryId===state.country.id),'Shared doctor requires cross-market review');
+    assert(state.allDoctorAssignments.filter(a=>a.doctorId===id).every(a=>state.services.some(x=>x.id===a.serviceId)),'Doctor assigned outside market');
+   }
+   const after=new Map();
+   for(const r of reps){
+    const row=one(state[r.table],x=>x.id===r.id,'Row missing'),k=`${r.table}/${r.id}`,current=after.get(k)?.[r.field]??row[r.field];
+    let next;
+    if(Array.isArray(r.from)){assert.deepEqual(current,r.from,`Array drift ${k}.${r.field}`);next=r.to;}
+    else{assert.equal(typeof current,'string',`Not text ${k}.${r.field}`);assert.equal(current.split(r.from).length-1,1,`Replacement must match exactly once: ${k}.${r.field} "${r.from.slice(0,60)}"`);next=current.replace(r.from,()=>r.to);}
+    assert.notDeepEqual(next,current,`No-op replacement ${k}.${r.field}`);
+    after.set(k,{...after.get(k),[r.field]:next});
+   }
+   const changes=[...after].map(([k,a])=>{const [table,rowId]=k.split('/');return{action:'update',table,id:rowId,before:structuredClone(state[table].find(x=>x.id===rowId)),after:a};});
+   const group={key,stateKey,textReplacements:reps,changes};
+   const next=rehearse(state,group);group.resultingStateSha256=romanianContentStates(next)[stateKey];group.approvalSha256=hash(group);groups.push(group);state=next;
+  }catch(e){blockers.push({key,reason:e.message.split('\n')[0]});}
+ }
+ return {status:'storage prepared; no approval or publication',country:s.country.code,snapshotSha256:hash(s),groups,blockers};
+}
 if(process.argv[1]?.endsWith('prepare-spain-seo.mjs')){
  const phaseArg=process.argv.find(a=>a.startsWith('--phase='))?.slice(8),brazil=process.argv.includes('--brazil');
  if(phaseArg&&Number(phaseArg)>=3){
   // Phase 3+: storage-based copy patches (summary/name) for Spain or Brazil.
   const root=brazil?'seo/brazil':'seo/spain',read=p=>JSON.parse(fs.readFileSync(`${root}/${p}`));
   const plan=read(`content-briefs/phase${phaseArg}-plan.json`);
-  const manifest={...planCopyPatches(read(plan.snapshot),plan.patches),phase:Number(phaseArg)};
+  const manifest={...(plan.replacements?planTextReplacements(read(plan.snapshot),plan.replacements):planCopyPatches(read(plan.snapshot),plan.patches)),phase:Number(phaseArg)};
   fs.writeFileSync(`${root}/content-briefs/storage-mutation-manifest-phase${phaseArg}.json`,JSON.stringify(manifest,null,2)+'\n');
   console.log(JSON.stringify({market:manifest.country,phase:manifest.phase,groups:manifest.groups.length,operations:manifest.groups.reduce((n,g)=>n+g.changes.length,0),blockers:manifest.blockers,manifestSha256:hash(manifest)}));
   process.exit(0);

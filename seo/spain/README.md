@@ -24,7 +24,7 @@ architecture, technical sources, implementation evidence and measurement rationa
   [payload explanation](content-briefs/README.md).
 
 - [Sick-leave wording review, 14 September](sick-leave-wording-review-2026-09-14.md)
-  (ledger §56.8; draft copy not clinically approved).
+  (ledger §56.10; implementation §56.11).
 
 These are local research/draft artifacts. See the canonical ledger for what has
 actually been approved or published; country files are supporting evidence.

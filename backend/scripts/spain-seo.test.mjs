@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {prepareSpain,planCopyPatches,hash,rehearse} from './prepare-spain-seo.mjs';
+import {prepareSpain,planCopyPatches,planTextReplacements,hash,rehearse} from './prepare-spain-seo.mjs';
 import {executeSpainGroup,verifySpainApproval,rolloutReceipt} from './apply-spain-seo.mjs';
 import {APPROVED_SPAIN_STATES,SPAIN_REVIEW_POLICY,romanianContentStates,assertSpainClinicalChanges,reviewedRomaniaTransaction} from '../src/content/romania-clinical-review.ts';
 import {verifyPage} from '../../seo/spain/verify-public.mjs';
@@ -104,4 +104,20 @@ test('existing CMS transaction owner protects Spain even without Romania',async(
  const f=fixture();let committed=false;const client=clientFor(f.data);
  const prisma={$transaction:async work=>{await client.query('BEGIN');try{const out=await work({country:{findUnique:async({where})=>where.code==='es'?{id:'es-country'}:null},$queryRawUnsafe:async(sql,...values)=>(await client.query(sql,values)).rows});committed=true;return out;}catch(e){await client.query('ROLLBACK');throw e;}}};
  await assert.rejects(reviewedRomaniaTransaction(prisma,async()=>{client.state.services[0].seoTitle='Unreviewed';}),/Spain clinical/);assert.equal(committed,false);assert.deepEqual(client.state,f.data);
+});
+test('text replacements: exact single match, Spain-only owners, array compare-and-set',()=>{
+ const f=fixture();
+ f.data.services[0].detailBody='<li>Bajas médicas</li><p>Otro</p>';f.data.services[0].seoKeywords=['a','baja'];
+ f.data.doctorTranslations.push({id:'dt',doctorId:'doc',locale:'ES',bio:'<li>Bajas médicas</li>'});
+ const reps=[{table:'services',id:'svc',field:'detailBody',from:'<li>Bajas médicas</li>',to:'<li>Justificantes</li>'},{table:'services',id:'svc',field:'seoKeywords',from:['a','baja'],to:['a']},{table:'doctorTranslations',id:'dt',field:'bio',from:'Bajas médicas',to:'Justificantes'}];
+ const m=planTextReplacements({data:f.data},reps);
+ assert.deepEqual(m.blockers,[]);assert.deepEqual(m.groups.map(g=>g.key),['text:service:svc','text:doctor:doc']);
+ const next=m.groups.reduce((s,g)=>rehearse(s,g),f.data);
+ assert.equal(next.services[0].detailBody,'<li>Justificantes</li><p>Otro</p>');assert.deepEqual(next.services[0].seoKeywords,['a']);assert.equal(next.doctorTranslations[0].bio,'<li>Justificantes</li>');
+ assert.match(planTextReplacements({data:f.data},[{...reps[0],from:'<p>Missing</p>'}]).blockers[0].reason,/exactly once/);
+ assert.match(planTextReplacements({data:f.data},[{...reps[1],from:['drift']}]).blockers[0].reason,/Array drift/);
+ const foreign=structuredClone(f.data);foreign.doctorCountries.push({id:'m2',doctorId:'doc',countryId:'pt-country'});
+ assert.match(planTextReplacements({data:foreign},[reps[2]]).blockers[0].reason,/cross-market/);
+ const other=structuredClone(f.data);other.services[0].countryId='pt-country';
+ assert.match(planTextReplacements({data:other},[reps[0]]).blockers[0].reason,/another market/);
 });

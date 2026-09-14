@@ -374,7 +374,7 @@ export const COUNTRY_CONTACT: Record<string, CountryContact> = {
           "Reservar una consulta es la vía más rápida para hablar con un médico. Atendemos consultas administrativas por correo electrónico, en español e inglés. Para urgencias, llame al 112.",
         regulatoryHeading: "Colegiación y certificados",
         regulatoryBody:
-          "Los médicos que atienden a pacientes en España están colegiados en su Colegio Oficial de Médicos correspondiente. El certificado lo emite el médico que realiza la valoración. La baja laboral y sus prestaciones las gestionan el INSS y los servicios de salud autonómicos conforme a sus propios criterios.",
+          "Los médicos que atienden a pacientes en España están colegiados en su Colegio Oficial de Médicos correspondiente. El certificado lo emite el médico que realiza la valoración y no es un parte de baja. La baja la emite el médico del servicio público de salud o, en contingencias profesionales, la mutua; la prestación la gestionan el INSS o la mutua.",
         faqHeading: "Preguntas frecuentes",
         faqs: [
           {
@@ -390,7 +390,7 @@ export const COUNTRY_CONTACT: Record<string, CountryContact> = {
           {
             question: "¿Sirve su certificado para una baja laboral?",
             answer:
-              "El certificado acredita la valoración médica realizada. La baja laboral oficial y su prestación las tramitan el INSS y el servicio de salud de su comunidad autónoma según sus propios requisitos.",
+              "No. El certificado acredita la valoración médica realizada, pero no es un parte de baja. La baja por incapacidad temporal la emite el médico del servicio público de salud o, en contingencias profesionales, la mutua, y la prestación la gestionan el INSS o la mutua.",
           },
           {
             question: "¿Qué hago en una urgencia?",
@@ -411,7 +411,7 @@ export const COUNTRY_CONTACT: Record<string, CountryContact> = {
           "Booking a consultation is the fastest route to a doctor. Administrative questions are handled by email, in Spanish and English. For emergencies call 112.",
         regulatoryHeading: "Registration and certificates",
         regulatoryBody:
-          "Doctors seeing patients in Spain are registered with their relevant Colegio Oficial de Médicos. Certificates are issued by the assessing doctor. Statutory sick leave and its benefits are administered by the INSS and regional health services under their own criteria.",
+          "Doctors seeing patients in Spain are registered with their relevant Colegio Oficial de Médicos. Certificates are issued by the assessing doctor and are not a parte de baja. Statutory sick leave is issued by a public health service doctor or, for work-related conditions, the mutua; benefit is managed by the INSS or the mutua.",
         faqHeading: "Frequently asked questions",
         faqs: [
           {
@@ -427,7 +427,7 @@ export const COUNTRY_CONTACT: Record<string, CountryContact> = {
           {
             question: "Can I use your certificate for statutory sick leave?",
             answer:
-              "The certificate records the medical assessment carried out. Statutory sick leave and benefit are processed by the INSS and your regional health service under their own requirements.",
+              "No. The certificate records the medical assessment, but it is not a parte de baja. Statutory sick leave is issued by a public health service doctor or, for work-related conditions, the mutua; benefit is managed by the INSS or the mutua.",
           },
           {
             question: "What should I do in an emergency?",

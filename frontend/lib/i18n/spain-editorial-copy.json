@@ -1,0 +1,68 @@
+{
+  "es": {
+    "about": {
+      "country": {
+        "offer_certificates_body": "Un {certificate} privado emitido por el médico que le ha valorado. No es un parte de baja: la baja la emite el servicio público de salud o la mutua, y la prestación la gestionan el INSS o la mutua."
+      }
+    }
+  },
+  "en": {
+    "about": {
+      "country": {
+        "offer_certificates_body": "A private {certificate} issued by the doctor who assessed you. It is not a parte de baja: statutory sick leave is issued by the public health service or the mutua, and benefit is managed by the INSS or the mutua."
+      }
+    }
+  },
+  "pt": {
+    "about": {
+      "country": {
+        "offer_certificates_body": "Um {certificate} privado emitido pelo médico que o avaliou. Não é um parte de baja: a baixa é emitida pelo serviço público de saúde ou pela mutua, e a prestação é gerida pelo INSS ou pela mutua."
+      }
+    },
+    "contact": {
+      "country": {
+        "regulatoryBodyTemplate": "Os médicos que consultam através da Global Health {country} estão inscritos na {regulator}. O {certificate} é emitido pelo médico que fez a avaliação. Não é um parte de baja: a baixa é emitida pelo serviço público de saúde ou pela mutua, e a prestação é gerida pelo INSS ou pela mutua.",
+        "faq3A": "É emitido por um médico inscrito após avaliação e tem a mesma validade de um emitido presencialmente. Cada entidade patronal define as suas regras e o direito ao subsídio é decidido por {benefitBody}, segundo os seus critérios. Não é um parte de baja."
+      }
+    }
+  },
+  "de": {
+    "about": {
+      "country": {
+        "offer_certificates_body": "Ein privates {certificate}, ausgestellt von der Ärztin oder dem Arzt, die oder der Sie beurteilt hat. Es ist kein parte de baja: Die Krankschreibung stellt der öffentliche Gesundheitsdienst oder die Mutua aus, das Krankengeld verwalten INSS oder Mutua."
+      }
+    },
+    "contact": {
+      "country": {
+        "regulatoryBodyTemplate": "Ärzte, die über Global Health {country} beraten, sind bei {regulator} registriert. Die {certificate} stellt der behandelnde Arzt nach der Untersuchung aus. Es ist kein parte de baja: Die Krankschreibung stellt der öffentliche Gesundheitsdienst oder die Mutua aus, das Krankengeld verwalten INSS oder Mutua.",
+        "faq3A": "Sie wird nach der Untersuchung von einem registrierten Arzt ausgestellt und ist einer persönlich ausgestellten gleichgestellt. Arbeitgeber haben eigene Regeln, über Leistungen entscheidet {benefitBody}. Es ist kein parte de baja."
+      }
+    }
+  },
+  "cs": {
+    "about": {
+      "country": {
+        "offer_certificates_body": "Soukromé {certificate} vystavené lékařem, který vás vyšetřil. Nejde o parte de baja: neschopnost vystavuje veřejná zdravotní služba nebo mutua a dávku spravuje INSS nebo mutua."
+      }
+    },
+    "contact": {
+      "country": {
+        "regulatoryBodyTemplate": "Lékaři konzultující přes Global Health {country} jsou registrováni u {regulator}. {certificate} vystavuje lékař, který vás vyšetřil. Nejde o parte de baja: neschopnost vystavuje veřejná zdravotní služba nebo mutua a dávku spravuje INSS nebo mutua.",
+        "faq3A": "Vystavuje ji registrovaný lékař po vyšetření a má stejnou platnost jako potvrzení vystavené osobně. Zaměstnavatel má vlastní pravidla a o dávce rozhoduje {benefitBody} podle svých kritérií. Nejde o parte de baja."
+      }
+    }
+  },
+  "ro": {
+    "about": {
+      "country": {
+        "offer_certificates_body": "O {certificate} privată emisă de medicul care v-a evaluat. Nu este parte de baja: concediul medical este emis de serviciul public de sănătate sau de mutua, iar indemnizația este gestionată de INSS sau de mutua."
+      }
+    },
+    "contact": {
+      "country": {
+        "regulatoryBodyTemplate": "Medicii care consultă prin Global Health {country} sunt înregistrați la {regulator}. {certificate} este emisă de medicul care v-a evaluat. Nu este parte de baja: concediul medical este emis de serviciul public de sănătate sau de mutua, iar indemnizația este gestionată de INSS sau de mutua.",
+        "faq3A": "Este emisă de un medic înregistrat după evaluare și are aceeași valoare ca una emisă în cabinet. Angajatorii au propriile reguli, iar dreptul la indemnizație este stabilit de {benefitBody}. Nu este parte de baja."
+      }
+    }
+  }
+}

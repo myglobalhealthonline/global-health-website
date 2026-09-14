@@ -2,6 +2,7 @@ import type { LocaleCode } from "@/lib/i18n/types";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import { deepMergeLocale } from "@/lib/i18n/deep-merge-locale";
 import romaniaEditorialCopy from "@/lib/i18n/romania-editorial-copy.json";
+import spainEditorialCopy from "@/lib/i18n/spain-editorial-copy.json";
 
 import enHome from "@/locales/en/home.json";
 import ptHome from "@/locales/pt/home.json";
@@ -157,13 +158,17 @@ const bundleCache = new Map<string, ReturnType<typeof buildLocaleBundle>>();
 
 export function loadLocaleBundle(locale: LocaleCode, country?: string) {
   const isRomania = country === "ro" || country === "romania";
-  const cacheKey = isRomania ? `${locale}:ro` : locale;
+  // Spain-only sick-leave wording (ledger §56.11): the shared templates stay unchanged for other markets.
+  const isSpain = country === "es" || country === "spain";
+  const cacheKey = isRomania ? `${locale}:ro` : isSpain ? `${locale}:es` : locale;
   const cached = bundleCache.get(cacheKey);
   if (cached) return cached;
   const shared = buildLocaleBundle(locale);
   const bundle = isRomania
     ? deepMergeLocale<Record<string, unknown>>(shared, romaniaEditorialCopy[locale]) as typeof shared
-    : shared;
+    : isSpain
+      ? deepMergeLocale<Record<string, unknown>>(shared, spainEditorialCopy[locale]) as typeof shared
+      : shared;
   bundleCache.set(cacheKey, bundle);
   return bundle;
 }

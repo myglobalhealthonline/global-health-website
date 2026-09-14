@@ -1,0 +1,1102 @@
+{
+  "snapshot": "raw/storage-post-phase3-2026-09-14.json",
+  "source": "Sick-leave wording review 2026-09-14 (seo/spain/sick-leave-wording-review-2026-09-14.md §3); owner reported Dra. María Fernanda Ocampo Mora approved the draft copy; owner chose to include J5/J6/L2 without separate legal review.",
+  "deferPublicVerification": true,
+  "replacements": [
+    {
+      "table": "services",
+      "id": "cmre7pxza000angjubr3s2h65",
+      "field": "seoKeywords",
+      "from": [
+        "justificante médico online España",
+        "certificado médico privado online España",
+        "justificante laboral médico online",
+        "certificado incapacidad laboral privado",
+        "baja médica privada online España"
+      ],
+      "to": [
+        "justificante médico online España",
+        "certificado médico privado online España",
+        "justificante laboral médico online"
+      ]
+    },
+    {
+      "table": "services",
+      "id": "cmre7pxza000angjubr3s2h65",
+      "field": "seoDescription",
+      "from": "¿Necesitas un justificante médico o certificado de incapacidad laboral? Nuestros médicos colegiados evalúan tus síntomas por videollamada y emiten documentación clínica donde esté médicamente justificado. El mismo día.",
+      "to": "¿Necesitas un justificante médico privado? Médicos colegiados valoran tus síntomas por videollamada y lo emiten cuando está clínicamente justificado. No sustituye al parte de baja."
+    },
+    {
+      "table": "services",
+      "id": "cmre7pxza000angjubr3s2h65",
+      "field": "heroDescription",
+      "from": "Estás enfermo y no puedes trabajar. Necesitas un documento médico que lo acredite — hoy, sin desplazarte, sin esperar en una sala de espera cuando ya te encuentras mal.",
+      "to": "¿Te encuentras mal y necesitas hoy un justificante médico privado, sin desplazarte ni esperar en una sala de espera?"
+    },
+    {
+      "table": "services",
+      "id": "cmre7pxza000angjubr3s2h65",
+      "field": "detailBody",
+      "from": "<p><strong>Parte de baja por Incapacidad Temporal (IT) del sistema público</strong></p><p>El parte de baja oficial del sistema público es emitido por el médico de cabecera o el médico de urgencias del SNS. Se comunica electrónicamente a la Seguridad Social y al empleador. El trabajador puede tener derecho a prestación económica de la INSS a partir del cuarto día de baja — con los tres primeros a cargo de la empresa en contratos laborales estándar.</p><p>Global Health no emite partes de baja del SNS. Estos requieren un médico contratado con el sistema público.</p>",
+      "to": "<p><strong>Parte de baja por incapacidad temporal (IT)</strong></p><p>El parte de baja lo emite el médico del servicio público de salud o, si la causa es un accidente de trabajo o una enfermedad profesional, la mutua (Real Decreto 625/2014, art. 2). Se comunica electrónicamente al INSS y da acceso, si se cumplen los requisitos, a la prestación económica de la Seguridad Social.</p><p>Global Health no emite partes de baja, confirmación ni alta.</p>"
+    },
+    {
+      "table": "services",
+      "id": "cmre7pxza000angjubr3s2h65",
+      "field": "detailBody",
+      "from": "<li>Es válido como justificante ante el empleador para ausencias laborales</li>",
+      "to": "<li>Puede presentarse ante la empresa; su aceptación depende del convenio y de la política interna</li>"
+    },
+    {
+      "table": "services",
+      "id": "cmre7pxza000angjubr3s2h65",
+      "field": "detailBody",
+      "from": "<li>Sirve como documentación clínica de respaldo si después acudes a tu médico de cabecera para tramitar la IT del sistema público</li>",
+      "to": "<li>Puedes llevarlo a tu médico del servicio público como información clínica; la decisión sobre la baja es suya</li>"
+    },
+    {
+      "table": "services",
+      "id": "cmre7pxza000angjubr3s2h65",
+      "field": "detailBody",
+      "from": "<p>¿Eres autónomo o trabajador por cuenta propia? Si cotizas por contingencias comunes, tienes derecho a prestación por IT — pero gestionada a través de tu mutua colaboradora. El certificado médico privado puede servirte como documentación inicial. Consulta tu situación específica con tu médico al inicio de la consulta.</p>",
+      "to": "<p>¿Eres autónomo? Si cotizas por incapacidad temporal, el parte de baja también lo emite tu médico del servicio público de salud (o la mutua, si es una contingencia profesional), y la prestación suele gestionarla tu mutua colaboradora. El justificante médico privado no sustituye ese parte.</p>"
+    },
+    {
+      "table": "services",
+      "id": "cmre7pxza000angjubr3s2h65",
+      "field": "detailBody",
+      "from": "<p><strong>Para trabajadores con mutua</strong></p><p>Si tu empresa tiene mutua colaboradora con la Seguridad Social, el certificado médico privado puede servir como documentación previa mientras gestionas la baja a través de la mutua.</p>",
+      "to": "<p><strong>Si tu dolencia puede ser laboral</strong></p><p>Si puede tratarse de un accidente de trabajo o una enfermedad profesional, acude a la mutua de tu empresa: es quien emite el parte de baja en esos casos. El justificante privado no sustituye ese trámite.</p>"
+    },
+    {
+      "table": "services",
+      "id": "cmre7pxza000angjubr3s2h65",
+      "field": "detailBody",
+      "from": "<p><strong>Valoración de la incapacidad laboral</strong></p>",
+      "to": "<p><strong>Valoración clínica de tu capacidad para trabajar</strong></p>"
+    },
+    {
+      "table": "services",
+      "id": "cmre7pxza000angjubr3s2h65",
+      "field": "detailBody",
+      "from": "<p>Si el médico determina que tu situación clínica justifica la emisión de un certificado médico de incapacidad temporal para el trabajo, lo emite el mismo día de la consulta. El certificado documenta la fecha de evaluación, los síntomas, la valoración clínica y la incompatibilidad con la actividad laboral — sin especificar diagnóstico si el paciente no lo desea.</p>",
+      "to": "<p>Si el médico determina que tu situación clínica lo justifica, emite el mismo día un justificante médico privado con la fecha de la valoración, los síntomas, la valoración clínica y su criterio sobre la compatibilidad con tu actividad laboral, sin especificar diagnóstico si no lo deseas. No es un parte de baja por incapacidad temporal.</p>"
+    },
+    {
+      "table": "services",
+      "id": "cmre7pxza000angjubr3s2h65",
+      "field": "detailBody",
+      "from": "<li>No emitimos partes de baja del SNS — estos requieren médico contratado con el sistema público</li>",
+      "to": "<li>No emitimos partes de baja, confirmación ni alta: los emite el servicio público de salud o la mutua</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrez64d200nl01qrswg1ock9",
+      "field": "seoDescription",
+      "from": "¿Necesitas un justificante médico o certificado de incapacidad laboral? Nuestros médicos colegiados evalúan tus síntomas por videollamada y emiten documentación clínica donde esté médicamente justificado. El mismo día.",
+      "to": "¿Necesitas un justificante médico privado? Médicos colegiados valoran tus síntomas por videollamada y lo emiten cuando está clínicamente justificado. No sustituye al parte de baja."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrez64d200nl01qrswg1ock9",
+      "field": "heroDescription",
+      "from": "Estás enfermo y no puedes trabajar. Necesitas un documento médico que lo acredite — hoy, sin desplazarte, sin esperar en una sala de espera cuando ya te encuentras mal.",
+      "to": "¿Te encuentras mal y necesitas hoy un justificante médico privado, sin desplazarte ni esperar en una sala de espera?"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrez64d200nl01qrswg1ock9",
+      "field": "detailBody",
+      "from": "<p><strong>Parte de baja por Incapacidad Temporal (IT) del sistema público</strong></p><p>El parte de baja oficial del sistema público es emitido por el médico de cabecera o el médico de urgencias del SNS. Se comunica electrónicamente a la Seguridad Social y al empleador. El trabajador puede tener derecho a prestación económica de la INSS a partir del cuarto día de baja — con los tres primeros a cargo de la empresa en contratos laborales estándar.</p><p>Global Health no emite partes de baja del SNS. Estos requieren un médico contratado con el sistema público.</p>",
+      "to": "<p><strong>Parte de baja por incapacidad temporal (IT)</strong></p><p>El parte de baja lo emite el médico del servicio público de salud o, si la causa es un accidente de trabajo o una enfermedad profesional, la mutua (Real Decreto 625/2014, art. 2). Se comunica electrónicamente al INSS y da acceso, si se cumplen los requisitos, a la prestación económica de la Seguridad Social.</p><p>Global Health no emite partes de baja, confirmación ni alta.</p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrez64d200nl01qrswg1ock9",
+      "field": "detailBody",
+      "from": "<li>Es válido como justificante ante el empleador para ausencias laborales</li>",
+      "to": "<li>Puede presentarse ante la empresa; su aceptación depende del convenio y de la política interna</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrez64d200nl01qrswg1ock9",
+      "field": "detailBody",
+      "from": "<li>Sirve como documentación clínica de respaldo si después acudes a tu médico de cabecera para tramitar la IT del sistema público</li>",
+      "to": "<li>Puedes llevarlo a tu médico del servicio público como información clínica; la decisión sobre la baja es suya</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrez64d200nl01qrswg1ock9",
+      "field": "detailBody",
+      "from": "<p>¿Eres autónomo o trabajador por cuenta propia? Si cotizas por contingencias comunes, tienes derecho a prestación por IT — pero gestionada a través de tu mutua colaboradora. El certificado médico privado puede servirte como documentación inicial. Consulta tu situación específica con tu médico al inicio de la consulta.</p>",
+      "to": "<p>¿Eres autónomo? Si cotizas por incapacidad temporal, el parte de baja también lo emite tu médico del servicio público de salud (o la mutua, si es una contingencia profesional), y la prestación suele gestionarla tu mutua colaboradora. El justificante médico privado no sustituye ese parte.</p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrez64d200nl01qrswg1ock9",
+      "field": "detailBody",
+      "from": "<p><strong>Para trabajadores con mutua</strong></p><p>Si tu empresa tiene mutua colaboradora con la Seguridad Social, el certificado médico privado puede servir como documentación previa mientras gestionas la baja a través de la mutua.</p>",
+      "to": "<p><strong>Si tu dolencia puede ser laboral</strong></p><p>Si puede tratarse de un accidente de trabajo o una enfermedad profesional, acude a la mutua de tu empresa: es quien emite el parte de baja en esos casos. El justificante privado no sustituye ese trámite.</p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrez64d200nl01qrswg1ock9",
+      "field": "detailBody",
+      "from": "<p><strong>Valoración de la incapacidad laboral</strong></p>",
+      "to": "<p><strong>Valoración clínica de tu capacidad para trabajar</strong></p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrez64d200nl01qrswg1ock9",
+      "field": "detailBody",
+      "from": "<p>Si el médico determina que tu situación clínica justifica la emisión de un certificado médico de incapacidad temporal para el trabajo, lo emite el mismo día de la consulta. El certificado documenta la fecha de evaluación, los síntomas, la valoración clínica y la incompatibilidad con la actividad laboral — sin especificar diagnóstico si el paciente no lo desea.</p>",
+      "to": "<p>Si el médico determina que tu situación clínica lo justifica, emite el mismo día un justificante médico privado con la fecha de la valoración, los síntomas, la valoración clínica y su criterio sobre la compatibilidad con tu actividad laboral, sin especificar diagnóstico si no lo deseas. No es un parte de baja por incapacidad temporal.</p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrez64d200nl01qrswg1ock9",
+      "field": "detailBody",
+      "from": "<li>No emitimos partes de baja del SNS — estos requieren médico contratado con el sistema público</li>",
+      "to": "<li>No emitimos partes de baja, confirmación ni alta: los emite el servicio público de salud o la mutua</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmre7pyes000jngju3qrggcpx",
+      "field": "seoTitle",
+      "from": "Medical Certificate Online Spain | Sick Note | English Doctor",
+      "to": "Private Medical Certificate Online Spain | English Doctor"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmre7pyes000jngju3qrggcpx",
+      "field": "seoDescription",
+      "from": "Need a medical certificate or sick note in Spain today? Our OMC-registered doctors assess your symptoms by video call and issue private medical certificates where clinically justified. Same-day, in English.",
+      "to": "Need a private medical certificate in Spain? OMC-registered doctors assess you by video and issue one where clinically justified. Not a parte de baja (statutory sick leave)."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmre7pyes000jngju3qrggcpx",
+      "field": "detailBody",
+      "from": "<p>Official sick leave certification in Spain's public system is issued by a doctor contracted with the SNS. It is automatically communicated to Social Security and the employer. Workers may be entitled to economic benefit from INSS from day four of sick leave. Access requires registration with a public GP — which many expats and international residents do not have.</p><p>Global Health does not issue public system IT certificates. These require a doctor contracted with the Spanish public health system.</p>",
+      "to": "<p>The parte de baja is issued by a public health service doctor or, if the cause is a workplace accident or occupational disease, by the mutua (Royal Decree 625/2014, art. 2). It is sent electronically to the INSS and, where the requirements are met, gives access to Social Security sickness benefit.</p><p>Global Health does not issue sick-leave, confirmation or discharge certificates (partes de baja, confirmación or alta).</p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmre7pyes000jngju3qrggcpx",
+      "field": "detailBody",
+      "from": "<li>Is accepted by most Spanish employers to justify short-term absences</li>",
+      "to": "<li>Can be given to your employer; acceptance depends on the collective agreement and company policy</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmre7pyes000jngju3qrggcpx",
+      "field": "detailBody",
+      "from": "<li>Can serve as clinical documentation if you later pursue formal IT certification through the public system</li>",
+      "to": "<li>Can be shared with your public health service doctor as clinical information; the sick-leave decision is theirs</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmre7pyes000jngju3qrggcpx",
+      "field": "detailBody",
+      "from": "<li>Is legally valid as a clinical document issued by a registered physician</li>",
+      "to": "<li>Is a clinical document signed by a registered doctor — not a parte de baja</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmre7pyes000jngju3qrggcpx",
+      "field": "detailBody",
+      "from": "<p>As a self-employed worker in Spain, your sick leave pathway differs from employed workers. A private medical certificate documents your health situation and can support claims through your mutua colaboradora. Your doctor advises on the appropriate pathway for your specific situation.</p>",
+      "to": "<p>As a self-employed worker in Spain, your parte de baja is still issued by your public health service doctor (or the mutua for work-related conditions), and the benefit is usually managed by your mutua colaboradora. A private medical certificate does not replace that parte; your doctor can explain the route.</p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmre7pyes000jngju3qrggcpx",
+      "field": "detailBody",
+      "from": "<p><strong>Assessment of incapacity for work</strong></p>",
+      "to": "<p><strong>Clinical assessment of your fitness for work</strong></p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmre7pyes000jngju3qrggcpx",
+      "field": "detailBody",
+      "from": "<p>If your doctor determines that your clinical situation justifies issuing a certificate of temporary incapacity for work, this is issued the same day. The certificate documents the date of assessment, symptoms, clinical assessment, and incompatibility with work activity — without specifying diagnosis if you prefer this for privacy reasons.</p>",
+      "to": "<p>If your doctor determines that your clinical situation justifies it, they issue a private medical certificate the same day, recording the date of assessment, symptoms, clinical findings and their opinion on your fitness for your work, without the diagnosis if you prefer. It is not a parte de baja for temporary incapacity.</p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmre7pyes000jngju3qrggcpx",
+      "field": "detailBody",
+      "from": "<li>We do not issue public system IT certificates — these require a doctor contracted with the Spanish public health system</li>",
+      "to": "<li>We do not issue partes de baja, confirmación or alta — these are issued by the public health service or the mutua</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp2gb0063ywjuh08w2nsd",
+      "field": "seoDescription",
+      "from": "Precisa de um atestado médico ou certificado de incapacidade laboral? Os nossos médicos inscritos na ordem avaliam os seus sintomas por videochamada e emitem documentação clínica quando esteja clinicamente justificado. No mesmo dia.",
+      "to": "Precisa de um atestado médico privado? Médicos inscritos avaliam os seus sintomas por videochamada e emitem-no quando clinicamente justificado. Não substitui o parte de baja."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp2gb0063ywjuh08w2nsd",
+      "field": "heroDescription",
+      "from": "Estás doente e não podes trabalhar. Precisas de um documento médico que o comprove — hoje, sem te deslocares, sem esperar numa sala de espera quando já te sentes mal.",
+      "to": "Sentes-te mal e precisas hoje de um atestado médico privado, sem te deslocares nem esperares numa sala de espera?"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp2gb0063ywjuh08w2nsd",
+      "field": "detailBody",
+      "from": "<p><strong>Parte de baixa por Incapacidade Temporária (IT) do sistema público</strong></p><p>O parte de baixa oficial do sistema público é emitido pelo médico de família ou pelo médico de urgência do SNS. É comunicado eletronicamente à Segurança Social e ao empregador. O trabalhador pode ter direito a prestação económica do INSS a partir do quarto dia de baixa — com os três primeiros a cargo da empresa em contratos laborais standard.</p><p>Global Health não emite partes de baixa do SNS. Estes requerem um médico contratado com o sistema público.</p>",
+      "to": "<p><strong>Parte de baja por incapacidade temporária (IT)</strong></p><p>O parte de baja é emitido pelo médico do serviço público de saúde ou, se a causa for um acidente de trabalho ou uma doença profissional, pela mutua (Real Decreto 625/2014, art. 2). É comunicado eletronicamente ao INSS e dá acesso, quando se cumprem os requisitos, à prestação económica da Seguridad Social.</p><p>A Global Health não emite partes de baja, de confirmação nem de alta.</p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp2gb0063ywjuh08w2nsd",
+      "field": "detailBody",
+      "from": "<li>É válido como justificação perante o empregador para ausências laborais</li>",
+      "to": "<li>Pode ser apresentado à empresa; a aceitação depende da convenção coletiva e da política interna</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp2gb0063ywjuh08w2nsd",
+      "field": "detailBody",
+      "from": "<li>Serve como documentação clínica de suporte se depois fores ao teu médico de família para tramitar a IT do sistema público</li>",
+      "to": "<li>Podes levá-lo ao teu médico do serviço público como informação clínica; a decisão sobre a baixa é dele</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp2gb0063ywjuh08w2nsd",
+      "field": "detailBody",
+      "from": "<p>És autónomo ou trabalhador por conta própria? Se descontas para contingências comuns, tens direito a prestação por IT — mas gerida através da tua mútuo colaboradora. O atestado médico privado pode servir-te como documentação inicial. Consulta a tua situação específica com o teu médico no início da consulta.</p>",
+      "to": "<p>És autónomo? Se descontas para incapacidade temporária, o parte de baja também é emitido pelo teu médico do serviço público de saúde (ou pela mutua, se for contingência profissional) e a prestação costuma ser gerida pela tua mutua colaboradora. O atestado médico privado não substitui esse parte.</p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp2gb0063ywjuh08w2nsd",
+      "field": "detailBody",
+      "from": "<p><strong>Para trabalhadores com mútuo</strong></p><p>Se a tua empresa tem mútuo colaboradora com a Segurança Social, o atestado médico privado pode servir como documentação prévia enquanto geres a baixa através da mútuo.</p>",
+      "to": "<p><strong>Se a tua doença puder ser laboral</strong></p><p>Se puder tratar-se de um acidente de trabalho ou de uma doença profissional, dirige-te à mutua da tua empresa: é ela que emite o parte de baja nesses casos. O atestado privado não substitui esse procedimento.</p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp2gb0063ywjuh08w2nsd",
+      "field": "detailBody",
+      "from": "<p><strong>Avaliação da incapacidade laboral</strong></p>",
+      "to": "<p><strong>Avaliação clínica da tua capacidade para trabalhar</strong></p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp2gb0063ywjuh08w2nsd",
+      "field": "detailBody",
+      "from": "<p>Se o médico determinar que a tua situação clínica justifica a emissão de um atestado médico de incapacidade temporária para o trabalho, emite-o no mesmo dia da consulta. O atestado documenta a data da avaliação, os sintomas, a avaliação clínica e a incompatibilidade com a atividade laboral — sem especificar diagnóstico se o paciente não o desejar.</p>",
+      "to": "<p>Se o médico determinar que a tua situação clínica o justifica, emite no mesmo dia um atestado médico privado com a data da avaliação, os sintomas, a avaliação clínica e o seu critério sobre a compatibilidade com a tua atividade laboral, sem indicar o diagnóstico se não o desejares. Não é um parte de baja por incapacidade temporária.</p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp2gb0063ywjuh08w2nsd",
+      "field": "detailBody",
+      "from": "através do sistema público ou da tua mútuo, o médico",
+      "to": "através do sistema público ou da tua mutua, o médico"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp2gb0063ywjuh08w2nsd",
+      "field": "detailBody",
+      "from": "<li>Não emitimos partes de baixa do SNS — estes requerem médico contratado com o sistema público</li>",
+      "to": "<li>Não emitimos partes de baja, de confirmação nem de alta: são emitidos pelo serviço público de saúde ou pela mutua</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp3970064ywju069wui4h",
+      "field": "seoDescription",
+      "from": "Potřebujete lékařské potvrzení nebo potvrzení o pracovní neschopnosti? Naši licencovaní lékaři vyhodnotí vaše příznaky prostřednictvím videohovoru a vystaví klinickou dokumentaci tam, kde je to z lékařského hlediska odůvodněné. Tentýž den.",
+      "to": "Potřebujete soukromé lékařské potvrzení? Registrovaní lékaři posoudí vaše příznaky přes videohovor a vystaví ho, je-li to lékařsky odůvodněné. Nenahrazuje parte de baja."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp3970064ywju069wui4h",
+      "field": "heroDescription",
+      "from": "Jste nemocní a nemůžete pracovat. Potřebujete lékařský dokument, který to potvrdí — dnes, bez cestování, bez čekání v čekárně, když vám už je špatně.",
+      "to": "Je vám špatně a potřebujete ještě dnes soukromé lékařské potvrzení, bez cestování a bez čekárny?"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp3970064ywju069wui4h",
+      "field": "detailBody",
+      "from": "<p><strong>Potvrzení o pracovní neschopnosti (IT) z veřejného systému</strong></p><p>Oficiální potvrzení o pracovní neschopnosti z veřejného systému vystavuje praktický lékař nebo lékař pohotovosti SNS. Je elektronicky odesíláno Sociální pojišťovně a zaměstnavateli. Zaměstnanec může mít nárok na finanční dávku od INSS od čtvrtého dne pracovní neschopnosti — přičemž první tři dny hradí zaměstnavatel u standardních pracovních smluv.</p><p>Global Health nevystavuje potvrzení o pracovní neschopnosti SNS. Ta vyžadují lékaře smluvně zapojeného do veřejného systému.</p>",
+      "to": "<p><strong>Parte de baja pro dočasnou pracovní neschopnost (IT)</strong></p><p>Parte de baja vystavuje lékař veřejné zdravotní služby, a jde-li o pracovní úraz nebo nemoc z povolání, mutua (Real Decreto 625/2014, čl. 2). Elektronicky se předává INSS a při splnění podmínek zakládá nárok na nemocenskou dávku Seguridad Social.</p><p>Global Health nevystavuje parte de baja ani potvrzení o pokračování či ukončení neschopnosti.</p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp3970064ywju069wui4h",
+      "field": "detailBody",
+      "from": "<li>Je platné jako doklad pro zaměstnavatele pro omluvu pracovní absence</li>",
+      "to": "<li>Lze ho předložit zaměstnavateli; přijetí závisí na kolektivní smlouvě a vnitřních pravidlech firmy</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp3970064ywju069wui4h",
+      "field": "detailBody",
+      "from": "<li>Slouží jako podpůrná klinická dokumentace, pokud později navštívíte svého praktického lékaře kvůli vyřízení IT z veřejného systému</li>",
+      "to": "<li>Můžete ho předat lékaři veřejné zdravotní služby jako klinickou informaci; o neschopnosti rozhoduje on</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp3970064ywju069wui4h",
+      "field": "detailBody",
+      "from": "<p>Jste osoba samostatně výdělečně činná nebo OSVČ? Pokud odvádíte pojistné na běžná rizika, máte nárok na dávku při IT — ale je spravována prostřednictvím vaší spolupracující vzájemné pojišťovny. Soukromé lékařské potvrzení vám může sloužit jako úvodní dokumentace. Poraďte se o své konkrétní situaci se svým lékařem na začátku konzultace.</p>",
+      "to": "<p>Jste OSVČ? Pokud platíte pojištění pro dočasnou neschopnost, parte de baja vám rovněž vystavuje lékař veřejné zdravotní služby (u pracovního úrazu či nemoci z povolání mutua) a dávku obvykle spravuje vaše mutua colaboradora. Soukromé lékařské potvrzení tento parte nenahrazuje.</p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp3970064ywju069wui4h",
+      "field": "detailBody",
+      "from": "<p><strong>Pro pracovníky s vzájemnou pojišťovnou</strong></p><p>Pokud má vaše společnost spolupracující vzájemnou pojišťovnu se Sociálním zabezpečením, soukromé lékařské potvrzení může sloužit jako předběžná dokumentace, zatímco vyřizujete pracovní neschopnost prostřednictvím vzájemné pojišťovny.</p>",
+      "to": "<p><strong>Pokud může jít o pracovní příčinu</strong></p><p>Může-li jít o pracovní úraz nebo nemoc z povolání, obraťte se na mutuu svého zaměstnavatele: v těchto případech vystavuje parte de baja ona. Soukromé potvrzení tento postup nenahrazuje.</p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp3970064ywju069wui4h",
+      "field": "detailBody",
+      "from": "<p><strong>Posouzení pracovní neschopnosti</strong></p>",
+      "to": "<p><strong>Klinické posouzení vaší schopnosti pracovat</strong></p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp3970064ywju069wui4h",
+      "field": "detailBody",
+      "from": "<p>Pokud lékař určí, že váš klinický stav odůvodňuje vystavení lékařského potvrzení o dočasné pracovní neschopnosti, vystaví jej tentýž den konzultace. Potvrzení dokumentuje datum vyšetření, příznaky, klinické posouzení a neslučitelnost s pracovní činností — bez uvedení diagnózy, pokud si to pacient nepřeje.</p>",
+      "to": "<p>Pokud lékař usoudí, že to váš klinický stav odůvodňuje, vystaví týž den soukromé lékařské potvrzení s datem vyšetření, příznaky, klinickým posouzením a jeho názorem na slučitelnost s vaší prací, na přání bez diagnózy. Nejde o parte de baja pro dočasnou pracovní neschopnost.</p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp3970064ywju069wui4h",
+      "field": "detailBody",
+      "from": "prostřednictvím veřejného systému nebo své vzájemné pojišťovny, lékař",
+      "to": "prostřednictvím veřejného systému nebo své mutuy, lékař"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp3970064ywju069wui4h",
+      "field": "detailBody",
+      "from": "<li>Nevystavujeme potvrzení o pracovní neschopnosti SNS — ta vyžadují lékaře smluvně zapojeného do veřejného systému</li>",
+      "to": "<li>Nevystavujeme parte de baja ani potvrzení o pokračování či ukončení neschopnosti — vystavuje je veřejná zdravotní služba nebo mutua</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp4270065ywju5gl6utsf",
+      "field": "seoDescription",
+      "from": "Ai nevoie de o adeverință medicală sau de un certificat de incapacitate de muncă? Medicii noștri autorizați îți evaluează simptomele prin apel video și emit documentație clinică acolo unde este justificată din punct de vedere medical. În aceeași zi.",
+      "to": "Ai nevoie de o adeverință medicală privată? Medici înregistrați îți evaluează simptomele prin apel video și o emit când este justificat medical. Nu înlocuiește parte de baja."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp4270065ywju5gl6utsf",
+      "field": "heroDescription",
+      "from": "Ești bolnav și nu poți munci. Ai nevoie de un document medical care să ateste acest lucru — astăzi, fără să te deplasezi, fără să aștepți într-o sală de așteptare când deja te simți rău.",
+      "to": "Te simți rău și ai nevoie azi de o adeverință medicală privată, fără să te deplasezi și fără sală de așteptare?"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp4270065ywju5gl6utsf",
+      "field": "detailBody",
+      "from": "<p><strong>Certificat de concediu medical pentru Incapacitate Temporară (IT) din sistemul public</strong></p><p>Certificatul oficial de concediu medical din sistemul public este emis de medicul de familie sau de medicul de urgență al SNS. Este transmis electronic către Seguridad Social și către angajator. Lucrătorul poate avea dreptul la indemnizație financiară de la INSS începând cu a patra zi de concediu medical — primele trei fiind suportate de companie în contractele de muncă standard.</p><p>Global Health nu emite certificate de concediu medical ale SNS. Acestea necesită un medic contractat cu sistemul public.</p>",
+      "to": "<p><strong>Parte de baja pentru incapacitate temporară (IT)</strong></p><p>Parte de baja este emis de medicul serviciului public de sănătate sau, dacă este vorba de un accident de muncă ori o boală profesională, de mutua (Real Decreto 625/2014, art. 2). Este transmis electronic către INSS și, dacă sunt îndeplinite condițiile, dă acces la indemnizația Seguridad Social.</p><p>Global Health nu emite parte de baja, de confirmare sau de alta.</p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp4270065ywju5gl6utsf",
+      "field": "detailBody",
+      "from": "<li>Este valabil ca justificare în fața angajatorului pentru absențe de la locul de muncă</li>",
+      "to": "<li>Poate fi prezentată angajatorului; acceptarea depinde de contractul colectiv și de politica internă</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp4270065ywju5gl6utsf",
+      "field": "detailBody",
+      "from": "<li>Servește ca documentație clinică de sprijin dacă ulterior mergi la medicul de familie pentru a solicita IT din sistemul public</li>",
+      "to": "<li>O poți duce medicului din serviciul public ca informație clinică; decizia privind concediul medical îi aparține</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp4270065ywju5gl6utsf",
+      "field": "detailBody",
+      "from": "<p>Ești autonom sau lucrător pe cont propriu? Dacă plătești contribuții pentru contingente comune, ai dreptul la indemnizație pentru IT — dar gestionată prin mutua ta colaboratoare. Certificatul medical privat îți poate servi drept documentație inițială. Consultă-ți situația specifică cu medicul la începutul consultației.</p>",
+      "to": "<p>Ești autonom? Dacă plătești contribuții pentru incapacitate temporară, parte de baja este emis tot de medicul serviciului public de sănătate (sau de mutua, pentru contingențe profesionale), iar indemnizația este de regulă gestionată de mutua colaboradora. Adeverința medicală privată nu înlocuiește acest parte.</p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp4270065ywju5gl6utsf",
+      "field": "detailBody",
+      "from": "<p><strong>Pentru lucrători cu mutua</strong></p><p>Dacă firma ta are o mutua colaboratoare cu Seguridad Social, certificatul medical privat poate servi drept documentație prealabilă în timp ce gestionezi concediul medical prin mutua.</p>",
+      "to": "<p><strong>Dacă afecțiunea poate avea legătură cu munca</strong></p><p>Dacă poate fi vorba de un accident de muncă sau de o boală profesională, adresează-te mutuei firmei tale: ea emite parte de baja în aceste cazuri. Adeverința privată nu înlocuiește această procedură.</p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp4270065ywju5gl6utsf",
+      "field": "detailBody",
+      "from": "<p><strong>Evaluarea incapacității de muncă</strong></p>",
+      "to": "<p><strong>Evaluarea clinică a capacității tale de a lucra</strong></p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp4270065ywju5gl6utsf",
+      "field": "detailBody",
+      "from": "<p>Dacă medicul stabilește că situația ta clinică justifică emiterea unui certificat medical de incapacitate temporară pentru muncă, îl emite în aceeași zi a consultației. Certificatul documentează data evaluării, simptomele, evaluarea clinică și incompatibilitatea cu activitatea profesională — fără a specifica diagnosticul dacă pacientul nu dorește acest lucru.</p>",
+      "to": "<p>Dacă medicul stabilește că situația ta clinică o justifică, emite în aceeași zi o adeverință medicală privată cu data evaluării, simptomele, evaluarea clinică și opinia sa privind compatibilitatea cu activitatea ta, fără diagnostic dacă nu dorești. Nu este parte de baja pentru incapacitate temporară.</p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp4270065ywju5gl6utsf",
+      "field": "detailBody",
+      "from": "<li>Nu emitem certificate de concediu medical ale SNS — acestea necesită medic contractat cu sistemul public</li>",
+      "to": "<li>Nu emitem parte de baja, de confirmare sau de alta — acestea sunt emise de serviciul public de sănătate sau de mutua</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp4v60066ywjud51lbhcy",
+      "field": "seoDescription",
+      "from": "Benötigen Sie ein ärztliches Attest oder eine Arbeitsunfähigkeitsbescheinigung? Unsere approbierten Ärzte beurteilen Ihre Symptome per Videoanruf und stellen klinische Unterlagen aus, wo dies medizinisch gerechtfertigt ist. Noch am selben Tag.",
+      "to": "Sie brauchen ein privates ärztliches Attest? Zugelassene Ärzte beurteilen Ihre Symptome per Videoanruf und stellen es aus, wenn medizinisch gerechtfertigt. Kein Ersatz für den parte de baja."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp4v60066ywjud51lbhcy",
+      "field": "heroDescription",
+      "from": "Du bist krank und kannst nicht arbeiten. Du benötigst ein ärztliches Dokument, das dies bestätigt — heute, ohne dich zu bewegen, ohne in einem Wartezimmer zu warten, wenn es dir ohnehin schon schlecht geht.",
+      "to": "Du fühlst dich krank und brauchst heute ein privates ärztliches Attest – ohne Weg und ohne Wartezimmer?"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp4v60066ywjud51lbhcy",
+      "field": "detailBody",
+      "from": "<p><strong>Krankschreibung wegen vorübergehender Arbeitsunfähigkeit (IT) des öffentlichen Systems</strong></p><p>Die offizielle Krankschreibung des öffentlichen Systems wird vom Hausarzt oder vom Notarzt des SNS ausgestellt. Sie wird elektronisch an die Sozialversicherung und an den Arbeitgeber übermittelt. Der Arbeitnehmer kann ab dem vierten Tag der Krankschreibung Anspruch auf eine finanzielle Leistung der INSS haben — die ersten drei Tage in Standardarbeitsverträgen zu Lasten des Unternehmens.</p><p>Global Health stellt keine Krankschreibungen des SNS aus. Diese erfordern einen Arzt, der mit dem öffentlichen System vertraglich verbunden ist.</p>",
+      "to": "<p><strong>Parte de baja wegen vorübergehender Arbeitsunfähigkeit (IT)</strong></p><p>Den parte de baja stellt ein Arzt des öffentlichen Gesundheitsdienstes aus, bei einem Arbeitsunfall oder einer Berufskrankheit die Mutua (Real Decreto 625/2014, Art. 2). Er wird elektronisch an das INSS übermittelt und eröffnet, wenn die Voraussetzungen erfüllt sind, den Anspruch auf Krankengeld der Seguridad Social.</p><p>Global Health stellt keine partes de baja, Bestätigungen oder Gesundschreibungen (alta) aus.</p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp4v60066ywjud51lbhcy",
+      "field": "detailBody",
+      "from": "<li>Ist als Nachweis gegenüber dem Arbeitgeber für Arbeitsabwesenheiten gültig</li>",
+      "to": "<li>Kann dem Arbeitgeber vorgelegt werden; ob er es akzeptiert, hängt vom Tarifvertrag und der Unternehmensrichtlinie ab</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp4v60066ywjud51lbhcy",
+      "field": "detailBody",
+      "from": "<li>Dient als klinische Begleitdokumentation, wenn du später deinen Hausarzt aufsuchst, um die IT des öffentlichen Systems zu beantragen</li>",
+      "to": "<li>Du kannst es deinem Arzt im öffentlichen Gesundheitsdienst als klinische Information vorlegen; über die Krankschreibung entscheidet er</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp4v60066ywjud51lbhcy",
+      "field": "detailBody",
+      "from": "<p>Bist du selbständig oder freiberuflich tätig? Wenn du Beiträge für allgemeine Risiken zahlst, hast du Anspruch auf eine Leistung wegen IT — jedoch verwaltet über deine zuständige Krankenkasse/Mutualität. Das private ärztliche Attest kann dir als erste Dokumentation dienen. Kläre deine individuelle Situation zu Beginn der Konsultation mit deinem Arzt.</p>",
+      "to": "<p>Du bist selbstständig? Wenn du für vorübergehende Arbeitsunfähigkeit versichert bist, stellt den parte de baja ebenfalls dein Arzt im öffentlichen Gesundheitsdienst aus (bei Arbeitsunfall oder Berufskrankheit die Mutua); die Leistung verwaltet in der Regel deine Mutua colaboradora. Das private ärztliche Attest ersetzt diesen parte nicht.</p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp4v60066ywjud51lbhcy",
+      "field": "detailBody",
+      "from": "<p><strong>Für Arbeitnehmer mit Krankenkasse/Mutualität</strong></p><p>Wenn dein Unternehmen eine mit der Sozialversicherung zusammenarbeitende Krankenkasse/Mutualität hat, kann das private ärztliche Attest als vorläufige Dokumentation dienen, während du die Krankschreibung über die Krankenkasse/Mutualität beantragst.</p>",
+      "to": "<p><strong>Wenn deine Beschwerden beruflich bedingt sein könnten</strong></p><p>Handelt es sich möglicherweise um einen Arbeitsunfall oder eine Berufskrankheit, wende dich an die Mutua deines Unternehmens: Sie stellt in diesen Fällen den parte de baja aus. Das private Attest ersetzt dieses Verfahren nicht.</p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp4v60066ywjud51lbhcy",
+      "field": "detailBody",
+      "from": "<p><strong>Beurteilung der Arbeitsunfähigkeit</strong></p>",
+      "to": "<p><strong>Klinische Beurteilung deiner Arbeitsfähigkeit</strong></p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp4v60066ywjud51lbhcy",
+      "field": "detailBody",
+      "from": "<p>Wenn der Arzt feststellt, dass deine klinische Situation die Ausstellung eines ärztlichen Attests über vorübergehende Arbeitsunfähigkeit rechtfertigt, stellt er es noch am selben Tag der Konsultation aus. Das Attest dokumentiert das Datum der Untersuchung, die Symptome, die klinische Beurteilung und die Unvereinbarkeit mit der Arbeitstätigkeit — ohne eine Diagnose anzugeben, wenn der Patient dies nicht wünscht.</p>",
+      "to": "<p>Wenn der Arzt feststellt, dass deine klinische Situation es rechtfertigt, stellt er noch am selben Tag ein privates ärztliches Attest aus. Es dokumentiert Datum, Symptome, klinische Beurteilung und seine Einschätzung zur Vereinbarkeit mit deiner Arbeit – auf Wunsch ohne Diagnose. Es ist kein parte de baja wegen vorübergehender Arbeitsunfähigkeit.</p>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp4v60066ywjud51lbhcy",
+      "field": "detailBody",
+      "from": "über das öffentliche System oder deine Krankenkasse/Mutualität beantragen musst",
+      "to": "über das öffentliche System oder deine Mutua beantragen musst"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp4v60066ywjud51lbhcy",
+      "field": "detailBody",
+      "from": "<li>Wir stellen keine Krankschreibungen des SNS aus — diese erfordern einen mit dem öffentlichen System vertraglich verbundenen Arzt</li>",
+      "to": "<li>Wir stellen keine partes de baja, Bestätigungen oder Gesundschreibungen (alta) aus — diese stellen der öffentliche Gesundheitsdienst oder die Mutua aus</li>"
+    },
+    {
+      "table": "serviceFaqs",
+      "id": "cmre7py7l000bngjuh4k0yxty",
+      "field": "question",
+      "from": "¿El certificado médico privado tiene validez legal?",
+      "to": "¿Qué validez tiene el justificante médico privado?"
+    },
+    {
+      "table": "serviceFaqs",
+      "id": "cmre7py7l000bngjuh4k0yxty",
+      "field": "answer",
+      "from": "Sí. Un certificado médico privado emitido por un médico colegiado tiene plena validez legal como documento clínico. La mayoría de empleadores lo aceptan para justificar ausencias laborales, especialmente de corta duración. Para la prestación económica por IT de la Seguridad Social es necesario el parte de baja oficial del SNS o la mutua.",
+      "to": "Es un documento clínico firmado por un médico colegiado. Muchas empresas lo aceptan para ausencias breves, pero depende del convenio colectivo y de su política interna. No es un parte de baja: la prestación por incapacidad temporal requiere el parte del servicio público de salud o, en contingencias profesionales, de la mutua."
+    },
+    {
+      "table": "serviceFaqs",
+      "id": "cmre7py7l000cngjuz5lrqajb",
+      "field": "answer",
+      "from": "Sí. Los autónomos no tienen acceso al mismo circuito de IT que los trabajadores por cuenta ajena. El certificado médico privado documenta clínicamente tu situación de salud. Si cotizas por contingencias comunes, consulta con tu mutua colaboradora sobre cómo gestionar la IT — el médico puede orientarte.",
+      "to": "Sí. El justificante médico privado documenta clínicamente tu situación de salud. Si cotizas por incapacidad temporal, el parte de baja lo emite tu médico del servicio público de salud (o la mutua en contingencias profesionales) y la prestación suele gestionarla tu mutua colaboradora; el médico puede orientarte."
+    },
+    {
+      "table": "serviceFaqs",
+      "id": "cmre7py7l000dngjum1ra5ggc",
+      "field": "answer",
+      "from": "El certificado documenta la evaluación clínica y la valoración de incapacidad temporal para el trabajo. Si prefieres que no figure el diagnóstico específico — por motivos de privacidad — coméntalo con el médico al inicio de la consulta.",
+      "to": "El justificante documenta la valoración clínica y el criterio del médico sobre tu capacidad para trabajar ese día; no es un parte de baja. Si prefieres que no figure el diagnóstico —por privacidad—, coméntalo con el médico al inicio de la consulta."
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfi4sla00ooywjuahztda0m",
+      "field": "question",
+      "from": "Does a private medical certificate have legal validity?",
+      "to": "What is a private medical certificate valid for?"
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfi4sla00ooywjuahztda0m",
+      "field": "answer",
+      "from": "Yes. A private medical certificate issued by a licensed physician has full legal validity as a clinical document. Most employers accept it to justify work absences, especially short-term ones. For the economic benefit for temporary disability from Social Security, the official sick note from the SNS or the mutual insurance company is required.",
+      "to": "It is a clinical document signed by a registered doctor. Many employers accept it for short absences, but this depends on the collective agreement and company policy. It is not a parte de baja: temporary incapacity benefit requires the parte issued by the public health service or, for work-related conditions, the mutua."
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfi4wja00otywjuo0vwef3h",
+      "field": "answer",
+      "from": "Yes. Self-employed workers do not have access to the same sick leave process as salaried employees. The private medical certificate clinically documents your health condition. If you contribute for common contingencies, check with your collaborating mutual insurance provider on how to manage sick leave — the doctor can guide you.",
+      "to": "Yes. The private medical certificate documents your health condition. If you contribute for temporary incapacity, the parte de baja is issued by your public health service doctor (or the mutua for work-related conditions) and the benefit is usually managed by your mutua colaboradora; the doctor can guide you."
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfi50h500oyywju3b8nkycn",
+      "field": "answer",
+      "from": "The certificate documents the clinical evaluation and the assessment of temporary incapacity for work. If you prefer that the specific diagnosis not appear — for privacy reasons — mention it to the doctor at the start of the consultation.",
+      "to": "The certificate documents the clinical assessment and the doctor's opinion on your fitness for work that day; it is not a parte de baja. If you prefer the specific diagnosis not to appear, for privacy, tell the doctor at the start of the consultation."
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfi4tdq00opywjuty7q5o7g",
+      "field": "question",
+      "from": "O certificado médico privado tem validade legal?",
+      "to": "Que validade tem o atestado médico privado?"
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfi4tdq00opywjuty7q5o7g",
+      "field": "answer",
+      "from": "Sim. Um certificado médico privado emitido por um médico inscrito na ordem profissional tem plena validade legal como documento clínico. A maioria dos empregadores o aceita para justificar ausências ao trabalho, especialmente de curta duração. Para a prestação económica por IT da Segurança Social, é necessário o parte de baixa oficial do SNS ou da mutua.",
+      "to": "É um documento clínico assinado por um médico inscrito. Muitas empresas aceitam-no para ausências curtas, mas depende da convenção coletiva e da política interna. Não é um parte de baja: a prestação por incapacidade temporária exige o parte do serviço público de saúde ou, em contingências profissionais, da mutua."
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfi4xbp00ouywjuzun8243i",
+      "field": "answer",
+      "from": "Sim. Os trabalhadores independentes não têm acesso ao mesmo circuito de IT que os trabalhadores por conta de outrem. O atestado médico privado documenta clinicamente a sua situação de saúde. Se contribui por contingências comuns, consulte a sua mutua colaboradora sobre como gerir a IT — o médico pode orientá-lo.",
+      "to": "Sim. O atestado médico privado documenta clinicamente a sua situação de saúde. Se desconta para incapacidade temporária, o parte de baja é emitido pelo seu médico do serviço público de saúde (ou pela mutua em contingências profissionais) e a prestação costuma ser gerida pela sua mutua colaboradora; o médico pode orientá-lo."
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfi519h00ozywju0mg678wq",
+      "field": "answer",
+      "from": "O certificado documenta a avaliação clínica e a avaliação de incapacidade temporária para o trabalho. Se preferir que não conste o diagnóstico específico — por motivos de privacidade — comente isso com o médico no início da consulta.",
+      "to": "O atestado documenta a avaliação clínica e o critério do médico sobre a sua capacidade para trabalhar nesse dia; não é um parte de baja. Se preferir que não conste o diagnóstico, por privacidade, diga-o ao médico no início da consulta."
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfi4u6400oqywjuoilrwzv0",
+      "field": "question",
+      "from": "Má soukromé lékařské potvrzení právní platnost?",
+      "to": "K čemu platí soukromé lékařské potvrzení?"
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfi4u6400oqywjuoilrwzv0",
+      "field": "answer",
+      "from": "Ano. Soukromé lékařské potvrzení vystavené lékařem s licencí má plnou právní platnost jako klinický dokument. Většina zaměstnavatelů jej akceptuje k omluvení pracovní nepřítomnosti, zejména krátkodobé. Pro peněžitou dávku při dočasné pracovní neschopnosti od Sociálního zabezpečení je nezbytné úřední potvrzení o pracovní neschopnosti od SNS nebo vzájemné pojišťovny.",
+      "to": "Je to klinický dokument podepsaný registrovaným lékařem. Mnoho zaměstnavatelů ho přijímá u krátkých absencí, záleží však na kolektivní smlouvě a pravidlech firmy. Nejde o parte de baja: dávka při dočasné neschopnosti vyžaduje parte od veřejné zdravotní služby, nebo u pracovních příčin od mutuy."
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfi4y4500ovywjufjnix4h5",
+      "field": "answer",
+      "from": "Ano. Osoby samostatně výdělečně činné nemají přístup ke stejnému režimu pracovní neschopnosti jako zaměstnanci v pracovním poměru. Soukromé lékařské potvrzení klinicky dokládá váš zdravotní stav. Pokud platíte pojistné na běžná rizika, obraťte se na svou spolupracující vzájemnou pojišťovnu ohledně toho, jak postupovat při pracovní neschopnosti — lékař vám může poskytnout doporučení.",
+      "to": "Ano. Soukromé lékařské potvrzení klinicky dokládá váš zdravotní stav. Pokud platíte pojištění pro dočasnou neschopnost, parte de baja vystavuje lékař veřejné zdravotní služby (u pracovních příčin mutua) a dávku obvykle spravuje vaše mutua colaboradora; lékař vám poradí."
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfi521t00p0ywjuwjpg4afe",
+      "field": "answer",
+      "from": "Certifikát dokumentuje klinické vyšetření a posouzení dočasné pracovní neschopnosti. Pokud si nepřejete, aby byla uvedena konkrétní diagnóza — z důvodu soukromí — sdělte to lékaři na začátku konzultace.",
+      "to": "Potvrzení dokládá klinické vyšetření a názor lékaře na vaši schopnost pracovat v daný den; nejde o parte de baja. Nechcete-li z důvodu soukromí uvést diagnózu, řekněte to lékaři na začátku konzultace."
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfi4uyi00orywjujtamx2dp",
+      "field": "question",
+      "from": "Certificatul medical privat are valabilitate legală?",
+      "to": "Ce valabilitate are adeverința medicală privată?"
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfi4uyi00orywjujtamx2dp",
+      "field": "answer",
+      "from": "Da. Un certificat medical privat emis de un medic cu drept de practică are deplină valabilitate juridică ca document clinic. Majoritatea angajatorilor îl acceptă pentru a justifica absențele de la locul de muncă, în special pe cele de scurtă durată. Pentru indemnizația pentru IT a Securității Sociale este necesar certificatul oficial de concediu medical al SNS sau al mutualei.",
+      "to": "Este un document clinic semnat de un medic înregistrat. Mulți angajatori o acceptă pentru absențe scurte, dar depinde de contractul colectiv și de politica internă. Nu este parte de baja: indemnizația pentru incapacitate temporară necesită parte emis de serviciul public de sănătate sau, pentru contingențe profesionale, de mutua."
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfi4ywh00owywju5hmwhxa5",
+      "field": "answer",
+      "from": "Da. Persoanele care desfășoară activități independente nu au acces la același circuit de IT ca angajații. Certificatul medical privat îți documentează clinic starea de sănătate. Dacă cotizezi pentru contingencias comunes, consultă-te cu mutua colaboratoare despre cum să gestionezi IT — medicul te poate orienta.",
+      "to": "Da. Adeverința medicală privată documentează clinic starea ta de sănătate. Dacă plătești contribuții pentru incapacitate temporară, parte de baja este emis de medicul serviciului public de sănătate (sau de mutua, pentru contingențe profesionale), iar indemnizația este de regulă gestionată de mutua colaboradora; medicul te poate îndruma."
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfi52u500p1ywju06yjbnpm",
+      "field": "answer",
+      "from": "Certificatul documentează evaluarea clinică și aprecierea incapacității temporare de muncă. Dacă preferi să nu apară diagnosticul specific — din motive de confidențialitate — discută acest lucru cu medicul la începutul consultației.",
+      "to": "Adeverința documentează evaluarea clinică și opinia medicului privind capacitatea ta de a lucra în acea zi; nu este parte de baja. Dacă preferi să nu apară diagnosticul, din motive de confidențialitate, spune-i medicului la începutul consultației."
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfi4vqv00osywju1heb4jcn",
+      "field": "question",
+      "from": "Hat das private ärztliche Attest rechtliche Gültigkeit?",
+      "to": "Wofür gilt das private ärztliche Attest?"
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfi4vqv00osywju1heb4jcn",
+      "field": "answer",
+      "from": "Ja. Ein privates ärztliches Attest, das von einem approbierten Arzt ausgestellt wurde, hat volle rechtliche Gültigkeit als klinisches Dokument. Die meisten Arbeitgeber akzeptieren es, um Fehlzeiten von der Arbeit zu rechtfertigen, insbesondere bei kurzer Dauer. Für die Geldleistung bei Arbeitsunfähigkeit (IT) der Sozialversicherung ist der offizielle Krankmeldeschein des SNS oder der Berufsgenossenschaft erforderlich.",
+      "to": "Es ist ein klinisches Dokument, unterschrieben von einem zugelassenen Arzt. Viele Arbeitgeber akzeptieren es für kurze Abwesenheiten; das hängt aber vom Tarifvertrag und der Unternehmensrichtlinie ab. Es ist kein parte de baja: Krankengeld wegen vorübergehender Arbeitsunfähigkeit setzt den parte des öffentlichen Gesundheitsdienstes oder, bei beruflicher Ursache, der Mutua voraus."
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfi4zot00oxywjuych205j7",
+      "field": "answer",
+      "from": "Ja. Selbstständige haben keinen Zugang zum gleichen Krankheitsausfallverfahren wie Arbeitnehmer. Das private ärztliche Attest dokumentiert klinisch Ihren Gesundheitszustand. Wenn Sie Beiträge für allgemeine Risiken zahlen, erkundigen Sie sich bei Ihrer kooperierenden Mutua, wie Sie die Arbeitsunfähigkeit (IT) handhaben können — der Arzt kann Sie beraten.",
+      "to": "Ja. Das private ärztliche Attest dokumentiert Ihren Gesundheitszustand. Wenn Sie für vorübergehende Arbeitsunfähigkeit versichert sind, stellt den parte de baja Ihr Arzt im öffentlichen Gesundheitsdienst aus (bei beruflicher Ursache die Mutua); die Leistung verwaltet in der Regel Ihre Mutua colaboradora. Der Arzt kann Sie beraten."
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfi53mg00p2ywju6pqde83p",
+      "field": "answer",
+      "from": "Das Zertifikat dokumentiert die klinische Untersuchung und die Beurteilung der vorübergehenden Arbeitsunfähigkeit. Wenn du möchtest, dass die genaue Diagnose nicht aufgeführt wird — aus Gründen der Privatsphäre — sprich das zu Beginn des Termins mit dem Arzt an.",
+      "to": "Das Attest dokumentiert die klinische Beurteilung und die ärztliche Einschätzung Ihrer Arbeitsfähigkeit an diesem Tag; es ist kein parte de baja. Wenn die Diagnose aus Datenschutzgründen nicht erscheinen soll, sagen Sie das zu Beginn des Termins."
+    },
+    {
+      "table": "serviceFaqs",
+      "id": "cmre7px5i0004ngjugfol80qo",
+      "field": "question",
+      "from": "¿Puedo obtener la baja médica a través de este servicio?",
+      "to": "¿Puedo obtener la baja médica (incapacidad temporal) a través de este servicio?"
+    },
+    {
+      "table": "serviceFaqs",
+      "id": "cmre7px5i0004ngjugfol80qo",
+      "field": "answer",
+      "from": "Los médicos de Global Health pueden emitir un certificado médico privado que acredite la incapacidad temporal. Para acceder a la baja por incapacidad temporal (IT) del sistema público con prestación económica de la Seguridad Social, necesitas médico de cabecera en el SNS.",
+      "to": "No. El parte de baja por incapacidad temporal lo emite el médico del servicio público de salud o, si se trata de un accidente de trabajo o una enfermedad profesional, el de la mutua, y es el que da acceso a la prestación de la Seguridad Social. Nuestros médicos pueden emitir un justificante médico privado que acredita la consulta y la valoración clínica, cuando esté indicado, pero no sustituye al parte de baja ni da derecho a prestación."
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfhxg0400fmywjuu1p8uonj",
+      "field": "question",
+      "from": "Can I obtain medical leave through this service?",
+      "to": "Can I get statutory sick leave (baja médica) through this service?"
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfhxg0400fmywjuu1p8uonj",
+      "field": "answer",
+      "from": "Global Health doctors can issue a private medical certificate that certifies temporary incapacity. To access sick leave for temporary incapacity (IT) in the public system with financial benefits from Social Security, you need a primary care doctor in the SNS.",
+      "to": "No. The parte de baja for temporary incapacity is issued by a public health service doctor or, for a workplace accident or occupational disease, by the mutua doctor, and it is what gives access to Social Security benefit. Our doctors can issue a private medical certificate recording the consultation and clinical assessment where clinically appropriate, but it does not replace the parte de baja or give entitlement to benefit."
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfhxgsz00fnywjug0f0k8c6",
+      "field": "question",
+      "from": "Posso obter a baixa médica através deste serviço?",
+      "to": "Posso obter a baixa médica (incapacidade temporária) através deste serviço?"
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfhxgsz00fnywjug0f0k8c6",
+      "field": "answer",
+      "from": "Os médicos da Global Health podem emitir um atestado médico privado que comprove a incapacidade temporária. Para aceder à baixa por incapacidade temporária (IT) do sistema público com prestação económica da Segurança Social, precisa de médico de família no SNS.",
+      "to": "Não. O parte de baja por incapacidade temporária é emitido pelo médico do serviço público de saúde ou, em caso de acidente de trabalho ou doença profissional, pelo médico da mutua, e é o que dá acesso à prestação da Seguridad Social. Os nossos médicos podem emitir um atestado médico privado que regista a consulta e a avaliação clínica, quando clinicamente indicado, mas não substitui o parte de baja nem dá direito a prestação."
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfhxhlv00foywjuir7qv34d",
+      "field": "question",
+      "from": "Mohu prostřednictvím této služby získat pracovní neschopenku?",
+      "to": "Mohu přes tuto službu získat pracovní neschopenku (baja médica)?"
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfhxhlv00foywjuir7qv34d",
+      "field": "answer",
+      "from": "Lékaři Global Health mohou vystavit soukromé lékařské potvrzení prokazující dočasnou pracovní neschopnost. Pro získání neschopenky z důvodu dočasné pracovní neschopnosti (IT) ve veřejném systému s finanční dávkou sociálního zabezpečení potřebujete praktického lékaře v SNS.",
+      "to": "Ne. Parte de baja pro dočasnou pracovní neschopnost vystavuje lékař veřejné zdravotní služby, u pracovního úrazu nebo nemoci z povolání lékař mutuy, a jen ten zakládá nárok na dávku Seguridad Social. Naši lékaři mohou, je-li to klinicky vhodné, vystavit soukromé lékařské potvrzení o konzultaci a klinickém posouzení. Parte de baja nenahrazuje a nárok na dávku nezakládá."
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfhxieq00fpywjuocowpuim",
+      "field": "question",
+      "from": "Pot obține concediul medical prin acest serviciu?",
+      "to": "Pot obține concediu medical (baja médica) prin acest serviciu?"
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfhxieq00fpywjuocowpuim",
+      "field": "answer",
+      "from": "Medicii de la Global Health pot emite un certificat medical privat care să ateste incapacitatea temporară. Pentru a accesa concediul medical pentru incapacitate temporară (IT) din sistemul public, cu prestație economică de la Securitatea Socială, ai nevoie de medic de familie în SNS.",
+      "to": "Nu. Parte de baja pentru incapacitate temporară este emis de medicul serviciului public de sănătate sau, pentru accidente de muncă și boli profesionale, de medicul mutuei, și doar acesta dă acces la indemnizația Seguridad Social. Medicii noștri pot emite, când este clinic adecvat, o adeverință medicală privată care atestă consultația și evaluarea clinică. Aceasta nu înlocuiește parte de baja și nu dă drept la indemnizație."
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfhxj7m00fqywju5n5qqaa8",
+      "field": "question",
+      "from": "Kann ich über diesen Service eine Krankschreibung erhalten?",
+      "to": "Kann ich über diesen Service eine Krankschreibung (baja médica) erhalten?"
+    },
+    {
+      "table": "serviceFaqTranslations",
+      "id": "cmrfhxj7m00fqywju5n5qqaa8",
+      "field": "answer",
+      "from": "Die Ärzte von Global Health können ein privates ärztliches Attest ausstellen, das die vorübergehende Arbeitsunfähigkeit bestätigt. Um die Krankschreibung wegen vorübergehender Arbeitsunfähigkeit (IT) im öffentlichen System mit Geldleistung der Seguridad Social zu erhalten, benötigen Sie einen Hausarzt im SNS.",
+      "to": "Nein. Den parte de baja wegen vorübergehender Arbeitsunfähigkeit stellt ein Arzt des öffentlichen Gesundheitsdienstes aus, bei Arbeitsunfall oder Berufskrankheit ein Arzt der Mutua; nur er eröffnet den Anspruch auf Leistungen der Seguridad Social. Unsere Ärzte können, sofern klinisch angemessen, ein privates ärztliches Attest über die Konsultation und die klinische Beurteilung ausstellen. Es ersetzt den parte de baja nicht und begründet keinen Leistungsanspruch."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmre7pxcr0009ngjumptgplvy",
+      "field": "detailBody",
+      "from": "<li>Medical letters and documentation — sick notes, referral letters</li>",
+      "to": "<li>Medical letters and documentation — private medical certificates, referral letters</li>"
+    },
+    {
+      "table": "serviceLinkTranslations",
+      "id": "cmre7rguo0001g8jui035sx6g",
+      "field": "heading",
+      "from": "¿Justificante médico o certificado de baja?",
+      "to": "¿Necesitas un justificante médico privado?"
+    },
+    {
+      "table": "serviceLinkTranslations",
+      "id": "cmre7rguo0001g8jui035sx6g",
+      "field": "body",
+      "from": "Si tu situación está relacionada con justificante médico o certificado de baja, nuestra Justificante Médico te ofrece la evaluación adecuada.",
+      "to": "Si necesitas documentar una consulta médica ante tu empresa o tu centro de estudios, nuestro servicio de Justificante Médico te ofrece la valoración adecuada. No emite partes de baja."
+    },
+    {
+      "table": "services",
+      "id": "cmre7qeyz0050ngjund1jqnhp",
+      "field": "detailBody",
+      "from": "<li>Informes psiquiátricos para incapacidad laboral temporal o permanente</li>",
+      "to": "<li>Informes psiquiátricos de apoyo en procesos de incapacidad temporal o permanente (la decisión corresponde al servicio público de salud, la mutua o el INSS)</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrezmja200pk01qr0loxmzzz",
+      "field": "detailBody",
+      "from": "<li>Informes psiquiátricos para incapacidad laboral temporal o permanente</li>",
+      "to": "<li>Informes psiquiátricos de apoyo en procesos de incapacidad temporal o permanente (la decisión corresponde al servicio público de salud, la mutua o el INSS)</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhrqi60098ywju7d40shwf",
+      "field": "detailBody",
+      "from": "<li>Relatórios psiquiátricos para incapacidade laboral temporária ou permanente</li>",
+      "to": "<li>Relatórios psiquiátricos de apoio a processos de incapacidade temporária ou permanente (a decisão cabe ao serviço público de saúde, à mutua ou ao INSS)</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhrrhp0099ywjuxnmbea2f",
+      "field": "detailBody",
+      "from": "<li>Psychiatrické zprávy pro dočasnou nebo trvalou pracovní neschopnost</li>",
+      "to": "<li>Psychiatrické zprávy jako podklad pro řízení o dočasné nebo trvalé pracovní neschopnosti (rozhoduje veřejná zdravotní služba, mutua nebo INSS)</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhrsgy009aywjunj801bx3",
+      "field": "detailBody",
+      "from": "<li>Rapoarte psihiatrice pentru incapacitate de muncă temporară sau permanentă</li>",
+      "to": "<li>Rapoarte psihiatrice în sprijinul procedurilor de incapacitate temporară sau permanentă (decizia aparține serviciului public de sănătate, mutuei sau INSS)</li>"
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhrtgg009bywjusfe2rucs",
+      "field": "detailBody",
+      "from": "<li>Psychiatrische Berichte für vorübergehende oder dauerhafte Arbeitsunfähigkeit</li>",
+      "to": "<li>Psychiatrische Berichte zur Unterstützung von Verfahren wegen vorübergehender oder dauerhafter Arbeitsunfähigkeit (die Entscheidung liegt beim öffentlichen Gesundheitsdienst, der Mutua oder dem INSS)</li>"
+    },
+    {
+      "table": "doctors",
+      "id": "cmrdpxpi0001v01ruqavjiq79",
+      "field": "bio",
+      "from": "<li>Bajas médicas e informes médicos</li>",
+      "to": "<li>Justificantes médicos privados e informes médicos</li>"
+    },
+    {
+      "table": "doctorTranslations",
+      "id": "cmrdpxpib001x01rut1g2sklz",
+      "field": "bio",
+      "from": "<li>Bajas médicas e informes médicos</li>",
+      "to": "<li>Justificantes médicos privados e informes médicos</li>"
+    },
+    {
+      "table": "doctorMarketTranslations",
+      "id": "cmrdxk874003f01lmzmi5av59",
+      "field": "bio",
+      "from": "<li>Bajas médicas e informes médicos</li>",
+      "to": "<li>Justificantes médicos privados e informes médicos</li>"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrmjmdw60007rsjuomt010sl",
+      "field": "answer",
+      "from": "bajas médicas e informes",
+      "to": "justificantes médicos privados e informes"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrnxq7jj000bbsjuckw0tme3",
+      "field": "answer",
+      "from": "medical leave, and medical reports",
+      "to": "private medical certificates, and medical reports"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrnxqgfg000hbsjur2gqx332",
+      "field": "answer",
+      "from": "baixas médicas",
+      "to": "atestados médicos privados"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrnxqq2i000nbsjuzn0oukq4",
+      "field": "answer",
+      "from": "pracovní neschopnosti a",
+      "to": "soukromá lékařská potvrzení a"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrnxr31x000tbsjur3nspd5k",
+      "field": "answer",
+      "from": "concedii medicale",
+      "to": "adeverințe medicale private"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrnxrdyf000zbsjuwmkh9dnz",
+      "field": "answer",
+      "from": "Krankschreibungen",
+      "to": "private ärztliche Atteste"
+    },
+    {
+      "table": "doctors",
+      "id": "cmrdpted5001901ru0wk0ncnd",
+      "field": "bio",
+      "from": "<li>Bajas médicas e informes médicos</li>",
+      "to": "<li>Justificantes médicos privados e informes médicos</li>"
+    },
+    {
+      "table": "doctorTranslations",
+      "id": "cmrdptedh001b01ru0d7v14qd",
+      "field": "bio",
+      "from": "<li>Bajas médicas e informes médicos</li>",
+      "to": "<li>Justificantes médicos privados e informes médicos</li>"
+    },
+    {
+      "table": "doctorMarketTranslations",
+      "id": "cmrdxbsh4001q01lmdbn2f4ku",
+      "field": "bio",
+      "from": "<li>Bajas médicas e informes médicos</li>",
+      "to": "<li>Justificantes médicos privados e informes médicos</li>"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrmjnec4001jrsjuwc86751y",
+      "field": "answer",
+      "from": "bajas médicas e informes",
+      "to": "justificantes médicos privados e informes"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrnybdr700bhbsju4x1amwix",
+      "field": "answer",
+      "from": "medical leave and reports",
+      "to": "private medical certificates and reports"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrnybrbp00bnbsjumrl8hspo",
+      "field": "answer",
+      "from": "baixas médicas",
+      "to": "atestados médicos privados"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrnyc19d00btbsjuv5v3y49u",
+      "field": "answer",
+      "from": "pracovní neschopnosti a",
+      "to": "soukromá lékařská potvrzení a"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrnycbpa00bzbsju0ptq0fn6",
+      "field": "answer",
+      "from": "concedii medicale",
+      "to": "adeverințe medicale private"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrnycm1x00c5bsjuy2u7kclv",
+      "field": "answer",
+      "from": "Krankschreibungen",
+      "to": "private ärztliche Atteste"
+    },
+    {
+      "table": "doctors",
+      "id": "cmrdpsayj001401ruyb4x1ze3",
+      "field": "bio",
+      "from": "<li>Bajas médicas e informes médicos</li>",
+      "to": "<li>Justificantes médicos privados e informes médicos</li>"
+    },
+    {
+      "table": "doctorTranslations",
+      "id": "cmrdpsays001601ru6w5d5tbg",
+      "field": "bio",
+      "from": "<li>Bajas médicas e informes médicos</li>",
+      "to": "<li>Justificantes médicos privados e informes médicos</li>"
+    },
+    {
+      "table": "doctorMarketTranslations",
+      "id": "cmrdx9gxx000y01lmwh8u2f93",
+      "field": "bio",
+      "from": "<li>Bajas médicas e informes médicos</li>",
+      "to": "<li>Justificantes médicos privados e informes médicos</li>"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrmjning001prsjugcvy7z2a",
+      "field": "answer",
+      "from": "bajas médicas e informes",
+      "to": "justificantes médicos privados e informes"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrny29iy006zbsjuna85vo1j",
+      "field": "answer",
+      "from": "medical leaves, and reports",
+      "to": "private medical certificates, and reports"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrny2lgc0075bsjuvbt2nw7t",
+      "field": "answer",
+      "from": "baixas médicas",
+      "to": "atestados médicos privados"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrny377e007bbsju4ubl0wql",
+      "field": "answer",
+      "from": "pracovní neschopnosti a",
+      "to": "soukromá lékařská potvrzení a"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrny3j29007hbsjuii1zq8t2",
+      "field": "answer",
+      "from": "concedii medicale",
+      "to": "adeverințe medicale private"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrny3tya007nbsjugy93lm05",
+      "field": "answer",
+      "from": "Krankschreibungen",
+      "to": "private ärztliche Atteste"
+    },
+    {
+      "table": "doctors",
+      "id": "cmrdq2bu1002f01ru2g8317b6",
+      "field": "bio",
+      "from": "<li>Bajas médicas e informes médicos</li>",
+      "to": "<li>Justificantes médicos privados e informes médicos</li>"
+    },
+    {
+      "table": "doctorTranslations",
+      "id": "cmrdq2bue002h01rua5242mgy",
+      "field": "bio",
+      "from": "<li>Bajas médicas e informes médicos</li>",
+      "to": "<li>Justificantes médicos privados e informes médicos</li>"
+    },
+    {
+      "table": "doctorMarketTranslations",
+      "id": "cmrdxr9tg004t01lm1zg1apzn",
+      "field": "bio",
+      "from": "<li>Bajas médicas e informes médicos</li>",
+      "to": "<li>Justificantes médicos privados e informes médicos</li>"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrmjnram0021rsjutyexpx5t",
+      "field": "answer",
+      "from": "bajas médicas e informes",
+      "to": "justificantes médicos privados e informes"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrnyxc3800mzbsjupwsp3doo",
+      "field": "answer",
+      "from": "medical leave and reports",
+      "to": "private medical certificates and reports"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrnyxp9s00n5bsjupjee9vaj",
+      "field": "answer",
+      "from": "baixas médicas",
+      "to": "atestados médicos privados"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrnyy1h800nbbsjudsyuom7c",
+      "field": "answer",
+      "from": "pracovní neschopnosti a",
+      "to": "soukromá lékařská potvrzení a"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrnyyelm00nhbsjuqlr9e7u3",
+      "field": "answer",
+      "from": "concedii medicale",
+      "to": "adeverințe medicale private"
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrnyyrp300nnbsju4s49p2if",
+      "field": "answer",
+      "from": "Krankmeldungen",
+      "to": "private ärztliche Atteste"
+    }
+  ]
+}

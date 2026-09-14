@@ -58,6 +58,22 @@ if(process.argv[1]?.endsWith('verify-public.mjs')){
   fs.writeFileSync(`${root}/${rollout}/${stem}-public.json`,JSON.stringify({checkedAt:new Date().toISOString(),group:key,approvalSha256:group.approvalSha256,results},null,2));
   console.log(JSON.stringify({group:key,passed:results.length}));process.exit(0);
  }
+ if(group.textReplacements){
+  // Exact text replacements: the uncached public API returns every replacement text for its locale.
+  const snapshot=read(read(`content-briefs/phase${phase}-plan.json`).snapshot).data,[kind,id]=group.stateKey.split(':');
+  const slug=kind==='service'?snapshot.services.find(s=>s.id===id).slug:snapshot.doctors.find(d=>d.id===id).slug,byLocale=new Map(),results=[];
+  for(const c of group.changes){const locale=c.before.locale??'ES';byLocale.set(locale,[...(byLocale.get(locale)??[]),...group.textReplacements.filter(r=>r.table===c.table&&r.id===c.id&&!Array.isArray(r.to))]);}
+  for(const [locale,reps] of byLocale){
+   const endpoint=kind==='service'?`https://api.myglobalhealth.online/api/services/${slug}?countryCode=${manifest.country}&locale=${locale}`:`https://api.myglobalhealth.online/api/countries/${manifest.country}/doctors/${slug}?locale=${locale}`;
+   const r=await fetch(endpoint,{cache:'no-store',signal:AbortSignal.timeout(45000)});assert.equal(r.status,200,`API status ${locale}`);
+   const body=JSON.stringify(await r.json());
+   for(const rep of reps)assert(body.includes(JSON.stringify(rep.to).slice(1,-1)),`Replacement missing ${rep.table}/${rep.id}.${rep.field} ${locale}`);
+   results.push({endpoint,status:'passed',replacements:reps.length});
+  }
+  fs.mkdirSync(`${root}/${rollout}`,{recursive:true});
+  fs.writeFileSync(`${root}/${rollout}/${stem}-public.json`,JSON.stringify({checkedAt:new Date().toISOString(),group:key,approvalSha256:group.approvalSha256,results},null,2));
+  console.log(JSON.stringify({group:key,passed:results.length}));process.exit(0);
+ }
  assert.equal(manifest.draftsSha256,hash(read('content-briefs/exact-drafts.json')),'Drafts changed');
  const inventory=read('raw/public-inventory-2026-09-13.json'),drafts=read('content-briefs/exact-drafts.json'),links=read('content-briefs/link-drafts.json'),results=[];
  const appliedKeys=new Set(manifest.groups.slice(0,manifest.groups.indexOf(group)+1).map(g=>g.key));
