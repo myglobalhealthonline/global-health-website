@@ -27,9 +27,16 @@
     "sameDay": {
       "eyebrow": "Precisa de ajuda?",
       "title": "Consulta no Mesmo Dia",
+      "titleNextAvailable": "Próxima consulta disponível",
       "languageLabel": "Idioma da consulta",
+      "languagePlaceholder": "Selecione o seu idioma…",
       "pickTime": "Escolha uma hora",
       "today": "Hoje",
+      "tomorrow": "Amanhã",
+      "nextAvailable": "Próxima disponível",
+      "pickLanguageFirst": "Escolha um idioma para ver os horários disponíveis.",
+      "loading": "A procurar horários…",
+      "noSlots": "Sem horários hoje ou amanhã neste idioma. Experimente outro idioma.",
       "continue": "Continuar",
       "minSuffix": "min",
       "reassure": "Escolha o seu idioma e uma hora. Iremos atribuir o médico de família adequado."

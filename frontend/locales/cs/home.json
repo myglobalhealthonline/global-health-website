@@ -27,9 +27,16 @@
     "sameDay": {
       "eyebrow": "Potřebujete pomoc?",
       "title": "Konzultace ve stejný den",
+      "titleNextAvailable": "Nejbližší volná konzultace",
       "languageLabel": "Jazyk konzultace",
+      "languagePlaceholder": "Vyberte jazyk…",
       "pickTime": "Vyberte čas",
       "today": "Dnes",
+      "tomorrow": "Zítra",
+      "nextAvailable": "Nejbližší volný termín",
+      "pickLanguageFirst": "Vyberte jazyk, abyste viděli volné časy.",
+      "loading": "Hledáme volné časy…",
+      "noSlots": "Pro tento jazyk nejsou dnes ani zítra volné časy. Zkuste jiný jazyk.",
       "continue": "Pokračovat",
       "minSuffix": "min",
       "reassure": "Vyberte svůj jazyk a zvolte čas. Přiřadíme vám správného lékaře."
