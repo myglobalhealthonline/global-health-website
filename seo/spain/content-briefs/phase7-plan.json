@@ -1,0 +1,301 @@
+{
+  "snapshot": "raw/storage-post-phase6-2026-09-15.json",
+  "source": "SMA-05/SMA-14 snippet trim (audit cross-check §56.13). Owner 2026-09-15: each country clinical director approves description copy; Spain clinical director Dra. María Fernanda Ocampo Mora.",
+  "deferPublicVerification": true,
+  "replacements": [
+    {
+      "table": "services",
+      "id": "cmre7qeyz0050ngjund1jqnhp",
+      "field": "seoDescription",
+      "from": "Trastorno mental complejo, TDAH, trastorno bipolar u otra preocupación psiquiátrica. Nuestros psiquiatras colegiados ofrecen evaluaciones especialistas por videollamada segura. El mismo día en España.",
+      "to": "TDAH, trastorno bipolar u otros problemas psiquiátricos: psiquiatras colegiados valoran tu caso por videollamada segura, desde cualquier punto de España."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrezmja200pk01qr0loxmzzz",
+      "field": "seoDescription",
+      "from": "Trastorno mental complejo, TDAH, trastorno bipolar u otra preocupación psiquiátrica. Nuestros psiquiatras colegiados ofrecen evaluaciones especialistas por videollamada segura. El mismo día en España.",
+      "to": "TDAH, trastorno bipolar u otros problemas psiquiátricos: psiquiatras colegiados valoran tu caso por videollamada segura, desde cualquier punto de España."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmre7qff1005bngjuxk9yqjkz",
+      "field": "seoDescription",
+      "from": "Complex mental health condition, ADHD, bipolar disorder, or psychiatric concern in Spain? Our specialist psychiatrists offer expert assessments by secure video call. Same-day appointments available in English.",
+      "to": "ADHD, bipolar disorder or another psychiatric concern in Spain? Registered psychiatrists assess you by secure video call, wherever you are in Spain."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhrqi60098ywju7d40shwf",
+      "field": "seoDescription",
+      "from": "Transtorno mental complexo, TDAH, transtorno bipolar ou outra preocupação psiquiátrica. Os nossos psiquiatras inscritos na ordem oferecem avaliações especializadas por videochamada segura. No mesmo dia em Espanha.",
+      "to": "TDAH, transtorno bipolar ou outra preocupação psiquiátrica? Psiquiatras inscritos avaliam o seu caso por videochamada segura, em qualquer ponto de Espanha."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhrrhp0099ywjuxnmbea2f",
+      "field": "seoDescription",
+      "from": "Komplexní duševní porucha, ADHD, bipolární porucha nebo jiný psychiatrický problém. Naši atestovaní psychiatři nabízejí odborná vyšetření prostřednictvím zabezpečeného videohovoru. Ve stejný den ve Španělsku.",
+      "to": "ADHD, bipolární porucha nebo jiný psychiatrický problém? Atestovaní psychiatři vás vyšetří přes zabezpečený videohovor, kdekoli ve Španělsku."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhrsgy009aywjunj801bx3",
+      "field": "seoDescription",
+      "from": "Tulburare psihică complexă, TDAH, tulburare bipolară sau altă îngrijorare psihiatrică. Psihiatrii noștri autorizați oferă evaluări specializate prin apel video securizat. În aceeași zi în Spania.",
+      "to": "TDAH, tulburare bipolară sau altă problemă psihiatrică? Psihiatri autorizați îți evaluează situația prin apel video securizat, oriunde în Spania."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhrtgg009bywjusfe2rucs",
+      "field": "seoDescription",
+      "from": "Komplexe psychische Störung, ADHS, bipolare Störung oder ein anderes psychiatrisches Anliegen. Unsere approbierten Psychiater bieten fachärztliche Beurteilungen per sicherer Videoanruf. Noch am selben Tag in Spanien.",
+      "to": "ADHS, bipolare Störung oder ein anderes psychiatrisches Anliegen? Approbierte Psychiater beurteilen Sie per sicherem Videoanruf, überall in Spanien."
+    },
+    {
+      "table": "services",
+      "id": "cmre7qas1003sngjus0w2obwn",
+      "field": "seoDescription",
+      "from": "¿Necesitas una carta de derivación a especialista, analíticas o pruebas de imagen en España? Nuestros médicos de cabecera colegiados emiten documentación clínica tras evaluación completa. El mismo día en España.",
+      "to": "¿Necesitas derivación a especialista, analíticas o pruebas de imagen? Médicos colegiados las indican tras una valoración completa por videollamada."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrez4epe00n501qruwgzm9od",
+      "field": "seoDescription",
+      "from": "¿Necesitas una carta de derivación a especialista, analíticas o pruebas de imagen en España? Nuestros médicos de cabecera colegiados emiten documentación clínica tras evaluación completa. El mismo día en España.",
+      "to": "¿Necesitas derivación a especialista, analíticas o pruebas de imagen? Médicos colegiados las indican tras una valoración completa por videollamada."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmre7qb7o0041ngjufz99w5f7",
+      "field": "seoDescription",
+      "from": "Need a specialist referral letter, blood tests, or imaging in Spain? Our OMC-registered GPs issue clinical documentation after full assessment. Same-day appointments available anywhere in Spain.",
+      "to": "Need a specialist referral, blood tests or imaging in Spain? OMC-registered GPs issue the paperwork after a full video assessment when indicated."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfho2go004wywjuy0ihamvn",
+      "field": "seoDescription",
+      "from": "Precisa de uma carta de encaminhamento para especialista, análises ou exames de imagem em Espanha? Os nossos médicos de clínica geral inscritos na ordem emitem documentação clínica após avaliação completa. No mesmo dia em Espanha.",
+      "to": "Precisa de encaminhamento para especialista, análises ou exames de imagem? Médicos inscritos emitem-nos após avaliação completa por videochamada."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfho3a0004xywjuxvfzzfbg",
+      "field": "seoDescription",
+      "from": "Potřebujete doporučení ke specialistovi, laboratorní testy nebo zobrazovací vyšetření ve Španělsku? Naši registrovaní praktičtí lékaři vystavují klinickou dokumentaci po kompletním vyšetření. Tentýž den ve Španělsku.",
+      "to": "Potřebujete doporučení ke specialistovi, laboratorní nebo zobrazovací vyšetření? Registrovaní lékaři je vystaví po kompletním vyšetření přes video."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfho43c004yywju3x1wflwr",
+      "field": "seoDescription",
+      "from": "Ai nevoie de o scrisoare de trimitere către un specialist, analize sau investigații imagistice în Spania? Medicii noștri de familie înscriși în colegiul medicilor emit documentație clinică după o evaluare completă. În aceeași zi în Spania.",
+      "to": "Ai nevoie de trimitere la specialist, analize sau investigații imagistice? Medici înregistrați le emit după o evaluare completă prin apel video."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfho4wn004zywjuztgqm8c8",
+      "field": "seoDescription",
+      "from": "Benötigen Sie in Spanien eine Überweisung an einen Facharzt, Laboranalysen oder bildgebende Untersuchungen? Unsere zugelassenen Hausärzte stellen nach vollständiger Untersuchung klinische Unterlagen aus. Noch am selben Tag in Spanien.",
+      "to": "Überweisung zum Facharzt, Laborwerte oder Bildgebung nötig? Zugelassene Hausärzte stellen die Unterlagen nach vollständiger Video-Untersuchung aus."
+    },
+    {
+      "table": "services",
+      "id": "cmre7q7k0002vngju6v73lt8h",
+      "field": "seoDescription",
+      "from": "¿Viajando a zona de malaria o destino de riesgo? Nuestros médicos de cabecera colegiados evalúan tu salud de viaje y gestionan la documentación clínica necesaria. El mismo día en España.",
+      "to": "¿Viajas a una zona de malaria o de riesgo? Médicos colegiados valoran tu salud de viaje por videollamada y preparan la documentación clínica necesaria."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrez76wu00ns01qr63cxblt3",
+      "field": "seoDescription",
+      "from": "¿Viajando a zona de malaria o destino de riesgo? Nuestros médicos de cabecera colegiados evalúan tu salud de viaje y gestionan la documentación clínica necesaria. El mismo día en España.",
+      "to": "¿Viajas a una zona de malaria o de riesgo? Médicos colegiados valoran tu salud de viaje por videollamada y preparan la documentación clínica necesaria."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmre7q8030036ngjug217xl31",
+      "field": "seoDescription",
+      "from": "Travelling from Spain to a malaria zone or higher-risk destination? Our OMC-registered GPs assess travel health risks and manage clinical documentation for malaria prophylaxis. Same-day appointments in English.",
+      "to": "Travelling to a malaria zone or higher-risk destination? OMC-registered GPs assess your travel health by video and prepare the clinical paperwork."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhq8rd007lywju5fxlvpyu",
+      "field": "seoDescription",
+      "from": "A viajar para uma zona de malária ou destino de risco? Os nossos médicos de clínica geral inscritos na ordem avaliam a sua saúde de viagem e tratam da documentação clínica necessária. No mesmo dia em Espanha.",
+      "to": "Vai viajar para uma zona de malária ou de risco? Médicos inscritos avaliam a sua saúde de viagem por videochamada e tratam da documentação clínica."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhq9kn007mywju9zltlv9q",
+      "field": "seoDescription",
+      "from": "Cestujete do oblasti s výskytem malárie nebo do rizikové destinace? Naši registrovaní praktičtí lékaři posoudí váš cestovní zdravotní stav a zajistí potřebnou zdravotní dokumentaci. Ve stejný den ve Španělsku.",
+      "to": "Cestujete do oblasti s malárií nebo do rizikové destinace? Registrovaní lékaři posoudí vaše cestovní zdraví přes video a připraví dokumentaci."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhqadz007nywjul9qiopib",
+      "field": "seoDescription",
+      "from": "Călătorești într-o zonă cu malarie sau într-o destinație cu risc? Medicii noștri de familie cu drept de liberă practică evaluează starea ta de sănătate pentru călătorie și se ocupă de documentația medicală necesară. În aceeași zi în Spania.",
+      "to": "Călătorești într-o zonă cu malarie sau cu risc? Medici înregistrați îți evaluează sănătatea de călătorie prin apel video și pregătesc documentele."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhqb7l007oywjuqlp35kn9",
+      "field": "seoDescription",
+      "from": "Reisen Sie in ein Malariagebiet oder ein Risikogebiet? Unsere approbierten Hausärzte beurteilen Ihre Reisegesundheit und kümmern sich um die erforderliche klinische Dokumentation. Noch am selben Tag in Spanien.",
+      "to": "Reise in ein Malaria- oder Risikogebiet? Zugelassene Hausärzte beurteilen Ihre Reisegesundheit per Video und erstellen die nötigen Unterlagen."
+    },
+    {
+      "table": "services",
+      "id": "cmre7pxza000angjubr3s2h65",
+      "field": "seoDescription",
+      "from": "¿Necesitas un justificante médico privado? Médicos colegiados valoran tus síntomas por videollamada y lo emiten cuando está clínicamente justificado. No sustituye al parte de baja.",
+      "to": "¿Necesitas un justificante médico privado? Médicos colegiados te valoran por videollamada y lo emiten si está indicado. No sustituye al parte de baja."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrez64d200nl01qrswg1ock9",
+      "field": "seoDescription",
+      "from": "¿Necesitas un justificante médico privado? Médicos colegiados valoran tus síntomas por videollamada y lo emiten cuando está clínicamente justificado. No sustituye al parte de baja.",
+      "to": "¿Necesitas un justificante médico privado? Médicos colegiados te valoran por videollamada y lo emiten si está indicado. No sustituye al parte de baja."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmre7pyes000jngju3qrggcpx",
+      "field": "seoDescription",
+      "from": "Need a private medical certificate in Spain? OMC-registered doctors assess you by video and issue one where clinically justified. Not a parte de baja (statutory sick leave).",
+      "to": "Need a private medical certificate in Spain? OMC-registered doctors assess you by video and issue one if justified. Not a parte de baja (sick leave)."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp2gb0063ywjuh08w2nsd",
+      "field": "seoDescription",
+      "from": "Precisa de um atestado médico privado? Médicos inscritos avaliam os seus sintomas por videochamada e emitem-no quando clinicamente justificado. Não substitui o parte de baja.",
+      "to": "Precisa de um atestado médico privado? Médicos inscritos avaliam-no por videochamada e emitem-no se justificado. Não substitui o parte de baja."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp3970064ywju069wui4h",
+      "field": "seoDescription",
+      "from": "Potřebujete soukromé lékařské potvrzení? Registrovaní lékaři posoudí vaše příznaky přes videohovor a vystaví ho, je-li to lékařsky odůvodněné. Nenahrazuje parte de baja.",
+      "to": "Potřebujete soukromé lékařské potvrzení? Registrovaní lékaři vás posoudí přes video a vystaví ho, je-li to odůvodněné. Nenahrazuje parte de baja."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp4270065ywju5gl6utsf",
+      "field": "seoDescription",
+      "from": "Ai nevoie de o adeverință medicală privată? Medici înregistrați îți evaluează simptomele prin apel video și o emit când este justificat medical. Nu înlocuiește parte de baja.",
+      "to": "Ai nevoie de o adeverință medicală privată? Medici înregistrați te evaluează prin apel video și o emit dacă e justificat. Nu înlocuiește parte de baja."
+    },
+    {
+      "table": "serviceTranslations",
+      "id": "cmrfhp4v60066ywjud51lbhcy",
+      "field": "seoDescription",
+      "from": "Sie brauchen ein privates ärztliches Attest? Zugelassene Ärzte beurteilen Ihre Symptome per Videoanruf und stellen es aus, wenn medizinisch gerechtfertigt. Kein Ersatz für den parte de baja.",
+      "to": "Privates ärztliches Attest nötig? Zugelassene Ärzte beurteilen Sie per Video und stellen es aus, wenn gerechtfertigt. Kein Ersatz für den parte de baja."
+    },
+    {
+      "table": "doctors",
+      "id": "cmrdppjf5000u01ru1ayu78k0",
+      "field": "seoDescription",
+      "from": "Reserve una videoconsulta con Dr. Alfredo del Valle — dermatólogo especialista registrado en CGCOM (nº 282885136). Dermatología médica y estética · Teledermatología · España y Latinoamérica · Español e inglés. Cita el mismo día.",
+      "to": "Videoconsulta con el Dr. Alfredo del Valle, dermatólogo colegiado (CGCOM 282885136). Dermatología médica y estética, en español e inglés."
+    },
+    {
+      "table": "doctorMarketTranslations",
+      "id": "cmrdx1so6000a01lm60qob02x",
+      "field": "seoDescription",
+      "from": "Reserve una videoconsulta con Dr. Alfredo del Valle — dermatólogo especialista registrado en CGCOM (nº 282885136). Dermatología médica y estética · Teledermatología · España y Latinoamérica · Español e inglés. Cita el mismo día.",
+      "to": "Videoconsulta con el Dr. Alfredo del Valle, dermatólogo colegiado (CGCOM 282885136). Dermatología médica y estética, en español e inglés."
+    },
+    {
+      "table": "doctorMarketTranslations",
+      "id": "cmrdx1so9000b01lmxf6oxa36",
+      "field": "seoDescription",
+      "from": "Dr. Alfredo del Valle Moreno Montañez, dermatologist specializing in medical and aesthetic dermatology. Expert in dermato-oncology, hidradenitis suppurativa and botulinum toxin treatments. Online consultation at Global Health.",
+      "to": "Dr. Alfredo del Valle, dermatologist: medical and aesthetic dermatology, dermato-oncology and hidradenitis suppurativa. Online consultation."
+    },
+    {
+      "table": "doctorMarketTranslations",
+      "id": "cmrdx1sob000c01lmn8usupog",
+      "field": "seoDescription",
+      "from": "Dr. Alfredo del Valle Moreno Montañez, dermatologista especialista em dermatologia médica e estética. Especialista em dermato-oncologia, hidradenite supurativa e tratamentos com toxina botulínica. Consulta online na Global Health.",
+      "to": "Dr. Alfredo del Valle, dermatologista: dermatologia médica e estética, dermato-oncologia e hidradenite supurativa. Consulta online na Global Health."
+    },
+    {
+      "table": "doctorMarketTranslations",
+      "id": "cmrdx1soc000d01lmd0k3e2po",
+      "field": "seoDescription",
+      "from": "Dr. Alfredo del Valle Moreno Montañez, dermatolog specializovaný na lékařskou a estetickou dermatologii. Expert na dermatoonkologii, hidradenitidu supurativa a léčbu botulotoxinem. Online konzultace v Global Health.",
+      "to": "Dr. Alfredo del Valle, dermatolog: lékařská a estetická dermatologie, dermatoonkologie a hidradenitida. Online konzultace v Global Health."
+    },
+    {
+      "table": "doctorMarketTranslations",
+      "id": "cmrdx1soe000e01lms7fd7hce",
+      "field": "seoDescription",
+      "from": "Dr. Alfredo del Valle Moreno Montañez, dermatolog specialist în dermatologie medicală și estetică. Expert în dermato-oncologie, hidradenită supurativă și tratamente cu toxină botulinică. Consult online la Global Health.",
+      "to": "Dr. Alfredo del Valle, dermatolog: dermatologie medicală și estetică, dermato-oncologie și hidradenită supurativă. Consult online la Global Health."
+    },
+    {
+      "table": "doctorMarketTranslations",
+      "id": "cmrdx1sof000f01lmd381golg",
+      "field": "seoDescription",
+      "from": "Dr. Alfredo del Valle Moreno Montañez, Facharzt für Dermatologie mit Spezialisierung auf medizinische und ästhetische Dermatologie. Experte für Dermatoonkologie, Hidradenitis suppurativa und Behandlungen mit Botulinumtoxin. Online-Sprechstunde bei Global Health.",
+      "to": "Dr. Alfredo del Valle, Facharzt für medizinische und ästhetische Dermatologie, Dermatoonkologie und Hidradenitis suppurativa. Online-Sprechstunde."
+    },
+    {
+      "table": "doctors",
+      "id": "cmrdq0tv2002701rupeh3nkyd",
+      "field": "seoDescription",
+      "from": "Reserve una sesión con Tomás Ruiz Palacios — Psicólogo General Sanitario (nº MU05691). TCC y terapia sistémica relacional · Universidad de Murcia · ITFB Bolonia · Adultos hispanohablantes e italianos · Español e italiano. Cita el mismo día.",
+      "to": "Sesión online con Tomás Ruiz Palacios, psicólogo general sanitario (nº MU05691). Terapia cognitivo-conductual y sistémica, en español e italiano."
+    },
+    {
+      "table": "doctorMarketTranslations",
+      "id": "cmrdxogb1004901lmtwzkc5cq",
+      "field": "seoDescription",
+      "from": "Reserve una sesión con Tomás Ruiz Palacios — Psicólogo General Sanitario (nº MU05691). TCC y terapia sistémica relacional · Universidad de Murcia · ITFB Bolonia · Adultos hispanohablantes e italianos · Español e italiano. Cita el mismo día.",
+      "to": "Sesión online con Tomás Ruiz Palacios, psicólogo general sanitario (nº MU05691). Terapia cognitivo-conductual y sistémica, en español e italiano."
+    },
+    {
+      "table": "doctorMarketTranslations",
+      "id": "cmrdxogb2004a01lmfjzkzwh2",
+      "field": "seoDescription",
+      "from": "Tomás Ruiz Palacios, General Health Psychologist specializing in cognitive-behavioral and relational systemic therapy. Care in Spanish and Italian. Online consultation at Global Health.",
+      "to": "Tomás Ruiz Palacios, general health psychologist: cognitive-behavioural and relational systemic therapy in Spanish and Italian. Online sessions."
+    },
+    {
+      "table": "doctorMarketTranslations",
+      "id": "cmrdxogb3004b01lmupckvj5c",
+      "field": "seoDescription",
+      "from": "Tomás Ruiz Palacios, Psicólogo Geral de Saúde especializado em terapia cognitivo-comportamental e sistêmica relacional. Atendimento em espanhol e italiano. Consulta online na Global Health.",
+      "to": "Tomás Ruiz Palacios, psicólogo geral de saúde: terapia cognitivo-comportamental e sistémica relacional, em espanhol e italiano. Consulta online."
+    },
+    {
+      "table": "doctorMarketTranslations",
+      "id": "cmrdxogb5004c01lm3ezxlh6j",
+      "field": "seoDescription",
+      "from": "Tomás Ruiz Palacios, zdravotnický psycholog specializovaný na kognitivně-behaviorální a systemickou relační terapii. Péče ve španělštině a italštině. Online konzultace v Global Health.",
+      "to": "Tomás Ruiz Palacios, zdravotnický psycholog: kognitivně-behaviorální a systemická relační terapie ve španělštině a italštině. Online konzultace."
+    },
+    {
+      "table": "doctorMarketTranslations",
+      "id": "cmrdxogb6004d01lm7sv6wo0u",
+      "field": "seoDescription",
+      "from": "Tomás Ruiz Palacios, Psiholog General Sanitar specializat în terapie cognitiv-comportamentală și sistemică relațională. Consultații în spaniolă și italiană. Consulta online la Global Health.",
+      "to": "Tomás Ruiz Palacios, psiholog general sanitar: terapie cognitiv-comportamentală și sistemică relațională, în spaniolă și italiană. Consult online."
+    },
+    {
+      "table": "doctorMarketTranslations",
+      "id": "cmrdxogb7004e01lm085ikia9",
+      "field": "seoDescription",
+      "from": "Tomás Ruiz Palacios, Psychologe im Gesundheitswesen, spezialisiert auf kognitiv-verhaltenstherapeutische und systemisch-relationale Therapie. Betreuung auf Spanisch und Italienisch. Online-Sprechstunde bei Global Health.",
+      "to": "Tomás Ruiz Palacios, Psychologe im Gesundheitswesen: kognitive Verhaltenstherapie und systemische Therapie auf Spanisch und Italienisch. Online."
+    }
+  ]
+}
