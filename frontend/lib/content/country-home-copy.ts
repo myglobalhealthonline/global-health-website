@@ -188,10 +188,27 @@ export const EXTRAS: Record<string, HomePageExtras> = {
     resourceLink: { href: "/romania/ro/tools/calorie-calculator", label: "Calculator de calorii" },
   },
   "ro:de": { heroTitle: "Online-medizinische Versorgung in Rumänien" },
-  "br:en": { heroTitle: "Online medical care in Brazil" },
-  "br:es": { heroTitle: "Atención médica online en Brasil" },
+  // Brazil SEO (2026-09-15): the shared pt/en/es homeMeta templates promise
+  // specialists and same-day care, and pt uses European spelling ("Registados").
+  // Brazil has one active GP-level clinician, and phase 4 removed same-day
+  // claims from every Brazil service page — these keep the homepage consistent.
+  "br:en": {
+    heroTitle: "Online medical care in Brazil",
+    seoTitle: "Online Doctor in Brazil | Video Consultations",
+    seoDescription:
+      "Video consultations with a CRM-registered doctor in Brazil. General care, prescription renewal and test requests depending on clinical assessment. Check times and price.",
+  },
+  "br:es": {
+    heroTitle: "Atención médica online en Brasil",
+    seoTitle: "Médico Online en Brasil | Consulta por Vídeo",
+    seoDescription:
+      "Consulta por videollamada con un médico registrado en el CRM en Brasil. Medicina general, renovación de recetas y exámenes según la evaluación clínica. Consulta horarios y precio.",
+  },
   "br:pt": {
     heroTitle: "Cuidados médicos online no Brasil",
+    seoTitle: "Médico Online no Brasil | Consulta por Vídeo",
+    seoDescription:
+      "Consulta por videochamada com médico registrado no CRM. Clínica geral, renovação de receita e pedido de exames conforme avaliação clínica. Veja horários e preço.",
     resourceLink: { href: "/brazil/pt/tools/calorie-calculator", label: "Calculadora de calorias" },
   },
   "br:cs": { heroTitle: "Online lékařská péče v Brazílii" },
@@ -215,6 +232,53 @@ export const EXTRAS: Record<string, HomePageExtras> = {
 };
 
 const BUNDLE: Record<string, DeepPartial<HomeBundle>> = {
+  // Brazil availability panel (2026-09-15): no same-day promise, and pt-BR
+  // wording — the shared pt strings are European Portuguese and several keys
+  // fell back to the component's English defaults.
+  "br:pt": {
+    countryHero: {
+      sameDay: {
+        eyebrow: "Precisa de ajuda?",
+        title: "Horários disponíveis com médico",
+        titleNextAvailable: "Próximo horário disponível",
+        languageLabel: "Idioma da consulta",
+        languagePlaceholder: "Selecione o idioma…",
+        pickTime: "Escolha um horário",
+        today: "Hoje",
+        tomorrow: "Amanhã",
+        nextAvailable: "Próximo horário",
+        pickLanguageFirst: "Escolha um idioma para ver os horários disponíveis.",
+        loading: "Buscando horários…",
+        noSlots: "Sem horários hoje ou amanhã neste idioma. Tente outro idioma.",
+        continue: "Continuar",
+        reassure: "Escolha o idioma e um horário. Vamos direcionar você ao médico adequado.",
+      },
+    },
+    // Shared pt names Portugal's regulator ("Ordem dos Médicos"); Brazil's is the CRM.
+    statsBand: {
+      stat1Label: "Médicos registrados",
+      stat1Caption: "Registrados no Conselho Regional de Medicina (CRM).",
+    },
+  },
+  "br:en": {
+    countryHero: {
+      sameDay: {
+        title: "Available Consultation Times",
+        reassure: "Choose your language and pick a time. We will direct you to the right doctor.",
+      },
+    },
+  },
+  "br:es": {
+    countryHero: {
+      sameDay: {
+        title: "Horarios de consulta disponibles",
+        titleNextAvailable: "Próxima consulta disponible",
+        tomorrow: "Mañana",
+        nextAvailable: "Próximo horario",
+        reassure: "Elige tu idioma y un horario. Te dirigiremos al médico adecuado.",
+      },
+    },
+  },
   "IE:en": {
     countryHero: {
       // Availability badge reads "3 doctors available" instead of "3 available".

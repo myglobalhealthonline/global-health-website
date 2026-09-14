@@ -93,6 +93,11 @@ export async function generateMetadata({
   const extras = homePageExtras(code, lang);
   const { common: metaCommon } = loadLocaleBundle(lang as LocaleCode, country);
   const preferIrelandExtras = code === "ie";
+  // Brazil's stored HOME SEO strings still promise specialists and same-day
+  // care, which phase 4 removed from every Brazil service page (2026-09-15).
+  // Code-owned Brazil SEO wins for title/description only; hero copy keeps
+  // the CMS-first order. Clear those HOME fields before relying on the CMS.
+  const preferSeoExtras = preferIrelandExtras || (code === "br" && Boolean(extras?.seoTitle));
   const path = `/${country}/${lang}`;
   // `config.name` is the country's English display name (DB `Country.name`),
   // not locale-aware — the generic template fallback below must use the
@@ -101,12 +106,12 @@ export async function generateMetadata({
   // half-English, e.g. "Médico Online Czechia" instead of "...Chequia".
   const localizedCountryName = metaCommon.countryNames?.[code] ?? config.name;
   const title =
-    (preferIrelandExtras ? extras?.seoTitle : page?.seoTitle) ??
-    (preferIrelandExtras ? page?.seoTitle : extras?.seoTitle) ??
+    (preferSeoExtras ? extras?.seoTitle : page?.seoTitle) ??
+    (preferSeoExtras ? page?.seoTitle : extras?.seoTitle) ??
     metaCommon.homeMeta.titleTemplate.replace("{country}", localizedCountryName);
   const description =
-    (preferIrelandExtras ? extras?.seoDescription : page?.seoDescription) ??
-    (preferIrelandExtras ? page?.seoDescription : extras?.seoDescription) ??
+    (preferSeoExtras ? extras?.seoDescription : page?.seoDescription) ??
+    (preferSeoExtras ? page?.seoDescription : extras?.seoDescription) ??
     metaCommon.homeMeta.descriptionTemplate.replace("{country}", localizedCountryName);
   // OG/Twitter may carry a distinct social-optimised variant; fall back to
   // the page title/description otherwise.

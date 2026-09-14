@@ -73,6 +73,25 @@ type SearchParams = {
 type Notice = { tone: "info" | "warning"; message: string } | null;
 
 type BookT = import("@/lib/i18n/types").CommonLocale["bookPage"];
+
+/**
+ * `pt` is one bundle shared by Portugal and Brazil, so Brazil's booking wording
+ * keys off the country code (same pattern as booking-address-copy.ts). Brazil
+ * also makes no same-day promise: its GP link names the consultation instead.
+ */
+const BRAZIL_BOOK_PAGE: Record<string, Partial<BookT>> = {
+  pt: {
+    title: "Agende sua consulta",
+    subtitle: "Clínica médica no {country}. Escolha o serviço, o médico, o horário e os dados do paciente.",
+    sameDayLink: "Ver consulta com médico de família",
+  },
+  en: { sameDayLink: "View family doctor consultations" },
+  es: { sameDayLink: "Ver consultas con médico de familia" },
+};
+
+function marketBookPage(code: string, lang: string, bookPage: BookT): BookT {
+  return code === "br" ? { ...bookPage, ...BRAZIL_BOOK_PAGE[lang] } : bookPage;
+}
 type SameDayT = ReturnType<typeof loadLocaleBundle>["home"]["countryHero"]["sameDay"];
 
 /** How many months ahead the TIME step's month picker offers — matches the
@@ -172,8 +191,9 @@ export async function generateMetadata({
   // `config.name` is English-only. Use the locale's own country name, as every
   // sibling template does, so a Portuguese page does not read "Brazil".
   const countryName = common.countryNames?.[code] ?? config.name;
-  const title = czechiaSeo?.title ?? `${common.bookPage.title} — ${countryName}`;
-  const description = czechiaSeo?.description ?? common.bookPage.subtitle.replace("{country}", countryName);
+  const bookPage = marketBookPage(code, lang, common.bookPage);
+  const title = czechiaSeo?.title ?? `${bookPage.title} — ${countryName}`;
+  const description = czechiaSeo?.description ?? bookPage.subtitle.replace("{country}", countryName);
   const metadata = buildPublicMetadata({
     path: `/${country}/${lang}/book`,
     title,
@@ -181,7 +201,7 @@ export async function generateMetadata({
     locale: ogLocales(config, lang).locale,
     kind: "service",
     subtitle: countryName,
-    imageAlt: `${common.bookPage.title} — ${countryName}`,
+    imageAlt: `${bookPage.title} — ${countryName}`,
     languages: hreflangAlternates(config, "/book"),
   });
   return applyBookingWorkflowIndexing(metadata, await searchParams);
@@ -201,7 +221,7 @@ export default async function CountryLangBookPage({
   if (!code || !config || !isSupportedLocale(lang)) notFound();
   const { common: c, home } = loadLocaleBundle(lang as LocaleCode);
   const bf = c.bookingForm;
-  const bp = c.bookPage;
+  const bp = marketBookPage(code, lang, c.bookPage);
   const czechiaSeo = czechiaStaticPageSeo(code, lang, "book");
   // Started here, awaited where first needed below — lets the (independent)
   // `overlay` fetch on the non-GP path start without waiting on this one.
@@ -1237,7 +1257,7 @@ function ServicePicker({
           href={`/${country}/${lang}#same-day-booking`}
           className="gh-link inline-flex w-fit items-center gap-1.5 text-sm font-semibold"
         >
-          Need a same-day GP instead?
+          {bp.sameDayLink}
         </Link>
       ) : null}
       {services.length === 0 ? (

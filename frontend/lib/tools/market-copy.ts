@@ -1408,8 +1408,11 @@ const BR_PT_BMI: DeepPartial<ToolCopy> = {
 /** Same treatment for the calorie tool: `déficit`/`superávit`, not `défice`. */
 const BR_PT_CALORIE: DeepPartial<ToolCopy> = {
   cardBlurb: "Quantas calorias por dia você precisa para manter, perder ou ganhar peso.",
+  // Brazil tool metadata (2026-09-15): 2,251 impressions / 7 clicks in GSC. The shared
+  // pt title drops the preposition; the query evidence is "calorias por dia".
+  metaTitle: "Calculadora de Calorias {country} | Calorias por Dia",
   metaDescription:
-    "Calcule quantas calorias você precisa por dia para manter, perder ou ganhar peso. Equação de Mifflin-St Jeor, cinco níveis de atividade e o que os números significam na prática.",
+    "Calcule grátis quantas calorias por dia você precisa para manter, perder ou ganhar peso, pela equação de Mifflin-St Jeor. Resultado orientativo.",
   lede: "Insira sexo, idade, altura, peso e o quanto você se movimenta para ver quantas calorias gasta por dia — e quantas comer para manter, perder ou ganhar peso.",
   trustPoints: [
     "Equação de Mifflin-St Jeor, a que os médicos usam",
@@ -1694,9 +1697,11 @@ const BR_PT_DUE_DATE: DeepPartial<ToolCopy> = {
   // single-clinic domains, so this is the most winnable page we have. Seven of
   // the top twenty title themselves "calculadora de IDADE gestacional" — the
   // phrase belongs in the tail rather than only in the body copy.
-  metaTitle: "Calculadora Gestacional {country} | Idade Gestacional e DPP",
+  // 2026-09-15: 824 impressions / 0 clicks; queries are "calculadora gestacional",
+  // "calculadora de gravidez" and "calculadora idade gestacional".
+  metaTitle: "Calculadora Gestacional e de Gravidez {country} | DPP",
   metaDescription:
-    "Calcule a idade gestacional e a data provável do parto (DPP) a partir do primeiro dia da última menstruação. Ajusta-se à duração do seu ciclo, com as 40 semanas detalhadas.",
+    "Calculadora gestacional grátis: veja de quantas semanas você está e a data provável do parto (DPP) a partir da última menstruação, ajustada ao seu ciclo.",
   lede: "Informe o primeiro dia da última menstruação para ver a data provável do parto, em qual semana você está hoje e quando começa cada trimestre.",
   trustPoints: [
     "Ajusta-se a ciclos de 20 a 45 dias",

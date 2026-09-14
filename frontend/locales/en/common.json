@@ -807,6 +807,7 @@
     "step1": "Step 1",
     "chooseServiceWith": "Choose a service with {doctor}",
     "chooseWhatYouNeed": "Choose what you need",
+    "sameDayLink": "Need a same-day GP instead?",
     "servicesEnabledNote": "General and specialist services are shown only when enabled for your country.",
     "noBookableServices": "No bookable services are available right now.",
     "clinicianNoServices": "This clinician has no bookable public services right now.",

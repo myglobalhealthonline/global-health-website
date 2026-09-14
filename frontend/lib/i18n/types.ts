@@ -889,6 +889,7 @@ export type CommonLocale = {
     step1: string;
     chooseServiceWith: string;
     chooseWhatYouNeed: string;
+    sameDayLink: string;
     servicesEnabledNote: string;
     noBookableServices: string;
     clinicianNoServices: string;

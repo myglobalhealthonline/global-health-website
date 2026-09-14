@@ -807,6 +807,7 @@
     "step1": "Passo 1",
     "chooseServiceWith": "Escolha um serviço com {doctor}",
     "chooseWhatYouNeed": "Escolha o que precisa",
+    "sameDayLink": "Prefere um médico de família no mesmo dia?",
     "servicesEnabledNote": "Os serviços gerais e de especialidade só são mostrados quando ativados para o seu país.",
     "noBookableServices": "Não há serviços disponíveis para marcação neste momento.",
     "clinicianNoServices": "Este clínico não tem serviços públicos disponíveis para marcação neste momento.",

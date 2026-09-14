@@ -807,6 +807,7 @@
     "step1": "Pasul 1",
     "chooseServiceWith": "Alege un serviciu cu {doctor}",
     "chooseWhatYouNeed": "Alege ce ai nevoie",
+    "sameDayLink": "Ai nevoie de un medic de familie în aceeași zi?",
     "servicesEnabledNote": "Serviciile generale și de specialitate sunt afișate doar atunci când sunt activate pentru țara ta.",
     "noBookableServices": "Niciun serviciu rezervabil nu este disponibil în acest moment.",
     "clinicianNoServices": "Acest clinician nu are servicii publice rezervabile în acest moment.",
