@@ -1,0 +1,11 @@
+{
+  "deploymentId": "712e7380-b0e5-4acc-9028-259a561cfdae",
+  "service": "Backend (Railway Production)",
+  "status": "SUCCESS",
+  "commit": "6b4da640",
+  "containsCommit": "2c1fd66e",
+  "branch": "main",
+  "frontendDeploymentId": "fe3726f0-7716-4da6-b49c-fe7f90f21883",
+  "readiness": "https://api.myglobalhealth.online/ready returned ok:true, database connected",
+  "note": "Carries the Spain gate with phase-2 approved states for manifest 3cfecca0 (Luz groups, Tomás registration typo)."
+}
