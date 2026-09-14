@@ -9791,6 +9791,36 @@ publicly verified. The "Remaining" list below is historical.
   "Arbeitsunfähigkeitsbescheinigung", ES "Fechas de incapacidad laboral"); OpenSEO/Google API
   re-authorization before a fresh-window read.
 
+### 56.12 Phase 5 and owner follow-ups (14 September 2026)
+
+**Status: PREPARED, NOT LIVE.** Owner answers on 14 September, applied or prepared as follows.
+
+- **Issued absence certificate (ES).** Owner chose "Justificante médico de ausencia". Code change
+  committed (`586b3881`): `docTitleAbsence` "Certificado de Baja Médica" → "Justificante Médico de
+  Ausencia"; `absenceTitle` "Período de baja médica" → "Período de ausencia". 80 generated-documents
+  tests pass. Goes live with the next backend deploy.
+- **Luz Marina Zuluaga Ríos.** Owner: record as practising and keep live. Fact register updated;
+  CGCOM still "ALTA sin ejercicio" at the 14 September recheck. Recheck on 18 September.
+- **Leandro Wang.** Owner: General Medicine Physician. Supersedes §56.5's specialist-evidence
+  attestation. Fact register updated. Stored service `kind` remains `SPECIALIST`; the frontend does
+  not render it and the runner cannot write it.
+- **Phase 5 manifest** `storage-mutation-manifest-phase5.json`, SHA-256 `76e36474…`, 5 groups, 18
+  operations, 0 blockers, planned from read-only snapshot `raw/storage-post-phase4-2026-09-14.json`
+  (local). Groups: phlebology/lymphology service and vascular-diagnosis service (names, summaries,
+  SEO, hero and body lose "especialista/specialist/especializada/fachärztlich/specializovaná/de
+  specialitate" claims in six locales; "sin esperas/without waiting" removed; one ES keyword),
+  Wang profile (bio and SEO description; "Cita el mismo día" removed), EN GP hero ("without a
+  waiting room", "same day" promises) and CS skin (seoTitle "| Tentýž den", description, hero).
+  Kept by design: same-day DVT emergency guidance, conditional same-day test requests, market
+  context ("specialist lymphology is scarce"), physiotherapist training and dermatology referral.
+- **Approval.** Owner chose "Dra. Ocampo, approved now". Recording it
+  (`clinical-approval-phase5.json` plus `APPROVED_SPAIN_STATES`) was refused by automated permission
+  review; not recorded yet.
+- **Search Console.** Owner: no manual indexing request; let Google recrawl through the sitemap.
+- **Next.** Record approval → commit → sync `main` → record deployment → `run-rollout.ps1 -Phase 5`
+  → cohort and ledger update. Scheduled reads unchanged (18 and 24 September; 14 October, 13
+  November, 13 December).
+
 ## 57. Brazil evidence and guarded preparation — 13 September 2026
 
 Research and local preparation complete for the first staffed service/profile batch;
