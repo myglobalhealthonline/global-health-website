@@ -9880,6 +9880,24 @@ SERIALIZABLE transaction at 2026-09-14T18:42:36Z:
 - Drives the service `reviewedBy` Physician schema and "Last reviewed" dates. Not part of the Spain/
   Romania/Brazil clinical state hash, so no gate re-approval is needed.
 
+### 56.15 Phase 7: SEO description trims (15 September 2026) — LIVE
+
+SMA-05/SMA-14 follow-up from the §56.13 cross-check. Owner: country clinical directors approve
+description copy (Spain: Dra. María Fernanda Ocampo Mora); approval recorded by the owner
+(`75b4c563`). Manifest `storage-mutation-manifest-phase7.json`, SHA-256 `5b189c76…`, 6 groups,
+42 operations, planned from read-only snapshot `raw/storage-post-phase6-2026-09-15.json` (local).
+- `seoDescription` trimmed to ≤155 characters in six locales for `psiquiatra-online`,
+  `derivaciones-pruebas-online`, `medicina-viaje-online`, `justificante-medico-online` (base, ES and
+  translations) and the Del Valle and Tomás Ruiz Palacios profiles (Doctor base + six
+  DoctorMarketTranslation rows). Unconditional same-day promises ("El mismo día", "Cita el mismo
+  día") removed; Del Valle keeps his registered specialist wording.
+- Deploy Backend `c1cb4133-9b37-4150-bf08-e29030cadb82` / Frontend
+  `62d08f2d-08d9-4c18-89a9-3585d4fcb397`; receipt `seo/spain/enforcement-deployment-phase7.json`.
+- `run-rollout.ps1 -Phase 7`: all 6 groups applied and API-verified (6 locales each). Live HTML
+  `<meta name="description">`: 36/36 page-locale pairs match the approved text.
+- Measurement: read CTR on these six pages at the 2026-10-14 / 2026-11-13 / 2026-12-13 checks;
+  no ranking change is expected from a snippet trim.
+
 ## 57. Brazil evidence and guarded preparation — 13 September 2026
 
 Research and local preparation complete for the first staffed service/profile batch;
@@ -10291,3 +10309,21 @@ the same manifest and hash; it refuses if content changed after this apply.
 
 - spain group text:doctor:cmrdpx4ah001r01rupv1od828: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-doctor-cmrdpx4ah001r01rupv1od828-applied.json.
 - seo/spain phase 6 group text:doctor:cmrdpx4ah001r01rupv1od828: public verification passed 2026-09-14T17:23:46.0958078Z. Receipt: seo/spain/raw/rollout/phase6/text-doctor-cmrdpx4ah001r01rupv1od828-public.json.
+
+- spain group text:service:cmre7qeyz0050ngjund1jqnhp: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-service-cmre7qeyz0050ngjund1jqnhp-applied.json.
+- seo/spain phase 7 group text:service:cmre7qeyz0050ngjund1jqnhp: public verification passed 2026-09-14T19:34:07.0648693Z. Receipt: seo/spain/raw/rollout/phase7/text-service-cmre7qeyz0050ngjund1jqnhp-public.json.
+
+- spain group text:service:cmre7qas1003sngjus0w2obwn: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-service-cmre7qas1003sngjus0w2obwn-applied.json.
+- seo/spain phase 7 group text:service:cmre7qas1003sngjus0w2obwn: public verification passed 2026-09-14T19:34:38.5711802Z. Receipt: seo/spain/raw/rollout/phase7/text-service-cmre7qas1003sngjus0w2obwn-public.json.
+
+- spain group text:service:cmre7q7k0002vngju6v73lt8h: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-service-cmre7q7k0002vngju6v73lt8h-applied.json.
+- seo/spain phase 7 group text:service:cmre7q7k0002vngju6v73lt8h: public verification passed 2026-09-14T19:35:09.6911576Z. Receipt: seo/spain/raw/rollout/phase7/text-service-cmre7q7k0002vngju6v73lt8h-public.json.
+
+- spain group text:service:cmre7pxza000angjubr3s2h65: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-service-cmre7pxza000angjubr3s2h65-applied.json.
+- seo/spain phase 7 group text:service:cmre7pxza000angjubr3s2h65: public verification passed 2026-09-14T19:35:42.5198664Z. Receipt: seo/spain/raw/rollout/phase7/text-service-cmre7pxza000angjubr3s2h65-public.json.
+
+- spain group text:doctor:cmrdppjf5000u01ru1ayu78k0: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-doctor-cmrdppjf5000u01ru1ayu78k0-applied.json.
+- seo/spain phase 7 group text:doctor:cmrdppjf5000u01ru1ayu78k0: public verification passed 2026-09-14T19:36:15.0199017Z. Receipt: seo/spain/raw/rollout/phase7/text-doctor-cmrdppjf5000u01ru1ayu78k0-public.json.
+
+- spain group text:doctor:cmrdq0tv2002701rupeh3nkyd: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-doctor-cmrdq0tv2002701rupeh3nkyd-applied.json.
+- seo/spain phase 7 group text:doctor:cmrdq0tv2002701rupeh3nkyd: public verification passed 2026-09-14T19:36:45.9265548Z. Receipt: seo/spain/raw/rollout/phase7/text-doctor-cmrdq0tv2002701rupeh3nkyd-public.json.

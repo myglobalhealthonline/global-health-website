@@ -1,0 +1,9 @@
+{
+  "deploymentId": "c1cb4133-9b37-4150-bf08-e29030cadb82",
+  "service": "Backend (Railway Production)",
+  "status": "SUCCESS",
+  "commit": "75b4c563",
+  "branch": "main",
+  "frontendDeploymentId": "62d08f2d-08d9-4c18-89a9-3585d4fcb397",
+  "note": "Carries the Spain gate with phase-7 approved states for manifest 5b189c76 (SEO description trims). IDs read from the Railway CLI."
+}
