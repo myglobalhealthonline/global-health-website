@@ -9463,6 +9463,35 @@ unchanged, and now also serve as the first post-publication index/crawl check.
 - Brazil: the gate is live with a null policy, so admin edits to Brazil clinical
   content are refused until Brazil approvals are recorded.
 
+### 56.7 Spain phase 2 — Luz groups and Tomás registration typo (14 September 2026)
+
+**Status:** prepared, approved and pushed (`2c1fd66e` on Dev-hassaan). The owner pushes
+`main`; publication follows the deploy.
+
+- **Luz Marina Zuluaga Ríos.** The owner (super admin) instructed publication of her
+  profile and six drafted services, overriding the hold. CGCOM still listed "Médico de
+  ALTA sin ejercicio" on the 14 September recheck; the owner reports she is practising.
+  The override reason is stored per group (`holdOverride`), and the registry
+  discrepancy remains recorded in the fact register.
+- **Tomás Ruiz Palacios.** The COP Murcia register lists MU05691. A correction group
+  replaces `MUO5691` in 12 stored fields: Doctor seoTitle/seoDescription/qualifications,
+  DoctorCountry registrationNumber, the ES market seoTitle/seoDescription and six FAQ
+  answers. Chamber, verified flag and every other credential field are unchanged. The
+  planner refuses the group if the typo remains anywhere in his stored rows.
+- **Manifest.** `storage-mutation-manifest-phase2.json`, SHA-256 `3cfecca0…`, 8 groups,
+  41 operations, 0 blockers. It was planned from the post-rollout read-only snapshot,
+  which matched the expected phase-1 state with zero drift. Phase-1 files and receipts
+  are untouched.
+- **Approval.** `clinical-approval-phase2.json` records owner-reported verbal approval,
+  reviewedAt `2026-09-14T03:46:07Z`. Its 8 resulting states were added to
+  `APPROVED_SPAIN_STATES`.
+- **Proof.** 13 tests pass, backend tsc passes, and the isolated embedded-PostgreSQL
+  rehearsal passed ([receipt](../../seo/spain/raw/postgres-rehearsal-2026-09-14-3cfecca0.json)).
+  The runner now updates DoctorCountry without `updatedAt`, since that table has no
+  such column.
+- **Standing instruction.** Doctors add availability themselves. Fidel's groups stay
+  held and are not an owner action item.
+
 **Next (historical, superseded by §56.6):**
 1. Dra. Ocampo approves manifest `8846503c…` and its group hashes.
 2. Record `clinical-approval.json` and matching `APPROVED_SPAIN_STATES`.
