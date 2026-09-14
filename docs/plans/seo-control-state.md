@@ -9867,6 +9867,19 @@ preparation/limitations content (day 60/90). Doctor-portal sick-leave labels (DE
 §53 sick-leave expansion, new "médico online España" page, neurology/paediatric specialist pages,
 indexing requests, backlink buying.
 
+### 56.14 Clinical director named as reviewer, all markets (14 September 2026)
+
+Owner instruction: each country's clinical director has reviewed service and doctor descriptions.
+Owner confirmed Spain = Dra. María Fernanda Ocampo Mora, Brazil = Dr. Renato Sarmento (neither market
+has `isCountryDirector` set; that flag and director access/commission were NOT changed). Applied in one
+SERIALIZABLE transaction at 2026-09-14T18:42:36Z:
+- `Service.reviewerDoctorId` = country clinical director and `lastReviewedAt` = that time for every
+  active PUBLIC service: IE 23 and PT 23 (Dr Tiago Figueira), CZ 15 (MUDr. Vojtěch Černý), RO 17
+  (Dr Robert Brindus), ES 24 (Ocampo), BR 18 (Sarmento). Each director verified as a member of the market.
+- `Doctor.lastReviewedAt` set for all 60 active doctors (the profile has no reviewer-name field).
+- Drives the service `reviewedBy` Physician schema and "Last reviewed" dates. Not part of the Spain/
+  Romania/Brazil clinical state hash, so no gate re-approval is needed.
+
 ## 57. Brazil evidence and guarded preparation — 13 September 2026
 
 Research and local preparation complete for the first staffed service/profile batch;
