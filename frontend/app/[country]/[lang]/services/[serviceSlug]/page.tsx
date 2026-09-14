@@ -223,7 +223,11 @@ export async function generateMetadata({
       ? await indexableServiceAlternates(config, code, country, serviceSlug)
       : undefined,
     noindex: !indexable,
-    keywords: detail.seoKeywords.length > 0 ? detail.seoKeywords : undefined,
+    // seoKeywords has no translation column, so it is always in the market's
+    // default language — emitting it on other locales put Spanish keywords on
+    // the English/Czech/German URLs of every Spain service.
+    keywords:
+      lang === defaultLocale && detail.seoKeywords.length > 0 ? detail.seoKeywords : undefined,
   });
   if (indexable) return metadata;
   // `noindex, FOLLOW` — an editorially incomplete service is still a real page

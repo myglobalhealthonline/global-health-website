@@ -1,0 +1,43 @@
+{
+  "collectedAt": "2026-09-14",
+  "source": "OpenSEO Search Console connector, sc-domain:myglobalhealth.online, dataState final",
+  "purpose": "Spanish dermatology queries landing on the /spain/en/ service URL (ledger 56.2 hold)",
+  "queryPage_2026-08-13_2026-09-11_allCountries": {
+    "filter": "page contains /spain/ AND dermatolog",
+    "rows": 92,
+    "summaryByPage": {
+      "/spain/en/services/dermatologia-especialista-online": "Spanish and English queries, positions 58-91, 0 clicks",
+      "/spain/es/blog/dermatologo-online-que-puede-resolver": "Spanish head queries, positions 17-26, 0 clicks",
+      "/spain/es/services/dermatologia-especialista-online": "no query rows (anonymised long tail only)"
+    },
+    "pairedExamples": [
+      { "query": "dermatólogo online", "en_service": [5, 78.2], "es_blog": [19, 17.5] },
+      { "query": "dermatología online", "en_service": [13, 71.5], "es_blog": [28, 20.0] },
+      { "query": "consulta dermatologo online", "en_service": [9, 91.1], "es_blog": [28, 19.5] },
+      { "query": "dermatologo atencion online", "en_service": [7, 90.6], "es_blog": [31, 18.6] },
+      { "query": "consulta virtual dermatologo", "en_service": [11, 84.8], "es_blog": [25, 24.2] }
+    ],
+    "pairFormat": "[impressions, position]"
+  },
+  "page_2026-08-13_2026-09-11_countryESP": {
+    "/spain/en/services/dermatologia-especialista-online": [142, 81.1],
+    "/spain/es/blog/dermatologo-online-que-puede-resolver": [285, 20.1],
+    "/spain/pt/blog/dermatologista-online-espanha": [13, 77.2],
+    "/spain/en/blog/online-dermatologist-spain": [2, 7.5]
+  },
+  "dailySeries_2026-07-15_2026-09-11": {
+    "es_service": "Jul 20-23: 27/32/34/7 impressions at position 39-42; from Jul 24 only 0-2 impressions per day (positions 4.5-54)",
+    "es_blog": "first impressions Aug 15; 13-30 per day Aug 15-26 at position 16-21; near zero Aug 27-Sep 7; 6-19 per day Sep 8-11 at position 14-18",
+    "en_service": "zero before Aug 29; Aug 29 6, Aug 30 53, Aug 31 45, Sep 1 46, Sep 2 41, Sep 3 32 (positions 69-82); Sep 4-11 one impression total",
+    "strayUrl": "/spain/es/blog/dermatologo-que-resuelve-y-que-no: 1 impression Sep 11 at position 1; live HTTP 404"
+  },
+  "consultaPiel_queryPage_2026-08-13_2026-09-11": "5 rows, all /spain/cs/ Czech queries; no ES or EN rows",
+  "urlInspection": {
+    "/spain/es/services/dermatologia-especialista-online": { "coverage": "Submitted and indexed", "lastCrawl": "2026-07-19T07:41:19Z", "googleCanonical": "self", "referrers": ["/spain/es", "/spain/es/book"] },
+    "/spain/en/services/dermatologia-especialista-online": { "coverage": "Submitted and indexed", "lastCrawl": "2026-08-27T18:42:06Z", "googleCanonical": "self", "referrers": ["/spain/es/services/dermatologia-especialista-online"] },
+    "/spain/es/blog/dermatologo-online-que-puede-resolver": { "coverage": "Submitted and indexed", "lastCrawl": "2026-09-08T00:55:27Z", "googleCanonical": "self" },
+    "/spain/en/blog/online-dermatologist-spain": { "coverage": "Submitted and indexed", "lastCrawl": "2026-09-07T14:17:30Z", "googleCanonical": "self" },
+    "/spain/es/services/consulta-piel-online": { "coverage": "Discovered - currently not indexed", "lastCrawl": null, "referrers": ["/spain/es"] },
+    "/spain/en/services/consulta-piel-online": { "coverage": "Submitted and indexed", "lastCrawl": "2026-07-19T20:23:20Z", "googleCanonical": "self" }
+  }
+}
